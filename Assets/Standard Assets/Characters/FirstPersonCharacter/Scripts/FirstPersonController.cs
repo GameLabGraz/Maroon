@@ -2,13 +2,14 @@ using System;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 using UnityStandardAssets.Utility;
+using UnityEngine.Networking;
 using Random = UnityEngine.Random;
 
 namespace UnityStandardAssets.Characters.FirstPerson
 {
     [RequireComponent(typeof (CharacterController))]
     [RequireComponent(typeof (AudioSource))]
-    public class FirstPersonController : MonoBehaviour
+    public class FirstPersonController : NetworkBehaviour
     {
         [SerializeField] private bool m_IsWalking;
         [SerializeField] private float m_WalkSpeed;
@@ -47,6 +48,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         {
             m_CharacterController = GetComponent<CharacterController>();
             m_Camera = Camera.main;
+            transform.rotation = Quaternion.Euler(0, 180, 0);
             m_OriginalCameraPosition = m_Camera.transform.localPosition;
             m_FovKick.Setup(m_Camera);
             m_HeadBob.Setup(m_Camera, m_StepInterval);
