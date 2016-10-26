@@ -34,7 +34,7 @@ public class ColliderEntered : MonoBehaviour {
 	{
 		if (Input.GetKeyDown (KeyCode.E) && this.insideTriggerSphere) {
 			Debug.Log(LevelName);
-			Application.LoadLevel(LevelName);		
+			Application.LoadLevel(LevelName);
 		}
 	}
 
