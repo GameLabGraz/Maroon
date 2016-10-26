@@ -239,6 +239,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void RotateView()
         {
+            if (!(Application.loadedLevel == 0))
+                return;
+
             m_MouseLook.LookRotation (transform, m_Camera.transform);
         }
 
