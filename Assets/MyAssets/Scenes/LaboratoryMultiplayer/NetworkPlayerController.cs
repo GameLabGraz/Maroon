@@ -11,9 +11,13 @@ using UnityStandardAssets.Characters.FirstPerson;
 public class NetworkPlayerController : NetworkBehaviour {
 
     public GameObject avatar_;
+    private MeshRenderer[] ren;
 
-	void Start()
+    [SyncVar] private Color color;
+
+    void Start()
     {
+        ren = GetComponentsInChildren<MeshRenderer>();
         if (!isLocalPlayer)
         {
             GetComponentInChildren<FirstPersonController>().enabled = false;
@@ -21,11 +25,36 @@ public class NetworkPlayerController : NetworkBehaviour {
             GetComponentInChildren<AudioListener>().enabled = false;
             GetComponentInChildren<Camera>().enabled = false;
             GetComponentInChildren<CharacterController>().enabled = false;
+
+            CmdSetColor(color);
+            foreach (MeshRenderer i in ren)
+            {
+                i.material.color = color;
+            }
         }
         else
         {
+            CmdSetColor(color);
             avatar_.SetActive(false);
         }
     }
 
+    public override void OnStartClient()
+    {
+        if (isServer)
+        {
+            color = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f));
+            RpcSetColor(color);
+        }
+    }
+
+    [ClientRpc] void RpcSetColor(Color c)
+    {
+        color = c;
+    }
+
+    [Command] void CmdSetColor(Color c)
+    {
+        color = c;
+    }
 }
