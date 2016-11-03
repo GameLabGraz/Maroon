@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.Networking;
 using UnityStandardAssets.Characters.FirstPerson;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(FirstPersonController))]
 [RequireComponent(typeof(AudioSource))]
@@ -12,6 +13,7 @@ public class NetworkPlayerController : NetworkBehaviour {
 
     public GameObject avatar_;
     private MeshRenderer[] ren;
+    private GameObject bar;
 
     [SyncVar] private Color color;
 
@@ -35,8 +37,16 @@ public class NetworkPlayerController : NetworkBehaviour {
         else
         {
             CmdSetColor(color);
+            bar = GameObject.FindGameObjectWithTag("ColorBar");
+            bar.GetComponentInChildren<Image>().color = color;
+            DontDestroyOnLoad(bar);
             avatar_.SetActive(false);
         }
+    }
+
+    void OnDestroy()
+    {
+        bar.GetComponentInChildren<Image>().color = Color.white;
     }
 
     public override void OnStartClient()

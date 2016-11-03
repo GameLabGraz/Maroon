@@ -11,11 +11,6 @@ public class NetworkGUI : MonoBehaviour {
 	void Start () {
         gui = GetComponent<NetworkManagerHUD>();
         gui.offsetX = Screen.width - 240;
-        gui.offsetY = -30;
-    }
-
-	// Update is called once per frame
-	void Update () {
-        
+        gui.offsetY = -20;
     }
 }
