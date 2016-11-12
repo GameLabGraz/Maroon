@@ -12,14 +12,20 @@ using UnityEngine.UI;
 public class NetworkPlayerController : NetworkBehaviour {
 
     public GameObject avatar_;
+    public GameObject messagePrefab_;
     private MeshRenderer[] ren;
     private GameObject bar;
+    private InputField if_;
+    private NetworkManagerHUD gui_;
+    private string text_;
 
     [SyncVar] private Color color;
 
     void Start()
     {
         ren = GetComponentsInChildren<MeshRenderer>();
+        if_ = GameObject.FindGameObjectWithTag("Input").GetComponent<InputField>();
+        gui_ = GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<NetworkManagerHUD>();
         if (!isLocalPlayer)
         {
             GetComponentInChildren<FirstPersonController>().enabled = false;
@@ -44,9 +50,53 @@ public class NetworkPlayerController : NetworkBehaviour {
         }
     }
 
+    // Update is called once per frame
+    void Update()
+    {
+        if(isLocalPlayer)
+        { 
+            if (if_.isFocused)
+            {
+                gui_.showGUI = false;
+                GetComponentInChildren<FirstPersonController>().enabled = false;
+            }
+            else
+            {
+                gui_.showGUI = true;
+                GetComponentInChildren<FirstPersonController>().enabled = true;
+            }
+
+            text_ = if_.text;
+            if (text_.Length > 0 && Input.GetKeyDown(KeyCode.Return))
+            {
+                if_.text = "";
+                Debug.Log(text_);
+
+                CmdMessage(text_);
+            }
+        }
+    }
+
+    [Command]
+    void CmdMessage(string t)
+    {
+        Debug.Log("CmdMessage");
+        var msg = (GameObject)Instantiate(
+            messagePrefab_,
+            new Vector3(0,0,0),
+            new Quaternion(0,0,0,0));
+
+        msg.GetComponentInChildren<Text>().text = t;
+        msg.GetComponentInChildren<Text>().color = color;
+
+        Debug.Log("Spawning msg" + t);
+        NetworkServer.Spawn(msg);
+    }
+
     void OnDestroy()
     {
-        bar.GetComponentInChildren<Image>().color = Color.white;
+        if(bar != null)
+            bar.GetComponentInChildren<Image>().color = Color.white;
     }
 
     public override void OnStartClient()
