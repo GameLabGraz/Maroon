@@ -12,6 +12,7 @@ using UnityEngine.UI;
 public class NetworkPlayerController : NetworkBehaviour {
 
     public GameObject avatar_;
+    public GameObject eyes_;
     public GameObject messagePrefab_;
     private MeshRenderer[] ren;
     private GameObject bar;
@@ -23,7 +24,7 @@ public class NetworkPlayerController : NetworkBehaviour {
 
     void Start()
     {
-        ren = GetComponentsInChildren<MeshRenderer>();
+        ren = avatar_.GetComponentsInChildren<MeshRenderer>();
         if_ = GameObject.FindGameObjectWithTag("Input").GetComponent<InputField>();
         gui_ = GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<NetworkManagerHUD>();
         if (!isLocalPlayer)
@@ -47,6 +48,7 @@ public class NetworkPlayerController : NetworkBehaviour {
             bar.GetComponentInChildren<Image>().color = color;
             DontDestroyOnLoad(bar);
             avatar_.SetActive(false);
+            eyes_.SetActive(false);
         }
     }
 
