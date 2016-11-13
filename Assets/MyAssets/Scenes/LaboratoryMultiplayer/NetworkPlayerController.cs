@@ -77,6 +77,11 @@ public class NetworkPlayerController : NetworkBehaviour {
         }
     }
 
+    public bool isFocused()
+    {
+        return if_.isFocused;
+    }
+
     [Command]
     void CmdMessage(string t)
     {

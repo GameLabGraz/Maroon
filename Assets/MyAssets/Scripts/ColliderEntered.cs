@@ -7,6 +7,7 @@ public class ColliderEntered : MonoBehaviour {
 	public string DisplayedText;	// starts with "Press [E] "
 	private bool insideTriggerSphere = false;
 	private GUIStyle textStyle;
+    private GameObject player;
 
 	public void Start()
 	{
@@ -19,6 +20,7 @@ public class ColliderEntered : MonoBehaviour {
 		if (other.CompareTag ("Player")) {
 			Debug.Log("Player entered");
 			this.insideTriggerSphere = true;
+            player = other.gameObject;
 		}
 	}
 
@@ -27,15 +29,19 @@ public class ColliderEntered : MonoBehaviour {
 		if (other.CompareTag ("Player")) {
 			Debug.Log("Player exit");
 			this.insideTriggerSphere = false;
+            player = null;
 		}
 	}
 
 	public void Update()
 	{
 		if (Input.GetKeyDown (KeyCode.E) && this.insideTriggerSphere) {
-			Debug.Log(LevelName);
-			Application.LoadLevel(LevelName);
-		}
+            if(player != null && ! player.GetComponent<NetworkPlayerController>().isFocused())
+            { 
+			    Debug.Log(LevelName);
+			    Application.LoadLevel(LevelName);
+            }
+        }
 	}
 
 	public void OnGUI()
