@@ -72,8 +72,6 @@ public class NetworkPlayerController : NetworkBehaviour {
             if (text_.Length > 0 && Input.GetKeyDown(KeyCode.Return))
             {
                 if_.text = "";
-                Debug.Log(text_);
-
                 CmdMessage(text_);
             }
         }
@@ -82,7 +80,6 @@ public class NetworkPlayerController : NetworkBehaviour {
     [Command]
     void CmdMessage(string t)
     {
-        Debug.Log("CmdMessage");
         var msg = (GameObject)Instantiate(
             messagePrefab_,
             new Vector3(0,0,0),
@@ -91,7 +88,6 @@ public class NetworkPlayerController : NetworkBehaviour {
         msg.GetComponentInChildren<Text>().text = t;
         msg.GetComponentInChildren<Text>().color = color;
 
-        Debug.Log("Spawning msg" + t);
         NetworkServer.Spawn(msg);
     }
 

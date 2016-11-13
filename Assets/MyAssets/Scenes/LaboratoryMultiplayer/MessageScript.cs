@@ -13,6 +13,20 @@ public class MessageScript : NetworkBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        // move old messages down
+        GameObject[] old = GameObject.FindGameObjectsWithTag("Message");
+        if (old.Length > 0)
+        {
+            foreach (GameObject o in old)
+            {
+                if(o != this.gameObject)
+                { 
+                    Text temp = o.GetComponentInChildren<Text>();
+                    temp.transform.position = new Vector3(temp.transform.position.x, temp.transform.position.y - 20, temp.transform.position.z);
+                }
+            }
+        }
+
         field_ = GetComponentInChildren<Text>();
         if (isServer)
         {
@@ -23,7 +37,7 @@ public class MessageScript : NetworkBehaviour {
         field_.text = text_;
         field_.color = col_;
         DontDestroyOnLoad(gameObject);
-        Destroy(gameObject, 5);
+        Destroy(gameObject, 100);
     }
 
     [ClientRpc]
