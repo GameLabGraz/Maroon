@@ -8,8 +8,9 @@ public class GuiVandeGraaffExperiment1 : MonoBehaviour {
 	private PaperStripesController paperStripesController;
 	private bool glowEnabled;
 	private GUIStyle textStyle;
-	
-	public void Start () {
+    private bool grounderfound = false;
+
+    public void Start () {
 		// find Van de Graaff Generator object in the scene
 		GameObject vandeGraaff = GameObject.FindGameObjectWithTag ("VandeGraaff");
 		if (null != vandeGraaff) 
@@ -18,8 +19,9 @@ public class GuiVandeGraaffExperiment1 : MonoBehaviour {
 		}
 		// find Grounder object in the scene
 		GameObject grounder = GameObject.FindGameObjectWithTag ("Grounder");
-		if (null != grounder) {
+        if (null != grounder) {
 			this.grounderController = grounder.GetComponent<GrounderController>();
+            grounderfound = true;
 		}
 		// find Paper Stripes object in the scene
 		GameObject paperStripes = GameObject.FindGameObjectWithTag ("PaperStripes");
@@ -35,8 +37,19 @@ public class GuiVandeGraaffExperiment1 : MonoBehaviour {
 	
 	public void Update()
 	{
-		// check if [E] was pressed (Switch ON/OFF VdG)
-		if (Input.GetKeyDown (KeyCode.E)) 
+        if(! grounderfound)
+        {
+            GameObject grounder = GameObject.FindGameObjectWithTag("Grounder");
+            if (null != grounder)
+            {
+                this.grounderController = grounder.GetComponent<GrounderController>();
+                this.EnableGlow(this.glowEnabled);
+                grounderfound = true;
+            }
+        }
+
+        // check if [E] was pressed (Switch ON/OFF VdG)
+        if (Input.GetKeyDown (KeyCode.E)) 
 		{
 			this.vandeGraaffController.Switch();
 		}
@@ -64,7 +77,8 @@ public class GuiVandeGraaffExperiment1 : MonoBehaviour {
 	private void EnableGlow(bool enable)
 	{
 		this.vandeGraaffController.GlowEnabled = enable;
-		this.grounderController.GlowEnabled = enable;
+        if (this.grounderController != null)
+            this.grounderController.GlowEnabled = enable;
 		this.paperStripesController.GlowEnabled = enable;
 	}
 

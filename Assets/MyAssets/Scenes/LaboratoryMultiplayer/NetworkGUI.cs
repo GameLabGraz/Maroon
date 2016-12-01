@@ -13,4 +13,9 @@ public class NetworkGUI : MonoBehaviour {
         gui.offsetX = Screen.width - 240;
         gui.offsetY = -20;
     }
+
+    void Update()
+    {
+        NetworkServer.SpawnObjects();
+    }
 }
