@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class GuiTriboelectricExperiment : MonoBehaviour {
 	
@@ -16,8 +17,8 @@ public class GuiTriboelectricExperiment : MonoBehaviour {
 		// check if [ESC] was pressed
 		if (Input.GetKeyDown (KeyCode.Escape)) 
 		{
-			Application.LoadLevel("Laboratory");
-		}
+            SceneManager.LoadScene("Laboratory");
+        }
 	}
 	
 	// OnGUI is called once per frame

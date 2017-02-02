@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class GuiWhiteboard : MonoBehaviour 
 {
@@ -39,8 +40,8 @@ public class GuiWhiteboard : MonoBehaviour
 		// Check if [ESC] was pressed
 		if (Input.GetKeyDown (KeyCode.Escape)) 
 		{
-			Application.LoadLevel("Laboratory");
-		}
+            SceneManager.LoadScene("Laboratory");
+        }
 		// Check if [<-] or [A] was pressed
 		if (Input.GetKeyDown (KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A)) 
 		{

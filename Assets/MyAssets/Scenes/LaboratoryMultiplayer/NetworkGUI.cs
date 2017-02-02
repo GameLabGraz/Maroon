@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.Networking;
 
 [RequireComponent(typeof(NetworkManagerHUD))]
-public class NetworkGUI : MonoBehaviour {
+public class NetworkGUI : NetworkBehaviour {
 
     private NetworkManagerHUD gui;
 

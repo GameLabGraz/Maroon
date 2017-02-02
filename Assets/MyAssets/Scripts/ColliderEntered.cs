@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class ColliderEntered : MonoBehaviour {
 
@@ -39,7 +40,7 @@ public class ColliderEntered : MonoBehaviour {
             if(player != null && ! player.GetComponent<NetworkPlayerController>().isFocused())
             { 
 			    Debug.Log(LevelName);
-			    Application.LoadLevel(LevelName);
+			    SceneManager.LoadScene(LevelName);
             }
         }
 	}

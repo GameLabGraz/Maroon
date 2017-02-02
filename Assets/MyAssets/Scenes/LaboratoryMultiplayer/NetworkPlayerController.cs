@@ -46,7 +46,7 @@ public class NetworkPlayerController : NetworkBehaviour {
             CmdSetColor(color);
             bar = GameObject.FindGameObjectWithTag("ColorBar");
             bar.GetComponentInChildren<Image>().color = color;
-            DontDestroyOnLoad(bar);
+            //DontDestroyOnLoad(bar);
             avatar_.SetActive(false);
             eyes_.SetActive(false);
         }
