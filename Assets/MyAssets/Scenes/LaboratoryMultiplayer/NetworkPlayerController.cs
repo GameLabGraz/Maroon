@@ -27,6 +27,7 @@ public class NetworkPlayerController : NetworkBehaviour {
         ren = avatar_.GetComponentsInChildren<MeshRenderer>();
         if_ = GameObject.FindGameObjectWithTag("Input").GetComponent<InputField>();
         gui_ = GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<NetworkManagerHUD>();
+        gui_.showGUI = false;
         if (!isLocalPlayer)
         {
             GetComponentInChildren<FirstPersonController>().enabled = false;
@@ -72,7 +73,7 @@ public class NetworkPlayerController : NetworkBehaviour {
             }
             else
             {
-                gui_.showGUI = true;
+                //gui_.showGUI = true;
                 GetComponentInChildren<FirstPersonController>().enabled = true;
             }
 
