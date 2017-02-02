@@ -49,6 +49,14 @@ public class NetworkPlayerController : NetworkBehaviour {
             //DontDestroyOnLoad(bar);
             avatar_.SetActive(false);
             eyes_.SetActive(false);
+
+            //cleanup messages if any
+            GameObject[] old = GameObject.FindGameObjectsWithTag("Message");
+            if (old.Length > 0)
+            {
+                foreach (GameObject o in old)
+                    o.SetActive(false);
+            }
         }
     }
 
