@@ -15,30 +15,34 @@ public class NetworkPlayerController : NetworkBehaviour {
     public GameObject avatar_;
     public GameObject eyes_;
     public GameObject messagePrefab_;
-    private MeshRenderer[] ren;
-    private GameObject bar;
+    private MeshRenderer[] ren_;
+    private GameObject bar_;
     private InputField if_;
     private NetworkManagerHUD gui_;
+    private Camera cam_;
+    private FirstPersonController fps_;
     private string text_;
 
     [SyncVar] private Color color;
 
     void Start()
     {
-        ren = avatar_.GetComponentsInChildren<MeshRenderer>();
+        ren_ = avatar_.GetComponentsInChildren<MeshRenderer>();
         if_ = GameObject.FindGameObjectWithTag("Input").GetComponent<InputField>();
         gui_ = GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<NetworkManagerHUD>();
-        
+        cam_ = GetComponentInChildren<Camera>();
+        fps_ = GetComponentInChildren<FirstPersonController>();
+
         if (!isLocalPlayer)
         {
-            GetComponentInChildren<FirstPersonController>().enabled = false;
+            fps_.enabled = false;
+            cam_.enabled = false;
             GetComponentInChildren<AudioSource>().enabled = false;
             GetComponentInChildren<AudioListener>().enabled = false;
-            GetComponentInChildren<Camera>().enabled = false;
             GetComponentInChildren<CharacterController>().enabled = false;
 
             CmdSetColor(color);
-            foreach (MeshRenderer i in ren)
+            foreach (MeshRenderer i in ren_)
             {
                 i.material.color = color;
             }
@@ -47,8 +51,8 @@ public class NetworkPlayerController : NetworkBehaviour {
         {
             gui_.showGUI = false;
             CmdSetColor(color);
-            bar = GameObject.FindGameObjectWithTag("ColorBar");
-            bar.GetComponentInChildren<Image>().color = color;
+            bar_ = GameObject.FindGameObjectWithTag("ColorBar");
+            bar_.GetComponentInChildren<Image>().color = color;
             //DontDestroyOnLoad(bar);
             avatar_.SetActive(false);
             eyes_.SetActive(false);
@@ -67,7 +71,7 @@ public class NetworkPlayerController : NetworkBehaviour {
 
     private void switchCamera(Scene previousScene, Scene newScene)
     {
-        GetComponentInChildren<Camera>().enabled = !GetComponentInChildren<Camera>().enabled;
+        cam_.enabled = !cam_.enabled;
     }
 
     // Update is called once per frame
@@ -78,20 +82,24 @@ public class NetworkPlayerController : NetworkBehaviour {
             if (if_.isFocused)
             {
                 gui_.showGUI = false;
-                GetComponentInChildren<FirstPersonController>().enabled = false;
+                fps_.enabled = false;
             }
             else
             {
                 //gui_.showGUI = true;
-                GetComponentInChildren<FirstPersonController>().enabled = true;
+                fps_.enabled = true;
             }
 
             text_ = if_.text;
+
             if (text_.Length > 0 && Input.GetKeyDown(KeyCode.Return))
             {
                 if_.text = "";
                 CmdMessage(text_);
+                if_.ActivateInputField();
             }
+            if (text_.Length == 0 && Input.GetKeyDown(KeyCode.Return))
+                if_.ActivateInputField();
         }
     }
 
@@ -116,10 +124,14 @@ public class NetworkPlayerController : NetworkBehaviour {
 
     void OnDestroy()
     {
-        if (bar != null)
-            bar.GetComponentInChildren<Image>().color = Color.white;
-        if (gui_ != null)
-            gui_.showGUI = true;
+        if (isLocalPlayer)
+        {
+            if (bar_ != null)
+                bar_.GetComponentInChildren<Image>().color = Color.white;
+            if (gui_ != null)
+                gui_.showGUI = true;
+            SceneManager.activeSceneChanged -= switchCamera; // unsubscribe
+        }
     }
 
     public override void OnStartClient()
