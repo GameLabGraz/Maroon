@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.Networking;
 using UnityStandardAssets.Characters.FirstPerson;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(FirstPersonController))]
 [RequireComponent(typeof(AudioSource))]
@@ -52,6 +53,8 @@ public class NetworkPlayerController : NetworkBehaviour {
             avatar_.SetActive(false);
             eyes_.SetActive(false);
 
+            SceneManager.activeSceneChanged += switchCamera; // subscribe
+
             //cleanup messages if any
             GameObject[] old = GameObject.FindGameObjectsWithTag("Message");
             if (old.Length > 0)
@@ -62,11 +65,16 @@ public class NetworkPlayerController : NetworkBehaviour {
         }
     }
 
+    private void switchCamera(Scene previousScene, Scene newScene)
+    {
+        GetComponentInChildren<Camera>().enabled = !GetComponentInChildren<Camera>().enabled;
+    }
+
     // Update is called once per frame
     void Update()
     {
         if(isLocalPlayer)
-        { 
+        {
             if (if_.isFocused)
             {
                 gui_.showGUI = false;
