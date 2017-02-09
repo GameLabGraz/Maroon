@@ -12,50 +12,50 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(CharacterController))]
 public class NetworkPlayerController : NetworkBehaviour {
 
-    public GameObject avatar_;
-    public GameObject eyes_;
-    public GameObject messagePrefab_;
-    private MeshRenderer[] ren_;
-    private GameObject bar_;
-    private InputField if_;
-    private NetworkManagerHUD gui_;
-    private Camera cam_;
-    private FirstPersonController fps_;
-    private string text_;
+    public GameObject avatar;
+    public GameObject eyes;
+    public GameObject messagePrefab;
+    private MeshRenderer[] mesh_renderer;
+    private GameObject color_bar;
+    private InputField input_field;
+    private NetworkManagerHUD gui;
+    private Camera cam;
+    private FirstPersonController fps;
+    private string text;
 
     [SyncVar] private Color color;
 
     void Start()
     {
-        ren_ = avatar_.GetComponentsInChildren<MeshRenderer>();
-        if_ = GameObject.FindGameObjectWithTag("Input").GetComponent<InputField>();
-        gui_ = GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<NetworkManagerHUD>();
-        cam_ = GetComponentInChildren<Camera>();
-        fps_ = GetComponentInChildren<FirstPersonController>();
+        mesh_renderer = avatar.GetComponentsInChildren<MeshRenderer>();
+        input_field = GameObject.FindGameObjectWithTag("Input").GetComponent<InputField>();
+        gui = GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<NetworkManagerHUD>();
+        cam = GetComponentInChildren<Camera>();
+        fps = GetComponentInChildren<FirstPersonController>();
 
         if (!isLocalPlayer)
         {
-            fps_.enabled = false;
-            cam_.enabled = false;
+            fps.enabled = false;
+            cam.enabled = false;
             GetComponentInChildren<AudioSource>().enabled = false;
             GetComponentInChildren<AudioListener>().enabled = false;
             GetComponentInChildren<CharacterController>().enabled = false;
 
             CmdSetColor(color);
-            foreach (MeshRenderer i in ren_)
+            foreach (MeshRenderer i in mesh_renderer)
             {
                 i.material.color = color;
             }
         }
         else
         {
-            gui_.showGUI = false;
+            gui.showGUI = false;
             CmdSetColor(color);
-            bar_ = GameObject.FindGameObjectWithTag("ColorBar");
-            bar_.GetComponentInChildren<Image>().color = color;
+            color_bar = GameObject.FindGameObjectWithTag("ColorBar");
+            color_bar.GetComponentInChildren<Image>().color = color;
             //DontDestroyOnLoad(bar);
-            avatar_.SetActive(false);
-            eyes_.SetActive(false);
+            avatar.SetActive(false);
+            eyes.SetActive(false);
 
             SceneManager.activeSceneChanged += switchCamera; // subscribe
 
@@ -71,7 +71,7 @@ public class NetworkPlayerController : NetworkBehaviour {
 
     private void switchCamera(Scene previousScene, Scene newScene)
     {
-        cam_.enabled = !cam_.enabled;
+        cam.enabled = !cam.enabled;
     }
 
     // Update is called once per frame
@@ -79,40 +79,40 @@ public class NetworkPlayerController : NetworkBehaviour {
     {
         if(isLocalPlayer)
         {
-            if (if_.isFocused)
+            if (input_field.isFocused)
             {
-                gui_.showGUI = false;
-                fps_.enabled = false;
+                gui.showGUI = false;
+                fps.enabled = false;
             }
             else
             {
                 //gui_.showGUI = true;
-                fps_.enabled = true;
+                fps.enabled = true;
             }
 
-            text_ = if_.text;
+            text = input_field.text;
 
-            if (text_.Length > 0 && Input.GetKeyDown(KeyCode.Return))
+            if (text.Length > 0 && Input.GetKeyDown(KeyCode.Return))
             {
-                if_.text = "";
-                CmdMessage(text_);
-                if_.ActivateInputField();
+                input_field.text = "";
+                CmdMessage(text);
+                input_field.ActivateInputField();
             }
-            if (text_.Length == 0 && Input.GetKeyDown(KeyCode.Return))
-                if_.ActivateInputField();
+            if (text.Length == 0 && Input.GetKeyDown(KeyCode.Return))
+                input_field.ActivateInputField();
         }
     }
 
     public bool isFocused()
     {
-        return if_.isFocused;
+        return input_field.isFocused;
     }
 
     [Command]
     void CmdMessage(string t)
     {
         var msg = (GameObject)Instantiate(
-            messagePrefab_,
+            messagePrefab,
             new Vector3(0,0,0),
             new Quaternion(0,0,0,0));
 
@@ -126,10 +126,12 @@ public class NetworkPlayerController : NetworkBehaviour {
     {
         if (isLocalPlayer)
         {
-            if (bar_ != null)
-                bar_.GetComponentInChildren<Image>().color = Color.white;
-            if (gui_ != null)
-                gui_.showGUI = true;
+            if (color_bar != null)
+                color_bar.GetComponentInChildren<Image>().color = Color.white;
+            if (gui != null)
+                gui.showGUI = true;
+            if (!SceneManager.GetActiveScene().name.Equals("Laboratory"))
+                SceneManager.LoadScene("Laboratory");
             SceneManager.activeSceneChanged -= switchCamera; // unsubscribe
         }
     }

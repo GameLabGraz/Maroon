@@ -17,11 +17,6 @@ public class NetworkGUI : NetworkBehaviour {
         b.onClick.AddListener(click);
     }
 
-    void Update()
-    {
-        NetworkServer.SpawnObjects();
-    }
-
     void click()
     {
         gui.showGUI = !gui.showGUI;
