@@ -27,7 +27,7 @@ public class NetworkPlayerController : NetworkBehaviour {
         ren = avatar_.GetComponentsInChildren<MeshRenderer>();
         if_ = GameObject.FindGameObjectWithTag("Input").GetComponent<InputField>();
         gui_ = GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<NetworkManagerHUD>();
-        gui_.showGUI = false;
+        
         if (!isLocalPlayer)
         {
             GetComponentInChildren<FirstPersonController>().enabled = false;
@@ -44,6 +44,7 @@ public class NetworkPlayerController : NetworkBehaviour {
         }
         else
         {
+            gui_.showGUI = false;
             CmdSetColor(color);
             bar = GameObject.FindGameObjectWithTag("ColorBar");
             bar.GetComponentInChildren<Image>().color = color;
@@ -107,8 +108,10 @@ public class NetworkPlayerController : NetworkBehaviour {
 
     void OnDestroy()
     {
-        if(bar != null)
+        if (bar != null)
             bar.GetComponentInChildren<Image>().color = Color.white;
+        if (gui_ != null)
+            gui_.showGUI = true;
     }
 
     public override void OnStartClient()
