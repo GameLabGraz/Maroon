@@ -111,6 +111,18 @@ public class NetworkPlayerController : NetworkBehaviour {
             {
                 CmdSwitch(SceneManager.GetActiveScene().buildIndex-1);
             }
+
+            if (SceneManager.GetActiveScene().buildIndex - 1 == 1)
+            { 
+                if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
+                {
+                    CmdMove(-1);
+                }
+                if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
+                {
+                    CmdMove( 1);
+                }
+            }
         }
     }
 
@@ -126,6 +138,12 @@ public class NetworkPlayerController : NetworkBehaviour {
             se.vdg1_on_off = !se.vdg1_on_off;
         else if(exp == 2)
             se.vdg2_on_off = !se.vdg2_on_off;
+    }
+
+    [Command]
+    void CmdMove(int dist)
+    {
+        se.vdg1_dist += dist;
     }
 
     [Command]

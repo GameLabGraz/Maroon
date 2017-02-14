@@ -10,8 +10,8 @@ public class SyncExperiments : NetworkBehaviour
     public bool vdg1_on_off = false;
     [SyncVar(hook = "OnVdg2OnOff")]
     public bool vdg2_on_off = false;
-    //[SyncVar(hook = "OnChangeDistance")]
-    //private float vdg1_distance;
+    [SyncVar(hook = "OnChangePosition")]
+    public int vdg1_dist = 0;
 
     void Start()
     {
@@ -44,6 +44,32 @@ public class SyncExperiments : NetworkBehaviour
             VandeGraaffController vdgc = vandeGraaff.GetComponent<VandeGraaffController>();
             vdgc.On = value;
             vdgc.sound.enabled = value;
+        }
+    }
+
+    void OnChangePosition(int dist)
+    {
+        Debug.Log("VDG1 Distance " + dist + " (" + -(vdg1_dist - dist) + ")");
+        MoveVDG1(-(vdg1_dist - dist));
+        vdg1_dist = dist;
+    }
+
+    void MoveVDG1(int dist)
+    {
+        //check for correct scene
+        if (SceneManager.GetActiveScene().buildIndex - 1 != 1)
+            return;
+
+        GameObject grounder = GameObject.FindGameObjectWithTag("Grounder");
+        if (null != grounder)
+        {
+            MoveLeftRight move = grounder.GetComponent<MoveLeftRight>();
+            if (dist > 0)
+                for (int i = 0; i < dist; i++)
+                    move.Move(Vector3.right, move.maxMovementRight);
+            else
+                for (int i = 0; i > dist; i--)
+                    move.Move(Vector3.left, move.maxMovementLeft);
         }
     }
 }

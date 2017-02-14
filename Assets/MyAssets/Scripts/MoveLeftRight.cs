@@ -12,18 +12,23 @@ public class MoveLeftRight : MonoBehaviour {
 	public void Start()
 	{
 		this.initialPosition = transform.position;
-	}
+        SyncExperiments se = GameObject.FindGameObjectWithTag("SyncExperiments").GetComponent<SyncExperiments>();
+        for (int i = 0; i < se.vdg1_dist; i++)
+            this.Move(Vector3.right, maxMovementRight);
+        for (int i = 0; i > se.vdg1_dist; i--)
+            this.Move(Vector3.left,  maxMovementLeft);
+    }
 
 	public void Update () 
 	{
-		if (Input.GetKey (KeyCode.LeftArrow) || Input.GetKey(KeyCode.A)) 
-		{
-			this.Move(Vector3.left, maxMovementLeft);
-		}
-		if (Input.GetKey (KeyCode.RightArrow) || Input.GetKey(KeyCode.D)) 
-		{
-			this.Move(Vector3.right, maxMovementRight);
-		}
+		//if (Input.GetKey (KeyCode.LeftArrow) || Input.GetKey(KeyCode.A)) 
+		//{
+		//	this.Move(Vector3.left, maxMovementLeft);
+		//}
+		//if (Input.GetKey (KeyCode.RightArrow) || Input.GetKey(KeyCode.D)) 
+		//{
+		//	this.Move(Vector3.right, maxMovementRight);
+		//}
 	}
 
 	public void Move(Vector3 direction, float maxMovement)

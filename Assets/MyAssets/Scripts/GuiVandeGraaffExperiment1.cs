@@ -13,8 +13,8 @@ public class GuiVandeGraaffExperiment1 : MonoBehaviour
 
     public void Start()
     {
-        // find Van de Graaff Generator object in the scene
         SyncExperiments se = GameObject.FindGameObjectWithTag("SyncExperiments").GetComponent<SyncExperiments>();
+        // find Van de Graaff Generator object in the scene
         GameObject vandeGraaff = GameObject.FindGameObjectWithTag("VandeGraaff");
         if (null != vandeGraaff)
         {
