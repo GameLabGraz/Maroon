@@ -77,7 +77,6 @@ public class NetworkPlayerController : NetworkBehaviour {
     {
         cam.enabled = !cam.enabled;
         al.enabled  = !al.enabled;
-        CmdCheckSync();
     }
 
     // Update is called once per frame
@@ -118,15 +117,6 @@ public class NetworkPlayerController : NetworkBehaviour {
     public bool isFocused()
     {
         return input_field.isFocused;
-    }
-
-    [Command]
-    void CmdCheckSync()
-    {
-        // resets the sync vars on scenechange so the proper
-        // hook function is called on the client
-        se.vdg1_on_off = se.vdg1_on_off;
-        se.vdg2_on_off = se.vdg2_on_off;
     }
 
     [Command]

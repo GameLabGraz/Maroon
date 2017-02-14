@@ -11,11 +11,14 @@ public class GuiVandeGraaffExperiment2 : MonoBehaviour {
 	private GUIStyle textStyle;
 
 	public void Start () {
-		// find Van der Graaf Generator object in the scene
-		GameObject vandeGraaff = GameObject.FindGameObjectWithTag ("VandeGraaff");
+        SyncExperiments se = GameObject.FindGameObjectWithTag("SyncExperiments").GetComponent<SyncExperiments>();
+        // find Van der Graaf Generator object in the scene
+        GameObject vandeGraaff = GameObject.FindGameObjectWithTag ("VandeGraaff");
 		if (null != vandeGraaff) {
 			this.vandeGraaffController = vandeGraaff.GetComponent<VandeGraaffController>();
-		}
+            if (se.vdg2_on_off)
+                this.vandeGraaffController.Switch();
+        }
 		// find Grounder object in the scene
 		GameObject grounder = GameObject.FindGameObjectWithTag ("Grounder");
 		if (null != grounder) {
