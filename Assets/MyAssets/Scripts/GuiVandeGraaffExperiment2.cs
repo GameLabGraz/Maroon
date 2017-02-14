@@ -36,10 +36,10 @@ public class GuiVandeGraaffExperiment2 : MonoBehaviour {
 	public void Update()
 	{
 		// check if [E] was pressed (Switch ON/OFF VdG)
-		if (Input.GetKeyDown (KeyCode.E)) 
-		{
-			this.vandeGraaffController.Switch();
-		}
+		//if (Input.GetKeyDown (KeyCode.E)) 
+		//{
+			//this.vandeGraaffController.Switch();
+		//}
 
 		// check if [C] was pressed (Show/Hide Charge Glow)
 		if (Input.GetKeyDown (KeyCode.C)) 

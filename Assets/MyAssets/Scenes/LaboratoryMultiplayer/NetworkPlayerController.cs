@@ -19,7 +19,9 @@ public class NetworkPlayerController : NetworkBehaviour {
     private GameObject color_bar;
     private InputField input_field;
     private NetworkManagerHUD gui;
+    private SyncExperiments se;
     private Camera cam;
+    private AudioListener al;
     private FirstPersonController fps;
     private string text;
 
@@ -30,15 +32,17 @@ public class NetworkPlayerController : NetworkBehaviour {
         mesh_renderer = avatar.GetComponentsInChildren<MeshRenderer>();
         input_field = GameObject.FindGameObjectWithTag("Input").GetComponent<InputField>();
         gui = GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<NetworkManagerHUD>();
+        se  = GameObject.FindGameObjectWithTag("SyncExperiments").GetComponent<SyncExperiments>();
         cam = GetComponentInChildren<Camera>();
+        al  = GetComponentInChildren<AudioListener>();
         fps = GetComponentInChildren<FirstPersonController>();
 
         if (!isLocalPlayer)
         {
             fps.enabled = false;
             cam.enabled = false;
+            al.enabled  = false;
             GetComponentInChildren<AudioSource>().enabled = false;
-            GetComponentInChildren<AudioListener>().enabled = false;
             GetComponentInChildren<CharacterController>().enabled = false;
 
             CmdSetColor(color);
@@ -57,7 +61,7 @@ public class NetworkPlayerController : NetworkBehaviour {
             avatar.SetActive(false);
             eyes.SetActive(false);
 
-            SceneManager.activeSceneChanged += switchCamera; // subscribe
+            SceneManager.activeSceneChanged += switchScene; // subscribe
 
             //cleanup messages if any
             GameObject[] old = GameObject.FindGameObjectsWithTag("Message");
@@ -69,9 +73,11 @@ public class NetworkPlayerController : NetworkBehaviour {
         }
     }
 
-    private void switchCamera(Scene previousScene, Scene newScene)
+    private void switchScene(Scene previousScene, Scene newScene)
     {
         cam.enabled = !cam.enabled;
+        al.enabled  = !al.enabled;
+        CmdCheckSync();
     }
 
     // Update is called once per frame
@@ -100,12 +106,36 @@ public class NetworkPlayerController : NetworkBehaviour {
             }
             if (text.Length == 0 && Input.GetKeyDown(KeyCode.Return))
                 input_field.ActivateInputField();
+
+            // check if [E] was pressed (Switch ON / OFF VdG)
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                CmdSwitch(SceneManager.GetActiveScene().buildIndex-1);
+            }
         }
     }
 
     public bool isFocused()
     {
         return input_field.isFocused;
+    }
+
+    [Command]
+    void CmdCheckSync()
+    {
+        // resets the sync vars on scenechange so the proper
+        // hook function is called on the client
+        se.vdg1_on_off = se.vdg1_on_off;
+        se.vdg2_on_off = se.vdg2_on_off;
+    }
+
+    [Command]
+    void CmdSwitch(int exp)
+    {
+        if(exp == 1)
+            se.vdg1_on_off = !se.vdg1_on_off;
+        else if(exp == 2)
+            se.vdg2_on_off = !se.vdg2_on_off;
     }
 
     [Command]
@@ -132,7 +162,7 @@ public class NetworkPlayerController : NetworkBehaviour {
                 gui.showGUI = true;
             if (!SceneManager.GetActiveScene().name.Equals("Laboratory"))
                 SceneManager.LoadScene("Laboratory");
-            SceneManager.activeSceneChanged -= switchCamera; // unsubscribe
+            SceneManager.activeSceneChanged -= switchScene; // unsubscribe
         }
     }
 

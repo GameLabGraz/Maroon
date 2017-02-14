@@ -77,6 +77,7 @@ public class VandeGraaffController : MonoBehaviour
 	public bool On
 	{
 		get{ return this.on; }
+        set{ this.on = value; }
 	}
 
 	public bool FieldLinesEnabled
