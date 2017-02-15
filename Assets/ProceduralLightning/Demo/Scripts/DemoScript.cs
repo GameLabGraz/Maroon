@@ -6,6 +6,7 @@
 // 
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 namespace DigitalRuby.ThunderAndLightning
@@ -51,7 +52,8 @@ namespace DigitalRuby.ThunderAndLightning
                 {
                     if (CloudParticleSystem != null)
                     {
-                        CloudParticleSystem.playbackSpeed = (CloudParticleSystem.playbackSpeed == 1.0f ? fastCloudSpeed : 1.0f);
+                        ParticleSystem.MainModule main = CloudParticleSystem.main;
+                        main.simulationSpeed = (CloudParticleSystem.main.simulationSpeed == 1.0f ? fastCloudSpeed : 1.0f);
                     }
                 }
             }
@@ -147,7 +149,7 @@ namespace DigitalRuby.ThunderAndLightning
 
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                Application.LoadLevel(0);
+                SceneManager.LoadScene(0);
             }
         }
 
@@ -186,7 +188,8 @@ namespace DigitalRuby.ThunderAndLightning
 
             if (CloudParticleSystem != null)
             {
-                CloudParticleSystem.playbackSpeed = fastCloudSpeed;
+                ParticleSystem.MainModule main = CloudParticleSystem.main;
+                main.simulationSpeed = fastCloudSpeed;
             }
         }
 

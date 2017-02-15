@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class GuiTriboelectricExperiment : MonoBehaviour {
@@ -16,7 +17,7 @@ public class GuiTriboelectricExperiment : MonoBehaviour {
 		// check if [ESC] was pressed
 		if (Input.GetKeyDown (KeyCode.Escape)) 
 		{
-			Application.LoadLevel("Laboratory");
+      SceneManager.LoadScene("Laboratory");
 		}
 	}
 	

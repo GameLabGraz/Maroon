@@ -36,8 +36,8 @@ public class Magnet : EMObject
     /// </summary>
     public override void resetObject()
     {
-        rigidbody.velocity = Vector3.zero;
-        rigidbody.angularVelocity = Vector3.zero;
+        GetComponent<Rigidbody>().velocity = Vector3.zero;
+        GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
         transform.position = startPos;
         transform.rotation = startRot;
     }
@@ -50,7 +50,7 @@ public class Magnet : EMObject
     {
         if (force_active)
         {
-            rigidbody.AddForce(GameObject.Find("Coil").GetComponent<Coil>().getExternalForce() * transform.up); //hack to get force from coil
+            GetComponent<Rigidbody>().AddForce(GameObject.Find("Coil").GetComponent<Coil>().getExternalForce() * transform.up); //hack to get force from coil
         }
     }
 }

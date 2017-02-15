@@ -59,7 +59,10 @@ public class SimCntrl : MonoBehaviour
     /// <param name="mode">the load scene mode</param>
     void OnLevelFinishedLoading(Scene scene, LoadSceneMode mode)
     {
-        InitSimController();
+      InitSimController();
+      if (scene.name != "FallingCoil" && scene.name != "FallingMagnet" && scene.name != "FaradaysLaw")
+        StartSimulation();
+     
     }
 
     /// <summary>
@@ -124,8 +127,12 @@ public class SimCntrl : MonoBehaviour
         }
         set
         {
+          Scene scene = SceneManager.GetActiveScene();
+          if (scene.name == "FallingCoil" || scene.name == "FallingMagnet" || scene.name == "FaradaysLaw")
             Time.timeScale = value == true ? Teal.TimeScaleSimulationRunning : 0f;
-            simulationRunning = value;
+          else
+            Time.timeScale = 1f;
+          simulationRunning = value;
         }
     }
 

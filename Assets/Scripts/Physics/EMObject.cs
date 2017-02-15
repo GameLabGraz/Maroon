@@ -29,12 +29,6 @@ public abstract class EMObject : MonoBehaviour, IGenerateB, IResetObject
     public float field_strength = 0;
 
     /// <summary>
-    /// Control of an object's position through physics simulation.
-    /// Adding a Rigidbody component to an object will put its motion under the control of Unity's physics engine.
-    /// </summary>
-    protected new Rigidbody rigidbody;
-
-    /// <summary>
     /// The start position of the object for reseting
     /// </summary>
     protected Vector3 startPos;
@@ -51,7 +45,6 @@ public abstract class EMObject : MonoBehaviour, IGenerateB, IResetObject
     {
         startPos = transform.position;
         startRot = transform.rotation;
-        rigidbody = GetComponent<Rigidbody>();
     }
 
     /// <summary>

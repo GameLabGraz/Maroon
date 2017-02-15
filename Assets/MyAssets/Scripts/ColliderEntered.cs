@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class ColliderEntered : MonoBehaviour {
@@ -34,7 +35,7 @@ public class ColliderEntered : MonoBehaviour {
 	{
 		if (Input.GetKeyDown (KeyCode.E) && this.insideTriggerSphere) {
 			Debug.Log(LevelName);
-			Application.LoadLevel(LevelName);		
+      SceneManager.LoadScene(LevelName);
 		}
 	}
 

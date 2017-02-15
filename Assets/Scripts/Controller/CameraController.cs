@@ -11,6 +11,7 @@
 //
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 /// <summary>
@@ -76,8 +77,14 @@ public class CameraController : MonoBehaviour
     /// </summary>
     void LateUpdate()
     {
+        // check if [ESC] was pressed
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+          SceneManager.LoadScene("Laboratory");
+        }
+
         if (mouseOverPanel)
-            return;
+                return;
 
         if (Input.GetButton("Fire1"))
             rotateCamera();
@@ -120,4 +127,12 @@ public class CameraController : MonoBehaviour
         Vector3 zoom = new Vector3(0, 0, pos.y * speed);
         transform.Translate(zoom);
     }
+
+  // OnGUI is called once per frame
+  public void OnGUI()
+  {
+    // show controls on top left corner
+    GUI.Label(new Rect(10f, 10f, 300f, 200f), string.Format("[ESC] - Leave"));
+  }
+
 }

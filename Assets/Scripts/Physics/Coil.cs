@@ -75,7 +75,7 @@ public class Coil : EMObject, IResetObject
         start_flux = flux;
         startPos = transform.position;
         startRot = transform.rotation;
-        rigidbody = GetComponent<Rigidbody>();
+        //GetComponent<Rigidbody>() = GetComponent<Rigidbody>();
     }
 
     /// <summary>
@@ -101,7 +101,7 @@ public class Coil : EMObject, IResetObject
         field_strength = (current * number_of_turns) / Mathf.Sqrt(length * length + diameter * diameter);
 
         if (force_active)
-            rigidbody.AddForce(getExternalForce() * transform.up);
+            GetComponent<Rigidbody>().AddForce(getExternalForce() * transform.up);
     }
 
     /// <summary>
@@ -187,8 +187,8 @@ public class Coil : EMObject, IResetObject
     /// </summary>
     public override void resetObject()
     {
-        rigidbody.velocity = Vector3.zero;
-        rigidbody.angularVelocity = Vector3.zero;
+        GetComponent<Rigidbody>().velocity = Vector3.zero;
+        GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
         transform.position = startPos;
         transform.rotation = startRot;
         current = 0.0f;
