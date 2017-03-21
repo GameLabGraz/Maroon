@@ -77,12 +77,6 @@ public class CameraController : MonoBehaviour
     /// </summary>
     void LateUpdate()
     {
-        // check if [ESC] was pressed
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-          SceneManager.LoadScene("Laboratory");
-        }
-
         if (mouseOverPanel)
                 return;
 
