@@ -43,7 +43,7 @@ public class VandeGraaffController : MonoBehaviour
 	private StaticChargeScript chargeScript;
 	private List<ICharge> inducedObjectsCharge;
 	private bool on = false;
-	private bool fieldLinesEnabled;
+    private bool fieldLinesEnabled = true;
 	private FieldLineScript[] fieldLineScripts;
 	private Object lockObject = new Object();
 

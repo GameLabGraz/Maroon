@@ -21,6 +21,15 @@ public class WhiteboardController : MonoBehaviour
 		// ---- REMOVE WHEN DONE
 		// Create some dummy lectures - TO BE REPLACED with dynamic loading from XML
 		this.lectures = new List<Lecture> ();
+        if (lectures != null)
+        {
+            Debug.Log("WhiteboardController created a new list Lectures");
+        }
+        else
+        {
+            Debug.Log("WhiteboardController - list Lectures is NULL");
+        }
+       
 		List<string> webContentList1 = new List<string> ();
 		webContentList1.Add ("https://upload.wikimedia.org/wikipedia/commons/b/bd/Westinghouse_Van_de_Graaff_atom_smasher_-_cutaway.png");
 		webContentList1.Add ("http://www.kshitij-iitjee.com/Study/Physics/Part4/Chapter25/57.jpg");

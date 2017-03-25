@@ -4,20 +4,32 @@ using System.Collections;
 public class GuiTriboelectricExperiment : MonoBehaviour {
 	
 	private GUIStyle textStyle;
+    private int left = -1;
+    private int right = -1;
 	
 	public void Start () {
 		// define GUI style
 		this.textStyle = new GUIStyle("label");
 		this.textStyle.alignment = TextAnchor.MiddleCenter;
-	}
+
+        var system = Valve.VR.OpenVR.System;
+        if (system != null)
+        {
+            left = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Leftmost);
+            right = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
+        }
+    }
 	
 	public void Update()
 	{
-		// check if [ESC] was pressed
-		if (Input.GetKeyDown (KeyCode.Escape)) 
-		{
-			Application.LoadLevel("Laboratory");
-		}
+        // check if [ESC] was pressed
+        // VIVE -> ESC == MENU BUTTON top 
+        // DESKTOP if (Input.GetKeyDown (KeyCode.Escape))  
+        if (SteamVR_Controller.Input((int)left).GetPress(SteamVR_Controller.ButtonMask.ApplicationMenu) ||
+         SteamVR_Controller.Input((int)right).GetPress(SteamVR_Controller.ButtonMask.ApplicationMenu))
+        {
+            Application.LoadLevel("Laboratory");
+        }
 	}
 	
 	// OnGUI is called once per frame

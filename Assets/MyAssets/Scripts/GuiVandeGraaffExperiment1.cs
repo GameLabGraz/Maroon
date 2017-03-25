@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Valve.VR;
 
 public class GuiVandeGraaffExperiment1 : MonoBehaviour {
 
 	private VandeGraaffController vandeGraaffController;
 	private GrounderController grounderController;
 	private PaperStripesController paperStripesController;
-	private bool glowEnabled;
+	private bool glowEnabled = true;
 	private GUIStyle textStyle;
 	
 	public void Start () {
@@ -35,14 +36,26 @@ public class GuiVandeGraaffExperiment1 : MonoBehaviour {
 	
 	public void Update()
 	{
-		// check if [E] was pressed (Switch ON/OFF VdG)
-		if (Input.GetKeyDown (KeyCode.E)) 
-		{
-			this.vandeGraaffController.Switch();
+        // NEW init, TODO 0 check l,r - maybe invalid if system null. dont do this every update
+        var system = OpenVR.System;
+        var left = 0;
+        var right = 0;
+        if (system != null)
+        {
+            left = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Leftmost);
+            right = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
+        }
+                 
+        // check if [E] was pressed (Switch ON/OFF VdG)
+        // if (Input.GetKeyDown (KeyCode.E)) desktop
+        if (SteamVR_Controller.Input((int)left).GetPress(SteamVR_Controller.ButtonMask.Trigger) ||
+           SteamVR_Controller.Input((int)right).GetPress(SteamVR_Controller.ButtonMask.Trigger))
+        {
+			this.vandeGraaffController.Switch(); // VIVE trigger == E button, used for switching generator on/off here! 
 		}
 
-		// check if [C] was pressed (Show/Hide Charge Glow)
-		if (Input.GetKeyDown (KeyCode.C)) 
+        // check if [C] was pressed (Show/Hide Charge Glow)
+        if (Input.GetKeyDown (KeyCode.C)) 
 		{
 			this.glowEnabled = !this.glowEnabled;
 			this.EnableGlow(this.glowEnabled);
@@ -54,9 +67,12 @@ public class GuiVandeGraaffExperiment1 : MonoBehaviour {
 			this.vandeGraaffController.FieldLinesEnabled = !this.vandeGraaffController.FieldLinesEnabled;
 		}
 
-		// check if [ESC] was pressed
-		if (Input.GetKeyDown (KeyCode.Escape)) 
-		{
+        // check if [ESC] was pressed
+        // VIVE -> ESC == MENU BUTTON top 
+        //if (Input.GetKeyDown (KeyCode.Escape))  desktop
+        if (SteamVR_Controller.Input((int)left).GetPress(SteamVR_Controller.ButtonMask.ApplicationMenu) ||
+         SteamVR_Controller.Input((int)right).GetPress(SteamVR_Controller.ButtonMask.ApplicationMenu))
+        {
 			Application.LoadLevel("Laboratory");
 		}
 	}

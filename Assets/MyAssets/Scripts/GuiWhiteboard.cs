@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GuiWhiteboard : MonoBehaviour 
 {
@@ -10,7 +11,13 @@ public class GuiWhiteboard : MonoBehaviour
 	private string[] lectureNames;
 	private bool showMenu = true;
 
-	public void Start () 
+    // HOTFIX for NullReference to this.whiteboardController.Lectures.Count
+    private int lectureCount = 4; //static, only 4 lectures atm
+    private List<string> myLectureNames = new List<string>();
+   // private int left = 0;
+   // private int right = 0; 
+
+    public void Start () 
 	{
 		// Define GUI style
 		this.textStyle = new GUIStyle("label");
@@ -25,24 +32,49 @@ public class GuiWhiteboard : MonoBehaviour
 		if (null == this.whiteboardController) {
 			throw new System.ArgumentNullException("No WhiteboardController script attached to WhiteboardPlane GameObject");
 		}
+        else
+        {
+            Debug.Log("found object WhiteBoardController");
+            // bug discovered here: Debug.Log("nr of lectures" + this.whiteboardController.Lectures.Count);
+        }
 
+
+        /*
+        // TODO INCLUDE LATER
 		// Get Lecture names
-		this.lectureNames = new string[this.whiteboardController.Lectures.Count];
+		this.lectureNames = new string[lectureCount];
 		int i = 0;
-		foreach (Lecture lecture in this.whiteboardController.Lectures) {
+
+        //HOTFIX, static nr & names of lectures
+        myLectureNames.Add("exp1");
+        myLectureNames.Add("exp2");
+        myLectureNames.Add("exp3");
+        myLectureNames.Add("exp4");
+        while (i < lectureCount)
+        {
+            this.lectureNames[i] = myLectureNames[i];
+            i++;
+        }
+
+        /*foreach (Lecture lecture in this.whiteboardController.Lectures) {
 			this.lectureNames[i++] = lecture.Name;
-		}
-	}
+		} */
+
+        
+    }
 	
 	public void Update()
 	{
-		// Check if [ESC] was pressed
-		if (Input.GetKeyDown (KeyCode.Escape)) 
-		{
-			Application.LoadLevel("Laboratory");
-		}
-		// Check if [<-] or [A] was pressed
-		if (Input.GetKeyDown (KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A)) 
+
+        // Check if [ESC] was pressed
+        if (Input.GetKeyDown (KeyCode.Escape))
+        {
+            Application.LoadLevel("Laboratory");
+        }
+
+        // TODO handle back & next via grips
+        // Check if [<-] or [A] was pressed
+        if (Input.GetKeyDown (KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A)) 
 		{
 			// Move back in slide show
 			if(null != this.whiteboardController) {
@@ -65,7 +97,7 @@ public class GuiWhiteboard : MonoBehaviour
 		}
 	}
 
-	public void OnGUI()
+    public void OnGUI()
 	{
 		// Show control messages on top left corner
 		GUI.Label (new Rect (10f, 10f, 300f, 200f), string.Format("[ESC] - Leave\r\n[TAB] - {0} Lecture Menu\r\n[<-] or [A] - Back\r\n[->] or [D] - Forward", this.showMenu ? "Hide" : "Show"));
@@ -76,6 +108,7 @@ public class GuiWhiteboard : MonoBehaviour
 			GUI.Label (new Rect (Screen.width / 2f - 50f, Screen.height - 50f, 100f, 50f), string.Format ("{0}/{1}", this.whiteboardController.CurrentWebContentIndex + 1, this.whiteboardController.SelectedLecture.WebContents.Count), this.textStyle);
 		}
 
+        /* TODO LATER
 		// Show lecture menu when activated
 		if (this.showMenu) {
 			// Begin the ScrollView
@@ -89,7 +122,7 @@ public class GuiWhiteboard : MonoBehaviour
 
 			// End the ScrollView
 			GUI.EndScrollView ();
-		}
+		} */
 
 		if (GUI.changed) {
 			Debug.Log("Selected Lecture Index: " + this.selectedLectureIndex);
