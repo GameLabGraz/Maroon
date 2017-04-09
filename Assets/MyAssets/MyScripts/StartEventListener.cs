@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using VRTK;
 
 public class StartEventListener : MonoBehaviour
@@ -42,7 +43,7 @@ public class StartEventListener : MonoBehaviour
         Debug.Log("registered button use");
         string LevelName = "VandeGraaffExperiment2";
         Debug.Log("Will load " + LevelName);
-        Application.LoadLevel(LevelName);
+        SceneManager.LoadScene(LevelName);
     }
 
 }

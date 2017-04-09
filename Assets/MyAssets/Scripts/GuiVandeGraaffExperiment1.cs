@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 using Valve.VR;
 
@@ -73,7 +74,7 @@ public class GuiVandeGraaffExperiment1 : MonoBehaviour {
         if (SteamVR_Controller.Input((int)left).GetPress(SteamVR_Controller.ButtonMask.ApplicationMenu) ||
          SteamVR_Controller.Input((int)right).GetPress(SteamVR_Controller.ButtonMask.ApplicationMenu))
         {
-			Application.LoadLevel("Laboratory");
+            SceneManager.LoadScene("Laboratory");
 		}
 	}
 

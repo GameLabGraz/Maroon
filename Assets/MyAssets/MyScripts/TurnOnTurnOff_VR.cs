@@ -11,7 +11,7 @@ public class TurnOnTurnOff_VR : VRTK_InteractableObject { //MonoBehaviour
     private int target = 0;
     private float current = 0.0f;
 
-	public void Start() {
+	protected override void Start() {
         chargeScript = charge.GetComponent<StaticChargeScript>();
         //target = 1; //for debug purposes, switch it on right away
         base.Start();

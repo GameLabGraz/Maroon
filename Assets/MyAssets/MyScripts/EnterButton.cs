@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using VRTK;
 
 public class EnterButton : VRTK_InteractableObject
@@ -13,7 +14,7 @@ public class EnterButton : VRTK_InteractableObject
         spinSpeed = 360f;
 
         Debug.Log("ENTER BUTTON pressed, will load " + this.LevelName);
-        Application.LoadLevel(this.LevelName);
+        SceneManager.LoadScene(this.LevelName);
     }
 
     public override void StopUsing(GameObject usingObject)
@@ -37,6 +38,6 @@ public class EnterButton : VRTK_InteractableObject
     private void loadLevel(string name)
     {
         Debug.Log("ENTER BUTTON pressed, will load " + name);
-        Application.LoadLevel(name);
+        SceneManager.LoadScene(name);
     }
 }

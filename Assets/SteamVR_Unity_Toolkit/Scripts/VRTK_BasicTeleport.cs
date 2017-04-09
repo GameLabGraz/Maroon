@@ -97,8 +97,8 @@ namespace VRTK
             bool validNavMeshLocation = false;
             if (target)
             {
-                NavMeshHit hit;
-                validNavMeshLocation = NavMesh.SamplePosition(target.position, out hit, 1.0f, NavMesh.AllAreas);
+                UnityEngine.AI.NavMeshHit hit;
+                validNavMeshLocation = UnityEngine.AI.NavMesh.SamplePosition(target.position, out hit, 1.0f, UnityEngine.AI.NavMesh.AllAreas);
             }
             if (!limitToNavMesh)
             {

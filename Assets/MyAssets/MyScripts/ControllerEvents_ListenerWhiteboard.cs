@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using VRTK;
 
 public class ControllerEvents_ListenerWhiteboard : MonoBehaviour
@@ -57,7 +58,7 @@ public class ControllerEvents_ListenerWhiteboard : MonoBehaviour
     private void DoApplicationMenuPressed(object sender, ControllerInteractionEventArgs e)
     {
         DebugLogger(e.controllerIndex, "APPLICATION MENU", "pressed down, will ESC & load Lab now", e);
-        Application.LoadLevel("Laboratory");
+        SceneManager.LoadScene("Laboratory");
     }
 
     private void DoApplicationMenuReleased(object sender, ControllerInteractionEventArgs e)

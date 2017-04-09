@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 using VRTK;
 
@@ -36,7 +37,7 @@ public class MoveGrounder : VRTK_InteractableObject
     private void loadLevel(string name)
     {
         Debug.Log("ENTER BUTTON pressed, will load " + name);
-        Application.LoadLevel(name);
+        SceneManager.LoadScene(name);
     }
 }
 

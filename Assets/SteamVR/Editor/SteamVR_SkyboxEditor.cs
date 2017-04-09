@@ -32,21 +32,11 @@ public class SteamVR_SkyboxEditor : Editor
 	public override void OnInspectorGUI()
 	{
 		DrawDefaultInspector();
-#if !(UNITY_5_0 || UNITY_5_1)
+
 		EditorGUILayout.HelpBox(helpText, MessageType.Info);
 
 		if (GUILayout.Button("Take snapshot"))
 		{
-#if (UNITY_5_2)
-			var sceneName = Path.GetFileNameWithoutExtension(EditorApplication.currentScene);
-			var scenePath = Path.GetDirectoryName(EditorApplication.currentScene);
-			var assetPath = scenePath +"/" + sceneName;
-			if (!AssetDatabase.IsValidFolder(assetPath))
-			{
-				var guid = AssetDatabase.CreateFolder(scenePath, sceneName);
-				assetPath = AssetDatabase.GUIDToAssetPath(guid);
-			}
-#endif
 			var directions = new Quaternion[] {
 				Quaternion.LookRotation(Vector3.forward),
 				Quaternion.LookRotation(Vector3.back),
@@ -59,7 +49,6 @@ public class SteamVR_SkyboxEditor : Editor
 			Camera tempCamera = null;
 			foreach (SteamVR_Skybox target in targets)
 			{
-#if !(UNITY_5_2)
 				var targetScene = target.gameObject.scene;
                 var sceneName = Path.GetFileNameWithoutExtension(targetScene.path);
 				var scenePath = Path.GetDirectoryName(targetScene.path);
@@ -69,7 +58,7 @@ public class SteamVR_SkyboxEditor : Editor
 					var guid = AssetDatabase.CreateFolder(scenePath, sceneName);
 					assetPath = AssetDatabase.GUIDToAssetPath(guid);
 				}
-#endif
+
 				var camera = target.GetComponent<Camera>();
 				if (camera == null)
 				{
@@ -127,17 +116,20 @@ public class SteamVR_SkyboxEditor : Editor
 			AssetDatabase.Refresh();
 			foreach (SteamVR_Skybox target in targets)
 			{
-#if !(UNITY_5_2)
 				var targetScene = target.gameObject.scene;
 				var sceneName = Path.GetFileNameWithoutExtension(targetScene.path);
 				var scenePath = Path.GetDirectoryName(targetScene.path);
 				var assetPath = scenePath + "/" + sceneName;
-#endif
+
 				for (int i = 0; i < directions.Length; i++)
 				{
 					var assetName = string.Format(nameFormat, assetPath, target.name, i);
 					var importer = AssetImporter.GetAtPath(assetName) as TextureImporter;
+#if (UNITY_5_4 || UNITY_5_3 || UNITY_5_2 || UNITY_5_1 || UNITY_5_0)
 					importer.textureFormat = TextureImporterFormat.RGB24;
+#else
+					importer.textureCompression = TextureImporterCompression.Uncompressed;
+#endif
 					importer.wrapMode = TextureWrapMode.Clamp;
 					importer.mipmapEnabled = false;
 					importer.SaveAndReimport();
@@ -163,7 +155,7 @@ public class SteamVR_SkyboxEditor : Editor
 			foreach (SteamVR_Skybox target in targets)
 			{
 				timer.Start();
-#if !(UNITY_5_2)
+
 				var targetScene = target.gameObject.scene;
 				var sceneName = Path.GetFileNameWithoutExtension(targetScene.path);
 				var scenePath = Path.GetDirectoryName(targetScene.path);
@@ -173,7 +165,7 @@ public class SteamVR_SkyboxEditor : Editor
 					var guid = AssetDatabase.CreateFolder(scenePath, sceneName);
 					assetPath = AssetDatabase.GUIDToAssetPath(guid);
 				}
-#endif
+
 				var camera = target.GetComponent<Camera>();
 				if (camera == null)
 				{
@@ -358,19 +350,25 @@ public class SteamVR_SkyboxEditor : Editor
 			AssetDatabase.Refresh();
 			foreach (SteamVR_Skybox target in targets)
 			{
-#if !(UNITY_5_2)
 				var targetScene = target.gameObject.scene;
 				var sceneName = Path.GetFileNameWithoutExtension(targetScene.path);
 				var scenePath = Path.GetDirectoryName(targetScene.path);
 				var assetPath = scenePath + "/" + sceneName;
-#endif
+
 				for (int i = 0; i < 2; i++)
 				{
 					var assetName = string.Format(nameFormat, assetPath, target.name, i);
 					var importer = AssetImporter.GetAtPath(assetName) as TextureImporter;
 					importer.mipmapEnabled = false;
 					importer.wrapMode = TextureWrapMode.Repeat;
+#if (UNITY_5_4 || UNITY_5_3 || UNITY_5_2 || UNITY_5_1 || UNITY_5_0)
 					importer.SetPlatformTextureSettings("Standalone", width, TextureImporterFormat.RGB24);
+#else
+					var settings = importer.GetPlatformTextureSettings("Standalone");
+					settings.textureCompression = TextureImporterCompression.Uncompressed;
+					settings.maxTextureSize = width;
+					importer.SetPlatformTextureSettings(settings);
+#endif
 					importer.SaveAndReimport();
 
 					var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(assetName);
@@ -378,7 +376,6 @@ public class SteamVR_SkyboxEditor : Editor
 				}
 			}
 		}
-#endif
 	}
 }
 

@@ -163,7 +163,7 @@ public class SteamVR_LoadLevel : MonoBehaviour
 				{
 					var texture = new Texture_t();
 					texture.handle = renderTexture.GetNativeTexturePtr();
-					texture.eType = SteamVR.instance.graphicsAPI;
+					texture.eType = SteamVR.instance.textureType;
 					texture.eColorSpace = EColorSpace.Auto;
 					overlay.SetOverlayTexture(progressBarOverlayHandle, ref texture);
 				}
@@ -252,7 +252,7 @@ public class SteamVR_LoadLevel : MonoBehaviour
 
 		_active = this;
 
-		SteamVR_Utils.Event.Send("loading", true);
+		SteamVR_Events.Loading.Send(true);
 
 		// Calculate rate for fading in loading screen and progress bar.
 		if (loadingScreenFadeInTime > 0.0f)
@@ -274,7 +274,7 @@ public class SteamVR_LoadLevel : MonoBehaviour
 			{
 				var texture = new Texture_t();
 				texture.handle = loadingScreen.GetNativeTexturePtr();
-				texture.eType = SteamVR.instance.graphicsAPI;
+				texture.eType = SteamVR.instance.textureType;
 				texture.eColorSpace = EColorSpace.Auto;
 				overlay.SetOverlayTexture(loadingScreenOverlayHandle, ref texture);
 			}
@@ -283,7 +283,7 @@ public class SteamVR_LoadLevel : MonoBehaviour
 		bool fadedForeground = false;
 
 		// Fade out to compositor
-		SteamVR_Utils.Event.Send("loading_fade_out", fadeOutTime);
+		SteamVR_Events.LoadingFadeOut.Send(fadeOutTime);
 
 		// Optionally set a skybox to use as a backdrop in the compositor.
 		var compositor = OpenVR.Compositor;
@@ -357,7 +357,6 @@ public class SteamVR_LoadLevel : MonoBehaviour
 		}
 		else
 		{
-#if !(UNITY_5_2 || UNITY_5_1 || UNITY_5_0)
 			var mode = loadAdditive ? UnityEngine.SceneManagement.LoadSceneMode.Additive : UnityEngine.SceneManagement.LoadSceneMode.Single;
 			if (loadAsync)
 			{
@@ -375,27 +374,6 @@ public class SteamVR_LoadLevel : MonoBehaviour
 			{
 				UnityEngine.SceneManagement.SceneManager.LoadScene(levelName, mode);
 			}
-#else
-			if (loadAsync)
-			{
-				async = loadAdditive ? Application.LoadLevelAdditiveAsync(levelName) : Application.LoadLevelAsync(levelName);
-
-				// Performing this in a while loop instead seems to help smooth things out.
-				//yield return async;
-				while (!async.isDone)
-				{
-					yield return null;
-				}
-			}
-			else if (loadAdditive)
-			{
-				Application.LoadLevelAdditive(levelName);
-			}
-			else
-			{
-				Application.LoadLevel(levelName);
-			}
-#endif
 		}
 
 		yield return null;
@@ -423,7 +401,7 @@ public class SteamVR_LoadLevel : MonoBehaviour
 		}
 
 		// Fade out to compositor
-		SteamVR_Utils.Event.Send("loading_fade_in", fadeInTime);
+		SteamVR_Events.LoadingFadeIn.Send(fadeInTime);
 
 		if (compositor != null)
 		{
@@ -463,7 +441,7 @@ public class SteamVR_LoadLevel : MonoBehaviour
 
 		_active = null;
 
-		SteamVR_Utils.Event.Send("loading", false);
+		SteamVR_Events.Loading.Send(false);
 	}
 
 	// Helper to create (or reuse if possible) each of our different overlay types.
@@ -487,7 +465,7 @@ public class SteamVR_LoadLevel : MonoBehaviour
 			overlay.SetOverlayWidthInMeters(handle, widthInMeters);
 
 			// D3D textures are upside-down in Unity to match OpenGL.
-			if (SteamVR.instance.graphicsAPI == EGraphicsAPIConvention.API_DirectX)
+			if (SteamVR.instance.textureType == ETextureType.DirectX)
 			{
 				var textureBounds = new VRTextureBounds_t();
 				textureBounds.uMin = 0;
