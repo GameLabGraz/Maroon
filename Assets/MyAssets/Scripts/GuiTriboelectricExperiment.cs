@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class GuiTriboelectricExperiment : MonoBehaviour {
@@ -29,7 +28,7 @@ public class GuiTriboelectricExperiment : MonoBehaviour {
         if (SteamVR_Controller.Input((int)left).GetPress(SteamVR_Controller.ButtonMask.ApplicationMenu) ||
          SteamVR_Controller.Input((int)right).GetPress(SteamVR_Controller.ButtonMask.ApplicationMenu))
         {
-            SceneManager.LoadScene("Laboratory");
+            Application.LoadLevel("Laboratory");
         }
 	}
 	

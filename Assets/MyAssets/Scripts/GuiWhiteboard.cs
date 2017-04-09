@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -70,7 +69,7 @@ public class GuiWhiteboard : MonoBehaviour
         // Check if [ESC] was pressed
         if (Input.GetKeyDown (KeyCode.Escape))
         {
-            SceneManager.LoadScene("Laboratory");
+            Application.LoadLevel("Laboratory");
         }
 
         // TODO handle back & next via grips

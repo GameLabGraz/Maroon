@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class GuiWorkstation : MonoBehaviour 
@@ -39,7 +38,7 @@ public class GuiWorkstation : MonoBehaviour
 		// Check if [ESC] was pressed
 		if (Input.GetKeyDown (KeyCode.Escape)) 
 		{
-            SceneManager.LoadScene("Laboratory");
+			Application.LoadLevel("Laboratory");
 		}
 	}
 
