@@ -60,6 +60,9 @@ public class VectorField : MonoBehaviour
     /// </summary>
 	public Slider sliderResolution;
 
+    [SerializeField]
+    private int resolution = 20;
+
     private SimulationController simController;
 
     /// <summary>
@@ -84,7 +87,6 @@ public class VectorField : MonoBehaviour
     /// </summary>
 	private void createVectorFieldArrows()
     {
-        int resolution = (int)sliderResolution.value;
         float arrow_scale;
         if (resolution > 20)
             arrow_scale = 1 - (resolution - 20) * 0.05f;
@@ -113,9 +115,9 @@ public class VectorField : MonoBehaviour
     /// Sets the vetor field visibility by the given toggle.
     /// </summary>
     /// <param name="visibility">The toggle to get value from user</param>
-    public void setVectorFieldVisible(Toggle visibility)
+    public void setVectorFieldVisible(bool visibility)
     {
-        if (visibility.isOn)
+        if (visibility)
         {
             vectorFieldVisible = true;
             clearVectorField();
@@ -151,5 +153,11 @@ public class VectorField : MonoBehaviour
             return;
         clearVectorField();
         createVectorFieldArrows();
+    }
+
+    public void setResolution(int resolution)
+    {
+        this.resolution = resolution;
+        changeResolution();
     }
 }

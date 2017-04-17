@@ -124,9 +124,9 @@ public class Coil : EMObject, IResetObject
     /// User can sets the risistance factor by a slider.
     /// </summary>
     /// <param name="resistance_factor">The silder to get selected value from user</param>
-    public void setResistanceFactor(Slider resistance_factor)
+    public void setResistanceFactor(float resistance_factor)
     {
-        this.resistance_factor = resistance_factor.value;
+        this.resistance_factor = resistance_factor;
     }
 
     /// <summary>

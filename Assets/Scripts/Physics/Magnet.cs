@@ -27,9 +27,9 @@ public class Magnet : EMObject
     /// User can sets the strength factor by a slider.
     /// </summary>
     /// <param name="field_strength">The silder to get selected value from user</param>
-    public void setFieldStrength(Slider field_strength)
+    public void setFieldStrength(float field_strength)
     {
-        this.field_strength = field_strength.value;
+        this.field_strength = field_strength;
     }
 
     /// <summary>

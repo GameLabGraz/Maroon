@@ -94,7 +94,7 @@ public class IronFiling : MonoBehaviour, IResetObject
             linerenderer.receiveShadows = true;
             linerenderer.material = ironMaterial;
             linerenderer.useLightProbes = false;
-            linerenderer.SetWidth(0.2f, 0.002f);
+            linerenderer.SetWidth(0.4f, 0.004f);
             linerenderers[i] = linerenderer;
         }
         gameObject.SetActive(false);
@@ -148,7 +148,7 @@ public class IronFiling : MonoBehaviour, IResetObject
                newLinePoint.y <= height_offset + height / 2.0f && newLinePoint.y >= height_offset - height / 2.0f && numberOfPoints < maxvertexCount)
         {
             newLinePoint += Vector3.Normalize(field.get(newLinePoint)) * lineSegmentLength;
-            linePoints.Add(new Vector3(newLinePoint.x, newLinePoint.y, newLinePoint.z));
+            linePoints.Add(new Vector3(newLinePoint.x, newLinePoint.y, 0));
             numberOfPoints++;
         }
 
@@ -165,5 +165,10 @@ public class IronFiling : MonoBehaviour, IResetObject
     public void resetObject()
     {
         gameObject.SetActive(false);
+    }
+
+    public void Test(Object testObject)
+    {
+        Debug.Log("Test");
     }
 }

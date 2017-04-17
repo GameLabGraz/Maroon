@@ -21,12 +21,27 @@ public class MagnetController : VRTK_InteractableObject
 
     private GameObject UsingObject;
 
+    private SimulationController simController;
+
+    protected override void Start()
+    {
+        base.Start();
+
+        GameObject simControllerObject = GameObject.Find("SimulationController");
+        if (simControllerObject)
+            simController = simControllerObject.GetComponent<SimulationController>();
+
+    }
+
     public override void StartUsing(GameObject usingObject)
     {
         base.StartUsing(usingObject);
 
         IsMoving = true;
         UsingObject = usingObject;
+
+
+        simController.SimulationRunning = true;
 
         StartCoroutine(Move());
     }
@@ -36,6 +51,9 @@ public class MagnetController : VRTK_InteractableObject
         base.StopUsing(usingObject);
 
         IsMoving = false;
+
+        simController.SimulationRunning = false;
+
     }
 
     private IEnumerator Move()
