@@ -11,7 +11,6 @@
 //
 
 using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
@@ -73,7 +72,7 @@ public class SimCntrl : MonoBehaviour
         simulationRunning = false;
         stepSimulation = false;
         simulationReset = true;
-        Time.timeScale = 0;
+        Time.timeScale = Teal.TimeScaleSimulationRunning;
 
         resetObjects.Clear();
         GameObject[] objects = GameObject.FindGameObjectsWithTag("ResetObject");
@@ -127,12 +126,13 @@ public class SimCntrl : MonoBehaviour
         }
         set
         {
-          Scene scene = SceneManager.GetActiveScene();
-          if (scene.name == "FallingCoil" || scene.name == "FallingMagnet" || scene.name == "FaradaysLaw")
-            Time.timeScale = value == true ? Teal.TimeScaleSimulationRunning : 0f;
-          else
-            Time.timeScale = 1f;
-          simulationRunning = value;
+            Scene scene = SceneManager.GetActiveScene();
+            if (scene.name == "FallingCoil" || scene.name == "FallingMagnet" || scene.name == "FaradaysLaw")
+                Time.timeScale = Teal.TimeScaleSimulationRunning;
+            else
+                Time.timeScale = 1f;
+
+            simulationRunning = value;
         }
     }
 

@@ -16,7 +16,7 @@ using System.Collections;
 /// <summary>
 /// Abstract base class for electro magnetic objects
 /// </summary>
-public abstract class EMObject : MonoBehaviour, IGenerateB, IResetObject
+public abstract class EMObject : PausableObject, IGenerateB, IResetObject
 {
     /// <summary>
     /// Activated acting forces on the object

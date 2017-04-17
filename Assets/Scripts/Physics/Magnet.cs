@@ -14,6 +14,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System;
 
 /// <summary>
 /// Class for a permanent magnet.
@@ -46,11 +47,16 @@ public class Magnet : EMObject
     /// This function is called every fixed framerate frame and adds the force to the rigidbody
     /// if force effects are active.
     /// </summary>
-    public void FixedUpdate()
+    protected override void HandleFixedUpdate()
     {
         if (force_active)
         {
             GetComponent<Rigidbody>().AddForce(GameObject.Find("Coil").GetComponent<Coil>().getExternalForce() * transform.up); //hack to get force from coil
         }
+    }
+
+    protected override void HandleUpdate()
+    {
+        return;
     }
 }

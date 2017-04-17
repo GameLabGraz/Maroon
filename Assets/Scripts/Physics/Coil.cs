@@ -14,6 +14,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System;
 
 /// <summary>
 /// Class for a live coil.
@@ -82,7 +83,7 @@ public class Coil : EMObject, IResetObject
     /// Update is called every frame and sets flux and start flux correctly
     /// if the simulation was reseted.
     /// </summary>
-    public void Update()
+    protected override void HandleUpdate()
     {
         if (SimController.Instance.SimulationJustReset)
         {
@@ -95,7 +96,7 @@ public class Coil : EMObject, IResetObject
     /// This function is called every fixed framerate frame and calculates induction and the field strength.
     /// Also adds the force to the rigidbody if force effects are active.
     /// </summary>
-    public void FixedUpdate()
+    protected override void HandleFixedUpdate()
     {
         calculateInduction();
         field_strength = (current * number_of_turns) / Mathf.Sqrt(length * length + diameter * diameter);
