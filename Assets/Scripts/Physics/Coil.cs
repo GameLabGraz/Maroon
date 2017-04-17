@@ -84,8 +84,11 @@ public class Coil : EMObject, IResetObject
     /// </summary>
     protected override void HandleUpdate()
     {
-        flux = getMagneticFluxInCoil();
-        start_flux = flux;
+        if (simController.SimulationJustReset)
+        {
+            flux = getMagneticFluxInCoil();
+            start_flux = flux;
+        }
     }
 
     /// <summary>

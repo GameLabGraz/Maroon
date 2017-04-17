@@ -6,7 +6,7 @@ public abstract class PausableObject : MonoBehaviour
 
     private bool IsPause = false;
 
-    private SimulationController simController;
+    protected SimulationController simController;
 
 
     protected virtual void Start()
