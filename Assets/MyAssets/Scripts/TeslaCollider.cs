@@ -4,7 +4,6 @@ using System.Collections;
 public class TeslaCollider : MonoBehaviour {
 
 	public GameObject teslaTrafo;
-	public bool SwitchOn;
 
 	private TeslaTrafoController teslaTrafoController;
 	
@@ -20,12 +19,28 @@ public class TeslaCollider : MonoBehaviour {
 
 	public void OnTriggerEnter(Collider other)
 	{
+        Debug.Log("Trigger Enter: " + other.gameObject.name);
+
 		if (other.CompareTag ("Player")) 
 		{
-			if(null != this.teslaTrafoController) {
-				this.teslaTrafoController.Switch(this.SwitchOn);
-				Debug.Log(string.Format("Tesla Trafo switched {0}", this.SwitchOn ? "on" : "off"));
+			if(null != this.teslaTrafoController)
+            {
+				this.teslaTrafoController.Switch(true);
+				Debug.Log("Tesla Trafo switched on");
 			}
 		}
 	}
+
+    public void OnTriggerExit(Collider other)
+    {
+        if(other.CompareTag("Player"))
+        {
+            if(null != this.teslaTrafoController)
+            {
+                this.teslaTrafoController.Switch(false);
+                Debug.Log("Tesla Trafo switched off");
+            }
+        }
+    }
+
 }
