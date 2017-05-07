@@ -1,4 +1,6 @@
-﻿Shader "Custom/LightningGlowShader"
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Custom/LightningGlowShader"
 {
 	Properties
 	{
@@ -59,7 +61,7 @@
             v2f vert(appdata_t v)
             {
                 v2f o;
-                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertex);
 				o.texcoord = v.texcoord;
                 o.color = (v.color * _TintColor);
 
