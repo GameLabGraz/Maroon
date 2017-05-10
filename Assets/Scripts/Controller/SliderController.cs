@@ -29,15 +29,24 @@ public class SliderController : VRTK_InteractableObject
     [SerializeField]
     private bool isInteger = false;
 
+    [SerializeField]
+    private float MoveSpeedFactor = 0.25f;
+
     private int oldIntValue;
 
     private bool IsMoving = false;
 
-    private GameObject UsingObject;
+    private Vector3 UsingObjectPosition;
+
+    private Vector3 UsingObjectPositionOld;
+
+    private Vector3 SliderMoveDirection;
 
     protected override void Start()
     {
         base.Start();
+
+        SliderMoveDirection = MinPosition - MaxPosition;
         oldIntValue = (int)getValue();
     }
 
@@ -48,8 +57,7 @@ public class SliderController : VRTK_InteractableObject
         Debug.Log("Slider start using...");
 
         IsMoving = true;
-        UsingObject = usingObject;
-
+        UsingObjectPosition = usingObject.transform.position;
         StartCoroutine(Move());
     }
 
@@ -74,11 +82,56 @@ public class SliderController : VRTK_InteractableObject
     {
         while (IsMoving)
         {
+            /*
+            UsingObjectPositionOld = UsingObjectPosition;
+            UsingObjectPosition = usingObject.transform.position;
+
+            Vector3 moveDirection = transform.InverseTransformDirection(UsingObjectPositionOld - UsingObjectPosition);
+
+            float moveDistance = moveDirection.magnitude;
+
+            if (Vector3.Dot(SliderMoveDirection, moveDirection) > 0)
+                this.transform.localPosition += SliderMoveDirection * moveDistance * MoveSpeedFactor;
+            else
+                this.transform.localPosition -= SliderMoveDirection * moveDistance * MoveSpeedFactor;
+
+            if (Vector3.Dot(MaxPosition - this.transform.localPosition, Vector3.right) > 0)
+                this.transform.localPosition = MaxPosition;
+
+            if (Vector3.Dot(MinPosition - this.transform.localPosition, Vector3.right) < 0)
+                this.transform.localPosition = MinPosition;
+            
+            */
+
+            UsingObjectPositionOld = UsingObjectPosition;
+            UsingObjectPosition = usingObject.transform.position;
+
+            Vector3 moveDirection = transform.InverseTransformDirection(UsingObjectPositionOld - UsingObjectPosition);
+
+            float moveDistance = moveDirection.magnitude;
+
+            if (Vector3.Dot(SliderMoveDirection, moveDirection) > 0)
+                this.transform.localPosition += SliderMoveDirection * moveDistance * MoveSpeedFactor;
+            else
+                this.transform.localPosition -= SliderMoveDirection * moveDistance * MoveSpeedFactor;
+
+
+            if (Vector3.Distance(MinPosition, MaxPosition) < Vector3.Distance(MinPosition, this.transform.localPosition))
+                this.transform.localPosition = MaxPosition;
+            if (Vector3.Distance(MinPosition, MaxPosition) < Vector3.Distance(MaxPosition, this.transform.localPosition))
+                this.transform.localPosition = MinPosition;
+
+
+
+
+
+            /*
             Vector3 newPosition = this.transform.position;
 
             Vector3 UsingObjectPosition = UsingObject.transform.position;
 
             newPosition.x = UsingObjectPosition.x;
+
 
             this.transform.position = newPosition + moveOffset;
 
@@ -87,9 +140,9 @@ public class SliderController : VRTK_InteractableObject
 
             if (MinPosition.x < 0 && this.transform.localPosition.x < MinPosition.x || MinPosition.x >= 0 && this.transform.localPosition.x > MinPosition.x)
                 this.transform.localPosition = new Vector3(MinPosition.x, this.transform.localPosition.y, this.transform.localPosition.z);
+            */
 
-
-            if(isInteger)
+            if (isInteger)
             {
                 int intValue = (int)getValue();
                 if(intValue != oldIntValue)
@@ -100,7 +153,8 @@ public class SliderController : VRTK_InteractableObject
             }
             else
                 invokeObject.SendMessage(methodName, getValue());
-
+            
+                
             yield return new WaitForFixedUpdate();
         }
     }
