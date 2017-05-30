@@ -5,7 +5,7 @@ using VRTK;
 public class EnterButton : VRTK_InteractableObject
 {
     float spinSpeed = 0f;
-    Transform rotator;
+    //Transform rotator;
     public string LevelName; //= "VanDeGraaffExperiment2";
 
     public override void StartUsing(GameObject usingObject)
@@ -26,12 +26,12 @@ public class EnterButton : VRTK_InteractableObject
     protected override void Start()
     {
         base.Start();
-        rotator = transform.Find("Capsule");
+        //rotator = transform.Find("Capsule");
     }
 
     protected override void Update()
     {
-        rotator.transform.Rotate(new Vector3(spinSpeed * Time.deltaTime, 0f, 0f));
+        //rotator.transform.Rotate(new Vector3(spinSpeed * Time.deltaTime, 0f, 0f));
     }
 
     //helper fct, unused for now
