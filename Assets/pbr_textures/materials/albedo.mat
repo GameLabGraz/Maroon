@@ -6,9 +6,9 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Brickwork wall red long
-  m_Shader: {fileID: 45, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: _DETAIL_MULX2 _EMISSION _METALLICGLOSSMAP
+  m_Name: albedo
+  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: _EMISSION _NORMALMAP
   m_LightmapFlags: 1
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -18,14 +18,14 @@ Material:
     - first:
         name: _BumpMap
       second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 28, y: 6.6}
+        m_Texture: {fileID: 2800000, guid: cf6e5b0bb3cdff240a3ad2785ae037f8, type: 3}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _DetailAlbedoMap
       second:
-        m_Texture: {fileID: 2800000, guid: 61286463b4d4d154698011f27f50fa5b, type: 3}
-        m_Scale: {x: 0.06, y: 0.066}
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _DetailMask
@@ -43,34 +43,28 @@ Material:
         name: _EmissionMap
       second:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 6, y: 6.6}
+        m_Scale: {x: 3.58, y: 4.39}
         m_Offset: {x: 0, y: 0}
     - first:
         name: _MainTex
       second:
-        m_Texture: {fileID: 2800000, guid: e478ba5811a7fb74ea140b5c06a5f85d, type: 3}
-        m_Scale: {x: 9.3, y: 1.3}
-        m_Offset: {x: 0.57, y: 0}
+        m_Texture: {fileID: 2800000, guid: b96feb90cf7cef34cb81b61b2cdd1fd1, type: 3}
+        m_Scale: {x: 3.58, y: 4.39}
+        m_Offset: {x: 0, y: 0}
     - first:
         name: _MetallicGlossMap
-      second:
-        m_Texture: {fileID: 2800000, guid: c7ed940f15046b040a2682e56d3c2304, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _OcclusionMap
-      second:
-        m_Texture: {fileID: 2800000, guid: 79448576610a9d24bba37cd09a6db825, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _ParallaxMap
       second:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:
-        name: _SpecGlossMap
+        name: _OcclusionMap
+      second:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - first:
+        name: _ParallaxMap
       second:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -93,7 +87,7 @@ Material:
       second: 1
     - first:
         name: _Glossiness
-      second: 0.08
+      second: 0.5
     - first:
         name: _GlossyReflections
       second: 1
@@ -105,10 +99,10 @@ Material:
       second: 0
     - first:
         name: _OcclusionStrength
-      second: 0.238
+      second: 1
     - first:
         name: _Parallax
-      second: 0.0065
+      second: 0.02
     - first:
         name: _SmoothnessTextureChannel
       second: 0
@@ -127,10 +121,7 @@ Material:
     m_Colors:
     - first:
         name: _Color
-      second: {r: 0.9191176, g: 0.8715771, b: 0.8715771, a: 0.991}
+      second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _EmissionColor
       second: {r: 0, g: 0, b: 0, a: 1}
-    - first:
-        name: _SpecColor
-      second: {r: 0.2, g: 0.2, b: 0.2, a: 1}

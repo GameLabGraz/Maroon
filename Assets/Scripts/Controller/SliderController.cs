@@ -118,6 +118,7 @@ public class SliderController : VRTK_InteractableObject
 
             if (Vector3.Distance(MinPosition, MaxPosition) < Vector3.Distance(MinPosition, this.transform.localPosition))
                 this.transform.localPosition = MaxPosition;
+
             if (Vector3.Distance(MinPosition, MaxPosition) < Vector3.Distance(MaxPosition, this.transform.localPosition))
                 this.transform.localPosition = MinPosition;
 

@@ -3,6 +3,9 @@ using VRTK;
 
 public class StopPlayButtonController : VRTK_InteractableObject
 {
+    [SerializeField]
+    private TextMesh PlayPauseText;
+
     private SimulationController simController;
 
     protected override void Start()
@@ -13,6 +16,14 @@ public class StopPlayButtonController : VRTK_InteractableObject
         if (simControllerObject)
             simController = simControllerObject.GetComponent<SimulationController>();
 
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if (PlayPauseText != null)
+            PlayPauseText.text = simController.SimulationRunning ? "PAUSE\nSimulation" : "PLAY\nSimulation";
     }
 
     public override void StartUsing(GameObject usingObject)
