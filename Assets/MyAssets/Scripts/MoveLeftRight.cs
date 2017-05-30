@@ -42,10 +42,6 @@ public class MoveLeftRight : MonoBehaviour {
         var system = Valve.VR.OpenVR.System;
         var left = 0;
         var right = 0;
-        float z;
-        float x;
-        float y;
-        float z_new;
 
         if (system != null)
         {
@@ -60,45 +56,13 @@ public class MoveLeftRight : MonoBehaviour {
             grounder = GameObject.Find("Grounder"); //important to avoid null reference
             if(grounder != null)
             {
-                x = grounder.transform.position.x;
-                y = grounder.transform.position.y;
-                z = grounder.transform.position.z;
-                z_new = z + maxMovementLeft;
-
-                //https://docs.unity3d.com/ScriptReference/Transform.Translate.html 
-                //transform.Translate(Vector3.up * Time.deltaTime, Space.World);
-                Vector3 newLeftPosition = new Vector3(x, y, z_new); ;
-                this.transform.Translate(Vector3.back * movementSpeed * Time.deltaTime, Space.World);
+                this.Move(Vector3.left, maxMovementLeft);
 
                 // trigger haptic pulse     
                 SteamVR_Controller.Input(left).TriggerHapticPulse(3999);
                 
                 Debug.Log("moved grounder to LEFT");
-
-                /* long version
-                device = SteamVR_Controller.Input(left);
-                if(device != null)
-                {
-                    device.TriggerHapticPulse(3999);
-                    Debug.Log("trigger haptic pulse");
-                }
-                else
-                {
-                    Debug.Log("MoveLeftRight could not trigger haptic pulse");
-                }             
-
-                //VRTK version
-                controllerActions = device.GetComponent<VRTK_ControllerActions>();
-                if (controllerActions != null)
-                {
-                    controllerActions.TriggerHapticPulse(1000); // public void TriggerHapticPulse(ushort strength)
-                }
-                else
-                {
-                    Debug.Log("MoveLeftRight could not find controllerActions");
-                }*/
-
-            } 
+             } 
         }
 
         if (SteamVR_Controller.Input((int)right).GetPressDown(SteamVR_Controller.ButtonMask.Grip))
@@ -108,17 +72,12 @@ public class MoveLeftRight : MonoBehaviour {
             grounder = GameObject.Find("Grounder");
             if(grounder != null)
             {
-                x = grounder.transform.position.x;
-                y = grounder.transform.position.y;
-                z = grounder.transform.position.z;
-                z_new = z + maxMovementRight;
-                Vector3 newRightPosition = new Vector3(x, y, -z_new); // minus sign to move into opposite direction
-                this.transform.Translate(Vector3.forward * movementSpeed * Time.deltaTime, Space.World); 
+                this.Move(Vector3.right, maxMovementRight);
+
+                SteamVR_Controller.Input(right).TriggerHapticPulse(3999);
+
+                Debug.Log("moved grounder to RIGHT");
             }
-
-            SteamVR_Controller.Input(right).TriggerHapticPulse(3999);
-
-            Debug.Log("moved grounder to RIGHT");
         }
     }
 
@@ -126,12 +85,12 @@ public class MoveLeftRight : MonoBehaviour {
 	{
 		if (null != transform) 
 		{
-			Vector3 translateVector = direction * Time.deltaTime * 0.35f;
-			Vector3 newPosition = transform.position + Camera.main.transform.TransformDirection(translateVector);
+			Vector3 translateVector = direction * Time.deltaTime * movementSpeed;
+			Vector3 newPosition = transform.position + transform.TransformDirection(translateVector);
 			
 			float distance = Vector3.Distance(this.initialPosition, newPosition);
 			if(distance < (maxMovement) || distance < this.lastDistance) {
-				transform.Translate(translateVector, Camera.main.transform);
+				transform.Translate(translateVector);
 				this.lastDistance = distance;
 			}
 		}
