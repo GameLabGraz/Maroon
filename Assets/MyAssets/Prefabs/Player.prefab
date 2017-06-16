@@ -96,6 +96,8 @@ GameObject:
   - component: {fileID: 33087460301969694}
   - component: {fileID: 114065167006331142}
   - component: {fileID: 114606206570988718}
+  - component: {fileID: 20524936787370226}
+  - component: {fileID: 114405650553583790}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -129,7 +131,7 @@ GameObject:
   - component: {fileID: 4663199218937044}
   - component: {fileID: 20941332844085996}
   - component: {fileID: 124627109914417344}
-  - component: {fileID: 114617706235875478}
+  - component: {fileID: 114292773461818088}
   m_Layer: 0
   m_Name: Camera (eye)
   m_TagString: MainCamera
@@ -429,7 +431,45 @@ Camera:
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 0
+  m_AllowMSAA: 1
+  m_ForceIntoRT: 0
   m_OcclusionCulling: 0
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+  m_StereoMirrorMode: 0
+--- !u!20 &20524936787370226
+Camera:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1547527747225754}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 1
+  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 0
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
   m_StereoMirrorMode: 0
@@ -463,6 +503,8 @@ Camera:
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 0
+  m_AllowMSAA: 1
+  m_ForceIntoRT: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
@@ -497,6 +539,7 @@ MeshRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
+  m_SortingLayer: 0
   m_SortingOrder: 0
 --- !u!33 &33087460301969694
 MeshFilter:
@@ -718,6 +761,20 @@ MonoBehaviour:
   verbose: 0
   createComponents: 1
   updateDynamically: 1
+--- !u!114 &114292773461818088
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1740581706733598}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bca9ccf900ccc84c887d783321d27e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _head: {fileID: 4953005776071774}
+  _ears: {fileID: 4766924884990576}
+  wireframe: 0
 --- !u!114 &114311269323241790
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -823,6 +880,17 @@ MonoBehaviour:
   gravityFallYThreshold: 1
   blinkYThreshold: 0.15
   floorHeightTolerance: 0.001
+--- !u!114 &114405650553583790
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1547527747225754}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b61cd59d8f02e454186a61a5f55c21b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114412057804600168
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1055,20 +1123,6 @@ MonoBehaviour:
   headsetPositionCompensation: 1
   targetListPolicy: {fileID: 114885788732334748}
   navMeshLimitDistance: 0
---- !u!114 &114617706235875478
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1740581706733598}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bca9ccf900ccc84c887d783321d27e2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _head: {fileID: 4953005776071774}
-  _ears: {fileID: 4766924884990576}
-  wireframe: 0
 --- !u!114 &114683510001586346
 MonoBehaviour:
   m_ObjectHideFlags: 1

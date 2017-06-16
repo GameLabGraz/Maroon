@@ -182,7 +182,7 @@ public class AdvancedLineRenderer : MonoBehaviour
     public void WritePositionsToLineRenderer()
     {
         vertexCount_ = positions_.Keys.Max() + 1;
-        line_.numPositions = vertexCount_;
+        line_.positionCount = vertexCount_;
         foreach (KeyValuePair<int, Vector3> entry in positions_)
         {
             line_.SetPosition(entry.Key, entry.Value);
@@ -196,7 +196,7 @@ public class AdvancedLineRenderer : MonoBehaviour
     public void SetVertexCount(int vertextCount)
     {
         this.vertexCount_ = vertextCount;
-        line_.numPositions = vertextCount;
+        line_.positionCount = vertextCount;
     }
 
     /// <summary>
@@ -260,7 +260,7 @@ public class AdvancedLineRenderer : MonoBehaviour
     {
         this.SetWidth(lineWidth_.item1, lineWidth_.item2);
         this.SetColors(lineColors_.item1, lineColors_.item2);
-        line_.numPositions = vertexCount_;
+        line_.positionCount = vertexCount_;
         line_.useWorldSpace = useWorldSpace_;
         line_.material = material;
     }
