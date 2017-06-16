@@ -42,10 +42,8 @@ public class SliderController : VRTK_InteractableObject
 
     private Vector3 SliderMoveDirection;
 
-    protected override void Start()
+    private void Start()
     {
-        base.Start();
-
         SliderMoveDirection = MinPosition - MaxPosition;
         oldIntValue = (int)getValue();
     }

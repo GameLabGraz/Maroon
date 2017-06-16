@@ -23,9 +23,8 @@ public class EnterButton : VRTK_InteractableObject
         spinSpeed = 0f;
     }
 
-    protected override void Start()
+    private void Start()
     {
-        base.Start();
         //rotator = transform.Find("Capsule");
     }
 
