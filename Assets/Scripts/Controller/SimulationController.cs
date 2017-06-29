@@ -48,16 +48,17 @@ public class SimulationController : MonoBehaviour
     /// <summary>
     /// Initialization
     /// </summary>
-    public void Awake()
+    private void Awake()
     {
         resetObjects = new List<IResetObject>();
+        SceneManager.sceneUnloaded += OnSceneUnloaded;
         InitSimController();
     }
 
     /// <summary>
     /// Initialization function for the Sim Controller
     /// </summary>
-    public void InitSimController()
+    private void InitSimController()
     {
         stepSimulation = false;
         simulationReset = true;
@@ -72,6 +73,17 @@ public class SimulationController : MonoBehaviour
                 resetObjects.Add(reset_obj);
 
         }
+    }
+
+    /// <summary>
+    /// Delegate to get notification when the scene has unloaded.
+    /// Reset timeScale to 1.0f.
+    /// </summary>
+    /// <param name="scene">Unloaded scene</param>
+    private void OnSceneUnloaded(Scene scene)
+    {
+        Time.timeScale = 1.0f;
+        SceneManager.sceneUnloaded -= OnSceneUnloaded;
     }
 
     /// <summary>
