@@ -70,11 +70,6 @@ public class GuiVandeGraaffExperiment1 : MonoBehaviour {
         // check if [ESC] was pressed
         // VIVE -> ESC == MENU BUTTON top 
         //if (Input.GetKeyDown (KeyCode.Escape))  desktop
-        if (SteamVR_Controller.Input((int)left).GetPress(SteamVR_Controller.ButtonMask.ApplicationMenu) ||
-         SteamVR_Controller.Input((int)right).GetPress(SteamVR_Controller.ButtonMask.ApplicationMenu))
-        {
-			Application.LoadLevel("Laboratory");
-		}
 	}
 
 	private void EnableGlow(bool enable)

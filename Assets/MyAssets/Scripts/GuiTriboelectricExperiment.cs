@@ -25,11 +25,6 @@ public class GuiTriboelectricExperiment : MonoBehaviour {
         // check if [ESC] was pressed
         // VIVE -> ESC == MENU BUTTON top 
         // DESKTOP if (Input.GetKeyDown (KeyCode.Escape))  
-        if (SteamVR_Controller.Input((int)left).GetPress(SteamVR_Controller.ButtonMask.ApplicationMenu) ||
-         SteamVR_Controller.Input((int)right).GetPress(SteamVR_Controller.ButtonMask.ApplicationMenu))
-        {
-            Application.LoadLevel("Laboratory");
-        }
 	}
 	
 	// OnGUI is called once per frame
