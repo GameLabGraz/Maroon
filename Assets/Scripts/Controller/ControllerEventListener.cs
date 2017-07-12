@@ -58,12 +58,13 @@ public class ControllerEventListener : MonoBehaviour
 
     private void HandlePadClicked(object sender, ClickedEventArgs e)
     {
-
+        // Enable Teleport
+        
     }
 
     private void HandlePadUnclicked(object sender, ClickedEventArgs e)
     {
-
+        // Teleport
     }
 
     private void HandlePadTouched(object sender, ClickedEventArgs e)
