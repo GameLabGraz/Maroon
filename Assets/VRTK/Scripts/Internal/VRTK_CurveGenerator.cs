@@ -308,7 +308,9 @@ namespace VRTK
                 setMaterial(items[f], material, color);
 
                 Vector3 position = GetPoint(f * stepSize);
-                items[f].transform.position = position;
+
+                if(!float.IsNaN(position.x) && !float.IsNaN(position.y) && !float.IsNaN(position.z))
+                    items[f].transform.position = position;
 
                 Vector3 nextPosition = GetPoint((f + 1) * stepSize);
                 Vector3 offset = nextPosition - position;
