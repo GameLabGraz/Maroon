@@ -1,55 +1,87 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using VRTK;
 
 public class CapacitorPlateController : VRTK_InteractableObject
 {
-    private GameObject scaleHeightObject1;
-    private GameObject scaleHeightObject2;
-    private GameObject scaleWidthObject1;
-    private GameObject scaleWidthObject2;
+    private GameObject resizeHeightObject1;
+    private GameObject resizeHeightObject2;
+    private GameObject resizeWidthObject1;
+    private GameObject resizeWidthObject2;
 
-    private float scaleObjectSize = 0.02f;
+    [SerializeField]
+    private float resizeObjectSize = 0.02f;
+
+    [SerializeField]
+    private float maxHeightSize = 0.5f;
+
+    [SerializeField]
+    private float maxWidthSize = 1;
 
     private void Start()
     {
-        Vector3 size =  GetComponent<Renderer>().bounds.size;
+        resizeWidthObject1 = CreateResizeObject(Vector3.right, maxWidthSize);
+        resizeWidthObject2 = CreateResizeObject(Vector3.right, maxWidthSize);
+        resizeHeightObject1 = CreateResizeObject(Vector3.up, maxHeightSize);
+        resizeHeightObject2 = CreateResizeObject(Vector3.up, maxHeightSize);
+
+        EnableResizeObjects(false);
+
+        disableWhenIdle = false;
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        Vector3 size = GetComponent<Renderer>().bounds.size;
         Vector3 offset_x = new Vector3(size.x / 2, 0, 0);
         Vector3 offset_y = new Vector3(0, size.y / 2, 0);
 
-        scaleWidthObject1 = CreateScaleObject(transform.position + offset_x);
-        scaleWidthObject2 = CreateScaleObject(transform.position - offset_x);
-        scaleHeightObject1 = CreateScaleObject(transform.position + offset_y);
-        scaleHeightObject2 = CreateScaleObject(transform.position - offset_y);
-        EnableScaleObjects(false);
+        if (resizeWidthObject1 != null)
+            resizeWidthObject1.transform.position = transform.position + offset_x;
+        if(resizeWidthObject2 != null)
+            resizeWidthObject2.transform.position = transform.position - offset_x;
+        if (resizeHeightObject1 != null)
+            resizeHeightObject1.transform.position = transform.position + offset_y;
+        if (resizeHeightObject2 != null)
+            resizeHeightObject2.transform.position = transform.position - offset_y;
     }
 
-    private GameObject CreateScaleObject(Vector3 position)
+    private GameObject CreateResizeObject(Vector3 resizeAxis, float maxSize)
     {
-        GameObject scaleObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        scaleObject.transform.position = position;
-        scaleObject.transform.localScale = new Vector3(scaleObjectSize, scaleObjectSize, scaleObjectSize);
-        scaleObject.GetComponent<Renderer>().material.color = Color.black;
-        scaleObject.GetComponent<Collider>().isTrigger = true;
-        Physics.IgnoreCollision(GetComponent<Collider>(), scaleObject.GetComponent<Collider>(), true);
-        return scaleObject;
+        GameObject resizeObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        resizeObject.GetComponent<SphereCollider>().radius = 2;
+        resizeObject.transform.localScale = new Vector3(resizeObjectSize, resizeObjectSize, resizeObjectSize);
+        resizeObject.GetComponent<Renderer>().material.color = Color.black;
+
+        CapacitorPlateResizeController resizeController = resizeObject.AddComponent<CapacitorPlateResizeController>();
+        resizeController.isUsable = true;
+        resizeController.setCapacitorPlate(this);
+        resizeController.setResizeAxsis(resizeAxis);
+        resizeController.setMaxSize(maxSize);
+
+        return resizeObject;
     }
 
-    private void EnableScaleObjects(bool value)
+    public void EnableResizeObjects(bool value)
     {
-        scaleWidthObject1.SetActive(value);
-        scaleWidthObject2.SetActive(value);
-        scaleHeightObject1.SetActive(value);
-        scaleHeightObject2.SetActive(value);
+        resizeWidthObject1.GetComponent<Renderer>().enabled = value;
+        resizeWidthObject2.GetComponent<Renderer>().enabled = value;
+        resizeHeightObject1.GetComponent<Renderer>().enabled = value;
+        resizeHeightObject2.GetComponent<Renderer>().enabled = value;
     }
 
     public override void StartTouching(GameObject currentTouchingObject)
     {
         base.StartTouching(currentTouchingObject);
 
-        EnableScaleObjects(true);
+        EnableResizeObjects(true);
     }
 
-    
+    public override void StopTouching(GameObject previousTouchingObject)
+    {
+        base.StopTouching(previousTouchingObject);
+
+        EnableResizeObjects(false);
+    }
 }
