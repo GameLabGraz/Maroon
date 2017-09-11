@@ -69,7 +69,21 @@ public class Graph : MonoBehaviour, IResetObject
     /// The coil, to get the current value to draw
     /// </summary>
     private Coil coil;
-    
+
+    /// <summary>
+    /// The game object from which a value curve is be drawn
+    /// </summary>
+    [SerializeField]
+    private GameObject valueGetterObject;
+
+    /// <summary>
+    /// The value getter method name which is called to get the draw value.
+    /// The method must take exactly one argument with the type MessageArgs.
+    /// The argument will be used to get the value.
+    /// </summary>
+    [SerializeField]
+    private string valueGetterMethodByReference;
+
     /// <summary>
     /// max value of the graph
     /// </summary>
@@ -132,8 +146,6 @@ public class Graph : MonoBehaviour, IResetObject
         line_renderer.SetWidth(lineWidth, lineWidth);
         line_renderer.SetMaterial(material);
         line_renderer.initLineRenderer();
-
-        coil = GameObject.Find("Coil").GetComponent<Coil>();
     }
 
     /// <summary>
@@ -156,7 +168,10 @@ public class Graph : MonoBehaviour, IResetObject
         if (i++ % 6 != 0)
             return;
 
-        float value = coil.getCurrent();
+        MessageArgs messageArgs = new MessageArgs();     
+        valueGetterObject.SendMessage(valueGetterMethodByReference, messageArgs);
+        float value = (float)messageArgs.value;
+
         line_renderer.SetPosition(index++, new Vector3(time, yOffset, getRange(value)));
         line_renderer.WritePositionsToLineRenderer();
         time = invertedCoordinateSystem ? time - stepSize : time + stepSize;

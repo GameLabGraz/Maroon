@@ -1,32 +1,30 @@
-using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class ReturnToMainMenu : MonoBehaviour
 {
-    private bool m_Levelloaded;
+    private bool m_Sceneloaded;
 
 
     public void Start()
     {
+        SceneManager.sceneLoaded += OnSceneLoaded;
         DontDestroyOnLoad(this);
     }
 
-
-    private void OnLevelWasLoaded(int level)
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        m_Levelloaded = true;
+        m_Sceneloaded = true;
     }
-
 
     private void Update()
     {
-        if (m_Levelloaded)
+        if (m_Sceneloaded)
         {
             Canvas component = gameObject.GetComponent<Canvas>();
             component.enabled = false;
             component.enabled = true;
-            m_Levelloaded = false;
+            m_Sceneloaded = false;
         }
     }
 

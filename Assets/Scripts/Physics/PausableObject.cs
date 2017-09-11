@@ -26,8 +26,11 @@ public abstract class PausableObject : MonoBehaviour
             if(IsPause)
             {
                 IsPause = false;
-                rigidbody_.isKinematic = false;
-                rigidbody_.velocity = CurrentVelocity;
+                if(rigidbody_ != null)
+                {
+                    rigidbody_.isKinematic = false;
+                    rigidbody_.velocity = CurrentVelocity;
+                }
             }
 
             HandleUpdate();
@@ -35,10 +38,13 @@ public abstract class PausableObject : MonoBehaviour
         else if(!IsPause)
         {
             IsPause = true;
-            CurrentVelocity = rigidbody_.velocity;
-            rigidbody_.isKinematic = true;
+            if (rigidbody_ != null)
+            {
+                CurrentVelocity = rigidbody_.velocity;
+                rigidbody_.isKinematic = true;
+            }
         }
-	}
+    }
 
     private void FixedUpdate()
     {

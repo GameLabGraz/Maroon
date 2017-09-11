@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
-using UnityEditor;
 using VRTK;
-using System;
 
 public class VRButtonController : VRTK_InteractableObject
 {
@@ -67,25 +65,5 @@ public class VRButtonController : VRTK_InteractableObject
             invokeObject.SendMessage(methodName);
         }
            
-    }
-}
-
-[CustomEditor(typeof(VRButtonController))]
-public class VRButtonEditor : Editor
-{
-    private int selectedToggleValue = 0;
-    private string[] toogleValueOptions = { "true", "false" };
-
-    public override void OnInspectorGUI()
-    {
-        DrawDefaultInspector();
-
-        VRButtonController VRButtonTarget = target as VRButtonController;
-
-        if (VRButtonTarget.IsToogleButton)
-        {
-            selectedToggleValue = EditorGUILayout.Popup("Toogle Value", selectedToggleValue, toogleValueOptions);
-            VRButtonTarget.ToogleValue = Boolean.Parse(toogleValueOptions[selectedToggleValue]);
-        }
     }
 }
