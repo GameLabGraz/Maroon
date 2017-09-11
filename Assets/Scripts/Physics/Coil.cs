@@ -79,16 +79,11 @@ public class Coil : EMObject, IResetObject
     }
 
     /// <summary>
-    /// Update is called every frame and sets flux and start flux correctly
-    /// if the simulation was reseted.
+    /// Update is called every frame
     /// </summary>
     protected override void HandleUpdate()
     {
-        if (simController.SimulationJustReset)
-        {
-            flux = getMagneticFluxInCoil();
-            start_flux = flux;
-        }
+    
     }
 
     /// <summary>
@@ -120,6 +115,11 @@ public class Coil : EMObject, IResetObject
     public float getCurrent()
     {
         return this.current;
+    }
+
+    public void getCurrentByReference(MessageArgs args)
+    {
+        args.value = this.current;
     }
 
     /// <summary>

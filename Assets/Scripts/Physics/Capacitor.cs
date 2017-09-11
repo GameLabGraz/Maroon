@@ -1,8 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Capacitor : MonoBehaviour
+public class Capacitor : PausableObject
 {
     [SerializeField]
     private GameObject plate1;
@@ -21,19 +22,16 @@ public class Capacitor : MonoBehaviour
 
     private float voltage;
 
-	private void Start ()
+    protected override void Start()
     {
+        base.Start();
+
         if(plate1 == null || plate2 == null)
         {
             Debug.LogError("Capacitor requires two plates!");
             gameObject.SetActive(false);
         }
 	}
-
-    private void FixedUpdate()
-    {
-        capacitance = (GetOverlapPlateArea() * vacuumPermittivity * relativePermittivity) / GetPlateDistance();
-    }
 
     private float GetOverlapPlateArea()
     {
@@ -49,7 +47,7 @@ public class Capacitor : MonoBehaviour
 
         Vector3 testDirection = plate2.transform.position - plate1.transform.position;
 
-        if(CheckIfOverlapPlate(plate1WidthCorner, testDirection, plate2))
+        if (CheckIfOverlapPlate(plate1WidthCorner, testDirection, plate2))
             overlapWidth = plate1Size.x;
         else
             overlapWidth = plate2Size.x;
@@ -83,4 +81,25 @@ public class Capacitor : MonoBehaviour
     {
         this.relativePermittivity = relativePermittivity;
     }
+
+    protected override void HandleUpdate()
+    {
+
+    }
+
+    protected override void HandleFixedUpdate()
+    {
+        capacitance = (GetOverlapPlateArea() * vacuumPermittivity * relativePermittivity) / GetPlateDistance();
+    }
+
+    public float getCapacitance()
+    {
+        return this.capacitance;
+    }
+
+    public void getCapacitanceByReference(MessageArgs args)
+    {
+        args.value = this.capacitance;
+    }
+
 }
