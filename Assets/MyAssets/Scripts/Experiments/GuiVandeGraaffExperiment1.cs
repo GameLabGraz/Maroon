@@ -9,8 +9,11 @@ public class GuiVandeGraaffExperiment1 : MonoBehaviour {
 	private PaperStripesController paperStripesController;
 	private bool glowEnabled = true;
 	private GUIStyle textStyle;
-	
-	public void Start () {
+
+    private int controllerLeftIndex;
+    private int controllerRightIndex;
+
+    public void Start () {
 		// find Van de Graaff Generator object in the scene
 		GameObject vandeGraaff = GameObject.FindGameObjectWithTag ("VandeGraaff");
 		if (null != vandeGraaff) 
@@ -32,24 +35,31 @@ public class GuiVandeGraaffExperiment1 : MonoBehaviour {
 		// define GUI style
 		this.textStyle = new GUIStyle("label");
 		this.textStyle.alignment = TextAnchor.MiddleCenter;
-	}
+
+        var system = OpenVR.System;
+
+        if (system != null)
+        {
+            controllerLeftIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Leftmost);
+            controllerRightIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
+        }
+    }
 	
 	public void Update()
 	{
-        // NEW init, TODO 0 check l,r - maybe invalid if system null. dont do this every update
-        var system = OpenVR.System;
-        var left = 0;
-        var right = 0;
-        if (system != null)
-        {
-            left = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Leftmost);
-            right = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
-        }
-                 
+        if(controllerLeftIndex == -1)
+            controllerLeftIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Leftmost);
+
+        if(controllerRightIndex == -1)
+            controllerRightIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
+
         // check if [E] was pressed (Switch ON/OFF VdG)
-        // if (Input.GetKeyDown (KeyCode.E)) desktop
-        if (SteamVR_Controller.Input((int)left).GetPress(SteamVR_Controller.ButtonMask.Trigger) ||
-           SteamVR_Controller.Input((int)right).GetPress(SteamVR_Controller.ButtonMask.Trigger))
+
+        if (Input.GetKeyDown (KeyCode.E)) // desktop
+            this.vandeGraaffController.Switch();
+
+        if ((controllerLeftIndex != -1 && SteamVR_Controller.Input(controllerLeftIndex).GetPress(SteamVR_Controller.ButtonMask.Trigger)) ||
+            (controllerRightIndex != -1 && SteamVR_Controller.Input(controllerRightIndex).GetPress(SteamVR_Controller.ButtonMask.Trigger)))
         {
 			this.vandeGraaffController.Switch(); // VIVE trigger == E button, used for switching generator on/off here! 
 		}
