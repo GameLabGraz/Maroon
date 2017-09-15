@@ -60,7 +60,7 @@ public class MagnetController : VRTK_InteractableObject
         {
             this.transform.position = new Vector3(UsingObject.transform.position.x, this.transform.position.y, this.transform.position.z);
 
-            UsingObject.GetComponent<VRTK_ControllerActions>().TriggerHapticPulse((ushort)(GetComponent<Magnet>().getExternalForce().magnitude * 100));
+            UsingObject.GetComponent<VRTK_ControllerActions>().TriggerHapticPulse((ushort)(GetComponent<Magnet>().getExternalForce().magnitude));
 
             yield return new WaitForFixedUpdate();
         }
