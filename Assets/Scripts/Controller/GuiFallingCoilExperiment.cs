@@ -16,8 +16,8 @@ public class GuiFallingCoilExperiment : MonoBehaviour
   // Update is called once per frame
   void Update()
   {
-    // check if [ESC] was pressed
-    if (Input.GetKeyDown(KeyCode.Escape))
+    // check if [Space] was pressed
+    if (Input.GetKeyDown(KeyCode.Space))
     {
       SceneManager.LoadScene("Laboratory");
     }

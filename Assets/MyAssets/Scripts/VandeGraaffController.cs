@@ -100,8 +100,8 @@ public class VandeGraaffController : MonoBehaviour
 	
 	public void Start ()
 	{
-		// Get the Van de Graaff Static Charge Script
-		this.chargeScript = charge.GetComponent<StaticChargeScript> ();
+        // Get the Van de Graaff Static Charge Script
+        this.chargeScript = charge.GetComponent<StaticChargeScript> ();
 		// Get the Static Charge Handles of the induced objects
 		this.inducedObjectsCharge = new List<ICharge> ();
 		foreach (GameObject inducedObject in this.inducedObjects) {
@@ -109,6 +109,7 @@ public class VandeGraaffController : MonoBehaviour
 				this.inducedObjectsCharge.Add(inducedObject.GetComponent<ICharge>());
 			}
 		}
+     
 		// Get the Field Line Scripts
 		this.fieldLineScripts = this.fieldLines.GetComponentsInChildren<FieldLineScript> ();
 	}
@@ -125,7 +126,8 @@ public class VandeGraaffController : MonoBehaviour
 
 	private void UpdateCharge()
 	{
-		if (!this.on) 
+       
+        if (!this.on) 
 		{
 			// TODO: apply formula for corona discharge and leakage
 			// For now just leak a third of the charging current when VdG is switched off
@@ -166,17 +168,18 @@ public class VandeGraaffController : MonoBehaviour
 
 	private void UpdateInducedCharges()
 	{
-		// For now just fake electrostatic induction by applying
-		// a charge of opposite value corresponding to the charge strength of the VdG
-		// to all induced objects which are not touching the VdG.
-		// If an induced object is attached to the VdG it will get a charge of the
-		// same sign as the VdG.
-		float vanDeGraaffChargeSign = (this.ChargeStrength >= 0f) ? 1f : -1f;
+       
+        // For now just fake electrostatic induction by applying
+        // a charge of opposite value corresponding to the charge strength of the VdG
+        // to all induced objects which are not touching the VdG.
+        // If an induced object is attached to the VdG it will get a charge of the
+        // same sign as the VdG.
+        float vanDeGraaffChargeSign = (this.ChargeStrength >= 0f) ? 1f : -1f;
 		float inducedChargeSign;
 
 		foreach (ICharge inducedCharge in this.inducedObjectsCharge) {
-			if (null != inducedCharge) {
-				inducedChargeSign = inducedCharge.IsAttachedToInducer ? vanDeGraaffChargeSign : vanDeGraaffChargeSign * -1f;
+			if (null != inducedCharge) {             
+                inducedChargeSign = inducedCharge.IsAttachedToInducer ? vanDeGraaffChargeSign : vanDeGraaffChargeSign * -1f;
 				inducedCharge.SetCharge (inducedChargeSign * this.GetVoltage () / MaxVoltage * inducedCharge.GetMaxCharge ());
 			}
 		}
@@ -224,7 +227,8 @@ public class VandeGraaffController : MonoBehaviour
 
 	public void OnCollisionEnter(Collision col)
 	{
-		GameObject collidedGameObject = col.gameObject;
+    
+        GameObject collidedGameObject = col.gameObject;
 		if(collidedGameObject.tag != "Untagged")
 			Debug.Log (collidedGameObject.tag);
 		if ("Balloon" == collidedGameObject.tag) {

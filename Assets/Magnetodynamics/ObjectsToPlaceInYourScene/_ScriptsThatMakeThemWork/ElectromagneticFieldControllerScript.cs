@@ -186,8 +186,9 @@ public class ElectromagneticFieldControllerScript : MonoBehaviour {
             mesh.triangles = newTriangles;
             mesh.RecalculateBounds();
             mesh.RecalculateNormals();
-    
+
             // now "poof" it out like the other collider types
+            Debug.Log("Blitz");
             float size = Mathf.Max(mesh.bounds.size.x, mesh.bounds.size.y, mesh.bounds.size.z);
             Vector3[] vertices = mesh.vertices;
             Vector3[] normals = mesh.normals;

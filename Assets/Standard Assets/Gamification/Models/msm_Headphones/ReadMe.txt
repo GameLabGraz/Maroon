@@ -1,0 +1,1 @@
+Stylish wireless headphones. Provided in two postions for on the head and off. 4K textures suitable for scaling for any type of project. 4.4k Tris hero quality.

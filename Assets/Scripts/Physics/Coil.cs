@@ -72,6 +72,7 @@ public class Coil : EMObject, IResetObject
     /// </summary>
     public void Start()
     {
+        Cursor.lockState = CursorLockMode.None;
         flux = getMagneticFluxInCoil();
         start_flux = flux;
         startPos = transform.position;

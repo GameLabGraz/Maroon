@@ -13,8 +13,9 @@ public class GuiWhiteboard : MonoBehaviour
 
 	public void Start () 
 	{
-		// Define GUI style
-		this.textStyle = new GUIStyle("label");
+        Cursor.lockState = CursorLockMode.None;
+        // Define GUI style
+        this.textStyle = new GUIStyle("label");
 		this.textStyle.alignment = TextAnchor.MiddleCenter;
 
 		// Find Whiteboard GameObject in the scene
@@ -37,8 +38,8 @@ public class GuiWhiteboard : MonoBehaviour
 	
 	public void Update()
 	{
-		// Check if [ESC] was pressed
-		if (Input.GetKeyDown (KeyCode.Escape)) 
+		// Check if [Space] was pressed
+		if (Input.GetKeyDown (KeyCode.Space)) 
 		{
       SceneManager.LoadScene("Laboratory");
 		}

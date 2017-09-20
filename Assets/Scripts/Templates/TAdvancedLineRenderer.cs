@@ -101,7 +101,8 @@ public class AdvancedLineRenderer : MonoBehaviour
     public void SetColors(Color start, Color end)
     {
         lineColors_ = new Tuple<Color, Color>(start, end);
-        line_.SetColors(start, end);
+        line_.startColor = start;
+        line_.endColor = end;
     }
 
     /// <summary>
@@ -181,7 +182,7 @@ public class AdvancedLineRenderer : MonoBehaviour
     public void WritePositionsToLineRenderer()
     {
         vertexCount_ = positions_.Keys.Max() + 1;
-        line_.SetVertexCount(vertexCount_);
+        line_.positionCount = vertexCount_;
         foreach (KeyValuePair<int, Vector3> entry in positions_)
         {
             line_.SetPosition(entry.Key, entry.Value);
@@ -195,7 +196,7 @@ public class AdvancedLineRenderer : MonoBehaviour
     public void SetVertexCount(int count)
     {
         this.vertexCount_ = count;
-        line_.SetVertexCount(count);
+        line_.positionCount = count;
     }
 
     /// <summary>
@@ -216,7 +217,8 @@ public class AdvancedLineRenderer : MonoBehaviour
     public void SetWidth(float start, float end)
     {
         this.lineWidth_ = new Tuple<float, float>(start, end);
-        line_.SetWidth(start, end);
+        line_.startWidth = start;
+        line_.endWidth = end;
     }
 
     /// <summary>
@@ -258,7 +260,7 @@ public class AdvancedLineRenderer : MonoBehaviour
     {
         this.SetWidth(lineWidth_.item1, lineWidth_.item2);
         this.SetColors(lineColors_.item1, lineColors_.item2);
-        line_.SetVertexCount(vertexCount_);
+        line_.positionCount = vertexCount_;
         line_.useWorldSpace = useWorldSpace_;
         line_.material = material;
     }

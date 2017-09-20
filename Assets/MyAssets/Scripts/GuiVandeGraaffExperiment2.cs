@@ -9,6 +9,7 @@ public class GuiVandeGraaffExperiment2 : MonoBehaviour {
 	private BalloonGlowController balloonGlowController;
 	private bool glowEnabled;
 	private GUIStyle textStyle;
+    public string gname;
 
 	public void Start () {
 		// find Van der Graaf Generator object in the scene
@@ -31,20 +32,41 @@ public class GuiVandeGraaffExperiment2 : MonoBehaviour {
 		// define GUI style
 		this.textStyle = new GUIStyle("label");
 		this.textStyle.alignment = TextAnchor.MiddleCenter;
-	}
+    }
 
-	public void Update()
-	{
+
+    //New mechanic, things are activated by clicking on them
+    private void OnMouseDown()
+    {
+        if (gname == "generator")
+        {
+            this.vandeGraaffController.Switch();
+        }
+        else if (gname == "line")
+        {
+
+            this.vandeGraaffController.FieldLinesEnabled = !this.vandeGraaffController.FieldLinesEnabled;
+        }
+        else if (gname == "charge")
+        {
+            this.glowEnabled = !this.glowEnabled;
+            this.EnableGlow(this.glowEnabled);
+        }
+    }
+
+    //Old mechanic
+    public void Update()
+	{/*
 		// check if [E] was pressed (Switch ON/OFF VdG)
 		if (Input.GetKeyDown (KeyCode.E)) 
 		{
-			this.vandeGraaffController.Switch();
+			//this.vandeGraaffController.Switch();
 		}
 
 		// check if [C] was pressed (Show/Hide Charge Glow)
 		if (Input.GetKeyDown (KeyCode.C)) 
 		{
-			this.glowEnabled = !this.glowEnabled;
+		//	this.glowEnabled = !this.glowEnabled;
 			this.EnableGlow(this.glowEnabled);
 		}
 
@@ -53,9 +75,9 @@ public class GuiVandeGraaffExperiment2 : MonoBehaviour {
 		{
 			this.vandeGraaffController.FieldLinesEnabled = !this.vandeGraaffController.FieldLinesEnabled;
 		}
-
+        */
 		// check if [ESC] was pressed
-		if (Input.GetKeyDown (KeyCode.Escape)) 
+		if (Input.GetKeyDown (KeyCode.Space)) 
 		{
       SceneManager.LoadScene("Laboratory");
 		}
@@ -72,10 +94,10 @@ public class GuiVandeGraaffExperiment2 : MonoBehaviour {
 	public void OnGUI()
 	{
 		// show info message
-		GUI.Label (new Rect (Screen.width / 2 - 200f, Screen.height / 16, 400f, 100f), string.Format ("You can turn the Van de Graaff Generator ON/OFF.\r\nExperiment and observe what happens.", this.vandeGraaffController.On ? "OFF" : "ON"), this.textStyle);
+	//	GUI.Label (new Rect (Screen.width / 2 - 200f, Screen.height / 16, 400f, 100f), string.Format ("You can turn the Van de Graaff Generator ON/OFF.\r\nExperiment and observe what happens.", this.vandeGraaffController.On ? "OFF" : "ON"), this.textStyle);
 		// show voltage / charge of VdG
 		GUI.Label (new Rect (Screen.width - 170f, Screen.height - 50f, 170f, 50f), string.Format ("Voltage: {0,15:N0} V\r\nCharge: {1,16} C", this.vandeGraaffController.GetVoltage(), this.vandeGraaffController.ChargeStrength));
 		// show controls
-		GUI.Label (new Rect (10f, 10f, 300f, 200f), string.Format("[ESC] - Leave\r\n[E] - Switch {0} Van de Graaff Generator\r\n[F] - {1} Electric Field\r\n[C] - {2} Charge", this.vandeGraaffController.On ? "OFF" : "ON", this.vandeGraaffController.FieldLinesEnabled ? "Hide" : "Show", this.glowEnabled ? "Hide" : "Show"));
+		//GUI.Label (new Rect (10f, 10f, 300f, 200f), string.Format("[ESC] - Leave\r\n[E] - Switch {0} Van de Graaff Generator\r\n[F] - {1} Electric Field\r\n[C] - {2} Charge", this.vandeGraaffController.On ? "OFF" : "ON", this.vandeGraaffController.FieldLinesEnabled ? "Hide" : "Show", this.glowEnabled ? "Hide" : "Show"));
 	}
 }

@@ -33,6 +33,7 @@ public class TeslaTrafoController : MonoBehaviour
 	{
 		// switch sound on/off
 		if (null != this.sound) {
+            this.sound.volume = SoundManager.instance.efxSource.volume;
 			this.sound.enabled = on;
 		}
 		// switch lightning on/off
@@ -52,7 +53,9 @@ public class TeslaTrafoController : MonoBehaviour
 
 	public void Update () 
 	{
-		this.UpdateBulbs ();
+        if (this.sound.enabled)
+            this.sound.volume = SoundManager.instance.efxSource.volume;
+        this.UpdateBulbs ();
 	}
 
 	private void UpdateBulbs()

@@ -87,8 +87,9 @@ public class IronFiling : MonoBehaviour, IResetObject
             linerenderer.shadowCastingMode = ShadowCastingMode.On;
             linerenderer.receiveShadows = true;
             linerenderer.material = ironMaterial;
-            linerenderer.useLightProbes = false;
-            linerenderer.SetWidth(0.2f, 0.002f);
+          //  GetComponent<Renderer>().lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
+            linerenderer.startWidth = 0.2f;
+            linerenderer.endWidth = 0.002f;
             linerenderers[i] = linerenderer;
         }
         gameObject.SetActive(false);
@@ -146,7 +147,7 @@ public class IronFiling : MonoBehaviour, IResetObject
             numberOfPoints++;
         }
 
-        linerender.SetVertexCount(numberOfPoints);
+        linerender.positionCount = numberOfPoints;
         for (int i = 0; i < numberOfPoints; i++)
         {
             linerender.SetPosition(i, linePoints[i]);
