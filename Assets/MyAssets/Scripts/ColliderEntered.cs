@@ -48,7 +48,7 @@ public class ColliderEntered : MonoBehaviour {
         //Starting experiments with left-click
 		if (Input.GetMouseButtonDown(0) && this.insideTriggerSphere)
         {
-            if (!GamificationManager.instance.headset)
+            if (!GamificationManager.instance.headset || LevelName == "Door")
                 dMan.ShowBox(dialogueKeyClick);
 		
             if (LevelName == "Headset")
@@ -70,7 +70,7 @@ public class ColliderEntered : MonoBehaviour {
             }
             
               
-            else if (LevelName != "helpi" && LevelName != "door" && LevelName != "Headset")
+            else if (LevelName != "Helpi" && LevelName != "Door" && LevelName != "Headset")
                 SceneManager.LoadScene(LevelName);
           
 		}

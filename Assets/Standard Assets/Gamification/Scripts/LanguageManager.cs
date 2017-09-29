@@ -145,12 +145,14 @@ public class LanguageManager
     public void Save()
     {
         XmlSerializer serializer = new XmlSerializer(typeof(LanguageManager));
+       
         using (FileStream stream = new FileStream(savePath, FileMode.Create))
         {
             serializer.Serialize(stream, this);
+            stream.Close();
         }
         //Avoid Backup Bug
-        //AssetDatabase.Refresh();
+        AssetDatabase.Refresh();
     }
     
     //XML Stuff Loading
@@ -161,20 +163,10 @@ public class LanguageManager
 
         try
         {
-            if (Application.platform == RuntimePlatform.WindowsEditor)
-            {
-                //Open simple if we are in Editor
-                stream = File.Open(savePath, FileMode.Open);
-            }
-            else
-            {
-                //If we are in Build or WebGL
                 TextAsset text = Resources.Load("Languages") as TextAsset;
                 stream = new MemoryStream(text.bytes);
-            }
-                return xmlSerializer.Deserialize(stream) as LanguageManager;
-            
-         
+                        
+                return xmlSerializer.Deserialize(stream) as LanguageManager;                    
         }
         catch
         {
