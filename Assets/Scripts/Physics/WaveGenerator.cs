@@ -2,13 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[ExecuteInEditMode]
 public class WaveGenerator : MonoBehaviour
 {
+    [SerializeField]
+    private Mesh planeMesh;
+
     [SerializeField]
     private GameObject planeObject;
 
     [SerializeField]
-    private int VerticesPerSide = 40;
+    private int VerticesPerLength = 40;
+
+    [SerializeField]
+    private int VerticesPerWidth = 20;
 
     [SerializeField]
     private float waveAmplitude;
@@ -24,61 +31,53 @@ public class WaveGenerator : MonoBehaviour
 
     private Vector3[] waveVertices;
 
-    private Mesh mesh;
-
     private float time = 0;
 
 	private void Start ()
     {
-
-        /*
-        Mesh testMesh = new Mesh();
-
+        planeMesh = new Mesh();
 
         // create vertices
         List<Vector3> vertices = new List<Vector3>();
-        for(int i = -VerticesPerSide; i <= VerticesPerSide; i++)
+        for(int i = -VerticesPerLength; i <= VerticesPerLength; i++)
         {
-            for (int j = -VerticesPerSide; j <= VerticesPerSide; j++)
+            for (int j = -VerticesPerWidth; j <= VerticesPerWidth; j++)
             {
                 vertices.Add(new Vector3(i, 0, j));
             }
         }
-        testMesh.vertices = vertices.ToArray();
+        planeMesh.vertices = vertices.ToArray();
 
         // create triangles
         List<int> triangles = new List<int>();
-        for(int i = 0; i < vertices.Count - (VerticesPerSide * 2 + 1) - 1; i++)
+        for(int i = 0; i < vertices.Count - (VerticesPerWidth * 2 + 1) - 1; i++)
         {
-            if ((i + 1) % (VerticesPerSide * 2 + 1) == 0)
+            if ((i + 1) % (VerticesPerWidth * 2 + 1) == 0)
                 continue;
 
-            triangles.Add(i + (VerticesPerSide * 2) + 2);
+            triangles.Add(i);
             triangles.Add(i + 1);
+            triangles.Add(i + (VerticesPerWidth * 2) + 2);
+
+            triangles.Add(i + (VerticesPerWidth * 2) + 2);         
+            triangles.Add(i + (VerticesPerWidth * 2) + 1);
             triangles.Add(i);
 
-            triangles.Add(i);
-            triangles.Add(i + (VerticesPerSide * 2) + 1);
-            triangles.Add(i + (VerticesPerSide * 2) + 2);
         }
 
-        testMesh.triangles = triangles.ToArray();
+        planeMesh.triangles = triangles.ToArray();
 
         Vector2[] uvs = new Vector2[vertices.Count];
         for(int i = 0; i < uvs.Length; i++)
         {
             uvs[i] = new Vector2(vertices[i].x, vertices[i].z);
         }
-        testMesh.uv = uvs;
-        */
+        planeMesh.uv = uvs;
 
         MeshFilter meshFilter = planeObject.GetComponent<MeshFilter>();
-        mesh = meshFilter.mesh;
-        //meshFilter.mesh = testMesh;
-        
+        meshFilter.mesh = planeMesh;
 
-        mesh = meshFilter.mesh;
-        waveVertices = mesh.vertices;
+        waveVertices = planeMesh.vertices;
     }
 	
 	private void FixedUpdate()
@@ -100,7 +99,7 @@ public class WaveGenerator : MonoBehaviour
 
         time += Time.fixedDeltaTime;
 
-        mesh.vertices = waveVertices;
-        mesh.RecalculateBounds();
+        planeMesh.vertices = waveVertices;
+        planeMesh.RecalculateBounds();
     }
 }
