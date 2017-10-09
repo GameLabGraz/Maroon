@@ -5,6 +5,8 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class WaveGenerator : MonoBehaviour
 {
+    enum WavePropagation { Rectilinear, Circular }
+
     [SerializeField]
     private Mesh planeMesh;
 
@@ -27,79 +29,22 @@ public class WaveGenerator : MonoBehaviour
     private float waveFrequency;
 
     [SerializeField]
+    private Vector3 startingPoint = Vector3.zero;
+
+    [SerializeField]
+    private WavePropagation propagationMode;
+
+    [SerializeField]
     private Vector3 propagationAxis = Vector3.right;
 
-    private Vector3[] waveVertices;
 
-    private float time = 0;
-
-	private void Start ()
+    public float GetWaveValue(Vector3 position, float time)
     {
-        planeMesh = new Mesh();
+        if (propagationMode == WavePropagation.Rectilinear)
+            position.z = 0;
 
-        // create vertices
-        List<Vector3> vertices = new List<Vector3>();
-        for(int i = -VerticesPerLength; i <= VerticesPerLength; i++)
-        {
-            for (int j = -VerticesPerWidth; j <= VerticesPerWidth; j++)
-            {
-                vertices.Add(new Vector3(i, 0, j));
-            }
-        }
-        planeMesh.vertices = vertices.ToArray();
-
-        // create triangles
-        List<int> triangles = new List<int>();
-        for(int i = 0; i < vertices.Count - (VerticesPerWidth * 2 + 1) - 1; i++)
-        {
-            if ((i + 1) % (VerticesPerWidth * 2 + 1) == 0)
-                continue;
-
-            triangles.Add(i);
-            triangles.Add(i + 1);
-            triangles.Add(i + (VerticesPerWidth * 2) + 2);
-
-            triangles.Add(i + (VerticesPerWidth * 2) + 2);         
-            triangles.Add(i + (VerticesPerWidth * 2) + 1);
-            triangles.Add(i);
-
-        }
-
-        planeMesh.triangles = triangles.ToArray();
-
-        Vector2[] uvs = new Vector2[vertices.Count];
-        for(int i = 0; i < uvs.Length; i++)
-        {
-            uvs[i] = new Vector2(vertices[i].x, vertices[i].z);
-        }
-        planeMesh.uv = uvs;
-
-        MeshFilter meshFilter = planeObject.GetComponent<MeshFilter>();
-        meshFilter.mesh = planeMesh;
-
-        waveVertices = planeMesh.vertices;
+        float distanceToSource = Vector3.Distance(startingPoint, position);
+        return waveAmplitude * Mathf.Sin(2 * Mathf.PI * waveFrequency * (time - distanceToSource / (waveLength * waveFrequency)));
     }
-	
-	private void FixedUpdate()
-    {
-        for (int i = 0; i < waveVertices.Length; i++)
-        {
-            Vector3 waveVertex = waveVertices[i];
 
-
-            Vector3 vertex = waveVertex;
-            //vertex.z = 0;
-
-            float x = Vector3.Distance(Vector3.zero, vertex);
-            waveVertex.y = waveAmplitude * Mathf.Sin(2 * Mathf.PI * waveFrequency * (time - x / (waveLength * waveFrequency)));
-
-
-            waveVertices[i] = waveVertex;
-        }
-
-        time += Time.fixedDeltaTime;
-
-        planeMesh.vertices = waveVertices;
-        planeMesh.RecalculateBounds();
-    }
 }
