@@ -47,21 +47,6 @@ public class WaterPlane : MonoBehaviour
     {
         for (int i = 0; i < waveVertices.Length; i++)
         {
-            /*
-            Vector3 waveVertex = waveVertices[i];
-
-
-            Vector3 vertex = waveVertex;
-            if (propagationMode == WavePropagation.Rectilinear)
-                vertex.z = 0;
-
-            float x = Vector3.Distance(startingPoint, vertex);
-            waveVertex.y = waveAmplitude * Mathf.Sin(2 * Mathf.PI * waveFrequency * (time - x / (waveLength * waveFrequency)));
-
-
-            waveVertices[i] = waveVertex;
-            */
-
             Vector3 waveVertex = waveVertices[i];
 
             waveVertex.y = GetTotalWaveValue(waveVertex);
@@ -79,7 +64,16 @@ public class WaterPlane : MonoBehaviour
     {
         float waveValue = 0;
         foreach(WaveGenerator waveGenerator in waveGenerators)
-            waveValue += waveGenerator.GetWaveValue(position, time);
+        {
+            Vector3 worldPosition = transform.TransformPoint(position);
+            Vector3 worldWaveStartingPoint = transform.TransformPoint(waveGenerator.getStaringPoint());
+
+            Vector3 rayDirection = worldWaveStartingPoint - worldPosition;
+            float maxRayLength = Vector3.Distance(worldWaveStartingPoint, worldPosition);
+
+            if (!Physics.Raycast(worldPosition, rayDirection, maxRayLength))
+                waveValue += waveGenerator.GetWaveValue(position, time);
+        }           
 
         return waveValue;
     }

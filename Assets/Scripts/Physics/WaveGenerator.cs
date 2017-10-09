@@ -47,4 +47,9 @@ public class WaveGenerator : MonoBehaviour
         return waveAmplitude * Mathf.Sin(2 * Mathf.PI * waveFrequency * (time - distanceToSource / (waveLength * waveFrequency)));
     }
 
+    public Vector3 getStaringPoint()
+    {
+        return this.startingPoint;
+    }
+
 }

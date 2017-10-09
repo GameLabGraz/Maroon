@@ -54,6 +54,10 @@ public class CapacitorPlateResizeController : VRTK_InteractableObject
 
         capacitorPlate.ToggleHighlight(false);
         capacitorPlate.EnableResizeObjects(false);
+
+        // Reset ignore controller collision with capacitor plate to enable plate touching
+        foreach (Collider usingCollider in previousTouchingObject.GetComponentsInChildren<Collider>())
+            Physics.IgnoreCollision(capacitorPlate.GetComponent<Collider>(), usingCollider, false);
     }
 
     public override void StartUsing(GameObject currentUsingObject)
@@ -75,10 +79,6 @@ public class CapacitorPlateResizeController : VRTK_InteractableObject
         base.StopUsing(previousUsingObject);
 
         isResizing = false;
-
-        // Reset ignore controller collision with capacitor plate to enable plate touching
-        foreach (Collider usingCollider in previousUsingObject.GetComponentsInChildren<Collider>())
-            Physics.IgnoreCollision(capacitorPlate.GetComponent<Collider>(), usingCollider, false);
     }
 
     private IEnumerator Resize()

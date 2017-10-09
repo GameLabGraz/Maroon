@@ -162,6 +162,9 @@ public class SliderController : VRTK_InteractableObject
     {
         base.Update();
 
+        if (ValueText == null)
+            return;
+
         if (isInteger)
             ValueText.text = ((int)getValue()).ToString();
         else
