@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 using VRTK;
 
 public class SliderController : VRTK_InteractableObject
@@ -24,7 +25,7 @@ public class SliderController : VRTK_InteractableObject
     private float maxValue;
 
     [SerializeField]
-    private TextMesh ValueText;
+    private Text ValueText;
 
     [SerializeField]
     private bool isInteger = false;

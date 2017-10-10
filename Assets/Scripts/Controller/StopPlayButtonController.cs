@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using VRTK;
 
 public class StopPlayButtonController : VRTK_InteractableObject
 {
     [SerializeField]
-    private TextMesh PlayPauseText;
+    private Text PlayPauseText;
 
     private SimulationController simController;
 
