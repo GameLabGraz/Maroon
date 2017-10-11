@@ -38,12 +38,16 @@ public class GamificationManager : MonoBehaviour
     public bool deactivateDialogue = false;
     [HideInInspector]
 
+    //Variables for loading laboratory in background from other scene 
+    public string levelName;
+    AsyncOperation async;
+
 
 
     //Manager will be created only once and then stays for all scenes
     public void Awake()
     {
-
+        levelName = "Laboratory";
         //  Debug.Log(l_manager.GetString("he", Language.English));
         scene = "Laboratory";
         DontDestroyOnLoad(this);
@@ -78,6 +82,30 @@ public class GamificationManager : MonoBehaviour
 
     }
 
+    
+    //Load Laboratory Scene in Background to avoid lag
+    //Use StartLoading to start loading the scene in background. Called in FadeOnEnter.cs and LoadOnEnter.cs
+    public void StartLoading()
+    {
+        StartCoroutine("load");
+    }
+
+    IEnumerator load()
+    {
+        Debug.LogWarning("ASYNC LOAD STARTED - " +
+           "DO NOT EXIT PLAY MODE UNTIL SCENE LOADS... UNITY WILL CRASH. SMALL LAG JUST IN EDITOR, WORKS SMOOTH IN BUILD");
+        async = SceneManager.LoadSceneAsync(scene);
+        async.allowSceneActivation = false;
+        yield return async;
+    }
+
+    //Use Activate to switch to the loaded scene immediately
+    public void ActivateScene()
+    {
+        async.allowSceneActivation = true;
+    }
+
+    //Resume Game from Menu
     public void Resume()
     {
         Debug.Log(scene);

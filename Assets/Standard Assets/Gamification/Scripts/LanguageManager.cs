@@ -149,10 +149,10 @@ public class LanguageManager
         using (FileStream stream = new FileStream(savePath, FileMode.Create))
         {
             serializer.Serialize(stream, this);
-            stream.Close();
+            Debug.Log("Saving");
+       
         }
-        //Avoid Backup Bug
-        AssetDatabase.Refresh();
+      
     }
     
     //XML Stuff Loading
@@ -164,8 +164,7 @@ public class LanguageManager
         try
         {
                 TextAsset text = Resources.Load("Languages") as TextAsset;
-                stream = new MemoryStream(text.bytes);
-                        
+                stream = new MemoryStream(text.bytes);       
                 return xmlSerializer.Deserialize(stream) as LanguageManager;                    
         }
         catch

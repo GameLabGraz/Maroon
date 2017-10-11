@@ -35,6 +35,7 @@ public class BalloonController : MonoBehaviour, ICharge {
 
 	public void Update () 
 	{
+        sound.volume = SoundManager.instance.efxSource.volume;
 	}
 
 	public float GetMaxCharge()

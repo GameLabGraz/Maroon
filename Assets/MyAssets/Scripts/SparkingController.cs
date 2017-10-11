@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using DigitalRuby.ThunderAndLightning;
+using UnityEngine.UI;
 
 public class SparkingController : MonoBehaviour
 {
@@ -19,6 +20,8 @@ public class SparkingController : MonoBehaviour
 
     private VandeGraaffController vandeGraaffController;
     private AudioSource sound;
+
+    public Text text_distance;
 
     public void Start()
     {
@@ -41,6 +44,9 @@ public class SparkingController : MonoBehaviour
 
     public void Update()
     {
+        text_distance.text = GamificationManager.instance.l_manager.GetString("Distance GUI") + GetDistanceBetweenSparkingPoints();
+
+
         float vandeGraaffVoltage = this.vandeGraaffController.GetVoltage();
         float distance = this.GetDistanceBetweenSparkingPoints();
 
@@ -49,6 +55,7 @@ public class SparkingController : MonoBehaviour
         {
             // generate spark
             this.GenerateSpark();
+            this.sound.volume = SoundManager.instance.efxSource.volume;
             this.sound.Play();
             // discharge VdG
             this.vandeGraaffController.Discharge();
@@ -111,7 +118,7 @@ public class SparkingController : MonoBehaviour
     {
         if (showDistance)
         {
-            GUI.Label(new Rect(10f, Screen.height - 30f, 200f, 20f), string.Format("Distance: {0} m", GetDistanceBetweenSparkingPoints()));
+           // GUI.Label(new Rect(10f, Screen.height - 30f, 200f, 20f), string.Format("Distance: {0} m", GetDistanceBetweenSparkingPoints()));
         }
     }
 }

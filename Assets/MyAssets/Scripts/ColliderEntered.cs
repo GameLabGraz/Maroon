@@ -5,7 +5,7 @@ using System.Collections;
 public class ColliderEntered : MonoBehaviour {
 
 	public string LevelName;
-	public string DisplayedText;	// starts with "Press [E] " //Isnt needed anymore in the Helpi Version
+	//public string DisplayedText;	// starts with "Press [E] " //Isnt needed anymore in the Helpi Version
 	private bool insideTriggerSphere = false;
 	private GUIStyle textStyle;
     //dialogue starts when colliding
@@ -14,7 +14,8 @@ public class ColliderEntered : MonoBehaviour {
     public string dialogueKeyClick;
     private DialogueManager dMan;
     //if this is set true in Editor, Dialogue is only played once
-    public bool DeleteAfterFirstTime;
+    public bool Just_Playing_Once;
+    private  bool played_once;
 
 
     public void Start()
@@ -29,9 +30,10 @@ public class ColliderEntered : MonoBehaviour {
 		if (other.CompareTag ("Player")) {
 			Debug.Log("Player entered");
 			this.insideTriggerSphere = true;
-            dMan.ShowBox(dialogueKey);
-            if (DeleteAfterFirstTime)
-                Destroy(this);
+            if (!played_once)
+              dMan.ShowBox(dialogueKey);
+            if (Just_Playing_Once)
+             played_once = true;
         }
 	}
 

@@ -122,6 +122,7 @@ public class VandeGraaffController : MonoBehaviour
 		this.UpdateGlow ();
 		// update induced charge of other game objects (e.g. Grounder)
 		this.UpdateInducedCharges ();
+        sound.volume = SoundManager.instance.efxSource.volume;
 	}
 
 	private void UpdateCharge()

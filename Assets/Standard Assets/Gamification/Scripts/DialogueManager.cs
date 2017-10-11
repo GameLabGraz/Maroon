@@ -16,7 +16,6 @@ public class DialogueManager : MonoBehaviour {
     public float letterPause = 0.01f;
     public AudioClip typeSound;
     private string dialougeKey1 = "Introduction 1";
-    private string dialogueKey2 = "Introduction 2";
     private string dialogueKey3 = "Vandegraaf 1";
     private string dialogueKey4 = "Vandegraaf 2";
     
@@ -31,7 +30,7 @@ public class DialogueManager : MonoBehaviour {
         if (sceneName == "VandeGraaffExperiment1")
         {
 
-            ShowBox(dialogueKey3);
+          //  ShowBox(dialogueKey3);
 
             
         }
@@ -41,7 +40,7 @@ public class DialogueManager : MonoBehaviour {
         }
         else if (sceneName == "VandeGraaffExperiment2")
         {
-            ShowBox(dialogueKey4);
+           // ShowBox(dialogueKey4);
         }
         else if(sceneName == "Laboratory" && GamificationManager.instance.gameStarted)
         {
@@ -80,7 +79,7 @@ public class DialogueManager : MonoBehaviour {
         if (GamificationManager.instance.deactivateDialogue)
             return;
         //get the dialogue in the language manager in the current language. Returns nothing if keyword doesnt exist
-        string dialogue = GamificationManager.instance.l_manager.GetString(keyword);
+        string dialogue = GamificationManager.instance.l_manager.GetString(keyword);   
         if (!GamificationManager.instance.coroutineRunning)
         {
             dialogActive = true;
@@ -94,6 +93,8 @@ public class DialogueManager : MonoBehaviour {
 
 
     }
+
+
 
     //Function to display text letter-by-letter
     IEnumerator TypeText(string dialogue)
