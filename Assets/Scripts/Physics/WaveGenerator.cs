@@ -40,16 +40,17 @@ public class WaveGenerator : MonoBehaviour
 
     public float GetWaveValue(Vector3 position, float time)
     {
+        startingPoint = transform.position;
+
         if (propagationMode == WavePropagation.Rectilinear)
-            position.z = 0;
+        {
+            position.x = 0;
+            startingPoint.x = 0;
+        }
+           
 
         float distanceToSource = Vector3.Distance(startingPoint, position);
+
         return waveAmplitude * Mathf.Sin(2 * Mathf.PI * waveFrequency * (time - distanceToSource / (waveLength * waveFrequency)));
     }
-
-    public Vector3 getStaringPoint()
-    {
-        return this.startingPoint;
-    }
-
 }

@@ -14,9 +14,11 @@ public class Capacitor : PausableObject
     [SerializeField]
     private float seriesResistance = 500;
 
-    private float vacuumPermittivity = 8.8542e-12f;
+    private const float vacuumPermittivity = 8.8542e-12f;
 
-    private float relativePermittivity = 1.0f;
+    private Dielectric dielectric;
+
+    // private float relativePermittivity = 1.0f;
 
     private float capacitance;
 
@@ -31,6 +33,8 @@ public class Capacitor : PausableObject
             Debug.LogError("Capacitor requires two plates!");
             gameObject.SetActive(false);
         }
+
+        dielectric = GameObject.FindObjectOfType<Dielectric>();
 	}
 
     private float GetOverlapPlateArea()
@@ -77,11 +81,6 @@ public class Capacitor : PausableObject
         return Vector3.Distance(plate1.transform.position, plate2.transform.position);
     }
 
-    public void SetRelativePermittivity(float relativePermittivity)
-    {
-        this.relativePermittivity = relativePermittivity;
-    }
-
     protected override void HandleUpdate()
     {
 
@@ -89,6 +88,10 @@ public class Capacitor : PausableObject
 
     protected override void HandleFixedUpdate()
     {
+        float relativePermittivity = 1.0f;
+        if (dielectric != null)
+            relativePermittivity = dielectric.GetRelativePermittivity();
+
         capacitance = (GetOverlapPlateArea() * vacuumPermittivity * relativePermittivity) / GetPlateDistance();
     }
 

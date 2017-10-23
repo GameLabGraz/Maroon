@@ -66,13 +66,13 @@ public class WaterPlane : MonoBehaviour
         foreach(WaveGenerator waveGenerator in waveGenerators)
         {
             Vector3 worldPosition = transform.TransformPoint(position);
-            Vector3 worldWaveStartingPoint = transform.TransformPoint(waveGenerator.getStaringPoint());
+            Vector3 worldWaveStartingPoint = waveGenerator.transform.position; //transform.TransformPoint(waveGenerator.getStaringPoint());
 
             Vector3 rayDirection = worldWaveStartingPoint - worldPosition;
             float maxRayLength = Vector3.Distance(worldWaveStartingPoint, worldPosition);
 
             if (!Physics.Raycast(worldPosition, rayDirection, maxRayLength))
-                waveValue += waveGenerator.GetWaveValue(position, time);
+                waveValue += waveGenerator.GetWaveValue(worldPosition, time);
         }           
 
         return waveValue;
