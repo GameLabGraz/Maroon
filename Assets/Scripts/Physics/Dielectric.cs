@@ -38,7 +38,6 @@ public class Dielectric : MonoBehaviour
     {
         renderer_ = GetComponent<Renderer>();
         UpdateMaterialColor();
-
     }
 
     private void UpdateMaterialColor()

@@ -18,11 +18,14 @@ public class Capacitor : PausableObject
 
     private Dielectric dielectric;
 
-    // private float relativePermittivity = 1.0f;
-
     private float capacitance;
 
+    [SerializeField]
+    private float powerVoltage = 15;
+
     private float voltage;
+
+    private float time = 0;
 
     protected override void Start()
     {
@@ -93,16 +96,48 @@ public class Capacitor : PausableObject
             relativePermittivity = dielectric.GetRelativePermittivity();
 
         capacitance = (GetOverlapPlateArea() * vacuumPermittivity * relativePermittivity) / GetPlateDistance();
+
+        if (voltage < powerVoltage)
+            Charge();
+        else
+            Discharge();
+
+        time += Time.fixedDeltaTime;
     }
 
-    public float getCapacitance()
+    private void Charge()
+    {
+        voltage = powerVoltage * (1 - Mathf.Exp(-time / (seriesResistance * capacitance * 100000000)));
+    }
+
+    private void Discharge()
+    {
+        voltage = powerVoltage * Mathf.Exp(-time / (seriesResistance * capacitance * 100000000));
+    }
+
+    public float GetVoltage()
+    {
+        return this.voltage;
+    }
+
+    public void getVoltageByReference(MessageArgs args)
+    {
+        args.value = this.voltage;
+    }
+
+    public float GetCapacitance()
     {
         return this.capacitance;
     }
 
-    public void getCapacitanceByReference(MessageArgs args)
+    public void GetCapacitanceByReference(MessageArgs args)
     {
         args.value = this.capacitance;
+    }
+
+    public void SetPowerVoltage(float voltage)
+    {
+        this.powerVoltage = voltage;
     }
 
 }
