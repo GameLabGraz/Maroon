@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class Capacitor : PausableObject
 {
+    private enum ChargeState {IDLE, CHARGING, DISCHARGING};
+
+
     [SerializeField]
     private GameObject plate1;
 
@@ -25,7 +28,9 @@ public class Capacitor : PausableObject
 
     private float voltage;
 
-    private float time = 0;
+    private float chargeTime = 0;
+
+    private ChargeState chargeState = ChargeState.IDLE;
 
     protected override void Start()
     {
@@ -97,22 +102,49 @@ public class Capacitor : PausableObject
 
         capacitance = (GetOverlapPlateArea() * vacuumPermittivity * relativePermittivity) / GetPlateDistance();
 
-        if (voltage < powerVoltage)
-            Charge();
-        else
-            Discharge();
+        switch(chargeState)
+        {
+            case ChargeState.IDLE:
+                chargeTime = 0;
 
-        time += Time.fixedDeltaTime;
+                if (powerVoltage > voltage)
+                    chargeState = ChargeState.CHARGING;
+                else if (powerVoltage < voltage)
+                    chargeState = ChargeState.DISCHARGING;
+
+                break;
+
+            case ChargeState.CHARGING:
+                Charge();
+
+                if (voltage >= powerVoltage)
+                    chargeState = ChargeState.IDLE;
+
+                chargeTime += Time.fixedDeltaTime;
+                break;
+
+            case ChargeState.DISCHARGING:
+                Discharge();
+
+                if (voltage <= powerVoltage)
+                    chargeState = ChargeState.IDLE;
+
+                chargeTime += Time.fixedDeltaTime;
+                break;
+
+            default:
+                break;
+        }
     }
 
     private void Charge()
     {
-        voltage = powerVoltage * (1 - Mathf.Exp(-time / (seriesResistance * capacitance * 100000000)));
+        voltage = powerVoltage * (1 - Mathf.Exp(-chargeTime / (seriesResistance * capacitance * 100000000)));
     }
 
     private void Discharge()
     {
-        voltage = powerVoltage * Mathf.Exp(-time / (seriesResistance * capacitance * 100000000));
+        voltage = powerVoltage * Mathf.Exp(-chargeTime / (seriesResistance * capacitance * 100000000));
     }
 
     public float GetVoltage()
