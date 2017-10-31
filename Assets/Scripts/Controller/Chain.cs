@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class Chain : MonoBehaviour
+public class Chain : MonoBehaviour, IPath
 {
     [SerializeField]
     private Vector3 chainAxis = Vector3.up;
@@ -29,7 +30,7 @@ public class Chain : MonoBehaviour
 
     [SerializeField, HideInInspector]
     private List<GameObject> LinkObjects = new List<GameObject>();
-    
+
     public void UpdateNumberOfLinks()
     {
         if (linkCount > LinkObjects.Count)
@@ -49,7 +50,7 @@ public class Chain : MonoBehaviour
 
             if (linkIndex <= 0)
                 return;
-                        
+
             previousLink = LinkObjects[linkIndex - 1];
         }
 
@@ -60,7 +61,7 @@ public class Chain : MonoBehaviour
     private Vector3 GetLinkSize(GameObject linkObject, bool localScale = true)
     {
         Vector3 size = Vector3.Scale(linkObject.GetComponent<MeshFilter>().sharedMesh.bounds.size, chainAxis);
-        if(localScale)
+        if (localScale)
             size = Vector3.Scale(size, linkObject.transform.localScale);
         return size;
     }
@@ -102,7 +103,7 @@ public class Chain : MonoBehaviour
 
     private void RemoveLinkObjects(int removeCount)
     {
-        for(int i = 0; i < removeCount; i++)
+        for (int i = 0; i < removeCount; i++)
         {
             if (LinkObjects.Count == 0)
                 return;
@@ -132,7 +133,7 @@ public class Chain : MonoBehaviour
             linkObject.transform.localScale = linkScale;
             UpdateLinkPosition(linkObject, previousLink);
 
-            CharacterJoint joint = linkObject.AddComponent<CharacterJoint>();           
+            CharacterJoint joint = linkObject.AddComponent<CharacterJoint>();
             UpdateJointSettings(linkObject);
 
             if (previousLink)
@@ -145,11 +146,24 @@ public class Chain : MonoBehaviour
 
     private void ClearLinkObjects()
     {
-        while(LinkObjects.Count > 0)
+        while (LinkObjects.Count > 0)
         {
             GameObject toRemove = LinkObjects[0];
             LinkObjects.Remove(toRemove);
             DestroyImmediate(toRemove);
         }
+    }
+
+    public List<Vector3> GetNodes(bool reverseOrder = false)
+    {
+        List<Vector3> path = new List<Vector3>();
+
+        foreach (GameObject linkObject in LinkObjects)
+            path.Add(linkObject.transform.position);
+
+        if (reverseOrder)
+            path.Reverse();
+
+        return path;
     }
 }
