@@ -2,63 +2,63 @@
 {
     using UnityEngine;
     using UnityEngine.Events;
+    using System;
 
-    [RequireComponent(typeof(VRTK_BodyPhysics))]
-    public class VRTK_BodyPhysics_UnityEvents : MonoBehaviour
+    [AddComponentMenu("VRTK/Scripts/Utilities/Unity Events/VRTK_BodyPhysics_UnityEvents")]
+    public sealed class VRTK_BodyPhysics_UnityEvents : VRTK_UnityEvents<VRTK_BodyPhysics>
     {
-        private VRTK_BodyPhysics bp;
+        [Serializable]
+        public sealed class BodyPhysicsEvent : UnityEvent<object, BodyPhysicsEventArgs> { }
 
-        [System.Serializable]
-        public class UnityObjectEvent : UnityEvent<object, BodyPhysicsEventArgs> { };
+        public BodyPhysicsEvent OnStartFalling = new BodyPhysicsEvent();
+        public BodyPhysicsEvent OnStopFalling = new BodyPhysicsEvent();
 
-        /// <summary>
-        /// Emits the StartFalling class event.
-        /// </summary>
-        public UnityObjectEvent OnStartFalling = new UnityObjectEvent();
-        /// <summary>
-        /// Emits the StopFalling class event.
-        /// </summary>
-        public UnityObjectEvent OnStopFalling = new UnityObjectEvent();
-        /// <summary>
-        /// Emits the StartMoving class event.
-        /// </summary>
-        public UnityObjectEvent OnStartMoving = new UnityObjectEvent();
-        /// <summary>
-        /// Emits the StopMoving class event.
-        /// </summary>
-        public UnityObjectEvent OnStopMoving = new UnityObjectEvent();
-        /// <summary>
-        /// Emits the StartColliding class event.
-        /// </summary>
-        public UnityObjectEvent OnStartColliding = new UnityObjectEvent();
-        /// <summary>
-        /// Emits the StopColliding class event.
-        /// </summary>
-        public UnityObjectEvent OnStopColliding = new UnityObjectEvent();
+        public BodyPhysicsEvent OnStartMoving = new BodyPhysicsEvent();
+        public BodyPhysicsEvent OnStopMoving = new BodyPhysicsEvent();
 
-        private void SetBodyPhysics()
+        public BodyPhysicsEvent OnStartColliding = new BodyPhysicsEvent();
+        public BodyPhysicsEvent OnStopColliding = new BodyPhysicsEvent();
+
+        public BodyPhysicsEvent OnStartLeaning = new BodyPhysicsEvent();
+        public BodyPhysicsEvent OnStopLeaning = new BodyPhysicsEvent();
+
+        public BodyPhysicsEvent OnStartTouchingGround = new BodyPhysicsEvent();
+        public BodyPhysicsEvent OnStopTouchingGround = new BodyPhysicsEvent();
+
+        protected override void AddListeners(VRTK_BodyPhysics component)
         {
-            if (bp == null)
-            {
-                bp = GetComponent<VRTK_BodyPhysics>();
-            }
+            component.StartFalling += StartFalling;
+            component.StopFalling += StopFalling;
+
+            component.StartMoving += StartMoving;
+            component.StopMoving += StopMoving;
+
+            component.StartColliding += StartColliding;
+            component.StopColliding += StopColliding;
+
+            component.StartLeaning += StartLeaning;
+            component.StopLeaning += StopLeaning;
+
+            component.StartTouchingGround += StartTouchingGround;
+            component.StopTouchingGround += StopTouchingGround;
         }
 
-        private void OnEnable()
+        protected override void RemoveListeners(VRTK_BodyPhysics component)
         {
-            SetBodyPhysics();
-            if (bp == null)
-            {
-                Debug.LogError("The VRTK_BodyPhysics_UnityEvents script requires to be attached to a GameObject that contains a VRTK_BodyPhysics script");
-                return;
-            }
+            component.StartFalling -= StartFalling;
+            component.StopFalling -= StopFalling;
 
-            bp.StartFalling += StartFalling;
-            bp.StopFalling += StopFalling;
-            bp.StartMoving += StartMoving;
-            bp.StopMoving += StopMoving;
-            bp.StartColliding += StartColliding;
-            bp.StopColliding += StopColliding;
+            component.StartMoving -= StartMoving;
+            component.StopMoving -= StopMoving;
+
+            component.StartColliding -= StartColliding;
+            component.StopColliding -= StopColliding;
+
+            component.StartLeaning -= StartLeaning;
+            component.StopLeaning -= StopLeaning;
+
+            component.StartTouchingGround -= StartTouchingGround;
+            component.StopTouchingGround -= StopTouchingGround;
         }
 
         private void StartFalling(object o, BodyPhysicsEventArgs e)
@@ -91,19 +91,24 @@
             OnStopColliding.Invoke(o, e);
         }
 
-        private void OnDisable()
+        private void StartLeaning(object o, BodyPhysicsEventArgs e)
         {
-            if (bp == null)
-            {
-                return;
-            }
+            OnStartLeaning.Invoke(o, e);
+        }
 
-            bp.StartFalling -= StartFalling;
-            bp.StopFalling -= StopFalling;
-            bp.StartMoving -= StartMoving;
-            bp.StopMoving -= StopMoving;
-            bp.StartColliding -= StartColliding;
-            bp.StopColliding -= StopColliding;
+        private void StopLeaning(object o, BodyPhysicsEventArgs e)
+        {
+            OnStopLeaning.Invoke(o, e);
+        }
+
+        private void StartTouchingGround(object o, BodyPhysicsEventArgs e)
+        {
+            OnStartTouchingGround.Invoke(o, e);
+        }
+
+        private void StopTouchingGround(object o, BodyPhysicsEventArgs e)
+        {
+            OnStopTouchingGround.Invoke(o, e);
         }
     }
 }

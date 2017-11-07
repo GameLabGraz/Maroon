@@ -2,43 +2,44 @@
 {
     using UnityEngine;
     using UnityEngine.Events;
+    using System;
 
-    [RequireComponent(typeof(VRTK_InteractTouch))]
-    public class VRTK_InteractTouch_UnityEvents : MonoBehaviour
+    [AddComponentMenu("VRTK/Scripts/Utilities/Unity Events/VRTK_InteractTouch_UnityEvents")]
+    public sealed class VRTK_InteractTouch_UnityEvents : VRTK_UnityEvents<VRTK_InteractTouch>
     {
-        private VRTK_InteractTouch it;
+        [Serializable]
+        public sealed class ObjectInteractEvent : UnityEvent<object, ObjectInteractEventArgs> { }
 
-        [System.Serializable]
-        public class UnityObjectEvent : UnityEvent<object, ObjectInteractEventArgs> { };
+        public ObjectInteractEvent OnControllerStartTouchInteractableObject = new ObjectInteractEvent();
+        public ObjectInteractEvent OnControllerTouchInteractableObject = new ObjectInteractEvent();
+        public ObjectInteractEvent OnControllerStartUntouchInteractableObject = new ObjectInteractEvent();
+        public ObjectInteractEvent OnControllerUntouchInteractableObject = new ObjectInteractEvent();
+        public ObjectInteractEvent OnControllerRigidbodyActivated = new ObjectInteractEvent();
+        public ObjectInteractEvent OnControllerRigidbodyDeactivated = new ObjectInteractEvent();
 
-        /// <summary>
-        /// Emits the ControllerTouchInteractableObject class event.
-        /// </summary>
-        public UnityObjectEvent OnControllerTouchInteractableObject = new UnityObjectEvent();
-        /// <summary>
-        /// Emits the ControllerUntouchInteractableObject class event.
-        /// </summary>
-        public UnityObjectEvent OnControllerUntouchInteractableObject = new UnityObjectEvent();
-
-        private void SetInteractTouch()
+        protected override void AddListeners(VRTK_InteractTouch component)
         {
-            if (it == null)
-            {
-                it = GetComponent<VRTK_InteractTouch>();
-            }
+            component.ControllerStartTouchInteractableObject += ControllerStartTouchInteractableObject;
+            component.ControllerTouchInteractableObject += ControllerTouchInteractableObject;
+            component.ControllerStartUntouchInteractableObject += ControllerStartUntouchInteractableObject;
+            component.ControllerUntouchInteractableObject += ControllerUntouchInteractableObject;
+            component.ControllerRigidbodyActivated += ControllerRigidbodyActivated;
+            component.ControllerRigidbodyDeactivated += ControllerRigidbodyDeactivated;
         }
 
-        private void OnEnable()
+        protected override void RemoveListeners(VRTK_InteractTouch component)
         {
-            SetInteractTouch();
-            if (it == null)
-            {
-                Debug.LogError("The VRTK_InteractTouch_UnityEvents script requires to be attached to a GameObject that contains a VRTK_InteractTouch script");
-                return;
-            }
+            component.ControllerStartTouchInteractableObject -= ControllerStartTouchInteractableObject;
+            component.ControllerTouchInteractableObject -= ControllerTouchInteractableObject;
+            component.ControllerStartUntouchInteractableObject -= ControllerStartUntouchInteractableObject;
+            component.ControllerUntouchInteractableObject -= ControllerUntouchInteractableObject;
+            component.ControllerRigidbodyActivated -= ControllerRigidbodyActivated;
+            component.ControllerRigidbodyDeactivated -= ControllerRigidbodyDeactivated;
+        }
 
-            it.ControllerTouchInteractableObject += ControllerTouchInteractableObject;
-            it.ControllerUntouchInteractableObject += ControllerUntouchInteractableObject;
+        private void ControllerStartTouchInteractableObject(object o, ObjectInteractEventArgs e)
+        {
+            OnControllerStartTouchInteractableObject.Invoke(o, e);
         }
 
         private void ControllerTouchInteractableObject(object o, ObjectInteractEventArgs e)
@@ -46,20 +47,24 @@
             OnControllerTouchInteractableObject.Invoke(o, e);
         }
 
+        private void ControllerStartUntouchInteractableObject(object o, ObjectInteractEventArgs e)
+        {
+            OnControllerStartUntouchInteractableObject.Invoke(o, e);
+        }
+
         private void ControllerUntouchInteractableObject(object o, ObjectInteractEventArgs e)
         {
             OnControllerUntouchInteractableObject.Invoke(o, e);
         }
 
-        private void OnDisable()
+        private void ControllerRigidbodyActivated(object o, ObjectInteractEventArgs e)
         {
-            if (it == null)
-            {
-                return;
-            }
+            OnControllerRigidbodyActivated.Invoke(o, e);
+        }
 
-            it.ControllerTouchInteractableObject -= ControllerTouchInteractableObject;
-            it.ControllerUntouchInteractableObject -= ControllerUntouchInteractableObject;
+        private void ControllerRigidbodyDeactivated(object o, ObjectInteractEventArgs e)
+        {
+            OnControllerRigidbodyDeactivated.Invoke(o, e);
         }
     }
 }

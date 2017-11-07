@@ -59,6 +59,7 @@ namespace VRTK
     /// Pressing the trigger generates a new sphere and pressing the touchpad generates ten new spheres.
     /// Eventually when lots of spheres are present the FPS will drop and demonstrate the script.
     /// </example>
+    [AddComponentMenu("VRTK/Scripts/Utilities/VRTK_AdaptiveQuality")]
     public sealed class VRTK_AdaptiveQuality : MonoBehaviour
     {
         #region Public fields
@@ -123,7 +124,6 @@ namespace VRTK
         [Tooltip("The render viewport scale level to override the current one with.")]
         [NonSerialized]
         public int overrideRenderViewportScaleLevel;
-
         #endregion
 
         #region Public readonly fields & properties
@@ -145,7 +145,7 @@ namespace VRTK
         /// </remarks>
         public static float CurrentRenderScale
         {
-            get { return VRSettings.renderScale * VRSettings.renderViewportScale; }
+            get { return UnityEngine.XR.XRSettings.eyeTextureResolutionScale * UnityEngine.XR.XRSettings.renderViewportScale; }
         }
 
         /// <summary>
@@ -210,8 +210,8 @@ namespace VRTK
         /// </returns>
         public static Vector2 RenderTargetResolutionForRenderScale(float renderScale)
         {
-            return new Vector2((int)(VRSettings.eyeTextureWidth / VRSettings.renderScale * renderScale),
-                               (int)(VRSettings.eyeTextureHeight / VRSettings.renderScale * renderScale));
+            return new Vector2((int)(UnityEngine.XR.XRSettings.eyeTextureWidth / UnityEngine.XR.XRSettings.eyeTextureResolutionScale * renderScale),
+                               (int)(UnityEngine.XR.XRSettings.eyeTextureHeight / UnityEngine.XR.XRSettings.eyeTextureResolutionScale * renderScale));
         }
 
         /// <summary>
@@ -223,15 +223,15 @@ namespace VRTK
         /// </returns>
         public float BiggestAllowedMaximumRenderScale()
         {
-            if (VRSettings.eyeTextureWidth == 0 || VRSettings.eyeTextureHeight == 0)
+            if (UnityEngine.XR.XRSettings.eyeTextureWidth == 0 || UnityEngine.XR.XRSettings.eyeTextureHeight == 0)
             {
                 return maximumRenderScale;
             }
 
-            float maximumHorizontalRenderScale = maximumRenderTargetDimension * VRSettings.renderScale
-                                                 / VRSettings.eyeTextureWidth;
-            float maximumVerticalRenderScale = maximumRenderTargetDimension * VRSettings.renderScale
-                                               / VRSettings.eyeTextureHeight;
+            float maximumHorizontalRenderScale = maximumRenderTargetDimension * UnityEngine.XR.XRSettings.eyeTextureResolutionScale
+                                                 / UnityEngine.XR.XRSettings.eyeTextureWidth;
+            float maximumVerticalRenderScale = maximumRenderTargetDimension * UnityEngine.XR.XRSettings.eyeTextureResolutionScale
+                                               / UnityEngine.XR.XRSettings.eyeTextureHeight;
             return Mathf.Min(maximumHorizontalRenderScale, maximumVerticalRenderScale);
         }
 
@@ -290,13 +290,18 @@ namespace VRTK
 
         #region MonoBehaviour methods
 
+        private void Awake()
+        {
+            VRTK_SDKManager.instance.AddBehaviourToToggleOnLoadedSetupChange(this);
+        }
+
         private void OnEnable()
         {
             Camera.onPreCull += OnCameraPreCull;
 
             hmdDisplayIsOnDesktop = VRTK_SDK_Bridge.IsDisplayOnDesktop();
-            singleFrameDurationInMilliseconds = VRDevice.refreshRate > 0.0f
-                                                ? 1000.0f / VRDevice.refreshRate
+            singleFrameDurationInMilliseconds = UnityEngine.XR.XRDevice.refreshRate > 0.0f
+                                                ? 1000.0f / UnityEngine.XR.XRDevice.refreshRate
                                                 : DefaultFrameDurationInMilliseconds;
 
             HandleCommandLineArguments();
@@ -311,6 +316,11 @@ namespace VRTK
         {
             Camera.onPreCull -= OnCameraPreCull;
             SetRenderScale(1.0f, 1.0f);
+        }
+
+        private void OnDestroy()
+        {
+            VRTK_SDKManager.instance.RemoveBehaviourToToggleOnLoadedSetupChange(this);
         }
 
         private void OnValidate()
@@ -482,6 +492,11 @@ namespace VRTK
 
         private void UpdateRenderScale()
         {
+            if (allRenderScales.Count == 0)
+            {
+                return;
+            }
+
             if (!scaleRenderViewport)
             {
                 renderViewportScaleSetting.currentValue = defaultRenderViewportScaleLevel;
@@ -629,13 +644,13 @@ namespace VRTK
 
         private static void SetRenderScale(float renderScale, float renderViewportScale)
         {
-            if (Mathf.Abs(VRSettings.renderScale - renderScale) > float.Epsilon)
+            if (Mathf.Abs(UnityEngine.XR.XRSettings.eyeTextureResolutionScale - renderScale) > float.Epsilon)
             {
-                VRSettings.renderScale = renderScale;
+                UnityEngine.XR.XRSettings.eyeTextureResolutionScale = renderScale;
             }
-            if (Mathf.Abs(VRSettings.renderViewportScale - renderViewportScale) > float.Epsilon)
+            if (Mathf.Abs(UnityEngine.XR.XRSettings.renderViewportScale - renderViewportScale) > float.Epsilon)
             {
-                VRSettings.renderViewportScale = renderViewportScale;
+                UnityEngine.XR.XRSettings.renderViewportScale = renderViewportScale;
             }
         }
 
@@ -682,11 +697,8 @@ namespace VRTK
 #endif
                 mesh.UploadMeshData(true);
 
-                debugVisualizationQuad = new GameObject("AdaptiveQualityDebugVisualizationQuad");
-                if (VRTK_SDKManager.instance)
-                {
-                    debugVisualizationQuad.transform.parent = VRTK_DeviceFinder.HeadsetTransform();
-                }
+                debugVisualizationQuad = new GameObject(VRTK_SharedMethods.GenerateVRTKObjectName(true, "AdaptiveQualityDebugVisualizationQuad"));
+                debugVisualizationQuad.transform.parent = VRTK_DeviceFinder.HeadsetTransform();
                 debugVisualizationQuad.transform.localPosition = Vector3.forward;
                 debugVisualizationQuad.transform.localRotation = Quaternion.identity;
                 debugVisualizationQuad.AddComponent<MeshFilter>().mesh = mesh;
@@ -710,9 +722,7 @@ namespace VRTK
                 return;
             }
 
-            int lastFrameIsInBudget = interleavedReprojectionEnabled || VRStats.gpuTimeLastFrame > singleFrameDurationInMilliseconds
-                                      ? 0
-                                      : 1;
+            int lastFrameIsInBudget = (interleavedReprojectionEnabled || VRTK_SharedMethods.GetGPUTimeLastFrame() > singleFrameDurationInMilliseconds ? 0 : 1);
 
             debugVisualizationQuadMaterial.SetInt(ShaderPropertyIDs.RenderScaleLevelsCount, allRenderScales.Count);
             debugVisualizationQuadMaterial.SetInt(ShaderPropertyIDs.DefaultRenderViewportScaleLevel, defaultRenderViewportScaleLevel);
@@ -801,7 +811,7 @@ namespace VRTK
             public void SaveCurrentFrameTiming()
             {
                 bufferIndex = (bufferIndex + 1) % buffer.Length;
-                buffer[bufferIndex] = VRStats.gpuTimeLastFrame;
+                buffer[bufferIndex] = VRTK_SharedMethods.GetGPUTimeLastFrame();
             }
 
             public float GetFrameTiming(int framesAgo)

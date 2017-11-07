@@ -1,20 +1,22 @@
 ﻿// Simulator Headset|SDK_Simulator|002
 namespace VRTK
 {
-#if VRTK_SDK_SIM
     using UnityEngine;
     using System.Collections.Generic;
 
     /// <summary>
     /// The Sim Headset SDK script  provides dummy functions for the headset.
     /// </summary>
+    [SDK_Description(typeof(SDK_SimSystem))]
     public class SDK_SimHeadset : SDK_BaseHeadset
     {
         private Transform camera;
-        private Vector3 lastPos;
-        private Vector3 lastRot;
-        private List<Vector3> posList;
-        private List<Vector3> rotList;
+        private Vector3 lastPos = new Vector3();
+        private Quaternion lastRot = new Quaternion();
+        private List<Vector3> posList = new List<Vector3>();
+        private List<Vector3> rotList = new List<Vector3>();
+        private float magnitude;
+        private Vector3 axis;
 
         /// <summary>
         /// The ProcessUpdate method enables an SDK to run logic for every Unity Update
@@ -22,18 +24,31 @@ namespace VRTK
         /// <param name="options">A dictionary of generic options that can be used to within the update.</param>
         public override void ProcessUpdate(Dictionary<string, object> options)
         {
-            posList.Add((camera.position - lastPos) / Time.deltaTime);
-            if (posList.Count > 10)
+            if (camera != null)
             {
-                posList.RemoveAt(0);
+                posList.Add((camera.position - lastPos) / Time.deltaTime);
+                if (posList.Count > 4)
+                {
+                    posList.RemoveAt(0);
+                }
+                Quaternion deltaRotation = camera.rotation * Quaternion.Inverse(lastRot);
+                deltaRotation.ToAngleAxis(out magnitude, out axis);
+                rotList.Add((axis * magnitude));
+                if (rotList.Count > 4)
+                {
+                    rotList.RemoveAt(0);
+                }
+                lastPos = camera.position;
+                lastRot = camera.rotation;
             }
-            rotList.Add((Quaternion.FromToRotation(lastRot, camera.rotation.eulerAngles)).eulerAngles / Time.deltaTime);
-            if (rotList.Count > 10)
-            {
-                rotList.RemoveAt(0);
-            }
-            lastPos = camera.position;
-            lastRot = camera.rotation.eulerAngles;
+        }
+
+        /// <summary>
+        /// The ProcessFixedUpdate method enables an SDK to run logic for every Unity FixedUpdate
+        /// </summary>
+        /// <param name="options">A dictionary of generic options that can be used to within the fixed update.</param>
+        public override void ProcessFixedUpdate(Dictionary<string, object> options)
+        {
         }
 
         /// <summary>
@@ -47,7 +62,7 @@ namespace VRTK
                 GameObject simPlayer = SDK_InputSimulator.FindInScene();
                 if (simPlayer)
                 {
-                    camera = simPlayer.transform.FindChild("Camera");
+                    camera = simPlayer.transform.Find("Neck/Camera");
                 }
             }
 
@@ -60,16 +75,7 @@ namespace VRTK
         /// <returns>A transform of the object holding the headset camera in the scene.</returns>
         public override Transform GetHeadsetCamera()
         {
-            if (camera == null)
-            {
-                GameObject simPlayer = SDK_InputSimulator.FindInScene();
-                if (simPlayer)
-                {
-                    camera = simPlayer.transform.FindChild("Camera");
-                }
-            }
-
-            return camera;
+            return GetHeadset();
         }
 
         /// <summary>
@@ -110,7 +116,7 @@ namespace VRTK
         /// <param name="fadeOverlay">Determines whether to use an overlay on the fade.</param>
         public override void HeadsetFade(Color color, float duration, bool fadeOverlay = false)
         {
-
+            VRTK_ScreenFade.Start(color, duration);
         }
 
         /// <summary>
@@ -120,7 +126,7 @@ namespace VRTK
         /// <returns>Returns true if the headset has fade functionality on it.</returns>
         public override bool HasHeadsetFade(Transform obj)
         {
-            return false;
+            return obj.GetComponentInChildren<VRTK_ScreenFade>() != null;
         }
 
         /// <summary>
@@ -129,7 +135,10 @@ namespace VRTK
         /// <param name="camera">The Transform to with the camera on to add the fade functionality to.</param>
         public override void AddHeadsetFade(Transform camera)
         {
-
+            if (camera != null && camera.GetComponent<VRTK_ScreenFade>() == null)
+            {
+                camera.gameObject.AddComponent<VRTK_ScreenFade>();
+            }
         }
 
         private void Awake()
@@ -138,13 +147,11 @@ namespace VRTK
             rotList = new List<Vector3>();
 
             var headset = GetHeadset();
-            lastPos = headset.position;
-            lastRot = headset.rotation.eulerAngles;
+            if (headset != null)
+            {
+                lastPos = headset.position;
+                lastRot = headset.rotation;
+            }
         }
     }
-#else
-    public class SDK_SimHeadset : SDK_FallbackHeadset
-    {
-    }
-#endif
 }

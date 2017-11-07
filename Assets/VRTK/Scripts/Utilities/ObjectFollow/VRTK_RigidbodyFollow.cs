@@ -6,6 +6,7 @@ namespace VRTK
     /// <summary>
     /// Changes one game object's rigidbody to follow another game object's rigidbody.
     /// </summary>
+    [AddComponentMenu("VRTK/Scripts/Utilities/Object Follow/VRTK_RigidbodyFollow")]
     public class VRTK_RigidbodyFollow : VRTK_ObjectFollow
     {
         /// <summary>
@@ -24,20 +25,13 @@ namespace VRTK
         [Tooltip("Specifies how to position and rotate the rigidbody.")]
         public MovementOption movementOption = MovementOption.Set;
 
-        private Rigidbody rigidbodyToFollow;
-        private Rigidbody rigidbodyToChange;
+        protected Rigidbody rigidbodyToFollow;
+        protected Rigidbody rigidbodyToChange;
 
-        protected override void OnEnable()
+        public override void Follow()
         {
-            base.OnEnable();
-
-            if (gameObjectToFollow == null)
-            {
-                return;
-            }
-
-            rigidbodyToFollow = gameObjectToFollow.GetComponent<Rigidbody>();
-            rigidbodyToChange = gameObjectToChange.GetComponent<Rigidbody>();
+            CacheRigidbodies();
+            base.Follow();
         }
 
         protected virtual void OnDisable()
@@ -98,6 +92,18 @@ namespace VRTK
         protected override Vector3 GetScaleToFollow()
         {
             return rigidbodyToFollow.transform.localScale;
+        }
+
+        protected virtual void CacheRigidbodies()
+        {
+            if (gameObjectToFollow == null || gameObjectToChange == null
+                || (rigidbodyToFollow != null && rigidbodyToChange != null))
+            {
+                return;
+            }
+
+            rigidbodyToFollow = gameObjectToFollow.GetComponent<Rigidbody>();
+            rigidbodyToChange = gameObjectToChange.GetComponent<Rigidbody>();
         }
     }
 }

@@ -12,7 +12,7 @@ public class CapacitorPlateResizeController : VRTK_InteractableObject
 
     private bool isResizing = false;
 
-    private GameObject UsingObject;
+    private MonoBehaviour UsingObject;
 
 
     public void setCapacitorPlate(CapacitorPlateController capacitorPlate)

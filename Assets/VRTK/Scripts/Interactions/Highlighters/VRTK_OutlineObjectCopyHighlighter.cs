@@ -13,6 +13,7 @@ namespace VRTK.Highlighters
     ///
     /// `VRTK/Examples/035_Controller_OpacityAndHighlighting` demonstrates the outline highlighting if the left controller collides with the green box.
     /// </example>
+    [AddComponentMenu("VRTK/Scripts/Interactions/Highlighters/VRTK_OutlineObjectCopyHighlighter")]
     public class VRTK_OutlineObjectCopyHighlighter : VRTK_BaseHighlighter
     {
         [Tooltip("The thickness of the outline effect")]
@@ -24,9 +25,9 @@ namespace VRTK.Highlighters
         [Tooltip("If the mesh has multiple sub-meshes to highlight then this should be checked, otherwise only the first mesh will be highlighted.")]
         public bool enableSubmeshHighlight = false;
 
-        private Material stencilOutline;
-        private GameObject[] highlightModels;
-        private string[] copyComponents = new string[] { "UnityEngine.MeshFilter", "UnityEngine.MeshRenderer" };
+        protected Material stencilOutline;
+        protected GameObject[] highlightModels;
+        protected string[] copyComponents = new string[] { "UnityEngine.MeshFilter", "UnityEngine.MeshRenderer" };
 
         /// <summary>
         /// The Initialise method sets up the highlighter for use.
@@ -214,7 +215,7 @@ namespace VRTK.Highlighters
 
             if (copyModel == null)
             {
-                Debug.LogError("No Renderer has been found on the model to add highlighting to");
+                VRTK_Logger.Error(VRTK_Logger.GetCommonMessage(VRTK_Logger.CommonMessageKeys.REQUIRED_COMPONENT_MISSING_FROM_GAMEOBJECT, "VRTK_OutlineObjectCopyHighlighter", "Renderer", "the same or child", " to add the highlighter to"));
                 return null;
             }
 

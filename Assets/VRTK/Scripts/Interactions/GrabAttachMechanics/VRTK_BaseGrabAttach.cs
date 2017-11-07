@@ -41,7 +41,7 @@ namespace VRTK.GrabAttachMechanics
         /// The IsTracked method determines if the grab attach mechanic is a track object type.
         /// </summary>
         /// <returns>Is true if the mechanic is of type tracked.</returns>
-        public bool IsTracked()
+        public virtual bool IsTracked()
         {
             return tracked;
         }
@@ -50,7 +50,7 @@ namespace VRTK.GrabAttachMechanics
         /// The IsClimbable method determines if the grab attach mechanic is a climbable object type.
         /// </summary>
         /// <returns>Is true if the mechanic is of type climbable.</returns>
-        public bool IsClimbable()
+        public virtual bool IsClimbable()
         {
             return climbable;
         }
@@ -59,7 +59,7 @@ namespace VRTK.GrabAttachMechanics
         /// The IsKinematic method determines if the grab attach mechanic is a kinematic object type.
         /// </summary>
         /// <returns>Is true if the mechanic is of type kinematic.</returns>
-        public bool IsKinematic()
+        public virtual bool IsKinematic()
         {
             return kinematic;
         }
@@ -169,10 +169,14 @@ namespace VRTK.GrabAttachMechanics
         {
             if (grabbedObjectScript)
             {
-                var grabbingObject = grabbedObjectScript.GetGrabbingObject();
-                if (grabbingObject)
+                GameObject grabbingObject = grabbedObjectScript.GetGrabbingObject();
+                if (grabbingObject != null)
                 {
-                    grabbingObject.GetComponent<VRTK_InteractGrab>().ForceRelease();
+                    VRTK_InteractGrab grabbingObjectScript = grabbingObject.GetComponent<VRTK_InteractGrab>();
+                    if (grabbingObjectScript != null)
+                    {
+                        grabbingObjectScript.ForceRelease();
+                    }
                 }
             }
         }
@@ -180,7 +184,7 @@ namespace VRTK.GrabAttachMechanics
         protected virtual void ReleaseObject(bool applyGrabbingObjectVelocity)
         {
             Rigidbody releasedObjectRigidBody = ReleaseFromController(applyGrabbingObjectVelocity);
-            if (releasedObjectRigidBody && applyGrabbingObjectVelocity)
+            if (releasedObjectRigidBody != null && applyGrabbingObjectVelocity)
             {
                 ThrowReleasedObject(releasedObjectRigidBody);
             }
@@ -197,51 +201,52 @@ namespace VRTK.GrabAttachMechanics
             Initialise();
         }
 
-        private void ThrowReleasedObject(Rigidbody objectRigidbody)
+        protected virtual void ThrowReleasedObject(Rigidbody objectRigidbody)
         {
-            if (grabbedObjectScript)
+            if (grabbedObjectScript != null)
             {
-                var grabbingObject = grabbedObjectScript.GetGrabbingObject();
-                if (grabbingObject)
+                VRTK_ControllerReference controllerReference = VRTK_ControllerReference.GetControllerReference(grabbedObjectScript.GetGrabbingObject());
+                if (VRTK_ControllerReference.IsValid(controllerReference) && controllerReference.scriptAlias != null)
                 {
-                    var grabbingObjectScript = grabbingObject.GetComponent<VRTK_InteractGrab>();
-
-                    var grabbingObjectThrowMultiplier = grabbingObjectScript.throwMultiplier;
-
-                    var origin = VRTK_DeviceFinder.GetControllerOrigin(grabbingObject);
-
-                    var velocity = VRTK_DeviceFinder.GetControllerVelocity(grabbingObject);
-                    var angularVelocity = VRTK_DeviceFinder.GetControllerAngularVelocity(grabbingObject);
-
-                    if (origin != null)
+                    VRTK_InteractGrab grabbingObjectScript = controllerReference.scriptAlias.GetComponent<VRTK_InteractGrab>();
+                    if (grabbingObjectScript != null)
                     {
-                        objectRigidbody.velocity = origin.TransformVector(velocity) * (grabbingObjectThrowMultiplier * throwMultiplier);
-                        objectRigidbody.angularVelocity = origin.TransformDirection(angularVelocity);
-                    }
-                    else
-                    {
-                        objectRigidbody.velocity = velocity * (grabbingObjectThrowMultiplier * throwMultiplier);
-                        objectRigidbody.angularVelocity = angularVelocity;
-                    }
+                        Transform origin = VRTK_DeviceFinder.GetControllerOrigin(controllerReference);
 
-                    if (throwVelocityWithAttachDistance)
-                    {
-                        var rigidbodyCollider = objectRigidbody.GetComponentInChildren<Collider>();
-                        if (rigidbodyCollider)
+                        Vector3 velocity = VRTK_DeviceFinder.GetControllerVelocity(controllerReference);
+                        Vector3 angularVelocity = VRTK_DeviceFinder.GetControllerAngularVelocity(controllerReference);
+                        float grabbingObjectThrowMultiplier = grabbingObjectScript.throwMultiplier;
+
+                        if (origin != null)
                         {
-                            Vector3 collisionCenter = rigidbodyCollider.bounds.center;
-                            objectRigidbody.velocity = objectRigidbody.GetPointVelocity(collisionCenter + (collisionCenter - transform.position));
+                            objectRigidbody.velocity = origin.TransformVector(velocity) * (grabbingObjectThrowMultiplier * throwMultiplier);
+                            objectRigidbody.angularVelocity = origin.TransformDirection(angularVelocity);
                         }
                         else
                         {
-                            objectRigidbody.velocity = objectRigidbody.GetPointVelocity(objectRigidbody.position + (objectRigidbody.position - transform.position));
+                            objectRigidbody.velocity = velocity * (grabbingObjectThrowMultiplier * throwMultiplier);
+                            objectRigidbody.angularVelocity = angularVelocity;
+                        }
+
+                        if (throwVelocityWithAttachDistance)
+                        {
+                            Collider rigidbodyCollider = objectRigidbody.GetComponentInChildren<Collider>();
+                            if (rigidbodyCollider != null)
+                            {
+                                Vector3 collisionCenter = rigidbodyCollider.bounds.center;
+                                objectRigidbody.velocity = objectRigidbody.GetPointVelocity(collisionCenter + (collisionCenter - transform.position));
+                            }
+                            else
+                            {
+                                objectRigidbody.velocity = objectRigidbody.GetPointVelocity(objectRigidbody.position + (objectRigidbody.position - transform.position));
+                            }
                         }
                     }
                 }
             }
         }
 
-        private Transform GetSnapHandle(GameObject grabbingObject)
+        protected virtual Transform GetSnapHandle(GameObject grabbingObject)
         {
             if (rightSnapHandle == null && leftSnapHandle != null)
             {
@@ -266,9 +271,9 @@ namespace VRTK.GrabAttachMechanics
             return null;
         }
 
-        private void FlipSnapHandle(Transform snapHandle)
+        protected virtual void FlipSnapHandle(Transform snapHandle)
         {
-            if (snapHandle)
+            if (snapHandle != null)
             {
                 snapHandle.localRotation = Quaternion.Inverse(snapHandle.localRotation);
             }

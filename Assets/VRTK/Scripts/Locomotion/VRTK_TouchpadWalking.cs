@@ -53,6 +53,11 @@ namespace VRTK
 
         protected virtual void Awake()
         {
+            VRTK_SDKManager.instance.AddBehaviourToToggleOnLoadedSetupChange(this);
+        }
+
+        protected virtual void OnEnable()
+        {
             touchpadAxisChanged = new ControllerInteractionEventHandler(DoTouchpadAxisChanged);
             touchpadUntouched = new ControllerInteractionEventHandler(DoTouchpadTouchEnd);
             playArea = VRTK_DeviceFinder.PlayAreaTransform();
@@ -60,14 +65,11 @@ namespace VRTK
             controllerRightHand = VRTK_DeviceFinder.GetControllerRightHand();
             if (!playArea)
             {
-                Debug.LogError("No play area could be found. Have you selected a valid Boundaries SDK in the SDK Manager? If you are unsure, then click the GameObject with the `VRTK_SDKManager` script attached to it in Edit Mode and select a Boundaries SDK from the dropdown.");
+                VRTK_Logger.Error(VRTK_Logger.GetCommonMessage(VRTK_Logger.CommonMessageKeys.SDK_OBJECT_NOT_FOUND, "PlayArea", "Boundaries SDK"));
             }
 
             VRTK_PlayerObject.SetPlayerObject(gameObject, VRTK_PlayerObject.ObjectTypes.CameraRig);
-        }
 
-        protected virtual void OnEnable()
-        {
             SetControllerListeners(controllerLeftHand, leftController, ref leftSubscribed);
             SetControllerListeners(controllerRightHand, rightController, ref rightSubscribed);
             bodyPhysics = GetComponent<VRTK_BodyPhysics>();
@@ -81,6 +83,11 @@ namespace VRTK
             SetControllerListeners(controllerLeftHand, leftController, ref leftSubscribed, true);
             SetControllerListeners(controllerRightHand, rightController, ref rightSubscribed, true);
             bodyPhysics = null;
+        }
+
+        protected virtual void OnDestroy()
+        {
+            VRTK_SDKManager.instance.RemoveBehaviourToToggleOnLoadedSetupChange(this);
         }
 
         protected virtual void Update()

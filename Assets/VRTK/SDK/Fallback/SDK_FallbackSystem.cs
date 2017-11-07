@@ -1,14 +1,13 @@
 ﻿// Fallback System|SDK_Fallback|001
 namespace VRTK
 {
-    using UnityEngine;
-
     /// <summary>
     /// The Fallback System SDK script provides a fallback collection of methods that return null or default system values.
     /// </summary>
     /// <remarks>
     /// This is the fallback class that will just return default values.
     /// </remarks>
+    [SDK_Description("Fallback", null, null, null)]
     public class SDK_FallbackSystem : SDK_BaseSystem
     {
         /// <summary>
@@ -35,11 +34,6 @@ namespace VRTK
         /// <param name="force">If true then Interleaved Reprojection will be forced on, if false it will not be forced on.</param>
         public override void ForceInterleavedReprojectionOn(bool force)
         {
-        }
-
-        private void Awake()
-        {
-            Debug.LogError("Fallback System SDK is being used. Have you selected a valid System SDK in the SDK Manager? If you are unsure, then click the GameObject with the `VRTK_SDKManager` script attached to it in Edit Mode and select a System SDK from the dropdown.");
         }
     }
 }

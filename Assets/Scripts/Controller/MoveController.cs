@@ -19,7 +19,7 @@ public class MoveController : VRTK_InteractableObject
 
     protected bool IsMoving = false;
 
-    protected GameObject UsingObject;
+    protected MonoBehaviour UsingObject;
 
     protected Vector3 UsingObjectPosition;
 
@@ -29,7 +29,6 @@ public class MoveController : VRTK_InteractableObject
     {
         base.StartUsing(currentUsingObject);
 
-        IsMoving = true;
         UsingObject = usingObject;
         UsingObjectPosition = usingObject.transform.position;
 

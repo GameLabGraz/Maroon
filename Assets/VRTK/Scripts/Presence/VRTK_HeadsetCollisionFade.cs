@@ -15,20 +15,29 @@ namespace VRTK
     /// `VRTK/Examples/011_Camera_HeadSetCollisionFading` has collidable walls around the play area and if the user puts their head into any of the walls then the headset will fade to black.
     /// </example>
     [RequireComponent(typeof(VRTK_HeadsetCollision)), RequireComponent(typeof(VRTK_HeadsetFade))]
+    [AddComponentMenu("VRTK/Scripts/Presence/VRTK_HeadsetCollisionFade")]
     public class VRTK_HeadsetCollisionFade : MonoBehaviour
     {
+        [Header("Collision Fade Settings")]
+
+        [Tooltip("The amount of time to wait until a fade occurs.")]
+        public float timeTillFade = 0f;
         [Tooltip("The fade blink speed on collision.")]
         public float blinkTransitionSpeed = 0.1f;
         [Tooltip("The colour to fade the headset to on collision.")]
         public Color fadeColor = Color.black;
 
-        private VRTK_HeadsetCollision headsetCollision;
-        private VRTK_HeadsetFade headsetFade;
+        [Header("Custom Settings")]
+
+        [Tooltip("The VRTK Headset Collision script to use when determining headset collisions. If this is left blank then the script will need to be applied to the same GameObject.")]
+        public VRTK_HeadsetCollision headsetCollision;
+        [Tooltip("The VRTK Headset Fade script to use when fading the headset. If this is left blank then the script will need to be applied to the same GameObject.")]
+        public VRTK_HeadsetFade headsetFade;
 
         protected virtual void OnEnable()
         {
-            headsetFade = GetComponent<VRTK_HeadsetFade>();
-            headsetCollision = GetComponent<VRTK_HeadsetCollision>();
+            headsetFade = (headsetFade != null ? headsetFade : GetComponentInChildren<VRTK_HeadsetFade>());
+            headsetCollision = (headsetCollision != null ? headsetCollision : GetComponentInChildren<VRTK_HeadsetCollision>());
 
             headsetCollision.HeadsetCollisionDetect += new HeadsetCollisionEventHandler(OnHeadsetCollisionDetect);
             headsetCollision.HeadsetCollisionEnded += new HeadsetCollisionEventHandler(OnHeadsetCollisionEnded);
@@ -40,14 +49,20 @@ namespace VRTK
             headsetCollision.HeadsetCollisionEnded -= new HeadsetCollisionEventHandler(OnHeadsetCollisionEnded);
         }
 
-        private void OnHeadsetCollisionDetect(object sender, HeadsetCollisionEventArgs e)
+        protected virtual void OnHeadsetCollisionDetect(object sender, HeadsetCollisionEventArgs e)
         {
-            headsetFade.Fade(fadeColor, blinkTransitionSpeed);
+            Invoke("StartFade", timeTillFade);
         }
 
-        private void OnHeadsetCollisionEnded(object sender, HeadsetCollisionEventArgs e)
+        protected virtual void OnHeadsetCollisionEnded(object sender, HeadsetCollisionEventArgs e)
         {
+            CancelInvoke("StartFade");
             headsetFade.Unfade(blinkTransitionSpeed);
+        }
+
+        protected virtual void StartFade()
+        {
+            headsetFade.Fade(fadeColor, blinkTransitionSpeed);
         }
     }
 }

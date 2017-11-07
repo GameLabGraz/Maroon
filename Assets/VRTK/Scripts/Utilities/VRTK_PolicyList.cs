@@ -18,6 +18,7 @@ namespace VRTK
     ///
     /// Then in the component that has a Policy List paramter (e.g. BasicTeleporter has `Target List Policy`) simply select the list that has been created and defined.
     /// </remarks>
+    [AddComponentMenu("VRTK/Scripts/Utilities/VRTK_PolicyList")]
     public class VRTK_PolicyList : MonoBehaviour
     {
         /// <summary>
@@ -79,18 +80,18 @@ namespace VRTK
         /// <returns>Returns true of the given game object matches the policy list or given string logic.</returns>
         public static bool Check(GameObject obj, VRTK_PolicyList list)
         {
-            if (list)
+            if (list != null)
             {
                 return list.Find(obj);
             }
             return false;
         }
 
-        private bool ScriptCheck(GameObject obj, bool returnState)
+        protected virtual bool ScriptCheck(GameObject obj, bool returnState)
         {
-            foreach (var identifier in identifiers)
+            for(int i = 0; i < identifiers.Count; i++)
             {
-                if (obj.GetComponent(identifier))
+                if (obj.GetComponent(identifiers[i]))
                 {
                     return returnState;
                 }
@@ -98,7 +99,7 @@ namespace VRTK
             return !returnState;
         }
 
-        private bool TagCheck(GameObject obj, bool returnState)
+        protected virtual bool TagCheck(GameObject obj, bool returnState)
         {
             if (returnState)
             {
@@ -110,7 +111,7 @@ namespace VRTK
             }
         }
 
-        private bool LayerCheck(GameObject obj, bool returnState)
+        protected virtual bool LayerCheck(GameObject obj, bool returnState)
         {
             if (returnState)
             {
@@ -122,7 +123,7 @@ namespace VRTK
             }
         }
 
-        private bool TypeCheck(GameObject obj, bool returnState)
+        protected virtual bool TypeCheck(GameObject obj, bool returnState)
         {
             var selection = 0;
 

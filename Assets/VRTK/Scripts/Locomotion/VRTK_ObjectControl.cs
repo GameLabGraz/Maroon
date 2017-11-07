@@ -112,6 +112,11 @@ namespace VRTK
         protected abstract bool IsInAction();
         protected abstract void SetListeners(bool state);
 
+        protected virtual void Awake()
+        {
+            VRTK_SDKManager.instance.AddBehaviourToToggleOnLoadedSetupChange(this);
+        }
+
         protected virtual void OnEnable()
         {
             currentAxis = Vector2.zero;
@@ -119,7 +124,7 @@ namespace VRTK
             controllerEvents = (controller != null ? controller : GetComponent<VRTK_ControllerEvents>());
             if (!controllerEvents)
             {
-                Debug.LogError("A `VRTK_ControllerEvents` script is required for the `VRTK_ObjectControl` script to work. Either the `controller` parameter is not set or no `VRTK_ControllerEvents` is attached to this GameObject.");
+                VRTK_Logger.Error(VRTK_Logger.GetCommonMessage(VRTK_Logger.CommonMessageKeys.REQUIRED_COMPONENT_MISSING_NOT_INJECTED, "VRTK_ObjectControl", "VRTK_ControllerEvents", "controller", "the same"));
                 return;
             }
             SetControlledObject();
@@ -133,6 +138,11 @@ namespace VRTK
         protected virtual void OnDisable()
         {
             SetListeners(false);
+        }
+
+        protected virtual void OnDestroy()
+        {
+            VRTK_SDKManager.instance.RemoveBehaviourToToggleOnLoadedSetupChange(this);
         }
 
         protected virtual void Update()
