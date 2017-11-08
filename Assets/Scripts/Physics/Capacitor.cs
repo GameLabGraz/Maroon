@@ -7,7 +7,6 @@ public class Capacitor : PausableObject
 {
     private enum ChargeState {IDLE, CHARGING, DISCHARGING};
 
-
     [SerializeField]
     private GameObject plate1;
 
@@ -15,7 +14,7 @@ public class Capacitor : PausableObject
     private GameObject plate2;
 
     [SerializeField]
-    private float seriesResistance = 500;
+    private float seriesResistance = 5e10f;
 
     private const float vacuumPermittivity = 8.8542e-12f;
 
@@ -31,6 +30,9 @@ public class Capacitor : PausableObject
     private float chargeTime = 0;
 
     private ChargeState chargeState = ChargeState.IDLE;
+
+    [SerializeField]
+    private GameObject electronPrefab;
 
     protected override void Start()
     {
@@ -108,7 +110,11 @@ public class Capacitor : PausableObject
                 chargeTime = 0;
 
                 if (powerVoltage > voltage)
+                {
                     chargeState = ChargeState.CHARGING;
+                    StartCoroutine("ElectronChargeEffect");
+                }
+                   
                 else if (powerVoltage < voltage)
                     chargeState = ChargeState.DISCHARGING;
 
@@ -137,14 +143,54 @@ public class Capacitor : PausableObject
         }
     }
 
+    private IEnumerator ElectronChargeEffect()
+    {
+        GameObject plusCable = GameObject.Find("Cable+");
+
+        int numberOfElectrons = (int)(powerVoltage - voltage);
+        float electronTimeInterval = 1.0f;
+        float electronSpeed = 0.01f;
+
+        while (numberOfElectrons > 0 && chargeState == ChargeState.CHARGING)
+        {
+            GameObject electron = GameObject.Instantiate(electronPrefab);
+            electron.transform.position = new Vector3(2.05f, 1.5f, -7.235f);
+
+            PathFollower pathFollower = electron.GetComponent<PathFollower>();
+            pathFollower.SetPath(plusCable.GetComponent<IPath>());
+            pathFollower.maxSpeed = electronSpeed;           
+
+            numberOfElectrons--;
+            yield return new WaitForSeconds(electronTimeInterval);
+        }
+
+    }
+
+    /*
+    private IEnumerator ElectronDischargeEffect()
+    {
+        int numberOfElectrons = (int)(voltage - powerVoltage);
+        float electronTimeInterval = 1.0f;
+        float electronSpeed = 0.01f;
+
+        while (numberOfElectrons > 0 && chargeState == ChargeState.DISCHARGING)
+        {
+
+            numberOfElectrons--;
+            yield return new WaitForSeconds(electronTimeInterval);
+        }
+
+    }
+    */
+
     private void Charge()
     {
-        voltage = powerVoltage * (1 - Mathf.Exp(-chargeTime / (seriesResistance * capacitance * 100000000)));
+        voltage = powerVoltage * (1 - Mathf.Exp(-chargeTime / (seriesResistance * capacitance)));
     }
 
     private void Discharge()
     {
-        voltage = powerVoltage * Mathf.Exp(-chargeTime / (seriesResistance * capacitance * 100000000));
+        voltage = powerVoltage * Mathf.Exp(-chargeTime / (seriesResistance * capacitance));
     }
 
     public float GetVoltage()
