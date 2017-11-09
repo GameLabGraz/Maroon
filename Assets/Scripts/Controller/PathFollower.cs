@@ -17,12 +17,18 @@ public class PathFollower : MonoBehaviour
     [SerializeField]
     public bool reverseOrder = false;
 
+    [SerializeField]
+    public bool followPath = true;
+
     private Vector3 velocity = Vector3.zero;
 
     private int currentNode;
 	
 	private void Update ()
     {
+        if (!followPath)
+            return;
+
         Vector3 steering = Vector3.zero;
         steering += PathFollowing();
 
@@ -46,7 +52,7 @@ public class PathFollower : MonoBehaviour
         {
             currentNode++;
             if (currentNode >= nodes.Count)
-                currentNode = nodes.Count - 1;
+                followPath = false;
         }
 
         return Seek(target);

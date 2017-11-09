@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class VoltageSource : MonoBehaviour
+public class VoltageSource : MonoBehaviour, IVoltagePoleTrigger
 {
     [SerializeField]
     private GameObject negativeVoltagePole;
@@ -21,7 +21,7 @@ public class VoltageSource : MonoBehaviour
         minusCable = GameObject.Find("Cable-");
     }
 
-    public void PullTrigger(Collider other, GameObject source)
+    public void PullVoltagePoleTrigger(Collider other, GameObject source)
     {
         float electronSpeed = other.GetComponent<PathFollower>().maxSpeed;
         Destroy(other.gameObject);
@@ -38,8 +38,6 @@ public class VoltageSource : MonoBehaviour
 
             pathFollower.reverseOrder = true;
             pathFollower.SetPath(minusCable.GetComponent<IPath>());
-
-            //Physics.IgnoreCollision(electron.GetComponent<Collider>(), negativeVoltagePole.GetComponent<Collider>());
         }
 
         if(source == negativeVoltagePole)
@@ -47,8 +45,6 @@ public class VoltageSource : MonoBehaviour
             electron.transform.position = positiveVoltagePole.transform.position;
 
             pathFollower.SetPath(minusCable.GetComponent<IPath>());
-
-            //Physics.IgnoreCollision(electron.GetComponent<Collider>(), positiveVoltagePole.GetComponent<Collider>());
         }
     }
 }

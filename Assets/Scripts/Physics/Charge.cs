@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class Charge : MonoBehaviour
 {
-    private bool justCreated = false;
+    [SerializeField]
+    private bool justCreated = true;
 
     public bool JustCreated
     {
