@@ -18,6 +18,10 @@ public class CapacitorBaseController : MonoBehaviour, IVoltagePoleTrigger
 
     private int numberOfElectrons = 0;
 
+    private int numberOfElectronsInCurrentRow = 0;
+
+    private float rowOffset = 0;
+
 
     private void Start()
     {
@@ -46,14 +50,28 @@ public class CapacitorBaseController : MonoBehaviour, IVoltagePoleTrigger
         if (numberOfElectrons  > numberOfElectronsPerRow * numberOfRows)
             return position;
 
-       
-        if (numberOfElectrons % 2 == 0)
-            position.x += (electronRadius + electronDistance) * 2 * (int)((numberOfElectrons + 2)  / 2);
-        else
-            position.x -= (electronRadius + electronDistance) * 2 * (int)((numberOfElectrons + 2) / 2);
 
+        if (numberOfElectrons % 2 == 0)
+        {
+            position.x += (electronRadius + electronDistance) * 2 * (int)((numberOfElectronsInCurrentRow + 2) / 2);
+            position.y += rowOffset;
+        }
+        else
+        {
+            position.x -= (electronRadius + electronDistance) * 2 * (int)((numberOfElectronsInCurrentRow + 2) / 2);
+            position.y -= rowOffset;
+        }
+           
+
+
+        if (++numberOfElectronsInCurrentRow >= numberOfElectronsPerRow)
+        {
+            numberOfElectronsInCurrentRow = 0;
+            rowOffset += (electronRadius + electronDistance) * 2;
+        }
 
         numberOfElectrons++;
+
         return position;
     }
 

@@ -193,6 +193,15 @@ public class Capacitor : PausableObject
         voltage = powerVoltage * Mathf.Exp(-chargeTime / (seriesResistance * capacitance));
     }
 
+
+    public float GetElectricalFieldStrength()
+    {
+        float area = GetOverlapPlateArea();
+        float permittivity = vacuumPermittivity * dielectric.GetRelativePermittivity();
+
+        return (capacitance * voltage) / (area * permittivity);
+    }
+
     public float GetVoltage()
     {
         return this.voltage;
@@ -212,6 +221,7 @@ public class Capacitor : PausableObject
     {
         args.value = this.capacitance;
     }
+
 
     public void SetPowerVoltage(float voltage)
     {
