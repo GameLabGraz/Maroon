@@ -14,10 +14,8 @@ public class GuiVandeGraaffExperiment1 : MonoBehaviour {
 
     public Text text_voltage;
     public Text text_charge;
-    public Text text_info1;
-    public Text text_info2;
-    public Text text_info3;
-    public Text text_info4;
+    public Text text_info;
+
 	
 	public void Start () {
 		// find Van de Graaff Generator object in the scene
@@ -66,12 +64,16 @@ public class GuiVandeGraaffExperiment1 : MonoBehaviour {
 
     public void Update()
 	{
-        text_voltage.text = GamificationManager.instance.l_manager.GetString("Voltage GUI") + this.vandeGraaffController.GetVoltage();
+        string dialogue;
+        dialogue =  GamificationManager.instance.l_manager.GetString("Voltage GUI") + this.vandeGraaffController.GetVoltage();
+        dialogue = dialogue.Replace("NEWLINE ", "\n");
+        text_voltage.text = dialogue;
         text_charge.text = GamificationManager.instance.l_manager.GetString("Charge GUI") + this.vandeGraaffController.ChargeStrength;
-        text_info1.text = GamificationManager.instance.l_manager.GetString("Info 1 Vandegraaf 1");
-        text_info2.text = GamificationManager.instance.l_manager.GetString("Info 2 Vandegraaf 1");
-        text_info3.text = GamificationManager.instance.l_manager.GetString("Info 3 Vandegraaf 1");
-        text_info4.text = GamificationManager.instance.l_manager.GetString("Info 4 Vandegraaf 1");
+        dialogue = GamificationManager.instance.l_manager.GetString("Info 1 Vandegraaf 1");
+        dialogue = dialogue.Replace("NEWLINE ", "\n");
+        text_info.text = dialogue;
+
+
 
 
 

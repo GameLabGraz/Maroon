@@ -79,7 +79,11 @@ public class DialogueManager : MonoBehaviour {
         if (GamificationManager.instance.deactivateDialogue)
             return;
         //get the dialogue in the language manager in the current language. Returns nothing if keyword doesnt exist
-        string dialogue = GamificationManager.instance.l_manager.GetString(keyword);   
+        string dialogue = GamificationManager.instance.l_manager.GetString(keyword);
+        //Creating newlines
+        Debug.Log(dialogue);
+        dialogue = dialogue.Replace("NEWLINE ", "\n");   
+        Debug.Log(dialogue);
         if (!GamificationManager.instance.coroutineRunning)
         {
             dialogActive = true;
