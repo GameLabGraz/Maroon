@@ -148,7 +148,7 @@ public class Capacitor : PausableObject
         GameObject plusCable = GameObject.Find("Cable+");
 
         int numberOfElectrons = (int)(powerVoltage - voltage) * 2;
-        float electronTimeInterval = 1.0f;
+        float electronTimeInterval = 0.2f;
         float electronSpeed = 0.01f;
 
         while (numberOfElectrons > 0 && chargeState == ChargeState.CHARGING)

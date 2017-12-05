@@ -44,7 +44,7 @@ public class VoltageSource : MonoBehaviour, IVoltagePoleTrigger
         {
             electron.transform.position = positiveVoltagePole.transform.position;
 
-            pathFollower.SetPath(minusCable.GetComponent<IPath>());
+            pathFollower.SetPath(plusCable.GetComponent<IPath>());
         }
     }
 }

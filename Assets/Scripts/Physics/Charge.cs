@@ -27,5 +27,4 @@ public class Charge : MonoBehaviour
         Vector3 force = Vector3.zero;
         GetComponent<Rigidbody>().AddForce(force);
     }
-
 }

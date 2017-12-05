@@ -10,7 +10,12 @@ public class VoltagePole : MonoBehaviour
         Charge charge = other.GetComponent<Charge>();
 
         if(!charge.JustCreated)
-            GetComponentInParent<IVoltagePoleTrigger>().PullVoltagePoleTrigger(other, gameObject);
+        {
+            IVoltagePoleTrigger voltagePoleTrigger = GetComponentInParent<IVoltagePoleTrigger>();
+            if(voltagePoleTrigger != null)
+                voltagePoleTrigger.PullVoltagePoleTrigger(other, gameObject);
+        }
+           
         else
             charge.JustCreated = false;      
     }
