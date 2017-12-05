@@ -34,6 +34,9 @@ public class Capacitor : PausableObject
     [SerializeField]
     private GameObject electronPrefab;
 
+    [SerializeField]
+    private GameObject protonPrefab;
+
     protected override void Start()
     {
         base.Start();
@@ -182,6 +185,21 @@ public class Capacitor : PausableObject
 
     }
     */
+
+    public void SetElectronOnPlate(GameObject electron, GameObject plate)
+    {
+        if(plate == plate1)
+        {
+            plate1.GetComponent<CapacitorPlateController>().AddCharge(electron);
+            plate2.GetComponent<CapacitorPlateController>().AddCharge(GameObject.Instantiate(protonPrefab));
+        }
+        else if(plate == plate2)
+        {
+            plate2.GetComponent<CapacitorPlateController>().AddCharge(electron);
+            plate1.GetComponent<CapacitorPlateController>().AddCharge(GameObject.Instantiate(protonPrefab));
+        }
+    }
+
 
     private void Charge()
     {
