@@ -119,7 +119,10 @@ public class Capacitor : PausableObject
                 }
                    
                 else if (powerVoltage < voltage)
+                {
                     chargeState = ChargeState.DISCHARGING;
+                    StartCoroutine("ElectronDischargeEffect");
+                }                   
 
                 break;
 
@@ -169,22 +172,11 @@ public class Capacitor : PausableObject
 
     }
 
-    /*
     private IEnumerator ElectronDischargeEffect()
     {
-        int numberOfElectrons = (int)(voltage - powerVoltage);
-        float electronTimeInterval = 1.0f;
-        float electronSpeed = 0.01f;
-
-        while (numberOfElectrons > 0 && chargeState == ChargeState.DISCHARGING)
-        {
-
-            numberOfElectrons--;
-            yield return new WaitForSeconds(electronTimeInterval);
-        }
-
+        yield return new WaitForSeconds(0);
     }
-    */
+
 
     public void SetElectronOnPlate(GameObject electron, GameObject plate)
     {

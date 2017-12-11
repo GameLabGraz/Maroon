@@ -24,13 +24,8 @@ public class CapacitorPlateController : VRTK_InteractableObject
     [SerializeField]
     private float chargeDistance;
 
-    private int numberOfCharges = 0;
     private int numberOfChargesPerRow = 0;
     private int numberOfRows = 0;
-
-    private int numberOfChargesInCurrentRow = 0;
-
-    private float rowOffset = 0;
 
     private List<GameObject> charges = new List<GameObject>();
 
@@ -119,41 +114,30 @@ public class CapacitorPlateController : VRTK_InteractableObject
 
     private void UpdateChargePositions()
     {
-        numberOfCharges = 0;
-        numberOfChargesInCurrentRow = 0;
-        rowOffset = 0;
-
-        foreach (GameObject charge in charges)
-        {
-            charge.transform.position = GetNextElectronPositionOnPlate();
-        }
+        for (int i = 0; i < charges.Count; i++)
+            charges[i].transform.position = GetNextElectronPositionOnPlate(i);
     }
-
-    private Vector3 GetNextElectronPositionOnPlate()
+    
+    private Vector3 GetNextElectronPositionOnPlate(int chargeIndex)
     {
         Vector3 position = this.transform.position;
 
-        if (numberOfCharges > numberOfChargesPerRow * numberOfRows)
+        if (chargeIndex > numberOfChargesPerRow * numberOfRows)
             return position;
 
-        if (numberOfCharges % 2 == 0)
+        int numberOfChargesInCurrentRow = (chargeIndex) % numberOfChargesPerRow;
+        int rowOffset = (int)(chargeIndex) / numberOfChargesPerRow;
+
+        if (chargeIndex % 2 == 0)
         {
             position.x += (chargeRadius + chargeDistance) * 2 * (int)((numberOfChargesInCurrentRow + 2) / 2);
-            position.y += rowOffset;
+            position.y += rowOffset * (chargeRadius + chargeDistance) * 2;
         }
         else
         {
             position.x -= (chargeRadius + chargeDistance) * 2 * (int)((numberOfChargesInCurrentRow + 2) / 2);
-            position.y -= rowOffset;
+            position.y -= rowOffset * (chargeRadius + chargeDistance) * 2;
         }
-
-        if (++numberOfChargesInCurrentRow >= numberOfChargesPerRow)
-        {
-            numberOfChargesInCurrentRow = 0;
-            rowOffset += (chargeRadius + chargeDistance) * 2;
-        }
-
-        numberOfCharges++;
 
         return position;
     }

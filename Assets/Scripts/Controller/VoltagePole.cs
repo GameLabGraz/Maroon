@@ -2,6 +2,9 @@
 
 public class VoltagePole : MonoBehaviour
 {
+    [SerializeField]
+    private bool debug = false;
+
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Electron"))
@@ -9,7 +12,13 @@ public class VoltagePole : MonoBehaviour
 
         Charge charge = other.GetComponent<Charge>();
 
-        if(!charge.JustCreated)
+        if (debug)
+        {
+            Debug.Log("VoltagePole triggered");
+            Debug.Log("Charge.JustCreated = " + charge.JustCreated);
+        }
+
+        if (!charge.JustCreated)
         {
             IVoltagePoleTrigger voltagePoleTrigger = GetComponentInParent<IVoltagePoleTrigger>();
             if(voltagePoleTrigger != null)
