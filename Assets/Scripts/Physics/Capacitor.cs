@@ -25,7 +25,9 @@ public class Capacitor : PausableObject
     [SerializeField]
     private float powerVoltage = 15;
 
-    private float voltage;
+    private float previousPowerVoltage = 0;
+
+    private float voltage = 0;
 
     private float chargeTime = 0;
 
@@ -36,6 +38,8 @@ public class Capacitor : PausableObject
 
     [SerializeField]
     private GameObject protonPrefab;
+
+    private float epsilon = 0.1f;
 
     protected override void Start()
     {
@@ -112,13 +116,13 @@ public class Capacitor : PausableObject
             case ChargeState.IDLE:
                 chargeTime = 0;
 
-                if (powerVoltage > voltage)
+                if (powerVoltage - epsilon > voltage)
                 {
                     chargeState = ChargeState.CHARGING;
                     StartCoroutine("ElectronChargeEffect");
                 }
                    
-                else if (powerVoltage < voltage)
+                else if (powerVoltage < voltage - epsilon)
                 {
                     chargeState = ChargeState.DISCHARGING;
                     StartCoroutine("ElectronDischargeEffect");
@@ -126,22 +130,28 @@ public class Capacitor : PausableObject
 
                 break;
 
-            case ChargeState.CHARGING:
+            case ChargeState.CHARGING:              
+                if (voltage >= powerVoltage - epsilon)
+                {
+                    chargeState = ChargeState.IDLE;
+                    previousPowerVoltage = voltage;
+                }
+
                 Charge();
 
-                if (voltage >= powerVoltage)
-                    chargeState = ChargeState.IDLE;
-
-                chargeTime += Time.fixedDeltaTime;
+                chargeTime += Time.fixedDeltaTime * 0.25f;
                 break;
 
             case ChargeState.DISCHARGING:
+                if (voltage - epsilon <= powerVoltage)
+                {
+                    chargeState = ChargeState.IDLE;
+                    previousPowerVoltage = voltage;
+                }
+
                 Discharge();
 
-                if (voltage <= powerVoltage)
-                    chargeState = ChargeState.IDLE;
-
-                chargeTime += Time.fixedDeltaTime;
+                chargeTime += Time.fixedDeltaTime * 0.25f;
                 break;
 
             default:
@@ -160,7 +170,7 @@ public class Capacitor : PausableObject
         while (numberOfElectrons > 0 && chargeState == ChargeState.CHARGING)
         {
             GameObject electron = GameObject.Instantiate(electronPrefab);
-            electron.transform.position = new Vector3(2.05f, 1.5f, -7.235f);
+            electron.transform.position = plate2.transform.position;
 
             PathFollower pathFollower = electron.GetComponent<PathFollower>();
             pathFollower.SetPath(plusCable.GetComponent<IPath>());
@@ -169,38 +179,65 @@ public class Capacitor : PausableObject
             numberOfElectrons--;
             yield return new WaitForSeconds(electronTimeInterval);
         }
-
     }
 
     private IEnumerator ElectronDischargeEffect()
     {
-        yield return new WaitForSeconds(0);
-    }
+        GameObject minusCable = GameObject.Find("Cable-");
 
+        int numberOfElectrons = (int)Mathf.Round(voltage - powerVoltage) * 2;
+        float electronTimeInterval = 0.2f;
+        float electronSpeed = 0.01f;
+
+        List<Charge> electronsOnPlate = plate1.GetComponent<CapacitorPlateController>().GetCharges();
+
+        while (numberOfElectrons > 0 && chargeState == ChargeState.DISCHARGING)
+        {
+            if (electronsOnPlate.Count - 1 < 0)
+                break;
+
+            Charge electron = electronsOnPlate[electronsOnPlate.Count - 1];
+            electron.transform.position = plate1.transform.position;
+            electron.GetComponent<Charge>().JustCreated = true;
+
+            electronsOnPlate.RemoveAt(electronsOnPlate.Count - 1);
+            
+            PathFollower pathFollower = electron.GetComponent<PathFollower>();
+            pathFollower.SetPath(minusCable.GetComponent<IPath>());
+            pathFollower.maxSpeed = electronSpeed;
+            pathFollower.reverseOrder = false;
+            pathFollower.followPath = true;
+
+            numberOfElectrons--;
+            yield return new WaitForSeconds(electronTimeInterval);
+        }
+    }
 
     public void SetElectronOnPlate(GameObject electron, GameObject plate)
     {
-        if(plate == plate1)
+        GameObject proton = GameObject.Instantiate(protonPrefab);
+        if (plate == plate1)
         {
-            plate1.GetComponent<CapacitorPlateController>().AddCharge(electron);
-            plate2.GetComponent<CapacitorPlateController>().AddCharge(GameObject.Instantiate(protonPrefab));
+            plate1.GetComponent<CapacitorPlateController>().AddCharge(electron.GetComponent<Charge>());
+            plate2.GetComponent<CapacitorPlateController>().AddCharge(proton.GetComponent<Charge>());
         }
         else if(plate == plate2)
         {
-            plate2.GetComponent<CapacitorPlateController>().AddCharge(electron);
-            plate1.GetComponent<CapacitorPlateController>().AddCharge(GameObject.Instantiate(protonPrefab));
+            plate2.GetComponent<CapacitorPlateController>().AddCharge(electron.GetComponent<Charge>());
+            plate1.GetComponent<CapacitorPlateController>().AddCharge(proton.GetComponent<Charge>());
         }
     }
 
-
     private void Charge()
     {
-        voltage = powerVoltage * (1 - Mathf.Exp(-chargeTime / (seriesResistance * capacitance)));
+        //voltage = powerVoltage * (1 - Mathf.Exp(-chargeTime / (seriesResistance * capacitance)));
+        voltage = previousPowerVoltage + (powerVoltage - previousPowerVoltage) * (1 - Mathf.Exp(-chargeTime / (seriesResistance * capacitance)));
     }
 
     private void Discharge()
     {
-        voltage = powerVoltage * Mathf.Exp(-chargeTime / (seriesResistance * capacitance));
+        //voltage = powerVoltage * Mathf.Exp(-chargeTime / (seriesResistance * capacitance));
+        voltage = powerVoltage + (previousPowerVoltage - powerVoltage) * Mathf.Exp(-chargeTime / (seriesResistance * capacitance));
     }
 
 
@@ -232,10 +269,8 @@ public class Capacitor : PausableObject
         args.value = this.capacitance;
     }
 
-
     public void SetPowerVoltage(float voltage)
     {
         this.powerVoltage = voltage;
     }
-
 }

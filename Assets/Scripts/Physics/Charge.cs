@@ -13,6 +13,17 @@ public class Charge : MonoBehaviour
     [SerializeField]
     private bool justCreated = true;
 
+
+    public float ChargeValue
+    {
+        get { return chargeValue; }
+    }
+
+    public float Mass
+    {
+        get { return mass; }
+    }
+
     public bool JustCreated
     {
         get { return justCreated; }

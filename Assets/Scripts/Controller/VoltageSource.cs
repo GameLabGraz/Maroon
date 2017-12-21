@@ -27,7 +27,7 @@ public class VoltageSource : MonoBehaviour, IVoltagePoleTrigger
         Destroy(other.gameObject);
 
         GameObject electron = GameObject.Instantiate(electronPrefab);      
-        electron.GetComponent<Charge>().JustCreated = false;
+        electron.GetComponent<Charge>().JustCreated = true;
 
         PathFollower pathFollower = electron.GetComponent<PathFollower>();
         pathFollower.maxSpeed = electronSpeed;
@@ -44,6 +44,7 @@ public class VoltageSource : MonoBehaviour, IVoltagePoleTrigger
         {
             electron.transform.position = positiveVoltagePole.transform.position;
 
+            pathFollower.reverseOrder = true;
             pathFollower.SetPath(plusCable.GetComponent<IPath>());
         }
     }

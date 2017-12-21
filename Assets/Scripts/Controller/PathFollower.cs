@@ -22,7 +22,7 @@ public class PathFollower : MonoBehaviour
 
     private Vector3 velocity = Vector3.zero;
 
-    private int currentNode;
+    private int currentNode = 0;
 	
 	private void Update ()
     {
@@ -68,5 +68,6 @@ public class PathFollower : MonoBehaviour
     public void SetPath(IPath path)
     {
         this.path = path;
+        currentNode = 0;
     }
 }

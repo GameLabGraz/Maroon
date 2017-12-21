@@ -27,7 +27,7 @@ public class CapacitorPlateController : VRTK_InteractableObject
     private int numberOfChargesPerRow = 0;
     private int numberOfRows = 0;
 
-    private List<GameObject> charges = new List<GameObject>();
+    private List<Charge> charges = new List<Charge>();
 
     private void Start()
     {
@@ -107,11 +107,25 @@ public class CapacitorPlateController : VRTK_InteractableObject
         EnableResizeObjects(false);
     }
 
-    public void AddCharge(GameObject charge)
+    public void AddCharge(Charge charge)
     {
         charges.Add(charge);
     }
 
+    public void RemoveCharge(Charge charge)
+    {
+        charges.Remove(charge);
+    }
+
+    public Charge GetChargeAt(int index)
+    {
+        return charges[index];
+    }
+
+    public List<Charge> GetCharges()
+    {
+        return this.charges;
+    }
     private void UpdateChargePositions()
     {
         for (int i = 0; i < charges.Count; i++)
