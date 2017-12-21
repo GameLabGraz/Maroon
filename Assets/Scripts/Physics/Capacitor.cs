@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -29,17 +28,18 @@ public class Capacitor : PausableObject
 
     private float voltage = 0;
 
+
     private float chargeTime = 0;
 
     private ChargeState chargeState = ChargeState.IDLE;
 
+
+    // Charge Prefabs
     [SerializeField]
     private GameObject electronPrefab;
 
     [SerializeField]
     private GameObject protonPrefab;
-
-    private float epsilon = 0.1f;
 
     protected override void Start()
     {
@@ -116,13 +116,13 @@ public class Capacitor : PausableObject
             case ChargeState.IDLE:
                 chargeTime = 0;
 
-                if (powerVoltage - epsilon > voltage)
+                if (powerVoltage > voltage)
                 {
                     chargeState = ChargeState.CHARGING;
                     StartCoroutine("ElectronChargeEffect");
                 }
                    
-                else if (powerVoltage < voltage - epsilon)
+                else if (powerVoltage < voltage)
                 {
                     chargeState = ChargeState.DISCHARGING;
                     StartCoroutine("ElectronDischargeEffect");
@@ -131,27 +131,30 @@ public class Capacitor : PausableObject
                 break;
 
             case ChargeState.CHARGING:              
-                if (voltage >= powerVoltage - epsilon)
+                if (voltage >= powerVoltage)
                 {
                     chargeState = ChargeState.IDLE;
                     previousPowerVoltage = voltage;
+                    break;
                 }
-
-                Charge();
-
-                chargeTime += Time.fixedDeltaTime * 0.25f;
+                else
+                {
+                    Charge();
+                    chargeTime += Time.fixedDeltaTime * 0.25f;
+                }
                 break;
 
             case ChargeState.DISCHARGING:
-                if (voltage - epsilon <= powerVoltage)
+                if (voltage <= powerVoltage)
                 {
                     chargeState = ChargeState.IDLE;
                     previousPowerVoltage = voltage;
                 }
-
-                Discharge();
-
-                chargeTime += Time.fixedDeltaTime * 0.25f;
+                else
+                {
+                    Discharge();
+                    chargeTime += Time.fixedDeltaTime * 0.25f;
+                }
                 break;
 
             default:
@@ -169,6 +172,8 @@ public class Capacitor : PausableObject
 
         while (numberOfElectrons > 0 && chargeState == ChargeState.CHARGING)
         {
+            yield return new WaitUntil(() => simController.SimulationRunning);
+
             GameObject electron = GameObject.Instantiate(electronPrefab);
             electron.transform.position = plate2.transform.position;
 
@@ -195,6 +200,8 @@ public class Capacitor : PausableObject
         {
             if (electronsOnPlate.Count - 1 < 0)
                 break;
+
+            yield return new WaitUntil(() => simController.SimulationRunning);
 
             Charge electron = electronsOnPlate[electronsOnPlate.Count - 1];
             electron.transform.position = plate1.transform.position;
@@ -230,16 +237,13 @@ public class Capacitor : PausableObject
 
     private void Charge()
     {
-        //voltage = powerVoltage * (1 - Mathf.Exp(-chargeTime / (seriesResistance * capacitance)));
         voltage = previousPowerVoltage + (powerVoltage - previousPowerVoltage) * (1 - Mathf.Exp(-chargeTime / (seriesResistance * capacitance)));
     }
 
     private void Discharge()
     {
-        //voltage = powerVoltage * Mathf.Exp(-chargeTime / (seriesResistance * capacitance));
         voltage = powerVoltage + (previousPowerVoltage - powerVoltage) * Mathf.Exp(-chargeTime / (seriesResistance * capacitance));
     }
-
 
     public float GetElectricalFieldStrength()
     {

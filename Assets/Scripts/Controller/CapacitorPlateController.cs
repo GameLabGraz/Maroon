@@ -126,6 +126,17 @@ public class CapacitorPlateController : VRTK_InteractableObject
     {
         return this.charges;
     }
+
+    public float GetPlateChargeValue()
+    {
+        float totalChargeValue = 0;
+
+        foreach (Charge charge in charges)
+            totalChargeValue += charge.ChargeValue;
+
+        return totalChargeValue;
+    }
+
     private void UpdateChargePositions()
     {
         for (int i = 0; i < charges.Count; i++)

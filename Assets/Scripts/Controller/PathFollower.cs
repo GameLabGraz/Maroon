@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class PathFollower : MonoBehaviour
+public class PathFollower : PausableObject
 {
     private IPath path;
 
@@ -23,21 +23,6 @@ public class PathFollower : MonoBehaviour
     private Vector3 velocity = Vector3.zero;
 
     private int currentNode = 0;
-	
-	private void Update ()
-    {
-        if (!followPath)
-            return;
-
-        Vector3 steering = Vector3.zero;
-        steering += PathFollowing();
-
-        steering = Vector3.ClampMagnitude(steering, maxForce);
-        steering /= mass;
-
-        velocity = Vector3.ClampMagnitude(velocity + steering, maxSpeed);
-        transform.position += velocity;
-    }
 
     private Vector3 PathFollowing()
     {
@@ -69,5 +54,25 @@ public class PathFollower : MonoBehaviour
     {
         this.path = path;
         currentNode = 0;
+    }
+
+    protected override void HandleUpdate()
+    {
+        if (!followPath)
+            return;
+
+        Vector3 steering = Vector3.zero;
+        steering += PathFollowing();
+
+        steering = Vector3.ClampMagnitude(steering, maxForce);
+        steering /= mass;
+
+        velocity = Vector3.ClampMagnitude(velocity + steering, maxSpeed);
+        transform.position += velocity;
+    }
+
+    protected override void HandleFixedUpdate()
+    {
+
     }
 }
