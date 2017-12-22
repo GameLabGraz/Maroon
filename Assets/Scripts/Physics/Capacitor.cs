@@ -54,6 +54,18 @@ public class Capacitor : PausableObject
         dielectric = GameObject.FindObjectOfType<Dielectric>();
 	}
 
+    protected override void Update()
+    {
+        float relativePermittivity = 1.0f;
+        if (dielectric != null)
+            relativePermittivity = dielectric.GetRelativePermittivity();
+
+        capacitance = (GetOverlapPlateArea() * vacuumPermittivity * relativePermittivity) / GetPlateDistance();
+
+        base.Update();
+    }
+
+
     private float GetOverlapPlateArea()
     {
         float area = 0;
@@ -105,12 +117,6 @@ public class Capacitor : PausableObject
 
     protected override void HandleFixedUpdate()
     {
-        float relativePermittivity = 1.0f;
-        if (dielectric != null)
-            relativePermittivity = dielectric.GetRelativePermittivity();
-
-        capacitance = (GetOverlapPlateArea() * vacuumPermittivity * relativePermittivity) / GetPlateDistance();
-
         switch(chargeState)
         {
             case ChargeState.IDLE:

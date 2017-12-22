@@ -16,7 +16,7 @@ public abstract class PausableObject : MonoBehaviour
             simController = simControllerObject.GetComponent<SimulationController>();
     }
 
-	private void Update()
+    protected virtual void Update()
     {
         Rigidbody rigidbody_ = GetComponent<Rigidbody>();
 
@@ -46,7 +46,7 @@ public abstract class PausableObject : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         if (simController.SimulationRunning)
             HandleFixedUpdate();
