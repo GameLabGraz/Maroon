@@ -23,7 +23,7 @@ public class FieldLine : MonoBehaviour, IResetObject
     /// <summary>
     /// The magnetic field
     /// </summary>
-	public BField field;
+    public BField field;
 
     /// <summary>
     /// The vertex count of a single field line.
@@ -85,6 +85,11 @@ public class FieldLine : MonoBehaviour, IResetObject
     private HashSet<GameObject> clones;
 
     /// <summary>
+    /// Width of the drawn field lines
+    /// </summary>
+    public Vector2 lineWidth = new Vector2(0.1f, 0.1f);
+
+    /// <summary>
     /// Initializes clones field
     /// </summary>
     public void Awake()
@@ -92,6 +97,10 @@ public class FieldLine : MonoBehaviour, IResetObject
         clones = new HashSet<GameObject>();
         numClones = Teal.DefaultNumFieldLines;
         symmetryAxis = new Vector3(0, 1, 0);
+
+        lineRenderer = gameObject.GetComponent<AdvancedLineRenderer>();
+        if (lineRenderer == null)
+            lineRenderer = gameObject.AddComponent<AdvancedLineRenderer>();
     }
 
     /// <summary>
@@ -99,12 +108,8 @@ public class FieldLine : MonoBehaviour, IResetObject
     /// </summary>
     public void Start()
     {
-        lineRenderer = gameObject.GetComponent<AdvancedLineRenderer>();
-        if (lineRenderer == null)
-            lineRenderer = gameObject.AddComponent<AdvancedLineRenderer>();
-
         lineRenderer.initLineRenderer();
-        lineRenderer.SetWidth(0.1f, 0.1f);
+        lineRenderer.SetWidth(lineWidth.x, lineWidth.y);
 
         emObj = gameObject.GetComponentInParent<EMObject>();
     }
@@ -125,7 +130,7 @@ public class FieldLine : MonoBehaviour, IResetObject
     /// </summary>
     public void draw()
     {
-        if (!this.visible)
+        if (!visible)
             return;
 
         lineRenderer.Clear();
@@ -136,25 +141,27 @@ public class FieldLine : MonoBehaviour, IResetObject
 
         drawFieldLine();
 
-        float rotation_scale = 360f / numClones;
+        float rotationScale = 360f / numClones;
 
-        float rotation = rotation_scale;
+        float rotation = rotationScale;
 
         List<KeyValuePair<int, Vector3>> pointList = lineRenderer.GetPositions();
         for (int i = 1; i < numClones; ++i)
         {
-            GameObject clone = Instantiate(gameObject, transform.position, Quaternion.identity) as GameObject;
-            clone.GetComponent<AdvancedLineRenderer>().SetVertexCount(pointList.Count);
-            clone.GetComponent<AdvancedLineRenderer>().SetPositions(pointList);
+            GameObject clone = Instantiate(gameObject, transform.position, Quaternion.identity);
+
+            AdvancedLineRenderer lineRendererClone = clone.GetComponent<AdvancedLineRenderer>();
+            lineRendererClone.SetVertexCount(pointList.Count);
+            lineRendererClone.SetPositions(pointList);
 
             //workaround to keep the fieldline and its clones at the same scale
             Vector3 temp = clone.transform.localScale;
-            clone.transform.SetParent(this.transform.parent);
+            clone.transform.SetParent(transform.parent);
             clone.transform.localScale = temp;
             //rotate clones to fill the whole 360°
             clone.transform.localEulerAngles = rotation * symmetryAxis;
             clones.Add(clone);
-            rotation += rotation_scale;
+            rotation += rotationScale;
         }
     }
 
@@ -166,7 +173,8 @@ public class FieldLine : MonoBehaviour, IResetObject
     {
         float closingAngle = fixClosingAngle + (4 - emObj.getFieldStrength()) * 2;
 
-        int positionIndex = 0; ;
+        int positionIndex = 0;
+
         Vector3 position = transform.position - originOffset;
         lineRenderer.SetPosition(positionIndex, transform.InverseTransformPoint(position));
         positionIndex++;
@@ -174,10 +182,12 @@ public class FieldLine : MonoBehaviour, IResetObject
         {
             Vector3 p = Vector3.Normalize(-field.get(position) * Teal.FieldStrengthFactor);
 
-            Vector3 direction = new Vector3();
-            direction.x = Mathf.Cos(closingAngle * Mathf.Deg2Rad) * p.x - Mathf.Sin(closingAngle * Mathf.Deg2Rad) * p.y;
-            direction.y = Mathf.Sin(closingAngle * Mathf.Deg2Rad) * p.x + Mathf.Cos(closingAngle * Mathf.Deg2Rad) * p.y;
-            direction.z = p.z;
+            Vector3 direction = new Vector3
+            (
+                Mathf.Cos(closingAngle * Mathf.Deg2Rad) * p.x - Mathf.Sin(closingAngle * Mathf.Deg2Rad) * p.y,
+                Mathf.Sin(closingAngle * Mathf.Deg2Rad) * p.x + Mathf.Cos(closingAngle * Mathf.Deg2Rad) * p.y,
+                p.z
+            );
 
             position += direction * lineSegmentLength;
 
@@ -185,12 +195,13 @@ public class FieldLine : MonoBehaviour, IResetObject
             positionIndex++;
 
             Vector3 dist = transform.position;
-            if (coil)   // hack for coil
-                dist -= 1.5f * new Vector3(Mathf.Abs(emObj.transform.up.x), Mathf.Abs(emObj.transform.up.y), Mathf.Abs(emObj.transform.up.z));
+            if (coil) // hack for coil
+                dist -= 1.5f * new Vector3(Mathf.Abs(emObj.transform.up.x), Mathf.Abs(emObj.transform.up.y),
+                            Mathf.Abs(emObj.transform.up.z));
             if (Vector3.Distance(position, dist) <= 0.8f || Vector3.Distance(position, transform.position) <= 0.4f)
                 break;
-
         }
+
         lineRenderer.WritePositionsToLineRenderer();
     }
 
