@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Capacitor : PausableObject
 {
     private enum ChargeState {IDLE, CHARGING, DISCHARGING};
-
 
     [SerializeField]
     private GameObject plate1;
@@ -15,7 +13,7 @@ public class Capacitor : PausableObject
     private GameObject plate2;
 
     [SerializeField]
-    private float seriesResistance = 500;
+    private float seriesResistance = 5e10f;
 
     private const float vacuumPermittivity = 8.8542e-12f;
 
@@ -26,11 +24,22 @@ public class Capacitor : PausableObject
     [SerializeField]
     private float powerVoltage = 15;
 
-    private float voltage;
+    private float previousPowerVoltage = 0;
+
+    private float voltage = 0;
+
 
     private float chargeTime = 0;
 
     private ChargeState chargeState = ChargeState.IDLE;
+
+
+    // Charge Prefabs
+    [SerializeField]
+    private GameObject electronPrefab;
+
+    [SerializeField]
+    private GameObject protonPrefab;
 
     protected override void Start()
     {
@@ -44,6 +53,18 @@ public class Capacitor : PausableObject
 
         dielectric = GameObject.FindObjectOfType<Dielectric>();
 	}
+
+    protected override void Update()
+    {
+        float relativePermittivity = 1.0f;
+        if (dielectric != null)
+            relativePermittivity = dielectric.GetRelativePermittivity();
+
+        capacitance = (GetOverlapPlateArea() * vacuumPermittivity * relativePermittivity) / GetPlateDistance();
+
+        base.Update();
+    }
+
 
     private float GetOverlapPlateArea()
     {
@@ -96,40 +117,50 @@ public class Capacitor : PausableObject
 
     protected override void HandleFixedUpdate()
     {
-        float relativePermittivity = 1.0f;
-        if (dielectric != null)
-            relativePermittivity = dielectric.GetRelativePermittivity();
-
-        capacitance = (GetOverlapPlateArea() * vacuumPermittivity * relativePermittivity) / GetPlateDistance();
-
         switch(chargeState)
         {
             case ChargeState.IDLE:
                 chargeTime = 0;
 
                 if (powerVoltage > voltage)
+                {
                     chargeState = ChargeState.CHARGING;
+                    StartCoroutine("ElectronChargeEffect");
+                }
+                   
                 else if (powerVoltage < voltage)
+                {
                     chargeState = ChargeState.DISCHARGING;
+                    StartCoroutine("ElectronDischargeEffect");
+                }                   
 
                 break;
 
-            case ChargeState.CHARGING:
-                Charge();
-
+            case ChargeState.CHARGING:              
                 if (voltage >= powerVoltage)
+                {
                     chargeState = ChargeState.IDLE;
-
-                chargeTime += Time.fixedDeltaTime;
+                    previousPowerVoltage = voltage;
+                    break;
+                }
+                else
+                {
+                    Charge();
+                    chargeTime += Time.fixedDeltaTime * 0.25f;
+                }
                 break;
 
             case ChargeState.DISCHARGING:
-                Discharge();
-
                 if (voltage <= powerVoltage)
+                {
                     chargeState = ChargeState.IDLE;
-
-                chargeTime += Time.fixedDeltaTime;
+                    previousPowerVoltage = voltage;
+                }
+                else
+                {
+                    Discharge();
+                    chargeTime += Time.fixedDeltaTime * 0.25f;
+                }
                 break;
 
             default:
@@ -137,14 +168,95 @@ public class Capacitor : PausableObject
         }
     }
 
+    private IEnumerator ElectronChargeEffect()
+    {
+        GameObject plusCable = GameObject.Find("Cable+");
+
+        int numberOfElectrons = (int)(powerVoltage - voltage) * 2;
+        float electronTimeInterval = 0.2f;
+        float electronSpeed = 0.01f;
+
+        while (numberOfElectrons > 0 && chargeState == ChargeState.CHARGING)
+        {
+            yield return new WaitUntil(() => simController.SimulationRunning);
+
+            GameObject electron = GameObject.Instantiate(electronPrefab);
+            electron.transform.position = plate2.transform.position;
+
+            PathFollower pathFollower = electron.GetComponent<PathFollower>();
+            pathFollower.SetPath(plusCable.GetComponent<IPath>());
+            pathFollower.maxSpeed = electronSpeed;           
+
+            numberOfElectrons--;
+            yield return new WaitForSeconds(electronTimeInterval);
+        }
+    }
+
+    private IEnumerator ElectronDischargeEffect()
+    {
+        GameObject minusCable = GameObject.Find("Cable-");
+
+        int numberOfElectrons = (int)Mathf.Round(voltage - powerVoltage) * 2;
+        float electronTimeInterval = 0.2f;
+        float electronSpeed = 0.01f;
+
+        List<Charge> electronsOnPlate = plate1.GetComponent<CapacitorPlateController>().GetCharges();
+
+        while (numberOfElectrons > 0 && chargeState == ChargeState.DISCHARGING)
+        {
+            if (electronsOnPlate.Count - 1 < 0)
+                break;
+
+            yield return new WaitUntil(() => simController.SimulationRunning);
+
+            Charge electron = electronsOnPlate[electronsOnPlate.Count - 1];
+            electron.transform.position = plate1.transform.position;
+            electron.GetComponent<Charge>().JustCreated = true;
+
+            electronsOnPlate.RemoveAt(electronsOnPlate.Count - 1);
+            
+            PathFollower pathFollower = electron.GetComponent<PathFollower>();
+            pathFollower.SetPath(minusCable.GetComponent<IPath>());
+            pathFollower.maxSpeed = electronSpeed;
+            pathFollower.reverseOrder = false;
+            pathFollower.followPath = true;
+
+            numberOfElectrons--;
+            yield return new WaitForSeconds(electronTimeInterval);
+        }
+    }
+
+    public void SetElectronOnPlate(GameObject electron, GameObject plate)
+    {
+        GameObject proton = GameObject.Instantiate(protonPrefab);
+        if (plate == plate1)
+        {
+            plate1.GetComponent<CapacitorPlateController>().AddCharge(electron.GetComponent<Charge>());
+            plate2.GetComponent<CapacitorPlateController>().AddCharge(proton.GetComponent<Charge>());
+        }
+        else if(plate == plate2)
+        {
+            plate2.GetComponent<CapacitorPlateController>().AddCharge(electron.GetComponent<Charge>());
+            plate1.GetComponent<CapacitorPlateController>().AddCharge(proton.GetComponent<Charge>());
+        }
+    }
+
     private void Charge()
     {
-        voltage = powerVoltage * (1 - Mathf.Exp(-chargeTime / (seriesResistance * capacitance * 100000000)));
+        voltage = previousPowerVoltage + (powerVoltage - previousPowerVoltage) * (1 - Mathf.Exp(-chargeTime / (seriesResistance * capacitance)));
     }
 
     private void Discharge()
     {
-        voltage = powerVoltage * Mathf.Exp(-chargeTime / (seriesResistance * capacitance * 100000000));
+        voltage = powerVoltage + (previousPowerVoltage - powerVoltage) * Mathf.Exp(-chargeTime / (seriesResistance * capacitance));
+    }
+
+    public float GetElectricalFieldStrength()
+    {
+        float area = GetOverlapPlateArea();
+        float permittivity = vacuumPermittivity * dielectric.GetRelativePermittivity();
+
+        return (capacitance * voltage) / (area * permittivity);
     }
 
     public float GetVoltage()
@@ -171,5 +283,4 @@ public class Capacitor : PausableObject
     {
         this.powerVoltage = voltage;
     }
-
 }

@@ -31,9 +31,6 @@ public class ScreenController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!simController.SimulationRunning)
-            return;
-
         MessageArgs messageArgs = new MessageArgs();
         valueGetterObject.SendMessage(valueGetterMethodByReference, messageArgs);
         valueDisplay.text = valueDisplayText + messageArgs.value.ToString();

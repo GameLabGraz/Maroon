@@ -1,54 +1,43 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class PathFollower : MonoBehaviour
+public class PathFollower : PausableObject
 {
     private IPath path;
 
     [SerializeField]
-    private bool followPath;
+    public float maxForce;
 
     [SerializeField]
-    private float maxForce;
+    public float mass;
 
     [SerializeField]
-    private float mass;
+    public float maxSpeed;
 
     [SerializeField]
-    private float maxSpeed;
+    public bool reverseOrder = false;
+
+    [SerializeField]
+    public bool followPath = true;
 
     private Vector3 velocity = Vector3.zero;
 
-    private int currentNode;
-	
-	private void Update ()
-    {
-        if (!followPath)
-            return;
-
-        Vector3 steering = Vector3.zero;
-        steering += PathFollowing();
-
-        steering = Vector3.ClampMagnitude(steering, maxForce);
-        steering /= mass;
-
-        velocity = Vector3.ClampMagnitude(velocity + steering, maxSpeed);
-        transform.position += velocity;
-    }
+    private int currentNode = 0;
 
     private Vector3 PathFollowing()
     {
         if (path == null)
             return new Vector3();
 
-        List<Vector3> nodes = path.GetNodes();
+        List<Vector3> nodes = path.GetNodes(reverseOrder);
+
         Vector3 target = nodes[currentNode];
 
-        if (Vector3.Distance(transform.position, target) <= 0.5f)
+        if (Vector3.Distance(transform.position, target) <= 0.01f)
         {
             currentNode++;
             if (currentNode >= nodes.Count)
-                currentNode = nodes.Count - 1;
+                followPath = false;
         }
 
         return Seek(target);
@@ -64,5 +53,26 @@ public class PathFollower : MonoBehaviour
     public void SetPath(IPath path)
     {
         this.path = path;
+        currentNode = 0;
+    }
+
+    protected override void HandleUpdate()
+    {
+        if (!followPath)
+            return;
+
+        Vector3 steering = Vector3.zero;
+        steering += PathFollowing();
+
+        steering = Vector3.ClampMagnitude(steering, maxForce);
+        steering /= mass;
+
+        velocity = Vector3.ClampMagnitude(velocity + steering, maxSpeed);
+        transform.position += velocity;
+    }
+
+    protected override void HandleFixedUpdate()
+    {
+
     }
 }
