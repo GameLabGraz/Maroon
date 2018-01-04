@@ -1433,6 +1433,7 @@ GameObject:
   - component: {fileID: 142720191}
   - component: {fileID: 142720190}
   - component: {fileID: 142720189}
+  - component: {fileID: 142720192}
   m_Layer: 0
   m_Name: PlayArea
   m_TagString: Untagged
@@ -1490,8 +1491,8 @@ MonoBehaviour:
   layersToIgnore:
     serializedVersion: 2
     m_Bits: 4
-  normalLerpTime: 0.1
-  minSpeedMps: 50
+  normalLerpTime: 0.22
+  minSpeedMps: 24.93
   capsuleTopOffset: 0.2
   capsuleBottomOffset: 0.5
   capsuleRadius: 0.5
@@ -1531,6 +1532,27 @@ MonoBehaviour:
   teleporter: {fileID: 0}
   customBodyColliderContainer: {fileID: 0}
   customFootColliderContainer: {fileID: 0}
+--- !u!114 &142720192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 142720187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc42913721fa5ac43aa12864be562cb4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  drawDebugVisualization: 0
+  allowKeyboardShortcuts: 1
+  allowCommandLineArguments: 1
+  msaaLevel: 8
+  scaleRenderViewport: 1
+  minimumRenderScale: 0.8
+  maximumRenderScale: 1.4
+  maximumRenderTargetDimension: 4096
+  renderScaleFillRateStepSizeInPercent: 15
+  scaleRenderTargetResolution: 0
 --- !u!1 &156930522
 GameObject:
   m_ObjectHideFlags: 0
