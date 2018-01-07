@@ -11,6 +11,9 @@ public class SliderReactor : MonoBehaviour
     private void Start()
     {
         _slider.ValueChanged += SliderOnValueChanged;
+        // fixes not firing event at start when value is 0
+        SliderOnValueChanged(null,
+            new Control3DEventArgs() {value = _slider.GetValue(), normalizedValue = _slider.GetNormalizedValue()});
     }
 
     private void SliderOnValueChanged(object sender, Control3DEventArgs control3DEventArgs)

@@ -129,6 +129,7 @@ public class Coil : EMObject, IResetObject
     /// <param name="resistance_factor">The silder to get selected value from user</param>
     public void setResistanceFactor(float resistance_factor)
     {
+        Debug.Log("RingResistance: " + resistance_factor);
         this.resistance_factor = resistance_factor;
     }
 

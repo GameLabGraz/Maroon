@@ -50,7 +50,7 @@ public class BField : MonoBehaviour, IField
         GameObject[] sensedObjects = GameObject.FindGameObjectsWithTag("GenerateB");
         foreach (GameObject currGO in sensedObjects)
         {
-            if (currGO.transform.parent != null && currGO.transform.parent.gameObject != null)
+            if (currGO != null && currGO.transform != null && currGO.transform.parent != null && currGO.transform.parent.gameObject != null && producers != null)
                 producers.Add(currGO.transform.parent.gameObject);
         }
     }

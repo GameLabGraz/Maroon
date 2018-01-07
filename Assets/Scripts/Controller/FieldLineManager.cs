@@ -96,6 +96,7 @@ public class FieldLineManager : MonoBehaviour
     /// <param name="value"></param>
     public void setSymmetryCount(int value)
     {
+        Debug.Log("FieldLines: " + value);
         int symmetryCnt = value;
 
         symmetryEnabled = symmetryCnt == 1 ? false : true;
@@ -133,9 +134,9 @@ public class FieldLineManager : MonoBehaviour
             return;
         drawCounter = 1;
 
+        if(fieldLines == null)
+            return;
         foreach (FieldLine fl in fieldLines)
-        {
             fl.draw();
-        }
     }
 }

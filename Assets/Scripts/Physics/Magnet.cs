@@ -29,6 +29,7 @@ public class Magnet : EMObject
     /// <param name="field_strength">The silder to get selected value from user</param>
     public void setFieldStrength(float field_strength)
     {
+        Debug.Log("MagneticMoment: " + field_strength);
         this.field_strength = field_strength;
     }
 
