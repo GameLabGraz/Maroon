@@ -195,4 +195,15 @@ public class SimulationController : MonoBehaviour
         simulationReset = true;
         Debug.Log("Reset");
     }
+
+    /// <summary>
+    /// Toggles the simulation
+    /// </summary>
+    public void ToggleSimulation()
+    {
+        if (!SimulationRunning)
+            StartSimulation();
+        else
+            StopSimulation();
+    }
 }
