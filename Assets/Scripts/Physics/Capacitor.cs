@@ -181,6 +181,8 @@ public class Capacitor : PausableObject
             yield return new WaitUntil(() => simController.SimulationRunning);
 
             GameObject electron = GameObject.Instantiate(electronPrefab);
+            electron.GetComponent<Charge>().Id = numberOfElectrons;
+
             electron.transform.position = plate2.transform.position;
 
             PathFollower pathFollower = electron.GetComponent<PathFollower>();
@@ -200,10 +202,10 @@ public class Capacitor : PausableObject
         float electronTimeInterval = 0.2f;
         float electronSpeed = 0.01f;
 
-        List<Charge> electronsOnPlate = plate1.GetComponent<CapacitorPlateController>().GetCharges();
-
         while (numberOfElectrons > 0 && chargeState == ChargeState.DISCHARGING)
         {
+            List<Charge> electronsOnPlate = plate1.GetComponent<CapacitorPlateController>().GetCharges();
+
             if (electronsOnPlate.Count - 1 < 0)
                 break;
 
@@ -213,8 +215,8 @@ public class Capacitor : PausableObject
             electron.transform.position = plate1.transform.position;
             electron.GetComponent<Charge>().JustCreated = true;
 
-            electronsOnPlate.RemoveAt(electronsOnPlate.Count - 1);
-            
+            plate1.GetComponent<CapacitorPlateController>().RemoveCharge(electron);
+
             PathFollower pathFollower = electron.GetComponent<PathFollower>();
             pathFollower.SetPath(minusCable.GetComponent<IPath>());
             pathFollower.maxSpeed = electronSpeed;
@@ -229,6 +231,8 @@ public class Capacitor : PausableObject
     public void SetElectronOnPlate(GameObject electron, GameObject plate)
     {
         GameObject proton = GameObject.Instantiate(protonPrefab);
+        proton.GetComponent<Charge>().Id = electron.GetComponent<Charge>().Id;
+
         if (plate == plate1)
         {
             plate1.GetComponent<CapacitorPlateController>().AddCharge(electron.GetComponent<Charge>());

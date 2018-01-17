@@ -13,10 +13,10 @@ public class CapacitorBaseController : MonoBehaviour, IVoltagePoleTrigger
         CapacitorPlateController plateController = capacitorPlate.GetComponent<CapacitorPlateController>();
         if (plateController.GetPlateChargeValue() > 0)
         {
-            Charge chargeToRemove = plateController.GetChargeAt(0);
+            Charge chargeToRemove = plateController.GetCharge(other.GetComponent<Charge>().Id);
             plateController.RemoveCharge(chargeToRemove);
 
-            Destroy(chargeToRemove.gameObject);
+            chargeToRemove.FadingOut(0.5f);
             Destroy(other.gameObject);
         }
         else

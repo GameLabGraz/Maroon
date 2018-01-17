@@ -5,6 +5,9 @@ using UnityEngine;
 public class Charge : MonoBehaviour
 {
     [SerializeField]
+    private int id;
+
+    [SerializeField]
     private float chargeValue;
 
     [SerializeField]
@@ -13,6 +16,19 @@ public class Charge : MonoBehaviour
     [SerializeField]
     private bool justCreated = true;
 
+    private CapacitorPlateController plate;
+
+    public int Id
+    {
+        get { return id; }
+        set { id = value; }
+    }
+
+    public CapacitorPlateController Plate
+    {
+        get { return plate; }
+        set { plate = value; }
+    }
 
     public float ChargeValue
     {
@@ -28,6 +44,31 @@ public class Charge : MonoBehaviour
     {
         get { return justCreated; }
         set { justCreated = value; }
+    }
+
+    public void FadingOut(float fadingOutTime)
+    {
+        StartCoroutine("FadeOutSequence", fadingOutTime);
+    }
+
+    private IEnumerator FadeOutSequence(float fadingOutTime)
+    {
+        float fadingOutSpeed = 1.0f / fadingOutTime;
+
+        Renderer rendererObj = GetComponent<Renderer>();
+        float alphaValue = rendererObj.material.color.a;
+
+        while (alphaValue >= 0)
+        {
+            alphaValue -= Time.deltaTime * fadingOutSpeed;
+            Color newColor = rendererObj.material.color;
+            newColor.a = alphaValue;
+            rendererObj.material.SetColor("_Color", newColor);
+            yield return null;
+        }
+
+        plate.RemoveCharge(this);
+        Destroy(this.gameObject);
     }
 
     private void OnTriggerEnter(Collider other)
