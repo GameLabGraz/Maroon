@@ -65,7 +65,6 @@ public class Capacitor : PausableObject
         base.Update();
     }
 
-
     private float GetOverlapPlateArea()
     {
         float area = 0;
@@ -173,7 +172,8 @@ public class Capacitor : PausableObject
         GameObject plusCable = GameObject.Find("Cable+");
 
         int numberOfElectrons = (int)(powerVoltage - voltage) * 2;
-        float electronTimeInterval = 0.2f;
+
+        float electronTimeInterval = 5 * seriesResistance * capacitance / numberOfElectrons;
         float electronSpeed = 0.01f;
 
         while (numberOfElectrons > 0 && chargeState == ChargeState.CHARGING)
@@ -199,7 +199,8 @@ public class Capacitor : PausableObject
         GameObject minusCable = GameObject.Find("Cable-");
 
         int numberOfElectrons = (int)Mathf.Round(voltage - powerVoltage) * 2;
-        float electronTimeInterval = 0.2f;
+
+        float electronTimeInterval = 5 * seriesResistance * capacitance / numberOfElectrons;
         float electronSpeed = 0.01f;
 
         while (numberOfElectrons > 0 && chargeState == ChargeState.DISCHARGING)
