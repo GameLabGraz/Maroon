@@ -66,7 +66,7 @@ public class CapacitorPlateController : VRTK_InteractableObject
         numberOfChargesPerRow = (int)(this.transform.localScale.x / ((chargeRadius + chargeDistance) * 2));
         numberOfRows = (int)(this.transform.localScale.y / ((chargeRadius + chargeDistance) * 2));
 
-        UpdateChargePositions();
+        //UpdateChargePositions();
     }
 
     private GameObject CreateResizeObject(Vector3 resizeAxis, float maxSize)
@@ -109,6 +109,8 @@ public class CapacitorPlateController : VRTK_InteractableObject
 
     public void AddCharge(Charge charge)
     {
+        charge.transform.position = GetNextElectronPositionOnPlate(charges.Count);
+
         charges.Add(charge.Id, charge);
         charge.Plate = this;
     }
@@ -155,15 +157,39 @@ public class CapacitorPlateController : VRTK_InteractableObject
         int numberOfChargesInCurrentRow = (chargeIndex) % numberOfChargesPerRow;
         int rowOffset = (int)(chargeIndex) / numberOfChargesPerRow;
 
+        if (chargeIndex >= numberOfChargesPerRow)
+        {
+            rowOffset = (int)((chargeIndex + numberOfChargesPerRow) / (numberOfChargesPerRow * 2));
+            numberOfChargesInCurrentRow = (int)(((chargeIndex) % (numberOfChargesPerRow * 2)) / 2);
+        }
+
+
         if (chargeIndex % 2 == 0)
         {
-            position.x += (chargeRadius + chargeDistance) * 2 * (int)((numberOfChargesInCurrentRow + 2) / 2);
-            position.y += rowOffset * (chargeRadius + chargeDistance) * 2;
+            if (chargeIndex % 4 == 0)
+            {
+                position.x += (chargeRadius + chargeDistance) * 2 * (int)((numberOfChargesInCurrentRow + 2) / 2);
+                position.y += rowOffset * (chargeRadius + chargeDistance) * 2;
+            }
+            else
+            {
+                position.x += (chargeRadius + chargeDistance) * 2 * (int)((numberOfChargesInCurrentRow + 2) / 2);
+                position.y -= rowOffset * (chargeRadius + chargeDistance) * 2;
+            }
+
         }
         else
         {
-            position.x -= (chargeRadius + chargeDistance) * 2 * (int)((numberOfChargesInCurrentRow + 2) / 2);
-            position.y -= rowOffset * (chargeRadius + chargeDistance) * 2;
+            if ((chargeIndex+1) % 4 == 0)
+            {
+                position.x -= (chargeRadius + chargeDistance) * 2 * (int)((numberOfChargesInCurrentRow + 2) / 2);
+                position.y += rowOffset * (chargeRadius + chargeDistance) * 2;
+            }
+            else
+            {
+                position.x -= (chargeRadius + chargeDistance) * 2 * (int)((numberOfChargesInCurrentRow + 2) / 2);
+                position.y -= rowOffset * (chargeRadius + chargeDistance) * 2;
+            }
         }
 
         return position;
