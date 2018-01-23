@@ -66,7 +66,7 @@ public class CapacitorPlateController : VRTK_InteractableObject
         numberOfChargesPerRow = (int)(this.transform.localScale.x / ((chargeRadius + chargeDistance) * 2));
         numberOfRows = (int)(this.transform.localScale.y / ((chargeRadius + chargeDistance) * 2));
 
-        //UpdateChargePositions();
+        UpdateChargePositions();
     }
 
     private GameObject CreateResizeObject(Vector3 resizeAxis, float maxSize)

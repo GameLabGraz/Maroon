@@ -24,6 +24,8 @@ public class PathFollower : PausableObject
 
     private int currentNode = 0;
 
+    private Vector3 currentTarget;
+
     private Vector3 PathFollowing()
     {
         if (path == null)
@@ -31,16 +33,18 @@ public class PathFollower : PausableObject
 
         List<Vector3> nodes = path.GetNodes(reverseOrder);
 
-        Vector3 target = nodes[currentNode];
+        currentTarget = nodes[currentNode];
 
-        if (Vector3.Distance(transform.position, target) <= 0.01f)
+        if (Vector3.Distance(transform.position, currentTarget) <= 0.01f)
         {
-            currentNode++;
+            if (simController.SimulationRunning)
+                currentNode++;
+
             if (currentNode >= nodes.Count)
                 followPath = false;
         }
 
-        return Seek(target);
+        return Seek(currentTarget);
     }
 
     private Vector3 Seek(Vector3 target)
@@ -55,6 +59,10 @@ public class PathFollower : PausableObject
         this.path = path;
         currentNode = 0;
     }
+    protected override void Update()
+    {
+        HandleUpdate();
+    }
 
     protected override void HandleUpdate()
     {
@@ -67,12 +75,21 @@ public class PathFollower : PausableObject
         steering = Vector3.ClampMagnitude(steering, maxForce);
         steering /= mass;
 
-        velocity = Vector3.ClampMagnitude(velocity + steering, maxSpeed);
-        transform.position += velocity;
+        if(simController.SimulationRunning)
+        {
+            velocity = Vector3.ClampMagnitude(velocity + steering, maxSpeed);
+            transform.position += velocity;
+        }
+        else
+        {
+            Vector3 direction = currentTarget - transform.position;
+
+            transform.position += direction;
+        }
     }
 
     protected override void HandleFixedUpdate()
     {
-
+        // not implemended
     }
 }

@@ -7,7 +7,7 @@ public class VoltagePole : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!other.CompareTag("Electron"))
+        if (!other.CompareTag("Charge"))
             return;
 
         Charge charge = other.GetComponent<Charge>();
