@@ -190,7 +190,7 @@ public class Capacitor : PausableObject
             pathFollower.maxSpeed = electronSpeed;           
 
             numberOfElectrons--;
-            yield return new WaitForSeconds(electronTimeInterval);
+            yield return new WaitForSecondsWithPause(electronTimeInterval, simController);
         }
     }
 
@@ -225,7 +225,7 @@ public class Capacitor : PausableObject
             pathFollower.followPath = true;
 
             numberOfElectrons--;
-            yield return new WaitForSeconds(electronTimeInterval);
+            yield return new WaitForSecondsWithPause(electronTimeInterval, simController);
         }
     }
 
