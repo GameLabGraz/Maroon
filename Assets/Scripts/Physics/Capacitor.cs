@@ -178,8 +178,6 @@ public class Capacitor : PausableObject
 
         while (numberOfElectrons > 0 && chargeState == ChargeState.CHARGING)
         {
-            yield return new WaitUntil(() => simController.SimulationRunning);
-
             GameObject electron = GameObject.Instantiate(electronPrefab);
             electron.GetComponent<Charge>().Id = numberOfElectrons;
 
@@ -190,7 +188,8 @@ public class Capacitor : PausableObject
             pathFollower.maxSpeed = electronSpeed;           
 
             numberOfElectrons--;
-            yield return new WaitForSecondsWithPause(electronTimeInterval, simController);
+
+            yield return new WaitForSecondsWithPause(electronTimeInterval);
         }
     }
 
@@ -210,8 +209,6 @@ public class Capacitor : PausableObject
             if (electronsOnPlate.Count - 1 < 0)
                 break;
 
-            yield return new WaitUntil(() => simController.SimulationRunning);
-
             Charge electron = electronsOnPlate[electronsOnPlate.Count - 1];
             electron.transform.position = plate1.transform.position;
             electron.GetComponent<Charge>().JustCreated = true;
@@ -225,7 +222,7 @@ public class Capacitor : PausableObject
             pathFollower.followPath = true;
 
             numberOfElectrons--;
-            yield return new WaitForSecondsWithPause(electronTimeInterval, simController);
+            yield return new WaitForSecondsWithPause(electronTimeInterval);
         }
     }
 

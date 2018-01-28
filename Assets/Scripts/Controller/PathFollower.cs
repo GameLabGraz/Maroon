@@ -24,6 +24,7 @@ public class PathFollower : PausableObject
 
     private int currentNode = 0;
 
+    private Vector3 previousTarget;
     private Vector3 currentTarget;
 
     private Vector3 PathFollowing()
@@ -33,6 +34,7 @@ public class PathFollower : PausableObject
 
         List<Vector3> nodes = path.GetNodes(reverseOrder);
 
+        previousTarget = currentTarget;
         currentTarget = nodes[currentNode];
 
         if (Vector3.Distance(transform.position, currentTarget) <= 0.01f)
@@ -82,8 +84,7 @@ public class PathFollower : PausableObject
         }
         else
         {
-            Vector3 direction = currentTarget - transform.position;
-
+            Vector3 direction = currentTarget - previousTarget;
             transform.position += direction;
         }
     }
