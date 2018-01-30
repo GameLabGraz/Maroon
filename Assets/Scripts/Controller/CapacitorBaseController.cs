@@ -8,15 +8,28 @@ public class CapacitorBaseController : MonoBehaviour, IVoltagePoleTrigger
     [SerializeField]
     private GameObject capacitorPlate;
 
+    [SerializeField]
+    private ChargePoolHandler chargePoolHandler;
+
+    private void Start()
+    {
+        if(chargePoolHandler == null)
+        {
+            chargePoolHandler = GameObject.FindObjectOfType<ChargePoolHandler>();
+            if (chargePoolHandler == null)
+                Debug.LogError("CapacitorBaseController requires a ChargePoolHandler!");
+        }
+    }
+
     public void PullVoltagePoleTrigger(Collider other, GameObject source)
     {
         CapacitorPlateController plateController = capacitorPlate.GetComponent<CapacitorPlateController>();
         if (plateController.GetPlateChargeValue() > 0)
         {
-            Charge chargeToRemove = plateController.GetCharge(other.GetComponent<Charge>().Id);
-            plateController.RemoveCharge(chargeToRemove);
+            Charge electron = other.GetComponent<Charge>();
+            Charge protonToRemove = chargePoolHandler.GetProton(electron.Id); // Get the corresponding proton
 
-            chargeToRemove.FadingOut(0.5f);
+            protonToRemove.FadingOut(0.5f);
             Destroy(other.gameObject);
         }
         else

@@ -27,7 +27,7 @@ public class CapacitorPlateController : VRTK_InteractableObject
     private int numberOfChargesPerRow = 0;
     private int numberOfRows = 0;
 
-    private Dictionary<int, Charge> charges = new Dictionary<int, Charge>();
+    private List<Charge> charges = new List<Charge>();
 
     private void Start()
     {
@@ -111,30 +111,25 @@ public class CapacitorPlateController : VRTK_InteractableObject
     {
         charge.transform.position = GetNextElectronPositionOnPlate(charges.Count);
 
-        charges.Add(charge.Id, charge);
+        charges.Add(charge);
         charge.Plate = this;
     }
 
     public void RemoveCharge(Charge charge)
     {
-        charges.Remove(charge.Id);
-    }
-
-    public Charge GetCharge(int id)
-    {
-        return charges[id];
+        charges.Remove(charge);
     }
 
     public List<Charge> GetCharges()
     {
-        return new List<Charge>(charges.Values);
+        return charges;
     }
 
     public float GetPlateChargeValue()
     {
         float totalChargeValue = 0;
 
-        foreach (Charge charge in charges.Values)
+        foreach (Charge charge in charges)
             totalChargeValue += charge.ChargeValue;
 
         return totalChargeValue;

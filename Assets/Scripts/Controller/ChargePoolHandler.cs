@@ -9,9 +9,11 @@ public class ChargePoolHandler : MonoBehaviour
     [SerializeField]
     private GameObject protonPrefab;
 
-    private Dictionary<int, Charge> electrons = new Dictionary<int, Charge>();
+    private ulong electronIDcount = 0;
+    private Dictionary<ulong, Charge> electrons = new Dictionary<ulong, Charge>();
 
-    private Dictionary<int, Charge> protons = new Dictionary<int, Charge>();
+    private ulong protonIDcount = 0;
+    private Dictionary<ulong, Charge> protons = new Dictionary<ulong, Charge>();
 
     private void Start()
     {
@@ -27,27 +29,27 @@ public class ChargePoolHandler : MonoBehaviour
             // positive charge => proton
             if (charge.ChargeValue > 0) 
             {
-                int protonId = protons.Count;
-                charge.Id = protonId;
-                protons.Add(protonId, charge);
+                charge.Id = protonIDcount;
+                protons.Add(protonIDcount++, charge);
             }
 
             // negative charge => electron
             else
             {
-                int electronId = electrons.Count;
-                charge.Id = electronId;
-                electrons.Add(electronId, charge);
+                charge.Id = electronIDcount;
+                electrons.Add(electronIDcount++, charge);
             }
+
+            charge.ChargePoolHandler = this;
         }
     }
 
-    public Charge GetProton(int id)
+    public Charge GetProton(ulong id)
     {
         return protons[id];
     }
 
-    public Charge GetElectron(int id)
+    public Charge GetElectron(ulong id)
     {
         return electrons[id];
     }
@@ -56,11 +58,10 @@ public class ChargePoolHandler : MonoBehaviour
     {
         GameObject protonObj = GameObject.Instantiate(protonPrefab);
         Charge proton = protonObj.GetComponent<Charge>();
-        int protonId = protons.Count;
+        proton.Id = protonIDcount;
+        proton.ChargePoolHandler = this;
 
-        proton.Id = protonId;
-        protons.Add(protonId, proton);
-
+        protons.Add(protonIDcount++, proton);
         return proton;
     }
 
@@ -68,11 +69,10 @@ public class ChargePoolHandler : MonoBehaviour
     {
         GameObject electronObj = GameObject.Instantiate(electronPrefab);
         Charge electron = electronObj.GetComponent<Charge>();
-        int electronId = electrons.Count;
+        electron.Id = electronIDcount;
+        electron.ChargePoolHandler = this;
 
-        electron.Id = electronId;
-        electrons.Add(electronId, electron);
-
+        electrons.Add(electronIDcount++, electron);
         return electron;
     }
 
@@ -82,12 +82,5 @@ public class ChargePoolHandler : MonoBehaviour
             return protons.Remove(charge.Id);
         else
             return electrons.Remove(charge.Id);
-
-    }
-
-    public void DestroyCharge(Charge charge)
-    {
-        RemoveCharge(charge);
-        Destroy(charge.gameObject);
     }
 }

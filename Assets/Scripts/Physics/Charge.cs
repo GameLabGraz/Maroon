@@ -1,11 +1,10 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Charge : MonoBehaviour
 {
     [SerializeField]
-    private int id;
+    private ulong id;
 
     [SerializeField]
     private float chargeValue;
@@ -18,7 +17,9 @@ public class Charge : MonoBehaviour
 
     private CapacitorPlateController plate;
 
-    public int Id
+    private ChargePoolHandler chargePoolHandler;
+
+    public ulong Id
     {
         get { return id; }
         set { id = value; }
@@ -28,6 +29,12 @@ public class Charge : MonoBehaviour
     {
         get { return plate; }
         set { plate = value; }
+    }
+
+    public ChargePoolHandler ChargePoolHandler
+    {
+        get { return chargePoolHandler; }
+        set { chargePoolHandler = value; }
     }
 
     public float ChargeValue
@@ -67,7 +74,6 @@ public class Charge : MonoBehaviour
             yield return null;
         }
 
-        plate.RemoveCharge(this);
         Destroy(this.gameObject);
     }
 
@@ -78,5 +84,14 @@ public class Charge : MonoBehaviour
 
         Vector3 force = Vector3.zero;
         GetComponent<Rigidbody>().AddForce(force);
+    }
+
+    private void OnDestroy()
+    {
+        if (plate != null)
+            plate.RemoveCharge(this);
+
+        if (chargePoolHandler != null)
+            chargePoolHandler.RemoveCharge(this);
     }
 }
