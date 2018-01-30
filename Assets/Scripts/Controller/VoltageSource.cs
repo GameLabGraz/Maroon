@@ -25,11 +25,8 @@ public class VoltageSource : MonoBehaviour, IVoltagePoleTrigger
     {
         float electronSpeed = other.GetComponent<PathFollower>().maxSpeed;
 
-        GameObject electron = GameObject.Instantiate(electronPrefab);
-        electron.GetComponent<Charge>().Id = other.GetComponent<Charge>().Id;
+        GameObject electron = other.gameObject;
         electron.GetComponent<Charge>().JustCreated = true;
-
-        Destroy(other.gameObject);
 
         PathFollower pathFollower = electron.GetComponent<PathFollower>();
         pathFollower.maxSpeed = electronSpeed;

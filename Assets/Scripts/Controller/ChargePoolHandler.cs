@@ -75,4 +75,19 @@ public class ChargePoolHandler : MonoBehaviour
 
         return electron;
     }
+
+    public bool RemoveCharge(Charge charge)
+    {
+        if (charge.ChargeValue > 0)
+            return protons.Remove(charge.Id);
+        else
+            return electrons.Remove(charge.Id);
+
+    }
+
+    public void DestroyCharge(Charge charge)
+    {
+        RemoveCharge(charge);
+        Destroy(charge.gameObject);
+    }
 }
