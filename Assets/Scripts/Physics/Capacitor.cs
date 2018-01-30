@@ -33,6 +33,8 @@ public class Capacitor : PausableObject
 
     private ChargeState chargeState = ChargeState.IDLE;
 
+    [SerializeField]
+    private ChargePoolHandler chargePoolHander;
 
     // Charge Prefabs
     [SerializeField]
@@ -49,6 +51,13 @@ public class Capacitor : PausableObject
         {
             Debug.LogError("Capacitor requires two plates!");
             gameObject.SetActive(false);
+        }
+
+        if(chargePoolHander == null)
+        {
+            chargePoolHander = GameObject.FindObjectOfType<ChargePoolHandler>();
+            if (chargePoolHander == null)
+                Debug.LogError("Capacitor requires a charge pool handler!");
         }
 
         dielectric = GameObject.FindObjectOfType<Dielectric>();
@@ -136,7 +145,7 @@ public class Capacitor : PausableObject
                 break;
 
             case ChargeState.CHARGING:              
-                if (voltage >= powerVoltage)
+                if (voltage >= powerVoltage * 0.99f)
                 {
                     chargeState = ChargeState.IDLE;
                     previousPowerVoltage = voltage;
@@ -178,8 +187,7 @@ public class Capacitor : PausableObject
 
         while (numberOfElectrons > 0 && chargeState == ChargeState.CHARGING)
         {
-            GameObject electron = GameObject.Instantiate(electronPrefab);
-            electron.GetComponent<Charge>().Id = numberOfElectrons;
+            Charge electron = chargePoolHander.GetNewElectron();
 
             electron.transform.position = plate2.transform.position;
 
