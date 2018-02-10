@@ -5,22 +5,28 @@ using UnityEngine.UI;
 public class InfoStand : MonoBehaviour
 {
     private Text _text;
+    private Text _buttonText;
     private ButtonSceneLoad _buttonSceneLoad;
 
     public string ShownName;
     public string SceneName;
+    public string ButtonText = "Enter";
 
     private void Awake()
     {
         var textFields = GetComponentsInChildren<Text>();
-        _text = textFields.First();
+        _text = textFields[0];
+        _buttonText = textFields[1];
         _buttonSceneLoad = GetComponentInChildren<ButtonSceneLoad>();
+        
     }
 
     private void Start()
     {
         _text.text = ShownName;
+        _buttonText.text = ButtonText;
         _buttonSceneLoad.SceneName = SceneName;
+        _buttonSceneLoad.SceneLoading = SceneLoad;
         TextTimerPass = TimeLetterFadeIn;
     }
 
@@ -34,6 +40,7 @@ public class InfoStand : MonoBehaviour
     private int blinkCounter = 0;
     private bool blinkShown = true;
     public TextState _TextState = TextState.FadeIn;
+    public ButtonSceneLoad.SceneLoad SceneLoad = ButtonSceneLoad.SceneLoad.Async;
 
     public enum TextState
     {
