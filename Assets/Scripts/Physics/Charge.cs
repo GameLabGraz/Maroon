@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class Charge : MonoBehaviour
+public class Charge : MonoBehaviour, IGenerateE
 {
     [SerializeField]
     private ulong id;
@@ -93,5 +93,23 @@ public class Charge : MonoBehaviour
 
         if (chargePoolHandler != null)
             chargePoolHandler.RemoveCharge(this);
+    }
+
+    public Vector3 getE(Vector3 position)
+    {
+        Vector3 direction = position - this.transform.position;
+        float distance = Vector3.Distance(this.transform.position, position);
+
+        return (chargeValue * direction) / (4 * Mathf.PI * 8.8542e-12f * Mathf.Pow(distance, 3));
+    }
+
+    public float getEFlux(Vector3 position)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public float getEPotential(Vector3 position)
+    {
+        throw new System.NotImplementedException();
     }
 }

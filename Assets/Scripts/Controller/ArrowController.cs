@@ -77,8 +77,31 @@ public class ArrowController : MonoBehaviour, IResetObject
     {
         Vector3 rotate = Field.GetComponent<IField>().get(transform.position) * fieldStrengthFactor;
         rotate.Normalize();
-        float rotZ = -Mathf.Atan2(rotate.x, rotate.y) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0f, 0f, rotZ + rotationOffset);
+
+        float rot = 0;
+
+        if(transform.parent != null)
+        {
+            if(transform.parent.rotation == Quaternion.Euler(-90, 0, 0))
+                rot = Mathf.Atan2(rotate.x, rotate.y) * Mathf.Rad2Deg;
+            else if (transform.parent.rotation == Quaternion.Euler(90, 0, 0))
+                rot = -Mathf.Atan2(rotate.x, rotate.y) * Mathf.Rad2Deg;
+
+            else if (transform.parent.rotation == Quaternion.Euler(90, 90, 0))
+                rot = Mathf.Atan2(rotate.z, rotate.y) * Mathf.Rad2Deg;
+            else if (transform.parent.rotation == Quaternion.Euler(90, -90, 0))
+                rot = -Mathf.Atan2(rotate.z, rotate.y) * Mathf.Rad2Deg;
+
+            else if (transform.parent.rotation == Quaternion.Euler(-90, 90, 0))
+                rot = -Mathf.Atan2(rotate.z, rotate.y) * Mathf.Rad2Deg;
+            else if (transform.parent.rotation == Quaternion.Euler(-90, -90, 0))
+                rot = Mathf.Atan2(rotate.z, rotate.y) * Mathf.Rad2Deg;
+
+            else if (transform.parent.rotation == Quaternion.Euler(0, 0, 0))
+                rot = Mathf.Atan2(rotate.x, rotate.z) * Mathf.Rad2Deg;
+        }
+
+        transform.localRotation = Quaternion.Euler(-90, rot, 0);
     }
 
     /// <summary>

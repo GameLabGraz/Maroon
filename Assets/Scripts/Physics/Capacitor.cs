@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Capacitor : PausableObject
+public class Capacitor : PausableObject, IGenerateE
 {
     private enum ChargeState {IDLE, CHARGING, DISCHARGING};
 
@@ -58,11 +58,7 @@ public class Capacitor : PausableObject
 
     protected override void Update()
     {
-        float relativePermittivity = 1.0f;
-        if (dielectric != null)
-            relativePermittivity = dielectric.GetRelativePermittivity();
-
-        capacitance = (GetOverlapPlateArea() * vacuumPermittivity * relativePermittivity) / GetPlateDistance();
+        capacitance = (GetOverlapPlateArea() * vacuumPermittivity * GetRelativePermittivity()) / GetPlateDistance();
 
         base.Update();
     }
@@ -276,6 +272,15 @@ public class Capacitor : PausableObject
         return this.capacitance;
     }
 
+    private float GetRelativePermittivity()
+    {
+        float relativePermittivity = 1.0f;
+        if (dielectric != null)
+            relativePermittivity = dielectric.GetRelativePermittivity();
+
+        return relativePermittivity;
+    }
+
     public void GetCapacitanceByReference(MessageArgs args)
     {
         args.value = this.capacitance;
@@ -284,5 +289,31 @@ public class Capacitor : PausableObject
     public void SetPowerVoltage(float voltage)
     {
         this.powerVoltage = voltage;
+    }
+
+    public Vector3 getE(Vector3 position)
+    {
+        float plateChargeValue = (capacitance * voltage) / GetOverlapPlateArea();
+
+        float distancePlate1 = Vector3.Distance(plate1.transform.position, position);
+        float distancePlate2 = Vector3.Distance(plate2.transform.position, position);
+
+        Vector3 distancePlate1direction = position - plate1.transform.position;
+        Vector3 distancePlate2direction = position - plate2.transform.position;
+
+        Vector3 e1 = (-plateChargeValue * distancePlate1direction) / (4 * Mathf.PI * vacuumPermittivity * GetRelativePermittivity() * Mathf.Pow(distancePlate1, 3));
+        Vector3 e2 = (plateChargeValue * distancePlate2direction) / (4 * Mathf.PI * vacuumPermittivity * GetRelativePermittivity() * Mathf.Pow(distancePlate2, 3));
+
+        return e1 + e2;
+    }
+
+    public float getEFlux(Vector3 position)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public float getEPotential(Vector3 position)
+    {
+        throw new System.NotImplementedException();
     }
 }

@@ -74,10 +74,8 @@ public class VectorField : MonoBehaviour
         if (simControllerObject)
             simController = simControllerObject.GetComponent<SimulationController>();
 
-        height = GetComponent<MeshFilter>().mesh.bounds.size.z * transform.localScale.y;
-        width = GetComponent<MeshFilter>().mesh.bounds.size.x * transform.localScale.x;
-        height_offset = transform.position.y;
-        width_offset = transform.position.x;
+        height = GetComponent<MeshFilter>().mesh.bounds.size.z;
+        width = GetComponent<MeshFilter>().mesh.bounds.size.x;
 
         createVectorFieldArrows();
     }
@@ -97,15 +95,15 @@ public class VectorField : MonoBehaviour
         {
             for (int j = 0; j < resolution; j++)
             {
-                float x = -width / 2 + (width / resolution) * (0.5f + i) + width_offset;
-                float y = -height / 2 + (height / resolution) * (0.5f + j) + height_offset;
+                float x = -width / 2 + (width / resolution) * (0.5f + i);
+                float y = -height / 2 + (height / resolution) * (0.5f + j);
 
-                Vector3 position = new Vector3(x, y, transform.position.z);
-                GameObject arrow = Instantiate(arrowPrefab, position, Quaternion.identity) as GameObject;
-                simController.AddNewResetObject(arrow.GetComponent<IResetObject>());
-
-                arrow.transform.localScale = new Vector3(arrow_scale, arrow_scale, arrow_scale);
+                GameObject arrow = Instantiate(arrowPrefab) as GameObject;
+                arrow.transform.localScale = Vector3.Scale(new Vector3(arrow_scale, arrow_scale, arrow_scale), transform.localScale) / 3;
                 arrow.transform.parent = transform; //set vectorField as parent
+                arrow.transform.localPosition = new Vector3(x, 0, y);
+
+                simController.AddNewResetObject(arrow.GetComponent<IResetObject>());
                 vectorFieldArrows.Add(arrow);
             }
         }
