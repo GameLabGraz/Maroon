@@ -36,16 +36,6 @@ public class VectorField : MonoBehaviour
 	private float width;
 
     /// <summary>
-    /// The height offset
-    /// </summary>
-	private float height_offset;
-
-    /// <summary>
-    /// The width offset
-    /// </summary>
-	private float width_offset;
-
-    /// <summary>
     /// Indicates if the vector field is displayed or not
     /// </summary>
     private bool vectorFieldVisible = true;

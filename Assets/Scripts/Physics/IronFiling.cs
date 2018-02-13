@@ -51,20 +51,18 @@ public class IronFiling : MonoBehaviour, IResetObject
     private float width;
 
     /// <summary>
-    /// The height offset
-    /// </summary>
-    private float height_offset;
-
-    /// <summary>
-    /// The width offset
-    /// </summary>
-    private float width_offset;
-
-    /// <summary>
     /// The maximum of vertices
     /// </summary>
     public int maxvertexCount = 100;
-    public float lineSegmentLength = 0.1f;
+
+    [SerializeField]
+    private float lineSegmentLength = 0.1f;
+
+    [SerializeField]
+    private float lineStartWidth = 0.4f;
+
+    [SerializeField]
+    private float lineEndWidth = 0.004f;
 
     private SimulationController simController;
 
@@ -77,10 +75,8 @@ public class IronFiling : MonoBehaviour, IResetObject
         if (simControllerObject)
             simController = simControllerObject.GetComponent<SimulationController>();
 
-        height = gameObject.GetComponent<MeshFilter>().mesh.bounds.size.z * gameObject.transform.localScale.y;
-        width = gameObject.GetComponent<MeshFilter>().mesh.bounds.size.x * gameObject.transform.localScale.x;
-        height_offset = gameObject.transform.position.y;
-        width_offset = gameObject.transform.position.x;
+        height = gameObject.GetComponent<MeshFilter>().mesh.bounds.size.z;
+        width = gameObject.GetComponent<MeshFilter>().mesh.bounds.size.x;
 
         field = GameObject.FindGameObjectWithTag("Field").GetComponent<IField>();
         linerenderers = new LineRenderer[2 * iterations];
@@ -89,12 +85,16 @@ public class IronFiling : MonoBehaviour, IResetObject
         {
             GameObject line = new GameObject("line");
             line.transform.parent = this.transform;
+            //line.transform.localRotation = Quaternion.identity;
+
             LineRenderer linerenderer = line.AddComponent<LineRenderer>();
+            //linerenderer.useWorldSpace = false;
             linerenderer.shadowCastingMode = ShadowCastingMode.On;
             linerenderer.receiveShadows = true;
             linerenderer.material = ironMaterial;
-            linerenderer.useLightProbes = false;
-            linerenderer.SetWidth(0.4f, 0.004f);
+            linerenderer.lightProbeUsage = LightProbeUsage.Off;
+            linerenderer.startWidth = lineStartWidth;
+            linerenderer.endWidth = lineEndWidth;
             linerenderers[i] = linerenderer;
         }
         gameObject.SetActive(false);
@@ -124,7 +124,7 @@ public class IronFiling : MonoBehaviour, IResetObject
 
         for (int i = 0; i < iterations * 2; i++)
         {
-            Vector3 origin = new Vector3(Random.Range(-1f, 1f) * 25f, Random.Range(-1f, 1f) * 25f, 0);
+            Vector3 origin = new Vector3(Random.Range(-1f, 1f) * width/2, 0, Random.Range(-1f, 1f) * height/2);
             drawIron(origin, linerenderers[i]);
         }
         Debug.Log("End IronFiling");
@@ -139,20 +139,25 @@ public class IronFiling : MonoBehaviour, IResetObject
     /// <param name="linerender">The line renderer to draw line</param>
     private void drawIron(Vector3 origin, LineRenderer linerender)
     {
-        List<Vector3> linePoints = new List<Vector3>();
-        linePoints.Add(new Vector3(origin.x, origin.y, origin.z));
+        // line renderer points in world space!
+        List<Vector3> linePoints = new List<Vector3> { transform.TransformPoint(origin) };
 
-        Vector3 newLinePoint = origin;
+        Vector3 linePoint = origin;
         int numberOfPoints = 1;
-        while (newLinePoint.x <= width_offset + width / 2.0f && newLinePoint.x >= width_offset - width / 2.0f &&
-               newLinePoint.y <= height_offset + height / 2.0f && newLinePoint.y >= height_offset - height / 2.0f && numberOfPoints < maxvertexCount)
+        while (linePoint.x <= width / 2.0f && linePoint.x >= -width / 2.0f &&
+               linePoint.z <= height / 2.0f && linePoint.z >= -height / 2.0f && numberOfPoints < maxvertexCount)
         {
-            newLinePoint += Vector3.Normalize(field.get(newLinePoint)) * lineSegmentLength;
-            linePoints.Add(new Vector3(newLinePoint.x, newLinePoint.y, 0));
+            Vector3 globalLinePoint = transform.TransformPoint(linePoint);
+            globalLinePoint += Vector3.Normalize(field.get(globalLinePoint)) * lineSegmentLength;
+
+            linePoints.Add(globalLinePoint);
+
+            linePoint = transform.InverseTransformPoint(globalLinePoint);
+
             numberOfPoints++;
         }
 
-        linerender.SetVertexCount(numberOfPoints);
+        linerender.positionCount = numberOfPoints;
         for (int i = 0; i < numberOfPoints; i++)
         {
             linerender.SetPosition(i, linePoints[i]);
