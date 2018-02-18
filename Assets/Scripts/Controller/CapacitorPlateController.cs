@@ -2,7 +2,7 @@
 using UnityEngine;
 using VRTK;
 
-public class CapacitorPlateController : VRTK_InteractableObject
+public class CapacitorPlateController : VRTK_InteractableObject, IGenerateE
 {
     private GameObject resizeHeightObject1;
     private GameObject resizeHeightObject2;
@@ -24,13 +24,29 @@ public class CapacitorPlateController : VRTK_InteractableObject
     [SerializeField]
     private float chargeDistance;
 
+    [SerializeField]
+    private bool isNegativePlate = false;
+
+    private Capacitor capacitor;
+
     private int numberOfChargesPerRow = 0;
     private int numberOfRows = 0;
 
     private List<Charge> charges = new List<Charge>();
 
+    private Dictionary<Tuple<float, float, float>, Vector3> eFieldCalculations = new Dictionary<Tuple<float, float, float>, Vector3>();
+
+    private Vector3 oldPosition;
+
+    private Vector3 oldLocalScale;
+
     private void Start()
     {
+        oldPosition = transform.position;
+        oldLocalScale = transform.localScale;
+
+        capacitor =  GetComponentInParent<Capacitor>();
+
         numberOfChargesPerRow = (int)(this.transform.localScale.x / ((chargeRadius + chargeDistance) * 2));
 
         numberOfRows = (int)(this.transform.localScale.y / ((chargeRadius + chargeDistance) * 2));
@@ -49,6 +65,15 @@ public class CapacitorPlateController : VRTK_InteractableObject
     protected override void Update()
     {
         base.Update();
+
+        if (oldPosition != transform.position || oldLocalScale != transform.localScale)
+        {
+            eFieldCalculations.Clear();
+
+            oldPosition = transform.position;
+            oldLocalScale = transform.localScale;
+        }
+           
 
         Vector3 size = GetComponent<Renderer>().bounds.size;
         Vector3 offset_x = new Vector3(size.x / 2, 0, 0);
@@ -188,5 +213,57 @@ public class CapacitorPlateController : VRTK_InteractableObject
         }
 
         return position;
+    }
+
+    public float GetChargeValue()
+    {
+        float chargeValue = capacitor.GetChargeValue() / 2;
+        if (isNegativePlate)
+            chargeValue *= -1;
+
+        return chargeValue; 
+    }
+
+    public Vector3 getE(Vector3 position)
+    {
+        Vector3 eField = Vector3.zero;
+        Vector3 size = GetComponent<Renderer>().bounds.size;
+        Vector3 offset = new Vector3(-size.x / 2, -size.y / 2, 0);
+
+        float dw = 0.08f;
+        float dh = 0.08f;
+        float dq = (GetChargeValue() / (size.x * size.y)) * dw * dh;
+
+        Tuple<float, float, float> tPosition = new Tuple<float, float, float>(position.x, position.y, position.z);
+        if (eFieldCalculations.ContainsKey(tPosition))
+            return dq * eFieldCalculations[tPosition];
+      
+        for(int i = 0; i <= (int)(size.x / dw); i++)
+        {
+            for(int j = 0;  j <= (int)(size.y / dh); j++)
+            {
+                Vector3 s = transform.position + offset;
+                s.x += i * dw;
+                s.y += j * dh;
+
+                Vector3 direction = position - s;
+                float distance = Vector3.Distance(s, position);
+
+                eField += direction / (4 * Mathf.PI * 8.8542e-12f * Mathf.Pow(distance, 3));
+            }
+        }
+        eFieldCalculations.Add(tPosition, eField);
+
+        return dq * eField;
+    }
+
+    public float getEFlux(Vector3 position)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public float getEPotential(Vector3 position)
+    {
+        throw new System.NotImplementedException();
     }
 }

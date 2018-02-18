@@ -258,8 +258,8 @@ public class AdvancedLineRenderer : MonoBehaviour
     /// </summary>
     public void initLineRenderer()
     {
-        this.SetWidth(lineWidth_.item1, lineWidth_.item2);
-        this.SetColors(lineColors_.item1, lineColors_.item2);
+        this.SetWidth(lineWidth_.Item1, lineWidth_.Item2);
+        this.SetColors(lineColors_.Item1, lineColors_.Item2);
         line_.positionCount = vertexCount_;
         line_.useWorldSpace = useWorldSpace_;
         line_.material = material;
