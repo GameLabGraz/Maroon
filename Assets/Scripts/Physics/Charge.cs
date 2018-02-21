@@ -15,20 +15,12 @@ public class Charge : MonoBehaviour, IGenerateE
     [SerializeField]
     private bool justCreated = true;
 
-    private CapacitorPlateController plate;
-
     private ChargePoolHandler chargePoolHandler;
 
     public ulong Id
     {
         get { return id; }
         set { id = value; }
-    }
-
-    public CapacitorPlateController Plate
-    {
-        get { return plate; }
-        set { plate = value; }
     }
 
     public ChargePoolHandler ChargePoolHandler
@@ -88,9 +80,6 @@ public class Charge : MonoBehaviour, IGenerateE
 
     private void OnDestroy()
     {
-        if (plate != null)
-            plate.RemoveCharge(this);
-
         if (chargePoolHandler != null)
             chargePoolHandler.RemoveCharge(this);
     }

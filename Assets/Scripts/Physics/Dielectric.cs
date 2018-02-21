@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Dielectric : MonoBehaviour
 {
-    private enum DielectricMaterial
+    public enum DielectricMaterial
     {
         Vacuum,  Glass, Water, Porcelain, Ceramic
     }
@@ -51,6 +51,12 @@ public class Dielectric : MonoBehaviour
         }
         else
             renderer_.enabled = false;
+    }
+
+    public void SetDielectricMaterial(DielectricMaterial material)
+    {
+        this.material = material;
+        UpdateMaterialColor();
     }
 
     public float GetRelativePermittivity()

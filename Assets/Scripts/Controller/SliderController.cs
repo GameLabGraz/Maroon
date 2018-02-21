@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using VRTK;
@@ -13,6 +14,9 @@ public class SliderController : VRTK_InteractableObject
 
     [SerializeField]
     private Vector3 moveOffset;
+
+    [SerializeField]
+    private List<string> options = new List<string>(); 
 
     [SerializeField]
     private Vector3 MinPosition;
@@ -45,6 +49,12 @@ public class SliderController : VRTK_InteractableObject
 
     private void Start()
     {
+        if(options.Count > 0)
+        {
+            minValue = 0;
+            maxValue = options.Count - 1;
+        }
+
         SliderMoveDirection = MinPosition - MaxPosition;
         oldIntValue = (int)getValue();
     }
@@ -166,7 +176,9 @@ public class SliderController : VRTK_InteractableObject
         if (ValueText == null)
             return;
 
-        if (isInteger)
+        if (options.Count > 0)
+            ValueText.text = options[(int)getValue()];
+        else if (isInteger)
             ValueText.text = ((int)getValue()).ToString();
         else
             ValueText.text = getValue().ToString("0.00");

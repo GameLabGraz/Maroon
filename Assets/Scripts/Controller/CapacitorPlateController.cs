@@ -19,20 +19,9 @@ public class CapacitorPlateController : VRTK_InteractableObject, IGenerateE
     private float maxWidthSize = 1;
 
     [SerializeField]
-    private float chargeRadius;
-
-    [SerializeField]
-    private float chargeDistance;
-
-    [SerializeField]
     private bool isNegativePlate = false;
 
     private Capacitor capacitor;
-
-    private int numberOfChargesPerRow = 0;
-    private int numberOfRows = 0;
-
-    private List<Charge> charges = new List<Charge>();
 
     private Dictionary<Tuple<float, float, float>, Vector3> eFieldCalculations = new Dictionary<Tuple<float, float, float>, Vector3>();
 
@@ -46,11 +35,6 @@ public class CapacitorPlateController : VRTK_InteractableObject, IGenerateE
         oldLocalScale = transform.localScale;
 
         capacitor =  GetComponentInParent<Capacitor>();
-
-        numberOfChargesPerRow = (int)(this.transform.localScale.x / ((chargeRadius + chargeDistance) * 2));
-
-        numberOfRows = (int)(this.transform.localScale.y / ((chargeRadius + chargeDistance) * 2));
-
 
         resizeWidthObject1 = CreateResizeObject(Vector3.right, maxWidthSize);
         resizeWidthObject2 = CreateResizeObject(Vector3.right, maxWidthSize);
@@ -87,11 +71,6 @@ public class CapacitorPlateController : VRTK_InteractableObject, IGenerateE
             resizeHeightObject1.transform.position = transform.position + offset_y;
         if (resizeHeightObject2 != null)
             resizeHeightObject2.transform.position = transform.position - offset_y;
-
-        numberOfChargesPerRow = (int)(this.transform.localScale.x / ((chargeRadius + chargeDistance) * 2));
-        numberOfRows = (int)(this.transform.localScale.y / ((chargeRadius + chargeDistance) * 2));
-
-        UpdateChargePositions();
     }
 
     private GameObject CreateResizeObject(Vector3 resizeAxis, float maxSize)
@@ -130,89 +109,6 @@ public class CapacitorPlateController : VRTK_InteractableObject, IGenerateE
         base.StopTouching(previousTouchingObject);
 
         EnableResizeObjects(false);
-    }
-
-    public void AddCharge(Charge charge)
-    {
-        charge.transform.position = GetNextElectronPositionOnPlate(charges.Count);
-
-        charges.Add(charge);
-        charge.Plate = this;
-    }
-
-    public void RemoveCharge(Charge charge)
-    {
-        charges.Remove(charge);
-    }
-
-    public List<Charge> GetCharges()
-    {
-        return charges;
-    }
-
-    public float GetPlateChargeValue()
-    {
-        float totalChargeValue = 0;
-
-        foreach (Charge charge in charges)
-            totalChargeValue += charge.ChargeValue;
-
-        return totalChargeValue;
-    }
-
-    private void UpdateChargePositions()
-    {
-        List<Charge> charges = GetCharges();
-        for (int i = 0; i < charges.Count; i++)
-            charges[i].transform.position = GetNextElectronPositionOnPlate(i);
-    }
-    
-    private Vector3 GetNextElectronPositionOnPlate(int chargeIndex)
-    {
-        Vector3 position = this.transform.position;
-
-        if (chargeIndex > numberOfChargesPerRow * numberOfRows)
-            return position;
-
-        int numberOfChargesInCurrentRow = (chargeIndex) % numberOfChargesPerRow;
-        int rowOffset = (int)(chargeIndex) / numberOfChargesPerRow;
-
-        if (chargeIndex >= numberOfChargesPerRow)
-        {
-            rowOffset = (int)((chargeIndex + numberOfChargesPerRow) / (numberOfChargesPerRow * 2));
-            numberOfChargesInCurrentRow = (int)(((chargeIndex) % (numberOfChargesPerRow * 2)) / 2);
-        }
-
-
-        if (chargeIndex % 2 == 0)
-        {
-            if (chargeIndex % 4 == 0)
-            {
-                position.x += (chargeRadius + chargeDistance) * 2 * (int)((numberOfChargesInCurrentRow + 2) / 2);
-                position.y += rowOffset * (chargeRadius + chargeDistance) * 2;
-            }
-            else
-            {
-                position.x += (chargeRadius + chargeDistance) * 2 * (int)((numberOfChargesInCurrentRow + 2) / 2);
-                position.y -= rowOffset * (chargeRadius + chargeDistance) * 2;
-            }
-
-        }
-        else
-        {
-            if ((chargeIndex+1) % 4 == 0)
-            {
-                position.x -= (chargeRadius + chargeDistance) * 2 * (int)((numberOfChargesInCurrentRow + 2) / 2);
-                position.y += rowOffset * (chargeRadius + chargeDistance) * 2;
-            }
-            else
-            {
-                position.x -= (chargeRadius + chargeDistance) * 2 * (int)((numberOfChargesInCurrentRow + 2) / 2);
-                position.y -= rowOffset * (chargeRadius + chargeDistance) * 2;
-            }
-        }
-
-        return position;
     }
 
     public float GetChargeValue()

@@ -22,6 +22,9 @@ public class Capacitor : PausableObject
     private float capacitance;
 
     [SerializeField]
+    private float maxVoltage = 15;
+
+    [SerializeField]
     private float powerVoltage = 15;
 
     private float previousPowerVoltage = 0;
@@ -59,6 +62,10 @@ public class Capacitor : PausableObject
     protected override void Update()
     {
         capacitance = (GetOverlapPlateArea() * vacuumPermittivity * GetRelativePermittivity()) / GetPlateDistance();
+
+        float colorValue = -(voltage / maxVoltage - 1);
+        plate1.GetComponent<Renderer>().material.color = new Color(colorValue, colorValue, 1, 0.6f);
+        plate2.GetComponent<Renderer>().material.color = new Color(1, colorValue, colorValue, 0.6f);
 
         base.Update();
     }
@@ -119,7 +126,7 @@ public class Capacitor : PausableObject
             case ChargeState.IDLE:
                 chargeTime = 0;
 
-                if (powerVoltage > voltage)
+                if (powerVoltage * 0.99f > voltage)
                 {
                     chargeState = ChargeState.CHARGING;
                     StartCoroutine("ElectronChargeEffect");
@@ -128,7 +135,7 @@ public class Capacitor : PausableObject
                 else if (powerVoltage < voltage)
                 {
                     chargeState = ChargeState.DISCHARGING;
-                    StartCoroutine("ElectronDischargeEffect");
+                    StartCoroutine("ElectronChargeEffect");
                 }                   
 
                 break;
@@ -148,7 +155,7 @@ public class Capacitor : PausableObject
                 break;
 
             case ChargeState.DISCHARGING:
-                if (voltage <= powerVoltage)
+                if (voltage * 0.99f <= powerVoltage)
                 {
                     chargeState = ChargeState.IDLE;
                     previousPowerVoltage = voltage;
@@ -168,74 +175,33 @@ public class Capacitor : PausableObject
     private IEnumerator ElectronChargeEffect()
     {
         GameObject plusCable = GameObject.Find("Cable+");
-
-        int numberOfElectrons = (int)(powerVoltage - voltage) * 2;
-
-        float electronTimeInterval = 5 * seriesResistance * capacitance / numberOfElectrons;
-        float electronSpeed = 0.01f;
-
-        while (numberOfElectrons > 0 && chargeState == ChargeState.CHARGING)
-        {
-            Charge electron = chargePoolHander.GetNewElectron();
-
-            electron.transform.position = plate2.transform.position;
-
-            PathFollower pathFollower = electron.GetComponent<PathFollower>();
-            pathFollower.SetPath(plusCable.GetComponent<IPath>());
-            pathFollower.maxSpeed = electronSpeed;           
-
-            numberOfElectrons--;
-
-            yield return new WaitForSecondsWithPause(electronTimeInterval);
-        }
-    }
-
-    private IEnumerator ElectronDischargeEffect()
-    {
         GameObject minusCable = GameObject.Find("Cable-");
 
-        int numberOfElectrons = (int)Mathf.Round(voltage - powerVoltage) * 2;
+        int numberOfElectrons = Mathf.Abs(Mathf.RoundToInt(powerVoltage - voltage)) * 2;
 
         float electronTimeInterval = 5 * seriesResistance * capacitance / numberOfElectrons;
         float electronSpeed = 0.01f;
 
-        while (numberOfElectrons > 0 && chargeState == ChargeState.DISCHARGING)
+        while (numberOfElectrons > 0 && chargeState != ChargeState.IDLE)
         {
-            List<Charge> electronsOnPlate = plate1.GetComponent<CapacitorPlateController>().GetCharges();
-
-            if (electronsOnPlate.Count - 1 < 0)
-                break;
-
-            Charge electron = electronsOnPlate[electronsOnPlate.Count - 1];
-            electron.transform.position = plate1.transform.position;
-            electron.GetComponent<Charge>().JustCreated = true;
-
-            plate1.GetComponent<CapacitorPlateController>().RemoveCharge(electron);
-
+            Charge electron = chargePoolHander.GetNewElectron();
             PathFollower pathFollower = electron.GetComponent<PathFollower>();
-            pathFollower.SetPath(minusCable.GetComponent<IPath>());
             pathFollower.maxSpeed = electronSpeed;
-            pathFollower.reverseOrder = false;
-            pathFollower.followPath = true;
 
+            if (voltage > powerVoltage)
+            {
+                electron.transform.position = plate1.transform.position;
+                pathFollower.SetPath(minusCable.GetComponent<IPath>());
+            }
+            else
+            {
+                electron.transform.position = plate2.transform.position;
+                pathFollower.SetPath(plusCable.GetComponent<IPath>());
+            }
+                
             numberOfElectrons--;
+
             yield return new WaitForSecondsWithPause(electronTimeInterval);
-        }
-    }
-
-    public void SetElectronOnPlate(GameObject electron, GameObject plate)
-    {
-        Charge proton = chargePoolHander.GetNewProton();
-
-        if (plate == plate1)
-        {
-            plate1.GetComponent<CapacitorPlateController>().AddCharge(electron.GetComponent<Charge>());
-            plate2.GetComponent<CapacitorPlateController>().AddCharge(proton);
-        }
-        else if(plate == plate2)
-        {
-            plate2.GetComponent<CapacitorPlateController>().AddCharge(electron.GetComponent<Charge>());
-            plate1.GetComponent<CapacitorPlateController>().AddCharge(proton.GetComponent<Charge>());
         }
     }
 
