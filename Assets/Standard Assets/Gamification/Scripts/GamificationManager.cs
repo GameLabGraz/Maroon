@@ -37,6 +37,14 @@ public class GamificationManager : MonoBehaviour
     [HideInInspector]
     public bool deactivateDialogue = false;
     [HideInInspector]
+    //this is the dialogue which is played once when the door is first opened
+    public bool doorDialogue = false;
+    [HideInInspector]
+    //if player is holding an item, menu call is not allowed
+    public bool holdingItem = false;
+    [HideInInspector]
+    public bool playerCanPickItem = false;
+    [HideInInspector]
 
     //Variables for loading laboratory in background from other scene 
     public string levelName;
@@ -120,7 +128,7 @@ public class GamificationManager : MonoBehaviour
         Scene currentScene = SceneManager.GetActiveScene();
         string sceneName = currentScene.name;
     
-        if (Input.GetKeyDown("escape") && sceneName != "Menu")
+        if (Input.GetKeyDown("escape") && sceneName != "Menu" && !holdingItem)
         {
             if (sceneName != "Menu")
                 scene = sceneName;
@@ -138,6 +146,9 @@ public class GamificationManager : MonoBehaviour
       
         else
             Cursor.lockState = CursorLockMode.None;
+
+        if (holdingItem)
+            Cursor.lockState = CursorLockMode.Locked;
      
 
     }
