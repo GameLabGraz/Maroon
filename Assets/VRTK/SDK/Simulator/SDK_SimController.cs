@@ -196,10 +196,10 @@ namespace VRTK
                 switch (hand)
                 {
                     case ControllerHand.Right:
-                        controller = simPlayer.transform.FindChild(RIGHT_HAND_CONTROLLER_NAME).gameObject;
+                        controller = simPlayer.transform.Find(RIGHT_HAND_CONTROLLER_NAME).gameObject;
                         break;
                     case ControllerHand.Left:
-                        controller = simPlayer.transform.FindChild(LEFT_HAND_CONTROLLER_NAME).gameObject;
+                        controller = simPlayer.transform.Find(LEFT_HAND_CONTROLLER_NAME).gameObject;
                         break;
                     default:
                         break;
@@ -275,10 +275,10 @@ namespace VRTK
                 switch (hand)
                 {
                     case ControllerHand.Left:
-                        model = simPlayer.transform.FindChild(string.Format("{0}/Hand", LEFT_HAND_CONTROLLER_NAME)).gameObject;
+                        model = simPlayer.transform.Find(string.Format("{0}/Hand", LEFT_HAND_CONTROLLER_NAME)).gameObject;
                         break;
                     case ControllerHand.Right:
-                        model = simPlayer.transform.FindChild(string.Format("{0}/Hand", RIGHT_HAND_CONTROLLER_NAME)).gameObject;
+                        model = simPlayer.transform.Find(string.Format("{0}/Hand", RIGHT_HAND_CONTROLLER_NAME)).gameObject;
                         break;
                 }
             }
@@ -292,7 +292,7 @@ namespace VRTK
         /// <returns>A GameObject containing the object that has a render model for the controller.</returns>
         public override GameObject GetControllerRenderModel(GameObject controller)
         {
-            return controller.transform.parent.FindChild("Hand").gameObject;
+            return controller.transform.parent.Find("Hand").gameObject;
         }
 
         /// <summary>
@@ -939,8 +939,8 @@ namespace VRTK
                 GameObject simPlayer = SDK_InputSimulator.FindInScene();
                 if (simPlayer)
                 {
-                    rightHand = simPlayer.transform.FindChild(RIGHT_HAND_CONTROLLER_NAME);
-                    leftHand = simPlayer.transform.FindChild(LEFT_HAND_CONTROLLER_NAME);
+                    rightHand = simPlayer.transform.Find(RIGHT_HAND_CONTROLLER_NAME);
+                    leftHand = simPlayer.transform.Find(LEFT_HAND_CONTROLLER_NAME);
                     rightController = rightHand.GetComponent<SDK_ControllerSim>();
                     leftController = leftHand.GetComponent<SDK_ControllerSim>();
                 }

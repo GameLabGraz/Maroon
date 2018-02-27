@@ -1,10 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using VRTK;
+using VRTK.UnityEventHelper;
 
-public class SliderController : VRTK_InteractableObject
+public class SliderController : VRTK_Slider
 {
     [SerializeField]
     private GameObject invokeObject;
@@ -13,20 +13,7 @@ public class SliderController : VRTK_InteractableObject
     private string methodName;
 
     [SerializeField]
-    private Vector3 moveOffset;
-
-    [SerializeField]
     private List<string> options = new List<string>(); 
-
-    [SerializeField]
-    private Vector3 MinPosition;
-    [SerializeField]
-    private Vector3 MaxPosition;
-
-    [SerializeField]
-    private float minValue;
-    [SerializeField]
-    private float maxValue;
 
     [SerializeField]
     private Text ValueText;
@@ -34,154 +21,52 @@ public class SliderController : VRTK_InteractableObject
     [SerializeField]
     private bool isInteger = false;
 
-    [SerializeField]
-    private float MoveSpeedFactor = 0.25f;
-
-    private int oldIntValue;
-
-    private bool IsMoving = false;
-
-    private Vector3 UsingObjectPosition;
-
-    private Vector3 UsingObjectPositionOld;
-
-    private Vector3 SliderMoveDirection;
+    private VRTK_Control_UnityEvents controlEvents;
 
     private void Start()
     {
+        controlEvents = GetComponent<VRTK_Control_UnityEvents>();
+        if (controlEvents == null)
+        {
+            controlEvents = gameObject.AddComponent<VRTK_Control_UnityEvents>();
+        }
+
+        controlEvents.OnValueChanged.AddListener(HandleChange);
+    }
+
+    protected override ControlValueRange RegisterValueRange()
+    {
         if(options.Count > 0)
         {
-            minValue = 0;
-            maxValue = options.Count - 1;
+            minimumValue = 0;
+            maximumValue = options.Count - 1;
         }
 
-        SliderMoveDirection = MinPosition - MaxPosition;
-        oldIntValue = (int)getValue();
-    }
-
-    public override void StartUsing(GameObject usingObject)
-    {
-        base.StartUsing(usingObject);
-
-        Debug.Log("Slider start using...");
-
-        IsMoving = true;
-        UsingObjectPosition = usingObject.transform.position;
-        StartCoroutine(Move());
-    }
-
-    public override void StopUsing(GameObject usingObject)
-    {
-        base.StopUsing(usingObject);
-
-        Debug.Log("Slider stop using...");
-
-        IsMoving = false;
-    }
-
-    public float getValue()
-    {
-        float minMaxDistance = Vector3.Distance(MinPosition, MaxPosition);
-        float sliderDistance = Vector3.Distance(MinPosition, this.transform.localPosition);
-        float value = minValue + (maxValue - minValue) * (sliderDistance / minMaxDistance);
-        return value;
-    }
-
-    private IEnumerator Move()
-    {
-        while (IsMoving)
+        return new ControlValueRange()
         {
-            /*
-            UsingObjectPositionOld = UsingObjectPosition;
-            UsingObjectPosition = usingObject.transform.position;
+            controlMin = minimumValue,
+            controlMax = maximumValue
+        };
+    }
 
-            Vector3 moveDirection = transform.InverseTransformDirection(UsingObjectPositionOld - UsingObjectPosition);
-
-            float moveDistance = moveDirection.magnitude;
-
-            if (Vector3.Dot(SliderMoveDirection, moveDirection) > 0)
-                this.transform.localPosition += SliderMoveDirection * moveDistance * MoveSpeedFactor;
+    private void HandleChange(object sender, Control3DEventArgs e)
+    {
+        if (ValueText != null)
+        {
+            if (options.Count > 0)
+                ValueText.text = options[(int)GetValue()];
+            else if (isInteger)
+                ValueText.text = ((int)GetValue()).ToString();
             else
-                this.transform.localPosition -= SliderMoveDirection * moveDistance * MoveSpeedFactor;
+                ValueText.text = GetValue().ToString("0.00");
+        }
 
-            if (Vector3.Dot(MaxPosition - this.transform.localPosition, Vector3.right) > 0)
-                this.transform.localPosition = MaxPosition;
-
-            if (Vector3.Dot(MinPosition - this.transform.localPosition, Vector3.right) < 0)
-                this.transform.localPosition = MinPosition;
-            
-            */
-
-            UsingObjectPositionOld = UsingObjectPosition;
-            UsingObjectPosition = usingObject.transform.position;
-
-            Vector3 moveDirection = transform.InverseTransformDirection(UsingObjectPositionOld - UsingObjectPosition);
-
-            float moveDistance = moveDirection.magnitude;
-
-            if (Vector3.Dot(SliderMoveDirection, moveDirection) > 0)
-                this.transform.localPosition += SliderMoveDirection * moveDistance * MoveSpeedFactor;
-            else
-                this.transform.localPosition -= SliderMoveDirection * moveDistance * MoveSpeedFactor;
-
-
-            if (Vector3.Distance(MinPosition, MaxPosition) < Vector3.Distance(MinPosition, this.transform.localPosition))
-                this.transform.localPosition = MaxPosition;
-
-            if (Vector3.Distance(MinPosition, MaxPosition) < Vector3.Distance(MaxPosition, this.transform.localPosition))
-                this.transform.localPosition = MinPosition;
-
-
-
-
-
-            /*
-            Vector3 newPosition = this.transform.position;
-
-            Vector3 UsingObjectPosition = UsingObject.transform.position;
-
-            newPosition.x = UsingObjectPosition.x;
-
-
-            this.transform.position = newPosition + moveOffset;
-
-            if (MaxPosition.x <= 0 && this.transform.localPosition.x < MaxPosition.x || MaxPosition.x > 0 && this.transform.localPosition.x > MaxPosition.x)
-                this.transform.localPosition = new Vector3(MaxPosition.x, this.transform.localPosition.y, this.transform.localPosition.z);
-
-            if (MinPosition.x < 0 && this.transform.localPosition.x < MinPosition.x || MinPosition.x >= 0 && this.transform.localPosition.x > MinPosition.x)
-                this.transform.localPosition = new Vector3(MinPosition.x, this.transform.localPosition.y, this.transform.localPosition.z);
-            */
-
+        if(invokeObject != null)
+        {
             if (isInteger)
-            {
-                int intValue = (int)getValue();
-                if(intValue != oldIntValue)
-                {
-                    oldIntValue = intValue;
-                    invokeObject.SendMessage(methodName, intValue);
-                }
-            }
+                invokeObject.SendMessage(methodName, (int)GetValue());
             else
-                invokeObject.SendMessage(methodName, getValue());
-            
-                
-            yield return new WaitForFixedUpdate();
+                invokeObject.SendMessage(methodName, GetValue());
         }
     }
-
-    protected override void Update()
-    {
-        base.Update();
-
-        if (ValueText == null)
-            return;
-
-        if (options.Count > 0)
-            ValueText.text = options[(int)getValue()];
-        else if (isInteger)
-            ValueText.text = ((int)getValue()).ToString();
-        else
-            ValueText.text = getValue().ToString("0.00");
-    }
-
 }

@@ -47,7 +47,7 @@ namespace VRTK
                 GameObject simPlayer = SDK_InputSimulator.FindInScene();
                 if (simPlayer)
                 {
-                    camera = simPlayer.transform.FindChild("Camera");
+                    camera = simPlayer.transform.Find("Camera");
                 }
             }
 
@@ -65,7 +65,7 @@ namespace VRTK
                 GameObject simPlayer = SDK_InputSimulator.FindInScene();
                 if (simPlayer)
                 {
-                    camera = simPlayer.transform.FindChild("Camera");
+                    camera = simPlayer.transform.Find("Camera");
                 }
             }
 
