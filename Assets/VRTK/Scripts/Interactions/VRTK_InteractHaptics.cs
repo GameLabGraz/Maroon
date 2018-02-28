@@ -81,7 +81,7 @@ namespace VRTK
             }
         }
 
-        private void TriggerHapticPulse(VRTK_ControllerActions controllerActions, float strength, float duration, float interval)
+        protected void TriggerHapticPulse(VRTK_ControllerActions controllerActions, float strength, float duration, float interval)
         {
             if (controllerActions)
             {

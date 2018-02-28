@@ -19,8 +19,6 @@ public class MagnetController : VRTK_InteractableObject
 {
     private bool IsMoving = false;
 
-    private GameObject UsingObject;
-
     private SimulationController simController;
 
     private void Start()
@@ -31,38 +29,22 @@ public class MagnetController : VRTK_InteractableObject
 
     }
 
-    public override void StartUsing(GameObject usingObject)
+    public override void Grabbed(GameObject currentGrabbingObject)
     {
-        base.StartUsing(usingObject);
+        base.Grabbed(currentGrabbingObject);
 
         IsMoving = true;
-        UsingObject = usingObject;
-
 
         simController.SimulationRunning = true;
-
-        StartCoroutine(Move());
     }
 
-    public override void StopUsing(GameObject usingObject)
+    public override void Ungrabbed(GameObject previousGrabbingObject)
     {
-        base.StopUsing(usingObject);
+        base.Ungrabbed(previousGrabbingObject);
 
         IsMoving = false;
 
         simController.SimulationRunning = false;
-
     }
 
-    private IEnumerator Move()
-    {
-        while(IsMoving)
-        {
-            this.transform.position = new Vector3(UsingObject.transform.position.x, this.transform.position.y, this.transform.position.z);
-
-            UsingObject.GetComponent<VRTK_ControllerActions>().TriggerHapticPulse((ushort)(GetComponent<Magnet>().getExternalForce().magnitude));
-
-            yield return new WaitForFixedUpdate();
-        }
-    }
 }
