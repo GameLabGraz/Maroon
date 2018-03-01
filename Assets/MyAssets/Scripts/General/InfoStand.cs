@@ -78,9 +78,10 @@ public class InfoStand : MonoBehaviour
                 var previewBounds = GetLocalBounds(PreviewObject);
 //                Debug.Log("X/Y/Z: " + previewBounds.size.x + "/" + previewBounds.size.y + "/" + previewBounds.size.z);
                 // draw gizmo in the size of the bounds
-                Vector3 previewSpawnPos = transform.position + PreviewOffset;
+                Vector3 previewSpawnPos = transform.position + PreviewOffset + previewBounds.center * PreviewScale; // console position + preview center + preview offset
                 Gizmos.color = PreviewColor;
-                Gizmos.DrawCube(previewSpawnPos + previewBounds.center, previewBounds.size * PreviewScale);
+                Gizmos.DrawCube(previewSpawnPos, previewBounds.size * PreviewScale);
+                Debug.Log("Spawn Position X/Y/Z: " + previewSpawnPos.x + "/" + previewSpawnPos.y + "/" + previewSpawnPos.z);
                 break;
         }
     }

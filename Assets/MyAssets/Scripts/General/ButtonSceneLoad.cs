@@ -19,10 +19,7 @@ public class ButtonSceneLoad : MonoBehaviour
 
     private void Start()
     {
-        _buttonEvents = GetComponent<VRTK_Button_UnityEvents>();
-        if (_buttonEvents == null)
-            _buttonEvents = gameObject.AddComponent<VRTK_Button_UnityEvents>();
-
+        _buttonEvents = gameObject.GetOrAddComponent<VRTK_Button_UnityEvents>();
         _buttonEvents.OnPushed.AddListener(HandlePush);
     }
 
