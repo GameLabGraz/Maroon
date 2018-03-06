@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Chain : MonoBehaviour, IPath
+public class Chain : MonoBehaviour, IPath, IResetObject
 {
     [SerializeField]
     private Vector3 chainAxis = Vector3.up;
@@ -30,6 +30,19 @@ public class Chain : MonoBehaviour, IPath
 
     [SerializeField, HideInInspector]
     private List<GameObject> LinkObjects = new List<GameObject>();
+
+    private List<Vector3> startLinkPositions = new List<Vector3>();
+    private List<Quaternion> startLinkRotations = new List<Quaternion>();
+
+    private void Start()
+    {
+        foreach(GameObject linkObject in LinkObjects)
+        {
+            startLinkPositions.Add(linkObject.transform.position);
+            startLinkRotations.Add(linkObject.transform.rotation);
+        }
+    }
+
 
     public void UpdateNumberOfLinks()
     {
@@ -165,5 +178,17 @@ public class Chain : MonoBehaviour, IPath
             path.Reverse();
 
         return path;
+    }
+
+    public void resetObject()
+    {
+        for(int i = 0; i < LinkObjects.Count; i++)
+        {
+            LinkObjects[i].GetComponent<Rigidbody>().velocity = Vector3.zero;
+            LinkObjects[i].GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+
+            LinkObjects[i].transform.position = startLinkPositions[i];
+            LinkObjects[i].transform.rotation = startLinkRotations[i];
+        }  
     }
 }

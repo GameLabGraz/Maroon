@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using VRTK;
 using VRTK.UnityEventHelper;
 
-public class SliderController : VRTK_Slider
+public class SliderController : VRTK_Slider, IResetObject
 {
     [SerializeField]
     private GameObject invokeObject;
@@ -23,8 +23,15 @@ public class SliderController : VRTK_Slider
 
     private VRTK_Control_UnityEvents controlEvents;
 
+    private Vector3 startPos;
+
+    private Quaternion startRot;
+
     private void Start()
     {
+        startPos = transform.position;
+        startRot = transform.rotation;
+
         controlEvents = GetComponent<VRTK_Control_UnityEvents>();
         if (controlEvents == null)
         {
@@ -68,5 +75,11 @@ public class SliderController : VRTK_Slider
             else
                 invokeObject.SendMessage(methodName, GetValue());
         }
+    }
+
+    public void resetObject()
+    {
+        transform.position = startPos;
+        transform.rotation = startRot;
     }
 }

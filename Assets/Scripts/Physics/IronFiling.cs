@@ -171,9 +171,4 @@ public class IronFiling : MonoBehaviour, IResetObject
     {
         gameObject.SetActive(false);
     }
-
-    public void Test(Object testObject)
-    {
-        Debug.Log("Test");
-    }
 }

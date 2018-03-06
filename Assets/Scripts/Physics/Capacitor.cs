@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Capacitor : PausableObject
+public class Capacitor : PausableObject, IResetObject
 {
     private enum ChargeState {IDLE, CHARGING, DISCHARGING};
 
@@ -31,10 +31,11 @@ public class Capacitor : PausableObject
 
     private float voltage = 0;
 
-
     private float chargeTime = 0;
 
     private ChargeState chargeState = ChargeState.IDLE;
+
+    private List<Charge> chargesOnCable = new List<Charge>();
 
     [SerializeField]
     private ChargePoolHandler chargePoolHander;
@@ -124,6 +125,9 @@ public class Capacitor : PausableObject
         switch(chargeState)
         {
             case ChargeState.IDLE:
+
+                chargesOnCable.Clear();
+
                 chargeTime = 0;
 
                 if (powerVoltage * 0.99f > voltage)
@@ -185,6 +189,9 @@ public class Capacitor : PausableObject
         while (numberOfElectrons > 0 && chargeState != ChargeState.IDLE)
         {
             Charge electron = chargePoolHander.GetNewElectron();
+
+            chargesOnCable.Add(electron);
+
             PathFollower pathFollower = electron.GetComponent<PathFollower>();
             pathFollower.maxSpeed = electronSpeed;
 
@@ -260,5 +267,20 @@ public class Capacitor : PausableObject
     public void SetPowerVoltage(float voltage)
     {
         this.powerVoltage = voltage;
+    }
+
+    public void resetObject()
+    {
+        voltage = 0;
+        previousPowerVoltage = 0;
+        chargeTime = 0;
+
+        chargeState = ChargeState.IDLE;
+
+        foreach(Charge charge in chargesOnCable)
+        {
+            if (charge != null)
+                Destroy(charge.gameObject);
+        }
     }
 }

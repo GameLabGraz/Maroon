@@ -2,7 +2,7 @@
 using UnityEngine;
 using VRTK;
 
-public class CapacitorPlateController : VRTK_InteractableObject, IGenerateE
+public class CapacitorPlateController : VRTK_InteractableObject, IGenerateE, IResetObject
 {
     private GameObject resizeHeightObject1;
     private GameObject resizeHeightObject2;
@@ -29,8 +29,12 @@ public class CapacitorPlateController : VRTK_InteractableObject, IGenerateE
 
     private Vector3 oldLocalScale;
 
+    private Vector3 startScale;
+
     private void Start()
     {
+        startScale = transform.localScale;
+
         oldPosition = transform.position;
         oldLocalScale = transform.localScale;
 
@@ -161,5 +165,10 @@ public class CapacitorPlateController : VRTK_InteractableObject, IGenerateE
     public float getEPotential(Vector3 position)
     {
         throw new System.NotImplementedException();
+    }
+
+    public void resetObject()
+    {
+        transform.localScale = startScale;
     }
 }
