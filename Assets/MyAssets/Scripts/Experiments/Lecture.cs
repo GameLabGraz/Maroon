@@ -2,68 +2,36 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Lecture 
+public class Lecture  : MonoBehaviour
 {
-	/// <summary>
-	/// The name of the lecture.
-	/// </summary>
-	private string name;
-	/// <summary>
-	/// The URLs of the web content.
-	/// </summary>
-	private List<string> urls;
-	/// <summary>
-	/// The list of web content objects.
-	/// </summary>
-	private List<WWW> webContents;
+    [SerializeField]
+    private List<Texture> contents;
 
-	public string Name { get{ return this.name; } }
-	public List<string> ContentUrls { get{ return this.urls; } }
-	public List<WWW> WebContents { get{ return this.webContents; } }
+    private bool isDone = true;
 
-	public Lecture(string name, List<string> urls) {
-		this.name = name;
-		this.webContents = new List<WWW>();
-		this.StartLoadingWebContents (urls);
-	}
+    public List<Texture> Contents { get { return contents; } }
 
-	public bool IsDone()
-	{
-		foreach (WWW www in this.webContents) {
-			if(null != www) {
-				if(!www.isDone)
-					return false;
-			}
-		}
-		return true;
-	}
+    public bool IsDone { get { return isDone; } }
 
-	/// <summary>
-	/// Asynchronous method that starts loading the web contents.
-	/// </summary>
-	/// <param name="urls">Urls.</param>
-	public void StartLoadingWebContents(List<string> urls)
-	{
-		this.urls = urls;
-		this.webContents.Clear ();
-		foreach (string url in urls) {
-			this.webContents.Add(new WWW(url));
-		}
-	}
+    public void AddContentTexture(Texture content)
+    {
+        contents.Add(content);
+    }
 
-	/// <summary>
-	/// Asynchronous method that starts reloading web contents of
-	/// which downloads finished but contained an error.
-	/// </summary>
-	public void StartReloadingFailedWebContents()
-	{
-		foreach (WWW www in this.webContents) 
-		{
-			if(www.isDone && !www.error.Equals(string.Empty))
-			{
-				//WWW newWww = new WWW(www.url);
-				// TODO: replace WWW object in the webContent list with new one
-			}
-		}
-	}
+    public void LoadWebContents(List<string> urls)
+    {
+        isDone = false;
+        StartCoroutine(LoadWebContentTextures(urls));
+    }
+
+    private IEnumerator LoadWebContentTextures(List<string> urls)
+    {
+        foreach (string url in urls)
+        {
+            WWW webContent = new WWW(url);
+            yield return webContent;
+            contents.Add(webContent.texture);
+        }
+        isDone = true;
+    }
 }

@@ -104,8 +104,8 @@ public class GuiWhiteboard : MonoBehaviour
 		// Show navigation information on the middle lower screen
 		if (null != this.whiteboardController && 
 		    null != this.whiteboardController.SelectedLecture &&
-		    null != this.whiteboardController.SelectedLecture.WebContents) {
-			GUI.Label (new Rect (Screen.width / 2f - 50f, Screen.height - 50f, 100f, 50f), string.Format ("{0}/{1}", this.whiteboardController.CurrentWebContentIndex + 1, this.whiteboardController.SelectedLecture.WebContents.Count), this.textStyle);
+		    null != this.whiteboardController.SelectedLecture.Contents) {
+			GUI.Label (new Rect (Screen.width / 2f - 50f, Screen.height - 50f, 100f, 50f), string.Format ("{0}/{1}", this.whiteboardController.CurrentContentIndex + 1, this.whiteboardController.SelectedLecture.Contents.Count), this.textStyle);
 		}
 
         /* TODO LATER
