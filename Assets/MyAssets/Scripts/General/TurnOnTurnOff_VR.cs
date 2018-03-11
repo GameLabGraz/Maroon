@@ -2,10 +2,13 @@ using UnityEngine;
 using System.Collections;
 using VRTK;
 
-public class TurnOnTurnOff_VR : VRTK_InteractableObject { //MonoBehaviour
+public class TurnOnTurnOff_VR : VRTK_InteractableObject
+{
+    [SerializeField]
+    private GameObject charge;
 
-    public GameObject charge;
-    public Light glow;
+    [SerializeField]
+    private Light glow;
 
     private StaticChargeScript chargeScript;
     private int target = 0;
@@ -14,18 +17,7 @@ public class TurnOnTurnOff_VR : VRTK_InteractableObject { //MonoBehaviour
 	private void Start()
 	{
         chargeScript = charge.GetComponent<StaticChargeScript>();
-        //target = 1; //for debug purposes, switch it on right away
     }
-	
-    /* desktop version 
-    void OnMouseUp() {
-        if (target == 0) {
-            target = 1;
-        }
-        else {
-            target = 0;
-        }
-    } */
 
     public override void StartUsing(GameObject usingObject)
     {
@@ -34,36 +26,23 @@ public class TurnOnTurnOff_VR : VRTK_InteractableObject { //MonoBehaviour
         base.StartUsing(usingObject);
 
         if (target == 0)
-        {
             target = 1;
-        }
-        else {
+        else 
             target = 0;
-        }
 
         Debug.Log("Generator turned ON/OFF");
     }
 
-    public override void StopUsing(GameObject usingObject)
+    protected override void FixedUpdate()
     {
-        Debug.Log("Generator StopUsing");
-        base.StopUsing(usingObject);
-    }
+        base.FixedUpdate();
 
-    protected override void FixedUpdate() {
-
-        if (target == 0) {
+        if (target == 0)
             current *= 0.9f;
-        }
-        else {
+        else
             current = 1.0f - 0.99f * (1.0f - current);
-        }
     
-        chargeScript.strength = 1e-4f * current;
-        glow.intensity = 8.0f * current;
-
-        //Debug.Log("Generator Updated");
-
-        //TODO 
+        chargeScript.strength = 0.1e-4f * current;
+        glow.intensity = 5f * current;
     }
 }
