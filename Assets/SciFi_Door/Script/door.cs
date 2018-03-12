@@ -14,18 +14,22 @@ public class door : MonoBehaviour {
         dMan = FindObjectOfType<DialogueManager>();
     }
 
-    void OnTriggerEnter ( Collider obj  )
+    void OnTriggerEnter ( Collider other  )
     {
-        hasPlayer = true;
-        if (!GamificationManager.instance.doorDialogue)
+
+        if (other.CompareTag("Player"))
         {
-            dMan.ShowBox("DoorOpen");
-            GamificationManager.instance.doorDialogue = true;
-        }
-        if (!setUI)
-        {
-            setUI = true;
-            uiBox.SetActive(true);
+            hasPlayer = true;
+            if (!GamificationManager.instance.doorDialogue)
+            {
+                dMan.ShowBox("DoorOpen");
+                GamificationManager.instance.doorDialogue = true;
+            }
+            if (!setUI)
+            {
+                setUI = true;
+                uiBox.SetActive(true);
+            }
         }
       
        
@@ -52,12 +56,15 @@ public class door : MonoBehaviour {
         }
     }
 
-    void OnTriggerExit ( Collider obj  ){
-        hasPlayer = false;
-        if (setUI)
+    void OnTriggerExit ( Collider other  ){
+        if (other.CompareTag("Player"))
         {
-            setUI = false;
-            uiBox.SetActive(false);
+            hasPlayer = false;
+            if (setUI)
+            {
+                setUI = false;
+                uiBox.SetActive(false);
+            }
         }
 }
 }

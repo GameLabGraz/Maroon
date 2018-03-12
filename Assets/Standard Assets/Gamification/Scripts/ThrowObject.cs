@@ -3,11 +3,11 @@ using System.Collections;
 
 public class ThrowObject : MonoBehaviour
 {
-    public GameObject uiBox;
+    private GameObject uiBox;
     private ConstantForce cf;
-    public Transform player;
-    public Transform playerCam;
-    public float throwForce = 10;
+    private GameObject player;
+    private GameObject playerCam;
+    private float throwForce = 200;
     bool hasPlayer = false;
     bool beingCarried = false;
     public AudioClip[] soundToPlay;
@@ -19,10 +19,19 @@ public class ThrowObject : MonoBehaviour
     private bool setUI = false;
     private bool trigger = false;
 
+    private void Awake()
+    {
+        uiBox = GameObject.FindWithTag("UI");
+        playerCam  = GameObject.FindWithTag("MainCamera");
+        player = GameObject.FindWithTag("Player");
+
+    }
+
     void Start()
     {
         audio = GetComponent<AudioSource>();
         cf = GetComponent<ConstantForce>();
+       // uiBox = GameObject.FindGameObjectWithTag("UI");
     }
 
 
@@ -71,7 +80,7 @@ public class ThrowObject : MonoBehaviour
             Debug.Log("Flying");
         }
 
-        float dist = Vector3.Distance(gameObject.transform.position, player.position);
+        float dist = Vector3.Distance(gameObject.transform.position, player.transform.position);
         if (dist <= 2.5f)
         {
             hasPlayer = true;
@@ -84,7 +93,7 @@ public class ThrowObject : MonoBehaviour
         {
             Debug.Log("Carry");
             GetComponent<Rigidbody>().isKinematic = true;
-            transform.parent = playerCam;
+            transform.parent = playerCam.transform;
             beingCarried = true;
             trigger = true;
         }
@@ -106,14 +115,16 @@ public class ThrowObject : MonoBehaviour
                 GetComponent<Rigidbody>().isKinematic = false;
                 transform.parent = null;
                 beingCarried = false;
-                GetComponent<Rigidbody>().AddForce(playerCam.forward * throwForce);
+                GetComponent<Rigidbody>().AddForce(playerCam.transform.forward * throwForce);
                 RandomAudio();
+                GamificationManager.instance.OneBalloonSpawned = false;
             }
             else if (Input.GetMouseButtonDown(1) && !trigger)
             {
                 GetComponent<Rigidbody>().isKinematic = false;
                 transform.parent = null;
                 beingCarried = false;
+                GamificationManager.instance.OneBalloonSpawned = false;
             }
         }
     }
@@ -129,12 +140,12 @@ public class ThrowObject : MonoBehaviour
     }
 
   
-
+    //If object collides with other object player looses it
     void OnTriggerEnter(Collider other)
     {
-        if (beingCarried && !other.CompareTag("Door"))
+        if (beingCarried && other.CompareTag("Wall"))
         {
-            Debug.Log("ouch");
+            GamificationManager.instance.OneBalloonSpawned = false; //enabbles to pick up next balloon
             touched = true;
         }
 

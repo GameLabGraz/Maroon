@@ -45,6 +45,8 @@ public class GamificationManager : MonoBehaviour
     [HideInInspector]
     public bool playerCanPickItem = false;
     [HideInInspector]
+    public bool OneBalloonSpawned = false;
+    [HideInInspector]
 
     //Variables for loading laboratory in background from other scene 
     public string levelName;
@@ -65,6 +67,9 @@ public class GamificationManager : MonoBehaviour
             instance = this;
         else if (instance != this)
             Destroy(gameObject);
+        GameObject uiBox = GameObject.FindWithTag("UI");
+       // uiBox.SetActive(false);
+
 
 
     }
