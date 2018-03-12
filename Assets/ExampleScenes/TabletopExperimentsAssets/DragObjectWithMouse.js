@@ -10,10 +10,13 @@ private var grabPoint : Vector3;
 function OnMouseDown() {
     var ray : Ray = Camera.main.ScreenPointToRay(Input.mousePosition);
     var hit : RaycastHit;
+    
     if (Physics.Raycast(ray, hit, Mathf.Infinity, (1 << dragMouseTargetLayer))) {
         touching = true;
         grabPoint = transform.InverseTransformPoint(hit.point);
     }
+
+    Debug.Log("test");
 }
 
 function FixedUpdate() {
