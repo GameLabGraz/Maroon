@@ -20,11 +20,14 @@ using UnityEngine.UI;
 /// </summary>
 public class PendulumManager : MonoBehaviour
 {
-    private GameObject rope;
     private GameObject weight;
+    private GameObject ropeJoint;
     private  bool mouseDown;
     private Vector3 mouseStart;
     private Vector3 lastForce;
+    private GameObject lastLine;
+
+    public float ropeLength = 0.2f;
 
 
     /// <summary>
@@ -32,22 +35,20 @@ public class PendulumManager : MonoBehaviour
     /// </summary>
     public void Start()
     {
-        GameObject[] sensedObjects = GameObject.FindGameObjectsWithTag("Pendulum_Rope");
-        if (sensedObjects.Length != 1)
-            throw new Exception(String.Format("Found {0} ropes. only 1 is supported!", sensedObjects.Length));
-        rope = sensedObjects[0];
-
-        sensedObjects = GameObject.FindGameObjectsWithTag("Pendulum_Weight");
+        var sensedObjects = GameObject.FindGameObjectsWithTag("Pendulum_Weight");
         if (sensedObjects.Length != 1)
             throw new Exception(String.Format("Found {0} weights. only 1 is supported!", sensedObjects.Length));
         weight = sensedObjects[0];
+
+        ropeJoint = GameObject.Find("stand_rope_joint");
+
 
     }
 
     public void Update()
     {
 
-        HingeJoint joint = rope.GetComponent<HingeJoint>();
+        HingeJoint joint = weight.GetComponent<HingeJoint>();
 
         if (Input.GetMouseButtonUp(0))
         {
@@ -62,45 +63,69 @@ public class PendulumManager : MonoBehaviour
                 mouseStart = Input.mousePosition;
             }
 
-            float angle = (mouseStart.x - Input.mousePosition.x) / 2 ;
-            JointLimits jl = new JointLimits();
-            jl.min = angle;
-            jl.max = angle + 0.0001f; // because it bugs out otherwise...
-            joint.useLimits = true;
-            joint.limits = jl;
-
+            limitHinge(joint, (mouseStart.x - Input.mousePosition.x) / 2);
         } 
 
         if(Input.GetAxis("Mouse ScrollWheel") > 0)
         {
             Debug.Log("Wheel Up");
-            var obj = GameObject.Find(name + "/default");
-            
-            Debug.Log(obj.name);
-            var pos = obj.transform.position;
-            pos.Set(transform.position.x, Math.Min(1, pos.y + 0.5f), transform.position.z);
-            obj.transform.position = pos;
+            setRopeLengthRelative(0.01f);
+
         } else if(Input.GetAxis("Mouse ScrollWheel") < 0)
         {
             Debug.Log("Wheel Down");
-            var obj = GameObject.Find(name + "/default");
-
-            Debug.Log(name + "/default: " + obj.name);
-            var pos = obj.transform.position;
-            pos.Set(transform.position.x, Math.Max(-8, pos.y - 0.5f), transform.position.z);
-            obj.transform.position = pos;
+            setRopeLengthRelative(-0.01f);
         }
+
+        var startPos = GameObject.Find(name + "/weight_obj").transform.position;
+        startPos.Set(startPos.x, startPos.y, startPos.z + 0.0257f);
+        DrawLine(startPos, ropeJoint.transform.position, new Color(0, 0, 0));
     }
 
 
-     void setRopeLength(int value)
+     void setRopeLengthRelative(float value)
     {
+        limitHinge(weight.GetComponent<HingeJoint>(), 0);
         Vector3 currPos = weight.transform.position;
+        var obj = GameObject.Find(name + "/weight_obj");
+        var pos = obj.transform.position;
+        float newVal = Math.Max(-0.5f, ropeLength + value);
+        newVal = Math.Min(newVal, -0.1f);
+        ropeLength = newVal;
 
-        weight.transform.position.Set(currPos.x, (float)(value * 0.02695), currPos.z); //Yeah seems random, but calculates from the origin distance of 200 mm in the scaling of unity
+        pos.Set(transform.position.x, transform.position.y + ropeLength, transform.position.z);
+
+        Debug.Log("new pos: " + pos.ToString());
+        obj.transform.position = pos;
     }
-    
 
-   
-    
+
+
+    void DrawLine(Vector3 start, Vector3 end, Color color)
+    {
+        GameObject myLine = new GameObject();
+        myLine.transform.position = start;
+        myLine.AddComponent<LineRenderer>();
+        LineRenderer lr = myLine.GetComponent<LineRenderer>();
+        lr.material = new Material(Shader.Find("Particles/Alpha Blended Premultiply"));
+        lr.startColor = lr.endColor = color;
+        lr.startWidth = lr.endWidth = 0.001f;
+        lr.SetPosition(0, start);
+        lr.SetPosition(1, end);
+        GameObject.Destroy(lastLine);
+        lastLine = myLine;
+    }
+
+    void limitHinge(HingeJoint joint, float angle)
+    {
+        JointLimits jl = new JointLimits {
+            min = angle,
+            max = angle + 0.0001f // because it bugs out otherwise...
+        };
+        joint.useLimits = true;
+        joint.limits = jl;
+    }
+
+
+
 }
