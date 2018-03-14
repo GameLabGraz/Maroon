@@ -20,8 +20,9 @@ using UnityEngine.UI;
 /// </summary>
 public class PendulumManager : MonoBehaviour
 {
-    private GameObject weight;
-    private GameObject ropeJoint;
+    public GameObject PendulumWeight;
+    public GameObject StandRopeJoint;
+    public GameObject StopWatch;
     private  bool mouseDown;
     private Vector3 mouseStart;
     private Vector3 lastForce;
@@ -35,23 +36,17 @@ public class PendulumManager : MonoBehaviour
     /// </summary>
     public void Start()
     {
-        var sensedObjects = GameObject.FindGameObjectsWithTag("Pendulum_Weight");
-        if (sensedObjects.Length != 1)
-            throw new Exception(String.Format("Found {0} weights. only 1 is supported!", sensedObjects.Length));
-        weight = sensedObjects[0];
-
-        ropeJoint = GameObject.Find("stand_rope_joint");
-
-
+        
     }
 
     public void Update()
     {
 
-        HingeJoint joint = weight.GetComponent<HingeJoint>();
+        HingeJoint joint = PendulumWeight.GetComponent<HingeJoint>();
 
         if (Input.GetMouseButtonUp(0))
         {
+            StopWatch.SendMessage("SWStart");
             mouseDown = false;
             joint.useLimits = false;
         }
@@ -59,8 +54,10 @@ public class PendulumManager : MonoBehaviour
         {
             if (!mouseDown)
             {
+                StopWatch.SendMessage("SWStop");
                 mouseDown = true;
                 mouseStart = Input.mousePosition;
+
             }
 
             limitHinge(joint, (mouseStart.x - Input.mousePosition.x) / 2);
@@ -79,14 +76,14 @@ public class PendulumManager : MonoBehaviour
 
         var startPos = GameObject.Find(name + "/weight_obj").transform.position;
         startPos.Set(startPos.x, startPos.y, startPos.z + 0.0257f);
-        DrawLine(startPos, ropeJoint.transform.position, new Color(0, 0, 0));
+        DrawLine(startPos, StandRopeJoint.transform.position, new Color(0, 0, 0));
     }
 
 
      void setRopeLengthRelative(float value)
     {
-        limitHinge(weight.GetComponent<HingeJoint>(), 0);
-        Vector3 currPos = weight.transform.position;
+        limitHinge(PendulumWeight.GetComponent<HingeJoint>(), 0);
+        Vector3 currPos = PendulumWeight.transform.position;
         var obj = GameObject.Find(name + "/weight_obj");
         var pos = obj.transform.position;
         float newVal = Math.Max(-0.5f, ropeLength + value);
