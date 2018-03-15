@@ -55,7 +55,7 @@ public class StopWatch : MonoBehaviour {
         if (!TextDisplay)
             return;
 
-        var text = String.Format("{0:00.00}", number);
+        var text = String.Format("{0:0.00}", number);
         TextDisplay.GetComponent<TextMesh>().text = text.Substring(0, 4);
     }
 

@@ -28,7 +28,7 @@ public class PendulumManager : MonoBehaviour
     private Vector3 lastForce;
     private GameObject lastLine;
 
-    public float ropeLength = 0.2f;
+    public float ropeLength = -0.3f;
 
 
     /// <summary>
@@ -75,7 +75,7 @@ public class PendulumManager : MonoBehaviour
         }
 
         var startPos = GameObject.Find(name + "/weight_obj").transform.position;
-        startPos.Set(startPos.x, startPos.y, startPos.z + 0.0257f);
+        startPos.Set(startPos.x, startPos.y, startPos.z);
         DrawLine(startPos, StandRopeJoint.transform.position, new Color(0, 0, 0));
     }
 
@@ -84,11 +84,12 @@ public class PendulumManager : MonoBehaviour
     {
         limitHinge(PendulumWeight.GetComponent<HingeJoint>(), 0);
         Vector3 currPos = PendulumWeight.transform.position;
-        var obj = GameObject.Find(name + "/weight_obj");
+        var obj = GameObject.Find(PendulumWeight.name + "/weight_obj");
         var pos = obj.transform.position;
         float newVal = Math.Max(-0.5f, ropeLength + value);
         newVal = Math.Min(newVal, -0.1f);
         ropeLength = newVal;
+        Debug.Log(ropeLength);
 
         pos.Set(transform.position.x, transform.position.y + ropeLength, transform.position.z);
 
