@@ -29,6 +29,7 @@ public class PendulumManager : MonoBehaviour
     private GameObject lastLine;
 
     public float ropeLength = -0.3f;
+    private Boolean slow = false;
 
 
     /// <summary>
@@ -61,9 +62,19 @@ public class PendulumManager : MonoBehaviour
             }
 
             limitHinge(joint, (mouseStart.x - Input.mousePosition.x) / 2);
-        } 
+        } else if (Input.GetMouseButtonDown(1) )
+        {
+           if(slow)
+                Time.timeScale = 1.0f;
+            else
+                Time.timeScale = 0.2f;
 
-        if(Input.GetAxis("Mouse ScrollWheel") > 0)
+            Time.fixedDeltaTime = 0.02F * Time.timeScale;
+            slow = !slow;
+                       
+        }
+
+        if (Input.GetAxis("Mouse ScrollWheel") > 0)
         {
             Debug.Log("Wheel Up");
             setRopeLengthRelative(0.01f);

@@ -10,7 +10,7 @@ public class StopWatch : MonoBehaviour {
     public GameObject TextDisplay = null;
 
     private Boolean running;
-    private DateTime startTime;
+    private float startTime;
 
 
     // Use this for initialization
@@ -25,15 +25,16 @@ public class StopWatch : MonoBehaviour {
         if (!running)
             return;
 
-        TimeSpan passed = DateTime.Now - startTime;
-        SetSecondsHand(passed.TotalMilliseconds);
-        SetMinutesHand(passed.TotalMinutes);
-        SetText(passed.TotalSeconds);
+        float passed = Time.time - startTime;
+        SetSecondsHand(passed * 1000);
+        SetMinutesHand(passed / 60);
+        SetText(passed);
+        
     }
 
     public void SWReset()
     {
-        startTime = DateTime.Now;
+        startTime = Time.time;
         SetSecondsHand(0);
         SetMinutesHand(0);
         SetText(0);
@@ -42,7 +43,7 @@ public class StopWatch : MonoBehaviour {
     public void SWStart()
     {
         running = true;
-        startTime = DateTime.Now;
+        startTime = Time.time;
     }
 
     public void SWStop()
