@@ -171,4 +171,9 @@ public class CapacitorPlateController : VRTK_InteractableObject, IGenerateE, IRe
     {
         transform.localScale = startScale;
     }
+
+    public float getFieldStrength()
+    {
+        return capacitor.GetElectricalFieldStrength();
+    }
 }

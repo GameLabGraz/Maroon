@@ -15,7 +15,17 @@ public class Charge : MonoBehaviour, IGenerateE
     [SerializeField]
     private bool justCreated = true;
 
+    EField eField;
+
+    [SerializeField]
+    private float forceFactor = 0.5f; //constant force multyplier
+
     private ChargePoolHandler chargePoolHandler;
+
+    private void Start()
+    {
+        eField = GameObject.FindGameObjectWithTag("Field").GetComponent<EField>();
+    }
 
     public ulong Id
     {
@@ -69,12 +79,12 @@ public class Charge : MonoBehaviour, IGenerateE
         Destroy(this.gameObject);
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         if (!other.CompareTag("ElectricField"))
             return;
 
-        Vector3 force = Vector3.zero;
+        Vector3 force = chargeValue * forceFactor * eField.get(transform.position, gameObject);
         GetComponent<Rigidbody>().AddForce(force);
     }
 
@@ -98,6 +108,11 @@ public class Charge : MonoBehaviour, IGenerateE
     }
 
     public float getEPotential(Vector3 position)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public float getFieldStrength()
     {
         throw new System.NotImplementedException();
     }
