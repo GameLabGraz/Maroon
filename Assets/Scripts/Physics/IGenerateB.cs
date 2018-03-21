@@ -24,4 +24,6 @@ public interface IGenerateB
     /// <param name="position"></param>
     /// <returns></returns>
 	Vector3 getB(Vector3 position);
+
+    float getFieldStrength();
 }

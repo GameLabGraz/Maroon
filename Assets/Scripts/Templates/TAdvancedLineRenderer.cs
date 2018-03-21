@@ -11,7 +11,6 @@
 //
 
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,17 +32,17 @@ public class AdvancedLineRenderer : MonoBehaviour
     /// <summary>
     /// Dictionary of vertex positions
     /// </summary>
-    private SortedDictionary<int, Vector3> positions_;
+    private SortedDictionary<int, Vector3> positions_ = new SortedDictionary<int, Vector3>();
 
     /// <summary>
     /// Line width for drawing
     /// </summary>
-    private Tuple<float, float> lineWidth_;
+    private Tuple<float, float> lineWidth_ = new Tuple<float, float>(0.1f, 0.1f);
 
     /// <summary>
     /// Line color for drawing
     /// </summary>
-    private Tuple<Color, Color> lineColors_;
+    private Tuple<Color, Color> lineColors_ = new Tuple<Color, Color>(Color.white, Color.white);
 
     /// <summary>
     /// Use world space if true
@@ -80,17 +79,6 @@ public class AdvancedLineRenderer : MonoBehaviour
         //initLineRenderer();
         useWorldSpace = false;
         material = new Material(Shader.Find("Particles/Additive"));
-    }
-
-    /// <summary>
-    /// Constructor of Advanced Line Renderer
-    /// </summary>
-    public AdvancedLineRenderer()
-    {
-        positions_ = new SortedDictionary<int, Vector3>();
-        lineWidth_ = new Tuple<float, float>(0.1f, 0.1f);
-        lineColors_ = new Tuple<Color, Color>(Color.white, Color.white);
-        //material = new Material(Shader.Find("Particles/Additive"));
     }
 
     /// <summary>

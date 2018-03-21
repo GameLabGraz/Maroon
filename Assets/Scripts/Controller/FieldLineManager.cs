@@ -18,40 +18,12 @@ using UnityEngine.UI;
 /// <summary>
 /// Controller class to manage the field lines
 /// </summary>
-public class FieldLineManager : MonoBehaviour
+public abstract class FieldLineManager : MonoBehaviour
 {
-    /// <summary>
-    /// The symmetry count, number of copys
-    /// </summary>
-    public int symmetryCount = 20;
-
-    /// <summary>
-    /// The symmetry axis
-    /// </summary>
-    public Vector3 symmetryAxis;
-
     /// <summary>
     /// Lists of field lines
     /// </summary>
-    private HashSet<FieldLine> fieldLines;
-
-    /// <summary>
-    /// Indicates if symmetry is enabled
-    /// </summary>
-    private bool symmetryEnabled = true;
-
-    /// <summary>
-    /// The draw count
-    /// </summary>
-    private int drawCounter = 0;
-
-    /// <summary>
-    /// Initialization
-    /// </summary>
-    public void Awake()
-    {
-        fieldLines = new HashSet<FieldLine>();
-    }
+    protected HashSet<FieldLine> fieldLines = new HashSet<FieldLine>();
 
     /// <summary>
     /// Initialization
@@ -63,7 +35,7 @@ public class FieldLineManager : MonoBehaviour
         foreach (GameObject sensedTag in sensedObjects)
         {
             GameObject parent = sensedTag.transform.parent.gameObject;
-            addFieldLine(parent.GetComponent<FieldLine>());
+            AddFieldLine(parent.GetComponent<FieldLine>());
         }
     }
 
@@ -71,54 +43,26 @@ public class FieldLineManager : MonoBehaviour
     /// Sets the field line visibility
     /// </summary>
     /// <param name="visibility">The visibility value</param>
-    public void setFieldLinesVisible(bool visibility)
+    public void SetFieldLinesVisible(bool visibility)
     {
         foreach (FieldLine fL in fieldLines)
-        {
             fL.setVisibility(visibility);
-        }
-    }
-
-    /// <summary>
-    /// Updates the symmetry
-    /// </summary>
-    private void updateSymmetry()
-    {
-        foreach (FieldLine fL in fieldLines)
-        {
-            fL.setSymmetry(symmetryCount, symmetryAxis);
-        }
-    }
-
-    /// <summary>
-    /// Sets the symmetry count
-    /// </summary>
-    /// <param name="value"></param>
-    public void setSymmetryCount(int value)
-    {
-        int symmetryCnt = value;
-
-        symmetryEnabled = symmetryCnt == 1 ? false : true;
-        symmetryCount = symmetryCnt;
-        updateSymmetry();
     }
 
     /// <summary>
     /// Adds the given field line to list
     /// </summary>
     /// <param name="fL">The field line</param>
-    public void addFieldLine(FieldLine fL)
+    public void AddFieldLine(FieldLine fL)
     {
         fieldLines.Add(fL);
-        if (symmetryEnabled)
-            fL.setSymmetry(symmetryCount, symmetryAxis);
     }
 
     /// <summary>
     /// Removes the given field line from list
     /// </summary>
     /// <param name="fL">The field line</param>
-    public void removeFieldLine(FieldLine fL)
+    public void RemoveFieldLine(FieldLine fL)
     {
         fieldLines.Remove(fL);
     }
@@ -128,14 +72,8 @@ public class FieldLineManager : MonoBehaviour
     /// </summary>
     public void FixedUpdate()
     {
-        drawCounter++;
-        if ((drawCounter % Teal.FieldLineDrawDivisor) != 0)
-            return;
-        drawCounter = 1;
-
-        foreach (FieldLine fl in fieldLines)
-        {
-            fl.draw();
-        }
+        DrawFieldLines();
     }
+
+    protected abstract void DrawFieldLines();
 }

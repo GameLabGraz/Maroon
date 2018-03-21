@@ -11,7 +11,6 @@
 //
 
 using UnityEngine;
-using System;
 
 /// <summary>
 /// Field types
@@ -25,20 +24,20 @@ public enum FieldType
 /// <summary>
 /// Interface to represent a physical field
 /// </summary>
-public interface IField
+public abstract class IField : MonoBehaviour
 {
     /// <summary>
     /// Gets the field type
     /// </summary>
     /// <returns></returns>
-	FieldType getFieldType();
+    public abstract FieldType getFieldType();
 
     /// <summary>
     /// Gets the combined field at a given position
     /// </summary>
     /// <param name="position">The required positio</param>
     /// <returns>The field vector</returns>
-    Vector3 get(Vector3 position);
+    public abstract Vector3 get(Vector3 position);
 
     /// <summary>
     ///  Gets the combined field at a given position excluded the given EM object.
@@ -46,5 +45,5 @@ public interface IField
     /// <param name="position">The required position</param>
     /// <param name="xobj">Ignored object</param>
     /// <returns>The field vector</returns>
-    Vector3 get(Vector3 position, GameObject xobj);
+    public abstract Vector3 get(Vector3 position, GameObject xobj);
 }

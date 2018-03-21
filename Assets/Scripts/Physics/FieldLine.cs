@@ -11,8 +11,8 @@
 //
 
 using UnityEngine;
-using UnityEngine.UI;
 using System.Collections.Generic;
+
 
 /// <summary>
 /// Script to draw the field lines.
@@ -23,7 +23,7 @@ public class FieldLine : MonoBehaviour, IResetObject
     /// <summary>
     /// The magnetic field
     /// </summary>
-	public BField field;
+	public IField field;
 
     /// <summary>
     /// The vertex count of a single field line.
@@ -55,13 +55,7 @@ public class FieldLine : MonoBehaviour, IResetObject
     /// <summary>
     /// The electro magnet object
     /// </summary>
-    private EMObject emObj;
-
-    /// <summary>
-    /// The symmetry axis around which the field lines
-    /// are cloned
-    /// </summary>
-    private Vector3 symmetryAxis;
+    private GameObject emObj;
 
     /// <summary>
     /// Boolean value which indicates if the 
@@ -70,29 +64,12 @@ public class FieldLine : MonoBehaviour, IResetObject
     private bool visible = true;
 
     /// <summary>
-    /// Number of clones to copy
-    /// </summary>
-    private int numClones;
-
-    /// <summary>
     /// The line renderer which draws the line
     /// </summary>
-    AdvancedLineRenderer lineRenderer;
+    private AdvancedLineRenderer lineRenderer;
 
-    /// <summary>
-    /// Set of existing field line clones
-    /// </summary>
-    private HashSet<GameObject> clones;
-
-    /// <summary>
-    /// Initializes clones field
-    /// </summary>
-    public void Awake()
-    {
-        clones = new HashSet<GameObject>();
-        numClones = Teal.DefaultNumFieldLines;
-        symmetryAxis = new Vector3(0, 1, 0);
-    }
+    public delegate bool StopDrawingCheck(Vector3 position);
+    public StopDrawingCheck stopDrawingCheck;
 
     /// <summary>
     /// Initializes the line renderer.
@@ -106,18 +83,7 @@ public class FieldLine : MonoBehaviour, IResetObject
         lineRenderer.initLineRenderer();
         lineRenderer.SetWidth(0.1f, 0.1f);
 
-        emObj = gameObject.GetComponentInParent<EMObject>();
-    }
-
-    /// <summary>
-    /// Sets the symmetry axis and clones.
-    /// </summary>
-    /// <param name="count">number of clones</param>
-    /// <param name="ax">symmetry axis</param>
-    public void setSymmetry(int count, Vector3 ax)
-    {
-        numClones = count;
-        symmetryAxis = ax;
+        emObj = transform.parent.gameObject;
     }
 
     /// <summary>
@@ -125,46 +91,12 @@ public class FieldLine : MonoBehaviour, IResetObject
     /// </summary>
     public void draw()
     {
-        if (!this.visible)
-            return;
-
         lineRenderer.Clear();
-        clearClones();
 
-        if (Mathf.Abs(emObj.getFieldStrength()) < 0.05)
+        if (!this.visible || Mathf.Abs(GetFieldStrengthFromEmObj()) < 0.05)
             return;
 
-        drawFieldLine();
-
-        float rotation_scale = 360f / numClones;
-
-        float rotation = rotation_scale;
-
-        List<KeyValuePair<int, Vector3>> pointList = lineRenderer.GetPositions();
-        for (int i = 1; i < numClones; ++i)
-        {
-            GameObject clone = Instantiate(gameObject, transform.position, Quaternion.identity) as GameObject;
-            clone.GetComponent<AdvancedLineRenderer>().SetVertexCount(pointList.Count);
-            clone.GetComponent<AdvancedLineRenderer>().SetPositions(pointList);
-
-            //workaround to keep the fieldline and its clones at the same scale
-            Vector3 temp = clone.transform.localScale;
-            clone.transform.SetParent(this.transform.parent);
-            clone.transform.localScale = temp;
-            //rotate clones to fill the whole 360°
-            clone.transform.localEulerAngles = rotation * symmetryAxis;
-            clones.Add(clone);
-            rotation += rotation_scale;
-        }
-    }
-
-    /// <summary>
-    /// Draws the first field line which
-    /// is then copied
-    /// </summary>
-    private void drawFieldLine()
-    {
-        float closingAngle = fixClosingAngle + (4 - emObj.getFieldStrength()) * 2;
+        float closingAngle = fixClosingAngle + (4 - GetFieldStrengthFromEmObj()) * 2;
 
         int positionIndex = 0; ;
         Vector3 position = transform.position - originOffset;
@@ -184,24 +116,12 @@ public class FieldLine : MonoBehaviour, IResetObject
             lineRenderer.SetPosition(positionIndex, transform.InverseTransformPoint(position));
             positionIndex++;
 
-            Vector3 dist = transform.position;
-            if (coil)   // hack for coil
-                dist -= 1.5f * new Vector3(Mathf.Abs(emObj.transform.up.x), Mathf.Abs(emObj.transform.up.y), Mathf.Abs(emObj.transform.up.z));
-            if (Vector3.Distance(position, dist) <= 0.8f || Vector3.Distance(position, transform.position) <= 0.4f)
+            if (stopDrawingCheck != null && stopDrawingCheck(position))
                 break;
-
         }
-        lineRenderer.WritePositionsToLineRenderer();
-    }
 
-    /// <summary>
-    /// Clears all the copies of the field line
-    /// </summary>
-    private void clearClones()
-    {
-        foreach (GameObject clone in clones)
-            DestroyImmediate(clone);
-        clones.Clear();
+        lineRenderer.WritePositionsToLineRenderer();
+
     }
 
     /// <summary>
@@ -221,10 +141,7 @@ public class FieldLine : MonoBehaviour, IResetObject
     {
         this.visible = visibility;
         if (!visible)
-        {
             clearLineRenderer();
-            clearClones();
-        }
     }
 
     /// <summary>
@@ -233,6 +150,23 @@ public class FieldLine : MonoBehaviour, IResetObject
     public void resetObject()
     {
         lineRenderer.Clear();
-        clearClones();
+    }
+
+    public List<KeyValuePair<int, Vector3>> GetLinePositions()
+    {
+        return lineRenderer.GetPositions();
+    }
+
+    private float GetFieldStrengthFromEmObj()
+    {
+        switch (field.getFieldType())
+        {
+            case FieldType.BField:
+                return emObj.GetComponent<IGenerateB>().getFieldStrength();
+            case FieldType.EField:
+                return emObj.GetComponent<IGenerateE>().getFieldStrength();
+            default:
+                return 0;
+        }
     }
 }

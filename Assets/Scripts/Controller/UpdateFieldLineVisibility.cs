@@ -38,6 +38,6 @@ public class UpdateFieldLineVisibility : MonoBehaviour
     /// <param name="flManager">The field line manager</param>
     public void SetVisibility(FieldLineManager flManager)
     {
-        flManager.setFieldLinesVisible(toggleFieldLineVisibility.isOn);
+        flManager.SetFieldLinesVisible(toggleFieldLineVisibility.isOn);
     }
 }

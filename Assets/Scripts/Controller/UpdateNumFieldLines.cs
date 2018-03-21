@@ -37,7 +37,7 @@ public class UpdateNumFieldLines : MonoBehaviour
     /// Sets the number of field lines
     /// </summary>
     /// <param name="flManager">The field line manager</param>
-    public void SetNumFieldLines(FieldLineManager flManager)
+    public void SetNumFieldLines(SymmetricFieldLineManager flManager)
     {
         flManager.setSymmetryCount((int)slider.value);
     }

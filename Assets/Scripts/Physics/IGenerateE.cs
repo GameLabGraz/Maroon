@@ -38,4 +38,6 @@ public interface IGenerateE
     /// <param name="position"></param>
     /// <returns></returns>
 	float getEPotential(Vector3 position);
+
+    float getFieldStrength();
 }

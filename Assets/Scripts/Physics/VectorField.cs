@@ -53,6 +53,9 @@ public class VectorField : MonoBehaviour
     [SerializeField]
     private int resolution = 20;
 
+    [SerializeField]
+    private float fieldStrengthFactor = Teal.FieldStrengthFactor;
+
     private SimulationController simController;
 
     /// <summary>
@@ -89,6 +92,8 @@ public class VectorField : MonoBehaviour
                 float y = -height / 2 + (height / resolution) * (0.5f + j);
 
                 GameObject arrow = Instantiate(arrowPrefab) as GameObject;
+                arrow.GetComponent<ArrowController>().fieldStrengthFactor = this.fieldStrengthFactor;
+
                 arrow.transform.localScale = Vector3.Scale(new Vector3(arrow_scale, arrow_scale, arrow_scale), transform.localScale) / 3;
                 arrow.transform.parent = transform; //set vectorField as parent
                 arrow.transform.localPosition = new Vector3(x, 0, y);

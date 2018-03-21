@@ -17,18 +17,18 @@ using System.Collections.Generic;
 /// <summary>
 /// Class to represent a electric field
 /// </summary>
-public class EField : MonoBehaviour, IField
+public class EField : IField
 {
     /// <summary>
     /// Lists of producers which generats a electrical field
     /// </summary>
-    private HashSet<GameObject> producers;
+    private HashSet<GameObject> producers = new HashSet<GameObject>();
 
     /// <summary>
     /// Gets the field type
     /// </summary>
     /// <returns>The field type</returns>
-	public FieldType getFieldType()
+	public override FieldType getFieldType()
     {
         return FieldType.EField;
     }
@@ -36,9 +36,8 @@ public class EField : MonoBehaviour, IField
     /// <summary>
     /// Initialization
     /// </summary>
-    void Start()
+    void Awake()
     {
-        producers = new HashSet<GameObject>();
         updateProducers();
     }
 
@@ -60,9 +59,9 @@ public class EField : MonoBehaviour, IField
     /// </summary>
     /// <param name="position">The required position</param>
     /// <returns>The electric field vector</returns>
-    public Vector3 get(Vector3 position)
+    public override Vector3 get(Vector3 position)
     {
-        Vector3 field = new Vector3(0f, 0f, 0f);
+        Vector3 field = Vector3.zero;
         try
         {
             foreach (GameObject producer in producers)
@@ -86,9 +85,9 @@ public class EField : MonoBehaviour, IField
     /// <param name="position">The required position</param>
     /// <param name="xobj">Ignored object</param>
     /// <returns>the electric field vector</returns>
-    public Vector3 get(Vector3 position, GameObject xobj)
+    public override Vector3 get(Vector3 position, GameObject xobj)
     {
-        Vector3 field = new Vector3(0f, 0f, 0f);
+        Vector3 field = Vector3.zero;
         try
         {
             foreach (GameObject producer in producers)
