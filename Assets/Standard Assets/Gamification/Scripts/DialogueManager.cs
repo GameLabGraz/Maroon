@@ -46,6 +46,8 @@ public class DialogueManager : MonoBehaviour {
         {
             dialogActive = false;
             dBox.SetActive(false);
+            GameObject uiBox = GameObject.FindWithTag("UI");
+            uiBox.SetActive(false);
         }
         text.text = "";
     }
@@ -82,7 +84,8 @@ public class DialogueManager : MonoBehaviour {
         string dialogue = GamificationManager.instance.l_manager.GetString(keyword);
         //Creating newlines
         Debug.Log(dialogue);
-        dialogue = dialogue.Replace("NEWLINE ", "\n");   
+        // \n doesnt work when you load dialogues from XML-Files, so write NEWLINE if you want a newline and replace it here
+        dialogue = dialogue.Replace("NEWLINE ", "\n"); //To create Newlines  
         Debug.Log(dialogue);
         if (!GamificationManager.instance.coroutineRunning)
         {

@@ -27,7 +27,7 @@ public class GamificationManager : MonoBehaviour
     public AudioSource menuSound;
 
     //Gamification Bools
-    public bool gameStarted = false;
+    public bool gameStarted = false; //is set true after game mechanics started
     [HideInInspector]
     public bool headset = false;
     [HideInInspector]
@@ -35,17 +35,15 @@ public class GamificationManager : MonoBehaviour
     [HideInInspector]
     public bool xmlLoaded = false;
     [HideInInspector]
-    public bool deactivateDialogue = false;
+    public bool deactivateDialogue = false; //no dialogues if true
     [HideInInspector]
-    //this is the dialogue which is played once when the door is first opened
-    public bool doorDialogue = false;
+    public bool doorDialogue = false;  //this is the dialogue which is played once when the door is first opened
+    [HideInInspector]  
+    public bool holdingItem = false; //if player is holding an item, menu call is not allowed
     [HideInInspector]
-    //if player is holding an item, menu call is not allowed
-    public bool holdingItem = false;
+    public bool playerCanPickItem = false; //true if player is in range to pick up an item
     [HideInInspector]
-    public bool playerCanPickItem = false;
-    [HideInInspector]
-    public bool OneBalloonSpawned = false;
+    public bool OneBalloonSpawned = false; //player can hold only one balloon at the same time
     [HideInInspector]
 
     //Variables for loading laboratory in background from other scene 
