@@ -16,6 +16,7 @@ public class DialogueManager : MonoBehaviour {
     public float letterPause = 0.01f;
     public AudioClip typeSound;
     private string dialougeKey1 = "Introduction 1";
+    private string dialogueKey2 = "Introduction 2";
     private string dialogueKey3 = "Vandegraaf 1";
     private string dialogueKey4 = "Vandegraaf 2";
     
@@ -126,7 +127,7 @@ public class DialogueManager : MonoBehaviour {
             dialogActive = false;
             dBox.SetActive(false);
             GamificationManager.instance.coroutineRunning = false;
-          //  ShowBox(dialogueKey2);
+            ShowBox(dialogueKey2);
             GamificationManager.instance.gameStarted = true;
 
         }

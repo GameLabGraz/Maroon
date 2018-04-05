@@ -27,7 +27,7 @@ public class HelpCharacterController : MonoBehaviour {
         rb = GetComponent<Rigidbody>();
         speed = 100;
         turnSpeed = 5.0f;
-        //Cursor.lockState = CursorLockMode.Locked;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 	
 	// Update is called once per frame

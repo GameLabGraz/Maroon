@@ -49,6 +49,13 @@ public class GamificationManager : MonoBehaviour
     //Variables for loading laboratory in background from other scene 
     public string levelName;
     AsyncOperation async;
+    //Prefabs and Variables to display the UI-Achievement-Messages and manage Achievements
+    public GameObject parent;
+    public Object achievementPrefab;
+    private List<GameObject> spawnedAchievementUIs = new List<GameObject>();
+    public int howMuchSpawnedAchievementUIs;
+    [HideInInspector]
+
 
 
 
@@ -66,7 +73,8 @@ public class GamificationManager : MonoBehaviour
         else if (instance != this)
             Destroy(gameObject);
         GameObject uiBox = GameObject.FindWithTag("UI");
-       // uiBox.SetActive(false);
+        // uiBox.SetActive(false);
+
 
 
 
@@ -89,11 +97,14 @@ public class GamificationManager : MonoBehaviour
         else
             l_manager.SetCurrentLanguage(Language.English);
 
+        //Add first achievement
+        AddAchievement("Achievement 1", "Helpi");
+        AddAchievement("Achievement 2", "Door");
 
 
     }
 
-    
+
     //Load Laboratory Scene in Background to avoid lag
     //Use StartLoading to start loading the scene in background. Called in FadeOnEnter.cs and LoadOnEnter.cs
     public void StartLoading()
@@ -114,22 +125,85 @@ public class GamificationManager : MonoBehaviour
     public void ActivateScene()
     {
         async.allowSceneActivation = true;
+        
     }
 
     //Resume Game from Menu
     public void Resume()
     {
-        Debug.Log(scene);
-            SceneManager.LoadScene(scene);
-            if (scene == "Laboratory")
-                Cursor.lockState = CursorLockMode.Locked;       
+       
+
+    }
+
+
+
+    //Delete the achievement with the ID when the goal is accomplished
+    //Moving other achievements correctly
+    public void DeleteAchievement(string id)
+    {
+        int number = 0;
+        foreach (var it in spawnedAchievementUIs)
+        {
+            if (it.GetComponent<AchievementController>().getID() == id)
+            {
+                number = it.GetComponent<AchievementController>().number;
+            }
+        }
+        Destroy(spawnedAchievementUIs[number]);
+        //Change position of other achievements
+        for (int i = number+1; i < spawnedAchievementUIs.Count; i++)
+        {
+            AchievementController script = spawnedAchievementUIs[i].GetComponent<AchievementController>();
+            script.ChangePosition();
+         
+        }
+        //Nach Hinten rücken
+        spawnedAchievementUIs.RemoveAt(number);
+        number--;
+    }
+
+    //Show Achievements when player is in laboratory
+    void ShowAchievements()
+    {
+
+        foreach (var it in spawnedAchievementUIs)
+        {
+            it.SetActive(true);
+        }
+    }
+
+    //Hide Achievements when player is not in laboratory
+    void HideAchievements()
+    {
+        foreach (var it in spawnedAchievementUIs)
+        {
+            it.SetActive(false);
+        }
+    }
+
+    //Add a new achievement to list and instantiate the UI-element
+    //dialogueKey : Key of achievement-string
+    //ID : Unique ID of achievement - important for deleting 
+    void AddAchievement(string dialogeKey, string ID)
+    {
+        GameObject achievement = Instantiate(achievementPrefab, new Vector3(parent.transform.position.x, parent.transform.position.y, parent.transform.position.z),
+            Quaternion.identity, parent.transform) as GameObject;
+        achievement.GetComponent<AchievementController>().SetText(l_manager.GetString(dialogeKey), ID); //Access script function SetText
+        spawnedAchievementUIs.Add(achievement);
+
     }
 
     // Locking and unlocking mouse and loading menu and going back from menu
     void Update ()
-    {
+    {                
+
         Scene currentScene = SceneManager.GetActiveScene();
         string sceneName = currentScene.name;
+
+        if (sceneName == "Laboratory")
+            ShowAchievements();
+        else
+            HideAchievements();
     
         if (Input.GetKeyDown("escape") && sceneName != "Menu" && !holdingItem)
         {

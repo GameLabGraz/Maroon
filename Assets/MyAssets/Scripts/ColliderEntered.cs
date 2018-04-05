@@ -45,6 +45,7 @@ public class ColliderEntered : MonoBehaviour {
     public void OnTriggerEnter(Collider other)
 	{
 		if (other.CompareTag ("Player")) {
+            GamificationManager.instance.DeleteAchievement("Helpi");
             setUI = true;
             uiBox.SetActive(true);
             Debug.Log("Player entered");
