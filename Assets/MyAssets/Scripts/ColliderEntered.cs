@@ -53,7 +53,7 @@ public class ColliderEntered : MonoBehaviour {
             GamificationManager.instance.finishedAchievements++;
         }
         else if ((LevelName == "VandeGraaffExperiment1" || LevelName == "FallingCoil" || LevelName == "Pendulum" //Add any new experiments here!
-            || LevelName == "VandeGraafExperiment2" || LevelName == "FaradaysLaw") && !GamificationManager.instance.spokenWithLaunch)
+            || LevelName == "VandeGraaffExperiment2" || LevelName == "FaradaysLaw") && !GamificationManager.instance.spokenWithLaunch)
         {
             //User plays in correct order
             if (GamificationManager.instance.isAchievementInList("Build"))
@@ -104,7 +104,7 @@ public class ColliderEntered : MonoBehaviour {
             //Achievement-Dialogues are only played once
             if (LevelName == "Helpi" && GamificationManager.instance.spokenWithHelpi ||
                 ((LevelName == "VandeGraaffExperiment1" || LevelName == "FallingCoil" || LevelName == "Pendulum" //Add any new experiments here!
-            || LevelName == "VandeGraafExperiment2" || LevelName == "FaradaysLaw") && GamificationManager.instance.spokenWithLaunch)
+            || LevelName == "VandeGraaffExperiment2" || LevelName == "FaradaysLaw") && GamificationManager.instance.spokenWithLaunch)
             || LevelName == "After" && GamificationManager.instance.spokenWithDoor)            
                 return;
             if (!played_once && !noDialogue)

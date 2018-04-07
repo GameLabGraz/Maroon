@@ -10,8 +10,6 @@ public class ThrowObject : MonoBehaviour
     private float throwForce = 200;
     bool hasPlayer = false;
     bool beingCarried = false;
-    public AudioClip[] soundToPlay;
-    private AudioSource audio;
     public int dmg;
     private bool touched = false;
     public bool isBalloon = false;
@@ -19,6 +17,7 @@ public class ThrowObject : MonoBehaviour
     private bool setUI = false;
     private bool trigger = false;
     private DialogueManager dMan;
+    public string ID;
 
 
     private void Awake()
@@ -31,7 +30,6 @@ public class ThrowObject : MonoBehaviour
 
     void Start()
     {
-        audio = GetComponent<AudioSource>();
         cf = GetComponent<ConstantForce>();
        // uiBox = GameObject.FindGameObjectWithTag("UI");
     }
@@ -119,7 +117,6 @@ public class ThrowObject : MonoBehaviour
                 transform.parent = null;
                 beingCarried = false;
                 GetComponent<Rigidbody>().AddForce(playerCam.transform.forward * throwForce);
-                RandomAudio();
                 GamificationManager.instance.OneBalloonSpawned = false;
             }
             else if (Input.GetMouseButtonDown(1) && !trigger)
@@ -131,16 +128,7 @@ public class ThrowObject : MonoBehaviour
             }
         }
     }
-    void RandomAudio()
-    {
-        if (audio.isPlaying)
-        {
-            return;
-        }
-        audio.clip = soundToPlay[Random.Range(0, soundToPlay.Length)];
-        audio.Play();
-
-    }
+  
 
   
     //If object collides with other object player looses it
