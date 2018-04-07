@@ -18,13 +18,15 @@ public class ThrowObject : MonoBehaviour
     private bool firstcarried = false;
     private bool setUI = false;
     private bool trigger = false;
+    private DialogueManager dMan;
+
 
     private void Awake()
     {
         uiBox = GameObject.FindWithTag("UI");
         playerCam  = GameObject.FindWithTag("MainCamera");
         player = GameObject.FindWithTag("Player");
-
+        dMan = FindObjectOfType<DialogueManager>();
     }
 
     void Start()
@@ -52,6 +54,7 @@ public class ThrowObject : MonoBehaviour
 
     void Update()
     {
+
         if (beingCarried)
             GamificationManager.instance.holdingItem = true;
         else
@@ -69,7 +72,6 @@ public class ThrowObject : MonoBehaviour
         if (beingCarried)
         {
             firstcarried = true;
-            Debug.Log("touched");
         }
            
 
@@ -96,6 +98,7 @@ public class ThrowObject : MonoBehaviour
             transform.parent = playerCam.transform;
             beingCarried = true;
             trigger = true;
+
         }
         if (hasPlayer && beingCarried && Input.GetMouseButtonUp(0))
         {
@@ -143,6 +146,7 @@ public class ThrowObject : MonoBehaviour
     //If object collides with other object player looses it
     void OnTriggerEnter(Collider other)
     {
+
         if (beingCarried && other.CompareTag("Wall"))
         {
             GamificationManager.instance.OneBalloonSpawned = false; //enabbles to pick up next balloon

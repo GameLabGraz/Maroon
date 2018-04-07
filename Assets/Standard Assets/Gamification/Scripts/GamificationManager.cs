@@ -25,6 +25,7 @@ public class GamificationManager : MonoBehaviour
     public LanguageManager l_manager;
     private string scene;
     public AudioSource menuSound;
+    public AudioClip AchievementSound;
 
     //Gamification Bools
     public bool gameStarted = false; //is set true after game mechanics started
@@ -38,7 +39,7 @@ public class GamificationManager : MonoBehaviour
     public bool deactivateDialogue = false; //no dialogues if true
     [HideInInspector]
     public bool doorDialogue = false;  //this is the dialogue which is played once when the door is first opened
-    [HideInInspector]  
+    [HideInInspector]
     public bool holdingItem = false; //if player is holding an item, menu call is not allowed
     [HideInInspector]
     public bool playerCanPickItem = false; //true if player is in range to pick up an item
@@ -55,9 +56,45 @@ public class GamificationManager : MonoBehaviour
     private List<GameObject> spawnedAchievementUIs = new List<GameObject>();
     public int howMuchSpawnedAchievementUIs;
     [HideInInspector]
+    private const int numberOfAchievements = 8;
+    public int finishedAchievements = 0;
+    [HideInInspector]
+    public bool spokenWithHelpi = false;
+    [HideInInspector]
+    public bool spokenWithLaunch = false;
+    [HideInInspector]
+    public bool spokenWithDoor = false;
+    [HideInInspector]
 
 
 
+    /*List of dialogueKeys and IDs:
+     * Achievement 1 : Helpi
+     * Achievement 2 : Door
+     * Achievement 3 : Build 
+     * Achievement 4: Build Vandegraaf1
+     * Achievement 5: Build Vandegraaf2
+     * Achievement 6: Build Faradayslaw
+     * Achievement 7: Build FallingCoil
+     * Achievement 8: Build Pendulum
+     */
+
+    //this bools are true if the experiment was built correctly and is ready to use
+    public bool vandegraaf1Complete = false;
+    [HideInInspector]
+    public bool vandegraaf2Complete = false;
+    [HideInInspector]
+    public bool pendulumComplete = false;
+    [HideInInspector]
+    public bool faradayComplete = false;
+    [HideInInspector]
+    public bool fallingcoilComplete = false;
+    [HideInInspector]
+
+    public int getNumberOfAchievements()
+    {
+        return numberOfAchievements;
+    }
 
     //Manager will be created only once and then stays for all scenes
     public void Awake()
@@ -99,7 +136,6 @@ public class GamificationManager : MonoBehaviour
 
         //Add first achievement
         AddAchievement("Achievement 1", "Helpi");
-        AddAchievement("Achievement 2", "Door");
 
 
     }
@@ -136,11 +172,23 @@ public class GamificationManager : MonoBehaviour
     }
 
 
+    public bool isAchievementInList(string id)
+    {
+        foreach (var it in spawnedAchievementUIs)
+        {
+            if (it.GetComponent<AchievementController>().getID() == id)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
     //Delete the achievement with the ID when the goal is accomplished
     //Moving other achievements correctly
     public void DeleteAchievement(string id)
     {
+        SoundManager.instance.PlaySingle(AchievementSound);
         int number = 0;
         foreach (var it in spawnedAchievementUIs)
         {
@@ -159,7 +207,7 @@ public class GamificationManager : MonoBehaviour
         }
         //Nach Hinten rücken
         spawnedAchievementUIs.RemoveAt(number);
-        number--;
+        howMuchSpawnedAchievementUIs--;
     }
 
     //Show Achievements when player is in laboratory
@@ -184,7 +232,7 @@ public class GamificationManager : MonoBehaviour
     //Add a new achievement to list and instantiate the UI-element
     //dialogueKey : Key of achievement-string
     //ID : Unique ID of achievement - important for deleting 
-    void AddAchievement(string dialogeKey, string ID)
+    public void AddAchievement(string dialogeKey, string ID)
     {
         GameObject achievement = Instantiate(achievementPrefab, new Vector3(parent.transform.position.x, parent.transform.position.y, parent.transform.position.z),
             Quaternion.identity, parent.transform) as GameObject;

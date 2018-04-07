@@ -20,10 +20,10 @@ public class door : MonoBehaviour {
         if (other.CompareTag("Player"))
         {
             hasPlayer = true;
-            if (!GamificationManager.instance.doorDialogue)
+            if (!GamificationManager.instance.doorDialogue && GamificationManager.instance.spokenWithLaunch)
             {
                 dMan.ShowBox("DoorOpen");
-                GamificationManager.instance.doorDialogue = true;
+                GamificationManager.instance.doorDialogue = true;               
             }
             if (!setUI)
             {
@@ -39,21 +39,25 @@ public class door : MonoBehaviour {
 
     private void Update()
     {
-        if (!GamificationManager.instance.holdingItem && hasPlayer &&  !GamificationManager.instance.playerCanPickItem && !doorOpen && Input.GetMouseButtonDown(0))
+        if (GamificationManager.instance.spokenWithLaunch)
         {
-            thedoor = GameObject.FindWithTag("SF_Door");
-            thedoor.GetComponent<Animation>().Play("open");
-            doorOpen = true;
-            Debug.Log("open");
-        }
+            if (!GamificationManager.instance.holdingItem && hasPlayer && !GamificationManager.instance.playerCanPickItem && !doorOpen && Input.GetMouseButtonDown(0))
+            {              
+                thedoor = GameObject.FindWithTag("SF_Door");
+                thedoor.GetComponent<Animation>().Play("open");
+                doorOpen = true;
+                Debug.Log("open");          
+            }
 
-        else if (!GamificationManager.instance.holdingItem &&  !GamificationManager.instance.playerCanPickItem &&hasPlayer && doorOpen && Input.GetMouseButtonDown(0))
-        {
-            thedoor = GameObject.FindWithTag("SF_Door");
-            thedoor.GetComponent<Animation>().Play("close");
-            doorOpen = false;
-            Debug.Log("close");
+            else if (!GamificationManager.instance.holdingItem && !GamificationManager.instance.playerCanPickItem && hasPlayer && doorOpen && Input.GetMouseButtonDown(0))
+            {
+                thedoor = GameObject.FindWithTag("SF_Door");
+                thedoor.GetComponent<Animation>().Play("close");
+                doorOpen = false;
+                Debug.Log("close");
+            }
         }
+       
     }
 
     void OnTriggerExit ( Collider other  ){

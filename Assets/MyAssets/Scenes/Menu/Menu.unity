@@ -77,15 +77,18 @@ LightmapSettings:
     m_PVRDirectSampleCount: 32
     m_PVRSampleCount: 500
     m_PVRBounces: 2
-    m_PVRFiltering: 0
+    m_PVRFilterTypeDirect: 0
+    m_PVRFilterTypeIndirect: 0
+    m_PVRFilterTypeAO: 0
     m_PVRFilteringMode: 1
     m_PVRCulling: 1
     m_PVRFilteringGaussRadiusDirect: 1
     m_PVRFilteringGaussRadiusIndirect: 5
     m_PVRFilteringGaussRadiusAO: 2
-    m_PVRFilteringAtrousColorSigma: 1
-    m_PVRFilteringAtrousNormalSigma: 1
-    m_PVRFilteringAtrousPositionSigma: 1
+    m_PVRFilteringAtrousPositionSigmaDirect: 0.5
+    m_PVRFilteringAtrousPositionSigmaIndirect: 2
+    m_PVRFilteringAtrousPositionSigmaAO: 1
+    m_ShowResolutionOverlay: 1
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -107,6 +110,8 @@ NavMeshSettings:
     manualTileSize: 0
     tileSize: 256
     accuratePlacement: 0
+    debug:
+      m_Flags: 0
   m_NavMeshData: {fileID: 0}
 --- !u!1 &6818580
 GameObject:
@@ -479,6 +484,7 @@ MonoBehaviour:
   deactivate: {fileID: 1367375175}
   yes: {fileID: 1630060718}
   no: {fileID: 1974934624}
+  achievement: {fileID: 1988023321}
   musicSlider: {fileID: 1401430145}
   soundSlider: {fileID: 1857649838}
   ger: {fileID: 1131345486}
@@ -907,12 +913,23 @@ MonoBehaviour:
   clockSmallRotation: {x: 0, y: 0, z: 0, w: 0}
   clockLongRotation: {x: 0, y: 0, z: 0, w: 0}
   menuSound: {fileID: 0}
+  AchievementSound: {fileID: 0}
   gameStarted: 0
   headset: 0
   coroutineRunning: 0
   xmlLoaded: 0
   deactivateDialogue: 0
+  doorDialogue: 0
+  holdingItem: 0
+  playerCanPickItem: 0
+  OneBalloonSpawned: 0
   levelName: 
+  parent: {fileID: 0}
+  achievementPrefab: {fileID: 0}
+  howMuchSpawnedAchievementUIs: 0
+  finishedAchievements: 0
+  spokenWithHelpi: 0
+  spokenWithLaunch: 0
 --- !u!4 &237631579
 Transform:
   m_ObjectHideFlags: 0
@@ -3888,7 +3905,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22400008, guid: a5f56aaac255dc24e9ee992c15da77ac, type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -208.84334
       objectReference: {fileID: 0}
     - target: {fileID: 22400008, guid: a5f56aaac255dc24e9ee992c15da77ac, type: 2}
       propertyPath: m_SizeDelta.x
@@ -5215,7 +5232,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22400008, guid: a5f56aaac255dc24e9ee992c15da77ac, type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -126.28111
       objectReference: {fileID: 0}
     - target: {fileID: 22400008, guid: a5f56aaac255dc24e9ee992c15da77ac, type: 2}
       propertyPath: m_SizeDelta.x
@@ -5621,7 +5638,7 @@ GameObject:
   - component: {fileID: 1988023322}
   - component: {fileID: 1988023321}
   m_Layer: 5
-  m_Name: LoremPanel
+  m_Name: Achievements
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

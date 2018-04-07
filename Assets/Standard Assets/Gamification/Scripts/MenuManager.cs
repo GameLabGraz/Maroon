@@ -23,6 +23,7 @@ public class MenuManager : MonoBehaviour {
     public Text deactivate;
     public Text yes;
     public Text no;
+    public Text achievement;
 
 
     public Slider musicSlider;
@@ -111,6 +112,9 @@ public class MenuManager : MonoBehaviour {
         deactivate.text = GamificationManager.instance.l_manager.GetString("Deactivate");
         yes.text = GamificationManager.instance.l_manager.GetString("Yes");
         no.text = GamificationManager.instance.l_manager.GetString("No");
+        achievement.text = GamificationManager.instance.l_manager.GetString("Menu Achievements") + ": " +
+            GamificationManager.instance.finishedAchievements + "/" + GamificationManager.instance.getNumberOfAchievements();
+
 
     }
 
