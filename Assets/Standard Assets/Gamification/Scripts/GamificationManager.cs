@@ -28,6 +28,7 @@ public class GamificationManager : MonoBehaviour
     public AudioClip AchievementSound;
 
     //Gamification Bools
+    [HideInInspector]
     public bool gameStarted = false; //is set true after game mechanics started
     [HideInInspector]
     public bool headset = false;
@@ -46,12 +47,50 @@ public class GamificationManager : MonoBehaviour
     [HideInInspector]
     public bool OneBalloonSpawned = false; //player can hold only one balloon at the same time
     [HideInInspector]
+    public bool doorIsOpen = false;
+    [HideInInspector]
+    public bool hasPlayer = false;
+    [HideInInspector]
+    public bool beingCarried = false;
+
+    //experiments and experiment built bools
+    public GameObject graaf1Experiment;
+    public GameObject graaf2Experiment;
+    public GameObject fallingExperiment;
+    public GameObject faradayExperiment;
+    public GameObject pendulumExperiment;
+    [HideInInspector]
+    public bool vandegraaf2generatorEnabled = false;
+    [HideInInspector]
+    public bool vandegraaf2ballonEnabled = false;
+    [HideInInspector]
+    public bool vandegraaf2grounderEnabled = false;
+    [HideInInspector]
+    public bool vandegraaf2electrodeEnabled = false;
+    [HideInInspector]
+    public bool vandegraaf1generatorEnabled = false;
+    [HideInInspector]
+    public bool vandegraaf1grounderEnabled = false;
+    [HideInInspector]
+    public bool vandegraaf1electrodeEnabled = false;
+    [HideInInspector]
+    public bool fallingcoilmagnetEnabled = false;
+    [HideInInspector]
+    public bool fallingcoilringEnabled = false;
+    [HideInInspector]
+    public bool faradayslawmagnetEnabled = false;
+    [HideInInspector]
+    public bool faradayslawringEnabled = false;
+    [HideInInspector]
+    public bool pendulumweightEnabled = false;
 
     //Variables for loading laboratory in background from other scene 
     public string levelName;
     AsyncOperation async;
     //Prefabs and Variables to display the UI-Achievement-Messages and manage Achievements
     public GameObject parent;
+
+
     public Object achievementPrefab;
     private List<GameObject> spawnedAchievementUIs = new List<GameObject>();
     public int howMuchSpawnedAchievementUIs;
@@ -86,7 +125,7 @@ public class GamificationManager : MonoBehaviour
     [HideInInspector]
     public bool pendulumComplete = false;
     [HideInInspector]
-    public bool faradayComplete = false;
+    public bool faradayslawComplete = false;
     [HideInInspector]
     public bool fallingcoilComplete = false;
     [HideInInspector]

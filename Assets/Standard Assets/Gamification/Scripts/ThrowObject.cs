@@ -8,7 +8,7 @@ public class ThrowObject : MonoBehaviour
     private GameObject player;
     private GameObject playerCam;
     private float throwForce = 200;
-    bool hasPlayer = false;
+   // bool GamificationManager.instance.hasPlayer = false;
     bool beingCarried = false;
     public int dmg;
     private bool touched = false;
@@ -18,6 +18,7 @@ public class ThrowObject : MonoBehaviour
     private bool trigger = false;
     private DialogueManager dMan;
     public string ID;
+    private bool isPlaced = false;
 
 
     private void Awake()
@@ -31,18 +32,20 @@ public class ThrowObject : MonoBehaviour
     void Start()
     {
         cf = GetComponent<ConstantForce>();
-       // uiBox = GameObject.FindGameObjectWithTag("UI");
+        // uiBox = GameObject.FindGameObjectWithTag("UI");
+        if (isPlaced)
+            this.gameObject.SetActive(false);
     }
 
 
     void ShowUI()
     {
-        if (hasPlayer && !setUI)
+        if (GamificationManager.instance.hasPlayer && !setUI)
         {
             setUI = true;
             uiBox.SetActive(true);
         }
-        else if (!hasPlayer && setUI)
+        else if (!GamificationManager.instance.hasPlayer && setUI)
         {
             setUI = false;
             uiBox.SetActive(false);
@@ -58,7 +61,7 @@ public class ThrowObject : MonoBehaviour
         else
             GamificationManager.instance.holdingItem = false;
 
-        if (hasPlayer)
+        if (GamificationManager.instance.hasPlayer)
             GamificationManager.instance.playerCanPickItem = true;
         else
             GamificationManager.instance.playerCanPickItem = false;
@@ -83,13 +86,13 @@ public class ThrowObject : MonoBehaviour
         float dist = Vector3.Distance(gameObject.transform.position, player.transform.position);
         if (dist <= 2.5f)
         {
-            hasPlayer = true;
+            GamificationManager.instance.hasPlayer = true;
         }
         else
         {
-            hasPlayer = false;
+            GamificationManager.instance.hasPlayer = false;
         }
-        if (hasPlayer && !beingCarried && Input.GetMouseButtonDown(0))
+        if (GamificationManager.instance.hasPlayer && !beingCarried && Input.GetMouseButtonDown(0))
         {
             Debug.Log("Carry");
             GetComponent<Rigidbody>().isKinematic = true;
@@ -98,7 +101,7 @@ public class ThrowObject : MonoBehaviour
             trigger = true;
 
         }
-        if (hasPlayer && beingCarried && Input.GetMouseButtonUp(0))
+        if (GamificationManager.instance.hasPlayer && beingCarried && Input.GetMouseButtonUp(0))
         {
             trigger = false;
         }
@@ -110,6 +113,7 @@ public class ThrowObject : MonoBehaviour
                 transform.parent = null;
                 beingCarried = false;
                 touched = false;
+               
             }
             if (Input.GetMouseButtonDown(0) && !trigger)
             {
@@ -118,6 +122,7 @@ public class ThrowObject : MonoBehaviour
                 beingCarried = false;
                 GetComponent<Rigidbody>().AddForce(playerCam.transform.forward * throwForce);
                 GamificationManager.instance.OneBalloonSpawned = false;
+                PlaceItem();
             }
             else if (Input.GetMouseButtonDown(1) && !trigger)
             {
@@ -125,10 +130,37 @@ public class ThrowObject : MonoBehaviour
                 transform.parent = null;
                 beingCarried = false;
                 GamificationManager.instance.OneBalloonSpawned = false;
+                PlaceItem();
             }
         }
     }
   
+    //Check if item is placed correctly. ADD NEW EXPERIMENTS HERE
+    void PlaceItem()
+    {
+        Collider collider = this.GetComponent<Collider>();
+        BuildVandegraaf2 script = FindObjectOfType<BuildVandegraaf2>();
+        BuildVandegraaf1 script2 = FindObjectOfType<BuildVandegraaf1>();
+        BuildFallingcoil script3 = FindObjectOfType<BuildFallingcoil>();
+        BuildFaradayslaw script4 = FindObjectOfType<BuildFaradayslaw>();
+        BuildPendulum script5 = FindObjectOfType<BuildPendulum>();
+
+
+
+        if (script.IsOverlapping(collider, ID) || script2.IsOverlapping(collider, ID)
+            || script3.IsOverlapping(collider, ID) || script4.IsOverlapping(collider, ID)
+            || script5.IsOverlapping(collider, ID))
+        {
+            isPlaced = true;
+            setUI = false;
+            uiBox.SetActive(false);
+            SoundManager.instance.PlaySingle(GamificationManager.instance.AchievementSound);
+            this.gameObject.SetActive(false);
+        }
+     
+
+
+    }
 
   
     //If object collides with other object player looses it

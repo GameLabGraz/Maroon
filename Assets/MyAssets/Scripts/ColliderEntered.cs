@@ -168,15 +168,59 @@ public class ColliderEntered : MonoBehaviour {
                 }
 
             }
-
-
-            else if (LevelName != "Helpi" && LevelName != "Door" && LevelName != "Headset")
-            SceneManager.LoadScene(LevelName);
-
+                ChangeScene();
         }
     }
 
-	public void OnGUI()
+    //Change scene to new experiment if it is build correctly
+    public void ChangeScene()
+    {
+        //These scenes dont exist
+        if (LevelName == "Helpi" && LevelName == "Door" && LevelName == "Headset" && LevelName == "After")
+        {
+            return;
+        }
+        //Check if experiments are built
+        if (LevelName == "VandeGraaffExperiment2")
+        {
+            if (GamificationManager.instance.vandegraaf2Complete)
+                SceneManager.LoadScene(LevelName);
+            else
+                dMan.ShowBox("Not Built");
+        }
+        else if (LevelName == "VandeGraaffExperiment1")
+        {
+            if (GamificationManager.instance.vandegraaf1Complete)
+                SceneManager.LoadScene(LevelName);
+            else
+                dMan.ShowBox("Not Built");
+        }
+        else if (LevelName == "Pendulum")
+        {
+            if (GamificationManager.instance.pendulumComplete)
+                SceneManager.LoadScene(LevelName);
+            else
+                dMan.ShowBox("Not Built");
+
+        }
+        else if (LevelName == "FaradaysLaw")
+        {
+            if (GamificationManager.instance.faradayslawComplete)
+                SceneManager.LoadScene(LevelName);
+            else
+                dMan.ShowBox("Not Built");
+        }
+        else if (LevelName == "FallingCoil")
+        {
+            if (GamificationManager.instance.fallingcoilComplete)
+             SceneManager.LoadScene(LevelName);
+            else
+                dMan.ShowBox("Not Built");
+        }
+        
+    }
+
+    public void OnGUI()
 	{
 		//if (this.insideTriggerSphere) {
 			//GUI.Label(new Rect(Screen.width / 2 - 200f, Screen.height / 2 - 100f, 400f, 200f), "Press [E] " + DisplayedText, this.textStyle);
