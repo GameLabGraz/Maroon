@@ -967,6 +967,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9812e200717e9a47a5f90943bcb8823, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hasPlayer: 0
   dmg: 0
   isBalloon: 1
   ID: 
@@ -6052,6 +6053,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73e182aee1fb0a7419353a013111efd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerIsMoving: 0
   player_position_x: 0
   player_position_y: 0
   player_position_z: 0
@@ -6070,12 +6072,32 @@ MonoBehaviour:
   OneBalloonSpawned: 0
   doorIsOpen: 0
   hasPlayer: 0
-  beingCarried: 0
-  graaf1Experiment: {fileID: 0}
+  pickups:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  graaf1Experiment: {fileID: 1623824322}
   graaf2Experiment: {fileID: 723565980}
-  fallingExperiment: {fileID: 0}
-  faradayExperiment: {fileID: 0}
-  pendulumExperiment: {fileID: 0}
+  fallingExperiment: {fileID: 467887603}
+  faradayExperiment: {fileID: 578289901}
+  pendulumExperiment: {fileID: 1551093832}
   vandegraaf2generatorEnabled: 0
   vandegraaf2ballonEnabled: 0
   vandegraaf2grounderEnabled: 0
@@ -8150,6 +8172,10 @@ Prefab:
     - target: {fileID: 1795759855039462, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
       propertyPath: m_Name
       value: MovableObject (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1795759855039462, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
+      propertyPath: m_TagString
+      value: pickup
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 23883789223672888, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
@@ -10856,7 +10882,7 @@ GameObject:
   - component: {fileID: 630695634}
   m_Layer: 0
   m_Name: Coil (2)
-  m_TagString: Untagged
+  m_TagString: pickup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -10909,6 +10935,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9812e200717e9a47a5f90943bcb8823, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hasPlayer: 0
   dmg: 0
   isBalloon: 0
   ID: ring s
@@ -11183,7 +11210,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1795759855039462, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
       propertyPath: m_Name
-      value: MovableObject (2)
+      value: MovableObject 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1795759855039462, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
+      propertyPath: m_TagString
+      value: pickup
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 23883789223672888, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
@@ -12580,6 +12611,10 @@ Prefab:
       propertyPath: m_Name
       value: MovableObject (10)
       objectReference: {fileID: 0}
+    - target: {fileID: 1795759855039462, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
+      propertyPath: m_TagString
+      value: pickup
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
   m_IsPrefabParent: 0
@@ -12714,6 +12749,10 @@ Prefab:
         type: 2}
       propertyPath: isBalloon
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1795759855039462, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
+      propertyPath: m_TagString
+      value: pickup
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 23883789223672888, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
@@ -13966,6 +14005,14 @@ Prefab:
     - target: {fileID: 4144397374988500, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90.00001
+      objectReference: {fileID: 0}
+    - target: {fileID: 1795759855039462, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
+      propertyPath: m_Name
+      value: MovableObject 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1795759855039462, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
+      propertyPath: m_TagString
+      value: pickup
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 23883789223672888, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
@@ -15238,9 +15285,10 @@ GameObject:
   - component: {fileID: 901629674}
   - component: {fileID: 901629677}
   - component: {fileID: 901629676}
+  - component: {fileID: 901629678}
   m_Layer: 0
   m_Name: weight_obj (1)
-  m_TagString: Untagged
+  m_TagString: pickup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -15270,6 +15318,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9812e200717e9a47a5f90943bcb8823, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hasPlayer: 0
   dmg: 0
   isBalloon: 0
   ID: weight
@@ -15312,6 +15361,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.12, y: 0.15, z: 0.22}
   m_Center: {x: 0, y: -0.01, z: 0}
+--- !u!114 &901629678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 901629672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e244021448a573546aec91a7756fb9b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  check: 0
 --- !u!4 &905024723 stripped
 Transform:
   m_PrefabParentObject: {fileID: 481746, guid: f98ccef28e68d4b7f998923e62958760, type: 2}
@@ -15754,6 +15815,14 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1795759855039462, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
+      propertyPath: m_Name
+      value: MovableObject 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1795759855039462, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
+      propertyPath: m_TagString
+      value: pickup
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
   m_IsPrefabParent: 0
@@ -16036,6 +16105,10 @@ Prefab:
         type: 2}
       propertyPath: isBalloon
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1795759855039462, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
+      propertyPath: m_TagString
+      value: pickup
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 23883789223672888, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
@@ -17203,13 +17276,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 984aea9654a824340b4d6c80f3e0cf2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unfinishedItems: 2
-  magnet: {fileID: 0}
-  ring: {fileID: 0}
-  magnetCollider: {fileID: 0}
-  ringCollider: {fileID: 0}
-  magnetEnabled: 0
-  ringEnabled: 0
 --- !u!1 &1012285622
 GameObject:
   m_ObjectHideFlags: 0
@@ -19062,7 +19128,7 @@ GameObject:
   - component: {fileID: 1172463210}
   m_Layer: 0
   m_Name: Coil (4)
-  m_TagString: Untagged
+  m_TagString: pickup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -19115,6 +19181,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9812e200717e9a47a5f90943bcb8823, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hasPlayer: 0
   dmg: 0
   isBalloon: 0
   ID: coil M
@@ -19546,7 +19613,7 @@ GameObject:
   - component: {fileID: 1205222331}
   m_Layer: 0
   m_Name: Coil (6)
-  m_TagString: Untagged
+  m_TagString: pickup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -19599,6 +19666,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9812e200717e9a47a5f90943bcb8823, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hasPlayer: 0
   dmg: 0
   isBalloon: 0
   ID: ring l
@@ -20620,6 +20688,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1262838940}
+  - component: {fileID: 1262838941}
   m_Layer: 5
   m_Name: MovableObjectUI
   m_TagString: UI
@@ -20647,6 +20716,17 @@ RectTransform:
   m_AnchoredPosition: {x: 590, y: 174}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1262838941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1262838939}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a498355b21747b94bb5d5e90564671aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1265597755 stripped
 Transform:
   m_PrefabParentObject: {fileID: 431316, guid: b00208f06b04b2447af23a7247883af2, type: 2}
@@ -22333,6 +22413,10 @@ Prefab:
       propertyPath: m_Name
       value: MovableObject (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 1795759855039462, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
+      propertyPath: m_TagString
+      value: pickup
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 23883789223672888, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
     - {fileID: 65141325193543512, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
@@ -22469,7 +22553,7 @@ GameObject:
   - component: {fileID: 1372700786}
   m_Layer: 0
   m_Name: Coil (1)
-  m_TagString: Untagged
+  m_TagString: pickup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -22510,6 +22594,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9812e200717e9a47a5f90943bcb8823, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hasPlayer: 0
   dmg: 0
   isBalloon: 0
   ID: ring s
@@ -22825,6 +22910,10 @@ Prefab:
       propertyPath: isBalloon
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1795759855039462, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
+      propertyPath: m_TagString
+      value: pickup
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 23883789223672888, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
     - {fileID: 65141325193543512, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
@@ -23102,7 +23191,7 @@ GameObject:
   - component: {fileID: 1407861993}
   m_Layer: 0
   m_Name: Coil (3)
-  m_TagString: Untagged
+  m_TagString: pickup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -23155,6 +23244,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9812e200717e9a47a5f90943bcb8823, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hasPlayer: 0
   dmg: 0
   isBalloon: 0
   ID: coil M
@@ -24764,6 +24854,10 @@ Prefab:
     - target: {fileID: 1795759855039462, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
       propertyPath: m_Name
       value: MovableObject (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1795759855039462, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
+      propertyPath: m_TagString
+      value: pickup
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 23883789223672888, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
@@ -32343,9 +32437,10 @@ GameObject:
   - component: {fileID: 1899168304}
   - component: {fileID: 1899168303}
   - component: {fileID: 1899168306}
+  - component: {fileID: 1899168307}
   m_Layer: 0
   m_Name: Magnet (2)
-  m_TagString: Untagged
+  m_TagString: pickup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -32389,6 +32484,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9812e200717e9a47a5f90943bcb8823, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hasPlayer: 0
   dmg: 0
   isBalloon: 0
   ID: magnet
@@ -32419,6 +32515,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.69, y: 2.06, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1899168307
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1899168301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e244021448a573546aec91a7756fb9b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  check: 0
 --- !u!1 &1901949744
 GameObject:
   m_ObjectHideFlags: 0
@@ -32729,9 +32837,10 @@ GameObject:
   - component: {fileID: 1924270069}
   - component: {fileID: 1924270068}
   - component: {fileID: 1924270071}
+  - component: {fileID: 1924270072}
   m_Layer: 0
   m_Name: Magnet (1)
-  m_TagString: Untagged
+  m_TagString: pickup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -32775,6 +32884,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9812e200717e9a47a5f90943bcb8823, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hasPlayer: 0
   dmg: 0
   isBalloon: 0
   ID: magnet
@@ -32805,6 +32915,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.69, y: 2.06, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1924270072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1924270066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e244021448a573546aec91a7756fb9b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  check: 0
 --- !u!1001 &1929375547
 Prefab:
   m_ObjectHideFlags: 0
@@ -33470,7 +33592,7 @@ GameObject:
   - component: {fileID: 1951096674}
   m_Layer: 0
   m_Name: Coil (5)
-  m_TagString: Untagged
+  m_TagString: pickup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -33523,6 +33645,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9812e200717e9a47a5f90943bcb8823, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hasPlayer: 0
   dmg: 0
   isBalloon: 0
   ID: ring l
@@ -34353,6 +34476,10 @@ Prefab:
       propertyPath: m_Name
       value: MovableObject (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 1795759855039462, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
+      propertyPath: m_TagString
+      value: pickup
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 23883789223672888, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
     - {fileID: 65141325193543512, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
@@ -34509,6 +34636,10 @@ Prefab:
     - target: {fileID: 1795759855039462, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
       propertyPath: m_Name
       value: MovableObject (9)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1795759855039462, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}
+      propertyPath: m_TagString
+      value: pickup
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 790d086728e7ec44abb8aec5abcba106, type: 2}

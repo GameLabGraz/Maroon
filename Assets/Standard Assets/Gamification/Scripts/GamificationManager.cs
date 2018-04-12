@@ -9,7 +9,8 @@ using UnityEngine.SceneManagement;
 
 public class GamificationManager : MonoBehaviour
 {
-
+    [HideInInspector]
+    public bool playerIsMoving = false;
     [HideInInspector]
     public float player_position_x;
     [HideInInspector]
@@ -26,6 +27,7 @@ public class GamificationManager : MonoBehaviour
     private string scene;
     public AudioSource menuSound;
     public AudioClip AchievementSound;
+    private GameObject player;
 
     //Gamification Bools
     [HideInInspector]
@@ -50,10 +52,10 @@ public class GamificationManager : MonoBehaviour
     public bool doorIsOpen = false;
     [HideInInspector]
     public bool hasPlayer = false;
-    [HideInInspector]
-    public bool beingCarried = false;
 
     //experiments and experiment built bools
+ 
+    public GameObject[] pickups; //All pickups
     public GameObject graaf1Experiment;
     public GameObject graaf2Experiment;
     public GameObject fallingExperiment;
@@ -89,6 +91,7 @@ public class GamificationManager : MonoBehaviour
     AsyncOperation async;
     //Prefabs and Variables to display the UI-Achievement-Messages and manage Achievements
     public GameObject parent;
+
 
 
     public Object achievementPrefab;
@@ -148,13 +151,14 @@ public class GamificationManager : MonoBehaviour
             instance = this;
         else if (instance != this)
             Destroy(gameObject);
-        GameObject uiBox = GameObject.FindWithTag("UI");
-        // uiBox.SetActive(false);
+
 
 
 
 
     }
+
+  
 
     public void PlayMenuSound()
     {
@@ -175,6 +179,11 @@ public class GamificationManager : MonoBehaviour
 
         //Add first achievement
         AddAchievement("Achievement 1", "Helpi");
+
+        //Add pickups
+        pickups = GameObject.FindGameObjectsWithTag("pickup");
+
+
 
 
     }
@@ -200,7 +209,8 @@ public class GamificationManager : MonoBehaviour
     public void ActivateScene()
     {
         async.allowSceneActivation = true;
-        
+       
+
     }
 
     //Resume Game from Menu
@@ -282,8 +292,9 @@ public class GamificationManager : MonoBehaviour
 
     // Locking and unlocking mouse and loading menu and going back from menu
     void Update ()
-    {                
-
+    {
+        //Add pickups
+        pickups = GameObject.FindGameObjectsWithTag("pickup");
         Scene currentScene = SceneManager.GetActiveScene();
         string sceneName = currentScene.name;
 
@@ -312,8 +323,7 @@ public class GamificationManager : MonoBehaviour
             Cursor.lockState = CursorLockMode.None;
 
         if (holdingItem)
-            Cursor.lockState = CursorLockMode.Locked;
-     
+            Cursor.lockState = CursorLockMode.Locked;     
 
     }
 

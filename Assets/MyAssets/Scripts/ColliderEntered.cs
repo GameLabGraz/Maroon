@@ -4,7 +4,6 @@ using System.Collections;
 
 public class ColliderEntered : MonoBehaviour {
 
-    private GameObject uiBox;
     public string LevelName;
 	//public string DisplayedText;	// starts with "Press [E] " //Isnt needed anymore in the Helpi Version
 	private bool insideTriggerSphere = false;
@@ -17,7 +16,6 @@ public class ColliderEntered : MonoBehaviour {
     //if this is set true in Editor, Dialogue is only played once
     public bool Just_Playing_Once; //if the dialogue should only be displayed once
     public bool noDialogue; //if there should be no dialogue
-    private bool setUI = false;
     private  bool played_once; //true after dialogue has displayed once
 
 
@@ -25,22 +23,12 @@ public class ColliderEntered : MonoBehaviour {
 
         public void Awake()
 	{
-        uiBox = GameObject.FindWithTag("UI");
         this.textStyle = new GUIStyle("label");
 		this.textStyle.alignment = TextAnchor.MiddleCenter;
         dMan = FindObjectOfType<DialogueManager>();
     }
 
-    //This is here to disable the UI symbol when the game starts
-    public void Start()
-    {
-        if (!GamificationManager.instance.gameStarted)
-        {
-            setUI = false;
-            uiBox.SetActive(false);
-        }
-  
-    }
+
 
     //Add and Delete Achievements
     void HandleAchievements()
@@ -97,8 +85,7 @@ public class ColliderEntered : MonoBehaviour {
 	{
 		if (other.CompareTag ("Player"))
         {
-            setUI = true;
-            uiBox.SetActive(true);
+            UIManager.instance.ShowUICollided();
 			this.insideTriggerSphere = true;
 
             //Achievement-Dialogues are only played once
@@ -125,8 +112,7 @@ public class ColliderEntered : MonoBehaviour {
     {
         if (other.CompareTag("Player"))
         {
-            setUI = true;
-            uiBox.SetActive(true);
+            UIManager.instance.ShowUICollided();
         }
     }
 
@@ -135,8 +121,7 @@ public class ColliderEntered : MonoBehaviour {
 		if (other.CompareTag ("Player")) {
 			Debug.Log("Player exit");
 			this.insideTriggerSphere = false;
-            setUI = false;
-            uiBox.SetActive(false);
+            UIManager.instance.HideUICollided();
         }
 	}
 

@@ -60,10 +60,47 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         }
 
+       public void SetClosestpickup()
+        {
+            Debug.Log("Closest Set");
+            Transform bestTarget = null;
+            float closestDistanceSqr = Mathf.Infinity;
+            Vector3 currentPosition = transform.position;
+            foreach (GameObject potentialTarget in GamificationManager.instance.pickups)
+            {
+                Vector3 directionToTarget = potentialTarget.transform.position - currentPosition;
+                float dSqrToTarget = directionToTarget.sqrMagnitude;
+                if (dSqrToTarget < closestDistanceSqr)
+                {
+                    closestDistanceSqr = dSqrToTarget;
+                    bestTarget = potentialTarget.transform;
+                }
+            }
+
+            float dist = Vector3.Distance(bestTarget.position, transform.position);
+            if (dist <= 2.5f)
+            {
+                foreach (GameObject potentialTarget in GamificationManager.instance.pickups)
+                {
+                    //Closest target is in range
+                    potentialTarget.GetComponent<ThrowObject>().hasPlayer = false;
+                   
+                }
+                bestTarget.gameObject.GetComponent<ThrowObject>().hasPlayer = true;
+                UIManager.instance.ShowUI();
+            }
+            else
+            {
+                bestTarget.gameObject.GetComponent<ThrowObject>().hasPlayer = false;
+                UIManager.instance.HideUI();
+            }
+        }
 
         // Update is called once per frame
         private void Update()
         {
+            SetClosestpickup();
+            GamificationManager.instance.playerIsMoving = m_IsWalking;
             RotateView();
             // the jump state needs to read here to make sure it is not missed
             if (!m_Jump)

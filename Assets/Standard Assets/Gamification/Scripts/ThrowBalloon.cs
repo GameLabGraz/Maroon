@@ -1,18 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ThrowObject : MonoBehaviour
+public class ThrowBalloon : MonoBehaviour
 {
+    private GameObject uiBox;
     private ConstantForce cf;
     private GameObject player;
     private GameObject playerCam;
     private float throwForce = 200;
-    public  bool hasPlayer = false;
+    // bool GamificationManager.instance.hasPlayer = false;
     bool beingCarried = false;
     public int dmg;
     private bool touched = false;
     public bool isBalloon = false;
     private bool firstcarried = false;
+    private bool setUI = false;
     private bool trigger = false;
     private DialogueManager dMan;
     public string ID;
@@ -21,7 +23,8 @@ public class ThrowObject : MonoBehaviour
 
     private void Awake()
     {
-        playerCam  = GameObject.FindWithTag("MainCamera");
+        uiBox = GameObject.FindWithTag("UI");
+        playerCam = GameObject.FindWithTag("MainCamera");
         player = GameObject.FindWithTag("Player");
         dMan = FindObjectOfType<DialogueManager>();
     }
@@ -35,7 +38,13 @@ public class ThrowObject : MonoBehaviour
     }
 
 
+
+
   
+
+          
+        
+    
 
 
     void Update()
@@ -46,20 +55,18 @@ public class ThrowObject : MonoBehaviour
         else
             GamificationManager.instance.holdingItem = false;
 
-        if (hasPlayer)
+        if (GamificationManager.instance.hasPlayer)
             GamificationManager.instance.playerCanPickItem = true;
         else
             GamificationManager.instance.playerCanPickItem = false;
 
-    
-     
 
 
         if (beingCarried)
         {
             firstcarried = true;
         }
-           
+
 
         if (!beingCarried && firstcarried && isBalloon)
         {
@@ -67,9 +74,19 @@ public class ThrowObject : MonoBehaviour
             GetComponent<Rigidbody>().useGravity = false;
             Debug.Log("Flying");
         }
-      
 
-        if (hasPlayer && !beingCarried && Input.GetMouseButtonDown(0))
+        float dist = Vector3.Distance(gameObject.transform.position, player.transform.position);
+        if (dist <= 2.5f)
+        {
+            GamificationManager.instance.hasPlayer = true;
+            UIManager.instance.ShowUI();
+        }
+        else
+        {
+            GamificationManager.instance.hasPlayer = false;
+            UIManager.instance.HideUI();
+        }
+        if (GamificationManager.instance.hasPlayer && !beingCarried && Input.GetMouseButtonDown(0))
         {
             Debug.Log("Carry");
             GetComponent<Rigidbody>().isKinematic = true;
@@ -78,7 +95,7 @@ public class ThrowObject : MonoBehaviour
             trigger = true;
 
         }
-        if (hasPlayer && beingCarried && Input.GetMouseButtonUp(0))
+        if (GamificationManager.instance.hasPlayer && beingCarried && Input.GetMouseButtonUp(0))
         {
             trigger = false;
         }
@@ -90,7 +107,7 @@ public class ThrowObject : MonoBehaviour
                 transform.parent = null;
                 beingCarried = false;
                 touched = false;
-               
+
             }
             if (Input.GetMouseButtonDown(0) && !trigger)
             {
@@ -111,7 +128,7 @@ public class ThrowObject : MonoBehaviour
             }
         }
     }
-  
+
     //Check if item is placed correctly. ADD NEW EXPERIMENTS HERE
     void PlaceItem()
     {
@@ -129,15 +146,17 @@ public class ThrowObject : MonoBehaviour
             || script5.IsOverlapping(collider, ID))
         {
             isPlaced = true;
+            setUI = false;
+            uiBox.SetActive(false);
             SoundManager.instance.PlaySingle(GamificationManager.instance.AchievementSound);
             this.gameObject.SetActive(false);
         }
-     
+
 
 
     }
 
-  
+
     //If object collides with other object player looses it
     void OnTriggerEnter(Collider other)
     {
@@ -148,6 +167,6 @@ public class ThrowObject : MonoBehaviour
             touched = true;
         }
 
-      
+
     }
 }
