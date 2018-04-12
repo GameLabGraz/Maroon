@@ -47,12 +47,6 @@ public class FieldLine : MonoBehaviour, IResetObject
     public float fixClosingAngle = 14;
 
     /// <summary>
-    /// Boolean value to indicate if the 
-    /// field line belongs to a coil
-    /// </summary>
-    public bool coil = false;
-
-    /// <summary>
     /// The electro magnet object
     /// </summary>
     private GameObject emObj;
@@ -71,6 +65,9 @@ public class FieldLine : MonoBehaviour, IResetObject
     public delegate bool StopDrawingCheck(Vector3 position);
     public StopDrawingCheck stopDrawingCheck;
 
+    [SerializeField]
+    private float lineWidth = 0.1f;
+
     /// <summary>
     /// Initializes the line renderer.
     /// </summary>
@@ -81,7 +78,7 @@ public class FieldLine : MonoBehaviour, IResetObject
             lineRenderer = gameObject.AddComponent<AdvancedLineRenderer>();
 
         lineRenderer.initLineRenderer();
-        lineRenderer.SetWidth(0.1f, 0.1f);
+        lineRenderer.SetWidth(lineWidth, lineWidth);
 
         emObj = transform.parent.gameObject;
     }
@@ -91,6 +88,9 @@ public class FieldLine : MonoBehaviour, IResetObject
     /// </summary>
     public void draw()
     {
+        if (lineRenderer == null)
+            return;
+
         lineRenderer.Clear();
 
         if (!this.visible || Mathf.Abs(GetFieldStrengthFromEmObj()) < 0.05)

@@ -28,7 +28,7 @@ public abstract class FieldLineManager : MonoBehaviour
     /// <summary>
     /// Initialization
     /// </summary>
-    public void Start()
+    protected virtual void Start()
     {
         GameObject[] sensedObjects = GameObject.FindGameObjectsWithTag("FieldLine");
 
@@ -75,5 +75,9 @@ public abstract class FieldLineManager : MonoBehaviour
         DrawFieldLines();
     }
 
-    protected abstract void DrawFieldLines();
+    protected virtual void DrawFieldLines()
+    {
+        foreach (FieldLine fieldLine in fieldLines)
+            fieldLine.draw();
+    }
 }

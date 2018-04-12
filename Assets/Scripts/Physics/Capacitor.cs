@@ -9,8 +9,12 @@ public class Capacitor : PausableObject, IResetObject
     [SerializeField]
     private GameObject plate1;
 
+    public GameObject Plate1 { get { return plate1; } set { plate1 = value; } }
+
     [SerializeField]
     private GameObject plate2;
+
+    public GameObject Plate2 { get { return plate2; } set { plate2 = value; } }
 
     [SerializeField]
     private float seriesResistance = 5e10f;
