@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using VRTK;
+﻿using UnityEngine;
+using UnityEngine.VR;
 
 public class PlayerController : MonoBehaviour
 {
@@ -16,7 +14,7 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        if(!preferSimulator && SteamVR.active)
+        if(!preferSimulator && VRDevice.isPresent)
         {
             PlayerVR.SetActive(true);
             PlayerSimulator.SetActive(false);
