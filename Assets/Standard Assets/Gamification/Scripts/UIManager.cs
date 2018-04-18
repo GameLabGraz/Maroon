@@ -5,7 +5,6 @@ using UnityEngine;
 public class UIManager : MonoBehaviour {
 
     private GameObject uiBox;
-    private bool setUI = false;
     public static UIManager instance = null; //so we have access to Manager from other files
     private bool collided = false;
 
@@ -23,15 +22,17 @@ public class UIManager : MonoBehaviour {
 
     public void ShowUI()
     {
-        setUI = true;
         uiBox.SetActive(true);
+        Debug.Log("Show");
     }
 
     public void HideUI()
     {
-        setUI = false;
         if (!collided)
-         uiBox.SetActive(false);
+        {
+            uiBox.SetActive(false);
+            Debug.Log("Hide");
+        }
     }
 
     private void Awake()

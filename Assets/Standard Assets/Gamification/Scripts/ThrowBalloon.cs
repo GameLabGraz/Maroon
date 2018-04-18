@@ -3,7 +3,6 @@ using System.Collections;
 
 public class ThrowBalloon : MonoBehaviour
 {
-    private GameObject uiBox;
     private ConstantForce cf;
     private GameObject player;
     private GameObject playerCam;
@@ -23,7 +22,6 @@ public class ThrowBalloon : MonoBehaviour
 
     private void Awake()
     {
-        uiBox = GameObject.FindWithTag("UI");
         playerCam = GameObject.FindWithTag("MainCamera");
         player = GameObject.FindWithTag("Player");
         dMan = FindObjectOfType<DialogueManager>();
@@ -79,12 +77,10 @@ public class ThrowBalloon : MonoBehaviour
         if (dist <= 2.5f)
         {
             GamificationManager.instance.hasPlayer = true;
-            UIManager.instance.ShowUI();
         }
         else
         {
             GamificationManager.instance.hasPlayer = false;
-            UIManager.instance.HideUI();
         }
         if (GamificationManager.instance.hasPlayer && !beingCarried && Input.GetMouseButtonDown(0))
         {
@@ -147,7 +143,6 @@ public class ThrowBalloon : MonoBehaviour
         {
             isPlaced = true;
             setUI = false;
-            uiBox.SetActive(false);
             SoundManager.instance.PlaySingle(GamificationManager.instance.AchievementSound);
             this.gameObject.SetActive(false);
         }
