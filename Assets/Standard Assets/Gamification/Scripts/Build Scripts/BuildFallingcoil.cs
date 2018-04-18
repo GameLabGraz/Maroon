@@ -77,7 +77,6 @@ public class BuildFallingcoil : MonoBehaviour
         {
             GamificationManager.instance.DeleteAchievement("Build FallingCoil");
             GamificationManager.instance.fallingcoilComplete = true;
-            GamificationManager.instance.finishedAchievements++;
         }
     }
 }

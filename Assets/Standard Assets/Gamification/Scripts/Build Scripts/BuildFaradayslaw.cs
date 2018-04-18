@@ -77,7 +77,6 @@ public class BuildFaradayslaw : MonoBehaviour
         {
             GamificationManager.instance.DeleteAchievement("Build Faradayslaw");
             GamificationManager.instance.faradayslawComplete = true;
-            GamificationManager.instance.finishedAchievements++;
         }
     }
 }

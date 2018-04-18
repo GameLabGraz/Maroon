@@ -4,8 +4,6 @@ using System.Collections;
 public class door : MonoBehaviour {
 	GameObject thedoor;
     private DialogueManager dMan;
-    public GameObject uiBox;
-    private bool setUI = false;
     private bool hasPlayer = false;
     private bool doorOpen = false;
 
@@ -29,17 +27,20 @@ public class door : MonoBehaviour {
                 dMan.ShowBox("DoorOpen");
                 GamificationManager.instance.doorDialogue = true;               
             }
-            if (!setUI)
-            {
-                setUI = true;
-                uiBox.SetActive(true);
-            }
+           
         }
       
        
 }
 
-   
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Player") && !GamificationManager.instance.doorIsOpen && GamificationManager.instance.spokenWithLaunch)
+        {
+            UIManager.instance.ShowUICollided();
+        }
+    }
+
 
     private void Update()
     {
@@ -52,15 +53,16 @@ public class door : MonoBehaviour {
                 doorOpen = true;
                 Debug.Log("open");
                 GamificationManager.instance.doorIsOpen = true;
+                UIManager.instance.HideUICollided();
             }
 
-           /* else if (!GamificationManager.instance.holdingItem && !GamificationManager.instance.playerCanPickItem && hasPlayer && doorOpen && Input.GetMouseButtonDown(0))
-            {
-                thedoor = GameObject.FindWithTag("SF_Door");
-                thedoor.GetComponent<Animation>().Play("close");
-                doorOpen = false;
-                Debug.Log("close");
-            }*/
+            /* else if (!GamificationManager.instance.holdingItem && !GamificationManager.instance.playerCanPickItem && hasPlayer && doorOpen && Input.GetMouseButtonDown(0))
+             {
+                 thedoor = GameObject.FindWithTag("SF_Door");
+                 thedoor.GetComponent<Animation>().Play("close");
+                 doorOpen = false;
+                 Debug.Log("close");
+             }*/
         }
        
     }
@@ -70,11 +72,7 @@ public class door : MonoBehaviour {
         if (other.CompareTag("Player") && !GamificationManager.instance.doorIsOpen)
         {
             hasPlayer = false;
-            if (setUI)
-            {
-                setUI = false;
-                uiBox.SetActive(false);
-            }
+            UIManager.instance.HideUICollided();
         }
 }
 }

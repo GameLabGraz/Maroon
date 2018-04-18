@@ -38,7 +38,6 @@ public class ColliderEntered : MonoBehaviour {
             GamificationManager.instance.DeleteAchievement("Helpi");
             GamificationManager.instance.AddAchievement("Achievement 3", "Build");
             GamificationManager.instance.spokenWithHelpi = true;
-            GamificationManager.instance.finishedAchievements++;
         }
         else if ((LevelName == "VandeGraaffExperiment1" || LevelName == "FallingCoil" || LevelName == "Pendulum" //Add any new experiments here!
             || LevelName == "VandeGraaffExperiment2" || LevelName == "FaradaysLaw") && !GamificationManager.instance.spokenWithLaunch)
@@ -50,18 +49,16 @@ public class ColliderEntered : MonoBehaviour {
                 GamificationManager.instance.AddAchievement("Achievement 2", "Door");
                 GamificationManager.instance.spokenWithLaunch = true;
                 GamificationManager.instance.spokenWithHelpi = true;
-                GamificationManager.instance.finishedAchievements++;
                 Debug.Log("Correct");
             }         
             else
             {
                 //User goes to experiments or door before talking to helpi
                 GamificationManager.instance.DeleteAchievement("Helpi");
+                GamificationManager.instance.DeleteAchievement("Build");
                 GamificationManager.instance.AddAchievement("Achievement 2", "Door");
                 GamificationManager.instance.spokenWithLaunch = true;
                 GamificationManager.instance.spokenWithHelpi = true;
-                GamificationManager.instance.finishedAchievements++;
-                GamificationManager.instance.finishedAchievements++;
                 Debug.Log("Incorrect");
             }
         }
@@ -75,7 +72,6 @@ public class ColliderEntered : MonoBehaviour {
             GamificationManager.instance.AddAchievement("Achievement 6", "Build Faradayslaw");
             GamificationManager.instance.AddAchievement("Achievement 7", "Build FallingCoil");
             GamificationManager.instance.AddAchievement("Achievement 8", "Build Pendulum");
-            GamificationManager.instance.finishedAchievements++;
             GamificationManager.instance.spokenWithDoor = true;
 
         }

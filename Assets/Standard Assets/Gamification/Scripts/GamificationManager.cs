@@ -238,7 +238,8 @@ public class GamificationManager : MonoBehaviour
     public void DeleteAchievement(string id)
     {
         SoundManager.instance.PlaySingle(AchievementSound);
-        int number = 0;
+        finishedAchievements++;
+        int number = -1;
         foreach (var it in spawnedAchievementUIs)
         {
             if (it.GetComponent<AchievementController>().getID() == id)
@@ -246,6 +247,8 @@ public class GamificationManager : MonoBehaviour
                 number = it.GetComponent<AchievementController>().number;
             }
         }
+        if (number == -1)
+            return;
         Destroy(spawnedAchievementUIs[number]);
         //Change position of other achievements
         for (int i = number+1; i < spawnedAchievementUIs.Count; i++)
@@ -285,7 +288,7 @@ public class GamificationManager : MonoBehaviour
     {
         GameObject achievement = Instantiate(achievementPrefab, new Vector3(parent.transform.position.x, parent.transform.position.y, parent.transform.position.z),
             Quaternion.identity, parent.transform) as GameObject;
-        achievement.GetComponent<AchievementController>().SetText(l_manager.GetString(dialogeKey), ID); //Access script function SetText
+        achievement.GetComponent<AchievementController>().setDialogue(dialogeKey, ID); //Access script function SetText
         spawnedAchievementUIs.Add(achievement);
 
     }
@@ -324,7 +327,6 @@ public class GamificationManager : MonoBehaviour
 
         if (holdingItem)
             Cursor.lockState = CursorLockMode.Locked;     
-
     }
 
    public void LoadSceneAfterMenu()

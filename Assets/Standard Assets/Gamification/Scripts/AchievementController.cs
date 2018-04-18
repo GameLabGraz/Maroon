@@ -11,6 +11,7 @@ public class AchievementController : MonoBehaviour {
     private string id;
     private int controlNumber;
     private const int UISPACE = 50;
+    private string dialogeKey;
     // Use this for initialization
     void Start ()
 
@@ -20,16 +21,24 @@ public class AchievementController : MonoBehaviour {
         number = GamificationManager.instance.howMuchSpawnedAchievementUIs;
         GamificationManager.instance.howMuchSpawnedAchievementUIs++;
         this.gameObject.transform.position = new Vector3(this.gameObject.transform.position.x, this.gameObject.transform.position.y + (number * UISPACE), this.gameObject.transform.position.z);
-
-
     }
 
-    public void SetText(string s, string i)
+    //Update text in case of language switch
+    public void SetText()
     {
-        achievementText.text = s;
+        achievementText.text = GamificationManager.instance.l_manager.GetString(dialogeKey);
+    }
+
+    public void setDialogue(string d, string i)
+    {
+        dialogeKey = d;
         id = i;
     }
 
+    public string getDialogueKey()
+    {
+        return dialogeKey;
+    }
 
     public void ChangePosition()
     {
@@ -45,5 +54,6 @@ public class AchievementController : MonoBehaviour {
     // Update is called once per frame
     void Update ()
     {
+        SetText();
     }
 }

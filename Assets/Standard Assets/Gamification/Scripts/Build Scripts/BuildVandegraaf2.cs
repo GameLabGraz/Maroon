@@ -122,7 +122,6 @@ public class BuildVandegraaf2 : MonoBehaviour
         {
             GamificationManager.instance.DeleteAchievement("Build Vandegraaf2");
             GamificationManager.instance.vandegraaf2Complete = true;
-            GamificationManager.instance.finishedAchievements++;
         }
     }
 }

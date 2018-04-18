@@ -53,7 +53,6 @@ public class BuildPendulum : MonoBehaviour
         {
             GamificationManager.instance.DeleteAchievement("Build Pendulum");
             GamificationManager.instance.pendulumComplete = true;
-            GamificationManager.instance.finishedAchievements++;
         }
     }
 }
