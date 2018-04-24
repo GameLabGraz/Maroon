@@ -25,6 +25,11 @@ public abstract class FieldLineManager : MonoBehaviour
     /// </summary>
     protected HashSet<FieldLine> fieldLines = new HashSet<FieldLine>();
 
+    [SerializeField]
+    protected int updateRate = 1;
+
+    private int updateCount = 0;
+
     /// <summary>
     /// Initialization
     /// </summary>
@@ -72,6 +77,9 @@ public abstract class FieldLineManager : MonoBehaviour
     /// </summary>
     public void FixedUpdate()
     {
+        if (++updateCount % updateRate != 0)
+            return;
+
         DrawFieldLines();
     }
 

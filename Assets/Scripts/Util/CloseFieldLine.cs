@@ -2,6 +2,9 @@
 
 public class CloseFieldLine : MonoBehaviour
 {
+    [SerializeField]
+    private bool useCoilHack = false;
+
     void Start()
     {
         FieldLine fieldLine = GetComponent<FieldLine>();
@@ -14,8 +17,10 @@ public class CloseFieldLine : MonoBehaviour
         GameObject emObj = transform.parent.gameObject;
 
         Vector3 dist = transform.position;
-        if (GetComponentInParent<Coil>())   // hack for coil
+
+        if (useCoilHack)   // hack for coil
             dist -= 1.5f * new Vector3(Mathf.Abs(emObj.transform.up.x), Mathf.Abs(emObj.transform.up.y), Mathf.Abs(emObj.transform.up.z));
+
         if (Vector3.Distance(position, dist) <= 0.8f || Vector3.Distance(position, transform.position) <= 0.4f)
             return true;
         return false;

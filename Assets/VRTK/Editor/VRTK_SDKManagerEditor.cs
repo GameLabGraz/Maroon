@@ -5,6 +5,7 @@
     using System.Collections.Generic;
     using System;
     using System.Linq;
+    using UnityEngine.VR;
 
     [CustomEditor(typeof(VRTK_SDKManager))]
     public class VRTK_SDKManagerEditor : Editor
@@ -20,6 +21,8 @@
 
             //Get actual inspector
             VRTK_SDKManager sdkManager = (VRTK_SDKManager)target;
+
+            bool vrDevicePresent = VRDevice.isPresent;
 
             EditorGUILayout.BeginVertical("Box");
 

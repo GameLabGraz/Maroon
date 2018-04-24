@@ -22,7 +22,9 @@ public class WhiteboardController : MonoBehaviour
         {
             currentContentIndex = 0;
             selectedLecture = lectures[0];
-            myRenderer.material.mainTexture = selectedLecture.Contents[currentContentIndex];
+
+            if(selectedLecture.Contents.Count > 0)
+                myRenderer.material.mainTexture = selectedLecture.Contents[currentContentIndex];
         }
     }
 
