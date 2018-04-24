@@ -17,9 +17,6 @@ public class DialogueManager : MonoBehaviour {
     public AudioClip typeSound;
     private string dialougeKey1 = "Introduction 1";
     private string dialogueKey2 = "Introduction 2";
-    private string dialogueKey3 = "Vandegraaf 1";
-    private string dialogueKey4 = "Vandegraaf 2";
-    
     
 
     // Use this for initialization
@@ -41,7 +38,6 @@ public class DialogueManager : MonoBehaviour {
         }
         else if (sceneName == "VandeGraaffExperiment2")
         {
-           // ShowBox(dialogueKey4);
         }
         else if(sceneName == "Laboratory" && GamificationManager.instance.gameStarted)
         {

@@ -67,11 +67,11 @@ public class ColliderEntered : MonoBehaviour {
             dMan.ShowBox("Build Together");
             //Achievements
             GamificationManager.instance.DeleteAchievement("Door");
+            GamificationManager.instance.AddAchievement("Achievement 8", "Build Pendulum");
             GamificationManager.instance.AddAchievement("Achievement 4", "Build Vandegraaf1");
             GamificationManager.instance.AddAchievement("Achievement 5", "Build Vandegraaf2");
             GamificationManager.instance.AddAchievement("Achievement 6", "Build Faradayslaw");
             GamificationManager.instance.AddAchievement("Achievement 7", "Build FallingCoil");
-            GamificationManager.instance.AddAchievement("Achievement 8", "Build Pendulum");
             GamificationManager.instance.spokenWithDoor = true;
 
         }
@@ -126,10 +126,10 @@ public class ColliderEntered : MonoBehaviour {
         //Starting experiments with left-click
         if (Input.GetMouseButtonDown(0) && this.insideTriggerSphere)
         {
-            if ((!GamificationManager.instance.headset && !noDialogue) || (LevelName == "Door" && !noDialogue))
+            if ((!GamificationManager.instance.headset && LevelName == "Headset" && !noDialogue) || (LevelName == "Leave" && !noDialogue))
             {
                 //Zurzeit auskommentiert weil Funktion nicht gebraucht wird
-               // dMan.ShowBox(dialogueKeyClick);
+                dMan.ShowBox(dialogueKeyClick);
             }
 
             if (LevelName == "Headset")
@@ -156,49 +156,36 @@ public class ColliderEntered : MonoBehaviour {
     //Change scene to new experiment if it is build correctly
     public void ChangeScene()
     {
-        //These scenes dont exist
-        if (LevelName == "Helpi" && LevelName == "Door" && LevelName == "Headset" && LevelName == "After")
-        {
-            return;
-        }
+
         //Check if experiments are built
         if (LevelName == "VandeGraaffExperiment2")
         {
             if (GamificationManager.instance.vandegraaf2Complete)
                 SceneManager.LoadScene(LevelName);
-            else
-                dMan.ShowBox("Not Built");
         }
         else if (LevelName == "VandeGraaffExperiment1")
         {
             if (GamificationManager.instance.vandegraaf1Complete)
                 SceneManager.LoadScene(LevelName);
-            else
-                dMan.ShowBox("Not Built");
         }
         else if (LevelName == "Pendulum")
         {
             if (GamificationManager.instance.pendulumComplete)
                 SceneManager.LoadScene(LevelName);
-            else
-                dMan.ShowBox("Not Built");
-
         }
         else if (LevelName == "FaradaysLaw")
         {
             if (GamificationManager.instance.faradayslawComplete)
                 SceneManager.LoadScene(LevelName);
-            else
-                dMan.ShowBox("Not Built");
         }
         else if (LevelName == "FallingCoil")
         {
             if (GamificationManager.instance.fallingcoilComplete)
              SceneManager.LoadScene(LevelName);
-            else
-                dMan.ShowBox("Not Built");
         }
-        
+        else if (LevelName =="Whiteboard" || LevelName == "Laptop")
+            SceneManager.LoadScene(LevelName);
+
     }
 
     public void OnGUI()

@@ -13,7 +13,6 @@ public class ThrowBalloon : MonoBehaviour
     private bool touched = false;
     public bool isBalloon = false;
     private bool firstcarried = false;
-    private bool setUI = false;
     private bool trigger = false;
     private DialogueManager dMan;
     public string ID;
@@ -142,7 +141,6 @@ public class ThrowBalloon : MonoBehaviour
             || script5.IsOverlapping(collider, ID))
         {
             isPlaced = true;
-            setUI = false;
             SoundManager.instance.PlaySingle(GamificationManager.instance.AchievementSound);
             this.gameObject.SetActive(false);
         }

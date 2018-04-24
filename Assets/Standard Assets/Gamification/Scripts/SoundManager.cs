@@ -12,6 +12,10 @@ public class SoundManager : MonoBehaviour
     public float lowPitchRange = .95f; //-5% von Original Pitch
     public float highPitchRange = 1.05f; //+5% von Original Pitch
 
+    public AudioClip pickupSound;
+    public AudioClip pickdownSound;
+
+
     // Use this for initialization
     void Awake()
     {

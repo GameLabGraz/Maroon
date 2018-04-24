@@ -28,6 +28,7 @@ public class GamificationManager : MonoBehaviour
     public AudioSource menuSound;
     public AudioClip AchievementSound;
     private GameObject player;
+    public BoxCollider floorCollider;
 
     //Gamification Bools
     [HideInInspector]
