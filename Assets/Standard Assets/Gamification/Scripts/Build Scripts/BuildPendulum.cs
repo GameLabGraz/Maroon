@@ -8,6 +8,7 @@ public class BuildPendulum : MonoBehaviour
     public GameObject weight;
     private BoxCollider weightCollider;
     private bool weightEnabled;
+    private DialogueManager dMan;
 
     // Use this for initialization
     void Start()
@@ -17,6 +18,7 @@ public class BuildPendulum : MonoBehaviour
             unfinishedItems--;
         weight.SetActive(weightEnabled);
         weightCollider = weight.transform.parent.gameObject.GetComponent<BoxCollider>();
+        dMan = FindObjectOfType<DialogueManager>();
     }
 
     public bool IsOverlapping(Collider current, string id)
@@ -53,6 +55,7 @@ public class BuildPendulum : MonoBehaviour
         {
             GamificationManager.instance.DeleteAchievement("Build Pendulum");
             GamificationManager.instance.pendulumComplete = true;
+            dMan.ShowBox("Built");
         }
     }
 }

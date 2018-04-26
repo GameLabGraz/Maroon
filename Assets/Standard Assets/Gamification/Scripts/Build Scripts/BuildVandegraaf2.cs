@@ -17,9 +17,11 @@ public class BuildVandegraaf2 : MonoBehaviour
     private bool balloonEnabled;
     private bool grounderEnabled;
     private bool electrodeEnabled;
+    private DialogueManager dMan;
 
-	// Use this for initialization
-	void Start ()
+
+    // Use this for initialization
+    void Start ()
     {
         generatorEnabled =  GamificationManager.instance.vandegraaf2generatorEnabled;
         balloonEnabled = GamificationManager.instance.vandegraaf2ballonEnabled;
@@ -41,6 +43,7 @@ public class BuildVandegraaf2 : MonoBehaviour
         generatorCollider = generator.transform.parent.gameObject.GetComponent<BoxCollider>();
         grounderCollider = grounder.transform.parent.gameObject.GetComponent<BoxCollider>();
         electrodeCollider = electrode.transform.parent.gameObject.GetComponent<BoxCollider>();
+        dMan = FindObjectOfType<DialogueManager>();
 
     }
 
@@ -122,6 +125,7 @@ public class BuildVandegraaf2 : MonoBehaviour
         {
             GamificationManager.instance.DeleteAchievement("Build Vandegraaf2");
             GamificationManager.instance.vandegraaf2Complete = true;
+            dMan.ShowBox("Built");
         }
     }
 }

@@ -57,6 +57,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_MouseLook.Init(transform, m_Camera.transform);
             this.transform.position = new Vector3(GamificationManager.instance.player_position_x, GamificationManager.instance.player_position_y,
                 GamificationManager.instance.player_position_z);
+            //This functions is called every time laboratory is loaded new. Its here to place the pickups
+            GamificationManager.instance.Resume();
 
         }
 

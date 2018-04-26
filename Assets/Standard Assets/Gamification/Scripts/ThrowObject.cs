@@ -162,6 +162,7 @@ public class ThrowObject : MonoBehaviour
             isPlaced = true;
             SoundManager.instance.PlaySingle(GamificationManager.instance.AchievementSound);
             this.gameObject.SetActive(false);
+            GamificationManager.instance.namesOfDestroyedPickups.Add(this.gameObject.name);
         }
      
 

@@ -11,6 +11,8 @@ public class BuildFaradayslaw : MonoBehaviour
     private BoxCollider ringCollider;
     private bool magnetEnabled;
     private bool ringEnabled;
+    private DialogueManager dMan;
+
 
     // Use this for initialization
     void Start()
@@ -25,6 +27,7 @@ public class BuildFaradayslaw : MonoBehaviour
         ring.SetActive(ringEnabled);
         magnetCollider = magnet.transform.parent.gameObject.GetComponent<BoxCollider>();
         ringCollider = ring.transform.parent.gameObject.GetComponent<BoxCollider>();
+        dMan = FindObjectOfType<DialogueManager>();
     }
 
     public bool IsOverlapping(Collider current, string id)
@@ -77,6 +80,7 @@ public class BuildFaradayslaw : MonoBehaviour
         {
             GamificationManager.instance.DeleteAchievement("Build Faradayslaw");
             GamificationManager.instance.faradayslawComplete = true;
+            dMan.ShowBox("Built");
         }
     }
 }

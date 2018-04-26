@@ -1,7 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement; 
+using UnityEngine.SceneManagement;
+using System;
+using System.Linq;
+
 
 
 //This manager will be created one time at the beginning and stays troughout all scenes to manage 
@@ -32,6 +35,8 @@ public class GamificationManager : MonoBehaviour
 
     //Gamification Bools
     [HideInInspector]
+    public bool labLoaded = false;
+    [HideInInspector]
     public bool gameStarted = false; //is set true after game mechanics started
     [HideInInspector]
     public bool headset = false;
@@ -57,6 +62,8 @@ public class GamificationManager : MonoBehaviour
     //experiments and experiment built bools
  
     public GameObject[] pickups; //All pickups
+    private List<Vector3> pickupPositions = new List<Vector3>();
+    public List<String> namesOfDestroyedPickups = new List<string>();
     public GameObject graaf1Experiment;
     public GameObject graaf2Experiment;
     public GameObject fallingExperiment;
@@ -95,7 +102,7 @@ public class GamificationManager : MonoBehaviour
 
 
 
-    public Object achievementPrefab;
+    public UnityEngine.Object achievementPrefab;
     private List<GameObject> spawnedAchievementUIs = new List<GameObject>();
     public int howMuchSpawnedAchievementUIs;
     [HideInInspector]
@@ -153,7 +160,7 @@ public class GamificationManager : MonoBehaviour
         else if (instance != this)
             Destroy(gameObject);
 
-
+       
 
 
 
@@ -181,8 +188,12 @@ public class GamificationManager : MonoBehaviour
         //Add first achievement
         AddAchievement("Achievement 1", "Helpi");
 
-        //Add pickups
-        pickups = GameObject.FindGameObjectsWithTag("pickup");
+        //Add pickups and positions
+        pickups = GameObject.FindGameObjectsWithTag("pickup").OrderBy(go => go.name).ToArray();
+        foreach (var pickup in pickups)
+        {
+            pickupPositions.Add(pickup.transform.position);
+        }
 
 
 
@@ -210,14 +221,30 @@ public class GamificationManager : MonoBehaviour
     public void ActivateScene()
     {
         async.allowSceneActivation = true;
-       
-
     }
 
     //Resume Game from Menu
     public void Resume()
     {
-       
+        if (!labLoaded)
+        {
+            Debug.Log("return");
+            return;
+
+        }
+        //Add pickups
+        pickups = GameObject.FindGameObjectsWithTag("pickup").OrderBy(go => go.name).ToArray();
+        //Replace all the pickups where they were left when player went out of laboratory
+        for (int i = 0; i < pickups.Length; i++)
+        {
+            pickups[i].transform.position = pickupPositions[i];
+        }
+        //Set already placed objects to false
+        if(namesOfDestroyedPickups.Count>0)
+        {
+            for (int i = 0; i < namesOfDestroyedPickups.Count; i++)
+                GameObject.Find(namesOfDestroyedPickups[i]).SetActive(false);
+        }
 
     }
 
@@ -294,16 +321,31 @@ public class GamificationManager : MonoBehaviour
 
     }
 
+    //Update position of all Pickups
+    void Pickups()
+    {
+        //pickupPositions[0] = pickups[0].transform.position;
+       // pickupPositions[1] = pickups[1].transform.position;
+
+
+        for (int i = 0; i < pickups.Length; i++)
+         {
+             pickupPositions[i] = pickups[i].transform.position;
+         }
+    }
+
     // Locking and unlocking mouse and loading menu and going back from menu
     void Update ()
     {
-        //Add pickups
-        pickups = GameObject.FindGameObjectsWithTag("pickup");
+        labLoaded = true;
         Scene currentScene = SceneManager.GetActiveScene();
         string sceneName = currentScene.name;
 
         if (sceneName == "Laboratory")
+        {
             ShowAchievements();
+            Pickups(); //Because pickups are only in lab
+        }        
         else
             HideAchievements();
     

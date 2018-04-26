@@ -11,6 +11,7 @@ public class BuildFallingcoil : MonoBehaviour
     private BoxCollider ringCollider;
     private bool magnetEnabled;
     private bool ringEnabled;
+    private DialogueManager dMan;
 
     // Use this for initialization
     void Start()
@@ -25,6 +26,7 @@ public class BuildFallingcoil : MonoBehaviour
         ring.SetActive(ringEnabled);
         magnetCollider = magnet.transform.parent.gameObject.GetComponent<BoxCollider>();
         ringCollider = ring.transform.parent.gameObject.GetComponent<BoxCollider>();
+        dMan = FindObjectOfType<DialogueManager>();
     }
 
     public bool IsOverlapping(Collider current, string id)
@@ -77,6 +79,7 @@ public class BuildFallingcoil : MonoBehaviour
         {
             GamificationManager.instance.DeleteAchievement("Build FallingCoil");
             GamificationManager.instance.fallingcoilComplete = true;
+            dMan.ShowBox("Built");
         }
     }
 }
