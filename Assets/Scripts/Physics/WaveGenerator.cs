@@ -5,19 +5,13 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class WaveGenerator : MonoBehaviour
 {
-    enum WavePropagation { Rectilinear, Circular }
+    public enum WavePropagation { Rectilinear, Circular }
 
     [SerializeField]
     private Mesh planeMesh;
 
     [SerializeField]
     private GameObject planeObject;
-
-    [SerializeField]
-    private int VerticesPerLength = 40;
-
-    [SerializeField]
-    private int VerticesPerWidth = 20;
 
     [SerializeField]
     private float waveAmplitude;
@@ -37,6 +31,12 @@ public class WaveGenerator : MonoBehaviour
     [SerializeField]
     private Vector3 propagationAxis = Vector3.right;
 
+    public float WaveAmplitude { get { return waveAmplitude; } set { waveAmplitude = value; } }
+
+    public float WaveLength { get { return waveLength; } set { waveLength = value; } }
+
+    public float WaveFrequency { get { return waveFrequency; } set { waveFrequency = value; } }
+
 
     public float GetWaveValue(Vector3 position, float time)
     {
@@ -52,5 +52,10 @@ public class WaveGenerator : MonoBehaviour
         float distanceToSource = Vector3.Distance(startingPoint, position);
 
         return waveAmplitude * Mathf.Sin(2 * Mathf.PI * waveFrequency * (time - distanceToSource / (waveLength * waveFrequency)));
+    }
+
+    public void SetPropagationMode(WavePropagation propagationMode)
+    {
+        this.propagationMode = propagationMode;
     }
 }
