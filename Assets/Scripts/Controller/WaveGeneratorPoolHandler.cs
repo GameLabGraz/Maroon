@@ -6,9 +6,13 @@ public class WaveGeneratorPoolHandler : MonoBehaviour
 
     private ulong generatorIdCount = 0;
     private Dictionary<ulong, WaveGenerator> mGenerators = new Dictionary<ulong, WaveGenerator>();
+    private GameObject[] mSlitPlates;
 
     private void Start()
     {
+        // Find slit plates in scene
+        mSlitPlates = GameObject.FindGameObjectsWithTag("SlitPlate");
+
         // Find wave generators in scene
         WaveGenerator[] generators = GameObject.FindObjectsOfType<WaveGenerator>();
         foreach (WaveGenerator generator in generators)
@@ -31,6 +35,13 @@ public class WaveGeneratorPoolHandler : MonoBehaviour
     {
         foreach (WaveGenerator generator in mGenerators.Values)
             generator.WaveAmplitude = waveAmplitude;
+
+        foreach (GameObject slitPlate in mSlitPlates)
+        {
+            WaveGenerator[] generators = slitPlate.GetComponentsInChildren<WaveGenerator>();
+            foreach (WaveGenerator generator in generators)
+                generator.WaveAmplitude = waveAmplitude / generators.Length;
+        }
     }
 
     public void SetWaveAmplitude(float waveAmplitude, ulong generatorId)

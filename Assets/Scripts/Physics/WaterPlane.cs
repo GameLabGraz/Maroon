@@ -6,7 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(MeshRenderer))]
 
 [ExecuteInEditMode]
-public class WaterPlane : MonoBehaviour
+public class WaterPlane : PausableObject
 {
     [SerializeField]
     private int verticesPerLength = 40;
@@ -28,36 +28,16 @@ public class WaterPlane : MonoBehaviour
     private float time = 0;
 
 
-    private void Start ()
+    protected override void Start()
     {
-	    if(planeMesh == null)
+        base.Start();
+
+        if (planeMesh == null)
         {
             UpdatePlane();
         }
 
         waveVertices = planeMesh.vertices;
-    }
-
-    private void Update()
-    {
-        material = GetComponent<Renderer>().sharedMaterial;
-    }
-
-    private void FixedUpdate ()
-    {
-        for (int i = 0; i < waveVertices.Length; i++)
-        {
-            Vector3 waveVertex = waveVertices[i];
-
-            waveVertex.y = GetTotalWaveValue(waveVertex);
-
-            waveVertices[i] = waveVertex;
-        }
-
-        time += Time.fixedDeltaTime;
-
-        planeMesh.vertices = waveVertices;
-        planeMesh.RecalculateBounds();
     }
 
     private float GetTotalWaveValue(Vector3 position)
@@ -137,5 +117,27 @@ public class WaterPlane : MonoBehaviour
     public void UnregisterWaveGenerator(WaveGenerator waveGenerator)
     {
         waveGenerators.Remove(waveGenerator);
+    }
+
+    protected override void HandleUpdate()
+    {
+        material = GetComponent<Renderer>().sharedMaterial;
+    }
+
+    protected override void HandleFixedUpdate()
+    {
+        for (int i = 0; i < waveVertices.Length; i++)
+        {
+            Vector3 waveVertex = waveVertices[i];
+
+            waveVertex.y = GetTotalWaveValue(waveVertex);
+
+            waveVertices[i] = waveVertex;
+        }
+
+        time += Time.fixedDeltaTime;
+
+        planeMesh.vertices = waveVertices;
+        planeMesh.RecalculateBounds();
     }
 }
