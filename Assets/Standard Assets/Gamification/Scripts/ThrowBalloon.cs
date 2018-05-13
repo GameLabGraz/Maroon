@@ -48,14 +48,14 @@ public class ThrowBalloon : MonoBehaviour
     {
 
         if (beingCarried)
-            GamificationManager.instance.holdingItem = true;
+            GamificationManager.instance.HoldingItem = true;
         else
-            GamificationManager.instance.holdingItem = false;
+            GamificationManager.instance.HoldingItem = false;
 
-        if (GamificationManager.instance.hasPlayer)
-            GamificationManager.instance.playerCanPickItem = true;
+        if (GamificationManager.instance.HasPlayer)
+            GamificationManager.instance.PlayerCanPickItem = true;
         else
-            GamificationManager.instance.playerCanPickItem = false;
+            GamificationManager.instance.PlayerCanPickItem = false;
 
 
 
@@ -75,13 +75,13 @@ public class ThrowBalloon : MonoBehaviour
         float dist = Vector3.Distance(gameObject.transform.position, player.transform.position);
         if (dist <= 2.5f)
         {
-            GamificationManager.instance.hasPlayer = true;
+            GamificationManager.instance.HasPlayer = true;
         }
         else
         {
-            GamificationManager.instance.hasPlayer = false;
+            GamificationManager.instance.HasPlayer = false;
         }
-        if (GamificationManager.instance.hasPlayer && !beingCarried && Input.GetMouseButtonDown(0))
+        if (GamificationManager.instance.HasPlayer && !beingCarried && Input.GetMouseButtonDown(0))
         {
             Debug.Log("Carry");
             GetComponent<Rigidbody>().isKinematic = true;
@@ -90,7 +90,7 @@ public class ThrowBalloon : MonoBehaviour
             trigger = true;
 
         }
-        if (GamificationManager.instance.hasPlayer && beingCarried && Input.GetMouseButtonUp(0))
+        if (GamificationManager.instance.HasPlayer && beingCarried && Input.GetMouseButtonUp(0))
         {
             trigger = false;
         }

@@ -55,7 +55,7 @@ public class MenuManager : MonoBehaviour {
         else if (current == Language.French)
             fre.isOn = true;
         UpdateLanguage();
-        if (GamificationManager.instance.deactivateDialogue)
+        if (GamificationManager.instance.DeactivateDialogue)
             toggleYes.isOn = true;
         else
             toggleNo.isOn = true;
@@ -69,12 +69,12 @@ public class MenuManager : MonoBehaviour {
 
     public void DeactivateDialogue()
     {
-        GamificationManager.instance.deactivateDialogue = false;
+        GamificationManager.instance.DeactivateDialogue = false;
     }
 
     public void ActivateDialogue()
     {
-        GamificationManager.instance.deactivateDialogue = true;
+        GamificationManager.instance.DeactivateDialogue = true;
     }
 
     public void Resume()
@@ -113,7 +113,7 @@ public class MenuManager : MonoBehaviour {
         yes.text = GamificationManager.instance.l_manager.GetString("Yes");
         no.text = GamificationManager.instance.l_manager.GetString("No");
         achievement.text = GamificationManager.instance.l_manager.GetString("Menu Achievements") + ": " +
-            GamificationManager.instance.finishedAchievements + "/" + GamificationManager.instance.getNumberOfAchievements();
+            GamificationManager.instance.FinishedAchievements + "/" + GamificationManager.instance.getNumberOfAchievements();
 
 
     }
@@ -125,8 +125,8 @@ public class MenuManager : MonoBehaviour {
         highlightSound.volume = SoundManager.instance.efxSource.volume;
         closeSound.volume = SoundManager.instance.efxSource.volume;
         if (musicSlider.value != 0)
-            GamificationManager.instance.headset = true;
+            GamificationManager.instance.Headset = true;
         else
-            GamificationManager.instance.headset = false;
+            GamificationManager.instance.Headset = false;
     }
 }

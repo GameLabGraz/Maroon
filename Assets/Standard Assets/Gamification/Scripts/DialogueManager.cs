@@ -24,7 +24,7 @@ public class DialogueManager : MonoBehaviour {
     {
         Scene currentScene = SceneManager.GetActiveScene();
         string sceneName = currentScene.name;
-        GamificationManager.instance.coroutineRunning = false;
+        GamificationManager.instance.CoroutineRunning = false;
         if (sceneName == "VandeGraaffExperiment1")
         {
 
@@ -32,14 +32,14 @@ public class DialogueManager : MonoBehaviour {
 
             
         }
-        else if (sceneName == "Laboratory" && !GamificationManager.instance.gameStarted)
+        else if (sceneName == "Laboratory" && !GamificationManager.instance.GameStarted)
         {     
             ShowBox(dialougeKey1);                   
         }
         else if (sceneName == "VandeGraaffExperiment2")
         {
         }
-        else if(sceneName == "Laboratory" && GamificationManager.instance.gameStarted)
+        else if(sceneName == "Laboratory" && GamificationManager.instance.GameStarted)
         {
             dialogActive = false;
             dBox.SetActive(false);
@@ -75,7 +75,7 @@ public class DialogueManager : MonoBehaviour {
     //keyword is the keyword of dialogue who should be showed
     public void ShowBox(string keyword)
     {      
-        if (GamificationManager.instance.deactivateDialogue)
+        if (GamificationManager.instance.DeactivateDialogue)
             return;
         //get the dialogue in the language manager in the current language. Returns nothing if keyword doesnt exist
         string dialogue = GamificationManager.instance.l_manager.GetString(keyword);
@@ -84,7 +84,7 @@ public class DialogueManager : MonoBehaviour {
         // \n doesnt work when you load dialogues from XML-Files, so write NEWLINE if you want a newline and replace it here
         dialogue = dialogue.Replace("NEWLINE ", "\n"); //To create Newlines  
         Debug.Log(dialogue);
-        if (!GamificationManager.instance.coroutineRunning)
+        if (!GamificationManager.instance.CoroutineRunning)
         {
             dialogActive = true;
             dBox.SetActive(true);
@@ -103,7 +103,7 @@ public class DialogueManager : MonoBehaviour {
     //Function to display text letter-by-letter
     IEnumerator TypeText(string dialogue)
     {
-        GamificationManager.instance.coroutineRunning = true;
+        GamificationManager.instance.CoroutineRunning = true;
         foreach (char letter in dialogue.ToCharArray())
         {
             if (!dialogActive)
@@ -118,20 +118,20 @@ public class DialogueManager : MonoBehaviour {
         }
             yield return 0;
             yield return new WaitForSeconds(waitAtEnd);
-        if (!GamificationManager.instance.gameStarted)
+        if (!GamificationManager.instance.GameStarted)
         {
             dialogActive = false;
             dBox.SetActive(false);
-            GamificationManager.instance.coroutineRunning = false;
+            GamificationManager.instance.CoroutineRunning = false;
             ShowBox(dialogueKey2);
-            GamificationManager.instance.gameStarted = true;
+            GamificationManager.instance.GameStarted = true;
 
         }
         else
         {
             dialogActive = false;
             dBox.SetActive(false);
-            GamificationManager.instance.coroutineRunning = false;                     
+            GamificationManager.instance.CoroutineRunning = false;                     
         }
         
         

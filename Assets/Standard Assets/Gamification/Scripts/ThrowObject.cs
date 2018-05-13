@@ -20,6 +20,7 @@ public class ThrowObject : MonoBehaviour
     private MeshRenderer render;
     private Color color;
 
+
     private void Awake()
     {
         playerCam  = GameObject.FindWithTag("MainCamera");
@@ -63,17 +64,17 @@ public class ThrowObject : MonoBehaviour
        
         if (beingCarried)
         {
-            GamificationManager.instance.holdingItem = true;
+            GamificationManager.instance.HoldingItem = true;
                 
         }
         else
         {               
-            GamificationManager.instance.holdingItem = false;
+            GamificationManager.instance.HoldingItem = false;
         }
         if (hasPlayer)
-            GamificationManager.instance.playerCanPickItem = true;
+            GamificationManager.instance.PlayerCanPickItem = true;
         else
-            GamificationManager.instance.playerCanPickItem = false;
+            GamificationManager.instance.PlayerCanPickItem = false;
 
     
      
@@ -143,9 +144,16 @@ public class ThrowObject : MonoBehaviour
         }
     }
   
+    //dialogue plays when player places an item correctly
+    void PlayDialogue()
+    {
+        dMan.ShowBox(ID);
+    }
+
     //Check if item is placed correctly. ADD NEW EXPERIMENTS HERE
     void PlaceItem()
     {
+
         Collider collider = this.GetComponent<Collider>();
         BuildVandegraaf2 script = FindObjectOfType<BuildVandegraaf2>();
         BuildVandegraaf1 script2 = FindObjectOfType<BuildVandegraaf1>();
@@ -163,8 +171,9 @@ public class ThrowObject : MonoBehaviour
             SoundManager.instance.PlaySingle(GamificationManager.instance.AchievementSound);
             this.gameObject.SetActive(false);
             GamificationManager.instance.namesOfDestroyedPickups.Add(this.gameObject.name);
+            Invoke("PlayDialogue", 0.1F); //Play dialogue after a little while
         }
-     
+
 
 
     }

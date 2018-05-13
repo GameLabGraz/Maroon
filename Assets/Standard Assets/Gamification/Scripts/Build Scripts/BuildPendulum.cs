@@ -13,7 +13,7 @@ public class BuildPendulum : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        weightEnabled = GamificationManager.instance.pendulumweightEnabled;
+        weightEnabled = GamificationManager.instance.PendulumweightEnabled;
         if (weightEnabled)
             unfinishedItems--;
         weight.SetActive(weightEnabled);
@@ -37,10 +37,10 @@ public class BuildPendulum : MonoBehaviour
     {
 
 
-        if (weightCollider.bounds.Intersects(current.bounds) && !GamificationManager.instance.pendulumweightEnabled)
+        if (weightCollider.bounds.Intersects(current.bounds) && !GamificationManager.instance.PendulumweightEnabled)
         {
             weight.SetActive(true);
-            GamificationManager.instance.pendulumweightEnabled = true;
+            GamificationManager.instance.PendulumweightEnabled = true;
             unfinishedItems--;
             return true;
         }

@@ -33,22 +33,22 @@ public class ColliderEntered : MonoBehaviour {
     //Add and Delete Achievements
     void HandleAchievements()
     {
-        if (LevelName == "Helpi" && !GamificationManager.instance.spokenWithHelpi)
+        if (LevelName == "Helpi" && !GamificationManager.instance.SpokenWithHelpi)
         {
             GamificationManager.instance.DeleteAchievement("Helpi");
             GamificationManager.instance.AddAchievement("Achievement 3", "Build");
-            GamificationManager.instance.spokenWithHelpi = true;
+            GamificationManager.instance.SpokenWithHelpi = true;
         }
         else if ((LevelName == "VandeGraaffExperiment1" || LevelName == "FallingCoil" || LevelName == "Pendulum" //Add any new experiments here!
-            || LevelName == "VandeGraaffExperiment2" || LevelName == "FaradaysLaw") && !GamificationManager.instance.spokenWithLaunch)
+            || LevelName == "VandeGraaffExperiment2" || LevelName == "FaradaysLaw") && !GamificationManager.instance.SpokenWithLaunch)
         {
             //User plays in correct order
             if (GamificationManager.instance.isAchievementInList("Build"))
             {
                 GamificationManager.instance.DeleteAchievement("Build");
                 GamificationManager.instance.AddAchievement("Achievement 2", "Door");
-                GamificationManager.instance.spokenWithLaunch = true;
-                GamificationManager.instance.spokenWithHelpi = true;
+                GamificationManager.instance.SpokenWithLaunch = true;
+                GamificationManager.instance.SpokenWithHelpi = true;
                 Debug.Log("Correct");
             }         
             else
@@ -57,12 +57,12 @@ public class ColliderEntered : MonoBehaviour {
                 GamificationManager.instance.DeleteAchievement("Helpi");
                 GamificationManager.instance.DeleteAchievement("Build");
                 GamificationManager.instance.AddAchievement("Achievement 2", "Door");
-                GamificationManager.instance.spokenWithLaunch = true;
-                GamificationManager.instance.spokenWithHelpi = true;
+                GamificationManager.instance.SpokenWithLaunch = true;
+                GamificationManager.instance.SpokenWithHelpi = true;
                 Debug.Log("Incorrect");
             }
         }
-        else if (LevelName == "After" && !GamificationManager.instance.spokenWithDoor)
+        else if (LevelName == "After" && !GamificationManager.instance.SpokenWithDoor)
         {
             dMan.ShowBox("Build Together");
             //Achievements
@@ -72,7 +72,7 @@ public class ColliderEntered : MonoBehaviour {
             GamificationManager.instance.AddAchievement("Achievement 5", "Build Vandegraaf2");
             GamificationManager.instance.AddAchievement("Achievement 6", "Build Faradayslaw");
             GamificationManager.instance.AddAchievement("Achievement 7", "Build FallingCoil");
-            GamificationManager.instance.spokenWithDoor = true;
+            GamificationManager.instance.SpokenWithDoor = true;
 
         }
     }
@@ -85,10 +85,10 @@ public class ColliderEntered : MonoBehaviour {
 			this.insideTriggerSphere = true;
 
             //Achievement-Dialogues are only played once
-            if (LevelName == "Helpi" && GamificationManager.instance.spokenWithHelpi ||
+            if (LevelName == "Helpi" && GamificationManager.instance.SpokenWithHelpi ||
                 ((LevelName == "VandeGraaffExperiment1" || LevelName == "FallingCoil" || LevelName == "Pendulum" //Add any new experiments here!
-            || LevelName == "VandeGraaffExperiment2" || LevelName == "FaradaysLaw") && GamificationManager.instance.spokenWithLaunch)
-            || LevelName == "After" && GamificationManager.instance.spokenWithDoor)            
+            || LevelName == "VandeGraaffExperiment2" || LevelName == "FaradaysLaw") && GamificationManager.instance.SpokenWithLaunch)
+            || LevelName == "After" && GamificationManager.instance.SpokenWithDoor)            
                 return;
             if (!played_once && !noDialogue)
             {
@@ -126,7 +126,7 @@ public class ColliderEntered : MonoBehaviour {
         //Starting experiments with left-click
         if (Input.GetMouseButtonDown(0) && this.insideTriggerSphere)
         {
-            if ((!GamificationManager.instance.headset && LevelName == "Headset" && !noDialogue) || (LevelName == "Leave" && !noDialogue))
+            if ((!GamificationManager.instance.Headset && LevelName == "Headset" && !noDialogue) || (LevelName == "Leave" && !noDialogue))
             {
                 //Zurzeit auskommentiert weil Funktion nicht gebraucht wird
                 dMan.ShowBox(dialogueKeyClick);
@@ -134,16 +134,16 @@ public class ColliderEntered : MonoBehaviour {
 
             if (LevelName == "Headset")
             {
-                if (!GamificationManager.instance.headset)
+                if (!GamificationManager.instance.Headset)
                 {
-                    GamificationManager.instance.headset = true;
+                    GamificationManager.instance.Headset = true;
                     SoundManager.instance.SetMusicVolume(1.0f);
 
                 }
 
                 else if (!noDialogue)
                 {
-                    GamificationManager.instance.headset = false;
+                    GamificationManager.instance.Headset = false;
                     SoundManager.instance.SetMusicVolume(0.0f);
                     dMan.ShowBox("Headset Away");
                 }

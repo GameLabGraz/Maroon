@@ -15,7 +15,7 @@ public class Headset : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        if (GamificationManager.instance.headset)
+        if (GamificationManager.instance.Headset)
             headset.localScale = new Vector3(0, 0, 0);
         else
             headset.localScale = new Vector3(7, 7, 7);

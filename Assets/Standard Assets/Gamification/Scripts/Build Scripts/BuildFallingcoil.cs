@@ -16,8 +16,8 @@ public class BuildFallingcoil : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        magnetEnabled = GamificationManager.instance.fallingcoilmagnetEnabled;
-        ringEnabled = GamificationManager.instance.fallingcoilringEnabled;
+        magnetEnabled = GamificationManager.instance.FallingcoilmagnetEnabled;
+        ringEnabled = GamificationManager.instance.FallingcoilringEnabled;
         if (magnetEnabled)
             unfinishedItems--;
         if (ringEnabled)
@@ -44,10 +44,10 @@ public class BuildFallingcoil : MonoBehaviour
 
     public bool ringIsOverlapping(Collider current)
     {
-        if (ringCollider.bounds.Intersects(current.bounds) && !GamificationManager.instance.fallingcoilringEnabled)
+        if (ringCollider.bounds.Intersects(current.bounds) && !GamificationManager.instance.FallingcoilringEnabled)
         {
             ring.SetActive(true);
-            GamificationManager.instance.fallingcoilringEnabled = true;
+            GamificationManager.instance.FallingcoilringEnabled = true;
             unfinishedItems--;
             return true;
         }
@@ -61,10 +61,10 @@ public class BuildFallingcoil : MonoBehaviour
     {
 
 
-        if (magnetCollider.bounds.Intersects(current.bounds) && !GamificationManager.instance.fallingcoilmagnetEnabled)
+        if (magnetCollider.bounds.Intersects(current.bounds) && !GamificationManager.instance.FallingcoilmagnetEnabled)
         {
             magnet.SetActive(true);
-            GamificationManager.instance.fallingcoilmagnetEnabled = true;
+            GamificationManager.instance.FallingcoilmagnetEnabled = true;
             unfinishedItems--;
             return true;
         }

@@ -1,6 +1,4 @@
-using System;
 using UnityEngine;
-using UnityEditor.UI;
 using UnityEngine.UI;
 
 namespace UnityStandardAssets.Utility

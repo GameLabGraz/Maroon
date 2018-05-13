@@ -17,8 +17,8 @@ public class BuildFaradayslaw : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        magnetEnabled = GamificationManager.instance.faradayslawmagnetEnabled;
-        ringEnabled = GamificationManager.instance.faradayslawringEnabled;
+        magnetEnabled = GamificationManager.instance.FaradayslawmagnetEnabled;
+        ringEnabled = GamificationManager.instance.FaradayslawringEnabled;
         if (magnetEnabled)
             unfinishedItems--;
         if (ringEnabled)
@@ -45,10 +45,10 @@ public class BuildFaradayslaw : MonoBehaviour
 
     public bool ringIsOverlapping(Collider current)
     {
-        if (ringCollider.bounds.Intersects(current.bounds) && !GamificationManager.instance.faradayslawringEnabled)
+        if (ringCollider.bounds.Intersects(current.bounds) && !GamificationManager.instance.FaradayslawringEnabled)
         {
             ring.SetActive(true);
-            GamificationManager.instance.faradayslawringEnabled = true;
+            GamificationManager.instance.FaradayslawringEnabled = true;
             unfinishedItems--;
             return true;
         }
@@ -62,10 +62,10 @@ public class BuildFaradayslaw : MonoBehaviour
     {
 
 
-        if (magnetCollider.bounds.Intersects(current.bounds) && !GamificationManager.instance.faradayslawmagnetEnabled)
+        if (magnetCollider.bounds.Intersects(current.bounds) && !GamificationManager.instance.FaradayslawmagnetEnabled)
         {
             magnet.SetActive(true);
-            GamificationManager.instance.faradayslawmagnetEnabled = true;
+            GamificationManager.instance.FaradayslawmagnetEnabled = true;
             unfinishedItems--;
             return true;
         }

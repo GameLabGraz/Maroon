@@ -18,8 +18,8 @@ public class AchievementController : MonoBehaviour {
     {
         DontDestroyOnLoad(this.gameObject);
         //Get text from attached object
-        number = GamificationManager.instance.howMuchSpawnedAchievementUIs;
-        GamificationManager.instance.howMuchSpawnedAchievementUIs++;
+        number = GamificationManager.instance.HowMuchSpawnedAchievementUIs;
+        GamificationManager.instance.HowMuchSpawnedAchievementUIs++;
         this.gameObject.transform.position = new Vector3(this.gameObject.transform.position.x, this.gameObject.transform.position.y + (number * UISPACE), this.gameObject.transform.position.z);
     }
 

@@ -28,11 +28,11 @@ public class SpawningBallon : MonoBehaviour
     private void OnTriggerStay(Collider other)
     {
         //Spawning Ballon
-        if (other.CompareTag("Player") && !GamificationManager.instance.holdingItem && hasPlayer && !GamificationManager.instance.playerCanPickItem && Input.GetMouseButtonDown(0)
+        if (other.CompareTag("Player") && !GamificationManager.instance.HoldingItem && hasPlayer && !GamificationManager.instance.PlayerCanPickItem && Input.GetMouseButtonDown(0)
             && !GamificationManager.instance.OneBalloonSpawned)
         {
             Debug.Log("ballon");
-            Instantiate(ballonPrefab, new Vector3(GamificationManager.instance.player_position_x-1, GamificationManager.instance.player_position_y+1, GamificationManager.instance.player_position_z),
+            Instantiate(ballonPrefab, new Vector3(GamificationManager.instance.Player_position.x-1, GamificationManager.instance.Player_position.y+1, GamificationManager.instance.Player_position.z),
              Quaternion.identity);
             GamificationManager.instance.OneBalloonSpawned = true;
         }

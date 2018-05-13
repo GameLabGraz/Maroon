@@ -26,7 +26,7 @@ public class DialogueHolder : MonoBehaviour {
     {
         if (!messageRead)
         {
-            if (!GamificationManager.instance.coroutineRunning)
+            if (!GamificationManager.instance.CoroutineRunning)
                 messageRead = true;
             dMan.ShowBox(dialogueKey);
           

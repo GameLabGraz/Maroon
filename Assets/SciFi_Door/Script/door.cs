@@ -11,7 +11,7 @@ public class door : MonoBehaviour {
     {
         dMan = FindObjectOfType<DialogueManager>();
         thedoor = GameObject.FindWithTag("SF_Door");
-        if (GamificationManager.instance.doorIsOpen)
+        if (GamificationManager.instance.DoorIsOpen)
             thedoor.transform.position = new Vector3(thedoor.transform.position.x, thedoor.transform.position.y + 4, thedoor.transform.position.z);
        
     }
@@ -19,13 +19,13 @@ public class door : MonoBehaviour {
     void OnTriggerEnter ( Collider other  )
     {
 
-        if (other.CompareTag("Player") && !GamificationManager.instance.doorIsOpen)
+        if (other.CompareTag("Player") && !GamificationManager.instance.DoorIsOpen)
         {
             hasPlayer = true;
-            if (!GamificationManager.instance.doorDialogue && GamificationManager.instance.spokenWithLaunch)
+            if (!GamificationManager.instance.DoorDialogue && GamificationManager.instance.SpokenWithLaunch)
             {
                 dMan.ShowBox("DoorOpen");
-                GamificationManager.instance.doorDialogue = true;               
+                GamificationManager.instance.DoorDialogue = true;               
             }
            
         }
@@ -35,7 +35,7 @@ public class door : MonoBehaviour {
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Player") && !GamificationManager.instance.doorIsOpen && GamificationManager.instance.spokenWithLaunch)
+        if (other.CompareTag("Player") && !GamificationManager.instance.DoorIsOpen && GamificationManager.instance.SpokenWithLaunch)
         {
             UIManager.instance.ShowUICollided();
         }
@@ -44,15 +44,15 @@ public class door : MonoBehaviour {
 
     private void Update()
     {
-        if (GamificationManager.instance.spokenWithLaunch && !GamificationManager.instance.doorIsOpen)
+        if (GamificationManager.instance.SpokenWithLaunch && !GamificationManager.instance.DoorIsOpen)
         {
-            if (!GamificationManager.instance.holdingItem && hasPlayer && !GamificationManager.instance.playerCanPickItem && !doorOpen && Input.GetMouseButtonDown(0))
+            if (!GamificationManager.instance.HoldingItem && hasPlayer && !GamificationManager.instance.PlayerCanPickItem && !doorOpen && Input.GetMouseButtonDown(0))
             {              
                 thedoor = GameObject.FindWithTag("SF_Door");
                 thedoor.GetComponent<Animation>().Play("open");
                 doorOpen = true;
                 Debug.Log("open");
-                GamificationManager.instance.doorIsOpen = true;
+                GamificationManager.instance.DoorIsOpen = true;
                 UIManager.instance.HideUICollided();
             }
 
@@ -69,7 +69,7 @@ public class door : MonoBehaviour {
 
     void OnTriggerExit ( Collider other)
     {
-        if (other.CompareTag("Player") && !GamificationManager.instance.doorIsOpen)
+        if (other.CompareTag("Player") && !GamificationManager.instance.DoorIsOpen)
         {
             hasPlayer = false;
             UIManager.instance.HideUICollided();

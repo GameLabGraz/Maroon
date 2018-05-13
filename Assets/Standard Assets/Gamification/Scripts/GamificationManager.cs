@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System;
 using System.Linq;
 
 
@@ -12,87 +11,196 @@ using System.Linq;
 
 public class GamificationManager : MonoBehaviour
 {
+    //create an instance so we have access to Manager from other files via GamificationManager.instance
     [HideInInspector]
-    public bool playerIsMoving = false;
-    [HideInInspector]
-    public float player_position_x;
-    [HideInInspector]
-    public float player_position_y;
-    [HideInInspector]
-    public float player_position_z;
-    [HideInInspector]
-    public Quaternion clockSmallRotation;
-    [HideInInspector]
-    public Quaternion clockLongRotation;
-    [HideInInspector]
-    public static GamificationManager instance = null; //so we have access to Manager from other files
+    public static GamificationManager instance = null; 
+    //Player position needs to be saved if player changes the scene and goes back
+    private float player_position_x;
+    private float player_position_y;
+    private float player_position_z;
+    public Vector3 Player_position
+    {
+        get { return new Vector3(player_position_x, player_position_y, player_position_z); }
+        set { player_position_x = value.x; player_position_y = value.y; player_position_z = value.z; }
+    }
+    //Same for clock position
+    private Quaternion clockSmallRotation;
+    public Quaternion ClockSmallRotation
+    {
+        get { return clockSmallRotation; }
+        set { clockSmallRotation = value; }
+    }
+    private Quaternion clockLongRotation;
+    public Quaternion ClockLongRotation
+    {
+        get { return clockSmallRotation; }
+        set { clockSmallRotation = value; }
+    }
+    //some important things
     public LanguageManager l_manager;
-    private string scene;
-    public AudioSource menuSound;
-    public AudioClip AchievementSound;
-    private GameObject player;
-    public BoxCollider floorCollider;
-
+    private string scene; //name of scene player is currently
+    public AudioSource menuSound; //sound when player goes to menu
+    public AudioClip AchievementSound; //sound when player gets an achievement
+    private GameObject player; //player
     //Gamification Bools
-    [HideInInspector]
-    public bool labLoaded = false;
-    [HideInInspector]
-    public bool gameStarted = false; //is set true after game mechanics started
-    [HideInInspector]
-    public bool headset = false;
-    [HideInInspector]
-    public bool coroutineRunning = false;
-    [HideInInspector]
-    public bool xmlLoaded = false;
-    [HideInInspector]
-    public bool deactivateDialogue = false; //no dialogues if true
-    [HideInInspector]
-    public bool doorDialogue = false;  //this is the dialogue which is played once when the door is first opened
-    [HideInInspector]
-    public bool holdingItem = false; //if player is holding an item, menu call is not allowed
-    [HideInInspector]
-    public bool playerCanPickItem = false; //true if player is in range to pick up an item
-    [HideInInspector]
-    public bool OneBalloonSpawned = false; //player can hold only one balloon at the same time
-    [HideInInspector]
-    public bool doorIsOpen = false;
-    [HideInInspector]
-    public bool hasPlayer = false;
+    private bool playerIsMoving = false;
+    public bool PlayerIsMoving
+    {
+        set { playerIsMoving = value; }
+    }
+    private bool labLoaded = false;
+    public bool LabLoaded
+    {
+        get { return labLoaded; }
+        set { labLoaded = value; }
+    }
+    private bool gameStarted = false; //is set true after game mechanics started
+    public bool GameStarted
+    {
+        get { return gameStarted; }
+        set { gameStarted = value; }
+    }
+    private bool headset = false;
+    public bool Headset
+    {
+        get { return headset; }
+        set { headset = value; }
+    }
+    private bool coroutineRunning = false;
+    public bool CoroutineRunning
+    {
+        get { return coroutineRunning; }
+        set { coroutineRunning = value; }
+    }
+    private bool xmlLoaded = false;
+    public bool XmlLoaded
+    {
+        get { return xmlLoaded; }
+        set { xmlLoaded = value; }
+    }
+    private bool deactivateDialogue = false; //no dialogues if true
+    public bool DeactivateDialogue
+    {
+        get { return deactivateDialogue; }
+        set { deactivateDialogue = value; }
+    }
+    private bool doorDialogue = false;  //this is the dialogue which is played once when the door is first opened
+    public bool DoorDialogue
+    {
+        get { return doorDialogue; }
+        set { doorDialogue = value; }
+    }
+    private bool holdingItem = false; //if player is holding an item, menu call is not allowed
+    public bool HoldingItem
+    {
+        get { return holdingItem; }
+        set { holdingItem = value; }
+    }
+    private bool playerCanPickItem = false; //true if player is in range to pick up an item
+    public bool PlayerCanPickItem
+    {
+        get { return playerCanPickItem; }
+        set { playerCanPickItem = value; }
+    }
+    private bool oneBalloonSpawned = false; //player can hold only one balloon at the same time
+    public bool OneBalloonSpawned
+    {
+        get { return oneBalloonSpawned; }
+        set { oneBalloonSpawned = value; }
+    }
+    private bool doorIsOpen = false;
+    public bool DoorIsOpen
+    {
+        get { return doorIsOpen; }
+        set { doorIsOpen = value; }
+    }
+    private bool hasPlayer = false;
+    public bool HasPlayer
+    {
+        get { return hasPlayer; }
+        set { hasPlayer = value; }
+    }
 
-    //experiments and experiment built bools
+   
  
-    public GameObject[] pickups; //All pickups
-    private List<Vector3> pickupPositions = new List<Vector3>();
-    public List<String> namesOfDestroyedPickups = new List<string>();
-    public GameObject graaf1Experiment;
-    public GameObject graaf2Experiment;
-    public GameObject fallingExperiment;
-    public GameObject faradayExperiment;
-    public GameObject pendulumExperiment;
-    [HideInInspector]
-    public bool vandegraaf2generatorEnabled = false;
-    [HideInInspector]
-    public bool vandegraaf2ballonEnabled = false;
-    [HideInInspector]
-    public bool vandegraaf2grounderEnabled = false;
-    [HideInInspector]
-    public bool vandegraaf2electrodeEnabled = false;
-    [HideInInspector]
-    public bool vandegraaf1generatorEnabled = false;
-    [HideInInspector]
-    public bool vandegraaf1grounderEnabled = false;
-    [HideInInspector]
-    public bool vandegraaf1electrodeEnabled = false;
-    [HideInInspector]
-    public bool fallingcoilmagnetEnabled = false;
-    [HideInInspector]
-    public bool fallingcoilringEnabled = false;
-    [HideInInspector]
-    public bool faradayslawmagnetEnabled = false;
-    [HideInInspector]
-    public bool faradayslawringEnabled = false;
-    [HideInInspector]
-    public bool pendulumweightEnabled = false;
+    //pickup variables. work automatically if you tag them correctly with "pickup" tag
+    public GameObject[] pickups; //All pickups, array will be created automatically and contains all items with tag "pickup"
+    private List<Vector3> pickupPositions = new List<Vector3>(); //Positions are saved for each pickup for scene change
+    public List<System.String> namesOfDestroyedPickups = new List<string>(); //Destroyed pickups are saved for scene change
+
+    //experiments and experiment built bools and getter/setters. For each item you need to place there is a bool
+    private bool vandegraaf2generatorEnabled = false;
+    public bool Vandegraaf2generatorEnabled
+    {
+        get { return vandegraaf2generatorEnabled; }
+        set { vandegraaf2generatorEnabled = value; }
+    }
+    private bool vandegraaf2ballonEnabled = false;
+    public bool Vandegraaf2ballonEnabled
+    {
+        get { return vandegraaf2ballonEnabled; }
+        set { vandegraaf2ballonEnabled = value ; }
+    }
+    private bool vandegraaf2grounderEnabled = false;
+    public bool Vandegraaf2grounderEnabled
+    {
+        get { return vandegraaf2grounderEnabled; }
+        set { vandegraaf2grounderEnabled = value  ; }
+    }
+    private bool vandegraaf2electrodeEnabled = false;
+    public bool Vandegraaf2electrodeEnabled
+    {
+        get { return vandegraaf2electrodeEnabled; }
+        set { vandegraaf2electrodeEnabled = value; }
+    }
+    private bool vandegraaf1generatorEnabled = false;
+    public bool Vandegraaf1generatorEnabled
+    {
+        get { return vandegraaf1generatorEnabled; }
+        set { vandegraaf1generatorEnabled = value; }
+    }
+    private bool vandegraaf1grounderEnabled = false;
+    public bool Vandegraaf1grounderEnabled
+    {
+        get { return vandegraaf1generatorEnabled; }
+        set { vandegraaf1generatorEnabled = value; }
+    }
+    private bool vandegraaf1electrodeEnabled = false;
+    public bool Vandegraaf1electrodeEnabled
+    {
+        get { return vandegraaf1electrodeEnabled; }
+        set { vandegraaf1electrodeEnabled = value; }
+    }
+    private bool fallingcoilmagnetEnabled = false;
+    public bool FallingcoilmagnetEnabled
+    {
+        get { return fallingcoilmagnetEnabled; }
+        set { fallingcoilmagnetEnabled = value; }
+    }
+    private bool fallingcoilringEnabled = false;
+    public bool FallingcoilringEnabled
+    {
+        get { return fallingcoilringEnabled; }
+        set { fallingcoilringEnabled = value; }
+    }
+    private bool faradayslawmagnetEnabled = false;
+    public bool FaradayslawmagnetEnabled
+    {
+        get { return faradayslawmagnetEnabled; }
+        set { faradayslawmagnetEnabled = value; }
+    }
+    private bool faradayslawringEnabled = false;
+    public bool FaradayslawringEnabled
+    {
+        get { return faradayslawringEnabled; }
+        set { faradayslawringEnabled = value; }
+    }
+    private bool pendulumweightEnabled = false;
+    public bool PendulumweightEnabled
+    {
+        get { return pendulumweightEnabled; }
+        set { pendulumweightEnabled = value; }
+    }
 
     //Variables for loading laboratory in background from other scene 
     public string levelName;
@@ -102,21 +210,39 @@ public class GamificationManager : MonoBehaviour
 
 
 
-    public UnityEngine.Object achievementPrefab;
+    public Object achievementPrefab;
     private List<GameObject> spawnedAchievementUIs = new List<GameObject>();
-    public int howMuchSpawnedAchievementUIs;
-    [HideInInspector]
+    private int howMuchSpawnedAchievementUIs;
+    public int HowMuchSpawnedAchievementUIs
+    {
+        get { return howMuchSpawnedAchievementUIs; }
+        set { howMuchSpawnedAchievementUIs = value; }
+    }
     private const int numberOfAchievements = 8;
-    public int finishedAchievements = 0;
-    [HideInInspector]
-    public bool spokenWithHelpi = false;
-    [HideInInspector]
-    public bool spokenWithLaunch = false;
-    [HideInInspector]
-    public bool spokenWithDoor = false;
-    [HideInInspector]
-
-
+    private int finishedAchievements = 0;
+    public int FinishedAchievements
+    {
+        get { return finishedAchievements; }
+        set { finishedAchievements = value; }
+    }
+    private bool spokenWithHelpi = false;
+    public bool SpokenWithHelpi
+    {
+        get { return spokenWithHelpi; }
+        set { spokenWithHelpi = value; }
+    }
+    private bool spokenWithLaunch = false;
+    public bool SpokenWithLaunch
+    {
+        get { return spokenWithLaunch; }
+        set { spokenWithLaunch = value; }
+    }
+    private bool spokenWithDoor = false;
+    public bool SpokenWithDoor
+    {
+        get { return spokenWithDoor; }
+        set { spokenWithDoor = value; }
+    }
 
     /*List of dialogueKeys and IDs:
      * Achievement 1 : Helpi

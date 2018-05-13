@@ -20,9 +20,9 @@ public class BuildVandegraaf1 : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        generatorEnabled = GamificationManager.instance.vandegraaf1generatorEnabled;
-        grounderEnabled = GamificationManager.instance.vandegraaf1grounderEnabled;
-        electrodeEnabled = GamificationManager.instance.vandegraaf1electrodeEnabled;
+        generatorEnabled = GamificationManager.instance.Vandegraaf1generatorEnabled;
+        grounderEnabled = GamificationManager.instance.Vandegraaf1grounderEnabled;
+        electrodeEnabled = GamificationManager.instance.Vandegraaf1electrodeEnabled;
         if (generatorEnabled)
             unfinishedItems--;
         if (grounderEnabled)
@@ -42,7 +42,7 @@ public class BuildVandegraaf1 : MonoBehaviour
 
     public bool IsOverlapping(Collider current, string id)
     {
-        if (id == "generator")
+        if (id == "generator" || id == "generator 2")
             return GeneratorIsOverlapping(current);   
         else if (id == "Electrode S")
             return GrounderIsOverlapping(current);
@@ -57,10 +57,10 @@ public class BuildVandegraaf1 : MonoBehaviour
 
     public bool GrounderIsOverlapping(Collider current)
     {
-        if (grounderCollider.bounds.Intersects(current.bounds) && !GamificationManager.instance.vandegraaf1grounderEnabled)
+        if (grounderCollider.bounds.Intersects(current.bounds) && !GamificationManager.instance.Vandegraaf1grounderEnabled)
         {
             grounder.SetActive(true);
-            GamificationManager.instance.vandegraaf1grounderEnabled = true;
+            GamificationManager.instance.Vandegraaf1grounderEnabled = true;
             unfinishedItems--;
             return true;
         }
@@ -70,10 +70,10 @@ public class BuildVandegraaf1 : MonoBehaviour
 
     public bool ElectrodeIsOverlapping(Collider current)
     {
-        if (electrodeCollider.bounds.Intersects(current.bounds) && !GamificationManager.instance.vandegraaf1electrodeEnabled)
+        if (electrodeCollider.bounds.Intersects(current.bounds) && !GamificationManager.instance.Vandegraaf1electrodeEnabled)
         {
             electrode.SetActive(true);
-            GamificationManager.instance.vandegraaf1electrodeEnabled = true;
+            GamificationManager.instance.Vandegraaf1electrodeEnabled = true;
             unfinishedItems--;
             return true;
         }
@@ -86,10 +86,10 @@ public class BuildVandegraaf1 : MonoBehaviour
     {
 
 
-        if (generatorCollider.bounds.Intersects(current.bounds) && !GamificationManager.instance.vandegraaf1generatorEnabled)
+        if (generatorCollider.bounds.Intersects(current.bounds) && !GamificationManager.instance.Vandegraaf1generatorEnabled)
         {
             generator.SetActive(true);
-            GamificationManager.instance.vandegraaf1generatorEnabled = true;
+            GamificationManager.instance.Vandegraaf1generatorEnabled = true;
             unfinishedItems--;
             return true;
         }

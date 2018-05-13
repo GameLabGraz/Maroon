@@ -8,14 +8,14 @@ public class ClockSmall : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        if (GamificationManager.instance.gameStarted)
-             this.transform.rotation = GamificationManager.instance.clockSmallRotation;
+        if (GamificationManager.instance.GameStarted)
+             this.transform.rotation = GamificationManager.instance.ClockSmallRotation;
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        GamificationManager.instance.clockSmallRotation = this.transform.rotation;
+        GamificationManager.instance.ClockSmallRotation = this.transform.rotation;
     }
 }
