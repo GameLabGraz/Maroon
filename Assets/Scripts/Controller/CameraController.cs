@@ -122,11 +122,4 @@ public class CameraController : MonoBehaviour
         transform.Translate(zoom);
     }
 
-  // OnGUI is called once per frame
-  public void OnGUI()
-  {
-    // show controls on top left corner
-    GUI.Label(new Rect(10f, 10f, 300f, 200f), string.Format("[ESC] - Leave"));
-  }
-
 }
