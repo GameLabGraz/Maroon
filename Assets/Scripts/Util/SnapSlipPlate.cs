@@ -4,6 +4,9 @@ using VRTK;
 public class SnapSlipPlate : MonoBehaviour
 {
     [SerializeField]
+    private WaterPlane waterPlane;
+
+    [SerializeField]
     private Rigidbody plateHandleBodyRight;
 
     [SerializeField]
@@ -48,6 +51,11 @@ public class SnapSlipPlate : MonoBehaviour
         snappedPlate.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionY;
 
         snappedPlate.InteractableObjectGrabbed += OnSnappedPlateGrabbed;
+
+        // Register all plate wave generators
+        WaveGenerator[] generators = snappedPlate.GetComponentsInChildren<WaveGenerator>();
+        foreach (WaveGenerator generator in generators)
+            waterPlane.RegisterWaveGenerator(generator);
     }
 
     private void OnSnappedPlateGrabbed(object sender, InteractableObjectEventArgs e)
@@ -55,6 +63,11 @@ public class SnapSlipPlate : MonoBehaviour
         // Destroy all current joints
         foreach (Joint joint in snappedPlate.GetComponents<Joint>())
             Destroy(joint);
+
+        // Unregister all plate wave generators
+        WaveGenerator[] generators = snappedPlate.GetComponentsInChildren<WaveGenerator>();
+        foreach (WaveGenerator generator in generators)
+            waterPlane.UnregisterWaveGenerator(generator);
 
         LoadPreviousState();
 

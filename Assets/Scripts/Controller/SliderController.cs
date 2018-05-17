@@ -38,6 +38,16 @@ public class SliderController : VRTK_Slider, IResetObject
             controlEvents = gameObject.AddComponent<VRTK_Control_UnityEvents>();
         }
 
+        if (ValueText != null)
+        {
+            if (options.Count > 0)
+                ValueText.text = options[(int)GetValue()];
+            else if (isInteger)
+                ValueText.text = ((int)GetValue()).ToString();
+            else
+                ValueText.text = GetValue().ToString("0.00");
+        }
+
         controlEvents.OnValueChanged.AddListener(HandleChange);
     }
 

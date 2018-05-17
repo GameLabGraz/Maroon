@@ -6,7 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(MeshRenderer))]
 
 [ExecuteInEditMode]
-public class WaterPlane : PausableObject
+public class WaterPlane : PausableObject, IResetObject
 {
     [SerializeField]
     private int verticesPerLength = 40;
@@ -129,7 +129,6 @@ public class WaterPlane : PausableObject
         for (int i = 0; i < waveVertices.Length; i++)
         {
             Vector3 waveVertex = waveVertices[i];
-
             waveVertex.y = GetTotalWaveValue(waveVertex);
 
             waveVertices[i] = waveVertex;
@@ -139,5 +138,21 @@ public class WaterPlane : PausableObject
 
         planeMesh.vertices = waveVertices;
         planeMesh.RecalculateBounds();
+    }
+
+    public void resetObject()
+    {
+        for (int i = 0; i < waveVertices.Length; i++)
+        {
+            Vector3 waveVertex = waveVertices[i];
+            waveVertex.y = 0;
+
+            waveVertices[i] = waveVertex;
+        }
+
+        planeMesh.vertices = waveVertices;
+        planeMesh.RecalculateBounds();
+
+        time = 0;
     }
 }
