@@ -23,10 +23,14 @@ public class WaterPlane : PausableObject, IResetObject
     [SerializeField]
     private List<WaveGenerator> waveGenerators = new List<WaveGenerator>();
 
+    [SerializeField]
+    private uint updateRate = 5;
+
     private Vector3[] waveVertices;
 
     private float time = 0;
 
+    private ulong updateCount = 0;
 
     protected override void Start()
     {
@@ -126,6 +130,10 @@ public class WaterPlane : PausableObject, IResetObject
 
     protected override void HandleFixedUpdate()
     {
+        if (updateCount++ % updateRate != 0)
+            return;
+
+
         for (int i = 0; i < waveVertices.Length; i++)
         {
             Vector3 waveVertex = waveVertices[i];
