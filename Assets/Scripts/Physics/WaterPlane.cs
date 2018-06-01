@@ -26,7 +26,7 @@ public class WaterPlane : PausableObject, IResetObject
     [SerializeField]
     private uint updateRate = 5;
 
-    private Vector3[] waveVertices;
+    private Vector3[] waveVertices; 
 
     private float time = 0;
 
@@ -34,6 +34,9 @@ public class WaterPlane : PausableObject, IResetObject
 
     protected override void Start()
     {
+        //GetComponent<Renderer>().sharedMaterial.SetColor("_ColorMin", Color.red);
+        //GetComponent<Renderer>().sharedMaterial.SetColor("_ColorMax", Color.blue);
+
         base.Start();
 
         if (planeMesh == null)
