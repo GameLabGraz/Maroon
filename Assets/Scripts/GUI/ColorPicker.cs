@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using VRTK;
 
 public class ColorPicker : MonoBehaviour
@@ -10,7 +9,7 @@ public class ColorPicker : MonoBehaviour
 
     private float hue, saturation, value = 1f;
 
-    private GameObject blackWheel;
+    private GameObject colorWheel;
 
 
 	void Start ()
@@ -21,7 +20,7 @@ public class ColorPicker : MonoBehaviour
             return;
         }
 
-        blackWheel = transform.Find("CanvasHolder/Canvas/BlackWheel").gameObject;
+        colorWheel = transform.Find("ColorWheel").gameObject;
 
         GetComponent<VRTK_ControllerEvents>().TouchpadAxisChanged += new ControllerInteractionEventHandler(DoTouchpadAxisChanged);
 	}
@@ -38,10 +37,12 @@ public class ColorPicker : MonoBehaviour
 
     private void ChangeValue(Vector2 touchpadAxis)
     {
-        this.value = (touchpadAxis.y + 1) / 2;
-        Color currColor = blackWheel.GetComponent<Image>().color;
-        currColor.a = 1 - this.value;
-        blackWheel.GetComponent<Image>().color = currColor;
+        value = (touchpadAxis.y + 1) / 2;
+        Color currColor = colorWheel.GetComponent<Renderer>().material.color;
+        currColor.r = value;
+        currColor.g = value;
+        currColor.b = value;
+        colorWheel.GetComponent<Renderer>().material.color = currColor;
     }
 
     private void ChangeHueSaturation(Vector2 touchpadAxis, float touchpadAngle)
@@ -49,8 +50,6 @@ public class ColorPicker : MonoBehaviour
         float normalAngle = touchpadAngle - 90;
         if (normalAngle < 0)
             normalAngle += 360;
-
-        Debug.Log("ChangeHueSaturation: axis: " + touchpadAxis + " angle: " + normalAngle);
 
         float rads = normalAngle * Mathf.Deg2Rad;
         float maxX = Mathf.Cos(rads);
@@ -62,16 +61,13 @@ public class ColorPicker : MonoBehaviour
         float percentX = Mathf.Abs(currX / maxX);
         float percentY = Mathf.Abs(currY / maxY);
 
-        this.hue = normalAngle / 360f;
-        this.saturation = (percentX + percentY) / 2;
-
-        Debug.Log(this.hue + " " + this.saturation);
+        hue = normalAngle / 360f;
+        saturation = (percentX + percentY) / 2;
     }
 
     private void UpdateColor()
     {
-        Color color = Color.HSVToRGB(this.hue, this.saturation, this.value);
+        Color color = Color.HSVToRGB(hue, saturation, value);
         colorCube.GetComponent<Renderer>().material.color = color;
     }
-
 }
