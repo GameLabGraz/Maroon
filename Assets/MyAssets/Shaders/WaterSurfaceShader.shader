@@ -3,7 +3,7 @@
 	Properties
 	{
 		_MainTex("Base (RGB)", 2D) = "white" {}
-	_HeightMin("Height Min", Float) = -1
+		_HeightMin("Height Min", Float) = -1
 		_HeightMax("Height Max", Float) = 1
 		_ColorMin("Tint Color At Min", Color) = (0,0,0,1)
 		_ColorMax("Tint Color At Max", Color) = (1,1,1,1)
@@ -18,7 +18,7 @@
 #pragma fragment frag
 #include "UnityCG.cginc"
 
-		float _HeightMax;
+	float _HeightMax;
 	float _HeightMin;
 	fixed4 _ColorMin;
 	fixed4 _ColorMax;

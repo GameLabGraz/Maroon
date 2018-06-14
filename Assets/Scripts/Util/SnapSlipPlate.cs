@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using VRTK;
 
-public class SnapSlipPlate : MonoBehaviour
+public class SnapSlipPlate : MonoBehaviour, IResetObject
 {
     [SerializeField]
     private WaterPlane waterPlane;
@@ -16,10 +16,6 @@ public class SnapSlipPlate : MonoBehaviour
     private Vector3 plateScale = Vector3.one;
 
     private VRTK_InteractableObject snappedPlate = null;
-
-    private FixedJoint handleJointRight;
-
-    private FixedJoint handleJointLeft;
 
     private Vector3 previousPlateScale;
             
@@ -42,20 +38,17 @@ public class SnapSlipPlate : MonoBehaviour
         snappedPlate.transform.localScale = plateScale;
 
         // Create Handle Joints
-        handleJointRight = snappedPlate.gameObject.AddComponent<FixedJoint>();
+        FixedJoint handleJointRight = snappedPlate.gameObject.AddComponent<FixedJoint>();
         handleJointRight.connectedBody = plateHandleBodyRight;
 
-        handleJointLeft = snappedPlate.gameObject.AddComponent<FixedJoint>();
+        FixedJoint handleJointLeft = snappedPlate.gameObject.AddComponent<FixedJoint>();
         handleJointLeft.connectedBody = plateHandleBodyLeft;
 
         snappedPlate.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionY;
 
         snappedPlate.InteractableObjectGrabbed += OnSnappedPlateGrabbed;
 
-        // Register all plate wave generators
-        WaveGenerator[] generators = snappedPlate.GetComponentsInChildren<WaveGenerator>();
-        foreach (WaveGenerator generator in generators)
-            waterPlane.RegisterWaveGenerator(generator);
+        RegisterPlateWaveGenerators();
     }
 
     private void OnSnappedPlateGrabbed(object sender, InteractableObjectEventArgs e)
@@ -64,15 +57,27 @@ public class SnapSlipPlate : MonoBehaviour
         foreach (Joint joint in snappedPlate.GetComponents<Joint>())
             Destroy(joint);
 
-        // Unregister all plate wave generators
-        WaveGenerator[] generators = snappedPlate.GetComponentsInChildren<WaveGenerator>();
-        foreach (WaveGenerator generator in generators)
-            waterPlane.UnregisterWaveGenerator(generator);
-
+        UnregisterPlateWaveGenerators();
         LoadPreviousState();
 
         snappedPlate.InteractableObjectGrabbed -= OnSnappedPlateGrabbed;
         snappedPlate = null;
+    }
+
+    private void RegisterPlateWaveGenerators()
+    {
+        // Register all plate wave generators
+        WaveGenerator[] generators = snappedPlate.GetComponentsInChildren<WaveGenerator>();
+        foreach (WaveGenerator generator in generators)
+            waterPlane.RegisterWaveGenerator(generator);
+    }
+
+    private void UnregisterPlateWaveGenerators()
+    {
+        // Unregister all plate wave generators
+        WaveGenerator[] generators = snappedPlate.GetComponentsInChildren<WaveGenerator>();
+        foreach (WaveGenerator generator in generators)
+            waterPlane.UnregisterWaveGenerator(generator);
     }
 
     private void StorePreviousState()
@@ -85,5 +90,14 @@ public class SnapSlipPlate : MonoBehaviour
     {
         snappedPlate.transform.localScale = previousPlateScale;
         snappedPlate.GetComponent<Rigidbody>().constraints = previousPlateBodyConstraints;
+    }
+
+    public void resetObject()
+    {
+        UnregisterPlateWaveGenerators();
+        LoadPreviousState();
+
+        snappedPlate.InteractableObjectGrabbed -= OnSnappedPlateGrabbed;
+        snappedPlate = null;
     }
 }

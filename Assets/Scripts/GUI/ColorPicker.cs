@@ -5,14 +5,17 @@ public class ColorPicker : MonoBehaviour
 {
 
     [SerializeField]
-    private GameObject colorCube;
+    private GameObject colorObject;
+
+    [SerializeField]
+    private string colorPropertyName = "_Color";
 
     private float hue, saturation, value = 1f;
 
     private GameObject colorWheel;
 
 
-	void Start ()
+	private void Awake ()
     {
 	    if(GetComponent<VRTK_ControllerEvents>() == null)
         {
@@ -21,9 +24,20 @@ public class ColorPicker : MonoBehaviour
         }
 
         colorWheel = transform.Find("ColorWheel").gameObject;
+    }
 
-        GetComponent<VRTK_ControllerEvents>().TouchpadAxisChanged += new ControllerInteractionEventHandler(DoTouchpadAxisChanged);
-	}
+    private void OnEnable()
+    {
+        GetComponent<VRTK_ControllerEvents>().TouchpadAxisChanged += DoTouchpadAxisChanged;
+        colorWheel.SetActive(true);
+    }
+
+    private void OnDisable()
+    {
+        GetComponent<VRTK_ControllerEvents>().TouchpadAxisChanged -= DoTouchpadAxisChanged;
+        colorWheel.SetActive(false);
+    }
+
 
     private void DoTouchpadAxisChanged(object sender, ControllerInteractionEventArgs e)
     {
@@ -67,7 +81,6 @@ public class ColorPicker : MonoBehaviour
 
     private void UpdateColor()
     {
-        Color color = Color.HSVToRGB(hue, saturation, value);
-        colorCube.GetComponent<Renderer>().material.color = color;
+        colorObject.GetComponent<Renderer>().material.SetColor(colorPropertyName, Color.HSVToRGB(hue, saturation, value));
     }
 }
