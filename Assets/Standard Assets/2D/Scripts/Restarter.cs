@@ -10,11 +10,7 @@ namespace UnityStandardAssets._2D
         {
             if (other.tag == "Player")
             {
-                //Application.LoadLevel(Application.loadedLevelName);
-
-                // fix 2 warnings
                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-
             }
         }
     }

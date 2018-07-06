@@ -7,6 +7,7 @@
 
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 namespace DigitalRuby.ThunderAndLightning
 {
@@ -147,7 +148,7 @@ namespace DigitalRuby.ThunderAndLightning
 
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                Application.LoadLevel(0);
+                SceneManager.LoadScene(0);
             }
         }
 

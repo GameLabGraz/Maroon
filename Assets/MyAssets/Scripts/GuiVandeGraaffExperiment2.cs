@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class GuiVandeGraaffExperiment2 : MonoBehaviour {
 
@@ -56,7 +57,7 @@ public class GuiVandeGraaffExperiment2 : MonoBehaviour {
 		// check if [ESC] was pressed
 		if (Input.GetKeyDown (KeyCode.Escape)) 
 		{
-			Application.LoadLevel("Laboratory");
+            SceneManager.LoadScene("Laboratory");
 		}
 	}
 

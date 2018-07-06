@@ -34,7 +34,6 @@ public class ReturnToMainMenu : MonoBehaviour
     public void GoBackToMainMenu()
     {
         Debug.Log("going back to main menu");
-        //Application.LoadLevel("MainMenu");
         SceneManager.LoadScene("MainMenu");
     }
 }
