@@ -1,4 +1,6 @@
-﻿Shader "Custom/LightningBoltShaderMesh"
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Custom/LightningBoltShaderMesh"
 {
 	Properties
 	{
@@ -155,7 +157,7 @@
 					float4 tangent = float4(cross(directionBackwardsNormalized, directionToCamera), 0);
 					dirModifier = v.dir.w / absRadius;
 					float4 directionSideways = (tangent * lineMultiplier * dirModifier * jitter);
-					o.pos = mul(UNITY_MATRIX_MVP, v.vertex + directionBackwards + directionSideways + turbulenceDirection);
+					o.pos = UnityObjectToClipPos(v.vertex + directionBackwards + directionSideways + turbulenceDirection);
 				}
 				else
 				{
@@ -165,7 +167,7 @@
 					float2 tangent = normalize(float2(-v.dir2.y, v.dir2.x));
 					dirModifier = v.dir.w / absRadius;
 					float4 directionSideways = float4(tangent * lineMultiplier * dirModifier * jitter, 0, 0);
-					o.pos = mul(UNITY_MATRIX_MVP, v.vertex + directionBackwards + directionSideways + turbulenceDirection);
+					o.pos = UnityObjectToClipPos(v.vertex + directionBackwards + directionSideways + turbulenceDirection);
 				}
 
 				#else
@@ -181,7 +183,7 @@
 				// use right and down vectors to billboard
 				float4 offset = (particleSize * ((texCoordX * UNITY_MATRIX_IT_MV[0]) + ((v.texcoord.y - 0.5) * -UNITY_MATRIX_IT_MV[1])));
 				pivot += offset;
-				o.pos = mul(UNITY_MATRIX_MVP, pivot);
+				o.pos = UnityObjectToClipPos(pivot);
 				
 				#endif
 
@@ -252,14 +254,14 @@
 					float3 directionToCamera = (_WorldSpaceCameraPos - worldPos);
 					float3 tangent = cross(v.dir.xyz, directionToCamera);
 					float4 offset = float4(normalize(tangent) * v.dir.w, 0);
-					o.pos = mul(UNITY_MATRIX_MVP, worldPos + (offset * jitter) + turbulenceDirection);
+					o.pos = UnityObjectToClipPos(worldPos + (offset * jitter) + turbulenceDirection);
 				}
 				else
 				{
 					float4 turbulenceDirection = float4(turbulenceVelocity.xy, 0, 0) + (float4(normalize(v.dir).xy, 0, 0) * turbulence);
 					float2 tangent = normalize(float2(-v.dir.y, v.dir.x));
 					float4 offset = float4(tangent * v.dir.w, 0, 0);
-					o.pos = mul(UNITY_MATRIX_MVP, worldPos + (offset * jitter) + turbulenceDirection);
+					o.pos = UnityObjectToClipPos(worldPos + (offset * jitter) + turbulenceDirection);
 				}
 				o.texcoord = v.texcoord;
                 o.color = (lerpColor(v.color) * _TintColor);
