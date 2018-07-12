@@ -35,8 +35,8 @@ public class ColliderEntered : MonoBehaviour {
 	{
 		if (Input.GetKeyDown (KeyCode.E) && this.insideTriggerSphere) {
 			Debug.Log(LevelName);
-            SceneManager.LoadScene(LevelName);		
-		}
+            SceneManager.LoadScene(LevelName);
+        }
 	}
 
 	public void OnGUI()

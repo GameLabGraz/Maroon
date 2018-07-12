@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 using DigitalRuby.ThunderAndLightning;
+using UnityEngine.UI;
 
 public class SparkingController : MonoBehaviour {
 
 	public GameObject sparkingStartPoint;
 	public GameObject sparkingEndPoint;
-	public bool showDistance;
+    public LightningBoltScript lightningbolt;
+    public bool showDistance;
 	/// <summary>
 	/// The normalization factor to get the distance in meters.
 	/// The VdG sphere should have a diameter of 1m. The in-game diameter
@@ -15,6 +17,7 @@ public class SparkingController : MonoBehaviour {
 	public float normalizationFactor = 0.476f;
 	public GameObject vandeGraaff;
 	public float emax = 3e06f;
+    public Text distanceText;
 
 	private VandeGraaffController vandeGraaffController;
 	private AudioSource sound;
@@ -39,9 +42,10 @@ public class SparkingController : MonoBehaviour {
 	{
 		float vandeGraaffVoltage = this.vandeGraaffController.GetVoltage ();
 		float distance = this.GetDistanceBetweenSparkingPoints ();
+	    distanceText.text = "Distance: " + GetDistanceBetweenSparkingPoints().ToString("0.000") + " m";
 
-		// check if electric breakdown voltage of air is reached
-		if (vandeGraaffVoltage >= emax * distance) {
+        // check if electric breakdown voltage of air is reached
+        if (vandeGraaffVoltage >= emax * distance) {
 			// generate spark
 			this.GenerateSpark();
 			this.sound.Play();
@@ -61,8 +65,7 @@ public class SparkingController : MonoBehaviour {
 
 	public void GenerateSpark()
 	{
-		// Important, make sure this script is assigned properly, or you will get null ref exceptions.
-		DigitalRuby.ThunderAndLightning.LightningBoltScript script = gameObject.GetComponent<DigitalRuby.ThunderAndLightning.LightningBoltScript>();
+        // Important, make sure this script is assigned properly, or you will get null ref exceptions.
 		int count = 1;
 		float duration = 0.25f;
 		float delay = 0.0f;
@@ -97,7 +100,7 @@ public class SparkingController : MonoBehaviour {
 				FadePercent = fadePercent, // set to 0 to disable fade in / out
 				GrowthMultiplier = growthMultiplier
 			};
-			script.CreateLightningBolt(parameters);
+			lightningbolt.CreateLightningBolt(parameters);
 			delay += (singleDuration * (((float)r.NextDouble() * 0.8f) + 0.4f));
 		}
 	}

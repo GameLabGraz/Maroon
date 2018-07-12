@@ -1,13 +1,15 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+[Serializable]
 public class Lecture 
 {
 	/// <summary>
 	/// The name of the lecture.
 	/// </summary>
-	private string name;
+	public string name;
 	/// <summary>
 	/// The URLs of the web content.
 	/// </summary>
@@ -17,19 +19,30 @@ public class Lecture
 	/// </summary>
 	private List<WWW> webContents;
 
-	public string Name { get{ return this.name; } }
-	public List<string> ContentUrls { get{ return this.urls; } }
-	public List<WWW> WebContents { get{ return this.webContents; } }
+	public string Name { get{ return name; } }
+	public List<string> ContentUrls { get{ return urls; } }
+	public List<WWW> WebContents { get{ return webContents; } }
+    public List<Texture> textures = new List<Texture>();
+
+    public bool usingLocalTextures;
+
+    public Lecture(string name, List<Texture> textures)
+    {
+        this.name = name;
+        this.textures.AddRange(textures);
+        usingLocalTextures = true;
+    }
 
 	public Lecture(string name, List<string> urls) {
 		this.name = name;
-		this.webContents = new List<WWW>();
-		this.StartLoadingWebContents (urls);
+		webContents = new List<WWW>();
+		StartLoadingWebContents (urls);
+	    usingLocalTextures = false;
 	}
 
 	public bool IsDone()
 	{
-		foreach (WWW www in this.webContents) {
+		foreach (WWW www in webContents) {
 			if(null != www) {
 				if(!www.isDone)
 					return false;
@@ -45,9 +58,9 @@ public class Lecture
 	public void StartLoadingWebContents(List<string> urls)
 	{
 		this.urls = urls;
-		this.webContents.Clear ();
+		webContents.Clear ();
 		foreach (string url in urls) {
-			this.webContents.Add(new WWW(url));
+			webContents.Add(new WWW(url));
 		}
 	}
 
@@ -57,7 +70,7 @@ public class Lecture
 	/// </summary>
 	public void StartReloadingFailedWebContents()
 	{
-		foreach (WWW www in this.webContents) 
+		foreach (WWW www in webContents) 
 		{
 			if(www.isDone && !www.error.Equals(string.Empty))
 			{

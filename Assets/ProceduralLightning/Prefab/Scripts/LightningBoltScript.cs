@@ -18,6 +18,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Rendering;
 
 namespace DigitalRuby.ThunderAndLightning
 {
@@ -1475,7 +1476,7 @@ namespace DigitalRuby.ThunderAndLightning
             yield return new WaitForSeconds(delay);
 
             p.transform.position = pos;
-            p.Emit((int)p.emissionRate);
+            p.Emit((int)p.emission.rate.constantMax);
         }
 
         private void GenerateLightningBolt(Vector3 start, Vector3 end, int generation, int totalGenerations, float offsetAmount,

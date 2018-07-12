@@ -15,8 +15,8 @@ public class GuiTriboelectricExperiment : MonoBehaviour {
 	public void Update()
 	{
 		// check if [ESC] was pressed
-		if (Input.GetKeyDown (KeyCode.Escape)) 
-		{
+		if (Input.GetKeyDown (KeyCode.Escape))
+        {
             SceneManager.LoadScene("Laboratory");
 		}
 	}

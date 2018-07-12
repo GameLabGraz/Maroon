@@ -4,21 +4,21 @@ using System.Collections.Generic;
 
 public class QuizController : MonoBehaviour 
 {
-	private List<Quiz> quizzes;
-	private Quiz selectedQuiz;
-	private int currentQuestionIndex;
-	private Object lockObject = new Object();
+	List<Quiz> quizzes;
+	Quiz selectedQuiz;
+	int currentQuestionIndex;
+	Object lockObject = new Object();
 
-	public List<Quiz> Quizzes { get{ return this.quizzes; }}
-	public Quiz SelectedQuiz { get{ return this.selectedQuiz; } }
-	public int CurrentQuestionIndex { get{ return this.currentQuestionIndex; } }
+	public List<Quiz> Quizzes { get{ return quizzes; }}
+	public Quiz SelectedQuiz { get{ return selectedQuiz; } }
+	public int CurrentQuestionIndex { get{ return currentQuestionIndex; } }
 
 	public void Start () {
-		this.currentQuestionIndex = -1;
+		currentQuestionIndex = -1;
 
 		// ---- REMOVE WHEN DONE
 		// Create some dummy quizzes - TO BE REPLACED with dynamic loading from XML
-		this.quizzes = new List<Quiz> ();
+		quizzes = new List<Quiz> ();
 		List<Question> questionsQuiz1 = new List<Question> ();
 		List<Answer> answersQuiz1Question1 = new List<Answer>();
 		answersQuiz1Question1.Add (new Answer ("Positive", true));
@@ -31,17 +31,18 @@ public class QuizController : MonoBehaviour
 		answersQuiz1Question2.Add (new Answer ("10MV/cm", false));
 		answersQuiz1Question2.Add (new Answer ("1TV/cm", false));
 		questionsQuiz1.Add (new Question ("What is the value of the breakdown voltage of air under standard conditions for temperature and pressure?", answersQuiz1Question2, Question.QuestionType.SingleAnswer));
-		this.quizzes.Add(new Quiz ("Van de Graaff Experiment 1 Quiz", questionsQuiz1));
+		quizzes.Add(new Quiz ("Van de Graaff Experiment 1 Quiz", questionsQuiz1));
 
 		List<Question> questionsQuiz2 = new List<Question> ();
 		List<Answer> answersQuiz2Question1 = new List<Answer>();
 		answersQuiz2Question1.Add (new Answer ("Conductive", true));
 		answersQuiz2Question1.Add (new Answer ("Non-Conductive", false));
 		questionsQuiz2.Add(new Question ("Is the balloon surface conductive or non-conductive?", answersQuiz2Question1, Question.QuestionType.SingleAnswer));
-		this.quizzes.Add(new Quiz ("Van de Graaff Experiment 2 Quiz", questionsQuiz2));
+		quizzes.Add(new Quiz ("Van de Graaff Experiment 2 Quiz", questionsQuiz2));
 
-		this.selectedQuiz = this.quizzes[0];
+		selectedQuiz = quizzes[0];
 		// ---------------------
+        VRQuizController.Instance.quizSelector.add(quizzes);
 	}
 
 	public void Update () {
@@ -50,21 +51,26 @@ public class QuizController : MonoBehaviour
 
 	public Quiz SelectQuiz(int quizIndex)
 	{
-		if (quizIndex < 0 || quizIndex >= this.quizzes.Count) {
+		if (quizIndex < 0 || quizIndex >= quizzes.Count) {
 			throw new  System.IndexOutOfRangeException(string.Format("Selected Quiz Index {0} out of range", quizIndex));
 		}
-		this.selectedQuiz = this.quizzes [quizIndex];
-		this.currentQuestionIndex = 0;
-		return this.selectedQuiz;
+		selectedQuiz = quizzes [quizIndex];
+		currentQuestionIndex = 0;
+		return selectedQuiz;
 	}
+
+    public void SelectQuiz(Quiz quiz)
+    {
+        SelectQuiz(quizzes.IndexOf(quiz));
+    }
 
 	public Question GetCurrentQuestion()
 	{
-		if (null == this.selectedQuiz.Questions)
+		if (null == selectedQuiz.Questions)
 			throw new System.NullReferenceException("Questions list in selected quizz is null");
-		lock (this.lockObject) {
-			if (this.currentQuestionIndex >= 0 && this.selectedQuiz.Questions.Count > this.currentQuestionIndex) {
-				return this.selectedQuiz.Questions[this.currentQuestionIndex];
+		lock (lockObject) {
+			if (currentQuestionIndex >= 0 && selectedQuiz.Questions.Count > currentQuestionIndex) {
+				return selectedQuiz.Questions[currentQuestionIndex];
 			}
 		}
 		return null;
@@ -72,11 +78,11 @@ public class QuizController : MonoBehaviour
 
 	public Question GetNextQuestion()
 	{
-		if (null == this.selectedQuiz.Questions)
+		if (null == selectedQuiz.Questions)
 			throw new System.NullReferenceException("Questions list in selected quizz is null");
-		lock (this.lockObject) {
-			if (this.currentQuestionIndex >= 0 && this.selectedQuiz.Questions.Count > this.currentQuestionIndex + 1) {
-				return this.selectedQuiz.Questions[++this.currentQuestionIndex];
+		lock (lockObject) {
+			if (currentQuestionIndex >= 0 && selectedQuiz.Questions.Count > currentQuestionIndex + 1) {
+				return selectedQuiz.Questions[++currentQuestionIndex];
 			}
 		}
 		return null;

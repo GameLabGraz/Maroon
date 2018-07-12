@@ -48,7 +48,16 @@ public class FieldLineScript: MonoBehaviour {
     private Func<Vector3,int,int,Vector3> field;
     private Func<Vector3,Vector3> calculate;
 
-	void Start() {
+    void Awake()
+    {
+        
+#if UNITY_ANDROID && !UNITY_EDITOR
+        numberOfSegments /= 2;
+        segmentLength *= 2f;
+#endif
+    }
+
+    void Start() {
 	    if (!electromagneticFieldController) {
 	        electromagneticFieldController = GameObject.Find("ElectromagneticFieldController");
 	        if (!electromagneticFieldController) {
@@ -83,8 +92,9 @@ public class FieldLineScript: MonoBehaviour {
 	    else if (accuracy == Accuracy.RungeKuttaMethod) {
 	        calculate = RungeKuttaMethod;
 	    }
-	}
-	
+
+    }
+    
 	Vector3 EulersMethod(Vector3 pos) {
 	    Vector3 k1 = field(pos, -1, 0);
 	    if (k1 == Vector3.zero) { throw new System.Exception(); }
@@ -121,11 +131,12 @@ public class FieldLineScript: MonoBehaviour {
             Vector3 step = Vector3.zero;
             int i;
             for (i = 1;  i < numberOfSegments;  i++) {
+
                 try {
                     step = calculate(pos);
                 }
                 catch { }
-                
+
                 if (i > 1) {
                     if (Vector3.Dot(lastStep, step) < backTolerance) {
                         break;

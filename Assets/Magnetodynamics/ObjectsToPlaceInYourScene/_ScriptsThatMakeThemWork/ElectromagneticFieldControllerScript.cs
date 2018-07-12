@@ -1,7 +1,14 @@
+#define USE_ARRAY
+//#define USE_LIST
+//#define USE_SINGLE_DIMENSIONAL_LIST
+//#define USE_DICTIONARY
 using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using Debug = UnityEngine.Debug;
 
 public class ElectromagneticFieldControllerScript : MonoBehaviour {
     // This keeps track of the world's magnetic (and electric) fields and makes sure that we don't let a magnetic dipole exert a force on itself (which would be infinite in classical physics).
@@ -269,7 +276,10 @@ public class ElectromagneticFieldControllerScript : MonoBehaviour {
     }
     
     // FixedUpdate applies all forces among static charges and external electric fields, and among magnetic dipoles and external magnetic fields.
-    void FixedUpdate() {
+    void FixedUpdate()
+    {
+        //Debug.Log("iterations: " + iterationCount);
+        iterationCount = 0;
         int rigidbodyId = 0;
         foreach (Rigidbody rigidbody in rigidbodies) {
             if (!rigidbody) {
@@ -350,30 +360,142 @@ public class ElectromagneticFieldControllerScript : MonoBehaviour {
     }
     
     // Public functions for anyone to calculate the electric or magnetic force at a point.  The "rigidbodyId" option allows the caller to ignore all charges/dipoles from a given rigidbody.
-    
-    public Vector3 ElectricField(Vector3 pos, int rigidbodyId = -1, int excludeConductors = 0) {
+
+    int iterationCount = 0;
+#if USE_LIST
+    List<List<Vector3>> positions = new List<List<Vector3>>();
+    List<List<float>> strengths = new List<List<float>>();
+    List<int> rids = new List<int>();
+#endif
+#if USE_SINGLE_DIMENSIONAL_LIST
+    List<Vector3> positions = new List<Vector3>();
+    List<float> strengths = new List<float>();
+    List<int> rids = new List<int>();
+#endif
+
+#if USE_ARRAY
+    Vector3[] positions;
+    float[] strengths;
+    int[] rids;
+#endif
+    System.Diagnostics.Stopwatch sw = new Stopwatch();
+    int framesCount = 0;
+
+    public Vector3 ElectricField(Vector3 pos, int rigidbodyId = -1, int excludeConductors = 0)
+    {
         // I absorbed the 1/(4pi epsilon0) factor into the units of electric charge strength.
         Vector3 E = ambientElectricField;
-
-        foreach (Func<Vector3,Vector3> fieldFunction in electricFieldFunctions) {
-            E += fieldFunction(pos);
-        }
         
+        if (iterationCount == 0)
+        {
+            framesCount++;
+            if (framesCount % 500 == 0 && framesCount > 0)
+            {
+                //Debug.Log(sw.ElapsedMilliseconds);
+                sw.Reset();
+            }
+#if USE_LIST
+            positions.Clear();
+            strengths.Clear();
+            rids.Clear();
+
+            foreach (int key in staticChargePosition.Keys)
+            {
+                positions.Add(staticChargePosition[key].Values.ToList());
+                strengths.Add(staticChargeStrength[key].Values.ToList());
+                rids.Add(key);
+            }
+#endif
+
+#if USE_SINGLE_DIMENSIONAL_LIST
+            positions.Clear();
+            strengths.Clear();
+            rids.Clear();
+            rids = staticChargePosition.Keys.ToList();
+            foreach (int key in rids)
+            {
+                positions.Add(staticChargePosition[key].Values.First());
+                strengths.Add(staticChargeStrength[key].Values.First());
+            }
+#endif
+
+#if USE_ARRAY
+            positions = new Vector3[staticChargeCount];
+            strengths = new float[staticChargeCount];
+            rids = staticChargePosition.Keys.ToArray();
+            int[] strengthKeys = staticChargePosition.Keys.ToArray();
+            for (int i = 0; i < staticChargeCount; i++)
+            {
+                positions[i] = staticChargePosition[rids[i]].Values.First();
+                strengths[i] = staticChargeStrength[strengthKeys[i]].Values.First();
+            }
+#endif
+        }
+        iterationCount++;
+
+        sw.Start();
+
+#if USE_LIST
+        for (int i = 0; i < staticChargeCount; i++)
+        {
+            if (rids[i] != rigidbodyId  &&  (rigidbodyId < 0  || !Colliding(rids[i], rigidbodyId)))
+            {
+                Vector3 opos = positions[i][0];
+                float ostr = strengths[i][0];
+
+                Vector3 r = (pos - opos);
+                E += r.normalized * ostr / r.sqrMagnitude / (4.0f * Mathf.PI * 8.8541878176e-12f);
+            }
+        }
+#endif
+#if USE_SINGLE_DIMENSIONAL_LIST
+        for (int i = 0; i < staticChargeCount; i++)
+        {
+            if (rids[i] != rigidbodyId && (rigidbodyId < 0 || !Colliding(rids[i], rigidbodyId)))
+            {
+                Vector3 opos = positions[i];
+                float ostr = strengths[i];
+
+                Vector3 r = (pos - opos);
+                E += r.normalized * ostr / r.sqrMagnitude / (4.0f * Mathf.PI * 8.8541878176e-12f);
+            }
+        }
+#endif
+#if USE_ARRAY
+        for (int i = 0; i <staticChargeCount; i++)
+        {
+            if (rids[i] != rigidbodyId && (rigidbodyId < 0 || !Colliding(rids[i], rigidbodyId)))
+            {
+                    Vector3 opos = positions[i];
+                    float ostr = strengths[i];
+
+                    Vector3 r = (pos - opos);
+                    E += r.normalized * ostr / r.sqrMagnitude / (4.0f * Mathf.PI * 8.8541878176e-12f);
+            }
+        }
+#endif
+#if USE_DICTIONARY
+        //original version
+
         foreach (int rId in staticChargePosition.Keys) {
-            if (rId != rigidbodyId  &&  (rigidbodyId < 0  ||  !Colliding(rId, rigidbodyId))) {
-                foreach (int sId in staticChargePosition[rId].Keys) {
+            if (rId != rigidbodyId  &&  (rigidbodyId < 0  || !Colliding(rId, rigidbodyId)))
+            {
+                foreach (int sId in staticChargePosition[rId].Keys)
+                {
                     Vector3 opos = staticChargePosition[rId][sId];
                     float ostr = staticChargeStrength[rId][sId];
 
                     Vector3 r = (pos - opos);
-                    E += ostr * r.normalized/r.sqrMagnitude / (4.0f*Mathf.PI*8.8541878176e-12f);
+                    E += r.normalized * ostr / r.sqrMagnitude / (4.0f*Mathf.PI*8.8541878176e-12f);
                 }
             }
         }
-
+#endif
+        sw.Stop();
         return E;
+        
     }
-    
+
     public Vector3 MagneticField(Vector3 pos, int rigidbodyId = -1, int excludeSuperconductors = 0) {
         Vector3 B = ambientMagneticField;
 
