@@ -32,11 +32,12 @@ public class WaterPlane : PausableObject, IResetObject
 
     private ulong updateCount = 0;
 
+    private Color startMinColor;
+
+    private Color startMaxColor;
+
     protected override void Start()
     {
-        //GetComponent<Renderer>().sharedMaterial.SetColor("_ColorMin", Color.red);
-        //GetComponent<Renderer>().sharedMaterial.SetColor("_ColorMax", Color.blue);
-
         base.Start();
 
         if (planeMesh == null)
@@ -45,6 +46,9 @@ public class WaterPlane : PausableObject, IResetObject
         }
 
         waveVertices = planeMesh.vertices;
+
+        startMinColor = GetComponent<Renderer>().material.GetColor("_ColorMin");
+        startMaxColor = GetComponent<Renderer>().material.GetColor("_ColorMax");
     }
 
     private float GetTotalWaveValue(Vector3 position)
@@ -153,6 +157,9 @@ public class WaterPlane : PausableObject, IResetObject
 
     public void resetObject()
     {
+        GetComponent<Renderer>().material.SetColor("_ColorMin", startMinColor);
+        GetComponent<Renderer>().material.SetColor("_ColorMax", startMaxColor);
+
         for (int i = 0; i < waveVertices.Length; i++)
         {
             Vector3 waveVertex = waveVertices[i];
