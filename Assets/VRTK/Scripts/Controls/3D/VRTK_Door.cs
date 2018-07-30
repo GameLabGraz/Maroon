@@ -14,6 +14,7 @@ namespace VRTK
     /// <example>
     /// `VRTK/Examples/025_Controls_Overview` shows a selection of door types, from a normal door and trapdoor, to a door with a cat-flap in the middle.
     /// </example>
+    [AddComponentMenu("VRTK/Scripts/Controls/3D/VRTK_Door")]
     public class VRTK_Door : VRTK_Control
     {
         [Tooltip("The axis on which the door should open.")]
@@ -44,16 +45,16 @@ namespace VRTK
         [Tooltip("If this is checked then only the door handle is grabbale to operate the door.")]
         public bool handleInteractableOnly = false;
 
-        private float stepSize = 1f;
-        private Rigidbody doorRigidbody;
-        private HingeJoint doorHinge;
-        private ConstantForce doorSnapForce;
-        private Rigidbody frameRigidbody;
-        private Direction finalDirection;
-        private float subDirection = 1; // positive or negative can be determined automatically since handles dictate that
-        private Vector3 secondaryDirection;
-        private bool doorHingeCreated = false;
-        private bool doorSnapForceCreated = false;
+        protected float stepSize = 1f;
+        protected Rigidbody doorRigidbody;
+        protected HingeJoint doorHinge;
+        protected ConstantForce doorSnapForce;
+        protected Rigidbody frameRigidbody;
+        protected Direction finalDirection;
+        protected float subDirection = 1; // positive or negative can be determined automatically since handles dictate that
+        protected Vector3 secondaryDirection;
+        protected bool doorHingeCreated = false;
+        protected bool doorSnapForceCreated = false;
 
         protected override void OnDrawGizmos()
         {
@@ -316,7 +317,7 @@ namespace VRTK
             return (doorHinge.limits.min < 0f ? -1f : 1f);
         }
 
-        private Vector3 Direction2Axis(Direction givenDirection)
+        protected virtual Vector3 Direction2Axis(Direction givenDirection)
         {
             Vector3 returnAxis = Vector3.zero;
 
@@ -336,7 +337,7 @@ namespace VRTK
             return returnAxis;
         }
 
-        private Direction DetectDirection()
+        protected virtual Direction DetectDirection()
         {
             Direction returnDirection = Direction.autodetect;
 
@@ -378,7 +379,7 @@ namespace VRTK
             return returnDirection;
         }
 
-        private void InitFrame()
+        protected virtual void InitFrame()
         {
             if (frame == null)
             {
@@ -394,7 +395,7 @@ namespace VRTK
             }
         }
 
-        private void InitDoor()
+        protected virtual void InitDoor()
         {
             GameObject actualDoor = GetDoor();
             VRTK_SharedMethods.CreateColliders(actualDoor);
@@ -430,7 +431,7 @@ namespace VRTK
             }
         }
 
-        private void InitHandle()
+        protected virtual void InitHandle()
         {
             if (handles == null)
             {
@@ -463,7 +464,7 @@ namespace VRTK
             }
         }
 
-        private void CreateInteractableObject(GameObject target)
+        protected virtual void CreateInteractableObject(GameObject target)
         {
             VRTK_InteractableObject targetInteractableObject = target.GetComponent<VRTK_InteractableObject>();
             if (targetInteractableObject == null)
@@ -480,22 +481,22 @@ namespace VRTK
             targetInteractableObject.InteractableObjectUngrabbed += InteractableObjectUngrabbed;
         }
 
-        private void InteractableObjectGrabbed(object sender, InteractableObjectEventArgs e)
+        protected virtual void InteractableObjectGrabbed(object sender, InteractableObjectEventArgs e)
         {
             doorRigidbody.angularDrag = grabbedFriction;
         }
 
-        private void InteractableObjectUngrabbed(object sender, InteractableObjectEventArgs e)
+        protected virtual void InteractableObjectUngrabbed(object sender, InteractableObjectEventArgs e)
         {
             doorRigidbody.angularDrag = releasedFriction;
         }
 
-        private float CalculateValue()
+        protected virtual float CalculateValue()
         {
             return Mathf.Round((doorHinge.angle) / stepSize) * stepSize;
         }
 
-        private GameObject GetDoor()
+        protected virtual GameObject GetDoor()
         {
             return (door ? door : gameObject);
         }

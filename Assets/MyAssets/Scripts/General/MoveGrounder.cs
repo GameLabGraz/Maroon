@@ -7,17 +7,12 @@ public class MoveGrounder : VRTK_InteractableObject
 {
     // TODO get index? of controller right or left
 
-    public override void StartUsing(GameObject usingObject)
+    public override void StartUsing(VRTK_InteractUse usingObject)
     {
         base.StartUsing(usingObject);
 
         Debug.Log("Grounder USED via pointer");
         // TODO move Application.LoadLevel(this.LevelName);
-    }
-
-    public override void StopUsing(GameObject usingObject)
-    {
-        base.StopUsing(usingObject);
     }
 
     // Update is called once per frame

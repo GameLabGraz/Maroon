@@ -6,17 +6,12 @@ public class IronFillingButtonController : VRTK_InteractableObject
     [SerializeField]
     private IronFiling ironFilling;
 
-    public override void StartUsing(GameObject usingObject)
+    public override void StartUsing(VRTK_InteractUse currentUsingObject = null)
     {
         base.StartUsing(usingObject);
 
         Debug.Log("Iron Filling Button pressed, start Iron Filling");
 
         ironFilling.generateFieldImage();
-    }
-
-    public override void StopUsing(GameObject usingObject)
-    {
-        base.StopUsing(usingObject);
     }
 }

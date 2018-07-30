@@ -9,18 +9,28 @@
         public float wireframeHeight = 2.0f;
         public bool drawWireframeWhenSelectedOnly = false;
 
-        private Transform playArea;
-        private VRTK_RoomExtender roomExtender;
+        protected Transform playArea;
+        protected VRTK_RoomExtender roomExtender;
 
         protected virtual void Awake()
+        {
+            VRTK_SDKManager.instance.AddBehaviourToToggleOnLoadedSetupChange(this);
+        }
+
+        protected virtual void OnEnable()
         {
             playArea = VRTK_DeviceFinder.PlayAreaTransform();
             roomExtender = FindObjectOfType<VRTK_RoomExtender>();
             if (playArea == null || roomExtender == null)
             {
-                Debug.LogWarning("Could not find PlayArea or 'VRTK_RoomExtender'.");
+                VRTK_Logger.Warn(VRTK_Logger.GetCommonMessage(VRTK_Logger.CommonMessageKeys.REQUIRED_COMPONENT_MISSING_FROM_GAMEOBJECT, "VRTK_RoomExtender_PlayAreaGizmo", "PlayArea or VRTK_RoomExtender", "an active"));
                 return;
             }
+        }
+
+        protected virtual void OnDestroy()
+        {
+            VRTK_SDKManager.instance.RemoveBehaviourToToggleOnLoadedSetupChange(this);
         }
 
         protected virtual void OnDrawGizmos()
@@ -39,10 +49,14 @@
             }
         }
 
-        private void DrawWireframe()
+        protected virtual void DrawWireframe()
         {
-            var vertices = VRTK_SDK_Bridge.GetPlayAreaVertices(playArea.gameObject);
+            if (playArea == null || roomExtender == null)
+            {
+                return;
+            }
 
+            var vertices = VRTK_SDK_Bridge.GetPlayAreaVertices();
             if (vertices == null || vertices.Length == 0)
             {
                 return;

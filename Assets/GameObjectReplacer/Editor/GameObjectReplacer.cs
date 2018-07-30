@@ -87,7 +87,7 @@ namespace GOReplacer
 				}
 					
 				GameObject newGameObject = null;
-				Object newPrefab = PrefabUtility.GetPrefabParent(GameObjectReplacement);
+				Object newPrefab = PrefabUtility.GetCorrespondingObjectFromSource(GameObjectReplacement);
 				
 				switch(prefabType)
 				{

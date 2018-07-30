@@ -21,8 +21,8 @@ public class ControllerEvents_ListenerWhiteboard : MonoBehaviour
         //GetComponent<VRTK_ControllerEvents>().ApplicationMenuPressed += new ControllerInteractionEventHandler(DoApplicationMenuPressed);
         //GetComponent<VRTK_ControllerEvents>().ApplicationMenuReleased += new ControllerInteractionEventHandler(DoApplicationMenuReleased);
 
-        GetComponent<VRTK_ControllerEvents>().AliasMenuOn += new ControllerInteractionEventHandler(DoApplicationMenuPressed);
-        GetComponent<VRTK_ControllerEvents>().AliasMenuOff += new ControllerInteractionEventHandler(DoApplicationMenuReleased);
+        //GetComponent<VRTK_ControllerEvents>().AliasMenuOn += new ControllerInteractionEventHandler(DoApplicationMenuPressed);
+        //GetComponent<VRTK_ControllerEvents>().AliasMenuOff += new ControllerInteractionEventHandler(DoApplicationMenuReleased);
 
         GetComponent<VRTK_ControllerEvents>().GripPressed += new ControllerInteractionEventHandler(DoGripPressed);
         GetComponent<VRTK_ControllerEvents>().GripReleased += new ControllerInteractionEventHandler(DoGripReleased);
@@ -60,7 +60,7 @@ public class ControllerEvents_ListenerWhiteboard : MonoBehaviour
     // VIVE -> ESC == MENU BUTTON top 
     private void DoApplicationMenuPressed(object sender, ControllerInteractionEventArgs e)
     {
-        DebugLogger(e.controllerIndex, "APPLICATION MENU", "pressed down, will ESC & load Lab now", e);
+        //DebugLogger(e.controllerIndex, "APPLICATION MENU", "pressed down, will ESC & load Lab now", e);
         SceneManager.LoadScene("Laboratory");
     }
 

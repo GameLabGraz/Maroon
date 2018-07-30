@@ -158,8 +158,13 @@ public class FieldLineScript: MonoBehaviour {
 	}
 	
 	void Update() {
-	    #if I_HAVE_VECTROSITY
-	    line.Draw3D();
-	    #endif
+#if I_HAVE_VECTROSITY
+        if (!Camera.main)
+            return;
+
+        VectorLine.SetCamera3D(Camera.main);
+        line.Draw3D();
+
+#endif
 	}
 }

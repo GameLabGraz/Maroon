@@ -2,43 +2,44 @@
 {
     using UnityEngine;
     using UnityEngine.Events;
+    using System;
 
-    [RequireComponent(typeof(VRTK_InteractUse))]
-    public class VRTK_InteractUse_UnityEvents : MonoBehaviour
+    [AddComponentMenu("VRTK/Scripts/Utilities/Unity Events/VRTK_InteractUse_UnityEvents")]
+    public sealed class VRTK_InteractUse_UnityEvents : VRTK_UnityEvents<VRTK_InteractUse>
     {
-        private VRTK_InteractUse iu;
+        [Serializable]
+        public sealed class ObjectInteractEvent : UnityEvent<object, ObjectInteractEventArgs> { }
 
-        [System.Serializable]
-        public class UnityObjectEvent : UnityEvent<object, ObjectInteractEventArgs> { };
+        public ObjectInteractEvent OnControllerStartUseInteractableObject = new ObjectInteractEvent();
+        public ObjectInteractEvent OnControllerUseInteractableObject = new ObjectInteractEvent();
+        public ObjectInteractEvent OnControllerStartUnuseInteractableObject = new ObjectInteractEvent();
+        public ObjectInteractEvent OnControllerUnuseInteractableObject = new ObjectInteractEvent();
+        public VRTK_ControllerEvents_UnityEvents.ControllerInteractionEvent OnUseButtonPressed = new VRTK_ControllerEvents_UnityEvents.ControllerInteractionEvent();
+        public VRTK_ControllerEvents_UnityEvents.ControllerInteractionEvent OnUseButtonReleased = new VRTK_ControllerEvents_UnityEvents.ControllerInteractionEvent();
 
-        /// <summary>
-        /// Emits the ControllerUseInteractableObject class event.
-        /// </summary>
-        public UnityObjectEvent OnControllerUseInteractableObject = new UnityObjectEvent();
-        /// <summary>
-        /// Emits the ControllerUnuseInteractableObject class event.
-        /// </summary>
-        public UnityObjectEvent OnControllerUnuseInteractableObject = new UnityObjectEvent();
-
-        private void SetInteractUse()
+        protected override void AddListeners(VRTK_InteractUse component)
         {
-            if (iu == null)
-            {
-                iu = GetComponent<VRTK_InteractUse>();
-            }
+            component.ControllerStartUseInteractableObject += ControllerStartUseInteractableObject;
+            component.ControllerUseInteractableObject += ControllerUseInteractableObject;
+            component.ControllerStartUnuseInteractableObject += ControllerStartUnuseInteractableObject;
+            component.ControllerUnuseInteractableObject += ControllerUnuseInteractableObject;
+            component.UseButtonPressed += UseButtonPressed;
+            component.UseButtonReleased += UseButtonReleased;
         }
 
-        private void OnEnable()
+        protected override void RemoveListeners(VRTK_InteractUse component)
         {
-            SetInteractUse();
-            if (iu == null)
-            {
-                Debug.LogError("The VRTK_InteractUse_UnityEvents script requires to be attached to a GameObject that contains a VRTK_InteractUse script");
-                return;
-            }
+            component.ControllerStartUseInteractableObject -= ControllerStartUseInteractableObject;
+            component.ControllerUseInteractableObject -= ControllerUseInteractableObject;
+            component.ControllerStartUnuseInteractableObject -= ControllerStartUnuseInteractableObject;
+            component.ControllerUnuseInteractableObject -= ControllerUnuseInteractableObject;
+            component.UseButtonPressed -= UseButtonPressed;
+            component.UseButtonReleased -= UseButtonReleased;
+        }
 
-            iu.ControllerUseInteractableObject += ControllerUseInteractableObject;
-            iu.ControllerUnuseInteractableObject += ControllerUnuseInteractableObject;
+        private void ControllerStartUseInteractableObject(object o, ObjectInteractEventArgs e)
+        {
+            OnControllerStartUseInteractableObject.Invoke(o, e);
         }
 
         private void ControllerUseInteractableObject(object o, ObjectInteractEventArgs e)
@@ -46,20 +47,24 @@
             OnControllerUseInteractableObject.Invoke(o, e);
         }
 
+        private void ControllerStartUnuseInteractableObject(object o, ObjectInteractEventArgs e)
+        {
+            OnControllerStartUnuseInteractableObject.Invoke(o, e);
+        }
+
         private void ControllerUnuseInteractableObject(object o, ObjectInteractEventArgs e)
         {
             OnControllerUnuseInteractableObject.Invoke(o, e);
         }
 
-        private void OnDisable()
+        private void UseButtonPressed(object o, ControllerInteractionEventArgs e)
         {
-            if (iu == null)
-            {
-                return;
-            }
+            OnUseButtonPressed.Invoke(o, e);
+        }
 
-            iu.ControllerUseInteractableObject -= ControllerUseInteractableObject;
-            iu.ControllerUnuseInteractableObject -= ControllerUnuseInteractableObject;
+        private void UseButtonReleased(object o, ControllerInteractionEventArgs e)
+        {
+            OnUseButtonReleased.Invoke(o, e);
         }
     }
 }

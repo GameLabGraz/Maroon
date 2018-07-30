@@ -28,13 +28,13 @@ public class StartEventListener : MonoBehaviour
 
     private void DoTriggerPressed(object sender, ControllerInteractionEventArgs e)
     {
-        DebugLogger(e.controllerIndex, "TRIGGER", "pressed down", e);
+        DebugLogger(e.controllerReference.index, "TRIGGER", "pressed down", e);
        
     }
 
     private void DoTriggerReleased(object sender, ControllerInteractionEventArgs e)
     {
-        DebugLogger(e.controllerIndex, "TRIGGER", "released", e);
+        DebugLogger(e.controllerReference.index, "TRIGGER", "released", e);
     }
 
     //TODO

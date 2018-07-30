@@ -101,14 +101,14 @@ public class CapacitorPlateController : VRTK_InteractableObject, IGenerateE, IRe
         resizeHeightObject2.GetComponent<Renderer>().enabled = value;
     }
 
-    public override void StartTouching(GameObject currentTouchingObject)
+    public override void StartTouching(VRTK_InteractTouch currentTouchingObject = null)
     {
         base.StartTouching(currentTouchingObject);
 
         EnableResizeObjects(true);
     }
 
-    public override void StopTouching(GameObject previousTouchingObject)
+    public override void StopTouching(VRTK_InteractTouch previousTouchingObject = null)
     {
         base.StopTouching(previousTouchingObject);
 

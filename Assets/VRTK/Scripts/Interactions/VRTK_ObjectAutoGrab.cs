@@ -1,8 +1,14 @@
-﻿// Object Auto Grab|Interactions|30090
+﻿// Object Auto Grab|Interactions|30110
 namespace VRTK
 {
     using UnityEngine;
     using System.Collections;
+
+    /// <summary>
+    /// Event Payload
+    /// </summary>
+    /// <param name="sender">this object</param>
+    public delegate void ObjectAutoGrabEventHandler(object sender);
 
     /// <summary>
     /// It is possible to automatically grab an Interactable Object to a specific controller by applying the Object Auto Grab script to the controller that the object should be grabbed by default.
@@ -10,7 +16,7 @@ namespace VRTK
     /// <example>
     /// `VRTK/Examples/026_Controller_ForceHoldObject` shows how to automatically grab a sword to each controller and also prevents the swords from being dropped so they are permanently attached to the user's controllers.
     /// </example>
-    [RequireComponent(typeof(VRTK_InteractGrab))]
+    [AddComponentMenu("VRTK/Scripts/Interactions/VRTK_ObjectAutoGrab")]
     public class VRTK_ObjectAutoGrab : MonoBehaviour
     {
         [Tooltip("A game object (either within the scene or a prefab) that will be grabbed by the controller on game start.")]
@@ -22,12 +28,32 @@ namespace VRTK
         [Tooltip("If `Clone Grabbed Object` is checked and this is checked, then whenever this script is disabled and re-enabled, it will always create a new clone of the object to grab. If this is false then the original cloned object will attempt to be grabbed again. If the original cloned object no longer exists then a new clone will be created.")]
         public bool alwaysCloneOnEnable;
 
-        private VRTK_InteractableObject previousClonedObject = null;
+        [Header("Custom Settings")]
+
+        [Tooltip("The Interact Touch to listen for touches on. If the script is being applied onto a controller then this parameter can be left blank as it will be auto populated by the controller the script is on at runtime.")]
+        public VRTK_InteractTouch interactTouch;
+        [Tooltip("The Interact Grab to listen for grab actions on. If the script is being applied onto a controller then this parameter can be left blank as it will be auto populated by the controller the script is on at runtime.")]
+        public VRTK_InteractGrab interactGrab;
+
+        /// <summary>
+        /// Emitted when the object auto grab has completed successfully.
+        /// </summary>
+        public event ObjectAutoGrabEventHandler ObjectAutoGrabCompleted;
+
+        protected VRTK_InteractableObject previousClonedObject = null;
+
+        public virtual void OnObjectAutoGrabCompleted()
+        {
+            if (ObjectAutoGrabCompleted != null)
+            {
+                ObjectAutoGrabCompleted(this);
+            }
+        }
 
         /// <summary>
         /// The ClearPreviousClone method resets the previous cloned object to null to ensure when the script is re-enabled that a new cloned object is created, rather than the original clone being grabbed again.
         /// </summary>
-        public void ClearPreviousClone()
+        public virtual void ClearPreviousClone()
         {
             previousClonedObject = null;
         }
@@ -43,20 +69,30 @@ namespace VRTK
             StartCoroutine(AutoGrab());
         }
 
-        private IEnumerator AutoGrab()
+        protected virtual IEnumerator AutoGrab()
         {
             yield return new WaitForEndOfFrame();
 
-            var controllerGrab = GetComponent<VRTK_InteractGrab>();
-            var controllerTouch = GetComponent<VRTK_InteractTouch>();
+            interactTouch = (interactTouch != null ? interactTouch : GetComponentInParent<VRTK_InteractTouch>());
+            interactGrab = (interactGrab != null ? interactGrab : GetComponentInParent<VRTK_InteractGrab>());
 
-            if (!objectToGrab)
+            if (interactTouch == null)
             {
-                Debug.LogError("You have to assign an object that should be grabbed.");
+                VRTK_Logger.Error(VRTK_Logger.GetCommonMessage(VRTK_Logger.CommonMessageKeys.REQUIRED_COMPONENT_MISSING_NOT_INJECTED, "VRTK_ObjectAutoGrab", "VRTK_InteractTouch", "interactTouch", "the same or parent"));
+            }
+
+            if (interactGrab == null)
+            {
+                VRTK_Logger.Error(VRTK_Logger.GetCommonMessage(VRTK_Logger.CommonMessageKeys.REQUIRED_COMPONENT_MISSING_NOT_INJECTED, "VRTK_ObjectAutoGrab", "VRTK_InteractGrab", "interactGrab", "the same or parent"));
+            }
+
+            if (objectToGrab == null)
+            {
+                VRTK_Logger.Error(VRTK_Logger.GetCommonMessage(VRTK_Logger.CommonMessageKeys.NOT_DEFINED, "objectToGrab"));
                 yield break;
             }
 
-            while (controllerGrab.controllerAttachPoint == null)
+            while (interactGrab.controllerAttachPoint == null)
             {
                 yield return true;
             }
@@ -74,7 +110,7 @@ namespace VRTK
                 ClearPreviousClone();
             }
 
-            if (!controllerGrab.GetGrabbedObject())
+            if (!interactGrab.GetGrabbedObject())
             {
                 if (cloneGrabbedObject)
                 {
@@ -92,9 +128,10 @@ namespace VRTK
                 if (grabbableObject.isGrabbable && !grabbableObject.IsGrabbed())
                 {
                     grabbableObject.transform.position = transform.position;
-                    controllerTouch.ForceStopTouching();
-                    controllerTouch.ForceTouch(grabbableObject.gameObject);
-                    controllerGrab.AttemptGrab();
+                    interactTouch.ForceStopTouching();
+                    interactTouch.ForceTouch(grabbableObject.gameObject);
+                    interactGrab.AttemptGrab();
+                    OnObjectAutoGrabCompleted();
                 }
             }
             objectToGrab.disableWhenIdle = grabbableObjectDisableState;

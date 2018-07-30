@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using VRTK;
 
 public class TeslaCollider : MonoBehaviour {
 
@@ -21,7 +21,7 @@ public class TeslaCollider : MonoBehaviour {
 	{
         Debug.Log("Trigger Enter: " + other.gameObject.name);
 
-		if (other.CompareTag ("Player")) 
+		if (other.CompareTag ("Player") || other.GetComponent<VRTK_PlayerObject>() != null) 
 		{
 			if(null != this.teslaTrafoController)
             {
@@ -33,7 +33,7 @@ public class TeslaCollider : MonoBehaviour {
 
     public void OnTriggerExit(Collider other)
     {
-        if(other.CompareTag("Player"))
+        if(other.CompareTag("Player") || other.GetComponent<VRTK_PlayerObject>() != null)
         {
             if(null != this.teslaTrafoController)
             {

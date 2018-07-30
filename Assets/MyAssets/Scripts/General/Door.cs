@@ -6,16 +6,11 @@ public class Door : VRTK_InteractableObject
 {
     public string SceneName;
 
-    public override void StartUsing(GameObject usingObject)
+    public override void StartUsing(VRTK_InteractUse usingObject)
     {
         base.StartUsing(usingObject);
 
         Debug.Log("Door pressed, leave experiment.");
         SceneManager.LoadScene(this.SceneName);
-    }
-
-    public override void StopUsing(GameObject usingObject)
-    {
-        base.StopUsing(usingObject);
     }
 }

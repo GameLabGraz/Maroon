@@ -25,17 +25,12 @@ public class StopPlayButtonController : VRTK_InteractableObject
             PlayPauseText.text = simController.SimulationRunning ? "PAUSE\nSimulation" : "PLAY\nSimulation";
     }
 
-    public override void StartUsing(GameObject usingObject)
+    public override void StartUsing(VRTK_InteractUse currentUsingObject = null)
     {
         base.StartUsing(usingObject);
 
         Debug.Log("Stop Play Button pressed, will stop/play simulation");
 
         simController.SimulationRunning = !simController.SimulationRunning;
-    }
-
-    public override void StopUsing(GameObject usingObject)
-    {
-        base.StopUsing(usingObject);
     }
 }

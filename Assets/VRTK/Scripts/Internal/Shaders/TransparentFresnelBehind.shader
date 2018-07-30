@@ -1,5 +1,4 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
+﻿// UNITY_SHADER_NO_UPGRADE
 Shader "Custom/TransparentFresnel"
 {
 	Properties{
@@ -46,7 +45,11 @@ Shader "Custom/TransparentFresnel"
 	v2f vert(appdata_t v)
 	{
 		v2f o;
+#if UNITY_VERSION >= 560
 		o.vertex = UnityObjectToClipPos(v.vertex);
+#else
+		o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+#endif
 		o.color = v.color;
 		o.texcoord = TRANSFORM_TEX(v.texcoord,_MainTex);
 

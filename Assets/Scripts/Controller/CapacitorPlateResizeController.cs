@@ -30,7 +30,7 @@ public class CapacitorPlateResizeController : VRTK_InteractableObject
         this.maxSize = maxSize;
     }
 
-    public override void StartTouching(GameObject currentTouchingObject)
+    public override void StartTouching(VRTK_InteractTouch currentTouchingObject = null)
     {
         base.StartTouching(currentTouchingObject);
 
@@ -45,7 +45,7 @@ public class CapacitorPlateResizeController : VRTK_InteractableObject
             Physics.IgnoreCollision(capacitorPlate.GetComponent<Collider>(), usingCollider, true);
     }
 
-    public override void StopTouching(GameObject previousTouchingObject)
+    public override void StopTouching(VRTK_InteractTouch previousTouchingObject = null)
     {
         base.StopTouching(previousTouchingObject);
 
@@ -60,11 +60,11 @@ public class CapacitorPlateResizeController : VRTK_InteractableObject
             Physics.IgnoreCollision(capacitorPlate.GetComponent<Collider>(), usingCollider, false);
     }
 
-    public override void StartUsing(GameObject currentUsingObject)
+    public override void StartUsing(VRTK_InteractUse currentUsingObject = null)
     {
         base.StartUsing(currentUsingObject);
 
-        UsingObject = usingObject;
+        UsingObject = usingObject.gameObject;
 
         if (capacitorPlate == null)
             return;
@@ -74,7 +74,7 @@ public class CapacitorPlateResizeController : VRTK_InteractableObject
         StartCoroutine(Resize());
     }
 
-    public override void StopUsing(GameObject previousUsingObject)
+    public override void StopUsing(VRTK_InteractUse previousUsingObject = null)
     {
         base.StopUsing(previousUsingObject);
 

@@ -38,7 +38,7 @@ public class VRButtonController : VRTK_InteractableObject
         }
     }
 
-    public override void StartUsing(GameObject usingObject)
+    public override void StartUsing(VRTK_InteractUse currentUsingObject = null)
     {
         base.StartUsing(usingObject);
 

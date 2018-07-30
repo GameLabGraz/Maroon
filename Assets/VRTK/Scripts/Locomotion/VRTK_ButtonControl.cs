@@ -15,12 +15,13 @@ namespace VRTK
     ///
     /// If the controlled object is the play area and `VRTK_BodyPhysics` is also available, then additional logic is processed when the user is falling such as preventing the button control from affecting a falling user.
     /// </remarks>
+    [AddComponentMenu("VRTK/Scripts/Locomotion/VRTK_ButtonControl")]
     public class VRTK_ButtonControl : VRTK_ObjectControl
     {
         [Header("Button Control Settings")]
 
         [Tooltip("The button to set the y axis to +1.")]
-        public VRTK_ControllerEvents.ButtonAlias forwardButton = VRTK_ControllerEvents.ButtonAlias.Trigger_Press;
+        public VRTK_ControllerEvents.ButtonAlias forwardButton = VRTK_ControllerEvents.ButtonAlias.TriggerPress;
         [Tooltip("The button to set the y axis to -1.")]
         public VRTK_ControllerEvents.ButtonAlias backwardButton = VRTK_ControllerEvents.ButtonAlias.Undefined;
         [Tooltip("The button to set the x axis to -1.")]

@@ -19,7 +19,7 @@ public class TurnOnTurnOff_VR : VRTK_InteractableObject
         chargeScript = charge.GetComponent<StaticChargeScript>();
     }
 
-    public override void StartUsing(GameObject usingObject)
+    public override void StartUsing(VRTK_InteractUse usingObject)
     {
         Debug.Log("Generator StartUsing");
 

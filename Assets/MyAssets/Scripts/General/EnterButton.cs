@@ -4,23 +4,15 @@ using VRTK;
 
 public class EnterButton : VRTK_InteractableObject
 {
-    float spinSpeed = 0f;
     //Transform rotator;
     public string LevelName; //= "VanDeGraaffExperiment2";
 
-    public override void StartUsing(GameObject usingObject)
+    public override void StartUsing(VRTK_InteractUse usingObject)
     {
         base.StartUsing(usingObject);
-        spinSpeed = 360f;
 
         Debug.Log("ENTER BUTTON pressed, will load " + this.LevelName);
         SceneManager.LoadScene(this.LevelName);
-    }
-
-    public override void StopUsing(GameObject usingObject)
-    {
-        base.StopUsing(usingObject);
-        spinSpeed = 0f;
     }
 
     private void Start()

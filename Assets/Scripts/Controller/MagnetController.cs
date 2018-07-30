@@ -28,14 +28,13 @@ public class MagnetController : VRTK_InteractableObject
         GameObject simControllerObject = GameObject.Find("SimulationController");
         if (simControllerObject)
             simController = simControllerObject.GetComponent<SimulationController>();
-
     }
 
-    public override void Grabbed(GameObject currentGrabbingObject)
+    public override void Grabbed(VRTK_InteractGrab currentGrabbingObject = null)
     {
         base.Grabbed(currentGrabbingObject);
 
-        grabbingObject = currentGrabbingObject;
+        grabbingObject = currentGrabbingObject.gameObject;
 
         IsMoving = true;
 
@@ -44,7 +43,7 @@ public class MagnetController : VRTK_InteractableObject
         StartCoroutine(TriggerHapticPulse());
     }
 
-    public override void Ungrabbed(GameObject previousGrabbingObject)
+    public override void Ungrabbed(VRTK_InteractGrab previousGrabbingObject = null)
     {
         base.Ungrabbed(previousGrabbingObject);
 
@@ -58,7 +57,12 @@ public class MagnetController : VRTK_InteractableObject
     {
         while (IsMoving)
         {
-            grabbingObject.GetComponent<VRTK_ControllerActions>().TriggerHapticPulse((ushort)(GetComponent<Magnet>().getExternalForce().magnitude));
+            var hapticPulseStrength = GetComponent<Magnet>().getExternalForce().magnitude / 10;
+            Debug.Log("Haptic Pulse Strength = " + hapticPulseStrength);
+
+            VRTK_ControllerHaptics.TriggerHapticPulse(
+                    VRTK_ControllerReference.GetControllerReference(grabbingObject),
+                    hapticPulseStrength);
 
             yield return new WaitForFixedUpdate();
         }

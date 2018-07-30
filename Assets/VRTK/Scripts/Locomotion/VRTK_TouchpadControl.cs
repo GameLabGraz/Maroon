@@ -17,14 +17,15 @@ namespace VRTK
     /// <example>
     /// `VRTK/Examples/017_CameraRig_TouchpadWalking` has a collection of walls and slopes that can be traversed by the user with the touchpad. There is also an area that can only be traversed if the user is crouching.
     /// </example>
+    [AddComponentMenu("VRTK/Scripts/Locomotion/VRTK_TouchpadControl")]
     public class VRTK_TouchpadControl : VRTK_ObjectControl
     {
         [Header("Touchpad Control Settings")]
 
         [Tooltip("An optional button that has to be engaged to allow the touchpad control to activate.")]
-        public VRTK_ControllerEvents.ButtonAlias primaryActivationButton = VRTK_ControllerEvents.ButtonAlias.Touchpad_Touch;
+        public VRTK_ControllerEvents.ButtonAlias primaryActivationButton = VRTK_ControllerEvents.ButtonAlias.TouchpadTouch;
         [Tooltip("An optional button that when engaged will activate the modifier on the touchpad control action.")]
-        public VRTK_ControllerEvents.ButtonAlias actionModifierButton = VRTK_ControllerEvents.ButtonAlias.Touchpad_Press;
+        public VRTK_ControllerEvents.ButtonAlias actionModifierButton = VRTK_ControllerEvents.ButtonAlias.TouchpadPress;
         [Tooltip("Any input on the axis will be ignored if it is within this deadzone threshold. Between `0f` and `1f`.")]
         public Vector2 axisDeadzone = new Vector2(0.2f, 0.2f);
 
@@ -45,7 +46,7 @@ namespace VRTK
                 OnXAxisChanged(SetEventArguements(directionDevice.right, currentAxis.x, axisDeadzone.x));
             }
 
-            if (OutsideDeadzone(currentAxis.y, axisDeadzone.y) || currentAxis.x == 0f)
+            if (OutsideDeadzone(currentAxis.y, axisDeadzone.y) || currentAxis.y == 0f)
             {
                 OnYAxisChanged(SetEventArguements(directionDevice.forward, currentAxis.y, axisDeadzone.y));
             }
@@ -100,7 +101,7 @@ namespace VRTK
 
         protected virtual bool TouchpadTouched()
         {
-            return (controllerEvents && controllerEvents.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.Touchpad_Touch));
+            return (controllerEvents && controllerEvents.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.TouchpadTouch));
         }
 
         protected virtual void TouchpadAxisChanged(object sender, ControllerInteractionEventArgs e)

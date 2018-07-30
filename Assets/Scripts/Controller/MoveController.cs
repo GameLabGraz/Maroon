@@ -19,24 +19,21 @@ public class MoveController : VRTK_InteractableObject
 
     protected bool IsMoving = false;
 
-    protected GameObject UsingObject;
-
     protected Vector3 UsingObjectPosition;
 
     protected Vector3 UsingObjectPositionOld;
 
-    public override void StartUsing(GameObject currentUsingObject)
+    public override void StartUsing(VRTK_InteractUse currentUsingObject = null)
     {
         base.StartUsing(currentUsingObject);
 
         IsMoving = true;
-        UsingObject = usingObject;
         UsingObjectPosition = usingObject.transform.position;
 
         StartCoroutine(Move());
     }
 
-    public override void StopUsing(GameObject previousUsingObject)
+    public override void StopUsing(VRTK_InteractUse previousUsingObject = null)
     {
         base.StopUsing(previousUsingObject);
 
@@ -47,14 +44,6 @@ public class MoveController : VRTK_InteractableObject
     {
         while (IsMoving)
         {
-            /*
-
-            Vector3 newPosition = this.transform.position - Vector3.Scale(this.transform.position, MoveDirection);
-            newPosition += Vector3.Scale(UsingObject.transform.position, MoveDirection);
-
-            this.transform.position = newPosition;
-            */
-
             UsingObjectPositionOld = UsingObjectPosition;
             UsingObjectPosition = usingObject.transform.position;
 

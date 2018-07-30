@@ -1,104 +1,90 @@
 ﻿using UnityEngine;
+using VRTK;
 
 public class MoveLeftRight : MonoBehaviour
 {
+    [SerializeField]
+    private float maxMovementLeft = 0;
 
     [SerializeField]
-    private GameObject grounder;
+	private float maxMovementRight = 0;
 
     [SerializeField]
-    public float maxMovementLeft;
+    private float movementSpeed = 1;
 
     [SerializeField]
-	public float maxMovementRight;
+    private float hapticPulseStrength = 0.5f;
 
-    [SerializeField]
-    public float movementSpeed = 10;
-   
     private Vector3 initialPosition;
 	private float lastDistance;
 
-    private int controllerLeftIndex;
-    private int controllerRightIndex;
+    private GameObject leftController;
+    private GameObject rightController;
 
     public void Start()
 	{
-		this.initialPosition = transform.position;
+		initialPosition = transform.position;
 
-        if(grounder == null)
-            grounder = GameObject.Find("Grounder"); //important to avoid null reference
-
-        // VIVE: use grip on left controller to move left, grip on right controller to move right
-        var system = Valve.VR.OpenVR.System;
-
-        if (system != null)
-        {
-            controllerLeftIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost); //spiegelverkehrte Ansicht, aus Sicht des PCs?!
-            controllerRightIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Leftmost); // switching so it makes sense from user POV
-        }
+        leftController = VRTK_DeviceFinder.GetControllerLeftHand();
+        rightController = VRTK_DeviceFinder.GetControllerRightHand();
     }
 
-    public void Update()
-    {
-        if (controllerLeftIndex == -1)
-            controllerLeftIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Leftmost);
+    private void Update()
+    {       
+        if(!leftController)
+            leftController = VRTK_DeviceFinder.GetControllerLeftHand();
+        if(!rightController)
+            rightController = VRTK_DeviceFinder.GetControllerRightHand();
 
-        if (controllerRightIndex == -1)
-            controllerRightIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
+        if (leftController)
+        {
+            var controllerEvent = leftController.GetComponent<VRTK_ControllerEvents>();
+            if(controllerEvent.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.GripPress))
+            {
+                Debug.Log("Move grounder to LEFT");
+                Move(Vector3.left, maxMovementLeft);
 
+                VRTK_ControllerHaptics.TriggerHapticPulse(
+                    VRTK_ControllerReference.GetControllerReference(leftController),
+                    hapticPulseStrength);
+            }
+        }
+        if(rightController)
+        {
+            var controllerEvent = rightController.GetComponent<VRTK_ControllerEvents>();
+            if (controllerEvent.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.GripPress))
+            {
+                Debug.Log("Move grounder to RIGHT");
+                Move(Vector3.right, maxMovementLeft);
+
+                VRTK_ControllerHaptics.TriggerHapticPulse(
+                    VRTK_ControllerReference.GetControllerReference(rightController),
+                    hapticPulseStrength);
+            }
+        }
 
         if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
         {
-            this.Move(Vector3.left, maxMovementLeft);
+            Move(Vector3.left, maxMovementLeft);
         }
         if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
         {
-            this.Move(Vector3.right, maxMovementRight);
-        } 
-
-        if (controllerLeftIndex != -1 && SteamVR_Controller.Input(controllerLeftIndex).GetPressDown(SteamVR_Controller.ButtonMask.Grip))
-        {
-            Debug.Log("LEFT grips pressed");
-
-
-            if(grounder != null)
-            {
-                this.Move(Vector3.left, maxMovementLeft);
-
-                // trigger haptic pulse     
-                SteamVR_Controller.Input(controllerLeftIndex).TriggerHapticPulse(3999);
-                
-                Debug.Log("moved grounder to LEFT");
-             } 
-        }
-
-        if (controllerRightIndex != -1 && SteamVR_Controller.Input(controllerRightIndex).GetPressDown(SteamVR_Controller.ButtonMask.Grip))
-        {
-            Debug.Log("RIGHT grips pressed");
-
-            grounder = GameObject.Find("Grounder");
-            if(grounder != null)
-            {
-                this.Move(Vector3.right, maxMovementRight);
-
-                SteamVR_Controller.Input(controllerRightIndex).TriggerHapticPulse(3999);
-
-                Debug.Log("moved grounder to RIGHT");
-            }
+            Move(Vector3.right, maxMovementRight);
         }
     }
 
     public void Move(Vector3 direction, float maxMovement)
 	{
-		if (null != transform) 
+		if (transform) 
 		{
 			Vector3 translateVector = direction * Time.deltaTime * movementSpeed;
 			Vector3 newPosition = transform.position + transform.TransformDirection(translateVector);
 			
-			float distance = Vector3.Distance(this.initialPosition, newPosition);
-			if(distance < (maxMovement) || distance < this.lastDistance) {
+			float distance = Vector3.Distance(initialPosition, newPosition);
+			if(distance < maxMovement || distance < lastDistance)
+            {
 				transform.Translate(translateVector);
-				this.lastDistance = distance;
+				lastDistance = distance;
 			}
 		}
 	}
