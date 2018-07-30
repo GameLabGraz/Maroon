@@ -22,7 +22,7 @@
             //Get actual inspector
             VRTK_SDKManager sdkManager = (VRTK_SDKManager)target;
 
-            bool vrDevicePresent = VRDevice.isPresent;
+            bool vrDevicePresent = UnityEngine.XR.XRDevice.isPresent;
 
             EditorGUILayout.BeginVertical("Box");
 

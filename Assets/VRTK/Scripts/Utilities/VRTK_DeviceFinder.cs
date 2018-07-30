@@ -313,7 +313,7 @@ namespace VRTK
         public static Headsets GetHeadsetType(bool summary = false)
         {
             Headsets returnValue = Headsets.Unknown;
-            string checkValue = VRDevice.model;
+            string checkValue = UnityEngine.XR.XRDevice.model;
             switch (checkValue)
             {
                 case "Oculus Rift CV1":
