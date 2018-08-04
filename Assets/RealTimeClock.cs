@@ -15,10 +15,10 @@ public class RealTimeClock : MonoBehaviour {
 	[Header("Adjust the Clock:")]
 	[Range(0f,359.9f)]
 	[Tooltip("Value in euler degrees how big is the angle between the Hours pointer and 12'o clock, when you write \"0\" in transform's rotation values")]
-	public float offsetHours = 0f;
+    [SerializeField] private const float offsetHours = 90f;
 	[Range(0f,359.9f)]
 	[Tooltip("Value in euler degrees how big is the angle between the Minutes pointer and 12'o clock, when you write \"0\" in transform's rotation values")]
-	public float offsetMinutes = 0f;
+	[SerializeField] private const float offsetMinutes = 90f;
 
 	void Start () {
 		if (minuteTransform == null || hourTransform == null) {

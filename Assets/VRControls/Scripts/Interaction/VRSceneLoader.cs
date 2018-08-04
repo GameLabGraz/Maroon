@@ -7,6 +7,20 @@ public class VRSceneLoader : VRMenuItem
 {
     public string sceneName;
 
+    [SerializeField] private GazeOnly_SelectionRadial m_GazeOnly_SelectionRadial;
+
+    public virtual void OnEnable()
+    {
+        if(m_GazeOnly_SelectionRadial)
+            m_GazeOnly_SelectionRadial.OnSelectionComplete += onActivate;
+    }
+
+    public virtual void OnDisable()
+    {
+        if (m_GazeOnly_SelectionRadial)
+            m_GazeOnly_SelectionRadial.OnSelectionComplete -= onActivate;
+    }
+
     protected override void onActivate()
     {
         base.onActivate();
