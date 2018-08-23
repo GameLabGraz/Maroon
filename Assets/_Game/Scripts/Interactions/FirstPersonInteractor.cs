@@ -14,33 +14,45 @@ namespace Maroon {
         [SerializeField]
         private float reach = 2;
 
-        protected override void DetectInteractable() {
-            RaycastHit hit;
+        private RaycastHit hit;
+        private float grabDistance;
+
+        protected override Interactable DetectInteractable() {
             if (Physics.Raycast(camera.transform.position, camera.transform.forward, out hit, reach,
                                 LayerMask.GetMask("Default"))) {
-                interactable = hit.transform.GetComponentInParent(typeof(IInteractable)) as IInteractable;
-                if (interactable != null) {
-                    // TODO: Highlight object.
-                }
+                var interactable = GetInteractableFromTransform(hit.transform);
+
+                return interactable;
             }
 
-    }
-
-    protected override bool ShallInteract() {
-            return Input.GetButtonDown(InputButton.Interact);
+            return null;
         }
 
-        private void Update() {
-            IInteractable interactable = null;
+        protected override void Update() {
+            base.Update();
 
-            RaycastHit hit;
-            if (Physics.Raycast(camera.transform.position, camera.transform.forward, out hit, reach,
-                                LayerMask.GetMask("Default"))) {
-                interactable = hit.transform.GetComponentInParent(typeof(IInteractable)) as IInteractable;
-                if (interactable != null) {
-                    // TODO: Highlight object.
-                }
+            if (!IsGrabbing) {
+                grabDistance = hit.distance;
             }
+
+            if (Input.GetButtonDown(InputButton.Use)) {
+                StartUse();
+            }
+
+            if (Input.GetButtonUp(InputButton.Use)) {
+                StopUse();
+            }
+
+            if (Input.GetButtonDown(InputButton.Grab)) {
+                grabDistance = hit.distance;
+                StartGrab();
+            }
+
+            if (Input.GetButtonUp(InputButton.Grab)) {
+                StopGrab();
+            }
+
+            grabHandle.Rigidbody.MovePosition(camera.transform.position + camera.transform.forward * grabDistance);
         }
     }
 }
