@@ -3,5 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class InputButton {
-    public const string Interact = "Interact";
+    public const string Use = "Use";
+    public const string Grab = "Grab";
 }
