@@ -5,7 +5,7 @@ using UnityEngine.Assertions;
 using VRTK;
 
 namespace Maroon {
-    public class VRTKInteractor : Interactor {
+    public class VRInteractor : Interactor {
 
         [SerializeField]
         private VRTK_ControllerEvents controllerEvents;
@@ -60,10 +60,6 @@ namespace Maroon {
 
             triggerInteractable = GetInteractableFromTransform(other.transform);
             triggerCollider = other;
-
-            //if (triggerInteractable) {
-            //    Debug.Log("Detected interactable " + triggerInteractable.name + " by collider " + triggerCollider.name);
-            //}
         }
 
         private void OnTriggerExit(Collider other) {
@@ -72,7 +68,6 @@ namespace Maroon {
             }
 
             if (other == triggerCollider) {
-                //Debug.Log("Lost interactable " + triggerInteractable.name + " by collider " + triggerCollider.name);
                 triggerCollider = null;
                 triggerInteractable = null;
             }
