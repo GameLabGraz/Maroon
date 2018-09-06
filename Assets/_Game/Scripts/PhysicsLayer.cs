@@ -3,5 +3,5 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PhysicsLayer {
-    public const string Interactable = "Interactable";
+  public const string Interactable = "Interactable";
 }

@@ -5,24 +5,19 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Maroon
-{
-  public sealed class SliderGrabAttach : GrabAttach
-  {
+namespace Maroon {
+  public sealed class SliderGrabBehaviour : GrabBehaviour {
 
     private Slider Slider {
       get { return interactable as Slider; }
     }
 
-    private void Awake()
-    {
+    private void Awake() {
       Assert.IsNotNull(Slider, "This grab behaviour can only be applied to slider interactables.");
     }
 
-    private void Update()
-    {
-      if (handle)
-      {
+    private void Update() {
+      if (handle) {
         var sliderVector = Slider.Max.point.position - Slider.Min.point.position;
         var totalSliderLen = Slider.TotalSliderLength;
         var sliderDir = Slider.SliderDirection;

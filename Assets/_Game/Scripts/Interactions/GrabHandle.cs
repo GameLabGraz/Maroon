@@ -5,13 +5,13 @@ using System.Text;
 using UnityEngine;
 
 namespace Maroon {
-    public class GrabHandle : MonoBehaviour {
+  public class GrabHandle : MonoBehaviour {
 
-        [SerializeField]
-        private new Rigidbody rigidbody;
+    [SerializeField]
+    private new Rigidbody rigidbody;
 
-        public Rigidbody Rigidbody {
-            get { return rigidbody; }
-        }
+    public Rigidbody Rigidbody {
+      get { return rigidbody; }
     }
+  }
 }

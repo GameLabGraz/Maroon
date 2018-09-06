@@ -4,13 +4,10 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace Maroon
-{
-  public class Slider : Interactable
-  {
+namespace Maroon {
+  public class Slider : Interactable {
     [Serializable]
-    public class SliderPoint
-    {
+    public class SliderPoint {
       public Transform point;
       public float value;
     }
@@ -50,13 +47,11 @@ namespace Maroon
     }
 
 
-    protected virtual void Start()
-    {
+    protected virtual void Start() {
       UpdatePosition();
     }
 
-    protected virtual void UpdatePosition()
-    {
+    protected virtual void UpdatePosition() {
       transform.position = Min.point.position + SliderDirection * TotalSliderLength * percent;
     }
   }
