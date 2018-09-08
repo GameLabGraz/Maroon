@@ -63,7 +63,7 @@ namespace Maroon {
     }
 
     protected Interactable GetInteractableFromTransform(Transform t) {
-      return t.GetComponentInParent<Interactable>();
+      return t.GetComponent<Interactable>();
     }
   }
 }

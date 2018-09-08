@@ -19,7 +19,7 @@ namespace Maroon {
 
     protected override Interactable DetectInteractable() {
       if (Physics.Raycast(camera.transform.position, camera.transform.forward, out hit, reach,
-                          LayerMask.GetMask("Default"))) {
+          LayerConfig.InteractableLayerMask)) {
         var interactable = GetInteractableFromTransform(hit.transform);
 
         return interactable;
@@ -54,5 +54,6 @@ namespace Maroon {
 
       grabHandle.Rigidbody.MovePosition(camera.transform.position + camera.transform.forward * grabDistance);
     }
+
   }
 }

@@ -24,7 +24,6 @@ namespace Maroon {
       if (!controllerEvents) {
         controllerEvents = GetComponent<VRTK_ControllerEvents>();
       }
-
       Assert.IsNotNull(controllerEvents, "VRTK ControllerEvents have to be set on VRTK Interactors!");
 
       controllerEvents.SubscribeToButtonAliasEvent(useButton, true, OnUseButtonDown);

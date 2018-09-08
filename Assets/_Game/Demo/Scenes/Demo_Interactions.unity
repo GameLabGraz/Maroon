@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028334, g: 0.2257134, b: 0.30692226, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -123,7 +123,6 @@ GameObject:
   - component: {fileID: 19542367}
   - component: {fileID: 19542370}
   - component: {fileID: 19542369}
-  - component: {fileID: 19542368}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -144,18 +143,6 @@ Transform:
   m_Father: {fileID: 64937705}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &19542368
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 19542366}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &19542369
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -501,7 +488,8 @@ GameObject:
   - component: {fileID: 64937705}
   - component: {fileID: 64937707}
   - component: {fileID: 64937706}
-  m_Layer: 0
+  - component: {fileID: 64937708}
+  m_Layer: 8
   m_Name: Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -556,6 +544,18 @@ MonoBehaviour:
     point: {fileID: 2108668725}
     value: 1
   text: {fileID: 1891522844}
+--- !u!135 &64937708
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 64937704}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.075
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &84325484
 GameObject:
   m_ObjectHideFlags: 0
@@ -566,7 +566,7 @@ GameObject:
   - component: {fileID: 84325485}
   - component: {fileID: 84325486}
   - component: {fileID: 84325487}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -653,7 +653,7 @@ GameObject:
   - component: {fileID: 101006261}
   - component: {fileID: 101006263}
   - component: {fileID: 101006262}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1157,7 +1157,8 @@ GameObject:
   - component: {fileID: 343645143}
   - component: {fileID: 343645142}
   - component: {fileID: 343645141}
-  m_Layer: 0
+  - component: {fileID: 343645144}
+  m_Layer: 8
   m_Name: Object
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1222,6 +1223,18 @@ MonoBehaviour:
   toggleUse: 0
   grabbable: 1
   grabBehaviour: {fileID: 343645142}
+--- !u!135 &343645144
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 343645139}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.75
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &374855852
 GameObject:
   m_ObjectHideFlags: 0
@@ -1232,7 +1245,8 @@ GameObject:
   - component: {fileID: 374855853}
   - component: {fileID: 374855855}
   - component: {fileID: 374855854}
-  m_Layer: 0
+  - component: {fileID: 374855856}
+  m_Layer: 8
   m_Name: Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1287,6 +1301,18 @@ MonoBehaviour:
     point: {fileID: 276517665}
     value: 1
   text: {fileID: 587106061}
+--- !u!135 &374855856
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 374855852}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.075
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &398813659
 GameObject:
   m_ObjectHideFlags: 0
@@ -1297,7 +1323,7 @@ GameObject:
   - component: {fileID: 398813660}
   - component: {fileID: 398813662}
   - component: {fileID: 398813661}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2448,7 +2474,8 @@ GameObject:
   - component: {fileID: 712994916}
   - component: {fileID: 712994918}
   - component: {fileID: 712994917}
-  m_Layer: 0
+  - component: {fileID: 712994919}
+  m_Layer: 8
   m_Name: Object
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2511,6 +2538,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interactable: {fileID: 712994916}
   breakForce: 1500
+--- !u!135 &712994919
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 712994914}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.75
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &738285309
 GameObject:
   m_ObjectHideFlags: 0
@@ -2521,7 +2560,6 @@ GameObject:
   - component: {fileID: 738285310}
   - component: {fileID: 738285313}
   - component: {fileID: 738285312}
-  - component: {fileID: 738285311}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -2542,18 +2580,6 @@ Transform:
   m_Father: {fileID: 1459730449}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &738285311
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 738285309}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &738285312
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3716,7 +3742,6 @@ GameObject:
   - component: {fileID: 1078450545}
   - component: {fileID: 1078450548}
   - component: {fileID: 1078450547}
-  - component: {fileID: 1078450546}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -3737,18 +3762,6 @@ Transform:
   m_Father: {fileID: 374855853}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &1078450546
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1078450544}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1078450547
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4734,7 +4747,8 @@ GameObject:
   - component: {fileID: 1459730449}
   - component: {fileID: 1459730450}
   - component: {fileID: 1459730451}
-  m_Layer: 0
+  - component: {fileID: 1459730452}
+  m_Layer: 8
   m_Name: Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4789,6 +4803,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactable: {fileID: 1459730450}
+--- !u!135 &1459730452
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1459730448}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.075
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1499593410
 GameObject:
   m_ObjectHideFlags: 0
