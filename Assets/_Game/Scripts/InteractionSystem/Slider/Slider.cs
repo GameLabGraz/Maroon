@@ -27,12 +27,16 @@ namespace Maroon {
       get { return max; }
     }
 
+    public Vector3 SliderVector {
+      get { return Max.point.position - Min.point.position; }
+    }
+
     public Vector3 SliderDirection {
-      get { return (Max.point.position - Min.point.position).normalized; }
+      get { return SliderVector.normalized; }
     }
 
     public float TotalSliderLength {
-      get { return (Max.point.position - Min.point.position).magnitude; }
+      get { return SliderVector.magnitude; }
     }
 
     public float Percent {
@@ -43,9 +47,13 @@ namespace Maroon {
       }
     }
 
+    public float ValueRange {
+      get { return Max.value - Min.value; }
+    }
+
     public float Value {
-      get { return Min.value + (Max.value - Min.value) * Percent; }
-      set { Percent = (value - Min.value) / (Max.value - Min.value); }
+      get { return Min.value + ValueRange * Percent; }
+      set { Percent = (value - Min.value) / ValueRange; }
     }
 
     protected override void Awake() {

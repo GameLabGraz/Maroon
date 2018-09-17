@@ -18,7 +18,6 @@ namespace Maroon {
 
     private void Update() {
       if (handle) {
-        var sliderVector = Slider.Max.point.position - Slider.Min.point.position;
         var totalSliderLen = Slider.TotalSliderLength;
         var sliderDir = Slider.SliderDirection;
 
