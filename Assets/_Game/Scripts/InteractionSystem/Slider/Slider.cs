@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Maroon {
   public class Slider : Interactable {
+
     [Serializable]
     public class SliderPoint {
       public Transform point;
@@ -44,6 +46,12 @@ namespace Maroon {
     public float Value {
       get { return Min.value + (Max.value - Min.value) * Percent; }
       set { Percent = (value - Min.value) / (Max.value - Min.value); }
+    }
+
+    protected override void Awake() {
+      base.Awake();
+      Assert.IsTrue(grabBehaviour is SliderGrabBehaviour,
+        "Slider interactables must have a grab behaviour of type SliderGrabBehaviour!");
     }
 
 
