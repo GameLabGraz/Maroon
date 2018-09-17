@@ -22,14 +22,22 @@ namespace Maroon {
         var sliderDir = Slider.SliderDirection;
 
         var handleVector = handle.Rigidbody.position - Slider.Min.point.position;
-        var sliderPos = Slider.Min.point.position + Vector3.Project(handleVector, sliderDir);
-        var handleDir = (sliderPos - Slider.Min.point.position).normalized;
-        var positiveHandleDir = Vector3.Angle(handleDir, Slider.SliderDirection) < 90;
-        var sliderLenFromMin = (sliderPos - Slider.Min.point.position).magnitude;
-        var sliderLen = !positiveHandleDir
-          ? 0
-          : (sliderLenFromMin > totalSliderLen ? totalSliderLen : sliderLenFromMin);
-        Slider.Percent = sliderLen / totalSliderLen;
+        var projectedHandlePos = Slider.Min.point.position + Vector3.Project(handleVector, sliderDir);
+
+        var projectedHandleVector = projectedHandlePos - Slider.Min.point.position;
+        var projectedHandleDir = projectedHandleVector.normalized;
+        var positiveHandleDir = Vector3.Angle(projectedHandleDir, Slider.SliderDirection) < 90;
+
+        if (positiveHandleDir) {
+          var projectedHandleLen = (projectedHandlePos - Slider.Min.point.position).magnitude;
+          if (projectedHandleLen > totalSliderLen) {
+            Slider.Percent = 1;
+          } else {
+            Slider.Percent = projectedHandleLen / totalSliderLen;
+          }
+        } else {
+          Slider.Percent = 0;
+        }
       }
     }
   }
