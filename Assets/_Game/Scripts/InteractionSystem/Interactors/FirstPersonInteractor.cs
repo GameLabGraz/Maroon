@@ -17,7 +17,7 @@ namespace Maroon {
     private RaycastHit hit;
     private float grabDistance;
 
-    protected override Interactable DetectInteractable() {
+    private Interactable DetectInteractable() {
       if (Physics.Raycast(camera.transform.position, camera.transform.forward, out hit, reach,
           LayerConfig.InteractableLayerMask)) {
         var interactable = GetInteractableFromTransform(hit.transform);
@@ -28,8 +28,9 @@ namespace Maroon {
       return null;
     }
 
-    protected override void Update() {
-      base.Update();
+    private void Update() {
+
+      detectedInteractable = DetectInteractable();
 
       if (!IsGrabbing) {
         grabDistance = hit.distance;

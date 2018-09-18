@@ -15,29 +15,19 @@ namespace Maroon {
     protected Interactable usedInteractable;
     protected Interactable grabbedInteractable;
 
-    public bool IsGrabbing {
-      get { return grabbedInteractable != null; }
-    }
-
-    public bool IsUsing {
-      get { return usedInteractable != null; }
-    }
-
-
     public GrabHandle GrabHandle {
       get { return grabHandle; }
     }
 
-    protected abstract Interactable DetectInteractable();
-
-    protected virtual void Update() {
-      detectedInteractable = DetectInteractable();
+    protected Interactable GetInteractableFromTransform(Transform t) {
+      return t.GetComponent<Interactable>();
     }
+
 
     protected void StartUse() {
       if (detectedInteractable) {
         usedInteractable = detectedInteractable;
-        detectedInteractable.StartUse();
+        usedInteractable.StartUse();
       }
     }
 
@@ -46,6 +36,10 @@ namespace Maroon {
         usedInteractable.StopUse();
         usedInteractable = null;
       }
+    }
+
+    public bool IsUsing {
+      get { return usedInteractable != null; }
     }
 
     protected void StartGrab() {
@@ -62,8 +56,8 @@ namespace Maroon {
       }
     }
 
-    protected Interactable GetInteractableFromTransform(Transform t) {
-      return t.GetComponent<Interactable>();
+    public bool IsGrabbing {
+      get { return grabbedInteractable != null; }
     }
   }
 }

@@ -16,8 +16,7 @@ namespace Maroon {
     [SerializeField]
     private VRTK_ControllerEvents.ButtonAlias grabButton;
 
-    private Interactable triggerInteractable;
-    private Collider triggerCollider;
+    private Collider detectedInteractableCollider;
 
 
     private void Awake() {
@@ -48,27 +47,23 @@ namespace Maroon {
       StopGrab();
     }
 
-    protected override Interactable DetectInteractable() {
-      return triggerInteractable;
-    }
-
     private void OnTriggerEnter(Collider other) {
-      if (triggerInteractable) {
+      if (detectedInteractable) {
         return;
       }
 
-      triggerInteractable = GetInteractableFromTransform(other.transform);
-      triggerCollider = other;
+      detectedInteractable = GetInteractableFromTransform(other.transform);
+      detectedInteractableCollider = other;
     }
 
     private void OnTriggerExit(Collider other) {
-      if (!triggerInteractable) {
+      if (!detectedInteractable) {
         return;
       }
 
-      if (other == triggerCollider) {
-        triggerCollider = null;
-        triggerInteractable = null;
+      if (other == detectedInteractableCollider) {
+        detectedInteractableCollider = null;
+        detectedInteractable = null;
       }
     }
   }
