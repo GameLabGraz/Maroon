@@ -14,27 +14,13 @@ namespace Maroon {
     [SerializeField]
     private float reach = 2;
 
-    private RaycastHit hit;
-    private float grabDistance;
-
-    private Interactable DetectInteractable() {
-      if (Physics.Raycast(camera.transform.position, camera.transform.forward, out hit, reach,
-          LayerConfig.InteractableLayerMask)) {
-        var interactable = GetInteractableFromTransform(hit.transform);
-
-        return interactable;
-      }
-
-      return null;
-    }
+    private float detectedInteractableDistance;
 
     private void Update() {
-
       detectedInteractable = DetectInteractable();
 
-      if (!IsGrabbing) {
-        grabDistance = hit.distance;
-      }
+      grabHandle.transform.position = camera.transform.position +
+          camera.transform.forward * detectedInteractableDistance;
 
       if (Input.GetButtonDown(InputButton.Use)) {
         StartUse();
@@ -45,16 +31,29 @@ namespace Maroon {
       }
 
       if (Input.GetButtonDown(InputButton.Grab)) {
-        grabDistance = hit.distance;
         StartGrab();
       }
 
       if (Input.GetButtonUp(InputButton.Grab)) {
         StopGrab();
       }
-
-      grabHandle.Rigidbody.MovePosition(camera.transform.position + camera.transform.forward * grabDistance);
     }
 
+    private Interactable DetectInteractable() {
+
+      if (IsUsing || IsGrabbing) {
+        return detectedInteractable;
+      }
+
+      RaycastHit hit;
+      if (Physics.Raycast(camera.transform.position, camera.transform.forward, out hit, reach,
+          LayerConfig.InteractableLayerMask)) {
+
+        detectedInteractableDistance = hit.distance;
+        return GetInteractableFromTransform(hit.transform);
+      }
+
+      return null;
+    }
   }
 }
