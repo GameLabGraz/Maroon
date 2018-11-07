@@ -34,6 +34,7 @@ GameObject:
   - component: {fileID: 65551861958009462}
   - component: {fileID: 114875302973062768}
   - component: {fileID: 114555874179630774}
+  - component: {fileID: 114873839911052272}
   m_Layer: 5
   m_Name: QuizSelector
   m_TagString: Untagged
@@ -246,7 +247,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 0, y: 0, z: 0.005}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &114171828810376616
 MonoBehaviour:
@@ -276,6 +277,22 @@ MonoBehaviour:
   increaseSizeOnHover: 1
   doubleClick: 0
   isClicked: 0
+  m_GazeOnly_SelectionRadial: {fileID: 114873839911052272}
+--- !u!114 &114873839911052272
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 162026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ade7bc50efc1c14478698506344a468f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SelectionDuration: 2
+  m_HideOnStart: 1
+  m_Selection: {fileID: 0}
+  m_VRInteractiveItem: {fileID: 114171828810376616}
 --- !u!114 &114875302973062768
 MonoBehaviour:
   m_ObjectHideFlags: 1

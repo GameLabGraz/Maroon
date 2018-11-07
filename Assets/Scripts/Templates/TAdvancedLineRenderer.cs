@@ -13,6 +13,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.Rendering;
 
 /// <summary>
 /// WrapperClass for Basic Line Renderer
@@ -248,6 +249,10 @@ public class AdvancedLineRenderer : MonoBehaviour
     {
         this.SetWidth(lineWidth_.Item1, lineWidth_.Item2);
         this.SetColors(lineColors_.Item1, lineColors_.Item2);
+        line_.shadowCastingMode = ShadowCastingMode.Off;
+        line_.receiveShadows = false;
+        line_.lightProbeUsage = LightProbeUsage.Off;
+        line_.allowOcclusionWhenDynamic = false;
         line_.positionCount = vertexCount_;
         line_.useWorldSpace = useWorldSpace_;
         line_.material = material;

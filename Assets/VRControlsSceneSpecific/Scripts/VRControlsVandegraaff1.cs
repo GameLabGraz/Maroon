@@ -18,8 +18,8 @@ public class VRControlsVandegraaff1 : MonoBehaviour
 	    startToggle.isOn = false;
 	    electricFieldToggle.isOn = false;
 	    chargeToggle.isOn = false;
-	    positionSlider.value = (moveLeftRight.transform.localPosition.z - rightEndPosition.z)/
-	                           (leftEndPosition.z - rightEndPosition.z);
+	 /*   positionSlider.value = (moveLeftRight.transform.localPosition.z - rightEndPosition.z)/
+	                           (leftEndPosition.z - rightEndPosition.z);*/
 	}
 
     public void onClickStart()
@@ -37,17 +37,17 @@ public class VRControlsVandegraaff1 : MonoBehaviour
         vandeGraaffGui.glowEnabled = chargeToggle.isOn;
         vandeGraaffGui.EnableGlow(vandeGraaffGui.glowEnabled);
     }
-
+    
     public void onChangeSlider()
     {
         moveLeftRight.transform.localPosition = Vector3.Lerp(leftEndPosition, rightEndPosition, positionSlider.value);
     }
-
+    /*
     void moveSlider(float delta)
     {
         positionSlider.value += delta;
         onChangeSlider();
-    }
+    }*/
 
     void Update()
     {
@@ -59,8 +59,8 @@ public class VRControlsVandegraaff1 : MonoBehaviour
 #else
             sliderDelta = Input.GetAxis("Mouse ScrollWheel") * .4f;
 #endif
-            if(Mathf.Abs(sliderDelta) >= 0.001f)
-                moveSlider(sliderDelta);
+         /*   if(Mathf.Abs(sliderDelta) >= 0.001f)
+                moveSlider(sliderDelta);*/
         }
     }
 }

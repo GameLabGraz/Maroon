@@ -10,8 +10,6 @@ GameObject:
   - component: {fileID: 427154}
   - component: {fileID: 3396380}
   - component: {fileID: 2363932}
-  - component: {fileID: 9543522}
-  - component: {fileID: 114552134550821256}
   m_Layer: 0
   m_Name: Arrow
   m_TagString: Untagged
@@ -39,12 +37,12 @@ MeshRenderer:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 122800}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 0
+  m_MotionVectors: 2
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: 5595776ad48614604a6ea1ed83b4037a, type: 2}
@@ -74,24 +72,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 122800}
   m_Mesh: {fileID: 4300002, guid: d3bd61349e9ca428abc1b2198cab6e28, type: 3}
---- !u!95 &9543522
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 122800}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: d3bd61349e9ca428abc1b2198cab6e28, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -107,18 +87,3 @@ Prefab:
   m_SourcePrefab: {fileID: 0}
   m_RootGameObject: {fileID: 122800}
   m_IsPrefabAsset: 1
---- !u!114 &114552134550821256
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 122800}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 577a4a97a8058e24189acbd6dc47c92a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Field: {fileID: 0}
-  rotationOffset: 0
-  fieldStrengthFactor: 100
-  start_rot: {x: 0, y: 0, z: 0, w: 0}

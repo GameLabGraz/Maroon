@@ -58,7 +58,7 @@ public class VRMenuItem : MonoBehaviour
         targetPosition = startPosition;
         targetScale = startScale;
         StopCoroutine("hoverAnimationRoutine");
-        StartCoroutine("hoverAnimationRoutine");
+        if(this.transform.gameObject.activeInHierarchy)StartCoroutine("hoverAnimationRoutine");
     }
 
     void onOver()

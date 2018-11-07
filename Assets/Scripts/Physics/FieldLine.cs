@@ -58,6 +58,13 @@ public class FieldLine : MonoBehaviour, IResetObject
     private bool visible = true;
 
     /// <summary>
+    /// Set of existing field line clones
+    /// </summary>
+    public HashSet<AdvancedLineRenderer> clones = new HashSet<AdvancedLineRenderer>();
+    public Stack<GameObject> pooledclones = new Stack<GameObject>();
+
+
+    /// <summary>
     /// The line renderer which draws the line
     /// </summary>
     private AdvancedLineRenderer lineRenderer;
@@ -155,6 +162,11 @@ public class FieldLine : MonoBehaviour, IResetObject
     public List<KeyValuePair<int, Vector3>> GetLinePositions()
     {
         return lineRenderer.GetPositions();
+    }
+
+    public int GetVertexCount()
+    {
+        return lineRenderer.GetVertexCount();
     }
 
     private float GetFieldStrengthFromEmObj()

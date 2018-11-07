@@ -30,6 +30,7 @@ public class IronFiling : MonoBehaviour, IResetObject
     /// </summary>
     public int iterations = 1000;
 
+
     /// <summary>
     /// The field which is represented
     /// </summary>
@@ -54,6 +55,7 @@ public class IronFiling : MonoBehaviour, IResetObject
     /// The maximum of vertices
     /// </summary>
     public int maxvertexCount = 100;
+    private const bool usecoroutine = true;
 
     [SerializeField]
     private float lineSegmentLength = 0.1f;
@@ -64,7 +66,11 @@ public class IronFiling : MonoBehaviour, IResetObject
     [SerializeField]
     private float lineEndWidth = 0.004f;
 
+    [SerializeField]
+    private float tolerance = 0.25f;
+
     private SimulationController simController;
+
 
     /// <summary>
     /// Initialization
@@ -89,12 +95,17 @@ public class IronFiling : MonoBehaviour, IResetObject
 
             LineRenderer linerenderer = line.AddComponent<LineRenderer>();
             //linerenderer.useWorldSpace = false;
-            linerenderer.shadowCastingMode = ShadowCastingMode.On;
-            linerenderer.receiveShadows = true;
+            linerenderer.shadowCastingMode = ShadowCastingMode.Off;
+            linerenderer.receiveShadows = false;
             linerenderer.material = ironMaterial;
             linerenderer.lightProbeUsage = LightProbeUsage.Off;
             linerenderer.startWidth = lineStartWidth;
             linerenderer.endWidth = lineEndWidth;
+            linerenderer.allowOcclusionWhenDynamic = false;
+
+            linerenderer.SetPosition(0, transform.TransformPoint(new Vector3(Random.Range(-1f, 1f) * width / 2, 0, Random.Range(-1f, 1f) * height / 2)));
+            linerenderer.positionCount = 15;
+
             linerenderers[i] = linerenderer;
         }
         gameObject.SetActive(false);
@@ -120,16 +131,25 @@ public class IronFiling : MonoBehaviour, IResetObject
         simController.StopSimulation();
         simController.AddNewResetObject(this);
 
-        Debug.Log("Start IronFiling");
-
-        for (int i = 0; i < iterations * 2; i++)
+        if (!usecoroutine)
         {
-            Vector3 origin = new Vector3(Random.Range(-1f, 1f) * width/2, 0, Random.Range(-1f, 1f) * height/2);
-            drawIron(origin, linerenderers[i]);
+            Debug.Log("Start IronFiling");
+            for (int i = 0; i < iterations * 2; i++)
+            {
+                Vector3 origin = new Vector3(Random.Range(-1f, 1f) * width / 2, 0, Random.Range(-1f, 1f) * height / 2);
+                drawIron(origin, linerenderers[i]);
+            }
+            Debug.Log("End IronFiling");
+            gameObject.SetActive(true);
         }
-        Debug.Log("End IronFiling");
+        else
+        {
+            gameObject.SetActive(true);
+            StopCoroutine(drawIronCoroutine());
+            StartCoroutine(drawIronCoroutine());
+        }
 
-        gameObject.SetActive(true);
+
     }
 
     /// <summary>
@@ -164,11 +184,139 @@ public class IronFiling : MonoBehaviour, IResetObject
         }
     }
 
+    private IEnumerator drawIronCoroutine()
+    {
+        Vector3 globalLeftUpBorderPoint = transform.TransformPoint(new Vector3(width / 2.0f, 0, height / 2.0f));
+        Vector3 globalBottonDown = transform.TransformPoint(new Vector3(-width / 2.0f, 0, -height / 2.0f));
+
+        //Caching values to maybe squeeze out a little bit more performance.
+        float globalLeftUpBorderPointx = globalLeftUpBorderPoint.x;
+        float globalBottonDownx = globalBottonDown.x;
+        float globalLeftUpBorderPointz = globalLeftUpBorderPoint.z;
+        float globalBottonDownz = globalBottonDown.z;
+        Vector3 globalLinePoint;
+        int numberOfPoints = 0;
+
+        for (int i = 0; i < iterations * 2; i++)
+        {
+            // line renderer points in world space!
+            globalLinePoint = linerenderers[i].GetPosition(0);
+
+
+            linerenderers[i].positionCount = 15;
+            for (numberOfPoints = 0; numberOfPoints < 15; numberOfPoints++)
+            {
+                globalLinePoint += Vector3.Normalize(field.get(globalLinePoint)) * lineSegmentLength;
+                linerenderers[i].SetPosition(numberOfPoints, globalLinePoint);
+            }
+        }
+        yield return null;
+        bool dirty = false;
+        for (int n = 0; n < 25; n++)
+        {
+            for (int i = 0; i < iterations * 2; i++)
+            {
+                int positioncount = linerenderers[i].positionCount;
+                if (positioncount > 3)
+                {
+                    globalLinePoint = linerenderers[i].GetPosition(positioncount - 1);
+                }
+                else
+                {
+                    globalLinePoint = transform.TransformPoint(new Vector3(Random.Range(-1f, 1f) * width / 2, 0, Random.Range(-1f, 1f) * height / 2));
+                    positioncount = 0;
+                }
+                linerenderers[i].positionCount = maxvertexCount;
+                for (numberOfPoints = positioncount; globalLinePoint.x <= globalLeftUpBorderPointx && globalLinePoint.x >= globalBottonDownx &&
+                       globalLinePoint.z <= globalLeftUpBorderPointz && globalLinePoint.z >= globalBottonDownz && numberOfPoints < maxvertexCount; numberOfPoints++)
+                {
+                    globalLinePoint += Vector3.Normalize(field.get(globalLinePoint)) * lineSegmentLength / 4.0f;
+                    linerenderers[i].SetPosition(numberOfPoints, globalLinePoint);
+                    dirty = true;
+                }
+                linerenderers[i].positionCount = numberOfPoints;
+                linerenderers[i].Simplify(tolerance);
+                if (dirty)
+                {
+                dirty = false;
+                    yield return null;
+                }
+            }
+        }
+    }
+
     /// <summary>
     /// Resets the object
     /// </summary>
     public void resetObject()
     {
+        StopCoroutine(drawIronCoroutine());
+        foreach (LineRenderer linerenderer in linerenderers)
+        {
+            linerenderer.SetPosition(0, transform.TransformPoint(new Vector3(Random.Range(-1f, 1f) * width / 2, 0, Random.Range(-1f, 1f) * height / 2)));
+            linerenderer.positionCount = 15;
+        }
         gameObject.SetActive(false);
     }
 }
+
+//Archive:
+/*
+ *     private IEnumerator drawIronCoroutine()
+    {
+        Vector3 globalLeftUpBorderPoint = transform.TransformPoint(new Vector3(width / 2.0f, 0, height / 2.0f));
+        Vector3 globalBottonDown = transform.TransformPoint(new Vector3(-width / 2.0f, 0, -height / 2.0f));
+
+        //Caching values to maybe squeeze out a little bit more performance.
+        float globalLeftUpBorderPointx = globalLeftUpBorderPoint.x;
+        float globalBottonDownx = globalBottonDown.x;
+        float globalLeftUpBorderPointz = globalLeftUpBorderPoint.z;
+        float globalBottonDownz = globalBottonDown.z;
+        Vector3 globalLinePoint;
+        int numberOfPoints = 0;
+
+        for (int i = 0; i < iterations * 2; i++)
+        {
+            // line renderer points in world space!
+            globalLinePoint = transform.TransformPoint(new Vector3(Random.Range(-1f, 1f) * width / 2, 0, Random.Range(-1f, 1f) * height / 2));
+            float lineSegmentFactor = lineSegmentLength;
+
+            linerenderers[i].positionCount = maxvertexCount;
+            float emergencystop = maxvertexCount * 2;
+            for (numberOfPoints = 0; globalLinePoint.x <= globalLeftUpBorderPointx && globalLinePoint.x >= globalBottonDownx &&
+                   globalLinePoint.z <= globalLeftUpBorderPointz && globalLinePoint.z >= globalBottonDownz && emergencystop > 0 && numberOfPoints < maxvertexCount; numberOfPoints++)
+            {
+                emergencystop--;
+                linerenderers[i].SetPosition(numberOfPoints, globalLinePoint);
+                globalLinePoint += Vector3.Normalize(field.get(globalLinePoint)) * lineSegmentFactor;
+                if (numberOfPoints >= 2)
+                {
+                    Vector3 A = linerenderers[i].GetPosition(numberOfPoints - 2);
+                    Vector3 B = linerenderers[i].GetPosition(numberOfPoints - 1);
+                    Vector3 C = linerenderers[i].GetPosition(numberOfPoints);
+                    Vector2 A2 = new Vector2(A.x, A.y);
+                    Vector2 B2 = new Vector2(B.x, B.y);
+                    Vector2 C2 = new Vector2(C.x, C.y);
+                    float Angle = Vector2.Angle(B2 - A2, C2 - B2) + 0.1f;
+                    if ((C2 - B2).magnitude < (lineSegmentLength / 30.0f)) break;
+                    Vector2 temp = C2 - B2;
+                    if (Angle < maxAngle / 2)
+                        lineSegmentFactor *= 2;
+                    else if (Angle > maxAngle && lineSegmentFactor > lineSegmentLength / 10.0f)
+                    {
+                        lineSegmentFactor /= 2;
+                        numberOfPoints -=2;
+                        globalLinePoint = linerenderers[i].GetPosition(numberOfPoints);
+                        globalLinePoint += Vector3.Normalize(field.get(globalLinePoint)) * lineSegmentFactor;
+                    }
+                    else
+                        lineSegmentFactor *= 1.3f;
+                }
+            }
+            linerenderers[i].SetPosition(numberOfPoints, globalLinePoint);
+            linerenderers[i].positionCount = ++numberOfPoints;
+            yield return null;
+        }
+        yield return null;
+    }
+    */
