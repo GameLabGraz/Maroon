@@ -273,7 +273,7 @@ public class Capacitor : PausableObject, IResetObject
         this.powerVoltage = voltage;
     }
 
-    public void resetObject()
+    public void ResetObject()
     {
         voltage = 0;
         previousPowerVoltage = 0;

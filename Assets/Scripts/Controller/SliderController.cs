@@ -87,7 +87,7 @@ public class SliderController : VRTK_Slider, IResetObject
         }
     }
 
-    public void resetObject()
+    public void ResetObject()
     {
         transform.position = startPos;
         transform.rotation = startRot;

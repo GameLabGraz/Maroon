@@ -92,7 +92,7 @@ public class SnapSlipPlate : MonoBehaviour, IResetObject
         snappedPlate.GetComponent<Rigidbody>().constraints = previousPlateBodyConstraints;
     }
 
-    public void resetObject()
+    public void ResetObject()
     {
         UnregisterPlateWaveGenerators();
         LoadPreviousState();

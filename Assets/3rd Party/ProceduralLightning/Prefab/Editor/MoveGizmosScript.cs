@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using System.Collections;
 using System.IO;
 
 namespace DigitalRuby.ThunderAndLightning.Editor
@@ -8,7 +9,6 @@ namespace DigitalRuby.ThunderAndLightning.Editor
     public class MoveGizmosScript
     {
         private static readonly string sourcePath = Path.Combine(Application.dataPath, "3rd Party/ProceduralLightning/Prefab/Editor/Gizmos");
-
 
         static MoveGizmosScript()
         {

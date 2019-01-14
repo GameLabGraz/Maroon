@@ -11,7 +11,6 @@
 //
 
 using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
@@ -65,12 +64,11 @@ public class SimulationController : MonoBehaviour
         Time.timeScale = timeScale;
 
         resetObjects.Clear();
-        GameObject[] objects = GameObject.FindGameObjectsWithTag("ResetObject");
-        foreach (GameObject obj in objects)
+        foreach (var obj in GameObject.FindGameObjectsWithTag("ResetObject"))
         {
-            IResetObject reset_obj = obj.GetComponentInParent<IResetObject>();
-            if (reset_obj != null)
-                resetObjects.Add(reset_obj);
+            var resetObj = obj.GetComponentInParent<IResetObject>();
+            if (resetObj != null)
+                resetObjects.Add(resetObj);
 
         }
     }
@@ -89,27 +87,27 @@ public class SimulationController : MonoBehaviour
     /// <summary>
     /// Adds a reset object
     /// </summary>
-    /// <param name="reset_obj">the object to be reset</param>
-    public void AddNewResetObject(IResetObject reset_obj)
+    /// <param name="resetObj">the object to be reset</param>
+    public void AddNewResetObject(IResetObject resetObj)
     {
-        if (reset_obj != null)
-            resetObjects.Add(reset_obj);
+        if (resetObj != null)
+            resetObjects.Add(resetObj);
     }
 
     /// <summary>
     /// Removes a reset object
     /// </summary>
-    /// <param name="reset_obj">the reset object to remove</param>
-    public void RemoveResetObject(IResetObject reset_obj)
+    /// <param name="resetObj">the reset object to remove</param>
+    public void RemoveResetObject(IResetObject resetObj)
     {
-        resetObjects.Remove(reset_obj);
+        resetObjects.Remove(resetObj);
     }
 
     /// <summary>
     /// Simulates one frame
     /// </summary>
     /// <returns>enumerator</returns>
-    IEnumerator SimulateOneFrame()
+    private IEnumerator SimulateOneFrame()
     {
         yield return 0;
         StopSimulation();
@@ -186,9 +184,9 @@ public class SimulationController : MonoBehaviour
     /// </summary>
     public void ResetSimulation()
     {
-        foreach (IResetObject resetObject in resetObjects)
+        foreach (var resetObject in resetObjects)
         {
-            resetObject.resetObject();
+            resetObject.ResetObject();
         }
 
         StopSimulation();

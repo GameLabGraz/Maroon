@@ -162,7 +162,7 @@ public class FieldLineScript: MonoBehaviour {
         if (!Camera.main)
             return;
 
-        VectorLine.SetCamera3D(Camera.main);
+        //VectorLine.SetCamera3D(Camera.main);
         line.Draw3D();
 
 #endif

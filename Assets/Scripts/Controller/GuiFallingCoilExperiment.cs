@@ -3,27 +3,23 @@ using UnityEngine.SceneManagement;
 
 public class GuiFallingCoilExperiment : MonoBehaviour
 {
-
   private GUIStyle textStyle;
 
   private SimulationController simController;
 
   [SerializeField]
-  private IronFiling ironFiling;
+  private IronFiling _ironFiling;
 
-  void Start ()
+  private void Start()
   {
-        GameObject simControllerObject = GameObject.Find("SimulationController");
-        if (simControllerObject)
-            simController = simControllerObject.GetComponent<SimulationController>();
+    var simControllerObject = GameObject.Find("SimulationController");
+    if (simControllerObject)
+        simController = simControllerObject.GetComponent<SimulationController>();
 
-        // define GUI style
-        this.textStyle = new GUIStyle("label");
-        this.textStyle.alignment = TextAnchor.MiddleCenter;
+    this.textStyle = new GUIStyle("label") {alignment = TextAnchor.MiddleCenter};
   }
 
-  // Update is called once per frame
-  void Update()
+  private void Update()
   {
     // check if [ESC] was pressed
     if (Input.GetKeyDown(KeyCode.Escape))
@@ -55,8 +51,8 @@ public class GuiFallingCoilExperiment : MonoBehaviour
     // check if [I] was pressed (Iron Filings)
     if(Input.GetKeyDown(KeyCode.I))
     {
-      if(ironFiling)
-        ironFiling.generateFieldImage();
+      if(_ironFiling)
+        _ironFiling.generateFieldImage();
     }
   }
 

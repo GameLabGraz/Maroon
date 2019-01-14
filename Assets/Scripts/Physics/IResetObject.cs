@@ -10,9 +10,6 @@
 //-----------------------------------------------------------------------------
 //
 
-using UnityEngine;
-using System.Collections;
-
 /// <summary>
 /// Interface for objects which must be reset.
 /// </summary>
@@ -21,5 +18,5 @@ public interface IResetObject
     /// <summary>
     /// Resets the object
     /// </summary>
-    void resetObject();
+    void ResetObject();
 }

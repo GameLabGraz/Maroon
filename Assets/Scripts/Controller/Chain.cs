@@ -180,7 +180,7 @@ public class Chain : MonoBehaviour, IPath, IResetObject
         return path;
     }
 
-    public void resetObject()
+    public void ResetObject()
     {
         for(int i = 0; i < LinkObjects.Count; i++)
         {

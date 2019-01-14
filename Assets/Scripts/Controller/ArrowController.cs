@@ -107,7 +107,7 @@ public class ArrowController : MonoBehaviour, IResetObject
     /// <summary>
     /// Resets the object
     /// </summary>
-    public void resetObject()
+    public void ResetObject()
     {
         rotateArrow();
     }

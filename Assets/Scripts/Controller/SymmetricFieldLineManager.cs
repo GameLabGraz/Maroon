@@ -33,8 +33,13 @@ public class SymmetricFieldLineManager : FieldLineManager
     /// <param name="symmetryCnt"></param>
     public void setSymmetryCount(int symmetryCnt)
     {
-        symmetryEnabled = symmetryCnt == 1 ? false : true;
+        symmetryEnabled = symmetryCnt != 1;
         symmetryCount = symmetryCnt;
+    }
+
+    public void setSymmetryCount(float symmetryCnt)
+    {
+        setSymmetryCount((int)symmetryCnt);
     }
 
     protected override void DrawFieldLines()

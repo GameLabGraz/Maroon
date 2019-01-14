@@ -5,17 +5,22 @@ using System.Collections.Generic;
 public class Lecture  : MonoBehaviour
 {
     [SerializeField]
-    private List<Texture> contents;
+    private string _name;
+    
+    [SerializeField]
+    private List<Texture> _contents;
 
     private bool isDone = true;
 
-    public List<Texture> Contents { get { return contents; } }
+    public string Name { get { return this._name; } }
+
+    public List<Texture> Contents { get { return _contents; } }
 
     public bool IsDone { get { return isDone; } }
 
     public void AddContentTexture(Texture content)
     {
-        contents.Add(content);
+        _contents.Add(content);
     }
 
     public void LoadWebContents(List<string> urls)
@@ -24,13 +29,13 @@ public class Lecture  : MonoBehaviour
         StartCoroutine(LoadWebContentTextures(urls));
     }
 
-    private IEnumerator LoadWebContentTextures(List<string> urls)
+    private IEnumerator LoadWebContentTextures(IEnumerable<string> urls)
     {
-        foreach (string url in urls)
+        foreach (var url in urls)
         {
-            WWW webContent = new WWW(url);
+            var webContent = new WWW(url);
             yield return webContent;
-            contents.Add(webContent.texture);
+            _contents.Add(webContent.texture);
         }
         isDone = true;
     }

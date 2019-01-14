@@ -155,7 +155,7 @@ public class WaterPlane : PausableObject, IResetObject
         planeMesh.RecalculateBounds();
     }
 
-    public void resetObject()
+    public void ResetObject()
     {
         GetComponent<Renderer>().material.SetColor("_ColorMin", startMinColor);
         GetComponent<Renderer>().material.SetColor("_ColorMax", startMaxColor);

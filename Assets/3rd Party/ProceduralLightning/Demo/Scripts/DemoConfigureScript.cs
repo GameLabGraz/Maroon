@@ -184,7 +184,7 @@ namespace DigitalRuby.ThunderAndLightning
                 FadePercentSlider.value,
                 GrowthMultiplierSlider.value
             );
-            te.content = new GUIContent(copyText);
+            te.text =copyText;
             te.SelectAll();
             te.Copy();
         }

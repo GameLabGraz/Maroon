@@ -54,6 +54,8 @@ public class AdvancedLineRenderer : MonoBehaviour
     /// </summary>
     private Material material;
 
+    private bool _generateLightingData;
+
     /// <summary>
     /// Get or Set if world space is used
     /// </summary>
@@ -64,6 +66,16 @@ public class AdvancedLineRenderer : MonoBehaviour
         {
             useWorldSpace_ = value;
             line_.useWorldSpace = value;
+        }
+    }
+
+    public bool GenerateLightingData
+    {
+        get { return _generateLightingData; }
+        set
+        {
+            _generateLightingData = value;
+            line_.generateLightingData = value;
         }
     }
 
@@ -251,6 +263,7 @@ public class AdvancedLineRenderer : MonoBehaviour
         line_.positionCount = vertexCount_;
         line_.useWorldSpace = useWorldSpace_;
         line_.material = material;
+        line_.generateLightingData = _generateLightingData;
     }
 
     /// <summary>
@@ -259,7 +272,7 @@ public class AdvancedLineRenderer : MonoBehaviour
     /// </summary>
     private void clearLineRenderer()
     {
-        UnityEngine.Object.DestroyImmediate(line_);
+        DestroyImmediate(line_);
         line_ = gameObject.AddComponent<LineRenderer>();
         initLineRenderer();
     }

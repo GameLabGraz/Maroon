@@ -35,7 +35,7 @@ public class Magnet : EMObject
     /// <summary>
     /// Resets the object
     /// </summary>
-    public override void resetObject()
+    public override void ResetObject()
     {
         GetComponent<Rigidbody>().velocity = Vector3.zero;
         GetComponent<Rigidbody>().angularVelocity = Vector3.zero;

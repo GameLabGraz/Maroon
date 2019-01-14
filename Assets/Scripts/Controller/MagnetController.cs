@@ -1,44 +1,30 @@
-﻿//-----------------------------------------------------------------------------
-// MagnetController.cs
-//
-// Controller class for the magnet
-//
-//
-// Authors: Michael Stefan Holly
-//-----------------------------------------------------------------------------
-//
-
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using VRTK;
 
-/// <summary>
-/// Controller class for the magnet
-/// </summary>
 public class MagnetController : VRTK_InteractableObject
 {
-    private bool IsMoving = false;
+    private bool _isMoving = false;
 
-    private GameObject grabbingObject;
+    private GameObject _grabbingObject;
 
-    private SimulationController simController;
+    private SimulationController _simController;
 
     private void Start()
     {
-        GameObject simControllerObject = GameObject.Find("SimulationController");
-        if (simControllerObject)
-            simController = simControllerObject.GetComponent<SimulationController>();
+        _simController = FindObjectOfType<SimulationController>();
     }
 
     public override void Grabbed(VRTK_InteractGrab currentGrabbingObject = null)
     {
         base.Grabbed(currentGrabbingObject);
 
-        grabbingObject = currentGrabbingObject.gameObject;
+        if (currentGrabbingObject != null)
+            _grabbingObject = currentGrabbingObject.gameObject;
 
-        IsMoving = true;
+        _isMoving = true;
 
-        simController.SimulationRunning = true;
+        _simController.SimulationRunning = true;
 
         StartCoroutine(TriggerHapticPulse());
     }
@@ -47,21 +33,20 @@ public class MagnetController : VRTK_InteractableObject
     {
         base.Ungrabbed(previousGrabbingObject);
 
-        IsMoving = false;
+        _isMoving = false;
 
-        simController.SimulationRunning = false;
+        _simController.SimulationRunning = false;
     }
 
 
     private IEnumerator TriggerHapticPulse()
     {
-        while (IsMoving)
+        while (_isMoving)
         {
             var hapticPulseStrength = GetComponent<Magnet>().getExternalForce().magnitude / 10;
-            Debug.Log("Haptic Pulse Strength = " + hapticPulseStrength);
 
             VRTK_ControllerHaptics.TriggerHapticPulse(
-                    VRTK_ControllerReference.GetControllerReference(grabbingObject),
+                    VRTK_ControllerReference.GetControllerReference(_grabbingObject),
                     hapticPulseStrength);
 
             yield return new WaitForFixedUpdate();

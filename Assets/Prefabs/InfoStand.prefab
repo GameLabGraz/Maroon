@@ -73,7 +73,6 @@ GameObject:
   - component: {fileID: 4109133658017454}
   - component: {fileID: 33886427238528816}
   - component: {fileID: 23605001304992676}
-  - component: {fileID: 114826655034844116}
   - component: {fileID: 64604654912387204}
   m_Layer: 2
   m_Name: InfoStand
@@ -99,6 +98,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1940016177781114
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4332505560498622}
+  - component: {fileID: 108278344198641582}
+  m_Layer: 0
+  m_Name: PointLight
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
 --- !u!1 &1965365440466882
 GameObject:
   m_ObjectHideFlags: 1
@@ -123,14 +138,28 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1854812684289932}
-  m_LocalRotation: {x: -0.37104177, y: 0.60193694, z: 0.60193694, w: 0.37104177}
-  m_LocalPosition: {x: -3.5709, y: 0.15582033, z: -9.46271}
+  m_LocalRotation: {x: -0.5, y: 0.5, z: 0.5, w: 0.5}
+  m_LocalPosition: {x: 2.9665585, y: -0.02417943, z: -2.1356363}
   m_LocalScale: {x: 0.3000002, y: 0.30000013, z: 0.3000001}
   m_Children:
   - {fileID: 224196076554232448}
+  - {fileID: 4332505560498622}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -90.00001, y: 3758, z: -41.3}
+  m_LocalEulerAnglesHint: {x: -90, y: 180, z: -90}
+--- !u!4 &4332505560498622
+Transform:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1940016177781114}
+  m_LocalRotation: {x: 0.6889975, y: -0.15900469, z: -0.15900469, w: 0.6889975}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 5, y: 5, z: 5}
+  m_Children: []
+  m_Father: {fileID: 4109133658017454}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &23605001304992676
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -146,7 +175,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 2100000, guid: 9527d4ffc6cf1694284a80710fa830a3, type: 2}
+  - {fileID: 2100000, guid: f1a8571c3ef3f4d46bbdfb8b2ecdec74, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -187,6 +216,43 @@ MeshCollider:
   m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300062, guid: 0b7d05bbe5a437a4dae644aaec5e1506, type: 3}
+--- !u!108 &108278344198641582
+Light:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1940016177781114}
+  m_Enabled: 1
+  serializedVersion: 8
+  m_Type: 3
+  m_Color: {r: 1, g: 0, b: 0.84827566, a: 1}
+  m_Intensity: 2
+  m_Range: 3
+  m_SpotAngle: 30
+  m_CookieSize: 10
+  m_Shadows:
+    m_Type: 0
+    m_Resolution: -1
+    m_CustomResolution: -1
+    m_Strength: 1
+    m_Bias: 0.05
+    m_NormalBias: 0.4
+    m_NearPlane: 0.2
+  m_Cookie: {fileID: 0}
+  m_DrawHalo: 1
+  m_Flare: {fileID: 0}
+  m_RenderMode: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_Lightmapping: 2
+  m_LightShadowCasterMode: 0
+  m_AreaSize: {x: 1, y: 1}
+  m_BounceIntensity: 0
+  m_ColorTemperature: 6570
+  m_UseColorTemperature: 0
+  m_ShadowRadius: 0
+  m_ShadowAngle: 0
 --- !u!114 &114194629475408670
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -358,37 +424,6 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Enter
---- !u!114 &114826655034844116
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1854812684289932}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3db642874ab773b4e8917fa26d805e36, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  disableWhenIdle: 1
-  touchHighlightColor: {r: 0.101960786, g: 0.8235294, b: 0.78039217, a: 0}
-  allowedTouchControllers: 0
-  ignoredColliders: []
-  isGrabbable: 0
-  holdButtonToGrab: 0
-  stayGrabbedOnTeleport: 1
-  validDrop: 1
-  grabOverrideButton: 0
-  allowedGrabControllers: 0
-  grabAttachMechanicScript: {fileID: 0}
-  secondaryGrabActionScript: {fileID: 0}
-  isUsable: 1
-  holdButtonToUse: 1
-  useOnlyIfGrabbed: 0
-  pointerActivatesUseAction: 0
-  useOverrideButton: 0
-  allowedUseControllers: 0
-  usingState: 0
-  LevelName: 
 --- !u!114 &114851076344048166
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -480,7 +515,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.26168528, y: 0.1056355}
   m_AnchorMax: {x: 0.73719114, y: 0.36338723}
-  m_AnchoredPosition: {x: 0.16794357, y: -0.05133629}
+  m_AnchoredPosition: {x: 0.16794586, y: -0.051330566}
   m_SizeDelta: {x: 0.47050655, y: 1.3449571}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224196076554232448
@@ -517,7 +552,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.047376473, y: 0.5}
   m_AnchorMax: {x: 0.95132077, y: 0.8433723}
-  m_AnchoredPosition: {x: 0.26694435, y: -0.17803884}
+  m_AnchoredPosition: {x: 0.26693726, y: -0.17803955}
   m_SizeDelta: {x: -1.2784548, y: -2.4873033}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224837701267080778

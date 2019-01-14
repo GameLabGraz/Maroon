@@ -14,7 +14,7 @@ public class CapacitorBaseController : MonoBehaviour, IVoltagePoleTrigger, IRese
         Destroy(other.gameObject);
     }
 
-    public void resetObject()
+    public void ResetObject()
     {
         transform.position = startPos;
     }

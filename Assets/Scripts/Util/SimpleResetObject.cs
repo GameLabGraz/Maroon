@@ -25,7 +25,7 @@ public class SimpleResetObject : MonoBehaviour, IResetObject
     }
 
 
-    public void resetObject()
+    public void ResetObject()
     {
         transform.localScale = startScale;
         transform.position = startPos;

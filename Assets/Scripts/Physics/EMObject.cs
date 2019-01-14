@@ -100,5 +100,5 @@ public abstract class EMObject : PausableObject, IGenerateB, IResetObject
     /// <summary>
     /// Resets the object
     /// </summary>
-    public abstract void resetObject();
+    public abstract void ResetObject();
 }

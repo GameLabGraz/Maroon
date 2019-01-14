@@ -167,7 +167,7 @@ public class IronFiling : MonoBehaviour, IResetObject
     /// <summary>
     /// Resets the object
     /// </summary>
-    public void resetObject()
+    public void ResetObject()
     {
         gameObject.SetActive(false);
     }

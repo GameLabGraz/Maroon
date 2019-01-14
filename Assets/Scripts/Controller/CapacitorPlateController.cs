@@ -167,7 +167,7 @@ public class CapacitorPlateController : VRTK_InteractableObject, IGenerateE, IRe
         throw new System.NotImplementedException();
     }
 
-    public void resetObject()
+    public void ResetObject()
     {
         transform.localScale = startScale;
     }

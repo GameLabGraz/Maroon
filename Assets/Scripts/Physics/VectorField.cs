@@ -45,11 +45,6 @@ public class VectorField : MonoBehaviour
     /// </summary>
     public Object arrowPrefab;
 
-    /// <summary>
-    /// The silder to change the vector field resolution
-    /// </summary>
-	public Slider sliderResolution;
-
     [SerializeField]
     private int resolution = 20;
 
@@ -147,6 +142,13 @@ public class VectorField : MonoBehaviour
         clearVectorField();
         createVectorFieldArrows();
     }
+
+    public void setResolution(float resolution)
+    {
+        this.resolution = (int)resolution;
+        changeResolution();
+    }
+
 
     public void setResolution(int resolution)
     {

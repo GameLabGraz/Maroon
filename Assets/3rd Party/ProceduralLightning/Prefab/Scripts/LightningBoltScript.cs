@@ -397,7 +397,7 @@ namespace DigitalRuby.ThunderAndLightning
 
                 meshRenderer = GetComponent<MeshRenderer>();
                 meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-                meshRenderer.useLightProbes = false;
+                meshRenderer.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
                 meshRenderer.receiveShadows = false;
                 meshRenderer.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
                 meshRenderer.enabled = false;

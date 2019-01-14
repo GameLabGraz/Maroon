@@ -53,14 +53,24 @@ public class VandeGraaffController : MonoBehaviour
 	/// </summary>
 	public float GetVoltage()
 	{
-		return this.ChargeStrength/(4.0f * Mathf.PI * PhysicalConstants.e0 * radius);
+		return ChargeStrength/(4.0f * Mathf.PI * PhysicalConstants.e0 * radius);
 	}
 
-	/// <summary>
-	/// The maximum voltage produced by the Van de Graaff Generator in [V]
-	/// Depending on Emax and radius of sphere.
-	/// </summary>
-	public float MaxVoltage
+    public void GetVoltageByReference(MessageArgs args)
+    {
+        args.value = GetVoltage();
+    }
+
+    public void GetChargeStrengthByReference(MessageArgs args)
+    {
+        args.value = ChargeStrength;
+    }
+
+    /// <summary>
+    /// The maximum voltage produced by the Van de Graaff Generator in [V]
+    /// Depending on Emax and radius of sphere.
+    /// </summary>
+    public float MaxVoltage
 	{
 		get{ return emax * radius; }
 	}
@@ -76,7 +86,15 @@ public class VandeGraaffController : MonoBehaviour
 
 	public bool On
 	{
-		get{ return this.on; }
+	    get
+	    {
+	        return on;
+	    }
+	    set
+	    {
+	        on = value;
+	        sound.enabled = value;
+	    }
 	}
 
 	public bool FieldLinesEnabled

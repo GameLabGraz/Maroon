@@ -147,7 +147,7 @@ public class FieldLine : MonoBehaviour, IResetObject
     /// <summary>
     /// Clears the clones and line renderer
     /// </summary>
-    public void resetObject()
+    public void ResetObject()
     {
         lineRenderer.Clear();
     }

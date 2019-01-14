@@ -11,7 +11,7 @@ public class StopPlayButtonController : VRTK_InteractableObject
 
     private void Start()
     {
-        GameObject simControllerObject = GameObject.Find("SimulationController");
+        var simControllerObject = GameObject.Find("SimulationController");
         if (simControllerObject)
             simController = simControllerObject.GetComponent<SimulationController>();
 
