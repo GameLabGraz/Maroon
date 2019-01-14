@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
         {
             language = LanguageManager.Instance.CurrentLanguage;
 
-            if (_player != null)
+            if (_player != null && SceneManager.GetActiveScene().name.Contains("Laboratory"))
             {
                 _player.transform.position = _playerPosition;
                 _player.transform.rotation = _playerRotation;
@@ -93,7 +93,7 @@ public class GameManager : MonoBehaviour
 
     private void Update ()
     {
-        if (_player != null)
+        if (_player != null && SceneManager.GetActiveScene().name.Contains("Laboratory"))
         {
             _playerPosition = _player.transform.position;
             _playerRotation = _player.transform.rotation;
