@@ -11,14 +11,13 @@
 //
 
 using System;
-using System.Reflection;
 
 /// <summary>
 /// 1-Tuple or singleton implementation
 /// </summary>
 public class Tuple<T1> : IEquatable<Tuple<T1>>
 {
-    readonly T1 item1;
+    private readonly T1 item1;
 
     public T1 Item1 { get { return item1; } }
 
@@ -35,14 +34,17 @@ public class Tuple<T1> : IEquatable<Tuple<T1>>
     public override bool Equals(object obj)
     {
         if (obj == null || GetType() != obj.GetType())
+        {
             return false;
+        }
 
         return Equals((Tuple<T1>)obj);
     }
 
     public bool Equals(Tuple<T1> other)
     {
-        return other.item1.Equals(item1);
+        return other != null
+             && other.item1.Equals(item1);
     }
 }
 
@@ -51,8 +53,8 @@ public class Tuple<T1> : IEquatable<Tuple<T1>>
 /// </summary>
 public class Tuple<T1, T2> : IEquatable<Tuple<T1, T2>>
 {
-    readonly T1 item1;
-    readonly T2 item2;
+    private readonly T1 item1;
+    private readonly T2 item2;
 
     public T1 Item1 { get { return item1; } }
     public T2 Item2 { get { return item2; } }
@@ -77,14 +79,18 @@ public class Tuple<T1, T2> : IEquatable<Tuple<T1, T2>>
     public override bool Equals(object obj)
     {
         if (obj == null || GetType() != obj.GetType())
+        {
             return false;
+        }
 
         return Equals((Tuple<T1, T2>)obj);
     }
 
     public bool Equals(Tuple<T1, T2> other)
     {
-        return other.item1.Equals(item1) && other.item2.Equals(item2);
+        return other != null
+             && other.item1.Equals(item1)
+             && other.item2.Equals(item2);
     }
 }
 
@@ -93,9 +99,9 @@ public class Tuple<T1, T2> : IEquatable<Tuple<T1, T2>>
 /// </summary>
 public class Tuple<T1, T2, T3> : IEquatable<Tuple<T1, T2, T3>>
 {
-    readonly T1 item1;
-    readonly T2 item2;
-    readonly T3 item3;
+    private readonly T1 item1;
+    private readonly T2 item2;
+    private readonly T3 item3;
 
     public T1 Item1 { get { return item1; } }
     public T2 Item2 { get { return item2; } }
@@ -117,20 +123,25 @@ public class Tuple<T1, T2, T3> : IEquatable<Tuple<T1, T2, T3>>
             hash = hash * 23 + item2.GetHashCode();
             hash = hash * 23 + item3.GetHashCode();
             return hash;
-        };
+        }
     }
 
     public override bool Equals(object obj)
     {
         if (obj == null || GetType() != obj.GetType())
+        {
             return false;
+        }
 
         return Equals((Tuple<T1, T2, T3>)obj);
     }
 
     public bool Equals(Tuple<T1, T2, T3> other)
     {
-        return other.item1.Equals(item1) && other.item2.Equals(item2) && other.item3.Equals(item3);
+        return other != null
+             && other.item1.Equals(item1)
+             && other.item2.Equals(item2)
+             && other.item3.Equals(item3);
     }
 }
 
@@ -139,16 +150,15 @@ public class Tuple<T1, T2, T3> : IEquatable<Tuple<T1, T2, T3>>
 /// </summary>
 public class Tuple<T1, T2, T3, T4> : IEquatable<Tuple<T1, T2, T3, T4>>
 {
-    readonly T1 item1;
-    readonly T2 item2;
-    readonly T3 item3;
-    readonly T4 item4;
+    private readonly T1 item1;
+    private readonly T2 item2;
+    private readonly T3 item3;
+    private readonly T4 item4;
 
     public T1 Item1 { get { return item1; } }
     public T2 Item2 { get { return item2; } }
     public T3 Item3 { get { return item3; } }
     public T4 Item4 { get { return item4; } }
-
 
     internal Tuple(T1 item1, T2 item2, T3 item3, T4 item4)
     {
@@ -168,20 +178,26 @@ public class Tuple<T1, T2, T3, T4> : IEquatable<Tuple<T1, T2, T3, T4>>
             hash = hash * 23 + item3.GetHashCode();
             hash = hash * 23 + item4.GetHashCode();
             return hash;
-        };
+        }
     }
 
     public override bool Equals(object obj)
     {
         if (obj == null || GetType() != obj.GetType())
+        {
             return false;
+        }
 
         return Equals((Tuple<T1, T2, T3, T4>)obj);
     }
 
     public bool Equals(Tuple<T1, T2, T3, T4> other)
     {
-        return other.item1.Equals(item1) && other.item2.Equals(item2) && other.item3.Equals(item3) && other.item4.Equals(item4);
+        return other != null
+             && other.item1.Equals(item1)
+             && other.item2.Equals(item2)
+             && other.item3.Equals(item3)
+             && other.item4.Equals(item4);
     }
 }
 
@@ -190,11 +206,11 @@ public class Tuple<T1, T2, T3, T4> : IEquatable<Tuple<T1, T2, T3, T4>>
 /// </summary>
 public class Tuple<T1, T2, T3, T4, T5> : IEquatable<Tuple<T1, T2, T3, T4, T5>>
 {
-    readonly T1 item1;
-    readonly T2 item2;
-    readonly T3 item3;
-    readonly T4 item4;
-    readonly T5 item5;
+    private readonly T1 item1;
+    private readonly T2 item2;
+    private readonly T3 item3;
+    private readonly T4 item4;
+    private readonly T5 item5;
 
     public T1 Item1 { get { return item1; } }
     public T2 Item2 { get { return item2; } }
@@ -222,20 +238,27 @@ public class Tuple<T1, T2, T3, T4, T5> : IEquatable<Tuple<T1, T2, T3, T4, T5>>
             hash = hash * 23 + item4.GetHashCode();
             hash = hash * 23 + item5.GetHashCode();
             return hash;
-        };
+        }
     }
 
     public override bool Equals(object obj)
     {
         if (obj == null || GetType() != obj.GetType())
+        {
             return false;
+        }
 
         return Equals((Tuple<T1, T2, T3, T4, T5>)obj);
     }
 
     public bool Equals(Tuple<T1, T2, T3, T4, T5> other)
     {
-        return other.item1.Equals(item1) && other.item2.Equals(item2) && other.item3.Equals(item3) && other.item4.Equals(item4) && other.item5.Equals(item5);
+        return other != null
+             && other.item1.Equals(item1)
+             && other.item2.Equals(item2)
+             && other.item3.Equals(item3)
+             && other.item4.Equals(item4)
+             && other.item5.Equals(item5);
     }
 }
 
@@ -244,12 +267,12 @@ public class Tuple<T1, T2, T3, T4, T5> : IEquatable<Tuple<T1, T2, T3, T4, T5>>
 /// </summary>
 public class Tuple<T1, T2, T3, T4, T5, T6> : IEquatable<Tuple<T1, T2, T3, T4, T5, T6>>
 {
-    readonly T1 item1;
-    readonly T2 item2;
-    readonly T3 item3;
-    readonly T4 item4;
-    readonly T5 item5;
-    readonly T6 item6;
+    private readonly T1 item1;
+    private readonly T2 item2;
+    private readonly T3 item3;
+    private readonly T4 item4;
+    private readonly T5 item5;
+    private readonly T6 item6;
 
     public T1 Item1 { get { return item1; } }
     public T2 Item2 { get { return item2; } }
@@ -280,20 +303,28 @@ public class Tuple<T1, T2, T3, T4, T5, T6> : IEquatable<Tuple<T1, T2, T3, T4, T5
             hash = hash * 23 + item5.GetHashCode();
             hash = hash * 23 + item6.GetHashCode();
             return hash;
-        };
+        }
     }
 
     public override bool Equals(object obj)
     {
         if (obj == null || GetType() != obj.GetType())
+        {
             return false;
+        }
 
         return Equals((Tuple<T1, T2, T3, T4, T5, T6>)obj);
     }
 
     public bool Equals(Tuple<T1, T2, T3, T4, T5, T6> other)
     {
-        return other.item1.Equals(item1) && other.item2.Equals(item2) && other.item3.Equals(item3) && other.item4.Equals(item4) && other.item5.Equals(item5) && other.item6.Equals(item6);
+        return other != null
+             && other.item1.Equals(item1)
+             && other.item2.Equals(item2)
+             && other.item3.Equals(item3)
+             && other.item4.Equals(item4)
+             && other.item5.Equals(item5)
+             && other.item6.Equals(item6);
     }
 }
 
@@ -302,13 +333,13 @@ public class Tuple<T1, T2, T3, T4, T5, T6> : IEquatable<Tuple<T1, T2, T3, T4, T5
 /// </summary>
 public class Tuple<T1, T2, T3, T4, T5, T6, T7> : IEquatable<Tuple<T1, T2, T3, T4, T5, T6, T7>>
 {
-    readonly T1 item1;
-    readonly T2 item2;
-    readonly T3 item3;
-    readonly T4 item4;
-    readonly T5 item5;
-    readonly T6 item6;
-    readonly T7 item7;
+    private readonly T1 item1;
+    private readonly T2 item2;
+    private readonly T3 item3;
+    private readonly T4 item4;
+    private readonly T5 item5;
+    private readonly T6 item6;
+    private readonly T7 item7;
 
     public T1 Item1 { get { return item1; } }
     public T2 Item2 { get { return item2; } }
@@ -342,20 +373,29 @@ public class Tuple<T1, T2, T3, T4, T5, T6, T7> : IEquatable<Tuple<T1, T2, T3, T4
             hash = hash * 23 + item6.GetHashCode();
             hash = hash * 23 + item7.GetHashCode();
             return hash;
-        };
+        }
     }
 
     public override bool Equals(object obj)
     {
         if (obj == null || GetType() != obj.GetType())
+        {
             return false;
+        }
 
         return Equals((Tuple<T1, T2, T3, T4, T5, T6, T7>)obj);
     }
 
     public bool Equals(Tuple<T1, T2, T3, T4, T5, T6, T7> other)
     {
-        return other.item1.Equals(item1) && other.item2.Equals(item2) && other.item3.Equals(item3) && other.item4.Equals(item4) && other.item5.Equals(item5) && other.item6.Equals(item6) && other.item7.Equals(item7);
+        return other != null
+             && other.item1.Equals(item1)
+             && other.item2.Equals(item2)
+             && other.item3.Equals(item3)
+             && other.item4.Equals(item4)
+             && other.item5.Equals(item5)
+             && other.item6.Equals(item6)
+             && other.item7.Equals(item7);
     }
 }
 
@@ -364,14 +404,14 @@ public class Tuple<T1, T2, T3, T4, T5, T6, T7> : IEquatable<Tuple<T1, T2, T3, T4
 /// </summary>
 public class Tuple<T1, T2, T3, T4, T5, T6, T7, T8> : IEquatable<Tuple<T1, T2, T3, T4, T5, T6, T7, T8>>
 {
-    readonly T1 item1;
-    readonly T2 item2;
-    readonly T3 item3;
-    readonly T4 item4;
-    readonly T5 item5;
-    readonly T6 item6;
-    readonly T7 item7;
-    readonly T8 item8;
+    private readonly T1 item1;
+    private readonly T2 item2;
+    private readonly T3 item3;
+    private readonly T4 item4;
+    private readonly T5 item5;
+    private readonly T6 item6;
+    private readonly T7 item7;
+    private readonly T8 item8;
 
     public T1 Item1 { get { return item1; } }
     public T2 Item2 { get { return item2; } }
@@ -408,20 +448,30 @@ public class Tuple<T1, T2, T3, T4, T5, T6, T7, T8> : IEquatable<Tuple<T1, T2, T3
             hash = hash * 23 + item7.GetHashCode();
             hash = hash * 23 + item8.GetHashCode();
             return hash;
-        };
+        }
     }
 
     public override bool Equals(object obj)
     {
         if (obj == null || GetType() != obj.GetType())
+        {
             return false;
+        }
 
         return Equals((Tuple<T1, T2, T3, T4, T5, T6, T7, T8>)obj);
     }
 
     public bool Equals(Tuple<T1, T2, T3, T4, T5, T6, T7, T8> other)
     {
-        return other.item1.Equals(item1) && other.item2.Equals(item2) && other.item3.Equals(item3) && other.item4.Equals(item4) && other.item5.Equals(item5) && other.item6.Equals(item6) && other.item7.Equals(item7) && other.item8.Equals(item8);
+        return other != null
+             && other.item1.Equals(item1)
+             && other.item2.Equals(item2)
+             && other.item3.Equals(item3)
+             && other.item4.Equals(item4)
+             && other.item5.Equals(item5)
+             && other.item6.Equals(item6)
+             && other.item7.Equals(item7)
+             && other.item8.Equals(item8);
     }
 }
 
@@ -434,7 +484,7 @@ public static class Tuple
     /// 1-Tuple Create implementation
     /// </summary>
     /// <returns>1-Tuple</returns>
-	public static Tuple<T1> Create<T1>(T1 it1)
+    public static Tuple<T1> Create<T1>(T1 it1)
     {
         return new Tuple<T1>(it1);
     }
