@@ -18,6 +18,7 @@ using System.Collections.Generic;
 /// Script to draw the field lines.
 /// One Field Line is cloned around an axis.
 /// </summary>
+[RequireComponent(typeof(AdvancedLineRenderer))]
 public class FieldLine : MonoBehaviour, IResetObject
 {
     /// <summary>
@@ -60,25 +61,22 @@ public class FieldLine : MonoBehaviour, IResetObject
     /// <summary>
     /// The line renderer which draws the line
     /// </summary>
-    private AdvancedLineRenderer lineRenderer;
+    private AdvancedLineRenderer _lineRenderer;
 
     public delegate bool StopDrawingCheck(Vector3 position);
     public StopDrawingCheck stopDrawingCheck;
 
     [SerializeField]
-    private float lineWidth = 0.1f;
+    private float _lineWidth = 0.1f;
 
     /// <summary>
     /// Initializes the line renderer.
     /// </summary>
     public void Start()
     {
-        lineRenderer = gameObject.GetComponent<AdvancedLineRenderer>();
-        if (lineRenderer == null)
-            lineRenderer = gameObject.AddComponent<AdvancedLineRenderer>();
-
-        lineRenderer.initLineRenderer();
-        lineRenderer.SetWidth(lineWidth, lineWidth);
+        _lineRenderer = GetComponent<AdvancedLineRenderer>();
+        _lineRenderer.InitLineRenderer();
+        _lineRenderer.SetWidth(_lineWidth, _lineWidth);
 
         emObj = transform.parent.gameObject;
     }
@@ -86,50 +84,52 @@ public class FieldLine : MonoBehaviour, IResetObject
     /// <summary>
     /// Draws the field lines
     /// </summary>
-    public void draw()
+    public void Draw()
     {
-        if (lineRenderer == null)
+        if (_lineRenderer == null)
             return;
 
-        lineRenderer.Clear();
+        _lineRenderer.Clear();
 
-        if (!this.visible || Mathf.Abs(GetFieldStrengthFromEmObj()) < 0.05)
+        if (!visible || Mathf.Abs(GetFieldStrengthFromEmObj()) < 0.05)
             return;
 
-        float closingAngle = fixClosingAngle + (4 - GetFieldStrengthFromEmObj()) * 2;
+        var closingAngle = fixClosingAngle + (4 - GetFieldStrengthFromEmObj()) * 2;
 
-        int positionIndex = 0; ;
-        Vector3 position = transform.position - originOffset;
-        lineRenderer.SetPosition(positionIndex, transform.InverseTransformPoint(position));
+        var positionIndex = 0;
+        var position = transform.position - originOffset;
+        _lineRenderer.SetPosition(positionIndex, transform.InverseTransformPoint(position));
         positionIndex++;
         while (positionIndex < vertexCount)
         {
-            Vector3 p = Vector3.Normalize(-field.get(position) * Teal.FieldStrengthFactor);
+            var p = Vector3.Normalize(-field.get(position) * Teal.FieldStrengthFactor);
 
-            Vector3 direction = new Vector3();
-            direction.x = Mathf.Cos(closingAngle * Mathf.Deg2Rad) * p.x - Mathf.Sin(closingAngle * Mathf.Deg2Rad) * p.y;
-            direction.y = Mathf.Sin(closingAngle * Mathf.Deg2Rad) * p.x + Mathf.Cos(closingAngle * Mathf.Deg2Rad) * p.y;
-            direction.z = p.z;
+            var direction = new Vector3
+            {
+                x = Mathf.Cos(closingAngle * Mathf.Deg2Rad) * p.x - Mathf.Sin(closingAngle * Mathf.Deg2Rad) * p.y,
+                y = Mathf.Sin(closingAngle * Mathf.Deg2Rad) * p.x + Mathf.Cos(closingAngle * Mathf.Deg2Rad) * p.y,
+                z = p.z
+            };
 
             position += direction * lineSegmentLength;
 
-            lineRenderer.SetPosition(positionIndex, transform.InverseTransformPoint(position));
+            _lineRenderer.SetPosition(positionIndex, transform.InverseTransformPoint(position));
             positionIndex++;
 
             if (stopDrawingCheck != null && stopDrawingCheck(position))
                 break;
         }
 
-        lineRenderer.WritePositionsToLineRenderer();
+        _lineRenderer.WritePositionsToLineRenderer();
 
     }
 
     /// <summary>
     /// Clears the line renderer
     /// </summary>
-    private void clearLineRenderer()
+    private void ClearLineRenderer()
     {
-        lineRenderer.Clear();
+        _lineRenderer.Clear();
     }
 
     /// <summary>
@@ -137,11 +137,11 @@ public class FieldLine : MonoBehaviour, IResetObject
     /// on or off
     /// </summary>
     /// <param name="visibility">visible if true else invisible</param>
-    public void setVisibility(bool visibility)
+    public void SetVisibility(bool visibility)
     {
         this.visible = visibility;
         if (!visible)
-            clearLineRenderer();
+            ClearLineRenderer();
     }
 
     /// <summary>
@@ -149,12 +149,12 @@ public class FieldLine : MonoBehaviour, IResetObject
     /// </summary>
     public void ResetObject()
     {
-        lineRenderer.Clear();
+        _lineRenderer.Clear();
     }
 
     public List<KeyValuePair<int, Vector3>> GetLinePositions()
     {
-        return lineRenderer.GetPositions();
+        return _lineRenderer.GetPositions();
     }
 
     private float GetFieldStrengthFromEmObj()

@@ -131,7 +131,7 @@ namespace UI
             line_renderer.SetWidth(_lineWidth, _lineWidth);
             line_renderer.SetMaterial(material);
             line_renderer.GenerateLightingData = true;
-            line_renderer.initLineRenderer();
+            line_renderer.InitLineRenderer();
         }
 
         /// <summary>

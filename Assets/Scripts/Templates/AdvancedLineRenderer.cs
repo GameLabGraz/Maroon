@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------------
-// TAdvancedLineRenderer.cs
+// AdvancedLineRenderer.cs
 //
 // WrapperClass for Basic Line Renderer
 //
@@ -52,6 +52,7 @@ public class AdvancedLineRenderer : MonoBehaviour
     /// <summary>
     /// Material used for drawing
     /// </summary>
+    [SerializeField]
     private Material material;
 
     private bool _generateLightingData;
@@ -88,9 +89,8 @@ public class AdvancedLineRenderer : MonoBehaviour
         if (line_ == null)
             line_ = gameObject.AddComponent<LineRenderer>();
 
-        //initLineRenderer();
         useWorldSpace = false;
-        material = new Material(Shader.Find("Particles/Additive"));
+        //material = new Material(Shader.Find("Particles/Additive"));
     }
 
     /// <summary>
@@ -111,7 +111,7 @@ public class AdvancedLineRenderer : MonoBehaviour
     /// <returns>color currently used to draw</returns>
     public Tuple<Color, Color> GetColors()
     {
-        return this.lineColors_;
+        return lineColors_;
     }
 
     /// <summary>
@@ -146,8 +146,8 @@ public class AdvancedLineRenderer : MonoBehaviour
     /// <returns>list of all positions</returns>
     public List<KeyValuePair<int, Vector3>> GetPositions()
     {
-        List<KeyValuePair<int, Vector3>> intVectorList = new List<KeyValuePair<int, Vector3>>();
-        foreach (KeyValuePair<int, Vector3> entry in positions_)
+        var intVectorList = new List<KeyValuePair<int, Vector3>>();
+        foreach (var entry in positions_)
         {
             intVectorList.Add(entry);
         }
@@ -160,7 +160,7 @@ public class AdvancedLineRenderer : MonoBehaviour
     /// <param name="dictEntries">new entries for the positions</param>
     public void SetPositions(List<KeyValuePair<int, Vector3>> dictEntries)
     {
-        foreach (KeyValuePair<int, Vector3> entry in dictEntries)
+        foreach (var entry in dictEntries)
         {
             positions_[entry.Key] = entry.Value;
         }
@@ -183,7 +183,7 @@ public class AdvancedLineRenderer : MonoBehaviour
     {
         vertexCount_ = positions_.Keys.Max() + 1;
         line_.positionCount = vertexCount_;
-        foreach (KeyValuePair<int, Vector3> entry in positions_)
+        foreach (var entry in positions_)
         {
             line_.SetPosition(entry.Key, entry.Value);
         }
@@ -195,7 +195,7 @@ public class AdvancedLineRenderer : MonoBehaviour
     /// <param name="count">new vertex count</param>
     public void SetVertexCount(int vertextCount)
     {
-        this.vertexCount_ = vertextCount;
+        vertexCount_ = vertextCount;
         line_.positionCount = vertextCount;
     }
 
@@ -205,18 +205,18 @@ public class AdvancedLineRenderer : MonoBehaviour
     /// <returns>vertex count</returns>
     public int GetVertexCount()
     {
-        return this.vertexCount_;
+        return vertexCount_;
     }
 
     /// <summary>
     /// Setter function for the line width of the 
     /// Advanced Line Renderer
     /// </summary>
-    /// <param name="starting width"></param>
-    /// <param name="ending width"></param>
+    /// <param name="startWidth"></param>
+    /// <param name="endWidth"></param>
     public void SetWidth(float startWidth, float endWidth)
     {
-        this.lineWidth_ = new Tuple<float, float>(startWidth, endWidth);
+        lineWidth_ = new Tuple<float, float>(startWidth, endWidth);
         line_.startWidth = startWidth;
         line_.endWidth = endWidth;
     }
@@ -227,7 +227,7 @@ public class AdvancedLineRenderer : MonoBehaviour
     /// <returns></returns>
     public Tuple<float, float> GetWidth()
     {
-        return this.lineWidth_;
+        return lineWidth_;
     }
 
     /// <summary>
@@ -256,10 +256,10 @@ public class AdvancedLineRenderer : MonoBehaviour
     /// <summary>
     /// Initialize Line Renderer
     /// </summary>
-    public void initLineRenderer()
+    public void InitLineRenderer()
     {
-        this.SetWidth(lineWidth_.Item1, lineWidth_.Item2);
-        this.SetColors(lineColors_.Item1, lineColors_.Item2);
+        SetWidth(lineWidth_.Item1, lineWidth_.Item2);
+        SetColors(lineColors_.Item1, lineColors_.Item2);
         line_.positionCount = vertexCount_;
         line_.useWorldSpace = useWorldSpace_;
         line_.material = material;
@@ -272,8 +272,6 @@ public class AdvancedLineRenderer : MonoBehaviour
     /// </summary>
     private void clearLineRenderer()
     {
-        DestroyImmediate(line_);
-        line_ = gameObject.AddComponent<LineRenderer>();
-        initLineRenderer();
+        InitLineRenderer();
     }
 }

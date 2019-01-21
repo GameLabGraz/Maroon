@@ -5,7 +5,7 @@ using UnityEngine;
 public class SymmetricFieldLineManager : FieldLineManager
 {
     /// <summary>
-    /// The symmetry count, number of copys
+    /// The symmetry count, number of copies
     /// </summary>
     [SerializeField]
     private int symmetryCount = Teal.DefaultNumFieldLines;
@@ -19,7 +19,7 @@ public class SymmetricFieldLineManager : FieldLineManager
     /// <summary>
     /// Set of existing field line clones
     /// </summary>
-    private HashSet<GameObject> clones = new HashSet<GameObject>();
+    private readonly HashSet<GameObject> clones = new HashSet<GameObject>();
 
     /// <summary>
     /// Indicates if symmetry is enabled
@@ -46,29 +46,29 @@ public class SymmetricFieldLineManager : FieldLineManager
     {
         ClearClones();
 
-        foreach (FieldLine fieldLine in fieldLines)
+        foreach (var fieldLine in fieldLines)
         {
-            fieldLine.draw();
+            fieldLine.Draw();
 
             // clone field line around symmetry axis
-            float rotation_scale = 360f / symmetryCount;
-            float rotation = rotation_scale;
+            var rotationScale = 360f / symmetryCount;
+            var rotation = rotationScale;
 
-            for (int i = 1; i < symmetryCount; ++i)
+            for (var i = 1; i < symmetryCount; ++i)
             {
-                GameObject clone = Instantiate(fieldLine.gameObject, fieldLine.transform.position, Quaternion.identity);
+                var clone = Instantiate(fieldLine.gameObject, fieldLine.transform.position, Quaternion.identity);
                 clone.GetComponent<AdvancedLineRenderer>().SetVertexCount(fieldLine.GetLinePositions().Count);
                 clone.GetComponent<AdvancedLineRenderer>().SetPositions(fieldLine.GetLinePositions());
 
-                //workaround to keep the fieldline and its clones at the same scale
-                Vector3 temp = clone.transform.localScale;
+                //workaround to keep the field line and its clones at the same scale
+                var temp = clone.transform.localScale;
                 clone.transform.SetParent(fieldLine.transform.parent);
                 clone.transform.localScale = temp;
 
                 //rotate clones to fill the whole 360°
                 clone.transform.localEulerAngles = rotation * symmetryAxis;
                 clones.Add(clone);
-                rotation += rotation_scale;
+                rotation += rotationScale;
             }
         }
     }
@@ -78,8 +78,8 @@ public class SymmetricFieldLineManager : FieldLineManager
     /// </summary>
     private void ClearClones()
     {
-        foreach (GameObject clone in clones)
-            DestroyImmediate(clone);
+        foreach (var clone in clones)
+            Destroy(clone);
         clones.Clear();
     }
 }

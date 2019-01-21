@@ -10,10 +10,8 @@
 //-----------------------------------------------------------------------------
 //
 
-using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 /// <summary>
 /// Controller class to manage the field lines
@@ -35,11 +33,11 @@ public abstract class FieldLineManager : MonoBehaviour
     /// </summary>
     protected virtual void Start()
     {
-        GameObject[] sensedObjects = GameObject.FindGameObjectsWithTag("FieldLine");
+        var sensedObjects = GameObject.FindGameObjectsWithTag("FieldLine");
 
-        foreach (GameObject sensedTag in sensedObjects)
+        foreach (var sensedTag in sensedObjects)
         {
-            GameObject parent = sensedTag.transform.parent.gameObject;
+            var parent = sensedTag.transform.parent.gameObject;
             AddFieldLine(parent.GetComponent<FieldLine>());
         }
     }
@@ -50,8 +48,8 @@ public abstract class FieldLineManager : MonoBehaviour
     /// <param name="visibility">The visibility value</param>
     public void SetFieldLinesVisible(bool visibility)
     {
-        foreach (FieldLine fL in fieldLines)
-            fL.setVisibility(visibility);
+        foreach (var fL in fieldLines)
+            fL.SetVisibility(visibility);
     }
 
     /// <summary>
@@ -73,9 +71,9 @@ public abstract class FieldLineManager : MonoBehaviour
     }
 
     /// <summary>
-    /// This function is called every fixed framerate frame and draw fild lines
+    /// This function is called every frame after all Update functions have been called and draws field lines
     /// </summary>
-    public void FixedUpdate()
+    public void LateUpdate()
     {
         if (++updateCount % updateRate != 0)
             return;
@@ -85,7 +83,7 @@ public abstract class FieldLineManager : MonoBehaviour
 
     protected virtual void DrawFieldLines()
     {
-        foreach (FieldLine fieldLine in fieldLines)
-            fieldLine.draw();
+        foreach (var fieldLine in fieldLines)
+            fieldLine.Draw();
     }
 }
