@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Localization;
 using UnityEngine;
 using UnityEngine.UI;
 using VRTK;
@@ -13,7 +14,7 @@ public class SliderController : VRTK_Slider, IResetObject
     private string methodName;
 
     [SerializeField]
-    private List<string> options = new List<string>(); 
+    private List<string> _optionKeys = new List<string>(); 
 
     [SerializeField]
     private Text ValueText;
@@ -38,25 +39,17 @@ public class SliderController : VRTK_Slider, IResetObject
             controlEvents = gameObject.AddComponent<VRTK_Control_UnityEvents>();
         }
 
-        if (ValueText != null)
-        {
-            if (options.Count > 0)
-                ValueText.text = options[(int)GetValue()];
-            else if (isInteger)
-                ValueText.text = ((int)GetValue()).ToString();
-            else
-                ValueText.text = GetValue().ToString("0.00");
-        }
+        UpdateValueText();
 
         controlEvents.OnValueChanged.AddListener(HandleChange);
     }
 
     protected override ControlValueRange RegisterValueRange()
     {
-        if(options.Count > 0)
+        if(_optionKeys.Count > 0)
         {
             minimumValue = 0;
-            maximumValue = options.Count - 1;
+            maximumValue = _optionKeys.Count - 1;
         }
 
         return new ControlValueRange()
@@ -66,17 +59,22 @@ public class SliderController : VRTK_Slider, IResetObject
         };
     }
 
+    private void UpdateValueText()
+    {
+        if(ValueText == null)
+            return;
+
+        if (_optionKeys.Count > 0)
+            ValueText.text = LanguageManager.Instance.GetString(_optionKeys[(int)GetValue()]);
+        else if (isInteger)
+            ValueText.text = ((int)GetValue()).ToString();
+        else
+            ValueText.text = GetValue().ToString("0.00");
+    }
+
     private void HandleChange(object sender, Control3DEventArgs e)
     {
-        if (ValueText != null)
-        {
-            if (options.Count > 0)
-                ValueText.text = options[(int)GetValue()];
-            else if (isInteger)
-                ValueText.text = ((int)GetValue()).ToString();
-            else
-                ValueText.text = GetValue().ToString("0.00");
-        }
+        UpdateValueText();
 
         if(invokeObject != null)
         {

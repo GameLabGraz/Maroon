@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 namespace Localization
 {
+    [RequireComponent(typeof(Text))]
     public class LocalizedText : MonoBehaviour
     {
         [SerializeField]

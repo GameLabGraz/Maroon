@@ -47,8 +47,8 @@ public class WaterPlane : PausableObject, IResetObject
 
         waveVertices = planeMesh.vertices;
 
-        startMinColor = GetComponent<Renderer>().material.GetColor("_ColorMin");
-        startMaxColor = GetComponent<Renderer>().material.GetColor("_ColorMax");
+        startMinColor = GetComponent<Renderer>().sharedMaterial.GetColor("_ColorMin");
+        startMaxColor = GetComponent<Renderer>().sharedMaterial.GetColor("_ColorMax");
     }
 
     private float GetTotalWaveValue(Vector3 position)
