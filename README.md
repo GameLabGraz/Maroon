@@ -103,7 +103,7 @@ patterns. For a better wave illustration, the wave color can be freely changed.
 ## Supported SDK's
 | SDK | Download Link |
 |---------------|---------------|
-| Unity 2018.2.17f1  | [Unity] |
+| Unity 2018.3.4f1  | [Unity] |
 | SteamVR 1.2.3 | [SteamVR Plugin] |
 | VRTK 3.2.1 | [VRTK Plugin] |
 | HTC Vive | [HTC Vive] |
