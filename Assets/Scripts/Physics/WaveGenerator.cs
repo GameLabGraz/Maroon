@@ -56,6 +56,11 @@ public class WaveGenerator : MonoBehaviour
         return waveAmplitude * Mathf.Sin(2 * Mathf.PI * waveFrequency * (time - distanceToSource / (waveLength * waveFrequency)));
     }
 
+    public void SetPropagationMode(int propagationMode)
+    {
+        this.propagationMode = (WavePropagation)propagationMode;
+    }
+
     public void SetPropagationMode(WavePropagation propagationMode)
     {
         this.propagationMode = propagationMode;

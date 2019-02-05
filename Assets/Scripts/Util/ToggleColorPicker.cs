@@ -1,27 +1,28 @@
-﻿using UnityEngine;
+﻿using PlatformControls.BaseControls;
+using UnityEngine;
 
 
 public class ToggleColorPicker : MonoBehaviour
 {
-    private bool colorPickerEnabled = false;
+    private bool _colorPickerEnabled = false;
 
-    private ColorPicker[] colorPickers;
+    private ColorPicker[] _colorPickers;
 
     private void Start()
     {
-        colorPickers = GameObject.FindObjectsOfType<ColorPicker>();
+        _colorPickers = GameObject.FindObjectsOfType<ColorPicker>();
         EnableColorPickers(false);
     }
 
     private void EnableColorPickers(bool enabled)
     {
-        foreach (ColorPicker colorPicker in colorPickers)
+        foreach (var colorPicker in _colorPickers)
             colorPicker.enabled = enabled;
     }
 
     public void ToggleColorPickers()
     {
-        colorPickerEnabled ^= true;
-        EnableColorPickers(colorPickerEnabled);
+        _colorPickerEnabled ^= true;
+        EnableColorPickers(_colorPickerEnabled);
     }
 }

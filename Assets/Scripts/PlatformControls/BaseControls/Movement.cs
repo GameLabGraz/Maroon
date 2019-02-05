@@ -2,19 +2,22 @@
 
 namespace PlatformControls.BaseControls
 {
-    public abstract class MagnetMovement : MonoBehaviour
+    public abstract class Movement : MonoBehaviour
     {
         protected SimulationController SimController;
         protected bool IsMoving = false;
 
         [SerializeField]
-        protected float MagnetSpeed = 20.0f;
+        protected float Speed = 20.0f;
 
         [SerializeField]
         protected GameObject MinPosition;
 
         [SerializeField]
         protected GameObject MaxPosition;
+
+        [SerializeField]
+        protected bool SimulationRunningDuringMovement = false;
 
         protected virtual void Start()
         {
@@ -26,13 +29,17 @@ namespace PlatformControls.BaseControls
         protected void StartMoving()
         {
             IsMoving = true;
-            SimController.SimulationRunning = true;
+
+            if (!SimulationRunningDuringMovement)
+                SimController.SimulationRunning = true;
         }
 
         protected void StopMoving()
         {
             IsMoving = false;
-            SimController.SimulationRunning = false;
+
+            if (!SimulationRunningDuringMovement)
+                SimController.SimulationRunning = false;
         }
 
         protected void Move(Vector3 target)

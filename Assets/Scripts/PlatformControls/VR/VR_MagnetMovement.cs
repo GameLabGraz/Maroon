@@ -7,7 +7,7 @@ namespace PlatformControls.VR
 {
     [RequireComponent(typeof(VRTK_Slider))]
     [RequireComponent(typeof(VRTK_InteractableObject))]
-    public class VR_MagnetMovement : MagnetMovement
+    public class VR_MagnetMovement : Movement
     {
         private Magnet _magnet;
 
