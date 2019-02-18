@@ -23,13 +23,12 @@ namespace PlatformControls.PC
             var plateScale = currentPlate.transform.localScale;
             var plateRotation = currentPlate.transform.localRotation;
 
-            currentPlate.SetActive(false);
-            _snapSlipPlate.UnplugPlate();         
+            _snapSlipPlate.UnplugPlate();
+            currentPlate.transform.position = _slitPlates[plateIndex].transform.position;
 
             _slitPlates[plateIndex].transform.position = platePosition;
             _slitPlates[plateIndex].transform.localScale = plateScale;
             _slitPlates[plateIndex].transform.localRotation = plateRotation;
-            _slitPlates[plateIndex].SetActive(true);
         }
     }
 }
