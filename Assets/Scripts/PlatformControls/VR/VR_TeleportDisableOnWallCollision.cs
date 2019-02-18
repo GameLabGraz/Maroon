@@ -12,12 +12,15 @@ namespace PlatformControls.VR
         private void Start()
         {
             _collisionTracker = GetComponent<VRTK_CollisionTracker>();
+            _collisionTracker.TriggerEnter += DisableTeleport;
+            _collisionTracker.TriggerExit += EnableTeleport;
+
             _pointer = GetComponent<VRTK_Pointer>();
         }
 
         private void OnEnable()
         {
-            if (_collisionTracker == null)
+            if(_collisionTracker == null)
                 return;
 
             _collisionTracker.TriggerEnter += DisableTeleport;
@@ -37,9 +40,6 @@ namespace PlatformControls.VR
         {
             if (_pointer)
                 _pointer.enabled = value;
-
-            foreach (var teleporter in VRTK_ObjectCache.registeredTeleporters)
-                teleporter.ToggleTeleportEnabled(value);
         }
 
         private void DisableTeleport(object sender, CollisionTrackerEventArgs e)
