@@ -15,14 +15,13 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private string _mlgFile;
 
-    private static GameObject _player;
+    [SerializeField]
+    private GameObject _player;
+
     private static Vector3 _playerPosition;
     private static Quaternion _playerRotation;
 
     private LanguageManager _languageManager;
-
-    private string _startScene;
-    public string StartScene { get{ return _startScene; } }
 
     private string _scene; //name of scene player is currently
 
@@ -38,8 +37,9 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(this);
 
         var language = Application.systemLanguage.ToString();
-        _player = GameObject.FindGameObjectWithTag("Player");
-        _startScene = SceneManager.GetActiveScene().name;
+
+        if (!_player)
+            _player = GameObject.FindGameObjectWithTag("Player");
 
         if (Instance == null)
         {
@@ -55,6 +55,7 @@ public class GameManager : MonoBehaviour
                 _player.transform.rotation = _playerRotation;
             }
 
+            Instance._player = _player;
             Instance.LabLoaded = true;
             Destroy(gameObject);
         }
@@ -73,7 +74,7 @@ public class GameManager : MonoBehaviour
     //Use StartLoading to start loading the scene in background. Called in FadeOnEnter.cs and LoadOnEnter.cs
     public void StartLoading()
     {
-        StartCoroutine("Load");
+        StartCoroutine(Load());
     }
 
     private IEnumerator Load()
