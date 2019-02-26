@@ -104,6 +104,9 @@ public class SnapSlipPlate : MonoBehaviour, IResetObject
 
     public void ResetObject()
     {
+        if (!snappedPlate)
+            return;
+
         UnregisterPlateWaveGenerators();
         LoadPreviousState();
 

@@ -1,27 +1,32 @@
-﻿using System.Collections.Generic;
-using Localization;
+﻿using Localization;
 using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(Dropdown))]
-public class PC_LocalizedDropDown : MonoBehaviour
+
+namespace PlatformControls.PC
 {
-    [SerializeField]
-    private List<string> _optionKeys = new List<string>();
-
-    private void Start()
+    public class PC_LocalizedDropDown : Dropdown, IResetObject
     {
-        var dropdown = GetComponent<Dropdown>();
-        dropdown.ClearOptions();
+        private int _startValue;
 
-        foreach (var optionKey in _optionKeys)
+        protected override void Start()
         {
-            dropdown.options.Add(new Dropdown.OptionData
-            {
-                text = LanguageManager.Instance.GetString(optionKey)
-            });
+            base.Start();
+            if (!Application.isPlaying)
+                return;
+
+            _startValue = value;
+
+            // Translate option keys
+            foreach (var option in options)
+                option.text = LanguageManager.Instance.GetString(option.text);
+
+            RefreshShownValue();
         }
 
-        dropdown.RefreshShownValue();
+        public void ResetObject()
+        {
+            value = _startValue;
+        }
     }
 }
