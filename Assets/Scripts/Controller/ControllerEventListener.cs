@@ -48,7 +48,7 @@ public class ControllerEventListener : MonoBehaviour
 
     private void HandleMenuButtonClicked(object sender, ClickedEventArgs e)
     {
-        SceneManager.LoadScene("Laboratory");
+        SceneManager.LoadScene("Laboratory.vr");
     }
 
     private void HandleMenuButtonUnclicked(object sender, ClickedEventArgs e)

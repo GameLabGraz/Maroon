@@ -74,9 +74,9 @@ public class CapacitorPlateResizeController : VRTK_InteractableObject
         StartCoroutine(Resize());
     }
 
-    public override void StopUsing(VRTK_InteractUse previousUsingObject = null)
+    public override void StopUsing(VRTK_InteractUse previousUsingObject = null, bool resetUsingObjectState = true)
     {
-        base.StopUsing(previousUsingObject);
+        base.StopUsing(previousUsingObject, resetUsingObjectState);
 
         isResizing = false;
     }

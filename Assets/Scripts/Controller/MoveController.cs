@@ -33,9 +33,9 @@ public class MoveController : VRTK_InteractableObject
         StartCoroutine(Move());
     }
 
-    public override void StopUsing(VRTK_InteractUse previousUsingObject = null)
+    public override void StopUsing(VRTK_InteractUse previousUsingObject = null, bool resetUsingObjectState = true)
     {
-        base.StopUsing(previousUsingObject);
+        base.StopUsing(previousUsingObject, resetUsingObjectState);
 
         IsMoving = false;
     }
