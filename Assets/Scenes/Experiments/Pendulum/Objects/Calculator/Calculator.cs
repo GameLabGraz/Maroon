@@ -1,10 +1,11 @@
 ﻿
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 
-public class Calculator : MonoBehaviour {
+public class Calculator : MonoBehaviour
+{
 
     public class CalculatorButtonPressedEvent : EventArgs
     {
@@ -27,9 +28,9 @@ public class Calculator : MonoBehaviour {
     public delegate void ButtonPressed(CalculatorButtonPressedEvent ev);
     public static event ButtonPressed OnButtonPressed;
 
-    public Boolean HasFocus { get; private set; }
+    public bool HasFocus { get; private set; }
 
-    private static int visibleDigits = 15;
+    private static readonly int visibleDigits = 15;
 
     private Dictionary<string, Button> buttons = new Dictionary<string, Button>();
     private string leftNumber;
@@ -45,23 +46,24 @@ public class Calculator : MonoBehaviour {
     private Dictionary<string, Func<string, bool>> actions = new Dictionary<string, Func<string, bool>>();
 
 	// Use this for initialization
-	void Start () {
+	private void Start ()
+    {
 
         HasFocus = false;
 
         //numberButtons
-        var start = (int)KeyCode.Keypad0;
+        const int start = (int)KeyCode.Keypad0;
         
-        for (int i = start; i <= (int)KeyCode.Keypad9; i++)
+        for (var i = start; i <= (int)KeyCode.Keypad9; i++)
         {
-            Button btn = AddButton((i - start).ToString(), (KeyCode)i, calcNumber);
+            var btn = AddButton((i - start).ToString(), (KeyCode)i, calcNumber);
             btn.keycodes.Add((KeyCode)(i - start + (int)KeyCode.Alpha0));
         }
 
         Func<string, bool> act = (string x) => {
             reduce();
             leftNumber = rightNumber;
-            if (leftNumber == "" || leftNumber == null)
+            if (string.IsNullOrEmpty(leftNumber))
                 leftNumber = "0";
             rightNumber = "";
             op = x;
@@ -104,7 +106,7 @@ public class Calculator : MonoBehaviour {
             throw new Exception("Calculator: Internal Error. Could not find an object named 'Display'");
 	}
 
-    void Update()
+    private void Update()
     {
 
         Button buttonPressed;
@@ -118,9 +120,9 @@ public class Calculator : MonoBehaviour {
             buttons["clear"].action.Invoke("clear");
         }
 
-        Debug.Log(String.Format("Button '{0}' pressed, method name '{1}'", buttonPressed.name, buttonPressed.action.Method.Name));
+        Debug.Log($"Button '{buttonPressed.name}' pressed, method name '{buttonPressed.action.Method.Name}'");
         buttonPressed.action.Invoke(buttonPressed.name);
-        OnButtonPressed(new CalculatorButtonPressedEvent(buttonPressed.name, buttonPressed.keycodes, toDouble(rightNumber)));
+        OnButtonPressed?.Invoke(new CalculatorButtonPressedEvent(buttonPressed.name, buttonPressed.keycodes, toDouble(rightNumber)));
 
         displayNumber();
     }
@@ -132,11 +134,14 @@ public class Calculator : MonoBehaviour {
         if (s == "" || s == ".")
             return 0;
 
-        double res;
-        if (!double.TryParse(s, out res))
+        try
+        {
+            return double.Parse(s, NumberFormatInfo.InvariantInfo);
+        }
+        catch
+        {
             return 0;
-
-        return res;
+        }
     }
 
     protected void reduce()
@@ -152,19 +157,19 @@ public class Calculator : MonoBehaviour {
                     op = "";
                 }
                 else
-                    rightNumber = (toDouble(leftNumber) / toDouble(rightNumber)).ToString();
+                    rightNumber = (toDouble(leftNumber) / toDouble(rightNumber)).ToString(CultureInfo.InvariantCulture);
                 break;
 
             case "+":
-                rightNumber = (toDouble(leftNumber) + toDouble(rightNumber)).ToString();
+                rightNumber = (toDouble(leftNumber) + toDouble(rightNumber)).ToString(CultureInfo.InvariantCulture);
                 break;
 
             case "-":
-                rightNumber = (toDouble(leftNumber) - toDouble(rightNumber)).ToString();
+                rightNumber = (toDouble(leftNumber) - toDouble(rightNumber)).ToString(CultureInfo.InvariantCulture);
                 break;
 
             case "*":
-                rightNumber = (toDouble(leftNumber) * toDouble(rightNumber)).ToString();
+                rightNumber = (toDouble(leftNumber) * toDouble(rightNumber)).ToString(CultureInfo.InvariantCulture);
                 break;                
         }
 
@@ -196,7 +201,8 @@ public class Calculator : MonoBehaviour {
         {
             mainDisplay.GetComponent<TextMesh>().text = "Error: div/0";
             sideDisplay.GetComponent<TextMesh>().text = "";
-        } else
+        }
+        else
         {
             if (rightNumber == "")
                 mainDisplay.GetComponent<TextMesh>().text = "0.";
@@ -223,7 +229,7 @@ public class Calculator : MonoBehaviour {
         if (!Input.GetMouseButtonDown(0))
             return false;
 
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
         if (Physics.Raycast(ray, out hit, 100))
@@ -250,9 +256,9 @@ public class Calculator : MonoBehaviour {
         if (!HasFocus)
             return false;
 
-        foreach (Button button in buttons.Values)
+        foreach (var button in buttons.Values)
         {
-            foreach(KeyCode code in button.keycodes)
+            foreach(var code in button.keycodes)
                 if (Input.GetKeyDown(code))
                 { 
                     btn = button;
@@ -264,7 +270,7 @@ public class Calculator : MonoBehaviour {
 
     private Button AddButton(string name, KeyCode code, Func<string, bool> action)
     {
-        Button btn = new Button();
+        var btn = new Button();
         btn.name = name;
         btn.keycodes.Add(code);
         btn.action = action;
@@ -277,5 +283,11 @@ public class Calculator : MonoBehaviour {
         public string name;
         public List<KeyCode> keycodes = new List<KeyCode>();
         public Func<string, bool> action;
+
+        public override string ToString()
+        {
+            var kc = string.Join(", ", keycodes);
+            return $"{name} - {kc}";
+        }
     }
 }

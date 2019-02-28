@@ -124,7 +124,6 @@ GameObject:
   - component: {fileID: 15202386}
   - component: {fileID: 15202385}
   - component: {fileID: 15202384}
-  - component: {fileID: 15202388}
   m_Layer: 0
   m_Name: Floor
   m_TagString: Untagged
@@ -205,25 +204,6 @@ Transform:
   m_Father: {fileID: 788582731}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
---- !u!95 &15202388
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 15202383}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 203677ea3a48af74593eaf43f3013c1c, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &16967265
 GameObject:
   m_ObjectHideFlags: 0
@@ -409,6 +389,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mlgFile: MLG/pendulum
+  _player: {fileID: 0}
   menuSound: {fileID: 430436728}
 --- !u!4 &47512838
 Transform:
@@ -1831,8 +1812,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 306726294}
   m_HandleRect: {fileID: 306726293}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.9999994
+  m_Value: 0
+  m_Size: 0.9999997
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -4342,10 +4323,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fda54c2fe3adc84bad2f8b63133ff5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _optionKeys:
-  - SingleSlit
-  - DoubleSlit
-  - TripleSlit
+  m_Navigation:
+    m_Mode: 3
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 0}
+  m_Template: {fileID: 0}
+  m_CaptionText: {fileID: 0}
+  m_CaptionImage: {fileID: 0}
+  m_ItemText: {fileID: 0}
+  m_ItemImage: {fileID: 0}
+  m_Value: 0
+  m_Options:
+    m_Options: []
+  m_OnValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Dropdown+DropdownEvent, UnityEngine.UI, Version=1.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &441573868
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5144,6 +5159,14 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -0.0049
       objectReference: {fileID: 0}
+    - target: {fileID: 4554723612739030, guid: 8a3a672371095d246a66b8836f761301, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.014014511
+      objectReference: {fileID: 0}
+    - target: {fileID: 4554723612739030, guid: 8a3a672371095d246a66b8836f761301, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.00556
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 65757487149971554, guid: 8a3a672371095d246a66b8836f761301, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 8a3a672371095d246a66b8836f761301, type: 3}
@@ -5587,6 +5610,25 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 7d0a735386cbe4e4daf8bd3a3aa91cca, type: 2}
+    - target: {fileID: 4092162710811326, guid: 96b856300853e4540bae9d76025fe392, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.066
+      objectReference: {fileID: 0}
+    - target: {fileID: 102201417413051482, guid: 96b856300853e4540bae9d76025fe392,
+        type: 3}
+      propertyPath: m_FontSize
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 102201417413051482, guid: 96b856300853e4540bae9d76025fe392,
+        type: 3}
+      propertyPath: m_CharacterSize
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 102201417413051482, guid: 96b856300853e4540bae9d76025fe392,
+        type: 3}
+      propertyPath: m_Text
+      value: 0.00
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 96b856300853e4540bae9d76025fe392, type: 3}
 --- !u!1 &581173447
@@ -6252,7 +6294,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1827819697}
   m_HandleRect: {fileID: 1827819696}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 0.99999976
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -7106,9 +7148,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fda54c2fe3adc84bad2f8b63133ff5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _optionKeys:
-  - Rectilinear
-  - Circular
+  m_Navigation:
+    m_Mode: 3
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 0}
+  m_Template: {fileID: 0}
+  m_CaptionText: {fileID: 0}
+  m_CaptionImage: {fileID: 0}
+  m_ItemText: {fileID: 0}
+  m_ItemImage: {fileID: 0}
+  m_Value: 0
+  m_Options:
+    m_Options: []
+  m_OnValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Dropdown+DropdownEvent, UnityEngine.UI, Version=1.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &755585979
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19940,7 +20017,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.0003368569, y: -0.00039692174}
+  m_AnchoredPosition: {x: 0.00020318164, y: 0.00013210815}
   m_SizeDelta: {x: -0.00048828125, y: 200}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &2138385242
