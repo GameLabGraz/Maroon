@@ -21,12 +21,6 @@ public class GuiFallingCoilExperiment : MonoBehaviour
 
   private void Update()
   {
-    // check if [ESC] was pressed
-    if (Input.GetKeyDown(KeyCode.Escape))
-    {
-      SceneManager.LoadScene("Laboratory");
-    }
-
     // check if [E] was pressed (PLAY/PAUSE Simulation)
     if (Input.GetKeyDown(KeyCode.E))
     {
@@ -59,7 +53,7 @@ public class GuiFallingCoilExperiment : MonoBehaviour
   public void OnGUI()
   {
     // show controls on top left corner
-    GUI.Label(new Rect(10f, 10f, 300f, 200f), string.Format("[ESC] - Leave\r\n" +
+    GUI.Label(new Rect(10f, 10f, 300f, 200f), string.Format(
         "[E] - {0} Simulation \r\n" +
         "[R] - Reset Simulation \r\n" +
         "[S] - Step Simulation", simController.SimulationRunning ? "PAUSE" : "PLAY") + "\r\n" +
