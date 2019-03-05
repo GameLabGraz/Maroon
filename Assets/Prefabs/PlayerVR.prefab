@@ -30,9 +30,7 @@ Transform:
   m_Children:
   - {fileID: 2588024212121727955}
   - {fileID: 2376296091070133725}
-  - {fileID: 4186678400412274}
-  - {fileID: 4428440656850588}
-  - {fileID: 4773196368447718}
+  - {fileID: 4343381696548533419}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -155,6 +153,7 @@ GameObject:
   - component: {fileID: 114825559600774236}
   - component: {fileID: 114177989342335404}
   - component: {fileID: 114175370213763982}
+  - component: {fileID: 4347338780621279891}
   m_Layer: 0
   m_Name: PlayArea
   m_TagString: Untagged
@@ -169,12 +168,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1240108636158840}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 4006992740838434}
-  m_RootOrder: 2
+  m_Father: {fileID: 4343381696548533419}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &114915125460019566
 MonoBehaviour:
@@ -330,6 +329,31 @@ MonoBehaviour:
   checkType: 1
   identifiers:
   - IgnoreHeadSetCollisionFade
+--- !u!114 &4347338780621279891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1240108636158840}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc42913721fa5ac43aa12864be562cb4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  drawDebugVisualization: 0
+  allowKeyboardShortcuts: 1
+  allowCommandLineArguments: 1
+  msaaLevel: 8
+  scaleRenderViewport: 1
+  renderScaleLimits:
+    minimum: 1.0
+    maximum: 2.0
+  minimumRenderScale: 1.0
+  maximumRenderScale: 2.0
+  maximumRenderTargetDimension: 4096
+  renderScaleFillRateStepSizeInPercent: 15
+  scaleRenderTargetResolution: 0
 --- !u!1 &1384447514077980
 GameObject:
   m_ObjectHideFlags: 0
@@ -446,8 +470,8 @@ Transform:
   - {fileID: 4759829523268580}
   - {fileID: 4135162623914378}
   - {fileID: 4796524621881220}
-  m_Father: {fileID: 4006992740838434}
-  m_RootOrder: 4
+  m_Father: {fileID: 4343381696548533419}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &114637094668327172
 MonoBehaviour:
@@ -1095,8 +1119,8 @@ Transform:
   - {fileID: 4326394341432040}
   - {fileID: 4312756387998446}
   - {fileID: 4279579094544538}
-  m_Father: {fileID: 4006992740838434}
-  m_RootOrder: 3
+  m_Father: {fileID: 4343381696548533419}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &114031504588352826
 MonoBehaviour:
@@ -6749,3 +6773,36 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2375496329675707399}
   m_CullTransparentMesh: 0
+--- !u!1 &8002744664920168400
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4343381696548533419}
+  m_Layer: 0
+  m_Name: '[VRTK_Scripts]'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4343381696548533419
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8002744664920168400}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 4186678400412274}
+  - {fileID: 4428440656850588}
+  - {fileID: 4773196368447718}
+  m_Father: {fileID: 4006992740838434}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
