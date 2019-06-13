@@ -20,6 +20,10 @@ public class ParticleBehaviour : MonoBehaviour, IResetObject, IGenerateB
 
     private Vector3 _resetPosition;
     private Vector3 _updatePosition;
+    private Vector3 _prevUpdatePosition1;
+    private Vector3 _prevUpdatePosition2;
+    private Rigidbody _rigidbody;
+    private int _collided = 0;
 
     private const float CoulombConstant = 9f; // = 9 * 10^9 -> but we use the factor 0.001 beneath because we have constant * microCoulomb * microCoulomb (= 10^9 * 10^-6 * 10^-6 = 0.001)
     private const float CoulombMultiplyFactor = 0.001f; // explanation above
@@ -27,9 +31,12 @@ public class ParticleBehaviour : MonoBehaviour, IResetObject, IGenerateB
     // Start is called before the first frame update
     void Start()
     {
+        _rigidbody = GetComponent<Rigidbody>();
         _currentCharge = charge < 0 ? -1 : charge > 0 ? 1 : 0;
         ChangeParticleType();
         GetComponent<Rigidbody>().velocity = Vector3.zero;
+        _prevUpdatePosition1 = Vector3.zero;
+        _prevUpdatePosition2 = Vector3.zero;
     }
 
     private void ChangeParticleType()
@@ -88,6 +95,16 @@ public class ParticleBehaviour : MonoBehaviour, IResetObject, IGenerateB
 
     public void UpdateCalculations()
     {
+        _rigidbody.velocity = Vector3.zero;
+        _prevUpdatePosition2 = _prevUpdatePosition1;
+        _prevUpdatePosition1 = transform.position;
+        
+        
+        float dist = Vector3.Distance(_prevUpdatePosition1, _prevUpdatePosition2);
+//        Debug.Log("Distance: " + dist);
+        
+        _prevUpdatePosition1 = _updatePosition;
+        if(_collided < 3)
         transform.position = _updatePosition;
     }
 
@@ -103,6 +120,21 @@ public class ParticleBehaviour : MonoBehaviour, IResetObject, IGenerateB
         var dir = (transPos - position).normalized;
 
         return (CoulombConstant  * charge / distance) * dir;
+    }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        Debug.Log("Collision: " + other.gameObject.tag + " - " + other.gameObject.name);
+        if(other.gameObject.CompareTag("Particle"))
+            _collided++;
+
+    }
+
+    private void OnCollisionExit(Collision other)
+    {        
+        Debug.Log("Collision Exit: " + other.gameObject.tag + " - " + other.gameObject.name);
+        if(other.gameObject.CompareTag("Particle"))
+            _collided--;
     }
 
     public float getFieldStrength()

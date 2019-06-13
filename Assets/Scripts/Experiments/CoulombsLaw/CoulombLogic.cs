@@ -47,6 +47,7 @@ public class CoulombLogic : MonoBehaviour
             if(Mathf.Abs(currentParticle.charge) < 0.0001f || currentParticle.fixedPosition)
                 continue;
 
+            var sumForce = Vector3.zero;
             for (var j = 0; j < _particles.Count; ++j)
             {
                 if(i == j || Mathf.Abs(currentParticle.charge) < 0.0001f)
@@ -54,30 +55,38 @@ public class CoulombLogic : MonoBehaviour
                 
                 var affectingParticle = _particles[j];
                 Vector3 direction;
+                Vector3 direction2;
                 var r = Vector3.Distance(currentParticle.transform.position, affectingParticle.transform.position); // = distance
-                
-                if(r <= 1.5)
-                    continue;
+                r -= 2 * 0.71f; // - 2 * radius
+//                if(r <= 1.5)
+//                    continue;
                 
                 if ((currentParticle.charge < 0f) == (affectingParticle.charge < 0f))
                 {
                     //both have the same charge (both pos resp. neg) -> abstoßend
                     direction = Vector3.Normalize(currentParticle.transform.position - affectingParticle.transform.position);
+                    direction2 = (currentParticle.transform.position - affectingParticle.transform.position);
                 }
                 else
                 {
                     direction = Vector3.Normalize(affectingParticle.transform.position - currentParticle.transform.position);
+                    direction2 = (affectingParticle.transform.position - currentParticle.transform.position);
                 }
 
                 var force = CoulombConstant * CoulombMultiplyFactor * Mathf.Abs(currentParticle.charge) *
                             Mathf.Abs(affectingParticle.charge);
                 force /= Mathf.Pow(r, 2);
+
+                sumForce += force * direction2;
                 
                 if(force > 0.0001f)
                     sumDirection += force * direction;
             }
 
+            Debug.Log("Dir: " + sumForce);
+            
             sumDirection = Vector3.Normalize(sumDirection)* Time.deltaTime;
+
             currentParticle.CalculatedPosition(sumDirection + currentParticle.transform.position);
 //
 //            if (Mathf.Abs(sumDirection.x) < 0.0001f && Mathf.Abs(sumDirection.y) < 0.0001f &&

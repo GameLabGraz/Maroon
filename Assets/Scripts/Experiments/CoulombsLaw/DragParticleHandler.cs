@@ -28,9 +28,11 @@ public class DragParticleHandler : MonoBehaviour
     private SimulationController simController;
     private CoulombLogic _coulombLogic;
     private Rigidbody _rigidbody;
+    private ParticleBehaviour _particleBehaviour;
 
     private void Start()
     {
+        _particleBehaviour = GetComponent<ParticleBehaviour>();
         _rigidbody = GetComponent<Rigidbody>();
         var simControllerObject = GameObject.Find("SimulationController");
         if (simControllerObject)
@@ -42,7 +44,7 @@ public class DragParticleHandler : MonoBehaviour
 
     private void Update()
     {
-        _rigidbody.isKinematic = !simController.SimulationRunning;
+        _rigidbody.isKinematic = !simController.SimulationRunning || _particleBehaviour.fixedPosition;
     }
 
     public void SetBoundaries(GameObject min, GameObject max)
@@ -111,6 +113,8 @@ public class DragParticleHandler : MonoBehaviour
         if (_isOutsideBoundaries && deleteIfOutsideBoundaries)
         {
             _coulombLogic.RemoveParticle(gameObject.GetComponent<ParticleBehaviour>(), true);
+            simController.ResetSimulation();
         }
+        
     }
 }

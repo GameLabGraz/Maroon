@@ -7,8 +7,9 @@ Shader "Custom/CoulombVoltageShader" {
         _MainTex ("Sprite Texture", 2D) = "white" {}
         _HueBased("HueBased", Range(0,1)) = 1
         _Transparency("Transparency", Range(0.0,1.0)) = 0.75
-        _minValue ("Minimum Charge", Range(-10, 0)) = -5
-        _maxValue ("Maximum Charge", Range(0, 10)) = 5
+        _minValue ("Minimum Charge", Range(-10, 10)) = 0 //-0.001
+        _maxValue ("Maximum Charge", Range(0, 10)) = 0.001
+        _multFactor ("Mult Factor Charge", Range(0, 10)) = 0.001
         _minColor("MinColor", Color) = (1,1,1,1)
         _maxColor("MaxColor", Color) = (1,1,1,1)
     }
@@ -31,6 +32,7 @@ Shader "Custom/CoulombVoltageShader" {
         float _Transparency;
         float _minValue;
         float _maxValue;
+        float _multFactor;
         float4 _minColor;
         float4 _maxColor;
         
@@ -78,64 +80,64 @@ Shader "Custom/CoulombVoltageShader" {
             float voltage = 0.0;
             float3 world_pos = mul (unity_ObjectToWorld, input.cmp_pos.xyz);
             int entries = _EntryCnt;
+            float radius = 0.71;
             for(int i = 0; i < entries; ++i){
                 float3 pos = _Entries[i].xyz;
                 float charge = _Entries[i].w;
                 
-                float dist = distance(world_pos, pos);
-                float tmp = CoulombConstant * charge / dist; //(dist * dist);
+                float dist = distance(world_pos, pos) - radius;
+                if(dist < 0) dist = 0;
+                float tmp = CoulombConstant * CoulombMultiplyFactor * charge * _multFactor / (dist * dist);
                 voltage = voltage + tmp;
             }
         
-              
-//            float voltage = input.cmp_pos.x; //input.cmp_pos.x;
-            
-            
-//            if(voltage < 0) voltage = voltage * -1;
+            //voltage = clamp(voltage, _minValue, _maxValue);
+            int neg = 0;
+            if(voltage < 0){
+                neg = 1;
+                voltage *= -1;
+            }
             voltage = clamp(voltage, _minValue, _maxValue);
+            
             float range = _maxValue - _minValue;
             float percentage =  (voltage - _minValue) / range;
-
-//            return half4(percentage, percentage, percentage, 1.0);
+            
+            percentage = 0.5 + percentage / 2;
+            if(neg == 1){
+                percentage = 1 - percentage;
+            }
             
             if(_HueBased > 0.5){
                 percentage = 1.0 - percentage;
-                float3 HSV = float3((percentage * 240) / 360, 1, 1);   
+                float3 HSV;
+                
+                int border1 = 240;
+                int border2 = 160;
+                int border3 = 80; 
+                float step = 0.49;
+                if(percentage > 1.0 - step){
+                    HSV = float3((border2 + ((percentage - (1.0 - step)) / step) * (border1 - border2)) / 360, 1, 1); 
+                }
+                else if(percentage > step){
+                    HSV = float3((border3 + ((percentage - step) / (1.0 - 2.0 * step)) * (border2 - border3)) / 360, 1, 1);
+                }
+                else {
+                    HSV = float3(((percentage / step) * border3) / 360, 1, 1);
+                }
+                
+//                float3 HSV = float3((percentage * 240) / 360, 1, 1);   
                 float3 RGB = hsv_to_rgb(HSV);        
                 return half4(RGB, _Transparency); 
             }
             else if(percentage < 0.5) {
                 percentage = 1.0 - percentage;
-                return half4(_minColor.xyz, (percentage - 0.5) * 2.0);
+                return half4(_minColor.xyz, (percentage - 0.5) * 2.0 * _Transparency);
             }
             else{
-                return half4(_maxColor.xyz, (percentage - 0.5) * 2.0);
+                return half4(_maxColor.xyz, (percentage - 0.5) * 2.0 * _Transparency);
             }
         }
-         
-                 
-        //min = 0, max = 360 -> but we only go to max = 240
-         
-//         
-// 
-//         struct v2f {
-//             float4 pos : SV_POSITION;
-//             float4 texcoord : TEXCOORD0;
-//         };
-// 
-//         v2f vert (appdata_full v) {
-//             v2f o;
-//             o.pos = UnityObjectToClipPos (v.vertex);
-//             o.texcoord = v.texcoord;
-//             return o;
-//         }
-// 
-//         fixed4 frag (v2f i) : COLOR {
-//             fixed4 c = lerp(_ColorBot, _ColorMid, i.texcoord.y / _Middle) * step(i.texcoord.y, _Middle);
-//             c += lerp(_ColorMid, _ColorTop, (i.texcoord.y - _Middle) / (1 - _Middle)) * step(_Middle, i.texcoord.y);
-//             c.a = 1;
-//             return c;
-//         }
+
         ENDCG
         }
     }
