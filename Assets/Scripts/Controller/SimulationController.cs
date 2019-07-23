@@ -204,4 +204,14 @@ public class SimulationController : MonoBehaviour
         simulationReset = true;
         Debug.Log("Reset");
     }
+
+    public void ResetWholeSimulation()
+    {
+        ResetSimulation();
+        foreach (var resetObject in resetObjects)
+        {
+            if(resetObject is IResetWholeObject)
+                (resetObject as IResetWholeObject).ResetWholeObject();
+        }
+    }
 }

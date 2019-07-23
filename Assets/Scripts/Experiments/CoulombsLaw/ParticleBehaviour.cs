@@ -105,7 +105,7 @@ public class ParticleBehaviour : MonoBehaviour, IResetObject, IGenerateB
         
         _prevUpdatePosition1 = _updatePosition;
         if(_collided < 3)
-        transform.position = _updatePosition;
+            transform.position = _updatePosition;
     }
 
     public Vector3 getB(Vector3 position)
@@ -124,7 +124,7 @@ public class ParticleBehaviour : MonoBehaviour, IResetObject, IGenerateB
 
     private void OnCollisionEnter(Collision other)
     {
-        Debug.Log("Collision: " + other.gameObject.tag + " - " + other.gameObject.name);
+//        Debug.Log("Collision: " + other.gameObject.tag + " - " + other.gameObject.name);
         if(other.gameObject.CompareTag("Particle"))
             _collided++;
 
@@ -132,7 +132,7 @@ public class ParticleBehaviour : MonoBehaviour, IResetObject, IGenerateB
 
     private void OnCollisionExit(Collision other)
     {        
-        Debug.Log("Collision Exit: " + other.gameObject.tag + " - " + other.gameObject.name);
+//        Debug.Log("Collision Exit: " + other.gameObject.tag + " - " + other.gameObject.name);
         if(other.gameObject.CompareTag("Particle"))
             _collided--;
     }

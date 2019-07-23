@@ -20,6 +20,9 @@ public class UIItemDragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler,
     public Color minColor;
     public Color zeroColor;
 
+    [Header("Other Affected GameObjects")]
+    public GameObject ChangeLayerObject;
+
     [Header("Image Components")] 
     public Image BackgroundImage;
     public Image MinusImage;
@@ -105,6 +108,10 @@ public class UIItemDragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler,
     public void OnBeginDrag(PointerEventData eventData)
     {
         _initialPosition = transform.position;
+        if (ChangeLayerObject)
+        {
+            ChangeLayerObject.layer = 0; //Default Layer
+        }
     }
     
     public void OnDrag(PointerEventData eventData)
@@ -132,10 +139,11 @@ public class UIItemDragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler,
         bool hitVectorField = false;
         for(var i = 0; i < hits.Length; ++i)
         {
+            Debug.Log("hit: " + hits[i].transform.tag);
             if (hits[i].transform.CompareTag("VectorField"))
             {
                 hitVectorField = true;
-                _coulombLogic.AddParticle(CreateParticle(hits[i].point));
+                _coulombLogic.AddParticle(CreateParticle(hits[i].point, hits[i].transform.parent));
                 transform.position = _initialPosition;           
             }
         }
@@ -146,11 +154,16 @@ public class UIItemDragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler,
             _time = 0f;
             _returnDirection = _initialPosition - transform.position;
         }
+        
+        if (ChangeLayerObject)
+        {
+            ChangeLayerObject.layer = 2; //Ignore Raycast
+        }
     }
 
-    private ParticleBehaviour CreateParticle(Vector3 position)
+    private ParticleBehaviour CreateParticle(Vector3 position, Transform parent)
     {
-        var newGameObj = Instantiate(Resources.Load("Particle", typeof(GameObject))) as GameObject;
+        var newGameObj = Instantiate(Resources.Load("Particle", typeof(GameObject)), parent, true) as GameObject;
         Debug.Assert(newGameObj != null);
         
         var particle = newGameObj.GetComponent<ParticleBehaviour>();

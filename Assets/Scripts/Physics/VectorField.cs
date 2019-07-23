@@ -23,22 +23,22 @@ public class VectorField : MonoBehaviour
     /// <summary>
     /// List of field arrows
     /// </summary>
-    private List<GameObject> vectorFieldArrows = new List<GameObject>();
+    protected List<GameObject> vectorFieldArrows = new List<GameObject>();
 
     /// <summary>
     /// The vector field height
     /// </summary>
-    private float height;
+    protected float height;
 
     /// <summary>
     /// The vector field width
     /// </summary>
-	private float width;
+    protected float width;
 
     /// <summary>
     /// Indicates if the vector field is displayed or not
     /// </summary>
-    private bool vectorFieldVisible = true;
+    protected bool vectorFieldVisible = true;
 
     /// <summary>
     /// The arrow prefab which includes the model
@@ -46,17 +46,17 @@ public class VectorField : MonoBehaviour
     public Object arrowPrefab;
 
     [SerializeField]
-    private int resolution = 20;
+    protected int resolution = 20;
 
     [SerializeField]
-    private float fieldStrengthFactor = Teal.FieldStrengthFactor;
+    protected float fieldStrengthFactor = Teal.FieldStrengthFactor;
 
-    private SimulationController simController;
+    protected SimulationController simController = null;
 
     /// <summary>
     /// Initialization
     /// </summary>
-    void Start()
+    protected void Start()
     {
         GameObject simControllerObject = GameObject.Find("SimulationController");
         if (simControllerObject)
@@ -71,8 +71,14 @@ public class VectorField : MonoBehaviour
     /// <summary>
     /// Creates the vector field arrows and move them to the right position depending on the resolution.
     /// </summary>
-	private void createVectorFieldArrows()
+    protected virtual void createVectorFieldArrows()
     {
+        if (simController == null)
+        {
+            Start();
+            return;
+        }
+
         float arrow_scale;
         if (resolution > 20)
             arrow_scale = 1 - (resolution - 20) * 0.05f;
@@ -116,13 +122,12 @@ public class VectorField : MonoBehaviour
             vectorFieldVisible = false;
             clearVectorField();
         }
-
     }
 
     /// <summary>
     /// Clears the vector field
     /// </summary>
-	private void clearVectorField()
+    protected void clearVectorField()
     {
         foreach (GameObject arrow in vectorFieldArrows)
         {

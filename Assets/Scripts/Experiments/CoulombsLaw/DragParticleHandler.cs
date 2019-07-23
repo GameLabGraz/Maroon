@@ -55,6 +55,7 @@ public class DragParticleHandler : MonoBehaviour
     
     private void OnMouseDown()
     {
+        Debug.Log("OnMouseDown");
         if (!Input.GetMouseButtonDown(0)) return;
         
         _moving = true;
