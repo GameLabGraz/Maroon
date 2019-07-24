@@ -74,7 +74,6 @@ Shader "Custom/CoulombVoltageShader" {
         }
         
         half4 frag(vertOutput input) : COLOR {
-        
             float CoulombConstant = 9; 
             float CoulombMultiplyFactor = 0.001;
             float voltage = 0.0;

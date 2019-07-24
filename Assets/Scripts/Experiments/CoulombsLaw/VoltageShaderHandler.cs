@@ -57,6 +57,7 @@ public class VoltageShaderHandler : MonoBehaviour, IResetObject
                 var pos = particle.transform.position;
                 var vec = new Vector4(pos.x, pos.y, pos.z, particle.charge);
                 vecArray.Add(vec);
+                Debug.Log("Add Particle to shader. " + vec);
             }
         }
 

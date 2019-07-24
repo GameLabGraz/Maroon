@@ -128,8 +128,16 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         simController.AddNewResetObjectAtBegin(particle);
         _particles.Add(particle);
         //TODO: check if this works
-        Physics.IgnoreCollision(particle.gameObject.GetComponent<Collider>(), _vectorField3d.gameObject.GetComponent<Collider>());
-        Physics.IgnoreCollision(particle.gameObject.GetComponent<Collider>(), _vectorField2d.gameObject.GetComponent<Collider>());
+        foreach (var collider in particle.gameObject.GetComponents<Collider>())
+        {
+            Physics.IgnoreCollision(collider, _vectorField3d.gameObject.GetComponent<Collider>());
+            Physics.IgnoreCollision(collider, _vectorField2d.gameObject.GetComponent<Collider>());
+        }
+        foreach (var collider in particle.gameObject.GetComponentsInChildren<Collider>())
+        {
+            Physics.IgnoreCollision(collider, _vectorField3d.gameObject.GetComponent<Collider>());
+            Physics.IgnoreCollision(collider, _vectorField2d.gameObject.GetComponent<Collider>());
+        }
         
         simController.ResetSimulation();
     }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using PlatformControls.PC;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -29,8 +30,10 @@ public class UIItemDragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler,
     public Image PlusImage;
 
     [Header("Particle Movement Restrictions")]
-    public GameObject minPosition;
-    public GameObject maxPosition;
+    public GameObject minPosition2d;
+    public GameObject maxPosition2d;
+    public GameObject minPosition3d;
+    public GameObject maxPosition3d;
 
     private Vector3 _initialPosition;
     private Vector3 _initialMousePosition;
@@ -139,7 +142,6 @@ public class UIItemDragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler,
         bool hitVectorField = false;
         for(var i = 0; i < hits.Length; ++i)
         {
-            Debug.Log("hit: " + hits[i].transform.tag);
             if (hits[i].transform.CompareTag("VectorField"))
             {
                 hitVectorField = true;
@@ -165,6 +167,7 @@ public class UIItemDragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler,
     {
         var newGameObj = Instantiate(Resources.Load("Particle", typeof(GameObject)), parent, true) as GameObject;
         Debug.Assert(newGameObj != null);
+        var is2dScene = string.CompareOrdinal(parent.gameObject.name, "2dScene") == 0; //TODO: use tag or something else
         
         var particle = newGameObj.GetComponent<ParticleBehaviour>();
         Debug.Assert(particle != null);
@@ -173,8 +176,15 @@ public class UIItemDragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler,
         particle.SetCharge(_currentCharge, BackgroundImage.color);
 
         var movement = newGameObj.GetComponent<DragParticleHandler>();
+        if (!movement) movement = newGameObj.GetComponentInChildren<DragParticleHandler>();
         Debug.Assert(movement != null);
-        movement.SetBoundaries(minPosition, maxPosition);
+        
+        movement.SetBoundaries(is2dScene? minPosition2d : minPosition3d, is2dScene? maxPosition2d : maxPosition3d);
+        var arrowMovement = newGameObj.GetComponentInChildren<ArrowControlledMovement>();
+        Debug.Assert(arrowMovement != null);
+        arrowMovement.MinimumBoundary = is2dScene? minPosition2d.transform : minPosition3d.transform;
+        arrowMovement.MaximumBoundary = is2dScene? maxPosition2d.transform : maxPosition3d.transform;
+        arrowMovement.RestrictZMovement = is2dScene;
         newGameObj.SetActive(true);
         
         return particle;
