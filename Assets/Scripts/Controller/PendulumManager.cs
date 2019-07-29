@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using Evaluation.UnityInterface;
+using Maroon.Util;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -56,8 +57,8 @@ namespace Controller
         public void Awake()
         {
             Calculator.OnButtonPressed += CalculatorButtonPressed;
-            StopWatch.OnStart += StopWatchStart;
-            StopWatch.OnStop += StopWatchStop;
+            StopWatchOld.OnStart += StopWatchStart;
+            StopWatchOld.OnStop += StopWatchStop;
             AssessmentManager.OnEnteredSection += (result) => {
                 GuiPendulum.ShowFeedback(result.Feedback);
             };
@@ -278,12 +279,12 @@ namespace Controller
             GuiPendulum.ShowFeedback(res.Feedback);
         }
 
-        private void StopWatchStart(StopWatch.StopWatchEvent evt)
+        private void StopWatchStart(StopWatchOld.StopWatchEvent evt)
         {
             var res = AssessmentManager.Instance.Send(GameEventBuilder.UseObject("operation", "sw-start"));
             GuiPendulum.ShowFeedback(res.Feedback);
         }
-        private void StopWatchStop(StopWatch.StopWatchEvent evt)
+        private void StopWatchStop(StopWatchOld.StopWatchEvent evt)
         {
             var res = AssessmentManager.Instance.Send(GameEventBuilder.UseObject("operation", "sw-stop"));
             GuiPendulum.ShowFeedback(res.Feedback);
@@ -291,7 +292,7 @@ namespace Controller
 
         private void AdjustWeight()
         {
-            var obj = _pendulumWeight.transform.Find("weight_obj/weight_gizmo");
+            var obj = this.transform;
 
             Weight = Math.Min(Math.Max(Weight, _weightMin), _weightMax);
             obj.transform.localScale = new Vector3(Weight / 1000, Weight / 1000, Weight / 1000);
@@ -302,7 +303,7 @@ namespace Controller
         }
         private void DrawRopeAndAngle()
         {
-            var startPos = _pendulumWeight.transform.Find("weight_obj").transform.position;
+            var startPos = transform.position;
             startPos.Set(startPos.x, startPos.y, startPos.z);
             DrawLine(startPos, _standRopeJoint.transform.position);
 
@@ -322,7 +323,7 @@ namespace Controller
         {
             LimitHinge(_pendulumWeight.GetComponent<HingeJoint>(), 0);
             var currPos = _pendulumWeight.transform.position;
-            var obj = _pendulumWeight.transform.Find("weight_obj");
+            var obj = this.transform;
             var pos = obj.transform.position;
             var newVal = Math.Max(-_ropeMaxLength, -RopeLength + value);
             newVal = Math.Min(newVal, -_ropeMinLength);

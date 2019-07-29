@@ -187,8 +187,8 @@ public class Coil : EMObject, IResetObject
     /// </summary>
     public override void ResetObject()
     {
-        GetComponent<Rigidbody>().velocity = Vector3.zero;
-        GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+        _rigidbody.velocity = Vector3.zero;
+        _rigidbody.angularVelocity = Vector3.zero;
         transform.position = startPos;
         transform.rotation = startRot;
         current = 0.0f;

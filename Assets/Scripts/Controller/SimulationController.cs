@@ -30,6 +30,16 @@ public class SimulationController : MonoBehaviour
     [SerializeField]
     private float timeScale = 1;
 
+    public float TimeScale
+    {
+        get => timeScale;
+        set
+        {
+            timeScale = value;
+            Time.timeScale = value;
+        }
+    }
+
     /// <summary>
     /// Indicates wheter a single step should be simulated
     /// </summary>
@@ -87,7 +97,7 @@ public class SimulationController : MonoBehaviour
     /// <param name="scene">Unloaded scene</param>
     private void OnSceneUnloaded(Scene scene)
     {
-        Time.timeScale = 1.0f;
+        TimeScale = 1.0f;
         SceneManager.sceneUnloaded -= OnSceneUnloaded;
     }
 
@@ -122,7 +132,7 @@ public class SimulationController : MonoBehaviour
     }
 
     /// <summary>
-    /// Property that defines wheter the simulation is running
+    /// Property that defines whether the simulation is running
     /// </summary>
     public bool SimulationRunning => simulationRunning;
 
@@ -134,13 +144,7 @@ public class SimulationController : MonoBehaviour
     /// <summary>
     /// Getter for the simulationReset field
     /// </summary>
-    public bool SimulationJustReset
-    {
-        get
-        {
-            return simulationReset;
-        }
-    }
+    public bool SimulationJustReset => simulationReset;
 
     /// <summary>
     /// Starts the simulation
