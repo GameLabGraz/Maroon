@@ -10,70 +10,58 @@
 //-----------------------------------------------------------------------------
 //
 
+using System;
 using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 
-/// <summary>
-/// Script for start button
-/// </summary>
-[RequireComponent(typeof(Button))]
-public class StartBtnScript : MonoBehaviour
+namespace Maroon.UI.Buttons
 {
     /// <summary>
-    /// Icon of button when simulation is paused
+    /// Script for start button
     /// </summary>
-	[SerializeField]
-    private Sprite playIcon = null;
-
-    /// <summary>
-    /// Icon of button when simulation is running
-    /// </summary>
-	[SerializeField]
-    private Sprite pauseIcon = null;
-
-    /// <summary>
-    /// The attached button object
-    /// </summary>
-    private Button attachedButton;
-
-    private SimulationController simController;
-
-    /// <summary>
-    /// Save the button object in member variable
-    /// </summary>
-    private void Awake()
+    [RequireComponent(typeof(Button))]
+    public class StartBtnScript : BaseButton
     {
-        attachedButton = gameObject.GetComponent<Button>();
-    }
+        /// <summary>
+        /// Icon of button when simulation is paused
+        /// </summary>
+        [SerializeField]
+        private Sprite _playIcon = null;
 
-    private void Start()
-    {
-        var simControllerObject = GameObject.Find("SimulationController");
-        if (simControllerObject)
-            simController = simControllerObject.GetComponent<SimulationController>();
-    }
+        /// <summary>
+        /// Icon of button when simulation is running
+        /// </summary>
+        [SerializeField]
+        private Sprite _pauseIcon = null;
+        
 
-    /// <summary>
-    /// Handles the appearance of the button
-    /// </summary>
-    private void Update()
-    {
-        if (simController.SimulationRunning &&
-            !simController.StepSimulation)
-            attachedButton.image.sprite = pauseIcon;
-        else
-            attachedButton.image.sprite = playIcon;
-    }
+        protected  override void Start()
+        {
+            base.Start();
+            SimController.OnStart += OnStartHandler;
+            SimController.OnStop += OnStopHandler;
+        }
 
-    /// <summary>
-    /// Handles the button being pressed
-    /// </summary>
-    public void ButtonStartPressed()
-    {
-        if (simController.SimulationRunning)
-            simController.StopSimulation();
-        else
-            simController.StartSimulation();
+        private void OnStartHandler(object sender, EventArgs e)
+        {
+            Button.image.sprite = _pauseIcon;
+        }
+
+        private void OnStopHandler(object sender, EventArgs e)
+        {
+            Button.image.sprite = _playIcon;
+        }
+
+        /// <summary>
+        /// Handles the button being pressed
+        /// </summary>
+        public void ButtonStartPressed()
+        {
+            if (SimController.SimulationRunning)
+                SimController.StopSimulation();
+            else
+                SimController.StartSimulation();
+        }
     }
 }
+

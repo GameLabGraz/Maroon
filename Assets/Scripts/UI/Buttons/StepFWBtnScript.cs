@@ -10,51 +10,38 @@
 //-----------------------------------------------------------------------------
 //
 
-using UnityEngine;
-using System.Collections;
-using UnityEngine.UI;
+using System;
 
-/// <summary>
-/// Script for forward button
-/// </summary>
-public class StepFWBtnScript : MonoBehaviour
+namespace Maroon.UI.Buttons
 {
-    private SimulationController simController;
-
-    private void Start()
-    {
-        GameObject simControllerObject = GameObject.Find("SimulationController");
-        if (simControllerObject)
-            simController = simControllerObject.GetComponent<SimulationController>();
-    }
-
     /// <summary>
-    /// Handles the appearance of the button
+    /// Script for forward button
     /// </summary>
-    void Update()
+    public class StepFWBtnScript : BaseButton
     {
-        if (Input.GetKeyDown(KeyCode.RightArrow) && gameObject.GetComponent<Button>().interactable)
-            stepFWButtonPressed();
-
-        if (simController.SimulationRunning &&
-            !simController.StepSimulation)
+        protected override void Start()
         {
-            gameObject.GetComponent<CanvasRenderer>().SetAlpha(0.0f);
-            gameObject.GetComponent<Button>().interactable = false;
-        }
-        else
-        {
-            gameObject.GetComponent<CanvasRenderer>().SetAlpha(1.0f);
-            gameObject.GetComponent<Button>().interactable = true;
+            base.Start();
+            SimController.OnStart += OnStartHandler;
+            SimController.OnStop += OnStopHandler;
         }
 
-    }
+        private void OnStartHandler(object sender, EventArgs e)
+        {
+            Disable();
+        }
 
-    /// <summary>
-    /// Handles the button being pressed
-    /// </summary>
-    public void stepFWButtonPressed()
-    {
-        simController.SimulateStep();
+        private void OnStopHandler(object sender, EventArgs e)
+        {
+            Enable();
+        }
+
+        /// <summary>
+        /// Handles the button being pressed
+        /// </summary>
+        public void StepFwButtonPressed()
+        {
+            SimController.SimulateStep();
+        }
     }
 }

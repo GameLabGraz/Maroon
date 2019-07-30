@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 //
 
+using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -43,6 +44,12 @@ public class SimulationController : MonoBehaviour
     /// The objects which must be reset
     /// </summary>
     private List<IResetObject> resetObjects;
+
+    public event EventHandler<EventArgs> OnStart;
+
+    public event EventHandler<EventArgs> OnStop;
+
+    public event EventHandler<EventArgs> OnReset;
 
     /// <summary>
     /// Initialization
@@ -117,28 +124,12 @@ public class SimulationController : MonoBehaviour
     /// <summary>
     /// Property that defines wheter the simulation is running
     /// </summary>
-    public bool SimulationRunning
-    {
-        get
-        {
-            return simulationRunning;
-        }
-        set
-        {
-          simulationRunning = value;
-        }
-    }
+    public bool SimulationRunning => simulationRunning;
 
     /// <summary>
     /// Getter for the stepSimulation field
     /// </summary>
-    public bool StepSimulation
-    {
-        get
-        {
-            return stepSimulation;
-        }
-    }
+    public bool StepSimulation => stepSimulation;
 
     /// <summary>
     /// Getter for the simulationReset field
@@ -156,8 +147,11 @@ public class SimulationController : MonoBehaviour
     /// </summary>
     public void StartSimulation()
     {
-        SimulationRunning = true;
+        simulationRunning = true;
         simulationReset = false;
+
+        if(!stepSimulation)
+            OnStart?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -176,7 +170,8 @@ public class SimulationController : MonoBehaviour
     /// </summary>
     public void StopSimulation()
     {
-        SimulationRunning = false;
+        simulationRunning = false;
+        OnStop?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -191,6 +186,9 @@ public class SimulationController : MonoBehaviour
 
         StopSimulation();
         simulationReset = true;
+
+        OnReset?.Invoke(this, EventArgs.Empty);
+
         Debug.Log("Reset");
     }
 }

@@ -24,7 +24,7 @@ public class MagnetController : VRTK_InteractableObject
 
         _isMoving = true;
 
-        _simController.SimulationRunning = true;
+        _simController.StartSimulation();
 
         StartCoroutine(TriggerHapticPulse());
     }
@@ -35,7 +35,7 @@ public class MagnetController : VRTK_InteractableObject
 
         _isMoving = false;
 
-        _simController.SimulationRunning = false;
+        _simController.StopSimulation();
     }
 
 

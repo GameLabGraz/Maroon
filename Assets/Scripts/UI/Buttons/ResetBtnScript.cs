@@ -10,56 +10,46 @@
 //-----------------------------------------------------------------------------
 //
 
+using System;
 using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 
-/// <summary>
-/// Script for reset button
-/// </summary>
-[RequireComponent(typeof(Button))]
-public class ResetBtnScript : MonoBehaviour
+namespace Maroon.UI.Buttons
 {
-    SimulationController simController;
-
     /// <summary>
-    /// Initializing
+    /// Script for reset button
     /// </summary>
-    void Start()
+    public class ResetBtnScript : BaseButton
     {
-        GameObject simControllerObject = GameObject.Find("SimulationController");
-        if (simControllerObject)
-            simController = simControllerObject.GetComponent<SimulationController>();
+        protected override void Start()
+        {
+            base.Start();
 
-        gameObject.GetComponent<CanvasRenderer>().SetAlpha(0.0f);
-        gameObject.GetComponent<Button>().interactable = false;
-    }
+            SimController.OnReset += OnResetHandler;
+            SimController.OnStart += OnStartHandler;
 
-    /// <summary>
-    /// Handles the appearance of the button
-    /// </summary>
-	void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.LeftArrow) && gameObject.GetComponent<Button>().interactable)
-            buttonResetPressed();
+            Disable();
+        }
 
-        if (!simController.SimulationJustReset)
+        private void OnStartHandler(object sender, EventArgs e)
         {
             gameObject.GetComponent<CanvasRenderer>().SetAlpha(1.0f);
             gameObject.GetComponent<Button>().interactable = true;
+
         }
-        else
+
+        private void OnResetHandler(object sender, EventArgs e)
         {
             gameObject.GetComponent<CanvasRenderer>().SetAlpha(0.0f);
             gameObject.GetComponent<Button>().interactable = false;
         }
-    }
 
-    /// <summary>
-    /// Handles the button being pressed and resets the simulation
-    /// </summary>
-    public void buttonResetPressed()
-    {
-        simController.ResetSimulation();
+        /// <summary>
+        /// Handles the button being pressed and resets the simulation
+        /// </summary>
+        public void ButtonResetPressed()
+        {
+            SimController.ResetSimulation();
+        }
     }
 }

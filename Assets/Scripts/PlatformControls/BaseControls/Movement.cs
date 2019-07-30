@@ -31,7 +31,7 @@ namespace PlatformControls.BaseControls
             IsMoving = true;
 
             if (!SimulationRunningDuringMovement)
-                SimController.SimulationRunning = true;
+                SimController.StartSimulation();
         }
 
         protected void StopMoving()
@@ -39,7 +39,7 @@ namespace PlatformControls.BaseControls
             IsMoving = false;
 
             if (!SimulationRunningDuringMovement)
-                SimController.SimulationRunning = false;
+                SimController.StopSimulation();
         }
 
         protected void Move(Vector3 target)
