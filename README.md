@@ -66,7 +66,7 @@ feature in this experiment is that the user can also feel the acting force throu
 feedback which corresponds to the force. This gives the user an ”extra-dimension”
 for an even better experience.
 
-<img src="/Assets/Images/Screenshots/falling_coil.png" width="600"/>
+<img src="/Assets/Images/Screenshots/faradays_law.png" width="600"/>
 
 ### Capacitor
 A capacitor is an electrical component which consists of two electrically conductive
