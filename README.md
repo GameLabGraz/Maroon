@@ -1,4 +1,4 @@
-<img src="/Assets/Images/logo.png" width="400"/>
+﻿<img src="/Assets/Images/logo.png" width="400"/>
 
 > ### Maroon
 > A interactive physics laboratory and experiment environment implemented in Unity3D, designed for active learning in the classroom or at home. It visualizes and simulates various physics experiments
@@ -112,7 +112,7 @@ patterns. For a better wave illustration, the wave color can be freely changed.
 
 [Unity]: https://unity3d.com
 [SteamVR Plugin]: https://github.com/ValveSoftware/steamvr_unity_plugin/releases/download/1.2.3/SteamVR.Plugin.unitypackage
-[VRTK Plugin]: https://github.com/thestonefox/VRTK/archive/3.2.1.zip
+[VRTK Plugin]: https://github.com/thestonefox/VRTK/archive/3.3.0.zip
 [HTC Vive]: https://www.vive.com
 [Oculus Integration]: https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022
 [Google VR SDK for Unity]: https://developers.google.com/vr/unity/download
