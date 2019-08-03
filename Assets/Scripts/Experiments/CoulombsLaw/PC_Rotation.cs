@@ -1,11 +1,20 @@
 ﻿using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
 
-public class CubeRotationScript : MonoBehaviour, IResetWholeObject
+public class PC_Rotation : MonoBehaviour, IResetWholeObject
 {
+    [Tooltip("The speed with which the object rotates.")]
     public float rotationSpeed = 20;
+    [Tooltip("The object that should be rotated. If null then the object with the script on it will be rotated.")]
     public GameObject rotationObject = null;
 
+    [Header("Other Settings")] 
+    [Tooltip("Tells if zoom via + and - buttons is enabled.")]
+    public bool enableShortcuts = true;
+    [Tooltip("Stops the simulation while rotating when enabled.")]
+    public bool onlyRotateOnSimulationPause;
+    
+    
     private SimulationController _simController;
     private Transform rotateTrans;
     
@@ -22,6 +31,7 @@ public class CubeRotationScript : MonoBehaviour, IResetWholeObject
 
     private void Update()
     {
+        if (!enableShortcuts) return;
         if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
             rotateTrans.RotateAround(Vector3.up, rotationSpeed * Mathf.Deg2Rad * Time.deltaTime);
         else if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
@@ -34,8 +44,10 @@ public class CubeRotationScript : MonoBehaviour, IResetWholeObject
 
     private void OnMouseDrag()
     {
+        Debug.Log("onMouseDrag");
+        
         // taken from https://www.youtube.com/watch?v=S3pjBQObC90
-        _simController.SimulationRunning = false;
+        if(onlyRotateOnSimulationPause) _simController.SimulationRunning = false;
         
         var rotX = Input.GetAxis("Mouse X") * rotationSpeed * Mathf.Deg2Rad;
         var rotY = Input.GetAxis("Mouse Y") * rotationSpeed * Mathf.Deg2Rad;

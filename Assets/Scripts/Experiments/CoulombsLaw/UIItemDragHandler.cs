@@ -180,11 +180,18 @@ public class UIItemDragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler,
         Debug.Assert(movement != null);
         
         movement.SetBoundaries(is2dScene? minPosition2d : minPosition3d, is2dScene? maxPosition2d : maxPosition3d);
-        var arrowMovement = newGameObj.GetComponentInChildren<ArrowControlledMovement>();
+//        var arrowMovement2 = newGameObj.GetComponentInChildren<ArrowControlledMovement>();
+//        Debug.Assert(arrowMovement2 != null);
+//        arrowMovement2.minimumBoundary = is2dScene? minPosition2d.transform : minPosition3d.transform;
+//        arrowMovement2.maximumBoundary = is2dScene? maxPosition2d.transform : maxPosition3d.transform;
+//        arrowMovement2.restrictZMovement = is2dScene;
+        
+        var arrowMovement = newGameObj.GetComponentInChildren<PC_ArrowMovement>();
         Debug.Assert(arrowMovement != null);
-        arrowMovement.MinimumBoundary = is2dScene? minPosition2d.transform : minPosition3d.transform;
-        arrowMovement.MaximumBoundary = is2dScene? maxPosition2d.transform : maxPosition3d.transform;
-        arrowMovement.RestrictZMovement = is2dScene;
+        arrowMovement.minimumBoundary = is2dScene? minPosition2d.transform : minPosition3d.transform;
+        arrowMovement.maximumBoundary = is2dScene? maxPosition2d.transform : maxPosition3d.transform;
+        arrowMovement.restrictZMovement = is2dScene;
+        
         newGameObj.SetActive(true);
         
         return particle;

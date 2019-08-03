@@ -5,7 +5,7 @@ public class DragParticleHandler : MonoBehaviour
 {
     public bool pauseSimulationWhileMoving = true;
     public bool deleteIfOutsideBoundaries = true;
-    public GameObject MovingObject = null; 
+    public GameObject movingObject = null; 
     
     [Header("Movement Restrictions")]
     public Transform minBoundary;
@@ -15,7 +15,7 @@ public class DragParticleHandler : MonoBehaviour
     public bool allowedYMovement = true;
     public bool allowedZMovement = true;
 
-    [Header("Movement Restrictions Apparences")]
+    [Header("Movement Restrictions Appearances")]
     public List<GameObject> changeMaterialIfOutside;
     public float outsideTransparency = 0.7f;
     
@@ -23,20 +23,20 @@ public class DragParticleHandler : MonoBehaviour
     private bool _isOutsideBoundaries = false;
     private float _distance;
     
-    private SimulationController simController;
+    private SimulationController _simController;
     private CoulombLogic _coulombLogic;
     private Rigidbody _rigidbody;
     private ParticleBehaviour _particleBehaviour;
 
     private void Start()
     {
-        if (MovingObject == null) MovingObject = gameObject;
+        if (movingObject == null) movingObject = gameObject;
         
-        _particleBehaviour = MovingObject.GetComponent<ParticleBehaviour>();
-        _rigidbody = MovingObject.GetComponent<Rigidbody>();
+        _particleBehaviour = movingObject.GetComponent<ParticleBehaviour>();
+        _rigidbody = movingObject.GetComponent<Rigidbody>();
         var simControllerObject = GameObject.Find("SimulationController");
         if (simControllerObject)
-            simController = simControllerObject.GetComponent<SimulationController>();
+            _simController = simControllerObject.GetComponent<SimulationController>();
         simControllerObject = GameObject.Find("CoulombLogic");
         if (simControllerObject)
             _coulombLogic = simControllerObject.GetComponent<CoulombLogic>();
@@ -44,7 +44,7 @@ public class DragParticleHandler : MonoBehaviour
 
     private void Update()
     {
-        _rigidbody.isKinematic = !simController.SimulationRunning || _particleBehaviour.fixedPosition;
+        _rigidbody.isKinematic = !_simController.SimulationRunning || _particleBehaviour.fixedPosition;
     }
 
     public void SetBoundaries(GameObject min, GameObject max)
@@ -55,7 +55,7 @@ public class DragParticleHandler : MonoBehaviour
     
     private void OnMouseDown()
     {
-        if(!MovingObject.activeSelf) return;
+        if(!movingObject.activeSelf) return;
         if (!Input.GetMouseButtonDown(0)) return;
 
         var arrowControlled = GetComponentInChildren<ArrowControlledMovement>();
@@ -63,12 +63,13 @@ public class DragParticleHandler : MonoBehaviour
             return;
         
         _moving = true;
-        _distance = Vector3.Distance(MovingObject.transform.position, Camera.main.transform.position);
-        if (pauseSimulationWhileMoving) simController.SimulationRunning = false;
+        _distance = Vector3.Distance(movingObject.transform.position, Camera.main.transform.position);
+        if (pauseSimulationWhileMoving) _simController.SimulationRunning = false;
     }
 
     private void OnMouseDrag()
     {
+        Debug.Log("OnMouseDrag Particle Handler");
         var arrowControlled = GetComponentInChildren<ArrowControlledMovement>();
         if (arrowControlled)
             arrowControlled.MouseDrag();
@@ -77,7 +78,7 @@ public class DragParticleHandler : MonoBehaviour
 
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         var pt = ray.GetPoint(_distance);
-        var pos = MovingObject.transform.position;
+        var pos = movingObject.transform.position;
 
         if (!allowedXMovement) pt.x = pos.x;
         if (!allowedYMovement) pt.y = pos.y;
@@ -108,7 +109,7 @@ public class DragParticleHandler : MonoBehaviour
             }
         }
         
-        MovingObject.transform.position = pt;
+        movingObject.transform.position = pt;
     }
 
     private void OnMouseUp()
@@ -120,13 +121,13 @@ public class DragParticleHandler : MonoBehaviour
             arrowControlled.MouseUp();
         
         _moving = false;
-        MovingObject.GetComponent<ParticleBehaviour>().SetPosition(transform.position);
-        simController.ResetSimulation();
+        movingObject.GetComponent<ParticleBehaviour>().SetPosition(transform.position);
+        _simController.ResetSimulation();
         
         if (_isOutsideBoundaries && deleteIfOutsideBoundaries)
         {
-            _coulombLogic.RemoveParticle(MovingObject.GetComponent<ParticleBehaviour>(), true);
-            simController.ResetSimulation();
+            _coulombLogic.RemoveParticle(movingObject.GetComponent<ParticleBehaviour>(), true);
+            _simController.ResetSimulation();
         }
         
     }

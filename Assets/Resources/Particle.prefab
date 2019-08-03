@@ -174,7 +174,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pauseSimulationWhileMoving: 1
   deleteIfOutsideBoundaries: 1
-  MovingObject: {fileID: 0}
+  movingObject: {fileID: 0}
   minBoundary: {fileID: 0}
   maxBoundary: {fileID: 0}
   allowedXMovement: 1
@@ -275,6 +275,7 @@ GameObject:
   - component: {fileID: 2366296896351806000}
   - component: {fileID: 2366296896353297200}
   - component: {fileID: 7286255154409568554}
+  - component: {fileID: 2883324276439321303}
   m_Layer: 0
   m_Name: y_up
   m_TagString: Untagged
@@ -355,6 +356,18 @@ CapsuleCollider:
   m_Height: 1.5
   m_Direction: 1
   m_Center: {x: 0, y: 0.25, z: -0.005210001}
+--- !u!114 &2883324276439321303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2366296896350891676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 842e60e7e413e034b9cdcf361c6aff33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2387678922236096599
 GameObject:
   m_ObjectHideFlags: 0
@@ -366,6 +379,7 @@ GameObject:
   - component: {fileID: 725601085861586812}
   - component: {fileID: 2776868376966244259}
   - component: {fileID: 5358706408711267893}
+  - component: {fileID: 2316824530287130642}
   m_Layer: 0
   m_Name: MovingArrows
   m_TagString: Untagged
@@ -400,26 +414,29 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2387678922236096599}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5aad12a76633a4142acd8bc47f60f4c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ArrowXPositive: {fileID: 6659510810689582561}
-  ArrowXNegative: {fileID: 5430855144425759330}
-  ArrowYPositive: {fileID: 2366296896350891676}
-  ArrowYNegative: {fileID: 2793186196924214518}
-  ArrowZPositive: {fileID: 5807823107091523444}
-  ArrowZNegative: {fileID: 4015202728723004117}
-  MovingObject: {fileID: 222567040141845092}
-  InUse: 1
-  ShowMovingLines: 1
-  HideWhileInRunMode: 1
-  RestrictXMovement: 0
-  RestrictYMovement: 0
-  RestrictZMovement: 0
-  MinimumBoundary: {fileID: 0}
-  MaximumBoundary: {fileID: 0}
+  arrowXPositive: {fileID: 6659510810689582561}
+  arrowXNegative: {fileID: 5430855144425759330}
+  arrowYPositive: {fileID: 2366296896350891676}
+  arrowYNegative: {fileID: 2793186196924214518}
+  arrowZPositive: {fileID: 5807823107091523444}
+  arrowZNegative: {fileID: 4015202728723004117}
+  movingObject: {fileID: 222567040141845092}
+  inUse: 1
+  showMovingLines: 0
+  hideWhileInRunMode: 1
+  pauseWhileMoving: 1
+  restrictXMovement: 0
+  restrictYMovement: 0
+  restrictZMovement: 0
+  minimumBoundary: {fileID: 0}
+  maximumBoundary: {fileID: 0}
+  resetOnReset: 0
+  resetOnWholeReset: 0
 --- !u!120 &5358706408711267893
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -515,6 +532,29 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
+--- !u!114 &2316824530287130642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2387678922236096599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f20556496be8f1d4c9d3ba968ac00ac6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movingObject: {fileID: 222567040141845092}
+  restrictXMovement: 0
+  restrictYMovement: 0
+  restrictZMovement: 0
+  minimumBoundary: {fileID: 0}
+  maximumBoundary: {fileID: 0}
+  showMovingLines: 1
+  hideWhileInRunMode: 1
+  pauseWhileMoving: 1
+  resetOnReset: 0
+  resetOnWholeReset: 0
 --- !u!1 &2793186196924214518
 GameObject:
   m_ObjectHideFlags: 0
@@ -527,6 +567,7 @@ GameObject:
   - component: {fileID: 2793186196921196634}
   - component: {fileID: 2793186196922360154}
   - component: {fileID: 377784845512371955}
+  - component: {fileID: 6543336047018406633}
   m_Layer: 0
   m_Name: y_down
   m_TagString: Untagged
@@ -607,6 +648,18 @@ CapsuleCollider:
   m_Height: 1.5
   m_Direction: 1
   m_Center: {x: 0, y: 0.25, z: -0.005210001}
+--- !u!114 &6543336047018406633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2793186196924214518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 842e60e7e413e034b9cdcf361c6aff33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4015202728723004117
 GameObject:
   m_ObjectHideFlags: 0
@@ -619,6 +672,7 @@ GameObject:
   - component: {fileID: 4015202728719726201}
   - component: {fileID: 4015202728720693113}
   - component: {fileID: 3088683390175411059}
+  - component: {fileID: 3377774324207739349}
   m_Layer: 0
   m_Name: z_forth
   m_TagString: Untagged
@@ -699,6 +753,18 @@ CapsuleCollider:
   m_Height: 1.5000004
   m_Direction: 1
   m_Center: {x: 0, y: 0.25000006, z: -0.0052100024}
+--- !u!114 &3377774324207739349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4015202728723004117}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 842e60e7e413e034b9cdcf361c6aff33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5430855144425759330
 GameObject:
   m_ObjectHideFlags: 0
@@ -711,6 +777,7 @@ GameObject:
   - component: {fileID: 5430855144426942158}
   - component: {fileID: 5430855144428040142}
   - component: {fileID: 317724237447829019}
+  - component: {fileID: 3044608321245031484}
   m_Layer: 0
   m_Name: x_left
   m_TagString: Untagged
@@ -791,6 +858,18 @@ CapsuleCollider:
   m_Height: 1.5000004
   m_Direction: 1
   m_Center: {x: 0, y: 0.25000006, z: -0.005210001}
+--- !u!114 &3044608321245031484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5430855144425759330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 842e60e7e413e034b9cdcf361c6aff33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5807823107091523444
 GameObject:
   m_ObjectHideFlags: 0
@@ -803,6 +882,7 @@ GameObject:
   - component: {fileID: 5807823107088247768}
   - component: {fileID: 5807823107089181400}
   - component: {fileID: 3751187456093713183}
+  - component: {fileID: 5601887803660789653}
   m_Layer: 0
   m_Name: z_back
   m_TagString: Untagged
@@ -883,6 +963,18 @@ CapsuleCollider:
   m_Height: 1.5000004
   m_Direction: 1
   m_Center: {x: 0, y: 0.25000006, z: -0.0052100024}
+--- !u!114 &5601887803660789653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5807823107091523444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 842e60e7e413e034b9cdcf361c6aff33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6659510810689582561
 GameObject:
   m_ObjectHideFlags: 0
@@ -895,6 +987,7 @@ GameObject:
   - component: {fileID: 6659510810692598093}
   - component: {fileID: 6659510810691467341}
   - component: {fileID: 8514945531893879309}
+  - component: {fileID: 5478201539570208321}
   m_Layer: 0
   m_Name: x_right
   m_TagString: Untagged
@@ -975,3 +1068,15 @@ CapsuleCollider:
   m_Height: 1.5000004
   m_Direction: 1
   m_Center: {x: 0, y: 0.25000006, z: -0.005210001}
+--- !u!114 &5478201539570208321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6659510810689582561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 842e60e7e413e034b9cdcf361c6aff33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
