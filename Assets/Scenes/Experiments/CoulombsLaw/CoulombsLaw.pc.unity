@@ -8341,7 +8341,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1344848887
 Transform:
   m_ObjectHideFlags: 0
@@ -8527,6 +8527,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movingObject: {fileID: 1014711990}
+  useMovementOffset: 1
   restrictXMovement: 0
   restrictYMovement: 0
   restrictZMovement: 0
@@ -8534,7 +8535,6 @@ MonoBehaviour:
   maximumBoundary: {fileID: 981137932}
   showMovingLines: 1
   hideWhileInRunMode: 1
-  pauseWhileMoving: 1
   resetOnReset: 1
   resetOnWholeReset: 1
 --- !u!114 &1400260246
@@ -12706,7 +12706,7 @@ GameObject:
   - component: {fileID: 4151695070649756}
   - component: {fileID: 1518534916158649}
   m_Layer: 0
-  m_Name: BField
+  m_Name: EField
   m_TagString: Field
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12721,9 +12721,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 1518534916158648}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 830cf78b65fb61846b9c49b651e5752d, type: 3}
+  m_Script: {fileID: 11500000, guid: 36133bc73cdbdf54c9801f6f0884618e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  useCallback: 1
+  onGetProducers:
+    _target: {fileID: 1103835507}
+    _methodName: GetChargeGameObjects
+    _args: []
+    _dynamic: 0
+    _typeName: ProducersCallback, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+    dirty: 0
 --- !u!1 &1543784195298483
 GameObject:
   m_ObjectHideFlags: 0

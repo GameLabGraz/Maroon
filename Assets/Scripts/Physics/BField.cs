@@ -19,11 +19,6 @@ using System.Collections.Generic;
 public class BField : IField
 {
     /// <summary>
-    /// Lists of producers which generats a magnetic field
-    /// </summary>
-    private HashSet<GameObject> producers = new HashSet<GameObject>();
-
-    /// <summary>
     /// Gets the field type
     /// </summary>
     /// <returns></returns>
@@ -63,6 +58,8 @@ public class BField : IField
         Vector3 field = Vector3.zero;
         try
         {
+            if (useCallback) producers = onGetProducers.Invoke();
+
             foreach (GameObject producer in producers)
             {
                 if (producer.gameObject.activeSelf)
@@ -89,6 +86,8 @@ public class BField : IField
         Vector3 field = Vector3.zero;
         try
         {
+            if (useCallback) producers = onGetProducers.Invoke();
+
             foreach (GameObject producer in producers)
             {
                 if (producer.gameObject.activeSelf)

@@ -231,7 +231,8 @@ public class ArrowControlledMovement : MonoBehaviour, IResetWholeObject
     public void MouseUp()
     {
         _movingDirection = Vector3.zero;
-        _lineRenderer.enabled = false;
+        if(_lineRenderer)
+            _lineRenderer.enabled = false;
     }
 
     public void ResetObject()
