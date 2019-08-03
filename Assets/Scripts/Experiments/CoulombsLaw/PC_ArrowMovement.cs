@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
@@ -8,6 +6,7 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
     [Header("General Input Objects")]
     [Tooltip("The object that will be moved with the arrows. If null then the object with the script on it will be moved.")]
     public GameObject movingObject = null;
+    public bool useMovementOffset = true;
 
     [Header("Restrictions")]
     public bool restrictXMovement = false;
@@ -22,8 +21,9 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
     public bool showMovingLines = false;
     [Tooltip("Hides the arrows when the simulation is running.")]
     public bool hideWhileInRunMode = true;
-    [Tooltip("Pauses the simulation when the object is moved. Note: This is only possible if the arrows aren't hidden in run-mode.")]
-    public bool pauseWhileMoving = true;
+    //TODO: here
+//    [Tooltip("Pauses the simulation when the object is moved. Note: This is only possible if the arrows aren't hidden in run-mode.")]
+//    public bool pauseWhileMoving = true;
     
     [Header("Reset Settings")] 
     public bool resetOnReset = false;
@@ -34,7 +34,7 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
     
     private Vector3 _movingDirection =  Vector3.zero;
     private bool _moving = false;
-    private Vector3 _movingOffset;
+    private Vector3 _movingOffset = Vector3.zero;
     private float _distance;
     
     private LineRenderer _lineRenderer;
@@ -140,7 +140,8 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
         _moving = true;
         _distance = Vector3.Distance(movingObject.transform.position, Camera.main.transform.position);
         var pt = movingObject.transform.parent.transform.InverseTransformPoint(ray.GetPoint(_distance));
-        _movingOffset = pt - movingObject.transform.localPosition;
+        if(useMovementOffset)
+            _movingOffset = pt - movingObject.transform.localPosition;
         Debug.Log("pt = " + pt + " -- localPos = " + movingObject.transform.localPosition + " -  offset: " + _movingOffset);
     }
 
