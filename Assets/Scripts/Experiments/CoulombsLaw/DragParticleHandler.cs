@@ -57,10 +57,6 @@ public class DragParticleHandler : MonoBehaviour
     {
         if(!movingObject.activeSelf) return;
         if (!Input.GetMouseButtonDown(0)) return;
-
-        var arrowControlled = GetComponentInChildren<ArrowControlledMovement>();
-        if (arrowControlled && arrowControlled.MouseDown())
-            return;
         
         _moving = true;
         _distance = Vector3.Distance(movingObject.transform.position, Camera.main.transform.position);
@@ -69,11 +65,6 @@ public class DragParticleHandler : MonoBehaviour
 
     private void OnMouseDrag()
     {
-        Debug.Log("OnMouseDrag Particle Handler");
-        var arrowControlled = GetComponentInChildren<ArrowControlledMovement>();
-        if (arrowControlled)
-            arrowControlled.MouseDrag();
-        
         if (!_moving) return;
 
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -116,10 +107,6 @@ public class DragParticleHandler : MonoBehaviour
     {
         if (!Input.GetMouseButtonUp(0)) return;
         
-        var arrowControlled = GetComponentInChildren<ArrowControlledMovement>();
-        if (arrowControlled)
-            arrowControlled.MouseUp();
-        
         _moving = false;
         movingObject.GetComponent<ParticleBehaviour>().SetPosition(transform.position);
         _simController.ResetSimulation();
@@ -129,6 +116,5 @@ public class DragParticleHandler : MonoBehaviour
             _coulombLogic.RemoveParticle(movingObject.GetComponent<ParticleBehaviour>(), true);
             _simController.ResetSimulation();
         }
-        
     }
 }

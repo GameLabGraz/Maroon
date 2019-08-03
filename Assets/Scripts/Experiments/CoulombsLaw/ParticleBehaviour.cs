@@ -75,8 +75,13 @@ public class ParticleBehaviour : MonoBehaviour, IResetObject, IGenerateE
 
     public void SetPosition(Vector3 newPosition)
     {
-        _resetPosition = newPosition;
         transform.position = newPosition;
+        UpdateResetPosition();
+    }
+
+    public void UpdateResetPosition()
+    {
+        _resetPosition = transform.position;
     }
 
     public void ResetObject()

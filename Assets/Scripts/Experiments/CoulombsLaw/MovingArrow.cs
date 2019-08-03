@@ -19,8 +19,6 @@ public class MovingArrow : MonoBehaviour
 
     private void OnMouseDrag()
     {
-        Debug.Log("OnMouseDrag Arrow Moving");
-
         _arrowMovement.OnChildMouseDrag();
     }
 

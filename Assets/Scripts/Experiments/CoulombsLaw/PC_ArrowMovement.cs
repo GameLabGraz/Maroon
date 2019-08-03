@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
 {
@@ -28,6 +29,8 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
     [Header("Reset Settings")] 
     public bool resetOnReset = false;
     public bool resetOnWholeReset = false;
+
+    public UnityEvent OnMovementFinished;
     
     private Vector3 _localMinBoundary;
     private Vector3 _localMaxBoundary;
@@ -121,6 +124,8 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
     
     public void OnChildMouseDown(GameObject child)
     {
+        if (_moving) return;
+        
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hitInfo;
         if (!Physics.Raycast(ray, out hitInfo) || !Input.GetMouseButtonDown(0)) return;
@@ -135,8 +140,7 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
         else return;
         
         DrawMovingLines(_movingDirection);
-
-
+        
         _moving = true;
         _distance = Vector3.Distance(movingObject.transform.position, Camera.main.transform.position);
         var pt = movingObject.transform.parent.transform.InverseTransformPoint(ray.GetPoint(_distance));
@@ -200,8 +204,12 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
 
     public void OnChildMouseUp()
     {
+        if (!_moving) return;
+        _moving = false;
         _movingDirection = Vector3.zero;
         if (_lineRenderer && _lineRenderer.enabled) _lineRenderer.enabled = false;
+        
+        OnMovementFinished.Invoke();
     }
     
     public void ResetObject()
