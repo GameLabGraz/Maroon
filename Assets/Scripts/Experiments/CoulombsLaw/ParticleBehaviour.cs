@@ -1,9 +1,6 @@
-﻿using System;
-using System.Runtime.InteropServices.WindowsRuntime;
-using UnityEngine;
-using UnityEngine.EventSystems;
+﻿using UnityEngine;
 
-public class ParticleBehaviour : MonoBehaviour, IResetObject, IGenerateB
+public class ParticleBehaviour : MonoBehaviour, IResetObject, IGenerateE
 {
     [Header("Design Parameters and Variables")]
     public GameObject particleBase;
@@ -11,22 +8,23 @@ public class ParticleBehaviour : MonoBehaviour, IResetObject, IGenerateB
     public Material highlightMaterial;
     
     [Header("Particle Settings")]
+    [Tooltip("Sets the charge value of the Charge. This should be a value between -10 and 10 micro Coulomb.")]
     [Range(-10f, 10f)] public float charge;
+    public float radius = 0.7022421f;
+    [Tooltip("Tells whether the charge moves or has a fixed position.")]
     public bool fixedPosition = false;
     
-    private const float Tolerance = 0.001f;
     private int _currentCharge = -1; // -1 = electron, 0 = neutron, 1 = proton -> needed to adapt the material during runtime
     private bool _inUse = false;
 
     private Vector3 _resetPosition;
     private Vector3 _updatePosition;
-    private Vector3 _prevUpdatePosition1;
-    private Vector3 _prevUpdatePosition2;
     private Rigidbody _rigidbody;
     private int _collided = 0;
-
-    private const float CoulombConstant = 9f; // = 9 * 10^9 -> but we use the factor 0.001 beneath because we have constant * microCoulomb * microCoulomb (= 10^9 * 10^-6 * 10^-6 = 0.001)
-    private const float CoulombMultiplyFactor = 0.001f; // explanation above
+    
+    private const float CoulombConstant = 1f / (Mathf.PI * 8.8542e-12f);
+//    private const float CoulombConstant = 9f; // = 9 * 10^9 -> but we use the factor 0.001 beneath because we have constant * microCoulomb * microCoulomb (= 10^9 * 10^-6 * 10^-6 = 0.001)
+//    private const float CoulombMultiplyFactor = 0.001f; // explanation above
 
     // Start is called before the first frame update
     void Start()
@@ -35,8 +33,6 @@ public class ParticleBehaviour : MonoBehaviour, IResetObject, IGenerateB
         _currentCharge = charge < 0 ? -1 : charge > 0 ? 1 : 0;
         ChangeParticleType();
         GetComponent<Rigidbody>().velocity = Vector3.zero;
-        _prevUpdatePosition1 = Vector3.zero;
-        _prevUpdatePosition2 = Vector3.zero;
     }
 
     private void ChangeParticleType()
@@ -96,35 +92,27 @@ public class ParticleBehaviour : MonoBehaviour, IResetObject, IGenerateB
     public void UpdateCalculations()
     {
         _rigidbody.velocity = Vector3.zero;
-        _prevUpdatePosition2 = _prevUpdatePosition1;
-        _prevUpdatePosition1 = transform.position;
-        
-        
-        float dist = Vector3.Distance(_prevUpdatePosition1, _prevUpdatePosition2);
-//        Debug.Log("Distance: " + dist);
-        
-        _prevUpdatePosition1 = _updatePosition;
         if(_collided < 3)
             transform.position = _updatePosition;
     }
 
-    public Vector3 getB(Vector3 position)
-    {
-        if (Mathf.Abs(charge) < 0.0001f)
-        {
-            return Vector3.zero;
-        }
-
-        var transPos = transform.position;
-        var distance = Mathf.Pow(Vector3.Distance(position, transPos), 2);
-        var dir = (transPos - position).normalized;
-
-        return (CoulombConstant  * charge / distance) * dir;
-    }
+    //TODO: remove
+//    public Vector3 getB(Vector3 position)
+//    {
+//        if (Mathf.Abs(charge) < 0.0001f)
+//        {
+//            return Vector3.zero;
+//        }
+//
+//        var transPos = transform.position;
+//        var distance = Mathf.Pow(Vector3.Distance(position, transPos), 2);
+//        var dir = (transPos - position).normalized;
+//
+//        return (CoulombConstant  * charge / distance) * dir;
+//    }
 
     private void OnCollisionEnter(Collision other)
     {
-//        Debug.Log("Collision: " + other.gameObject.tag + " - " + other.gameObject.name);
         if(other.gameObject.CompareTag("Particle"))
             _collided++;
 
@@ -132,15 +120,32 @@ public class ParticleBehaviour : MonoBehaviour, IResetObject, IGenerateB
 
     private void OnCollisionExit(Collision other)
     {        
-//        Debug.Log("Collision Exit: " + other.gameObject.tag + " - " + other.gameObject.name);
         if(other.gameObject.CompareTag("Particle"))
             _collided--;
     }
 
+    public Vector3 getE(Vector3 position)
+    {
+        if (Mathf.Abs(charge) < 0.0001f) return Vector3.zero;
+        
+        var dir = (position - transform.position).normalized;
+        var distance = Vector3.Distance(transform.position, position) - radius;
+        return (CoulombConstant * charge / distance) * dir;
+    }
+
+    public float getEFlux(Vector3 position)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public float getEPotential(Vector3 position)
+    {
+        throw new System.NotImplementedException();
+    }
+
     public float getFieldStrength()
     {
-        Debug.Log("GET FIELD STRENGHT????");
-        return 0f;
+        throw new System.NotImplementedException();
     }
 
 }

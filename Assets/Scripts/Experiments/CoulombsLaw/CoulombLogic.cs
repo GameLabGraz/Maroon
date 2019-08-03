@@ -19,6 +19,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     
     private SimulationController _simController;
     private List<ParticleBehaviour> _particles;
+    private HashSet<GameObject> _particlesGameObjects;
 
     private const float CoulombConstant = 9f; // = 9 * 10^9 -> but we use the factor 0.001 beneath because we have constant * microCoulomb * microCoulomb (= 10^9 * 10^-6 * 10^-6 = 0.001)
     private const float CoulombMultiplyFactor = 0.001f; // explanation above
@@ -40,6 +41,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         _vectorField2d = scene2D.GetComponentInChildren<VectorField>();
         
         _particles = new List<ParticleBehaviour>();
+        _particlesGameObjects = new HashSet<GameObject>();
         OnSwitch3d2dMode(_in3dMode? 1f : 0f);
     }
 
@@ -54,6 +56,11 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     public List<ParticleBehaviour> GetParticles()
     {
         return _particles;
+    }
+
+    public HashSet<GameObject> GetChargeGameObjects()
+    {
+        return _particlesGameObjects;
     }
 
 
@@ -134,6 +141,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         _simController.SimulationRunning = false;
         _simController.AddNewResetObjectAtBegin(particle);
         _particles.Add(particle);
+        _particlesGameObjects.Add(particle.gameObject);
         //TODO: check if this works
         foreach (var collider in particle.gameObject.GetComponents<Collider>())
         {
@@ -153,6 +161,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     {
         _simController.RemoveResetObject(particle);
         _particles.Remove(particle);
+        _particlesGameObjects.Remove(particle.gameObject);
 
         if (destroy)
         {
