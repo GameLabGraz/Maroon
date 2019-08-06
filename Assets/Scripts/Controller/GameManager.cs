@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Localization;
@@ -31,12 +32,20 @@ public class GameManager : MonoBehaviour
 
     public bool LabLoaded { get; private set; }
 
+    private string _version;
+
     //Manager will be created only once and then stays for all scenes
     private void Awake()
     {
         DontDestroyOnLoad(this);
 
         var language = Application.systemLanguage.ToString();
+
+#if UNITY_EDITOR
+        _version = DateTime.UtcNow.Date.ToString("yyyyMMdd");
+#else
+        _version = ((TextAsset) Resources.Load("version")).text;
+#endif
 
         if (!_player)
             _player = GameObject.FindGameObjectWithTag("Player");
@@ -112,6 +121,12 @@ public class GameManager : MonoBehaviour
     public void LoadSceneAfterMenu()
     {
         SceneManager.LoadScene(_scene);
+    }
+
+    public void OnGUI()
+    {
+        // show build version on lower right corner
+        GUI.Label(new Rect(Screen.width - 100f, Screen.height - 30f, 300f, 200f), $"build {_version}");
     }
 
 }

@@ -155,6 +155,7 @@ PlayerSettings:
   applicationIdentifier:
     Android: com.Company.ProductName
     Standalone: unity.Valve.SteamVR
+    WebGL: com.oculus.UnitySample
     iOS: com.Company.ProductName
     tvOS: com.Company.ProductName
   buildNumber:
@@ -275,7 +276,10 @@ PlayerSettings:
   - m_BuildTarget: Standalone
     m_StaticBatching: 1
     m_DynamicBatching: 1
-  m_BuildTargetGraphicsAPIs: []
+  m_BuildTargetGraphicsAPIs:
+  - m_BuildTarget: WebGLSupport
+    m_APIs: 0b000000
+    m_Automatic: 0
   m_BuildTargetVRSettings:
   - m_BuildTarget: Android
     m_Enabled: 0
@@ -311,7 +315,7 @@ PlayerSettings:
     m_Enabled: 0
     m_Devices: []
   - m_BuildTarget: WebGL
-    m_Enabled: 0
+    m_Enabled: 1
     m_Devices: []
   - m_BuildTarget: WebPlayer
     m_Enabled: 0
