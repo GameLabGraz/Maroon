@@ -18,6 +18,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Class to create a field image with iron filing
 /// </summary>
+/// TODO: PLEASE RENAME TO IronFiLLing -> with 2 L ;)
 public class IronFiling : MonoBehaviour, IResetObject
 {
     /// <summary>
@@ -43,12 +44,14 @@ public class IronFiling : MonoBehaviour, IResetObject
     /// <summary>
     /// The filling height
     /// </summary>
-    private float height;
+    public float height;
 
     /// <summary>
     /// The filling width
     /// </summary>
-    private float width;
+    public float width;
+    //TODO: remove once width and height are correctly received
+    public bool usePredefinedSize = false;
 
     /// <summary>
     /// The maximum of vertices
@@ -75,8 +78,13 @@ public class IronFiling : MonoBehaviour, IResetObject
         if (simControllerObject)
             simController = simControllerObject.GetComponent<SimulationController>();
 
-        height = gameObject.GetComponent<MeshFilter>().mesh.bounds.size.z;
-        width = gameObject.GetComponent<MeshFilter>().mesh.bounds.size.x;
+        //TODO: get correct width and height
+        if (!usePredefinedSize)
+        {
+            height = gameObject.GetComponent<MeshFilter>().mesh.bounds.size.z;
+            width = gameObject.GetComponent<MeshFilter>().mesh.bounds.size.x;
+            Debug.Log("Iron Filling: " + height + " x " + width);
+        }
 
         field = GameObject.FindGameObjectWithTag("Field").GetComponent<IField>();
         linerenderers = new LineRenderer[2 * iterations];

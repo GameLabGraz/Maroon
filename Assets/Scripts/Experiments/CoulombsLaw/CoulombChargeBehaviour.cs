@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class ParticleBehaviour : MonoBehaviour, IResetObject, IGenerateE
+public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
 {
     [Header("Design Parameters and Variables")]
     public GameObject particleBase;
@@ -23,8 +23,6 @@ public class ParticleBehaviour : MonoBehaviour, IResetObject, IGenerateE
     private int _collided = 0;
     
     private const float CoulombConstant = 1f / (Mathf.PI * 8.8542e-12f);
-//    private const float CoulombConstant = 9f; // = 9 * 10^9 -> but we use the factor 0.001 beneath because we have constant * microCoulomb * microCoulomb (= 10^9 * 10^-6 * 10^-6 = 0.001)
-//    private const float CoulombMultiplyFactor = 0.001f; // explanation above
 
     // Start is called before the first frame update
     void Start()
@@ -100,21 +98,6 @@ public class ParticleBehaviour : MonoBehaviour, IResetObject, IGenerateE
         if(_collided < 3)
             transform.position = _updatePosition;
     }
-
-    //TODO: remove
-//    public Vector3 getB(Vector3 position)
-//    {
-//        if (Mathf.Abs(charge) < 0.0001f)
-//        {
-//            return Vector3.zero;
-//        }
-//
-//        var transPos = transform.position;
-//        var distance = Mathf.Pow(Vector3.Distance(position, transPos), 2);
-//        var dir = (transPos - position).normalized;
-//
-//        return (CoulombConstant  * charge / distance) * dir;
-//    }
 
     private void OnCollisionEnter(Collision other)
     {

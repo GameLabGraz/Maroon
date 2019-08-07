@@ -45,6 +45,8 @@ public class VectorField : MonoBehaviour
     /// </summary>
     public Object arrowPrefab;
 
+    public bool OnlyUpdateInRunMode = true;
+    
     [SerializeField]
     protected int resolution = 20;
 
@@ -94,6 +96,7 @@ public class VectorField : MonoBehaviour
 
                 GameObject arrow = Instantiate(arrowPrefab) as GameObject;
                 arrow.GetComponent<ArrowController>().fieldStrengthFactor = this.fieldStrengthFactor;
+                arrow.GetComponent<ArrowController>().OnlyUpdateInRunMode = OnlyUpdateInRunMode;
 
                 arrow.transform.localScale = Vector3.Scale(new Vector3(arrow_scale, arrow_scale, arrow_scale), transform.localScale) / 3;
                 arrow.transform.parent = transform; //set vectorField as parent

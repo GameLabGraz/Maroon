@@ -26,13 +26,13 @@ public class DragParticleHandler : MonoBehaviour
     private SimulationController _simController;
     private CoulombLogic _coulombLogic;
     private Rigidbody _rigidbody;
-    private ParticleBehaviour _particleBehaviour;
+    private CoulombChargeBehaviour _coulombChargeBehaviour;
 
     private void Start()
     {
         if (movingObject == null) movingObject = gameObject;
         
-        _particleBehaviour = movingObject.GetComponent<ParticleBehaviour>();
+        _coulombChargeBehaviour = movingObject.GetComponent<CoulombChargeBehaviour>();
         _rigidbody = movingObject.GetComponent<Rigidbody>();
         var simControllerObject = GameObject.Find("SimulationController");
         if (simControllerObject)
@@ -44,7 +44,7 @@ public class DragParticleHandler : MonoBehaviour
 
     private void Update()
     {
-        _rigidbody.isKinematic = !_simController.SimulationRunning || _particleBehaviour.fixedPosition;
+        _rigidbody.isKinematic = !_simController.SimulationRunning || _coulombChargeBehaviour.fixedPosition;
     }
 
     public void SetBoundaries(GameObject min, GameObject max)
@@ -108,12 +108,12 @@ public class DragParticleHandler : MonoBehaviour
         if (!Input.GetMouseButtonUp(0)) return;
         
         _moving = false;
-        movingObject.GetComponent<ParticleBehaviour>().SetPosition(transform.position);
+        movingObject.GetComponent<CoulombChargeBehaviour>().SetPosition(transform.position);
         _simController.ResetSimulation();
         
         if (_isOutsideBoundaries && deleteIfOutsideBoundaries)
         {
-            _coulombLogic.RemoveParticle(movingObject.GetComponent<ParticleBehaviour>(), true);
+            _coulombLogic.RemoveParticle(movingObject.GetComponent<CoulombChargeBehaviour>(), true);
             _simController.ResetSimulation();
         }
     }

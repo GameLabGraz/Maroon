@@ -30,7 +30,8 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
     public bool resetOnReset = false;
     public bool resetOnWholeReset = false;
 
-    public UnityEvent OnMovementFinished;
+    public UnityEvent OnMovementStart;
+    public UnityEvent OnMovementFinish;
     
     private Vector3 _localMinBoundary;
     private Vector3 _localMaxBoundary;
@@ -146,6 +147,8 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
         var pt = movingObject.transform.parent.transform.InverseTransformPoint(ray.GetPoint(_distance));
         if(useMovementOffset)
             _movingOffset = pt - movingObject.transform.localPosition;
+        
+        OnMovementStart.Invoke();
         Debug.Log("pt = " + pt + " -- localPos = " + movingObject.transform.localPosition + " -  offset: " + _movingOffset);
     }
 
@@ -209,7 +212,7 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
         _movingDirection = Vector3.zero;
         if (_lineRenderer && _lineRenderer.enabled) _lineRenderer.enabled = false;
         
-        OnMovementFinished.Invoke();
+        OnMovementFinish.Invoke();
     }
     
     public void ResetObject()

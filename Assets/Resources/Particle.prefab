@@ -87,7 +87,6 @@ GameObject:
   m_Component:
   - component: {fileID: 222567040141688388}
   - component: {fileID: 222567040141845091}
-  - component: {fileID: 6203697182597836783}
   - component: {fileID: 222567040141845093}
   - component: {fileID: 5106389307625418835}
   - component: {fileID: 7646616569720168378}
@@ -130,24 +129,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   particleBase: {fileID: 222567040141845094}
   particleFixingRing: {fileID: 222567040141845088}
-  highlightMaterial: {fileID: 2100000, guid: a282b470dd6667848904cb12c35a1a2c, type: 2}
-  charge: 0
-  radius: 0.7022421
-  fixedPosition: 0
---- !u!114 &6203697182597836783
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 222567040141845092}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f57dcd4c5becb604d8dd32b0fa2541d0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  chargeBase: {fileID: 222567040141845094}
-  chargeFixingRing: {fileID: 222567040141845088}
   highlightMaterial: {fileID: 2100000, guid: a282b470dd6667848904cb12c35a1a2c, type: 2}
   charge: 0
   radius: 0.7022421
@@ -381,11 +362,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4038319250242354144, guid: 565f734b46691944bb8c7cb7888df542,
-        type: 3}
-      propertyPath: movingObject
-      value: 
-      objectReference: {fileID: 222567040141845092}
     - target: {fileID: 4513896859846796369, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}
       propertyPath: OnMovementFinished.m_PersistentCalls.m_Calls.Array.size
@@ -421,6 +397,11 @@ PrefabInstance:
       propertyPath: OnMovementFinished.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 4038319250242354144, guid: 565f734b46691944bb8c7cb7888df542,
+        type: 3}
+      propertyPath: movingObject
+      value: 
+      objectReference: {fileID: 222567040141845092}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 565f734b46691944bb8c7cb7888df542, type: 3}
 --- !u!4 &725601085861586812 stripped

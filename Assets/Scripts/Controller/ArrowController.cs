@@ -43,6 +43,8 @@ public class ArrowController : MonoBehaviour, IResetObject
     /// </summary>
     public Quaternion start_rot;
 
+    public bool OnlyUpdateInRunMode = true;
+
     private SimulationController simController;
 
     /// <summary>
@@ -66,7 +68,7 @@ public class ArrowController : MonoBehaviour, IResetObject
     /// </summary>
     void Update()
     {
-        if (!simController.SimulationRunning)
+        if (OnlyUpdateInRunMode && !simController.SimulationRunning)
             return;
 
         if (Field != null)
