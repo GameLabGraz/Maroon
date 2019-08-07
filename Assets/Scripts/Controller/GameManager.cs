@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour
 #if UNITY_EDITOR
         _version = DateTime.UtcNow.Date.ToString("yyyyMMdd");
 #else
-        _version = ((TextAsset) Resources.Load("version")).text;
+        _version = Application.version;
 #endif
 
         if (!_player)
@@ -126,8 +126,10 @@ public class GameManager : MonoBehaviour
     public void OnGUI()
     {
         // show build version on lower right corner
-        GUI.Label(new Rect(Screen.width - 100f, Screen.height - 30f, 300f, 200f), $"build {_version}");
+        GUI.Label(new Rect(10, Screen.height - 20f, 300f, 200f), $"build {_version}", new GUIStyle
+        {
+            fontSize = 14, fontStyle = FontStyle.Bold, normal = { textColor = Color.white }
+        });
     }
-
 }
 
