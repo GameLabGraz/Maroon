@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using PlatformControls.PC;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
@@ -35,6 +36,8 @@ public class UIItemDragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler,
     public GameObject minPosition3d;
     public GameObject maxPosition3d;
 
+    public UnityEvent onInvalidDisplay;
+    
     private Vector3 _initialPosition;
     private Vector3 _initialMousePosition;
 
@@ -46,6 +49,8 @@ public class UIItemDragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler,
 
     private float _currentCharge = 0f;
     private bool _fixedPosition = false;
+
+    private bool _allowAddingCharges = true;
 
     private void Start()
     {
@@ -107,6 +112,11 @@ public class UIItemDragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler,
     {
         _fixedPosition = isPositionFixed;
     }
+
+    public void AllowAddingCharges(bool allowed)
+    {
+        _allowAddingCharges = allowed;
+    }
     
     public void OnBeginDrag(PointerEventData eventData)
     {
@@ -130,20 +140,17 @@ public class UIItemDragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler,
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         var hits = Physics.RaycastAll(ray, 100f);
 
-//        if (EventSystem.current.IsPointerOverGameObject())
-//        {
-//            Debug.Log("Pointer over game object");
-//            _slowlyReturnToOrigin = true;
-//            _time = 0f;
-//            _returnDirection = _initialPosition - transform.position;
-//            return;
-//        }
-        
         bool hitVectorField = false;
         for(var i = 0; i < hits.Length; ++i)
         {
             if (hits[i].transform.CompareTag("VectorField"))
             {
+                if (!_allowAddingCharges)
+                {
+                    onInvalidDisplay.Invoke();
+                    return;
+                }
+                
                 hitVectorField = true;
                 _coulombLogic.AddParticle(CreateParticle(hits[i].point, hits[i].transform.parent));
                 transform.position = _initialPosition;           
@@ -163,13 +170,31 @@ public class UIItemDragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler,
         }
     }
 
-    private ParticleBehaviour CreateParticle(Vector3 position, Transform parent)
+    public void CreateParticleAtOrigin()
+    {
+        if (!_allowAddingCharges)
+        {
+            onInvalidDisplay.Invoke();
+            return;
+        }
+        
+        var vecFields = GameObject.FindGameObjectsWithTag("VectorField"); //should be 2 -> one 2d and one 3d, where only one should be active at a time
+
+        foreach (var vecField in vecFields)
+        {
+            if(!vecField.activeInHierarchy) continue;
+            Debug.Log("Add To Field: " + vecField.name);
+            _coulombLogic.AddParticle(CreateParticle(vecField.transform.position, vecField.transform.parent));
+        }
+    }
+
+    private CoulombChargeBehaviour CreateParticle(Vector3 position, Transform parent)
     {
         var newGameObj = Instantiate(Resources.Load("Particle", typeof(GameObject)), parent, true) as GameObject;
         Debug.Assert(newGameObj != null);
-        var is2dScene = string.CompareOrdinal(parent.gameObject.name, "2dScene") == 0; //TODO: use tag or something else
+        var is2dScene = _coulombLogic.IsIn2dMode();
         
-        var particle = newGameObj.GetComponent<ParticleBehaviour>();
+        var particle = newGameObj.GetComponent<CoulombChargeBehaviour>();
         Debug.Assert(particle != null);
         particle.SetPosition(position);
         particle.SetFixedPosition(_fixedPosition);
@@ -180,12 +205,7 @@ public class UIItemDragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler,
         Debug.Assert(movement != null);
         
         movement.SetBoundaries(is2dScene? minPosition2d : minPosition3d, is2dScene? maxPosition2d : maxPosition3d);
-//        var arrowMovement2 = newGameObj.GetComponentInChildren<ArrowControlledMovement>();
-//        Debug.Assert(arrowMovement2 != null);
-//        arrowMovement2.minimumBoundary = is2dScene? minPosition2d.transform : minPosition3d.transform;
-//        arrowMovement2.maximumBoundary = is2dScene? maxPosition2d.transform : maxPosition3d.transform;
-//        arrowMovement2.restrictZMovement = is2dScene;
-        
+
         var arrowMovement = newGameObj.GetComponentInChildren<PC_ArrowMovement>();
         Debug.Assert(arrowMovement != null);
         arrowMovement.minimumBoundary = is2dScene? minPosition2d.transform : minPosition3d.transform;

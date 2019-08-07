@@ -34,7 +34,7 @@ public abstract class IField : MonoBehaviour
     [Tooltip("If true then the callback is used to get the producers.")]
     public bool useCallback = false;
     
-//    [Tooltip("This method is only used when use Callback is set to true.")]
+    [Tooltip("This method is only used when use Callback is set to true.")]
     public ProducersCallback onGetProducers;
         
     /// <summary>

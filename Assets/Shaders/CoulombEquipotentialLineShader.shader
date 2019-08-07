@@ -4,6 +4,7 @@ Shader "Custom/CoulombEquipotentialLineShader" {
     Properties {
         _MainTex ("Sprite Texture", 2D) = "white" {}        
         _LineColor("Line Color", Color) = (1,1,1,1)
+        _BkgdColor("Background Color", Color) = (1,1,1,1)
         _LineWidth("Line Width", Range(0, 1)) = 0.0001
         _ChargeStep("Charge Step", Range(0,5)) = 0.5
         _ChargeStepTolerance("Charge Step Tolerance", Range(0.0,1.0)) = 0.001
@@ -26,6 +27,7 @@ Shader "Custom/CoulombEquipotentialLineShader" {
         float _ChargeStep;
         float _ChargeStepTolerance;
         float4 _LineColor;
+        float4 _BkgdColor;
         float _LineWidth;
         
         uniform int _EntryCnt;
@@ -114,7 +116,7 @@ Shader "Custom/CoulombEquipotentialLineShader" {
                 return _LineColor;
             }
             else{
-                return half4(1, 0, 0, 1);
+                return _BkgdColor;
             }      
                   
 //                       

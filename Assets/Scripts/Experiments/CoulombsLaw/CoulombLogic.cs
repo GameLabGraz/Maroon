@@ -11,18 +11,25 @@ public class ModeChangeEvent : UnityEvent<bool>
 
 public class CoulombLogic : MonoBehaviour, IResetWholeObject
 {
+    [Header("General Settings")] 
+    public int maxChargeCount = 10;
+
+    public UnityEvent onMaxChargesReached;
+    public UnityEvent onUnderMaxChargesAgain;
+    
     [Header("2D-3D Mode depending Settings")]
     public GameObject scene2D;
     public GameObject scene3D;
     
     public ModeChangeEvent onModeChange;
-    
-    private SimulationController _simController;
-    private List<ParticleBehaviour> _particles;
-    private HashSet<GameObject> _particlesGameObjects;
 
-    private const float CoulombConstant = 9f; // = 9 * 10^9 -> but we use the factor 0.001 beneath because we have constant * microCoulomb * microCoulomb (= 10^9 * 10^-6 * 10^-6 = 0.001)
-    private const float CoulombMultiplyFactor = 0.001f; // explanation above
+    private SimulationController _simController;
+    private List<CoulombChargeBehaviour> _charges;
+    private HashSet<GameObject> _chargesGameObjects;
+
+    private const float CoulombConstant = 1f / (Mathf.PI * 8.8542e-12f);
+//    private const float CoulombConstant = 9f; // = 9 * 10^9 -> but we use the factor 0.001 beneath because we have constant * microCoulomb * microCoulomb (= 10^9 * 10^-6 * 10^-6 = 0.001)
+//    private const float CoulombMultiplyFactor = 0.001f; // explanation above
 
     private VectorField _vectorField2d;
     private VectorField3d _vectorField3d;
@@ -40,8 +47,8 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         _vectorField3d = scene3D.GetComponentInChildren<VectorField3d>();
         _vectorField2d = scene2D.GetComponentInChildren<VectorField>();
         
-        _particles = new List<ParticleBehaviour>();
-        _particlesGameObjects = new HashSet<GameObject>();
+        _charges = new List<CoulombChargeBehaviour>();
+        _chargesGameObjects = new HashSet<GameObject>();
         OnSwitch3d2dMode(_in3dMode? 1f : 0f);
     }
 
@@ -53,33 +60,49 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         }
     }
 
-    public List<ParticleBehaviour> GetParticles()
+    public List<CoulombChargeBehaviour> GetCharges()
     {
-        return _particles;
+        return _charges;
+    }
+    
+    public List<Vector4> GetChargesAsVector()
+    {
+        var list = new List<Vector4>();
+        foreach (var charge in _charges)
+        {
+            var pos = charge.transform.position;
+            list.Add(new Vector4(pos.x, pos.y, pos.z, charge.charge));
+        }
+
+        return list;
     }
 
+    public bool IsIn3dMode() { return _in3dMode; }
+    public bool IsIn2dMode() { return !_in3dMode; }
+    public int GetMaxChargesCount() { return maxChargeCount; }
+    
     public HashSet<GameObject> GetChargeGameObjects()
     {
-        return _particlesGameObjects;
+        return _chargesGameObjects;
     }
 
 
     private void RunSimulation()
     {
-        for (var i = 0; i < _particles.Count; ++i)
+        for (var i = 0; i < _charges.Count; ++i)
         {
-            var currentParticle = _particles[i];
+            var currentParticle = _charges[i];
             var sumDirection = Vector3.zero;
             if(Mathf.Abs(currentParticle.charge) < 0.0001f || currentParticle.fixedPosition)
                 continue;
 
             var sumForce = Vector3.zero;
-            for (var j = 0; j < _particles.Count; ++j)
+            for (var j = 0; j < _charges.Count; ++j)
             {
                 if(i == j || Mathf.Abs(currentParticle.charge) < 0.0001f)
                     continue;
                 
-                var affectingParticle = _particles[j];
+                var affectingParticle = _charges[j];
                 Vector3 direction;
                 Vector3 direction2;
                 var r = Vector3.Distance(currentParticle.transform.position, affectingParticle.transform.position); // = distance
@@ -99,8 +122,8 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
                     direction2 = (affectingParticle.transform.position - currentParticle.transform.position);
                 }
 
-                var force = CoulombConstant * CoulombMultiplyFactor * Mathf.Abs(currentParticle.charge) *
-                            Mathf.Abs(affectingParticle.charge);
+                var force = CoulombConstant * Mathf.Abs(currentParticle.charge) * Mathf.Abs(affectingParticle.charge);
+//                var force = CoulombConstant * CoulombMultiplyFactor * Mathf.Abs(currentParticle.charge) * Mathf.Abs(affectingParticle.charge);
                 force /= Mathf.Pow(r, 2);
 
                 sumForce += force * direction2;
@@ -127,47 +150,53 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
             
         }
 
-        for (var i = 0; i < _particles.Count; ++i)
+        for (var i = 0; i < _charges.Count; ++i)
         {
-            if (Mathf.Abs(_particles[i].charge) < 0.0001f || _particles[i].fixedPosition)
+            if (Mathf.Abs(_charges[i].charge) < 0.0001f || _charges[i].fixedPosition)
                 continue;
-            _particles[i].UpdateCalculations();
+            _charges[i].UpdateCalculations();
         }
     }
 
 
-    public void AddParticle(ParticleBehaviour particle)
+    public void AddParticle(CoulombChargeBehaviour coulombCharge)
     {
+        if(_charges.Count >= maxChargeCount) return;
+        
         _simController.SimulationRunning = false;
-        _simController.AddNewResetObjectAtBegin(particle);
-        _particles.Add(particle);
-        _particlesGameObjects.Add(particle.gameObject);
-        //TODO: check if this works
-        foreach (var collider in particle.gameObject.GetComponents<Collider>())
+        _simController.AddNewResetObjectAtBegin(coulombCharge);
+        _charges.Add(coulombCharge);
+        _chargesGameObjects.Add(coulombCharge.gameObject);
+
+        foreach (var collider in coulombCharge.gameObject.GetComponents<Collider>())
         {
             Physics.IgnoreCollision(collider, _vectorField3d.gameObject.GetComponent<Collider>());
             Physics.IgnoreCollision(collider, _vectorField2d.gameObject.GetComponent<Collider>());
         }
-        foreach (var collider in particle.gameObject.GetComponentsInChildren<Collider>())
+        foreach (var collider in coulombCharge.gameObject.GetComponentsInChildren<Collider>())
         {
             Physics.IgnoreCollision(collider, _vectorField3d.gameObject.GetComponent<Collider>());
             Physics.IgnoreCollision(collider, _vectorField2d.gameObject.GetComponent<Collider>());
         }
         
         _simController.ResetSimulation();
+        
+        if(_charges.Count == maxChargeCount) onMaxChargesReached.Invoke();
     }
 
-    public void RemoveParticle(ParticleBehaviour particle, bool destroy = false)
+    public void RemoveParticle(CoulombChargeBehaviour coulombCharge, bool destroy = false)
     {
-        _simController.RemoveResetObject(particle);
-        _particles.Remove(particle);
-        _particlesGameObjects.Remove(particle.gameObject);
+        _simController.RemoveResetObject(coulombCharge);
+        _charges.Remove(coulombCharge);
+        _chargesGameObjects.Remove(coulombCharge.gameObject);
 
         if (destroy)
         {
-            particle.gameObject.SetActive(false);
-            Destroy(particle.gameObject);
+            coulombCharge.gameObject.SetActive(false);
+            Destroy(coulombCharge.gameObject);
         }
+        
+        if(_charges.Count == maxChargeCount - 1) onUnderMaxChargesAgain.Invoke();
     }
 
 
@@ -179,8 +208,8 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         _simController.SimulationRunning = false;
         
         //remove all particles show new scene
-        while(_particles.Count > 0)
-            RemoveParticle(_particles[0], true);
+        while(_charges.Count > 0)
+            RemoveParticle(_charges[0], true);
 
         scene2D.SetActive(!_in3dMode);
         scene3D.SetActive(_in3dMode);
@@ -199,7 +228,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     public void ResetWholeObject()
     {        
         //remove all particles show new scene
-        while(_particles.Count > 0)
-            RemoveParticle(_particles[0], true);
+        while(_charges.Count > 0)
+            RemoveParticle(_charges[0], true);
     }
 }
