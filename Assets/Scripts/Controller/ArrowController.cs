@@ -12,6 +12,7 @@
 
 using UnityEngine;
 using System.Collections;
+using UnityEditor.Experimental.UIElements;
 
 /// <summary>
 /// Controller class for field arrows
@@ -83,6 +84,7 @@ public class ArrowController : MonoBehaviour, IResetObject
     private void rotateArrow()
     {
         Vector3 rotate = Field.GetComponent<IField>().get(transform.position) * fieldStrengthFactor;
+        
         rotate.Normalize();
         float rot = 0;
 

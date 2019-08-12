@@ -13,7 +13,11 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
     public float radius = 0.7022421f;
     [Tooltip("Tells whether the charge moves or has a fixed position.")]
     public bool fixedPosition = false;
-    
+//
+//    [Header("Boundaries")] 
+//    public Transform minPosition;
+//    public Transform maxPosition;
+
     private int _currentCharge = -1; // -1 = electron, 0 = neutron, 1 = proton -> needed to adapt the material during runtime
     private bool _inUse = false;
 
@@ -21,8 +25,10 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
     private Vector3 _updatePosition;
     private Rigidbody _rigidbody;
     private int _collided = 0;
+
+    private CoulombLogic _coulombLogic;
     
-    private const float CoulombConstant = 1f / (Mathf.PI * 8.8542e-12f);
+    private static readonly float CoulombConstant = 9f * Mathf.Pow(10f, 9f); // 1f / (Mathf.PI * 8.8542e-12f);
 
     // Start is called before the first frame update
     void Start()
@@ -31,6 +37,11 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
         _currentCharge = charge < 0 ? -1 : charge > 0 ? 1 : 0;
         ChangeParticleType();
         GetComponent<Rigidbody>().velocity = Vector3.zero;
+        
+        var obj  = GameObject.Find("CoulombLogic");
+        if (obj)
+            _coulombLogic = obj.GetComponent<CoulombLogic>();
+        Debug.Assert(_coulombLogic != null);
     }
 
     private void ChangeParticleType()
@@ -115,10 +126,47 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
     public Vector3 getE(Vector3 position)
     {
         if (Mathf.Abs(charge) < 0.0001f) return Vector3.zero;
+//
+//        var Range = minPosition.position - maxPosition.position;
+//        var inputPos = (position - minPosition.position);
+//        inputPos.x /= Range.x;
+//        inputPos.y /= Range.y;
+//        inputPos.z /= Range.z;
+//
+//        var currentPos = (transform.position - minPosition.position);
+//        currentPos.x /= Range.x;
+//        currentPos.y /= Range.y;
+//        currentPos.z /= Range.z;
+
+        //        var distance = Vector3.Distance(currentPos, inputPos); //TODO - radius
+//        var retVal = CoulombConstant * charge / distance) *dir;
+//        return (CoulombConstant * charge / distance) * dir;
+
+//        var Range = minPosition.position - maxPosition.position;
+//        Range.x = Mathf.Abs(Range.x);
+//        Range.y = Mathf.Abs(Range.y);
+//        Range.z = Mathf.Abs(Range.z);
+//
+//        var inputPos = (position - minPosition.position);
+//        inputPos.x = Range.x < 0.0001f? 0f : inputPos.x / Range.x;
+//        inputPos.y = Range.y < 0.0001f? 0f : inputPos.y / Range.y;
+//        inputPos.z = Range.z < 0.0001f? 0f : inputPos.z / Range.z;
+//
+//        var currentPos = (transform.position - minPosition.position);
+//        currentPos.x = Range.x < 0.0001f? 0f : currentPos.x / Range.x;
+//        currentPos.y = Range.y < 0.0001f? 0f : currentPos.y / Range.y;
+//        currentPos.z = Range.z < 0.0001f? 0f : currentPos.z / Range.z;
+        
+        var distance = _coulombLogic.WorldToCalcSpace(Vector3.Distance(transform.position, position)); //TODO: radius???
         
         var dir = (position - transform.position).normalized;
-        var distance = Vector3.Distance(transform.position, position) - radius;
-        return (CoulombConstant * charge / distance) * dir;
+        //TODO: consider 3d as well
+        var potential = CoulombConstant * charge * Mathf.Pow(10f, -6f) / Mathf.Pow(distance, 2f);
+        return potential * dir;
+
+//        var dir = (position - transform.position).normalized;
+//        var distance = Vector3.Distance(transform.position, position) - radius;
+//        return (CoulombConstant * charge / distance) * dir;
     }
 
     public float getEFlux(Vector3 position)
@@ -128,9 +176,12 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
 
     public float getEPotential(Vector3 position)
     {
-        throw new System.NotImplementedException();
+        if (Mathf.Abs(charge) < 0.0001f) return 0f;
+        var distance = _coulombLogic.WorldToCalcSpace(Vector3.Distance(transform.position, position)); //TODO: radius???
+        var potential = CoulombConstant * charge * Mathf.Pow(10f, -6f) / Mathf.Pow(distance, 2f);
+        return potential;
     }
-
+    
     public float getFieldStrength()
     {
         throw new System.NotImplementedException();

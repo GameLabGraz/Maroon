@@ -62,4 +62,11 @@ public abstract class IField : MonoBehaviour
     /// <param name="xobj">Ignored object</param>
     /// <returns>The field vector</returns>
     public abstract Vector3 get(Vector3 position, GameObject xobj);
+    
+    /// <summary>
+    ///  Gets the combined field-strength at a given position.
+    /// </summary>
+    /// <param name="position">The required position</param>
+    /// <returns>The field strength</returns>
+    public abstract float getStrength(Vector3 position);
 }

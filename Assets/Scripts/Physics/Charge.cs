@@ -112,6 +112,11 @@ public class Charge : MonoBehaviour, IGenerateE
         throw new System.NotImplementedException();
     }
 
+    public Vector3 getEPotentialVec(Vector3 position)
+    {
+        throw new System.NotImplementedException();
+    }
+
     public float getFieldStrength()
     {
         throw new System.NotImplementedException();

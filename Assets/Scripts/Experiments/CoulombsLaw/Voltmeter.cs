@@ -1,35 +1,66 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+
+[Serializable]
+public class VoltmeterEvent : UnityEvent<string> {}
 
 public class Voltmeter : MonoBehaviour, IResetWholeObject
 {
-
-
+    public IField field;
+    public VoltmeterEvent onVoltageChanged;
+    
     private CoulombLogic _coulombLogic;
     
     // Start is called before the first frame update
     void Start()
     {
-        GameObject simControllerObject = GameObject.Find("CoulombLogic");
+        var simControllerObject = GameObject.Find("CoulombLogic");
         if (simControllerObject)
             _coulombLogic = simControllerObject.GetComponent<CoulombLogic>();
+        Debug.Assert(_coulombLogic != null);
+
+        onVoltageChanged.Invoke("---");
     }
 
     // Update is called once per frame
     void Update()
     {
+        var currentPos = transform.position;
+        if (!gameObject.activeInHierarchy) return;
         
+        var potential = field.getStrength(currentPos) * Mathf.Pow(10f, -5f);
+        var potentialString = potential.ToString("0.000") + " V";
+//            var potentialString = potential.ToString("0.000") + " * 10^-5 V";
+//            Debug.Log("OnVoltageChanged: " + potentialString);            
+        onVoltageChanged.Invoke(potentialString);
     }
 
 
     public void OnResetMovingArrows(bool in3dMode)
     {
-        if (in3dMode) gameObject.transform.parent = _coulombLogic.scene3D.transform;
-        else gameObject.transform.parent = _coulombLogic.scene2D.transform;
+        if (!_coulombLogic)
+        {
+            var simControllerObject = GameObject.Find("CoulombLogic");
+            if (simControllerObject)
+                _coulombLogic = simControllerObject.GetComponent<CoulombLogic>();
+        }
+        var dragHandler = GetComponent<PC_DragHandler>();
+        if (in3dMode)
+        {
+            gameObject.transform.parent = _coulombLogic.scene3D.transform;
+            dragHandler.SetBoundaries(_coulombLogic.minBoundary3d.gameObject, _coulombLogic.maxBoundary3d.gameObject);
+            dragHandler.allowedXMovement = dragHandler.allowedYMovement = dragHandler.allowedZMovement = true;
+        }
+        else
+        {
+            gameObject.transform.parent = _coulombLogic.scene2D.transform;
+            dragHandler.SetBoundaries(_coulombLogic.minBoundary2d.gameObject, _coulombLogic.maxBoundary2d.gameObject);
+            dragHandler.allowedXMovement = dragHandler.allowedYMovement = true;
+            dragHandler.allowedZMovement = false;
+        }
 
-            var movArrows = GetComponentInChildren<PC_ArrowMovement>();
+        var movArrows = GetComponentInChildren<PC_ArrowMovement>();
         if (!movArrows) return;
         Debug.Log("OnResetMovingArrows");
 
@@ -59,6 +90,8 @@ public class Voltmeter : MonoBehaviour, IResetWholeObject
     public void HideObject()
     {
         gameObject.SetActive(false);
-        gameObject.transform.parent = _coulombLogic.transform.parent;
+        if(_coulombLogic)
+            gameObject.transform.parent = _coulombLogic.transform.parent;
+        onVoltageChanged.Invoke("---");
     }
 }

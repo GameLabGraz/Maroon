@@ -47,8 +47,6 @@ public class EField : IField
             if (currGO.transform.parent != null && currGO.transform.parent.gameObject != null)
                 producers.Add(currGO.transform.parent.gameObject);
         }
-        
-        Debug.Log("Update Producers: " + producers.Count);
     }
 
     /// <summary>
@@ -105,5 +103,29 @@ public class EField : IField
             updateProducers();
         }
         return field;
+    }
+
+    public override float getStrength(Vector3 position)
+    {
+        var strength = 0f;
+        try
+        {
+            if (useCallback) producers = onGetProducers.Invoke();
+
+            foreach (GameObject producer in producers)
+            {
+                if (producer.gameObject.activeSelf)
+                {
+                    strength += Mathf.Pow(producer.GetComponent<IGenerateE>().getEPotential(position), 2f);
+                }
+            }
+
+            strength = Mathf.Sqrt(strength);
+        }
+        catch
+        {
+            updateProducers();
+        }
+        return strength;
     }
 }
