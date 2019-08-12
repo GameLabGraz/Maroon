@@ -89,7 +89,7 @@ GameObject:
   - component: {fileID: 222567040141845091}
   - component: {fileID: 222567040141845093}
   - component: {fileID: 5106389307625418835}
-  - component: {fileID: 7646616569720168378}
+  - component: {fileID: 1182506105227209955}
   m_Layer: 0
   m_Name: Particle
   m_TagString: Particle
@@ -133,6 +133,8 @@ MonoBehaviour:
   charge: 0
   radius: 0.7022421
   fixedPosition: 0
+  pauseSimulationWhileMoving: 1
+  deleteIfOutsideBoundaries: 1
 --- !u!54 &222567040141845093
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -162,7 +164,7 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.70224214
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &7646616569720168378
+--- !u!114 &1182506105227209955
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -171,21 +173,67 @@ MonoBehaviour:
   m_GameObject: {fileID: 222567040141845092}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f89d82b090a22c248bddd5bb0fe30c28, type: 3}
+  m_Script: {fileID: 11500000, guid: 233dba56b7c33c54f9a9b1982ce376b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pauseSimulationWhileMoving: 1
-  deleteIfOutsideBoundaries: 1
-  movingObject: {fileID: 0}
+  movingObject: {fileID: 222567040141845092}
   minBoundary: {fileID: 0}
   maxBoundary: {fileID: 0}
   allowedXMovement: 1
   allowedYMovement: 1
-  allowedZMovement: 0
+  allowedZMovement: 1
   changeMaterialIfOutside:
   - {fileID: 222567040141845094}
   - {fileID: 222567040141845088}
-  outsideTransparency: 0.5
+  outsideTransparency: 0.7
+  onStartedMoving:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 222567040141845091}
+        m_MethodName: MovementStart
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onEndMovingOutsideBoundaries:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 222567040141845091}
+        m_MethodName: MovementEndOutsideBoundaries
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onEndMovingInsideBoundaries:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 222567040141845091}
+        m_MethodName: MovementEndInsideBoundaries
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!1 &222567040141845094
 GameObject:
   m_ObjectHideFlags: 0

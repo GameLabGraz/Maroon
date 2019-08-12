@@ -200,12 +200,13 @@ public class UIItemDragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler,
         particle.SetFixedPosition(_fixedPosition);
         particle.SetCharge(_currentCharge, BackgroundImage.color);
 
-        var movement = newGameObj.GetComponent<DragParticleHandler>();
-        if (!movement) movement = newGameObj.GetComponentInChildren<DragParticleHandler>();
+        var movement = newGameObj.GetComponent<PC_DragHandler>();
+        if (!movement) movement = newGameObj.GetComponentInChildren<PC_DragHandler>();
         Debug.Assert(movement != null);
-        
         movement.SetBoundaries(is2dScene? minPosition2d : minPosition3d, is2dScene? maxPosition2d : maxPosition3d);
-
+        movement.allowedXMovement = movement.allowedYMovement = true;
+        movement.allowedZMovement = !is2dScene;
+        
         var arrowMovement = newGameObj.GetComponentInChildren<PC_ArrowMovement>();
         Debug.Assert(arrowMovement != null);
         arrowMovement.minimumBoundary = is2dScene? minPosition2d.transform : minPosition3d.transform;
