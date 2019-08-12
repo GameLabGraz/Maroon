@@ -103,4 +103,9 @@ public class BField : IField
         }
         return field;
     }
+
+    public override float getStrength(Vector3 position)
+    {
+        throw new System.NotImplementedException();
+    }
 }

@@ -15,6 +15,7 @@ public class DragObject : MonoBehaviour
 
 	void OnMouseDown()
 	{
+		Debug.Log("Mouse down");
 		Vector3 pos = cachedTransform.position;
 		screenPoint = MainCamera.WorldToScreenPoint(pos);
 		offset = pos - MainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));

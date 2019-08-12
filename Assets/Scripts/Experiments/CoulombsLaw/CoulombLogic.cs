@@ -16,6 +16,10 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
 
     public UnityEvent onMaxChargesReached;
     public UnityEvent onUnderMaxChargesAgain;
+
+    [Header("Calculation Settings")] 
+    public Transform xOrigin;
+    public Transform xAt1m;
     
     [Header("2D-3D Mode depending Settings")]
     public GameObject scene2D;
@@ -41,6 +45,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     
     private bool _in3dMode = false;
 
+    private float _worldToCalcSpaceFactor;
     
     // Start is called before the first frame update
     void Start()
@@ -55,6 +60,8 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         _charges = new List<CoulombChargeBehaviour>();
         _chargesGameObjects = new HashSet<GameObject>();
         OnSwitch3d2dMode(_in3dMode? 1f : 0f);
+
+        _worldToCalcSpaceFactor = Mathf.Abs(xAt1m.position.x - xOrigin.position.x);
     }
 
     private void FixedUpdate()
@@ -63,6 +70,11 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         {
             RunSimulation();
         }
+    }
+
+    public float WorldToCalcSpace(float distanceWorldSpace)
+    {
+        return distanceWorldSpace / _worldToCalcSpaceFactor;
     }
 
     public List<CoulombChargeBehaviour> GetCharges()
