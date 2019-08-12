@@ -22,9 +22,6 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
     public bool showMovingLines = false;
     [Tooltip("Hides the arrows when the simulation is running.")]
     public bool hideWhileInRunMode = true;
-    //TODO: here
-//    [Tooltip("Pauses the simulation when the object is moved. Note: This is only possible if the arrows aren't hidden in run-mode.")]
-//    public bool pauseWhileMoving = true;
     
     [Header("Reset Settings")] 
     public bool resetOnReset = false;
@@ -53,7 +50,7 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
     private GameObject _arrowYNegative;
     private GameObject _arrowZPositive;
     private GameObject _arrowZNegative;
-    
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -90,14 +87,7 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
         
         //Needed for resetting later
         _originalPosition = movingObject.transform.position;
-
-        //Movement Restrictions -> hide arrows that are not allowed to move
-        _arrowXPositive.SetActive(!restrictXMovement); 
-        _arrowXNegative.SetActive(!restrictXMovement);
-        _arrowYPositive.SetActive(!restrictYMovement);
-        _arrowYNegative.SetActive(!restrictYMovement);
-        _arrowZPositive.SetActive(!restrictZMovement);
-        _arrowZNegative.SetActive(!restrictZMovement);
+        UpdateMovementRestriction();
     }
 
     // Update is called once per frame
@@ -108,6 +98,25 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
         ChangeRunMode();
     }
 
+    public void UpdateMovementRestriction(bool forbidXMovement, bool forbidYMovement, bool forbidZMovement)
+    {
+        restrictXMovement = forbidXMovement;
+        restrictYMovement = forbidYMovement;
+        restrictZMovement = forbidZMovement;
+        UpdateMovementRestriction();
+    }
+
+    private void UpdateMovementRestriction()
+    {
+        //Movement Restrictions -> hide arrows that are not allowed to move
+        _arrowXPositive.SetActive(!restrictXMovement); 
+        _arrowXNegative.SetActive(!restrictXMovement);
+        _arrowYPositive.SetActive(!restrictYMovement);
+        _arrowYNegative.SetActive(!restrictYMovement);
+        _arrowZPositive.SetActive(!restrictZMovement);
+        _arrowZNegative.SetActive(!restrictZMovement);
+    }
+    
     private void ChangeRunMode()
     {
         _arrowXPositive.SetActive((!_simController.SimulationRunning || !hideWhileInRunMode) && !restrictXMovement); 
@@ -149,11 +158,20 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
             _movingOffset = pt - movingObject.transform.localPosition;
         
         OnMovementStart.Invoke();
-        Debug.Log("pt = " + pt + " -- localPos = " + movingObject.transform.localPosition + " -  offset: " + _movingOffset);
+        Debug.Log("Mouse Down: " + movingObject.transform.position + " local: " + movingObject.transform.localPosition + " offset: " + _movingOffset);
+        Debug.Log("_local boundaries: min: " + _localMinBoundary + " - max: " + _localMaxBoundary);
+
     }
 
     private void DrawMovingLines(Vector3 drawingMask)
     {
+        if(_lineRenderer == null && maximumBoundary != null && minimumBoundary != null && showMovingLines)
+        {
+            _lineRenderer = GetComponent<LineRenderer>();
+            if (!_lineRenderer) _lineRenderer = gameObject.AddComponent<LineRenderer>();
+            _lineRenderer.enabled = false;
+        }
+        
         if (!showMovingLines || maximumBoundary == null || minimumBoundary == null || _lineRenderer == null) return;
         var lineStart = movingObject.transform.localPosition; 
         var lineEnd = movingObject.transform.localPosition;
@@ -188,20 +206,24 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
 
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         var pt = movingObject.transform.parent.transform.InverseTransformPoint(ray.GetPoint(_distance));
+//        Debug.Log("pt: " + pt);
         var pos = movingObject.transform.localPosition;
         pt -= _movingOffset;
+//        Debug.Log("pt with offset: " + pt);
 
         if (Math.Abs(_movingDirection.x) < 0.001) pt.x = pos.x;
         if (Math.Abs(_movingDirection.y) < 0.001) pt.y = pos.y;
         if (Math.Abs(_movingDirection.z) < 0.001) pt.z = pos.z;
-
+        
+//        Debug.Log("pt with moving dir: " + pt);
         if (minimumBoundary != null && maximumBoundary != null)
         {
             pt.x = Mathf.Clamp(pt.x, _localMinBoundary.x, _localMaxBoundary.x);
             pt.y = Mathf.Clamp(pt.y, _localMinBoundary.y, _localMaxBoundary.y);
             pt.z = Mathf.Clamp(pt.z, _localMinBoundary.z, _localMaxBoundary.z);
         }
-        
+//        Debug.Log("pt with boundaries: " + pt);
+
         movingObject.transform.localPosition =  pt;
     }
 
@@ -213,6 +235,14 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
         if (_lineRenderer && _lineRenderer.enabled) _lineRenderer.enabled = false;
         
         OnMovementFinish.Invoke();
+    }
+
+    public void SetBoundaries(Transform min, Transform max)
+    {
+        minimumBoundary = min;
+        maximumBoundary = max;
+        _localMinBoundary = movingObject.transform.parent.transform.InverseTransformPoint(minimumBoundary.position);
+        _localMaxBoundary = movingObject.transform.parent.transform.InverseTransformPoint(maximumBoundary.position);
     }
     
     public void ResetObject()
