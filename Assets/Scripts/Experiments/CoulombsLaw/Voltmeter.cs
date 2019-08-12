@@ -62,8 +62,6 @@ public class Voltmeter : MonoBehaviour, IResetWholeObject
 
         var movArrows = GetComponentInChildren<PC_ArrowMovement>();
         if (!movArrows) return;
-        Debug.Log("OnResetMovingArrows");
-
         if (in3dMode)
         {
             movArrows.UpdateMovementRestriction(false, false, false);

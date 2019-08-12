@@ -31,6 +31,9 @@ public class StopPlayButtonController : VRTK_InteractableObject
 
         Debug.Log("Stop Play Button pressed, will stop/play simulation");
 
-        simController.SimulationRunning = !simController.SimulationRunning;
+        if(simController.SimulationRunning)
+            simController.StopSimulation();
+        else
+            simController.StartSimulation();
     }
 }

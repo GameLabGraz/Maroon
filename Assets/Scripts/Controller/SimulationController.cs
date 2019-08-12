@@ -10,9 +10,11 @@
 //-----------------------------------------------------------------------------
 //
 
+using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.SceneManagement;
 
 /// <summary>
@@ -29,6 +31,16 @@ public class SimulationController : MonoBehaviour
     [SerializeField]
     private float timeScale = 1;
 
+    public float TimeScale
+    {
+        get => timeScale;
+        set
+        {
+            timeScale = value;
+            Time.timeScale = value;
+        }
+    }
+
     /// <summary>
     /// Indicates wheter a single step should be simulated
     /// </summary>
@@ -43,6 +55,12 @@ public class SimulationController : MonoBehaviour
     /// The objects which must be reset
     /// </summary>
     private List<IResetObject> resetObjects;
+
+    public event EventHandler<EventArgs> OnStart;
+
+    public event EventHandler<EventArgs> OnStop;
+
+    public event EventHandler<EventArgs> OnReset;
 
     /// <summary>
     /// Initialization
@@ -80,7 +98,7 @@ public class SimulationController : MonoBehaviour
     /// <param name="scene">Unloaded scene</param>
     private void OnSceneUnloaded(Scene scene)
     {
-        Time.timeScale = 1.0f;
+        TimeScale = 1.0f;
         SceneManager.sceneUnloaded -= OnSceneUnloaded;
     }
 
@@ -126,49 +144,34 @@ public class SimulationController : MonoBehaviour
     }
 
     /// <summary>
-    /// Property that defines wheter the simulation is running
+    /// Property that defines whether the simulation is running
     /// </summary>
     public bool SimulationRunning
     {
-        get
-        {
-            return simulationRunning;
-        }
-        set
-        {
-          simulationRunning = value;
-        }
+        get => simulationRunning;
+        set => simulationRunning = value;
     }
 
     /// <summary>
     /// Getter for the stepSimulation field
     /// </summary>
-    public bool StepSimulation
-    {
-        get
-        {
-            return stepSimulation;
-        }
-    }
+    public bool StepSimulation => stepSimulation;
 
     /// <summary>
     /// Getter for the simulationReset field
     /// </summary>
-    public bool SimulationJustReset
-    {
-        get
-        {
-            return simulationReset;
-        }
-    }
+    public bool SimulationJustReset => simulationReset;
 
     /// <summary>
     /// Starts the simulation
     /// </summary>
     public void StartSimulation()
     {
-        SimulationRunning = true;
+        simulationRunning = true;
         simulationReset = false;
+
+        if(!stepSimulation)
+            OnStart?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -187,7 +190,8 @@ public class SimulationController : MonoBehaviour
     /// </summary>
     public void StopSimulation()
     {
-        SimulationRunning = false;
+        simulationRunning = false;
+        OnStop?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -202,13 +206,15 @@ public class SimulationController : MonoBehaviour
 
         StopSimulation();
         simulationReset = true;
-        Debug.Log("Reset");
+
+        OnReset?.Invoke(this, EventArgs.Empty);
+//        Debug.Log("Reset");
     }
 
     public void ResetWholeSimulation()
     {
         ResetSimulation();
-        foreach (var resetObject in resetObjects)
+        foreach (var resetObject in resetObjects.ToList())
         {
             if(resetObject is IResetWholeObject)
                 (resetObject as IResetWholeObject).ResetWholeObject();

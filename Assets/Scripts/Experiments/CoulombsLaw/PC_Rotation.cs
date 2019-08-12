@@ -44,8 +44,6 @@ public class PC_Rotation : MonoBehaviour, IResetWholeObject
 
     private void OnMouseDrag()
     {
-        Debug.Log("onMouseDrag");
-        
         // taken from https://www.youtube.com/watch?v=S3pjBQObC90
         if(onlyRotateOnSimulationPause) _simController.SimulationRunning = false;
         
@@ -62,6 +60,9 @@ public class PC_Rotation : MonoBehaviour, IResetWholeObject
 
     public void ResetWholeObject()
     {
+        if(rotateTrans == null) 
+            rotateTrans = rotationObject == null ? transform : rotationObject.transform;
+        
         rotateTrans.rotation = Quaternion.identity;
     }
 }

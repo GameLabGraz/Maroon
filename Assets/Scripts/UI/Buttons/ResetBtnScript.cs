@@ -10,89 +10,66 @@
 //-----------------------------------------------------------------------------
 //
 
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Script for reset button
-/// </summary>
-[RequireComponent(typeof(Button))]
-public class ResetBtnScript : MonoBehaviour
+namespace Maroon.UI.Buttons
 {
-    public bool AllowWholeReset = false;
-    public bool AllowWithButtonPress = true;
-    
-    SimulationController simController;
-
-    private bool _inWholeResetMode = false;
-    private CanvasRenderer _canvasRenderer;
-    private Button _button;
-
     /// <summary>
-    /// Initializing
+    /// Script for reset button
     /// </summary>
-    void Start()
+    public class ResetBtnScript : BaseButton
     {
-        _button = gameObject.GetComponent<Button>();
-        _canvasRenderer = gameObject.GetComponent<CanvasRenderer>();
-        GameObject simControllerObject = GameObject.Find("SimulationController");
-        if (simControllerObject)
-            simController = simControllerObject.GetComponent<SimulationController>();
+        public bool AllowWholeReset = false;
+        public bool AllowWithButtonPress = true;
 
-        DeactivateResetButton();
-    }
+        SimulationController simController;
 
-    /// <summary>
-    /// Handles the appearance of the button
-    /// </summary>
-	void Update()
-    {
-        if (AllowWithButtonPress && Input.GetKeyDown(KeyCode.LeftArrow) && _button.interactable)
+        private bool _inWholeResetMode = false;
+        private CanvasRenderer _canvasRenderer;
+        private Button _button;
+        
+        protected override void Start()
         {
-            Debug.Log("Reset san");
-            buttonResetPressed();
+            base.Start();
+
+            SimController.OnReset += OnResetHandler;
+            SimController.OnStart += OnStartHandler;
+
+            _button = gameObject.GetComponent<Button>();
+            _canvasRenderer = gameObject.GetComponent<CanvasRenderer>();
+
+            if(!AllowWholeReset) Disable();
+            else Enable();
         }
 
-        if (!simController.SimulationJustReset)
+        protected void Update()
         {
-            ActivateResetButton();
+            if (_inWholeResetMode && SimController.SimulationRunning) _inWholeResetMode = false;
         }
-        else
-        {
-            DeactivateResetButton();
-        }
-    }
 
-    /// <summary>
-    /// Handles the button being pressed and resets the simulation
-    /// </summary>
-    public void buttonResetPressed()
-    {
-        if (!_inWholeResetMode)
-            simController.ResetSimulation();
-        else
-            simController.ResetWholeSimulation();
-    }
-
-    private void DeactivateResetButton()
-    {
-        if (!AllowWholeReset)
+        private void OnStartHandler(object sender, EventArgs e)
         {
-            _canvasRenderer.SetAlpha(0.0f);
-            _button.interactable = false;
+            if (AllowWholeReset) Enable();
+            else _inWholeResetMode = false;
         }
-        else
-            _inWholeResetMode = true;
-    }
 
-    private void ActivateResetButton()
-    {
-        if (!AllowWholeReset)
+        private void OnResetHandler(object sender, EventArgs e)
         {
-            _canvasRenderer.SetAlpha(1.0f);
-            _button.interactable = true;
+            if (!AllowWholeReset) Disable();
+            else _inWholeResetMode = true;
         }
-        else
-            _inWholeResetMode = false;
+
+        /// <summary>
+        /// Handles the button being pressed and resets the simulation
+        /// </summary>
+        public void ButtonResetPressed()
+        {
+            if (!_inWholeResetMode)
+                SimController.ResetSimulation();
+            else
+                SimController.ResetWholeSimulation();
+        }
     }
 }

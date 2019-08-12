@@ -8,28 +8,25 @@ public abstract class PausableObject : MonoBehaviour
 
     protected SimulationController simController;
 
+    protected Rigidbody _rigidbody;
 
     protected virtual void Start()
     {
-        GameObject simControllerObject = GameObject.Find("SimulationController");
-        if (simControllerObject)
-            simController = simControllerObject.GetComponent<SimulationController>();
+        simController = FindObjectOfType<SimulationController>();
+        _rigidbody = GetComponent<Rigidbody>();
     }
 
     protected virtual void Update()
     {
-        Rigidbody rigidbody_ = GetComponent<Rigidbody>();
-
-
         if(simController.SimulationRunning)
         {
             if(IsPause)
             {
                 IsPause = false;
-                if(rigidbody_ != null)
+                if(_rigidbody != null)
                 {
-                    rigidbody_.isKinematic = false;
-                    rigidbody_.velocity = CurrentVelocity;
+                    _rigidbody.isKinematic = false;
+                    _rigidbody.velocity = CurrentVelocity;
                 }
             }
 
@@ -38,10 +35,10 @@ public abstract class PausableObject : MonoBehaviour
         else if(!IsPause)
         {
             IsPause = true;
-            if (rigidbody_ != null)
+            if (_rigidbody != null)
             {
-                CurrentVelocity = rigidbody_.velocity;
-                rigidbody_.isKinematic = true;
+                CurrentVelocity = _rigidbody.velocity;
+                _rigidbody.isKinematic = true;
             }
         }
     }

@@ -21,6 +21,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ************************************************************************************/
 
+#if !PLATFORM_WEBGL
+
 using System;
 using UnityEngine;
 using System.Diagnostics;
@@ -28,7 +30,6 @@ using Debug = UnityEngine.Debug;
 using System.Threading;
 
 [RequireComponent(typeof(AudioSource))]
-
 public class OVRLipSyncMicInput : MonoBehaviour
 {
     public enum micActivation
@@ -348,3 +349,4 @@ public class OVRLipSyncMicInput : MonoBehaviour
         return 0.0f;
     }
 }
+#endif

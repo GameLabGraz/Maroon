@@ -158,9 +158,6 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
             _movingOffset = pt - movingObject.transform.localPosition;
         
         OnMovementStart.Invoke();
-        Debug.Log("Mouse Down: " + movingObject.transform.position + " local: " + movingObject.transform.localPosition + " offset: " + _movingOffset);
-        Debug.Log("_local boundaries: min: " + _localMinBoundary + " - max: " + _localMaxBoundary);
-
     }
 
     private void DrawMovingLines(Vector3 drawingMask)
@@ -206,23 +203,19 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
 
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         var pt = movingObject.transform.parent.transform.InverseTransformPoint(ray.GetPoint(_distance));
-//        Debug.Log("pt: " + pt);
         var pos = movingObject.transform.localPosition;
         pt -= _movingOffset;
-//        Debug.Log("pt with offset: " + pt);
 
         if (Math.Abs(_movingDirection.x) < 0.001) pt.x = pos.x;
         if (Math.Abs(_movingDirection.y) < 0.001) pt.y = pos.y;
         if (Math.Abs(_movingDirection.z) < 0.001) pt.z = pos.z;
         
-//        Debug.Log("pt with moving dir: " + pt);
         if (minimumBoundary != null && maximumBoundary != null)
         {
             pt.x = Mathf.Clamp(pt.x, _localMinBoundary.x, _localMaxBoundary.x);
             pt.y = Mathf.Clamp(pt.y, _localMinBoundary.y, _localMaxBoundary.y);
             pt.z = Mathf.Clamp(pt.z, _localMinBoundary.z, _localMaxBoundary.z);
         }
-//        Debug.Log("pt with boundaries: " + pt);
 
         movingObject.transform.localPosition =  pt;
     }

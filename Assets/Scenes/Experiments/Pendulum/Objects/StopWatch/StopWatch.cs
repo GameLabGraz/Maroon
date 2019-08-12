@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 using Evaluation.UnityInterface;
 
-public class StopWatch : MonoBehaviour {
+public class StopWatchOld : MonoBehaviour {
 
     [SerializeField]
     private GameObject MinuteHand;
@@ -62,17 +62,17 @@ public class StopWatch : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-       if (!isRunning)
+       if (!isRunning && !isReset)
             return;
 
-        isReset = false;
-        var evt = new StopWatchEvent(Elapsed, isRunning);
-        SetSecondsHand(evt.MillisecondsPassed);
-        SetMinutesHand(evt.MinutesPassed);
-        SetText(evt.SecondsPassed);
+       isReset = false;
+       var evt = new StopWatchEvent(Elapsed, isRunning);
+       SetSecondsHand(evt.MillisecondsPassed);
+       SetMinutesHand(evt.MinutesPassed);
+       SetText(evt.SecondsPassed);
 
-        if (OnTick != null)
-            OnTick(evt);
+       if (OnTick != null)
+           OnTick(evt);
     }
 
     public void SWStart()
