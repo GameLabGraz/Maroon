@@ -20,6 +20,11 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     [Header("2D-3D Mode depending Settings")]
     public GameObject scene2D;
     public GameObject scene3D;
+
+    public GameObject minBoundary2d;
+    public GameObject maxBoundary2d;
+    public GameObject minBoundary3d;
+    public GameObject maxBoundary3d;
     
     public ModeChangeEvent onModeChange;
 

@@ -109,6 +109,10 @@ Shader "Custom/CoulombEquipotentialLineShader" {
             if(voltage3 < 0.0) voltage3 *= -1.0;
             if(voltage4 < 0.0) voltage4 *= -1.0;
             
+            if(voltage1 < 0.0001 && voltage2 < 0.0001 && voltage3 < 0.0001 && voltage4 < 0.0001)
+                return _BkgdColor;
+            
+            
             if(fmod(voltage1, _ChargeStep) < 2.0 * _ChargeStepTolerance
                 || fmod(voltage2, _ChargeStep) < 2.0 * _ChargeStepTolerance
                 || fmod(voltage3, _ChargeStep) < 2.0 * _ChargeStepTolerance
