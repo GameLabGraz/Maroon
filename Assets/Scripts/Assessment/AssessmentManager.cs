@@ -1,143 +1,114 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Linq;
 using UnityEngine;
-using Evaluation.UnityInterface;
+using Antares.Evaluation;
+using Antares.Evaluation.Engine;
+using Antares.Evaluation.Util;
 
-public class AssessmentManager : MonoBehaviour {
+namespace Maroon.Assessment
+{
+    [RequireComponent(typeof(AssessmentFeedbackHandler))]
+    public class AssessmentManager : MonoBehaviour
+    { 
+        [SerializeField]
+        private string amlFile;
 
-    [SerializeField]
-    private string AssessmentUrl;
-    [SerializeField]
-    private string AssignmentFileName;
-    [SerializeField]
-    private string FirstSectionName;
+        private Evaluator _evalService;
 
-    [TextArea]
-    public string GlobalAttributes;
-    private AssessmentWatchValue GlobalWatchValue;
+        private AssessmentFeedbackHandler _feedbackHandler;
 
-    private static AssessmentManager instance_;
-    private EvaluationService evalService_;
-    private List<IAssessmentValue> values_;
-    public bool Enabled { get; private set; }
+        private readonly List<IAssessmentValue> _assessmentValues = new List<IAssessmentValue>();
 
-    public delegate void OnEnteredSectionHandler(IterationResult result);
-    public static event OnEnteredSectionHandler OnEnteredSection;
+        public bool IsConnected { get; private set; }
 
-    public static AssessmentManager Instance {
-        get {
-            return instance_;
-        }
-    }
-  
-    public void Start()
-    {
+        private static AssessmentManager _instance;
 
-        values_ = new List<IAssessmentValue>();
-        instance_ = this;
-
-        if (GlobalAttributes != "")
+        public static AssessmentManager Instance
         {
-            GlobalWatchValue = gameObject.AddComponent<AssessmentWatchValue>();
-            GlobalWatchValue.Attributes = GlobalAttributes;
-            GlobalWatchValue.Internal = true;
+            get
+            {
+                if (_instance == null)
+                    _instance = FindObjectOfType<AssessmentManager>();
+                return _instance;
+            }
+        } 
+
+        private void Awake()
+        {
+            _feedbackHandler = FindObjectOfType<AssessmentFeedbackHandler>();
+
+            IsConnected = ConnectToAssessmentSystem();
         }
 
 
-        try
+        private bool ConnectToAssessmentSystem()
         {
-            Debug.Log("Connecting to WebService");
-            evalService_ = new EvaluationService(AssessmentUrl, AssignmentFileName);
-            Debug.Log("Got ID: " + evalService_.ContextID);
-            Enabled = true;
-            //var ev = GameEventBuilder.EnterSection(FirstSectionName);
-            var ev = new GameEvent().Add(
-                new PlayerAction() {
-                    Name = "EnterSection",
-                    Parameters = new ActionParameter[] {
-                             new ActionParameter () {
-                                Name = "section_class",
-                                Value = FirstSectionName
-                            }
-                        }
+            try
+            {
+                Debug.Log("AssessmentManager: Connecting to Assessment Service...");
+                _evalService = new Evaluator();
+                Debug.Log("AssessmentManager: Successfully connected to Assessment Service.");
+
+                Debug.Log($"AssessmentManager: Loading {amlFile} into evaluation engine ...");
+                _evalService.LoadAmlFile(Application.dataPath + amlFile);
+                Debug.Log("AssessmentManager: Assessment model loaded.");
+
+                _evalService.FeedbackReceived += delegate (object sender, FeedbackEventArgs args)
+                {
+                  _feedbackHandler.HandleFeedback(args);
+                };
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"AssessmentManager: An error occurred while connecting to the Assessment service.: {ex.Message}");
+                return false;
+            }
+        }
+
+        public void RegisterAssessmentObject(AssessmentObject assessmentObject)
+        {
+            Debug.Log($"AssessmentManager::RegisterAssessmentObject: {assessmentObject.ObjectID}");
+
+            var assessmentEvent = EventBuilder.Event()
+                .PerceiveObject(assessmentObject.ObjectID)
+                .Set("class", assessmentObject.assessmentClass.ToString());
+
+            foreach (var watchValue in assessmentObject.WatchValues)
+                assessmentEvent.Set(watchValue.PropertyName, watchValue.GetValue());
+
+            SendGameEvent(assessmentEvent);
+        }
+
+        public void SendUserAction(string actionName, string objectId=null)
+        {
+            Debug.Log($"AssessmentManager::SendUserAction: {objectId}.{actionName}");
+
+            var assessmentEvent = EventBuilder.Event().Action(actionName, objectId);
+            foreach (var watchValue in GetComponents<AssessmentWatchValue>())
+            {
+                if (watchValue.IsDynamic)
+                {
+                    assessmentEvent.UnlearnObject(watchValue.ObjectID)
+                        .Set(watchValue.PropertyName, watchValue.GetValue());
                 }
-            );
-
-            IterationResult result = Send(ev);
-            
-            if (OnEnteredSection != null)
-                OnEnteredSection(result);
-
-        } catch(Exception e)
-        {
-            Enabled = false;
-            Debug.Log("WARNING! An error happened while connection to the Assessment service: " + e.Message);
-            return;
+            }
         }
 
-
-    }
-
-    public void UpdateEnvironment()
-    {
-        if (!Enabled)
-            return;
-
-        Send(GetAllEnvironmentalChanges());
-    }
-
-    private GameEvent GetAllEnvironmentalChanges()
-    {
-        if (values_.Count > 0)
-            return values_.Where(val => !val.ContinuousUpdate).Select(val => val.GameEvent).Aggregate((prev, curr) => prev.Add(curr));
-        else
-            return new GameEvent();
-    }
-
-    public IterationResult Send(GameEvent Event, bool UpdateOfEnvironment = true)
-    {
-        if (!Enabled)
-            return new IterationResult(null);
-
-        if (UpdateOfEnvironment)
-            Event.Add(GetAllEnvironmentalChanges());
-        
-        return evalService_.Send(Event);
-    }
-    
-
-    public IterationResult RegisterValue(IAssessmentValue Value)
-    {
-        Debug.Log("registering value: " + Value.gameObject.name);
-        values_.Add(Value);
-        if(evalService_ == null)
+        public void SendDataUpdate(string objectId, string propertyName, object value)
         {
-            Debug.Log("Warning! Assessmentservice is not active!");
-            return new IterationResult(null);
+            Debug.Log($"AssessmentManager::SendDataUpdate: {objectId}.{propertyName}={value}");
+
+            SendGameEvent(EventBuilder.Event().UpdateDataOf(objectId).Set(propertyName, value));
         }
-        return evalService_.Send(Value.GameEvent, true);
-    }
 
-    public void PrintSummary()
-    {
-        Debug.Log(evalService_.GetSummary().ToString());
-    }
-
-    public void Update()
-    {
-        if (values_.Count == 0)
-            return;
-
-        var evt = values_
-            .Where(val => val.ContinuousUpdate)
-            .Select(val => val.GameEvent)
-            .Aggregate(new GameEvent(), (prev, curr) => prev.Add(curr));
-
-        if (evt.Actions.Length > 0 || evt.EnvironmentChanges.Length > 0)
-            evalService_.Send(evt);
+        private void SendGameEvent(GameEvent gameEvent)
+        {
+            if (IsConnected)
+                _evalService.ProcessEvent(gameEvent);
+            else
+                Debug.LogWarning("AssessmentManager::SendGameEvent: Assessment service is not running");
+        }
     }
 }
-

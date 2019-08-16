@@ -1,12 +1,11 @@
-﻿using Evaluation.UnityInterface;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-
-
-public abstract class IAssessmentValue : MonoBehaviour
+namespace Maroon.Assessment
 {
-    public bool ContinuousUpdate = false;
-    public abstract GameEvent GameEvent {  get; set; }
+    public abstract class IAssessmentValue : MonoBehaviour
+    {
+        public virtual string Name => gameObject.name;
+
+        public abstract object GetValue();
+    }
 }

@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
-namespace Maroon.Util
+namespace Maroon.Tools
 {
-    public class StopWatchEvent
+    public class SWEventArgs
     {
         public double SecondsPassed;
         public double MinutesPassed;
@@ -11,7 +13,7 @@ namespace Maroon.Util
         public bool IsRunning;
         public Time GameTime = new Time();
 
-        public StopWatchEvent(double elapsed, bool running)
+        public SWEventArgs(double elapsed, bool running)
         {
             SecondsPassed = elapsed;
             MillisecondsPassed = SecondsPassed * 1000;
@@ -20,16 +22,18 @@ namespace Maroon.Util
         }
     }
 
+    [Serializable]
+    public class StopWatchEvent : UnityEvent<SWEventArgs> { }
+
     public class StopWatch : MonoBehaviour
     {
         private float _startTime;
         private float _lastElapsed;
 
-        public delegate void StateChange(StopWatchEvent evt);
-        public event StateChange OnStart;
-        public event StateChange OnStop;
-        public event StateChange OnReset;
-        public event StateChange OnTick;
+        public StopWatchEvent OnStart;
+        public StopWatchEvent OnStop;
+        public StopWatchEvent OnReset;
+        public StopWatchEvent OnTick;
 
         public bool isRunning { get; private set; }
         public bool isReset { get; private set; }
@@ -56,7 +60,7 @@ namespace Maroon.Util
         {
             while (isRunning)
             {
-                OnTick?.Invoke(new StopWatchEvent(Elapsed, isRunning));
+                OnTick?.Invoke(new SWEventArgs(Elapsed, isRunning));
                 yield return new WaitForSeconds(0.001f);
             }
         }
@@ -73,7 +77,7 @@ namespace Maroon.Util
 
             StartCoroutine(Run());
 
-            OnStart?.Invoke(new StopWatchEvent(Elapsed, isRunning));
+            OnStart?.Invoke(new SWEventArgs(Elapsed, isRunning));
         }
 
         public void SWStop()
@@ -81,7 +85,7 @@ namespace Maroon.Util
             _lastElapsed = Elapsed;
             isRunning = false;
 
-            OnStop?.Invoke(new StopWatchEvent(Elapsed, isRunning));
+            OnStop?.Invoke(new SWEventArgs(Elapsed, isRunning));
         }
 
         public void SWReset()
@@ -91,7 +95,7 @@ namespace Maroon.Util
             _lastElapsed = 0;
             _startTime = Time.time;
 
-            OnReset?.Invoke(new StopWatchEvent(Elapsed, isRunning));
+            OnReset?.Invoke(new SWEventArgs(Elapsed, isRunning));
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Globalization;
 using UnityEngine;
 
-namespace Tools.Calculator
+namespace Maroon.Tools.Calculator
 {
     public class Calculator : MonoBehaviour
     {

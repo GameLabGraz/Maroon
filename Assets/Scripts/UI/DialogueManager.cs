@@ -3,69 +3,89 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-public class DialogueManager : MonoBehaviour
+namespace Maroon.UI
 {
-    [SerializeField]
-    private GameObject _dialogBox;
-    [SerializeField]
-    private Text _text;
-    [SerializeField]
-    private float _waitAtEnd = 1.0f;
-    [SerializeField]
-    private float _letterPause = 0.01f;
-    [SerializeField]
-    private AudioClip _typeSound;
-
-    private Queue<string> _messages = new Queue<string>();
-    private bool _typeMessageRunning = false;
-
-    public bool TypeMessageRunning
+    public class Message
     {
-        get { return _typeMessageRunning; }
-    }
+        public string Text { get; set; }
+        public Color Color { get; set; }
 
-    private void Awake()
-    {
-        _dialogBox.SetActive(false);
-    }
+        public Message(string text) : this(text, Color.white) { }
 
-    private void Update () 
-    {
-        if (_dialogBox.activeSelf && Input.GetMouseButtonDown(0))
-            _dialogBox.SetActive(false);
-
-        if (_messages.Count > 0 && !_typeMessageRunning)
-            StartCoroutine(TypeMessage(_messages.Dequeue()));
-    }
-
-    public void ShowMessage(string message)
-    {
-        _messages.Enqueue(message);
-    }
-
-    //Function to display text letter-by-letter
-    private IEnumerator TypeMessage(string message)
-    {
-        _typeMessageRunning = true;
-
-        _dialogBox.SetActive(true);
-        SoundManager.Instance.PlaySingle(_typeSound);
-
-        _text.text = "";
-        foreach (var letter in message)
+        public Message(string text, Color color)
         {
-            if (!_dialogBox.activeSelf)
-            {
-                _typeMessageRunning = false;
-                yield break;
-            }
+            Text = text;
+            Color = color;
+        }
+    }
 
-            _text.text += letter;        
-            yield return new WaitForSeconds(_letterPause);
+    public class DialogueManager : MonoBehaviour
+    {
+        [SerializeField]
+        private GameObject _dialogBox;
+        [SerializeField]
+        private Text _text;
+        [SerializeField]
+        private float _letterPause = 0.01f;
+        [SerializeField]
+        private AudioClip _typeSound;
+
+        private Queue<Message> _messages = new Queue<Message>();
+
+        public bool TypeMessageRunning { get; private set; } = false;
+
+        private void Awake()
+        {
+            _dialogBox.SetActive(false);
         }
 
-        yield return new WaitForSeconds(_waitAtEnd);
-        _dialogBox.SetActive(false);
-        _typeMessageRunning = false;
+        private void Update()
+        {
+            if (_dialogBox.activeSelf && Input.GetMouseButtonDown(0))
+                _dialogBox.SetActive(false);
+
+            if (_messages.Count > 0 && !TypeMessageRunning)
+                StartCoroutine(TypeMessage(_messages.Dequeue()));
+        }
+
+        public void ShowMessage(string message)
+        {
+            _messages.Enqueue(new Message(message));
+        }
+
+        public void ShowMessage(Message message)
+        {
+            _messages.Enqueue(message);
+        }
+
+        //Function to display text letter-by-letter
+        private IEnumerator TypeMessage(Message message)
+        {
+            TypeMessageRunning = true;
+
+            _dialogBox.SetActive(true);
+            SoundManager.Instance.PlaySingle(_typeSound);
+
+            _text.text = "";
+            _text.color = message.Color;
+
+            foreach (var letter in message.Text)
+            {
+                if (!_dialogBox.activeSelf)
+                {
+                    TypeMessageRunning = false;
+                    yield break;
+                }
+
+                _text.text += letter;
+                yield return new WaitForSeconds(_letterPause);
+            }
+
+            yield return new WaitForSeconds(Mathf.Min(2f, 0.05f * message.Text.Length));
+            _dialogBox.SetActive(false);
+            TypeMessageRunning = false;
+        }
     }
 }
+
+

@@ -1,39 +1,30 @@
 ﻿using System.Globalization;
+using Maroon.Tools;
 using UnityEngine;
 using UnityEngine.UI;
-using Maroon.Util;
 
 namespace Maroon.UI
 {
     [RequireComponent(typeof(Text))]
     public class StopWatchDisplay : MonoBehaviour
     {
-        [SerializeField]
-        private StopWatch _stopWatch;
-
         private Text _displayText;
 
         private void Start()
         {
-            if (_stopWatch == null)
-                return;
-
             _displayText = GetComponent<Text>();
             _displayText.text = $"0.00";
-
-            _stopWatch.OnTick += StopWatchOnTick;
-            _stopWatch.OnReset += StopWatchOnReset;
         }
 
-        private void StopWatchOnReset(StopWatchEvent evt)
+        public void StopWatchOnReset(SWEventArgs args)
         {
             _displayText.text = $"0.00";
         }
 
-        private void StopWatchOnTick(StopWatchEvent evt)
+        public void StopWatchOnTick(SWEventArgs args)
         {
 
-            _displayText.text = string.Format(CultureInfo.InvariantCulture, "{0:0.0}", evt.SecondsPassed);
+            _displayText.text = string.Format(CultureInfo.InvariantCulture, "{0:0.0}", args.SecondsPassed);
         }
     }
 }

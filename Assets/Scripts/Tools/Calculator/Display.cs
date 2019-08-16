@@ -1,9 +1,8 @@
 using System.Globalization;
 using UnityEngine;
-using UnityEngine.Assertions.Comparers;
 using UnityEngine.UI;
 
-namespace Tools.Calculator
+namespace Maroon.Tools.Calculator
 {
     public class Display : MonoBehaviour
     {

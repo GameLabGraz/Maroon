@@ -1,4 +1,5 @@
 ﻿using Localization;
+using Maroon.UI;
 using UnityEngine;
 
 namespace HelpCharacter

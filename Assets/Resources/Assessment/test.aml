@@ -1,0 +1,29 @@
+
+
+pattern Measurement:
+
+	# Bind contextual objects
+	query objects where class == [StopWatch] into sw
+	
+	feedback hint "Objects found and bound"
+	
+	@snapshot s
+	match action start on sw into _, sw:
+		query objects \
+			where class == [Pendulum] into p
+			
+		feedback hint "Pendulum object found and bound"
+		
+	set cycles = 0
+	match group {0, inf}:
+		match property changed \
+			[direction] on p
+		set cycles = cycles + 1
+	
+	match action stop on sw
+	
+	if diff_p(s:p.elongation, p.elongation) <= 0.1:
+		feedback success "Well done! Your measurement was well within the expected tolerance."
+	else:
+		feedback warning "test"
+

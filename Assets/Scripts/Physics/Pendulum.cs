@@ -1,21 +1,32 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Maroon.Physics
 {
-    [RequireComponent(typeof(HingeJoint))]
+  [Serializable]
+  public class Node
+  {
+    public string interestingValue = "value";
+    //The field below is what makes the serialization data become huge because
+    //it introduces a 'class cycle'.
+    public List<Node> children = new List<Node>();
+  }
+
+  [RequireComponent(typeof(HingeJoint))]
     public class Pendulum : PausableObject, IResetObject
     {
-        [SerializeField]
-        private float _weight = 1;
+        public QuantityFloat weight = 1.0f;
+
+        public QuantityFloat ropeLength = 0.3f;
+
+        public QuantityFloat elongation = 0.0f;
 
         [SerializeField]
         private GameObject _standRopeJoint;
-
+    
         [SerializeField]
-        private float _ropeLength = 1;
-
-        [SerializeField] private GameObject _weightObj;
+        private GameObject _weightObj;
 
         private Vector3 _startPos;
 
@@ -25,39 +36,47 @@ namespace Maroon.Physics
 
         private float _startRopeLength;
 
+        private float _oldRopeLength;
+
         public HingeJoint Joint { get; private set; }
 
         public float Weight
         {
-            get => _weight;
-            set
-            {
-                _weight = value;
-                _rigidbody.mass = value;
-
-                _weightObj.transform.localScale = Vector3.one * _weight;
-            }
+            get => weight;
+            set => weight.Value = value;
         }
 
         public float RopeLength
         {
-            get => _ropeLength;
+            get => ropeLength;
             set
             {
-                //if (simController.SimulationRunning)
-                    //simController.StopSimulation();
-
-                var pos = _weightObj.transform.position;
-                var moveDirection = (pos - _standRopeJoint.transform.position).normalized;
-                _weightObj.transform.position = pos + moveDirection * (value - _ropeLength);
-
-                _ropeLength = value;
+                _oldRopeLength = RopeLength;
+                ropeLength.Value = value;
             }
+        }
+
+        public float Elongation
+        {
+            get => elongation;
+            set => elongation.Value = value;
         }
 
         protected override void Start()
         {
             base.Start();
+            
+            weight.onValueChanged.AddListener((value) =>
+            {
+              _rigidbody.mass = value;
+              _weightObj.transform.localScale = Vector3.one * value;
+            });
+            ropeLength.onValueChanged.AddListener((value) =>
+            {
+              var pos = _weightObj.transform.position;
+              var moveDirection = (pos - _standRopeJoint.transform.position).normalized;
+              _weightObj.transform.position = pos + moveDirection * (value - _oldRopeLength);
+            });
 
             Joint = GetComponent<HingeJoint>();
 
@@ -76,7 +95,7 @@ namespace Maroon.Physics
         
         protected override void HandleFixedUpdate()
         {
-
+          Elongation = transform.rotation.x;
         }
 
         public float GetDeflection()
