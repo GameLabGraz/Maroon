@@ -160,6 +160,8 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
     
     public float getFieldStrength()
     {
+        return 3f;
+        Debug.Log("get field strenght");
         throw new System.NotImplementedException();
     }
 

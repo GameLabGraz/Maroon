@@ -213,6 +213,9 @@ public class UIItemDragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler,
         arrowMovement.maximumBoundary = is2dScene? maxPosition2d.transform : maxPosition3d.transform;
         arrowMovement.restrictZMovement = is2dScene;
         
+        var field = GameObject.FindGameObjectWithTag("Field").GetComponent<IField>(); //should be 2 -> one 2d and one 3d, where only one should be active at a time
+        newGameObj.GetComponentInChildren<FieldLine>().field = field;
+        
         newGameObj.SetActive(true);
         
         return particle;

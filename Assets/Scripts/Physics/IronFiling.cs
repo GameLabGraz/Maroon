@@ -129,6 +129,12 @@ public class IronFiling : MonoBehaviour, IResetObject
         simController.AddNewResetObject(this);
 
         Debug.Log("Start IronFiling");
+        
+        foreach (Transform child in transform)
+        {
+            if(child.name == "line")
+                child.gameObject.SetActive(true);
+        }
 
         for (int i = 0; i < iterations * 2; i++)
         {
@@ -138,6 +144,15 @@ public class IronFiling : MonoBehaviour, IResetObject
         Debug.Log("End IronFiling");
 
         gameObject.SetActive(true);
+    }
+
+    public void hideFieldImage()
+    {
+        foreach (Transform child in transform)
+        {
+            if(child.name == "line")
+                child.gameObject.SetActive(false);
+        }
     }
 
     /// <summary>

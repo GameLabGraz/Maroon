@@ -96,6 +96,8 @@ public class PlaneVisualization : MonoBehaviour, IResetObject
             {
                 plane.GetComponent<MeshRenderer>().enabled = true;
                 plane.GetComponent<MeshRenderer>().material = defaultMaterial;
+                var filling = plane.GetComponent<IronFiling>();
+                if(filling) filling.hideFieldImage();
                 plane.SetActive(true);
             }
         }
@@ -103,10 +105,12 @@ public class PlaneVisualization : MonoBehaviour, IResetObject
         {
             foreach (var plane in planes)
             {
+                var filling = plane.GetComponent<IronFiling>();
+                if(filling) filling.hideFieldImage();
                 plane.SetActive(false);
             }
         }
-
+        
         _currentMode = Mode.Disabled;
     }
 
@@ -120,7 +124,7 @@ public class PlaneVisualization : MonoBehaviour, IResetObject
             Disable();
             return;
         }
-
+        Disable();
         foreach (var plane in planes)
         {
             plane.SetActive(true);
@@ -137,13 +141,13 @@ public class PlaneVisualization : MonoBehaviour, IResetObject
     {
         if (onAllowVisualization != null && !onAllowVisualization.Invoke()) return;
         if (!voltageVisualizationEnabled) return;
-        
+
         if (_currentMode == Mode.VoltageVis)
         {
             Disable();
             return;
         }
-        
+        Disable();
         ShowShader(voltageMaterial);
 
         _currentMode = Mode.VoltageVis;
@@ -155,15 +159,17 @@ public class PlaneVisualization : MonoBehaviour, IResetObject
     }
     
     public void ShowEquipotentialLineVisualization()
-    {      
+    {    
         if (onAllowVisualization != null && !onAllowVisualization.Invoke()) return;
         if (!equipotentialLineVisualizationEnabled) return;
+
         if (_currentMode == Mode.EquipotentialVis)
         {
             Disable();
             return;
         }
 
+        Disable();
         ShowShader(equipotentialMaterial);
         _currentMode = Mode.EquipotentialVis;
     }
