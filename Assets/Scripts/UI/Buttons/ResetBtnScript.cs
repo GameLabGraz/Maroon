@@ -21,6 +21,15 @@ namespace Maroon.UI.Buttons
     /// </summary>
     public class ResetBtnScript : BaseButton
     {
+        public bool AllowWholeReset = false;
+        public bool AllowWithButtonPress = true;
+
+        SimulationController simController;
+
+        private bool _inWholeResetMode = false;
+        private CanvasRenderer _canvasRenderer;
+        private Button _button;
+        
         protected override void Start()
         {
             base.Start();
@@ -28,20 +37,28 @@ namespace Maroon.UI.Buttons
             SimController.OnReset += OnResetHandler;
             SimController.OnStart += OnStartHandler;
 
-            Disable();
+            _button = gameObject.GetComponent<Button>();
+            _canvasRenderer = gameObject.GetComponent<CanvasRenderer>();
+
+            if(!AllowWholeReset) Disable();
+            else Enable();
+        }
+
+        protected void Update()
+        {
+            if (_inWholeResetMode && SimController.SimulationRunning) _inWholeResetMode = false;
         }
 
         private void OnStartHandler(object sender, EventArgs e)
         {
-            gameObject.GetComponent<CanvasRenderer>().SetAlpha(1.0f);
-            gameObject.GetComponent<Button>().interactable = true;
-
+            if (AllowWholeReset) Enable();
+            else _inWholeResetMode = false;
         }
 
         private void OnResetHandler(object sender, EventArgs e)
         {
-            gameObject.GetComponent<CanvasRenderer>().SetAlpha(0.0f);
-            gameObject.GetComponent<Button>().interactable = false;
+            if (!AllowWholeReset) Disable();
+            else _inWholeResetMode = true;
         }
 
         /// <summary>
@@ -49,7 +66,10 @@ namespace Maroon.UI.Buttons
         /// </summary>
         public void ButtonResetPressed()
         {
-            SimController.ResetSimulation();
+            if (!_inWholeResetMode)
+                SimController.ResetSimulation();
+            else
+                SimController.ResetWholeSimulation();
         }
     }
 }

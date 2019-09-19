@@ -22,6 +22,11 @@ public class ArrowController : MonoBehaviour, IResetObject
     /// The physical field
     /// </summary>
     public GameObject Field;
+    
+    /// <summary>
+    /// The physical field
+    /// </summary>
+    public bool Allow3dRotation = false;
 
     /// <summary>
     /// The rotation offset
@@ -37,6 +42,8 @@ public class ArrowController : MonoBehaviour, IResetObject
     /// The start rotation for reseting
     /// </summary>
     public Quaternion start_rot;
+
+    public bool OnlyUpdateInRunMode = true;
 
     private SimulationController simController;
 
@@ -61,7 +68,7 @@ public class ArrowController : MonoBehaviour, IResetObject
     /// </summary>
     void Update()
     {
-        if (!simController.SimulationRunning)
+        if (OnlyUpdateInRunMode && !simController.SimulationRunning)
             return;
 
         if (Field != null)
@@ -76,10 +83,16 @@ public class ArrowController : MonoBehaviour, IResetObject
     private void rotateArrow()
     {
         Vector3 rotate = Field.GetComponent<IField>().get(transform.position) * fieldStrengthFactor;
+        
         rotate.Normalize();
-
         float rot = 0;
 
+        if (Allow3dRotation)
+        {
+            transform.up = rotate;
+            return;
+        }
+        
         if(transform.parent != null)
         {
             if(transform.parent.rotation == Quaternion.Euler(-90, 0, 0))
@@ -102,6 +115,7 @@ public class ArrowController : MonoBehaviour, IResetObject
         }
 
         transform.localRotation = Quaternion.Euler(-90, rot, 0);
+//        transform.localRotation = Quaternion.Euler(-90, rot, 0);
     }
 
     /// <summary>

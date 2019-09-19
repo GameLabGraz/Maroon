@@ -20,11 +20,6 @@ using System.Collections.Generic;
 public class EField : IField
 {
     /// <summary>
-    /// Lists of producers which generats a electrical field
-    /// </summary>
-    private HashSet<GameObject> producers = new HashSet<GameObject>();
-
-    /// <summary>
     /// Gets the field type
     /// </summary>
     /// <returns>The field type</returns>
@@ -64,6 +59,8 @@ public class EField : IField
         Vector3 field = Vector3.zero;
         try
         {
+            if (useCallback) producers = onGetProducers.Invoke();
+            
             foreach (GameObject producer in producers)
             {
                 if (producer.gameObject.activeSelf)
@@ -90,6 +87,8 @@ public class EField : IField
         Vector3 field = Vector3.zero;
         try
         {
+            if (useCallback) producers = onGetProducers.Invoke();
+
             foreach (GameObject producer in producers)
             {
                 if (producer.gameObject.activeSelf)
@@ -104,5 +103,29 @@ public class EField : IField
             updateProducers();
         }
         return field;
+    }
+
+    public override float getStrength(Vector3 position)
+    {
+        var strength = 0f;
+        try
+        {
+            if (useCallback) producers = onGetProducers.Invoke();
+
+            foreach (GameObject producer in producers)
+            {
+                if (producer.gameObject.activeSelf)
+                {
+                    strength += Mathf.Pow(producer.GetComponent<IGenerateE>().getEPotential(position), 2f);
+                }
+            }
+
+            strength = Mathf.Sqrt(strength);
+        }
+        catch
+        {
+            updateProducers();
+        }
+        return strength;
     }
 }

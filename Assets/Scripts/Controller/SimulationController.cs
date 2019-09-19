@@ -14,6 +14,7 @@ using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.SceneManagement;
 
 /// <summary>
@@ -112,6 +113,17 @@ public class SimulationController : MonoBehaviour
     }
 
     /// <summary>
+    /// Adds a reset object at the begin so that it is called first when reseting the objects
+    /// </summary>
+    /// <param name="resetObj">the object to be reset</param>
+    public void AddNewResetObjectAtBegin(IResetObject resetObj)
+    {
+        if(resetObj != null)
+            resetObjects.Insert(0, resetObj);
+    }
+
+    
+    /// <summary>
     /// Removes a reset object
     /// </summary>
     /// <param name="resetObj">the reset object to remove</param>
@@ -134,7 +146,11 @@ public class SimulationController : MonoBehaviour
     /// <summary>
     /// Property that defines whether the simulation is running
     /// </summary>
-    public bool SimulationRunning => simulationRunning;
+    public bool SimulationRunning
+    {
+        get => simulationRunning;
+        set => simulationRunning = value;
+    }
 
     /// <summary>
     /// Getter for the stepSimulation field
@@ -192,7 +208,16 @@ public class SimulationController : MonoBehaviour
         simulationReset = true;
 
         OnReset?.Invoke(this, EventArgs.Empty);
+//        Debug.Log("Reset");
+    }
 
-        Debug.Log("Reset");
+    public void ResetWholeSimulation()
+    {
+        ResetSimulation();
+        foreach (var resetObject in resetObjects.ToList())
+        {
+            if(resetObject is IResetWholeObject)
+                (resetObject as IResetWholeObject).ResetWholeObject();
+        }
     }
 }

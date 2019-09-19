@@ -45,7 +45,6 @@ public class SymmetricFieldLineManager : FieldLineManager
     protected override void DrawFieldLines()
     {
         ClearClones();
-
         foreach (var fieldLine in fieldLines)
         {
             fieldLine.Draw();

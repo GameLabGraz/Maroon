@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 //
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,6 +23,8 @@ public abstract class FieldLineManager : MonoBehaviour
     /// Lists of field lines
     /// </summary>
     protected HashSet<FieldLine> fieldLines = new HashSet<FieldLine>();
+
+    public bool getSensed = false;
 
     [SerializeField]
     protected int updateRate = 1;
@@ -39,6 +42,23 @@ public abstract class FieldLineManager : MonoBehaviour
         {
             var parent = sensedTag.transform.parent.gameObject;
             AddFieldLine(parent.GetComponent<FieldLine>());
+        }
+        Debug.Log("FieldLines: " + sensedObjects.Length);
+    }
+
+    private void Update()
+    {
+        if (getSensed)
+        {
+            var sensedObjects = GameObject.FindGameObjectsWithTag("FieldLine");
+
+            foreach (var sensedTag in sensedObjects)
+            {
+                var parent = sensedTag.transform.parent.gameObject;
+                AddFieldLine(parent.GetComponent<FieldLine>());
+            }
+            Debug.Log("FieldLines: " + sensedObjects.Length);
+            getSensed = false;
         }
     }
 
