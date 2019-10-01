@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
+using Valve.VR.InteractionSystem;
 
 [Serializable]
 public class VoltmeterEvent : UnityEvent<string> {}
@@ -19,6 +21,11 @@ public class Voltmeter : MonoBehaviour, IResetWholeObject
         if (simControllerObject)
             _coulombLogic = simControllerObject.GetComponent<CoulombLogic>();
         Debug.Assert(_coulombLogic != null);
+
+        // There is only one voltmeter allowed.
+        FindObjectsOfType<Voltmeter>()
+            .Where(voltmeter => voltmeter != this)
+            .ForEach(voltmeter => Destroy(voltmeter.gameObject));
 
         onVoltageChanged.Invoke("---");
     }

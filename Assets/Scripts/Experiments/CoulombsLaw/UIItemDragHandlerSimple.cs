@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using Vector3 = UnityEngine.Vector3;
 
@@ -19,9 +18,6 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
     public GameObject minPosition3d;
     public GameObject maxPosition3d;
 
-    public UnityEvent onInvalidDisplay;
-    public UnityEvent onValidDisplay;
-    
     private Vector3 _initialPosition;
     private Vector3 _initialMousePosition;
 
@@ -33,11 +29,6 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
     private bool _fixedPosition = false;
 
     private bool _allowAddingCharges = true;
-
-    private void Start()
-    {
-        generatedObject.SetActive(false);
-    }
 
     private void Update()
     {
@@ -76,21 +67,18 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         var hits = Physics.RaycastAll(ray, 100f);
 
-        bool hitVectorField = false;
-        for(var i = 0; i < hits.Length; ++i)
+        var hitVectorField = false;
+        foreach (var hit in hits)
         {
-            if (hits[i].transform.CompareTag("VectorField"))
-            {
-                if (!_allowAddingCharges)
-                {
-                    onInvalidDisplay.Invoke();
-                    return;
-                }
+            if(!hit.transform.CompareTag("VectorField"))
+                continue;
 
-                hitVectorField = true;
-                ShowObject(hits[i].point, hits[i].transform.parent);
-                transform.position = _initialPosition;
-            }
+            if (!_allowAddingCharges)
+                return;
+
+            hitVectorField = true;
+            ShowObject(hit.point, hit.transform.parent);
+            transform.position = _initialPosition;
         }
 
         if (!hitVectorField)
@@ -109,11 +97,8 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
     public void SetObjectToOrigin()
     {
         if (!_allowAddingCharges)
-        {
-            onInvalidDisplay.Invoke();
             return;
-        }
-        
+
         var vecFields = GameObject.FindGameObjectsWithTag("VectorField"); //should be 2 -> one 2d and one 3d, where only one should be active at a time
 
         foreach (var vecField in vecFields)
@@ -123,12 +108,11 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
         }
     }
 
-    private void ShowObject(Vector3 position, Transform parent)
+    protected virtual void ShowObject(Vector3 position, Transform parent)
     {
-        onValidDisplay.Invoke();
-        Debug.Log("Set Active");
-        generatedObject.transform.parent = parent;
-        generatedObject.transform.position = position;
-        generatedObject.SetActive(true);
+        var obj = Instantiate(generatedObject, position, Quaternion.identity, parent);
+        obj.transform.parent = parent;
+        obj.transform.position = position;
+        obj.SetActive(true);
     }
 }

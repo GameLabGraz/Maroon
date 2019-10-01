@@ -210,7 +210,19 @@ MonoBehaviour:
   particleBase: {fileID: 222567040141845094}
   particleFixingRing: {fileID: 222567040141845088}
   highlightMaterial: {fileID: 2100000, guid: a282b470dd6667848904cb12c35a1a2c, type: 2}
-  charge: 0
+  maxPositiveColor: {r: 1, g: 0, b: 0, a: 0}
+  minPositiveColor: {r: 1, g: 0.72156864, b: 0.72156864, a: 0}
+  maxNegativeColor: {r: 0, g: 0, b: 1, a: 0}
+  minNegativeColor: {r: 0.5921569, g: 0.70980394, b: 0.94509804, a: 0}
+  charge:
+    _value: 0
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+      m_TypeName: Maroon.Physics.OnValueFloatChangeEvent, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+  maxChargeValue: 5
+  minChargeValue: -5
   radius: 0.7022421
   fixedPosition: 0
   pauseSimulationWhileMoving: 1
@@ -491,11 +503,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 222567040141688388}
     m_Modifications:
-    - target: {fileID: 4584993937279052820, guid: 565f734b46691944bb8c7cb7888df542,
-        type: 3}
-      propertyPath: m_Name
-      value: MovingArrows
-      objectReference: {fileID: 0}
     - target: {fileID: 1482331554849848127, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -550,6 +557,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4584993937279052820, guid: 565f734b46691944bb8c7cb7888df542,
+        type: 3}
+      propertyPath: m_Name
+      value: MovingArrows
       objectReference: {fileID: 0}
     - target: {fileID: 4513896859846796369, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}

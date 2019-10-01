@@ -22,7 +22,7 @@ public static class Teal
     /// <summary>
     /// Time Scale for running simulation
     /// </summary>
-    public static readonly float TimeScaleSimulationRunning = 1;//0.3f;
+    public static readonly float TimeScaleSimulationRunning = 1;
 
     /// <summary>
     /// The permitivity of vacuum
@@ -53,4 +53,10 @@ public static class Teal
     /// The field line strength factor
     /// </summary>
     public static readonly int FieldStrengthFactor = 100;
+
+    public static readonly Color MaxPositiveChargeColor = Color.red;
+    public static readonly Color MinPositiveChargeColor = new Color(1f, 0.72f, 0.72f);
+    public static readonly Color MaxNegativeChargeColor = Color.blue;
+    public static readonly Color MinNegativeChargeColor = new Color(0.72f, 0.72f, 1f);
+    public static readonly Color NeutralChargeColor = Color.green;
 }

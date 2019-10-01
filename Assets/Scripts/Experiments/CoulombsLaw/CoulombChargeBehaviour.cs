@@ -1,16 +1,33 @@
-﻿using System;
+﻿using Maroon.Physics;
 using UnityEngine;
 
 public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
 {
     [Header("Design Parameters and Variables")]
-    public GameObject particleBase;
-    public GameObject particleFixingRing;
-    public Material highlightMaterial;
-    
+    [SerializeField]
+    private GameObject particleBase;
+    [SerializeField]
+    private GameObject particleFixingRing;
+    [SerializeField]
+    private Material highlightMaterial;
+
     [Header("Particle Settings")]
     [Tooltip("Sets the charge value of the Charge. This should be a value between -10 and 10 micro Coulomb.")]
-    [Range(-10f, 10f)] public float charge;
+
+    [SerializeField]
+    private QuantityFloat charge = 0.0f;
+    public float Charge
+    {
+        get => charge;
+        set => charge.Value = value;
+    }
+
+    [SerializeField]
+    private float maxChargeValue = 5f;
+
+    [SerializeField]
+    private float minChargeValue = -5f;
+
     public float radius = 0.7022421f;
     [Tooltip("Tells whether the charge moves or has a fixed position.")]
     public bool fixedPosition = false;
@@ -19,12 +36,10 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
     public bool pauseSimulationWhileMoving = true;
     public bool deleteIfOutsideBoundaries = true;
 
-    private int _currentCharge = -1; // -1 = electron, 0 = neutron, 1 = proton -> needed to adapt the material during runtime
-//    private bool _inUse = false;
-
     private Vector3 _resetPosition;
     private Vector3 _updatePosition;
     private Rigidbody _rigidbody;
+    private Renderer _particleBaseRenderer;
     private int _collided = 0;
 
     private CoulombLogic _coulombLogic;
@@ -32,14 +47,17 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
     
     private static readonly float CoulombConstant = 9f * Mathf.Pow(10f, 9f); // 1f / (Mathf.PI * 8.8542e-12f);
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
+    {
+        _particleBaseRenderer = particleBase.GetComponent<MeshRenderer>();
+        charge.onValueChanged.AddListener(OnChargeValueChangeHandler);
+    }
+
+    private void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
-        _currentCharge = charge < 0 ? -1 : charge > 0 ? 1 : 0;
-        ChangeParticleType();
-        GetComponent<Rigidbody>().velocity = Vector3.zero;
-        
+        _rigidbody.velocity = Vector3.zero;
+
         var obj  = GameObject.Find("CoulombLogic");
         if (obj)
             _coulombLogic = obj.GetComponent<CoulombLogic>();
@@ -56,36 +74,26 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
         _rigidbody.isKinematic = !_simController.SimulationRunning || fixedPosition;
     }
 
-    private void ChangeParticleType()
+    private void OnChargeValueChangeHandler(float chargeValue)
     {
-        var mat = particleBase.GetComponent<MeshRenderer>().materials;
-        switch (_currentCharge)
+        var mat = _particleBaseRenderer.materials;
+        if (Charge > 0)
         {
-            case 0:
-                mat[1] = mat[2] = mat[0];
-                break;
-            case -1:
-                mat[2] = mat[0];
-                mat[1] = highlightMaterial;
-                break;
-            case 1:
-                mat[1] = mat[2] = highlightMaterial;
-                break;
+            mat[0].color = Color.Lerp(Teal.MinPositiveChargeColor, Teal.MaxPositiveChargeColor, chargeValue / maxChargeValue);
+            mat[1] = mat[2] = highlightMaterial;
         }
-        
-        particleBase.GetComponent<MeshRenderer>().materials = mat;
-    }
-    
-    public void SetCharge(float charge, Color chargeColor)
-    {
-        this.charge = charge;
-        if (chargeColor.a > 0f)
+        else if (chargeValue < 0)
         {
-            particleBase.GetComponent<MeshRenderer>().materials[0].color = chargeColor;
+            mat[0].color = Color.Lerp(Teal.MinNegativeChargeColor, Teal.MaxNegativeChargeColor, chargeValue / minChargeValue);
+            mat[2] = mat[0];
+            mat[1] = highlightMaterial;
         }
-
-        _currentCharge = this.charge < 0 ? -1 : this.charge > 0 ? 1 : 0;
-        ChangeParticleType();
+        else
+        {
+            mat[0].color = Teal.NeutralChargeColor;
+            mat[1] = mat[2] = mat[0];
+        }
+        _particleBaseRenderer.materials = mat;
     }
 
     public void SetFixedPosition(bool isPositionFixed)
@@ -137,11 +145,11 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
 
     public Vector3 getE(Vector3 position)
     {
-        if (Mathf.Abs(charge) < 0.0001f) return Vector3.zero;
+        if (Mathf.Abs(Charge) < 0.0001f) return Vector3.zero;
         var distance = _coulombLogic.WorldToCalcSpace(Vector3.Distance(transform.position, position)); //TODO: radius???
         var dir = (position - transform.position).normalized;
         //TODO: consider 3d as well
-        var potential = CoulombConstant * charge * Mathf.Pow(10f, -6f) / Mathf.Pow(distance, 2f);
+        var potential = CoulombConstant * Charge * Mathf.Pow(10f, -6f) / Mathf.Pow(distance, 2f);
         return potential * dir;
     }
 
@@ -152,9 +160,9 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
 
     public float getEPotential(Vector3 position)
     {
-        if (Mathf.Abs(charge) < 0.0001f) return 0f;
+        if (Mathf.Abs(Charge) < 0.0001f) return 0f;
         var distance = _coulombLogic.WorldToCalcSpace(Vector3.Distance(transform.position, position)); //TODO: radius???
-        var potential = CoulombConstant * charge * Mathf.Pow(10f, -6f) / Mathf.Pow(distance, 2f);
+        var potential = CoulombConstant * Charge * Mathf.Pow(10f, -6f) / Mathf.Pow(distance, 2f);
         return potential;
     }
     

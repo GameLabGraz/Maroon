@@ -88,7 +88,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         foreach (var charge in _charges)
         {
             var pos = charge.transform.position;
-            list.Add(new Vector4(pos.x, pos.y, pos.z, charge.charge));
+            list.Add(new Vector4(pos.x, pos.y, pos.z, charge.Charge));
         }
 
         return list;
@@ -110,13 +110,13 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         {
             var currentParticle = _charges[i];
             var sumDirection = Vector3.zero;
-            if(Mathf.Abs(currentParticle.charge) < 0.0001f || currentParticle.fixedPosition)
+            if(Mathf.Abs(currentParticle.Charge) < 0.0001f || currentParticle.fixedPosition)
                 continue;
 
             var sumForce = Vector3.zero;
             for (var j = 0; j < _charges.Count; ++j)
             {
-                if(i == j || Mathf.Abs(currentParticle.charge) < 0.0001f)
+                if(i == j || Mathf.Abs(currentParticle.Charge) < 0.0001f)
                     continue;
                 
                 var affectingParticle = _charges[j];
@@ -127,7 +127,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
 //                if(r <= 1.5)
 //                    continue;
                 
-                if ((currentParticle.charge < 0f) == (affectingParticle.charge < 0f))
+                if ((currentParticle.Charge < 0f) == (affectingParticle.Charge < 0f))
                 {
                     //both have the same charge (both pos resp. neg) -> abstoßend
                     direction = Vector3.Normalize(currentParticle.transform.position - affectingParticle.transform.position);
@@ -139,7 +139,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
                     direction2 = (affectingParticle.transform.position - currentParticle.transform.position);
                 }
 
-                var force = CoulombConstant * Mathf.Abs(currentParticle.charge) * Mathf.Abs(affectingParticle.charge);
+                var force = CoulombConstant * Mathf.Abs(currentParticle.Charge) * Mathf.Abs(affectingParticle.Charge);
 //                var force = CoulombConstant * CoulombMultiplyFactor * Mathf.Abs(currentParticle.charge) * Mathf.Abs(affectingParticle.charge);
                 force /= Mathf.Pow(r, 2);
 
@@ -169,7 +169,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
 
         for (var i = 0; i < _charges.Count; ++i)
         {
-            if (Mathf.Abs(_charges[i].charge) < 0.0001f || _charges[i].fixedPosition)
+            if (Mathf.Abs(_charges[i].Charge) < 0.0001f || _charges[i].fixedPosition)
                 continue;
             _charges[i].UpdateCalculations();
         }
