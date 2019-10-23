@@ -1,9 +1,11 @@
 ﻿using System;
 using Maroon.Physics;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace PlatformControls.PC
 {
+
     [RequireComponent(typeof(Pendulum))]
     public class PC_SwingPendulum : MonoBehaviour
     {
@@ -11,6 +13,8 @@ namespace PlatformControls.PC
         private Pendulum _pendulum;
 
         private Vector3 _mouseStart;
+
+        public UnityEvent OnRelease;
 
     	private void Start()
         {
@@ -33,6 +37,7 @@ namespace PlatformControls.PC
         private void OnMouseUp()
         {
             _pendulum.Joint.useLimits = false;
+            OnRelease?.Invoke();
         }
 
         private void OnMouseDrag()

@@ -2,7 +2,7 @@
 using Maroon.Tools;
 using UnityEngine;
 
-namespace Maroon.Assessment
+namespace Maroon.Assessment.Handler
 {
     [RequireComponent(typeof(AssessmentObject))]
     public class AssessmentStopWatchHandler : MonoBehaviour

@@ -3,12 +3,18 @@ using Antares.Evaluation;
 using Maroon.UI;
 using UnityEngine;
 
-namespace Maroon.Assessment
+namespace Maroon.Assessment.Handler
 {
     public class AssessmentFeedbackHandler : MonoBehaviour
     {
-        [SerializeField]
         private DialogueManager dialogue;
+        private AssessmentDisplay display;
+
+        private void Awake()
+        {
+            dialogue = FindObjectOfType<DialogueManager>();
+            display = FindObjectOfType<AssessmentDisplay>();
+        }
 
         public void HandleFeedback(FeedbackEventArgs feedbackArgs)
         {
@@ -26,6 +32,9 @@ namespace Maroon.Assessment
                 case DisplayTextMessage displayTextMessage:
                   HandleDisplayTextMessage(displayTextMessage);
                   break;
+                case DisplaySlide displaySlide:
+                    HandleDisplaySlide(displaySlide);
+                    break;
                 default:
                     Debug.LogWarning(
                         $"AssessmentFeedbackHandler::HandleFeedbackEntry: Unable to handle feedback command");
@@ -56,7 +65,11 @@ namespace Maroon.Assessment
                     break;
             }
             dialogue.ShowMessage(message);
+        }
 
+        private void HandleDisplaySlide(DisplaySlide displaySlide)
+        {
+            display.LoadSlide(displaySlide.Slide);
         }
     }
 }

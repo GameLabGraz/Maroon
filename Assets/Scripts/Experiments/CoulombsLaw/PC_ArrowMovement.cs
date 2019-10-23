@@ -32,7 +32,8 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
     
     private Vector3 _localMinBoundary;
     private Vector3 _localMaxBoundary;
-    
+
+
     private Vector3 _movingDirection =  Vector3.zero;
     private bool _moving = false;
     private Vector3 _movingOffset = Vector3.zero;
@@ -109,12 +110,12 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
     private void UpdateMovementRestriction()
     {
         //Movement Restrictions -> hide arrows that are not allowed to move
-        _arrowXPositive.SetActive(!restrictXMovement); 
-        _arrowXNegative.SetActive(!restrictXMovement);
-        _arrowYPositive.SetActive(!restrictYMovement);
-        _arrowYNegative.SetActive(!restrictYMovement);
-        _arrowZPositive.SetActive(!restrictZMovement);
-        _arrowZNegative.SetActive(!restrictZMovement);
+        _arrowXPositive?.SetActive(!restrictXMovement); 
+        _arrowXNegative?.SetActive(!restrictXMovement);
+        _arrowYPositive?.SetActive(!restrictYMovement);
+        _arrowYNegative?.SetActive(!restrictYMovement);
+        _arrowZPositive?.SetActive(!restrictZMovement);
+        _arrowZNegative?.SetActive(!restrictZMovement);
     }
     
     private void ChangeRunMode()
