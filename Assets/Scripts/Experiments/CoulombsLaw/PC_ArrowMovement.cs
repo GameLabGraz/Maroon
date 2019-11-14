@@ -44,23 +44,23 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
 
     private Vector3 _originalPosition;
     
-    private GameObject _arrowXPositive;
-    private GameObject _arrowXNegative;
-    private GameObject _arrowYPositive;
-    private GameObject _arrowYNegative;
-    private GameObject _arrowZPositive;
-    private GameObject _arrowZNegative;
+    public GameObject _arrowXPositive;
+    public GameObject _arrowXNegative;
+    public GameObject _arrowYPositive;
+    public GameObject _arrowYNegative;
+    public GameObject _arrowZPositive;
+    public GameObject _arrowZNegative;
 
     // Start is called before the first frame update
     private void Start()
     {
         //Get the child object via fixed names (is a prefab, shouldn't need change)
-        _arrowXPositive = transform.Find("x_right").gameObject;
-        _arrowXNegative = transform.Find("x_left").gameObject;
-        _arrowYPositive = transform.Find("y_up").gameObject;
-        _arrowYNegative = transform.Find("y_down").gameObject;
-        _arrowZPositive = transform.Find("z_back").gameObject;
-        _arrowZNegative = transform.Find("z_forth").gameObject;
+//        _arrowXPositive = transform.Find("x_right").gameObject;
+//        _arrowXNegative = transform.Find("x_left").gameObject;
+//        _arrowYPositive = transform.Find("y_up").gameObject;
+//        _arrowYNegative = transform.Find("y_down").gameObject;
+//        _arrowZPositive = transform.Find("z_back").gameObject;
+//        _arrowZNegative = transform.Find("z_forth").gameObject;
         
         //Get the simulation controller
         var simControllerObject = GameObject.Find("SimulationController");
@@ -109,12 +109,12 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
     private void UpdateMovementRestriction()
     {
         //Movement Restrictions -> hide arrows that are not allowed to move
-        _arrowXPositive.SetActive(!restrictXMovement); 
-        _arrowXNegative.SetActive(!restrictXMovement);
-        _arrowYPositive.SetActive(!restrictYMovement);
-        _arrowYNegative.SetActive(!restrictYMovement);
-        _arrowZPositive.SetActive(!restrictZMovement);
-        _arrowZNegative.SetActive(!restrictZMovement);
+        if(_arrowXPositive) _arrowXPositive.SetActive(!restrictXMovement); 
+        if(_arrowXNegative) _arrowXNegative.SetActive(!restrictXMovement);
+        if(_arrowYPositive) _arrowYPositive.SetActive(!restrictYMovement);
+        if(_arrowYNegative) _arrowYNegative.SetActive(!restrictYMovement);
+        if(_arrowZPositive) _arrowZPositive.SetActive(!restrictZMovement);
+        if(_arrowZNegative) _arrowZNegative.SetActive(!restrictZMovement);
     }
     
     private void ChangeRunMode()

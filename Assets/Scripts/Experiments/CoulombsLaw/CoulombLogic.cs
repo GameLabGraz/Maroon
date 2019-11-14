@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -47,9 +48,15 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
 
     private float _worldToCalcSpaceFactor;
     
+    private bool _initialized = false;
+    
     // Start is called before the first frame update
     void Start()
     {
+        Initialize();
+    }
+    
+    private void Initialize(){
         var simControllerObject = GameObject.Find("SimulationController");
         if (simControllerObject)
             _simController = simControllerObject.GetComponent<SimulationController>();
@@ -60,12 +67,16 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         _charges = new List<CoulombChargeBehaviour>();
         _chargesGameObjects = new HashSet<GameObject>();
         OnSwitch3d2dMode(_in3dMode? 1f : 0f);
-
+    
         _worldToCalcSpaceFactor = Mathf.Abs(xAt1m.position.x - xOrigin.position.x);
+        _initialized = true;
     }
 
     private void FixedUpdate()
     {
+        if (!_initialized)
+            Initialize();
+        
         if (_simController.SimulationRunning)
         {
             RunSimulation();
@@ -89,6 +100,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         {
             var pos = charge.transform.position;
             list.Add(new Vector4(pos.x, pos.y, pos.z, charge.Charge));
+            Debug.Log("Charge as Vec: " + new Vector4(pos.x, pos.y, pos.z, charge.Charge));
         }
 
         return list;
