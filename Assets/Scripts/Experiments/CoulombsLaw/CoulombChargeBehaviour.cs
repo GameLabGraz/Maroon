@@ -148,7 +148,6 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
         if (Mathf.Abs(Charge) < 0.0001f) return Vector3.zero;
         var distance = _coulombLogic.WorldToCalcSpace(Vector3.Distance(transform.position, position)); //TODO: radius???
         var dir = (position - transform.position).normalized;
-        //TODO: consider 3d as well
         var potential = CoulombConstant * Charge * Mathf.Pow(10f, -6f) / Mathf.Pow(distance, 2f);
         return potential * dir;
     }

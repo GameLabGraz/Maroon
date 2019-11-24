@@ -2,6 +2,12 @@
 
 // Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Custom/CoulombVoltageShader" {
     Properties {
         _MainTex ("Sprite Texture", 2D) = "white" {}
@@ -12,6 +18,7 @@ Shader "Custom/CoulombVoltageShader" {
         _multFactor ("Mult Factor Charge", Range(0, 10)) = 0.001
         _minColor("MinColor", Color) = (1,1,1,1)
         _maxColor("MaxColor", Color) = (1,1,1,1)
+        _Distance("Distance", Range(0, 100)) = 1
     }
     
     SubShader {
@@ -35,6 +42,7 @@ Shader "Custom/CoulombVoltageShader" {
         float _multFactor;
         float4 _minColor;
         float4 _maxColor;
+        float _Distance;
         
         uniform int _EntryCnt;
         uniform float4 _Entries[100];       
@@ -67,24 +75,39 @@ Shader "Custom/CoulombVoltageShader" {
         
         vertOutput vert(vertInput input) {
             vertOutput o;
-            
             o.cmp_pos = float4(input.pos, 1);
             o.pos = UnityObjectToClipPos(input.pos);
             return o;
         }
         
         half4 frag(vertOutput input) : COLOR {
+            //return float4(normalize(input.cmp_pos.xyz), 1);
             float CoulombConstant = 9; 
             float CoulombMultiplyFactor = 0.001;
             float voltage = 0.0;
-            float3 world_pos = mul (unity_ObjectToWorld, input.cmp_pos.xyz);
+                
+            float4x4 model = unity_ObjectToWorld;
+            
+            float3 world_pos = mul(model , input.cmp_pos.xyz);
+            //return float4(normalize(world_pos), 1);
+            
             int entries = _EntryCnt;
             float radius = 0.71;
             for(int i = 0; i < entries; ++i){
                 float3 pos = _Entries[i].xyz;
                 float charge = _Entries[i].w;
                 
-                float dist = distance(world_pos, pos) - radius;
+                float dist = distance(world_pos, pos); // - radius;
+                
+                //if(dist < _Distance)
+                if(input.pos.x <= 0.5 && input.pos.y <= 0.5)
+                    return half4(1, 0, 0, 1);
+                
+                //return half4(0, 1, 0, 1);
+                
+                
+                //dist = sqrt(pow(pos.x - world_pos.x, 2) + pow(pos.y - world_pos.y, 2));        
+                
                 if(dist < 0) dist = 0;
                 float tmp = CoulombConstant * CoulombMultiplyFactor * charge * _multFactor / (dist * dist);
                 voltage = voltage + tmp;
