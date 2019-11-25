@@ -116,6 +116,7 @@ public class Voltmeter : MonoBehaviour, IResetWholeObject
 
     public void ResetWholeObject()
     {
+        gameObject.transform.localRotation = Quaternion.identity;
         gameObject.SetActive(false);
     }
 
