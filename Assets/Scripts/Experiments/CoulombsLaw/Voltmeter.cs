@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Linq;
+using UnityEditor.Experimental.UIElements.GraphView;
 using UnityEngine;
 using UnityEngine.Events;
-using Valve.VR.InteractionSystem;
 
 [Serializable]
 public class VoltmeterEvent : UnityEvent<string> {}
@@ -11,8 +10,10 @@ public class Voltmeter : MonoBehaviour, IResetWholeObject
 {
     public IField field;
     public VoltmeterEvent onVoltageChanged;
+    public VoltmeterEvent onVoltageChangedUnit;
     
     private CoulombLogic _coulombLogic;
+    private float _potential;
     
     // Start is called before the first frame update
     void Start()
@@ -22,10 +23,10 @@ public class Voltmeter : MonoBehaviour, IResetWholeObject
             _coulombLogic = simControllerObject.GetComponent<CoulombLogic>();
         Debug.Assert(_coulombLogic != null);
 
-        // There is only one voltmeter allowed.
-        FindObjectsOfType<Voltmeter>()
-            .Where(voltmeter => voltmeter != this)
-            .ForEach(voltmeter => Destroy(voltmeter.gameObject));
+//        // There is only one voltmeter allowed.
+//        FindObjectsOfType<Voltmeter>()
+//            .Where(voltmeter => voltmeter != this)
+//            .ForEach(voltmeter => Destroy(voltmeter.gameObject));
 
         onVoltageChanged.Invoke("---");
     }
@@ -35,12 +36,39 @@ public class Voltmeter : MonoBehaviour, IResetWholeObject
     {
         var currentPos = transform.position;
         if (!gameObject.activeInHierarchy) return;
-        
-        var potential = field.getStrength(currentPos) * Mathf.Pow(10f, -5f);
-        var potentialString = potential.ToString("0.000") + " V";
+
+        _potential = field.getStrength(currentPos) * Mathf.Pow(10, -6); //in V now (because we used microCoulomb)
+        var pot = _potential; //in micro Volt
+        var potentialString = pot.ToString("F"); 
 //            var potentialString = potential.ToString("0.000") + " * 10^-5 V";
 //            Debug.Log("OnVoltageChanged: " + potentialString);            
-        onVoltageChanged.Invoke(potentialString);
+        onVoltageChanged.Invoke(GetCurrentFormattedString());
+        onVoltageChangedUnit.Invoke(GetCurrentUnit());
+    }
+
+    public string GetCurrentUnit()
+    {
+        var checkPotential = _potential;
+        if (checkPotential > 1f)
+            return "V";
+        checkPotential *= Mathf.Pow(10, 3);
+        return checkPotential > 1f ? "mV" : "\u00B5V";
+    }
+
+    public string GetCurrentFormattedString()
+    {
+        var checkPotential = _potential;
+        for (var cnt = 0; checkPotential < 1f && cnt < 2; ++cnt)
+        {
+            checkPotential *= Mathf.Pow(10, 3);
+        }
+            
+        return checkPotential.ToString("F");   
+    }
+    
+    public float GetPotentialInMicroVolt()
+    {
+        return _potential; 
     }
 
 
@@ -81,7 +109,6 @@ public class Voltmeter : MonoBehaviour, IResetWholeObject
         }
         movArrows.gameObject.SetActive(true);
     }
-
     public void ResetObject()
     {
         

@@ -110,7 +110,11 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
 
     protected virtual void ShowObject(Vector3 position, Transform parent)
     {
-        var obj = Instantiate(generatedObject, position, Quaternion.identity, parent);
+        if (generatedObject == null) return;
+//        var obj = Instantiate(generatedObject, position, Quaternion.identity, parent);
+
+        var obj = generatedObject;
+        
         obj.transform.parent = parent;
         obj.transform.position = position;
         obj.SetActive(true);
