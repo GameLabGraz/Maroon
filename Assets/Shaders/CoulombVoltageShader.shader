@@ -99,6 +99,12 @@
 				{
 					float3 charge_entry_pos    = _Entries[i].xyz;
 					float  charge_entry_charge = _Entries[i].w;
+
+					// DEBUG
+					if (distance(input.pos_world_space, charge_entry_pos) < 2)
+						return half4(1, 0, 0, 1);
+					return half4(0, 0, 1, 1);
+					// DEBUG END
                 
 					float dist = distance(input.pos_world_space, charge_entry_pos);
                 
