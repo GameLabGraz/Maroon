@@ -42,7 +42,7 @@
 			vert2frag vert(vertInput input) {
 				vert2frag output;
 				output.pos_object_space = input.pos;
-				output.pos_world_space  = mul(unity_ObjectToWorld, input.pos.xyz);
+				output.pos_world_space  = mul(unity_ObjectToWorld, input.pos);
 				output.pos_clip_space   = UnityObjectToClipPos(input.pos);
 				return output;
 			}
@@ -87,8 +87,6 @@
         
 			half4 frag(vert2frag input) : COLOR {
 
-				//return half4(1, 0, 0, 1);
-
 				// Variables
 				float CoulombConstant = 9; 
 				float CoulombMultiplyFactor = 0.001;
@@ -99,12 +97,6 @@
 				{
 					float3 charge_entry_pos    = _Entries[i].xyz;
 					float  charge_entry_charge = _Entries[i].w;
-
-					// DEBUG
-					if (distance(input.pos_world_space, charge_entry_pos) < 2)
-						return half4(1, 0, 0, 1);
-					return half4(0, 0, 1, 1);
-					// DEBUG END
                 
 					float dist = distance(input.pos_world_space, charge_entry_pos);
                 
@@ -117,10 +109,7 @@
 					float tmp = CoulombConstant * CoulombMultiplyFactor * charge_entry_charge * _multFactor / (dist * dist);
 					voltage = voltage + tmp;
 				}
-
-				return half4(voltage, 0, 0, 1);
         
-				//voltage = clamp(voltage, _minValue, _maxValue);
 				int neg = 0;
 				if(voltage < 0){
 					neg = 1;
@@ -154,7 +143,6 @@
 						HSV = float3(((percentage / step) * border3) / 360, 1, 1);
 					}
                 
-	//                float3 HSV = float3((percentage * 240) / 360, 1, 1);   
 					float3 RGB = hsv_to_rgb(HSV);        
 					return half4(RGB, _Transparency); 
 				}
