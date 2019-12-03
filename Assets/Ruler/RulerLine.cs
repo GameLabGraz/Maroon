@@ -17,7 +17,7 @@ public class RulerLine : MonoBehaviour
         rend.material.mainTextureScale = new Vector2(this.gameObject.transform.lossyScale.x, 1);
 
         Vector3 temp = this.gameObject.transform.localScale;
-        temp.x += 0.001f;
+        temp.x += 0.01f;
         this.gameObject.transform.localScale = temp;
     }
 }
