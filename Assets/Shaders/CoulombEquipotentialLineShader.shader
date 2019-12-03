@@ -70,21 +70,21 @@
 				float3 pos, pos1, pos2, pos3, pos4;
 
 				// Init
-				pos = pos1 = pos2 = pos3 = pos4 = input.pos_object_space.xyz;
-				pos1.x = pos2.x = input.pos_object_space.x - _LineWidth;
-				pos3.x = pos4.x = input.pos_object_space.x + _LineWidth;
+				pos = pos1 = pos2 = pos3 = pos4 = input.pos_world_space;
+				pos1.x = pos2.x = input.pos_world_space.x - _LineWidth;
+				pos3.x = pos4.x = input.pos_world_space.x + _LineWidth;
             
-				pos1.z = pos3.z = input.pos_object_space.z - _LineWidth;
-				pos2.z = pos4.z = input.pos_object_space.z + _LineWidth;
+				pos1.z = pos3.z = input.pos_world_space.z - _LineWidth;
+				pos2.z = pos4.z = input.pos_world_space.z + _LineWidth;
             
-				float3 world_pos = mul (unity_ObjectToWorld, pos);
-				float3 world_pos1 = mul (unity_ObjectToWorld, pos1);
-				float3 world_pos2 = mul (unity_ObjectToWorld, pos2);
-				float3 world_pos3 = mul (unity_ObjectToWorld, pos3);
-				float3 world_pos4 = mul (unity_ObjectToWorld, pos4);
+				float3 world_pos = pos;
+				float3 world_pos1 = pos1;
+				float3 world_pos2 = pos2;
+				float3 world_pos3 = pos3;
+				float3 world_pos4 = pos4;
                         
 				//TODO: check voltage on 4 neigbouring points -> not a tolerance for the voltage -> use linewidth
-				 int entries = _EntryCnt;
+				int entries = _EntryCnt;
 				float voltage = 0.0;
 				float voltage1 = 0.0;
 				float voltage2 = 0.0;
