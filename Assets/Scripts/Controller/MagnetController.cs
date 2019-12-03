@@ -8,13 +8,6 @@ public class MagnetController : VRTK_InteractableObject
 
     private GameObject _grabbingObject;
 
-    private SimulationController _simController;
-
-    private void Start()
-    {
-        _simController = FindObjectOfType<SimulationController>();
-    }
-
     public override void Grabbed(VRTK_InteractGrab currentGrabbingObject = null)
     {
         base.Grabbed(currentGrabbingObject);
@@ -24,7 +17,7 @@ public class MagnetController : VRTK_InteractableObject
 
         _isMoving = true;
 
-        _simController.StartSimulation();
+        SimulationController.Instance.StartSimulation();
 
         StartCoroutine(TriggerHapticPulse());
     }
@@ -35,7 +28,7 @@ public class MagnetController : VRTK_InteractableObject
 
         _isMoving = false;
 
-        _simController.StopSimulation();
+        SimulationController.Instance.StopSimulation();
     }
 
 

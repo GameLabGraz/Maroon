@@ -2,7 +2,6 @@
 
 public class WaitForSecondsWithPause : CustomYieldInstruction
 {
-    private SimulationController simController;
     private float waitTime;
 
     public override bool keepWaiting
@@ -11,7 +10,7 @@ public class WaitForSecondsWithPause : CustomYieldInstruction
         {
             if (waitTime >= 0)
             {
-                if(simController == null || simController.SimulationRunning)
+                if(SimulationController.Instance == null || SimulationController.Instance.SimulationRunning)
                     waitTime -= Time.deltaTime;
 
                 return true;
@@ -23,13 +22,11 @@ public class WaitForSecondsWithPause : CustomYieldInstruction
 
     public WaitForSecondsWithPause(float seconds)
     {
-        this.simController = GameObject.FindObjectOfType<SimulationController>();
-        this.waitTime = seconds;
+        waitTime = seconds;
     }
 
     public WaitForSecondsWithPause(float seconds, SimulationController simController)
     {
-        this.simController = simController;
-        this.waitTime = seconds;
+        waitTime = seconds;
     }
 }

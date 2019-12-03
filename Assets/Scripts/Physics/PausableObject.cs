@@ -6,19 +6,16 @@ public abstract class PausableObject : MonoBehaviour
 
     private bool IsPause = false;
 
-    protected SimulationController simController;
-
     protected Rigidbody _rigidbody;
 
     protected virtual void Start()
     {
-        simController = FindObjectOfType<SimulationController>();
         _rigidbody = GetComponent<Rigidbody>();
     }
 
     protected virtual void Update()
     {
-        if(simController.SimulationRunning)
+        if(SimulationController.Instance.SimulationRunning)
         {
             if(IsPause)
             {
@@ -45,7 +42,7 @@ public abstract class PausableObject : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
-        if (simController.SimulationRunning)
+        if (SimulationController.Instance.SimulationRunning)
             HandleFixedUpdate();
     }
 

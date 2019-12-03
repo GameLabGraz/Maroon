@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------------
-// SimulationController.cs
+// UpdateFieldLineVisibility.cs
 //
 // Script to update the field line visibility
 //
@@ -12,7 +12,6 @@
 
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 /// <summary>
 /// Class to update the field line visibility
@@ -27,7 +26,7 @@ public class UpdateFieldLineVisibility : MonoBehaviour
     /// <summary>
     /// Stores the field with the toggle game component
     /// </summary>
-    void Start()
+    private void Start()
     {
         toggleFieldLineVisibility = gameObject.GetComponent<Toggle>();
     }

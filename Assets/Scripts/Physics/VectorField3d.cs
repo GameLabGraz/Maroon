@@ -31,10 +31,6 @@ public class VectorField3d : VectorField
     /// </summary>
     protected void Start()
     {
-        GameObject simControllerObject = GameObject.Find("SimulationController");
-        if (simControllerObject)
-            simController = simControllerObject.GetComponent<SimulationController>();
-
         height = GetComponent<MeshFilter>().mesh.bounds.size.z;
         depth = GetComponent<MeshFilter>().mesh.bounds.size.y;
         width = GetComponent<MeshFilter>().mesh.bounds.size.x;
@@ -52,7 +48,7 @@ public class VectorField3d : VectorField
     /// </summary>
     protected override void createVectorFieldArrows()
     {
-        if (simController == null)
+        if (SimulationController.Instance == null)
         {
             Start();
             return;
@@ -89,8 +85,8 @@ public class VectorField3d : VectorField
                     arrow.transform.localScale = Vector3.Scale(new Vector3(arrow_scale, arrow_scale, arrow_scale),
                                                      transform.localScale) / 3;
                     arrow.transform.localPosition = new Vector3(x, z, y);
-                    
-                    simController.AddNewResetObject(arrow.GetComponent<IResetObject>());
+
+                    SimulationController.Instance.AddNewResetObject(arrow.GetComponent<IResetObject>());
                     vectorFieldArrows.Add(arrow);
                 }
             }
