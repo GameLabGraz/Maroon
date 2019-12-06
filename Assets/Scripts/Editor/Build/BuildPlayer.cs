@@ -49,14 +49,44 @@ namespace Maroon.Build
             Build(MaroonBuildTarget.WebGL);
         }
 
-        private static void Build(MaroonBuildTarget buildTarget)
+        public static void JenkinsBuild()
         {
-            var buildPath = EditorUtility.SaveFolderPanel("Choose Build Location", "Build", $"{buildTarget}");
-            if (buildPath.Length == 0)
-                return;
+            var args = Environment.GetCommandLineArgs();
 
-            Debug.ClearDeveloperConsole();
-            Debug.Log($"Start building for {buildTarget} ...");
+            var executeMethodIndex = Array.IndexOf(args, "-executeMethod");
+            if (executeMethodIndex + 2 >= args.Length)
+            {
+                Log("[JenkinsBuild] Incorrect Parameters for -executeMethod Format: -executeMethod <output dir>");
+                return;
+            }
+
+            //  args[executeMethodIndex + 1] = JenkinsBuild.Build
+            var buildPath = args[executeMethodIndex + 2];
+
+            // run build for each build target
+            foreach (var buildTarget in (BuildPlayer.MaroonBuildTarget[])Enum.GetValues(
+                typeof(BuildPlayer.MaroonBuildTarget)))
+            {
+                BuildPlayer.Build(buildTarget, $"{buildPath}/{buildTarget}");
+            }
+        }
+
+        private static void Build(MaroonBuildTarget buildTarget, string buildPath = null)
+        {
+            if (string.IsNullOrEmpty(buildPath))
+            {
+                if (!UnityEditorInternal.InternalEditorUtility.isHumanControllingUs)
+                    return;
+
+                buildPath = EditorUtility.SaveFolderPanel("Choose Build Location", "Build", $"{buildTarget}");
+                if (buildPath.Length == 0)
+                    return;
+            }
+
+            if (UnityEditorInternal.InternalEditorUtility.isHumanControllingUs)
+                Debug.ClearDeveloperConsole();
+
+            Log($"Start building for {buildTarget} ...");
 
             PlayerSettings.bundleVersion = DateTime.UtcNow.Date.ToString("yyyyMMdd");
 
@@ -77,7 +107,7 @@ namespace Maroon.Build
             var sceneExtension = GetSceneExtension(buildTarget);
             if (sceneExtension == string.Empty)
             {
-                Debug.LogError($"BuildPlayer::GetScenes: Unable to load Scenes for {buildTarget}");
+                Log($"BuildPlayer::GetScenes: Unable to load Scenes for {buildTarget}");
                 return null;
             }
 
@@ -145,13 +175,13 @@ namespace Maroon.Build
             switch (summary.result)
             {
                 case BuildResult.Succeeded:
-                    Debug.Log($"Build succeeded: {summary.totalSize} bytes");
+                    Log($"Build succeeded: {summary.totalSize} bytes");
                     break;
                 case BuildResult.Failed:
-                    Debug.LogError("Build failed!");
+                    Log("Build failed!");
                     break;
                 case BuildResult.Unknown:
-                    Debug.LogWarning("Unknown Build result.");
+                    Log("Unknown Build result.");
                     break;
                 case BuildResult.Cancelled:
                     Debug.Log("Build cancelled.");
@@ -159,6 +189,14 @@ namespace Maroon.Build
                 default:
                     throw new Exception("BuildPlayer: Unable to handle build result.");
             }
+        }
+
+        private static void Log(string message)
+        {
+            if (UnityEditorInternal.InternalEditorUtility.isHumanControllingUs)
+                Debug.Log(message);
+            else
+                Console.WriteLine(message);
         }
     }
 }
