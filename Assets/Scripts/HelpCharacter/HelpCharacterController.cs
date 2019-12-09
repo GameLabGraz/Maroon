@@ -8,14 +8,8 @@ namespace HelpCharacter
         [SerializeField]
         private float _turnSpeed = 5.0f;
         
-        [SerializeField]
-        private Camera _mainCamera;
-
         private void Start()
         {
-            if(_mainCamera == null)
-             _mainCamera = Camera.main;
-
             if (SceneManager.GetActiveScene().name.Contains("Laboratory") && GameManager.Instance.LabLoaded)
                 return;
 
@@ -25,10 +19,10 @@ namespace HelpCharacter
 
         private void Update()
         {
-            if (_mainCamera == null)
+            if (Camera.main == null)
                 return;            
 
-            var direction = _mainCamera.transform.position - transform.position; // set direction of help character
+            var direction = Camera.main.transform.position - transform.position; // set direction of help character
             direction.Normalize(); //for look rotation direction vector needs to be orthogonal
 
             // slerp = Rotation from X to Y. X is current rotation, Y is where player direction vector is
