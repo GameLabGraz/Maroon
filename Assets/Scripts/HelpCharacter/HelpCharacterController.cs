@@ -12,15 +12,16 @@ namespace HelpCharacter
         {
             if (SceneManager.GetActiveScene().name.Contains("Laboratory") && GameManager.Instance.LabLoaded)
                 return;
-
-            foreach (var helpMessage in gameObject.GetComponents<HelpMessage>())
-                helpMessage.ShowMessage();
         }
 
         private void Update()
         {
             if (Camera.main == null)
-                return;            
+                return;
+
+            // is displayed only once
+            foreach (var helpMessage in gameObject.GetComponents<HelpMessage>())
+                helpMessage.ShowMessage();
 
             var direction = Camera.main.transform.position - transform.position; // set direction of help character
             direction.Normalize(); //for look rotation direction vector needs to be orthogonal
