@@ -15,23 +15,17 @@ public class ScreenController : MonoBehaviour
     [SerializeField]
     private string valueGetterMethodByReference;
 
-    private SimulationController simController;
-
-    void Start()
+    private void Start()
     {
-        GameObject simControllerObject = GameObject.Find("SimulationController");
-        if (simControllerObject)
-            simController = simControllerObject.GetComponent<SimulationController>();
-
         if (valueDisplay == null)
             GameObject.Find("ValueDisplay").GetComponent<Text>();
 
         valueDisplay.text = valueDisplayText;
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
-        MessageArgs messageArgs = new MessageArgs();
+        var messageArgs = new MessageArgs();
         valueGetterObject.SendMessage(valueGetterMethodByReference, messageArgs);
         valueDisplay.text = valueDisplayText + messageArgs.value.ToString();
     }

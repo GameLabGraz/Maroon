@@ -4,7 +4,6 @@ namespace PlatformControls.BaseControls
 {
     public abstract class Movement : MonoBehaviour
     {
-        protected SimulationController SimController;
         protected bool IsMoving = false;
 
         [SerializeField]
@@ -19,19 +18,12 @@ namespace PlatformControls.BaseControls
         [SerializeField]
         protected bool SimulationRunningDuringMovement = false;
 
-        protected virtual void Start()
-        {
-            SimController = FindObjectOfType<SimulationController>();
-            if(!SimController)
-                throw new System.NullReferenceException("Simulation Controller is null");
-        }
-
         protected void StartMoving()
         {
             IsMoving = true;
 
             if (!SimulationRunningDuringMovement)
-                SimController.StartSimulation();
+                SimulationController.Instance.StartSimulation();
         }
 
         protected void StopMoving()
@@ -39,7 +31,7 @@ namespace PlatformControls.BaseControls
             IsMoving = false;
 
             if (!SimulationRunningDuringMovement)
-                SimController.StopSimulation();
+                SimulationController.Instance.StopSimulation();
         }
 
         protected void Move(Vector3 target)

@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------------
-// SimulationController.cs
+// UpdateNumFieldLines.cs
 //
 // Script to update the number of field lines
 //
@@ -12,7 +12,6 @@
 
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 /// <summary>
 /// Class to update the number of field lines
@@ -28,7 +27,7 @@ public class UpdateNumFieldLines : MonoBehaviour
     /// <summary>
     /// Stores the slider component in the slider field
     /// </summary>
-    void Start()
+    private void Start()
     {
         slider = gameObject.GetComponent<Slider>();
     }

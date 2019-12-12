@@ -9,7 +9,6 @@ namespace PlatformControls.PC
     [RequireComponent(typeof(Pendulum))]
     public class PC_SwingPendulum : MonoBehaviour
     {
-        private SimulationController _simulationController;
         private Pendulum _pendulum;
 
         private Vector3 _mouseStart;
@@ -18,17 +17,13 @@ namespace PlatformControls.PC
 
     	private void Start()
         {
-            _simulationController = FindObjectOfType<SimulationController>();
-            if(!_simulationController)
-                throw new System.NullReferenceException("Simulation Controller is null");
-
             _pendulum = GetComponent<Pendulum>();
         }
 
         private void OnMouseDown()
         {
-            if (!_simulationController.SimulationRunning)
-                _simulationController.StartSimulation();
+            if (!SimulationController.Instance.SimulationRunning)
+                SimulationController.Instance.StartSimulation();
 
             _mouseStart = Input.mousePosition;
             _pendulum.GetComponent<Rigidbody>().WakeUp();

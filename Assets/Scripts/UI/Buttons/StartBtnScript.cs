@@ -38,8 +38,8 @@ namespace Maroon.UI.Buttons
         protected  override void Start()
         {
             base.Start();
-            SimController.OnStart += OnStartHandler;
-            SimController.OnStop += OnStopHandler;
+            SimulationController.Instance.OnStart += OnStartHandler;
+            SimulationController.Instance.OnStop += OnStopHandler;
         }
 
         private void OnStartHandler(object sender, EventArgs e)
@@ -57,10 +57,10 @@ namespace Maroon.UI.Buttons
         /// </summary>
         public void ButtonStartPressed()
         {
-            if (SimController.SimulationRunning)
-                SimController.StopSimulation();
+            if (SimulationController.Instance.SimulationRunning)
+                SimulationController.Instance.StopSimulation();
             else
-                SimController.StartSimulation();
+                SimulationController.Instance.StartSimulation();
         }
     }
 }

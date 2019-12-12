@@ -19,14 +19,14 @@ namespace HelpCharacter
 
         public string MessageKey
         {
-            get { return _messageKey; }
-            set { _messageKey = value; }
+            get => _messageKey;
+            set => _messageKey = value;
         }
 
         public void ShowMessage()
         {
             if (_dialogueManager == null)
-                _dialogueManager = GameObject.FindObjectOfType<DialogueManager>();
+                _dialogueManager = FindObjectOfType<DialogueManager>();
 
             if (_dialogueManager == null || (_alreadyDisplayed && !_showMultipleTimes))
                 return;
