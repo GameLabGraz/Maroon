@@ -9,6 +9,9 @@ namespace Localization
         [SerializeField]
         private string _key;
 
+        [SerializeField]
+        private bool _addColon = false;
+
         private Text _text;
 
         private void Start()
@@ -19,8 +22,9 @@ namespace Localization
 
         public void UpdateLocalizedText()
         {
-            if (_text)
-                _text.text = LanguageManager.Instance.GetString(_key);
+            _text.text = LanguageManager.Instance.GetString(_key);
+            if (_addColon)
+                _text.text += ":";
         }
     }
 }

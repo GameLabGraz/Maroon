@@ -32,7 +32,6 @@ public class PlaneVisualization : MonoBehaviour, IResetObject
     public IntConditionCallback onGetMaxChargesCount;
     public BoolConditionCallback onAllowVisualization;
     
-    private SimulationController _simController;
     private int _maxCnt;
     
     private enum Mode
@@ -47,12 +46,8 @@ public class PlaneVisualization : MonoBehaviour, IResetObject
     
     
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        var simControllerObject = GameObject.Find("SimulationController");
-        if (simControllerObject)
-            _simController = simControllerObject.GetComponent<SimulationController>();
-
         Debug.Assert(onGetMaxChargesCount != null);
         _maxCnt = onGetMaxChargesCount.Invoke();
         
@@ -63,10 +58,10 @@ public class PlaneVisualization : MonoBehaviour, IResetObject
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (_currentMode == Mode.Disabled) return;
-        if (_simController.SimulationRunning)
+        if (SimulationController.Instance.SimulationRunning)
             Disable();
         else if (updateDuringRuntime && (_currentMode == Mode.VoltageVis || _currentMode == Mode.EquipotentialVis))
         {
@@ -176,16 +171,7 @@ public class PlaneVisualization : MonoBehaviour, IResetObject
 
     private void ShowShader(Material mat)
     {
-        if (_simController == null)
-        {
-            var simControllerObject = GameObject.Find("SimulationController");
-            if (simControllerObject)
-                _simController = simControllerObject.GetComponent<SimulationController>();
-            Debug.Assert(_simController != null);
-        }
-
-        if(_simController != null)
-            _simController.SimulationRunning = false;
+        SimulationController.Instance.SimulationRunning = false;
         var vecArray = onGetChargePosition.Invoke();
         var entryCnt = vecArray.Count;
         for (var i = entryCnt; i < _maxCnt; ++i)

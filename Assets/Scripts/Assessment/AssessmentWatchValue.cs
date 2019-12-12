@@ -8,7 +8,7 @@ using Maroon.Physics;
 namespace Maroon.Assessment
 {
     [RequireComponent(typeof(AssessmentObject))]
-    public class AssessmentWatchValue : IAssessmentValue
+    public class AssessmentWatchValue : MonoBehaviour
     {
         [SerializeField]
         private Component component;
@@ -21,6 +21,8 @@ namespace Maroon.Assessment
 
 
         private List<string> _attributeComponents;
+
+        public virtual string Name => gameObject.name;
 
         public string ObjectID => $"{gameObject.name}{gameObject.GetInstanceID()}";
 
@@ -37,7 +39,7 @@ namespace Maroon.Assessment
             _attributeComponents = new List<string>(attribute.Split('.'));
         }
 
-        public override object GetValue()
+        public object GetValue()
         {
             object obj = component;
             foreach (var attributePart in _attributeComponents)

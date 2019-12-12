@@ -1,4 +1,14 @@
 
+load slide "pendulum_task_1.xml" into slide_1
+
+pattern init:
+	match action enter
+	query objects \
+		where class == [Display] \
+		into board
+	display slide_1 on board
+	feedback success "Willkommen beim Experiment 'Fadenpendel'."
+
 
 pattern Measurement:
 
@@ -23,7 +33,14 @@ pattern Measurement:
 	match action stop on sw
 	
 	if diff_p(s:p.elongation, p.elongation) <= 0.1:
-		feedback success "Well done! Your measurement was well within the expected tolerance."
+		feedback success "Gut gemacht! Deine Messung liegt gut in der Toleranz."
 	else:
-		feedback warning "test"
+		feedback warning "Du hast keine vollständigen Perioden gemessen!"
 
+
+pattern FrequencyCalculation:
+	match action submit
+	feedback success "Danke für das Einreichen der Antwort"
+
+
+	

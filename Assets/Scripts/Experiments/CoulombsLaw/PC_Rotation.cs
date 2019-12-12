@@ -14,18 +14,10 @@ public class PC_Rotation : MonoBehaviour, IResetWholeObject
     [Tooltip("Stops the simulation while rotating when enabled.")]
     public bool onlyRotateOnSimulationPause;
     
-    
-    private SimulationController _simController;
     private Transform rotateTrans;
     
     private void Start()
     {
-        var simControllerObject = GameObject.Find("SimulationController");
-        if (simControllerObject)
-        {
-            _simController = simControllerObject.GetComponent<SimulationController>();
-        }
-
         rotateTrans = rotationObject == null ? transform : rotationObject.transform;
     }
 
@@ -47,7 +39,7 @@ public class PC_Rotation : MonoBehaviour, IResetWholeObject
         if (!enabled) return;
         
         // taken from https://www.youtube.com/watch?v=S3pjBQObC90
-        if(onlyRotateOnSimulationPause) _simController.SimulationRunning = false;
+        if(onlyRotateOnSimulationPause) SimulationController.Instance.SimulationRunning = false;
         
         var rotX = Input.GetAxis("Mouse X") * rotationSpeed * Mathf.Deg2Rad;
         var rotY = Input.GetAxis("Mouse Y") * rotationSpeed * Mathf.Deg2Rad;

@@ -23,23 +23,14 @@ public class AboutInfo : MonoBehaviour
     /// </summary>
     private bool simRunning;
 
-    private SimulationController simController;
-
-    private void Start()
-    {
-        GameObject simControllerObject = GameObject.Find("SimulationController");
-        if (simControllerObject)
-            simController = simControllerObject.GetComponent<SimulationController>();
-    }
-
     /// <summary>
     /// Shows the about panel
     /// </summary>
     public void showAboutPanel()
     {
-        simRunning = simController.SimulationRunning;
+        simRunning = SimulationController.Instance.SimulationRunning;
         if (simRunning)
-            simController.StopSimulation();
+            SimulationController.Instance.StopSimulation();
         gameObject.SetActive(true);
     }
 
@@ -49,7 +40,7 @@ public class AboutInfo : MonoBehaviour
     public void closeAboutIPanel()
     {
         if (simRunning)
-            simController.StartSimulation();
+            SimulationController.Instance.StartSimulation();
         gameObject.SetActive(false);
     }
 }

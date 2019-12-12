@@ -1,30 +1,29 @@
 ﻿using System;
 using Maroon.Physics;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace PlatformControls.PC
 {
+
     [RequireComponent(typeof(Pendulum))]
     public class PC_SwingPendulum : MonoBehaviour
     {
-        private SimulationController _simulationController;
         private Pendulum _pendulum;
 
         private Vector3 _mouseStart;
 
+        public UnityEvent OnRelease;
+
     	private void Start()
         {
-            _simulationController = FindObjectOfType<SimulationController>();
-            if(!_simulationController)
-                throw new System.NullReferenceException("Simulation Controller is null");
-
             _pendulum = GetComponent<Pendulum>();
         }
 
         private void OnMouseDown()
         {
-            if (!_simulationController.SimulationRunning)
-                _simulationController.StartSimulation();
+            if (!SimulationController.Instance.SimulationRunning)
+                SimulationController.Instance.StartSimulation();
 
             _mouseStart = Input.mousePosition;
             _pendulum.GetComponent<Rigidbody>().WakeUp();
@@ -33,6 +32,7 @@ namespace PlatformControls.PC
         private void OnMouseUp()
         {
             _pendulum.Joint.useLimits = false;
+            OnRelease?.Invoke();
         }
 
         private void OnMouseDrag()

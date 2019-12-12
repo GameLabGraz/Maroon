@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PathFollower : PausableObject
 {
@@ -32,14 +31,14 @@ public class PathFollower : PausableObject
         if (path == null)
             return new Vector3();
 
-        List<Vector3> nodes = path.GetNodes(reverseOrder);
+        var nodes = path.GetNodes(reverseOrder);
 
         previousTarget = currentTarget;
         currentTarget = nodes[currentNode];
 
         if (Vector3.Distance(transform.position, currentTarget) <= 0.01f)
         {
-            if (simController.SimulationRunning)
+            if (SimulationController.Instance.SimulationRunning)
                 currentNode++;
 
             if (currentNode >= nodes.Count)
@@ -51,8 +50,8 @@ public class PathFollower : PausableObject
 
     private Vector3 Seek(Vector3 target)
     {
-        Vector3 desiredVelocity = Vector3.Normalize(target - transform.position) * maxSpeed;
-        Vector3 steering = desiredVelocity - velocity;
+        var desiredVelocity = Vector3.Normalize(target - transform.position) * maxSpeed;
+        var steering = desiredVelocity - velocity;
         return steering;
     }
 
@@ -71,26 +70,26 @@ public class PathFollower : PausableObject
         if (!followPath)
             return;
 
-        Vector3 steering = Vector3.zero;
+        var steering = Vector3.zero;
         steering += PathFollowing();
 
         steering = Vector3.ClampMagnitude(steering, maxForce);
         steering /= mass;
 
-        if(simController.SimulationRunning)
+        if(SimulationController.Instance.SimulationRunning)
         {
             velocity = Vector3.ClampMagnitude(velocity + steering, maxSpeed);
             transform.position += velocity;
         }
         else
         {
-            Vector3 direction = currentTarget - previousTarget;
+            var direction = currentTarget - previousTarget;
             transform.position += direction;
         }
     }
 
     protected override void HandleFixedUpdate()
     {
-        // not implemended
+        // not implemented
     }
 }

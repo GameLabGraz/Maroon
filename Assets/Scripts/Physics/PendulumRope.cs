@@ -24,7 +24,7 @@ namespace Maroon.Physics
             _lineRenderer.InitLineRenderer();
             _lineRenderer.SetWidth(_ropeWeidth, _ropeWeidth);
 
-            simController.OnStop += (sender, args) => { DrawRope(); };
+            SimulationController.Instance.OnStop += (sender, args) => { DrawRope(); };
 
             DrawRope();
         }
