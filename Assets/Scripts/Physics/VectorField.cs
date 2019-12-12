@@ -53,17 +53,11 @@ public class VectorField : MonoBehaviour
     [SerializeField]
     protected float fieldStrengthFactor = Teal.FieldStrengthFactor;
 
-    protected SimulationController simController = null;
-
     /// <summary>
     /// Initialization
     /// </summary>
     protected void Start()
     {
-        GameObject simControllerObject = GameObject.Find("SimulationController");
-        if (simControllerObject)
-            simController = simControllerObject.GetComponent<SimulationController>();
-
         height = GetComponent<MeshFilter>().mesh.bounds.size.z;
         width = GetComponent<MeshFilter>().mesh.bounds.size.x;
 
@@ -75,7 +69,7 @@ public class VectorField : MonoBehaviour
     /// </summary>
     protected virtual void createVectorFieldArrows()
     {
-        if (simController == null)
+        if (SimulationController.Instance == null)
         {
             Start();
             return;
@@ -87,14 +81,14 @@ public class VectorField : MonoBehaviour
         else
             arrow_scale = 1 + (20 - resolution) * 0.05f;
 
-        for (int i = 0; i < resolution; i++)
+        for (var i = 0; i < resolution; i++)
         {
-            for (int j = 0; j < resolution; j++)
+            for (var j = 0; j < resolution; j++)
             {
-                float x = -width / 2 + (width / resolution) * (0.5f + i);
-                float y = -height / 2 + (height / resolution) * (0.5f + j);
+                var x = -width / 2 + (width / resolution) * (0.5f + i);
+                var y = -height / 2 + (height / resolution) * (0.5f + j);
 
-                GameObject arrow = Instantiate(arrowPrefab) as GameObject;
+                var arrow = Instantiate(arrowPrefab) as GameObject;
                 arrow.GetComponent<ArrowController>().fieldStrengthFactor = this.fieldStrengthFactor;
                 arrow.GetComponent<ArrowController>().OnlyUpdateInRunMode = OnlyUpdateInRunMode;
 
@@ -102,7 +96,7 @@ public class VectorField : MonoBehaviour
                 arrow.transform.parent = transform; //set vectorField as parent
                 arrow.transform.localPosition = new Vector3(x, 0, y);
 
-                simController.AddNewResetObject(arrow.GetComponent<IResetObject>());
+                SimulationController.Instance.AddNewResetObject(arrow.GetComponent<IResetObject>());
                 vectorFieldArrows.Add(arrow);
             }
         }
@@ -132,9 +126,9 @@ public class VectorField : MonoBehaviour
     /// </summary>
     protected void clearVectorField()
     {
-        foreach (GameObject arrow in vectorFieldArrows)
+        foreach (var arrow in vectorFieldArrows)
         {
-            simController.RemoveResetObject(arrow.GetComponent<IResetObject>());
+            SimulationController.Instance.RemoveResetObject(arrow.GetComponent<IResetObject>());
             DestroyImmediate(arrow);
         }
         vectorFieldArrows.Clear();

@@ -67,17 +67,11 @@ public class IronFiling : MonoBehaviour, IResetObject
     [SerializeField]
     private float lineEndWidth = 0.004f;
 
-    private SimulationController simController;
-
     /// <summary>
     /// Initialization
     /// </summary>
-    void Start()
+    private void Start()
     {
-        GameObject simControllerObject = GameObject.Find("SimulationController");
-        if (simControllerObject)
-            simController = simControllerObject.GetComponent<SimulationController>();
-
         //TODO: get correct width and height
         if (!usePredefinedSize)
         {
@@ -89,13 +83,13 @@ public class IronFiling : MonoBehaviour, IResetObject
         field = GameObject.FindGameObjectWithTag("Field").GetComponent<IField>();
         linerenderers = new LineRenderer[2 * iterations];
 
-        for (int i = 0; i < iterations * 2; i++)
+        for (var i = 0; i < iterations * 2; i++)
         {
-            GameObject line = new GameObject("line");
+            var line = new GameObject("line");
             line.transform.parent = this.transform;
             //line.transform.localRotation = Quaternion.identity;
 
-            LineRenderer linerenderer = line.AddComponent<LineRenderer>();
+            var linerenderer = line.AddComponent<LineRenderer>();
             //linerenderer.useWorldSpace = false;
             linerenderer.shadowCastingMode = ShadowCastingMode.On;
             linerenderer.receiveShadows = true;
@@ -111,9 +105,9 @@ public class IronFiling : MonoBehaviour, IResetObject
     /// <summary>
     /// Update is called every frame and disables the object during a running simulation.
     /// </summary>
-    void Update()
+    private void Update()
     {
-        if (simController.SimulationRunning)
+        if (SimulationController.Instance.SimulationRunning)
             gameObject.SetActive(false);
     }
 
@@ -125,8 +119,8 @@ public class IronFiling : MonoBehaviour, IResetObject
         if (field == null)
             return;
 
-        simController.StopSimulation();
-        simController.AddNewResetObject(this);
+        SimulationController.Instance.StopSimulation();
+        SimulationController.Instance.AddNewResetObject(this);
 
         Debug.Log("Start IronFiling");
         
@@ -136,9 +130,9 @@ public class IronFiling : MonoBehaviour, IResetObject
                 child.gameObject.SetActive(true);
         }
 
-        for (int i = 0; i < iterations * 2; i++)
+        for (var i = 0; i < iterations * 2; i++)
         {
-            Vector3 origin = new Vector3(Random.Range(-1f, 1f) * width/2, 0, Random.Range(-1f, 1f) * height/2);
+            var origin = new Vector3(Random.Range(-1f, 1f) * width/2, 0, Random.Range(-1f, 1f) * height/2);
             drawIron(origin, linerenderers[i]);
         }
         Debug.Log("End IronFiling");
@@ -163,14 +157,14 @@ public class IronFiling : MonoBehaviour, IResetObject
     private void drawIron(Vector3 origin, LineRenderer linerender)
     {
         // line renderer points in world space!
-        List<Vector3> linePoints = new List<Vector3> { transform.TransformPoint(origin) };
+        var linePoints = new List<Vector3> { transform.TransformPoint(origin) };
 
-        Vector3 linePoint = origin;
-        int numberOfPoints = 1;
+        var linePoint = origin;
+        var numberOfPoints = 1;
         while (linePoint.x <= width / 2.0f && linePoint.x >= -width / 2.0f &&
                linePoint.z <= height / 2.0f && linePoint.z >= -height / 2.0f && numberOfPoints < maxvertexCount)
         {
-            Vector3 globalLinePoint = transform.TransformPoint(linePoint);
+            var globalLinePoint = transform.TransformPoint(linePoint);
             globalLinePoint += Vector3.Normalize(field.get(globalLinePoint)) * lineSegmentLength;
 
             linePoints.Add(globalLinePoint);
@@ -181,7 +175,7 @@ public class IronFiling : MonoBehaviour, IResetObject
         }
 
         linerender.positionCount = numberOfPoints;
-        for (int i = 0; i < numberOfPoints; i++)
+        for (var i = 0; i < numberOfPoints; i++)
         {
             linerender.SetPosition(i, linePoints[i]);
         }

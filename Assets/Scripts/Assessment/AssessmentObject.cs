@@ -7,25 +7,40 @@ namespace Maroon.Assessment
     {
         StopWatch,
         Calculator,
-        Pendulum
+        Pendulum,
+        Voltmeter,
+        Ruler,
+        Charge,
+        Display,
+        Slide
     }
 
     public class AssessmentObject : MonoBehaviour
     {
-        public AssessmentClass assessmentClass;
+        [SerializeField]
+        protected AssessmentClass classType;
 
         private readonly SortedList<string, AssessmentWatchValue> _watchValues = new SortedList<string, AssessmentWatchValue>();
 
+        public AssessmentClass ClassType => classType;
+
         public IList<AssessmentWatchValue> WatchValues => _watchValues.Values;
 
-        public string ObjectID => $"{gameObject.name}{gameObject.GetInstanceID()}";
+        public string ObjectID { get; protected set; }
 
-        private void Start()
+        protected virtual void Start()
         {
+            ObjectID = $"{gameObject.name}{gameObject.GetInstanceID()}";
+
             foreach (var watchValue in GetComponents<AssessmentWatchValue>())
                 _watchValues.Add(watchValue.PropertyName, watchValue);
 
-            AssessmentManager.Instance.RegisterAssessmentObject(this);
+            AssessmentManager.Instance?.RegisterAssessmentObject(this);
+        }
+
+        protected virtual void OnDestroy()
+        {
+            AssessmentManager.Instance?.DeregisterAssessmentObject(this);
         }
 
         public void OnAttributeValueChanged(string propertyName)
@@ -34,7 +49,7 @@ namespace Maroon.Assessment
             if (watchValue.IsDynamic)
                 return;
 
-            AssessmentManager.Instance.SendDataUpdate(ObjectID, propertyName, watchValue.GetValue());
+            AssessmentManager.Instance?.SendDataUpdate(ObjectID, propertyName, watchValue.GetValue());
         }
     }
 }

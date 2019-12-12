@@ -53,7 +53,6 @@ namespace Maroon.Tools
         private void Start()
         {
             isRunning = false;
-            SWReset();
         }
 
         private IEnumerator Run()

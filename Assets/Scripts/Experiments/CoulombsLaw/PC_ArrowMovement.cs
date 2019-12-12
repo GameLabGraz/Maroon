@@ -39,7 +39,6 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
     private float _distance;
     
     private LineRenderer _lineRenderer;
-    private SimulationController _simController;
     private bool _lastUpdateInRunMode = false;
 
     private Vector3 _originalPosition;
@@ -62,11 +61,7 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
 //        _arrowZPositive = transform.Find("z_back").gameObject;
 //        _arrowZNegative = transform.Find("z_forth").gameObject;
         
-        //Get the simulation controller
-        var simControllerObject = GameObject.Find("SimulationController");
-        if (simControllerObject)
-            _simController = simControllerObject.GetComponent<SimulationController>();
-        _lastUpdateInRunMode = _simController.SimulationRunning;
+        _lastUpdateInRunMode = SimulationController.Instance.SimulationRunning;
         
         //Check if we have a moving object or we should just move our own transform
         if (movingObject == null) movingObject = gameObject;
@@ -93,8 +88,8 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
     // Update is called once per frame
     private void Update()
     {
-        if (_simController.SimulationRunning == _lastUpdateInRunMode) return;
-        _lastUpdateInRunMode = _simController.SimulationRunning;
+        if (SimulationController.Instance.SimulationRunning == _lastUpdateInRunMode) return;
+        _lastUpdateInRunMode = SimulationController.Instance.SimulationRunning;
         ChangeRunMode();
     }
 
@@ -119,17 +114,17 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
     
     private void ChangeRunMode()
     {
-        _arrowXPositive.SetActive((!_simController.SimulationRunning || !hideWhileInRunMode) && !restrictXMovement); 
-        _arrowXNegative.SetActive((!_simController.SimulationRunning || !hideWhileInRunMode) && !restrictXMovement);
-        _arrowYPositive.SetActive((!_simController.SimulationRunning || !hideWhileInRunMode) && !restrictYMovement);
-        _arrowYNegative.SetActive((!_simController.SimulationRunning || !hideWhileInRunMode) && !restrictYMovement);
-        _arrowZPositive.SetActive((!_simController.SimulationRunning || !hideWhileInRunMode) && !restrictZMovement);
-        _arrowZNegative.SetActive((!_simController.SimulationRunning || !hideWhileInRunMode) && !restrictZMovement);
+        _arrowXPositive.SetActive((!SimulationController.Instance.SimulationRunning || !hideWhileInRunMode) && !restrictXMovement); 
+        _arrowXNegative.SetActive((!SimulationController.Instance.SimulationRunning || !hideWhileInRunMode) && !restrictXMovement);
+        _arrowYPositive.SetActive((!SimulationController.Instance.SimulationRunning || !hideWhileInRunMode) && !restrictYMovement);
+        _arrowYNegative.SetActive((!SimulationController.Instance.SimulationRunning || !hideWhileInRunMode) && !restrictYMovement);
+        _arrowZPositive.SetActive((!SimulationController.Instance.SimulationRunning || !hideWhileInRunMode) && !restrictZMovement);
+        _arrowZNegative.SetActive((!SimulationController.Instance.SimulationRunning || !hideWhileInRunMode) && !restrictZMovement);
         
         _arrowXPositive.GetComponent<Collider>().enabled = _arrowXNegative.GetComponent<Collider>().enabled = 
             _arrowYPositive.GetComponent<Collider>().enabled = _arrowYNegative.GetComponent<Collider>().enabled = 
                 _arrowZPositive.GetComponent<Collider>().enabled = _arrowZNegative.GetComponent<Collider>().enabled = 
-                    !_simController.SimulationRunning || hideWhileInRunMode && _arrowXPositive.GetComponent<Collider>().enabled;
+                    !SimulationController.Instance.SimulationRunning || hideWhileInRunMode && _arrowXPositive.GetComponent<Collider>().enabled;
     }
     
     public void OnChildMouseDown(GameObject child)

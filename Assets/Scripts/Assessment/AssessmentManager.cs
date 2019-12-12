@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Antares.Evaluation;
 using Antares.Evaluation.Engine;
 using Antares.Evaluation.Util;
+using Maroon.Assessment.Handler;
 
 namespace Maroon.Assessment
 {
@@ -16,13 +16,16 @@ namespace Maroon.Assessment
 
         private Evaluator _evalService;
 
+        private EventBuilder _eventBuilder;
+
         private AssessmentFeedbackHandler _feedbackHandler;
 
-        private readonly List<IAssessmentValue> _assessmentValues = new List<IAssessmentValue>();
+        private readonly List<AssessmentWatchValue> _assessmentValues = new List<AssessmentWatchValue>();
 
         public bool IsConnected { get; private set; }
 
         private static AssessmentManager _instance;
+
 
         public static AssessmentManager Instance
         {
@@ -32,7 +35,7 @@ namespace Maroon.Assessment
                     _instance = FindObjectOfType<AssessmentManager>();
                 return _instance;
             }
-        } 
+        }
 
         private void Awake()
         {
@@ -41,6 +44,23 @@ namespace Maroon.Assessment
             IsConnected = ConnectToAssessmentSystem();
         }
 
+        private void Start()
+        {
+            Debug.Log("AssessmentManager::Send Enter Event");
+            
+            if(_eventBuilder == null)
+                _eventBuilder = EventBuilder.Event();
+
+            _eventBuilder.Action("enter");
+        }
+
+        private void LateUpdate()
+        {
+            if (_eventBuilder == null) return;
+
+            SendGameEvent(_eventBuilder);
+            _eventBuilder = null;
+        }
 
         private bool ConnectToAssessmentSystem()
         {
@@ -62,7 +82,7 @@ namespace Maroon.Assessment
             }
             catch (Exception ex)
             {
-                Debug.LogWarning($"AssessmentManager: An error occurred while connecting to the Assessment service.: {ex.Message}");
+                Debug.LogWarning($"AssessmentManager: An error occurred while connecting to the Assessment service.: {ex.Message} {ex.StackTrace}");
                 return false;
             }
         }
@@ -71,26 +91,40 @@ namespace Maroon.Assessment
         {
             Debug.Log($"AssessmentManager::RegisterAssessmentObject: {assessmentObject.ObjectID}");
 
-            var assessmentEvent = EventBuilder.Event()
+            if(_eventBuilder == null)
+                _eventBuilder = EventBuilder.Event();
+
+            _eventBuilder
                 .PerceiveObject(assessmentObject.ObjectID)
-                .Set("class", assessmentObject.assessmentClass.ToString());
+                .Set("class", assessmentObject.ClassType.ToString());
 
             foreach (var watchValue in assessmentObject.WatchValues)
-                assessmentEvent.Set(watchValue.PropertyName, watchValue.GetValue());
+                _eventBuilder.Set(watchValue.PropertyName, watchValue.GetValue());
+        }
 
-            SendGameEvent(assessmentEvent);
+        public void DeregisterAssessmentObject(AssessmentObject assessmentObject)
+        {
+            Debug.Log($"AssessmentManager::DeregisterAssessmentObject: {assessmentObject.ObjectID}");
+
+            if (_eventBuilder == null)
+                _eventBuilder = EventBuilder.Event();
+
+            _eventBuilder.UnlearnObject(assessmentObject.ObjectID);
         }
 
         public void SendUserAction(string actionName, string objectId=null)
         {
             Debug.Log($"AssessmentManager::SendUserAction: {objectId}.{actionName}");
 
-            var assessmentEvent = EventBuilder.Event().Action(actionName, objectId);
+            if (_eventBuilder == null)
+                _eventBuilder = EventBuilder.Event();
+
+            _eventBuilder.Action(actionName, objectId);
             foreach (var watchValue in GetComponents<AssessmentWatchValue>())
             {
                 if (watchValue.IsDynamic)
                 {
-                    assessmentEvent.UnlearnObject(watchValue.ObjectID)
+                    _eventBuilder.UpdateDataOf(watchValue.ObjectID)
                         .Set(watchValue.PropertyName, watchValue.GetValue());
                 }
             }
@@ -100,15 +134,22 @@ namespace Maroon.Assessment
         {
             Debug.Log($"AssessmentManager::SendDataUpdate: {objectId}.{propertyName}={value}");
 
-            SendGameEvent(EventBuilder.Event().UpdateDataOf(objectId).Set(propertyName, value));
+            if (_eventBuilder == null)
+                _eventBuilder = EventBuilder.Event();
+
+            _eventBuilder.UpdateDataOf(objectId).Set(propertyName, value);
         }
 
         private void SendGameEvent(GameEvent gameEvent)
         {
             if (IsConnected)
+            {
                 _evalService.ProcessEvent(gameEvent);
+            }
             else
+            {
                 Debug.LogWarning("AssessmentManager::SendGameEvent: Assessment service is not running");
+            }
         }
     }
 }

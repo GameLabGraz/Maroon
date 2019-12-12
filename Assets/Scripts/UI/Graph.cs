@@ -70,8 +70,6 @@ namespace UI
         [SerializeField]
         private float _min = -1;
 
-        private SimulationController simController;
-
         [SerializeField]
         private float _stepSize = 0.5f;
 
@@ -100,7 +98,7 @@ namespace UI
         /// </summary>
         private void FixedUpdate()
         {
-            if (!simController.SimulationRunning)
+            if (!SimulationController.Instance.SimulationRunning)
                 return;
 
             if (_fixedUpdateCount++ % _fixedUpdateRate != 0)
@@ -117,10 +115,6 @@ namespace UI
 
         protected void Initialize()
         {
-            var simControllerObject = GameObject.Find("SimulationController");
-            if (simControllerObject)
-                simController = simControllerObject.GetComponent<SimulationController>();
-
             time = -width / 2;
             max_vertex = width / _stepSize;
 

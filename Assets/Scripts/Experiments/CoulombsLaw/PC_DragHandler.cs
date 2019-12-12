@@ -20,6 +20,9 @@ public class PC_DragHandler : MonoBehaviour
     public List<GameObject> changeMaterialIfOutside;
     [Tooltip("The materials must support transparency for this.")]
     public float outsideTransparency = 0.7f;
+
+    [Header("Additional Object References")]
+    public PC_ArrowMovement ArrowMovement = null;
     
     [Header("Events")]
     [Tooltip("Event that gets triggered when the Object starts to move.")]
@@ -105,5 +108,12 @@ public class PC_DragHandler : MonoBehaviour
         _moving = false;
         if (_isOutsideBoundaries) onEndMovingOutsideBoundaries.Invoke();
         else onEndMovingInsideBoundaries.Invoke();
+    }
+
+    public void RestrictMovement(bool allowX, bool allowY, bool allowZ)
+    {
+        allowedXMovement = allowX;
+        allowedYMovement = allowY;
+        allowedZMovement = allowZ;
     }
 }

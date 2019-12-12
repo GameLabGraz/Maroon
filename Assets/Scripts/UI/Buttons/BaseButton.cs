@@ -6,8 +6,6 @@ namespace Maroon.UI.Buttons
     [RequireComponent(typeof(Button))]
     public abstract class BaseButton : MonoBehaviour
     {
-        protected SimulationController SimController;
-
         protected CanvasRenderer Renderer;
 
         protected Button Button;
@@ -15,7 +13,6 @@ namespace Maroon.UI.Buttons
         // Start is called before the first frame update
         protected virtual void Start()
         {
-            SimController = FindObjectOfType<SimulationController>();
             Renderer = GetComponent<CanvasRenderer>();
             Button = GetComponent<Button>();
         }

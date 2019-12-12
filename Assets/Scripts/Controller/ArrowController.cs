@@ -45,17 +45,11 @@ public class ArrowController : MonoBehaviour, IResetObject
 
     public bool OnlyUpdateInRunMode = true;
 
-    private SimulationController simController;
-
     /// <summary>
     /// Initialization
     /// </summary>
-    void Start()
+    private void Start()
     {
-        GameObject simControllerObject = GameObject.Find("SimulationController");
-        if (simControllerObject)
-            simController = simControllerObject.GetComponent<SimulationController>();
-
         Field = GameObject.FindGameObjectWithTag("Field");
         if (Field != null)
             rotateArrow();
@@ -66,9 +60,9 @@ public class ArrowController : MonoBehaviour, IResetObject
     /// <summary>
     /// Update is called every frame and rotates the arrow
     /// </summary>
-    void Update()
+    private void Update()
     {
-        if (OnlyUpdateInRunMode && !simController.SimulationRunning)
+        if (OnlyUpdateInRunMode && !SimulationController.Instance.SimulationRunning)
             return;
 
         if (Field != null)
@@ -82,7 +76,7 @@ public class ArrowController : MonoBehaviour, IResetObject
     /// </summary>
     private void rotateArrow()
     {
-        Vector3 rotate = Field.GetComponent<IField>().get(transform.position) * fieldStrengthFactor;
+        var rotate = Field.GetComponent<IField>().get(transform.position) * fieldStrengthFactor;
         
         rotate.Normalize();
         float rot = 0;

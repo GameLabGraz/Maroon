@@ -43,8 +43,7 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
     private int _collided = 0;
 
     private CoulombLogic _coulombLogic;
-    private SimulationController _simController;
-    
+
     private static readonly float CoulombConstant = 9f * Mathf.Pow(10f, 9f); // 1f / (Mathf.PI * 8.8542e-12f);
 
     private void Awake()
@@ -62,16 +61,13 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
         if (obj)
             _coulombLogic = obj.GetComponent<CoulombLogic>();
         
-        var simControllerObject = GameObject.Find("SimulationController");
-        if (simControllerObject)
-            _simController = simControllerObject.GetComponent<SimulationController>();
-        Debug.Assert(_coulombLogic != null && _simController != null);
+        Debug.Assert(_coulombLogic != null);
     }
 
     private void Update()
     {
         //PC Only?
-        _rigidbody.isKinematic = !_simController.SimulationRunning || fixedPosition;
+        _rigidbody.isKinematic = !SimulationController.Instance.SimulationRunning || fixedPosition;
     }
 
     private void OnChargeValueChangeHandler(float chargeValue)
@@ -174,20 +170,20 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
 
     public void MovementStart()
     {
-        if (pauseSimulationWhileMoving) _simController.SimulationRunning = false;
+        if (pauseSimulationWhileMoving) SimulationController.Instance.SimulationRunning = false;
     }
 
     public void MovementEndOutsideBoundaries()
     {
         if (!deleteIfOutsideBoundaries) return;
         _coulombLogic.RemoveParticle(this, true);
-        _simController.ResetSimulation();
+        SimulationController.Instance.ResetSimulation();
     }
     
     public void MovementEndInsideBoundaries()
     {
         UpdateResetPosition();
-        _simController.ResetSimulation();
+        SimulationController.Instance.ResetSimulation();
     }
     
 }

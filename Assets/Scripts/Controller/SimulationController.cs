@@ -23,7 +23,7 @@ using UnityEngine.SceneManagement;
 public class SimulationController : MonoBehaviour
 {
     /// <summary>
-    /// Indicates wheter the simulation is running
+    /// Indicates whether the simulation is running
     /// </summary>
     [SerializeField]
     private bool simulationRunning = false;
@@ -42,12 +42,12 @@ public class SimulationController : MonoBehaviour
     }
 
     /// <summary>
-    /// Indicates wheter a single step should be simulated
+    /// Indicates whether a single step should be simulated
     /// </summary>
     private bool stepSimulation;
 
     /// <summary>
-    /// Indicates wheter the simulation should be reset
+    /// Indicates whether the simulation should be reset
     /// </summary>
     private bool simulationReset;
 
@@ -61,6 +61,22 @@ public class SimulationController : MonoBehaviour
     public event EventHandler<EventArgs> OnStop;
 
     public event EventHandler<EventArgs> OnReset;
+
+    private static SimulationController _instance;
+
+    public static SimulationController Instance
+    {
+        get
+        {
+            if (_instance == null)
+                _instance = FindObjectOfType<SimulationController>();
+
+            if(_instance == null)
+                throw  new NullReferenceException("There is no simulation controller.");
+
+            return _instance;
+        }
+    }
 
     /// <summary>
     /// Initialization
