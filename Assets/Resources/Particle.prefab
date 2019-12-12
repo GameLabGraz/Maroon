@@ -210,10 +210,6 @@ MonoBehaviour:
   particleBase: {fileID: 222567040141845094}
   particleFixingRing: {fileID: 222567040141845088}
   highlightMaterial: {fileID: 2100000, guid: a282b470dd6667848904cb12c35a1a2c, type: 2}
-  maxPositiveColor: {r: 1, g: 0, b: 0, a: 0}
-  minPositiveColor: {r: 1, g: 0.72156864, b: 0.72156864, a: 0}
-  maxNegativeColor: {r: 0, g: 0, b: 1, a: 0}
-  minNegativeColor: {r: 0.5921569, g: 0.70980394, b: 0.94509804, a: 0}
   charge:
     _value: 0
     onValueChanged:
@@ -278,6 +274,7 @@ MonoBehaviour:
   - {fileID: 222567040141845094}
   - {fileID: 222567040141845088}
   outsideTransparency: 0.7
+  ArrowMovement: {fileID: 2316824530287130642}
   onStartedMoving:
     m_PersistentCalls:
       m_Calls:
@@ -503,6 +500,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 222567040141688388}
     m_Modifications:
+    - target: {fileID: 4584993937279052820, guid: 565f734b46691944bb8c7cb7888df542,
+        type: 3}
+      propertyPath: m_Name
+      value: MovingArrows
+      objectReference: {fileID: 0}
     - target: {fileID: 1482331554849848127, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -557,11 +559,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4584993937279052820, guid: 565f734b46691944bb8c7cb7888df542,
-        type: 3}
-      propertyPath: m_Name
-      value: MovingArrows
       objectReference: {fileID: 0}
     - target: {fileID: 4513896859846796369, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}
@@ -641,3 +638,15 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2198766957091068995}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2316824530287130642 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4513896859846796369, guid: 565f734b46691944bb8c7cb7888df542,
+    type: 3}
+  m_PrefabInstance: {fileID: 2198766957091068995}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f20556496be8f1d4c9d3ba968ac00ac6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -44,6 +44,8 @@ public class PC_Rotation : MonoBehaviour, IResetWholeObject
 
     private void OnMouseDrag()
     {
+        if (!enabled) return;
+        
         // taken from https://www.youtube.com/watch?v=S3pjBQObC90
         if(onlyRotateOnSimulationPause) _simController.SimulationRunning = false;
         

@@ -10,11 +10,20 @@ public class ModeChangeEvent : UnityEvent<bool>
 {
 }
 
+[System.Serializable]
+public class ParticleEvent : UnityEvent<CoulombChargeBehaviour>
+{
+}
+
+
 public class CoulombLogic : MonoBehaviour, IResetWholeObject
 {
     [Header("General Settings")] 
     public int maxChargeCount = 10;
+    public bool startIn2dMode = true;
 
+    public ParticleEvent onParticleAdded;
+    public ParticleEvent onParticleRemoved;
     public UnityEvent onMaxChargesReached;
     public UnityEvent onUnderMaxChargesAgain;
 
@@ -66,7 +75,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         
         _charges = new List<CoulombChargeBehaviour>();
         _chargesGameObjects = new HashSet<GameObject>();
-        OnSwitch3d2dMode(_in3dMode? 1f : 0f);
+        OnSwitch3d2dMode(startIn2dMode? 0f : 1f);
     
         _worldToCalcSpaceFactor = Mathf.Abs(xAt1m.position.x - xOrigin.position.x);
         _initialized = true;
@@ -211,6 +220,8 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         _simController.ResetSimulation();
         
         if(_charges.Count == maxChargeCount) onMaxChargesReached.Invoke();
+        
+        onParticleAdded.Invoke(coulombCharge);
     }
 
     public void RemoveParticle(CoulombChargeBehaviour coulombCharge, bool destroy = false)
@@ -226,6 +237,8 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         }
         
         if(_charges.Count == maxChargeCount - 1) onUnderMaxChargesAgain.Invoke();
+
+        onParticleRemoved.Invoke(coulombCharge);
     }
 
 
@@ -243,6 +256,8 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         scene2D.SetActive(!_in3dMode);
         scene3D.SetActive(_in3dMode);
 
+        Debug.Log("Switch Camera");
+        
         Camera.main.transform.position = _in3dMode ? new Vector3(0, 30f, -59.52f) : new Vector3(0, 4.4f, -59.52f);
         Camera.main.transform.rotation = _in3dMode ? new Quaternion(0.25f, 0f, 0f, 1f) : new Quaternion(0f, 0f, 0f, 0f);
 
