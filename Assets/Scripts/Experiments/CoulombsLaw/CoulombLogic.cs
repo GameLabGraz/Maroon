@@ -28,8 +28,17 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     public UnityEvent onUnderMaxChargesAgain;
 
     [Header("Calculation Settings")] 
-    public Transform xOrigin;
-    public Transform xAt1m;
+    public Transform xOrigin2d;
+    public Transform xAt1m2d;
+    public Transform xOrigin3d;
+    public Transform xAt1m3d;
+    
+    [Header("Maximum Ranges")]
+    public float xMax2d = 1f;
+    public float yMax2d = 1.35f;
+    public float xMax3d = 1f;
+    public float yMax3d = 1f;
+    public float zMax3d = 1f;
     
     [Header("2D-3D Mode depending Settings")]
     public GameObject scene2D;
@@ -55,7 +64,10 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     
     private bool _in3dMode = false;
 
-    private float _worldToCalcSpaceFactor;
+    private float _worldToCalcSpaceFactor2d;
+    private float _worldToCalcSpaceFactor2dLocal;
+    private float _worldToCalcSpaceFactor3d;
+    private float _worldToCalcSpaceFactor3dLocal;
     
     private bool _initialized = false;
     
@@ -77,7 +89,10 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         _chargesGameObjects = new HashSet<GameObject>();
         OnSwitch3d2dMode(startIn2dMode? 0f : 1f);
     
-        _worldToCalcSpaceFactor = Mathf.Abs(xAt1m.position.x - xOrigin.position.x);
+        _worldToCalcSpaceFactor2d = Mathf.Abs(xAt1m2d.position.x - xOrigin2d.position.x);
+        _worldToCalcSpaceFactor2dLocal = Mathf.Abs(xAt1m2d.localPosition.x - xOrigin2d.localPosition.x);
+        _worldToCalcSpaceFactor3d = Mathf.Abs(xAt1m3d.position.x - xOrigin3d.position.x);
+        _worldToCalcSpaceFactor3dLocal = Mathf.Abs(xAt1m3d.localPosition.x - xOrigin3d.localPosition.x);
         _initialized = true;
     }
 
@@ -92,11 +107,20 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         }
     }
 
-    public float WorldToCalcSpace(float distanceWorldSpace)
+    public float WorldToCalcSpace(float distanceWorldSpace, bool local = false)
     {
-        return distanceWorldSpace / _worldToCalcSpaceFactor;
+        if (IsIn2dMode())
+            return distanceWorldSpace / (local? _worldToCalcSpaceFactor2dLocal : _worldToCalcSpaceFactor2d);
+        return distanceWorldSpace / (local? _worldToCalcSpaceFactor3dLocal : _worldToCalcSpaceFactor3d);
     }
 
+    public float CalcToWorldSpace(float distanceCalcSpace, bool local = false)
+    {
+        if (IsIn2dMode())
+            return distanceCalcSpace * (local? _worldToCalcSpaceFactor2dLocal : _worldToCalcSpaceFactor2d);
+        return distanceCalcSpace * (local? _worldToCalcSpaceFactor3dLocal : _worldToCalcSpaceFactor3d);
+    }
+    
     public List<CoulombChargeBehaviour> GetCharges()
     {
         return _charges;
@@ -274,5 +298,15 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         //remove all particles show new scene
         while(_charges.Count > 0)
             RemoveParticle(_charges[0], true);
+    }
+    
+    public Vector3 GetMinimumPos()
+    {
+        return IsIn2dMode() ? minBoundary2d.transform.position : minBoundary3d.transform.position;
+    }
+
+    public Vector3 GetMaximumPos()
+    {
+        return IsIn2dMode() ? maxBoundary2d.transform.position : maxBoundary3d.transform.position;
     }
 }

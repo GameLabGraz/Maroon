@@ -53,14 +53,6 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
     // Start is called before the first frame update
     private void Start()
     {
-        //Get the child object via fixed names (is a prefab, shouldn't need change)
-//        _arrowXPositive = transform.Find("x_right").gameObject;
-//        _arrowXNegative = transform.Find("x_left").gameObject;
-//        _arrowYPositive = transform.Find("y_up").gameObject;
-//        _arrowYNegative = transform.Find("y_down").gameObject;
-//        _arrowZPositive = transform.Find("z_back").gameObject;
-//        _arrowZNegative = transform.Find("z_forth").gameObject;
-        
         _lastUpdateInRunMode = SimulationController.Instance.SimulationRunning;
         
         //Check if we have a moving object or we should just move our own transform
