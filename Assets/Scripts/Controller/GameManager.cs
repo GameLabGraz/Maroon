@@ -2,7 +2,6 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Localization;
 
 
 //This manager will be created one time at the beginning and stays troughout all scenes to manage 
@@ -14,15 +13,10 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance = null; 
 
     [SerializeField]
-    private string _mlgFile;
-
-    [SerializeField]
     private GameObject _player;
 
     private static Vector3 _playerPosition;
     private static Quaternion _playerRotation;
-
-    private LanguageManager _languageManager;
 
     private string _scene; //name of scene player is currently
 
@@ -39,8 +33,6 @@ public class GameManager : MonoBehaviour
     {
         DontDestroyOnLoad(this);
 
-        var language = Application.systemLanguage.ToString();
-
 #if UNITY_EDITOR
         _version = DateTime.UtcNow.Date.ToString("yyyyMMdd");
 #else
@@ -56,8 +48,6 @@ public class GameManager : MonoBehaviour
         }            
         else if (Instance != this)
         {
-            language = LanguageManager.Instance.CurrentLanguage;
-
             if (_player != null && SceneManager.GetActiveScene().name.Contains("Laboratory"))
             {
                 _player.transform.position = _playerPosition;
@@ -68,9 +58,6 @@ public class GameManager : MonoBehaviour
             Instance.LabLoaded = true;
             Destroy(gameObject);
         }
-
-        _languageManager = LanguageManager.Load(_mlgFile);
-        _languageManager.CurrentLanguage = language;
     }
 
     public void PlayMenuSound()

@@ -1,26 +1,34 @@
-﻿using System.Xml.Serialization;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Localization
 {
+
     public class Translation
-
     {
-        [XmlAttribute] public string Key;
+        private readonly string _key;
+        private readonly Dictionary<SystemLanguage, string> _values = new Dictionary<SystemLanguage, string>();
 
-        [XmlElement] public string English;
-
-        [XmlElement] public string German;
-
-
-        public string GetValue(string language)
+        public Translation(string key)
         {
-            switch(language)
-            {
-                case "German":
-                    return German;
-                default:
-                    return English;
-            }
+            _key = key;
+        }
+
+        public void AddTranslation(SystemLanguage language, string value)
+        {
+            if(_values.ContainsKey(language))
+                Debug.LogWarning($"Translation: contains {language} already");
+
+            _values[language] = value;
+        }
+
+        public string GetValue(SystemLanguage language)
+        {
+            if (_values.ContainsKey(language))
+                return _values[language];
+            if (_values.ContainsKey(SystemLanguage.English))
+                return _values[SystemLanguage.English];
+            return _key;
         }
     }
 }
