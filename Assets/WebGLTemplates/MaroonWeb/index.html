@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <!-- Head -->
+  <head>
+
+    <!-- Meta -->
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <!-- Title, icon -->
+    <title>%UNITY_WEB_NAME%</title>
+    <link rel="shortcut icon" href="images/favicon.png" />
+
+    <!-- CSS, scripts -->
+    <link rel="stylesheet" href="style.css" />
+    <script src="progress.js"></script>
+    <script src="%UNITY_WEBGL_LOADER_URL%"></script>
+    <script>
+      var gameInstance = UnityLoader.instantiate("gameContainer", "%UNITY_WEBGL_BUILD_URL%", {onProgress: UnityProgress});
+    </script>
+
+  </head>
+
+  <!-- Body -->
+  <body>
+
+    <div class="webgl-content">
+
+      <div id="gameContainer" style="width: %UNITY_WIDTH%px; height: %UNITY_HEIGHT%px;  margin: auto;"></div>
+
+      <div class="footer">
+        <div class="webgl-logo"></div>
+        <div class="fullscreen" onclick="gameInstance.SetFullscreen(1)"></div>
+        <div class="title">%UNITY_WEB_NAME%</div>
+      </div>
+
+    </div>
+
+  </body>
+
+</html>
