@@ -320,10 +320,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 260504b563b9dd841bab1f8edd5903de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dialogBox: {fileID: 1117766055}
-  _text: {fileID: 1163306043}
-  _letterPause: 0.02
-  _typeSound: {fileID: 8300000, guid: a074273c11dcc504fb8dfca613442196, type: 3}
+  dialogView: {fileID: 1117766059}
+  letterPause: 0.02
+  typeSound: {fileID: 8300000, guid: a074273c11dcc504fb8dfca613442196, type: 3}
 --- !u!1 &472427242
 GameObject:
   m_ObjectHideFlags: 0
@@ -877,6 +876,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 224026599748742132, guid: c702bd809945e8641ba7a9c46d2e539c,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -25.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 114625766562793530, guid: c702bd809945e8641ba7a9c46d2e539c,
+        type: 3}
+      propertyPath: _dBox
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114625766562793530, guid: c702bd809945e8641ba7a9c46d2e539c,
+        type: 3}
+      propertyPath: _text
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114625766562793530, guid: c702bd809945e8641ba7a9c46d2e539c,
+        type: 3}
+      propertyPath: _typeSound
+      value: 
+      objectReference: {fileID: 8300000, guid: a074273c11dcc504fb8dfca613442196, type: 3}
     - target: {fileID: 1175924811043320, guid: c702bd809945e8641ba7a9c46d2e539c, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -952,26 +971,6 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 224026599748742132, guid: c702bd809945e8641ba7a9c46d2e539c,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -25.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 114625766562793530, guid: c702bd809945e8641ba7a9c46d2e539c,
-        type: 3}
-      propertyPath: _dBox
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 114625766562793530, guid: c702bd809945e8641ba7a9c46d2e539c,
-        type: 3}
-      propertyPath: _text
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 114625766562793530, guid: c702bd809945e8641ba7a9c46d2e539c,
-        type: 3}
-      propertyPath: _typeSound
-      value: 
-      objectReference: {fileID: 8300000, guid: a074273c11dcc504fb8dfca613442196, type: 3}
     - target: {fileID: 1309234265481300, guid: c702bd809945e8641ba7a9c46d2e539c, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -1026,8 +1025,9 @@ GameObject:
   - component: {fileID: 1117766056}
   - component: {fileID: 1117766058}
   - component: {fileID: 1117766057}
+  - component: {fileID: 1117766059}
   m_Layer: 5
-  m_Name: Dialogue Box
+  m_Name: DialogueView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1095,6 +1095,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1117766055}
   m_CullTransparentMesh: 0
+--- !u!114 &1117766059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1117766055}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a95a8b19637833741888d0f12a5ef0b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textComponent: {fileID: 1163306043}
 --- !u!1 &1163306041
 GameObject:
   m_ObjectHideFlags: 0
@@ -1108,7 +1121,7 @@ GameObject:
   - component: {fileID: 1163306044}
   - component: {fileID: 1163306043}
   m_Layer: 5
-  m_Name: Text
+  m_Name: DialogueText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
