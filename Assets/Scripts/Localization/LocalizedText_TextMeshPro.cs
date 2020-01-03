@@ -10,6 +10,9 @@ namespace Localization
         [SerializeField]
         public string key;
 
+        [SerializeField]
+        private bool addColon = false;
+
         private TextMeshProUGUI _text;
 
         private void Start()
@@ -20,8 +23,12 @@ namespace Localization
 
         public void UpdateLocalizedText()
         {
-            if (_text)
-                _text.text = LanguageManager.Instance.GetString(key);
+            if (!_text)
+                return;
+
+            _text.text = LanguageManager.Instance.GetString(key);
+            if (addColon)
+                _text.text += ":";
         }
     }
 }

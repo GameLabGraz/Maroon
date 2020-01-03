@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 using System.Collections.Generic;
 
 namespace Maroon.UI
@@ -22,27 +21,33 @@ namespace Maroon.UI
     public class DialogueManager : MonoBehaviour
     {
         [SerializeField]
-        private GameObject _dialogBox;
+        private DialogueView dialogView;
         [SerializeField]
-        private Text _text;
+        private float letterPause = 0.01f;
         [SerializeField]
-        private float _letterPause = 0.01f;
-        [SerializeField]
-        private AudioClip _typeSound;
+        private AudioClip typeSound;
 
-        private Queue<Message> _messages = new Queue<Message>();
+        private readonly Queue<Message> _messages = new Queue<Message>();
 
-        public bool TypeMessageRunning { get; private set; } = false;
+        public bool TypeMessageRunning { get; private set; }
 
         private void Awake()
         {
-            _dialogBox.SetActive(false);
+            if (!dialogView)
+            {
+                Debug.LogError("DialogueManager::Awake: There is no dialogue view.");
+                return;
+            }
+            dialogView.SetActive(false);
         }
 
         private void Update()
         {
-            if (_dialogBox.activeSelf && Input.GetMouseButtonDown(0))
-                _dialogBox.SetActive(false);
+            if (!dialogView)
+                return;
+
+            if (dialogView.IsActive && Input.GetMouseButtonDown(0))
+                dialogView.SetActive(false);
 
             if (_messages.Count > 0 && !TypeMessageRunning)
                 StartCoroutine(TypeMessage(_messages.Dequeue()));
@@ -63,26 +68,29 @@ namespace Maroon.UI
         {
             TypeMessageRunning = true;
 
-            _dialogBox.SetActive(true);
-            SoundManager.Instance.PlaySingle(_typeSound);
+            dialogView.SetActive(true);
+            SoundManager.Instance.PlaySingle(typeSound);
 
-            _text.text = "";
-            _text.color = message.Color;
+            var text = "";
+            dialogView.ClearMessage();
+            dialogView.SetTextColor(message.Color);
 
             foreach (var letter in message.Text)
             {
-                if (!_dialogBox.activeSelf)
+                if (!dialogView.IsActive)
                 {
                     TypeMessageRunning = false;
                     yield break;
                 }
 
-                _text.text += letter;
-                yield return new WaitForSeconds(_letterPause);
+                text += letter;
+                dialogView.ShowMessage(text);
+
+                yield return new WaitForSeconds(letterPause);
             }
 
             yield return new WaitForSeconds(Mathf.Min(2f, 0.05f * message.Text.Length));
-            _dialogBox.SetActive(false);
+            dialogView.SetActive(false);
             TypeMessageRunning = false;
         }
     }
