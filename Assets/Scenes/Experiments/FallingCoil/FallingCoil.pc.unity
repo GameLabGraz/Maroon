@@ -132,6 +132,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _key: VectorfieldResolution
+  _addColon: 0
 --- !u!1 &86575774 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5376674144822327697, guid: 5320e11e368a6e74081ffa27fc5479a2,
@@ -151,6 +152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _key: MagneticMoment
+  _addColon: 0
 --- !u!1 &101474204
 GameObject:
   m_ObjectHideFlags: 0
@@ -182,7 +184,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73e182aee1fb0a7419353a013111efd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mlgFile: MLG/falling_coil
   _player: {fileID: 0}
   menuSound: {fileID: 2109741263}
 --- !u!4 &101474206
@@ -513,7 +514,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &333039083
 GameObject:
@@ -624,7 +625,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.133, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -2.4100037, y: -0.5}
+  m_AnchoredPosition: {x: -2.409996, y: -0.5}
   m_SizeDelta: {x: -5.18, y: -3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &353903429
@@ -640,6 +641,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _key: ShowVectorFieldGrid
+  _addColon: 0
 --- !u!114 &353903430
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -682,6 +684,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 353903427}
   m_CullTransparentMesh: 0
+--- !u!1 &378699323
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 378699325}
+  - component: {fileID: 378699324}
+  m_Layer: 0
+  m_Name: LanguageManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &378699324
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 378699323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07fa06ca615937b40a560012bfb6f45c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _mlgFile: MLG/falling_coil
+--- !u!4 &378699325
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 378699323}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &495590776
 GameObject:
   m_ObjectHideFlags: 0
@@ -1137,6 +1183,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _key: NumberOfLines
+  _addColon: 0
 --- !u!1001 &1041941142
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1147,6 +1194,10 @@ PrefabInstance:
     - target: {fileID: 145426, guid: 5d83376cff522cd4899e5448a6d78246, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11473006, guid: 5d83376cff522cd4899e5448a6d78246, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 402848, guid: 5d83376cff522cd4899e5448a6d78246, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1179,10 +1230,6 @@ PrefabInstance:
     - target: {fileID: 402848, guid: 5d83376cff522cd4899e5448a6d78246, type: 3}
       propertyPath: m_RootOrder
       value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 11473006, guid: 5d83376cff522cd4899e5448a6d78246, type: 3}
-      propertyPath: m_Enabled
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5d83376cff522cd4899e5448a6d78246, type: 3}
@@ -1650,6 +1697,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _key: Amperage
+  _addColon: 0
 --- !u!1 &1319239748 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7799855421237934799, guid: e4b449653c8015d4c85b679b5820eee0,
@@ -1669,6 +1717,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _key: Graph
+  _addColon: 0
 --- !u!1 &1351739250
 GameObject:
   m_ObjectHideFlags: 0
@@ -2349,6 +2398,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _key: Time
+  _addColon: 0
 --- !u!1001 &1835321246
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2688,7 +2738,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.133, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -2.4100037, y: -0.5}
+  m_AnchoredPosition: {x: -2.409996, y: -0.5}
   m_SizeDelta: {x: -5.18, y: -3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1838778391
@@ -2704,6 +2754,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _key: ShowFieldLines
+  _addColon: 0
 --- !u!114 &1838778392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2872,6 +2923,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _key: Visualization
+  _addColon: 0
 --- !u!224 &1978037731 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8682629649530855541, guid: d63de2a9f5d25f645baaa3241fde6f00,
@@ -2929,6 +2981,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _key: IronFilings
+  _addColon: 0
 --- !u!114 &1995525155
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3640,6 +3693,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _key: RingResistance
+  _addColon: 0
 --- !u!1001 &4001495127277490887
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3828,6 +3882,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _key: Parameters
+  _addColon: 0
 --- !u!224 &8065646483271317139 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6369994365226918996, guid: e4b449653c8015d4c85b679b5820eee0,
