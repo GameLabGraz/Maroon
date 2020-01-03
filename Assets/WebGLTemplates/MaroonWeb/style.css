@@ -1,26 +1,107 @@
 /*
+ * Fonts
+ */
+
+@font-face{
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url(vendor/material-icons/MaterialIcons-Regular.woff) format('woff');
+}
+
+.material-icons{
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+}
+
+/*
+ * Globals
+ */
+
+/* Text colors */
+
+.color-dark{
+  color: #101A1D;
+}
+
+/* Background colors */
+.bg-maroon{
+  background: #800000;
+}
+
+.bg-orange{
+  background: #ED6A42;
+}
+
+.bg-light{
+  background: #CEE6D7;
+}
+
+.bg-blue{
+  background: #257A73;
+}
+
+.bg-dark{
+  background: #101A1D;
+}
+
+/* Links */
+a,
+a:focus,
+a:hover {
+  color: #fff;
+}
+
+/*
  * General
  */
 
-body
-{
-    padding: 0;
-    margin: 0;
-    background: #800000;
+ html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body{
+  padding: 0;
+  margin: 0;
+  background: #231f20;
 }
 
 .webgl-content *{
-    border: 0;
-    margin: 0;
-    padding: 0;
+  border: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .webgl-content{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 
 /*
@@ -28,39 +109,39 @@ body
  */
 
 .webgl-content .logo, .progress{
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 
 .webgl-content .logo{
-    background: url('images/progressLogo.png') no-repeat center / contain;
-    width: 154px;
-    height: 130px;
+  background: url('images/progressLogo.png') no-repeat center / contain;
+  width: 141px;
+  height: 141px;
 }
 
 .webgl-content .progress{
-    height: 18px;
-    width: 141px;
-    margin-top: 90px;
+  height: 18px;
+  width: 141px;
+  margin-top: 90px;
 }
 
 .webgl-content .progress .empty{
-    background: url('images/progressEmpty.png') no-repeat right / cover;
-    float: right;
-    width: 100%;
-    height: 100%;
-    display: inline-block;
+  background: url('images/progressEmpty.png') no-repeat right / cover;
+  float: right;
+  width: 100%;
+  height: 100%;
+  display: inline-block;
 }
 
 .webgl-content .progress .full{
-    background: url('images/progressFull.png') no-repeat left / cover;
-    float: left;
-    width: 0%;
-    height: 100%;
-    display: inline-block;
+  background: url('images/progressFull.png') no-repeat left / cover;
+  float: left;
+  width: 0%;
+  height: 100%;
+  display: inline-block;
 }
 
 /*
@@ -68,32 +149,40 @@ body
  */
 
 .webgl-content .footer{
-    margin-top: 5px;
-    height: 38px;
-    line-height: 38px;
-    font-family: Helvetica, Verdana, Arial, sans-serif;
-    font-size: 18px;
-}
-
-.webgl-content .footer .webgl-logo, .title, .fullscreen{
-    height: 100%;
-    display: inline-block;
-    background: transparent center no-repeat;
+  margin-top: 15px;
+  height: 55px;
+  font-family: Helvetica, Verdana, Arial, sans-serif;
+  font-size: 18px;
 }
 
 .webgl-content .footer .webgl-logo{
-    background-image: url('images/logo.png');
-    width: 204px; 
-    float: left;
+  float: right;
 }
 
-.webgl-content .footer .title{
-    margin-right: 10px;
-    float: right;
+.webgl-content .footer .webgl-logo img{
+  height: 55px;
 }
 
-.webgl-content .footer .fullscreen{
-    background-image: url('images/fullscreen.png');
-    width: 38px;
-    float: right;
+.webgl-content .footer .button{
+  float: left;
+  background: #257A73;
+  padding: 5px 15px;
+  margin-right: 15px;
+  text-decoration: none;
+  color: #101A1D;
+  height: 55px;
+  line-height: 45px;
+  text-align: center;
+}
+
+.webgl-content .footer .button:hover{
+  background: #CEE6D7;
+  color: #101A1D;
+  cursor: pointer;
+}
+
+.webgl-content .footer .button i, .webgl-content .footer .button span{
+  display: inline-block;
+  vertical-align: middle;
+  line-height: normal;
 }

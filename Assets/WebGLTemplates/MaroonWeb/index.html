@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="en">
 
   <!-- Head -->
   <head>
@@ -10,7 +10,7 @@
 
     <!-- Title, icon -->
     <title>%UNITY_WEB_NAME%</title>
-    <link rel="shortcut icon" href="images/favicon.png" />
+    <link rel="icon" type="image/png" href="images/favicon.png" />
 
     <!-- CSS, scripts -->
     <link rel="stylesheet" href="style.css" />
@@ -30,9 +30,21 @@
       <div id="gameContainer" style="width: %UNITY_WIDTH%px; height: %UNITY_HEIGHT%px;  margin: auto;"></div>
 
       <div class="footer">
-        <div class="webgl-logo"></div>
-        <div class="fullscreen" onclick="gameInstance.SetFullscreen(1)"></div>
-        <div class="title">%UNITY_WEB_NAME%</div>
+        <a class="button back" href="/">
+          <i class="material-icons">arrow_back</i>
+          <span>
+            Back to main page
+          </span>
+        </a>
+        <div class="button fullscreen" onclick="gameInstance.SetFullscreen(1)">
+          <i class="material-icons">fullscreen</i>
+          <span>
+            Fullscreen
+          </span>
+        </div>
+        <div class="webgl-logo">
+          <img src="images/logo.png" alt="Maroon" />
+        </div>
       </div>
 
     </div>
