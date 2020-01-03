@@ -22,6 +22,9 @@ namespace Localization
 
         public void UpdateLocalizedText()
         {
+            if (!_text)
+                return;
+
             _text.text = LanguageManager.Instance.GetString(_key);
             if (_addColon)
                 _text.text += ":";
