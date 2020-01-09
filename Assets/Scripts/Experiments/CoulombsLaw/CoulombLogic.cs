@@ -50,6 +50,8 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     public GameObject maxBoundary3d;
     
     public ModeChangeEvent onModeChange;
+    public UnityEvent onModeChangeTo2d;
+    public UnityEvent onModeChangeTo3d;
 
     private SimulationController _simController;
     private List<CoulombChargeBehaviour> _charges;
@@ -270,6 +272,10 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     {
         _in3dMode = !(newMode < 0.5);
         onModeChange.Invoke(_in3dMode);
+        if(_in3dMode)
+            onModeChangeTo3d.Invoke();
+        else
+            onModeChangeTo2d.Invoke();
         
         _simController.SimulationRunning = false;
         

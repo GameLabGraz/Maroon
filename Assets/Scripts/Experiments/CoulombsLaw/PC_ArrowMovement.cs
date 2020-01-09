@@ -28,6 +28,7 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
     public bool resetOnWholeReset = false;
 
     public UnityEvent OnMovementStart;
+    public UnityEvent OnMove;
     public UnityEvent OnMovementFinish;
     
     private Vector3 _localMinBoundary;
@@ -205,6 +206,7 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
         }
 
         movingObject.transform.localPosition =  pt;
+        OnMove.Invoke();
     }
 
     public void OnChildMouseUp()

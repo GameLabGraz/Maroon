@@ -27,6 +27,7 @@ public class PC_DragHandler : MonoBehaviour
     [Header("Events")]
     [Tooltip("Event that gets triggered when the Object starts to move.")]
     public UnityEvent onStartedMoving;
+    public UnityEvent onMove;
     [Tooltip("Event that gets triggered when the Object is outside the boundaries when the movement finished. This only gets triggered if the boundaries are set.")]
     public UnityEvent onEndMovingOutsideBoundaries;
     [Tooltip("Event that gets triggered at the end of the movement if the object is within the boundaries (or none are specified).")]
@@ -99,6 +100,7 @@ public class PC_DragHandler : MonoBehaviour
         }
         
         movingObject.transform.position = pt;
+        onMove.Invoke();
     }
     
     private void OnMouseUp()
