@@ -6,7 +6,7 @@ using UnityEngine.Events;
 [Serializable]
 public class VoltmeterEvent : UnityEvent<string> {}
 
-public class Voltmeter : MonoBehaviour, IResetWholeObject
+public class VoltmeterMeasuringPoint : MonoBehaviour, IResetWholeObject
 {
     public IField field;
     public VoltmeterEvent onVoltageChanged;

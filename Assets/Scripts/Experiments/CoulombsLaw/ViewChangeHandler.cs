@@ -11,7 +11,9 @@ public class ViewChangeHandler : MonoBehaviour
     public GameObject VisualizationPlaneOutline;
     public GameObject VisualizationCube;
     public GameObject VisualizationCubeOutline;
-    
+    public GameObject VoltmeterPositive;
+    public GameObject VoltmeterNegative;
+
     private CoulombLogic _coulombLogic;
     private PathHandler.CameraPosition _lastView = PathHandler.CameraPosition.CP_Free;
     
@@ -35,8 +37,10 @@ public class ViewChangeHandler : MonoBehaviour
         var allowY = newPosition != PathHandler.CameraPosition.CP_Top;
         var allowZ = newPosition != PathHandler.CameraPosition.CP_Front;
         foreach (var charge in _coulombLogic.GetCharges())
-            HandleMovementRestrictions(charge, allowX, allowY, allowZ);
+            HandleMovementRestrictions(charge.gameObject, allowX, allowY, allowZ);
         
+        HandleMovementRestrictions(VoltmeterPositive, allowX, allowY, allowZ);
+        HandleMovementRestrictions(VoltmeterNegative, allowX, allowY, allowZ);
         
         VisualizationCube.transform.rotation = Quaternion.identity;
         VisualizationCube.GetComponent<PC_Rotation>().enabled = newPosition == PathHandler.CameraPosition.CP_Free;
@@ -57,9 +61,9 @@ public class ViewChangeHandler : MonoBehaviour
         _lastView = newPosition;
     }
 
-    private void HandleMovementRestrictions(CoulombChargeBehaviour charge, bool allowX = true, bool allowY = true, bool allowZ = true)
+    private void HandleMovementRestrictions(GameObject obj, bool allowX = true, bool allowY = true, bool allowZ = true)
     {
-        var dragHandler = charge.GetComponent<PC_DragHandler>();
+        var dragHandler = obj.GetComponent<PC_DragHandler>();
         if (!dragHandler) return;
         dragHandler.RestrictMovement(allowX, allowY, allowZ);
         if (!dragHandler.ArrowMovement) return;
@@ -70,7 +74,7 @@ public class ViewChangeHandler : MonoBehaviour
     public void SetupViewSettingsForNewParticles(CoulombChargeBehaviour newCharge)
     {
         if (_coulombLogic.IsIn2dMode()) return;
-        HandleMovementRestrictions(newCharge, 
+        HandleMovementRestrictions(newCharge.gameObject, 
             pathHandler.GetCurrentPosition() != PathHandler.CameraPosition.CP_Side,
             pathHandler.GetCurrentPosition() != PathHandler.CameraPosition.CP_Top,
             pathHandler.GetCurrentPosition() != PathHandler.CameraPosition.CP_Front);
