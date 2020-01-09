@@ -37,8 +37,13 @@ public class PC_SelectScript : MonoBehaviour
 
     public void Select()
     {
-        if(_coulombLogic)
-            _coulombLogic.GetComponent<PC_SelectionHandler>().SelectObject(this);
+        if (!_coulombLogic)
+        {
+            var obj = GameObject.Find("CoulombLogic");
+            if (obj)
+                _coulombLogic = obj.GetComponent<CoulombLogic>();
+        }
+        _coulombLogic.GetComponent<PC_SelectionHandler>().SelectObject(this);
     }
     
     public void Deselect()
@@ -55,18 +60,29 @@ public class PC_SelectScript : MonoBehaviour
     
     public void PositionChanged()
     {
-        Debug.Log("Pos Changed 1");
         if (!_coulombLogic)
         {
             var obj = GameObject.Find("CoulombLogic");
             if (obj)
                 _coulombLogic = obj.GetComponent<CoulombLogic>();
         }
-        Debug.Log("Pos Changed 2");
 
         var handler = _coulombLogic.GetComponent<PC_SelectionHandler>();
         if(handler && handler.selectedObject == this)
             handler.PositionChanged();
     }
     
+    public void RotationChanged()
+    {
+        if (!_coulombLogic)
+        {
+            var obj = GameObject.Find("CoulombLogic");
+            if (obj)
+                _coulombLogic = obj.GetComponent<CoulombLogic>();
+        }
+
+        var handler = _coulombLogic.GetComponent<PC_SelectionHandler>();
+        if(handler && handler.selectedObject == this)
+            handler.RotationChanged();
+    }
 }

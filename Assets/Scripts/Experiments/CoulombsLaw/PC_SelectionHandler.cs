@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Security.Cryptography.X509Certificates;
 using Localization;
 using TMPro;
@@ -16,6 +17,7 @@ public class PC_SelectionHandler : MonoBehaviour
 
     [Header("General Game Objects")] 
     public PC_RegisterBase selectionRegister;
+    public LocalizedText_TextMeshPro nameKey;
     public GameObject xVariablePosition;
     public GameObject yVariablePosition;
     public GameObject zVariablePosition;
@@ -48,6 +50,10 @@ public class PC_SelectionHandler : MonoBehaviour
         xVariablePosition.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(CheckXVariable);
         yVariablePosition.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(CheckYVariable);
         zVariablePosition.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(CheckZVariable);
+        
+        xVariableRotation.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(CheckXVariableRotation);
+        yVariableRotation.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(CheckYVariableRotation);
+        zVariableRotation.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(CheckZVariableRotation);
     }
     
     private void AdaptButtonTextCharge()
@@ -162,6 +168,27 @@ public class PC_SelectionHandler : MonoBehaviour
         }
     }
 
+    private void CheckXVariableRotation(float endValue)
+    {
+        if (!selectedObject || selectedObject.type != PC_SelectScript.SelectType.VisualizationPlaneSelect) return;
+        var currentRot = selectedObject.transform.localRotation.eulerAngles;
+        selectedObject.transform.localRotation = Quaternion.Euler(endValue, currentRot.y, currentRot.z);
+    }
+
+    private void CheckYVariableRotation(float endValue)
+    {
+        if (!selectedObject || selectedObject.type != PC_SelectScript.SelectType.VisualizationPlaneSelect) return;
+        var currentRot = selectedObject.transform.localRotation.eulerAngles;
+        selectedObject.transform.localRotation = Quaternion.Euler(currentRot.x, endValue, currentRot.z);
+    }
+    
+    private void CheckZVariableRotation(float endValue)
+    {
+        if (!selectedObject || selectedObject.type != PC_SelectScript.SelectType.VisualizationPlaneSelect) return;
+        var currentRot = selectedObject.transform.localRotation.eulerAngles;
+        selectedObject.transform.localRotation = Quaternion.Euler(currentRot.x, currentRot.y, endValue);
+    }
+
     public void SelectObject(PC_SelectScript obj)
     {
         Debug.Log("Select now: " + obj.nameKey);
@@ -194,7 +221,6 @@ public class PC_SelectionHandler : MonoBehaviour
 
     public void PositionChanged()
     {
-        Debug.Log("Handler Pos Changed");
         var endPos = Vector3.zero;
         if (_coulombLogic.IsIn2dMode())
         {
@@ -221,11 +247,30 @@ public class PC_SelectionHandler : MonoBehaviour
                 ChargeZVariable.GetComponent<PC_TextFormatter_TMP>().FormatString(endPos.z);
                 break;
             default:
+                nameKey.key = selectedObject.nameKey;
+                nameKey.UpdateLocalizedText();
                 xVariablePosition.GetComponent<PC_TextFormatter_TMP>().FormatString(endPos.x);
                 yVariablePosition.GetComponent<PC_TextFormatter_TMP>().FormatString(endPos.y);
                 zVariablePosition.GetComponent<PC_TextFormatter_TMP>().FormatString(endPos.z);
+
+                foreach (var rot in rotationParent)
+                {
+                    rot.SetActive(selectedObject.type == PC_SelectScript.SelectType.VisualizationPlaneSelect);
+                }
+                
+                if(selectedObject.type == PC_SelectScript.SelectType.VisualizationPlaneSelect)
+                    RotationChanged();
+                
                 break;
         }
+    }
+
+    public void RotationChanged()
+    {
+        var rotation = selectedObject.transform.localRotation.eulerAngles;
+        xVariableRotation.GetComponent<PC_TextFormatter_TMP>().FormatString(rotation.x <= 180f? rotation.x : - Mathf.Abs(360f - rotation.x));
+        yVariableRotation.GetComponent<PC_TextFormatter_TMP>().FormatString(rotation.y <= 180f? rotation.y : - Mathf.Abs(360f - rotation.y));
+        zVariableRotation.GetComponent<PC_TextFormatter_TMP>().FormatString(rotation.z <= 180f? rotation.z : - Mathf.Abs(360f - rotation.z));
     }
 
 }
