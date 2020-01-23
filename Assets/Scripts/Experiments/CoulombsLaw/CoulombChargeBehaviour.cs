@@ -62,6 +62,13 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
             _coulombLogic = obj.GetComponent<CoulombLogic>();
         
         Debug.Assert(_coulombLogic != null);
+
+        if (_coulombLogic.IsIn2dMode())
+        {
+            transform.localRotation = Quaternion.Euler(0, 0, 0);
+            GetComponent<Rigidbody>().constraints |= RigidbodyConstraints.FreezePositionZ;
+        }
+
     }
 
     private void Update()

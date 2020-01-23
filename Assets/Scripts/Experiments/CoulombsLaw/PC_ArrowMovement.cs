@@ -203,11 +203,12 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
         
         if (minimumBoundary != null && maximumBoundary != null)
         {
-            Debug.Log("Clamp: Min " + _localMinBoundary + " - " + _localMaxBoundary + "\nprev pt: " + pt);
-            pt.x = Mathf.Clamp(pt.x, _localMinBoundary.x, _localMaxBoundary.x);
-            pt.y = Mathf.Clamp(pt.y, _localMinBoundary.y, _localMaxBoundary.y);
-            pt.z = Mathf.Clamp(pt.z, _localMinBoundary.z, _localMaxBoundary.z);
-            Debug.Log("new pt: " + pt);
+            if (Math.Abs(_movingDirection.x) > 0.001)
+                pt.x = Mathf.Clamp(pt.x, _localMinBoundary.x, _localMaxBoundary.x);
+            if (Math.Abs(_movingDirection.y) > 0.001)
+                pt.y = Mathf.Clamp(pt.y, _localMinBoundary.y, _localMaxBoundary.y);
+            if (Math.Abs(_movingDirection.z) > 0.001) 
+                pt.z = Mathf.Clamp(pt.z, _localMinBoundary.z, _localMaxBoundary.z);
         }
 
         movingObject.transform.localPosition =  pt;

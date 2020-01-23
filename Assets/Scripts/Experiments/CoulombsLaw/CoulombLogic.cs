@@ -229,7 +229,6 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
 //                pos.z = 4.361746f;      
 //                obj.transform.localPosition = pos;
             } 
-            obj.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
             chargeBehaviour.SetPosition(obj.transform.position);
         }
         chargeBehaviour.Charge = chargeLoad;
@@ -245,13 +244,15 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         var arrowMovement = obj.GetComponentInChildren<PC_ArrowMovement>();
         Debug.Assert(arrowMovement != null);
         arrowMovement.SetBoundaries(_in3dMode? minBoundary3d.transform : minBoundary2d.transform, _in3dMode? maxBoundary3d.transform : maxBoundary2d.transform);
-        arrowMovement.restrictZMovement = !_in3dMode;
+        arrowMovement.restrictYMovement = !_in3dMode;
         
         var field = GameObject.FindGameObjectWithTag("Field").GetComponent<IField>(); //should be only one
         obj.GetComponentInChildren<FieldLine>().field = field;
         obj.SetActive(true);
 
         AddParticle(chargeBehaviour);
+        if(!_in3dMode)
+            chargeBehaviour.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
     }
     
 
