@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -10,12 +9,14 @@ public class PC_SelectScript : MonoBehaviour
     {
         ChargeSelect,
         VisualizationPlaneSelect,
-        VoltmeterSelect
+        VoltmeterSelect,
+        CubeSelect,
+        WhiteboardSelect
     }
     
     // Selected Object
     //TODO: highlight the object
-    public GameObject highlightObject;
+    public List<GameObject> highlightObjects = new List<GameObject>();
     public SelectType type;
     public string nameKey;
     
@@ -36,19 +37,37 @@ public class PC_SelectScript : MonoBehaviour
     }
 
     public void Select()
-    {
+    {        
+        Debug.Log("Select");
+
         if (!_coulombLogic)
         {
             var obj = GameObject.Find("CoulombLogic");
             if (obj)
                 _coulombLogic = obj.GetComponent<CoulombLogic>();
         }
-        _coulombLogic.GetComponent<PC_SelectionHandler>().SelectObject(this);
+        var selectHandler = _coulombLogic.GetComponent<PC_SelectionHandler>();
+        selectHandler.SelectObject(this);
+        
+        foreach (var highlightObj in highlightObjects)
+        {
+            var mats = highlightObj.GetComponent<MeshRenderer>().sharedMaterials.ToList();
+            if(!mats.Contains(selectHandler.highlightMaterial))
+                mats.Add(selectHandler.highlightMaterial);
+            highlightObj.GetComponent<MeshRenderer>().sharedMaterials = mats.ToArray();
+        }
     }
     
     public void Deselect()
     {
-        
+        Debug.Log("Deselect");
+        var selectHandler = _coulombLogic.GetComponent<PC_SelectionHandler>();
+        foreach (var highlightObj in highlightObjects)
+        {
+            var mats = highlightObj.GetComponent<MeshRenderer>().sharedMaterials.ToList();
+            mats.Remove(selectHandler.highlightMaterial);
+            highlightObj.GetComponent<MeshRenderer>().sharedMaterials = mats.ToArray();
+        }
     }
 
     public void DeselectMe()

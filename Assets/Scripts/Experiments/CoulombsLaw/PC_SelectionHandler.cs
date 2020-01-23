@@ -32,6 +32,7 @@ public class PC_SelectionHandler : MonoBehaviour
     
     [Header("Others")]
     public PC_SelectScript selectedObject = null;
+    public Material highlightMaterial;
 
     private CoulombLogic _coulombLogic;
 
@@ -145,11 +146,13 @@ public class PC_SelectionHandler : MonoBehaviour
                 return new Vector3(ChargeXVariable.GetComponent<PC_InputParser_Float_TMP>().GetValue(),
                     ChargeYVariable.GetComponent<PC_InputParser_Float_TMP>().GetValue(),
                     ChargeZVariable.GetComponent<PC_InputParser_Float_TMP>().GetValue());
-            default:
+            case PC_SelectScript.SelectType.VoltmeterSelect:
+            case PC_SelectScript.SelectType.VisualizationPlaneSelect:
                 return new Vector3(xVariablePosition.GetComponent<PC_InputParser_Float_TMP>().GetValue(),
                     yVariablePosition.GetComponent<PC_InputParser_Float_TMP>().GetValue(),
                     zVariablePosition.GetComponent<PC_InputParser_Float_TMP>().GetValue());
         }
+        return Vector3.zero;
     }
     
     public Vector3 GetPositionInWorldSpace(PC_SelectScript.SelectType type, bool alwaysReturnWorldCoord = false)
@@ -170,7 +173,8 @@ public class PC_SelectionHandler : MonoBehaviour
                         _coulombLogic.CalcToWorldSpace(ChargeYVariable.GetComponent<PC_InputParser_Float_TMP>().GetValue()),
                         0); //not supported in 2d -> maybe change that
                     return pos;
-                default:
+                case PC_SelectScript.SelectType.VisualizationPlaneSelect:
+                case PC_SelectScript.SelectType.VoltmeterSelect:
                     pos += new Vector3(
                         _coulombLogic.CalcToWorldSpace(xVariablePosition.GetComponent<PC_InputParser_Float_TMP>().GetValue()),
                         _coulombLogic.CalcToWorldSpace(yVariablePosition.GetComponent<PC_InputParser_Float_TMP>().GetValue()),
@@ -195,6 +199,8 @@ public class PC_SelectionHandler : MonoBehaviour
                         _coulombLogic.CalcToWorldSpace(zVariablePosition.GetComponent<PC_InputParser_Float_TMP>().GetValue(), true));
             }
         }
+
+        return Vector3.zero;
     }
     
     public void SelectObject(PC_SelectScript obj)
@@ -210,7 +216,8 @@ public class PC_SelectionHandler : MonoBehaviour
                     AdaptButtonTextCharge();
                     AdaptVariableFieldsCharge();
                     break;
-                default:
+                case PC_SelectScript.SelectType.VisualizationPlaneSelect:
+                case PC_SelectScript.SelectType.VoltmeterSelect:
                     selectionRegister.registerHandler.DeselectRegister(selectionRegister);
                     break;
             }
@@ -253,7 +260,8 @@ public class PC_SelectionHandler : MonoBehaviour
                 ChargeYVariable.GetComponent<PC_TextFormatter_TMP>().FormatString(endPos.y);
                 ChargeZVariable.GetComponent<PC_TextFormatter_TMP>().FormatString(endPos.z);
                 break;
-            default:
+            case PC_SelectScript.SelectType.VisualizationPlaneSelect:
+            case PC_SelectScript.SelectType.VoltmeterSelect:
                 nameKey.key = selectedObject.nameKey;
                 nameKey.UpdateLocalizedText();
                 xVariablePosition.GetComponent<PC_TextFormatter_TMP>().FormatString(endPos.x);

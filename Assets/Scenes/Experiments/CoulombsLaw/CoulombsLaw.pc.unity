@@ -14118,7 +14118,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9325e85c21518c46baf840be9875edd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  highlightObject: {fileID: 0}
+  highlightObjects:
+  - {fileID: 1112950678}
+  - {fileID: 368271406}
+  - {fileID: 369096685}
+  - {fileID: 1297761719}
+  - {fileID: 423700835}
+  - {fileID: 1091676879}
+  - {fileID: 613685011}
+  - {fileID: 429921016}
   type: 1
   nameKey: VisualizationPlaneKey
 --- !u!1 &1018679510
@@ -15759,7 +15767,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9325e85c21518c46baf840be9875edd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  highlightObject: {fileID: 0}
+  highlightObjects:
+  - {fileID: 1096077108}
   type: 2
   nameKey: VoltmeterNegativeKey
 --- !u!1 &1096178202
@@ -16179,6 +16188,7 @@ MonoBehaviour:
   - {fileID: 149927877}
   - {fileID: 123389368}
   selectedObject: {fileID: 0}
+  highlightMaterial: {fileID: 2100000, guid: 87ae730e6b6786a4baecd1a175e164bb, type: 2}
 --- !u!1001 &1111895826
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22023,7 +22033,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9325e85c21518c46baf840be9875edd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  highlightObject: {fileID: 0}
+  highlightObjects:
+  - {fileID: 1545767907}
   type: 2
   nameKey: VoltmeterPositiveKey
 --- !u!1 &1546420460
@@ -22417,7 +22428,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: -1
+  m_firstOverflowCharacterIndex: 0
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -24377,13 +24388,14 @@ GameObject:
   - component: {fileID: 1714027337}
   - component: {fileID: 1714027336}
   - component: {fileID: 1714027335}
+  - component: {fileID: 1714027347}
   m_Layer: 0
   m_Name: 3dScene
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1714027331
 Transform:
   m_ObjectHideFlags: 0
@@ -24636,6 +24648,21 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &1714027347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1714027330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9325e85c21518c46baf840be9875edd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  highlightObjects: []
+  type: 3
+  nameKey: 
 --- !u!1 &1714394157
 GameObject:
   m_ObjectHideFlags: 0
@@ -27897,6 +27924,7 @@ GameObject:
   - component: {fileID: 1938568895}
   - component: {fileID: 1938568893}
   - component: {fileID: 1938568892}
+  - component: {fileID: 1938568894}
   m_Layer: 2
   m_Name: VectorField3d
   m_TagString: VectorField
@@ -27947,6 +27975,21 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0.0000005364418}
+--- !u!114 &1938568894
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1938568890}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9325e85c21518c46baf840be9875edd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  highlightObjects: []
+  type: 3
+  nameKey: 
 --- !u!33 &1938568895
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -30308,6 +30351,7 @@ GameObject:
   - component: {fileID: 23893973549322920}
   - component: {fileID: 114394125256489962}
   - component: {fileID: 1184177625213541}
+  - component: {fileID: 1184177625213542}
   m_Layer: 0
   m_Name: VectorField
   m_TagString: VectorField
@@ -30328,6 +30372,21 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 10, y: 2.2204457e-16, z: 9.999998}
   m_Center: {x: 0.0000011399388, y: -0.00000033341348, z: 0.00000333786}
+--- !u!114 &1184177625213542
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1184177625213540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9325e85c21518c46baf840be9875edd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  highlightObjects: []
+  type: 4
+  nameKey: 
 --- !u!1 &1227991892381773
 GameObject:
   m_ObjectHideFlags: 0
