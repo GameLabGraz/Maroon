@@ -76,7 +76,8 @@ public class PC_DragHandler : MonoBehaviour
         {
             if (allowedXMovement && (pt.x < minBoundary.position.x || maxBoundary.position.x < pt.x))
                 outside = true;
-            else if (allowedYMovement && (pt.y < minBoundary.position.y || maxBoundary.position.y < pt.y))
+            else if (allowedYMovement && (pt.y < Mathf.Min(minBoundary.position.y, maxBoundary.position.y) 
+                                          || Mathf.Max(minBoundary.position.y, maxBoundary.position.y) < pt.y))
                 outside = true;
             else if (allowedZMovement && (pt.z < minBoundary.position.z || maxBoundary.position.z < pt.z))
                 outside = true;

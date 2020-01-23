@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Data;
-using System.Security.Cryptography.X509Certificates;
 using Localization;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class PC_SelectionHandler : MonoBehaviour
 {
@@ -14,6 +14,8 @@ public class PC_SelectionHandler : MonoBehaviour
     
     public GameObject ChargeButtonAddDelete;
     public GameObject ChargeButtonText;
+    public GameObject ChargePrefab;
+    public UIChargeDragHandler UICharge;
 
     [Header("General Game Objects")] 
     public PC_RegisterBase selectionRegister;
@@ -32,7 +34,7 @@ public class PC_SelectionHandler : MonoBehaviour
     public PC_SelectScript selectedObject = null;
 
     private CoulombLogic _coulombLogic;
-    
+
     private void Start()
     {
         var obj  = GameObject.Find("CoulombLogic");
@@ -43,17 +45,32 @@ public class PC_SelectionHandler : MonoBehaviour
         
         AdaptButtonTextCharge();
         AdaptVariableFieldsCharge();
-        ChargeXVariable.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(CheckXVarCharge);
-        ChargeYVariable.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(CheckYVarCharge);
-        ChargeZVariable.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(CheckZVarCharge);
+        ChargeXVariable.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener((endVal) => { CheckVariable(endVal, Vector3.right); });
+        ChargeYVariable.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener((endVal) => { CheckVariable(endVal, Vector3.up); });
+        ChargeZVariable.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener((endVal) => { CheckVariable(endVal, Vector3.forward); });
         
-        xVariablePosition.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(CheckXVariable);
-        yVariablePosition.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(CheckYVariable);
-        zVariablePosition.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(CheckZVariable);
+        xVariablePosition.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener((endVal) => { CheckVariable(endVal, Vector3.right); });
+        yVariablePosition.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener((endVal) => { CheckVariable(endVal, Vector3.up); });
+        zVariablePosition.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener((endVal) => { CheckVariable(endVal, Vector3.forward); });
         
-        xVariableRotation.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(CheckXVariableRotation);
-        yVariableRotation.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(CheckYVariableRotation);
-        zVariableRotation.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(CheckZVariableRotation);
+        xVariableRotation.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener((endVal) => { CheckRotation(endVal, Vector3.right); });
+        yVariableRotation.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener((endVal) => { CheckRotation(endVal, Vector3.up); });
+        zVariableRotation.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener((endVal) => { CheckRotation(endVal, Vector3.forward); });
+        
+        ChargeButtonAddDelete.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            Debug.Log("On Click Add Delete");
+            if (selectedObject != null && selectedObject.type == PC_SelectScript.SelectType.ChargeSelect)
+            {
+                //DELETE
+                _coulombLogic.RemoveParticle(selectedObject.GetComponent<CoulombChargeBehaviour>(), true);
+            }
+            else
+            {
+                //CREATE
+                _coulombLogic.CreateCharge(ChargePrefab, GetInputPosition(PC_SelectScript.SelectType.ChargeSelect), UICharge.ChargeValue, UICharge.FixedPosition, false);
+            }
+        });
     }
     
     private void AdaptButtonTextCharge()
@@ -81,9 +98,11 @@ public class PC_SelectionHandler : MonoBehaviour
             ChargeXVariable.GetComponent<PC_InputParser_Float_TMP>().minimum = 0f;
             ChargeXVariable.GetComponent<PC_InputParser_Float_TMP>().maximum = _coulombLogic.xMax2d;
             ChargeYVariable.GetComponent<PC_InputParser_Float_TMP>().minimum = 0f;
-            ChargeYVariable.GetComponent<PC_InputParser_Float_TMP>().minimum = _coulombLogic.yMax2d;
+            ChargeYVariable.GetComponent<PC_InputParser_Float_TMP>().maximum = _coulombLogic.yMax2d;
             ChargeZVariable.GetComponent<TMP_InputField>().text = "0.00";
             ChargeZVariable.GetComponent<TMP_InputField>().interactable = false;
+            
+            
         }
         else
         {
@@ -96,102 +115,90 @@ public class PC_SelectionHandler : MonoBehaviour
             ChargeZVariable.GetComponent<PC_InputParser_Float_TMP>().maximum = _coulombLogic.zMax3d;
         }
     }
-
-    public void CheckXVarCharge(float endValue)
-    {
-        if (selectedObject.type == PC_SelectScript.SelectType.ChargeSelect)
-            CheckXVariable(endValue);
-    }
-
-    public void CheckYVarCharge(float endValue)
-    {
-        if (selectedObject.type == PC_SelectScript.SelectType.ChargeSelect)
-            CheckYVariable(endValue);
-    }
-
-    public void CheckZVarCharge(float endValue)
-    {
-        if (selectedObject.type == PC_SelectScript.SelectType.ChargeSelect)
-            CheckZVariable(endValue);
-    }
     
-    public void CheckXVariable(float endValue)
+    private void CheckVariable(float endValue, Vector3 affectedAxis)
     {
         if (!selectedObject) return;
-        Debug.Log("Float Val: " + endValue);
         if (_coulombLogic.IsIn2dMode())
         {
             var currentPos = selectedObject.transform.position;
-            //end Value is between 0 and 1
-            currentPos.x = _coulombLogic.xOrigin2d.position.x + _coulombLogic.CalcToWorldSpace(endValue);
+            if(affectedAxis.x > 0.1) currentPos.x = _coulombLogic.xOrigin2d.position.x + _coulombLogic.CalcToWorldSpace(endValue); //end Value is between 0 and 1
+            if(affectedAxis.y > 0.1) currentPos.y = _coulombLogic.xOrigin2d.position.y + _coulombLogic.CalcToWorldSpace(endValue); //end Value is between 0 and 1
+            if(affectedAxis.z > 0.1) currentPos.z = _coulombLogic.xOrigin2d.position.z + _coulombLogic.CalcToWorldSpace(endValue); //end Value is between 0 and 1
             selectedObject.transform.position = currentPos;
         }
         else
         {
             var currentPos = selectedObject.transform.localPosition;
-            currentPos.x = _coulombLogic.xOrigin3d.localPosition.x + _coulombLogic.CalcToWorldSpace(endValue, true);
+            if(affectedAxis.x > 0.1) currentPos.x = _coulombLogic.xOrigin3d.localPosition.x + _coulombLogic.CalcToWorldSpace(endValue, true); //end Value is between 0 and 1
+            if(affectedAxis.y > 0.1) currentPos.y = _coulombLogic.xOrigin3d.localPosition.y + _coulombLogic.CalcToWorldSpace(endValue, true); //end Value is between 0 and 1
+            if(affectedAxis.z > 0.1) currentPos.z = _coulombLogic.xOrigin3d.localPosition.z + _coulombLogic.CalcToWorldSpace(endValue, true); //end Value is between 0 and 1
             selectedObject.transform.localPosition = currentPos;
         }
     }
 
-    public void CheckYVariable(float endValue)
+    public Vector3 GetInputPosition(PC_SelectScript.SelectType type)
     {
-        if (!selectedObject) return;
-        Debug.Log("Float Val: " + endValue);
-        if (_coulombLogic.IsIn2dMode())
+        switch (type)
         {
-            var currentPos = selectedObject.transform.position;
-            //end Value is between 0 and 1
-            currentPos.y = _coulombLogic.xOrigin2d.position.y + _coulombLogic.CalcToWorldSpace(endValue);
-            selectedObject.transform.position = currentPos;
+            case PC_SelectScript.SelectType.ChargeSelect:
+                return new Vector3(ChargeXVariable.GetComponent<PC_InputParser_Float_TMP>().GetValue(),
+                    ChargeYVariable.GetComponent<PC_InputParser_Float_TMP>().GetValue(),
+                    ChargeZVariable.GetComponent<PC_InputParser_Float_TMP>().GetValue());
+            default:
+                return new Vector3(xVariablePosition.GetComponent<PC_InputParser_Float_TMP>().GetValue(),
+                    yVariablePosition.GetComponent<PC_InputParser_Float_TMP>().GetValue(),
+                    zVariablePosition.GetComponent<PC_InputParser_Float_TMP>().GetValue());
         }
-        else
-        {
-            var currentPos = selectedObject.transform.localPosition;
-            currentPos.y = _coulombLogic.xOrigin3d.localPosition.y + _coulombLogic.CalcToWorldSpace(endValue, true);
-            selectedObject.transform.localPosition = currentPos;
-        }
-    }
-
-    public void CheckZVariable(float endValue)
-    {
-        if (!selectedObject) return;
-        if (_coulombLogic.IsIn2dMode())
-        {
-            //No z variable is supported
-        }
-        else
-        {
-            var currentPos = selectedObject.transform.localPosition;
-            currentPos.z = _coulombLogic.xOrigin3d.localPosition.z + _coulombLogic.CalcToWorldSpace(endValue, true);
-            selectedObject.transform.localPosition = currentPos;
-        }
-    }
-
-    private void CheckXVariableRotation(float endValue)
-    {
-        if (!selectedObject || selectedObject.type != PC_SelectScript.SelectType.VisualizationPlaneSelect) return;
-        var currentRot = selectedObject.transform.localRotation.eulerAngles;
-        selectedObject.transform.localRotation = Quaternion.Euler(endValue, currentRot.y, currentRot.z);
-    }
-
-    private void CheckYVariableRotation(float endValue)
-    {
-        if (!selectedObject || selectedObject.type != PC_SelectScript.SelectType.VisualizationPlaneSelect) return;
-        var currentRot = selectedObject.transform.localRotation.eulerAngles;
-        selectedObject.transform.localRotation = Quaternion.Euler(currentRot.x, endValue, currentRot.z);
     }
     
-    private void CheckZVariableRotation(float endValue)
+    public Vector3 GetPositionInWorldSpace(PC_SelectScript.SelectType type, bool alwaysReturnWorldCoord = false)
     {
-        if (!selectedObject || selectedObject.type != PC_SelectScript.SelectType.VisualizationPlaneSelect) return;
-        var currentRot = selectedObject.transform.localRotation.eulerAngles;
-        selectedObject.transform.localRotation = Quaternion.Euler(currentRot.x, currentRot.y, endValue);
-    }
+        if (selectedObject != null && selectedObject.type == type)
+        {
+            return selectedObject.transform.position;
+        }
 
+        if (_coulombLogic.IsIn2dMode())
+        {                        
+            var pos = _coulombLogic.xOrigin2d.position;
+            switch (type)
+            {
+                case PC_SelectScript.SelectType.ChargeSelect:
+                    pos += new Vector3(
+                        _coulombLogic.CalcToWorldSpace(ChargeXVariable.GetComponent<PC_InputParser_Float_TMP>().GetValue()),
+                        _coulombLogic.CalcToWorldSpace(ChargeYVariable.GetComponent<PC_InputParser_Float_TMP>().GetValue()),
+                        0); //not supported in 2d -> maybe change that
+                    return pos;
+                default:
+                    pos += new Vector3(
+                        _coulombLogic.CalcToWorldSpace(xVariablePosition.GetComponent<PC_InputParser_Float_TMP>().GetValue()),
+                        _coulombLogic.CalcToWorldSpace(yVariablePosition.GetComponent<PC_InputParser_Float_TMP>().GetValue()),
+                        0); //not supported in 2d -> maybe change that
+                    return pos;
+            }
+        }
+        else
+        {
+            var pos = _coulombLogic.xOrigin3d.localPosition;
+            switch (type)
+            {
+                case PC_SelectScript.SelectType.ChargeSelect:
+                    return pos + new Vector3(
+                        _coulombLogic.CalcToWorldSpace(ChargeXVariable.GetComponent<PC_InputParser_Float_TMP>().GetValue(), true),
+                        _coulombLogic.CalcToWorldSpace(ChargeYVariable.GetComponent<PC_InputParser_Float_TMP>().GetValue(), true),
+                        _coulombLogic.CalcToWorldSpace(ChargeZVariable.GetComponent<PC_InputParser_Float_TMP>().GetValue(), true));
+                default:
+                    return pos + new Vector3(
+                        _coulombLogic.CalcToWorldSpace(xVariablePosition.GetComponent<PC_InputParser_Float_TMP>().GetValue(), true),
+                        _coulombLogic.CalcToWorldSpace(yVariablePosition.GetComponent<PC_InputParser_Float_TMP>().GetValue(), true),
+                        _coulombLogic.CalcToWorldSpace(zVariablePosition.GetComponent<PC_InputParser_Float_TMP>().GetValue(), true));
+            }
+        }
+    }
+    
     public void SelectObject(PC_SelectScript obj)
     {
-        Debug.Log("Select now: " + obj.nameKey);
         if (selectedObject == obj) return;
         if (selectedObject != null)
         {
@@ -272,5 +279,12 @@ public class PC_SelectionHandler : MonoBehaviour
         yVariableRotation.GetComponent<PC_TextFormatter_TMP>().FormatString(rotation.y <= 180f? rotation.y : - Mathf.Abs(360f - rotation.y));
         zVariableRotation.GetComponent<PC_TextFormatter_TMP>().FormatString(rotation.z <= 180f? rotation.z : - Mathf.Abs(360f - rotation.z));
     }
-
+    
+    private void CheckRotation(float endValue, Vector3 axis)
+    {
+        if (!selectedObject || selectedObject.type != PC_SelectScript.SelectType.VisualizationPlaneSelect) return;
+        var currentRot = selectedObject.transform.localRotation.eulerAngles;
+        selectedObject.transform.localRotation = Quaternion.Euler(axis.x > 0.1? endValue : currentRot.x, 
+            axis.y > 0.1f? endValue : currentRot.y, axis.z > 0.1f? endValue : currentRot.z);
+    }
 }

@@ -18,7 +18,8 @@ public class PC_InputParser_Float_TMP : MonoBehaviour
     
     public string textFormat = "F";
     private string _prevText;
-
+    private float _value = 0;
+    
     public TextChangeFloat onValueChangedFloat;
     
     // Start is called before the first frame update
@@ -40,6 +41,7 @@ public class PC_InputParser_Float_TMP : MonoBehaviour
                 number = maximum;
 
             text = number.ToString(textFormat);
+            _value = number;
             _prevText = text;
             onValueChangedFloat.Invoke(number);
         }
@@ -50,5 +52,10 @@ public class PC_InputParser_Float_TMP : MonoBehaviour
         }
 
         _textField.textComponent.text = text;
+    }
+
+    public float GetValue()
+    {
+        return _value;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -65,8 +66,8 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
             if (showMovingLines)
             {
                 _lineRenderer = GetComponent<LineRenderer>();
-                if (!_lineRenderer) _lineRenderer = gameObject.AddComponent<LineRenderer>();
-                _lineRenderer.enabled = false;
+//                if (!_lineRenderer) _lineRenderer = gameObject.AddComponent<LineRenderer>();
+                if(_lineRenderer != null) _lineRenderer.enabled = false;
             }
             
             _localMinBoundary = movingObject.transform.parent.transform.InverseTransformPoint(minimumBoundary.position);
@@ -142,6 +143,8 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
         _moving = true;
         _distance = Vector3.Distance(movingObject.transform.position, Camera.main.transform.position);
         var pt = movingObject.transform.parent.transform.InverseTransformPoint(ray.GetPoint(_distance));
+//        var pt = movingObject.transform.InverseTransformPoint(ray.GetPoint(_distance));
+        
         if(useMovementOffset)
             _movingOffset = pt - movingObject.transform.localPosition;
         
@@ -153,7 +156,7 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
         if(_lineRenderer == null && maximumBoundary != null && minimumBoundary != null && showMovingLines)
         {
             _lineRenderer = GetComponent<LineRenderer>();
-            if (!_lineRenderer) _lineRenderer = gameObject.AddComponent<LineRenderer>();
+            if (!_lineRenderer) return;
             _lineRenderer.enabled = false;
         }
         
@@ -200,9 +203,11 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
         
         if (minimumBoundary != null && maximumBoundary != null)
         {
+            Debug.Log("Clamp: Min " + _localMinBoundary + " - " + _localMaxBoundary + "\nprev pt: " + pt);
             pt.x = Mathf.Clamp(pt.x, _localMinBoundary.x, _localMaxBoundary.x);
             pt.y = Mathf.Clamp(pt.y, _localMinBoundary.y, _localMaxBoundary.y);
             pt.z = Mathf.Clamp(pt.z, _localMinBoundary.z, _localMaxBoundary.z);
+            Debug.Log("new pt: " + pt);
         }
 
         movingObject.transform.localPosition =  pt;

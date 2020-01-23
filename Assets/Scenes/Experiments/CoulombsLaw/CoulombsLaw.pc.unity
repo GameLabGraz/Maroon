@@ -1938,7 +1938,6 @@ GameObject:
   - component: {fileID: 126574072}
   - component: {fileID: 126574075}
   - component: {fileID: 126574074}
-  - component: {fileID: 126574073}
   m_Layer: 5
   m_Name: ChargeSettings
   m_TagString: Untagged
@@ -1971,26 +1970,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &126574073
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 126574071}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1679637790, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_IgnoreLayout: 0
-  m_MinWidth: -1
-  m_MinHeight: -1
-  m_PreferredWidth: -1
-  m_PreferredHeight: -1
-  m_FlexibleWidth: 1
-  m_FlexibleHeight: 1
-  m_LayoutPriority: 1
 --- !u!114 &126574074
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2947,8 +2926,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2499cb07610e0cd4a98a23b652b27f4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minimum: -5
-  maximum: 5
+  minimum: 0
+  maximum: 1
   textFormat: F
   onValueChangedFloat:
     m_PersistentCalls:
@@ -8306,8 +8285,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 536034726}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.7, y: 0, z: -4.62}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 5, y: 2, z: 4.91}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4557310006003312}
@@ -10076,10 +10055,6 @@ MonoBehaviour:
   returnTime: 1
   generatedObject: {fileID: 1545767907}
   ChangeLayerObject: {fileID: 1938568890}
-  minPosition2d: {fileID: 1235280554}
-  maxPosition2d: {fileID: 536034726}
-  minPosition3d: {fileID: 1263600782}
-  maxPosition3d: {fileID: 981137931}
 --- !u!114 &683929894
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11205,8 +11180,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2499cb07610e0cd4a98a23b652b27f4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minimum: -5
-  maximum: 5
+  minimum: 0
+  maximum: 1
   textFormat: F
   onValueChangedFloat:
     m_PersistentCalls:
@@ -15981,7 +15956,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxChargeCount: 10
-  startIn2dMode: 0
+  startIn2dMode: 1
   onParticleAdded:
     m_PersistentCalls:
       m_Calls:
@@ -16018,7 +15993,7 @@ MonoBehaviour:
   xOrigin3d: {fileID: 1263600783}
   xAt1m3d: {fileID: 981137932}
   xMax2d: 1
-  yMax2d: 1.35
+  yMax2d: 1.3
   xMax3d: 1
   yMax3d: 1
   zMax3d: 1
@@ -16189,6 +16164,9 @@ MonoBehaviour:
   ChargeZVariable: {fileID: 2051407309}
   ChargeButtonAddDelete: {fileID: 447123910}
   ChargeButtonText: {fileID: 1736795090}
+  ChargePrefab: {fileID: 222567040141845092, guid: 9402c44767a65434480275f7447498ec,
+    type: 3}
+  UICharge: {fileID: 1353178339}
   selectionRegister: {fileID: 1018679512}
   nameKey: {fileID: 850903568}
   xVariablePosition: {fileID: 1995361966}
@@ -18471,7 +18449,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1235280554}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.69, y: -0, z: 4.71}
+  m_LocalPosition: {x: -5.07, y: -2, z: -5.18}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4557310006003312}
@@ -19737,7 +19715,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1353178339}
-        m_MethodName: CreateParticleAtOrigin
+        m_MethodName: SetObjectToOrigin
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -19766,10 +19744,6 @@ MonoBehaviour:
   generatedObject: {fileID: 222567040141845092, guid: 9402c44767a65434480275f7447498ec,
     type: 3}
   ChangeLayerObject: {fileID: 1938568890}
-  minPosition2d: {fileID: 1235280554}
-  maxPosition2d: {fileID: 536034726}
-  minPosition3d: {fileID: 1263600782}
-  maxPosition3d: {fileID: 981137931}
   maxValue: 5
   minValue: -5
   BackgroundImage: {fileID: 7767437}
@@ -22443,7 +22417,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: 0
+  m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -23752,10 +23726,6 @@ MonoBehaviour:
   returnTime: 1
   generatedObject: {fileID: 1096077108}
   ChangeLayerObject: {fileID: 1938568890}
-  minPosition2d: {fileID: 1235280554}
-  maxPosition2d: {fileID: 536034726}
-  minPosition3d: {fileID: 1263600782}
-  maxPosition3d: {fileID: 981137931}
 --- !u!114 &1670564332
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24315,7 +24285,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1703478441}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -24413,7 +24383,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1714027331
 Transform:
   m_ObjectHideFlags: 0
@@ -29047,8 +29017,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2499cb07610e0cd4a98a23b652b27f4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minimum: -5
-  maximum: 5
+  minimum: 0
+  maximum: 1
   textFormat: F
   onValueChangedFloat:
     m_PersistentCalls:
@@ -29837,8 +29807,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.19427796, y: 1, z: 9.999998}
-  m_Center: {x: -4.9028683, y: -0.00000033341357, z: 0.0000034332274}
+  m_Size: {x: 0.19427796, y: 1, z: 11.65}
+  m_Center: {x: -5.41, y: -0.00000033341357, z: 0.0000034332274}
 --- !u!65 &2112628883
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -29850,8 +29820,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 10, y: 1, z: 0.2286732}
-  m_Center: {x: 0.0000011444092, y: -0.0000003334132, z: 4.885666}
+  m_Size: {x: 11.69, y: 1, z: 0.2286732}
+  m_Center: {x: 0.0000011444092, y: -0.0000003334132, z: 5.25}
 --- !u!65 &2112628884
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -29863,8 +29833,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.19427148, y: 1, z: 9.999998}
-  m_Center: {x: 4.902868, y: -0.00000033341357, z: 0.0000034332274}
+  m_Size: {x: 0.19427148, y: 1, z: 11.74}
+  m_Center: {x: 5.33, y: -0.00000033341357, z: 0.0000034332274}
 --- !u!65 &2112628885
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -29876,8 +29846,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 10, y: 1, z: 0.15986751}
-  m_Center: {x: 0.0000011444092, y: -0.00000033342127, z: -4.9200616}
+  m_Size: {x: 11.53, y: 1.98, z: 0.15986751}
+  m_Center: {x: 0.0000011444092, y: -0.00000033342127, z: -5.72}
 --- !u!1 &2114445817
 GameObject:
   m_ObjectHideFlags: 0
@@ -30940,7 +30910,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1184177625213540}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -56.128, y: 294.72, z: -325.15906}
+  m_LocalPosition: {x: -56.128, y: 294.72, z: -322.9}
   m_LocalScale: {x: 2.3, y: 2.299999, z: 2.299999}
   m_Children:
   - {fileID: 2112628880}
