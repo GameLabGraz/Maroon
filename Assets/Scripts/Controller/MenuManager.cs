@@ -22,7 +22,7 @@ public class MenuManager : MonoBehaviour
 
         switch (LanguageManager.Instance.CurrentLanguage)
         {
-            case "German":
+            case SystemLanguage.German:
                 ger.isOn = true;
                 break;
             default:
@@ -34,13 +34,13 @@ public class MenuManager : MonoBehaviour
 
     public void ClickOnGerman()
     {
-        LanguageManager.Instance.CurrentLanguage = "German";
+        LanguageManager.Instance.CurrentLanguage = SystemLanguage.German;
         UpdateLocalizedText();
     }
 
     public void ClickOnEnglish()
     {
-        LanguageManager.Instance.CurrentLanguage = "English";
+        LanguageManager.Instance.CurrentLanguage = SystemLanguage.English;
         UpdateLocalizedText();
     }
 

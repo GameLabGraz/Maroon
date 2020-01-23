@@ -227,7 +227,8 @@ public class PC_SelectionHandler : MonoBehaviour
         selectedObject = obj;
         if (selectedObject != null)
         {
-            if (selectedObject.type != PC_SelectScript.SelectType.ChargeSelect)
+            if (selectedObject.type == PC_SelectScript.SelectType.VisualizationPlaneSelect ||
+                selectedObject.type == PC_SelectScript.SelectType.VoltmeterSelect)
                 selectionRegister.registerHandler.SelectRegister(selectionRegister);
             PositionChanged();
         }
