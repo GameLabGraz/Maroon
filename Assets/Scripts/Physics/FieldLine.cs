@@ -97,19 +97,14 @@ public class FieldLine : MonoBehaviour, IResetObject
         var closingAngle = fixClosingAngle + (4 - GetFieldStrengthFromEmObj()) * 2;
 
         var positionIndex = 0;
-        var position = transform.position - originOffset;
+        var position = transform.TransformPoint(Vector3.zero - originOffset);
         _lineRenderer.SetPosition(positionIndex, transform.InverseTransformPoint(position));
         positionIndex++;
         while (positionIndex < vertexCount)
         {
             var p = Vector3.Normalize(-field.get(position) * Teal.FieldStrengthFactor);
 
-            var direction = new Vector3
-            {
-                x = Mathf.Cos(closingAngle * Mathf.Deg2Rad) * p.x - Mathf.Sin(closingAngle * Mathf.Deg2Rad) * p.y,
-                y = Mathf.Sin(closingAngle * Mathf.Deg2Rad) * p.x + Mathf.Cos(closingAngle * Mathf.Deg2Rad) * p.y,
-                z = p.z
-            };
+            var direction = Quaternion.AngleAxis(closingAngle, transform.forward) * p;
 
             position += direction * lineSegmentLength;
 

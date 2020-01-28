@@ -2,31 +2,32 @@
 // EMObject.cs
 //
 // Abstract base class for electro magnetic objects
-//
-//
-// Authors: Michael Stefan Holly
-//          Michael Schiller
-//          Christopher Schinnerl
 //-----------------------------------------------------------------------------
 //
 
 using UnityEngine;
-using System.Collections;
 
 /// <summary>
-/// Abstract base class for electro magnetic objects
+/// Abstract base class for electromagnetic objects
 /// </summary>
 public abstract class EMObject : PausableObject, IGenerateB, IResetObject
 {
-    /// <summary>
-    /// Activated acting forces on the object
-    /// </summary>
-    public bool force_active = false;
+    public enum FieldAxis
+    {
+        Up, Right, Forward
+    }
 
     /// <summary>
     /// The field strength factor
     /// </summary>
     public float field_strength = 0;
+
+    public FieldAxis fieldAxis = FieldAxis.Up;
+    
+    /// <summary>
+    /// Activated acting forces on the object
+    /// </summary>
+    public bool force_active = false;
 
     /// <summary>
     /// The start position of the object for reseting
@@ -37,6 +38,24 @@ public abstract class EMObject : PausableObject, IGenerateB, IResetObject
     /// The start rotation of the object for reseting
     /// </summary>
     protected Quaternion startRot;
+
+    public Vector3 FieldAlignment
+    {
+        get
+        {
+            switch (fieldAxis)
+            {
+                case FieldAxis.Up:
+                    return transform.up;
+                case FieldAxis.Right:
+                    return transform.right;
+                case FieldAxis.Forward:
+                    return transform.forward;
+                default:
+                    return Vector3.zero;
+            }
+        }
+    }
 
     /// <summary>
     /// Initialization
@@ -55,9 +74,7 @@ public abstract class EMObject : PausableObject, IGenerateB, IResetObject
     /// <returns>The dipole moment</returns>
     private Vector3 getDipoleMoment()
     {
-        Vector3 direction = transform.up;
-        Vector3 dipolMoment = direction * field_strength;
-        return dipolMoment;
+        return FieldAlignment * field_strength;
     }
 
     /// <summary>
@@ -76,17 +93,15 @@ public abstract class EMObject : PausableObject, IGenerateB, IResetObject
     /// <returns>The magnetic field vector at the position</returns>
     public Vector3 getB(Vector3 position)
     {
-        //http://magician.ucsd.edu/Essentials_2/WebBook2ch1.html
-        Vector3 B;
-        Vector3 n = position - transform.position;
-        Vector3 m = getDipoleMoment();
-        float r = n.magnitude; //length
+        var n = position - transform.position;
+        var m = getDipoleMoment();
+        var r = n.magnitude; //length
 
         n.Normalize();
         n.Scale(new Vector3(3.0f * Vector3.Dot(m, n),
                             3.0f * Vector3.Dot(m, n),
                             3.0f * Vector3.Dot(m, n)));
-        B = n - m;
+        var B = n - m;
 
         B.Scale(new Vector3(1.0f / (r * r * r),
                             1.0f / (r * r * r),
