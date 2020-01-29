@@ -13,7 +13,9 @@ public class TextChangeFloat : UnityEvent<float> {}
 public class PC_InputParser_Float_TMP : MonoBehaviour
 {
     private TMP_InputField _textField;
+    [SerializeField]
     public float minimum = float.MinValue;
+    [SerializeField]
     public float maximum = float.MaxValue;
     
     public string textFormat = "F";

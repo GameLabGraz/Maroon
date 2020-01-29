@@ -1,5 +1,7 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Localization
@@ -14,11 +16,18 @@ namespace Localization
         private bool addColon = false;
 
         private TextMeshProUGUI _text;
+        private string _oldKey;
 
         private void Start()
         {
             _text = GetComponent<TextMeshProUGUI>();
             UpdateLocalizedText();
+            _oldKey = key;
+        }
+
+        private void Update()
+        {
+            if (_oldKey != key) UpdateLocalizedText();
         }
 
         public void UpdateLocalizedText()
@@ -30,6 +39,8 @@ namespace Localization
             _text.text = LanguageManager.Instance.GetString(key);
             if (addColon)
                 _text.text += ":";
+
+            _oldKey = key;
         }
     }
 }
