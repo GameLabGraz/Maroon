@@ -13,6 +13,7 @@ public class ViewChangeHandler : MonoBehaviour
     public GameObject VisualizationCubeOutline;
     public GameObject VoltmeterPositive;
     public GameObject VoltmeterNegative;
+    public RulerPrefab Ruler;
 
     private CoulombLogic _coulombLogic;
     private PathHandler.CameraPosition _lastView = PathHandler.CameraPosition.CP_Free;
@@ -41,6 +42,8 @@ public class ViewChangeHandler : MonoBehaviour
         
         HandleMovementRestrictions(VoltmeterPositive, allowX, allowY, allowZ);
         HandleMovementRestrictions(VoltmeterNegative, allowX, allowY, allowZ);
+        HandleMovementRestrictions(Ruler.RulerStart, allowX, allowY, allowZ);
+        HandleMovementRestrictions(Ruler.RulerEnd, allowX, allowY, allowZ);
         
         VisualizationCube.transform.rotation = Quaternion.identity;
         VisualizationCube.GetComponent<PC_Rotation>().enabled = newPosition == PathHandler.CameraPosition.CP_Free;

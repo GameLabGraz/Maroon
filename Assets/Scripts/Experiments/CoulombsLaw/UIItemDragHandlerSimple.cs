@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using Vector3 = UnityEngine.Vector3;
 
@@ -8,6 +9,8 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
     public Canvas parentCanvas;
     public float returnTime = 1f;
     public GameObject generatedObject;
+    [Tooltip("The object which is set as the new child, if empty the generated Object will be used as childObject.")]
+    public GameObject childObject = null;
     
     [Header("Other Affected GameObjects")]
     public GameObject ChangeLayerObject;
@@ -21,6 +24,12 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
     
     private float _currentCharge = 0f;
     private bool _fixedPosition = false;
+
+    private void Start()
+    {
+        if (childObject == null)
+            childObject = generatedObject;
+    }
 
     private void Update()
     {
@@ -99,10 +108,9 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
         if (generatedObject == null) return;
 //        var obj = Instantiate(generatedObject, position, Quaternion.identity, parent);
 
-        var obj = generatedObject;
-        
-        obj.transform.parent = parent;
-        obj.transform.position = position;
-        obj.SetActive(true);
+        childObject.transform.parent = parent;
+        generatedObject.transform.position = position;
+        generatedObject.SetActive(false);
+        generatedObject.SetActive(true);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -33,10 +34,15 @@ public class PC_DragHandler : MonoBehaviour
     [Tooltip("Event that gets triggered at the end of the movement if the object is within the boundaries (or none are specified).")]
     public UnityEvent onEndMovingInsideBoundaries;
     
+    [Tooltip("Event that gets triggered when the object is enabled.")]
+    public UnityEvent onEnabled;
+    [Tooltip("Event that gets triggered when the object is disabled.")]
+    public UnityEvent onDisabled;
+    
     private bool _moving = false;
     private bool _isOutsideBoundaries = false;
     private float _distance;
-    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -118,5 +124,16 @@ public class PC_DragHandler : MonoBehaviour
         allowedXMovement = allowX;
         allowedYMovement = allowY;
         allowedZMovement = allowZ;
+    }
+
+
+    private void OnDisable()
+    {
+        onDisabled.Invoke();
+    }
+
+    private void OnEnable()
+    {
+        onEnabled.Invoke();
     }
 }

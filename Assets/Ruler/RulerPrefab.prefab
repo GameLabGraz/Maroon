@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5322284415718354359}
   - component: {fileID: 1129618664009680711}
   - component: {fileID: 3668250748596780449}
+  - component: {fileID: 6231548434669007651}
   m_Layer: 0
   m_Name: RulerEnd
   m_TagString: Untagged
@@ -92,6 +93,57 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6231548434669007651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2817295697082991055}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 233dba56b7c33c54f9a9b1982ce376b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movingObject: {fileID: 0}
+  minBoundary: {fileID: 0}
+  maxBoundary: {fileID: 0}
+  allowedXMovement: 1
+  allowedYMovement: 1
+  allowedZMovement: 1
+  changeMaterialIfOutside: []
+  outsideTransparency: 0.7
+  ArrowMovement: {fileID: 531307401340712683}
+  onStartedMoving:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onMove:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onEndMovingOutsideBoundaries:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onEndMovingInsideBoundaries:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onEnabled:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onDisabled:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!1 &3845582264836902178
 GameObject:
   m_ObjectHideFlags: 0
@@ -205,8 +257,13 @@ MonoBehaviour:
   allowedZMovement: 1
   changeMaterialIfOutside: []
   outsideTransparency: 0.7
-  ArrowMovement: {fileID: 0}
+  ArrowMovement: {fileID: 6600565567420275962}
   onStartedMoving:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onMove:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
@@ -217,6 +274,16 @@ MonoBehaviour:
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   onEndMovingInsideBoundaries:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onEnabled:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  onDisabled:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
@@ -299,6 +366,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f9c14f247d45e746930a6cd1386056a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  RulerEverything: {fileID: 0}
+  RulerStart: {fileID: 0}
+  RulerEnd: {fileID: 0}
+  RulerLine: {fileID: 0}
+  onDistanceChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: RulerDistanceEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!61 &7529090592101494454
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -467,6 +543,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7096164154862913325}
     m_Modifications:
+    - target: {fileID: 4584993937279052820, guid: 565f734b46691944bb8c7cb7888df542,
+        type: 3}
+      propertyPath: m_Name
+      value: MovingArrowsEnd
+      objectReference: {fileID: 0}
     - target: {fileID: 1482331554849848127, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -521,11 +602,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4584993937279052820, guid: 565f734b46691944bb8c7cb7888df542,
-        type: 3}
-      propertyPath: m_Name
-      value: MovingArrowsEnd
       objectReference: {fileID: 0}
     - target: {fileID: 4513896859846796369, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}
@@ -540,6 +616,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 4177933094224499386}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &531307401340712683 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4513896859846796369, guid: 565f734b46691944bb8c7cb7888df542,
+    type: 3}
+  m_PrefabInstance: {fileID: 4177933094224499386}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f20556496be8f1d4c9d3ba968ac00ac6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &7295125710818637995
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -547,6 +635,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 956786379726660032}
     m_Modifications:
+    - target: {fileID: 4584993937279052820, guid: 565f734b46691944bb8c7cb7888df542,
+        type: 3}
+      propertyPath: m_Name
+      value: MovingArrowsStart
+      objectReference: {fileID: 0}
     - target: {fileID: 1482331554849848127, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -602,11 +695,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4584993937279052820, guid: 565f734b46691944bb8c7cb7888df542,
-        type: 3}
-      propertyPath: m_Name
-      value: MovingArrowsStart
-      objectReference: {fileID: 0}
     - target: {fileID: 4513896859846796369, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}
       propertyPath: movingObject
@@ -620,3 +708,15 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 7295125710818637995}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6600565567420275962 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4513896859846796369, guid: 565f734b46691944bb8c7cb7888df542,
+    type: 3}
+  m_PrefabInstance: {fileID: 7295125710818637995}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f20556496be8f1d4c9d3ba968ac00ac6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

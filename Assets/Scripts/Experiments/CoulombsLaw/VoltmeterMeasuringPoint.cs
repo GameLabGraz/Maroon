@@ -70,8 +70,7 @@ public class VoltmeterMeasuringPoint : MonoBehaviour, IResetWholeObject
     {
         return _potential; 
     }
-
-
+    
     public void OnResetMovingArrows(bool in3dMode)
     {
         if (!_coulombLogic)
@@ -109,6 +108,7 @@ public class VoltmeterMeasuringPoint : MonoBehaviour, IResetWholeObject
         }
         movArrows.gameObject.SetActive(true);
     }
+    
     public void ResetObject()
     {
         
