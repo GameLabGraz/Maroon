@@ -102,8 +102,6 @@ public class PC_SelectionHandler : MonoBehaviour
             ChargeYVariable.GetComponent<PC_InputParser_Float_TMP>().maximum = _coulombLogic.yMax2d;
             ChargeZVariable.GetComponent<TMP_InputField>().text = "0.00";
             ChargeZVariable.GetComponent<TMP_InputField>().interactable = false;
-            
-            
         }
         else
         {
@@ -115,6 +113,10 @@ public class PC_SelectionHandler : MonoBehaviour
             ChargeZVariable.GetComponent<PC_InputParser_Float_TMP>().minimum = 0f;
             ChargeZVariable.GetComponent<PC_InputParser_Float_TMP>().maximum = _coulombLogic.zMax3d;
         }
+        
+        ChargeXVariable.GetComponent<PC_TextFormatter_TMP>().FormatString(0f);
+        ChargeYVariable.GetComponent<PC_TextFormatter_TMP>().FormatString(0f);
+        ChargeZVariable.GetComponent<PC_TextFormatter_TMP>().FormatString(0f);
     }
     
     private void CheckVariable(float endValue, Vector3 affectedAxis)
@@ -243,7 +245,7 @@ public class PC_SelectionHandler : MonoBehaviour
             var position = _coulombLogic.xOrigin2d.position;
             endPos.x = _coulombLogic.WorldToCalcSpace(pos.x - position.x);
             endPos.y = _coulombLogic.WorldToCalcSpace(pos.y - position.y);
-            endPos.z = _coulombLogic.WorldToCalcSpace(pos.z - position.z);
+            endPos.z = 0f; //_coulombLogic.WorldToCalcSpace(pos.z - position.z);
         }
         else
         {

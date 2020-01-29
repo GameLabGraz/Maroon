@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
@@ -103,5 +104,14 @@ public class PC_SelectScript : MonoBehaviour
         var handler = _coulombLogic.GetComponent<PC_SelectionHandler>();
         if(handler && handler.selectedObject == this)
             handler.RotationChanged();
+    }
+
+    private void OnDestroy()
+    {
+        if(!_coulombLogic) return;
+        var handler = _coulombLogic.GetComponent<PC_SelectionHandler>();
+        if (handler && handler.selectedObject == this)
+            handler.SelectObject(null);
+
     }
 }
