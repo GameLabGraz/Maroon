@@ -44,8 +44,6 @@ public class PC_Tooltip : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     private void UpdateKey()
     {
-        Debug.Log("Update Key: " + LanguageManager.Instance + " - ");
-
         if (!Localization.LanguageManager.Instance) return;
         var tmp = Localization.LanguageManager.Instance.GetString(TooltipKey);
         if (tmp != "")
