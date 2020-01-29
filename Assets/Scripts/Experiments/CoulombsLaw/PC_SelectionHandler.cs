@@ -2,7 +2,6 @@
 using Localization;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class PC_SelectionHandler : MonoBehaviour
@@ -72,6 +71,9 @@ public class PC_SelectionHandler : MonoBehaviour
                 _coulombLogic.CreateCharge(ChargePrefab, GetInputPosition(PC_SelectScript.SelectType.ChargeSelect), UICharge.ChargeValue, UICharge.FixedPosition, false);
             }
         });
+        
+        AdaptVariableFieldsCharge();
+        AdaptVariableFields();
     }
     
     private void AdaptButtonTextCharge()
@@ -90,6 +92,7 @@ public class PC_SelectionHandler : MonoBehaviour
         
         AdaptButtonTextCharge();
         AdaptVariableFieldsCharge();
+        AdaptVariableFields();
     }
 
     public void AdaptVariableFieldsCharge()
@@ -117,6 +120,33 @@ public class PC_SelectionHandler : MonoBehaviour
         ChargeXVariable.GetComponent<PC_TextFormatter_TMP>().FormatString(0f);
         ChargeYVariable.GetComponent<PC_TextFormatter_TMP>().FormatString(0f);
         ChargeZVariable.GetComponent<PC_TextFormatter_TMP>().FormatString(0f);
+    }
+    
+    public void AdaptVariableFields()
+    {
+        if (_coulombLogic.IsIn2dMode())
+        {
+            xVariablePosition.GetComponent<PC_InputParser_Float_TMP>().minimum = 0f;
+            xVariablePosition.GetComponent<PC_InputParser_Float_TMP>().maximum = _coulombLogic.xMax2d;
+            yVariablePosition.GetComponent<PC_InputParser_Float_TMP>().minimum = 0f;
+            yVariablePosition.GetComponent<PC_InputParser_Float_TMP>().maximum = _coulombLogic.yMax2d;
+            zVariablePosition.GetComponent<TMP_InputField>().text = "0.00";
+            zVariablePosition.GetComponent<TMP_InputField>().interactable = false;
+        }
+        else
+        {
+            xVariablePosition.GetComponent<PC_InputParser_Float_TMP>().minimum = 0f;
+            xVariablePosition.GetComponent<PC_InputParser_Float_TMP>().maximum = _coulombLogic.xMax3d;
+            yVariablePosition.GetComponent<PC_InputParser_Float_TMP>().minimum = 0f;
+            yVariablePosition.GetComponent<PC_InputParser_Float_TMP>().maximum = _coulombLogic.yMax3d;
+            zVariablePosition.GetComponent<TMP_InputField>().interactable = true;
+            zVariablePosition.GetComponent<PC_InputParser_Float_TMP>().minimum = 0f;
+            zVariablePosition.GetComponent<PC_InputParser_Float_TMP>().maximum = _coulombLogic.zMax3d;
+        }
+        
+        xVariablePosition.GetComponent<PC_TextFormatter_TMP>().FormatString(0f);
+        yVariablePosition.GetComponent<PC_TextFormatter_TMP>().FormatString(0f);
+        zVariablePosition.GetComponent<PC_TextFormatter_TMP>().FormatString(0f);
     }
     
     private void CheckVariable(float endValue, Vector3 affectedAxis)

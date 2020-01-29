@@ -112,6 +112,5 @@ public class PC_SelectScript : MonoBehaviour
         var handler = _coulombLogic.GetComponent<PC_SelectionHandler>();
         if (handler && handler.selectedObject == this)
             handler.SelectObject(null);
-
     }
 }

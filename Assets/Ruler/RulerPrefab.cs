@@ -76,7 +76,7 @@ public class RulerPrefab : MonoBehaviour, IResetWholeObject
         RulerEnd.GetComponent<PC_DragHandler>().onDisabled.Invoke();
     }
     
-    public void OnResetMovingArrows(bool in3dMode)
+    public void OnChangeMode(bool in3dMode)
     {
         if (!_coulombLogic)
         {
