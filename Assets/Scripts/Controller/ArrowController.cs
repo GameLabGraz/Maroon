@@ -47,6 +47,9 @@ public class ArrowController : MonoBehaviour, IResetObject
     private IField _field;
     private bool _isParentNull;
 
+    private bool _hasScaling = false;
+    private ScalingArrow _scalingArrow;
+
     /// <summary>
     /// Initialization
     /// </summary>
@@ -55,8 +58,11 @@ public class ArrowController : MonoBehaviour, IResetObject
         _isParentNull = transform.parent == null; //init it here as this null look up is expensive in update
         // Field = GameObject.FindGameObjectWithTag("Field"); -> super inefficient if 20x20 arrows search for the same tag at once...
         Debug.Assert(Field != null);
-        
         _field = Field.GetComponent<IField>();
+
+        _scalingArrow = GetComponent<ScalingArrow>();
+        _hasScaling = _scalingArrow != null;
+        
         rotateArrow();
         start_rot = transform.rotation;
     }
@@ -76,6 +82,12 @@ public class ArrowController : MonoBehaviour, IResetObject
     /// </summary>
     private void rotateArrow()
     {
+        if (_hasScaling)
+        {
+            _scalingArrow.size = _field.getStrengthInPercent(transform.position) * 100f;
+
+        }
+        
         var rotate = _field.get(transform.position) * fieldStrengthFactor;
         
         rotate.Normalize();

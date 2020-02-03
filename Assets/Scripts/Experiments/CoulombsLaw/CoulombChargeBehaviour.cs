@@ -170,9 +170,7 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
     
     public float getFieldStrength()
     {
-        return 3f;
-        Debug.Log("get field strenght");
-        throw new System.NotImplementedException();
+        return Charge * 3f; //as our field strength is 3 -> a 1 Coulomb Charge would feel 3, a 2 Coulomb Charge 6 and a -1 Charge -3
     }
 
     public void MovementStart()

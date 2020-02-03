@@ -24057,7 +24057,7 @@ Transform:
   m_GameObject: {fileID: 1274710711}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: -56.21, y: 295.39, z: -325.17}
-  m_LocalScale: {x: 2.4, y: 1, z: 2.4193778}
+  m_LocalScale: {x: 2.5, y: 1, z: 2.519378}
   m_Children: []
   m_Father: {fileID: 1399056773}
   m_RootOrder: 0
@@ -25771,7 +25771,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1399056771}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.42, z: 2.39}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1274710712}
@@ -28798,7 +28798,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: 0
+  m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -38800,6 +38800,50 @@ MonoBehaviour:
     _typeName: ProducersCallback, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
     dirty: 0
+  maximumStrength: 100000
+  minimumStrength: 30000
+  distributionCurveForStrength:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -0.2
+      value: 0
+      inSlope: Infinity
+      outSlope: Infinity
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0.5
+      outSlope: 0.5
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0.99910927
+      outSlope: Infinity
+      tangentMode: 1
+      weightedMode: 2
+      inWeight: 0.9992881
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1.2
+      value: 1
+      inSlope: Infinity
+      outSlope: Infinity
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1543784195298483
 GameObject:
   m_ObjectHideFlags: 0
@@ -40183,7 +40227,7 @@ MonoBehaviour:
   ignoreXDimension: 0
   ignoreYDimension: 1
   ignoreZDimension: 0
-  resolution: 20
+  resolution: 10
   fieldStrengthFactor: 100
 --- !u!114 &114519399895316398
 MonoBehaviour:
