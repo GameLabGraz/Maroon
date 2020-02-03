@@ -26,6 +26,7 @@ public class VectorField : MonoBehaviour
     /// </summary>
     protected List<GameObject> vectorFieldArrows = new List<GameObject>();
     
+    [Range(1f, 20f)]
     public float scalingDivider = 3f;
     
     /// <summary>
@@ -128,6 +129,8 @@ public class VectorField : MonoBehaviour
                     if (currentIdx < vectorFieldArrows.Count)
                     {
                         currentArrow = vectorFieldArrows[currentIdx];
+                        currentArrow.transform.localScale =
+                            Vector3.Scale(new Vector3(arrow_scale, arrow_scale, arrow_scale), transform.localScale) / scalingDivider;
                         currentArrow.SetActive(true);
                     }
                     else
