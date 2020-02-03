@@ -14,6 +14,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using Debug = System.Diagnostics.Debug;
 
 /// <summary>
 /// Class for the vector field to represent the field
@@ -24,17 +25,16 @@ public class VectorField : MonoBehaviour
     /// List of field arrows
     /// </summary>
     protected List<GameObject> vectorFieldArrows = new List<GameObject>();
-
+    
+    public float scalingDivider = 3f;
+    
     /// <summary>
-    /// The vector field height
+    /// The vector fields width, height and depth
     /// </summary>
     protected float height;
-
-    /// <summary>
-    /// The vector field width
-    /// </summary>
     protected float width;
-
+    protected float depth;
+    
     /// <summary>
     /// Indicates if the vector field is displayed or not
     /// </summary>
@@ -47,6 +47,12 @@ public class VectorField : MonoBehaviour
 
     public bool OnlyUpdateInRunMode = true;
     
+    public GameObject Field = null;
+
+    public bool ignoreXDimension = false;
+    public bool ignoreYDimension = true;
+    public bool ignoreZDimension = false;
+
     [SerializeField]
     protected int resolution = 20;
 
@@ -58,9 +64,12 @@ public class VectorField : MonoBehaviour
     /// </summary>
     protected void Start()
     {
+        if(Field == null)
+            Field = GameObject.FindGameObjectWithTag("Field");
+        
         height = GetComponent<MeshFilter>().mesh.bounds.size.z;
+        depth = GetComponent<MeshFilter>().mesh.bounds.size.y;
         width = GetComponent<MeshFilter>().mesh.bounds.size.x;
-
         createVectorFieldArrows();
     }
 
@@ -80,26 +89,66 @@ public class VectorField : MonoBehaviour
             arrow_scale = 1 - (resolution - 20) * 0.05f;
         else
             arrow_scale = 1 + (20 - resolution) * 0.05f;
+        
+        var arrow = Instantiate(arrowPrefab, transform) as GameObject;
+        arrow.transform.localScale =
+            Vector3.Scale(new Vector3(arrow_scale, arrow_scale, arrow_scale), transform.localScale) / scalingDivider;
+        var controller = arrow.GetComponent<ArrowController>();
+        controller.fieldStrengthFactor = fieldStrengthFactor;
+        controller.OnlyUpdateInRunMode = OnlyUpdateInRunMode;
+        controller.Field = Field;
+        controller.Allow3dRotation = !ignoreXDimension && !ignoreYDimension && !ignoreZDimension;
+        arrow.SetActive(true);
+        
+        var widthHalf = -width / 2;
+        var widthFactor = width / resolution;
+        var heightHalf = -height / 2;
+        var heightFactor = height / resolution;
+        var depthHalf = -depth / 2;        
+        var depthFactor = depth / resolution;
 
-        for (var i = 0; i < resolution; i++)
+        var xRes = ignoreXDimension ? 1 : resolution;
+        var yRes = ignoreYDimension ? 1 : resolution;
+        var zRes = ignoreZDimension ? 1 : resolution;
+
+        var currentIdx = 0;
+        
+        for (var i = 0; i < xRes; ++i) // x
         {
-            for (var j = 0; j < resolution; j++)
+            for (var j = 0; j < yRes; ++j) //y
             {
-                var x = -width / 2 + (width / resolution) * (0.5f + i);
-                var y = -height / 2 + (height / resolution) * (0.5f + j);
+                for (var k = 0; k < zRes; k++) // z
+                {
+                    var x = -width / 2 + (width / xRes) * (0.5f + i);
 
-                var arrow = Instantiate(arrowPrefab) as GameObject;
-                arrow.GetComponent<ArrowController>().fieldStrengthFactor = this.fieldStrengthFactor;
-                arrow.GetComponent<ArrowController>().OnlyUpdateInRunMode = OnlyUpdateInRunMode;
+                    var y = -depth / 2f + (depth / yRes) * (0.5f + j);
+                    var z = -height / 2 + (height / zRes) * (0.5f + k);
 
-                arrow.transform.localScale = Vector3.Scale(new Vector3(arrow_scale, arrow_scale, arrow_scale), transform.localScale) / 3;
-                arrow.transform.parent = transform; //set vectorField as parent
-                arrow.transform.localPosition = new Vector3(x, 0, y);
-
-                SimulationController.Instance.AddNewResetObject(arrow.GetComponent<IResetObject>());
-                vectorFieldArrows.Add(arrow);
+                    GameObject currentArrow;
+                    if (currentIdx < vectorFieldArrows.Count)
+                    {
+                        currentArrow = vectorFieldArrows[currentIdx];
+                        currentArrow.SetActive(true);
+                    }
+                    else
+                    {
+                        currentArrow = Instantiate(arrow, transform);
+                        SimulationController.Instance.AddNewResetObject(currentArrow.GetComponent<IResetObject>());
+                        vectorFieldArrows.Add(currentArrow);
+                    }
+                    currentArrow.transform.localPosition = new Vector3(x, y, z);
+                    currentIdx++;
+                }
             }
         }
+
+        for (; currentIdx < vectorFieldArrows.Count; ++currentIdx)
+        {
+            if(!vectorFieldArrows[currentIdx].activeSelf) break;
+            vectorFieldArrows[currentIdx].SetActive(false);
+        }
+        
+        arrow.SetActive(false);
     }
 
     /// <summary>
@@ -111,7 +160,7 @@ public class VectorField : MonoBehaviour
         if (visibility)
         {
             vectorFieldVisible = true;
-            clearVectorField();
+            // clearVectorField();
             createVectorFieldArrows();
         }
         else
@@ -128,10 +177,8 @@ public class VectorField : MonoBehaviour
     {
         foreach (var arrow in vectorFieldArrows)
         {
-            SimulationController.Instance.RemoveResetObject(arrow.GetComponent<IResetObject>());
-            DestroyImmediate(arrow);
+            arrow.SetActive(false);
         }
-        vectorFieldArrows.Clear();
     }
 
     /// <summary>
@@ -141,7 +188,6 @@ public class VectorField : MonoBehaviour
     {
         if (!vectorFieldVisible)
             return;
-        clearVectorField();
         createVectorFieldArrows();
     }
 

@@ -79,6 +79,7 @@ public class PC_SelectionHandler : MonoBehaviour
     private void AdaptButtonTextCharge()
     {
         Debug.Assert(ChargeButtonText && ChargeButtonText.GetComponent<LocalizedText_TextMeshPro>());
+        if (!ChargeButtonText) return;
         ChargeButtonText.GetComponent<LocalizedText_TextMeshPro>().key = selectedObject == null || selectedObject.type != PC_SelectScript.SelectType.ChargeSelect? "Button_Add" : "Button_Delete";
         ChargeButtonText.transform.parent.GetComponent<PC_Tooltip>().TooltipKey =
             selectedObject == null || selectedObject.type != PC_SelectScript.SelectType.ChargeSelect

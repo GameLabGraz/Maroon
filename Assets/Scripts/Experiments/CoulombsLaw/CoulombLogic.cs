@@ -41,6 +41,9 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     public GameObject scene2D;
     public GameObject scene3D;
 
+    public VectorField vectorField2d;
+    public VectorField vectorField3d;
+
     public GameObject minBoundary2d;
     public GameObject maxBoundary2d;
     public GameObject minBoundary3d;
@@ -57,9 +60,6 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     private const float CoulombConstant = 1f / (Mathf.PI * 8.8542e-12f);
 //    private const float CoulombConstant = 9f; // = 9 * 10^9 -> but we use the factor 0.001 beneath because we have constant * microCoulomb * microCoulomb (= 10^9 * 10^-6 * 10^-6 = 0.001)
 //    private const float CoulombMultiplyFactor = 0.001f; // explanation above
-
-    private VectorField _vectorField2d;
-    private VectorField3d _vectorField3d;
     
     private bool _in3dMode = false;
 
@@ -80,9 +80,6 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         var simControllerObject = GameObject.Find("SimulationController");
         if (simControllerObject)
             _simController = simControllerObject.GetComponent<SimulationController>();
-        
-        _vectorField3d = scene3D.GetComponentInChildren<VectorField3d>();
-        _vectorField2d = scene2D.GetComponentInChildren<VectorField>();
         
         _charges = new List<CoulombChargeBehaviour>();
         _chargesGameObjects = new HashSet<GameObject>();
@@ -209,7 +206,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     
     public void CreateCharge(GameObject prefab, Vector3 position, float chargeLoad, bool hasFixedPosition, bool positionInWorldCoord = true)
     {
-        var obj = Instantiate(prefab, _in3dMode ? _vectorField3d.transform : _vectorField2d.transform, true);
+        var obj = Instantiate(prefab, _in3dMode ? vectorField3d.transform : vectorField2d.transform, true);
         Debug.Assert(obj != null);
 
         var chargeBehaviour = obj.GetComponent<CoulombChargeBehaviour>();
@@ -267,13 +264,13 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
 
         foreach (var collider in coulombCharge.gameObject.GetComponents<Collider>())
         {
-            Physics.IgnoreCollision(collider, _vectorField3d.gameObject.GetComponent<Collider>());
-            Physics.IgnoreCollision(collider, _vectorField2d.gameObject.GetComponent<Collider>());
+            Physics.IgnoreCollision(collider, vectorField3d.gameObject.GetComponent<Collider>());
+            Physics.IgnoreCollision(collider, vectorField2d.gameObject.GetComponent<Collider>());
         }
         foreach (var collider in coulombCharge.gameObject.GetComponentsInChildren<Collider>())
         {
-            Physics.IgnoreCollision(collider, _vectorField3d.gameObject.GetComponent<Collider>());
-            Physics.IgnoreCollision(collider, _vectorField2d.gameObject.GetComponent<Collider>());
+            Physics.IgnoreCollision(collider, vectorField3d.gameObject.GetComponent<Collider>());
+            Physics.IgnoreCollision(collider, vectorField2d.gameObject.GetComponent<Collider>());
         }
         
         _simController.ResetSimulation();
@@ -323,8 +320,8 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         camTransform.position = _in3dMode ? new Vector3(0, 30f, -59.52f) : new Vector3(0, 4.4f, -59.52f);
         camTransform.rotation = _in3dMode ? new Quaternion(0.25f, 0f, 0f, 1f) : new Quaternion(0f, 0f, 0f, 0f);
 
-        _vectorField3d.setVectorFieldVisible(_in3dMode);
-        _vectorField2d.setVectorFieldVisible(!_in3dMode);
+        vectorField3d.setVectorFieldVisible(_in3dMode);
+        vectorField2d.setVectorFieldVisible(!_in3dMode);
     }
 
     public void ResetObject()
