@@ -40,6 +40,13 @@ public class PC_SelectionHandler : MonoBehaviour
 
     private void Start()
     {
+        if (!selectionRegister.selectedOnStart)
+        {
+            selectionRegister.registerHandler.SelectRegister(selectionRegister);
+            selectionRegister.registerHandler.DeselectRegister(selectionRegister);
+            selectionRegister.gameObject.SetActive(false);
+        }
+
         var obj = GameObject.Find("CoulombLogic");
         if (obj) _coulombLogic = obj.GetComponent<CoulombLogic>();
 
@@ -130,7 +137,15 @@ public class PC_SelectionHandler : MonoBehaviour
 
     private void Update()
     {
-        if ((!Input.GetKeyDown(KeyCode.Backspace) && !Input.GetKeyDown(KeyCode.Escape)) || selectedObject == null) return;
+        if (selectedObject == null) return;
+
+        if (!selectedObject.isActiveAndEnabled)
+        {
+            SelectObject(null);
+            return;
+        }
+        
+        if (!Input.GetKeyDown(KeyCode.Backspace) && !Input.GetKeyDown(KeyCode.Escape)) return;
         switch (selectedObject.type)
         {
             case PC_SelectScript.SelectType.ChargeSelect:
@@ -359,9 +374,8 @@ public class PC_SelectionHandler : MonoBehaviour
         return Vector3.zero;
     }
 
-    public void SelectObject(PC_SelectScript obj)
+    public void DeselectAll()
     {
-        if (selectedObject == obj) return;
         if (selectedObject != null)
         {
             //deselect old
@@ -376,9 +390,18 @@ public class PC_SelectionHandler : MonoBehaviour
                 case PC_SelectScript.SelectType.VisualizationPlaneSelect:
                 case PC_SelectScript.SelectType.VoltmeterSelect:
                     selectionRegister.registerHandler.DeselectRegister(selectionRegister);
+                    selectionRegister.gameObject.SetActive(false);
                     break;
             }
         }
+
+        selectedObject = null;
+    }
+    
+    public void SelectObject(PC_SelectScript obj)
+    {
+        if (selectedObject == obj) return;
+        DeselectAll();
 
         //select new
         selectedObject = obj;
@@ -386,7 +409,11 @@ public class PC_SelectionHandler : MonoBehaviour
         {
             if (selectedObject.type == PC_SelectScript.SelectType.VisualizationPlaneSelect ||
                 selectedObject.type == PC_SelectScript.SelectType.VoltmeterSelect)
+            {
+                selectionRegister.gameObject.SetActive(true);
                 selectionRegister.registerHandler.SelectRegister(selectionRegister);
+            }
+
             PositionChanged();
 
             AdaptButtonTextCharge();

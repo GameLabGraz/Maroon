@@ -48,20 +48,30 @@ public class PositionObserver : MonoBehaviour
         }
         else
         {
-            var newPos = observingGameObject.activeSelf
-                ? _coulombLogic.xOrigin3d.InverseTransformPoint(observingGameObject.transform.position)
-                : _coulombLogic.xOrigin3d.transform.localPosition;
+            //WS = WorldSpace
+            var newPosWS = observingGameObject.activeSelf
+                ? observingGameObject.transform.position : _coulombLogic.xOrigin3d.transform.position;
             if (axis.x > 0.1f)
-                newPos.x = _coulombLogic.xOrigin3d.transform.localPosition.x +
-                           _coulombLogic.CalcToWorldSpace(newValue, true);
+            {
+                var test = _coulombLogic.xOrigin3d.transform.position;
+                test.x += _coulombLogic.CalcToWorldSpace(newValue, false);
+                newPosWS.x = test.x; //_coulombLogic.xOrigin3d.InverseTransformPoint(test).x;
+                
+            }
             if (axis.y > 0.1f)
-                newPos.y = _coulombLogic.xOrigin3d.transform.localPosition.y +
-                           _coulombLogic.CalcToWorldSpace(newValue, true);
+            {
+                var test = _coulombLogic.xOrigin3d.transform.position;
+                test.y += _coulombLogic.CalcToWorldSpace(newValue, false);
+                newPosWS.y = test.y; //_coulombLogic.xOrigin3d.InverseTransformPoint(test).y;
+            }
             if (axis.z > 0.1f)
-                newPos.z = _coulombLogic.xOrigin3d.transform.localPosition.z +
-                           _coulombLogic.CalcToWorldSpace(newValue, true); //SHOULD NEVER BE ABLE TO GET IN HERE
+            {
+                var test = _coulombLogic.xOrigin3d.transform.position;
+                test.z += _coulombLogic.CalcToWorldSpace(newValue, false);
+                newPosWS.z = test.z; //_coulombLogic.xOrigin3d.InverseTransformPoint(test).z;
+            }
 
-            observingGameObject.transform.position = _coulombLogic.xOrigin3d.TransformPoint(newPos);
+            observingGameObject.transform.position = newPosWS;
             if (!observingGameObject.activeSelf)
                 observingGameObject.SetActive(true);
         }

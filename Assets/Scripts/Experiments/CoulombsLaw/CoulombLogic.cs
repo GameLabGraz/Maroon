@@ -245,6 +245,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         
         var field = GameObject.FindGameObjectWithTag("Field").GetComponent<IField>(); //should be only one
         obj.GetComponentInChildren<FieldLine>().field = field;
+        obj.transform.localRotation = Quaternion.identity;
         obj.SetActive(true);
 
         AddParticle(chargeBehaviour);

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class PC_SelectScript : MonoBehaviour
 {
@@ -17,16 +16,21 @@ public class PC_SelectScript : MonoBehaviour
     }
     
     // Selected Object
-    //TODO: highlight the object
     public List<GameObject> highlightObjects = new List<GameObject>();
     public SelectType type;
     public string nameKey;
     
     private CoulombLogic _coulombLogic;
+    private void OnDisable()
+    {
+        if (!_coulombLogic || _coulombLogic.GetComponent<PC_SelectionHandler>().selectedObject != this) return;
+        Deselect();
+        DeselectMe();
+    }
 
     private void OnMouseDown()
     {
-        Debug.Log("Mouse down on Select: " + gameObject.name);
+        // Debug.Log("Mouse down on Select: " + gameObject.name);
 
         if (!_coulombLogic)
         {
@@ -40,7 +44,7 @@ public class PC_SelectScript : MonoBehaviour
 
     public void Select()
     {        
-        Debug.Log("Select");
+        // Debug.Log("Select");
 
         if (!_coulombLogic)
         {
@@ -62,7 +66,7 @@ public class PC_SelectScript : MonoBehaviour
     
     public void Deselect()
     {
-        Debug.Log("Deselect");
+        // Debug.Log("Deselect");
         var selectHandler = _coulombLogic.GetComponent<PC_SelectionHandler>();
         foreach (var highlightObj in highlightObjects)
         {

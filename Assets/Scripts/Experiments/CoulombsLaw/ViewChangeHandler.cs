@@ -8,6 +8,7 @@ public class ViewChangeHandler : MonoBehaviour
 
     [Header("Affected Objects")] 
     public GameObject VisualizationPlane;
+    public PC_ArrowMovement VisualizationPlaneMovingArrows;
     public GameObject VisualizationPlaneOutline;
     public GameObject VisualizationCube;
     public GameObject VisualizationCubeOutline;
@@ -50,8 +51,9 @@ public class ViewChangeHandler : MonoBehaviour
         VisualizationCubeOutline.GetComponent<PC_Rotation>().enabled =
             newPosition == PathHandler.CameraPosition.CP_Free;
         
+        VisualizationPlane.transform.localPosition = Vector3.zero;
         VisualizationPlane.transform.rotation = Quaternion.Euler(newPosition == PathHandler.CameraPosition.CP_Top? 90f : 0f, newPosition == PathHandler.CameraPosition.CP_Side? 90f : 0f, 0f);
-        VisualizationPlane.transform.GetComponentInChildren<PC_ArrowMovement>().gameObject.SetActive(newPosition == PathHandler.CameraPosition.CP_Free);
+        VisualizationPlaneMovingArrows.gameObject.SetActive(newPosition == PathHandler.CameraPosition.CP_Free);
         
         //Get All Childs from the visPlane_child[2] and disable their rotation scripts
         for (var i = 0; i < VisualizationPlaneOutline.transform.childCount; ++i)

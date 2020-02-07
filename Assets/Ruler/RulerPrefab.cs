@@ -70,6 +70,8 @@ public class RulerPrefab : MonoBehaviour, IResetWholeObject
 
     public void ResetWholeObject()
     {
+        transform.localRotation = Quaternion.identity;
+        
         RulerStart.SetActive(false);
         RulerEnd.SetActive(false);
         RulerStart.GetComponent<PC_DragHandler>().onDisabled.Invoke();

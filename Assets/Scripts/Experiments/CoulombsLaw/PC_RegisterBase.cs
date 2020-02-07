@@ -14,7 +14,7 @@ public class PC_RegisterBase : MonoBehaviour
     public PC_RegisterHandler registerHandler;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         registerHandler.RegisterBaseRegister(this, selectedOnStart);
     }

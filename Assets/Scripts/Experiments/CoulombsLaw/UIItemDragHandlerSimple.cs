@@ -11,9 +11,10 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
     public GameObject generatedObject;
     [Tooltip("The object which is set as the new child, if empty the generated Object will be used as childObject.")]
     public GameObject childObject = null;
+    public bool resetRotation = true;
     
     [Header("Other Affected GameObjects")]
-    public GameObject ChangeLayerObject;
+    public GameObject changeLayerObject;
     
     private Vector3 _initialPosition;
     private Vector3 _initialMousePosition;
@@ -45,10 +46,13 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
     
     public void OnBeginDrag(PointerEventData eventData)
     {
+        Debug.Log("OnBegin Drag: " + changeLayerObject);
         _initialPosition = transform.position;
-        if (ChangeLayerObject)
+        if (changeLayerObject)
         {
-            ChangeLayerObject.layer = 0; //Default Layer
+            Debug.Log("Change Layer: " + changeLayerObject);
+
+            changeLayerObject.layer = 0; //Default Layer
         }
     }
     
@@ -84,9 +88,9 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
             _returnDirection = _initialPosition - transform.position;
         }
         
-        if (ChangeLayerObject)
+        if (changeLayerObject)
         {
-            ChangeLayerObject.layer = 2; //Ignore Raycast
+            changeLayerObject.layer = 2; //IgnoreRaycast
         }
     }
     
@@ -108,6 +112,8 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
 
         childObject.transform.parent = parent;
         generatedObject.transform.position = position;
+        if(resetRotation)
+            generatedObject.transform.localRotation = Quaternion.identity;
         generatedObject.SetActive(false);
         generatedObject.SetActive(true);
     }
