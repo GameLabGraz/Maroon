@@ -113,12 +113,12 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
 
     public void UpdateResetPosition()
     {
-        _resetPosition = transform.position;
+        _resetPosition = transform.localPosition;
     }
 
     public void ResetObject()
     {
-        transform.position = _resetPosition;
+        transform.localPosition = _resetPosition;
     }
     
     public void CalculatedPosition(Vector3 calculatedPosition)

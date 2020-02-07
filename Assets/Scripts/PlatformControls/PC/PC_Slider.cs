@@ -7,6 +7,7 @@ namespace PlatformControls.PC
     public class PC_Slider : Slider, IResetObject
     {
         private float _startValue;
+        public bool resetEnabled = true;
 
         protected override void Start()
         {
@@ -30,7 +31,8 @@ namespace PlatformControls.PC
 
         public void ResetObject()
         {
-            value = _startValue;
+            if(resetEnabled)
+                value = _startValue;
         }
     }
 }

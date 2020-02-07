@@ -12,7 +12,8 @@ public class PC_SelectScript : MonoBehaviour
         VisualizationPlaneSelect,
         VoltmeterSelect,
         CubeSelect,
-        WhiteboardSelect
+        WhiteboardSelect,
+        RulerSelect
     }
     
     // Selected Object

@@ -51,7 +51,7 @@ public class ViewChangeHandler : MonoBehaviour
             newPosition == PathHandler.CameraPosition.CP_Free;
         
         VisualizationPlane.transform.rotation = Quaternion.Euler(newPosition == PathHandler.CameraPosition.CP_Top? 90f : 0f, newPosition == PathHandler.CameraPosition.CP_Side? 90f : 0f, 0f);
-        VisualizationPlane.transform.GetChild(2).gameObject.SetActive(newPosition == PathHandler.CameraPosition.CP_Free);
+        VisualizationPlane.transform.GetComponentInChildren<PC_ArrowMovement>().gameObject.SetActive(newPosition == PathHandler.CameraPosition.CP_Free);
         
         //Get All Childs from the visPlane_child[2] and disable their rotation scripts
         for (var i = 0; i < VisualizationPlaneOutline.transform.childCount; ++i)
@@ -60,7 +60,7 @@ public class ViewChangeHandler : MonoBehaviour
             if (component)
                 component.enabled = newPosition == PathHandler.CameraPosition.CP_Free;
         }
-        
+
         _lastView = newPosition;
     }
 

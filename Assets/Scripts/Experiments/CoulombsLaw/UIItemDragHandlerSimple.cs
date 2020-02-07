@@ -22,9 +22,6 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
     private Vector3 _returnDirection;
     private float _time;
     
-    private float _currentCharge = 0f;
-    private bool _fixedPosition = false;
-
     private void Start()
     {
         if (childObject == null)
@@ -71,6 +68,7 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
         var hitVectorField = false;
         foreach (var hit in hits)
         {
+            Debug.Log("Hit " + hit.transform.tag + " - " + hit.transform.gameObject.name);
             if(!hit.transform.CompareTag("VectorField"))
                 continue;
 
