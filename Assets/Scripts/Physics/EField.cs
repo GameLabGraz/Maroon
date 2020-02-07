@@ -128,4 +128,17 @@ public class EField : IField
         }
         return strength;
     }
+
+    public override float getStrengthInPercent(Vector3 position)
+    {
+        var original = getStrength(position);
+        // Debug.Log("Original: " + original);
+        var strength = Mathf.Clamp(Mathf.Abs(original), minimumStrength, maximumStrength);
+        var strengthInRealPercent = strength / Mathf.Abs(maximumStrength - minimumStrength);
+        // Debug.Log("Strength: " + strength);
+        // Debug.Log("Strength in Percent: " + strengthInRealPercent);
+        var onCurve = distributionCurveForStrength.Evaluate(strengthInRealPercent);
+        // Debug.Log("OnCurve: " + onCurve);
+        return onCurve; //distributionCurveForStrength.Evaluate(strengthInRealPercent);
+    }
 }

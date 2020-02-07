@@ -9,7 +9,7 @@ public class BoolConditionCallback : SerializableCallback<bool> {}
 [Serializable]
 public class IntConditionCallback : SerializableCallback<int> {}
 
-public class PlaneVisualization : MonoBehaviour, IResetObject
+public class PlaneVisualization : MonoBehaviour, IResetObject, IResetWholeObject
 {
     [Header("Possible Visualizations")] 
     public bool voltageVisualizationEnabled = true;
@@ -61,7 +61,9 @@ public class PlaneVisualization : MonoBehaviour, IResetObject
     private void Update()
     {
         if (_currentMode == Mode.Disabled) return;
-        if (SimulationController.Instance.SimulationRunning)
+        if (!updateDuringRuntime && SimulationController.Instance.SimulationRunning)
+            Disable();
+        else if(SimulationController.Instance.SimulationRunning && _currentMode == Mode.IronFilling)
             Disable();
         else if (updateDuringRuntime && (_currentMode == Mode.VoltageVis || _currentMode == Mode.EquipotentialVis))
         {
@@ -79,7 +81,6 @@ public class PlaneVisualization : MonoBehaviour, IResetObject
                 meshRenderer.sharedMaterial.SetInt(Shader.PropertyToID("_EntryCnt"), entryCnt);
                 meshRenderer.sharedMaterial.SetVectorArray(Shader.PropertyToID("_Entries"), vecArray);
             }
-            
         }
     }
 
@@ -193,6 +194,11 @@ public class PlaneVisualization : MonoBehaviour, IResetObject
     }
 
     public void ResetObject()
+    {
+        // Disable();
+    }
+
+    public void ResetWholeObject()
     {
         Disable();
     }

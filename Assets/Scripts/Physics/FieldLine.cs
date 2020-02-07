@@ -159,6 +159,7 @@ public class FieldLine : MonoBehaviour, IResetObject
 
     private float GetFieldStrengthFromEmObj()
     {
+        if (!field) return 0f;
         switch (field.getFieldType())
         {
             case FieldType.BField:
@@ -166,7 +167,7 @@ public class FieldLine : MonoBehaviour, IResetObject
             case FieldType.EField:
                 return emObj.GetComponent<IGenerateE>().getFieldStrength();
             default:
-                return 0;
+                return 0f;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -28,6 +29,7 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
     public bool resetOnWholeReset = false;
 
     public UnityEvent OnMovementStart;
+    public UnityEvent OnMove;
     public UnityEvent OnMovementFinish;
     
     private Vector3 _localMinBoundary;
@@ -43,24 +45,16 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
 
     private Vector3 _originalPosition;
     
-    private GameObject _arrowXPositive;
-    private GameObject _arrowXNegative;
-    private GameObject _arrowYPositive;
-    private GameObject _arrowYNegative;
-    private GameObject _arrowZPositive;
-    private GameObject _arrowZNegative;
+    public GameObject _arrowXPositive;
+    public GameObject _arrowXNegative;
+    public GameObject _arrowYPositive;
+    public GameObject _arrowYNegative;
+    public GameObject _arrowZPositive;
+    public GameObject _arrowZNegative;
 
     // Start is called before the first frame update
     private void Start()
     {
-        //Get the child object via fixed names (is a prefab, shouldn't need change)
-        _arrowXPositive = transform.Find("x_right").gameObject;
-        _arrowXNegative = transform.Find("x_left").gameObject;
-        _arrowYPositive = transform.Find("y_up").gameObject;
-        _arrowYNegative = transform.Find("y_down").gameObject;
-        _arrowZPositive = transform.Find("z_back").gameObject;
-        _arrowZNegative = transform.Find("z_forth").gameObject;
-        
         _lastUpdateInRunMode = SimulationController.Instance.SimulationRunning;
         
         //Check if we have a moving object or we should just move our own transform
@@ -72,8 +66,8 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
             if (showMovingLines)
             {
                 _lineRenderer = GetComponent<LineRenderer>();
-                if (!_lineRenderer) _lineRenderer = gameObject.AddComponent<LineRenderer>();
-                _lineRenderer.enabled = false;
+//                if (!_lineRenderer) _lineRenderer = gameObject.AddComponent<LineRenderer>();
+                if(_lineRenderer != null) _lineRenderer.enabled = false;
             }
             
             _localMinBoundary = movingObject.transform.parent.transform.InverseTransformPoint(minimumBoundary.position);
@@ -104,12 +98,12 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
     private void UpdateMovementRestriction()
     {
         //Movement Restrictions -> hide arrows that are not allowed to move
-        _arrowXPositive?.SetActive(!restrictXMovement); 
-        _arrowXNegative?.SetActive(!restrictXMovement);
-        _arrowYPositive?.SetActive(!restrictYMovement);
-        _arrowYNegative?.SetActive(!restrictYMovement);
-        _arrowZPositive?.SetActive(!restrictZMovement);
-        _arrowZNegative?.SetActive(!restrictZMovement);
+        if(_arrowXPositive) _arrowXPositive.SetActive(!restrictXMovement); 
+        if(_arrowXNegative) _arrowXNegative.SetActive(!restrictXMovement);
+        if(_arrowYPositive) _arrowYPositive.SetActive(!restrictYMovement);
+        if(_arrowYNegative) _arrowYNegative.SetActive(!restrictYMovement);
+        if(_arrowZPositive) _arrowZPositive.SetActive(!restrictZMovement);
+        if(_arrowZNegative) _arrowZNegative.SetActive(!restrictZMovement);
     }
     
     private void ChangeRunMode()
@@ -149,6 +143,8 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
         _moving = true;
         _distance = Vector3.Distance(movingObject.transform.position, Camera.main.transform.position);
         var pt = movingObject.transform.parent.transform.InverseTransformPoint(ray.GetPoint(_distance));
+//        var pt = movingObject.transform.InverseTransformPoint(ray.GetPoint(_distance));
+        
         if(useMovementOffset)
             _movingOffset = pt - movingObject.transform.localPosition;
         
@@ -160,7 +156,7 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
         if(_lineRenderer == null && maximumBoundary != null && minimumBoundary != null && showMovingLines)
         {
             _lineRenderer = GetComponent<LineRenderer>();
-            if (!_lineRenderer) _lineRenderer = gameObject.AddComponent<LineRenderer>();
+            if (!_lineRenderer) return;
             _lineRenderer.enabled = false;
         }
         
@@ -207,12 +203,17 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
         
         if (minimumBoundary != null && maximumBoundary != null)
         {
-            pt.x = Mathf.Clamp(pt.x, _localMinBoundary.x, _localMaxBoundary.x);
-            pt.y = Mathf.Clamp(pt.y, _localMinBoundary.y, _localMaxBoundary.y);
-            pt.z = Mathf.Clamp(pt.z, _localMinBoundary.z, _localMaxBoundary.z);
+            if (Math.Abs(_movingDirection.x) > 0.001)
+                pt.x = Mathf.Clamp(pt.x, _localMinBoundary.x, _localMaxBoundary.x);
+            if (Math.Abs(_movingDirection.y) > 0.001)
+                pt.y = Mathf.Clamp(pt.y, Mathf.Min(_localMinBoundary.y, _localMaxBoundary.y), 
+                    Mathf.Max(_localMinBoundary.y, _localMaxBoundary.y));
+            if (Math.Abs(_movingDirection.z) > 0.001) 
+                pt.z = Mathf.Clamp(pt.z, _localMinBoundary.z, _localMaxBoundary.z);
         }
 
         movingObject.transform.localPosition =  pt;
+        OnMove.Invoke();
     }
 
     public void OnChildMouseUp()
