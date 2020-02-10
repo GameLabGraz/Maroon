@@ -62,6 +62,13 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
             _coulombLogic = obj.GetComponent<CoulombLogic>();
         
         Debug.Assert(_coulombLogic != null);
+
+        if (_coulombLogic.IsIn2dMode())
+        {
+            transform.localRotation = Quaternion.Euler(0, 0, 0);
+            GetComponent<Rigidbody>().constraints |= RigidbodyConstraints.FreezePositionZ;
+        }
+
     }
 
     private void Update()
@@ -106,12 +113,12 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
 
     public void UpdateResetPosition()
     {
-        _resetPosition = transform.position;
+        _resetPosition = transform.localPosition;
     }
 
     public void ResetObject()
     {
-        transform.position = _resetPosition;
+        transform.localPosition = _resetPosition;
     }
     
     public void CalculatedPosition(Vector3 calculatedPosition)
@@ -144,7 +151,6 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
         if (Mathf.Abs(Charge) < 0.0001f) return Vector3.zero;
         var distance = _coulombLogic.WorldToCalcSpace(Vector3.Distance(transform.position, position)); //TODO: radius???
         var dir = (position - transform.position).normalized;
-        //TODO: consider 3d as well
         var potential = CoulombConstant * Charge * Mathf.Pow(10f, -6f) / Mathf.Pow(distance, 2f);
         return potential * dir;
     }
@@ -164,9 +170,7 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
     
     public float getFieldStrength()
     {
-        return 3f;
-        Debug.Log("get field strenght");
-        throw new System.NotImplementedException();
+        return Charge * 3f; //as our field strength is 3 -> a 1 Coulomb Charge would feel 3, a 2 Coulomb Charge 6 and a -1 Charge -3
     }
 
     public void MovementStart()

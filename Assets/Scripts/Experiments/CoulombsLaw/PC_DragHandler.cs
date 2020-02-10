@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -20,19 +21,28 @@ public class PC_DragHandler : MonoBehaviour
     public List<GameObject> changeMaterialIfOutside;
     [Tooltip("The materials must support transparency for this.")]
     public float outsideTransparency = 0.7f;
+
+    [Header("Additional Object References")]
+    public PC_ArrowMovement ArrowMovement = null;
     
     [Header("Events")]
     [Tooltip("Event that gets triggered when the Object starts to move.")]
     public UnityEvent onStartedMoving;
+    public UnityEvent onMove;
     [Tooltip("Event that gets triggered when the Object is outside the boundaries when the movement finished. This only gets triggered if the boundaries are set.")]
     public UnityEvent onEndMovingOutsideBoundaries;
     [Tooltip("Event that gets triggered at the end of the movement if the object is within the boundaries (or none are specified).")]
     public UnityEvent onEndMovingInsideBoundaries;
     
+    [Tooltip("Event that gets triggered when the object is enabled.")]
+    public UnityEvent onEnabled;
+    [Tooltip("Event that gets triggered when the object is disabled.")]
+    public UnityEvent onDisabled;
+    
     private bool _moving = false;
     private bool _isOutsideBoundaries = false;
     private float _distance;
-    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -72,7 +82,8 @@ public class PC_DragHandler : MonoBehaviour
         {
             if (allowedXMovement && (pt.x < minBoundary.position.x || maxBoundary.position.x < pt.x))
                 outside = true;
-            else if (allowedYMovement && (pt.y < minBoundary.position.y || maxBoundary.position.y < pt.y))
+            else if (allowedYMovement && (pt.y < Mathf.Min(minBoundary.position.y, maxBoundary.position.y) 
+                                          || Mathf.Max(minBoundary.position.y, maxBoundary.position.y) < pt.y))
                 outside = true;
             else if (allowedZMovement && (pt.z < minBoundary.position.z || maxBoundary.position.z < pt.z))
                 outside = true;
@@ -96,6 +107,7 @@ public class PC_DragHandler : MonoBehaviour
         }
         
         movingObject.transform.position = pt;
+        onMove.Invoke();
     }
     
     private void OnMouseUp()
@@ -105,5 +117,23 @@ public class PC_DragHandler : MonoBehaviour
         _moving = false;
         if (_isOutsideBoundaries) onEndMovingOutsideBoundaries.Invoke();
         else onEndMovingInsideBoundaries.Invoke();
+    }
+
+    public void RestrictMovement(bool allowX, bool allowY, bool allowZ)
+    {
+        allowedXMovement = allowX;
+        allowedYMovement = allowY;
+        allowedZMovement = allowZ;
+    }
+
+
+    private void OnDisable()
+    {
+        onDisabled.Invoke();
+    }
+
+    private void OnEnable()
+    {
+        onEnabled.Invoke();
     }
 }

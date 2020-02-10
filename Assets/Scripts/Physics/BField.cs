@@ -108,4 +108,9 @@ public class BField : IField
     {
         throw new System.NotImplementedException();
     }
+
+    public override float getStrengthInPercent(Vector3 position)
+    {
+        return 1f;
+    }
 }

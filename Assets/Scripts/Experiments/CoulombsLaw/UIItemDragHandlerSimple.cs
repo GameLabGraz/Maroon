@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using Vector3 = UnityEngine.Vector3;
 
@@ -8,16 +9,13 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
     public Canvas parentCanvas;
     public float returnTime = 1f;
     public GameObject generatedObject;
+    [Tooltip("The object which is set as the new child, if empty the generated Object will be used as childObject.")]
+    public GameObject childObject = null;
+    public bool resetRotation = true;
     
     [Header("Other Affected GameObjects")]
-    public GameObject ChangeLayerObject;
+    public GameObject changeLayerObject;
     
-    [Header("Particle Movement Restrictions")]
-    public GameObject minPosition2d;
-    public GameObject maxPosition2d;
-    public GameObject minPosition3d;
-    public GameObject maxPosition3d;
-
     private Vector3 _initialPosition;
     private Vector3 _initialMousePosition;
 
@@ -25,10 +23,11 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
     private Vector3 _returnDirection;
     private float _time;
     
-    private float _currentCharge = 0f;
-    private bool _fixedPosition = false;
-
-    private bool _allowAddingCharges = true;
+    private void Start()
+    {
+        if (childObject == null)
+            childObject = generatedObject;
+    }
 
     private void Update()
     {
@@ -47,10 +46,13 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
     
     public void OnBeginDrag(PointerEventData eventData)
     {
+        Debug.Log("OnBegin Drag: " + changeLayerObject);
         _initialPosition = transform.position;
-        if (ChangeLayerObject)
+        if (changeLayerObject)
         {
-            ChangeLayerObject.layer = 0; //Default Layer
+            Debug.Log("Change Layer: " + changeLayerObject);
+
+            changeLayerObject.layer = 0; //Default Layer
         }
     }
     
@@ -70,11 +72,9 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
         var hitVectorField = false;
         foreach (var hit in hits)
         {
+            Debug.Log("Hit " + hit.transform.tag + " - " + hit.transform.gameObject.name);
             if(!hit.transform.CompareTag("VectorField"))
                 continue;
-
-            if (!_allowAddingCharges)
-                return;
 
             hitVectorField = true;
             ShowObject(hit.point, hit.transform.parent);
@@ -88,17 +88,14 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
             _returnDirection = _initialPosition - transform.position;
         }
         
-        if (ChangeLayerObject)
+        if (changeLayerObject)
         {
-            ChangeLayerObject.layer = 2; //Ignore Raycast
+            changeLayerObject.layer = 2; //IgnoreRaycast
         }
     }
-
-    public void SetObjectToOrigin()
+    
+    public virtual void SetObjectToOrigin()
     {
-        if (!_allowAddingCharges)
-            return;
-
         var vecFields = GameObject.FindGameObjectsWithTag("VectorField"); //should be 2 -> one 2d and one 3d, where only one should be active at a time
 
         foreach (var vecField in vecFields)
@@ -110,9 +107,14 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
 
     protected virtual void ShowObject(Vector3 position, Transform parent)
     {
-        var obj = Instantiate(generatedObject, position, Quaternion.identity, parent);
-        obj.transform.parent = parent;
-        obj.transform.position = position;
-        obj.SetActive(true);
+        if (generatedObject == null) return;
+//        var obj = Instantiate(generatedObject, position, Quaternion.identity, parent);
+
+        childObject.transform.parent = parent;
+        generatedObject.transform.position = position;
+        if(resetRotation)
+            generatedObject.transform.localRotation = Quaternion.identity;
+        generatedObject.SetActive(false);
+        generatedObject.SetActive(true);
     }
 }

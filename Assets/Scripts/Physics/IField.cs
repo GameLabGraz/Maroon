@@ -36,6 +36,18 @@ public abstract class IField : MonoBehaviour
     
     [Tooltip("This method is only used when use Callback is set to true.")]
     public ProducersCallback onGetProducers;
+
+    [Header("Resizing and Transparent Appearance Settings")]
+    public float maximumStrength;
+    public float minimumStrength;
+    [Tooltip("Shows the distribution of the strengths.")]
+    public AnimationCurve distributionCurveForStrength = AnimationCurve.Linear(0f, 0f, 1f, 1f);
+    /**
+     * |    /
+     * |  /      -> Curve: small x (= strength) have low strength factor (=y)
+     * |/
+     * -------
+     */
         
     /// <summary>
     /// Lists of producers which generates the field
@@ -69,4 +81,6 @@ public abstract class IField : MonoBehaviour
     /// <param name="position">The required position</param>
     /// <returns>The field strength</returns>
     public abstract float getStrength(Vector3 position);
+
+    public abstract float getStrengthInPercent(Vector3 position);
 }
