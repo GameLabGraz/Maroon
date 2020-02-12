@@ -1,4 +1,4 @@
-﻿<img src="/Assets/Images/logo.png" width="400"/>
+﻿<img src="/images/logo/logo.png" width="400"/>
 
 > ### Maroon
 > A interactive physics laboratory and experiment environment implemented in Unity3D, designed for active learning in the classroom or at home. It visualizes and simulates various physics experiments
@@ -16,12 +16,12 @@ room which represents the specific learning experiences with the learning conten
 simulations, or experiments.
 
 
-![](/Assets/Images/Screenshots/lab_overview.png)
+![](/images/screenshots/lab-overview.png)
 
 An conceptual overview of the different version of Maroon (Maroon Desktop, Maroon Room-Scale VR, Maroon Mobile VR and Maroon
 Multi-User) support different forms of engagement is illustrated in the following figure.
 
-<img src="/Assets/Images/Screenshots/architecture.png" width="600"/>
+<img src="/images/screenshots/architecture.png" width="600"/>
 
 ## Simulations and Experiments
 
@@ -42,7 +42,7 @@ energy it produces a visible spark. The second experiment
 shows a balloon placed between a Van de Graaff generator and a grounding sphere.
 Users can observe the behavior of the balloon by charging the generator.
 
-<img src="/Assets/Images/Screenshots/vandegraff2.PNG" width="600"/>
+<img src="/images/screenshots/vandegraff-2.png" width="600"/>
 
 ### Falling Coil and Faraday’s Law
 In the Falling Coil experiment, a small magnet is positioned some distance above
@@ -66,7 +66,7 @@ feature in this experiment is that the user can also feel the acting force throu
 feedback which corresponds to the force. This gives the user an ”extra-dimension”
 for an even better experience.
 
-<img src="/Assets/Images/Screenshots/faradays_law.png" width="600"/>
+<img src="/images/screenshots/experiment-faradays-law.png" width="600"/>
 
 ### Capacitor
 A capacitor is an electrical component which consists of two electrically conductive
@@ -83,7 +83,7 @@ the behavior of charges in the electric field by placing them into the field. Th
 underlying electric field can be visualized by using field lines and a 3D vector field
 visualization.
 
-<img src="/Assets/Images/Screenshots/capacitor.png" width="600"/>
+<img src="/images/screenshots/experiment-capacitor.png" width="600"/>
 
 ### Huygens Principle 
 The Huygens Principle experiment is one of the first experiment in Maroon that does
@@ -98,7 +98,7 @@ the interference pattern behind the plate. The user can also replace the used pl
 with other plates which have more or fewer slits. This leads to different interference
 patterns. For a better wave illustration, the wave color can be freely changed.
 
-<img src="/Assets/Images/Screenshots/huygens_principle.png" width="600"/>
+<img src="/images/screenshots/experiment-huygens-principle.png" width="600"/>
 
 ## Supported SDK's
 | SDK | Download Link |
