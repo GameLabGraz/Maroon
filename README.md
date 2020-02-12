@@ -21,7 +21,7 @@ simulations, or experiments.
 An conceptual overview of the different version of Maroon (Maroon Desktop, Maroon Room-Scale VR, Maroon Mobile VR and Maroon
 Multi-User) support different forms of engagement is illustrated in the following figure.
 
-<img src="/images/screenshots/architecture.png" width="600"/>
+<img src="/images/architecture/architecture.png" width="600"/>
 
 ## Simulations and Experiments
 
@@ -42,7 +42,7 @@ energy it produces a visible spark. The second experiment
 shows a balloon placed between a Van de Graaff generator and a grounding sphere.
 Users can observe the behavior of the balloon by charging the generator.
 
-<img src="/images/screenshots/vandegraff-2.png" width="600"/>
+<img src="/images/screenshots/experiment-vandegraff-2.png" width="600"/>
 
 ### Falling Coil and Faraday’s Law
 In the Falling Coil experiment, a small magnet is positioned some distance above
