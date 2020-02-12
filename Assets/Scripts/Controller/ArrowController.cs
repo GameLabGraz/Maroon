@@ -44,17 +44,27 @@ public class ArrowController : MonoBehaviour, IResetObject
     public Quaternion start_rot;
 
     public bool OnlyUpdateInRunMode = true;
+    private IField _field;
+    private bool _isParentNull;
+
+    private bool _hasScaling = false;
+    private ScalingArrow _scalingArrow;
 
     /// <summary>
     /// Initialization
     /// </summary>
     private void Start()
     {
-        Field = GameObject.FindGameObjectWithTag("Field");
-        if (Field != null)
-            rotateArrow();
-        start_rot = transform.rotation;
+        _isParentNull = transform.parent == null; //init it here as this null look up is expensive in update
+        // Field = GameObject.FindGameObjectWithTag("Field"); -> super inefficient if 20x20 arrows search for the same tag at once...
+        Debug.Assert(Field != null);
+        _field = Field.GetComponent<IField>();
 
+        _scalingArrow = GetComponent<ScalingArrow>();
+        _hasScaling = _scalingArrow != null;
+        
+        rotateArrow();
+        start_rot = transform.rotation;
     }
 
     /// <summary>
@@ -62,13 +72,9 @@ public class ArrowController : MonoBehaviour, IResetObject
     /// </summary>
     private void Update()
     {
-        if (OnlyUpdateInRunMode && !SimulationController.Instance.SimulationRunning)
-            return;
-
-        if (Field != null)
-            rotateArrow();
-        else
-            Field = GameObject.FindGameObjectWithTag("Field");
+        if (!isActiveAndEnabled) return;
+        if (OnlyUpdateInRunMode && !SimulationController.Instance.SimulationRunning) return;
+        rotateArrow();
     }
 
     /// <summary>
@@ -76,7 +82,13 @@ public class ArrowController : MonoBehaviour, IResetObject
     /// </summary>
     private void rotateArrow()
     {
-        var rotate = Field.GetComponent<IField>().get(transform.position) * fieldStrengthFactor;
+        if (_hasScaling)
+        {
+            _scalingArrow.size = _field.getStrengthInPercent(transform.position) * 100f;
+
+        }
+        
+        var rotate = _field.get(transform.position) * fieldStrengthFactor;
         
         rotate.Normalize();
         float rot = 0;
@@ -87,7 +99,7 @@ public class ArrowController : MonoBehaviour, IResetObject
             return;
         }
         
-        if(transform.parent != null)
+        if(!_isParentNull)
         {
             if(transform.parent.rotation == Quaternion.Euler(-90, 0, 0))
                 rot = Mathf.Atan2(rotate.x, rotate.y) * Mathf.Rad2Deg;
@@ -117,6 +129,7 @@ public class ArrowController : MonoBehaviour, IResetObject
     /// </summary>
     public void ResetObject()
     {
-        rotateArrow();
+        if(isActiveAndEnabled)
+            rotateArrow();
     }
 }

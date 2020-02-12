@@ -26,7 +26,26 @@ public class SymmetricFieldLineManager : FieldLineManager
     /// </summary>
     private bool symmetryEnabled = true;
 
+    protected override void Start()
+    {
+        base.Start();
+        CheckSymmetryAxis();
+    }
 
+    private static void CheckSymmetryAxis()
+    {
+        //check symmetry axis
+        var emObjects = FindObjectsOfType<EMObject>();
+        for (var i = 1; i < emObjects.Length; i++)
+        {
+            var check1 = Vector3.Cross(emObjects[0].FieldAlignment, emObjects[i].FieldAlignment).sqrMagnitude < 0.01f;
+            var check2 = Vector3.Cross(emObjects[0].FieldAlignment, emObjects[i].transform.position - emObjects[0].transform.position).sqrMagnitude < 0.01f;
+
+            if (!check1 || !check2)
+                Debug.LogError("Warning: The EMObjects do not have the same symmetry axis. Please do not use the SymmetricFieldLineManager.");
+        }
+    }
+    
     /// <summary>
     /// Sets the symmetry count
     /// </summary>

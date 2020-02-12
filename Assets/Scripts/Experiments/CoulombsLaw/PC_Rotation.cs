@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using UnityEngine.Events;
 using Vector3 = UnityEngine.Vector3;
 
 public class PC_Rotation : MonoBehaviour, IResetWholeObject
@@ -13,6 +15,10 @@ public class PC_Rotation : MonoBehaviour, IResetWholeObject
     public bool enableShortcuts = true;
     [Tooltip("Stops the simulation while rotating when enabled.")]
     public bool onlyRotateOnSimulationPause;
+
+    public UnityEvent OnStartRotation;
+    public UnityEvent OnRotate;
+    public UnityEvent OnEndRotation;
     
     private Transform rotateTrans;
     
@@ -24,6 +30,8 @@ public class PC_Rotation : MonoBehaviour, IResetWholeObject
     private void Update()
     {
         if (!enableShortcuts) return;
+        var rotated = true;
+        
         if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
             rotateTrans.RotateAround(Vector3.up, rotationSpeed * Mathf.Deg2Rad * Time.deltaTime);
         else if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
@@ -32,10 +40,22 @@ public class PC_Rotation : MonoBehaviour, IResetWholeObject
             rotateTrans.RotateAround(Vector3.right, rotationSpeed * Mathf.Deg2Rad * Time.deltaTime);
         else if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
             rotateTrans.RotateAround(Vector3.right, -rotationSpeed * Mathf.Deg2Rad * Time.deltaTime);
+        else
+            rotated = false;
+        
+        if(rotated)
+            OnRotate.Invoke();
+    }
+
+    private void OnMouseDown()
+    {
+        OnStartRotation.Invoke();
     }
 
     private void OnMouseDrag()
     {
+        if (!enabled) return;
+        
         // taken from https://www.youtube.com/watch?v=S3pjBQObC90
         if(onlyRotateOnSimulationPause) SimulationController.Instance.SimulationRunning = false;
         
@@ -44,6 +64,13 @@ public class PC_Rotation : MonoBehaviour, IResetWholeObject
         
         rotateTrans.Rotate(Vector3.up, -rotX);
         rotateTrans.Rotate(Vector3.right, rotY);
+        
+        OnRotate.Invoke();
+    }
+
+    private void OnMouseUp()
+    {
+        OnEndRotation.Invoke();
     }
 
     public void ResetObject()
