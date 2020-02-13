@@ -1,8 +1,5 @@
-﻿using System;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 namespace Localization
 {
@@ -36,10 +33,12 @@ namespace Localization
                 return;
 
             if (!LanguageManager.Instance) return;
-            _text.text = LanguageManager.Instance.GetString(key);
+            var text = LanguageManager.Instance.GetString(key);
+            // _text.text = LanguageManager.Instance.GetString(key);
             if (addColon)
-                _text.text += ":";
+                text += ":";
 
+            _text.text = text;
             _oldKey = key;
         }
     }
