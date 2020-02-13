@@ -176,7 +176,7 @@ public class PC_SelectionHandler : MonoBehaviour
 
     private void AdaptButtonTextCharge()
     {
-        Debug.Assert(ChargeButtonText && ChargeButtonText.GetComponent<LocalizedText_TextMeshPro>());
+        if (!ChargeButtonText && !ChargeButtonText.GetComponent<LocalizedText_TextMeshPro>()) return;
         if (!ChargeButtonText) return;
         ChargeButtonText.GetComponent<LocalizedText_TextMeshPro>().key =
             selectedObject == null || selectedObject.type != PC_SelectScript.SelectType.ChargeSelect

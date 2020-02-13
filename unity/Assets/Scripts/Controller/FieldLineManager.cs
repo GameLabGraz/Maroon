@@ -43,7 +43,7 @@ public abstract class FieldLineManager : MonoBehaviour
             var parent = sensedTag.transform.parent.gameObject;
             AddFieldLine(parent.GetComponent<FieldLine>());
         }
-        Debug.Log("FieldLines: " + sensedObjects.Length);
+        // Debug.Log("FieldLines: " + sensedObjects.Length);
     }
 
     private void Update()
