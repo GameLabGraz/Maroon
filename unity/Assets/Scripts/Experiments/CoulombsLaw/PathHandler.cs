@@ -38,15 +38,13 @@ public class PathHandler : MonoBehaviour
     
     public void SwitchPosition(int posIdx)
     {
-        Debug.Log("Switch Pos: " + posIdx);
-        
-//        Debug.Log("Switch Position: " + posIdx);
+        // Debug.Log("Switch Pos: " + posIdx);
         SwitchPosition((CameraPosition)posIdx);
     }
     
     public void SwitchPosition(CameraPosition newPosition)
     {
-        Debug.Log("Switch POsition: "+ newPosition);
+        // Debug.Log("Switch Position: "+ newPosition);
         if(_currentPosition == newPosition) return;
 
         _workingPath.points.RemoveAll(point => true); // delete every point

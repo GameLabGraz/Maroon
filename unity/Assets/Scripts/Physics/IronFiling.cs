@@ -72,12 +72,11 @@ public class IronFiling : MonoBehaviour, IResetObject
     /// </summary>
     private void Start()
     {
-        //TODO: get correct width and height
         if (!usePredefinedSize)
         {
             height = gameObject.GetComponent<MeshFilter>().mesh.bounds.size.z;
             width = gameObject.GetComponent<MeshFilter>().mesh.bounds.size.x;
-            Debug.Log("Iron Filling: " + height + " x " + width);
+            // Debug.Log("Iron Filling: " + height + " x " + width);
         }
 
         field = GameObject.FindGameObjectWithTag("Field").GetComponent<IField>();
