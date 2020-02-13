@@ -37,11 +37,8 @@ namespace Localization
             // _text.text = LanguageManager.Instance.GetString(key);
             if (addColon)
                 text += ":";
-            
-            _text.SetText(text, true);
-            _text.havePropertiesChanged = true;
-            _text.GetPreferredValues(2, 2);
 
+            _text.text = text;
             _oldKey = key;
         }
     }
