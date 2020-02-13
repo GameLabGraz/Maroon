@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using UnityEngine;
 
@@ -66,7 +67,7 @@ namespace Localization
                     if(!Enum.TryParse(languageElement.Name.ToString(), out SystemLanguage language))
                         continue;
 
-                    translation.AddTranslation(language, languageElement.Value);
+                    translation.AddTranslation(language, Regex.Unescape(languageElement.Value));
                 }
 
                 _translations.Add(key, translation);
