@@ -86,7 +86,7 @@ public class PositionObserver : MonoBehaviour
             if (obj) _coulombLogic = obj.GetComponent<CoulombLogic>();
         }
         
-        Debug.Log("Update Position from Ruler");
+        // Debug.Log("Update Position from Ruler");
         var endPos = Vector3.zero;
         if (_coulombLogic.IsIn2dMode() && observingGameObject.activeSelf)
         {
