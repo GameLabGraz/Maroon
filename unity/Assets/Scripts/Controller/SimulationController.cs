@@ -15,6 +15,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 /// <summary>
@@ -26,10 +27,13 @@ public class SimulationController : MonoBehaviour
     /// Indicates whether the simulation is running
     /// </summary>
     [SerializeField]
-    private bool simulationRunning = false;
+    private bool simulationRunning;
 
     [SerializeField]
     private float timeScale = 1;
+
+    public UnityEvent onStartRunning;
+    public UnityEvent onStopRunning;
 
     public float TimeScale
     {
@@ -165,7 +169,14 @@ public class SimulationController : MonoBehaviour
     public bool SimulationRunning
     {
         get => simulationRunning;
-        set => simulationRunning = value;
+        set
+        {
+            if (simulationRunning == value) return;
+            
+            simulationRunning = value;
+            if(simulationRunning) onStartRunning.Invoke();
+            else onStopRunning.Invoke();
+        }
     }
 
     /// <summary>
@@ -183,7 +194,7 @@ public class SimulationController : MonoBehaviour
     /// </summary>
     public void StartSimulation()
     {
-        simulationRunning = true;
+        SimulationRunning = true;
         simulationReset = false;
 
         if(!stepSimulation)
@@ -206,7 +217,7 @@ public class SimulationController : MonoBehaviour
     /// </summary>
     public void StopSimulation()
     {
-        simulationRunning = false;
+        SimulationRunning = false;
         OnStop?.Invoke(this, EventArgs.Empty);
     }
 

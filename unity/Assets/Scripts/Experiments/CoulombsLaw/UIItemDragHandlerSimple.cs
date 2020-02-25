@@ -46,11 +46,11 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
     
     public void OnBeginDrag(PointerEventData eventData)
     {
-        Debug.Log("OnBegin Drag: " + changeLayerObject);
+        // Debug.Log("OnBegin Drag: " + changeLayerObject);
         _initialPosition = transform.position;
         if (changeLayerObject)
         {
-            Debug.Log("Change Layer: " + changeLayerObject);
+            // Debug.Log("Change Layer: " + changeLayerObject);
 
             changeLayerObject.layer = 0; //Default Layer
         }
@@ -72,7 +72,7 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
         var hitVectorField = false;
         foreach (var hit in hits)
         {
-            Debug.Log("Hit " + hit.transform.tag + " - " + hit.transform.gameObject.name);
+            // Debug.Log("Hit " + hit.transform.tag + " - " + hit.transform.gameObject.name);
             if(!hit.transform.CompareTag("VectorField"))
                 continue;
 

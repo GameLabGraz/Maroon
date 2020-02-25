@@ -25,7 +25,7 @@ public class PC_RegisterHandler : MonoBehaviour
 
     public void SelectRegister(PC_RegisterBase registerBase)
     {
-        Debug.Log("Select Register: " + registerBase.gameObject.name);
+        // Debug.Log("Select Register: " + registerBase.gameObject.name);
         if (_selectedRegister == registerBase) return;
         _selectedRegister.SetInactive();
         _selectedRegister = registerBase;
