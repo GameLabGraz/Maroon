@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Localization
 {
-    [RequireComponent(typeof(TextMeshProUGUI))]
+    [RequireComponent(typeof(TMP_Text))]
     public class LocalizedText_TextMeshPro : MonoBehaviour
     {
         [SerializeField]
@@ -12,12 +12,12 @@ namespace Localization
         [SerializeField]
         private bool addColon = false;
 
-        private TextMeshProUGUI _text;
+        private TMP_Text _text;
         private string _oldKey;
 
         private void Start()
         {
-            _text = GetComponent<TextMeshProUGUI>();
+            _text = GetComponent<TMP_Text>();
             UpdateLocalizedText();
             _oldKey = key;
         }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Localization;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using VRTK;
@@ -7,20 +8,19 @@ using VRTK.UnityEventHelper;
 
 public class SliderController : VRTK_Slider, IResetObject
 {
-    [SerializeField]
-    private GameObject invokeObject;
+    [SerializeField] private GameObject invokeObject;
 
-    [SerializeField]
-    private string methodName;
+    [SerializeField] private string methodName;
 
-    [SerializeField]
-    private List<string> _optionKeys = new List<string>(); 
+    [SerializeField] private List<string> _optionKeys = new List<string>();
 
-    [SerializeField]
-    private Text ValueText;
+    [SerializeField] private Text ValueText;
 
-    [SerializeField]
-    private bool isInteger = false;
+    [SerializeField] private TextMeshPro ValueText_TMP;
+
+    [SerializeField] public string valueFormat = "0.00";
+
+    [SerializeField] private bool isInteger = false;
 
     private VRTK_Control_UnityEvents controlEvents;
 
@@ -28,11 +28,8 @@ public class SliderController : VRTK_Slider, IResetObject
 
     private Quaternion startRot;
 
-    private void Start()
+    protected void Start()
     {
-        startPos = transform.position;
-        startRot = transform.rotation;
-
         controlEvents = GetComponent<VRTK_Control_UnityEvents>();
         if (controlEvents == null)
         {
@@ -42,11 +39,14 @@ public class SliderController : VRTK_Slider, IResetObject
         UpdateValueText();
 
         controlEvents.OnValueChanged.AddListener(HandleChange);
+
+        startPos = transform.position;
+        startRot = transform.rotation;
     }
 
     protected override ControlValueRange RegisterValueRange()
     {
-        if(_optionKeys.Count > 0)
+        if (_optionKeys.Count > 0)
         {
             minimumValue = 0;
             maximumValue = _optionKeys.Count - 1;
@@ -61,25 +61,30 @@ public class SliderController : VRTK_Slider, IResetObject
 
     private void UpdateValueText()
     {
-        if(ValueText == null)
-            return;
-
         if (_optionKeys.Count > 0)
-            ValueText.text = LanguageManager.Instance.GetString(_optionKeys[(int)GetValue()]);
+            SetText(LanguageManager.Instance.GetString(_optionKeys[(int) GetValue()]));
         else if (isInteger)
-            ValueText.text = ((int)GetValue()).ToString();
+            SetText(((int) GetValue()).ToString());
         else
-            ValueText.text = GetValue().ToString("0.00");
+            SetText(GetValue().ToString(valueFormat));
+    }
+
+    private void SetText(string text)
+    {
+        if (ValueText)
+            ValueText.text = text;
+        if (ValueText_TMP)
+            ValueText_TMP.text = text;
     }
 
     private void HandleChange(object sender, Control3DEventArgs e)
     {
         UpdateValueText();
 
-        if(invokeObject != null)
+        if (invokeObject != null)
         {
             if (isInteger)
-                invokeObject.SendMessage(methodName, (int)GetValue());
+                invokeObject.SendMessage(methodName, (int) GetValue());
             else
                 invokeObject.SendMessage(methodName, GetValue());
         }

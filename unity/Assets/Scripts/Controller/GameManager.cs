@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
 
     private string _scene; //name of scene player is currently
 
+    public bool enableMenuOnEsc = true;
     public AudioSource menuSound; //sound when player goes to menu
 
     private AsyncOperation _async;
@@ -97,7 +98,7 @@ public class GameManager : MonoBehaviour
         }            
 
         var activeScene = SceneManager.GetActiveScene().name;
-        if (Input.GetKeyDown(KeyCode.Escape) && activeScene != "Menu")
+        if (enableMenuOnEsc && Input.GetKeyDown(KeyCode.Escape) && activeScene != "Menu")
         {
             _scene = activeScene;
             PlayMenuSound();
