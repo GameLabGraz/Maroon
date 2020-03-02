@@ -9,22 +9,22 @@ If you are looking for more information, downloads or web-builds feel free to vi
 ***
 
 # Design and Implementation of Maroon
-Maroon is an interactive and immersive physics laboratory developed in [Unity], a
+
+<img src="/images/screenshots/laboratory.jpg" width="600"/>
+
+Maroon is an interactive and immersive physics laboratory developed in Unity, a
 game engine which allows to build and deploy a high-quality 3D environment across
 mobile, desktop and VR platforms. The lab is designed to support the flexible integration
 of different interactive learning experiences.
 To start a specific learning experience, the user can approach one
-of those stations (illustrated with a pink marker) and can teleport to a new
+of those stations (illustrated with circular markers). From there the user can teleport to a new
 room which represents the specific learning experiences with the learning content,
 simulations, or experiments.
 
-
-<img src="/images/screenshots/laboratory.jpg" width="600"/>
-
-An conceptual overview of the different version of Maroon (Maroon Desktop, Maroon Room-Scale VR, Maroon Mobile VR and Maroon
-Multi-User) support different forms of engagement is illustrated in the following figure.
-
 <img src="/images/architecture/architecture.png" width="600"/>
+
+This conceptual overview of the different version of Maroon (Maroon Desktop, Maroon Room-Scale VR, Maroon Mobile VR and Maroon
+Multi-User) illustrates the different forms of engagement Maroon supports or plans to support.
 
 ## Simulations and Experiments
 
