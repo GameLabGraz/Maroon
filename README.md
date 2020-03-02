@@ -1,17 +1,18 @@
-﻿<img src="/images/logo/logo.png" width="400"/>
+<img src="/images/logo/logo.png" width="400"/>
 
-> ### Maroon
-> A interactive physics laboratory and experiment environment implemented in Unity3D, designed for active learning in the classroom or at home. It visualizes and simulates various physics experiments
+Welcome to the Maroon repository. Maroon is an interactive laboratory and experiment environment implemented in Unity, designed for active learning in the classroom or at home. It visualizes and simulates various physics experiments.
 
-[![Maroon VR Video](https://img.youtube.com/vi/iGuzgi-hfcM/0.jpg)](https://www.youtube.com/watch?v=iGuzgi-hfcM)
+If you are looking for more information, downloads or web-builds feel free to visit our [website](https://maroon.tugraz.at/). If you are looking for details about software components, how to contribute to Maroon or other development-related information, you can consult our [wiki](https://github.com/GamesResearchTUG/Maroon/wiki).
+
+<img src="/images/experiment-room.jpg" width="600"/>
 
 ## Design and Implementation of Maroon
-Maroon is an interactive immersive physics laboratory developed in [Unity], a
+Maroon is an interactive and immersive physics laboratory developed in [Unity], a
 game engine which allows to build and deploy a high-quality 3D environment across
 mobile, desktop and VR platforms. The lab is designed to support the flexible integration
 of different interactive learning experiences.
-To start a specific learning experience, the user would approach one
-of those stations (illustrated with a pink marker) and would get teleported to a new
+To start a specific learning experience, the user can approach one
+of those stations (illustrated with a pink marker) and can teleport to a new
 room which represents the specific learning experiences with the learning content,
 simulations, or experiments.
 
@@ -100,20 +101,4 @@ patterns. For a better wave illustration, the wave color can be freely changed.
 
 <img src="/images/screenshots/experiment-huygens-principle.png" width="600"/>
 
-## Supported SDK's
-| SDK | Download Link |
-|---------------|---------------|
-| Unity 2018.4.7f1  | [Unity] |
-| SteamVR 1.2.3 | [SteamVR Plugin] |
-| VRTK 3.3.0 | [VRTK Plugin] |
-| HTC Vive | [HTC Vive] |
-| Oculus | [Oculus Integration] |
-| Samung Gear VR | [Samsung Gear VR] |
-
-[Unity]: https://unity3d.com
-[SteamVR Plugin]: https://github.com/ValveSoftware/steamvr_unity_plugin/releases/download/1.2.3/SteamVR.Plugin.unitypackage
-[VRTK Plugin]: https://github.com/thestonefox/VRTK/archive/3.3.0.zip
-[HTC Vive]: https://www.vive.com
-[Oculus Integration]: https://assetstore.unity.com/packages/tools/integration/oculus-integration-82022
-[Google VR SDK for Unity]: https://developers.google.com/vr/unity/download
-[Samsung Gear VR]: https://www.samsung.com/us/mobile/virtual-reality/gear-vr
+[![Maroon VR Video](https://img.youtube.com/vi/iGuzgi-hfcM/0.jpg)](https://www.youtube.com/watch?v=iGuzgi-hfcM)
