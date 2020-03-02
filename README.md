@@ -4,7 +4,7 @@ Welcome to the Maroon repository. Maroon is an interactive laboratory and experi
 
 If you are looking for more information, downloads or web-builds feel free to visit our [website](https://maroon.tugraz.at/). If you are looking for details about software components, how to contribute to Maroon or other development-related information, you can consult our [wiki](https://github.com/GamesResearchTUG/Maroon/wiki).
 
-<img src="/images/experiment-room.jpg" width="600"/>
+<img src="/images/screenshots/experiment-room.jpg" width="600"/>
 
 ## Design and Implementation of Maroon
 Maroon is an interactive and immersive physics laboratory developed in [Unity], a
