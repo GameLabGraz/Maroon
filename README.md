@@ -2,17 +2,17 @@
 
 Welcome to the Maroon repository. Maroon is an interactive laboratory and experiment environment implemented in Unity, designed for active learning in the classroom or at home. It visualizes and simulates various physics experiments.
 
-If you are looking for more information, downloads or web-builds feel free to visit our [website](https://maroon.tugraz.at/). If you are looking for details about software components, how to contribute to Maroon or other development-related information, you can consult our [wiki](./wiki)
+If you are looking for more information, downloads or web-builds feel free to visit our [website](https://maroon.tugraz.at/). If you are looking for details about software components, how to contribute to Maroon or other development-related information, you can consult our [wiki](https://github.com/GamesResearchTUG/Maroon/wiki)
 
 [![Maroon VR Video](https://img.youtube.com/vi/iGuzgi-hfcM/0.jpg)](https://www.youtube.com/watch?v=iGuzgi-hfcM)
 
 ## Design and Implementation of Maroon
-Maroon is an interactive immersive physics laboratory developed in [Unity], a
+Maroon is an interactive and immersive physics laboratory developed in [Unity], a
 game engine which allows to build and deploy a high-quality 3D environment across
 mobile, desktop and VR platforms. The lab is designed to support the flexible integration
 of different interactive learning experiences.
-To start a specific learning experience, the user would approach one
-of those stations (illustrated with a pink marker) and would get teleported to a new
+To start a specific learning experience, the user can approach one
+of those stations (illustrated with a pink marker) and can teleport to a new
 room which represents the specific learning experiences with the learning content,
 simulations, or experiments.
 
