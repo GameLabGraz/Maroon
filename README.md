@@ -27,6 +27,6 @@ Multi-User) illustrates the different forms of engagement Maroon supports or pla
 
 # Simulations and Experiments
 
-Maroon contains several phisics experiments, but will be extended with informatics simulations and experiences from other subjects in the future.
+Maroon contains several phisics experiments, but will be extended with computer science simulations and experiences from other subjects in the future. The physics experiments cover Van de Graaff Generator, Falling Coil, Faraday’s Law, Capacitor and Huygen's Principle.
 
 <img src="/images/screenshots/experiment-room.jpg" width="600"/>
