@@ -7,7 +7,7 @@ If you are looking for more information, downloads or web-builds feel free to vi
 ***
 
 # Overview
-Maroon is an interactive and immersive physics laboratory developed in Unity, a
+Maroon is an interactive and immersive laboratory developed in Unity, a
 game engine which allows to build and deploy a high-quality 3D environment across
 mobile, desktop and VR platforms. The lab is designed to support the flexible integration
 of different interactive learning experiences.
