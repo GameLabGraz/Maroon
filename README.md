@@ -1,4 +1,8 @@
+***
+
 <img src="/images/logo/logo.png" width="400"/>
+
+***
 
 Welcome to the Maroon repository. Maroon is an interactive laboratory and experiment environment implemented in Unity, designed for active learning in the classroom or at home. It visualizes and simulates various physics experiments.
 
@@ -9,9 +13,6 @@ If you are looking for more information, downloads or web-builds feel free to vi
 ***
 
 # Design and Implementation of Maroon
-
-<img src="/images/screenshots/laboratory.jpg" width="600"/>
-
 Maroon is an interactive and immersive physics laboratory developed in Unity, a
 game engine which allows to build and deploy a high-quality 3D environment across
 mobile, desktop and VR platforms. The lab is designed to support the flexible integration
@@ -21,12 +22,18 @@ of those stations (illustrated with circular markers). From there the user can t
 room which represents the specific learning experiences with the learning content,
 simulations, or experiments.
 
-<img src="/images/architecture/architecture.png" width="600"/>
+<img src="/images/screenshots/laboratory.jpg" width="600"/>
 
-This conceptual overview of the different version of Maroon (Maroon Desktop, Maroon Room-Scale VR, Maroon Mobile VR and Maroon
+The following conceptual overview of the different versions of Maroon (Maroon Desktop, Maroon Room-Scale VR, Maroon Mobile VR and Maroon
 Multi-User) illustrates the different forms of engagement Maroon supports or plans to support.
 
-## Simulations and Experiments
+<img src="/images/architecture/architecture.png" width="600"/>
+
+***
+
+# Simulations and Experiments
+
+Maroon contains several phisics experiments, but will be extended with informatics simulations and experiences from other subjects in the future.
 
 ### Van de Graaff Generator
 
@@ -102,5 +109,3 @@ with other plates which have more or fewer slits. This leads to different interf
 patterns. For a better wave illustration, the wave color can be freely changed.
 
 <img src="/images/screenshots/experiment-huygens-principle.png" width="600"/>
-
-[![Maroon VR Video](https://img.youtube.com/vi/iGuzgi-hfcM/0.jpg)](https://www.youtube.com/watch?v=iGuzgi-hfcM)
