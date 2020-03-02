@@ -1,7 +1,6 @@
-﻿<img src="/images/logo/logo.png" width="400"/>
+<img src="/images/logo/logo.png" width="400"/>
 
-> ### Maroon
-> A interactive physics laboratory and experiment environment implemented in Unity3D, designed for active learning in the classroom or at home. It visualizes and simulates various physics experiments
+Welcome to the Maroon repository. Maroon is an interactive laboratory and experiment environment implemented in Unity, designed for active learning in the classroom or at home. It visualizes and simulates various physics experiments.
 
 [![Maroon VR Video](https://img.youtube.com/vi/iGuzgi-hfcM/0.jpg)](https://www.youtube.com/watch?v=iGuzgi-hfcM)
 
