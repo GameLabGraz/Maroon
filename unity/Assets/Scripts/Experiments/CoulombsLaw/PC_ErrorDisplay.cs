@@ -25,8 +25,8 @@ public class PC_ErrorDisplay : MonoBehaviour
     
     public void ShowError(string localizationCode)
     {
-        ErrorText.GetComponent<LocalizedText_TextMeshPro>().key = localizationCode;
-        ErrorText.GetComponent<LocalizedText_TextMeshPro>().UpdateLocalizedText();
+        ErrorText.GetComponent<LocalizedTMP>().Key = localizationCode;
+        ErrorText.GetComponent<LocalizedTMP>().UpdateLocalizedText();
 
         gameObject.SetActive(true);
         _currentTime = DisplayTime;

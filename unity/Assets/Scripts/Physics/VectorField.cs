@@ -56,6 +56,11 @@ public class VectorField : MonoBehaviour
 
     [SerializeField]
     protected int resolution = 20;
+    public int Resolution
+    {
+        get => resolution;
+        set => resolution = value;
+    }
 
     [SerializeField]
     protected float fieldStrengthFactor = Teal.FieldStrengthFactor;
@@ -155,7 +160,7 @@ public class VectorField : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets the vetor field visibility by the given toggle.
+    /// Sets the vector field visibility by the given toggle.
     /// </summary>
     /// <param name="visibility">The toggle to get value from user</param>
     public void setVectorFieldVisible(bool visibility)

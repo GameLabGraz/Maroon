@@ -247,7 +247,7 @@ PrefabInstance:
     - target: {fileID: 5376674143681915612, guid: 5320e11e368a6e74081ffa27fc5479a2,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -5.0000153
+      value: -5.0000305
       objectReference: {fileID: 0}
     - target: {fileID: 5376674143751023531, guid: 5320e11e368a6e74081ffa27fc5479a2,
         type: 3}
@@ -452,7 +452,7 @@ MeshRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2e396b6df87a3c94e8e20e922295ec69, type: 2}
+  - {fileID: 2100000, guid: 9f93fff9715bf2f49a7cc85664cf63c0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -814,8 +814,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b59d940c278e96d4aa4df14add796e7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _key: RopeLength
-  _addColon: 0
+  key: RopeLength
+  suffix: 
 --- !u!1 &346725694
 GameObject:
   m_ObjectHideFlags: 0
@@ -845,7 +845,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07fa06ca615937b40a560012bfb6f45c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mlgFile: MLG/pendulum
+  _currentLanguage: 10
+  _mlgFiles:
+  - MLG/pendulum
+  OnLanguageChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &346725696
 Transform:
   m_ObjectHideFlags: 0
@@ -1401,8 +1406,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b59d940c278e96d4aa4df14add796e7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _key: PendulumWeight
-  _addColon: 0
+  key: PendulumWeight
+  suffix: 
 --- !u!224 &979592535 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6369994365226918996, guid: e4b449653c8015d4c85b679b5820eee0,
@@ -1444,7 +1449,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.00024414062, y: -0.0000829125}
+  m_AnchoredPosition: {x: -0.00024414062, y: -0.00008250676}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1151915886
@@ -1888,7 +1893,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1162764338}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.9999999
+  m_Size: 0.99999994
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1946,8 +1951,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b59d940c278e96d4aa4df14add796e7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _key: Parameters
-  _addColon: 0
+  key: Parameters
+  suffix: 
 --- !u!114 &1410002749 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5202824136149113556, guid: f1d29f2ffd6e5e44a8358b7534612945,
@@ -2429,7 +2434,7 @@ PrefabInstance:
     - target: {fileID: 5376674143681915612, guid: 5320e11e368a6e74081ffa27fc5479a2,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -5.0000153
+      value: -5.0000305
       objectReference: {fileID: 0}
     - target: {fileID: 5376674143751023531, guid: 5320e11e368a6e74081ffa27fc5479a2,
         type: 3}
@@ -2619,7 +2624,7 @@ MeshRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 3f905e496a84507419fa2e64e6f7f534, type: 2}
+  - {fileID: 2100000, guid: 2bb9e586f5dda43419cec2d9ab3a0c7b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3783,6 +3788,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.x
       value: 0.09300232
       objectReference: {fileID: 0}
+    - target: {fileID: 2834125337921688683, guid: 33b95cc0977be824da730050d2a2efa7,
+        type: 3}
+      propertyPath: key
+      value: StopWatch
+      objectReference: {fileID: 0}
     - target: {fileID: 2834125338441889866, guid: 33b95cc0977be824da730050d2a2efa7,
         type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -4395,6 +4405,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.x
       value: -0.89990234
+      objectReference: {fileID: 0}
+    - target: {fileID: 5823268160835608056, guid: 7d860b7375eb7e9409b2609b9b0cab7d,
+        type: 3}
+      propertyPath: key
+      value: Calculator
       objectReference: {fileID: 0}
     - target: {fileID: 5823268160856898170, guid: 7d860b7375eb7e9409b2609b9b0cab7d,
         type: 3}

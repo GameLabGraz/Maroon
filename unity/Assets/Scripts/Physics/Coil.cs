@@ -132,6 +132,11 @@ public class Coil : EMObject, IResetObject
         this.resistance_factor = resistance_factor;
     }
 
+    public float GetResistanceFactor()
+    {
+        return resistance_factor;
+    }
+
     /// <summary>
     /// Gets the magnetic flux in the coil.
     /// </summary>
