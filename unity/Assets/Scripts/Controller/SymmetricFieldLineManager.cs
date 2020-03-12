@@ -56,6 +56,11 @@ public class SymmetricFieldLineManager : FieldLineManager
         symmetryCount = symmetryCnt;
     }
 
+    public int GetSymmetryCount()
+    {
+        return symmetryCount;
+    }
+
     public void setSymmetryCount(float symmetryCnt)
     {
         setSymmetryCount((int)symmetryCnt);

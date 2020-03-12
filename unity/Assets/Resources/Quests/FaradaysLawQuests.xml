@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<QuestManager>
+    <QuestList>
+
+        <MainQuest>
+			<TranslationKey>QM_MoveMagnet</TranslationKey>
+			<DefaultText>Move Magnet</DefaultText>
+			
+            <SubQuest>
+				<TranslationKey>QM_MoveMagnetToCoil</TranslationKey>
+				<DefaultText>Move the Magnet near the Coil</DefaultText>
+				<Script>QuestManager.MoveMagnetToCoilCheck</Script>
+			</SubQuest>
+			
+            <SubQuest>
+				<TranslationKey>QM_MoveMagnetAway</TranslationKey>
+				<DefaultText>Move the Magnet away from the Coil.</DefaultText>
+				<Script>QuestManager.MoveMagnetAwayCheck</Script>
+			</SubQuest>
+        </MainQuest>
+
+		<MainQuest>
+			<TranslationKey>QM_ChangeParameters</TranslationKey>
+			<DefaultText>Change Experiment Parameters</DefaultText>
+			
+            <SubQuest>
+				<TranslationKey>QM_ChangeMagneticMoment</TranslationKey>
+				<DefaultText>Change Magnetic Moment</DefaultText>
+				<Script>QuestManager.MagneticMomentCheck</Script>
+			</SubQuest>
+			
+            <SubQuest>
+				<TranslationKey>QM_ChangeRingResistance</TranslationKey>
+				<DefaultText>Change Ring Resistance</DefaultText>
+				<Script>QuestManager.RingResistanceCheck</Script>
+			</SubQuest>
+        </MainQuest>
+
+		<MainQuest>
+			<TranslationKey>QM_ChangeVisualizationSettings</TranslationKey>
+			<DefaultText>Change Visualization Settings</DefaultText>
+			
+            <SubQuest>
+				<TranslationKey>QM_ChangeFieldLines</TranslationKey>
+				<DefaultText>Change the Number of Field Lines</DefaultText>
+				<Script>QuestManager.FieldLineNumberCheck</Script>
+			</SubQuest>
+			
+            <SubQuest>
+				<TranslationKey>QM_ChangeVectorFieldResolution</TranslationKey>
+				<DefaultText>Change the VectorField Resolution</DefaultText>
+				<Script>QuestManager.VectorFieldResolutionCheck</Script>
+			</SubQuest>
+
+			<SubQuest>
+				<TranslationKey>QM_EnableIronFilling</TranslationKey>
+				<DefaultText>Enable Iron Filling</DefaultText>
+				<Script>QuestManager.IronFillingCheck</Script>
+			</SubQuest>
+        </MainQuest>
+    </QuestList>
+</QuestManager>

@@ -22,7 +22,7 @@ public class PC_SelectionHandler : MonoBehaviour
     public UIChargeDragHandler UICharge;
 
     [Header("General Game Objects")] public PC_RegisterBase selectionRegister;
-    public LocalizedText_TextMeshPro nameKey;
+    public LocalizedTMP nameKey;
     public GameObject xVariablePosition;
     public GameObject yVariablePosition;
     public GameObject zVariablePosition;
@@ -176,9 +176,9 @@ public class PC_SelectionHandler : MonoBehaviour
 
     private void AdaptButtonTextCharge()
     {
-        if (ChargeButtonText == null || ChargeButtonText.GetComponent<LocalizedText_TextMeshPro>() == null) return;
+        if (ChargeButtonText == null || ChargeButtonText.GetComponent<LocalizedTMP>() == null) return;
         if (!ChargeButtonText) return;
-        ChargeButtonText.GetComponent<LocalizedText_TextMeshPro>().key =
+        ChargeButtonText.GetComponent<LocalizedTMP>().Key =
             selectedObject == null || selectedObject.type != PC_SelectScript.SelectType.ChargeSelect
                 ? "Button_Add"
                 : "Button_Delete";
@@ -451,7 +451,7 @@ public class PC_SelectionHandler : MonoBehaviour
                 break;
             case PC_SelectScript.SelectType.VisualizationPlaneSelect:
             case PC_SelectScript.SelectType.VoltmeterSelect:
-                nameKey.key = selectedObject.nameKey;
+                nameKey.Key = selectedObject.nameKey;
                 nameKey.UpdateLocalizedText();
                 xVariablePosition.GetComponent<PC_TextFormatter_TMP>().FormatString(endPos.x);
                 yVariablePosition.GetComponent<PC_TextFormatter_TMP>().FormatString(endPos.y);

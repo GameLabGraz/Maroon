@@ -2134,7 +2134,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07fa06ca615937b40a560012bfb6f45c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mlgFile: MLG/vandegraaff
+  _currentLanguage: 10
+  _mlgFiles:
+  - MLG/vandegraaff
+  OnLanguageChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &292222557
 Transform:
   m_ObjectHideFlags: 0
@@ -4109,7 +4114,7 @@ MeshRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 3f905e496a84507419fa2e64e6f7f534, type: 2}
+  - {fileID: 2100000, guid: 2bb9e586f5dda43419cec2d9ab3a0c7b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4587,7 +4592,7 @@ MeshRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2e396b6df87a3c94e8e20e922295ec69, type: 2}
+  - {fileID: 2100000, guid: 9f93fff9715bf2f49a7cc85664cf63c0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5463,8 +5468,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b59d940c278e96d4aa4df14add796e7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _key: Voltage
-  _addColon: 0
+  key: Voltage
+  suffix: ':'
 --- !u!114 &943798912
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6321,8 +6326,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b59d940c278e96d4aa4df14add796e7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _key: Charge
-  _addColon: 0
+  key: Charge
+  suffix: ':'
 --- !u!114 &1069557740
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7254,8 +7259,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b59d940c278e96d4aa4df14add796e7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _key: ShowCharge
-  _addColon: 0
+  key: ShowCharge
+  suffix: 
 --- !u!114 &1174542820
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7874,8 +7879,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b59d940c278e96d4aa4df14add796e7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _key: ShowFieldLines
-  _addColon: 0
+  key: ShowFieldLines
+  suffix: 
 --- !u!114 &1388808195
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8501,8 +8506,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b59d940c278e96d4aa4df14add796e7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _key: Visualization
-  _addColon: 0
+  key: Visualization
+  suffix: 
 --- !u!114 &1446024512
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9139,7 +9144,7 @@ MeshRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2e396b6df87a3c94e8e20e922295ec69, type: 2}
+  - {fileID: 2100000, guid: 9f93fff9715bf2f49a7cc85664cf63c0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -9231,8 +9236,7 @@ MeshRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 3f905e496a84507419fa2e64e6f7f534, type: 2}
-  - {fileID: 2100000, guid: 3f905e496a84507419fa2e64e6f7f534, type: 2}
+  - {fileID: 2100000, guid: 2bb9e586f5dda43419cec2d9ab3a0c7b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -9816,8 +9820,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b59d940c278e96d4aa4df14add796e7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _key: Display
-  _addColon: 0
+  key: Display
+  suffix: 
 --- !u!114 &1753916531
 MonoBehaviour:
   m_ObjectHideFlags: 0
