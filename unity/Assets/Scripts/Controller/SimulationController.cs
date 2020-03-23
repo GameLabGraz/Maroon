@@ -34,6 +34,8 @@ public class SimulationController : MonoBehaviour
 
     public UnityEvent onStartRunning;
     public UnityEvent onStopRunning;
+    
+    private bool _inWholeResetMode = false;
 
     public float TimeScale
     {
@@ -172,6 +174,8 @@ public class SimulationController : MonoBehaviour
         set
         {
             if (simulationRunning == value) return;
+
+            _inWholeResetMode = false;
             
             simulationRunning = value;
             if(simulationRunning) onStartRunning.Invoke();
@@ -196,6 +200,7 @@ public class SimulationController : MonoBehaviour
     {
         SimulationRunning = true;
         simulationReset = false;
+        _inWholeResetMode = false;
 
         if(!stepSimulation)
             OnStart?.Invoke(this, EventArgs.Empty);
@@ -208,6 +213,7 @@ public class SimulationController : MonoBehaviour
     {
         stepSimulation = true;
         simulationReset = false;
+        _inWholeResetMode = false;
         StartSimulation();
         StartCoroutine(SimulateOneFrame());
     }
@@ -235,6 +241,8 @@ public class SimulationController : MonoBehaviour
         simulationReset = true;
 
         OnReset?.Invoke(this, EventArgs.Empty);
+
+        _inWholeResetMode = true;
 //        Debug.Log("Reset");
     }
 
@@ -246,5 +254,13 @@ public class SimulationController : MonoBehaviour
             if(resetObject is IResetWholeObject)
                 (resetObject as IResetWholeObject).ResetWholeObject();
         }
+    }
+
+    public void ResetRespResetWholeSimulation()
+    {
+        if (!_inWholeResetMode)
+            SimulationController.Instance.ResetSimulation();
+        else
+            SimulationController.Instance.ResetWholeSimulation();
     }
 }
