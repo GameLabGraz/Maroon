@@ -11,6 +11,8 @@ public class RulerPrefab : MonoBehaviour, IResetWholeObject
     bool locked = false;
     Vector3 start_to_end;
 
+    private bool DeactivateOnReset = true;
+    
     public GameObject RulerEverything;
     public GameObject RulerStart;
     public GameObject RulerEnd;
@@ -20,19 +22,21 @@ public class RulerPrefab : MonoBehaviour, IResetWholeObject
 
     private CoulombLogic _coulombLogic;
     private float _oldDistance;
+    private Vector3 _startPosition;
     
     // Start is called before the first frame update
     void Start()
     {
-        RulerEverything = transform.Find("RulerEverything").gameObject;
-        RulerStart = RulerEverything.transform.Find("RulerStart").gameObject;
-        RulerEnd = RulerEverything.transform.Find("RulerEnd").gameObject;
-        RulerLine = RulerEverything.transform.Find("RulerLine").gameObject.GetComponent<LineRenderer>();
-        
+        _startPosition = transform.position;
         var simControllerObject = GameObject.Find("CoulombLogic");
         if (simControllerObject)
             _coulombLogic = simControllerObject.GetComponent<CoulombLogic>();
         Debug.Assert(_coulombLogic != null);
+
+        if (RulerLine.positionCount < 2)
+        {
+            RulerLine.SetPositions(new[]{RulerStart.transform.position, RulerEnd.transform.position});
+        }
         
         _oldDistance = 0;
         onDistanceChanged.Invoke(0f);
@@ -41,13 +45,15 @@ public class RulerPrefab : MonoBehaviour, IResetWholeObject
     // Update is called once per frame
     void Update()
     {
-        if (RulerStart.gameObject.activeSelf && RulerEnd.gameObject.activeSelf)
+        if (RulerStart.activeSelf && RulerEnd.activeSelf)
         {
             if(!RulerLine.gameObject.activeSelf)
                 RulerLine.gameObject.SetActive(true);
-            RulerLine.SetPosition(0, RulerStart.transform.position);
-            RulerLine.SetPosition(1, RulerEnd.transform.position);
-            var newDist = _coulombLogic.WorldToCalcSpace(Vector3.Distance(RulerStart.transform.position, RulerEnd.transform.position));
+            var startPosition = RulerStart.transform.position;
+            var endPosition = RulerEnd.transform.position;
+            RulerLine.SetPosition(0, startPosition);
+            RulerLine.SetPosition(1, endPosition);
+            var newDist = _coulombLogic.WorldToCalcSpace(Vector3.Distance(startPosition, endPosition));
 
             if (Math.Abs(newDist - _oldDistance) > 0.0001f)
             {
@@ -71,11 +77,18 @@ public class RulerPrefab : MonoBehaviour, IResetWholeObject
     public void ResetWholeObject()
     {
         transform.localRotation = Quaternion.identity;
-        
-        RulerStart.SetActive(false);
-        RulerEnd.SetActive(false);
-        RulerStart.GetComponent<PC_DragHandler>().onDisabled.Invoke();
-        RulerEnd.GetComponent<PC_DragHandler>().onDisabled.Invoke();
+
+        transform.position = _startPosition;
+
+        if (DeactivateOnReset)
+        {
+            RulerStart.SetActive(false);
+            RulerEnd.SetActive(false);
+            var dragHandler = RulerStart.GetComponent<PC_DragHandler>();
+            if(dragHandler) dragHandler.onDisabled.Invoke();
+            dragHandler = RulerEnd.GetComponent<PC_DragHandler>();
+            if(dragHandler) dragHandler.onDisabled.Invoke();
+        }
     }
     
     public void OnChangeMode(bool in3dMode)
