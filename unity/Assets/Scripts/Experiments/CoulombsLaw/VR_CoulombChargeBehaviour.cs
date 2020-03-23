@@ -87,7 +87,7 @@ public class VR_CoulombChargeBehaviour : MonoBehaviour, IResetWholeObject
 
     public void UpdateValues()
     {
-        Debug.Log("Update Values: " + _updateValue + " - " + _fixedPos);
+        // Debug.Log("Update Values: " + _updateValue + " - " + _fixedPos);
         _hasUpdatedCharge = false;
         _hasUpdatedFixed = false;
         _checkOldSnapped = true;
@@ -96,7 +96,7 @@ public class VR_CoulombChargeBehaviour : MonoBehaviour, IResetWholeObject
         if(obj)
         {
             obj.GetComponent<CoulombChargeBehaviour>().SetInUse(false);
-            Debug.Log("New Object: " + obj.name);
+            // Debug.Log("New Object: " + obj.name);
 
             _resetObjList.Add(obj);
         }

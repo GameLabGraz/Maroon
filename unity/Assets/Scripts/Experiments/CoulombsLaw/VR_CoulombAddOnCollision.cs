@@ -23,7 +23,7 @@ public class VR_CoulombAddOnCollision : MonoBehaviour
 
 
     private void OnTriggerEnter(Collider other)
-    {
+    { 
         var coulombBehavior = other.gameObject.GetComponent<CoulombChargeBehaviour>();
         if (coulombBehavior)
         {
@@ -63,7 +63,6 @@ public class VR_CoulombAddOnCollision : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         var coulombBehavior = other.gameObject.GetComponent<CoulombChargeBehaviour>();
-        
         if (coulombBehavior)
         {
             _coulombLogic.RemoveParticle(coulombBehavior);

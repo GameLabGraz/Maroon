@@ -263,6 +263,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         _simController.AddNewResetObjectAtBegin(coulombCharge);
         _charges.Add(coulombCharge);
         _chargesGameObjects.Add(coulombCharge.gameObject);
+        coulombCharge.SetInUse(true);
 
         if (deactivateCollisions)
         {
@@ -296,6 +297,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         _simController.RemoveResetObject(coulombCharge);
         _charges.Remove(coulombCharge);
         _chargesGameObjects.Remove(coulombCharge.gameObject);
+        coulombCharge.SetInUse(false);
 
         if (destroy)
         {
