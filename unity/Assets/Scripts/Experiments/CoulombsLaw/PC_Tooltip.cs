@@ -1,4 +1,4 @@
-﻿using Localization;
+﻿using GEAR.Localization;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -44,8 +44,8 @@ public class PC_Tooltip : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     private void UpdateKey()
     {
-        if (!Localization.LanguageManager.Instance) return;
-        var tmp = Localization.LanguageManager.Instance.GetString(TooltipKey);
+        if (!LanguageManager.Instance) return;
+        var tmp = LanguageManager.Instance.GetString(TooltipKey);
         if (tmp != "")
         {
             _tooltipText = tmp;

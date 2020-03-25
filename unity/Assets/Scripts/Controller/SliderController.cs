@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Localization;
+using GEAR.Localization;
 using UnityEngine;
 using UnityEngine.UI;
 using VRTK;
