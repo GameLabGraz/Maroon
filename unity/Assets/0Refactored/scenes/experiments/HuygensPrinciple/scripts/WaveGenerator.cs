@@ -48,8 +48,8 @@ public class WaveGenerator : MonoBehaviour
 
         if (propagationMode == WavePropagation.Rectilinear)
         {
-            position.x = 0;
-            startingPoint.x = 0;
+            position.z = 0;
+            startingPoint.z = 0;
         }
            
         float distanceToSource = Vector3.Distance(startingPoint, position);
