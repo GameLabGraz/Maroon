@@ -1,7 +1,7 @@
 ﻿using Maroon.Physics;
 using UnityEngine;
 
-public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
+public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, IDeleteObject
 {
     [Header("Design Parameters and Variables")]
     [SerializeField]
@@ -239,5 +239,9 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
         
         OnChargeValueChangeHandler(charge);
     }
-    
+
+    public void OnDeleteObject()
+    {
+        _coulombLogic.RemoveParticle(this, true);
+    }
 }

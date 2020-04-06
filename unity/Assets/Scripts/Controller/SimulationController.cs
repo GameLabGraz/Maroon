@@ -263,4 +263,8 @@ public class SimulationController : MonoBehaviour
         else
             SimulationController.Instance.ResetWholeSimulation();
     }
+
+    public void TraceOutput(string output){
+        Debug.Log(output);
+    }
 }
