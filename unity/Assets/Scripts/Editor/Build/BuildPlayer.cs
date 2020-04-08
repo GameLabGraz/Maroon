@@ -25,25 +25,39 @@ namespace Maroon.Build
             VR
         }
 
-        [MenuItem(("Build/Build PC"))]
+        [MenuItem("Build/Build All")]
+        public static void BuildAll()
+        {
+            var buildPath = EditorUtility.SaveFolderPanel("Choose Build Location", string.Empty, "Build");
+            if (buildPath.Length == 0)
+                return;
+
+            foreach (var buildTarget in (MaroonBuildTarget[])Enum.GetValues(
+                typeof(MaroonBuildTarget)))
+            {
+                Build(buildTarget, $"{buildPath}/{buildTarget}");
+            }
+        }
+
+        [MenuItem("Build/Build for Platform/Build PC")]
         public static void BuildPC()
         {
             Build(MaroonBuildTarget.PC);
         }
 
-        [MenuItem(("Build/Build MAC"))]
+        [MenuItem("Build/Build for Platform/Build MAC")]
         public static void BuildMAC()
         {
             Build(MaroonBuildTarget.MAC);
         }
 
-        [MenuItem(("Build/Build VR"))]
+        [MenuItem("Build/Build for Platform/Build VR")]
         public static void BuildVR()
         {
             Build(MaroonBuildTarget.VR);
         }
 
-        [MenuItem(("Build/Build WebGL"))]
+        [MenuItem("Build/Build for Platform/Build WebGL")]
         public static void BuildWebGL()
         {
             Build(MaroonBuildTarget.WebGL);
@@ -64,10 +78,10 @@ namespace Maroon.Build
             var buildPath = args[executeMethodIndex + 2];
 
             // run build for each build target
-            foreach (var buildTarget in (BuildPlayer.MaroonBuildTarget[])Enum.GetValues(
-                typeof(BuildPlayer.MaroonBuildTarget)))
+            foreach (var buildTarget in (MaroonBuildTarget[])Enum.GetValues(
+                typeof(MaroonBuildTarget)))
             {
-                BuildPlayer.Build(buildTarget, $"{buildPath}/{buildTarget}");
+                Build(buildTarget, $"{buildPath}/{buildTarget}");
             }
         }
 
