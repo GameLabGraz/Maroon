@@ -65,4 +65,19 @@ public class WaveGenerator : MonoBehaviour
     {
         this.propagationMode = propagationMode;
     }
+
+    public void SetPlaneObject(GameObject plane)
+    {
+        this.planeObject = plane;
+    }
+
+    public GameObject GetPlaneObject()
+    {
+        return this.planeObject;
+    }
+
+    public void SetGeneratorActive(bool status)
+    {
+        this.isActive = status;
+    }
 }

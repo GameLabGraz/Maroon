@@ -39,8 +39,9 @@ public class SnapSlipPlate : MonoBehaviour, IResetObject
         StorePreviousState();
 
         snappedPlate.transform.position = Vector3.Lerp(plateHandleBodyRight.transform.position, plateHandleBodyLeft.transform.position, 0.5f);
-        snappedPlate.transform.rotation = Quaternion.Euler(90, 0, 90);
-        snappedPlate.transform.localScale = plateScale;
+        snappedPlate.transform.position = new Vector3(snappedPlate.transform.position.x, snappedPlate.transform.position.y - 0.3f, snappedPlate.transform.position.z); 
+        snappedPlate.transform.rotation = Quaternion.Euler(0, 90, 0);
+        snappedPlate.transform.localScale = new Vector3(1.0f,1.0f,1.0f);
 
         // Create Handle Joints
         var handleJointRight = snappedPlate.gameObject.AddComponent<FixedJoint>();
