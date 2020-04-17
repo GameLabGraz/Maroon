@@ -51,14 +51,14 @@ public class scrSegmentBuilder : MonoBehaviour
             // If 2 or more previews left
             if((this.prefabsExperimentPreview.Length - (this.numberSegmentsCurrent * 2)) >= 2)
             {
-                this.addSegment(this.prefabsExperimentPreview[this.numberSegmentsCurrent],
-                                this.prefabsExperimentPreview[this.numberSegmentsCurrent + 1]);
+                this.addSegment(this.prefabsExperimentPreview[this.numberSegmentsCurrent * 2],
+                                this.prefabsExperimentPreview[this.numberSegmentsCurrent * 2 + 1]);
             }
 
             // If one preview left
             else
             {
-                this.addSegment(this.prefabsExperimentPreview[this.numberSegmentsCurrent], this.prefabEmptyPreview);                
+                this.addSegment(this.prefabsExperimentPreview[this.numberSegmentsCurrent * 2], this.prefabEmptyPreview);                
             }
 
             // Update segment counter
@@ -73,7 +73,7 @@ public class scrSegmentBuilder : MonoBehaviour
         // Move end segment forward
         this.staticSegmentEnd.transform.position += this.staticSegmentEnd.transform.forward * 8;
 
-        // Create new Segment
+        // Create new segment
         GameObject new_segment = Instantiate(this.prefabSegment, new Vector3(0, 0, 0), Quaternion.identity);
         new_segment.transform.SetParent(this.staticSegmentContainer.transform);
 
@@ -90,17 +90,22 @@ public class scrSegmentBuilder : MonoBehaviour
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Adds previews to one segment
-    void addPreview(GameObject segment, GameObject prePreview, bool isRight = false)
+    void addPreview(GameObject segment, GameObject prefabPreview, bool isRight = false)
     {
-        /*
-        GameObject new_preview = Instantiate(prePreview, new Vector3(0, 0, 0), Quaternion.identity);
+        // Instantiate new preview
+        GameObject new_preview = Instantiate(prefabPreview, new Vector3(0, 0, -1000), Quaternion.identity);
         new_preview.transform.SetParent(segment.transform);
+        new_preview.transform.position = new Vector3(0, 0, 0);
 
+        // Remove editor only stuff
+        new_preview.transform.GetChild(0).gameObject.SetActive(false);
+        
+        // Rotate preview for other side
         if(isRight)
         {
-
+            new_preview.transform.position = new Vector3(0, 0, 8);
+            new_preview.transform.rotation = new Quaternion(0, 180, 0, 0);
         }
-        */
     }
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
