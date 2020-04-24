@@ -10,7 +10,7 @@ namespace Maroon.Build
     public class BuildPlayer
     {
         private const string ScenePath      = "Assets/0Refactored/scenes";
-        private const string LabPath        = ScenePath + "/laboratory";
+        private const string LabPath        = ScenePath + "/Laboratory";
         private const string MenuPath       = ScenePath + "/menu";
         private const string ExperimentPath = ScenePath + "/experiments";
 
