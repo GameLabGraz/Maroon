@@ -27,6 +27,8 @@ namespace Maroon.Assessment
 
         private static AssessmentManager _instance;
 
+        private EventBuilder EventBuilder => _eventBuilder ?? (_eventBuilder = EventBuilder.Event());
+
 
         public static AssessmentManager Instance
         {
@@ -49,10 +51,7 @@ namespace Maroon.Assessment
         {
             Debug.Log("AssessmentManager::Send Enter Event");
             
-            if(_eventBuilder == null)
-                _eventBuilder = EventBuilder.Event();
-
-            _eventBuilder.Action("enter");
+            EventBuilder.Action("enter");
         }
 
         private void LateUpdate()
@@ -92,40 +91,32 @@ namespace Maroon.Assessment
         {
             Debug.Log($"AssessmentManager::RegisterAssessmentObject: {assessmentObject.ObjectID}");
 
-            if(_eventBuilder == null)
-                _eventBuilder = EventBuilder.Event();
-
-            _eventBuilder
+            EventBuilder
                 .PerceiveObject(assessmentObject.ObjectID)
                 .Set("class", assessmentObject.ClassType.ToString());
 
             foreach (var watchValue in assessmentObject.WatchValues)
-                _eventBuilder.Set(watchValue.PropertyName, watchValue.GetValue());
+                EventBuilder.Set(watchValue.PropertyName, watchValue.GetValue());
         }
 
         public void DeregisterAssessmentObject(AssessmentObject assessmentObject)
         {
             Debug.Log($"AssessmentManager::DeregisterAssessmentObject: {assessmentObject.ObjectID}");
 
-            if (_eventBuilder == null)
-                _eventBuilder = EventBuilder.Event();
-
-            _eventBuilder.UnlearnObject(assessmentObject.ObjectID);
+            EventBuilder.UnlearnObject(assessmentObject.ObjectID);
         }
 
         public void SendUserAction(string actionName, string objectId=null)
         {
             Debug.Log($"AssessmentManager::SendUserAction: {objectId}.{actionName}");
 
-            if (_eventBuilder == null)
-                _eventBuilder = EventBuilder.Event();
+            EventBuilder.Action(actionName, objectId);
 
-            _eventBuilder.Action(actionName, objectId);
-            foreach (var watchValue in GetComponents<AssessmentWatchValue>())
+            foreach (var watchValue in GameObject.FindObjectsOfType<AssessmentWatchValue>())
             {
                 if (watchValue.IsDynamic)
                 {
-                    _eventBuilder.UpdateDataOf(watchValue.ObjectID)
+                    EventBuilder.UpdateDataOf(watchValue.ObjectID)
                         .Set(watchValue.PropertyName, watchValue.GetValue());
                 }
             }
@@ -135,10 +126,7 @@ namespace Maroon.Assessment
         {
             Debug.Log($"AssessmentManager::SendDataUpdate: {objectId}.{propertyName}={value}");
 
-            if (_eventBuilder == null)
-                _eventBuilder = EventBuilder.Event();
-
-            _eventBuilder.UpdateDataOf(objectId).Set(propertyName, value);
+            EventBuilder.UpdateDataOf(objectId).Set(propertyName, value);
         }
 
         private void SendGameEvent(GameEvent gameEvent)
