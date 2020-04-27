@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 using VRTK;
 
 public class VRButtonController : VRTK_InteractableObject
@@ -13,6 +14,8 @@ public class VRButtonController : VRTK_InteractableObject
     private bool isToggleButton = false;
 
     private bool toggleValue = false;
+
+    public UnityEvent OnButtonClicked;
 
     public bool IsToogleButton
     {
@@ -41,10 +44,10 @@ public class VRButtonController : VRTK_InteractableObject
     public override void StartUsing(VRTK_InteractUse currentUsingObject = null)
     {
         base.StartUsing(usingObject);
-
-        Debug.Log("Iron Filling Button pressed, start Iron Filling");
-
-        invokeObject.SetActive(true);
+        OnButtonClicked.Invoke();
+        
+        if(invokeObject)
+            invokeObject.SetActive(true);
 
         if(isToggleButton)
         {
