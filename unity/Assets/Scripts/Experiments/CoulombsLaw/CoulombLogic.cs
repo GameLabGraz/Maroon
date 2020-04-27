@@ -16,6 +16,7 @@ public class ParticleEvent : UnityEvent<CoulombChargeBehaviour>
 public class CoulombLogic : MonoBehaviour, IResetWholeObject
 {
     [Header("General Settings")] 
+    public bool inVR = false;
     public int maxChargeCount = 10;
     public bool startIn2dMode = true;
 
@@ -230,6 +231,9 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         }
         chargeBehaviour.Charge = chargeLoad;
         chargeBehaviour.SetFixedPosition(hasFixedPosition);
+        
+        if(!inVR)
+            chargeBehaviour.Init();
 
         var movement = obj.GetComponent<PC_DragHandler>();
         if (!movement) movement = obj.GetComponentInChildren<PC_DragHandler>();
@@ -254,7 +258,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     }
     
 
-    public void AddParticle(CoulombChargeBehaviour coulombCharge)
+    public void AddParticle(CoulombChargeBehaviour coulombCharge, bool deactivateCollisions = true)
     {
         if(_charges.Count >= maxChargeCount) return;
         
@@ -262,18 +266,23 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         _simController.AddNewResetObjectAtBegin(coulombCharge);
         _charges.Add(coulombCharge);
         _chargesGameObjects.Add(coulombCharge.gameObject);
+        coulombCharge.SetInUse(true);
 
-        foreach (var collider in coulombCharge.gameObject.GetComponents<Collider>())
+        if (deactivateCollisions)
         {
-            Physics.IgnoreCollision(collider, vectorField3d.gameObject.GetComponent<Collider>());
-            Physics.IgnoreCollision(collider, vectorField2d.gameObject.GetComponent<Collider>());
+            foreach (var collider in coulombCharge.gameObject.GetComponents<Collider>())
+            {
+                Physics.IgnoreCollision(collider, vectorField3d.gameObject.GetComponent<Collider>());
+                Physics.IgnoreCollision(collider, vectorField2d.gameObject.GetComponent<Collider>());
+            }
+
+            foreach (var collider in coulombCharge.gameObject.GetComponentsInChildren<Collider>())
+            {
+                Physics.IgnoreCollision(collider, vectorField3d.gameObject.GetComponent<Collider>());
+                Physics.IgnoreCollision(collider, vectorField2d.gameObject.GetComponent<Collider>());
+            }
         }
-        foreach (var collider in coulombCharge.gameObject.GetComponentsInChildren<Collider>())
-        {
-            Physics.IgnoreCollision(collider, vectorField3d.gameObject.GetComponent<Collider>());
-            Physics.IgnoreCollision(collider, vectorField2d.gameObject.GetComponent<Collider>());
-        }
-        
+
         _simController.ResetSimulation();
         
         if(_charges.Count == maxChargeCount) onMaxChargesReached.Invoke();
@@ -281,11 +290,17 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         onParticleAdded.Invoke(coulombCharge);
     }
 
+    public bool ContainsParticle(CoulombChargeBehaviour coulombCharge)
+    {
+        return _charges.Contains(coulombCharge);
+    }
+
     public void RemoveParticle(CoulombChargeBehaviour coulombCharge, bool destroy = false)
     {
         _simController.RemoveResetObject(coulombCharge);
         _charges.Remove(coulombCharge);
         _chargesGameObjects.Remove(coulombCharge.gameObject);
+        coulombCharge.SetInUse(false);
 
         if (destroy)
         {
@@ -317,9 +332,12 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         scene2D.SetActive(!_in3dMode);
         scene3D.SetActive(_in3dMode);
 
-        var camTransform = Camera.main.transform;
-        camTransform.position = _in3dMode ? new Vector3(0, 30f, -59.52f) : new Vector3(0, 4.4f, -59.52f);
-        camTransform.rotation = _in3dMode ? new Quaternion(0.25f, 0f, 0f, 1f) : new Quaternion(0f, 0f, 0f, 0f);
+        if (!inVR)
+        {
+            var camTransform = Camera.main.transform;
+            camTransform.position = _in3dMode ? new Vector3(0, 30f, -59.52f) : new Vector3(0, 4.4f, -59.52f);
+            camTransform.rotation = _in3dMode ? new Quaternion(0.25f, 0f, 0f, 1f) : new Quaternion(0f, 0f, 0f, 0f);
+        }
 
         vectorField3d.setVectorFieldVisible(_in3dMode);
         vectorField2d.setVectorFieldVisible(!_in3dMode);

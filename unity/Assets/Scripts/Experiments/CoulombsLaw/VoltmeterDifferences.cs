@@ -1,40 +1,61 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using JetBrains.Annotations;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
-[RequireComponent(typeof(TextMeshProUGUI))]
 public class VoltmeterDifferences : MonoBehaviour
 {
     public VoltmeterMeasuringPoint positiveMeasuringPoint;
     public VoltmeterMeasuringPoint negativeMeasuringPoint;
 
     private CoulombLogic _coulombLogic;
-    private TextMeshProUGUI _textMeshProUgui;
+    public TextMeshPro textMeshPro;
+    public TextMeshProUGUI textMeshProGUI;
+    public TextMeshPro textMeshProUnit;
 
+    public bool onPerDefault = true;
+    public bool showUnitInText = true;
+    
     private float _currentValue;
+    private bool _isOn;
     
     // Start is called before the first frame update
     void Start()
     {
-        _textMeshProUgui = GetComponent<TextMeshProUGUI>();
+        if(textMeshPro == null)
+            textMeshPro = GetComponent<TextMeshPro>();
+
+        if (textMeshProGUI == null)
+            textMeshProGUI = GetComponent<TextMeshProUGUI>();
+        
         var simControllerObject = GameObject.Find("CoulombLogic");
         if (simControllerObject)
             _coulombLogic = simControllerObject.GetComponent<CoulombLogic>();
         Debug.Assert(_coulombLogic != null);
+
+        _isOn = onPerDefault;
     }
 
     // Update is called once per frame
     private void Update()
     {
-        if (!positiveMeasuringPoint.isActiveAndEnabled || !negativeMeasuringPoint.isActiveAndEnabled)
-            _textMeshProUgui.text = "--- " + GetCurrentUnit();
+        if (!_isOn || (!positiveMeasuringPoint.isActiveAndEnabled || !negativeMeasuringPoint.isActiveAndEnabled))
+            SetText("--- " + (showUnitInText? GetCurrentUnit() : ""));
         else
         {
-            _textMeshProUgui.text = GetDifference() + " " + GetCurrentUnit();
+            SetText(GetDifference() + (showUnitInText? " " + GetCurrentUnit() : ""));
         }
+
+        if (!showUnitInText && textMeshProUnit)
+        {
+            textMeshProUnit.text = GetCurrentUnit();
+        }
+    }
+
+    private void SetText(string text)
+    {
+        if (textMeshPro)
+            textMeshPro.text = text;
+        if (textMeshProGUI)
+            textMeshProGUI.text = text;
     }
     
     private string GetDifference(){
@@ -64,5 +85,15 @@ public class VoltmeterDifferences : MonoBehaviour
         if (check > 1f)
             return "m" + unit;
         return "\u00B5" + unit;
+    }
+
+    public void TurnOn()
+    {
+        _isOn = true;
+    }
+
+    public void TurnOff()
+    {
+        _isOn = false;
     }
 }

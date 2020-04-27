@@ -1,7 +1,7 @@
 ﻿using Maroon.Physics;
 using UnityEngine;
 
-public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
+public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, IDeleteObject
 {
     [Header("Design Parameters and Variables")]
     [SerializeField]
@@ -45,14 +45,27 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
     private CoulombLogic _coulombLogic;
 
     private static readonly float CoulombConstant = 9f * Mathf.Pow(10f, 9f); // 1f / (Mathf.PI * 8.8542e-12f);
+    
+    //VR Specific
+    public bool _inUse = false;
+    public int inUseLayer = -1;
+    private int _layer;
+    //VR Specific End
+    
 
     private void Awake()
     {
         _particleBaseRenderer = particleBase.GetComponent<MeshRenderer>();
         charge.onValueChanged.AddListener(OnChargeValueChangeHandler);
+        _layer = gameObject.layer;
     }
 
     private void Start()
+    {
+        Init();
+    }
+
+    public void Init()
     {
         _rigidbody = GetComponent<Rigidbody>();
         _rigidbody.velocity = Vector3.zero;
@@ -68,13 +81,43 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
             transform.localRotation = Quaternion.Euler(0, 0, 0);
             GetComponent<Rigidbody>().constraints |= RigidbodyConstraints.FreezePositionZ;
         }
-
     }
 
     private void Update()
     {
         //PC Only?
-        _rigidbody.isKinematic = !SimulationController.Instance.SimulationRunning || fixedPosition;
+        if(_inUse)
+            _rigidbody.isKinematic = !SimulationController.Instance.SimulationRunning || fixedPosition;
+    }
+    
+    public void SetInUse(bool inUse)
+    {
+        _inUse = inUse;
+        //TODO: check if needed in PC version? or if it creates a bug there
+        _rigidbody.useGravity = !inUse;
+        // Debug.Log("Set In USE: " + inUse);
+
+        _rigidbody.constraints =
+            inUse
+                ? RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY |
+                  RigidbodyConstraints.FreezeRotationZ
+                : RigidbodyConstraints.None;
+
+        if (inUseLayer != -1)
+        {
+            if (inUse)
+                gameObject.layer = inUseLayer;
+            else
+                gameObject.layer = _layer;
+        }
+        
+        if(!_inUse)
+            _rigidbody.isKinematic = false;
+    }
+
+    public bool IsInUse()
+    {
+        return _inUse;
     }
 
     private void OnChargeValueChangeHandler(float chargeValue)
@@ -191,4 +234,19 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE
         SimulationController.Instance.ResetSimulation();
     }
     
+    public void SetCharge(float charge, Color chargeColor)
+    {
+        this.charge = charge;
+        if (chargeColor.a > 0f)
+        {
+            particleBase.GetComponent<MeshRenderer>().materials[0].color = chargeColor;
+        }
+        
+        OnChargeValueChangeHandler(charge);
+    }
+
+    public void OnDeleteObject()
+    {
+        _coulombLogic.RemoveParticle(this, true);
+    }
 }
