@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using Maroon.Physics;
+using TMPro;
 using UnityEngine;
 
 public class VoltmeterDifferences : MonoBehaviour
@@ -13,8 +14,10 @@ public class VoltmeterDifferences : MonoBehaviour
 
     public bool onPerDefault = true;
     public bool showUnitInText = true;
-    
-    private float _currentValue;
+
+    [Header("Assessment System")]
+    public QuantityFloat currentValue;
+
     private bool _isOn;
     
     // Start is called before the first frame update
@@ -59,13 +62,13 @@ public class VoltmeterDifferences : MonoBehaviour
     }
     
     private string GetDifference(){
-        _currentValue = positiveMeasuringPoint.GetPotentialInMicroVolt() - negativeMeasuringPoint.GetPotentialInMicroVolt();
+        currentValue = positiveMeasuringPoint.GetPotentialInMicroVolt() - negativeMeasuringPoint.GetPotentialInMicroVolt();
         return GetCurrentFormattedString();
     }
 
     private string GetCurrentFormattedString()
     {
-        var check = _currentValue;
+        float check = currentValue;
         for (var cnt = 0; Mathf.Abs(check) < 1f && cnt < 2; ++cnt)
         {
             check *= Mathf.Pow(10, 3);
@@ -78,7 +81,7 @@ public class VoltmeterDifferences : MonoBehaviour
     private string GetCurrentUnit()
     {
         var unit = "V";
-        var check = _currentValue;
+        var check = currentValue;
         if (check > 1f)
             return unit;
         check *= Mathf.Pow(10, 3);

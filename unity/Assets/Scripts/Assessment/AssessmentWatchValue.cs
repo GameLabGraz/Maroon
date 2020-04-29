@@ -4,9 +4,12 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using Maroon.Physics;
+using UnityEngine.Events;
 
 namespace Maroon.Assessment
 {
+    class UnityQuantityEvent<T> : UnityEvent<Quantity<T>> { }
+    
     [RequireComponent(typeof(AssessmentObject))]
     public class AssessmentWatchValue : MonoBehaviour
     {
@@ -17,6 +20,7 @@ namespace Maroon.Assessment
         private string attribute;
 
         [SerializeField]
+        [Tooltip("If the value is dynamic, then the value gets send in each update to the assessment system, otherwise just changes are reported.")]
         private bool isDynamic;
 
 
@@ -34,7 +38,7 @@ namespace Maroon.Assessment
             set => isDynamic = value;
         }
 
-        private void Start()
+        private void Awake()
         {
             _attributeComponents = new List<string>(attribute.Split('.'));
         }

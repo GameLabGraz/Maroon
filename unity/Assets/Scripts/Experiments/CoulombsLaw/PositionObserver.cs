@@ -18,11 +18,11 @@ public class PositionObserver : MonoBehaviour
             _coulombLogic = simControllerObject.GetComponent<CoulombLogic>();
         Debug.Assert(_coulombLogic != null);
 
-        xText.GetComponent<PC_InputParser_Float_TMP>()
+        if (xText) xText.GetComponent<PC_InputParser_Float_TMP>()
             .onValueChangedFloat.AddListener((newVal) => UpdateObjectPosition(newVal, new Vector3(1f, 0f, 0f)));
-        yText.GetComponent<PC_InputParser_Float_TMP>()
+        if (yText) yText.GetComponent<PC_InputParser_Float_TMP>()
             .onValueChangedFloat.AddListener((newVal) => UpdateObjectPosition(newVal, new Vector3(0f, 1f, 0f)));
-        zText.GetComponent<PC_InputParser_Float_TMP>()
+        if (zText) zText.GetComponent<PC_InputParser_Float_TMP>()
             .onValueChangedFloat.AddListener((newVal) => UpdateObjectPosition(newVal, new Vector3(0f, 0f, 1f)));
     }
 
@@ -107,13 +107,14 @@ public class PositionObserver : MonoBehaviour
             endPos.z = _coulombLogic.WorldToCalcSpace(pos.z - position.z, true);
         }
 
-        xText.GetComponent<PC_TextFormatter_TMP>().FormatString(endPos.x);
-        yText.GetComponent<PC_TextFormatter_TMP>().FormatString(endPos.y);
-        zText.GetComponent<PC_TextFormatter_TMP>().FormatString(endPos.z);
+        if (xText) xText.GetComponent<PC_TextFormatter_TMP>().FormatString(endPos.x);
+        if (yText) yText.GetComponent<PC_TextFormatter_TMP>().FormatString(endPos.y);
+        if (zText) zText.GetComponent<PC_TextFormatter_TMP>().FormatString(endPos.z);
     }
 
     public void OnCoulombModeChanged(bool in3dMode)
     {
+        if (!xText || !yText || !zText) return;
         if (!in3dMode)
         {
             xText.GetComponent<PC_InputParser_Float_TMP>().minimum = 0f;

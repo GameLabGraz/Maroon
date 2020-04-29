@@ -111,6 +111,26 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         return distanceWorldSpace / (local? _worldToCalcSpaceFactor3dLocal : _worldToCalcSpaceFactor3d);
     }
 
+    public Vector3 WorldToCalcSpace(Transform position)
+    {
+        if (IsIn2dMode())
+        {
+            var originPos = xOrigin2d.position;
+            var calculationPos = position.position;
+            return new Vector3(WorldToCalcSpace(Mathf.Abs(originPos.x - calculationPos.x)),
+                WorldToCalcSpace(Mathf.Abs(originPos.y - calculationPos.y)), 0f);
+        }
+        else
+        {
+            //3d mode
+            var originPos = xOrigin3d.localPosition;
+            var calculatePos = position.localPosition;
+            return new Vector3(WorldToCalcSpace(Mathf.Abs(originPos.x - calculatePos.x), true),
+                WorldToCalcSpace(Mathf.Abs(originPos.y - calculatePos.y), true),
+                WorldToCalcSpace(Mathf.Abs(originPos.z - calculatePos.z), true));
+        }
+    }
+
     public Vector3 CalcToWorldSpace(Vector3 distance, bool local = false)
     {
         return new Vector3(CalcToWorldSpace(distance.x, local), CalcToWorldSpace(distance.y, local),
