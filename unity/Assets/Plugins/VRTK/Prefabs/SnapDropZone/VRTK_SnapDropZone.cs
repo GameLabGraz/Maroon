@@ -1,4 +1,7 @@
 ﻿// Snap Drop Zone|Prefabs|0080
+
+using UnityEngine.Events;
+
 namespace VRTK
 {
     using UnityEngine;
@@ -105,6 +108,8 @@ namespace VRTK
         /// </summary>
         public event SnapDropZoneEventHandler ObjectUnsnappedFromDropZone;
 
+        public UnityEvent OnCreateNewClone;
+        
         protected GameObject previousPrefab;
         protected GameObject highlightContainer;
         protected GameObject highlightObject;
@@ -796,6 +801,7 @@ namespace VRTK
             if (cloneNewOnUnsnap)
             {
                 ResnapPermanentClone();
+                OnCreateNewClone.Invoke();
             }
 
             if (checkCanSnapRoutine != null)
