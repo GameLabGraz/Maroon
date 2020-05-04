@@ -40,7 +40,7 @@ namespace Maroon.Physics.HuygensPrinciple
         private WaterPlane waterPlane;
 
         [SerializeField]
-        private Material materialReference;
+        private Material plateMaterial;
 
         private Vector3 TopSize => top.GetComponentInChildren<MeshRenderer>().bounds.size;
         private Vector3 BottomSize => bottom.GetComponentInChildren<MeshRenderer>().bounds.size;
@@ -111,9 +111,8 @@ namespace Maroon.Physics.HuygensPrinciple
                 Debug.LogError("SlitPlate::Start: WaterPlane object cannot be null.");
             if(waveGenerator.GetComponent<WaveGenerator>().GetPlaneObject() == null)           
                 Debug.LogError("SlitPlate::Start: WaterGenerator is missing its water plane object.");
-            if (materialReference == null)          
-                Debug.LogError("SlitPlate::Start: Missing color for plate.");         
-
+            if (plateMaterial == null)
+                plateMaterial = top.GetComponent<MeshRenderer>().sharedMaterial;
             if (!Mathf.Approximately(TopSize.z, BottomSize.z))
                 Debug.LogError("SlitPlate::Start: Top and Bottom object width must be equal.");
 
@@ -130,7 +129,7 @@ namespace Maroon.Physics.HuygensPrinciple
         {
             var cubeCount = numberOfSlits + 1;
             var scale = right.transform.localScale;
-            bool scaleInBounds = PlateWidth - SlitWidth * numberOfSlits >= 0 ? true : false; 
+            bool scaleInBounds = PlateWidth - SlitWidth * numberOfSlits >= 0 ; 
 
             scale.x = scaleInBounds ? (PlateWidth - (slitWidth * numberOfSlits)) / cubeCount : 0.0f ; 
             right.transform.localScale = left.transform.localScale = scale;
@@ -143,7 +142,7 @@ namespace Maroon.Physics.HuygensPrinciple
                     cube.transform.parent = GameObject.Find("Plate").transform;
                     cube.transform.rotation = cube.transform.parent.rotation;
                     cube.transform.localPosition = left.transform.localPosition;
-                    cube.GetComponent<Renderer>().material = materialReference;
+                    cube.GetComponent<Renderer>().material = plateMaterial;
                     midSections.Add(cube);                 
                 }
             }
@@ -184,24 +183,15 @@ namespace Maroon.Physics.HuygensPrinciple
                         var generatorGroupTransition = initialPositionLeft + (transition * (float)(slitIndex));
                         for (var count = 0; count < generatorCountPerSlit; count++)
                         {
-                            waveGeneratorList[count + (slitIndex * (generatorCountPerSlit))].transform.localPosition = new Vector3(generatorGroupTransition + (generatorPlacementTransistion * (count + 1)), left.transform.localPosition.y, left.transform.localPosition.z + 0.02f);                       
-                            if(count == 0)
+                            waveGeneratorList[count + (slitIndex * (generatorCountPerSlit))].transform.localPosition = new Vector3(generatorGroupTransition + (generatorPlacementTransistion * (count + 1)), left.transform.localPosition.y, left.transform.localPosition.z + 0.02f);
+                            if(generatorCountPerSlit > 2)
                             {
-                                waveGeneratorList[count + (slitIndex * (generatorCountPerSlit))].GetComponent<WaveGenerator>().SetPropagationMode(WaveGenerator.WavePropagation.Circular);
-                                if(generatorCountPerSlit > 2)
-                                {
+                                if (count == 0)
                                     waveGeneratorList[count + (slitIndex * (generatorCountPerSlit))].transform.localPosition = new Vector3(generatorGroupTransition + ((generatorPlacementTransistion * 0.5f) * (count + 1)), left.transform.localPosition.y, left.transform.localPosition.z + 0.02f);
-                                }
-                            }   
-                            else if (count == generatorCountPerSlit - 1)
-                            {
-                                waveGeneratorList[count + (slitIndex * (generatorCountPerSlit))].GetComponent<WaveGenerator>().SetPropagationMode(WaveGenerator.WavePropagation.Circular);
-                               
-                                if (generatorCountPerSlit > 2)
-                                {
+                                if(count == generatorCountPerSlit - 1)
                                     waveGeneratorList[count + (slitIndex * (generatorCountPerSlit))].transform.localPosition = new Vector3(initialPositionRight - (generatorPlacementTransistion * 0.5f), left.transform.localPosition.y, left.transform.localPosition.z + 0.02f);
-                                }
-                            }
+
+                            }                         
                         }
                     }                             
                 }
