@@ -162,7 +162,6 @@ namespace Maroon.Physics.HuygensPrinciple
         {
             var transition = scale.x + slitWidth;
             var initialPositionLeft = left.transform.localPosition.x + scale.x;
-            var initialPositionRight = right.transform.localPosition.x - scale.x;
             var generatorPlacementTransistion = (slitWidth / (float)(generatorCountPerSlit + 1));
 
             if (slitWidth > 0.0f)
@@ -176,13 +175,13 @@ namespace Maroon.Physics.HuygensPrinciple
                         for (var count = 0; count < generatorCountPerSlit; count++)
                         {
                             waveGeneratorList[count + (slitIndex * (generatorCountPerSlit))].transform.localPosition = new Vector3(generatorGroupTransition + (generatorPlacementTransistion * (count + 1)), left.transform.localPosition.y, left.transform.localPosition.z + 0.02f);
-                            if(generatorCountPerSlit > 2)
+                           /* if(generatorCountPerSlit > 2)
                             {
                                 if (count == 0)
                                     waveGeneratorList[count + (slitIndex * (generatorCountPerSlit))].transform.localPosition = new Vector3(generatorGroupTransition + ((generatorPlacementTransistion * 0.5f) * (count + 1)), left.transform.localPosition.y, left.transform.localPosition.z + 0.02f);
                                 if(count == generatorCountPerSlit - 1)
-                                    waveGeneratorList[count + (slitIndex * (generatorCountPerSlit))].transform.localPosition = new Vector3(generatorGroupTransition + slitWidth - (generatorPlacementTransistion * 0.5f), left.transform.localPosition.y, left.transform.localPosition.z + 0.02f);
-                            }                         
+                                    waveGeneratorList[count + (slitIndex * (generatorCountPerSlit))].transform.localPosition = new Vector3(generatorGroupTransition - (generatorPlacementTransistion * 0.5f) + slitWidth , left.transform.localPosition.y, left.transform.localPosition.z + 0.02f);
+                            }    */                    
                         }
                     }                             
                 }
@@ -195,7 +194,7 @@ namespace Maroon.Physics.HuygensPrinciple
 
         private int CalculateGeneratorsPerSlit()
         {        
-            int numberOfGeneratorsPerSlit = 1 + (int)((slitWidth * 10.0f)/1.5f);
+            int numberOfGeneratorsPerSlit = 1 + (int)((slitWidth * 10.0f)/2.0f);
             return numberOfGeneratorsPerSlit; 
         }
 
@@ -205,7 +204,7 @@ namespace Maroon.Physics.HuygensPrinciple
             waveGenerator.transform.parent = gameObject.transform;
             waveGenerator.transform.rotation = gameObject.transform.rotation;
 
-            WaveGenerator waveGeneratorScript = waveGenerator.gameObject.AddComponent<WaveGenerator>();       
+            WaveGenerator waveGeneratorScript = waveGenerator.AddComponent<WaveGenerator>();       
             waveGeneratorScript.WaveAmplitude = 0.5f;
             waveGeneratorScript.WaveLength = 0.25f;
             waveGeneratorScript.WaveFrequency = 0.5f;
@@ -245,7 +244,8 @@ namespace Maroon.Physics.HuygensPrinciple
 
         public void ResetCubes()
         {
-            foreach (var section in midSections){
+            foreach (var section in midSections)
+            {
                 DestroyImmediate(section);   
             }
 
