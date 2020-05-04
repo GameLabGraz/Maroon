@@ -34,9 +34,6 @@ namespace Maroon.Physics.HuygensPrinciple
         private GameObject left;
 
         [SerializeField]
-        private GameObject waveGenerator;
-
-        [SerializeField]
         private WaterPlane waterPlane;
 
         [SerializeField]
@@ -105,12 +102,8 @@ namespace Maroon.Physics.HuygensPrinciple
                 Debug.LogError("SlitPlate::Start: Right object cannot be null.");
             if (left == null)
                 Debug.LogError("SlitPlate::Start: Left object cannot be null.");
-            if (waveGenerator == null)
-                Debug.LogError("SlitPlate::Start: WaveGenerator object cannot be null.");
             if (waterPlane == null)
                 Debug.LogError("SlitPlate::Start: WaterPlane object cannot be null.");
-            if(waveGenerator.GetComponent<WaveGenerator>().GetPlaneObject() == null)           
-                Debug.LogError("SlitPlate::Start: WaterGenerator is missing its water plane object.");
             if (plateMaterial == null)
                 plateMaterial = top.GetComponent<MeshRenderer>().sharedMaterial;
             if (!Mathf.Approximately(TopSize.z, BottomSize.z))
@@ -119,7 +112,6 @@ namespace Maroon.Physics.HuygensPrinciple
             if (!Mathf.Approximately(RightSize.y, LeftSize.y))
                 Debug.LogError("SlitPlate::Start: Right and Left object height must be equal.");
 
-            waveGeneratorList.Add(waveGenerator);
             generatorCountPerSlit = CalculateGeneratorsPerSlit();
             AddAllWaveGenerators();
             SetupPlateSlits(false);
@@ -127,6 +119,7 @@ namespace Maroon.Physics.HuygensPrinciple
 
         private void SetupPlateSlits(bool numberOfSlitsChanged)
         {
+            generatorCountPerSlit = CalculateGeneratorsPerSlit();
             var cubeCount = numberOfSlits + 1;
             var scale = right.transform.localScale;
             bool scaleInBounds = PlateWidth - SlitWidth * numberOfSlits >= 0 ; 
@@ -139,8 +132,8 @@ namespace Maroon.Physics.HuygensPrinciple
                 for (var count = 0; count < cubeCount - 2; count++)
                 {
                     var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    cube.transform.parent = GameObject.Find("Plate").transform;
-                    cube.transform.rotation = cube.transform.parent.rotation;
+                    cube.transform.parent = gameObject.transform;
+                    cube.transform.rotation = gameObject.transform.rotation;
                     cube.transform.localPosition = left.transform.localPosition;
                     cube.GetComponent<Renderer>().material = plateMaterial;
                     midSections.Add(cube);                 
@@ -157,7 +150,7 @@ namespace Maroon.Physics.HuygensPrinciple
             if (midSections.Count > 0)
                 for (var index = 0; index < midSections.Count; index++)
                 {
-                    midSections[index].transform.localScale = new Vector3(scale.x, scale.y, scale.z);
+                    midSections[index].transform.localScale = scale;
                     if(scaleInBounds)
                     {
                         var transformCubeSection = left.transform.localPosition.x + ((scale.x + slitWidth) * (float)(index + 1)) + scale.x / 2.0f;                                
@@ -189,8 +182,7 @@ namespace Maroon.Physics.HuygensPrinciple
                                 if (count == 0)
                                     waveGeneratorList[count + (slitIndex * (generatorCountPerSlit))].transform.localPosition = new Vector3(generatorGroupTransition + ((generatorPlacementTransistion * 0.5f) * (count + 1)), left.transform.localPosition.y, left.transform.localPosition.z + 0.02f);
                                 if(count == generatorCountPerSlit - 1)
-                                    waveGeneratorList[count + (slitIndex * (generatorCountPerSlit))].transform.localPosition = new Vector3(initialPositionRight - (generatorPlacementTransistion * 0.5f), left.transform.localPosition.y, left.transform.localPosition.z + 0.02f);
-
+                                    waveGeneratorList[count + (slitIndex * (generatorCountPerSlit))].transform.localPosition = new Vector3(generatorGroupTransition + slitWidth - (generatorPlacementTransistion * 0.5f), left.transform.localPosition.y, left.transform.localPosition.z + 0.02f);
                             }                         
                         }
                     }                             
@@ -211,9 +203,8 @@ namespace Maroon.Physics.HuygensPrinciple
         public void AddWaveGenerator()
         {
             var waveGenerator = new GameObject("WaveGenerator");
-            waveGenerator.transform.parent = GameObject.Find("Plate").transform;
-            waveGenerator.transform.rotation = waveGenerator.transform.parent.rotation;
-            //waveGenerator.transform.localPosition = left.transform.localPosition;
+            waveGenerator.transform.parent = gameObject.transform;
+            waveGenerator.transform.rotation = gameObject.transform.rotation;
 
             WaveGenerator waveGeneratorScript = waveGenerator.gameObject.AddComponent<WaveGenerator>();
             waveGeneratorScript.WaveAmplitude = 0.5f;
@@ -230,7 +221,7 @@ namespace Maroon.Physics.HuygensPrinciple
         public void AddAllWaveGenerators() 
         {          
             var totalNumberOfGenerators = generatorCountPerSlit * numberOfSlits; 
-            for (int count = 0; count < totalNumberOfGenerators - 1; count++)
+            for (int count = 0; count < totalNumberOfGenerators; count++)
             {
                 AddWaveGenerator();
             }
@@ -239,9 +230,8 @@ namespace Maroon.Physics.HuygensPrinciple
 
         private void RegisterPlateWaveGenerators()
         {
-            foreach (var generator in waveGeneratorList)
-                if(generator != waveGenerator)
-                    waterPlane.RegisterWaveGenerator(generator.GetComponent<WaveGenerator>());
+            foreach (var generator in waveGeneratorList)                
+                waterPlane.RegisterWaveGenerator(generator.GetComponent<WaveGenerator>());
         }
 
         private void ActivatePlateWaveGenerators()
@@ -275,18 +265,14 @@ namespace Maroon.Physics.HuygensPrinciple
         {
             foreach (var gen in waveGeneratorList)
             {
-                if (gen != waveGenerator)
-                {
                     if(gen != null)
                     {
                         waterPlane.UnregisterWaveGenerator(gen.GetComponent<WaveGenerator>());
                         DestroyImmediate(gen);
                     }
-                   
-                }
             }
 
-            waveGeneratorList.RemoveAll(gen => gen != waveGenerator);
+            waveGeneratorList.Clear();
         }
     }
 }

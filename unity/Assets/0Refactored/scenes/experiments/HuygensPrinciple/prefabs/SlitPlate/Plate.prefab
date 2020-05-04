@@ -31,58 +31,6 @@ Transform:
   m_Father: {fileID: 4560832792566992606}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &4560832792449206912
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4560832792449206914}
-  - component: {fileID: 4560832792449206913}
-  m_Layer: 0
-  m_Name: WaveGenerator
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4560832792449206914
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4560832792449206912}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.000000011175871, y: 0.3, z: 0.03}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4560832792566992606}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4560832792449206913
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4560832792449206912}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 958588c3b131b4e429614ab92446ae96, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  planeMesh: {fileID: 0}
-  planeObject: {fileID: 0}
-  waveAmplitude: 0.5
-  waveLength: 0.25
-  waveFrequency: 0.5
-  startingPoint: {x: 0, y: 0, z: 0}
-  propagationMode: 1
-  propagationAxis: {x: 1, y: 0, z: 0}
-  isActive: 1
 --- !u!1 &4560832792556798201
 GameObject:
   m_ObjectHideFlags: 0
@@ -243,7 +191,6 @@ Transform:
   - {fileID: 4560832793636399924}
   - {fileID: 4560832792566712155}
   - {fileID: 4560832792044782070}
-  - {fileID: 4560832792449206914}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
@@ -265,9 +212,8 @@ MonoBehaviour:
   bottom: {fileID: 4560832793636399920}
   right: {fileID: 4560832792566712154}
   left: {fileID: 4560832792044782069}
-  waveGenerator: {fileID: 4560832792449206912}
   waterPlane: {fileID: 0}
-  materialReference: {fileID: 2100000, guid: 262cbe152d1284c47a5292f51e5eedb6, type: 2}
+  plateMaterial: {fileID: 2100000, guid: 262cbe152d1284c47a5292f51e5eedb6, type: 2}
 --- !u!65 &4560832792566992596
 BoxCollider:
   m_ObjectHideFlags: 0
