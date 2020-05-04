@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Maroon.Physics.HuygensPrinciple
 {
-    [ExecuteInEditMode]
+    //[ExecuteInEditMode]
     public class SlitPlate : MonoBehaviour, IResetObject
     {
         [Header("Properties")]
@@ -48,8 +48,9 @@ namespace Maroon.Physics.HuygensPrinciple
         public float PlateHeight => TopSize.y + RightSize.y + BottomSize.y;
 
         private List<GameObject> midSections = new List<GameObject>();
-        private List<GameObject> waveGeneratorList = new List<GameObject>();
+        private List<WaveGenerator> waveGeneratorList = new List<WaveGenerator>();
         private int generatorCountPerSlit;
+        private bool startRegistration = true; 
        
         public int NumberOfSlits
         {
@@ -113,13 +114,11 @@ namespace Maroon.Physics.HuygensPrinciple
                 Debug.LogError("SlitPlate::Start: Right and Left object height must be equal.");
 
             generatorCountPerSlit = CalculateGeneratorsPerSlit();
-            AddAllWaveGenerators();
             SetupPlateSlits(false);
         }
 
         private void SetupPlateSlits(bool numberOfSlitsChanged)
         {
-            generatorCountPerSlit = CalculateGeneratorsPerSlit();
             var cubeCount = numberOfSlits + 1;
             var scale = right.transform.localScale;
             bool scaleInBounds = PlateWidth - SlitWidth * numberOfSlits >= 0 ; 
@@ -206,48 +205,41 @@ namespace Maroon.Physics.HuygensPrinciple
             waveGenerator.transform.parent = gameObject.transform;
             waveGenerator.transform.rotation = gameObject.transform.rotation;
 
-            WaveGenerator waveGeneratorScript = waveGenerator.gameObject.AddComponent<WaveGenerator>();
+            WaveGenerator waveGeneratorScript = waveGenerator.gameObject.AddComponent<WaveGenerator>();       
             waveGeneratorScript.WaveAmplitude = 0.5f;
             waveGeneratorScript.WaveLength = 0.25f;
             waveGeneratorScript.WaveFrequency = 0.5f;
             waveGeneratorScript.SetPropagationMode(WaveGenerator.WavePropagation.Circular);
-            if (GameObject.Find("Water") != null)
-            {
-                waveGeneratorScript.SetPlaneObject(GameObject.Find("Water"));
-                waveGeneratorList.Add(waveGenerator);
-            }
+
+            waveGeneratorList.Add(waveGeneratorScript);
+            waterPlane.RegisterWaveGenerator(waveGeneratorScript); 
         }
 
         public void AddAllWaveGenerators() 
-        {          
+        {
             var totalNumberOfGenerators = generatorCountPerSlit * numberOfSlits; 
             for (int count = 0; count < totalNumberOfGenerators; count++)
             {
                 AddWaveGenerator();
             }
-            RegisterPlateWaveGenerators();
-        }
 
-        private void RegisterPlateWaveGenerators()
-        {
-            foreach (var generator in waveGeneratorList)                
-                waterPlane.RegisterWaveGenerator(generator.GetComponent<WaveGenerator>());
         }
 
         private void ActivatePlateWaveGenerators()
         {
             foreach (var generator in waveGeneratorList)
-                generator.GetComponent<WaveGenerator>().SetGeneratorActive(true);
+                generator.SetGeneratorActive(true);
         }
 
         private void DeactivatePlateWaveGenerators()
         {
             foreach (var generator in waveGeneratorList)
-                generator.GetComponent<WaveGenerator>().SetGeneratorActive(false);
+                generator.SetGeneratorActive(false);
         }
 
         public void ResetObject()
         {
+            ResetCubes();
             throw new System.NotImplementedException();
         }
 
@@ -265,13 +257,9 @@ namespace Maroon.Physics.HuygensPrinciple
         {
             foreach (var gen in waveGeneratorList)
             {
-                    if(gen != null)
-                    {
-                        waterPlane.UnregisterWaveGenerator(gen.GetComponent<WaveGenerator>());
-                        DestroyImmediate(gen);
-                    }
+                        waterPlane.UnregisterWaveGenerator(gen);                       
+                        DestroyImmediate(gen.gameObject);
             }
-
             waveGeneratorList.Clear();
         }
     }

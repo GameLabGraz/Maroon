@@ -54,7 +54,7 @@ public class SnapSlipPlate : MonoBehaviour, IResetObject
 
         snappedPlate.InteractableObjectGrabbed += OnSnappedPlateGrabbed;
 
-        RegisterPlateWaveGenerators();
+       // RegisterPlateWaveGenerators();
     }
 
     private void OnSnappedPlateGrabbed(object sender, InteractableObjectEventArgs e)
