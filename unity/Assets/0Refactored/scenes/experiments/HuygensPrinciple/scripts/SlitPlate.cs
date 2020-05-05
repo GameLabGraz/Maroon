@@ -47,11 +47,23 @@ namespace Maroon.Physics.HuygensPrinciple
         public float PlateWidth => top.transform.localScale.x;    
         public float PlateHeight => TopSize.y + RightSize.y + BottomSize.y;
 
+        private int generatorCountPerSlit;
+        private bool startRegistration = true;
+
         private List<GameObject> midSections = new List<GameObject>();
         private List<WaveGenerator> waveGeneratorList = new List<WaveGenerator>();
-        private int generatorCountPerSlit;
-        private bool startRegistration = true; 
-       
+
+        private static WaveGeneratorPoolHandler _wgph_instance;
+        public static WaveGeneratorPoolHandler Instance
+        {
+            get
+            {
+                if (_wgph_instance == null)
+                    _wgph_instance = FindObjectOfType<WaveGeneratorPoolHandler>();
+                return _wgph_instance;
+            }
+        }
+
         public int NumberOfSlits
         {
             get => numberOfSlits;
@@ -174,14 +186,7 @@ namespace Maroon.Physics.HuygensPrinciple
                         var generatorGroupTransition = initialPositionLeft + (transition * (float)(slitIndex));
                         for (var count = 0; count < generatorCountPerSlit; count++)
                         {
-                            waveGeneratorList[count + (slitIndex * (generatorCountPerSlit))].transform.localPosition = new Vector3(generatorGroupTransition + (generatorPlacementTransistion * (count + 1)), left.transform.localPosition.y, left.transform.localPosition.z + 0.02f);
-                           /* if(generatorCountPerSlit > 2)
-                            {
-                                if (count == 0)
-                                    waveGeneratorList[count + (slitIndex * (generatorCountPerSlit))].transform.localPosition = new Vector3(generatorGroupTransition + ((generatorPlacementTransistion * 0.5f) * (count + 1)), left.transform.localPosition.y, left.transform.localPosition.z + 0.02f);
-                                if(count == generatorCountPerSlit - 1)
-                                    waveGeneratorList[count + (slitIndex * (generatorCountPerSlit))].transform.localPosition = new Vector3(generatorGroupTransition - (generatorPlacementTransistion * 0.5f) + slitWidth , left.transform.localPosition.y, left.transform.localPosition.z + 0.02f);
-                            }    */                    
+                            waveGeneratorList[count + (slitIndex * (generatorCountPerSlit))].transform.localPosition = new Vector3(generatorGroupTransition + (generatorPlacementTransistion * (count + 1)), left.transform.localPosition.y, left.transform.localPosition.z + 0.02f);                 
                         }
                     }                             
                 }
@@ -211,7 +216,8 @@ namespace Maroon.Physics.HuygensPrinciple
             waveGeneratorScript.SetPropagationMode(WaveGenerator.WavePropagation.Circular);
 
             waveGeneratorList.Add(waveGeneratorScript);
-            waterPlane.RegisterWaveGenerator(waveGeneratorScript); 
+            _wgph_instance.AddWaveGenerator(waveGeneratorScript);
+           //waterPlane.RegisterWaveGenerator(waveGeneratorScript); 
         }
 
         public void AddAllWaveGenerators() 
