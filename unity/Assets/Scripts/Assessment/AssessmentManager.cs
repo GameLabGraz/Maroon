@@ -21,7 +21,7 @@ namespace Maroon.Assessment
 
         private AssessmentFeedbackHandler _feedbackHandler;
 
-        private readonly List<AssessmentWatchValue> _assessmentValues = new List<AssessmentWatchValue>();
+        private readonly List<AssessmentObject> _objectsInRange = new List<AssessmentObject>();
 
         public bool IsConnected { get; private set; }
 
@@ -91,6 +91,8 @@ namespace Maroon.Assessment
         {
             Debug.Log($"AssessmentManager::RegisterAssessmentObject: {assessmentObject.ObjectID}");
 
+			_objectsInRange.Add(assessmentObject);
+
             EventBuilder
                 .PerceiveObject(assessmentObject.ObjectID)
                 .Set("class", assessmentObject.ClassType.ToString());
@@ -104,6 +106,8 @@ namespace Maroon.Assessment
             Debug.Log($"AssessmentManager::DeregisterAssessmentObject: {assessmentObject.ObjectID}");
 
             EventBuilder.UnlearnObject(assessmentObject.ObjectID);
+			
+			_objectsInRange.Remove(assessmentObject);
         }
 
         public void SendUserAction(string actionName, string objectId=null)
@@ -112,12 +116,15 @@ namespace Maroon.Assessment
 
             EventBuilder.Action(actionName, objectId);
 
-            foreach (var watchValue in GameObject.FindObjectsOfType<AssessmentWatchValue>())
+            foreach (AssessmentObject assessmentObject in _objectsInRange)
             {
-                if (watchValue.IsDynamic)
+                EventBuilder.UpdateDataOf(assessmentObject.ObjectID);
+                foreach (var watchValue in assessmentObject.gameObject.GetComponents<AssessmentWatchValue>())
                 {
-                    EventBuilder.UpdateDataOf(watchValue.ObjectID)
-                        .Set(watchValue.PropertyName, watchValue.GetValue());
+                    if (watchValue.IsDynamic)
+                    {
+                        EventBuilder.Set(watchValue.PropertyName, watchValue.GetValue());
+                    }
                 }
             }
         }
