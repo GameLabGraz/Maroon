@@ -53,14 +53,14 @@ namespace Maroon.Physics.HuygensPrinciple
         private List<GameObject> midSections = new List<GameObject>();
         private List<WaveGenerator> waveGeneratorList = new List<WaveGenerator>();
 
-        private static WaveGeneratorPoolHandler _wgph_instance;
+        private static WaveGeneratorPoolHandler _wgphInstance;
         public static WaveGeneratorPoolHandler Instance
         {
             get
             {
-                if (_wgph_instance == null)
-                    _wgph_instance = FindObjectOfType<WaveGeneratorPoolHandler>();
-                return _wgph_instance;
+                if (_wgphInstance == null)
+                    _wgphInstance = FindObjectOfType<WaveGeneratorPoolHandler>();
+                return _wgphInstance;
             }
         }
 
@@ -205,18 +205,24 @@ namespace Maroon.Physics.HuygensPrinciple
 
         public void AddWaveGenerator()
         {
-            var waveGenerator = new GameObject("WaveGenerator");
-            waveGenerator.transform.parent = gameObject.transform;
-            waveGenerator.transform.rotation = gameObject.transform.rotation;
+            /* var waveGenerator = new GameObject("WaveGenerator");
+             waveGenerator.transform.parent = gameObject.transform;
+             waveGenerator.transform.rotation = gameObject.transform.rotation;*/
 
-            WaveGenerator waveGeneratorScript = waveGenerator.AddComponent<WaveGenerator>();       
-            waveGeneratorScript.WaveAmplitude = 0.5f;
-            waveGeneratorScript.WaveLength = 0.25f;
-            waveGeneratorScript.WaveFrequency = 0.5f;
-            waveGeneratorScript.SetPropagationMode(WaveGenerator.WavePropagation.Circular);
+            /* WaveGenerator waveGeneratorScript = waveGenerator.AddComponent<WaveGenerator>();       
+             waveGeneratorScript.WaveAmplitude = 0.5f;
+             waveGeneratorScript.WaveLength = 0.25f;
+             waveGeneratorScript.WaveFrequency = 0.5f;
+             waveGeneratorScript.SetPropagationMode(WaveGenerator.WavePropagation.Circular);*/
 
-            waveGeneratorList.Add(waveGeneratorScript);
-            _wgph_instance.AddWaveGenerator(waveGeneratorScript);
+            Debug.Log("GE");
+            var waveGeneratorS = new WaveGenerator(); 
+            waveGeneratorS =  _wgphInstance.createWaveGenerator().GetComponent<WaveGenerator>();
+            waveGeneratorS = Instance.createWaveGenerator();
+            Debug.Log("Wee"+ _wgphInstance.createWaveGenerator().GetComponent<WaveGenerator>().WaveAmplitude);
+            waveGeneratorS.gameObject.transform.parent = gameObject.transform.Find("Plate").transform;
+            waveGeneratorList.Add(waveGeneratorS);
+           //_wgph_instance.AddWaveGenerator(waveGeneratorScript);
            //waterPlane.RegisterWaveGenerator(waveGeneratorScript); 
         }
 

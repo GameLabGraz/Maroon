@@ -8,6 +8,18 @@ public class WaveGeneratorPoolHandler : MonoBehaviour
     private Dictionary<ulong, WaveGenerator> mGenerators = new Dictionary<ulong, WaveGenerator>();
     private GameObject[] mSlitPlates;
 
+    private static WaterPlane _waterPlane_instance;
+  
+    public static WaterPlane Instance
+    {
+        get
+        {
+            if (_waterPlane_instance == null)
+                _waterPlane_instance = FindObjectOfType<WaterPlane>();
+            return _waterPlane_instance;
+        }
+    }
+
     private void Start()
     {
         // Find slit plates in scene
@@ -72,5 +84,19 @@ public class WaveGeneratorPoolHandler : MonoBehaviour
     {
         if (mGenerators.ContainsKey(generatorId))
             mGenerators[generatorId].WaveFrequency = waveFrequency;
+    }
+
+    public WaveGenerator createWaveGenerator()
+    {
+        var waveGenerator = new GameObject("WaveGenerator");
+        //WaveGenerator waveGeneratorScript = waveGenerator.AddComponent<WaveGenerator>();
+        WaveGenerator waveGeneratorScript = gameObject.AddComponent<WaveGenerator>();
+        waveGeneratorScript.WaveAmplitude = 0.5f;
+        waveGeneratorScript.WaveLength = 0.25f;
+        waveGeneratorScript.WaveFrequency = 0.5f;
+        waveGeneratorScript.SetPropagationMode(WaveGenerator.WavePropagation.Circular);
+        waveGeneratorScript.gameObject.transform.parent = gameObject.transform.Find("Plate").transform;
+
+        return waveGeneratorScript;
     }
 }
