@@ -10,7 +10,9 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     [HideInInspector]
-    public static GameManager Instance = null; 
+    public static GameManager Instance = null;
+
+    public bool EnableESCMenu = true;
 
     [SerializeField]
     private GameObject _player;
@@ -97,7 +99,7 @@ public class GameManager : MonoBehaviour
         }            
 
         var activeScene = SceneManager.GetActiveScene().name;
-        if (Input.GetKeyDown(KeyCode.Escape) && activeScene != "Menu")
+        if (EnableESCMenu && Input.GetKeyDown(KeyCode.Escape) && activeScene != "Menu")
         {
             _scene = activeScene;
             PlayMenuSound();

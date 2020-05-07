@@ -92,7 +92,7 @@ namespace VRTK.SecondaryControllerGrabActions
             }
         }
 
-        protected virtual void ApplyScale(Vector3 newScale)
+        public virtual void ApplyScale(Vector3 newScale)
         {
             Vector3 existingScale = grabbedObject.transform.localScale;
 

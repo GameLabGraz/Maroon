@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using GEAR.Localization;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using VRTK;
@@ -18,6 +19,9 @@ public class SliderController : VRTK_Slider, IResetObject
 
     [SerializeField]
     private Text ValueText;
+    
+    [SerializeField]
+    private TextMeshPro ValueTMP;
 
     [SerializeField]
     private bool isInteger = false;
@@ -61,15 +65,22 @@ public class SliderController : VRTK_Slider, IResetObject
 
     private void UpdateValueText()
     {
-        if(ValueText == null)
+        if(!ValueText && !ValueTMP)
             return;
 
+        var text = "";
+
         if (_optionKeys.Count > 0)
-            ValueText.text = LanguageManager.Instance.GetString(_optionKeys[(int)GetValue()]);
+            text = LanguageManager.Instance.GetString(_optionKeys[(int)GetValue()]);
         else if (isInteger)
-            ValueText.text = ((int)GetValue()).ToString();
+            text = ((int)GetValue()).ToString();
         else
-            ValueText.text = GetValue().ToString("0.00");
+            text = GetValue().ToString("0.00");
+
+        if (ValueText)
+            ValueText.text = text;
+        if (ValueTMP)
+            ValueTMP.text = text;
     }
 
     private void HandleChange(object sender, Control3DEventArgs e)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using Antares.Evaluation;
 using Antares.Evaluation.Engine;
@@ -71,7 +72,7 @@ namespace Maroon.Assessment
                 Debug.Log("AssessmentManager: Successfully connected to Assessment Service.");
 
                 Debug.Log($"AssessmentManager: Loading {amlFile} into evaluation engine ...");
-                _evalService.LoadAmlFile(Application.dataPath + amlFile);
+                _evalService.LoadAmlFile(Path.Combine(Application.streamingAssetsPath, amlFile));
                 Debug.Log("AssessmentManager: Assessment model loaded.");
 
                 _evalService.FeedbackReceived += delegate (object sender, FeedbackEventArgs args)

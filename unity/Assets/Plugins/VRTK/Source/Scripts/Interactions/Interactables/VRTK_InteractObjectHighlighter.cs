@@ -155,7 +155,7 @@ namespace VRTK
         {
             return currentAffectingObject;
         }
-
+        
         protected virtual void OnEnable()
         {
 #pragma warning disable 0618

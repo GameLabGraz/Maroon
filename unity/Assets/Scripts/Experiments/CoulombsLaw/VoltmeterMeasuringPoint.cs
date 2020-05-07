@@ -34,7 +34,7 @@ public class VoltmeterMeasuringPoint : MonoBehaviour, IResetWholeObject
     void Update()
     {
         var currentPos = transform.position;
-        if (!gameObject.activeInHierarchy) return;
+        if (!gameObject.activeInHierarchy || !field) return;
 
         _potential = field.getStrength(currentPos) * Mathf.Pow(10, -6); //in V now (because we used microCoulomb)
         var pot = _potential; //in micro Volt
