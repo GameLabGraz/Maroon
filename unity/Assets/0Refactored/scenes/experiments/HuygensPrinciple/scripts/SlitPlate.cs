@@ -45,7 +45,9 @@ namespace Maroon.Physics.HuygensPrinciple
         public float PlateHeight => TopSize.y + RightSize.y + BottomSize.y;
 
         private int generatorCountPerSlit;
-        private bool startRegistration = true;
+
+        private Vector3 previousPlateScale;
+        private Vector3 previousPlatePosition;
 
         private List<GameObject> midSections = new List<GameObject>();
         private List<WaveGenerator> waveGeneratorList = new List<WaveGenerator>();
@@ -122,6 +124,7 @@ namespace Maroon.Physics.HuygensPrinciple
 
             generatorCountPerSlit = CalculateGeneratorsPerSlit();
             SetupPlateSlits(false);
+            StorePreviousState();
         }
 
         private void SetupPlateSlits(bool numberOfSlitsChanged)
@@ -227,22 +230,15 @@ namespace Maroon.Physics.HuygensPrinciple
                 generator.SetGeneratorActive(false);
         }
 
-        public void ResetObject()
-        {
-            ResetCubes();
-            SetupPlateSlits(false);
-            //throw new System.NotImplementedException();
-        }
-
         public void ResetCubes()
         {
             foreach (var section in midSections)
             {
-                DestroyImmediate(section);   
+                DestroyImmediate(section);
             }
 
             ResetWaveGenerators();
-            midSections.Clear();             
+            midSections.Clear();
         }
 
         public void ResetWaveGenerators()
@@ -253,6 +249,25 @@ namespace Maroon.Physics.HuygensPrinciple
                 DestroyImmediate(generator.gameObject);
             }
             waveGeneratorList.Clear();
+        }
+
+        private void StorePreviousState()
+        {
+            previousPlateScale = gameObject.transform.localScale;
+            previousPlatePosition = gameObject.transform.position;
+        }
+
+        private void LoadPreviousState()
+        {
+            gameObject.transform.localScale = previousPlateScale;
+            gameObject.transform.position = previousPlatePosition;
+        }
+
+        public void ResetObject()
+        {
+            ResetCubes();
+            SetupPlateSlits(false);
+            LoadPreviousState();
         }
     }
 }
