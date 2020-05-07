@@ -22,19 +22,25 @@ public class WaveGeneratorPoolHandler : MonoBehaviour
 
     private void Start()
     {
-        // Find slit plates in scene
-        mSlitPlates = GameObject.FindGameObjectsWithTag("SlitPlate");
-
-        // Find wave generators in scene
-        WaveGenerator[] generators = GameObject.FindObjectsOfType<WaveGenerator>();
-        foreach (WaveGenerator generator in generators)
-            mGenerators.Add(generatorIdCount++, generator);
+        WaveGenerator basinWaveGenerator = GameObject.Find("WaveGeneratorBasin").GetComponent<WaveGenerator>();
+        mGenerators.Add(generatorIdCount++, basinWaveGenerator);
+        Instance.RegisterWaveGenerator(basinWaveGenerator);
     }
 
     public void AddWaveGenerator(WaveGenerator generator)
     {
+        generator.setGeneratorKey(generatorIdCount);
         mGenerators.Add(generatorIdCount++, generator);
+        Instance.RegisterWaveGenerator(generator);
     }
+
+    public void RemoveWaveGenerator(WaveGenerator generator)
+    {
+        Instance.UnregisterWaveGenerator(generator);
+        mGenerators.Remove(generator.getGeneratorKey());
+    }
+
+
 
     public WaveGenerator GetWaveGenerator(ulong generatorId)
     {
@@ -86,17 +92,16 @@ public class WaveGeneratorPoolHandler : MonoBehaviour
             mGenerators[generatorId].WaveFrequency = waveFrequency;
     }
 
-    public WaveGenerator createWaveGenerator()
+    public WaveGenerator CreateWaveGenerator()
     {
         var waveGenerator = new GameObject("WaveGenerator");
-        //WaveGenerator waveGeneratorScript = waveGenerator.AddComponent<WaveGenerator>();
-        WaveGenerator waveGeneratorScript = gameObject.AddComponent<WaveGenerator>();
+        WaveGenerator waveGeneratorScript = waveGenerator.AddComponent<WaveGenerator>();
         waveGeneratorScript.WaveAmplitude = 0.5f;
         waveGeneratorScript.WaveLength = 0.25f;
         waveGeneratorScript.WaveFrequency = 0.5f;
         waveGeneratorScript.SetPropagationMode(WaveGenerator.WavePropagation.Circular);
-        waveGeneratorScript.gameObject.transform.parent = gameObject.transform.Find("Plate").transform;
 
+        AddWaveGenerator(waveGeneratorScript);
         return waveGeneratorScript;
     }
 }

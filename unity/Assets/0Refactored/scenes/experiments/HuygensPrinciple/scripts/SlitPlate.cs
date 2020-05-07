@@ -34,9 +34,6 @@ namespace Maroon.Physics.HuygensPrinciple
         private GameObject left;
 
         [SerializeField]
-        private WaterPlane waterPlane;
-
-        [SerializeField]
         private Material plateMaterial;
 
         private Vector3 TopSize => top.GetComponentInChildren<MeshRenderer>().bounds.size;
@@ -115,8 +112,6 @@ namespace Maroon.Physics.HuygensPrinciple
                 Debug.LogError("SlitPlate::Start: Right object cannot be null.");
             if (left == null)
                 Debug.LogError("SlitPlate::Start: Left object cannot be null.");
-            if (waterPlane == null)
-                Debug.LogError("SlitPlate::Start: WaterPlane object cannot be null.");
             if (plateMaterial == null)
                 plateMaterial = top.GetComponent<MeshRenderer>().sharedMaterial;
             if (!Mathf.Approximately(TopSize.z, BottomSize.z))
@@ -205,25 +200,9 @@ namespace Maroon.Physics.HuygensPrinciple
 
         public void AddWaveGenerator()
         {
-            /* var waveGenerator = new GameObject("WaveGenerator");
-             waveGenerator.transform.parent = gameObject.transform;
-             waveGenerator.transform.rotation = gameObject.transform.rotation;*/
-
-            /* WaveGenerator waveGeneratorScript = waveGenerator.AddComponent<WaveGenerator>();       
-             waveGeneratorScript.WaveAmplitude = 0.5f;
-             waveGeneratorScript.WaveLength = 0.25f;
-             waveGeneratorScript.WaveFrequency = 0.5f;
-             waveGeneratorScript.SetPropagationMode(WaveGenerator.WavePropagation.Circular);*/
-
-            Debug.Log("GE");
-            var waveGeneratorS = new WaveGenerator(); 
-            waveGeneratorS =  _wgphInstance.createWaveGenerator().GetComponent<WaveGenerator>();
-            waveGeneratorS = Instance.createWaveGenerator();
-            Debug.Log("Wee"+ _wgphInstance.createWaveGenerator().GetComponent<WaveGenerator>().WaveAmplitude);
-            waveGeneratorS.gameObject.transform.parent = gameObject.transform.Find("Plate").transform;
-            waveGeneratorList.Add(waveGeneratorS);
-           //_wgph_instance.AddWaveGenerator(waveGeneratorScript);
-           //waterPlane.RegisterWaveGenerator(waveGeneratorScript); 
+            var waveGenerator = Instance.CreateWaveGenerator();
+            waveGenerator.transform.parent = gameObject.transform;
+            waveGeneratorList.Add(waveGenerator);
         }
 
         public void AddAllWaveGenerators() 
@@ -251,7 +230,8 @@ namespace Maroon.Physics.HuygensPrinciple
         public void ResetObject()
         {
             ResetCubes();
-            throw new System.NotImplementedException();
+            SetupPlateSlits(false);
+            //throw new System.NotImplementedException();
         }
 
         public void ResetCubes()
@@ -267,10 +247,10 @@ namespace Maroon.Physics.HuygensPrinciple
 
         public void ResetWaveGenerators()
         {
-            foreach (var gen in waveGeneratorList)
+            foreach (var generator in waveGeneratorList)
             {
-                        waterPlane.UnregisterWaveGenerator(gen);                       
-                        DestroyImmediate(gen.gameObject);
+                Instance.RemoveWaveGenerator(generator);
+                DestroyImmediate(generator.gameObject);
             }
             waveGeneratorList.Clear();
         }
