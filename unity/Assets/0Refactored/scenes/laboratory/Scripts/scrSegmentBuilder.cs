@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class scrSegmentBuilder : MonoBehaviour
 {
@@ -6,24 +7,46 @@ public class scrSegmentBuilder : MonoBehaviour
     // Members
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // Settings
+
+    // Activates animation
+    public bool animate;
+
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Previews
+
+    // Experiment previews to be displayed
     public GameObject[] prefabsExperimentPreview;
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Given Segments
+
+    // Start segment in the scene
     [SerializeField] private GameObject staticSegementStart;
+
+    // End segment in the scene
     [SerializeField] private GameObject staticSegmentEnd;
+
+    // Empty game object that holds segments that are created dynamically
     [SerializeField] private GameObject staticSegmentContainer;
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Prefabs
-    [SerializeField] private GameObject prefabSegment;    
+
+    // Prefab to be used as a template for a new segment
+    [SerializeField] private GameObject prefabSegment;
+
+    // Prefab to be placed in a scene if no experiment preview is available   
     [SerializeField] private GameObject prefabEmptyPreview;
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    // Counters
+    // Counters (exclude start and end segment)
+
+    // Number of segments to be generated to hold all experiment previews (excluding start and end)
     private int numberSegmentsTotal;
-    private int numberSegmentsCurrent = 0;
+
+    // Number of segments currently in the scene (excluding start and end)
+    private int numberDynamicSegments = 0;
 
     // #################################################################################################################
     // Methods
@@ -32,35 +55,54 @@ public class scrSegmentBuilder : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        this.BuildAllSegments();
+        StartCoroutine(this.BuildAllSegments());
     }
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Builds all segments according to the members
-    public void BuildAllSegments()
+    public IEnumerator BuildAllSegments()
     {
         // Calculate number of segments to be generated
         this.numberSegmentsTotal = Mathf.CeilToInt(this.prefabsExperimentPreview.Length / 2.0F);
 
+        // Hide segment end
+        this.staticSegmentEnd.SetActive(false);
+
         // Generate segments
-        while(this.numberSegmentsCurrent < numberSegmentsTotal)
+        while(this.numberDynamicSegments < numberSegmentsTotal)
         {
             // If 2 or more previews left
-            if((this.prefabsExperimentPreview.Length - (this.numberSegmentsCurrent * 2)) >= 2)
+            if((this.prefabsExperimentPreview.Length - (this.numberDynamicSegments * 2)) >= 2)
             {
-                this.AddSegment(this.prefabsExperimentPreview[this.numberSegmentsCurrent * 2],
-                                this.prefabsExperimentPreview[this.numberSegmentsCurrent * 2 + 1]);
+                this.AddSegment(this.prefabsExperimentPreview[this.numberDynamicSegments * 2],
+                                this.prefabsExperimentPreview[this.numberDynamicSegments * 2 + 1],
+                                this.animate);
             }
 
             // If one preview left
             else
             {
-                this.AddSegment(this.prefabsExperimentPreview[this.numberSegmentsCurrent * 2], this.prefabEmptyPreview);                
+                this.AddSegment(this.prefabsExperimentPreview[this.numberDynamicSegments * 2],
+                                this.prefabEmptyPreview,
+                                this.animate);                
+            }
+
+            // Wait before adding next segment
+            if(this.animate)
+            {
+                yield return new WaitForSeconds(1);
             }
 
             // Update segment counter
-            this.numberSegmentsCurrent += 1;
+            this.numberDynamicSegments += 1;
         }
+
+        // Show segment end
+        if(this.animate)
+        {
+            yield return new WaitForSeconds(6);
+        }
+        this.staticSegmentEnd.SetActive(true);
     }
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -71,35 +113,16 @@ public class scrSegmentBuilder : MonoBehaviour
         this.staticSegmentEnd.transform.position += this.staticSegmentEnd.transform.forward * 8;
 
         // Create new segment
-        GameObject new_segment = Instantiate(this.prefabSegment, Vector3.zero, Quaternion.identity);
+        GameObject new_segment = Instantiate(this.prefabSegment, new Vector3(0, 0, 500), Quaternion.identity);
         new_segment.transform.SetParent(this.staticSegmentContainer.transform);
+        var segment_script = (scrLaboratorySegment) new_segment.GetComponent(typeof(scrLaboratorySegment));
 
         // Add previews
-        this.AddPreview(new_segment, prefabPreviewLeft);
-        this.AddPreview(new_segment, prefabPreviewRight, true);
+        segment_script.AddPreview(prefabPreviewLeft);
+        segment_script.AddPreview(prefabPreviewRight, true);
 
-        // Move to fit start transform
-        new_segment.transform.position += new_segment.transform.forward * 4;
-
-        // Move to fit previous segments
-        new_segment.transform.position += new_segment.transform.forward * this.numberSegmentsCurrent * 8;
-    }
-
-    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    // Adds previews to one segment
-    private void AddPreview(GameObject segment, GameObject prefabPreview, bool isRight = false)
-    {
-        // Instantiate new preview
-        GameObject new_preview = Instantiate(prefabPreview, Vector3.zero, Quaternion.identity, segment.transform);
-
-        // Remove editor only stuff
-        new_preview.transform.GetChild(0).gameObject.SetActive(false);
-        
-        // Rotate preview for other side
-        if(isRight)
-        {
-            new_preview.transform.position = new Vector3(0, 0, 8);
-            new_preview.transform.rotation = new Quaternion(0, 180, 0, 0);
-        }
-    }
+        // Move correct position
+        segment_script.setTargetIndexAndForwardTranslation(this.numberDynamicSegments + 1);
+        segment_script.moveToTargetForwardTranslation(animate);
+    }    
 }
