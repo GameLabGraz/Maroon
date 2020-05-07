@@ -20,7 +20,6 @@ public class WaterPlane : PausableObject, IResetObject
     [SerializeField, HideInInspector]
     private Mesh planeMesh;
 
-    [SerializeField]
     private List<WaveGenerator> waveGenerators = new List<WaveGenerator>();
 
     [SerializeField]

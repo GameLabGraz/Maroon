@@ -22,6 +22,9 @@ public class WaveGeneratorPoolHandler : MonoBehaviour
 
     private void Start()
     {
+        // Find slit plates in scene
+        mSlitPlates = GameObject.FindGameObjectsWithTag("SlitPlate");
+
         WaveGenerator basinWaveGenerator = GameObject.Find("WaveGeneratorBasin").GetComponent<WaveGenerator>();
         mGenerators.Add(generatorIdCount++, basinWaveGenerator);
         Instance.RegisterWaveGenerator(basinWaveGenerator);
