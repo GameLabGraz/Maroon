@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Maroon.Physics.HuygensPrinciple
 {
-    //[ExecuteInEditMode]
+    [ExecuteInEditMode]
     public class SlitPlate : MonoBehaviour, IResetObject
     {
         [Header("Properties")]
