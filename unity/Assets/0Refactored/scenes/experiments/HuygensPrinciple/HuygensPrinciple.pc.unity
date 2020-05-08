@@ -249,6 +249,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 602218157930835564, guid: 40aab8bc34f575e4eaddf6b9545c0eef,
+        type: 3}
+      propertyPath: slitWidth
+      value: 0.14
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 40aab8bc34f575e4eaddf6b9545c0eef, type: 3}
 --- !u!1001 &112394542
@@ -868,7 +873,7 @@ PrefabInstance:
     - target: {fileID: 5376674144982438886, guid: 5320e11e368a6e74081ffa27fc5479a2,
         type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5376674144982438886, guid: 5320e11e368a6e74081ffa27fc5479a2,
         type: 3}
@@ -928,20 +933,43 @@ PrefabInstance:
     - target: {fileID: 5376674144982438886, guid: 5320e11e368a6e74081ffa27fc5479a2,
         type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[2].m_CallState
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5376674144982438886, guid: 5320e11e368a6e74081ffa27fc5479a2,
         type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[2].m_MethodName
-      value: 
+      value: RestrictSlidersWidth_PC
       objectReference: {fileID: 0}
     - target: {fileID: 5376674144982438886, guid: 5320e11e368a6e74081ffa27fc5479a2,
         type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 5376674144982438886, guid: 5320e11e368a6e74081ffa27fc5479a2,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[2].m_Target
+      value: 
+      objectReference: {fileID: 342071742}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5320e11e368a6e74081ffa27fc5479a2, type: 3}
+--- !u!1 &342071740 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5376674144982438887, guid: 5320e11e368a6e74081ffa27fc5479a2,
+    type: 3}
+  m_PrefabInstance: {fileID: 296554417}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &342071742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 342071740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cff875b3f085e7d46a7d585208d55633, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &716340911 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5376674144822327697, guid: 5320e11e368a6e74081ffa27fc5479a2,

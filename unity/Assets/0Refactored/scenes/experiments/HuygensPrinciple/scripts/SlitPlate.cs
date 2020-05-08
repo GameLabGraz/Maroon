@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Maroon.Physics.HuygensPrinciple
 {
-    [ExecuteInEditMode]
+   // [ExecuteInEditMode]
     public class SlitPlate : MonoBehaviour, IResetObject
     {
         [Header("Properties")]
@@ -234,7 +234,7 @@ namespace Maroon.Physics.HuygensPrinciple
         {
             foreach (var section in midSections)
             {
-                DestroyImmediate(section);
+                Destroy(section);
             }
 
             ResetWaveGenerators();
@@ -246,7 +246,7 @@ namespace Maroon.Physics.HuygensPrinciple
             foreach (var generator in waveGeneratorList)
             {
                 Instance.RemoveWaveGenerator(generator);
-                DestroyImmediate(generator.gameObject);
+                Destroy(generator.gameObject);
             }
             waveGeneratorList.Clear();
         }
