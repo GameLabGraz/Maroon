@@ -21,6 +21,8 @@ namespace Maroon.Physics
         public QuantityFloat ropeLength = 0.3f;
 
         public QuantityFloat elongation = 0.0f;
+		
+		private float[] _previousElongations = new float[2]; // used to determine zeros
 
         [SerializeField]
         private GameObject _standRopeJoint;
@@ -95,7 +97,21 @@ namespace Maroon.Physics
         
         protected override void HandleFixedUpdate()
         {
-          Elongation = transform.rotation.x;
+			Elongation = transform.rotation.x;
+		  
+			// determine zeros:
+			float currentElongation = Math.Abs(Elongation);
+			if(_previousElongations[0] > _previousElongations[1] && currentElongation > _previousElongations[1])
+			{
+				Elongation = 0f; // should not be noticable
+				Assessment.AssessmentManager.Instance.SendDataUpdate(
+					this.GetComponent<Assessment.AssessmentObject>().ObjectID,
+					"elongation",
+					Elongation
+				);
+			}
+			_previousElongations[0] = _previousElongations[1];
+			_previousElongations[1] = currentElongation;
         }
 
         public float GetDeflection()

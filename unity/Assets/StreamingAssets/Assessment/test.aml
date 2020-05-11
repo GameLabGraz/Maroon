@@ -1,4 +1,3 @@
-
 load slide "pendulum_task_1.xml" into slide_1
 
 pattern init:
@@ -7,40 +6,67 @@ pattern init:
 		where class == [Display] \
 		into board
 	display slide_1 on board
-	feedback success "Willkommen beim Experiment 'Fadenpendel'."
+	feedback success "Welcome to the experiment 'Simple Pendulum'."
 
 
 pattern Measurement:
 
-	# Bind contextual objects
 	query objects where class == [StopWatch] into sw
-	
-	feedback hint "Objects found and bound"
-	
+		
 	@snapshot s
 	match action start on sw into _, sw:
 		query objects \
 			where class == [Pendulum] into p
 			
-		feedback hint "Pendulum object found and bound"
-		
-	set cycles = 0
+	set half_cycles = 0
 	match group {0, inf}:
-		match property changed \
-			[direction] on p
-		set cycles = cycles + 1
+		match property changed [elongation] on p where elongation == 0
+		set half_cycles = half_cycles + 1
 	
 	match action stop on sw
 	
-	if diff_p(s:p.elongation, p.elongation) <= 0.1:
-		feedback success "Gut gemacht! Deine Messung liegt gut in der Toleranz."
+	set diff = abs(p.elongation - s:p.elongation)
+	if diff <= radians(3):
+		feedback success "Well done! Your measurement lies well within the tolerance range."
+		if half_cycles / 2 >= 5:
+			feedback success "It was a good strategy to use " + half_cycles / 2 + " cycles to improve the precision."
+	elif diff <= radians(5):
+		feedback warning "The measurement of the cycle duration could be a little more precise."
 	else:
-		feedback warning "Du hast keine vollständigen Perioden gemessen!"
+		feedback mistake "You did not measure a full cycle duration."
+	
+	record
 
 
 pattern FrequencyCalculation:
-	match action submit
-	feedback success "Danke für das Einreichen der Antwort"
+	match first:
+		match action submit:
+			query patterns \
+				where name == [Measurement] \
+				into m
+			assert true
+			feedback success "Thank you for submitting your result."
+		match action submit:
+			feedback warning "How did you find your result? No measurements have been performed."
+			
 
-
+pattern MeasurementSeriesLength:
+	query objects where class == [Pendulum] limit 1 into p
+	match pattern Measurement into m
+	set mass = p.weight
+	set count = 1
+	match group {0, inf}:
+		match pattern Measurement into m
+		assert p.weight == mass
+		set count = count + 1
+	match first:
+		match action submit
+		match property changed [weight] on p
+	if count > 4:
+		feedback success "You have successfully performed a measurement series of " + count + " different lengths."
+	elif count > 1:
+		feedback warning "A measurement series should at least consist of 5 different lengths."
 	
+
+
+
