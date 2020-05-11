@@ -4,7 +4,7 @@ namespace Maroon.Assessment.Content
 {
     public class AssessmentSlide : AssessmentObject
     {
-        protected override void Start()
+        protected override void Awake()
         {
             classType = AssessmentClass.Slide;
         }

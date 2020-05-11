@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Maroon.Physics;
 using UnityEngine;
 
 [Serializable]
@@ -31,6 +32,11 @@ public class PlaneVisualization : MonoBehaviour, IResetObject, IResetWholeObject
     public ChargesCallback onGetChargePosition;
     public IntConditionCallback onGetMaxChargesCount;
     public BoolConditionCallback onAllowVisualization;
+
+    [Header("Assessment System")] 
+    public QuantityBool voltageVisualization = false;
+    public QuantityBool equipotentialLineVisualization = false;
+    public QuantityBool ironFilingVisualization = false;
     
     private int _maxCnt;
     
@@ -108,6 +114,8 @@ public class PlaneVisualization : MonoBehaviour, IResetObject, IResetWholeObject
         }
         
         _currentMode = Mode.Disabled;
+
+        voltageVisualization.Value = equipotentialLineVisualization.Value = ironFilingVisualization.Value = false;
     }
 
     public void ShowIronFilling()
@@ -131,6 +139,7 @@ public class PlaneVisualization : MonoBehaviour, IResetObject, IResetWholeObject
         }
         
         _currentMode = Mode.IronFilling;
+        ironFilingVisualization.Value = true;
     }
 
     public void ShowVoltageVisualization()
@@ -147,6 +156,7 @@ public class PlaneVisualization : MonoBehaviour, IResetObject, IResetWholeObject
         ShowShader(voltageMaterial);
 
         _currentMode = Mode.VoltageVis;
+        voltageVisualization.Value = true;
     }
 
     public void StopVisualization()
@@ -168,6 +178,7 @@ public class PlaneVisualization : MonoBehaviour, IResetObject, IResetWholeObject
         Disable();
         ShowShader(equipotentialMaterial);
         _currentMode = Mode.EquipotentialVis;
+        equipotentialLineVisualization.Value = true;
     }
 
     private void ShowShader(Material mat)
@@ -201,5 +212,20 @@ public class PlaneVisualization : MonoBehaviour, IResetObject, IResetWholeObject
     public void ResetWholeObject()
     {
         Disable();
+    }
+
+    public IQuantity GetVoltageVis()
+    {
+        return voltageVisualization;
+    }
+
+    public IQuantity GetEquipotentialLineVis()
+    {
+        return equipotentialLineVisualization;
+    }
+
+    public IQuantity GetIronFilingVis()
+    {
+        return ironFilingVisualization;
     }
 }

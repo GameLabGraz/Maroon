@@ -31,7 +31,7 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
 
     public float radius = 0.7022421f;
     [Tooltip("Tells whether the charge moves or has a fixed position.")]
-    public bool fixedPosition = false;
+    public QuantityBool fixedPosition = false;
     
     [Header("Movement Settings")]
     public bool pauseSimulationWhileMoving = true;
@@ -151,7 +151,7 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
 
     public void SetFixedPosition(bool isPositionFixed)
     {
-        fixedPosition = isPositionFixed;
+        fixedPosition.Value = isPositionFixed;
         particleFixingRing.SetActive(fixedPosition);
     }
 
@@ -255,5 +255,15 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
     public void OnDeleteObject()
     {
         _coulombLogic.RemoveParticle(this, true);
+    }
+
+    public IQuantity GetCharge()
+    {
+        return charge;
+    }
+
+    public IQuantity GetFixedPosition()
+    {
+        return fixedPosition;
     }
 }

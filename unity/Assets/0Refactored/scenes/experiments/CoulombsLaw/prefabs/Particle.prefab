@@ -171,9 +171,7 @@ GameObject:
   - component: {fileID: 1182506105227209955}
   - component: {fileID: 1376864048248906643}
   - component: {fileID: 5246116731593758841}
-  - component: {fileID: 828056924683420725}
-  - component: {fileID: 8712604458290999658}
-  - component: {fileID: 3748022539885278531}
+  - component: {fileID: 2519088853291130249}
   m_Layer: 0
   m_Name: Particle
   m_TagString: Particle
@@ -217,19 +215,22 @@ MonoBehaviour:
   particleFixingRing: {fileID: 222567040141845088}
   highlightMaterial: {fileID: 2100000, guid: a282b470dd6667848904cb12c35a1a2c, type: 2}
   charge:
-    assessmentName: 
+    assessmentName: charge
     isDynamic: 0
     _value: 0
     onValueChanged:
       m_PersistentCalls:
         m_Calls: []
-    onValueChangedWithName:
-      m_PersistentCalls:
-        m_Calls: []
   maxChargeValue: 5
   minChargeValue: -5
   radius: 0.7022421
-  fixedPosition: 0
+  fixedPosition:
+    assessmentName: fixed_position
+    isDynamic: 0
+    _value: 0
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
   pauseSimulationWhileMoving: 1
   deleteIfOutsideBoundaries: 1
   _inUse: 0
@@ -390,29 +391,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   observingObject: {fileID: 0}
   position:
-    assessmentName: 
+    assessmentName: position
     isDynamic: 0
     _value: {x: 0, y: 0, z: 0}
     onValueChanged:
       m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 828056924683420725}
-          m_MethodName: OnAttributeValueChanged
-          m_Mode: 5
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: position
-            m_BoolArgument: 0
-          m_CallState: 2
-    onValueChangedWithName:
-      m_PersistentCalls:
         m_Calls: []
   observeLocal: 1
   tolerance: 0.00001
---- !u!114 &828056924683420725
+--- !u!114 &2519088853291130249
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -421,40 +408,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 222567040141845092}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 701ec518203a55747a4576ce372f6742, type: 3}
+  m_Script: {fileID: 11500000, guid: 0d275e28287338949acc3d1598513343, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   classType: 5
---- !u!114 &8712604458290999658
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 222567040141845092}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 432d575816794734c8072fa3354e8f93, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  component: {fileID: 222567040141845091}
-  attribute: charge
-  isDynamic: 0
---- !u!114 &3748022539885278531
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 222567040141845092}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 432d575816794734c8072fa3354e8f93, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  component: {fileID: 5246116731593758841}
-  attribute: position
-  isDynamic: 0
+  quantityCallbacks:
+  - _target: {fileID: 5246116731593758841}
+    _methodName: GetPosition
+    _args: []
+    _dynamic: 0
+    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    dirty: 0
+  - _target: {fileID: 222567040141845091}
+    _methodName: GetCharge
+    _args: []
+    _dynamic: 0
+    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    dirty: 0
+  - _target: {fileID: 222567040141845091}
+    _methodName: GetFixedPosition
+    _args: []
+    _dynamic: 0
+    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    dirty: 0
 --- !u!1 &222567040141845094
 GameObject:
   m_ObjectHideFlags: 0

@@ -6,6 +6,7 @@ using Antares.Evaluation;
 using Antares.Evaluation.Engine;
 using Antares.Evaluation.Util;
 using Maroon.Assessment.Handler;
+using Maroon.Physics;
 
 namespace Maroon.Assessment
 {
@@ -99,7 +100,28 @@ namespace Maroon.Assessment
                 EventBuilder.Set(watchValue.PropertyName, watchValue.GetValue());
         }
 
+        public void RegisterAssessmentObject(AssessmentObjectCompressed assessmentObject)
+        {
+            Debug.Log($"AssessmentManager::RegisterAssessmentObject: {assessmentObject.ObjectID}");
+
+            EventBuilder
+                .PerceiveObject(assessmentObject.ObjectID)
+                .Set("class", assessmentObject.ClassType.ToString());
+
+            foreach (var watchValue in assessmentObject.WatchedValues) {
+                Debug.Log("AssessmentManager::" + assessmentObject.ObjectID + ": " + watchValue.GetName());
+                EventBuilder.Set(watchValue.GetName(), watchValue.GetValue());
+            }
+        }
+
         public void DeregisterAssessmentObject(AssessmentObject assessmentObject)
+        {
+            Debug.Log($"AssessmentManager::DeregisterAssessmentObject: {assessmentObject.ObjectID}");
+
+            EventBuilder.UnlearnObject(assessmentObject.ObjectID);
+        }
+        
+        public void DeregisterAssessmentObject(AssessmentObjectCompressed assessmentObject)
         {
             Debug.Log($"AssessmentManager::DeregisterAssessmentObject: {assessmentObject.ObjectID}");
 

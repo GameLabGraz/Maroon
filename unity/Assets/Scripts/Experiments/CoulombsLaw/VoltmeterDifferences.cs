@@ -16,7 +16,7 @@ public class VoltmeterDifferences : MonoBehaviour
     public bool showUnitInText = true;
 
     [Header("Assessment System")]
-    public QuantityFloat currentValue;
+    public QuantityFloat currentValue = 0;
 
     private bool _isOn;
     
@@ -62,13 +62,13 @@ public class VoltmeterDifferences : MonoBehaviour
     }
     
     private string GetDifference(){
-        currentValue = positiveMeasuringPoint.GetPotentialInMicroVolt() - negativeMeasuringPoint.GetPotentialInMicroVolt();
+        currentValue.Value = positiveMeasuringPoint.GetPotentialInMicroVolt() - negativeMeasuringPoint.GetPotentialInMicroVolt();
         return GetCurrentFormattedString();
     }
 
     private string GetCurrentFormattedString()
     {
-        float check = currentValue;
+        float check = currentValue.Value;
         for (var cnt = 0; Mathf.Abs(check) < 1f && cnt < 2; ++cnt)
         {
             check *= Mathf.Pow(10, 3);
@@ -81,7 +81,7 @@ public class VoltmeterDifferences : MonoBehaviour
     private string GetCurrentUnit()
     {
         var unit = "V";
-        var check = currentValue;
+        var check = currentValue.Value;
         if (check > 1f)
             return unit;
         check *= Mathf.Pow(10, 3);
@@ -98,5 +98,10 @@ public class VoltmeterDifferences : MonoBehaviour
     public void TurnOff()
     {
         _isOn = false;
+    }
+
+    public IQuantity GetVoltage()
+    {
+        return currentValue;
     }
 }

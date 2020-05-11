@@ -3204,11 +3204,7 @@ GameObject:
   m_Component:
   - component: {fileID: 249590952}
   - component: {fileID: 249590959}
-  - component: {fileID: 249590958}
   - component: {fileID: 249590957}
-  - component: {fileID: 249590956}
-  - component: {fileID: 249590955}
-  - component: {fileID: 249590954}
   - component: {fileID: 249590953}
   m_Layer: 0
   m_Name: Voltmeter
@@ -3240,78 +3236,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 249590951}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 432d575816794734c8072fa3354e8f93, type: 3}
+  m_Script: {fileID: 11500000, guid: 0d275e28287338949acc3d1598513343, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  component: {fileID: 249590959}
-  attribute: currentValue
-  isDynamic: 0
---- !u!114 &249590954
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 249590951}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 432d575816794734c8072fa3354e8f93, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  component: {fileID: 249590955}
-  attribute: position
-  isDynamic: 0
---- !u!114 &249590955
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 249590951}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c367082969a1e424080b986995cd4d63, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  observingObject: {fileID: 941569012}
-  position:
-    assessmentName: 
-    isDynamic: 0
-    _value: {x: 0, y: 0, z: 0}
-    onValueChanged:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 249590957}
-          m_MethodName: OnAttributeValueChanged
-          m_Mode: 5
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: negative_terminal_position
-            m_BoolArgument: 0
-          m_CallState: 2
-    onValueChangedWithName:
-      m_PersistentCalls:
-        m_Calls: []
-  observeLocal: 1
-  tolerance: 0.00001
---- !u!114 &249590956
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 249590951}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 432d575816794734c8072fa3354e8f93, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  component: {fileID: 249590958}
-  attribute: position
-  isDynamic: 0
+  classType: 3
+  quantityCallbacks:
+  - _target: {fileID: 941568987}
+    _methodName: GetPosition
+    _args: []
+    _dynamic: 0
+    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    dirty: 0
+  - _target: {fileID: 941568988}
+    _methodName: GetPosition
+    _args: []
+    _dynamic: 0
+    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    dirty: 0
+  - _target: {fileID: 249590959}
+    _methodName: GetVoltage
+    _args: []
+    _dynamic: 0
+    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    dirty: 0
 --- !u!114 &249590957
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3325,42 +3275,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   classType: 3
---- !u!114 &249590958
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 249590951}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c367082969a1e424080b986995cd4d63, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  observingObject: {fileID: 941569005}
-  position:
-    assessmentName: 
-    isDynamic: 0
-    _value: {x: 0, y: 0, z: 0}
-    onValueChanged:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 249590957}
-          m_MethodName: OnAttributeValueChanged
-          m_Mode: 5
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: positive_terminal_position
-            m_BoolArgument: 0
-          m_CallState: 2
-    onValueChangedWithName:
-      m_PersistentCalls:
-        m_Calls: []
-  observeLocal: 1
-  tolerance: 0.00001
 --- !u!114 &249590959
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3381,13 +3295,10 @@ MonoBehaviour:
   onPerDefault: 1
   showUnitInText: 1
   currentValue:
-    assessmentName: 
+    assessmentName: voltage
     isDynamic: 0
     _value: 0
     onValueChanged:
-      m_PersistentCalls:
-        m_Calls: []
-    onValueChangedWithName:
       m_PersistentCalls:
         m_Calls: []
 --- !u!1 &264305264
@@ -16311,6 +16222,48 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 941568970}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &941568987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 941568973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c367082969a1e424080b986995cd4d63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  position:
+    assessmentName: positive_terminal_position
+    isDynamic: 0
+    _value: {x: 0, y: 0, z: 0}
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+  observeLocal: 1
+  tolerance: 0.00001
+--- !u!114 &941568988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 941568972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c367082969a1e424080b986995cd4d63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  position:
+    assessmentName: negative_terminal_position
+    isDynamic: 0
+    _value: {x: 0, y: 0, z: 0}
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+  observeLocal: 1
+  tolerance: 0.00001
 --- !u!4 &941568989 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6896857272221569599, guid: bdfec920f90e5d7499f7d0276bf96c41,
@@ -17023,7 +16976,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 941568970}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 2006672461}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 53642c4af3e6c5e4db7b24b1a3ce15c6, type: 3}
@@ -17035,6 +16988,48 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 941568970}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &941569022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 941568977}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d275e28287338949acc3d1598513343, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  classType: 8
+  quantityCallbacks:
+  - _target: {fileID: 941569019}
+    _methodName: GetVoltageVis
+    _args: []
+    _dynamic: 0
+    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    dirty: 0
+  - _target: {fileID: 941569019}
+    _methodName: GetEquipotentialLineVis
+    _args: []
+    _dynamic: 0
+    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    dirty: 0
+  - _target: {fileID: 941569019}
+    _methodName: GetIronFilingVis
+    _args: []
+    _dynamic: 0
+    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    dirty: 0
+  - _target: {fileID: 941569017}
+    _methodName: GetVectorFieldArrows
+    _args: []
+    _dynamic: 0
+    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    dirty: 0
 --- !u!114 &941569102
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19454,7 +19449,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.03128294, y: 0.123}
   m_AnchorMax: {x: 1, y: 0.9850001}
-  m_AnchoredPosition: {x: -6.5, y: 0.099975586}
+  m_AnchoredPosition: {x: -6.5, y: 0.099853516}
   m_SizeDelta: {x: -13, y: -0.30000305}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1109837620
@@ -28441,12 +28436,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 1747568414}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 432d575816794734c8072fa3354e8f93, type: 3}
+  m_Script: {fileID: 11500000, guid: 0d275e28287338949acc3d1598513343, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  component: {fileID: 1747568417}
-  attribute: position
-  isDynamic: 0
+  classType: 4
+  quantityCallbacks:
+  - _target: {fileID: 1747568416}
+    _methodName: GetDistance
+    _args: []
+    _dynamic: 0
+    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    dirty: 0
+  - _target: {fileID: 2001467426}
+    _methodName: GetPosition
+    _args: []
+    _dynamic: 0
+    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    dirty: 0
+  - _target: {fileID: 2001467425}
+    _methodName: GetPosition
+    _args: []
+    _dynamic: 0
+    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    dirty: 0
 --- !u!114 &1747568416 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4335284374865567558, guid: 25af714453cfd4147834948a37c2a53e,
@@ -28459,121 +28474,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f9c14f247d45e746930a6cd1386056a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1747568417
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1747568414}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c367082969a1e424080b986995cd4d63, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  observingObject: {fileID: 2001467414}
-  position:
-    assessmentName: 
-    isDynamic: 0
-    _value: {x: 0, y: 0, z: 0}
-    onValueChanged:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 1747568421}
-          m_MethodName: OnAttributeValueChanged
-          m_Mode: 5
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: start_position
-            m_BoolArgument: 0
-          m_CallState: 2
-    onValueChangedWithName:
-      m_PersistentCalls:
-        m_Calls: []
-  observeLocal: 1
-  tolerance: 0.00001
---- !u!114 &1747568418
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1747568414}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 432d575816794734c8072fa3354e8f93, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  component: {fileID: 1747568419}
-  attribute: possition
-  isDynamic: 0
---- !u!114 &1747568419
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1747568414}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c367082969a1e424080b986995cd4d63, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  observingObject: {fileID: 2001467413}
-  position:
-    assessmentName: 
-    isDynamic: 0
-    _value: {x: 0, y: 0, z: 0}
-    onValueChanged:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 1747568421}
-          m_MethodName: OnAttributeValueChanged
-          m_Mode: 5
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: end_position
-            m_BoolArgument: 0
-          m_CallState: 2
-    onValueChangedWithName:
-      m_PersistentCalls:
-        m_Calls: []
-  observeLocal: 1
-  tolerance: 0.00001
---- !u!114 &1747568420
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1747568414}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 432d575816794734c8072fa3354e8f93, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  component: {fileID: 1747568416}
-  attribute: currentDistance
-  isDynamic: 0
---- !u!114 &1747568421
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1747568414}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 701ec518203a55747a4576ce372f6742, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  classType: 7
 --- !u!4 &1753449352 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 23911724280138401, guid: bdfec920f90e5d7499f7d0276bf96c41,
@@ -31874,6 +31774,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4335284374865567558, guid: 25af714453cfd4147834948a37c2a53e,
         type: 3}
+      propertyPath: currentDistance.onValueChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4335284374865567558, guid: 25af714453cfd4147834948a37c2a53e,
+        type: 3}
       propertyPath: onDistanceChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 0
       objectReference: {fileID: 0}
@@ -31895,6 +31800,31 @@ PrefabInstance:
     - target: {fileID: 4335284374865567558, guid: 25af714453cfd4147834948a37c2a53e,
         type: 3}
       propertyPath: onDistanceChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 4335284374865567558, guid: 25af714453cfd4147834948a37c2a53e,
+        type: 3}
+      propertyPath: currentDistance.onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4335284374865567558, guid: 25af714453cfd4147834948a37c2a53e,
+        type: 3}
+      propertyPath: currentDistance.onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4335284374865567558, guid: 25af714453cfd4147834948a37c2a53e,
+        type: 3}
+      propertyPath: currentDistance.onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1747568415}
+    - target: {fileID: 4335284374865567558, guid: 25af714453cfd4147834948a37c2a53e,
+        type: 3}
+      propertyPath: currentDistance.onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: DummyCallback
+      objectReference: {fileID: 0}
+    - target: {fileID: 4335284374865567558, guid: 25af714453cfd4147834948a37c2a53e,
+        type: 3}
+      propertyPath: currentDistance.onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 6231548434669007651, guid: 25af714453cfd4147834948a37c2a53e,
@@ -32132,18 +32062,6 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 2001467409}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &2001467413 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7096164154862913325, guid: 25af714453cfd4147834948a37c2a53e,
-    type: 3}
-  m_PrefabInstance: {fileID: 2001467409}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &2001467414 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 956786379726660032, guid: 25af714453cfd4147834948a37c2a53e,
-    type: 3}
-  m_PrefabInstance: {fileID: 2001467409}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2001467423
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32178,6 +32096,48 @@ MonoBehaviour:
   IgnoreColliders:
   - {fileID: 941568981}
   - {fileID: 941568986}
+--- !u!114 &2001467425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2001467411}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c367082969a1e424080b986995cd4d63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  position:
+    assessmentName: end_position
+    isDynamic: 0
+    _value: {x: 0, y: 0, z: 0}
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+  observeLocal: 1
+  tolerance: 0.00001
+--- !u!114 &2001467426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2001467412}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c367082969a1e424080b986995cd4d63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  position:
+    assessmentName: start_position
+    isDynamic: 0
+    _value: {x: 0, y: 0, z: 0}
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+  observeLocal: 1
+  tolerance: 0.00001
 --- !u!1 &2002427538
 GameObject:
   m_ObjectHideFlags: 0
@@ -32250,6 +32210,54 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
+--- !u!1 &2006672461 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6896857270828580107, guid: bdfec920f90e5d7499f7d0276bf96c41,
+    type: 3}
+  m_PrefabInstance: {fileID: 941568970}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2006672462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2006672461}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d275e28287338949acc3d1598513343, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  classType: 3
+  quantityCallbacks:
+  - _target: {fileID: 941569020}
+    _methodName: GetVoltageVis
+    _args: []
+    _dynamic: 0
+    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    dirty: 0
+  - _target: {fileID: 941569020}
+    _methodName: GetEquipotentialLineVis
+    _args: []
+    _dynamic: 0
+    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    dirty: 0
+  - _target: {fileID: 941569020}
+    _methodName: GetIronFilingVis
+    _args: []
+    _dynamic: 0
+    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    dirty: 0
+  - _target: {fileID: 941569018}
+    _methodName: GetVectorFieldArrows
+    _args: []
+    _dynamic: 0
+    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    dirty: 0
 --- !u!1 &2015188470
 GameObject:
   m_ObjectHideFlags: 0

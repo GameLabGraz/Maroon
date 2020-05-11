@@ -229,7 +229,8 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     {
         var obj = Instantiate(prefab, _in3dMode ? vectorField3d.transform : vectorField2d.transform, true);
         Debug.Assert(obj != null);
-
+        
+        
         var chargeBehaviour = obj.GetComponent<CoulombChargeBehaviour>();
         Debug.Assert(chargeBehaviour != null);
         if(positionInWorldCoord) chargeBehaviour.SetPosition(position);
@@ -239,8 +240,8 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
                 obj.transform.localPosition = xOrigin3d.localPosition + CalcToWorldSpace(position, true);
             else
             {
-                Debug.Log("Position" + position);
-                Debug.Log("Calc to worl psace: " + CalcToWorldSpace(position));
+                // Debug.Log("Position" + position);
+                // Debug.Log("Calc to worl psace: " + CalcToWorldSpace(position));
                 var pos = xOrigin2d.position + CalcToWorldSpace(new Vector3(position.x, position.y));
                 obj.transform.position = pos;
 //                pos = obj.transform.localPosition;

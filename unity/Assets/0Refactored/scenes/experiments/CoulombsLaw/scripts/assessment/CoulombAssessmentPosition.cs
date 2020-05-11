@@ -1,11 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using Maroon.Physics;
 using UnityEngine;
 
 public class CoulombAssessmentPosition : MonoBehaviour
 {
-    public Transform observingObject = null;
-    
     [SerializeField]
     public QuantityVector3 position;
     public bool observeLocal = true;
@@ -17,27 +16,33 @@ public class CoulombAssessmentPosition : MonoBehaviour
     private Transform _transform;
     
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         var obj  = GameObject.Find("CoulombLogic");
         if (obj)
             _coulombLogic = obj.GetComponent<CoulombLogic>();
 
-        if (observingObject)
-            _transform = observingObject;
-        else
-            _transform = transform;
-
-        position = _coulombLogic.WorldToCalcSpace(_transform);
+        _transform = transform;
+        
+        position.Value = _coulombLogic.WorldToCalcSpace(_transform);
         _lastPosition = observeLocal ? _transform.localPosition : _transform.position;
     }
     
     private void Update()
     {
-        if (Vector3.Distance(_lastPosition, observeLocal ? _transform.localPosition : _transform.position) > tolerance)
+        if (_transform.gameObject.activeSelf && Vector3.Distance(_lastPosition, observeLocal ? _transform.localPosition : _transform.position) > tolerance)
         {
-            position = _coulombLogic.WorldToCalcSpace(_transform);
+            position.Value = _coulombLogic.WorldToCalcSpace(_transform);
+            _lastPosition = position.Value;
+        }
+        else if (!_transform.gameObject.activeSelf && position.Value.x >= 0)
+        {
+            position.Value = new Vector3(-1, -1, -1);
         }
     }
-
+    
+    public IQuantity GetPosition()
+    {
+        return position;
+    }
 }

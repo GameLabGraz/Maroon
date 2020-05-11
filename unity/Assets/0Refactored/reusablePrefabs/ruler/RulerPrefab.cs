@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Maroon.Physics;
 using UnityEngine;
 using UnityEngine.Events;
@@ -22,7 +23,7 @@ public class RulerPrefab : MonoBehaviour, IResetWholeObject
     public RulerDistanceEvent onDistanceChanged;
 
     private CoulombLogic _coulombLogic;
-    public QuantityFloat currentDistance;
+    public QuantityFloat currentDistance = 0;
     private Vector3 _startPosition;
     
     // Start is called before the first frame update
@@ -39,7 +40,7 @@ public class RulerPrefab : MonoBehaviour, IResetWholeObject
             RulerLine.SetPositions(new[]{RulerStart.transform.position, RulerEnd.transform.position});
         }
 
-        currentDistance = 0;
+        currentDistance.Value = 0;
         onDistanceChanged.Invoke(0f);
     }
 
@@ -58,14 +59,14 @@ public class RulerPrefab : MonoBehaviour, IResetWholeObject
 
             if (Math.Abs(newDist - currentDistance) > 0.0001f)
             {
-                currentDistance = newDist;
+                currentDistance.Value = newDist;
                 onDistanceChanged.Invoke(currentDistance);
             }
         }
         else if(RulerLine.gameObject.activeSelf)
         { 
             RulerLine.gameObject.SetActive(false);
-            currentDistance = 0f;
+            currentDistance.Value = 0f;
             onDistanceChanged.Invoke(0f);
         }
     }
@@ -137,5 +138,10 @@ public class RulerPrefab : MonoBehaviour, IResetWholeObject
             movArrows.SetBoundaries(_coulombLogic.minBoundary2d.transform, _coulombLogic.maxBoundary2d.transform);
         }
         movArrows.gameObject.SetActive(true);
+    }
+
+    public IQuantity GetDistance()
+    {
+        return currentDistance;
     }
 }

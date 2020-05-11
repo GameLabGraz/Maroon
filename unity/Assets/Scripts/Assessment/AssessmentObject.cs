@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Maroon.Physics;
 using UnityEngine;
 
 namespace Maroon.Assessment
@@ -12,7 +13,8 @@ namespace Maroon.Assessment
         Ruler,
         Charge,
         Display,
-        Slide
+        Slide,
+        Visualization
     }
 
     public class AssessmentObject : MonoBehaviour
@@ -28,7 +30,7 @@ namespace Maroon.Assessment
 
         public string ObjectID { get; protected set; }
 
-        protected virtual void Start()
+        protected virtual void Awake()
         {
             ObjectID = $"{gameObject.name}{gameObject.GetInstanceID()}";
 
@@ -45,6 +47,9 @@ namespace Maroon.Assessment
 
         public void OnAttributeValueChanged(string propertyName)
         {
+            if (!_watchValues.ContainsKey(propertyName)) 
+                return;
+            
             var watchValue = _watchValues[propertyName];
             if (watchValue.IsDynamic)
                 return;
