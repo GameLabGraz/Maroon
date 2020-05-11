@@ -44,7 +44,7 @@ namespace Maroon.Assessment
         {
             if (isDynamic) return;
             
-            Debug.Log(ObjectID + "::" + name + " = " + val);
+            // Debug.Log(ObjectID + "::" + name + " = " + val);
             AssessmentManager.Instance?.SendDataUpdate(ObjectID, name, val);
         }
         

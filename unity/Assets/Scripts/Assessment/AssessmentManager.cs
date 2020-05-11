@@ -153,7 +153,7 @@ namespace Maroon.Assessment
 
         public void SendDataUpdate(string objectId, string propertyName, object value)
         {
-            Debug.Log($"AssessmentManager::SendDataUpdate: {objectId}.{propertyName}={value}");
+            // Debug.Log($"AssessmentManager::SendDataUpdate: {objectId}.{propertyName}={value}");
 
             EventBuilder.UpdateDataOf(objectId).Set(propertyName, value);
         }

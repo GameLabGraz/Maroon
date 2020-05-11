@@ -6,7 +6,7 @@ using UnityEngine;
 public class CoulombAssessmentPosition : MonoBehaviour
 {
     [SerializeField]
-    public QuantityVector3 position;
+    public QuantityVector3 position = new Vector3(-1, -1, -1);
     public bool observeLocal = true;
     [Range(0f, 0.1f)]
     public float tolerance = 0.00001f;
