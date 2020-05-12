@@ -115,7 +115,7 @@ public class scrSegmentBuilder : MonoBehaviour
         // Create new segment
         GameObject new_segment = Instantiate(this.prefabSegment, new Vector3(0, 0, 500), Quaternion.identity);
         new_segment.transform.SetParent(this.staticSegmentContainer.transform);
-        var segment_script = (scrLaboratorySegment) new_segment.GetComponent(typeof(scrLaboratorySegment));
+        var segment_script = new_segment.GetComponent<scrLaboratorySegment>();
 
         // Add previews
         segment_script.AddPreview(prefabPreviewLeft);
