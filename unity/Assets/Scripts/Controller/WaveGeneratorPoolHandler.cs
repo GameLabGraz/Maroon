@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Maroon.Physics.HuygensPrinciple;
 using UnityEngine;
 
 public class WaveGeneratorPoolHandler : MonoBehaviour
@@ -6,7 +7,8 @@ public class WaveGeneratorPoolHandler : MonoBehaviour
 
     private ulong generatorIdCount = 0;
     private Dictionary<ulong, WaveGenerator> mGenerators = new Dictionary<ulong, WaveGenerator>();
-    private GameObject[] mSlitPlates;
+    private SlitPlate slitPlate;
+    private float waveAmplitudeStorage = 0.5f;
 
     private static WaterPlane _waterPlane_instance;
   
@@ -22,9 +24,7 @@ public class WaveGeneratorPoolHandler : MonoBehaviour
 
     private void Start()
     {
-        // Find slit plates in scene
-        mSlitPlates = GameObject.FindGameObjectsWithTag("SlitPlate");
-
+        slitPlate = GameObject.Find("Plate").GetComponent<SlitPlate>();
         WaveGenerator basinWaveGenerator = GameObject.Find("WaveGeneratorBasin").GetComponent<WaveGenerator>();
         mGenerators.Add(generatorIdCount++, basinWaveGenerator);
         Instance.RegisterWaveGenerator(basinWaveGenerator);
@@ -57,11 +57,11 @@ public class WaveGeneratorPoolHandler : MonoBehaviour
         foreach (WaveGenerator generator in mGenerators.Values)
             generator.WaveAmplitude = waveAmplitude;
 
-        foreach (GameObject slitPlate in mSlitPlates)
+        waveAmplitudeStorage = waveAmplitude * 0.8f;
+        WaveGenerator[] generators = slitPlate.GetComponentsInChildren<WaveGenerator>();
+        foreach (WaveGenerator generator in generators)
         {
-            WaveGenerator[] generators = slitPlate.GetComponentsInChildren<WaveGenerator>();
-            foreach (WaveGenerator generator in generators)
-                generator.WaveAmplitude = waveAmplitude / generators.Length;
+            generator.WaveAmplitude = waveAmplitudeStorage;
         }
     }
 
@@ -99,7 +99,7 @@ public class WaveGeneratorPoolHandler : MonoBehaviour
     {
         var waveGenerator = new GameObject("WaveGenerator");
         WaveGenerator waveGeneratorScript = waveGenerator.AddComponent<WaveGenerator>();
-        waveGeneratorScript.WaveAmplitude = 0.5f;
+        waveGeneratorScript.WaveAmplitude = waveAmplitudeStorage;
         waveGeneratorScript.WaveLength = 0.25f;
         waveGeneratorScript.WaveFrequency = 0.5f;
         waveGeneratorScript.SetPropagationMode(WaveGenerator.WavePropagation.Circular);

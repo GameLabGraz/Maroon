@@ -197,7 +197,7 @@ namespace Maroon.Physics.HuygensPrinciple
 
         private int CalculateGeneratorsPerSlit()
         {        
-            int numberOfGeneratorsPerSlit = 1 + (int)((slitWidth * 10.0f)/2.0f);
+            int numberOfGeneratorsPerSlit = 1 + (int)((slitWidth * 10.0f)/1.5f);
             return numberOfGeneratorsPerSlit; 
         }
 
@@ -266,7 +266,7 @@ namespace Maroon.Physics.HuygensPrinciple
         public void ResetObject()
         {
             ResetCubes();
-            SetupPlateSlits(false);
+            SetupPlateSlits(true);
             LoadPreviousState();
         }
     }

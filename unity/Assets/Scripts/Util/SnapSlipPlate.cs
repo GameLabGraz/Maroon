@@ -53,8 +53,6 @@ public class SnapSlipPlate : MonoBehaviour, IResetObject
         snappedPlate.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionY;
 
         snappedPlate.InteractableObjectGrabbed += OnSnappedPlateGrabbed;
-
-       // RegisterPlateWaveGenerators();
     }
 
     private void OnSnappedPlateGrabbed(object sender, InteractableObjectEventArgs e)
