@@ -32,6 +32,8 @@ public class WaveGenerator : MonoBehaviour
     [SerializeField]
     private bool isActive = true;
 
+    public ulong waveGeneratorKey = 0; 
+
     public float WaveAmplitude { get { return waveAmplitude; } set { waveAmplitude = value; } }
 
     public float WaveLength { get { return waveLength; } set { waveLength = value; } }
@@ -64,5 +66,30 @@ public class WaveGenerator : MonoBehaviour
     public void SetPropagationMode(WavePropagation propagationMode)
     {
         this.propagationMode = propagationMode;
+    }
+
+    public void SetPlaneObject(GameObject plane)
+    {
+        this.planeObject = plane;
+    }
+
+    public GameObject GetPlaneObject()
+    {
+        return this.planeObject;
+    }
+
+    public void SetGeneratorActive(bool status)
+    {
+        this.isActive = status;
+    }
+
+    public void setGeneratorKey(ulong key)
+    {
+        this.waveGeneratorKey = key;
+    }
+
+    public ulong getGeneratorKey()
+    {
+        return this.waveGeneratorKey;
     }
 }

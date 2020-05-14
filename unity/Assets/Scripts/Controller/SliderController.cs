@@ -1,10 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GEAR.Localization;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 using VRTK;
 using VRTK.UnityEventHelper;
+
+[Serializable]
+public class OnValueChangedEvent : UnityEvent<float> { }
 
 public class SliderController : VRTK_Slider, IResetObject
 {
@@ -26,6 +31,9 @@ public class SliderController : VRTK_Slider, IResetObject
     [SerializeField]
     private bool isInteger = false;
 
+    [SerializeField]
+    private OnValueChangedEvent OnValueChanged;
+
     private VRTK_Control_UnityEvents controlEvents;
 
     private Vector3 startPos;
@@ -37,15 +45,17 @@ public class SliderController : VRTK_Slider, IResetObject
         startPos = transform.position;
         startRot = transform.rotation;
 
-        controlEvents = GetComponent<VRTK_Control_UnityEvents>();
-        if (controlEvents == null)
-        {
-            controlEvents = gameObject.AddComponent<VRTK_Control_UnityEvents>();
-        }
-
         UpdateValueText();
+    }
 
-        controlEvents.OnValueChanged.AddListener(HandleChange);
+    private void OnEnable()
+    {
+        ValueChanged += HandleChange;
+    }
+
+    private void OnDisable()
+    {
+        ValueChanged -= HandleChange;
     }
 
     protected override ControlValueRange RegisterValueRange()
@@ -68,8 +78,7 @@ public class SliderController : VRTK_Slider, IResetObject
         if(!ValueText && !ValueTMP)
             return;
 
-        var text = "";
-
+        string text;
         if (_optionKeys.Count > 0)
             text = LanguageManager.Instance.GetString(_optionKeys[(int)GetValue()]);
         else if (isInteger)
@@ -86,6 +95,7 @@ public class SliderController : VRTK_Slider, IResetObject
     private void HandleChange(object sender, Control3DEventArgs e)
     {
         UpdateValueText();
+        OnValueChanged.Invoke(GetValue());
 
         if(invokeObject != null)
         {

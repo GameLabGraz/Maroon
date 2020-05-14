@@ -5,8 +5,6 @@ public class WaterPlaneEditor : Editor
 {
     private WaterPlane waterPlane;
 
-    private SerializedProperty waveGenerators;
-
     private SerializedProperty material;
 
     private SerializedProperty verticesPerLength;
@@ -21,8 +19,6 @@ public class WaterPlaneEditor : Editor
 
     private void OnEnable()
     {
-        waveGenerators = serializedObject.FindProperty("waveGenerators");
-
         material = serializedObject.FindProperty("material");
 
         verticesPerLength = serializedObject.FindProperty("verticesPerLength");
@@ -55,16 +51,6 @@ public class WaterPlaneEditor : Editor
         serializedObject.ApplyModifiedProperties();
         if (EditorGUI.EndChangeCheck())
             waterPlane.UpdatePlane();
-
-        EditorGUILayout.PropertyField(waveGenerators);
-        EditorGUI.indentLevel++;
-        if (waveGenerators.isExpanded)
-        {
-            EditorGUILayout.PropertyField(waveGenerators.FindPropertyRelative("Array.size"));
-            for (int i = 0; i < waveGenerators.arraySize; i++)
-                EditorGUILayout.PropertyField(waveGenerators.GetArrayElementAtIndex(i));
-        }
-        EditorGUI.indentLevel--;
 
         serializedObject.ApplyModifiedProperties();
 

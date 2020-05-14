@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
@@ -20,7 +19,6 @@ public class WaterPlane : PausableObject, IResetObject
     [SerializeField, HideInInspector]
     private Mesh planeMesh;
 
-    [SerializeField]
     private List<WaveGenerator> waveGenerators = new List<WaveGenerator>();
 
     [SerializeField]
@@ -54,13 +52,13 @@ public class WaterPlane : PausableObject, IResetObject
     private float GetTotalWaveValue(Vector3 position)
     {
         float waveValue = 0;
-        foreach(WaveGenerator waveGenerator in waveGenerators)
+        foreach(var waveGenerator in waveGenerators)
         {
-            Vector3 worldPosition = transform.TransformPoint(position);
-            Vector3 worldWaveStartingPoint = waveGenerator.transform.position; //transform.TransformPoint(waveGenerator.getStaringPoint());
+            var worldPosition = transform.TransformPoint(position);
+            var worldWaveStartingPoint = waveGenerator.transform.position; //transform.TransformPoint(waveGenerator.getStaringPoint());
 
-            Vector3 rayDirection = worldWaveStartingPoint - worldPosition;
-            float maxRayLength = Vector3.Distance(worldWaveStartingPoint, worldPosition);
+            var rayDirection = worldWaveStartingPoint - worldPosition;
+            var maxRayLength = Vector3.Distance(worldWaveStartingPoint, worldPosition);
 
             if (!Physics.Raycast(worldPosition, rayDirection, maxRayLength))
                 waveValue += waveGenerator.GetWaveValue(worldPosition, time);
@@ -74,10 +72,10 @@ public class WaterPlane : PausableObject, IResetObject
         planeMesh = new Mesh();
 
         // create vertices
-        List<Vector3> vertices = new List<Vector3>();
-        for (int i = -verticesPerLength; i <= verticesPerLength; i++)
+        var vertices = new List<Vector3>();
+        for (var i = -verticesPerLength; i <= verticesPerLength; i++)
         {
-            for (int j = -verticesPerWidth; j <= verticesPerWidth; j++)
+            for (var j = -verticesPerWidth; j <= verticesPerWidth; j++)
             {
                 vertices.Add(new Vector3(i, 0, j));
             }
@@ -85,8 +83,8 @@ public class WaterPlane : PausableObject, IResetObject
         planeMesh.vertices = vertices.ToArray();
 
         // create triangles
-        List<int> triangles = new List<int>();
-        for (int i = 0; i < vertices.Count - (verticesPerWidth * 2 + 1) - 1; i++)
+        var triangles = new List<int>();
+        for (var i = 0; i < vertices.Count - (verticesPerWidth * 2 + 1) - 1; i++)
         {
             if ((i + 1) % (verticesPerWidth * 2 + 1) == 0)
                 continue;
@@ -103,14 +101,14 @@ public class WaterPlane : PausableObject, IResetObject
 
         planeMesh.triangles = triangles.ToArray();
 
-        Vector2[] uvs = new Vector2[vertices.Count];
-        for (int i = 0; i < uvs.Length; i++)
+        var uvs = new Vector2[vertices.Count];
+        for (var i = 0; i < uvs.Length; i++)
         {
             uvs[i] = new Vector2(vertices[i].x, vertices[i].z);
         }
         planeMesh.uv = uvs;
 
-        MeshFilter meshFilter = GetComponent<MeshFilter>();
+        var meshFilter = GetComponent<MeshFilter>();
         meshFilter.mesh = planeMesh;
 
         
@@ -141,9 +139,9 @@ public class WaterPlane : PausableObject, IResetObject
             return;
 
 
-        for (int i = 0; i < waveVertices.Length; i++)
+        for (var i = 0; i < waveVertices.Length; i++)
         {
-            Vector3 waveVertex = waveVertices[i];
+            var waveVertex = waveVertices[i];
             waveVertex.y = GetTotalWaveValue(waveVertex);
 
             waveVertices[i] = waveVertex;
@@ -160,9 +158,9 @@ public class WaterPlane : PausableObject, IResetObject
         GetComponent<Renderer>().material.SetColor("_ColorMin", startMinColor);
         GetComponent<Renderer>().material.SetColor("_ColorMax", startMaxColor);
 
-        for (int i = 0; i < waveVertices.Length; i++)
+        for (var i = 0; i < waveVertices.Length; i++)
         {
-            Vector3 waveVertex = waveVertices[i];
+            var waveVertex = waveVertices[i];
             waveVertex.y = 0;
 
             waveVertices[i] = waveVertex;
