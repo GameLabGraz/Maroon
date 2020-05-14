@@ -4,105 +4,115 @@ using UnityEngine;
 
 public class WaveGeneratorPoolHandler : MonoBehaviour
 {
+    [SerializeField] private float waveAmplitude;
+    [SerializeField] private float waveLength;
+    [SerializeField] private float waveFrequency;
 
-    private ulong generatorIdCount = 0;
-    private Dictionary<ulong, WaveGenerator> mGenerators = new Dictionary<ulong, WaveGenerator>();
+    [SerializeField] private WaterPlane waterPlane;
+
+    private ulong _generatorIdCount;
+    private Dictionary<ulong, WaveGenerator> _generators = new Dictionary<ulong, WaveGenerator>();
     private SlitPlate slitPlate;
-    private float waveAmplitudeStorage = 0.5f;
 
-    private static WaterPlane _waterPlane_instance;
-  
-    public static WaterPlane Instance
+    private static WaveGeneratorPoolHandler _instance;
+    public static WaveGeneratorPoolHandler Instance
     {
         get
         {
-            if (_waterPlane_instance == null)
-                _waterPlane_instance = FindObjectOfType<WaterPlane>();
-            return _waterPlane_instance;
+            if (_instance == null)
+                _instance = FindObjectOfType<WaveGeneratorPoolHandler>();
+            return _instance;
         }
     }
 
-    private void Start()
+    private void Awake()
     {
         slitPlate = GameObject.Find("Plate").GetComponent<SlitPlate>();
-        WaveGenerator basinWaveGenerator = GameObject.Find("WaveGeneratorBasin").GetComponent<WaveGenerator>();
-        mGenerators.Add(generatorIdCount++, basinWaveGenerator);
-        Instance.RegisterWaveGenerator(basinWaveGenerator);
+
+        foreach (var waveGenerator in FindObjectsOfType<WaveGenerator>())
+        {
+            _generators.Add(_generatorIdCount++, waveGenerator);
+            waterPlane.RegisterWaveGenerator(waveGenerator);
+        }
     }
 
     public void AddWaveGenerator(WaveGenerator generator)
     {
-        generator.setGeneratorKey(generatorIdCount);
-        mGenerators.Add(generatorIdCount++, generator);
-        Instance.RegisterWaveGenerator(generator);
+        generator.setGeneratorKey(_generatorIdCount);
+        _generators.Add(_generatorIdCount++, generator);
+        waterPlane.RegisterWaveGenerator(generator);
     }
 
     public void RemoveWaveGenerator(WaveGenerator generator)
     {
-        Instance.UnregisterWaveGenerator(generator);
-        mGenerators.Remove(generator.getGeneratorKey());
+        waterPlane.UnregisterWaveGenerator(generator);
+        _generators.Remove(generator.getGeneratorKey());
     }
-
-
 
     public WaveGenerator GetWaveGenerator(ulong generatorId)
     {
-        if (mGenerators.ContainsKey(generatorId))
-            return mGenerators[generatorId];
+        if (_generators.ContainsKey(generatorId))
+            return _generators[generatorId];
         return null;
     }
 
     public void SetWaveAmplitude(float waveAmplitude)
     {
-        foreach (WaveGenerator generator in mGenerators.Values)
+        this.waveAmplitude = waveAmplitude;
+
+        foreach (var generator in _generators.Values)
             generator.WaveAmplitude = waveAmplitude;
 
-        waveAmplitudeStorage = waveAmplitude * 0.8f;
-        WaveGenerator[] generators = slitPlate.GetComponentsInChildren<WaveGenerator>();
-        foreach (WaveGenerator generator in generators)
+
+        var generators = slitPlate.GetComponentsInChildren<WaveGenerator>();
+        foreach (var generator in generators)
         {
-            generator.WaveAmplitude = waveAmplitudeStorage;
+            generator.WaveAmplitude = waveAmplitude / generators.Length;
         }
     }
 
     public void SetWaveAmplitude(float waveAmplitude, ulong generatorId)
     {
-        if (mGenerators.ContainsKey(generatorId))
-            mGenerators[generatorId].WaveAmplitude = waveAmplitude;
+        if (_generators.ContainsKey(generatorId))
+            _generators[generatorId].WaveAmplitude = waveAmplitude;
     }
 
     public void SetWaveLength(float waveLength)
     {
-        foreach (WaveGenerator generator in mGenerators.Values)
+        this.waveLength = waveLength;
+
+        foreach (var generator in _generators.Values)
             generator.WaveLength = waveLength;
     }
 
     public void SetWaveLength(float waveLength, ulong generatorId)
     {
-        if (mGenerators.ContainsKey(generatorId))
-            mGenerators[generatorId].WaveLength = waveLength;
+        if (_generators.ContainsKey(generatorId))
+            _generators[generatorId].WaveLength = waveLength;
     }
 
     public void SetWaveFrequency(float waveFrequency)
     {
-        foreach (WaveGenerator generator in mGenerators.Values)
+        this.waveFrequency = waveFrequency;
+
+        foreach (var generator in _generators.Values)
             generator.WaveFrequency = waveFrequency;
     }
 
     public void SetWaveFrequency(float waveFrequency, ulong generatorId)
     {
-        if (mGenerators.ContainsKey(generatorId))
-            mGenerators[generatorId].WaveFrequency = waveFrequency;
+        if (_generators.ContainsKey(generatorId))
+            _generators[generatorId].WaveFrequency = waveFrequency;
     }
 
-    public WaveGenerator CreateWaveGenerator()
+    public WaveGenerator CreateWaveGenerator(WaveGenerator.WavePropagation propagationMode)
     {
         var waveGenerator = new GameObject("WaveGenerator");
-        WaveGenerator waveGeneratorScript = waveGenerator.AddComponent<WaveGenerator>();
-        waveGeneratorScript.WaveAmplitude = waveAmplitudeStorage;
-        waveGeneratorScript.WaveLength = 0.25f;
-        waveGeneratorScript.WaveFrequency = 0.5f;
-        waveGeneratorScript.SetPropagationMode(WaveGenerator.WavePropagation.Circular);
+        var waveGeneratorScript = waveGenerator.AddComponent<WaveGenerator>();
+        waveGeneratorScript.WaveAmplitude = waveAmplitude;
+        waveGeneratorScript.WaveLength = waveLength;
+        waveGeneratorScript.WaveFrequency = waveFrequency;
+        waveGeneratorScript.SetPropagationMode(propagationMode);
 
         AddWaveGenerator(waveGeneratorScript);
         return waveGeneratorScript;
