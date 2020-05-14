@@ -30,6 +30,14 @@ namespace Maroon.Assessment
 
         private EventBuilder EventBuilder => _eventBuilder ?? (_eventBuilder = EventBuilder.Event());
 
+        private static object ConvertToAntaresValue(object input)
+        {
+            if(input is Vector3 vector)
+            {
+                return new Antares.Evaluation.Vector3D(vector.x, vector.y, vector.z);
+            }
+            return input;
+        }
 
         public static AssessmentManager Instance
         {
@@ -68,7 +76,8 @@ namespace Maroon.Assessment
             try
             {
                 Debug.Log("AssessmentManager: Connecting to Assessment Service...");
-                _evalService = new Evaluator();
+                _evalService = new Evaluator(false); // create with disabled thread-support
+
                 Debug.Log("AssessmentManager: Successfully connected to Assessment Service.");
 
                 Debug.Log($"AssessmentManager: Loading {amlFile} into evaluation engine ...");
@@ -79,6 +88,9 @@ namespace Maroon.Assessment
                 {
                   _feedbackHandler.HandleFeedback(args);
                 };
+
+                StartCoroutine(_evalService.Run()); // use Unity as scheduler
+
                 return true;
             }
             catch (Exception ex)
@@ -99,7 +111,7 @@ namespace Maroon.Assessment
                 .Set("class", assessmentObject.ClassType.ToString());
 
             foreach (var watchValue in assessmentObject.WatchValues)
-                EventBuilder.Set(watchValue.PropertyName, watchValue.GetValue());
+                EventBuilder.Set(watchValue.PropertyName, ConvertToAntaresValue(watchValue.GetValue()));
         }
 
         public void RegisterAssessmentObject(AssessmentObjectCompressed assessmentObject)
@@ -112,7 +124,7 @@ namespace Maroon.Assessment
 
             foreach (var watchValue in assessmentObject.WatchedValues) {
                 Debug.Log("AssessmentManager::" + assessmentObject.ObjectID + ": " + watchValue.GetName());
-                EventBuilder.Set(watchValue.GetName(), watchValue.GetValue());
+                EventBuilder.Set(watchValue.GetName(), ConvertToAntaresValue(watchValue.GetValue()));
             }
         }
 
@@ -145,7 +157,7 @@ namespace Maroon.Assessment
                 {
                     if (watchValue.IsDynamic)
                     {
-                        EventBuilder.Set(watchValue.PropertyName, watchValue.GetValue());
+                        EventBuilder.Set(watchValue.PropertyName, ConvertToAntaresValue(watchValue.GetValue()));
                     }
                 }
             }
@@ -153,9 +165,9 @@ namespace Maroon.Assessment
 
         public void SendDataUpdate(string objectId, string propertyName, object value)
         {
-            // Debug.Log($"AssessmentManager::SendDataUpdate: {objectId}.{propertyName}={value}");
+            Debug.Log($"AssessmentManager::SendDataUpdate: {objectId}.{propertyName}={value}");
 
-            EventBuilder.UpdateDataOf(objectId).Set(propertyName, value);
+            EventBuilder.UpdateDataOf(objectId).Set(propertyName, ConvertToAntaresValue(value));
         }
 
         private void SendGameEvent(GameEvent gameEvent)
