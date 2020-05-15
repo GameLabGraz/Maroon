@@ -12,7 +12,6 @@
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections;
 
 /// <summary>
 /// Script to handle the toolbar buttons

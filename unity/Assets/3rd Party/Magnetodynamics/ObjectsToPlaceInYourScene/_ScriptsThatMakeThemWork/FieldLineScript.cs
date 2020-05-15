@@ -3,7 +3,6 @@
 
 using UnityEngine;
 using System;
-using System.Collections;
 #if I_HAVE_VECTROSITY
 using Vectrosity;
 #endif

@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 public class TurnOnMagnet : MonoBehaviour {
     public GameObject light1 = null;

@@ -1,12 +1,9 @@
 #define USE_ARRAY
-//#define USE_DICTIONARY
 using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Debug = UnityEngine.Debug;
 
 public class ElectromagneticFieldControllerScript : MonoBehaviour
 {

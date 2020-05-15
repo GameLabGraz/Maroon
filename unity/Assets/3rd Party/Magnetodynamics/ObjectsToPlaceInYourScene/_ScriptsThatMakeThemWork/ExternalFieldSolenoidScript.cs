@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 public class ExternalFieldSolenoidScript : MonoBehaviour {
     public GameObject electromagneticFieldController = null;

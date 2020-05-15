@@ -11,10 +11,7 @@
 //
 
 using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
 using System.Collections.Generic;
-using Debug = System.Diagnostics.Debug;
 
 /// <summary>
 /// Class for the vector field to represent the field
