@@ -144,12 +144,12 @@ public class FieldLine : MonoBehaviour, IResetObject
     /// </summary>
     public void ResetObject()
     {
-        _lineRenderer.Clear();
+        if(_lineRenderer) _lineRenderer.Clear();
     }
 
     public List<KeyValuePair<int, Vector3>> GetLinePositions()
     {
-        return _lineRenderer.GetPositions();
+        return !_lineRenderer ? new List<KeyValuePair<int, Vector3>>() : _lineRenderer.GetPositions();
     }
 
     private float GetFieldStrengthFromEmObj()
