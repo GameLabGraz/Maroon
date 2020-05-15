@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 // Forces between magnetic dipoles and magnetizable materials are implemented with SpringJoints, rather than explicit forces, to get them to collide gracefully (not fly through each other, experiencing infinite forces, NaN, etc.).

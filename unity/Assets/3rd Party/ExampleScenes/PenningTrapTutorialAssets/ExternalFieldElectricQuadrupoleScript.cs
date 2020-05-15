@@ -1,7 +1,4 @@
 using UnityEngine;
-using System;
-using System.Collections;
-
 public class ExternalFieldElectricQuadrupoleScript : MonoBehaviour {
     public GameObject electromagneticFieldController = null;
     private ElectromagneticFieldControllerScript controller;
