@@ -340,6 +340,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 5246116731593758841}
+        m_MethodName: UpdatePosition
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onEndMovingInsideBoundaries:
     m_PersistentCalls:
       m_Calls:
@@ -354,12 +365,45 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 5246116731593758841}
+        m_MethodName: UpdatePosition
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onEnabled:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5246116731593758841}
+        m_MethodName: UpdatePosition
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onDisabled:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5246116731593758841}
+        m_MethodName: UpdatePosition
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1376864048248906643
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -377,6 +421,23 @@ MonoBehaviour:
   - {fileID: 222567040141845088}
   type: 0
   nameKey: 
+  onPositionChanged:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5246116731593758841}
+        m_MethodName: UpdatePosition
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onRotationChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &5246116731593758841
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -389,7 +450,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c367082969a1e424080b986995cd4d63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  observingObject: {fileID: 0}
   position:
     assessmentName: position
     isDynamic: 0
@@ -398,7 +458,9 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   observeLocal: 1
-  tolerance: 0.00001
+  updateMode: 1
+  ignoreRuntime: 1
+  tolerance: 0.01
 --- !u!114 &2519088853291130249
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -755,7 +817,7 @@ PrefabInstance:
     - target: {fileID: 4513896859846796369, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}
       propertyPath: OnMovementFinish.m_PersistentCalls.m_Calls.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4513896859846796369, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}
@@ -836,11 +898,11 @@ PrefabInstance:
         type: 3}
       propertyPath: OnMovementFinish.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
-      objectReference: {fileID: 1376864048248906643}
+      objectReference: {fileID: 5246116731593758841}
     - target: {fileID: 4513896859846796369, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}
       propertyPath: OnMovementFinish.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: PositionChanged
+      value: UpdatePosition
       objectReference: {fileID: 0}
     - target: {fileID: 4513896859846796369, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}

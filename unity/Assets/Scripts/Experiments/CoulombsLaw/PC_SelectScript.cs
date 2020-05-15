@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
+
+[Serializable]
+public class SelectV3Event : UnityEvent<Vector3> {}
 
 public class PC_SelectScript : MonoBehaviour
 {
@@ -19,7 +23,11 @@ public class PC_SelectScript : MonoBehaviour
     public List<GameObject> highlightObjects = new List<GameObject>();
     public SelectType type;
     public string nameKey;
-    
+
+    [Header("Events")] 
+    public SelectV3Event onPositionChanged;
+    public SelectV3Event onRotationChanged;
+
     private CoulombLogic _coulombLogic;
     private void OnDisable()
     {

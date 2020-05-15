@@ -240,13 +240,8 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
                 obj.transform.localPosition = xOrigin3d.localPosition + CalcToWorldSpace(position, true);
             else
             {
-                // Debug.Log("Position" + position);
-                // Debug.Log("Calc to worl psace: " + CalcToWorldSpace(position));
                 var pos = xOrigin2d.position + CalcToWorldSpace(new Vector3(position.x, position.y));
                 obj.transform.position = pos;
-//                pos = obj.transform.localPosition;
-//                pos.z = 4.361746f;      
-//                obj.transform.localPosition = pos;
             } 
             chargeBehaviour.SetPosition(obj.transform.position);
         }
@@ -255,7 +250,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         
         if(!inVR)
             chargeBehaviour.Init();
-
+        
         var movement = obj.GetComponent<PC_DragHandler>();
         if (!movement) movement = obj.GetComponentInChildren<PC_DragHandler>();
         Debug.Assert(movement != null);
@@ -274,6 +269,15 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         obj.SetActive(true);
 
         AddParticle(chargeBehaviour);
+        
+        var assessmentPos = chargeBehaviour.GetComponent<CoulombAssessmentPosition>();
+        if (assessmentPos)
+        {
+            SimulationController.Instance.onStartRunning.AddListener(assessmentPos.UpdatePosition);
+            SimulationController.Instance.onStopRunning.AddListener(assessmentPos.UpdatePosition);
+            assessmentPos.UpdatePosition();
+        }
+        
         if(!_in3dMode)
             chargeBehaviour.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
     }

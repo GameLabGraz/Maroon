@@ -1,5 +1,6 @@
 ﻿using Maroon.Physics;
 using TMPro;
+using UnityEditor.Experimental.SceneManagement;
 using UnityEngine;
 
 public class VoltmeterDifferences : MonoBehaviour
@@ -61,8 +62,13 @@ public class VoltmeterDifferences : MonoBehaviour
             textMeshProGUI.text = text;
     }
     
-    private string GetDifference(){
-        currentValue.Value = positiveMeasuringPoint.GetPotentialInMicroVolt() - negativeMeasuringPoint.GetPotentialInMicroVolt();
+    private string GetDifference()
+    {
+        var currentDifference = positiveMeasuringPoint.GetPotentialInMicroVolt() -
+                                negativeMeasuringPoint.GetPotentialInMicroVolt();
+        
+        if(Mathf.Abs(currentDifference - currentValue.Value) > 0.000001)
+            currentValue.Value = currentDifference;
         return GetCurrentFormattedString();
     }
 

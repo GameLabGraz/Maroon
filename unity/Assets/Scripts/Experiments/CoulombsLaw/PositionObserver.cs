@@ -1,5 +1,10 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
+
+[Serializable]
+public class PositionObserverEvent : UnityEvent<Vector3> {}
 
 public class PositionObserver : MonoBehaviour
 {
@@ -8,6 +13,9 @@ public class PositionObserver : MonoBehaviour
     public GameObject xText;
     public GameObject yText;
     public GameObject zText;
+
+    [SerializeField]
+    public PositionObserverEvent OnPositionChanged;
 
     private CoulombLogic _coulombLogic;
 
@@ -45,25 +53,30 @@ public class PositionObserver : MonoBehaviour
             observingGameObject.transform.position = newPos;
             if (!observingGameObject.activeSelf)
                 observingGameObject.SetActive(true);
+            
+            OnPositionChanged.Invoke(newPos);
         }
         else
         {
             //WS = WorldSpace
             var newPosWS = observingGameObject.activeSelf
-                ? observingGameObject.transform.position : _coulombLogic.xOrigin3d.transform.position;
+                ? observingGameObject.transform.position
+                : _coulombLogic.xOrigin3d.transform.position;
             if (axis.x > 0.1f)
             {
                 var test = _coulombLogic.xOrigin3d.transform.position;
                 test.x += _coulombLogic.CalcToWorldSpace(newValue, false);
                 newPosWS.x = test.x; //_coulombLogic.xOrigin3d.InverseTransformPoint(test).x;
-                
+
             }
+
             if (axis.y > 0.1f)
             {
                 var test = _coulombLogic.xOrigin3d.transform.position;
                 test.y += _coulombLogic.CalcToWorldSpace(newValue, false);
                 newPosWS.y = test.y; //_coulombLogic.xOrigin3d.InverseTransformPoint(test).y;
             }
+
             if (axis.z > 0.1f)
             {
                 var test = _coulombLogic.xOrigin3d.transform.position;
@@ -74,6 +87,8 @@ public class PositionObserver : MonoBehaviour
             observingGameObject.transform.position = newPosWS;
             if (!observingGameObject.activeSelf)
                 observingGameObject.SetActive(true);
+
+            OnPositionChanged.Invoke(newPosWS);
         }
     }
 

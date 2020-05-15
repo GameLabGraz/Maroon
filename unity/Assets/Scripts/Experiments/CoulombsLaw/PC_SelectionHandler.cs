@@ -4,7 +4,10 @@ using GEAR.Localization;
 using PlatformControls.PC;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
+
+[Serializable]
 
 public class PC_SelectionHandler : MonoBehaviour
 {
@@ -137,7 +140,11 @@ public class PC_SelectionHandler : MonoBehaviour
 
     private void Update()
     {
-        if (selectedObject == null) return;
+        if (selectedObject == null)
+        {
+            AdaptButtonTextCharge();
+            return;
+        }
 
         if (!selectedObject.isActiveAndEnabled)
         {
@@ -281,6 +288,8 @@ public class PC_SelectionHandler : MonoBehaviour
                     _coulombLogic.xOrigin2d.position.z +
                     _coulombLogic.CalcToWorldSpace(endValue); //end Value is between 0 and 1
             selectedObject.transform.position = currentPos;
+            
+            selectedObject.onPositionChanged.Invoke(currentPos);
         }
         else
         {
@@ -295,6 +304,8 @@ public class PC_SelectionHandler : MonoBehaviour
                 currentPos.z = _coulombLogic.xOrigin3d.localPosition.z +
                                _coulombLogic.CalcToWorldSpace(endValue, true); //end Value is between 0 and 1
             selectedObject.transform.localPosition = currentPos;
+            
+            selectedObject.onPositionChanged.Invoke(currentPos);
         }
     }
 
@@ -484,7 +495,10 @@ public class PC_SelectionHandler : MonoBehaviour
     {
         if (!selectedObject || selectedObject.type != PC_SelectScript.SelectType.VisualizationPlaneSelect) return;
         var currentRot = selectedObject.transform.localRotation.eulerAngles;
-        selectedObject.transform.localRotation = Quaternion.Euler(axis.x > 0.1 ? endValue : currentRot.x,
+        var eulerRot = new Vector3(axis.x > 0.1 ? endValue : currentRot.x,
             axis.y > 0.1f ? endValue : currentRot.y, axis.z > 0.1f ? endValue : currentRot.z);
+        selectedObject.transform.localRotation = Quaternion.Euler(eulerRot);
+        
+        selectedObject.onRotationChanged.Invoke(eulerRot);
     }
 }
