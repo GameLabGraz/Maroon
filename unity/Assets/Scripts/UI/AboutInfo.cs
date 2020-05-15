@@ -11,7 +11,6 @@
 //
 
 using UnityEngine;
-using System.Collections;
 
 /// <summary>
 /// Script to show and hide the about panel

@@ -11,8 +11,6 @@
 //
 
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 
 /// <summary>
 /// Class to represent a electric field

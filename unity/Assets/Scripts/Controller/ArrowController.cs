@@ -11,7 +11,6 @@
 //
 
 using UnityEngine;
-using System.Collections;
 
 /// <summary>
 /// Controller class for field arrows

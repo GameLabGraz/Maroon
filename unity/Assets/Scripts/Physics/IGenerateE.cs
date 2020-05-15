@@ -11,7 +11,6 @@
 //
 
 using UnityEngine;
-using System.Collections;
 
 /// <summary>
 /// Interface for objects which generates a electric field.

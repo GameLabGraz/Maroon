@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 // The book-keeping for static charges is mostly a copy of the book-keeping for magnetic dipoles.  Charges are a little simpler because they don't have a direction (they're monopoles).
 

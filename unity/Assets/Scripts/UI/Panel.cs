@@ -12,7 +12,6 @@
 
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 /// <summary>
 /// Script to manage panels

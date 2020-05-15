@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 public class TurnOnTurnOff : MonoBehaviour {
     public GameObject charge;

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using Valve.VR;
 
 public class GuiVandeGraaffExperiment1 : MonoBehaviour {
