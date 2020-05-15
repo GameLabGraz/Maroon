@@ -1,8 +1,16 @@
 ﻿using System;
+using Maroon.Physics;
 using UnityEngine;
+using UnityEngine.Events;
+
 
 public class ViewChangeHandler : MonoBehaviour
 {
+    public const int DefaultView = 0;
+    public const int FrontView = 1;
+    public const int SideView = 2;
+    public const int TopView = 3;
+    
     [Header("Information Components")]
     public PathHandler pathHandler;
 
@@ -16,6 +24,11 @@ public class ViewChangeHandler : MonoBehaviour
     public GameObject VoltmeterNegative;
     public RulerPrefab Ruler;
 
+    [Header("Assessment System")] 
+    public QuantityInt currentView = 0;
+
+    public UnityEvent onViewChanged;
+    
     private CoulombLogic _coulombLogic;
     private PathHandler.CameraPosition _lastView = PathHandler.CameraPosition.CP_Free;
     
@@ -64,6 +77,12 @@ public class ViewChangeHandler : MonoBehaviour
         }
 
         _lastView = newPosition;
+
+        currentView.Value = newPosition == PathHandler.CameraPosition.CP_Free ? DefaultView :
+            newPosition == PathHandler.CameraPosition.CP_Front ? FrontView :
+            newPosition == PathHandler.CameraPosition.CP_Side ? SideView : TopView;
+        
+        onViewChanged.Invoke();
     }
 
     private void HandleMovementRestrictions(GameObject obj, bool allowX = true, bool allowY = true, bool allowZ = true)
@@ -83,5 +102,10 @@ public class ViewChangeHandler : MonoBehaviour
             pathHandler.GetCurrentPosition() != PathHandler.CameraPosition.CP_Side,
             pathHandler.GetCurrentPosition() != PathHandler.CameraPosition.CP_Top,
             pathHandler.GetCurrentPosition() != PathHandler.CameraPosition.CP_Front);
+    }
+
+    public IQuantity GetViewPerspective()
+    {
+        return currentView;
     }
 }

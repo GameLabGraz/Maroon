@@ -67,9 +67,12 @@ public class CoulombAssessmentRotation : MonoBehaviour
         return eulerRotation;
     }
 
-    public void UpdatePosition()
+    public void UpdateRotation()
     {
-        eulerRotation.Value = _transform.rotation.eulerAngles;
+        if (isActiveAndEnabled)
+        {
+            eulerRotation.Value = _transform.rotation.eulerAngles;
+        }
     }
 }
 

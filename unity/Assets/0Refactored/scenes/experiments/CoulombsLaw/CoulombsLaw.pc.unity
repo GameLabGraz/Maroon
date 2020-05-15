@@ -9049,6 +9049,18 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
+--- !u!114 &577176244 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6782515512188068646, guid: bdfec920f90e5d7499f7d0276bf96c41,
+    type: 3}
+  m_PrefabInstance: {fileID: 941568970}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fb080c8a2120a24b91de31503e911ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &586246024
 GameObject:
   m_ObjectHideFlags: 0
@@ -13143,7 +13155,7 @@ PrefabInstance:
         type: 3}
       propertyPath: OnMovementFinish.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 941569023}
+      objectReference: {fileID: 941569105}
     - target: {fileID: 4513896859846796369, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}
       propertyPath: OnMovementFinish.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
@@ -16139,6 +16151,27 @@ MonoBehaviour:
   VoltmeterPositive: {fileID: 941568973}
   VoltmeterNegative: {fileID: 941568972}
   Ruler: {fileID: 1747568416}
+  currentView:
+    assessmentName: perspective
+    isDynamic: 0
+    _value: 0
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+  onViewChanged:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 941569023}
+        m_MethodName: UpdateRotation
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &941568980
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16225,7 +16258,18 @@ MonoBehaviour:
       m_Calls: []
   OnEndRotation:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 941569023}
+        m_MethodName: UpdateRotation
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &941568984
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16425,7 +16469,7 @@ MonoBehaviour:
   onPositionChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941569023}
+      - m_Target: {fileID: 941569105}
         m_MethodName: UpdatePosition
         m_Mode: 1
         m_Arguments:
@@ -16439,8 +16483,8 @@ MonoBehaviour:
   onRotationChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941569024}
-        m_MethodName: UpdatePosition
+      - m_Target: {fileID: 941569106}
+        m_MethodName: UpdateRotation
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -16497,8 +16541,8 @@ MonoBehaviour:
   OnEndRotation:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941569024}
-        m_MethodName: UpdatePosition
+      - m_Target: {fileID: 941569106}
+        m_MethodName: UpdateRotation
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -16555,8 +16599,8 @@ MonoBehaviour:
   OnEndRotation:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941569024}
-        m_MethodName: UpdatePosition
+      - m_Target: {fileID: 941569106}
+        m_MethodName: UpdateRotation
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -16613,8 +16657,8 @@ MonoBehaviour:
   OnEndRotation:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941569024}
-        m_MethodName: UpdatePosition
+      - m_Target: {fileID: 941569106}
+        m_MethodName: UpdateRotation
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -16671,8 +16715,8 @@ MonoBehaviour:
   OnEndRotation:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941569024}
-        m_MethodName: UpdatePosition
+      - m_Target: {fileID: 941569106}
+        m_MethodName: UpdateRotation
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -16885,8 +16929,8 @@ MonoBehaviour:
   OnEndRotation:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941569024}
-        m_MethodName: UpdatePosition
+      - m_Target: {fileID: 941569106}
+        m_MethodName: UpdateRotation
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -16943,8 +16987,8 @@ MonoBehaviour:
   OnEndRotation:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941569024}
-        m_MethodName: UpdatePosition
+      - m_Target: {fileID: 941569106}
+        m_MethodName: UpdateRotation
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -17001,8 +17045,8 @@ MonoBehaviour:
   OnEndRotation:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941569024}
-        m_MethodName: UpdatePosition
+      - m_Target: {fileID: 941569106}
+        m_MethodName: UpdateRotation
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -17059,8 +17103,8 @@ MonoBehaviour:
   OnEndRotation:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941569024}
-        m_MethodName: UpdatePosition
+      - m_Target: {fileID: 941569106}
+        m_MethodName: UpdateRotation
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -17334,14 +17378,14 @@ MonoBehaviour:
     _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     dirty: 0
-  - _target: {fileID: 941569023}
+  - _target: {fileID: 941569105}
     _methodName: GetPosition
     _args: []
     _dynamic: 0
     _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     dirty: 0
-  - _target: {fileID: 941569024}
+  - _target: {fileID: 941569106}
     _methodName: GetEulerRotation
     _args: []
     _dynamic: 0
@@ -17354,20 +17398,19 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 941568977}
+  m_GameObject: {fileID: 941568974}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c367082969a1e424080b986995cd4d63, type: 3}
+  m_Script: {fileID: 11500000, guid: d01311bc025a2c54994d21aeb19b85f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  position:
-    assessmentName: position
+  eulerRotation:
+    assessmentName: 3d_rotation
     isDynamic: 0
-    _value: {x: -1, y: -1, z: -1}
+    _value: {x: 0, y: 0, z: 0}
     onValueChanged:
       m_PersistentCalls:
         m_Calls: []
-  observeLocal: 1
   updateMode: 1
   ignoreRuntime: 0
   tolerance: 0.01
@@ -17377,22 +17420,42 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 941568977}
+  m_GameObject: {fileID: 941568978}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d01311bc025a2c54994d21aeb19b85f3, type: 3}
+  m_Script: {fileID: 11500000, guid: 0d275e28287338949acc3d1598513343, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  eulerRotation:
-    assessmentName: rotation
-    isDynamic: 0
-    _value: {x: 0, y: 0, z: 0}
-    onValueChanged:
-      m_PersistentCalls:
-        m_Calls: []
-  updateMode: 1
-  ignoreRuntime: 0
-  tolerance: 0.01
+  classType: 9
+  quantityCallbacks:
+  - _target: {fileID: 577176244}
+    _methodName: GetSimulationRunning
+    _args: []
+    _dynamic: 0
+    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    dirty: 0
+  - _target: {fileID: 941569023}
+    _methodName: GetEulerRotation
+    _args: []
+    _dynamic: 0
+    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    dirty: 0
+  - _target: {fileID: 941569016}
+    _methodName: GetCurrentMode
+    _args: []
+    _dynamic: 0
+    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    dirty: 0
+  - _target: {fileID: 941568979}
+    _methodName: GetViewPerspective
+    _args: []
+    _dynamic: 0
+    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    dirty: 0
 --- !u!114 &941569102
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17427,6 +17490,51 @@ MonoBehaviour:
   IgnoreColliders:
   - {fileID: 941568981}
   - {fileID: 941568986}
+--- !u!114 &941569105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 941568977}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c367082969a1e424080b986995cd4d63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  position:
+    assessmentName: position
+    isDynamic: 0
+    _value: {x: -1, y: -1, z: -1}
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+  observeLocal: 1
+  updateMode: 1
+  ignoreRuntime: 0
+  tolerance: 0.01
+--- !u!114 &941569106
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 941568977}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d01311bc025a2c54994d21aeb19b85f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  eulerRotation:
+    assessmentName: rotation
+    isDynamic: 0
+    _value: {x: 0, y: 0, z: 0}
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+  updateMode: 1
+  ignoreRuntime: 0
+  tolerance: 0.01
 --- !u!1 &948728817
 GameObject:
   m_ObjectHideFlags: 0

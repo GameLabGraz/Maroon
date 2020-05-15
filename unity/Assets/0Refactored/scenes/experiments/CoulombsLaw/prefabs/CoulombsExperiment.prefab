@@ -4887,7 +4887,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fb080c8a2120a24b91de31503e911ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  simulationRunning: 0
+  simulationRunning:
+    assessmentName: simulation_running
+    isDynamic: 0
+    _value: 0
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
   timeScale: 1
   onStartRunning:
     m_PersistentCalls:
@@ -6226,6 +6232,13 @@ MonoBehaviour:
   inVR: 0
   maxChargeCount: 10
   startIn2dMode: 1
+  currentMode:
+    assessmentName: display_mode
+    isDynamic: 0
+    _value: 2
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
   onParticleAdded:
     m_PersistentCalls:
       m_Calls: []

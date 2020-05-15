@@ -14,7 +14,8 @@ namespace Maroon.Assessment
         Charge,
         Display,
         Slide,
-        Visualization
+        Visualization,
+        Logic
     }
 
     public class AssessmentObject : MonoBehaviour

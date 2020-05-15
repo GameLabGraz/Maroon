@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Maroon.Physics;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -19,6 +20,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     public bool inVR = false;
     public int maxChargeCount = 10;
     public bool startIn2dMode = true;
+    public QuantityInt currentMode = 2;
 
     public ParticleEvent onParticleAdded;
     public ParticleEvent onParticleRemoved;
@@ -366,6 +368,8 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
 
         vectorField3d.setVectorFieldVisible(_in3dMode);
         vectorField2d.setVectorFieldVisible(!_in3dMode);
+
+        currentMode.Value = _in3dMode ? 3 : 2;
     }
 
     public void ResetObject()
@@ -387,5 +391,10 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     public Vector3 GetMaximumPos()
     {
         return IsIn2dMode() ? maxBoundary2d.transform.position : maxBoundary3d.transform.position;
+    }
+
+    public IQuantity GetCurrentMode()
+    {
+        return currentMode;
     }
 }
