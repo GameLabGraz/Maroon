@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Reflection;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace GOReplacer

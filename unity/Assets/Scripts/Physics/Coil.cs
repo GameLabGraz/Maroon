@@ -12,9 +12,6 @@
 //
 
 using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
-using System;
 
 /// <summary>
 /// Class for a live coil.

@@ -1,6 +1,4 @@
 using UnityEngine;
-using System;
-using System.Collections;
 
 public class ExternalFieldTemplateScript : MonoBehaviour {
     public GameObject electromagneticFieldController = null;

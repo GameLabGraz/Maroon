@@ -11,8 +11,6 @@
 //
 
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using System.Collections;
 
 /// <summary>
 /// Controller class for the main camera

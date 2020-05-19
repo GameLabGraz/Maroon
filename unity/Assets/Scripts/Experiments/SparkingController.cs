@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
-using DigitalRuby.ThunderAndLightning;
 
 public class SparkingController : MonoBehaviour {
 

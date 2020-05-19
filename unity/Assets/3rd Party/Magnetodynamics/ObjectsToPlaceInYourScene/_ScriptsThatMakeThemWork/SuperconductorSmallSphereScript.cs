@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 public class SuperconductorSmallSphereScript : SuperconductorScript {
     // cache derivatives so that you don't have to compute them three times (for dx, dy, dz)

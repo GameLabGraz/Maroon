@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using System.Collections;
 using System.IO;
 
 namespace DigitalRuby.ThunderAndLightning.Editor

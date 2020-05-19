@@ -1,6 +1,4 @@
 using UnityEngine;
-using System;
-using System.Collections;
 
 // This is the model for all hand-built electric and magnetic fields.  You supply a function that calculates custom electric fields, magnetic fields, and magnetic field derivatives (see solenoid example) and send them to the ElectromagneticFieldController.  The controller calls them (and all other field sources) whenever it needs to find out what is the field at a given point in space.
 

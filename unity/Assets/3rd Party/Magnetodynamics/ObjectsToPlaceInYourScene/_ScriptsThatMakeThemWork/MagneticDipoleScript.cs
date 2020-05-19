@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 public class ElectromagneticInfinitesimal : MonoBehaviour {
     public GameObject electromagneticFieldController = null;
