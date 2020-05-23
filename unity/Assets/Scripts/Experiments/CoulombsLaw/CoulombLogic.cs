@@ -78,7 +78,11 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     private float _worldToCalcSpaceFactor3dLocal;
     
     private bool _initialized = false;
-    
+
+    [Header("Debug Stuff")] 
+    public float correctionFactor = 1f;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -96,7 +100,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         _worldToCalcSpaceFactor3dLocal = Mathf.Abs(xAt1m3d.localPosition.x - xOrigin3d.localPosition.x);
         _initialized = true;
     }
-
+    
     private void FixedUpdate()
     {
         if (!_initialized)
@@ -140,7 +144,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         {
             var pos = charge.transform.position;
             list.Add(new Vector4(pos.x, pos.y, pos.z, charge.Charge));
-            Debug.Log("Charge as Vec: " + new Vector4(pos.x, pos.y, pos.z, charge.Charge));
+            // Debug.Log("Charge as Vec: " + new Vector4(pos.x, pos.y, pos.z, charge.Charge));
         }
 
         return list;
@@ -173,8 +177,9 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
                 var affectingParticle = _charges[j];
                 Vector3 direction;
                 Vector3 direction2;
-                var r = Vector3.Distance(currentParticle.transform.position, affectingParticle.transform.position); // = distance
-                r -= 2 * 0.71f; // - 2 * radius
+                
+                var r = WorldToCalcSpace(Vector3.Distance(currentParticle.transform.position, affectingParticle.transform.position)); // = distance
+                r -= 2 * WorldToCalcSpace(0.71f); // - 2 * radius
                 
                 if ((currentParticle.Charge < 0f) == (affectingParticle.Charge < 0f))
                 {
@@ -190,14 +195,23 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
 
                 var force = CoulombConstant * Mathf.Abs(currentParticle.Charge) * Mathf.Abs(affectingParticle.Charge);
                 force /= Mathf.Pow(r, 2);
-
-                sumForce += force * direction2;
                 
+                sumForce += force * direction2;
+
                 if(force > 0.0001f)
                     sumDirection += force * direction;
             }
 
             sumDirection = Vector3.Normalize(sumDirection)* Time.deltaTime;
+            sumDirection = CalcToWorldSpace(sumDirection);
+
+            if (Mathf.Abs(correctionFactor - 1f) > 0.0000000001f)
+            {
+                sumDirection.x *= correctionFactor;
+                sumDirection.y *= correctionFactor;
+                sumDirection.z *= correctionFactor;
+            }
+            
             currentParticle.CalculatedPosition(sumDirection + currentParticle.transform.position);
         }
 
@@ -209,11 +223,48 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         }
     }
 
+
     public GameObject CreateChargeAtCalcSpacePosition(GameObject prefab, Vector3 position, float chargeLoad, bool hasFixedPosition, bool deactivateCollisions = true)
     {
         var localPos = CalcToWorldSpace(position, false);
         var newCharge = CreateCharge(prefab, localPos, chargeLoad, hasFixedPosition, false, deactivateCollisions);
         newCharge.transform.localPosition = localPos;
+
+        // if (!_in3dMode)
+        // {
+        //     var globalNewPos = xOrigin2d.position;
+        //     switch (calcSpaceXAxisToRealAxis)
+        //     {
+        //         case Axis.XAxis:
+        //             globalNewPos.x += (xAt1m2d.position.x - xOrigin2d.position.x) * position.x;
+        //             break;
+        //         case Axis.YAxis:
+        //             globalNewPos.y += (xAt1m2d.position.y - xOrigin2d.position.y) * position.x;
+        //             break;
+        //         case Axis.ZAxis:
+        //             globalNewPos.z += (xAt1m2d.position.z - xOrigin2d.position.z) * position.x;
+        //             break;
+        //         default:
+        //             throw new ArgumentOutOfRangeException();
+        //     }        
+        //     switch (calcSpaceYAxisToRealAxis)
+        //     {
+        //         case Axis.XAxis:
+        //             globalNewPos.x += (xAt1m2d.position.x - xOrigin2d.position.x) * position.y;
+        //             break;
+        //         case Axis.YAxis:
+        //             globalNewPos.y += (xAt1m2d.position.y - xOrigin2d.position.y) * position.y;
+        //             break;
+        //         case Axis.ZAxis:
+        //             globalNewPos.z += (xAt1m2d.position.z - xOrigin2d.position.z) * position.y;
+        //             break;
+        //         default:
+        //             throw new ArgumentOutOfRangeException();
+        //     }
+        //
+        //     newCharge.transform.position = globalNewPos;
+        // }
+        
         
         var rb = newCharge.GetComponent<Rigidbody>();
         if (rb && !_in3dMode && !inVR)
@@ -282,8 +333,8 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         obj.SetActive(true);
 
         AddParticle(chargeBehaviour, deactivateCollisions);
-        if(!_in3dMode)
-            chargeBehaviour.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+        // if(!_in3dMode)
+            // chargeBehaviour.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
 
         return obj;
     }
