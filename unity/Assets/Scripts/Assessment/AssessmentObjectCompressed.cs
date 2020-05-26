@@ -21,7 +21,9 @@ namespace Maroon.Assessment
         public AssessmentClass ClassType => classType;
         
         public List<IQuantity> WatchedValues = new List<IQuantity>();
-        
+
+        [SerializeField] private List<QuantityReferenceValue> watchValues = new List<QuantityReferenceValue>();
+
         public string ObjectID { get; protected set; }
 
         protected virtual void Awake()
