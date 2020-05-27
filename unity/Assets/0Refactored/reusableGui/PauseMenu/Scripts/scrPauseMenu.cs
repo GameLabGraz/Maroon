@@ -1,19 +1,61 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+
 
 public class scrPauseMenu : MonoBehaviour
 {
-    public static bool IsPaused = false;
-    [SerializeField] private GameObject PauseMenuCanvas;
+    // #################################################################################################################
+    // Members
 
-    // Start is called before the first frame update
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // State
+    public static bool IsPaused = false;
+
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // Pause Menu items
+    [SerializeField] private GameObject Canvas;
+
+    [SerializeField] private GameObject PanelRight;
+
+    [SerializeField] private GameObject PanelRightTitle;
+
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // Pause Menu settings
+    [SerializeField] private GameObject[] SettingButtons;
+
+    [SerializeField] private GameObject[] SettingPanels;
+    
+    // #################################################################################################################
+    // Methods
+
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // Setup
+
     void Start()
     {
-        this.PauseMenuCanvas.SetActive(false);
+        // Hide menu and panels
+        this.Canvas.SetActive(false);
+        this.PanelRight.SetActive(false);
+        foreach(GameObject SettingPanel in this.SettingPanels)
+        {
+            SettingPanel.SetActive(false);            
+        }
+
+        // Add button actions
+        for(int i = 0; i < this.SettingButtons.Length; i++)
+        {
+            GameObject button = this.SettingButtons[i];
+
+            // Delegates passed by reference, hacky workaround
+            int openPanel = i;
+            button.GetComponent<Button>().onClick.AddListener(delegate {this.ToggleSettingsPanel(openPanel);});
+        }
     }
 
-    // Update is called once per frame
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // Open/Close Pause Menu
+
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.Escape))
@@ -31,15 +73,42 @@ public class scrPauseMenu : MonoBehaviour
 
     private void OpenPauseMenu()
     {
-        this.PauseMenuCanvas.SetActive(true);
+        this.Canvas.SetActive(true);
         Time.timeScale = 0;
         scrPauseMenu.IsPaused = true;
     }
 
     public void ClosePauseMenu()
     {
-        this.PauseMenuCanvas.SetActive(false);
+        this.Canvas.SetActive(false);
         Time.timeScale = 1;
         scrPauseMenu.IsPaused = false;
     }
+
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // Open/Close Settings
+
+    void ToggleSettingsPanel(int panel_id)
+    {
+        // Gather info
+        GameObject requested_panel = this.SettingPanels[panel_id];
+        bool open_requested = !requested_panel.activeSelf;
+
+        // Close all panels
+        this.PanelRight.SetActive(false);
+        foreach(GameObject SettingPanel in this.SettingPanels)
+        {
+            SettingPanel.SetActive(false);            
+        }
+
+        // Open correct panel if requested
+        if(open_requested)
+        {
+            string title = this.SettingButtons[panel_id].GetComponentInChildren<TextMeshProUGUI>().text;
+            this.PanelRightTitle.GetComponentInChildren<TextMeshProUGUI>().text = title;
+            requested_panel.SetActive(true);
+            this.PanelRight.SetActive(true);
+        }
+    }
+    
 }
