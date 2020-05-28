@@ -393,8 +393,4 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         return IsIn2dMode() ? maxBoundary2d.transform.position : maxBoundary3d.transform.position;
     }
 
-    public IQuantity GetCurrentMode()
-    {
-        return currentMode;
-    }
 }

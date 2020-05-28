@@ -268,9 +268,4 @@ public class SimulationController : MonoBehaviour
     public void TraceOutput(string output){
         Debug.Log(output);
     }
-
-    public IQuantity GetSimulationRunning()
-    {
-        return simulationRunning;
-    }
 }

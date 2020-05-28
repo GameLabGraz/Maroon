@@ -103,9 +103,4 @@ public class ViewChangeHandler : MonoBehaviour
             pathHandler.GetCurrentPosition() != PathHandler.CameraPosition.CP_Top,
             pathHandler.GetCurrentPosition() != PathHandler.CameraPosition.CP_Front);
     }
-
-    public IQuantity GetViewPerspective()
-    {
-        return currentView;
-    }
 }

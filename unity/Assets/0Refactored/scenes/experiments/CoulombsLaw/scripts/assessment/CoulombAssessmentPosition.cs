@@ -74,11 +74,6 @@ public class CoulombAssessmentPosition : MonoBehaviour
         }
     }
     
-    public IQuantity GetPosition()
-    {
-        return position;
-    }
-
     public void UpdatePosition()
     {
         position.Value = isActiveAndEnabled ? _coulombLogic.WorldToCalcSpace(_transform) : new Vector3(-1, -1, -1);

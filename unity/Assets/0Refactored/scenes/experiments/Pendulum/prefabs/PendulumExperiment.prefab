@@ -214,7 +214,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5202824134909388956}
   m_Layer: 0
-  m_Name: Tabel
+  m_Name: Table
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -245,6 +245,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5202824135114805616}
+  - component: {fileID: 3133969044073660156}
   m_Layer: 0
   m_Name: Pendulum
   m_TagString: Untagged
@@ -270,6 +271,35 @@ Transform:
   m_Father: {fileID: 5202824135223137452}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3133969044073660156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5202824135114805617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d275e28287338949acc3d1598513343, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  classType: 2
+  watchValues:
+  - index: 0
+    objectInfo:
+      Object: {fileID: 5202824135465736139}
+      ComponentName: Pendulum
+      FieldName: weight
+  - index: 1
+    objectInfo:
+      Object: {fileID: 5202824135465736139}
+      ComponentName: Pendulum
+      FieldName: ropeLength
+  - index: 2
+    objectInfo:
+      Object: {fileID: 5202824135465736139}
+      ComponentName: Pendulum
+      FieldName: elongation
 --- !u!1 &5202824135223137453
 GameObject:
   m_ObjectHideFlags: 0
@@ -279,6 +309,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5202824135223137452}
+  - component: {fileID: 6841518307298574852}
   m_Layer: 0
   m_Name: PendulumExperiment
   m_TagString: Untagged
@@ -303,6 +334,25 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6841518307298574852
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5202824135223137453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d275e28287338949acc3d1598513343, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  classType: 9
+  watchValues:
+  - index: 0
+    objectInfo:
+      Object: {fileID: 5202824136149113554}
+      ComponentName: SimulationController
+      FieldName: simulationRunning
 --- !u!1 &5202824135282605348
 GameObject:
   m_ObjectHideFlags: 0
@@ -625,22 +675,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weight:
+    assessmentName: weight
+    isDynamic: 0
     _value: 1
     onValueChanged:
       m_PersistentCalls:
         m_Calls: []
   ropeLength:
+    assessmentName: ropeLength
+    isDynamic: 0
     _value: 0.3
     onValueChanged:
       m_PersistentCalls:
         m_Calls: []
   elongation:
+    assessmentName: elongation
+    isDynamic: 0
     _value: 0
     onValueChanged:
       m_PersistentCalls:
         m_Calls: []
   _standRopeJoint: {fileID: 5202824134377885964}
   _weightObj: {fileID: 5202824134415402285}
+  onPendulumRotationMaximumPoint:
+    m_PersistentCalls:
+      m_Calls: []
+  onPendulumRotationNullPoint:
+    m_PersistentCalls:
+      m_Calls: []
+  onPendulumRotationStopped:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &5202824135465736138
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -655,7 +720,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnRelease:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3133969044073660156}
+        m_MethodName: SendUserAction
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: pull
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 5998583639729668546}
+        m_MethodName: PendulumReleased
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &5202824135483130517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1223,14 +1310,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fb080c8a2120a24b91de31503e911ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  simulationRunning: 0
+  simulationRunning:
+    assessmentName: simulation_running
+    isDynamic: 0
+    _value: 0
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
   timeScale: 1
   onStartRunning:
     m_PersistentCalls:
       m_Calls: []
   onStopRunning:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5998583639729668546}
+        m_MethodName: UpdateElongation
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &5202824136259931489
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,22 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Maroon.Physics;
 using UnityEngine;
 
 namespace Maroon.Assessment
 {
     [Serializable]
-    public class QuantityCallback : SerializableCallback<IQuantity> { }
-    
-    [Serializable]
     public class AssessmentObjectCompressed : MonoBehaviour
     {
         [SerializeField]
         protected AssessmentClass classType;
-
-        [SerializeField] 
-        public List<QuantityCallback> quantityCallbacks = new List<QuantityCallback>();
 
         public AssessmentClass ClassType => classType;
         
@@ -30,14 +23,22 @@ namespace Maroon.Assessment
         {
             ObjectID = $"{gameObject.name}{gameObject.GetInstanceID()}";
             
-            foreach (var quantity in quantityCallbacks.Select(callback => callback.Invoke()).Where(quantity => quantity != null))
+            foreach (var refValue in watchValues) // quantityCallbacks.Select(callback => callback.Invoke()).Where(quantity => quantity != null))
             {
+                var quantity = refValue.Value;
+                if (quantity == null)
+                {
+                    Debug.LogError("Reference Value is Null: " + refValue.objectInfo.ComponentName + "::" + refValue.objectInfo.FieldName);
+                    throw new NullReferenceException();
+                }
+                
                 WatchedValues.Add(quantity);
                 
                 (quantity as QuantityFloat)?.onValueChanged.AddListener((value) => ValueChangedForProperty<float>(value, quantity.GetName(), quantity.IsDynamic()));
                 (quantity as QuantityVector3)?.onValueChanged.AddListener((value) => ValueChangedForProperty<Vector3>(value, quantity.GetName(), quantity.IsDynamic()));
                 (quantity as QuantityBool)?.onValueChanged.AddListener((value) => ValueChangedForProperty<bool>(value, quantity.GetName(), quantity.IsDynamic()));
                 (quantity as QuantityInt)?.onValueChanged.AddListener((value) => ValueChangedForProperty<int>(value, quantity.GetName(), quantity.IsDynamic()));
+                (quantity as QuantityString)?.onValueChanged.AddListener((value) => ValueChangedForProperty<string>(value, quantity.GetName(), quantity.IsDynamic()));
             }
             AssessmentManager.Instance?.RegisterAssessmentObject(this);
         }
@@ -48,6 +49,12 @@ namespace Maroon.Assessment
             
             // Debug.Log(ObjectID + "::" + name + " = " + val);
             AssessmentManager.Instance?.SendDataUpdate(ObjectID, name, val);
+        }
+
+        public void SendUserAction(string actionName)
+        {
+            // Debug.Log(ObjectID + "::" + actionName);
+            AssessmentManager.Instance?.SendUserAction(actionName, ObjectID);
         }
         
         protected virtual void OnDestroy()

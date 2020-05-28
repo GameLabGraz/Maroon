@@ -24,6 +24,8 @@ namespace Maroon.Physics
     public class OnValueBoolChangeEvent : OnValueChangeEvent<bool> { }
     [Serializable]
     public class OnValueIntChangeEvent : OnValueChangeEvent<int> { }
+    [Serializable]
+    public class OnValueStringChangeEvent : OnValueChangeEvent<string> { }
     
     public interface IQuantity
     {
@@ -112,5 +114,15 @@ namespace Maroon.Physics
         private void OnValueChangedHandler(int value) { onValueChanged?.Invoke(value); }
         public static implicit operator QuantityInt(int value) => new QuantityInt(value);
         public static implicit operator int(QuantityInt quantity) => quantity.Value;
+    }
+    
+    [Serializable]
+    public class QuantityString : Quantity<string>
+    {
+        public QuantityString(string value) : base(value) { base.onValueChanged.AddListener(OnValueChangedHandler); }
+        public new OnValueStringChangeEvent onValueChanged = new OnValueStringChangeEvent();
+        private void OnValueChangedHandler(string value) { onValueChanged?.Invoke(value); }
+        public static implicit operator QuantityString(string value) => new QuantityString(value);
+        public static implicit operator string(QuantityString quantity) => quantity.Value;
     }
 }

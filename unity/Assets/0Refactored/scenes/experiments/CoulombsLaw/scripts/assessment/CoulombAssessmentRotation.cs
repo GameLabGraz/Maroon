@@ -61,11 +61,6 @@ public class CoulombAssessmentRotation : MonoBehaviour
             } return;
         }
     }
-    
-    public IQuantity GetEulerRotation()
-    {
-        return eulerRotation;
-    }
 
     public void UpdateRotation()
     {

@@ -16,6 +16,9 @@ namespace Maroon.Assessment
         [SerializeField]
         private string amlFile;
 
+        [SerializeField] 
+        private bool showDebugMessages = false;
+
         private Evaluator _evalService;
 
         private EventBuilder _eventBuilder;
@@ -58,7 +61,8 @@ namespace Maroon.Assessment
 
         private void Start()
         {
-            Debug.Log("AssessmentManager::Send Enter Event");
+            if(showDebugMessages)
+                Debug.Log("AssessmentManager::Send Enter Event");
             
             EventBuilder.Action("enter");
         }
@@ -75,14 +79,22 @@ namespace Maroon.Assessment
         {
             try
             {
-                Debug.Log("AssessmentManager: Connecting to Assessment Service...");
+                if(showDebugMessages)
+                    Debug.Log("AssessmentManager: Connecting to Assessment Service...");
                 _evalService = new Evaluator(false); // create with disabled thread-support
 
-                Debug.Log("AssessmentManager: Successfully connected to Assessment Service.");
 
-                Debug.Log($"AssessmentManager: Loading {amlFile} into evaluation engine ...");
+                if (showDebugMessages)
+                {
+                    Debug.Log("AssessmentManager: Successfully connected to Assessment Service.");
+                    Debug.Log($"AssessmentManager: Loading {amlFile} into evaluation engine ...");
+                }
+
                 _evalService.LoadAmlFile(Path.Combine(Application.streamingAssetsPath, amlFile));
-                Debug.Log("AssessmentManager: Assessment model loaded.");
+
+                Debug.Log(showDebugMessages
+                    ? "AssessmentManager: Assessment model loaded."
+                    : $"AssessmentManager: Successfully started with {amlFile}.");
 
                 _evalService.FeedbackReceived += delegate (object sender, FeedbackEventArgs args)
                 {
@@ -102,7 +114,8 @@ namespace Maroon.Assessment
 
         public void RegisterAssessmentObject(AssessmentObject assessmentObject)
         {
-            Debug.Log($"AssessmentManager::RegisterAssessmentObject: {assessmentObject.ObjectID}");
+            if(showDebugMessages)
+                Debug.Log($"AssessmentManager::RegisterAssessmentObject: {assessmentObject.ObjectID}");
 
 			_objectsInRange.Add(assessmentObject);
 
@@ -116,7 +129,8 @@ namespace Maroon.Assessment
 
         public void RegisterAssessmentObject(AssessmentObjectCompressed assessmentObject)
         {
-            Debug.Log($"AssessmentManager::RegisterAssessmentObject: {assessmentObject.ObjectID}");
+            if(showDebugMessages)
+                Debug.Log($"AssessmentManager::RegisterAssessmentObject: {assessmentObject.ObjectID}");
 
             EventBuilder
                 .PerceiveObject(assessmentObject.ObjectID)
@@ -130,7 +144,8 @@ namespace Maroon.Assessment
 
         public void DeregisterAssessmentObject(AssessmentObject assessmentObject)
         {
-            Debug.Log($"AssessmentManager::DeregisterAssessmentObject: {assessmentObject.ObjectID}");
+            if(showDebugMessages)
+                Debug.Log($"AssessmentManager::DeregisterAssessmentObject: {assessmentObject.ObjectID}");
 
             EventBuilder.UnlearnObject(assessmentObject.ObjectID);
 			
@@ -139,14 +154,16 @@ namespace Maroon.Assessment
         
         public void DeregisterAssessmentObject(AssessmentObjectCompressed assessmentObject)
         {
-            Debug.Log($"AssessmentManager::DeregisterAssessmentObject: {assessmentObject.ObjectID}");
+            if(showDebugMessages)
+                Debug.Log($"AssessmentManager::DeregisterAssessmentObject: {assessmentObject.ObjectID}");
 
             EventBuilder.UnlearnObject(assessmentObject.ObjectID);
         }
 
         public void SendUserAction(string actionName, string objectId=null)
         {
-            Debug.Log($"AssessmentManager::SendUserAction: {objectId}.{actionName}");
+            if(showDebugMessages)
+                Debug.Log($"AssessmentManager::SendUserAction: {objectId}.{actionName}");
 
             EventBuilder.Action(actionName, objectId);
 
@@ -165,7 +182,8 @@ namespace Maroon.Assessment
 
         public void SendDataUpdate(string objectId, string propertyName, object value)
         {
-            Debug.Log($"AssessmentManager::SendDataUpdate: {objectId}.{propertyName}={value}");
+            if(showDebugMessages)
+                Debug.Log($"AssessmentManager::SendDataUpdate: {objectId}.{propertyName}={value}");
 
             EventBuilder.UpdateDataOf(objectId).Set(propertyName, ConvertToAntaresValue(value));
         }

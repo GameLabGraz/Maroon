@@ -474,28 +474,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   classType: 5
-  quantityCallbacks:
-  - _target: {fileID: 5246116731593758841}
-    _methodName: GetPosition
-    _args: []
-    _dynamic: 0
-    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    dirty: 0
-  - _target: {fileID: 222567040141845091}
-    _methodName: GetCharge
-    _args: []
-    _dynamic: 0
-    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    dirty: 0
-  - _target: {fileID: 222567040141845091}
-    _methodName: GetFixedPosition
-    _args: []
-    _dynamic: 0
-    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    dirty: 0
+  watchValues:
+  - index: 0
+    objectInfo:
+      Object: {fileID: 222567040141845092}
+      ComponentName: CoulombChargeBehaviour
+      FieldName: charge
+  - index: 1
+    objectInfo:
+      Object: {fileID: 222567040141845092}
+      ComponentName: CoulombChargeBehaviour
+      FieldName: fixedPosition
+  - index: 2
+    objectInfo:
+      Object: {fileID: 222567040141845092}
+      ComponentName: CoulombAssessmentPosition
+      FieldName: position
 --- !u!1 &222567040141845094
 GameObject:
   m_ObjectHideFlags: 0

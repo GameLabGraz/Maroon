@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Maroon.Physics
 {
@@ -22,8 +23,6 @@ namespace Maroon.Physics
 
         public QuantityFloat elongation = 0.0f;
 		
-		private float[] _previousElongations = new float[2]; // used to determine zeros
-
         [SerializeField]
         private GameObject _standRopeJoint;
     
@@ -39,9 +38,25 @@ namespace Maroon.Physics
         private float _startRopeLength;
 
         private float _oldRopeLength;
+        private bool _pendulumRelease = false;
+
+        enum ElongationMode
+        {
+            EM_Increasing,
+            EM_Decreasing,
+            EM_StandingStill
+        }
+        
+        private float _previousElongation = 0f;
+        private float _currentElongation = 0f;
+        private ElongationMode _elongationMode = ElongationMode.EM_StandingStill;
 
         public HingeJoint Joint { get; private set; }
 
+        public UnityEvent onPendulumRotationMaximumPoint = new UnityEvent();
+        public UnityEvent onPendulumRotationNullPoint = new UnityEvent();
+        public UnityEvent onPendulumRotationStopped = new UnityEvent();
+        
         public float Weight
         {
             get => weight;
@@ -97,21 +112,52 @@ namespace Maroon.Physics
         
         protected override void HandleFixedUpdate()
         {
-			Elongation = transform.rotation.x;
-		  
-			// determine zeros:
-			float currentElongation = Math.Abs(Elongation);
-			if(_previousElongations[0] > _previousElongations[1] && currentElongation > _previousElongations[1])
-			{
-				Elongation = 0f; // should not be noticable
-				Assessment.AssessmentManager.Instance.SendDataUpdate(
-					this.GetComponent<Assessment.AssessmentObject>().ObjectID,
-					"elongation",
-					Elongation
-				);
-			}
-			_previousElongations[0] = _previousElongations[1];
-			_previousElongations[1] = currentElongation;
+            if (!_pendulumRelease) return;
+            
+            _previousElongation = _currentElongation;
+            _currentElongation = transform.rotation.x;
+
+            if (Mathf.Abs(_previousElongation) <= 0.000001f && Mathf.Abs(Elongation) < 0.000001f &&
+                _elongationMode != ElongationMode.EM_StandingStill)
+            {
+                Elongation = 0f;
+                _elongationMode = ElongationMode.EM_StandingStill;
+                onPendulumRotationStopped.Invoke();
+                _pendulumRelease = false;
+                Debug.Log("Pendulum Stopped");
+                return;
+            }
+            
+            if (_elongationMode == ElongationMode.EM_StandingStill && Mathf.Abs(_currentElongation) > 0.000001f)
+            {
+                _elongationMode = _currentElongation > 0 ? ElongationMode.EM_Decreasing : ElongationMode.EM_Increasing;
+            }
+            else
+            {
+                if ((_previousElongation <= 0 && _currentElongation >= 0) ||
+                    (_previousElongation >= 0 && _currentElongation <= 0))
+                {
+                    Debug.Log("Null Point: " + _previousElongation + " - " + _currentElongation);
+                    Elongation = 0f;
+                    onPendulumRotationNullPoint.Invoke();
+                }
+
+                if (_elongationMode == ElongationMode.EM_Decreasing && _previousElongation > _currentElongation)
+                {
+                    _elongationMode = ElongationMode.EM_Increasing;
+                    Elongation = _previousElongation;
+                    onPendulumRotationMaximumPoint.Invoke();
+                    Debug.Log("Pendulum Maximum" + _currentElongation + " - " + _previousElongation);
+                }
+                else if(_elongationMode == ElongationMode.EM_Increasing && _currentElongation > _previousElongation)
+                {
+                    _elongationMode = ElongationMode.EM_Decreasing;
+                    Elongation = _previousElongation;
+                    onPendulumRotationMaximumPoint.Invoke();
+                    Debug.Log("Pendulum Maximum" + _currentElongation + " - " + _previousElongation);
+                }
+            }
+
         }
 
         public float GetDeflection()
@@ -146,6 +192,16 @@ namespace Maroon.Physics
 
             _rigidbody.velocity = Vector3.zero;
             _rigidbody.angularVelocity = Vector3.zero;
+        }
+
+        public void PendulumReleased()
+        {
+            _pendulumRelease = true;
+        }
+
+        public void UpdateElongation()
+        {
+            Elongation = transform.rotation.x;
         }
     }
 }

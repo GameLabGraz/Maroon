@@ -3240,29 +3240,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   classType: 3
-  quantityCallbacks:
-  - _target: {fileID: 941568987}
-    _methodName: GetPosition
-    _args: []
-    _dynamic: 0
-    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    dirty: 0
-  - _target: {fileID: 941568988}
-    _methodName: GetPosition
-    _args: []
-    _dynamic: 0
-    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    dirty: 0
-  - _target: {fileID: 249590959}
-    _methodName: GetVoltage
-    _args: []
-    _dynamic: 0
-    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    dirty: 0
-  watchValues: []
+  watchValues:
+  - index: 0
+    objectInfo:
+      Object: {fileID: 249590951}
+      ComponentName: VoltmeterDifferences
+      FieldName: currentValue
+  - index: 1
+    objectInfo:
+      Object: {fileID: 941568973}
+      ComponentName: CoulombAssessmentPosition
+      FieldName: position
+  - index: 1
+    objectInfo:
+      Object: {fileID: 941568972}
+      ComponentName: CoulombAssessmentPosition
+      FieldName: position
 --- !u!114 &249590957
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9124,18 +9117,6 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
---- !u!114 &577176244 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6782515512188068646, guid: bdfec920f90e5d7499f7d0276bf96c41,
-    type: 3}
-  m_PrefabInstance: {fileID: 941568970}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 941569025}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8fb080c8a2120a24b91de31503e911ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &586246024
 GameObject:
   m_ObjectHideFlags: 0
@@ -14840,6 +14821,26 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6895778647729176300, guid: bdfec920f90e5d7499f7d0276bf96c41,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6896113000729337904, guid: bdfec920f90e5d7499f7d0276bf96c41,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6896857270606356331, guid: bdfec920f90e5d7499f7d0276bf96c41,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6896857270661762508, guid: bdfec920f90e5d7499f7d0276bf96c41,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6896857270672831204, guid: bdfec920f90e5d7499f7d0276bf96c41,
         type: 3}
       propertyPath: m_textInfo.characterCount
@@ -14896,6 +14897,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 6896857270807009150, guid: bdfec920f90e5d7499f7d0276bf96c41,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6896857270828580107, guid: bdfec920f90e5d7499f7d0276bf96c41,
         type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -14964,6 +14970,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Mesh
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6896857271066270652, guid: bdfec920f90e5d7499f7d0276bf96c41,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6896857271066270653, guid: bdfec920f90e5d7499f7d0276bf96c41,
         type: 3}
@@ -16154,6 +16165,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7498517643828348794, guid: bdfec920f90e5d7499f7d0276bf96c41,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bdfec920f90e5d7499f7d0276bf96c41, type: 3}
@@ -17424,50 +17440,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   classType: 8
-  quantityCallbacks:
-  - _target: {fileID: 941569019}
-    _methodName: GetVoltageVis
-    _args: []
-    _dynamic: 0
-    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    dirty: 0
-  - _target: {fileID: 941569019}
-    _methodName: GetEquipotentialLineVis
-    _args: []
-    _dynamic: 0
-    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    dirty: 0
-  - _target: {fileID: 941569019}
-    _methodName: GetIronFilingVis
-    _args: []
-    _dynamic: 0
-    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    dirty: 0
-  - _target: {fileID: 941569017}
-    _methodName: GetVectorFieldArrows
-    _args: []
-    _dynamic: 0
-    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    dirty: 0
-  - _target: {fileID: 941569105}
-    _methodName: GetPosition
-    _args: []
-    _dynamic: 0
-    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    dirty: 0
-  - _target: {fileID: 941569106}
-    _methodName: GetEulerRotation
-    _args: []
-    _dynamic: 0
-    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    dirty: 0
-  watchValues: []
+  watchValues:
+  - index: 0
+    objectInfo:
+      Object: {fileID: 941568977}
+      ComponentName: PlaneVisualization
+      FieldName: voltageVisualization
+  - index: 1
+    objectInfo:
+      Object: {fileID: 941568977}
+      ComponentName: PlaneVisualization
+      FieldName: equipotentialLineVisualization
+  - index: 2
+    objectInfo:
+      Object: {fileID: 941568977}
+      ComponentName: PlaneVisualization
+      FieldName: ironFilingVisualization
+  - index: 0
+    objectInfo:
+      Object: {fileID: 941568986}
+      ComponentName: VectorField
+      FieldName: arrows
+  - index: 3
+    objectInfo:
+      Object: {fileID: 941568977}
+      ComponentName: CoulombAssessmentPosition
+      FieldName: position
+  - index: 4
+    objectInfo:
+      Object: {fileID: 941568977}
+      ComponentName: CoulombAssessmentRotation
+      FieldName: eulerRotation
 --- !u!114 &941569023
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17503,56 +17506,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   classType: 9
-  quantityCallbacks:
-  - _target: {fileID: 577176244}
-    _methodName: GetSimulationRunning
-    _args: []
-    _dynamic: 0
-    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    dirty: 0
-  - _target: {fileID: 941569023}
-    _methodName: GetEulerRotation
-    _args: []
-    _dynamic: 0
-    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    dirty: 0
-  - _target: {fileID: 941569016}
-    _methodName: GetCurrentMode
-    _args: []
-    _dynamic: 0
-    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    dirty: 0
-  - _target: {fileID: 941568979}
-    _methodName: GetViewPerspective
-    _args: []
-    _dynamic: 0
-    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    dirty: 0
   watchValues:
   - index: 0
     objectInfo:
       Object: {fileID: 941569025}
       ComponentName: SimulationController
-      FieldName: SimulationController (SimulationController)39290/simulationRunning
+      FieldName: simulationRunning
   - index: 0
     objectInfo:
       Object: {fileID: 941568974}
       ComponentName: CoulombAssessmentRotation
-      FieldName: 3dScene (CoulombAssessmentRotation)39720/eulerRotation
+      FieldName: eulerRotation
   - index: 0
     objectInfo:
       Object: {fileID: 941568978}
       ComponentName: CoulombLogic
-      FieldName: CoulombLogic (CoulombLogic)39706/currentMode
-  - index: 2
+      FieldName: currentMode
+  - index: 1
     objectInfo:
       Object: {fileID: 941568978}
       ComponentName: ViewChangeHandler
-      FieldName: CoulombLogic (ViewChangeHandler)39632/currentView
+      FieldName: currentView
 --- !u!1 &941569025 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6895057524511495324, guid: bdfec920f90e5d7499f7d0276bf96c41,
@@ -18673,7 +18647,7 @@ MonoBehaviour:
     spaceCount: 1
     wordCount: 2
     linkCount: 0
-    lineCount: 2
+    lineCount: 3
     pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
@@ -19590,7 +19564,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 30
+  m_fontSize: 30.05
   m_fontSizeBase: 42
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -19607,7 +19581,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: 0
+  m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -19913,7 +19887,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.00024414062, y: 0.0000022548827}
+  m_AnchoredPosition: {x: -0.00024414062, y: 0.000044942855}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1109170133
@@ -21920,7 +21894,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0.21122801, y: 1}
-  m_AnchoredPosition: {x: 10.000008, y: 2.5}
+  m_AnchoredPosition: {x: 9.999992, y: 2.5}
   m_SizeDelta: {x: -30.000015, y: -15}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1156320150
@@ -28995,29 +28969,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   classType: 4
-  quantityCallbacks:
-  - _target: {fileID: 1747568416}
-    _methodName: GetDistance
-    _args: []
-    _dynamic: 0
-    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    dirty: 0
-  - _target: {fileID: 2001467426}
-    _methodName: GetPosition
-    _args: []
-    _dynamic: 0
-    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    dirty: 0
-  - _target: {fileID: 2001467425}
-    _methodName: GetPosition
-    _args: []
-    _dynamic: 0
-    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    dirty: 0
-  watchValues: []
+  watchValues:
+  - index: 0
+    objectInfo:
+      Object: {fileID: 1747568414}
+      ComponentName: RulerPrefab
+      FieldName: currentDistance
+  - index: 0
+    objectInfo:
+      Object: {fileID: 2001467412}
+      ComponentName: CoulombAssessmentPosition
+      FieldName: position
+  - index: 0
+    objectInfo:
+      Object: {fileID: 2001467411}
+      ComponentName: CoulombAssessmentPosition
+      FieldName: position
 --- !u!114 &1747568416 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4335284374865567558, guid: 25af714453cfd4147834948a37c2a53e,
@@ -32808,6 +32775,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: RulerPrefab
       objectReference: {fileID: 0}
+    - target: {fileID: 7117858530360728442, guid: 25af714453cfd4147834948a37c2a53e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8409527518451127711, guid: 25af714453cfd4147834948a37c2a53e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -33059,36 +33031,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   classType: 3
-  quantityCallbacks:
-  - _target: {fileID: 941569020}
-    _methodName: GetVoltageVis
-    _args: []
-    _dynamic: 0
-    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    dirty: 0
-  - _target: {fileID: 941569020}
-    _methodName: GetEquipotentialLineVis
-    _args: []
-    _dynamic: 0
-    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    dirty: 0
-  - _target: {fileID: 941569020}
-    _methodName: GetIronFilingVis
-    _args: []
-    _dynamic: 0
-    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    dirty: 0
-  - _target: {fileID: 941569018}
-    _methodName: GetVectorFieldArrows
-    _args: []
-    _dynamic: 0
-    _typeName: Maroon.Assessment.QuantityCallback, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    dirty: 0
-  watchValues: []
+  watchValues:
+  - index: 0
+    objectInfo:
+      Object: {fileID: 2006672461}
+      ComponentName: PlaneVisualization
+      FieldName: voltageVisualization
+  - index: 1
+    objectInfo:
+      Object: {fileID: 2006672461}
+      ComponentName: PlaneVisualization
+      FieldName: equipotentialLineVisualization
+  - index: 2
+    objectInfo:
+      Object: {fileID: 2006672461}
+      ComponentName: PlaneVisualization
+      FieldName: ironFilingVisualization
+  - index: 0
+    objectInfo:
+      Object: {fileID: 941568981}
+      ComponentName: VectorField
+      FieldName: arrows
 --- !u!1 &2015188470
 GameObject:
   m_ObjectHideFlags: 0
@@ -33284,7 +33247,7 @@ MonoBehaviour:
     spaceCount: 0
     wordCount: 1
     linkCount: 0
-    lineCount: 1
+    lineCount: 2
     pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
