@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using Antares.Evaluation;
 using Antares.Evaluation.Engine;
@@ -111,27 +112,14 @@ namespace Maroon.Assessment
                 return false;
             }
         }
-
+        
         public void RegisterAssessmentObject(AssessmentObject assessmentObject)
         {
             if(showDebugMessages)
                 Debug.Log($"AssessmentManager::RegisterAssessmentObject: {assessmentObject.ObjectID}");
 
-			_objectsInRange.Add(assessmentObject);
-
-            EventBuilder
-                .PerceiveObject(assessmentObject.ObjectID)
-                .Set("class", assessmentObject.ClassType.ToString());
-
-            foreach (var watchValue in assessmentObject.WatchValues)
-                EventBuilder.Set(watchValue.PropertyName, ConvertToAntaresValue(watchValue.GetValue()));
-        }
-
-        public void RegisterAssessmentObject(AssessmentObjectCompressed assessmentObject)
-        {
-            if(showDebugMessages)
-                Debug.Log($"AssessmentManager::RegisterAssessmentObject: {assessmentObject.ObjectID}");
-
+            _objectsInRange.Add(assessmentObject);
+            
             EventBuilder
                 .PerceiveObject(assessmentObject.ObjectID)
                 .Set("class", assessmentObject.ClassType.ToString());
@@ -141,23 +129,14 @@ namespace Maroon.Assessment
                 EventBuilder.Set(watchValue.GetName(), ConvertToAntaresValue(watchValue.GetValue()));
             }
         }
-
+        
         public void DeregisterAssessmentObject(AssessmentObject assessmentObject)
         {
             if(showDebugMessages)
                 Debug.Log($"AssessmentManager::DeregisterAssessmentObject: {assessmentObject.ObjectID}");
 
             EventBuilder.UnlearnObject(assessmentObject.ObjectID);
-			
-			_objectsInRange.Remove(assessmentObject);
-        }
-        
-        public void DeregisterAssessmentObject(AssessmentObjectCompressed assessmentObject)
-        {
-            if(showDebugMessages)
-                Debug.Log($"AssessmentManager::DeregisterAssessmentObject: {assessmentObject.ObjectID}");
-
-            EventBuilder.UnlearnObject(assessmentObject.ObjectID);
+            _objectsInRange.Remove(assessmentObject);
         }
 
         public void SendUserAction(string actionName, string objectId=null)
@@ -167,15 +146,12 @@ namespace Maroon.Assessment
 
             EventBuilder.Action(actionName, objectId);
 
-            foreach (AssessmentObject assessmentObject in _objectsInRange)
+            foreach (var assessmentObject in _objectsInRange)
             {
                 EventBuilder.UpdateDataOf(assessmentObject.ObjectID);
-                foreach (var watchValue in assessmentObject.gameObject.GetComponents<AssessmentWatchValue>())
+                foreach (var watchValue in assessmentObject.WatchedValues.Where(watchValue => watchValue.IsDynamic()))
                 {
-                    if (watchValue.IsDynamic)
-                    {
-                        EventBuilder.Set(watchValue.PropertyName, ConvertToAntaresValue(watchValue.GetValue()));
-                    }
+                    EventBuilder.Set(watchValue.GetName(), ConvertToAntaresValue(watchValue.GetValue()));
                 }
             }
         }
@@ -194,7 +170,7 @@ namespace Maroon.Assessment
             {
                 _evalService.ProcessEvent(gameEvent);
             }
-            else
+            else if(showDebugMessages)
             {
                 Debug.LogWarning("AssessmentManager::SendGameEvent: Assessment service is not running");
             }
