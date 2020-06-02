@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 [System.Serializable]
@@ -39,6 +40,11 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     public Transform xAt1m2d;
     public Transform xOrigin3d;
     public Transform xAt1m3d;
+
+    [Header("Axis Settings")] 
+    public Axis calcSpaceXAxis = Axis.XAxis;
+    public Axis calcSpaceYAxis = Axis.YAxis;
+    public Axis calcSpaceZAxis = Axis.ZAxis;
     
     [Header("Maximum Ranges")]
     public float xMax2d = 1f;
@@ -125,6 +131,36 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
             CalcToWorldSpace(distance.z, local));
     }
 
+    public Vector3 CalcToWorldSpaceCoordinates(Vector3 coord, bool local = true)
+    {
+        if (local)
+        {
+            var origin = Vector3.zero;
+            var at1m = Vector3.zero;
+            if(IsIn2dMode())
+            {
+                var tmp = coord.y;
+                coord.y = coord.z;
+                coord.z = tmp;
+                origin = xOrigin2d.transform.localPosition;
+                at1m = xAt1m2d.transform.localPosition;
+            }
+            else
+            {
+                origin = xOrigin3d.transform.localPosition;
+                at1m = xAt1m3d.transform.localPosition;
+            }
+            
+              
+            return new Vector3(
+                origin.x + (at1m.x - origin.x) * coord.x,
+                origin.y + (at1m.y - origin.y) * coord.y,
+                origin.z + (at1m.z - origin.z) * coord.z);
+        }
+
+        throw new NotImplementedException();
+    }
+    
     public float CalcToWorldSpace(float distanceCalcSpace, bool local = false)
     {
         if (IsIn2dMode())
@@ -226,46 +262,12 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
 
     public GameObject CreateChargeAtCalcSpacePosition(GameObject prefab, Vector3 position, float chargeLoad, bool hasFixedPosition, bool deactivateCollisions = true)
     {
-        var localPos = CalcToWorldSpace(position, false);
+        Debug.Log("Create Charge with " + chargeLoad + " at " + position + " using " + (hasFixedPosition? "a" : "no") + " fixed position");
+        var localPos = CalcToWorldSpaceCoordinates(position, true);
         var newCharge = CreateCharge(prefab, localPos, chargeLoad, hasFixedPosition, false, deactivateCollisions);
         newCharge.transform.localPosition = localPos;
+        newCharge.GetComponent<CoulombChargeBehaviour>()?.UpdateResetPosition();
 
-        // if (!_in3dMode)
-        // {
-        //     var globalNewPos = xOrigin2d.position;
-        //     switch (calcSpaceXAxisToRealAxis)
-        //     {
-        //         case Axis.XAxis:
-        //             globalNewPos.x += (xAt1m2d.position.x - xOrigin2d.position.x) * position.x;
-        //             break;
-        //         case Axis.YAxis:
-        //             globalNewPos.y += (xAt1m2d.position.y - xOrigin2d.position.y) * position.x;
-        //             break;
-        //         case Axis.ZAxis:
-        //             globalNewPos.z += (xAt1m2d.position.z - xOrigin2d.position.z) * position.x;
-        //             break;
-        //         default:
-        //             throw new ArgumentOutOfRangeException();
-        //     }        
-        //     switch (calcSpaceYAxisToRealAxis)
-        //     {
-        //         case Axis.XAxis:
-        //             globalNewPos.x += (xAt1m2d.position.x - xOrigin2d.position.x) * position.y;
-        //             break;
-        //         case Axis.YAxis:
-        //             globalNewPos.y += (xAt1m2d.position.y - xOrigin2d.position.y) * position.y;
-        //             break;
-        //         case Axis.ZAxis:
-        //             globalNewPos.z += (xAt1m2d.position.z - xOrigin2d.position.z) * position.y;
-        //             break;
-        //         default:
-        //             throw new ArgumentOutOfRangeException();
-        //     }
-        //
-        //     newCharge.transform.position = globalNewPos;
-        // }
-        
-        
         var rb = newCharge.GetComponent<Rigidbody>();
         if (rb && !_in3dMode && !inVR)
         {
@@ -422,7 +424,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         scene2D.SetActive(!_in3dMode);
         scene3D.SetActive(_in3dMode);
 
-        if (!inVR)
+        if (!inVR && !SceneManager.GetActiveScene().name.Contains(".vr"))
         {
             var camTransform = Camera.main.transform;
             camTransform.position = _in3dMode ? new Vector3(0, 30f, -59.52f) : new Vector3(0, 4.4f, -59.52f);

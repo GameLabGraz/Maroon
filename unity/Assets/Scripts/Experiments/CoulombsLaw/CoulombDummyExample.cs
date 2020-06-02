@@ -65,81 +65,37 @@ using Random = UnityEngine.Random;
 
 public class CoulombDummyExample : MonoBehaviour
 {
-    public CoulombLogic logic;
-    [Range(1, 60)]
-    public float timeInterval = 30;
-    [Range(0, 60)] 
-    public float startSimulationAfter = 5;
-
-    public GameObject ChargePrefab;
-    public int maxNumCharges = 4;
-
-    // [Header("Axis Mapping")] 
-    // public Mapping mapping;
+    [Serializable]
+    public struct ChargeStruct
+    {
+        public Vector2 position;
+        [Range(-5f, 5f)] public float charge;
+    }
     
-    private float _currentTime = -1f;
-    private bool _simulationStarted = false;
+    public CoulombLogic logic;
+    public GameObject ChargePrefab;
+    public List<ChargeStruct> charges = new List<ChargeStruct>();
+    
+    private bool _initialized = false;
 
-    // private List<GameObject> _charges = new List<GameObject>();
-
-    // Update is called once per frame
     void Update()
     {
-        _currentTime -= Time.deltaTime;
-
-        if (!_simulationStarted && _currentTime < timeInterval - startSimulationAfter)
-        {
-            SimulationController.Instance.StartSimulation();
-            _simulationStarted = true;
-        }
-        
-        if(_currentTime < 0)
+        if(!_initialized)
             InitNewAnimation();
     }
 
     private void InitNewAnimation()
     {
-        var numCharges = Random.Range(2f, maxNumCharges);
         SimulationController.Instance.StopSimulation();
-        
         logic.RemoveAllParticles(true);
 
-        for (var i = 0; i < Mathf.FloorToInt(numCharges); ++i)
+        foreach (var chargeTemplate in charges)
         {
-            // GameObject charge = null;
-            // var chargeValue = Random.Range(-5f, 5f);
-            // if (i < _charges.Count)
-            // {
-            //     charge = _charges[i];
-            //     charge.SetActive(true);
-            // }
-            // else
-            // {
-            //     charge = logic.CreateCharge(ChargePrefab, Vector3.zero, chargeValue, false);
-            //     _charges.Add(charge);
-            // }
-            //
-            // charge.GetComponent<CoulombChargeBehaviour>().SetInUse(true);
-            //
-            // var calcPosition = new Vector3(Random.Range(0f, 1f), Random.Range(0f, 1f), 0f);
-            // Debug.Log("Random Position: " + calcPosition);
-            //
-            // var realMapped = mapping.MapFromCalcToReal(calcPosition);
-            // charge.transform.position = logic.xOrigin2d.position;
-            // var localPos = charge.transform.localPosition;
-            // localPos.x += realMapped.x * logic.GetWorldToCalcFactor(true);
-            // localPos.y += realMapped.y * logic.GetWorldToCalcFactor(true);
-            // localPos.z += realMapped.z * logic.GetWorldToCalcFactor(true);
-            // charge.transform.localPosition = localPos;
-
-            
-            var chargeValue = Random.Range(-5f, 5f);
-            var position = new Vector3(Random.Range(0f, 1f), Random.Range(0f, 1f), 0f);
-            var newCharge = logic.CreateChargeAtCalcSpacePosition(ChargePrefab, position, chargeValue, false);
+            var position = new Vector3(chargeTemplate.position.x, chargeTemplate.position.y, 0f);
+            var newCharge = logic.CreateChargeAtCalcSpacePosition(ChargePrefab, position, chargeTemplate.charge, false);
             newCharge.GetComponent<CoulombChargeBehaviour>().SetInUse(true);
         }
 
-        _simulationStarted = false;
-        _currentTime = timeInterval;
+        _initialized = true;
     }
 }
