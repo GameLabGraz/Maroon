@@ -1646,6 +1646,15 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   resetEnabled: 1
+  onStartDrag:
+    m_PersistentCalls:
+      m_Calls: []
+  onEndDrag:
+    m_PersistentCalls:
+      m_Calls: []
+  onSetSliderValueViaInput:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!224 &118444851
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3291,6 +3300,7 @@ MonoBehaviour:
   currentValue:
     assessmentName: voltage
     isDynamic: 0
+    alwaysSendValueChangedEvent: 1
     _value: 0
     onValueChanged:
       m_PersistentCalls:
@@ -10414,7 +10424,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e18eda270d65ffa4cb73d980579c5522, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amlFile: Assessment\test.aml
+  amlFile: Assessment\coulomb_test_1.aml
+  showDebugMessages: 1
 --- !u!114 &668779869
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16245,6 +16256,7 @@ MonoBehaviour:
   currentView:
     assessmentName: perspective
     isDynamic: 0
+    alwaysSendValueChangedEvent: 1
     _value: 0
     onValueChanged:
       m_PersistentCalls:
@@ -16428,6 +16440,7 @@ MonoBehaviour:
   position:
     assessmentName: positive_terminal_position
     isDynamic: 0
+    alwaysSendValueChangedEvent: 1
     _value: {x: 0, y: 0, z: 0}
     onValueChanged:
       m_PersistentCalls:
@@ -16451,6 +16464,7 @@ MonoBehaviour:
   position:
     assessmentName: negative_terminal_position
     isDynamic: 0
+    alwaysSendValueChangedEvent: 1
     _value: {x: 0, y: 0, z: 0}
     onValueChanged:
       m_PersistentCalls:
@@ -17486,6 +17500,7 @@ MonoBehaviour:
   eulerRotation:
     assessmentName: 3d_rotation
     isDynamic: 0
+    alwaysSendValueChangedEvent: 1
     _value: {x: 0, y: 0, z: 0}
     onValueChanged:
       m_PersistentCalls:
@@ -17582,6 +17597,7 @@ MonoBehaviour:
   position:
     assessmentName: position
     isDynamic: 0
+    alwaysSendValueChangedEvent: 1
     _value: {x: -1, y: -1, z: -1}
     onValueChanged:
       m_PersistentCalls:
@@ -17605,6 +17621,7 @@ MonoBehaviour:
   eulerRotation:
     assessmentName: rotation
     isDynamic: 0
+    alwaysSendValueChangedEvent: 1
     _value: {x: 0, y: 0, z: 0}
     onValueChanged:
       m_PersistentCalls:
@@ -18647,7 +18664,7 @@ MonoBehaviour:
     spaceCount: 1
     wordCount: 2
     linkCount: 0
-    lineCount: 3
+    lineCount: 2
     pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
@@ -19564,7 +19581,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 30.05
+  m_fontSize: 30
   m_fontSizeBase: 42
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -19581,7 +19598,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: -1
+  m_firstOverflowCharacterIndex: 0
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -19903,6 +19920,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   classType: 6
+  watchValues: []
 --- !u!114 &1109170134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19978,7 +19996,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.03128294, y: 0.123}
   m_AnchorMax: {x: 1, y: 0.9850001}
-  m_AnchoredPosition: {x: -6.5, y: 0.099853516}
+  m_AnchoredPosition: {x: -6.4999847, y: 0.099853516}
   m_SizeDelta: {x: -13, y: -0.30000305}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1109837620
@@ -26004,6 +26022,15 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   resetEnabled: 1
+  onStartDrag:
+    m_PersistentCalls:
+      m_Calls: []
+  onEndDrag:
+    m_PersistentCalls:
+      m_Calls: []
+  onSetSliderValueViaInput:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!224 &1546420462
 RectTransform:
   m_ObjectHideFlags: 0
@@ -32909,6 +32936,7 @@ MonoBehaviour:
   position:
     assessmentName: end_position
     isDynamic: 0
+    alwaysSendValueChangedEvent: 1
     _value: {x: 0, y: 0, z: 0}
     onValueChanged:
       m_PersistentCalls:
@@ -32932,6 +32960,7 @@ MonoBehaviour:
   position:
     assessmentName: start_position
     isDynamic: 0
+    alwaysSendValueChangedEvent: 1
     _value: {x: 0, y: 0, z: 0}
     onValueChanged:
       m_PersistentCalls:
@@ -34962,6 +34991,15 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   resetEnabled: 1
+  onStartDrag:
+    m_PersistentCalls:
+      m_Calls: []
+  onEndDrag:
+    m_PersistentCalls:
+      m_Calls: []
+  onSetSliderValueViaInput:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &5376674143609445455
 GameObject:
   m_ObjectHideFlags: 0
