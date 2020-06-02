@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using GEAR.Gadgets.ReferenceValue;
 using Maroon.Physics;
 using UnityEngine;
 
@@ -74,6 +76,14 @@ namespace Maroon.Assessment
         protected virtual void OnDestroy()
         {
             AssessmentManager.Instance?.DeregisterAssessmentObject(this);
+        }
+
+        public void ForceUpdateValue(string nameInProperties)
+        {
+            foreach (var quantity in WatchedValues.Where(quantity => quantity.GetName() == nameInProperties))
+            {
+                quantity.SendValueChangedEvent();
+            }
         }
     }
 }

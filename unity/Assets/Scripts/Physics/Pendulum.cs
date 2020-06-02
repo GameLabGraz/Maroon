@@ -60,7 +60,13 @@ namespace Maroon.Physics
         public float Weight
         {
             get => weight;
-            set => weight.Value = value;
+            set
+            {
+                weight.Value = value;
+                
+                _rigidbody.mass = value;
+                _weightObj.transform.localScale = Vector3.one * value;
+            }
         }
 
         public float RopeLength
@@ -70,6 +76,11 @@ namespace Maroon.Physics
             {
                 _oldRopeLength = RopeLength;
                 ropeLength.Value = value;
+                
+                
+                var pos = _weightObj.transform.position;
+                var moveDirection = (pos - _standRopeJoint.transform.position).normalized;
+                _weightObj.transform.position = pos + moveDirection * (value - _oldRopeLength);
             }
         }
 
@@ -82,19 +93,6 @@ namespace Maroon.Physics
         protected override void Start()
         {
             base.Start();
-            
-            weight.onValueChanged.AddListener((value) =>
-            {
-              _rigidbody.mass = value;
-              _weightObj.transform.localScale = Vector3.one * value;
-            });
-            ropeLength.onValueChanged.AddListener((value) =>
-            {
-              var pos = _weightObj.transform.position;
-              var moveDirection = (pos - _standRopeJoint.transform.position).normalized;
-              _weightObj.transform.position = pos + moveDirection * (value - _oldRopeLength);
-            });
-
             Joint = GetComponent<HingeJoint>();
 
             _rigidbody.mass = Weight;

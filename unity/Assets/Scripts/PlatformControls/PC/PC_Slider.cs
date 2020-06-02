@@ -1,5 +1,7 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace PlatformControls.PC
@@ -9,10 +11,17 @@ namespace PlatformControls.PC
         private float _startValue;
         public bool resetEnabled = true;
 
+        public UnityEvent onStartDrag = new UnityEvent();
+        public UnityEvent onEndDrag = new UnityEvent();
+        public UnityEvent onSetSliderValueViaInput = new UnityEvent();
+
         protected override void Start()
         {
             base.Start();
 
+            onStartDrag.AddListener(() => Debug.Log("PC_SLIDER: START DRAG!!!"));
+            onEndDrag.AddListener(() => Debug.Log("PC_SLIDER: END DRAG!!!"));
+            
             _startValue = value;
         }
 
@@ -21,6 +30,7 @@ namespace PlatformControls.PC
             try
             {
                 value = (float)Convert.ToDouble(valueObject);
+                onSetSliderValueViaInput.Invoke();
             }
             catch (Exception e)
             {
@@ -33,6 +43,18 @@ namespace PlatformControls.PC
         {
             if(resetEnabled)
                 value = _startValue;
+        }
+        
+        public override void OnPointerDown(PointerEventData eventData)
+        {
+            base.OnPointerDown(eventData);
+            onStartDrag.Invoke();
+        }
+
+        public override void OnPointerUp(PointerEventData eventData)
+        {
+            base.OnPointerUp(eventData);
+            onEndDrag.Invoke();
         }
     }
 }

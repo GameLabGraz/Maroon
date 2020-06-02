@@ -32,6 +32,8 @@ namespace Maroon.Physics
         string GetName();
         bool IsDynamic();
         object GetValue();
+
+        void SendValueChangedEvent();
     }
     
     
@@ -41,6 +43,8 @@ namespace Maroon.Physics
         [SerializeField] public string assessmentName;
         public bool isDynamic = false;
 
+        public bool alwaysSendValueChangedEvent = true;
+
         [SerializeField]
         private T _value;
         public T Value
@@ -49,7 +53,8 @@ namespace Maroon.Physics
             set
             {
                 _value = value;
-                onValueChanged?.Invoke(value);
+                if(alwaysSendValueChangedEvent)
+                    onValueChanged?.Invoke(value);
             }
         }
 
@@ -73,6 +78,11 @@ namespace Maroon.Physics
         public object GetValue()
         {
             return _value;
+        }
+
+        public void SendValueChangedEvent()
+        {
+            onValueChanged.Invoke(_value);
         }
     }
 
