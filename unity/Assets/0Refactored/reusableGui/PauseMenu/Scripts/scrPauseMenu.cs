@@ -12,6 +12,8 @@ public class scrPauseMenu : MonoBehaviour
     // State
     public static bool IsPaused = false;
 
+    private int OpenPanelId = -1;
+
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Pause Menu items
     [SerializeField] private GameObject Canvas;
@@ -32,7 +34,7 @@ public class scrPauseMenu : MonoBehaviour
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Setup
 
-    void Start()
+    private void Start()
     {
         // Hide menu and panels
         this.Canvas.SetActive(false);
@@ -48,15 +50,15 @@ public class scrPauseMenu : MonoBehaviour
             GameObject button = this.SettingButtons[i];
 
             // Delegates passed by reference, hacky workaround
-            int openPanel = i;
-            button.GetComponent<Button>().onClick.AddListener(delegate {this.ToggleSettingsPanel(openPanel);});
+            int openPanelId = i;
+            button.GetComponent<Button>().onClick.AddListener(delegate {this.ToggleSettingsPanel(openPanelId);});
         }
     }
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Open/Close Pause Menu
 
-    void Update()
+    private void Update()
     {
         if(Input.GetKeyDown(KeyCode.Escape))
         {
@@ -78,7 +80,7 @@ public class scrPauseMenu : MonoBehaviour
         scrPauseMenu.IsPaused = true;
     }
 
-    public void ClosePauseMenu()
+    private void ClosePauseMenu()
     {
         this.Canvas.SetActive(false);
         Time.timeScale = 1;
@@ -88,7 +90,7 @@ public class scrPauseMenu : MonoBehaviour
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Open/Close Settings
 
-    void ToggleSettingsPanel(int panel_id)
+    private void ToggleSettingsPanel(int panel_id)
     {
         // Gather info
         GameObject requested_panel = this.SettingPanels[panel_id];
@@ -98,17 +100,24 @@ public class scrPauseMenu : MonoBehaviour
         this.PanelRight.SetActive(false);
         foreach(GameObject SettingPanel in this.SettingPanels)
         {
+            this.OpenPanelId = -1;
             SettingPanel.SetActive(false);            
         }
 
         // Open correct panel if requested
         if(open_requested)
         {
-            string title = this.SettingButtons[panel_id].GetComponentInChildren<TextMeshProUGUI>().text;
-            this.PanelRightTitle.GetComponentInChildren<TextMeshProUGUI>().text = title;
+            this.OpenPanelId = panel_id;
+            this.UpdateRightPanelName();
             requested_panel.SetActive(true);
             this.PanelRight.SetActive(true);
         }
+    }
+
+    public void UpdateRightPanelName()
+    {
+        string title = this.SettingButtons[this.OpenPanelId].GetComponentInChildren<TextMeshProUGUI>().text;
+        this.PanelRightTitle.GetComponentInChildren<TextMeshProUGUI>().text = title;
     }
     
 }
