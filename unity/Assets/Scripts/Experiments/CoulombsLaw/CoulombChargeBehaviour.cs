@@ -1,4 +1,5 @@
-﻿using Maroon.Physics;
+﻿using System;
+using Maroon.Physics;
 using UnityEngine;
 
 public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, IDeleteObject
@@ -51,6 +52,8 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
     public int inUseLayer = -1;
     private int _layer;
     //VR Specific End
+
+    public RigidbodyConstraints inUseFreezing = RigidbodyConstraints.FreezeRotation;
     
 
     private void Awake()
@@ -58,13 +61,10 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
         _particleBaseRenderer = particleBase.GetComponent<MeshRenderer>();
         charge.onValueChanged.AddListener(OnChargeValueChangeHandler);
         _layer = gameObject.layer;
-    }
 
-    private void Start()
-    {
         Init();
     }
-
+    
     public void Init()
     {
         _rigidbody = GetComponent<Rigidbody>();
@@ -97,9 +97,8 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
         _rigidbody.useGravity = !inUse;
         // Debug.Log("Set In USE: " + inUse);
 
-        _rigidbody.constraints =
-            inUse
-                ? RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY |
+        // _rigidbody.constraints = inUse?     RigidbodyConstraints.FreezeRotation | inUseFreezing : RigidbodyConstraints.None;
+        _rigidbody.constraints = inUse? RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY |
                   RigidbodyConstraints.FreezeRotationZ
                 : RigidbodyConstraints.None;
 
