@@ -1,4 +1,4 @@
-<img src="/images/logo/logo.png" width="400"/>
+<img src="/images/logo/logo-256.png" width="400"/>
 
 Welcome to the Maroon repository. Maroon is an interactive laboratory and experiment environment implemented in Unity, designed for active learning in the classroom or at home. It visualizes and simulates various experiments.
 
