@@ -79,8 +79,12 @@ public class SymmetricFieldLineManager : FieldLineManager
             for (var i = 1; i < symmetryCount; ++i)
             {
                 var clone = Instantiate(fieldLine.gameObject, fieldLine.transform.position, Quaternion.identity);
-                clone.GetComponent<AdvancedLineRenderer>().SetVertexCount(fieldLine.GetLinePositions().Count);
-                clone.GetComponent<AdvancedLineRenderer>().SetPositions(fieldLine.GetLinePositions());
+                var lineRender = clone.GetComponent<AdvancedLineRenderer>();
+                if (lineRender)
+                {
+                    lineRender.SetVertexCount(fieldLine.GetLinePositions().Count);
+                    lineRender.SetPositions(fieldLine.GetLinePositions());
+                }
 
                 //workaround to keep the field line and its clones at the same scale
                 var temp = clone.transform.localScale;

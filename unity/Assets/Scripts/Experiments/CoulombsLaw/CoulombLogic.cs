@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 [System.Serializable]
 public class ModeChangeEvent : UnityEvent<bool>
@@ -15,10 +18,17 @@ public class ParticleEvent : UnityEvent<CoulombChargeBehaviour>
 
 public class CoulombLogic : MonoBehaviour, IResetWholeObject
 {
+    public enum Axis {
+        XAxis,
+        YAxis,
+        ZAxis
+    }
+    
     [Header("General Settings")] 
     public bool inVR = false;
     public int maxChargeCount = 10;
     public bool startIn2dMode = true;
+    public Axis restrict2dModeMovement = Axis.ZAxis;
 
     public ParticleEvent onParticleAdded;
     public ParticleEvent onParticleRemoved;
@@ -30,6 +40,11 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     public Transform xAt1m2d;
     public Transform xOrigin3d;
     public Transform xAt1m3d;
+
+    [Header("Axis Settings")] 
+    public Axis calcSpaceXAxis = Axis.XAxis;
+    public Axis calcSpaceYAxis = Axis.YAxis;
+    public Axis calcSpaceZAxis = Axis.ZAxis;
     
     [Header("Maximum Ranges")]
     public float xMax2d = 1f;
@@ -54,9 +69,8 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     public UnityEvent onModeChangeTo2d;
     public UnityEvent onModeChangeTo3d;
 
-    private SimulationController _simController;
-    private List<CoulombChargeBehaviour> _charges;
-    private HashSet<GameObject> _chargesGameObjects;
+    private List<CoulombChargeBehaviour> _charges = new List<CoulombChargeBehaviour>();
+    private HashSet<GameObject> _chargesGameObjects = new HashSet<GameObject>();
 
     private const float CoulombConstant = 1f / (Mathf.PI * 8.8542e-12f);
 //    private const float CoulombConstant = 9f; // = 9 * 10^9 -> but we use the factor 0.001 beneath because we have constant * microCoulomb * microCoulomb (= 10^9 * 10^-6 * 10^-6 = 0.001)
@@ -70,7 +84,11 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     private float _worldToCalcSpaceFactor3dLocal;
     
     private bool _initialized = false;
-    
+
+    [Header("Debug Stuff")] 
+    public float correctionFactor = 1f;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -78,10 +96,6 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     }
     
     private void Initialize(){
-        var simControllerObject = GameObject.Find("SimulationController");
-        if (simControllerObject)
-            _simController = simControllerObject.GetComponent<SimulationController>();
-        
         _charges = new List<CoulombChargeBehaviour>();
         _chargesGameObjects = new HashSet<GameObject>();
         OnSwitch3d2dMode(startIn2dMode? 0f : 1f);
@@ -92,13 +106,13 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         _worldToCalcSpaceFactor3dLocal = Mathf.Abs(xAt1m3d.localPosition.x - xOrigin3d.localPosition.x);
         _initialized = true;
     }
-
+    
     private void FixedUpdate()
     {
         if (!_initialized)
             Initialize();
         
-        if (_simController.SimulationRunning)
+        if (SimulationController.Instance.SimulationRunning)
         {
             RunSimulation();
         }
@@ -117,6 +131,36 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
             CalcToWorldSpace(distance.z, local));
     }
 
+    public Vector3 CalcToWorldSpaceCoordinates(Vector3 coord, bool local = true)
+    {
+        if (local)
+        {
+            var origin = Vector3.zero;
+            var at1m = Vector3.zero;
+            if(IsIn2dMode())
+            {
+                var tmp = coord.y;
+                coord.y = coord.z;
+                coord.z = tmp;
+                origin = xOrigin2d.transform.localPosition;
+                at1m = xAt1m2d.transform.localPosition;
+            }
+            else
+            {
+                origin = xOrigin3d.transform.localPosition;
+                at1m = xAt1m3d.transform.localPosition;
+            }
+            
+              
+            return new Vector3(
+                origin.x + (at1m.x - origin.x) * coord.x,
+                origin.y + (at1m.y - origin.y) * coord.y,
+                origin.z + (at1m.z - origin.z) * coord.z);
+        }
+
+        throw new NotImplementedException();
+    }
+    
     public float CalcToWorldSpace(float distanceCalcSpace, bool local = false)
     {
         if (IsIn2dMode())
@@ -136,7 +180,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         {
             var pos = charge.transform.position;
             list.Add(new Vector4(pos.x, pos.y, pos.z, charge.Charge));
-            Debug.Log("Charge as Vec: " + new Vector4(pos.x, pos.y, pos.z, charge.Charge));
+            // Debug.Log("Charge as Vec: " + new Vector4(pos.x, pos.y, pos.z, charge.Charge));
         }
 
         return list;
@@ -169,8 +213,9 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
                 var affectingParticle = _charges[j];
                 Vector3 direction;
                 Vector3 direction2;
-                var r = Vector3.Distance(currentParticle.transform.position, affectingParticle.transform.position); // = distance
-                r -= 2 * 0.71f; // - 2 * radius
+                
+                var r = WorldToCalcSpace(Vector3.Distance(currentParticle.transform.position, affectingParticle.transform.position)); // = distance
+                r -= 2 * WorldToCalcSpace(0.71f); // - 2 * radius
                 
                 if ((currentParticle.Charge < 0f) == (affectingParticle.Charge < 0f))
                 {
@@ -186,14 +231,23 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
 
                 var force = CoulombConstant * Mathf.Abs(currentParticle.Charge) * Mathf.Abs(affectingParticle.Charge);
                 force /= Mathf.Pow(r, 2);
-
-                sumForce += force * direction2;
                 
+                sumForce += force * direction2;
+
                 if(force > 0.0001f)
                     sumDirection += force * direction;
             }
 
             sumDirection = Vector3.Normalize(sumDirection)* Time.deltaTime;
+            sumDirection = CalcToWorldSpace(sumDirection);
+
+            if (Mathf.Abs(correctionFactor - 1f) > 0.0000000001f)
+            {
+                sumDirection.x *= correctionFactor;
+                sumDirection.y *= correctionFactor;
+                sumDirection.z *= correctionFactor;
+            }
+            
             currentParticle.CalculatedPosition(sumDirection + currentParticle.transform.position);
         }
 
@@ -204,8 +258,28 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
             _charges[i].UpdateCalculations();
         }
     }
+
+
+    public GameObject CreateChargeAtCalcSpacePosition(GameObject prefab, Vector3 position, float chargeLoad, bool hasFixedPosition, bool deactivateCollisions = true)
+    {
+        Debug.Log("Create Charge with " + chargeLoad + " at " + position + " using " + (hasFixedPosition? "a" : "no") + " fixed position");
+        var localPos = CalcToWorldSpaceCoordinates(position, true);
+        var newCharge = CreateCharge(prefab, localPos, chargeLoad, hasFixedPosition, false, deactivateCollisions);
+        newCharge.transform.localPosition = localPos;
+        newCharge.GetComponent<CoulombChargeBehaviour>()?.UpdateResetPosition();
+
+        var rb = newCharge.GetComponent<Rigidbody>();
+        if (rb && !_in3dMode && !inVR)
+        {
+            rb.constraints = ( restrict2dModeMovement == Axis.XAxis? RigidbodyConstraints.FreezePositionX 
+                                 : restrict2dModeMovement == Axis.YAxis? RigidbodyConstraints.FreezePositionY : RigidbodyConstraints.FreezePositionZ) 
+                             | RigidbodyConstraints.FreezeRotation;
+        }
+        
+        return newCharge;
+    }
     
-    public void CreateCharge(GameObject prefab, Vector3 position, float chargeLoad, bool hasFixedPosition, bool positionInWorldCoord = true)
+    public GameObject CreateCharge(GameObject prefab, Vector3 position, float chargeLoad, bool hasFixedPosition, bool positionInWorldCoord = true, bool deactivateCollisions = true)
     {
         var obj = Instantiate(prefab, _in3dMode ? vectorField3d.transform : vectorField2d.transform, true);
         Debug.Assert(obj != null);
@@ -219,13 +293,8 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
                 obj.transform.localPosition = xOrigin3d.localPosition + CalcToWorldSpace(position, true);
             else
             {
-                Debug.Log("Position" + position);
-                Debug.Log("Calc to worl psace: " + CalcToWorldSpace(position));
                 var pos = xOrigin2d.position + CalcToWorldSpace(new Vector3(position.x, position.y));
                 obj.transform.position = pos;
-//                pos = obj.transform.localPosition;
-//                pos.z = 4.361746f;      
-//                obj.transform.localPosition = pos;
             } 
             chargeBehaviour.SetPosition(obj.transform.position);
         }
@@ -237,24 +306,39 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
 
         var movement = obj.GetComponent<PC_DragHandler>();
         if (!movement) movement = obj.GetComponentInChildren<PC_DragHandler>();
-        Debug.Assert(movement != null);
-        movement.SetBoundaries(_in3dMode?  minBoundary3d : minBoundary2d, _in3dMode? maxBoundary3d : maxBoundary2d);
-        movement.allowedXMovement = movement.allowedYMovement = true;
-        movement.allowedZMovement = _in3dMode;
+        if (movement)
+        {
+            movement.SetBoundaries(_in3dMode ? minBoundary3d : minBoundary2d,
+                _in3dMode ? maxBoundary3d : maxBoundary2d);
+            movement.allowedXMovement = _in3dMode || restrict2dModeMovement != Axis.XAxis;
+            movement.allowedYMovement = _in3dMode || restrict2dModeMovement != Axis.YAxis;
+            movement.allowedZMovement = _in3dMode || restrict2dModeMovement != Axis.ZAxis;
+            // movement.allowedXMovement = movement.allowedYMovement = true;
+            // movement.allowedZMovement = _in3dMode;
+        }
         
         var arrowMovement = obj.GetComponentInChildren<PC_ArrowMovement>();
-        Debug.Assert(arrowMovement != null);
-        arrowMovement.SetBoundaries(_in3dMode? minBoundary3d.transform : minBoundary2d.transform, _in3dMode? maxBoundary3d.transform : maxBoundary2d.transform);
-        arrowMovement.restrictYMovement = !_in3dMode;
-        
+        if (arrowMovement)
+        {
+            arrowMovement.SetBoundaries(_in3dMode ? minBoundary3d.transform : minBoundary2d.transform,
+                _in3dMode ? maxBoundary3d.transform : maxBoundary2d.transform);
+            arrowMovement.restrictYMovement = !_in3dMode;
+        }
+
         var field = GameObject.FindGameObjectWithTag("Field").GetComponent<IField>(); //should be only one
-        obj.GetComponentInChildren<FieldLine>().field = field;
+        var fieldLine = obj.GetComponentInChildren<FieldLine>();
+        if (field && fieldLine)
+        {
+            fieldLine.field = field;
+        }
         obj.transform.localRotation = Quaternion.identity;
         obj.SetActive(true);
 
-        AddParticle(chargeBehaviour);
-        if(!_in3dMode)
-            chargeBehaviour.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+        AddParticle(chargeBehaviour, deactivateCollisions);
+        // if(!_in3dMode)
+            // chargeBehaviour.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+
+        return obj;
     }
     
 
@@ -262,8 +346,8 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     {
         if(_charges.Count >= maxChargeCount) return;
         
-        _simController.SimulationRunning = false;
-        _simController.AddNewResetObjectAtBegin(coulombCharge);
+        SimulationController.Instance.SimulationRunning = false;
+        SimulationController.Instance.AddNewResetObjectAtBegin(coulombCharge);
         _charges.Add(coulombCharge);
         _chargesGameObjects.Add(coulombCharge.gameObject);
         coulombCharge.SetInUse(true);
@@ -283,7 +367,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
             }
         }
 
-        _simController.ResetSimulation();
+        SimulationController.Instance.ResetSimulation();
         
         if(_charges.Count == maxChargeCount) onMaxChargesReached.Invoke();
         
@@ -297,7 +381,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
 
     public void RemoveParticle(CoulombChargeBehaviour coulombCharge, bool destroy = false)
     {
-        _simController.RemoveResetObject(coulombCharge);
+        SimulationController.Instance.RemoveResetObject(coulombCharge);
         _charges.Remove(coulombCharge);
         _chargesGameObjects.Remove(coulombCharge.gameObject);
         coulombCharge.SetInUse(false);
@@ -313,6 +397,14 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         onParticleRemoved.Invoke(coulombCharge);
     }
 
+    public void RemoveAllParticles(bool destroy = false)
+    {
+        while (_charges.Count > 0)
+        {
+            RemoveParticle(_charges[0], destroy);
+        }
+    }
+
 
     public void OnSwitch3d2dMode(float newMode)
     {
@@ -323,7 +415,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         else
             onModeChangeTo2d.Invoke();
         
-        _simController.SimulationRunning = false;
+        SimulationController.Instance.SimulationRunning = false;
         
         //remove all particles show new scene
         while(_charges.Count > 0)
@@ -332,7 +424,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         scene2D.SetActive(!_in3dMode);
         scene3D.SetActive(_in3dMode);
 
-        if (!inVR)
+        if (!inVR && !SceneManager.GetActiveScene().name.Contains(".vr"))
         {
             var camTransform = Camera.main.transform;
             camTransform.position = _in3dMode ? new Vector3(0, 30f, -59.52f) : new Vector3(0, 4.4f, -59.52f);
