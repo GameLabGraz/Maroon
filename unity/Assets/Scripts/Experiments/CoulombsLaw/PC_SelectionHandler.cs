@@ -145,7 +145,8 @@ public class PC_SelectionHandler : MonoBehaviour
             return;
         }
         
-        if (!Input.GetKeyDown(KeyCode.Backspace) && !Input.GetKeyDown(KeyCode.Escape)) return;
+        if (!Input.GetKeyDown(KeyCode.Backspace)) return;
+        //delete selected object when backspace is pressed
         switch (selectedObject.type)
         {
             case PC_SelectScript.SelectType.ChargeSelect:
