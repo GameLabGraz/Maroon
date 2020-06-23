@@ -123,7 +123,7 @@ public class SortingLogic : MonoBehaviour
                 //TODO _algorithm = new BubbleSort(this, arraySize);
                 break;
             case SortingAlgorithmType.SA_GnomeSort:
-                //TODO _algorithm = new GnomeSort(this, arraySize);
+                _algorithm = new GnomeSort(this, arraySize);
                 break;
             case SortingAlgorithmType.SA_RadixSort:
                 //TODO _algorithm = new RadixSort(this, arraySize);
