@@ -129,7 +129,7 @@ public class SortingLogic : MonoBehaviour
                 //TODO _algorithm = new RadixSort(this, arraySize);
                 break;
             case SortingAlgorithmType.SA_ShellSort:
-                //TODO _algorithm = new ShellSort(this, arraySize);
+                _algorithm = new ShellSort(this, arraySize);
                 break;
             default:
                 //TODO: No algorithm selected
