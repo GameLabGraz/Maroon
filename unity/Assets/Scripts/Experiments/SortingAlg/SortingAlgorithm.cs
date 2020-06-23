@@ -172,7 +172,7 @@ public abstract class SortingAlgorithm
         _nextState.Undo();
         sortingLogic.markCurrentSubset(_executedStates.Peek().GetSubsetStart(), _executedStates.Peek().GetSubsetEnd());
         sortingLogic.markPivot(_nextState.GetPivot());
-        sortingLogic.displayIndices(_executedStates.Peek().GetVariables());
+        sortingLogic.displayIndices(_nextState.GetVariables());
         if (!_nextState._requireWait)
         {
             sortingLogic.MoveFinished();

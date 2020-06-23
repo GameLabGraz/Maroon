@@ -10,8 +10,15 @@ public class SortingLogic : MonoBehaviour
     public enum SortingAlgorithmType
     {
         SA_None,
+        SA_InsertionSort,
+        SA_MergeSort,
+        SA_HeapSort,
+        SA_QuickSort,
+        SA_SelectionSort,
+        SA_BubbleSort,
+        SA_GnomeSort,
         SA_RadixSort,
-        SA_BubbleSort
+        SA_ShellSort
     }
     
     [Header("Sorting Machine Settings")] 
@@ -53,8 +60,8 @@ public class SortingLogic : MonoBehaviour
             _arrayPlaces.Add(referencePlace);
         CreateArray(arraySize);
         
-        //TODO: Set this in a function, make it changable
-        _algorithm = new InsertionSort(this, arraySize);
+        SetAlgorithm();
+        
         _currentlySorting = true;
         setPseudocode(-1);
     }
@@ -90,6 +97,43 @@ public class SortingLogic : MonoBehaviour
 
         if (swap) {
             Swap(moveFrom, moveTo);
+        }
+    }
+
+    private void SetAlgorithm()
+    {
+        switch (sortingAlgorithm)
+        {
+            case SortingAlgorithmType.SA_InsertionSort:
+                _algorithm = new InsertionSort(this, arraySize);
+                break;
+            case SortingAlgorithmType.SA_MergeSort:
+                _algorithm = new MergeSort(this, arraySize);
+                break;
+            case SortingAlgorithmType.SA_HeapSort:
+                //TODO _algorithm = new HeapSort(this, arraySize);
+                break;
+            case SortingAlgorithmType.SA_QuickSort:
+                _algorithm = new QuickSort(this, arraySize);
+                break;
+            case SortingAlgorithmType.SA_SelectionSort:
+                _algorithm = new SelectionSort(this, arraySize);
+                break;
+            case SortingAlgorithmType.SA_BubbleSort:
+                //TODO _algorithm = new BubbleSort(this, arraySize);
+                break;
+            case SortingAlgorithmType.SA_GnomeSort:
+                //TODO _algorithm = new GnomeSort(this, arraySize);
+                break;
+            case SortingAlgorithmType.SA_RadixSort:
+                //TODO _algorithm = new RadixSort(this, arraySize);
+                break;
+            case SortingAlgorithmType.SA_ShellSort:
+                //TODO _algorithm = new ShellSort(this, arraySize);
+                break;
+            default:
+                //TODO: No algorithm selected
+                break;
         }
     }
 
