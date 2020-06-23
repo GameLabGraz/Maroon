@@ -40,6 +40,10 @@ public class SelectionSort : SortingAlgorithm
         {
             SelectionSortingState next = new SelectionSortingState(this);
             next._line = _nextLine;
+            if (_nextValues != null)
+            {
+                next._variables = _nextValues;
+            }
             return next;
         }
         
@@ -71,7 +75,9 @@ public class SelectionSort : SortingAlgorithm
                     break;
                 case SortingStateLine.SS_Line2: // m = i
                     m = i;
-                    j = i;
+                    _nextValues = new Dictionary<string, int>(_variables);
+                    _nextValues["m"] = i;
+                    _nextValues["j"] = i;
                     _nextLine = SortingStateLine.SS_Line3;
                     break;
                 case SortingStateLine.SS_Line3: // for j = i+1 .. len(A)-1:

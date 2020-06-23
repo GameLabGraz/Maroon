@@ -41,6 +41,10 @@ public class ShellSort : SortingAlgorithm
         {
             ShellSortingState next = new ShellSortingState(this);
             next._line = _nextLine;
+            if (_nextValues != null)
+            {
+                next._variables = _nextValues;
+            }
             return next;
         }
         
@@ -66,7 +70,8 @@ public class ShellSort : SortingAlgorithm
                     if (gap > 0)
                     {
                         _nextLine = SortingStateLine.SS_Line3;
-                        i = gap - 1;
+                        _nextValues = new Dictionary<string, int>(_variables);
+                        _nextValues["i"] =  gap - 1;
                     }
                     else
                     {
