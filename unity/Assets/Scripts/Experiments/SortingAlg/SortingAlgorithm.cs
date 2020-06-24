@@ -31,7 +31,13 @@ public abstract class SortingAlgorithm
         SS_Line12,
         SS_Line13,
         SS_Line14,
-        SS_Line15
+        SS_Line15,
+        SS_Line16,
+        SS_Line17,
+        SS_Line18,
+        SS_Line19,
+        SS_Line20,
+        SS_Line21
     }
 
     protected class SortingState

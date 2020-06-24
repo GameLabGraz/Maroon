@@ -111,7 +111,7 @@ public class SortingLogic : MonoBehaviour
                 _algorithm = new MergeSort(this, arraySize);
                 break;
             case SortingAlgorithmType.SA_HeapSort:
-                //TODO _algorithm = new HeapSort(this, arraySize);
+                _algorithm = new HeapSort(this, arraySize);
                 break;
             case SortingAlgorithmType.SA_QuickSort:
                 _algorithm = new QuickSort(this, arraySize);
