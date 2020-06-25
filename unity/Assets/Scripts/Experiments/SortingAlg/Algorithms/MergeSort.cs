@@ -30,7 +30,7 @@ public class MergeSort : SortingAlgorithm
     
     public MergeSort(SortingLogic logic, int n) : base(logic)
     {
-        _nextState = new MergeSortingState(this, n);
+        _executedStates.AddFirst(new MergeSortingState(this, n));
     }
     
     private class MergeSortingState : SortingState
@@ -49,12 +49,7 @@ public class MergeSort : SortingAlgorithm
         public override SortingState Next()
         {
             MergeSortingState next = new MergeSortingState(this);
-            next._line = _nextLine;
-            if (_nextValues != null)
-            {
-                next._variables = _nextValues;
-            }
-            return next;
+            return initializeNext(next);
         }
         
         public override SortingState Copy()
@@ -102,6 +97,7 @@ public class MergeSort : SortingAlgorithm
                     _nextLine = SortingStateLine.SS_Line1;
                     break;
                 case SortingStateLine.SS_Line6: // merge(A,i,k,j)
+                    enterSubroutineWithExitLine(SortingStateLine.SS_None);
                     _nextLine = SortingStateLine.SS_Line8;
                     break;
                 case SortingStateLine.SS_Line7: // 

@@ -78,6 +78,10 @@ public class SortingLogic : MonoBehaviour
             _algorithm.ExecuteNextState();
         }
 
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            _currentlySorting = !_currentlySorting;
+        }
         
         //TODO: Just for debugging, should be done by controller
         if (!_waitForMachine && Input.GetKeyDown(KeyCode.RightArrow))

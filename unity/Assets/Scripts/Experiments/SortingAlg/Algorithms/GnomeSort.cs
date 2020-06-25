@@ -22,7 +22,7 @@ public class GnomeSort : SortingAlgorithm
     
     public GnomeSort(SortingLogic logic, int n) : base(logic)
     {
-        _nextState = new GnomeSortingState(this, n);
+        _executedStates.AddFirst(new GnomeSortingState(this, n));
     }
 
     private class GnomeSortingState : SortingState
@@ -38,8 +38,7 @@ public class GnomeSort : SortingAlgorithm
         public override SortingState Next()
         {
             GnomeSortingState next = new GnomeSortingState(this);
-            next._line = _nextLine;
-            return next;
+            return initializeNext(next);
         }
         
         public override SortingState Copy()

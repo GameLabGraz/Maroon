@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Valve.VR.InteractionSystem;
 
 public abstract class SortingAlgorithm
 {
     public SortingLogic sortingLogic;
     abstract public List<string> pseudocode { get; }
     
-    protected Stack<SortingState> _executedStates = new Stack<SortingState>();
-    protected SortingState _nextState;
+    protected LinkedList<SortingState> _executedStates = new LinkedList<SortingState>();
     
     protected int _operations;
     protected int _swaps;
@@ -75,8 +75,9 @@ public abstract class SortingAlgorithm
         {
             _algorithm = algorithm;
             
-            _line = SortingStateLine.SS_Line1;
-            _nextLine = SortingStateLine.SS_Line2;
+            _line = SortingStateLine.SS_None;
+            _nextLine = SortingStateLine.SS_Line1;
+            _nextValues = null;
             _requireWait = false;
         }
         
@@ -89,9 +90,35 @@ public abstract class SortingAlgorithm
             _requireWait = false;
             
             //subroutine
-            _nextValues = null;
-            _continueLine = old._continueLine;
-            _valueStore = old._valueStore;
+            if (old._nextValues != null)
+            {
+                _nextValues = new Dictionary<string, int>(old._nextValues);
+            }
+            else
+            {
+                _nextValues = null;
+            }
+            _continueLine = new Stack<SortingStateLine>(old._continueLine.Reverse()); //reverse because this method iteratively pops the stack items
+            
+            //Deep copy _valueStore
+            _valueStore = new Stack<Dictionary<string, int>>();
+            foreach (Dictionary<string, int> dict in old._valueStore.Reverse())
+            {
+                _valueStore.Push(new Dictionary<string, int>(dict));
+            }
+            
+        }
+
+        protected SortingState initializeNext(SortingState next)
+        {
+            next._line = _nextLine;
+            next._nextValues = null;
+            if (_nextValues != null)
+            {
+                next._variables = _nextValues;
+            }
+
+            return next;
         }
 
         public SortingStateLine GetLine()
@@ -133,26 +160,24 @@ public abstract class SortingAlgorithm
         
         _operations = 0;
         _swaps = 0;
-        
-        _executedStates.Push(new SortingState());
     }
 
     public void ExecuteNextState()
     {
-        sortingLogic.setPseudocode((int)_nextState.GetLine());
-        if (_nextState.GetLine() != SortingStateLine.SS_None)
+        SortingState newState = _executedStates.Last.Value.Next();
+        sortingLogic.setPseudocode((int)newState.GetLine());
+        if (newState.GetLine() != SortingStateLine.SS_None)
         {
             _operations++;
-            _executedStates.Push(_nextState.Copy());
-            _nextState.Execute();
-            sortingLogic.markCurrentSubset(_nextState.GetSubsetStart(), _nextState.GetSubsetEnd());
-            sortingLogic.markPivot(_nextState.GetPivot());
-            sortingLogic.displayIndices(_nextState.GetVariables());
-            if (!_nextState._requireWait)
+            newState.Execute();
+            _executedStates.AddLast(newState);
+            sortingLogic.markCurrentSubset(newState.GetSubsetStart(), newState.GetSubsetEnd());
+            sortingLogic.markPivot(newState.GetPivot());
+            sortingLogic.displayIndices(newState.GetVariables());
+            if (!newState._requireWait)
             {
                 sortingLogic.MoveFinished();
             }
-            _nextState = _nextState.Next();
         }
         else
         {
@@ -164,7 +189,7 @@ public abstract class SortingAlgorithm
 
     public void ExecutePreviousState()
     {
-        if (_executedStates.Peek().GetLine() == SortingStateLine.SS_None)
+        if (_executedStates.Count == 1)
         {
             _operations = 0;
             _swaps = 0;
@@ -173,13 +198,15 @@ public abstract class SortingAlgorithm
             return;
         }
         _operations--;
-        _nextState = _executedStates.Pop();
-        sortingLogic.setPseudocode((int)_executedStates.Peek().GetLine());
-        _nextState.Undo();
-        sortingLogic.markCurrentSubset(_executedStates.Peek().GetSubsetStart(), _executedStates.Peek().GetSubsetEnd());
-        sortingLogic.markPivot(_nextState.GetPivot());
-        sortingLogic.displayIndices(_nextState.GetVariables());
-        if (!_nextState._requireWait)
+        SortingState stateToUndo = _executedStates.Last.Value;
+        stateToUndo.Undo();
+        _executedStates.RemoveLast();
+        SortingState currentState = _executedStates.Last.Value;
+        sortingLogic.setPseudocode((int)currentState.GetLine());
+        sortingLogic.markCurrentSubset(currentState.GetSubsetStart(), currentState.GetSubsetEnd());
+        sortingLogic.markPivot(currentState.GetPivot());
+        sortingLogic.displayIndices(currentState.GetVariables());
+        if (!stateToUndo._requireWait)
         {
             sortingLogic.MoveFinished();
         }

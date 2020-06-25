@@ -22,7 +22,7 @@ public class ShellSort : SortingAlgorithm
     
     public ShellSort(SortingLogic logic, int n) : base(logic)
     {
-        _nextState = new ShellSortingState(this, n);
+        _executedStates.AddFirst(new ShellSortingState(this, n));
     }
 
     private class ShellSortingState : SortingState
@@ -40,12 +40,7 @@ public class ShellSort : SortingAlgorithm
         public override SortingState Next()
         {
             ShellSortingState next = new ShellSortingState(this);
-            next._line = _nextLine;
-            if (_nextValues != null)
-            {
-                next._variables = _nextValues;
-            }
-            return next;
+            return initializeNext(next);
         }
         
         public override SortingState Copy()

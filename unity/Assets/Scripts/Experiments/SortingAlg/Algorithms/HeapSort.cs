@@ -36,7 +36,7 @@ public class HeapSort : SortingAlgorithm
     
     public HeapSort(SortingLogic logic, int n) : base(logic)
     {
-        _nextState = new HeapSortingState(this, n);
+        _executedStates.AddFirst(new HeapSortingState(this, n));
     }
 
     private class HeapSortingState : SortingState
@@ -56,12 +56,7 @@ public class HeapSort : SortingAlgorithm
         public override SortingState Next()
         {
             HeapSortingState next = new HeapSortingState(this);
-            next._line = _nextLine;
-            if (_nextValues != null)
-            {
-                next._variables = _nextValues;
-            }
-            return next;
+            return initializeNext(next);
         }
         
         public override SortingState Copy()

@@ -21,7 +21,7 @@ public class SelectionSort : SortingAlgorithm
     
     public SelectionSort(SortingLogic logic, int n) : base(logic)
     {
-        _nextState = new SelectionSortingState(this, n);
+        _executedStates.AddFirst(new SelectionSortingState(this, n));
     }
 
     private class SelectionSortingState : SortingState
@@ -39,12 +39,7 @@ public class SelectionSort : SortingAlgorithm
         public override SortingState Next()
         {
             SelectionSortingState next = new SelectionSortingState(this);
-            next._line = _nextLine;
-            if (_nextValues != null)
-            {
-                next._variables = _nextValues;
-            }
-            return next;
+            return initializeNext(next);
         }
         
         public override SortingState Copy()

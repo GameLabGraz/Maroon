@@ -30,7 +30,7 @@ public class QuickSort : SortingAlgorithm
     
     public QuickSort(SortingLogic logic, int n) : base(logic)
     {
-        _nextState = new QuickSortingState(this, n);
+        _executedStates.AddFirst(new QuickSortingState(this, n));
     }
     
     private class QuickSortingState : SortingState
@@ -54,12 +54,7 @@ public class QuickSort : SortingAlgorithm
         public override SortingState Next()
         {
             QuickSortingState next = new QuickSortingState(this);
-            next._line = _nextLine;
-            if (_nextValues != null)
-            {
-                next._variables = _nextValues;
-            }
-            return next;
+            return initializeNext(next);
         }
         
         public override SortingState Copy()

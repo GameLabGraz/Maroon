@@ -19,7 +19,7 @@ public class InsertionSort : SortingAlgorithm
     
     public InsertionSort(SortingLogic logic, int n) : base(logic)
     {
-        _nextState = new InsertionSortingState(this, n);
+        _executedStates.AddFirst(new InsertionSortingState(this, n));
     }
 
     private class InsertionSortingState : SortingState
@@ -36,8 +36,7 @@ public class InsertionSort : SortingAlgorithm
         public override SortingState Next()
         {
             InsertionSortingState next = new InsertionSortingState(this);
-            next._line = _nextLine;
-            return next;
+            return initializeNext(next);
         }
         
         public override SortingState Copy()
