@@ -152,32 +152,32 @@ public class PC_SelectionHandler : MonoBehaviour
             return;
         }
         
-        if (!Input.GetKeyDown(KeyCode.Backspace) && !Input.GetKeyDown(KeyCode.Escape)) return;
-        switch (selectedObject.type)
-        {
-            case PC_SelectScript.SelectType.ChargeSelect:
-                DeleteSelectedCharge();
-                break;
-            case PC_SelectScript.SelectType.VisualizationPlaneSelect:
-                //Nothing happens
-                break;
-            case PC_SelectScript.SelectType.VoltmeterSelect:
-                selectedObject.GetComponent<VoltmeterMeasuringPoint>().HideObject();
-                SelectObject(null);
-                break;
-            case PC_SelectScript.SelectType.CubeSelect:
-                //Nothing happens
-                break;
-            case PC_SelectScript.SelectType.WhiteboardSelect:
-                //Nothing happens
-                break;
-            case PC_SelectScript.SelectType.RulerSelect:
-                selectedObject.gameObject.SetActive(false);
-                SelectObject(null);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+        // if (!Input.GetKeyDown(KeyCode.Backspace) && !Input.GetKeyDown(KeyCode.Escape)) return;
+        // switch (selectedObject.type)
+        // {
+        //     case PC_SelectScript.SelectType.ChargeSelect:
+        //         DeleteSelectedCharge();
+        //         break;
+        //     case PC_SelectScript.SelectType.VisualizationPlaneSelect:
+        //         //Nothing happens
+        //         break;
+        //     case PC_SelectScript.SelectType.VoltmeterSelect:
+        //         selectedObject.GetComponent<VoltmeterMeasuringPoint>().HideObject();
+        //         SelectObject(null);
+        //         break;
+        //     case PC_SelectScript.SelectType.CubeSelect:
+        //         //Nothing happens
+        //         break;
+        //     case PC_SelectScript.SelectType.WhiteboardSelect:
+        //         //Nothing happens
+        //         break;
+        //     case PC_SelectScript.SelectType.RulerSelect:
+        //         selectedObject.gameObject.SetActive(false);
+        //         SelectObject(null);
+        //         break;
+        //     default:
+        //         throw new ArgumentOutOfRangeException();
+        // }
     }
 
 
@@ -422,7 +422,7 @@ public class PC_SelectionHandler : MonoBehaviour
                 selectedObject.type == PC_SelectScript.SelectType.VoltmeterSelect)
             {
                 selectionRegister.gameObject.SetActive(true);
-                selectionRegister.registerHandler.SelectRegister(selectionRegister);
+                // selectionRegister.registerHandler.SelectRegister(selectionRegister);
             }
 
             PositionChanged();
