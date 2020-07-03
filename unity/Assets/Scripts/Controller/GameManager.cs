@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector]
     public static GameManager Instance = null;
 
-    public bool EnableESCMenu = true;
+    public bool EnableESCMenu = false;
 
     [SerializeField]
     private GameObject _player;

@@ -82,18 +82,23 @@ public class VoltmeterMeasuringPoint : MonoBehaviour, IResetWholeObject
                 _coulombLogic = simControllerObject.GetComponent<CoulombLogic>();
         }
         var dragHandler = GetComponent<PC_DragHandler>();
-        if (in3dMode)
+        if (dragHandler)
         {
-            gameObject.transform.parent = _coulombLogic.scene3D.transform;
-            dragHandler.SetBoundaries(_coulombLogic.minBoundary3d.gameObject, _coulombLogic.maxBoundary3d.gameObject);
-            dragHandler.allowedXMovement = dragHandler.allowedYMovement = dragHandler.allowedZMovement = true;
-        }
-        else
-        {
-            gameObject.transform.parent = _coulombLogic.scene2D.transform;
-            dragHandler.SetBoundaries(_coulombLogic.minBoundary2d.gameObject, _coulombLogic.maxBoundary2d.gameObject);
-            dragHandler.allowedXMovement = dragHandler.allowedYMovement = true;
-            dragHandler.allowedZMovement = false;
+            if (in3dMode)
+            {
+                gameObject.transform.parent = _coulombLogic.scene3D.transform;
+                dragHandler.SetBoundaries(_coulombLogic.minBoundary3d.gameObject,
+                    _coulombLogic.maxBoundary3d.gameObject);
+                dragHandler.allowedXMovement = dragHandler.allowedYMovement = dragHandler.allowedZMovement = true;
+            }
+            else
+            {
+                gameObject.transform.parent = _coulombLogic.scene2D.transform;
+                dragHandler.SetBoundaries(_coulombLogic.minBoundary2d.gameObject,
+                    _coulombLogic.maxBoundary2d.gameObject);
+                dragHandler.allowedXMovement = dragHandler.allowedYMovement = true;
+                dragHandler.allowedZMovement = false;
+            }
         }
 
         var movArrows = GetComponentInChildren<PC_ArrowMovement>();

@@ -61,7 +61,7 @@ public class SimulationController : MonoBehaviour
     /// <summary>
     /// The objects which must be reset
     /// </summary>
-    private List<IResetObject> resetObjects;
+    private List<IResetObject> resetObjects = new List<IResetObject>();
 
     public event EventHandler<EventArgs> OnStart;
 
@@ -90,7 +90,6 @@ public class SimulationController : MonoBehaviour
     /// </summary>
     private void Awake()
     {
-        resetObjects = new List<IResetObject>();
         SceneManager.sceneUnloaded += OnSceneUnloaded;
         InitSimController();
     }

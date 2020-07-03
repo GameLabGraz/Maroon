@@ -34,8 +34,12 @@ public class Magnet : EMObject
     /// </summary>
     public override void ResetObject()
     {
-        GetComponent<Rigidbody>().velocity = Vector3.zero;
-        GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+        var rg = GetComponent<Rigidbody>();
+        if (rg)
+        {
+            rg.velocity = Vector3.zero;
+            rg.angularVelocity = Vector3.zero;
+        }
         transform.position = startPos;
         transform.rotation = startRot;
     }

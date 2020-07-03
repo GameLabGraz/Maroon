@@ -4,7 +4,6 @@ using GEAR.Localization;
 using PlatformControls.PC;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
 [Serializable]
@@ -149,7 +148,6 @@ public class PC_SelectionHandler : MonoBehaviour
         if (!selectedObject.isActiveAndEnabled)
         {
             SelectObject(null);
-            return;
         }
         
         // if (!Input.GetKeyDown(KeyCode.Backspace) && !Input.GetKeyDown(KeyCode.Escape)) return;
