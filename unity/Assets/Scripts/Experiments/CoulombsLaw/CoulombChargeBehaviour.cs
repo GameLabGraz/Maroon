@@ -23,6 +23,8 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
         set => charge.Value = value;
     }
 
+    public static readonly float ChargeUnit = Mathf.Pow(10, -9);
+
     [Header("Particle Settings")]
     [SerializeField]
     private float maxChargeValue = 5f;
@@ -200,7 +202,7 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
         if (Mathf.Abs(Charge) < 0.0001f) return Vector3.zero;
         var distance = _coulombLogic.WorldToCalcSpace(Vector3.Distance(transform.position, position)); //TODO: radius???
         var dir = (position - transform.position).normalized;
-        var potential = CoulombConstant * Charge * Mathf.Pow(10f, -6f) / Mathf.Pow(distance, 2f);
+        var potential = CoulombConstant * Charge * ChargeUnit / Mathf.Pow(distance, 2f);
         return potential * dir;
     }
 
@@ -213,7 +215,7 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
     {
         if (Mathf.Abs(Charge) < 0.0001f) return 0f;
         var distance = _coulombLogic.WorldToCalcSpace(Vector3.Distance(transform.position, position)); //TODO: radius???
-        var potential = CoulombConstant * Charge * Mathf.Pow(10f, -6f) / distance;
+        var potential = CoulombConstant * Charge * ChargeUnit / distance;
         return potential;
     }
     

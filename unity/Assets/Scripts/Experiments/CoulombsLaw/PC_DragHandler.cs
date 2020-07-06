@@ -40,6 +40,7 @@ public class PC_DragHandler : MonoBehaviour
     public UnityEvent onDisabled;
     
     private bool _moving = false;
+    private Vector3 _lastMousePos = Vector3.zero;
     private bool _isOutsideBoundaries = false;
     private float _distance;
 
@@ -61,15 +62,21 @@ public class PC_DragHandler : MonoBehaviour
         if (!Input.GetMouseButtonDown(0)) return;
         
         _moving = true;
-        _distance = Vector3.Distance(movingObject.transform.position, Camera.main.transform.position);
+
+        var main = Camera.main;
+        Debug.Assert(main != null);
+        _lastMousePos = Input.mousePosition;
+        _distance = Vector3.Distance( movingObject.transform.position, main.transform.position);
+        
         onStartedMoving.Invoke();
     }
     
     private void OnMouseDrag()
     {
-        if (!_moving) return;
+        if (!_moving || Vector3.Distance(_lastMousePos, Input.mousePosition) < 2f) return;
 
-        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        _lastMousePos = Input.mousePosition;
+        var ray = Camera.main.ScreenPointToRay(_lastMousePos);
         var pt = ray.GetPoint(_distance);
         var pos = movingObject.transform.position;
 
