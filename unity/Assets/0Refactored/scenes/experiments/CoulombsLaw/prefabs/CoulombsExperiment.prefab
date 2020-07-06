@@ -4890,6 +4890,7 @@ MonoBehaviour:
   simulationRunning:
     assessmentName: simulation_running
     isDynamic: 0
+    alwaysSendValueChangedEvent: 1
     _value: 0
     onValueChanged:
       m_PersistentCalls:
@@ -4991,7 +4992,7 @@ Transform:
   m_GameObject: {fileID: 6895778647729176300}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071067}
   m_LocalPosition: {x: -56.128, y: 294.72, z: -322.9}
-  m_LocalScale: {x: 2.3, y: 2.299999, z: 2.299999}
+  m_LocalScale: {x: 2.3, y: 2.3, z: 2.3}
   m_Children:
   - {fileID: 6896857271138090008}
   - {fileID: 6896857270933370403}
@@ -5068,6 +5069,7 @@ MonoBehaviour:
   arrows:
     assessmentName: vector_field_arrow_count
     isDynamic: 0
+    alwaysSendValueChangedEvent: 1
     _value: 20
     onValueChanged:
       m_PersistentCalls:
@@ -5305,6 +5307,7 @@ MonoBehaviour:
   calculatedPosition:
     assessmentName: 
     isDynamic: 0
+    alwaysSendValueChangedEvent: 0
     _value: {x: 0, y: 0, z: 0}
     onValueChanged:
       m_PersistentCalls:
@@ -5617,6 +5620,7 @@ MonoBehaviour:
   voltageVisualization:
     assessmentName: voltage_visualization
     isDynamic: 0
+    alwaysSendValueChangedEvent: 1
     _value: 0
     onValueChanged:
       m_PersistentCalls:
@@ -5624,6 +5628,7 @@ MonoBehaviour:
   equipotentialLineVisualization:
     assessmentName: equipotential_line_visualization
     isDynamic: 0
+    alwaysSendValueChangedEvent: 1
     _value: 0
     onValueChanged:
       m_PersistentCalls:
@@ -5631,6 +5636,7 @@ MonoBehaviour:
   ironFilingVisualization:
     assessmentName: iron_filing_visualization
     isDynamic: 0
+    alwaysSendValueChangedEvent: 1
     _value: 0
     onValueChanged:
       m_PersistentCalls:
@@ -6130,6 +6136,7 @@ MonoBehaviour:
   calculatedPosition:
     assessmentName: 
     isDynamic: 0
+    alwaysSendValueChangedEvent: 0
     _value: {x: 0, y: 0, z: 0}
     onValueChanged:
       m_PersistentCalls:
@@ -6235,6 +6242,7 @@ MonoBehaviour:
   currentMode:
     assessmentName: display_mode
     isDynamic: 0
+    alwaysSendValueChangedEvent: 1
     _value: 2
     onValueChanged:
       m_PersistentCalls:
@@ -6255,6 +6263,9 @@ MonoBehaviour:
   xAt1m2d: {fileID: 23911724829058118}
   xOrigin3d: {fileID: 6896857270965784583}
   xAt1m3d: {fileID: 6896857272322338436}
+  calcSpaceXAxis: 0
+  calcSpaceYAxis: 1
+  calcSpaceZAxis: 2
   xMax2d: 1
   yMax2d: 1
   xMax3d: 1
@@ -6343,6 +6354,7 @@ MonoBehaviour:
   onModeChangeTo3d:
     m_PersistentCalls:
       m_Calls: []
+  correctionFactor: 1
 --- !u!1 &6896857271116698398
 GameObject:
   m_ObjectHideFlags: 0
@@ -6790,6 +6802,7 @@ MonoBehaviour:
   arrows:
     assessmentName: 
     isDynamic: 0
+    alwaysSendValueChangedEvent: 1
     _value: 20
     onValueChanged:
       m_PersistentCalls:
@@ -7588,6 +7601,7 @@ MonoBehaviour:
   voltageVisualization:
     assessmentName: 
     isDynamic: 0
+    alwaysSendValueChangedEvent: 1
     _value: 0
     onValueChanged:
       m_PersistentCalls:
@@ -7595,6 +7609,7 @@ MonoBehaviour:
   equipotentialLineVisualization:
     assessmentName: 
     isDynamic: 0
+    alwaysSendValueChangedEvent: 1
     _value: 0
     onValueChanged:
       m_PersistentCalls:
@@ -7602,6 +7617,7 @@ MonoBehaviour:
   ironFilingVisualization:
     assessmentName: 
     isDynamic: 0
+    alwaysSendValueChangedEvent: 1
     _value: 0
     onValueChanged:
       m_PersistentCalls:

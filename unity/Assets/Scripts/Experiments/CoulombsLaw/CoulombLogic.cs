@@ -360,7 +360,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         }
         
         if(!_in3dMode)
-            chargeBehaviour.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+            chargeBehaviour.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
         
         return obj;
     }
@@ -452,7 +452,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         {
             var camTransform = Camera.main.transform;
             camTransform.position = _in3dMode ? new Vector3(0, 30f, -59.52f) : new Vector3(0, 4.4f, -59.52f);
-            camTransform.rotation = _in3dMode ? new Quaternion(0.25f, 0f, 0f, 1f) : new Quaternion(0f, 0f, 0f, 0f);
+            camTransform.rotation = _in3dMode ? new Quaternion(0.25f, 0f, 0f, 1f) : new Quaternion(0.0f, 0f, 0f, 0f);
         }
 
         vectorField3d.setVectorFieldVisible(_in3dMode);

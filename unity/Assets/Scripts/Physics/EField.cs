@@ -114,11 +114,9 @@ public class EField : IField
             {
                 if (producer.gameObject.activeSelf)
                 {
-                    strength += Mathf.Pow(producer.GetComponent<IGenerateE>().getEPotential(position), 2f);
+                    strength += producer.GetComponent<IGenerateE>().getEPotential(position);
                 }
             }
-
-            strength = Mathf.Sqrt(strength);
         }
         catch
         {

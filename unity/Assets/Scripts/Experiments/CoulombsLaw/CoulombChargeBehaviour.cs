@@ -46,7 +46,8 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
 
     private CoulombLogic _coulombLogic;
 
-    private static readonly float CoulombConstant = 9f * Mathf.Pow(10f, 9f); // 1f / (Mathf.PI * 8.8542e-12f);
+    // private static readonly float CoulombConstant = 9f * Mathf.Pow(10f, 9f); // 1f / (Mathf.PI * 8.8542e-12f);
+    private static readonly float CoulombConstant = 1f / (4 * Mathf.PI * 8.8542e-12f);
     
     //VR Specific
     public bool _inUse = false;
@@ -170,6 +171,7 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
         transform.localPosition = _resetPosition;
     }
     
+    
     public void CalculatedPosition(Vector3 calculatedPosition)
     {
         _updatePosition = calculatedPosition;
@@ -206,14 +208,14 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
 
     public float getEFlux(Vector3 position)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     public float getEPotential(Vector3 position)
     {
         if (Mathf.Abs(Charge) < 0.0001f) return 0f;
         var distance = _coulombLogic.WorldToCalcSpace(Vector3.Distance(transform.position, position)); //TODO: radius???
-        var potential = CoulombConstant * Charge * Mathf.Pow(10f, -6f) / Mathf.Pow(distance, 2f);
+        var potential = CoulombConstant * Charge * Mathf.Pow(10f, -6f) / distance;
         return potential;
     }
     
