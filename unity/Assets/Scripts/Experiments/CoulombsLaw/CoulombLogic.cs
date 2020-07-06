@@ -72,9 +72,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     private List<CoulombChargeBehaviour> _charges = new List<CoulombChargeBehaviour>();
     private HashSet<GameObject> _chargesGameObjects = new HashSet<GameObject>();
 
-    private const float CoulombConstant = 1f / (Mathf.PI * 8.8542e-12f);
-//    private const float CoulombConstant = 9f; // = 9 * 10^9 -> but we use the factor 0.001 beneath because we have constant * microCoulomb * microCoulomb (= 10^9 * 10^-6 * 10^-6 = 0.001)
-//    private const float CoulombMultiplyFactor = 0.001f; // explanation above
+    private const float CoulombConstant = 1f / (4 * Mathf.PI * 8.8542e-12f); 
     
     private bool _in3dMode = false;
 

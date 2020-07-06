@@ -9,45 +9,33 @@ namespace Maroon.UI
         [SerializeField]
         private Text textComponent;
 
-        public GameObject iconHint;
-        public GameObject iconError;
-        public GameObject iconWarning;
-        public GameObject iconSuccess;
+        public Image iconHint;
+        public Image iconError;
+        public Image iconWarning;
+        public Image iconSuccess;
         [Range(0f, 5f)] 
-        public float FadeTime = 2f;
+        public float fadeTime = 2f;
 
         public bool IsActive => gameObject.activeSelf;
-        private GameObject currentIcon = null;
-        private bool fadeOut = false;
-        private bool fadeIn = false;
+        private Image _currentIcon = null;
+        private bool _fadeIn = false;
 
         private float _currentTime = 0f;
 
+        private void Start()
+        {
+            ClearIcons();
+        }
+
         private void Update()
         {
-            if (fadeOut)
-            {
-                _currentTime -= Time.deltaTime;
-                currentIcon.GetComponent<Image>().color = new Color(1f, 1f, 1f, _currentTime / FadeTime);
+            if (!_fadeIn) return;
+            _currentTime += Time.deltaTime;
+            _currentIcon.color = new Color(1f, 1f, 1f, _currentTime / fadeTime);
 
-                if (_currentTime < 0f)
-                {
-                    currentIcon.SetActive(false);
-                    currentIcon = null;
-                    fadeOut = false;
-                }
-            }
-            else if (fadeIn)
-            {
-                _currentTime += Time.deltaTime;
-                currentIcon.GetComponent<Image>().color = new Color(1f, 1f, 1f, _currentTime / FadeTime);
-
-                if (_currentTime > FadeTime)
-                {
-                    currentIcon.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
-                    fadeIn = false;
-                }
-            }
+            if (_currentTime <= fadeTime) return;
+            _currentIcon.color = new Color(1f, 1f, 1f, 1f);
+            _fadeIn = false;
         }
 
         public void ShowMessage(string message)
@@ -67,52 +55,44 @@ namespace Maroon.UI
 
         public void ClearIcons()
         {
-            if (currentIcon != null)
-            {
-                fadeOut = true;
-                fadeIn = false;
-                _currentTime = FadeTime;
-            }
-                
-            if (iconHint != currentIcon) iconHint.SetActive(false);
-            if(iconWarning != currentIcon) iconWarning.SetActive(false);
-            if(iconSuccess != currentIcon) iconSuccess.SetActive(false);
-            if(iconError != currentIcon) iconError.SetActive(false);
+            _fadeIn = false;
+            _currentIcon = null;
+            
+            iconHint.gameObject.SetActive(false);
+            iconWarning.gameObject.SetActive(false);
+            iconSuccess.gameObject.SetActive(false);
+            iconError.gameObject.SetActive(false);
         }
 
         public void SetIcon(MessageIcon icon)
         {
             ClearIcons();
-            if(currentIcon != null) currentIcon.SetActive(false);
-
             switch (icon)
             {
                 case MessageIcon.MI_None:
-                    currentIcon = null;
+                    _currentIcon = null;
                     break;
                 case MessageIcon.MI_Ok:
-                    currentIcon = iconSuccess;
+                    _currentIcon = iconSuccess;
                     break;
                 case MessageIcon.MI_Warning:
-                    currentIcon = iconWarning;
+                    _currentIcon = iconWarning;
                     break;
                 case MessageIcon.MI_Error:
-                    currentIcon = iconError;
+                    _currentIcon = iconError;
                     break;
                 case MessageIcon.MI_Hint:
-                    currentIcon = iconHint;
+                    _currentIcon = iconHint;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(icon), icon, null);
             }
 
-            if (currentIcon != null)
-            {
-                currentIcon.SetActive(true);
-                fadeIn = true;
-                fadeOut = false;
-                _currentTime = 0f;
-            }
+            if (_currentIcon == null) return;
+            _currentIcon.color = new Color(1f, 1f, 1f, 0f);
+            _currentIcon.gameObject.SetActive(true);
+            _fadeIn = true;
+            _currentTime = 0f;
         }
         
         public void SetTextColor(Color color)
@@ -126,5 +106,10 @@ namespace Maroon.UI
             gameObject.SetActive(value);
         }
 
+        public void OnDisable()
+        {
+            ClearIcons();
+            Debug.Log("OnDisable Dialogue View");
+        }
     }
 }

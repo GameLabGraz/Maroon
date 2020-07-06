@@ -18,10 +18,6 @@ namespace PlatformControls.PC
         protected override void Start()
         {
             base.Start();
-
-            onStartDrag.AddListener(() => Debug.Log("PC_SLIDER: START DRAG!!!"));
-            onEndDrag.AddListener(() => Debug.Log("PC_SLIDER: END DRAG!!!"));
-            
             _startValue = value;
         }
 

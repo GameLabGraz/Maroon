@@ -45,10 +45,8 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
     private int _collided = 0;
 
     private CoulombLogic _coulombLogic;
+    private const float CoulombConstant = 1f / (4 * Mathf.PI * 8.8542e-12f);
 
-    // private static readonly float CoulombConstant = 9f * Mathf.Pow(10f, 9f); // 1f / (Mathf.PI * 8.8542e-12f);
-    private static readonly float CoulombConstant = 1f / (4 * Mathf.PI * 8.8542e-12f);
-    
     //VR Specific
     public bool _inUse = false;
     public int inUseLayer = -1;

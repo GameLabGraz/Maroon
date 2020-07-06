@@ -33,10 +33,12 @@ namespace Maroon.UI
     {
         [SerializeField]
         private DialogueView dialogView;
-        [SerializeField]
+        [SerializeField] [Range(0.001f, 0.05f)]
         private float letterPause = 0.01f;
         [SerializeField]
         private AudioClip typeSound;
+
+        [Range(2f, 10f)] [SerializeField] private float minMessageTime = 2f;
 
         private readonly Queue<Message> _messages = new Queue<Message>();
 
@@ -101,7 +103,7 @@ namespace Maroon.UI
                 yield return new WaitForSeconds(letterPause);
             }
 
-            yield return new WaitForSeconds(Mathf.Min(2f, 0.05f * message.Text.Length));
+            yield return new WaitForSeconds(Mathf.Max(minMessageTime, letterPause * 5f * message.Text.Length));
             dialogView.SetActive(false);
             TypeMessageRunning = false;
         }

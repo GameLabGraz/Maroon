@@ -125,7 +125,8 @@ namespace Maroon.Assessment
                 .Set("class", assessmentObject.ClassType.ToString());
 
             foreach (var watchValue in assessmentObject.WatchedValues) {
-                Debug.Log("AssessmentManager::" + assessmentObject.ObjectID + ": " + watchValue.GetName());
+                if(showDebugMessages)
+                    Debug.Log("AssessmentManager::" + assessmentObject.ObjectID + ": " + watchValue.GetName());
                 EventBuilder.Set(watchValue.GetName(), ConvertToAntaresValue(watchValue.GetValue()));
             }
         }
