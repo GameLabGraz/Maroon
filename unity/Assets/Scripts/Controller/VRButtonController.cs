@@ -4,41 +4,31 @@ using VRTK;
 
 public class VRButtonController : VRTK_InteractableObject
 {
+    [System.Obsolete]
     [SerializeField]
     private GameObject invokeObject;
 
+    [System.Obsolete]
     [SerializeField]
     private string methodName;
 
     [SerializeField]
-    private bool isToggleButton = false;
+    private bool isToggleButton;
 
-    private bool toggleValue = false;
+    private bool toggleValue;
 
     public UnityEvent OnButtonClicked;
 
     public bool IsToogleButton
     {
-        get
-        {
-            return this.isToggleButton;
-        }
-        set
-        {
-            this.isToggleButton = value;
-        }
+        get => isToggleButton;
+        set => isToggleButton = value;
     }
 
     public bool ToogleValue
     {
-        get
-        {
-            return this.toggleValue;
-        }
-        set
-        {
-            this.toggleValue = value;
-        }
+        get => toggleValue;
+        set => toggleValue = value;
     }
 
     public override void StartUsing(VRTK_InteractUse currentUsingObject = null)
@@ -54,14 +44,7 @@ public class VRButtonController : VRTK_InteractableObject
             toggleValue = !toggleValue;
             invokeObject.SendMessage(methodName, toggleValue);
 
-            if (toggleValue)
-            {
-                GetComponent<Renderer>().material.color = Color.green;
-            }
-            else
-            {
-                GetComponent<Renderer>().material.color = Color.red;
-            }
+            GetComponent<Renderer>().material.color = toggleValue ? Color.green : Color.red;
         }
         else
         {

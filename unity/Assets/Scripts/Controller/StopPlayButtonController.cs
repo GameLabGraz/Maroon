@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 using VRTK;
 
@@ -7,12 +8,18 @@ public class StopPlayButtonController : VRTK_InteractableObject
     [SerializeField]
     private Text PlayPauseText;
 
+    [SerializeField]
+    private TMP_Text PlayPauseTMP;
+
     protected override void Update()
     {
         base.Update();
 
         if (PlayPauseText != null)
             PlayPauseText.text = SimulationController.Instance.SimulationRunning ? "PAUSE\nSimulation" : "PLAY\nSimulation";
+
+        if (PlayPauseTMP != null)
+            PlayPauseTMP.text = SimulationController.Instance.SimulationRunning ? "PAUSE\nSimulation" : "PLAY\nSimulation";
     }
 
     public override void StartUsing(VRTK_InteractUse currentUsingObject = null)
