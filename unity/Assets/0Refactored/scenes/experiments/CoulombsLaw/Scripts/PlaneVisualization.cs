@@ -92,7 +92,7 @@ public class PlaneVisualization : MonoBehaviour, IResetObject, IResetWholeObject
             {
                 plane.GetComponent<MeshRenderer>().enabled = true;
                 plane.GetComponent<MeshRenderer>().material = defaultMaterial;
-                var filling = plane.GetComponent<IronFiling>();
+                var filling = plane.GetComponent<scrIronFilings>();
                 if(filling) filling.hideFieldImage();
                 plane.SetActive(true);
             }
@@ -101,7 +101,7 @@ public class PlaneVisualization : MonoBehaviour, IResetObject, IResetWholeObject
         {
             foreach (var plane in planes)
             {
-                var filling = plane.GetComponent<IronFiling>();
+                var filling = plane.GetComponent<scrIronFilings>();
                 if(filling) filling.hideFieldImage();
                 plane.SetActive(false);
             }
@@ -125,7 +125,7 @@ public class PlaneVisualization : MonoBehaviour, IResetObject, IResetWholeObject
         {
             plane.SetActive(true);
             plane.GetComponent<MeshRenderer>().enabled = false;
-            var filling = plane.GetComponent<IronFiling>();
+            var filling = plane.GetComponent<scrIronFilings>();
             Debug.Assert(filling != null);
             filling.generateFieldImage();
         }

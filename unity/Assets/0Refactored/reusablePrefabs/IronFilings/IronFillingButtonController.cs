@@ -4,7 +4,7 @@ using VRTK;
 public class IronFillingButtonController : VRTK_InteractableObject
 {
     [SerializeField]
-    private IronFiling ironFilling;
+    private scrIronFilings ironFilling;
 
     public override void StartUsing(VRTK_InteractUse currentUsingObject = null)
     {

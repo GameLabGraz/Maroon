@@ -18,7 +18,7 @@ using System.Collections.Generic;
 /// Class to create a field image with iron filing
 /// </summary>
 /// TODO: PLEASE RENAME TO IronFiLLing -> with 2 L ;)
-public class IronFiling : MonoBehaviour, IResetObject
+public class scrIronFilings : MonoBehaviour, IResetObject
 {
     /// <summary>
     /// The iron material

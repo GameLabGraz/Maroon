@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 
-public class GuiFallingCoilExperiment : MonoBehaviour
+public class KeyboardControl : MonoBehaviour // former GuiFallingCoilExperiment
 {
   private GUIStyle textStyle;
 
   [SerializeField]
-  private IronFiling _ironFiling;
+  private scrIronFilings _ironFiling;
 
   private void Start()
   {
