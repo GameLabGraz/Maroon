@@ -35,33 +35,33 @@ public class GuiVandeGraaffExperiment1 : MonoBehaviour {
 		this.textStyle = new GUIStyle("label");
 		this.textStyle.alignment = TextAnchor.MiddleCenter;
 
-        var system = OpenVR.System;
-
-        if (system != null)
-        {
-            controllerLeftIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Leftmost);
-            controllerRightIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
-        }
+        // var system = OpenVR.System;
+        //
+        // if (system != null)
+        // {
+        //     controllerLeftIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Leftmost);
+        //     controllerRightIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
+        // }
     }
 	
 	public void Update()
 	{
-        if(controllerLeftIndex == -1)
-            controllerLeftIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Leftmost);
-
-        if(controllerRightIndex == -1)
-            controllerRightIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
+        // if(controllerLeftIndex == -1)
+        //     controllerLeftIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Leftmost);
+        //
+        // if(controllerRightIndex == -1)
+        //     controllerRightIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
 
         // check if [E] was pressed (Switch ON/OFF VdG)
 
         if (Input.GetKeyDown (KeyCode.E)) // desktop
             this.vandeGraaffController.Switch();
 
-        if ((controllerLeftIndex != -1 && SteamVR_Controller.Input(controllerLeftIndex).GetPress(SteamVR_Controller.ButtonMask.Trigger)) ||
-            (controllerRightIndex != -1 && SteamVR_Controller.Input(controllerRightIndex).GetPress(SteamVR_Controller.ButtonMask.Trigger)))
-        {
-			this.vandeGraaffController.Switch(); // VIVE trigger == E button, used for switching generator on/off here! 
-		}
+  //       if ((controllerLeftIndex != -1 && SteamVR_Controller.Input(controllerLeftIndex).GetPress(SteamVR_Controller.ButtonMask.Trigger)) ||
+  //           (controllerRightIndex != -1 && SteamVR_Controller.Input(controllerRightIndex).GetPress(SteamVR_Controller.ButtonMask.Trigger)))
+  //       {
+		// 	this.vandeGraaffController.Switch(); // VIVE trigger == E button, used for switching generator on/off here! 
+		// }
 
         // check if [C] was pressed (Show/Hide Charge Glow)
         if (Input.GetKeyDown (KeyCode.C)) 

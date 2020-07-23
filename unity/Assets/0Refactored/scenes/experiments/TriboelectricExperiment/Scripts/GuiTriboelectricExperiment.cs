@@ -11,12 +11,12 @@ public class GuiTriboelectricExperiment : MonoBehaviour {
 		this.textStyle = new GUIStyle("label");
 		this.textStyle.alignment = TextAnchor.MiddleCenter;
 
-        var system = Valve.VR.OpenVR.System;
-        if (system != null)
-        {
-            left = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Leftmost);
-            right = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
-        }
+        // var system = Valve.VR.OpenVR.System;
+        // if (system != null)
+        // {
+        //     left = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Leftmost);
+        //     right = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
+        // }
     }
 	
 	public void Update()

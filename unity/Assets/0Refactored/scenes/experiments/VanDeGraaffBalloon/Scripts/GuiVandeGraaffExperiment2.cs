@@ -37,19 +37,19 @@ public class GuiVandeGraaffExperiment2 : MonoBehaviour {
         var system = Valve.VR.OpenVR.System;
         var left = 0;
         var right = 0;
-        if (system != null)
-        {
-            left = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Leftmost);
-            right = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
-        }
-        
+        // if (system != null)
+        // {
+        //     left = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Leftmost);
+        //     right = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
+        // }
+        //
         // check if [E] was pressed (Switch ON/OFF VdG)
         //if (Input.GetKeyDown (KeyCode.E)) 
-        if (SteamVR_Controller.Input((int)left).GetPress(SteamVR_Controller.ButtonMask.Trigger) ||
-         SteamVR_Controller.Input((int)right).GetPress(SteamVR_Controller.ButtonMask.Trigger))
-         {
-                this.vandeGraaffController.Switch();
-		 }
+   //      if (SteamVR_Controller.Input((int)left).GetPress(SteamVR_Controller.ButtonMask.Trigger) ||
+   //       SteamVR_Controller.Input((int)right).GetPress(SteamVR_Controller.ButtonMask.Trigger))
+   //       {
+   //              this.vandeGraaffController.Switch();
+		 // }
 
 		// check if [C] was pressed (Show/Hide Charge Glow)
 		if (Input.GetKeyDown (KeyCode.C)) 
@@ -67,11 +67,11 @@ public class GuiVandeGraaffExperiment2 : MonoBehaviour {
 		// check if [ESC] was pressed
         // VIVE -> ESC == MENU BUTTON top 
         //if (Input.GetKeyDown (KeyCode.Escape))  desktop
-        if (SteamVR_Controller.Input((int)left).GetPress(SteamVR_Controller.ButtonMask.ApplicationMenu) ||
-         SteamVR_Controller.Input((int)right).GetPress(SteamVR_Controller.ButtonMask.ApplicationMenu))
-        {
-            Application.LoadLevel("Laboratory");
-        }
+        // if (SteamVR_Controller.Input((int)left).GetPress(SteamVR_Controller.ButtonMask.ApplicationMenu) ||
+        //  SteamVR_Controller.Input((int)right).GetPress(SteamVR_Controller.ButtonMask.ApplicationMenu))
+        // {
+        //     Application.LoadLevel("Laboratory");
+        // }
     }
 
 	private void EnableGlow(bool enable)

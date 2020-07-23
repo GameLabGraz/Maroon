@@ -17,10 +17,10 @@ namespace Valve.VR.InteractionSystem
 	{
 		public CustomEvents.UnityEventHand onHandClick;
 
-		private Hand currentHand;
+        protected Hand currentHand;
 
 		//-------------------------------------------------
-		void Awake()
+		protected virtual void Awake()
 		{
 			Button button = GetComponent<Button>();
 			if ( button )
@@ -31,36 +31,36 @@ namespace Valve.VR.InteractionSystem
 
 
 		//-------------------------------------------------
-		private void OnHandHoverBegin( Hand hand )
+		protected virtual void OnHandHoverBegin( Hand hand )
 		{
 			currentHand = hand;
 			InputModule.instance.HoverBegin( gameObject );
-			ControllerButtonHints.ShowButtonHint( hand, Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger );
+			ControllerButtonHints.ShowButtonHint( hand, hand.uiInteractAction);
 		}
 
 
-		//-------------------------------------------------
-		private void OnHandHoverEnd( Hand hand )
+        //-------------------------------------------------
+        protected virtual void OnHandHoverEnd( Hand hand )
 		{
 			InputModule.instance.HoverEnd( gameObject );
-			ControllerButtonHints.HideButtonHint( hand, Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger );
+			ControllerButtonHints.HideButtonHint( hand, hand.uiInteractAction);
 			currentHand = null;
 		}
 
 
-		//-------------------------------------------------
-		private void HandHoverUpdate( Hand hand )
+        //-------------------------------------------------
+        protected virtual void HandHoverUpdate( Hand hand )
 		{
-			if ( hand.GetStandardInteractionButtonDown() )
+			if ( hand.uiInteractAction != null && hand.uiInteractAction.GetStateDown(hand.handType) )
 			{
 				InputModule.instance.Submit( gameObject );
-				ControllerButtonHints.HideButtonHint( hand, Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger );
+				ControllerButtonHints.HideButtonHint( hand, hand.uiInteractAction);
 			}
 		}
 
 
-		//-------------------------------------------------
-		private void OnButtonClick()
+        //-------------------------------------------------
+        protected virtual void OnButtonClick()
 		{
 			onHandClick.Invoke( currentHand );
 		}

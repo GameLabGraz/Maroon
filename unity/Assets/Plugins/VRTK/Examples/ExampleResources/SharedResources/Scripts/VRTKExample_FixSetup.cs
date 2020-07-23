@@ -31,22 +31,22 @@ namespace VRTK.Examples.Utilities
 
         protected virtual void FixTrackingType()
         {
-#if VRTK_DEFINE_SDK_OCULUS
-            if (forceOculusFloorLevel && !trackingLevelFloor)
-            {
-                GameObject overManagerGO = GameObject.Find("[VRTK_SDKManager]/[VRTK_SDKSetups]/Oculus/OVRCameraRig");
-                if (overManagerGO != null)
-                {
-                    OVRManager ovrManager = overManagerGO.GetComponent<OVRManager>();
-                    if (ovrManager != null)
-                    {
-                        ovrManager.trackingOriginType = OVRManager.TrackingOrigin.FloorLevel;
-                        trackingLevelFloor = true;
-                        Debug.Log("Forced Oculus Tracking to Floor Level");
-                    }
-                }
-            }
-#endif
+// #if VRTK_DEFINE_SDK_OCULUS
+//             if (forceOculusFloorLevel && !trackingLevelFloor)
+//             {
+//                 GameObject overManagerGO = GameObject.Find("[VRTK_SDKManager]/[VRTK_SDKSetups]/Oculus/OVRCameraRig");
+//                 if (overManagerGO != null)
+//                 {
+//                     OVRManager ovrManager = overManagerGO.GetComponent<OVRManager>();
+//                     if (ovrManager != null)
+//                     {
+//                         ovrManager.trackingOriginType = OVRManager.TrackingOrigin.FloorLevel;
+//                         trackingLevelFloor = true;
+//                         Debug.Log("Forced Oculus Tracking to Floor Level");
+//                     }
+//                 }
+//             }
+// #endif
         }
 
         protected virtual void FixOculus()
@@ -55,7 +55,7 @@ namespace VRTK.Examples.Utilities
             string oculusPath = "[VRTK_SDKManager]/[VRTK_SDKSetups]/Oculus";
             GameObject oculusSDK = GameObject.Find(oculusPath);
 
-            if (oculusSDK == null || oculusSDK.GetComponentInChildren<OVRManager>() != null)
+            if (oculusSDK == null /*|| oculusSDK.GetComponentInChildren<OVRManager>() != null*/)
             {
                 Debug.Log("No Oculus Repaired Required");
                 return;
@@ -110,18 +110,18 @@ namespace VRTK.Examples.Utilities
             }
             if (ovrAvatar != null)
             {
-                OvrAvatar avatarScript = ovrAvatar.GetComponent<OvrAvatar>();
-                avatarScript.StartWithControllers = true;
-                ovrAvatar.name = ovrAvatar.name.Replace("(Clone)", "");
-                ovrAvatar.transform.SetParent(oculusSDK.transform);
-                ovrAvatar.SetActive(true);
-                oculusSetup.modelAliasLeftController = GameObject.Find(oculusPath + "/LocalAvatar/controller_left");
-                oculusSetup.modelAliasRightController = GameObject.Find(oculusPath + "/LocalAvatar/controller_right");
-                GameObject.Find(oculusPath + "/LocalAvatar/hand_left").SetActive(false);
-                GameObject.Find(oculusPath + "/LocalAvatar/hand_right").SetActive(false);
-                VRTK_TransformFollow transformFollow = ovrAvatar.AddComponent<VRTK_TransformFollow>();
-                transformFollow.gameObjectToFollow = ovrCameraRig;
-                Debug.Log("Successfully repaired Oculus LocalAvatar prefab");
+                // OvrAvatar avatarScript = ovrAvatar.GetComponent<OvrAvatar>();
+                // avatarScript.StartWithControllers = true;
+                // ovrAvatar.name = ovrAvatar.name.Replace("(Clone)", "");
+                // ovrAvatar.transform.SetParent(oculusSDK.transform);
+                // ovrAvatar.SetActive(true);
+                // oculusSetup.modelAliasLeftController = GameObject.Find(oculusPath + "/LocalAvatar/controller_left");
+                // oculusSetup.modelAliasRightController = GameObject.Find(oculusPath + "/LocalAvatar/controller_right");
+                // GameObject.Find(oculusPath + "/LocalAvatar/hand_left").SetActive(false);
+                // GameObject.Find(oculusPath + "/LocalAvatar/hand_right").SetActive(false);
+                // VRTK_TransformFollow transformFollow = ovrAvatar.AddComponent<VRTK_TransformFollow>();
+                // transformFollow.gameObjectToFollow = ovrCameraRig;
+                // Debug.Log("Successfully repaired Oculus LocalAvatar prefab");
             }
 #endif
         }

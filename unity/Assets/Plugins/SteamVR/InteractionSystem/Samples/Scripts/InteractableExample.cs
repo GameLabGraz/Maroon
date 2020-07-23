@@ -7,25 +7,34 @@
 using UnityEngine;
 using System.Collections;
 
-namespace Valve.VR.InteractionSystem
+namespace Valve.VR.InteractionSystem.Sample
 {
 	//-------------------------------------------------------------------------
 	[RequireComponent( typeof( Interactable ) )]
 	public class InteractableExample : MonoBehaviour
-	{
-		private TextMesh textMesh;
-		private Vector3 oldPosition;
+    {
+        private TextMesh generalText;
+        private TextMesh hoveringText;
+        private Vector3 oldPosition;
 		private Quaternion oldRotation;
 
 		private float attachTime;
 
-		private Hand.AttachmentFlags attachmentFlags = Hand.defaultAttachmentFlags & ( ~Hand.AttachmentFlags.SnapOnAttach ) & ( ~Hand.AttachmentFlags.DetachOthers );
+		private Hand.AttachmentFlags attachmentFlags = Hand.defaultAttachmentFlags & ( ~Hand.AttachmentFlags.SnapOnAttach ) & (~Hand.AttachmentFlags.DetachOthers) & (~Hand.AttachmentFlags.VelocityMovement);
+
+        private Interactable interactable;
 
 		//-------------------------------------------------
 		void Awake()
 		{
-			textMesh = GetComponentInChildren<TextMesh>();
-			textMesh.text = "No Hand Hovering";
+			var textMeshs = GetComponentsInChildren<TextMesh>();
+            generalText = textMeshs[0];
+            hoveringText = textMeshs[1];
+
+            generalText.text = "No Hand Hovering";
+            hoveringText.text = "Hovering: False";
+
+            interactable = this.GetComponent<Interactable>();
 		}
 
 
@@ -34,7 +43,7 @@ namespace Valve.VR.InteractionSystem
 		//-------------------------------------------------
 		private void OnHandHoverBegin( Hand hand )
 		{
-			textMesh.text = "Hovering hand: " + hand.name;
+			generalText.text = "Hovering hand: " + hand.name;
 		}
 
 
@@ -43,7 +52,7 @@ namespace Valve.VR.InteractionSystem
 		//-------------------------------------------------
 		private void OnHandHoverEnd( Hand hand )
 		{
-			textMesh.text = "No Hand Hovering";
+			generalText.text = "No Hand Hovering";
 		}
 
 
@@ -52,34 +61,34 @@ namespace Valve.VR.InteractionSystem
 		//-------------------------------------------------
 		private void HandHoverUpdate( Hand hand )
 		{
-			if ( hand.GetStandardInteractionButtonDown() || ( ( hand.controller != null ) && hand.controller.GetPressDown( Valve.VR.EVRButtonId.k_EButton_Grip ) ) )
-			{
-				if ( hand.currentAttachedObject != gameObject )
-				{
-					// Save our position/rotation so that we can restore it when we detach
-					oldPosition = transform.position;
-					oldRotation = transform.rotation;
+            GrabTypes startingGrabType = hand.GetGrabStarting();
+            bool isGrabEnding = hand.IsGrabEnding(this.gameObject);
 
-					// Call this to continue receiving HandHoverUpdate messages,
-					// and prevent the hand from hovering over anything else
-					hand.HoverLock( GetComponent<Interactable>() );
+            if (interactable.attachedToHand == null && startingGrabType != GrabTypes.None)
+            {
+                // Save our position/rotation so that we can restore it when we detach
+                oldPosition = transform.position;
+                oldRotation = transform.rotation;
 
-					// Attach this object to the hand
-					hand.AttachObject( gameObject, attachmentFlags );
-				}
-				else
-				{
-					// Detach this object from the hand
-					hand.DetachObject( gameObject );
+                // Call this to continue receiving HandHoverUpdate messages,
+                // and prevent the hand from hovering over anything else
+                hand.HoverLock(interactable);
 
-					// Call this to undo HoverLock
-					hand.HoverUnlock( GetComponent<Interactable>() );
+                // Attach this object to the hand
+                hand.AttachObject(gameObject, startingGrabType, attachmentFlags);
+            }
+            else if (isGrabEnding)
+            {
+                // Detach this object from the hand
+                hand.DetachObject(gameObject);
 
-					// Restore position/rotation
-					transform.position = oldPosition;
-					transform.rotation = oldRotation;
-				}
-			}
+                // Call this to undo HoverLock
+                hand.HoverUnlock(interactable);
+
+                // Restore position/rotation
+                transform.position = oldPosition;
+                transform.rotation = oldRotation;
+            }
 		}
 
 
@@ -87,10 +96,11 @@ namespace Valve.VR.InteractionSystem
 		// Called when this GameObject becomes attached to the hand
 		//-------------------------------------------------
 		private void OnAttachedToHand( Hand hand )
-		{
-			textMesh.text = "Attached to hand: " + hand.name;
-			attachTime = Time.time;
+        {
+            generalText.text = string.Format("Attached: {0}", hand.name);
+            attachTime = Time.time;
 		}
+
 
 
 		//-------------------------------------------------
@@ -98,7 +108,7 @@ namespace Valve.VR.InteractionSystem
 		//-------------------------------------------------
 		private void OnDetachedFromHand( Hand hand )
 		{
-			textMesh.text = "Detached from hand: " + hand.name;
+            generalText.text = string.Format("Detached: {0}", hand.name);
 		}
 
 
@@ -107,8 +117,18 @@ namespace Valve.VR.InteractionSystem
 		//-------------------------------------------------
 		private void HandAttachedUpdate( Hand hand )
 		{
-			textMesh.text = "Attached to hand: " + hand.name + "\nAttached time: " + ( Time.time - attachTime ).ToString( "F2" );
+            generalText.text = string.Format("Attached: {0} :: Time: {1:F2}", hand.name, (Time.time - attachTime));
 		}
+
+        private bool lastHovering = false;
+        private void Update()
+        {
+            if (interactable.isHovering != lastHovering) //save on the .tostrings a bit
+            {
+                hoveringText.text = string.Format("Hovering: {0}", interactable.isHovering);
+                lastHovering = interactable.isHovering;
+            }
+        }
 
 
 		//-------------------------------------------------

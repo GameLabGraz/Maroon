@@ -1,10 +1,702 @@
-SteamVR plugin for Unity - v1.2.3
+﻿# SteamVR Unity Plugin - v2.5 (sdk 1.8.19)
+
 Copyright (c) Valve Corporation, All rights reserved.
 
 
 Requirements:
 
-The SteamVR runtime must be installed.  This can be found in Steam under Tools.
+ The SteamVR runtime must be installed. This can be found in Steam under Tools.
+
+ We strongly recommend you opt-in to the SteamVR Beta to make sure your application will work with future versions of SteamVR. Right-click SteamVR inside steam, click Properties, the beta tab, then select the beta branch.
+
+
+Documentation:
+
+ Documentation can be found online here: https://valvesoftware.github.io/steamvr_unity_plugin/
+
+
+Quick Start:
+
+ If you want to explore the interaction scene you'll need to open the SteamVR Input window (under the Window Menu), click yes to copy example jsons, then click Save and Generate to create input actions.
+
+ For the most simple example of VR with tracked controllers see the sample scene at ​SteamVR/Simple Sample
+
+ For a more extensive example including picking up, throwing objects, and animated hands see the Interaction System example at ​SteamVR/Interaction System/Samples/Interactions_Example
+
+
+Support:
+
+ If you're having trouble with the plugin the best place to discuss issues is our github here: https://github.com/ValveSoftware/steamvr_unity_plugin/issues/
+
+ If you'd like to discuss features, post guides, and give general feedback please post on the steam forum here: https://steamcommunity.com/app/250820/discussions/7/
+
+
+Input and Steam:
+
+ If you publish your game to steam you can let users change their input bindings while the game is not running by setting the location of your action manifest. On the steamworks partner site go to the Application settings, and the Virtual Reality Section. At the bottom you'll see a radio button to designate your title as a SteamVR Input application. You then can set the location of your action manifest. In older versions of the plugin this was next to the executable. In versions 2.3.3 and above this is in [GameName]_Data/StreamingAssets/SteamVR/actions.json.
+
+ 
+ 
+Changes for 2.5.0
+
+ * Updated openvr_api to v1.8.19
+
+ * Fixes the Open Binding UI button. This should now work on all computers as it opens the window in SteamVR instead of through your default browser.
+
+ * Multiple hands can now hover over one interactable.
+
+ * Interactable now has a priority member. Higher numbers will make the interactable preferred when one hand is hovering over multiple interactables.
+
+ * Fixed the SteamVR binding hint ui. This lets you show the user (through a SteamVR interface) what actions are mapped to what bindings in a specified set. See: SteamVR_Input.ShowBindingHints(Action), SteamVR_Input.ShowBindingHints(ActionSet), SteamVR_Input.ShowBindingHints(ActionSet), SteamVR_Input.ShowBindingHintsForActiveActionSets()
+
+ * SteamVR_Behaviour_Skeleton will now initialize SteamVR if a Pose has not already done so.
+
+ * Fixed default binding bug with the index hmd not responding to proximity events (controller type is "indexhmd" not "index_hmd")
+
+ * Fixed bug with the SteamVR_Skeleton_Poser_Editor being offscreen
+
+ * Fixed a bug with the teleport point prefabs being on the wrong layer
+
+ * 
+ 
+Changes for 2.4.5
+
+ * Fixed the path for the editor manifest
+
+ * Fixed the openvr_api.cs version (1.7.15)
+
+Changes for 2.4.3
+
+ * **BREAKING** actions.json and associated bindings will automatically be moved to the StreamingAssets folder instead of stored in the project root. This removes the need for the plugin to copy them post build and fixes some problems people were having with version control. **IF YOU HAVE A TITLE ON STEAM AND YOU USE THIS TO BUILD - SET THE NEW PATH IN Application/Virtual Reality -> SteamVR Input System -> This game uses SteamVR Input system to: [GameName]_Data/StreamingAssets/SteamVR/actions.json **
+
+ * Added properties to SteamVR_Settings to set default models to use when previewing hand poses
+
+ * Moved default location of SteamVR_Settings.asset to a folder called SteamVR_Resources to make upgrading the plugin easier (can just delete the whole steamvr directory and import again)
+
+ * Various fixes for mac/linux issues
+
+ * Pathing fixes to allow nesting of the SteamVR folders
+
+ * Added a way to easily set the prefab the poser system uses for previews in the editor. Check SteamVR_Settings.asset
+
+ * Some fixes for fallback mode
+
+ * Added index hmd proximity binding
+
+ * Increased default ColliderArraySize for Hands in the Interaction System to 32
+
+ * Removed ResolutionDialogSetting warning in Unity 2019.1 (https://github.com/ValveSoftware/steamvr_unity_plugin/pull/498)
+
+ * Fix partial bindings not including default actions (https://github.com/ValveSoftware/steamvr_unity_plugin/pull/494)
+
+ * Fix Unity crash on "Open binding UI" when using as package (https://github.com/ValveSoftware/steamvr_unity_plugin/pull/491)
+
+ * Fix for copy example input files failing on Linux/OSX (https://github.com/ValveSoftware/steamvr_unity_plugin/pull/490)
+
+ * Add Treadmill Source to Input Sources (https://github.com/ValveSoftware/steamvr_unity_plugin/pull/486)
+
+ * 2D Debug: Camera navigation up/down (E/Q) support (https://github.com/ValveSoftware/steamvr_unity_plugin/pull/481)
+
+ * Fixed an issue with Unity throwing "cannot find ın" error in PCs with Turkish default language. (https://github.com/ValveSoftware/steamvr_unity_plugin/pull/479)
+
+ * Exposed useItemPackagePreview (https://github.com/ValveSoftware/steamvr_unity_plugin/pull/432)
+
+ * Modified Throwable to optionally ease into release velocity scaling. (https://github.com/ValveSoftware/steamvr_unity_plugin/pull/173)
+
+ * Updated openvr sdk version to 1.7.15
+
+ * Significant performance increases in the input system
+
+ * Made the hands physical objects that can touch and push things (similar to The Lab)
+
+ * Added Snap Turn and related actions / bindings
+
+ * Changed teleport bindings to use joysticks when available
+
+ * Normalized line endings and trailing spaces across project
+
+ * Added Vive Cosmos default bindings
+
+ * Removed the requirements to have a velocityestimator on throwables.
+
+ * Added SteamVR.GetHeadsetActivityLevel() which will give you the current state of the hmd (idle, in use, etc)
+
+
+Changes for 2.3.2
+
+ * Updated openvr sdk version to 1.4.18
+
+ * Added SteamVR.asmdef.20192 for Unity 2019.2b and 2019.3a - replace SteamVR.asmdef to fix UI errors in these versions.
+
+
+Changes for 2.3.1b
+
+ * Added legacy mixed reality camera mode (enabled by default). You can change this in SteamVR/Resources/SteamVR_Settings.
+
+ * Fixing some errors for 2019.1
+
+ * Removing an unused editor class
+
+ * Added low fidelity fallback hand animation for when no skeleton data is available (WinMR)
+
+ * Fixing OpenVR Package not required error for pre 2018.2 versions of unity
+
+ * Fixed serializable event in Throwable
+
+ * Fix for Custom Skeleton not getting initialized
+
+ * Fix for a rare failure in action retrieval (https://github.com/ValveSoftware/steamvr_unity_plugin/pull/431)
+
+ * Allowing folders in the action path. (https://github.com/ValveSoftware/steamvr_unity_plugin/pull/443)
+
+ * Fix for multiple SteamVR_Behaviours initializing (https://github.com/ValveSoftware/steamvr_unity_plugin/pull/435)
+
+ * Stop updating poses if they're not active
+
+
+Changes for 2.3b
+
+ * Fix for runtime action instantiation generating garbage
+
+ * Fix for setting Universe Origin at runtime. SteamVR.settings.trackingOrigin will automatically set all pose origins and the compositor origin (hmd)
+
+ * Physics objects correctly teleport while held now
+
+ * Fix for left hand being inside out sometimes.
+
+ * Fixed some perf and gc issues in the skeleton
+
+ * Updated poses to support 120hz prediction better
+
+ * Fix for IL2CPP compilation
+
+ * Fix for poor interpolation when dropping objects with left hand
+
+ * Added SteamVR_TrackingReferenceManager to allow showing tracking devices (base stations / cameras)
+
+ * Typo fix for GetStateUp returning GetStateDown
+
+ * Added ability to suppress updating the full skeletal bone data and only update summary data SteamVR_Action_Skeleton.onlyUpdateSummaryData
+
+ * Added access to different skeletal summary data. SteamVR_Action_Skeleton.summaryDataType specifies if you want the summary of the animation data or the summary of the device data. Device data may be faster but different than animation data.
+
+ * Added wrappers for ShowActionOrigin and ShowBindingsForActionSet. See SteamVR_Action.ShowOrigins() .HideOrigins(). SteamVR_ActionSet.ShowBindingHints() .HideBindingHints()
+
+
+Changes for v2.2.0:
+
+ * Removing some unused code
+
+
+Changes for v2.2RC5:
+
+ * Fix for controllers that don't support Skeleton Input yet (WinMR)
+
+ * Fixing issue where sometimes SteamVR would load legacy bindings for SteamVR Input projects while in the editor.
+
+
+Changes for v2.2RC4:
+
+ * Changed SteamVR_Input.isStartupFrame to return true for the couple frames around startup. This fixes some startup errors temporarily until we have a SteamVR API to determine startup state.
+
+ * Fixed an issue where builds would fail
+
+ * Significantly reduced asset package file size (~50%). Some psds were replaced with pngs, some png res was lowered. The old assets are still on the github repo under old plugin versions.
+
+ * Made Unity 2018.1+ OpenVR package detection and installation more robust.
+
+ * Improved Project Setup experience when using an Oculus headset
+
+
+Changes for v2.2RC3:
+
+ * Minor Breaking Change: SteamVR_Behaviour_ActionType events were incorrectly sending the action instead of the behaviour component they came from.
+
+ * Minor Breaking Change: Simplified the handFollowTransform member to be one variable instead of three
+
+ * Fixed code generation so it deletes unused actionset classes (asks first)
+
+ * Fixed behaviour events disappearing from serialized objects in some unity versions
+
+ * Added a few events to SteamVR_Behaviour_Skeleton
+
+ * Added C# style events to the SteamVR_Behaviour_ActionType components.
+
+ * Added Happy Ball as an example of a complex blending pose that moves the held object
+
+ * Added scaling support for the skeleton poser
+
+ * Cleaned up the canvas elements on the Interaction System Sample scene.
+
+ * Skeleton poser is now able to snap/follow interactables
+
+ * Fixed the namespace on a couple small sample scene components
+
+ * When clicking the "Show binding UI" button we will now always try to launch the default browser, though it may fail sometimes (Edge) we have better error messages now
+
+ * Fixed some documentation errors
+
+ * Improved skeleton poser editor ui
+
+ * Fixed an issue with ActionSets not serializing defaults properly
+
+
+Changes for v2.2RC2:
+
+ * Interactable.isHovering now correctly reports hovering when a hand is over it. There is a new associated field Interactable.hoveringHand.
+
+ * RenderModels should no longer throw an error on immediate reload.
+
+ * Added the SteamVR_Behaviour component to the Player prefab in the Interaction System so it's easier to set it's DoNotDestroy value.
+
+ * Fixed an issue with skeletons complaining that they were getting called too early. Initial action updates now happen a frame after SteamVR_Input initialization.
+
+ * Normalized the behaviours of the throwables in the Interaction System sample scene to do what their description says they should.
+
+ * Fixed an issue with TeleportArea throwing errors without a Teleport component in the scene.
+
+
+Changes for v2.2RC1:
+
+ * Feature: Added SteamVR_Skeleton_Poser component that simplifies creating poses that are easily compatible with the SteamVR Skeletal System. Check the objects in the Interaction System scene for examples or add the component to an interactable. More documentation on this feature will come before release. Example poses will be improved before release.
+
+ * Copied skeletalTrackingLevel, arrays, and finger splays into the Skeleton Behaviour component
+
+ * Fixed some related skeleton docs
+
+ * Added an option to importing partial bindings to just replace the current actions instead of merging.
+
+
+Changes for v2.2b5:
+
+ * Fixed an issue where the SteamVR_Actions assembly was not being auto referenced by the main assembly. (intellisense would not recognize the class)
+
+ * Fixed an issue with nullchecks against unassigned actions returning false incorrectly. (headsetOnHead == null with no action assigned should return true)
+
+
+Changes for v2.2b4:
+
+ * Fixed an issue in builds where actions and action sets were not deserializing correctly.
+
+ * Added an option to turn on the action set debug text generation for builds in the manager.
+
+ * Fixed an issue where automatic SteamVR Input calls on frame 0 would cause errors.
+
+
+Changes for v2.2b3:
+
+ * Fixed a named action property generation issue
+
+ * Fixed an issue with not removing missing default binding files from the action manifest
+
+
+Changes for v2.2b2:
+
+ * Fixed an assembly definition issue during generation.
+
+ * Added a warning to Edge users that they need to manually open the binding ui.
+
+
+Changes for v2.2:
+
+ * Major Breaking Change: To allow for the new SteamVR plugin to use assembly definition files generated action properties have been moved to the SteamVR_Actions class. Since this was already breaking references to actions we've also created friendlier names. SteamVR_Input.__actions_default_in_GripGrab -> SteamVR_Actions.default_GripGrab
+
+ * Breaking Change: SteamVR_Action_In.GetDeviceComponentName() has been renamed GetRenderModelComponentName because that is more descriptive. This is a non-localized string representing the render model's component. Not necessarily the physical component on the device.
+
+ * Major Change: Added Indexer/property style action data access. Instead of booleanAction.GetStateDown(SteamVR_Input_Sources.LeftHand); you can now use booleanAction[SteamVR_Input_Sources.LeftHand].stateDown; Or if you don't need to restrict to a specific input source just access booleanAction.stateDown;
+
+ * Fix for Mixed Reality camera configs. The Example actions now have a "mixedreality" action set with an "ExternalCamera" pose action. Set this pose to a tracker / controller and mixed reality should work again. By default the camera tracker type is bound to this action. You can also change the pose that's used in SteamVR/Resources/ExternalCamera.
+
+ * When saving / generating actions the plugin will now automatically remove entries in default binding files for actions that no longer exist.
+
+ * Auto loading OpenVR package for projects that don't have it (2018.1+)
+
+ * Only updating actions that has been accessed.
+
+ * Fixed issue where you would get old data from an action recently activated.
+
+ * Fixed some issues with Unity 2018.3+
+
+ * Significant XML style documentation added in preparation for documentation generation
+
+ * Added C# events with autocomplete to all actions. booleanAction[source].onStateDown += yourMethod will auto-generate a method with named variables!
+
+ * Added C# events to all SteamVR_Behaviour_ActionType components
+
+ * Added unrestricted input source shortcuts to actions. booleanAction.state is a short-cut to booleanAction[SteamVR_Input_Sources.Any].state.
+
+ * Faster initialization.
+
+ * Fixed some issues with actions not serializing properly.
+
+ * Added DoNotDestroy checkbox to SteamVR_Behaviour component.
+
+ * Active has been split into Active and ActiveBinding - ActiveBinding indicates the action has an active binding, Active indicates the binding is active as well as the containing action set.
+
+ * Calls to action data will now only return valid data then the action is active. So actionBoolean.stateDown will always be false if the action is inactive.
+
+ * Added delta parameter to Single, Vector2, Vector3 behaviour events
+
+ * Added onState event to Boolean actions that fires when the action is true
+
+ * Added onAxis event to Single, Vector2, and Vector3 actions that fires when the action is non-zero.
+
+ * General input system performance increases
+
+
+Changes for v2.1.5:
+
+ * Breaking Change: Skeleton actions no longer take a input source as a parameter since this doesn't make sense. A lot of skeleton action method signatures have changed
+
+ * Added lots of new helpful functions to the skeleton behaviour and action classes. Finger curl, finger splay, reference poses, tracking level, bone names, etc.
+
+ * Added SteamVR_Input.GetLocalizedName and SteamVR_Action_In.GetLocalizedName that will return the localized name of the device component to last use that action. "Left Hand Vive Controller Trackpad". You can specify which parts of the name you want as well.
+
+ * Fixed a major slowdown with going in and out of the steamvr dashboard at runtime
+
+Changes for v2.1:
+
+ * Major Breaking Change: Actions and ActionSets are no longer Scriptable Objects. Make sure to delete your existing SteamVR_Input folder with all your generated stuff in it. This means you will have to reset all Actions and Action Sets in all prefabs and scenes.
+
+ * Breaking Change: DefaultAction and DefaultActionSet properties no longer exist. Good news: Generation is now near-instant, doesn't require looping through every prefab and every scene. Set defaults through the following format: public SteamVR_Action_Pose poseAction = SteamVR_Input.GetAction<SteamVR_Action_Pose>("Pose"); or public SteamVR_Action_Boolean interactWithUI = SteamVR_Input.__actions_default_in_InteractUI;
+
+ * Breaking Change: actionSet.inActions and actionSet.outActions are no longer generated. We're moving all the actions directly to the set level. Previously: SteamVR_Input._default.inActions.GripGrab. Now: SteamVR_Input._default.GripGrab. Collisions of an In-Action with the same name as an Out-Action will be handled by prepending "in_" and "out_" to the field names.
+
+ * Breaking Change: More extensive action set management. Swapped out ActivatePrimary and ActivateSecondary for a single Activate call. You can activate as many sets at once as you want.
+
+ * Added ability to create partial input bindings to be used in plugins. Create a partial binding folder and include it in your plugin. When users import your plugin they will be presented with the option to import your actions and bindings.
+
+ * Added better tracker support via access to other user paths. Poses can now be bound to user/foot/left, user/foot/right, etc.
+
+ * Added access to action set priorities. If you activate an action set with a higher priority it will stop actions bound to the same button in lower priority sets from updating
+
+ * Added action set visualization to live editor window
+
+ * Added more extensive string access to actions. SteamVR_Input.GetAction(actionName), GetState(actionName, inputSource), GetFloat(actionName, inputSource), GetVector2(actionName, inputSource)
+
+ * Added proximity sensor action and example. The interaction system will log when you put the headset on / take it off. (binding ui for this still needs fix)
+
+ * Fixed some generation and loading issues with 2018.3
+
+ * Bolded [SteamVR] in Debug.log entries
+
+ * Fixed a rigidbody issue with 2018.3
+
+ * Fixed some issues with delayed loading SteamVR. Added a test scene: SteamVR/Extras/SteamVR_ForceSteamVRMode.unity
+
+ * Readded the laser pointer extra with an example scene: SteamVR/Extras/SteamVR_LaserPointer.unity
+
+ * Fixed auto-enabling of vr mode in recent unity versions. (Reminder you can disable this in: Edit Menu -> Preferences -> SteamVR)
+
+ * Fixed action set renaming so it renames all actions in its set. Does not currently modify default bindings though.
+
+ * Fixed basic fallback hand support
+
+ * Moved automatic enabling of VR in player settings to the SteamVR_Settings.asset file in SteamVR/Resources. This allows better per project settings
+
+ * Gave better error when SteamVR fails to initialize with oculus devices
+
+
+Changes for v2.0.1:
+
+ * Changed SteamVR to identify only when in editor. SteamVR_Setting.appKey has been replaced with SteamVR_Setting.editorAppKey. This means that downloads from steam will always use proper bindings but builds run separate from Steam will have their own autogenerated app key. Remember to replace your default bindings in the binding ui before creating a build.
+
+ * Fixed bug where hands were not reactivating properly after visiting the dashboard (https://github.com/ValveSoftware/steamvr_unity_plugin/issues/118)
+
+ * Fixed bug with multiple items being grabbed at once (https://github.com/ValveSoftware/steamvr_unity_plugin/issues/121)
+
+ * Fixed bug where Linear Drive would freeze when grabbed twice (https://github.com/ValveSoftware/steamvr_unity_plugin/issues/120)
+
+ * Fixed bug with bindings that were readonly not copying correctly.
+
+ * Fixed some other bugs with multiple pickup types being activated at once.
+
+
+Changes for v2.0:
+
+ * Updated to SteamVR runtime v1537309452 and SDK version 1.0.16.
+
+ * Removed support for older versions of Unity (v5.4 or newer required).  Previous versions of the plugin can be found here: https://github.com/ValveSoftware/steamvr_unity_plugin/
+
+
+Changes for v2.0rc4:
+
+ * Support for Windows MR (no Skeletal input at this time - driver needs to be updated)
+
+ * Added SteamVR_ActionIn.onActiveChange event (most actions inherit from this class)
+
+ * Added Interactable.activateActionSetOnAttach to activate action sets when you grab an item and deactivate them when they're detached
+
+ * Fixed an issue in the SteamVR Input Live View that made it unreadable
+
+ * Fixed an issue that lead to duplicate SteamVR_Render components in some circumstances
+
+ * Removed Debug UI from release builds using the Interaction System
+
+ * Added ModalThrowable. Allowing different snap locations for grip and pinch pickups
+
+ * Added grenade as an example of the ModalThrowable
+
+ * Added a squishable object for a knuckles force example
+
+ * Fixed an order of operations error where the interactable detach event was being called after the attach event when an item changed hands
+
+ * Fixed an issue with pickup points being in odd places
+
+ * Forcing hover unlock on interactable destruction
+
+ * Added support for Unity 2018.3
+
+ * Fixed an issue with delayed init
+
+
+Changes for v2.0rc3:
+
+ * Added some pdf documentation for the new plugin and input system
+
+ * Added code documentation to most public functions in the input system
+
+ * Removed SteamVR_Camera from prefabs as this is no longer necessary
+
+ * Added simple rc car example ported from Knuckles Tech Demo
+
+ * Added simple platformer example
+
+ * Switched hover highlights to highlight the object being interacted with instead of the controller. Can be reenabled in the player prefab.
+
+ * Fixed some upgrading issues for Unity 2018
+
+ * Added glcore to a few of the shaders to make them opengl compatible
+
+ * Fixed a code generation issue that was generating static members instead of instance members, making actions inside sets unavailable.
+
+ * Added scrollview to LiveWindow
+
+ * Fixed some issues with action sets
+
+ * Added DefaultActionSet attribute to specify a default action set to be assigned to fields/properties on input generation
+
+ * Updated some scriptable object fields to not serialize things unintentionally
+
+ * Made initialization a little more streamlined.
+
+ * Added an event you can subscribe to for when initialization is completed (SteamVR_Events.Initialized(bool)). The bool indicates success
+
+ * Improved editor UI for action / action set assignment
+
+ * Made the example button do something on press
+
+Changes for v2.0rc2:
+
+ * Added built in support for delayed loading of SteamVR. You can now call SteamVR.Initialize() and pass a boolean to force set unity to OpenVR mode.
+
+ * Added a new Simple Sample scene in the root to do super basic testing.
+
+ * Moved SteamVR Input updating to SteamVR_Behaviour which also handles the SteamVR_Render component. This will be added to scenes at runtime.
+
+ * Added ability to explicitly show or hide controller model in the interaction system
+
+ * Gave the interaction system scene a new paint job
+
+ * Auto scaling the teleporter beam to the player size
+
+ * Added a new quickstart pdf
+
+ * Fixed issue for Unity 5.6 not showing controllers
+
+ * Fixed issue for 2018.2 not opening the input window properly
+
+ * Minor performance increases
+
+ * Updated initialization process to support having XR set to none or Oculus initially.
+
+ * Moved some of example jsons files into a more reasonable directory.
+
+
+Changes for v2.0rc1:
+
+ * Namespacing all SteamVR scripts. This will be a breaking change for most projects but this is a major revision.
+
+ * Renamed most of the input classes to have a more reasonable length. Generally removed _Input_ as it's redundant in most places
+
+ * Fixed some issues with newer versions of Unity throwing errors during action generation
+
+ * Fixed some issues with scenes not opening properly during generation on newer versions of Unity
+
+ * Removing SteamVR_Settings from plugin, it should be auto generated so new versions of the plugin don't overwrite it
+
+ * Fixed some performance issues surrounding using the legacy input system at the same time as the new input system. This is not a supported scenario.
+
+ * Minor performance increases around render model loading.
+
+ * Removed some legacy system scripts
+
+ * Fixed the button hint system
+
+ * Consolidated the skeleton options
+
+
+Changes for v1.3b10:
+
+ * Fixed a couple issues that would cause tracking jitter or entire loss of input
+
+ * Fixed an issue with destroying held objects
+
+
+Changes for v1.3b09:
+
+ * Newly created action sets default to "single" mode allowing action mirroring in the binding UI.
+
+ * Added an example of blending unity animations with the skeleton input system. The sphere on the Equippable table can be grabbed and the hand will blend to an animation.
+
+ * Interactables now hand a hideHandOnAttach bool, a handAnimationOnPickup int that triggers an Animator.SetInt, and setRangeOfMotionOnPickup which will temporarily set the range of motion while an object is attached.
+
+ * Added a tool example for "With Controller" hand animation examples. Equippables can also be flipped depending on the hand that picks them up.
+
+ * Interactables now can tell hands to snap to them on attach. Specify a transform to snap to in Interactable.handFollowTransform and then check handFollowTransformPosition and/or handFollowTransformRotation
+
+ * Added Range of Motion blending to skeleton - Hand.SetSkeletonRangeOfMotion(rangeOfMotion, blendTime)
+
+ * Updated skeleton system to account for coordinate system changes
+
+ * Fixed some perf issues with the old render models (WIP)
+
+ * Fixed some bugs with button hints (WIP)
+
+ * Interactables should now auto detach on destroy.
+
+ * Added slim glove models, an example of an alien hand with 3 fingers, and an alien hand with floppy fingers
+
+ * Hands now initialize a RenderModel object which can contain a hand and a controller. These can be toggled on and off separately
+
+ * Fixed issue with controller highlighters not initializing correctly
+
+ * Added the ability to attach an object to a specific offset from the Hand - Hand.ObjectAttachmentPoint
+
+ * Fixed issue where render model would not show after bringing up compositor
+
+ * Fixed issue with default Throwables. HoverButton now works in local space
+
+ * Fixed issue with velocities and angular velocities not transforming properly
+
+
+Changes for v1.3b08:
+
+* SteamVR_Input_References has been moved to the generated folder so new plugin updates don't wipe yours. Prior beta users: Please delete your existing one in Assets/SteamVR/Resources/SteamVR_Input_References.asset
+
+* SteamVR_Input is no longer a MonoBehaviour. This fixes scene transition issues as well as event subscription issues.
+
+* The Live Action View has been moved to its own window under the Window menu.
+
+* Some excess configuration options were removed from the settings window, some were moved into SteamVR_Settings if still needed.
+
+* Added a Hover Button that depresses when the controller gets close to it.
+
+* Fixed an issue where default throwables would "auto catch" objects
+
+
+Changes for v1.3b07:
+
+* Fixed issue with upgrading from the legacy system
+
+* Fixed some line endings
+
+* Fixed generation bug where it wouldn't reopen to the scene you started on
+
+* Auto replacing app key in binding files
+
+* Updating actions and bindings to have one pose and one haptic action
+
+* Gave each app its own app id via a vrmanifest that is generated on import. Can be modified in SteamVR_Settings for release.
+
+* Fixed haptic actions not displaying in play mode
+
+* Temporary fix for skeletons erroring while the dashboard is up
+
+
+Changes for v1.3b06:
+
+* Added some flower and planting stuff for the tutorial
+
+* Updating knuckles actions and binding jsons
+
+* Added code solution for blending skeleton animations to mechanim, no example yet though
+
+* Updated some helper components to utilize Unity Events properly
+
+* Updated skeleton hierarchy
+
+
+Changes for v1.3b05:
+
+* Added a knuckles binding for the Grab mode
+
+* Fixed some bugs around skeleton updates and GC alloc
+
+* Fixed a pretty significant perf hit
+
+* Added a blending option to skeletons
+
+* Added some ui to try out skeleton options
+
+* Added a target for the throwing examples
+
+* Updated longbow to only fire arrows with the pinch action
+
+* Updated other interactable examples
+
+* Added some helper methods to hand around showing / hiding controller or the whole hand.
+
+* Fixed some of the throwing examples
+
+
+Changes for v1.3b04:
+
+* Added some more extensive velocity and angular velocity estimation based on positions and rotations per frame. Normalizing for time between frames.
+
+* Cleaned out and updated the actions + bindings for knuckles/wands/touch.
+
+* Fixed a bug with newly created actions not having a set type
+
+* Updated extra scenes to use the new input system
+
+
+Changes for v1.3b03:
+
+* Fixed some warnings for unity 2017 / 2018.
+
+* Fixed some editor UI issues for 2018
+
+* Fixed issues with Unity 2017+ not wanting to open scenes from a script reloaded callback
+
+
+Changes for v1.3b02:
+
+* Added DefaultInputAction attribute to automatically assign actions during action generation.
+
+* Updated default CameraRig prefab to use the new input system and components
+
+
+Changes for v1.3b01:
+
+* Integrated SteamVR Input System.
+https://steamcommunity.com/games/250820/announcements/detail/3809361199426010680
+
+* [InteractionSystem] Added basic examples of the Skeletal API
+
+* [InteractionSystem] Integrated SteamVR Input System. Actions and Action Sets instead of buttons.
+
+* [InteractionSystem] Added Velocity style object interaction
+
+* [InteractionSystem] Fixed some issues from github. Took some pull requests.
+https://github.com/ValveSoftware/steamvr_unity_plugin/pull/79
+https://github.com/ValveSoftware/steamvr_unity_plugin/pull/73
+https://github.com/ValveSoftware/steamvr_unity_plugin/pull/72
+https://github.com/ValveSoftware/steamvr_unity_plugin/pull/71
+https://github.com/ValveSoftware/steamvr_unity_plugin/pull/67
+https://github.com/ValveSoftware/steamvr_unity_plugin/pull/64
+https://github.com/ValveSoftware/steamvr_unity_plugin/issues/84
+https://github.com/ValveSoftware/steamvr_unity_plugin/issues/78
 
 
 Changes for v1.2.3:
@@ -19,7 +711,7 @@ Changes for v1.2.3:
 
 * [RenderModels] Switched from using TextureFormat.ARGB32 to RGBA32 to fix pink texture issue on Vulkan.
 
-* [RenderModels] Fix for not initializing propery if game is paused on startup.
+* [RenderModels] Fix for not initializing properly if game is paused on startup.
 https://github.com/ValveSoftware/steamvr_unity_plugin/issues/62
 
 * [InteractionSystem] Added implemention for ItemPackageSpawner requireTriggerPressToReturn.
@@ -427,15 +1119,15 @@ and this was an incomplete and unsupported solution.
 
 Files:
 
-Assets/Plugins/openvr_api.cs - This direct wrapper for the native SteamVR SDK support mirrors SteamVR.h and  
-is the only script required.  It exposes all functionality provided by SteamVR.  It is not recommended you make  
+Assets/Plugins/openvr_api.cs - This direct wrapper for the native SteamVR SDK support mirrors SteamVR.h and
+is the only script required.  It exposes all functionality provided by SteamVR.  It is not recommended you make
 changes to this file.  It should be kept in sync with the associated openvr_api dll.
 
-The remaining files found in Assets/SteamVR/Scripts are provided as a reference implementation, and to get you  
-up and running quickly and easily.  You are encouraged to modify these to suit your project's unique needs,  
+The remaining files found in Assets/SteamVR/Scripts are provided as a reference implementation, and to get you
+up and running quickly and easily.  You are encouraged to modify these to suit your project's unique needs,
 and provide feedback at http://steamcommunity.com/app/250820 or http://steamcommunity.com/app/358720/discussions
 
-Assets/SteamVR/Scenes/example.unity - A sample scene demonstrating the functionality provided by this plugin.   
+Assets/SteamVR/Scenes/example.unity - A sample scene demonstrating the functionality provided by this plugin.
 This also shows you how to set up a separate camera for rendering gui elements.
 
 
@@ -475,8 +1167,8 @@ that is inconvenient, you can specify the 'origin' in the TrackedObject itself.
 Assets/SteamVR/Scripts/SteamVR_RenderModel.cs - Dynamically creates associated SteamVR provided models for tracked
 objects.  See <SteamVR Runtime Path>/resources/rendermodels for the full list of overrides.
 
-Assets/SteamVR/Scripts/SteamVR_Utils.cs - Various bits for working with the SteamVR API in Unity including a  
-simple event system, a RigidTransform class for working with vector/quaternion pairs, matrix conversions, and  
+Assets/SteamVR/Scripts/SteamVR_Utils.cs - Various bits for working with the SteamVR API in Unity including a
+simple event system, a RigidTransform class for working with vector/quaternion pairs, matrix conversions, and
 other useful functions.
 
 
@@ -509,8 +1201,8 @@ updated before composited into the final view.
 
 OnGUI:
 
-Assets/SteamVR/Scripts/SteamVR_Menu.cs demonstrates use of OnGUI with SteamVR_Camera's overlay texture.  The  
-key is to set RenderTexture.active and restore it afterward.  Beware when also using a camera to render to the  
+Assets/SteamVR/Scripts/SteamVR_Menu.cs demonstrates use of OnGUI with SteamVR_Camera's overlay texture.  The
+key is to set RenderTexture.active and restore it afterward.  Beware when also using a camera to render to the
 same texture as it may clear your content.
 
 
@@ -548,8 +1240,8 @@ Initializing - This event is sent when the hmd's tracking status changes to or f
 
 Calibrating - This event is sent when starting or stopping calibration with the new state.
 
-OutOfRange - This event is sent when losing or reacquiring absolute positional tracking.  This will 
-never fire for the Rift DK1 since it does not have positional tracking.  For camera based trackers, this 
+OutOfRange - This event is sent when losing or reacquiring absolute positional tracking.  This will
+never fire for the Rift DK1 since it does not have positional tracking.  For camera based trackers, this
 happens when the hmd exits and enters the camera's view.
 
 DeviceConnected - This event is sent when devices are connected or disconnected.  The device index is passed
@@ -566,8 +1258,8 @@ I - toggle frame stats on/off
 
 Deploying on Steam:
 
-If you are releasing your game on Steam (i.e. have a Steam ID and are calling Steam_Init through the  
-Steamworks SDK), then you may want to check ISteamUtils::IsSteamRunningInVRMode() in order to determine if you  
+If you are releasing your game on Steam (i.e. have a Steam ID and are calling Steam_Init through the
+Steamworks SDK), then you may want to check ISteamUtils::IsSteamRunningInVRMode() in order to determine if you
 should automatically launch into VR mode or not.
 
 

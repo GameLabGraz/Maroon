@@ -75,91 +75,34 @@ namespace VRTK
             return cachedHeadsetCamera;
         }
 
-        /// <summary>
-        /// The GetHeadsetType method returns a string representing the type of headset connected.
-        /// </summary>
-        /// <returns>The string of the headset connected.</returns>
         public override string GetHeadsetType()
         {
-            if (SteamVR.instance != null)
-            {
-                string manufactuer = CleanPropertyString(SteamVR.instance.GetStringProperty(ETrackedDeviceProperty.Prop_ManufacturerName_String));
-                string model = CleanPropertyString(SteamVR.instance.GetStringProperty(ETrackedDeviceProperty.Prop_ModelNumber_String));
-
-                //Check for specific manufacturer models
-                switch (manufactuer)
-                {
-                    case "htc":
-                        if (model.Contains("vive"))
-                        {
-                            return "htcvive";
-                        }
-                        break;
-                    case "oculus":
-                        return "oculusrift";
-                    case "windowsmr":
-                        return "windowsmixedreality";
-                }
-
-                //If no model check required then just return manufacturer
-                return CleanPropertyString(manufactuer);
-            }
-            return CleanPropertyString("");
+            throw new System.NotImplementedException();
         }
 
-        /// <summary>
-        /// The GetHeadsetVelocity method is used to determine the current velocity of the headset.
-        /// </summary>
-        /// <returns>A Vector3 containing the current velocity of the headset.</returns>
         public override Vector3 GetHeadsetVelocity()
         {
-            return SteamVR_Controller.Input((int)SteamVR_TrackedObject.EIndex.Hmd).velocity;
+            throw new System.NotImplementedException();
         }
 
-        /// <summary>
-        /// The GetHeadsetAngularVelocity method is used to determine the current angular velocity of the headset.
-        /// </summary>
-        /// <returns>A Vector3 containing the current angular velocity of the headset.</returns>
         public override Vector3 GetHeadsetAngularVelocity()
         {
-            return SteamVR_Controller.Input((int)SteamVR_TrackedObject.EIndex.Hmd).angularVelocity;
+            throw new System.NotImplementedException();
         }
 
-        /// <summary>
-        /// The HeadsetFade method is used to apply a fade to the headset camera to progressively change the colour.
-        /// </summary>
-        /// <param name="color">The colour to fade to.</param>
-        /// <param name="duration">The amount of time the fade should take to reach the given colour.</param>
-        /// <param name="fadeOverlay">Determines whether to use an overlay on the fade.</param>
         public override void HeadsetFade(Color color, float duration, bool fadeOverlay = false)
         {
-            SteamVR_Fade.Start(color, duration, fadeOverlay);
+            throw new System.NotImplementedException();
         }
 
-        /// <summary>
-        /// The HasHeadsetFade method checks to see if the given game object (usually the camera) has the ability to fade the viewpoint.
-        /// </summary>
-        /// <param name="obj">The Transform to check to see if a camera fade is available on.</param>
-        /// <returns>Returns true if the headset has fade functionality on it.</returns>
         public override bool HasHeadsetFade(Transform obj)
         {
-            if (obj.GetComponentInChildren<SteamVR_Fade>() != null)
-            {
-                return true;
-            }
-            return false;
+            throw new System.NotImplementedException();
         }
 
-        /// <summary>
-        /// The AddHeadsetFade method attempts to add the fade functionality to the game object with the camera on it.
-        /// </summary>
-        /// <param name="camera">The Transform to with the camera on to add the fade functionality to.</param>
         public override void AddHeadsetFade(Transform camera)
         {
-            if (camera != null && camera.GetComponent<SteamVR_Fade>() == null)
-            {
-                camera.gameObject.AddComponent<SteamVR_Fade>();
-            }
+            throw new System.NotImplementedException();
         }
 #endif
     }

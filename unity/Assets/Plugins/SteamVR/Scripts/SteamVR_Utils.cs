@@ -8,11 +8,61 @@ using UnityEngine;
 using System.Collections;
 using System.Runtime.InteropServices;
 using Valve.VR;
+using System.IO;
 
 public static class SteamVR_Utils
 {
-	// this version does not clamp [0..1]
-	public static Quaternion Slerp(Quaternion A, Quaternion B, float t)
+	public class Event
+	{
+		public delegate void Handler(params object[] args);
+
+		public static void Listen(string message, Handler action)
+		{
+			var actions = listeners[message] as Handler;
+			if (actions != null)
+			{
+				listeners[message] = actions + action;
+			}
+			else
+			{
+				listeners[message] = action;
+			}
+		}
+
+		public static void Remove(string message, Handler action)
+		{
+			var actions = listeners[message] as Handler;
+			if (actions != null)
+			{
+				listeners[message] = actions - action;
+			}
+		}
+
+		public static void Send(string message, params object[] args)
+		{
+			var actions = listeners[message] as Handler;
+			if (actions != null)
+			{
+				actions(args);
+			}
+		}
+
+		private static Hashtable listeners = new Hashtable();
+	}
+
+
+    public static bool IsValid(Vector3 vector)
+    {
+        return (float.IsNaN(vector.x) == false && float.IsNaN(vector.y) == false && float.IsNaN(vector.z) == false);
+    }
+    public static bool IsValid(Quaternion rotation)
+    {
+        return (float.IsNaN(rotation.x) == false && float.IsNaN(rotation.y) == false && float.IsNaN(rotation.z) == false && float.IsNaN(rotation.w) == false) &&
+            (rotation.x != 0 || rotation.y != 0 || rotation.z != 0 || rotation.w != 0);
+    }
+
+    // this version does not clamp [0..1]
+    public static Quaternion Slerp(Quaternion A, Quaternion B, float t)
 	{
 		var cosom = Mathf.Clamp(A.x * B.x + A.y * B.y + A.z * B.z + A.w * B.w, -1.0f, 1.0f);
 		if (cosom < 0.0f)
@@ -123,7 +173,7 @@ public static class SteamVR_Utils
 		return new Vector3(x, y, z);
 	}
 
-	public static Vector3 GetScale(this Matrix4x4 m)
+    public static Vector3 GetScale(this Matrix4x4 m)
 	{
 		var x = Mathf.Sqrt(m.m00 * m.m00 + m.m01 * m.m01 + m.m02 * m.m02);
 		var y = Mathf.Sqrt(m.m10 * m.m10 + m.m11 * m.m11 + m.m12 * m.m12);
@@ -132,7 +182,58 @@ public static class SteamVR_Utils
 		return new Vector3(x, y, z);
 	}
 
-	[System.Serializable]
+    public static float GetLossyScale(Transform t)
+    {
+        return t.lossyScale.x;
+    }
+
+    private const string secretKey = "foobar";
+
+    public static string GetBadMD5Hash(string usedString)
+    {
+        byte[] bytes = System.Text.Encoding.UTF8.GetBytes(usedString + secretKey);
+
+        return GetBadMD5Hash(bytes);
+    }
+    public static string GetBadMD5Hash(byte[] bytes)
+    {
+        System.Security.Cryptography.MD5CryptoServiceProvider md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+        byte[] hash = md5.ComputeHash(bytes);
+
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        for (int i = 0; i < hash.Length; i++)
+        {
+            sb.Append(hash[i].ToString("x2"));
+        }
+
+        return sb.ToString();
+    }
+    public static string GetBadMD5HashFromFile(string filePath)
+    {
+        if (File.Exists(filePath) == false)
+            return null;
+
+        string data = File.ReadAllText(filePath);
+        return GetBadMD5Hash(data + secretKey);
+    }
+
+    public static string SanitizePath(string path, bool allowLeadingSlash = true)
+    {
+        if (path.Contains("\\\\"))
+            path = path.Replace("\\\\", "\\");
+        if (path.Contains("//"))
+            path = path.Replace("//", "/");
+
+        if (allowLeadingSlash == false)
+        {
+            if (path[0] == '/' || path[0] == '\\')
+                path = path.Substring(1);
+        }
+
+        return path;
+    }
+
+    [System.Serializable]
 	public struct RigidTransform
 	{
 		public Vector3 pos;
@@ -279,7 +380,9 @@ public static class SteamVR_Utils
 			return false;
 		}
 
-		public override int GetHashCode()
+
+
+        public override int GetHashCode()
 		{
 			return pos.GetHashCode() ^ rot.GetHashCode();
 		}
@@ -536,7 +639,7 @@ public static class SteamVR_Utils
 
 						RenderTexture.active = targetTexture;
 						texture.ReadPixels(new Rect(0, 0, targetTexture.width, targetTexture.height), uTarget, vTarget + vTargetOffset);
-						RenderTexture.active = null;                 
+						RenderTexture.active = null;
 					}
 
 					// Update progress
