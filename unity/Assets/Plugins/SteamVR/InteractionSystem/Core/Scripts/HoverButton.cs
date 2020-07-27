@@ -32,16 +32,16 @@ namespace Valve.VR.InteractionSystem
         public bool buttonDown = false;
         public bool buttonUp = false;
 
-        private Vector3 startPosition;
-        private Vector3 endPosition;
+        protected Vector3 startPosition;
+        protected Vector3 endPosition;
 
-        private Vector3 handEnteredPosition;
+        protected Vector3 handEnteredPosition;
 
-        private bool hovering;
+        protected bool hovering;
 
-        private Hand lastHoveredHand;
+        protected Hand lastHoveredHand;
 
-        private void Start()
+        protected void Start()
         {
             if (movingPart == null && this.transform.childCount > 0)
                 movingPart = this.transform.GetChild(0);
@@ -51,7 +51,7 @@ namespace Valve.VR.InteractionSystem
             handEnteredPosition = endPosition;
         }
 
-        private void HandHoverUpdate(Hand hand)
+        protected void HandHoverUpdate(Hand hand)
         {
             hovering = true;
             lastHoveredHand = hand;
@@ -81,7 +81,7 @@ namespace Valve.VR.InteractionSystem
             InvokeEvents(wasEngaged, engaged);
         }
 
-        private void LateUpdate()
+        protected void LateUpdate()
         {
             if (hovering == false)
             {
@@ -95,7 +95,7 @@ namespace Valve.VR.InteractionSystem
             hovering = false;
         }
 
-        private void InvokeEvents(bool wasEngaged, bool isEngaged)
+        protected void InvokeEvents(bool wasEngaged, bool isEngaged)
         {
             buttonDown = wasEngaged == false && isEngaged == true;
             buttonUp = wasEngaged == true && isEngaged == false;
