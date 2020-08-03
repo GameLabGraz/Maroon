@@ -28,6 +28,12 @@ namespace MaroonVR
                 hoverButton.onButtonDown.AddListener(OnButtonDown);
                 hoverButton.onButtonUp.AddListener(OnButtonUp);
             }
+            
+            var hoverEvents = GetComponent<InteractableHoverEvents>();
+            if(hoverEvents){
+                hoverEvents.onHandHoverBegin.AddListener(() => { ColorSelf(highlightColor); });
+                hoverEvents.onHandHoverEnd.AddListener(() => { ColorSelf(defaultColor); });
+            }
         }
         
         public void OnButtonDown(Hand fromHand)
@@ -42,10 +48,10 @@ namespace MaroonVR
 
         private void ColorSelf(Color newColor)
         {
-            Renderer[] renderers = GetComponentsInChildren<Renderer>();
-            for (int rendererIndex = 0; rendererIndex < renderers.Length; rendererIndex++)
+            var renderers = GetComponentsInChildren<Renderer>();
+            foreach (var t in renderers)
             {
-                renderers[rendererIndex].material.color = newColor;
+                t.material.color = newColor;
             }
         }
     }

@@ -6,8 +6,7 @@ public class PC_TextFormatter_TMP : MonoBehaviour
     public string format = "F";
     public string unit = "";
     public bool addSpaceBetweenUnit = false;
-
-
+    
     public void FormatString(float number)
     {
         var text = number.ToString(format) + (addSpaceBetweenUnit? " " : "") + unit;
