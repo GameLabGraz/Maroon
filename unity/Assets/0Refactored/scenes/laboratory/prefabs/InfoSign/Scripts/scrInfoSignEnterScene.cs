@@ -1,5 +1,4 @@
-﻿using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using VRTK;
 using Util;
@@ -8,11 +7,9 @@ public class scrInfoSignEnterScene : MonoBehaviour
 {
     // #################################################################################################################
     // Members
-
-    // Name of scenes
-    [SerializeField] private SceneAsset targetScenePC;
-    [SerializeField] private SceneAsset targetSceneVR;
-    private SceneAsset targetScene;
+    [SerializeField] private Utilities.SceneField targetScenePC;
+    [SerializeField] private Utilities.SceneField targetSceneVR;
+    private Utilities.SceneField targetScene;
 
     // Settings
     [SerializeField] private Color highlightColor;
@@ -27,7 +24,7 @@ public class scrInfoSignEnterScene : MonoBehaviour
     // Load new scene
     public void EnterScene()
     {
-        SceneManager.LoadScene(this.targetScene.name);
+        SceneManager.LoadScene(this.targetScene);
     }
 
     // Start is called before the first frame update
