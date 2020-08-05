@@ -15,16 +15,13 @@ public class SnapSlipPlate : MonoBehaviour, IResetObject
     [SerializeField]
     private Vector3 plateScale = Vector3.one;
 
-    private VRTK_InteractableObject snappedPlate = null;
+    private VRTK_InteractableObject snappedPlate;
 
     private Vector3 previousPlateScale;
             
     private RigidbodyConstraints previousPlateBodyConstraints;
 
-    public GameObject SnappedPlateObject
-    {
-        get { return snappedPlate.gameObject; }
-    }
+    public GameObject SnappedPlateObject => snappedPlate.gameObject;
 
     private void OnTriggerStay(Collider other)
     {
@@ -41,7 +38,7 @@ public class SnapSlipPlate : MonoBehaviour, IResetObject
         snappedPlate.transform.position = Vector3.Lerp(plateHandleBodyRight.transform.position, plateHandleBodyLeft.transform.position, 0.5f);
         snappedPlate.transform.position = new Vector3(snappedPlate.transform.position.x, snappedPlate.transform.position.y - 0.3f, snappedPlate.transform.position.z); 
         snappedPlate.transform.rotation = Quaternion.Euler(0, 90, 0);
-        snappedPlate.transform.localScale = new Vector3(1.0f,1.0f,1.0f);
+        snappedPlate.transform.localScale = plateScale;
 
         // Create Handle Joints
         var handleJointRight = snappedPlate.gameObject.AddComponent<FixedJoint>();
