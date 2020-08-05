@@ -9,7 +9,7 @@ namespace Maroon.UI
         public string Text { get; set; }
         public Color Color { get; set; }
 
-        public Message(string text) : this(text, Color.white) { }
+        public Message(string text) : this(text, Color.black) { }
 
         public Message(string text, Color color)
         {
