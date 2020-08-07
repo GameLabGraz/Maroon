@@ -1,7 +1,7 @@
 
 load slide "physics_test.xml" into s1
 
-uservar pi = 3.1415926 , eps0 = 8.85418
+uservar pi = 3.1415926 , eps0 = 0.000000000008854187
 
 pattern init:
 	match action enter
@@ -16,6 +16,7 @@ pattern calculateVoltage:
 	for c in charges:
 		set PotA = PotA + c.charge / (4 * pi * eps0 * abs(c.position - vm.positive_terminal_position))
 		set PotB = PotB + c.charge / (4 * pi * eps0 * abs(c.position - vm.negative_terminal_position))
+		feedback hint "Position last C: " + c.position.x + ", charge: " + c.charge
 	set U = PotA - PotB
 	feedback success "Calculated voltage: " + U + " V"
 
