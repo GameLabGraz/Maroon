@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 
 
-public class scrPauseMenu : MonoBehaviour
+public class scrMenuColumnPauseMenu : MonoBehaviour
 {
     // #################################################################################################################
     // Members
@@ -62,7 +62,7 @@ public class scrPauseMenu : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Escape))
         {
-            if(scrPauseMenu.IsPaused)
+            if(scrMenuColumnPauseMenu.IsPaused)
             {
                 this.ClosePauseMenu();
             }
@@ -77,14 +77,14 @@ public class scrPauseMenu : MonoBehaviour
     {
         this.Canvas.SetActive(true);
         Time.timeScale = 0;
-        scrPauseMenu.IsPaused = true;
+        scrMenuColumnPauseMenu.IsPaused = true;
     }
 
     public void ClosePauseMenu()
     {
         this.Canvas.SetActive(false);
         Time.timeScale = 1;
-        scrPauseMenu.IsPaused = false;
+        scrMenuColumnPauseMenu.IsPaused = false;
     }
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
