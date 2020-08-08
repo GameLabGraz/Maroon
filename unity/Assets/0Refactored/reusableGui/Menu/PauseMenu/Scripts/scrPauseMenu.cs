@@ -80,7 +80,7 @@ public class scrPauseMenu : MonoBehaviour
         scrPauseMenu.IsPaused = true;
     }
 
-    private void ClosePauseMenu()
+    public void ClosePauseMenu()
     {
         this.Canvas.SetActive(false);
         Time.timeScale = 1;
