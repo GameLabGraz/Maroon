@@ -7,26 +7,15 @@ public class scrMenu : MonoBehaviour
 {
     // #################################################################################################################
     // Members
+    [SerializeField] private bool OpenOnEsc = false;
 
-    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    // State
-    public static bool IsPaused = false;
+    private bool IsOpen = false;
 
-    private int OpenPanelId = -1;
-
-    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    // Pause Menu items
     [SerializeField] private GameObject Canvas;
 
-    [SerializeField] private GameObject PanelRight;
+    private Transform Columns;
 
-    [SerializeField] private GameObject PanelRightTitle;
-
-    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    // Pause Menu settings
-    [SerializeField] private GameObject[] SettingButtons;
-
-    [SerializeField] private GameObject[] SettingPanels;
+    public GameObject MainColumn;
     
     // #################################################################################################################
     // Methods
@@ -36,88 +25,65 @@ public class scrMenu : MonoBehaviour
 
     private void Start()
     {
-        // Hide menu and panels
+        // Hide menu
         this.Canvas.SetActive(false);
-        this.PanelRight.SetActive(false);
-        foreach(GameObject SettingPanel in this.SettingPanels)
+
+        // Init Columns
+        this.Columns = Canvas.transform.Find("Columns");
+
+        // Delete columns
+        while(this.Columns.childCount > 0)
         {
-            SettingPanel.SetActive(false);            
+            DestroyImmediate(this.Columns.GetChild(0).gameObject);
         }
 
-        // Add button actions
-        for(int i = 0; i < this.SettingButtons.Length; i++)
-        {
-            GameObject button = this.SettingButtons[i];
-
-            // Delegates passed by reference, hacky workaround
-            int openPanelId = i;
-            button.GetComponent<Button>().onClick.AddListener(delegate {this.ToggleSettingsPanel(openPanelId);});
-        }
+        // Add main column of this menu (e.g. Pause Menu column)
+        this.AddMenuColumn(MainColumn);
     }
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    // Open/Close Pause Menu
+    // Open/Close Menu
 
-    private void Update()
+    // TODO use keymap instead of this
+    public void Update()
     {
         if(Input.GetKeyDown(KeyCode.Escape))
         {
-            if(scrMenuColumnPauseMenu.IsPaused)
-            {
-                this.ClosePauseMenu();
+            if(this.IsOpen)
+            {   
+                this.CloseMenu();
             }
             else
             {
-                this.OpenPauseMenu();
+                this.OpenMenu();
             }
         }
     }
 
-    private void OpenPauseMenu()
+    public void OpenMenu()
     {
         this.Canvas.SetActive(true);
-        Time.timeScale = 0;
-        scrMenuColumnPauseMenu.IsPaused = true;
+        this.IsOpen = true;
     }
 
-    public void ClosePauseMenu()
+    public void CloseMenu()
     {
         this.Canvas.SetActive(false);
-        Time.timeScale = 1;
-        scrMenuColumnPauseMenu.IsPaused = false;
+        this.IsOpen = false;    
     }
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    // Open/Close Settings
+    // Columns
 
-    private void ToggleSettingsPanel(int panel_id)
+    public void AddMenuColumn(GameObject column)
     {
-        // Gather info
-        GameObject requested_panel = this.SettingPanels[panel_id];
-        bool open_requested = !requested_panel.activeSelf;
-
-        // Close all panels
-        this.PanelRight.SetActive(false);
-        foreach(GameObject SettingPanel in this.SettingPanels)
-        {
-            this.OpenPanelId = -1;
-            SettingPanel.SetActive(false);            
-        }
-
-        // Open correct panel if requested
-        if(open_requested)
-        {
-            this.OpenPanelId = panel_id;
-            this.UpdateRightPanelName();
-            requested_panel.SetActive(true);
-            this.PanelRight.SetActive(true);
-        }
+        GameObject new_column;
+        new_column = Instantiate(column) as GameObject;
+        new_column.transform.parent = this.Columns; 
     }
 
-    public void UpdateRightPanelName()
+    public void RemoveMenuColumn(GameObject column)
     {
-        string title = this.SettingButtons[this.OpenPanelId].GetComponentInChildren<TextMeshProUGUI>().text;
-        this.PanelRightTitle.GetComponentInChildren<TextMeshProUGUI>().text = title;
+        Destroy(column);
     }
-    
 }

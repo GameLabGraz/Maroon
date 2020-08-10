@@ -54,9 +54,7 @@ public class scrMenuColumnLanguage : MonoBehaviour
 
         if(LanguageManager.Instance.CurrentLanguage == SystemLanguage.English)
         {
-            print(icon_english.texture);
             icon_english.texture = this.TextureIconSelected;
-            print(icon_english.texture);
         }
 
         else if (LanguageManager.Instance.CurrentLanguage == SystemLanguage.German)
