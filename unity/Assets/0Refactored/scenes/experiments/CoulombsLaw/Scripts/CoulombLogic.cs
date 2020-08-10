@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GEAR.Localization;
 using Maroon.Physics;
 using UnityEngine;
 using UnityEngine.Events;
@@ -29,6 +30,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     public int maxChargeCount = 10;
     public bool startIn2dMode = true;
     public QuantityInt currentMode = 2;
+    public QuantityString currentLanguage = "";
 
     public ParticleEvent onParticleAdded;
     public ParticleEvent onParticleRemoved;
@@ -97,7 +99,9 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         _charges = new List<CoulombChargeBehaviour>();
         _chargesGameObjects = new HashSet<GameObject>();
         OnSwitch3d2dMode(startIn2dMode? 0f : 1f);
-    
+
+        currentLanguage.Value = LanguageManager.Instance.CurrentLanguage.ToString();
+        
         _worldToCalcSpaceFactor2d = Mathf.Abs(xAt1m2d.position.x - xOrigin2d.position.x);
         _worldToCalcSpaceFactor2dLocal = Mathf.Abs(xAt1m2d.localPosition.x - xOrigin2d.localPosition.x);
         _worldToCalcSpaceFactor3d = Mathf.Abs(xAt1m3d.position.x - xOrigin3d.position.x);
@@ -478,6 +482,11 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     public Vector3 GetMaximumPos()
     {
         return IsIn2dMode() ? maxBoundary2d.transform.position : maxBoundary3d.transform.position;
+    }
+
+    public void OnLanguageChanged(SystemLanguage newLanguage)
+    {
+        currentLanguage.Value = newLanguage.ToString();
     }
 
 }
