@@ -1,20 +1,28 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-
 
 public class scrMenu : MonoBehaviour
 {
     // #################################################################################################################
     // Members
+
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // Open/Close
+
     [SerializeField] private bool OpenOnEsc = false;
+
+    [SerializeField] private bool RemoveExtraColumnsOnClose = true;
 
     private bool IsOpen = false;
 
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // Game Object Links
+
     [SerializeField] private GameObject Canvas;
 
-    private Transform Columns;
+    [SerializeField] private Transform Columns;
 
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // Prefab Links
     public GameObject MainColumn;
     
     // #################################################################################################################
@@ -28,11 +36,8 @@ public class scrMenu : MonoBehaviour
         // Hide menu
         this.Canvas.SetActive(false);
 
-        // Init Columns
-        this.Columns = Canvas.transform.Find("Columns");
-
         // Delete columns
-        while(this.Columns.childCount > 0)
+        while(this.Columns.transform.childCount > 0)
         {
             DestroyImmediate(this.Columns.GetChild(0).gameObject);
         }
@@ -69,7 +74,12 @@ public class scrMenu : MonoBehaviour
     public void CloseMenu()
     {
         this.Canvas.SetActive(false);
-        this.IsOpen = false;    
+        this.IsOpen = false;
+
+        if(this.RemoveExtraColumnsOnClose)
+        {
+            this.RemoveAllMenuColumnsButFirst();
+        }
     }
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -79,7 +89,6 @@ public class scrMenu : MonoBehaviour
     {
         GameObject new_column;
         new_column = Instantiate(column) as GameObject;
-
         new_column.transform.SetParent(this.Columns, false);
     }
 
@@ -90,7 +99,7 @@ public class scrMenu : MonoBehaviour
 
     public void RemoveAllMenuColumnsButFirst()
     {
-        while(this.Columns.childCount > 1)
+        while(this.Columns.transform.childCount > 1)
         {
             DestroyImmediate(this.Columns.GetChild(1).gameObject);
         }

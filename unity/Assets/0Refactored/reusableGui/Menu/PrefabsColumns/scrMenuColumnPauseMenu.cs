@@ -33,11 +33,11 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
 
     private void Start()
     {
+        // Link scrMenu
         // TODO: This is ugly and needs to get fixed
         this.Menu = (scrMenu) this.transform.parent.parent.parent.GetComponent(typeof(scrMenu));
-        print(this.Menu);
 
-        
+        // Link button actions
         this.ButtonAudio.GetComponent<Button>().onClick.AddListener(() => this.OnClickAudio());
         this.ButtonLanguage.GetComponent<Button>().onClick.AddListener(() => this.OnClickLanguage());
         this.ButtonMainMenu.GetComponent<Button>().onClick.AddListener(() => this.OnClickMainMenu());
