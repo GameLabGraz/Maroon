@@ -79,11 +79,20 @@ public class scrMenu : MonoBehaviour
     {
         GameObject new_column;
         new_column = Instantiate(column) as GameObject;
-        new_column.transform.parent = this.Columns; 
+
+        new_column.transform.SetParent(this.Columns, false);
     }
 
     public void RemoveMenuColumn(GameObject column)
     {
         Destroy(column);
+    }
+
+    public void RemoveAllMenuColumnsButFirst()
+    {
+        while(this.Columns.childCount > 1)
+        {
+            DestroyImmediate(this.Columns.GetChild(1).gameObject);
+        }
     }
 }

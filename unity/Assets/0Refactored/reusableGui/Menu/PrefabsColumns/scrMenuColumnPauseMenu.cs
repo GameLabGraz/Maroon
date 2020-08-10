@@ -8,12 +8,17 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
     // #################################################################################################################
     // Members
 
-    public static bool IsPaused = false;
+    private scrMenu Menu;
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    // Pause Menu items
+    // Columns
 
-    private scrMenu Menu;
+    [SerializeField] private GameObject ColumnAudio;
+
+    [SerializeField] private GameObject ColumnLanguage;
+
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // Buttons
 
     [SerializeField] private GameObject ButtonAudio;
 
@@ -54,17 +59,19 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
 
     private void OnClickAudio()
     {
-
+        this.Menu.RemoveAllMenuColumnsButFirst();
+        this.Menu.AddMenuColumn(this.ColumnAudio);
     }
 
     private void OnClickLanguage()
     {
-
+        this.Menu.RemoveAllMenuColumnsButFirst();
+        this.Menu.AddMenuColumn(this.ColumnLanguage);
     }
 
     private void OnClickMainMenu()
     {
-
+        //TODO
     }
 
     private void OnClickResume()
