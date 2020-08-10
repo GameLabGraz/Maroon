@@ -222,6 +222,14 @@ MonoBehaviour:
     onValueChanged:
       m_PersistentCalls:
         m_Calls: []
+  chargeUnit:
+    assessmentName: chargeUnit
+    isDynamic: 0
+    alwaysSendValueChangedEvent: 1
+    _value: nC
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
   maxChargeValue: 5
   minChargeValue: -5
   radius: 0.7022421
@@ -237,6 +245,7 @@ MonoBehaviour:
   deleteIfOutsideBoundaries: 1
   _inUse: 0
   inUseLayer: -1
+  inUseFreezing: 112
 --- !u!54 &222567040141845093
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -498,8 +507,13 @@ MonoBehaviour:
     objectInfo:
       Object: {fileID: 222567040141845092}
       ComponentName: CoulombChargeBehaviour
-      FieldName: fixedPosition
+      FieldName: chargeUnit
   - index: 2
+    objectInfo:
+      Object: {fileID: 222567040141845092}
+      ComponentName: CoulombChargeBehaviour
+      FieldName: fixedPosition
+  - index: 3
     objectInfo:
       Object: {fileID: 222567040141845092}
       ComponentName: CoulombAssessmentPosition

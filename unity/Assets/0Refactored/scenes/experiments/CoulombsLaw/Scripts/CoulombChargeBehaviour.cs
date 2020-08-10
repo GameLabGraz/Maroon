@@ -16,11 +16,16 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
     [SerializeField]
     [Tooltip("Sets the charge value of the Charge. This should be a value between -10 and 10 micro Coulomb.")]
     public QuantityFloat charge = 0.0f;
+    public QuantityString chargeUnit = "nC";
 
     public float Charge
     {
         get => charge;
-        set => charge.Value = value;
+        set
+        {
+            charge.Value = value;
+            chargeUnit.Value = "nC";
+        }
     }
 
     public static readonly float ChargeUnit = Mathf.Pow(10, -9);

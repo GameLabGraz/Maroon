@@ -76,6 +76,11 @@ public class CoulombAssessmentPosition : MonoBehaviour
     
     public void UpdatePosition()
     {
-        position.Value = isActiveAndEnabled ? _coulombLogic.WorldToCalcSpace(_transform) : new Vector3(-1, -1, -1);
+        var isActive = gameObject ? gameObject.activeInHierarchy : isActiveAndEnabled;
+        
+        if(!_coulombLogic)
+            Awake();
+        
+        position.Value = isActive ? _coulombLogic.WorldToCalcSpace(_transform) : new Vector3(-1, -1, -1);
     }
 }
