@@ -17,31 +17,19 @@ public class scrMenuColumnLanguage : MonoBehaviour
     {
         this.ButtonGerman.GetComponent<Button>().onClick.AddListener(() => this.OnClickGerman());
         this.ButtonEnglish.GetComponent<Button>().onClick.AddListener(() => this.OnClickEnglish());
-        this.UpdateLocalizedText();
         this.UpdateActiveButton();
     }
 
     private void OnClickGerman()
     {
         LanguageManager.Instance.CurrentLanguage = SystemLanguage.German;
-        this.UpdateLocalizedText();
         this.UpdateActiveButton();
     }
 
     private void OnClickEnglish()
     {
         LanguageManager.Instance.CurrentLanguage = SystemLanguage.English;
-        this.UpdateLocalizedText();
         this.UpdateActiveButton();
-    }
-
-    private void UpdateLocalizedText()
-    {
-        // Update text in all localized elements
-        foreach(var text in GameObject.FindObjectsOfType<LocalizedText>())
-        {
-            text.UpdateLocalizedText();
-        }
     }
 
     private void UpdateActiveButton()
