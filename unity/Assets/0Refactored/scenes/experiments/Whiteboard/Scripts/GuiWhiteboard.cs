@@ -58,10 +58,10 @@ public class GuiWhiteboard : MonoBehaviour
 		if (showMenu)
 		{
 			// Begin the ScrollView
-			scrollViewVector = GUI.BeginScrollView (new Rect (Screen.width / 2f - 225f, 50f, 450f, Screen.height - 125f), scrollViewVector, new Rect (0f, 0f, 430f, 2000f));
+			scrollViewVector = GUI.BeginScrollView (new Rect (Screen.width / 2f + 500, 50f, 450f, Screen.height - 125f), scrollViewVector, new Rect (0f, 0f, 430f, 2000f));
 
 			// Put something inside the ScrollView
-			GUILayout.BeginArea (new Rect (0, 0, 430f, 2000f));
+			GUILayout.BeginArea (new Rect (0, 20, 430f, 2000f));
 			GUILayout.Box ("PLEASE SELECT A LECTURE");
 			selectedLectureIndex = GUILayout.SelectionGrid (selectedLectureIndex, lectureNames, 1);
 			GUILayout.EndArea ();
