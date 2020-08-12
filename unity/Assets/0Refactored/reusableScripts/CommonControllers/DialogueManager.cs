@@ -19,7 +19,7 @@ namespace Maroon.UI
         public string Text { get; set; }
         public Color Color { get; set; }
 
-        public Message(string text, MessageIcon icon = MessageIcon.MI_None) : this(text, Color.white, icon) { }
+        public Message(string text, MessageIcon icon = MessageIcon.MI_None) : this(text, Color.black, icon) { }
 
         public Message(string text, Color color, MessageIcon icon = MessageIcon.MI_None )
         {
