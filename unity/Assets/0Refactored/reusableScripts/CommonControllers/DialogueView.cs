@@ -6,13 +6,13 @@ namespace Maroon.UI
 {
     public class DialogueView : MonoBehaviour
     {
-        [SerializeField]
-        private Text textComponent;
+        [SerializeField] private Text textComponent;
 
-        public Image iconHint;
-        public Image iconError;
-        public Image iconWarning;
-        public Image iconSuccess;
+        [SerializeField] private Image iconHint;
+        [SerializeField] private Image iconError;
+        [SerializeField] private Image iconWarning;
+        [SerializeField] private Image iconSuccess;
+
         [Range(0f, 5f)] 
         public float fadeTime = 2f;
 
@@ -58,10 +58,10 @@ namespace Maroon.UI
             _fadeIn = false;
             _currentIcon = null;
             
-            iconHint.gameObject.SetActive(false);
-            iconWarning.gameObject.SetActive(false);
-            iconSuccess.gameObject.SetActive(false);
-            iconError.gameObject.SetActive(false);
+            if(iconHint) iconHint.gameObject.SetActive(false);
+            if (iconWarning) iconWarning.gameObject.SetActive(false);
+            if (iconSuccess) iconSuccess.gameObject.SetActive(false);
+            if (iconError) iconError.gameObject.SetActive(false);
         }
 
         public void SetIcon(MessageIcon icon)
