@@ -1,6 +1,10 @@
-﻿using UnityEngine;
+﻿using MaroonVR;
+using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
+using Valve.VR;
+using Valve.VR.InteractionSystem;
 
 
 public class scrPauseMenu : MonoBehaviour
@@ -13,7 +17,11 @@ public class scrPauseMenu : MonoBehaviour
     public static bool IsPaused = false;
 
     private int OpenPanelId = -1;
-
+    private Player player = null;
+    private bool isVR = false;
+    private bool vrLastPressed = false;
+    private bool vrShowHint = true;
+    
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Pause Menu items
     [SerializeField] private GameObject Canvas;
@@ -21,6 +29,8 @@ public class scrPauseMenu : MonoBehaviour
     [SerializeField] private GameObject PanelRight;
 
     [SerializeField] private GameObject PanelRightTitle;
+
+    [SerializeField] protected SteamVR_Action_Boolean menuAction = SteamVR_Input.GetAction<SteamVR_Action_Boolean>("onMenu");
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Pause Menu settings
@@ -53,6 +63,21 @@ public class scrPauseMenu : MonoBehaviour
             int openPanelId = i;
             button.GetComponent<Button>().onClick.AddListener(delegate {this.ToggleSettingsPanel(openPanelId);});
         }
+
+        isVR = SceneManager.GetActiveScene().name.EndsWith(".vr");
+        isVR = true;
+        if (isVR && player == null)
+        {
+            Debug.Log("Pause Menu");
+            player = Valve.VR.InteractionSystem.Player.instance;
+            isVR = player != null;
+
+            foreach (var hand in player.hands)
+            {
+                Debug.Log("Show Pause Menu hint");
+                ControllerButtonHints.ShowTextHint(hand, menuAction, "Menu");
+            }
+        }
     }
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -69,6 +94,25 @@ public class scrPauseMenu : MonoBehaviour
             else
             {
                 this.OpenPauseMenu();
+            }
+        }
+
+        if (isVR)
+        {
+            foreach (var hand in player.hands)
+            {
+                if (!menuAction.GetStateDown(hand.handType)) continue;
+                
+                if(vrShowHint){
+                    foreach (var hintHand in player.hands)
+                    {
+                        ControllerButtonHints.HideTextHint(hintHand, menuAction);
+                    }
+                }
+                
+                vrShowHint = false;
+                if(IsPaused) ClosePauseMenu();
+                else OpenPauseMenu();
             }
         }
     }

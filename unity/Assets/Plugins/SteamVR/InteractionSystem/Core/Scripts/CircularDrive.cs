@@ -444,7 +444,7 @@ namespace Valve.VR.InteractionSystem
 		//-------------------------------------------------
 		// Computes the angle to rotate the game object based on the change in the transform
 		//-------------------------------------------------
-		private void ComputeAngle( Hand hand )
+		protected void ComputeAngle( Hand hand )
 		{
 			Vector3 toHandProjected = ComputeToTransformProjected( hand.hoverSphereTransform );
 

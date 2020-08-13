@@ -10,9 +10,11 @@ namespace MaroonVR
         public Color highlightColor = Color.cyan;
         public Color pressedColor = Color.gray;
         public Color defaultColor = Color.white;
+        public Color attachedColor = Color.white;
 
         private Color _defaultCol;
-        
+        private bool _isHovering = false;
+
         protected void Start()
         {
             var maroonHoverBtn = GetComponent<MaroonVR_HoverButton>();
@@ -31,8 +33,23 @@ namespace MaroonVR
             
             var hoverEvents = GetComponent<InteractableHoverEvents>();
             if(hoverEvents){
-                hoverEvents.onHandHoverBegin.AddListener(() => { ColorSelf(highlightColor); });
-                hoverEvents.onHandHoverEnd.AddListener(() => { ColorSelf(defaultColor); });
+                hoverEvents.onHandHoverBegin.AddListener(() => { 
+                    ColorSelf(highlightColor);
+                    _isHovering = true;
+                });
+                hoverEvents.onHandHoverEnd.AddListener(() =>
+                {
+                    ColorSelf(defaultColor);
+                    _isHovering = false;
+                });
+                hoverEvents.onAttachedToHand.AddListener(() => { ColorSelf(attachedColor); });
+                hoverEvents.onDetachedFromHand.AddListener(() =>
+                {
+                    if (_isHovering)
+                        ColorSelf(highlightColor);
+                    else
+                        ColorSelf(defaultColor);
+                });
             }
         }
         

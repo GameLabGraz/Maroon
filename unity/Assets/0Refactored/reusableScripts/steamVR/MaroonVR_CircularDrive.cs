@@ -27,6 +27,8 @@ namespace MaroonVR
         protected bool _currentValueBool;
         protected float _valueRange;
         
+        protected Hand.AttachmentFlags attachmentFlags = Hand.AttachmentFlags.DetachFromOtherHand;
+        
         private void Start()
         {
             if ( childCollider == null )
@@ -104,14 +106,26 @@ namespace MaroonVR
             
             if (lastGrabEnded != isGrabEnding && isGrabEnding && useStepsAfterGrabEnded && rotateGameObject)
             {
-                Debug.Log("Correct end Position");
                 var realAngle = minAngle + (maxAngle - minAngle) * linearMapping.value;
-                Debug.Log("Lin Map: " + linearMapping.value + " - " + realAngle);
-
                 transform.localRotation = start * Quaternion.AngleAxis( realAngle, localPlaneNormal );
             }
             lastGrabEnded = isGrabEnding;
             
+            if (interactable.attachedToHand == null && startingGrabType != GrabTypes.None)
+            {
+                hand.AttachObject(gameObject, startingGrabType, attachmentFlags);
+            }
+        }
+        
+        protected virtual void HandAttachedUpdate(Hand hand)
+        {
+            ComputeAngle(hand);
+            UpdateAll();
+        
+            if (hand.IsGrabEnding(gameObject))
+            {
+                hand.DetachObject(gameObject);
+            }
         }
   
         
