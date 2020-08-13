@@ -22,6 +22,14 @@ public class PC_Tooltip : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         var obj = GameObject.FindWithTag("TooltipPopup");
         if (obj) _tooltipPopup = obj.GetComponent<UI_TooltipPopup>();
 
+        if (LanguageManager.Instance)
+        {
+            LanguageManager.Instance.OnLanguageChanged.AddListener((language) =>
+            {
+                UpdateKey();
+            });
+        }
+
         UpdateKey();
     }
 
