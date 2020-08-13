@@ -87,7 +87,7 @@ public class VoltmeterDifferences : MonoBehaviour
     private string GetCurrentUnit()
     {
         var unit = "V";
-        var check = currentValue.Value;
+        var check = Mathf.Abs(currentValue.Value);
         if (check > 1f)
             return unit;
         check *= Mathf.Pow(10, 3);

@@ -80,7 +80,7 @@ public class PathHandler : MonoBehaviour
         switch (newPosition)
         {
             case CameraPosition.CP_Free:
-                _workingPath.points.Add(new CPC_Point(freeMaximumPoint.position - freeMinimumPoint.position, Camera.main.transform.rotation));
+                _workingPath.points.Add(new CPC_Point(freeMinimumPoint.position + (freeMaximumPoint.position - freeMinimumPoint.position) * 0.5f, Camera.main.transform.rotation));
                 _workingPath.lookAtTarget = true;
                 break;
             case CameraPosition.CP_Front:
