@@ -10,6 +10,8 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
 
     private scrMenu Menu;
 
+    private float TimeScaleRestore = 1.0f;
+
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Columns
 
@@ -46,12 +48,14 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
 
     void OnEnable()
     {
+        this.TimeScaleRestore = Time.timeScale;
         Time.timeScale = 0;
     }
 
     void OnDisable()
     {
-        Time.timeScale = 1;
+        Time.timeScale = this.TimeScaleRestore;
+        this.TimeScaleRestore = 1.0f;
         this.ButtonAudio.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
         this.ButtonLanguage.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
     }
