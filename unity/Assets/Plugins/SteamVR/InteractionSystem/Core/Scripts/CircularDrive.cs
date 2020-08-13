@@ -75,35 +75,35 @@ namespace Valve.VR.InteractionSystem
 		[Tooltip( "The output angle value of the drive in degrees, unlimited will increase or decrease without bound, take the 360 modulus to find number of rotations" )]
 		public float outAngle;
 
-		private Quaternion start;
+		protected Quaternion start;
 
-		private Vector3 worldPlaneNormal = new Vector3( 1.0f, 0.0f, 0.0f );
-		private Vector3 localPlaneNormal = new Vector3( 1.0f, 0.0f, 0.0f );
+		protected Vector3 worldPlaneNormal = new Vector3( 1.0f, 0.0f, 0.0f );
+		protected Vector3 localPlaneNormal = new Vector3( 1.0f, 0.0f, 0.0f );
 
-		private Vector3 lastHandProjected;
+		protected Vector3 lastHandProjected;
 
-		private Color red = new Color( 1.0f, 0.0f, 0.0f );
-		private Color green = new Color( 0.0f, 1.0f, 0.0f );
+		protected Color red = new Color( 1.0f, 0.0f, 0.0f );
+		protected Color green = new Color( 0.0f, 1.0f, 0.0f );
 
-		private GameObject[] dbgHandObjects;
-		private GameObject[] dbgProjObjects;
-		private GameObject dbgObjectsParent;
-		private int dbgObjectCount = 0;
-		private int dbgObjectIndex = 0;
+		protected GameObject[] dbgHandObjects;
+		protected GameObject[] dbgProjObjects;
+		protected GameObject dbgObjectsParent;
+		protected int dbgObjectCount = 0;
+		protected int dbgObjectIndex = 0;
 
-		private bool driving = false;
+		protected bool driving = false;
 
 		// If the drive is limited as is at min/max, angles greater than this are ignored
-		private float minMaxAngularThreshold = 1.0f;
+		protected float minMaxAngularThreshold = 1.0f;
 
-		private bool frozen = false;
-		private float frozenAngle = 0.0f;
-		private Vector3 frozenHandWorldPos = new Vector3( 0.0f, 0.0f, 0.0f );
-		private Vector2 frozenSqDistanceMinMaxThreshold = new Vector2( 0.0f, 0.0f );
+		protected bool frozen = false;
+		protected float frozenAngle = 0.0f;
+		protected Vector3 frozenHandWorldPos = new Vector3( 0.0f, 0.0f, 0.0f );
+		protected Vector2 frozenSqDistanceMinMaxThreshold = new Vector2( 0.0f, 0.0f );
 
-		private Hand handHoverLocked = null;
+		protected Hand handHoverLocked = null;
 
-        private Interactable interactable;
+		protected Interactable interactable;
 
 		//-------------------------------------------------
 		private void Freeze( Hand hand )
@@ -129,7 +129,7 @@ namespace Valve.VR.InteractionSystem
         }
 
         //-------------------------------------------------
-        private void Start()
+        protected virtual void Start()
 		{
 			if ( childCollider == null )
 			{
@@ -238,9 +238,9 @@ namespace Valve.VR.InteractionSystem
 			handHoverLocked = null;
 		}
 
-        private GrabTypes grabbedWithType;
+        protected GrabTypes grabbedWithType;
 		//-------------------------------------------------
-		private void HandHoverUpdate( Hand hand )
+		protected virtual void HandHoverUpdate( Hand hand )
         {
             GrabTypes startingGrabType = hand.GetGrabStarting();
             bool isGrabEnding = hand.IsGrabbingWithType(grabbedWithType) == false;
@@ -388,7 +388,7 @@ namespace Valve.VR.InteractionSystem
 		//-------------------------------------------------
 		// Updates the LinearMapping value from the angle
 		//-------------------------------------------------
-		private void UpdateLinearMapping()
+		protected virtual void UpdateLinearMapping()
 		{
 			if ( limited )
 			{
@@ -409,7 +409,7 @@ namespace Valve.VR.InteractionSystem
 		//-------------------------------------------------
 		// Updates the LinearMapping value from the angle
 		//-------------------------------------------------
-		private void UpdateGameObject()
+		protected virtual void UpdateGameObject()
 		{
 			if ( rotateGameObject )
 			{
@@ -421,7 +421,7 @@ namespace Valve.VR.InteractionSystem
 		//-------------------------------------------------
 		// Updates the Debug TextMesh with the linear mapping value and the angle
 		//-------------------------------------------------
-		private void UpdateDebugText()
+		protected void UpdateDebugText()
 		{
 			if ( debugText )
 			{
@@ -433,7 +433,7 @@ namespace Valve.VR.InteractionSystem
 		//-------------------------------------------------
 		// Updates the Debug TextMesh with the linear mapping value and the angle
 		//-------------------------------------------------
-		private void UpdateAll()
+		protected void UpdateAll()
 		{
 			UpdateLinearMapping();
 			UpdateGameObject();

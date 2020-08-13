@@ -4,11 +4,6 @@ using Valve.VR.InteractionSystem;
 
 namespace MaroonVR
 {
-	[System.Serializable]
-	public class ValueChangeEventFloat : UnityEvent<float> { }
-	[System.Serializable]
-	public class ValueChangeEventInt : UnityEvent<float> { }
-	
 	public class MaroonVR_LinearDrive : LinearDrive
 	{
 		[Header("Maroon VR Specific")] public bool useSteps = true;
@@ -49,7 +44,7 @@ namespace MaroonVR
 			
 			onValueChanged.Invoke(_currentValue);
 			if(useAsInteger)
-				onValueChanged.Invoke(Mathf.RoundToInt(_currentValue));
+				onValueChangedInt.Invoke(Mathf.RoundToInt(_currentValue));
 		}
 		
 		protected override void HandAttachedUpdate(Hand hand)
@@ -87,7 +82,7 @@ namespace MaroonVR
 
 			onValueChanged.Invoke(_currentValue);
 			if(useAsInteger)
-				onValueChanged.Invoke(Mathf.RoundToInt(_currentValue));
+				onValueChangedInt.Invoke(Mathf.RoundToInt(_currentValue));
 			
 			mappingChangeSamples[sampleCount % mappingChangeSamples.Length] =
 				(1.0f / Time.deltaTime) * (linearMapping.value - prevMapping);
