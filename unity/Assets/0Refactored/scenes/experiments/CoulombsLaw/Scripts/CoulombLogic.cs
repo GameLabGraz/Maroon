@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using GEAR.Localization;
 using Maroon.Physics;
@@ -332,6 +332,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
             movement.SetBoundaries(_in3dMode ? minBoundary3d : minBoundary2d, _in3dMode ? maxBoundary3d : maxBoundary2d);
             movement.allowedXMovement = movement.allowedYMovement = true;
             movement.allowedZMovement = _in3dMode;
+            movement.useLocalCoordinates = _in3dMode;
         }
         
         var arrowMovement = obj.GetComponentInChildren<PC_ArrowMovement>();

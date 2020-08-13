@@ -15,7 +15,8 @@ public class PC_DragHandler : MonoBehaviour
     public bool allowedXMovement = true;
     public bool allowedYMovement = true;
     public bool allowedZMovement = true;
-    
+    public bool useLocalCoordinates = false;
+
     [Header("Movement Restrictions Appearances")]
     [Tooltip("Boundaries need to be set for this")]
     public List<GameObject> changeMaterialIfOutside;
@@ -84,15 +85,23 @@ public class PC_DragHandler : MonoBehaviour
         if (!allowedYMovement) pt.y = pos.y;
         if (!allowedZMovement) pt.z = pos.z;
 
+        
         var outside = false;
         if (minBoundary != null && maxBoundary != null)
         {
-            if (allowedXMovement && (pt.x < minBoundary.position.x || maxBoundary.position.x < pt.x))
+            var minPosition = useLocalCoordinates ? minBoundary.localPosition : minBoundary.position;
+            var maxPosition = useLocalCoordinates ? maxBoundary.localPosition : maxBoundary.position;
+            var checkPt = useLocalCoordinates? minBoundary.parent.InverseTransformPoint(pt) : pt;
+
+            Debug.Assert(minBoundary.parent == maxBoundary.parent);
+            if (allowedXMovement && (checkPt.x < Mathf.Min(minPosition.x, maxPosition.x)
+                                     || Mathf.Max(minPosition.x, maxPosition.x) < checkPt.x))
                 outside = true;
-            else if (allowedYMovement && (pt.y < Mathf.Min(minBoundary.position.y, maxBoundary.position.y) 
-                                          || Mathf.Max(minBoundary.position.y, maxBoundary.position.y) < pt.y))
+            else if (allowedYMovement && (checkPt.y < Mathf.Min(minPosition.y, maxPosition.y) 
+                                          || Mathf.Max(minPosition.y, maxPosition.y) < checkPt.y))
                 outside = true;
-            else if (allowedZMovement && (pt.z < minBoundary.position.z || maxBoundary.position.z < pt.z))
+            else if (allowedZMovement && (checkPt.z < Mathf.Min(minPosition.z, maxPosition.z) 
+                                          || Mathf.Max(minPosition.z, maxPosition.z)  < checkPt.z))
                 outside = true;
         }
 
@@ -142,5 +151,10 @@ public class PC_DragHandler : MonoBehaviour
     private void OnEnable()
     {
         onEnabled.Invoke();
+    }
+
+    public void SetUseLocalCoordinates(bool useLocal)
+    {
+        useLocalCoordinates = useLocal;
     }
 }

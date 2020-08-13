@@ -122,7 +122,7 @@ public class RulerPrefab : MonoBehaviour, IResetWholeObject
         {
             dragHandler.SetBoundaries(_coulombLogic.minBoundary2d.gameObject, _coulombLogic.maxBoundary2d.gameObject);
             dragHandler.allowedXMovement = dragHandler.allowedYMovement = true;
-            dragHandler.allowedZMovement = false;
+            dragHandler.allowedZMovement = false;     
         }
 
         var movArrows = obj.GetComponentInChildren<PC_ArrowMovement>();
