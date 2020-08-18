@@ -40,7 +40,7 @@ public abstract class SortingAlgorithm
         SS_Line21
     }
 
-    protected class SortingState
+    protected abstract class SortingState
     {
         protected SortingAlgorithm _algorithm;
         
