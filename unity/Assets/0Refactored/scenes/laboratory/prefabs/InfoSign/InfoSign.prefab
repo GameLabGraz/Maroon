@@ -474,7 +474,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 114851076344048166}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4551172655252542898}
+        m_MethodName: EnterScene
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &50121898381673533
 GameObject:
   m_ObjectHideFlags: 0
@@ -994,8 +1005,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 805fa20454379c44491c32b035f8fdfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetScenePC: {fileID: 0}
-  targetSceneVR: {fileID: 0}
+  targetScenePC:
+    sceneAsset: {fileID: 0}
+    sceneName: 
+  targetSceneVR:
+    sceneAsset: {fileID: 0}
+    sceneName: 
   highlightColor: {r: 0, g: 0.961823, b: 1, a: 0}
   highlightMesh: {fileID: 4773389060662363145}
 --- !u!1 &2709113984344056980
@@ -2119,6 +2134,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4721121398664592409}
+  - component: {fileID: 7506669287559668721}
   m_Layer: 0
   m_Name: DestinationPoint
   m_TagString: Untagged
@@ -2143,6 +2159,29 @@ Transform:
   m_Father: {fileID: 4109133658017454}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7506669287559668721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8915233755622657278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6512be739a547c4f8c3323a1bdb9708, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enableTeleport: 1
+  targetListPolicy: {fileID: 0}
+  defaultCursorObject: {fileID: 6444299536348277320}
+  hoverCursorObject: {fileID: 6728169297676030118}
+  lockedCursorObject: {fileID: 3729322790343556104}
+  destinationLocation: {fileID: 0}
+  snapToPoint: 1
+  hidePointerCursorOnHover: 1
+  hideDirectionIndicatorOnHover: 1
+  snapToRotation: 0
+  teleporter: {fileID: 0}
 --- !u!1 &8997889043775274292
 GameObject:
   m_ObjectHideFlags: 0
