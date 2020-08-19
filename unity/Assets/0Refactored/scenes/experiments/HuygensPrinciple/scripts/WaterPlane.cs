@@ -111,7 +111,6 @@ public class WaterPlane : PausableObject, IResetObject
         var meshFilter = GetComponent<MeshFilter>();
         meshFilter.mesh = planeMesh;
 
-        
     }
 
     public void UpdateMaterial()

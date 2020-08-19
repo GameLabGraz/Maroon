@@ -105,6 +105,8 @@ public class WaveGeneratorPoolHandler : MonoBehaviour
             _generators[generatorId].WaveFrequency = waveFrequency;
     }
 
+    public float WaveLength => this.waveLength; 
+
     public WaveGenerator CreateWaveGenerator(WaveGenerator.WavePropagation propagationMode)
     {
         var waveGenerator = new GameObject("WaveGenerator");
