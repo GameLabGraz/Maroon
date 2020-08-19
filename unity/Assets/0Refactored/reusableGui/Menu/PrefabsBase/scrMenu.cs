@@ -10,6 +10,8 @@ public class scrMenu : MonoBehaviour
 
     [SerializeField] private bool OpenOnEsc = false;
 
+    [SerializeField] private bool OpenOnStart = false;
+
     [SerializeField] private bool RemoveExtraColumnsOnClose = true;
 
     private bool IsOpen = false;
@@ -44,6 +46,12 @@ public class scrMenu : MonoBehaviour
 
         // Add main column of this menu (e.g. Pause Menu column)
         this.AddMenuColumn(MainColumn);
+
+        // Open if selected
+        if(this.OpenOnStart)
+        {
+            this.OpenMenu();
+        }
     }
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
