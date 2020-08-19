@@ -127,8 +127,8 @@ namespace Maroon.Build
 
             var scenes = new List<string>
             {
-                $"{LabPath}/Laboratory{sceneExtension}",
-                $"{MenuPath}/Menu.unity"
+                $"{MenuPath}/MainMenu.unity",
+                $"{LabPath}/Laboratory{sceneExtension}"
             };
 
             var experiments = Directory.GetFiles(ExperimentPath, $"*{sceneExtension}", SearchOption.AllDirectories);

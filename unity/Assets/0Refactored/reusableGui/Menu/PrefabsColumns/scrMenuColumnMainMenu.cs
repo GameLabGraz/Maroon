@@ -70,7 +70,7 @@ public class scrMenuColumnMainMenu : MonoBehaviour
         this.Menu.RemoveAllMenuColumnsButFirst();
         this.Menu.AddMenuColumn(this.ColumnAudio);
         this.ClearButtonActiveIcons();
-        this.ButtonAudio.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.white;
+        this.SetButtonActiveIcon(this.ButtonAudio);
     }
 
     private void OnClickLanguage()
@@ -78,7 +78,7 @@ public class scrMenuColumnMainMenu : MonoBehaviour
         this.Menu.RemoveAllMenuColumnsButFirst();
         this.Menu.AddMenuColumn(this.ColumnLanguage);
         this.ClearButtonActiveIcons();
-        this.ButtonLanguage.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.white;
+        this.SetButtonActiveIcon(this.ButtonLanguage);
     }
 
     private void OnClickNetwork()
@@ -86,7 +86,7 @@ public class scrMenuColumnMainMenu : MonoBehaviour
         this.Menu.RemoveAllMenuColumnsButFirst();
         this.Menu.AddMenuColumn(this.ColumnNetwork);
         this.ClearButtonActiveIcons();
-        this.ButtonLanguage.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.white;
+        this.SetButtonActiveIcon(this.ButtonNetwork);
     }
 
     private void OnClickCredits()
@@ -94,19 +94,26 @@ public class scrMenuColumnMainMenu : MonoBehaviour
         this.Menu.RemoveAllMenuColumnsButFirst();
         this.Menu.AddMenuColumn(this.ColumnCredits);
         this.ClearButtonActiveIcons();
-        this.ButtonLanguage.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.white;
+        this.SetButtonActiveIcon(this.ButtonCredits);
     }
 
     private void OnClickExit()
     {
+        print("here");
         Application.Quit();
     }
 
     private void ClearButtonActiveIcons()
     {
-        this.ButtonAudio.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
-        this.ButtonLanguage.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
-        this.ButtonNetwork.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
-        this.ButtonCredits.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
+        Color clr = Color.clear;
+        this.ButtonAudio.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;
+        this.ButtonLanguage.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;
+        this.ButtonNetwork.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;
+        this.ButtonCredits.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;
+    }
+
+    private void SetButtonActiveIcon(GameObject btn)
+    {
+        btn.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.white;
     }
 }
