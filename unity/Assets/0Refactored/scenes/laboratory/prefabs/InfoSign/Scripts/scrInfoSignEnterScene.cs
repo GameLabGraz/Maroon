@@ -7,8 +7,8 @@ public class scrInfoSignEnterScene : MonoBehaviour
 {
     // #################################################################################################################
     // Members
-    [SerializeField] private Utilities.SceneField targetScenePC;
-    [SerializeField] private Utilities.SceneField targetSceneVR;
+    [SerializeField] private Utilities.SceneField targetLabScenePC;
+    [SerializeField] private Utilities.SceneField targetLabSceneVR;
     private Utilities.SceneField targetScene;
 
     // Settings
@@ -30,17 +30,18 @@ public class scrInfoSignEnterScene : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // TODO: Use TargetPlatformDetector
         // Detect Scene type
         string sceneName = SceneManager.GetActiveScene().name;
         if(sceneName.Contains(".pc"))
         {
             this.detectedSceneType = "pc";
-            this.targetScene = targetScenePC;
+            this.targetScene = targetLabScenePC;
         }
         else if(sceneName.Contains(".vr"))
         {
             this.detectedSceneType = "vr";
-            this.targetScene = targetSceneVR;
+            this.targetScene = targetLabSceneVR;
         }
 
         // Prepare scene for VR entering

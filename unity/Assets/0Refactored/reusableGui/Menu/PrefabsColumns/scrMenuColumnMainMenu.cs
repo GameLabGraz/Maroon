@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-
+using UnityEngine.SceneManagement;
 
 public class scrMenuColumnMainMenu : MonoBehaviour
 {
@@ -11,6 +10,10 @@ public class scrMenuColumnMainMenu : MonoBehaviour
     private scrMenu Menu;
 
     private float TimeScaleRestore = 1.0f;
+
+    [SerializeField] private Utilities.SceneField targetScenePC;
+
+    [SerializeField] private Utilities.SceneField targetSceneVR;
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Columns
@@ -25,6 +28,8 @@ public class scrMenuColumnMainMenu : MonoBehaviour
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Buttons
+
+    [SerializeField] private GameObject ButtonLab;
 
     [SerializeField] private GameObject ButtonAudio;
 
@@ -46,6 +51,7 @@ public class scrMenuColumnMainMenu : MonoBehaviour
         this.Menu = (scrMenu) this.transform.parent.parent.parent.GetComponent(typeof(scrMenu));
 
         // Link button actions
+        this.ButtonLab.GetComponent<Button>().onClick.AddListener(() => this.OnClickLab());
         this.ButtonAudio.GetComponent<Button>().onClick.AddListener(() => this.OnClickAudio());
         this.ButtonLanguage.GetComponent<Button>().onClick.AddListener(() => this.OnClickLanguage());
         this.ButtonNetwork.GetComponent<Button>().onClick.AddListener(() => this.OnClickNetwork());
@@ -64,6 +70,19 @@ public class scrMenuColumnMainMenu : MonoBehaviour
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Button Actions
+
+    private void OnClickLab()
+    {
+        if(TargetPlatformDetector.isVRPlatform)
+        {
+            SceneManager.LoadScene(this.targetSceneVR);
+        }
+        
+        else
+        {
+            SceneManager.LoadScene(this.targetScenePC);
+        }
+    }
 
     private void OnClickAudio()
     {
@@ -99,7 +118,6 @@ public class scrMenuColumnMainMenu : MonoBehaviour
 
     private void OnClickExit()
     {
-        print("here");
         Application.Quit();
     }
 
