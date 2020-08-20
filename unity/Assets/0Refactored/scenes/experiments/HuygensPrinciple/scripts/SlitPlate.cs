@@ -176,17 +176,25 @@ namespace Maroon.Physics.HuygensPrinciple
                         var generatorGroupTransition = initialPositionLeft + (transition * (float)(slitIndex));
                         for (var count = 0; count < generatorCountPerSlit; count++)
                         {
-                            waveGeneratorList[count + (slitIndex * (generatorCountPerSlit))].transform.localPosition = new Vector3(generatorGroupTransition + (generatorPlacementTransistion * (count + 1)), left.transform.localPosition.y, left.transform.localPosition.z + 0.02f);                 
+                            waveGeneratorList[count + (slitIndex * (generatorCountPerSlit))].transform.localPosition = new Vector3(
+                                generatorGroupTransition + (generatorPlacementTransistion * (count + 1)), 
+                                left.transform.localPosition.y, 
+                                left.transform.localPosition.z + 0.02f);                 
                         }
                     }                             
                 }
 
                 for (var slitCount = 0; slitCount < numberOfSlits; slitCount++)
                 {
-                    GameObject slitC = new GameObject("SlitCenter");
+                    var slitC = new GameObject("SlitCenter");
                     slitC.transform.parent = gameObject.transform;
                     slitCenters.Add(slitC);
-                    slitCenters[slitCount].transform.localPosition = new Vector4((initialPositionLeft + slitWidth / 2) + (transition * slitCount), left.transform.localPosition.y, left.transform.localPosition.z, 0); ;
+
+                    slitCenters[slitCount].transform.localPosition = new Vector4(
+                        (initialPositionLeft + slitWidth / 2) + (transition * slitCount), 
+                        left.transform.localPosition.y, 
+                        left.transform.localPosition.z, 
+                        0);
                 }
             }
             else
@@ -205,6 +213,7 @@ namespace Maroon.Physics.HuygensPrinciple
         {
             var waveGenerator = WaveGeneratorPoolHandler.Instance.
                 CreateWaveGenerator(WaveGenerator.WavePropagation.Circular);
+
             waveGenerator.WaveAmplitude /= generatorCountPerSlit * NumberOfSlits;
             waveGenerator.transform.parent = gameObject.transform;
             waveGeneratorList.Add(waveGenerator);
@@ -291,6 +300,5 @@ namespace Maroon.Physics.HuygensPrinciple
         {
             return slitCenterDistance; 
         }
-       
     }
 }

@@ -52,7 +52,6 @@
 
 				float calculateIntensityWithWidth(float alpha)
 				{
-
 					float Intensity = 0;
 					float gutterFunction = 1;
 					float gutterDivident = sin((_NumberOfSlits * PI * _DistanceBetweenSlits * sin(alpha)) / _WaveLength);
@@ -69,16 +68,17 @@
 					return Intensity;
 				}
 
-				//Formular to find http://lampx.tugraz.at/~hadley/physikm/apps/single_slit.de.php and 
+				// Formular: 
+				// http://lampx.tugraz.at/~hadley/physikm/apps/single_slit.de.php
 				// http://lampx.tugraz.at/~hadley/physikm/apps/2single_slit.de.php
-				//https://www.leifiphysik.de/optik/beugung-und-interferenz/grundwissen/vielfachspalt-und-gitter
+				// https://www.leifiphysik.de/optik/beugung-und-interferenz/grundwissen/vielfachspalt-und-gitter
 				fixed4 frag(v2f i) : SV_Target
 				{
 					float alpha = atan(i.object_space.x / _DistanceBetweenPlates);
 					float intensity = calculateIntensityWithWidth(alpha) / pow(_NumberOfSlits, 2);
 
 					i.color = lerp(_ColorMin, _ColorMax, intensity);
-					if ((i.object_space.y + 0.45 <= intensity + 0.02) && (i.object_space.y + 0.45 >= intensity - 0.02))
+					if ((i.object_space.y + 0.5 <= intensity + 0.02) && (i.object_space.y + 0.5 >= intensity - 0.02))
 					{
 						i.color = fixed3(0, 1, 1);
 					}

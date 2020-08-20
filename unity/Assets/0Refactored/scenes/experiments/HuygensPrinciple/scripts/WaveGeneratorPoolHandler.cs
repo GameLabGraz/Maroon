@@ -25,6 +25,8 @@ public class WaveGeneratorPoolHandler : MonoBehaviour
         }
     }
 
+    public float WaveLength => waveLength;
+
     private void Awake()
     {
         slitPlate = GameObject.Find("Plate").GetComponent<SlitPlate>();
@@ -104,8 +106,6 @@ public class WaveGeneratorPoolHandler : MonoBehaviour
         if (_generators.ContainsKey(generatorId))
             _generators[generatorId].WaveFrequency = waveFrequency;
     }
-
-    public float WaveLength => this.waveLength; 
 
     public WaveGenerator CreateWaveGenerator(WaveGenerator.WavePropagation propagationMode)
     {
