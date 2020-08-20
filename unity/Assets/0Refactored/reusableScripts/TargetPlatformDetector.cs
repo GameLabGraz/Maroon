@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-
+﻿
 public static class TargetPlatformDetector
 {
     public static bool isVRPlatform = false;

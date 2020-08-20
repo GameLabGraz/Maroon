@@ -11,9 +11,9 @@ public class scrMenuColumnMainMenu : MonoBehaviour
 
     private float TimeScaleRestore = 1.0f;
 
-    [SerializeField] private Utilities.SceneField targetScenePC;
+    [SerializeField] private Utilities.SceneField targetLabScenePC;
 
-    [SerializeField] private Utilities.SceneField targetSceneVR;
+    [SerializeField] private Utilities.SceneField targetLabSceneVR;
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Columns
@@ -75,12 +75,12 @@ public class scrMenuColumnMainMenu : MonoBehaviour
     {
         if(TargetPlatformDetector.isVRPlatform)
         {
-            SceneManager.LoadScene(this.targetSceneVR);
+            SceneManager.LoadScene(this.targetLabSceneVR);
         }
-        
+
         else
         {
-            SceneManager.LoadScene(this.targetScenePC);
+            SceneManager.LoadScene(this.targetLabScenePC);
         }
     }
 
