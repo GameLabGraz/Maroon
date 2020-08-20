@@ -20,8 +20,6 @@ public class PC_Dropdown : TMP_Dropdown
             RefreshShownValue(); }
     }
     
-    
-    
     [Serializable]
     public class LocalizedOptionData : OptionData
     {
@@ -87,7 +85,20 @@ public class PC_Dropdown : TMP_Dropdown
     {
         base.Start();
 
-        foreach(var key in keys)
+        UpdateKeys();
+
+        if (LanguageManager.Instance)
+        {
+            LanguageManager.Instance.OnLanguageChanged.AddListener((language) =>
+            {
+                UpdateKeys();
+            });
+        }
+    }
+
+    private void UpdateKeys()
+    {
+        foreach (var key in keys)
             key.UpdateKey();
 
         if (keys.Count > 0)
@@ -95,10 +106,9 @@ public class PC_Dropdown : TMP_Dropdown
             options.Clear();
             options.AddRange(keys);
         }
-        
+
         RefreshShownValue();
     }
-    
     
     public void AddOptions(List<LocalizedOptionData> options)
     {
