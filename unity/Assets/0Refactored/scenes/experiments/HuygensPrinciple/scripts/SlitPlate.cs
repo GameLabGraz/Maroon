@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Maroon.Physics.HuygensPrinciple
 {
-   // [ExecuteInEditMode]
+    //[ExecuteInEditMode]
     public class SlitPlate : MonoBehaviour, IResetObject
     {
         [Header("Properties")]
@@ -13,7 +13,7 @@ namespace Maroon.Physics.HuygensPrinciple
         [Range(1, 5, order = 0)]
         [SerializeProperty("NumberOfSlits", order = 1)]
         private int numberOfSlits = 1;
-
+        
         [SerializeField]
         [Range(0,5, order = 0)]
         [SerializeProperty("SlitWidth", order = 1)]
@@ -40,15 +40,17 @@ namespace Maroon.Physics.HuygensPrinciple
         private Vector3 BottomSize => bottom.GetComponentInChildren<MeshRenderer>().bounds.size;
         private Vector3 RightSize => right.GetComponentInChildren<MeshRenderer>().bounds.size;
         private Vector3 LeftSize => left.GetComponentInChildren<MeshRenderer>().bounds.size;
-
+        
         public float PlateWidth => top.transform.localScale.x;    
         public float PlateHeight => TopSize.y + RightSize.y + BottomSize.y;
 
         private int generatorCountPerSlit;
+        private float slitCenterDistance; 
 
         private Vector3 previousPlateScale;
         private Vector3 previousPlatePosition;
 
+        private List<GameObject> slitCenters = new List<GameObject>();
         private List<GameObject> midSections = new List<GameObject>();
         private List<WaveGenerator> waveGeneratorList = new List<WaveGenerator>();
 
@@ -142,7 +144,7 @@ namespace Maroon.Physics.HuygensPrinciple
             ScaleAndPositionWaveGenerators(scale, scaleInBounds); 
         }
 
-        public void ScaleAndPositionPlates(Vector3 scale, bool scaleInBounds)
+        private void ScaleAndPositionPlates(Vector3 scale, bool scaleInBounds)
         {
             if (midSections.Count > 0)
                 for (var index = 0; index < midSections.Count; index++)
@@ -156,11 +158,13 @@ namespace Maroon.Physics.HuygensPrinciple
                 }
         }
 
-        public void ScaleAndPositionWaveGenerators(Vector3 scale, bool scaleInBounds)
+        private void ScaleAndPositionWaveGenerators(Vector3 scale, bool scaleInBounds)
         {
-            var transition = scale.x + slitWidth;
+            var transition = scale.x + slitWidth;        
             var initialPositionLeft = left.transform.localPosition.x + scale.x;
             var generatorPlacementTransistion = (slitWidth / (float)(generatorCountPerSlit + 1));
+
+            slitCenterDistance = transition;
 
             if (slitWidth > 0.0f)
             {
@@ -172,9 +176,25 @@ namespace Maroon.Physics.HuygensPrinciple
                         var generatorGroupTransition = initialPositionLeft + (transition * (float)(slitIndex));
                         for (var count = 0; count < generatorCountPerSlit; count++)
                         {
-                            waveGeneratorList[count + (slitIndex * (generatorCountPerSlit))].transform.localPosition = new Vector3(generatorGroupTransition + (generatorPlacementTransistion * (count + 1)), left.transform.localPosition.y, left.transform.localPosition.z + 0.02f);                 
+                            waveGeneratorList[count + (slitIndex * (generatorCountPerSlit))].transform.localPosition = new Vector3(
+                                generatorGroupTransition + (generatorPlacementTransistion * (count + 1)), 
+                                left.transform.localPosition.y, 
+                                left.transform.localPosition.z + 0.02f);                 
                         }
                     }                             
+                }
+
+                for (var slitCount = 0; slitCount < numberOfSlits; slitCount++)
+                {
+                    var slitC = new GameObject("SlitCenter");
+                    slitC.transform.parent = gameObject.transform;
+                    slitCenters.Add(slitC);
+
+                    slitCenters[slitCount].transform.localPosition = new Vector4(
+                        (initialPositionLeft + slitWidth / 2) + (transition * slitCount), 
+                        left.transform.localPosition.y, 
+                        left.transform.localPosition.z, 
+                        0);
                 }
             }
             else
@@ -189,16 +209,17 @@ namespace Maroon.Physics.HuygensPrinciple
             return numberOfGeneratorsPerSlit; 
         }
 
-        public void AddWaveGenerator()
+        private void AddWaveGenerator()
         {
             var waveGenerator = WaveGeneratorPoolHandler.Instance.
                 CreateWaveGenerator(WaveGenerator.WavePropagation.Circular);
+
             waveGenerator.WaveAmplitude /= generatorCountPerSlit * NumberOfSlits;
             waveGenerator.transform.parent = gameObject.transform;
             waveGeneratorList.Add(waveGenerator);
         }
 
-        public void AddAllWaveGenerators() 
+        private void AddAllWaveGenerators() 
         {
             var totalNumberOfGenerators = generatorCountPerSlit * numberOfSlits; 
             for (var count = 0; count < totalNumberOfGenerators; count++)
@@ -219,7 +240,7 @@ namespace Maroon.Physics.HuygensPrinciple
                 generator.SetGeneratorActive(false);
         }
 
-        public void ResetCubes()
+        private void ResetCubes()
         {
             foreach (var section in midSections)
             {
@@ -230,6 +251,15 @@ namespace Maroon.Physics.HuygensPrinciple
             midSections.Clear();
         }
 
+        public void ResetSlitCenters()
+        {
+            foreach(var center in slitCenters)
+            {
+                Destroy(center); 
+            }
+            slitCenters.Clear();
+        }
+
         public void ResetWaveGenerators()
         {
             foreach (var generator in waveGeneratorList)
@@ -237,7 +267,9 @@ namespace Maroon.Physics.HuygensPrinciple
                 WaveGeneratorPoolHandler.Instance.RemoveWaveGenerator(generator);
                 Destroy(generator.gameObject);
             }
+
             waveGeneratorList.Clear();
+            ResetSlitCenters();
         }
 
         private void StorePreviousState()
@@ -257,6 +289,16 @@ namespace Maroon.Physics.HuygensPrinciple
             ResetCubes();
             SetupPlateSlits(true);
             LoadPreviousState();
+        }
+
+        public List<GameObject> GetSlitCenters()
+        {
+            return slitCenters; 
+        }
+
+        public float GetDistanceBetweenSlitCenters()
+        {
+            return slitCenterDistance; 
         }
     }
 }
