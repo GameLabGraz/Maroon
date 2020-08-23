@@ -1,28 +1,66 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Networking;
 using Antares.Evaluation;
 using Antares.Evaluation.Engine;
 using Antares.Evaluation.Util;
 using Maroon.Assessment.Handler;
 using Maroon.Physics;
+using Newtonsoft.Json;
+
+using System.Threading.Tasks;
 
 namespace Maroon.Assessment
 {
     [RequireComponent(typeof(AssessmentFeedbackHandler))]
     public class AssessmentManager : MonoBehaviour
-    { 
+    {
+        /*
+        private class AntaresWebResourceProvider : IResourceProvider
+        {
+            public class ResourceLoader : IResourceLoader
+            {
+                private readonly UnityWebRequest _request;
+
+                public ResourceLoader(string uri)
+                {
+                    Debug.Log("AntaresWebResourceManager: loading '" + uri + "'");
+                    _request = UnityWebRequest.Get(uri);
+                }
+
+                public Stream GetInputStream()
+                {
+                    Debug.Log("AntaresWebResourceManager: input stream ready");
+                    return new MemoryStream(_request.downloadHandler.data);
+                }
+
+                public object Load()
+                {
+                    Debug.Log("AntaresWebResourceManager: 'sending web request for '" + _request.url + "'");
+                    return _request.SendWebRequest();
+                }
+            }
+
+            public IResourceLoader CreateLoader(string uri) => new ResourceLoader(uri);
+        }
+        */
         [SerializeField]
-        private string amlFile;
+        private string amlFile; // depricated amlUrl
+
+        private string antaresUrl = "wss://hui.maderer.at/antares/ws"; // TODO: get from parameter/default component setting
 
         [SerializeField] 
-        private bool showDebugMessages = false;
+        private bool showDebugMessages = true;
 
-        private Evaluator _evalService;
+        private AntaresClient _evalService;
 
         private EventBuilder _eventBuilder;
+
+        private List<GameEvent> _eventBuffer = new List<GameEvent>();
 
         private AssessmentFeedbackHandler _feedbackHandler;
 
@@ -53,19 +91,22 @@ namespace Maroon.Assessment
             }
         }
 
-        private void Awake()
+        private async void Awake()
         {
             _feedbackHandler = FindObjectOfType<AssessmentFeedbackHandler>();
 
-            IsConnected = ConnectToAssessmentSystem();
+            await ConnectToAssessmentSystem();
         }
 
         private void Start()
         {
-            if(showDebugMessages)
-                Debug.Log("AssessmentManager::Send Enter Event");
-            
+            Debug.Log("AssessmentManager: Raising enter event ...");
             EventBuilder.Action("enter");
+        }
+
+        private void Update()
+        {
+            _evalService.DoWork();
         }
 
         private void LateUpdate()
@@ -76,41 +117,44 @@ namespace Maroon.Assessment
             _eventBuilder = null;
         }
 
-        private bool ConnectToAssessmentSystem()
+        private async Task ConnectToAssessmentSystem()
         {
             try
             {
-                if(showDebugMessages)
-                    Debug.Log("AssessmentManager: Connecting to Assessment Service...");
-                _evalService = new Evaluator(false); // create with disabled thread-support
-
-
                 if (showDebugMessages)
-                {
-                    Debug.Log("AssessmentManager: Successfully connected to Assessment Service.");
-                    Debug.Log($"AssessmentManager: Loading {amlFile} into evaluation engine ...");
-                }
+                    Debug.Log("AssessmentManager: Connecting to Assessment Service...");
 
-                _evalService.LoadAmlFile(Path.Combine(Application.streamingAssetsPath, amlFile));
-
-                Debug.Log(showDebugMessages
-                    ? "AssessmentManager: Assessment model loaded."
-                    : $"AssessmentManager: Successfully started with {amlFile}.");
-
+                _evalService = new AntaresClient(antaresUrl);
                 _evalService.FeedbackReceived += delegate (object sender, FeedbackEventArgs args)
                 {
-                  _feedbackHandler.HandleFeedback(args);
+                    if (showDebugMessages)
+                        Debug.Log("AssessmentManager: Feedback received");
+                    _feedbackHandler.HandleFeedback(args);
                 };
 
-                StartCoroutine(_evalService.Run()); // use Unity as scheduler
+                _evalService.Connected += delegate (object sender, EventArgs args)
+                {
+                    if (showDebugMessages)
+                        Debug.Log("AssessmentManager: Connection established");
+                    IsConnected = true;
+                    FlushEventBuffer();
+                };
 
-                return true;
+                await _evalService.ConnectAndRun();    
             }
             catch (Exception ex)
             {
                 Debug.LogWarning($"AssessmentManager: An error occurred while connecting to the Assessment service.: {ex.Message} {ex.StackTrace}");
-                return false;
             }
+        }
+
+        private void FlushEventBuffer()
+        {
+            foreach(GameEvent gameEvent in _eventBuffer)
+            {
+                _evalService.ProcessEvent(gameEvent);
+            }
+            _eventBuffer.Clear();
         }
         
         public void RegisterAssessmentObject(AssessmentObject assessmentObject)
@@ -150,9 +194,12 @@ namespace Maroon.Assessment
             foreach (var assessmentObject in _objectsInRange)
             {
                 EventBuilder.UpdateDataOf(assessmentObject.ObjectID);
-                foreach (var watchValue in assessmentObject.WatchedValues.Where(watchValue => watchValue.IsDynamic()))
+                foreach (var watchValue in assessmentObject.WatchedValues)
                 {
-                    EventBuilder.Set(watchValue.GetName(), ConvertToAntaresValue(watchValue.GetValue()));
+                    if (watchValue.IsDynamic())
+                    {
+                        EventBuilder.Set(watchValue.GetName(), ConvertToAntaresValue(watchValue.GetValue()));
+                    }
                 }
             }
         }
@@ -171,9 +218,10 @@ namespace Maroon.Assessment
             {
                 _evalService.ProcessEvent(gameEvent);
             }
-            else if(showDebugMessages)
+            else
             {
-                Debug.LogWarning("AssessmentManager::SendGameEvent: Assessment service is not running");
+                _eventBuffer.Add(gameEvent);
+                Debug.LogWarning("AssessmentManager::SendGameEvent: sending event to buffer");
             }
         }
     }
