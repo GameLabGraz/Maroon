@@ -112,6 +112,12 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(_scene);
     }
 
+    public void RegisterNetworkPlayer(GameObject newPlayer)
+    {
+        _player.SetActive(false);
+        _player = newPlayer;
+    }
+
     public void OnGUI()
     {
         // show build version on lower right corner
