@@ -235,6 +235,16 @@ public class ListServer : MonoBehaviour
         }
     }
 
+    public bool GetListServerStatus()
+    {
+        if (clientToListenConnection.Connected)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     
 
     public void PortMappingSuccessfull()

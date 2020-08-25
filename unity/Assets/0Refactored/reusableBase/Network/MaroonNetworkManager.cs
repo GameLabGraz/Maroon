@@ -5,10 +5,12 @@ using UnityEngine;
 
 public class MaroonNetworkManager : NetworkManager
 {
+    private NetworkStatusLight _statusLight;
     private ListServer _listServer;
     private MaroonNetworkDiscovery _networkDiscovery;
     private PortForwarding _upnp;
 
+    private bool _isStarted;
     private bool _activePortMapping;
     
     public override void Start()
@@ -17,9 +19,17 @@ public class MaroonNetworkManager : NetworkManager
         _listServer = GetComponent<ListServer>();
         _networkDiscovery = GetComponent<MaroonNetworkDiscovery>();
         _upnp = GetComponent<PortForwarding>();
-        
+        _statusLight = FindObjectOfType<NetworkStatusLight>();
+    }
+
+    public void StartMultiUser()
+    {
+        if(_isStarted)
+            return;
         _listServer.ConnectToListServer();
         _networkDiscovery.StartDiscovery();
+        _statusLight.SetActive(true);
+        _isStarted = true;
     }
 
     public override void OnStartHost()
