@@ -10,38 +10,6 @@
   src: local('Poppins Regular'), local('Poppins-Regular'), url(vendor/font-poppins/poppins-regular.woff) format('woff');
 }
 
-@font-face{
-  font-family: 'Material Icons';
-  font-style: normal;
-  font-weight: 400;
-  src: url(vendor/material-icons/MaterialIcons-Regular.woff) format('woff');
-}
-
-.material-icons{
-  font-family: 'Material Icons';
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;  /* Preferred icon size */
-  display: inline-block;
-  line-height: 1;
-  text-transform: none;
-  letter-spacing: normal;
-  word-wrap: normal;
-  white-space: nowrap;
-  direction: ltr;
-
-  /* Support for all WebKit browsers. */
-  -webkit-font-smoothing: antialiased;
-  /* Support for Safari and Chrome. */
-  text-rendering: optimizeLegibility;
-
-  /* Support for Firefox. */
-  -moz-osx-font-smoothing: grayscale;
-
-  /* Support for IE. */
-  font-feature-settings: 'liga';
-}
-
 /*
  * Globals
  */
@@ -66,7 +34,7 @@
 }
 
 .bg-blue{
-  background: #519872;
+  background-color: #519872;
 }
 
 .bg-dark{
@@ -84,94 +52,48 @@ a:hover {
  * General
  */
 
- html {
-  box-sizing: border-box;
-}
-
-*, *:before, *:after {
-  box-sizing: inherit;
-}
-
-body{
+html, body{
+  height: 100vh;
   padding: 0;
   margin: 0;
   background: #231f20;
 }
 
-.webgl-content *{
-  border: 0;
-  margin: 0;
+body{
+  padding: 35px;
+}
+
+.container-fluid{
+  height: 100%;
   padding: 0;
 }
 
-.webgl-content{
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  -webkit-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
-}
-
 /*
- * Progress
+ * Top bar
  */
 
-.webgl-content .logo, .progress{
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  -webkit-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
+#row-top{
+  padding-bottom: 35px;
 }
 
-.webgl-content .logo{
-  background: url('images/progressLogo.png') no-repeat center / contain;
-  width: 141px;
-  height: 141px;
-}
-
-.webgl-content .progress{
-  height: 18px;
-  width: 141px;
-  margin-top: 90px;
-}
-
-.webgl-content .progress .empty{
-  background: url('images/progressEmpty.png') no-repeat right / cover;
-  float: right;
-  width: 100%;
-  height: 100%;
-  display: inline-block;
-}
-
-.webgl-content .progress .full{
-  background: url('images/progressFull.png') no-repeat left / cover;
-  float: left;
-  width: 0%;
-  height: 100%;
-  display: inline-block;
-}
-
-/*
- * Footer
- */
-
-.webgl-content .footer{
-  margin-top: 15px;
+.top-bar{
   height: 55px;
-  font-family: 'Poppins', sans-serif;
   font-size: 18px;
 }
 
-.webgl-content .footer .webgl-logo{
+.top-bar, .top-bar *{
+  font-family: 'Poppins', sans-serif;
+}
+
+.top-bar .webgl-logo{
   float: right;
 }
 
-.webgl-content .footer .webgl-logo img{
+.top-bar .webgl-logo img{
   height: 55px;
 }
 
-.webgl-content .footer .button{
+.top-bar .button{
   float: left;
   background: #519872;
   padding: 5px 15px;
@@ -183,14 +105,38 @@ body{
   text-align: center;
 }
 
-.webgl-content .footer .button:hover{
+.top-bar .button:hover{
   background: #E5E6E4;
   color: #353831;
   cursor: pointer;
 }
 
-.webgl-content .footer .button i, .webgl-content .footer .button span{
+.top-bar .button i, .top-bar .button span{
   display: inline-block;
   vertical-align: middle;
   line-height: normal;
+}
+
+/*
+ * Progress
+ */
+#row-progress .progress-wrapper {
+  width: 75vw;
+  background: #ffffff55;
+}
+
+#row-progress .progress {
+  border-radius: 0;
+}
+
+/*
+ * Game
+ */
+#row-game {
+  display: none;
+}
+
+#row-game #gameContainer {
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
