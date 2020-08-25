@@ -2,31 +2,39 @@
 
 namespace Maroon.Physics.HuygensPrinciple
 {
-    public class InterferencePlate : MonoBehaviour
+    public class InterferencePlate : PausableObject
     {
         [SerializeField]
         private SlitPlate slitPlate;
 
         private MeshRenderer _meshRenderer;
-
-        private void Start()
+        private bool _parameterHasChanged;
+        
+        protected override void Start()
         {
+            base.Start();
+
             _meshRenderer = GetComponent<MeshRenderer>();
             UpdateParameters();
         }
 
-
-        private void Update()
+        protected override void HandleUpdate()
         {
-            //ToDo: Add OnMovement Event to the SlitPlate script
-            if (slitPlate.transform.hasChanged)
+            if(!slitPlate.transform.hasChanged && !_parameterHasChanged)
             {
-                slitPlate.transform.hasChanged = false;
-                UpdateParameters();
+                return;
             }
+           
+            _parameterHasChanged = false;
+            slitPlate.transform.hasChanged = false;
+            UpdateParameters();   
         }
 
-        public void UpdateParameters()
+        protected override void HandleFixedUpdate()
+        {   
+        }
+
+        private void UpdateParameters()
         {
             if (slitPlate.NumberOfSlits > 1)
             {
@@ -45,6 +53,11 @@ namespace Maroon.Physics.HuygensPrinciple
 
             _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_DistanceBetweenPlates"), 
                 Vector4.Distance(slitPlate.transform.position, transform.position));
+        }
+
+        public void SetParameterChangeTrue()
+        {
+            _parameterHasChanged = true;
         }
     }
 }
