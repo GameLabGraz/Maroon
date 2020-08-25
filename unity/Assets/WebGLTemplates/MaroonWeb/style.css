@@ -10,42 +10,40 @@
   src: local('Poppins Regular'), local('Poppins-Regular'), url(vendor/font-poppins/poppins-regular.woff) format('woff');
 }
 
-/*
- * Globals
- */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: local('Poppins Medium'), local('Poppins-Medium'), url(vendor/font-poppins/poppins-medium.woff) format('woff');
+}
 
-/* Text colors */
+/*
+ * Colors
+ */
 
 .color-dark{
   color: #353831;
 }
 
-/* Background colors */
 .bg-maroon{
-  background: #800000;
+  background-color: #800000;
 }
 
 .bg-orange{
-  background: #FF7F11;
+  background-color: #FF7F11;
 }
 
 .bg-light{
-  background: #E5E6E4;
+  background-color: #E5E6E4;
 }
 
-.bg-blue{
+.bg-green{
   background-color: #519872;
 }
 
 .bg-dark{
-  background: #353831;
-}
-
-/* Links */
-a,
-a:focus,
-a:hover {
-  color: #fff;
+  background-color: #353831;
 }
 
 /*
@@ -66,6 +64,12 @@ body{
 .container-fluid{
   height: 100%;
   padding: 0;
+}
+
+a,
+a:focus,
+a:hover {
+  color: #fff;
 }
 
 /*
@@ -120,6 +124,7 @@ body{
 /*
  * Progress
  */
+
 #row-progress .progress-wrapper {
   width: 75vw;
   background: #ffffff55;
@@ -132,6 +137,7 @@ body{
 /*
  * Game
  */
+
 #row-game {
   display: none;
 }
