@@ -10,8 +10,10 @@ namespace Maroon.Physics.HuygensPrinciple
         private MeshRenderer _meshRenderer;
         private bool _parameterHasChanged;
         
-        private void Start()
+        protected override void Start()
         {
+            base.Start();
+
             _meshRenderer = GetComponent<MeshRenderer>();
             UpdateParameters();
         }
@@ -53,7 +55,7 @@ namespace Maroon.Physics.HuygensPrinciple
                 Vector4.Distance(slitPlate.transform.position, transform.position));
         }
 
-        public void SetParamterChangeTrue()
+        public void SetParameterChangeTrue()
         {
             _parameterHasChanged = true;
         }
