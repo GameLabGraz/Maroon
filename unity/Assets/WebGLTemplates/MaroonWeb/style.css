@@ -149,8 +149,29 @@ a:hover {
  */
 
 #row-progress .progress-wrapper {
-  width: 75vw;
   background: #ffffff55;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  #row-progress .progress-wrapper {
+    width: 75vw;
+  }
+}
+
+#row-progress .logo-text {
+  min-height: 256px;
+
+}
+
+#row-progress .logo-text img {
+  max-width: 128px;
+}
+
+@media (min-width: 768px) {
+  #row-progress .logo-text img{
+    max-width: none;
+  }
 }
 
 #row-progress .progress {
