@@ -18,6 +18,10 @@
   src: local('Poppins Medium'), local('Poppins-Medium'), url(vendor/font-poppins/poppins-medium.woff) format('woff');
 }
 
+*{
+  font-family: 'Poppins', sans-serif;
+}
+
 /*
  * Colors
  */
@@ -72,53 +76,72 @@ a:hover {
   color: #fff;
 }
 
+.btn{
+  border-radius: 0;
+}
+
 /*
  * Top bar
  */
 
 #row-top{
   padding-bottom: 35px;
-}
-
-.top-bar{
-  height: 55px;
   font-size: 18px;
 }
 
-.top-bar, .top-bar *{
-  font-family: 'Poppins', sans-serif;
-}
-
-.top-bar .webgl-logo{
-  float: right;
-}
-
-.top-bar .webgl-logo img{
-  height: 55px;
-}
-
-.top-bar .button{
-  float: left;
+#row-top .btn{
   background: #519872;
-  padding: 5px 15px;
-  margin-right: 15px;
-  text-decoration: none;
   color: #353831;
   height: 55px;
-  line-height: 45px;
   text-align: center;
+  line-height: 41px;
+  display: block;
 }
 
-.top-bar .button:hover{
+@media (min-width: 576px) {
+  #row-top .btn{
+    display: inline-block;
+  }
+}
+
+#row-top .btn:hover{
   background: #E5E6E4;
   color: #353831;
   cursor: pointer;
 }
 
-.top-bar .button i, .top-bar .button span{
+#row-top .btn span{
   display: inline-block;
   vertical-align: middle;
   line-height: normal;
+}
+
+#row-top .btn.middle-margin{
+  margin: 15px 0;
+}
+
+@media (min-width: 576px) {
+  #row-top .btn.middle-margin{
+    margin-left: 15px;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
+#row-top .logo-top{
+  text-align: center;
+  background: #800000;
+}
+
+@media (min-width: 576px) {
+  #row-top .logo-top{
+    text-align: right;
+    background: none;
+  }
+}
+
+#row-top .logo-top img{
+  height: 55px;
 }
 
 /*

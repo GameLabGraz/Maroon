@@ -97,31 +97,33 @@
       
       <!-- Top bar -->
       <div class="row" id="row-top">
-        <div class="col">
 
-          <div class="top-bar">
+        <div class="col-sm-8">
 
-            <a class="button back" href="/">
-              <img src="vendor/bootstrap-icons/box-arrow-left.svg" />
-              <span>
-                Back to main page
-              </span>
-            </a>
+          <a class="btn" href="/">
+            <img src="vendor/bootstrap-icons/box-arrow-left.svg" />
+            <span>
+              Main page
+            </span>
+          </a>
 
-            <div class="button fullscreen" onclick="gameInstance.SetFullscreen(1)">
-              <img src="vendor/bootstrap-icons/arrows-fullscreen.svg" />
-              <span>
-                Fullscreen
-              </span>
-            </div>
-            
-            <div class="webgl-logo">
-              <img src="images/logo.png" alt="Maroon" />
-            </div>
-
+          <div class="btn middle-margin" onclick="gameInstance.SetFullscreen(1)">
+            <img src="vendor/bootstrap-icons/arrows-fullscreen.svg" />
+            <span>
+              Fullscreen
+            </span>
           </div>
 
         </div>
+
+        <div class="col-sm-4">
+
+          <div class="logo-top">
+            <img class="img-fluid" src="images/logo.png" alt="Maroon" />
+          </div>
+        
+        </div>
+            
       </div>
 
       <!-- Progress -->
