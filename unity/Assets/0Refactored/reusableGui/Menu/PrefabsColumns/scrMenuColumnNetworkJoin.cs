@@ -43,7 +43,6 @@ public class scrMenuColumnNetworkJoin : MonoBehaviour
 
     void UpdateServerList()
     {
-        Debug.Log("Update");
         if (_listServer.list.Count > 0)
         {
             NoServerText.SetActive(false);

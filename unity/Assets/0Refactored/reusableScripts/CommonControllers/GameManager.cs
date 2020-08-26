@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     private GameObject _player;
+    
+    private GameObject _offlinePlayer;
 
     private static Vector3 _playerPosition;
     private static Quaternion _playerRotation;
@@ -114,8 +116,15 @@ public class GameManager : MonoBehaviour
 
     public void RegisterNetworkPlayer(GameObject newPlayer)
     {
+        _offlinePlayer = _player;
         _player.SetActive(false);
         _player = newPlayer;
+    }
+    
+    public void UnregisterNetworkPlayer()
+    {
+        _offlinePlayer.SetActive(true);
+        _player = _offlinePlayer;
     }
 
     public void OnGUI()

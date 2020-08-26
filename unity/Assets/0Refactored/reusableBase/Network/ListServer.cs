@@ -237,12 +237,6 @@ public class ListServer : MonoBehaviour
             clientToListenConnection.Disconnect();
             list.Clear();
         }
-
-        // TODO: Display Servers
-        foreach (var server in list)
-        {
-            Debug.Log("found server " + server.Key + " : " + server.Value.title);
-        }
     }
 
     public bool GetListServerStatus()

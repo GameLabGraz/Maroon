@@ -40,6 +40,12 @@ public class MaroonNetworkManager : NetworkManager
         _upnp.SetupPortForwarding();
     }
 
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        _networkDiscovery.StopDiscovery();
+    }
+
     public void PortsMapped()
     {
         //TODO: Manual Port Mapping

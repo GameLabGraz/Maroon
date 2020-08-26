@@ -10,27 +10,33 @@ public class scrMenuColumnNetwork : MonoBehaviour
     private MaroonNetworkManager _networkManager;
     
     [SerializeField] private GameObject ColumnJoin;
-
-    [SerializeField] private GameObject ColumnSettings;
     
     
     [SerializeField] private GameObject ButtonJoin;
 
     [SerializeField] private GameObject ButtonHost;
     
-    [SerializeField] private GameObject ButtonSettings;
+    [SerializeField] private GameObject ButtonLeaveClient;
+    
+    [SerializeField] private GameObject ButtonLeaveHost;
     
     void Start()
     {
         // Link button actions
         this.ButtonJoin.GetComponent<Button>().onClick.AddListener(() => this.OnClickJoin());
         this.ButtonHost.GetComponent<Button>().onClick.AddListener(() => this.OnClickHost());
-        this.ButtonSettings.GetComponent<Button>().onClick.AddListener(() => this.OnClickSettings());
+        this.ButtonLeaveClient.GetComponent<Button>().onClick.AddListener(() => this.OnClickLeaveClient());
+        this.ButtonLeaveHost.GetComponent<Button>().onClick.AddListener(() => this.OnClickLeaveHost());
 
         //TODO better way?
         _menu = FindObjectOfType<scrMenu>();
         _networkManager = FindObjectOfType<MaroonNetworkManager>();
         _networkManager.StartMultiUser();
+        
+        ButtonJoin.SetActive(_networkManager.mode == NetworkManagerMode.Offline);
+        ButtonHost.SetActive(_networkManager.mode == NetworkManagerMode.Offline);
+        ButtonLeaveClient.SetActive(_networkManager.mode == NetworkManagerMode.ClientOnly);
+        ButtonLeaveHost.SetActive(_networkManager.mode == NetworkManagerMode.Host);
     }
 
     private void OnClickJoin()
@@ -38,21 +44,23 @@ public class scrMenuColumnNetwork : MonoBehaviour
         this._menu.RemoveAllMenuColumnsButTwo();
         this._menu.AddMenuColumn(this.ColumnJoin);
         this.ButtonJoin.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.white;
-        this.ButtonHost.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
-        this.ButtonSettings.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
     }
     
     private void OnClickHost()
     {
-        //TODO: More?
         _networkManager.StartHost();
         _menu.CloseMenu();
     }
     
-    private void OnClickSettings()
+    private void OnClickLeaveClient()
     {
-        //TODO
+        _networkManager.StartClient();
+        _menu.CloseMenu();
     }
     
-    //TODO: different online and offline
+    private void OnClickLeaveHost()
+    {
+        _networkManager.StopHost();
+        _menu.CloseMenu();
+    }
 }

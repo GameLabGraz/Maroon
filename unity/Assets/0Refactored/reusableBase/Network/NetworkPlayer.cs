@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
@@ -11,6 +12,7 @@ public class NetworkPlayer : NetworkBehaviour
     private CharacterController _cc;
     private AudioSource _as;
     private FirstPersonController _fpc;
+    private GameManager _gm;
     
     // Start is called before the first frame update
     void Start()
@@ -18,6 +20,7 @@ public class NetworkPlayer : NetworkBehaviour
         _cc = GetComponent<CharacterController>();
         _as = GetComponent<AudioSource>();
         _fpc = GetComponent<FirstPersonController>();
+        _gm = FindObjectOfType<GameManager>();
 
         if (isLocalPlayer)
         {
@@ -26,7 +29,17 @@ public class NetworkPlayer : NetworkBehaviour
             _as.enabled = true;
             _fpc.enabled = true;
             
-            FindObjectOfType<GameManager>().RegisterNetworkPlayer(gameObject);
+            //TODO: Do this in add player / remove player
+            _gm.RegisterNetworkPlayer(gameObject);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (isLocalPlayer)
+        {
+            //TODO: Do this in add player / remove player
+            _gm.UnregisterNetworkPlayer();
         }
     }
 }
