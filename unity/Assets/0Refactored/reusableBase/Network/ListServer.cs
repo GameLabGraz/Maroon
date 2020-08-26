@@ -71,7 +71,17 @@ public class ListServer : MonoBehaviour
 
     public void ConnectToListServer()
     {
-        InvokeRepeating(nameof(Tick), 0, 1);
+        // cannot use InvokeRepeating(nameof(Tick), 0, 1); because affected by Time Scale
+        StartCoroutine(InvokeRealtimeTickCoroutine(1));
+    }
+    
+    private IEnumerator InvokeRealtimeTickCoroutine(float seconds)
+    {
+        while (true)
+        {
+            yield return new WaitForSecondsRealtime(seconds);
+            Tick();
+        }
     }
 
     bool IsConnecting() => NetworkClient.active && !ClientScene.ready;

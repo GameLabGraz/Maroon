@@ -16,7 +16,18 @@ public class scrMenuColumnNetworkJoin : MonoBehaviour
     void Start()
     {
         _listServer = FindObjectOfType<ListServer>();
-        InvokeRepeating(nameof(UpdateServerList), 0, 1);
+        //cannot use InvokeRepeating(nameof(UpdateServerList), 0, 1); because affected by time scale
+        UpdateServerList();
+        StartCoroutine(InvokeRealtimeCoroutine(0.7f));
+    }
+    
+    private IEnumerator InvokeRealtimeCoroutine(float seconds)
+    {
+        while (true)
+        {
+            yield return new WaitForSecondsRealtime(seconds);
+            UpdateServerList();
+        }
     }
 
     void AddServerButton(ServerStatus status)
@@ -32,6 +43,7 @@ public class scrMenuColumnNetworkJoin : MonoBehaviour
 
     void UpdateServerList()
     {
+        Debug.Log("Update");
         if (_listServer.list.Count > 0)
         {
             NoServerText.SetActive(false);
