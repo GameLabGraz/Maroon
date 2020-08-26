@@ -18,6 +18,8 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
     [SerializeField] private GameObject ColumnAudio;
 
     [SerializeField] private GameObject ColumnLanguage;
+    
+    [SerializeField] private GameObject ColumnNetwork;
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Buttons
@@ -29,6 +31,8 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
     [SerializeField] private GameObject ButtonMainMenu;
 
     [SerializeField] private GameObject ButtonResume;
+    
+    [SerializeField] private GameObject ButtonNetwork;
     
     // #################################################################################################################
     // Methods
@@ -44,6 +48,7 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
         this.ButtonLanguage.GetComponent<Button>().onClick.AddListener(() => this.OnClickLanguage());
         this.ButtonMainMenu.GetComponent<Button>().onClick.AddListener(() => this.OnClickMainMenu());
         this.ButtonResume.GetComponent<Button>().onClick.AddListener(() => this.OnClickResume());
+        this.ButtonNetwork.GetComponent<Button>().onClick.AddListener(() => this.OnClickNetwork());
     }
 
     void OnEnable()
@@ -87,5 +92,11 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
     private void OnClickResume()
     {
         this.Menu.CloseMenu();
+    }
+    
+    private void OnClickNetwork()
+    {
+        this.Menu.RemoveAllMenuColumnsButFirst();
+        this.Menu.AddMenuColumn(this.ColumnNetwork);
     }
 }

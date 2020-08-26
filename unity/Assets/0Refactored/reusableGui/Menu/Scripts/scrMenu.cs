@@ -104,4 +104,12 @@ public class scrMenu : MonoBehaviour
             DestroyImmediate(this.Columns.GetChild(1).gameObject);
         }
     }
+    
+    public void RemoveAllMenuColumnsButTwo()
+    {
+        while(this.Columns.transform.childCount > 2)
+        {
+            DestroyImmediate(this.Columns.GetChild(2).gameObject);
+        }
+    }
 }
