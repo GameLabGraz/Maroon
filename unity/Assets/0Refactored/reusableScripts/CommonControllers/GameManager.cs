@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityStandardAssets.Characters.FirstPerson;
 
 
 //This manager will be created one time at the beginning and stays troughout all scenes to manage 
@@ -124,7 +125,17 @@ public class GameManager : MonoBehaviour
     public void UnregisterNetworkPlayer()
     {
         _offlinePlayer.SetActive(true);
+        _playerPosition = _player.transform.position;
+        _offlinePlayer.transform.position = _playerPosition;
+        _playerRotation = _player.transform.rotation;
+        //cannot set _offlinePlayer.transform.rotation = _playerRotation; because overruled by First Person Controller
+        _offlinePlayer.GetComponent<FirstPersonController>().SetPlayerRotation(_playerRotation);
         _player = _offlinePlayer;
+    }
+
+    public Transform GetPlayerTransform()
+    {
+        return _player.transform;
     }
 
     public void OnGUI()
