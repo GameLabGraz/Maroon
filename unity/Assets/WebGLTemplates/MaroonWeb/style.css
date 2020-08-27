@@ -10,187 +10,183 @@
   src: local('Poppins Regular'), local('Poppins-Regular'), url(vendor/font-poppins/poppins-regular.woff) format('woff');
 }
 
-@font-face{
-  font-family: 'Material Icons';
+@font-face {
+  font-family: 'Poppins';
   font-style: normal;
-  font-weight: 400;
-  src: url(vendor/material-icons/MaterialIcons-Regular.woff) format('woff');
+  font-weight: 500;
+  font-display: swap;
+  src: local('Poppins Medium'), local('Poppins-Medium'), url(vendor/font-poppins/poppins-medium.woff) format('woff');
 }
 
-.material-icons{
-  font-family: 'Material Icons';
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;  /* Preferred icon size */
-  display: inline-block;
-  line-height: 1;
-  text-transform: none;
-  letter-spacing: normal;
-  word-wrap: normal;
-  white-space: nowrap;
-  direction: ltr;
-
-  /* Support for all WebKit browsers. */
-  -webkit-font-smoothing: antialiased;
-  /* Support for Safari and Chrome. */
-  text-rendering: optimizeLegibility;
-
-  /* Support for Firefox. */
-  -moz-osx-font-smoothing: grayscale;
-
-  /* Support for IE. */
-  font-feature-settings: 'liga';
+*{
+  font-family: 'Poppins', sans-serif;
 }
 
 /*
- * Globals
+ * Colors
  */
 
-/* Text colors */
-
 .color-dark{
-  color: #101A1D;
+  color: #353831;
 }
 
-/* Background colors */
 .bg-maroon{
-  background: #800000;
+  background-color: #800000;
 }
 
 .bg-orange{
-  background: #ED6A42;
+  background-color: #FF7F11;
 }
 
 .bg-light{
-  background: #CEE6D7;
+  background-color: #E5E6E4;
 }
 
-.bg-blue{
-  background: #257A73;
+.bg-green{
+  background-color: #519872;
 }
 
 .bg-dark{
-  background: #101A1D;
-}
-
-/* Links */
-a,
-a:focus,
-a:hover {
-  color: #fff;
+  background-color: #353831;
 }
 
 /*
  * General
  */
 
- html {
-  box-sizing: border-box;
-}
-
-*, *:before, *:after {
-  box-sizing: inherit;
+html, body{
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+  background: #353831;
 }
 
 body{
-  padding: 0;
-  margin: 0;
-  background: #231f20;
+  padding: 35px;
 }
 
-.webgl-content *{
-  border: 0;
-  margin: 0;
+.container-fluid{
+  height: 100%;
   padding: 0;
 }
 
-.webgl-content{
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  -webkit-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
+a,
+a:focus,
+a:hover {
+  color: #fff;
+}
+
+.btn{
+  border-radius: 0;
+}
+
+/*
+ * Top bar
+ */
+
+#row-top{
+  padding-bottom: 35px;
+  font-size: 18px;
+}
+
+#row-top .btn{
+  background: #519872;
+  color: #353831;
+  height: 55px;
+  text-align: center;
+  line-height: 41px;
+  display: block;
+}
+
+@media (min-width: 576px) {
+  #row-top .btn{
+    display: inline-block;
+  }
+}
+
+#row-top .btn:hover{
+  background: #E5E6E4;
+  color: #353831;
+  cursor: pointer;
+}
+
+#row-top .btn span{
+  display: inline-block;
+  vertical-align: middle;
+  line-height: normal;
+}
+
+#row-top .btn.middle-margin{
+  margin: 15px 0;
+}
+
+@media (min-width: 576px) {
+  #row-top .btn.middle-margin{
+    margin-left: 15px;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
+#row-top .logo-top{
+  text-align: center;
+  background: #800000;
+}
+
+@media (min-width: 576px) {
+  #row-top .logo-top{
+    text-align: right;
+    background: none;
+  }
+}
+
+#row-top .logo-top img{
+  height: 55px;
 }
 
 /*
  * Progress
  */
 
-.webgl-content .logo, .progress{
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  -webkit-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
-}
-
-.webgl-content .logo{
-  background: url('images/progressLogo.png') no-repeat center / contain;
-  width: 141px;
-  height: 141px;
-}
-
-.webgl-content .progress{
-  height: 18px;
-  width: 141px;
-  margin-top: 90px;
-}
-
-.webgl-content .progress .empty{
-  background: url('images/progressEmpty.png') no-repeat right / cover;
-  float: right;
+#row-progress .progress-wrapper {
+  background: #ffffff55;
   width: 100%;
-  height: 100%;
-  display: inline-block;
 }
 
-.webgl-content .progress .full{
-  background: url('images/progressFull.png') no-repeat left / cover;
-  float: left;
-  width: 0%;
-  height: 100%;
-  display: inline-block;
+@media (min-width: 768px) {
+  #row-progress .progress-wrapper {
+    width: 75vw;
+  }
+}
+
+#row-progress .logo-text {
+  min-height: 256px;
+
+}
+
+#row-progress .logo-text img {
+  max-width: 128px;
+}
+
+@media (min-width: 768px) {
+  #row-progress .logo-text img{
+    max-width: none;
+  }
+}
+
+#row-progress .progress {
+  border-radius: 0;
 }
 
 /*
- * Footer
+ * Game
  */
 
-.webgl-content .footer{
-  margin-top: 15px;
-  height: 55px;
-  font-family: 'Poppins', sans-serif;
-  font-size: 18px;
+#row-game {
+  display: none;
 }
 
-.webgl-content .footer .webgl-logo{
-  float: right;
-}
-
-.webgl-content .footer .webgl-logo img{
-  height: 55px;
-}
-
-.webgl-content .footer .button{
-  float: left;
-  background: #257A73;
-  padding: 5px 15px;
-  margin-right: 15px;
-  text-decoration: none;
-  color: #101A1D;
-  height: 55px;
-  line-height: 45px;
-  text-align: center;
-}
-
-.webgl-content .footer .button:hover{
-  background: #CEE6D7;
-  color: #101A1D;
-  cursor: pointer;
-}
-
-.webgl-content .footer .button i, .webgl-content .footer .button span{
-  display: inline-block;
-  vertical-align: middle;
-  line-height: normal;
+#row-game #gameContainer {
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
