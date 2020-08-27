@@ -60,7 +60,8 @@ public class MaroonNetworkManager : NetworkManager
     public override void OnStartClient()
     {
         base.OnStartClient();
-        _networkDiscovery.StopDiscovery();
+        if(mode == NetworkManagerMode.ClientOnly)
+            _networkDiscovery.StopDiscovery();
     }
 
     public override void OnClientConnect(NetworkConnection conn)
