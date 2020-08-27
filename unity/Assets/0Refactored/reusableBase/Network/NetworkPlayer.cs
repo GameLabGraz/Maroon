@@ -29,17 +29,7 @@ public class NetworkPlayer : NetworkBehaviour
             _as.enabled = true;
             _fpc.enabled = true;
             
-            //TODO: Do this in add player / remove player
             _gm.RegisterNetworkPlayer(gameObject);
-        }
-    }
-
-    private void OnDestroy()
-    {
-        if (isLocalPlayer)
-        {
-            //TODO: Do this in add player / remove player
-            _gm.UnregisterNetworkPlayer();
         }
     }
 }

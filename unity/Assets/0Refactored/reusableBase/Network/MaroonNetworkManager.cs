@@ -64,6 +64,13 @@ public class MaroonNetworkManager : NetworkManager
             _networkDiscovery.StopDiscovery();
     }
 
+    public override void OnStopClient()
+    {
+        base.OnStopClient();
+        _gameManager.UnregisterNetworkPlayer();
+        _networkDiscovery.StartDiscovery();
+    }
+
     public override void OnClientConnect(NetworkConnection conn)
     {
         base.OnClientConnect(conn);
