@@ -124,18 +124,32 @@ public class GameManager : MonoBehaviour
     
     public void UnregisterNetworkPlayer()
     {
+        if (_offlinePlayer == null)
+        {
+            _player = null;
+            return;
+        }
+
+        if (_player != null)
+        {
+            _playerPosition = _player.transform.position;
+            _playerRotation = _player.transform.rotation;
+        }
         _offlinePlayer.SetActive(true);
-        _playerPosition = _player.transform.position;
         _offlinePlayer.transform.position = _playerPosition;
-        _playerRotation = _player.transform.rotation;
         //cannot set _offlinePlayer.transform.rotation = _playerRotation; because overruled by First Person Controller
         _offlinePlayer.GetComponent<FirstPersonController>().SetPlayerRotation(_playerRotation);
         _player = _offlinePlayer;
     }
 
-    public Transform GetPlayerTransform()
+    public Vector3 GetPlayerPosition()
     {
-        return _player.transform;
+        return _playerPosition;
+    }
+
+    public Quaternion GetPlayerRotation()
+    {
+        return _playerRotation;
     }
 
     public void OnGUI()

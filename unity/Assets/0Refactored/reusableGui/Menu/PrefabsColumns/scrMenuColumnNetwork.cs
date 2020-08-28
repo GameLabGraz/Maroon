@@ -54,7 +54,7 @@ public class scrMenuColumnNetwork : MonoBehaviour
     
     private void OnClickLeaveClient()
     {
-        _networkManager.StartClient();
+        _networkManager.StopClient();
         _menu.CloseMenu();
     }
     

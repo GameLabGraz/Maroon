@@ -32,4 +32,12 @@ public class NetworkPlayer : NetworkBehaviour
             _gm.RegisterNetworkPlayer(gameObject);
         }
     }
+
+    private void OnDestroy()
+    {
+        if (isLocalPlayer)
+        {
+            _gm.UnregisterNetworkPlayer();
+        }
+    }
 }

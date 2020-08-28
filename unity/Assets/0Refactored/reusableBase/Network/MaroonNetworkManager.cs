@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CharacterSpawnMessage : MessageBase
 {
@@ -11,7 +12,6 @@ public class CharacterSpawnMessage : MessageBase
 
 public class MaroonNetworkManager : NetworkManager
 {
-    private NetworkStatusLight _statusLight;
     private ListServer _listServer;
     private MaroonNetworkDiscovery _networkDiscovery;
     private PortForwarding _upnp;
@@ -26,7 +26,6 @@ public class MaroonNetworkManager : NetworkManager
         _listServer = GetComponent<ListServer>();
         _networkDiscovery = GetComponent<MaroonNetworkDiscovery>();
         _upnp = GetComponent<PortForwarding>();
-        _statusLight = FindObjectOfType<NetworkStatusLight>();
         _gameManager = FindObjectOfType<GameManager>();
     }
 
@@ -36,8 +35,12 @@ public class MaroonNetworkManager : NetworkManager
             return;
         _listServer.ConnectToListServer();
         _networkDiscovery.StartDiscovery();
-        _statusLight.SetActive(true);
         _isStarted = true;
+    }
+
+    public bool IsActive()
+    {
+        return _isStarted;
     }
 
     public override void OnStartServer()
@@ -67,21 +70,32 @@ public class MaroonNetworkManager : NetworkManager
     public override void OnStopClient()
     {
         base.OnStopClient();
-        _gameManager.UnregisterNetworkPlayer();
         _networkDiscovery.StartDiscovery();
     }
 
     public override void OnClientConnect(NetworkConnection conn)
     {
         base.OnClientConnect(conn);
-
-        Transform playerTransform = _gameManager.GetPlayerTransform();
         
+        if(SceneManager.GetActiveScene().name.Contains("Laboratory"))
+            SendCreatePlayerMessage(conn);
+    }
+
+    public override void OnClientSceneChanged(NetworkConnection conn)
+    {
+        base.OnClientSceneChanged(conn);
+        
+        if(SceneManager.GetActiveScene().name.Contains("Laboratory"))
+            SendCreatePlayerMessage(conn);
+    }
+
+    private void SendCreatePlayerMessage(NetworkConnection conn)
+    {
         // you can send the message here, or wherever else you want
         CharacterSpawnMessage characterMessage = new CharacterSpawnMessage
         {
-            CharacterPosition = playerTransform.position,
-            CharacterRotation = playerTransform.rotation
+            CharacterPosition = _gameManager.GetPlayerPosition(),
+            CharacterRotation = _gameManager.GetPlayerRotation()
         };
 
         conn.Send(characterMessage);
