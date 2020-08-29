@@ -1,54 +1,203 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
   <!-- Head -->
   <head>
-
-    <!-- Meta -->
+  
+    <!-- Required meta tags -->
     <meta charset="utf-8" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
+    <link rel="stylesheet" href="style.css" />
 
     <!-- Title, icon -->
     <title>%UNITY_WEB_NAME%</title>
     <link rel="icon" type="image/png" href="images/favicon.png" />
 
-    <!-- CSS, scripts -->
-    <link rel="stylesheet" href="style.css" />
-    <script src="progress.js"></script>
-    <script src="%UNITY_WEBGL_LOADER_URL%"></script>
+    <!-- Scripts -->
     <script>
-      var gameInstance = UnityLoader.instantiate("gameContainer", "%UNITY_WEBGL_BUILD_URL%", {onProgress: UnityProgress});
+
+      // Progress Bar
+      function UnityProgress(gameInstance, progress)
+      {
+          if (!gameInstance.Module)
+              return;
+          
+          var row_progress    = document.getElementById('row-progress');
+          var row_game        = document.getElementById('row-game');
+          var progressbar     = document.getElementById('load-progressbar');
+          
+          progressbar.style.width = (100 * progress) + "%";
+
+          if (progress == 1)
+          {
+              row_progress.style.display = "none";
+              row_game.style.display = "flex";
+              enableFitGame();
+          }
+      }
+
+      // Fit Game Canvas
+      function fitGame()
+      {
+        // Elements
+        var target_col  = document.getElementById('target-game-size');
+        var container   = gameInstance.container;
+        var canvas      = gameInstance.Module.canvas;
+
+        // Reset
+        canvas.style.width = container.style.width = 0;
+        canvas.style.height = container.style.height = 0;
+        
+        // Get target width
+        var w = target_col.offsetWidth - 30;
+        var h = target_col.offsetHeight;
+
+        // Aspect ratio
+        var r_min_landscape = 21 / 8;
+        var r_min_portrait  = 1 / 1;
+
+        if (w / h > r_min_landscape)
+        {
+          w = Math.min(w, Math.ceil(h * r_min_landscape));
+        }
+
+        else if(w / h < r_min_portrait)
+        {
+          h = Math.min(h, Math.ceil(w / r_min_portrait));
+        }
+
+        container.style.width = canvas.style.width = w + "px";
+        container.style.height = canvas.style.height = h + "px";
+      }
+
+      function enableFitGame()
+      {
+        fitGame();
+        window.addEventListener('resize', fitGame);
+      }
+
+    </script>
+
+    <script src="%UNITY_WEBGL_LOADER_URL%"></script>
+
+    <script>
+      var gameInstance = UnityLoader.instantiate("gameContainer", "%UNITY_WEBGL_BUILD_URL%",
+                                                 {onProgress: UnityProgress});
     </script>
 
   </head>
-
+  
   <!-- Body -->
   <body>
+    <div class="container-fluid d-flex flex-column">
+      
+      <!-- Top bar -->
+      <div class="row" id="row-top">
 
-    <div class="webgl-content">
+        <div class="col-sm-8">
 
-      <div id="gameContainer" style="width: %UNITY_WIDTH%px; height: %UNITY_HEIGHT%px;  margin: auto;"></div>
+          <a class="btn" href="/">
+            <img src="vendor/bootstrap-icons/box-arrow-left.svg" />
+            <span>
+              Main page
+            </span>
+          </a>
 
-      <div class="footer">
-        <a class="button back" href="/">
-          <i class="material-icons">arrow_back</i>
-          <span>
-            Back to main page
-          </span>
-        </a>
-        <div class="button fullscreen" onclick="gameInstance.SetFullscreen(1)">
-          <i class="material-icons">fullscreen</i>
-          <span>
-            Fullscreen
-          </span>
+          <div class="btn middle-margin" onclick="gameInstance.SetFullscreen(1)">
+            <img src="vendor/bootstrap-icons/arrows-fullscreen.svg" />
+            <span>
+              Fullscreen
+            </span>
+          </div>
+
         </div>
-        <div class="webgl-logo">
-          <img src="images/logo.png" alt="Maroon" />
+
+        <div class="col-sm-4">
+
+          <div class="logo-top">
+            <img class="img-fluid" src="images/logo.png" alt="Maroon" />
+          </div>
+        
+        </div>
+            
+      </div>
+
+      <!-- Progress -->
+      <div class="row flex-grow-1" id="row-progress">
+        <div class="col d-flex justify-content-center align-items-center">
+
+          <div class="progress-wrapper">
+
+            <div class="d-flex align-items-center logo-text">
+              <div>
+                <img class="img-fluid" src="images/logo-progress.png" />
+              </div>
+  
+              <div class="flex-grow-1 text-center px-3">
+                <h3><span id="starttype"></span></h3>
+              </div>
+            </div>
+
+            <div class="progress">
+              <div id="load-progressbar" class="progress-bar progress-bar-striped progress-bar-animated bg-green"
+                   role="progressbar">
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Game -->
+      <div class="row flex-grow-1" id="row-game">
+        <div class="col" id="target-game-size">
+
+          <div id="gameContainer"></div>
+
         </div>
       </div>
 
     </div>
 
-  </body>
+    <!-- JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="vendor/jquery/jquery-3.5.1.slim.min.js"
+            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
+    </script>
+    <script src="vendor/popper-js/popper.min.js"
+            integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous">
+    </script>
+    <script src="vendor/bootstrap/js/bootstrap.min.js"
+            integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous">
+    </script>
+  
+    <!-- Typed.js -->
+    <script src="vendor/typed-js/typed.min.js"></script>
 
+    <!-- Scripts -->
+    <script>
+
+      // Init Typed
+      var typed = new Typed(
+          '#starttype',
+          {
+              strings: [
+                  "Loading",
+                  "Adjusting Gravity",
+                  "Transferring Experiment Data",
+                  "Aligning Laboratory Rooms",
+                  "Downloading Furniture"
+              ],
+              loop: true,
+              typeSpeed: 100
+          }
+      );
+
+    </script>
+  </body>
 </html>
