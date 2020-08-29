@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using GEAR.Localization;
+using Maroon.UI;
 using Mirror;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -19,9 +21,11 @@ public class MaroonNetworkManager : NetworkManager
     private MaroonNetworkDiscovery _networkDiscovery;
     private PortForwarding _upnp;
     private GameManager _gameManager;
+    private DialogueManager _dialogueManager;
 
     private bool _isStarted;
     private bool _activePortMapping;
+    private bool _tryClientConnect = true;
 
     public override void Awake()
     {
@@ -80,8 +84,27 @@ public class MaroonNetworkManager : NetworkManager
     public override void OnStartClient()
     {
         base.OnStartClient();
-        if(mode == NetworkManagerMode.ClientOnly)
+        if (mode == NetworkManagerMode.ClientOnly)
+        {
             _networkDiscovery.StopDiscovery();
+            _tryClientConnect = true;
+        }
+    }
+
+    public override void OnClientDisconnect(NetworkConnection conn)
+    {
+        base.OnClientDisconnect(conn);
+        if (_tryClientConnect)
+        {
+            //Connection attempt failed!
+            _tryClientConnect = false;
+            DisplayMessage("ClientConnectFail");
+        }
+        else
+        {
+            //Disconnected from host
+            DisplayMessage("ClientDisconnect");
+        }
     }
 
     public override void OnStopClient()
@@ -93,6 +116,7 @@ public class MaroonNetworkManager : NetworkManager
     public override void OnClientConnect(NetworkConnection conn)
     {
         base.OnClientConnect(conn);
+        _tryClientConnect = false;
         
         if(SceneManager.GetActiveScene().name.Contains("Laboratory"))
             SendCreatePlayerMessage(conn);
@@ -132,5 +156,17 @@ public class MaroonNetworkManager : NetworkManager
             _upnp.DeletePortMapping();
         }
         base.OnApplicationQuit();
+    }
+    
+    private void DisplayMessage(string messageKey)
+    {
+        if (_dialogueManager == null)
+            _dialogueManager = FindObjectOfType<DialogueManager>();
+
+        if (_dialogueManager == null)
+            return;
+
+        var message = LanguageManager.Instance.GetString(messageKey);
+        _dialogueManager.ShowMessage(message);
     }
 }

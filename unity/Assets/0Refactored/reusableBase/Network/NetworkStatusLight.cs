@@ -14,7 +14,6 @@ public class NetworkStatusLight : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("Scene newly loaded!");
         _light = lightObject.GetComponent<Light>();
         _ls = FindObjectOfType<ListServer>();
         
