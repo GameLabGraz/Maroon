@@ -88,7 +88,7 @@ public class MaroonNetworkDiscovery : NetworkDiscoveryBase<DiscoveryRequest, Dis
         response.uri = transport.ServerUri();
         response.name = _listServer.gameServerTitle;
         response.connectedPlayers = NetworkServer.connections.Count;
-        response.maximumPlayers = NetworkManager.singleton.maxConnections;
+        response.maximumPlayers = MaroonNetworkManager.Instance.maxConnections;
         
         return response;
     }

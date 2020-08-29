@@ -8,13 +8,6 @@ using Util;
 public class NetworkConnectTrigger : MonoBehaviour
 {
     [SerializeField] private NetworkScreen _screen;
-    
-    private MaroonNetworkManager _networkManager;
-
-    private void Start()
-    {
-        _networkManager = FindObjectOfType<MaroonNetworkManager>();
-    }
 
     private void OnTriggerStay(Collider other)
     {
@@ -23,7 +16,7 @@ public class NetworkConnectTrigger : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Return))
         {
-            _networkManager.StartMultiUser();
+            MaroonNetworkManager.Instance.StartMultiUser();
             //TODO: use language manager
             _screen.DisplayMessage("Go to the menu to join a network!");
         }

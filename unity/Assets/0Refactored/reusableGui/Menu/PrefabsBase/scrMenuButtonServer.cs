@@ -32,8 +32,8 @@ public class scrMenuButtonServer : MonoBehaviour
         joinButton.onClick.RemoveAllListeners();
         joinButton.onClick.AddListener(() =>
         {
-            NetworkManager.singleton.networkAddress = status.ip;
-            NetworkManager.singleton.StartClient();
+            MaroonNetworkManager.Instance.networkAddress = status.ip;
+            MaroonNetworkManager.Instance.StartClient();
             //TODO: better?
             FindObjectOfType<scrMenu>().CloseMenu();
         });

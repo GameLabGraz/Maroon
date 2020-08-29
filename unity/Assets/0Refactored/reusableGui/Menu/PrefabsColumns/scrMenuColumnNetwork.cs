@@ -7,7 +7,6 @@ using UnityEngine;
 public class scrMenuColumnNetwork : MonoBehaviour
 {
     private scrMenu _menu;
-    private MaroonNetworkManager _networkManager;
     
     [SerializeField] private GameObject ColumnJoin;
     
@@ -30,13 +29,12 @@ public class scrMenuColumnNetwork : MonoBehaviour
 
         //TODO better way?
         _menu = FindObjectOfType<scrMenu>();
-        _networkManager = FindObjectOfType<MaroonNetworkManager>();
-        _networkManager.StartMultiUser();
+        MaroonNetworkManager.Instance.StartMultiUser();
         
-        ButtonJoin.SetActive(_networkManager.mode == NetworkManagerMode.Offline);
-        ButtonHost.SetActive(_networkManager.mode == NetworkManagerMode.Offline);
-        ButtonLeaveClient.SetActive(_networkManager.mode == NetworkManagerMode.ClientOnly);
-        ButtonLeaveHost.SetActive(_networkManager.mode == NetworkManagerMode.Host);
+        ButtonJoin.SetActive(MaroonNetworkManager.Instance.mode == NetworkManagerMode.Offline);
+        ButtonHost.SetActive(MaroonNetworkManager.Instance.mode == NetworkManagerMode.Offline);
+        ButtonLeaveClient.SetActive(MaroonNetworkManager.Instance.mode == NetworkManagerMode.ClientOnly);
+        ButtonLeaveHost.SetActive(MaroonNetworkManager.Instance.mode == NetworkManagerMode.Host);
     }
 
     private void OnClickJoin()
@@ -48,19 +46,19 @@ public class scrMenuColumnNetwork : MonoBehaviour
     
     private void OnClickHost()
     {
-        _networkManager.StartHost();
+        MaroonNetworkManager.Instance.StartHost();
         _menu.CloseMenu();
     }
     
     private void OnClickLeaveClient()
     {
-        _networkManager.StopClient();
+        MaroonNetworkManager.Instance.StopClient();
         _menu.CloseMenu();
     }
     
     private void OnClickLeaveHost()
     {
-        _networkManager.StopHost();
+        MaroonNetworkManager.Instance.StopHost();
         _menu.CloseMenu();
     }
 }

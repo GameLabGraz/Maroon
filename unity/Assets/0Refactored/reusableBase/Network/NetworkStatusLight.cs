@@ -10,7 +10,6 @@ public class NetworkStatusLight : MonoBehaviour
     private Light _light;
 
     private ListServer _ls;
-    private MaroonNetworkManager _nm;
     
     // Start is called before the first frame update
     void Start()
@@ -18,14 +17,13 @@ public class NetworkStatusLight : MonoBehaviour
         Debug.Log("Scene newly loaded!");
         _light = lightObject.GetComponent<Light>();
         _ls = FindObjectOfType<ListServer>();
-        _nm = FindObjectOfType<MaroonNetworkManager>();
         
         InvokeRepeating(nameof(UpdateLightStatus), 0, 1);
     }
 
     private void UpdateLightStatus()
     {
-        lightObject.SetActive(_nm.IsActive());
+        lightObject.SetActive(MaroonNetworkManager.Instance.IsActive());
         if (NetworkClient.active && ClientScene.ready)
         {
             _light.color = Color.green;

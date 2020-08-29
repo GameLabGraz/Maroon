@@ -6,16 +6,10 @@ using UnityEngine;
 
 public class PortForwarding : MonoBehaviour
 {
-    private MaroonNetworkManager _networkManager;
     //public Text ipText;
     private NatDevice _foundDevice;
     private Mapping _createdMapping;
     private bool _activeMapping;
-
-    private void Start()
-    {
-        _networkManager = GetComponent<MaroonNetworkManager>();
-    }
 
     public async void SetupPortForwarding()
     {
@@ -30,7 +24,7 @@ public class PortForwarding : MonoBehaviour
             Debug.Log("Port Mapping created successfully using UPnP");
             _foundDevice = upnpDevice;
             _activeMapping = true;
-            _networkManager.PortsMapped();
+            MaroonNetworkManager.Instance.PortsMapped();
             return;
         }
         catch(NatDeviceNotFoundException e)
@@ -51,7 +45,7 @@ public class PortForwarding : MonoBehaviour
             Debug.Log("Port Mapping created successfully using PMP");
             _foundDevice = pmpDevice;
             _activeMapping = true;
-            _networkManager.PortsMapped();
+            MaroonNetworkManager.Instance.PortsMapped();
         }
         catch(NatDeviceNotFoundException e)
         {

@@ -12,6 +12,9 @@ public class CharacterSpawnMessage : MessageBase
 
 public class MaroonNetworkManager : NetworkManager
 {
+    [HideInInspector]
+    public static MaroonNetworkManager Instance = null;
+    
     private ListServer _listServer;
     private MaroonNetworkDiscovery _networkDiscovery;
     private PortForwarding _upnp;
@@ -19,7 +22,21 @@ public class MaroonNetworkManager : NetworkManager
 
     private bool _isStarted;
     private bool _activePortMapping;
-    
+
+    public override void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+        base.Awake();
+    }
+
     public override void Start()
     {
         base.Start();

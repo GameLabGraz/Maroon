@@ -112,7 +112,7 @@ public class ListServer : MonoBehaviour
 
         // create message
         writer.Write((ushort)NetworkServer.connections.Count);
-        writer.Write((ushort)NetworkManager.singleton.maxConnections);
+        writer.Write((ushort)MaroonNetworkManager.Instance.maxConnections);
         byte[] titleBytes = Encoding.UTF8.GetBytes(gameServerTitle);
         writer.Write((ushort)titleBytes.Length);
         writer.Write(titleBytes);
