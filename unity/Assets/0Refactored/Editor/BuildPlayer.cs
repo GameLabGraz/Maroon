@@ -20,6 +20,14 @@ namespace Maroon.Build
         private const string PcExtension = ".pc.unity";
         private const string VrExtension = ".vr.unity";
 
+        private struct PlayerSetOptions
+        {
+            public string BundleVersion;
+            public int DefaultScreenWidth;
+            public int DefaultScreenHeight;
+            public FullScreenMode FullScreenMode;
+        }
+
         private enum MaroonBuildTarget
         {
             PC,
@@ -98,7 +106,16 @@ namespace Maroon.Build
 
             Log($"Start building for {buildTarget} ...");
 
-            PlayerSettings.bundleVersion = DateTime.UtcNow.Date.ToString("yyyyMMdd");
+            var defaultPlayerSettings = GetPlayerSettings();
+
+            // Set PlayerSettings for Build
+            SetPlayerSettings(new PlayerSetOptions()
+            {
+                BundleVersion = DateTime.UtcNow.Date.ToString("yyyyMMdd"),
+                DefaultScreenWidth = 1920,
+                DefaultScreenHeight = 1080,
+                FullScreenMode = FullScreenMode.FullScreenWindow
+            });
 
             var buildPlayerOptions = new BuildPlayerOptions
             {
@@ -110,6 +127,9 @@ namespace Maroon.Build
 
             var report = BuildPipeline.BuildPlayer(buildPlayerOptions);
             HandleBuildResult(report.summary);
+
+            // Restore PlayerSettings for Editor
+            SetPlayerSettings(defaultPlayerSettings);
         }
 
         public static void JenkinsBuild()
@@ -227,6 +247,25 @@ namespace Maroon.Build
                 default:
                     throw new Exception("BuildPlayer: Unable to handle build result.");
             }
+        }
+
+        private static void SetPlayerSettings(PlayerSetOptions options)
+        {
+            PlayerSettings.bundleVersion = options.BundleVersion;
+            PlayerSettings.defaultScreenWidth = options.DefaultScreenWidth;
+            PlayerSettings.defaultScreenHeight = options.DefaultScreenHeight;
+            PlayerSettings.fullScreenMode = options.FullScreenMode;
+        }
+
+        private static PlayerSetOptions GetPlayerSettings()
+        {
+            return new PlayerSetOptions()
+            {
+                BundleVersion = PlayerSettings.bundleVersion,
+                DefaultScreenWidth = PlayerSettings.defaultScreenWidth,
+                DefaultScreenHeight = PlayerSettings.defaultScreenHeight,
+                FullScreenMode = PlayerSettings.fullScreenMode
+            };
         }
 
         private static void Log(string message)
