@@ -102,14 +102,23 @@ public class scrMenu : MonoBehaviour
 
     public void RemoveMenuColumn(GameObject column)
     {
-        Destroy(column);
+        DestroyImmediate(column);
+    }
+
+    public void RemoveRightmostMenuColumn()
+    {
+        int column_number = this.Columns.transform.childCount;
+        if(column_number > 1)
+        {
+            this.RemoveMenuColumn(this.Columns.GetChild(column_number - 1).gameObject);
+        }
     }
 
     public void RemoveAllMenuColumnsButFirst()
     {
         while(this.Columns.transform.childCount > 1)
         {
-            DestroyImmediate(this.Columns.GetChild(1).gameObject);
+            this.RemoveMenuColumn(this.Columns.GetChild(1).gameObject);
         }
     }
 }
