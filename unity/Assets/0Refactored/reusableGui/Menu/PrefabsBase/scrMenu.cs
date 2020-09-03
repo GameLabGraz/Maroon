@@ -8,9 +8,9 @@ public class scrMenu : MonoBehaviour
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Open/Close
 
-    [SerializeField] private bool OpenOnEsc = false;
+    [SerializeField] private bool EnableEscKey = false;
 
-    [SerializeField] private bool OpenOnStart = false;
+    [SerializeField] private bool EnableOnStart = false;
 
     [SerializeField] private bool RemoveExtraColumnsOnClose = true;
 
@@ -48,7 +48,7 @@ public class scrMenu : MonoBehaviour
         this.AddMenuColumn(MainColumn);
 
         // Open if selected
-        if(this.OpenOnStart)
+        if(this.EnableOnStart)
         {
             this.OpenMenu();
         }
@@ -60,7 +60,7 @@ public class scrMenu : MonoBehaviour
     // TODO use keymap instead of this
     public void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Escape))
+        if(Input.GetKeyDown(KeyCode.Escape) && this.EnableEscKey)
         {
             if(this.IsOpen)
             {   
