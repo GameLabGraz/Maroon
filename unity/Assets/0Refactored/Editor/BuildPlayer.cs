@@ -9,8 +9,11 @@ namespace Maroon.Build
 {
     public class BuildPlayer
     {
+        // #############################################################################################################
+        // Members
+
         private const string ScenePath      = "Assets/0Refactored/scenes";
-        private const string LabPath        = ScenePath + "/Laboratory";
+        private const string LabPath        = ScenePath + "/laboratory";
         private const string MenuPath       = ScenePath + "/menu";
         private const string ExperimentPath = ScenePath + "/experiments";
 
@@ -33,15 +36,20 @@ namespace Maroon.Build
             VR
         }
 
+        // #############################################################################################################
+        // Editor Build Methods
+
         [MenuItem("Build/Build All")]
         public static void BuildAll()
         {
             var buildPath = EditorUtility.SaveFolderPanel("Choose Build Location", string.Empty, "Build");
-            if (buildPath.Length == 0)
-                return;
 
-            foreach (var buildTarget in (MaroonBuildTarget[])Enum.GetValues(
-                typeof(MaroonBuildTarget)))
+            if (buildPath.Length == 0)
+            {
+                return;
+            }
+
+            foreach(var buildTarget in (MaroonBuildTarget[])Enum.GetValues(typeof(MaroonBuildTarget)))
             {
                 Build(buildTarget, $"{buildPath}/{buildTarget}");
             }
@@ -71,42 +79,30 @@ namespace Maroon.Build
             Build(MaroonBuildTarget.WebGL);
         }
 
-        public static void JenkinsBuild()
-        {
-            var args = Environment.GetCommandLineArgs();
-
-            var executeMethodIndex = Array.IndexOf(args, "-executeMethod");
-            if (executeMethodIndex + 2 >= args.Length)
-            {
-                Log("[JenkinsBuild] Incorrect Parameters for -executeMethod Format: -executeMethod <output dir>");
-                return;
-            }
-
-            //  args[executeMethodIndex + 1] = JenkinsBuild.Build
-            var buildPath = args[executeMethodIndex + 2];
-
-            // run build for each build target
-            foreach (var buildTarget in (MaroonBuildTarget[])Enum.GetValues(
-                typeof(MaroonBuildTarget)))
-            {
-                Build(buildTarget, $"{buildPath}/{buildTarget}");
-            }
-        }
+        // #############################################################################################################
+        // Build Methods
 
         private static void Build(MaroonBuildTarget buildTarget, string buildPath = null)
         {
-            if (string.IsNullOrEmpty(buildPath))
+            if(string.IsNullOrEmpty(buildPath))
             {
-                if (!UnityEditorInternal.InternalEditorUtility.isHumanControllingUs)
+                if(!UnityEditorInternal.InternalEditorUtility.isHumanControllingUs)
+                {
                     return;
+                }
 
                 buildPath = EditorUtility.SaveFolderPanel("Choose Build Location", "Build", $"{buildTarget}");
-                if (buildPath.Length == 0)
+
+                if(buildPath.Length == 0)
+                {
                     return;
+                }
             }
 
-            if (UnityEditorInternal.InternalEditorUtility.isHumanControllingUs)
+            if(UnityEditorInternal.InternalEditorUtility.isHumanControllingUs)
+            {
                 Debug.ClearDeveloperConsole();
+            }
 
             Log($"Start building for {buildTarget} ...");
 
@@ -136,6 +132,30 @@ namespace Maroon.Build
             SetPlayerSettings(defaultPlayerSettings);
         }
 
+        public static void JenkinsBuild()
+        {
+            var args = Environment.GetCommandLineArgs();
+
+            var executeMethodIndex = Array.IndexOf(args, "-executeMethod");
+            if (executeMethodIndex + 2 >= args.Length)
+            {
+                Log("[JenkinsBuild] Incorrect Parameters for -executeMethod Format: -executeMethod <output dir>");
+                return;
+            }
+
+            //  args[executeMethodIndex + 1] = JenkinsBuild.Build
+            var buildPath = args[executeMethodIndex + 2];
+
+            // run build for each build target
+            foreach(var buildTarget in (MaroonBuildTarget[])Enum.GetValues(typeof(MaroonBuildTarget)))
+            {
+                Build(buildTarget, $"{buildPath}/{buildTarget}");
+            }
+        }
+
+        // #############################################################################################################
+        // Helper Methods
+
         private static string[] GetScenes(MaroonBuildTarget buildTarget)
         {
             var sceneExtension = GetSceneExtension(buildTarget);
@@ -144,12 +164,15 @@ namespace Maroon.Build
                 Log($"BuildPlayer::GetScenes: Unable to load Scenes for {buildTarget}");
                 return null;
             }
+            
+            var scenes = new List<string>();
 
-            var scenes = new List<string>
+            // TODO: If VR Main Menu ready, remove if, just disables main menu for VR 
+            if(sceneExtension == PcExtension) 
             {
-                $"{LabPath}/Laboratory{sceneExtension}",
-                $"{MenuPath}/Menu.unity"
-            };
+                scenes.Add($"{MenuPath}/MainMenu{sceneExtension}");
+            }
+            scenes.Add($"{LabPath}/Laboratory{sceneExtension}");
 
             var experiments = Directory.GetFiles(ExperimentPath, $"*{sceneExtension}", SearchOption.AllDirectories);
             scenes.AddRange(experiments);
@@ -181,8 +204,9 @@ namespace Maroon.Build
                 case MaroonBuildTarget.MAC:
                     return "Maroon.app";
                 case MaroonBuildTarget.PC:
-                case MaroonBuildTarget.VR:
                     return "Maroon.exe";
+                case MaroonBuildTarget.VR:
+                    return "MaroonVR.exe";
                 default:
                     return "";
             }

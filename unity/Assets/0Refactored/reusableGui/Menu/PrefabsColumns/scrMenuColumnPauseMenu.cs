@@ -12,6 +12,10 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
 
     private float TimeScaleRestore = 1.0f;
 
+    [SerializeField] private Utilities.SceneField targetMainMenuScenePC;
+
+    [SerializeField] private Utilities.SceneField targetMainMenuSceneVR;
+
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Columns
 
@@ -81,7 +85,15 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
 
     private void OnClickMainMenu()
     {
-        //TODO
+        if(TargetPlatformDetector.isVRPlatform)
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene(this.targetMainMenuSceneVR);
+        }
+        
+        else
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene(this.targetMainMenuScenePC);
+        }
     }
 
     private void OnClickResume()
