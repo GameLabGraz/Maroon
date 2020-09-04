@@ -86,6 +86,10 @@ public class MaroonNetworkManager : NetworkManager
     public override void OnStartServer()
     {
         base.OnStartServer();
+        
+        MarkTakenServerNames();
+        _serverName = NetworkNamingService.GetNewServerName();
+        
         _networkDiscovery.AdvertiseServer();
         _upnp.SetupPortForwarding();
         NetworkServer.RegisterHandler<CharacterSpawnMessage>(OnCreateCharacter);
@@ -94,10 +98,22 @@ public class MaroonNetworkManager : NetworkManager
         SpawnSyncVars();
     }
 
+    public override void OnStopServer()
+    {
+        base.OnStopServer();
+        NetworkNamingService.FreeAllPlayerNames();
+        NetworkNamingService.FreeAllServerNames();
+        _activePortMapping = false;
+        _clientInControl = null;
+        _connectedPlayers.Clear();
+    }
+
     public override void OnServerDisconnect(NetworkConnection conn)
     {
         base.OnServerDisconnect(conn);
         string disconnectedPlayerName = _connectedPlayers.FirstOrDefault(x => x.Value == conn).Key;
+        if (disconnectedPlayerName == null)
+            return;
         if (disconnectedPlayerName == _clientInControl)
         {
             //Cannot use TakeControl because client already disconnected
@@ -105,6 +121,7 @@ public class MaroonNetworkManager : NetworkManager
             _clientInControl = _playerName;
         }
         _connectedPlayers.Remove(disconnectedPlayerName);
+        NetworkNamingService.FreePlayerName(disconnectedPlayerName);
     }
 
     public override void OnServerSceneChanged(string sceneName)
@@ -127,7 +144,6 @@ public class MaroonNetworkManager : NetworkManager
         playerObject.transform.position = message.CharacterPosition;
         playerObject.transform.rotation = message.CharacterRotation;
         
-        //TODO: Naming!!
         string playerName;
         if (_connectedPlayers.ContainsValue(conn))
         {
@@ -135,7 +151,11 @@ public class MaroonNetworkManager : NetworkManager
         }
         else
         {
-            playerName = "Player " + conn.connectionId;
+            playerName = NetworkNamingService.GetNewPlayerName();
+            if (playerName == "")
+            {
+                playerName = "Scientist " + conn.connectionId;
+            }
             _connectedPlayers[playerName] = conn;
         }
 
@@ -200,6 +220,14 @@ public class MaroonNetworkManager : NetworkManager
         NetworkServer.Spawn(syncVars);
     }
 
+    private void MarkTakenServerNames()
+    {
+        foreach (var server in _listServer.list.Values)
+        {
+            NetworkNamingService.ServerNameTaken(server.title);
+        }
+    }
+
     #endregion
 
     #region Client
@@ -207,7 +235,8 @@ public class MaroonNetworkManager : NetworkManager
     private bool _tryClientConnect = true;
     private bool _isInControl;
     private string _playerName;
-    
+    private string _serverName;
+
     public override void OnStartClient()
     {
         base.OnStartClient();
@@ -216,7 +245,6 @@ public class MaroonNetworkManager : NetworkManager
         {
             _networkDiscovery.StopDiscovery();
             _tryClientConnect = true;
-            _isInControl = false;
         }
     }
 
@@ -239,6 +267,9 @@ public class MaroonNetworkManager : NetworkManager
     public override void OnStopClient()
     {
         base.OnStopClient();
+        _playerName = null;
+        _isInControl = false;
+        _serverName = null;
         _networkDiscovery.StartDiscovery();
     }
 
@@ -277,6 +308,12 @@ public class MaroonNetworkManager : NetworkManager
     {
         get => _playerName;
         set => _playerName = value;
+    }
+
+    public string ServerName
+    {
+        get => _serverName;
+        set => _serverName = value;
     }
 
     private void OnNetworkControlMessage(NetworkConnection conn, NetworkControlMessage msg)

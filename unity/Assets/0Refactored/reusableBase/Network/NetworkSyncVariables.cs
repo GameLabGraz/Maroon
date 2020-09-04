@@ -13,9 +13,13 @@ public class NetworkSyncVariables : NetworkBehaviour
     public static NetworkSyncVariables Instance = null;
     
     // Start is called before the first frame update
-    [SyncVar] public string clientInControl;
+    [SyncVar] private string clientInControl;
     
-    public readonly SyncListNames connectedPlayers = new SyncListNames();
+    private readonly SyncListNames connectedPlayers = new SyncListNames();
+
+    public string ClientInControl => clientInControl;
+
+    public SyncListNames ConnectedPlayers => connectedPlayers;
 
     private void Awake()
     {

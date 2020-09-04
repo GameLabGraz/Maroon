@@ -43,7 +43,6 @@ public class ListServer : MonoBehaviour
     public string listServerIp = "127.0.0.1";
     public ushort gameServerToListenPort = 8887;
     public ushort clientToListenPort = 8888;
-    public string gameServerTitle = "Deathmatch";
 
     Telepathy.Client gameServerToListenConnection = new Telepathy.Client();
     Telepathy.Client clientToListenConnection = new Telepathy.Client();
@@ -53,21 +52,6 @@ public class ListServer : MonoBehaviour
     // update them more easily
     // (use "ip:port" if port is needed)
     public Dictionary<string, ServerStatus> list = new Dictionary<string, ServerStatus>();
-
-    void Start()
-    {
-        // examples
-        //list["127.0.0.1"] = new ServerStatus("127.0.0.1", "Deathmatch", 3, 10);
-        //list["192.168.0.1"] = new ServerStatus("192.168.0.1", "Free for all", 7, 10);
-        //list["172.217.22.3"] = new ServerStatus("172.217.22.3", "5vs5", 10, 10);
-        //list["172.217.16.142"] = new ServerStatus("172.217.16.142", "Hide & Seek Mod", 0, 10);
-
-        // Update once a second. no need to try to reconnect or read data
-        // in each Update call
-        // -> calling it more than 1/second would also cause significantly
-        //    more broadcasts in the list server.
-        // InvokeRepeating(nameof(Tick), 0, 1);
-    }
 
     public void ConnectToListServer()
     {
@@ -113,7 +97,7 @@ public class ListServer : MonoBehaviour
         // create message
         writer.Write((ushort)NetworkServer.connections.Count);
         writer.Write((ushort)MaroonNetworkManager.Instance.maxConnections);
-        byte[] titleBytes = Encoding.UTF8.GetBytes(gameServerTitle);
+        byte[] titleBytes = Encoding.UTF8.GetBytes(MaroonNetworkManager.Instance.ServerName);
         writer.Write((ushort)titleBytes.Length);
         writer.Write(titleBytes);
         writer.Flush();

@@ -20,7 +20,7 @@ public class scrMenuColumnNetworkControl : MonoBehaviour
 
     private void Start()
     {
-        foreach (var playerName in NetworkSyncVariables.Instance.connectedPlayers)
+        foreach (var playerName in NetworkSyncVariables.Instance.ConnectedPlayers)
         {
             AddPlayerButton(playerName);
         }
@@ -35,7 +35,7 @@ public class scrMenuColumnNetworkControl : MonoBehaviour
         new_button.GetComponentInChildren<LocalizedTMP>().enabled = false;
         new_button.GetComponentInChildren<TextMeshProUGUI>().text = playerName;
         var icon = new_button.transform.Find("IconContainer").Find("Icon").GetComponent<RawImage>();
-        if (playerName == NetworkSyncVariables.Instance.clientInControl)
+        if (playerName == MaroonNetworkManager.Instance.PlayerName)
         {
             new_button.GetComponent<Button>().interactable = false;
             icon.texture = TextureIconSelected;

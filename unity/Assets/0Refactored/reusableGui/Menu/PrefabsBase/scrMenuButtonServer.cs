@@ -34,6 +34,7 @@ public class scrMenuButtonServer : MonoBehaviour
         {
             MaroonNetworkManager.Instance.networkAddress = status.ip;
             MaroonNetworkManager.Instance.StartClient();
+            MaroonNetworkManager.Instance.ServerName = status.title;
             //TODO: better?
             FindObjectOfType<scrMenu>().CloseMenu();
         });
