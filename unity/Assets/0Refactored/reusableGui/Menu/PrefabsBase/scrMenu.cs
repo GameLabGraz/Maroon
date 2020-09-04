@@ -8,7 +8,9 @@ public class scrMenu : MonoBehaviour
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Open/Close
 
-    [SerializeField] private bool OpenOnEsc = false;
+    [SerializeField] private bool EnableEscKey = false;
+
+    [SerializeField] private bool EnableOnStart = false;
 
     [SerializeField] private bool RemoveExtraColumnsOnClose = true;
 
@@ -44,6 +46,12 @@ public class scrMenu : MonoBehaviour
 
         // Add main column of this menu (e.g. Pause Menu column)
         this.AddMenuColumn(MainColumn);
+
+        // Open if selected
+        if(this.EnableOnStart)
+        {
+            this.OpenMenu();
+        }
     }
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -52,7 +60,7 @@ public class scrMenu : MonoBehaviour
     // TODO use keymap instead of this
     public void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Escape))
+        if(Input.GetKeyDown(KeyCode.Escape) && this.EnableEscKey)
         {
             if(this.IsOpen)
             {   
@@ -94,14 +102,23 @@ public class scrMenu : MonoBehaviour
 
     public void RemoveMenuColumn(GameObject column)
     {
-        Destroy(column);
+        DestroyImmediate(column);
+    }
+
+    public void RemoveRightmostMenuColumn()
+    {
+        int column_number = this.Columns.transform.childCount;
+        if(column_number > 1)
+        {
+            this.RemoveMenuColumn(this.Columns.GetChild(column_number - 1).gameObject);
+        }
     }
 
     public void RemoveAllMenuColumnsButFirst()
     {
         while(this.Columns.transform.childCount > 1)
         {
-            DestroyImmediate(this.Columns.GetChild(1).gameObject);
+            this.RemoveMenuColumn(this.Columns.GetChild(1).gameObject);
         }
     }
     
