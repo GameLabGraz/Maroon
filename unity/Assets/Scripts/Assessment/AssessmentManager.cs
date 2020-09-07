@@ -16,6 +16,13 @@ using System.Threading.Tasks;
 
 namespace Maroon.Assessment
 {
+    [Serializable]
+    public enum AssessmentIntegrationMode
+    {
+        AntaresRemote,
+        AntaresLocal
+    }
+
     [RequireComponent(typeof(AssessmentFeedbackHandler))]
     public class AssessmentManager : MonoBehaviour
     {
@@ -48,10 +55,15 @@ namespace Maroon.Assessment
             public IResourceLoader CreateLoader(string uri) => new ResourceLoader(uri);
         }
         */
+
+        [SerializeField]
+        private AssessmentIntegrationMode mode;
+
+        [SerializeField]
+        private string antaresUrl = null; // TODO: remove default parameter
+
         [SerializeField]
         private string amlFile; // depricated amlUrl
-
-        private string antaresUrl = "wss://hui.maderer.at/antares/ws"; // TODO: get from parameter/default component setting
 
         [SerializeField] 
         private bool showDebugMessages = true;
@@ -117,6 +129,11 @@ namespace Maroon.Assessment
             _eventBuilder = null;
         }
 
+        private string GetAntaresUrl()
+        {
+            return AppParams.Instance["antares_connect"] ?? antaresUrl;
+        }
+
         private async Task ConnectToAssessmentSystem()
         {
             try
@@ -124,7 +141,14 @@ namespace Maroon.Assessment
                 if (showDebugMessages)
                     Debug.Log("AssessmentManager: Connecting to Assessment Service...");
 
-                _evalService = new AntaresClient(antaresUrl);
+                string url = GetAntaresUrl();
+                if(url == null)
+                {
+                    Debug.Log("AssessmentManager: Missing Antares URL configuration (expecting parameter or component configuration)");
+                    return;
+                }
+
+                _evalService = new AntaresClient(url);
                 _evalService.FeedbackReceived += delegate (object sender, FeedbackEventArgs args)
                 {
                     if (showDebugMessages)
