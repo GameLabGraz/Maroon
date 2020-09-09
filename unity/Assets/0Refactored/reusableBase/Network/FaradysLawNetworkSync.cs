@@ -220,26 +220,25 @@ public class FaradysLawNetworkSync : NetworkBehaviour
     }
 
     //MAGNET
+    private Vector3 _startPosition;
     private Vector3 _targetPosition;
-    private Vector3 _step;
+    private float _startTime;
     
     private void OnMagnetPositionChanged(Vector3 oldPosition, Vector3 newPosition)
     {
+        _startPosition = oldPosition;
         _targetPosition = newPosition;
-        _step = (_targetPosition - Magnet.transform.position) / (syncInterval / Time.deltaTime);
+        _startTime = Time.time;
     }
 
     private void Update()
     {
         if (!MaroonNetworkManager.Instance.IsInControl)
         {
-            if ((_targetPosition - Magnet.transform.position).magnitude > _step.magnitude)
+            if (Magnet.transform.position != _targetPosition)
             {
-                Magnet.transform.position += _step;
-            }
-            else
-            {
-                Magnet.transform.position = _targetPosition;
+                float t = syncInterval / (_startTime - Time.time);
+                Magnet.transform.position = Vector3.Lerp(_startPosition, _targetPosition, t);
             }
             return;
         }

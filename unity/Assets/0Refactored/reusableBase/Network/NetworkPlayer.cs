@@ -8,6 +8,7 @@ using UnityStandardAssets.Characters.FirstPerson;
 public class NetworkPlayer : NetworkBehaviour
 {
     public GameObject firstPersonCharacter;
+    public GameObject body;
 
     private CharacterController _cc;
     private AudioSource _as;
@@ -32,6 +33,8 @@ public class NetworkPlayer : NetworkBehaviour
             _cc.enabled = true;
             _as.enabled = true;
             _fpc.enabled = true;
+
+            body.SetActive(false);
             
             _gm.RegisterNetworkPlayer(gameObject);
         }

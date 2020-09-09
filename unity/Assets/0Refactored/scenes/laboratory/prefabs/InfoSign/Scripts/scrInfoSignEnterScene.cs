@@ -68,7 +68,7 @@ public class scrInfoSignEnterScene : MonoBehaviour
             if (!PlayerUtil.IsPlayer(other.gameObject))
                 return;
 
-            if (Input.GetKey(KeyCode.Return))
+            if (Input.GetKeyDown(KeyCode.Return))
                 this.EnterScene();
         }
     }
