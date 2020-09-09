@@ -6,6 +6,7 @@ using GEAR.Localization;
 using Maroon.UI;
 using Mirror;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 public class CharacterSpawnMessage : MessageBase
@@ -29,7 +30,14 @@ public class MaroonNetworkManager : NetworkManager
     [HideInInspector]
     public static MaroonNetworkManager Instance = null;
 
+    [Header("Maroon Network Manager")]
     public GameObject preNetworkSyncVars;
+    public GameObject experimentPlayer;
+
+    [HideInInspector]
+    public UnityEvent onGetControl;
+    [HideInInspector]
+    public UnityEvent onLoseControl;
     
     private ListServer _listServer;
     private MaroonNetworkDiscovery _networkDiscovery;
@@ -140,10 +148,18 @@ public class MaroonNetworkManager : NetworkManager
 
     private void OnCreateCharacter(NetworkConnection conn, CharacterSpawnMessage message)
     {
-        GameObject playerObject = Instantiate(playerPrefab);
-        playerObject.transform.position = message.CharacterPosition;
-        playerObject.transform.rotation = message.CharacterRotation;
-        
+        GameObject playerObject;
+        if (SceneManager.GetActiveScene().name.Contains("Laboratory"))
+        {
+            playerObject = Instantiate(playerPrefab);
+            playerObject.transform.position = message.CharacterPosition;
+            playerObject.transform.rotation = message.CharacterRotation;
+        }
+        else
+        {
+            playerObject = Instantiate(experimentPlayer);
+        }
+
         string playerName;
         if (_connectedPlayers.ContainsValue(conn))
         {
@@ -277,17 +293,13 @@ public class MaroonNetworkManager : NetworkManager
     {
         base.OnClientConnect(conn);
         _tryClientConnect = false;
-        
-        if(SceneManager.GetActiveScene().name.Contains("Laboratory"))
-            SendCreatePlayerMessage(conn);
+        SendCreatePlayerMessage(conn);
     }
 
     public override void OnClientSceneChanged(NetworkConnection conn)
     {
         base.OnClientSceneChanged(conn);
-        
-        if(SceneManager.GetActiveScene().name.Contains("Laboratory"))
-            SendCreatePlayerMessage(conn);
+        SendCreatePlayerMessage(conn);
     }
 
     private void SendCreatePlayerMessage(NetworkConnection conn)
@@ -319,7 +331,14 @@ public class MaroonNetworkManager : NetworkManager
     private void OnNetworkControlMessage(NetworkConnection conn, NetworkControlMessage msg)
     {
         _isInControl = msg.InControl;
-        //TODO: Here take care of what to do with control?
+        if (_isInControl)
+        {
+            onGetControl.Invoke();
+        }
+        else
+        {
+            onLoseControl.Invoke();
+        }
     }
     
     public void EnterScene(string sceneName)

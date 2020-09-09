@@ -19,6 +19,8 @@ public class NetworkPlayer : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (firstPersonCharacter == null) //not in Laboratory
+            return;
         _cc = GetComponent<CharacterController>();
         _as = GetComponent<AudioSource>();
         _fpc = GetComponent<FirstPersonController>();
@@ -52,6 +54,8 @@ public class NetworkPlayer : NetworkBehaviour
 
     private void OnDestroy()
     {
+        if (firstPersonCharacter == null) //not in Laboratory
+            return;
         if (isLocalPlayer)
         {
             _gm.UnregisterNetworkPlayer();
