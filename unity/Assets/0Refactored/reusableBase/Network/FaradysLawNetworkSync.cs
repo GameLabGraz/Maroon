@@ -67,6 +67,9 @@ public class FaradysLawNetworkSync : NetworkBehaviour
     private void Start()
     {
         //This is only executed if on a running Server!
+        SimulationController.Instance.onStartRunning.AddListener(OnSimulationStart);
+        SimulationController.Instance.onStopRunning.AddListener(OnSimulationStop);
+        
         _resetButton.onClick.AddListener(ResetButtonClicked);
         _playPauseButton.onClick.AddListener(PlayPauseButtonClicked);
         _stepForwardButton.onClick.AddListener(StepForwardButtonClicked);
@@ -176,6 +179,45 @@ public class FaradysLawNetworkSync : NetworkBehaviour
     #endregion
 
     #region InputHandlers
+    
+    //SIMULATION MIRRORING
+    public void OnSimulationStart()
+    {
+        if(MaroonNetworkManager.Instance.IsInControl)
+            CmdOnSimulationStart();
+    }
+
+    [Command(ignoreAuthority = true)]
+    public void CmdOnSimulationStart()
+    {
+        RpcOnSimulationStart();
+    }
+
+    [ClientRpc]
+    public void RpcOnSimulationStart()
+    {
+        if(!MaroonNetworkManager.Instance.IsInControl)
+            SimulationController.Instance.StartSimulation();
+    }
+    
+    public void OnSimulationStop()
+    {
+        if(MaroonNetworkManager.Instance.IsInControl)
+            CmdOnSimulationStop();
+    }
+
+    [Command(ignoreAuthority = true)]
+    public void CmdOnSimulationStop()
+    {
+        RpcOnSimulationStop();
+    }
+
+    [ClientRpc]
+    public void RpcOnSimulationStop()
+    {
+        if(!MaroonNetworkManager.Instance.IsInControl)
+            SimulationController.Instance.StopSimulation();
+    }
 
     //MAGNET
     private Vector3 _targetPosition;
@@ -184,7 +226,7 @@ public class FaradysLawNetworkSync : NetworkBehaviour
     private void OnMagnetPositionChanged(Vector3 oldPosition, Vector3 newPosition)
     {
         _targetPosition = newPosition;
-        _step = (_targetPosition - Magnet.transform.position) / (0.1f / Time.deltaTime); //0.1s is Update speed for SyncVar
+        _step = (_targetPosition - Magnet.transform.position) / (syncInterval / Time.deltaTime);
     }
 
     private void Update()
