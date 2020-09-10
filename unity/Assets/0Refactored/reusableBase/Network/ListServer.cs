@@ -46,7 +46,6 @@ public class ListServer : MonoBehaviour
 
     Telepathy.Client gameServerToListenConnection = new Telepathy.Client();
     Telepathy.Client clientToListenConnection = new Telepathy.Client();
-    private bool portsMapped = false;
 
     // all the servers, stored as dict with unique ip key so we can
     // update them more easily
@@ -80,7 +79,7 @@ public class ListServer : MonoBehaviour
     // should we use the game server to listen connection?
     bool UseGameServerToListen()
     {
-        return NetworkServer.active && portsMapped;
+        return NetworkServer.active && MaroonNetworkManager.Instance.PortsMapped;
     }
 
     void Tick()
@@ -225,19 +224,7 @@ public class ListServer : MonoBehaviour
 
     public bool GetListServerStatus()
     {
-        if (clientToListenConnection.Connected)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    
-
-    public void PortMappingSuccessfull()
-    {
-        portsMapped = true;
+        return clientToListenConnection.Connected || gameServerToListenConnection.Connected;
     }
 
     // disconnect everything when pressing Stop in the Editor

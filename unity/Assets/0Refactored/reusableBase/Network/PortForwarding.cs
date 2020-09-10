@@ -26,19 +26,18 @@ public class PortForwarding : MonoBehaviour
             var upnpDevice = await discoverer.DiscoverDeviceAsync(PortMapper.Upnp, cts);
             await upnpDevice.CreatePortMapAsync(_createdMapping);
             //Debug.Log("Port Mapping created successfully using UPnP");
-            DisplayMessage("PortMappingSuccess");
             _foundDevice = upnpDevice;
             _activeMapping = true;
-            MaroonNetworkManager.Instance.PortsMapped();
+            MaroonNetworkManager.Instance.PortsMapped = true;
             return;
         }
         catch(NatDeviceNotFoundException e)
         {
-            //Debug.Log("Open.NAT wasn't able to find a UpnP device ;(");
+            // Doesn't matter, try PMP
         }
         catch(MappingException me)
         {
-            //Debug.Log("Port Mapping could not be created using UPnP");
+            // Doesn't matter, try PMP
         }
         
         //Upnp mapping didn't work, try PMP
@@ -48,20 +47,17 @@ public class PortForwarding : MonoBehaviour
             var pmpDevice = await discoverer.DiscoverDeviceAsync(PortMapper.Upnp, cts);
             await pmpDevice.CreatePortMapAsync(_createdMapping);
             //Debug.Log("Port Mapping created successfully using PMP");
-            DisplayMessage("PortMappingSuccess");
             _foundDevice = pmpDevice;
             _activeMapping = true;
-            MaroonNetworkManager.Instance.PortsMapped();
+            MaroonNetworkManager.Instance.PortsMapped = true;
         }
         catch(NatDeviceNotFoundException e)
         {
-            //Debug.Log("Open.NAT wasn't able to find a PMP device ;(");
-            DisplayMessage("PortMappingFail");
+            MaroonNetworkManager.Instance.PortsMapped = false;
         }
         catch(MappingException me)
         {
-            //Debug.Log("Port Mapping could not be created using PMP");
-            DisplayMessage("PortMappingFail");
+            MaroonNetworkManager.Instance.PortsMapped = false;
         }
     }
 
@@ -71,17 +67,5 @@ public class PortForwarding : MonoBehaviour
             return;
         await _foundDevice.DeletePortMapAsync(_createdMapping);
         //Debug.Log("Mapping deleted");
-    }
-
-    private void DisplayMessage(string messageKey)
-    {
-        if (_dialogueManager == null)
-            _dialogueManager = FindObjectOfType<DialogueManager>();
-
-        if (_dialogueManager == null)
-            return;
-
-        var message = LanguageManager.Instance.GetString(messageKey);
-        _dialogueManager.ShowMessage(message);
     }
 }

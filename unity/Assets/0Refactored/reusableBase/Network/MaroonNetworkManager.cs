@@ -187,12 +187,26 @@ public class MaroonNetworkManager : NetworkManager
             ServerChangeScene(msg.SceneName);
         }
     }
-    
-    public void PortsMapped()
+
+    public bool PortsMapped
     {
-        //TODO: Manual Port Mapping
-        _activePortMapping = true;
-        _listServer.PortMappingSuccessfull();
+        get => _activePortMapping;
+        set
+        {
+            _activePortMapping = value;
+            if (!value)
+            {
+                DisplayMessage("PortMappingFail");
+            }
+            else if (!_listServer.GetListServerStatus())
+            {
+                DisplayMessage("ListServerFail");
+            }
+            else
+            {
+                DisplayMessage("PortMappingSuccess");
+            }
+        }
     }
 
     public string GetClientInControl()
@@ -359,7 +373,7 @@ public class MaroonNetworkManager : NetworkManager
             }
             else
             {
-                //TODO: This only works in Lab!
+                //TODO: Special case Main Menu
                 DisplayMessage("ChangeSceneDenial");
             }
         }
