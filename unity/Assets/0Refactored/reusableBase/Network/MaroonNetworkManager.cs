@@ -333,7 +333,11 @@ public class MaroonNetworkManager : NetworkManager
     public string PlayerName
     {
         get => _playerName;
-        set => _playerName = value;
+        set
+        {
+            _playerName = value;
+            DisplayWelcomeMessage(value, _serverName);
+        }
     }
 
     public string ServerName
@@ -399,6 +403,22 @@ public class MaroonNetworkManager : NetworkManager
             return;
 
         var message = LanguageManager.Instance.GetString(messageKey);
+        _dialogueManager.ShowMessage(message);
+    }
+
+    private void DisplayWelcomeMessage(string playerName, string serverName)
+    {
+        if (_dialogueManager == null)
+            _dialogueManager = FindObjectOfType<DialogueManager>();
+
+        if (_dialogueManager == null)
+            return;
+
+        string message = LanguageManager.Instance.GetString("WelcomeMessage1") + " " + playerName +
+                         "! ";
+        message += LanguageManager.Instance.GetString("WelcomeMessage2") + " " + serverName +
+                   "!";
+        
         _dialogueManager.ShowMessage(message);
     }
 }

@@ -79,7 +79,7 @@ public class ListServer : MonoBehaviour
     // should we use the game server to listen connection?
     bool UseGameServerToListen()
     {
-        return NetworkServer.active && MaroonNetworkManager.Instance.PortsMapped;
+        return NetworkServer.active;
     }
 
     void Tick()
@@ -118,7 +118,8 @@ public class ListServer : MonoBehaviour
             // connected yet?
             if (gameServerToListenConnection.Connected)
             {
-                SendStatus();
+                if(MaroonNetworkManager.Instance.PortsMapped)
+                    SendStatus();
             }
             // otherwise try to connect
             // (we may have just started the game)

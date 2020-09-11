@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using GEAR.Localization;
 using Mirror;
 using TMPro;
 using UnityEngine;
@@ -28,7 +29,8 @@ public class NetworkStatusStation : MonoBehaviour
 
         if (!MaroonNetworkManager.Instance.IsActive())
         {
-            DisplayMessage("Go to the menu to connect to a server or host your own one.");
+            string msg = LanguageManager.Instance.GetString("ScreenHostJoin");
+            DisplayMessage(msg);
             return;
         }
 
@@ -45,12 +47,13 @@ public class NetworkStatusStation : MonoBehaviour
         {
             if (listServerConnected)
             {
-                DisplayMessage("Go to the menu to connect to a server or host your own one.");
-                statusLight.color = Color.yellow;
+                string msg = LanguageManager.Instance.GetString("ScreenHostJoin");
+                DisplayMessage(msg);
             }
             else
             {
-                DisplayMessage("Could not connect to the list server.\nYou can still host or join a local game.");
+                string msg = LanguageManager.Instance.GetString("ScreenNoListServerJoin");
+                DisplayMessage(msg);
                 statusLight.color = Color.red;
             }
         }
@@ -63,14 +66,14 @@ public class NetworkStatusStation : MonoBehaviour
             }
             else if (portsMapped) //List server not connected
             {
-                DisplayMessage("Could not connect to the list server.\nUsers can still join you locally.");
+                string msg = LanguageManager.Instance.GetString("ScreenNoListServerHost");
+                DisplayMessage(msg);
                 statusLight.color = Color.cyan;
             }
             else //Ports not mapped
             {
-                DisplayMessage("Ports could not be automatically forwarded, but <color=#800000>other users can still join you locally</color>.\n" +
-                               "Please let another user host the server or contact your system administrator to manually forward the ports.\n" +
-                               "When the ports have been mapped manually, you can enable the server over the menu.");
+                string msg = LanguageManager.Instance.GetString("ScreenNoPortsMapped");
+                DisplayMessage(msg);
                 statusLight.color = Color.cyan;
             }
         }
@@ -79,15 +82,15 @@ public class NetworkStatusStation : MonoBehaviour
     private void DisplayOnlineInformation()
     {
         string information = "";
-        information += "Hello <color=#800000>" + MaroonNetworkManager.Instance.PlayerName + "</color>!\n";
-        information += "You are on the server <color=#800000>" + MaroonNetworkManager.Instance.ServerName + "</color>.\n";
+        information += LanguageManager.Instance.GetString("OnlineInformation1") + " <color=#800000>" + MaroonNetworkManager.Instance.PlayerName + "</color>!\n";
+        information += LanguageManager.Instance.GetString("OnlineInformation2") + " <color=#800000>" + MaroonNetworkManager.Instance.ServerName + "</color>.\n";
         if (MaroonNetworkManager.Instance.IsInControl)
         {
-            information += "<color=#800000>You</color> are currently in control!";
+            information += LanguageManager.Instance.GetString("OnlineInformation3");
         }
         else
         {
-            information += "<color=#800000>" + MaroonNetworkManager.Instance.GetClientInControl() + "</color> is currently in control.";
+            information += "<color=#800000>" + MaroonNetworkManager.Instance.GetClientInControl() + "</color> " + LanguageManager.Instance.GetString("OnlineInformation4");
         }
         DisplayMessage(information);
     }

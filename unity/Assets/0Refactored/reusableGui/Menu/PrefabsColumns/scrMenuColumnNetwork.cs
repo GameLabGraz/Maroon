@@ -25,6 +25,8 @@ public class scrMenuColumnNetwork : MonoBehaviour
     
     [SerializeField] private GameObject ButtonLeaveHost;
     
+    [SerializeField] private GameObject ButtonPortsMapped;
+    
     void Start()
     {
         // Link button actions
@@ -34,6 +36,7 @@ public class scrMenuColumnNetwork : MonoBehaviour
         this.ButtonGrantControl.GetComponent<Button>().onClick.AddListener(() => this.OnClickGrantControl());
         this.ButtonLeaveClient.GetComponent<Button>().onClick.AddListener(() => this.OnClickLeaveClient());
         this.ButtonLeaveHost.GetComponent<Button>().onClick.AddListener(() => this.OnClickLeaveHost());
+        this.ButtonPortsMapped.GetComponent<Button>().onClick.AddListener(() => this.OnClickPortsMapped());
 
         //TODO better way?
         _menu = FindObjectOfType<scrMenu>();
@@ -45,6 +48,7 @@ public class scrMenuColumnNetwork : MonoBehaviour
         ButtonGrantControl.SetActive(MaroonNetworkManager.Instance.IsInControl && NetworkClient.active);
         ButtonLeaveClient.SetActive(MaroonNetworkManager.Instance.mode == NetworkManagerMode.ClientOnly);
         ButtonLeaveHost.SetActive(MaroonNetworkManager.Instance.mode == NetworkManagerMode.Host);
+        ButtonPortsMapped.SetActive(MaroonNetworkManager.Instance.mode == NetworkManagerMode.Host && !MaroonNetworkManager.Instance.PortsMapped);
     }
 
     private void OnClickJoin()
@@ -82,6 +86,12 @@ public class scrMenuColumnNetwork : MonoBehaviour
     private void OnClickLeaveHost()
     {
         MaroonNetworkManager.Instance.StopHost();
+        _menu.CloseMenu();
+    }
+
+    private void OnClickPortsMapped()
+    {
+        MaroonNetworkManager.Instance.PortsMapped = true;
         _menu.CloseMenu();
     }
 }
