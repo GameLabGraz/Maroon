@@ -22,8 +22,6 @@ public class scrMenuColumnMainMenu : MonoBehaviour
 
     [SerializeField] private GameObject ColumnLanguage;
 
-    [SerializeField] private GameObject ColumnNetwork;
-
     [SerializeField] private GameObject ColumnCredits;
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -34,8 +32,6 @@ public class scrMenuColumnMainMenu : MonoBehaviour
     [SerializeField] private GameObject ButtonAudio;
 
     [SerializeField] private GameObject ButtonLanguage;
-
-    [SerializeField] private GameObject ButtonNetwork;
 
     [SerializeField] private GameObject ButtonCredits;
 
@@ -54,7 +50,6 @@ public class scrMenuColumnMainMenu : MonoBehaviour
         this.ButtonLab.GetComponent<Button>().onClick.AddListener(() => this.OnClickLab());
         this.ButtonAudio.GetComponent<Button>().onClick.AddListener(() => this.OnClickAudio());
         this.ButtonLanguage.GetComponent<Button>().onClick.AddListener(() => this.OnClickLanguage());
-        this.ButtonNetwork.GetComponent<Button>().onClick.AddListener(() => this.OnClickNetwork());
         this.ButtonCredits.GetComponent<Button>().onClick.AddListener(() => this.OnClickCredits());
         this.ButtonExit.GetComponent<Button>().onClick.AddListener(() => this.OnClickExit());
     }
@@ -100,14 +95,6 @@ public class scrMenuColumnMainMenu : MonoBehaviour
         this.SetButtonActiveIcon(this.ButtonLanguage);
     }
 
-    private void OnClickNetwork()
-    {
-        this.Menu.RemoveAllMenuColumnsButFirst();
-        this.Menu.AddMenuColumn(this.ColumnNetwork);
-        this.ClearButtonActiveIcons();
-        this.SetButtonActiveIcon(this.ButtonNetwork);
-    }
-
     private void OnClickCredits()
     {
         this.Menu.RemoveAllMenuColumnsButFirst();
@@ -126,7 +113,6 @@ public class scrMenuColumnMainMenu : MonoBehaviour
         Color clr = Color.clear;
         this.ButtonAudio.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;
         this.ButtonLanguage.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;
-        this.ButtonNetwork.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;
         this.ButtonCredits.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;
     }
 

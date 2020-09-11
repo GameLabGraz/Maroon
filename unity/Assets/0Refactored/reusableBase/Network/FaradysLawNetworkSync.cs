@@ -71,7 +71,7 @@ public class FaradysLawNetworkSync : NetworkBehaviour
         SimulationController.Instance.onStopRunning.AddListener(OnSimulationStop);
         
         _resetButton.onClick.AddListener(ResetButtonClicked);
-        _playPauseButton.onClick.AddListener(PlayPauseButtonClicked);
+        //Play Pause Button already Mirrored with Simulation Mirroring!
         _stepForwardButton.onClick.AddListener(StepForwardButtonClicked);
         
         _ringResistanceSlider.onValueChanged.AddListener(RingResistanceSliderChanged);
@@ -274,30 +274,6 @@ public class FaradysLawNetworkSync : NetworkBehaviour
         if (!MaroonNetworkManager.Instance.IsInControl)
         {
             _resetButton.onClick.Invoke();
-            OnLoseControl();
-        }
-    }
-
-    //PLAY PAUSE BUTTON
-    private void PlayPauseButtonClicked()
-    {
-        if(MaroonNetworkManager.Instance.IsInControl)
-            CmdPlayPauseButtonClicked();
-    }
-    
-    [Command(ignoreAuthority = true)]
-    private void CmdPlayPauseButtonClicked()
-    {
-        RpcPlayPauseButtonClicked();
-    }
-
-    [ClientRpc]
-    private void RpcPlayPauseButtonClicked()
-    {
-        //If in Control: Already executed it!
-        if (!MaroonNetworkManager.Instance.IsInControl)
-        {
-            _playPauseButton.onClick.Invoke();
             OnLoseControl();
         }
     }

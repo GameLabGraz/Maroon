@@ -103,6 +103,7 @@ public class MaroonNetworkManager : NetworkManager
         NetworkServer.RegisterHandler<CharacterSpawnMessage>(OnCreateCharacter);
         NetworkServer.RegisterHandler<ChangeSceneMessage>(OnChangeSceneMessage);
         _isInControl = true;
+        onGetControl.Invoke();
         SpawnSyncVars();
     }
 
@@ -367,6 +368,11 @@ public class MaroonNetworkManager : NetworkManager
         }
         else
         {
+            if (sceneName.Contains("Menu"))
+            {
+                DisplayMessage("MainMenuDenial");
+                return;
+            }
             if (_isInControl)
             {
                 ChangeSceneMessage msg = new ChangeSceneMessage
@@ -377,8 +383,7 @@ public class MaroonNetworkManager : NetworkManager
             }
             else
             {
-                //TODO: Special case Main Menu
-                DisplayMessage("ChangeSceneDenial");
+                DisplayMessage("ControlDenial");
             }
         }
     }

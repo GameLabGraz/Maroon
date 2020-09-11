@@ -2,20 +2,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using Mirror;
+using TMPro;
 using UnityEngine;
 using UnityStandardAssets.Characters.FirstPerson;
 
 public class NetworkPlayer : NetworkBehaviour
 {
-    public GameObject firstPersonCharacter;
-    public GameObject body;
+    [SerializeField] private GameObject firstPersonCharacter;
+    [SerializeField] private GameObject body;
+    [SerializeField] private GameObject colouredBody;
+    [SerializeField] private TextMeshProUGUI playerNameText;
 
     private CharacterController _cc;
     private AudioSource _as;
     private FirstPersonController _fpc;
     private GameManager _gm;
 
-    [SyncVar] private string _name;
+    private Color _noControlColor = new Color(0.5f, 0, 0);
+    private Color _inControlColor = new Color(0, 0.5f, 0);
+
+    [SyncVar(hook = "OnChangeName")] private string _name;
     
     // Start is called before the first frame update
     void Start()
@@ -38,6 +44,10 @@ public class NetworkPlayer : NetworkBehaviour
             
             _gm.RegisterNetworkPlayer(gameObject);
         }
+        else
+        {
+            InvokeRepeating(nameof(UpdateControlColor), 0, 0.5f);
+        }
     }
 
     private void Update()
@@ -47,6 +57,38 @@ public class NetworkPlayer : NetworkBehaviour
         if (MaroonNetworkManager.Instance.PlayerName == null && _name != null)
         {
             MaroonNetworkManager.Instance.PlayerName = _name;
+        }
+    }
+
+    private void OnChangeName(string oldName, string newName)
+    {
+        if (isLocalPlayer)
+        {
+            MaroonNetworkManager.Instance.PlayerName = newName;
+        }
+        else if(firstPersonCharacter != null) //in Laboratory
+        {
+            playerNameText.text = newName;
+        }
+    }
+
+    private void UpdateControlColor()
+    {
+        if (_name == NetworkSyncVariables.Instance.ClientInControl)
+        {
+            SetColor(_inControlColor);
+        }
+        else
+        {
+            SetColor(_noControlColor);
+        }
+    }
+
+    private void SetColor(Color color)
+    {
+        foreach (var rend in colouredBody.GetComponentsInChildren<Renderer>())
+        {
+            rend.material.color = color;
         }
     }
 

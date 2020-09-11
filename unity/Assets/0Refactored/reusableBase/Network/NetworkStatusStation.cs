@@ -90,7 +90,7 @@ public class NetworkStatusStation : MonoBehaviour
         }
         else
         {
-            information += "<color=#800000>" + MaroonNetworkManager.Instance.GetClientInControl() + "</color> " + LanguageManager.Instance.GetString("OnlineInformation4");
+            information += "<color=#800000>" + NetworkSyncVariables.Instance.ClientInControl + "</color> " + LanguageManager.Instance.GetString("OnlineInformation4");
         }
         DisplayMessage(information);
     }
