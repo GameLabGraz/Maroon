@@ -123,6 +123,7 @@ public class MaroonNetworkManager : NetworkManager
         NetworkServer.RegisterHandler<ChangeSceneMessage>(OnChangeSceneMessage);
         IsInControl = true;
         SpawnSyncVars();
+        networkSceneName = onlineScene; // to make sure that Manager has Scene Control!
     }
 
     public override void OnStopServer()
