@@ -31,8 +31,10 @@ public class MaroonNetworkManager : NetworkManager
     public static MaroonNetworkManager Instance = null;
 
     [Header("Maroon Network Manager")]
-    public GameObject preNetworkSyncVars;
-    public GameObject experimentPlayer;
+    [SerializeField] private GameObject preNetworkSyncVars;
+    [SerializeField] private GameObject experimentPlayer;
+    [Scene]
+    [SerializeField] private List<string> networkEnabledExperiments;
 
     [HideInInspector]
     public UnityEvent onGetControl;
@@ -69,6 +71,8 @@ public class MaroonNetworkManager : NetworkManager
         _networkDiscovery = GetComponent<MaroonNetworkDiscovery>();
         _upnp = GetComponent<PortForwarding>();
         _gameManager = FindObjectOfType<GameManager>();
+
+        SceneManager.sceneLoaded += OnSceneFinishedLoading;
     }
 
     public void StartMultiUser()
@@ -85,11 +89,26 @@ public class MaroonNetworkManager : NetworkManager
         return _isStarted;
     }
 
+    private bool CheckSceneValid(string sceneName)
+    {
+        if (onlineScene.Contains(sceneName))
+            return true;
+
+        foreach (var enabledScene in networkEnabledExperiments)
+        {
+            if (enabledScene.Contains(sceneName))
+                return true;
+        }
+
+        return false;
+    }
+
     #region Server
 
     private bool _activePortMapping;
     private string _clientInControl;
     private Dictionary<string, NetworkConnection> _connectedPlayers = new Dictionary<string, NetworkConnection>();
+    private Dictionary<NetworkConnection, NetworkPlayer> _connectedPlayerObjects = new Dictionary<NetworkConnection, NetworkPlayer>();
     
     public override void OnStartServer()
     {
@@ -102,8 +121,7 @@ public class MaroonNetworkManager : NetworkManager
         _upnp.SetupPortForwarding();
         NetworkServer.RegisterHandler<CharacterSpawnMessage>(OnCreateCharacter);
         NetworkServer.RegisterHandler<ChangeSceneMessage>(OnChangeSceneMessage);
-        _isInControl = true;
-        onGetControl.Invoke();
+        IsInControl = true;
         SpawnSyncVars();
     }
 
@@ -117,6 +135,16 @@ public class MaroonNetworkManager : NetworkManager
         _connectedPlayers.Clear();
     }
 
+    public override void OnServerConnect(NetworkConnection conn)
+    {
+        base.OnServerConnect(conn);
+        if (!SceneManager.GetActiveScene().name.Contains("Laboratory"))
+        {
+            //Connection only possible when in Laboratory
+            conn.Disconnect();
+        }
+    }
+
     public override void OnServerDisconnect(NetworkConnection conn)
     {
         base.OnServerDisconnect(conn);
@@ -126,7 +154,7 @@ public class MaroonNetworkManager : NetworkManager
         if (disconnectedPlayerName == _clientInControl)
         {
             //Cannot use TakeControl because client already disconnected
-            _isInControl = true;
+            IsInControl = true;
             _clientInControl = _playerName;
         }
         _connectedPlayers.Remove(disconnectedPlayerName);
@@ -149,6 +177,9 @@ public class MaroonNetworkManager : NetworkManager
 
     private void OnCreateCharacter(NetworkConnection conn, CharacterSpawnMessage message)
     {
+        if (_connectedPlayerObjects.ContainsKey(conn)) //already created a player object for this connection!
+            return;
+        
         GameObject playerObject;
         if (SceneManager.GetActiveScene().name.Contains("Laboratory"))
         {
@@ -176,14 +207,21 @@ public class MaroonNetworkManager : NetworkManager
             _connectedPlayers[playerName] = conn;
         }
 
-        playerObject.GetComponent<NetworkPlayer>().SetName(playerName);
+        NetworkPlayer networkPlayer = playerObject.GetComponent<NetworkPlayer>();
+        networkPlayer.SetName(playerName);
 
+        _connectedPlayerObjects[conn] = networkPlayer;
         NetworkServer.AddPlayerForConnection(conn, playerObject);
+    }
+
+    public void RemovePlayerForConnection(NetworkConnection conn)
+    {
+        _connectedPlayerObjects.Remove(conn);
     }
 
     private void OnChangeSceneMessage(NetworkConnection conn, ChangeSceneMessage msg)
     {
-        if (conn == _connectedPlayers[GetClientInControl()])
+        if (conn == _connectedPlayers[GetClientInControl()] && CheckSceneValid(msg.SceneName))
         {
             ServerChangeScene(msg.SceneName);
         }
@@ -240,7 +278,7 @@ public class MaroonNetworkManager : NetworkManager
 
     public void TakeControl()
     {
-        if (!(mode == NetworkManagerMode.Host))
+        if (mode != NetworkManagerMode.Host)
             return;
         ServerGrantControl(_playerName);
     }
@@ -264,9 +302,11 @@ public class MaroonNetworkManager : NetworkManager
     #region Client
 
     private bool _tryClientConnect = true;
+    private bool _hasLoadedSceneOnce;
     private bool _isInControl;
     private string _playerName;
     private string _serverName;
+    private List<string> _messagesForNextScene = new List<string>();
 
     public override void OnStartClient()
     {
@@ -276,6 +316,7 @@ public class MaroonNetworkManager : NetworkManager
         {
             _networkDiscovery.StopDiscovery();
             _tryClientConnect = true;
+            _hasLoadedSceneOnce = false;
         }
     }
 
@@ -286,12 +327,16 @@ public class MaroonNetworkManager : NetworkManager
         {
             //Connection attempt failed!
             _tryClientConnect = false;
-            DisplayMessage("ClientConnectFail");
+            _messagesForNextScene.Add("ClientConnectFail");
+        }
+        else if (_hasLoadedSceneOnce)
+        {
+            //Disconnected from host
+            _messagesForNextScene.Add("ClientDisconnect");
         }
         else
         {
-            //Disconnected from host
-            DisplayMessage("ClientDisconnect");
+            _messagesForNextScene.Add("ServerInExperiment");
         }
     }
 
@@ -299,9 +344,10 @@ public class MaroonNetworkManager : NetworkManager
     {
         base.OnStopClient();
         _playerName = null;
-        _isInControl = false;
+        IsInControl = false;
         _serverName = null;
         _networkDiscovery.StartDiscovery();
+        SceneManager.LoadScene(onlineScene);
     }
 
     public override void OnClientConnect(NetworkConnection conn)
@@ -313,8 +359,17 @@ public class MaroonNetworkManager : NetworkManager
 
     public override void OnClientSceneChanged(NetworkConnection conn)
     {
+        _hasLoadedSceneOnce = true;
         base.OnClientSceneChanged(conn);
         SendCreatePlayerMessage(conn);
+        if (_isInControl)
+        {
+            onGetControl.Invoke();
+        }
+        else
+        {
+            onLoseControl.Invoke();
+        }
     }
 
     private void SendCreatePlayerMessage(NetworkConnection conn)
@@ -328,8 +383,32 @@ public class MaroonNetworkManager : NetworkManager
 
         conn.Send(characterMessage);
     }
+    
+    void OnSceneFinishedLoading(Scene scene, LoadSceneMode lsmode)
+    {
+        foreach (var key in _messagesForNextScene)
+        {
+            DisplayMessage(key);
+        }
+        _messagesForNextScene.Clear();
+    }
 
-    public bool IsInControl => _isInControl;
+    public bool IsInControl
+    {
+        get => _isInControl;
+        private set
+        {
+            _isInControl = value;
+            if (value)
+            {
+                onGetControl.Invoke();
+            }
+            else
+            {
+                onLoseControl.Invoke();
+            }
+        }
+    }
 
     public string PlayerName
     {
@@ -349,17 +428,10 @@ public class MaroonNetworkManager : NetworkManager
 
     private void OnNetworkControlMessage(NetworkConnection conn, NetworkControlMessage msg)
     {
-        _isInControl = msg.InControl;
-        if (_isInControl)
-        {
-            onGetControl.Invoke();
-        }
-        else
-        {
-            onLoseControl.Invoke();
-        }
+        IsInControl = msg.InControl;
     }
-    
+
+    private float _lastEnterSceneTime;
     public void EnterScene(string sceneName)
     {
         if (mode == NetworkManagerMode.Offline)
@@ -368,6 +440,10 @@ public class MaroonNetworkManager : NetworkManager
         }
         else
         {
+            if (Time.time - _lastEnterSceneTime < 1) //Otherwise executed multiple times!
+                return;
+            _lastEnterSceneTime = Time.time;
+            
             if (sceneName.Contains("Menu"))
             {
                 DisplayMessage("MainMenuDenial");
@@ -375,11 +451,18 @@ public class MaroonNetworkManager : NetworkManager
             }
             if (_isInControl)
             {
-                ChangeSceneMessage msg = new ChangeSceneMessage
+                if (CheckSceneValid(sceneName))
                 {
-                    SceneName =  sceneName
-                };
-                NetworkClient.connection.Send(msg);
+                    ChangeSceneMessage msg = new ChangeSceneMessage
+                    {
+                        SceneName = sceneName
+                    };
+                    NetworkClient.connection.Send(msg);
+                }
+                else
+                {
+                    DisplayMessage("ExperimentNotEnabled");
+                }
             }
             else
             {

@@ -52,6 +52,7 @@ public class NetworkPlayer : NetworkBehaviour
 
     private void Update()
     {
+        //needed additionally to OnChangeName because sometimes name changed before init
         if (!isLocalPlayer)
             return;
         if (MaroonNetworkManager.Instance.PlayerName == null && _name != null)
@@ -62,7 +63,7 @@ public class NetworkPlayer : NetworkBehaviour
 
     private void OnChangeName(string oldName, string newName)
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer && MaroonNetworkManager.Instance.PlayerName == null)
         {
             MaroonNetworkManager.Instance.PlayerName = newName;
         }
@@ -97,8 +98,12 @@ public class NetworkPlayer : NetworkBehaviour
         _name = newName;
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
+        if (isServer)
+        {
+            MaroonNetworkManager.Instance.RemovePlayerForConnection(connectionToClient);
+        }
         if (firstPersonCharacter == null) //not in Laboratory
             return;
         if (isLocalPlayer)
