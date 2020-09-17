@@ -17,7 +17,7 @@ public class AcidTitration : MonoBehaviour
 		{"HNO3", 1},
 		{"H2SO4", 2} };
 	Dictionary<string, double> weakAcids = new Dictionary<string, double>() {
-		{"CH3COOH", 4.75} };
+		{"CH3CO2H", 4.75} };
 
 	Dictionary<string, double> weakBases = new Dictionary<string, double>() {
 		{"NH3", 4.75} };
@@ -218,7 +218,7 @@ public class AcidTitration : MonoBehaviour
 				//Debug.Log("Value should be H2SO4. Value is: " + dropddownAcidText);
 				checkH2SO4 = true;
 				break;
-			case "CH3COOH":
+			case "CH3CO2H":
 				//Debug.Log("Value should be CH3COOH. Value is: " + dropddownAcidText);
 				weakAcid = true;
 				break;

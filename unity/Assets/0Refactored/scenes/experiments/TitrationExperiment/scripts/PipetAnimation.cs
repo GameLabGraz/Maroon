@@ -9,10 +9,13 @@ public class PipetAnimation : MonoBehaviour, IResetObject
     public GameObject analyt;
     ShowFluid showFluid;
 
+    Animator dropperAnimator;
+
     void Start ()
     {
         pipetAnimator = GetComponent<Animator>();
-        showFluid = GetComponent<ShowFluid>();
+        showFluid = ShowFluid.Instance;
+        dropperAnimator = GameObject.Find("Dropper").GetComponent<Animator>();
 	}
 	
     // Gamecontroller decides if analyt is acid oder base
@@ -22,6 +25,14 @@ public class PipetAnimation : MonoBehaviour, IResetObject
             pipetAnimator.SetTrigger("takeAcidTrigger");
         else
             pipetAnimator.SetTrigger("takeBaseTrigger");
+
+        dropperAnimator.ResetTrigger("forceIndicatorExit");
+
+    }
+
+    public void activateIndicator()
+    {
+        dropperAnimator.SetTrigger("takeIndicatorTrigger");
     }
 
     public void resetPipet(bool param)
@@ -29,6 +40,7 @@ public class PipetAnimation : MonoBehaviour, IResetObject
         if (param)
         {
             pipetAnimator.SetTrigger("forceExit");
+            dropperAnimator.SetTrigger("forceIndicatorExit");
         }
     }
 

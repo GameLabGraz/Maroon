@@ -5,28 +5,27 @@ using UnityEngine.UI;
 
 public class ShowNameAndFluidcolor : MonoBehaviour {
 
-    public GameObject fluid;
     public Text label;
 
-    public Material FluidWaterColorless;
-    public Material FluidWaterYellow;
+    private ShowFluid showFluidScript;
+    private Renderer rend;
+    private MeshRenderer meshRend;
 
-    Renderer rend;
-    MeshRenderer meshRend;
-
-    void Start () {
-        rend = GetComponent<Renderer>();
-        meshRend = fluid.GetComponent<MeshRenderer>();
+    void Start () 
+    {
+        showFluidScript = ShowFluid.Instance;
+        rend = gameObject.transform.GetChild(2).gameObject.GetComponent<Renderer>();
+        meshRend = gameObject.transform.GetChild(1).gameObject.GetComponent<MeshRenderer>();
         changeName(label);
     }
 	
-	public void changeName (Text label) {
-
+	public void changeName (Text label) 
+    {
         rend.material.mainTexture = Resources.Load<Texture>("Sprites/" + label.text);
 
         if (label.text.Equals("HNO3"))
-            meshRend.material = FluidWaterYellow;
+            meshRend.material = showFluidScript.FluidWaterYellow;
         else
-            meshRend.material = FluidWaterColorless;
+            meshRend.material = showFluidScript.FluidWaterColorless;
     }
 }

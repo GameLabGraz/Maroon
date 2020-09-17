@@ -22,9 +22,10 @@ public class DrawGraph : MonoBehaviour, IResetObject
 
     private int fluidRestrictionSpeed = 10;
 
-    GameObject lineRenderer;
-    LineRenderer[] equivalenzLine;
-    LineRenderer line;
+    LineRenderer[] lineRenderers;
+    LineRenderer equivalenzLine;
+    LineRenderer titrationCurveLine;
+    LineRenderer axisLine;
 
     private int counter = 0;
 
@@ -45,21 +46,27 @@ public class DrawGraph : MonoBehaviour, IResetObject
     {
         acidTitrationScript = GameObject.Find("TitrationController").GetComponent<AcidTitration>();
         //result = acidTitrationScript.getResultDictonary();
-        lineRenderer = GameObject.Find("LineRenderer");
-        line = lineRenderer.GetComponent<LineRenderer>();
+
         buretteScript = burette.GetComponent<OpenBurette>();
-        showFluidScript = pipet.GetComponent<ShowFluid>();
+        showFluidScript = ShowFluid.Instance;
         rect = GetComponent<RectTransform>();
         height = rect.rect.height;
         width = rect.rect.width;
+
+        lineRenderers = GetComponentsInChildren<LineRenderer>();
+        titrationCurveLine = lineRenderers[0];
+        equivalenzLine = lineRenderers[1];
+        axisLine = lineRenderers[2];
+
+        drawAxisLines();
     }
 
     public void InitLine()
     {
         result = acidTitrationScript.getResultDictionary();
         equivalenzPoint = acidTitrationScript.getEquivalenzPointDictionary();
-        equivalenzLine = GetComponentsInChildren<LineRenderer>();
-        equivalenzLine[1].positionCount = 3;
+        equivalenzLine.positionCount = 3;
+
 
         if (equivalenzPoint.Count > 0)
         {
@@ -80,10 +87,10 @@ public class DrawGraph : MonoBehaviour, IResetObject
 
     public void ResetObject()
     {
-        line.positionCount = 0;
+        titrationCurveLine.positionCount = 0;
 
         if (equivalenzLine != null)
-            equivalenzLine[1].positionCount = 0;
+            equivalenzLine.positionCount = 0;
 
         counter = 0;
 
@@ -131,8 +138,8 @@ public class DrawGraph : MonoBehaviour, IResetObject
                 float tmpPh = ((float)entry.Value / ph) * height;
 
                 // Renders line
-                line.positionCount = counter + 1;
-                line.SetPosition(counter, new Vector3(tmpMl, tmpPh, 0));
+                titrationCurveLine.positionCount = counter + 1;
+                titrationCurveLine.SetPosition(counter, new Vector3(tmpMl, tmpPh, 0));
                 counter++;
 
                 //volumeAddedScript.changeVolumeAddedPanel(entry.Key.ToString("F2"), entry.Value.ToString("F2"));
@@ -153,9 +160,9 @@ public class DrawGraph : MonoBehaviour, IResetObject
 
                             float equivalenzlinewidth = (10 / maxMl) * width;
 
-                            equivalenzLine[1].SetPosition(0, new Vector3(tmpMl_ - equivalenzlinewidth, tmpPh_, 0));
-                            equivalenzLine[1].SetPosition(1, new Vector3(tmpMl_, tmpPh_, 0));
-                            equivalenzLine[1].SetPosition(2, new Vector3(tmpMl_ + equivalenzlinewidth, tmpPh_, 0));
+                            equivalenzLine.SetPosition(0, new Vector3(tmpMl_ - equivalenzlinewidth, tmpPh_, 0));
+                            equivalenzLine.SetPosition(1, new Vector3(tmpMl_, tmpPh_, 0));
+                            equivalenzLine.SetPosition(2, new Vector3(tmpMl_ + equivalenzlinewidth, tmpPh_, 0));
                             break;
                         }
                     }
@@ -191,6 +198,66 @@ public class DrawGraph : MonoBehaviour, IResetObject
     public void getVolumeAddedMl(MessageArgs args)
     {
         args.value = (float)volumeAddedMl;
+    }
+
+    public void drawAxisLines()
+    {
+        float heightHalf = height / 2;
+
+        int numberOfPosForTick = 4;
+        float tickSpacing = width / 20; // 10ml
+        float tickSpacingBig = width / 4; // 50ml
+        float counterForTicks = width;
+        int tmpCounter = 0;
+
+        List<int> tickHeightSmall = new List<int>() {0, 5, -2, 0};
+        List<int> tickHeightBig = new List<int>() {0, 10, -10, 0};
+        
+        // x-Axis
+        while(counterForTicks > 0)
+        {
+            axisLine.positionCount += numberOfPosForTick;
+            for(int i = 0; i < numberOfPosForTick; i++)
+            {
+                if (counterForTicks % tickSpacingBig == 0 && counterForTicks != 0)
+                {
+                    axisLine.SetPosition(tmpCounter + i, new Vector3(counterForTicks, tickHeightBig[i], 0));
+                }
+                else
+                {
+                    axisLine.SetPosition(tmpCounter + i, new Vector3(counterForTicks, tickHeightSmall[i], 0));
+                }
+            }
+            counterForTicks -= tickSpacing;
+            tmpCounter += numberOfPosForTick;
+        }
+
+        axisLine.positionCount += 1;
+        axisLine.SetPosition(tmpCounter, new Vector3(0, 0, 0));
+        tmpCounter++;
+        
+        tickSpacing = height / 14;
+        counterForTicks = tickSpacing;
+
+        // y-Axis
+        while (counterForTicks <= height)
+        {
+            axisLine.positionCount += numberOfPosForTick;
+            for (int i = 0; i < numberOfPosForTick; i++)
+            {
+                if (Mathf.Approximately(counterForTicks, heightHalf))
+                {
+                    axisLine.SetPosition(tmpCounter + i, new Vector3(tickHeightBig[i], counterForTicks, 0));
+                }
+                else
+                {
+                    axisLine.SetPosition(tmpCounter + i, new Vector3(tickHeightSmall[i], counterForTicks, 0));
+                }
+            }
+            counterForTicks += tickSpacing;
+            tmpCounter += numberOfPosForTick;
+        }
+        
     }
 }
 

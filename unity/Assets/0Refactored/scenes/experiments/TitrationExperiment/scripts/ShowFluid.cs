@@ -6,7 +6,7 @@ using System.Linq;
 
 public enum colorEnum { colorless, red, yellow, blue, green, orange };
 
-public class Indicator : MonoBehaviour
+public class Indicator
 {
     public colorEnum lowColor { get; set; }
     public colorEnum midColor { get; set; }
@@ -16,20 +16,21 @@ public class Indicator : MonoBehaviour
 
     public Indicator(colorEnum newLowColor, colorEnum newMidColor, colorEnum newHighColor, float newStartNumber, float newEndnumber)
     {
-        lowColor = newLowColor;
-        midColor = newMidColor;
-        highColor = newHighColor;
-        startNumber = newStartNumber;
-        endNumber = newEndnumber;
+        this.lowColor = newLowColor;
+        this.midColor = newMidColor;
+        this.highColor = newHighColor;
+        this.startNumber = newStartNumber;
+        this.endNumber = newEndnumber;
     }
 }
 public class ShowFluid : MonoBehaviour
 {
     // Indicators
     Dictionary<int, Indicator> indicators = new Dictionary<int, Indicator>() {
-        {0, new Indicator(colorEnum.colorless, colorEnum.red, colorEnum.red, 8.3f, 10f)}, // Phenolphtalein
-        {1, new Indicator(colorEnum.yellow, colorEnum.green, colorEnum.blue, 6f, 7.6f)},  // Bromothymol blue
-        {2, new Indicator(colorEnum.red, colorEnum.orange, colorEnum.yellow, 3.1f, 4.5f)} }; // Mehtyl orange
+         {0, new Indicator(colorEnum.colorless, colorEnum.red, colorEnum.red, 8.3f, 10f)}, // Phenolphtalein
+         {1, new Indicator(colorEnum.yellow, colorEnum.green, colorEnum.blue, 6f, 7.6f)},  // Bromothymol blue
+         {2, new Indicator(colorEnum.red, colorEnum.orange, colorEnum.yellow, 3.1f, 4.5f)} }; // Mehtyl orange
+ 
 
     private Indicator currentInd;
     private Dictionary<double, double> result = new Dictionary<double, double>();
@@ -49,12 +50,24 @@ public class ShowFluid : MonoBehaviour
     public MeshRenderer meshRend;
     private AcidTitration acidTitrationScript;
 
+    private static ShowFluid _instance;
+    public static ShowFluid Instance
+    {
+        get
+        {
+            if (_instance == null)
+                _instance = FindObjectOfType<ShowFluid>();
+            return _instance;
+        }
+    }
+
     // Use this for initialization
     void Start()
     {
         meshRend = fluid.GetComponent<MeshRenderer>();
         meshRend.enabled = false;
         acidTitrationScript = GameObject.Find("TitrationController").GetComponent<AcidTitration>();
+
         currentInd = indicators[0];
 
     }

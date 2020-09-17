@@ -128,7 +128,7 @@ public class GameController : MonoBehaviour, IResetObject
 		//acidTitrationScript.resetEquivalenzPointResult();
         //volumeAddedScript.resetVolumeAddedPanel();
         StopCoroutine(theCoroutine);
-    }
+	}
 
     // Animation: Pipet takes fluid and puts it into erlenmeyer flask
     void playPipetAnimation()

@@ -4,23 +4,28 @@ using UnityEngine;
 
 public class OpenBurette : MonoBehaviour {
 
-    public GameObject particleObj;
-    public GameObject handle;
-    public bool open = false;
+    private GameObject handle;
     private ParticleSystem particleSys;
 
-    private Vector3 openHandlePos = new Vector3(-1.34306f, -0.8691311f, 1.35f);
-    private Vector3 closedHandlePos = new Vector3(1.645245f, -0.8691306f, 4.530176f);
-    private Vector3 openHandleRot = new Vector3(-89.97201f, 0f, -87.784f);
-    private Vector3 closedHandleRot = new Vector3(-89.98f, 0f, 0f);
+    public bool open = false;
+
+    private Vector3 openHandlePos = new Vector3(-0.0652f, 0f, -0.0689f);
+    private Vector3 closedHandlePos;
+    private Vector3 openHandleRot = new Vector3(0, -90f, 0);
+    private Vector3 closedHandleRot;
 
     public bool interactable = false;
 
 
     private void Start()
     {
-        particleSys = particleObj.GetComponent<ParticleSystem>();
+        handle = gameObject.transform.GetChild(3).gameObject;
+        particleSys = gameObject.transform.GetChild(5).gameObject.GetComponent<ParticleSystem>();
         particleSys.Stop();
+
+
+        closedHandlePos = handle.transform.localPosition;
+        closedHandleRot = handle.transform.localEulerAngles;
     }
 
     private void OnMouseDown()
