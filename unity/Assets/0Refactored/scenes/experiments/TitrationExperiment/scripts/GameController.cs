@@ -10,8 +10,6 @@ public class GameController : MonoBehaviour, IResetObject
 	private AcidTitration acidTitrationScript;
 	DrawGraph drawGraphScript;
 
-	//public static GameController Instance;
-
 	// Base settings
 	private double baseMol = 0.1f;
 	private double baseMl = 50f;
@@ -42,7 +40,6 @@ public class GameController : MonoBehaviour, IResetObject
 	{
 		acidTitrationScript = gameObject.GetComponent<AcidTitration>();
 		drawGraphScript = GameObject.Find("LineRenderer").GetComponent<DrawGraph>();
-        //volumeAddedScript = volumePanel.GetComponent<ShowVolumeAdded>();
         pipetAnimation = pipet.GetComponent<PipetAnimation>();
 	}
 
@@ -64,12 +61,10 @@ public class GameController : MonoBehaviour, IResetObject
 
             // Calculation and Graph
             acidTitrationScript.initialise(molTitrant, mlTitrant, molAnalyt, mlAnalyt);
-            drawGraphScript.InitLine(/*volumeAddedScript*/);
-			// Show equivalence point result
-			//acidTitrationScript.showEquivalenzPointResult();
+            drawGraphScript.InitLine();
 
             // Draw the Graph when burette is opened
-            theCoroutine = StartCoroutine(drawGraphScript.DrawLine(/*volumeAddedScript*/));
+            theCoroutine = StartCoroutine(drawGraphScript.DrawLine());
         }
     }
 
@@ -122,11 +117,7 @@ public class GameController : MonoBehaviour, IResetObject
 		baseToggleTitrant = true;
 		acidToggleTitrant = false;
 
-		//drawGraphScript.resetLine();
 		pipetAnimation.resetPipet(true);
-
-		//acidTitrationScript.resetEquivalenzPointResult();
-        //volumeAddedScript.resetVolumeAddedPanel();
         StopCoroutine(theCoroutine);
 	}
 

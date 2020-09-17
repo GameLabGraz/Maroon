@@ -8,7 +8,6 @@ using System;
 public class DrawGraph : MonoBehaviour, IResetObject
 {
 
-
     private AcidTitration acidTitrationScript;
     private Dictionary<double, double> result = new Dictionary<double, double>();
     private Dictionary<double, double> equivalenzPoint = new Dictionary<double, double>();
@@ -45,7 +44,6 @@ public class DrawGraph : MonoBehaviour, IResetObject
     void Start()
     {
         acidTitrationScript = GameObject.Find("TitrationController").GetComponent<AcidTitration>();
-        //result = acidTitrationScript.getResultDictonary();
 
         buretteScript = burette.GetComponent<OpenBurette>();
         showFluidScript = ShowFluid.Instance;
@@ -77,12 +75,6 @@ public class DrawGraph : MonoBehaviour, IResetObject
 
             equivalenzPointKey = temp / 10.00;
         }
-
-        if (result.Count > 0)
-        {
-            // show the start concentration of the analyte
-            //volumeAddedScript.changeVolumeAddedPanel(result.Keys.First().ToString("F2"), result.Values.First().ToString("F2"));
-        }
     }
 
     public void ResetObject()
@@ -101,7 +93,7 @@ public class DrawGraph : MonoBehaviour, IResetObject
         equivalenzPoint.Clear();
     }
 
-    public IEnumerator DrawLine(/*ShowVolumeAdded volumeAddedScript,*/)
+    public IEnumerator DrawLine()
     {
         int prev_counter = 0;
 
@@ -142,7 +134,6 @@ public class DrawGraph : MonoBehaviour, IResetObject
                 titrationCurveLine.SetPosition(counter, new Vector3(tmpMl, tmpPh, 0));
                 counter++;
 
-                //volumeAddedScript.changeVolumeAddedPanel(entry.Key.ToString("F2"), entry.Value.ToString("F2"));
                 volumeAddedMl = entry.Key;
                 volumeAddedPh = entry.Value;
 

@@ -27,7 +27,6 @@ public class PipetAnimation : MonoBehaviour, IResetObject
             pipetAnimator.SetTrigger("takeBaseTrigger");
 
         dropperAnimator.ResetTrigger("forceIndicatorExit");
-
     }
 
     public void activateIndicator()
@@ -53,11 +52,10 @@ public class PipetAnimation : MonoBehaviour, IResetObject
     {
         analyt.GetComponent<Animator>().SetTrigger("put");
     }
-
-    //resetAnalytAnimation
     
     public void ResetObject()
     {
+        //resetAnalytAnimation
         analyt.GetComponent<Animator>().SetTrigger("reset");
         showFluid.meshRend.enabled = false;
         showFluid.changeMeshMaterial(colorEnum.colorless);

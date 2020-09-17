@@ -14,8 +14,8 @@ public class ShowNameAndFluidcolor : MonoBehaviour {
     void Start () 
     {
         showFluidScript = ShowFluid.Instance;
-        rend = gameObject.transform.GetChild(2).gameObject.GetComponent<Renderer>();
-        meshRend = gameObject.transform.GetChild(1).gameObject.GetComponent<MeshRenderer>();
+        rend = gameObject.transform.GetChild(2).gameObject.GetComponent<Renderer>(); // Label of ReagentBottle
+        meshRend = gameObject.transform.GetChild(1).gameObject.GetComponent<MeshRenderer>(); // Fluid of ReagentBottle
         changeName(label);
     }
 	
