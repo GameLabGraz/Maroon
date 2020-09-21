@@ -33,6 +33,7 @@ public class MaroonNetworkManager : NetworkManager
     [Header("Maroon Network Manager")]
     [SerializeField] private GameObject preNetworkSyncVars;
     [SerializeField] private GameObject experimentPlayer;
+    [SerializeField] private GameObject sceneCountdown;
     [Scene]
     [SerializeField] private List<string> networkEnabledExperiments;
 
@@ -46,7 +47,6 @@ public class MaroonNetworkManager : NetworkManager
     private PortForwarding _upnp;
     private GameManager _gameManager;
     private DialogueManager _dialogueManager;
-    private NetworkSyncVariables _syncVariables;
 
     private bool _isStarted;
 
@@ -104,6 +104,7 @@ public class MaroonNetworkManager : NetworkManager
     #region Server
 
     private bool _activePortMapping;
+    private bool _sceneCountdownActive;
     private string _clientInControl;
     private Dictionary<string, NetworkConnection> _connectedPlayers = new Dictionary<string, NetworkConnection>();
     private Dictionary<NetworkConnection, NetworkPlayer> _connectedPlayerObjects = new Dictionary<NetworkConnection, NetworkPlayer>();
@@ -121,6 +122,7 @@ public class MaroonNetworkManager : NetworkManager
         NetworkServer.RegisterHandler<ChangeSceneMessage>(OnChangeSceneMessage);
         IsInControl = true;
         SpawnSyncVars();
+        _sceneCountdownActive = false;
         networkSceneName = onlineScene; // to make sure that Manager has Scene Control!
     }
 
@@ -166,6 +168,7 @@ public class MaroonNetworkManager : NetworkManager
         //For some strange reason, ClientRPCs and SyncVars are not updated when this is called immediately.
         //Therefore we wait a second until we spawn it
         StartCoroutine(SpawnNetworkSyncVarsAfterSeconds(1));
+        _sceneCountdownActive = false;
     }
     
     private IEnumerator SpawnNetworkSyncVarsAfterSeconds(float seconds)
@@ -220,9 +223,14 @@ public class MaroonNetworkManager : NetworkManager
 
     private void OnChangeSceneMessage(NetworkConnection conn, ChangeSceneMessage msg)
     {
+        if(_sceneCountdownActive)
+            return;
         if (conn == _connectedPlayers[GetClientInControl()] && CheckSceneValid(msg.SceneName))
         {
-            ServerChangeScene(msg.SceneName);
+            GameObject coundownObject = Instantiate(sceneCountdown);
+            coundownObject.GetComponent<SceneChangeCountdown>().SetSceneName(msg.SceneName);
+            NetworkServer.Spawn(coundownObject);
+            _sceneCountdownActive = true;
         }
     }
 
