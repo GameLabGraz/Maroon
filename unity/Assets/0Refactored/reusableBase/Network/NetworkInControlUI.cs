@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 
 public class NetworkInControlUI : MonoBehaviour
@@ -15,7 +16,10 @@ public class NetworkInControlUI : MonoBehaviour
 
     private void OnGetControl()
     {
-        gameObject.SetActive(true);
+        if(NetworkClient.active)
+            gameObject.SetActive(true);
+        else
+            gameObject.SetActive(false);
     }
     
     private void OnLoseControl()

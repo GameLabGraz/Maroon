@@ -71,8 +71,6 @@ public class MaroonNetworkManager : NetworkManager
         _networkDiscovery = GetComponent<MaroonNetworkDiscovery>();
         _upnp = GetComponent<PortForwarding>();
         _gameManager = FindObjectOfType<GameManager>();
-
-        SceneManager.sceneLoaded += OnSceneFinishedLoading;
     }
 
     public void StartMultiUser()
@@ -307,7 +305,6 @@ public class MaroonNetworkManager : NetworkManager
     private bool _isInControl;
     private string _playerName;
     private string _serverName;
-    private List<string> _messagesForNextScene = new List<string>();
 
     public override void OnStartClient()
     {
@@ -318,6 +315,7 @@ public class MaroonNetworkManager : NetworkManager
             _networkDiscovery.StopDiscovery();
             _tryClientConnect = true;
             _hasLoadedSceneOnce = false;
+            IsInControl = false;
         }
     }
 
@@ -328,16 +326,16 @@ public class MaroonNetworkManager : NetworkManager
         {
             //Connection attempt failed!
             _tryClientConnect = false;
-            _messagesForNextScene.Add("ClientConnectFail");
+            DisplayMessage("ClientConnectFail");
         }
         else if (_hasLoadedSceneOnce)
         {
             //Disconnected from host
-            _messagesForNextScene.Add("ClientDisconnect");
+            DisplayMessage("ClientDisconnect");
         }
         else
         {
-            _messagesForNextScene.Add("ServerInExperiment");
+            DisplayMessage("ServerInExperiment");
         }
     }
 
@@ -345,10 +343,9 @@ public class MaroonNetworkManager : NetworkManager
     {
         base.OnStopClient();
         _playerName = null;
-        IsInControl = false;
+        IsInControl = true;
         _serverName = null;
         _networkDiscovery.StartDiscovery();
-        SceneManager.LoadScene(onlineScene);
     }
 
     public override void OnClientConnect(NetworkConnection conn)
@@ -383,15 +380,6 @@ public class MaroonNetworkManager : NetworkManager
         };
 
         conn.Send(characterMessage);
-    }
-    
-    void OnSceneFinishedLoading(Scene scene, LoadSceneMode lsmode)
-    {
-        foreach (var key in _messagesForNextScene)
-        {
-            DisplayMessage(key);
-        }
-        _messagesForNextScene.Clear();
     }
 
     public bool IsInControl
