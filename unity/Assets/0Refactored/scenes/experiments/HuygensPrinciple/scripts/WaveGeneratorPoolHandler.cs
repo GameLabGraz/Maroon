@@ -25,6 +25,8 @@ public class WaveGeneratorPoolHandler : MonoBehaviour
         }
     }
 
+    public float WaveLength => waveLength;
+
     private void Awake()
     {
         slitPlate = GameObject.Find("Plate").GetComponent<SlitPlate>();
