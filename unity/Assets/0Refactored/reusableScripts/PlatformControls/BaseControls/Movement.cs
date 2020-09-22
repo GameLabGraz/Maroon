@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 
 namespace PlatformControls.BaseControls
 {
@@ -17,11 +18,13 @@ namespace PlatformControls.BaseControls
 
         [SerializeField]
         protected bool SimulationRunningDuringMovement = false;
+        
+        public UnityEvent onMovementStoped;
 
         protected void StartMoving()
         {
             IsMoving = true;
-
+         
             if (!SimulationRunningDuringMovement)
                 SimulationController.Instance.StartSimulation();
         }
@@ -29,6 +32,8 @@ namespace PlatformControls.BaseControls
         protected void StopMoving()
         {
             IsMoving = false;
+            
+            onMovementStoped.Invoke();
 
             if (!SimulationRunningDuringMovement)
                 SimulationController.Instance.StopSimulation();

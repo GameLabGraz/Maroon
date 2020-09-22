@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &360207747677165422
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7293729155218583083}
+  m_Layer: 0
+  m_Name: WaterBasinGeneratorPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7293729155218583083
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 360207747677165422}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1846387199182740049}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1846387199182740048
 GameObject:
   m_ObjectHideFlags: 0
@@ -27,7 +57,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1846387199443580865}
+  - {fileID: 7293729155218583083}
   - {fileID: 1846387201161358754}
   - {fileID: 1846387199857951263}
   - {fileID: 1846387200571654546}
@@ -264,59 +294,6 @@ Transform:
   m_Father: {fileID: 1846387199857951263}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1846387199443580867
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1846387199443580865}
-  - component: {fileID: 1846387199443580864}
-  m_Layer: 0
-  m_Name: WaveGenerator
-  m_TagString: Untagged
-  m_Icon: {fileID: 8220585740371884164, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1846387199443580865
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1846387199443580867}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.4, y: 1.3, z: 0.7}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1846387199182740049}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1846387199443580864
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1846387199443580867}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 958588c3b131b4e429614ab92446ae96, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  planeMesh: {fileID: 0}
-  planeObject: {fileID: 1846387199857860159}
-  waveAmplitude: 0.5
-  waveLength: 0.25
-  waveFrequency: 0.5
-  startingPoint: {x: -18.5, y: 0, z: 0}
-  propagationMode: 0
-  propagationAxis: {x: 1, y: 0, z: 0}
-  isActive: 1
-  waveGeneratorKey: 0
 --- !u!1 &1846387199491665494
 GameObject:
   m_ObjectHideFlags: 0
@@ -478,11 +455,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa38866e3ab324e4ab39f941cf9e1c00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  verticesPerLength: 80
-  verticesPerWidth: 34
   material: {fileID: 2100000, guid: b69611e47e1422842a23d115ab3ebeed, type: 2}
-  planeMesh: {fileID: 0}
-  updateRate: 10
 --- !u!1 &1846387200166215735
 GameObject:
   m_ObjectHideFlags: 0

@@ -78,9 +78,9 @@
 					float intensity = calculateIntensityWithWidth(alpha) / pow(_NumberOfSlits, 2);
 
 					i.color = lerp(_ColorMin, _ColorMax, intensity);
-					if ((i.object_space.y + 0.5 <= intensity + 0.02) && (i.object_space.y + 0.5 >= intensity - 0.02))
+					if ((i.object_space.y + 0.5 <= intensity + 0.05) && (i.object_space.y + 0.5 >= intensity - 0.05))
 					{
-						i.color = fixed3(0, 1, 1);
+						i.color = fixed3(1, 0.0, 0.5);
 					}
 
 					return fixed4(i.color, 1);
