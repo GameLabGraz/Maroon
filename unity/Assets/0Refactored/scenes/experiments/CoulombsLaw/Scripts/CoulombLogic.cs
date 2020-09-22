@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Maroon.Physics.Electromagnetism;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;

@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Maroon.Physics.Electromagnetism;
 using UnityEngine;
 
 public class Charge : MonoBehaviour, IGenerateE
@@ -21,6 +22,12 @@ public class Charge : MonoBehaviour, IGenerateE
     private float forceFactor = 0.5f; //constant force multyplier
 
     private ChargePoolHandler chargePoolHandler;
+
+    public bool Enabled
+    {
+        get => enabled;
+        set => enabled = value;
+    }
 
     private void Start()
     {
