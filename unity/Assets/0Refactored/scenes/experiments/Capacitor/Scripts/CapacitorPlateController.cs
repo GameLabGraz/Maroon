@@ -32,6 +32,12 @@ public class CapacitorPlateController : VRTK_InteractableObject, IGenerateE, IRe
 
     private Vector3 startScale;
 
+    public bool Enabled
+    {
+        get => enabled;
+        set => enabled = value;
+    }
+
     private void Start()
     {
         startScale = transform.localScale;

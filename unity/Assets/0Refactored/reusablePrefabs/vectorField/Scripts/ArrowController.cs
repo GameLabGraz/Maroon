@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 //
 
+using Maroon.Physics;
 using UnityEngine;
 
 /// <summary>
@@ -35,7 +36,7 @@ public class ArrowController : MonoBehaviour, IResetObject
     /// <summary>
     /// The field strength factor
     /// </summary>
-    public float fieldStrengthFactor = Teal.FieldStrengthFactor;
+    public float fieldStrengthFactor = PhysicalConstants.FieldStrengthFactor;
 
     /// <summary>
     /// The start rotation for reseting

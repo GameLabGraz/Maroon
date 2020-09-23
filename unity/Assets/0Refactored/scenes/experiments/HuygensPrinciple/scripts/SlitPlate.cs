@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using GEAR.Serialize;
 using System.Collections.Generic;
+using UnityEngine.Events;
 
 namespace Maroon.Physics.HuygensPrinciple
 {
@@ -205,16 +206,15 @@ namespace Maroon.Physics.HuygensPrinciple
 
         private int CalculateGeneratorsPerSlit()
         {        
-            var numberOfGeneratorsPerSlit = 1 + (int)((slitWidth * 10.0f)/1.5f);
+            var numberOfGeneratorsPerSlit = 1 + (int)((slitWidth * 10.0f)/0.8f);
             return numberOfGeneratorsPerSlit; 
         }
 
         private void AddWaveGenerator()
         {
             var waveGenerator = WaveGeneratorPoolHandler.Instance.
-                CreateWaveGenerator(WaveGenerator.WavePropagation.Circular);
+                CreateWaveGenerator(WaveGenerator.GeneratorMembership.SlitPlate1);
 
-            waveGenerator.WaveAmplitude /= generatorCountPerSlit * NumberOfSlits;
             waveGenerator.transform.parent = gameObject.transform;
             waveGeneratorList.Add(waveGenerator);
         }
