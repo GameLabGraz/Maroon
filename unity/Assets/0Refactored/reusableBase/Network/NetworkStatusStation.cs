@@ -88,9 +88,9 @@ public class NetworkStatusStation : MonoBehaviour
         {
             information += LanguageManager.Instance.GetString("OnlineInformation3");
         }
-        else if(NetworkSyncVariables.Instance != null)
+        else
         {
-            information += "<color=#800000>" + NetworkSyncVariables.Instance.ClientInControl + "</color> " + LanguageManager.Instance.GetString("OnlineInformation4");
+            information += "<color=#800000>" + MaroonNetworkManager.Instance.ClientInControl + "</color> " + LanguageManager.Instance.GetString("OnlineInformation4");
         }
         DisplayMessage(information);
     }

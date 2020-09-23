@@ -17,7 +17,7 @@ public class CharacterSpawnMessage : MessageBase
 
 public class NetworkControlMessage : MessageBase
 {
-    public bool InControl;
+    public string NewPlayerInControl;
 }
 
 public class ChangeSceneMessage : MessageBase
@@ -31,16 +31,11 @@ public class MaroonNetworkManager : NetworkManager
     public static MaroonNetworkManager Instance = null;
 
     [Header("Maroon Network Manager")]
-    [SerializeField] private GameObject preNetworkSyncVars;
     [SerializeField] private GameObject experimentPlayer;
+    [SerializeField] private GameObject controlHandlingUi;
     [SerializeField] private GameObject sceneCountdown;
     [Scene]
     [SerializeField] private List<string> networkEnabledExperiments;
-
-    [HideInInspector]
-    public UnityEvent onGetControl;
-    [HideInInspector]
-    public UnityEvent onLoseControl;
     
     private ListServer _listServer;
     private MaroonNetworkDiscovery _networkDiscovery;
@@ -105,8 +100,8 @@ public class MaroonNetworkManager : NetworkManager
 
     private bool _activePortMapping;
     private bool _sceneCountdownActive;
-    private string _clientInControl;
     private Dictionary<string, NetworkConnection> _connectedPlayers = new Dictionary<string, NetworkConnection>();
+    //TODO: Refactor - is this needed?
     private Dictionary<NetworkConnection, NetworkPlayer> _connectedPlayerObjects = new Dictionary<NetworkConnection, NetworkPlayer>();
     
     public override void OnStartServer()
@@ -120,8 +115,7 @@ public class MaroonNetworkManager : NetworkManager
         _upnp.SetupPortForwarding();
         NetworkServer.RegisterHandler<CharacterSpawnMessage>(OnCreateCharacter);
         NetworkServer.RegisterHandler<ChangeSceneMessage>(OnChangeSceneMessage);
-        IsInControl = true;
-        SpawnSyncVars();
+        ClientInControl = null;
         _sceneCountdownActive = false;
         networkSceneName = onlineScene; // to make sure that Manager has Scene Control!
     }
@@ -132,7 +126,6 @@ public class MaroonNetworkManager : NetworkManager
         NetworkNamingService.FreeAllPlayerNames();
         NetworkNamingService.FreeAllServerNames();
         _activePortMapping = false;
-        _clientInControl = null;
         _connectedPlayers.Clear();
     }
 
@@ -154,9 +147,7 @@ public class MaroonNetworkManager : NetworkManager
             return;
         if (disconnectedPlayerName == _clientInControl)
         {
-            //Cannot use TakeControl because client already disconnected
-            IsInControl = true;
-            _clientInControl = _playerName;
+            ServerSetClientInControl(_playerName);
         }
         _connectedPlayers.Remove(disconnectedPlayerName);
         NetworkNamingService.FreePlayerName(disconnectedPlayerName);
@@ -165,16 +156,7 @@ public class MaroonNetworkManager : NetworkManager
     public override void OnServerSceneChanged(string sceneName)
     {
         base.OnServerSceneChanged(sceneName);
-        //For some strange reason, ClientRPCs and SyncVars are not updated when this is called immediately.
-        //Therefore we wait a second until we spawn it
-        StartCoroutine(SpawnNetworkSyncVarsAfterSeconds(1));
         _sceneCountdownActive = false;
-    }
-    
-    private IEnumerator SpawnNetworkSyncVarsAfterSeconds(float seconds)
-    {
-        yield return new WaitForSecondsRealtime(seconds);
-        SpawnSyncVars();
     }
 
     private void OnCreateCharacter(NetworkConnection conn, CharacterSpawnMessage message)
@@ -210,10 +192,17 @@ public class MaroonNetworkManager : NetworkManager
         }
 
         NetworkPlayer networkPlayer = playerObject.GetComponent<NetworkPlayer>();
-        networkPlayer.SetName(playerName);
 
         _connectedPlayerObjects[conn] = networkPlayer;
         NetworkServer.AddPlayerForConnection(conn, playerObject);
+        networkPlayer.SetName(playerName);
+        
+        //Update client in control on new client
+        NetworkControlMessage msg = new NetworkControlMessage
+        {
+            NewPlayerInControl = _clientInControl
+        };
+        conn.Send(msg);
     }
 
     public void RemovePlayerForConnection(NetworkConnection conn)
@@ -225,7 +214,7 @@ public class MaroonNetworkManager : NetworkManager
     {
         if(_sceneCountdownActive)
             return;
-        if (conn == _connectedPlayers[GetClientInControl()] && CheckSceneValid(msg.SceneName))
+        if (conn == _connectedPlayers[_clientInControl] && CheckSceneValid(msg.SceneName))
         {
             GameObject coundownObject = Instantiate(sceneCountdown);
             coundownObject.GetComponent<SceneChangeCountdown>().SetSceneName(msg.SceneName);
@@ -255,45 +244,32 @@ public class MaroonNetworkManager : NetworkManager
         }
     }
 
-    public string GetClientInControl()
+    public void ServerSpawnControlHandlingUi()
     {
-        if (_clientInControl == null)
-            _clientInControl = _playerName;
+        GameObject ui = Instantiate(controlHandlingUi);
+        NetworkServer.Spawn(ui);
+    }
+    
+    public void ServerSetClientInControl(string clientInControl)
+    {
+        if (!NetworkServer.active)
+            return;
         
-        return _clientInControl;
+        NetworkControlMessage msg = new NetworkControlMessage
+        {
+            NewPlayerInControl = clientInControl
+        };
+
+        foreach (var conn in _connectedPlayers.Values)
+        {
+            conn.Send(msg);
+        }
     }
 
+    //TODO: refactor this
     public List<string> GetAllPlayerNames()
     {
         return _connectedPlayers.Keys.ToList();
-    }
-
-    public void ServerGrantControl(string newClientInControl)
-    {
-        //Tell client currently in control he is not
-        NetworkControlMessage msg = new NetworkControlMessage
-        {
-            InControl = false
-        };
-        _connectedPlayers[GetClientInControl()].Send(msg);
-        
-        //Tell new client he is in control
-        msg.InControl = true;
-        _connectedPlayers[newClientInControl].Send(msg);
-        _clientInControl = newClientInControl;
-    }
-
-    public void TakeControl()
-    {
-        if (mode != NetworkManagerMode.Host)
-            return;
-        ServerGrantControl(_playerName);
-    }
-
-    private void SpawnSyncVars()
-    {
-        GameObject syncVars = Instantiate(preNetworkSyncVars);
-        NetworkServer.Spawn(syncVars);
     }
 
     private void MarkTakenServerNames()
@@ -310,9 +286,16 @@ public class MaroonNetworkManager : NetworkManager
 
     private bool _tryClientConnect = true;
     private bool _hasLoadedSceneOnce;
-    private bool _isInControl;
     private string _playerName;
     private string _serverName;
+    private string _clientInControl;
+
+    [HideInInspector]
+    public UnityEvent onGetControl;
+    [HideInInspector]
+    public UnityEvent onLoseControl;
+    [HideInInspector] 
+    public UnityEvent newClientInControlEvent;
 
     public override void OnStartClient()
     {
@@ -323,7 +306,6 @@ public class MaroonNetworkManager : NetworkManager
             _networkDiscovery.StopDiscovery();
             _tryClientConnect = true;
             _hasLoadedSceneOnce = false;
-            IsInControl = false;
         }
     }
 
@@ -351,9 +333,10 @@ public class MaroonNetworkManager : NetworkManager
     {
         base.OnStopClient();
         _playerName = null;
-        IsInControl = true;
+        ClientInControl = _playerName;
         _serverName = null;
         _networkDiscovery.StartDiscovery();
+        //handlers cleared automatically!
     }
 
     public override void OnClientConnect(NetworkConnection conn)
@@ -368,7 +351,7 @@ public class MaroonNetworkManager : NetworkManager
         _hasLoadedSceneOnce = true;
         base.OnClientSceneChanged(conn);
         SendCreatePlayerMessage(conn);
-        if (_isInControl)
+        if (IsInControl)
         {
             onGetControl.Invoke();
         }
@@ -389,21 +372,33 @@ public class MaroonNetworkManager : NetworkManager
 
         conn.Send(characterMessage);
     }
-
-    public bool IsInControl
+    
+    private void OnNetworkControlMessage(NetworkConnection conn, NetworkControlMessage msg)
     {
-        get => _isInControl;
-        private set
+        ClientInControl = msg.NewPlayerInControl;
+    }
+
+    public bool IsInControl => _clientInControl == _playerName;
+
+    public string ClientInControl
+    {
+        get => _clientInControl;
+        set
         {
-            _isInControl = value;
-            if (value)
-            {
-                onGetControl.Invoke();
-            }
-            else
+            if (_clientInControl == value)
+                return;
+            
+            if (IsInControl)
             {
                 onLoseControl.Invoke();
             }
+            else if (value == _playerName)
+            {
+                onGetControl.Invoke();
+            }
+
+            _clientInControl = value;
+            newClientInControlEvent.Invoke();
         }
     }
 
@@ -421,11 +416,6 @@ public class MaroonNetworkManager : NetworkManager
     {
         get => _serverName;
         set => _serverName = value;
-    }
-
-    private void OnNetworkControlMessage(NetworkConnection conn, NetworkControlMessage msg)
-    {
-        IsInControl = msg.InControl;
     }
 
     private float _lastEnterSceneTime;
@@ -446,7 +436,7 @@ public class MaroonNetworkManager : NetworkManager
                 DisplayMessage("MainMenuDenial");
                 return;
             }
-            if (_isInControl)
+            if (IsInControl)
             {
                 if (CheckSceneValid(sceneName))
                 {

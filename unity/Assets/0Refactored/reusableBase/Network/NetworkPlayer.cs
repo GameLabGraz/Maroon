@@ -26,6 +26,9 @@ public class NetworkPlayer : NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if(isServer && isLocalPlayer) //only spawn once on server
+            MaroonNetworkManager.Instance.ServerSpawnControlHandlingUi();
+        
         if (firstPersonCharacter == null) //not in Laboratory
             return;
         _cc = GetComponent<CharacterController>();
@@ -50,17 +53,6 @@ public class NetworkPlayer : NetworkBehaviour
         }
     }
 
-    private void Update()
-    {
-        //needed additionally to OnChangeName because sometimes name changed before init
-        if (!isLocalPlayer)
-            return;
-        if (MaroonNetworkManager.Instance.PlayerName == null && _name != null)
-        {
-            MaroonNetworkManager.Instance.PlayerName = _name;
-        }
-    }
-
     private void OnChangeName(string oldName, string newName)
     {
         if (isLocalPlayer && MaroonNetworkManager.Instance.PlayerName == null)
@@ -75,7 +67,7 @@ public class NetworkPlayer : NetworkBehaviour
 
     private void UpdateControlColor()
     {
-        if (_name == NetworkSyncVariables.Instance.ClientInControl)
+        if (_name == MaroonNetworkManager.Instance.ClientInControl)
         {
             SetColor(_inControlColor);
         }
@@ -93,9 +85,12 @@ public class NetworkPlayer : NetworkBehaviour
         }
     }
 
+    [Server]
     public void SetName(string newName)
     {
         _name = newName;
+        if (isLocalPlayer && MaroonNetworkManager.Instance.PlayerName == null)
+            MaroonNetworkManager.Instance.PlayerName = newName;
     }
 
     private void OnDisable()
