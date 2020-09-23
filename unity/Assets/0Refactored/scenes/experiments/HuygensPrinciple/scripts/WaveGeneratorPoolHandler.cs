@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Maroon.Physics.HuygensPrinciple;
 using UnityEngine;
-using UnityEngine.Assertions.Must;
 
 public class WaveGeneratorPoolHandler : MonoBehaviour
 {
@@ -55,25 +52,25 @@ public class WaveGeneratorPoolHandler : MonoBehaviour
 
     public void CreateWaterBasinGenerators()
     {      
-        for (int count = 0; count < numberOfBasinGenerators; count++)
+        for (var count = 0; count < numberOfBasinGenerators; count++)
         {
-            WaveGenerator waterBasinGenerator = CreateWaveGenerator(WaveGenerator.GeneratorMembership.WaterBasin);
+            var waterBasinGenerator = CreateWaveGenerator(WaveGenerator.GeneratorMembership.WaterBasin);
             waterBasinGenerator.transform.parent = waterBasinGeneratorPosition.transform;
 
-            Vector3 coordinates = new Vector3(waterBasinGeneratorPosition.transform.position.x, waterBasinGeneratorPosition.transform.position.y, waterBasinGeneratorPosition.transform.position.z + _waterPlaneWidth / 2 - count * _waterPlaneWidth / numberOfBasinGenerators);
+            var coordinates = new Vector3(waterBasinGeneratorPosition.transform.position.x, waterBasinGeneratorPosition.transform.position.y, waterBasinGeneratorPosition.transform.position.z + _waterPlaneWidth / 2 - count * _waterPlaneWidth / numberOfBasinGenerators);
             waterBasinGenerator.transform.position = coordinates;
         }
     }
 
     public void SetPropagationMode(int propagationMode)
     {
-        this.wavePropagationMode = (WavePropagation)propagationMode;
+        wavePropagationMode = (WavePropagation)propagationMode;
         ChangePropagationMode();
     }
 
     public void SetPropagationMode(object o)
     {
-        this.wavePropagationMode = o.ToString() == "1" ? WavePropagation.Circular : WavePropagation.Rectilinear;
+        wavePropagationMode = o.ToString() == "1" ? WavePropagation.Circular : WavePropagation.Rectilinear;
         ChangePropagationMode();
     }
 
@@ -92,9 +89,7 @@ public class WaveGeneratorPoolHandler : MonoBehaviour
 
     public WaveGenerator GetWaveGenerator(ulong generatorId)
     {
-        if (_generators.ContainsKey(generatorId))
-            return _generators[generatorId];
-        return null;
+        return _generators.ContainsKey(generatorId) ? _generators[generatorId] : null;
     }
 
     public void SetWaveLength(float waveLength)
@@ -130,7 +125,7 @@ public class WaveGeneratorPoolHandler : MonoBehaviour
 
     public List<WaveGenerator> GetGeneratorListOfType(WaveGenerator.GeneratorMembership membership)
     {
-        List<WaveGenerator> generatorList = new List<WaveGenerator>();
+        var generatorList = new List<WaveGenerator>();
         foreach (var generator in _generators.Values)
         {
             if (generator.getGeneratorMembership() == membership)
@@ -143,10 +138,10 @@ public class WaveGeneratorPoolHandler : MonoBehaviour
 
     private void UpdateAmplitudes(WaveGenerator.GeneratorMembership membership)
     {
-        List<WaveGenerator> generatorList = GetGeneratorListOfType(membership);
-        float amplitude = waveAmplitude / generatorList.Count;
+        var generatorList = GetGeneratorListOfType(membership);
+        var amplitude = waveAmplitude / generatorList.Count;
 
-        Debug.Log(amplitude + " " + generatorList.Count);
+        //Debug.Log(amplitude + " " + generatorList.Count);
 
         foreach (var generator in generatorList)
         {
@@ -160,21 +155,21 @@ public class WaveGeneratorPoolHandler : MonoBehaviour
 
         if (wavePropagationMode == WavePropagation.Circular)
         {
-            WaveGenerator waterBasinGenerator = CreateWaveGenerator(WaveGenerator.GeneratorMembership.WaterBasin);
+            var waterBasinGenerator = CreateWaveGenerator(WaveGenerator.GeneratorMembership.WaterBasin);
             waterBasinGenerator.transform.parent = waterBasinGeneratorPosition.transform;
 
-            Vector3 coordinates = new Vector3(waterBasinGeneratorPosition.transform.position.x, waterBasinGeneratorPosition.transform.position.y, waterBasinGeneratorPosition.transform.position.z); //+ 0.1f - count * 0.1f/(numberOfBasinGenerators/2));
+            var coordinates = new Vector3(waterBasinGeneratorPosition.transform.position.x, waterBasinGeneratorPosition.transform.position.y, waterBasinGeneratorPosition.transform.position.z); //+ 0.1f - count * 0.1f/(numberOfBasinGenerators/2));
             waterBasinGenerator.transform.position = coordinates;
 
         }
         else
         {
-            for (int count = 0; count < numberOfBasinGenerators; count++)
+            for (var count = 0; count < numberOfBasinGenerators; count++)
             {
-                WaveGenerator waterBasinGenerator = CreateWaveGenerator(WaveGenerator.GeneratorMembership.WaterBasin);
+                var waterBasinGenerator = CreateWaveGenerator(WaveGenerator.GeneratorMembership.WaterBasin);
                 waterBasinGenerator.transform.parent = waterBasinGeneratorPosition.transform;
 
-                Vector3 coordinates = new Vector3(waterBasinGeneratorPosition.transform.position.x, waterBasinGeneratorPosition.transform.position.y, waterBasinGeneratorPosition.transform.position.z + _waterPlaneWidth / 2 - count * _waterPlaneWidth / numberOfBasinGenerators);
+                var coordinates = new Vector3(waterBasinGeneratorPosition.transform.position.x, waterBasinGeneratorPosition.transform.position.y, waterBasinGeneratorPosition.transform.position.z + _waterPlaneWidth / 2 - count * _waterPlaneWidth / numberOfBasinGenerators);
                 waterBasinGenerator.transform.position = coordinates;
             }
         }
@@ -184,15 +179,15 @@ public class WaveGeneratorPoolHandler : MonoBehaviour
 
     private void RemoveBasinGenerators()
     {
-        ulong[] keys = _generators.Keys.ToArray();
+        var keys = _generators.Keys.ToArray();
 
         foreach(var key in keys)
         {
            if((_generators[key]).getGeneratorMembership() == WaveGenerator.GeneratorMembership.WaterBasin)
-            {            
+           {            
                 Destroy(_generators[key].gameObject);
                 RemoveWaveGenerator(_generators[key]);            
-            }
+           }
         }       
     }
 }

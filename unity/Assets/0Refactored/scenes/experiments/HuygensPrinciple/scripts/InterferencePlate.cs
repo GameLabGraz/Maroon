@@ -14,7 +14,7 @@ namespace Maroon.Physics.HuygensPrinciple
             base.Start();
 
             _meshRenderer = GetComponent<MeshRenderer>();
-            UpdatePlateParameters();
+            UpdateParameters();
         }
 
         protected override void HandleUpdate()
@@ -25,22 +25,33 @@ namespace Maroon.Physics.HuygensPrinciple
         {   
         }
 
-        public void UpdatePlateParameters()
+        public void UpdateParameters()
         {
-            if (slitPlate.NumberOfSlits > 1)
-            {
-                _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_DistanceBetweenSlits"), 
-                    slitPlate.GetDistanceBetweenSlitCenters());
-            }
+            UpdateNumberOfSlits();
+            UpdateSlitWidth();
+            UpdatePlatePosition();
+            UpdateWaveLength();
+        }
 
-            _meshRenderer.sharedMaterial.SetInt(Shader.PropertyToID("_NumberOfSlits"), 
-                slitPlate.NumberOfSlits);
-
+        public void UpdateSlitWidth()
+        {
             _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_SlitWidth"), 
                 slitPlate.SlitWidth);         
         }
 
-        public void SetPlatePosition()
+        public void UpdateNumberOfSlits()
+        {
+            if (slitPlate.NumberOfSlits > 1)
+            {
+                _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_DistanceBetweenSlits"),
+                    slitPlate.GetDistanceBetweenSlitCenters());
+            }
+
+            _meshRenderer.sharedMaterial.SetInt(Shader.PropertyToID("_NumberOfSlits"),
+                slitPlate.NumberOfSlits);
+        }
+
+        public void UpdatePlatePosition()
         {
             _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_DistanceBetweenPlates"),
                  Vector4.Distance(slitPlate.transform.position, transform.position));

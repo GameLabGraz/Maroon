@@ -1,7 +1,6 @@
 ﻿using Maroon.Physics.HuygensPrinciple;
 using System.Collections.Generic;
 using UnityEngine;
-using VRTK;
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
@@ -70,22 +69,23 @@ public class WaterPlane : PausableObject, IResetObject
     private void Init()
     {
         CalculatePlaneMesh();
-        
+        UpdateParameters();
+    }
+
+    public void UpdateParameters()
+    {
         UpdateWaveLength();
         UpdateWaveFrequency();
-        
-        SetPlatePosition();
-        UpdatePlane();
-
+        UpdatePlatePosition();
     }
 
     public void UpdatePlane()
     {
-        List<WaveGenerator> basinGenerators = WaveGeneratorPoolHandler.Instance.GetGeneratorListOfType(WaveGenerator.GeneratorMembership.WaterBasin);
-        List<WaveGenerator> plateGenerators = WaveGeneratorPoolHandler.Instance.GetGeneratorListOfType(WaveGenerator.GeneratorMembership.SlitPlate1);
+        var basinGenerators = WaveGeneratorPoolHandler.Instance.GetGeneratorListOfType(WaveGenerator.GeneratorMembership.WaterBasin);
+        var plateGenerators = WaveGeneratorPoolHandler.Instance.GetGeneratorListOfType(WaveGenerator.GeneratorMembership.SlitPlate1);
 
-        ShaderConversionStruct basin = SetCoordinatesAndParameterArrays(basinGenerators, _maxNumberOfBasinGenerators);
-        ShaderConversionStruct plate = SetCoordinatesAndParameterArrays(plateGenerators, _maxNumberOfPlateGenerators);
+        var basin = SetCoordinatesAndParameterArrays(basinGenerators, _maxNumberOfBasinGenerators);
+        var plate = SetCoordinatesAndParameterArrays(plateGenerators, _maxNumberOfPlateGenerators);
 
         _meshRenderer.sharedMaterial.SetInt(Shader.PropertyToID("_BasinEntryCount"), basinGenerators.Count);
         _meshRenderer.sharedMaterial.SetFloatArray(Shader.PropertyToID("_sourceParameters"), basin.parameters);
@@ -144,12 +144,12 @@ public class WaterPlane : PausableObject, IResetObject
     {
         float parameter;
         Vector4 coordinates;
-        Vector4 empty = new Vector4(0f, 0f, 0f, 0f);
+        var empty = new Vector4(0f, 0f, 0f, 0f);
        
-        Vector4[] coordinatesArray = new Vector4[maxArraySize];
-        float[] parametersArray = new float[maxArraySize];
+        var coordinatesArray = new Vector4[maxArraySize];
+        var parametersArray = new float[maxArraySize];
 
-        for (int count = 0; count < maxArraySize; count++)
+        for (var count = 0; count < maxArraySize; count++)
         {
             if(count < list.Count)
             {
@@ -208,7 +208,7 @@ public class WaterPlane : PausableObject, IResetObject
         _timer = 0;
     }
 
-    public void SetPlatePosition()
+    public void UpdatePlatePosition()
     {
         _meshRenderer.sharedMaterial.SetVector(Shader.PropertyToID("_PlatePosition"), slitPlate.transform.position);
         UpdatePlane();

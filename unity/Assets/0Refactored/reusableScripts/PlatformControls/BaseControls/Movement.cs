@@ -18,13 +18,22 @@ namespace PlatformControls.BaseControls
 
         [SerializeField]
         protected bool SimulationRunningDuringMovement = false;
-        
-        public UnityEvent onMovementStoped;
+
+        [SerializeField]
+        protected UnityEvent onMovementStart;
+
+        [SerializeField]
+        protected UnityEvent onMovementStopped;
+
+        [SerializeField]
+        protected UnityEvent onMovement;
 
         protected void StartMoving()
         {
             IsMoving = true;
-         
+
+            onMovementStart.Invoke();
+
             if (!SimulationRunningDuringMovement)
                 SimulationController.Instance.StartSimulation();
         }
@@ -32,8 +41,8 @@ namespace PlatformControls.BaseControls
         protected void StopMoving()
         {
             IsMoving = false;
-            
-            onMovementStoped.Invoke();
+
+            onMovementStopped.Invoke();
 
             if (!SimulationRunningDuringMovement)
                 SimulationController.Instance.StopSimulation();
@@ -43,6 +52,8 @@ namespace PlatformControls.BaseControls
         {
             if(!IsMoving)
                 StartMoving();
+
+            onMovement.Invoke();
 
             var maxDistance = Vector3.Distance(MinPosition.transform.position, MaxPosition.transform.position);
 
