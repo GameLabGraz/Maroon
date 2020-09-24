@@ -40,6 +40,8 @@ public class NetworkControl : NetworkBehaviour
     {
         controlButton.onClick.AddListener(OnClickCommandButton);
         MaroonNetworkManager.Instance.newClientInControlEvent.AddListener(OnNewClientInControl);
+        LanguageManager.Instance.OnLanguageChanged.AddListener(OnLanguageChanged);
+        
         if (isServer)
         {
             if (MaroonNetworkManager.Instance.ClientInControl == null)
@@ -73,6 +75,11 @@ public class NetworkControl : NetworkBehaviour
         {
             _mode = Mode.NotInControl;
         }
+        UpdateAppearance();
+    }
+
+    private void OnLanguageChanged(SystemLanguage newLanguage)
+    {
         UpdateAppearance();
     }
 
