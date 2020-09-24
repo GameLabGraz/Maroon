@@ -203,28 +203,29 @@ public class NetworkControl : NetworkBehaviour
         _countdownTime = CountdownDuration;
         countdownText.text = _countdownTime.ToString();
         _countdownActive = true;
-        InvokeRepeating(nameof(DecreaseCountdown), 1, 1);
+        StartCoroutine(nameof(CountdownRoutine));
     }
-
-    private void DecreaseCountdown()
+    
+    private IEnumerator CountdownRoutine()
     {
-        _countdownTime--;
-        if (_countdownTime <= 0)
+        while (_countdownTime >= 0)
         {
-            StopCountdown();
-            if (isServer)
-            {
-                MaroonNetworkManager.Instance.ServerSetClientInControl(_clientWithRequest);
-            }
+            yield return new WaitForSecondsRealtime(1);
+            _countdownTime--;
+            countdownText.text = _countdownTime.ToString();
         }
-        countdownText.text = _countdownTime.ToString();
+        StopCountdown();
+        if (isServer)
+        {
+            MaroonNetworkManager.Instance.ServerSetClientInControl(_clientWithRequest);
+        }
     }
 
     private void StopCountdown()
     {
         _countdownTime = 0;
         _countdownActive = false;
-        CancelInvoke(nameof(DecreaseCountdown));
+        StopCoroutine(nameof(CountdownRoutine));
     }
 
     private void CancelCountdown()
@@ -271,18 +272,19 @@ public class NetworkControl : NetworkBehaviour
         _cooldownTime = CooldownDuration;
         countdownText.text = _cooldownTime.ToString();
         _cooldownActive = true;
-        InvokeRepeating(nameof(DecreaseCooldown), 1, 1);
+        StartCoroutine(nameof(CooldownRoutine));
     }
-
-    private void DecreaseCooldown()
+    
+    private IEnumerator CooldownRoutine()
     {
-        _cooldownTime--;
-        if (_cooldownTime <= 0)
+        while (_cooldownTime >= 0)
         {
-            StopCooldown();
+            yield return new WaitForSecondsRealtime(1);
+            _cooldownTime--;
+            if(!_countdownActive)
+                countdownText.text = _cooldownTime.ToString();
         }
-        if(!_countdownActive)
-            countdownText.text = _cooldownTime.ToString();
+        StopCooldown();
     }
 
     private void StopCooldown()
@@ -291,6 +293,6 @@ public class NetworkControl : NetworkBehaviour
         _cooldownActive = false;
         _mode = Mode.NotInControl;
         UpdateAppearance();
-        CancelInvoke(nameof(DecreaseCooldown));
+        StopCoroutine(nameof(CooldownRoutine));
     }
 }
