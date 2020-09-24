@@ -19,7 +19,8 @@ public class NetworkControl : NetworkBehaviour
         InControlRequest,
         NotInControl,
         NotInControlMyRequest,
-        NotInControlOtherRequest
+        NotInControlOtherRequest,
+        NotInControlCooldown
     }
 
     private Mode _mode;
@@ -28,6 +29,10 @@ public class NetworkControl : NetworkBehaviour
     private const int CountdownDuration = 5;
     private int _countdownTime;
     private bool _countdownActive;
+    
+    private const int CooldownDuration = 15;
+    private int _cooldownTime;
+    private bool _cooldownActive;
     
     // Start is called before the first frame update
     void Start()
@@ -58,6 +63,10 @@ public class NetworkControl : NetworkBehaviour
         if (MaroonNetworkManager.Instance.IsInControl)
         {
             _mode = Mode.InControl;
+        }
+        else if (_cooldownActive)
+        {
+            _mode = Mode.NotInControlCooldown;
         }
         else
         {
@@ -113,6 +122,15 @@ public class NetworkControl : NetworkBehaviour
                 controlButton.GetComponent<Image>().color = new Color(0.5f,0.5f, 0.5f, 0.6f);
                 break;
             
+            case Mode.NotInControlCooldown:
+                inControlText.text = MaroonNetworkManager.Instance.ClientInControl + " is in Control";
+                statusText.text = "Wait until you can request again";
+                statusText.gameObject.SetActive(true);
+                countdownText.gameObject.SetActive(true);
+                controlButton.interactable = false;
+                controlButton.GetComponent<Image>().color = new Color(1,0.5f, 0.5f, 0.6f);
+                break;
+            
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -135,6 +153,9 @@ public class NetworkControl : NetworkBehaviour
                 CancelCountdown();
                 break;
             case Mode.NotInControlOtherRequest:
+                // cannot happen
+                break;
+            case Mode.NotInControlCooldown:
                 // cannot happen
                 break;
             default:
@@ -179,7 +200,6 @@ public class NetworkControl : NetworkBehaviour
     {
         _countdownTime = CountdownDuration;
         countdownText.text = _countdownTime.ToString();
-        countdownText.gameObject.SetActive(true);
         _countdownActive = true;
         InvokeRepeating(nameof(DecreaseCountdown), 1, 1);
     }
@@ -200,8 +220,7 @@ public class NetworkControl : NetworkBehaviour
 
     private void StopCountdown()
     {
-        _countdownTime = CountdownDuration;
-        countdownText.gameObject.SetActive(false);
+        _countdownTime = 0;
         _countdownActive = false;
         CancelInvoke(nameof(DecreaseCountdown));
     }
@@ -211,20 +230,19 @@ public class NetworkControl : NetworkBehaviour
         if (!_countdownActive)
             return;
         
-        CmdCancelCoundown();
+        CmdCancelCountdown();
     }
 
     [Command(ignoreAuthority = true)]
-    private void CmdCancelCoundown()
+    private void CmdCancelCountdown()
     {
-        RpcCancelCoundown();
+        RpcCancelCountdown();
     }
     
     [ClientRpc]
-    private void RpcCancelCoundown()
+    private void RpcCancelCountdown()
     {
         StopCountdown();
-        //TODO: cooldown handling
         if (MaroonNetworkManager.Instance.IsInControl)
         {
             _mode = Mode.InControl;
@@ -233,6 +251,39 @@ public class NetworkControl : NetworkBehaviour
         {
             _mode = Mode.NotInControl;
         }
+
+        if (_clientWithRequest == MaroonNetworkManager.Instance.PlayerName)
+        {
+            StartCooldown();
+        }
         UpdateAppearance();
+    }
+    
+    private void StartCooldown()
+    {
+        _mode = Mode.NotInControlCooldown;
+        _cooldownTime = CooldownDuration;
+        countdownText.text = _cooldownTime.ToString();
+        _cooldownActive = true;
+        InvokeRepeating(nameof(DecreaseCooldown), 1, 1);
+    }
+
+    private void DecreaseCooldown()
+    {
+        _cooldownTime--;
+        if (_cooldownTime <= 0)
+        {
+            StopCooldown();
+        }
+        countdownText.text = _cooldownTime.ToString();
+    }
+
+    private void StopCooldown()
+    {
+        _cooldownTime = 0;
+        _cooldownActive = false;
+        _mode = Mode.NotInControl;
+        UpdateAppearance();
+        CancelInvoke(nameof(DecreaseCooldown));
     }
 }
