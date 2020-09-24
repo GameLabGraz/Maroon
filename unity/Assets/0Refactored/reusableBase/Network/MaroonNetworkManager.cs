@@ -101,7 +101,6 @@ public class MaroonNetworkManager : NetworkManager
     private bool _activePortMapping;
     private bool _sceneCountdownActive;
     private Dictionary<string, NetworkConnection> _connectedPlayers = new Dictionary<string, NetworkConnection>();
-    //TODO: Refactor - is this needed?
     private Dictionary<NetworkConnection, NetworkPlayer> _connectedPlayerObjects = new Dictionary<NetworkConnection, NetworkPlayer>();
     
     public override void OnStartServer()
@@ -264,12 +263,6 @@ public class MaroonNetworkManager : NetworkManager
         {
             conn.Send(msg);
         }
-    }
-
-    //TODO: refactor this
-    public List<string> GetAllPlayerNames()
-    {
-        return _connectedPlayers.Keys.ToList();
     }
 
     private void MarkTakenServerNames()

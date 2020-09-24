@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using GEAR.Localization;
 using Mirror;
 using TMPro;
 using UnityEngine;
@@ -80,7 +81,7 @@ public class NetworkControl : NetworkBehaviour
         switch (_mode)
         {
             case Mode.InControl:
-                inControlText.text = "IN CONTROL";
+                inControlText.text = LanguageManager.Instance.GetString("InControl");
                 statusText.gameObject.SetActive(false);
                 countdownText.gameObject.SetActive(false);
                 controlButton.interactable = false;
@@ -88,8 +89,8 @@ public class NetworkControl : NetworkBehaviour
                 break;
             
             case Mode.InControlRequest:
-                inControlText.text = _clientWithRequest + " requests control";
-                statusText.text = "Click to deny";
+                inControlText.text = _clientWithRequest + " " + LanguageManager.Instance.GetString("ControlRequest");
+                statusText.text = LanguageManager.Instance.GetString("ClickToDeny");
                 statusText.gameObject.SetActive(true);
                 countdownText.gameObject.SetActive(true);
                 controlButton.interactable = true;
@@ -97,8 +98,8 @@ public class NetworkControl : NetworkBehaviour
                 break;
             
             case Mode.NotInControl:
-                inControlText.text = MaroonNetworkManager.Instance.ClientInControl + " is in Control";
-                statusText.text = "Click to take control";
+                inControlText.text = MaroonNetworkManager.Instance.ClientInControl + " " + LanguageManager.Instance.GetString("IsInControl");
+                statusText.text = LanguageManager.Instance.GetString("ClickRequestControl");
                 statusText.gameObject.SetActive(true);
                 countdownText.gameObject.SetActive(false);
                 controlButton.interactable = true;
@@ -106,8 +107,8 @@ public class NetworkControl : NetworkBehaviour
                 break;
             
             case Mode.NotInControlMyRequest:
-                inControlText.text = "control requested";
-                statusText.text = "Click to cancel";
+                inControlText.text = LanguageManager.Instance.GetString("ControlRequested");
+                statusText.text = LanguageManager.Instance.GetString("ClickToCancel");
                 statusText.gameObject.SetActive(true);
                 countdownText.gameObject.SetActive(true);
                 controlButton.interactable = true;
@@ -115,7 +116,7 @@ public class NetworkControl : NetworkBehaviour
                 break;
             
             case Mode.NotInControlOtherRequest:
-                inControlText.text = _clientWithRequest + " requests control";
+                inControlText.text = _clientWithRequest + " " + LanguageManager.Instance.GetString("ControlRequest");
                 statusText.gameObject.SetActive(false);
                 countdownText.gameObject.SetActive(true);
                 controlButton.interactable = false;
@@ -123,10 +124,11 @@ public class NetworkControl : NetworkBehaviour
                 break;
             
             case Mode.NotInControlCooldown:
-                inControlText.text = MaroonNetworkManager.Instance.ClientInControl + " is in Control";
-                statusText.text = "Wait until you can request again";
+                inControlText.text = MaroonNetworkManager.Instance.ClientInControl + " " + LanguageManager.Instance.GetString("IsInControl");
+                statusText.text = LanguageManager.Instance.GetString("WaitCooldown");
                 statusText.gameObject.SetActive(true);
                 countdownText.gameObject.SetActive(true);
+                countdownText.text = _cooldownTime.ToString();
                 controlButton.interactable = false;
                 controlButton.GetComponent<Image>().color = new Color(1,0.5f, 0.5f, 0.6f);
                 break;
@@ -247,6 +249,10 @@ public class NetworkControl : NetworkBehaviour
         {
             _mode = Mode.InControl;
         }
+        else if (_cooldownActive)
+        {
+            _mode = Mode.NotInControlCooldown;
+        }
         else
         {
             _mode = Mode.NotInControl;
@@ -275,7 +281,8 @@ public class NetworkControl : NetworkBehaviour
         {
             StopCooldown();
         }
-        countdownText.text = _cooldownTime.ToString();
+        if(!_countdownActive)
+            countdownText.text = _cooldownTime.ToString();
     }
 
     private void StopCooldown()
