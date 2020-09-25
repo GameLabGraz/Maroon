@@ -52,6 +52,8 @@ MonoBehaviour:
   originOffset: {x: 0.1, y: 0.5, z: 0}
   fixClosingAngle: 14
   _lineWidth: 0.1
+  fieldStrengthFactor: 1
+  invertDirection: 0
 --- !u!114 &114834550783966940
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -316,7 +318,7 @@ Transform:
   m_GameObject: {fileID: 7973655754857343902}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 459744}
   m_RootOrder: 4
@@ -331,10 +333,10 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 0
-  serializedVersion: 3
+  serializedVersion: 4
   m_Convex: 1
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 4300000, guid: 778145ad357266442a9415d441387974, type: 3}
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: 98dc7d0434fa9634d9520ac7aefc6076, type: 3}
 --- !u!1 &8125011667091419601
 GameObject:
   m_ObjectHideFlags: 0
@@ -362,7 +364,7 @@ Transform:
   m_GameObject: {fileID: 8125011667091419601}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 459744}
   m_RootOrder: 5
@@ -374,7 +376,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8125011667091419601}
-  m_Mesh: {fileID: 4300000, guid: f27f61f477d81d8488dc48831e304043, type: 3}
+  m_Mesh: {fileID: 4300002, guid: 98dc7d0434fa9634d9520ac7aefc6076, type: 3}
 --- !u!23 &8963738645159234660
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -389,6 +391,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -400,6 +403,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0

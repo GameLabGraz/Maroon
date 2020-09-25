@@ -207,7 +207,7 @@ namespace Maroon.Physics.HuygensPrinciple
         private int CalculateGeneratorsPerSlit()
         {        
             var numberOfGeneratorsPerSlit = 1 + (int)((slitWidth * 10.0f)/0.8f);
-            return numberOfGeneratorsPerSlit; 
+            return slitWidth == 0 ? 0 : numberOfGeneratorsPerSlit;
         }
 
         private void AddWaveGenerator()
