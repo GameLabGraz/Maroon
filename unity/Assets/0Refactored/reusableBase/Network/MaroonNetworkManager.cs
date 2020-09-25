@@ -254,10 +254,10 @@ public class MaroonNetworkManager : NetworkManager
         if (!NetworkServer.active)
             return;
 
-        // Player not connected - Host takes control
+        // Player not connected - Player in control stays in control
         if (!_connectedPlayers.ContainsKey(clientInControl))
         {
-            clientInControl = _playerName;
+            return;
         }
         
         NetworkControlMessage msg = new NetworkControlMessage

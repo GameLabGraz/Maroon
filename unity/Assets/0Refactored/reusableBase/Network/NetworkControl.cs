@@ -233,6 +233,8 @@ public class NetworkControl : NetworkBehaviour
         _countdownTime = 0;
         _countdownActive = false;
         StopCoroutine(nameof(CountdownRoutine));
+        
+        OnNewClientInControl(); //In case anything goes wrong (i.e. client with request leaves)
     }
 
     private void CancelCountdown()
