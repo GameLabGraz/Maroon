@@ -162,6 +162,31 @@
         </div>
       </div>
 
+      <!-- Modal -->
+      <div class="modal fade" id="mobileModal" tabindex="-1" aria-labelledby="mobileModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+
+            <div class="modal-header">
+              <h5 class="modal-title" id="mobileModalLabel">Heads up!</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+            <div class="modal-body">
+              You seem to open Maroon on a mobile device. Unfortunately this is not supported, we recommend
+              switching to a desktop pc.
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Try it anyway</button>
+              <a href="/" class="btn btn-green">Go to homepage</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- JavaScript -->
@@ -182,6 +207,15 @@
     <!-- Scripts -->
     <script>
 
+      // Check for mobile platform
+      if(UnityLoader.SystemInfo.mobile)
+      {
+        $( document ).ready(function()
+        {
+          $('#mobileModal').modal('show');
+        });
+      }
+      
       // Init Typed
       var typed = new Typed(
           '#starttype',
