@@ -457,6 +457,18 @@ public class MaroonNetworkManager : NetworkManager
         }
     }
 
+    public bool AllowNetworkPause()
+    {
+        if (!NetworkClient.active)
+            return true;
+
+        if (SceneManager.GetActiveScene().name.Contains("Laboratory"))
+            return true;
+
+        //In experiment while multi-user
+        return false;
+    }
+
     #endregion
 
     public override void OnApplicationQuit()
