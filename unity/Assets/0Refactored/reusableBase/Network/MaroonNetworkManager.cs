@@ -126,6 +126,7 @@ public class MaroonNetworkManager : NetworkManager
         NetworkNamingService.FreeAllServerNames();
         _activePortMapping = false;
         _connectedPlayers.Clear();
+        DisplayMessage("StopHost");
     }
 
     public override void OnServerConnect(NetworkConnection conn)
@@ -335,7 +336,6 @@ public class MaroonNetworkManager : NetworkManager
         ClientInControl = _playerName;
         _serverName = null;
         _networkDiscovery.StartDiscovery();
-        //handlers cleared automatically!
     }
 
     public override void OnClientConnect(NetworkConnection conn)
