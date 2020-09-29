@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System.IO;
 using PlatformControls.PC;
 using System.Linq;
+using System;
 
 public class AcidTitration : MonoBehaviour
 {
@@ -20,7 +21,7 @@ public class AcidTitration : MonoBehaviour
 		{"CH3CO2H", 4.75} };
 
 	Dictionary<string, double> weakBases = new Dictionary<string, double>() {
-		{"NH3", 4.75} };
+		{"NH3", 9.25} };
 
 	Dictionary<double, double> result = new Dictionary<double, double>();
 	Dictionary<double, double> equivalenzPoint = new Dictionary<double, double>();
@@ -66,77 +67,89 @@ public class AcidTitration : MonoBehaviour
 		{
 			concentration_preequivalence = ((mlAnalyt*0.001) * molAnalyt) - ((i*0.001) * molTitrant);
 			concentration_preequivalence /= ((mlAnalyt + i)*0.001);
-			
+
+
 			// equivalence point reached
 			if (concentration_preequivalence <= 0.0) 
 			{
 
                 if (checkEquivalencePoint)
 				{
-					ph = 7.0f;
-					if (weakAcid) 
+					ph = 7.0;
+					if (weakAcid && !weakBase) 
 					{
 						double pKb = 14.0 - weakAcids[dropddownAcidText]; // pKs + pKb = pKw
 						double X = ((i*0.001) * molTitrant) / ((mlAnalyt + i)*0.001);
-						double pOH = 0.5 * (pKb -Mathf.Log10((float)X));
-						ph = 14.0 - pOH;
+						ph = 0.5 * (pKb -Math.Log10(X));
 
-						if (!baseToggleTitrant)
-							ph = 14 - ph; // ph = 14 - pOH
+						ph = 14 - ph; // ph = 14 - pOH
 					}
-					if (weakBase)
+					if (weakBase && !weakAcid)
 					{
-						double pKs = 14.0 - weakBases[dropdownBaseText];
 						double X = ((i*0.001) * molTitrant) / ((mlAnalyt + i)*0.001);
-						ph = 0.5 * (pKs -Mathf.Log10((float)X));
-
-						if (baseToggleTitrant)
-							ph = 14 - ph; // ph = 14 - pOH
+						ph = 0.5 * (weakBases[dropdownBaseText] - Math.Log10(X));
 					}
 					equivalenzPoint.Add(i, ph);
                     checkEquivalencePoint = false;
                 }
 				else // after equivalence point
 				{
-					concentration_postequivalence = ((i * 0.001) * molTitrant) - ((mlAnalyt * 0.001) * molAnalyt);
-					concentration_postequivalence /= ((mlAnalyt + i) * 0.001);
+					if((weakAcid && !baseToggleTitrant) || (weakBase && baseToggleTitrant))
+					{
+						if (!baseToggleTitrant) // weak acid remains
+						{
+							ph = weakTitrCalculation(i, molTitrant, molAnalyt, mlAnalyt, weakAcids[dropddownAcidText]);
+						}
+						else // weak base remains
+						{
+							double pKb = 14.0 - weakBases[dropdownBaseText];
+							ph = weakTitrCalculation(i, molTitrant, molAnalyt, mlAnalyt, pKb);
+						}
+					}
+					else
+					{
+						// strong base or strong acid
+						concentration_postequivalence = ((i * 0.001) * molTitrant) - ((mlAnalyt * 0.001) * molAnalyt);
+						concentration_postequivalence /= ((mlAnalyt + i) * 0.001);
 
-					double pOH = -Mathf.Log10((float)concentration_postequivalence);
+						ph = -Math.Log10(concentration_postequivalence);
+					}
 
 					if (baseToggleTitrant)
-						ph = 14 - pOH;
-					else
-						ph = pOH;
+						ph = 14 - ph;
+
 				}
 				prev_concentration_preequivalence = concentration_preequivalence;
 			} 
 			else // before equivalence point
 			{
-				if (weakAcid) // weak acid with strong base
+				if (weakAcid && baseToggleTitrant) // weak acid with strong base
 				{
 					if (i == 0) 
 					{
-						ph = 0.5 * (weakAcids[dropddownAcidText] - Mathf.Log10((float)molAnalyt)); // ph = 1/2 * (pKs - lg(c0))
+						ph = 0.5 * (weakAcids[dropddownAcidText] - Math.Log10(molAnalyt)); // ph = 1/2 * (pKs - lg(c0))
 					}
 					else 
 					{
-						ph = weakTitrCalculation(mlAnalyt, molAnalyt, molTitrant, i, dropddownAcidText, weakAcids);
+						ph = weakTitrCalculation(mlAnalyt, molAnalyt, molTitrant, i, weakAcids[dropddownAcidText]);
 					}
 				}
-				else if (weakBase) 
+				else if (weakBase && !baseToggleTitrant) 
 				{
 					if (i == 0)
 					{
-						ph = 0.5 * (weakBases[dropdownBaseText] - Mathf.Log10((float)molAnalyt)); // pOH = 1/2 * (pKb - lg(c0))
+						double pKb = 14.0 - weakBases[dropdownBaseText];
+						ph = 0.5 * (pKb - Math.Log10(molAnalyt)); // pOH = 1/2 * (pKb - lg(c0))
 					}
 					else 
 					{
-						ph = weakTitrCalculation(mlAnalyt, molAnalyt, molTitrant, i, dropdownBaseText, weakBases);
+						double pKb = 14.0 - weakBases[dropdownBaseText];
+						ph = weakTitrCalculation(mlAnalyt, molAnalyt, molTitrant, i, pKb);
 					}
 				}
 				else // strong acid  with strong base
 				{
-					ph = -Mathf.Log10 ((float)concentration_preequivalence);
+					ph = -Math.Log10 (concentration_preequivalence);
 				}
 
 				if (!baseToggleTitrant)
@@ -150,20 +163,36 @@ public class AcidTitration : MonoBehaviour
             if ((i * 10) % 1 == 0)
             {
                 result.Add(i, ph);
-            }
+				//Debug.Log("ph: " + ph + " ml: " + i);
+			}
 
             i += 0.01D;
-			i = System.Math.Round(i, 2);
+			i = Math.Round(i, 2);
 		}
 	}
 
-	public double weakTitrCalculation(double mlAnalyt_, double molAnalyt_, double molTitrant_, double i_, string dropDownText, Dictionary<string, double> weakDict)
+	public double weakTitrCalculation(double mlAnalyt_, double molAnalyt_, double molTitrant_, double i_, double pK)
 	{
 		double HX = ((mlAnalyt_ * 0.001) * molAnalyt_) - ((i_ * 0.001) * molTitrant_);
 		HX /= ((mlAnalyt_ + i_) * 0.001);
-		double X = ((i_ * 0.001) * molTitrant_);
-		X /= ((mlAnalyt_ + i_) * 0.001);
-		double ph_ = weakDict[dropDownText] - Mathf.Log10((float)(HX / X)); // ph = pKs - lg(HX / X)
+		double X = ((i_ * 0.001) * molTitrant_) / ((mlAnalyt_ + i_) * 0.001);
+		double ph_ = pK - Math.Log10(HX / X); // ph = pKs - lg(HX / X)
+
+		if (weakAcid && weakBase)
+		{
+			double X2 = ((mlAnalyt_ * 0.001) * molAnalyt_) - ((i_ * 0.001) * molTitrant_);
+			double Ks = Math.Pow(10, -pK);
+			double tmp_ph = 0.5 * ((14 - pK) - Math.Log10(X2)); // c0 << Ks
+
+			if (ph_ >= tmp_ph)
+				ph_ = tmp_ph;
+
+			if (X2 <= Ks)
+			{
+				double Ks_tmp = Math.Pow(10, -(pK - 0.01));
+				ph_ = 0.5 * ((14-pK) - Math.Log10(Ks_tmp));
+			}
+		}
 
 		return ph_;
 	}

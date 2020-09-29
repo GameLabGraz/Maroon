@@ -8,7 +8,7 @@ public class GameController : MonoBehaviour, IResetObject
 {
 
 	private AcidTitration acidTitrationScript;
-	DrawGraph drawGraphScript;
+	private DrawGraph drawGraphScript;
 
 	// Base settings
 	private double baseMol = 0.1f;
@@ -24,15 +24,13 @@ public class GameController : MonoBehaviour, IResetObject
 	private double molAnalyt = 0.1f;
 	private double mlAnalyt = 20f;
 
-	private bool baseToggleTitrant = true;
-	private bool acidToggleTitrant = false;
-
 	[Space(10)]
     public GameObject pipet;
-    PipetAnimation pipetAnimation;
+    private PipetAnimation pipetAnimation;
 
 	public Toggle baseToggle;
 	public Toggle acidToggle;
+	public Button startButton;
 
     Coroutine theCoroutine;
 
@@ -53,6 +51,7 @@ public class GameController : MonoBehaviour, IResetObject
 
 	public void startTitration()
 	{
+		startButton.interactable = false;
 		bool ready = initaliseComponents();
 
         if (ready)
@@ -70,7 +69,7 @@ public class GameController : MonoBehaviour, IResetObject
 
     bool initaliseComponents()
 	{
-		if (baseToggleTitrant) // if base is titrant
+		if (baseToggle.isOn) // if base is titrant
 		{
 			molTitrant = baseMol;
 			mlTitrant = baseMl;
@@ -90,7 +89,9 @@ public class GameController : MonoBehaviour, IResetObject
         if (checkForZeros(molAnalyt))
             return false;
         return true;
-    }
+
+
+	}
 
     public bool checkForZeros(double value)
     {
@@ -114,45 +115,36 @@ public class GameController : MonoBehaviour, IResetObject
 		acidMol = 0.1f;
 		acidMl = 20.0f;
 
-		baseToggleTitrant = true;
-		acidToggleTitrant = false;
+		baseToggle.isOn = true;
+		acidToggle.isOn = false;
 
 		pipetAnimation.resetPipet(true);
         StopCoroutine(theCoroutine);
+		startButton.interactable = true;
 	}
 
     // Animation: Pipet takes fluid and puts it into erlenmeyer flask
     void playPipetAnimation()
     {
 		pipetAnimation.resetTrigger("reset");
-		pipetAnimation.setPipetBool(baseToggleTitrant);
+		pipetAnimation.setPipetBool(baseToggle.isOn);
     }
 
 	public void setBaseToggleTitrant(bool value)
 	{
 		if (!acidToggle.IsActive())
-		{
-			baseToggleTitrant = value;
-			acidToggleTitrant = !value;
-
 			acidToggle.isOn = !acidToggle.isOn;
-		}
 	}
 
 	public void setAcidToggleTitrant(bool value)
 	{
 		if (!baseToggle.IsActive())
-		{
-			acidToggleTitrant = value;
-			baseToggleTitrant = !value;
-
 			baseToggle.isOn = !baseToggle.isOn;
-		}
 	}
 
 	public bool getBaseToggleTitrant()
 	{
-		return baseToggleTitrant;
+		return baseToggle.isOn;
 	}
 
 
