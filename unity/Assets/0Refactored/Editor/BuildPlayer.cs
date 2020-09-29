@@ -9,13 +9,24 @@ namespace Maroon.Build
 {
     public class BuildPlayer
     {
+        // #############################################################################################################
+        // Members
+
         private const string ScenePath      = "Assets/0Refactored/scenes";
-        private const string LabPath        = ScenePath + "/Laboratory";
+        private const string LabPath        = ScenePath + "/laboratory";
         private const string MenuPath       = ScenePath + "/menu";
         private const string ExperimentPath = ScenePath + "/experiments";
 
         private const string PcExtension = ".pc.unity";
         private const string VrExtension = ".vr.unity";
+
+        private struct PlayerSetOptions
+        {
+            public string BundleVersion;
+            public int DefaultScreenWidth;
+            public int DefaultScreenHeight;
+            public FullScreenMode FullScreenMode;
+        }
 
         private enum MaroonBuildTarget
         {
@@ -25,15 +36,20 @@ namespace Maroon.Build
             VR
         }
 
+        // #############################################################################################################
+        // Editor Build Methods
+
         [MenuItem("Build/Build All")]
         public static void BuildAll()
         {
             var buildPath = EditorUtility.SaveFolderPanel("Choose Build Location", string.Empty, "Build");
-            if (buildPath.Length == 0)
-                return;
 
-            foreach (var buildTarget in (MaroonBuildTarget[])Enum.GetValues(
-                typeof(MaroonBuildTarget)))
+            if (buildPath.Length == 0)
+            {
+                return;
+            }
+
+            foreach(var buildTarget in (MaroonBuildTarget[])Enum.GetValues(typeof(MaroonBuildTarget)))
             {
                 Build(buildTarget, $"{buildPath}/{buildTarget}");
             }
@@ -63,6 +79,59 @@ namespace Maroon.Build
             Build(MaroonBuildTarget.WebGL);
         }
 
+        // #############################################################################################################
+        // Build Methods
+
+        private static void Build(MaroonBuildTarget buildTarget, string buildPath = null)
+        {
+            if(string.IsNullOrEmpty(buildPath))
+            {
+                if(!UnityEditorInternal.InternalEditorUtility.isHumanControllingUs)
+                {
+                    return;
+                }
+
+                buildPath = EditorUtility.SaveFolderPanel("Choose Build Location", "Build", $"{buildTarget}");
+
+                if(buildPath.Length == 0)
+                {
+                    return;
+                }
+            }
+
+            if(UnityEditorInternal.InternalEditorUtility.isHumanControllingUs)
+            {
+                Debug.ClearDeveloperConsole();
+            }
+
+            Log($"Start building for {buildTarget} ...");
+
+            var defaultPlayerSettings = GetPlayerSettings();
+
+            // Set PlayerSettings for Build
+            SetPlayerSettings(new PlayerSetOptions()
+            {
+                BundleVersion = DateTime.UtcNow.Date.ToString("yyyyMMdd"),
+                DefaultScreenWidth = 1920,
+                DefaultScreenHeight = 1080,
+                FullScreenMode = FullScreenMode.FullScreenWindow
+            });
+
+            var buildPlayerOptions = new BuildPlayerOptions
+            {
+                target = MaroonBuildTarget2UnityBuildTarget(buildTarget),
+                options = BuildOptions.None,
+                locationPathName = $"{buildPath}/{GetAppName(buildTarget)}",
+                scenes = GetScenes(buildTarget)
+            };
+
+            var report = BuildPipeline.BuildPlayer(buildPlayerOptions);
+            HandleBuildResult(report.summary);
+
+            // Restore PlayerSettings for Editor
+            SetPlayerSettings(defaultPlayerSettings);
+        }
+
         public static void JenkinsBuild()
         {
             var args = Environment.GetCommandLineArgs();
@@ -78,43 +147,14 @@ namespace Maroon.Build
             var buildPath = args[executeMethodIndex + 2];
 
             // run build for each build target
-            foreach (var buildTarget in (MaroonBuildTarget[])Enum.GetValues(
-                typeof(MaroonBuildTarget)))
+            foreach(var buildTarget in (MaroonBuildTarget[])Enum.GetValues(typeof(MaroonBuildTarget)))
             {
                 Build(buildTarget, $"{buildPath}/{buildTarget}");
             }
         }
 
-        private static void Build(MaroonBuildTarget buildTarget, string buildPath = null)
-        {
-            if (string.IsNullOrEmpty(buildPath))
-            {
-                if (!UnityEditorInternal.InternalEditorUtility.isHumanControllingUs)
-                    return;
-
-                buildPath = EditorUtility.SaveFolderPanel("Choose Build Location", "Build", $"{buildTarget}");
-                if (buildPath.Length == 0)
-                    return;
-            }
-
-            if (UnityEditorInternal.InternalEditorUtility.isHumanControllingUs)
-                Debug.ClearDeveloperConsole();
-
-            Log($"Start building for {buildTarget} ...");
-
-            PlayerSettings.bundleVersion = DateTime.UtcNow.Date.ToString("yyyyMMdd");
-
-            var buildPlayerOptions = new BuildPlayerOptions
-            {
-                target = MaroonBuildTarget2UnityBuildTarget(buildTarget),
-                options = BuildOptions.None,
-                locationPathName = $"{buildPath}/{GetAppName(buildTarget)}",
-                scenes = GetScenes(buildTarget)
-            };
-
-            var report = BuildPipeline.BuildPlayer(buildPlayerOptions);
-            HandleBuildResult(report.summary);
-        }
+        // #############################################################################################################
+        // Helper Methods
 
         private static string[] GetScenes(MaroonBuildTarget buildTarget)
         {
@@ -124,12 +164,15 @@ namespace Maroon.Build
                 Log($"BuildPlayer::GetScenes: Unable to load Scenes for {buildTarget}");
                 return null;
             }
+            
+            var scenes = new List<string>();
 
-            var scenes = new List<string>
+            // TODO: If VR Main Menu ready, remove if, just disables main menu for VR 
+            if(sceneExtension == PcExtension) 
             {
-                $"{LabPath}/Laboratory{sceneExtension}",
-                $"{MenuPath}/Menu.unity"
-            };
+                scenes.Add($"{MenuPath}/MainMenu{sceneExtension}");
+            }
+            scenes.Add($"{LabPath}/Laboratory{sceneExtension}");
 
             var experiments = Directory.GetFiles(ExperimentPath, $"*{sceneExtension}", SearchOption.AllDirectories);
             scenes.AddRange(experiments);
@@ -161,8 +204,9 @@ namespace Maroon.Build
                 case MaroonBuildTarget.MAC:
                     return "Maroon.app";
                 case MaroonBuildTarget.PC:
-                case MaroonBuildTarget.VR:
                     return "Maroon.exe";
+                case MaroonBuildTarget.VR:
+                    return "MaroonVR.exe";
                 default:
                     return "";
             }
@@ -203,6 +247,25 @@ namespace Maroon.Build
                 default:
                     throw new Exception("BuildPlayer: Unable to handle build result.");
             }
+        }
+
+        private static void SetPlayerSettings(PlayerSetOptions options)
+        {
+            PlayerSettings.bundleVersion = options.BundleVersion;
+            PlayerSettings.defaultScreenWidth = options.DefaultScreenWidth;
+            PlayerSettings.defaultScreenHeight = options.DefaultScreenHeight;
+            PlayerSettings.fullScreenMode = options.FullScreenMode;
+        }
+
+        private static PlayerSetOptions GetPlayerSettings()
+        {
+            return new PlayerSetOptions()
+            {
+                BundleVersion = PlayerSettings.bundleVersion,
+                DefaultScreenWidth = PlayerSettings.defaultScreenWidth,
+                DefaultScreenHeight = PlayerSettings.defaultScreenHeight,
+                FullScreenMode = PlayerSettings.fullScreenMode
+            };
         }
 
         private static void Log(string message)

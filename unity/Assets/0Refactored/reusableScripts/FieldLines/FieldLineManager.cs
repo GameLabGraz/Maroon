@@ -11,12 +11,13 @@
 //
 
 using System.Collections.Generic;
+using Maroon.Physics.Electromagnetism;
 using UnityEngine;
 
 /// <summary>
 /// Controller class to manage the field lines
 /// </summary>
-public abstract class FieldLineManager : MonoBehaviour
+public class FieldLineManager : MonoBehaviour
 {
     /// <summary>
     /// Lists of field lines
