@@ -69,7 +69,7 @@ public class VectorField : MonoBehaviour
     public QuantityInt arrows = 20;
     
     [SerializeField]
-    protected float fieldStrengthFactor = Teal.FieldStrengthFactor;
+    protected float fieldStrengthFactor = PhysicalConstants.FieldStrengthFactor;
 
     /// <summary>
     /// Initialization

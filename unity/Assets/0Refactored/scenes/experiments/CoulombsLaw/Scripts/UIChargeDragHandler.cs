@@ -29,7 +29,7 @@ public class UIChargeDragHandler : UIItemDragHandlerSimple
 
             if (Mathf.Abs(_chargeValue) < Mathf.Epsilon)
             {
-                BackgroundImage.color = Teal.NeutralChargeColor;
+                BackgroundImage.color = CoulombChargeBehaviour.NeutralChargeColor;
                 MinusImage.gameObject.SetActive(false);
                 PlusImage.gameObject.SetActive(false);
                 return;
@@ -38,8 +38,8 @@ public class UIChargeDragHandler : UIItemDragHandlerSimple
             MinusImage.gameObject.SetActive(_chargeValue < 0);
             PlusImage.gameObject.SetActive(_chargeValue > 0);
             BackgroundImage.color = _chargeValue < 0 ?
-                Color.Lerp(Teal.MinNegativeChargeColor, Teal.MaxNegativeChargeColor, _chargeValue / minValue) :
-                Color.Lerp(Teal.MinPositiveChargeColor, Teal.MaxPositiveChargeColor, _chargeValue / maxValue);
+                Color.Lerp(CoulombChargeBehaviour.MinNegativeChargeColor, CoulombChargeBehaviour.MaxNegativeChargeColor, _chargeValue / minValue) :
+                Color.Lerp(CoulombChargeBehaviour.MinPositiveChargeColor, CoulombChargeBehaviour.MaxPositiveChargeColor, _chargeValue / maxValue);
         }
     }
     

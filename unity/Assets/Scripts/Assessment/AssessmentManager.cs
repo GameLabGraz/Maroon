@@ -1,16 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.Networking;
 using Antares.Evaluation;
-using Antares.Evaluation.Engine;
 using Antares.Evaluation.Util;
 using Maroon.Assessment.Handler;
-using Maroon.Physics;
-using Newtonsoft.Json;
 
 using System.Threading.Tasks;
 

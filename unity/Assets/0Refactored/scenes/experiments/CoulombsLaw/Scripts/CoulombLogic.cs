@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using GEAR.Localization;
 using Maroon.Physics;
+using Maroon.Physics.Electromagnetism;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
