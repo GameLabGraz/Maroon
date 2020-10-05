@@ -8,7 +8,6 @@ namespace Maroon.Physics.HuygensPrinciple
         private SlitPlate slitPlate;
 
         private MeshRenderer _meshRenderer;
-        private bool _parameterHasChanged;
         
         protected override void Start()
         {
@@ -20,44 +19,49 @@ namespace Maroon.Physics.HuygensPrinciple
 
         protected override void HandleUpdate()
         {
-            if(!slitPlate.transform.hasChanged && !_parameterHasChanged)
-            {
-                return;
-            }
-           
-            _parameterHasChanged = false;
-            slitPlate.transform.hasChanged = false;
-            UpdateParameters();   
         }
 
         protected override void HandleFixedUpdate()
         {   
         }
 
-        private void UpdateParameters()
+        public void UpdateParameters()
+        {
+            UpdateNumberOfSlits();
+            UpdateSlitWidth();
+            UpdatePlatePosition();
+            UpdateWaveLength();
+        }
+
+        public void UpdateSlitWidth()
+        {
+            _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_SlitWidth"), 
+                slitPlate.SlitWidth);         
+        }
+
+        public void UpdateNumberOfSlits()
         {
             if (slitPlate.NumberOfSlits > 1)
             {
-                _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_DistanceBetweenSlits"), 
+                _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_DistanceBetweenSlits"),
                     slitPlate.GetDistanceBetweenSlitCenters());
             }
 
-            _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_WaveLength"), 
-                WaveGeneratorPoolHandler.Instance.WaveLength);
-
-            _meshRenderer.sharedMaterial.SetInt(Shader.PropertyToID("_NumberOfSlits"), 
+            _meshRenderer.sharedMaterial.SetInt(Shader.PropertyToID("_NumberOfSlits"),
                 slitPlate.NumberOfSlits);
-
-            _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_SlitWidth"), 
-                slitPlate.SlitWidth);
-
-            _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_DistanceBetweenPlates"), 
-                Vector4.Distance(slitPlate.transform.position, transform.position));
         }
 
-        public void SetParameterChangeTrue()
+        public void UpdatePlatePosition()
         {
-            _parameterHasChanged = true;
+            _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_DistanceBetweenPlates"),
+                 Vector4.Distance(slitPlate.transform.position, transform.position));
         }
+
+        public void UpdateWaveLength()
+        {
+            _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_WaveLength"),
+                (WaveGeneratorPoolHandler.Instance.WaveLength * 0.3f));
+        }
+
     }
 }

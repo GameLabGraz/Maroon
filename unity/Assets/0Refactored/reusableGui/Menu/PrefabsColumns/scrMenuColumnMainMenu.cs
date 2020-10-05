@@ -46,6 +46,12 @@ public class scrMenuColumnMainMenu : MonoBehaviour
         // TODO: This is ugly and needs to get fixed
         this.Menu = (scrMenu) this.transform.parent.parent.parent.GetComponent(typeof(scrMenu));
 
+        // Hide exit button on WebGL
+        if(TargetPlatformDetector.targetPlatform == "webgl")
+        {
+            this.ButtonExit.SetActive(false);
+        }
+
         // Link button actions
         this.ButtonLab.GetComponent<Button>().onClick.AddListener(() => this.OnClickLab());
         this.ButtonAudio.GetComponent<Button>().onClick.AddListener(() => this.OnClickAudio());

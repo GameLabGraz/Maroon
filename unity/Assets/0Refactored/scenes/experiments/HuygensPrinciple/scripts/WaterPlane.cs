@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Maroon.Physics.HuygensPrinciple;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
@@ -8,69 +9,96 @@ using UnityEngine;
 public class WaterPlane : PausableObject, IResetObject
 {
     [SerializeField]
-    private int verticesPerLength = 40;
+    private int verticesPerLength = 60;
 
     [SerializeField]
     private int verticesPerWidth = 20;
+   
+    [SerializeField, HideInInspector]
+    private Mesh planeMesh;
 
     [SerializeField]
     private Material material;
 
-    [SerializeField, HideInInspector]
-    private Mesh planeMesh;
-
-    private List<WaveGenerator> waveGenerators = new List<WaveGenerator>();
+    [SerializeField]
+    private SlitPlate slitPlate;
 
     [SerializeField]
-    private uint updateRate = 5;
+    private GameObject waterBasinGeneratorPosition;
 
-    private Vector3[] waveVertices; 
+    private List<WaveGenerator> _waveGenerators = new List<WaveGenerator>();
 
-    private float time = 0;
+    private struct ShaderConversionStruct
+    {
+        public Vector4[] coordinates;
+        public float[] parameters;
+    };
 
-    private ulong updateCount = 0;
+    private float _timer;
+    private MeshRenderer _meshRenderer;
 
-    private Color startMinColor;
+    private Color _startMinColor;
+    private Color _startMaxColor;
 
-    private Color startMaxColor;
+    private static int _maxNumberOfBasinGenerators = 30;
+    private static int _maxNumberOfPlateGenerators = 30;
 
     protected override void Start()
     {
         base.Start();
 
-        if (planeMesh == null)
+        if(planeMesh == null)
         {
-            UpdatePlane();
+            CalculatePlaneMesh();
         }
 
-        waveVertices = planeMesh.vertices;
+        _meshRenderer = GetComponent<MeshRenderer>(); 
+        slitPlate = FindObjectOfType<SlitPlate>(); 
+       
+        if(slitPlate == null)
+        {
+            Debug.LogError("Slit Plate not found");
+        }
 
-        startMinColor = GetComponent<Renderer>().sharedMaterial.GetColor("_ColorMin");
-        startMaxColor = GetComponent<Renderer>().sharedMaterial.GetColor("_ColorMax");
+        _startMinColor = _meshRenderer.sharedMaterial.GetColor("_ColorMin");
+        _startMaxColor = _meshRenderer.sharedMaterial.GetColor("_ColorMax");
+
+        Init();       
     }
 
-    private float GetTotalWaveValue(Vector3 position)
+    private void Init()
     {
-        float waveValue = 0;
-        foreach(var waveGenerator in waveGenerators)
-        {
-            var worldPosition = transform.TransformPoint(position);
-            var worldWaveStartingPoint = waveGenerator.transform.position; //transform.TransformPoint(waveGenerator.getStaringPoint());
+        CalculatePlaneMesh();
+        UpdateParameters();
+    }
 
-            var rayDirection = worldWaveStartingPoint - worldPosition;
-            var maxRayLength = Vector3.Distance(worldWaveStartingPoint, worldPosition);
-
-            if (!Physics.Raycast(worldPosition, rayDirection, maxRayLength))
-                waveValue += waveGenerator.GetWaveValue(worldPosition, time);
-        }           
-
-        return waveValue;
+    public void UpdateParameters()
+    {
+        UpdateWaveLength();
+        UpdateWaveFrequency();
+        UpdatePlatePosition();
     }
 
     public void UpdatePlane()
     {
-        planeMesh = new Mesh();
+        var basinGenerators = WaveGeneratorPoolHandler.Instance.GetGeneratorListOfType(WaveGenerator.GeneratorMembership.WaterBasin);
+        var plateGenerators = WaveGeneratorPoolHandler.Instance.GetGeneratorListOfType(WaveGenerator.GeneratorMembership.SlitPlate1);
 
+        var basin = SetCoordinatesAndParameterArrays(basinGenerators, _maxNumberOfBasinGenerators);
+        var plate = SetCoordinatesAndParameterArrays(plateGenerators, _maxNumberOfPlateGenerators);
+
+        _meshRenderer.sharedMaterial.SetInt(Shader.PropertyToID("_BasinEntryCount"), basinGenerators.Count);
+        _meshRenderer.sharedMaterial.SetFloatArray(Shader.PropertyToID("_sourceParameters"), basin.parameters);
+        _meshRenderer.sharedMaterial.SetVectorArray(Shader.PropertyToID("_sourceCoordinates"), basin.coordinates);
+
+        _meshRenderer.sharedMaterial.SetInt(Shader.PropertyToID("_PlateEntryCount"), plateGenerators.Count);
+        _meshRenderer.sharedMaterial.SetFloatArray(Shader.PropertyToID("_plateParameters"), plate.parameters);
+        _meshRenderer.sharedMaterial.SetVectorArray(Shader.PropertyToID("_plateCoordinates"), plate.coordinates);
+    }
+
+    public void CalculatePlaneMesh()
+    {
+        planeMesh = new Mesh();
         // create vertices
         var vertices = new List<Vector3>();
         for (var i = -verticesPerLength; i <= verticesPerLength; i++)
@@ -110,7 +138,39 @@ public class WaterPlane : PausableObject, IResetObject
 
         var meshFilter = GetComponent<MeshFilter>();
         meshFilter.mesh = planeMesh;
+    }
 
+    private ShaderConversionStruct SetCoordinatesAndParameterArrays(List<WaveGenerator> list, int maxArraySize)
+    {
+        float parameter;
+        Vector4 coordinates;
+        var empty = new Vector4(0f, 0f, 0f, 0f);
+       
+        var coordinatesArray = new Vector4[maxArraySize];
+        var parametersArray = new float[maxArraySize];
+
+        for (var count = 0; count < maxArraySize; count++)
+        {
+            if(count < list.Count)
+            {
+                coordinates = new Vector4(list[count].transform.position.x, list[count].transform.position.y, list[count].transform.position.z, 0);
+                parameter = list[count].WaveAmplitude;
+            }
+            else
+            {
+                coordinates = empty;
+                parameter = 0f;
+            }
+
+            coordinatesArray[count] = coordinates;
+            parametersArray[count] = parameter;
+        }
+
+        ShaderConversionStruct conversion;
+        conversion.coordinates = coordinatesArray;
+        conversion.parameters = parametersArray; 
+
+        return conversion;
     }
 
     public void UpdateMaterial()
@@ -120,54 +180,49 @@ public class WaterPlane : PausableObject, IResetObject
 
     public void RegisterWaveGenerator(WaveGenerator waveGenerator)
     {
-        waveGenerators.Add(waveGenerator);
+        _waveGenerators.Add(waveGenerator);
     }
     public void UnregisterWaveGenerator(WaveGenerator waveGenerator)
     {
-        waveGenerators.Remove(waveGenerator);
+        _waveGenerators.Remove(waveGenerator);
     }
 
     protected override void HandleUpdate()
     {
-        material = GetComponent<Renderer>().sharedMaterial;
+        _timer += Time.deltaTime;
+        _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_SceneTime"), _timer);
     }
 
     protected override void HandleFixedUpdate()
     {
-        if (updateCount++ % updateRate != 0)
-            return;
-
-
-        for (var i = 0; i < waveVertices.Length; i++)
-        {
-            var waveVertex = waveVertices[i];
-            waveVertex.y = GetTotalWaveValue(waveVertex);
-
-            waveVertices[i] = waveVertex;
-        }
-
-        time += Time.fixedDeltaTime;
-
-        planeMesh.vertices = waveVertices;
-        planeMesh.RecalculateBounds();
     }
 
     public void ResetObject()
     {
-        GetComponent<Renderer>().material.SetColor("_ColorMin", startMinColor);
-        GetComponent<Renderer>().material.SetColor("_ColorMax", startMaxColor);
+        GetComponent<Renderer>().material.SetColor("_ColorMin", _startMinColor);
+        GetComponent<Renderer>().material.SetColor("_ColorMax", _startMaxColor);
 
-        for (var i = 0; i < waveVertices.Length; i++)
-        {
-            var waveVertex = waveVertices[i];
-            waveVertex.y = 0;
+        UpdateWaveLength();
+        UpdateWaveFrequency();
 
-            waveVertices[i] = waveVertex;
-        }
+        _timer = 0;
+    }
 
-        planeMesh.vertices = waveVertices;
-        planeMesh.RecalculateBounds();
+    public void UpdatePlatePosition()
+    {
+        _meshRenderer.sharedMaterial.SetVector(Shader.PropertyToID("_PlatePosition"), slitPlate.transform.position);
+        UpdatePlane();
+    }
 
-        time = 0;
+    public void UpdateWaveLength()
+    {
+        _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_WaveLength"),
+            (WaveGeneratorPoolHandler.Instance.WaveLength * 0.3f));
+    }
+
+    public void UpdateWaveFrequency()
+    {
+        _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_WaveFrequency"),
+            (WaveGeneratorPoolHandler.Instance.WaveFrequency));
     }
 }

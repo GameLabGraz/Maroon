@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, IDeleteObject
 {
+    public static readonly Color MaxPositiveChargeColor = Color.red;
+    public static readonly Color MinPositiveChargeColor = new Color(1f, 0.72f, 0.72f);
+    public static readonly Color MaxNegativeChargeColor = Color.blue;
+    public static readonly Color MinNegativeChargeColor = new Color(0.72f, 0.72f, 1f);
+    public static readonly Color NeutralChargeColor = Color.green;
+
+
     [Header("Design Parameters and Variables")]
     [SerializeField]
     private GameObject particleBase;
@@ -54,7 +61,12 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
     //VR Specific End
 
     public RigidbodyConstraints inUseFreezing = RigidbodyConstraints.FreezeRotation;
-    
+
+    public bool Enabled
+    {
+        get => enabled;
+        set => enabled = value;
+    }
 
     private void Awake()
     {
@@ -124,18 +136,18 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
         var mat = _particleBaseRenderer.materials;
         if (Charge > 0)
         {
-            mat[0].color = Color.Lerp(Teal.MinPositiveChargeColor, Teal.MaxPositiveChargeColor, chargeValue / maxChargeValue);
+            mat[0].color = Color.Lerp(MinPositiveChargeColor, MaxPositiveChargeColor, chargeValue / maxChargeValue);
             mat[1] = mat[2] = highlightMaterial;
         }
         else if (chargeValue < 0)
         {
-            mat[0].color = Color.Lerp(Teal.MinNegativeChargeColor, Teal.MaxNegativeChargeColor, chargeValue / minChargeValue);
+            mat[0].color = Color.Lerp(MinNegativeChargeColor, MaxNegativeChargeColor, chargeValue / minChargeValue);
             mat[2] = mat[0];
             mat[1] = highlightMaterial;
         }
         else
         {
-            mat[0].color = Teal.NeutralChargeColor;
+            mat[0].color = NeutralChargeColor;
             mat[1] = mat[2] = mat[0];
         }
         _particleBaseRenderer.materials = mat;
