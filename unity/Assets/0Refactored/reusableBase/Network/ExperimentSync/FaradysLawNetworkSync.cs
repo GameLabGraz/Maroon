@@ -66,6 +66,13 @@ public class FaradysLawNetworkSync : ExperimentNetworkSync
 
     protected override void Start()
     {
+        if (Magnet == null)
+        {
+            //In falling coil experiment
+            base.Start();
+            return;
+        }
+        //in faradays law experiment
         _magnetPosition = Magnet.transform.position;
         _magnetCollider = Magnet.GetComponent<BoxCollider>();
         
@@ -184,7 +191,8 @@ public class FaradysLawNetworkSync : ExperimentNetworkSync
 
         _ironFillingsButton.interactable = false;
 
-        _magnetCollider.enabled = false;
+        if(_magnetCollider != null)
+            _magnetCollider.enabled = false;
     }
     
     #endregion
@@ -205,6 +213,8 @@ public class FaradysLawNetworkSync : ExperimentNetworkSync
 
     private void Update()
     {
+        if (Magnet == null) //In Falling Coil Experiment
+            return;
         if (!MaroonNetworkManager.Instance.IsInControl)
         {
             if (Magnet.transform.position != _targetPosition)
