@@ -6,7 +6,7 @@ using PlatformControls.PC;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FaradysLawNetworkSync : NetworkBehaviour
+public class FaradysLawNetworkSync : ExperimentNetworkSync
 {
     #region ExperimentInputs
     
@@ -64,11 +64,19 @@ public class FaradysLawNetworkSync : NetworkBehaviour
 
     [SyncVar(hook = "OnMagnetPositionChanged")]private Vector3 _magnetPosition;
 
-    private void Start()
+    protected override void Start()
     {
-        //This is only executed if on a running Server!
-        SimulationController.Instance.onStartRunning.AddListener(OnSimulationStart);
-        SimulationController.Instance.onStopRunning.AddListener(OnSimulationStop);
+        _magnetPosition = Magnet.transform.position;
+        _magnetCollider = Magnet.GetComponent<BoxCollider>();
+        
+        base.Start();
+    }
+
+    #region Listeners
+
+    protected override void AddListeners()
+    {
+        base.AddListeners();
         
         _resetButton.onClick.AddListener(ResetButtonClicked);
         //Play Pause Button already Mirrored with Simulation Mirroring!
@@ -91,38 +99,40 @@ public class FaradysLawNetworkSync : NetworkBehaviour
         _lineNumberInputField.onEndEdit.AddListener(LineNumberInputFieldEndEdit);
         
         _ironFillingsButton.onClick.AddListener(IronFillingsButtonClicked);
-
-        _magnetPosition = Magnet.transform.position;
-        _magnetCollider = Magnet.GetComponent<BoxCollider>();
-        
-        MaroonNetworkManager.Instance.onGetControl.AddListener(OnGetControl);
-        MaroonNetworkManager.Instance.onLoseControl.AddListener(OnLoseControl);
-
-        //Needed so Buttons are not randomly reactivated
-        SimulationController.Instance.OnStart += DeactivateInteractionIfNotInControl;
-        SimulationController.Instance.OnStop += DeactivateInteractionIfNotInControl;
-        
-        if (MaroonNetworkManager.Instance.IsInControl)
-        {
-            OnGetControl();
-        }
-        else
-        {
-            OnLoseControl();
-        }
     }
+
+    protected override void RemoveListeners()
+    {
+        base.RemoveListeners();
+        
+        _resetButton.onClick.RemoveListener(ResetButtonClicked);
+        //Play Pause Button already Mirrored with Simulation Mirroring!
+        _stepForwardButton.onClick.RemoveListener(StepForwardButtonClicked);
+        
+        _ringResistanceSlider.onValueChanged.RemoveListener(RingResistanceSliderChanged);
+        _ringResistanceInputField.onEndEdit.RemoveListener(RingResistanceInputFieldEndEdit);
+        
+        _magneticMomentSlider.onValueChanged.RemoveListener(MagneticMomentSliderChanged);
+        _magneticMomentInputField.onEndEdit.RemoveListener(MagneticMomentInputFieldEndEdit);
+        
+        _vectorFieldGridToggle.onValueChanged.RemoveListener(VectorFieldGridToggled);
+        
+        _vectorFieldResolutionSlider.onValueChanged.RemoveListener(VectorFieldResolutionSliderChanged);
+        _vectorFieldResolutionInputField.onEndEdit.RemoveListener(VectorFieldResolutionInputFieldEndEdit);
+        
+        _fieldLinesToggle.onValueChanged.RemoveListener(FieldLinesToggled);
+        
+        _lineNumberSlider.onValueChanged.RemoveListener(LineNumberSliderChanged);
+        _lineNumberInputField.onEndEdit.RemoveListener(LineNumberInputFieldEndEdit);
+        
+        _ironFillingsButton.onClick.RemoveListener(IronFillingsButtonClicked);
+    }
+
+    #endregion
 
     #region ControlHandling
 
-    public void DeactivateInteractionIfNotInControl(object sender = null, EventArgs e = null)
-    {
-        if (!MaroonNetworkManager.Instance.IsInControl)
-        {
-            OnLoseControl();
-        }
-    }
-
-    public void OnGetControl()
+    protected override void OnGetControl()
     {
         _resetButton.interactable = true;
         _playPauseButton.interactable = true;
@@ -146,10 +156,11 @@ public class FaradysLawNetworkSync : NetworkBehaviour
 
         _ironFillingsButton.interactable = true;
 
-        _magnetCollider.enabled = true;
+        if(_magnetCollider != null)
+            _magnetCollider.enabled = true;
     }
     
-    public void OnLoseControl()
+    protected override void OnLoseControl()
     {
         _resetButton.interactable = false;
         _playPauseButton.interactable = false;
@@ -179,45 +190,6 @@ public class FaradysLawNetworkSync : NetworkBehaviour
     #endregion
 
     #region InputHandlers
-    
-    //SIMULATION MIRRORING
-    public void OnSimulationStart()
-    {
-        if(MaroonNetworkManager.Instance.IsInControl)
-            CmdOnSimulationStart();
-    }
-
-    [Command(ignoreAuthority = true)]
-    public void CmdOnSimulationStart()
-    {
-        RpcOnSimulationStart();
-    }
-
-    [ClientRpc]
-    public void RpcOnSimulationStart()
-    {
-        if(!MaroonNetworkManager.Instance.IsInControl)
-            SimulationController.Instance.StartSimulation();
-    }
-    
-    public void OnSimulationStop()
-    {
-        if(MaroonNetworkManager.Instance.IsInControl)
-            CmdOnSimulationStop();
-    }
-
-    [Command(ignoreAuthority = true)]
-    public void CmdOnSimulationStop()
-    {
-        RpcOnSimulationStop();
-    }
-
-    [ClientRpc]
-    public void RpcOnSimulationStop()
-    {
-        if(!MaroonNetworkManager.Instance.IsInControl)
-            SimulationController.Instance.StopSimulation();
-    }
 
     //MAGNET
     private Vector3 _startPosition;
@@ -257,308 +229,154 @@ public class FaradysLawNetworkSync : NetworkBehaviour
     //RESET BUTTON
     private void ResetButtonClicked()
     {
-        if(MaroonNetworkManager.Instance.IsInControl)
-            CmdResetButtonClicked();
+        SyncEvent(nameof(ResetButtonActivated));
     }
 
-    [Command(ignoreAuthority = true)]
-    private void CmdResetButtonClicked()
+    private IEnumerator ResetButtonActivated()
     {
-        RpcResetButtonClicked();
-    }
-
-    [ClientRpc]
-    private void RpcResetButtonClicked()
-    {
-        //If in Control: Already executed it!
-        if (!MaroonNetworkManager.Instance.IsInControl)
-        {
-            _resetButton.onClick.Invoke();
-            OnLoseControl();
-        }
+        _resetButton.onClick.Invoke();
+        OnLoseControl();
+        yield return null;
     }
     
     //STEP FORWARD BUTTON
     private void StepForwardButtonClicked()
     {
-        if(MaroonNetworkManager.Instance.IsInControl)
-            CmdStepForwardButtonClicked();
+        SyncEvent(nameof(StepForwardButtonActivated));
+    }
+
+    private IEnumerator StepForwardButtonActivated()
+    {
+        _stepForwardButton.onClick.Invoke();
+        _stepForwardButton.interactable = false;
+        yield return null;
     }
     
-    [Command(ignoreAuthority = true)]
-    private void CmdStepForwardButtonClicked()
-    {
-        RpcStepForwardButtonClicked();
-    }
-
-    [ClientRpc]
-    private void RpcStepForwardButtonClicked()
-    {
-        //If in Control: Already executed it!
-        if (!MaroonNetworkManager.Instance.IsInControl)
-        {
-            _stepForwardButton.onClick.Invoke();
-            _stepForwardButton.interactable = false;
-        }
-    }
-
     //RING RESISTANCE SLIDER
     private void RingResistanceSliderChanged(float value)
     {
-        if(MaroonNetworkManager.Instance.IsInControl)
-            CmdRingResistanceSliderChanged(value);
-    }
-    
-    [Command(ignoreAuthority = true)]
-    private void CmdRingResistanceSliderChanged(float value)
-    {
-        RpcRingResistanceSliderChanged(value);
+        SyncEvent(nameof(RingResistanceSliderActivated), value);
     }
 
-    [ClientRpc]
-    private void RpcRingResistanceSliderChanged(float value)
+    private void RingResistanceSliderActivated(float value)
     {
-        //If in Control: Already executed it!
-        if (!MaroonNetworkManager.Instance.IsInControl)
-        {
-            _ringResistanceSlider.SetSliderValue(value);
-            _ringResistanceSlider.onValueChanged.Invoke(value);
-        }
+        _ringResistanceSlider.SetSliderValue(value);
+        _ringResistanceSlider.onValueChanged.Invoke(value);
     }
 
     //RING RESISTANCE INPUT FIELD
     private void RingResistanceInputFieldEndEdit(string valueString)
     {
-        if(MaroonNetworkManager.Instance.IsInControl)
-            CmdRingResistanceInputFieldEndEdit(valueString);
+        SyncEvent(nameof(RingResistanceInputFieldActivated), valueString);
     }
-    
-    [Command(ignoreAuthority = true)]
-    private void CmdRingResistanceInputFieldEndEdit(string valueString)
+
+    private void RingResistanceInputFieldActivated(string valueString)
     {
-        RpcRingResistanceInputFieldEndEdit(valueString);
-    }
-    
-    [ClientRpc]
-    private void RpcRingResistanceInputFieldEndEdit(string valueString)
-    {
-        //If in Control: Already executed it!
-        if (!MaroonNetworkManager.Instance.IsInControl)
-        {
-            _ringResistanceInputField.onEndEdit.Invoke(valueString);
-        }
+        _ringResistanceInputField.onEndEdit.Invoke(valueString);
     }
     
     //MAGNETIC MOMENT SLIDER
     private void MagneticMomentSliderChanged(float value)
     {
-        if(MaroonNetworkManager.Instance.IsInControl)
-            CmdMagneticMomentSliderChanged(value);
+        SyncEvent(nameof(MagneticMomentSliderActivated), value);
+    }
+
+    private void MagneticMomentSliderActivated(float value)
+    {
+        _magneticMomentSlider.SetSliderValue(value);
+        _magneticMomentSlider.onValueChanged.Invoke(value);
     }
     
-    [Command(ignoreAuthority = true)]
-    private void CmdMagneticMomentSliderChanged(float value)
-    {
-        RpcMagneticMomentSliderChanged(value);
-    }
-
-    [ClientRpc]
-    private void RpcMagneticMomentSliderChanged(float value)
-    {
-        //If in Control: Already executed it!
-        if (!MaroonNetworkManager.Instance.IsInControl)
-        {
-            _magneticMomentSlider.SetSliderValue(value);
-            _magneticMomentSlider.onValueChanged.Invoke(value);
-        }
-    }
-
     //MAGNETIC MOMENT INPUT FIELD
     private void MagneticMomentInputFieldEndEdit(string valueString)
     {
-        if(MaroonNetworkManager.Instance.IsInControl)
-            CmdMagneticMomentInputFieldEndEdit(valueString);
+        SyncEvent(nameof(MagneticMomentInputFieldActivated), valueString);
     }
     
-    [Command(ignoreAuthority = true)]
-    private void CmdMagneticMomentInputFieldEndEdit(string valueString)
+    private void MagneticMomentInputFieldActivated(string valueString)
     {
-        RpcMagneticMomentInputFieldEndEdit(valueString);
-    }
-    
-    [ClientRpc]
-    private void RpcMagneticMomentInputFieldEndEdit(string valueString)
-    {
-        //If in Control: Already executed it!
-        if (!MaroonNetworkManager.Instance.IsInControl)
-        {
-            _magneticMomentInputField.onEndEdit.Invoke(valueString);
-        }
+        _magneticMomentInputField.onEndEdit.Invoke(valueString);
     }
 
     //VECTOR FIELD GRID TOGGLE
     private void VectorFieldGridToggled(bool value)
     {
-        if (MaroonNetworkManager.Instance.IsInControl)
-            CmdVectorFieldGridToggled(value);
+        SyncEvent(nameof(VectorFieldGridToggleActivated), value);
     }
-    
-    [Command(ignoreAuthority = true)]
-    private void CmdVectorFieldGridToggled(bool value)
+
+    private void VectorFieldGridToggleActivated(bool value)
     {
-        RpcVectorFieldGridToggled(value);
+        _vectorFieldGridToggle.onValueChanged.Invoke(value);
+        _vectorFieldGridToggle.isOn = value;
     }
-    
-    [ClientRpc]
-    private void RpcVectorFieldGridToggled(bool value)
-    {
-        //If in Control: Already executed it!
-        if (!MaroonNetworkManager.Instance.IsInControl)
-        {
-            _vectorFieldGridToggle.onValueChanged.Invoke(value);
-            _vectorFieldGridToggle.isOn = !_vectorFieldGridToggle.isOn;
-        }
-    }
-    
+
     //VECTOR FIELD RESOLUTION SLIDER
     private void VectorFieldResolutionSliderChanged(float value)
     {
-        if(MaroonNetworkManager.Instance.IsInControl)
-            CmdVectorFieldResolutionSliderChanged(value);
-    }
-    
-    [Command(ignoreAuthority = true)]
-    private void CmdVectorFieldResolutionSliderChanged(float value)
-    {
-        RpcVectorFieldResolutionSliderChanged(value);
+        SyncEvent(nameof(VectorFieldResolutionSliderActivated), value);
     }
 
-    [ClientRpc]
-    private void RpcVectorFieldResolutionSliderChanged(float value)
+    private void VectorFieldResolutionSliderActivated(float value)
     {
-        //If in Control: Already executed it!
-        if (!MaroonNetworkManager.Instance.IsInControl)
-        {
-            _vectorFieldResolutionSlider.SetSliderValue(value);
-            _vectorFieldResolutionSlider.onValueChanged.Invoke(value);
-        }
+        _vectorFieldResolutionSlider.SetSliderValue(value);
+        _vectorFieldResolutionSlider.onValueChanged.Invoke(value);
     }
 
     //VECTOR FIELD RESOLUTION INPUT FIELD
     private void VectorFieldResolutionInputFieldEndEdit(string valueString)
     {
-        if(MaroonNetworkManager.Instance.IsInControl)
-            CmdVectorFieldResolutionInputFieldEndEdit(valueString);
+        SyncEvent(nameof(VectorFieldResolutionInputFieldActivated), valueString);
     }
-    
-    [Command(ignoreAuthority = true)]
-    private void CmdVectorFieldResolutionInputFieldEndEdit(string valueString)
+
+    private void VectorFieldResolutionInputFieldActivated(string valueString)
     {
-        RpcVectorFieldResolutionInputFieldEndEdit(valueString);
-    }
-    
-    [ClientRpc]
-    private void RpcVectorFieldResolutionInputFieldEndEdit(string valueString)
-    {
-        //If in Control: Already executed it!
-        if (!MaroonNetworkManager.Instance.IsInControl)
-        {
-            _vectorFieldResolutionInputField.onEndEdit.Invoke(valueString);
-        }
+        _vectorFieldResolutionInputField.onEndEdit.Invoke(valueString);
     }
     
     //FIELD LINES TOGGLE
     private void FieldLinesToggled(bool value)
     {
-        if (MaroonNetworkManager.Instance.IsInControl)
-            CmdFieldLinesToggled(value);
+        SyncEvent(nameof(FieldLinesToggleActivated), value);
     }
-    
-    [Command(ignoreAuthority = true)]
-    private void CmdFieldLinesToggled(bool value)
+
+    private void FieldLinesToggleActivated(bool value)
     {
-        RpcFieldLinesToggled(value);
-    }
-    
-    [ClientRpc]
-    private void RpcFieldLinesToggled(bool value)
-    {
-        //If in Control: Already executed it!
-        if (!MaroonNetworkManager.Instance.IsInControl)
-        {
-            _fieldLinesToggle.onValueChanged.Invoke(value);
-            _fieldLinesToggle.isOn = !_fieldLinesToggle.isOn;
-        }
+        _fieldLinesToggle.onValueChanged.Invoke(value);
+        _fieldLinesToggle.isOn = value;
     }
     
     //LINE NUMBER SLIDER
     private void LineNumberSliderChanged(float value)
     {
-        if(MaroonNetworkManager.Instance.IsInControl)
-            CmdLineNumberSliderChanged(value);
-    }
-    
-    [Command(ignoreAuthority = true)]
-    private void CmdLineNumberSliderChanged(float value)
-    {
-        RpcLineNumberSliderChanged(value);
+        SyncEvent(nameof(LineNumberSliderActivated), value);
     }
 
-    [ClientRpc]
-    private void RpcLineNumberSliderChanged(float value)
+    private void LineNumberSliderActivated(float value)
     {
-        //If in Control: Already executed it!
-        if (!MaroonNetworkManager.Instance.IsInControl)
-        {
-            _lineNumberSlider.SetSliderValue(value);
-            _lineNumberSlider.onValueChanged.Invoke(value);
-        }
+        _lineNumberSlider.SetSliderValue(value);
+        _lineNumberSlider.onValueChanged.Invoke(value);
     }
 
     //LINE NUMBER INPUT FIELD
     private void LineNumberInputFieldEndEdit(string valueString)
     {
-        if(MaroonNetworkManager.Instance.IsInControl)
-            CmdLineNumberInputFieldEndEdit(valueString);
+        SyncEvent(nameof(LineNumberInputFieldActivated), valueString);
     }
-    
-    [Command(ignoreAuthority = true)]
-    private void CmdLineNumberInputFieldEndEdit(string valueString)
+
+    private void LineNumberInputFieldActivated(string valueString)
     {
-        RpcLineNumberInputFieldEndEdit(valueString);
+        _lineNumberInputField.onEndEdit.Invoke(valueString);
     }
-    
-    [ClientRpc]
-    private void RpcLineNumberInputFieldEndEdit(string valueString)
-    {
-        //If in Control: Already executed it!
-        if (!MaroonNetworkManager.Instance.IsInControl)
-        {
-            _lineNumberInputField.onEndEdit.Invoke(valueString);
-        }
-    }
-    
+
     //IRON FILLINGS BUTTON
     private void IronFillingsButtonClicked()
     {
-        if(MaroonNetworkManager.Instance.IsInControl)
-            CmdIronFillingsButtonClicked();
+        SyncEvent(nameof(IronFillingsButtonActivated));
     }
 
-    [Command(ignoreAuthority = true)]
-    private void CmdIronFillingsButtonClicked()
+    private void IronFillingsButtonActivated()
     {
-        RpcIronFillingsButtonClicked();
-    }
-
-    [ClientRpc]
-    private void RpcIronFillingsButtonClicked()
-    {
-        //If in Control: Already executed it!
-        if (!MaroonNetworkManager.Instance.IsInControl)
-        {
-            _ironFillingsButton.onClick.Invoke();
-        }
+        _ironFillingsButton.onClick.Invoke();
     }
     
     #endregion
