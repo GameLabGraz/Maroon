@@ -35,28 +35,42 @@ public class ExperimentNetworkSync : NetworkBehaviour
 
     protected virtual void AddListeners()
     {
-        SimulationController.Instance.onStartRunning.AddListener(OnSimulationStart);
-        SimulationController.Instance.onStopRunning.AddListener(OnSimulationStop);
-        
         MaroonNetworkManager.Instance.onGetControl.AddListener(OnGetControl);
         MaroonNetworkManager.Instance.onLoseControl.AddListener(OnLoseControl);
 
-        //Needed so Buttons are not randomly reactivated
-        SimulationController.Instance.OnStart += DeactivateInteractionIfNotInControl;
-        SimulationController.Instance.OnStop += DeactivateInteractionIfNotInControl;
+        try
+        {
+            SimulationController.Instance.onStartRunning.AddListener(OnSimulationStart);
+            SimulationController.Instance.onStopRunning.AddListener(OnSimulationStop);
+
+            //Needed so Buttons are not randomly reactivated
+            SimulationController.Instance.OnStart += DeactivateInteractionIfNotInControl;
+            SimulationController.Instance.OnStop += DeactivateInteractionIfNotInControl;
+        }
+        catch (NullReferenceException e)
+        {
+            //there is no Simulation Controller in this experiment
+        }
     }
     
     protected virtual void RemoveListeners()
     {
-        SimulationController.Instance.onStartRunning.RemoveListener(OnSimulationStart);
-        SimulationController.Instance.onStopRunning.RemoveListener(OnSimulationStop);
-        
         MaroonNetworkManager.Instance.onGetControl.RemoveListener(OnGetControl);
         MaroonNetworkManager.Instance.onLoseControl.RemoveListener(OnLoseControl);
 
-        //Needed so Buttons are not randomly reactivated
-        SimulationController.Instance.OnStart -= DeactivateInteractionIfNotInControl;
-        SimulationController.Instance.OnStop -= DeactivateInteractionIfNotInControl;
+        try
+        {
+            SimulationController.Instance.onStartRunning.RemoveListener(OnSimulationStart);
+            SimulationController.Instance.onStopRunning.RemoveListener(OnSimulationStop);
+
+            //Needed so Buttons are not randomly reactivated
+            SimulationController.Instance.OnStart -= DeactivateInteractionIfNotInControl;
+            SimulationController.Instance.OnStop -= DeactivateInteractionIfNotInControl;
+        }
+        catch (NullReferenceException e)
+        {
+            //there is no Simulation Controller in this experiment
+        }
     }
     
     public void DeactivateInteractionIfNotInControl(object sender = null, EventArgs e = null)

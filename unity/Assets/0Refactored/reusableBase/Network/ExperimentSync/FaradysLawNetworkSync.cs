@@ -78,65 +78,7 @@ public class FaradysLawNetworkSync : ExperimentNetworkSync
         
         base.Start();
     }
-
-    #region Listeners
-
-    protected override void AddListeners()
-    {
-        base.AddListeners();
-        
-        _resetButton.onClick.AddListener(ResetButtonClicked);
-        //Play Pause Button already Mirrored with Simulation Mirroring!
-        _stepForwardButton.onClick.AddListener(StepForwardButtonClicked);
-        
-        _ringResistanceSlider.onValueChanged.AddListener(RingResistanceSliderChanged);
-        _ringResistanceInputField.onEndEdit.AddListener(RingResistanceInputFieldEndEdit);
-        
-        _magneticMomentSlider.onValueChanged.AddListener(MagneticMomentSliderChanged);
-        _magneticMomentInputField.onEndEdit.AddListener(MagneticMomentInputFieldEndEdit);
-        
-        _vectorFieldGridToggle.onValueChanged.AddListener(VectorFieldGridToggled);
-        
-        _vectorFieldResolutionSlider.onValueChanged.AddListener(VectorFieldResolutionSliderChanged);
-        _vectorFieldResolutionInputField.onEndEdit.AddListener(VectorFieldResolutionInputFieldEndEdit);
-        
-        _fieldLinesToggle.onValueChanged.AddListener(FieldLinesToggled);
-        
-        _lineNumberSlider.onValueChanged.AddListener(LineNumberSliderChanged);
-        _lineNumberInputField.onEndEdit.AddListener(LineNumberInputFieldEndEdit);
-        
-        _ironFillingsButton.onClick.AddListener(IronFillingsButtonClicked);
-    }
-
-    protected override void RemoveListeners()
-    {
-        base.RemoveListeners();
-        
-        _resetButton.onClick.RemoveListener(ResetButtonClicked);
-        //Play Pause Button already Mirrored with Simulation Mirroring!
-        _stepForwardButton.onClick.RemoveListener(StepForwardButtonClicked);
-        
-        _ringResistanceSlider.onValueChanged.RemoveListener(RingResistanceSliderChanged);
-        _ringResistanceInputField.onEndEdit.RemoveListener(RingResistanceInputFieldEndEdit);
-        
-        _magneticMomentSlider.onValueChanged.RemoveListener(MagneticMomentSliderChanged);
-        _magneticMomentInputField.onEndEdit.RemoveListener(MagneticMomentInputFieldEndEdit);
-        
-        _vectorFieldGridToggle.onValueChanged.RemoveListener(VectorFieldGridToggled);
-        
-        _vectorFieldResolutionSlider.onValueChanged.RemoveListener(VectorFieldResolutionSliderChanged);
-        _vectorFieldResolutionInputField.onEndEdit.RemoveListener(VectorFieldResolutionInputFieldEndEdit);
-        
-        _fieldLinesToggle.onValueChanged.RemoveListener(FieldLinesToggled);
-        
-        _lineNumberSlider.onValueChanged.RemoveListener(LineNumberSliderChanged);
-        _lineNumberInputField.onEndEdit.RemoveListener(LineNumberInputFieldEndEdit);
-        
-        _ironFillingsButton.onClick.RemoveListener(IronFillingsButtonClicked);
-    }
-
-    #endregion
-
+    
     #region ControlHandling
 
     protected override void OnGetControl()
@@ -195,6 +137,64 @@ public class FaradysLawNetworkSync : ExperimentNetworkSync
             _magnetCollider.enabled = false;
     }
     
+    #endregion
+
+    #region Listeners
+
+    protected override void AddListeners()
+    {
+        base.AddListeners();
+        
+        _resetButton.onClick.AddListener(ResetButtonClicked);
+        //Play Pause Button already Mirrored with Simulation Mirroring!
+        _stepForwardButton.onClick.AddListener(StepForwardButtonClicked);
+        
+        _ringResistanceSlider.onValueChanged.AddListener(RingResistanceSliderChanged);
+        _ringResistanceInputField.onEndEdit.AddListener(RingResistanceInputFieldEndEdit);
+        
+        _magneticMomentSlider.onValueChanged.AddListener(MagneticMomentSliderChanged);
+        _magneticMomentInputField.onEndEdit.AddListener(MagneticMomentInputFieldEndEdit);
+        
+        _vectorFieldGridToggle.onValueChanged.AddListener(VectorFieldGridToggled);
+        
+        _vectorFieldResolutionSlider.onValueChanged.AddListener(VectorFieldResolutionSliderChanged);
+        _vectorFieldResolutionInputField.onEndEdit.AddListener(VectorFieldResolutionInputFieldEndEdit);
+        
+        _fieldLinesToggle.onValueChanged.AddListener(FieldLinesToggled);
+        
+        _lineNumberSlider.onValueChanged.AddListener(LineNumberSliderChanged);
+        _lineNumberInputField.onEndEdit.AddListener(LineNumberInputFieldEndEdit);
+        
+        _ironFillingsButton.onClick.AddListener(IronFillingsButtonClicked);
+    }
+
+    protected override void RemoveListeners()
+    {
+        base.RemoveListeners();
+        
+        _resetButton.onClick.RemoveListener(ResetButtonClicked);
+        //Play Pause Button already Mirrored with Simulation Mirroring!
+        _stepForwardButton.onClick.RemoveListener(StepForwardButtonClicked);
+        
+        _ringResistanceSlider.onValueChanged.RemoveListener(RingResistanceSliderChanged);
+        _ringResistanceInputField.onEndEdit.RemoveListener(RingResistanceInputFieldEndEdit);
+        
+        _magneticMomentSlider.onValueChanged.RemoveListener(MagneticMomentSliderChanged);
+        _magneticMomentInputField.onEndEdit.RemoveListener(MagneticMomentInputFieldEndEdit);
+        
+        _vectorFieldGridToggle.onValueChanged.RemoveListener(VectorFieldGridToggled);
+        
+        _vectorFieldResolutionSlider.onValueChanged.RemoveListener(VectorFieldResolutionSliderChanged);
+        _vectorFieldResolutionInputField.onEndEdit.RemoveListener(VectorFieldResolutionInputFieldEndEdit);
+        
+        _fieldLinesToggle.onValueChanged.RemoveListener(FieldLinesToggled);
+        
+        _lineNumberSlider.onValueChanged.RemoveListener(LineNumberSliderChanged);
+        _lineNumberInputField.onEndEdit.RemoveListener(LineNumberInputFieldEndEdit);
+        
+        _ironFillingsButton.onClick.RemoveListener(IronFillingsButtonClicked);
+    }
+
     #endregion
 
     #region InputHandlers

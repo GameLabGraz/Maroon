@@ -44,6 +44,11 @@ public class GuiWhiteboard : MonoBehaviour
         showMenu = !showMenu;
     }
 
+    public void HideMenu()
+    {
+	    showMenu = false;
+    }
+
     public void OnGUI()
 	{
 		// Show navigation information on the middle lower screen
