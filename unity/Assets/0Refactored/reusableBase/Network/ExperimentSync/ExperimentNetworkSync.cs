@@ -9,6 +9,8 @@ public class ExperimentNetworkSync : NetworkBehaviour
     // Start is called before the first frame update
     protected virtual void Start()
     {
+        if (MaroonNetworkManager.Instance == null)
+            return;
         if (MaroonNetworkManager.Instance.IsInControl)
         {
             OnGetControl();
@@ -21,11 +23,15 @@ public class ExperimentNetworkSync : NetworkBehaviour
 
     private void OnEnable()
     {
+        if (MaroonNetworkManager.Instance == null)
+            return;
         AddListeners();
     }
 
     private void OnDisable()
     {
+        if (MaroonNetworkManager.Instance == null)
+            return;
         RemoveListeners();
     }
 

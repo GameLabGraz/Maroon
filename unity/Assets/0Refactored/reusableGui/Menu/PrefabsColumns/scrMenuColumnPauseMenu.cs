@@ -58,6 +58,12 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
     void OnEnable()
     {
         this.TimeScaleRestore = Time.timeScale;
+        if (MaroonNetworkManager.Instance == null)
+        {
+            Time.timeScale = 0;
+            return;
+        }
+
         if(MaroonNetworkManager.Instance.AllowNetworkPause())
             Time.timeScale = 0;
         if(MaroonNetworkManager.Instance.IsInControl)
@@ -70,6 +76,8 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
         this.TimeScaleRestore = 1.0f;
         this.ButtonAudio.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
         this.ButtonLanguage.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
+        if (MaroonNetworkManager.Instance == null)
+            return;
         if(MaroonNetworkManager.Instance.IsInControl)
             MaroonNetworkManager.Instance.onGetControl.Invoke();
     }

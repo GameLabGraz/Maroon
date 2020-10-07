@@ -219,7 +219,7 @@ public class FaradysLawNetworkSync : ExperimentNetworkSync
         {
             if (Magnet.transform.position != _targetPosition)
             {
-                float t = syncInterval / (_startTime - Time.time);
+                float t = (Time.time - _startTime) / syncInterval;
                 Magnet.transform.position = Vector3.Lerp(_startPosition, _targetPosition, t);
             }
             return;
