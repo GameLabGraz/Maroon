@@ -15,6 +15,8 @@ namespace PlatformControls.PC
 
         public UnityEvent OnRelease;
 
+        public UnityEvent OnGrab;
+
     	private void Start()
         {
             _pendulum = GetComponent<Pendulum>();
@@ -27,6 +29,8 @@ namespace PlatformControls.PC
 
             _mouseStart = Input.mousePosition;
             _pendulum.GetComponent<Rigidbody>().WakeUp();
+            
+            OnGrab?.Invoke();
         }
 
         private void OnMouseUp()

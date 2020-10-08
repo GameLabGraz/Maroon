@@ -36,16 +36,27 @@ public class PendulumNetworkSync : ExperimentNetworkSync
     
     //Watch
     [SerializeField] 
-    private Button _slowMotionButton;
+    private Button _startSlowMotionButton;
+    
+    [SerializeField] 
+    private Button _stopSlowMotionButton;
 
     //In Experiment
-    [SerializeField] private CapsuleCollider _pendulumCollider;
-    [SerializeField] private Pendulum _pendulum;
-
+    [SerializeField] 
+    private GameObject _pendulumObject; 
+    
     #endregion
 
     [SyncVar(hook = "OnPendulumAngleChanged")] private float _pendulumAngle;
 
+    private Pendulum _pendulum;
+    protected override void Start()
+    {
+        _pendulum = _pendulumObject.GetComponentInChildren<Pendulum>();
+        
+        base.Start();
+    }
+    
     #region ControlHandling
 
     protected override void OnGetControl()
@@ -59,9 +70,10 @@ public class PendulumNetworkSync : ExperimentNetworkSync
         _lengthSlider.interactable = true;
         _lengthInputField.interactable = true;
 
-        _slowMotionButton.interactable = true;
+        _startSlowMotionButton.interactable = true;
+        _stopSlowMotionButton.interactable = true;
 
-        _pendulumCollider.gameObject.layer = LayerMask.NameToLayer("Default");
+        _pendulumObject.GetComponentInChildren<CapsuleCollider>().gameObject.layer = LayerMask.NameToLayer("Default");
     }
     
     protected override void OnLoseControl()
@@ -75,15 +87,16 @@ public class PendulumNetworkSync : ExperimentNetworkSync
         _lengthSlider.interactable = false;
         _lengthInputField.interactable = false;
 
-        _slowMotionButton.interactable = false;
+        _startSlowMotionButton.interactable = false;
+        _stopSlowMotionButton.interactable = false;
 
-        _pendulumCollider.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+        _pendulumObject.GetComponentInChildren<CapsuleCollider>().gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
         
         //TODO: Deadlock with grabbed on swap user??
     }
     
     #endregion
-
+    
     #region Listeners
 
     protected override void AddListeners()
@@ -100,11 +113,11 @@ public class PendulumNetworkSync : ExperimentNetworkSync
         _lengthSlider.onValueChanged.AddListener(LengthSliderChanged);
         _lengthInputField.onEndEdit.AddListener(LengthInputFieldEndEdit);
         
-        _slowMotionButton.onClick.AddListener(SlowMotionButtonClicked);
+        _startSlowMotionButton.onClick.AddListener(StartSlowMotionButtonClicked);
+        _stopSlowMotionButton.onClick.AddListener(StopSlowMotionButtonClicked);
         
-        //TODO: Add OnGrab Event in PC_SwingPendulum
-        //_pendulum.GetComponent<PC_SwingPendulum>().OnGrab.AddListener(OnGrabPendulum);
-        _pendulum.GetComponent<PC_SwingPendulum>().OnRelease.AddListener(OnReleasePendulum);
+        _pendulumObject.GetComponentInChildren<PC_SwingPendulum>().OnGrab.AddListener(OnGrabPendulum);
+        _pendulumObject.GetComponentInChildren<PC_SwingPendulum>().OnRelease.AddListener(OnReleasePendulum);
     }
 
     protected override void RemoveListeners()
@@ -121,11 +134,11 @@ public class PendulumNetworkSync : ExperimentNetworkSync
         _lengthSlider.onValueChanged.RemoveListener(LengthSliderChanged);
         _lengthInputField.onEndEdit.RemoveListener(LengthInputFieldEndEdit);
         
-        _slowMotionButton.onClick.RemoveListener(SlowMotionButtonClicked);
+        _startSlowMotionButton.onClick.RemoveListener(StartSlowMotionButtonClicked);
+        _stopSlowMotionButton.onClick.RemoveListener(StopSlowMotionButtonClicked);
         
-        //TODO: Add OnGrab Event in PC_SwingPendulum
-        //_pendulum.GetComponent<PC_SwingPendulum>().OnGrab.RemoveListener(OnGrabPendulum);
-        _pendulum.GetComponent<PC_SwingPendulum>().OnRelease.RemoveListener(OnReleasePendulum);
+        _pendulumObject.GetComponentInChildren<PC_SwingPendulum>().OnGrab.RemoveListener(OnGrabPendulum);
+        _pendulumObject.GetComponentInChildren<PC_SwingPendulum>().OnRelease.RemoveListener(OnReleasePendulum);
     }
 
     #endregion
@@ -172,6 +185,8 @@ public class PendulumNetworkSync : ExperimentNetworkSync
     {
         if (MaroonNetworkManager.Instance.IsInControl)
             return;
+        
+        Debug.Log("newAngle: " + newAngle);
         
         _pendulum.Joint.limits = new JointLimits
         {
@@ -270,15 +285,27 @@ public class PendulumNetworkSync : ExperimentNetworkSync
     }
 
     //SLOW MOTION BUTTON
-    private void SlowMotionButtonClicked()
+    private void StartSlowMotionButtonClicked()
     {
-        SyncEvent(nameof(SlowMotionButtonActivated));
+        SyncEvent(nameof(StartSlowMotionButtonActivated));
     }
 
-    private IEnumerator SlowMotionButtonActivated()
+    private IEnumerator StartSlowMotionButtonActivated()
     {
-        _slowMotionButton.onClick.Invoke();
-        _slowMotionButton.interactable = false;
+        _startSlowMotionButton.onClick.Invoke();
+        _startSlowMotionButton.interactable = false;
+        yield return null;
+    }
+    
+    private void StopSlowMotionButtonClicked()
+    {
+        SyncEvent(nameof(StopSlowMotionButtonActivated));
+    }
+
+    private IEnumerator StopSlowMotionButtonActivated()
+    {
+        _stopSlowMotionButton.onClick.Invoke();
+        _stopSlowMotionButton.interactable = false;
         yield return null;
     }
 
