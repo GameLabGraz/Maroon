@@ -58,7 +58,6 @@ public class FaradysLawNetworkSync : ExperimentNetworkSync
     //In Experiment
     [SerializeField]
     private GameObject Magnet;
-    private BoxCollider _magnetCollider;
 
     #endregion
 
@@ -74,7 +73,6 @@ public class FaradysLawNetworkSync : ExperimentNetworkSync
         }
         //in faradays law experiment
         _magnetPosition = Magnet.transform.position;
-        _magnetCollider = Magnet.GetComponent<BoxCollider>();
         
         base.Start();
     }
@@ -105,8 +103,8 @@ public class FaradysLawNetworkSync : ExperimentNetworkSync
 
         _ironFillingsButton.interactable = true;
 
-        if(_magnetCollider != null)
-            _magnetCollider.enabled = true;
+        if(Magnet != null)
+            Magnet.GetComponent<PC_MouseMovement>().enabled = true;
     }
     
     protected override void OnLoseControl()
@@ -133,8 +131,8 @@ public class FaradysLawNetworkSync : ExperimentNetworkSync
 
         _ironFillingsButton.interactable = false;
 
-        if(_magnetCollider != null)
-            _magnetCollider.enabled = false;
+        if(Magnet != null)
+            Magnet.GetComponent<PC_MouseMovement>().enabled = false;
     }
     
     #endregion

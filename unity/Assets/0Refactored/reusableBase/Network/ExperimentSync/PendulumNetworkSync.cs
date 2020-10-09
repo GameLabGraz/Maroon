@@ -73,7 +73,13 @@ public class PendulumNetworkSync : ExperimentNetworkSync
         _startSlowMotionButton.interactable = true;
         _stopSlowMotionButton.interactable = true;
 
-        _pendulumObject.GetComponentInChildren<CapsuleCollider>().gameObject.layer = LayerMask.NameToLayer("Default");
+        _pendulumObject.GetComponentInChildren<PC_SwingPendulum>().enabled = true;
+
+        if (_grabbed)
+        {
+            StartCoroutine(PendulumReleased(_pendulum.Joint.angle));
+            OnReleasePendulum();
+        }
     }
     
     protected override void OnLoseControl()
@@ -90,9 +96,7 @@ public class PendulumNetworkSync : ExperimentNetworkSync
         _startSlowMotionButton.interactable = false;
         _stopSlowMotionButton.interactable = false;
 
-        _pendulumObject.GetComponentInChildren<CapsuleCollider>().gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-        
-        //TODO: Deadlock with grabbed on swap user??
+        _pendulumObject.GetComponentInChildren<PC_SwingPendulum>().enabled = false;
     }
     
     #endregion

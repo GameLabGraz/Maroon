@@ -24,6 +24,9 @@ namespace PlatformControls.PC
 
         private void OnMouseDown()
         {
+            if (!enabled)
+                return;
+            
             if (!SimulationController.Instance.SimulationRunning)
                 SimulationController.Instance.StartSimulation();
 
@@ -35,12 +38,18 @@ namespace PlatformControls.PC
 
         private void OnMouseUp()
         {
+            if (!enabled)
+                return;
+            
             _pendulum.Joint.useLimits = false;
             OnRelease?.Invoke();
         }
 
         private void OnMouseDrag()
         {
+            if (!enabled)
+                return;
+            
             // relative mouse movement / (scaling factor for easy use) 
             var angle = ((_mouseStart.x - Input.mousePosition.x) / (_pendulum.RopeLength * 10));
 

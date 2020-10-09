@@ -386,8 +386,12 @@ public class MaroonNetworkManager : NetworkManager
         {
             if (_clientInControl == value)
                 return;
-            
-            if (IsInControl)
+
+            bool loseControl = IsInControl;
+
+            _clientInControl = value;
+
+            if (loseControl)
             {
                 onLoseControl.Invoke();
             }
@@ -395,8 +399,6 @@ public class MaroonNetworkManager : NetworkManager
             {
                 onGetControl.Invoke();
             }
-
-            _clientInControl = value;
             newClientInControlEvent.Invoke();
         }
     }
