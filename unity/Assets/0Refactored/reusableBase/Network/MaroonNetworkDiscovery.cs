@@ -105,7 +105,7 @@ public class MaroonNetworkDiscovery : NetworkDiscoveryBase<DiscoveryRequest, Dis
 
         string ip = info.EndPoint.Address.ToString();
         
-        ServerStatus server = new ServerStatus(ip, info.name, (ushort)info.connectedPlayers, (ushort)info.maximumPlayers);
+        ServerStatus server = new ServerStatus(ip, info.name, (ushort)info.connectedPlayers, (ushort)info.maximumPlayers, true);
 
         _listServer.list[ip] = server;
     }

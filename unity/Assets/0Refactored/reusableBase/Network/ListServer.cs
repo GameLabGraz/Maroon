@@ -15,18 +15,22 @@ public class ServerStatus
     public ushort players;
     public ushort capacity;
 
+    public bool isLocal = false;
+
     public int lastLatency = -1;
 #if !UNITY_WEBGL
     // Ping isn't known in WebGL builds
     public Ping ping;
 #endif
-    public ServerStatus(string ip, /*ushort port,*/ string title, ushort players, ushort capacity)
+    public ServerStatus(string ip, /*ushort port,*/ string title, ushort players, ushort capacity,
+        bool isLocal = false)
     {
         this.ip = ip;
         //this.port = port;
         this.title = title;
         this.players = players;
         this.capacity = capacity;
+        this.isLocal = isLocal;
 #if !UNITY_WEBGL
         // Ping isn't known in WebGL builds
         ping = new Ping(ip);

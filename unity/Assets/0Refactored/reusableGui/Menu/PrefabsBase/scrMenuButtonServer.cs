@@ -8,6 +8,8 @@ using UnityEngine.UI;
 public class scrMenuButtonServer : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI PingText;
+
+    [SerializeField] private GameObject LocalIcon;
     
     [SerializeField] private TextMeshProUGUI NameText;
     
@@ -41,6 +43,17 @@ public class scrMenuButtonServer : MonoBehaviour
         if (status.players >= status.capacity)
         {
             joinButton.interactable = false;
+        }
+
+        if (status.isLocal)
+        {
+            PingText.gameObject.SetActive(false);
+            LocalIcon.SetActive(true);
+        }
+        else
+        {
+            PingText.gameObject.SetActive(true);
+            LocalIcon.SetActive(false);
         }
     }
 }
