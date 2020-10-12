@@ -34,6 +34,7 @@ public class CoulombAssessmentRotation : MonoBehaviour
         _transform = transform;
 
         eulerRotation.Value = _transform.rotation.eulerAngles;
+        eulerRotation.onNewValueFromSystem.AddListener(ChangeToNewRotation);
     }
     
     private void Update()
@@ -68,6 +69,13 @@ public class CoulombAssessmentRotation : MonoBehaviour
         {
             eulerRotation.Value = _transform.rotation.eulerAngles;
         }
+    }
+    
+    private void ChangeToNewRotation(Vector3 newEulerRotation)
+    {
+        if (!isActiveAndEnabled) return;
+        _transform.rotation = Quaternion.Euler(newEulerRotation);
+        UpdateRotation();
     }
 }
 

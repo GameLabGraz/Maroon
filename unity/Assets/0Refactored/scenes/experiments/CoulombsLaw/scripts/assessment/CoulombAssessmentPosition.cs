@@ -90,7 +90,7 @@ public class CoulombAssessmentPosition : MonoBehaviour
         position.Value = isActive ? _coulombLogic.WorldToCalcSpace(_transform) : new Vector3(-1, -1, -1);
     }
 
-    public void ChangeToNewPosition(Vector3 newPosition)
+    private void ChangeToNewPosition(Vector3 newPosition)
     {
         if (!isBetween(newPosition.x) || !isBetween(newPosition.y) || !isBetween(newPosition.z))
         {

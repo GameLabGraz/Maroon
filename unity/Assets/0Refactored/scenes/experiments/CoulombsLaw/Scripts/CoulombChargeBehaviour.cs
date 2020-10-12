@@ -24,6 +24,7 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
     [Tooltip("Sets the charge value of the Charge. This should be a value between -10 and 10 micro Coulomb.")]
     public QuantityFloat charge = 0.0f;
     public QuantityString chargeUnit = "nC";
+    public QuantityBool isVisible = true;
 
     public float Charge
     {
@@ -35,7 +36,7 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
         }
     }
 
-    public static readonly float ChargeUnit = Mathf.Pow(10, -9);
+    public float ChargeUnit = Mathf.Pow(10, -9);
 
     [Header("Particle Settings")]
     [SerializeField]
@@ -79,6 +80,8 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
     {
         _particleBaseRenderer = particleBase.GetComponent<MeshRenderer>();
         charge.onValueChanged.AddListener(OnChargeValueChangeHandler);
+        fixedPosition.onValueChanged.AddListener((value) => particleFixingRing.SetActive(value));
+        isVisible.onValueChanged.AddListener(ChangeVisibility);
         _layer = gameObject.layer;
 
         Init();
@@ -169,7 +172,6 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
     public void SetFixedPosition(bool isPositionFixed)
     {
         fixedPosition.Value = isPositionFixed;
-        particleFixingRing.SetActive(fixedPosition);
     }
 
     public void SetPosition(Vector3 newPosition)
@@ -284,5 +286,14 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
     public IQuantity GetFixedPosition()
     {
         return fixedPosition;
+    }
+
+    protected void ChangeVisibility(bool setVisible)
+    {
+        foreach (var r in GetComponents<Renderer>()) r.enabled = setVisible;
+        foreach (var r in GetComponentsInChildren<Renderer>()) r.enabled = setVisible;
+        
+        foreach (var c in GetComponents<Collider>()) c.enabled = setVisible;
+        foreach (var c in GetComponentsInChildren<Collider>()) c.enabled = setVisible;
     }
 }

@@ -94,6 +94,25 @@ public class ViewChangeHandler : MonoBehaviour
         dragHandler.ArrowMovement.UpdateMovementRestriction(!allowX, !allowY, !allowZ);
 //        Debug.Log("SetUp Restrictions " + charge.name + " --- " + allowX + " - " + allowY + " - " + allowZ);
     }
+
+    public void AllowChargeInteraction(bool allowMovement)
+    {
+        foreach (var charge in _coulombLogic.GetChargeGameObjects())
+        {
+            if(!allowMovement)
+                HandleMovementRestrictions(charge, false, false, false);
+            else if(_coulombLogic.IsIn2dMode())
+                HandleMovementRestrictions(charge, true, false, true);
+            else
+            {
+                var view = (PathHandler.CameraPosition) currentView.Value;
+                var allowX = view != PathHandler.CameraPosition.CP_Side;
+                var allowY = view != PathHandler.CameraPosition.CP_Top;
+                var allowZ = view != PathHandler.CameraPosition.CP_Front;
+                HandleMovementRestrictions(charge.gameObject, allowX, allowY, allowZ);
+            }
+        }
+    }
     
     public void SetupViewSettingsForNewParticles(CoulombChargeBehaviour newCharge)
     {
