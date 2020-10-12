@@ -100,10 +100,15 @@ namespace Maroon.Physics
     [Serializable]
     public class QuantityFloat : Quantity<float>
     {
-        public QuantityFloat(float value) : base(value) { base.onValueChanged.AddListener(OnValueChangedHandler); }
+        public QuantityFloat(float value) : base(value)
+        {
+            base.onValueChanged.AddListener(OnValueChangedHandler);
+            base.onNewValueFromSystem.AddListener(OnNewValueFromSystemHandler);
+        }
         public new OnValueFloatChangeEvent onValueChanged = new OnValueFloatChangeEvent();
         public new OnValueFloatChangeEvent onNewValueFromSystem = new OnValueFloatChangeEvent();
         private void OnValueChangedHandler(float value) { onValueChanged?.Invoke(value); }
+        private void OnNewValueFromSystemHandler(float value) { onNewValueFromSystem?.Invoke(value); }
         public static implicit operator QuantityFloat(float value) => new QuantityFloat(value);
         public static implicit operator float(QuantityFloat quantity) => quantity.Value;
     }
@@ -111,10 +116,15 @@ namespace Maroon.Physics
     [Serializable]
     public class QuantityVector3 : Quantity<Vector3>
     {
-        public QuantityVector3(Vector3 value) : base(value) { base.onValueChanged.AddListener(OnValueChangedHandler);}
+        public QuantityVector3(Vector3 value) : base(value)
+        {
+            base.onValueChanged.AddListener(OnValueChangedHandler);
+            base.onNewValueFromSystem.AddListener(OnNewValueFromSystemHandler);
+        }
         public new OnValueVector3ChangeEvent onValueChanged = new OnValueVector3ChangeEvent();
         public new OnValueVector3ChangeEvent onNewValueFromSystem = new OnValueVector3ChangeEvent();
         private void OnValueChangedHandler(Vector3 value) { onValueChanged?.Invoke(value); }
+        private void OnNewValueFromSystemHandler(Vector3 value) { onNewValueFromSystem?.Invoke(value); }
         public static implicit operator QuantityVector3(Vector3 value) => new QuantityVector3(value);
         public static implicit operator Vector3(QuantityVector3 quantity) => quantity.Value;
     }

@@ -124,4 +124,14 @@ public class VoltmeterMeasuringPoint : MonoBehaviour, IResetWholeObject
             gameObject.transform.parent = _coulombLogic.transform.parent;
         onVoltageChanged.Invoke("---");
     }
+
+    public void ShowObject()
+    {
+        Debug.Assert(_coulombLogic != null);
+        gameObject.SetActive(true);
+        transform.parent = _coulombLogic.IsIn2dMode()
+            ? _coulombLogic.scene2D.transform
+            : _coulombLogic.scene3D.transform;
+        transform.localRotation = Quaternion.identity;
+    }
 }
