@@ -190,8 +190,6 @@ public class PendulumNetworkSync : ExperimentNetworkSync
         if (MaroonNetworkManager.Instance.IsInControl)
             return;
         
-        Debug.Log("newAngle: " + newAngle);
-        
         _pendulum.Joint.limits = new JointLimits
         {
             min = newAngle,

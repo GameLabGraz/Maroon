@@ -63,6 +63,7 @@ public class FaradysLawNetworkSync : ExperimentNetworkSync
 
     [SyncVar(hook = "OnMagnetPositionChanged")]private Vector3 _magnetPosition;
 
+    //TODO: Needed???
     protected override void Start()
     {
         if (Magnet == null)
