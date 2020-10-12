@@ -19,6 +19,7 @@ public class PlaneVisualization : MonoBehaviour, IResetObject, IResetWholeObject
 
     [Header("General Settings")] 
     public bool updateDuringRuntime = false;
+    public QuantityBool allowInteractions = true;
     
     [Header("Input Parameter")] 
     [Tooltip("Contains all the planes where the visualization should be done. If empty, the gameObject itself is assumed to be the plane.")]
@@ -50,7 +51,6 @@ public class PlaneVisualization : MonoBehaviour, IResetObject, IResetWholeObject
     
     private Mode _currentMode = Mode.Disabled;
     
-    
     // Start is called before the first frame update
     private void Start()
     {
@@ -61,6 +61,10 @@ public class PlaneVisualization : MonoBehaviour, IResetObject, IResetWholeObject
             planes.Add(gameObject);
         
         Disable();
+        allowInteractions.onValueChanged.AddListener((value) =>
+        {
+            if(!value) Disable();
+        });
     }
 
     // Update is called once per frame
@@ -88,6 +92,11 @@ public class PlaneVisualization : MonoBehaviour, IResetObject, IResetWholeObject
                 meshRenderer.sharedMaterial.SetVectorArray(Shader.PropertyToID("_Entries"), vecArray);
             }
         }
+    }
+
+    public void UpdateInteractions()
+    {
+        allowInteractions.onValueChanged.Invoke(allowInteractions.Value);
     }
 
     private void Disable()
@@ -158,7 +167,7 @@ public class PlaneVisualization : MonoBehaviour, IResetObject, IResetWholeObject
         _currentMode = Mode.VoltageVis;
         voltageVisualization.Value = true;
     }
-
+    
     public void StopVisualization()
     {
         Disable();
@@ -227,5 +236,29 @@ public class PlaneVisualization : MonoBehaviour, IResetObject, IResetWholeObject
     public IQuantity GetIronFilingVis()
     {
         return ironFilingVisualization;
+    }
+    
+    public void ForceVoltageVisualization(bool show)
+    {
+        if(_currentMode == Mode.VoltageVis)
+            Disable();
+        if(show)
+            ShowVoltageVisualization();
+    }
+    
+    public void ForceEquipotentialLineVisualization(bool show)
+    {
+        if(_currentMode == Mode.EquipotentialVis)
+            Disable();
+        if(show)
+            ShowEquipotentialLineVisualization();
+    }
+    
+    public void ForceIronFilingVisualization(bool show)
+    {
+        if(_currentMode == Mode.IronFilling)
+            Disable();
+        if(show)
+            ShowIronFilling();
     }
 }

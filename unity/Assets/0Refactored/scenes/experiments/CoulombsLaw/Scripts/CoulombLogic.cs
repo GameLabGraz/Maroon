@@ -32,6 +32,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     public bool startIn2dMode = true;
     public QuantityInt currentMode = 2;
     public QuantityString currentLanguage = "";
+    public QuantityBool chargeInteractionAllowed = true;
 
     public ParticleEvent onParticleAdded;
     public ParticleEvent onParticleRemoved;
@@ -223,6 +224,8 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         for (var i = 0; i < _charges.Count; ++i)
         {
             var currentParticle = _charges[i];
+            if(!currentParticle.isActiveAndEnabled) continue;
+            
             var sumDirection = Vector3.zero;
             if(Mathf.Abs(currentParticle.Charge) < 0.0001f || currentParticle.fixedPosition)
                 continue;
@@ -234,6 +237,9 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
                     continue;
                 
                 var affectingParticle = _charges[j];
+                if(!affectingParticle.isActiveAndEnabled) 
+                    continue;
+                
                 Vector3 direction;
                 Vector3 direction2;
                 
@@ -433,6 +439,13 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         }
     }
 
+    public void ChangeMode(int newMode)
+    {
+        if (newMode != 2 && newMode != 3)
+            return;
+        
+        OnSwitch3d2dMode(newMode == 2? 0f : 1f);
+    }
 
     public void OnSwitch3d2dMode(float newMode)
     {
@@ -490,5 +503,4 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     {
         currentLanguage.Value = newLanguage.ToString();
     }
-
 }
