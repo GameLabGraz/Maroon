@@ -34,6 +34,7 @@ namespace Maroon.Physics
         bool IsDynamic();
         object GetValue();
 
+        void SystemSetsQuantity(object value);
         void SendValueChangedEvent();
     }
     
@@ -65,12 +66,13 @@ namespace Maroon.Physics
             _value = value;
         }
 
-        public void SystemSetsQuantity(T newValue)
+        public void SystemSetsQuantity(object newValue)
         {
-            if (!allowSystemChange) return;
-            _value = newValue;
-            onNewValueFromSystem?.Invoke(newValue);
-            onValueChanged?.Invoke(newValue);
+            if (!allowSystemChange || newValue.GetType() != typeof(T)) return;
+            
+            _value = (T)newValue;
+            onNewValueFromSystem?.Invoke(_value);
+            onValueChanged?.Invoke(_value);
         }
 
         public OnValueChangeEvent<T> onValueChanged = new OnValueChangeEvent<T>();

@@ -3253,6 +3253,7 @@ GameObject:
   - component: {fileID: 249590959}
   - component: {fileID: 249590957}
   - component: {fileID: 249590953}
+  - component: {fileID: 249590954}
   m_Layer: 0
   m_Name: Voltmeter
   m_TagString: Untagged
@@ -3303,6 +3304,22 @@ MonoBehaviour:
       Object: {fileID: 941568972}
       ComponentName: CoulombAssessmentPosition
       FieldName: position
+--- !u!54 &249590954
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 249590951}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!114 &249590957
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3338,8 +3355,12 @@ MonoBehaviour:
     assessmentName: voltage
     isDynamic: 0
     alwaysSendValueChangedEvent: 1
+    allowSystemChange: 1
     _value: 0
     onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
 --- !u!1 &264305264
@@ -10385,8 +10406,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 668779870}
-  - component: {fileID: 668779869}
   - component: {fileID: 668779868}
+  - component: {fileID: 668779869}
   m_Layer: 0
   m_Name: AssessmentManager
   m_TagString: Untagged
@@ -10406,8 +10427,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e18eda270d65ffa4cb73d980579c5522, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mode: 1
-  antaresUrl: wss://localhost:44352/ws?assignment=CoulombsLaw_T2
+  mode: 0
+  antaresUrl: wss://hui.maderer.at/antares/ws?assignment=CoulombsLaw_T2
   amlFile: Assessment\CoulombsLaw\physics_test.aml
   showDebugMessages: 0
 --- !u!114 &668779869
@@ -10419,9 +10440,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 668779867}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56bdee6d1758955439edcf2994ff667d, type: 3}
+  m_Script: {fileID: 11500000, guid: 3e3b91797158f294c99bdba20a43774c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  logic: {fileID: 941569016}
+  chargePrefab: {fileID: 222567040141845092, guid: 9402c44767a65434480275f7447498ec,
+    type: 3}
 --- !u!4 &668779870
 Transform:
   m_ObjectHideFlags: 0
@@ -16698,8 +16722,12 @@ MonoBehaviour:
     assessmentName: perspective
     isDynamic: 0
     alwaysSendValueChangedEvent: 1
+    allowSystemChange: 1
     _value: 0
     onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
   onViewChanged:
@@ -16882,8 +16910,12 @@ MonoBehaviour:
     assessmentName: positive_terminal_position
     isDynamic: 0
     alwaysSendValueChangedEvent: 1
+    allowSystemChange: 1
     _value: {x: 0, y: 0, z: 0}
     onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
   observeLocal: 1
@@ -16906,8 +16938,12 @@ MonoBehaviour:
     assessmentName: negative_terminal_position
     isDynamic: 0
     alwaysSendValueChangedEvent: 1
+    allowSystemChange: 1
     _value: {x: 0, y: 0, z: 0}
     onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
   observeLocal: 1
@@ -17944,8 +17980,12 @@ MonoBehaviour:
     assessmentName: 3d_rotation
     isDynamic: 0
     alwaysSendValueChangedEvent: 1
+    allowSystemChange: 1
     _value: {x: 0, y: 0, z: 0}
     onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
   updateMode: 1
@@ -18046,8 +18086,12 @@ MonoBehaviour:
     assessmentName: position
     isDynamic: 0
     alwaysSendValueChangedEvent: 1
+    allowSystemChange: 1
     _value: {x: -1, y: -1, z: -1}
     onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
   observeLocal: 1
@@ -18070,8 +18114,12 @@ MonoBehaviour:
     assessmentName: rotation
     isDynamic: 0
     alwaysSendValueChangedEvent: 1
+    allowSystemChange: 1
     _value: {x: 0, y: 0, z: 0}
     onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
   updateMode: 1
@@ -33694,8 +33742,12 @@ MonoBehaviour:
     assessmentName: end_position
     isDynamic: 0
     alwaysSendValueChangedEvent: 1
+    allowSystemChange: 1
     _value: {x: 0, y: 0, z: 0}
     onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
   observeLocal: 1
@@ -33718,8 +33770,12 @@ MonoBehaviour:
     assessmentName: start_position
     isDynamic: 0
     alwaysSendValueChangedEvent: 1
+    allowSystemChange: 1
     _value: {x: 0, y: 0, z: 0}
     onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
   observeLocal: 1

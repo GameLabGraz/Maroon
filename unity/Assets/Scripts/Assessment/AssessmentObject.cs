@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GEAR.Gadgets.ReferenceValue;
 using Maroon.Physics;
 using UnityEngine;
 
@@ -84,6 +83,11 @@ namespace Maroon.Assessment
             {
                 quantity.SendValueChangedEvent();
             }
+        }
+
+        public IQuantity GetWatchValue(string name)
+        {
+            return WatchedValues.FirstOrDefault(watchValue => watchValue.GetName() == name);
         }
     }
 }

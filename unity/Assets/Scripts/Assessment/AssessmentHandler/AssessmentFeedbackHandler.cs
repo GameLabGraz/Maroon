@@ -1,11 +1,10 @@
-﻿
-using Antares.Evaluation;
+﻿using Antares.Evaluation;
 using Maroon.UI;
 using UnityEngine;
 
 namespace Maroon.Assessment.Handler
 {
-    public class AssessmentFeedbackHandler : MonoBehaviour
+    public abstract class AssessmentFeedbackHandler : MonoBehaviour
     {
         private DialogueManager dialogue;
         private AssessmentDisplay display;
@@ -34,6 +33,9 @@ namespace Maroon.Assessment.Handler
                   break;
                 case DisplaySlide displaySlide:
                     HandleDisplaySlide(displaySlide);
+                    break;
+                case ManipulateObject manipulateObject:
+                    HandleObjectManipulation(manipulateObject);
                     break;
                 default:
                     Debug.LogWarning(
@@ -71,9 +73,46 @@ namespace Maroon.Assessment.Handler
             dialogue.ShowMessage(message);
         }
 
+        private void HandleObjectManipulation(ManipulateObject manipulateObject)
+        {
+            AssessmentObject assessmentObject;
+
+            switch (manipulateObject.UpdateType)
+            {
+                case ObjectUpdateType.Create:
+                    HandleObjectCreation(manipulateObject);
+                    break;
+                
+                case ObjectUpdateType.Update:
+
+                    assessmentObject = AssessmentManager.Instance?.GetObject(manipulateObject.ID);
+                    if (assessmentObject == null) return;
+
+                    foreach (var dataUpdate in manipulateObject.DataUpdates)
+                    {
+                        var watchValue = assessmentObject.GetWatchValue(dataUpdate.PropertyName);
+                        watchValue?.SystemSetsQuantity(dataUpdate.Value);
+                    }
+                    break;
+
+                case ObjectUpdateType.Destroy:
+                    assessmentObject = AssessmentManager.Instance?.GetObject(manipulateObject.ID);
+                    if (assessmentObject == null) return;
+
+                    Destroy(assessmentObject.gameObject);
+                    break;
+                
+                default:
+                    Debug.LogWarning($"AssessmentFeedbackHandler::HandleObjectManipulation: Unknown Object Update Type {manipulateObject.UpdateType}");
+                    break;
+            }
+        }
+
         private void HandleDisplaySlide(DisplaySlide displaySlide)
         {
             display.LoadSlide(displaySlide.Slide);
         }
+
+        protected abstract void HandleObjectCreation(ManipulateObject manipulateObject);
     }
 }

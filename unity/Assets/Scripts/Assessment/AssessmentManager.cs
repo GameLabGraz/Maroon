@@ -69,7 +69,7 @@ namespace Maroon.Assessment
 
         private AssessmentFeedbackHandler _feedbackHandler;
 
-        private readonly List<AssessmentObject> _objectsInRange = new List<AssessmentObject>();
+        private readonly Dictionary<string, AssessmentObject> _objectsInRange = new Dictionary<string, AssessmentObject>();
 
         public bool IsConnected { get; private set; }
 
@@ -134,7 +134,7 @@ namespace Maroon.Assessment
                 if (showDebugMessages)
                     Debug.Log("AssessmentManager: Connecting to Assessment Service...");
 
-                string url = GetAntaresUrl();
+                var url = GetAntaresUrl();
                 if(url == null)
                 {
                     Debug.Log("AssessmentManager: Missing Antares URL configuration (expecting parameter or component configuration)");
@@ -167,20 +167,25 @@ namespace Maroon.Assessment
 
         private void FlushEventBuffer()
         {
-            foreach(GameEvent gameEvent in _eventBuffer)
+            foreach(var gameEvent in _eventBuffer)
             {
                 _evalService.ProcessEvent(gameEvent);
             }
             _eventBuffer.Clear();
         }
-        
+
+        public AssessmentObject GetObject(string id)
+        {
+            return _objectsInRange[id];
+        }
+
         public void RegisterAssessmentObject(AssessmentObject assessmentObject)
         {
             if(showDebugMessages)
                 Debug.Log($"AssessmentManager::RegisterAssessmentObject: {assessmentObject.ObjectID}");
 
-            _objectsInRange.Add(assessmentObject);
-            
+            _objectsInRange.Add(assessmentObject.ObjectID, assessmentObject);
+
             EventBuilder
                 .PerceiveObject(assessmentObject.ObjectID)
                 .Set("class", assessmentObject.ClassType.ToString());
@@ -198,7 +203,7 @@ namespace Maroon.Assessment
                 Debug.Log($"AssessmentManager::DeregisterAssessmentObject: {assessmentObject.ObjectID}");
 
             EventBuilder.UnlearnObject(assessmentObject.ObjectID);
-            _objectsInRange.Remove(assessmentObject);
+            _objectsInRange.Remove(assessmentObject.ObjectID);
         }
 
         public void SendUserAction(string actionName, string objectId=null)
@@ -208,7 +213,7 @@ namespace Maroon.Assessment
 
             EventBuilder.Action(actionName, objectId);
 
-            foreach (var assessmentObject in _objectsInRange)
+            foreach (var assessmentObject in _objectsInRange.Values)
             {
                 EventBuilder.UpdateDataOf(assessmentObject.ObjectID);
                 foreach (var watchValue in assessmentObject.WatchedValues)
