@@ -63,21 +63,6 @@ public class FaradysLawNetworkSync : ExperimentNetworkSync
 
     [SyncVar(hook = "OnMagnetPositionChanged")]private Vector3 _magnetPosition;
 
-    //TODO: Needed???
-    protected override void Start()
-    {
-        if (Magnet == null)
-        {
-            //In falling coil experiment
-            base.Start();
-            return;
-        }
-        //in faradays law experiment
-        _magnetPosition = Magnet.transform.position;
-        
-        base.Start();
-    }
-    
     #region ControlHandling
 
     protected override void OnGetControl()
