@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour, IResetObject
 {
@@ -21,8 +18,8 @@ public class GameController : MonoBehaviour, IResetObject
 	// Titration settings
 	private double molTitrant = 0.1f;
 	private double mlTitrant = 50f;
-	private double molAnalyt = 0.1f;
-	private double mlAnalyt = 20f;
+	private double molAnalyte = 0.1f;
+	private double mlAnalyte = 20f;
 
 	[Space(10)]
     public GameObject pipet;
@@ -41,52 +38,44 @@ public class GameController : MonoBehaviour, IResetObject
         pipetAnimation = pipet.GetComponent<PipetAnimation>();
 	}
 
-	/*private void FixedUpdate()
-	{
-		if (SimulationController.Instance.SimulationRunning)
-		{
-			startTitration();
-		}
-	}*/
-
 	public void startTitration()
 	{
 		startButton.interactable = false;
-		bool ready = initaliseComponents();
+		bool ready = initialiseComponents();
 
         if (ready)
         {
             playPipetAnimation();
 
             // Calculation and Graph
-            acidTitrationScript.initialise(molTitrant, mlTitrant, molAnalyt, mlAnalyt);
-            drawGraphScript.InitLine();
+            acidTitrationScript.calculation(molTitrant, mlTitrant, molAnalyte, mlAnalyte);
+            drawGraphScript.initialise();
 
             // Draw the Graph when burette is opened
             theCoroutine = StartCoroutine(drawGraphScript.DrawLine());
         }
     }
 
-    bool initaliseComponents()
+    bool initialiseComponents()
 	{
 		if (baseToggle.isOn) // if base is titrant
 		{
 			molTitrant = baseMol;
 			mlTitrant = baseMl;
-			molAnalyt = acidMol;
-			mlAnalyt = acidMl;
+			molAnalyte = acidMol;
+			mlAnalyte = acidMl;
 		}
 		else // if acid is titrant
 		{
 			molTitrant = acidMol;
 			mlTitrant = acidMl;
-			molAnalyt = baseMol;
-			mlAnalyt = baseMl;
+			molAnalyte = baseMol;
+			mlAnalyte = baseMl;
 		}
 
 		if (checkForZeros(molTitrant))
             return false;
-        if (checkForZeros(molAnalyt))
+        if (checkForZeros(molAnalyte))
             return false;
         return true;
 
@@ -103,10 +92,8 @@ public class GameController : MonoBehaviour, IResetObject
 
 	public void ResetObject()
 	{
-		//pipetAnimation.resetAnalytAnimation();
-
 		// handle of burette is not interactable
-		pipetAnimation.analyt.GetComponent<SetBuretteInteractive>().disableBuretteTap();
+		pipetAnimation.analyte.GetComponent<SetBuretteInteractive>().disableBuretteTap();
         acidTitrationScript.resetEverything();
 
 		baseMol = 0.1f;

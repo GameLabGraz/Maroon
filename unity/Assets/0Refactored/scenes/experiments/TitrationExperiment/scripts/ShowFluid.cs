@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
@@ -72,15 +71,15 @@ public class ShowFluid : MonoBehaviour
 
     }
 
-    // Show fluid of the analyt in erlenmeyer flask at beginning
+    // Show fluid of the analyte in erlenmeyer flask at beginning
     public void enableMeshRenderer()
     {
-        if (acidTitrationScript.analytText == "HNO3")
+        if (acidTitrationScript.analyteText == "HNO3")
             changeMeshMaterial(colorEnum.yellow);
         meshRend.enabled = !meshRend.enabled;
     }
 
-    // Change the material of analyt during titration
+    // Change the material of analyte during titration
     public void changeMeshMaterial(colorEnum color)
     {
         switch (color)
@@ -108,13 +107,13 @@ public class ShowFluid : MonoBehaviour
         }
     }
 
-    // Show fluid of the analyt with indicator in erlenmeyer flask 
+    // Show fluid of the analyte with indicator in erlenmeyer flask 
     // activated in Animator
     public void activateIndicatorColor()
     {
         result = acidTitrationScript.getResultDictionary();
         if (result.Count > 0)
-            determineAnalytColor((float)result.Values.First());
+            determineAnalyteColor((float)result.Values.First());
     }
 
     public void setCurrentIndicator(int value)
@@ -122,7 +121,7 @@ public class ShowFluid : MonoBehaviour
         currentInd = indicators[value];
     }
 
-    public void determineAnalytColor(float phValue)
+    public void determineAnalyteColor(float phValue)
     {
         if (phValue >= currentInd.startNumber && phValue <= currentInd.endNumber)
         {

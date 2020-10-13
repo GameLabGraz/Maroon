@@ -1,9 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using System.Linq;
-using System;
 
 public class DrawGraph : MonoBehaviour, IResetObject
 {
@@ -59,7 +57,7 @@ public class DrawGraph : MonoBehaviour, IResetObject
         drawAxisLines();
     }
 
-    public void InitLine()
+    public void initialise()
     {
         result = acidTitrationScript.getResultDictionary();
         equivalenzPoint = acidTitrationScript.getEquivalenzPointDictionary();
@@ -137,7 +135,7 @@ public class DrawGraph : MonoBehaviour, IResetObject
                 volumeAddedMl = entry.Key;
                 volumeAddedPh = entry.Value;
 
-                showFluidScript.determineAnalytColor((float)entry.Value);
+                showFluidScript.determineAnalyteColor((float)entry.Value);
 
                 if (equivalenzPoint.Count > 0)
                 {

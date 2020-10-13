@@ -1,12 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PipetAnimation : MonoBehaviour, IResetObject
 {
 
     Animator pipetAnimator;
-    public GameObject analyt;
+    public GameObject analyte;
     ShowFluid showFluid;
 
     Animator dropperAnimator;
@@ -18,7 +16,7 @@ public class PipetAnimation : MonoBehaviour, IResetObject
         dropperAnimator = GameObject.Find("Dropper").GetComponent<Animator>();
 	}
 	
-    // Gamecontroller decides if analyt is acid oder base
+    // Gamecontroller decides if analyte is acid oder base
     public void setPipetBool(bool param)
     {
         if (param)
@@ -45,18 +43,18 @@ public class PipetAnimation : MonoBehaviour, IResetObject
 
     public void resetTrigger(string name)
     {
-        analyt.GetComponent<Animator>().ResetTrigger(name);
+        analyte.GetComponent<Animator>().ResetTrigger(name);
     }
 
-    public void playAnalytAnimation()
+    public void playAnalyteAnimation()
     {
-        analyt.GetComponent<Animator>().SetTrigger("put");
+        analyte.GetComponent<Animator>().SetTrigger("put");
     }
     
     public void ResetObject()
     {
-        //resetAnalytAnimation
-        analyt.GetComponent<Animator>().SetTrigger("reset");
+        //resetAnalyteAnimation
+        analyte.GetComponent<Animator>().SetTrigger("reset");
         showFluid.meshRend.enabled = false;
         showFluid.changeMeshMaterial(colorEnum.colorless);
     }
