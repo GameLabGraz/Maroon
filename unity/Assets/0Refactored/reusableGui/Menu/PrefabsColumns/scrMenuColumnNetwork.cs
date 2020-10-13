@@ -63,7 +63,7 @@ public class scrMenuColumnNetwork : MonoBehaviour
     
     private void OnClickLeaveClient()
     {
-        MaroonNetworkManager.Instance.StopClient();
+        MaroonNetworkManager.Instance.StopClientRegularly();
         _menu.CloseMenu();
     }
     

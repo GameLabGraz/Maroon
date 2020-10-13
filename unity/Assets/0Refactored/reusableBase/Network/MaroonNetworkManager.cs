@@ -9,6 +9,11 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
+public class ConnectMessage : MessageBase
+{
+    public string password;
+}
+
 public class CharacterSpawnMessage : MessageBase
 {
     public Vector3 CharacterPosition;
@@ -23,6 +28,21 @@ public class NetworkControlMessage : MessageBase
 public class ChangeSceneMessage : MessageBase
 {
     public string SceneName;
+}
+
+public enum LeaveReason
+{
+    Disconnect,
+    Usual,
+    InExperiment,
+    Kicked,
+    WrongPw,
+    NoConnection
+}
+
+public class LeaveMessage : MessageBase
+{
+    public LeaveReason Reason;
 }
 
 public class MaroonNetworkManager : NetworkManager
@@ -102,6 +122,8 @@ public class MaroonNetworkManager : NetworkManager
     private bool _sceneCountdownActive;
     private Dictionary<string, NetworkConnection> _connectedPlayers = new Dictionary<string, NetworkConnection>();
     private Dictionary<NetworkConnection, NetworkPlayer> _connectedPlayerObjects = new Dictionary<NetworkConnection, NetworkPlayer>();
+    private bool _passwordProtected;
+    private List<NetworkConnection> _authenticatedPlayers = new List<NetworkConnection>();
     
     public override void OnStartServer()
     {
@@ -114,9 +136,24 @@ public class MaroonNetworkManager : NetworkManager
         _upnp.SetupPortForwarding();
         NetworkServer.RegisterHandler<CharacterSpawnMessage>(OnCreateCharacter);
         NetworkServer.RegisterHandler<ChangeSceneMessage>(OnChangeSceneMessage);
+        NetworkServer.RegisterHandler<ConnectMessage>(OnConnectMessage);
         ClientInControl = null;
         _sceneCountdownActive = false;
         networkSceneName = onlineScene; // to make sure that Manager has Scene Control!
+    }
+
+    private void OnConnectMessage(NetworkConnection conn, ConnectMessage connMsg)
+    {
+        //TODO: Password comparison & Stuff
+        if (SceneManager.GetActiveScene().name.Contains("Laboratory"))
+        {
+            CharacterSpawnMessage charMsg = new CharacterSpawnMessage();
+            conn.Send(charMsg);
+        }
+        else
+        {
+            ServerAskPlayerToLeave(conn, LeaveReason.InExperiment);
+        }
     }
 
     public override void OnStopServer()
@@ -129,19 +166,13 @@ public class MaroonNetworkManager : NetworkManager
         DisplayMessage("StopHost");
     }
 
-    public override void OnServerConnect(NetworkConnection conn)
-    {
-        base.OnServerConnect(conn);
-        if (!SceneManager.GetActiveScene().name.Contains("Laboratory"))
-        {
-            //Connection only possible when in Laboratory
-            conn.Disconnect();
-        }
-    }
-
     public override void OnServerDisconnect(NetworkConnection conn)
     {
         base.OnServerDisconnect(conn);
+
+        if (_authenticatedPlayers.Contains(conn))
+            _authenticatedPlayers.Remove(conn);
+        
         string disconnectedPlayerName = _connectedPlayers.FirstOrDefault(x => x.Value == conn).Key;
         if (disconnectedPlayerName == null)
             return;
@@ -161,6 +192,7 @@ public class MaroonNetworkManager : NetworkManager
 
     private void OnCreateCharacter(NetworkConnection conn, CharacterSpawnMessage message)
     {
+        //TODO: Only authenticated Users!
         if (_connectedPlayerObjects.ContainsKey(conn)) //already created a player object for this connection!
             return;
         
@@ -290,19 +322,41 @@ public class MaroonNetworkManager : NetworkManager
         if (!_connectedPlayers.ContainsKey(playerName))
             return;
         
-        //TODO: Tell him he was kicked!
-        _connectedPlayers[playerName].Disconnect();
+        ServerAskPlayerToLeave(_connectedPlayers[playerName], LeaveReason.Kicked);
+    }
+
+    private void ServerAskPlayerToLeave(NetworkConnection conn, LeaveReason reason)
+    {
+        LeaveMessage msg = new LeaveMessage
+        {
+            Reason = reason
+        };
+        conn.Send(msg);
+        StartCoroutine(DisconnectAfterWait(conn));
+    }
+
+    private IEnumerator DisconnectAfterWait(NetworkConnection conn)
+    {
+        yield return new WaitForSecondsRealtime(5);
+        try
+        {
+            conn.Disconnect();
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e.Message);
+            //Already Disconnected
+        }
     }
 
     #endregion
 
     #region Client
 
-    private bool _tryClientConnect = true;
-    private bool _hasLoadedSceneOnce;
     private string _playerName;
     private string _serverName;
     private string _clientInControl;
+    private LeaveReason _leaveReason;
 
     [HideInInspector]
     public UnityEvent onGetControl;
@@ -315,31 +369,12 @@ public class MaroonNetworkManager : NetworkManager
     {
         base.OnStartClient();
         NetworkClient.RegisterHandler<NetworkControlMessage>(OnNetworkControlMessage);
+        NetworkClient.RegisterHandler<CharacterSpawnMessage>(OnRequestedSpawn);
+        NetworkClient.RegisterHandler<LeaveMessage>(OnLeaveMessage);
         if (mode == NetworkManagerMode.ClientOnly)
         {
             _networkDiscovery.StopDiscovery();
-            _tryClientConnect = true;
-            _hasLoadedSceneOnce = false;
-        }
-    }
-
-    public override void OnClientDisconnect(NetworkConnection conn)
-    {
-        base.OnClientDisconnect(conn);
-        if (_tryClientConnect)
-        {
-            //Connection attempt failed!
-            _tryClientConnect = false;
-            DisplayMessage("ClientConnectFail");
-        }
-        else if (_hasLoadedSceneOnce)
-        {
-            //Disconnected from host
-            DisplayMessage("ClientDisconnect");
-        }
-        else
-        {
-            DisplayMessage("ServerInExperiment");
+            _leaveReason = LeaveReason.NoConnection;
         }
     }
 
@@ -350,18 +385,44 @@ public class MaroonNetworkManager : NetworkManager
         ClientInControl = _playerName;
         _serverName = null;
         _networkDiscovery.StartDiscovery();
+
+        string leaveMessageKey = "ClientDisconnect";
+
+        switch (_leaveReason)
+        {
+            case LeaveReason.Usual:
+                leaveMessageKey = "ClientLeave";
+                break;
+            case LeaveReason.InExperiment:
+                leaveMessageKey = "ServerInExperiment";
+                break;
+            case LeaveReason.Kicked:
+                leaveMessageKey = "ClientKicked";
+                break;
+            case LeaveReason.WrongPw:
+                //TODO
+                break;
+            case LeaveReason.NoConnection:
+                leaveMessageKey = "ClientConnectFail";
+                break;
+            default:
+                leaveMessageKey = "ClientDisconnect";
+                break;
+        }
+        
+        DisplayMessage(leaveMessageKey);
     }
 
     public override void OnClientConnect(NetworkConnection conn)
     {
         base.OnClientConnect(conn);
-        _tryClientConnect = false;
-        SendCreatePlayerMessage(conn);
+        //TODO: Password!
+        ConnectMessage msg = new ConnectMessage();
+        conn.Send(msg);
     }
 
     public override void OnClientSceneChanged(NetworkConnection conn)
     {
-        _hasLoadedSceneOnce = true;
         base.OnClientSceneChanged(conn);
         SendCreatePlayerMessage(conn);
         if (IsInControl)
@@ -372,6 +433,12 @@ public class MaroonNetworkManager : NetworkManager
         {
             onLoseControl.Invoke();
         }
+    }
+
+    private void OnRequestedSpawn(NetworkConnection conn, CharacterSpawnMessage msg)
+    {
+        _leaveReason = LeaveReason.Disconnect;
+        SendCreatePlayerMessage(conn);
     }
 
     private void SendCreatePlayerMessage(NetworkConnection conn)
@@ -389,6 +456,12 @@ public class MaroonNetworkManager : NetworkManager
     private void OnNetworkControlMessage(NetworkConnection conn, NetworkControlMessage msg)
     {
         ClientInControl = msg.NewPlayerInControl;
+    }
+
+    private void OnLeaveMessage(NetworkConnection conn, LeaveMessage msg)
+    {
+        _leaveReason = msg.Reason;
+        StopClient();
     }
 
     public bool IsInControl => _clientInControl == _playerName;
@@ -522,5 +595,11 @@ public class MaroonNetworkManager : NetworkManager
                    "!";
         
         _dialogueManager.ShowMessage(message);
+    }
+
+    public void StopClientRegularly()
+    {
+        _leaveReason = LeaveReason.Usual;
+        StopClient();
     }
 }
