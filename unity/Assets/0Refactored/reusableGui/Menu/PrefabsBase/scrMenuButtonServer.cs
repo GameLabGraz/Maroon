@@ -35,9 +35,8 @@ public class scrMenuButtonServer : MonoBehaviour
         joinButton.onClick.AddListener(() =>
         {
             MaroonNetworkManager.Instance.networkAddress = status.ip;
-            MaroonNetworkManager.Instance.StartClient();
+            MaroonNetworkManager.Instance.StartClientWithPassword();
             MaroonNetworkManager.Instance.ServerName = status.title;
-            //TODO: better?
             FindObjectOfType<scrMenu>().CloseMenu();
         });
         if (status.players >= status.capacity)

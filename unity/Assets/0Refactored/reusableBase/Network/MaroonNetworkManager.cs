@@ -37,6 +37,7 @@ public enum LeaveReason
     InExperiment,
     Kicked,
     WrongPw,
+    NotAuthorized,
     NoConnection
 }
 
@@ -53,6 +54,7 @@ public class MaroonNetworkManager : NetworkManager
     [Header("Maroon Network Manager")]
     [SerializeField] private GameObject experimentPlayer;
     [SerializeField] private GameObject controlHandlingUi;
+    [SerializeField] private GameObject passwordUi;
     [SerializeField] private GameObject sceneCountdown;
     [Scene]
     [SerializeField] private List<string> networkEnabledExperiments;
@@ -123,7 +125,14 @@ public class MaroonNetworkManager : NetworkManager
     private Dictionary<string, NetworkConnection> _connectedPlayers = new Dictionary<string, NetworkConnection>();
     private Dictionary<NetworkConnection, NetworkPlayer> _connectedPlayerObjects = new Dictionary<NetworkConnection, NetworkPlayer>();
     private bool _passwordProtected;
+    private string _serverPassword;
     private List<NetworkConnection> _authenticatedPlayers = new List<NetworkConnection>();
+
+    public void StartHostWithPassword()
+    {
+        GameObject pwUi = Instantiate(passwordUi) as GameObject;
+        pwUi.GetComponent<PasswordUI>().isHost = true;
+    }
     
     public override void OnStartServer()
     {
@@ -144,15 +153,19 @@ public class MaroonNetworkManager : NetworkManager
 
     private void OnConnectMessage(NetworkConnection conn, ConnectMessage connMsg)
     {
-        //TODO: Password comparison & Stuff
-        if (SceneManager.GetActiveScene().name.Contains("Laboratory"))
+        if (!SceneManager.GetActiveScene().name.Contains("Laboratory"))
         {
-            CharacterSpawnMessage charMsg = new CharacterSpawnMessage();
-            conn.Send(charMsg);
+            ServerAskPlayerToLeave(conn, LeaveReason.InExperiment);
+        }
+        else if (_passwordProtected && connMsg.password != _serverPassword)
+        {
+            ServerAskPlayerToLeave(conn, LeaveReason.WrongPw);
         }
         else
         {
-            ServerAskPlayerToLeave(conn, LeaveReason.InExperiment);
+            CharacterSpawnMessage charMsg = new CharacterSpawnMessage();
+            conn.Send(charMsg);
+            _authenticatedPlayers.Add(conn);
         }
     }
 
@@ -192,7 +205,12 @@ public class MaroonNetworkManager : NetworkManager
 
     private void OnCreateCharacter(NetworkConnection conn, CharacterSpawnMessage message)
     {
-        //TODO: Only authenticated Users!
+        if (!_authenticatedPlayers.Contains(conn))
+        {
+            ServerAskPlayerToLeave(conn, LeaveReason.NotAuthorized);
+            return;
+        }
+        
         if (_connectedPlayerObjects.ContainsKey(conn)) //already created a player object for this connection!
             return;
         
@@ -252,6 +270,16 @@ public class MaroonNetworkManager : NetworkManager
             coundownObject.GetComponent<SceneChangeCountdown>().SetSceneName(msg.SceneName);
             NetworkServer.Spawn(coundownObject);
             _sceneCountdownActive = true;
+        }
+    }
+
+    public string Password
+    {
+        set
+        {
+            _serverPassword = value;
+            ClientPassword = value;
+            _passwordProtected = _serverPassword != "";
         }
     }
 
@@ -357,6 +385,7 @@ public class MaroonNetworkManager : NetworkManager
     private string _serverName;
     private string _clientInControl;
     private LeaveReason _leaveReason;
+    private string _clientPassword;
 
     [HideInInspector]
     public UnityEvent onGetControl;
@@ -364,6 +393,12 @@ public class MaroonNetworkManager : NetworkManager
     public UnityEvent onLoseControl;
     [HideInInspector] 
     public UnityEvent newClientInControlEvent;
+    
+    public void StartClientWithPassword()
+    {
+        GameObject pwUi = Instantiate(passwordUi) as GameObject;
+        pwUi.GetComponent<PasswordUI>().isHost = false;
+    }
 
     public override void OnStartClient()
     {
@@ -386,6 +421,9 @@ public class MaroonNetworkManager : NetworkManager
         _serverName = null;
         _networkDiscovery.StartDiscovery();
 
+        if (mode == NetworkManagerMode.Host)
+            return;
+
         string leaveMessageKey = "ClientDisconnect";
 
         switch (_leaveReason)
@@ -400,7 +438,10 @@ public class MaroonNetworkManager : NetworkManager
                 leaveMessageKey = "ClientKicked";
                 break;
             case LeaveReason.WrongPw:
-                //TODO
+                leaveMessageKey = "WrongPassword";
+                break;
+            case LeaveReason.NotAuthorized:
+                leaveMessageKey = "NotAuthorized";
                 break;
             case LeaveReason.NoConnection:
                 leaveMessageKey = "ClientConnectFail";
@@ -416,8 +457,11 @@ public class MaroonNetworkManager : NetworkManager
     public override void OnClientConnect(NetworkConnection conn)
     {
         base.OnClientConnect(conn);
-        //TODO: Password!
-        ConnectMessage msg = new ConnectMessage();
+        _leaveReason = LeaveReason.Disconnect;
+        ConnectMessage msg = new ConnectMessage
+        {
+            password = _clientPassword
+        };
         conn.Send(msg);
     }
 
@@ -437,7 +481,6 @@ public class MaroonNetworkManager : NetworkManager
 
     private void OnRequestedSpawn(NetworkConnection conn, CharacterSpawnMessage msg)
     {
-        _leaveReason = LeaveReason.Disconnect;
         SendCreatePlayerMessage(conn);
     }
 
@@ -504,6 +547,11 @@ public class MaroonNetworkManager : NetworkManager
     {
         get => _serverName;
         set => _serverName = value;
+    }
+
+    public string ClientPassword
+    {
+        set => _clientPassword = value;
     }
 
     private float _lastEnterSceneTime;

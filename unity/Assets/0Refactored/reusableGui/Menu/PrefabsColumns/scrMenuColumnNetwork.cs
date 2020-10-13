@@ -35,7 +35,6 @@ public class scrMenuColumnNetwork : MonoBehaviour
         this.ButtonPortsMapped.GetComponent<Button>().onClick.AddListener(() => this.OnClickPortsMapped());
         this.ButtonKick.GetComponent<Button>().onClick.AddListener(() => this.OnButtonKick());
 
-        //TODO better way?
         _menu = FindObjectOfType<scrMenu>();
         MaroonNetworkManager.Instance.StartMultiUser();
         
@@ -57,7 +56,7 @@ public class scrMenuColumnNetwork : MonoBehaviour
     
     private void OnClickHost()
     {
-        MaroonNetworkManager.Instance.StartHost();
+        MaroonNetworkManager.Instance.StartHostWithPassword();
         _menu.CloseMenu();
     }
     
