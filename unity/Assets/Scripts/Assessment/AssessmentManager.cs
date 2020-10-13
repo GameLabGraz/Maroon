@@ -98,6 +98,8 @@ namespace Maroon.Assessment
 
         private async void Awake()
         {
+            AssessmentLogger.Enable = showDebugMessages;
+
             _feedbackHandler = FindObjectOfType<AssessmentFeedbackHandler>();
 
             await ConnectToAssessmentSystem();
@@ -105,7 +107,7 @@ namespace Maroon.Assessment
 
         private void Start()
         {
-            Debug.Log("AssessmentManager: Raising enter event ...");
+            AssessmentLogger.Log("AssessmentManager: Raising enter event ...");
             EventBuilder.Action("enter");
         }
 
@@ -131,28 +133,25 @@ namespace Maroon.Assessment
         {
             try
             {
-                if (showDebugMessages)
-                    Debug.Log("AssessmentManager: Connecting to Assessment Service...");
+                AssessmentLogger.Log("AssessmentManager: Connecting to Assessment Service...");
 
                 var url = GetAntaresUrl();
                 if(url == null)
                 {
-                    Debug.Log("AssessmentManager: Missing Antares URL configuration (expecting parameter or component configuration)");
+                    AssessmentLogger.Log("AssessmentManager: Missing Antares URL configuration (expecting parameter or component configuration)");
                     return;
                 }
 
                 _evalService = new AntaresClient(url);
                 _evalService.FeedbackReceived += delegate (object sender, FeedbackEventArgs args)
                 {
-                    if (showDebugMessages)
-                        Debug.Log("AssessmentManager: Feedback received");
+                    AssessmentLogger.Log("AssessmentManager: Feedback received");
                     _feedbackHandler.HandleFeedback(args);
                 };
 
                 _evalService.Connected += delegate (object sender, EventArgs args)
                 {
-                    if (showDebugMessages)
-                        Debug.Log("AssessmentManager: Connection established");
+                    AssessmentLogger.Log("AssessmentManager: Connection established");
                     IsConnected = true;
                     FlushEventBuffer();
                 };
@@ -181,8 +180,7 @@ namespace Maroon.Assessment
 
         public void RegisterAssessmentObject(AssessmentObject assessmentObject)
         {
-            if(showDebugMessages)
-                Debug.Log($"AssessmentManager::RegisterAssessmentObject: {assessmentObject.ObjectID}");
+            AssessmentLogger.Log($"AssessmentManager::RegisterAssessmentObject: {assessmentObject.ObjectID}");
 
             _objectsInRange.Add(assessmentObject.ObjectID, assessmentObject);
 
@@ -190,17 +188,16 @@ namespace Maroon.Assessment
                 .PerceiveObject(assessmentObject.ObjectID)
                 .Set("class", assessmentObject.ClassType.ToString());
 
-            foreach (var watchValue in assessmentObject.WatchedValues) {
-                if(showDebugMessages)
-                    Debug.Log("AssessmentManager::" + assessmentObject.ObjectID + ": " + watchValue.GetName());
+            foreach (var watchValue in assessmentObject.WatchedValues)
+            {
+                AssessmentLogger.Log(("AssessmentManager::" + assessmentObject.ObjectID + ": " + watchValue.GetName()));
                 EventBuilder.Set(watchValue.GetName(), ConvertToAntaresValue(watchValue.GetValue()));
             }
         }
         
         public void DeregisterAssessmentObject(AssessmentObject assessmentObject)
         {
-            if(showDebugMessages)
-                Debug.Log($"AssessmentManager::DeregisterAssessmentObject: {assessmentObject.ObjectID}");
+            AssessmentLogger.Log($"AssessmentManager::DeregisterAssessmentObject: {assessmentObject.ObjectID}");
 
             EventBuilder.UnlearnObject(assessmentObject.ObjectID);
             _objectsInRange.Remove(assessmentObject.ObjectID);
@@ -208,8 +205,7 @@ namespace Maroon.Assessment
 
         public void SendUserAction(string actionName, string objectId=null)
         {
-            if(showDebugMessages)
-                Debug.Log($"AssessmentManager::SendUserAction: {objectId}.{actionName}");
+            AssessmentLogger.Log($"AssessmentManager::SendUserAction: {objectId}.{actionName}");
 
             EventBuilder.Action(actionName, objectId);
 
@@ -228,8 +224,7 @@ namespace Maroon.Assessment
 
         public void SendDataUpdate(string objectId, string propertyName, object value)
         {
-            if(showDebugMessages)
-                Debug.Log($"AssessmentManager::SendDataUpdate: {objectId}.{propertyName}={value}");
+            AssessmentLogger.Log($"AssessmentManager::SendDataUpdate: {objectId}.{propertyName}={value}");
 
             EventBuilder.UpdateDataOf(objectId).Set(propertyName, ConvertToAntaresValue(value));
         }

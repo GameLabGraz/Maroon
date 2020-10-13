@@ -109,7 +109,6 @@ namespace Maroon.UI
         public void OnDisable()
         {
             ClearIcons();
-            Debug.Log("OnDisable Dialogue View");
         }
     }
 }

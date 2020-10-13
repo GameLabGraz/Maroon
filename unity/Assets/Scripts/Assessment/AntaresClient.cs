@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
 
@@ -17,15 +13,15 @@ namespace Maroon.Assessment
 
     public class AntaresClient : IEvaluationService
     {
-        private WebSocket _socket = null;
-        private JsonSerializer _serializer;
+        private readonly WebSocket _socket;
+        private readonly JsonSerializer _serializer;
 
         public AntaresClient(string url)
         {
-            Debug.Log("AntaresClient: enter ctor");
+            AssessmentLogger.Log("AntaresClient: enter ctor");
             _socket = new WebSocket(url);
             _serializer = JsonSerializer.Create(new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto });
-            Debug.Log("AntaresClient: exit ctor");
+            AssessmentLogger.Log("AntaresClient: exit ctor");
         }
 
         public delegate void ConnectedEvent(object sender, EventArgs args);
@@ -38,40 +34,40 @@ namespace Maroon.Assessment
         {
             _socket.OnOpen += delegate()
             {
-                Connected.Invoke(this, new EventArgs());
+                Connected?.Invoke(this, new EventArgs());
             };
             
             _socket.OnMessage += delegate (byte[] data)
             {
-                Debug.Log("AntaresClient: Incoming data: " + Encoding.UTF8.GetString(data));
+                AssessmentLogger.Log("AntaresClient: Incoming data: " + Encoding.UTF8.GetString(data));
 
-                FeedbackCommand[] feedbackCommands = _serializer.Deserialize<FeedbackCommand[]>(
+                var feedbackCommands = _serializer.Deserialize<FeedbackCommand[]>(
                     new JsonTextReader(
                         new StreamReader(
                             new MemoryStream(data))));
 
-                Debug.Log("AntaresClient: Feedback received");
-                FeedbackReceived.Invoke(this, new FeedbackEventArgs(feedbackCommands));
+                AssessmentLogger.Log("AntaresClient: Feedback received");
+                FeedbackReceived?.Invoke(this, new FeedbackEventArgs(feedbackCommands));
             };
 
             _socket.OnError += delegate (string errorMessage)
             {
-                Debug.Log("AntaresClient:: error: " + errorMessage);
+                AssessmentLogger.Log("AntaresClient:: error: " + errorMessage);
             };
 
-            Debug.Log("AntaresClient: Connecting and running ...");
+            AssessmentLogger.Log("AntaresClient: Connecting and running ...");
             await _socket.Connect();
         }
 
         public void ProcessEvent(GameEvent currentEvent)
         {
-            Debug.Log("AntaresClient: Sending event through web socket ...");
-            using (StringWriter result = new StringWriter())
+            AssessmentLogger.Log("AntaresClient: Sending event through web socket ...");
+            using (var result = new StringWriter())
             {
                 _serializer.Serialize(result, currentEvent);
-                Debug.Log("AntaresClient: outgoing message: " + result.ToString());
+                AssessmentLogger.Log("AntaresClient: outgoing message: " + result);
                 _socket.Send(Encoding.UTF8.GetBytes(result.ToString()));
-                Debug.Log("AntaresClient: message sent");
+                AssessmentLogger.Log("AntaresClient: message sent");
             }
         }
 
