@@ -91,8 +91,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     public float correctionFactor = 1f;
 
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         Initialize();
     }
@@ -350,7 +349,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
             arrowMovement.restrictYMovement = !_in3dMode;
         }
 
-        var field = GameObject.FindGameObjectWithTag("Field").GetComponent<IField>(); //should be only one
+        var field = FindObjectOfType<IField>(); //should be only one
         var fieldLine = obj.GetComponentInChildren<FieldLine>();
         if (field && fieldLine)
         {

@@ -8,12 +8,19 @@ namespace Maroon.Assessment.Handler
         [SerializeField] private CoulombLogic logic;
         [SerializeField] private GameObject chargePrefab;
 
-        protected override void HandleObjectCreation(ManipulateObject manipulateObject)
+        protected override AssessmentObject HandleObjectCreation(ManipulateObject manipulateObject)
         {
-            if (logic == null || chargePrefab == null) return;
+            AssessmentObject assessmentObject;
+            if (logic == null || chargePrefab == null) return null;
 
-            // DoTo: Check object type
-            logic.CreateCharge(chargePrefab, Vector3.zero, 0, false);
+            // ToDO:
+            // if (manipulationObject.class == AssessmentClass.Charge)
+            {
+                assessmentObject = logic.CreateCharge(chargePrefab, Vector3.zero, 0, false)
+                    .GetComponent<AssessmentObject>();
+            }
+
+            return assessmentObject;
         }
     }
 }

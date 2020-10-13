@@ -80,19 +80,13 @@ namespace Maroon.Assessment.Handler
             switch (manipulateObject.UpdateType)
             {
                 case ObjectUpdateType.Create:
-                    HandleObjectCreation(manipulateObject);
+                    assessmentObject = HandleObjectCreation(manipulateObject);
+                    HandleObjectUpdate(assessmentObject, manipulateObject);
                     break;
                 
                 case ObjectUpdateType.Update:
-
                     assessmentObject = AssessmentManager.Instance?.GetObject(manipulateObject.ID);
-                    if (assessmentObject == null) return;
-
-                    foreach (var dataUpdate in manipulateObject.DataUpdates)
-                    {
-                        var watchValue = assessmentObject.GetWatchValue(dataUpdate.PropertyName);
-                        watchValue?.SystemSetsQuantity(dataUpdate.Value);
-                    }
+                    HandleObjectUpdate(assessmentObject, manipulateObject);
                     break;
 
                 case ObjectUpdateType.Destroy:
@@ -113,6 +107,19 @@ namespace Maroon.Assessment.Handler
             display.LoadSlide(displaySlide.Slide);
         }
 
-        protected abstract void HandleObjectCreation(ManipulateObject manipulateObject);
+        private void HandleObjectUpdate(AssessmentObject obj, ManipulateObject manipulateObject)
+        {
+            if (obj == null) return;
+
+            foreach (var dataUpdate in manipulateObject.DataUpdates)
+            {
+                if (dataUpdate.UpdateType != DataUpdateType.SetValue) continue;
+
+                var watchValue = obj.GetWatchValue(dataUpdate.PropertyName);
+                watchValue?.SystemSetsQuantity(dataUpdate.Value);
+            }
+        }
+
+        protected abstract AssessmentObject HandleObjectCreation(ManipulateObject manipulateObject);
     }
 }
