@@ -10,6 +10,8 @@ public class scrMenuColumnNetwork : MonoBehaviour
     
     [SerializeField] private GameObject ColumnJoin;
     
+    [SerializeField] private GameObject ColumnKick;
+    
     
     [SerializeField] private GameObject ButtonJoin;
 
@@ -21,6 +23,8 @@ public class scrMenuColumnNetwork : MonoBehaviour
     
     [SerializeField] private GameObject ButtonPortsMapped;
     
+    [SerializeField] private GameObject ButtonKick;
+    
     void Start()
     {
         // Link button actions
@@ -29,6 +33,7 @@ public class scrMenuColumnNetwork : MonoBehaviour
         this.ButtonLeaveClient.GetComponent<Button>().onClick.AddListener(() => this.OnClickLeaveClient());
         this.ButtonLeaveHost.GetComponent<Button>().onClick.AddListener(() => this.OnClickLeaveHost());
         this.ButtonPortsMapped.GetComponent<Button>().onClick.AddListener(() => this.OnClickPortsMapped());
+        this.ButtonKick.GetComponent<Button>().onClick.AddListener(() => this.OnButtonKick());
 
         //TODO better way?
         _menu = FindObjectOfType<scrMenu>();
@@ -39,6 +44,7 @@ public class scrMenuColumnNetwork : MonoBehaviour
         ButtonLeaveClient.SetActive(MaroonNetworkManager.Instance.mode == NetworkManagerMode.ClientOnly);
         ButtonLeaveHost.SetActive(MaroonNetworkManager.Instance.mode == NetworkManagerMode.Host);
         ButtonPortsMapped.SetActive(MaroonNetworkManager.Instance.mode == NetworkManagerMode.Host && !MaroonNetworkManager.Instance.PortsMapped);
+        ButtonKick.SetActive(MaroonNetworkManager.Instance.mode == NetworkManagerMode.Host);
     }
 
     private void OnClickJoin()
@@ -46,6 +52,7 @@ public class scrMenuColumnNetwork : MonoBehaviour
         this._menu.RemoveAllMenuColumnsButTwo();
         this._menu.AddMenuColumn(this.ColumnJoin);
         this.ButtonJoin.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.white;
+        this.ButtonKick.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
     }
     
     private void OnClickHost()
@@ -70,5 +77,13 @@ public class scrMenuColumnNetwork : MonoBehaviour
     {
         MaroonNetworkManager.Instance.PortsMapped = true;
         _menu.CloseMenu();
+    }
+
+    private void OnButtonKick()
+    {
+        this._menu.RemoveAllMenuColumnsButTwo();
+        this._menu.AddMenuColumn(this.ColumnKick);
+        this.ButtonJoin.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
+        this.ButtonKick.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.white;
     }
 }

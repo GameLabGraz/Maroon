@@ -280,6 +280,20 @@ public class MaroonNetworkManager : NetworkManager
         }
     }
 
+    public List<string> ServerGetPlayerNames()
+    {
+        return _connectedPlayers.Keys.ToList();
+    }
+
+    public void KickPlayer(string playerName)
+    {
+        if (!_connectedPlayers.ContainsKey(playerName))
+            return;
+        
+        //TODO: Tell him he was kicked!
+        _connectedPlayers[playerName].Disconnect();
+    }
+
     #endregion
 
     #region Client
