@@ -26,25 +26,18 @@ public class NetworkStatusStation : MonoBehaviour
         bool hostStarted = NetworkServer.active;
         bool listServerConnected = _ls.GetListServerStatus();
         bool portsMapped = MaroonNetworkManager.Instance.PortsMapped;
-
-        if (!MaroonNetworkManager.Instance.IsActive())
-        {
-            string msg = LanguageManager.Instance.GetString("ScreenHostJoin");
-            DisplayMessage(msg);
-            return;
-        }
-
-        statusLight.gameObject.SetActive(true);
         
         if (clientStarted)
         {
             DisplayOnlineInformation();
             statusLight.color = Color.green;
+            statusLight.gameObject.SetActive(true);
             return;
         }
 
         if (!hostStarted)
         {
+            statusLight.gameObject.SetActive(false);
             if (listServerConnected)
             {
                 string msg = LanguageManager.Instance.GetString("ScreenHostJoin");
@@ -54,11 +47,11 @@ public class NetworkStatusStation : MonoBehaviour
             {
                 string msg = LanguageManager.Instance.GetString("ScreenNoListServerJoin");
                 DisplayMessage(msg);
-                statusLight.color = Color.red;
             }
         }
         else
         {
+            statusLight.gameObject.SetActive(true);
             if (listServerConnected && portsMapped)
             {
                 DisplayOnlineInformation();
@@ -68,13 +61,13 @@ public class NetworkStatusStation : MonoBehaviour
             {
                 string msg = LanguageManager.Instance.GetString("ScreenNoListServerHost");
                 DisplayMessage(msg);
-                statusLight.color = Color.cyan;
+                statusLight.color = Color.red;
             }
             else //Ports not mapped
             {
                 string msg = LanguageManager.Instance.GetString("ScreenNoPortsMapped");
                 DisplayMessage(msg);
-                statusLight.color = Color.cyan;
+                statusLight.color = Color.yellow;
             }
         }
     }
