@@ -22,6 +22,11 @@ public class NetworkStatusStation : MonoBehaviour
 
     private void UpdateNetworkInformation()
     {
+        if (!MaroonNetworkManager.Instance.IsActive())
+        {
+            return;
+        }
+        
         bool clientStarted = MaroonNetworkManager.Instance.mode == NetworkManagerMode.ClientOnly;
         bool hostStarted = NetworkServer.active;
         bool listServerConnected = _ls.GetListServerStatus();
@@ -32,6 +37,7 @@ public class NetworkStatusStation : MonoBehaviour
             DisplayOnlineInformation();
             statusLight.color = Color.green;
             statusLight.gameObject.SetActive(true);
+            MaroonNetworkManager.Instance.ConnectionStatus = ConnectionState.ClientOnline;
             return;
         }
 
@@ -40,11 +46,13 @@ public class NetworkStatusStation : MonoBehaviour
             statusLight.gameObject.SetActive(false);
             if (listServerConnected)
             {
+                MaroonNetworkManager.Instance.ConnectionStatus = ConnectionState.Offline;
                 string msg = LanguageManager.Instance.GetString("ScreenHostJoin");
                 DisplayMessage(msg);
             }
             else
             {
+                MaroonNetworkManager.Instance.ConnectionStatus = ConnectionState.OfflineNoConnectionToListServer;
                 string msg = LanguageManager.Instance.GetString("ScreenNoListServerJoin");
                 DisplayMessage(msg);
             }
@@ -54,17 +62,20 @@ public class NetworkStatusStation : MonoBehaviour
             statusLight.gameObject.SetActive(true);
             if (listServerConnected && portsMapped)
             {
+                MaroonNetworkManager.Instance.ConnectionStatus = ConnectionState.HostOnline;
                 DisplayOnlineInformation();
                 statusLight.color = Color.green;
             }
             else if (portsMapped) //List server not connected
             {
+                MaroonNetworkManager.Instance.ConnectionStatus = ConnectionState.HostOnlineNoConnectionToListServer;
                 string msg = LanguageManager.Instance.GetString("ScreenNoListServerHost");
                 DisplayMessage(msg);
                 statusLight.color = Color.red;
             }
             else //Ports not mapped
             {
+                MaroonNetworkManager.Instance.ConnectionStatus = ConnectionState.HostOnlinePortsNotMapped;
                 string msg = LanguageManager.Instance.GetString("ScreenNoPortsMapped");
                 DisplayMessage(msg);
                 statusLight.color = Color.yellow;

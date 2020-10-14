@@ -46,6 +46,16 @@ public class LeaveMessage : MessageBase
     public LeaveReason Reason;
 }
 
+public enum ConnectionState
+{
+    Offline,
+    OfflineNoConnectionToListServer,
+    ClientOnline,
+    HostOnline,
+    HostOnlineNoConnectionToListServer,
+    HostOnlinePortsNotMapped
+}
+
 public class MaroonNetworkManager : NetworkManager
 {
     [HideInInspector]
@@ -66,6 +76,7 @@ public class MaroonNetworkManager : NetworkManager
     private DialogueManager _dialogueManager;
 
     private bool _isStarted;
+    private ConnectionState _connectionStatus;
 
     public override void Awake()
     {
@@ -102,6 +113,19 @@ public class MaroonNetworkManager : NetworkManager
     public bool IsActive()
     {
         return _isStarted;
+    }
+
+    public ConnectionState ConnectionStatus
+    {
+        get => _connectionStatus;
+        set
+        {
+            if (_connectionStatus == value)
+                return;
+            
+            _connectionStatus = value; 
+            DisplayConnectionStatusMessage(value);
+        }
     }
 
     private bool CheckSceneValid(string sceneName)
@@ -290,14 +314,6 @@ public class MaroonNetworkManager : NetworkManager
             if (!value)
             {
                 DisplayMessage("PortMappingFail");
-            }
-            else if (!_listServer.GetListServerStatus())
-            {
-                DisplayMessage("ListServerFail");
-            }
-            else
-            {
-                DisplayMessage("PortMappingSuccess");
             }
         }
     }
@@ -647,5 +663,31 @@ public class MaroonNetworkManager : NetworkManager
                    "!";
         
         _dialogueManager.ShowMessage(message);
+    }
+    
+    private void DisplayConnectionStatusMessage(ConnectionState status)
+    {
+        switch (status)
+        {
+            case ConnectionState.Offline:
+                DisplayMessage("Offline");
+                break;
+            case ConnectionState.OfflineNoConnectionToListServer:
+                DisplayMessage("ListServerFailOffline");
+                break;
+            case ConnectionState.ClientOnline:
+                break;
+            case ConnectionState.HostOnline:
+                DisplayMessage("PortMappingSuccess");
+                break;
+            case ConnectionState.HostOnlineNoConnectionToListServer:
+                DisplayMessage("ListServerFailHost");
+                break;
+            case ConnectionState.HostOnlinePortsNotMapped:
+                //Displayed only on fail
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(status), status, null);
+        }
     }
 }
