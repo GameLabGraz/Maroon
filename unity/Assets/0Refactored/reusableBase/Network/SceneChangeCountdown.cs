@@ -4,10 +4,13 @@ using System.Collections.Generic;
 using Mirror;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SceneChangeCountdown : NetworkBehaviour
 {
     [SerializeField] private TextMeshProUGUI countdownText;
+    
+    [SerializeField] private TextMeshProUGUI cancelText;
 
     private string _sceneName;
 
@@ -20,7 +23,13 @@ public class SceneChangeCountdown : NetworkBehaviour
 
     private void Start()
     {
+        MaroonNetworkManager.Instance.SceneCountdownActive = true;
         countdownText.text = _countdownTime.ToString();
+        if (!MaroonNetworkManager.Instance.IsInControl)
+        {
+            cancelText.gameObject.SetActive(false);
+            GetComponentInChildren<Button>().interactable = false;
+        }
         StartCoroutine(CountdownRoutine());
     }
 
@@ -41,5 +50,22 @@ public class SceneChangeCountdown : NetworkBehaviour
         {
             gameObject.SetActive(false);
         }
+    }
+
+    public void OnCancel()
+    {
+        CmdStopCountdown();
+        gameObject.SetActive(false);
+    }
+
+    private void OnDisable()
+    {
+        MaroonNetworkManager.Instance.SceneCountdownActive = false;
+    }
+
+    [Command(ignoreAuthority = true)]
+    private void CmdStopCountdown()
+    {
+        Destroy(gameObject);
     }
 }

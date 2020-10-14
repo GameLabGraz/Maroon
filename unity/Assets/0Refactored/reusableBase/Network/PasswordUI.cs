@@ -46,4 +46,9 @@ public class PasswordUI : MonoBehaviour
         }
         Destroy(gameObject);
     }
+
+    public void OnCancelButtonCicked()
+    {
+        Destroy(gameObject);
+    }
 }

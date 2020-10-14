@@ -147,7 +147,6 @@ public class MaroonNetworkManager : NetworkManager
         NetworkServer.RegisterHandler<ChangeSceneMessage>(OnChangeSceneMessage);
         NetworkServer.RegisterHandler<ConnectMessage>(OnConnectMessage);
         ClientInControl = null;
-        _sceneCountdownActive = false;
         networkSceneName = onlineScene; // to make sure that Manager has Scene Control!
     }
 
@@ -195,12 +194,6 @@ public class MaroonNetworkManager : NetworkManager
         }
         _connectedPlayers.Remove(disconnectedPlayerName);
         NetworkNamingService.FreePlayerName(disconnectedPlayerName);
-    }
-
-    public override void OnServerSceneChanged(string sceneName)
-    {
-        base.OnServerSceneChanged(sceneName);
-        _sceneCountdownActive = false;
     }
 
     private void OnCreateCharacter(NetworkConnection conn, CharacterSpawnMessage message)
@@ -269,8 +262,13 @@ public class MaroonNetworkManager : NetworkManager
             GameObject coundownObject = Instantiate(sceneCountdown);
             coundownObject.GetComponent<SceneChangeCountdown>().SetSceneName(msg.SceneName);
             NetworkServer.Spawn(coundownObject);
-            _sceneCountdownActive = true;
         }
+    }
+
+    public bool SceneCountdownActive
+    {
+        get => _sceneCountdownActive;
+        set => _sceneCountdownActive = value;
     }
 
     public string Password
@@ -404,7 +402,7 @@ public class MaroonNetworkManager : NetworkManager
     {
         base.OnStartClient();
         NetworkClient.RegisterHandler<NetworkControlMessage>(OnNetworkControlMessage);
-        NetworkClient.RegisterHandler<CharacterSpawnMessage>(OnRequestedSpawn);
+        NetworkClient.RegisterHandler<CharacterSpawnMessage>(OnCharacterSpawnMessage);
         NetworkClient.RegisterHandler<LeaveMessage>(OnLeaveMessage);
         if (mode == NetworkManagerMode.ClientOnly)
         {
@@ -424,7 +422,7 @@ public class MaroonNetworkManager : NetworkManager
         if (mode == NetworkManagerMode.Host)
             return;
 
-        string leaveMessageKey = "ClientDisconnect";
+        string leaveMessageKey;
 
         switch (_leaveReason)
         {
@@ -479,7 +477,7 @@ public class MaroonNetworkManager : NetworkManager
         }
     }
 
-    private void OnRequestedSpawn(NetworkConnection conn, CharacterSpawnMessage msg)
+    private void OnCharacterSpawnMessage(NetworkConnection conn, CharacterSpawnMessage msg)
     {
         SendCreatePlayerMessage(conn);
     }
@@ -605,6 +603,12 @@ public class MaroonNetworkManager : NetworkManager
         //In experiment while multi-user
         return false;
     }
+    
+    public void StopClientRegularly()
+    {
+        _leaveReason = LeaveReason.Usual;
+        StopClient();
+    }
 
     #endregion
 
@@ -643,11 +647,5 @@ public class MaroonNetworkManager : NetworkManager
                    "!";
         
         _dialogueManager.ShowMessage(message);
-    }
-
-    public void StopClientRegularly()
-    {
-        _leaveReason = LeaveReason.Usual;
-        StopClient();
     }
 }
