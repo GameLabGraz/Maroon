@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using GEAR.Localization;
 using Maroon.UI;
 using Mirror;
@@ -148,6 +149,7 @@ public class MaroonNetworkManager : NetworkManager
 
     private bool _activePortMapping;
     private bool _sceneCountdownActive;
+    private bool _alreadyServerRunning;
     private Dictionary<string, NetworkConnection> _connectedPlayers = new Dictionary<string, NetworkConnection>();
     private Dictionary<NetworkConnection, NetworkPlayer> _connectedPlayerObjects = new Dictionary<NetworkConnection, NetworkPlayer>();
     private bool _passwordProtected;
@@ -166,8 +168,17 @@ public class MaroonNetworkManager : NetworkManager
         
         MarkTakenServerNames();
         _serverName = NetworkNamingService.GetNewServerName();
-        
-        _networkDiscovery.AdvertiseServer();
+
+        try
+        {
+            _networkDiscovery.AdvertiseServer();
+        }
+        catch (SocketException)
+        {
+            DisplayMessageByKey("AlreadyServerRunning");
+            _alreadyServerRunning = true;
+        }
+
         _upnp.SetupPortForwarding();
         NetworkServer.RegisterHandler<CharacterSpawnMessage>(OnCreateCharacter);
         NetworkServer.RegisterHandler<ChangeSceneMessage>(OnChangeSceneMessage);
@@ -201,7 +212,12 @@ public class MaroonNetworkManager : NetworkManager
         NetworkNamingService.FreeAllServerNames();
         _activePortMapping = false;
         _connectedPlayers.Clear();
-        DisplayMessage("StopHost");
+        
+        if (!_alreadyServerRunning)
+        {
+            DisplayMessageByKey("StopHost");
+        }
+        _alreadyServerRunning = false;
     }
 
     public override void OnServerDisconnect(NetworkConnection conn)
@@ -220,6 +236,9 @@ public class MaroonNetworkManager : NetworkManager
         }
         _connectedPlayers.Remove(disconnectedPlayerName);
         NetworkNamingService.FreePlayerName(disconnectedPlayerName);
+        
+        string leaveMsg = disconnectedPlayerName + " " + LanguageManager.Instance.GetString("ClientLeave");
+        DisplayMessage(leaveMsg);
     }
 
     private void OnCreateCharacter(NetworkConnection conn, CharacterSpawnMessage message)
@@ -258,6 +277,12 @@ public class MaroonNetworkManager : NetworkManager
                 playerName = "Scientist " + conn.connectionId;
             }
             _connectedPlayers[playerName] = conn;
+
+            if (_playerName != null) //Don't display for Host
+            {
+                string joinMsg = playerName + " " + LanguageManager.Instance.GetString("ClientJoin");
+                DisplayMessage(joinMsg);
+            }
         }
 
         NetworkPlayer networkPlayer = playerObject.GetComponent<NetworkPlayer>();
@@ -315,7 +340,7 @@ public class MaroonNetworkManager : NetworkManager
             _activePortMapping = value;
             if (!value)
             {
-                DisplayMessage("PortMappingFail");
+                DisplayMessageByKey("PortMappingFail");
             }
         }
     }
@@ -419,9 +444,16 @@ public class MaroonNetworkManager : NetworkManager
     public override void OnStartClient()
     {
         base.OnStartClient();
-        NetworkClient.RegisterHandler<NetworkControlMessage>(OnNetworkControlMessage);
-        NetworkClient.RegisterHandler<CharacterSpawnMessage>(OnCharacterSpawnMessage);
-        NetworkClient.RegisterHandler<LeaveMessage>(OnLeaveMessage);
+        
+        if(_alreadyServerRunning)
+            StopHost();
+        else
+        {
+            NetworkClient.RegisterHandler<NetworkControlMessage>(OnNetworkControlMessage);
+            NetworkClient.RegisterHandler<CharacterSpawnMessage>(OnCharacterSpawnMessage);
+            NetworkClient.RegisterHandler<LeaveMessage>(OnLeaveMessage);
+        }
+
         if (mode == NetworkManagerMode.ClientOnly)
         {
 #if !UNITY_WEBGL
@@ -471,7 +503,7 @@ public class MaroonNetworkManager : NetworkManager
                 break;
         }
         
-        DisplayMessage(leaveMessageKey);
+        DisplayMessageByKey(leaveMessageKey);
     }
 
     public override void OnClientConnect(NetworkConnection conn)
@@ -589,7 +621,7 @@ public class MaroonNetworkManager : NetworkManager
             
             if (sceneName.Contains("Menu"))
             {
-                DisplayMessage("MainMenuDenial");
+                DisplayMessageByKey("MainMenuDenial");
                 return;
             }
             if (IsInControl)
@@ -604,12 +636,12 @@ public class MaroonNetworkManager : NetworkManager
                 }
                 else
                 {
-                    DisplayMessage("ExperimentNotEnabled");
+                    DisplayMessageByKey("ExperimentNotEnabled");
                 }
             }
             else
             {
-                DisplayMessage("ControlDenial");
+                DisplayMessageByKey("ControlDenial");
             }
         }
     }
@@ -643,51 +675,50 @@ public class MaroonNetworkManager : NetworkManager
         base.OnApplicationQuit();
     }
     
-    private void DisplayMessage(string messageKey)
+    private void DisplayMessageByKey(string messageKey)
     {
-        if (_dialogueManager == null)
-            _dialogueManager = FindObjectOfType<DialogueManager>();
-
-        if (_dialogueManager == null)
-            return;
-
         var message = LanguageManager.Instance.GetString(messageKey);
-        _dialogueManager.ShowMessage(message);
+        DisplayMessage(message);
     }
 
     private void DisplayWelcomeMessage(string playerName, string serverName)
     {
-        if (_dialogueManager == null)
-            _dialogueManager = FindObjectOfType<DialogueManager>();
-
-        if (_dialogueManager == null)
-            return;
-
         string message = LanguageManager.Instance.GetString("WelcomeMessage1") + " " + playerName +
                          "! ";
         message += LanguageManager.Instance.GetString("WelcomeMessage2") + " " + serverName +
                    "!";
         
-        _dialogueManager.ShowMessage(message);
+        DisplayMessage(message);
     }
-    
+
+    private void DisplayMessage(string text)
+    {
+        if (_dialogueManager == null)
+            _dialogueManager = FindObjectOfType<DialogueManager>();
+
+        if (_dialogueManager == null)
+            return;
+
+        _dialogueManager.ShowMessage(text);
+    }
+
     private void DisplayConnectionStatusMessage(ConnectionState status)
     {
         switch (status)
         {
             case ConnectionState.Offline:
-                DisplayMessage("Offline");
+                DisplayMessageByKey("Offline");
                 break;
             case ConnectionState.OfflineNoConnectionToListServer:
-                DisplayMessage("ListServerFailOffline");
+                DisplayMessageByKey("ListServerFailOffline");
                 break;
             case ConnectionState.ClientOnline:
                 break;
             case ConnectionState.HostOnline:
-                DisplayMessage("PortMappingSuccess");
+                DisplayMessageByKey("PortMappingSuccess");
                 break;
             case ConnectionState.HostOnlineNoConnectionToListServer:
-                DisplayMessage("ListServerFailHost");
+                DisplayMessageByKey("ListServerFailHost");
                 break;
             case ConnectionState.HostOnlinePortsNotMapped:
                 //Displayed only on fail
