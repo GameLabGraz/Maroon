@@ -106,7 +106,9 @@ public class MaroonNetworkManager : NetworkManager
         if(_isStarted)
             return;
         _listServer.ConnectToListServer();
+#if !UNITY_WEBGL
         _networkDiscovery.StartDiscovery();
+#endif
         _isStarted = true;
     }
 
@@ -422,7 +424,9 @@ public class MaroonNetworkManager : NetworkManager
         NetworkClient.RegisterHandler<LeaveMessage>(OnLeaveMessage);
         if (mode == NetworkManagerMode.ClientOnly)
         {
+#if !UNITY_WEBGL
             _networkDiscovery.StopDiscovery();
+#endif
             _leaveReason = LeaveReason.NoConnection;
         }
     }
@@ -433,7 +437,9 @@ public class MaroonNetworkManager : NetworkManager
         _playerName = null;
         ClientInControl = _playerName;
         _serverName = null;
+#if !UNITY_WEBGL
         _networkDiscovery.StartDiscovery();
+#endif
 
         if (mode == NetworkManagerMode.Host)
             return;

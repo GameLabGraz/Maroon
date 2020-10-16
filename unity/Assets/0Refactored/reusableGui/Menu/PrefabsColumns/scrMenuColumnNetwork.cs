@@ -34,6 +34,10 @@ public class scrMenuColumnNetwork : MonoBehaviour
         this.ButtonLeaveHost.GetComponent<Button>().onClick.AddListener(() => this.OnClickLeaveHost());
         this.ButtonPortsMapped.GetComponent<Button>().onClick.AddListener(() => this.OnClickPortsMapped());
         this.ButtonKick.GetComponent<Button>().onClick.AddListener(() => this.OnButtonKick());
+        
+#if UNITY_WEBGL
+        ButtonHost.GetComponent<Button>().interactable = false;
+#endif
 
         _menu = FindObjectOfType<scrMenu>();
         MaroonNetworkManager.Instance.StartMultiUser();
