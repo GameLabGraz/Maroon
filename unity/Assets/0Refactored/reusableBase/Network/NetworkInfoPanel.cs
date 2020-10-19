@@ -39,7 +39,7 @@ public class NetworkInfoPanel : MonoBehaviour, IPointerEnterHandler, IPointerExi
         _extend = false;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (_extend)
         {

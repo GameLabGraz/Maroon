@@ -38,7 +38,6 @@ public enum LeaveReason
     InExperiment,
     Kicked,
     WrongPw,
-    NotAuthorized,
     NoConnection
 }
 
@@ -100,6 +99,8 @@ public class MaroonNetworkManager : NetworkManager
         _networkDiscovery = GetComponent<MaroonNetworkDiscovery>();
         _upnp = GetComponent<PortForwarding>();
         _gameManager = FindObjectOfType<GameManager>();
+
+        SceneManager.sceneLoaded += DisplayServerInExperimentMessage;
     }
 
     public void StartMultiUser()
@@ -245,7 +246,7 @@ public class MaroonNetworkManager : NetworkManager
     {
         if (!_authenticatedPlayers.Contains(conn))
         {
-            ServerAskPlayerToLeave(conn, LeaveReason.NotAuthorized);
+            conn.Disconnect();
             return;
         }
         
@@ -427,6 +428,7 @@ public class MaroonNetworkManager : NetworkManager
     private string _clientInControl;
     private LeaveReason _leaveReason;
     private string _clientPassword;
+    private bool _serverInExperiment;
 
     [HideInInspector]
     public UnityEvent onGetControl;
@@ -481,19 +483,18 @@ public class MaroonNetworkManager : NetworkManager
         switch (_leaveReason)
         {
             case LeaveReason.Usual:
-                leaveMessageKey = "ClientLeave";
+                leaveMessageKey = "UsualClientLeave";
                 break;
             case LeaveReason.InExperiment:
                 leaveMessageKey = "ServerInExperiment";
+                _serverInExperiment = true;
+                SceneManager.LoadScene(onlineScene);
                 break;
             case LeaveReason.Kicked:
                 leaveMessageKey = "ClientKicked";
                 break;
             case LeaveReason.WrongPw:
                 leaveMessageKey = "WrongPassword";
-                break;
-            case LeaveReason.NotAuthorized:
-                leaveMessageKey = "NotAuthorized";
                 break;
             case LeaveReason.NoConnection:
                 leaveMessageKey = "ClientConnectFail";
@@ -504,6 +505,15 @@ public class MaroonNetworkManager : NetworkManager
         }
         
         DisplayMessageByKey(leaveMessageKey);
+    }
+
+    private void DisplayServerInExperimentMessage(Scene scene, LoadSceneMode lsm)
+    {
+        if (_serverInExperiment && scene.name.Contains("Laboratory"))
+        {
+            _serverInExperiment = false;
+            DisplayMessageByKey("ServerInExperiment");
+        }
     }
 
     public override void OnClientConnect(NetworkConnection conn)
