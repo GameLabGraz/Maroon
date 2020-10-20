@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Maroon.Physics;
+﻿using Maroon.Physics;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -25,24 +23,24 @@ public class CoulombAssessmentPosition : MonoBehaviour
     public UnityEvent onSystemSetToInvalidPosition;
     public UnityEvent onSystemShowObject;
 
-    private CoulombLogic _coulombLogic;
     private Vector3 _lastPosition;
-    private Transform _transform;
-    private bool _lastVisible = false;
-    
-    // Start is called before the first frame update
-    void Awake()
-    {
-        var obj  = GameObject.Find("CoulombLogic");
-        if (obj)
-            _coulombLogic = obj.GetComponent<CoulombLogic>();
+    private bool _lastVisible;
+    private bool _isInitialized;
 
-        _transform = transform;
-        
-        position.Value = _coulombLogic.WorldToCalcSpace(_transform);
-        _lastPosition = observeLocal ? _transform.localPosition : _transform.position;
+    private void Awake()
+    {
+       if(!_isInitialized) Initialization();
+    }
+
+
+    private void Initialization()
+    {
+        _isInitialized = true;
+
+        position.Value = CoulombLogic.Instance.WorldToCalcSpace(transform);
+        _lastPosition = observeLocal ? transform.localPosition : transform.position;
         _lastVisible = isActiveAndEnabled;
-        
+
         position.onNewValueFromSystem.AddListener(ChangeToNewPosition);
     }
 
@@ -57,7 +55,7 @@ public class CoulombAssessmentPosition : MonoBehaviour
                 return;
             case UpdateMode.UM_Continuously:
                 position.Value = isActiveAndEnabled
-                    ? _coulombLogic.WorldToCalcSpace(_transform)
+                    ? CoulombLogic.Instance.WorldToCalcSpace(transform)
                     : new Vector3(-1, -1, -1);
                 return;
             case UpdateMode.UM_OnToleranceOverrun:
@@ -70,10 +68,10 @@ public class CoulombAssessmentPosition : MonoBehaviour
                         _lastVisible = false;
                     }
                 }
-                else if (!_lastVisible || Vector3.Distance(_lastPosition, observeLocal ? _transform.localPosition : _transform.position) > tolerance)
+                else if (!_lastVisible || Vector3.Distance(_lastPosition, observeLocal ? transform.localPosition : transform.position) > tolerance)
                 {
-                    position.Value = _coulombLogic.WorldToCalcSpace(_transform);
-                    _lastPosition = observeLocal? _transform.localPosition : _transform.position;
+                    position.Value = CoulombLogic.Instance.WorldToCalcSpace(transform);
+                    _lastPosition = observeLocal? transform.localPosition : transform.position;
                     _lastVisible = true;
                 }
             } return;
@@ -84,10 +82,9 @@ public class CoulombAssessmentPosition : MonoBehaviour
     {
         var isActive = gameObject ? gameObject.activeInHierarchy : isActiveAndEnabled;
         
-        if(!_coulombLogic)
-            Awake();
+        if(!_isInitialized) Initialization();
         
-        position.Value = isActive ? _coulombLogic.WorldToCalcSpace(_transform) : new Vector3(-1, -1, -1);
+        position.Value = isActive ? CoulombLogic.Instance.WorldToCalcSpace(transform) : new Vector3(-1, -1, -1);
     }
 
     private void ChangeToNewPosition(Vector3 newPosition)
@@ -102,26 +99,25 @@ public class CoulombAssessmentPosition : MonoBehaviour
            !isActiveAndEnabled)
             onSystemShowObject.Invoke();
 
-        if (_coulombLogic.IsIn2dMode())
+        if (CoulombLogic.Instance.IsIn2dMode())
         {
-            var currentPos = _coulombLogic.xOrigin2d.position;
-            currentPos.x += _coulombLogic.CalcToWorldSpace(newPosition.x); // Value is between 0 and 1
-            currentPos.y += _coulombLogic.CalcToWorldSpace(newPosition.y); // Value is between 0 and 1
-            currentPos.z += _coulombLogic.CalcToWorldSpace(0f); // Value is 0 -> 2d mode
-            // currentPos.z += _coulombLogic.CalcToWorldSpace(newPosition.z); // Value is between 0 and 1
+            var currentPos = CoulombLogic.Instance.xOrigin2d.position;
+            currentPos.x += CoulombLogic.Instance.CalcToWorldSpace(newPosition.x); // Value is between 0 and 1
+            currentPos.y += CoulombLogic.Instance.CalcToWorldSpace(newPosition.y); // Value is between 0 and 1
+            currentPos.z += CoulombLogic.Instance.CalcToWorldSpace(0f); // Value is 0 -> 2d mode
             transform.position = currentPos;
-            Debug.Log("Set position: " + currentPos);
+            Debug.Log("Set world position: " + currentPos);
         }
         else
         {
-            var currentPos = _coulombLogic.xOrigin3d.localPosition;
-            currentPos.x += _coulombLogic.CalcToWorldSpace(newPosition.x, true); // Value is between 0 and 1
-            currentPos.y += _coulombLogic.CalcToWorldSpace(newPosition.y, true); // Value is between 0 and 1
-            currentPos.z += _coulombLogic.CalcToWorldSpace(newPosition.z, true); // Value is between 0 and 1
+            var currentPos = CoulombLogic.Instance.xOrigin3d.localPosition;
+            currentPos.x += CoulombLogic.Instance.CalcToWorldSpace(newPosition.x, true); // Value is between 0 and 1
+            currentPos.y += CoulombLogic.Instance.CalcToWorldSpace(newPosition.y, true); // Value is between 0 and 1
+            currentPos.z += CoulombLogic.Instance.CalcToWorldSpace(newPosition.z, true); // Value is between 0 and 1
             transform.localPosition = currentPos;
         }
         
-        UpdatePosition();
+        //UpdatePosition();
     }
 
     private bool isBetween(float value, float min = 0f, float max = 1f)
