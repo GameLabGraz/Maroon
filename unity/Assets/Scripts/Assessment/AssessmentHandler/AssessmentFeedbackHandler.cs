@@ -116,7 +116,7 @@ namespace Maroon.Assessment.Handler
                 if (dataUpdate.UpdateType != DataUpdateType.SetValue) continue;
 
                 var watchValue = obj.GetWatchValue(dataUpdate.PropertyName);
-                watchValue?.SystemSetsQuantity(dataUpdate.Value);
+                watchValue?.SystemSetsQuantity(dataUpdate.Value.ToUnityValue());
             }
         }
 

@@ -61,14 +61,14 @@ namespace Maroon.Assessment
         private void ValueChangedForProperty<T>(T val, string name, bool isDynamic)
         {
             if (isDynamic) return;
-            
-            // Debug.Log(ObjectID + "::" + name + " = " + val);
+
+            AssessmentLogger.Log(ObjectID + "::" + name + " = " + val);
             AssessmentManager.Instance?.SendDataUpdate(ObjectID, name, val);
         }
 
         public void SendUserAction(string actionName)
         {
-            // Debug.Log(ObjectID + "::" + actionName);
+            AssessmentLogger.Log(ObjectID + "::" + actionName);
             AssessmentManager.Instance?.SendUserAction(actionName, ObjectID);
         }
         

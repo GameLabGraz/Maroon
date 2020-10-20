@@ -110,6 +110,7 @@ public class CoulombAssessmentPosition : MonoBehaviour
             currentPos.z += _coulombLogic.CalcToWorldSpace(0f); // Value is 0 -> 2d mode
             // currentPos.z += _coulombLogic.CalcToWorldSpace(newPosition.z); // Value is between 0 and 1
             transform.position = currentPos;
+            Debug.Log("Set position: " + currentPos);
         }
         else
         {

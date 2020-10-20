@@ -77,15 +77,6 @@ namespace Maroon.Assessment
 
         private EventBuilder EventBuilder => _eventBuilder ?? (_eventBuilder = EventBuilder.Event());
 
-        private static object ConvertToAntaresValue(object input)
-        {
-            if(input is Vector3 vector)
-            {
-                return new Antares.Evaluation.Vector3D(vector.x, vector.y, vector.z);
-            }
-            return input;
-        }
-
         public static AssessmentManager Instance
         {
             get
@@ -191,7 +182,7 @@ namespace Maroon.Assessment
             foreach (var watchValue in assessmentObject.WatchedValues)
             {
                 AssessmentLogger.Log(("AssessmentManager::" + assessmentObject.ObjectID + ": " + watchValue.GetName()));
-                EventBuilder.Set(watchValue.GetName(), ConvertToAntaresValue(watchValue.GetValue()));
+                EventBuilder.Set(watchValue.GetName(), watchValue.GetValue().ToAntaresValue());
             }
         }
         
@@ -216,7 +207,7 @@ namespace Maroon.Assessment
                 {
                     if (watchValue.IsDynamic())
                     {
-                        EventBuilder.Set(watchValue.GetName(), ConvertToAntaresValue(watchValue.GetValue()));
+                        EventBuilder.Set(watchValue.GetName(), watchValue.GetValue().ToAntaresValue());
                     }
                 }
             }
@@ -226,7 +217,7 @@ namespace Maroon.Assessment
         {
             AssessmentLogger.Log($"AssessmentManager::SendDataUpdate: {objectId}.{propertyName}={value}");
 
-            EventBuilder.UpdateDataOf(objectId).Set(propertyName, ConvertToAntaresValue(value));
+            EventBuilder.UpdateDataOf(objectId).Set(propertyName, value.ToAntaresValue());
         }
 
         private void SendGameEvent(GameEvent gameEvent)

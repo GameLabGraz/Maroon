@@ -1,25 +1,32 @@
-﻿using Antares.Evaluation;
+﻿using System;
+using System.Linq;
+using Antares.Evaluation;
 using UnityEngine;
 
 namespace Maroon.Assessment.Handler
 {
     public class CoulombFeedbackHandler : AssessmentFeedbackHandler
     {
-        [SerializeField] private CoulombLogic logic;
         [SerializeField] private GameObject chargePrefab;
 
         protected override AssessmentObject HandleObjectCreation(ManipulateObject manipulateObject)
         {
-            AssessmentObject assessmentObject;
-            if (logic == null || chargePrefab == null) return null;
+            AssessmentObject assessmentObject = null;
 
-            // ToDO:
-            // if (manipulationObject.class == AssessmentClass.Charge)
+            var classType = manipulateObject.DataUpdates.First(updateData => updateData.PropertyName == "class");
+            if(!Enum.TryParse(classType.Value.ToString(), true, out AssessmentClass assessmentClass)) return null;
+
+            if (assessmentClass == AssessmentClass.Charge)
             {
-                assessmentObject = logic.CreateCharge(chargePrefab, Vector3.zero, 0, false)
+                if (chargePrefab == null) return null;
+
+                // var position = (Vector3D)manipulateObject.DataUpdates.First(updateData => updateData.PropertyName == "position").Value;
+                Debug.Log("Antares position " + position.ToVector3());
+
+                assessmentObject = CoulombLogic.Instance
+                    .CreateCharge(chargePrefab, Vector3.zero, 0, false, false)
                     .GetComponent<AssessmentObject>();
             }
-
             return assessmentObject;
         }
     }

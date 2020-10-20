@@ -8,19 +8,16 @@ using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 [Serializable]
-public class ModeChangeEvent : UnityEvent<bool>
-{
-}
+public class ModeChangeEvent : UnityEvent<bool> { }
 
 [Serializable]
-public class ParticleEvent : UnityEvent<CoulombChargeBehaviour>
-{
-}
+public class ParticleEvent : UnityEvent<CoulombChargeBehaviour> { }
 
 
 public class CoulombLogic : MonoBehaviour, IResetWholeObject
 {
-    public enum Axis {
+    public enum Axis 
+    {
         XAxis,
         YAxis,
         ZAxis
@@ -90,13 +87,25 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     [Header("Debug Stuff")] 
     public float correctionFactor = 1f;
 
+    private static CoulombLogic _instance;
+
+    public static CoulombLogic Instance
+    {
+        get
+        {
+            if (_instance == null)
+                _instance = FindObjectOfType<CoulombLogic>();
+            return _instance;
+        }
+    }
 
     private void Start()
     {
         Initialize();
     }
     
-    private void Initialize(){
+    private void Initialize()
+    {
         _charges = new List<CoulombChargeBehaviour>();
         _chargesGameObjects = new HashSet<GameObject>();
         OnSwitch3d2dMode(startIn2dMode? 0f : 1f);
@@ -358,7 +367,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         obj.transform.localRotation = Quaternion.identity;
         obj.SetActive(true);
 
-        AddParticle(chargeBehaviour);
+        AddParticle(chargeBehaviour, deactivateCollisions);
         
         var assessmentPos = chargeBehaviour.GetComponent<CoulombAssessmentPosition>();
         if (assessmentPos)
@@ -387,16 +396,16 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
 
         if (deactivateCollisions)
         {
-            foreach (var collider in coulombCharge.gameObject.GetComponents<Collider>())
+            foreach (var collider in coulombCharge.GetComponents<Collider>())
             {
-                Physics.IgnoreCollision(collider, vectorField3d.gameObject.GetComponent<Collider>());
-                Physics.IgnoreCollision(collider, vectorField2d.gameObject.GetComponent<Collider>());
+                Physics.IgnoreCollision(collider, vectorField3d.GetComponent<Collider>());
+                Physics.IgnoreCollision(collider, vectorField2d.GetComponent<Collider>());
             }
 
-            foreach (var collider in coulombCharge.gameObject.GetComponentsInChildren<Collider>())
+            foreach (var collider in coulombCharge.GetComponentsInChildren<Collider>())
             {
-                Physics.IgnoreCollision(collider, vectorField3d.gameObject.GetComponent<Collider>());
-                Physics.IgnoreCollision(collider, vectorField2d.gameObject.GetComponent<Collider>());
+                Physics.IgnoreCollision(collider, vectorField3d.GetComponent<Collider>());
+                Physics.IgnoreCollision(collider, vectorField2d.GetComponent<Collider>());
             }
         }
 
