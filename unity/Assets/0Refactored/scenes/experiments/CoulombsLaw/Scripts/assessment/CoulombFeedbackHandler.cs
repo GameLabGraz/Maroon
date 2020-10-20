@@ -20,7 +20,7 @@ namespace Maroon.Assessment.Handler
             {
                 if (chargePrefab == null) return null;
 
-                // var position = (Vector3D)manipulateObject.DataUpdates.First(updateData => updateData.PropertyName == "position").Value;
+                var position = (Vector3D)manipulateObject.DataUpdates.First(updateData => updateData.PropertyName == "position").Value;
                 Debug.Log("Antares position " + position.ToVector3());
 
                 assessmentObject = CoulombLogic.Instance
