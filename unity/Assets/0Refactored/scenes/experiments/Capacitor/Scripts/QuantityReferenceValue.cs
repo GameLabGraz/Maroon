@@ -1,11 +1,12 @@
 ﻿using System;
 using GEAR.Gadgets.ReferenceValue;
-using GEAR.Gadgets.ReferenceValue.Editor;
 
 namespace Maroon.Physics
 {
 #if UNITY_EDITOR
     using UnityEditor;
+    using GEAR.Gadgets.ReferenceValue.Editor;
+
 
     [CustomPropertyDrawer(typeof(QuantityReferenceValue))]
     public class QuantityReferenceValuePropertyDrawer : ReferenceValuePropertyDrawer<IQuantity> { }
