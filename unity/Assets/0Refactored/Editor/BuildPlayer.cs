@@ -117,9 +117,16 @@ namespace Maroon.Build
                 FullScreenMode = FullScreenMode.FullScreenWindow
             });
 
+            var unityBuildTarget = MaroonBuildTarget2UnityBuildTarget(buildTarget);
+            var unityBuildTargetGroup = GetBuildTargetGroup(buildTarget);
+
+            // Switch to build target platform before build
+            EditorUserBuildSettings.SwitchActiveBuildTarget(unityBuildTargetGroup, unityBuildTarget);
+
             var buildPlayerOptions = new BuildPlayerOptions
             {
-                target = MaroonBuildTarget2UnityBuildTarget(buildTarget),
+                target = unityBuildTarget,
+                targetGroup = unityBuildTargetGroup,
                 options = BuildOptions.None,
                 locationPathName = $"{buildPath}/{GetAppName(buildTarget)}",
                 scenes = GetScenes(buildTarget)
@@ -225,6 +232,21 @@ namespace Maroon.Build
                     return BuildTarget.StandaloneWindows;
                 default:
                     return BuildTarget.NoTarget;
+            }
+        }
+
+        private static BuildTargetGroup GetBuildTargetGroup(MaroonBuildTarget buildTarget)
+        {
+            switch (buildTarget)
+            {
+                case MaroonBuildTarget.WebGL:
+                    return BuildTargetGroup.WebGL;
+                case MaroonBuildTarget.MAC:
+                case MaroonBuildTarget.PC:
+                case MaroonBuildTarget.VR:
+                    return BuildTargetGroup.Standalone;
+                default:
+                    return BuildTargetGroup.Unknown;
             }
         }
 

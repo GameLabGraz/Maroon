@@ -30,6 +30,8 @@ public static class TargetPlatformDetector
             TargetPlatformDetector.targetPlatform = "mac";
         #elif UNITY_STANDALONE_WIN
             TargetPlatformDetector.targetPlatform = "pc";
+        #elif UNITY_WEBGL
+            TargetPlatformDetector.targetPlatform = "webgl";
         #endif    
     }
 }
