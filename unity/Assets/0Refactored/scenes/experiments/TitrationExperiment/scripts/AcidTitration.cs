@@ -7,7 +7,7 @@ using System;
 
 public class AcidTitration : MonoBehaviour
 {
-	
+
 	Dictionary<string, int> strongBases = new Dictionary<string, int>() {
 		{"NaOH", 0}, 
 		{"KOH", 1} };
@@ -42,7 +42,7 @@ public class AcidTitration : MonoBehaviour
 		double concentration_preequivalence = 0;
 		double concentration_postequivalence = 0;
 		double ph = 0;
-        maxRange = mlTitrant + mlAnalyte;
+        maxRange = mlTitrant;
 
 
 		double prev_concentration_preequivalence = 0;
@@ -170,12 +170,25 @@ public class AcidTitration : MonoBehaviour
 		double HX = ((mlAnalyte_ * 0.001) * molAnalyte_) - ((i_ * 0.001) * molTitrant_);
 		HX /= ((mlAnalyte_ + i_) * 0.001);
 		double X = ((i_ * 0.001) * molTitrant_) / ((mlAnalyte_ + i_) * 0.001);
-		double ph_ = pK - Math.Log10(HX / X); // ph = pKs - lg(HX / X)
+		// double ph_ = pK - Math.Log10(HX / X); // ph = pKs - lg(HX / X) ---> Approximation
+
+		double Ks = Math.Pow(10, -pK);
+		double Kw = Math.Pow(10, -14.0);
+		double x_ = 0.0012;
+		int counter = 0;
+
+		// iterative method of finding H+ in solution
+		while (counter < 50)
+		{
+			x_ = (Ks * (HX - x_ + (Kw/x_))) / (X + x_ - (Kw/x_)); // yields exact titration curve
+			counter++;
+		}
+		double ph_ = -Math.Log10(x_);
+
 
 		if (weakAcid && weakBase)
 		{
 			double X2 = ((mlAnalyte_ * 0.001) * molAnalyte_) - ((i_ * 0.001) * molTitrant_);
-			double Ks = Math.Pow(10, -pK);
 			double tmp_ph = 0.5 * ((14 - pK) - Math.Log10(X2)); // c0 << Ks
 
 			if (ph_ >= tmp_ph)
@@ -194,6 +207,7 @@ public class AcidTitration : MonoBehaviour
 	public void validateBaseDropdown(Text label)
 	{
 		dropdownBaseText = label.text;
+		weakBase = false;
 
 		switch (dropdownBaseText) {
 			case "NaOH":
@@ -214,6 +228,8 @@ public class AcidTitration : MonoBehaviour
 	public void validateAcidDropdown(Text label)
 	{
 		dropddownAcidText = label.text;
+		weakAcid = false;
+		checkH2SO4 = false;
 
 		switch (dropddownAcidText)
 		{
@@ -235,6 +251,14 @@ public class AcidTitration : MonoBehaviour
 			analyteText = dropddownAcidText;
 	}
 
+	public void changeAnalyteText(bool param)
+	{
+		if (param)
+			analyteText = dropddownAcidText;
+		else
+			analyteText = dropdownBaseText;
+	}
+
 	public Dictionary<double, double> getResultDictionary()
 	{
 		return result;
@@ -254,7 +278,7 @@ public class AcidTitration : MonoBehaviour
 		weakAcid = false;
 		weakBase = false;
 		checkEquivalencePoint = true;
-		analyteText = "";
+		analyteText = "HCl";
 	}
 
 	public void getEquivalenzPointPh(MessageArgs args)

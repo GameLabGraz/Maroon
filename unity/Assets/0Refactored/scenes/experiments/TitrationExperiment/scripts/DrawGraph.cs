@@ -14,7 +14,7 @@ public class DrawGraph : MonoBehaviour, IResetObject
     private float height;
     private float width;
 
-    private float maxMl = 200.0f;
+    private float maxMl = 100.0f;
     private float ph = 14.0f;
 
     private int fluidRestrictionSpeed = 10;
@@ -37,8 +37,7 @@ public class DrawGraph : MonoBehaviour, IResetObject
     private double volumeAddedPh = 0f;
     private double volumeAddedMl = 0f;
     
-    
-    // Use this for initialization
+ 
     void Start()
     {
         acidTitrationScript = GameObject.Find("TitrationController").GetComponent<AcidTitration>();
@@ -147,7 +146,7 @@ public class DrawGraph : MonoBehaviour, IResetObject
                             float tmpMl_ = ((float)entryEqu.Key / maxMl) * width;
                             float tmpPh_ = ((float)entryEqu.Value / ph) * height;
 
-                            float equivalenzlinewidth = (10 / maxMl) * width;
+                            float equivalenzlinewidth = (5 / maxMl) * width;
 
                             equivalenzLine.SetPosition(0, new Vector3(tmpMl_ - equivalenzlinewidth, tmpPh_, 0));
                             equivalenzLine.SetPosition(1, new Vector3(tmpMl_, tmpPh_, 0));
@@ -175,7 +174,6 @@ public class DrawGraph : MonoBehaviour, IResetObject
                 break;
             default:
                 break;
-
         }
     }
 
@@ -194,8 +192,8 @@ public class DrawGraph : MonoBehaviour, IResetObject
         float heightHalf = height / 2;
 
         int numberOfPosForTick = 4;
-        float tickSpacing = width / 20; // 10ml
-        float tickSpacingBig = width / 4; // 50ml
+        float tickSpacing = width / 10; // 10ml
+        float tickSpacingBig = width / 2; // 50ml
         float counterForTicks = width;
         int tmpCounter = 0;
 
@@ -245,8 +243,7 @@ public class DrawGraph : MonoBehaviour, IResetObject
             }
             counterForTicks += tickSpacing;
             tmpCounter += numberOfPosForTick;
-        }
-        
+        }     
     }
 }
 

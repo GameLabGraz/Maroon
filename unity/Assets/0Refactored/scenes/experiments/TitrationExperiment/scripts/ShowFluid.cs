@@ -31,7 +31,7 @@ public class ShowFluid : MonoBehaviour
          {2, new Indicator(colorEnum.red, colorEnum.orange, colorEnum.yellow, 3.1f, 4.5f)} }; // Mehtyl orange
  
 
-    private Indicator currentInd;
+    private static Indicator currentInd;
     private Dictionary<double, double> result = new Dictionary<double, double>();
 
     [Header("Fluid Materials")]
@@ -68,7 +68,6 @@ public class ShowFluid : MonoBehaviour
         acidTitrationScript = GameObject.Find("TitrationController").GetComponent<AcidTitration>();
 
         currentInd = indicators[0];
-
     }
 
     // Show fluid of the analyte in erlenmeyer flask at beginning

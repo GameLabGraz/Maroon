@@ -78,8 +78,6 @@ public class GameController : MonoBehaviour, IResetObject
         if (checkForZeros(molAnalyte))
             return false;
         return true;
-
-
 	}
 
     public bool checkForZeros(double value)
@@ -117,16 +115,22 @@ public class GameController : MonoBehaviour, IResetObject
 		pipetAnimation.setPipetBool(baseToggle.isOn);
     }
 
-	public void setBaseToggleTitrant(bool value)
+	public void setBaseToggleTitrant()
 	{
-		if (!acidToggle.IsActive())
+		if (!acidToggle.IsActive() && baseToggle.IsActive())
+		{
 			acidToggle.isOn = !acidToggle.isOn;
+			acidTitrationScript.changeAnalyteText(true);
+		}
 	}
 
-	public void setAcidToggleTitrant(bool value)
+	public void setAcidToggleTitrant()
 	{
-		if (!baseToggle.IsActive())
+		if (!baseToggle.IsActive() && acidToggle.IsActive())
+		{
 			baseToggle.isOn = !baseToggle.isOn;
+			acidTitrationScript.changeAnalyteText(false);
+		}
 	}
 
 	public bool getBaseToggleTitrant()

@@ -6,7 +6,6 @@ public class PipetAnimation : MonoBehaviour, IResetObject
     Animator pipetAnimator;
     public GameObject analyte;
     ShowFluid showFluid;
-
     Animator dropperAnimator;
 
     void Start ()
@@ -50,7 +49,7 @@ public class PipetAnimation : MonoBehaviour, IResetObject
     {
         analyte.GetComponent<Animator>().SetTrigger("put");
     }
-    
+
     public void ResetObject()
     {
         //resetAnalyteAnimation
