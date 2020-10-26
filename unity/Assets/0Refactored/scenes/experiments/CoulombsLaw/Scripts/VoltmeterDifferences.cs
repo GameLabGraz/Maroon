@@ -17,6 +17,7 @@ public class VoltmeterDifferences : MonoBehaviour
 
     [Header("Assessment System")]
     public QuantityFloat currentValue = 0;
+    public QuantityBool voltmeterEnabled = true;
 
     private bool _isOn;
     
@@ -108,5 +109,17 @@ public class VoltmeterDifferences : MonoBehaviour
     public IQuantity GetVoltage()
     {
         return currentValue;
+    }
+
+    public void Enable(bool enable)
+    {
+        if (!enable)
+        {
+            positiveMeasuringPoint.HideObject();
+            negativeMeasuringPoint.HideObject();
+        }
+        else {
+            //do nothing the user just has to pull in the voltmeter measuring points and now he can
+        }
     }
 }

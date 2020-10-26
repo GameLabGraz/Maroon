@@ -183,6 +183,7 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
     public void UpdateResetPosition()
     {
         _resetPosition = transform.localPosition;
+        Debug.Log("Update Reset Position: " + _resetPosition + " (" + gameObject.name + ")");
     }
 
     public void ResetObject()
@@ -295,5 +296,10 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
         
         foreach (var c in GetComponents<Collider>()) c.enabled = setVisible;
         foreach (var c in GetComponentsInChildren<Collider>()) c.enabled = setVisible;
+    }
+
+    public void DummyDebugMessage(string msg)
+    {
+        Debug.Log("Dummy Debug Message: " + msg);
     }
 }

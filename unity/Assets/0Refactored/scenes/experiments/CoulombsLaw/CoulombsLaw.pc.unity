@@ -3315,9 +3315,8 @@ GameObject:
   m_Component:
   - component: {fileID: 249590952}
   - component: {fileID: 249590959}
-  - component: {fileID: 249590953}
   - component: {fileID: 249590954}
-  - component: {fileID: 249590957}
+  - component: {fileID: 249590953}
   m_Layer: 0
   m_Name: Voltmeter
   m_TagString: Untagged
@@ -3368,6 +3367,16 @@ MonoBehaviour:
       Object: {fileID: 941568972}
       ComponentName: CoulombAssessmentPosition
       FieldName: position
+  - index: 1
+    objectInfo:
+      Object: {fileID: 941568972}
+      ComponentName: CoulombAssessmentPosition
+      FieldName: position
+  - index: 1
+    objectInfo:
+      Object: {fileID: 249590951}
+      ComponentName: VoltmeterDifferences
+      FieldName: voltmeterEnabled
 --- !u!54 &249590954
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3384,18 +3393,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &249590957
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 249590951}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 701ec518203a55747a4576ce372f6742, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &249590959
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3427,6 +3424,40 @@ MonoBehaviour:
     onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
+  voltmeterEnabled:
+    assessmentName: visible
+    isDynamic: 0
+    alwaysSendValueChangedEvent: 1
+    allowSystemChange: 1
+    _value: 1
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    onNewValueFromSystem:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 249590959}
+          m_MethodName: Enable
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 1931003117}
+          m_MethodName: SetInteractable
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &264305264
 GameObject:
   m_ObjectHideFlags: 0
@@ -5293,7 +5324,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: 0
+  m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -10519,7 +10550,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e3b91797158f294c99bdba20a43774c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logic: {fileID: 941569016}
   chargePrefab: {fileID: 222567040141845092, guid: 9402c44767a65434480275f7447498ec,
     type: 3}
 --- !u!4 &668779870
@@ -15680,6 +15710,11 @@ PrefabInstance:
       propertyPath: allowInteractions.onValueChanged.m_PersistentCalls.m_Calls.Array.data[6].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 6896857270828580109, guid: bdfec920f90e5d7499f7d0276bf96c41,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.44
+      objectReference: {fileID: 0}
     - target: {fileID: 6896857270862132202, guid: bdfec920f90e5d7499f7d0276bf96c41,
         type: 3}
       propertyPath: m_textInfo.characterCount
@@ -18080,6 +18115,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  onSystemUpdatedPosition:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &941568988
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18136,6 +18174,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  onSystemUpdatedPosition:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &941568989 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6896857272221569599, guid: bdfec920f90e5d7499f7d0276bf96c41,
@@ -19315,6 +19356,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   onSystemShowObject:
+    m_PersistentCalls:
+      m_Calls: []
+  onSystemUpdatedPosition:
     m_PersistentCalls:
       m_Calls: []
 --- !u!114 &941569106
@@ -20631,6 +20675,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeColor: {r: 1, g: 1, b: 1, a: 0.4}
   inactiveColor: {r: 0.4, g: 0.4, b: 0.4, a: 0.4}
+  notInteractableColor: {r: 0, g: 0, b: 0, a: 0}
   hideWhenInactive: 0
   selectedOnStart: 0
   registerTag: {fileID: 1658675651}
@@ -20752,7 +20797,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: 0
+  m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -21150,6 +21195,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeColor: {r: 1, g: 1, b: 1, a: 0.4}
   inactiveColor: {r: 0.4, g: 0.4, b: 0.4, a: 0.4}
+  notInteractableColor: {r: 0, g: 0, b: 0, a: 0}
   hideWhenInactive: 0
   selectedOnStart: 1
   registerTag: {fileID: 1674539887}
@@ -25349,7 +25395,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 990177107}
   m_HandleRect: {fileID: 990177106}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -26596,6 +26642,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeColor: {r: 1, g: 1, b: 1, a: 0.4}
   inactiveColor: {r: 0.4, g: 0.4, b: 0.4, a: 0.4}
+  notInteractableColor: {r: 0, g: 0, b: 0, a: 0}
   hideWhenInactive: 0
   selectedOnStart: 0
   registerTag: {fileID: 1659154427}
@@ -27916,7 +27963,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 219449108}
   m_Direction: 0
   m_Value: 1
-  m_Size: 0.9999999
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -28621,7 +28668,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: 0
+  m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -29397,6 +29444,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeColor: {r: 1, g: 1, b: 1, a: 0.4}
   inactiveColor: {r: 0.4, g: 0.4, b: 0.4, a: 0.4}
+  notInteractableColor: {r: 0, g: 0, b: 0, a: 0}
   hideWhenInactive: 0
   selectedOnStart: 0
   registerTag: {fileID: 2053902474}
@@ -33576,6 +33624,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activeColor: {r: 1, g: 1, b: 1, a: 0.4}
   inactiveColor: {r: 0.4, g: 0.4, b: 0.4, a: 0.4}
+  notInteractableColor: {r: 0, g: 0, b: 0, a: 0}
   hideWhenInactive: 0
   selectedOnStart: 0
   registerTag: {fileID: 1495733669}
@@ -35013,6 +35062,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+  onSystemUpdatedPosition:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &2001467426
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35069,6 +35121,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+  onSystemUpdatedPosition:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &2002427538
 GameObject:
   m_ObjectHideFlags: 0

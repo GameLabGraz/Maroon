@@ -22,6 +22,7 @@ public class CoulombAssessmentPosition : MonoBehaviour
 
     public UnityEvent onSystemSetToInvalidPosition;
     public UnityEvent onSystemShowObject;
+    public UnityEvent onSystemUpdatedPosition;
 
     private Vector3 _lastPosition;
     private bool _lastVisible;
@@ -42,6 +43,7 @@ public class CoulombAssessmentPosition : MonoBehaviour
         _lastVisible = isActiveAndEnabled;
 
         position.onNewValueFromSystem.AddListener(ChangeToNewPosition);
+        position.onNewValueFromSystem.AddListener((newPos) => onSystemUpdatedPosition.Invoke());
     }
 
     private void Update()
@@ -77,7 +79,7 @@ public class CoulombAssessmentPosition : MonoBehaviour
             } return;
         }
     }
-    
+
     public void UpdatePosition()
     {
         var isActive = gameObject ? gameObject.activeInHierarchy : isActiveAndEnabled;
@@ -106,7 +108,6 @@ public class CoulombAssessmentPosition : MonoBehaviour
             currentPos.y += CoulombLogic.Instance.CalcToWorldSpace(newPosition.y); // Value is between 0 and 1
             currentPos.z += CoulombLogic.Instance.CalcToWorldSpace(0f); // Value is 0 -> 2d mode
             transform.position = currentPos;
-            Debug.Log("Set world position: " + currentPos);
         }
         else
         {
@@ -117,7 +118,7 @@ public class CoulombAssessmentPosition : MonoBehaviour
             transform.localPosition = currentPos;
         }
         
-        //UpdatePosition();
+        // UpdatePosition();
     }
 
     private bool isBetween(float value, float min = 0f, float max = 1f)

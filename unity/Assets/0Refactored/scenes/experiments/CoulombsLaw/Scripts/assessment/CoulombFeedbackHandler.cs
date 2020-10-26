@@ -26,6 +26,7 @@ namespace Maroon.Assessment.Handler
                 assessmentObject = CoulombLogic.Instance
                     .CreateCharge(chargePrefab, Vector3.zero, 0, false, false)
                     .GetComponent<AssessmentObject>();
+                
             }
             return assessmentObject;
         }
