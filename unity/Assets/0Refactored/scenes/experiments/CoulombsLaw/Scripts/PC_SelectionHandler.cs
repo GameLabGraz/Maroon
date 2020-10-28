@@ -423,12 +423,13 @@ public class PC_SelectionHandler : MonoBehaviour
                 // selectionRegister.registerHandler.SelectRegister(selectionRegister);
             }
 
-            PositionChanged();
 
             AdaptButtonTextCharge();
             AdaptVariableFieldsCharge();
             AdaptVariableFields();
-        }
+            
+            PositionChanged();
+        }    
     }
 
     public void PositionChanged()

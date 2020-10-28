@@ -24,7 +24,7 @@ namespace Maroon.Assessment.Handler
               HandleFeedbackCommand(feedbackCommand);
         }
 
-        private void HandleFeedbackCommand(FeedbackCommand feedbackCommand)
+        protected void HandleFeedbackCommand(FeedbackCommand feedbackCommand)
         {
             switch (feedbackCommand)
             {
@@ -91,9 +91,7 @@ namespace Maroon.Assessment.Handler
 
                 case ObjectUpdateType.Destroy:
                     assessmentObject = AssessmentManager.Instance?.GetObject(manipulateObject.ID);
-                    if (assessmentObject == null) return;
-
-                    Destroy(assessmentObject.gameObject);
+                    HandleObjectDelete(assessmentObject);
                     break;
                 
                 default:
@@ -120,6 +118,13 @@ namespace Maroon.Assessment.Handler
             }
         }
 
-        protected abstract AssessmentObject HandleObjectCreation(ManipulateObject manipulateObject);
+        protected virtual AssessmentObject HandleObjectCreation(ManipulateObject manipulateObject)
+        {
+            return null;
+        }
+        
+        protected virtual void HandleObjectDelete(AssessmentObject obj)
+        {
+        }
     }
 }

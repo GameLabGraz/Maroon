@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Antares.Evaluation;
+using Maroon.Assessment;
+using Maroon.Assessment.Handler;
 using Maroon.Physics;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Assessment
 {
@@ -18,8 +22,35 @@ namespace Assessment
     [Serializable] public class BoolTest : TestClass<bool> {}
     [Serializable] public class StringTest : TestClass<string> {}
     
+    [Serializable]
+    public class DataUpdateMessage
+    {
+        public string Identifier = "";
+        public bool IsVector3 = false;
+        public Vector3 vec3Value = Vector3.zero;
+        public bool IsFloat = false;
+        public float fValue = 0f;
+        public bool IsInteger = false;
+        public int nValue = 0;
+        public bool isBool = false;
+        public bool bValue = false;
+        public bool isString = false;
+        public string strValue = "";
+
+        public DataUpdate getDataUpdate()
+        {
+            if (IsVector3) return new DataUpdate(DataUpdateType.SetValue, Identifier, vec3Value);
+            if(IsFloat) return new DataUpdate(DataUpdateType.SetValue, Identifier, fValue);
+            if(IsInteger) return new DataUpdate(DataUpdateType.SetValue, Identifier, nValue);
+            if(isBool) return new DataUpdate(DataUpdateType.SetValue, Identifier, bValue);
+            if(isString) return new DataUpdate(DataUpdateType.SetValue, Identifier, strValue);
+            return null;
+        }
+    }
+    
     public class AssessmentSystemTester : MonoBehaviour
     {
+        [Header("Quantity Testing")]
         public QuantityReferenceValue quantityReference;
 
         public Vector3Test testVector3;
@@ -27,12 +58,23 @@ namespace Assessment
         public IntTest testInteger;
         public BoolTest testBool;
         public StringTest testString;
+
+        [Header("Message Testing")] 
+        public AssessmentFeedbackHandler FeedbackHandler;
+        [Tooltip("Set this to null if you want to test a create message!")]
+        public AssessmentObject assessmentObj = null;
+        public ObjectUpdateType messageType = ObjectUpdateType.Update;
+        public List<DataUpdateMessage> messageData = new List<DataUpdateMessage>();
+        public bool sendMessageNow = false;
         
-        // Start is called before the first frame update
-   
-        // Update is called once per frame
         void Update()
         {
+            if (sendMessageNow)
+            {
+                SendMessage();
+                sendMessageNow = false;
+            }
+            
             var testingQuantity = quantityReference.Value;
             if (testingQuantity == null) return;
             
@@ -85,6 +127,16 @@ namespace Assessment
             
                 testString.testNow = false;
             }
+        }
+
+
+        private void SendMessage()
+        {
+            if (!FeedbackHandler) return;
+            var manipulateObject = new ManipulateObject(DateTime.Now, messageType, 
+                assessmentObj == null? "" : assessmentObj.ObjectID, messageData.Select(md => md.getDataUpdate()).ToArray());
+
+            FeedbackHandler.HandleFeedback(new FeedbackEventArgs(new List<FeedbackCommand> {manipulateObject}.ToArray()));
         }
     }
 }

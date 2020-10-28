@@ -38,7 +38,6 @@ namespace Maroon.Physics
         private float _startRopeLength;
         private Vector3 _startRopePosition;
 
-        private float _oldRopeLength;
         private bool _pendulumRelease = false;
 
         enum ElongationMode
@@ -73,7 +72,6 @@ namespace Maroon.Physics
             get => ropeLength;
             set
             {
-                _oldRopeLength = RopeLength;
                 ropeLength.Value = value;
                 UpdatePendulum();
             }
