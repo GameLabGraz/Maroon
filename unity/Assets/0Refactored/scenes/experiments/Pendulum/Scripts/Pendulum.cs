@@ -36,6 +36,7 @@ namespace Maroon.Physics
         private float _startWeight;
 
         private float _startRopeLength;
+        private Vector3 _startRopePosition;
 
         private float _oldRopeLength;
         private bool _pendulumRelease = false;
@@ -63,12 +64,10 @@ namespace Maroon.Physics
             set
             {
                 weight.Value = value;
-                
-                _rigidbody.mass = value;
-                _weightObj.transform.localScale = Vector3.one * value;
+                UpdatePendulum();
             }
         }
-
+        
         public float RopeLength
         {
             get => ropeLength;
@@ -76,14 +75,22 @@ namespace Maroon.Physics
             {
                 _oldRopeLength = RopeLength;
                 ropeLength.Value = value;
-                
-                
-                var pos = _weightObj.transform.position;
-                var moveDirection = (pos - _standRopeJoint.transform.position).normalized;
-                _weightObj.transform.position = pos + moveDirection * (value - _oldRopeLength);
+                UpdatePendulum();
             }
         }
 
+        public void UpdatePendulum()
+        {
+            //weight
+            _rigidbody.mass = weight.Value;
+            _weightObj.transform.localScale = Vector3.one * weight.Value;
+            
+            //rope len
+            var pos = _weightObj.transform.position;
+            var moveDirection = (_startRopePosition - _standRopeJoint.transform.position).normalized;
+            _weightObj.transform.position = _startRopePosition + moveDirection * (ropeLength.Value - _startRopeLength);
+        }
+        
         public float Elongation
         {
             get => elongation;
@@ -101,6 +108,7 @@ namespace Maroon.Physics
             _startRot = transform.rotation;
             _startWeight = Weight;
             _startRopeLength = RopeLength;
+            _startRopePosition = _weightObj.transform.position;
         }
 
         protected override void HandleUpdate()
