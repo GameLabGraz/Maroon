@@ -55,12 +55,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 2420711017749542076}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -98529514, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -80,7 +81,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2420711017749542076}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -1254083943, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_AspectMode: 4
@@ -95,6 +96,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3651833716095218012}
   - component: {fileID: 2871893457073331865}
+  - component: {fileID: 5068541803672935238}
   m_Layer: 0
   m_Name: Video Player
   m_TagString: Untagged
@@ -139,7 +141,7 @@ VideoPlayer:
   m_TargetMaterialProperty: _MainTex
   m_RenderMode: 2
   m_AspectRatio: 2
-  m_DataSource: 0
+  m_DataSource: 1
   m_PlaybackSpeed: 1
   m_AudioOutputMode: 2
   m_TargetAudioSources: []
@@ -153,6 +155,18 @@ VideoPlayer:
   m_Looping: 1
   m_WaitForFirstFrame: 1
   m_FrameReadyEventEnabled: 0
+--- !u!114 &5068541803672935238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6632463544279867175}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f9c8f718ec1d8f44a22942a08b94ff5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &240375910245248948
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -393,7 +407,7 @@ PrefabInstance:
     - target: {fileID: 5295925124253147883, guid: 3e2615535e51099419210a17a330884d,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 314.86285
+      value: 820.45544
       objectReference: {fileID: 0}
     - target: {fileID: 5295925124253147883, guid: 3e2615535e51099419210a17a330884d,
         type: 3}
@@ -433,12 +447,17 @@ PrefabInstance:
     - target: {fileID: 7388298609439051876, guid: 3e2615535e51099419210a17a330884d,
         type: 3}
       propertyPath: m_textInfo.lineCount
-      value: 23
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 8315128690331720288, guid: 3e2615535e51099419210a17a330884d,
         type: 3}
       propertyPath: m_Size
-      value: 0.50849515
+      value: 0.43924496
+      objectReference: {fileID: 0}
+    - target: {fileID: 8315128690331720288, guid: 3e2615535e51099419210a17a330884d,
+        type: 3}
+      propertyPath: m_Value
+      value: 0.48648474
       objectReference: {fileID: 0}
     - target: {fileID: 8486455840694237518, guid: 3e2615535e51099419210a17a330884d,
         type: 3}
@@ -2046,7 +2065,7 @@ PrefabInstance:
     - target: {fileID: 2375782093165185842, guid: dba490b447fcc6544be06a1d953601a4,
         type: 3}
       propertyPath: m_fontSize
-      value: 47.9
+      value: 43.7
       objectReference: {fileID: 0}
     - target: {fileID: 2375782093165185842, guid: dba490b447fcc6544be06a1d953601a4,
         type: 3}
@@ -3070,7 +3089,7 @@ PrefabInstance:
     - target: {fileID: 8683332024267956328, guid: 41cbc85e5ea955a4c86614ab098edd7f,
         type: 3}
       propertyPath: m_fontSize
-      value: 47.9
+      value: 43.7
       objectReference: {fileID: 0}
     - target: {fileID: 8683332024267956328, guid: 41cbc85e5ea955a4c86614ab098edd7f,
         type: 3}
@@ -3906,7 +3925,7 @@ PrefabInstance:
     - target: {fileID: 8366086294071596774, guid: ad25a4c3d188d984fb4858680a7b8508,
         type: 3}
       propertyPath: m_fontSize
-      value: 47.9
+      value: 43.7
       objectReference: {fileID: 0}
     - target: {fileID: 8366086294071596774, guid: ad25a4c3d188d984fb4858680a7b8508,
         type: 3}
