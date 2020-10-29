@@ -33,7 +33,7 @@ public class AcidTitration : MonoBehaviour
     public string analyteText = "";
 
     public void Calculation(double molTitrant, double mlTitrant, double molAnalyte, double mlAnalyte)
-  {
+    {
         baseToggleTitrant = gameObject.GetComponent<GameController>().GetBaseToggleTitrant();
 
         double concentration_preequivalence;
