@@ -25,14 +25,12 @@ public class Indicator
 public class ShowFluid : MonoBehaviour
 {
     // Indicators
-    Dictionary<int, Indicator> indicators = new Dictionary<int, Indicator>() {
+    private readonly Dictionary<int, Indicator> indicators = new Dictionary<int, Indicator>() {
          {0, new Indicator(colorEnum.colorless, colorEnum.red, colorEnum.red, 8.3f, 10f)}, // Phenolphtalein
          {1, new Indicator(colorEnum.yellow, colorEnum.green, colorEnum.blue, 6f, 7.6f)},  // Bromothymol blue
          {2, new Indicator(colorEnum.red, colorEnum.orange, colorEnum.yellow, 3.1f, 4.5f)} }; // Mehtyl orange
  
-
     private static Indicator currentInd;
-    private Dictionary<double, double> result = new Dictionary<double, double>();
 
     [Header("Fluid Materials")]
     public Material FluidWaterBlue;
@@ -42,14 +40,13 @@ public class ShowFluid : MonoBehaviour
     public Material FluidWaterYellow;
     public Material FluidWaterGreen;
 
-    [Space(10)]
-    public GameObject fluid;
-
-    [HideInInspector]
-    public MeshRenderer meshRend;
+    [SerializeField] private GameObject fluid;
+    private MeshRenderer meshRend;
     private AcidTitration acidTitrationScript;
-
+    private Dictionary<double, double> result = new Dictionary<double, double>();
     private static ShowFluid _instance;
+
+
     public static ShowFluid Instance
     {
         get
@@ -70,16 +67,21 @@ public class ShowFluid : MonoBehaviour
         currentInd = indicators[0];
     }
 
-    // Show fluid of the analyte in erlenmeyer flask at beginning
-    public void enableMeshRenderer()
+    // Show fluid of the analyte in erlenmeyer flask at beginning -- for Animator
+    public void EnableMeshRenderer()
     {
         if (acidTitrationScript.analyteText == "HNO3")
-            changeMeshMaterial(colorEnum.yellow);
+            ChangeMeshMaterial(colorEnum.yellow);
         meshRend.enabled = !meshRend.enabled;
     }
 
+    public void DisableMeshRenderer()
+    {
+        meshRend.enabled = false;
+    }
+
     // Change the material of analyte during titration
-    public void changeMeshMaterial(colorEnum color)
+    public void ChangeMeshMaterial(colorEnum color)
     {
         switch (color)
         {
@@ -108,31 +110,31 @@ public class ShowFluid : MonoBehaviour
 
     // Show fluid of the analyte with indicator in erlenmeyer flask 
     // activated in Animator
-    public void activateIndicatorColor()
+    public void ActivateIndicatorColor()
     {
-        result = acidTitrationScript.getResultDictionary();
+        result = acidTitrationScript.GetResultDictionary();
         if (result.Count > 0)
-            determineAnalyteColor((float)result.Values.First());
+            DetermineAnalyteColor((float)result.Values.First());
     }
 
-    public void setCurrentIndicator(int value)
+    public void SetCurrentIndicator(int value)
     {
         currentInd = indicators[value];
     }
 
-    public void determineAnalyteColor(float phValue)
+    public void DetermineAnalyteColor(float phValue)
     {
         if (phValue >= currentInd.startNumber && phValue <= currentInd.endNumber)
         {
-            changeMeshMaterial(currentInd.midColor);
+            ChangeMeshMaterial(currentInd.midColor);
         }
         if (phValue > currentInd.endNumber)
         {
-            changeMeshMaterial(currentInd.highColor);
+            ChangeMeshMaterial(currentInd.highColor);
         }
         if (phValue < currentInd.startNumber)
         {
-            changeMeshMaterial(currentInd.lowColor);
+            ChangeMeshMaterial(currentInd.lowColor);
         }
     }
 }

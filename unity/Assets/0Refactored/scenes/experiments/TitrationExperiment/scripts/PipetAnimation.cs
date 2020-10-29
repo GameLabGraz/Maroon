@@ -3,20 +3,22 @@
 public class PipetAnimation : MonoBehaviour, IResetObject
 {
 
-    Animator pipetAnimator;
-    public GameObject analyte;
-    ShowFluid showFluid;
-    Animator dropperAnimator;
+    private Animator pipetAnimator;
+    private ShowFluid showFluid;
+    private Animator dropperAnimator;
+
+    [SerializeField] private GameObject analyte;
+
 
     void Start ()
     {
         pipetAnimator = GetComponent<Animator>();
         showFluid = ShowFluid.Instance;
         dropperAnimator = GameObject.Find("Dropper").GetComponent<Animator>();
-	}
-	
+    }
+    
     // Gamecontroller decides if analyte is acid oder base
-    public void setPipetBool(bool param)
+    public void SetPipetBool(bool param)
     {
         if (param)
             pipetAnimator.SetTrigger("takeAcidTrigger");
@@ -26,12 +28,12 @@ public class PipetAnimation : MonoBehaviour, IResetObject
         dropperAnimator.ResetTrigger("forceIndicatorExit");
     }
 
-    public void activateIndicator()
+    public void ActivateIndicator()
     {
         dropperAnimator.SetTrigger("takeIndicatorTrigger");
     }
 
-    public void resetPipet(bool param)
+    public void ResetPipet(bool param)
     {
         if (param)
         {
@@ -40,21 +42,24 @@ public class PipetAnimation : MonoBehaviour, IResetObject
         }
     }
 
-    public void resetTrigger(string name)
+    public void ResetTrigger(string name)
     {
         analyte.GetComponent<Animator>().ResetTrigger(name);
     }
 
-    public void playAnalyteAnimation()
+    public void PlayAnalyteAnimation()
     {
         analyte.GetComponent<Animator>().SetTrigger("put");
     }
 
     public void ResetObject()
     {
-        //resetAnalyteAnimation
+        // handle of burette is not interactable
+        analyte.GetComponent<SetBuretteInteractive>().DisableBuretteTap();
+
+        // resetAnalyteAnimation
         analyte.GetComponent<Animator>().SetTrigger("reset");
-        showFluid.meshRend.enabled = false;
-        showFluid.changeMeshMaterial(colorEnum.colorless);
+        showFluid.DisableMeshRenderer();
+        showFluid.ChangeMeshMaterial(colorEnum.colorless);
     }
 }

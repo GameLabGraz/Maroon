@@ -14,26 +14,24 @@ public class DrawGraph : MonoBehaviour, IResetObject
     private float height;
     private float width;
 
-    private float maxMl = 100.0f;
-    private float ph = 14.0f;
+    private readonly float maxMl = 100.0f;
+    private readonly float ph = 14.0f;
 
     private int fluidRestrictionSpeed = 10;
-
-    LineRenderer[] lineRenderers;
-    LineRenderer equivalenzLine;
-    LineRenderer titrationCurveLine;
-    LineRenderer axisLine;
-
     private int counter = 0;
 
-    public bool permitted = false;
-    public GameObject burette;
-    OpenBurette buretteScript;
-    double equivalenzPointKey;
+    private LineRenderer[] lineRenderers;
+    private LineRenderer equivalenzLine;
+    private LineRenderer titrationCurveLine;
+    private LineRenderer axisLine;
 
-    public GameObject pipet;
+    [SerializeField] private GameObject burette;
+
+    private OpenBurette buretteScript;
+    private double equivalenzPointKey;
     private ShowFluid showFluidScript;
 
+    // Display Panel values
     private double volumeAddedPh = 0f;
     private double volumeAddedMl = 0f;
     
@@ -53,13 +51,13 @@ public class DrawGraph : MonoBehaviour, IResetObject
         equivalenzLine = lineRenderers[1];
         axisLine = lineRenderers[2];
 
-        drawAxisLines();
+        DrawAxisLines();
     }
 
-    public void initialise()
+    public void Initialise()
     {
-        result = acidTitrationScript.getResultDictionary();
-        equivalenzPoint = acidTitrationScript.getEquivalenzPointDictionary();
+        result = acidTitrationScript.GetResultDictionary();
+        equivalenzPoint = acidTitrationScript.GetEquivalenzPointDictionary();
         equivalenzLine.positionCount = 3;
 
 
@@ -82,7 +80,6 @@ public class DrawGraph : MonoBehaviour, IResetObject
             equivalenzLine.positionCount = 0;
 
         counter = 0;
-
         volumeAddedMl = 0f;
         volumeAddedPh = 0f;
 
@@ -134,7 +131,7 @@ public class DrawGraph : MonoBehaviour, IResetObject
                 volumeAddedMl = entry.Key;
                 volumeAddedPh = entry.Value;
 
-                showFluidScript.determineAnalyteColor((float)entry.Value);
+                showFluidScript.DetermineAnalyteColor((float)entry.Value);
 
                 if (equivalenzPoint.Count > 0)
                 {
@@ -159,7 +156,7 @@ public class DrawGraph : MonoBehaviour, IResetObject
         }
     }
 
-    public void setStreamspeed(float value)
+    public void SetStreamspeed(float value)
     {
         switch (value)
         {
@@ -177,17 +174,17 @@ public class DrawGraph : MonoBehaviour, IResetObject
         }
     }
 
-    public void getVolumeAddedPh(MessageArgs args)
+    public void GetVolumeAddedPh(MessageArgs args)
     {
         args.value = (float)volumeAddedPh;
     }
 
-    public void getVolumeAddedMl(MessageArgs args)
+    public void GetVolumeAddedMl(MessageArgs args)
     {
         args.value = (float)volumeAddedMl;
     }
 
-    public void drawAxisLines()
+    public void DrawAxisLines()
     {
         float heightHalf = height / 2;
 
@@ -243,7 +240,7 @@ public class DrawGraph : MonoBehaviour, IResetObject
             }
             counterForTicks += tickSpacing;
             tmpCounter += numberOfPosForTick;
-        }     
+        }
     }
 }
 

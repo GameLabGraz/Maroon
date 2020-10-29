@@ -1,21 +1,21 @@
 ﻿using UnityEngine;
 
-public class SetBuretteInteractive : MonoBehaviour {
+public class SetBuretteInteractive : MonoBehaviour 
+{
 
-    public GameObject burette; 
-
+    [SerializeField] private GameObject burette;
     private OpenBurette openBuretteScript;
 
     void Start () {
         openBuretteScript = burette.gameObject.GetComponent<OpenBurette>();
-	}
-	
-    public void enableBuretteTap()
+    }
+    
+    public void EnableBuretteTap()
     {
         openBuretteScript.interactable = true;
     }
 
-    public void disableBuretteTap()
+    public void DisableBuretteTap()
     {
         openBuretteScript.interactable = false;
     }
