@@ -83,8 +83,6 @@ public class TitrationController : MonoBehaviour, IResetObject
 
     public void ResetObject()
     {
-        // handle of burette is not interactable
-        //pipetAnimation.analyte.GetComponent<SetBuretteInteractive>().disableBuretteTap();
         _acidTitration.ResetEverything();
 
         _baseMol = 0.1f;
@@ -130,7 +128,6 @@ public class TitrationController : MonoBehaviour, IResetObject
     {
         return baseToggle.isOn;
     }
-
 
     public void SetMolBase(float value)
     {
