@@ -2,64 +2,70 @@
 
 public class PipetAnimation : MonoBehaviour, IResetObject
 {
+    [SerializeField] private OpenBurette burette;
 
-    private Animator pipetAnimator;
-    private ShowFluid showFluid;
-    private Animator dropperAnimator;
+    [SerializeField] private Animator pipetAnimator;
+    [SerializeField] private Animator dropperAnimator;
+    [SerializeField] private Animator analyteAnimator;
 
-    [SerializeField] private GameObject analyte;
+    private static readonly int TakeAcidTrigger = Animator.StringToHash("takeAcidTrigger");
+    private static readonly int TakeBaseTrigger = Animator.StringToHash("takeBaseTrigger");
+    private static readonly int ForceIndicatorExit = Animator.StringToHash("forceIndicatorExit");
+    private static readonly int TakeIndicatorTrigger = Animator.StringToHash("takeIndicatorTrigger");
+    private static readonly int ForceExit = Animator.StringToHash("forceExit");
+    private static readonly int Reset = Animator.StringToHash("reset");
+    private static readonly int Put = Animator.StringToHash("put");
 
-
-    void Start ()
+    private ShowFluid _showFluid;
+    
+    private void Start ()
     {
-        pipetAnimator = GetComponent<Animator>();
-        showFluid = ShowFluid.Instance;
-        dropperAnimator = GameObject.Find("Dropper").GetComponent<Animator>();
+        _showFluid = ShowFluid.Instance;
     }
     
-    // Gamecontroller decides if analyte is acid oder base
+    // TitrationController decides if analyte is acid oder base
     public void SetPipetBool(bool param)
     {
         if (param)
-            pipetAnimator.SetTrigger("takeAcidTrigger");
+            pipetAnimator.SetTrigger(TakeAcidTrigger);
         else
-            pipetAnimator.SetTrigger("takeBaseTrigger");
+            pipetAnimator.SetTrigger(TakeBaseTrigger);
 
-        dropperAnimator.ResetTrigger("forceIndicatorExit");
+        dropperAnimator.ResetTrigger(ForceIndicatorExit);
     }
 
     public void ActivateIndicator()
     {
-        dropperAnimator.SetTrigger("takeIndicatorTrigger");
+        dropperAnimator.SetTrigger(TakeIndicatorTrigger);
     }
 
     public void ResetPipet(bool param)
     {
         if (param)
         {
-            pipetAnimator.SetTrigger("forceExit");
-            dropperAnimator.SetTrigger("forceIndicatorExit");
+            pipetAnimator.SetTrigger(ForceExit);
+            dropperAnimator.SetTrigger(ForceIndicatorExit);
         }
     }
 
-    public void ResetTrigger(string name)
+    public void ResetTrigger(string trigger)
     {
-        analyte.GetComponent<Animator>().ResetTrigger(name);
+        analyteAnimator.ResetTrigger(trigger);
     }
 
     public void PlayAnalyteAnimation()
     {
-        analyte.GetComponent<Animator>().SetTrigger("put");
+        analyteAnimator.SetTrigger(Put);
     }
 
     public void ResetObject()
     {
         // handle of burette is not interactable
-        analyte.GetComponent<SetBuretteInteractive>().DisableBuretteTap();
+        burette.interactable = false;
 
         // resetAnalyteAnimation
-        analyte.GetComponent<Animator>().SetTrigger("reset");
-        showFluid.DisableMeshRenderer();
-        showFluid.ChangeMeshMaterial(colorEnum.colorless);
+        analyteAnimator.SetTrigger(Reset);
+        _showFluid.DisableMeshRenderer();
+        _showFluid.ChangeMeshMaterial(colorEnum.Colorless);
     }
 }

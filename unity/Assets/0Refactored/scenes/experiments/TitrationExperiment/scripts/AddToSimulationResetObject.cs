@@ -1,15 +1,10 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 
 public class AddToSimulationResetObject : MonoBehaviour
 {
-    void Awake()
+    private void Awake()
     {
-        if(gameObject.GetComponent<Slider>() != null)
-            SimulationController.Instance.AddNewResetObject(gameObject.GetComponent<Slider>().GetComponent<IResetObject>());
-
-        if (gameObject.GetComponent<Dropdown>() != null)
-            SimulationController.Instance.AddNewResetObject(gameObject.GetComponent<Dropdown>().GetComponent<IResetObject>());
+        var resetObject = GetComponent<IResetObject>();
+        if(resetObject != null) SimulationController.Instance.AddNewResetObject(resetObject);
     }
-
 }

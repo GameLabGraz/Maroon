@@ -5,149 +5,144 @@ using System.Linq;
 
 public class DrawGraph : MonoBehaviour, IResetObject
 {
+    [SerializeField] private AcidTitration acidTitration;
+    [SerializeField] private OpenBurette burette;
 
-    private AcidTitration acidTitrationScript;
-    private Dictionary<double, double> result = new Dictionary<double, double>();
-    private Dictionary<double, double> equivalenzPoint = new Dictionary<double, double>();
+    private Dictionary<double, double> _result = new Dictionary<double, double>();
+    private Dictionary<double, double> _equivalenzPoint = new Dictionary<double, double>();
 
-    private RectTransform rect;
-    private float height;
-    private float width;
+    private RectTransform _rect;
+    private float _height;
+    private float _width;
 
-    private readonly float maxMl = 100.0f;
-    private readonly float ph = 14.0f;
+    private const float MaxMl = 100.0f;
+    private const float Ph = 14.0f;
 
-    private int fluidRestrictionSpeed = 10;
-    private int counter = 0;
+    private int _fluidRestrictionSpeed = 10;
+    private int _counter;
 
-    private LineRenderer[] lineRenderers;
-    private LineRenderer equivalenzLine;
-    private LineRenderer titrationCurveLine;
-    private LineRenderer axisLine;
+    private LineRenderer[] _lineRenderers;
+    private LineRenderer _equivalenzLine;
+    private LineRenderer _titrationCurveLine;
+    private LineRenderer _axisLine;
 
-    [SerializeField] private GameObject burette;
-
-    private OpenBurette buretteScript;
-    private double equivalenzPointKey;
-    private ShowFluid showFluidScript;
+    private double _equivalenzPointKey;
+    private ShowFluid _showFluidScript;
 
     // Display Panel values
-    private double volumeAddedPh = 0f;
-    private double volumeAddedMl = 0f;
+    private double _volumeAddedPh;
+    private double _volumeAddedMl;
     
  
-    void Start()
+    private void Start()
     {
-        acidTitrationScript = GameObject.Find("TitrationController").GetComponent<AcidTitration>();
+        _showFluidScript = ShowFluid.Instance;
+        _rect = GetComponent<RectTransform>();
+        _height = _rect.rect.height;
+        _width = _rect.rect.width;
 
-        buretteScript = burette.GetComponent<OpenBurette>();
-        showFluidScript = ShowFluid.Instance;
-        rect = GetComponent<RectTransform>();
-        height = rect.rect.height;
-        width = rect.rect.width;
-
-        lineRenderers = GetComponentsInChildren<LineRenderer>();
-        titrationCurveLine = lineRenderers[0];
-        equivalenzLine = lineRenderers[1];
-        axisLine = lineRenderers[2];
+        _lineRenderers = GetComponentsInChildren<LineRenderer>();
+        _titrationCurveLine = _lineRenderers[0];
+        _equivalenzLine = _lineRenderers[1];
+        _axisLine = _lineRenderers[2];
 
         DrawAxisLines();
     }
 
     public void Initialise()
     {
-        result = acidTitrationScript.GetResultDictionary();
-        equivalenzPoint = acidTitrationScript.GetEquivalenzPointDictionary();
-        equivalenzLine.positionCount = 3;
+        _result = acidTitration.GetResultDictionary();
+        _equivalenzPoint = acidTitration.GetEquivalenzPointDictionary();
+        _equivalenzLine.positionCount = 3;
 
 
-        if (equivalenzPoint.Count > 0)
+        if (_equivalenzPoint.Count > 0)
         {
-            int temp = (int)(equivalenzPoint.Keys.First() * 10);
+            var temp = (int)(_equivalenzPoint.Keys.First() * 10);
 
-            if ((equivalenzPoint.Keys.First() * 10) % 1 != 0)
+            if ((_equivalenzPoint.Keys.First() * 10) % 1 != 0)
                 temp += 1;
 
-            equivalenzPointKey = temp / 10.00;
+            _equivalenzPointKey = temp / 10.00;
         }
     }
 
     public void ResetObject()
     {
-        titrationCurveLine.positionCount = 0;
+        _titrationCurveLine.positionCount = 0;
 
-        if (equivalenzLine != null)
-            equivalenzLine.positionCount = 0;
+        if (_equivalenzLine != null)
+            _equivalenzLine.positionCount = 0;
 
-        counter = 0;
-        volumeAddedMl = 0f;
-        volumeAddedPh = 0f;
+        _counter = 0;
+        _volumeAddedMl = 0f;
+        _volumeAddedPh = 0f;
 
-        result.Clear();
-        equivalenzPoint.Clear();
+        _result.Clear();
+        _equivalenzPoint.Clear();
     }
 
     public IEnumerator DrawLine()
     {
-        int prev_counter = 0;
+        var prevCounter = 0;
 
-        if (result.Count > 0)
+        if (_result.Count > 0)
         {
             // Titration curve
-            foreach (KeyValuePair<double, double> entry in result)
+            foreach (var entry in _result)
             {
-                if (!buretteScript.open)
-                    yield return new WaitUntil(() => buretteScript.open);
+                if (!burette.open)
+                    yield return new WaitUntil(() => burette.open);
 
-                if (counter != 0)
+                if (_counter != 0)
                 {
                     // Add the ml correctly: Possib. values to add [0.1 ml, 1 ml, 10 ml]
-                    if (fluidRestrictionSpeed != 1)
+                    if (_fluidRestrictionSpeed != 1)
                     {
-                        if (counter % (fluidRestrictionSpeed + prev_counter) == 0)
+                        if (_counter % (_fluidRestrictionSpeed + prevCounter) == 0)
                         {
-                            prev_counter = counter;
+                            prevCounter = _counter;
                             yield return new WaitForSeconds(0.1f);
                         }
                     }
                     else
                     {
-                        if (counter % (fluidRestrictionSpeed) == 0)
+                        if (_counter % (_fluidRestrictionSpeed) == 0)
                         {
-                            prev_counter = counter;
+                            prevCounter = _counter;
                             yield return new WaitForSeconds(0.1f);
                         }
                     }
                 }
 
-                float tmpMl = ((float)entry.Key / maxMl) * width;
-                float tmpPh = ((float)entry.Value / ph) * height;
+                var tmpMl = ((float)entry.Key / MaxMl) * _width;
+                var tmpPh = ((float)entry.Value / Ph) * _height;
 
                 // Renders line
-                titrationCurveLine.positionCount = counter + 1;
-                titrationCurveLine.SetPosition(counter, new Vector3(tmpMl, tmpPh, 0));
-                counter++;
+                _titrationCurveLine.positionCount = _counter + 1;
+                _titrationCurveLine.SetPosition(_counter, new Vector3(tmpMl, tmpPh, 0));
+                _counter++;
 
-                volumeAddedMl = entry.Key;
-                volumeAddedPh = entry.Value;
+                _volumeAddedMl = entry.Key;
+                _volumeAddedPh = entry.Value;
 
-                showFluidScript.DetermineAnalyteColor((float)entry.Value);
+                _showFluidScript.DetermineAnalyteColor((float)entry.Value);
 
-                if (equivalenzPoint.Count > 0)
+                if (_equivalenzPoint.Count > 0)
                 {
-                    if (entry.Key.Equals(equivalenzPointKey))
+                    if (entry.Key.Equals(_equivalenzPointKey))
                     {
                         // Equivalence point horizontal line
-                        foreach (KeyValuePair<double, double> entryEqu in equivalenzPoint)
+                        foreach (KeyValuePair<double, double> entryEqu in _equivalenzPoint)
                         {
-                            float tmpMl_ = ((float)entryEqu.Key / maxMl) * width;
-                            float tmpPh_ = ((float)entryEqu.Value / ph) * height;
+                            var tmpMl_ = ((float)entryEqu.Key / MaxMl) * _width;
+                            var tmpPh_ = ((float)entryEqu.Value / Ph) * _height;
 
-                            float equivalenzlinewidth = (5 / maxMl) * width;
+                            var equivalenzlinewidth = (5 / MaxMl) * _width;
 
-                            equivalenzLine.SetPosition(0, new Vector3(tmpMl_ - equivalenzlinewidth, tmpPh_, 0));
-                            equivalenzLine.SetPosition(1, new Vector3(tmpMl_, tmpPh_, 0));
-                            equivalenzLine.SetPosition(2, new Vector3(tmpMl_ + equivalenzlinewidth, tmpPh_, 0));
+                            _equivalenzLine.SetPosition(0, new Vector3(tmpMl_ - equivalenzlinewidth, tmpPh_, 0));
+                            _equivalenzLine.SetPosition(1, new Vector3(tmpMl_, tmpPh_, 0));
+                            _equivalenzLine.SetPosition(2, new Vector3(tmpMl_ + equivalenzlinewidth, tmpPh_, 0));
                             break;
                         }
                     }
@@ -161,13 +156,13 @@ public class DrawGraph : MonoBehaviour, IResetObject
         switch (value)
         {
             case 0:
-                fluidRestrictionSpeed = 1;
+                _fluidRestrictionSpeed = 1;
                 break;
             case 1:
-                fluidRestrictionSpeed = 10;
+                _fluidRestrictionSpeed = 10;
                 break;
             case 2:
-                fluidRestrictionSpeed = 100;
+                _fluidRestrictionSpeed = 100;
                 break;
             default:
                 break;
@@ -176,66 +171,66 @@ public class DrawGraph : MonoBehaviour, IResetObject
 
     public void GetVolumeAddedPh(MessageArgs args)
     {
-        args.value = (float)volumeAddedPh;
+        args.value = (float)_volumeAddedPh;
     }
 
     public void GetVolumeAddedMl(MessageArgs args)
     {
-        args.value = (float)volumeAddedMl;
+        args.value = (float)_volumeAddedMl;
     }
 
     public void DrawAxisLines()
     {
-        float heightHalf = height / 2;
+        var heightHalf = _height / 2;
 
-        int numberOfPosForTick = 4;
-        float tickSpacing = width / 10; // 10ml
-        float tickSpacingBig = width / 2; // 50ml
-        float counterForTicks = width;
-        int tmpCounter = 0;
+        var numberOfPosForTick = 4;
+        var tickSpacing = _width / 10; // 10ml
+        var tickSpacingBig = _width / 2; // 50ml
+        var counterForTicks = _width;
+        var tmpCounter = 0;
 
-        List<int> tickHeightSmall = new List<int>() {0, 5, -2, 0};
-        List<int> tickHeightBig = new List<int>() {0, 10, -10, 0};
+        var tickHeightSmall = new List<int> {0, 5, -2, 0};
+        var tickHeightBig = new List<int> {0, 10, -10, 0};
         
         // x-Axis
         while(counterForTicks > 0)
         {
-            axisLine.positionCount += numberOfPosForTick;
+            _axisLine.positionCount += numberOfPosForTick;
             for(int i = 0; i < numberOfPosForTick; i++)
             {
                 if (counterForTicks % tickSpacingBig == 0 && counterForTicks != 0)
                 {
-                    axisLine.SetPosition(tmpCounter + i, new Vector3(counterForTicks, tickHeightBig[i], 0));
+                    _axisLine.SetPosition(tmpCounter + i, new Vector3(counterForTicks, tickHeightBig[i], 0));
                 }
                 else
                 {
-                    axisLine.SetPosition(tmpCounter + i, new Vector3(counterForTicks, tickHeightSmall[i], 0));
+                    _axisLine.SetPosition(tmpCounter + i, new Vector3(counterForTicks, tickHeightSmall[i], 0));
                 }
             }
             counterForTicks -= tickSpacing;
             tmpCounter += numberOfPosForTick;
         }
 
-        axisLine.positionCount += 1;
-        axisLine.SetPosition(tmpCounter, new Vector3(0, 0, 0));
+        _axisLine.positionCount += 1;
+        _axisLine.SetPosition(tmpCounter, new Vector3(0, 0, 0));
         tmpCounter++;
         
-        tickSpacing = height / 14;
+        tickSpacing = _height / 14;
         counterForTicks = tickSpacing;
 
         // y-Axis
-        while (counterForTicks <= height)
+        while (counterForTicks <= _height)
         {
-            axisLine.positionCount += numberOfPosForTick;
-            for (int i = 0; i < numberOfPosForTick; i++)
+            _axisLine.positionCount += numberOfPosForTick;
+            for (var i = 0; i < numberOfPosForTick; i++)
             {
                 if (Mathf.Approximately(counterForTicks, heightHalf))
                 {
-                    axisLine.SetPosition(tmpCounter + i, new Vector3(tickHeightBig[i], counterForTicks, 0));
+                    _axisLine.SetPosition(tmpCounter + i, new Vector3(tickHeightBig[i], counterForTicks, 0));
                 }
                 else
                 {
-                    axisLine.SetPosition(tmpCounter + i, new Vector3(tickHeightSmall[i], counterForTicks, 0));
+                    _axisLine.SetPosition(tmpCounter + i, new Vector3(tickHeightSmall[i], counterForTicks, 0));
                 }
             }
             counterForTicks += tickSpacing;

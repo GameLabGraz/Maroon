@@ -2,21 +2,15 @@
 
 public class SetBuretteInteractive : MonoBehaviour 
 {
+    [SerializeField] private OpenBurette burette;
 
-    [SerializeField] private GameObject burette;
-    private OpenBurette openBuretteScript;
-
-    void Start () {
-        openBuretteScript = burette.gameObject.GetComponent<OpenBurette>();
-    }
-    
     public void EnableBuretteTap()
     {
-        openBuretteScript.interactable = true;
+        burette.interactable = true;
     }
 
     public void DisableBuretteTap()
     {
-        openBuretteScript.interactable = false;
+        burette.interactable = false;
     }
 }

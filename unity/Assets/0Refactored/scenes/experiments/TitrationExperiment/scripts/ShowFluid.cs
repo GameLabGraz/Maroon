@@ -2,35 +2,36 @@
 using UnityEngine;
 using System.Linq;
 
-
-public enum colorEnum { colorless, red, yellow, blue, green, orange };
+public enum colorEnum { Colorless, Red, Yellow, Blue, Green, Orange };
 
 public class Indicator
 {
-    public colorEnum lowColor { get; set; }
-    public colorEnum midColor { get; set; }
-    public colorEnum highColor { get; set; }
-    public float startNumber { get; set; }
-    public float endNumber { get; set; }
+    public colorEnum LowColor { get; set; }
+    public colorEnum MidColor { get; set; }
+    public colorEnum HighColor { get; set; }
+    public float StartNumber { get; set; }
+    public float EndNumber { get; set; }
 
     public Indicator(colorEnum newLowColor, colorEnum newMidColor, colorEnum newHighColor, float newStartNumber, float newEndnumber)
     {
-        this.lowColor = newLowColor;
-        this.midColor = newMidColor;
-        this.highColor = newHighColor;
-        this.startNumber = newStartNumber;
-        this.endNumber = newEndnumber;
+        LowColor = newLowColor;
+        MidColor = newMidColor;
+        HighColor = newHighColor;
+        StartNumber = newStartNumber;
+        EndNumber = newEndnumber;
     }
 }
 public class ShowFluid : MonoBehaviour
 {
     // Indicators
-    private readonly Dictionary<int, Indicator> indicators = new Dictionary<int, Indicator>() {
-         {0, new Indicator(colorEnum.colorless, colorEnum.red, colorEnum.red, 8.3f, 10f)}, // Phenolphtalein
-         {1, new Indicator(colorEnum.yellow, colorEnum.green, colorEnum.blue, 6f, 7.6f)},  // Bromothymol blue
-         {2, new Indicator(colorEnum.red, colorEnum.orange, colorEnum.yellow, 3.1f, 4.5f)} }; // Mehtyl orange
+    private readonly Dictionary<int, Indicator> indicators = new Dictionary<int, Indicator>
+    {
+         {0, new Indicator(colorEnum.Colorless, colorEnum.Red, colorEnum.Red, 8.3f, 10f)}, // Phenolphtalein
+         {1, new Indicator(colorEnum.Yellow, colorEnum.Green, colorEnum.Blue, 6f, 7.6f)},  // Bromothymol blue
+         {2, new Indicator(colorEnum.Red, colorEnum.Orange, colorEnum.Yellow, 3.1f, 4.5f)} // Mehtyl orange
+    };
  
-    private static Indicator currentInd;
+    private static Indicator _currentInd;
 
     [Header("Fluid Materials")]
     public Material FluidWaterBlue;
@@ -41,11 +42,11 @@ public class ShowFluid : MonoBehaviour
     public Material FluidWaterGreen;
 
     [SerializeField] private GameObject fluid;
-    private MeshRenderer meshRend;
-    private AcidTitration acidTitrationScript;
-    private Dictionary<double, double> result = new Dictionary<double, double>();
-    private static ShowFluid _instance;
 
+    private MeshRenderer _meshRend;
+    [SerializeField] private AcidTitration _acidTitrationScript;
+    private Dictionary<double, double> _result = new Dictionary<double, double>();
+    private static ShowFluid _instance;
 
     public static ShowFluid Instance
     {
@@ -58,26 +59,25 @@ public class ShowFluid : MonoBehaviour
     }
 
     // Use this for initialization
-    void Start()
+    private void Start()
     {
-        meshRend = fluid.GetComponent<MeshRenderer>();
-        meshRend.enabled = false;
-        acidTitrationScript = GameObject.Find("TitrationController").GetComponent<AcidTitration>();
+        _meshRend = fluid.GetComponent<MeshRenderer>();
+        _meshRend.enabled = false;
 
-        currentInd = indicators[0];
+        _currentInd = indicators[0];
     }
 
     // Show fluid of the analyte in erlenmeyer flask at beginning -- for Animator
     public void EnableMeshRenderer()
     {
-        if (acidTitrationScript.analyteText == "HNO3")
-            ChangeMeshMaterial(colorEnum.yellow);
-        meshRend.enabled = !meshRend.enabled;
+        if (_acidTitrationScript.analyteText == "HNO3")
+            ChangeMeshMaterial(colorEnum.Yellow);
+        _meshRend.enabled = !_meshRend.enabled;
     }
 
     public void DisableMeshRenderer()
     {
-        meshRend.enabled = false;
+        _meshRend.enabled = false;
     }
 
     // Change the material of analyte during titration
@@ -85,23 +85,23 @@ public class ShowFluid : MonoBehaviour
     {
         switch (color)
         {
-            case colorEnum.colorless:
-                meshRend.material = FluidWaterColorless;
+            case colorEnum.Colorless:
+                _meshRend.material = FluidWaterColorless;
                 break;
-            case colorEnum.blue:
-                meshRend.material = FluidWaterBlue;
+            case colorEnum.Blue:
+                _meshRend.material = FluidWaterBlue;
                 break;
-            case colorEnum.red:
-                meshRend.material = FluidWaterRed;
+            case colorEnum.Red:
+                _meshRend.material = FluidWaterRed;
                 break;
-            case colorEnum.yellow:
-                meshRend.material = FluidWaterYellow;
+            case colorEnum.Yellow:
+                _meshRend.material = FluidWaterYellow;
                 break;
-            case colorEnum.green:
-                meshRend.material = FluidWaterGreen;
+            case colorEnum.Green:
+                _meshRend.material = FluidWaterGreen;
                 break;
-            case colorEnum.orange:
-                meshRend.material = FluidWaterOrange;
+            case colorEnum.Orange:
+                _meshRend.material = FluidWaterOrange;
                 break;
             default:
                 break;
@@ -112,29 +112,29 @@ public class ShowFluid : MonoBehaviour
     // activated in Animator
     public void ActivateIndicatorColor()
     {
-        result = acidTitrationScript.GetResultDictionary();
-        if (result.Count > 0)
-            DetermineAnalyteColor((float)result.Values.First());
+        _result = _acidTitrationScript.GetResultDictionary();
+        if (_result.Count > 0)
+            DetermineAnalyteColor((float)_result.Values.First());
     }
 
     public void SetCurrentIndicator(int value)
     {
-        currentInd = indicators[value];
+        _currentInd = indicators[value];
     }
 
     public void DetermineAnalyteColor(float phValue)
     {
-        if (phValue >= currentInd.startNumber && phValue <= currentInd.endNumber)
+        if (phValue >= _currentInd.StartNumber && phValue <= _currentInd.EndNumber)
         {
-            ChangeMeshMaterial(currentInd.midColor);
+            ChangeMeshMaterial(_currentInd.MidColor);
         }
-        if (phValue > currentInd.endNumber)
+        if (phValue > _currentInd.EndNumber)
         {
-            ChangeMeshMaterial(currentInd.highColor);
+            ChangeMeshMaterial(_currentInd.HighColor);
         }
-        if (phValue < currentInd.startNumber)
+        if (phValue < _currentInd.StartNumber)
         {
-            ChangeMeshMaterial(currentInd.lowColor);
+            ChangeMeshMaterial(_currentInd.LowColor);
         }
     }
 }

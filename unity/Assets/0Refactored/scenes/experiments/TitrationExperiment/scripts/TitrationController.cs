@@ -1,113 +1,108 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class GameController : MonoBehaviour, IResetObject
+[RequireComponent(typeof(AcidTitration))]
+public class TitrationController : MonoBehaviour, IResetObject
 {
-
-    private AcidTitration acidTitrationScript;
-    private DrawGraph drawGraphScript;
-
+    private AcidTitration _acidTitration;
+    
     // Base settings
-    private double baseMol = 0.1f;
-    private double baseMl = 50f;
+    private float _baseMol = 0.1f;
+    private float _baseMl = 50f;
 
     // Acid settings
-    private double acidMol = 0.1f;
-    private double acidMl = 20f;
+    private float _acidMol = 0.1f;
+    private float _acidMl = 20f;
 
     // Titration settings
-    private double molTitrant = 0.1f;
-    private double mlTitrant = 50f;
-    private double molAnalyte = 0.1f;
-    private double mlAnalyte = 20f;
+    private float _molTitrant = 0.1f;
+    private float _mlTitrant = 50f;
+    private float _molAnalyte = 0.1f;
+    private float _mlAnalyte = 20f;
 
-    [SerializeField] private GameObject pipet;
+    [SerializeField] private PipetAnimation pipetAnimation;
+    [SerializeField] private DrawGraph drawGraph;
+    
     [SerializeField] private Toggle baseToggle;
     [SerializeField] private Toggle acidToggle;
     [SerializeField] private Button startButton;
 
-    private PipetAnimation pipetAnimation;
-    private Coroutine theCoroutine;
+    private Coroutine _coroutine;
 
-    void Start () 
+    private void Start () 
     {
-        acidTitrationScript = gameObject.GetComponent<AcidTitration>();
-        drawGraphScript = GameObject.Find("LineRenderer").GetComponent<DrawGraph>();
-        pipetAnimation = pipet.GetComponent<PipetAnimation>();
+        _acidTitration = GetComponent<AcidTitration>();
     }
 
     public void StartTitration()
     {
         startButton.interactable = false;
-        bool ready = InitialiseComponents();
+        var ready = InitialiseComponents();
 
         if (ready)
         {
             PlayPipetAnimation();
 
             // Calculation and Graph
-            acidTitrationScript.Calculation(molTitrant, mlTitrant, molAnalyte, mlAnalyte);
-            drawGraphScript.Initialise();
+            _acidTitration.Calculation(_molTitrant, _mlTitrant, _molAnalyte, _mlAnalyte);
+            drawGraph.Initialise();
 
             // Draw the Graph when burette is opened
-            theCoroutine = StartCoroutine(drawGraphScript.DrawLine());
+            _coroutine = StartCoroutine(drawGraph.DrawLine());
         }
     }
 
-    bool InitialiseComponents()
+    private bool InitialiseComponents()
     {
         if (baseToggle.isOn) // if base is titrant
         {
-            molTitrant = baseMol;
-            mlTitrant = baseMl;
-            molAnalyte = acidMol;
-            mlAnalyte = acidMl;
+            _molTitrant = _baseMol;
+            _mlTitrant = _baseMl;
+            _molAnalyte = _acidMol;
+            _mlAnalyte = _acidMl;
         }
         else // if acid is titrant
         {
-            molTitrant = acidMol;
-            mlTitrant = acidMl;
-            molAnalyte = baseMol;
-            mlAnalyte = baseMl;
+            _molTitrant = _acidMol;
+            _mlTitrant = _acidMl;
+            _molAnalyte = _baseMol;
+            _mlAnalyte = _baseMl;
         }
 
-        if (CheckForZeros(molTitrant))
+        if (CheckForZeros(_molTitrant))
             return false;
-        if (CheckForZeros(molAnalyte))
+        if (CheckForZeros(_molAnalyte))
             return false;
         return true;
     }
 
     public bool CheckForZeros(double value)
     {
-        if (value == 0.0)
-            return true;
-        else
-            return false;
+        return value == 0.0;
     }
 
     public void ResetObject()
     {
         // handle of burette is not interactable
         //pipetAnimation.analyte.GetComponent<SetBuretteInteractive>().disableBuretteTap();
-        acidTitrationScript.ResetEverything();
+        _acidTitration.ResetEverything();
 
-        baseMol = 0.1f;
-        baseMl = 50.0f;
+        _baseMol = 0.1f;
+        _baseMl = 50.0f;
 
-        acidMol = 0.1f;
-        acidMl = 20.0f;
+        _acidMol = 0.1f;
+        _acidMl = 20.0f;
 
         baseToggle.isOn = true;
         acidToggle.isOn = false;
 
         pipetAnimation.ResetPipet(true);
-        StopCoroutine(theCoroutine);
+        if(_coroutine != null) StopCoroutine(_coroutine);
         startButton.interactable = true;
     }
 
     // Animation: Pipet takes fluid and puts it into erlenmeyer flask
-    void PlayPipetAnimation()
+    private void PlayPipetAnimation()
     {
         pipetAnimation.ResetTrigger("reset");
         pipetAnimation.SetPipetBool(baseToggle.isOn);
@@ -118,7 +113,7 @@ public class GameController : MonoBehaviour, IResetObject
         if (!acidToggle.IsActive() && baseToggle.IsActive())
         {
             acidToggle.isOn = !acidToggle.isOn;
-            acidTitrationScript.ChangeAnalyteText(true);
+            _acidTitration.ChangeAnalyteText(true);
         }
     }
 
@@ -127,7 +122,7 @@ public class GameController : MonoBehaviour, IResetObject
         if (!baseToggle.IsActive() && acidToggle.IsActive())
         {
             baseToggle.isOn = !baseToggle.isOn;
-            acidTitrationScript.ChangeAnalyteText(false);
+            _acidTitration.ChangeAnalyteText(false);
         }
     }
 
@@ -139,22 +134,22 @@ public class GameController : MonoBehaviour, IResetObject
 
     public void SetMolBase(float value)
     {
-        baseMol = (double)value;
+        _baseMol = value;
     }
 
     public void SetMlBase(float value)
     {
-        baseMl = (double)value;
+        _baseMl = value;
     }
 
     public void SetMolAcid(float value)
     {
-        acidMol = (double)value;
+        _acidMol = value;
     }
 
     public void SetMlAcid(float value)
     {
-        acidMl = (double)value;
+        _acidMl = value;
     }
 
 }

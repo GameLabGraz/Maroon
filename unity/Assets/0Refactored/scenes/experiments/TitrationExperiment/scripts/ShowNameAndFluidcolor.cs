@@ -5,26 +5,24 @@ public class ShowNameAndFluidcolor : MonoBehaviour
 {
 
     [SerializeField] private Text label;
+    [SerializeField] private Renderer labelRend;
+    [SerializeField] private MeshRenderer fluidRend;
 
-    private ShowFluid showFluidScript;
-    private Renderer rend;
-    private MeshRenderer meshRend;
+    private ShowFluid _showFluidScript;
 
-    void Start () 
+    private void Start () 
     {
-        showFluidScript = ShowFluid.Instance;
-        rend = gameObject.transform.GetChild(2).gameObject.GetComponent<Renderer>(); // Label of ReagentBottle
-        meshRend = gameObject.transform.GetChild(1).gameObject.GetComponent<MeshRenderer>(); // Fluid of ReagentBottle
+        _showFluidScript = ShowFluid.Instance;
         ChangeName(label);
     }
     
     public void ChangeName (Text label) 
     {
-        rend.material.mainTexture = Resources.Load<Texture>("Sprites/" + label.text);
+        labelRend.material.mainTexture = Resources.Load<Texture>("Sprites/" + label.text);
 
         if (label.text.Equals("HNO3"))
-            meshRend.material = showFluidScript.FluidWaterYellow;
+            fluidRend.material = _showFluidScript.FluidWaterYellow;
         else
-            meshRend.material = showFluidScript.FluidWaterColorless;
+            fluidRend.material = _showFluidScript.FluidWaterColorless;
     }
 }

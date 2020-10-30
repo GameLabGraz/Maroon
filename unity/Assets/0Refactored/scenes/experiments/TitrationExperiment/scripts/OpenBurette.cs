@@ -2,28 +2,25 @@
 
 public class OpenBurette : MonoBehaviour 
 {
+    [SerializeField] private GameObject handle;
+    [SerializeField] private ParticleSystem particleSys;
 
-    private GameObject handle;
-    private ParticleSystem particleSys;
-
-    private Vector3 openHandlePos = new Vector3(-0.0652f, 0f, -0.0689f);
-    private Vector3 closedHandlePos;
-    private Vector3 openHandleRot = new Vector3(0, -90f, 0);
-    private Vector3 closedHandleRot;
+    private Vector3 _openHandlePos = new Vector3(-0.0652f, 0f, -0.0689f);
+    private Vector3 _closedHandlePos;
+    private Vector3 _openHandleRot = new Vector3(0, -90f, 0);
+    private Vector3 _closedHandleRot;
 
     [HideInInspector]
-    public bool interactable = false;
+    public bool interactable;
     [HideInInspector]
-    public bool open = false;
+    public bool open;
 
     private void Start()
     {
-        handle = gameObject.transform.GetChild(3).gameObject;
-        particleSys = gameObject.transform.GetChild(5).gameObject.GetComponent<ParticleSystem>();
         particleSys.Stop();
 
-        closedHandlePos = handle.transform.localPosition;
-        closedHandleRot = handle.transform.localEulerAngles;
+        _closedHandlePos = handle.transform.localPosition;
+        _closedHandleRot = handle.transform.localEulerAngles;
     }
 
     private void OnMouseDown()
@@ -31,8 +28,8 @@ public class OpenBurette : MonoBehaviour
         if (interactable)
         {
             particleSys.Play();
-            handle.transform.localRotation = Quaternion.Euler(openHandleRot);
-            handle.transform.localPosition = openHandlePos;
+            handle.transform.localRotation = Quaternion.Euler(_openHandleRot);
+            handle.transform.localPosition = _openHandlePos;
             open = true;
         }
     }
@@ -42,8 +39,8 @@ public class OpenBurette : MonoBehaviour
         if (interactable)
         {
             particleSys.Stop();
-            handle.transform.localRotation = Quaternion.Euler(closedHandleRot);
-            handle.transform.localPosition = closedHandlePos;
+            handle.transform.localRotation = Quaternion.Euler(_closedHandleRot);
+            handle.transform.localPosition = _closedHandlePos;
             open = false;
         }
     }
