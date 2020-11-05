@@ -28,6 +28,8 @@ namespace Maroon.Assessment
 
         public event FeedbackEvent FeedbackReceived;
 
+        public event ErrorEvent ErrorReported;
+
         public event ConnectedEvent Connected;
 
         public async Task ConnectAndRun()
