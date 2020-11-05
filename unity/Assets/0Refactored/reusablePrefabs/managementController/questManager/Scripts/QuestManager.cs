@@ -34,6 +34,8 @@ namespace QuestManager
 
         public void ReadQuestXml()
         {
+            if (string.IsNullOrEmpty(QuestsPath)) return;
+
             _mainQuests.Clear();
 
             var text = Resources.Load<TextAsset>(QuestsPath);
