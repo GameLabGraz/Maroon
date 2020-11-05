@@ -104,7 +104,7 @@ namespace Maroon.Assessment
 
         private void Update()
         {
-            _evalService.DoWork();
+            _evalService?.DoWork();
         }
 
         private void LateUpdate()

@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Antares.Evaluation;
-using Maroon.Assessment;
 using Maroon.Assessment.Handler;
 using Maroon.Physics;
 using UnityEngine;
 
-namespace Assessment
+namespace Maroon.Assessment
 {
     [Serializable]
     public class TestClass<T>
