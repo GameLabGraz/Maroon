@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Antares.Evaluation.LearningContent;
-using Maroon.Util;
 using UnityEngine;
+using Antares.Evaluation.LearningContent;
+using GEAR.Gadgets.RemoteTexture;
 
 namespace Maroon.Assessment.Content
 {
@@ -14,15 +14,14 @@ namespace Maroon.Assessment.Content
                 return;
 
             var imageComponent = GetComponent<UnityEngine.UI.Image>();
-            _ = LoadImage(imageComponent);
+            imageComponent.preserveAspect = true;
+
+            _ = LoadImage(imageComponent, image.Uri);
         }
 
-        private static async Task LoadImage(UnityEngine.UI.Image imageContent)
+        private static async Task LoadImage(UnityEngine.UI.Image imageComponent, string url)
         {
-            // Test Image
-            imageContent.sprite =
-                await RemoteTexture.GetSprite(
-                    "https://github.com/GamesResearchTUG/Maroon/blob/master/Assets/Images/logo.png?raw=true");
+            imageComponent.sprite = await RemoteTexture.GetSprite(url);
         }
     }
 }

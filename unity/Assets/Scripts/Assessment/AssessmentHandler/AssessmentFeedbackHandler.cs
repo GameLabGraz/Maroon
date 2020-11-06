@@ -125,6 +125,7 @@ namespace Maroon.Assessment.Handler
         
         protected virtual void HandleObjectDelete(AssessmentObject obj)
         {
+            Destroy(obj.gameObject);
         }
     }
 }
