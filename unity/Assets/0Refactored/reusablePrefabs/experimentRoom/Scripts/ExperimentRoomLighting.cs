@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using UnityEditor;
 #endif
 
-namespace Maroon.ExperimentRoom
+namespace Maroon.Lighting
 {
     [ExecuteInEditMode]
-    public class ExperimentRoomLightning : MonoBehaviour
+    public class ExperimentRoomLighting : MonoBehaviour
     {
         [SerializeField] private List<GameObject> ignoreForLightBaking;
 
