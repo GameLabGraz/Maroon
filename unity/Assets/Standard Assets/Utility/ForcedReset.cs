@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using UnityStandardAssets.CrossPlatformInput;
 
-[RequireComponent(typeof (GUITexture))]
+[RequireComponent(typeof (Text))]
 public class ForcedReset : MonoBehaviour
 {
     private void Update()

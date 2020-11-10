@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Maroon.Physics.Electromagnetism;
+using UnityEngine;
 
 [RequireComponent(typeof(FieldLine))]
 public class PlateFieldLine : MonoBehaviour

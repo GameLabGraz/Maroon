@@ -12,6 +12,7 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+using Maroon.Physics;
 
 /// <summary>
 /// Class for the vector field to represent the field
@@ -60,7 +61,7 @@ public class VectorField : MonoBehaviour
     }
 
     [SerializeField]
-    protected float fieldStrengthFactor = Teal.FieldStrengthFactor;
+    protected float fieldStrengthFactor = PhysicalConstants.FieldStrengthFactor;
 
     /// <summary>
     /// Initialization

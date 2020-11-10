@@ -7,7 +7,7 @@ public class SymmetricFieldLineManager : FieldLineManager
     /// The symmetry count, number of copies
     /// </summary>
     [SerializeField]
-    private int symmetryCount = Teal.DefaultNumFieldLines;
+    private int symmetryCount = 20;
 
     /// <summary>
     /// The symmetry axis
