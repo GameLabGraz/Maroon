@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Analytics;
+using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.SceneManagement;
 
 
@@ -39,6 +41,10 @@ public class GameManager : MonoBehaviour
         _version = DateTime.UtcNow.Date.ToString("yyyyMMdd");
 #else
         _version = Application.version;
+#endif
+
+#if UNITY_WEBGL
+        FindObjectOfType<PostProcessVolume>()?.gameObject.SetActive(false);
 #endif
 
         if (!_player)
