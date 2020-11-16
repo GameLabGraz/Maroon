@@ -9,22 +9,22 @@ public class QuickSort : SortingAlgorithm
     {
         get => new List<string>()
         {
-            "<style=\"header\">Quick Sort:</style>",
-            "<style=\"function\">quickSort</style>(l, r):",
-            "    <style=\"command\">if</style> l<r:",
-            "        k = <style=\"function\">partition</style>(l,r)",
-            "        <style=\"function\">quickSort</style>(l,k-<style=\"number\">1</style>)",
-            "        <style=\"function\">quickSort</style>(k+<style=\"number\">1</style>,r)",
+            "<style=\"sortingTitle\">Quick Sort:</style>",
+            "<style=\"sortingFunction\">quickSort</style>(l, r):",
+            "    <style=\"sortingKeyword\">if</style> l<r:",
+            "        k = <style=\"sortingFunction\">partition</style>(l,r)",
+            "        <style=\"sortingFunction\">quickSort</style>(l,k-<style=\"sortingNumber\">1</style>)",
+            "        <style=\"sortingFunction\">quickSort</style>(k+<style=\"sortingNumber\">1</style>,r)",
             "",
-            "<style=\"function\">partition</style>(l, r):",
-            "    p = A[r] <style=\"comment\">//pivot element</style>",
+            "<style=\"sortingFunction\">partition</style>(l, r):",
+            "    p = A[r] <style=\"sortingComment\">//pivot element</style>",
             "    k = l",
-            "    <style=\"command\">for</style> j = l .. r-<style=\"number\">1</style>:",
-            "        <style=\"command\">if</style> A[j]<=p:",
-            "            <style=\"function\">swap</style>(j,k)",
-            "            k = k+<style=\"number\">1</style>",
-            "    <style=\"function\">swap</style>(k,r)",
-            "    <style=\"command\">return</style> k"
+            "    <style=\"sortingKeyword\">for</style> j = l .. r-<style=\"sortingNumber\">1</style>:",
+            "        <style=\"sortingKeyword\">if</style> A[j]<=p:",
+            "            <style=\"sortingFunction\">swap</style>(j,k)",
+            "            k = k+<style=\"sortingNumber\">1</style>",
+            "    <style=\"sortingFunction\">swap</style>(k,r)",
+            "    <style=\"sortingKeyword\">return</style> k"
         };
     }
     
@@ -210,6 +210,8 @@ public class QuickSort : SortingAlgorithm
                 case SortingStateLine.SS_Line10: // for j in range(l,r):
                     break;
                 case SortingStateLine.SS_Line11: // if A[j] <= p:
+                    _requireWait = true;
+                    _algorithm.UndoGreater(j,_pInd);
                     break;
                 case SortingStateLine.SS_Line12: // swap(j,k)
                     if (j != k)
@@ -244,11 +246,6 @@ public class QuickSort : SortingAlgorithm
         public override int GetSubsetEnd()
         {
             return _variables["r"];
-        }
-
-        public override int GetPivot()
-        {
-            return _pInd;
         }
     }
 }

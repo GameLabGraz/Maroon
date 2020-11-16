@@ -9,28 +9,28 @@ public class HeapSort : SortingAlgorithm
     {
         get => new List<string>()
         {
-            "<style=\"header\">Heap Sort:</style>",
-            "n = <style=\"command\">len</style>(A)",
+            "<style=\"sortingTitle\">Heap Sort:</style>",
+            "n = <style=\"sortingKeyword\">len</style>(A)",
             "<i><color=#005500>//Build heap:</color></i>",
-            "<style=\"command\">for</style> i = <style=\"command\">len</style>(A)/<style=\"number\">2</style>+<style=\"number\">1</style> .. <style=\"number\">0</style>:",
-            "    <style=\"function\">heapify</style>(i,n)",
+            "<style=\"sortingKeyword\">for</style> i = <style=\"sortingKeyword\">len</style>(A)/<style=\"sortingNumber\">2</style>+<style=\"sortingNumber\">1</style> .. <style=\"sortingNumber\">0</style>:",
+            "    <style=\"sortingFunction\">heapify</style>(i,n)",
             "<i><color=#005500>//Iteratively take maximum:</color></i>",
-            "<style=\"command\">for</style> i = <style=\"command\">len</style>(A)-<style=\"number\">1</style> .. <style=\"number\">1</style>:",
-            "    <style=\"function\">swap</style>(0,i)",
-            "    n = n-<style=\"number\">1</style>",
-            "    <style=\"function\">heapify</style>(0,n)",
+            "<style=\"sortingKeyword\">for</style> i = <style=\"sortingKeyword\">len</style>(A)-<style=\"sortingNumber\">1</style> .. <style=\"sortingNumber\">1</style>:",
+            "    <style=\"sortingFunction\">swap</style>(0,i)",
+            "    n = n-<style=\"sortingNumber\">1</style>",
+            "    <style=\"sortingFunction\">heapify</style>(0,n)",
             "",
-            "<style=\"function\">heapify</style>(j, n):",
-            "    l = <style=\"number\">2</style>*j+<style=\"number\">1</style>",
-            "    r = <style=\"number\">2</style>*j+<style=\"number\">2</style>",
+            "<style=\"sortingFunction\">heapify</style>(j, n):",
+            "    l = <style=\"sortingNumber\">2</style>*j+<style=\"sortingNumber\">1</style>",
+            "    r = <style=\"sortingNumber\">2</style>*j+<style=\"sortingNumber\">2</style>",
             "    m = j",
-            "    <style=\"command\">if</style> l<n <style=\"command\">and</style> A[l]>A[j]:",
+            "    <style=\"sortingKeyword\">if</style> l<n <style=\"sortingKeyword\">and</style> A[l]>A[j]:",
             "        m = l",
-            "    <style=\"command\">if</style> r<n <style=\"command\">and</style> A[r]>A[m]:",
+            "    <style=\"sortingKeyword\">if</style> r<n <style=\"sortingKeyword\">and</style> A[r]>A[m]:",
             "        m = r",
-            "    <style=\"command\">if</style> m!=j:",
-            "        <style=\"function\">swap</style>(j,m)",
-            "        <style=\"function\">heapify</style>(m,n)"
+            "    <style=\"sortingKeyword\">if</style> m!=j:",
+            "        <style=\"sortingFunction\">swap</style>(j,m)",
+            "        <style=\"sortingFunction\">heapify</style>(m,n)"
         };
     }
     
@@ -75,7 +75,7 @@ public class HeapSort : SortingAlgorithm
             int m = _variables["m"];
             switch (_line)
             {
-                case SortingStateLine.SS_Line1: // n = <style=\"command\">len</style>(A)
+                case SortingStateLine.SS_Line1: // n = len(A)
                     // already done at initialisation
                     _nextLine = SortingStateLine.SS_Line3;
                     break;
@@ -226,6 +226,8 @@ public class HeapSort : SortingAlgorithm
             int i = _variables["i"];
             int j = _variables["j"];
             int m = _variables["m"];
+            int l = _variables["l"];
+            int r = _variables["r"];
             _requireWait = false;
             switch (_line)
             {
@@ -260,10 +262,14 @@ public class HeapSort : SortingAlgorithm
                 case SortingStateLine.SS_Line14: // m = j
                     break;
                 case SortingStateLine.SS_Line15: // if l<n and A[l]>A[j]:
+                    _requireWait = true;
+                    _algorithm.UndoGreater(l,j);
                     break;
                 case SortingStateLine.SS_Line16: // m = l
                     break;
                 case SortingStateLine.SS_Line17: // if r<n and A[r]>A[m]:
+                    _requireWait = true;
+                    _algorithm.UndoGreater(r,m);
                     break;
                 case SortingStateLine.SS_Line18: // m = r
                     break;

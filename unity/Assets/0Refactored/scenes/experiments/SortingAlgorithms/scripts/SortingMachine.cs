@@ -2,6 +2,7 @@
 using Antares.Evaluation.LearningContent;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class SortingMachine : MonoBehaviour
 {
@@ -22,7 +23,7 @@ public class SortingMachine : MonoBehaviour
     }
     
     public SortingMachineState sortingState = SortingMachineState.SMS_Pause;
-    public SortingLogic sortingLogic;
+    [FormerlySerializedAs("sortingLogic")] public oldSortingLogic oldSortingLogic;
     
     [Header("Speed Settings")]
     [Range(1f, 10f)]
@@ -65,26 +66,26 @@ public class SortingMachine : MonoBehaviour
                 break;
             case SortingMachineState.SMS_ToSource:
             {
-                if (moveHorizontal(sortingLogic.ArrayPlaces[_sourceIdx].transform.position.z, _currentDistancePerSecond))
+                if (moveHorizontal(oldSortingLogic.ArrayPlaces[_sourceIdx].transform.position.z, _currentDistancePerSecond))
                 {
                     sortingState = SortingMachineState.SMS_SourceDown;
                     
-                    var wholeDistance = Mathf.Abs(sortingLogic.ArrayPlaces[_sourceIdx].sortElement.transform.position.y - grapperPointer.transform.TransformPoint(Vector3.zero).y);
+                    var wholeDistance = Mathf.Abs(oldSortingLogic.ArrayPlaces[_sourceIdx].sortElement.transform.position.y - grapperPointer.transform.TransformPoint(Vector3.zero).y);
                     _currentDistancePerSecond = wholeDistance / (timePerMove * 0.15f);
                 }
             } break;
             case SortingMachineState.SMS_SourceDown:
             {
-                if (GoDown(sortingLogic.ArrayPlaces[_sourceIdx].sortElement.transform.position.y,
+                if (GoDown(oldSortingLogic.ArrayPlaces[_sourceIdx].sortElement.transform.position.y,
                     _currentDistancePerSecond))
                 {
                     //Grab Source
                     highlighter.SetActive(true);
-                    _movingElement = sortingLogic.ArrayPlaces[_sourceIdx].sortElement;
-                    sortingLogic.ArrayPlaces[_sourceIdx].sortElement = null;
+                    _movingElement = oldSortingLogic.ArrayPlaces[_sourceIdx].sortElement;
+                    oldSortingLogic.ArrayPlaces[_sourceIdx].sortElement = null;
                     _movingElement.transform.parent = smallGrapper.transform;
 
-                    sortingLogic.RearrangeArrayElements(timePerMove * 0.15f);
+                    oldSortingLogic.RearrangeArrayElements(timePerMove * 0.15f);
                     sortingState = SortingMachineState.SMS_SourceUp;
                 }
             } break;
@@ -93,28 +94,28 @@ public class SortingMachine : MonoBehaviour
                 {
                     sortingState = SortingMachineState.SMS_ToDestination;
                     
-                    var wholeDistance = Mathf.Abs(sortingLogic.ArrayPlaces[_destinationIdx].transform.position.z- grapperPointer.transform.position.z);
+                    var wholeDistance = Mathf.Abs(oldSortingLogic.ArrayPlaces[_destinationIdx].transform.position.z- grapperPointer.transform.position.z);
                     _currentDistancePerSecond = wholeDistance / (timePerMove * 0.3f);
                 } break;
             case SortingMachineState.SMS_ToDestination:
-                if (moveHorizontal(sortingLogic.ArrayPlaces[_destinationIdx].transform.position.z, _currentDistancePerSecond))
+                if (moveHorizontal(oldSortingLogic.ArrayPlaces[_destinationIdx].transform.position.z, _currentDistancePerSecond))
                 {
                     sortingState = SortingMachineState.SMS_DestinationDown;
-                    sortingLogic.MakePlaceInArray(_destinationIdx, timePerMove * 0.15f);
+                    oldSortingLogic.MakePlaceInArray(_destinationIdx, timePerMove * 0.15f);
                     
-                    var wholeDistance = Mathf.Abs(sortingLogic.ArrayPlaces[_destinationIdx].elementPlace.transform.position.y 
-                                                  + _movingElement.GetComponent<SortingElement>().size / 2f 
+                    var wholeDistance = Mathf.Abs(oldSortingLogic.ArrayPlaces[_destinationIdx].elementPlace.transform.position.y 
+                                                  + _movingElement.GetComponent<oldSortingElement>().size / 2f 
                                                   - grapperPointer.transform.TransformPoint(Vector3.zero).y);
                     _currentDistancePerSecond = wholeDistance / (timePerMove * 0.15f);
                 }
                 break;
             case SortingMachineState.SMS_DestinationDown:
-                if (GoDown(sortingLogic.ArrayPlaces[_destinationIdx].elementPlace.transform.position.y
-                           + _movingElement.GetComponent<SortingElement>().size / 2f, _currentDistancePerSecond))
+                if (GoDown(oldSortingLogic.ArrayPlaces[_destinationIdx].elementPlace.transform.position.y
+                           + _movingElement.GetComponent<oldSortingElement>().size / 2f, _currentDistancePerSecond))
                 {
                     //Place Element At Destination
                     highlighter.SetActive(false);
-                    sortingLogic.ArrayPlaces[_destinationIdx].SetSortElement(_movingElement, 1f);
+                    oldSortingLogic.ArrayPlaces[_destinationIdx].SetSortElement(_movingElement, 1f);
                     _movingElement = null;
                     sortingState = SortingMachineState.SMS_DestinationUp;
                 }
@@ -123,32 +124,32 @@ public class SortingMachine : MonoBehaviour
                 if (GoUp(_currentDistancePerSecond))
                 {
                     sortingState = SortingMachineState.SMS_Pause;
-                    sortingLogic.MoveFinished();
+                    oldSortingLogic.MoveFinished();
                 } break;
             case SortingMachineState.SMS_ElementDisappear:
             {
                 _waitTime = timePerMove / 2f;
-                sortingLogic.ArrayPlaces[_sourceIdx].Highlight(true);
-                sortingLogic.ArrayPlaces[_destinationIdx].Highlight(true);
-                sortingLogic.ArrayPlaces[_sourceIdx].StartDisappear(_waitTime);
-                sortingLogic.ArrayPlaces[_destinationIdx].StartDisappear(_waitTime);
+                oldSortingLogic.ArrayPlaces[_sourceIdx].Highlight(true);
+                oldSortingLogic.ArrayPlaces[_destinationIdx].Highlight(true);
+                oldSortingLogic.ArrayPlaces[_sourceIdx].StartDisappear(_waitTime);
+                oldSortingLogic.ArrayPlaces[_destinationIdx].StartDisappear(_waitTime);
                 sortingState = SortingMachineState.SMS_ElementAppear;
             } break;
             case SortingMachineState.SMS_ElementAppear:
             {
-                var tmp = sortingLogic.ArrayPlaces[_sourceIdx].sortElement;
-                sortingLogic.ArrayPlaces[_sourceIdx].SetSortElement(sortingLogic.ArrayPlaces[_destinationIdx].sortElement, -1f);
-                sortingLogic.ArrayPlaces[_destinationIdx].SetSortElement(tmp, -1f);
+                var tmp = oldSortingLogic.ArrayPlaces[_sourceIdx].sortElement;
+                oldSortingLogic.ArrayPlaces[_sourceIdx].SetSortElement(oldSortingLogic.ArrayPlaces[_destinationIdx].sortElement, -1f);
+                oldSortingLogic.ArrayPlaces[_destinationIdx].SetSortElement(tmp, -1f);
                 
                 _waitTime = timePerMove / 2f;
-                sortingLogic.ArrayPlaces[_sourceIdx].StartAppear(_waitTime);
-                sortingLogic.ArrayPlaces[_destinationIdx].StartAppear(_waitTime);
+                oldSortingLogic.ArrayPlaces[_sourceIdx].StartAppear(_waitTime);
+                oldSortingLogic.ArrayPlaces[_destinationIdx].StartAppear(_waitTime);
                 sortingState = SortingMachineState.SMS_ElementFinish;
             } break;
             case SortingMachineState.SMS_ElementFinish:
-                sortingLogic.ArrayPlaces[_sourceIdx].Highlight(false);
-                sortingLogic.ArrayPlaces[_destinationIdx].Highlight(false);
-                sortingLogic.MoveFinished();
+                oldSortingLogic.ArrayPlaces[_sourceIdx].Highlight(false);
+                oldSortingLogic.ArrayPlaces[_destinationIdx].Highlight(false);
+                oldSortingLogic.MoveFinished();
                 sortingState = SortingMachineState.SMS_Pause;
                 break;
             default:
@@ -164,7 +165,7 @@ public class SortingMachine : MonoBehaviour
         _destinationIdx = toIdx;
         sortingState = SortingMachineState.SMS_ToSource;
         
-        var wholeDistance = Mathf.Abs(sortingLogic.ArrayPlaces[_sourceIdx].sortElement.transform.position.z- grapperPointer.transform.position.z);
+        var wholeDistance = Mathf.Abs(oldSortingLogic.ArrayPlaces[_sourceIdx].sortElement.transform.position.z- grapperPointer.transform.position.z);
         _currentDistancePerSecond = wholeDistance / (timePerMove * 0.3f);
         return true;
     }
@@ -182,7 +183,7 @@ public class SortingMachine : MonoBehaviour
     public bool Compare(int element1, int element2)
     {
         //TODO: Animation with highlight and finish (so it takes same time as other operations)
-        sortingLogic.MoveFinished();
+        oldSortingLogic.MoveFinished();
         return true;
     }
 

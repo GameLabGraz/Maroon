@@ -11,7 +11,7 @@ public abstract class SortingAlgorithm
     
     protected LinkedList<SortingState> _executedStates = new LinkedList<SortingState>();
     
-    protected int _operations;
+    protected int _comparisons;
     protected int _swaps;
     
     protected enum SortingStateLine
@@ -63,8 +63,6 @@ public abstract class SortingAlgorithm
         
         public virtual int GetSubsetStart() {return -1;}
         public virtual int GetSubsetEnd() {return -1;}
-        
-        public virtual int GetPivot() {return -1;}
 
         public SortingState()
         {
@@ -158,22 +156,20 @@ public abstract class SortingAlgorithm
     {
         sortingLogic = logic;
         
-        _operations = 0;
+        _comparisons = 0;
         _swaps = 0;
     }
 
     public void ExecuteNextState()
     {
         SortingState newState = _executedStates.Last.Value.Next();
-        sortingLogic.setPseudocode((int)newState.GetLine());
+        sortingLogic.SetPseudocode((int)newState.GetLine());
         if (newState.GetLine() != SortingStateLine.SS_None)
         {
-            _operations++;
             newState.Execute();
             _executedStates.AddLast(newState);
-            sortingLogic.markCurrentSubset(newState.GetSubsetStart(), newState.GetSubsetEnd());
-            sortingLogic.markPivot(newState.GetPivot());
-            sortingLogic.displayIndices(newState.GetVariables());
+            sortingLogic.MarkCurrentSubset(newState.GetSubsetStart(), newState.GetSubsetEnd());
+            sortingLogic.DisplayIndices(newState.GetVariables());
             if (!newState._requireWait)
             {
                 sortingLogic.MoveFinished();
@@ -182,35 +178,33 @@ public abstract class SortingAlgorithm
         else
         {
             sortingLogic.MoveFinished();
-            sortingLogic.sortingFinished();
+            sortingLogic.SortingFinished();
         }
-        sortingLogic.setSwapsOperations(_swaps, _operations);
+        sortingLogic.SetSwapsComparisons(_swaps, _comparisons);
     }
 
     public void ExecutePreviousState()
     {
         if (_executedStates.Count == 1)
         {
-            _operations = 0;
+            _comparisons = 0;
             _swaps = 0;
             sortingLogic.MoveFinished();
-            sortingLogic.markCurrentSubset(-1,-1);
+            sortingLogic.MarkCurrentSubset(-1,-1);
             return;
         }
-        _operations--;
         SortingState stateToUndo = _executedStates.Last.Value;
         stateToUndo.Undo();
         _executedStates.RemoveLast();
         SortingState currentState = _executedStates.Last.Value;
-        sortingLogic.setPseudocode((int)currentState.GetLine());
-        sortingLogic.markCurrentSubset(currentState.GetSubsetStart(), currentState.GetSubsetEnd());
-        sortingLogic.markPivot(currentState.GetPivot());
-        sortingLogic.displayIndices(currentState.GetVariables());
+        sortingLogic.SetPseudocode((int)currentState.GetLine());
+        sortingLogic.MarkCurrentSubset(currentState.GetSubsetStart(), currentState.GetSubsetEnd());
+        sortingLogic.DisplayIndices(currentState.GetVariables());
         if (!stateToUndo._requireWait)
         {
             sortingLogic.MoveFinished();
         }
-        sortingLogic.setSwapsOperations(_swaps, _operations);
+        sortingLogic.SetSwapsComparisons(_swaps, _comparisons);
     }
 
     public void Swap(int ind1, int ind2)
@@ -239,6 +233,13 @@ public abstract class SortingAlgorithm
 
     public bool CompareGreater(int ind1, int ind2)
     {
+        _comparisons++;
         return sortingLogic.CompareGreater(ind1, ind2);
+    }
+
+    public void UndoGreater(int ind1, int ind2)
+    {
+        _comparisons--;
+        sortingLogic.CompareGreater(ind1, ind2);
     }
 }

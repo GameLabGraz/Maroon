@@ -8,15 +8,15 @@ public class ShellSort : SortingAlgorithm
     {
         get => new List<string>()
         {
-            "<style=\"header\">Shell Sort:</style>",
-            "gap = <style=\"command\">len</style>(A)/<style=\"number\">2</style>",
-            "<style=\"command\">while</style> gap><style=\"number\">0</style>:",
-            "    <style=\"command\">for</style> i = gap .. <style=\"command\">len</style>(A)-<style=\"number\">1</style>:",
+            "<style=\"sortingTitle\">Shell Sort:</style>",
+            "gap = <style=\"sortingKeyword\">len</style>(A)/<style=\"sortingNumber\">2</style>",
+            "<style=\"sortingKeyword\">while</style> gap><style=\"sortingNumber\">0</style>:",
+            "    <style=\"sortingKeyword\">for</style> i = gap .. <style=\"sortingKeyword\">len</style>(A)-<style=\"sortingNumber\">1</style>:",
             "        j = i",
-            "        <style=\"command\">while</style> A[j-gap]>A[j] <style=\"command\">and</style> j>=gap:",
-            "            <style=\"function\">swap</style>(j,j-gap)",
+            "        <style=\"sortingKeyword\">while</style> A[j-gap]>A[j] <style=\"sortingKeyword\">and</style> j>=gap:",
+            "            <style=\"sortingFunction\">swap</style>(j,j-gap)",
             "            j = j-gap",
-            "    gap = gap/<style=\"number\">2</style>"
+            "    gap = gap/<style=\"sortingNumber\">2</style>"
         };
     }
     
@@ -143,6 +143,10 @@ public class ShellSort : SortingAlgorithm
                 case SortingStateLine.SS_Line4: // j = i
                     break;
                 case SortingStateLine.SS_Line5: // while A[j-gap]>A[j] and j>=gap:
+                    if (j < gap)
+                        break;
+                    _requireWait = true;
+                    _algorithm.UndoGreater(j-gap,j);
                     break;
                 case SortingStateLine.SS_Line6: // swap(j,j-gap)
                     _requireWait = true;

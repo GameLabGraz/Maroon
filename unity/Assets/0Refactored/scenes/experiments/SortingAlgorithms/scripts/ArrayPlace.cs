@@ -1,130 +1,87 @@
-﻿using DissolveShader;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
 public class ArrayPlace : MonoBehaviour
 {
-    public float width = 0.3f;
-    public Transform elementPlace;
-    public GameObject sortElement = null; //this will be the place where we can access the sorting element (eg. the colored cube etc)
-    public GameObject highlighter = null;
+    [SerializeField] private TextMeshPro baseText;
+    [SerializeField] private TextMeshPro indexText;
+    [SerializeField] private GameObject highlight;
+
+    private SortingElement _element;
+
+    private void Awake()
+    {
+        _element = GetComponentInChildren<SortingElement>();
+    }
+
+    public void SetBaseNumber(int index)
+    {
+        baseText.text = index.ToString();
+    }
+
+    public int Value
+    {
+        get => _element.Value;
+        set => _element.Value = value;
+    }
+
+    public void HighlightForSeconds(float seconds)
+    {
+        StartCoroutine(HighlightForSecondsCoroutine(seconds));
+    }
+
+    private IEnumerator HighlightForSecondsCoroutine(float seconds)
+    {
+        highlight.SetActive(true);
+        yield return new WaitForSeconds(seconds);
+        highlight.SetActive(false);
+    }
+
+    public void FadeOutSeconds(float seconds)
+    {
+        _element.FadeOutSeconds(seconds);
+    }
     
-    private int _index = 0;
+    public void FadeInSeconds(float seconds)
+    {
+        _element.FadeInSeconds(seconds);
+    }
 
-    private bool _moveSortElement;
-    private float _distancePerSecond;
+    public void MoveOutRight(float seconds, Vector3 offset)
+    {
+        _element.MoveOutRight(seconds, offset);
+    }
     
-    public int Index {
-        get => _index;
-        set
-        {
-            if (value != _index)
-            {
-                _index = value;
-                UpdateIndex();
-            }
-        }
+    public void MoveOutLeft(float seconds, Vector3 offset)
+    {
+        _element.MoveOutLeft(seconds, offset);
+    }
+    
+    public void MoveInRight(float seconds, Vector3 offset)
+    {
+        _element.MoveInRight(seconds, offset);
+    }
+    
+    public void MoveInLeft(float seconds, Vector3 offset)
+    {
+        _element.MoveInLeft(seconds, offset);
     }
 
-    // Start is called before the first frame update
-    void Start()
+    public void MarkAsSubset()
     {
-        highlighter.SetActive(false);
-        UpdateIndex();
+        _element.SetDefaultColor();
+    }
+    
+    public void MarkAsNotSubset()
+    {
+        _element.SetGrayColor();
     }
 
-    private void Update()
+    public void SetIndexText(List<string> indices)
     {
-        if (!_moveSortElement || sortElement == null) return;
-        var sortPos = sortElement.transform.localPosition;
-        var refPos = elementPlace.localPosition;
-
-        sortPos.x = getNewPos(sortPos.x, refPos.x);
-        sortPos.z = getNewPos(sortPos.z, refPos.z);
-        sortElement.transform.localPosition = sortPos;
-
-        if (Mathf.Abs(sortPos.x - refPos.x) < 0.00001 && Mathf.Abs(sortPos.z - refPos.z) < 0.00001)
-        {
-            _moveSortElement = false;
-        }
-    }
-
-    private float getNewPos(float current, float reference)
-    {
-        if (current < reference)
-        {
-            current += _distancePerSecond * Time.deltaTime;
-            current = current > reference ? reference : current;
-        }
-        else
-        {
-            current -= _distancePerSecond * Time.deltaTime;
-            current = current < reference ? reference : current;
-        }
-
-        return current;
-    }
-
-    public void UpdateIndex(string indexText = "")
-    {
-        var textField = GetComponentInChildren<TextMeshPro>();
-        if (textField)
-        {
-            if (indexText == "" && textField.text != _index.ToString("0"))
-            {
-                textField.text = _index.ToString("0");
-            }
-            if (indexText != "" && textField.text != indexText)
-            {
-                textField.text = indexText;
-            }
-        }
-    }
-
-    public void SetSortElement(GameObject sortElement, float speed)
-    {
-        this.sortElement = sortElement;
-        this.sortElement.transform.parent = transform;
-
-        var sortPos = sortElement.transform.localPosition;
-        var refPos = elementPlace.localPosition;
-
-        if (speed < 0f)
-        {
-            refPos.y = sortPos.y;
-            sortElement.transform.localPosition = refPos;
-        }
-        else {
-            var max = Mathf.Max(Mathf.Abs(sortPos.x - refPos.x), Mathf.Abs(sortPos.z - refPos.z));
-
-            _distancePerSecond = max / speed;
-            _moveSortElement = true;
-        }
-    }
-
-    public int GetSortElementValue()
-    {
-        return sortElement.GetComponent<SortingElement>().number;
-    }
-
-    public void StartDisappear(float timeToDisappear)
-    {
-        if (!sortElement) return;
-        var dissolve = sortElement.GetComponent<DissolveHandler>();
-        if (!dissolve) return;
-        dissolve.StartDissolving(timeToDisappear, false);
-    }
-
-    public void StartAppear(float timeToAppear)
-    {
-        if (!sortElement) return;
-        var dissolve = sortElement.GetComponent<DissolveHandler>();
-        if (!dissolve) return;
-        dissolve.StartDissolving(timeToAppear, true);
-    }
-
-    public void Highlight(bool active = true)
-    {
-        highlighter.SetActive(active);
+        indexText.text = String.Join("\n", indices);
     }
 }

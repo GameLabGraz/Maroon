@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -9,7 +8,6 @@ public class SortingLogic : MonoBehaviour
 {
     public enum SortingAlgorithmType
     {
-        SA_None,
         SA_InsertionSort,
         SA_MergeSort,
         SA_HeapSort,
@@ -20,296 +18,194 @@ public class SortingLogic : MonoBehaviour
         SA_RadixSort,
         SA_ShellSort
     }
-    
-    [Header("Sorting Machine Settings")] 
-    public SortingMachine sortingMachine;
 
-    public SortingAlgorithmType sortingAlgorithm;
+    [SerializeField] private TextMeshProUGUI pseudoCodeText;
+    [SerializeField] private TextMeshProUGUI swapsText;
+    
+    private SortingAlgorithmType _sortingAlgorithm;
     private SortingAlgorithm _algorithm;
-    private bool _currentlySorting;
-    private bool _waitForMachine;
 
-    [Header("Display")] 
-    public TextMeshPro displayText;
+    private SortingArray _sortingArray;
     
-    [Header("Array Settings")] 
-    public ArrayPlace referencePlace;
-    [Range(0,10)]
-    public int arraySize = 10;
+    private bool _waitForMove;
 
-    [Header("Debugging Variables")]
-    [Range(0, 9)] public int moveFrom = 0;
-    [Range(0, 9)] public int moveTo = 0;
-    public bool move = false;
-    public bool swap = false;
-    
-    private List<ArrayPlace> _arrayPlaces = new List<ArrayPlace>();
-
-    public List<ArrayPlace> ArrayPlaces
+    private void Start()
     {
-        get => _arrayPlaces;
-    }
-    
-    
-    private int currentSize = 0;
-    
-    // Start is called before the first frame update
-    void Start()
-    {
-        if (referencePlace != null)
-            _arrayPlaces.Add(referencePlace);
-        CreateArray(arraySize);
+        _sortingArray = GetComponent<SortingArray>();
+        _sortingArray.Size = 10; //TODO
         
+        //TODO
+        _sortingAlgorithm = SortingAlgorithmType.SA_QuickSort;
         SetAlgorithm();
-        
-        _currentlySorting = true;
-        setPseudocode(-1);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if(currentSize != arraySize)
-            CreateArray(arraySize);
-
-        if (!_waitForMachine && _currentlySorting)
+        if (SimulationController.Instance.SimulationRunning && !_waitForMove)
         {
-            _waitForMachine = true;
+            _waitForMove = true;
             _algorithm.ExecuteNextState();
-        }
-
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            _currentlySorting = !_currentlySorting;
-        }
-        
-        //TODO: Just for debugging, should be done by controller
-        if (!_waitForMachine && Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            _waitForMachine = true;
-            _algorithm.ExecuteNextState();
-        }
-        if (!_waitForMachine && Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            _waitForMachine = true;
-            _algorithm.ExecutePreviousState();
-        }
-        
-        if (move) {
-            Insert(moveFrom, moveTo);
-        }
-
-        if (swap) {
-            Swap(moveFrom, moveTo);
         }
     }
+
+    #region GUI_Functions
+    
+    public void StepForward()
+    {
+        if (_waitForMove)
+            return;
+        _waitForMove = true;
+        _algorithm.ExecuteNextState();
+    }
+    
+    public void StepBackward()
+    {
+        if (_waitForMove)
+            return;
+        _waitForMove = true;
+        _algorithm.ExecutePreviousState();
+    }
+    
+    //TODO: Reset!
+
+    public void SetAlgorithmDropdown(int choice)
+    {
+        _sortingAlgorithm = (SortingAlgorithmType)choice;
+        SetAlgorithm();
+    }
+
+    public void SetArraySize(float size)
+    {
+        _sortingArray.Size = (int)size;
+    }
+    
+    #endregion
 
     private void SetAlgorithm()
     {
-        switch (sortingAlgorithm)
+        switch (_sortingAlgorithm)
         {
             case SortingAlgorithmType.SA_InsertionSort:
-                _algorithm = new InsertionSort(this, arraySize);
+                _algorithm = new InsertionSort(this, _sortingArray.Size);
                 break;
             case SortingAlgorithmType.SA_MergeSort:
-                _algorithm = new MergeSort(this, arraySize);
+                _algorithm = new MergeSort(this, _sortingArray.Size);
                 break;
             case SortingAlgorithmType.SA_HeapSort:
-                _algorithm = new HeapSort(this, arraySize);
+                _algorithm = new HeapSort(this, _sortingArray.Size);
                 break;
             case SortingAlgorithmType.SA_QuickSort:
-                _algorithm = new QuickSort(this, arraySize);
+                _algorithm = new QuickSort(this, _sortingArray.Size);
                 break;
             case SortingAlgorithmType.SA_SelectionSort:
-                _algorithm = new SelectionSort(this, arraySize);
+                _algorithm = new SelectionSort(this, _sortingArray.Size);
                 break;
             case SortingAlgorithmType.SA_BubbleSort:
                 //TODO _algorithm = new BubbleSort(this, arraySize);
                 break;
             case SortingAlgorithmType.SA_GnomeSort:
-                _algorithm = new GnomeSort(this, arraySize);
+                _algorithm = new GnomeSort(this, _sortingArray.Size);
                 break;
             case SortingAlgorithmType.SA_RadixSort:
                 //TODO _algorithm = new RadixSort(this, arraySize);
                 break;
             case SortingAlgorithmType.SA_ShellSort:
-                _algorithm = new ShellSort(this, arraySize);
+                _algorithm = new ShellSort(this, _sortingArray.Size);
                 break;
             default:
                 //TODO: No algorithm selected
                 break;
         }
+        
+        SetPseudocode(-1);
+        SetSwapsComparisons(0,0);
     }
 
-    public void CreateArray(int newSize)
+    public void MoveFinished()
     {
-        // + is going to left, - is going to right -> z-axis!
-        var currentPos = Vector3.zero;
-        var neededWidth = newSize * referencePlace.width;
-        currentPos.z += (neededWidth / 2f) - referencePlace.width / 2f;
-        
-        for (var i = 0; i < _arrayPlaces.Count; ++i)
-        {
-            var isActive = i < newSize;
-            _arrayPlaces[i].gameObject.SetActive(isActive);
-            if (!isActive) continue;
-            
-            //Set Position
-            _arrayPlaces[i].gameObject.transform.localPosition = currentPos;
-            _arrayPlaces[i].Index = i;
-            currentPos.z -= referencePlace.width;
-        }
+        _waitForMove = false;
+    }
 
-        while (_arrayPlaces.Count < newSize)
-        {
-            var newPlace = Instantiate(referencePlace.gameObject, referencePlace.transform.parent);
-            
-            newPlace.SetActive(true);
-            newPlace.transform.localPosition = currentPos;
-            var place = newPlace.GetComponent<ArrayPlace>();
-            place.Index = _arrayPlaces.Count;
-            currentPos.z -= referencePlace.width;
-            
-            _arrayPlaces.Add(place);
-        }
-
-        currentSize = arraySize;
+    public void SortingFinished()
+    {
+        SimulationController.Instance.StopSimulation();
+        MarkCurrentSubset(0 , _sortingArray.Size - 1);
     }
 
     public void Insert(int fromIdx, int toIdx)
     {
-        if (fromIdx < 0 || fromIdx >= _arrayPlaces.Count || !_arrayPlaces[fromIdx].isActiveAndEnabled ||
-            toIdx < 0 || toIdx >= _arrayPlaces.Count || !_arrayPlaces[toIdx].isActiveAndEnabled ||
+        if (fromIdx < 0 || fromIdx >= _sortingArray.Size ||
+            toIdx < 0 || toIdx >= _sortingArray.Size ||
             fromIdx == toIdx)
         {
-            _waitForMachine = false;
+            MoveFinished();
             return;
         }
-        
-        sortingMachine.Insert(fromIdx, toIdx);
-        move = false;
-    }
-
-    public void Swap(int idx1, int idx2)
-    {
-        if (idx1 < 0 || idx1 >= _arrayPlaces.Count || !_arrayPlaces[idx1].isActiveAndEnabled ||
-            idx2 < 0 || idx2 >= _arrayPlaces.Count || !_arrayPlaces[idx2].isActiveAndEnabled ||
-            idx1 == idx2)
-        {
-            _waitForMachine = false;
-            return;
-        }
-
-        sortingMachine.Swap(idx1, idx2);
-        swap = false;
+        _sortingArray.Insert(fromIdx, toIdx);
     }
     
+    public void Swap(int fromIdx, int toIdx)
+    {
+        if (fromIdx < 0 || fromIdx >= _sortingArray.Size ||
+            toIdx < 0 || toIdx >= _sortingArray.Size ||
+            fromIdx == toIdx)
+        {
+            MoveFinished();
+            return;
+        }
+        _sortingArray.Swap(fromIdx, toIdx);
+    }
+
     public bool CompareGreater(int idx1, int idx2)
     {
-        if (idx1 < 0 || idx1 >= _arrayPlaces.Count || !_arrayPlaces[idx1].isActiveAndEnabled ||
-            idx2 < 0 || idx2 >= _arrayPlaces.Count || !_arrayPlaces[idx2].isActiveAndEnabled ||
+        if (idx1 < 0 || idx1 >= _sortingArray.Size ||
+            idx2 < 0 || idx2 >= _sortingArray.Size ||
             idx1 == idx2)
         {
-            _waitForMachine = false;
+            MoveFinished();
             return false;
         }
-
-        sortingMachine.Compare(idx1, idx2);
-        return _arrayPlaces[idx1].GetSortElementValue() > _arrayPlaces[idx2].GetSortElementValue();
-    }
-    
-    public void MoveFinished()
-    {
-        _waitForMachine = false;
+        return _sortingArray.CompareGreater(idx1, idx2);
     }
 
-    public void sortingFinished()
+    public void SetPseudocode(int highlightLine)
     {
-        _currentlySorting = false;
-        markCurrentSubset(-1,-1);
-    }
-
-    public void RearrangeArrayElements(float speed)
-    {
-        for (var i = 0; i < ArrayPlaces.Count - 1; ++i)
-        {
-            if (ArrayPlaces[i].sortElement != null) continue;
-            
-            ArrayPlaces[i].SetSortElement(_arrayPlaces[i+1].sortElement, speed);
-            _arrayPlaces[i + 1].sortElement = null;
-        }
-    }
-
-    public void MakePlaceInArray(int index, float speed)
-    {
-        for (var i = ArrayPlaces.Count - 1; i > index; --i)
-        {
-            if(ArrayPlaces[i].sortElement != null) continue;
-            
-            ArrayPlaces[i].SetSortElement(_arrayPlaces[i-1].sortElement, speed);
-            ArrayPlaces[i - 1].sortElement = null;
-        }
-    }
-    
-    public void setSwapsOperations(int swaps, int operations)
-    {
-        sortingMachine.setSwapsOperations(swaps, operations);
-    }
-
-    public void setPseudocode(int highlightLine)
-    {
-        //TODO: Maybe we can find a nicer highlight?
         string highlightedCode = "";
         for (int i = 0; i < _algorithm.pseudocode.Count; ++i)
         {
             if (i == highlightLine)
             {
-                highlightedCode += "<mark=#a8eb0055>" + _algorithm.pseudocode[i] + "\n" + "</mark>";
+                highlightedCode += "<color=#810000>></color> " + _algorithm.pseudocode[i] + "\n";
             }
             else
             {
-                highlightedCode += _algorithm.pseudocode[i] + "\n";
+                highlightedCode += "  " + _algorithm.pseudocode[i] + "\n";
             }
         }
-        displayText.text = highlightedCode;
+
+        pseudoCodeText.text = highlightedCode;
     }
 
-    public void markCurrentSubset(int from, int to) // exclude to
+    public void MarkCurrentSubset(int from, int to)
     {
-        for (int i = 0; i < ArrayPlaces.Count; ++i)
+        if (from < 0 || from >= _sortingArray.Size ||
+            to < 0 || to >= _sortingArray.Size)
         {
-            if (i >= from && i <= to)
-            {
-                ArrayPlaces[i].sortElement.GetComponent<SortingElement>().markActiveColor();
-            }
-            else
-            {
-                ArrayPlaces[i].sortElement.GetComponent<SortingElement>().resetToDefaultColor();
-            }
+            return;
         }
+        _sortingArray.MarkCurrentSubset(from, to);
     }
 
-    public void markPivot(int pivot)
+    public void SetSwapsComparisons(int swaps, int comparisons)
     {
-        if (pivot != -1)
-        {
-            ArrayPlaces[pivot].sortElement.GetComponent<SortingElement>().SetPivotColor();
-        }
+        string text = "";
+        text += "<b>Swaps:</b> <pos=50%>" + swaps + "\n";
+        text += "<b>Comparisons:</b> <pos=50%>" + comparisons;
+        swapsText.text = text;
     }
-
-    public void displayIndices(Dictionary<string, int> indices)
+    
+    public void DisplayIndices(Dictionary<string, int> indices)
     {
-        for (int i = 0; i < _arrayPlaces.Count; ++i)
-        {
-            List<string> matches = new List<string>();
-            foreach (var pair in indices)
-            {
-                if (pair.Value == i)
-                {
-                    matches.Add("<b><color=#006666>" + pair.Key + "</color></b>");
-                }
-            }
-            _arrayPlaces[i].UpdateIndex(string.Join(",", matches));
-        }
+        _sortingArray.DisplayIndices(indices);
     }
 }

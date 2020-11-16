@@ -8,14 +8,14 @@ public class SelectionSort : SortingAlgorithm
     {
         get => new List<string>()
         {
-            "<style=\"header\">Selection Sort:</style>",
-            "<style=\"command\">for</style> i = <style=\"number\">0</style> .. <style=\"command\">len</style>(A)-<style=\"number\">1</style>:",
+            "<style=\"sortingTitle\">Selection Sort:</style>",
+            "<style=\"sortingKeyword\">for</style> i = <style=\"sortingNumber\">0</style> .. <style=\"sortingKeyword\">len</style>(A)-<style=\"sortingNumber\">1</style>:",
             "    m = i",
-            "    <style=\"command\">for</style> j = i+<style=\"number\">1</style> .. <style=\"command\">len</style>(A)-<style=\"number\">1</style>:",
-            "        <style=\"command\">if</style> A[j]<A[m]:",
+            "    <style=\"sortingKeyword\">for</style> j = i+<style=\"sortingNumber\">1</style> .. <style=\"sortingKeyword\">len</style>(A)-<style=\"sortingNumber\">1</style>:",
+            "        <style=\"sortingKeyword\">if</style> A[j]<A[m]:",
             "            m = j",
-            "    <style=\"command\">if</style> i != m:",
-            "         <style=\"function\">swap</style>(i,m)",
+            "    <style=\"sortingKeyword\">if</style> i != m:",
+            "         <style=\"sortingFunction\">swap</style>(i,m)",
         };
     }
     
@@ -129,6 +129,7 @@ public class SelectionSort : SortingAlgorithm
         public override void Undo()
         {
             int i = _variables["i"];
+            int j = _variables["j"];
             int m = _variables["m"];
             _requireWait = false;
             switch (_line)
@@ -140,6 +141,8 @@ public class SelectionSort : SortingAlgorithm
                 case SortingStateLine.SS_Line3: // for j = i+1 .. len(A)-1:
                     break;
                 case SortingStateLine.SS_Line4: // if A[j]<A[m]:
+                    _requireWait = true;
+                    _algorithm.UndoGreater(j,m);
                     break;
                 case SortingStateLine.SS_Line5: // m = j
                     break;

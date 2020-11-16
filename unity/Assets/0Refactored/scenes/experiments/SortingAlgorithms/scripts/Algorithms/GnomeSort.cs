@@ -8,15 +8,15 @@ public class GnomeSort : SortingAlgorithm
     {
         get => new List<string>()
         {
-            "<style=\"header\">Gnome Sort:</style>",
-            "<style=\"command\">while</style> i<<style=\"command\">len</style>(A):",
-            "    <style=\"command\">if</style> i==<style=\"number\">0</style>:",
-            "        i = i+<style=\"number\">1</style>",
-            "    <style=\"command\">if</style> A[i]>=A[i-1]:",
-            "        i = i+<style=\"number\">1</style>",
-            "    <style=\"command\">else:</style>",
-            "        <style=\"function\">swap</style>(i,i-1)",
-            "        i = i-<style=\"number\">1</style>"
+            "<style=\"sortingTitle\">Gnome Sort:</style>",
+            "<style=\"sortingKeyword\">while</style> i<<style=\"sortingKeyword\">len</style>(A):",
+            "    <style=\"sortingKeyword\">if</style> i==<style=\"sortingNumber\">0</style>:",
+            "        i = i+<style=\"sortingNumber\">1</style>",
+            "    <style=\"sortingKeyword\">if</style> A[i]>=A[i-1]:",
+            "        i = i+<style=\"sortingNumber\">1</style>",
+            "    <style=\"sortingKeyword\">else:</style>",
+            "        <style=\"sortingFunction\">swap</style>(i,i-1)",
+            "        i = i-<style=\"sortingNumber\">1</style>"
         };
     }
     
@@ -125,6 +125,8 @@ public class GnomeSort : SortingAlgorithm
                 case SortingStateLine.SS_Line3: // i = i+1
                     break;
                 case SortingStateLine.SS_Line4: // if A[i]>=A[i-1]:
+                    _requireWait = true;
+                    _algorithm.UndoGreater(i,i-1);
                     break;
                 case SortingStateLine.SS_Line5: // i = i+1
                     break;

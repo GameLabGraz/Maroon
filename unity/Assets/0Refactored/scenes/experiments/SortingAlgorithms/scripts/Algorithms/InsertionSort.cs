@@ -8,12 +8,12 @@ public class InsertionSort : SortingAlgorithm
     {
         get => new List<string>()
         {
-            "<style=\"header\">Insertion Sort:</style>",
-            "<style=\"command\">for</style> i = <style=\"number\">1</style> .. <style=\"command\">len</style>(A)-<style=\"number\">1</style>:",
-            "    j = i-<style=\"number\">1</style>",
-            "    <style=\"command\">while</style> A[j]>A[i] <style=\"command\">and</style> j>=<style=\"number\">0</style>:",
-            "        j = j-<style=\"number\">1</style>",
-            "    <style=\"function\">insert</style>(i,j+<style=\"number\">1</style>)"
+            "<style=\"sortingTitle\">Insertion Sort:</style>",
+            "<style=\"sortingKeyword\">for</style> i = <style=\"sortingNumber\">1</style> .. <style=\"sortingKeyword\">len</style>(A)-<style=\"sortingNumber\">1</style>:",
+            "    j = i-<style=\"sortingNumber\">1</style>",
+            "    <style=\"sortingKeyword\">while</style> A[j]>A[i] <style=\"sortingKeyword\">and</style> j>=<style=\"sortingNumber\">0</style>:",
+            "        j = j-<style=\"sortingNumber\">1</style>",
+            "    <style=\"sortingFunction\">insert</style>(i,j+<style=\"sortingNumber\">1</style>)"
         };
     }
     
@@ -115,6 +115,8 @@ public class InsertionSort : SortingAlgorithm
                 case SortingStateLine.SS_Line2: // j = i-1
                     break;
                 case SortingStateLine.SS_Line3: // while A[j]>A[i] and j>=0:
+                    _requireWait = true;
+                    _algorithm.UndoGreater(j,i);
                     break;
                 case SortingStateLine.SS_Line4: // j = j-1
                     break;

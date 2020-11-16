@@ -9,22 +9,22 @@ public class MergeSort : SortingAlgorithm
     {
         get => new List<string>()
         {
-            "<style=\"header\">Merge Sort:</style>",
-            "<style=\"function\">mergeSort</style>(i, j):",
-            "    <style=\"command\">if</style> i<j:",
-            "        k = (i+j)/<style=\"number\">2</style>",
-            "        <style=\"function\">mergeSort</style>(i,k)",
-            "        <style=\"function\">mergeSort</style>(k+<style=\"number\">1</style>,j)",
-            "        <style=\"function\">merge</style>(i,k,j)",
+            "<style=\"sortingTitle\">Merge Sort:</style>",
+            "<style=\"sortingFunction\">mergeSort</style>(i, j):",
+            "    <style=\"sortingKeyword\">if</style> i<j:",
+            "        k = (i+j)/<style=\"sortingNumber\">2</style>",
+            "        <style=\"sortingFunction\">mergeSort</style>(i,k)",
+            "        <style=\"sortingFunction\">mergeSort</style>(k+<style=\"sortingNumber\">1</style>,j)",
+            "        <style=\"sortingFunction\">merge</style>(i,k,j)",
             "",
-            "<style=\"function\">merge</style>(i, k, j):",
+            "<style=\"sortingFunction\">merge</style>(i, k, j):",
             "    r = k+1",
             "    l = i",
-            "    <style=\"command\">while</style> l<r <style=\"command\">and</style> r<=j:",
-            "        <style=\"command\">if</style> A[r]<A[l]:",
-            "            <style=\"function\">insert</style>(r,l)",
-            "            r = r+<style=\"number\">1</style>",
-            "        l = l+<style=\"number\">1</style>"
+            "    <style=\"sortingKeyword\">while</style> l<r <style=\"sortingKeyword\">and</style> r<=j:",
+            "        <style=\"sortingKeyword\">if</style> A[r]<A[l]:",
+            "            <style=\"sortingFunction\">insert</style>(r,l)",
+            "            r = r+<style=\"sortingNumber\">1</style>",
+            "        l = l+<style=\"sortingNumber\">1</style>"
         };
     }
     
@@ -191,6 +191,8 @@ public class MergeSort : SortingAlgorithm
                 case SortingStateLine.SS_Line11: // while l < r and r <= j:
                     break;
                 case SortingStateLine.SS_Line12: // if A[r] < A[l]:
+                    _requireWait = true;
+                    _algorithm.UndoGreater(l,r);
                     break;
                 case SortingStateLine.SS_Line13: // insert(A,r,l)
                     _algorithm.UndoInsert(r,l);
