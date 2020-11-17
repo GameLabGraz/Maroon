@@ -7,7 +7,7 @@ using Valve.VR.InteractionSystem;
 public abstract class SortingAlgorithm
 {
     public SortingLogic sortingLogic;
-    abstract public List<string> pseudocode { get; }
+    abstract public List<string> Pseudocode { get; }
     
     protected LinkedList<SortingState> _executedStates = new LinkedList<SortingState>();
     
@@ -63,6 +63,10 @@ public abstract class SortingAlgorithm
         
         public virtual int GetSubsetStart() {return -1;}
         public virtual int GetSubsetEnd() {return -1;}
+        
+        public virtual Dictionary<string, int> GetIndexVariables() { return null; }
+        
+        public virtual Dictionary<string, int> GetExtraVariables() { return null; }
 
         public SortingState()
         {
@@ -107,7 +111,7 @@ public abstract class SortingAlgorithm
             
         }
 
-        protected SortingState initializeNext(SortingState next)
+        protected SortingState InitializeNext(SortingState next)
         {
             next._line = _nextLine;
             next._nextValues = null;
@@ -123,19 +127,14 @@ public abstract class SortingAlgorithm
         {
             return _line;
         }
-
-        public Dictionary<string, int> GetVariables()
-        {
-            return _variables;
-        }
         
-        protected void enterSubroutineWithExitLine(SortingStateLine line)
+        protected void EnterSubroutineWithExitLine(SortingStateLine line)
         {
             _continueLine.Push(line);
             _valueStore.Push(new Dictionary<string, int>(_variables));
         }
 
-        protected void leaveSubroutine()
+        protected void LeaveSubroutine()
         {
             if (_continueLine.Count == 0)
             {
@@ -147,7 +146,7 @@ public abstract class SortingAlgorithm
             if (_nextLine == SortingStateLine.SS_None)
             {
                 //leave more than one subroutine at once
-                leaveSubroutine();
+                LeaveSubroutine();
             }
         }
     }
@@ -163,13 +162,13 @@ public abstract class SortingAlgorithm
     public void ExecuteNextState()
     {
         SortingState newState = _executedStates.Last.Value.Next();
-        sortingLogic.SetPseudocode((int)newState.GetLine());
+        sortingLogic.SetPseudocode((int)newState.GetLine(), newState.GetExtraVariables());
         if (newState.GetLine() != SortingStateLine.SS_None)
         {
             newState.Execute();
             _executedStates.AddLast(newState);
             sortingLogic.MarkCurrentSubset(newState.GetSubsetStart(), newState.GetSubsetEnd());
-            sortingLogic.DisplayIndices(newState.GetVariables());
+            sortingLogic.DisplayIndices(newState.GetIndexVariables());
             if (!newState._requireWait)
             {
                 sortingLogic.MoveFinished();
@@ -197,9 +196,9 @@ public abstract class SortingAlgorithm
         stateToUndo.Undo();
         _executedStates.RemoveLast();
         SortingState currentState = _executedStates.Last.Value;
-        sortingLogic.SetPseudocode((int)currentState.GetLine());
+        sortingLogic.SetPseudocode((int)currentState.GetLine(), currentState.GetExtraVariables());
         sortingLogic.MarkCurrentSubset(currentState.GetSubsetStart(), currentState.GetSubsetEnd());
-        sortingLogic.DisplayIndices(currentState.GetVariables());
+        sortingLogic.DisplayIndices(currentState.GetIndexVariables());
         if (!stateToUndo._requireWait)
         {
             sortingLogic.MoveFinished();

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class SortingArray : MonoBehaviour
+public class SortingArray : MonoBehaviour, IResetObject
 {
     [SerializeField] private GameObject arrayPlace;
     
@@ -63,7 +63,15 @@ public class SortingArray : MonoBehaviour
             _elements.Remove(lastElement);
         }
     }
-    
+
+    public void ResetObject()
+    {
+        foreach (var element in _elements)
+        {
+            element.Value = Random.Range(1, 100);
+        }
+    }
+
     public void Insert(int fromIdx, int toIdx)
     {
         StartCoroutine(InsertCoroutine(fromIdx, toIdx));
@@ -187,11 +195,6 @@ public class SortingArray : MonoBehaviour
             }
         }
     }
-
-    public void SetSwapsOperations(int swaps, int operations)
-    {
-        //TODO
-    }
     
     public void DisplayIndices(Dictionary<string, int> indices)
     {
@@ -213,5 +216,10 @@ public class SortingArray : MonoBehaviour
     {
         yield return new WaitForSeconds(timePerMove);
         _sortingLogic.MoveFinished();
+    }
+
+    public int GetElementValue(int index)
+    {
+        return _elements[index].Value;
     }
 }

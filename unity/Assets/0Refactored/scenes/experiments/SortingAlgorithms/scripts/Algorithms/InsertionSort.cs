@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class InsertionSort : SortingAlgorithm
 {
-    public override List<string> pseudocode
+    public override List<string> Pseudocode
     {
         get => new List<string>()
         {
@@ -36,7 +36,7 @@ public class InsertionSort : SortingAlgorithm
         public override SortingState Next()
         {
             InsertionSortingState next = new InsertionSortingState(this);
-            return initializeNext(next);
+            return InitializeNext(next);
         }
         
         public override SortingState Copy()
@@ -127,6 +127,13 @@ public class InsertionSort : SortingAlgorithm
                 case SortingStateLine.SS_None:
                     break;
             }
+        }
+        
+        public override Dictionary<string, int> GetIndexVariables()
+        {
+            var indexVariables = new Dictionary<string, int>(_variables);
+            indexVariables.Remove("n");
+            return indexVariables;
         }
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GnomeSort : SortingAlgorithm
 {
-    public override List<string> pseudocode
+    public override List<string> Pseudocode
     {
         get => new List<string>()
         {
@@ -38,7 +38,7 @@ public class GnomeSort : SortingAlgorithm
         public override SortingState Next()
         {
             GnomeSortingState next = new GnomeSortingState(this);
-            return initializeNext(next);
+            return InitializeNext(next);
         }
         
         public override SortingState Copy()
@@ -141,6 +141,13 @@ public class GnomeSort : SortingAlgorithm
                 case SortingStateLine.SS_None:
                     break;
             }
+        }
+
+        public override Dictionary<string, int> GetIndexVariables()
+        {
+            var indexVariables = new Dictionary<string, int>(_variables);
+            indexVariables.Remove("n");
+            return indexVariables;
         }
     }
 }

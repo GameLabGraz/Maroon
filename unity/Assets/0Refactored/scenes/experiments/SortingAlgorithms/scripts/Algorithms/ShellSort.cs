@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ShellSort : SortingAlgorithm
 {
-    public override List<string> pseudocode
+    public override List<string> Pseudocode
     {
         get => new List<string>()
         {
@@ -40,7 +40,7 @@ public class ShellSort : SortingAlgorithm
         public override SortingState Next()
         {
             ShellSortingState next = new ShellSortingState(this);
-            return initializeNext(next);
+            return InitializeNext(next);
         }
         
         public override SortingState Copy()
@@ -159,6 +159,21 @@ public class ShellSort : SortingAlgorithm
                 case SortingStateLine.SS_None:
                     break;
             }
+        }
+        
+        public override Dictionary<string, int> GetIndexVariables()
+        {
+            var indexVariables = new Dictionary<string, int>(_variables);
+            indexVariables.Remove("n");
+            indexVariables.Remove("gap");
+            return indexVariables;
+        }
+        
+        public override Dictionary<string, int> GetExtraVariables()
+        {
+            var extraVariables = new Dictionary<string, int>();
+            extraVariables.Add("gap", _variables["gap"]);
+            return extraVariables;
         }
     }
 }

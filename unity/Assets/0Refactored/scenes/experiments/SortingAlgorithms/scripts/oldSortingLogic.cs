@@ -260,15 +260,15 @@ public class oldSortingLogic : MonoBehaviour
     {
         //TODO: Maybe we can find a nicer highlight?
         string highlightedCode = "";
-        for (int i = 0; i < _algorithm.pseudocode.Count; ++i)
+        for (int i = 0; i < _algorithm.Pseudocode.Count; ++i)
         {
             if (i == highlightLine)
             {
-                highlightedCode += "<mark=#a8eb0055>" + _algorithm.pseudocode[i] + "\n" + "</mark>";
+                highlightedCode += "<mark=#a8eb0055>" + _algorithm.Pseudocode[i] + "\n" + "</mark>";
             }
             else
             {
-                highlightedCode += _algorithm.pseudocode[i] + "\n";
+                highlightedCode += _algorithm.Pseudocode[i] + "\n";
             }
         }
         displayText.text = highlightedCode;

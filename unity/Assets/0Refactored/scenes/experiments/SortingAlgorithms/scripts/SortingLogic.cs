@@ -43,8 +43,11 @@ public class SortingLogic : MonoBehaviour
     {
         if (SimulationController.Instance.SimulationRunning && !_waitForMove)
         {
-            _waitForMove = true;
-            _algorithm.ExecuteNextState();
+            while (_waitForMove == false && SimulationController.Instance.SimulationRunning)
+            {
+                _waitForMove = true;
+                _algorithm.ExecuteNextState();
+            }
         }
     }
 
@@ -65,8 +68,6 @@ public class SortingLogic : MonoBehaviour
         _waitForMove = true;
         _algorithm.ExecutePreviousState();
     }
-    
-    //TODO: Reset!
 
     public void SetAlgorithmDropdown(int choice)
     {
@@ -77,6 +78,7 @@ public class SortingLogic : MonoBehaviour
     public void SetArraySize(float size)
     {
         _sortingArray.Size = (int)size;
+        SetAlgorithm();
     }
     
     #endregion
@@ -117,8 +119,9 @@ public class SortingLogic : MonoBehaviour
                 break;
         }
         
-        SetPseudocode(-1);
+        SetPseudocode(-1, null);
         SetSwapsComparisons(0,0);
+        DisplayIndices(new Dictionary<string, int>());
     }
 
     public void MoveFinished()
@@ -168,18 +171,39 @@ public class SortingLogic : MonoBehaviour
         return _sortingArray.CompareGreater(idx1, idx2);
     }
 
-    public void SetPseudocode(int highlightLine)
+    public void SetPseudocode(int highlightLine, Dictionary<string, int> extraVars)
     {
         string highlightedCode = "";
-        for (int i = 0; i < _algorithm.pseudocode.Count; ++i)
+        for (int i = 0; i < _algorithm.Pseudocode.Count; ++i)
         {
             if (i == highlightLine)
             {
-                highlightedCode += "<color=#810000>></color> " + _algorithm.pseudocode[i] + "\n";
+                highlightedCode += "<color=#810000>></color> " + _algorithm.Pseudocode[i] + "\n";
             }
             else
             {
-                highlightedCode += "  " + _algorithm.pseudocode[i] + "\n";
+                highlightedCode += "  " + _algorithm.Pseudocode[i] + "\n";
+            }
+        }
+
+        if (extraVars != null)
+        {
+            foreach (var extraVar in extraVars)
+            {
+                if (extraVar.Value == -1)
+                    break;
+                if (extraVar.Key == "pInd")
+                {
+                    highlightedCode += "\n<style=\"sortingFunction\">" + "p" +
+                                       "</style> : <style=\"sortingNumber\">" + _sortingArray.GetElementValue(extraVar.Value) +
+                                       "</style>";
+                }
+                else
+                {
+                    highlightedCode += "\n<style=\"sortingFunction\">" + extraVar.Key +
+                                       "</style> : <style=\"sortingNumber\">" + extraVar.Value +
+                                       "</style>";
+                }
             }
         }
 

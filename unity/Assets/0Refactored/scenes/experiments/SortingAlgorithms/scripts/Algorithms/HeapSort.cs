@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class HeapSort : SortingAlgorithm
 {
-    public override List<string> pseudocode
+    public override List<string> Pseudocode
     {
         get => new List<string>()
         {
@@ -56,7 +56,7 @@ public class HeapSort : SortingAlgorithm
         public override SortingState Next()
         {
             HeapSortingState next = new HeapSortingState(this);
-            return initializeNext(next);
+            return InitializeNext(next);
         }
         
         public override SortingState Copy()
@@ -95,7 +95,7 @@ public class HeapSort : SortingAlgorithm
                     }
                     break;
                 case SortingStateLine.SS_Line4: // heapify(i,n)
-                    enterSubroutineWithExitLine(SortingStateLine.SS_Line3);
+                    EnterSubroutineWithExitLine(SortingStateLine.SS_Line3);
                     _nextValues = new Dictionary<string, int>(_variables);
                     _nextValues["j"] = i;
                     _nextLine = SortingStateLine.SS_Line11;
@@ -123,7 +123,7 @@ public class HeapSort : SortingAlgorithm
                     _nextLine = SortingStateLine.SS_Line9;
                     break;
                 case SortingStateLine.SS_Line9: // heapify(0,n)
-                    enterSubroutineWithExitLine(SortingStateLine.SS_Line6);
+                    EnterSubroutineWithExitLine(SortingStateLine.SS_Line6);
                     _nextValues = new Dictionary<string, int>(_variables);
                     _nextValues["j"] = 0;
                     _nextLine = SortingStateLine.SS_Line11;
@@ -194,7 +194,7 @@ public class HeapSort : SortingAlgorithm
                     }
                     else
                     {
-                        leaveSubroutine();
+                        LeaveSubroutine();
                     }
                     break;
                 case SortingStateLine.SS_Line20: // swap(j,m)
@@ -203,7 +203,7 @@ public class HeapSort : SortingAlgorithm
                     _nextLine = SortingStateLine.SS_Line21;
                     break;
                 case SortingStateLine.SS_Line21: // heapify(m,n)
-                    enterSubroutineWithExitLine(SortingStateLine.SS_None);
+                    EnterSubroutineWithExitLine(SortingStateLine.SS_None);
                     _nextValues = new Dictionary<string, int>(_variables);
                     _nextValues["j"] = m;
                     _nextLine = SortingStateLine.SS_Line11;
@@ -284,6 +284,13 @@ public class HeapSort : SortingAlgorithm
                 case SortingStateLine.SS_None:
                     break;
             }
+        }
+        
+        public override Dictionary<string, int> GetIndexVariables()
+        {
+            var indexVariables = new Dictionary<string, int>(_variables);
+            indexVariables.Remove("n");
+            return indexVariables;
         }
     }
 }

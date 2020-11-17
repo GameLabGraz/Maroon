@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class MergeSort : SortingAlgorithm
 {
-    public override List<string> pseudocode
+    public override List<string> Pseudocode
     {
         get => new List<string>()
         {
@@ -49,7 +49,7 @@ public class MergeSort : SortingAlgorithm
         public override SortingState Next()
         {
             MergeSortingState next = new MergeSortingState(this);
-            return initializeNext(next);
+            return InitializeNext(next);
         }
         
         public override SortingState Copy()
@@ -77,7 +77,7 @@ public class MergeSort : SortingAlgorithm
                     }
                     else
                     {
-                        leaveSubroutine();
+                        LeaveSubroutine();
                     }
                     break;
                 case SortingStateLine.SS_Line3: // k = (i + j) // 2
@@ -85,19 +85,19 @@ public class MergeSort : SortingAlgorithm
                     _nextLine = SortingStateLine.SS_Line4;
                     break;
                 case SortingStateLine.SS_Line4: // mergeSort(A,i,k)
-                    enterSubroutineWithExitLine(SortingStateLine.SS_Line5);
+                    EnterSubroutineWithExitLine(SortingStateLine.SS_Line5);
                     _nextValues = new Dictionary<string, int>(_variables);
                     _nextValues["j"] = k;
                     _nextLine = SortingStateLine.SS_Line1;
                     break;
                 case SortingStateLine.SS_Line5: // mergeSort(A,k+1,j)
-                    enterSubroutineWithExitLine(SortingStateLine.SS_Line6);
+                    EnterSubroutineWithExitLine(SortingStateLine.SS_Line6);
                     _nextValues = new Dictionary<string, int>(_variables);
                     _nextValues["i"] = k+1;
                     _nextLine = SortingStateLine.SS_Line1;
                     break;
                 case SortingStateLine.SS_Line6: // merge(A,i,k,j)
-                    enterSubroutineWithExitLine(SortingStateLine.SS_None);
+                    EnterSubroutineWithExitLine(SortingStateLine.SS_None);
                     _nextLine = SortingStateLine.SS_Line8;
                     break;
                 case SortingStateLine.SS_Line7: // 
@@ -120,7 +120,7 @@ public class MergeSort : SortingAlgorithm
                     }
                     else
                     {
-                        leaveSubroutine();
+                        LeaveSubroutine();
                     }
                     break;
                 case SortingStateLine.SS_Line12: // if A[r] < A[l]:
@@ -215,6 +215,11 @@ public class MergeSort : SortingAlgorithm
         public override int GetSubsetEnd()
         {
             return _variables["j"];
+        }
+        
+        public override Dictionary<string, int> GetIndexVariables()
+        {
+            return _variables;
         }
     }
 }
