@@ -1,4 +1,5 @@
 ﻿using Maroon.Physics;
+using GEAR.Localization;
 using TMPro;
 using UnityEngine;
 
@@ -20,9 +21,34 @@ public class VoltmeterDifferences : MonoBehaviour
     public QuantityBool voltmeterEnabled = true;
 
     private bool _isOn;
-    
-    // Start is called before the first frame update
-    void Start()
+
+    private Vector3 positiveMeasuringPosition => GetMeasuringPosition(positiveMeasuringPoint);
+    private Vector3 negativeMeasuringPosition => GetMeasuringPosition(negativeMeasuringPoint);
+
+    private Vector3 GetMeasuringPosition(VoltmeterMeasuringPoint measuringPoint)
+    {
+        if (_coulombLogic.IsIn2dMode())
+        {
+            var pos = measuringPoint.transform.position;
+            var position = _coulombLogic.xOrigin2d.position;
+            return new Vector3(_coulombLogic.WorldToCalcSpace(pos.x - position.x),
+                _coulombLogic.WorldToCalcSpace(pos.y - position.y),
+                0);
+        }
+        else
+        {
+            var pos = measuringPoint.transform.localPosition;
+            var position = _coulombLogic.xOrigin3d.localPosition;
+            return new Vector3(_coulombLogic.WorldToCalcSpace(pos.x - position.x, true),
+                _coulombLogic.WorldToCalcSpace(pos.y - position.y, true),
+                _coulombLogic.WorldToCalcSpace(pos.z - position.z, true));
+        }
+    }
+
+    private float MeasuringPointDistance => _coulombLogic.WorldToCalcSpace(Vector3.Distance(positiveMeasuringPoint.transform.position, negativeMeasuringPoint.transform.position));
+
+
+    private void Start()
     {
         if(textMeshPro == null)
             textMeshPro = GetComponent<TextMeshPro>();
@@ -38,14 +64,18 @@ public class VoltmeterDifferences : MonoBehaviour
         _isOn = onPerDefault;
     }
 
-    // Update is called once per frame
     private void Update()
     {
         if (!_isOn || (!positiveMeasuringPoint.isActiveAndEnabled || !negativeMeasuringPoint.isActiveAndEnabled))
             SetText("--- " + (showUnitInText? GetCurrentUnit() : ""));
         else
         {
-            SetText(GetDifference() + (showUnitInText? " " + GetCurrentUnit() : ""));
+            var displayText = $"{LanguageManager.Instance.GetString("Voltage")}: {GetDifference()} {(showUnitInText ? " " + GetCurrentUnit() : "")}\n\n" +
+                              $"{LanguageManager.Instance.GetString("VoltmeterPositiveKey")}: {positiveMeasuringPosition}\n" +
+                              $"{LanguageManager.Instance.GetString("VoltmeterNegativeKey")}: {negativeMeasuringPosition}\n" +
+                              $"{LanguageManager.Instance.GetString("Distance")}: {MeasuringPointDistance:0.##} m";
+
+            SetText(displayText);
         }
 
         if (!showUnitInText && textMeshProUnit)
