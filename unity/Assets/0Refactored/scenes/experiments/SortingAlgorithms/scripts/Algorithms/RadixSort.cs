@@ -8,22 +8,22 @@ public class RadixSort : SortingAlgorithm
     {
         get => new List<string>()
         {
-            "Radix Sort:",
-            "key = max(A)",
-            "exp = 1",
-            "while key / exp > 1:",
-            "    countingSort(exp)",
-            "    exp = exp * 10",
+            "<style=\"sortingTitle\">Radix Sort:</style>",
+            "key = <style=\"sortingFunction\">max</style>(A)",
+            "exp = <style=\"sortingNumber\">1</style>",
+            "<style=\"sortingKeyword\">while</style> key / exp > <style=\"sortingNumber\">1</style>:",
+            "    <style=\"sortingFunction\">countingSort</style>(exp)",
+            "    exp = exp * <style=\"sortingNumber\">10</style>",
             "",
-            "countingSort(exp):",
-            "    for i = 0 .. len(A)-1:",
-            "        b = (A[i]//exp)%10",
-            "        moveToBucket(i,b)",
-            "    i = 0",
-            "    for b = 0 .. 10:",
-            "        if bucket[b] not empty:",
-            "            moveFromBucket(i,b)",
-            "            i = i + 1"
+            "<style=\"sortingFunction\">countingSort</style>(exp):",
+            "    <style=\"sortingKeyword\">for</style> i = <style=\"sortingNumber\">0</style> .. <style=\"sortingKeyword\">len</style>(A)-<style=\"sortingNumber\">1</style>:",
+            "        b = (A[i]//exp)%<style=\"sortingNumber\">10</style>",
+            "        <style=\"sortingFunction\">moveToBucket</style>(i,b)",
+            "    i = <style=\"sortingNumber\">0</style>",
+            "    <style=\"sortingKeyword\">for</style> b = <style=\"sortingNumber\">0</style> .. <style=\"sortingNumber\">10</style>:",
+            "        <style=\"sortingKeyword\">if</style> bucket[b] <style=\"sortingKeyword\">not</style> empty:",
+            "            <style=\"sortingFunction\">moveFromBucket</style>(i,b)",
+            "            i = i + <style=\"sortingNumber\">1</style>"
         };
     }
     
