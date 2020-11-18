@@ -104,7 +104,7 @@ public class SortingLogic : MonoBehaviour
                 _algorithm = new SelectionSort(this, _sortingArray.Size);
                 break;
             case SortingAlgorithmType.SA_BubbleSort:
-                //TODO _algorithm = new BubbleSort(this, arraySize);
+                _algorithm = new BubbleSort(this, _sortingArray.Size);
                 break;
             case SortingAlgorithmType.SA_GnomeSort:
                 _algorithm = new GnomeSort(this, _sortingArray.Size);
