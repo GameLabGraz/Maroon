@@ -117,7 +117,7 @@ public abstract class SortingAlgorithm
             next._nextValues = null;
             if (_nextValues != null)
             {
-                next._variables = _nextValues;
+                next._variables = new Dictionary<string, int>(_nextValues);
             }
 
             return next;
@@ -240,5 +240,58 @@ public abstract class SortingAlgorithm
     {
         _comparisons--;
         sortingLogic.CompareGreater(ind1, ind2);
+    }
+
+    public int GetMaxValue()
+    {
+        _comparisons++;
+        return sortingLogic.GetMaxValue();
+    }
+    
+    public void UndoGetMaxValue()
+    {
+        _comparisons--;
+        sortingLogic.GetMaxValue();
+    }
+    
+    public int GetBucketNumber(int ind, int exp)
+    {
+        _comparisons++;
+        return sortingLogic.GetBucketNumber(ind, exp);
+    }
+    
+    public void UndoGetBucketNumber(int ind, int exp)
+    {
+        _comparisons--;
+        sortingLogic.GetBucketNumber(ind, exp);
+    }
+
+    public void MoveToBucket(int ind, int bucket)
+    {
+        _swaps++;
+        sortingLogic.MoveToBucket(ind, bucket);
+    }
+    
+    public void MoveFromBucket(int ind, int bucket)
+    {
+        _swaps++;
+        sortingLogic.MoveFromBucket(ind, bucket);
+    }
+
+    public void UndoMoveToBucket(int ind, int bucket)
+    {
+        _swaps--;
+        sortingLogic.UndoMoveToBucket(ind, bucket);
+    }
+    
+    public void UndoMoveFromBucket(int ind, int bucket)
+    {
+        _swaps--;
+        sortingLogic.UndoMoveFromBucket(ind, bucket);
+    }
+    
+    public bool BucketEmpty(int bucket)
+    {
+        return sortingLogic.BucketEmpty(bucket);
     }
 }

@@ -35,7 +35,7 @@ public class SortingLogic : MonoBehaviour
         _sortingArray.Size = 10; //TODO
         
         //TODO
-        _sortingAlgorithm = SortingAlgorithmType.SA_QuickSort;
+        _sortingAlgorithm = SortingAlgorithmType.SA_RadixSort;
         SetAlgorithm();
     }
 
@@ -85,6 +85,7 @@ public class SortingLogic : MonoBehaviour
 
     private void SetAlgorithm()
     {
+        _sortingArray.HideBuckets();
         switch (_sortingAlgorithm)
         {
             case SortingAlgorithmType.SA_InsertionSort:
@@ -109,13 +110,14 @@ public class SortingLogic : MonoBehaviour
                 _algorithm = new GnomeSort(this, _sortingArray.Size);
                 break;
             case SortingAlgorithmType.SA_RadixSort:
-                //TODO _algorithm = new RadixSort(this, arraySize);
+                _sortingArray.ShowBuckets();
+                _algorithm = new RadixSort(this, _sortingArray.Size);
                 break;
             case SortingAlgorithmType.SA_ShellSort:
                 _algorithm = new ShellSort(this, _sortingArray.Size);
                 break;
             default:
-                //TODO: No algorithm selected
+                //No algorithm selected
                 break;
         }
         
@@ -169,6 +171,72 @@ public class SortingLogic : MonoBehaviour
             return false;
         }
         return _sortingArray.CompareGreater(idx1, idx2);
+    }
+
+    public int GetMaxValue()
+    {
+        return _sortingArray.GetMaxValue();
+    }
+    
+    public int GetBucketNumber(int ind, int exp)
+    {
+        if (ind < 0 || ind > _sortingArray.Size)
+        {
+            MoveFinished();
+            return -1;
+        }
+        return _sortingArray.GetBucketNumber(ind, exp);
+    }
+    
+    public void MoveToBucket(int idx, int bucket)
+    {
+        if (idx < 0 || idx >= _sortingArray.Size ||
+            bucket < 0 || bucket >= 10)
+        {
+            MoveFinished();
+            return;
+        }
+        _sortingArray.MoveToBucket(idx, bucket);
+    }
+    
+    public void UndoMoveToBucket(int idx, int bucket)
+    {
+        if (idx < 0 || idx >= _sortingArray.Size ||
+            bucket < 0 || bucket >= 10 ||
+            _sortingArray.BucketEmpty(bucket))
+        {
+            MoveFinished();
+            return;
+        }
+        _sortingArray.UndoMoveToBucket(idx, bucket);
+    }
+    
+    public void MoveFromBucket(int idx, int bucket)
+    {
+        if (idx < 0 || idx >= _sortingArray.Size ||
+            bucket < 0 || bucket >= 10 ||
+            _sortingArray.BucketEmpty(bucket))
+        {
+            MoveFinished();
+            return;
+        }
+        _sortingArray.MoveFromBucket(idx, bucket);
+    }
+    
+    public void UndoMoveFromBucket(int idx, int bucket)
+    {
+        if (idx < 0 || idx >= _sortingArray.Size ||
+            bucket < 0 || bucket >= 10)
+        {
+            MoveFinished();
+            return;
+        }
+        _sortingArray.UndoMoveFromBucket(idx, bucket);
+    }
+
+    public bool BucketEmpty(int bucket)
+    {
+        return _sortingArray.BucketEmpty(bucket);
     }
 
     public void SetPseudocode(int highlightLine, Dictionary<string, int> extraVars)

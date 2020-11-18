@@ -26,7 +26,7 @@ public class SortingElement : MonoBehaviour
         AS_MoveOutRight,
         AS_MoveOutLeft,
         AS_MoveInRight,
-        AS_MoveInLeft,
+        AS_MoveInLeft
     }
 
     private AnimationState _animationState;
@@ -162,7 +162,6 @@ public class SortingElement : MonoBehaviour
         _moveOffset = offset;
         transform.localPosition = _centerPosition + offset;
         transform.localScale = new Vector3(_size,_size,_size);
-        
     }
     
     public void MoveInLeft(float seconds, Vector3 offset)

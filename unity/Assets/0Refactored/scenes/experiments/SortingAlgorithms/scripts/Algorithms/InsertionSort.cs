@@ -30,7 +30,7 @@ public class InsertionSort : SortingAlgorithm
         {
             _variables.Add("n", n);
             _variables.Add("i", 0);
-            _variables.Add("j", 0);
+            _variables.Add("j", -1);
         }
 
         public override SortingState Next()

@@ -195,8 +195,8 @@ public class MergeSort : SortingAlgorithm
                     _algorithm.UndoGreater(l,r);
                     break;
                 case SortingStateLine.SS_Line13: // insert(A,r,l)
-                    _algorithm.UndoInsert(r,l);
                     _requireWait = true;
+                    _algorithm.UndoInsert(r,l);
                     break;
                 case SortingStateLine.SS_Line14: // r += 1
                     break;

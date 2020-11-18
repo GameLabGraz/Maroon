@@ -7,6 +7,9 @@ using Random = UnityEngine.Random;
 public class SortingArray : MonoBehaviour, IResetObject
 {
     [SerializeField] private GameObject arrayPlace;
+    [SerializeField] private GameObject bucketPrefab;
+
+    [SerializeField] private GameObject bucketsObject;
     
     [SerializeField] private Transform leftBorder;
     [SerializeField] private Transform rightBorder;
@@ -14,6 +17,7 @@ public class SortingArray : MonoBehaviour, IResetObject
     private int _size;
     private Vector3 _placeOffset;
     private List<ArrayPlace> _elements = new List<ArrayPlace>();
+    private List<SortingBucket> _buckets = new List<SortingBucket>();
 
     [SerializeField] private float timePerMove;
 
@@ -31,8 +35,11 @@ public class SortingArray : MonoBehaviour, IResetObject
 
     private void Start()
     {
+        //TODO!
         Size = 10;
         _sortingLogic = GetComponent<SortingLogic>();
+        CreateBuckets();
+        HideBuckets();
     }
 
     private void CreateDetailArray(int size)
@@ -62,6 +69,33 @@ public class SortingArray : MonoBehaviour, IResetObject
             Destroy(lastElement.gameObject);
             _elements.Remove(lastElement);
         }
+    }
+
+    private void CreateBuckets()
+    {
+        float padding = (rightBorder.position.x - leftBorder.position.x) / 10;
+        Vector3 placeOffset = new Vector3(padding, 0, 0);
+        Vector3 elementPosition = leftBorder.position + placeOffset / 2 - new Vector3(0, 0, 1);
+        for(int i = 0; i < 10; i++)
+        {
+            var newBucket = Instantiate(bucketPrefab, bucketsObject.transform, false) as GameObject;
+            var bucketComponent = newBucket.GetComponent<SortingBucket>();
+            _buckets.Add(bucketComponent);
+            bucketComponent.SetIndex(i);
+            
+            newBucket.transform.position = elementPosition;
+            elementPosition += placeOffset;
+        }
+    }
+
+    public void HideBuckets()
+    {
+        bucketsObject.SetActive(false);
+    }
+    
+    public void ShowBuckets()
+    {
+        bucketsObject.SetActive(true);
     }
 
     public void ResetObject()
@@ -179,6 +213,81 @@ public class SortingArray : MonoBehaviour, IResetObject
         }
 
         return false;
+    }
+    
+    public int GetMaxValue()
+    {
+        StartCoroutine(WaitForMove());
+        int max = 0;
+        int maxIndex = 0;
+        foreach (var element in _elements)
+        {
+            if (element.Value > max)
+            {
+                max = element.Value;
+                maxIndex = _elements.IndexOf(element);
+            }
+        }
+        _elements[maxIndex].HighlightForSeconds(timePerMove);
+
+        return max;
+    }
+    
+    public int GetBucketNumber(int ind, int exp)
+    {
+        StartCoroutine(WaitForMove());
+        _elements[ind].HighlightForSeconds(timePerMove);
+
+        int b = (_elements[ind].Value / exp) % 10;
+        _buckets[b].HighlightForSeconds(timePerMove);
+        
+        return b;
+    }
+    
+    public void MoveToBucket(int from, int bucket)
+    {
+        StartCoroutine(WaitForMove());
+        _elements[from].FadeOutSeconds(timePerMove);
+        _buckets[bucket].HighlightForSeconds(timePerMove);
+        
+        _buckets[bucket].StoredElements.AddLast(_elements[from].Value);
+    }
+    
+    public void UndoMoveToBucket(int from, int bucket)
+    {
+        StartCoroutine(WaitForMove());
+
+        _elements[from].Value = _buckets[bucket].StoredElements.Last.Value;
+        _buckets[bucket].StoredElements.RemoveLast();
+        
+        _elements[from].FadeInSeconds(timePerMove);
+        _buckets[bucket].HighlightForSeconds(timePerMove);
+    }
+    
+    public void MoveFromBucket(int to, int bucket)
+    {
+        StartCoroutine(WaitForMove());
+
+        _elements[to].Value = _buckets[bucket].StoredElements.First.Value;
+        _buckets[bucket].StoredElements.RemoveFirst();
+        
+        _elements[to].FadeInSeconds(timePerMove);
+        _buckets[bucket].HighlightForSeconds(timePerMove);
+    }
+    
+    public void UndoMoveFromBucket(int to, int bucket)
+    {
+        StartCoroutine(WaitForMove());
+        
+        _elements[to].FadeOutSeconds(timePerMove);
+        _buckets[bucket].HighlightForSeconds(timePerMove);
+
+        _buckets[bucket].StoredElements.AddFirst(_elements[to].Value);
+    }
+
+    public bool BucketEmpty(int bucket)
+    {
+        return _buckets[bucket].StoredElements.Count == 0;
     }
 
     public void MarkCurrentSubset(int from, int to)
