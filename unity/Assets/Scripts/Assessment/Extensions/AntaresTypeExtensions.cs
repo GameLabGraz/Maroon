@@ -29,6 +29,8 @@ public static class AntaresTypeExtensions
                 return vector.ToVector3();
             case double value:
                 return (float) value;
+            case long value:
+                return (int)value;
             default:
                 return obj;
         }
