@@ -82,12 +82,14 @@ public class ArrowController : MonoBehaviour, IResetObject
     /// </summary>
     private void rotateArrow()
     {
+        if (_field == null) return;
+
         if (_hasScaling)
         {
             _scalingArrow.size = _field.getStrengthInPercent(transform.position) * 100f;
 
         }
-        
+
         var rotate = _field.get(transform.position) * fieldStrengthFactor;
         
         rotate.Normalize();
