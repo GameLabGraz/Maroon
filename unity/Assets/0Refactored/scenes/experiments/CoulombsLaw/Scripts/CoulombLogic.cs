@@ -34,6 +34,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     public QuantityInt currentMode = 2;
     public QuantityString currentLanguage = "";
     public QuantityBool chargeInteractionAllowed = true;
+    public QuantityBool modeChangeAllowed = true;
 
     public ParticleEvent onParticleAdded;
     public ParticleEvent onParticleRemoved;
@@ -477,6 +478,8 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
 
     public void OnSwitch3d2dMode(float newMode)
     {
+        if (!modeChangeAllowed) return;
+        
         _in3dMode = !(newMode < 0.5);
         onModeChange.Invoke(_in3dMode);
         if(_in3dMode)

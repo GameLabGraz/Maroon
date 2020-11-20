@@ -6375,6 +6375,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50e8ae2dca2e3c04e98f00687bcc1f30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  viewChangeHandler: {fileID: 0}
+  selectionHandler: {fileID: 0}
   inVR: 0
   maxChargeCount: 10
   startIn2dMode: 1
@@ -6415,6 +6417,18 @@ MonoBehaviour:
         m_Calls: []
   chargeInteractionAllowed:
     assessmentName: allow_charge_interaction
+    isDynamic: 0
+    alwaysSendValueChangedEvent: 1
+    allowSystemChange: 1
+    _value: 1
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    onNewValueFromSystem:
+      m_PersistentCalls:
+        m_Calls: []
+  modeChangeAllowed:
+    assessmentName: allow_mode_change
     isDynamic: 0
     alwaysSendValueChangedEvent: 1
     allowSystemChange: 1
@@ -6982,7 +6996,7 @@ MonoBehaviour:
   ignoreZDimension: 0
   resolution: 5
   arrows:
-    assessmentName: 
+    assessmentName: vector_field_arrow_count
     isDynamic: 0
     alwaysSendValueChangedEvent: 1
     allowSystemChange: 1

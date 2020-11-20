@@ -20,7 +20,7 @@ namespace PlatformControls.PC
             base.Start();
             _startValue = value;
         }
-
+        
         public void SetSliderValue(object valueObject)
         {
             try
