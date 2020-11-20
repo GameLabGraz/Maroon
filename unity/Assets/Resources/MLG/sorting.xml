@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageManager>
+    <Translations>
+
+        <!-- Descriptions -->
+        <Translation Key="Insertion Sort Description">
+            <English>&lt;style="sortingFunction">Insertion Sort&lt;/style> starts with the second element, compares it to the first element and arranges them accordingly.
+Then it takes the third element and &lt;b>inserts&lt;/b> it in the right position.
+This is iteratively repeated for all elements, so the front elements are always sorted.</English>
+            <German>&lt;style="sortingFunction">Insertion Sort&lt;/style> started mit dem zweiten Element, vergleicht es mit dem Ersten und sortiert die beiden.
+Dann nimmt es das dritte Element und es wird an der passenden Stelle &lt;b>eingefügt&lt;/b>.
+Dies wird iterativ für alle Elemente wiederholt, somit sind die vorderen Elemente immer sortiert.</German>
+        </Translation>
+
+        <Translation Key="Merge Sort Description">
+            <English>&lt;style="sortingFunction">Merge Sort&lt;/style> splits the elements int two halves.
+It recursively splits these halves further and sorts them indiviudally.
+Once the halves can not be split further, or the 2 parts have been sorted, they are &lt;b>merged&lt;/b> by always comparing the leftmost elements of both halves and arranging them accordingly.</English>
+            <German>&lt;style="sortingFunction">Merge Sort&lt;/style> teilt die Elemente in zwei Hälften.
+Diese Hälften werden rekursiv weiter aufgeteilt und getrennt sortiert.
+Wenn die Hälften nicht weiter getrennt werden können, oder bereits sortiert wurden, werden sie &lt;b>zusammengefügt&lt;/b>.
+Dazu wird jeweils das kleinste Element der linken Seite mit dem Kleinsten der rechten Seite verglichen und eingeordnet.</German>
+        </Translation>
+
+        <Translation Key="Heap Sort Description">
+            <English>&lt;style="sortingFunction">Heap Sort&lt;/style> uses the maximum &lt;b>heap&lt;/b> datastructure to sort the elements. This datastructure always has the maximum element as its root element.
+The algorithm first builds a maximum heap of all elements.
+It then moves the root to the last unsorted position and again builds a heap of the remaining elements, using the fact that they are already pre-sorted.
+This is iteratively repeated until all elements are sorted, so the back always contains the sorted elements.</English>
+            <German>&lt;style="sortingFunction">Heap Sort&lt;/style> verwendet die Maximum-&lt;b>Halde&lt;/b> Datenstruktur um die Elemente zu sortieren. Diese Datenstruktur hat immer das größte Element als Wurzel.
+Zuerst wird eine Maximum-Halde aus allen Elementen erzeugt.
+Dann wird das Wurzel-Element an die letzte unsortierte Stelle verschoben und aus den restlichen Elementen wird wieder eine Maximum-Halde erzeugt.
+Dabei wird ausgenutzt, dass die Elemente bereits vorsortiert sind.
+Dies wird iterativ wiederholt, bis alle Elemente sortiert sind. Die hinteren Elemente sind dabei die Sortierten.</German>
+        </Translation>
+
+        <Translation Key="Quick Sort Description">
+            <English>&lt;style="sortingFunction">Quick Sort&lt;/style> sorts the elements using a &lt;b>pivot&lt;/b> element.
+All elements smaller than the pivot are moved to the left and all bigger than the pivot to the right.
+The pivot is then placed in the middle and the left and right part are sorted recursively.</English>
+            <German>&lt;style="sortingFunction">Quick Sort&lt;/style> sortiert die Elemente anhand von einem &lt;b>Pivot&lt;/b>-Element.
+Alle Elemente, die kleiner sind als das Pivot-Element, werden nach links verschoben, alle die größer sind nach rechts.
+Das Pivot-Element wird in die Mitte platziert und der linke und rechte Teil werden rekusiv sortiert.</German>
+        </Translation>
+
+        <Translation Key="Selection Sort Description">
+            <English>&lt;style="sortingFunction">Selection Sort&lt;/style> scans through all the elements to find the smalles one.
+The &lt;b>selected&lt;/b> element is moved to the first position and the procedure is iteratively repeated for all elements.</English>
+            <German>&lt;style="sortingFunction">Selection Sort&lt;/style> vergleicht alle Elemente, um das kleinste zu finden.
+Das &lt;b>ausgewählte&lt;/b> Element wird an die erste Stelle verschoben und das Ganze wird iterativ wiederholt, bis alle Elemente sortiert sind.</German>
+        </Translation>
+
+        <Translation Key="Bubble Sort Description">
+            <English>&lt;style="sortingFunction">Bubble Sort&lt;/style> goes through the elements from left to right, always comparing it to the right neighbour.
+If an element is bigger than its neighbour, they are swapped, so the bigger element is moved to the right like a rising &lt;b>bubble&lt;/b>.
+After each iteration the biggest element reachest to most right position. This is repeated until all elements are sorted.</English>
+            <German>&lt;style="sortingFunction">Bubble Sort&lt;/style> geht von links nach rechts durch alle Elemente und vergleicht sie mit dem rechten Nachbarn.
+Wenn das Element größer als der Nachbar ist, werden sie getauscht. Das größere Element bewegt sich somit nach rechts, wie eine aufsteigende &lt;b>Seifenblase&lt;/b>.
+Nach jeder Iteration befindet sich das größte Element am weitesten rechts. Das Ganze wird wiederholt, bis alle Elemente sortiert sind.</German>
+        </Translation>
+
+        <Translation Key="Gnome Sort Description">
+            <English>&lt;style="sortingFunction">Gnome Sort&lt;/style> works by always comparing two neighbours.
+You can imagine a litte &lt;b>gnome&lt;/b> starting at the most left element.
+If the right neighbour is bigger than the elementm it swaps them and takes a step to the left.
+If it is smaller it takes a step to the right.
+This is repeated until he moves past the right most element, then all elements are sorted.</English>
+            <German>&lt;style="sortingFunction">Gnome Sort&lt;/style> vergleicht immer zwei benachtbarte Elemente.
+Man kann sich vorstellen ein kleiner &lt;b>Gnom&lt;/b> steht vor dem ersten Element.
+Wenn der rechte Nachbar größer ist vertauscht er die 2 Elemente und macht einen Schritt nach links.
+Wenn er kleiner ist macht er einen Schritt nach rechts.
+Dies wird wiederholt, bis er an dem letzten Element vorbeigeht, dann sind alle Elemente sortiert.</German>
+        </Translation>
+
+        <Translation Key="Radix Sort Description">
+            <English>&lt;style="sortingFunction">Radix Sort&lt;/style> moves the elements into different &lt;b>buckets&lt;/b> to sort them.
+In the first pass, each element is put into the bucket corresponding to the one digit. After that the elements are placed again in the order of the buckets.
+In the second pass the elements are sorted by the tens digit, in the third pass by the hundreds digit, and so on.
+This is repeated as often as the largest element has digits.</English>
+            <German>&lt;style="sortingFunction">Radix Sort&lt;/style> verschiebt die Elemente in verschiedene &lt;b>Eimer&lt;/b>, um sie zu sortieren.
+Im ersten Durchlauf kommt jedes Element in den Eimer, der der Einerziffer entspricht. Danach werden die Elemente in Reihenfolge der Eimer wieder platziert.
+Im zweiten Durchlauf wird dann nach der Zehnerstelle sortiert, im Dritten nach der Hunderterstelle, und so weiter.
+Dies wird so of wiederholt, wie das größte Element Stellen hat.</German>
+        </Translation>
+
+        <Translation Key="Shell Sort Description">
+            <English>&lt;style="sortingFunction">Shell Sort&lt;/style> defines a &lt;b>gap&lt;/b> that it uses for sorting.
+Each element is compared to the element which is the gap away. The elements are swapped if neccessary.
+After each iteration the gap becomes smaller and once the gap reaches zero, the elements are sorted.</English>
+            <German>&lt;style="sortingFunction">Shell Sort&lt;/style> definiert eine &lt;b>Lücke&lt;/b>, die es zum Sortieren benutzt.
+Jedes Element wird mit jenem Element verglichen, das genau die Lücke entfernt ist. Falls nötig werden die Elemente getauscht.
+Nach jeder Iteration wird die Lücke verkleinert und wenn die Lücke null erreicht sind alle Elemente sortiert.</German>
+        </Translation>
+        
+    </Translations>
+</LanguageManager>

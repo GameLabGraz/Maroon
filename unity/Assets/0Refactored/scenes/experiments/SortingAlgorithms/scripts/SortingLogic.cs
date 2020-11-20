@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using GEAR.Localization;
 using TMPro;
 using UnityEngine;
 
@@ -21,6 +22,7 @@ public class SortingLogic : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI pseudoCodeText;
     [SerializeField] private TextMeshProUGUI swapsText;
+    [SerializeField] private TextMeshProUGUI descriptionText;
     
     private SortingAlgorithmType _sortingAlgorithm;
     private SortingAlgorithm _algorithm;
@@ -124,6 +126,7 @@ public class SortingLogic : MonoBehaviour
         SetPseudocode(-1, null);
         SetSwapsComparisons(0,0);
         DisplayIndices(new Dictionary<string, int>());
+        SetDescription();
     }
 
     public void MoveFinished()
@@ -276,6 +279,45 @@ public class SortingLogic : MonoBehaviour
         }
 
         pseudoCodeText.text = highlightedCode;
+    }
+
+    private void SetDescription()
+    {
+        string descriptionKey = "";
+        switch (_sortingAlgorithm)
+        {
+            case SortingAlgorithmType.SA_InsertionSort:
+                descriptionKey = "Insertion Sort Description";
+                break;
+            case SortingAlgorithmType.SA_MergeSort:
+                descriptionKey = "Merge Sort Description";
+                break;
+            case SortingAlgorithmType.SA_HeapSort:
+                descriptionKey = "Heap Sort Description";
+                break;
+            case SortingAlgorithmType.SA_QuickSort:
+                descriptionKey = "Quick Sort Description";
+                break;
+            case SortingAlgorithmType.SA_SelectionSort:
+                descriptionKey = "Selection Sort Description";
+                break;
+            case SortingAlgorithmType.SA_BubbleSort:
+                descriptionKey = "Bubble Sort Description";
+                break;
+            case SortingAlgorithmType.SA_GnomeSort:
+                descriptionKey = "Gnome Sort Description";
+                break;
+            case SortingAlgorithmType.SA_RadixSort:
+                descriptionKey = "Radix Sort Description";
+                break;
+            case SortingAlgorithmType.SA_ShellSort:
+                descriptionKey = "Shell Sort Description";
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(_sortingAlgorithm), _sortingAlgorithm, null);
+        }
+        
+        descriptionText.text = LanguageManager.Instance.GetString(descriptionKey);
     }
 
     public void MarkCurrentSubset(int from, int to)
