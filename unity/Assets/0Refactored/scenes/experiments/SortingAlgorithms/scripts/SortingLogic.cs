@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using GEAR.Localization;
+using PlatformControls.PC;
 using TMPro;
 using UnityEngine;
 
@@ -20,10 +21,8 @@ public class SortingLogic : MonoBehaviour
         SA_ShellSort
     }
 
-    [SerializeField] private TextMeshProUGUI pseudoCodeText;
-    [SerializeField] private TextMeshProUGUI swapsText;
-    [SerializeField] private TextMeshProUGUI descriptionText;
-    
+    [SerializeField] private PC_LocalizedDropDown algorithmDropDown;
+
     private SortingAlgorithmType _sortingAlgorithm;
     private SortingAlgorithm _algorithm;
 
@@ -31,14 +30,10 @@ public class SortingLogic : MonoBehaviour
     
     private bool _waitForMove;
 
-    private void Start()
+    private void Awake()
     {
         _sortingArray = GetComponent<SortingArray>();
-        _sortingArray.Size = 10; //TODO
-        
-        //TODO
-        _sortingAlgorithm = SortingAlgorithmType.SA_RadixSort;
-        SetAlgorithm();
+        SetAlgorithmDropdown(algorithmDropDown.value);
     }
 
     private void Update()
@@ -74,18 +69,12 @@ public class SortingLogic : MonoBehaviour
     public void SetAlgorithmDropdown(int choice)
     {
         _sortingAlgorithm = (SortingAlgorithmType)choice;
-        SetAlgorithm();
-    }
-
-    public void SetArraySize(float size)
-    {
-        _sortingArray.Size = (int)size;
-        SetAlgorithm();
+        ResetAlgorithm();
     }
     
     #endregion
 
-    private void SetAlgorithm()
+    public void ResetAlgorithm()
     {
         _sortingArray.HideBuckets();
         switch (_sortingAlgorithm)
@@ -244,41 +233,7 @@ public class SortingLogic : MonoBehaviour
 
     public void SetPseudocode(int highlightLine, Dictionary<string, int> extraVars)
     {
-        string highlightedCode = "";
-        for (int i = 0; i < _algorithm.Pseudocode.Count; ++i)
-        {
-            if (i == highlightLine)
-            {
-                highlightedCode += "<color=#810000>></color> " + _algorithm.Pseudocode[i] + "\n";
-            }
-            else
-            {
-                highlightedCode += "  " + _algorithm.Pseudocode[i] + "\n";
-            }
-        }
-
-        if (extraVars != null)
-        {
-            foreach (var extraVar in extraVars)
-            {
-                if (extraVar.Value == -1)
-                    break;
-                if (extraVar.Key == "pInd")
-                {
-                    highlightedCode += "\n<style=\"sortingFunction\">" + "p" +
-                                       "</style> : <style=\"sortingNumber\">" + _sortingArray.GetElementValue(extraVar.Value) +
-                                       "</style>";
-                }
-                else
-                {
-                    highlightedCode += "\n<style=\"sortingFunction\">" + extraVar.Key +
-                                       "</style> : <style=\"sortingNumber\">" + extraVar.Value +
-                                       "</style>";
-                }
-            }
-        }
-
-        pseudoCodeText.text = highlightedCode;
+        _sortingArray.DisplayPseudocode(_algorithm.Pseudocode, highlightLine, extraVars);
     }
 
     private void SetDescription()
@@ -317,7 +272,7 @@ public class SortingLogic : MonoBehaviour
                 throw new ArgumentOutOfRangeException(nameof(_sortingAlgorithm), _sortingAlgorithm, null);
         }
         
-        descriptionText.text = LanguageManager.Instance.GetString(descriptionKey);
+        _sortingArray.SetDescription(descriptionKey);
     }
 
     public void MarkCurrentSubset(int from, int to)
@@ -332,10 +287,7 @@ public class SortingLogic : MonoBehaviour
 
     public void SetSwapsComparisons(int swaps, int comparisons)
     {
-        string text = "";
-        text += "<b>Swaps:</b> <pos=50%>" + swaps + "\n";
-        text += "<b>Comparisons:</b> <pos=50%>" + comparisons;
-        swapsText.text = text;
+        _sortingArray.SetSwapsComparisons(swaps, comparisons);
     }
     
     public void DisplayIndices(Dictionary<string, int> indices)

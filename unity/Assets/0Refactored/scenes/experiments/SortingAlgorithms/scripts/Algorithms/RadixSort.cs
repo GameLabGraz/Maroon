@@ -228,6 +228,7 @@ public class RadixSort : SortingAlgorithm
             indexVariables.Remove("n");
             indexVariables.Remove("exp");
             indexVariables.Remove("key");
+            indexVariables.Remove("b");
             return indexVariables;
         }
 
@@ -236,6 +237,7 @@ public class RadixSort : SortingAlgorithm
             var extraVariables = new Dictionary<string, int>();
             extraVariables.Add("key", _variables["key"]);
             extraVariables.Add("exp", _variables["exp"]);
+            extraVariables.Add("b", _variables["b"]);
             return extraVariables;
         }
     }

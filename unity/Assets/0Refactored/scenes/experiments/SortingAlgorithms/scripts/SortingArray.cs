@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using GEAR.Localization;
+using PlatformControls.PC;
+using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -13,6 +16,12 @@ public class SortingArray : MonoBehaviour, IResetObject
     
     [SerializeField] private Transform leftBorder;
     [SerializeField] private Transform rightBorder;
+    
+    [SerializeField] private TextMeshProUGUI pseudoCodeText;
+    [SerializeField] private TextMeshProUGUI swapsText;
+    [SerializeField] private TextMeshProUGUI descriptionText;
+
+    [SerializeField] private PC_Slider sizeSlider;
 
     private int _size;
     private Vector3 _placeOffset;
@@ -30,16 +39,21 @@ public class SortingArray : MonoBehaviour, IResetObject
         {
             _size = value;
             CreateDetailArray(_size);
+            _sortingLogic.ResetAlgorithm();
         }
+    }
+    
+    public void SetArraySize(float size)
+    {
+        Size = (int)size;
     }
 
     private void Start()
     {
-        //TODO!
-        Size = 10;
         _sortingLogic = GetComponent<SortingLogic>();
         CreateBuckets();
         HideBuckets();
+        Size = (int)sizeSlider.value;
     }
 
     private void CreateDetailArray(int size)
@@ -96,14 +110,6 @@ public class SortingArray : MonoBehaviour, IResetObject
     public void ShowBuckets()
     {
         bucketsObject.SetActive(true);
-    }
-
-    public void ResetObject()
-    {
-        foreach (var element in _elements)
-        {
-            element.Value = Random.Range(1, 100);
-        }
     }
 
     public void Insert(int fromIdx, int toIdx)
@@ -305,6 +311,58 @@ public class SortingArray : MonoBehaviour, IResetObject
         }
     }
     
+    public void SetSwapsComparisons(int swaps, int comparisons)
+    {
+        string text = "";
+        text += "<b>Swaps:</b> <pos=50%>" + swaps + "\n";
+        text += "<b>Comparisons:</b> <pos=50%>" + comparisons;
+        swapsText.text = text;
+    }
+
+    public void DisplayPseudocode(List<string> pseudocode, int highlightLine, Dictionary<string, int> extraVars)
+    {
+        string highlightedCode = "";
+        for (int i = 0; i < pseudocode.Count; ++i)
+        {
+            if (i == highlightLine)
+            {
+                highlightedCode += "<color=#810000>></color> " + pseudocode[i] + "\n";
+            }
+            else
+            {
+                highlightedCode += "  " + pseudocode[i] + "\n";
+            }
+        }
+
+        if (extraVars != null)
+        {
+            foreach (var extraVar in extraVars)
+            {
+                if (extraVar.Value == -1)
+                    break;
+                if (extraVar.Key == "pInd")
+                {
+                    highlightedCode += "\n<style=\"sortingFunction\">" + "p" +
+                                       "</style> : <style=\"sortingNumber\">" + GetElementValue(extraVar.Value) +
+                                       "</style>";
+                }
+                else
+                {
+                    highlightedCode += "\n<style=\"sortingFunction\">" + extraVar.Key +
+                                       "</style> : <style=\"sortingNumber\">" + extraVar.Value +
+                                       "</style>";
+                }
+            }
+        }
+
+        pseudoCodeText.text = highlightedCode;
+    }
+    
+    public void SetDescription(string key)
+    {
+        descriptionText.text = LanguageManager.Instance.GetString(key);
+    }
+    
     public void DisplayIndices(Dictionary<string, int> indices)
     {
         for (int i = 0; i < Size; ++i)
@@ -327,8 +385,17 @@ public class SortingArray : MonoBehaviour, IResetObject
         _sortingLogic.MoveFinished();
     }
 
-    public int GetElementValue(int index)
+    private int GetElementValue(int index)
     {
         return _elements[index].Value;
+    }
+    
+    public void ResetObject()
+    {
+        foreach (var element in _elements)
+        {
+            element.Value = Random.Range(1, 100);
+        }
+        _sortingLogic.ResetAlgorithm();
     }
 }
