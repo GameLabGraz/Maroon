@@ -5260,7 +5260,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: 0
+  m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -13584,6 +13584,86 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 565f734b46691944bb8c7cb7888df542, type: 3}
+--- !u!1 &931607125
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 931607127}
+  - component: {fileID: 931607126}
+  m_Layer: 0
+  m_Name: TestAssessment
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &931607126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 931607125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 788554eb3dd93dd4bb9a023a581e1e07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  quantityReference:
+    index: 0
+    objectInfo:
+      Object: {fileID: 0}
+      ComponentName: 
+      FieldName: 
+  testVector3:
+    testNow: 0
+    NewValue: {x: 0, y: 0, z: 0}
+  testFloat:
+    testNow: 0
+    NewValue: 0
+  testInteger:
+    testNow: 0
+    NewValue: 0
+  testBool:
+    testNow: 0
+    NewValue: 0
+  testString:
+    testNow: 0
+    NewValue: 
+  FeedbackHandler: {fileID: 668779869}
+  assessmentObj: {fileID: 941569024}
+  messageType: 1
+  messageData:
+  - Identifier: allow_charge_interaction
+    IsVector3: 0
+    vec3Value: {x: 0, y: 0, z: 0}
+    IsFloat: 0
+    fValue: 0
+    IsInteger: 0
+    nValue: 0
+    isBool: 1
+    bValue: 0
+    isString: 0
+    strValue: 
+  sendMessageNow: 0
+--- !u!4 &931607127
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 931607125}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.2432785, y: 7.245392, z: -25.980011}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 16
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &931791565
 GameObject:
   m_ObjectHideFlags: 0
@@ -15754,7 +15834,7 @@ PrefabInstance:
     - target: {fileID: 6896857271073400315, guid: bdfec920f90e5d7499f7d0276bf96c41,
         type: 3}
       propertyPath: chargeInteractionAllowed.onValueChanged.m_PersistentCalls.m_Calls.Array.size
-      value: 10
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 6896857271073400315, guid: bdfec920f90e5d7499f7d0276bf96c41,
         type: 3}
@@ -16520,11 +16600,11 @@ PrefabInstance:
         type: 3}
       propertyPath: chargeInteractionAllowed.onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 941568979}
+      objectReference: {fileID: 1353178339}
     - target: {fileID: 6896857271073400315, guid: bdfec920f90e5d7499f7d0276bf96c41,
         type: 3}
       propertyPath: chargeInteractionAllowed.onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: AllowChargeInteraction
+      value: set_enabled
       objectReference: {fileID: 0}
     - target: {fileID: 6896857271073400315, guid: bdfec920f90e5d7499f7d0276bf96c41,
         type: 3}
@@ -16545,11 +16625,11 @@ PrefabInstance:
         type: 3}
       propertyPath: chargeInteractionAllowed.onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
-      objectReference: {fileID: 1353178339}
+      objectReference: {fileID: 820306737}
     - target: {fileID: 6896857271073400315, guid: bdfec920f90e5d7499f7d0276bf96c41,
         type: 3}
       propertyPath: chargeInteractionAllowed.onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: set_enabled
+      value: set_interactable
       objectReference: {fileID: 0}
     - target: {fileID: 6896857271073400315, guid: bdfec920f90e5d7499f7d0276bf96c41,
         type: 3}
@@ -16570,7 +16650,7 @@ PrefabInstance:
         type: 3}
       propertyPath: chargeInteractionAllowed.onValueChanged.m_PersistentCalls.m_Calls.Array.data[2].m_Target
       value: 
-      objectReference: {fileID: 820306737}
+      objectReference: {fileID: 211994541}
     - target: {fileID: 6896857271073400315, guid: bdfec920f90e5d7499f7d0276bf96c41,
         type: 3}
       propertyPath: chargeInteractionAllowed.onValueChanged.m_PersistentCalls.m_Calls.Array.data[2].m_MethodName
@@ -16615,17 +16695,17 @@ PrefabInstance:
         type: 3}
       propertyPath: chargeInteractionAllowed.onValueChanged.m_PersistentCalls.m_Calls.Array.data[3].m_Target
       value: 
-      objectReference: {fileID: 211994541}
+      objectReference: {fileID: 2051407312}
     - target: {fileID: 6896857271073400315, guid: bdfec920f90e5d7499f7d0276bf96c41,
         type: 3}
       propertyPath: chargeInteractionAllowed.onValueChanged.m_PersistentCalls.m_Calls.Array.data[4].m_Target
       value: 
-      objectReference: {fileID: 2051407312}
+      objectReference: {fileID: 867748146}
     - target: {fileID: 6896857271073400315, guid: bdfec920f90e5d7499f7d0276bf96c41,
         type: 3}
       propertyPath: chargeInteractionAllowed.onValueChanged.m_PersistentCalls.m_Calls.Array.data[5].m_Target
       value: 
-      objectReference: {fileID: 867748146}
+      objectReference: {fileID: 447123912}
     - target: {fileID: 6896857271073400315, guid: bdfec920f90e5d7499f7d0276bf96c41,
         type: 3}
       propertyPath: chargeInteractionAllowed.onValueChanged.m_PersistentCalls.m_Calls.Array.data[3].m_MethodName
@@ -16670,11 +16750,11 @@ PrefabInstance:
         type: 3}
       propertyPath: chargeInteractionAllowed.onValueChanged.m_PersistentCalls.m_Calls.Array.data[6].m_Target
       value: 
-      objectReference: {fileID: 447123912}
+      objectReference: {fileID: 1353178338}
     - target: {fileID: 6896857271073400315, guid: bdfec920f90e5d7499f7d0276bf96c41,
         type: 3}
       propertyPath: chargeInteractionAllowed.onValueChanged.m_PersistentCalls.m_Calls.Array.data[6].m_MethodName
-      value: set_interactable
+      value: set_enabled
       objectReference: {fileID: 0}
     - target: {fileID: 6896857271073400315, guid: bdfec920f90e5d7499f7d0276bf96c41,
         type: 3}
@@ -16695,11 +16775,11 @@ PrefabInstance:
         type: 3}
       propertyPath: chargeInteractionAllowed.onValueChanged.m_PersistentCalls.m_Calls.Array.data[7].m_Target
       value: 
-      objectReference: {fileID: 1353178338}
+      objectReference: {fileID: 5376674143609445454}
     - target: {fileID: 6896857271073400315, guid: bdfec920f90e5d7499f7d0276bf96c41,
         type: 3}
       propertyPath: chargeInteractionAllowed.onValueChanged.m_PersistentCalls.m_Calls.Array.data[7].m_MethodName
-      value: set_enabled
+      value: set_interactable
       objectReference: {fileID: 0}
     - target: {fileID: 6896857271073400315, guid: bdfec920f90e5d7499f7d0276bf96c41,
         type: 3}
@@ -16720,7 +16800,7 @@ PrefabInstance:
         type: 3}
       propertyPath: chargeInteractionAllowed.onValueChanged.m_PersistentCalls.m_Calls.Array.data[8].m_Target
       value: 
-      objectReference: {fileID: 5376674143609445454}
+      objectReference: {fileID: 1241887459}
     - target: {fileID: 6896857271073400315, guid: bdfec920f90e5d7499f7d0276bf96c41,
         type: 3}
       propertyPath: chargeInteractionAllowed.onValueChanged.m_PersistentCalls.m_Calls.Array.data[8].m_MethodName
@@ -16811,6 +16891,16 @@ PrefabInstance:
       propertyPath: onModeChangeTo2d.m_PersistentCalls.m_Calls.Array.data[7].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 6896857271073400315, guid: bdfec920f90e5d7499f7d0276bf96c41,
+        type: 3}
+      propertyPath: viewChangeHandler
+      value: 
+      objectReference: {fileID: 941568979}
+    - target: {fileID: 6896857271073400315, guid: bdfec920f90e5d7499f7d0276bf96c41,
+        type: 3}
+      propertyPath: selectionHandler
+      value: 
+      objectReference: {fileID: 941568980}
     - target: {fileID: 6896857271284000682, guid: bdfec920f90e5d7499f7d0276bf96c41,
         type: 3}
       propertyPath: m_textInfo.characterCount
@@ -20746,7 +20836,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: 0
+  m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -25344,7 +25434,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 990177107}
   m_HandleRect: {fileID: 990177106}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -28617,7 +28707,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: 0
+  m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0

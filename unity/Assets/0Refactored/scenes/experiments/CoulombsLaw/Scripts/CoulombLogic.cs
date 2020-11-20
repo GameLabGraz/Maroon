@@ -23,6 +23,10 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         ZAxis
     }
     
+    [Header("Reference Objects")]
+    public ViewChangeHandler viewChangeHandler;
+    public PC_SelectionHandler selectionHandler;
+
     [Header("General Settings")] 
     public bool inVR = false;
     public int maxChargeCount = 10;
@@ -117,6 +121,20 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         _worldToCalcSpaceFactor3d = Mathf.Abs(xAt1m3d.position.x - xOrigin3d.position.x);
         _worldToCalcSpaceFactor3dLocal = Mathf.Abs(xAt1m3d.localPosition.x - xOrigin3d.localPosition.x);
         _initialized = true;
+        
+        chargeInteractionAllowed.onNewValueFromSystem.AddListener((isAllowed) =>
+        {
+            viewChangeHandler?.AllowChargeInteraction(isAllowed);
+            if (!isAllowed && selectionHandler)
+            {
+                if (selectionHandler.selectedObject?.type == PC_SelectScript.SelectType.ChargeSelect)
+                {
+                    selectionHandler.DeselectAll();
+                    selectionHandler.ForceResetChargePositions();
+                }
+            }
+        });
+        
     }
     
     private void FixedUpdate()
@@ -408,7 +426,9 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
                 Physics.IgnoreCollision(collider, vectorField2d.GetComponent<Collider>());
             }
         }
-
+        
+        viewChangeHandler?.AllowChargeInteraction(coulombCharge.gameObject, chargeInteractionAllowed);
+        
         SimulationController.Instance.ResetSimulation();
         
         if(_charges.Count == maxChargeCount) onMaxChargesReached.Invoke();

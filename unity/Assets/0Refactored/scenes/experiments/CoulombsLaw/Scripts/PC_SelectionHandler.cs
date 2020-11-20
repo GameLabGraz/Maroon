@@ -406,10 +406,25 @@ public class PC_SelectionHandler : MonoBehaviour
 
         selectedObject = null;
     }
+
+    public void ForceResetChargePositions()
+    {
+        ChargeButtonText.GetComponent<LocalizedTMP>().Key = "Button_Add";
+        ChargeButtonText.transform.parent.GetComponent<PC_Tooltip>().TooltipKey = "TT_ChargeAdd";
+        
+        ChargeValueSlider.SetSliderValue(0);
+        ChargeFixedPosition.isOn = false;
+        
+        ChargeXVariable.GetComponent<PC_TextFormatter_TMP>().FormatString(0f);
+        ChargeYVariable.GetComponent<PC_TextFormatter_TMP>().FormatString(0f);
+        ChargeZVariable.GetComponent<PC_TextFormatter_TMP>().FormatString(0f);
+    }
     
     public void SelectObject(PC_SelectScript obj)
     {
-        if (selectedObject == obj) return;
+        if (selectedObject == obj 
+            || (!_coulombLogic.chargeInteractionAllowed && obj != null && obj.type == PC_SelectScript.SelectType.ChargeSelect)) 
+            return;
         DeselectAll();
 
         //select new
