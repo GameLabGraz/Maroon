@@ -335,7 +335,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     
     public GameObject CreateCharge(GameObject prefab, Vector3 position, float chargeLoad, bool hasFixedPosition, bool positionInWorldCoord = true, bool deactivateCollisions = true)
     {
-        var obj = Instantiate(prefab, _in3dMode ? vectorField3d.transform : vectorField2d.transform, true);
+        var obj = Instantiate(prefab, _in3dMode ? vectorField3d.transform.parent : vectorField2d.transform.parent, true);
         Debug.Assert(obj != null);
         
         
@@ -374,7 +374,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         {
             arrowMovement.SetBoundaries(_in3dMode ? minBoundary3d.transform : minBoundary2d.transform,
                 _in3dMode ? maxBoundary3d.transform : maxBoundary2d.transform);
-            arrowMovement.restrictYMovement = !_in3dMode;
+            arrowMovement.restrictZMovement = !_in3dMode;
         }
 
         var field = FindObjectOfType<IField>(); //should be only one

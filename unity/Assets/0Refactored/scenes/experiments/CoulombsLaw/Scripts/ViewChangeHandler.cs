@@ -1,5 +1,4 @@
-﻿using System;
-using Maroon.Physics;
+﻿using Maroon.Physics;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -108,7 +107,7 @@ public class ViewChangeHandler : MonoBehaviour
         if(!allowMovement)
             HandleMovementRestrictions(charge, false, false, false);
         else if(_coulombLogic.IsIn2dMode())
-            HandleMovementRestrictions(charge, true, false, true);
+            HandleMovementRestrictions(charge, true, true, false);
         else
         {
             var view = (PathHandler.CameraPosition) currentView.Value;
