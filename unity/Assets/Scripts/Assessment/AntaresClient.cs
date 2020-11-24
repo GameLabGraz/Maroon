@@ -43,13 +43,24 @@ namespace Maroon.Assessment
             {
                 AssessmentLogger.Log("AntaresClient: Incoming data: " + Encoding.UTF8.GetString(data));
 
-                var feedbackCommands = _serializer.Deserialize<FeedbackCommand[]>(
+                var result = _serializer.Deserialize<FeedbackEventArgs>(
                     new JsonTextReader(
                         new StreamReader(
                             new MemoryStream(data))));
 
-                AssessmentLogger.Log("AntaresClient: Feedback received");
-                FeedbackReceived?.Invoke(this, new FeedbackEventArgs(feedbackCommands));
+                // TODO: this is kind of a hack, but needs improvement later
+                if (result?.FeedbackCommands != null && result.FeedbackCommands.Length > 0)
+                {
+                    FeedbackReceived?.Invoke(this, new FeedbackEventArgs(result.FeedbackCommands));
+                }
+                else
+                {
+                    var errorResult = _serializer.Deserialize<Antares.Evaluation.ErrorEventArgs>(
+                    new JsonTextReader(
+                        new StreamReader(
+                            new MemoryStream(data))));
+                    ErrorReported?.Invoke(this, errorResult);
+                }
             };
 
             _socket.OnError += delegate (string errorMessage)

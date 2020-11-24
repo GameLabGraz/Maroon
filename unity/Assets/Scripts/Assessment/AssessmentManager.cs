@@ -19,36 +19,6 @@ namespace Maroon.Assessment
     [RequireComponent(typeof(AssessmentFeedbackHandler))]
     public class AssessmentManager : MonoBehaviour
     {
-        /*
-        private class AntaresWebResourceProvider : IResourceProvider
-        {
-            public class ResourceLoader : IResourceLoader
-            {
-                private readonly UnityWebRequest _request;
-
-                public ResourceLoader(string uri)
-                {
-                    Debug.Log("AntaresWebResourceManager: loading '" + uri + "'");
-                    _request = UnityWebRequest.Get(uri);
-                }
-
-                public Stream GetInputStream()
-                {
-                    Debug.Log("AntaresWebResourceManager: input stream ready");
-                    return new MemoryStream(_request.downloadHandler.data);
-                }
-
-                public object Load()
-                {
-                    Debug.Log("AntaresWebResourceManager: 'sending web request for '" + _request.url + "'");
-                    return _request.SendWebRequest();
-                }
-            }
-
-            public IResourceLoader CreateLoader(string uri) => new ResourceLoader(uri);
-        }
-        */
-
         [SerializeField]
         private AssessmentIntegrationMode mode;
 
@@ -99,7 +69,7 @@ namespace Maroon.Assessment
         private void Start()
         {
             AssessmentLogger.Log("AssessmentManager: Raising enter event ...");
-            EventBuilder.Action("enter");
+            EventBuilder.Action("enter"); // TODO: this is actually a workaround - it is universal, depends on the agreed semantics and should be fired by the spawning avatar
         }
 
         private void Update()
@@ -138,6 +108,18 @@ namespace Maroon.Assessment
                 {
                     AssessmentLogger.Log("AssessmentManager: Feedback received");
                     _feedbackHandler.HandleFeedback(args);
+                };
+
+                _evalService.ErrorReported += delegate (object sender, Antares.Evaluation.ErrorEventArgs args)
+                {
+                    Debug.LogError(
+                        "Antares Server Error: " + args.Message + Environment.NewLine +
+                        "--" + Environment.NewLine +
+                        "Message: " + args.Message + Environment.NewLine +
+                        "Internal message: " + args.InternalMessage + Environment.NewLine +
+                        "Source URI: " + args.SourceUri + Environment.NewLine +
+                        "Line: " + args.Line + Environment.NewLine +
+                        "Column: " + args.Column);
                 };
 
                 _evalService.Connected += delegate (object sender, EventArgs args)
