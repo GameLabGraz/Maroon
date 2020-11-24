@@ -1,4 +1,4 @@
-﻿using GEAR.Localization;
+﻿using GEAR.Localization.Text;
 using UnityEngine;
 
 public class PC_ErrorDisplay : MonoBehaviour
