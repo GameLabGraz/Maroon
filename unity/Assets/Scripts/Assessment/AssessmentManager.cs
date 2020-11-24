@@ -6,6 +6,7 @@ using Antares.Evaluation.Util;
 using Maroon.Assessment.Handler;
 
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 
 namespace Maroon.Assessment
 {
@@ -107,6 +108,17 @@ namespace Maroon.Assessment
                 _evalService.FeedbackReceived += delegate (object sender, FeedbackEventArgs args)
                 {
                     AssessmentLogger.Log("AssessmentManager: Feedback received");
+
+                    // hack: this is for the experiment: will be removed once common simulation events are implemented ...
+                    foreach(var feedback in args.FeedbackCommands)
+                    {
+                        if(feedback is DisplayTextMessage message && message.Message.Trim() == "#!GoToQuestionnaire")
+                        {
+                            AntaresExecuteUserAgent("GoToQuestionnaire");
+                        }
+                    }
+                    // end hack
+
                     _feedbackHandler.HandleFeedback(args);
                 };
 
@@ -214,5 +226,15 @@ namespace Maroon.Assessment
                 Debug.LogWarning("AssessmentManager::SendGameEvent: sending event to buffer");
             }
         }
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+        [DllImport("__Internal")]
+        private static extern void AntaresExecuteUserAgent(string command);
+#else
+        private static void AntaresExecuteUserAgent(string command)
+        {
+            Debug.Log("Requested UserAgent Command: " + command);
+        }
+#endif
     }
 }
