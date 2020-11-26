@@ -6,13 +6,13 @@ using Valve.VR.InteractionSystem;
 
 public abstract class SortingAlgorithm
 {
-    public SortingLogic sortingLogic;
-    abstract public List<string> Pseudocode { get; }
+    private SortingLogic sortingLogic;
+    public abstract List<string> Pseudocode { get; }
     
     protected LinkedList<SortingState> _executedStates = new LinkedList<SortingState>();
-    
-    protected int _comparisons;
-    protected int _swaps;
+
+    private int _comparisons;
+    private int _swaps;
     
     protected enum SortingStateLine
     {
@@ -50,8 +50,8 @@ public abstract class SortingAlgorithm
         public bool _requireWait;
         
         //Stacks for subroutine calling
-        protected Stack<Dictionary<string, int>> _valueStore = new Stack<Dictionary<string, int>>();
-        protected Stack<SortingStateLine> _continueLine = new Stack<SortingStateLine>();
+        private Stack<Dictionary<string, int>> _valueStore = new Stack<Dictionary<string, int>>();
+        private Stack<SortingStateLine> _continueLine = new Stack<SortingStateLine>();
         //when this variable is set, the next state will start with _variables set to _nextValues
         protected Dictionary<string, int> _nextValues = null;
 
@@ -68,12 +68,12 @@ public abstract class SortingAlgorithm
         
         public virtual Dictionary<string, int> GetExtraVariables() { return null; }
 
-        public SortingState()
+        protected SortingState()
         {
             _line = SortingStateLine.SS_None;
         }
-        
-        public SortingState(SortingAlgorithm algorithm)
+
+        protected SortingState(SortingAlgorithm algorithm)
         {
             _algorithm = algorithm;
             
@@ -82,8 +82,8 @@ public abstract class SortingAlgorithm
             _nextValues = null;
             _requireWait = false;
         }
-        
-        public SortingState(SortingState old)
+
+        protected SortingState(SortingState old)
         {
             _algorithm = old._algorithm;
             _line = old._line;
@@ -92,19 +92,12 @@ public abstract class SortingAlgorithm
             _requireWait = false;
             
             //subroutine
-            if (old._nextValues != null)
-            {
-                _nextValues = new Dictionary<string, int>(old._nextValues);
-            }
-            else
-            {
-                _nextValues = null;
-            }
+            _nextValues = old._nextValues != null ? new Dictionary<string, int>(old._nextValues) : null;
             _continueLine = new Stack<SortingStateLine>(old._continueLine.Reverse()); //reverse because this method iteratively pops the stack items
             
             //Deep copy _valueStore
             _valueStore = new Stack<Dictionary<string, int>>();
-            foreach (Dictionary<string, int> dict in old._valueStore.Reverse())
+            foreach (var dict in old._valueStore.Reverse())
             {
                 _valueStore.Push(new Dictionary<string, int>(dict));
             }
@@ -151,7 +144,7 @@ public abstract class SortingAlgorithm
         }
     }
 
-    public SortingAlgorithm(SortingLogic logic)
+    protected SortingAlgorithm(SortingLogic logic)
     {
         sortingLogic = logic;
         

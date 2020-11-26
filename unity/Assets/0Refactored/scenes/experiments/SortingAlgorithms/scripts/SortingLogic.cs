@@ -26,25 +26,26 @@ public class SortingLogic : MonoBehaviour
     private SortingAlgorithmType _sortingAlgorithm;
     private SortingAlgorithm _algorithm;
 
-    private SortingArray _sortingArray;
+    private SortingVisualization _sortingVisualization;
     
     private bool _waitForMove;
+    private bool _sortingFinished;
 
-    private void Awake()
+    public SortingAlgorithmType SelectedSortingAlgorithm => _sortingAlgorithm;
+
+    public void Init()
     {
-        _sortingArray = GetComponent<SortingArray>();
+        _sortingVisualization = GetComponent<SortingVisualization>();
         SetAlgorithmDropdown(algorithmDropDown.value);
+        algorithmDropDown.onValueChanged.AddListener(SetAlgorithmDropdown);
     }
 
     private void Update()
     {
-        if (SimulationController.Instance.SimulationRunning && !_waitForMove)
+        while (SimulationController.Instance.SimulationRunning && !_waitForMove && !_sortingFinished)
         {
-            while (_waitForMove == false && SimulationController.Instance.SimulationRunning)
-            {
-                _waitForMove = true;
-                _algorithm.ExecuteNextState();
-            }
+            _waitForMove = true;
+            _algorithm.ExecuteNextState();
         }
     }
 
@@ -70,42 +71,46 @@ public class SortingLogic : MonoBehaviour
     {
         _sortingAlgorithm = (SortingAlgorithmType)choice;
         ResetAlgorithm();
+        algorithmDropDown.value = choice;
     }
     
     #endregion
 
     public void ResetAlgorithm()
     {
-        _sortingArray.HideBuckets();
+        if (_sortingVisualization == null)
+            return;
+        
+        _sortingVisualization.HideBuckets();
         switch (_sortingAlgorithm)
         {
             case SortingAlgorithmType.SA_InsertionSort:
-                _algorithm = new InsertionSort(this, _sortingArray.Size);
+                _algorithm = new InsertionSort(this, _sortingVisualization.Size);
                 break;
             case SortingAlgorithmType.SA_MergeSort:
-                _algorithm = new MergeSort(this, _sortingArray.Size);
+                _algorithm = new MergeSort(this, _sortingVisualization.Size);
                 break;
             case SortingAlgorithmType.SA_HeapSort:
-                _algorithm = new HeapSort(this, _sortingArray.Size);
+                _algorithm = new HeapSort(this, _sortingVisualization.Size);
                 break;
             case SortingAlgorithmType.SA_QuickSort:
-                _algorithm = new QuickSort(this, _sortingArray.Size);
+                _algorithm = new QuickSort(this, _sortingVisualization.Size);
                 break;
             case SortingAlgorithmType.SA_SelectionSort:
-                _algorithm = new SelectionSort(this, _sortingArray.Size);
+                _algorithm = new SelectionSort(this, _sortingVisualization.Size);
                 break;
             case SortingAlgorithmType.SA_BubbleSort:
-                _algorithm = new BubbleSort(this, _sortingArray.Size);
+                _algorithm = new BubbleSort(this, _sortingVisualization.Size);
                 break;
             case SortingAlgorithmType.SA_GnomeSort:
-                _algorithm = new GnomeSort(this, _sortingArray.Size);
+                _algorithm = new GnomeSort(this, _sortingVisualization.Size);
                 break;
             case SortingAlgorithmType.SA_RadixSort:
-                _sortingArray.ShowBuckets();
-                _algorithm = new RadixSort(this, _sortingArray.Size);
+                _sortingVisualization.ShowBuckets();
+                _algorithm = new RadixSort(this, _sortingVisualization.Size);
                 break;
             case SortingAlgorithmType.SA_ShellSort:
-                _algorithm = new ShellSort(this, _sortingArray.Size);
+                _algorithm = new ShellSort(this, _sortingVisualization.Size);
                 break;
             default:
                 //No algorithm selected
@@ -116,6 +121,8 @@ public class SortingLogic : MonoBehaviour
         SetSwapsComparisons(0,0);
         DisplayIndices(new Dictionary<string, int>());
         SetDescription();
+        _sortingVisualization.SetTitle(_algorithm.Pseudocode[0]);
+        _sortingFinished = false;
     }
 
     public void MoveFinished()
@@ -125,115 +132,116 @@ public class SortingLogic : MonoBehaviour
 
     public void SortingFinished()
     {
-        SimulationController.Instance.StopSimulation();
-        MarkCurrentSubset(0 , _sortingArray.Size - 1);
+        _sortingFinished = true;
+        _sortingVisualization.SortingFinished();
+        MarkCurrentSubset(0 , _sortingVisualization.Size - 1);
     }
 
     public void Insert(int fromIdx, int toIdx)
     {
-        if (fromIdx < 0 || fromIdx >= _sortingArray.Size ||
-            toIdx < 0 || toIdx >= _sortingArray.Size ||
+        if (fromIdx < 0 || fromIdx >= _sortingVisualization.Size ||
+            toIdx < 0 || toIdx >= _sortingVisualization.Size ||
             fromIdx == toIdx)
         {
             MoveFinished();
             return;
         }
-        _sortingArray.Insert(fromIdx, toIdx);
+        _sortingVisualization.Insert(fromIdx, toIdx);
     }
     
     public void Swap(int fromIdx, int toIdx)
     {
-        if (fromIdx < 0 || fromIdx >= _sortingArray.Size ||
-            toIdx < 0 || toIdx >= _sortingArray.Size ||
+        if (fromIdx < 0 || fromIdx >= _sortingVisualization.Size ||
+            toIdx < 0 || toIdx >= _sortingVisualization.Size ||
             fromIdx == toIdx)
         {
             MoveFinished();
             return;
         }
-        _sortingArray.Swap(fromIdx, toIdx);
+        _sortingVisualization.Swap(fromIdx, toIdx);
     }
 
     public bool CompareGreater(int idx1, int idx2)
     {
-        if (idx1 < 0 || idx1 >= _sortingArray.Size ||
-            idx2 < 0 || idx2 >= _sortingArray.Size ||
+        if (idx1 < 0 || idx1 >= _sortingVisualization.Size ||
+            idx2 < 0 || idx2 >= _sortingVisualization.Size ||
             idx1 == idx2)
         {
             MoveFinished();
             return false;
         }
-        return _sortingArray.CompareGreater(idx1, idx2);
+        return _sortingVisualization.CompareGreater(idx1, idx2);
     }
 
     public int GetMaxValue()
     {
-        return _sortingArray.GetMaxValue();
+        return _sortingVisualization.GetMaxValue();
     }
     
     public int GetBucketNumber(int ind, int exp)
     {
-        if (ind < 0 || ind > _sortingArray.Size)
+        if (ind < 0 || ind > _sortingVisualization.Size)
         {
             MoveFinished();
             return -1;
         }
-        return _sortingArray.GetBucketNumber(ind, exp);
+        return _sortingVisualization.GetBucketNumber(ind, exp);
     }
     
     public void MoveToBucket(int idx, int bucket)
     {
-        if (idx < 0 || idx >= _sortingArray.Size ||
+        if (idx < 0 || idx >= _sortingVisualization.Size ||
             bucket < 0 || bucket >= 10)
         {
             MoveFinished();
             return;
         }
-        _sortingArray.MoveToBucket(idx, bucket);
+        _sortingVisualization.MoveToBucket(idx, bucket);
     }
     
     public void UndoMoveToBucket(int idx, int bucket)
     {
-        if (idx < 0 || idx >= _sortingArray.Size ||
+        if (idx < 0 || idx >= _sortingVisualization.Size ||
             bucket < 0 || bucket >= 10 ||
-            _sortingArray.BucketEmpty(bucket))
+            _sortingVisualization.BucketEmpty(bucket))
         {
             MoveFinished();
             return;
         }
-        _sortingArray.UndoMoveToBucket(idx, bucket);
+        _sortingVisualization.UndoMoveToBucket(idx, bucket);
     }
     
     public void MoveFromBucket(int idx, int bucket)
     {
-        if (idx < 0 || idx >= _sortingArray.Size ||
+        if (idx < 0 || idx >= _sortingVisualization.Size ||
             bucket < 0 || bucket >= 10 ||
-            _sortingArray.BucketEmpty(bucket))
+            _sortingVisualization.BucketEmpty(bucket))
         {
             MoveFinished();
             return;
         }
-        _sortingArray.MoveFromBucket(idx, bucket);
+        _sortingVisualization.MoveFromBucket(idx, bucket);
     }
     
     public void UndoMoveFromBucket(int idx, int bucket)
     {
-        if (idx < 0 || idx >= _sortingArray.Size ||
+        if (idx < 0 || idx >= _sortingVisualization.Size ||
             bucket < 0 || bucket >= 10)
         {
             MoveFinished();
             return;
         }
-        _sortingArray.UndoMoveFromBucket(idx, bucket);
+        _sortingVisualization.UndoMoveFromBucket(idx, bucket);
     }
 
     public bool BucketEmpty(int bucket)
     {
-        return _sortingArray.BucketEmpty(bucket);
+        return _sortingVisualization.BucketEmpty(bucket);
     }
 
     public void SetPseudocode(int highlightLine, Dictionary<string, int> extraVars)
     {
-        _sortingArray.DisplayPseudocode(_algorithm.Pseudocode, highlightLine, extraVars);
+        _sortingVisualization.DisplayPseudocode(_algorithm.Pseudocode, highlightLine, extraVars);
     }
 
     private void SetDescription()
@@ -272,26 +280,26 @@ public class SortingLogic : MonoBehaviour
                 throw new ArgumentOutOfRangeException(nameof(_sortingAlgorithm), _sortingAlgorithm, null);
         }
         
-        _sortingArray.SetDescription(descriptionKey);
+        _sortingVisualization.SetDescription(descriptionKey);
     }
 
     public void MarkCurrentSubset(int from, int to)
     {
-        if (from < 0 || from >= _sortingArray.Size ||
-            to < 0 || to >= _sortingArray.Size)
+        if (from < 0 || from >= _sortingVisualization.Size ||
+            to < 0 || to >= _sortingVisualization.Size)
         {
             return;
         }
-        _sortingArray.MarkCurrentSubset(from, to);
+        _sortingVisualization.MarkCurrentSubset(from, to);
     }
 
     public void SetSwapsComparisons(int swaps, int comparisons)
     {
-        _sortingArray.SetSwapsComparisons(swaps, comparisons);
+        _sortingVisualization.SetSwapsComparisons(swaps, comparisons);
     }
     
     public void DisplayIndices(Dictionary<string, int> indices)
     {
-        _sortingArray.DisplayIndices(indices);
+        _sortingVisualization.DisplayIndices(indices);
     }
 }

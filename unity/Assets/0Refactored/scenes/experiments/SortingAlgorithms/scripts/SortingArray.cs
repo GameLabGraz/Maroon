@@ -7,7 +7,7 @@ using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class SortingArray : MonoBehaviour, IResetObject
+public class SortingArray : SortingVisualization, IResetObject
 {
     [SerializeField] private GameObject arrayPlace;
     [SerializeField] private GameObject bucketPrefab;
@@ -23,16 +23,11 @@ public class SortingArray : MonoBehaviour, IResetObject
 
     [SerializeField] private PC_Slider sizeSlider;
 
-    private int _size;
     private Vector3 _placeOffset;
     private List<ArrayPlace> _elements = new List<ArrayPlace>();
     private List<SortingBucket> _buckets = new List<SortingBucket>();
 
-    [SerializeField] private float timePerMove;
-
-    private SortingLogic _sortingLogic;
-
-    public int Size
+    public override int Size
     {
         get => _size;
         set
@@ -48,12 +43,19 @@ public class SortingArray : MonoBehaviour, IResetObject
         Size = (int)size;
     }
 
-    private void Start()
+    public override void Init(int size)
     {
-        _sortingLogic = GetComponent<SortingLogic>();
+        //ignore size!
+        base.Init(size);
         CreateBuckets();
         HideBuckets();
         Size = (int)sizeSlider.value;
+        _sortingLogic.Init();
+    }
+
+    public override void SortingFinished()
+    {
+        SimulationController.Instance.StopSimulation();
     }
 
     private void CreateDetailArray(int size)
@@ -102,17 +104,17 @@ public class SortingArray : MonoBehaviour, IResetObject
         }
     }
 
-    public void HideBuckets()
+    public override void HideBuckets()
     {
         bucketsObject.SetActive(false);
     }
     
-    public void ShowBuckets()
+    public override void ShowBuckets()
     {
         bucketsObject.SetActive(true);
     }
 
-    public void Insert(int fromIdx, int toIdx)
+    public override void Insert(int fromIdx, int toIdx)
     {
         StartCoroutine(InsertCoroutine(fromIdx, toIdx));
     }
@@ -184,7 +186,7 @@ public class SortingArray : MonoBehaviour, IResetObject
         _sortingLogic.MoveFinished();
     }
     
-    public void Swap(int fromIdx, int toIdx)
+    public override void Swap(int fromIdx, int toIdx)
     {
         StartCoroutine(SwapCoroutine(fromIdx, toIdx));
     }
@@ -208,20 +210,16 @@ public class SortingArray : MonoBehaviour, IResetObject
         _sortingLogic.MoveFinished();
     }
 
-    public bool CompareGreater(int idx1, int idx2)
+    public override bool CompareGreater(int idx1, int idx2)
     {
         StartCoroutine(WaitForMove());
         _elements[idx1].HighlightForSeconds(timePerMove);
         _elements[idx2].HighlightForSeconds(timePerMove);
-        if (_elements[idx1].Value > _elements[idx2].Value)
-        {
-            return true;
-        }
 
-        return false;
+        return _elements[idx1].Value > _elements[idx2].Value;
     }
     
-    public int GetMaxValue()
+    public override int GetMaxValue()
     {
         StartCoroutine(WaitForMove());
         int max = 0;
@@ -239,7 +237,7 @@ public class SortingArray : MonoBehaviour, IResetObject
         return max;
     }
     
-    public int GetBucketNumber(int ind, int exp)
+    public override int GetBucketNumber(int ind, int exp)
     {
         StartCoroutine(WaitForMove());
         _elements[ind].HighlightForSeconds(timePerMove);
@@ -250,7 +248,7 @@ public class SortingArray : MonoBehaviour, IResetObject
         return b;
     }
     
-    public void MoveToBucket(int from, int bucket)
+    public override void MoveToBucket(int from, int bucket)
     {
         StartCoroutine(WaitForMove());
         _elements[from].FadeOutSeconds(timePerMove);
@@ -259,7 +257,7 @@ public class SortingArray : MonoBehaviour, IResetObject
         _buckets[bucket].StoredElements.AddLast(_elements[from].Value);
     }
     
-    public void UndoMoveToBucket(int from, int bucket)
+    public override void UndoMoveToBucket(int from, int bucket)
     {
         StartCoroutine(WaitForMove());
 
@@ -270,7 +268,7 @@ public class SortingArray : MonoBehaviour, IResetObject
         _buckets[bucket].HighlightForSeconds(timePerMove);
     }
     
-    public void MoveFromBucket(int to, int bucket)
+    public override void MoveFromBucket(int to, int bucket)
     {
         StartCoroutine(WaitForMove());
 
@@ -281,7 +279,7 @@ public class SortingArray : MonoBehaviour, IResetObject
         _buckets[bucket].HighlightForSeconds(timePerMove);
     }
     
-    public void UndoMoveFromBucket(int to, int bucket)
+    public override void UndoMoveFromBucket(int to, int bucket)
     {
         StartCoroutine(WaitForMove());
         
@@ -291,12 +289,12 @@ public class SortingArray : MonoBehaviour, IResetObject
         _buckets[bucket].StoredElements.AddFirst(_elements[to].Value);
     }
 
-    public bool BucketEmpty(int bucket)
+    public override bool BucketEmpty(int bucket)
     {
         return _buckets[bucket].StoredElements.Count == 0;
     }
 
-    public void MarkCurrentSubset(int from, int to)
+    public override void MarkCurrentSubset(int from, int to)
     {
         for (int i = 0; i < _size; ++i)
         {
@@ -311,7 +309,7 @@ public class SortingArray : MonoBehaviour, IResetObject
         }
     }
     
-    public void SetSwapsComparisons(int swaps, int comparisons)
+    public override void SetSwapsComparisons(int swaps, int comparisons)
     {
         string text = "";
         text += "<b>Swaps:</b> <pos=50%>" + swaps + "\n";
@@ -319,7 +317,7 @@ public class SortingArray : MonoBehaviour, IResetObject
         swapsText.text = text;
     }
 
-    public void DisplayPseudocode(List<string> pseudocode, int highlightLine, Dictionary<string, int> extraVars)
+    public override void DisplayPseudocode(List<string> pseudocode, int highlightLine, Dictionary<string, int> extraVars)
     {
         string highlightedCode = "";
         for (int i = 0; i < pseudocode.Count; ++i)
@@ -358,12 +356,12 @@ public class SortingArray : MonoBehaviour, IResetObject
         pseudoCodeText.text = highlightedCode;
     }
     
-    public void SetDescription(string key)
+    public override void SetDescription(string key)
     {
         descriptionText.text = LanguageManager.Instance.GetString(key);
     }
     
-    public void DisplayIndices(Dictionary<string, int> indices)
+    public override void DisplayIndices(Dictionary<string, int> indices)
     {
         for (int i = 0; i < Size; ++i)
         {
@@ -377,12 +375,6 @@ public class SortingArray : MonoBehaviour, IResetObject
             }
             _elements[i].SetIndexText(matches);
         }
-    }
-
-    private IEnumerator WaitForMove()
-    {
-        yield return new WaitForSeconds(timePerMove);
-        _sortingLogic.MoveFinished();
     }
 
     private int GetElementValue(int index)
