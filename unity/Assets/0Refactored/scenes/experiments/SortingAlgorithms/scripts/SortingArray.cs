@@ -381,7 +381,21 @@ public class SortingArray : SortingVisualization, IResetObject
     {
         return _elements[index].Value;
     }
-    
+
+    public override void NewAlgorithmSelected()
+    {
+        base.NewAlgorithmSelected();
+        HideBuckets();
+    }
+
+    public override void ResetVisualization()
+    {
+        foreach (var element in _elements)
+        {
+            element.ResetVisualization();
+        }
+    }
+
     public void ResetObject()
     {
         foreach (var element in _elements)
@@ -389,5 +403,6 @@ public class SortingArray : SortingVisualization, IResetObject
             element.Value = Random.Range(1, 100);
         }
         _sortingLogic.ResetAlgorithm();
+        ResetVisualization();
     }
 }

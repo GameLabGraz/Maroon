@@ -69,4 +69,10 @@ public class SortingColumn : MonoBehaviour
         Sprite newSprite = Sprite.Create(sortingTexture, textureStrip, Vector2.zero);
         _spriteRenderer.sprite = newSprite;
     }
+
+    public void ResetVisualization()
+    {
+        _spriteRenderer.color = defaultColor;
+        RerenderSprite();
+    }
 }

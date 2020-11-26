@@ -5,8 +5,10 @@ using System.Linq;
 using UnityEngine;
 using Random = System.Random;
 
-public class SortingController : MonoBehaviour
+public class SortingController : MonoBehaviour, IResetObject
 {
+    [SerializeField] private int battleArraySize;
+    
     [SerializeField] private GameObject detailSortingArray;
     [SerializeField] private GameObject battleArrays;
     
@@ -17,8 +19,9 @@ public class SortingController : MonoBehaviour
     //[SerializeField] private GameObject battleBettingUi;
 
     [SerializeField] private GameObject battlePanels;
-    
-    [SerializeField] private int battleArraySize;
+
+    [SerializeField] private GameObject forwardButton;
+    [SerializeField] private GameObject backwardButton;
     
     private void Start()
     {
@@ -41,6 +44,9 @@ public class SortingController : MonoBehaviour
         //battleBettingUI.SetActive(false);
         
         battlePanels.SetActive(false);
+        
+        forwardButton.SetActive(true);
+        backwardButton.SetActive(true);
 
         if (chosenAlgorithm != -1)
         {
@@ -63,6 +69,9 @@ public class SortingController : MonoBehaviour
         
         battlePanels.SetActive(true);
         
+        forwardButton.SetActive(false);
+        backwardButton.SetActive(false);
+        
         List<int> order = Enumerable.Range(0,battleArraySize).ToList();
         ShuffleList(order);
 
@@ -83,6 +92,25 @@ public class SortingController : MonoBehaviour
             int value = list[k];  
             list[k] = list[n];  
             list[n] = value;  
+        }
+    }
+
+    public void NewAlgorithmSelected()
+    {
+        foreach (var array in battleArrays.GetComponentsInChildren<SortingSpriteArray>())
+        {
+            array.RestoreOrder();
+        }
+    }
+
+    public void ResetObject()
+    {
+        List<int> order = Enumerable.Range(0,battleArraySize).ToList();
+        ShuffleList(order);
+        
+        foreach (var array in battleArrays.GetComponentsInChildren<SortingSpriteArray>())
+        {
+            array.ReorderElements(order);
         }
     }
 }

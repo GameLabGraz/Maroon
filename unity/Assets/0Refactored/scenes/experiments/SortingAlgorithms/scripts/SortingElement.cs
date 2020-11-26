@@ -186,4 +186,12 @@ public class SortingElement : MonoBehaviour
         foreach (var mat in _meshRenderer.materials)
             mat.color = _grayColor;
     }
+
+    public void ResetVisualization()
+    {
+        SetDefaultColor();
+        _animationState = AnimationState.AS_None;
+        transform.localPosition = _centerPosition;
+        transform.localScale = new Vector3(_size,_size,_size);
+    }
 }

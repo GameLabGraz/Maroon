@@ -60,4 +60,11 @@ public abstract class SortingVisualization : MonoBehaviour
         yield return new WaitForSeconds(timePerMove);
         _sortingLogic.MoveFinished();
     }
+
+    public virtual void NewAlgorithmSelected()
+    {
+        ResetVisualization();
+    }
+
+    public abstract void ResetVisualization();
 }

@@ -14,6 +14,8 @@ public class SortingSpriteArray : SortingVisualization
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI operationsText;
 
+    private List<int> _startOrder;
+
     public override int Size
     {
         get => _size;
@@ -170,11 +172,32 @@ public class SortingSpriteArray : SortingVisualization
         _sortingController.EnterDetailMode(selectedAlgorithm);
     }
 
+    public override void NewAlgorithmSelected()
+    {
+        base.NewAlgorithmSelected();
+        _sortingController.NewAlgorithmSelected();
+    }
+
     public void ReorderElements(List<int> order)
     {
+        _startOrder = order;
         for (int i = 0; i < Size; ++i)
         {
             _elements[i].Value = order[i];
+        }
+        _sortingLogic.ResetAlgorithm();
+    }
+
+    public void RestoreOrder()
+    {
+        ReorderElements(_startOrder);
+    }
+
+    public override void ResetVisualization()
+    {
+        foreach (var column in _elements)
+        {
+            column.ResetVisualization();
         }
     }
 }

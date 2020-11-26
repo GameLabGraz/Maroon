@@ -36,8 +36,8 @@ public class SortingLogic : MonoBehaviour
     public void Init()
     {
         _sortingVisualization = GetComponent<SortingVisualization>();
-        SetAlgorithmDropdown(algorithmDropDown.value);
         algorithmDropDown.onValueChanged.AddListener(SetAlgorithmDropdown);
+        algorithmDropDown.allowReset = false;
     }
 
     private void Update()
@@ -70,6 +70,7 @@ public class SortingLogic : MonoBehaviour
     public void SetAlgorithmDropdown(int choice)
     {
         _sortingAlgorithm = (SortingAlgorithmType)choice;
+        _sortingVisualization.NewAlgorithmSelected();
         ResetAlgorithm();
         algorithmDropDown.value = choice;
     }
@@ -78,10 +79,11 @@ public class SortingLogic : MonoBehaviour
 
     public void ResetAlgorithm()
     {
+        SimulationController.Instance.StopSimulation();
+        
         if (_sortingVisualization == null)
             return;
         
-        _sortingVisualization.HideBuckets();
         switch (_sortingAlgorithm)
         {
             case SortingAlgorithmType.SA_InsertionSort:
@@ -122,6 +124,7 @@ public class SortingLogic : MonoBehaviour
         DisplayIndices(new Dictionary<string, int>());
         SetDescription();
         _sortingVisualization.SetTitle(_algorithm.Pseudocode[0]);
+        _sortingVisualization.ResetVisualization();
         _sortingFinished = false;
     }
 

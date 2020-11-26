@@ -84,4 +84,10 @@ public class ArrayPlace : MonoBehaviour
     {
         indexText.text = String.Join("\n", indices);
     }
+
+    public void ResetVisualization()
+    {
+        highlight.SetActive(false);
+        _element.ResetVisualization();
+    }
 }
