@@ -8,4 +8,10 @@ public class QuantityObject : MonoBehaviour
     [SerializeField] private QuantityVector3 vectorValue;
     [SerializeField] private QuantityBool boolValue;
     [SerializeField] private QuantityString stringValue;
+
+
+    public void SetFloatValue(float value)
+    {
+        floatValue.Value = value;
+    }
 }

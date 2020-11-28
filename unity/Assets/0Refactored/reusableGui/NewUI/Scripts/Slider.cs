@@ -5,8 +5,9 @@ namespace Maroon.UI
 {
     public class Slider : UnityEngine.UI.Slider, IResetObject
     {
+        [SerializeField] private bool allowReset = true;
+
         private float _startValue;
-        public bool resetEnabled = true;
 
         protected override void Start()
         {
@@ -29,7 +30,7 @@ namespace Maroon.UI
 
         public void ResetObject()
         {
-            if (resetEnabled)
+            if (allowReset)
                 value = _startValue;
         }
     }

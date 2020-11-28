@@ -4,7 +4,8 @@ using UnityEngine.Events;
 
 namespace Maroon.Physics
 {
-    public class OnValueChangeEvent<T> : UnityEvent<T> {}
+    public class OnValueChangeEvent<T> : UnityEvent<T> { }
+
     [Serializable]
     public class OnValueFloatChangeEvent : OnValueChangeEvent<float> { }
     [Serializable]
@@ -18,46 +19,62 @@ namespace Maroon.Physics
 
     public interface IQuantity
     {
-        object GetValue();
         string GetName();
+        object GetValue();
     }
 
+
     [Serializable]
-    public class Quantity<T>: IQuantity
+    public class Quantity<T> : IQuantity
     {
-        [SerializeField] private string _name;
+        [SerializeField] private string name;
 
         [SerializeField] private T _value;
+
 
         public T Value
         {
             get => _value;
             set
             {
-
                 _value = value;
                 onValueChanged?.Invoke(value);
             }
         }
 
-        public Quantity(T value) { _value = value; }
+        public Quantity(T value)
+        {
+            _value = value;
+        }
+
+        public void SystemSetsQuantity(object newValue)
+        {
+            if (newValue.GetType() != typeof(T)) return;
+
+            _value = (T)newValue;
+            onValueChanged?.Invoke(_value);
+        }
 
         public OnValueChangeEvent<T> onValueChanged = new OnValueChangeEvent<T>();
+
+        public string GetName()
+        {
+            return name;
+        }
 
         public object GetValue()
         {
             return _value;
-        }
-
-        public string GetName()
-        {
-            return _name;
         }
     }
 
     [Serializable]
     public class QuantityFloat : Quantity<float>
     {
+        public float minValue;
+        public float maxValue;
+
+        public QuantityFloat() : this(0) { }
         public QuantityFloat(float value) : base(value)
         {
             base.onValueChanged.AddListener(OnValueChangedHandler);
@@ -71,6 +88,7 @@ namespace Maroon.Physics
     [Serializable]
     public class QuantityVector3 : Quantity<Vector3>
     {
+        public QuantityVector3() : this(Vector3.zero) { }
         public QuantityVector3(Vector3 value) : base(value)
         {
             base.onValueChanged.AddListener(OnValueChangedHandler);
@@ -84,6 +102,7 @@ namespace Maroon.Physics
     [Serializable]
     public class QuantityBool : Quantity<bool>
     {
+        public QuantityBool() : this(false) { }
         public QuantityBool(bool value) : base(value)
         {
             base.onValueChanged.AddListener(OnValueChangedHandler);
@@ -100,6 +119,7 @@ namespace Maroon.Physics
         public int minValue;
         public int maxValue;
 
+        public QuantityInt() : this(0) { }
         public QuantityInt(int value) : base(value)
         {
             base.onValueChanged.AddListener(OnValueChangedHandler);
@@ -113,6 +133,7 @@ namespace Maroon.Physics
     [Serializable]
     public class QuantityString : Quantity<string>
     {
+        public QuantityString() : this(string.Empty) { }
         public QuantityString(string value) : base(value)
         {
             base.onValueChanged.AddListener(OnValueChangedHandler);
