@@ -3273,7 +3273,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 941568971}
-  m_RootOrder: 10
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &249590953
 MonoBehaviour:
@@ -8949,9 +8949,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 548098170}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d290698d0aa5c7f42bb9616f8fa6d64e, type: 3}
+  m_Script: {fileID: 11500000, guid: e40813caf04046245adca9d9f261bd42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  key: TT_ToggleVoltage
+  suffix: 
 --- !u!114 &548098173
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10160,9 +10162,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 646307489}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d290698d0aa5c7f42bb9616f8fa6d64e, type: 3}
+  m_Script: {fileID: 11500000, guid: e40813caf04046245adca9d9f261bd42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  key: ErrorMaxCharges
+  suffix: 
 --- !u!114 &646307492
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10899,9 +10903,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 679243149}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d290698d0aa5c7f42bb9616f8fa6d64e, type: 3}
+  m_Script: {fileID: 11500000, guid: e40813caf04046245adca9d9f261bd42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  key: Button_Delete
+  suffix: 
 --- !u!114 &679243152
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18851,12 +18857,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66bf5cd5ecdf5af429495ffe9376c96a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!224 &941569005 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 6896857270606356323, guid: bdfec920f90e5d7499f7d0276bf96c41,
-    type: 3}
-  m_PrefabInstance: {fileID: 941568970}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &941569006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19228,12 +19228,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!224 &941569012 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 6896857271066270653, guid: bdfec920f90e5d7499f7d0276bf96c41,
-    type: 3}
-  m_PrefabInstance: {fileID: 941568970}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &941569013 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6896857271066270642, guid: bdfec920f90e5d7499f7d0276bf96c41,
@@ -19599,6 +19593,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fb080c8a2120a24b91de31503e911ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &941569100 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6414831389366167762, guid: bdfec920f90e5d7499f7d0276bf96c41,
+    type: 3}
+  m_PrefabInstance: {fileID: 941568970}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &941569101 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8365896200028374202, guid: bdfec920f90e5d7499f7d0276bf96c41,
+    type: 3}
+  m_PrefabInstance: {fileID: 941568970}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &941569102
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21174,7 +21180,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 941569012}
+    m_TransformParent: {fileID: 941569100}
     m_Modifications:
     - target: {fileID: 1482331554849848127, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}
@@ -25712,7 +25718,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 990177107}
   m_HandleRect: {fileID: 990177106}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -35352,7 +35358,7 @@ PrefabInstance:
     - target: {fileID: 8409527518451127711, guid: 25af714453cfd4147834948a37c2a53e,
         type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8409527518451127711, guid: 25af714453cfd4147834948a37c2a53e,
         type: 3}
@@ -35932,7 +35938,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 941569005}
+    m_TransformParent: {fileID: 941569101}
     m_Modifications:
     - target: {fileID: 1482331554849848127, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}
