@@ -237,9 +237,12 @@ public class MaroonNetworkManager : NetworkManager
         }
         _connectedPlayers.Remove(disconnectedPlayerName);
         NetworkNamingService.FreePlayerName(disconnectedPlayerName);
-        
-        string leaveMsg = disconnectedPlayerName + " " + LanguageManager.Instance.GetString("ClientLeave");
-        DisplayMessage(leaveMsg);
+
+        if (disconnectedPlayerName != _playerName)
+        {
+            string leaveMsg = disconnectedPlayerName + " " + LanguageManager.Instance.GetString("ClientLeave");
+            DisplayMessage(leaveMsg);
+        }
     }
 
     private void OnCreateCharacter(NetworkConnection conn, CharacterSpawnMessage message)
