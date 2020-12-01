@@ -1,4 +1,5 @@
 ﻿using GEAR.Localization;
+using GEAR.Localization.Text;
 using UnityEngine;
 using UnityEngine.UI;
 

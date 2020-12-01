@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using GEAR.Localization;
+using GEAR.Localization.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
