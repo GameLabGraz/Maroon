@@ -183,7 +183,7 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
     public void UpdateResetPosition()
     {
         _resetPosition = transform.localPosition;
-        Debug.Log("Update Reset Position: " + _resetPosition + " (" + gameObject.name + ")");
+        //Debug.Log("Update Reset Position: " + _resetPosition + " (" + gameObject.name + ")");
     }
 
     public void ResetObject()
