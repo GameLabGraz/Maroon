@@ -201,36 +201,66 @@ public abstract class SortingAlgorithm
 
     public void Swap(int ind1, int ind2)
     {
+        if (ind1 == ind2)
+        {
+            sortingLogic.MoveFinished();
+            return;   
+        }
         _swaps++;
         sortingLogic.Swap(ind1, ind2);
     }
     
     public void UndoSwap(int ind1, int ind2)
     {
+        if (ind1 == ind2)
+        {
+            sortingLogic.MoveFinished();
+            return;   
+        }
         _swaps--;
         sortingLogic.Swap(ind2, ind1);
     }
     
     public void Insert(int ind1, int ind2)
     {
+        if (ind1 == ind2)
+        {
+            sortingLogic.MoveFinished();
+            return;   
+        }
         _swaps++;
         sortingLogic.Insert(ind1, ind2);
     }
     
     public void UndoInsert(int ind1, int ind2)
     {
+        if (ind1 == ind2)
+        {
+            sortingLogic.MoveFinished();
+            return;   
+        }
         _swaps--;
         sortingLogic.Insert(ind2, ind1);
     }
 
     public bool CompareGreater(int ind1, int ind2)
     {
+        if (ind1 == ind2)
+        {
+            sortingLogic.MoveFinished();
+            return false;   
+        }
         _comparisons++;
         return sortingLogic.CompareGreater(ind1, ind2);
     }
 
     public void UndoGreater(int ind1, int ind2)
     {
+        if (ind1 == ind2)
+        {
+            sortingLogic.MoveFinished();
+            return;   
+        }
         _comparisons--;
         sortingLogic.CompareGreater(ind1, ind2);
     }

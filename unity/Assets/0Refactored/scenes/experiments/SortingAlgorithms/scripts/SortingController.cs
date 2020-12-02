@@ -2,11 +2,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using PlatformControls.PC;
 using UnityEngine;
 using Random = System.Random;
 
 public class SortingController : MonoBehaviour, IResetObject
 {
+    public enum ArrangementMode
+    {
+        AM_Random,
+        AM_Sorted,
+        AM_Reversed
+    }
+
+    private ArrangementMode _arrangementMode;
+    [SerializeField] private PC_LocalizedDropDown arrangementDropdown;
+    
     [SerializeField] private int battleArraySize;
     
     [SerializeField] private GameObject detailSortingArray;
@@ -30,6 +41,9 @@ public class SortingController : MonoBehaviour, IResetObject
             vis.Init(battleArraySize);
         }
         EnterDetailMode();
+        arrangementDropdown.onValueChanged.AddListener(NewArrangementSelected);
+        arrangementDropdown.allowReset = false;
+        _arrangementMode = (ArrangementMode)arrangementDropdown.value;
     }
 
     public void EnterDetailMode(int chosenAlgorithm = -1)
@@ -72,9 +86,25 @@ public class SortingController : MonoBehaviour, IResetObject
         forwardButton.SetActive(false);
         backwardButton.SetActive(false);
         
-        List<int> order = Enumerable.Range(0,battleArraySize).ToList();
-        ShuffleList(order);
+        SetBattleOrder();
+    }
 
+    private void SetBattleOrder()
+    {
+        List<int> order = Enumerable.Range(0, battleArraySize).ToList();
+        switch (_arrangementMode)
+        {
+            case ArrangementMode.AM_Random:
+                ShuffleList(order);
+                break;
+            case ArrangementMode.AM_Sorted:
+                //order stays
+                break;
+            case ArrangementMode.AM_Reversed:
+                order.Reverse();
+                break;
+        }
+        
         foreach (var array in battleArrays.GetComponentsInChildren<SortingSpriteArray>())
         {
             array.Size = battleArraySize;
@@ -103,14 +133,19 @@ public class SortingController : MonoBehaviour, IResetObject
         }
     }
 
+    public void NewArrangementSelected(int arr)
+    {
+        _arrangementMode = (ArrangementMode)arr;
+        SetBattleOrder();
+    }
+
+    public void SetExecutionSpeed(float speed)
+    {
+        Time.timeScale = speed;
+    }
+
     public void ResetObject()
     {
-        List<int> order = Enumerable.Range(0,battleArraySize).ToList();
-        ShuffleList(order);
-        
-        foreach (var array in battleArrays.GetComponentsInChildren<SortingSpriteArray>())
-        {
-            array.ReorderElements(order);
-        }
+        SetBattleOrder();
     }
 }

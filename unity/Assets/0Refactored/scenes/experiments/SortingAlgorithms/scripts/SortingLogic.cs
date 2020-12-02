@@ -40,13 +40,17 @@ public class SortingLogic : MonoBehaviour
         algorithmDropDown.allowReset = false;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
+        if(_waitForMove)
+            Debug.Log("Dropped " + _sortingAlgorithm);
         while (SimulationController.Instance.SimulationRunning && !_waitForMove && !_sortingFinished)
         {
             _waitForMove = true;
             _algorithm.ExecuteNextState();
         }
+        if(SimulationController.Instance.SimulationRunning)
+            Debug.Log("Finished " + _sortingAlgorithm);
     }
 
     #region GUI_Functions
