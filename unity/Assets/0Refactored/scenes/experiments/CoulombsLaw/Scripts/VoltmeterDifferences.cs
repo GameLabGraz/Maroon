@@ -152,4 +152,10 @@ public class VoltmeterDifferences : MonoBehaviour
             //do nothing the user just has to pull in the voltmeter measuring points and now he can
         }
     }
+
+    public void InvokeValueChangedEvent()
+    {
+        currentValue.SendValueChangedEvent();
+    }
+
 }
