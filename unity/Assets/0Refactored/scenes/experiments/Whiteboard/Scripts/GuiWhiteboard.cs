@@ -1,20 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class GuiWhiteboard : MonoBehaviour 
 {
 	private WhiteboardController whiteboardController;
 	private GUIStyle textStyle;
 	private Vector2 scrollViewVector = Vector2.zero;
-	private int selectedLectureIndex = 0;
-	private string[] lectureNames;
-	private bool showMenu = true;
+	private int selectedLectureIndex;
+    private bool showMenu = true;
 
-    // HOTFIX for NullReference to this.whiteboardController.Lectures.Count
-    private int lectureCount = 4; //static, only 4 lectures atm
-    private List<string> myLectureNames = new List<string>();
+    private string[] LectureNames => whiteboardController.Lectures.Select(lecture => lecture.Name).ToArray();
 
-    public void Start () 
+	public void Start () 
 	{
 	    Cursor.lockState = CursorLockMode.None;
 	    // Define GUI style
@@ -31,12 +29,6 @@ public class GuiWhiteboard : MonoBehaviour
 	    {
 	        throw new System.ArgumentNullException("No WhiteboardController script attached to WhiteboardPlane GameObject");
 	    }
-
-        // Get Lecture names
-        lectureNames = new string[whiteboardController.Lectures.Count];
-	    var i = 0;
-	    foreach (var lecture in whiteboardController.Lectures)
-	        lectureNames[i++] = lecture.Name;
     }
 
     public void ShowMenu()
@@ -51,19 +43,23 @@ public class GuiWhiteboard : MonoBehaviour
 		    null != whiteboardController.SelectedLecture &&
 		    null != whiteboardController.SelectedLecture.Contents)
 		{
-			GUI.Label (new Rect (Screen.width / 2f - 50f, Screen.height - 50f, 100f, 50f), string.Format ("{0}/{1}", whiteboardController.CurrentContentIndex + 1, whiteboardController.SelectedLecture.Contents.Count), textStyle);
+			GUI.Label (new Rect (Screen.width / 2f - 50, Screen.height - 60f, 100f, 50f),
+                $"{whiteboardController.CurrentContentIndex + 1}/{whiteboardController.SelectedLecture.Contents.Count}", textStyle);
 		}
 
 		// Show lecture menu when activated
 		if (showMenu)
 		{
 			// Begin the ScrollView
-			scrollViewVector = GUI.BeginScrollView (new Rect (Screen.width / 2f + 500, 50f, 450f, Screen.height - 125f), scrollViewVector, new Rect (0f, 0f, 430f, 2000f));
+			scrollViewVector = GUI.BeginScrollView (
+                new Rect (Screen.width / 2f + 320, 50f, 280, Screen.height - 125f), 
+                scrollViewVector, 
+                new Rect (0f, 0f, 260, 1000));
 
 			// Put something inside the ScrollView
-			GUILayout.BeginArea (new Rect (0, 20, 430f, 2000f));
+			GUILayout.BeginArea (new Rect (0, 0, 250, 1000f));
 			GUILayout.Box ("PLEASE SELECT A LECTURE");
-			selectedLectureIndex = GUILayout.SelectionGrid (selectedLectureIndex, lectureNames, 1);
+			selectedLectureIndex = GUILayout.SelectionGrid (selectedLectureIndex, LectureNames, 1);
 			GUILayout.EndArea ();
 
 			// End the ScrollView

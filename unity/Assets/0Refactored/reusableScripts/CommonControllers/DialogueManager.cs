@@ -27,6 +27,7 @@ namespace Maroon.UI
         [SerializeField]
         private AudioClip typeSound;
 
+        private IEnumerator _coroutine;
         private readonly Queue<Message> _messages = new Queue<Message>();
 
         public bool TypeMessageRunning { get; private set; }
@@ -47,10 +48,17 @@ namespace Maroon.UI
                 return;
 
             if (dialogView.IsActive && Input.GetMouseButtonDown(0))
+            {
+                StopCoroutine(_coroutine);
                 dialogView.SetActive(false);
+                TypeMessageRunning = false;
+            }
 
             if (_messages.Count > 0 && !TypeMessageRunning)
-                StartCoroutine(TypeMessage(_messages.Dequeue()));
+            {
+                _coroutine = TypeMessage(_messages.Dequeue());
+                StartCoroutine(_coroutine);
+            }
         }
 
         public void ShowMessage(string message)
