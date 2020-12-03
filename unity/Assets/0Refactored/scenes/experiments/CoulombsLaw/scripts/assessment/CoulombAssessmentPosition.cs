@@ -24,6 +24,8 @@ public class CoulombAssessmentPosition : MonoBehaviour
     public UnityEvent onSystemShowObject;
     public UnityEvent onSystemUpdatedPosition;
 
+    public UnityEvent onUpdateMessageSend;
+
     private Vector3 _lastPosition;
     private bool _lastVisible;
     private bool _isInitialized;
@@ -87,6 +89,8 @@ public class CoulombAssessmentPosition : MonoBehaviour
         if(!_isInitialized) Initialization();
         
         position.Value = isActive ? CoulombLogic.Instance.WorldToCalcSpace(transform) : new Vector3(-1, -1, -1);
+        
+        onUpdateMessageSend.Invoke();
     }
 
     private void ChangeToNewPosition(Vector3 newPosition)

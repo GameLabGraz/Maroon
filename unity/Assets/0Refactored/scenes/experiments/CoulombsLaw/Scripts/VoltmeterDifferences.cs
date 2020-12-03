@@ -155,7 +155,24 @@ public class VoltmeterDifferences : MonoBehaviour
 
     public void InvokeValueChangedEvent()
     {
+        if (!positiveMeasuringPoint.isActiveAndEnabled && !negativeMeasuringPoint.isActiveAndEnabled)
+            currentValue.Value = 0f;
+        else
+            GetDifference(); //call to update the current value, seems as otherwise this will be done too late
         currentValue.SendValueChangedEvent();
     }
 
+    public void AddValueChangedEventsToCharge(CoulombChargeBehaviour charge)
+    {
+        if (!charge) return;
+
+        charge.charge.onValueChanged.AddListener(newVal => InvokeValueChangedEvent());
+        
+        var dragHandler = charge.GetComponent<CoulombAssessmentPosition>();
+        if (dragHandler)
+        {
+            dragHandler.onUpdateMessageSend.AddListener(InvokeValueChangedEvent);
+        }
+
+    }
 }
