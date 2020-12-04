@@ -199,6 +199,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -210,6 +211,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 1
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -420,6 +422,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -431,6 +434,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -455,7 +459,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa38866e3ab324e4ab39f941cf9e1c00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  verticesPerLength: 60
+  verticesPerWidth: 20
+  planeMesh: {fileID: 0}
   material: {fileID: 2100000, guid: b69611e47e1422842a23d115ab3ebeed, type: 2}
+  slitPlate: {fileID: 0}
+  waterBasinGeneratorPosition: {fileID: 0}
 --- !u!1 &1846387200166215735
 GameObject:
   m_ObjectHideFlags: 0
@@ -533,7 +542,10 @@ MonoBehaviour:
   waveAmplitude: 0.5
   waveLength: 0.25
   waveFrequency: 0.5
+  numberOfBasinGenerators: 20
   waterPlane: {fileID: 1846387199857825954}
+  wavePropagationMode: 0
+  waterBasinGeneratorPosition: {fileID: 360207747677165422}
 --- !u!1 &1846387200410982919
 GameObject:
   m_ObjectHideFlags: 0
@@ -689,6 +701,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -700,6 +713,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 1
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
