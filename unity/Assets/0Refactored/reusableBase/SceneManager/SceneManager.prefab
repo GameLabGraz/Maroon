@@ -43,11 +43,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3372ac7764709be4e9a3156e4ad4c624, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  test:
-    UnitySceneAsset: {fileID: 102900000, guid: 8abb96c75f978e243a3313daae66f9e5, type: 3}
-    UnitySceneName: 0Refactored/scenes/experiments/HuygensPrinciple/HuygensPrinciple.pc
-  SceneCategories:
-  - Name: 
-    SceneFields: []
-  - Name: 
-    SceneFields: []
+  webGLEnableSceneLoadingViaURLParameter: 1
+  webGLForceSceneFromURLParameter: 0
+  webGLSceneURLParameterName: LoadScene
+  sceneCategories:
+  - name: Physics
+    scenes:
+    - unitySceneAsset: {fileID: 102900000, guid: 2f118885e3e92e442a59f549dc3b96df,
+        type: 3}
+      unityScenePath: 0Refactored/scenes/experiments/FallingCoil/FallingCoil.pc
+      unitySceneName: FallingCoil.pc
+      isVirtualRealityScene: 0
+    - unitySceneAsset: {fileID: 102900000, guid: d8668991e0e91ab4a9ada2bee11af03c,
+        type: 3}
+      unityScenePath: 0Refactored/scenes/experiments/FallingCoil/FallingCoil.vr
+      unitySceneName: FallingCoil.vr
+      isVirtualRealityScene: 1
+  - name: Computer Science
+    scenes: []

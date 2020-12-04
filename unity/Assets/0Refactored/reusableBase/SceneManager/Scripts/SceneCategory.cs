@@ -5,7 +5,23 @@ namespace Maroon
 {
     [Serializable] class SceneCategory
     {
-        [SerializeField] private string Name;
-        [SerializeField] private Utilities.SceneField[] SceneFields;
+        // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        // Fields
+
+        [SerializeField] private string name;
+        [SerializeField] private Maroon.CustomSceneAsset[] scenes;
+
+        // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        // Properties
+
+        public string Name
+        {
+            get { return this.name; }
+        }
+
+        public Maroon.CustomSceneAsset[] Scenes
+        {
+            get { return this.scenes; }
+        }
     }
 }

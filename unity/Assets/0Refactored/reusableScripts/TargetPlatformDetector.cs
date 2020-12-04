@@ -1,39 +1,40 @@
-﻿
-public static class TargetPlatformDetector
+﻿namespace Maroon
 {
-    public static bool isVRPlatform = false;
-
-    public static string targetPlatform = "undefined";
-    
-    static TargetPlatformDetector()
+    public static class TargetPlatformDetector
     {
-        // Detect Scene type
-        string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        public static bool isVRPlatform = false;
 
-        if(sceneName.Contains(".vr"))
+        public static string targetPlatform = "undefined";
+        
+        static TargetPlatformDetector()
         {
-            TargetPlatformDetector.isVRPlatform = true;
-        }
-        else
-        {
-            TargetPlatformDetector.isVRPlatform = false;
-        }
+            // Detect Scene type
+            string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
 
-        // Detect Platform
-        #if UNITY_EDITOR
-            TargetPlatformDetector.targetPlatform = "editor";
-        #elif UNITY_ANDROID
-            TargetPlatformDetector.targetPlatform = "android";
-        #elif UNITY_IOS 
-            TargetPlatformDetector.targetPlatform = "ios";
-        #elif UNITY_STANDALONE_OSX
-            TargetPlatformDetector.targetPlatform = "mac";
-        #elif UNITY_STANDALONE_WIN
-            TargetPlatformDetector.targetPlatform = "pc";
-        #elif UNITY_WEBGL
-            TargetPlatformDetector.targetPlatform = "webgl";
-        #endif    
+            if(sceneName.Contains(".vr"))
+            {
+                TargetPlatformDetector.isVRPlatform = true;
+            }
+            else
+            {
+                TargetPlatformDetector.isVRPlatform = false;
+            }
+
+            // Detect Platform
+            #if UNITY_EDITOR
+                TargetPlatformDetector.targetPlatform = "editor";
+            #elif UNITY_ANDROID
+                TargetPlatformDetector.targetPlatform = "android";
+            #elif UNITY_IOS 
+                TargetPlatformDetector.targetPlatform = "ios";
+            #elif UNITY_STANDALONE_OSX
+                TargetPlatformDetector.targetPlatform = "mac";
+            #elif UNITY_STANDALONE_WIN
+                TargetPlatformDetector.targetPlatform = "pc";
+            #elif UNITY_WEBGL
+                TargetPlatformDetector.targetPlatform = "webgl";
+            #endif    
+        }
     }
 }
-
 

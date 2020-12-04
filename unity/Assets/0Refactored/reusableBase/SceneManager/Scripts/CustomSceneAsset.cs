@@ -26,18 +26,22 @@ namespace Maroon
 
         public string ScenePath
         {
-            get { return unityScenePath; }
+            get { return this.unityScenePath; }
         }
 
         public string SceneName
         {
-            get { return unitySceneName; }
+            get { return this.unitySceneName; }
+        }
+
+        public string SceneNameWithoutPlatformExtension
+        {
+            get { return this.SceneName.Substring(0, this.SceneName.LastIndexOf('.')); }
         }
 
         public bool IsVirtualRealityScene
         {
-            get { return isVirtualRealityScene; }
-
+            get { return this.isVirtualRealityScene; }
         }
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
