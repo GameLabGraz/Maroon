@@ -19,8 +19,8 @@ public class PointWaveWaterPlane : PausableObject, IResetObject
     private int entryCount = 0;
     private bool _parameterHasChanged = false;
 
-    private Color startMinColor = Color.cyan;
-    private Color startMaxColor = Color.blue;
+    private Color startMinColor = Color.blue;
+    private Color startMaxColor = Color.cyan;
 
     float timer; 
     private MeshRenderer _meshRenderer;
