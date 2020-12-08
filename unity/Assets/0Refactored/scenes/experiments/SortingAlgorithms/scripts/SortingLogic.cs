@@ -40,6 +40,8 @@ public class SortingLogic : MonoBehaviour
 
     [SerializeField] private PC_LocalizedDropDown algorithmDropDown;
 
+    private bool _battleMode = false;
+
     private SortingAlgorithmType _sortingAlgorithm;
     private SortingAlgorithm _algorithm;
 
@@ -53,7 +55,7 @@ public class SortingLogic : MonoBehaviour
 
     public SortingAlgorithmType SelectedSortingAlgorithm => _sortingAlgorithm;
 
-    public void Init(int size, float operationsPerSecond)
+    public void Init(int size, float operationsPerSecond, bool battleMode)
     {
         _sortingVisualization = GetComponent<SortingVisualization>();
         _sortingVisualization.Init(size);
@@ -65,6 +67,8 @@ public class SortingLogic : MonoBehaviour
         {
             _buckets.Add(new LinkedList<int>());
         }
+
+        _battleMode = battleMode;
     }
 
     public void SetOperationsPerSecond(float value)
@@ -138,32 +142,32 @@ public class SortingLogic : MonoBehaviour
         switch (_sortingAlgorithm)
         {
             case SortingAlgorithmType.SA_InsertionSort:
-                _algorithm = new InsertionSort(this, _sortingValues.Count);
+                _algorithm = new InsertionSort(this, _sortingValues.Count, _battleMode);
                 break;
             case SortingAlgorithmType.SA_MergeSort:
-                _algorithm = new MergeSort(this, _sortingValues.Count);
+                _algorithm = new MergeSort(this, _sortingValues.Count, _battleMode);
                 break;
             case SortingAlgorithmType.SA_HeapSort:
-                _algorithm = new HeapSort(this, _sortingValues.Count);
+                _algorithm = new HeapSort(this, _sortingValues.Count, _battleMode);
                 break;
             case SortingAlgorithmType.SA_QuickSort:
-                _algorithm = new QuickSort(this, _sortingValues.Count);
+                _algorithm = new QuickSort(this, _sortingValues.Count, _battleMode);
                 break;
             case SortingAlgorithmType.SA_SelectionSort:
-                _algorithm = new SelectionSort(this, _sortingValues.Count);
+                _algorithm = new SelectionSort(this, _sortingValues.Count, _battleMode);
                 break;
             case SortingAlgorithmType.SA_BubbleSort:
-                _algorithm = new BubbleSort(this, _sortingValues.Count);
+                _algorithm = new BubbleSort(this, _sortingValues.Count, _battleMode);
                 break;
             case SortingAlgorithmType.SA_GnomeSort:
-                _algorithm = new GnomeSort(this, _sortingValues.Count);
+                _algorithm = new GnomeSort(this, _sortingValues.Count, _battleMode);
                 break;
             case SortingAlgorithmType.SA_RadixSort:
                 _sortingVisualization.ShowBuckets();
-                _algorithm = new RadixSort(this, _sortingValues.Count);
+                _algorithm = new RadixSort(this, _sortingValues.Count, _battleMode);
                 break;
             case SortingAlgorithmType.SA_ShellSort:
-                _algorithm = new ShellSort(this, _sortingValues.Count);
+                _algorithm = new ShellSort(this, _sortingValues.Count, _battleMode);
                 break;
             default:
                 //No algorithm selected

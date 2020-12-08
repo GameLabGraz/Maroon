@@ -45,6 +45,7 @@ public class SortingController : MonoBehaviour, IResetObject
     [SerializeField] private GameObject backwardButton;
     
     [SerializeField] private PC_Slider sizeSlider;
+    [SerializeField] private PC_Slider speedSlider;
 
     [SerializeField] private SortingLogic detailSortingLogic;
     [SerializeField] private SortingLogic leftBattleSortingLogic;
@@ -52,9 +53,9 @@ public class SortingController : MonoBehaviour, IResetObject
     
     private void Start()
     {
-        detailSortingLogic.Init(_detailArraySize, 1);
-        leftBattleSortingLogic.Init(battleArraySize, 20);//TODO
-        rightBattleSortingLogic.Init(battleArraySize, 20);
+        detailSortingLogic.Init(_detailArraySize, 1, false);
+        leftBattleSortingLogic.Init(battleArraySize, speedSlider.value, true);
+        rightBattleSortingLogic.Init(battleArraySize, speedSlider.value, true);
         SetDetailArraySize(sizeSlider.value);
         EnterDetailMode();
         arrangementDropdown.onValueChanged.AddListener(NewArrangementSelected);
@@ -66,6 +67,12 @@ public class SortingController : MonoBehaviour, IResetObject
     {
         _detailArraySize = (int)size;
         RandomizeDetailArray();
+    }
+
+    public void SetBattleOperationsPerSeconds(float value)
+    {
+        leftBattleSortingLogic.SetOperationsPerSecond(value);
+        rightBattleSortingLogic.SetOperationsPerSecond(value);
     }
 
     private void RandomizeDetailArray()

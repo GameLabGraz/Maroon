@@ -34,7 +34,7 @@ public class HeapSort : SortingAlgorithm
         };
     }
     
-    public HeapSort(SortingLogic logic, int n) : base(logic)
+    public HeapSort(SortingLogic logic, int n, bool battleMode) : base(logic, battleMode)
     {
         _executedStates.AddFirst(new HeapSortingState(this, n));
     }

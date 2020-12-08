@@ -28,7 +28,7 @@ public class QuickSort : SortingAlgorithm
         };
     }
     
-    public QuickSort(SortingLogic logic, int n) : base(logic)
+    public QuickSort(SortingLogic logic, int n, bool battleMode) : base(logic, battleMode)
     {
         _executedStates.AddFirst(new QuickSortingState(this, n));
     }

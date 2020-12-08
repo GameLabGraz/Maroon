@@ -20,7 +20,7 @@ public class ShellSort : SortingAlgorithm
         };
     }
     
-    public ShellSort(SortingLogic logic, int n) : base(logic)
+    public ShellSort(SortingLogic logic, int n, bool battleMode) : base(logic, battleMode)
     {
         _executedStates.AddFirst(new ShellSortingState(this, n));
     }

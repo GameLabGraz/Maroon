@@ -27,7 +27,7 @@ public class RadixSort : SortingAlgorithm
         };
     }
     
-    public RadixSort(SortingLogic logic, int n) : base(logic)
+    public RadixSort(SortingLogic logic, int n, bool battleMode) : base(logic, battleMode)
     {
         _executedStates.AddFirst(new RadixSortingState(this, n));
     }

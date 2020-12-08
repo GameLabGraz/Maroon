@@ -20,7 +20,7 @@ public class GnomeSort : SortingAlgorithm
         };
     }
     
-    public GnomeSort(SortingLogic logic, int n) : base(logic)
+    public GnomeSort(SortingLogic logic, int n, bool battleMode) : base(logic, battleMode)
     {
         _executedStates.AddFirst(new GnomeSortingState(this, n));
     }

@@ -6,15 +6,17 @@ using Valve.VR.InteractionSystem;
 
 public abstract class SortingAlgorithm
 {
-    //TODO: Forward only mode?
     private SortingLogic sortingLogic;
     public abstract List<string> Pseudocode { get; }
     
     protected LinkedList<SortingState> _executedStates = new LinkedList<SortingState>();
+    private SortingState _currentState;
 
     private int _comparisons;
     private int _swaps;
-    
+
+    private bool _battleMode;
+
     protected enum SortingStateLine
     {
         SS_None,
@@ -142,22 +144,38 @@ public abstract class SortingAlgorithm
         }
     }
 
-    protected SortingAlgorithm(SortingLogic logic)
+    protected SortingAlgorithm(SortingLogic logic, bool battleMode)
     {
         sortingLogic = logic;
         
         _comparisons = 0;
         _swaps = 0;
+
+        _battleMode = battleMode;
     }
 
     public void ExecuteNextState()
     {
-        SortingState newState = _executedStates.Last.Value.Next();
+        SortingState newState;
+        if (!_battleMode)
+        {
+            newState = _executedStates.Last.Value.Next();
+        }
+        else
+        {
+            if (_currentState == null)
+            {
+                _currentState = _executedStates.Last.Value;
+            }
+            newState = _currentState.Next();
+            _currentState = newState;
+        }
         sortingLogic.SetPseudocode((int)newState.GetLine(), newState.GetExtraVariables());
         if (newState.GetLine() != SortingStateLine.SS_None)
         {
             newState.Execute();
-            _executedStates.AddLast(newState);
+            if(!_battleMode)
+                _executedStates.AddLast(newState);
             sortingLogic.MarkCurrentSubset(newState.GetSubsetStart(), newState.GetSubsetEnd());
             sortingLogic.DisplayIndices(newState.GetIndexVariables());
         }
@@ -170,6 +188,8 @@ public abstract class SortingAlgorithm
 
     public void ExecutePreviousState()
     {
+        if (_battleMode)
+            return;
         if (_executedStates.Count == 1)
         {
             _comparisons = 0;
