@@ -5,7 +5,6 @@ using GEAR.Localization;
 using PlatformControls.PC;
 using TMPro;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class SortingArray : SortingVisualization, IResetObject
 {
@@ -21,8 +20,6 @@ public class SortingArray : SortingVisualization, IResetObject
     [SerializeField] private TextMeshProUGUI swapsText;
     [SerializeField] private TextMeshProUGUI descriptionText;
 
-    [SerializeField] private PC_Slider sizeSlider;
-
     private Vector3 _placeOffset;
     private List<ArrayPlace> _elements = new List<ArrayPlace>();
     private List<SortingBucket> _buckets = new List<SortingBucket>();
@@ -33,24 +30,15 @@ public class SortingArray : SortingVisualization, IResetObject
         set
         {
             _size = value;
-            CreateDetailArray(_size);
-            _sortingLogic.ResetAlgorithm();
+            AdaptDetailArraySize(_size);
         }
-    }
-    
-    public void SetArraySize(float size)
-    {
-        Size = (int)size;
     }
 
     public override void Init(int size)
     {
-        //ignore size!
         base.Init(size);
         CreateBuckets();
         HideBuckets();
-        Size = (int)sizeSlider.value;
-        _sortingLogic.Init();
     }
 
     public override void SortingFinished()
@@ -58,7 +46,7 @@ public class SortingArray : SortingVisualization, IResetObject
         SimulationController.Instance.StopSimulation();
     }
 
-    private void CreateDetailArray(int size)
+    private void AdaptDetailArraySize(int size)
     {
         float padding = (rightBorder.position.x - leftBorder.position.x) / size;
         _placeOffset = new Vector3(padding, 0, 0);
@@ -72,8 +60,6 @@ public class SortingArray : SortingVisualization, IResetObject
                 var arrayPlaceComponent = newArrayPlace.GetComponent<ArrayPlace>();
                 arrayPlaceComponent.SetBaseNumber(i);
                 _elements.Add(arrayPlaceComponent);
-                
-                arrayPlaceComponent.Value = Random.Range(1, 100);
             }
             _elements[i].transform.position = elementPosition;
             elementPosition += _placeOffset;
@@ -116,30 +102,31 @@ public class SortingArray : SortingVisualization, IResetObject
 
     public override void Insert(int fromIdx, int toIdx)
     {
+        StartVisualization();
         StartCoroutine(InsertCoroutine(fromIdx, toIdx));
     }
 
     private IEnumerator InsertCoroutine(int fromIdx, int toIdx)
     {
-        _elements[fromIdx].FadeOutSeconds(timePerMove / 2);
+        _elements[fromIdx].FadeOutSeconds(_timePerMove / 2);
 
         int i = toIdx;
         if (fromIdx > toIdx)
         {
             for (i = toIdx; i < fromIdx; i++)
             {
-                _elements[i].MoveOutRight(timePerMove / 2, _placeOffset / 2);
+                _elements[i].MoveOutRight(_timePerMove / 2, _placeOffset / 2);
             }
         }
         else
         {
             for (i = toIdx; i > fromIdx; i--)
             {
-                _elements[i].MoveOutLeft(timePerMove / 2, _placeOffset / 2);
+                _elements[i].MoveOutLeft(_timePerMove / 2, _placeOffset / 2);
             }
         }
          
-        yield return new WaitForSeconds(timePerMove / 2);
+        yield return new WaitForSeconds(_timePerMove / 2);
 
         int fromValue = _elements[fromIdx].Value;
         i = fromIdx;
@@ -164,134 +151,112 @@ public class SortingArray : SortingVisualization, IResetObject
             _elements[toIdx].Value = fromValue;
         }
 
-        _elements[toIdx].FadeInSeconds(timePerMove / 2);
+        _elements[toIdx].FadeInSeconds(_timePerMove / 2);
         
         if (fromIdx > toIdx)
         {
             for (i = toIdx + 1; i <= fromIdx; i++)
             {
-                _elements[i].MoveInLeft(timePerMove / 2, _placeOffset / 2);
+                _elements[i].MoveInLeft(_timePerMove / 2, _placeOffset / 2);
             }
         }
         else
         {
             for (i = toIdx - 1; i >= fromIdx; i--)
             {
-                _elements[i].MoveInRight(timePerMove / 2, _placeOffset / 2);
+                _elements[i].MoveInRight(_timePerMove / 2, _placeOffset / 2);
             }
         }
 
-        yield return new WaitForSeconds(timePerMove / 2);
+        yield return new WaitForSeconds(_timePerMove / 2);
 
-        _sortingLogic.MoveFinished();
+        _visualizationActive = false;
     }
     
     public override void Swap(int fromIdx, int toIdx)
     {
+        StartVisualization();
         StartCoroutine(SwapCoroutine(fromIdx, toIdx));
     }
 
     private IEnumerator SwapCoroutine(int fromIdx, int toIdx)
     {
-        _elements[fromIdx].FadeOutSeconds(timePerMove / 2);
-        _elements[toIdx].FadeOutSeconds(timePerMove / 2);
+        _elements[fromIdx].FadeOutSeconds(_timePerMove / 2);
+        _elements[toIdx].FadeOutSeconds(_timePerMove / 2);
         
-        yield return new WaitForSeconds(timePerMove / 2);
+        yield return new WaitForSeconds(_timePerMove / 2);
         
         int fromValue = _elements[fromIdx].Value;
         _elements[fromIdx].Value = _elements[toIdx].Value;
         _elements[toIdx].Value = fromValue;
         
-        _elements[fromIdx].FadeInSeconds(timePerMove / 2);
-        _elements[toIdx].FadeInSeconds(timePerMove / 2);
+        _elements[fromIdx].FadeInSeconds(_timePerMove / 2);
+        _elements[toIdx].FadeInSeconds(_timePerMove / 2);
         
-        yield return new WaitForSeconds(timePerMove / 2);
-        
-        _sortingLogic.MoveFinished();
+        yield return new WaitForSeconds(_timePerMove / 2);
+
+        _visualizationActive = false;
     }
 
-    public override bool CompareGreater(int idx1, int idx2)
+    public override void CompareGreater(int idx1, int idx2)
     {
-        StartCoroutine(WaitForMove());
-        _elements[idx1].HighlightForSeconds(timePerMove);
-        _elements[idx2].HighlightForSeconds(timePerMove);
-
-        return _elements[idx1].Value > _elements[idx2].Value;
-    }
-    
-    public override int GetMaxValue()
-    {
-        StartCoroutine(WaitForMove());
-        int max = 0;
-        int maxIndex = 0;
-        foreach (var element in _elements)
-        {
-            if (element.Value > max)
-            {
-                max = element.Value;
-                maxIndex = _elements.IndexOf(element);
-            }
-        }
-        _elements[maxIndex].HighlightForSeconds(timePerMove);
-
-        return max;
+        StartVisualization();
+        _elements[idx1].HighlightForSeconds(_timePerMove);
+        _elements[idx2].HighlightForSeconds(_timePerMove);
+        StartCoroutine(StopVisualizationAfterDelay());
     }
     
-    public override int GetBucketNumber(int ind, int exp)
+    public override void VisualizeMaxValue(int maxIndex)
     {
-        StartCoroutine(WaitForMove());
-        _elements[ind].HighlightForSeconds(timePerMove);
-
-        int b = (_elements[ind].Value / exp) % 10;
-        _buckets[b].HighlightForSeconds(timePerMove);
-        
-        return b;
+        StartVisualization();
+        _elements[maxIndex].HighlightForSeconds(_timePerMove);
+        StartCoroutine(StopVisualizationAfterDelay());
+    }
+    
+    public override void VisualizeBucketNumber(int ind, int bucket)
+    {
+        StartVisualization();
+        _elements[ind].HighlightForSeconds(_timePerMove);
+        _buckets[bucket].HighlightForSeconds(_timePerMove);
+        StartCoroutine(StopVisualizationAfterDelay());
     }
     
     public override void MoveToBucket(int from, int bucket)
     {
-        StartCoroutine(WaitForMove());
-        _elements[from].FadeOutSeconds(timePerMove);
-        _buckets[bucket].HighlightForSeconds(timePerMove);
-        
-        _buckets[bucket].StoredElements.AddLast(_elements[from].Value);
+        StartVisualization();
+        _elements[from].FadeOutSeconds(_timePerMove);
+        _elements[from].Hidden = true;
+        _buckets[bucket].HighlightForSeconds(_timePerMove);
+        StartCoroutine(StopVisualizationAfterDelay());
     }
     
-    public override void UndoMoveToBucket(int from, int bucket)
+    public override void UndoMoveToBucket(int from, int bucket, int value)
     {
-        StartCoroutine(WaitForMove());
-
-        _elements[from].Value = _buckets[bucket].StoredElements.Last.Value;
-        _buckets[bucket].StoredElements.RemoveLast();
-        
-        _elements[from].FadeInSeconds(timePerMove);
-        _buckets[bucket].HighlightForSeconds(timePerMove);
+        StartVisualization();
+        _elements[from].Value = value;
+        _elements[from].FadeInSeconds(_timePerMove);
+        _elements[from].Hidden = false;
+        _buckets[bucket].HighlightForSeconds(_timePerMove);
+        StartCoroutine(StopVisualizationAfterDelay());
     }
     
-    public override void MoveFromBucket(int to, int bucket)
+    public override void MoveFromBucket(int to, int bucket, int value)
     {
-        StartCoroutine(WaitForMove());
-
-        _elements[to].Value = _buckets[bucket].StoredElements.First.Value;
-        _buckets[bucket].StoredElements.RemoveFirst();
-        
-        _elements[to].FadeInSeconds(timePerMove);
-        _buckets[bucket].HighlightForSeconds(timePerMove);
+        StartVisualization();
+        _elements[to].Value = value;
+        _elements[to].FadeInSeconds(_timePerMove);
+        _elements[to].Hidden = false;
+        _buckets[bucket].HighlightForSeconds(_timePerMove);
+        StartCoroutine(StopVisualizationAfterDelay());
     }
     
     public override void UndoMoveFromBucket(int to, int bucket)
     {
-        StartCoroutine(WaitForMove());
-        
-        _elements[to].FadeOutSeconds(timePerMove);
-        _buckets[bucket].HighlightForSeconds(timePerMove);
-
-        _buckets[bucket].StoredElements.AddFirst(_elements[to].Value);
-    }
-
-    public override bool BucketEmpty(int bucket)
-    {
-        return _buckets[bucket].StoredElements.Count == 0;
+        StartVisualization();
+        _elements[to].FadeOutSeconds(_timePerMove);
+        _elements[to].Hidden = true;
+        _buckets[bucket].HighlightForSeconds(_timePerMove);
+        StartCoroutine(StopVisualizationAfterDelay());
     }
 
     public override void MarkCurrentSubset(int from, int to)
@@ -388,21 +353,45 @@ public class SortingArray : SortingVisualization, IResetObject
         HideBuckets();
     }
 
+    protected override void FinishRunningVisualizations()
+    {
+        StopAllCoroutines();
+        
+        ResetValues();
+        
+        foreach (var bucket in _buckets)
+        {
+            bucket.ResetVisualization();
+        }
+        
+        _visualizationActive = false;
+    }
+
     public override void ResetVisualization()
     {
+        FinishRunningVisualizations();
         foreach (var element in _elements)
         {
             element.ResetVisualization();
         }
     }
 
+    private void ResetValues()
+    {
+        List<int> values = _sortingLogic.SortingValues;
+        
+        if (values.Count == 0)
+            return;
+        
+        for(int i = 0; i < _elements.Count; ++i)
+        {
+            _elements[i].Value = values[i];
+            _elements[i].FinishActiveVisualizations();
+        }
+    }
+
     public void ResetObject()
     {
-        foreach (var element in _elements)
-        {
-            element.Value = Random.Range(1, 100);
-        }
-        _sortingLogic.ResetAlgorithm();
         ResetVisualization();
     }
 }

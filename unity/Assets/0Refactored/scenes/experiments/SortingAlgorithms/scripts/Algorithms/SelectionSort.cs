@@ -95,7 +95,6 @@ public class SelectionSort : SortingAlgorithm
                     {
                         _nextLine = SortingStateLine.SS_Line3;
                     }
-                    _requireWait = true;
                     break;
                 case SortingStateLine.SS_Line5: // m = j
                     m = j;
@@ -112,7 +111,6 @@ public class SelectionSort : SortingAlgorithm
                     }
                     break;
                 case SortingStateLine.SS_Line7: // swap(i,m)
-                    _requireWait = true;
                     _algorithm.Swap(i,m);
                     _nextLine = SortingStateLine.SS_Line1;
                     break;
@@ -131,7 +129,6 @@ public class SelectionSort : SortingAlgorithm
             int i = _variables["i"];
             int j = _variables["j"];
             int m = _variables["m"];
-            _requireWait = false;
             switch (_line)
             {
                 case SortingStateLine.SS_Line1: // for i = 0 .. len(A)-1:
@@ -141,7 +138,6 @@ public class SelectionSort : SortingAlgorithm
                 case SortingStateLine.SS_Line3: // for j = i+1 .. len(A)-1:
                     break;
                 case SortingStateLine.SS_Line4: // if A[j]<A[m]:
-                    _requireWait = true;
                     _algorithm.UndoGreater(j,m);
                     break;
                 case SortingStateLine.SS_Line5: // m = j
@@ -149,7 +145,6 @@ public class SelectionSort : SortingAlgorithm
                 case SortingStateLine.SS_Line6: // if i != m:
                     break;
                 case SortingStateLine.SS_Line7: // swap(i,m)
-                    _requireWait = true;
                     _algorithm.UndoSwap(i,m);
                     break;
                 case SortingStateLine.SS_None:

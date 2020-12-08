@@ -28,6 +28,12 @@ public class ArrayPlace : MonoBehaviour
         set => _element.Value = value;
     }
 
+    public bool Hidden
+    {
+        get => _element.Hidden;
+        set => _element.Hidden = value;
+    }
+
     public void HighlightForSeconds(float seconds)
     {
         StartCoroutine(HighlightForSecondsCoroutine(seconds));
@@ -85,9 +91,16 @@ public class ArrayPlace : MonoBehaviour
         indexText.text = String.Join("\n", indices);
     }
 
+    public void FinishActiveVisualizations()
+    {
+        StopAllCoroutines();
+        highlight.SetActive(false);
+        _element.FinishActiveVisualizations();
+    }
+    
     public void ResetVisualization()
     {
-        highlight.SetActive(false);
+        FinishActiveVisualizations();
         _element.ResetVisualization();
     }
 }

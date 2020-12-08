@@ -137,14 +137,12 @@ public class QuickSort : SortingAlgorithm
                     {
                         _nextLine = SortingStateLine.SS_Line12;
                     }
-                    _requireWait = true;
                     break;
                 case SortingStateLine.SS_Line12: // swap(j,k)
                     _nextLine = SortingStateLine.SS_Line13;
                     if (j != k)
                     {
                         _algorithm.Swap(j,k);
-                        _requireWait = true;
                     }
                     break;
                 case SortingStateLine.SS_Line13: // k = k+1
@@ -160,7 +158,6 @@ public class QuickSort : SortingAlgorithm
                             pInd = r;
                         }
                         _algorithm.Swap(k,r);
-                        _requireWait = true;
                     }
                     break;
                 case SortingStateLine.SS_Line15: // return k
@@ -180,7 +177,6 @@ public class QuickSort : SortingAlgorithm
 
         public override void Undo()
         {
-            _requireWait = false;
             int j = _variables["j"];
             int k = _variables["k"];
             int l = _variables["l"];
@@ -210,14 +206,12 @@ public class QuickSort : SortingAlgorithm
                 case SortingStateLine.SS_Line10: // for j in range(l,r):
                     break;
                 case SortingStateLine.SS_Line11: // if A[j] <= p:
-                    _requireWait = true;
                     _algorithm.UndoGreater(j,pInd);
                     break;
                 case SortingStateLine.SS_Line12: // swap(j,k)
                     if (j != k)
                     {
                         _algorithm.UndoSwap(j,k);
-                        _requireWait = true;
                     }
                     break;
                 case SortingStateLine.SS_Line13: // k = k+1
@@ -226,7 +220,6 @@ public class QuickSort : SortingAlgorithm
                     if (k != r)
                     {
                         _algorithm.UndoSwap(k,r);
-                        _requireWait = true;
                     }
                     break;
                 case SortingStateLine.SS_Line15: // return k

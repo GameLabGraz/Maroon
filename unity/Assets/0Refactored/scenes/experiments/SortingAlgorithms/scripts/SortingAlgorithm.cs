@@ -6,6 +6,7 @@ using Valve.VR.InteractionSystem;
 
 public abstract class SortingAlgorithm
 {
+    //TODO: Forward only mode?
     private SortingLogic sortingLogic;
     public abstract List<string> Pseudocode { get; }
     
@@ -47,7 +48,6 @@ public abstract class SortingAlgorithm
         protected SortingStateLine _line;
         protected SortingStateLine _nextLine;
         protected Dictionary<string, int> _variables = new Dictionary<string, int>();
-        public bool _requireWait;
         
         //Stacks for subroutine calling
         private Stack<Dictionary<string, int>> _valueStore = new Stack<Dictionary<string, int>>();
@@ -80,7 +80,6 @@ public abstract class SortingAlgorithm
             _line = SortingStateLine.SS_None;
             _nextLine = SortingStateLine.SS_Line1;
             _nextValues = null;
-            _requireWait = false;
         }
 
         protected SortingState(SortingState old)
@@ -89,7 +88,6 @@ public abstract class SortingAlgorithm
             _line = old._line;
             _nextLine = old._nextLine;
             _variables = new Dictionary<string, int>(old._variables);
-            _requireWait = false;
             
             //subroutine
             _nextValues = old._nextValues != null ? new Dictionary<string, int>(old._nextValues) : null;
@@ -162,14 +160,9 @@ public abstract class SortingAlgorithm
             _executedStates.AddLast(newState);
             sortingLogic.MarkCurrentSubset(newState.GetSubsetStart(), newState.GetSubsetEnd());
             sortingLogic.DisplayIndices(newState.GetIndexVariables());
-            if (!newState._requireWait)
-            {
-                sortingLogic.MoveFinished();
-            }
         }
         else
         {
-            sortingLogic.MoveFinished();
             sortingLogic.SortingFinished();
         }
         sortingLogic.SetSwapsComparisons(_swaps, _comparisons);
@@ -181,7 +174,6 @@ public abstract class SortingAlgorithm
         {
             _comparisons = 0;
             _swaps = 0;
-            sortingLogic.MoveFinished();
             sortingLogic.MarkCurrentSubset(-1,-1);
             return;
         }
@@ -192,10 +184,6 @@ public abstract class SortingAlgorithm
         sortingLogic.SetPseudocode((int)currentState.GetLine(), currentState.GetExtraVariables());
         sortingLogic.MarkCurrentSubset(currentState.GetSubsetStart(), currentState.GetSubsetEnd());
         sortingLogic.DisplayIndices(currentState.GetIndexVariables());
-        if (!stateToUndo._requireWait)
-        {
-            sortingLogic.MoveFinished();
-        }
         sortingLogic.SetSwapsComparisons(_swaps, _comparisons);
     }
 
@@ -203,7 +191,6 @@ public abstract class SortingAlgorithm
     {
         if (ind1 == ind2)
         {
-            sortingLogic.MoveFinished();
             return;   
         }
         _swaps++;
@@ -214,7 +201,6 @@ public abstract class SortingAlgorithm
     {
         if (ind1 == ind2)
         {
-            sortingLogic.MoveFinished();
             return;   
         }
         _swaps--;
@@ -225,7 +211,6 @@ public abstract class SortingAlgorithm
     {
         if (ind1 == ind2)
         {
-            sortingLogic.MoveFinished();
             return;   
         }
         _swaps++;
@@ -236,7 +221,6 @@ public abstract class SortingAlgorithm
     {
         if (ind1 == ind2)
         {
-            sortingLogic.MoveFinished();
             return;   
         }
         _swaps--;
@@ -247,7 +231,6 @@ public abstract class SortingAlgorithm
     {
         if (ind1 == ind2)
         {
-            sortingLogic.MoveFinished();
             return false;   
         }
         _comparisons++;
@@ -258,7 +241,6 @@ public abstract class SortingAlgorithm
     {
         if (ind1 == ind2)
         {
-            sortingLogic.MoveFinished();
             return;   
         }
         _comparisons--;

@@ -94,7 +94,6 @@ public class ShellSort : SortingAlgorithm
                         _nextLine = SortingStateLine.SS_Line3;
                         break;
                     }
-                    _requireWait = true;
                     if (_algorithm.CompareGreater(j-gap, j))
                     {
                         _nextLine = SortingStateLine.SS_Line6;
@@ -105,7 +104,6 @@ public class ShellSort : SortingAlgorithm
                     }
                     break;
                 case SortingStateLine.SS_Line6: // swap(j,j-gap)
-                    _requireWait = true;
                     _algorithm.Swap(j, j-gap);
                     _nextLine = SortingStateLine.SS_Line7;
                     break;
@@ -131,7 +129,6 @@ public class ShellSort : SortingAlgorithm
         {
             int j = _variables["j"];
             int gap = _variables["gap"];
-            _requireWait = false;
             switch (_line)
             {
                 case SortingStateLine.SS_Line1: // gap = len(A)/2
@@ -145,11 +142,9 @@ public class ShellSort : SortingAlgorithm
                 case SortingStateLine.SS_Line5: // while A[j-gap]>A[j] and j>=gap:
                     if (j < gap)
                         break;
-                    _requireWait = true;
                     _algorithm.UndoGreater(j-gap,j);
                     break;
                 case SortingStateLine.SS_Line6: // swap(j,j-gap)
-                    _requireWait = true;
                     _algorithm.UndoSwap(j, j-gap);
                     break;
                 case SortingStateLine.SS_Line7: // j = j-gap

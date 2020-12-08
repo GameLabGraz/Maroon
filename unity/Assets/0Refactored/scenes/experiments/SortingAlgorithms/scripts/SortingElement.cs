@@ -33,6 +33,14 @@ public class SortingElement : MonoBehaviour
     private float _animationStartTime;
     private float _animationEndTime;
 
+    private bool _hidden;
+
+    public bool Hidden
+    {
+        get => _hidden;
+        set => _hidden = value;
+    }
+
     private Vector3 _moveOffset;
 
     private void Awake()
@@ -187,11 +195,21 @@ public class SortingElement : MonoBehaviour
             mat.color = _grayColor;
     }
 
-    public void ResetVisualization()
+    public void FinishActiveVisualizations()
     {
         SetDefaultColor();
         _animationState = AnimationState.AS_None;
         transform.localPosition = _centerPosition;
+        if(!Hidden)
+            transform.localScale = new Vector3(_size,_size,_size);
+        else
+            transform.localScale = new Vector3(0,0,0);
+    }
+    
+    public void ResetVisualization()
+    {
+        FinishActiveVisualizations();
         transform.localScale = new Vector3(_size,_size,_size);
+        Hidden = false;
     }
 }

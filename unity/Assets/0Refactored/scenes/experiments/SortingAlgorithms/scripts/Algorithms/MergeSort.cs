@@ -132,12 +132,10 @@ public class MergeSort : SortingAlgorithm
                     {
                         _nextLine = SortingStateLine.SS_Line15;
                     }
-                    _requireWait = true;
                     break;
                 case SortingStateLine.SS_Line13: // insert(A,r,l)
                     _algorithm.Insert(r,l);
                     _nextLine = SortingStateLine.SS_Line14;
-                    _requireWait = true;
                     break;
                 case SortingStateLine.SS_Line14: // r += 1
                     r++;
@@ -160,7 +158,6 @@ public class MergeSort : SortingAlgorithm
 
         public override void Undo()
         {
-            _requireWait = false;
             int i = _variables["i"];
             int j = _variables["j"];
             int l = _variables["l"];
@@ -191,11 +188,9 @@ public class MergeSort : SortingAlgorithm
                 case SortingStateLine.SS_Line11: // while l < r and r <= j:
                     break;
                 case SortingStateLine.SS_Line12: // if A[r] < A[l]:
-                    _requireWait = true;
                     _algorithm.UndoGreater(l,r);
                     break;
                 case SortingStateLine.SS_Line13: // insert(A,r,l)
-                    _requireWait = true;
                     _algorithm.UndoInsert(r,l);
                     break;
                 case SortingStateLine.SS_Line14: // r += 1

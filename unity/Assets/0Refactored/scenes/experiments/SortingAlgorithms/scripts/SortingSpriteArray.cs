@@ -14,30 +14,24 @@ public class SortingSpriteArray : SortingVisualization
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI operationsText;
 
-    private List<int> _startOrder;
-
     public override int Size
     {
         get => _size;
-        set => _size = value;
+        set
+        {
+            _size = value;
+        }
     }
 
-    private SortingController _sortingController;
+    private SortingController _sortingController; //TODO: Not needed?
     
     private List<SortingColumn> _elements = new List<SortingColumn>();
-    private List<Queue<int>> _buckets = new List<Queue<int>>();
     
     public override void Init(int size)
     {
         base.Init(size);
-        _sortingController = GetComponentInParent<SortingController>();
-        Size = size;
+        _sortingController = GetComponentInParent<SortingController>(); //TODO??
         CreateColumnArray();
-        for (int i = 0; i < 10; ++i)
-        {
-            _buckets.Add(new Queue<int>());
-        }
-        _sortingLogic.Init();
     }
 
     public override void SortingFinished()
@@ -47,6 +41,7 @@ public class SortingSpriteArray : SortingVisualization
 
     public override void Insert(int fromIdx, int toIdx)
     {
+        StartVisualization();
         int fromValue = _elements[fromIdx].Value;
         int i = fromIdx;
         if (fromIdx > toIdx)
@@ -70,64 +65,46 @@ public class SortingSpriteArray : SortingVisualization
             _elements[toIdx].Value = fromValue;
         }
 
-        StartCoroutine(WaitForMove());
+        StartCoroutine(StopVisualizationAfterDelay());
     }
 
     public override void Swap(int fromIdx, int toIdx)
     {
+        StartVisualization();
         int fromValue = _elements[fromIdx].Value;
         _elements[fromIdx].Value = _elements[toIdx].Value;
         _elements[toIdx].Value = fromValue;
 
-        StartCoroutine(WaitForMove());
+        StartCoroutine(StopVisualizationAfterDelay());
     }
 
-    public override bool CompareGreater(int idx1, int idx2)
+    public override void CompareGreater(int idx1, int idx2)
     {
-        StartCoroutine(WaitForMove());
-        _elements[idx1].HighlightForSeconds(timePerMove);
-        _elements[idx2].HighlightForSeconds(timePerMove);
-        return _elements[idx1].Value > _elements[idx2].Value;
+        StartVisualization();
+        _elements[idx1].HighlightForSeconds(_timePerMove);
+        _elements[idx2].HighlightForSeconds(_timePerMove);
+        StartCoroutine(StopVisualizationAfterDelay());
     }
 
-    public override int GetMaxValue()
+    public override void VisualizeBucketNumber(int ind, int bucket)
     {
-        StartCoroutine(WaitForMove());
-        int max = 0;
-        foreach (var element in _elements)
-        {
-            if (element.Value > max)
-            {
-                max = element.Value;
-            }
-        }
-        return max;
-    }
-
-    public override int GetBucketNumber(int ind, int exp)
-    {
-        StartCoroutine(WaitForMove());
-        
-        return (_elements[ind].Value / exp) % 10;
+        StartVisualization();
+        StartCoroutine(StopVisualizationAfterDelay());
     }
 
     public override void MoveToBucket(int from, int bucket)
     {
-        StartCoroutine(WaitForMove());
-        _buckets[bucket].Enqueue(_elements[from].Value);
+        StartVisualization();
         _elements[from].MarkNotSubset();
+        StartCoroutine(StopVisualizationAfterDelay());
     }
 
-    public override void MoveFromBucket(int to, int bucket)
+    public override void MoveFromBucket(int to, int bucket, int value)
     {
-        StartCoroutine(WaitForMove());
-        _elements[to].Value = _buckets[bucket].Dequeue();
+        StartVisualization();
+        _elements[to].Value = value;
         _elements[to].MarkSubset();
-    }
-
-    public override bool BucketEmpty(int bucket)
-    {
-        return _buckets[bucket].Count == 0;
+        StartCoroutine(StopVisualizationAfterDelay());
     }
 
     public override void MarkCurrentSubset(int from, int to)
@@ -178,26 +155,24 @@ public class SortingSpriteArray : SortingVisualization
         _sortingController.NewAlgorithmSelected();
     }
 
-    public void ReorderElements(List<int> order)
+    protected override void FinishRunningVisualizations()
     {
-        _startOrder = order;
-        for (int i = 0; i < Size; ++i)
+        StopAllCoroutines();
+        List<int> values = _sortingLogic.SortingValues;
+        
+        if (values.Count == 0)
+            return;
+        
+        for(int i = 0; i < Size; ++i)
         {
-            _elements[i].Value = order[i];
+            _elements[i].Value = values[i];
+            _elements[i].ResetVisualization();
         }
-        _sortingLogic.ResetAlgorithm();
-    }
-
-    public void RestoreOrder()
-    {
-        ReorderElements(_startOrder);
+        _visualizationActive = false;
     }
 
     public override void ResetVisualization()
     {
-        foreach (var column in _elements)
-        {
-            column.ResetVisualization();
-        }
+        FinishRunningVisualizations();
     }
 }

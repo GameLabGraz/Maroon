@@ -114,7 +114,6 @@ public class HeapSort : SortingAlgorithm
                     }
                     break;
                 case SortingStateLine.SS_Line7: // swap(0,i)
-                    _requireWait = true;
                     _algorithm.Swap(0,i);
                     _nextLine = SortingStateLine.SS_Line8;
                     break;
@@ -151,8 +150,6 @@ public class HeapSort : SortingAlgorithm
                         _nextLine = SortingStateLine.SS_Line17;
                         break;
                     }
-
-                    _requireWait = true;
                     if (_algorithm.CompareGreater(l, j))
                     {
                         _nextLine = SortingStateLine.SS_Line16;
@@ -172,8 +169,6 @@ public class HeapSort : SortingAlgorithm
                         _nextLine = SortingStateLine.SS_Line19;
                         break;
                     }
-
-                    _requireWait = true;
                     if (_algorithm.CompareGreater(r, m))
                     {
                         _nextLine = SortingStateLine.SS_Line18;
@@ -198,7 +193,6 @@ public class HeapSort : SortingAlgorithm
                     }
                     break;
                 case SortingStateLine.SS_Line20: // swap(j,m)
-                    _requireWait = true;
                     _algorithm.Swap(j,m);
                     _nextLine = SortingStateLine.SS_Line21;
                     break;
@@ -228,7 +222,6 @@ public class HeapSort : SortingAlgorithm
             int m = _variables["m"];
             int l = _variables["l"];
             int r = _variables["r"];
-            _requireWait = false;
             switch (_line)
             {
                 case SortingStateLine.SS_Line1: // n = <style=\"command\">len</style>(A)
@@ -244,7 +237,6 @@ public class HeapSort : SortingAlgorithm
                 case SortingStateLine.SS_Line6: // for i = len(A)-1 .. 1:
                     break;
                 case SortingStateLine.SS_Line7: // swap(0,i)
-                    _requireWait = true;
                     _algorithm.UndoSwap(0,i);
                     break;
                 case SortingStateLine.SS_Line8: // n = n-1
@@ -262,13 +254,11 @@ public class HeapSort : SortingAlgorithm
                 case SortingStateLine.SS_Line14: // m = j
                     break;
                 case SortingStateLine.SS_Line15: // if l<n and A[l]>A[j]:
-                    _requireWait = true;
                     _algorithm.UndoGreater(l,j);
                     break;
                 case SortingStateLine.SS_Line16: // m = l
                     break;
                 case SortingStateLine.SS_Line17: // if r<n and A[r]>A[m]:
-                    _requireWait = true;
                     _algorithm.UndoGreater(r,m);
                     break;
                 case SortingStateLine.SS_Line18: // m = r
@@ -276,7 +266,6 @@ public class HeapSort : SortingAlgorithm
                 case SortingStateLine.SS_Line19: // if m!=j:
                     break;
                 case SortingStateLine.SS_Line20: // swap(j,m)
-                    _requireWait = true;
                     _algorithm.UndoSwap(j,m);
                     break;
                 case SortingStateLine.SS_Line21: // heapify(m,n)

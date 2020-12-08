@@ -4,9 +4,16 @@ using UnityEngine;
 
 public abstract class SortingVisualization : MonoBehaviour
 {
-    [SerializeField] protected float timePerMove;
-    
+    protected float _timePerMove;
+
+    public float TimePerMove
+    {
+        get => _timePerMove;
+        set => _timePerMove = value;
+    }
+
     protected int _size;
+    protected bool _visualizationActive;
     
     protected SortingLogic _sortingLogic;
     
@@ -15,6 +22,20 @@ public abstract class SortingVisualization : MonoBehaviour
     public virtual void Init(int size)
     {
         _sortingLogic = GetComponent<SortingLogic>();
+        Size = size;
+    }
+    
+    protected void StartVisualization()
+    {
+        if(_visualizationActive)
+            FinishRunningVisualizations();
+        _visualizationActive = true;
+    }
+    
+    protected IEnumerator StopVisualizationAfterDelay()
+    {
+        yield return new WaitForSeconds(_timePerMove);
+        _visualizationActive = false;
     }
 
     public abstract void SortingFinished();
@@ -27,22 +48,20 @@ public abstract class SortingVisualization : MonoBehaviour
 
     public abstract void Swap(int fromIdx, int toIdx);
 
-    public abstract bool CompareGreater(int idx1, int idx2);
+    public abstract void CompareGreater(int idx1, int idx2);
 
-    public abstract int GetMaxValue();
+    public virtual void VisualizeMaxValue(int maxIndex) {}
 
-    public abstract int GetBucketNumber(int ind, int exp);
+    public virtual void VisualizeBucketNumber(int ind, int bucket) {}
 
     public abstract void MoveToBucket(int from, int bucket);
     
-    public virtual void UndoMoveToBucket(int from, int bucket) {}
+    public virtual void UndoMoveToBucket(int from, int bucket, int value) {}
 
-    public abstract void MoveFromBucket(int to, int bucket);
+    public abstract void MoveFromBucket(int to, int bucket, int value);
 
     public virtual void UndoMoveFromBucket(int to, int bucket) {}
 
-    public abstract bool BucketEmpty(int bucket);
-    
     public virtual void MarkCurrentSubset(int from, int to) {}
     
     public virtual void SetSwapsComparisons(int swaps, int comparisons) {}
@@ -54,17 +73,13 @@ public abstract class SortingVisualization : MonoBehaviour
     public virtual void SetTitle(string title) {}
 
     public virtual void DisplayIndices(Dictionary<string, int> indices) {}
-    
-    protected IEnumerator WaitForMove()
-    {
-        yield return new WaitForSeconds(timePerMove);
-        _sortingLogic.MoveFinished();
-    }
 
     public virtual void NewAlgorithmSelected()
     {
         ResetVisualization();
     }
+
+    protected abstract void FinishRunningVisualizations();
 
     public abstract void ResetVisualization();
 }

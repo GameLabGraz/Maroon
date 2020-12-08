@@ -9,8 +9,6 @@ public class SortingBucket : MonoBehaviour
 
     [SerializeField] private GameObject highlight;
 
-    public LinkedList<int> StoredElements = new LinkedList<int>();
-
     public void HighlightForSeconds(float seconds)
     {
         StartCoroutine(HighlightForSecondsCoroutine(seconds));
@@ -26,5 +24,11 @@ public class SortingBucket : MonoBehaviour
     public void SetIndex(int i)
     {
         indexText.text = i.ToString();
+    }
+
+    public void ResetVisualization()
+    {
+        StopAllCoroutines();
+        highlight.SetActive(false);
     }
 }

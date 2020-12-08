@@ -79,7 +79,6 @@ public class BubbleSort : SortingAlgorithm
                     }
                     break;
                 case SortingStateLine.SS_Line3: // if A[j]>A[j+1]:
-                    _requireWait = true;
                     if (_algorithm.CompareGreater(j, j+1))
                     {
                         _nextLine = SortingStateLine.SS_Line4;
@@ -90,7 +89,6 @@ public class BubbleSort : SortingAlgorithm
                     }
                     break;
                 case SortingStateLine.SS_Line4: // swap(j,j+1)
-                    _requireWait = true;
                     _algorithm.Swap(j, j+1);
                     _nextLine = SortingStateLine.SS_Line2;
                     break;
@@ -106,7 +104,6 @@ public class BubbleSort : SortingAlgorithm
         public override void Undo()
         {
             int j = _variables["j"];
-            _requireWait = false;
             switch (_line)
             {
                 case SortingStateLine.SS_Line1: // for i = 0 .. len(A)-1:
@@ -114,11 +111,9 @@ public class BubbleSort : SortingAlgorithm
                 case SortingStateLine.SS_Line2: // for j = 0 .. len(A)-1-i
                     break;
                 case SortingStateLine.SS_Line3: // if A[j]>A[j+1]:
-                    _requireWait = true;
                     _algorithm.UndoGreater(j, j+1);
                     break;
                 case SortingStateLine.SS_Line4: // swap(j,j+1)
-                    _requireWait = true;
                     _algorithm.UndoSwap(j, j+1);
                     break;
             }

@@ -75,7 +75,6 @@ public class InsertionSort : SortingAlgorithm
                         _nextLine = SortingStateLine.SS_Line5;
                         break;
                     }
-                    _requireWait = true;
                     if (_algorithm.CompareGreater(j, i))
                     {
                         _nextLine = SortingStateLine.SS_Line4;
@@ -90,7 +89,6 @@ public class InsertionSort : SortingAlgorithm
                     _nextLine = SortingStateLine.SS_Line3;
                     break;
                 case SortingStateLine.SS_Line5: //insert(i,j+1)
-                    _requireWait = true;
                     _algorithm.Insert(i,j+1);
                     _nextLine = SortingStateLine.SS_Line1;
                     break;
@@ -107,7 +105,6 @@ public class InsertionSort : SortingAlgorithm
         {
             int j = _variables["j"];
             int i = _variables["i"];
-            _requireWait = false;
             switch (_line)
             {
                 case SortingStateLine.SS_Line1: // for i = 1 .. len(A)-1:
@@ -115,13 +112,11 @@ public class InsertionSort : SortingAlgorithm
                 case SortingStateLine.SS_Line2: // j = i-1
                     break;
                 case SortingStateLine.SS_Line3: // while A[j]>A[i] and j>=0:
-                    _requireWait = true;
                     _algorithm.UndoGreater(j,i);
                     break;
                 case SortingStateLine.SS_Line4: // j = j-1
                     break;
                 case SortingStateLine.SS_Line5: // //insert(i,j+1)
-                    _requireWait = true;
                     _algorithm.UndoInsert(i,j+1);
                     break;
                 case SortingStateLine.SS_None:

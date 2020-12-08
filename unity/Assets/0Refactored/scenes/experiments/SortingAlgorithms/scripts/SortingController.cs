@@ -8,6 +8,12 @@ using Random = System.Random;
 
 public class SortingController : MonoBehaviour, IResetObject
 {
+    public enum SortingMode
+    {
+        SM_DetailMode,
+        SM_BattleMode
+    }
+    
     public enum ArrangementMode
     {
         AM_Random,
@@ -15,10 +21,13 @@ public class SortingController : MonoBehaviour, IResetObject
         AM_Reversed
     }
 
+    private SortingMode _sortingMode;
     private ArrangementMode _arrangementMode;
+    
     [SerializeField] private PC_LocalizedDropDown arrangementDropdown;
     
     [SerializeField] private int battleArraySize;
+    private int _detailArraySize;
     
     [SerializeField] private GameObject detailSortingArray;
     [SerializeField] private GameObject battleArrays;
@@ -31,23 +40,48 @@ public class SortingController : MonoBehaviour, IResetObject
 
     [SerializeField] private GameObject battlePanels;
 
+    //TODO: Buttons also triggered here!
     [SerializeField] private GameObject forwardButton;
     [SerializeField] private GameObject backwardButton;
     
+    [SerializeField] private PC_Slider sizeSlider;
+
+    [SerializeField] private SortingLogic detailSortingLogic;
+    [SerializeField] private SortingLogic leftBattleSortingLogic;
+    [SerializeField] private SortingLogic rightBattleSortingLogic;
+    
     private void Start()
     {
-        foreach (var vis in GetComponentsInChildren<SortingVisualization>())
-        {
-            vis.Init(battleArraySize);
-        }
+        detailSortingLogic.Init(_detailArraySize, 1);
+        leftBattleSortingLogic.Init(battleArraySize, 20);//TODO
+        rightBattleSortingLogic.Init(battleArraySize, 20);
+        SetDetailArraySize(sizeSlider.value);
         EnterDetailMode();
         arrangementDropdown.onValueChanged.AddListener(NewArrangementSelected);
         arrangementDropdown.allowReset = false;
         _arrangementMode = (ArrangementMode)arrangementDropdown.value;
     }
+    
+    public void SetDetailArraySize(float size)
+    {
+        _detailArraySize = (int)size;
+        RandomizeDetailArray();
+    }
+
+    private void RandomizeDetailArray()
+    {
+        List<int> newValues = new List<int>();
+        for (int i = 0; i < _detailArraySize; ++i)
+        {
+            newValues.Add(rng.Next(100));
+        }
+        detailSortingLogic.SortingValues = newValues;
+    }
 
     public void EnterDetailMode(int chosenAlgorithm = -1)
     {
+        _sortingMode = SortingMode.SM_DetailMode;
+        
         detailSortingArray.SetActive(true);
         battleArrays.SetActive(false);
 
@@ -72,6 +106,8 @@ public class SortingController : MonoBehaviour, IResetObject
     
     public void EnterBattleMode()
     {
+        _sortingMode = SortingMode.SM_BattleMode;
+        
         detailSortingArray.SetActive(false);
         battleArrays.SetActive(true);
 
@@ -104,12 +140,9 @@ public class SortingController : MonoBehaviour, IResetObject
                 order.Reverse();
                 break;
         }
-        
-        foreach (var array in battleArrays.GetComponentsInChildren<SortingSpriteArray>())
-        {
-            array.Size = battleArraySize;
-            array.ReorderElements(order);
-        }
+
+        leftBattleSortingLogic.SortingValues = order;
+        rightBattleSortingLogic.SortingValues = order;
     }
     
     private static Random rng = new Random();
@@ -129,7 +162,7 @@ public class SortingController : MonoBehaviour, IResetObject
     {
         foreach (var array in battleArrays.GetComponentsInChildren<SortingSpriteArray>())
         {
-            array.RestoreOrder();
+            //TODO: array.RestoreOrder();
         }
     }
 
@@ -139,13 +172,18 @@ public class SortingController : MonoBehaviour, IResetObject
         SetBattleOrder();
     }
 
-    public void SetExecutionSpeed(float speed)
-    {
-        Time.timeScale = speed;
-    }
-
     public void ResetObject()
     {
-        SetBattleOrder();
+        switch (_sortingMode)
+        {
+            case SortingMode.SM_DetailMode:
+                RandomizeDetailArray();
+                break;
+            case SortingMode.SM_BattleMode:
+                SetBattleOrder();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 }

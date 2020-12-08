@@ -67,7 +67,6 @@ public class RadixSort : SortingAlgorithm
             switch (_line)
             {
                 case SortingStateLine.SS_Line1: // key = max(A)
-                    _requireWait = true;
                     key = _algorithm.GetMaxValue();
                     _nextLine = SortingStateLine.SS_Line2;
                     break;
@@ -113,12 +112,10 @@ public class RadixSort : SortingAlgorithm
                     }
                     break;
                 case SortingStateLine.SS_Line9: // b = (A[i]//exp)%10
-                    _requireWait = true;
                     b = _algorithm.GetBucketNumber(i, exp);
                     _nextLine = SortingStateLine.SS_Line10;
                     break;
                 case SortingStateLine.SS_Line10: // moveToBucket(i,b)
-                    _requireWait = true;
                     _algorithm.MoveToBucket(i, b);
                     _nextLine = SortingStateLine.SS_Line8;
                     break;
@@ -152,7 +149,6 @@ public class RadixSort : SortingAlgorithm
                     }
                     break;
                 case SortingStateLine.SS_Line14: // moveFromBucket(i,b)
-                    _requireWait = true;
                     _algorithm.MoveFromBucket(i, b);
                     _nextLine = SortingStateLine.SS_Line15;
                     break;
@@ -176,11 +172,9 @@ public class RadixSort : SortingAlgorithm
             int exp = _variables["exp"];
             int i = _variables["i"];
             int b = _variables["b"];
-            _requireWait = false;
             switch (_line)
             {
                 case SortingStateLine.SS_Line1: // key = max(A)
-                    _requireWait = true;
                     _algorithm.UndoGetMaxValue();
                     break;
                 case SortingStateLine.SS_Line2: // exp = 1
@@ -198,11 +192,9 @@ public class RadixSort : SortingAlgorithm
                 case SortingStateLine.SS_Line8: // for i = 0 .. len(A)-1
                     break;
                 case SortingStateLine.SS_Line9: // b = (A[i]//exp)%10
-                    _requireWait = true;
                     _algorithm.UndoGetBucketNumber(i, exp);
                     break;
                 case SortingStateLine.SS_Line10: // moveToBucket(i,b)
-                    _requireWait = true;
                     _algorithm.UndoMoveToBucket(i, b);
                     break;
                 case SortingStateLine.SS_Line11: // i = 0
@@ -212,7 +204,6 @@ public class RadixSort : SortingAlgorithm
                 case SortingStateLine.SS_Line13: // if bucket[b] not empty:
                     break;
                 case SortingStateLine.SS_Line14: // moveFromBucket(i,b)
-                    _requireWait = true;
                     _algorithm.UndoMoveFromBucket(i, b);
                     break;
                 case SortingStateLine.SS_Line15: // i = i + 1

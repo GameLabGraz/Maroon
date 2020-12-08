@@ -78,7 +78,6 @@ public class GnomeSort : SortingAlgorithm
                     _nextLine = SortingStateLine.SS_Line4;
                     break;
                 case SortingStateLine.SS_Line4: // if A[i]>=A[i-1]:
-                    _requireWait = true;
                     if (_algorithm.CompareGreater(i - 1, i)) // Inverted to Greater!
                     {
                         _nextLine = SortingStateLine.SS_Line7;
@@ -96,7 +95,6 @@ public class GnomeSort : SortingAlgorithm
                     _nextLine = SortingStateLine.SS_Line7;
                     break;
                 case SortingStateLine.SS_Line7: // swap(i,i-1)
-                    _requireWait = true;
                     _algorithm.Swap(i,i-1);
                     _nextLine = SortingStateLine.SS_Line8;
                     break;
@@ -115,7 +113,6 @@ public class GnomeSort : SortingAlgorithm
         public override void Undo()
         {
             int i = _variables["i"];
-            _requireWait = false;
             switch (_line)
             {
                 case SortingStateLine.SS_Line1: // while i<len(A):
@@ -125,7 +122,6 @@ public class GnomeSort : SortingAlgorithm
                 case SortingStateLine.SS_Line3: // i = i+1
                     break;
                 case SortingStateLine.SS_Line4: // if A[i]>=A[i-1]:
-                    _requireWait = true;
                     _algorithm.UndoGreater(i,i-1);
                     break;
                 case SortingStateLine.SS_Line5: // i = i+1
@@ -133,7 +129,6 @@ public class GnomeSort : SortingAlgorithm
                 case SortingStateLine.SS_Line6: // else
                     break;
                 case SortingStateLine.SS_Line7: // swap(i,i-1)
-                    _requireWait = true;
                     _algorithm.UndoSwap(i,i-1);
                     break;
                 case SortingStateLine.SS_Line8: // i = i-1
