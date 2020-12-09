@@ -11,6 +11,13 @@ public class SortingColumn : MonoBehaviour
     private int _numberOfColumns;
     private int _value;
 
+    private bool _hidden;
+    public bool Hidden
+    {
+        get => _hidden;
+        set => _hidden = value;
+    }
+
     [SerializeField] private Color defaultColor;
     [SerializeField] private Color unmarkedColor;
     [SerializeField] private Color highlightedColor;
@@ -70,6 +77,16 @@ public class SortingColumn : MonoBehaviour
         _spriteRenderer.sprite = newSprite;
     }
 
+    public void FinishActiveVisualization()
+    {
+        StopAllCoroutines();
+        if (!_hidden)
+        {
+            _spriteRenderer.color = defaultColor;
+        }
+        RerenderSprite();
+    }
+    
     public void ResetVisualization()
     {
         _spriteRenderer.color = defaultColor;

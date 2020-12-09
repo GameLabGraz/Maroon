@@ -86,16 +86,11 @@ public class SortingSpriteArray : SortingVisualization
         StartCoroutine(StopVisualizationAfterDelay());
     }
 
-    public override void VisualizeBucketNumber(int ind, int bucket)
-    {
-        StartVisualization();
-        StartCoroutine(StopVisualizationAfterDelay());
-    }
-
     public override void MoveToBucket(int from, int bucket)
     {
         StartVisualization();
         _elements[from].MarkNotSubset();
+        _elements[from].Hidden = true;
         StartCoroutine(StopVisualizationAfterDelay());
     }
 
@@ -104,6 +99,7 @@ public class SortingSpriteArray : SortingVisualization
         StartVisualization();
         _elements[to].Value = value;
         _elements[to].MarkSubset();
+        _elements[to].Hidden = false;
         StartCoroutine(StopVisualizationAfterDelay());
     }
 
@@ -166,7 +162,7 @@ public class SortingSpriteArray : SortingVisualization
         for(int i = 0; i < Size; ++i)
         {
             _elements[i].Value = values[i];
-            _elements[i].ResetVisualization();
+            _elements[i].FinishActiveVisualization();
         }
         _visualizationActive = false;
     }
@@ -174,5 +170,9 @@ public class SortingSpriteArray : SortingVisualization
     public override void ResetVisualization()
     {
         FinishRunningVisualizations();
+        foreach (var column in _elements)
+        {
+            column.ResetVisualization();
+        }
     }
 }

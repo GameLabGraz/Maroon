@@ -78,13 +78,14 @@ public class SortingLogic : MonoBehaviour
         _sortingVisualization.TimePerMove = 0.95f / value;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (SimulationController.Instance.SimulationRunning && !_sortingFinished)
         {
             _secondsCarry += Time.deltaTime;
             int operationsToExecute = (int) (_secondsCarry * _operationsPerSecond);
             _secondsCarry -= operationsToExecute / _operationsPerSecond;
+            Debug.Log(operationsToExecute);
             ExecuteOperations(operationsToExecute);
         }
     }
