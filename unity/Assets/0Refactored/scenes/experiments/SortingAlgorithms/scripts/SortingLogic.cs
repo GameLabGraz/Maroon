@@ -10,6 +10,7 @@ using UnityEngine;
 public class SortingLogic : MonoBehaviour
 {
     private List<int> _sortingValues = new List<int>();
+    private List<int> _startingOrder;
 
     public List<int> SortingValues
     {
@@ -17,66 +18,49 @@ public class SortingLogic : MonoBehaviour
         set
         {
             _sortingValues = new List<int>(value);
+            _startingOrder = value;
             _sortingVisualization.Size = value.Count;
             _sortingVisualization.ResetVisualization();
             ResetAlgorithm();
         }
     }
-    
     private List<LinkedList<int>> _buckets = new List<LinkedList<int>>();
 
     [SerializeField] private PC_LocalizedDropDown algorithmDropDown;
-
     private SortingAlgorithm.SortingAlgorithmType _sortingAlgorithm;
     private SortingAlgorithm _algorithm;
 
-    private SortingVisualization _sortingVisualization;
+    private DetailSortingVisualization _sortingVisualization;
     
+    [SerializeField] private float operationsPerSecond;
     private bool _operationPerformed;
     private bool _sortingFinished;
-
-    private float _operationsPerSecond;
     private float _secondsCarry;
 
-    public SortingAlgorithm.SortingAlgorithmType SelectedSortingAlgorithm => _sortingAlgorithm;
-
-    public void Init(int size, float operationsPerSecond)
+    public void Init(int size)
     {
-        _sortingVisualization = GetComponent<SortingVisualization>();
+        _sortingVisualization = GetComponent<DetailSortingVisualization>();
         _sortingVisualization.Init(size);
         algorithmDropDown.onValueChanged.AddListener(SetAlgorithmDropdown);
         algorithmDropDown.allowReset = false;
         SetAlgorithmDropdown(algorithmDropDown.value);
-        SetOperationsPerSecond(operationsPerSecond);
+        _sortingVisualization.TimePerMove = 0.99f / operationsPerSecond;
         for (int i = 0; i < 10; ++i)
         {
             _buckets.Add(new LinkedList<int>());
         }
     }
 
-    public void SetOperationsPerSecond(float value)
-    {
-        _operationsPerSecond = value;
-        //Make time per move shorter, so visualization finishes in time
-        _sortingVisualization.TimePerMove = 0.95f / value;
-    }
-
-    private void FixedUpdate()
+    private void Update()
     {
         if (SimulationController.Instance.SimulationRunning && !_sortingFinished)
         {
             _secondsCarry += Time.deltaTime;
-            int operationsToExecute = (int) (_secondsCarry * _operationsPerSecond);
-            _secondsCarry -= operationsToExecute / _operationsPerSecond;
-            ExecuteOperations(operationsToExecute);
-        }
-    }
-
-    private void ExecuteOperations(int numberOfOperations)
-    {
-        for (int i = 0; i < numberOfOperations; ++i)
-        {
-            ExecuteOneOperation();
+            if (_secondsCarry * operationsPerSecond > 1)
+            {
+                ExecuteOneOperation();
+                _secondsCarry -= 1 / operationsPerSecond;
+            }
         }
     }
 
@@ -115,7 +99,7 @@ public class SortingLogic : MonoBehaviour
     
     #endregion
 
-    public void ResetAlgorithm()
+    private void ResetAlgorithm()
     {
         SimulationController.Instance.StopSimulation();
         
@@ -161,18 +145,27 @@ public class SortingLogic : MonoBehaviour
         SetSwapsComparisons(0,0);
         DisplayIndices(new Dictionary<string, int>());
         SetDescription();
-        _sortingVisualization.SetTitle(_algorithm.Pseudocode[0]);
-        _sortingVisualization.ResetVisualization();
+        ReorderElements();
         _sortingFinished = false;
+    }
+
+    private void ReorderElements()
+    {
+        if (_startingOrder == null)
+            return;
+        _sortingValues = new List<int>(_startingOrder);
+        _sortingVisualization.ResetVisualization();
     }
 
     public void SortingFinished()
     {
         _sortingFinished = true;
-        _sortingVisualization.SortingFinished();
         MarkCurrentSubset(0 , _sortingVisualization.Size - 1);
+        SimulationController.Instance.StopSimulation();
     }
 
+    #region Operations & Visualizations
+    
     public void Insert(int fromIdx, int toIdx)
     {
         _operationPerformed = true;
@@ -382,4 +375,6 @@ public class SortingLogic : MonoBehaviour
     {
         _sortingVisualization.DisplayIndices(indices);
     }
+    
+    #endregion
 }

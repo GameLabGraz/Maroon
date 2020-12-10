@@ -17,9 +17,10 @@ public class SortingController : MonoBehaviour, IResetObject
     
     private void Start()
     {
-        detailSortingLogic.Init(_detailArraySize, 1);
+        detailSortingLogic.Init(_detailArraySize);
         leftBattleSorting.Init(battleArraySize);
         rightBattleSorting.Init(battleArraySize);
+        RandomizeDetailArray();
         SetDetailArraySize(sizeSlider.value);
         EnterDetailMode();
         arrangementDropdown.allowReset = false;
@@ -44,6 +45,8 @@ public class SortingController : MonoBehaviour, IResetObject
     }
 
     #region DetailMode
+
+    private List<int> _detailOrder;
     
     private int _detailArraySize;
     [SerializeField] private PC_Slider sizeSlider;
@@ -79,23 +82,23 @@ public class SortingController : MonoBehaviour, IResetObject
             detailSortingArray.GetComponent<SortingLogic>().SetAlgorithmDropdown(chosenAlgorithm);
         }
         
-        detailSortingArray.GetComponent<SortingArray>().ResetObject();
+        detailSortingArray.GetComponent<DetailSortingVisualization>().ResetVisualization();
     }
     
     public void SetDetailArraySize(float size)
     {
         _detailArraySize = (int)size;
-        RandomizeDetailArray();
+        detailSortingLogic.SortingValues = _detailOrder.GetRange(0, _detailArraySize);
     }
     
     private void RandomizeDetailArray()
     {
-        List<int> newValues = new List<int>();
-        for (int i = 0; i < _detailArraySize; ++i)
+        _detailOrder = new List<int>();
+        for (int i = 0; i < 10; ++i)
         {
-            newValues.Add(rng.Next(100));
+            _detailOrder.Add(rng.Next(100));
         }
-        detailSortingLogic.SortingValues = newValues;
+        detailSortingLogic.SortingValues = _detailOrder.GetRange(0, _detailArraySize);
     }
 
     #endregion
