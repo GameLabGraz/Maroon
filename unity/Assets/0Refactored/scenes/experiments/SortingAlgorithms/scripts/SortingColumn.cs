@@ -15,11 +15,32 @@ public class SortingColumn : MonoBehaviour
     public bool Hidden
     {
         get => _hidden;
-        set => _hidden = value;
+        set
+        {
+            _hidden = value;
+            if(value)
+                MarkNotSubset();
+            else
+                MarkSubset();
+        }
+    }
+
+    private bool _marked;
+    public bool Marked
+    {
+        get => _marked;
+        set
+        {
+            _marked = value;
+            if(value)
+                Highlight();
+            else
+                UnHighlight();
+        }
     }
 
     [SerializeField] private Color defaultColor;
-    [SerializeField] private Color unmarkedColor;
+    [SerializeField] private Color hiddenColor;
     [SerializeField] private Color highlightedColor;
 
     public int Value
@@ -42,16 +63,17 @@ public class SortingColumn : MonoBehaviour
         transform.position += new Vector3((position - colNum / 2) * width, 0, 0);
     }
 
-    public void HighlightForSeconds(float seconds)
-    {
-        StartCoroutine(HighlightForSecondsCoroutine(seconds));
-    }
-    
-    private IEnumerator HighlightForSecondsCoroutine(float seconds)
+    public void Highlight()
     {
         _spriteRenderer.color = highlightedColor;
-        yield return new WaitForSeconds(seconds);
-        _spriteRenderer.color = defaultColor;
+    }
+    
+    public void UnHighlight()
+    {
+        if(Hidden)
+            _spriteRenderer.color = hiddenColor;
+        else
+            _spriteRenderer.color = defaultColor;
     }
 
     public void MarkSubset()
@@ -63,7 +85,7 @@ public class SortingColumn : MonoBehaviour
     public void MarkNotSubset()
     {
         if(_spriteRenderer.color != highlightedColor)
-            _spriteRenderer.color = unmarkedColor;
+            _spriteRenderer.color = hiddenColor;
     }
 
     private void RerenderSprite()
@@ -75,21 +97,5 @@ public class SortingColumn : MonoBehaviour
         
         Sprite newSprite = Sprite.Create(sortingTexture, textureStrip, Vector2.zero);
         _spriteRenderer.sprite = newSprite;
-    }
-
-    public void FinishActiveVisualization()
-    {
-        StopAllCoroutines();
-        if (!_hidden)
-        {
-            _spriteRenderer.color = defaultColor;
-        }
-        RerenderSprite();
-    }
-    
-    public void ResetVisualization()
-    {
-        _spriteRenderer.color = defaultColor;
-        RerenderSprite();
     }
 }

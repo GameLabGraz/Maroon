@@ -6,6 +6,19 @@ using Valve.VR.InteractionSystem;
 
 public abstract class SortingAlgorithm
 {
+    public enum SortingAlgorithmType
+    {
+        SA_InsertionSort,
+        SA_MergeSort,
+        SA_HeapSort,
+        SA_QuickSort,
+        SA_SelectionSort,
+        SA_BubbleSort,
+        SA_GnomeSort,
+        SA_RadixSort,
+        SA_ShellSort
+    }
+    
     private SortingLogic sortingLogic;
     public abstract List<string> Pseudocode { get; }
     
@@ -14,8 +27,6 @@ public abstract class SortingAlgorithm
 
     private int _comparisons;
     private int _swaps;
-
-    private bool _battleMode;
 
     protected enum SortingStateLine
     {
@@ -144,38 +155,22 @@ public abstract class SortingAlgorithm
         }
     }
 
-    protected SortingAlgorithm(SortingLogic logic, bool battleMode)
+    protected SortingAlgorithm(SortingLogic logic)
     {
         sortingLogic = logic;
         
         _comparisons = 0;
         _swaps = 0;
-
-        _battleMode = battleMode;
     }
 
     public void ExecuteNextState()
     {
-        SortingState newState;
-        if (!_battleMode)
-        {
-            newState = _executedStates.Last.Value.Next();
-        }
-        else
-        {
-            if (_currentState == null)
-            {
-                _currentState = _executedStates.Last.Value;
-            }
-            newState = _currentState.Next();
-            _currentState = newState;
-        }
+        SortingState newState = _executedStates.Last.Value.Next();
         sortingLogic.SetPseudocode((int)newState.GetLine(), newState.GetExtraVariables());
         if (newState.GetLine() != SortingStateLine.SS_None)
         {
             newState.Execute();
-            if(!_battleMode)
-                _executedStates.AddLast(newState);
+            _executedStates.AddLast(newState);
             sortingLogic.MarkCurrentSubset(newState.GetSubsetStart(), newState.GetSubsetEnd());
             sortingLogic.DisplayIndices(newState.GetIndexVariables());
         }
@@ -188,8 +183,6 @@ public abstract class SortingAlgorithm
 
     public void ExecutePreviousState()
     {
-        if (_battleMode)
-            return;
         if (_executedStates.Count == 1)
         {
             _comparisons = 0;

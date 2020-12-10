@@ -8,83 +8,54 @@ using Random = System.Random;
 
 public class SortingController : MonoBehaviour, IResetObject
 {
-    public enum SortingMode
+    private enum SortingMode
     {
         SM_DetailMode,
         SM_BattleMode
     }
-    
-    public enum ArrangementMode
-    {
-        AM_Random,
-        AM_Sorted,
-        AM_Reversed
-    }
-
     private SortingMode _sortingMode;
-    private ArrangementMode _arrangementMode;
-    
-    [SerializeField] private PC_LocalizedDropDown arrangementDropdown;
-    
-    [SerializeField] private int battleArraySize;
-    private int _detailArraySize;
-    
-    [SerializeField] private GameObject detailSortingArray;
-    [SerializeField] private GameObject battleArrays;
-    
-    [SerializeField] private GameObject detailOptionsUi;
-    [SerializeField] private GameObject battleOptionsUi;
-    
-    [SerializeField] private GameObject detailDescriptionUi;
-    //[SerializeField] private GameObject battleBettingUi;
-
-    [SerializeField] private GameObject battlePanels;
-
-    //TODO: Buttons also triggered here!
-    [SerializeField] private GameObject forwardButton;
-    [SerializeField] private GameObject backwardButton;
-    
-    [SerializeField] private PC_Slider sizeSlider;
-    [SerializeField] private PC_Slider speedSlider;
-
-    [SerializeField] private SortingLogic detailSortingLogic;
-    [SerializeField] private SortingLogic leftBattleSortingLogic;
-    [SerializeField] private SortingLogic rightBattleSortingLogic;
     
     private void Start()
     {
-        detailSortingLogic.Init(_detailArraySize, 1, false);
-        leftBattleSortingLogic.Init(battleArraySize, speedSlider.value, true);
-        rightBattleSortingLogic.Init(battleArraySize, speedSlider.value, true);
+        detailSortingLogic.Init(_detailArraySize, 1);
+        leftBattleSorting.Init(battleArraySize);
+        rightBattleSorting.Init(battleArraySize);
         SetDetailArraySize(sizeSlider.value);
         EnterDetailMode();
-        arrangementDropdown.onValueChanged.AddListener(NewArrangementSelected);
         arrangementDropdown.allowReset = false;
         _arrangementMode = (ArrangementMode)arrangementDropdown.value;
+        SetBattleOperationsPerSeconds(speedSlider.value);
+        SetBattleOrder();
     }
     
-    public void SetDetailArraySize(float size)
+    public void ResetObject()
     {
-        _detailArraySize = (int)size;
-        RandomizeDetailArray();
-    }
-
-    public void SetBattleOperationsPerSeconds(float value)
-    {
-        leftBattleSortingLogic.SetOperationsPerSecond(value);
-        rightBattleSortingLogic.SetOperationsPerSecond(value);
-    }
-
-    private void RandomizeDetailArray()
-    {
-        List<int> newValues = new List<int>();
-        for (int i = 0; i < _detailArraySize; ++i)
+        switch (_sortingMode)
         {
-            newValues.Add(rng.Next(100));
+            case SortingMode.SM_DetailMode:
+                RandomizeDetailArray();
+                break;
+            case SortingMode.SM_BattleMode:
+                SetBattleOrder();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
-        detailSortingLogic.SortingValues = newValues;
     }
 
+    #region DetailMode
+    
+    private int _detailArraySize;
+    [SerializeField] private PC_Slider sizeSlider;
+    
+    [SerializeField] private GameObject detailSortingArray;
+    [SerializeField] private GameObject detailOptionsUi;
+    [SerializeField] private GameObject detailDescriptionUi;
+    [SerializeField] private GameObject forwardButton;
+    [SerializeField] private GameObject backwardButton;
+    
+    [SerializeField] private SortingLogic detailSortingLogic;
+    
     public void EnterDetailMode(int chosenAlgorithm = -1)
     {
         _sortingMode = SortingMode.SM_DetailMode;
@@ -111,6 +82,50 @@ public class SortingController : MonoBehaviour, IResetObject
         detailSortingArray.GetComponent<SortingArray>().ResetObject();
     }
     
+    public void SetDetailArraySize(float size)
+    {
+        _detailArraySize = (int)size;
+        RandomizeDetailArray();
+    }
+    
+    private void RandomizeDetailArray()
+    {
+        List<int> newValues = new List<int>();
+        for (int i = 0; i < _detailArraySize; ++i)
+        {
+            newValues.Add(rng.Next(100));
+        }
+        detailSortingLogic.SortingValues = newValues;
+    }
+
+    #endregion
+
+    #region BattleMode
+    
+    [SerializeField] private int battleArraySize;
+
+    private enum ArrangementMode
+    {
+        AM_Random,
+        AM_Sorted,
+        AM_Reversed
+    }
+    private ArrangementMode _arrangementMode;
+    [SerializeField] private PC_LocalizedDropDown arrangementDropdown;
+    
+    [SerializeField] private PC_LocalizedDropDown battleAlgorithmDropdownLeft;
+    [SerializeField] private PC_LocalizedDropDown battleAlgorithmDropdownRight;
+    
+    [SerializeField] private PC_Slider speedSlider;
+    
+    [SerializeField] private GameObject battleArrays;
+    [SerializeField] private GameObject battleOptionsUi;
+    //[SerializeField] private GameObject battleBettingUi;
+    [SerializeField] private GameObject battlePanels;
+    
+    [SerializeField] private BattleSorting leftBattleSorting;
+    [SerializeField] private BattleSorting rightBattleSorting;
+    
     public void EnterBattleMode()
     {
         _sortingMode = SortingMode.SM_BattleMode;
@@ -129,9 +144,44 @@ public class SortingController : MonoBehaviour, IResetObject
         forwardButton.SetActive(false);
         backwardButton.SetActive(false);
         
+        SetLeftBattleAlgorithm(battleAlgorithmDropdownLeft.value);
+        SetRightBattleAlgorithm(battleAlgorithmDropdownRight.value);
+        leftBattleSorting.RestoreOrder();
+        rightBattleSorting.RestoreOrder();
+    }
+    
+    public void SetBattleOperationsPerSeconds(float value)
+    {
+        leftBattleSorting.OperationsPerSecond = value;
+        rightBattleSorting.OperationsPerSecond = value;
+    }
+    
+    public void SetLeftBattleAlgorithm(int value)
+    {
+        leftBattleSorting.SetAlgorithm((SortingAlgorithm.SortingAlgorithmType)value);
+        NewAlgorithmSelected();
+    }
+    
+    public void SetRightBattleAlgorithm(int value)
+    {
+        rightBattleSorting.SetAlgorithm((SortingAlgorithm.SortingAlgorithmType)value);
+        NewAlgorithmSelected();
+    }
+    
+    public void SetArrangement(int arr)
+    {
+        SimulationController.Instance.StopSimulation();
+        _arrangementMode = (ArrangementMode)arr;
         SetBattleOrder();
     }
-
+    
+    private void NewAlgorithmSelected()
+    {
+        SimulationController.Instance.StopSimulation();
+        leftBattleSorting.RestoreOrder();
+        rightBattleSorting.RestoreOrder();
+    }
+    
     private void SetBattleOrder()
     {
         List<int> order = Enumerable.Range(0, battleArraySize).ToList();
@@ -148,8 +198,8 @@ public class SortingController : MonoBehaviour, IResetObject
                 break;
         }
 
-        leftBattleSortingLogic.SortingValues = order;
-        rightBattleSortingLogic.SortingValues = order;
+        leftBattleSorting.SetOrder(order);
+        rightBattleSorting.SetOrder(order);
     }
     
     private static Random rng = new Random();
@@ -165,32 +215,5 @@ public class SortingController : MonoBehaviour, IResetObject
         }
     }
 
-    public void NewAlgorithmSelected()
-    {
-        foreach (var array in battleArrays.GetComponentsInChildren<SortingSpriteArray>())
-        {
-            //TODO: array.RestoreOrder();
-        }
-    }
-
-    public void NewArrangementSelected(int arr)
-    {
-        _arrangementMode = (ArrangementMode)arr;
-        SetBattleOrder();
-    }
-
-    public void ResetObject()
-    {
-        switch (_sortingMode)
-        {
-            case SortingMode.SM_DetailMode:
-                RandomizeDetailArray();
-                break;
-            case SortingMode.SM_BattleMode:
-                SetBattleOrder();
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
+    #endregion
 }

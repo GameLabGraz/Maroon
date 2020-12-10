@@ -9,19 +9,6 @@ using UnityEngine;
 
 public class SortingLogic : MonoBehaviour
 {
-    public enum SortingAlgorithmType
-    {
-        SA_InsertionSort,
-        SA_MergeSort,
-        SA_HeapSort,
-        SA_QuickSort,
-        SA_SelectionSort,
-        SA_BubbleSort,
-        SA_GnomeSort,
-        SA_RadixSort,
-        SA_ShellSort
-    }
-    
     private List<int> _sortingValues = new List<int>();
 
     public List<int> SortingValues
@@ -40,9 +27,7 @@ public class SortingLogic : MonoBehaviour
 
     [SerializeField] private PC_LocalizedDropDown algorithmDropDown;
 
-    private bool _battleMode = false;
-
-    private SortingAlgorithmType _sortingAlgorithm;
+    private SortingAlgorithm.SortingAlgorithmType _sortingAlgorithm;
     private SortingAlgorithm _algorithm;
 
     private SortingVisualization _sortingVisualization;
@@ -53,9 +38,9 @@ public class SortingLogic : MonoBehaviour
     private float _operationsPerSecond;
     private float _secondsCarry;
 
-    public SortingAlgorithmType SelectedSortingAlgorithm => _sortingAlgorithm;
+    public SortingAlgorithm.SortingAlgorithmType SelectedSortingAlgorithm => _sortingAlgorithm;
 
-    public void Init(int size, float operationsPerSecond, bool battleMode)
+    public void Init(int size, float operationsPerSecond)
     {
         _sortingVisualization = GetComponent<SortingVisualization>();
         _sortingVisualization.Init(size);
@@ -67,8 +52,6 @@ public class SortingLogic : MonoBehaviour
         {
             _buckets.Add(new LinkedList<int>());
         }
-
-        _battleMode = battleMode;
     }
 
     public void SetOperationsPerSecond(float value)
@@ -85,7 +68,6 @@ public class SortingLogic : MonoBehaviour
             _secondsCarry += Time.deltaTime;
             int operationsToExecute = (int) (_secondsCarry * _operationsPerSecond);
             _secondsCarry -= operationsToExecute / _operationsPerSecond;
-            Debug.Log(operationsToExecute);
             ExecuteOperations(operationsToExecute);
         }
     }
@@ -125,7 +107,7 @@ public class SortingLogic : MonoBehaviour
 
     public void SetAlgorithmDropdown(int choice)
     {
-        _sortingAlgorithm = (SortingAlgorithmType)choice;
+        _sortingAlgorithm = (SortingAlgorithm.SortingAlgorithmType)choice;
         _sortingVisualization.NewAlgorithmSelected();
         ResetAlgorithm();
         algorithmDropDown.value = choice;
@@ -142,33 +124,33 @@ public class SortingLogic : MonoBehaviour
         
         switch (_sortingAlgorithm)
         {
-            case SortingAlgorithmType.SA_InsertionSort:
-                _algorithm = new InsertionSort(this, _sortingValues.Count, _battleMode);
+            case SortingAlgorithm.SortingAlgorithmType.SA_InsertionSort:
+                _algorithm = new InsertionSort(this, _sortingValues.Count);
                 break;
-            case SortingAlgorithmType.SA_MergeSort:
-                _algorithm = new MergeSort(this, _sortingValues.Count, _battleMode);
+            case SortingAlgorithm.SortingAlgorithmType.SA_MergeSort:
+                _algorithm = new MergeSort(this, _sortingValues.Count);
                 break;
-            case SortingAlgorithmType.SA_HeapSort:
-                _algorithm = new HeapSort(this, _sortingValues.Count, _battleMode);
+            case SortingAlgorithm.SortingAlgorithmType.SA_HeapSort:
+                _algorithm = new HeapSort(this, _sortingValues.Count);
                 break;
-            case SortingAlgorithmType.SA_QuickSort:
-                _algorithm = new QuickSort(this, _sortingValues.Count, _battleMode);
+            case SortingAlgorithm.SortingAlgorithmType.SA_QuickSort:
+                _algorithm = new QuickSort(this, _sortingValues.Count);
                 break;
-            case SortingAlgorithmType.SA_SelectionSort:
-                _algorithm = new SelectionSort(this, _sortingValues.Count, _battleMode);
+            case SortingAlgorithm.SortingAlgorithmType.SA_SelectionSort:
+                _algorithm = new SelectionSort(this, _sortingValues.Count);
                 break;
-            case SortingAlgorithmType.SA_BubbleSort:
-                _algorithm = new BubbleSort(this, _sortingValues.Count, _battleMode);
+            case SortingAlgorithm.SortingAlgorithmType.SA_BubbleSort:
+                _algorithm = new BubbleSort(this, _sortingValues.Count);
                 break;
-            case SortingAlgorithmType.SA_GnomeSort:
-                _algorithm = new GnomeSort(this, _sortingValues.Count, _battleMode);
+            case SortingAlgorithm.SortingAlgorithmType.SA_GnomeSort:
+                _algorithm = new GnomeSort(this, _sortingValues.Count);
                 break;
-            case SortingAlgorithmType.SA_RadixSort:
+            case SortingAlgorithm.SortingAlgorithmType.SA_RadixSort:
                 _sortingVisualization.ShowBuckets();
-                _algorithm = new RadixSort(this, _sortingValues.Count, _battleMode);
+                _algorithm = new RadixSort(this, _sortingValues.Count);
                 break;
-            case SortingAlgorithmType.SA_ShellSort:
-                _algorithm = new ShellSort(this, _sortingValues.Count, _battleMode);
+            case SortingAlgorithm.SortingAlgorithmType.SA_ShellSort:
+                _algorithm = new ShellSort(this, _sortingValues.Count);
                 break;
             default:
                 //No algorithm selected
@@ -347,31 +329,31 @@ public class SortingLogic : MonoBehaviour
         string descriptionKey = "";
         switch (_sortingAlgorithm)
         {
-            case SortingAlgorithmType.SA_InsertionSort:
+            case SortingAlgorithm.SortingAlgorithmType.SA_InsertionSort:
                 descriptionKey = "Insertion Sort Description";
                 break;
-            case SortingAlgorithmType.SA_MergeSort:
+            case SortingAlgorithm.SortingAlgorithmType.SA_MergeSort:
                 descriptionKey = "Merge Sort Description";
                 break;
-            case SortingAlgorithmType.SA_HeapSort:
+            case SortingAlgorithm.SortingAlgorithmType.SA_HeapSort:
                 descriptionKey = "Heap Sort Description";
                 break;
-            case SortingAlgorithmType.SA_QuickSort:
+            case SortingAlgorithm.SortingAlgorithmType.SA_QuickSort:
                 descriptionKey = "Quick Sort Description";
                 break;
-            case SortingAlgorithmType.SA_SelectionSort:
+            case SortingAlgorithm.SortingAlgorithmType.SA_SelectionSort:
                 descriptionKey = "Selection Sort Description";
                 break;
-            case SortingAlgorithmType.SA_BubbleSort:
+            case SortingAlgorithm.SortingAlgorithmType.SA_BubbleSort:
                 descriptionKey = "Bubble Sort Description";
                 break;
-            case SortingAlgorithmType.SA_GnomeSort:
+            case SortingAlgorithm.SortingAlgorithmType.SA_GnomeSort:
                 descriptionKey = "Gnome Sort Description";
                 break;
-            case SortingAlgorithmType.SA_RadixSort:
+            case SortingAlgorithm.SortingAlgorithmType.SA_RadixSort:
                 descriptionKey = "Radix Sort Description";
                 break;
-            case SortingAlgorithmType.SA_ShellSort:
+            case SortingAlgorithm.SortingAlgorithmType.SA_ShellSort:
                 descriptionKey = "Shell Sort Description";
                 break;
             default:

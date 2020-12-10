@@ -19,7 +19,7 @@ public class SelectionSort : SortingAlgorithm
         };
     }
     
-    public SelectionSort(SortingLogic logic, int n, bool battleMode) : base(logic, battleMode)
+    public SelectionSort(SortingLogic logic, int n) : base(logic)
     {
         _executedStates.AddFirst(new SelectionSortingState(this, n));
     }

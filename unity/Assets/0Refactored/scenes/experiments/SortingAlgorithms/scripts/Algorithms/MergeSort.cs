@@ -28,7 +28,7 @@ public class MergeSort : SortingAlgorithm
         };
     }
     
-    public MergeSort(SortingLogic logic, int n, bool battleMode) : base(logic, battleMode)
+    public MergeSort(SortingLogic logic, int n) : base(logic)
     {
         _executedStates.AddFirst(new MergeSortingState(this, n));
     }

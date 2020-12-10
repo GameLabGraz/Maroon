@@ -16,7 +16,7 @@ public class BubbleSort : SortingAlgorithm
         };
     }
     
-    public BubbleSort(SortingLogic logic, int n, bool battleMode) : base(logic, battleMode)
+    public BubbleSort(SortingLogic logic, int n) : base(logic)
     {
         _executedStates.AddFirst(new BubbleSortingState(this, n));
     }
