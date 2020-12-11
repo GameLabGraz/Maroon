@@ -1,10 +1,8 @@
 ﻿using System;
-using GEAR.Localization;
+using GEAR.Localization.Text;
 using PlatformControls.PC;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
-using UnityStandardAssets.Utility;
 
 public class PointWave_SelectionHandler : MonoBehaviour
 {
