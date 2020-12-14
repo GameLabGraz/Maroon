@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using GEAR.Localization;
 using UnityEngine;
 using Valve.VR.InteractionSystem;
 
@@ -161,6 +162,8 @@ public abstract class SortingAlgorithm
         
         _comparisons = 0;
         _swaps = 0;
+        
+        LanguageManager.Instance.OnLanguageChanged.AddListener(OnLanguageChanged);
     }
 
     public void ExecuteNextState()
@@ -311,5 +314,10 @@ public abstract class SortingAlgorithm
     public bool BucketEmpty(int bucket)
     {
         return sortingLogic.BucketEmpty(bucket);
+    }
+
+    private void OnLanguageChanged(SystemLanguage language)
+    {
+        sortingLogic.SetSwapsComparisons(_swaps, _comparisons);
     }
 }

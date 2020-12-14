@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using GEAR.Localization;
+using GEAR.Localization.Text;
 using PlatformControls.PC;
 using TMPro;
 using UnityEngine;
@@ -18,7 +19,8 @@ public class DetailSortingVisualization : MonoBehaviour
     
     [SerializeField] private TextMeshProUGUI pseudoCodeText;
     [SerializeField] private TextMeshProUGUI swapsText;
-    [SerializeField] private TextMeshProUGUI descriptionText;
+    
+    [SerializeField] private LocalizedTMP descriptionLocalizer;
     
     private float _timePerMove;
 
@@ -352,8 +354,8 @@ public class DetailSortingVisualization : MonoBehaviour
     public void SetSwapsComparisons(int swaps, int comparisons)
     {
         string text = "";
-        text += "<b>Swaps:</b> <pos=50%>" + swaps + "\n";
-        text += "<b>Comparisons:</b> <pos=50%>" + comparisons;
+        text += LanguageManager.Instance.GetString("StylizedSwapPrefix") + swaps + "\n";
+        text += LanguageManager.Instance.GetString("StylizedComparisonPrefix") + comparisons;
         swapsText.text = text;
     }
 
@@ -403,7 +405,7 @@ public class DetailSortingVisualization : MonoBehaviour
     
     public void SetDescription(string key)
     {
-        descriptionText.text = LanguageManager.Instance.GetString(key);
+        descriptionLocalizer.Key = key;
     }
     
     public void DisplayIndices(Dictionary<string, int> indices)

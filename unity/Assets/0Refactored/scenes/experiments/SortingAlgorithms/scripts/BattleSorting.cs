@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using GEAR.Localization;
 using TMPro;
 using UnityEngine;
 using Random = System.Random;
@@ -42,6 +43,8 @@ public class BattleSorting : MonoBehaviour
         }
         
         CreateColumnArray();
+        
+        LanguageManager.Instance.OnLanguageChanged.AddListener(OnLanguageChanged);
     }
     
     private void Update()
@@ -149,11 +152,6 @@ public class BattleSorting : MonoBehaviour
         ResetVisualization();
         //TODO: Finished!
     }
-
-    private void DisplayOperations()
-    {
-        operationsText.text = "Operations: " +  _executedOperations;
-    }
     
     public void EnterDetailMode()
     {
@@ -161,7 +159,17 @@ public class BattleSorting : MonoBehaviour
         GetComponentInParent<SortingController>().EnterDetailMode(selectedAlgorithm);
     }
 
+    private void OnLanguageChanged(SystemLanguage language)
+    {
+        DisplayOperations();
+    }
+
     #region Operations
+    
+    private void DisplayOperations()
+    {
+        operationsText.text = LanguageManager.Instance.GetString("OperationsPrefix") +  _executedOperations;
+    }
     
     private bool OperationsAvailable()
     {

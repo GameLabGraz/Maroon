@@ -49,6 +49,8 @@ public class SortingLogic : MonoBehaviour
         {
             _buckets.Add(new LinkedList<int>());
         }
+        
+        LanguageManager.Instance.OnLanguageChanged.AddListener(OnLanguageChanged);
     }
 
     private void Update()
@@ -73,6 +75,11 @@ public class SortingLogic : MonoBehaviour
             safety++;
         }
         _operationPerformed = false;
+    }
+    
+    private void OnLanguageChanged(SystemLanguage language)
+    {
+        SetDescription();
     }
 
     #region GUI_Functions
