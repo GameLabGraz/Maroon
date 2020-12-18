@@ -239,6 +239,14 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
         }
 
+        public void SetPlayerRotation(Quaternion rotation)
+        {
+            transform.localRotation = rotation;
+            var cameraTransform = m_Camera.transform;
+            cameraTransform.localRotation = Quaternion.identity;
+            m_MouseLook.Init(transform, cameraTransform);
+        }
+
 
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {
