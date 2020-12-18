@@ -95,6 +95,7 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
         this.Menu.AddMenuColumn(this.ColumnAudio);
         this.ButtonAudio.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.white;
         this.ButtonLanguage.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
+        this.ButtonNetwork.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
     }
 
     private void OnClickLanguage()
@@ -103,6 +104,7 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
         this.Menu.AddMenuColumn(this.ColumnLanguage);
         this.ButtonAudio.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
         this.ButtonLanguage.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.white;
+        this.ButtonNetwork.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
     }
 
     private void OnClickMainMenu()
@@ -129,5 +131,8 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
     {
         this.Menu.RemoveAllMenuColumnsButFirst();
         this.Menu.AddMenuColumn(this.ColumnNetwork);
+        this.ButtonAudio.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
+        this.ButtonLanguage.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
+        this.ButtonNetwork.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.white;
     }
 }

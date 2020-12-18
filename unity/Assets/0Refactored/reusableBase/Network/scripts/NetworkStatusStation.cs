@@ -24,6 +24,8 @@ public class NetworkStatusStation : MonoBehaviour
     {
         if (!MaroonNetworkManager.Instance.IsActive())
         {
+            string msg = LanguageManager.Instance.GetString("ScreenHostJoin");
+            DisplayMessage(msg);
             return;
         }
         
