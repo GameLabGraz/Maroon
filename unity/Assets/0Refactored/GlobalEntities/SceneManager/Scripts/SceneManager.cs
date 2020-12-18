@@ -2,21 +2,77 @@
 
 namespace Maroon
 {
-    class SceneManager : MonoBehaviour
+    public class SceneManager : MonoBehaviour
     {
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Fields
 
-        [SerializeField] private bool webGLEnableSceneLoadingViaURLParameter = false;
-        [SerializeField] private bool webGLForceSceneFromURLParameter = false; // TODO: Implement
-        [SerializeField] private string webGLSceneURLParameterName = "LoadScene";
-
+        private static SceneManager instance = null;
         [SerializeField] private Maroon.SceneCategory[] sceneCategories;
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        // Getters
+        // Getters and Properties
 
-        public Maroon.CustomSceneAsset[] getScenesFromAllCategories()
+        public static SceneManager Instance
+        {
+            get { return SceneManager.instance; }
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+        // Current Scene
+
+        public string getCurrentSceneName()
+        {
+            return UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        }
+
+        public string getCurrentSceneNameWithoutPlatformExtension()
+        {
+            string currentSceneName = this.getCurrentSceneName();
+            return currentSceneName.Substring(0, currentSceneName.LastIndexOf('.'));
+        }
+
+        public bool currentSceneIsVR()
+        {
+            if(this.getCurrentSceneName().Contains(".vr"))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+        // Categories
+
+        public Maroon.SceneCategory getSceneCategoryByName(string categoryName)
+        {
+            // Check if category exists
+            Maroon.SceneCategory categoryFound = null;
+            for(int iCategories = 0; iCategories < this.sceneCategories.Length; iCategories++)
+            {
+                if(categoryName == this.sceneCategories[iCategories].Name)
+                {
+                    categoryFound = this.sceneCategories[iCategories];
+                    break;
+                }
+            }
+
+            // Return Category
+            if(categoryFound != null)
+            {
+                return categoryFound;
+            }
+            return null;
+        }
+
+        public Maroon.SceneCategory getVRSceneCategoryByName(string categoryName)
+        {
+            return null;
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+        // Scenes
+        private Maroon.CustomSceneAsset[] getScenesFromAllCategories()
         {
             int numberOfScenes = 0;
             for(int iCategories = 0; iCategories < this.sceneCategories.Length; iCategories++)
@@ -63,46 +119,26 @@ namespace Maroon
             return sceneNamesFromAllCategories;
         }
 
-        public Maroon.SceneCategory getSceneCategoryByName(string categoryName)
-        {
-            // Check if category exists
-            Maroon.SceneCategory categoryFound = null;
-            for(int iCategories = 0; iCategories < this.sceneCategories.Length; iCategories++)
-            {
-                if(categoryName == this.sceneCategories[iCategories].Name)
-                {
-                    categoryFound = this.sceneCategories[iCategories];
-                    break;
-                }
-            }
-
-            // Return Category
-            if(categoryFound != null)
-            {
-                return categoryFound;
-            }
-            return null;
-        }
-
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Methods
 
-        // 
-        public void Start()
+        private void Awake()
         {
-            if(this.webGLEnableSceneLoadingViaURLParameter)
+            // Singleton
+            if(SceneManager.instance == null)
             {
-                this.loadSceneViaURLParameter();
+                SceneManager.instance = this;
             }
-        }
+            else if(SceneManager.instance != this)
+            {
+                Destroy(this.gameObject);
+            }
 
-        private void loadSceneViaURLParameter()
-        {
-            if(Maroon.TargetPlatformDetector.targetPlatform == "webgl")
-            {
-                string parameter = Maroon.WebGLUrlParameterReader.GetUrlParameter(this.webGLSceneURLParameterName);
-                this.LoadSceneIfInAnyCategory(parameter + ".pc");
-            }
+            // Keep alive
+            DontDestroyOnLoad(this.gameObject);
+
+            // Sanity Check VR vs Standard scenes in categories
+            // TODO
         }
 
         public bool LoadSceneIfInAnyCategory(string sceneName, bool showLoadingScreen = false)
@@ -117,5 +153,11 @@ namespace Maroon
             
             return false;
         }
+    }
+
+    enum SceneType
+    {
+        Standard,
+        VR
     }
 }

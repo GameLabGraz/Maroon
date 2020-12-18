@@ -11,7 +11,7 @@ namespace Maroon
 {
     // #################################################################################################################
     // Custom Scene Asset
-    [System.Serializable] class CustomSceneAsset
+    [System.Serializable] public class CustomSceneAsset
     {
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Fields
@@ -22,7 +22,7 @@ namespace Maroon
         [SerializeField] private bool isVirtualRealityScene = false;
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        // Getters
+        // Getters and Properties
 
         public string ScenePath
         {

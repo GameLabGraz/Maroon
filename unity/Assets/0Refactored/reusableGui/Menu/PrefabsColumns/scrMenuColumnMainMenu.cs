@@ -51,7 +51,7 @@ public class scrMenuColumnMainMenu : MonoBehaviour
         this.Menu = (scrMenu) this.transform.parent.parent.parent.GetComponent(typeof(scrMenu));
 
         // Hide exit button on WebGL
-        if(Maroon.TargetPlatformDetector.targetPlatform == "webgl")
+        if(Maroon.PlatformManager.Instance.CurrentPlatform == Maroon.Platform.WebGL)
         {
             this.ButtonExit.SetActive(false);
         }
@@ -79,7 +79,7 @@ public class scrMenuColumnMainMenu : MonoBehaviour
 
     private void OnClickLab()
     {
-        if(Maroon.TargetPlatformDetector.isVRPlatform)
+        if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
         {
             SceneManager.LoadScene(this.targetLabSceneVR);
         }
