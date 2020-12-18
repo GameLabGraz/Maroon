@@ -10,7 +10,8 @@ namespace PlatformControls.BaseControls
 
         public void Enter()
         {
-            SceneManager.LoadScene(_sceneName);
+            //SceneManager.LoadScene(_sceneName);
+            MaroonNetworkManager.Instance.EnterScene(_sceneName);
         }
     }
 }

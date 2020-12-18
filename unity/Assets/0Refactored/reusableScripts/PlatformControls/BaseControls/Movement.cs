@@ -26,7 +26,7 @@ namespace PlatformControls.BaseControls
         protected UnityEvent onMovementStopped;
 
         [SerializeField]
-        protected UnityEvent onMovement;
+        public UnityEvent onMovement;
 
         protected void StartMoving()
         {
