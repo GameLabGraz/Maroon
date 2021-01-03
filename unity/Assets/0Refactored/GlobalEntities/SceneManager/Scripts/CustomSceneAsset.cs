@@ -43,6 +43,11 @@ namespace Maroon
         {
             get { return this.isVirtualRealityScene; }
         }
+        
+        public Maroon.SceneType SceneType
+        {
+            get { if(this.isVirtualRealityScene){return Maroon.SceneType.VR;} return Maroon.SceneType.Standard; }
+        }
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Operators

@@ -11,9 +11,9 @@ public class scrMenuColumnMainMenu : MonoBehaviour
 
     private float TimeScaleRestore = 1.0f;
 
-    [SerializeField] private Utilities.SceneField targetLabScenePC;
+    [SerializeField] private Maroon.CustomSceneAsset targetLabScenePC;
 
-    [SerializeField] private Utilities.SceneField targetLabSceneVR;
+    [SerializeField] private Maroon.CustomSceneAsset targetLabSceneVR;
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Columns
@@ -47,6 +47,7 @@ public class scrMenuColumnMainMenu : MonoBehaviour
         this.Menu = (scrMenu) this.transform.parent.parent.parent.GetComponent(typeof(scrMenu));
 
         // Hide exit button on WebGL
+        Debug.Log(Maroon.PlatformManager.Instance.CurrentPlatform);
         if(Maroon.PlatformManager.Instance.CurrentPlatform == Maroon.Platform.WebGL)
         {
             this.ButtonExit.SetActive(false);

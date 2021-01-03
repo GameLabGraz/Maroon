@@ -12,9 +12,9 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
 
     private float TimeScaleRestore = 1.0f;
 
-    [SerializeField] private Utilities.SceneField targetMainMenuScenePC;
+    [SerializeField] private Maroon.CustomSceneAsset targetMainMenuScenePC;
 
-    [SerializeField] private Utilities.SceneField targetMainMenuSceneVR;
+    [SerializeField] private Maroon.CustomSceneAsset targetMainMenuSceneVR;
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Columns

@@ -35,6 +35,11 @@ namespace Maroon
             }
         }
 
+        public Maroon.SceneType SceneTypeInThisCategory
+        {
+            get { return this.sceneTypeInThisCategory; }
+        }
+
         public Maroon.CustomSceneAsset[] Scenes
         {
             get { return this.scenes; }
