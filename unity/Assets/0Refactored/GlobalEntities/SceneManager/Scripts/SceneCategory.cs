@@ -10,6 +10,8 @@ namespace Maroon
 
         [SerializeField] private string name = "CategoryName";
 
+        [SerializeField] private bool hiddenCategory = false;
+
         [SerializeField] private Maroon.SceneType sceneTypeInThisCategory = Maroon.SceneType.Standard;
 
         [SerializeField] private Maroon.CustomSceneAsset[] scenes;
@@ -20,6 +22,11 @@ namespace Maroon
         public string Name
         {
             get { return this.name; }
+        }
+
+        public bool HiddenCategory
+        {
+            get { return this.hiddenCategory; }
         }
 
         public bool IsVRCategory

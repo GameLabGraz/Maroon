@@ -12,12 +12,27 @@ namespace Maroon
 
         [SerializeField] private Maroon.SceneCategory[] sceneCategories;
 
+        private Maroon.SceneCategory activeSceneCategory;
+
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Getters and Properties
 
         public static SceneManager Instance
         {
             get { return SceneManager.instance; }
+        }
+
+        public Maroon.SceneCategory ActiveSceneCategory
+        {
+            get { return this.activeSceneCategory; }
+            set
+            {
+                // Only set if it exists in categories array
+                if(System.Array.Exists(this.sceneCategories, element => element == value))
+                {
+                    this.activeSceneCategory = value;
+                }
+            }
         }
 
         // -------------------------------------------------------------------------------------------------------------

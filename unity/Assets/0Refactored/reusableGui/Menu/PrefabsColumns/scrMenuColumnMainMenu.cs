@@ -47,7 +47,6 @@ public class scrMenuColumnMainMenu : MonoBehaviour
         this.Menu = (scrMenu) this.transform.parent.parent.parent.GetComponent(typeof(scrMenu));
 
         // Hide exit button on WebGL
-        Debug.Log(Maroon.PlatformManager.Instance.CurrentPlatform);
         if(Maroon.PlatformManager.Instance.CurrentPlatform == Maroon.Platform.WebGL)
         {
             this.ButtonExit.SetActive(false);
@@ -75,14 +74,18 @@ public class scrMenuColumnMainMenu : MonoBehaviour
 
     private void OnClickLab()
     {
+        // TODO: Create new menu column that lists each category, for now physics is hardcoded
+        Maroon.SceneManager.Instance.ActiveSceneCategory = Maroon.SceneManager.Instance.getSceneCategoryByName("Physics");
+
+
         if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
         {
-            SceneManager.LoadScene(this.targetLabSceneVR);
+            Maroon.SceneManager.Instance.LoadSceneIfInAnyCategory(this.targetLabSceneVR);
         }
 
         else
         {
-            SceneManager.LoadScene(this.targetLabScenePC);
+            Maroon.SceneManager.Instance.LoadSceneIfInAnyCategory(this.targetLabScenePC);
         }
     }
 
