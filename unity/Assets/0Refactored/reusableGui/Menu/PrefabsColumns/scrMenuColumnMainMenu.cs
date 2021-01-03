@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class scrMenuColumnMainMenu : MonoBehaviour
 {
@@ -11,12 +10,10 @@ public class scrMenuColumnMainMenu : MonoBehaviour
 
     private float TimeScaleRestore = 1.0f;
 
-    [SerializeField] private Maroon.CustomSceneAsset targetLabScenePC;
-
-    [SerializeField] private Maroon.CustomSceneAsset targetLabSceneVR;
-
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Columns
+
+    [SerializeField] private GameObject ColumnLaboratory;
 
     [SerializeField] private GameObject ColumnAudio;
 
@@ -27,7 +24,7 @@ public class scrMenuColumnMainMenu : MonoBehaviour
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Buttons
 
-    [SerializeField] private GameObject ButtonLab;
+    [SerializeField] private GameObject ButtonLaboratory;
 
     [SerializeField] private GameObject ButtonAudio;
 
@@ -53,7 +50,7 @@ public class scrMenuColumnMainMenu : MonoBehaviour
         }
 
         // Link button actions
-        this.ButtonLab.GetComponent<Button>().onClick.AddListener(() => this.OnClickLab());
+        this.ButtonLaboratory.GetComponent<Button>().onClick.AddListener(() => this.OnClickLaboratory());
         this.ButtonAudio.GetComponent<Button>().onClick.AddListener(() => this.OnClickAudio());
         this.ButtonLanguage.GetComponent<Button>().onClick.AddListener(() => this.OnClickLanguage());
         this.ButtonCredits.GetComponent<Button>().onClick.AddListener(() => this.OnClickCredits());
@@ -72,21 +69,12 @@ public class scrMenuColumnMainMenu : MonoBehaviour
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Button Actions
 
-    private void OnClickLab()
+    private void OnClickLaboratory()
     {
-        // TODO: Create new menu column that lists each category, for now physics is hardcoded
-        Maroon.SceneManager.Instance.ActiveSceneCategory = Maroon.SceneManager.Instance.getSceneCategoryByName("Physics");
-
-
-        if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
-        {
-            Maroon.SceneManager.Instance.LoadSceneIfInAnyCategory(this.targetLabSceneVR);
-        }
-
-        else
-        {
-            Maroon.SceneManager.Instance.LoadSceneIfInAnyCategory(this.targetLabScenePC);
-        }
+        this.Menu.RemoveAllMenuColumnsButFirst();
+        this.Menu.AddMenuColumn(this.ColumnLaboratory);
+        this.ClearButtonActiveIcons();
+        this.SetButtonActiveIcon(this.ButtonLaboratory);
     }
 
     private void OnClickAudio()

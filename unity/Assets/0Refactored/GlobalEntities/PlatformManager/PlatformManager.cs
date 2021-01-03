@@ -29,6 +29,19 @@ namespace Maroon
             get { return this.currentPlatformIsVR; }
         }
 
+        public Maroon.SceneType SceneTypeBasedOnPlatform
+        {
+            get
+            {
+                if(this.currentPlatformIsVR)
+                {
+                    return Maroon.SceneType.VR;
+                }
+
+                return Maroon.SceneType.Standard;
+            }
+        }
+
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Methods
 

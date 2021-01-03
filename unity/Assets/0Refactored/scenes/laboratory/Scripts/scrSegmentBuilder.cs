@@ -79,6 +79,7 @@ public class scrSegmentBuilder : MonoBehaviour
             if(loadedObject == null)
             {
                 this.laboratoryBlocks.Add(this.defaultLaboratoryBlock);
+                Debug.Log("No laboratoryblock available for: " + laboratoryBlockName);
             }
             else
             {

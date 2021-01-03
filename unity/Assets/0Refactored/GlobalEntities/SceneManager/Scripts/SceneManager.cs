@@ -57,7 +57,9 @@ namespace Maroon
         }
 
         /// <summary>
-        ///     Returns true if the currently active scene is a virtual reality scene and has the .vr extension.
+        ///     Maroon.PlatformManager has a property SceneTypeBasedOnPlatform. You might want to use that to get info
+        ///     about the current build platform and VR state. This is only valid for the current scene. This method
+        ///     returns true if the currently active scene is a virtual reality scene and has the .vr extension.
         ///     Returns false otherwise.
         /// </summary>
         public bool currentSceneIsVR()
@@ -73,14 +75,53 @@ namespace Maroon
         // Categories
 
         /// <summary>
-        ///     Searches all scene categories registered the SceneManager prefab and returns the category if the name
-        ///     matches. Returns null if no category was found.
+        ///     Returns a list of all scene categories registered in the SceneManager prefab and returns the category
+        ///     if the name matches. Returns empty list if no category was found.
+        /// </summary>
+        /// <param name="sceneType">
+        ///     Mixed allows any scene category type, others limit returned categories to the given type.
+        /// </param>
+        /// <param name="includeHidden">
+        ///     Hidden categories are excluded by default. Set to true to include hidden categories.
+        /// </param>
+        public List<Maroon.SceneCategory> getSceneCategories(Maroon.SceneType sceneType = Maroon.SceneType.Mixed,
+                                                             bool includeHidden = false)
+        {
+            // Create list
+            List<Maroon.SceneCategory> categories = new List<Maroon.SceneCategory>();
+
+            // Add categories
+            for(int iCategories = 0; iCategories < this.sceneCategories.Length; iCategories++)
+            {
+                // Extract current category
+                Maroon.SceneCategory current_category = this.sceneCategories[iCategories];
+
+                // Skip hidden categories based on setting
+                if((!includeHidden) && (current_category.HiddenCategory))
+                {
+                    continue;
+                }
+
+                // Select if all types allowed or if desired type eqal to current type
+                if((sceneType == Maroon.SceneType.Mixed) || (sceneType == current_category.SceneTypeInThisCategory))
+                {
+                    categories.Add(current_category);
+                }
+            }
+
+            // Return categories
+            return categories;
+        }
+
+        /// <summary>
+        ///     Searches all scene categories registered in the SceneManager prefab and returns the category if the
+        ///     name matches. Returns null if no category was found.
         /// </summary>
         /// <param name="categoryName">
         ///     The name of the category to be looked for.
         /// </param>
         /// <param name="sceneType">
-        ///     Mixed allows any scene category type, others limit returned scenes to the given type.
+        ///     Mixed allows any scene category type, others limit returned categories to the given type.
         /// </param>
         public Maroon.SceneCategory getSceneCategoryByName(string categoryName, Maroon.SceneType sceneType =
                                                            Maroon.SceneType.Mixed)
