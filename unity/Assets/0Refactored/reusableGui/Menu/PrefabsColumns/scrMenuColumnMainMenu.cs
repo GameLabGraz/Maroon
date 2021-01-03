@@ -109,6 +109,7 @@ public class scrMenuColumnMainMenu : MonoBehaviour
     private void ClearButtonActiveIcons()
     {
         Color clr = Color.clear;
+        this.ButtonLaboratory.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;
         this.ButtonAudio.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;
         this.ButtonLanguage.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;
         this.ButtonCredits.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;

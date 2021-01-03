@@ -44,12 +44,8 @@ namespace Maroon{
             DontDestroyOnLoad(this.gameObject);
 
             // Create instances
-            
-            Debug.Log(Maroon.PlatformManager.Instance);
-
             if(Maroon.PlatformManager.Instance == null)
             {
-                Debug.Log("GlobalEntityLoader -> Instantiate PlatformManager");
                 Instantiate(this.platformManagerPrefab).transform.SetParent(this.transform);
             }
             if(Maroon.SceneManager.Instance == null)
@@ -60,8 +56,6 @@ namespace Maroon{
             {
                 Instantiate(this.bootstrappingManagerPrefab).transform.SetParent(this.transform);
             }
-
-            Debug.Log(Maroon.PlatformManager.Instance);
         }
 
     }

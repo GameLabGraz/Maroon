@@ -283,6 +283,9 @@ namespace Maroon
         ///
         ///     TODO: Pipe all scene changes through this method so that this method can notify the NetworkManager
         ///     consistently.
+        ///
+        ///     TODO: Check if the scene to be loaded fits the current platform. Prevent loading a VR scene on non-VR
+        ///     platform.
         /// </summary>
         /// <param name="sceneNameOrPath">
         ///     The full path to the scene or the name of the scene. Also accepts a Maroon.CustomSceneAsset.
@@ -294,6 +297,9 @@ namespace Maroon
         {
             // Convert full path to scene name
             string sceneName = System.IO.Path.GetFileName(sceneNameOrPath);
+
+            Debug.Log("TRYING TO LOAD SCENEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+            Debug.Log(sceneName);
 
             // Get valid scenes
             string[] validSceneNames = this.getSceneNamesFromAllCategories();

@@ -47,8 +47,6 @@ namespace Maroon
 
         private void Awake()
         {
-            Debug.Log("PlatformManager Awake");
-
             // Singleton
             if(PlatformManager.instance == null)
             {
@@ -68,7 +66,7 @@ namespace Maroon
             #elif UNITY_STANDALONE_WIN
                 this.currentPlatform = Maroon.Platform.PC;
             #elif UNITY_WEBGL
-                this.currentPlatform = Maroon.Platform.WebGl;
+                this.currentPlatform = Maroon.Platform.WebGL;
             #elif UNITY_STANDALONE_OSX
                 this.currentPlatform = Maroon.Platform.Mac;
             #elif UNITY_ANDROID

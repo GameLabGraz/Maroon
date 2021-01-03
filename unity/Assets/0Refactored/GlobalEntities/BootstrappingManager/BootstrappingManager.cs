@@ -49,7 +49,7 @@ namespace Maroon
         private void Start()
         {
             if((!this.bootstrappingFinished) &&
-               (Maroon.SceneManager.Instance.getCurrentSceneNameWithoutPlatformExtension() == "Bootstrapping"))
+               (Maroon.SceneManager.Instance.getCurrentSceneNameWithoutPlatformExtension() == "Bootstrapping"))         // TODO: Maybe this has some side effects and should be done on other scenes as well for certain things to work as expected when developing in editor
             {
                 // Update platform VR state
                 Maroon.PlatformManager.Instance.UpdatePlatformVRStateBasedOnScene();
@@ -58,6 +58,7 @@ namespace Maroon
                 if((Maroon.PlatformManager.Instance.CurrentPlatform == Maroon.Platform.WebGL) &&
                    (this.webGLEnableSceneLoadingViaURLParameter))
                 {
+                    Debug.Log("Checking redirect");
                     string parameter = Maroon.WebGLUrlParameterReader.GetUrlParameter(this.webGLSceneURLParameterName);
                     Maroon.SceneManager.Instance.LoadSceneIfInAnyCategory(parameter + ".pc");
                 }
