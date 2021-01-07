@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Mirror;
 using PlatformControls.PC;
 using UnityEngine;
 using Random = System.Random;
@@ -14,9 +15,14 @@ public class SortingController : MonoBehaviour, IResetObject
         SM_BattleMode
     }
     private SortingMode _sortingMode;
+
+    [SerializeField] private SortingNetworkSync networkSync;
+    private bool _isOnline;
+    private bool _initialized = false;
     
     private void Start()
     {
+        _isOnline = NetworkClient.active;
         detailSortingLogic.Init(_detailArraySize);
         leftBattleSorting.Init(battleArraySize);
         rightBattleSorting.Init(battleArraySize);
@@ -26,7 +32,11 @@ public class SortingController : MonoBehaviour, IResetObject
         arrangementDropdown.allowReset = false;
         _arrangementMode = (ArrangementMode)arrangementDropdown.value;
         SetBattleOperationsPerSeconds(speedSlider.value);
-        SetBattleOrder();
+        
+        //Only after delay, so all clients are ready
+        Invoke(nameof(DistributeDetailArray), 1.0f);
+        Invoke(nameof(SetBattleOrder), 1.0f);
+        _initialized = true;
     }
     
     public void ResetObject()
@@ -93,11 +103,27 @@ public class SortingController : MonoBehaviour, IResetObject
     
     private void RandomizeDetailArray()
     {
+        if (_initialized && _isOnline && !MaroonNetworkManager.Instance.IsInControl)
+            return;
         _detailOrder = new List<int>();
         for (int i = 0; i < 10; ++i)
         {
             _detailOrder.Add(rng.Next(100));
         }
+        detailSortingLogic.SortingValues = _detailOrder.GetRange(0, _detailArraySize);
+        
+        DistributeDetailArray();
+    }
+
+    private void DistributeDetailArray()
+    {
+        if(_initialized && _isOnline && MaroonNetworkManager.Instance.IsInControl)
+            networkSync.SynchronizeArray(_detailOrder);
+    }
+
+    public void SetDetailArray(List<int> array)
+    {
+        _detailOrder = array;
         detailSortingLogic.SortingValues = _detailOrder.GetRange(0, _detailArraySize);
     }
 
@@ -187,6 +213,9 @@ public class SortingController : MonoBehaviour, IResetObject
     
     private void SetBattleOrder()
     {
+        if (_initialized && _isOnline && !MaroonNetworkManager.Instance.IsInControl)
+            return;
+        
         List<int> order = Enumerable.Range(0, battleArraySize).ToList();
         switch (_arrangementMode)
         {
@@ -201,6 +230,14 @@ public class SortingController : MonoBehaviour, IResetObject
                 break;
         }
 
+        SetBattleOrder(order);
+        
+        if(_initialized && _isOnline && MaroonNetworkManager.Instance.IsInControl)
+            networkSync.SynchronizeBattleOrder(order);
+    }
+
+    public void SetBattleOrder(List<int> order)
+    {
         leftBattleSorting.SetOrder(order);
         rightBattleSorting.SetOrder(order);
     }
