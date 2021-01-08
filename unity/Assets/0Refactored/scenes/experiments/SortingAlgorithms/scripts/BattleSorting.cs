@@ -29,11 +29,14 @@ public class BattleSorting : MonoBehaviour
     private float _secondsCarry;
     private int _operationsToExecute;
     private int _executedOperations;
+    public int Operations => _executedOperations;
 
     private List<int> _currentOrder;
     private SortingAlgorithm.SortingAlgorithmType _selectedAlgorithm;
+
+    private SortingController _sortingController;
     
-    public void Init(int size)
+    public void Init(int size, SortingController controller)
     {
         _size = size;
         
@@ -45,6 +48,8 @@ public class BattleSorting : MonoBehaviour
         CreateColumnArray();
         
         LanguageManager.Instance.OnLanguageChanged.AddListener(OnLanguageChanged);
+
+        _sortingController = controller;
     }
     
     private void Update()
@@ -104,42 +109,36 @@ public class BattleSorting : MonoBehaviour
 
     private IEnumerator SortingStarter()
     {
+        titleText.text = "<style=\"sortingTitle\">" + _sortingController.GetAlgorithmName(_selectedAlgorithm) +
+                         "</style>";
+        
         switch (_selectedAlgorithm)
         {
             case SortingAlgorithm.SortingAlgorithmType.SA_InsertionSort:
-                titleText.text = "<style=\"sortingTitle\">Insertion Sort</style>";
                 yield return InsertionSort();
                 break;
             case SortingAlgorithm.SortingAlgorithmType.SA_MergeSort:
-                titleText.text = "<style=\"sortingTitle\">Merge Sort</style>";
                 yield return MergeSort(0, _size-1);
                 break;
             case SortingAlgorithm.SortingAlgorithmType.SA_HeapSort:
-                titleText.text = "<style=\"sortingTitle\">Heap Sort</style>";
                 yield return HeapSort();
                 break;
             case SortingAlgorithm.SortingAlgorithmType.SA_QuickSort:
-                titleText.text = "<style=\"sortingTitle\">Quick Sort</style>";
                 yield return QuickSort(0, _size-1);
                 break;
             case SortingAlgorithm.SortingAlgorithmType.SA_SelectionSort:
-                titleText.text = "<style=\"sortingTitle\">Selection Sort</style>";
                 yield return SelectionSort();
                 break;
             case SortingAlgorithm.SortingAlgorithmType.SA_BubbleSort:
-                titleText.text = "<style=\"sortingTitle\">Bubble Sort</style>";
                 yield return BubbleSort();
                 break;
             case SortingAlgorithm.SortingAlgorithmType.SA_GnomeSort:
-                titleText.text = "<style=\"sortingTitle\">Gnome Sort</style>";
                 yield return GnomeSort();
                 break;
             case SortingAlgorithm.SortingAlgorithmType.SA_RadixSort:
-                titleText.text = "<style=\"sortingTitle\">Radix Sort</style>";
                 yield return RadixSort();
                 break;
             case SortingAlgorithm.SortingAlgorithmType.SA_ShellSort:
-                titleText.text = "<style=\"sortingTitle\">Shell Sort</style>";
                 yield return ShellSort();
                 break;
         }
@@ -150,7 +149,7 @@ public class BattleSorting : MonoBehaviour
     private void FinishedSorting()
     {
         ResetVisualization();
-        //TODO: Finished!
+        _sortingController.BattleAlgorithmFinished(this);
     }
     
     public void EnterDetailMode()

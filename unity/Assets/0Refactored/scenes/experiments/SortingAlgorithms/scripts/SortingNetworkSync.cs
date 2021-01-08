@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Mirror;
@@ -44,11 +45,37 @@ public class SortingNetworkSync : ExperimentNetworkSync
     [SerializeField] private PC_LocalizedDropDown _battleArrangementDropDown;
     
     [SerializeField] private Button _detailModeButton;
+    
+    //Quiz
+    [SerializeField] private Button _resetScoreButton;
 
     #endregion
 
     [SerializeField] private SortingController sortingController;
+
+    [SerializeField] private GameObject quizScorePrefab;
+
+    protected override void Start()
+    {
+        base.Start();
+
+        SpawnMyQuizPlayer(MaroonNetworkManager.Instance.PlayerName);
+    }
+
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        
+        sortingController.GoOffline();
+    }
     
+    [Command(ignoreAuthority = true)]
+    private void SpawnMyQuizPlayer(string playerName)
+    {
+        GameObject newQuizScore = Instantiate(quizScorePrefab);
+        NetworkServer.Spawn(newQuizScore, MaroonNetworkManager.Instance.GetConnectionByName(playerName));
+    }
+
     public void SynchronizeArray(List<int> array)
     {
         if (MaroonNetworkManager.Instance.IsInControl)
@@ -115,6 +142,8 @@ public class SortingNetworkSync : ExperimentNetworkSync
         _battleSpeedInputField.interactable = true;
         _battleArrangementDropDown.interactable = true;
         _detailModeButton.interactable = true;
+
+        _resetScoreButton.interactable = true;
     }
 
     protected override void OnLoseControl()
@@ -135,6 +164,8 @@ public class SortingNetworkSync : ExperimentNetworkSync
         _battleSpeedInputField.interactable = false;
         _battleArrangementDropDown.interactable = false;
         _detailModeButton.interactable = false;
+
+        _resetScoreButton.interactable = false;
     }
 
     #endregion
@@ -161,6 +192,8 @@ public class SortingNetworkSync : ExperimentNetworkSync
         _battleSpeedInputField.onEndEdit.AddListener(BattleSpeedInputFieldEndEdit);
         _battleArrangementDropDown.onValueChanged.AddListener(BattleArrangementDropDownChanged);
         _detailModeButton.onClick.AddListener(DetailModeButtonClicked);
+        
+        _resetScoreButton.onClick.AddListener(ResetScoreButtonClicked);
     }
 
     protected override void RemoveListeners()
@@ -183,6 +216,8 @@ public class SortingNetworkSync : ExperimentNetworkSync
         _battleSpeedInputField.onEndEdit.RemoveListener(BattleSpeedInputFieldEndEdit);
         _battleArrangementDropDown.onValueChanged.RemoveListener(BattleArrangementDropDownChanged);
         _detailModeButton.onClick.RemoveListener(DetailModeButtonClicked);
+        
+        _resetScoreButton.onClick.RemoveListener(ResetScoreButtonClicked);
     }
 
     #endregion
@@ -336,6 +371,17 @@ public class SortingNetworkSync : ExperimentNetworkSync
     private void DetailModeButtonActivated()
     {
         _detailModeButton.onClick.Invoke();
+    }
+    
+    //Quiz
+    private void ResetScoreButtonClicked()
+    {
+        SyncEvent(nameof(ResetScoreButtonActivated));
+    }
+
+    private void ResetScoreButtonActivated()
+    {
+        _resetScoreButton.onClick.Invoke();
     }
 
     #endregion

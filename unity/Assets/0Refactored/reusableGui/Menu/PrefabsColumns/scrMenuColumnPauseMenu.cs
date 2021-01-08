@@ -80,6 +80,7 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
         this.TimeScaleRestore = 1.0f;
         this.ButtonAudio.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
         this.ButtonLanguage.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
+        this.ButtonNetwork.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
         if (MaroonNetworkManager.Instance == null)
             return;
         if(MaroonNetworkManager.Instance.IsInControl)

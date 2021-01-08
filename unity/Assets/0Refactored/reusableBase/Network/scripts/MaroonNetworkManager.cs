@@ -390,6 +390,11 @@ public class MaroonNetworkManager : NetworkManager
         return _connectedPlayers.Keys.ToList();
     }
 
+    public NetworkConnection GetConnectionByName(string playerName)
+    {
+        return _connectedPlayers[playerName];
+    }
+
     public void KickPlayer(string playerName)
     {
         if (!_connectedPlayers.ContainsKey(playerName))
