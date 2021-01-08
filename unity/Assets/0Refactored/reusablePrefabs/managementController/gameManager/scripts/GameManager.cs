@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Analytics;
 using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.SceneManagement;
+using UnityStandardAssets.Characters.FirstPerson;
 
 
 //This manager will be created one time at the beginning and stays troughout all scenes to manage 
@@ -18,6 +19,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     private GameObject _player;
+    
+    private GameObject _offlinePlayer;
 
     private static Vector3 _playerPosition;
     private static Quaternion _playerRotation;
@@ -118,6 +121,43 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(_scene);
     }
 
+    public void RegisterNetworkPlayer(GameObject newPlayer)
+    {
+        _offlinePlayer = _player;
+        _player.SetActive(false);
+        _player = newPlayer;
+    }
+    
+    public void UnregisterNetworkPlayer()
+    {
+        if (_offlinePlayer == null)
+        {
+            _player = null;
+            return;
+        }
+
+        if (_player != null)
+        {
+            _playerPosition = _player.transform.position;
+            _playerRotation = _player.transform.rotation;
+        }
+        _offlinePlayer.SetActive(true);
+        _offlinePlayer.transform.position = _playerPosition;
+        //cannot set _offlinePlayer.transform.rotation = _playerRotation; because overruled by First Person Controller
+        _offlinePlayer.GetComponent<FirstPersonController>().SetPlayerRotation(_playerRotation);
+        _player = _offlinePlayer;
+    }
+
+    public Vector3 GetPlayerPosition()
+    {
+        return _playerPosition;
+    }
+
+    public Quaternion GetPlayerRotation()
+    {
+        return _playerRotation;
+    }
+
     public void OnGUI()
     {
         // show build version on lower right corner
@@ -127,4 +167,3 @@ public class GameManager : MonoBehaviour
         });
     }
 }
-

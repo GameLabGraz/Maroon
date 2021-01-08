@@ -10,6 +10,9 @@ namespace PlatformControls.PC
 
         private void OnMouseDrag()
         {
+            if (!enabled)
+                return;
+            
             var mousePosScreen = Input.mousePosition;
             mousePosScreen.z = Speed;
 
@@ -22,11 +25,17 @@ namespace PlatformControls.PC
 
         private void OnMouseDown()
         {
+            if (!enabled)
+                return;
+            
             StartMoving();
         }
 
         private void OnMouseUp()
         {
+            if (!enabled)
+                return;
+            
             StopMoving();
         }
     }
