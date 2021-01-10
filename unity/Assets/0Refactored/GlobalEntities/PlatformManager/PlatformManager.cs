@@ -78,7 +78,7 @@ namespace Maroon
 
         public void UpdatePlatformVRStateBasedOnScene()
         {
-            this.currentPlatformIsVR = Maroon.SceneManager.Instance.currentSceneIsVR();
+            this.currentPlatformIsVR = Maroon.SceneManager.Instance.activeSceneIsVR();
         }
     }
 

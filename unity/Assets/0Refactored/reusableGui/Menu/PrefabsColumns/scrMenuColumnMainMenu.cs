@@ -40,8 +40,7 @@ public class scrMenuColumnMainMenu : MonoBehaviour
     private void Start()
     {
         // Link scrMenu
-        // TODO: This is ugly and needs to get fixed
-        this.Menu = (scrMenu) this.transform.parent.parent.parent.GetComponent(typeof(scrMenu));
+        this.Menu = FindObjectOfType<scrMenu>();
 
         // Hide exit button on WebGL
         if(Maroon.PlatformManager.Instance.CurrentPlatform == Maroon.Platform.WebGL)

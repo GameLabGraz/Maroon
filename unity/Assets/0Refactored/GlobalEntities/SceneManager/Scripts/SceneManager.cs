@@ -3,6 +3,10 @@ using System.Collections.Generic;
 
 namespace Maroon
 {
+    /// <summary>
+    ///     Handles tasks related to scenes in Maroon, including finding scene categories, scene assets and loading
+    ///     scenes.
+    /// </summary>
     public class SceneManager : MonoBehaviour
     {
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -10,21 +14,48 @@ namespace Maroon
 
         private static SceneManager instance = null;
 
+        /// TODO
+        [SerializeField] private Maroon.CustomSceneAsset sceneMainMenuPC = null;
+
+        [SerializeField] private Maroon.CustomSceneAsset sceneMainMenuVR = null;
+
         [SerializeField] private Maroon.SceneCategory[] sceneCategories;
 
         private Maroon.SceneCategory activeSceneCategory;
 
-        // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        // Getters and Properties
+        private Stack<Maroon.CustomSceneAsset> sceneHistory = new Stack<Maroon.CustomSceneAsset>();
 
+        // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        // Properties, Getters and Setters
+
+        // -------------------------------------------------------------------------------------------------------------
+        // Singleton
+
+        /// <summary>
+        ///     The SceneManager instance
+        /// </summary>
         public static SceneManager Instance
         {
-            get { return SceneManager.instance; }
+            get
+            {
+                return SceneManager.instance;
+            }
         }
 
+        // -------------------------------------------------------------------------------------------------------------
+        // Categories
+
+        /// <summary>
+        ///     The SceneCategory that is currently active.
+        //      For example if the player is in the physics lab/category, the physics category should be set to active.
+        /// </summary>
         public Maroon.SceneCategory ActiveSceneCategory
         {
-            get { return this.activeSceneCategory; }
+            get
+            {
+                return this.activeSceneCategory;
+            }
+
             set
             {
                 // Only set if it exists in categories array
@@ -36,35 +67,39 @@ namespace Maroon
         }
 
         // -------------------------------------------------------------------------------------------------------------
-        // Current Scene
+        // Active Scene
 
         /// <summary>
-        ///     Returns the name of the scene that is currently active.
+        ///     The name of the scene that is currently active.
         /// </summary>
-        public string getCurrentSceneName()
+        public string ActiveSceneName
         {
-            return UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            get
+            {
+                return UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            }
         }
 
         /// <summary>
-        ///     Returns the name of the scene that is currently active, without the platform-specific extension (.vr or
-        ///     .pc).
+        ///     The name of the scene that is currently active, without the platform-specific extension (.vr or .pc).
         /// </summary>
-        public string getCurrentSceneNameWithoutPlatformExtension()
+        public string ActiveSceneNameWithoutPlatformExtension
         {
-            string currentSceneName = this.getCurrentSceneName();
-            return currentSceneName.Substring(0, currentSceneName.LastIndexOf('.'));
+            get
+            {
+                return this.ActiveSceneName.Substring(0, this.ActiveSceneName.LastIndexOf('.'));
+            }
         }
 
         /// <summary>
-        ///     Maroon.PlatformManager has a property SceneTypeBasedOnPlatform. You might want to use that to get info
-        ///     about the current build platform and VR state. This is only valid for the current scene. This method
-        ///     returns true if the currently active scene is a virtual reality scene and has the .vr extension.
-        ///     Returns false otherwise.
+        ///     Maroon.PlatformManager has the properties CurrentPlatformIsVR and SceneTypeBasedOnPlatform. You might
+        ///     want to use that to get info about the current build platform and VR state. This is only valid for the
+        ///     active scene. This method returns true if the currently active scene is a virtual reality scene and has
+        ///     the .vr extension. Returns false otherwise.
         /// </summary>
-        public bool currentSceneIsVR()
+        public bool activeSceneIsVR()
         {
-            if(this.getCurrentSceneName().Contains(".vr"))
+            if(this.ActiveSceneName.Contains(".vr"))
             {
                 return true;
             }
@@ -238,6 +273,9 @@ namespace Maroon
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Methods
 
+        // -------------------------------------------------------------------------------------------------------------
+        // Initialization
+
         /// <summary>
         ///     Called by Unity. Initializes singleton instance and DontDestroyOnLoad (stays active on new scene load).
         ///     Checks if only VR scenes are in VR categories and only standard scenes are in standard categories.
@@ -276,43 +314,102 @@ namespace Maroon
             }
         }
 
+        // -------------------------------------------------------------------------------------------------------------
+        // Scenes
+
         /// <summary>
-        ///     Loades a scene based on a scene name, a scene path or a Maroon.CustomSceneAsset. The
-        ///     Maroon.CustomSceneAsset is equivalent to the scene path. The scene must be registered in the
-        ///     SceneManager to be able to load it with this method.
-        ///
-        ///     TODO: Pipe all scene changes through this method so that this method can notify the NetworkManager
-        ///     consistently.
-        ///
-        ///     TODO: Check if the scene to be loaded fits the current platform. Prevent loading a VR scene on non-VR
-        ///     platform.
+        ///     Returns a Maroon.CustomSceneAsset based on a scene name or a scene path. The scene must be registered
+        ///     in one of the categories in the SceneManager to be able to convert it with this method. Returns null
+        ///     if no Maroon.CustomSceneAsset is found
         /// </summary>
-        /// <param name="sceneNameOrPath">
-        ///     The full path to the scene or the name of the scene. Also accepts a Maroon.CustomSceneAsset.
+        /// <param name="scene">
+        ///     The full path to the scene or the name of the scene.
         /// </param>
-        /// <param name="showLoadingScreen">
-        ///     Enables a loading screen while loading the given scene. TODO: Not implemented. Implement this.
-        /// </param>
-        public bool LoadSceneIfInAnyCategory(string sceneNameOrPath, bool showLoadingScreen = false)
+        public Maroon.CustomSceneAsset GetSceneAssetBySceneName(string sceneNameOrPath)
         {
             // Convert full path to scene name
             string sceneName = System.IO.Path.GetFileName(sceneNameOrPath);
 
-            Debug.Log("TRYING TO LOAD SCENEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-            Debug.Log(sceneName);
+            // Find and return Maroon.CustomSceneAsset
+            Maroon.CustomSceneAsset sceneAsset;
+            sceneAsset = this.getScenesFromAllCategories().Find(element => sceneName == element.SceneName);
+            return sceneAsset;
+        }
 
-            // Get valid scenes
-            string[] validSceneNames = this.getSceneNamesFromAllCategories();
+        // -------------------------------------------------------------------------------------------------------------
+        // Scene Navigation
+
+        /// <summary>
+        ///     Loades a scene based on a Maroon.CustomSceneAsset. The scene must be registered in one of the
+        ///     categories in the SceneManager to be able to load it with this method. Always use this method for 
+        ///     loading a new scene, it updates the scene history and checks if the platform is correct.
+        ///
+        ///     TODO: Pipe all scene changes through this method so that this method can notify the NetworkManager
+        ///     consistently.
+        /// </summary>
+        /// <param name="scene">
+        ///     A Maroon.CustomSceneAsset to be loaded.
+        /// </param>
+        /// <param name="showLoadingScreen">
+        ///     Enables a loading screen while loading the scene. TODO: Not implemented. Implement this.
+        /// </param>
+        public bool LoadSceneIfInAnyCategory(Maroon.CustomSceneAsset scene, bool showLoadingScreen = false)
+        {
+            // If scene to be loaded doesn't exist in one of the categories
+            if(!System.Array.Exists(this.getScenesFromAllCategories().ToArray(), element => element.SceneName == scene.SceneName))
+            {
+                // TODO: Convert to warning after fixing warnings
+                Debug.Log("WARNING: Tried to load scene that does not exist in categories."); 
+                return false;
+            }
+
+            // If scene to be loaded has wrong platform
+            if(scene.IsVirtualRealityScene != Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
+            {
+                // TODO: Convert to warning after fixing warnings
+                Debug.Log("WARNING: Tried to load scene that does not match platform type."); 
+                return false;
+            }
 
             // If valid, load scene and return true
-            if(System.Array.Exists(validSceneNames, element => element == sceneName))
+            UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
+            this.sceneHistory.Push(scene);
+            return true;
+        }
+
+        /// <summary>
+        ///     Loades the Main Menu scene according to the current platform.
+        /// </summary>
+        /// <param name="showLoadingScreen">
+        ///     Enables a loading screen while loading the scene.
+        /// </param>
+        public void LoadMainMenu(bool showLoadingScreen = false)
+        {
+            // Return VR main menu for VR platform
+            if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
             {
-                UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
-                return true;
+                this.LoadSceneIfInAnyCategory(this.sceneMainMenuVR);
             }
-            
-            // Else return false
-            return false;
+
+            // Return PC main menu
+            this.LoadSceneIfInAnyCategory(this.sceneMainMenuPC);
+        }
+
+        /// <summary>
+        ///     The name of the scene that was loaded before the currently active scene. If no previous scene
+        ///     is available, the Main Menu scene according to the current platform.
+        /// </summary>
+        public void LoadPreviousScene()
+        {
+            // If there is no previous scene available, load main menu
+            if(this.sceneHistory.Count < 2)
+            {
+                this.LoadMainMenu();
+            }
+
+            // If previous scene available, remove current scene and load previous scene
+            this.sceneHistory.Pop();
+            this.LoadSceneIfInAnyCategory(this.sceneHistory.Pop());            
         }
     }
 

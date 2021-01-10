@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class scrMenuColumnLaboratory : MonoBehaviour
+public class scrMenuColumnLaboratorySelection : MonoBehaviour
 {
-    // Scenes
-    [SerializeField] private Maroon.CustomSceneAsset targetLabScenePC;
+    private scrMenu Menu;
 
-    [SerializeField] private Maroon.CustomSceneAsset targetLabSceneVR;
+    // Column
+    [SerializeField] private GameObject ColumnLaboratorySelectionDetail;
+
 
     // Buttons
     [SerializeField] private GameObject CategoryButtonsContainer;
@@ -19,6 +20,9 @@ public class scrMenuColumnLaboratory : MonoBehaviour
 
     private void Start()
     {
+        // Link scrMenu
+        this.Menu = FindObjectOfType<scrMenu>();
+
         // Get scene categories based on current platform
         Maroon.SceneType platformSceneType = Maroon.PlatformManager.Instance.SceneTypeBasedOnPlatform;
         List<Maroon.SceneCategory> categories = Maroon.SceneManager.Instance.getSceneCategories(platformSceneType);
@@ -34,30 +38,38 @@ public class scrMenuColumnLaboratory : MonoBehaviour
                                                this.CategoryButtonsContainer.transform) as GameObject;
             newButton.transform.localScale = Vector3.one;
 
-            // Set text
+            // Set text TODO: Make this work with Localization
             Transform text = newButton.transform.Find("ContentContainer").transform.Find("Text (TMP)");
             text.GetComponent<LocalizedTMP>().Key = current_category.Name;
 
             // Link function
-            newButton.GetComponent<Button>().onClick.AddListener(() => this.SetCategoryAndLoadLaboratoryScene(current_category));
+            newButton.GetComponent<Button>().onClick.AddListener(() => this.SetCategoryAndOpenColumn(newButton, current_category));
         }
 
     }
 
-    private void SetCategoryAndLoadLaboratoryScene(Maroon.SceneCategory category)
+    private void SetCategoryAndOpenColumn(GameObject pressedButton, Maroon.SceneCategory category)
     {
         // Set category
         Maroon.SceneManager.Instance.ActiveSceneCategory = category;
 
         // Load laboratory scene
-        if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
-        {
-            Maroon.SceneManager.Instance.LoadSceneIfInAnyCategory(this.targetLabSceneVR);
-        }
+        this.Menu.RemoveAllMenuColumnsButTwo();
+        this.Menu.AddMenuColumn(this.ColumnLaboratorySelectionDetail);
+        this.ClearButtonActiveIcons();
+        this.SetButtonActiveIcon(pressedButton);
+    }
 
-        else
+    private void ClearButtonActiveIcons()
+    {
+        foreach(Transform button in this.CategoryButtonsContainer.transform)
         {
-            Maroon.SceneManager.Instance.LoadSceneIfInAnyCategory(this.targetLabScenePC);
+            button.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
         }
+    }
+
+    private void SetButtonActiveIcon(GameObject btn)
+    {
+        btn.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.white;
     }
 }

@@ -32,8 +32,6 @@ namespace Maroon.Build
         private const string ScenePath      = "Assets/0Refactored/scenes";
         private const string LabPath        = ScenePath + "/laboratory";
         private const string SpecialPath    = ScenePath + "/special";
-
-        private const string MenuPath       = ScenePath + "/menu";
         private const string ExperimentPath = ScenePath + "/experiments";
 
         private const string PcExtension = ".pc.unity";
@@ -281,7 +279,7 @@ namespace Maroon.Build
             // TODO
 
             // Add main menu
-            scenes.Add($"{MenuPath}/MainMenu{sceneExtension}");
+            scenes.Add($"{SpecialPath}/MainMenu{sceneExtension}");
             
             // Add laboratory
             scenes.Add($"{LabPath}/Laboratory{sceneExtension}");

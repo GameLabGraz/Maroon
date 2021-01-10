@@ -53,10 +53,14 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
         this.ButtonMainMenu.GetComponent<Button>().onClick.AddListener(() => this.OnClickMainMenu());
         this.ButtonResume.GetComponent<Button>().onClick.AddListener(() => this.OnClickResume());
         this.ButtonNetwork.GetComponent<Button>().onClick.AddListener(() => this.OnClickNetwork());
-        
-#if UNITY_WEBGL
-        this.ButtonNetwork.GetComponent<Button>().interactable = false;
-#endif
+
+        // Enable WebGL button only for PC or Editor, non-VR Build
+        Maroon.Platform currentPlatform = Maroon.PlatformManager.Instance.CurrentPlatform;
+        if(!((currentPlatform == Maroon.Platform.PC || currentPlatform == Maroon.Platform.Editor) &&
+           (Maroon.PlatformManager.Instance.CurrentPlatformIsVR == false)))
+        {
+            this.ButtonNetwork.GetComponent<Button>().interactable = false;
+        }
     }
 
     void OnEnable()
