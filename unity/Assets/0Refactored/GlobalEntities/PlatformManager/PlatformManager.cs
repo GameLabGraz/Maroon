@@ -7,33 +7,35 @@ namespace Maroon
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Fields
 
-        private static PlatformManager instance = null;
-        private Maroon.Platform currentPlatform;
-        private bool currentPlatformIsVR = false;
+        private static PlatformManager _instance = null;
+
+        private Maroon.Platform _currentPlatform;
+        
+        private bool _currentPlatformIsVR = false;
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Getters and Properties
 
         public static PlatformManager Instance
         {
-            get { return PlatformManager.instance; }
+            get { return PlatformManager._instance; }
         }
 
         public Maroon.Platform CurrentPlatform
         {
-            get { return this.currentPlatform; }
+            get { return this._currentPlatform; }
         }
 
         public bool CurrentPlatformIsVR
         {
-            get { return this.currentPlatformIsVR; }
+            get { return this._currentPlatformIsVR; }
         }
 
         public Maroon.SceneType SceneTypeBasedOnPlatform
         {
             get
             {
-                if(this.currentPlatformIsVR)
+                if(this._currentPlatformIsVR)
                 {
                     return Maroon.SceneType.VR;
                 }
@@ -48,11 +50,11 @@ namespace Maroon
         private void Awake()
         {
             // Singleton
-            if(PlatformManager.instance == null)
+            if(PlatformManager._instance == null)
             {
-                PlatformManager.instance = this;
+                PlatformManager._instance = this;
             }
-            else if(PlatformManager.instance != this)
+            else if(PlatformManager._instance != this)
             {
                 DestroyImmediate(this.gameObject);
                 return;
@@ -63,7 +65,7 @@ namespace Maroon
 
             // Detect platform
             #if UNITY_EDITOR
-                this.currentPlatform = Maroon.Platform.Editor;
+                this._currentPlatform = Maroon.Platform.Editor;
             #elif UNITY_STANDALONE_WIN
                 this.currentPlatform = Maroon.Platform.PC;
             #elif UNITY_WEBGL
@@ -79,7 +81,7 @@ namespace Maroon
 
         public void UpdatePlatformVRStateBasedOnScene()
         {
-            this.currentPlatformIsVR = Maroon.SceneManager.Instance.activeSceneIsVR();
+            this._currentPlatformIsVR = Maroon.SceneManager.Instance.activeSceneIsVR();
         }
     }
 

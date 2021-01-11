@@ -12,18 +12,18 @@ namespace Maroon
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Fields
 
-        private static SceneManager instance = null;
+        private static SceneManager _instance = null;
 
         /// TODO
-        [SerializeField] private Maroon.CustomSceneAsset sceneMainMenuPC = null;
+        [SerializeField] private Maroon.CustomSceneAsset _sceneMainMenuPC = null;
 
-        [SerializeField] private Maroon.CustomSceneAsset sceneMainMenuVR = null;
+        [SerializeField] private Maroon.CustomSceneAsset _sceneMainMenuVR = null;
 
-        [SerializeField] private Maroon.SceneCategory[] sceneCategories = null;
+        [SerializeField] private Maroon.SceneCategory[] _sceneCategories = null;
 
-        private Maroon.SceneCategory activeSceneCategory;
+        private Maroon.SceneCategory _activeSceneCategory;
 
-        private Stack<Maroon.CustomSceneAsset> sceneHistory = new Stack<Maroon.CustomSceneAsset>();
+        private Stack<Maroon.CustomSceneAsset> _sceneHistory = new Stack<Maroon.CustomSceneAsset>();
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Properties, Getters and Setters
@@ -38,7 +38,7 @@ namespace Maroon
         {
             get
             {
-                return SceneManager.instance;
+                return SceneManager._instance;
             }
         }
 
@@ -53,15 +53,15 @@ namespace Maroon
         {
             get
             {
-                return this.activeSceneCategory;
+                return this._activeSceneCategory;
             }
 
             set
             {
                 // Only set if it exists in categories array
-                if(System.Array.Exists(this.sceneCategories, element => element == value))
+                if(System.Array.Exists(this._sceneCategories, element => element == value))
                 {
-                    this.activeSceneCategory = value;
+                    this._activeSceneCategory = value;
                 }
             }
         }
@@ -126,10 +126,10 @@ namespace Maroon
             List<Maroon.SceneCategory> categories = new List<Maroon.SceneCategory>();
 
             // Add categories
-            for(int iCategories = 0; iCategories < this.sceneCategories.Length; iCategories++)
+            for(int iCategories = 0; iCategories < this._sceneCategories.Length; iCategories++)
             {
                 // Extract current category
-                Maroon.SceneCategory current_category = this.sceneCategories[iCategories];
+                Maroon.SceneCategory current_category = this._sceneCategories[iCategories];
 
                 // Skip hidden categories based on setting
                 if((!includeHidden) && (current_category.HiddenCategory))
@@ -163,12 +163,12 @@ namespace Maroon
         {
             // Check if category exists
             Maroon.SceneCategory categoryFound = null;
-            for(int iCategories = 0; iCategories < this.sceneCategories.Length; iCategories++)
+            for(int iCategories = 0; iCategories < this._sceneCategories.Length; iCategories++)
             {
-                if(categoryName == this.sceneCategories[iCategories].Name)
+                if(categoryName == this._sceneCategories[iCategories].Name)
                 {
                     // Extract current category
-                    Maroon.SceneCategory current_category = this.sceneCategories[iCategories];
+                    Maroon.SceneCategory current_category = this._sceneCategories[iCategories];
 
                     // Select if all types allowed or if desired type eqal to current type
                     if((sceneType == Maroon.SceneType.Mixed) || (sceneType == current_category.SceneTypeInThisCategory))
@@ -200,12 +200,12 @@ namespace Maroon
             List<Maroon.CustomSceneAsset> scenesFromAllCategories = new List<Maroon.CustomSceneAsset>();
 
             // Aggregate all scenes from all categories
-            for(int iCategories = 0; iCategories < this.sceneCategories.Length; iCategories++)
+            for(int iCategories = 0; iCategories < this._sceneCategories.Length; iCategories++)
             {
-                for(int iScenes = 0; iScenes < this.sceneCategories[iCategories].Scenes.Length; iScenes++)
+                for(int iScenes = 0; iScenes < this._sceneCategories[iCategories].Scenes.Length; iScenes++)
                 {
                     // Extract current scene
-                    Maroon.CustomSceneAsset current_scene = this.sceneCategories[iCategories].Scenes[iScenes];
+                    Maroon.CustomSceneAsset current_scene = this._sceneCategories[iCategories].Scenes[iScenes];
 
                     // Add if all types allowed or if desired type eqal to current type
                     if((sceneType == Maroon.SceneType.Mixed) || (sceneType == current_scene.SceneType))
@@ -284,11 +284,11 @@ namespace Maroon
         private void Awake()
         {
             // Singleton
-            if(SceneManager.instance == null)
+            if(SceneManager._instance == null)
             {
-                SceneManager.instance = this;
+                SceneManager._instance = this;
             }
-            else if(SceneManager.instance != this)
+            else if(SceneManager._instance != this)
             {
                 DestroyImmediate(this.gameObject);
                 return;
@@ -298,10 +298,10 @@ namespace Maroon
             DontDestroyOnLoad(this.gameObject);
 
             // Check if only VR scenes are in VR categories and only standard scenes are in standard categories
-            for(int iCategories = 0; iCategories < this.sceneCategories.Length; iCategories++)
+            for(int iCategories = 0; iCategories < this._sceneCategories.Length; iCategories++)
             {
                 // Extract current category
-                Maroon.SceneCategory current_category = this.sceneCategories[iCategories];
+                Maroon.SceneCategory current_category = this._sceneCategories[iCategories];
 
                 // Check if all scenes types match
                 for(int iScenes = 0; iScenes < current_category.Scenes.Length; iScenes++)
@@ -374,7 +374,7 @@ namespace Maroon
 
             // If valid, load scene and return true
             UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
-            this.sceneHistory.Push(scene);
+            this._sceneHistory.Push(scene);
             return true;
         }
 
@@ -389,11 +389,11 @@ namespace Maroon
             // Return VR main menu for VR platform
             if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
             {
-                this.LoadSceneIfInAnyCategory(this.sceneMainMenuVR);
+                this.LoadSceneIfInAnyCategory(this._sceneMainMenuVR);
             }
 
             // Return PC main menu
-            this.LoadSceneIfInAnyCategory(this.sceneMainMenuPC);
+            this.LoadSceneIfInAnyCategory(this._sceneMainMenuPC);
         }
 
         /// <summary>
@@ -403,14 +403,14 @@ namespace Maroon
         public void LoadPreviousScene()
         {
             // If there is no previous scene available, load main menu
-            if(this.sceneHistory.Count < 2)
+            if(this._sceneHistory.Count < 2)
             {
                 this.LoadMainMenu();
             }
 
             // If previous scene available, remove current scene and load previous scene
-            this.sceneHistory.Pop();
-            this.LoadSceneIfInAnyCategory(this.sceneHistory.Pop());            
+            this._sceneHistory.Pop();
+            this.LoadSceneIfInAnyCategory(this._sceneHistory.Pop());            
         }
     }
 

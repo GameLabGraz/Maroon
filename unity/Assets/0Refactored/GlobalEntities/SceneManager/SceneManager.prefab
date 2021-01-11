@@ -43,21 +43,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3372ac7764709be4e9a3156e4ad4c624, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneMainMenuPC:
+  _sceneMainMenuPC:
     unitySceneAsset: {fileID: 102900000, guid: 3722807e7d537e843a0f0cce79611a24, type: 3}
     unityScenePath: 0Refactored/scenes/special/MainMenu.pc
     unitySceneName: MainMenu.pc
     isVirtualRealityScene: 0
-  sceneMainMenuVR:
+  _sceneMainMenuVR:
     unitySceneAsset: {fileID: 102900000, guid: 95eccdc259dea1c41a260fb4246aa6d4, type: 3}
     unityScenePath: 0Refactored/scenes/special/MainMenu.vr
     unitySceneName: MainMenu.vr
     isVirtualRealityScene: 1
-  sceneCategories:
+  _sceneCategories:
   - name: Physics
     hiddenCategory: 0
     sceneTypeInThisCategory: 0
     scenes:
+    - unitySceneAsset: {fileID: 102900000, guid: 12dc0dd665b395d48851ef505eb62ab1,
+        type: 3}
+      unityScenePath: 0Refactored/scenes/experiments/CoulombsLaw/CoulombsLaw.pc
+      unitySceneName: CoulombsLaw.pc
+      isVirtualRealityScene: 0
     - unitySceneAsset: {fileID: 102900000, guid: 2f118885e3e92e442a59f549dc3b96df,
         type: 3}
       unityScenePath: 0Refactored/scenes/experiments/FallingCoil/FallingCoil.pc
@@ -67,6 +72,16 @@ MonoBehaviour:
         type: 3}
       unityScenePath: 0Refactored/scenes/experiments/FaradaysLaw/FaradaysLaw.pc
       unitySceneName: FaradaysLaw.pc
+      isVirtualRealityScene: 0
+    - unitySceneAsset: {fileID: 102900000, guid: 8abb96c75f978e243a3313daae66f9e5,
+        type: 3}
+      unityScenePath: 0Refactored/scenes/experiments/HuygensPrinciple/HuygensPrinciple.pc
+      unitySceneName: HuygensPrinciple.pc
+      isVirtualRealityScene: 0
+    - unitySceneAsset: {fileID: 102900000, guid: f86938c1fcb39044d9819e343db28d68,
+        type: 3}
+      unityScenePath: 0Refactored/scenes/experiments/Pendulum/Pendulum.pc
+      unitySceneName: Pendulum.pc
       isVirtualRealityScene: 0
     - unitySceneAsset: {fileID: 102900000, guid: 1a3843495d3cc7644b473672ccdafec5,
         type: 3}
@@ -78,25 +93,25 @@ MonoBehaviour:
       unityScenePath: 0Refactored/scenes/experiments/VanDeGraaffGenerator/VandeGraaffGenerator.pc
       unitySceneName: VandeGraaffGenerator.pc
       isVirtualRealityScene: 0
-    - unitySceneAsset: {fileID: 102900000, guid: f86938c1fcb39044d9819e343db28d68,
+    - unitySceneAsset: {fileID: 102900000, guid: 2b63e5622538792419faf0a10b89d0a9,
         type: 3}
-      unityScenePath: 0Refactored/scenes/experiments/Pendulum/Pendulum.pc
-      unitySceneName: Pendulum.pc
+      unityScenePath: 0Refactored/scenes/experiments/Whiteboard/Whiteboard.pc
+      unitySceneName: Whiteboard.pc
       isVirtualRealityScene: 0
-    - unitySceneAsset: {fileID: 102900000, guid: 8abb96c75f978e243a3313daae66f9e5,
-        type: 3}
-      unityScenePath: 0Refactored/scenes/experiments/HuygensPrinciple/HuygensPrinciple.pc
-      unitySceneName: HuygensPrinciple.pc
-      isVirtualRealityScene: 0
-    - unitySceneAsset: {fileID: 102900000, guid: 12dc0dd665b395d48851ef505eb62ab1,
-        type: 3}
-      unityScenePath: 0Refactored/scenes/experiments/CoulombsLaw/CoulombsLaw.pc
-      unitySceneName: CoulombsLaw.pc
-      isVirtualRealityScene: 0
-  - name: VR Physics
+  - name: Physics VR
     hiddenCategory: 0
     sceneTypeInThisCategory: 1
     scenes:
+    - unitySceneAsset: {fileID: 102900000, guid: e1cd251cb36bc4c4aacdec85000560d9,
+        type: 3}
+      unityScenePath: 0Refactored/scenes/experiments/Capacitor/Capacitor.vr
+      unitySceneName: Capacitor.vr
+      isVirtualRealityScene: 1
+    - unitySceneAsset: {fileID: 102900000, guid: 6e3cbbd5121c1404aaa5a4086dd985e7,
+        type: 3}
+      unityScenePath: 0Refactored/scenes/experiments/CoulombsLaw/CoulombsLaw.vr
+      unitySceneName: CoulombsLaw.vr
+      isVirtualRealityScene: 1
     - unitySceneAsset: {fileID: 102900000, guid: d8668991e0e91ab4a9ada2bee11af03c,
         type: 3}
       unityScenePath: 0Refactored/scenes/experiments/FallingCoil/FallingCoil.vr
@@ -106,6 +121,11 @@ MonoBehaviour:
         type: 3}
       unityScenePath: 0Refactored/scenes/experiments/FaradaysLaw/FaradaysLaw.vr
       unitySceneName: FaradaysLaw.vr
+      isVirtualRealityScene: 1
+    - unitySceneAsset: {fileID: 102900000, guid: 787464c5a8cba60459d5a7c7bf2338ab,
+        type: 3}
+      unityScenePath: 0Refactored/scenes/experiments/HuygensPrinciple/HuygensPrinciple.vr
+      unitySceneName: HuygensPrinciple.vr
       isVirtualRealityScene: 1
     - unitySceneAsset: {fileID: 102900000, guid: 59484b7afc6f7074b96dbee6a1bae8be,
         type: 3}
@@ -117,15 +137,10 @@ MonoBehaviour:
       unityScenePath: 0Refactored/scenes/experiments/VanDeGraaffGenerator/VandeGraaffGenerator.vr
       unitySceneName: VandeGraaffGenerator.vr
       isVirtualRealityScene: 1
-    - unitySceneAsset: {fileID: 102900000, guid: 787464c5a8cba60459d5a7c7bf2338ab,
+    - unitySceneAsset: {fileID: 102900000, guid: 1fdf8ac04763f4d6aa353fac03ca9a6b,
         type: 3}
-      unityScenePath: 0Refactored/scenes/experiments/HuygensPrinciple/HuygensPrinciple.vr
-      unitySceneName: HuygensPrinciple.vr
-      isVirtualRealityScene: 1
-    - unitySceneAsset: {fileID: 102900000, guid: 6e3cbbd5121c1404aaa5a4086dd985e7,
-        type: 3}
-      unityScenePath: 0Refactored/scenes/experiments/CoulombsLaw/CoulombsLaw.vr
-      unitySceneName: CoulombsLaw.vr
+      unityScenePath: 0Refactored/scenes/experiments/Whiteboard/Whiteboard.vr
+      unitySceneName: Whiteboard.vr
       isVirtualRealityScene: 1
   - name: Chemistry
     hiddenCategory: 0
@@ -140,6 +155,11 @@ MonoBehaviour:
     hiddenCategory: 1
     sceneTypeInThisCategory: 0
     scenes:
+    - unitySceneAsset: {fileID: 102900000, guid: 3511d555ff9decc40af6d9ebc5a8784b,
+        type: 3}
+      unityScenePath: 0Refactored/scenes/special/Loading.pc
+      unitySceneName: Loading.pc
+      isVirtualRealityScene: 0
     - unitySceneAsset: {fileID: 102900000, guid: 3722807e7d537e843a0f0cce79611a24,
         type: 3}
       unityScenePath: 0Refactored/scenes/special/MainMenu.pc
@@ -150,7 +170,7 @@ MonoBehaviour:
       unityScenePath: 0Refactored/scenes/laboratory/Laboratory.pc
       unitySceneName: Laboratory.pc
       isVirtualRealityScene: 0
-  - name: VR Internal
+  - name: Internal VR
     hiddenCategory: 1
     sceneTypeInThisCategory: 1
     scenes:

@@ -15,7 +15,8 @@ namespace Maroon
         // Fields
         private static GameManager _instance = null;
 
-        [SerializeField]
+        private string _version;
+
         private GameObject _player;
         
         private GameObject _offlinePlayer;
@@ -23,11 +24,8 @@ namespace Maroon
         private static Vector3 _playerPosition;
         private static Quaternion _playerRotation;
 
-        public AudioSource menuSound; //sound when player goes to menu
-
         public bool LabLoaded { get; private set; }
 
-        private string _version;
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Properties, Getters and Setters
@@ -64,25 +62,6 @@ namespace Maroon
             }
             else if(GameManager._instance != this)
             {
-                // ################
-                // ----------------
-                // TODO: This should not be done here, this is a very ugly hack and should be solved by actually only having
-                // one GameManager at all times, not copying stuff from a temporary game manager to another one and then 
-                // silently destroying the duplicate game manager
-                if (_player != null && Maroon.SceneManager.Instance.ActiveSceneName.Contains("Laboratory"))
-                {
-                    /*
-                        TODO: This needs to be done in a Player script, because the lab looks different every time now
-                    _player.transform.position = _playerPosition;
-                    _player.transform.rotation = _playerRotation;
-                    */
-                }
-
-                Instance._player = _player;
-                Instance.LabLoaded = true;
-                // ----------------
-                // ################
-
                 // Only this should be done here
                 DestroyImmediate(this.gameObject);
                 return;
@@ -91,24 +70,22 @@ namespace Maroon
             // Keep alive
             DontDestroyOnLoad(this.gameObject);
 
-
             // Version
-    #if UNITY_EDITOR
-            _version = DateTime.UtcNow.Date.ToString("yyyyMMdd");
-    #else
-            _version = Application.version;
-    #endif
+            #if UNITY_EDITOR
+                _version = DateTime.UtcNow.Date.ToString("yyyyMMdd");
+            #else
+                _version = Application.version;
+            #endif
+        }
 
-            // Player
-            if (!_player)
-            {
-                _player = GameObject.FindGameObjectWithTag("Player");
-            }
+        public void ResetPlayerRef()
+        {
+            _player = GameObject.FindGameObjectWithTag("Player");
         }
 
         private void Update()
         {
-            // TODO: This should be done by the Player OR by the Laboratory
+            // TODO: This should be done by the Player OR the Laboratory
             if(_player != null && Maroon.SceneManager.Instance.ActiveSceneName.Contains("Laboratory"))
             {
                 _playerPosition = _player.transform.position;
@@ -116,20 +93,28 @@ namespace Maroon
             }
         }
 
-
-        // #################################################################################################################
-        // #################################################################################################################
+        // #############################################################################################################
+        // #############################################################################################################
         // Things below this line should not be done in the GameManager
 
         // THIS IS A WORKAROUND, THERE SHOULD BE ONE (or multiple, if multiplayer) PLAYERS. The player should not be
         // destroyed and created on each scene load.
         public void searchForPlayer()
         {
-            // Search for: PlayerPC in laboratory 
+            // TODO: This should not be done here, this is a very ugly hack and should be solved by actually only having
+            // one GameManager at all times, not copying stuff from a temporary game manager to another one and then 
+            // silently destroying the duplicate game manager
+            if (_player != null && Maroon.SceneManager.Instance.ActiveSceneName.Contains("Laboratory"))
+            {
+                /*
+                    TODO: This needs to be done in a Player script, because the lab looks different every time now
+                _player.transform.position = _playerPosition;
+                _player.transform.rotation = _playerRotation;
+                */
+            }
         }
 
-
-        // #################################################################################################################
+        // #############################################################################################################
         // MOVE TO: Main Menu
 
         public void OnGUI()
@@ -141,7 +126,7 @@ namespace Maroon
             });
         }
 
-        // #################################################################################################################
+        // #############################################################################################################
         // MOVE TO: NetworkManager or PlayerManager
         public void RegisterNetworkPlayer(GameObject newPlayer)
         {

@@ -8,23 +8,23 @@ namespace Maroon
         // Fields
 
         // Singleton instance
-        private static BootstrappingManager instance = null;
+        private static BootstrappingManager _instance = null;
 
         // Settings
-        [SerializeField] private bool webGLEnableSceneLoadingViaURLParameter = true;
-        [SerializeField] private string webGLSceneURLParameterName = "LoadScene";
-        [SerializeField] private Maroon.CustomSceneAsset firstStandardScene = null;
-        [SerializeField] private Maroon.CustomSceneAsset firstVRScene = null;
+        [SerializeField] private bool _webglEnableSceneLoadingViaUrlParameter = true;
+        [SerializeField] private string _webglSceneUrlParameterName = "LoadScene";
+        [SerializeField] private Maroon.CustomSceneAsset _firstStandardScene = null;
+        [SerializeField] private Maroon.CustomSceneAsset _firstVRScene = null;
 
         // State
-        private bool bootstrappingFinished = false;
+        private bool _bootstrappingFinished = false;
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Getters and Properties
 
         public static BootstrappingManager Instance
         {
-            get { return BootstrappingManager.instance; }
+            get { return BootstrappingManager._instance; }
         }
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -33,11 +33,11 @@ namespace Maroon
         private void Awake()
         {
             // Singleton
-            if(BootstrappingManager.instance == null)
+            if(BootstrappingManager._instance == null)
             {
-                BootstrappingManager.instance = this;
+                BootstrappingManager._instance = this;
             }
-            else if(BootstrappingManager.instance != this)
+            else if(BootstrappingManager._instance != this)
             {
                 DestroyImmediate(this.gameObject);
                 return;
@@ -49,7 +49,7 @@ namespace Maroon
 
         private void Start()
         {
-            if(!this.bootstrappingFinished)        
+            if(!this._bootstrappingFinished)        
             {
                 // Update platform VR state
                 Maroon.PlatformManager.Instance.UpdatePlatformVRStateBasedOnScene();
@@ -59,9 +59,9 @@ namespace Maroon
                 {
                     // Webgl redirect
                     if((Maroon.PlatformManager.Instance.CurrentPlatform == Maroon.Platform.WebGL) &&
-                    (this.webGLEnableSceneLoadingViaURLParameter))
+                    (this._webglEnableSceneLoadingViaUrlParameter))
                     {
-                        string parameter = Maroon.WebGLUrlParameterReader.GetUrlParameter(this.webGLSceneURLParameterName);
+                        string parameter = Maroon.WebGLUrlParameterReader.GetUrlParameter(this._webglSceneUrlParameterName);
                         Maroon.SceneManager.Instance.LoadSceneIfInAnyCategory(
                             Maroon.SceneManager.Instance.GetSceneAssetBySceneName(parameter + ".pc"));
                     }
@@ -71,17 +71,17 @@ namespace Maroon
                     {
                         if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
                         {
-                            Maroon.SceneManager.Instance.LoadSceneIfInAnyCategory(this.firstVRScene);
+                            Maroon.SceneManager.Instance.LoadSceneIfInAnyCategory(this._firstVRScene);
                         }
                         else
                         {
-                            Maroon.SceneManager.Instance.LoadSceneIfInAnyCategory(this.firstStandardScene);
+                            Maroon.SceneManager.Instance.LoadSceneIfInAnyCategory(this._firstStandardScene);
                         }
                     }
                 }
 
                 // Bootstrapping finished
-                this.bootstrappingFinished = true;
+                this._bootstrappingFinished = true;
             }
         }
     }
