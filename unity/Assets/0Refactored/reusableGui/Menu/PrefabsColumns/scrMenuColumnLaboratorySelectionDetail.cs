@@ -11,6 +11,9 @@ public class scrMenuColumnLaboratorySelectionDetail : MonoBehaviour
 
     [SerializeField] private Maroon.CustomSceneAsset targetLabSceneVR;
 
+    // Title
+    [SerializeField] private GameObject Title;
+
     // Buttons
     [SerializeField] private GameObject ButtonGo;
 
@@ -26,11 +29,17 @@ public class scrMenuColumnLaboratorySelectionDetail : MonoBehaviour
             return;
         }
 
+        // Update Title
+        // TODO: Make this work with localization
+        Title.transform.GetComponent<LocalizedTMP>().Key = Maroon.SceneManager.Instance.ActiveSceneCategory.Name;
+
         // Link go button action
         this.ButtonGo.GetComponent<Button>().onClick.AddListener(() => this.OnClickGo());
 
         // Get experiment scenes based on current category
         Maroon.CustomSceneAsset[] scenes = Maroon.SceneManager.Instance.ActiveSceneCategory.Scenes;
+        ButtonGo.transform.Find("ContentContainer").transform.Find("Text (TMP)").GetComponent<LocalizedTMP>().Key =
+            "Go to " + Maroon.SceneManager.Instance.ActiveSceneCategory.Name + " Lab";
 
         // Create buttons based on category experiments
         for(int iScenes = 0; iScenes < scenes.Length; iScenes++)
