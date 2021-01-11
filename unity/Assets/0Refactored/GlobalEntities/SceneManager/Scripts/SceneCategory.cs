@@ -14,7 +14,7 @@ namespace Maroon
 
         [SerializeField] private Maroon.SceneType sceneTypeInThisCategory = Maroon.SceneType.Standard;
 
-        [SerializeField] private Maroon.CustomSceneAsset[] scenes;
+        [SerializeField] private Maroon.CustomSceneAsset[] scenes = null;
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Getters and Properties

@@ -20,6 +20,12 @@ public class scrMenuColumnLaboratorySelectionDetail : MonoBehaviour
 
     private void Start()
     {
+        // Do not init anything if no category is selected, because no lab can be built and no experiments will show up
+        if(Maroon.SceneManager.Instance.ActiveSceneCategory == null)
+        {
+            return;
+        }
+
         // Link go button action
         this.ButtonGo.GetComponent<Button>().onClick.AddListener(() => this.OnClickGo());
 
@@ -46,7 +52,6 @@ public class scrMenuColumnLaboratorySelectionDetail : MonoBehaviour
             newButton.GetComponent<Button>().onClick.AddListener(() =>
                 Maroon.SceneManager.Instance.LoadSceneIfInAnyCategory(current_scene));
         }
-
     }
 
     private void OnClickGo()

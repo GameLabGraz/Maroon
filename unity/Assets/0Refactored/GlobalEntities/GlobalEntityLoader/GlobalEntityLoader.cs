@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Maroon{
-
-
+namespace Maroon
+{
     /// <summary>
     ///     Handles the creation and instantiation of global entities.
     ///
@@ -20,7 +19,7 @@ namespace Maroon{
         private static GlobalEntityLoader instance = null;
 
         // Prefabs
-        [SerializeField] private GameObject _bootstrappingManagerPrefab;
+        [SerializeField] private GameObject _bootstrappingManagerPrefab = null;
         [SerializeField] private GameObject _platformManagerPrefab;
         [SerializeField] private GameObject _sceneManagerPrefab;
         [SerializeField] private GameObject _soundManagerPrefab;
@@ -69,6 +68,5 @@ namespace Maroon{
                 Instantiate(this._soundManagerPrefab).transform.SetParent(this.transform);
             }
         }
-
     }
 }

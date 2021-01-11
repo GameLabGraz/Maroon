@@ -13,8 +13,8 @@ namespace Maroon
         // Settings
         [SerializeField] private bool webGLEnableSceneLoadingViaURLParameter = true;
         [SerializeField] private string webGLSceneURLParameterName = "LoadScene";
-        [SerializeField] private Maroon.CustomSceneAsset firstStandardScene;
-        [SerializeField] private Maroon.CustomSceneAsset firstVRScene;
+        [SerializeField] private Maroon.CustomSceneAsset firstStandardScene = null;
+        [SerializeField] private Maroon.CustomSceneAsset firstVRScene = null;
 
         // State
         private bool bootstrappingFinished = false;
@@ -48,31 +48,34 @@ namespace Maroon
 
         private void Start()
         {
-            if((!this.bootstrappingFinished) &&
-               (Maroon.SceneManager.Instance.ActiveSceneNameWithoutPlatformExtension == "Bootstrapping"))               // TODO: Maybe this has some side effects and should be done on other scenes as well for certain things to work as expected when developing in editor
+            if(!this.bootstrappingFinished)        
             {
                 // Update platform VR state
                 Maroon.PlatformManager.Instance.UpdatePlatformVRStateBasedOnScene();
 
-                // Webgl redirect
-                if((Maroon.PlatformManager.Instance.CurrentPlatform == Maroon.Platform.WebGL) &&
-                   (this.webGLEnableSceneLoadingViaURLParameter))
+                // Redirects: Only enable if on bootstrapping scene, if standalone scene, don't redirect somewhere else
+                if(Maroon.SceneManager.Instance.ActiveSceneNameWithoutPlatformExtension == "Bootstrapping")
                 {
-                    string parameter = Maroon.WebGLUrlParameterReader.GetUrlParameter(this.webGLSceneURLParameterName);
-                    Maroon.SceneManager.Instance.LoadSceneIfInAnyCategory(
-                        Maroon.SceneManager.Instance.GetSceneAssetBySceneName(parameter + ".pc"));
-                }
-
-                // First Scene Redirect
-                else
-                {
-                    if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
+                    // Webgl redirect
+                    if((Maroon.PlatformManager.Instance.CurrentPlatform == Maroon.Platform.WebGL) &&
+                    (this.webGLEnableSceneLoadingViaURLParameter))
                     {
-                        Maroon.SceneManager.Instance.LoadSceneIfInAnyCategory(this.firstVRScene);
+                        string parameter = Maroon.WebGLUrlParameterReader.GetUrlParameter(this.webGLSceneURLParameterName);
+                        Maroon.SceneManager.Instance.LoadSceneIfInAnyCategory(
+                            Maroon.SceneManager.Instance.GetSceneAssetBySceneName(parameter + ".pc"));
                     }
+
+                    // First Scene Redirect
                     else
                     {
-                        Maroon.SceneManager.Instance.LoadSceneIfInAnyCategory(this.firstStandardScene);
+                        if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
+                        {
+                            Maroon.SceneManager.Instance.LoadSceneIfInAnyCategory(this.firstVRScene);
+                        }
+                        else
+                        {
+                            Maroon.SceneManager.Instance.LoadSceneIfInAnyCategory(this.firstStandardScene);
+                        }
                     }
                 }
 

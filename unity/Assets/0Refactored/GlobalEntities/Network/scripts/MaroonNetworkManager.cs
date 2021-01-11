@@ -72,7 +72,7 @@ public class MaroonNetworkManager : NetworkManager
     private ListServer _listServer;
     private MaroonNetworkDiscovery _networkDiscovery;
     private PortForwarding _upnp;
-    private GameManager _gameManager;
+    private Maroon.GameManager _gameManager;
     private DialogueManager _dialogueManager;
 
     private bool _isStarted;
@@ -98,7 +98,7 @@ public class MaroonNetworkManager : NetworkManager
         _listServer = GetComponent<ListServer>();
         _networkDiscovery = GetComponent<MaroonNetworkDiscovery>();
         _upnp = GetComponent<PortForwarding>();
-        _gameManager = FindObjectOfType<GameManager>();
+        _gameManager = FindObjectOfType<Maroon.GameManager>();
 
         SceneManager.sceneLoaded += DisplayServerInExperimentMessage;
     }

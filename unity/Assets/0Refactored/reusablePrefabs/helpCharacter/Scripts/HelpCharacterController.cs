@@ -11,7 +11,7 @@ namespace HelpCharacter
         private void Start()
         {
             // is displayed only once in the laboratory room
-            if (!SceneManager.GetActiveScene().name.Contains("Laboratory") || !GameManager.Instance.LabLoaded)
+            if (!SceneManager.GetActiveScene().name.Contains("Laboratory") || !Maroon.GameManager.Instance.LabLoaded)
             {
                 foreach (var helpMessage in gameObject.GetComponents<HelpMessage>())
                     helpMessage.ShowMessage();
