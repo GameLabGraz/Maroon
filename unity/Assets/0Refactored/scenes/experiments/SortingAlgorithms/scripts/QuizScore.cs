@@ -118,5 +118,6 @@ public class QuizScore : NetworkBehaviour
     private void OnScoreChanged(int oldScore, int newScore)
     {
         scoreText.text = newScore.ToString();
+        transform.SetSiblingIndex(_quizManager.GetRanking(this));
     }
 }

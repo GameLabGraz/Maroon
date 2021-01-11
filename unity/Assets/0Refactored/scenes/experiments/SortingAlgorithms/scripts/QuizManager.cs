@@ -96,18 +96,14 @@ public class QuizManager : MonoBehaviour
                     score.IncreaseScore();
             }
         }
-        OrderByScore();
     }
 
-    private void OrderByScore()
+    public int GetRanking(QuizScore score)
     {
         _allScores = _allScores.OrderBy(i => i.Score).ToList();
         _allScores.Reverse();
 
-        for (int i = 0; i < _allScores.Count; ++i)
-        {
-            _allScores[i].transform.SetSiblingIndex(i);
-        }
+        return _allScores.IndexOf(score);
     }
 
     public void ResetAllChoices()
