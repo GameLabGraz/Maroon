@@ -37,24 +37,24 @@ public class PC_Tooltip : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     {
         if (_key != TooltipKey) UpdateKey();
 
-        if (_onHovered)
-        {
-            _hoverTime += Time.deltaTime;
-            if (_hoverTime >= _tooltipPopup.displayedHoverTime)
-            {
-                if (_tooltipText != "") _tooltipPopup.DisplayTooltip(_tooltipText);
-                _onHovered = false; //as we already displayed the tooltip
-            }
-                
-        }
+        if (!_onHovered) return;
+
+        _hoverTime += Time.deltaTime;
         
+        if (_hoverTime >= _tooltipPopup.displayedHoverTime)
+        {
+            if (!string.IsNullOrEmpty(_tooltipText)) 
+                _tooltipPopup.DisplayTooltip(_tooltipText);
+
+            _onHovered = false; //as we already displayed the tooltip
+        }
     }
 
     private void UpdateKey()
     {
         if (!LanguageManager.Instance) return;
         var tmp = LanguageManager.Instance.GetString(TooltipKey);
-        if (tmp != "")
+        if (!string.IsNullOrEmpty(tmp))
         {
             _tooltipText = tmp;
             _key = TooltipKey;
@@ -72,9 +72,7 @@ public class PC_Tooltip : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         _onHovered = true;
         _hoverTime = 0f;
         
-        if (_tooltipText == "") UpdateKey();
-
-//        if (_tooltipText != "") _tooltipPopup.DisplayTooltip(_tooltipText);
+        if (string.IsNullOrEmpty(_tooltipText)) UpdateKey();
     }
 
     public void OnPointerExit(PointerEventData eventData)
