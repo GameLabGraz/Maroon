@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Mirror;
 using TMPro;
 using UnityEngine;
@@ -94,6 +95,18 @@ public class QuizManager : MonoBehaviour
                 if(score.Choice == correct)
                     score.IncreaseScore();
             }
+        }
+        OrderByScore();
+    }
+
+    private void OrderByScore()
+    {
+        _allScores = _allScores.OrderBy(i => i.Score).ToList();
+        _allScores.Reverse();
+
+        for (int i = 0; i < _allScores.Count; ++i)
+        {
+            _allScores[i].transform.SetSiblingIndex(i);
         }
     }
 

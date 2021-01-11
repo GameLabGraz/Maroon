@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using GEAR.Localization;
+using Maroon.UI;
 using Mirror;
 using PlatformControls.PC;
 using UnityEngine;
@@ -23,6 +25,8 @@ public class SortingController : MonoBehaviour, IResetObject
     [SerializeField] private QuizManager quizManager;
     public QuizManager TheQuizManager => quizManager;
 
+    private DialogueManager _dialogueManager;
+
     private void Start()
     {
         _isOnline = NetworkClient.active;
@@ -37,6 +41,8 @@ public class SortingController : MonoBehaviour, IResetObject
         SetBattleOperationsPerSeconds(speedSlider.value);
         
         SimulationController.Instance.onStartRunning.AddListener(SortingStarted);
+        
+        DisplayMessageByKey("EnterSortingExperiment");
         
         //Only after delay, so all clients are ready
         Invoke(nameof(DistributeDetailArray), 1.0f);
@@ -66,6 +72,19 @@ public class SortingController : MonoBehaviour, IResetObject
         
         if(_isOnline)
             ResetQuiz();
+    }
+
+    private void DisplayMessageByKey(string key)
+    {
+        if (_dialogueManager == null)
+            _dialogueManager = FindObjectOfType<DialogueManager>();
+
+        if (_dialogueManager == null)
+            return;
+        
+        var message = LanguageManager.Instance.GetString(key);
+
+        _dialogueManager.ShowMessage(message);
     }
 
     #region DetailMode
@@ -169,7 +188,8 @@ public class SortingController : MonoBehaviour, IResetObject
     
     [SerializeField] private BattleSorting leftBattleSorting;
     [SerializeField] private BattleSorting rightBattleSorting;
-    
+
+    private bool _enteredOnce;
     public void EnterBattleMode()
     {
         _sortingMode = SortingMode.SM_BattleMode;
@@ -193,6 +213,12 @@ public class SortingController : MonoBehaviour, IResetObject
         SetRightBattleAlgorithm(battleAlgorithmDropdownRight.value);
         leftBattleSorting.RestoreOrder();
         rightBattleSorting.RestoreOrder();
+
+        if (!_enteredOnce)
+        {
+            DisplayMessageByKey("EnterBattleModeMessage");
+            _enteredOnce = true;
+        }
     }
     
     public void SetBattleOperationsPerSeconds(float value)

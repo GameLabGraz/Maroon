@@ -4,10 +4,13 @@ using System.Collections.Generic;
 using Mirror;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class QuizScore : NetworkBehaviour
 {
     private QuizManager _quizManager;
+
+    [SerializeField] private Color localColor;
 
     private void Start()
     {
@@ -24,6 +27,8 @@ public class QuizScore : NetworkBehaviour
         if(_quizManager == null)
             _quizManager = FindObjectOfType<SortingController>().TheQuizManager;
         _quizManager.SetLocalQuizScore(gameObject);
+
+        GetComponent<Image>().color = localColor;
     }
 
     public enum QuizChoice
