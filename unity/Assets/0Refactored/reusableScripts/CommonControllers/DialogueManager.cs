@@ -77,7 +77,7 @@ namespace Maroon.UI
             TypeMessageRunning = true;
 
             dialogView.SetActive(true);
-            SoundManager.Instance.PlaySingle(typeSound);
+            Maroon.SoundManager.Instance.PlaySoundEffect(typeSound);
 
             var text = "";
             dialogView.ClearMessage();
