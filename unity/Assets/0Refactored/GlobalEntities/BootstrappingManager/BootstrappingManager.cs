@@ -40,6 +40,7 @@ namespace Maroon
             else if(BootstrappingManager.instance != this)
             {
                 DestroyImmediate(this.gameObject);
+                return;
             }
 
             // Keep alive

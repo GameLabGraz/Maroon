@@ -84,7 +84,8 @@ namespace Maroon
                 // ################
 
                 // Only this should be done here
-                Destroy(this.gameObject);
+                DestroyImmediate(this.gameObject);
+                return;
             }
 
             // Keep alive

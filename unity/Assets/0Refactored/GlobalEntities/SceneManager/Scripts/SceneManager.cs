@@ -19,7 +19,7 @@ namespace Maroon
 
         [SerializeField] private Maroon.CustomSceneAsset sceneMainMenuVR = null;
 
-        [SerializeField] private Maroon.SceneCategory[] sceneCategories;
+        [SerializeField] private Maroon.SceneCategory[] sceneCategories = null;
 
         private Maroon.SceneCategory activeSceneCategory;
 
@@ -290,7 +290,8 @@ namespace Maroon
             }
             else if(SceneManager.instance != this)
             {
-                Destroy(this.gameObject);
+                DestroyImmediate(this.gameObject);
+                return;
             }
 
             // Keep alive

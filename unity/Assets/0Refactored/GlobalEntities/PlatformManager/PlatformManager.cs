@@ -55,6 +55,7 @@ namespace Maroon
             else if(PlatformManager.instance != this)
             {
                 DestroyImmediate(this.gameObject);
+                return;
             }
 
             // Keep alive

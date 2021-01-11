@@ -16,20 +16,20 @@ namespace Maroon
         // Fields
 
         // Singleton instance
-        private static GlobalEntityLoader instance = null;
+        private static GlobalEntityLoader _instance = null;
 
         // Prefabs
         [SerializeField] private GameObject _bootstrappingManagerPrefab = null;
-        [SerializeField] private GameObject _platformManagerPrefab;
-        [SerializeField] private GameObject _sceneManagerPrefab;
-        [SerializeField] private GameObject _soundManagerPrefab;
+        [SerializeField] private GameObject _platformManagerPrefab = null;
+        [SerializeField] private GameObject _sceneManagerPrefab = null;
+        [SerializeField] private GameObject _soundManagerPrefab = null;
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Getters and Properties
 
         public static GlobalEntityLoader Instance
         {
-            get { return GlobalEntityLoader.instance; }
+            get { return GlobalEntityLoader._instance; }
         }
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -38,13 +38,14 @@ namespace Maroon
         private void Awake()
         {
             // Singleton
-            if(GlobalEntityLoader.instance == null)
+            if(GlobalEntityLoader._instance == null)
             {
-                GlobalEntityLoader.instance = this;
+                GlobalEntityLoader._instance = this;
             }
-            else if(GlobalEntityLoader.instance != this)
-            {
+            else if(GlobalEntityLoader._instance != this)
+            {                
                 DestroyImmediate(this.gameObject);
+                return;
             }
 
             // Keep alive

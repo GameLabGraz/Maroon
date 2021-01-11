@@ -20,10 +20,10 @@ namespace Maroon
         // Sources
 
         // For sounds
-        [SerializeField] private AudioSource _soundEffectSource;
+        [SerializeField] private AudioSource _soundEffectSource = null;
 
         // For music
-        [SerializeField] private AudioSource _musicSource;
+        [SerializeField] private AudioSource _musicSource = null;
 
         // -------------------------------------------------------------------------------------------------------------
         // Common Sounds
@@ -110,7 +110,8 @@ namespace Maroon
             }
             else if(SoundManager._instance != this)
             {
-                Destroy(this.gameObject);
+                DestroyImmediate(this.gameObject);
+                return;
             }
 
             // Keep alive
