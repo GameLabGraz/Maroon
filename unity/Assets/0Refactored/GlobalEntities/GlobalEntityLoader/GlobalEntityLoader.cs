@@ -22,6 +22,7 @@ namespace Maroon
         [SerializeField] private GameObject _bootstrappingManagerPrefab = null;
         [SerializeField] private GameObject _platformManagerPrefab = null;
         [SerializeField] private GameObject _sceneManagerPrefab = null;
+        [SerializeField] private GameObject _gameManagerPrefab = null;
         [SerializeField] private GameObject _soundManagerPrefab = null;
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -63,6 +64,10 @@ namespace Maroon
             if(Maroon.BootstrappingManager.Instance == null)
             {
                 Instantiate(this._bootstrappingManagerPrefab).transform.SetParent(this.transform);
+            }
+            if(Maroon.GameManager.Instance == null)
+            {
+                Instantiate(this._gameManagerPrefab).transform.SetParent(this.transform);
             }
             if(Maroon.SoundManager.Instance == null)
             {
