@@ -68,6 +68,9 @@ public class scrSegmentBuilder : MonoBehaviour
         // Reset laboratory blocks
         this.laboratoryBlocks.Clear();
 
+        // TODO: This needs to be refactored, done by player
+        Maroon.GameManager.Instance.enteringLab();
+
         // Get scenes to select new laboratory blocks
         Maroon.CustomSceneAsset[] scenes = Maroon.SceneManager.Instance.ActiveSceneCategory.Scenes;
 

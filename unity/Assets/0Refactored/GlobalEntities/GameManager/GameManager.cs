@@ -17,6 +17,8 @@ namespace Maroon
 
         private string _version;
 
+        private Maroon.SceneCategory _lastCategory;
+
         private GameObject _player;
         
         private GameObject _offlinePlayer;
@@ -78,9 +80,25 @@ namespace Maroon
             #endif
         }
 
+        // TODO: This needs to be refactored
+        public void enteringLab()
+        {
+            this.ResetPlayerRef();
+        }
+
         public void ResetPlayerRef()
         {
             _player = GameObject.FindGameObjectWithTag("Player");
+            if (_player != null && Maroon.SceneManager.Instance.ActiveSceneName.Contains("Laboratory") && 
+                _lastCategory == Maroon.SceneManager.Instance.ActiveSceneCategory)
+            {
+                /*
+                    TODO: This needs to be done in a Player script, because the lab looks different every time now
+               
+                */
+                _player.transform.position = _playerPosition;
+                _player.transform.rotation = _playerRotation;
+            }
         }
 
         private void Update()
@@ -90,6 +108,7 @@ namespace Maroon
             {
                 _playerPosition = _player.transform.position;
                 _playerRotation = _player.transform.rotation;
+                _lastCategory = Maroon.SceneManager.Instance.ActiveSceneCategory;
             }
         }
 
@@ -104,14 +123,7 @@ namespace Maroon
             // TODO: This should not be done here, this is a very ugly hack and should be solved by actually only having
             // one GameManager at all times, not copying stuff from a temporary game manager to another one and then 
             // silently destroying the duplicate game manager
-            if (_player != null && Maroon.SceneManager.Instance.ActiveSceneName.Contains("Laboratory"))
-            {
-                /*
-                    TODO: This needs to be done in a Player script, because the lab looks different every time now
-                _player.transform.position = _playerPosition;
-                _player.transform.rotation = _playerRotation;
-                */
-            }
+            
         }
 
         // #############################################################################################################
