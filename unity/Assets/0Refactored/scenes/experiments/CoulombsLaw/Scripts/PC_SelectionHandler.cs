@@ -187,10 +187,15 @@ public class PC_SelectionHandler : MonoBehaviour
             selectedObject == null || selectedObject.type != PC_SelectScript.SelectType.ChargeSelect
                 ? "Button_Add"
                 : "Button_Delete";
-        ChargeButtonText.transform.parent.GetComponent<PC_Tooltip>().TooltipKey =
-            selectedObject == null || selectedObject.type != PC_SelectScript.SelectType.ChargeSelect
-                ? "TT_ChargeAdd"
-                : "TT_ChargeDelete";
+
+        var tooltip = ChargeButtonText.transform.parent.GetComponent<PC_Tooltip>();
+        if (tooltip != null)
+        {
+            tooltip.TooltipKey =
+                selectedObject == null || selectedObject.type != PC_SelectScript.SelectType.ChargeSelect
+                    ? "TT_ChargeAdd"
+                    : "TT_ChargeDelete";
+        }
     }
 
     private void ChangeMode(bool in3dMode)
