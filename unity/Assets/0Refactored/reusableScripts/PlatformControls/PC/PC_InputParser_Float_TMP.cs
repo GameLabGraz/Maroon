@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -24,8 +21,7 @@ public class PC_InputParser_Float_TMP : MonoBehaviour
     
     public TextChangeFloat onValueChangedFloat;
     
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         _textField = GetComponent<TMP_InputField>();
         _textField.onEndEdit.AddListener(OnTextChanged);
@@ -59,5 +55,10 @@ public class PC_InputParser_Float_TMP : MonoBehaviour
     public float GetValue()
     {
         return _value;
+    }
+
+    public void SetValue(float value)
+    {
+        _textField.text = value.ToString(textFormat);
     }
 }
