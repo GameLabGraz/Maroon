@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class PathHandler : MonoBehaviour
 {
@@ -26,6 +22,7 @@ public class PathHandler : MonoBehaviour
 
     private CameraPosition _currentPosition = CameraPosition.CP_Free;
     private CPC_CameraPath _workingPath;
+
     private void Start()
     {
         _workingPath = GetComponent<CPC_CameraPath>();
@@ -113,9 +110,13 @@ public class PathHandler : MonoBehaviour
         _currentPosition = newPosition;
 
         Debug.Assert(Camera.main != null, "Camera.main != null");
-        Debug.Assert(Camera.main.GetComponent<PC_ZoomMovement>(), "Camera must have a component PC_ZoomMovement");
-        Camera.main.GetComponent<PC_ZoomMovement>().enabled = _currentPosition == CameraPosition.CP_Free;
-        
+        //Debug.Assert(Camera.main.GetComponent<PC_ZoomMovement>(), "Camera must have a component PC_ZoomMovement");
+        //Camera.main.GetComponent<PC_ZoomMovement>().enabled = _currentPosition == CameraPosition.CP_Free;
+
+        Debug.Assert(Camera.main.GetComponent<CameraController>(), "Camera must have a CameraController");
+        Camera.main.GetComponent<CameraController>().enabled = _currentPosition == CameraPosition.CP_Free;
+
+
         _workingPath.PlayPath(pathTime * _workingPath.points.Count);
     }
 }

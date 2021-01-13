@@ -1,130 +1,75 @@
-﻿//-----------------------------------------------------------------------------
-// CameraController.cs
-//
-// Controller class for the main camera
-//
-//
-// Authors: Michael Stefan Holly
-//          Michael Schiller
-//          Christopher Schinnerl
-//-----------------------------------------------------------------------------
-//
-
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Controller class for the main camera
-/// </summary>
-public class CameraController : MonoBehaviour
+[RequireComponent(typeof(Camera))]
+public class CameraController : MonoBehaviour, IResetObject
 {
-    /// <summary>
-    /// The movement speed
-    /// </summary>
-    private int speed = 300;
+    [Header("Movement Settings")]
+    [SerializeField] private float movementSpeed = 100f;
+    [SerializeField] private float rotationSpeed = 100f;
+    [SerializeField] private float zoomSpeed = 5f;
 
-    /// <summary>
-    /// The mouse origin
-    /// </summary>
-    private Vector3 mouseOrigin;
+    [SerializeField] Transform minPosition;
+    [SerializeField] private Transform maxPosition;
 
-    /// <summary>
-    /// Indicates if the mouse is over a panel
-    /// </summary>
-    private bool mouseOverPanel = false;
 
-    /// <summary>
-    /// The origin position for reseting
-    /// </summary>
-    Vector3 origPos;
 
-    /// <summary>
-    /// The origin rotation for reseting
-    /// </summary>
-    Quaternion origRot;
 
-    /// <summary>
-    /// Initialization
-    /// </summary>
-    void Start()
+    private Camera _camera;
+
+    private Vector3 _mouseOrigin;
+    private Vector3 _origPos;
+    private Quaternion _origRot;
+
+    private void Start()
     {
-        origPos = transform.position;
-        origRot = transform.rotation;
+        _camera = GetComponent<Camera>();
+
+        _origPos = transform.position;
+        _origRot = transform.rotation;
     }
 
-    /// <summary>
-    /// Resets the camera
-    /// </summary>
-    public void ResetCamera()
+    private void LateUpdate()
     {
-        transform.position = origPos;
-        transform.rotation = origRot;
-    }
-
-    /// <summary>
-    /// Sets the mouse over panel value
-    /// </summary>
-    /// <param name="mouseOverPanel">Mouse over panel value</param>
-    public void setMouseOverPanel(bool mouseOverPanel)
-    {
-        this.mouseOverPanel = mouseOverPanel;
-    }
-
-    /// <summary>
-    /// LateUpdate is called after all Update functions have been called.
-    /// Rotates, moves and zooms
-    /// </summary>
-    void LateUpdate()
-    {
-        if (mouseOverPanel)
-                return;
-
-        if (Input.GetButton("Fire1"))
-            rotateCamera();
-
-        if (Input.GetButton("Fire2"))
-            moveCamera();
-
+        // Camera Movement
         if (Input.GetButton("Fire3"))
-            zoomCamera();
+        {
+            var pos = _camera.ScreenToViewportPoint( _mouseOrigin - Input.mousePosition);
+            var move = new Vector3(pos.x * movementSpeed, pos.y * movementSpeed, 0);
+            transform.Translate(move);
+            transform.position = ClampCamPosition(transform.position);
+        }
 
-        mouseOrigin = Input.mousePosition;
-    }
+        // Camera Rotation
+        if (Input.GetButton("Fire2"))
+        {
+            var pos = _camera.ScreenToViewportPoint(Input.mousePosition - _mouseOrigin);
+            transform.RotateAround(transform.position, transform.right, -pos.y * rotationSpeed);
+            transform.RotateAround(transform.position, Vector3.up, pos.x * rotationSpeed);
 
-    /// <summary>
-    /// Moves the camera
-    /// </summary>
-    private void moveCamera()
-    {
-        Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - mouseOrigin);
-        Vector3 move = new Vector3(pos.x * speed, pos.y * speed, 0);
-        transform.Translate(move);
-    }
+        }
 
-    /// <summary>
-    /// Rotates the camera
-    /// </summary>
-    private void rotateCamera()
-    {
-        Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - mouseOrigin);
-        transform.RotateAround(Vector3.zero, transform.right, -pos.y * speed);
-        transform.RotateAround(Vector3.zero, Vector3.up, pos.x * speed);
-    }
-
-    /// <summary>
-    /// Zomms in or out
-    /// </summary>
-    private void zoomCamera()
-    {
-        Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - mouseOrigin);
-        Vector3 zoom = new Vector3(0, 0, pos.y * speed);
+        // Camera Zoom
+        var mouseScroll = Input.GetAxis("Mouse ScrollWheel");
+        var zoom = new Vector3(0, 0, mouseScroll * zoomSpeed);
         transform.Translate(zoom);
+        transform.position = ClampCamPosition(transform.position);
+
+        _mouseOrigin = Input.mousePosition;
     }
 
-  // OnGUI is called once per frame
-  public void OnGUI()
-  {
-    // show controls on top left corner
-    GUI.Label(new Rect(10f, 10f, 300f, 200f), string.Format("[ESC] - Leave"));
-  }
+    private Vector3 ClampCamPosition(Vector3 position)
+    {
+        position.x = Mathf.Clamp(position.x, minPosition.position.x, maxPosition.position.x);
+        position.y = Mathf.Clamp(position.y, minPosition.position.y, maxPosition.position.y);
+        position.z = Mathf.Clamp(position.z, minPosition.position.z, maxPosition.position.z);
 
+        return position;
+    }
+
+    public void ResetObject()
+    {
+        transform.position = _origPos;
+        transform.rotation = _origRot;
+    }
 }

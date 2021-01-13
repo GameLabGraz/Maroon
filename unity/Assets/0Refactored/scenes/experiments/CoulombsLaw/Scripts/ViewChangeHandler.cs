@@ -59,9 +59,12 @@ public class ViewChangeHandler : MonoBehaviour
         HandleMovementRestrictions(Ruler.RulerEnd, allowX, allowY, allowZ);
         
         VisualizationCube.transform.rotation = Quaternion.identity;
+        
+        /*
         VisualizationCube.GetComponent<PC_Rotation>().enabled = newPosition == PathHandler.CameraPosition.CP_Free;
         VisualizationCubeOutline.GetComponent<PC_Rotation>().enabled =
             newPosition == PathHandler.CameraPosition.CP_Free;
+        */
         
         VisualizationPlane.transform.localPosition = Vector3.zero;
         VisualizationPlane.transform.rotation = Quaternion.Euler(newPosition == PathHandler.CameraPosition.CP_Top? 90f : 0f, newPosition == PathHandler.CameraPosition.CP_Side? 90f : 0f, 0f);
