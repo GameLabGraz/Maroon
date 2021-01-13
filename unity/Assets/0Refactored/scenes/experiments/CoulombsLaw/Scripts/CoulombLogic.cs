@@ -498,9 +498,11 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
 
         if (!inVR && !SceneManager.GetActiveScene().name.Contains(".vr"))
         {
-            var camTransform = Camera.main.transform;
-            camTransform.position = _in3dMode ? new Vector3(0, 30f, -59.52f) : new Vector3(0, 4.4f, -59.52f);
-            camTransform.rotation = _in3dMode ? new Quaternion(0.25f, 0f, 0f, 1f) : new Quaternion(0.0f, 0f, 0f, 0f);
+            var cameraController = Camera.main.GetComponent<CameraController>();
+            cameraController.transform.position = _in3dMode ? new Vector3(0, 30f, -59.52f) : new Vector3(0, 4.4f, -59.52f);
+            cameraController.transform.rotation = _in3dMode ? new Quaternion(0.25f, 0f, 0f, 1f) : new Quaternion(0.0f, 0f, 0f, 0f);
+            cameraController.UpdateOrigPosition();
+            cameraController.UpdateOrigRotation();
         }
 
         vectorField3d.setVectorFieldVisible(_in3dMode);

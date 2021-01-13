@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Camera))]
@@ -12,23 +12,19 @@ public class CameraController : MonoBehaviour, IResetObject
     [SerializeField] Transform minPosition;
     [SerializeField] private Transform maxPosition;
 
-
-
-
     private Camera _camera;
 
     private Vector3 _mouseOrigin;
     private Vector3 _origPos;
     private Quaternion _origRot;
 
-    private void Start()
+    private void Awake()
     {
         _camera = GetComponent<Camera>();
 
-        _origPos = transform.position;
-        _origRot = transform.rotation;
+        UpdateOrigPosition();
+        UpdateOrigRotation();
     }
-
     private void LateUpdate()
     {
         // Camera Movement
@@ -65,6 +61,17 @@ public class CameraController : MonoBehaviour, IResetObject
         position.z = Mathf.Clamp(position.z, minPosition.position.z, maxPosition.position.z);
 
         return position;
+    }
+
+    public void UpdateOrigPosition()
+    {
+        _origPos = transform.position;
+
+    }
+
+    public void UpdateOrigRotation()
+    {
+        _origRot = transform.rotation;
     }
 
     public void ResetObject()
