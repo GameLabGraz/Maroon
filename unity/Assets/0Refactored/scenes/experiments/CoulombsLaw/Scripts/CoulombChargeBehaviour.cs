@@ -36,7 +36,21 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
         }
     }
 
-    public float ChargeUnit = Mathf.Pow(10, -9);
+    public float ChargeValue => Charge * ChargeUnit;
+
+    public float ChargeUnit
+    {
+        get
+        {
+            switch (chargeUnit)
+            {
+                case "mC": return 1e-3f;
+                case "µC": return 1e-6f;
+                case "nC": return 1e-9f;
+                default: return 1f;
+            }
+        }
+    }
 
     [Header("Particle Settings")]
     [SerializeField]
@@ -222,7 +236,7 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
         if (Mathf.Abs(Charge) < 0.0001f) return Vector3.zero;
         var distance = _coulombLogic.WorldToCalcSpace(Vector3.Distance(transform.position, position)); //TODO: radius???
         var dir = (position - transform.position).normalized;
-        var potential = CoulombConstant * Charge * ChargeUnit / Mathf.Pow(distance, 2f);
+        var potential = CoulombConstant * ChargeValue / Mathf.Pow(distance, 2f);
         return potential * dir;
     }
 
@@ -235,7 +249,7 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
     {
         if (Mathf.Abs(Charge) < 0.0001f) return 0f;
         var distance = _coulombLogic.WorldToCalcSpace(Vector3.Distance(transform.position, position)); //TODO: radius???
-        var potential = CoulombConstant * Charge * ChargeUnit / distance;
+        var potential = CoulombConstant * ChargeValue / distance;
         return potential;
     }
     
