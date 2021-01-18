@@ -1,5 +1,4 @@
 ﻿using Maroon.Physics;
-using GEAR.Localization;
 using TMPro;
 using UnityEngine;
 
@@ -8,10 +7,16 @@ public class VoltmeterDifferences : MonoBehaviour
     public VoltmeterMeasuringPoint positiveMeasuringPoint;
     public VoltmeterMeasuringPoint negativeMeasuringPoint;
 
-    private CoulombLogic _coulombLogic;
-    public TextMeshPro textMeshPro;
-    public TextMeshProUGUI textMeshProGUI;
-    public TextMeshPro textMeshProUnit;
+    public TMP_Text VoltageText;
+    public TMP_Text DistanceText;
+
+    public GameObject NegPositionX;
+    public GameObject NegPositionY;
+    public GameObject NegPositionZ;
+
+    public GameObject PosPositionX;
+    public GameObject PosPositionY;
+    public GameObject PosPositionZ;
 
     public bool onPerDefault = true;
     public bool showUnitInText = true;
@@ -27,71 +32,155 @@ public class VoltmeterDifferences : MonoBehaviour
 
     private Vector3 GetMeasuringPosition(VoltmeterMeasuringPoint measuringPoint)
     {
-        if (_coulombLogic.IsIn2dMode())
+        if (CoulombLogic.Instance.IsIn2dMode())
         {
             var pos = measuringPoint.transform.position;
-            var position = _coulombLogic.xOrigin2d.position;
-            return new Vector3(_coulombLogic.WorldToCalcSpace(pos.x - position.x),
-                _coulombLogic.WorldToCalcSpace(pos.y - position.y),
+            var position = CoulombLogic.Instance.xOrigin2d.position;
+            return new Vector3(CoulombLogic.Instance.WorldToCalcSpace(pos.x - position.x),
+                CoulombLogic.Instance.WorldToCalcSpace(pos.y - position.y),
                 0);
         }
         else
         {
             var pos = measuringPoint.transform.localPosition;
-            var position = _coulombLogic.xOrigin3d.localPosition;
-            return new Vector3(_coulombLogic.WorldToCalcSpace(pos.x - position.x, true),
-                _coulombLogic.WorldToCalcSpace(pos.y - position.y, true),
-                _coulombLogic.WorldToCalcSpace(pos.z - position.z, true));
+            var position = CoulombLogic.Instance.xOrigin3d.localPosition;
+            return new Vector3(CoulombLogic.Instance.WorldToCalcSpace(pos.x - position.x, true),
+                CoulombLogic.Instance.WorldToCalcSpace(pos.y - position.y, true),
+                CoulombLogic.Instance.WorldToCalcSpace(pos.z - position.z, true));
         }
     }
 
-    private float MeasuringPointDistance => _coulombLogic.WorldToCalcSpace(Vector3.Distance(positiveMeasuringPoint.transform.position, negativeMeasuringPoint.transform.position));
+    private float MeasuringPointDistance => CoulombLogic.Instance.WorldToCalcSpace(Vector3.Distance(positiveMeasuringPoint.transform.position, negativeMeasuringPoint.transform.position));
 
 
     private void Start()
     {
-        if(textMeshPro == null)
-            textMeshPro = GetComponent<TextMeshPro>();
+        NegPositionX.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(endVal =>
+        {
+            CheckVariable(endVal, Vector3.right, negativeMeasuringPoint.GetComponent<PC_SelectScript>());
+        });
+        NegPositionY.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(endVal =>
+        {
+            CheckVariable(endVal, Vector3.up, negativeMeasuringPoint.GetComponent<PC_SelectScript>());
+        });
+        NegPositionZ.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(endVal =>
+        {
+            CheckVariable(endVal, Vector3.forward, negativeMeasuringPoint.GetComponent<PC_SelectScript>());
+        });
 
-        if (textMeshProGUI == null)
-            textMeshProGUI = GetComponent<TextMeshProUGUI>();
-        
-        var simControllerObject = GameObject.Find("CoulombLogic");
-        if (simControllerObject)
-            _coulombLogic = simControllerObject.GetComponent<CoulombLogic>();
-        Debug.Assert(_coulombLogic != null);
+        PosPositionX.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(endVal =>
+        {
+            CheckVariable(endVal, Vector3.right, positiveMeasuringPoint.GetComponent<PC_SelectScript>());
+        });
+        PosPositionY.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(endVal =>
+        {
+            CheckVariable(endVal, Vector3.up, positiveMeasuringPoint.GetComponent<PC_SelectScript>());
+        });
+        PosPositionZ.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(endVal =>
+        {
+            CheckVariable(endVal, Vector3.forward, positiveMeasuringPoint.GetComponent<PC_SelectScript>());
+        });
+
+
+        NegPositionZ.GetComponent<TMP_InputField>().interactable = CoulombLogic.Instance.IsIn3dMode();
+        PosPositionZ.GetComponent<TMP_InputField>().interactable = CoulombLogic.Instance.IsIn3dMode();
+
+
+
+        CoulombLogic.Instance.onModeChange.AddListener(in3dMode =>
+        {
+            NegPositionZ.GetComponent<TMP_InputField>().interactable = in3dMode;
+            PosPositionZ.GetComponent<TMP_InputField>().interactable = in3dMode;
+        });
 
         _isOn = onPerDefault;
     }
 
-    private void Update()
+    private static void CheckVariable(float endValue, Vector3 affectedAxis, PC_SelectScript selectedObject)
     {
-        if (!_isOn || (!positiveMeasuringPoint.isActiveAndEnabled || !negativeMeasuringPoint.isActiveAndEnabled))
-            SetText("--- " + (showUnitInText? GetCurrentUnit() : ""));
+        if (!selectedObject) return;
+        if (CoulombLogic.Instance.IsIn2dMode())
+        {
+            var currentPos = selectedObject.transform.position;
+            if (affectedAxis.x > 0.1)
+                currentPos.x =
+                    CoulombLogic.Instance.xOrigin2d.position.x +
+                    CoulombLogic.Instance.CalcToWorldSpace(endValue); //end Value is between 0 and 1
+            if (affectedAxis.y > 0.1)
+                currentPos.y =
+                    CoulombLogic.Instance.xOrigin2d.position.y +
+                    CoulombLogic.Instance.CalcToWorldSpace(endValue); //end Value is between 0 and 1
+            if (affectedAxis.z > 0.1)
+                currentPos.z =
+                    CoulombLogic.Instance.xOrigin2d.position.z +
+                    CoulombLogic.Instance.CalcToWorldSpace(endValue); //end Value is between 0 and 1
+            selectedObject.transform.position = currentPos;
+
+            selectedObject.onPositionChanged.Invoke(currentPos);
+        }
         else
         {
-            var displayText = $"{LanguageManager.Instance.GetString("Voltage")}: {GetDifference()} {(showUnitInText ? " " + GetCurrentUnit() : "")}\n\n" +
-                              $"{LanguageManager.Instance.GetString("VoltmeterPositiveKey")}: {positiveMeasuringPosition}\n" +
-                              $"{LanguageManager.Instance.GetString("VoltmeterNegativeKey")}: {negativeMeasuringPosition}\n" +
-                              $"{LanguageManager.Instance.GetString("Distance")}: {MeasuringPointDistance:0.##} m";
+            var currentPos = selectedObject.transform.localPosition;
+            if (affectedAxis.x > 0.1)
+                currentPos.x = CoulombLogic.Instance.xOrigin3d.localPosition.x +
+                               CoulombLogic.Instance.CalcToWorldSpace(endValue, true); //end Value is between 0 and 1
+            if (affectedAxis.y > 0.1)
+                currentPos.y = CoulombLogic.Instance.xOrigin3d.localPosition.y +
+                               CoulombLogic.Instance.CalcToWorldSpace(endValue, true); //end Value is between 0 and 1
+            if (affectedAxis.z > 0.1)
+                currentPos.z = CoulombLogic.Instance.xOrigin3d.localPosition.z +
+                               CoulombLogic.Instance.CalcToWorldSpace(endValue, true); //end Value is between 0 and 1
+            selectedObject.transform.localPosition = currentPos;
 
-            SetText(displayText);
-        }
-
-        if (!showUnitInText && textMeshProUnit)
-        {
-            textMeshProUnit.text = GetCurrentUnit();
+            selectedObject.onPositionChanged.Invoke(currentPos);
         }
     }
 
-    private void SetText(string text)
+    public void UpdateDisplay()
     {
-        if (textMeshPro)
-            textMeshPro.text = text;
-        if (textMeshProGUI)
-            textMeshProGUI.text = text;
+        if (positiveMeasuringPoint == null || negativeMeasuringPoint == null) return;
+
+        if (!_isOn || (!positiveMeasuringPoint.gameObject.activeSelf || !negativeMeasuringPoint.gameObject.activeSelf))
+        {
+            VoltageText.text = "---";
+            DistanceText.text = "---";
+        }
+        else
+        {
+            VoltageText.text = $"{GetDifference()} {(showUnitInText ? " " + GetCurrentUnit() : "")}";
+            DistanceText.text = $"{MeasuringPointDistance:0.###} m";
+        }
+
+
+        if (!negativeMeasuringPoint.gameObject.activeSelf)
+        {
+            NegPositionX.GetComponent<TMP_InputField>().text = "";
+            NegPositionY.GetComponent<TMP_InputField>().text = "";
+            NegPositionZ.GetComponent<TMP_InputField>().text = "";
+        }
+        else
+        {
+            var negPosition = negativeMeasuringPosition;
+            NegPositionX.GetComponent<PC_TextFormatter_TMP>().FormatString(negPosition.x);
+            NegPositionY.GetComponent<PC_TextFormatter_TMP>().FormatString(negPosition.y);
+            NegPositionZ.GetComponent<PC_TextFormatter_TMP>().FormatString(negPosition.z);
+        }
+
+        if (!positiveMeasuringPoint.gameObject.activeSelf)
+        {
+            PosPositionX.GetComponent<TMP_InputField>().text = "";
+            PosPositionY.GetComponent<TMP_InputField>().text = "";
+            PosPositionZ.GetComponent<TMP_InputField>().text = "";
+        }
+        else
+        {
+            var posPosition = positiveMeasuringPosition;
+            PosPositionX.GetComponent<PC_TextFormatter_TMP>().FormatString(posPosition.x);
+            PosPositionY.GetComponent<PC_TextFormatter_TMP>().FormatString(posPosition.y);
+            PosPositionZ.GetComponent<PC_TextFormatter_TMP>().FormatString(posPosition.z);
+        }
     }
-    
+
     private string GetDifference()
     {
         var currentDifference = positiveMeasuringPoint.GetPotentialInMicroVolt() -
@@ -104,14 +193,13 @@ public class VoltmeterDifferences : MonoBehaviour
 
     private string GetCurrentFormattedString()
     {
-        float check = currentValue.Value;
+        var check = currentValue.Value;
         for (var cnt = 0; Mathf.Abs(check) < 1f && cnt < 2; ++cnt)
         {
             check *= Mathf.Pow(10, 3);
         }
-            
-//        Debug.Log("START: " + _currentValue.ToString("F") + " - END: "+ check.ToString("F"));
-        return check.ToString("F");   
+        
+        return check.ToString("F3");   
     }
 
     private string GetCurrentUnit()
@@ -155,6 +243,8 @@ public class VoltmeterDifferences : MonoBehaviour
 
     public void InvokeValueChangedEvent()
     {
+        UpdateDisplay();
+        
         if (!positiveMeasuringPoint.isActiveAndEnabled && !negativeMeasuringPoint.isActiveAndEnabled)
             currentValue.Value = 0f;
         else

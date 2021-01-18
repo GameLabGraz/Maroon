@@ -13,10 +13,12 @@ public class PC_SelectScript : MonoBehaviour
     {
         ChargeSelect,
         VisualizationPlaneSelect,
-        VoltmeterSelect,
+        VoltmeterTerminalPosSelect,
+        VoltmeterTerminalNegSelect,
         CubeSelect,
         WhiteboardSelect,
-        RulerSelect
+        RulerStartSelect,
+        RulerEndSelect
     }
     
     // Selected Object
@@ -25,6 +27,7 @@ public class PC_SelectScript : MonoBehaviour
     public string nameKey;
 
     [Header("Events")] 
+    public UnityEvent onSelect;
     public SelectV3Event onPositionChanged;
     public SelectV3Event onRotationChanged;
 
@@ -48,6 +51,7 @@ public class PC_SelectScript : MonoBehaviour
         }
 
         Select();
+        onSelect?.Invoke();
     }
 
     public void Select()
@@ -103,20 +107,6 @@ public class PC_SelectScript : MonoBehaviour
         var handler = _coulombLogic.GetComponent<PC_SelectionHandler>();
         if(handler && handler.selectedObject == this)
             handler.PositionChanged();
-    }
-    
-    public void RotationChanged()
-    {
-        if (!_coulombLogic)
-        {
-            var obj = GameObject.Find("CoulombLogic");
-            if (obj)
-                _coulombLogic = obj.GetComponent<CoulombLogic>();
-        }
-
-        var handler = _coulombLogic.GetComponent<PC_SelectionHandler>();
-        if(handler && handler.selectedObject == this)
-            handler.RotationChanged();
     }
 
     private void OnDestroy()
