@@ -70,8 +70,7 @@ public class SortingController : MonoBehaviour, IResetObject
                 throw new ArgumentOutOfRangeException();
         }
         
-        if(_isOnline)
-            ResetQuiz();
+        ResetQuiz();
     }
 
     private void DisplayMessageByKey(string key)
