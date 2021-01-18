@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Maroon.Physics;
 using UnityEngine;
 using UnityEngine.Events;
@@ -22,18 +21,12 @@ public class RulerPrefab : MonoBehaviour, IResetWholeObject
 
     public RulerDistanceEvent onDistanceChanged;
 
-    private CoulombLogic _coulombLogic;
     public QuantityFloat currentDistance = 0;
     private Vector3 _startPosition;
     
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         _startPosition = transform.position;
-        var simControllerObject = GameObject.Find("CoulombLogic");
-        if (simControllerObject)
-            _coulombLogic = simControllerObject.GetComponent<CoulombLogic>();
-        Debug.Assert(_coulombLogic != null);
 
         if (RulerLine.positionCount < 2)
         {
@@ -44,24 +37,17 @@ public class RulerPrefab : MonoBehaviour, IResetWholeObject
         onDistanceChanged.Invoke(0f);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (RulerStart.activeSelf && RulerEnd.activeSelf)
         {
             if(!RulerLine.gameObject.activeSelf)
                 RulerLine.gameObject.SetActive(true);
+
             var startPosition = RulerStart.transform.position;
             var endPosition = RulerEnd.transform.position;
             RulerLine.SetPosition(0, startPosition);
             RulerLine.SetPosition(1, endPosition);
-            var newDist = _coulombLogic.WorldToCalcSpace(Vector3.Distance(startPosition, endPosition));
-
-            if (Math.Abs(newDist - currentDistance) > 0.0001f)
-            {
-                currentDistance.Value = newDist;
-                onDistanceChanged.Invoke(currentDistance);
-            }
         }
         else if(RulerLine.gameObject.activeSelf)
         { 
@@ -69,6 +55,31 @@ public class RulerPrefab : MonoBehaviour, IResetWholeObject
             currentDistance.Value = 0f;
             onDistanceChanged.Invoke(0f);
         }
+    }
+
+    public void UpdateDistance()
+    {
+        var startPosition = RulerStart.transform.position;
+        var endPosition = RulerEnd.transform.position;
+        var newDist = CoulombLogic.Instance.WorldToCalcSpace(Vector3.Distance(startPosition, endPosition));
+
+        if (Math.Abs(newDist - currentDistance) > 0.0001f)
+        {
+            currentDistance.Value = newDist;
+            onDistanceChanged.Invoke(currentDistance);
+        }
+    }
+
+    public void InvokeDistanceChangeEvent()
+    {
+        UpdateDistance();
+
+        if (!RulerStart.activeSelf && !RulerStart.activeSelf)
+            currentDistance.Value = 0f;
+        else
+            UpdateDistance(); //call to update the current value
+
+        currentDistance.SendValueChangedEvent();
     }
 
     public void ResetObject()
@@ -95,16 +106,10 @@ public class RulerPrefab : MonoBehaviour, IResetWholeObject
     
     public void OnChangeMode(bool in3dMode)
     {
-        if (!_coulombLogic)
-        {
-            var simControllerObject = GameObject.Find("CoulombLogic");
-            if (simControllerObject)
-                _coulombLogic = simControllerObject.GetComponent<CoulombLogic>();
-        }
         if (in3dMode)
-            transform.parent = _coulombLogic.scene3D.transform;
+            transform.parent = CoulombLogic.Instance.scene3D.transform;
         else
-            transform.parent = _coulombLogic.scene2D.transform;
+            transform.parent = CoulombLogic.Instance.scene2D.transform;
        
         ResetMovingArrow(in3dMode, RulerStart);
         ResetMovingArrow(in3dMode, RulerEnd);
@@ -115,12 +120,12 @@ public class RulerPrefab : MonoBehaviour, IResetWholeObject
         var dragHandler = obj.GetComponent<PC_DragHandler>();
         if (in3dMode)
         {
-            dragHandler.SetBoundaries(_coulombLogic.minBoundary3d.gameObject, _coulombLogic.maxBoundary3d.gameObject);
+            dragHandler.SetBoundaries(CoulombLogic.Instance.minBoundary3d.gameObject, CoulombLogic.Instance.maxBoundary3d.gameObject);
             dragHandler.allowedXMovement = dragHandler.allowedYMovement = dragHandler.allowedZMovement = true;
         }
         else
         {
-            dragHandler.SetBoundaries(_coulombLogic.minBoundary2d.gameObject, _coulombLogic.maxBoundary2d.gameObject);
+            dragHandler.SetBoundaries(CoulombLogic.Instance.minBoundary2d.gameObject, CoulombLogic.Instance.maxBoundary2d.gameObject);
             dragHandler.allowedXMovement = dragHandler.allowedYMovement = true;
             dragHandler.allowedZMovement = false;     
         }
@@ -130,12 +135,12 @@ public class RulerPrefab : MonoBehaviour, IResetWholeObject
         if (in3dMode)
         {
             movArrows.UpdateMovementRestriction(false, false, false);
-            movArrows.SetBoundaries(_coulombLogic.minBoundary3d.transform, _coulombLogic.maxBoundary3d.transform);
+            movArrows.SetBoundaries(CoulombLogic.Instance.minBoundary3d.transform, CoulombLogic.Instance.maxBoundary3d.transform);
         }
         else
         {
             movArrows.UpdateMovementRestriction(false, false, true);
-            movArrows.SetBoundaries(_coulombLogic.minBoundary2d.transform, _coulombLogic.maxBoundary2d.transform);
+            movArrows.SetBoundaries(CoulombLogic.Instance.minBoundary2d.transform, CoulombLogic.Instance.maxBoundary2d.transform);
         }
         movArrows.gameObject.SetActive(true);
     }
