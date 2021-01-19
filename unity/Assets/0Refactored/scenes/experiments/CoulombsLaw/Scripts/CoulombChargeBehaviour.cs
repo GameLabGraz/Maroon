@@ -268,13 +268,13 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
         Debug.Log("End outside Boundary");
         if (!deleteIfOutsideBoundaries) return;
         _coulombLogic.RemoveParticle(this, true);
-        SimulationController.Instance.ResetSimulation();
+        //SimulationController.Instance.ResetSimulation();
     }
     
     public void MovementEndInsideBoundaries()
     {
         UpdateResetPosition();
-        SimulationController.Instance.ResetSimulation();
+        //SimulationController.Instance.ResetSimulation();
     }
     
     public void SetCharge(float charge, Color chargeColor)
