@@ -94,14 +94,14 @@ public class PC_DragHandler : MonoBehaviour
             var checkPt = useLocalCoordinates? minBoundary.parent.InverseTransformPoint(pt) : pt;
 
             Debug.Assert(minBoundary.parent == maxBoundary.parent);
-            if (allowedXMovement && (checkPt.x < Mathf.Min(minPosition.x, maxPosition.x)
-                                     || Mathf.Max(minPosition.x, maxPosition.x) < checkPt.x))
+            if (allowedXMovement && (checkPt.x + 0.2f < Mathf.Min(minPosition.x, maxPosition.x)
+                                     || Mathf.Max(minPosition.x, maxPosition.x) < checkPt.x - 0.2f))
                 outside = true;
-            else if (allowedYMovement && (checkPt.y < Mathf.Min(minPosition.y, maxPosition.y) 
-                                          || Mathf.Max(minPosition.y, maxPosition.y) < checkPt.y))
+            else if (allowedYMovement && (checkPt.y + 0.2f < Mathf.Min(minPosition.y, maxPosition.y) 
+                                          || Mathf.Max(minPosition.y, maxPosition.y) < checkPt.y - 0.2f))
                 outside = true;
-            else if (allowedZMovement && (checkPt.z < Mathf.Min(minPosition.z, maxPosition.z) 
-                                          || Mathf.Max(minPosition.z, maxPosition.z)  < checkPt.z))
+            else if (allowedZMovement && (checkPt.z + 0.2f < Mathf.Min(minPosition.z, maxPosition.z) 
+                                          || Mathf.Max(minPosition.z, maxPosition.z)  < checkPt.z - 0.2f))
                 outside = true;
         }
 
