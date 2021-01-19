@@ -103,7 +103,8 @@ public class RulerDisplay : MonoBehaviour
         }
         else
         {
-            var currentPos = selectedObject.transform.localPosition;
+            var currentPos = CoulombLogic.Instance.scene3D.transform.InverseTransformPoint(selectedObject.transform.position);
+
             if (affectedAxis.x > 0.1)
                 currentPos.x = CoulombLogic.Instance.xOrigin3d.localPosition.x +
                                CoulombLogic.Instance.CalcToWorldSpace(endValue, true); //end Value is between 0 and 1
@@ -113,7 +114,8 @@ public class RulerDisplay : MonoBehaviour
             if (affectedAxis.z > 0.1)
                 currentPos.z = CoulombLogic.Instance.xOrigin3d.localPosition.z +
                                CoulombLogic.Instance.CalcToWorldSpace(endValue, true); //end Value is between 0 and 1
-            selectedObject.transform.localPosition = currentPos;
+            
+            selectedObject.transform.position = CoulombLogic.Instance.scene3D.transform.TransformPoint(currentPos);
 
             selectedObject.onPositionChanged.Invoke(currentPos);
         }
