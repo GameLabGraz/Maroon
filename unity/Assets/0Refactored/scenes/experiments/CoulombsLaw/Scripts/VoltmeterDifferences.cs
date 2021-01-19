@@ -154,30 +154,30 @@ public class VoltmeterDifferences : MonoBehaviour
 
         if (!negativeMeasuringPoint.gameObject.activeSelf)
         {
-            NegPositionX.GetComponent<TMP_InputField>().text = "";
-            NegPositionY.GetComponent<TMP_InputField>().text = "";
-            NegPositionZ.GetComponent<TMP_InputField>().text = "";
+            if (NegPositionX != null) NegPositionX.GetComponent<TMP_InputField>().text = "";
+            if (NegPositionY != null) NegPositionY.GetComponent<TMP_InputField>().text = "";
+            if (NegPositionZ != null) NegPositionZ.GetComponent<TMP_InputField>().text = "";
         }
         else
         {
             var negPosition = negativeMeasuringPosition;
-            NegPositionX.GetComponent<PC_TextFormatter_TMP>().FormatString(negPosition.x);
-            NegPositionY.GetComponent<PC_TextFormatter_TMP>().FormatString(negPosition.y);
-            NegPositionZ.GetComponent<PC_TextFormatter_TMP>().FormatString(negPosition.z);
+            if(NegPositionX != null) NegPositionX.GetComponent<PC_TextFormatter_TMP>().FormatString(negPosition.x);
+            if(NegPositionY != null) NegPositionY.GetComponent<PC_TextFormatter_TMP>().FormatString(negPosition.y);
+            if(NegPositionZ != null) NegPositionZ.GetComponent<PC_TextFormatter_TMP>().FormatString(negPosition.z);
         }
 
         if (!positiveMeasuringPoint.gameObject.activeSelf)
         {
-            PosPositionX.GetComponent<TMP_InputField>().text = "";
-            PosPositionY.GetComponent<TMP_InputField>().text = "";
-            PosPositionZ.GetComponent<TMP_InputField>().text = "";
+            if (PosPositionX != null) PosPositionX.GetComponent<TMP_InputField>().text = "";
+            if (PosPositionY != null) PosPositionY.GetComponent<TMP_InputField>().text = "";
+            if (PosPositionZ != null) PosPositionZ.GetComponent<TMP_InputField>().text = "";
         }
         else
         {
             var posPosition = positiveMeasuringPosition;
-            PosPositionX.GetComponent<PC_TextFormatter_TMP>().FormatString(posPosition.x);
-            PosPositionY.GetComponent<PC_TextFormatter_TMP>().FormatString(posPosition.y);
-            PosPositionZ.GetComponent<PC_TextFormatter_TMP>().FormatString(posPosition.z);
+            if (PosPositionX != null) PosPositionX.GetComponent<PC_TextFormatter_TMP>().FormatString(posPosition.x);
+            if (PosPositionY != null) PosPositionY.GetComponent<PC_TextFormatter_TMP>().FormatString(posPosition.y);
+            if (PosPositionZ != null) PosPositionZ.GetComponent<PC_TextFormatter_TMP>().FormatString(posPosition.z);
         }
     }
 
