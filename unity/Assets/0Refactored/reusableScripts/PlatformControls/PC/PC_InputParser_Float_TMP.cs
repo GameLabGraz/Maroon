@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -31,14 +32,14 @@ public class PC_InputParser_Float_TMP : MonoBehaviour
     private void OnTextChanged(string changedText)
     {
         string text;
-        if (float.TryParse(changedText, out var number))
+        if (float.TryParse(changedText, NumberStyles.Any, CultureInfo.InvariantCulture, out var number))
         {
             if (number < minimum)
                 number = minimum;
             if (number > maximum)
                 number = maximum;
 
-            text = number.ToString(textFormat);
+            text = number.ToString(textFormat, CultureInfo.InvariantCulture);
             _value = number;
             _prevText = text;
             onValueChangedFloat.Invoke(number);
@@ -59,6 +60,6 @@ public class PC_InputParser_Float_TMP : MonoBehaviour
 
     public void SetValue(float value)
     {
-        _textField.text = value.ToString(textFormat);
+        _textField.text = value.ToString(textFormat, CultureInfo.InvariantCulture);
     }
 }

@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System.Globalization;
+using TMPro;
 using UnityEngine;
 
 public class RulerDisplay : MonoBehaviour
@@ -132,7 +133,7 @@ public class RulerDisplay : MonoBehaviour
         else
         {
             var distance = Vector3.Distance(startMeasuringPosition, endMeasuringPosition);
-            DistanceText.text = $"{distance:0.###} m";
+            DistanceText.text = string.Format(CultureInfo.InvariantCulture, "{0:0.###} m", distance); 
         }
 
 

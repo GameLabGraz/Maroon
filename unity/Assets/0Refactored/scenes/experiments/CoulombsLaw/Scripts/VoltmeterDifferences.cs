@@ -1,4 +1,5 @@
-﻿using Maroon.Physics;
+﻿using System.Globalization;
+using Maroon.Physics;
 using TMPro;
 using UnityEngine;
 
@@ -147,8 +148,9 @@ public class VoltmeterDifferences : MonoBehaviour
         }
         else
         {
-            VoltageText.text = $"{GetDifference()} {(showUnitInText ? " " + GetCurrentUnit() : "")}";
-            DistanceText.text = $"{MeasuringPointDistance:0.###} m";
+            VoltageText.text = string.Format(CultureInfo.InvariantCulture, "{0} {1}", 
+                GetDifference(), (showUnitInText ? " " + GetCurrentUnit() : ""));
+            DistanceText.text = string.Format(CultureInfo.InvariantCulture, "{0:0.###} m", MeasuringPointDistance);
         }
 
 
@@ -199,7 +201,7 @@ public class VoltmeterDifferences : MonoBehaviour
             check *= Mathf.Pow(10, 3);
         }
         
-        return check.ToString("F3");   
+        return check.ToString("F3", CultureInfo.InvariantCulture);   
     }
 
     private string GetCurrentUnit()
