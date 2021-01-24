@@ -169,7 +169,8 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         {
             //3d mode
             var originPos = xOrigin3d.localPosition;
-            var calculatePos = position.localPosition;
+            var calculatePos = xOrigin3d.parent.InverseTransformPoint(position.position);
+
             return new Vector3(WorldToCalcSpace(Mathf.Abs(originPos.x - calculatePos.x), true),
                 WorldToCalcSpace(Mathf.Abs(originPos.y - calculatePos.y), true),
                 WorldToCalcSpace(Mathf.Abs(originPos.z - calculatePos.z), true));
