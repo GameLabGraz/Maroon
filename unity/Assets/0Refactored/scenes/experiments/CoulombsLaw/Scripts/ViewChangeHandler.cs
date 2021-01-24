@@ -51,7 +51,11 @@ public class ViewChangeHandler : MonoBehaviour
         var allowY = newPosition != PathHandler.CameraPosition.CP_Top;
         var allowZ = newPosition != PathHandler.CameraPosition.CP_Front;
         foreach (var charge in _coulombLogic.GetCharges())
+        {
+            if(charge.fixedPosition) continue;
             HandleMovementRestrictions(charge.gameObject, allowX, allowY, allowZ);
+        }
+            
         
         HandleMovementRestrictions(VoltmeterPositive, allowX, allowY, allowZ);
         HandleMovementRestrictions(VoltmeterNegative, allowX, allowY, allowZ);
