@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using GEAR.Localization;
 using Mirror;
 using TMPro;
 using UnityEngine;
@@ -11,9 +12,15 @@ public class QuizManager : MonoBehaviour
 {
     [SerializeField] private GameObject scrollViewContent;
 
-    [SerializeField] private Button leftButton;
-    [SerializeField] private Button rightButton;
-    [SerializeField] private Button resetButton;
+    [SerializeField] private Button leftOnlineButton;
+    [SerializeField] private Button rightOnlineButton;
+    [SerializeField] private Button resetOnlineButton;
+    
+    [SerializeField] private Button leftOfflineButton;
+    [SerializeField] private Button rightOfflineButton;
+    [SerializeField] private Button resetOfflineButton;
+    
+    [SerializeField] private TextMeshProUGUI offlinePointsText;
 
     [SerializeField] private Color defaultButtonColor;
     [SerializeField] private Color selectedButtonColor;
@@ -26,24 +33,36 @@ public class QuizManager : MonoBehaviour
 
     private void Start()
     {
-        leftButton.onClick.AddListener(ChooseLeftAlgorithm);
-        rightButton.onClick.AddListener(ChooseRightAlgorithm);
-        resetButton.onClick.AddListener(FullReset);
+        leftOnlineButton.onClick.AddListener(ChooseLeftAlgorithmOnline);
+        rightOnlineButton.onClick.AddListener(ChooseRightAlgorithmOnline);
+        resetOnlineButton.onClick.AddListener(FullReset);
+        
+        leftOfflineButton.onClick.AddListener(ChooseLeftAlgorithmOffline);
+        rightOfflineButton.onClick.AddListener(ChooseRightAlgorithmOffline);
+        resetOfflineButton.onClick.AddListener(FullReset);
 
         _isServer = NetworkServer.active;
 
-        leftButton.image.color = defaultButtonColor;
-        rightButton.image.color = defaultButtonColor;
+        leftOnlineButton.image.color = defaultButtonColor;
+        rightOnlineButton.image.color = defaultButtonColor;
+        
+        leftOfflineButton.image.color = defaultButtonColor;
+        rightOfflineButton.image.color = defaultButtonColor;
+        
+        LanguageManager.Instance.OnLanguageChanged.AddListener(DisplayOfflineScore);
+        DisplayOfflineScore();
     }
 
     public void SetLeftButtonText(string text)
     {
-        leftButton.GetComponentInChildren<TextMeshProUGUI>().text = text;
+        leftOnlineButton.GetComponentInChildren<TextMeshProUGUI>().text = text;
+        leftOfflineButton.GetComponentInChildren<TextMeshProUGUI>().text = text;
     }
     
     public void SetRightButtonText(string text)
     {
-        rightButton.GetComponentInChildren<TextMeshProUGUI>().text = text;
+        rightOnlineButton.GetComponentInChildren<TextMeshProUGUI>().text = text;
+        rightOfflineButton.GetComponentInChildren<TextMeshProUGUI>().text = text;
     }
 
     public void SetQuizScoreParent(GameObject quizScore)
@@ -57,25 +76,46 @@ public class QuizManager : MonoBehaviour
         _localQuizScore = local.GetComponent<QuizScore>();
     }
 
-    public void ChooseLeftAlgorithm()
+    public void ChooseLeftAlgorithmOnline()
     {
         _localQuizScore.ChooseAlgorithm(QuizScore.QuizChoice.Left);
-        leftButton.image.color = selectedButtonColor;
-        rightButton.image.color = defaultButtonColor;
+        leftOnlineButton.image.color = selectedButtonColor;
+        rightOnlineButton.image.color = defaultButtonColor;
     }
     
-    public void ChooseRightAlgorithm()
+    public void ChooseRightAlgorithmOnline()
     {
         _localQuizScore.ChooseAlgorithm(QuizScore.QuizChoice.Right);
-        leftButton.image.color = defaultButtonColor;
-        rightButton.image.color = selectedButtonColor;
+        leftOnlineButton.image.color = defaultButtonColor;
+        rightOnlineButton.image.color = selectedButtonColor;
+    }
+
+    private QuizScore.QuizChoice _offlineChoice;
+    private int _offlineScore;
+    private int _offlineTries;
+    
+    public void ChooseLeftAlgorithmOffline()
+    {
+        _offlineChoice = QuizScore.QuizChoice.Left;
+        leftOfflineButton.image.color = selectedButtonColor;
+        rightOfflineButton.image.color = defaultButtonColor;
+    }
+    
+    public void ChooseRightAlgorithmOffline()
+    {
+        _offlineChoice = QuizScore.QuizChoice.Right;
+        leftOfflineButton.image.color = defaultButtonColor;
+        rightOfflineButton.image.color = selectedButtonColor;
     }
 
     public void SortingStarted()
     {
         ShowAllChoices();
-        leftButton.interactable = false;
-        rightButton.interactable = false;
+        leftOnlineButton.interactable = false;
+        rightOnlineButton.interactable = false;
+        
+        leftOfflineButton.interactable = false;
+        rightOfflineButton.interactable = false;
     }
 
     private void ShowAllChoices()
@@ -96,6 +136,17 @@ public class QuizManager : MonoBehaviour
                     score.IncreaseScore();
             }
         }
+
+        if (_offlineChoice == QuizScore.QuizChoice.Nothing)
+            return;
+
+        _offlineTries++;
+        if (_offlineChoice == correct)
+        {
+            _offlineScore++;
+        }
+
+        DisplayOfflineScore();
     }
 
     public int GetRanking(QuizScore score)
@@ -115,10 +166,17 @@ public class QuizManager : MonoBehaviour
                 score.ResetChoice();
             }
         }
-        leftButton.interactable = true;
-        rightButton.interactable = true;
-        leftButton.image.color = defaultButtonColor;
-        rightButton.image.color = defaultButtonColor;
+        leftOnlineButton.interactable = true;
+        rightOnlineButton.interactable = true;
+        leftOnlineButton.image.color = defaultButtonColor;
+        rightOnlineButton.image.color = defaultButtonColor;
+
+        _offlineChoice = QuizScore.QuizChoice.Nothing;
+        
+        leftOfflineButton.interactable = true;
+        rightOfflineButton.interactable = true;
+        leftOfflineButton.image.color = defaultButtonColor;
+        rightOfflineButton.image.color = defaultButtonColor;
     }
 
     public void FullReset()
@@ -131,5 +189,14 @@ public class QuizManager : MonoBehaviour
             }
         }
         ResetAllChoices();
+        
+        _offlineScore = 0;
+        _offlineTries = 0;
+        DisplayOfflineScore();
+    }
+
+    private void DisplayOfflineScore(SystemLanguage language = SystemLanguage.English)
+    {
+        offlinePointsText.text = _offlineScore + " / " + _offlineTries + LanguageManager.Instance.GetString("PointsPostfix");
     }
 }

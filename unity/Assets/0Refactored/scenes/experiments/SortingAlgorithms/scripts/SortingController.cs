@@ -53,7 +53,12 @@ public class SortingController : MonoBehaviour, IResetObject
     public void GoOffline()
     {
         _isOnline = false;
-        quizManager.gameObject.SetActive(false);
+        battleQuizOnline.SetActive(false);
+        if (_sortingMode == SortingMode.SM_BattleMode)
+        {
+            battleQuizOffline.SetActive(true);
+            ResetQuiz();
+        }
     }
     
     public void ResetObject()
@@ -112,7 +117,8 @@ public class SortingController : MonoBehaviour, IResetObject
         battleOptionsUi.SetActive(false);
         
         detailDescriptionUi.SetActive(true);
-        quizManager.gameObject.SetActive(false);
+        battleQuizOnline.gameObject.SetActive(false);
+        battleQuizOffline.gameObject.SetActive(false);
         ResetQuiz();
         
         battlePanels.SetActive(false);
@@ -182,7 +188,8 @@ public class SortingController : MonoBehaviour, IResetObject
     
     [SerializeField] private GameObject battleArrays;
     [SerializeField] private GameObject battleOptionsUi;
-    //[SerializeField] private GameObject battleBettingUi;
+    [SerializeField] private GameObject battleQuizOnline;
+    [SerializeField] private GameObject battleQuizOffline;
     [SerializeField] private GameObject battlePanels;
     
     [SerializeField] private BattleSorting leftBattleSorting;
@@ -201,7 +208,9 @@ public class SortingController : MonoBehaviour, IResetObject
         
         detailDescriptionUi.SetActive(false);
         if (_isOnline)
-            quizManager.gameObject.SetActive(true);
+            battleQuizOnline.SetActive(true);
+        else
+            battleQuizOffline.SetActive(true);
         
         battlePanels.SetActive(true);
         
@@ -230,16 +239,14 @@ public class SortingController : MonoBehaviour, IResetObject
     {
         leftBattleSorting.SetAlgorithm((SortingAlgorithm.SortingAlgorithmType)value);
         NewAlgorithmSelected();
-        if(_isOnline)
-            quizManager.SetLeftButtonText(GetAlgorithmName((SortingAlgorithm.SortingAlgorithmType)value));
+        quizManager.SetLeftButtonText(GetAlgorithmName((SortingAlgorithm.SortingAlgorithmType)value));
     }
     
     public void SetRightBattleAlgorithm(int value)
     {
         rightBattleSorting.SetAlgorithm((SortingAlgorithm.SortingAlgorithmType)value);
         NewAlgorithmSelected();
-        if(_isOnline)
-            quizManager.SetRightButtonText(GetAlgorithmName((SortingAlgorithm.SortingAlgorithmType)value));
+        quizManager.SetRightButtonText(GetAlgorithmName((SortingAlgorithm.SortingAlgorithmType)value));
     }
     
     public void SetArrangement(int arr)
@@ -255,8 +262,7 @@ public class SortingController : MonoBehaviour, IResetObject
         leftBattleSorting.RestoreOrder();
         rightBattleSorting.RestoreOrder();
         
-        if(_isOnline)
-            ResetQuiz();
+        ResetQuiz();
     }
     
     private void SetBattleOrder()
@@ -340,7 +346,7 @@ public class SortingController : MonoBehaviour, IResetObject
 
     private void SortingStarted()
     {
-        if(!_isOnline || _sortingMode != SortingMode.SM_BattleMode)
+        if(_sortingMode != SortingMode.SM_BattleMode)
             return;
         
         quizManager.SortingStarted();
@@ -370,7 +376,7 @@ public class SortingController : MonoBehaviour, IResetObject
 
     private void Update()
     {
-        if (_winnerEvaluated || !_isOnline)
+        if (_winnerEvaluated)
             return;
         if (_leftFinished)
         {
@@ -395,8 +401,7 @@ public class SortingController : MonoBehaviour, IResetObject
         _winnerEvaluated = false;
         _leftFinished = false;
         _rightFinished = false;
-        if(_isOnline)
-            quizManager.ResetAllChoices();
+        quizManager.ResetAllChoices();
     }
 
     #endregion
