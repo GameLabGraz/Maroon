@@ -33,7 +33,7 @@ public class PC_Tooltip : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         UpdateKey();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (_key != TooltipKey) UpdateKey();
 
