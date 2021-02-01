@@ -114,7 +114,7 @@ public class PC_SelectionHandler : MonoBehaviour
         var tooltip = ChargeButtonText.transform.parent.GetComponent<PC_Tooltip>();
         if (tooltip != null)
         {
-            tooltip.TooltipKey =
+            tooltip.tooltipKey =
                 selectedObject == null || selectedObject.type != PC_SelectScript.SelectType.ChargeSelect
                     ? "TT_ChargeAdd"
                     : "TT_ChargeDelete";
@@ -283,7 +283,7 @@ public class PC_SelectionHandler : MonoBehaviour
     public void ForceResetChargePositions()
     {
         ChargeButtonText.GetComponent<LocalizedTMP>().Key = "Button_Add";
-        ChargeButtonText.transform.parent.GetComponent<PC_Tooltip>().TooltipKey = "TT_ChargeAdd";
+        ChargeButtonText.transform.parent.GetComponent<PC_Tooltip>().tooltipKey = "TT_ChargeAdd";
 
         ChargeValueSlider.SetSliderValue(0);
         ChargeFixedPosition.isOn = false;
