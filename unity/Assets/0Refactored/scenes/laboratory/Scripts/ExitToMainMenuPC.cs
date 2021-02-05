@@ -3,7 +3,7 @@ using Util;
 
 public class ExitToMainMenuPC : MonoBehaviour
 {
-    [SerializeField] private Utilities.SceneField targetMainMenuScenePC;
+    [SerializeField] private Maroon.CustomSceneAsset targetMainMenuScenePC;
 
     private void OnTriggerStay(Collider other)
     {
