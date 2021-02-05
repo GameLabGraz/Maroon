@@ -67,15 +67,15 @@ namespace Maroon
             #if UNITY_EDITOR
                 this._currentPlatform = Maroon.Platform.Editor;
             #elif UNITY_STANDALONE_WIN
-                this.currentPlatform = Maroon.Platform.PC;
+                this._currentPlatform = Maroon.Platform.PC;
             #elif UNITY_WEBGL
-                this.currentPlatform = Maroon.Platform.WebGL;
+                this._currentPlatform = Maroon.Platform.WebGL;
             #elif UNITY_STANDALONE_OSX
-                this.currentPlatform = Maroon.Platform.Mac;
+                this._currentPlatform = Maroon.Platform.Mac;
             #elif UNITY_ANDROID
-                this.currentPlatform = Maroon.Platform.Android;
+                this._currentPlatform = Maroon.Platform.Android;
             #elif UNITY_IOS 
-                this.currentPlatform = Maroon.Platform.iOS;
+                this._currentPlatform = Maroon.Platform.iOS;
             #endif
         }
 
