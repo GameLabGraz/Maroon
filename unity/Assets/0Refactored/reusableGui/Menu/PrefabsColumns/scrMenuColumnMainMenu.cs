@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class scrMenuColumnMainMenu : MonoBehaviour
 {
@@ -11,12 +10,10 @@ public class scrMenuColumnMainMenu : MonoBehaviour
 
     private float TimeScaleRestore = 1.0f;
 
-    [SerializeField] private Utilities.SceneField targetLabScenePC;
-
-    [SerializeField] private Utilities.SceneField targetLabSceneVR;
-
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Columns
+
+    [SerializeField] private GameObject ColumnLaboratory;
 
     [SerializeField] private GameObject ColumnAudio;
 
@@ -27,7 +24,7 @@ public class scrMenuColumnMainMenu : MonoBehaviour
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Buttons
 
-    [SerializeField] private GameObject ButtonLab;
+    [SerializeField] private GameObject ButtonLaboratory;
 
     [SerializeField] private GameObject ButtonAudio;
 
@@ -43,17 +40,16 @@ public class scrMenuColumnMainMenu : MonoBehaviour
     private void Start()
     {
         // Link scrMenu
-        // TODO: This is ugly and needs to get fixed
-        this.Menu = (scrMenu) this.transform.parent.parent.parent.GetComponent(typeof(scrMenu));
+        this.Menu = FindObjectOfType<scrMenu>();
 
         // Hide exit button on WebGL
-        if(TargetPlatformDetector.targetPlatform == "webgl")
+        if(Maroon.PlatformManager.Instance.CurrentPlatform == Maroon.Platform.WebGL)
         {
             this.ButtonExit.SetActive(false);
         }
 
         // Link button actions
-        this.ButtonLab.GetComponent<Button>().onClick.AddListener(() => this.OnClickLab());
+        this.ButtonLaboratory.GetComponent<Button>().onClick.AddListener(() => this.OnClickLaboratory());
         this.ButtonAudio.GetComponent<Button>().onClick.AddListener(() => this.OnClickAudio());
         this.ButtonLanguage.GetComponent<Button>().onClick.AddListener(() => this.OnClickLanguage());
         this.ButtonCredits.GetComponent<Button>().onClick.AddListener(() => this.OnClickCredits());
@@ -72,17 +68,12 @@ public class scrMenuColumnMainMenu : MonoBehaviour
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Button Actions
 
-    private void OnClickLab()
+    private void OnClickLaboratory()
     {
-        if(TargetPlatformDetector.isVRPlatform)
-        {
-            SceneManager.LoadScene(this.targetLabSceneVR);
-        }
-
-        else
-        {
-            SceneManager.LoadScene(this.targetLabScenePC);
-        }
+        this.Menu.RemoveAllMenuColumnsButFirst();
+        this.Menu.AddMenuColumn(this.ColumnLaboratory);
+        this.ClearButtonActiveIcons();
+        this.SetButtonActiveIcon(this.ButtonLaboratory);
     }
 
     private void OnClickAudio()
@@ -117,6 +108,7 @@ public class scrMenuColumnMainMenu : MonoBehaviour
     private void ClearButtonActiveIcons()
     {
         Color clr = Color.clear;
+        this.ButtonLaboratory.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;
         this.ButtonAudio.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;
         this.ButtonLanguage.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;
         this.ButtonCredits.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;
