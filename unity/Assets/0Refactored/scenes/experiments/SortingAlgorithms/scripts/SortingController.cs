@@ -318,9 +318,9 @@ public class SortingController : MonoBehaviour, IResetObject
             case SortingAlgorithm.SortingAlgorithmType.SA_MergeSort:
                 return "Merge Sort";
             case SortingAlgorithm.SortingAlgorithmType.SA_HeapSort:
-                return "Heap Sort";
+                return "Heapsort";
             case SortingAlgorithm.SortingAlgorithmType.SA_QuickSort:
-                return "Quick Sort";
+                return "Quicksort";
             case SortingAlgorithm.SortingAlgorithmType.SA_SelectionSort:
                 return "Selection Sort";
             case SortingAlgorithm.SortingAlgorithmType.SA_BubbleSort:
@@ -330,7 +330,7 @@ public class SortingController : MonoBehaviour, IResetObject
             case SortingAlgorithm.SortingAlgorithmType.SA_RadixSort:
                 return "Radix Sort";
             case SortingAlgorithm.SortingAlgorithmType.SA_ShellSort:
-                return "Shell Sort";
+                return "Shellsort";
         }
 
         return "";
