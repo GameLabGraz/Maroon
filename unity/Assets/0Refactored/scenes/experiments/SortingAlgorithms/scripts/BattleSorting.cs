@@ -245,7 +245,23 @@ public class BattleSorting : MonoBehaviour
     #endregion
 
     #region Visualisation
+
+    public void HideAllElements()
+    {
+        foreach (var element in _elements)
+        {
+            element.Hidden = true;
+        }
+    }
     
+    public void ShowAllElements()
+    {
+        foreach (var element in _elements)
+        {
+            element.Hidden = false;
+        }
+    }
+
     private void ClearHighlights()
     {
         while (_highlightedColumns.Count > 0)
@@ -272,7 +288,7 @@ public class BattleSorting : MonoBehaviour
     private void ResetVisualization()
     {
         ClearHighlights();
-        MarkSubset(0,_size-1);
+        ShowAllElements();
     }
     
     #endregion

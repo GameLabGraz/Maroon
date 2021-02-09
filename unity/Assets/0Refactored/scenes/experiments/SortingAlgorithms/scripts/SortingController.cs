@@ -7,6 +7,7 @@ using Maroon.UI;
 using Mirror;
 using PlatformControls.PC;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = System.Random;
 
 public class SortingController : MonoBehaviour, IResetObject
@@ -343,6 +344,11 @@ public class SortingController : MonoBehaviour, IResetObject
     private bool _leftFinished;
     private bool _rightFinished;
     private bool _winnerEvaluated;
+    
+    [SerializeField] private GameObject leftBattlePanel;
+    [SerializeField] private GameObject rightBattlePanel;
+    [SerializeField] private Color defaultColor;
+    [SerializeField] private Color winColor;
 
     private void SortingStarted()
     {
@@ -383,6 +389,8 @@ public class SortingController : MonoBehaviour, IResetObject
             if (leftBattleSorting.Operations < rightBattleSorting.Operations)
             {
                 quizManager.CorrectChoice(QuizScore.QuizChoice.Left);
+                AnimateWin(leftBattleSorting);
+                leftBattlePanel.GetComponent<Image>().color = winColor;
                 _winnerEvaluated = true;
             }
         }
@@ -391,8 +399,26 @@ public class SortingController : MonoBehaviour, IResetObject
             if (rightBattleSorting.Operations < leftBattleSorting.Operations)
             {
                 quizManager.CorrectChoice(QuizScore.QuizChoice.Right);
+                AnimateWin(rightBattleSorting);
+                rightBattlePanel.GetComponent<Image>().color = winColor;
                 _winnerEvaluated = true;
             }
+        }
+    }
+
+    private void AnimateWin(BattleSorting winner)
+    {
+        StartCoroutine(WinAnimation(winner));
+    }
+
+    private IEnumerator WinAnimation(BattleSorting winner)
+    {
+        for (int i = 0; i < 5; ++i)
+        {
+            winner.HideAllElements();
+            yield return new WaitForSeconds(0.1f);
+            winner.ShowAllElements();
+            yield return new WaitForSeconds(0.1f);
         }
     }
 
@@ -401,6 +427,8 @@ public class SortingController : MonoBehaviour, IResetObject
         _winnerEvaluated = false;
         _leftFinished = false;
         _rightFinished = false;
+        leftBattlePanel.GetComponent<Image>().color = defaultColor;
+        rightBattlePanel.GetComponent<Image>().color = defaultColor;
         quizManager.ResetAllChoices();
     }
 
