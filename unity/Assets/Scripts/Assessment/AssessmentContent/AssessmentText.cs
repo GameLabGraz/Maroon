@@ -18,15 +18,15 @@ namespace Maroon.Assessment.Content
             switch (text.Type)
             {
                 case Antares.Evaluation.LearningContent.TextType.Heading:
-                    textComponent.fontSize = textComponent.resizeTextMaxSize = 36;
+                    textComponent.fontSize = textComponent.resizeTextMaxSize = 48;
                     textComponent.fontStyle = FontStyle.Bold;
                     break;
                 case Antares.Evaluation.LearningContent.TextType.Subheading:
-                    textComponent.fontSize = textComponent.resizeTextMaxSize = 28;
+                    textComponent.fontSize = textComponent.resizeTextMaxSize = 36;
                     textComponent.fontStyle = FontStyle.Bold;
                     break;
                 case Antares.Evaluation.LearningContent.TextType.Text:
-                    textComponent.fontSize = textComponent.resizeTextMaxSize = 20;
+                    textComponent.fontSize = textComponent.resizeTextMaxSize = 28;
                     break;
                 default:
                     Debug.LogWarning($"Unable to handle text type: {text.Type}");

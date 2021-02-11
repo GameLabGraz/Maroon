@@ -1,7 +1,6 @@
-﻿using System;
+﻿using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using Vector3 = UnityEngine.Vector3;
 
 public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
@@ -16,52 +15,41 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
     [Header("Other Affected GameObjects")]
     public GameObject changeLayerObject;
     
-    private Vector3 _initialPosition;
-    private Vector3 _initialMousePosition;
+    private GameObject _item;
+    private Transform _parent;
 
-    private bool _slowlyReturnToOrigin = false;
-    private Vector3 _returnDirection;
-    private float _time;
-    
-    private void Start()
+    protected void Start()
     {
         if (childObject == null)
             childObject = generatedObject;
+
+        _parent = transform.parent;
     }
 
-    private void Update()
-    {
-        if (_slowlyReturnToOrigin)
-        {
-            transform.position += Time.deltaTime * _returnDirection / returnTime;
-            _time += Time.deltaTime;
-
-            if (_time >= returnTime)
-            {
-                transform.position = _initialPosition;
-                _slowlyReturnToOrigin = false;
-            }
-        }
-    }
-    
     public void OnBeginDrag(PointerEventData eventData)
     {
-        // Debug.Log("OnBegin Drag: " + changeLayerObject);
-        _initialPosition = transform.position;
+        _item = Instantiate(gameObject, parentCanvas.transform);
+        var recTransformOrig = gameObject.GetComponent<RectTransform>();
+        var recTransform = _item.GetComponent<RectTransform>();
+
+        recTransform.sizeDelta = recTransformOrig.sizeDelta;
+        recTransform.localScale = recTransformOrig.localScale;
+
+
         if (changeLayerObject)
         {
-            // Debug.Log("Change Layer: " + changeLayerObject);
-
-            changeLayerObject.layer = 0; //Default Layer
+            changeLayerObject.layer = 0;
         }
     }
     
     public void OnDrag(PointerEventData eventData)
     {
+        //_item.transform.parent = parentCanvas.transform;
+
         var screenPoint = Input.mousePosition;
         var finish = parentCanvas.worldCamera.ScreenToWorldPoint(screenPoint);
         finish.z = 0f;
-        transform.position = finish;
+        _item.transform.position = finish;
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -69,29 +57,20 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         var hits = Physics.RaycastAll(ray, 100f);
 
-        var hitVectorField = false;
         foreach (var hit in hits)
         {
-            // Debug.Log("Hit " + hit.transform.tag + " - " + hit.transform.gameObject.name);
             if(!hit.transform.CompareTag("VectorField"))
                 continue;
 
-            hitVectorField = true;
             ShowObject(hit.point, hit.transform.parent);
-            transform.position = _initialPosition;
         }
 
-        if (!hitVectorField)
-        {
-            _slowlyReturnToOrigin = true;
-            _time = 0f;
-            _returnDirection = _initialPosition - transform.position;
-        }
-        
         if (changeLayerObject)
         {
             changeLayerObject.layer = 2; //IgnoreRaycast
         }
+
+        Destroy(_item);
     }
     
     public virtual void SetObjectToOrigin()
@@ -108,7 +87,6 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
     protected virtual void ShowObject(Vector3 position, Transform parent)
     {
         if (generatedObject == null) return;
-//        var obj = Instantiate(generatedObject, position, Quaternion.identity, parent);
 
         childObject.transform.parent = parent;
         generatedObject.transform.position = position;

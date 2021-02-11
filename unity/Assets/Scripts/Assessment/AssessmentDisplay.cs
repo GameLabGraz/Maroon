@@ -9,9 +9,9 @@ namespace Maroon.Assessment
     {
         private SynchronizationContext syncContext;
 
-        protected override void Start()
+        protected override void Awake()
         {
-            base.Start();
+            base.Awake();
             syncContext = SynchronizationContext.Current;
         }
 

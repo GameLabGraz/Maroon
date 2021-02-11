@@ -1,11 +1,10 @@
-﻿
-using Antares.Evaluation;
+﻿using Antares.Evaluation;
 using Maroon.UI;
 using UnityEngine;
 
 namespace Maroon.Assessment.Handler
 {
-    public class AssessmentFeedbackHandler : MonoBehaviour
+    public abstract class AssessmentFeedbackHandler : MonoBehaviour
     {
         private DialogueManager dialogue;
         private AssessmentDisplay display;
@@ -25,7 +24,7 @@ namespace Maroon.Assessment.Handler
               HandleFeedbackCommand(feedbackCommand);
         }
 
-        private void HandleFeedbackCommand(FeedbackCommand feedbackCommand)
+        protected void HandleFeedbackCommand(FeedbackCommand feedbackCommand)
         {
             switch (feedbackCommand)
             {
@@ -34,6 +33,9 @@ namespace Maroon.Assessment.Handler
                   break;
                 case DisplaySlide displaySlide:
                     HandleDisplaySlide(displaySlide);
+                    break;
+                case ManipulateObject manipulateObject:
+                    HandleObjectManipulation(manipulateObject);
                     break;
                 default:
                     Debug.LogWarning(
@@ -49,16 +51,20 @@ namespace Maroon.Assessment.Handler
             switch (displayTextMessage.Type)
             {
                 case FeedbackType.Success:
-                    message.Color = Color.green;
+                    message.Color = new Color(0f, 0.6f, 0f);
+                    message.Icon = MessageIcon.MI_Ok;
                     break;
                 case FeedbackType.Hint:
                     message.Color = Color.black;
+                    message.Icon = MessageIcon.MI_Hint;
                     break;
                 case FeedbackType.Warning:
-                    message.Color = Color.yellow;
+                    message.Color = new Color(0.8f, 0.5f, 0f);
+                    message.Icon = MessageIcon.MI_Warning;
                     break;
                 case FeedbackType.Mistake:
-                    message.Color = Color.red;
+                    message.Color = new Color(0.8f, 0f, 0f);
+                    message.Icon = MessageIcon.MI_Error;
                     break;
                 default:
                     Debug.LogWarning($"AssessmentFeedbackHandler::HandleDisplayTextMessage: Unknown Feedback Type {displayTextMessage.Type}");
@@ -67,9 +73,59 @@ namespace Maroon.Assessment.Handler
             dialogue.ShowMessage(message);
         }
 
+        private void HandleObjectManipulation(ManipulateObject manipulateObject)
+        {
+            AssessmentObject assessmentObject;
+
+            switch (manipulateObject.UpdateType)
+            {
+                case ObjectUpdateType.Create:
+                    assessmentObject = HandleObjectCreation(manipulateObject);
+                    HandleObjectUpdate(assessmentObject, manipulateObject);
+                    break;
+                
+                case ObjectUpdateType.Update:
+                    assessmentObject = AssessmentManager.Instance?.GetObject(manipulateObject.ID);
+                    HandleObjectUpdate(assessmentObject, manipulateObject);
+                    break;
+
+                case ObjectUpdateType.Destroy:
+                    assessmentObject = AssessmentManager.Instance?.GetObject(manipulateObject.ID);
+                    HandleObjectDelete(assessmentObject);
+                    break;
+                
+                default:
+                    Debug.LogWarning($"AssessmentFeedbackHandler::HandleObjectManipulation: Unknown Object Update Type {manipulateObject.UpdateType}");
+                    break;
+            }
+        }
+
         private void HandleDisplaySlide(DisplaySlide displaySlide)
         {
             display.LoadSlide(displaySlide.Slide);
+        }
+
+        private void HandleObjectUpdate(AssessmentObject obj, ManipulateObject manipulateObject)
+        {
+            if (obj == null) return;
+
+            foreach (var dataUpdate in manipulateObject.DataUpdates)
+            {
+                if (dataUpdate.UpdateType != DataUpdateType.SetValue) continue;
+
+                var watchValue = obj.GetWatchValue(dataUpdate.PropertyName);
+                watchValue?.SystemSetsQuantity(dataUpdate.Value.ToUnityValue());
+            }
+        }
+
+        protected virtual AssessmentObject HandleObjectCreation(ManipulateObject manipulateObject)
+        {
+            return null;
+        }
+        
+        protected virtual void HandleObjectDelete(AssessmentObject obj)
+        {
+            Destroy(obj.gameObject);
         }
     }
 }
