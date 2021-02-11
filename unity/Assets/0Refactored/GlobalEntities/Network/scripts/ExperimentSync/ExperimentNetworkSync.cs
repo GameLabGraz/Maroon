@@ -21,14 +21,14 @@ public class ExperimentNetworkSync : NetworkBehaviour
         }
     }
 
-    private void OnEnable()
+    protected virtual void OnEnable()
     {
         if (MaroonNetworkManager.Instance == null)
             return;
         AddListeners();
     }
 
-    private void OnDisable()
+    protected virtual void OnDisable()
     {
         if (MaroonNetworkManager.Instance == null)
             return;
