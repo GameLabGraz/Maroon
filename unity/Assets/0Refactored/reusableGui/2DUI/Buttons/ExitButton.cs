@@ -5,7 +5,7 @@ public class ExitButton : EnterScene
 {
     private void Start()
     {
-        var laboratoryScene = SceneManager.GetSceneByName("Laboratory.pc");
-        gameObject.SetActive(laboratoryScene.IsValid());
+        var sceneIndex = SceneUtility.GetBuildIndexByScenePath("Laboratory.pc");
+        gameObject.SetActive(sceneIndex >= 0);
     }
 }

@@ -31,7 +31,7 @@ namespace Maroon.Build
 
         private const string ScenePath      = "Assets/0Refactored/scenes";
         private const string LabPath        = ScenePath + "/laboratory";
-        private const string MenuPath       = ScenePath + "/menu";
+        private const string SpecialPath    = ScenePath + "/special";
         private const string ExperimentPath = ScenePath + "/experiments";
 
         private const string PcExtension = ".pc.unity";
@@ -48,55 +48,55 @@ namespace Maroon.Build
         // #############################################################################################################
         // Editor Build Methods
 
-        [MenuItem("Build/Build Laboratory for Platform/Build PC")]
+        [MenuItem("Build/Conventional Maroon/PC")]
         public static void BuildLaboratoryPC()
         {
-            BuildLaboratory(MaroonBuildTarget.PC);
+            BuildConventionalMaroon(MaroonBuildTarget.PC);
         }
 
-        [MenuItem("Build/Build Laboratory for Platform/Build MAC")]
-        public static void BuildLaboratoryMAC()
-        {
-            BuildLaboratory(MaroonBuildTarget.MAC);
-        }
-
-        [MenuItem("Build/Build Laboratory for Platform/Build VR")]
+        [MenuItem("Build/Conventional Maroon/PC VR")]
         public static void BuildLaboratoryVR()
         {
-            BuildLaboratory(MaroonBuildTarget.VR);
+            BuildConventionalMaroon(MaroonBuildTarget.VR);
         }
 
-        [MenuItem("Build/Build Laboratory for Platform/Build WebGL")]
+        [MenuItem("Build/Conventional Maroon/Mac")]
+        public static void BuildLaboratoryMAC()
+        {
+            BuildConventionalMaroon(MaroonBuildTarget.MAC);
+        }
+
+        [MenuItem("Build/Conventional Maroon/WebGL")]
         public static void BuildLaboratoryWebGL()
         {
-            BuildLaboratory(MaroonBuildTarget.WebGL);
+            BuildConventionalMaroon(MaroonBuildTarget.WebGL);
         }
 
-        [MenuItem("Build/Build Experiments for Platform/Build PC")]
+        [MenuItem("Build/Standalone Experiments/PC")]
         public static void BuildExperimentsPC()
         {
-            BuildExperiments(MaroonBuildTarget.PC);
+            BuildStandaloneExperiments(MaroonBuildTarget.PC);
         }
 
-        [MenuItem("Build/Build Experiments for Platform/Build MAC")]
-        public static void BuildExperimentsMAC()
-        {
-            BuildExperiments(MaroonBuildTarget.MAC);
-        }
-
-        [MenuItem("Build/Build Experiments for Platform/Build VR")]
+        [MenuItem("Build/Standalone Experiments/PC VR")]
         public static void BuildExperimentsVR()
         {
-            BuildExperiments(MaroonBuildTarget.MAC);
+            BuildStandaloneExperiments(MaroonBuildTarget.MAC);
         }
 
-        [MenuItem("Build/Build Experiments for Platform/Build WebGL")]
+        [MenuItem("Build/Standalone Experiments/Mac")]
+        public static void BuildExperimentsMAC()
+        {
+            BuildStandaloneExperiments(MaroonBuildTarget.MAC);
+        }
+
+        [MenuItem("Build/Standalone Experiments/WebGL")]
         public static void BuildExperimentsWebGL()
         {
-            BuildExperiments(MaroonBuildTarget.WebGL);
+            BuildStandaloneExperiments(MaroonBuildTarget.WebGL);
         }
 
-        [MenuItem("Build/Build All")]
+        [MenuItem("Build/All Platforms, Conventional and Standalone")]
         public static void BuildAll()
         {
             var buildPath = EditorUtility.SaveFolderPanel("Choose Build Location", string.Empty, "Build");
@@ -108,15 +108,15 @@ namespace Maroon.Build
 
             foreach (var buildTarget in (MaroonBuildTarget[])Enum.GetValues(typeof(MaroonBuildTarget)))
             {
-                BuildLaboratory(buildTarget, $"{buildPath}/Laboratory");
-                BuildExperiments(buildTarget, $"{buildPath}/Experiments");
+                BuildConventionalMaroon(buildTarget, $"{buildPath}/Laboratory");
+                BuildStandaloneExperiments(buildTarget, $"{buildPath}/Experiments");
             }
         }
 
         // #############################################################################################################
         // Build Methods
 
-        private static void BuildLaboratory(MaroonBuildTarget buildTarget, string buildPath = null)
+        private static void BuildConventionalMaroon(MaroonBuildTarget buildTarget, string buildPath = null)
         {
             if(string.IsNullOrEmpty(buildPath))
             {
@@ -167,7 +167,7 @@ namespace Maroon.Build
             SetPlayerSettings(defaultPlayerSettings);
         }
 
-        private static void BuildExperiments(MaroonBuildTarget buildTarget, string buildPath = null)
+        private static void BuildStandaloneExperiments(MaroonBuildTarget buildTarget, string buildPath = null)
         {
             if (string.IsNullOrEmpty(buildPath))
             {
@@ -253,8 +253,8 @@ namespace Maroon.Build
             // run build for each build target
             foreach(var buildTarget in (MaroonBuildTarget[])Enum.GetValues(typeof(MaroonBuildTarget)))
             {
-                BuildLaboratory(buildTarget, $"{buildPath}/Laboratory");
-                BuildExperiments(buildTarget, $"{buildPath}/Experiments");
+                BuildConventionalMaroon(buildTarget, $"{buildPath}/Laboratory");
+                BuildStandaloneExperiments(buildTarget, $"{buildPath}/Experiments");
             }
         }
 
@@ -272,11 +272,16 @@ namespace Maroon.Build
             
             var scenes = new List<string>();
 
-            // TODO: If VR Main Menu ready, remove if, just disables main menu for VR 
-            if(sceneExtension == PcExtension) 
-            {
-                scenes.Add($"{MenuPath}/MainMenu{sceneExtension}");
-            }
+            // Add Bootstrapping
+            scenes.Add($"{SpecialPath}/Bootstrapping{sceneExtension}");
+
+            // Add Loading
+            // TODO
+
+            // Add main menu
+            scenes.Add($"{SpecialPath}/MainMenu{sceneExtension}");
+            
+            // Add laboratory
             scenes.Add($"{LabPath}/Laboratory{sceneExtension}");
 
             var experiments = Directory.GetFiles(ExperimentPath, $"*{sceneExtension}", SearchOption.AllDirectories);
