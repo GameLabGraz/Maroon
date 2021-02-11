@@ -8,6 +8,8 @@ namespace PlatformControls.PC
 {
     public class PC_LocalizedDropDown : Dropdown, IResetObject
     {
+        public bool allowReset = true;
+        
         private int _startValue;
         private List<OptionData> _keys;
 
@@ -45,7 +47,8 @@ namespace PlatformControls.PC
 
         public void ResetObject()
         {
-            value = _startValue;
+            if(allowReset)
+                value = _startValue;
         }
     }
 }

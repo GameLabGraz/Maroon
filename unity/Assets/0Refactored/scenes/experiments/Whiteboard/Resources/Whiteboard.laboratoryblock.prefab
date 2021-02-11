@@ -232,6 +232,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -245,6 +246,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -343,6 +345,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -356,6 +359,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -384,6 +388,22 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4109133658017454, guid: fd4627f046664a148bf225c3c790da09, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4109133658017454, guid: fd4627f046664a148bf225c3c790da09, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4109133658017454, guid: fd4627f046664a148bf225c3c790da09, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4109133658017454, guid: fd4627f046664a148bf225c3c790da09, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4109133658017454, guid: fd4627f046664a148bf225c3c790da09, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.5
       objectReference: {fileID: 0}
@@ -394,6 +414,10 @@ PrefabInstance:
     - target: {fileID: 4109133658017454, guid: fd4627f046664a148bf225c3c790da09, type: 3}
       propertyPath: m_LocalPosition.z
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4109133658017454, guid: fd4627f046664a148bf225c3c790da09, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4109133658017454, guid: fd4627f046664a148bf225c3c790da09, type: 3}
       propertyPath: m_LocalRotation.x
@@ -408,14 +432,6 @@ PrefabInstance:
       value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4109133658017454, guid: fd4627f046664a148bf225c3c790da09, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4109133658017454, guid: fd4627f046664a148bf225c3c790da09, type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4109133658017454, guid: fd4627f046664a148bf225c3c790da09, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: -90
       objectReference: {fileID: 0}
@@ -426,18 +442,6 @@ PrefabInstance:
     - target: {fileID: 4109133658017454, guid: fd4627f046664a148bf225c3c790da09, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 4109133658017454, guid: fd4627f046664a148bf225c3c790da09, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 4109133658017454, guid: fd4627f046664a148bf225c3c790da09, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 4109133658017454, guid: fd4627f046664a148bf225c3c790da09, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 114194629475408670, guid: fd4627f046664a148bf225c3c790da09,
         type: 3}
@@ -461,15 +465,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4551172655252542898, guid: fd4627f046664a148bf225c3c790da09,
         type: 3}
+      propertyPath: targetScenePC.sceneName
+      value: 0Refactored/scenes/experiments/Whiteboard/Whiteboard.pc
+      objectReference: {fileID: 0}
+    - target: {fileID: 4551172655252542898, guid: fd4627f046664a148bf225c3c790da09,
+        type: 3}
+      propertyPath: targetSceneVR.sceneName
+      value: 0Refactored/scenes/experiments/Whiteboard/Whiteboard.vr
+      objectReference: {fileID: 0}
+    - target: {fileID: 4551172655252542898, guid: fd4627f046664a148bf225c3c790da09,
+        type: 3}
       propertyPath: targetScenePC.sceneAsset
       value: 
       objectReference: {fileID: 102900000, guid: 2b63e5622538792419faf0a10b89d0a9,
         type: 3}
-    - target: {fileID: 4551172655252542898, guid: fd4627f046664a148bf225c3c790da09,
-        type: 3}
-      propertyPath: targetScenePC.sceneName
-      value: 0Refactored/scenes/experiments/Whiteboard/Whiteboard.pc
-      objectReference: {fileID: 0}
     - target: {fileID: 4551172655252542898, guid: fd4627f046664a148bf225c3c790da09,
         type: 3}
       propertyPath: targetSceneVR.sceneAsset
@@ -478,7 +487,12 @@ PrefabInstance:
         type: 3}
     - target: {fileID: 4551172655252542898, guid: fd4627f046664a148bf225c3c790da09,
         type: 3}
-      propertyPath: targetSceneVR.sceneName
+      propertyPath: targetLabScenePC.sceneName
+      value: 0Refactored/scenes/experiments/Whiteboard/Whiteboard.pc
+      objectReference: {fileID: 0}
+    - target: {fileID: 4551172655252542898, guid: fd4627f046664a148bf225c3c790da09,
+        type: 3}
+      propertyPath: targetLabSceneVR.sceneName
       value: 0Refactored/scenes/experiments/Whiteboard/Whiteboard.vr
       objectReference: {fileID: 0}
     - target: {fileID: 4551172655252542898, guid: fd4627f046664a148bf225c3c790da09,
@@ -489,19 +503,46 @@ PrefabInstance:
         type: 3}
     - target: {fileID: 4551172655252542898, guid: fd4627f046664a148bf225c3c790da09,
         type: 3}
-      propertyPath: targetLabScenePC.sceneName
-      value: 0Refactored/scenes/experiments/Whiteboard/Whiteboard.pc
-      objectReference: {fileID: 0}
-    - target: {fileID: 4551172655252542898, guid: fd4627f046664a148bf225c3c790da09,
-        type: 3}
       propertyPath: targetLabSceneVR.sceneAsset
       value: 
       objectReference: {fileID: 102900000, guid: 1fdf8ac04763f4d6aa353fac03ca9a6b,
         type: 3}
     - target: {fileID: 4551172655252542898, guid: fd4627f046664a148bf225c3c790da09,
         type: 3}
-      propertyPath: targetLabSceneVR.sceneName
+      propertyPath: targetLabScenePC.unitySceneName
+      value: Whiteboard.pc
+      objectReference: {fileID: 0}
+    - target: {fileID: 4551172655252542898, guid: fd4627f046664a148bf225c3c790da09,
+        type: 3}
+      propertyPath: targetLabScenePC.unityScenePath
+      value: 0Refactored/scenes/experiments/Whiteboard/Whiteboard.pc
+      objectReference: {fileID: 0}
+    - target: {fileID: 4551172655252542898, guid: fd4627f046664a148bf225c3c790da09,
+        type: 3}
+      propertyPath: targetLabSceneVR.unitySceneName
+      value: Whiteboard.vr
+      objectReference: {fileID: 0}
+    - target: {fileID: 4551172655252542898, guid: fd4627f046664a148bf225c3c790da09,
+        type: 3}
+      propertyPath: targetLabSceneVR.unityScenePath
       value: 0Refactored/scenes/experiments/Whiteboard/Whiteboard.vr
+      objectReference: {fileID: 0}
+    - target: {fileID: 4551172655252542898, guid: fd4627f046664a148bf225c3c790da09,
+        type: 3}
+      propertyPath: targetLabScenePC.unitySceneAsset
+      value: 
+      objectReference: {fileID: 102900000, guid: 2b63e5622538792419faf0a10b89d0a9,
+        type: 3}
+    - target: {fileID: 4551172655252542898, guid: fd4627f046664a148bf225c3c790da09,
+        type: 3}
+      propertyPath: targetLabSceneVR.unitySceneAsset
+      value: 
+      objectReference: {fileID: 102900000, guid: 1fdf8ac04763f4d6aa353fac03ca9a6b,
+        type: 3}
+    - target: {fileID: 4551172655252542898, guid: fd4627f046664a148bf225c3c790da09,
+        type: 3}
+      propertyPath: targetLabSceneVR.isVirtualRealityScene
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8946062922979563800, guid: fd4627f046664a148bf225c3c790da09,
         type: 3}
@@ -519,6 +560,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4422255420666329435, guid: df0929cddac4dad4d88ecf95d68e624c,
         type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4422255420666329435, guid: df0929cddac4dad4d88ecf95d68e624c,
+        type: 3}
       propertyPath: m_LocalPosition.x
       value: -4.5
       objectReference: {fileID: 0}
@@ -534,6 +580,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4422255420666329435, guid: df0929cddac4dad4d88ecf95d68e624c,
         type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.92387956
+      objectReference: {fileID: 0}
+    - target: {fileID: 4422255420666329435, guid: df0929cddac4dad4d88ecf95d68e624c,
+        type: 3}
       propertyPath: m_LocalRotation.x
       value: -0
       objectReference: {fileID: 0}
@@ -546,16 +597,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalRotation.z
       value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4422255420666329435, guid: df0929cddac4dad4d88ecf95d68e624c,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.92387956
-      objectReference: {fileID: 0}
-    - target: {fileID: 4422255420666329435, guid: df0929cddac4dad4d88ecf95d68e624c,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4422255420666329435, guid: df0929cddac4dad4d88ecf95d68e624c,
         type: 3}
@@ -588,6 +629,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1314407336411190633, guid: 127261d1e2cccad40a9e5cc2dbfe2577,
         type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1314407336411190633, guid: 127261d1e2cccad40a9e5cc2dbfe2577,
+        type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -603,6 +649,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1314407336411190633, guid: 127261d1e2cccad40a9e5cc2dbfe2577,
         type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1314407336411190633, guid: 127261d1e2cccad40a9e5cc2dbfe2577,
+        type: 3}
       propertyPath: m_LocalRotation.x
       value: 0
       objectReference: {fileID: 0}
@@ -614,16 +665,6 @@ PrefabInstance:
     - target: {fileID: 1314407336411190633, guid: 127261d1e2cccad40a9e5cc2dbfe2577,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1314407336411190633, guid: 127261d1e2cccad40a9e5cc2dbfe2577,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1314407336411190633, guid: 127261d1e2cccad40a9e5cc2dbfe2577,
-        type: 3}
-      propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1314407336411190633, guid: 127261d1e2cccad40a9e5cc2dbfe2577,
@@ -644,7 +685,7 @@ PrefabInstance:
     - target: {fileID: 6853005819187452173, guid: 127261d1e2cccad40a9e5cc2dbfe2577,
         type: 3}
       propertyPath: m_Name
-      value: ExperimentPreviewWhiteboard
+      value: Whiteboard.laboratoryblock
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 127261d1e2cccad40a9e5cc2dbfe2577, type: 3}
