@@ -1,15 +1,17 @@
 ﻿using UnityEngine;
+using Util;
 
 public class ExitToMainMenuPC : MonoBehaviour
 {
-    [SerializeField] private Utilities.SceneField targetMainMenuScenePC;
+    [SerializeField] private Maroon.CustomSceneAsset targetMainMenuScenePC;
 
-    private void OnTriggerStay()
+    private void OnTriggerStay(Collider other)
     {
         // TODO: Use inputmap instead
+        if (!PlayerUtil.IsPlayer(other.gameObject))
+            return;
+
         if (Input.GetKey(KeyCode.Return))
-        {
-            UnityEngine.SceneManagement.SceneManager.LoadScene(this.targetMainMenuScenePC);
-        }
+            MaroonNetworkManager.Instance.EnterScene(this.targetMainMenuScenePC);
     }
 }

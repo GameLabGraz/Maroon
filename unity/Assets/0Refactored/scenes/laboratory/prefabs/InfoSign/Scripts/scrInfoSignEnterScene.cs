@@ -7,16 +7,13 @@ public class scrInfoSignEnterScene : MonoBehaviour
 {
     // #################################################################################################################
     // Members
-    [SerializeField] private Utilities.SceneField targetLabScenePC;
-    [SerializeField] private Utilities.SceneField targetLabSceneVR;
-    private Utilities.SceneField targetScene;
+    [SerializeField] private Maroon.CustomSceneAsset targetLabScenePC;
+    [SerializeField] private Maroon.CustomSceneAsset targetLabSceneVR;
+    private Maroon.CustomSceneAsset targetScene;
 
     // Settings
     [SerializeField] private Color highlightColor;
     [SerializeField] private GameObject highlightMesh;
-
-    // Detected scene type
-    private string detectedSceneType = "other";
 
     // #################################################################################################################
     // Methods
@@ -24,28 +21,26 @@ public class scrInfoSignEnterScene : MonoBehaviour
     // Load new scene
     public void EnterScene()
     {
-        SceneManager.LoadScene(this.targetScene);
+        //SceneManager.LoadScene(this.targetScene);
+        // TODO: Use SceneManager instead
+        MaroonNetworkManager.Instance.EnterScene(this.targetScene);
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        // TODO: Use TargetPlatformDetector
         // Detect Scene type
-        string sceneName = SceneManager.GetActiveScene().name;
-        if(sceneName.Contains(".pc"))
+        if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
         {
-            this.detectedSceneType = "pc";
-            this.targetScene = targetLabScenePC;
-        }
-        else if(sceneName.Contains(".vr"))
-        {
-            this.detectedSceneType = "vr";
             this.targetScene = targetLabSceneVR;
         }
-
+        else
+        {
+            this.targetScene = targetLabScenePC;
+        }
+        
         // Prepare scene for VR entering
-        if(this.detectedSceneType == "vr")
+        if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
         {
             // Highlighter
             var highlighter = this.gameObject.AddComponent<VRTK_InteractObjectHighlighter>();
@@ -62,7 +57,7 @@ public class scrInfoSignEnterScene : MonoBehaviour
     // PC enter scene
     private void OnTriggerStay(Collider other)
     {
-        if(this.detectedSceneType == "pc")
+        if(!(Maroon.PlatformManager.Instance.CurrentPlatformIsVR))
         {
             if (!PlayerUtil.IsPlayer(other.gameObject))
                 return;

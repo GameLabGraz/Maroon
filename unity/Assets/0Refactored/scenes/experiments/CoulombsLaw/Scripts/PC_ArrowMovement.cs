@@ -130,11 +130,11 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
         if (!Physics.Raycast(ray, out hitInfo) || !Input.GetMouseButtonDown(0)) return;
         
         var hitCollider = hitInfo.collider;
-        if ((hitCollider == _arrowXPositive.GetComponent<Collider>() || hitCollider == _arrowXNegative.GetComponent<Collider>()) && !restrictXMovement)
+        if ((hitCollider == _arrowXPositive.GetComponent<Collider>() || _arrowXNegative && hitCollider == _arrowXNegative.GetComponent<Collider>()) && !restrictXMovement)
             _movingDirection = Vector3.right;
-        else if ((hitCollider == _arrowYPositive.GetComponent<Collider>() || hitCollider == _arrowYNegative.GetComponent<Collider>()) && !restrictYMovement)
+        else if ((hitCollider == _arrowYPositive.GetComponent<Collider>() || _arrowYNegative && hitCollider == _arrowYNegative.GetComponent<Collider>()) && !restrictYMovement)
             _movingDirection = Vector3.up;
-        else if ((hitCollider == _arrowZPositive.GetComponent<Collider>() || hitCollider == _arrowZNegative.GetComponent<Collider>()) && !restrictZMovement)
+        else if ((hitCollider == _arrowZPositive.GetComponent<Collider>() || _arrowZNegative && hitCollider == _arrowZNegative.GetComponent<Collider>()) && !restrictZMovement)
             _movingDirection = Vector3.forward;
         else return;
         

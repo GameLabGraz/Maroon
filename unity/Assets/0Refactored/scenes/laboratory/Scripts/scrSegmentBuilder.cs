@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class scrSegmentBuilder : MonoBehaviour
@@ -15,8 +16,17 @@ public class scrSegmentBuilder : MonoBehaviour
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Previews
 
-    // Experiment previews to be displayed
-    public GameObject[] prefabsExperimentPreview;
+    /// <summary>
+    ///     Laboratory block to be displayed if no laboratory block can be found.
+    /// </summary>
+    [SerializeField] private GameObject defaultLaboratoryBlock;
+
+
+    /// <summary>
+    ///     Laboratory blocks (aka previews of experiments in the lab) to be displayed. Generated on Start() based on
+    ///     currently active scene category.
+    /// </summary>
+    private List<GameObject> laboratoryBlocks = new List<GameObject>();
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Given Segments
@@ -55,6 +65,32 @@ public class scrSegmentBuilder : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // Reset laboratory blocks
+        this.laboratoryBlocks.Clear();
+
+        // TODO: This needs to be refactored, done by player
+        Maroon.GameManager.Instance.enteringLab();
+
+        // Get scenes to select new laboratory blocks
+        Maroon.CustomSceneAsset[] scenes = Maroon.SceneManager.Instance.ActiveSceneCategory.Scenes;
+
+        // Get new laboratory blocks
+        for(int iScenes = 0; iScenes < scenes.Length; iScenes++)
+        {
+            string laboratoryBlockName = scenes[iScenes].SceneNameWithoutPlatformExtension + ".laboratoryblock";
+            GameObject loadedObject = Resources.Load(laboratoryBlockName) as GameObject;
+            if(loadedObject == null)
+            {
+                this.laboratoryBlocks.Add(this.defaultLaboratoryBlock);
+                Debug.Log("No laboratoryblock available for: " + laboratoryBlockName);
+            }
+            else
+            {
+                this.laboratoryBlocks.Add(loadedObject);
+            }
+        }
+
+        // Build laboratory segments
         StartCoroutine(this.BuildAllSegments());
     }
 
@@ -63,7 +99,7 @@ public class scrSegmentBuilder : MonoBehaviour
     public IEnumerator BuildAllSegments()
     {
         // Calculate number of segments to be generated
-        this.numberSegmentsTotal = Mathf.CeilToInt(this.prefabsExperimentPreview.Length / 2.0F);
+        this.numberSegmentsTotal = Mathf.CeilToInt(this.laboratoryBlocks.Count / 2.0F);
 
         // Hide segment end
         this.staticSegmentEnd.SetActive(false);
@@ -72,17 +108,17 @@ public class scrSegmentBuilder : MonoBehaviour
         while(this.numberDynamicSegments < numberSegmentsTotal)
         {
             // If 2 or more previews left
-            if((this.prefabsExperimentPreview.Length - (this.numberDynamicSegments * 2)) >= 2)
+            if((this.laboratoryBlocks.Count - (this.numberDynamicSegments * 2)) >= 2)
             {
-                this.AddSegment(this.prefabsExperimentPreview[this.numberDynamicSegments * 2],
-                                this.prefabsExperimentPreview[this.numberDynamicSegments * 2 + 1],
+                this.AddSegment(this.laboratoryBlocks[this.numberDynamicSegments * 2],
+                                this.laboratoryBlocks[this.numberDynamicSegments * 2 + 1],
                                 this.animate);
             }
 
             // If one preview left
             else
             {
-                this.AddSegment(this.prefabsExperimentPreview[this.numberDynamicSegments * 2],
+                this.AddSegment(this.laboratoryBlocks[this.numberDynamicSegments * 2],
                                 this.prefabEmptyPreview,
                                 this.animate);                
             }

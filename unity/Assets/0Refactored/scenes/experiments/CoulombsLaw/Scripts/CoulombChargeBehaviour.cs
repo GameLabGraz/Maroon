@@ -19,17 +19,40 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
     [SerializeField]
     private Material highlightMaterial;
 
-    [Header("Particle Settings")]
-    [Tooltip("Sets the charge value of the Charge. This should be a value between -10 and 10 micro Coulomb.")]
-
+    [Header("Assessment System")]
     [SerializeField]
-    private QuantityFloat charge = 0.0f;
+    [Tooltip("Sets the charge value of the Charge. This should be a value between -10 and 10 micro Coulomb.")]
+    public QuantityFloat charge = 0.0f;
+    public QuantityString chargeUnit = "nC";
+    public QuantityBool isVisible = true;
+
     public float Charge
     {
         get => charge;
-        set => charge.Value = value;
+        set
+        {
+            charge.Value = value;
+            chargeUnit.Value = "nC";
+        }
     }
 
+    public float ChargeValue => Charge * ChargeUnit;
+
+    public float ChargeUnit
+    {
+        get
+        {
+            switch (chargeUnit)
+            {
+                case "mC": return 1e-3f;
+                case "µC": return 1e-6f;
+                case "nC": return 1e-9f;
+                default: return 1f;
+            }
+        }
+    }
+
+    [Header("Particle Settings")]
     [SerializeField]
     private float maxChargeValue = 5f;
 
@@ -38,7 +61,7 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
 
     public float radius = 0.7022421f;
     [Tooltip("Tells whether the charge moves or has a fixed position.")]
-    public bool fixedPosition = false;
+    public QuantityBool fixedPosition = false;
     
     [Header("Movement Settings")]
     public bool pauseSimulationWhileMoving = true;
@@ -51,9 +74,8 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
     private int _collided = 0;
 
     private CoulombLogic _coulombLogic;
+    private const float CoulombConstant = 1f / (4 * Mathf.PI * 8.8542e-12f);
 
-    private static readonly float CoulombConstant = 9f * Mathf.Pow(10f, 9f); // 1f / (Mathf.PI * 8.8542e-12f);
-    
     //VR Specific
     public bool _inUse = false;
     public int inUseLayer = -1;
@@ -72,6 +94,8 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
     {
         _particleBaseRenderer = particleBase.GetComponent<MeshRenderer>();
         charge.onValueChanged.AddListener(OnChargeValueChangeHandler);
+        fixedPosition.onValueChanged.AddListener((value) => particleFixingRing.SetActive(value));
+        isVisible.onValueChanged.AddListener(ChangeVisibility);
         _layer = gameObject.layer;
 
         Init();
@@ -93,6 +117,12 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
             transform.localRotation = Quaternion.Euler(0, 0, 0);
             GetComponent<Rigidbody>().constraints |= RigidbodyConstraints.FreezePositionZ;
         }
+    }
+
+    private void GetCoulombLogic()
+    {
+        var obj = GameObject.Find("CoulombLogic");
+        if (obj) _coulombLogic = obj.GetComponent<CoulombLogic>();
     }
 
     private void Update()
@@ -155,8 +185,7 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
 
     public void SetFixedPosition(bool isPositionFixed)
     {
-        fixedPosition = isPositionFixed;
-        particleFixingRing.SetActive(fixedPosition);
+        fixedPosition.Value = isPositionFixed;
     }
 
     public void SetPosition(Vector3 newPosition)
@@ -168,12 +197,14 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
     public void UpdateResetPosition()
     {
         _resetPosition = transform.localPosition;
+        //Debug.Log("Update Reset Position: " + _resetPosition + " (" + gameObject.name + ")");
     }
 
     public void ResetObject()
     {
         transform.localPosition = _resetPosition;
     }
+    
     
     public void CalculatedPosition(Vector3 calculatedPosition)
     {
@@ -205,20 +236,20 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
         if (Mathf.Abs(Charge) < 0.0001f) return Vector3.zero;
         var distance = _coulombLogic.WorldToCalcSpace(Vector3.Distance(transform.position, position)); //TODO: radius???
         var dir = (position - transform.position).normalized;
-        var potential = CoulombConstant * Charge * Mathf.Pow(10f, -6f) / Mathf.Pow(distance, 2f);
+        var potential = CoulombConstant * ChargeValue / Mathf.Pow(distance, 2f);
         return potential * dir;
     }
 
     public float getEFlux(Vector3 position)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     public float getEPotential(Vector3 position)
     {
         if (Mathf.Abs(Charge) < 0.0001f) return 0f;
         var distance = _coulombLogic.WorldToCalcSpace(Vector3.Distance(transform.position, position)); //TODO: radius???
-        var potential = CoulombConstant * Charge * Mathf.Pow(10f, -6f) / Mathf.Pow(distance, 2f);
+        var potential = CoulombConstant * ChargeValue / distance;
         return potential;
     }
     
@@ -234,15 +265,16 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
 
     public void MovementEndOutsideBoundaries()
     {
+        Debug.Log("End outside Boundary");
         if (!deleteIfOutsideBoundaries) return;
         _coulombLogic.RemoveParticle(this, true);
-        SimulationController.Instance.ResetSimulation();
+        //SimulationController.Instance.ResetSimulation();
     }
     
     public void MovementEndInsideBoundaries()
     {
         UpdateResetPosition();
-        SimulationController.Instance.ResetSimulation();
+        //SimulationController.Instance.ResetSimulation();
     }
     
     public void SetCharge(float charge, Color chargeColor)
@@ -259,5 +291,29 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
     public void OnDeleteObject()
     {
         _coulombLogic.RemoveParticle(this, true);
+    }
+
+    public IQuantity GetCharge()
+    {
+        return charge;
+    }
+
+    public IQuantity GetFixedPosition()
+    {
+        return fixedPosition;
+    }
+
+    protected void ChangeVisibility(bool setVisible)
+    {
+        foreach (var r in GetComponents<Renderer>()) r.enabled = setVisible;
+        foreach (var r in GetComponentsInChildren<Renderer>()) r.enabled = setVisible;
+        
+        foreach (var c in GetComponents<Collider>()) c.enabled = setVisible;
+        foreach (var c in GetComponentsInChildren<Collider>()) c.enabled = setVisible;
+    }
+
+    public void DummyDebugMessage(string msg)
+    {
+        Debug.Log("Dummy Debug Message: " + msg);
     }
 }

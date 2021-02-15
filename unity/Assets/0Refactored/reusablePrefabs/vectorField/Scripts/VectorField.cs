@@ -13,6 +13,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Maroon.Physics;
+using Debug = System.Diagnostics.Debug;
 
 /// <summary>
 /// Class for the vector field to represent the field
@@ -57,9 +58,16 @@ public class VectorField : MonoBehaviour
     public int Resolution
     {
         get => resolution;
-        set => resolution = value;
+        set
+        {
+            resolution = value;
+            arrows.Value = value;
+        }
     }
 
+    [Header("Assessment System")] 
+    public QuantityInt arrows = 20;
+    
     [SerializeField]
     protected float fieldStrengthFactor = PhysicalConstants.FieldStrengthFactor;
 
@@ -166,12 +174,14 @@ public class VectorField : MonoBehaviour
         if (visibility)
         {
             vectorFieldVisible = true;
+            arrows.Value = Resolution;
             // clearVectorField();
             createVectorFieldArrows();
         }
         else
         {
             vectorFieldVisible = false;
+            arrows.Value = 0;
             clearVectorField();
         }
     }
@@ -199,14 +209,19 @@ public class VectorField : MonoBehaviour
 
     public void setResolution(float resolution)
     {
-        this.resolution = (int)resolution;
+        Resolution = (int)resolution;
         changeResolution();
     }
 
 
     public void setResolution(int resolution)
     {
-        this.resolution = resolution;
+        Resolution = resolution;
         changeResolution();
+    }
+
+    public IQuantity GetVectorFieldArrows()
+    {
+        return arrows;
     }
 }

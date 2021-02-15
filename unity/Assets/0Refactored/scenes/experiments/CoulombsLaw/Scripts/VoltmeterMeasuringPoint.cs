@@ -1,4 +1,5 @@
 ﻿using System;
+using Maroon.Physics;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -10,7 +11,9 @@ public class VoltmeterMeasuringPoint : MonoBehaviour, IResetWholeObject
     public IField field;
     public VoltmeterEvent onVoltageChanged;
     public VoltmeterEvent onVoltageChangedUnit;
-    
+
+    public QuantityVector3 calculatedPosition;
+
     private CoulombLogic _coulombLogic;
     private float _potential;
     
@@ -21,12 +24,6 @@ public class VoltmeterMeasuringPoint : MonoBehaviour, IResetWholeObject
         if (simControllerObject)
             _coulombLogic = simControllerObject.GetComponent<CoulombLogic>();
         Debug.Assert(_coulombLogic != null);
-
-//        // There is only one voltmeter allowed.
-//        FindObjectsOfType<Voltmeter>()
-//            .Where(voltmeter => voltmeter != this)
-//            .ForEach(voltmeter => Destroy(voltmeter.gameObject));
-
         onVoltageChanged.Invoke("---");
     }
 
@@ -36,11 +33,7 @@ public class VoltmeterMeasuringPoint : MonoBehaviour, IResetWholeObject
         var currentPos = transform.position;
         if (!gameObject.activeInHierarchy || !field) return;
 
-        _potential = field.getStrength(currentPos) * Mathf.Pow(10, -6); //in V now (because we used microCoulomb)
-        var pot = _potential; //in micro Volt
-        var potentialString = pot.ToString("F"); 
-//            var potentialString = potential.ToString("0.000") + " * 10^-5 V";
-//            Debug.Log("OnVoltageChanged: " + potentialString);            
+        _potential = field.getStrength(currentPos); //in V
         onVoltageChanged.Invoke(GetCurrentFormattedString());
         onVoltageChangedUnit.Invoke(GetCurrentUnit());
     }
@@ -130,5 +123,15 @@ public class VoltmeterMeasuringPoint : MonoBehaviour, IResetWholeObject
         if(_coulombLogic)
             gameObject.transform.parent = _coulombLogic.transform.parent;
         onVoltageChanged.Invoke("---");
+    }
+
+    public void ShowObject()
+    {
+        Debug.Assert(_coulombLogic != null);
+        gameObject.SetActive(true);
+        transform.parent = _coulombLogic.IsIn2dMode()
+            ? _coulombLogic.scene2D.transform
+            : _coulombLogic.scene3D.transform;
+        transform.localRotation = Quaternion.identity;
     }
 }

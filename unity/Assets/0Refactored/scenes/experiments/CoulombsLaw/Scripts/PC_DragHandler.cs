@@ -15,7 +15,8 @@ public class PC_DragHandler : MonoBehaviour
     public bool allowedXMovement = true;
     public bool allowedYMovement = true;
     public bool allowedZMovement = true;
-    
+    public bool useLocalCoordinates = false;
+
     [Header("Movement Restrictions Appearances")]
     [Tooltip("Boundaries need to be set for this")]
     public List<GameObject> changeMaterialIfOutside;
@@ -40,6 +41,7 @@ public class PC_DragHandler : MonoBehaviour
     public UnityEvent onDisabled;
     
     private bool _moving = false;
+    private Vector3 _lastMousePos = Vector3.zero;
     private bool _isOutsideBoundaries = false;
     private float _distance;
 
@@ -61,15 +63,21 @@ public class PC_DragHandler : MonoBehaviour
         if (!Input.GetMouseButtonDown(0)) return;
         
         _moving = true;
-        _distance = Vector3.Distance(movingObject.transform.position, Camera.main.transform.position);
+
+        var main = Camera.main;
+        Debug.Assert(main != null);
+        _lastMousePos = Input.mousePosition;
+        _distance = Vector3.Distance( movingObject.transform.position, main.transform.position);
+        
         onStartedMoving.Invoke();
     }
     
     private void OnMouseDrag()
     {
-        if (!_moving) return;
+        if (!_moving || Vector3.Distance(_lastMousePos, Input.mousePosition) < 2f) return;
 
-        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        _lastMousePos = Input.mousePosition;
+        var ray = Camera.main.ScreenPointToRay(_lastMousePos);
         var pt = ray.GetPoint(_distance);
         var pos = movingObject.transform.position;
 
@@ -77,15 +85,23 @@ public class PC_DragHandler : MonoBehaviour
         if (!allowedYMovement) pt.y = pos.y;
         if (!allowedZMovement) pt.z = pos.z;
 
+        
         var outside = false;
         if (minBoundary != null && maxBoundary != null)
         {
-            if (allowedXMovement && (pt.x < minBoundary.position.x || maxBoundary.position.x < pt.x))
+            var minPosition = useLocalCoordinates ? minBoundary.localPosition : minBoundary.position;
+            var maxPosition = useLocalCoordinates ? maxBoundary.localPosition : maxBoundary.position;
+            var checkPt = useLocalCoordinates? minBoundary.parent.InverseTransformPoint(pt) : pt;
+
+            Debug.Assert(minBoundary.parent == maxBoundary.parent);
+            if (allowedXMovement && (checkPt.x + 0.2f < Mathf.Min(minPosition.x, maxPosition.x)
+                                     || Mathf.Max(minPosition.x, maxPosition.x) < checkPt.x - 0.2f))
                 outside = true;
-            else if (allowedYMovement && (pt.y < Mathf.Min(minBoundary.position.y, maxBoundary.position.y) 
-                                          || Mathf.Max(minBoundary.position.y, maxBoundary.position.y) < pt.y))
+            else if (allowedYMovement && (checkPt.y + 0.2f < Mathf.Min(minPosition.y, maxPosition.y) 
+                                          || Mathf.Max(minPosition.y, maxPosition.y) < checkPt.y - 0.2f))
                 outside = true;
-            else if (allowedZMovement && (pt.z < minBoundary.position.z || maxBoundary.position.z < pt.z))
+            else if (allowedZMovement && (checkPt.z + 0.2f < Mathf.Min(minPosition.z, maxPosition.z) 
+                                          || Mathf.Max(minPosition.z, maxPosition.z)  < checkPt.z - 0.2f))
                 outside = true;
         }
 
@@ -135,5 +151,10 @@ public class PC_DragHandler : MonoBehaviour
     private void OnEnable()
     {
         onEnabled.Invoke();
+    }
+
+    public void SetUseLocalCoordinates(bool useLocal)
+    {
+        useLocalCoordinates = useLocal;
     }
 }
