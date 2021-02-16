@@ -482,7 +482,7 @@ namespace Maroon
                     leaveMessageKey = "ServerInExperiment";
                     _serverInExperiment = true;
                     Maroon.CustomSceneAsset asset = Maroon.SceneManager.Instance.GetSceneAssetBySceneName(_sceneBeforeJoin);
-                    Maroon.SceneManager.Instance.LoadSceneSilentlyLocalOnlyExecuteForce(asset);
+                    Maroon.SceneManager.Instance.LoadSceneLocalOnlyExecuteForce(asset);
                     break;
                 case LeaveReason.Kicked:
                     leaveMessageKey = "ClientKicked";

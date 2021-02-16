@@ -484,7 +484,7 @@ namespace Maroon
 
 
         // DO NOT USE THIS FUNCTION, use LoadSceneRequest instead, unless you have a good reason to do so and know what your are
-        public bool LoadSceneSilentlyLocalOnlyExecuteForce(Maroon.CustomSceneAsset scene, bool showLoadingScreen = false)
+        public bool LoadSceneLocalOnlyExecuteForce(Maroon.CustomSceneAsset scene, bool showLoadingScreen = false)
         {
             // Check if scene is valid
             if(!LoadSceneValidate(scene))
@@ -493,6 +493,7 @@ namespace Maroon
             }    
         
             UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
+            AddToSceneHistory(scene);
             return true;
         }
 
@@ -502,6 +503,11 @@ namespace Maroon
             if(_sceneHistory.Count == 0 || scene.SceneName != _sceneHistory.Peek().SceneName)
             {
                 this._sceneHistory.Push(scene);
+            }
+            Debug.Log("scene history:");
+            foreach (var _scene in _sceneHistory)
+            {
+                Debug.Log(_scene.SceneName);
             }
         }
     }
