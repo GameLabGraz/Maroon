@@ -356,8 +356,6 @@ namespace Maroon
         /// </param>
         public bool LoadSceneRequest(Maroon.CustomSceneAsset scene, bool showLoadingScreen = false)
         {
-            Debug.Log("LoadSceneRequest");
-
             // Check if scene is valid
             if(!LoadSceneValidate(scene))
             {
@@ -367,14 +365,12 @@ namespace Maroon
             // If network disabled
             if(Maroon.NetworkManager.Instance.mode == Mirror.NetworkManagerMode.Offline)
             {
-                Debug.Log("LoadSceneRequestOffline");
                 LoadSceneExecute(scene, showLoadingScreen);
             }
 
             // If network enabled
             else
             {
-                Debug.Log("LoadSceneRequestOnline");
                 Maroon.NetworkManager.Instance.EnterScene(scene.ScenePath);
             }
 
@@ -455,8 +451,6 @@ namespace Maroon
         // DO NOT USE THIS FUNCTION, use LoadSceneRequest instead, unless you have a good reason to do so and know what your are
         public bool LoadSceneExecute(Maroon.CustomSceneAsset scene, bool showLoadingScreen = false)
         {
-            Debug.Log("LoadSceneExecute");
-
             // Check if scene is valid
             if(!LoadSceneValidate(scene))
             {
@@ -466,7 +460,6 @@ namespace Maroon
             // If network disabled
             if(Maroon.NetworkManager.Instance.mode == Mirror.NetworkManagerMode.Offline)
             {
-                Debug.Log("LoadSceneExecuteOffline");
                 UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
                 AddToSceneHistory(scene);
             }
@@ -474,7 +467,6 @@ namespace Maroon
             // If network enabled
             else
             {
-                Debug.Log("LoadSceneExecuteOnline");
                 Maroon.NetworkManager.Instance.ServerChangeScene(scene.ScenePath);
             }
 
@@ -503,11 +495,6 @@ namespace Maroon
             if(_sceneHistory.Count == 0 || scene.SceneName != _sceneHistory.Peek().SceneName)
             {
                 this._sceneHistory.Push(scene);
-            }
-            Debug.Log("scene history:");
-            foreach (var _scene in _sceneHistory)
-            {
-                Debug.Log(_scene.SceneName);
             }
         }
     }
