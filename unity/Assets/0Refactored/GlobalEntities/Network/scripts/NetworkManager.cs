@@ -478,7 +478,8 @@ namespace Maroon
                 case LeaveReason.InExperiment:
                     leaveMessageKey = "ServerInExperiment";
                     _serverInExperiment = true;
-                    UnityEngine.SceneManagement.SceneManager.LoadScene(onlineScene);
+                    Maroon.CustomSceneAsset sceneAsset = Maroon.SceneManager.Instance.GetSceneAssetBySceneName(onlineScene);
+                    Maroon.SceneManager.Instance.LoadSceneExecute(sceneAsset);
                     break;
                 case LeaveReason.Kicked:
                     leaveMessageKey = "ClientKicked";
@@ -607,43 +608,47 @@ namespace Maroon
         }
 
         private float _lastEnterSceneTime;
+
+
+
+        // Starts countdown for scene change
         public void EnterScene(string sceneName)
         {
-            if (mode == NetworkManagerMode.Offline)
+            if(mode == NetworkManagerMode.Offline)
             {
-                UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
+                return;
             }
-            else
+            
+            if (Time.time - _lastEnterSceneTime < 1) //Otherwise executed multiple times!
+                return;
+            _lastEnterSceneTime = Time.time;
+            
+            if (sceneName.Contains("Menu"))
             {
-                if (Time.time - _lastEnterSceneTime < 1) //Otherwise executed multiple times!
-                    return;
-                _lastEnterSceneTime = Time.time;
-                
-                if (sceneName.Contains("Menu"))
+                DisplayMessageByKey("MainMenuDenial");
+                return;
+            }
+            
+            if (IsInControl)
+            {
+                if (CheckSceneValid(sceneName))
                 {
-                    DisplayMessageByKey("MainMenuDenial");
-                    return;
-                }
-                if (IsInControl)
-                {
-                    if (CheckSceneValid(sceneName))
+                    ChangeSceneMessage msg = new ChangeSceneMessage
                     {
-                        ChangeSceneMessage msg = new ChangeSceneMessage
-                        {
-                            SceneName = sceneName
-                        };
-                        NetworkClient.connection.Send(msg);
-                    }
-                    else
-                    {
-                        DisplayMessageByKey("ExperimentNotEnabled");
-                    }
+                        SceneName = sceneName
+                    };
+                    NetworkClient.connection.Send(msg);
                 }
                 else
                 {
-                    DisplayMessageByKey("ControlDenial");
+                    DisplayMessageByKey("ExperimentNotEnabled");
                 }
             }
+            else
+            {
+                DisplayMessageByKey("ControlDenial");
+            }
+            
         }
 
         public bool AllowNetworkPause()

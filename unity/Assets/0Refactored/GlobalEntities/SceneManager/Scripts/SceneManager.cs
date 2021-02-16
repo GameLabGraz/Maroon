@@ -340,21 +340,7 @@ namespace Maroon
         // -------------------------------------------------------------------------------------------------------------
         // Scene Navigation
 
-        /// <summary>
-        ///     Loades a scene based on a Maroon.CustomSceneAsset. The scene must be registered in one of the
-        ///     categories in the SceneManager to be able to load it with this method. Always use this method for 
-        ///     loading a new scene, it updates the scene history and checks if the platform is correct.
-        ///
-        ///     TODO: Pipe all scene changes through this method so that this method can notify the NetworkManager
-        ///     consistently.
-        /// </summary>
-        /// <param name="scene">
-        ///     A Maroon.CustomSceneAsset to be loaded.
-        /// </param>
-        /// <param name="showLoadingScreen">
-        ///     Enables a loading screen while loading the scene. TODO: Not implemented. Implement this.
-        /// </param>
-        public bool LoadSceneIfInAnyCategory(Maroon.CustomSceneAsset scene, bool showLoadingScreen = false)
+        public bool LoadSceneValidate(Maroon.CustomSceneAsset scene)
         {
             // If scene to be loaded doesn't exist in one of the categories
             if(!System.Array.Exists(this.getScenesFromAllCategories().ToArray(), element => element.SceneName == scene.SceneName))
@@ -372,8 +358,68 @@ namespace Maroon
                 return false;
             }
 
-            // If valid, load scene and return true
-            UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
+            // Scene exists and it is ok to load it
+            return true;
+        }
+
+        /// <summary>
+        ///     Loades a scene based on a Maroon.CustomSceneAsset. The scene must be registered in one of the
+        ///     categories in the SceneManager to be able to load it with this method. Always use this method for 
+        ///     loading a new scene, it updates the scene history and checks if the platform is correct.
+        ///
+        ///     TODO: Pipe all scene changes through this method so that this method can notify the NetworkManager
+        ///     consistently.
+        /// </summary>
+        /// <param name="scene">
+        ///     A Maroon.CustomSceneAsset to be loaded.
+        /// </param>
+        /// <param name="showLoadingScreen">
+        ///     Enables a loading screen while loading the scene. TODO: Not implemented. Implement this.
+        /// </param>
+        public bool LoadSceneRequest(Maroon.CustomSceneAsset scene, bool showLoadingScreen = false)
+        {
+            // Check if scene is valid
+            if(!LoadSceneValidate(scene))
+            {
+                return false;
+            }
+
+            // If network disabled
+            if(Maroon.NetworkManager.Instance.mode == Mirror.NetworkManagerMode.Offline)
+            {
+                LoadSceneExecute(scene, showLoadingScreen);
+            }
+
+            // If network enabled
+            else
+            {
+                Maroon.NetworkManager.Instance.EnterScene(scene.ScenePath);
+            }
+
+            return true;
+        }
+
+        public bool LoadSceneExecute(Maroon.CustomSceneAsset scene, bool showLoadingScreen = false)
+        {
+            // Check if scene is valid
+            if(!LoadSceneValidate(scene))
+            {
+                return false;
+            }
+            
+            // If network disabled
+            if(Maroon.NetworkManager.Instance.mode == Mirror.NetworkManagerMode.Offline)
+            {
+                UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
+            }
+
+            // If network enabled
+            else
+            {
+                Maroon.NetworkManager.Instance.ServerChangeScene(scene.ScenePath);
+            }
+
+            // Add scene change to history
             this._sceneHistory.Push(scene);
             return true;
         }
@@ -389,11 +435,11 @@ namespace Maroon
             // Return VR main menu for VR platform
             if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
             {
-                this.LoadSceneIfInAnyCategory(this._sceneMainMenuVR);
+                this.LoadSceneRequest(this._sceneMainMenuVR);
             }
 
             // Return PC main menu
-            this.LoadSceneIfInAnyCategory(this._sceneMainMenuPC);
+            this.LoadSceneRequest(this._sceneMainMenuPC);
         }
 
         /// <summary>
@@ -410,7 +456,7 @@ namespace Maroon
 
             // If previous scene available, remove current scene and load previous scene
             this._sceneHistory.Pop();
-            this.LoadSceneIfInAnyCategory(this._sceneHistory.Pop());            
+            this.LoadSceneRequest(this._sceneHistory.Pop());            
         }
     }
 

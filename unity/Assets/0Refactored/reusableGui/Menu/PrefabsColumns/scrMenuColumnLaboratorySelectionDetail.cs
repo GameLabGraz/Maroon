@@ -59,7 +59,7 @@ public class scrMenuColumnLaboratorySelectionDetail : MonoBehaviour
 
             // Link function
             newButton.GetComponent<Button>().onClick.AddListener(() =>
-                Maroon.SceneManager.Instance.LoadSceneIfInAnyCategory(current_scene));
+                Maroon.SceneManager.Instance.LoadSceneRequest(current_scene));
         }
     }
 
@@ -67,12 +67,12 @@ public class scrMenuColumnLaboratorySelectionDetail : MonoBehaviour
     {
         if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
         {
-            Maroon.SceneManager.Instance.LoadSceneIfInAnyCategory(this.targetLabSceneVR);
+            Maroon.SceneManager.Instance.LoadSceneRequest(this.targetLabSceneVR);
         }
 
         else
         {
-            Maroon.SceneManager.Instance.LoadSceneIfInAnyCategory(this.targetLabScenePC);
+            Maroon.SceneManager.Instance.LoadSceneRequest(this.targetLabScenePC);
         }
     }
 }

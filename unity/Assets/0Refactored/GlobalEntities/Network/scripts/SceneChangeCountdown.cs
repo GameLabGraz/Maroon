@@ -43,7 +43,8 @@ public class SceneChangeCountdown : NetworkBehaviour
         }
         if (isServer)
         {
-            Maroon.NetworkManager.Instance.ServerChangeScene(_sceneName);
+            Maroon.CustomSceneAsset sceneAsset = Maroon.SceneManager.Instance.GetSceneAssetBySceneName(_sceneName);
+            Maroon.SceneManager.Instance.LoadSceneExecute(sceneAsset);
             Destroy(gameObject);
         }
         else

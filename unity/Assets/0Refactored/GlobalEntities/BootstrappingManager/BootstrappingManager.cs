@@ -62,7 +62,7 @@ namespace Maroon
                     (this._webglEnableSceneLoadingViaUrlParameter))
                     {
                         string parameter = Maroon.WebGLUrlParameterReader.GetUrlParameter(this._webglSceneUrlParameterName);
-                        Maroon.SceneManager.Instance.LoadSceneIfInAnyCategory(
+                        Maroon.SceneManager.Instance.LoadSceneRequest(
                             Maroon.SceneManager.Instance.GetSceneAssetBySceneName(parameter + ".pc"));
                     }
 
@@ -71,11 +71,11 @@ namespace Maroon
                     {
                         if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
                         {
-                            Maroon.SceneManager.Instance.LoadSceneIfInAnyCategory(this._firstVRScene);
+                            Maroon.SceneManager.Instance.LoadSceneRequest(this._firstVRScene);
                         }
                         else
                         {
-                            Maroon.SceneManager.Instance.LoadSceneIfInAnyCategory(this._firstStandardScene);
+                            Maroon.SceneManager.Instance.LoadSceneRequest(this._firstStandardScene);
                         }
                     }
                 }
