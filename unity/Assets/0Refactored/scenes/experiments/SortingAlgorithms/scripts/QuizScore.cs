@@ -23,7 +23,7 @@ public class QuizScore : NetworkBehaviour
     {
         base.OnStartAuthority();
         
-        CmdSetName(MaroonNetworkManager.Instance.PlayerName);
+        CmdSetName(Maroon.NetworkManager.Instance.PlayerName);
         if(_quizManager == null)
             _quizManager = FindObjectOfType<SortingController>().TheQuizManager;
         _quizManager.SetLocalQuizScore(gameObject);

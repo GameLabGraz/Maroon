@@ -39,18 +39,18 @@ public class NetworkControl : NetworkBehaviour
     void Start()
     {
         controlButton.onClick.AddListener(OnClickCommandButton);
-        MaroonNetworkManager.Instance.newClientInControlEvent.AddListener(OnNewClientInControl);
+        Maroon.NetworkManager.Instance.newClientInControlEvent.AddListener(OnNewClientInControl);
         LanguageManager.Instance.OnLanguageChanged.AddListener(OnLanguageChanged);
         
         if (isServer)
         {
-            if (MaroonNetworkManager.Instance.ClientInControl == null)
+            if (Maroon.NetworkManager.Instance.ClientInControl == null)
             {
-                MaroonNetworkManager.Instance.ServerSetClientInControl(MaroonNetworkManager.Instance.PlayerName);
+                Maroon.NetworkManager.Instance.ServerSetClientInControl(Maroon.NetworkManager.Instance.PlayerName);
             }
         }
 
-        if (MaroonNetworkManager.Instance.IsInControl)
+        if (Maroon.NetworkManager.Instance.IsInControl)
         {
             _mode = Mode.InControl;
         }
@@ -63,7 +63,7 @@ public class NetworkControl : NetworkBehaviour
 
     private void OnNewClientInControl()
     {
-        if (MaroonNetworkManager.Instance.IsInControl)
+        if (Maroon.NetworkManager.Instance.IsInControl)
         {
             _mode = Mode.InControl;
         }
@@ -105,7 +105,7 @@ public class NetworkControl : NetworkBehaviour
                 break;
             
             case Mode.NotInControl:
-                inControlText.text = MaroonNetworkManager.Instance.ClientInControl + " " + LanguageManager.Instance.GetString("IsInControl");
+                inControlText.text = Maroon.NetworkManager.Instance.ClientInControl + " " + LanguageManager.Instance.GetString("IsInControl");
                 statusText.text = LanguageManager.Instance.GetString("ClickRequestControl");
                 statusText.gameObject.SetActive(true);
                 countdownText.gameObject.SetActive(false);
@@ -131,7 +131,7 @@ public class NetworkControl : NetworkBehaviour
                 break;
             
             case Mode.NotInControlCooldown:
-                inControlText.text = MaroonNetworkManager.Instance.ClientInControl + " " + LanguageManager.Instance.GetString("IsInControl");
+                inControlText.text = Maroon.NetworkManager.Instance.ClientInControl + " " + LanguageManager.Instance.GetString("IsInControl");
                 statusText.text = LanguageManager.Instance.GetString("WaitCooldown");
                 statusText.gameObject.SetActive(true);
                 countdownText.gameObject.SetActive(true);
@@ -174,7 +174,7 @@ public class NetworkControl : NetworkBehaviour
 
     private void RequestControl()
     {
-        CmdClientRequestsControl(MaroonNetworkManager.Instance.PlayerName);
+        CmdClientRequestsControl(Maroon.NetworkManager.Instance.PlayerName);
     }
     
     [Command(ignoreAuthority = true)]
@@ -189,11 +189,11 @@ public class NetworkControl : NetworkBehaviour
     private void RpcClientRequestsControl(string client)
     {
         _clientWithRequest = client;
-        if (client == MaroonNetworkManager.Instance.PlayerName)
+        if (client == Maroon.NetworkManager.Instance.PlayerName)
         {
             _mode = Mode.NotInControlMyRequest;
         } 
-        else if (MaroonNetworkManager.Instance.IsInControl)
+        else if (Maroon.NetworkManager.Instance.IsInControl)
         {
             _mode = Mode.InControlRequest;
         }
@@ -224,7 +224,7 @@ public class NetworkControl : NetworkBehaviour
         StopCountdown();
         if (isServer)
         {
-            MaroonNetworkManager.Instance.ServerSetClientInControl(_clientWithRequest);
+            Maroon.NetworkManager.Instance.ServerSetClientInControl(_clientWithRequest);
         }
     }
 
@@ -255,7 +255,7 @@ public class NetworkControl : NetworkBehaviour
     private void RpcCancelCountdown()
     {
         StopCountdown();
-        if (MaroonNetworkManager.Instance.IsInControl)
+        if (Maroon.NetworkManager.Instance.IsInControl)
         {
             _mode = Mode.InControl;
         }
@@ -268,7 +268,7 @@ public class NetworkControl : NetworkBehaviour
             _mode = Mode.NotInControl;
         }
 
-        if (_clientWithRequest == MaroonNetworkManager.Instance.PlayerName)
+        if (_clientWithRequest == Maroon.NetworkManager.Instance.PlayerName)
         {
             StartCooldown();
         }

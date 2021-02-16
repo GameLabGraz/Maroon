@@ -86,9 +86,9 @@ public class MaroonNetworkDiscovery : NetworkDiscoveryBase<DiscoveryRequest, Dis
         DiscoveryResponse response = new DiscoveryResponse();
         response.serverId = ServerId;
         response.uri = transport.ServerUri();
-        response.name = MaroonNetworkManager.Instance.ServerName;
+        response.name = Maroon.NetworkManager.Instance.ServerName;
         response.connectedPlayers = NetworkServer.connections.Count;
-        response.maximumPlayers = MaroonNetworkManager.Instance.maxConnections;
+        response.maximumPlayers = Maroon.NetworkManager.Instance.maxConnections;
         
         return response;
     }

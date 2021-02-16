@@ -23,9 +23,9 @@ public class SceneChangeCountdown : NetworkBehaviour
 
     private void Start()
     {
-        MaroonNetworkManager.Instance.SceneCountdownActive = true;
+        Maroon.NetworkManager.Instance.SceneCountdownActive = true;
         countdownText.text = _countdownTime.ToString();
-        if (!MaroonNetworkManager.Instance.IsInControl)
+        if (!Maroon.NetworkManager.Instance.IsInControl)
         {
             cancelText.gameObject.SetActive(false);
             GetComponentInChildren<Button>().interactable = false;
@@ -43,7 +43,7 @@ public class SceneChangeCountdown : NetworkBehaviour
         }
         if (isServer)
         {
-            MaroonNetworkManager.Instance.ServerChangeScene(_sceneName);
+            Maroon.NetworkManager.Instance.ServerChangeScene(_sceneName);
             Destroy(gameObject);
         }
         else
@@ -60,7 +60,7 @@ public class SceneChangeCountdown : NetworkBehaviour
 
     private void OnDisable()
     {
-        MaroonNetworkManager.Instance.SceneCountdownActive = false;
+        Maroon.NetworkManager.Instance.SceneCountdownActive = false;
     }
 
     [Command(ignoreAuthority = true)]

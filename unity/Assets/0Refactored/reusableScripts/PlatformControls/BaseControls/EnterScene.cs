@@ -13,7 +13,7 @@ namespace PlatformControls.BaseControls
             //SceneManager.LoadScene(_sceneName);
             // TODO: This does not work if standalone, use SceneManager previous scene instead!
 
-            MaroonNetworkManager.Instance.EnterScene(_sceneName);
+            Maroon.NetworkManager.Instance.EnterScene(_sceneName);
         }
     }
 }

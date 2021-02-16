@@ -66,16 +66,16 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
     void OnEnable()
     {
         this.TimeScaleRestore = Time.timeScale;
-        if (MaroonNetworkManager.Instance == null)
+        if (Maroon.NetworkManager.Instance == null)
         {
             Time.timeScale = 0;
             return;
         }
 
-        if(MaroonNetworkManager.Instance.AllowNetworkPause())
+        if(Maroon.NetworkManager.Instance.AllowNetworkPause())
             Time.timeScale = 0;
-        if(MaroonNetworkManager.Instance.IsInControl)
-            MaroonNetworkManager.Instance.onLoseControl.Invoke();
+        if(Maroon.NetworkManager.Instance.IsInControl)
+            Maroon.NetworkManager.Instance.onLoseControl.Invoke();
     }
 
     void OnDisable()
@@ -85,10 +85,10 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
         this.ButtonAudio.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
         this.ButtonLanguage.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
         this.ButtonNetwork.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
-        if (MaroonNetworkManager.Instance == null)
+        if (Maroon.NetworkManager.Instance == null)
             return;
-        if(MaroonNetworkManager.Instance.IsInControl)
-            MaroonNetworkManager.Instance.onGetControl.Invoke();
+        if(Maroon.NetworkManager.Instance.IsInControl)
+            Maroon.NetworkManager.Instance.onGetControl.Invoke();
     }
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -122,7 +122,7 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
         else
         {
             //UnityEngine.SceneManagement.SceneManager.LoadScene(this.targetMainMenuScenePC);
-            MaroonNetworkManager.Instance.EnterScene(this.targetMainMenuScenePC);
+            Maroon.NetworkManager.Instance.EnterScene(this.targetMainMenuScenePC);
         }
         this.Menu.CloseMenu();
     }

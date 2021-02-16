@@ -28,9 +28,9 @@ public class NetworkInfoPanel : MonoBehaviour, IPointerEnterHandler, IPointerExi
     public void OnPointerEnter(PointerEventData eventData)
     {
         infoText.text = "<color=#800000>" +
-                        MaroonNetworkManager.Instance.PlayerName
+                        Maroon.NetworkManager.Instance.PlayerName
                         + "</color> : <color=#800000>" +
-                        MaroonNetworkManager.Instance.ServerName;
+                        Maroon.NetworkManager.Instance.ServerName;
         _extend = true;
     }
 

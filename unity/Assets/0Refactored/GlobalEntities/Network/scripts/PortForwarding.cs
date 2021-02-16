@@ -28,7 +28,7 @@ public class PortForwarding : MonoBehaviour
             //Debug.Log("Port Mapping created successfully using UPnP");
             _foundDevice = upnpDevice;
             _activeMapping = true;
-            MaroonNetworkManager.Instance.PortsMapped = true;
+            Maroon.NetworkManager.Instance.PortsMapped = true;
             return;
         }
         catch(NatDeviceNotFoundException e)
@@ -49,15 +49,15 @@ public class PortForwarding : MonoBehaviour
             //Debug.Log("Port Mapping created successfully using PMP");
             _foundDevice = pmpDevice;
             _activeMapping = true;
-            MaroonNetworkManager.Instance.PortsMapped = true;
+            Maroon.NetworkManager.Instance.PortsMapped = true;
         }
         catch(NatDeviceNotFoundException e)
         {
-            MaroonNetworkManager.Instance.PortsMapped = false;
+            Maroon.NetworkManager.Instance.PortsMapped = false;
         }
         catch(MappingException me)
         {
-            MaroonNetworkManager.Instance.PortsMapped = false;
+            Maroon.NetworkManager.Instance.PortsMapped = false;
         }
     }
 
