@@ -116,7 +116,7 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
     {
         if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
         {
-            UnityEngine.SceneManagement.SceneManager.LoadScene(this.targetMainMenuSceneVR);
+            Maroon.SceneManager.Instance.LoadSceneRequest(this.targetMainMenuSceneVR);
         }
         
         else
