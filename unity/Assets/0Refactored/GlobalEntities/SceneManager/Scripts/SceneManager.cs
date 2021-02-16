@@ -403,6 +403,8 @@ namespace Maroon
             return true;
         }
 
+
+        // DO NOT USE THIS FUNCTION, use LoadSceneRequest instead, unless you have a good reason to do so and know what your are
         public bool LoadSceneExecute(Maroon.CustomSceneAsset scene, bool showLoadingScreen = false)
         {
             Debug.Log("LoadSceneExecute");
@@ -431,6 +433,22 @@ namespace Maroon
             this._sceneHistory.Push(scene);
             return true;
         }
+
+
+        // DO NOT USE THIS FUNCTION, use LoadSceneRequest instead, unless you have a good reason to do so and know what your are
+        public bool LoadSceneSilentlyLocalOnlyExecuteForce(Maroon.CustomSceneAsset scene, bool showLoadingScreen = false)
+        {
+            // Check if scene is valid
+            if(!LoadSceneValidate(scene))
+            {
+                return false;
+            }    
+        
+            UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
+            return true;
+        }
+
+
 
         /// <summary>
         ///     Loades the Main Menu scene according to the current platform.

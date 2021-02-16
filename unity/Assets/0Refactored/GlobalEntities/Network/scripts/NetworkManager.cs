@@ -419,6 +419,7 @@ namespace Maroon
         private LeaveReason _leaveReason;
         private string _clientPassword;
         private bool _serverInExperiment;
+        private string _sceneBeforeJoin = null;
 
         [HideInInspector]
         public UnityEvent onGetControl;
@@ -435,6 +436,8 @@ namespace Maroon
 
         public override void OnStartClient()
         {
+            _sceneBeforeJoin = Maroon.SceneManager.Instance.ActiveSceneName;
+
             base.OnStartClient();
             
             if(_alreadyServerRunning)
@@ -478,7 +481,8 @@ namespace Maroon
                 case LeaveReason.InExperiment:
                     leaveMessageKey = "ServerInExperiment";
                     _serverInExperiment = true;
-                    Maroon.SceneManager.Instance.LoadPreviousScene();
+                    Maroon.CustomSceneAsset asset = Maroon.SceneManager.Instance.GetSceneAssetBySceneName(_sceneBeforeJoin);
+                    Maroon.SceneManager.Instance.LoadSceneSilentlyLocalOnlyExecuteForce(asset);
                     break;
                 case LeaveReason.Kicked:
                     leaveMessageKey = "ClientKicked";
