@@ -1,32 +1,52 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 using Antares.Evaluation;
-using Antares.Evaluation.Engine;
 using Antares.Evaluation.Util;
 using Maroon.Assessment.Handler;
 
+using System.Threading.Tasks;
+using System.Runtime.InteropServices;
+
 namespace Maroon.Assessment
 {
+    [Serializable]
+    public enum AssessmentIntegrationMode
+    {
+        AntaresRemote,
+        AntaresLocal
+    }
+
     [RequireComponent(typeof(AssessmentFeedbackHandler))]
     public class AssessmentManager : MonoBehaviour
-    { 
+    {
         [SerializeField]
-        private string amlFile;
+        private AssessmentIntegrationMode mode;
 
-        private Evaluator _evalService;
+        [SerializeField]
+        private string antaresUrl = null; // TODO: remove default parameter
+
+        [SerializeField]
+        private string amlFile; // depricated amlUrl
+
+        [SerializeField] 
+        private bool showDebugMessages = true;
+
+        private AntaresClient _evalService;
 
         private EventBuilder _eventBuilder;
 
+        private List<GameEvent> _eventBuffer = new List<GameEvent>();
+
         private AssessmentFeedbackHandler _feedbackHandler;
 
-        private readonly List<AssessmentWatchValue> _assessmentValues = new List<AssessmentWatchValue>();
+        private readonly Dictionary<string, AssessmentObject> _objectsInRange = new Dictionary<string, AssessmentObject>();
 
         public bool IsConnected { get; private set; }
 
         private static AssessmentManager _instance;
 
+        private EventBuilder EventBuilder => _eventBuilder ?? (_eventBuilder = EventBuilder.Event());
 
         public static AssessmentManager Instance
         {
@@ -38,21 +58,24 @@ namespace Maroon.Assessment
             }
         }
 
-        private void Awake()
+        private async void Awake()
         {
+            AssessmentLogger.Enable = showDebugMessages;
+
             _feedbackHandler = FindObjectOfType<AssessmentFeedbackHandler>();
 
-            IsConnected = ConnectToAssessmentSystem();
+            await ConnectToAssessmentSystem();
         }
 
         private void Start()
         {
-            Debug.Log("AssessmentManager::Send Enter Event");
-            
-            if(_eventBuilder == null)
-                _eventBuilder = EventBuilder.Event();
+            AssessmentLogger.Log("AssessmentManager: Raising enter event ...");
+            EventBuilder.Action("enter"); // TODO: this is actually a workaround - it is universal, depends on the agreed semantics and should be fired by the spawning avatar
+        }
 
-            _eventBuilder.Action("enter");
+        private void Update()
+        {
+            _evalService?.DoWork();
         }
 
         private void LateUpdate()
@@ -63,82 +86,132 @@ namespace Maroon.Assessment
             _eventBuilder = null;
         }
 
-        private bool ConnectToAssessmentSystem()
+        private string GetAntaresUrl()
+        {
+            return AppParams.Instance["antares_connect"] ?? antaresUrl;
+        }
+
+        private async Task ConnectToAssessmentSystem()
         {
             try
             {
-                Debug.Log("AssessmentManager: Connecting to Assessment Service...");
-                _evalService = new Evaluator();
-                Debug.Log("AssessmentManager: Successfully connected to Assessment Service.");
+                AssessmentLogger.Log("AssessmentManager: Connecting to Assessment Service...");
 
-                Debug.Log($"AssessmentManager: Loading {amlFile} into evaluation engine ...");
-                _evalService.LoadAmlFile(Path.Combine(Application.streamingAssetsPath, amlFile));
-                Debug.Log("AssessmentManager: Assessment model loaded.");
+                var url = GetAntaresUrl();
+                if(url == null)
+                {
+                    AssessmentLogger.Log("AssessmentManager: Missing Antares URL configuration (expecting parameter or component configuration)");
+                    return;
+                }
 
+                _evalService = new AntaresClient(url);
                 _evalService.FeedbackReceived += delegate (object sender, FeedbackEventArgs args)
                 {
-                  _feedbackHandler.HandleFeedback(args);
+                    AssessmentLogger.Log("AssessmentManager: Feedback received");
+
+                    // hack: this is for the experiment: will be removed once common simulation events are implemented ...
+                    foreach(var feedback in args.FeedbackCommands)
+                    {
+                        if(feedback is DisplayTextMessage message && message.Message.Trim() == "#!GoToQuestionnaire")
+                        {
+                            AntaresExecuteUserAgent("GoToQuestionnaire");
+                        }
+                    }
+                    // end hack
+
+                    _feedbackHandler.HandleFeedback(args);
                 };
-                return true;
+
+                _evalService.ErrorReported += delegate (object sender, Antares.Evaluation.ErrorEventArgs args)
+                {
+                    Debug.LogError(
+                        "Antares Server Error: " + args.Message + Environment.NewLine +
+                        "--" + Environment.NewLine +
+                        "Message: " + args.Message + Environment.NewLine +
+                        "Internal message: " + args.InternalMessage + Environment.NewLine +
+                        "Source URI: " + args.SourceUri + Environment.NewLine +
+                        "Line: " + args.Line + Environment.NewLine +
+                        "Column: " + args.Column);
+                };
+
+                _evalService.Connected += delegate (object sender, EventArgs args)
+                {
+                    AssessmentLogger.Log("AssessmentManager: Connection established");
+                    IsConnected = true;
+                    FlushEventBuffer();
+                };
+
+                await _evalService.ConnectAndRun();    
             }
             catch (Exception ex)
             {
                 Debug.LogWarning($"AssessmentManager: An error occurred while connecting to the Assessment service.: {ex.Message} {ex.StackTrace}");
-                return false;
             }
+        }
+
+        private void FlushEventBuffer()
+        {
+            foreach(var gameEvent in _eventBuffer)
+            {
+                _evalService.ProcessEvent(gameEvent);
+            }
+            _eventBuffer.Clear();
+        }
+
+        public AssessmentObject GetObject(string id)
+        {
+            return _objectsInRange[id];
         }
 
         public void RegisterAssessmentObject(AssessmentObject assessmentObject)
         {
-            Debug.Log($"AssessmentManager::RegisterAssessmentObject: {assessmentObject.ObjectID}");
+            AssessmentLogger.Log($"AssessmentManager::RegisterAssessmentObject: {assessmentObject.ObjectID}");
 
-            if(_eventBuilder == null)
-                _eventBuilder = EventBuilder.Event();
+            _objectsInRange.Add(assessmentObject.ObjectID, assessmentObject);
 
-            _eventBuilder
+            EventBuilder
                 .PerceiveObject(assessmentObject.ObjectID)
                 .Set("class", assessmentObject.ClassType.ToString());
 
-            foreach (var watchValue in assessmentObject.WatchValues)
-                _eventBuilder.Set(watchValue.PropertyName, watchValue.GetValue());
+            foreach (var watchValue in assessmentObject.WatchedValues)
+            {
+                AssessmentLogger.Log(("AssessmentManager::" + assessmentObject.ObjectID + ": " + watchValue.GetName()));
+                EventBuilder.Set(watchValue.GetName(), watchValue.GetValue().ToAntaresValue());
+            }
         }
-
+        
         public void DeregisterAssessmentObject(AssessmentObject assessmentObject)
         {
-            Debug.Log($"AssessmentManager::DeregisterAssessmentObject: {assessmentObject.ObjectID}");
+            AssessmentLogger.Log($"AssessmentManager::DeregisterAssessmentObject: {assessmentObject.ObjectID}");
 
-            if (_eventBuilder == null)
-                _eventBuilder = EventBuilder.Event();
-
-            _eventBuilder.UnlearnObject(assessmentObject.ObjectID);
+            EventBuilder.UnlearnObject(assessmentObject.ObjectID);
+            _objectsInRange.Remove(assessmentObject.ObjectID);
         }
 
         public void SendUserAction(string actionName, string objectId=null)
         {
-            Debug.Log($"AssessmentManager::SendUserAction: {objectId}.{actionName}");
+            AssessmentLogger.Log($"AssessmentManager::SendUserAction: {objectId}.{actionName}");
 
-            if (_eventBuilder == null)
-                _eventBuilder = EventBuilder.Event();
+            EventBuilder.Action(actionName, objectId);
 
-            _eventBuilder.Action(actionName, objectId);
-            foreach (var watchValue in GetComponents<AssessmentWatchValue>())
+            foreach (var assessmentObject in _objectsInRange.Values)
             {
-                if (watchValue.IsDynamic)
+                EventBuilder.UpdateDataOf(assessmentObject.ObjectID);
+                foreach (var watchValue in assessmentObject.WatchedValues)
                 {
-                    _eventBuilder.UpdateDataOf(watchValue.ObjectID)
-                        .Set(watchValue.PropertyName, watchValue.GetValue());
+                    if (watchValue.IsDynamic())
+                    {
+                        EventBuilder.Set(watchValue.GetName(), watchValue.GetValue().ToAntaresValue());
+                    }
                 }
             }
         }
 
         public void SendDataUpdate(string objectId, string propertyName, object value)
         {
-            Debug.Log($"AssessmentManager::SendDataUpdate: {objectId}.{propertyName}={value}");
+            AssessmentLogger.Log($"AssessmentManager::SendDataUpdate: {objectId}.{propertyName}={value}");
 
-            if (_eventBuilder == null)
-                _eventBuilder = EventBuilder.Event();
-
-            _eventBuilder.UpdateDataOf(objectId).Set(propertyName, value);
+            EventBuilder.UpdateDataOf(objectId).Set(propertyName, value.ToAntaresValue());
         }
 
         private void SendGameEvent(GameEvent gameEvent)
@@ -149,8 +222,19 @@ namespace Maroon.Assessment
             }
             else
             {
-                Debug.LogWarning("AssessmentManager::SendGameEvent: Assessment service is not running");
+                _eventBuffer.Add(gameEvent);
+                Debug.LogWarning("AssessmentManager::SendGameEvent: sending event to buffer");
             }
         }
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+        [DllImport("__Internal")]
+        private static extern void AntaresExecuteUserAgent(string command);
+#else
+        private static void AntaresExecuteUserAgent(string command)
+        {
+            Debug.Log("Requested UserAgent Command: " + command);
+        }
+#endif
     }
 }

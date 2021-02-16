@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Maroon.Physics
 {
@@ -21,7 +22,7 @@ namespace Maroon.Physics
         public QuantityFloat ropeLength = 0.3f;
 
         public QuantityFloat elongation = 0.0f;
-
+		
         [SerializeField]
         private GameObject _standRopeJoint;
     
@@ -35,27 +36,59 @@ namespace Maroon.Physics
         private float _startWeight;
 
         private float _startRopeLength;
+        private Vector3 _startRopePosition;
 
-        private float _oldRopeLength;
+        private bool _pendulumRelease = false;
+
+        enum ElongationMode
+        {
+            EM_Increasing,
+            EM_Decreasing,
+            EM_StandingStill
+        }
+        
+        private float _previousElongation = 0f;
+        private float _currentElongation = 0f;
+        private ElongationMode _elongationMode = ElongationMode.EM_StandingStill;
 
         public HingeJoint Joint { get; private set; }
 
+        public UnityEvent onPendulumRotationMaximumPoint = new UnityEvent();
+        public UnityEvent onPendulumRotationNullPoint = new UnityEvent();
+        public UnityEvent onPendulumRotationStopped = new UnityEvent();
+        
         public float Weight
         {
             get => weight;
-            set => weight.Value = value;
+            set
+            {
+                weight.Value = value;
+                UpdatePendulum();
+            }
         }
-
+        
         public float RopeLength
         {
             get => ropeLength;
             set
             {
-                _oldRopeLength = RopeLength;
                 ropeLength.Value = value;
+                UpdatePendulum();
             }
         }
 
+        public void UpdatePendulum()
+        {
+            //weight
+            _rigidbody.mass = weight.Value;
+            _weightObj.transform.localScale = Vector3.one * weight.Value;
+            
+            //rope len
+            var pos = _weightObj.transform.position;
+            var moveDirection = (_startRopePosition - _standRopeJoint.transform.position).normalized;
+            _weightObj.transform.position = _startRopePosition + moveDirection * (ropeLength.Value - _startRopeLength);
+        }
+        
         public float Elongation
         {
             get => elongation;
@@ -65,19 +98,6 @@ namespace Maroon.Physics
         protected override void Start()
         {
             base.Start();
-            
-            weight.onValueChanged.AddListener((value) =>
-            {
-              _rigidbody.mass = value;
-              _weightObj.transform.localScale = Vector3.one * value;
-            });
-            ropeLength.onValueChanged.AddListener((value) =>
-            {
-              var pos = _weightObj.transform.position;
-              var moveDirection = (pos - _standRopeJoint.transform.position).normalized;
-              _weightObj.transform.position = pos + moveDirection * (value - _oldRopeLength);
-            });
-
             Joint = GetComponent<HingeJoint>();
 
             _rigidbody.mass = Weight;
@@ -86,6 +106,7 @@ namespace Maroon.Physics
             _startRot = transform.rotation;
             _startWeight = Weight;
             _startRopeLength = RopeLength;
+            _startRopePosition = _weightObj.transform.position;
         }
 
         protected override void HandleUpdate()
@@ -95,7 +116,52 @@ namespace Maroon.Physics
         
         protected override void HandleFixedUpdate()
         {
-          Elongation = transform.rotation.x;
+            if (!_pendulumRelease) return;
+            
+            _previousElongation = _currentElongation;
+            _currentElongation = transform.rotation.x;
+
+            if (Mathf.Abs(_previousElongation) <= 0.000001f && Mathf.Abs(Elongation) < 0.000001f &&
+                _elongationMode != ElongationMode.EM_StandingStill)
+            {
+                Elongation = 0f;
+                _elongationMode = ElongationMode.EM_StandingStill;
+                onPendulumRotationStopped.Invoke();
+                _pendulumRelease = false;
+                Debug.Log("Pendulum Stopped");
+                return;
+            }
+            
+            if (_elongationMode == ElongationMode.EM_StandingStill && Mathf.Abs(_currentElongation) > 0.000001f)
+            {
+                _elongationMode = _currentElongation > 0 ? ElongationMode.EM_Decreasing : ElongationMode.EM_Increasing;
+            }
+            else
+            {
+                if ((_previousElongation <= 0 && _currentElongation >= 0) ||
+                    (_previousElongation >= 0 && _currentElongation <= 0))
+                {
+                    Debug.Log("Null Point: " + _previousElongation + " - " + _currentElongation);
+                    Elongation = 0f;
+                    onPendulumRotationNullPoint.Invoke();
+                }
+
+                if (_elongationMode == ElongationMode.EM_Decreasing && _previousElongation > _currentElongation)
+                {
+                    _elongationMode = ElongationMode.EM_Increasing;
+                    Elongation = _previousElongation;
+                    onPendulumRotationMaximumPoint.Invoke();
+                    Debug.Log("Pendulum Maximum" + _currentElongation + " - " + _previousElongation);
+                }
+                else if(_elongationMode == ElongationMode.EM_Increasing && _currentElongation > _previousElongation)
+                {
+                    _elongationMode = ElongationMode.EM_Decreasing;
+                    Elongation = _previousElongation;
+                    onPendulumRotationMaximumPoint.Invoke();
+                    Debug.Log("Pendulum Maximum" + _currentElongation + " - " + _previousElongation);
+                }
+            }
+
         }
 
         public float GetDeflection()
@@ -130,6 +196,16 @@ namespace Maroon.Physics
 
             _rigidbody.velocity = Vector3.zero;
             _rigidbody.angularVelocity = Vector3.zero;
+        }
+
+        public void PendulumReleased()
+        {
+            _pendulumRelease = true;
+        }
+
+        public void UpdateElongation()
+        {
+            Elongation = transform.rotation.x;
         }
     }
 }

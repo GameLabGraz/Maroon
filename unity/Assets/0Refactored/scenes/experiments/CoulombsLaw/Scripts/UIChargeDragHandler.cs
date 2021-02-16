@@ -43,13 +43,13 @@ public class UIChargeDragHandler : UIItemDragHandlerSimple
         }
     }
     
-    private void Start()
+    private new void Start()
     {
+        base.Start();
+
         var simControllerObject = GameObject.Find("CoulombLogic");
         if (simControllerObject)
             _coulombLogic = simControllerObject.GetComponent<CoulombLogic>();
-
-        ChargeValue = _chargeValue;
     }
 
     protected override void ShowObject(Vector3 position, Transform parent)

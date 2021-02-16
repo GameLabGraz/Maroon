@@ -10,6 +10,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Maroon.Physics;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
@@ -22,7 +23,9 @@ public class SimulationController : MonoBehaviour
     /// Indicates whether the simulation is running
     /// </summary>
     [SerializeField]
-    private bool simulationRunning;
+    private QuantityBool simulationRunning = false;
+    [SerializeField]
+    private QuantityBool simulationAllowed = true;
 
     [SerializeField]
     private float timeScale = 1;
@@ -161,19 +164,33 @@ public class SimulationController : MonoBehaviour
     /// </summary>
     public bool SimulationRunning
     {
-        get => simulationRunning;
+        get => simulationRunning.Value;
         set
         {
-            if (simulationRunning == value) return;
+            if (simulationRunning.Value == value) return;
 
+            if (!simulationAllowed.Value && value) return; //simulation would be set to running although no simulation is allowed
+                
             _inWholeResetMode = false;
             
-            simulationRunning = value;
-            if(simulationRunning) onStartRunning.Invoke();
+            simulationRunning.Value = value;
+            if(simulationRunning.Value) onStartRunning.Invoke();
             else onStopRunning.Invoke();
         }
     }
 
+    public bool SimulationAllowed
+    {
+        get => simulationAllowed.Value;
+        set
+        {
+            simulationAllowed.Value = value;
+            
+            if(!simulationAllowed)
+                StopSimulation();
+        }
+    }
+    
     /// <summary>
     /// Getter for the stepSimulation field
     /// </summary>
@@ -256,5 +273,11 @@ public class SimulationController : MonoBehaviour
 
     public void TraceOutput(string output){
         Debug.Log(output);
+    }
+
+    public void StartStopSimulation(bool startSimulation)
+    {
+        if(startSimulation) StartSimulation();
+        else StopSimulation();
     }
 }

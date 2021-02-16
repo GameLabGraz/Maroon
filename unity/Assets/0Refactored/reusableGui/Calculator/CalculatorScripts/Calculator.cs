@@ -1,7 +1,9 @@
 using System;
 using System.Linq;
 using System.Globalization;
+using Maroon.Physics;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Maroon.Tools.Calculator
 {
@@ -25,6 +27,21 @@ namespace Maroon.Tools.Calculator
 
         private string _lastOperator;
 
+        
+        [SerializeField] 
+        private QuantityString operationString = "";
+
+        public string OperationString
+        {
+            get => operationString.Value;
+            set => operationString.Value = value;
+        }
+        
+        public string _operation = "";
+        
+        public UnityEvent onClearCalculation = new UnityEvent();
+        public UnityEvent onCalculate = new UnityEvent();
+        
         public delegate void CalculatorValueChanged(CalculatorValueChangedEvent ev);
 
         public static event CalculatorValueChanged OnResultChanged;
@@ -44,16 +61,22 @@ namespace Maroon.Tools.Calculator
         {
             _calculationValue = 0.0f;
             _result = 0.0f;
+            OperationString = _operation;
+            onClearCalculation.Invoke();
+            _operation = "";
+            OperationString = "";
         }
 
         public void InvertSign()
         {
             _calculationValue *= -1;
+            _operation = "-(" + _operation + ")";
             OnValueChanged?.Invoke(new CalculatorValueChangedEvent(_calculationValue, "±"));
         }
 
         public void Calculate(string op)
         {
+            _operation += _calculationValue.ToString();
             if (new[] { "sqrt", "sqr", "sin", "cos", "inv" }.Contains(op))
             {
                 switch (op)
@@ -78,6 +101,11 @@ namespace Maroon.Tools.Calculator
                         _calculationValue = 1.0f / _calculationValue;
                         break;
                 }
+                
+                _operation = op + "(" + _operation + ")";
+                OperationString = _operation;
+                _operation = "";
+                _lastOperator = null;
 
                 OnValueChanged?.Invoke(new CalculatorValueChangedEvent(_calculationValue, op));
             }
@@ -86,6 +114,7 @@ namespace Maroon.Tools.Calculator
             {
                 _lastOperator = op;
                 _result = _calculationValue;
+                _operation += op;
 
                 OnResultChanged?.Invoke(new CalculatorValueChangedEvent(_result, op));
             }
@@ -116,6 +145,10 @@ namespace Maroon.Tools.Calculator
                 }
 
                 _lastOperator = op;
+
+                OperationString = _operation;
+                _operation = _result.ToString() + op;
+                
                 OnResultChanged?.Invoke(new CalculatorValueChangedEvent(_result, op));
             }
             else
@@ -130,6 +163,9 @@ namespace Maroon.Tools.Calculator
                 Calculate(_lastOperator);
             else
                 _result = _calculationValue;
+
+            onCalculate.Invoke();
+            _operation = "";
                 
             OnResultChanged?.Invoke(new CalculatorValueChangedEvent(_result, "="));
 

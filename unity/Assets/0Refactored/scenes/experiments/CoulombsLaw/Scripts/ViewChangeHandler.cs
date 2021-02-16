@@ -1,8 +1,15 @@
-﻿using System;
+﻿using Maroon.Physics;
 using UnityEngine;
+using UnityEngine.Events;
+
 
 public class ViewChangeHandler : MonoBehaviour
 {
+    public const int DefaultView = 0;
+    public const int FrontView = 1;
+    public const int SideView = 2;
+    public const int TopView = 3;
+    
     [Header("Information Components")]
     public PathHandler pathHandler;
 
@@ -16,6 +23,11 @@ public class ViewChangeHandler : MonoBehaviour
     public GameObject VoltmeterNegative;
     public RulerPrefab Ruler;
 
+    [Header("Assessment System")] 
+    public QuantityInt currentView = 0;
+
+    public UnityEvent onViewChanged;
+    
     private CoulombLogic _coulombLogic;
     private PathHandler.CameraPosition _lastView = PathHandler.CameraPosition.CP_Free;
     
@@ -39,7 +51,11 @@ public class ViewChangeHandler : MonoBehaviour
         var allowY = newPosition != PathHandler.CameraPosition.CP_Top;
         var allowZ = newPosition != PathHandler.CameraPosition.CP_Front;
         foreach (var charge in _coulombLogic.GetCharges())
+        {
+            if(charge.fixedPosition) continue;
             HandleMovementRestrictions(charge.gameObject, allowX, allowY, allowZ);
+        }
+            
         
         HandleMovementRestrictions(VoltmeterPositive, allowX, allowY, allowZ);
         HandleMovementRestrictions(VoltmeterNegative, allowX, allowY, allowZ);
@@ -47,9 +63,12 @@ public class ViewChangeHandler : MonoBehaviour
         HandleMovementRestrictions(Ruler.RulerEnd, allowX, allowY, allowZ);
         
         VisualizationCube.transform.rotation = Quaternion.identity;
+        
+        /*
         VisualizationCube.GetComponent<PC_Rotation>().enabled = newPosition == PathHandler.CameraPosition.CP_Free;
         VisualizationCubeOutline.GetComponent<PC_Rotation>().enabled =
             newPosition == PathHandler.CameraPosition.CP_Free;
+        */
         
         VisualizationPlane.transform.localPosition = Vector3.zero;
         VisualizationPlane.transform.rotation = Quaternion.Euler(newPosition == PathHandler.CameraPosition.CP_Top? 90f : 0f, newPosition == PathHandler.CameraPosition.CP_Side? 90f : 0f, 0f);
@@ -64,6 +83,12 @@ public class ViewChangeHandler : MonoBehaviour
         }
 
         _lastView = newPosition;
+
+        currentView.Value = newPosition == PathHandler.CameraPosition.CP_Free ? DefaultView :
+            newPosition == PathHandler.CameraPosition.CP_Front ? FrontView :
+            newPosition == PathHandler.CameraPosition.CP_Side ? SideView : TopView;
+        
+        onViewChanged.Invoke();
     }
 
     private void HandleMovementRestrictions(GameObject obj, bool allowX = true, bool allowY = true, bool allowZ = true)
@@ -74,6 +99,30 @@ public class ViewChangeHandler : MonoBehaviour
         if (!dragHandler.ArrowMovement) return;
         dragHandler.ArrowMovement.UpdateMovementRestriction(!allowX, !allowY, !allowZ);
 //        Debug.Log("SetUp Restrictions " + charge.name + " --- " + allowX + " - " + allowY + " - " + allowZ);
+    }
+
+    public void AllowChargeInteraction(bool allowMovement)
+    {
+        foreach (var charge in _coulombLogic.GetChargeGameObjects())
+        {
+            AllowChargeInteraction(charge, allowMovement);
+        }
+    }
+    
+    public void AllowChargeInteraction(GameObject charge, bool allowMovement)
+    {
+        if(!allowMovement)
+            HandleMovementRestrictions(charge, false, false, false);
+        else if(_coulombLogic.IsIn2dMode())
+            HandleMovementRestrictions(charge, true, true, false);
+        else
+        {
+            var view = (PathHandler.CameraPosition) currentView.Value;
+            var allowX = view != PathHandler.CameraPosition.CP_Side;
+            var allowY = view != PathHandler.CameraPosition.CP_Top;
+            var allowZ = view != PathHandler.CameraPosition.CP_Front;
+            HandleMovementRestrictions(charge.gameObject, allowX, allowY, allowZ);
+        }
     }
     
     public void SetupViewSettingsForNewParticles(CoulombChargeBehaviour newCharge)

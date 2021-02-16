@@ -4,17 +4,28 @@ using System.Collections.Generic;
 
 namespace Maroon.UI
 {
+    public enum MessageIcon
+    {
+        MI_None,
+        MI_Ok,
+        MI_Warning,
+        MI_Error,
+        MI_Hint
+    }
+    
     public class Message
     {
+        public MessageIcon Icon { get; set; }
         public string Text { get; set; }
         public Color Color { get; set; }
 
-        public Message(string text) : this(text, Color.black) { }
+        public Message(string text, MessageIcon icon = MessageIcon.MI_None) : this(text, Color.black, icon) { }
 
-        public Message(string text, Color color)
+        public Message(string text, Color color, MessageIcon icon = MessageIcon.MI_None )
         {
             Text = text;
             Color = color;
+            Icon = icon;
         }
     }
 
@@ -22,13 +33,14 @@ namespace Maroon.UI
     {
         [SerializeField]
         private DialogueView dialogView;
-        [SerializeField]
+        [SerializeField] [Range(0.001f, 0.05f)]
         private float letterPause = 0.01f;
         [SerializeField]
         private AudioClip typeSound;
 
-        private IEnumerator _coroutine;
-        private readonly Queue<Message> _messages = new Queue<Message>();
+        [Range(2f, 10f)] [SerializeField] private float minMessageTime = 2f;
+
+        private IEnumerator _coroutine;        private readonly Queue<Message> _messages = new Queue<Message>();
 
         public bool TypeMessageRunning { get; private set; }
 
@@ -82,6 +94,7 @@ namespace Maroon.UI
             var text = "";
             dialogView.ClearMessage();
             dialogView.SetTextColor(message.Color);
+            dialogView.SetIcon(message.Icon);
 
             foreach (var letter in message.Text)
             {
@@ -97,7 +110,7 @@ namespace Maroon.UI
                 yield return new WaitForSeconds(letterPause);
             }
 
-            yield return new WaitForSeconds(Mathf.Min(2f, 0.05f * message.Text.Length));
+            yield return new WaitForSeconds(Mathf.Max(minMessageTime, letterPause * 5f * message.Text.Length));
             dialogView.SetActive(false);
             TypeMessageRunning = false;
         }

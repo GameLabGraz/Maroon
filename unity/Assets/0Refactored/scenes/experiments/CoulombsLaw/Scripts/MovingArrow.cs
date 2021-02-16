@@ -1,12 +1,10 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class MovingArrow : MonoBehaviour
 {
     private PC_ArrowMovement _arrowMovement;
     
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         _arrowMovement = transform.parent.GetComponent<PC_ArrowMovement>();
         Debug.Assert(_arrowMovement != null);
