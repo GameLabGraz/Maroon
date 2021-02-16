@@ -533,6 +533,9 @@ namespace Maroon
             {
                 onLoseControl.Invoke();
             }
+
+            Maroon.CustomSceneAsset asset = Maroon.SceneManager.Instance.GetSceneAssetBySceneName(Maroon.SceneManager.Instance.ActiveSceneName);
+            Maroon.SceneManager.Instance.AddToSceneHistory(asset);
         }
 
         private void OnCharacterSpawnMessage(NetworkConnection conn, CharacterSpawnMessage msg)

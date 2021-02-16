@@ -499,7 +499,7 @@ namespace Maroon
         // Called by network to update scene changes on clients, that were initiated by server
         public void AddToSceneHistory(Maroon.CustomSceneAsset scene)
         {
-            if(scene.SceneName != _sceneHistory.Peek().SceneName)
+            if(_sceneHistory.Count == 0 || scene.SceneName != _sceneHistory.Peek().SceneName)
             {
                 this._sceneHistory.Push(scene);
             }
