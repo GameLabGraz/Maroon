@@ -123,7 +123,7 @@ public class VanDeGraaffNetworkSync : ExperimentNetworkSync
     {
         if (_grounder == null) //In Balloon Experiment
             return;
-        if (!MaroonNetworkManager.Instance.IsInControl)
+        if (!Maroon.NetworkManager.Instance.IsInControl)
         {
             if (_grounder.transform.position != _targetPosition)
             {

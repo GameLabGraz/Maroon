@@ -187,7 +187,7 @@ public class PendulumNetworkSync : ExperimentNetworkSync
     
     private void OnPendulumAngleChanged(float oldAngle, float newAngle)
     {
-        if (MaroonNetworkManager.Instance.IsInControl)
+        if (Maroon.NetworkManager.Instance.IsInControl)
             return;
         
         _pendulum.Joint.limits = new JointLimits

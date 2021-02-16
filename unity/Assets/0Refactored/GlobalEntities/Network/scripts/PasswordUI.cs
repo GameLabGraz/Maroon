@@ -36,13 +36,13 @@ public class PasswordUI : MonoBehaviour
     {
         if (isHost)
         {
-            MaroonNetworkManager.Instance.Password = passwordInput.text;
-            MaroonNetworkManager.Instance.StartHost();
+            Maroon.NetworkManager.Instance.Password = passwordInput.text;
+            Maroon.NetworkManager.Instance.StartHost();
         }
         else
         {
-            MaroonNetworkManager.Instance.ClientPassword = passwordInput.text;
-            MaroonNetworkManager.Instance.StartClient();
+            Maroon.NetworkManager.Instance.ClientPassword = passwordInput.text;
+            Maroon.NetworkManager.Instance.StartClient();
         }
         Destroy(gameObject);
     }

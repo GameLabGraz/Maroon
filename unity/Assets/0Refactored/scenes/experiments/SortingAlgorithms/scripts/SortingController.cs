@@ -143,7 +143,7 @@ public class SortingController : MonoBehaviour, IResetObject
     
     private void RandomizeDetailArray()
     {
-        if (_initialized && _isOnline && !MaroonNetworkManager.Instance.IsInControl)
+        if (_initialized && _isOnline && !Maroon.NetworkManager.Instance.IsInControl)
             return;
         _detailOrder = new List<int>();
         for (int i = 0; i < 10; ++i)
@@ -157,7 +157,7 @@ public class SortingController : MonoBehaviour, IResetObject
 
     private void DistributeDetailArray()
     {
-        if(_initialized && _isOnline && MaroonNetworkManager.Instance.IsInControl)
+        if(_initialized && _isOnline && Maroon.NetworkManager.Instance.IsInControl)
             networkSync.SynchronizeArray(_detailOrder);
     }
 
@@ -268,7 +268,7 @@ public class SortingController : MonoBehaviour, IResetObject
     
     private void SetBattleOrder()
     {
-        if (_initialized && _isOnline && !MaroonNetworkManager.Instance.IsInControl)
+        if (_initialized && _isOnline && !Maroon.NetworkManager.Instance.IsInControl)
             return;
         
         List<int> order = Enumerable.Range(0, battleArraySize).ToList();
@@ -287,7 +287,7 @@ public class SortingController : MonoBehaviour, IResetObject
 
         SetBattleOrder(order);
         
-        if(_initialized && _isOnline && MaroonNetworkManager.Instance.IsInControl)
+        if(_initialized && _isOnline && Maroon.NetworkManager.Instance.IsInControl)
             networkSync.SynchronizeBattleOrder(order);
     }
 

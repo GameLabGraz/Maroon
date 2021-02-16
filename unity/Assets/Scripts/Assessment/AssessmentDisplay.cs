@@ -1,7 +1,9 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using Antares.Evaluation.LearningContent;
 using Maroon.Assessment.Content;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Maroon.Assessment
 {
@@ -13,6 +15,12 @@ namespace Maroon.Assessment
         {
             base.Awake();
             syncContext = SynchronizationContext.Current;
+        }
+
+        private void Start()
+        {
+            if (AssessmentManager.Instance == null || !AssessmentManager.Instance.enabled)
+                gameObject.SetActive(false);
         }
 
         public void LoadSlide(Slide slide)
