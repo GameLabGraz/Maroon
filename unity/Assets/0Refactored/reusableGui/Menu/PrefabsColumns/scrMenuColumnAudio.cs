@@ -1,18 +1,40 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
+
 
 public class scrMenuColumnAudio : MonoBehaviour
 {
-    // Start is called before the first frame update
+    // #################################################################################################################
+    // Members
+
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // Buttons/Sliders
+
+    [SerializeField] private GameObject _musicSlider;
+
+    [SerializeField] private GameObject _soundEffectSlider;
+
+    // #################################################################################################################
+    // Methods
+
     void Start()
     {
-        
+        // Listen to music slider
+        _musicSlider.GetComponent<Slider>().onValueChanged
+                    .AddListener((value) => this.OnChangeMusicSlider(value));
+
+        // Listen to sound effect slider
+        _soundEffectSlider.GetComponent<Slider>().onValueChanged
+                          .AddListener((value) => this.OnChangeSoundEffectSlider(value));
     }
 
-    // Update is called once per frame
-    void Update()
+    void OnChangeMusicSlider(float value)
     {
-        
+        Maroon.SoundManager.Instance.MusicVolume = value;
+    }
+
+    void OnChangeSoundEffectSlider(float value)
+    {
+        Maroon.SoundManager.Instance.SoundEffectVolume = value;
     }
 }

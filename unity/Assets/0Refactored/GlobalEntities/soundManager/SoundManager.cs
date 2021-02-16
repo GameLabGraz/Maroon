@@ -19,7 +19,7 @@ namespace Maroon
         // -------------------------------------------------------------------------------------------------------------
         // Sources
 
-        // For sounds
+        // For sound effects
         [SerializeField] private AudioSource _soundEffectSource = null;
 
         // For music
