@@ -36,14 +36,14 @@ public class scrMenuColumnNetwork : MonoBehaviour
         this.ButtonKick.GetComponent<Button>().onClick.AddListener(() => this.OnButtonKick());
 
         _menu = FindObjectOfType<scrMenu>();
-        MaroonNetworkManager.Instance.StartMultiUser();
+        Maroon.NetworkManager.Instance.StartMultiUser();
         
-        ButtonJoin.SetActive(MaroonNetworkManager.Instance.mode == NetworkManagerMode.Offline);
-        ButtonHost.SetActive(MaroonNetworkManager.Instance.mode == NetworkManagerMode.Offline);
-        ButtonLeaveClient.SetActive(MaroonNetworkManager.Instance.mode == NetworkManagerMode.ClientOnly);
-        ButtonLeaveHost.SetActive(MaroonNetworkManager.Instance.mode == NetworkManagerMode.Host);
-        ButtonPortsMapped.SetActive(MaroonNetworkManager.Instance.mode == NetworkManagerMode.Host && !MaroonNetworkManager.Instance.PortsMapped);
-        ButtonKick.SetActive(MaroonNetworkManager.Instance.mode == NetworkManagerMode.Host);
+        ButtonJoin.SetActive(Maroon.NetworkManager.Instance.mode == NetworkManagerMode.Offline);
+        ButtonHost.SetActive(Maroon.NetworkManager.Instance.mode == NetworkManagerMode.Offline);
+        ButtonLeaveClient.SetActive(Maroon.NetworkManager.Instance.mode == NetworkManagerMode.ClientOnly);
+        ButtonLeaveHost.SetActive(Maroon.NetworkManager.Instance.mode == NetworkManagerMode.Host);
+        ButtonPortsMapped.SetActive(Maroon.NetworkManager.Instance.mode == NetworkManagerMode.Host && !Maroon.NetworkManager.Instance.PortsMapped);
+        ButtonKick.SetActive(Maroon.NetworkManager.Instance.mode == NetworkManagerMode.Host);
     }
 
     private void OnClickJoin()
@@ -56,25 +56,25 @@ public class scrMenuColumnNetwork : MonoBehaviour
     
     private void OnClickHost()
     {
-        MaroonNetworkManager.Instance.StartHostWithPassword();
+        Maroon.NetworkManager.Instance.StartHostWithPassword();
         _menu.CloseMenu();
     }
     
     private void OnClickLeaveClient()
     {
-        MaroonNetworkManager.Instance.StopClientRegularly();
+        Maroon.NetworkManager.Instance.StopClientRegularly();
         _menu.CloseMenu();
     }
     
     private void OnClickLeaveHost()
     {
-        MaroonNetworkManager.Instance.StopHost();
+        Maroon.NetworkManager.Instance.StopHost();
         _menu.CloseMenu();
     }
 
     private void OnClickPortsMapped()
     {
-        MaroonNetworkManager.Instance.PortsMapped = true;
+        Maroon.NetworkManager.Instance.PortsMapped = true;
         _menu.CloseMenu();
     }
 

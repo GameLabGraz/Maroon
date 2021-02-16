@@ -19,7 +19,7 @@ public class scrMenuColumnNetworkKick : MonoBehaviour
     
     void Start()
     {
-        List<string> orderedPlayers = MaroonNetworkManager.Instance.ServerGetPlayerNames();
+        List<string> orderedPlayers = Maroon.NetworkManager.Instance.ServerGetPlayerNames();
         orderedPlayers.Sort();
 
         foreach (var player in orderedPlayers)
@@ -35,7 +35,7 @@ public class scrMenuColumnNetworkKick : MonoBehaviour
         new_button.GetComponentInChildren<LocalizedTMP>().enabled = false;
         new_button.GetComponentInChildren<TextMeshProUGUI>().text = playerName;
         
-        if (playerName == MaroonNetworkManager.Instance.PlayerName)
+        if (playerName == Maroon.NetworkManager.Instance.PlayerName)
         {
             new_button.GetComponent<Button>().interactable = false;
             new_button.transform.Find("IconContainer").Find("Icon").GetComponent<RawImage>().texture = TextureIconHost;
@@ -52,7 +52,7 @@ public class scrMenuColumnNetworkKick : MonoBehaviour
 
     private void KickPlayer(string playerName)
     {
-        MaroonNetworkManager.Instance.KickPlayer(playerName);
+        Maroon.NetworkManager.Instance.KickPlayer(playerName);
         Destroy(_playerButtons[playerName]);
     }
 }

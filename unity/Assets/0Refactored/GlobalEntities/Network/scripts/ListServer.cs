@@ -99,8 +99,8 @@ public class ListServer : MonoBehaviour
 
         // create message
         writer.Write((ushort)NetworkServer.connections.Count);
-        writer.Write((ushort)MaroonNetworkManager.Instance.maxConnections);
-        byte[] titleBytes = Encoding.UTF8.GetBytes(MaroonNetworkManager.Instance.ServerName);
+        writer.Write((ushort)Maroon.NetworkManager.Instance.maxConnections);
+        byte[] titleBytes = Encoding.UTF8.GetBytes(Maroon.NetworkManager.Instance.ServerName);
         writer.Write((ushort)titleBytes.Length);
         writer.Write(titleBytes);
         writer.Flush();
@@ -122,7 +122,7 @@ public class ListServer : MonoBehaviour
             // connected yet?
             if (gameServerToListenConnection.Connected)
             {
-                if(MaroonNetworkManager.Instance.PortsMapped)
+                if(Maroon.NetworkManager.Instance.PortsMapped)
                     SendStatus();
             }
             // otherwise try to connect

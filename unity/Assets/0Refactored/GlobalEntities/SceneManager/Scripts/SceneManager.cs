@@ -354,7 +354,76 @@ namespace Maroon
         /// <param name="showLoadingScreen">
         ///     Enables a loading screen while loading the scene. TODO: Not implemented. Implement this.
         /// </param>
-        public bool LoadSceneIfInAnyCategory(Maroon.CustomSceneAsset scene, bool showLoadingScreen = false)
+        public bool LoadSceneRequest(Maroon.CustomSceneAsset scene, bool showLoadingScreen = false)
+        {
+            // Check if scene is valid
+            if(!LoadSceneValidate(scene))
+            {
+                return false;
+            }
+
+            // If network disabled
+            if(Maroon.NetworkManager.Instance.mode == Mirror.NetworkManagerMode.Offline)
+            {
+                LoadSceneExecute(scene, showLoadingScreen);
+            }
+
+            // If network enabled
+            else
+            {
+                Maroon.NetworkManager.Instance.EnterScene(scene.ScenePath);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        ///     Loades the Main Menu scene according to the current platform.
+        /// </summary>
+        /// <param name="showLoadingScreen">
+        ///     Enables a loading screen while loading the scene.
+        /// </param>
+        public void LoadMainMenu(bool showLoadingScreen = false)
+        {
+            // Return VR main menu for VR platform
+            if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
+            {
+                this.LoadSceneRequest(this._sceneMainMenuVR);
+            }
+
+            // Return PC main menu
+            this.LoadSceneRequest(this._sceneMainMenuPC);
+        }
+
+        /// <summary>
+        ///     The name of the scene that was loaded before the currently active scene. If no previous scene
+        ///     is available, the Main Menu scene according to the current platform.
+        /// </summary>
+        public void LoadPreviousScene()
+        {
+            // If there is no previous scene available, load main menu
+            if(this._sceneHistory.Count < 2)
+            {
+                this.LoadMainMenu();
+                return;
+            }
+
+            // If previous scene available, remove current scene and load previous scene
+            this._sceneHistory.Pop();
+            this.LoadSceneRequest(this._sceneHistory.Pop());            
+        }
+
+
+        // -------------------------------------------------------------------------------------------------------------
+        // Scene Navigation: Helper Methods
+
+        /// <summary>
+        ///     Validates if a scene exists and checks if it can be loaded based on current scene and platform.
+        /// </summary>
+        /// <param name="scene">
+        ///     A Maroon.CustomSceneAsset to be loaded.
+        /// </param>
+        public bool LoadSceneValidate(Maroon.CustomSceneAsset scene)
         {
             // If scene to be loaded doesn't exist in one of the categories
             if(!System.Array.Exists(this.getScenesFromAllCategories().ToArray(), element => element.SceneName == scene.SceneName))
@@ -372,45 +441,61 @@ namespace Maroon
                 return false;
             }
 
-            // If valid, load scene and return true
-            UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
-            this._sceneHistory.Push(scene);
+            // Scene exists and it is ok to load it
             return true;
         }
 
-        /// <summary>
-        ///     Loades the Main Menu scene according to the current platform.
-        /// </summary>
-        /// <param name="showLoadingScreen">
-        ///     Enables a loading screen while loading the scene.
-        /// </param>
-        public void LoadMainMenu(bool showLoadingScreen = false)
+        // -------------------------------------------------------------------------------------------------------------
+        // Scene Navigation: Dangerous Methods
+
+        // DO NOT USE THIS FUNCTION, use LoadSceneRequest instead, unless you have a good reason to do so and know what your are
+        public bool LoadSceneExecute(Maroon.CustomSceneAsset scene, bool showLoadingScreen = false)
         {
-            // Return VR main menu for VR platform
-            if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
+            // Check if scene is valid
+            if(!LoadSceneValidate(scene))
             {
-                this.LoadSceneIfInAnyCategory(this._sceneMainMenuVR);
+                return false;
+            }
+            
+            // If network disabled
+            if(Maroon.NetworkManager.Instance.mode == Mirror.NetworkManagerMode.Offline)
+            {
+                UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
+                AddToSceneHistory(scene);
             }
 
-            // Return PC main menu
-            this.LoadSceneIfInAnyCategory(this._sceneMainMenuPC);
+            // If network enabled
+            else
+            {
+                Maroon.NetworkManager.Instance.ServerChangeScene(scene.ScenePath);
+            }
+
+            // Add scene change to history
+            return true;
         }
 
-        /// <summary>
-        ///     The name of the scene that was loaded before the currently active scene. If no previous scene
-        ///     is available, the Main Menu scene according to the current platform.
-        /// </summary>
-        public void LoadPreviousScene()
-        {
-            // If there is no previous scene available, load main menu
-            if(this._sceneHistory.Count < 2)
-            {
-                this.LoadMainMenu();
-            }
 
-            // If previous scene available, remove current scene and load previous scene
-            this._sceneHistory.Pop();
-            this.LoadSceneIfInAnyCategory(this._sceneHistory.Pop());            
+        // DO NOT USE THIS FUNCTION, use LoadSceneRequest instead, unless you have a good reason to do so and know what your are
+        public bool LoadSceneLocalOnlyExecuteForce(Maroon.CustomSceneAsset scene, bool showLoadingScreen = false)
+        {
+            // Check if scene is valid
+            if(!LoadSceneValidate(scene))
+            {
+                return false;
+            }    
+        
+            UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
+            AddToSceneHistory(scene);
+            return true;
+        }
+
+        // Called by network to update scene changes on clients, that were initiated by server
+        public void AddToSceneHistory(Maroon.CustomSceneAsset scene)
+        {
+            if(_sceneHistory.Count == 0 || scene.SceneName != _sceneHistory.Peek().SceneName)
+            {
+                this._sceneHistory.Push(scene);
+            }
         }
     }
 
