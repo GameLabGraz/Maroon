@@ -29,7 +29,7 @@ namespace Maroon.Build
         // #############################################################################################################
         // Members
 
-        private const string ScenePath      = "Assets/0Refactored/scenes";
+        private const string ScenePath      = "Assets/Maroon/scenes";
         private const string LabPath        = ScenePath + "/laboratory";
         private const string SpecialPath    = ScenePath + "/special";
         private const string ExperimentPath = ScenePath + "/experiments";
