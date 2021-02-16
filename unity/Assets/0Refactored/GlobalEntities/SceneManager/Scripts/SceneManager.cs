@@ -340,28 +340,6 @@ namespace Maroon
         // -------------------------------------------------------------------------------------------------------------
         // Scene Navigation
 
-        public bool LoadSceneValidate(Maroon.CustomSceneAsset scene)
-        {
-            // If scene to be loaded doesn't exist in one of the categories
-            if(!System.Array.Exists(this.getScenesFromAllCategories().ToArray(), element => element.SceneName == scene.SceneName))
-            {
-                // TODO: Convert to warning after fixing warnings
-                Debug.Log("WARNING: Tried to load scene that does not exist in categories."); 
-                return false;
-            }
-
-            // If scene to be loaded has wrong platform
-            if(scene.IsVirtualRealityScene != Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
-            {
-                // TODO: Convert to warning after fixing warnings
-                Debug.Log("WARNING: Tried to load scene that does not match platform type."); 
-                return false;
-            }
-
-            // Scene exists and it is ok to load it
-            return true;
-        }
-
         /// <summary>
         ///     Loades a scene based on a Maroon.CustomSceneAsset. The scene must be registered in one of the
         ///     categories in the SceneManager to be able to load it with this method. Always use this method for 
@@ -403,6 +381,76 @@ namespace Maroon
             return true;
         }
 
+        /// <summary>
+        ///     Loades the Main Menu scene according to the current platform.
+        /// </summary>
+        /// <param name="showLoadingScreen">
+        ///     Enables a loading screen while loading the scene.
+        /// </param>
+        public void LoadMainMenu(bool showLoadingScreen = false)
+        {
+            // Return VR main menu for VR platform
+            if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
+            {
+                this.LoadSceneRequest(this._sceneMainMenuVR);
+            }
+
+            // Return PC main menu
+            this.LoadSceneRequest(this._sceneMainMenuPC);
+        }
+
+        /// <summary>
+        ///     The name of the scene that was loaded before the currently active scene. If no previous scene
+        ///     is available, the Main Menu scene according to the current platform.
+        /// </summary>
+        public void LoadPreviousScene()
+        {
+            // If there is no previous scene available, load main menu
+            if(this._sceneHistory.Count < 2)
+            {
+                this.LoadMainMenu();
+                return;
+            }
+
+            // If previous scene available, remove current scene and load previous scene
+            this._sceneHistory.Pop();
+            this.LoadSceneRequest(this._sceneHistory.Pop());            
+        }
+
+
+        // -------------------------------------------------------------------------------------------------------------
+        // Scene Navigation: Helper Methods
+
+        /// <summary>
+        ///     Validates if a scene exists and checks if it can be loaded based on current scene and platform.
+        /// </summary>
+        /// <param name="scene">
+        ///     A Maroon.CustomSceneAsset to be loaded.
+        /// </param>
+        public bool LoadSceneValidate(Maroon.CustomSceneAsset scene)
+        {
+            // If scene to be loaded doesn't exist in one of the categories
+            if(!System.Array.Exists(this.getScenesFromAllCategories().ToArray(), element => element.SceneName == scene.SceneName))
+            {
+                // TODO: Convert to warning after fixing warnings
+                Debug.Log("WARNING: Tried to load scene that does not exist in categories."); 
+                return false;
+            }
+
+            // If scene to be loaded has wrong platform
+            if(scene.IsVirtualRealityScene != Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
+            {
+                // TODO: Convert to warning after fixing warnings
+                Debug.Log("WARNING: Tried to load scene that does not match platform type."); 
+                return false;
+            }
+
+            // Scene exists and it is ok to load it
+            return true;
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+        // Scene Navigation: Dangerous Methods
 
         // DO NOT USE THIS FUNCTION, use LoadSceneRequest instead, unless you have a good reason to do so and know what your are
         public bool LoadSceneExecute(Maroon.CustomSceneAsset scene, bool showLoadingScreen = false)
@@ -448,42 +496,10 @@ namespace Maroon
             return true;
         }
 
-
-
-        /// <summary>
-        ///     Loades the Main Menu scene according to the current platform.
-        /// </summary>
-        /// <param name="showLoadingScreen">
-        ///     Enables a loading screen while loading the scene.
-        /// </param>
-        public void LoadMainMenu(bool showLoadingScreen = false)
+        // Called by network to update scene changes on clients, that were initiated by server
+        public void UpdateSceneHistory(Maroon.CustomSceneAsset scene)
         {
-            // Return VR main menu for VR platform
-            if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
-            {
-                this.LoadSceneRequest(this._sceneMainMenuVR);
-            }
-
-            // Return PC main menu
-            this.LoadSceneRequest(this._sceneMainMenuPC);
-        }
-
-        /// <summary>
-        ///     The name of the scene that was loaded before the currently active scene. If no previous scene
-        ///     is available, the Main Menu scene according to the current platform.
-        /// </summary>
-        public void LoadPreviousScene()
-        {
-            // If there is no previous scene available, load main menu
-            if(this._sceneHistory.Count < 2)
-            {
-                this.LoadMainMenu();
-                return;
-            }
-
-            // If previous scene available, remove current scene and load previous scene
-            this._sceneHistory.Pop();
-            this.LoadSceneRequest(this._sceneHistory.Pop());            
+            this._sceneHistory.Push(scene);
         }
     }
 
