@@ -1,41 +1,14 @@
 ﻿using System.Globalization;
 using Maroon.Physics;
 using TMPro;
-using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-
 
 namespace Maroon.UI
 {
-
-    [CustomEditor(typeof(QuantityPropertyView))]
-    public class QuantityPropertyViewEditor : Editor
-    {
-        private QuantityPropertyView _propertyView;
-
-        private void OnEnable()
-        {
-            _propertyView = (QuantityPropertyView) target;
-        }
-
-        public override void OnInspectorGUI()
-        {
-            EditorGUI.BeginChangeCheck();
-            DrawDefaultInspector();
-
-            if (EditorGUI.EndChangeCheck())
-            {
-                _propertyView.ShowUI();
-            }
-        }
-    }
-
-
     public class QuantityPropertyView : MonoBehaviour
     {
-        [SerializeField] public QuantityReferenceValue quantity;
+        public QuantityReferenceValue quantity;
+        public object test;
 
         private void Start()
         {
@@ -52,6 +25,7 @@ namespace Maroon.UI
         
         public void ShowUI()
         {
+            test = quantity;
             ClearUI();
 
             if (quantity?.Value == null) return;

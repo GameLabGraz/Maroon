@@ -1,11 +1,14 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Maroon.UI
 {
     public class Slider : UnityEngine.UI.Slider, IResetObject
     {
         [SerializeField] private bool allowReset = true;
+
+        public UnityEvent OnStart;
 
         private float _startValue;
 
@@ -14,6 +17,8 @@ namespace Maroon.UI
             base.Start();
 
             _startValue = value;
+            
+            OnStart?.Invoke();
         }
 
         public void SetSliderValue(object valueObject)

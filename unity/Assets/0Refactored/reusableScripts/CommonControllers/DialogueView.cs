@@ -1,4 +1,5 @@
 ﻿using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,6 +8,7 @@ namespace Maroon.UI
     public class DialogueView : MonoBehaviour
     {
         [SerializeField] private Text textComponent;
+        [SerializeField] private TMP_Text textTMP;
 
         [SerializeField] private Image iconHint;
         [SerializeField] private Image iconError;
@@ -17,10 +19,10 @@ namespace Maroon.UI
         public float fadeTime = 2f;
 
         public bool IsActive => gameObject.activeSelf;
-        private Image _currentIcon = null;
-        private bool _fadeIn = false;
+        private Image _currentIcon;
+        private bool _fadeIn;
 
-        private float _currentTime = 0f;
+        private float _currentTime;
 
         private void Start()
         {
@@ -42,14 +44,19 @@ namespace Maroon.UI
         {
             if (textComponent)
                 textComponent.text = message;
+
+            if (textTMP)
+                textTMP.text = message;
         }
 
         public void ClearMessage()
         {
             if (textComponent)
-            {
                 textComponent.text = string.Empty;
-            }
+
+            if (textTMP)
+                textTMP.text = string.Empty;
+
             ClearIcons();
         }
 
@@ -99,6 +106,9 @@ namespace Maroon.UI
         {
             if (textComponent)
                 textComponent.color = color;
+
+            if (textTMP)
+                textTMP.color = color;
         }
 
         public void SetActive(bool value)
