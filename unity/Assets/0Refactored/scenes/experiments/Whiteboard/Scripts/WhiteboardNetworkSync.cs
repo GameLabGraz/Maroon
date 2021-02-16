@@ -69,7 +69,7 @@ public class WhiteboardNetworkSync : ExperimentNetworkSync
     private Lecture _currentLecture;
     private void Update()
     {
-        if (MaroonNetworkManager.Instance.IsInControl)
+        if (Maroon.NetworkManager.Instance.IsInControl)
         {
             if (_whiteboardController.SelectedLecture != _currentLecture)
             {

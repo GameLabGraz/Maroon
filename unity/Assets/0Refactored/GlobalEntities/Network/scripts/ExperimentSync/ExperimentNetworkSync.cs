@@ -9,9 +9,9 @@ public class ExperimentNetworkSync : NetworkBehaviour
     // Start is called before the first frame update
     protected virtual void Start()
     {
-        if (MaroonNetworkManager.Instance == null)
+        if (Maroon.NetworkManager.Instance == null)
             return;
-        if (MaroonNetworkManager.Instance.IsInControl)
+        if (Maroon.NetworkManager.Instance.IsInControl)
         {
             OnGetControl();
         }
@@ -23,14 +23,14 @@ public class ExperimentNetworkSync : NetworkBehaviour
 
     protected virtual void OnEnable()
     {
-        if (MaroonNetworkManager.Instance == null)
+        if (Maroon.NetworkManager.Instance == null)
             return;
         AddListeners();
     }
 
     protected virtual void OnDisable()
     {
-        if (MaroonNetworkManager.Instance == null)
+        if (Maroon.NetworkManager.Instance == null)
             return;
         RemoveListeners();
     }
@@ -41,8 +41,8 @@ public class ExperimentNetworkSync : NetworkBehaviour
 
     protected virtual void AddListeners()
     {
-        MaroonNetworkManager.Instance.onGetControl.AddListener(OnGetControl);
-        MaroonNetworkManager.Instance.onLoseControl.AddListener(OnLoseControl);
+        Maroon.NetworkManager.Instance.onGetControl.AddListener(OnGetControl);
+        Maroon.NetworkManager.Instance.onLoseControl.AddListener(OnLoseControl);
 
         try
         {
@@ -61,8 +61,8 @@ public class ExperimentNetworkSync : NetworkBehaviour
     
     protected virtual void RemoveListeners()
     {
-        MaroonNetworkManager.Instance.onGetControl.RemoveListener(OnGetControl);
-        MaroonNetworkManager.Instance.onLoseControl.RemoveListener(OnLoseControl);
+        Maroon.NetworkManager.Instance.onGetControl.RemoveListener(OnGetControl);
+        Maroon.NetworkManager.Instance.onLoseControl.RemoveListener(OnLoseControl);
 
         try
         {
@@ -81,7 +81,7 @@ public class ExperimentNetworkSync : NetworkBehaviour
     
     public void DeactivateInteractionIfNotInControl(object sender = null, EventArgs e = null)
     {
-        if (!MaroonNetworkManager.Instance.IsInControl)
+        if (!Maroon.NetworkManager.Instance.IsInControl)
         {
             OnLoseControl();
         }
@@ -92,7 +92,7 @@ public class ExperimentNetworkSync : NetworkBehaviour
     //No parameters
     protected void SyncEvent(string eventActivatedCoroutine)
     {
-        if(MaroonNetworkManager.Instance.IsInControl)
+        if(Maroon.NetworkManager.Instance.IsInControl)
             CmdSyncEvent(eventActivatedCoroutine);
     }
     
@@ -106,7 +106,7 @@ public class ExperimentNetworkSync : NetworkBehaviour
     private void RpcSyncEvent(string eventActivatedCoroutine)
     {
         //If in Control: Already executed it!
-        if (!MaroonNetworkManager.Instance.IsInControl)
+        if (!Maroon.NetworkManager.Instance.IsInControl)
         {
             StartCoroutine(eventActivatedCoroutine);
         }
@@ -115,7 +115,7 @@ public class ExperimentNetworkSync : NetworkBehaviour
     //float
     protected void SyncEvent(string eventActivatedCoroutine, float value)
     {
-        if(MaroonNetworkManager.Instance.IsInControl)
+        if(Maroon.NetworkManager.Instance.IsInControl)
             CmdSyncFloatEvent(eventActivatedCoroutine, value);
     }
     
@@ -129,7 +129,7 @@ public class ExperimentNetworkSync : NetworkBehaviour
     private void RpcSyncFloatEvent(string eventActivatedCoroutine, float value)
     {
         //If in Control: Already executed it!
-        if (!MaroonNetworkManager.Instance.IsInControl)
+        if (!Maroon.NetworkManager.Instance.IsInControl)
         {
             StartCoroutine(eventActivatedCoroutine, value);
         }
@@ -138,7 +138,7 @@ public class ExperimentNetworkSync : NetworkBehaviour
     //int
     protected void SyncEvent(string eventActivatedCoroutine, int value)
     {
-        if(MaroonNetworkManager.Instance.IsInControl)
+        if(Maroon.NetworkManager.Instance.IsInControl)
             CmdSyncIntEvent(eventActivatedCoroutine, value);
     }
     
@@ -152,7 +152,7 @@ public class ExperimentNetworkSync : NetworkBehaviour
     private void RpcSyncIntEvent(string eventActivatedCoroutine, int value)
     {
         //If in Control: Already executed it!
-        if (!MaroonNetworkManager.Instance.IsInControl)
+        if (!Maroon.NetworkManager.Instance.IsInControl)
         {
             StartCoroutine(eventActivatedCoroutine, value);
         }
@@ -161,7 +161,7 @@ public class ExperimentNetworkSync : NetworkBehaviour
     //string
     protected void SyncEvent(string eventActivatedCoroutine, string value)
     {
-        if(MaroonNetworkManager.Instance.IsInControl)
+        if(Maroon.NetworkManager.Instance.IsInControl)
             CmdSyncStringEvent(eventActivatedCoroutine, value);
     }
     
@@ -175,7 +175,7 @@ public class ExperimentNetworkSync : NetworkBehaviour
     private void RpcSyncStringEvent(string eventActivatedCoroutine, string value)
     {
         //If in Control: Already executed it!
-        if (!MaroonNetworkManager.Instance.IsInControl)
+        if (!Maroon.NetworkManager.Instance.IsInControl)
         {
             StartCoroutine(eventActivatedCoroutine, value);
         }
@@ -184,7 +184,7 @@ public class ExperimentNetworkSync : NetworkBehaviour
     //bool
     protected void SyncEvent(string eventActivatedCoroutine, bool value)
     {
-        if(MaroonNetworkManager.Instance.IsInControl)
+        if(Maroon.NetworkManager.Instance.IsInControl)
             CmdSyncBoolEvent(eventActivatedCoroutine, value);
     }
     
@@ -198,7 +198,7 @@ public class ExperimentNetworkSync : NetworkBehaviour
     private void RpcSyncBoolEvent(string eventActivatedCoroutine, bool value)
     {
         //If in Control: Already executed it!
-        if (!MaroonNetworkManager.Instance.IsInControl)
+        if (!Maroon.NetworkManager.Instance.IsInControl)
         {
             StartCoroutine(eventActivatedCoroutine, value);
         }

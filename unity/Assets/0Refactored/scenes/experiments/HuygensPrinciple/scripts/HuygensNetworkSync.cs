@@ -171,7 +171,7 @@ public class HuygensNetworkSync : ExperimentNetworkSync
     //Plate Position
     private void OnPlatePositionChanged(Vector3 oldPosition, Vector3 newPosition)
     {
-        if (MaroonNetworkManager.Instance.IsInControl)
+        if (Maroon.NetworkManager.Instance.IsInControl)
             return;
 
         StartCoroutine(UpdatePlatePosition(newPosition));
@@ -188,7 +188,7 @@ public class HuygensNetworkSync : ExperimentNetworkSync
     
     private void Update()
     {
-        if (!MaroonNetworkManager.Instance.IsInControl)
+        if (!Maroon.NetworkManager.Instance.IsInControl)
             return;
         
         if (_platePosition != _plateMovement.transform.position)

@@ -59,7 +59,7 @@ public class SortingNetworkSync : ExperimentNetworkSync
     {
         base.Start();
 
-        SpawnMyQuizPlayer(MaroonNetworkManager.Instance.PlayerName);
+        SpawnMyQuizPlayer(Maroon.NetworkManager.Instance.PlayerName);
     }
 
     protected override void OnDisable()
@@ -73,12 +73,12 @@ public class SortingNetworkSync : ExperimentNetworkSync
     private void SpawnMyQuizPlayer(string playerName)
     {
         GameObject newQuizScore = Instantiate(quizScorePrefab);
-        NetworkServer.Spawn(newQuizScore, MaroonNetworkManager.Instance.GetConnectionByName(playerName));
+        NetworkServer.Spawn(newQuizScore, Maroon.NetworkManager.Instance.GetConnectionByName(playerName));
     }
 
     public void SynchronizeArray(List<int> array)
     {
-        if (MaroonNetworkManager.Instance.IsInControl)
+        if (Maroon.NetworkManager.Instance.IsInControl)
         {
             CmdSyncArray(array.ToArray());
         }
@@ -93,7 +93,7 @@ public class SortingNetworkSync : ExperimentNetworkSync
     [ClientRpc]
     private void RpcSyncArray(int[] array)
     {
-        if (!MaroonNetworkManager.Instance.IsInControl)
+        if (!Maroon.NetworkManager.Instance.IsInControl)
         {
             sortingController.SetDetailArray(array.ToList());
         }
@@ -101,7 +101,7 @@ public class SortingNetworkSync : ExperimentNetworkSync
     
     public void SynchronizeBattleOrder(List<int> order)
     {
-        if (MaroonNetworkManager.Instance.IsInControl)
+        if (Maroon.NetworkManager.Instance.IsInControl)
         {
             CmdSyncBattleOrder(order.ToArray());
         }
@@ -116,7 +116,7 @@ public class SortingNetworkSync : ExperimentNetworkSync
     [ClientRpc]
     private void RpcSyncBattleOrder(int[] order)
     {
-        if (!MaroonNetworkManager.Instance.IsInControl)
+        if (!Maroon.NetworkManager.Instance.IsInControl)
         {
             sortingController.SetBattleOrder(order.ToList());
         }

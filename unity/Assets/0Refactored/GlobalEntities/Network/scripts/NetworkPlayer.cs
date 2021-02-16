@@ -27,7 +27,7 @@ public class NetworkPlayer : NetworkBehaviour
     void Start()
     {
         if(isServer && isLocalPlayer) //only spawn once on server
-            MaroonNetworkManager.Instance.ServerSpawnControlHandlingUi();
+            Maroon.NetworkManager.Instance.ServerSpawnControlHandlingUi();
         
         if (firstPersonCharacter == null) //not in Laboratory
             return;
@@ -55,9 +55,9 @@ public class NetworkPlayer : NetworkBehaviour
 
     private void OnChangeName(string oldName, string newName)
     {
-        if (isLocalPlayer && MaroonNetworkManager.Instance.PlayerName == null)
+        if (isLocalPlayer && Maroon.NetworkManager.Instance.PlayerName == null)
         {
-            MaroonNetworkManager.Instance.PlayerName = newName;
+            Maroon.NetworkManager.Instance.PlayerName = newName;
         }
         else if(firstPersonCharacter != null) //in Laboratory
         {
@@ -67,7 +67,7 @@ public class NetworkPlayer : NetworkBehaviour
 
     private void UpdateControlColor()
     {
-        if (_name == MaroonNetworkManager.Instance.ClientInControl)
+        if (_name == Maroon.NetworkManager.Instance.ClientInControl)
         {
             SetColor(_inControlColor);
         }
@@ -89,15 +89,15 @@ public class NetworkPlayer : NetworkBehaviour
     public void SetName(string newName)
     {
         _name = newName;
-        if (isLocalPlayer && MaroonNetworkManager.Instance.PlayerName == null)
-            MaroonNetworkManager.Instance.PlayerName = newName;
+        if (isLocalPlayer && Maroon.NetworkManager.Instance.PlayerName == null)
+            Maroon.NetworkManager.Instance.PlayerName = newName;
     }
 
     private void OnDisable()
     {
         if (isServer)
         {
-            MaroonNetworkManager.Instance.RemovePlayerForConnection(connectionToClient);
+            Maroon.NetworkManager.Instance.RemovePlayerForConnection(connectionToClient);
         }
         if (firstPersonCharacter == null) //not in Laboratory
             return;

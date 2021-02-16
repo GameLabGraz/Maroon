@@ -199,7 +199,7 @@ public class FaradysLawNetworkSync : ExperimentNetworkSync
     {
         if (Magnet == null) //In Falling Coil Experiment
             return;
-        if (!MaroonNetworkManager.Instance.IsInControl)
+        if (!Maroon.NetworkManager.Instance.IsInControl)
         {
             if (Magnet.transform.position != _targetPosition)
             {
