@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using Mirror;
 using PlatformControls.PC;
 using UnityEngine;
 using UnityEngine.UI;
+using InputField = Maroon.UI.InputField;
+using Slider = Maroon.UI.Slider;
 
 public class FaradysLawNetworkSync : ExperimentNetworkSync
 {
@@ -15,42 +15,45 @@ public class FaradysLawNetworkSync : ExperimentNetworkSync
     private Button _resetButton;
     
     [SerializeField]
-    private Button _playPauseButton;
-    
+    private Button _playButton;
+
+    [SerializeField]
+    private Button _pauseButton;
+
     [SerializeField]
     private Button _stepForwardButton;
     
     //Parameters
     [SerializeField]
-    private PC_Slider _ringResistanceSlider;
+    private Slider _ringResistanceSlider;
     
     [SerializeField]
-    private PC_InputField _ringResistanceInputField;
+    private InputField _ringResistanceInputField;
     
     [SerializeField]
-    private PC_Slider _magneticMomentSlider;
+    private Slider _magneticMomentSlider;
     
     [SerializeField]
-    private PC_InputField _magneticMomentInputField;
+    private InputField _magneticMomentInputField;
     
     //Visualisation
     [SerializeField] 
     private Toggle _vectorFieldGridToggle;
     
     [SerializeField]
-    private PC_Slider _vectorFieldResolutionSlider;
+    private Slider _vectorFieldResolutionSlider;
     
     [SerializeField]
-    private PC_InputField _vectorFieldResolutionInputField;
+    private InputField _vectorFieldResolutionInputField;
     
     [SerializeField] 
     private Toggle _fieldLinesToggle;
     
     [SerializeField]
-    private PC_Slider _lineNumberSlider;
+    private Slider _lineNumberSlider;
     
     [SerializeField]
-    private PC_InputField _lineNumberInputField;
+    private InputField _lineNumberInputField;
     
     [SerializeField] 
     private Button _ironFillingsButton;
@@ -68,7 +71,8 @@ public class FaradysLawNetworkSync : ExperimentNetworkSync
     protected override void OnGetControl()
     {
         _resetButton.interactable = true;
-        _playPauseButton.interactable = true;
+        _playButton.interactable = true;
+        _pauseButton.interactable = true;
         _stepForwardButton.interactable = true;
 
         _ringResistanceSlider.interactable = true;
@@ -96,7 +100,8 @@ public class FaradysLawNetworkSync : ExperimentNetworkSync
     protected override void OnLoseControl()
     {
         _resetButton.interactable = false;
-        _playPauseButton.interactable = false;
+        _playButton.interactable = false;
+        _pauseButton.interactable = false;
         _stepForwardButton.interactable = false;
 
         _ringResistanceSlider.interactable = false;
