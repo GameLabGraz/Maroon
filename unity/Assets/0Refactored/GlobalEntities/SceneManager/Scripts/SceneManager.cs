@@ -378,6 +378,8 @@ namespace Maroon
         /// </param>
         public bool LoadSceneRequest(Maroon.CustomSceneAsset scene, bool showLoadingScreen = false)
         {
+            Debug.Log("LoadSceneRequest");
+
             // Check if scene is valid
             if(!LoadSceneValidate(scene))
             {
@@ -387,12 +389,14 @@ namespace Maroon
             // If network disabled
             if(Maroon.NetworkManager.Instance.mode == Mirror.NetworkManagerMode.Offline)
             {
+                Debug.Log("LoadSceneRequestOffline");
                 LoadSceneExecute(scene, showLoadingScreen);
             }
 
             // If network enabled
             else
             {
+                Debug.Log("LoadSceneRequestOnline");
                 Maroon.NetworkManager.Instance.EnterScene(scene.ScenePath);
             }
 
@@ -401,6 +405,8 @@ namespace Maroon
 
         public bool LoadSceneExecute(Maroon.CustomSceneAsset scene, bool showLoadingScreen = false)
         {
+            Debug.Log("LoadSceneExecute");
+
             // Check if scene is valid
             if(!LoadSceneValidate(scene))
             {
@@ -410,12 +416,14 @@ namespace Maroon
             // If network disabled
             if(Maroon.NetworkManager.Instance.mode == Mirror.NetworkManagerMode.Offline)
             {
+                Debug.Log("LoadSceneExecuteOffline");
                 UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
             }
 
             // If network enabled
             else
             {
+                Debug.Log("LoadSceneExecuteOnline");
                 Maroon.NetworkManager.Instance.ServerChangeScene(scene.ScenePath);
             }
 
@@ -452,6 +460,7 @@ namespace Maroon
             if(this._sceneHistory.Count < 2)
             {
                 this.LoadMainMenu();
+                return;
             }
 
             // If previous scene available, remove current scene and load previous scene

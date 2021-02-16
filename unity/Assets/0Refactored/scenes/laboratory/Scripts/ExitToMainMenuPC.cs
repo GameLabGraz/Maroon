@@ -12,6 +12,6 @@ public class ExitToMainMenuPC : MonoBehaviour
             return;
 
         if (Input.GetKey(KeyCode.Return))
-            Maroon.NetworkManager.Instance.EnterScene(this.targetMainMenuScenePC);
+            Maroon.SceneManager.Instance.LoadSceneRequest(this.targetMainMenuScenePC);
     }
 }

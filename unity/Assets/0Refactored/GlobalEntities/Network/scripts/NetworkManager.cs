@@ -478,8 +478,7 @@ namespace Maroon
                 case LeaveReason.InExperiment:
                     leaveMessageKey = "ServerInExperiment";
                     _serverInExperiment = true;
-                    Maroon.CustomSceneAsset sceneAsset = Maroon.SceneManager.Instance.GetSceneAssetBySceneName(onlineScene);
-                    Maroon.SceneManager.Instance.LoadSceneExecute(sceneAsset);
+                    Maroon.SceneManager.Instance.LoadPreviousScene();
                     break;
                 case LeaveReason.Kicked:
                     leaveMessageKey = "ClientKicked";

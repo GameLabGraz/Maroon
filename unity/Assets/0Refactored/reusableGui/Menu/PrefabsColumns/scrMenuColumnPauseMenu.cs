@@ -121,8 +121,7 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
         
         else
         {
-            //UnityEngine.SceneManagement.SceneManager.LoadScene(this.targetMainMenuScenePC);
-            Maroon.NetworkManager.Instance.EnterScene(this.targetMainMenuScenePC);
+            Maroon.SceneManager.Instance.LoadSceneRequest(this.targetMainMenuScenePC);
         }
         this.Menu.CloseMenu();
     }

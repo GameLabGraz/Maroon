@@ -21,9 +21,7 @@ public class scrInfoSignEnterScene : MonoBehaviour
     // Load new scene
     public void EnterScene()
     {
-        //SceneManager.LoadScene(this.targetScene);
-        // TODO: Use SceneManager instead
-        Maroon.NetworkManager.Instance.EnterScene(this.targetScene);
+        Maroon.SceneManager.Instance.LoadSceneRequest(this.targetScene);
     }
 
     // Start is called before the first frame update
