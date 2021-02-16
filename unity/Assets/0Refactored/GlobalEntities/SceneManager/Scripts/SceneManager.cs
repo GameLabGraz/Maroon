@@ -468,6 +468,7 @@ namespace Maroon
             {
                 Debug.Log("LoadSceneExecuteOffline");
                 UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
+                AddToSceneHistory(scene);
             }
 
             // If network enabled
@@ -478,7 +479,6 @@ namespace Maroon
             }
 
             // Add scene change to history
-            this._sceneHistory.Push(scene);
             return true;
         }
 
@@ -497,9 +497,12 @@ namespace Maroon
         }
 
         // Called by network to update scene changes on clients, that were initiated by server
-        public void UpdateSceneHistory(Maroon.CustomSceneAsset scene)
+        public void AddToSceneHistory(Maroon.CustomSceneAsset scene)
         {
-            this._sceneHistory.Push(scene);
+            if(scene.SceneName != _sceneHistory.Peek().SceneName)
+            {
+                this._sceneHistory.Push(scene);
+            }
         }
     }
 
