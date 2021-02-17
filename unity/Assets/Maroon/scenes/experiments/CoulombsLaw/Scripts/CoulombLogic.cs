@@ -409,7 +409,6 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         if(_charges.Count >= maxChargeCount) return;
         
         SimulationController.Instance.SimulationRunning = false;
-        SimulationController.Instance.AddNewResetObjectAtBegin(coulombCharge);
         _charges.Add(coulombCharge);
         _chargesGameObjects.Add(coulombCharge.gameObject);
         coulombCharge.SetInUse(true);
@@ -445,7 +444,6 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
 
     public void RemoveParticle(CoulombChargeBehaviour coulombCharge, bool destroy = false)
     {
-        SimulationController.Instance.RemoveResetObject(coulombCharge);
         _charges.Remove(coulombCharge);
         _chargesGameObjects.Remove(coulombCharge.gameObject);
         coulombCharge.SetInUse(false);

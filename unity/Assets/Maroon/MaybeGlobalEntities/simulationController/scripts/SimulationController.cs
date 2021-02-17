@@ -58,7 +58,7 @@ public class SimulationController : MonoBehaviour
     /// <summary>
     /// The objects which must be reset
     /// </summary>
-    private readonly List<IResetObject> _resetObjects = new List<IResetObject>();
+    private IEnumerable<IResetObject> _resetObjects => FindObjectsOfType<MonoBehaviour>().OfType<IResetObject>();
 
     public event EventHandler<EventArgs> OnStart;
 
@@ -99,12 +99,6 @@ public class SimulationController : MonoBehaviour
         stepSimulation = false;
         simulationReset = true;
         Time.timeScale = timeScale;
-
-        _resetObjects.Clear();
-        foreach (var resetObject in FindObjectsOfType<MonoBehaviour>().OfType<IResetObject>())
-        {
-            _resetObjects.Add(resetObject);
-        }
     }
 
     /// <summary>
@@ -116,36 +110,6 @@ public class SimulationController : MonoBehaviour
     {
         TimeScale = 1.0f;
         SceneManager.sceneUnloaded -= OnSceneUnloaded;
-    }
-
-    /// <summary>
-    /// Adds a reset object
-    /// </summary>
-    /// <param name="resetObj">the object to be reset</param>
-    public void AddNewResetObject(IResetObject resetObj)
-    {
-        if (resetObj != null)
-            _resetObjects.Add(resetObj);
-    }
-
-    /// <summary>
-    /// Adds a reset object at the begin so that it is called first when resetting the objects
-    /// </summary>
-    /// <param name="resetObj">the object to be reset</param>
-    public void AddNewResetObjectAtBegin(IResetObject resetObj)
-    {
-        if(resetObj != null)
-            _resetObjects.Insert(0, resetObj);
-    }
-
-    
-    /// <summary>
-    /// Removes a reset object
-    /// </summary>
-    /// <param name="resetObj">the reset object to remove</param>
-    public void RemoveResetObject(IResetObject resetObj)
-    {
-        _resetObjects.Remove(resetObj);
     }
 
     /// <summary>

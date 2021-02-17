@@ -147,7 +147,6 @@ public class VectorField : MonoBehaviour
                     else
                     {
                         currentArrow = Instantiate(arrow, transform);
-                        SimulationController.Instance.AddNewResetObject(currentArrow.GetComponent<IResetObject>());
                         vectorFieldArrows.Add(currentArrow);
                     }
                     currentArrow.transform.localPosition = new Vector3(x, y, z);

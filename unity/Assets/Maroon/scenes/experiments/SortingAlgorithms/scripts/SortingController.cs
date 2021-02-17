@@ -5,10 +5,11 @@ using System.Linq;
 using GEAR.Localization;
 using Maroon.UI;
 using Mirror;
-using PlatformControls.PC;
 using UnityEngine;
 using UnityEngine.UI;
+using Dropdown = Maroon.UI.Dropdown;
 using Random = System.Random;
+using Slider = Maroon.UI.Slider;
 
 public class SortingController : MonoBehaviour, IResetObject
 {
@@ -21,7 +22,7 @@ public class SortingController : MonoBehaviour, IResetObject
 
     [SerializeField] private SortingNetworkSync networkSync;
     private bool _isOnline;
-    private bool _initialized = false;
+    private bool _initialized;
 
     [SerializeField] private QuizManager quizManager;
     public QuizManager TheQuizManager => quizManager;
@@ -31,13 +32,13 @@ public class SortingController : MonoBehaviour, IResetObject
     private void Start()
     {
         _isOnline = NetworkClient.active;
-        detailSortingLogic.Init(_detailArraySize);
+        detailSortingLogic.Init(detailArraySize);
         leftBattleSorting.Init(battleArraySize, this);
         rightBattleSorting.Init(battleArraySize, this);
         RandomizeDetailArray();
-        SetDetailArraySize(sizeSlider.value);
+        SetDetailArraySize(detailArraySize);
         EnterDetailMode();
-        arrangementDropdown.allowReset = false;
+        arrangementDropdown.AllowReset = false;
         _arrangementMode = (ArrangementMode)arrangementDropdown.value;
         SetBattleOperationsPerSeconds(speedSlider.value);
         
@@ -95,10 +96,9 @@ public class SortingController : MonoBehaviour, IResetObject
     #region DetailMode
 
     private List<int> _detailOrder;
-    
-    private int _detailArraySize;
-    [SerializeField] private PC_Slider sizeSlider;
-    
+
+    [Header("Detail Mode")]
+    [SerializeField] private int detailArraySize = 8;
     [SerializeField] private GameObject detailSortingArray;
     [SerializeField] private GameObject detailOptionsUi;
     [SerializeField] private GameObject detailDescriptionUi;
@@ -137,8 +137,8 @@ public class SortingController : MonoBehaviour, IResetObject
     
     public void SetDetailArraySize(float size)
     {
-        _detailArraySize = (int)size;
-        detailSortingLogic.SortingValues = _detailOrder.GetRange(0, _detailArraySize);
+        detailArraySize = (int)size;
+        detailSortingLogic.SortingValues = _detailOrder.GetRange(0, detailArraySize);
     }
     
     private void RandomizeDetailArray()
@@ -150,7 +150,7 @@ public class SortingController : MonoBehaviour, IResetObject
         {
             _detailOrder.Add(rng.Next(100));
         }
-        detailSortingLogic.SortingValues = _detailOrder.GetRange(0, _detailArraySize);
+        detailSortingLogic.SortingValues = _detailOrder.GetRange(0, detailArraySize);
         
         DistributeDetailArray();
     }
@@ -164,13 +164,14 @@ public class SortingController : MonoBehaviour, IResetObject
     public void SetDetailArray(List<int> array)
     {
         _detailOrder = array;
-        detailSortingLogic.SortingValues = _detailOrder.GetRange(0, _detailArraySize);
+        detailSortingLogic.SortingValues = _detailOrder.GetRange(0, detailArraySize);
     }
 
     #endregion
 
     #region BattleMode
     
+    [Header("Battle Mode")]
     [SerializeField] private int battleArraySize;
 
     private enum ArrangementMode
@@ -180,12 +181,12 @@ public class SortingController : MonoBehaviour, IResetObject
         AM_Reversed
     }
     private ArrangementMode _arrangementMode;
-    [SerializeField] private PC_LocalizedDropDown arrangementDropdown;
+    [SerializeField] private Dropdown arrangementDropdown;
     
-    [SerializeField] private PC_LocalizedDropDown battleAlgorithmDropdownLeft;
-    [SerializeField] private PC_LocalizedDropDown battleAlgorithmDropdownRight;
+    [SerializeField] private Dropdown battleAlgorithmDropdownLeft;
+    [SerializeField] private Dropdown battleAlgorithmDropdownRight;
     
-    [SerializeField] private PC_Slider speedSlider;
+    [SerializeField] private Slider speedSlider;
     
     [SerializeField] private GameObject battleArrays;
     [SerializeField] private GameObject battleOptionsUi;
@@ -271,7 +272,7 @@ public class SortingController : MonoBehaviour, IResetObject
         if (_initialized && _isOnline && !Maroon.NetworkManager.Instance.IsInControl)
             return;
         
-        List<int> order = Enumerable.Range(0, battleArraySize).ToList();
+        var order = Enumerable.Range(0, battleArraySize).ToList();
         switch (_arrangementMode)
         {
             case ArrangementMode.AM_Random:
@@ -300,7 +301,7 @@ public class SortingController : MonoBehaviour, IResetObject
     private static Random rng = new Random();
     private void ShuffleList(List<int> list)
     {
-        int n = list.Count;  
+        var n = list.Count;  
         while (n > 1) {  
             n--;  
             int k = rng.Next(n + 1);  
@@ -344,7 +345,8 @@ public class SortingController : MonoBehaviour, IResetObject
     private bool _leftFinished;
     private bool _rightFinished;
     private bool _winnerEvaluated;
-    
+
+    [Header("Quiz")]
     [SerializeField] private GameObject leftBattlePanel;
     [SerializeField] private GameObject rightBattlePanel;
     [SerializeField] private Color defaultColor;

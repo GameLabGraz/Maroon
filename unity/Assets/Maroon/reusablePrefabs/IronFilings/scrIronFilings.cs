@@ -118,7 +118,6 @@ public class scrIronFilings : MonoBehaviour, IResetObject
             return;
 
         SimulationController.Instance.StopSimulation();
-        SimulationController.Instance.AddNewResetObject(this);
 
         Debug.Log("Start IronFiling");
         

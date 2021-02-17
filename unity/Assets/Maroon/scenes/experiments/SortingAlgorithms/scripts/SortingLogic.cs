@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GEAR.Localization;
-using PlatformControls.PC;
-using TMPro;
+using Maroon.UI;
 using UnityEngine;
 
 public class SortingLogic : MonoBehaviour
@@ -26,7 +24,7 @@ public class SortingLogic : MonoBehaviour
     }
     private List<LinkedList<int>> _buckets = new List<LinkedList<int>>();
 
-    [SerializeField] private PC_LocalizedDropDown algorithmDropDown;
+    [SerializeField] private Dropdown algorithmDropDown;
     private SortingAlgorithm.SortingAlgorithmType _sortingAlgorithm;
     private SortingAlgorithm _algorithm;
 
@@ -42,10 +40,10 @@ public class SortingLogic : MonoBehaviour
         _sortingVisualization = GetComponent<DetailSortingVisualization>();
         _sortingVisualization.Init(size);
         algorithmDropDown.onValueChanged.AddListener(SetAlgorithmDropdown);
-        algorithmDropDown.allowReset = false;
+        algorithmDropDown.AllowReset = false;
         SetAlgorithmDropdown(algorithmDropDown.value);
         _sortingVisualization.TimePerMove = 0.99f / operationsPerSecond;
-        for (int i = 0; i < 10; ++i)
+        for (var i = 0; i < 10; ++i)
         {
             _buckets.Add(new LinkedList<int>());
         }
