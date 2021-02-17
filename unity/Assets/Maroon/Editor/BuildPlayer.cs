@@ -269,20 +269,21 @@ namespace Maroon.Build
                 Log($"BuildPlayer::GetScenes: Unable to load Scenes for {buildTarget}");
                 return null;
             }
-            
-            var scenes = new List<string>();
 
-            // Add Bootstrapping
-            scenes.Add($"{SpecialPath}/Bootstrapping{sceneExtension}");
+            var scenes = new List<string>
+            {
+                // Add Bootstrapping
+                $"{SpecialPath}/Bootstrapping{sceneExtension}",
 
-            // Add Loading
-            // TODO
+                // Add Loading
+                // TODO
 
-            // Add main menu
-            scenes.Add($"{SpecialPath}/MainMenu{sceneExtension}");
-            
-            // Add laboratory
-            scenes.Add($"{LabPath}/Laboratory{sceneExtension}");
+                // Add main menu
+                $"{SpecialPath}/MainMenu{sceneExtension}",
+
+                // Add laboratory
+                $"{LabPath}/Laboratory{sceneExtension}"
+            };
 
             var experiments = Directory.GetFiles(ExperimentPath, $"*{sceneExtension}", SearchOption.AllDirectories);
             scenes.AddRange(experiments);
