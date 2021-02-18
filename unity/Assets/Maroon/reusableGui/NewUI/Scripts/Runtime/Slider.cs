@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Maroon.UI
 {
@@ -8,17 +7,19 @@ namespace Maroon.UI
     {
         [SerializeField] private bool allowReset = true;
 
-        public UnityEvent OnStart;
-
         private float _startValue;
+
+        public bool AllowReset
+        {
+            get => allowReset;
+            set => allowReset = value;
+        }
 
         protected override void Start()
         {
             base.Start();
 
             _startValue = value;
-            
-            OnStart?.Invoke();
         }
 
         public void SetSliderValue(object valueObject)
