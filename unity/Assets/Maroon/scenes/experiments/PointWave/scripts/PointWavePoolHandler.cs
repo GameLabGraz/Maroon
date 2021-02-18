@@ -176,8 +176,7 @@ public class PointWavePoolHandler : MonoBehaviour
 
     public void AddSource(PointWaveSource pointWaveSource)
     {
-        SimulationController.Instance.StopSimulation(); 
-        SimulationController.Instance.AddNewResetObjectAtBegin(pointWaveSource);
+        SimulationController.Instance.StopSimulation();
 
         pointWaveSource.SetSourceKey(_sourceIdCount);
         _sources.Add(_sourceIdCount++, pointWaveSource);
@@ -193,8 +192,6 @@ public class PointWavePoolHandler : MonoBehaviour
 
     public void RemoveSource(PointWaveSource source)
     {
-        SimulationController.Instance.RemoveResetObject(source);
-        
         waterPlane.UnregisterWaveSource(source);
         _sources.Remove(source.GetSourceKey());
 

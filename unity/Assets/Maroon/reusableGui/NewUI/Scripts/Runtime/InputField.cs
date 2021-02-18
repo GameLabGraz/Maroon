@@ -1,11 +1,19 @@
-﻿using System.Globalization;
-using TMPro;
+﻿using TMPro;
+using UnityEngine;
 
 namespace Maroon.UI
 {
     public class InputField : TMP_InputField, IResetObject
     {
+        [SerializeField] private bool allowReset = true;
+
         private string _startText;
+
+        public bool AllowReset
+        {
+            get => allowReset;
+            set => allowReset = value;
+        }
 
         protected override void Start()
         {
@@ -19,7 +27,8 @@ namespace Maroon.UI
 
         public void ResetObject()
         {
-            text = _startText;
+            if (allowReset)
+                text = _startText;
         }
     }
 }

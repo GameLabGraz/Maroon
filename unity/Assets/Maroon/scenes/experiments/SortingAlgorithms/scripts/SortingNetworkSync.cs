@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Mirror;
-using PlatformControls.PC;
 using UnityEngine;
 using UnityEngine.UI;
+using Dropdown = Maroon.UI.Dropdown;
+using Slider = Maroon.UI.Slider;
+using InputField = Maroon.UI.InputField;
 
 public class SortingNetworkSync : ExperimentNetworkSync
 {
@@ -16,8 +17,11 @@ public class SortingNetworkSync : ExperimentNetworkSync
     private Button _resetButton;
     
     [SerializeField]
-    private Button _playPauseButton;
-    
+    private Button _playButton;
+
+    [SerializeField]
+    private Button _pauseButton;
+
     [SerializeField]
     private Button _stepBackwardButton;
     
@@ -25,24 +29,24 @@ public class SortingNetworkSync : ExperimentNetworkSync
     private Button _stepForwardButton;
     
     //Detail Mode Options
-    [SerializeField] private PC_LocalizedDropDown _detailAlgorithmDropDown;
+    [SerializeField] private Dropdown _detailAlgorithmDropDown;
     
-    [SerializeField] private PC_Slider _detailSizeSlider;
+    [SerializeField] private Slider _detailSizeSlider;
     
-    [SerializeField] private PC_InputField _detailSizeInputField;
+    [SerializeField] private InputField _detailSizeInputField;
     
     [SerializeField] private Button _battleModeButton;
     
     //Battle Mode Options
-    [SerializeField] private PC_LocalizedDropDown _battleLeftAlgorithmDropDown;
+    [SerializeField] private Dropdown _battleLeftAlgorithmDropDown;
     
-    [SerializeField] private PC_LocalizedDropDown _battleRightAlgorithmDropDown;
+    [SerializeField] private Dropdown _battleRightAlgorithmDropDown;
     
-    [SerializeField] private PC_Slider _battleSpeedSlider;
+    [SerializeField] private Slider _battleSpeedSlider;
     
-    [SerializeField] private PC_InputField _battleSpeedInputField;
+    [SerializeField] private InputField _battleSpeedInputField;
     
-    [SerializeField] private PC_LocalizedDropDown _battleArrangementDropDown;
+    [SerializeField] private Dropdown _battleArrangementDropDown;
     
     [SerializeField] private Button _detailModeButton;
     
@@ -127,7 +131,8 @@ public class SortingNetworkSync : ExperimentNetworkSync
     protected override void OnGetControl()
     {
         _resetButton.interactable = true;
-        _playPauseButton.interactable = true;
+        _playButton.interactable = true;
+        _pauseButton.interactable = true;
         _stepBackwardButton.interactable = true;
         _stepForwardButton.interactable = true;
         
@@ -149,7 +154,8 @@ public class SortingNetworkSync : ExperimentNetworkSync
     protected override void OnLoseControl()
     {
         _resetButton.interactable = false;
-        _playPauseButton.interactable = false;
+        _playButton.interactable = false;
+        _pauseButton.interactable = false;
         _stepBackwardButton.interactable = false;
         _stepForwardButton.interactable = false;
         
