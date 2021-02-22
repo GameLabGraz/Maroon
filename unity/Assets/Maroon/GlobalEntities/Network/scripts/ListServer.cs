@@ -60,6 +60,10 @@ public class ListServer : MonoBehaviour
     {
         // cannot use InvokeRepeating(nameof(Tick), 0, 1); because affected by Time Scale
         StartCoroutine(InvokeRealtimeTickCoroutine(1));
+        
+        //TODO: This is only for testing purposes! Remove once real list server works!!!
+        ServerStatus server = new ServerStatus("213.47.49.144", "Jannik's Testserver", 0, 10, false);
+        list["213.47.49.144"] = server;
     }
     
     private IEnumerator InvokeRealtimeTickCoroutine(float seconds)

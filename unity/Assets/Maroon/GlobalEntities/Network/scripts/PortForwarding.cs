@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using GEAR.Localization;
 using Maroon.UI;
+using Mirror;
 using Open.Nat;
 using UnityEngine;
 
@@ -18,7 +19,9 @@ public class PortForwarding : MonoBehaviour
     public async void SetupPortForwarding()
     {
         var discoverer = new NatDiscoverer();
-        _createdMapping = new Mapping(Protocol.Tcp, 7777, 7777, "Maroon");
+        var transport = (TelepathyTransport) Transport.activeTransport;
+        var port = transport.port;
+        _createdMapping = new Mapping(Protocol.Tcp, port, port, "Maroon");
         
         try
         {
