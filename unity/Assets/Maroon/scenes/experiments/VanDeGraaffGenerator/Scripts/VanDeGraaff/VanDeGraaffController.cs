@@ -51,7 +51,10 @@ namespace Maroon.Physics.Electromagnetism.VanDeGraaff
         /// The potential difference between the sphere and earth in [V]
         /// Derived from the charge in the sphere by Gauss' Law
         /// </summary>
-        public float Voltage => ChargeStrength / (4.0f * Mathf.PI * PhysicalConstants.e0 * radius);
+
+        [SerializeField] private QuantityFloat voltage;
+
+        public float Voltage => voltage.Value;
 
         /// <summary>
         /// The maximum voltage produced by the Van de Graaff Generator in [V]
@@ -90,6 +93,11 @@ namespace Maroon.Physics.Electromagnetism.VanDeGraaff
         protected override void Start()
         {
             base.Start();
+
+            charge.strength.onValueChanged.AddListener(chargeStrength =>
+            {
+                voltage.Value = chargeStrength / (4.0f * Mathf.PI * PhysicalConstants.e0 * radius);
+            });
 
             foreach (var inducedCharge in inducedObjects
                 .Select(inducedObject => inducedObject.GetComponent<ICharge>())
