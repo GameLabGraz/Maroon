@@ -28,6 +28,7 @@ public class SortingController : MonoBehaviour, IResetObject
     public QuizManager TheQuizManager => quizManager;
 
     private DialogueManager _dialogueManager;
+    private StudyTracker _studyTracker;
 
     private void Start()
     {
@@ -50,6 +51,8 @@ public class SortingController : MonoBehaviour, IResetObject
         Invoke(nameof(DistributeDetailArray), 1.0f);
         Invoke(nameof(SetBattleOrder), 1.0f);
         _initialized = true;
+
+        _studyTracker = FindObjectOfType<StudyTracker>();
     }
 
     public void GoOffline()
@@ -106,9 +109,13 @@ public class SortingController : MonoBehaviour, IResetObject
     [SerializeField] private GameObject backwardButton;
     
     [SerializeField] private SortingLogic detailSortingLogic;
+
+    private float _enterTime;
     
     public void EnterDetailMode(int chosenAlgorithm = -1)
     {
+        _enterTime = Time.time;
+        
         _sortingMode = SortingMode.SM_DetailMode;
         
         detailSortingArray.SetActive(true);
@@ -200,6 +207,9 @@ public class SortingController : MonoBehaviour, IResetObject
     private bool _enteredOnce;
     public void EnterBattleMode()
     {
+        if(_sortingMode == SortingMode.SM_DetailMode)
+            _studyTracker.TimeInDetailMode += Time.time - _enterTime;
+        
         _sortingMode = SortingMode.SM_BattleMode;
         
         detailSortingArray.SetActive(false);
@@ -229,6 +239,16 @@ public class SortingController : MonoBehaviour, IResetObject
             DisplayMessageByKey("EnterBattleModeMessage");
             _enteredOnce = true;
         }
+    }
+
+    public string GetLeftAlgorithm()
+    {
+        return GetAlgorithmName(leftBattleSorting.SelectedAlgorithm);
+    }
+    
+    public string GetRightAlgorithm()
+    {
+        return GetAlgorithmName(rightBattleSorting.SelectedAlgorithm);
     }
     
     public void SetBattleOperationsPerSeconds(float value)

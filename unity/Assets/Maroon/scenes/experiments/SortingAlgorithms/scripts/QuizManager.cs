@@ -77,6 +77,7 @@ public class QuizManager : MonoBehaviour
     public void ChooseLeftAlgorithmOnline()
     {
         _localQuizScore.ChooseAlgorithm(QuizScore.QuizChoice.Left);
+        _offlineChoice = QuizScore.QuizChoice.Left;
         leftOnlineButton.image.color = selectedButtonColor;
         rightOnlineButton.image.color = defaultButtonColor;
     }
@@ -84,6 +85,7 @@ public class QuizManager : MonoBehaviour
     public void ChooseRightAlgorithmOnline()
     {
         _localQuizScore.ChooseAlgorithm(QuizScore.QuizChoice.Right);
+        _offlineChoice = QuizScore.QuizChoice.Right;
         leftOnlineButton.image.color = defaultButtonColor;
         rightOnlineButton.image.color = selectedButtonColor;
     }
@@ -137,6 +139,13 @@ public class QuizManager : MonoBehaviour
 
         if (_offlineChoice == QuizScore.QuizChoice.Nothing)
             return;
+        
+        bool result = _offlineChoice == correct;
+        var studyTracker = FindObjectOfType<StudyTracker>();
+        var sortingController = FindObjectOfType<SortingController>();
+        studyTracker.ChallengeResults.Add(sortingController.GetLeftAlgorithm() + " vs. " +
+                                          sortingController.GetRightAlgorithm() + ": " + 
+                                          result);
 
         _offlineTries++;
         if (_offlineChoice == correct)

@@ -34,6 +34,8 @@ public class BattleSorting : MonoBehaviour
     private List<int> _currentOrder;
     private SortingAlgorithm.SortingAlgorithmType _selectedAlgorithm;
 
+    public SortingAlgorithm.SortingAlgorithmType SelectedAlgorithm => _selectedAlgorithm;
+
     private SortingController _sortingController;
     
     public void Init(int size, SortingController controller)
