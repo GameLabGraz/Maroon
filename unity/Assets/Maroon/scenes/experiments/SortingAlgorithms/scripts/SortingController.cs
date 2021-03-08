@@ -256,6 +256,8 @@ public class SortingController : MonoBehaviour, IResetObject
         SimulationController.Instance.StopSimulation();
         _arrangementMode = (ArrangementMode)arr;
         SetBattleOrder();
+        
+        ResetQuiz();
     }
     
     private void NewAlgorithmSelected()
