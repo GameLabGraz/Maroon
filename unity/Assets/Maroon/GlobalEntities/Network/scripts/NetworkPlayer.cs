@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using Mirror;
 using TMPro;
 using UnityEngine;
@@ -29,6 +27,9 @@ public class NetworkPlayer : NetworkBehaviour
         if(isServer && isLocalPlayer) //only spawn once on server
             Maroon.NetworkManager.Instance.ServerSpawnControlHandlingUi();
         
+        if(isLocalPlayer)
+            CmdClientLoadedScene();
+        
         if (firstPersonCharacter == null) //not in Laboratory
             return;
         _cc = GetComponent<CharacterController>();
@@ -50,6 +51,16 @@ public class NetworkPlayer : NetworkBehaviour
         else
         {
             InvokeRepeating(nameof(UpdateControlColor), 0, 0.5f);
+        }
+    }
+
+    [Command]
+    private void CmdClientLoadedScene()
+    {
+        var sync = FindObjectOfType<ExperimentNetworkSync>();
+        if (sync != null)
+        {
+            sync.ClientLoadedScene(connectionToClient);
         }
     }
 

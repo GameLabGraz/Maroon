@@ -66,6 +66,24 @@ public class SortingNetworkSync : ExperimentNetworkSync
 
     [SerializeField] private GameObject quizScorePrefab;
 
+    [Server]
+    public override void ClientLoadedScene(NetworkConnection conn)
+    {
+        List<int> detailArray = sortingController.GetDetailArray();
+        List<int> battleOrder = sortingController.GetBattleOrder();
+        RpcUpdateClientInformation(conn, detailArray.ToArray(), battleOrder.ToArray());
+    }
+
+    [TargetRpc]
+    private void RpcUpdateClientInformation(NetworkConnection client, int[] array, int[] order)
+    {
+        if (!isServer)
+        {
+            sortingController.SetDetailArray(array.ToList());
+            sortingController.SetBattleOrder(order.ToList());
+        }
+    }
+
     protected override void Start()
     {
         base.Start();
