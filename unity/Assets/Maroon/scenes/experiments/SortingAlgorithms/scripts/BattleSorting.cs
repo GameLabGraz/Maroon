@@ -99,12 +99,21 @@ public class BattleSorting : MonoBehaviour
     private void ResetAlgorithm()
     {
         StopAllCoroutines();
+        ResetBuckets();
         _executedOperations = 0;
         _operationsToExecute = 0;
         _secondsCarry = 0;
         DisplayOperations();
         if(isActiveAndEnabled)
             StartCoroutine(SortingStarter());
+    }
+    
+    private void ResetBuckets()
+    {
+        foreach (var bucket in _buckets)
+        {
+            bucket.Clear();
+        }
     }
 
     private IEnumerator SortingStarter()
