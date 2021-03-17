@@ -41,6 +41,7 @@ public class scrMenuColumnLaboratorySelectionDetail : MonoBehaviour
         ButtonGo.transform.Find("ContentContainer").transform.Find("Text (TMP)").GetComponent<LocalizedTMP>().Key =
             "Go to " + Maroon.SceneManager.Instance.ActiveSceneCategory.Name + " Lab";
 
+        return;
         // Create buttons based on category experiments
         for(int iScenes = 0; iScenes < scenes.Length; iScenes++)
         {
