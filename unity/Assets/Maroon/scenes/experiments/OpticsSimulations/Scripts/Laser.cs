@@ -26,7 +26,6 @@ public class Laser : MonoBehaviour
         float distance = (handle2.transform.position - handle1.transform.position).magnitude;
         Vector3 midpoint = (handle1.transform.position + handle2.transform.position) / 2.0f;
         Vector3 rotvec = (handle2.transform.position - handle1.transform.position).normalized;
-        //beam.transform.localScale = new Vector3(beam.transform.localScale.z, distance / 2.0f, beam.transform.localScale.x );
         beam.transform.localScale = new Vector3(1.0f, 1.0f, distance / 2.0f);
         beam.transform.position = midpoint;
         rotation = Quaternion.LookRotation(rotvec);
