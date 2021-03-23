@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 
 namespace PlatformControls.BaseControls
 {
@@ -12,6 +13,8 @@ namespace PlatformControls.BaseControls
 
         [SerializeField]
         protected float MovementSpeed = 1;
+        
+        public UnityEvent onMove;
 
         private Vector3 _initialPosition;
         private float _lastDistance;
@@ -31,6 +34,8 @@ namespace PlatformControls.BaseControls
             {
                 transform.Translate(translateVector);
                 _lastDistance = distance;
+
+                onMove?.Invoke();
             }
         }
     }
