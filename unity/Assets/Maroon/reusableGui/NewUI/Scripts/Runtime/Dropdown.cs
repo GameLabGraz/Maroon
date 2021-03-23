@@ -25,7 +25,6 @@ namespace Maroon.UI
 
         public void ResetObject()
         {
-            Debug.Log("Reset: " +  value);
             if (allowReset)
                 value = _startValue;
         }
