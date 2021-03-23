@@ -19,7 +19,6 @@ namespace Maroon.Physics.Electromagnetism.VanDeGraaff
         private const float MinGlowRangeDynamic = 0.25f;
         private const float MaxGlowRangeDynamic = 0.4f;
 
-        private float _chargeStrength;
         private AudioSource _sound;
 
         public bool GlowEnabled { get; set; } = true;
@@ -36,12 +35,14 @@ namespace Maroon.Physics.Electromagnetism.VanDeGraaff
             set => isAttachedToInducer = value;
         }
 
-        private void Start()
+        protected override void Start()
         {
+            base.Start();
+
             // Randomly set initial charge of balloon - positive or negative
             if (Random.Range(0, 2) > 0)
             {
-                charge.Strength *= -1f;
+                ChargeStrength *= -1f;
             }
 
             _sound = GetComponent<AudioSource>();
@@ -58,7 +59,7 @@ namespace Maroon.Physics.Electromagnetism.VanDeGraaff
 
             var glowFactor = chargeInducer.Voltage / chargeInducer.MaxVoltage;
 
-            if (charge.Strength < 0f)
+            if (ChargeStrength < 0f)
             {
                 leftGlow.range = MinGlowRangeOffset + MinGlowRangeDynamic * glowFactor;
                 rightGlow.range = MaxGlowRangeOffset + MaxGlowRangeDynamic * glowFactor;
