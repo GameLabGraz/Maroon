@@ -5,6 +5,8 @@ using Mirror;
 using PlatformControls.PC;
 using UnityEngine;
 using UnityEngine.UI;
+using InputField = Maroon.UI.InputField;
+using Slider = Maroon.UI.Slider;
 
 public class VanDeGraaffNetworkSync : ExperimentNetworkSync
 {
@@ -22,9 +24,9 @@ public class VanDeGraaffNetworkSync : ExperimentNetworkSync
 
     [SerializeField] private Toggle _vectorFieldToggle;
 
-    [SerializeField] private PC_Slider _vectorFieldResolutionSlider;
+    [SerializeField] private Slider _vectorFieldResolutionSlider;
 
-    [SerializeField] private PC_InputField _vectorFieldResolutionInputField;
+    [SerializeField] private InputField _vectorFieldResolutionInputField;
 
     [SerializeField] private Button _efieldFillingButton;
     
