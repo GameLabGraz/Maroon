@@ -37,8 +37,8 @@ public class WaterPlane : PausableObject, IResetObject
     private float _timer;
     private MeshRenderer _meshRenderer;
 
-    private Color _startMinColor;
-    private Color _startMaxColor;
+    public Color _startMinColor;
+    public Color _startMaxColor;
 
     private static int _maxNumberOfBasinGenerators = 30;
     private static int _maxNumberOfPlateGenerators = 30;
