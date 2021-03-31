@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class scrMenuColumnMainMenu : MonoBehaviour
@@ -33,6 +34,8 @@ public class scrMenuColumnMainMenu : MonoBehaviour
     [SerializeField] private GameObject ButtonCredits;
 
     [SerializeField] private GameObject ButtonExit;
+
+    [SerializeField] private GameObject ButtonMaroonWebSite;
     
     // #################################################################################################################
     // Methods
@@ -54,6 +57,10 @@ public class scrMenuColumnMainMenu : MonoBehaviour
         this.ButtonLanguage.GetComponent<Button>().onClick.AddListener(() => this.OnClickLanguage());
         this.ButtonCredits.GetComponent<Button>().onClick.AddListener(() => this.OnClickCredits());
         this.ButtonExit.GetComponent<Button>().onClick.AddListener(() => this.OnClickExit());
+        this.ButtonMaroonWebSite.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            Application.OpenURL("https://maroon.tugraz.at/");
+        });
     }
 
     void OnEnable()
