@@ -7,6 +7,8 @@ namespace HelpCharacter
     public class HelpMessageTrigger : MonoBehaviour
     {
         private HelpMessage[] _helpMessages;
+        private bool _trigger = true;
+        private int _count;
 
         private void Start ()
         {
@@ -18,8 +20,15 @@ namespace HelpCharacter
             if (!PlayerUtil.IsPlayer(other.gameObject))
                 return;
 
-            foreach (var helpMessage in _helpMessages)
-                helpMessage.ShowMessage();
+            if (_trigger)
+            {
+                foreach (var helpMessage in _helpMessages)
+                    helpMessage.ShowMessage();
+
+                _trigger = false;
+            }
+
+            if (_count++ > 2000) _trigger = true;
         }
     }
 }

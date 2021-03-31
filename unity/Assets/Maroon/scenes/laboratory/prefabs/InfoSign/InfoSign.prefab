@@ -484,7 +484,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4551172655252542898}
+      - m_Target: {fileID: 0}
         m_MethodName: EnterScene
         m_Mode: 1
         m_Arguments:
@@ -932,11 +932,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6474670638059283620}
-  - component: {fileID: 3526645197665556464}
   - component: {fileID: 6174145516931851252}
   - component: {fileID: 1253634968037966275}
   - component: {fileID: 7641606727072552732}
-  - component: {fileID: 4551172655252542898}
   m_Layer: 2
   m_Name: Collider
   m_TagString: Untagged
@@ -958,20 +956,6 @@ Transform:
   m_Father: {fileID: 4109133658017454}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!64 &3526645197665556464
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2418609122649457761}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: b58e11384d82ae341bd45aab1723d8fc, type: 3}
 --- !u!65 &6174145516931851252
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1012,30 +996,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a433369fd184ac7438e0942ee2c0035b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &4551172655252542898
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2418609122649457761}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 805fa20454379c44491c32b035f8fdfe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetLabScenePC:
-    unitySceneAsset: {fileID: 0}
-    unityScenePath: 
-    unitySceneName: 
-    isVirtualRealityScene: 0
-  targetLabSceneVR:
-    unitySceneAsset: {fileID: 0}
-    unityScenePath: 
-    unitySceneName: 
-    isVirtualRealityScene: 0
-  highlightColor: {r: 0, g: 0.961823, b: 1, a: 0}
-  highlightMesh: {fileID: 4773389060662363145}
 --- !u!1 &2709113984344056980
 GameObject:
   m_ObjectHideFlags: 0
@@ -1408,9 +1368,11 @@ GameObject:
   - component: {fileID: 1623511912841856382}
   - component: {fileID: 4517932865334011292}
   - component: {fileID: 5318431578184358725}
+  - component: {fileID: 7634011975354018189}
+  - component: {fileID: 6335817556341396092}
   m_Layer: 2
   m_Name: Model
-  m_TagString: Untagged
+  m_TagString: IgnoreHeadSetCollisionFade
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1476,6 +1438,44 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!64 &7634011975354018189
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4773389060662363145}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: b58e11384d82ae341bd45aab1723d8fc, type: 3}
+--- !u!114 &6335817556341396092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4773389060662363145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 805fa20454379c44491c32b035f8fdfe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetLabScenePC:
+    unitySceneAsset: {fileID: 0}
+    unityScenePath: 
+    unitySceneName: 
+    isVirtualRealityScene: 0
+  targetLabSceneVR:
+    unitySceneAsset: {fileID: 0}
+    unityScenePath: 
+    unitySceneName: 
+    isVirtualRealityScene: 0
+  highlightColor: {r: 0, g: 0.961823, b: 1, a: 0}
+  highlightMesh: {fileID: 4773389060662363145}
 --- !u!1 &4877422358691729982
 GameObject:
   m_ObjectHideFlags: 0
