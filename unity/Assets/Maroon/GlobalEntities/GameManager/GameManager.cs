@@ -26,7 +26,7 @@ namespace Maroon
         private static Vector3 _playerPosition;
         private static Quaternion _playerRotation;
 
-        public bool LabLoaded { get; private set; }
+        public bool LabLoaded { get; set; }
 
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

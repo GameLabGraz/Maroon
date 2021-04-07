@@ -1,10 +1,13 @@
 ﻿using GEAR.Localization;
+using Maroon;
 using UnityEngine;
 
 
 [RequireComponent(typeof(AudioSource))]
 public class IntroSound : MonoBehaviour
 {
+    [SerializeField] private bool playMultiple = true;
+
     [SerializeField] private AudioClip germanIntro;
     [SerializeField] private AudioClip englishIntro;
 
@@ -20,7 +23,10 @@ public class IntroSound : MonoBehaviour
             _audioSource.clip = language == SystemLanguage.German ? germanIntro : englishIntro;
         }));
 
-        PlayIntro();
+        if(playMultiple) PlayIntro();
+        else if (!GameManager.Instance.LabLoaded) PlayIntro();
+
+        GameManager.Instance.LabLoaded = true;
     }
 
     public void PlayIntro()
