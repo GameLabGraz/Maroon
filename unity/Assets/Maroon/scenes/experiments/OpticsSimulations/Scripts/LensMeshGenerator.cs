@@ -10,33 +10,92 @@ public class LensMeshGenerator : MonoBehaviour
     MeshFilter testmeshfilter;
     //[Range(0.0f, 4.0f)]
     //public float testfloat;
-    [Range(1.01f, 20.0f)]
+    //[Range(1.01f, 20.0f)]
+
+
     public float circradius = 3.0f;
+    [Range(-1, 1)]
+    public float radcalc = 0;
 
 
+    // not to change ingame
     [Range(3, 50)]
     public int sectionPoints = 10;
     [Range(3, 50)]
     public int domeSegments = 10;
 
 
+
     void Start()
     {
         testmeshfilter = gameObject.AddComponent<MeshFilter>();
         gameObject.AddComponent<MeshRenderer>();
-
-        
-        
     }
 
 
-    float calcSectionAngle(float radius)
+
+    float calcRadiusFromTopedge(float edgeinput, float lensradius)
+    {
+
+        // tan alpha = lensradius/ edgeinput
+        float edgeinp_sav = edgeinput;
+
+        // clamp forbidden values
+        if (edgeinput > 0 && edgeinput < 0.01f) edgeinput = 0.01f;
+        if (edgeinput < 0 && edgeinput > -0.01f) edgeinput = -0.01f;
+        if (edgeinput > 0.999) edgeinput = 0.999f;
+        if (edgeinput < -0.999) edgeinput = -0.999f;
+
+        /*
+        if(Mathf.Abs(edgeinput) < 0.01)
+        {
+            edgeinput = 0.01f;
+        }
+        if (Mathf.Abs(edgeinput) > 0.999)
+        {
+            if(edgeinput> 0)
+            {
+                edgeinput = 0.999f;
+            }
+            else
+            {
+                edgeinput = 0.999f;
+            }
+            
+        }*/
+
+        float alpha = Mathf.Atan(lensradius / edgeinput) * Mathf.Rad2Deg;
+        //2ndtriangle = 90 - (180 - 90 - alpha)
+
+        // segmentr = 90 - 2ndtriangle
+
+        float radiusangle =  Mathf.Abs(alpha)*2 -90.0f;
+
+
+
+        // radius = lensradius / sin ( segmentr)
+
+        float radius = lensradius / Mathf.Sin((radiusangle + 90) *Mathf.Deg2Rad); //todo invert why no wurk 
+
+        //Debug.Log(radiusangle);
+        //Debug.Log(radius);
+        //Debug.Log("---");
+
+        if (edgeinp_sav > 0) radius = radius * -1;
+
+
+        return radius;
+    }
+
+
+
+    float calcSectionAngle(float radius, float lensradius)
     {
         //CARE, radiants
 
         float size = 1.0f;
         //return Mathf.Rad2Deg *Mathf.Atan2(1.0f, radius); // hardcoded, lenssize could be bigger/smaller
-        float angle=  Mathf.Rad2Deg* Mathf.Asin((size/ radius));
+        float angle=  Mathf.Rad2Deg* Mathf.Asin((lensradius/ radius));
         return angle;
 
     }
@@ -156,16 +215,21 @@ public class LensMeshGenerator : MonoBehaviour
     void Update()
     {
         Mesh mymesh = new Mesh();
-        Vector3[] vertices = new Vector3[4];
 
-        float sectionangle = calcSectionAngle(circradius);
-        var pts = getSectionPoints(sectionPoints, sectionangle, circradius);
+        float radiuss = calcRadiusFromTopedge(radcalc, 1.0f);
+        circradius = radiuss;
+
+        float sectionangle = calcSectionAngle(circradius, 1.0f); //circradius
+        var pts = getSectionPoints(sectionPoints, sectionangle, circradius); //circradiuss
 
 
         // first vertex is 0 0 0 
         var domeL = getDomeVertices(pts, domeSegments);
         (List<Vector3> verts, List<int> tris) = makeFacesAndVerts(domeL);
 
+        
+
+        //Debug.Log(radcalc + "radius" + radiuss);
 
         // Set vertices and triangles to the mesh
         //mymesh.vertices = vertices;
@@ -175,7 +239,6 @@ public class LensMeshGenerator : MonoBehaviour
 
 
         testmeshfilter.mesh = mymesh;
-
         mymesh.RecalculateNormals();
 
     }
