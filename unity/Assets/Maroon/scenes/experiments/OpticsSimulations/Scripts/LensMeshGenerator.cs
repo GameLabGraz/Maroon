@@ -28,7 +28,17 @@ public class LensMeshGenerator : MonoBehaviour
 
     void Start()
     {
-        testmeshfilter = gameObject.AddComponent<MeshFilter>();
+
+        if(gameObject.GetComponent<MeshFilter>() != null)
+        {
+            testmeshfilter = gameObject.GetComponent<MeshFilter>();
+        }
+        else
+        {
+            testmeshfilter = gameObject.AddComponent<MeshFilter>();
+        }
+
+        
         gameObject.AddComponent<MeshRenderer>();
     }
 
@@ -238,8 +248,19 @@ public class LensMeshGenerator : MonoBehaviour
         mymesh.SetTriangles(tris, 0);
 
 
-        testmeshfilter.mesh = mymesh;
-        mymesh.RecalculateNormals();
+        if(testmeshfilter == null) // not particularly beautiful, but it works
+        {
+            //add mesh filter if not added already
+            testmeshfilter = gameObject.GetComponent<MeshFilter>();
+
+        }
+        else
+        {
+            testmeshfilter.mesh = mymesh;
+            mymesh.RecalculateNormals();
+        }
+
+       
 
     }
 }
