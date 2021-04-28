@@ -38,8 +38,9 @@ namespace PlatformControls.BaseControls
 
         protected void UpdateColor()
         {
+            if (!_colorObject) return;
+
             _colorObject.GetComponent<Renderer>().material.SetColor(_colorPropertyName, Color.HSVToRGB(_hue, _saturation, _value));
-            Debug.Log("hue = " + Hue);
         }
     }
 }
