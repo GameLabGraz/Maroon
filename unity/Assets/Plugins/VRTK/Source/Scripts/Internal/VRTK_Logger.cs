@@ -145,40 +145,40 @@
 #if VRTK_NO_LOGGING
             return;
 #endif
-            CreateIfNotExists();
-
-            if (instance.minLevel > level)
-            {
-                return;
-            }
-
-            switch (level)
-            {
-                case LogLevels.Trace:
-                case LogLevels.Debug:
-                case LogLevels.Info:
-                    UnityEngine.Debug.Log(message);
-                    break;
-                case LogLevels.Warn:
-                    UnityEngine.Debug.LogWarning(message);
-                    break;
-                case LogLevels.Error:
-                case LogLevels.Fatal:
-                    if (forcePause)
-                    {
-                        UnityEngine.Debug.Break();
-                    }
-
-                    if (instance.throwExceptions)
-                    {
-                        throw new Exception(message);
-                    }
-                    else
-                    {
-                        UnityEngine.Debug.LogError(message);
-                    }
-                    break;
-            }
+            // CreateIfNotExists();
+            //
+            // if (instance.minLevel > level)
+            // {
+            //     return;
+            // }
+            //
+            // switch (level)
+            // {
+            //     case LogLevels.Trace:
+            //     case LogLevels.Debug:
+            //     case LogLevels.Info:
+            //         UnityEngine.Debug.Log(message);
+            //         break;
+            //     case LogLevels.Warn:
+            //         UnityEngine.Debug.LogWarning(message);
+            //         break;
+            //     case LogLevels.Error:
+            //     case LogLevels.Fatal:
+            //         if (forcePause)
+            //         {
+            //             UnityEngine.Debug.Break();
+            //         }
+            //
+            //         if (instance.throwExceptions)
+            //         {
+            //             throw new Exception(message);
+            //         }
+            //         else
+            //         {
+            //             UnityEngine.Debug.LogError(message);
+            //         }
+            //         break;
+            // }
         }
 
         protected virtual void Awake()
