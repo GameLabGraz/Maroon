@@ -46,6 +46,8 @@ public struct OpticsLens
     public float radius;
     public float innerRefractiveidx;
     public float outerRefractiveidx;
+    public float leftbound;
+    public float rightbound;
 }
 
 [ExecuteInEditMode]
@@ -85,6 +87,8 @@ public class OpticsSim : MonoBehaviour
         lens.radius = 1.0f;
         lens.innerRefractiveidx = 1.3f;
         lens.outerRefractiveidx = 1.0f;
+        lens.leftbound = 0.0f;
+        lens.rightbound = 0.0f;
 
         (Vector2 pt, Vector2 nor, bool ishit) = getFirstLensHit(testRay, lens);
 
@@ -104,19 +108,23 @@ public class OpticsSim : MonoBehaviour
 
 
         OpticsLens lens2;
-        lens2.leftCircle.midpoint = new Vector2(0, 1);
+        lens2.leftCircle.midpoint = new Vector2(-0.5f, 1);
         lens2.leftCircle.radius = 1.0f;
         lens2.leftLeftSegment = true;
-        lens2.rightCircle.midpoint = new Vector2(0, 1);
+        lens2.rightCircle.midpoint = new Vector2(0.5f, 1);
         lens2.rightCircle.radius = 1.0f;
         lens2.rightLeftSegment = false;
-        lens2.radius = 1.0f;
+        lens2.radius = 0.8f;
         lens2.innerRefractiveidx = 1.0f;
         lens2.outerRefractiveidx = 1.3f;
+        lens2.leftbound = 0.0f;
+        lens2.rightbound = 0.0f;
+
+        (lens2.leftbound, lens2.rightbound) = getBoundsHit(lens2);
 
         OpticsRay testray2;
-        testray2.origin = new Vector2(0.0f, 1.1f);
-        testray2.dir = new Vector2(1.0f, 0.0f);
+        testray2.origin = new Vector2(0.0f, 0.3f);
+        testray2.dir = new Vector2(1.0f, 2.0f);
         testray2.intensity = 1.0f;
         List<OpticsSegment> segs2 = new List<OpticsSegment>(100);
         calcHitsRecursive(testray2, lens2, false, ref segs2);
@@ -130,11 +138,19 @@ public class OpticsSim : MonoBehaviour
 
         Debug.Log("numsegments: " + segs2.Count);
 
+        Debug.Log("left rightbound " + lens2.leftbound + " " + lens2.rightbound);
+
         Debug.Log("---------------");
 
         Vector2 tvec = new Vector2(1, 0);
 
         Vector2 tnorm = new Vector2(-0.4f, 0.9f);
+
+        OpticsRay test2 = new OpticsRay(new Vector2(1.3f, 0.3f), new Vector2(-1.0f, -0.2f), 1.0f);
+        (bool upin, bool lowin, _, _, _, _) = getOuterRingHit(test2, lens2);
+        (float b1, float b2) = getBoundsHit(lens2);
+        Debug.Log("b1 b2 " + b1 + " " + b2);
+        Debug.Log(" upin lowin " + upin+ " " + lowin);
 
         //Debug.Log( "getrefl" + getReflection(tnorm, tvec));
         //Debug.Log("getrefl2" + getReflection2(tnorm, tvec));
@@ -332,6 +348,80 @@ public class OpticsSim : MonoBehaviour
         return false;
     }
 
+    // todo: make onehitwrapper?
+
+    public (float,float) getBoundsHit(OpticsLens lens)
+    {
+        Vector2 upperlensbound = lens.leftCircle.midpoint + new Vector2(0, lens.radius);
+        OpticsRay upperbound = new OpticsRay(upperlensbound, new Vector2(1, 0), 1.0f);
+
+        float leftbound = 0.0f;
+        float rightbound = 0.0f;
+
+        (_, Vector2 int1, Vector2 int2) = IntersectRay2(upperbound, lens.leftCircle);
+
+        if (lens.leftLeftSegment)
+        {
+            leftbound = int2.x;
+        }
+        else
+        {
+            leftbound = int1.x;
+        }
+
+        (_, int1, int2) = IntersectRay2(upperbound, lens.rightCircle);
+
+        if (lens.rightLeftSegment)
+        {
+            rightbound = int2.x;
+        }
+        else
+        {
+            rightbound = int1.x;
+        }
+        //currently gets left and right bounds, best to make another function.  
+        return (leftbound, rightbound);
+    }
+
+    public (bool, bool, Vector2, Vector2, Vector2, Vector2) getOuterRingHit(OpticsRay currray, OpticsLens lens)
+    {
+        //get if parallel, if not intersect, then test for in bounds
+
+        if(currray.dir.y < 0.00001f && currray.dir.y > -0.00001f)
+        {
+            Debug.Log("no hitpoint");
+            return (false, false, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero); // return no hitpoint
+        }
+        //else intersect the 1 ray with the other 2, get the 2 hitpoints, check if they are in the respective correct x bounds
+        //and return bool bool point point normal normal;  
+        (float leftb, float rightb) = getBoundsHit(lens);
+
+        float upperray = lens.leftCircle.midpoint.y + lens.radius;
+        float lowerray = lens.leftCircle.midpoint.y - lens.radius;
+
+        Debug.Log("upperray lowrerray " + upperray + " " + lowerray);
+
+        
+        
+        float inc = currray.dir.y / currray.dir.x;
+        
+        float offs = currray.origin.y + (-currray.origin.x) * inc;
+        Debug.Log("inc offs" + inc + " " + offs);
+        float upperhitpt = (upperray - offs) * (1.0f / inc);
+        float lowerhitpt = (lowerray - offs) * (1.0f / inc);
+
+        Debug.Log("upperhitpt, lowerhitpt: " + upperhitpt + " " + lowerhitpt); // wronggg
+        bool upperin = false;
+        bool lowerin = false;
+
+        if (upperhitpt > leftb && upperhitpt < rightb) upperin = true;
+        if (lowerhitpt > leftb && lowerhitpt < rightb) lowerin = true;
+
+        Debug.Log("upperin lowerin " + upperin + " " + lowerin + " "+ upperray);
+
+        return (upperin, lowerin, new Vector2(upperhitpt, upperray), new Vector2(lowerhitpt, lowerray), Vector2.down, Vector2.up);
+
+    }
     public (bool, bool,  Vector2, Vector2, Vector2 nor1, Vector2 nor2) getSegmentHit(OpticsRay currray, OpticsCircle circ, bool isLeftSegment, float diameter = 1.0f)
     {
 
@@ -345,6 +435,8 @@ public class OpticsSim : MonoBehaviour
 
         Vector2 nor1 = new Vector2(0.0f, 0.0f);
         Vector2 nor2 = new Vector2(0.0f, 0.0f);
+
+        //(float leftb, float rightb) = getBoundsHit(lens);
         
         // make hitbox for inside-check
         if (isLeftSegment)
@@ -356,10 +448,7 @@ public class OpticsSim : MonoBehaviour
             topleft = new Vector2(circ.midpoint.x , circ.midpoint.y + diameter);
             botright = new Vector2(circ.midpoint.x+ circ.radius*2.0f, circ.midpoint.y+ diameter*-1.0f);
         }
-
-
-
-         Debug.Log("topleft botright " + topleft + " " + botright);
+        Debug.Log("topleft botright " + topleft + " " + botright);
 
         bool h1 = false, h2 = false;
         if (didhit)
@@ -438,21 +527,15 @@ public class OpticsSim : MonoBehaviour
         {
             normal = -normal;
         }
-
         Debug.Log("normal" + normal);
         //now dot product should only be positive
-
         float sign_angle = Vector2.SignedAngle(normal.normalized, entrydir.normalized);
-
         //Debug.Log("dot product " + Vector2.Dot(entrydir.normalized, normal.normalized));
         // if normalvector is other direction, angle is more than 90deg. 
         // flip normal vector for further calculation and subtract 90 deg?
-
         //Debug.Log("sign_angle " + sign_angle); // had to be normalized
-
         // n1 * sin theta1 = n2 * sin theta2
         //umgeformt: theta2 = sin-1(  (sin(theta1)*n1)/n2 )
-
         //totalreflexion ab n1* sin(theta1)/n2
         float t1 = Mathf.Sin(angle) * refIdx1;
 
@@ -464,9 +547,7 @@ public class OpticsSim : MonoBehaviour
         {
             Debug.Log("total internal reflection");
             return (new Vector2(0, 0), true); // ISTOTALREFLECTION
-
         }
-
         // no total reflection, now we calc refraction direction
         //Debug.Log("sin (res) " + Mathf.Sin(res) + " res " + res);
         //Debug.Log("div " + refIdx1 / refIdx2);
@@ -477,11 +558,8 @@ public class OpticsSim : MonoBehaviour
 
         //Debug.Log("refraction angle: " + res*Mathf.Rad2Deg);
         Vector2 rvec = rotateVec(normal, res);
-        
-
         //Debug.Log("kj " + rvec.x + " " + rvec.y);
         
-
         return (rotateVec(normal, res), false);
     }
 
@@ -506,19 +584,20 @@ public class OpticsSim : MonoBehaviour
     public (Vector2, Vector2, bool) getFirstLensHit(OpticsRay r, OpticsLens lens)
     {
         // should return hitpoint and normal, or miss 
-        bool[] hit = new bool[4];
-        Vector2[] intersects = new Vector2[4];
-        Vector2[] normals = new Vector2[4];
+        bool[] hit = new bool[6];
+        Vector2[] intersects = new Vector2[6];
+        Vector2[] normals = new Vector2[6];
 
-        List<Vector2> hits = new List<Vector2>(2);
-        List<Vector2> hitnormals = new List<Vector2>(2);
+        List<Vector2> hits = new List<Vector2>(6);
+        List<Vector2> hitnormals = new List<Vector2>(6);
 
         (hit[0], hit[1],intersects[0], intersects[1], normals[0], normals[1]) = getSegmentHit(r, lens.leftCircle, lens.leftLeftSegment, lens.radius);
-        
         (hit[2], hit[3], intersects[2], intersects[3], normals[2], normals[3]) = getSegmentHit(r, lens.rightCircle, lens.rightLeftSegment, lens.radius);
+        (hit[4], hit[5], intersects[4], intersects[5], normals[4], normals[5]) = getOuterRingHit(r, lens);
 
 
-        for(int i = 0; i < 4; i++)
+
+        for(int i = 0; i < hit.Length; i++)
         {
             if (hit[i])
             {
