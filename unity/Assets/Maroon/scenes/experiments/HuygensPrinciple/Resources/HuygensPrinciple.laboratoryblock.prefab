@@ -479,6 +479,19 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &2168146358539190912
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4658139663483871109}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 3.031709, y: 1.4491607, z: 1.4452376}
+  m_Center: {x: 0, y: 0.55292016, z: 0.7342793}
 --- !u!1 &5911325315783139073
 GameObject:
   m_ObjectHideFlags: 0
@@ -617,7 +630,7 @@ GameObject:
   - component: {fileID: 689076389677732734}
   m_Layer: 10
   m_Name: HuygensExperiment
-  m_TagString: SlitPlate
+  m_TagString: ExcludeTeleport
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -858,6 +871,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 8823858983309403628}
     m_Modifications:
+    - target: {fileID: 719621876920839027, guid: 35221164170e8a941ab746470ba1a886,
+        type: 3}
+      propertyPath: m_TagString
+      value: ExcludeTeleport
+      objectReference: {fileID: 0}
     - target: {fileID: 2196238256864268315, guid: 35221164170e8a941ab746470ba1a886,
         type: 3}
       propertyPath: m_RootOrder
@@ -935,6 +953,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 35221164170e8a941ab746470ba1a886, type: 3}
+--- !u!1 &4658139663483871109 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 719621876920839027, guid: 35221164170e8a941ab746470ba1a886,
+    type: 3}
+  m_PrefabInstance: {fileID: 5285419537379521782}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6278877828183155949 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2196238256864268315, guid: 35221164170e8a941ab746470ba1a886,

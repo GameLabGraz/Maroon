@@ -50,6 +50,13 @@ public class SortingNetworkSync : ExperimentNetworkSync
     
     [SerializeField] private Button _detailModeButton;
     
+    [SerializeField] private Button _detailViewLeftButton;
+    
+    [SerializeField] private Button _detailViewRightButton;
+
+    [SerializeField] private GameObject _leftClickHereText;
+    [SerializeField] private GameObject _rightClickHereText;
+    
     //Quiz
     [SerializeField] private Button _resetScoreButton;
 
@@ -58,6 +65,24 @@ public class SortingNetworkSync : ExperimentNetworkSync
     [SerializeField] private SortingController sortingController;
 
     [SerializeField] private GameObject quizScorePrefab;
+
+    [Server]
+    public override void ClientLoadedScene(NetworkConnection conn)
+    {
+        List<int> detailArray = sortingController.GetDetailArray();
+        List<int> battleOrder = sortingController.GetBattleOrder();
+        RpcUpdateClientInformation(conn, detailArray.ToArray(), battleOrder.ToArray());
+    }
+
+    [TargetRpc]
+    private void RpcUpdateClientInformation(NetworkConnection client, int[] array, int[] order)
+    {
+        if (!isServer)
+        {
+            sortingController.SetDetailArray(array.ToList());
+            sortingController.SetBattleOrder(order.ToList());
+        }
+    }
 
     protected override void Start()
     {
@@ -147,6 +172,11 @@ public class SortingNetworkSync : ExperimentNetworkSync
         _battleSpeedInputField.interactable = true;
         _battleArrangementDropDown.interactable = true;
         _detailModeButton.interactable = true;
+        _detailViewLeftButton.interactable = true;
+        _detailViewRightButton.interactable = true;
+        
+        _leftClickHereText.SetActive(true);
+        _rightClickHereText.SetActive(true);
 
         _resetScoreButton.interactable = true;
     }
@@ -170,6 +200,11 @@ public class SortingNetworkSync : ExperimentNetworkSync
         _battleSpeedInputField.interactable = false;
         _battleArrangementDropDown.interactable = false;
         _detailModeButton.interactable = false;
+        _detailViewLeftButton.interactable = false;
+        _detailViewRightButton.interactable = false;
+        
+        _leftClickHereText.SetActive(false);
+        _rightClickHereText.SetActive(false);
 
         _resetScoreButton.interactable = false;
     }
@@ -198,6 +233,8 @@ public class SortingNetworkSync : ExperimentNetworkSync
         _battleSpeedInputField.onEndEdit.AddListener(BattleSpeedInputFieldEndEdit);
         _battleArrangementDropDown.onValueChanged.AddListener(BattleArrangementDropDownChanged);
         _detailModeButton.onClick.AddListener(DetailModeButtonClicked);
+        _detailViewLeftButton.onClick.AddListener(DetailViewLeftButtonClicked);
+        _detailViewRightButton.onClick.AddListener(DetailViewRightButtonClicked);
         
         _resetScoreButton.onClick.AddListener(ResetScoreButtonClicked);
     }
@@ -222,6 +259,8 @@ public class SortingNetworkSync : ExperimentNetworkSync
         _battleSpeedInputField.onEndEdit.RemoveListener(BattleSpeedInputFieldEndEdit);
         _battleArrangementDropDown.onValueChanged.RemoveListener(BattleArrangementDropDownChanged);
         _detailModeButton.onClick.RemoveListener(DetailModeButtonClicked);
+        _detailViewLeftButton.onClick.RemoveListener(DetailViewLeftButtonClicked);
+        _detailViewRightButton.onClick.RemoveListener(DetailViewRightButtonClicked);
         
         _resetScoreButton.onClick.RemoveListener(ResetScoreButtonClicked);
     }
@@ -377,6 +416,26 @@ public class SortingNetworkSync : ExperimentNetworkSync
     private void DetailModeButtonActivated()
     {
         _detailModeButton.onClick.Invoke();
+    }
+    
+    private void DetailViewLeftButtonClicked()
+    {
+        SyncEvent(nameof(DetailViewLeftButtonActivated));
+    }
+
+    private void DetailViewLeftButtonActivated()
+    {
+        _detailViewLeftButton.onClick.Invoke();
+    }
+    
+    private void DetailViewRightButtonClicked()
+    {
+        SyncEvent(nameof(DetailViewRightButtonActivated));
+    }
+
+    private void DetailViewRightButtonActivated()
+    {
+        _detailViewRightButton.onClick.Invoke();
     }
     
     //Quiz

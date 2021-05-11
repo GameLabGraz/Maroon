@@ -6,6 +6,12 @@ using UnityEngine;
 
 public class ExperimentNetworkSync : NetworkBehaviour
 {
+    /// <summary>
+    /// Called on the server with the connection id of the client that has finished loading the scene.
+    /// </summary>
+    [Server]
+    public virtual void ClientLoadedScene(NetworkConnection conn) {}
+    
     // Start is called before the first frame update
     protected virtual void Start()
     {

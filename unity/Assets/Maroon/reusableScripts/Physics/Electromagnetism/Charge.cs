@@ -4,7 +4,7 @@ namespace Maroon.Physics.Electromagnetism
 {
     public class Charge : PausableObject, IGenerateE
     {
-        [SerializeField] private float strength;
+        [SerializeField] public QuantityFloat strength;
 
         [SerializeField] private bool enableForces;
 
@@ -14,8 +14,8 @@ namespace Maroon.Physics.Electromagnetism
 
         public float Strength
         {
-            get => strength;
-            set => strength = value;
+            get => strength.Value;
+            set => strength.Value = value;
         }
 
         public bool Enabled

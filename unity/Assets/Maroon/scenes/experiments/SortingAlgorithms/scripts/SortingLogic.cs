@@ -151,7 +151,16 @@ public class SortingLogic : MonoBehaviour
         DisplayIndices(new Dictionary<string, int>());
         SetDescription();
         ReorderElements();
+        ResetBuckets();
         _sortingFinished = false;
+    }
+
+    private void ResetBuckets()
+    {
+        foreach (var bucket in _buckets)
+        {
+            bucket.Clear();
+        }
     }
 
     private void ReorderElements()

@@ -45,10 +45,7 @@ public class SortingController : MonoBehaviour, IResetObject
         SimulationController.Instance.onStartRunning.AddListener(SortingStarted);
         
         DisplayMessageByKey("EnterSortingExperiment");
-        
-        //Only after delay, so all clients are ready
-        Invoke(nameof(DistributeDetailArray), 1.0f);
-        Invoke(nameof(SetBattleOrder), 1.0f);
+        SetBattleOrder();
         _initialized = true;
     }
 
@@ -166,6 +163,11 @@ public class SortingController : MonoBehaviour, IResetObject
         _detailOrder = array;
         detailSortingLogic.SortingValues = _detailOrder.GetRange(0, detailArraySize);
     }
+    
+    public List<int> GetDetailArray()
+    {
+        return _detailOrder;
+    }
 
     #endregion
 
@@ -197,6 +199,8 @@ public class SortingController : MonoBehaviour, IResetObject
     [SerializeField] private BattleSorting leftBattleSorting;
     [SerializeField] private BattleSorting rightBattleSorting;
 
+    private List<int> _currentBattleOrder;
+    
     private bool _enteredOnce;
     public void EnterBattleMode()
     {
@@ -256,6 +260,8 @@ public class SortingController : MonoBehaviour, IResetObject
         SimulationController.Instance.StopSimulation();
         _arrangementMode = (ArrangementMode)arr;
         SetBattleOrder();
+        
+        ResetQuiz();
     }
     
     private void NewAlgorithmSelected()
@@ -296,6 +302,12 @@ public class SortingController : MonoBehaviour, IResetObject
     {
         leftBattleSorting.SetOrder(order);
         rightBattleSorting.SetOrder(order);
+        _currentBattleOrder = order;
+    }
+
+    public List<int> GetBattleOrder()
+    {
+        return _currentBattleOrder;
     }
     
     private static Random rng = new Random();
