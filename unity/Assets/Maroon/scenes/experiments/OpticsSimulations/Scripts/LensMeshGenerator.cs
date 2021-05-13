@@ -12,10 +12,21 @@ public class LensMeshGenerator : MonoBehaviour
     //public float testfloat;
     //[Range(1.01f, 20.0f)]
 
-
+    public Vector3 offset_vec = new Vector3(1.0f, 0, 0);
+    [Range(0, 3)]
+    public float cylinderthickness = 0.0f;
+    private float cylinderthickness_old = 0.0f;
     public float circradius = 3.0f;
     [Range(-1, 1)]
     public float radcalc = 0;
+
+    [Range(-1, 1)]
+    
+    public float radcalc2 = 0;
+    public float circradius2 = 3.0f;
+
+    private float radcalc_old = 0;
+    private float radcalc_old2 = 0;
 
 
     // not to change ingame
@@ -23,12 +34,13 @@ public class LensMeshGenerator : MonoBehaviour
     public int sectionPoints = 10;
     [Range(3, 50)]
     public int domeSegments = 10;
+    [HideInInspector]
+    public OpticsLens thisLensLens;
 
 
 
     void Start()
     {
-
         if(gameObject.GetComponent<MeshFilter>() != null)
         {
             testmeshfilter = gameObject.GetComponent<MeshFilter>();
@@ -37,8 +49,6 @@ public class LensMeshGenerator : MonoBehaviour
         {
             testmeshfilter = gameObject.AddComponent<MeshFilter>();
         }
-
-        
         gameObject.AddComponent<MeshRenderer>();
     }
 
@@ -51,28 +61,10 @@ public class LensMeshGenerator : MonoBehaviour
         float edgeinp_sav = edgeinput;
 
         // clamp forbidden values
-        if (edgeinput > 0 && edgeinput < 0.01f) edgeinput = 0.01f;
-        if (edgeinput < 0 && edgeinput > -0.01f) edgeinput = -0.01f;
-        if (edgeinput > 0.999) edgeinput = 0.999f;
-        if (edgeinput < -0.999) edgeinput = -0.999f;
-
-        /*
-        if(Mathf.Abs(edgeinput) < 0.01)
-        {
-            edgeinput = 0.01f;
-        }
-        if (Mathf.Abs(edgeinput) > 0.999)
-        {
-            if(edgeinput> 0)
-            {
-                edgeinput = 0.999f;
-            }
-            else
-            {
-                edgeinput = 0.999f;
-            }
-            
-        }*/
+        if (edgeinput >= 0.0f && edgeinput < 0.01f) edgeinput = 0.01f;
+        if (edgeinput < 0.0f && edgeinput > -0.01f) edgeinput = -0.01f;
+        if (edgeinput > 0.999f) edgeinput = 0.999f;
+        if (edgeinput < -0.999f) edgeinput = -0.999f;
 
         float alpha = Mathf.Atan(lensradius / edgeinput) * Mathf.Rad2Deg;
         //2ndtriangle = 90 - (180 - 90 - alpha)
@@ -80,20 +72,10 @@ public class LensMeshGenerator : MonoBehaviour
         // segmentr = 90 - 2ndtriangle
 
         float radiusangle =  Mathf.Abs(alpha)*2 -90.0f;
-
-
-
         // radius = lensradius / sin ( segmentr)
 
-        float radius = lensradius / Mathf.Sin((radiusangle + 90) *Mathf.Deg2Rad); //todo invert why no wurk 
-
-        //Debug.Log(radiusangle);
-        //Debug.Log(radius);
-        //Debug.Log("---");
-
-        if (edgeinp_sav > 0) radius = radius * -1;
-
-
+        float radius = lensradius / Mathf.Sin((radiusangle + 90) *Mathf.Deg2Rad); 
+        if (edgeinp_sav >= 0.0f) radius = radius * -1.0f;
         return radius;
     }
 
@@ -112,7 +94,7 @@ public class LensMeshGenerator : MonoBehaviour
 
 
     //gets points of arc, starting at (0,0) and ending at (x, y(1.0))
-    Vector3[] getSectionPoints(int numpoints, float sectionangle, float radius)
+    Vector3[] getSectionPoints(int numpoints, float sectionangle, float radius, float circrad)
     {
         Vector3 radvec = new Vector3(radius, 0.0f, 0.0f);
 
@@ -124,7 +106,7 @@ public class LensMeshGenerator : MonoBehaviour
         {
             //i+1/numpoints
             points[i] = Quaternion.Euler(0, sectionangle * (i + 1) / numpoints, 0) * radvec;
-            points[i].x = points[i].x - circradius;
+            points[i].x = points[i].x - circrad;
         }
 
 
@@ -159,8 +141,6 @@ public class LensMeshGenerator : MonoBehaviour
             dome.Add(rotated);
         }
 
-        
-
         return dome;
     }
 
@@ -185,7 +165,7 @@ public class LensMeshGenerator : MonoBehaviour
         }
         for(int i = 0; i < dome.Count; i++)
         {
-            //make middle vertex
+            //make middle tri
             trisBuffer.Add(0);
             trisBuffer.Add((i + 1)%dome.Count * dcount + 1);
             trisBuffer.Add(i * dcount + 1);
@@ -202,50 +182,147 @@ public class LensMeshGenerator : MonoBehaviour
                 trisBuffer.Add(i * dcount + 2 + j);
                 trisBuffer.Add((i + 1) % dome.Count * dcount + j + 1);
 
-
-
             }
-
-
-
-
-
         }
-
-
-
-
         return (vertBuffer, trisBuffer);
     } 
 
 
+    (float, float) calcLensPos(float leftdome, float rightdome, float additionalthickness)
+    {
+        // calculate the minimum safe distance between the 2 midpoints
+        // additionalthickness is thickness @ edge of lens
 
+        float domediff = leftdome - rightdome;
+        float lensdistance = 0.0f;
+        float avgoffset = (leftdome + rightdome) / 2.0f;
+
+        if(domediff > 0.0f)
+        {
+            // then outer edge meets
+            // domediff is the difference we have to separate the 2 midpoints from each other to get the outer edge to be flush
+            // add the additional thickness
+            lensdistance = domediff + additionalthickness;
+        }
+        else
+        {
+            // inner edges meet
+            // domes just need to be moved so that the outer edges are symmetrical.
+
+            // domediff is the value how much outer edges are separated. additionalthickness - (-domediff) is the amount we need to separate the inner edges to reach the desired outer edge separation
+            if(-domediff > additionalthickness)
+            {
+                lensdistance = 0.0f;
+            }
+            else
+            {
+                lensdistance = additionalthickness + domediff;
+            }
+        }
+        return (lensdistance, avgoffset);
+    }
+
+    OpticsLens getOpticsLens(float distance, float offset, float rad1, float rad2)
+    {
+        OpticsLens toReturn;
+
+        if (rad1 < 0) toReturn.leftLeftSegment = true;
+        else toReturn.leftLeftSegment = false;
+        if (rad2 < 0) toReturn.rightLeftSegment = true;
+        else toReturn.rightLeftSegment = false;
+
+        toReturn.leftCircle.radius = Mathf.Abs(rad1);
+        toReturn.rightCircle.radius = Mathf.Abs(rad2);
+        toReturn.radius = 1.0f;
+        toReturn.leftCircle.midpoint = new Vector2(-distance / 2.0f - offset - rad1, 0.0f);
+        toReturn.rightCircle.midpoint = new Vector2(+distance / 2.0f - offset - rad2, 0.0f);
+        toReturn.innerRefractiveidx = 1.0f;
+        toReturn.outerRefractiveidx = 1.0f;
+        toReturn.leftbound = 0.0f;
+        toReturn.rightbound = 0.0f;
+        return toReturn;
+    }
 
     // Update is called once per frame
     void Update()
     {
+        //check for lens update.
+        if (Mathf.Approximately(radcalc, radcalc_old) && Mathf.Approximately(radcalc2, radcalc_old2) && Mathf.Approximately(cylinderthickness, cylinderthickness_old))
+        {
+            return;
+        }
+        else
+        {
+            radcalc_old = radcalc;
+            radcalc_old2 = radcalc2;
+            cylinderthickness_old = cylinderthickness;
+        }
         Mesh mymesh = new Mesh();
 
+        (float lensdist, float averageoffset) = calcLensPos(radcalc, radcalc2, cylinderthickness);
+
         float radiuss = calcRadiusFromTopedge(radcalc, 1.0f);
+        float radiuss2 = calcRadiusFromTopedge(radcalc2, 1.0f);
         circradius = radiuss;
+        circradius2 = radiuss2;
+
+        thisLensLens = getOpticsLens(lensdist, averageoffset, radiuss, radiuss2);
 
         float sectionangle = calcSectionAngle(circradius, 1.0f); //circradius
-        var pts = getSectionPoints(sectionPoints, sectionangle, circradius); //circradiuss
+        float sectionangle2 = calcSectionAngle(circradius2, 1.0f);
+
+
+        var pts = getSectionPoints(sectionPoints, sectionangle, circradius, circradius); //circradiuss
+        var pts2 = getSectionPoints(sectionPoints, sectionangle2, circradius2, circradius2);
 
 
         // first vertex is 0 0 0 
         var domeL = getDomeVertices(pts, domeSegments);
         (List<Vector3> verts, List<int> tris) = makeFacesAndVerts(domeL);
+        //Debug.Log("vertct trict " + verts.Count + " " + tris.Count);
 
-        
+        var domeL2 = getDomeVertices(pts2, domeSegments);
+        (List<Vector3> verts2, List<int> tris2) = makeFacesAndVerts(domeL2);
 
-        //Debug.Log(radcalc + "radius" + radiuss);
+        List<Vector3> lensmeshverts = new List<Vector3>();
+        List<int> lensmeshtris = new List<int>();
+        lensmeshtris.AddRange(tris);
+
+        for (int i = 0; i < verts.Count; i++)
+        {
+            verts[i] += new Vector3(-lensdist/2.0f - averageoffset, 0.0f, 0.0f);
+        }
+        lensmeshverts.AddRange(verts);
+        for (int i = 0; i < verts2.Count; i++)
+        {
+            verts2[i] += new Vector3(+lensdist/2.0f -averageoffset, 0.0f, 0.0f);
+        }
+
+        lensmeshverts.AddRange(verts2);
+
+
+        //List<int> tris = new List<int>();
+        //Debug.Log(tris.Count);
+
+        for(int i = 0; i < tris2.Count; i++)
+        {
+            tris2[i] += verts.Count;
+        }
+        lensmeshtris.AddRange(tris2);
+
+        //Debug.Log("vertct trict " + lensmeshverts.Count + " " + lensmeshtris.Count);
+        //adding  first verts 
+
+
+
 
         // Set vertices and triangles to the mesh
         //mymesh.vertices = vertices;
         //mymesh.triangles = triangles;
-        mymesh.SetVertices(verts);
-        mymesh.SetTriangles(tris, 0);
+        //mymesh.SetVertices(verts);
+        //mymesh.SetTriangles(tris, 0);
+        mymesh.SetVertices(lensmeshverts);
+        mymesh.SetTriangles(lensmeshtris, 0);
 
 
         if(testmeshfilter == null) // not particularly beautiful, but it works
@@ -259,8 +336,5 @@ public class LensMeshGenerator : MonoBehaviour
             testmeshfilter.mesh = mymesh;
             mymesh.RecalculateNormals();
         }
-
-       
-
     }
 }

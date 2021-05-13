@@ -93,7 +93,7 @@ public class OpticsSim : MonoBehaviour
         (Vector2 pt, Vector2 nor, bool ishit) = getFirstLensHit(testRay, lens);
 
 
-        Debug.Log("ishit: " + ishit + " pt: " + pt + " nor: " + nor);
+        //Debug.Log("ishit: " + ishit + " pt: " + pt + " nor: " + nor);
 
         List<OpticsSegment> segments = new List<OpticsSegment>(20);
         /*
@@ -129,18 +129,18 @@ public class OpticsSim : MonoBehaviour
         List<OpticsSegment> segs2 = new List<OpticsSegment>(100);
         calcHitsRecursive(testray2, lens2, false, ref segs2);
         
-        Debug.Log(segs2.Count);
+        //Debug.Log(segs2.Count);
 
         foreach (var seg in segs2)
         {
-            Debug.Log("segment: " + seg.p1 + " " + seg.p2 + " " + seg.intensity);
+          //  Debug.Log("segment: " + seg.p1 + " " + seg.p2 + " " + seg.intensity);
         }
 
-        Debug.Log("numsegments: " + segs2.Count);
+        //Debug.Log("numsegments: " + segs2.Count);
 
-        Debug.Log("left rightbound " + lens2.leftbound + " " + lens2.rightbound);
+        //Debug.Log("left rightbound " + lens2.leftbound + " " + lens2.rightbound);
 
-        Debug.Log("---------------");
+        //Debug.Log("---------------");
 
         Vector2 tvec = new Vector2(1, 0);
 
@@ -149,8 +149,8 @@ public class OpticsSim : MonoBehaviour
         OpticsRay test2 = new OpticsRay(new Vector2(1.3f, 0.3f), new Vector2(-1.0f, -0.2f), 1.0f);
         (bool upin, bool lowin, _, _, _, _) = getOuterRingHit(test2, lens2);
         (float b1, float b2) = getBoundsHit(lens2);
-        Debug.Log("b1 b2 " + b1 + " " + b2);
-        Debug.Log(" upin lowin " + upin+ " " + lowin);
+        //Debug.Log("b1 b2 " + b1 + " " + b2);
+        //Debug.Log(" upin lowin " + upin+ " " + lowin);
 
         //Debug.Log( "getrefl" + getReflection(tnorm, tvec));
         //Debug.Log("getrefl2" + getReflection2(tnorm, tvec));
@@ -389,7 +389,7 @@ public class OpticsSim : MonoBehaviour
 
         if(currray.dir.y < 0.00001f && currray.dir.y > -0.00001f)
         {
-            Debug.Log("no hitpoint");
+            //Debug.Log("no hitpoint");
             return (false, false, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero); // return no hitpoint
         }
         //else intersect the 1 ray with the other 2, get the 2 hitpoints, check if they are in the respective correct x bounds
@@ -399,25 +399,22 @@ public class OpticsSim : MonoBehaviour
         float upperray = lens.leftCircle.midpoint.y + lens.radius;
         float lowerray = lens.leftCircle.midpoint.y - lens.radius;
 
-        Debug.Log("upperray lowrerray " + upperray + " " + lowerray);
-
-        
-        
+        //Debug.Log("upperray lowrerray " + upperray + " " + lowerray);
         float inc = currray.dir.y / currray.dir.x;
         
         float offs = currray.origin.y + (-currray.origin.x) * inc;
-        Debug.Log("inc offs" + inc + " " + offs);
+        //Debug.Log("inc offs" + inc + " " + offs);
         float upperhitpt = (upperray - offs) * (1.0f / inc);
         float lowerhitpt = (lowerray - offs) * (1.0f / inc);
 
-        Debug.Log("upperhitpt, lowerhitpt: " + upperhitpt + " " + lowerhitpt); // wronggg
+        //Debug.Log("upperhitpt, lowerhitpt: " + upperhitpt + " " + lowerhitpt); // wronggg
         bool upperin = false;
         bool lowerin = false;
 
         if (upperhitpt > leftb && upperhitpt < rightb) upperin = true;
         if (lowerhitpt > leftb && lowerhitpt < rightb) lowerin = true;
 
-        Debug.Log("upperin lowerin " + upperin + " " + lowerin + " "+ upperray);
+        //Debug.Log("upperin lowerin " + upperin + " " + lowerin + " "+ upperray);
 
         return (upperin, lowerin, new Vector2(upperhitpt, upperray), new Vector2(lowerhitpt, lowerray), Vector2.down, Vector2.up);
 
@@ -448,7 +445,7 @@ public class OpticsSim : MonoBehaviour
             topleft = new Vector2(circ.midpoint.x , circ.midpoint.y + diameter);
             botright = new Vector2(circ.midpoint.x+ circ.radius*2.0f, circ.midpoint.y+ diameter*-1.0f);
         }
-        Debug.Log("topleft botright " + topleft + " " + botright);
+        //Debug.Log("topleft botright " + topleft + " " + botright);
 
         bool h1 = false, h2 = false;
         if (didhit)
@@ -494,7 +491,7 @@ public class OpticsSim : MonoBehaviour
         Vector2 nornormal = normal.normalized;
 
         Vector2 ret = entrydir - 2 * (Vector2.Dot(entrydir, nornormal) * nornormal);
-        Debug.Log("getreflection normal + entrydir " + normal + " " + entrydir + " return " + ret);
+        //Debug.Log("getreflection normal + entrydir " + normal + " " + entrydir + " return " + ret);
         return ret;
     }
 
@@ -502,15 +499,15 @@ public class OpticsSim : MonoBehaviour
     {
         norm = norm.normalized;
         entrydir = entrydir.normalized;
-        Debug.Log("GetReflection2");
+        //Debug.Log("GetReflection2");
         //Debug.Log(Vector2.Dot(norm, entrydir));
-        Debug.Log("norm, entrydir " + norm + " " + entrydir);
+        //Debug.Log("norm, entrydir " + norm + " " + entrydir);
 
         float nor_length = Vector2.Dot(entrydir, norm);
 
         Vector2 ret1 = -nor_length*norm*2.0f + entrydir;
 
-        Debug.Log(ret1);
+        //Debug.Log(ret1);
 
         Vector2 ret = entrydir - 2 * (Vector2.Dot(entrydir,norm)) * norm;
 
@@ -527,7 +524,7 @@ public class OpticsSim : MonoBehaviour
         {
             normal = -normal;
         }
-        Debug.Log("normal" + normal);
+        //Debug.Log("normal" + normal);
         //now dot product should only be positive
         float sign_angle = Vector2.SignedAngle(normal.normalized, entrydir.normalized);
         //Debug.Log("dot product " + Vector2.Dot(entrydir.normalized, normal.normalized));
@@ -545,7 +542,7 @@ public class OpticsSim : MonoBehaviour
 
         if(float.IsNaN(res)) //nan -> total internal reflection
         {
-            Debug.Log("total internal reflection");
+            //Debug.Log("total internal reflection");
             return (new Vector2(0, 0), true); // ISTOTALREFLECTION
         }
         // no total reflection, now we calc refraction direction
@@ -608,7 +605,7 @@ public class OpticsSim : MonoBehaviour
         }
 
         int hitidx = getNearestRayHit(hits, r);
-        Debug.Log(" getfirstlenshit index: " + hitidx + " "+ hits.Count);
+        //Debug.Log(" getfirstlenshit index: " + hitidx + " "+ hits.Count);
         
 
         if(hitidx < 0)
@@ -617,7 +614,7 @@ public class OpticsSim : MonoBehaviour
         }
         else
         {
-            Debug.Log("normals at hitindex " + hitnormals[hitidx]);
+            //Debug.Log("normals at hitindex " + hitnormals[hitidx]);
             return ( hits[hitidx], hitnormals[hitidx], true); // hits, hitsnormals @ hitidx
         }
     }
@@ -625,7 +622,7 @@ public class OpticsSim : MonoBehaviour
 
 
 
-    public void calcHitsRecursive(OpticsRay myRay, OpticsLens myLens, bool outside, ref List<OpticsSegment> segs)
+    public void calcHitsRecursive(OpticsRay myRay, OpticsLens myLens, bool outside, ref List<OpticsSegment> segs, float loss = 0.9f, float reflvsrefr = 0.3f)
     {
         if (myRay.intensity < 0.02) return; // dont go further if intensity low. TODO change to be changeable param.
 
@@ -635,14 +632,14 @@ public class OpticsSim : MonoBehaviour
 
         if (!didhit)
         {
-            Debug.Log("nothing hit. returning. ADDED END ::::::::::::::::::::::::::");
+            //Debug.Log("nothing hit. returning. ADDED END ::::::::::::::::::::::::::");
             OpticsSegment addend = new OpticsSegment(myRay.origin, myRay.origin + 100.0f * myRay.dir, myRay.intensity);
             segs.Add(addend);
             return; // we are done here... nothing hit.
 
 
         }
-        Debug.Log("NORMAL HIT calchitsrecu: " + norm +" " + hit);
+        //Debug.Log("NORMAL HIT calchitsrecu: " + norm +" " + hit);
 
         //TODO add raysegment to segs list...
         OpticsSegment toadd = new OpticsSegment(myRay.origin, hit, myRay.intensity);
@@ -662,23 +659,23 @@ public class OpticsSim : MonoBehaviour
 
         Vector2 reflecdir = getReflection2(-norm, myRay.dir);
 
-        Debug.Log("reflecidr " + reflecdir + " refracdir " + refracdir);
+        //Debug.Log("reflecidr " + reflecdir + " refracdir " + refracdir);
 
         if (wastotalreflection)
         { // was  a total reflection, only follow the reflection vector.
-            OpticsRay reflectedRay = new OpticsRay(hit + 0.0001f * reflecdir.normalized, reflecdir.normalized, myRay.intensity * 0.95f);
+            OpticsRay reflectedRay = new OpticsRay(hit + 0.0001f * reflecdir.normalized, reflecdir.normalized, myRay.intensity * 1.0f *loss);
             //TODO epsilon changeable
 
-            calcHitsRecursive(reflectedRay, myLens, outside, ref segs);
+            calcHitsRecursive(reflectedRay, myLens, outside, ref segs, loss, reflvsrefr);
             return;
         }
         else
         {
-            OpticsRay reflectedRay = new OpticsRay(hit + 0.0001f * reflecdir.normalized, reflecdir.normalized, myRay.intensity * 0.45f);
-            OpticsRay refractedRay = new OpticsRay(hit + 0.0001f * refracdir.normalized, refracdir.normalized, myRay.intensity * 0.45f);
+            OpticsRay reflectedRay = new OpticsRay(hit + 0.0001f * reflecdir.normalized, reflecdir.normalized, myRay.intensity * reflvsrefr*loss);
+            OpticsRay refractedRay = new OpticsRay(hit + 0.0001f * refracdir.normalized, refracdir.normalized, myRay.intensity * (1.0f - reflvsrefr)*loss);
 
-            calcHitsRecursive(reflectedRay, myLens, outside, ref segs);
-            calcHitsRecursive(refractedRay, myLens, !outside, ref segs);
+            calcHitsRecursive(reflectedRay, myLens, outside, ref segs, loss, reflvsrefr);
+            calcHitsRecursive(refractedRay, myLens, !outside, ref segs, loss, reflvsrefr);
         }
     }
 
