@@ -11,7 +11,7 @@ public class LaserRenderer : MonoBehaviour
     public Material LaserMaterial;
     private List<OpticsSegment> LaserSegments;
 
-    public GameObject laserPointer;
+    public GameObject[] laserPointers;
 
     /* values to change */
     [SerializeField]
@@ -38,8 +38,15 @@ public class LaserRenderer : MonoBehaviour
     void Start()
     {
         // add line renderers to parent object
+        //find all laserpointers we wanna use
+
         LaserSegments = new List<OpticsSegment>();
         thislens = GameObject.FindGameObjectWithTag("Lens");
+
+        foreach (Transform child in transform)// destroy all lasers that belong to the lens, to make everything work in editmode
+        {
+            DestroyImmediate(child.gameObject);
+        }
 
         for (int i = 0; i < 100; i++)
         {
@@ -49,8 +56,8 @@ public class LaserRenderer : MonoBehaviour
 
             //lineRenderers[i].SetPosition(0, new Vector3(2, 2, 2));
             //lineRenderers[i].SetPosition(1, new Vector3(3, 3, 3));
-            lineRenderers[i].startWidth = 0.05f;
-            lineRenderers[i].endWidth = 0.05f;
+            lineRenderers[i].startWidth = 0.02f;
+            lineRenderers[i].endWidth = 0.02f;
             lineRenderers[i].numCapVertices = 5;
             lineRenderers[i].useWorldSpace = false;
 
@@ -67,32 +74,26 @@ public class LaserRenderer : MonoBehaviour
         }
         LaserSegments.Clear();
 
-        Vector3 relLaserPos = gameObject.transform.InverseTransformPoint( laserPointer.transform.position);
-        Vector3 relLaserDir = gameObject.transform.InverseTransformDirection(laserPointer.transform.up);
+        //get all laserpointers in scene 
 
-        OpticsLens lens;
-        lens.leftCircle.midpoint = new Vector2(0.0f, 0.0f);
-        lens.leftCircle.radius = 1.0f;
-        lens.leftLeftSegment = true;
-        lens.rightCircle.midpoint = new Vector2(0.0f, 0.0f);
-        lens.rightCircle.radius = 1.0f;
-        lens.rightLeftSegment = false;
-        lens.radius = 0.99f;
-        lens.innerRefractiveidx = lensInner_RI;
-        lens.outerRefractiveidx = lensOuter_RI;
-        lens.leftbound = 0.0f;
-        lens.rightbound = 0.0f;
-        OpticsRay testRay = new OpticsRay(new Vector2(relLaserPos.x, relLaserPos.z), new Vector2(relLaserDir.x, relLaserDir.z), 1.0f);
-
+        laserPointers = GameObject.FindGameObjectsWithTag("LaserPointer");
         GameObject opLens = GameObject.FindGameObjectWithTag("Lens");
         OpticsLens currLens = opLens.GetComponent<LensMeshGenerator>().thisLensLens;
 
-        currLens.radius = 0.99f;
+        currLens.radius = opLens.GetComponent<LensMeshGenerator>().lensRadius;
         currLens.innerRefractiveidx = lensInner_RI;
         currLens.outerRefractiveidx = lensOuter_RI;
 
-        opLens.GetComponent<OpticsSim>().calcHitsRecursive(testRay, currLens, true, ref LaserSegments, loss, reflection_vs_refraction);
+        foreach (var laserp in laserPointers)
+        {
+            Vector3 relLaserPos = gameObject.transform.InverseTransformPoint(laserp.transform.position);
+            Vector3 relLaserDir = gameObject.transform.InverseTransformDirection(laserp.transform.up);
+            //todo add laserpointer properties
 
+            OpticsRay laserRay = new OpticsRay(new Vector2(relLaserPos.x, relLaserPos.z), new Vector2(relLaserDir.x, relLaserDir.z), 1.0f, laserp.GetComponent<LPProperties>().laserColor);
+            opLens.GetComponent<OpticsSim>().calcHitsRecursive(laserRay, currLens, true, ref LaserSegments, loss, reflection_vs_refraction);
+
+        }
         UpdateLasers();
 
     }
@@ -113,16 +114,13 @@ public class LaserRenderer : MonoBehaviour
             {
                 lineRenderers[i].enabled = false;
             }
-
         }
-
-
     }
 
     void UpdateLR(OpticsSegment opticsSeg, LineRenderer Lr, bool useIntensity = true)
     {
-        Lr.SetPosition(0, new Vector3( opticsSeg.p1.x, 0.0f, opticsSeg.p1.y) + thislens.transform.position); // mby works with vec2? 
-        Lr.SetPosition(1, new Vector3( opticsSeg.p2.x, 0.0f, opticsSeg.p2.y) + thislens.transform.position);
-        if(useIntensity) Lr.material.color = new Color(Lr.material.color.r, Lr.material.color.g, Lr.material.color.b, opticsSeg.intensity);
+        Lr.SetPosition(0, new Vector3( opticsSeg.p1.x, 0.0f, opticsSeg.p1.y)*thislens.transform.localScale.x + thislens.transform.position); // mby works with vec2? 
+        Lr.SetPosition(1, new Vector3( opticsSeg.p2.x, 0.0f, opticsSeg.p2.y)*thislens.transform.localScale.x + thislens.transform.position);
+        if(useIntensity) Lr.material.color = new Color(opticsSeg.segmentColor.r, opticsSeg.segmentColor.g, opticsSeg.segmentColor.b, opticsSeg.intensity);
     }
 }
