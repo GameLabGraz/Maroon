@@ -5,7 +5,7 @@ namespace PlatformControls.PC
 {
     public class PC_GrounderMovement : GrounderMovement
     {
-        [SerializeField] private bool _invertInput = false;
+        [SerializeField] private bool _invertInput;
 
         private void Update()
         {       
