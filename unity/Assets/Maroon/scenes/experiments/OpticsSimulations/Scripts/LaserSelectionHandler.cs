@@ -36,14 +36,14 @@ public class LaserSelectionHandler : MonoBehaviour
             currActiveLaser.GetComponent<LPProperties>().laserIntensity = intensity;
         }
     }
-    public void setWavelength(float wavelength)
+    public void setActiveWavelength(float wavelength)
     {
+
         if (currActiveLaser != null)
         {
-            currActiveLaser.GetComponent<LPProperties>().setLaserColor(wavelength);
+            currActiveLaser.GetComponent<LPProperties>().laserWavelength = wavelength;
         }
     }
-
     public GameObject[] getAllLaserPointers()
     {
         return GameObject.FindGameObjectsWithTag("LaserPointer"); ;
@@ -63,9 +63,8 @@ public class LaserSelectionHandler : MonoBehaviour
     {
         int numlasers = 7;
 
-        Vector3 startpoint = new Vector3(-1, 1.87f, 2.0f);
+        Vector3 startpoint = new Vector3(-1, 1.87f, 2.0f); //hardcoded values?
         Vector3 endpoint = new Vector3(-1, 1.87f, 3.0f);
-
         Vector3 offset = (endpoint - startpoint) / numlasers;
 
         for(int i = 0; i < numlasers; i++)
@@ -75,7 +74,10 @@ public class LaserSelectionHandler : MonoBehaviour
 
     }
 
+    public void addRGBLaserArray()
+    {
 
+    }
 
     public void AddLaserPointer()
     {
@@ -102,10 +104,8 @@ public class LaserSelectionHandler : MonoBehaviour
         else
         {
             laserControlPanel.SetActive(true);
+            currActiveLaser.GetComponent<LPProperties>().setLaserColor();
         }
-        
-        
-
 
         if(Input.GetMouseButtonDown(0))
         {
@@ -133,6 +133,6 @@ public class LaserSelectionHandler : MonoBehaviour
             }
         }
         setActiveIntensity(activeLaserIntensity);
-        setWavelength(activeLaserWavelength);
+        setActiveWavelength(activeLaserWavelength);
     }
 }

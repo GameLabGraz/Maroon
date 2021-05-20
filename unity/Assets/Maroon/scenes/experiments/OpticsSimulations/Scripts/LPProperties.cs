@@ -18,7 +18,15 @@ public class LPProperties : MonoBehaviour
         return col1*(1-interpolfactor) + col2*(interpolfactor);
     }
 
+    private void Update()
+    {
+        //setLaserColor(laserWavelength);
+    }
 
+    public void setLaserColor()
+    {
+        setLaserColor(laserWavelength);
+    }
     public void setLaserColor(float wavelength)
     {
         //wavelength between 0 and 1

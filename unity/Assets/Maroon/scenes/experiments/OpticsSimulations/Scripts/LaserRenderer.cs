@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Maroon.Physics;
 
 //[ExecuteInEditMode]
 public class LaserRenderer : MonoBehaviour
@@ -13,6 +14,8 @@ public class LaserRenderer : MonoBehaviour
 
     public GameObject[] laserPointers;
 
+    
+
     /* values to change */
     [SerializeField]
     [Range(1.0f, 10f)]
@@ -21,9 +24,15 @@ public class LaserRenderer : MonoBehaviour
     [Range(1.0f, 10f)]
     private float lensInner_RI = 1.0f;
 
+    public QuantityFloat inner_RI;
+    
+    public QuantityFloat outer_RI;
+
     [SerializeField]
     [Range(0.0f, 1.0f)]
     private float reflection_vs_refraction = 0.3f;
+
+    public QuantityFloat refl_vs_refr;
 
     [SerializeField]
     [Range(0.0f, 0.99f)]
@@ -50,12 +59,10 @@ public class LaserRenderer : MonoBehaviour
 
         for (int i = 0; i < 100; i++)
         {
-            lineRenderers[i] = new GameObject().AddComponent<LineRenderer>() as LineRenderer;
+            lineRenderers[i] = new GameObject().AddComponent<LineRenderer>();
             lineRenderers[i].material = LaserMaterial;
             lineRenderers[i].transform.parent = gameObject.transform;
 
-            //lineRenderers[i].SetPosition(0, new Vector3(2, 2, 2));
-            //lineRenderers[i].SetPosition(1, new Vector3(3, 3, 3));
             lineRenderers[i].startWidth = 0.02f;
             lineRenderers[i].endWidth = 0.02f;
             lineRenderers[i].numCapVertices = 5;
@@ -81,19 +88,21 @@ public class LaserRenderer : MonoBehaviour
         OpticsLens currLens = opLens.GetComponent<LensMeshGenerator>().thisLensLens;
 
         currLens.radius = opLens.GetComponent<LensMeshGenerator>().lensRadius;
-        currLens.innerRefractiveidx = lensInner_RI;
-        currLens.outerRefractiveidx = lensOuter_RI;
+        currLens.innerRefractiveidx = inner_RI;
+        currLens.outerRefractiveidx = outer_RI;
 
         foreach (var laserp in laserPointers)
         {
             Vector3 relLaserPos = gameObject.transform.InverseTransformPoint(laserp.transform.position);
             Vector3 relLaserDir = gameObject.transform.InverseTransformDirection(laserp.transform.up);
+            var lpprop = laserp.GetComponent<LPProperties>();
 
-            float intensity = laserp.GetComponent<LPProperties>().laserIntensity;
+            float intensity = lpprop.laserIntensity;
+            float wavelength = lpprop.laserWavelength;
             //todo add laserpointer properties
 
-            OpticsRay laserRay = new OpticsRay(new Vector2(relLaserPos.x, relLaserPos.z), new Vector2(relLaserDir.x, relLaserDir.z), intensity, laserp.GetComponent<LPProperties>().laserColor);
-            opLens.GetComponent<OpticsSim>().calcHitsRecursive(laserRay, currLens, true, ref LaserSegments, loss, reflection_vs_refraction);
+            OpticsRay laserRay = new OpticsRay(new Vector2(relLaserPos.x, relLaserPos.z), new Vector2(relLaserDir.x, relLaserDir.z), intensity, lpprop.laserColor, wavelength);
+            opLens.GetComponent<OpticsSim>().calcHitsRecursive(laserRay, currLens, true, ref LaserSegments, loss, refl_vs_refr);
 
         }
         UpdateLasers();

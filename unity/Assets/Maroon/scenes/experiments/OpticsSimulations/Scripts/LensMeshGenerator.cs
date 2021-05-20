@@ -11,9 +11,6 @@ public class LensMeshGenerator : MonoBehaviour
     public QuantityFloat cylinderthickness;
     private float cylinderthickness_old = 0.0f;
     public float circradius = 3.0f;
-    //[Range(-1, 1)]
-    //[Range(-1, 1)]
-    //public float radcalc = 0;
 
     public QuantityFloat radcalc;
 
@@ -21,6 +18,8 @@ public class LensMeshGenerator : MonoBehaviour
     private float circradius2 = 3.0f;
     public QuantityFloat lensRadius;
     private float lensRadius_old;
+
+    
 
     private float radcalc_old = 0;
     private float radcalc_old2 = 0;
@@ -91,7 +90,7 @@ public class LensMeshGenerator : MonoBehaviour
         if (edgeinput > 0.999f) edgeinput = 0.999f;
         if (edgeinput < -0.999f) edgeinput = -0.999f;
 
-        float alpha = Mathf.Atan(lensradius / edgeinput) * Mathf.Rad2Deg; // todo there is most likely a problem there
+        float alpha = Mathf.Atan(lensradius / edgeinput) * Mathf.Rad2Deg; 
         //2ndtriangle = 90 - (180 - 90 - alpha)
 
         // segmentr = 90 - 2ndtriangle
@@ -113,8 +112,6 @@ public class LensMeshGenerator : MonoBehaviour
         return angle;
 
     }
-
-
     //gets points of arc, starting at (0,0) and ending at (x, y(1.0))
     Vector3[] getSectionPoints(int numpoints, float sectionangle, float radius, float circrad)
     {
