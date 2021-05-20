@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
+//[ExecuteInEditMode]
 public class LaserRenderer : MonoBehaviour
 {
 
@@ -88,9 +88,11 @@ public class LaserRenderer : MonoBehaviour
         {
             Vector3 relLaserPos = gameObject.transform.InverseTransformPoint(laserp.transform.position);
             Vector3 relLaserDir = gameObject.transform.InverseTransformDirection(laserp.transform.up);
+
+            float intensity = laserp.GetComponent<LPProperties>().laserIntensity;
             //todo add laserpointer properties
 
-            OpticsRay laserRay = new OpticsRay(new Vector2(relLaserPos.x, relLaserPos.z), new Vector2(relLaserDir.x, relLaserDir.z), 1.0f, laserp.GetComponent<LPProperties>().laserColor);
+            OpticsRay laserRay = new OpticsRay(new Vector2(relLaserPos.x, relLaserPos.z), new Vector2(relLaserDir.x, relLaserDir.z), intensity, laserp.GetComponent<LPProperties>().laserColor);
             opLens.GetComponent<OpticsSim>().calcHitsRecursive(laserRay, currLens, true, ref LaserSegments, loss, reflection_vs_refraction);
 
         }

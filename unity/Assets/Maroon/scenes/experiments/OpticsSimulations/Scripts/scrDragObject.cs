@@ -15,6 +15,7 @@ public class scrDragObject : MonoBehaviour
 
     private MeshRenderer handleRenderer;
     private SphereCollider handleCollider;
+    private scrLaserSelectionHandler laserhandler;
 
     Collider thisColl;
 
@@ -33,6 +34,7 @@ public class scrDragObject : MonoBehaviour
         currentlydragging = false;
         activeColor = Color.green;
         activeLP = false;
+        laserhandler = GameObject.FindGameObjectWithTag("LaserSelectionHandler").GetComponent<scrLaserSelectionHandler>();
 
         handleRenderer = gameObject.transform.GetChild(0).GetComponent<MeshRenderer>();
         handleCollider = gameObject.transform.GetChild(0).GetComponent<SphereCollider>();
@@ -111,6 +113,7 @@ public class scrDragObject : MonoBehaviour
 
     public void makeActive()
     {
+        laserhandler.setActiveIntensityAndWavelength(gameObject.GetComponent<LPProperties>().laserIntensity, gameObject.GetComponent<LPProperties>().laserWavelength);
         activeLP = true;
         lasermat.color = activeColor;
         handleRenderer.enabled = true;

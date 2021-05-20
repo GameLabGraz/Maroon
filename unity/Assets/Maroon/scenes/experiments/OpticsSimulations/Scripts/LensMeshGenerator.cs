@@ -1,36 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Maroon.Physics;
 
-namespace Maroon.Physics { }
-
-[ExecuteInEditMode]
+//[ExecuteInEditMode]
 public class LensMeshGenerator : MonoBehaviour
 {
-    // Start is called before the first frame update
-
-
     MeshFilter testmeshfilter;
-    //[Range(0.0f, 4.0f)]
-    //public float testfloat;
-    //[Range(1.01f, 20.0f)]
-
     public Vector3 offset_vec = new Vector3(1.0f, 0, 0);
-    [Range(0, 3)]
-    public float cylinderthickness = 0.0f;
+    public QuantityFloat cylinderthickness;
     private float cylinderthickness_old = 0.0f;
-    private float circradius = 3.0f;
+    public float circradius = 3.0f;
     //[Range(-1, 1)]
-    [Range(-1, 1)]
-    public float radcalc = 0;
+    //[Range(-1, 1)]
+    //public float radcalc = 0;
 
-    [Range(-1, 1)]
-    
-    public float radcalc2 = 0;
+    public QuantityFloat radcalc;
+
+    public QuantityFloat radcalc2;
     private float circradius2 = 3.0f;
-
-    [Range(0.2f, 0.99f)]
-    public float lensRadius =0.99f;
+    public QuantityFloat lensRadius;
     private float lensRadius_old;
 
     private float radcalc_old = 0;
@@ -45,46 +34,28 @@ public class LensMeshGenerator : MonoBehaviour
     [HideInInspector]
     public OpticsLens thisLensLens;
 
-    [SerializeField]
-    public float Testfloat
+
+
+    public void setLensPreset(int whatlens)
     {
-        get => Testfloat;
-        set
+        Debug.Log(whatlens);
+        switch (whatlens)
         {
-            cylinderthickness = value;
+            case 0: setPresetLens(0.3f, -0.3f, 0.2f, 1.0f); break;
+            case 1: setPresetLens(-0.3f,0.3f, 0.7f, 1.0f); break;
+            case 2: setPresetLens(0.01f, 0.01f, 0.2f, 1.0f); break;
+            case 3: setPresetLens(0.3f, 0.3f, 0.2f, 1.0f); break;
         }
+        
     }
 
-    [SerializeField]
-    public float radcalcset
+    public void setPresetLens(float leftcircle, float rightcircle, float thickness, float diameter)
     {
-        get => radcalcset;
-        set
-        {
-            radcalc = value;
-        }
+        radcalc.Value = leftcircle;
+        radcalc2.Value = rightcircle;
+        lensRadius.Value = diameter;
+        cylinderthickness.Value = thickness; 
     }
-
-    [SerializeField]
-    public float radcalc2set
-    {
-        get => radcalc2set;
-        set
-        {
-            radcalc2 = value;
-        }
-    }
-
-    [SerializeField]
-    public float lensradset //0.2f -0.99f
-    {
-        get => lensradset;
-        set
-        {
-            lensRadius = value;
-        }
-    }
-
 
 
 
