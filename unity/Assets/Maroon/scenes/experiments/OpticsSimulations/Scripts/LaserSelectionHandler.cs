@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Maroon.Physics;
 
-public class scrLaserSelectionHandler : MonoBehaviour
+public class LaserSelectionHandler : MonoBehaviour
 {
     // Start is called before the first frame update
     [HideInInspector]
@@ -116,9 +116,9 @@ public class scrLaserSelectionHandler : MonoBehaviour
 
             if (rhit.collider.tag == "LaserPointer")
             {
-                if(currActiveLaser != null) currActiveLaser.GetComponent<scrDragObject>().makeInactive();
+                if(currActiveLaser != null) currActiveLaser.GetComponent<DragLaserObject>().makeInactive();
                 currActiveLaser = rhit.collider.gameObject;
-                currActiveLaser.GetComponent<scrDragObject>().makeActive();
+                currActiveLaser.GetComponent<DragLaserObject>().makeActive();
             }
             else
             {
@@ -126,7 +126,7 @@ public class scrLaserSelectionHandler : MonoBehaviour
                 {
                     if(rhit.collider.tag == "LensObject") //todo change to optical tables
                     {
-                        currActiveLaser.GetComponent<scrDragObject>().makeInactive();
+                        currActiveLaser.GetComponent<DragLaserObject>().makeInactive();
                         currActiveLaser = null;
                     }
                 }

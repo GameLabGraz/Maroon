@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
-public class scrDragObject : MonoBehaviour
+public class DragLaserObject : MonoBehaviour
 {
     private Camera mainCamera;
     private Plane movementPlane;
@@ -15,7 +15,7 @@ public class scrDragObject : MonoBehaviour
 
     private MeshRenderer handleRenderer;
     private SphereCollider handleCollider;
-    private scrLaserSelectionHandler laserhandler;
+    private LaserSelectionHandler laserhandler;
 
     Collider thisColl;
 
@@ -34,7 +34,7 @@ public class scrDragObject : MonoBehaviour
         currentlydragging = false;
         activeColor = Color.green;
         activeLP = false;
-        laserhandler = GameObject.FindGameObjectWithTag("LaserSelectionHandler").GetComponent<scrLaserSelectionHandler>();
+        laserhandler = GameObject.FindGameObjectWithTag("LaserSelectionHandler").GetComponent<LaserSelectionHandler>();
 
         handleRenderer = gameObject.transform.GetChild(0).GetComponent<MeshRenderer>();
         handleCollider = gameObject.transform.GetChild(0).GetComponent<SphereCollider>();
@@ -99,7 +99,7 @@ public class scrDragObject : MonoBehaviour
     bool isActiveLP()
     {
         GameObject laserSelHandler = GameObject.Find("LaserSelectionHandler");
-        GameObject activeLaser = laserSelHandler.GetComponent<scrLaserSelectionHandler>().currActiveLaser;
+        GameObject activeLaser = laserSelHandler.GetComponent<LaserSelectionHandler>().currActiveLaser;
         if (activeLaser == null)
         {
             activeLP = false;
