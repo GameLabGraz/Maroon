@@ -5,22 +5,16 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class LPProperties : MonoBehaviour
 {
-    // Start is called before the first frame update
 
     public Color laserColor = Color.red;
     public float laserIntensity = 1.0f;
-    public float laserWavelength = 0.5f;
+    public float laserWavelength = 0.886f;
 
     public Color[] spectrumcolors = new Color[20];
 
     private Color linearInterpolate(Color col1, Color col2, float interpolfactor)
     {
         return col1*(1-interpolfactor) + col2*(interpolfactor);
-    }
-
-    private void Update()
-    {
-        //setLaserColor(laserWavelength);
     }
 
     public void setLaserColor()
@@ -30,6 +24,8 @@ public class LPProperties : MonoBehaviour
     public void setLaserColor(float wavelength)
     {
         //wavelength between 0 and 1
+        //float wavelength2 = (wavelength - 400.0f) / 300.0f;
+
         wavelength = Mathf.Clamp(wavelength, 0.0f, 0.9999f);
         // should set color of laser depending on its wavelength.
 

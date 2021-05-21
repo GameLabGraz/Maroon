@@ -7,15 +7,25 @@ public class DragLaserObject : MonoBehaviour
 {
     private Camera mainCamera;
     private Plane movementPlane;
-    private Material lasermat;
+    private Material laserMat;
     private Color ogColor;
-    private bool currentlydragging;
+
+    private LPProperties laserProperties;
+
+    [SerializeField]
+    private Color hoverColor;
+    [SerializeField]
+    private Color draggingColor;
+    [SerializeField]
     private Color activeColor;
+
+
+    private bool currentlyDragging;
     private bool activeLP;
 
     private MeshRenderer handleRenderer;
     private SphereCollider handleCollider;
-    private LaserSelectionHandler laserhandler;
+    private LaserSelectionHandler laserHandler;
 
     Collider thisColl;
 
@@ -25,14 +35,20 @@ public class DragLaserObject : MonoBehaviour
     void Start()
     {
         mainCamera = Camera.main;
-        movementPlane = new Plane(Vector3.up, new Vector3(0.0f, 0.0f, 0.0f)); //todo correct laser height
+        movementPlane = new Plane(Vector3.up, new Vector3(0.0f, 0.0f, 0.0f)); //such an init needed?
         thisColl = GetComponent<Collider>();
-        lasermat = GetComponent<Renderer>().material;
-        ogColor = lasermat.color;
-        currentlydragging = false;
+        laserMat = GetComponent<Renderer>().material;
+
+        ogColor = laserMat.color;
+
+        hoverColor = Color.red;
         activeColor = Color.green;
+        draggingColor = Color.grey;
+        currentlyDragging = false;
+        
         activeLP = false;
-        laserhandler = GameObject.FindGameObjectWithTag("LaserSelectionHandler").GetComponent<LaserSelectionHandler>();
+        laserProperties = GetComponent<LPProperties>();
+        laserHandler = GameObject.FindGameObjectWithTag("LaserSelectionHandler").GetComponent<LaserSelectionHandler>();
 
         handleRenderer = gameObject.transform.GetChild(0).GetComponent<MeshRenderer>();
         handleCollider = gameObject.transform.GetChild(0).GetComponent<SphereCollider>();
@@ -43,7 +59,7 @@ public class DragLaserObject : MonoBehaviour
 
     void OnMouseDown()
     {
-        currentlydragging = true;
+        currentlyDragging = true;
         Ray objIntersectRay = mainCamera.ScreenPointToRay(Input.mousePosition);
         RaycastHit thisHit;
         thisColl.Raycast(objIntersectRay, out thisHit, Mathf.Infinity);
@@ -58,12 +74,12 @@ public class DragLaserObject : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if(!currentlydragging) lasermat.color = Color.red;
+        if(!currentlyDragging) laserMat.color = hoverColor;
     }
 
     private void OnMouseExit()
     {
-        if(!currentlydragging)
+        if(!currentlyDragging)
         {
             if (isActiveLP())
             {
@@ -71,15 +87,15 @@ public class DragLaserObject : MonoBehaviour
             }
             else
             {
-                lasermat.color = ogColor;
+                laserMat.color = ogColor;
             }
         }   
     }
 
     private void OnMouseUp()
     {
-        currentlydragging = false;
-        lasermat.color = Color.red;
+        currentlyDragging = false;
+        laserMat.color = hoverColor;
     }
 
     void OnMouseDrag()
@@ -90,30 +106,27 @@ public class DragLaserObject : MonoBehaviour
 
         Vector3 pointonplane = distRay.GetPoint(dist);
         transform.position = pointonplane - offset;
-        lasermat.color = Color.grey;
+        laserMat.color = draggingColor;
     }
 
 
     bool isActiveLP()
     {
-        GameObject laserSelHandler = GameObject.Find("LaserSelectionHandler");
-        GameObject activeLaser = laserSelHandler.GetComponent<LaserSelectionHandler>().currActiveLaser;
+        GameObject activeLaser = laserHandler.currActiveLaser;
+
         if (activeLaser == null)
         {
             activeLP = false;
             return false;
         }
-
-        activeLP = ReferenceEquals(gameObject, activeLaser);
-
-        return activeLP;
+        return ReferenceEquals(gameObject, activeLaser);
     }
 
     public void makeActive()
     {
-        laserhandler.setActiveIntensityAndWavelength(gameObject.GetComponent<LPProperties>().laserIntensity, gameObject.GetComponent<LPProperties>().laserWavelength);
+        laserHandler.setActiveIntensityAndWavelength(laserProperties.laserIntensity, laserProperties.laserWavelength);
         activeLP = true;
-        lasermat.color = activeColor;
+        laserMat.color = activeColor;
         handleRenderer.enabled = true;
         handleCollider.enabled = true;
     }
@@ -121,7 +134,7 @@ public class DragLaserObject : MonoBehaviour
     public void makeInactive()
     {
         activeLP = false;
-        lasermat.color = ogColor;
+        laserMat.color = ogColor;
         handleRenderer.enabled = false;
         handleCollider.enabled = false;
     }

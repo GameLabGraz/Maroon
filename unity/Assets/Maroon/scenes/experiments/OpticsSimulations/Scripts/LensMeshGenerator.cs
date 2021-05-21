@@ -19,7 +19,8 @@ public class LensMeshGenerator : MonoBehaviour
     public QuantityFloat lensRadius;
     private float lensRadius_old;
 
-    
+    private GameObject lensHolder;
+    private GameObject lensRod;
 
     private float radcalc_old = 0;
     private float radcalc_old2 = 0;
@@ -37,7 +38,6 @@ public class LensMeshGenerator : MonoBehaviour
 
     public void setLensPreset(int whatlens)
     {
-        Debug.Log(whatlens);
         switch (whatlens)
         {
             case 0: setPresetLens(0.3f, -0.3f, 0.2f, 1.0f); break;
@@ -73,6 +73,10 @@ public class LensMeshGenerator : MonoBehaviour
         {
             gameObject.AddComponent<MeshRenderer>();
         }
+
+        lensHolder = transform.Find("lens_holder_holder").gameObject;
+        lensRod = transform.Find("rod_holder").gameObject;
+
 
     }
 
@@ -139,8 +143,6 @@ public class LensMeshGenerator : MonoBehaviour
     List<Vector3[]> getDomeVertices(Vector3[] slice, int numberofribs)
     {
         
-
-
         float rotAngle = 360 / numberofribs;
 
         // numberofribs - 1
@@ -217,7 +219,7 @@ public class LensMeshGenerator : MonoBehaviour
         // additionalthickness is thickness @ edge of lens
 
         float domediff = leftdome - rightdome;
-        float lensdistance = 0.0f;
+        float lensdistance;
         float avgoffset = (leftdome + rightdome) / 2.0f;
 
         if(domediff > 0.0f)
@@ -336,6 +338,10 @@ public class LensMeshGenerator : MonoBehaviour
             cylinderthickness_old = cylinderthickness;
         }
         Mesh mymesh = new Mesh();
+        // this makes the lens holder scale along with the lens
+        lensHolder.transform.localScale = new Vector3(lensRadius, lensRadius, lensRadius);
+        // and moves the lens stand along with the lens thickness
+        lensRod.transform.position = new Vector3(lensRod.transform.position.x, -lensRadius*transform.localScale.y + transform.position.y, lensRod.transform.position.z);
 
         (float lensdist, float averageoffset) = calcLensPos(radcalc*lensRadius, radcalc2*lensRadius, cylinderthickness);
 
@@ -352,7 +358,6 @@ public class LensMeshGenerator : MonoBehaviour
 
         var pts = getSectionPoints(sectionPoints, sectionangle, circradius, circradius); //circradiuss
         var pts2 = getSectionPoints(sectionPoints, sectionangle2, circradius2, circradius2);
-
 
         // first vertex is 0 0 0 
         var domeL = getDomeVertices(pts, domeSegments);

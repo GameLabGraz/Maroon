@@ -63,11 +63,10 @@ public struct OpticsLens
     public float rightbound;
 }
 
-[ExecuteInEditMode]
+
 public class OpticsSim : MonoBehaviour
 {
     // inputs: ray, all properties of a lens 
-    // recursion anchor -> add ray intensity property 
     // from here http://devmag.org.za/2009/04/17/basic-collision-detection-in-2d-part-2/ , for debug
     public (bool didhit, Vector2 inter1, Vector2 inter2) IntersectRay2(OpticsRay toIntersect, OpticsCircle interCircle)
     {
@@ -256,13 +255,15 @@ public class OpticsSim : MonoBehaviour
 
     public (Vector2, bool totalinternalreflection) getRefraction(Vector2 normal, Vector2 entrydir, float refIdx1, float refIdx2, float wlmultiplier)
     {
-        // get entry angle
-        //refractive multiplier
+        
+
+
+        //refractive multiplier, add to the refracive indices to account for wavelength differences
 
         refIdx1 += (refIdx1 - 1.0f) * wlmultiplier * 0.2f;
         refIdx2 += (refIdx2 - 1.0f) * wlmultiplier * 0.2f;
 
-
+        // get entry angle
 
         float angle = Mathf.Acos(Vector2.Dot( entrydir.normalized, normal.normalized)); 
 
