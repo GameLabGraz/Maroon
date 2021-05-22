@@ -129,6 +129,22 @@ public class LaserSelectionHandler : MonoBehaviour
 
     }
 
+
+    public void setLaserArrangements(int arr)
+    {
+
+        switch (arr)
+        {
+            case 0: break;
+            case 1: addLaserArray(); break;
+            case 2: addRGBLaserArray(); break;
+            case 3: addFocusedLaserArray(); break;
+            case 4: break;
+            default: break;
+        }
+    }
+
+
     // Update is called once per frame
     void Update()
     {
@@ -161,7 +177,7 @@ public class LaserSelectionHandler : MonoBehaviour
             {
                 if(! (rhit.collider.tag == "LPHandle") && currActiveLaser != null) //todo make klick on table deselect of laser.
                 {
-                    if (rhit.collider.gameObject.name == "OpticsTable" || rhit.collider.gameObject.name == "OpticsTable2") //todo change to optical tables
+                    if (rhit.collider.gameObject.name == "OpticsTable" || rhit.collider.gameObject.name == "OpticsTable") //todo change to optical tables
                     {
                         currActiveLaser.GetComponent<DragLaserObject>().makeInactive();
                         currActiveLaser = null;

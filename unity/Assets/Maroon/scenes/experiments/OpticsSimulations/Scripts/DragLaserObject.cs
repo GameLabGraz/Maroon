@@ -24,7 +24,7 @@ public class DragLaserObject : MonoBehaviour
     private bool activeLP;
 
     private MeshRenderer handleRenderer;
-    private SphereCollider handleCollider;
+    private Collider handleCollider;
     private LaserSelectionHandler laserHandler;
 
     Collider thisColl;
@@ -51,7 +51,7 @@ public class DragLaserObject : MonoBehaviour
         laserHandler = GameObject.FindGameObjectWithTag("LaserSelectionHandler").GetComponent<LaserSelectionHandler>();
 
         handleRenderer = gameObject.transform.GetChild(0).GetComponent<MeshRenderer>();
-        handleCollider = gameObject.transform.GetChild(0).GetComponent<SphereCollider>();
+        handleCollider = gameObject.transform.GetChild(0).GetComponent<Collider>();
         handleCollider.enabled = false;
         handleRenderer.enabled = false;
     }
