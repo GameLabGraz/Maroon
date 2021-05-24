@@ -8,7 +8,7 @@ public class LPProperties : MonoBehaviour
 
     public Color laserColor = Color.red;
     public float laserIntensity = 1.0f;
-    public float laserWavelength = 0.886f;
+    public float laserWavelength = 680f;
 
     public Color[] spectrumcolors = new Color[20];
 
@@ -25,7 +25,8 @@ public class LPProperties : MonoBehaviour
     {
         //wavelength between 0 and 1
         //float wavelength2 = (wavelength - 400.0f) / 300.0f;
-
+        // 380-720nm
+        wavelength = (wavelength - 380.0f) / 340.0f;
         wavelength = Mathf.Clamp(wavelength, 0.0f, 0.9999f);
         // should set color of laser depending on its wavelength.
 

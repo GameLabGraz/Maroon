@@ -130,7 +130,7 @@ public class LaserRenderer : MonoBehaviour
     {
         Lr.SetPosition(0, new Vector3( opticsSeg.p1.x, 0.0f, opticsSeg.p1.y)*thislens.transform.localScale.x + thislens.transform.position); // mby works with vec2? 
         Lr.SetPosition(1, new Vector3( opticsSeg.p2.x, 0.0f, opticsSeg.p2.y)*thislens.transform.localScale.x + thislens.transform.position);
-        if(useIntensity) Lr.material.color = new Color(opticsSeg.segmentColor.r, opticsSeg.segmentColor.g, opticsSeg.segmentColor.b, opticsSeg.intensity);
+        if(useIntensity) Lr.material.SetColor("_TintColor", new Color(opticsSeg.segmentColor.r, opticsSeg.segmentColor.g, opticsSeg.segmentColor.b, opticsSeg.intensity));
     }
 
 

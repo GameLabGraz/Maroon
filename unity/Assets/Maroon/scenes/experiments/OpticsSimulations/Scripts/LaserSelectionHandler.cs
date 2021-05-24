@@ -72,11 +72,9 @@ public class LaserSelectionHandler : MonoBehaviour
     {
         int numlasers = 7;
 
-        //Vector3 startpoint = new Vector3(-1, 1.87f, 2.0f); //hardcoded values?
-        //Vector3 endpoint = new Vector3(-1, 1.87f, 3.0f);
         Vector3 offset = (laserArrayEndPoint - laserArrayStartPoint) / numlasers;
 
-        for(int i = 0; i < numlasers; i++)
+        for(int i = 1; i < numlasers; i++)
         {
             Instantiate(laserPointerPrefab, laserArrayStartPoint + i * offset, laserPointerPrefab.transform.rotation);
         }
@@ -87,7 +85,7 @@ public class LaserSelectionHandler : MonoBehaviour
     {
         Vector3 offset = (endpoint - startpoint) / numlasers;
 
-        for(int i = 0; i< numlasers; i++)
+        for(int i = 1; i< numlasers; i++)
         {
             var lpprefab = Instantiate(laserPointerPrefab, startpoint + i * offset, laserPointerPrefab.transform.rotation);
             var lpprops = lpprefab.GetComponent<LPProperties>();
@@ -106,14 +104,20 @@ public class LaserSelectionHandler : MonoBehaviour
 
     public void addFocusedLaserArray()
     {
-        addLaserArrayWithOptions(7, new Vector3(-1.5f, 1.87f, 2.0f), new Vector3(-1.5f, 1.87f, 3.0f), new Vector3(-0.5f, 1.87f, 2.5f), 1.0f, 0.886f);
+        addLaserArrayWithOptions(7, laserArrayStartPoint, laserArrayEndPoint, (laserArrayStartPoint + laserArrayEndPoint)/2 + Vector3.right*0.5f, 1.0f, 680f);
+    }
+
+    public void addFocusedLaserArrayWithOffset()
+    {
+        Vector3 offsetVec = - Vector3.right * 0.3f;
+        addLaserArrayWithOptions(7, laserArrayStartPoint +offsetVec, laserArrayEndPoint +offsetVec , (laserArrayStartPoint + laserArrayEndPoint) / 2 + Vector3.right * 0.5f +offsetVec, 1.0f, 680f);
     }
 
     public void addRGBLaserArray()
     {
-        addLaserArrayWithOptions(7, new Vector3(-1, lensPos.y, 2.0f), new Vector3(-1, lensPos.y, 3.0f), new Vector3(10000.0f, lensPos.y, 2.5f), 1.0f, 0.4f);
-        addLaserArrayWithOptions(7, new Vector3(-1.5f, lensPos.y, 2.0f), new Vector3(-1.5f, lensPos.y, 3.0f), new Vector3(10000.0f, lensPos.y, 2.5f), 1.0f, 0.886f);
-        addLaserArrayWithOptions(7, new Vector3(-2.0f, lensPos.y, 2.0f), new Vector3(-2.0f, lensPos.y, 3.0f), new Vector3(10000.0f, lensPos.y, 2.5f), 1.0f, 0.2f);
+        addLaserArrayWithOptions(7, laserArrayStartPoint, laserArrayEndPoint, laserArrayStartPoint + Vector3.right * 10000.0f, 1.0f, 450f);
+        addLaserArrayWithOptions(7, laserArrayStartPoint - Vector3.right*0.2f, laserArrayEndPoint - Vector3.right * 0.2f, laserArrayStartPoint + Vector3.right * 10000.0f, 1.0f, 500f);
+        addLaserArrayWithOptions(7, laserArrayStartPoint - Vector3.right * 0.4f, laserArrayEndPoint - Vector3.right * 0.4f, laserArrayStartPoint + Vector3.right * 10000.0f, 1.0f, 700f);
     }
 
     public void AddLaserPointer()

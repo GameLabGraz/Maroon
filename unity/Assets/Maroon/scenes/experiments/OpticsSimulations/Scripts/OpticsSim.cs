@@ -18,7 +18,7 @@ public struct OpticsRay
         this.rayColor = Color.red;
         this.wavelengthMultiplier = 1.0f;
     }
-    public OpticsRay(Vector2 origin, Vector2 dir, float intensity, Color rayColor, float wavelengthmult = 1.0f)
+    public OpticsRay(Vector2 origin, Vector2 dir, float intensity, Color rayColor, float wavelengthmult = 886.0f)
     {
         this.origin = origin;
         this.dir = dir;
@@ -253,15 +253,17 @@ public class OpticsSim : MonoBehaviour
         return ret1;
     }
 
-    public (Vector2, bool totalinternalreflection) getRefraction(Vector2 normal, Vector2 entrydir, float refIdx1, float refIdx2, float wlmultiplier)
+    public (Vector2, bool totalinternalreflection) getRefraction(Vector2 normal, Vector2 entrydir, float refIdx1, float refIdx2, float wavelength)
     {
-        
+
 
 
         //refractive multiplier, add to the refracive indices to account for wavelength differences
 
-        refIdx1 += (refIdx1 - 1.0f) * wlmultiplier * 0.2f;
-        refIdx2 += (refIdx2 - 1.0f) * wlmultiplier * 0.2f;
+        wavelength = (wavelength - 380.0f) / 340.0f;
+
+        refIdx1 += (refIdx1 - 1.0f) * wavelength * 0.2f;
+        refIdx2 += (refIdx2 - 1.0f) * wavelength * 0.2f;
 
         // get entry angle
 
