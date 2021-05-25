@@ -14,6 +14,9 @@ public class initCoordSystem : MonoBehaviour, IResetObject
     [SerializeField] private TMP_Text xLabel;
     [SerializeField] private TMP_Text yLabel;
     [SerializeField] private TMP_Text zLabel;
+    [SerializeField] private TMP_Text originLabel;
+
+    private string text;
 
     private Vector3 coordOriginPosition;
     private Vector3 xMax;
@@ -124,6 +127,7 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         lr.SetWidth(0.04f, 0.04f);
         lr.SetPosition(0, start);
         lr.SetPosition(1, end);
+        lr.numCapVertices = 5;
     }
 
     void drawLine(Vector3 start, Vector3 end, float duration = 0.2f)
@@ -137,6 +141,8 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         lr.SetWidth(0.04f, 0.04f);
         lr.SetPosition(0, start);
         lr.SetPosition(1, end);
+        lr.numCapVertices = 5;
+
     }
 
     void drawOrigin(Vector3 start, Vector3 end, float duration = 0.2f)
@@ -151,6 +157,7 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         lr.SetPosition(0, start);
         lr.SetPosition(1, end);
         origin_.Add(myLine);
+        lr.numCapVertices = 5;
     }
 
     public void setLabelX(string text)
@@ -168,6 +175,11 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         zLabel.text = text;
     }
 
+    public void setLabelOrigin(string text)
+    {
+        originLabel.text = text;
+    }
+
     public void setScaleXYZ(Vector3 scale)
     {
         scale_xyz = scale;
@@ -182,6 +194,7 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         setLabelX("X " + (real_xyz_max.x).ToString() + "m");
         setLabelY("Y " + (real_xyz_max.z).ToString() + "m");
         setLabelZ("Z " + (real_xyz_max.y).ToString() + "m");
+        setLabelOrigin("X: " + (real_xyz_min.x).ToString() + " Y: " + (real_xyz_min.z).ToString() + " Z: " + (real_xyz_min.y).ToString());
 
         Vector3 tmp = mapValues(real_xyz_min);
         Vector3 tmp2 = mapValues(real_xyz_max);
@@ -291,6 +304,7 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         setLabelX("X ");
         setLabelY("Y ");
         setLabelZ("Z ");
+        setLabelOrigin("X: Y: Z: ");
     }
 
     public void setParticleActive()

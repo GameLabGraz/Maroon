@@ -13,11 +13,12 @@ public class Calculation : PausableObject, IResetObject
     [SerializeField] private bool debug_parameters_ = true;
     [SerializeField] private bool start_test_ = true;
     private Vector3 point_;
-    private DialogueManager _dialogueManager;
+    
     private bool stop_simulation_ = false;
     private bool start_calc_plot_ = false;
-    private double current_steps_ = 0;
+    private int current_steps_ = 0;
     private int current_update_rate_ = 0;
+    private bool draw_trajectory_ = true;
 
     // min/max values for init coord borders
     private float x_max_ = System.Int64.MinValue;
@@ -44,6 +45,11 @@ public class Calculation : PausableObject, IResetObject
     private double current_vy_ = 0;
     private double current_vz_ = 0;
 
+    private double current_p_ = 0;
+    private double current_ekin_ = 0;
+    private double current_w_ = 0;
+    private double old_power_ = 0;
+
     private double delta_t_ = 0;
     private double steps_ = 0;
     private double current_time_ = 0;
@@ -52,17 +58,35 @@ public class Calculation : PausableObject, IResetObject
     private bool first_it = true;
     private double v_max_;
     private double r_max_ = 0.13;
+   
+    private List<Vector2> data_x_ = new List<Vector2>();
+    private List<Vector2> data_y_ = new List<Vector2>();
+    private List<Vector2> data_z_ = new List<Vector2>();
 
-    /// <summary>
-    /// Initialization
-    /// </summary>
-    protected override void Start()
+    private List<Vector2> data_vx_ = new List<Vector2>();
+    private List<Vector2> data_vy_ = new List<Vector2>();
+    private List<Vector2> data_vz_ = new List<Vector2>();
+
+    private List<Vector2> data_fx_ = new List<Vector2>();
+    private List<Vector2> data_fy_ = new List<Vector2>();
+    private List<Vector2> data_fz_ = new List<Vector2>();
+
+    private List<Vector2> data_p_ = new List<Vector2>();
+    private List<Vector2> data_ekin_ = new List<Vector2>();
+    private List<Vector2> data_w_ = new List<Vector2>();
+
+/// <summary>
+/// Initialization
+/// </summary>
+protected override void Start()
     {
+        /*
         displayMessage("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, " +
             "sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, " +
             "sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, " +
             "no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, " +
             "sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam era");
+        */
     }
 
     /// <summary>
@@ -78,23 +102,34 @@ public class Calculation : PausableObject, IResetObject
     /// </summary>
     protected override void HandleFixedUpdate()
     {
-        if (start_calc_plot_ && current_steps_ < steps_ && current_update_rate_ == 1)
+        try
         {
-            point_ = new Vector3((float)current_x_, (float)current_z_, (float)current_y_);
-            Vector3 mappedPoint = initCoordSystem.Instance.mapValues(point_);
-            initCoordSystem.Instance.drawPoint(mappedPoint, true);
+            if (start_calc_plot_ && current_steps_ < steps_ && current_update_rate_ == 1)
+            {
+                point_ = new Vector3(data_x_[current_steps_].y, data_z_[current_steps_].y, data_y_[current_steps_].y);
+                //Debug.Log("x: " + data_x_[current_steps_].y + " y: " + data_y_[current_steps_].y + " z: " + data_z_[current_steps_].y + "\n");
+                Vector3 mappedPoint = initCoordSystem.Instance.mapValues(point_);
+                initCoordSystem.Instance.drawPoint(mappedPoint, draw_trajectory_);
 
-            // calculate new values
-            calcValues();
-            current_steps_++;
-            current_update_rate_ = 0;
-        }
-        else
+                current_steps_++;
+                current_update_rate_ = 0;
+            }
+            else if (start_calc_plot_ && current_steps_ >= steps_)
+            {
+                current_steps_ = 0;
+                draw_trajectory_ = false;
+            }
+            else
+            {
+                if (start_calc_plot_)
+                    current_update_rate_++;
+            }
+        } catch
         {
-            if (start_calc_plot_)
-                current_update_rate_++;
+            Debug.Log("HandleFixedUpdate() exception\n");
+            showError();
+            SimulationController.Instance.ResetSimulation();
         }
-        
     }
 
     // GUI button
@@ -111,13 +146,9 @@ public class Calculation : PausableObject, IResetObject
         Vector3 border_min = new Vector3(x_min_, z_min_, y_min_);
         Vector3 border_max = new Vector3(x_max_, z_max_, y_max_);
         initCoordSystem.Instance.setRealCoordBorders(border_min, border_max);
-        resetParameters();
 
         start_calc_plot_ = true;
         initCoordSystem.Instance.setParticleActive();
-
-        //Debug.Log("xyz min: " + x_min_.ToString() + " " + y_min_.ToString() + " " + z_min_.ToString());
-        //Debug.Log("xyz max: " + x_max_.ToString() + " " + y_max_.ToString() + " " + z_max_.ToString());
 
     }
 
@@ -152,26 +183,39 @@ public class Calculation : PausableObject, IResetObject
     {
         Expression e;
 
-        // calc x-force
-        if (!System.String.IsNullOrEmpty(formula_fx_))
+        try
         {
-            e = getExpression(formula_fx_);
-            current_Fx_ = System.Convert.ToDouble(e.Evaluate());
-        }
-       
-        // calc y-force
-        if (!System.String.IsNullOrEmpty(formula_fx_))
-        {
-            e = getExpression(formula_fy_);
-            current_Fy_ = System.Convert.ToDouble(e.Evaluate());
-        }
+            // calc x-force
+            if (!System.String.IsNullOrEmpty(formula_fx_))
+            {
+                e = getExpression(formula_fx_);
+                current_Fx_ = System.Convert.ToDouble(e.Evaluate());
+            }
 
-        // calc z-force
-        if (!System.String.IsNullOrEmpty(formula_fx_))
+            // calc y-force
+            if (!System.String.IsNullOrEmpty(formula_fx_))
+            {
+                e = getExpression(formula_fy_);
+                current_Fy_ = System.Convert.ToDouble(e.Evaluate());
+            }
+
+            // calc z-force
+            if (!System.String.IsNullOrEmpty(formula_fx_))
+            {
+                e = getExpression(formula_fz_);
+                current_Fz_ = System.Convert.ToDouble(e.Evaluate());
+            }
+        } 
+        catch
         {
-            e = getExpression(formula_fz_);
-            current_Fz_ = System.Convert.ToDouble(e.Evaluate());
+            Debug.Log("calcForces() exception\n");
+            showError();
+            SimulationController.Instance.ResetSimulation();
+            //ParameterUI.Instance.ResetObject();
+            //initCoordSystem.Instance.ResetObject();
+            //ResetObject();
         }
+        
     }
 
     // calculates the values with the 4th order Runge-Kutta method
@@ -262,31 +306,11 @@ public class Calculation : PausableObject, IResetObject
         current_vz_ = temp_vz + (1.0 / 6.0) * (k1vz + 2 * k2vz + 2 * k3vz + k4vz);
 
         calcForces();
+        calcEnergies();
+
+        addData();
 
         current_time_ += delta_t_;
-    }
-
-    // calculates the function and visualize it
-    IEnumerator _wait(float time)
-    {
-        for (int i = 0; i < steps_; i++)
-        {
-            if (stop_simulation_)
-                break;
-            // debugCurrentValues();
-           
-            // calculate coord-position and draw point with trajectory
-            // point_ = new Vector3((float)current_x_, (float)current_y_, (float)current_z_);
-            point_ = new Vector3((float)current_x_, (float)current_z_, (float)current_y_);
-            Vector3 mappedPoint = initCoordSystem.Instance.mapValues(point_);
-            initCoordSystem.Instance.drawPoint(mappedPoint, true);
-
-            // calculate new values
-            calcValues();
-
-            yield return new WaitForSeconds(time);
-        }
-        
     }
 
     // init the parameters from GUI
@@ -309,6 +333,11 @@ public class Calculation : PausableObject, IResetObject
         current_vy_ = System.Convert.ToDouble(ParameterUI.Instance.getVxVyVz().y);
         current_vz_ = System.Convert.ToDouble(ParameterUI.Instance.getVxVyVz().z);
 
+        current_p_ = 0;
+        current_ekin_ = 0;
+        current_w_ = 0;
+
+        clearData();
         // debugGUIParameters();
     }
 
@@ -390,7 +419,7 @@ public class Calculation : PausableObject, IResetObject
                 "\nVx: " + current_vx_.ToString() + " Vy: " + current_vy_.ToString() + " Vz: " + current_vz_.ToString() +
                 "\nFx: " + current_Fx_.ToString() + " Fy: " + current_Fy_.ToString() + " Fz: " + current_Fz_.ToString());
     }
-
+    /*
     private void displayMessage(string message)
     {
         if (_dialogueManager == null)
@@ -401,7 +430,7 @@ public class Calculation : PausableObject, IResetObject
 
         _dialogueManager.ShowMessage(message);
     }
-
+    */
     public static Calculation Instance
     {
         get
@@ -412,6 +441,57 @@ public class Calculation : PausableObject, IResetObject
         }
     }
 
+    private void addData()
+    {
+        //debugCurrentValues();
+        Vector2 tmp;
+
+        tmp = new Vector2((float)current_time_, (float)current_x_);
+        data_x_.Add(tmp);
+        tmp = new Vector2((float)current_time_, (float)current_y_);
+        data_y_.Add(tmp);
+        tmp = new Vector2((float)current_time_, (float)current_z_);
+        data_z_.Add(tmp);
+
+        tmp = new Vector2((float)current_time_, (float)current_vx_);
+        data_vx_.Add(tmp);
+        tmp = new Vector2((float)current_time_, (float)current_vy_);
+        data_vy_.Add(tmp);
+        tmp = new Vector2((float)current_time_, (float)current_vz_);
+        data_vz_.Add(tmp);
+        
+        tmp = new Vector2((float)current_time_, (float)current_Fx_);
+        data_fx_.Add(tmp);
+        tmp = new Vector2((float)current_time_, (float)current_Fy_);
+        data_fy_.Add(tmp);
+        tmp = new Vector2((float)current_time_, (float)current_Fz_);
+        data_fz_.Add(tmp);
+
+        tmp = new Vector2((float)current_time_, (float)current_ekin_);
+        data_ekin_.Add(tmp);
+        tmp = new Vector2((float)current_time_, (float)current_p_);
+        data_p_.Add(tmp);
+        tmp = new Vector2((float)current_time_, (float)current_w_);
+        data_w_.Add(tmp);
+    }
+
+    public List<Vector2> getDataX() { return data_x_; }
+    public List<Vector2> getDataY() { return data_y_; }
+    public List<Vector2> getDataZ() { return data_z_; }
+
+    public List<Vector2> getDataVX() { return data_vx_; }
+    public List<Vector2> getDataVY() { return data_vy_; }
+    public List<Vector2> getDataVZ() { return data_vz_; }
+
+    public List<Vector2> getDataFX() { return data_fx_; }
+    public List<Vector2> getDataFY() { return data_fy_; }
+    public List<Vector2> getDataFZ() { return data_fz_; }
+
+    public List<Vector2> getDataP() { return data_p_; }
+    public List<Vector2> getDataEkin() { return data_ekin_; }
+    public List<Vector2> getDataW() { return data_w_; }
+
+
     /// <summary>
     /// Resets the object
     /// </summary>
@@ -420,13 +500,21 @@ public class Calculation : PausableObject, IResetObject
         Debug.Log("Reset Calculation\n");
         stop_simulation_ = true;
         start_calc_plot_ = false;
+        first_it = true;
+        draw_trajectory_ = true;
         current_steps_ = 0;
         current_update_rate_ = 0;
+        current_time_ = 0;
 
         initParameter();
         current_Fx_ = 0;
         current_Fy_ = 0;
         current_Fz_ = 0;
+
+        current_p_ = 0;
+        current_ekin_ = 0;
+        current_w_ = 0;
+        old_power_ = 0;
 
         x_max_ = System.Int64.MinValue;
         y_max_ = System.Int64.MinValue;
@@ -435,6 +523,44 @@ public class Calculation : PausableObject, IResetObject
         x_min_ = System.Int64.MaxValue;
         y_min_ = System.Int64.MaxValue;
         z_min_ = System.Int64.MaxValue;
+
+        clearData();
+    }
+
+    private void clearData()
+    {
+        data_x_.Clear();
+        data_y_.Clear();
+        data_z_.Clear();
+
+        data_vx_.Clear();
+        data_vy_.Clear();
+        data_vz_.Clear();
+
+        data_fx_.Clear();
+        data_fy_.Clear();
+        data_fz_.Clear();
+
+        data_ekin_.Clear();
+        data_p_.Clear();
+        data_w_.Clear();
+    }
+
+    private void calcEnergies()
+    {
+        current_ekin_ = (System.Math.Pow(current_vx_, 2) + System.Math.Pow(current_vy_, 2) + System.Math.Pow(current_vz_, 2)) /
+                        (2 * mass_);
+        
+        current_p_ = current_vx_ * current_Fx_ + current_vy_ * current_Fy_ + current_vz_ * current_Fz_;
+        current_w_ += 0.5 * (current_p_ + old_power_) * delta_t_;
+        old_power_ = current_p_;
+
+        // Debug.Log("Ekin: " + current_ekin_ + "\n"); 
+    }
+    private void showError()
+    {
+        //DialogueManager.Instance.displayMessage("Something went wrong with your calculation. Please check the formulas");
+        ParameterUI.Instance.displayMessage("Something went wrong with your calculation. Please check the formulas");
     }
 
 }

@@ -7,6 +7,7 @@ using Maroon.UI;
 public class ParameterUI : MonoBehaviour, IResetObject
 {
     private static ParameterUI _instance;
+    private DialogueManager _dialogueManager;
 
     Dictionary<string, string> functions_ = new Dictionary<string, string>();
 
@@ -48,6 +49,9 @@ public class ParameterUI : MonoBehaviour, IResetObject
     // Start is called before the first frame update
     void Start()
     {
+        if (_dialogueManager == null)
+            _dialogueManager = FindObjectOfType<DialogueManager>();
+
         functions_.Add("abs", "Abs");
         functions_.Add("acos", "Acos");
         functions_.Add("asin", "Asin");
@@ -93,6 +97,12 @@ public class ParameterUI : MonoBehaviour, IResetObject
 
     public float getMass()
     {
+        if (mass_ <= 0)
+        {
+            mass_ = 0.1f;
+            if_mass.text = (0.1).ToString();
+        }
+        
         return mass_;
     }
 
@@ -118,6 +128,22 @@ public class ParameterUI : MonoBehaviour, IResetObject
 
     public Vector3 getTimes()
     {
+        if (t0_ < 0)
+        {
+            t0_ = 0f;
+            if_t0.text = 0.ToString();
+        }
+        if (deltat_ <= 0)
+        {
+            deltat_ = 1f;
+            if_deltat.text = 1.ToString();
+        }     
+        if (steps_ <= 0)
+        {
+            steps_ = 1f;
+            if_steps.text = 1.ToString();
+        }        
+
         to_deltat_steps = new Vector3(t0_, deltat_, steps_);
 
         return to_deltat_steps;
@@ -140,6 +166,22 @@ public class ParameterUI : MonoBehaviour, IResetObject
 
     public Vector3 getXYZ()
     {
+        if (x_ < 0)
+        {
+            x_ = 0f;
+            if_x.text = 0.ToString();
+        }
+        if (y_ < 0)
+        {
+            y_ = 0f;
+            if_y.text = 0.ToString();
+        }
+        if (z_ < 0)
+        {
+            z_ = 0f;
+            if_z.text = 0.ToString();
+        }
+
         xyz = new Vector3(x_, y_, z_);
 
         return xyz;
@@ -162,6 +204,22 @@ public class ParameterUI : MonoBehaviour, IResetObject
 
     public Vector3 getVxVyVz()
     {
+        if (vx_ < 0)
+        {
+            vx_ = 0f;
+            if_vx.text = 0.ToString();
+        }
+        if (vy_ < 0)
+        {
+            vy_ = 0f;
+            if_vy.text = 0.ToString();
+        }
+        if (vz_ < 0)
+        {
+            vz_ = 0f;
+            if_vz.text = 0.ToString();
+        }
+
         vxvyvz = new Vector3(vx_, vy_, vz_);
 
         return vxvyvz;
@@ -179,9 +237,6 @@ public class ParameterUI : MonoBehaviour, IResetObject
                 break;
             case 2:
                 loadBallInTheWind();
-                break;
-            case 3:
-                loadRocketLaunch();
                 break;
             default:
                 break;
@@ -251,11 +306,6 @@ public class ParameterUI : MonoBehaviour, IResetObject
         if_vz.text = 10.ToString();
     }
 
-    private void loadRocketLaunch()
-    {
-
-    }
-
     private string getCorrectedFormula(string formula)
     {
         string tmp = formula.ToLower();
@@ -268,6 +318,14 @@ public class ParameterUI : MonoBehaviour, IResetObject
         return tmp;
     }
 
+    public void displayMessage(string message)
+    {
+        if (_dialogueManager == null)
+            return;
+
+        _dialogueManager.ShowMessage(message);
+    }
+    
     public static ParameterUI Instance
     {
         get
