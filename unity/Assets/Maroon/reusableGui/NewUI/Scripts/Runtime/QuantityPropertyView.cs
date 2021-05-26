@@ -2,6 +2,7 @@
 using Maroon.Physics;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Maroon.UI
 {
@@ -9,6 +10,8 @@ namespace Maroon.UI
     {
         public QuantityReferenceValue quantity;
         public object test;
+
+        public UnityEvent OnQuantityViewVisible;
 
         private void Start()
         {
@@ -117,6 +120,7 @@ namespace Maroon.UI
                     Debug.LogWarning("QuantityPropertyView::LoadUI:Unsupported Quantity Type!");
                     return;
             }
+            OnQuantityViewVisible?.Invoke();
         }
 
         private Slider InstantiateSlider(float minValue, float maxValue, Transform parent, bool wholeNumbers = false)
