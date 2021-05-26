@@ -260,7 +260,7 @@ public class OpticsSim : MonoBehaviour
 
         //refractive multiplier, add to the refracive indices to account for wavelength differences
 
-        wavelength = (wavelength - 380.0f) / 340.0f;
+        wavelength = 1.0f - (wavelength - 380.0f) / 340.0f;
 
         refIdx1 += (refIdx1 - 1.0f) * wavelength * 0.2f;
         refIdx2 += (refIdx2 - 1.0f) * wavelength * 0.2f;

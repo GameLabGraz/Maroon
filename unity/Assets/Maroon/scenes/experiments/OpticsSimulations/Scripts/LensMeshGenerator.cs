@@ -43,7 +43,11 @@ public class LensMeshGenerator : MonoBehaviour
             case 0: setPresetLens(0.3f, -0.3f, 0.2f, 1.0f); break;
             case 1: setPresetLens(-0.3f,0.3f, 0.7f, 1.0f); break;
             case 2: setPresetLens(0.01f, 0.01f, 0.2f, 1.0f); break;
-            case 3: setPresetLens(0.3f, 0.3f, 0.2f, 1.0f); break;
+            case 3: setPresetLens(1f, -1f, 0.0f, 1.0f); break;
+            case 4: setPresetLens(0.5f, 0.3f, 0.2f, 1.0f); break;
+            case 5: setPresetLens(0.3f, 0.5f, 0.2f, 1.0f); break;
+            case 6: setPresetLens(0.3f, 0f, 0.0f, 1.0f); break;
+            case 7: setPresetLens(-0.3f, 0f, 0.0f, 1.0f); break;
         }
         
     }
