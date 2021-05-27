@@ -14,6 +14,10 @@ public class LaserSelectionHandler : MonoBehaviour
     public QuantityFloat activeLaserIntensity;
     public QuantityFloat activeLaserWavelength;
 
+
+    public bool onUIpanel { get; set; } = false;
+
+
     private Vector3 laserArrayStartPoint;
     private Vector3 laserArrayEndPoint;
 
@@ -184,10 +188,14 @@ public class LaserSelectionHandler : MonoBehaviour
             {
                 if(! (rhit.collider.tag == "LPHandle") && currActiveLaser != null) //todo make klick on table deselect of laser.
                 {
-                    if (rhit.collider.gameObject.name == "OpticsTable" || rhit.collider.gameObject.name == "OpticsTable") //todo change to optical tables
+                    if (rhit.collider.gameObject.name == "OpticsTable" || rhit.collider.gameObject.name == "OpticsTable2") //todo change to optical tables
                     {
-                        currActiveLaser.GetComponent<DragLaserObject>().makeInactive();
-                        currActiveLaser = null;
+                        if (!onUIpanel)
+                        {
+                            currActiveLaser.GetComponent<DragLaserObject>().makeInactive();
+                            currActiveLaser = null;
+                        }
+                       
                     }
                 }
             }
