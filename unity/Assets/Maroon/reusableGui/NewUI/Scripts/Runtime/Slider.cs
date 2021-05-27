@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 namespace Maroon.UI
 {
@@ -12,6 +13,9 @@ namespace Maroon.UI
         [SerializeField] private bool allowReset = true;
 
         [SerializeField] private SliderInitEvent onSliderInit;
+        [SerializeField] private UnityEvent onStartDrag;
+        [SerializeField] private UnityEvent onEndDrag;
+        [SerializeField] private UnityEvent onSetSliderValueViaInput;
 
         private float _startValue;
 
@@ -34,11 +38,25 @@ namespace Maroon.UI
             try
             {
                 value = (float)Convert.ToDouble(valueObject);
+                onSetSliderValueViaInput?.Invoke();
             }
             catch (Exception e)
             {
+                value = 0;
                 Debug.LogException(e);
             }
+        }
+
+        public override void OnPointerDown(PointerEventData eventData)
+        {
+            base.OnPointerDown(eventData);
+            onStartDrag?.Invoke();
+        }
+
+        public override void OnPointerUp(PointerEventData eventData)
+        {
+            base.OnPointerUp(eventData);
+            onEndDrag?.Invoke();
         }
 
         public void ResetObject()

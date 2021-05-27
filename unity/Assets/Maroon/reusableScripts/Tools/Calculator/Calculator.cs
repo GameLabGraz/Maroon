@@ -44,8 +44,8 @@ namespace Maroon.Tools.Calculator
         
         public delegate void CalculatorValueChanged(CalculatorValueChangedEvent ev);
 
-        public static event CalculatorValueChanged OnResultChanged;
-        public static event CalculatorValueChanged OnValueChanged;
+        public event CalculatorValueChanged OnResultChanged;
+        public event CalculatorValueChanged OnValueChanged;
 
         public void SetCalculationValue(float calculationValue)
         {
