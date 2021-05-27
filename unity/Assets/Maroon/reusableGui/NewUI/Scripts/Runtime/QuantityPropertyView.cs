@@ -3,12 +3,15 @@ using GEAR.Localization;
 using Maroon.Physics;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Maroon.UI
 {
     public class QuantityPropertyView : MonoBehaviour
     {
         public QuantityReferenceValue quantity;
+
+        public UnityEvent OnQuantityViewVisible;
 
         private void Start()
         {
@@ -115,6 +118,7 @@ namespace Maroon.UI
                     Debug.LogWarning("QuantityPropertyView::LoadUI:Unsupported Quantity Type!");
                     return;
             }
+            OnQuantityViewVisible?.Invoke();
         }
 
         private TextMeshProUGUI InstantiateLabel(string text)
