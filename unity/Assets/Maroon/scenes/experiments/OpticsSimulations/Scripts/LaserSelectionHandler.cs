@@ -136,14 +136,17 @@ public class LaserSelectionHandler : MonoBehaviour
 
     public void setLaserArrangements(int arr)
     {
-
+        if(!(arr == 0))
+        {
+            removeAllLaserPointers();
+        }
         switch (arr)
         {
             case 0: break;
             case 1: addLaserArray(); break;
             case 2: addRGBLaserArray(); break;
             case 3: addFocusedLaserArray(); break;
-            case 4: break;
+            case 4: addFocusedLaserArrayWithOffset(); break;
             default: break;
         }
     }

@@ -14,12 +14,6 @@ public class SliderBackgroundImage : MonoBehaviour
 {
     [SerializeField] private Sprite imageSource;
 
-    //TODO this is not beautiful/efficient
-    void Update()
-    {
-        UpdateSliderBackgroundImage(); 
-    }
-
     public void UpdateSliderBackgroundImage()
     {
         var quantityPropertyView = GetComponent<QuantityPropertyView>();
