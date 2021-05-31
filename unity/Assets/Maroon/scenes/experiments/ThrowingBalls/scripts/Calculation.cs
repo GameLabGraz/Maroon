@@ -301,19 +301,24 @@ public class Calculation : PausableObject, IResetObject
         formula_fx_ = ParameterUI.Instance.getFunctionFx();
         formula_fy_ = ParameterUI.Instance.getFunctionFy();
         formula_fz_ = ParameterUI.Instance.getFunctionFz();
-
+        /*
         mass_ = System.Convert.ToDouble(ParameterUI.Instance.getMass(), System.Globalization.CultureInfo.InvariantCulture);
         current_time_ = System.Convert.ToDouble(ParameterUI.Instance.getTimes().x);
         delta_t_ = System.Convert.ToDouble(ParameterUI.Instance.getTimes().y, System.Globalization.CultureInfo.InvariantCulture);
         steps_ = System.Convert.ToDouble(ParameterUI.Instance.getTimes().z);
+        */
+        mass_ = (double) ParameterUI.Instance.getMass();
+        current_time_ = (double) ParameterUI.Instance.getTimes().x;
+        delta_t_ = (double) ParameterUI.Instance.getTimes().y;
+        steps_ = (double) ParameterUI.Instance.getTimes().z;
 
-        current_x_ = System.Convert.ToDouble(ParameterUI.Instance.getXYZ().x);
-        current_y_ = System.Convert.ToDouble(ParameterUI.Instance.getXYZ().y);
-        current_z_ = System.Convert.ToDouble(ParameterUI.Instance.getXYZ().z);
+        current_x_ = (double) ParameterUI.Instance.getXYZ().x;
+        current_y_ = (double) ParameterUI.Instance.getXYZ().y;
+        current_z_ = (double) ParameterUI.Instance.getXYZ().z;
 
-        current_vx_ = System.Convert.ToDouble(ParameterUI.Instance.getVxVyVz().x);
-        current_vy_ = System.Convert.ToDouble(ParameterUI.Instance.getVxVyVz().y);
-        current_vz_ = System.Convert.ToDouble(ParameterUI.Instance.getVxVyVz().z);
+        current_vx_ = (double) ParameterUI.Instance.getVxVyVz().x;
+        current_vy_ = (double) ParameterUI.Instance.getVxVyVz().y;
+        current_vz_ = (double) ParameterUI.Instance.getVxVyVz().z;
 
         current_p_ = 0;
         current_ekin_ = 0;
