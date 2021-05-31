@@ -99,8 +99,8 @@ public class ParameterUI : MonoBehaviour, IResetObject
     {
         if (mass_ <= 0)
         {
-            mass_ = 0.1f;
-            if_mass.text = (0.1).ToString();
+            mass_ = 1f;
+            if_mass.text = "1";
         }
         
         return mass_;
@@ -131,17 +131,17 @@ public class ParameterUI : MonoBehaviour, IResetObject
         if (t0_ < 0)
         {
             t0_ = 0f;
-            if_t0.text = 0.ToString();
+            if_t0.text = "0";
         }
         if (deltat_ <= 0)
         {
             deltat_ = 1f;
-            if_deltat.text = 1.ToString();
+            if_deltat.text = "1";
         }     
         if (steps_ <= 0)
         {
             steps_ = 1f;
-            if_steps.text = 1.ToString();
+            if_steps.text = "1";
         }        
 
         to_deltat_steps = new Vector3(t0_, deltat_, steps_);
@@ -166,22 +166,6 @@ public class ParameterUI : MonoBehaviour, IResetObject
 
     public Vector3 getXYZ()
     {
-        if (x_ < 0)
-        {
-            x_ = 0f;
-            if_x.text = 0.ToString();
-        }
-        if (y_ < 0)
-        {
-            y_ = 0f;
-            if_y.text = 0.ToString();
-        }
-        if (z_ < 0)
-        {
-            z_ = 0f;
-            if_z.text = 0.ToString();
-        }
-
         xyz = new Vector3(x_, y_, z_);
 
         return xyz;
@@ -204,22 +188,6 @@ public class ParameterUI : MonoBehaviour, IResetObject
 
     public Vector3 getVxVyVz()
     {
-        if (vx_ < 0)
-        {
-            vx_ = 0f;
-            if_vx.text = 0.ToString();
-        }
-        if (vy_ < 0)
-        {
-            vy_ = 0f;
-            if_vy.text = 0.ToString();
-        }
-        if (vz_ < 0)
-        {
-            vz_ = 0f;
-            if_vz.text = 0.ToString();
-        }
-
         vxvyvz = new Vector3(vx_, vy_, vz_);
 
         return vxvyvz;
@@ -227,6 +195,7 @@ public class ParameterUI : MonoBehaviour, IResetObject
 
     public void loadParameters(int choice)
     {
+        // liste aus objekten -> list[choice]
         switch (choice)
         {
             case 0:
@@ -249,19 +218,19 @@ public class ParameterUI : MonoBehaviour, IResetObject
         fyIF.text = "0";
         fzIF.text = "0";
 
-        if_mass.text = 1.ToString();
+        if_mass.text = "1";
 
-        if_t0.text = 0.ToString();
-        if_deltat.text = (0.05).ToString();
-        if_steps.text = 500.ToString();
+        if_t0.text = "0";
+        if_deltat.text = "0,05";
+        if_steps.text = "500";
 
-        if_x.text = 0.ToString();
-        if_y.text = 0.ToString();
-        if_z.text = 0.ToString();
+        if_x.text = "0";
+        if_y.text = "0";
+        if_z.text = "0";
 
-        if_vx.text = 1.ToString();
-        if_vy.text = 0.ToString();
-        if_vz.text = 0.ToString();
+        if_vx.text = "1";
+        if_vy.text = "0";
+        if_vz.text = "0";
     }
 
     private void loadSatellite()
@@ -270,19 +239,19 @@ public class ParameterUI : MonoBehaviour, IResetObject
         fyIF.text = "-100*y*6.6726E-11*5.97219E24/Pow(x*x+y*y+z*z,3/2)";
         fzIF.text = "-100*z*6.6726E-11*5.97219E24/Pow(x*x+y*y+z*z,3/2)";
 
-        if_mass.text = 100.ToString();
+        if_mass.text = "100";
 
-        if_t0.text = 0.ToString();
-        if_deltat.text = 60.ToString();
-        if_steps.text = 1500.ToString();
+        if_t0.text = "0";
+        if_deltat.text = "60";
+        if_steps.text = "1500";
 
-        if_x.text = 0.ToString();
-        if_y.text = 6371000.ToString();
-        if_z.text = 0.ToString();
+        if_x.text = "0";
+        if_y.text = "6371000";
+        if_z.text = "0";
 
-        if_vx.text = 7900.ToString();
-        if_vy.text = 0.ToString();
-        if_vz.text = 0.ToString();
+        if_vx.text = "7900";
+        if_vy.text = "0";
+        if_vz.text = "0";
     }
 
     private void loadBallInTheWind()
@@ -291,19 +260,19 @@ public class ParameterUI : MonoBehaviour, IResetObject
         fyIF.text = "(-0.01*(vy-(7*Exp(-x*x)))-0.03*(vy-(7*Exp(-x*x)))*Sqrt((vx-(1))*(vx-(1))+(vy-(7*Exp(-x*x)))*(vy-(7*Exp(-x*x)))+(vz-(-3*Exp(-t*t)))*(vz-(-3*Exp(-t*t)))))";
         fzIF.text = "(-0.01*(vz-(-3*Exp(-t*t)))-0.03*(vz-(-3*Exp(-t*t)))*Sqrt((vx-(1))*(vx-(1))+(vy-(7*Exp(-x*x)))*(vy-(7*Exp(-x*x)))+(vz-(-3*Exp(-t*t)))*(vz-(-3*Exp(-t*t)))))-9.81*0.1";
 
-        if_mass.text = (0.1).ToString();
+        if_mass.text = "0,1";
 
-        if_t0.text = 0.ToString();
-        if_deltat.text = (0.01).ToString();
-        if_steps.text = 100.ToString();
+        if_t0.text = "0";
+        if_deltat.text = "0,01";
+        if_steps.text = "100";
 
-        if_x.text = 0.ToString();
-        if_y.text = 0.ToString();
-        if_z.text = 0.ToString();
+        if_x.text = "0";
+        if_y.text = "0";
+        if_z.text = "0";
 
-        if_vx.text = (-7).ToString();
-        if_vy.text = 5.ToString();
-        if_vz.text = 10.ToString();
+        if_vx.text = "-7";
+        if_vy.text = "5";
+        if_vz.text = "10";
     }
 
     private string getCorrectedFormula(string formula)
@@ -342,6 +311,7 @@ public class ParameterUI : MonoBehaviour, IResetObject
     public void ResetObject()
     {
         Debug.Log("Reset Parameter UI\n");
+        Debug.Log("Reset Parameter UI - load default\n");
         loadDefault();
         // initCoordSystem.Instance.resetCoordSystem();
     }

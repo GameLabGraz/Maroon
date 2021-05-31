@@ -287,7 +287,8 @@ public class initCoordSystem : MonoBehaviour, IResetObject
     /// </summary>
     public void ResetObject()
     {
-        Debug.Log("Coord System\n");
+        Debug.Log("Reset Coord System\n");
+
         // deleting game objects
         foreach (GameObject trajectory in objects_)
             Destroy(trajectory);

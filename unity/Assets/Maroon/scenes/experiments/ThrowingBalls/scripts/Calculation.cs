@@ -8,10 +8,6 @@ public class Calculation : PausableObject, IResetObject
 {
     private static Calculation _instance;
 
-    private float time_ = -30.0f;
-    private bool start_ = false;
-    [SerializeField] private bool debug_parameters_ = true;
-    [SerializeField] private bool start_test_ = true;
     private Vector3 point_;
     
     private bool stop_simulation_ = false;
@@ -19,8 +15,8 @@ public class Calculation : PausableObject, IResetObject
     private int current_steps_ = 0;
     private int current_update_rate_ = 0;
     private bool draw_trajectory_ = true;
+    private bool first_it = true;
 
-    // min/max values for init coord borders
     private float x_max_ = System.Int64.MinValue;
     private float y_max_ = System.Int64.MinValue;
     private float z_max_ = System.Int64.MinValue;
@@ -54,10 +50,6 @@ public class Calculation : PausableObject, IResetObject
     private double steps_ = 0;
     private double current_time_ = 0;
     private double mass_ = 1;
-
-    private bool first_it = true;
-    private double v_max_;
-    private double r_max_ = 0.13;
    
     private List<Vector2> data_x_ = new List<Vector2>();
     private List<Vector2> data_y_ = new List<Vector2>();
@@ -75,18 +67,12 @@ public class Calculation : PausableObject, IResetObject
     private List<Vector2> data_ekin_ = new List<Vector2>();
     private List<Vector2> data_w_ = new List<Vector2>();
 
-/// <summary>
-/// Initialization
-/// </summary>
-protected override void Start()
+    /// <summary>
+    /// Initialization
+    /// </summary>
+    protected override void Start()
     {
-        /*
-        displayMessage("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, " +
-            "sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, " +
-            "sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, " +
-            "no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, " +
-            "sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam era");
-        */
+        
     }
 
     /// <summary>
@@ -107,7 +93,6 @@ protected override void Start()
             if (start_calc_plot_ && current_steps_ < steps_ && current_update_rate_ == 1)
             {
                 point_ = new Vector3(data_x_[current_steps_].y, data_z_[current_steps_].y, data_y_[current_steps_].y);
-                //Debug.Log("x: " + data_x_[current_steps_].y + " y: " + data_y_[current_steps_].y + " z: " + data_z_[current_steps_].y + "\n");
                 Vector3 mappedPoint = initCoordSystem.Instance.mapValues(point_);
                 initCoordSystem.Instance.drawPoint(mappedPoint, draw_trajectory_);
 
@@ -129,6 +114,7 @@ protected override void Start()
             Debug.Log("HandleFixedUpdate() exception\n");
             showError();
             SimulationController.Instance.ResetSimulation();
+            start_calc_plot_ = false;
         }
     }
 
@@ -143,13 +129,15 @@ protected override void Start()
 
         // calc min max for x,y,z coords
         calcMinMax();
-        Vector3 border_min = new Vector3(x_min_, z_min_, y_min_);
-        Vector3 border_max = new Vector3(x_max_, z_max_, y_max_);
-        initCoordSystem.Instance.setRealCoordBorders(border_min, border_max);
+        if (!stop_simulation_)
+        {
+            Vector3 border_min = new Vector3(x_min_, z_min_, y_min_);
+            Vector3 border_max = new Vector3(x_max_, z_max_, y_max_);
+            initCoordSystem.Instance.setRealCoordBorders(border_min, border_max);
 
-        start_calc_plot_ = true;
-        initCoordSystem.Instance.setParticleActive();
-
+            start_calc_plot_ = true;
+            initCoordSystem.Instance.setParticleActive();
+        }
     }
 
     // get formula expression with dynamic parameters
@@ -168,14 +156,6 @@ protected override void Start()
         e.Parameters["t"] = current_time_;
 
         return e;
-    }
-
-    // calculates the delta t
-    private void calcDeltaT()
-    {
-        v_max_ = System.Math.Sqrt(System.Math.Pow(current_vx_, 2) + System.Math.Pow(current_vy_, 2) + System.Math.Pow(current_vz_, 2));
-        delta_t_ = r_max_ / v_max_;
-        Debug.Log("Delta T: " + delta_t_.ToString());
     }
 
     // calculate the forces Fx, Fy, Fz
@@ -211,9 +191,7 @@ protected override void Start()
             Debug.Log("calcForces() exception\n");
             showError();
             SimulationController.Instance.ResetSimulation();
-            //ParameterUI.Instance.ResetObject();
-            //initCoordSystem.Instance.ResetObject();
-            //ResetObject();
+            stop_simulation_ = true;
         }
         
     }
@@ -234,6 +212,8 @@ protected override void Start()
             calcForces();
             first_it = false;
         }
+        if (stop_simulation_)
+            return;
             
         double k1x = current_vx_ * delta_t_;
         double k1y = current_vy_ * delta_t_;
@@ -310,6 +290,8 @@ protected override void Start()
 
         addData();
 
+        debugCurrentValues();
+
         current_time_ += delta_t_;
     }
 
@@ -338,16 +320,19 @@ protected override void Start()
         current_w_ = 0;
 
         clearData();
-        // debugGUIParameters();
+        debugGUIParameters();
     }
 
     // calculate min, max to set the borders of the coord-system
     private void calcMinMax()
     {
+        Debug.Log("Current x start: " + current_x_.ToString());
+
         for (int i = 0; i < steps_; i++)
         {
             calcValues();
-
+            if (stop_simulation_)
+                return;
             // get min
             if (x_min_ > current_x_)
             {
@@ -377,6 +362,8 @@ protected override void Start()
             }
         }
 
+        Debug.Log("xmin: " + x_min_.ToString() + " xmax: " + x_max_.ToString());
+
         x_min_ = (float)System.Math.Floor(x_min_) - 1;
         y_min_ = (float)System.Math.Floor(y_min_) - 1;
         z_min_ = (float)System.Math.Floor(z_min_) - 1;
@@ -384,14 +371,6 @@ protected override void Start()
         x_max_ = (float)System.Math.Ceiling(x_max_) + 1;
         y_max_ = (float)System.Math.Ceiling(y_max_) + 1;
         z_max_ = (float)System.Math.Ceiling(z_max_) + 1;
-    }
-
-    // resets the parameters to the values from the GUI
-    public void resetParameters()
-    {
-        initParameter();
-
-        first_it = true;
     }
 
     // debugging GUI parameters
@@ -419,18 +398,7 @@ protected override void Start()
                 "\nVx: " + current_vx_.ToString() + " Vy: " + current_vy_.ToString() + " Vz: " + current_vz_.ToString() +
                 "\nFx: " + current_Fx_.ToString() + " Fy: " + current_Fy_.ToString() + " Fz: " + current_Fz_.ToString());
     }
-    /*
-    private void displayMessage(string message)
-    {
-        if (_dialogueManager == null)
-            _dialogueManager = FindObjectOfType<DialogueManager>();
-
-        if (_dialogueManager == null)
-            return;
-
-        _dialogueManager.ShowMessage(message);
-    }
-    */
+    
     public static Calculation Instance
     {
         get
@@ -443,7 +411,6 @@ protected override void Start()
 
     private void addData()
     {
-        //debugCurrentValues();
         Vector2 tmp;
 
         tmp = new Vector2((float)current_time_, (float)current_x_);
@@ -498,6 +465,7 @@ protected override void Start()
     public void ResetObject()
     {
         Debug.Log("Reset Calculation\n");
+
         stop_simulation_ = true;
         start_calc_plot_ = false;
         first_it = true;
@@ -506,7 +474,6 @@ protected override void Start()
         current_update_rate_ = 0;
         current_time_ = 0;
 
-        initParameter();
         current_Fx_ = 0;
         current_Fy_ = 0;
         current_Fz_ = 0;
@@ -555,12 +522,10 @@ protected override void Start()
         current_w_ += 0.5 * (current_p_ + old_power_) * delta_t_;
         old_power_ = current_p_;
 
-        // Debug.Log("Ekin: " + current_ekin_ + "\n"); 
     }
     private void showError()
     {
-        //DialogueManager.Instance.displayMessage("Something went wrong with your calculation. Please check the formulas");
-        ParameterUI.Instance.displayMessage("Something went wrong with your calculation. Please check the formulas");
+        ParameterUI.Instance.displayMessage("Something went wrong with the calculation. Please check the formula.");
     }
 
 }
