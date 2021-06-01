@@ -10,6 +10,9 @@ public class ParameterUI : MonoBehaviour, IResetObject
     private DialogueManager _dialogueManager;
 
     Dictionary<string, string> functions_ = new Dictionary<string, string>();
+   
+    public Dropdown dropdown;
+    List<Dropdown.OptionData> menuOptions;
 
     [SerializeField] InputField fxIF;
     [SerializeField] InputField fyIF;
@@ -72,6 +75,7 @@ public class ParameterUI : MonoBehaviour, IResetObject
         functions_.Add("sqrt", "Sqrt");
         functions_.Add("tan", "Tan");
         functions_.Add("truncate", "Truncate");
+
     }
 
     // Update is called once per frame
@@ -196,16 +200,21 @@ public class ParameterUI : MonoBehaviour, IResetObject
     public void loadParameters(int choice)
     {
         // liste aus objekten -> list[choice]
+        SimulationController.Instance.ResetSimulation();
+
         switch (choice)
         {
             case 0:
                 loadDefault();
+                dropdown.SetValueWithoutNotify(0);
                 break;
             case 1:
                 loadSatellite();
+                dropdown.SetValueWithoutNotify(1);
                 break;
             case 2:
                 loadBallInTheWind();
+                dropdown.SetValueWithoutNotify(2);
                 break;
             default:
                 break;
@@ -219,18 +228,29 @@ public class ParameterUI : MonoBehaviour, IResetObject
         fzIF.text = "0";
 
         if_mass.text = "1";
-
-        if_t0.text = "0";
-        if_deltat.text = "0,05";
+        
+        if_t0.text = "0";        
+        if_deltat.text = "0,05";        
         if_steps.text = "500";
+        
+        if_x.text = "0";        
+        if_y.text = "0";       
+        if_z.text = "0";       
 
-        if_x.text = "0";
-        if_y.text = "0";
-        if_z.text = "0";
-
-        if_vx.text = "1";
-        if_vy.text = "0";
+        if_vx.text = "1";       
+        if_vy.text = "0";        
         if_vz.text = "0";
+        
+        mass_ = 1;
+        t0_ = 0;
+        deltat_ = 0.05f;
+        steps_ = 500;
+        x_ = 0;
+        y_ = 0;
+        z_ = 0;
+        vx_ = 1;
+        vy_ = 0;
+        vz_ = 0;
     }
 
     private void loadSatellite()
@@ -252,6 +272,17 @@ public class ParameterUI : MonoBehaviour, IResetObject
         if_vx.text = "7900";
         if_vy.text = "0";
         if_vz.text = "0";
+
+        mass_ = 100;
+        t0_ = 0;
+        deltat_ = 60;
+        steps_ = 1500;
+        x_ = 0;
+        y_ = 6371000;
+        z_ = 0;
+        vx_ = 7900;
+        vy_ = 0;
+        vz_ = 0;
     }
 
     private void loadBallInTheWind()
@@ -273,6 +304,17 @@ public class ParameterUI : MonoBehaviour, IResetObject
         if_vx.text = "-7";
         if_vy.text = "5";
         if_vz.text = "10";
+
+        mass_ = 0.1f;
+        t0_ = 0;
+        deltat_ = 0.01f;
+        steps_ = 100;
+        x_ = 0;
+        y_ = 0;
+        z_ = 0;
+        vx_ = -7;
+        vy_ = 5;
+        vz_ = 10;
     }
 
     private string getCorrectedFormula(string formula)
@@ -312,7 +354,6 @@ public class ParameterUI : MonoBehaviour, IResetObject
     {
         Debug.Log("Reset Parameter UI\n");
         Debug.Log("Reset Parameter UI - load default\n");
-        loadDefault();
-        // initCoordSystem.Instance.resetCoordSystem();
+        //loadDefault();
     }
 }

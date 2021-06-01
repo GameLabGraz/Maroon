@@ -95,7 +95,7 @@ public class Calculation : PausableObject, IResetObject
                 point_ = new Vector3(data_x_[current_steps_].y, data_z_[current_steps_].y, data_y_[current_steps_].y);
                 Vector3 mappedPoint = initCoordSystem.Instance.mapValues(point_);
                 initCoordSystem.Instance.drawPoint(mappedPoint, draw_trajectory_);
-
+                
                 current_steps_++;
                 current_update_rate_ = 0;
             }
