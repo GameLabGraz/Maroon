@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 
-public class UISourceDragHandler : UISourceDragHandlerSimple
+public class UISourceDragHandler : UISourceDragHandleSimple
 {
     private PointWavePoolHandler _pointWaveLogic;
 
@@ -17,8 +16,10 @@ public class UISourceDragHandler : UISourceDragHandlerSimple
     public float WaveFrequency { get => _waveFrequency; set { _waveFrequency = value; } }
     public float WavePhase { get => _wavePhase; set { _wavePhase = value; } }
 
-    private void Start()
+    private new void Start()
     {
+        base.Start();
+
         var simControllerObject = GameObject.Find("PoolHandler");
         if (simControllerObject)
             _pointWaveLogic = simControllerObject.GetComponent<PointWavePoolHandler>();
