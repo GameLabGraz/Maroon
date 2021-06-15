@@ -23,25 +23,28 @@ namespace Mirror.SimpleWeb
 #endif
         }
 
-        public override void Connect(string address)
+        public override void Connect(Uri serverAddress)
         {
             state = ClientState.Connecting;
-            Thread receiveThread = new Thread(() => ConnectAndReceiveLoop(address));
+            Thread receiveThread = new Thread(() => ConnectAndReceiveLoop(serverAddress));
             receiveThread.IsBackground = true;
             receiveThread.Start();
         }
 
-        void ConnectAndReceiveLoop(string address)
+        void ConnectAndReceiveLoop(Uri serverAddress)
         {
             try
             {
                 TcpClient client = new TcpClient();
                 tcpConfig.ApplyTo(client);
 
-                Uri uri = new Uri(address);
+                // create connection object here so dispose correctly disconnects on failed connect
+                conn = new Connection(client, AfterConnectionDisposed);
+                conn.receiveThread = Thread.CurrentThread;
+
                 try
                 {
-                    client.Connect(uri.Host, uri.Port);
+                    client.Connect(serverAddress.Host, serverAddress.Port);
                 }
                 catch (SocketException)
                 {
@@ -49,10 +52,8 @@ namespace Mirror.SimpleWeb
                     throw;
                 }
 
-                conn = new Connection(client, AfterConnectionDisposed);
-                conn.receiveThread = Thread.CurrentThread;
 
-                bool success = sslHelper.TryCreateStream(conn, uri);
+                bool success = sslHelper.TryCreateStream(conn, serverAddress);
                 if (!success)
                 {
                     Log.Warn("Failed to create Stream");
@@ -60,7 +61,7 @@ namespace Mirror.SimpleWeb
                     return;
                 }
 
-                success = handshake.TryHandshake(conn, uri);
+                success = handshake.TryHandshake(conn, serverAddress);
                 if (!success)
                 {
                     Log.Warn("Failed Handshake");
@@ -101,7 +102,7 @@ namespace Mirror.SimpleWeb
             finally
             {
                 // close here incase connect fails
-                conn.Dispose();
+                conn?.Dispose();
             }
         }
 
@@ -116,7 +117,14 @@ namespace Mirror.SimpleWeb
         {
             state = ClientState.Disconnecting;
             Log.Info("Disconnect Called");
-            conn.Dispose();
+            if (conn == null)
+            {
+                state = ClientState.NotConnected;
+            }
+            else
+            {
+                conn?.Dispose();
+            }
         }
 
         public override void Send(ArraySegment<byte> segment)

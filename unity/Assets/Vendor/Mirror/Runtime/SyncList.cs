@@ -1,36 +1,39 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace Mirror
 {
+    // Deprecated 10/02/2020
     [Obsolete("Use SyncList<string> instead")]
     public class SyncListString : SyncList<string>
     {
     }
 
+    // Deprecated 10/02/2020
     [Obsolete("Use SyncList<float> instead")]
     public class SyncListFloat : SyncList<float>
     {
     }
 
+    // Deprecated 10/02/2020
     [Obsolete("Use SyncList<int> instead")]
     public class SyncListInt : SyncList<int>
     {
     }
 
+    // Deprecated 10/02/2020
     [Obsolete("Use SyncList<uint> instead")]
     public class SyncListUInt : SyncList<uint>
     {
     }
 
+    // Deprecated 10/02/2020
     [Obsolete("Use SyncList<bool> instead")]
     public class SyncListBool : SyncList<bool>
     {
     }
 
-    [EditorBrowsable(EditorBrowsableState.Never)]
     public class SyncList<T> : IList<T>, IReadOnlyList<T>, SyncObject
     {
         public delegate void SyncListChanged(Operation op, int itemIndex, T oldItem, T newItem);

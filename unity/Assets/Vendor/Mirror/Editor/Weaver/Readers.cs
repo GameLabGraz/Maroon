@@ -95,7 +95,7 @@ namespace Mirror.Weaver
             }
             else if (variableDefinition.Is(typeof(List<>)))
             {
-                var genericInstance = (GenericInstanceType)variableReference;
+                GenericInstanceType genericInstance = (GenericInstanceType)variableReference;
                 TypeReference elementType = genericInstance.GenericArguments[0];
 
                 return GenerateReadCollection(variableReference, elementType, nameof(NetworkReaderExtensions.ReadList));
@@ -108,7 +108,6 @@ namespace Mirror.Weaver
         {
             readFuncs[typeReference.FullName] = newReaderFunc;
 
-            Weaver.WeaveLists.ConfirmGeneratedCodeClass();
             Weaver.WeaveLists.generateContainerClass.Methods.Add(newReaderFunc);
         }
 
@@ -176,7 +175,7 @@ namespace Mirror.Weaver
             TypeReference readerExtensions = module.ImportReference(typeof(NetworkReaderExtensions));
             MethodReference listReader = Resolvers.ResolveMethod(readerExtensions, Weaver.CurrentAssembly, readerFunction);
 
-            var methodRef = new GenericInstanceMethod(listReader);
+            GenericInstanceMethod methodRef = new GenericInstanceMethod(listReader);
             methodRef.GenericArguments.Add(elementType);
 
             // generates

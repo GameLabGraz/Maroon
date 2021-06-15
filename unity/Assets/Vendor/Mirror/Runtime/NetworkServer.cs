@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using Mirror.RemoteCalls;
 using UnityEngine;
@@ -72,21 +71,6 @@ namespace Mirror
         /// <para>Default value is 60 seconds.</para>
         /// </summary>
         public static float disconnectInactiveTimeout = 60f;
-
-        /// <summary>
-        /// cache the Send(connectionIds) list to avoid allocating each time 
-        /// </summary>
-        static readonly List<int> connectionIdsCache = new List<int>();
-
-        /// <summary>
-        /// Reset the NetworkServer singleton.
-        /// <para>Deprecated 02/23/2020</para>
-        /// </summary>
-        [Obsolete("NetworkServer.Reset was used to reset the singleton, but all it does is set active to false ever since we made NetworkServer static. Use StopServer to stop the server, or Shutdown to fully reset the server.")]
-        public static void Reset()
-        {
-            active = false;
-        }
 
         /// <summary>
         /// This shuts down the server and disconnects all clients.
@@ -218,7 +202,7 @@ namespace Mirror
         }
 
         /// <summary>
-        /// called by LocalClient to add itself. dont call directly. 
+        /// called by LocalClient to add itself. dont call directly.
         /// </summary>
         /// <param name="conn"></param>
         internal static void SetLocalConnection(ULocalConnectionToClient conn)
@@ -277,24 +261,14 @@ namespace Mirror
                 MessagePacker.Pack(msg, writer);
                 ArraySegment<byte> segment = writer.ToArraySegment();
 
-                // filter and then send to all internet connections at once
-                // -> makes code more complicated, but is HIGHLY worth it to
-                //    avoid allocations, allow for multicast, etc.
-                connectionIdsCache.Clear();
-                foreach (KeyValuePair<int, NetworkConnection> kvp in identity.observers)
+                foreach (NetworkConnection conn in identity.observers.Values)
                 {
                     // use local connection directly because it doesn't send via transport
-                    if (kvp.Value is ULocalConnectionToClient)
-                        kvp.Value.Send(segment);
-                    // gather all internet connections
+                    if (conn is ULocalConnectionToClient)
+                        conn.Send(segment);
+                    // send to regular connection
                     else
-                        connectionIdsCache.Add(kvp.Key);
-                }
-
-                // send to all internet connections at once
-                if (connectionIdsCache.Count > 0)
-                {
-                    NetworkConnectionToClient.Send(connectionIdsCache, segment, channelId);
+                        conn.Send(segment, channelId);
                 }
 
                 NetworkDiagnostics.OnSend(msg, channelId, segment.Count, identity.observers.Count);
@@ -309,13 +283,12 @@ namespace Mirror
         /// <param name="msg">Message</param>
         /// <param name="channelId">Transport channel to use</param>
         /// <param name="sendToReadyOnly">Indicates if only ready clients should receive the message</param>
-        /// <returns></returns>
-        public static bool SendToAll<T>(T msg, int channelId = Channels.DefaultReliable, bool sendToReadyOnly = false) where T : NetworkMessage
+        public static void SendToAll<T>(T msg, int channelId = Channels.DefaultReliable, bool sendToReadyOnly = false) where T : NetworkMessage
         {
             if (!active)
             {
                 logger.LogWarning("Can not send using NetworkServer.SendToAll<T>(T msg) because NetworkServer is not active");
-                return false;
+                return;
             }
 
             if (logger.LogEnabled()) logger.Log("Server.SendToAll id:" + typeof(T));
@@ -329,33 +302,23 @@ namespace Mirror
                 // filter and then send to all internet connections at once
                 // -> makes code more complicated, but is HIGHLY worth it to
                 //    avoid allocations, allow for multicast, etc.
-                connectionIdsCache.Clear();
-                bool result = true;
                 int count = 0;
-                foreach (KeyValuePair<int, NetworkConnectionToClient> kvp in connections)
+                foreach (NetworkConnectionToClient conn in connections.Values)
                 {
-                    if (sendToReadyOnly && !kvp.Value.isReady)
+                    if (sendToReadyOnly && !conn.isReady)
                         continue;
 
                     count++;
 
                     // use local connection directly because it doesn't send via transport
-                    if (kvp.Value is ULocalConnectionToClient)
-                        result &= kvp.Value.Send(segment);
-                    // gather all internet connections
+                    if (conn is ULocalConnectionToClient)
+                        conn.Send(segment);
+                    // send to regular connection
                     else
-                        connectionIdsCache.Add(kvp.Key);
-                }
-
-                // send to all internet connections at once
-                if (connectionIdsCache.Count > 0)
-                {
-                    result &= NetworkConnectionToClient.Send(connectionIdsCache, segment, channelId);
+                        conn.Send(segment, channelId);
                 }
 
                 NetworkDiagnostics.OnSend(msg, channelId, segment.Count, count);
-
-                return result;
             }
         }
 
@@ -366,16 +329,15 @@ namespace Mirror
         /// <typeparam name="T">Message type.</typeparam>
         /// <param name="msg">Message</param>
         /// <param name="channelId">Transport channel to use</param>
-        /// <returns></returns>
-        public static bool SendToReady<T>(T msg, int channelId = Channels.DefaultReliable) where T : NetworkMessage
+        public static void SendToReady<T>(T msg, int channelId = Channels.DefaultReliable) where T : NetworkMessage
         {
             if (!active)
             {
                 logger.LogWarning("Can not send using NetworkServer.SendToReady<T>(T msg) because NetworkServer is not active");
-                return false;
+                return;
             }
 
-            return SendToAll(msg, channelId, true);
+            SendToAll(msg, channelId, true);
         }
 
         /// <summary>
@@ -387,13 +349,12 @@ namespace Mirror
         /// <param name="msg">Message</param>
         /// <param name="includeOwner">Should the owner of the object be included</param>
         /// <param name="channelId">Transport channel to use</param>
-        /// <returns></returns>
-        public static bool SendToReady<T>(NetworkIdentity identity, T msg, bool includeOwner = true, int channelId = Channels.DefaultReliable) where T : NetworkMessage
+        public static void SendToReady<T>(NetworkIdentity identity, T msg, bool includeOwner = true, int channelId = Channels.DefaultReliable) where T : NetworkMessage
         {
             if (logger.LogEnabled()) logger.Log("Server.SendToReady msgType:" + typeof(T));
 
             if (identity == null || identity.observers == null || identity.observers.Count == 0)
-                return false;
+                return;
 
             using (PooledNetworkWriter writer = NetworkWriterPool.GetWriter())
             {
@@ -401,37 +362,24 @@ namespace Mirror
                 MessagePacker.Pack(msg, writer);
                 ArraySegment<byte> segment = writer.ToArraySegment();
 
-                // filter and then send to all internet connections at once
-                // -> makes code more complicated, but is HIGHLY worth it to
-                //    avoid allocations, allow for multicast, etc.
-                connectionIdsCache.Clear();
-                bool result = true;
                 int count = 0;
-                foreach (KeyValuePair<int, NetworkConnection> kvp in identity.observers)
+                foreach (NetworkConnection conn in identity.observers.Values)
                 {
-                    bool isOwner = kvp.Value == identity.connectionToClient;
-                    if ((!isOwner || includeOwner) && kvp.Value.isReady)
+                    bool isOwner = conn == identity.connectionToClient;
+                    if ((!isOwner || includeOwner) && conn.isReady)
                     {
                         count++;
 
                         // use local connection directly because it doesn't send via transport
-                        if (kvp.Value is ULocalConnectionToClient)
-                            result &= kvp.Value.Send(segment);
-                        // gather all internet connections
+                        if (conn is ULocalConnectionToClient)
+                            conn.Send(segment);
+                        // send to connection
                         else
-                            connectionIdsCache.Add(kvp.Key);
+                            conn.Send(segment, channelId);
                     }
                 }
 
-                // send to all internet connections at once
-                if (connectionIdsCache.Count > 0)
-                {
-                    result &= NetworkConnectionToClient.Send(connectionIdsCache, segment, channelId);
-                }
-
                 NetworkDiagnostics.OnSend(msg, channelId, segment.Count, count);
-
-                return result;
             }
         }
 
@@ -443,10 +391,9 @@ namespace Mirror
         /// <param name="identity">identity of the object</param>
         /// <param name="msg">Message</param>
         /// <param name="channelId">Transport channel to use</param>
-        /// <returns></returns>
-        public static bool SendToReady<T>(NetworkIdentity identity, T msg, int channelId) where T : NetworkMessage
+        public static void SendToReady<T>(NetworkIdentity identity, T msg, int channelId) where T : NetworkMessage
         {
-            return SendToReady(identity, msg, true, channelId);
+            SendToReady(identity, msg, true, channelId);
         }
 
         /// <summary>
@@ -788,7 +735,7 @@ namespace Mirror
                 // try with far away ones in ummorpg!
                 if (identity.gameObject.activeSelf) //TODO this is different
                 {
-                    if (logger.LogEnabled()) logger.Log("Sending spawn message for current server objects name='" + identity.name + "' netId=" + identity.netId + " sceneId=" + identity.sceneId);
+                    if (logger.LogEnabled()) logger.Log("Sending spawn message for current server objects name='" + identity.name + "' netId=" + identity.netId + " sceneId=" + identity.sceneId.ToString("X"));
 
                     bool visible = identity.OnCheckObserver(conn);
                     if (visible)
@@ -986,7 +933,7 @@ namespace Mirror
         }
 
         /// <summary>
-        /// default ready handler. 
+        /// default ready handler.
         /// </summary>
         /// <param name="conn"></param>
         /// <param name="msg"></param>
@@ -995,13 +942,6 @@ namespace Mirror
             if (logger.LogEnabled()) logger.Log("Default handler for ready message from " + conn);
             SetClientReady(conn);
         }
-
-        /// <summary>
-        /// Obsolete: Removed as a security risk. Use <see cref="RemovePlayerForConnection(NetworkConnection, bool)">NetworkServer.RemovePlayerForConnection</see> instead.
-        /// <para>Deprecated 5/2/2020</para>
-        /// </summary>
-        [EditorBrowsable(EditorBrowsableState.Never), Obsolete("Removed as a security risk. Use NetworkServer.RemovePlayerForConnection(NetworkConnection conn, bool keepAuthority = false) instead", true)]
-        static void OnRemovePlayerMessage(NetworkConnection conn, RemovePlayerMessage msg) { }
 
         /// <summary>
         /// Removes the player object from the connection

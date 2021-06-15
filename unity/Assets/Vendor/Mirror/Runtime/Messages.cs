@@ -3,15 +3,15 @@ using UnityEngine;
 
 namespace Mirror
 {
+    // Deprecated 10/06/2020
     [Obsolete("Implement NetworkMessage instead. Use extension methods instead of Serialize/Deserialize, see https://github.com/vis2k/Mirror/pull/2317", true)]
     public interface IMessageBase { }
 
+    // Deprecated 10/06/2020
     [Obsolete("Implement NetworkMessage instead. Use extension methods instead of Serialize/Deserialize, see https://github.com/vis2k/Mirror/pull/2317", true)]
     public class MessageBase : IMessageBase { }
 
-    public interface NetworkMessage
-    {
-    }
+    public interface NetworkMessage { }
 
     #region Public System Messages
     public struct ErrorMessage : NetworkMessage
@@ -24,34 +24,15 @@ namespace Mirror
         }
     }
 
-    public struct ReadyMessage : NetworkMessage
-    {
-    }
+    public struct ReadyMessage : NetworkMessage { }
 
-    public struct NotReadyMessage : NetworkMessage
-    {
-    }
+    public struct NotReadyMessage : NetworkMessage { }
 
-    public struct AddPlayerMessage : NetworkMessage
-    {
-    }
+    public struct AddPlayerMessage : NetworkMessage { }
 
-    // Deprecated 5/2/2020
-    /// <summary>
-    /// Obsolete: Removed as a security risk. Use <see cref="NetworkServer.RemovePlayerForConnection(NetworkConnection, bool)">NetworkServer.RemovePlayerForConnection</see> instead.
-    /// </summary>
-    [Obsolete("Removed as a security risk. Use NetworkServer.RemovePlayerForConnection(NetworkConnection conn, bool keepAuthority = false) instead")]
-    public struct RemovePlayerMessage : NetworkMessage
-    {
-    }
+    public struct DisconnectMessage : NetworkMessage { }
 
-    public struct DisconnectMessage : NetworkMessage
-    {
-    }
-
-    public struct ConnectMessage : NetworkMessage
-    {
-    }
+    public struct ConnectMessage : NetworkMessage { }
 
     public struct SceneMessage : NetworkMessage
     {
@@ -135,13 +116,9 @@ namespace Mirror
         public ArraySegment<byte> payload;
     }
 
-    public struct ObjectSpawnStartedMessage : NetworkMessage
-    {
-    }
+    public struct ObjectSpawnStartedMessage : NetworkMessage { }
 
-    public struct ObjectSpawnFinishedMessage : NetworkMessage
-    {
-    }
+    public struct ObjectSpawnFinishedMessage : NetworkMessage { }
 
     public struct ObjectDestroyMessage : NetworkMessage
     {

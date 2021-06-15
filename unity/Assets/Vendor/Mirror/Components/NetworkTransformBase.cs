@@ -16,7 +16,6 @@
 // * Only way for smooth movement is to use a fixed movement speed during
 //   interpolation. interpolation over time is never that good.
 //
-using System.ComponentModel;
 using UnityEngine;
 
 namespace Mirror
@@ -73,7 +72,6 @@ namespace Mirror
 
         // serialization is needed by OnSerialize and by manual sending from authority
         // public only for tests
-        [EditorBrowsable(EditorBrowsableState.Never)]
         public static void SerializeIntoWriter(NetworkWriter writer, Vector3 position, Quaternion rotation, Vector3 scale)
         {
             // serialize position, rotation, scale
@@ -415,7 +413,7 @@ namespace Mirror
         {
             // To prevent applying the position updates received from client (if they have ClientAuth) while being teleported.
 
-            // clientAuthorityBeforeTeleport defaults to false when not teleporting, if it is true then it means hat teleport was previously called but not finished
+            // clientAuthorityBeforeTeleport defaults to false when not teleporting, if it is true then it means that teleport was previously called but not finished
             // therefore we should keep it as true so that 2nd teleport call doesn't clear authority
             clientAuthorityBeforeTeleport = clientAuthority || clientAuthorityBeforeTeleport;
             clientAuthority = false;

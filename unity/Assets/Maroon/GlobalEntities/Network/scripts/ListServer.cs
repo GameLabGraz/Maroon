@@ -77,7 +77,13 @@ public class ListServer : MonoBehaviour
     // should we use the client to listen connection?
     bool UseClientToListen()
     {
-        return !NetworkManager.isHeadless && !NetworkServer.active && !FullyConnected();
+
+#if UNITY_SERVER
+        return false;
+#endif
+
+        return !NetworkServer.active && !FullyConnected();
+        //return !NetworkManager.isHeadless && !NetworkServer.active && !FullyConnected();
     }
 
     // should we use the game server to listen connection?
