@@ -6,7 +6,7 @@ namespace Mirror.Weaver
 {
     public static class PropertySiteProcessor
     {
-        public static void ProcessSitesModule(ModuleDefinition moduleDef)
+        public static void Process(ModuleDefinition moduleDef)
         {
             DateTime startTime = DateTime.Now;
 
@@ -18,21 +18,23 @@ namespace Mirror.Weaver
                     ProcessSiteClass(td);
                 }
             }
+
             if (Weaver.WeaveLists.generateContainerClass != null)
             {
                 moduleDef.Types.Add(Weaver.WeaveLists.generateContainerClass);
-                Weaver.CurrentAssembly.MainModule.ImportReference(Weaver.WeaveLists.generateContainerClass);
+                moduleDef.ImportReference(Weaver.WeaveLists.generateContainerClass);
 
                 foreach (MethodDefinition f in Weaver.WeaveLists.generatedReadFunctions)
                 {
-                    Weaver.CurrentAssembly.MainModule.ImportReference(f);
+                    moduleDef.ImportReference(f);
                 }
 
                 foreach (MethodDefinition f in Weaver.WeaveLists.generatedWriteFunctions)
                 {
-                    Weaver.CurrentAssembly.MainModule.ImportReference(f);
+                    moduleDef.ImportReference(f);
                 }
             }
+
             Console.WriteLine("  ProcessSitesModule " + moduleDef.Name + " elapsed time:" + (DateTime.Now - startTime));
         }
 
@@ -41,7 +43,7 @@ namespace Mirror.Weaver
             //Console.WriteLine("    ProcessSiteClass " + td);
             foreach (MethodDefinition md in td.Methods)
             {
-                ProcessSiteMethod(td, md);
+                ProcessSiteMethod(md);
             }
 
             foreach (TypeDefinition nested in td.NestedTypes)
@@ -50,7 +52,7 @@ namespace Mirror.Weaver
             }
         }
 
-        static void ProcessSiteMethod(TypeDefinition td, MethodDefinition md)
+        static void ProcessSiteMethod(MethodDefinition md)
         {
             // process all references to replaced members with properties
             //Weaver.DLog(td, "      ProcessSiteMethod " + md);
@@ -60,11 +62,13 @@ namespace Mirror.Weaver
                 md.Name.StartsWith(Weaver.InvokeRpcPrefix))
                 return;
 
+            if (md.IsAbstract)
+            {
+                return;
+            }
+
             if (md.Body != null && md.Body.Instructions != null)
             {
-                // TODO move this to NetworkBehaviourProcessor
-                ServerClientAttributeProcessor.ProcessMethodAttributes(td, md);
-
                 for (int iCount = 0; iCount < md.Body.Instructions.Count;)
                 {
                     Instruction instr = md.Body.Instructions[iCount];
@@ -169,9 +173,7 @@ namespace Mirror.Weaver
                     worker.Remove(instr);
                     worker.Remove(nextInstr);
                     return 4;
-
                 }
-
             }
 
             return 1;
