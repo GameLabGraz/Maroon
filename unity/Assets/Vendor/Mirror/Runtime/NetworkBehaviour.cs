@@ -125,11 +125,11 @@ namespace Mirror
         {
             get
             {
-                if (netIdentityCache == null)
+                if (netIdentityCache is null)
                 {
                     netIdentityCache = GetComponent<NetworkIdentity>();
                     // do this 2nd check inside first if so that we are not checking == twice on unity Object
-                    if (netIdentityCache == null)
+                    if (netIdentityCache is null)
                     {
                         logger.LogError("There is no NetworkIdentity on " + name + ". Please add one.");
                     }
@@ -165,7 +165,10 @@ namespace Mirror
         // We collect all of them and we synchronize them with OnSerialize/OnDeserialize
         protected void InitSyncObject(SyncObject syncObject)
         {
-            syncObjects.Add(syncObject);
+            if (syncObject == null)
+                logger.LogError("Uninitialized SyncObject. Manually call the constructor on your SyncList, SyncSet or SyncDictionary", this);
+            else
+                syncObjects.Add(syncObject);
         }
 
         #region Commands
@@ -207,17 +210,6 @@ namespace Mirror
             ClientScene.readyConnection.Send(message, channelId);
         }
 
-        /// <summary>
-        /// Manually invoke a Command.
-        /// </summary>
-        /// <param name="cmdHash">Hash of the Command name.</param>
-        /// <param name="reader">Parameters to pass to the command.</param>
-        /// <returns>Returns true if successful.</returns>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public virtual bool InvokeCommand(int cmdHash, NetworkReader reader)
-        {
-            return RemoteCallHelper.InvokeHandlerDelegate(cmdHash, MirrorInvokeType.Command, reader, this);
-        }
         #endregion
 
         #region Client RPCs
@@ -295,54 +287,6 @@ namespace Mirror
             conn.Send(message, channelId);
         }
 
-        /// <summary>
-        /// Manually invoke an RPC function.
-        /// </summary>
-        /// <param name="rpcHash">Hash of the RPC name.</param>
-        /// <param name="reader">Parameters to pass to the RPC function.</param>
-        /// <returns>Returns true if successful.</returns>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public virtual bool InvokeRPC(int rpcHash, NetworkReader reader)
-        {
-            return RemoteCallHelper.InvokeHandlerDelegate(rpcHash, MirrorInvokeType.ClientRpc, reader, this);
-        }
-        #endregion
-
-        #region Sync Events
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        protected void SendEventInternal(Type invokeClass, string eventName, NetworkWriter writer, int channelId)
-        {
-            if (!NetworkServer.active)
-            {
-                logger.LogWarning("SendEvent no server?");
-                return;
-            }
-
-            // construct the message
-            SyncEventMessage message = new SyncEventMessage
-            {
-                netId = netId,
-                componentIndex = ComponentIndex,
-                // type+func so Inventory.RpcUse != Equipment.RpcUse
-                functionHash = RemoteCallHelper.GetMethodHash(invokeClass, eventName),
-                // segment to avoid reader allocations
-                payload = writer.ToArraySegment()
-            };
-
-            NetworkServer.SendToReady(netIdentity, message, channelId);
-        }
-
-        /// <summary>
-        /// Manually invoke a SyncEvent.
-        /// </summary>
-        /// <param name="eventHash">Hash of the SyncEvent name.</param>
-        /// <param name="reader">Parameters to pass to the SyncEvent.</param>
-        /// <returns>Returns true if successful.</returns>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public virtual bool InvokeSyncEvent(int eventHash, NetworkReader reader)
-        {
-            return RemoteCallHelper.InvokeHandlerDelegate(eventHash, MirrorInvokeType.SyncEvent, reader, this);
-        }
         #endregion
 
         #region Helpers
