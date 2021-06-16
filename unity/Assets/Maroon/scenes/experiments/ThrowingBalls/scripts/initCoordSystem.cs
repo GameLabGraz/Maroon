@@ -17,11 +17,17 @@ public class initCoordSystem : MonoBehaviour, IResetObject
     [SerializeField] private TMP_Text originLabel;
 
     private string text;
+    private string text_x_ = "X ";
+    private string text_y_ = "Y ";
+    private string text_z_ = "Z ";
+    private string text_origin_ = "X: Y: Z: ";
 
     private Vector3 coordOriginPosition;
     private Vector3 xMax;
     private Vector3 yMax;
     private Vector3 zMax;
+    //
+    private bool border_values_set_ = false;
 
     private List<GameObject> objects_ = new List<GameObject>();
     private List<GameObject> origin_ = new List<GameObject>();
@@ -191,31 +197,20 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         real_xyz_min = min;
         real_xyz_max = max;
         
-        setLabelX("X " + (real_xyz_max.x).ToString() + "m");
-        setLabelY("Y " + (real_xyz_max.z).ToString() + "m");
-        setLabelZ("Z " + (real_xyz_max.y).ToString() + "m");
-        setLabelOrigin("X: " + (real_xyz_min.x).ToString() + " Y: " + (real_xyz_min.z).ToString() + " Z: " + (real_xyz_min.y).ToString());
+        text_x_ = "X " + (real_xyz_max.x).ToString() + "m";
+        setLabelX(text_x_);
 
-        Vector3 tmp = mapValues(real_xyz_min);
-        Vector3 tmp2 = mapValues(real_xyz_max);
-        Vector3 tmp3;
-        Vector3 tmp4;
+        text_y_ = "Y " + (real_xyz_max.z).ToString() + "m";
+        setLabelY(text_y_);
 
-        // x line
-        tmp3 = new Vector3(tmp.x, (tmp2.y + tmp.y) / 2, (tmp2.z + tmp.z) / 2);
-        tmp4 = new Vector3(tmp2.x, (tmp2.y + tmp.y) / 2, (tmp2.z + tmp.z) / 2);
-        drawOrigin(tmp3, tmp4);
+        text_z_ = "Z " + (real_xyz_max.y).ToString() + "m";
+        setLabelZ(text_z_);
 
-        // y line
-        tmp3 = new Vector3((tmp2.x + tmp.x) / 2, tmp.y, (tmp2.z + tmp.z) / 2);
-        tmp4 = new Vector3((tmp2.x + tmp.x) / 2, tmp2.y, (tmp2.z + tmp.z) / 2);
-        drawOrigin(tmp3, tmp4);
+        text_origin_ = "X: " + (real_xyz_min.x).ToString() + " Y: " + (real_xyz_min.z).ToString() + " Z: " + (real_xyz_min.y).ToString();
+        setLabelOrigin(text_origin_);
 
-        // z line
-        // y line
-        tmp3 = new Vector3((tmp2.x + tmp.x) / 2, (tmp2.y + tmp.y) / 2, tmp.z);
-        tmp4 = new Vector3((tmp2.x + tmp.x) / 2, (tmp2.y + tmp.y) / 2, tmp2.z);
-        drawOrigin(tmp3, tmp4);
+        border_values_set_ = true;
+        drawOriginGrid(true);
 
     }
 
@@ -302,14 +297,74 @@ public class initCoordSystem : MonoBehaviour, IResetObject
 
         particle.SetActive(false);
 
-        setLabelX("X ");
-        setLabelY("Y ");
-        setLabelZ("Z ");
-        setLabelOrigin("X: Y: Z: ");
+        text_x_ = "X ";
+        text_y_ = "Y ";
+        text_z_ = "Z ";
+        text_origin_ = "X: Y: Z: ";
+
+        setLabelX(text_x_);
+        setLabelY(text_y_);
+        setLabelZ(text_z_);
+        setLabelOrigin(text_origin_);
+
+        border_values_set_ = false;
     }
 
     public void setParticleActive()
     {
         particle.SetActive(true);
+    }
+
+    public void showLabels(bool show)
+    {
+        if (show)
+        {
+            setLabelX(text_x_);
+            setLabelY(text_y_);
+            setLabelZ(text_z_);
+            setLabelOrigin(text_origin_);
+        }
+        else
+        {
+            setLabelX("");
+            setLabelY("");
+            setLabelZ("");
+            setLabelOrigin("");
+        }
+    }
+
+    public void drawOriginGrid(bool draw)
+    {
+        if (draw && border_values_set_)
+        {
+            Debug.Log("Draw Grid");
+
+            Vector3 start;
+            Vector3 end;
+
+            // x line
+            start = new Vector3(real_xyz_min.x, 0, 0);
+            end = new Vector3(real_xyz_max.x, 0, 0);
+            drawOrigin(mapValues(start), mapValues(end));
+
+            // y line
+            start = new Vector3(0, real_xyz_min.y, 0);
+            end = new Vector3(0, real_xyz_max.y, 0);
+            drawOrigin(mapValues(start), mapValues(end));
+
+            // z line
+            start = new Vector3(0, 0, real_xyz_min.z);
+            end = new Vector3(0, 0, real_xyz_max.z);
+            drawOrigin(mapValues(start), mapValues(end));
+        }
+        else
+        {
+            Debug.Log("Clear Grid");
+            // deleting origin lines
+            foreach (GameObject line in origin_)
+                Destroy(line);
+            origin_.Clear();
+        }
+        
     }
 }

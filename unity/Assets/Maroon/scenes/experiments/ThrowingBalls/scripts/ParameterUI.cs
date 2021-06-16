@@ -49,6 +49,9 @@ public class ParameterUI : MonoBehaviour, IResetObject
     [SerializeField] InputField if_vy;
     [SerializeField] InputField if_vz;
 
+    [SerializeField] private UnityEngine.UI.Toggle showLabelToggle_;
+    [SerializeField] private UnityEngine.UI.Toggle showOriginGrid_;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -354,6 +357,8 @@ public class ParameterUI : MonoBehaviour, IResetObject
     {
         Debug.Log("Reset Parameter UI\n");
         Debug.Log("Reset Parameter UI - load default\n");
+        showLabelToggle_.isOn = true;
+        showOriginGrid_.isOn = true;
         //loadDefault();
     }
 }

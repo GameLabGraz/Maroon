@@ -18,6 +18,8 @@ public class CoordCameraController : MonoBehaviour, IResetObject
     private Vector3 _origPos;
     private Quaternion _origRot;
 
+    [SerializeField] private Transform target;
+
     private void Awake()
     {
         _camera = GetComponent<Camera>();
@@ -27,22 +29,14 @@ public class CoordCameraController : MonoBehaviour, IResetObject
     }
     private void LateUpdate()
     {
-        // Camera Movement
-        if (Input.GetButton("Fire3"))
-        {
-            var pos = _camera.ScreenToViewportPoint(_mouseOrigin - Input.mousePosition);
-            var move = new Vector3(pos.x * movementSpeed, pos.y * movementSpeed, 0);
-            transform.Translate(move);
-            transform.position = ClampCamPosition(transform.position);
-        }
-
+        transform.LookAt(target);
+        
         // Camera Rotation
         if (Input.GetButton("Fire2"))
         {
             var pos = _camera.ScreenToViewportPoint(Input.mousePosition - _mouseOrigin);
-            transform.RotateAround(transform.position, transform.right, -pos.y * rotationSpeed);
-            transform.RotateAround(transform.position, Vector3.up, pos.x * rotationSpeed);
-
+            transform.RotateAround(target.position, transform.right, -pos.y * rotationSpeed);
+            transform.RotateAround(target.position, Vector3.up, pos.x * rotationSpeed);
         }
 
         // Camera Zoom
