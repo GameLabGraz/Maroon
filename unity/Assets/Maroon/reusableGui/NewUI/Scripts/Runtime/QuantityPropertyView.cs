@@ -1,14 +1,17 @@
 ﻿using System.Globalization;
+using GEAR.Localization;
 using Maroon.Physics;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Maroon.UI
 {
     public class QuantityPropertyView : MonoBehaviour
     {
         public QuantityReferenceValue quantity;
-        public object test;
+
+        public UnityEvent OnQuantityViewVisible;
 
         private void Start()
         {
@@ -25,13 +28,11 @@ namespace Maroon.UI
         
         public void ShowUI()
         {
-            test = quantity;
             ClearUI();
 
             if (quantity?.Value == null) return;
 
-            var label = (GameObject)Instantiate(UserInterfaceContent.TextPrefab, transform);
-            label.GetComponent<TextMeshProUGUI>().text = quantity.Value.GetName();
+            var label = InstantiateLabel(quantity.Value.GetName());
 
             switch (quantity.Value)
             {
@@ -117,6 +118,27 @@ namespace Maroon.UI
                     Debug.LogWarning("QuantityPropertyView::LoadUI:Unsupported Quantity Type!");
                     return;
             }
+            OnQuantityViewVisible?.Invoke();
+        }
+
+        private TextMeshProUGUI InstantiateLabel(string text)
+        {
+            var label = ((GameObject)Instantiate(UserInterfaceContent.TextPrefab, transform))?.GetComponent<TextMeshProUGUI>();
+            if (label == null) return null;
+
+            if (LanguageManager.Instance)
+            {
+                label.text = LanguageManager.Instance.GetString(text);
+                LanguageManager.Instance.OnLanguageChanged.AddListener(language =>
+                {
+                    label.text = LanguageManager.Instance.GetString(text);
+                });
+            }
+            else
+            {
+                label.text = text;
+            }
+            return label;
         }
 
         private Slider InstantiateSlider(float minValue, float maxValue, Transform parent, bool wholeNumbers = false)
