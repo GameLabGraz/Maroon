@@ -7,7 +7,7 @@ using Maroon.Physics;
 public class LaserRenderer : MonoBehaviour
 {
 
-
+    [SerializeField]
     private LineRenderer[] lineRenderers = new LineRenderer[100];
     public Material LaserMaterial;
     private List<OpticsSegment> LaserSegments;
@@ -57,7 +57,7 @@ public class LaserRenderer : MonoBehaviour
         //    DestroyImmediate(child.gameObject);
         //}
 
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < lineRenderers.Length; i++)
         {
             lineRenderers[i] = new GameObject().AddComponent<LineRenderer>();
             lineRenderers[i].material = LaserMaterial;

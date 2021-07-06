@@ -14,6 +14,9 @@ public class LaserSelectionHandler : MonoBehaviour
     public QuantityFloat activeLaserIntensity;
     public QuantityFloat activeLaserWavelength;
 
+    private int numlaserpointers = 0;
+    public int maxlasers = 100;
+
 
     public bool onUIpanel { get; set; } = false;
 
@@ -31,6 +34,17 @@ public class LaserSelectionHandler : MonoBehaviour
         laserArrayStartPoint = GameObject.Find("LaserArrayStart").transform.position;
         laserArrayEndPoint = GameObject.Find("LaserArrayEnd").transform.position;
         lensPos = GameObject.Find("LensObject").transform.position;
+    }
+    // returns true for can add, false for cannot add
+    private bool checkLaserLimit(int toAdd)
+    {
+        if(numlaserpointers + toAdd < maxlasers)
+        {
+            numlaserpointers += toAdd;
+            return true;
+        }
+        Debug.Log("Max num of laserpointers reached!");
+        return false;
     }
 
 
@@ -70,15 +84,18 @@ public class LaserSelectionHandler : MonoBehaviour
         {
             Destroy(lp);
         }
+        numlaserpointers = 0;
     }
 
     public void addLaserArray()
     {
-        int numlasers = 7;
+        if (!checkLaserLimit(1)) return;
 
-        Vector3 offset = (laserArrayEndPoint - laserArrayStartPoint) / numlasers;
+        int lasers_in_array = 7;
 
-        for(int i = 1; i < numlasers; i++)
+        Vector3 offset = (laserArrayEndPoint - laserArrayStartPoint) / lasers_in_array;
+
+        for(int i = 1; i < lasers_in_array; i++)
         {
             Instantiate(laserPointerPrefab, laserArrayStartPoint + i * offset, laserPointerPrefab.transform.rotation);
         }
@@ -87,6 +104,7 @@ public class LaserSelectionHandler : MonoBehaviour
 
     private void addLaserArrayWithOptions(int numlasers, Vector3 startpoint, Vector3 endpoint, Vector3 focalpoint, float intensity, float wavelength)
     {
+        if (!checkLaserLimit(numlasers)) return;
         Vector3 offset = (endpoint - startpoint) / numlasers;
 
         for(int i = 1; i< numlasers; i++)
@@ -126,13 +144,16 @@ public class LaserSelectionHandler : MonoBehaviour
 
     public void AddLaserPointer()
     {
+        if (!checkLaserLimit(1)) return;
         Instantiate(laserPointerPrefab, new Vector3(-1.0f, lensPos.y, 2.5f), laserPointerPrefab.transform.rotation);
+        numlaserpointers++;
     }
     public void RemoveLaserPointer()
     {
         if(currActiveLaser != null)
         {
             Destroy(currActiveLaser);
+            numlaserpointers--;
         }
 
     }
@@ -154,7 +175,7 @@ public class LaserSelectionHandler : MonoBehaviour
             default: break;
         }
     }
-
+    
 
     // Update is called once per frame
     void Update()

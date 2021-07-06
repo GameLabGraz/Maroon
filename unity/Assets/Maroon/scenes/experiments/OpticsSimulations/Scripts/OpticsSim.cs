@@ -253,18 +253,17 @@ public class OpticsSim : MonoBehaviour
         return ret1;
     }
 
-    public (Vector2, bool totalinternalreflection) getRefraction(Vector2 normal, Vector2 entrydir, float refIdx1, float refIdx2, float wavelength)
+    public float getCauchy(float A, float B, float wavelength)
+    {
+        float wlcauchy = wavelength / 1000;
+
+        return A + B / (wlcauchy * wlcauchy);
+    }
+
+    public (Vector2, bool totalinternalreflection) getRefraction(Vector2 normal, Vector2 entrydir, float refIdx1, float refIdx2, float wavelength, bool inside)
     {
 
-
-
         //refractive multiplier, add to the refracive indices to account for wavelength differences
-
-        wavelength = 1.0f - (wavelength - 380.0f) / 340.0f;
-
-        refIdx1 += (refIdx1 - 1.0f) * wavelength * 0.2f;
-        refIdx2 += (refIdx2 - 1.0f) * wavelength * 0.2f;
-
         // get entry angle
 
         float angle = Mathf.Acos(Vector2.Dot( entrydir.normalized, normal.normalized)); 
@@ -368,8 +367,12 @@ public class OpticsSim : MonoBehaviour
         toadd.segmentColor = myRay.rayColor;
         segs.Add(toadd);
 
-        var innerref = myLens.innerRefractiveidx;
+        //var innerref = myLens.innerRefractiveidx;
+        var innerref = getCauchy(1.5046f, 0.00420f, myRay.wavelengthMultiplier);
+        
         var outerref = myLens.outerRefractiveidx;
+
+
 
         if (!outside)
         {
@@ -378,7 +381,7 @@ public class OpticsSim : MonoBehaviour
             outerref = temp;
         }
 
-        (Vector2 refracdir, bool wastotalreflection) = getRefraction(norm, myRay.dir, outerref, innerref, myRay.wavelengthMultiplier);
+        (Vector2 refracdir, bool wastotalreflection) = getRefraction(norm, myRay.dir, outerref, innerref, myRay.wavelengthMultiplier, !outside);
 
         Vector2 reflecdir = getReflection2(-norm, myRay.dir);
 
