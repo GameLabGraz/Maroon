@@ -21,6 +21,16 @@ public class LPProperties : MonoBehaviour
     {
         setLaserColor(laserWavelength);
     }
+
+    public float getCauchyForCurrentWavelength()
+    {
+
+        OpticsLens currLens = (OpticsLens) FindObjectOfType<LaserRenderer>().currentLens;
+
+        OpticsSim os = FindObjectOfType<OpticsSim>();
+
+        return os.getCauchy(currLens.innerRefractiveidx, currLens.outerRefractiveidx, laserWavelength);
+    }
     public void setLaserColor(float wavelength)
     {
         //wavelength between 0 and 1

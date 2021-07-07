@@ -16,6 +16,8 @@ public class LaserSelectionHandler : MonoBehaviour
     public QuantityFloat activeLaserIntensity;
     public QuantityFloat activeLaserWavelength;
 
+    public QuantityFloat activeLaserRefractiveIndex;
+
     private int numlaserpointers = 0;
     public int maxlasers = 100;
 
@@ -36,6 +38,9 @@ public class LaserSelectionHandler : MonoBehaviour
         laserArrayStartPoint = GameObject.Find("LaserArrayStart").transform.position;
         laserArrayEndPoint = GameObject.Find("LaserArrayEnd").transform.position;
         lensPos = GameObject.Find("LensObject").transform.position;
+
+
+        addLaserArray();
     }
     // returns true for can add, false for cannot add
     private bool checkLaserLimit(int toAdd)
@@ -166,7 +171,6 @@ public class LaserSelectionHandler : MonoBehaviour
 
     }
 
-
     public void setLaserArrangements(int arr)
     {
         if(!(arr == 0))
@@ -231,5 +235,11 @@ public class LaserSelectionHandler : MonoBehaviour
         }
         setActiveIntensity(activeLaserIntensity);
         setActiveWavelength(activeLaserWavelength);
+        if(currActiveLaser!= null)
+        {
+            activeLaserRefractiveIndex.Value = currActiveLaser.GetComponent<LPProperties>().getCauchyForCurrentWavelength();
+        }
+
+
     }
 }

@@ -49,7 +49,7 @@ public struct OpticsSegment
 public struct OpticsCircle
 {
     public Vector2 midpoint;
-    public float radius; // maybe special circle with radius negative left, positive right
+    public float radius; 
 }
 
 public struct OpticsLens
@@ -66,6 +66,8 @@ public struct OpticsLens
 }
 
 
+
+
 public class OpticsSim : MonoBehaviour
 {
     // inputs: ray, all properties of a lens 
@@ -73,6 +75,13 @@ public class OpticsSim : MonoBehaviour
 
 
     public static float AIR_REFRACTIVE_INDEX = 1.01f;
+
+
+    public float calcLensMiddleThickness(OpticsLens lens)
+    {
+        return 0.0f;
+    }
+
     public (bool didhit, Vector2 inter1, Vector2 inter2) IntersectRay2(OpticsRay toIntersect, OpticsCircle interCircle)
     {
 

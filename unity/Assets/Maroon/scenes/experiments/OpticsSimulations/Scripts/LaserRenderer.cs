@@ -31,6 +31,9 @@ public class LaserRenderer : MonoBehaviour
     public QuantityFloat lensradius1;
 
     public QuantityFloat lensradius2;
+    public QuantityFloat lensrad3;
+
+    public OpticsLens currentLens;
 
     [SerializeField]
     [Range(0.0f, 1.0f)]
@@ -91,12 +94,21 @@ public class LaserRenderer : MonoBehaviour
         GameObject opLens = GameObject.FindGameObjectWithTag("Lens");
         OpticsLens currLens = opLens.GetComponent<LensMeshGenerator>().thisLensLens; // todo this chould be changed, not pretty
 
-        lensradius1 = currLens.leftCircle.radius;
-        lensradius2 = currLens.rightCircle.radius;
+        lensradius1.Value = currLens.leftCircle.radius;
+        //Debug.Log("lensradius1 " + lensradius1.Value);
+        lensradius2.Value = currLens.rightCircle.radius;
+        
+        
 
+        
         currLens.radius = opLens.GetComponent<LensMeshGenerator>().lensRadius;
         currLens.innerRefractiveidx = inner_RI;
         currLens.outerRefractiveidx = outer_RI;
+        currentLens = currLens;
+
+        lensrad3.Value = 0.0f;
+        (float left, float right ) = opLens.GetComponent<OpticsSim>().getBoundsHit(currLens);
+        lensrad3.Value = (right - left) + opLens.GetComponent<LensMeshGenerator>().radcalc.Value - opLens.GetComponent<LensMeshGenerator>().radcalc2.Value;
 
         foreach (var laserp in laserPointers)
         {
