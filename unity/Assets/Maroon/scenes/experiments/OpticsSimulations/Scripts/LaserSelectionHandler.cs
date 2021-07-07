@@ -45,22 +45,13 @@ public class LaserSelectionHandler : MonoBehaviour
             numlaserpointers += toAdd;
             return true;
         }
-        //
-        //Debug.Log("Max num of laserpointers reached!");
-        //Language
+        // show dialogue for max number of lasers
         DialogueManager diagman = FindObjectOfType<DialogueManager>();
-
         LanguageManager langman = FindObjectOfType<LanguageManager>();
-        string mess = "";
-        if(langman.CurrentLanguage == SystemLanguage.German) {
-            mess = "Leider kann dieser Tisch nur das Gewicht von maximal " + (numlaserpointers + 1) + " Laserpointern tragen.";
-        }
-        if (langman.CurrentLanguage == SystemLanguage.English)
-        {
-            mess = "Sadly, this table only supports the weight of up to " + (numlaserpointers + 1) + " laserpointers.";
-        }
-        
-        diagman.ShowMessage(mess);
+
+        string message = langman.GetString("maxnumberoflasers");
+        diagman.ShowMessage(string.Format(message, (numlaserpointers+1)));
+
         return false;
     }
 

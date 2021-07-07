@@ -21,12 +21,16 @@ public class LaserRenderer : MonoBehaviour
     [Range(1.0f, 10f)]
     private float lensOuter_RI = 1.3f;
     [SerializeField]
-    [Range(1.0f, 10f)]
-    private float lensInner_RI = 1.0f;
+    [Range(0.0f, 10f)]
+    private float lensInner_RI = 0.0f;
 
     public QuantityFloat inner_RI;
     
     public QuantityFloat outer_RI;
+
+    public QuantityFloat lensradius1;
+
+    public QuantityFloat lensradius2;
 
     [SerializeField]
     [Range(0.0f, 1.0f)]
@@ -87,6 +91,9 @@ public class LaserRenderer : MonoBehaviour
         GameObject opLens = GameObject.FindGameObjectWithTag("Lens");
         OpticsLens currLens = opLens.GetComponent<LensMeshGenerator>().thisLensLens; // todo this chould be changed, not pretty
 
+        lensradius1 = currLens.leftCircle.radius;
+        lensradius2 = currLens.rightCircle.radius;
+
         currLens.radius = opLens.GetComponent<LensMeshGenerator>().lensRadius;
         currLens.innerRefractiveidx = inner_RI;
         currLens.outerRefractiveidx = outer_RI;
@@ -134,16 +141,32 @@ public class LaserRenderer : MonoBehaviour
     }
 
 
+
+
     public void setUIUpdateLensRefractiveIndex(int dropdownSelection) //todo maybe move this in extra class
     {
-        List<float> refractiveIndices = new List<float>();
 
-        refractiveIndices.Add(1.5f);//glass
-        refractiveIndices.Add(2.417f);//diamond
-        refractiveIndices.Add(1.31f); //ice
-        refractiveIndices.Add(1.003f); //air
-        refractiveIndices.Add(0.0f);
+        if (dropdownSelection == 0) return;
+        dropdownSelection--;
 
-        inner_RI.Value = refractiveIndices[dropdownSelection];
+        List<float> cauchy_As = new List<float>();
+        List<float> cauchy_Bs = new List<float>();
+
+        cauchy_As.Add(1.7387f);
+        cauchy_As.Add(1.5111f);
+        cauchy_As.Add(1.4767f);
+        cauchy_As.Add(1.3244f);
+        cauchy_As.Add(2.3818f);
+        cauchy_As.Add(1.7522f);
+
+        cauchy_Bs.Add(0.0159f);
+        cauchy_Bs.Add(0.00425f);
+        cauchy_Bs.Add(0.0048f);
+        cauchy_Bs.Add(0.0031f);
+        cauchy_Bs.Add(0.0121f);
+        cauchy_Bs.Add(0.0055f);
+
+        inner_RI.Value = cauchy_As[dropdownSelection];
+        outer_RI.Value = cauchy_Bs[dropdownSelection];
     }
 }

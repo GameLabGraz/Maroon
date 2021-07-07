@@ -10,6 +10,8 @@ public struct OpticsRay
     public Color rayColor;
     public float wavelengthMultiplier;
 
+
+
     public OpticsRay(Vector2 origin, Vector2 dir, float intensity)
     {
         this.origin = origin;
@@ -68,6 +70,9 @@ public class OpticsSim : MonoBehaviour
 {
     // inputs: ray, all properties of a lens 
     // from here http://devmag.org.za/2009/04/17/basic-collision-detection-in-2d-part-2/ , for debug
+
+
+    public static float AIR_REFRACTIVE_INDEX = 1.01f;
     public (bool didhit, Vector2 inter1, Vector2 inter2) IntersectRay2(OpticsRay toIntersect, OpticsCircle interCircle)
     {
 
@@ -256,7 +261,6 @@ public class OpticsSim : MonoBehaviour
     public float getCauchy(float A, float B, float wavelength)
     {
         float wlcauchy = wavelength / 1000;
-
         return A + B / (wlcauchy * wlcauchy);
     }
 
@@ -368,9 +372,12 @@ public class OpticsSim : MonoBehaviour
         segs.Add(toadd);
 
         //var innerref = myLens.innerRefractiveidx;
-        var innerref = getCauchy(1.5046f, 0.00420f, myRay.wavelengthMultiplier);
-        
-        var outerref = myLens.outerRefractiveidx;
+
+        var innerref = getCauchy(myLens.innerRefractiveidx, myLens.outerRefractiveidx, myRay.wavelengthMultiplier);
+        //var innerref = getCauchy(1.0f, 1.0f, myRay.wavelengthMultiplier);
+        //var innerref = getCauchy(1.5046f, 0.00420f, myRay.wavelengthMultiplier);
+
+        var outerref = AIR_REFRACTIVE_INDEX; //myLens.outerRefractiveidx;
 
 
 
