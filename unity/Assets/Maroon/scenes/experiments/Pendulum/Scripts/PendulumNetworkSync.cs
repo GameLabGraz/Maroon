@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using Maroon.Physics;
 using Mirror;
 using PlatformControls.PC;
 using UnityEngine;
 using UnityEngine.UI;
+using InputField = Maroon.UI.InputField;
+using Slider = Maroon.UI.Slider;
+
 
 public class PendulumNetworkSync : ExperimentNetworkSync
 {
@@ -14,25 +15,28 @@ public class PendulumNetworkSync : ExperimentNetworkSync
     //Control Buttons
     [SerializeField]
     private Button _resetButton;
-    
+
     [SerializeField]
-    private Button _playPauseButton;
-    
+    private Button _playButton;
+
+    [SerializeField]
+    private Button _pauseButton;
+
     [SerializeField]
     private Button _stepForwardButton;
     
     //Parameters
     [SerializeField]
-    private PC_Slider _weightSlider;
+    private Slider _weightSlider;
     
     [SerializeField]
-    private PC_InputField _weightInputField;
+    private InputField _weightInputField;
     
     [SerializeField]
-    private PC_Slider _lengthSlider;
+    private Slider _lengthSlider;
     
     [SerializeField]
-    private PC_InputField _lengthInputField;
+    private InputField _lengthInputField;
     
     //Watch
     [SerializeField] 
@@ -62,7 +66,8 @@ public class PendulumNetworkSync : ExperimentNetworkSync
     protected override void OnGetControl()
     {
         _resetButton.interactable = true;
-        _playPauseButton.interactable = true;
+        _playButton.interactable = true;
+        _pauseButton.interactable = true;
         _stepForwardButton.interactable = true;
 
         _weightSlider.interactable = true;
@@ -85,7 +90,8 @@ public class PendulumNetworkSync : ExperimentNetworkSync
     protected override void OnLoseControl()
     {
         _resetButton.interactable = false;
-        _playPauseButton.interactable = false;
+        _playButton.interactable = false;
+        _pauseButton.interactable = false;
         _stepForwardButton.interactable = false;
 
         _weightSlider.interactable = false;

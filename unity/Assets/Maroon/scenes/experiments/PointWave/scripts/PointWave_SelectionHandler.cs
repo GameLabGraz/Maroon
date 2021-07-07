@@ -1,8 +1,8 @@
-﻿using System;
-using GEAR.Localization.Text;
-using PlatformControls.PC;
+﻿using GEAR.Localization.Text;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Slider = Maroon.UI.Slider;
 
 public class PointWave_SelectionHandler : MonoBehaviour
 {
@@ -10,15 +10,15 @@ public class PointWave_SelectionHandler : MonoBehaviour
     public GameObject inputXVariable;
     public GameObject inputZVariable;
 
-    public PC_Slider waveSourceAmplitudeSlider;
-    public PC_Slider waveSourceLengthSlider;
-    public PC_Slider waveSourceFrequencySlider;
-    public PC_Slider waveSourcePhaseSlider;
+    public Slider waveSourceAmplitudeSlider;
+    public Slider waveSourceLengthSlider;
+    public Slider waveSourceFrequencySlider;
+    public Slider waveSourcePhaseSlider;
 
-    public Text amplitudeInputField;
-    public Text waveLengthInputField;
-    public Text frequencyInputField;
-    public Text phaseInputField;
+    public TMP_Text amplitudeInputField;
+    public TMP_Text waveLengthInputField;
+    public TMP_Text frequencyInputField;
+    public TMP_Text phaseInputField;
 
     public GameObject SourceButtonAddDelete;
     public GameObject SourceButtonText;
@@ -154,10 +154,10 @@ public class PointWave_SelectionHandler : MonoBehaviour
 
         if (selectedObject != null && selectedObject.type == PointWaveSelectScript.SelectObjectType.SourceSelect)
         {
-            waveSourceAmplitudeSlider.resetEnabled = false;
-            waveSourceLengthSlider.resetEnabled = false;
-            waveSourceFrequencySlider.resetEnabled = false;
-            waveSourcePhaseSlider.resetEnabled = false;
+            waveSourceAmplitudeSlider.AllowReset = false;
+            waveSourceLengthSlider.AllowReset = false;
+            waveSourceFrequencySlider.AllowReset = false;
+            waveSourcePhaseSlider.AllowReset = false;
 
             var obj = selectedObject.GetComponent<PointWaveSource>();
 
@@ -245,10 +245,10 @@ public class PointWave_SelectionHandler : MonoBehaviour
             {
                 case PointWaveSelectScript.SelectObjectType.SourceSelect:
                     AdaptButtonTextCharge();
-                    waveSourceAmplitudeSlider.resetEnabled = true;
-                    waveSourceLengthSlider.resetEnabled = true;
-                    waveSourceFrequencySlider.resetEnabled = true;
-                    waveSourcePhaseSlider.resetEnabled = true;
+                    waveSourceAmplitudeSlider.AllowReset = true;
+                    waveSourceLengthSlider.AllowReset = true;
+                    waveSourceFrequencySlider.AllowReset = true;
+                    waveSourcePhaseSlider.AllowReset = true;
                     break;
                 case PointWaveSelectScript.SelectObjectType.VisualizationPlaneSelect:
                     break;
