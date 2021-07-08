@@ -197,7 +197,7 @@ public class HuygensNetworkSync : ExperimentNetworkSync
         }
     }
     
-    [Command(ignoreAuthority = true)]
+    [Command(requiresAuthority = false)]
     private void CmdSetPlatePosition(Vector3 newPosition)
     {
         _platePosition = newPosition;

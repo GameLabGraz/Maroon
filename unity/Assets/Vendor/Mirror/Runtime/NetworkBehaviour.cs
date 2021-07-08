@@ -23,8 +23,6 @@ namespace Mirror
     [HelpURL("https://mirror-networking.com/docs/Articles/Guides/NetworkBehaviour.html")]
     public abstract class NetworkBehaviour : MonoBehaviour
     {
-        static readonly ILogger logger = LogFactory.GetLogger(typeof(NetworkBehaviour));
-
         internal float lastSyncTime;
 
         // hidden because NetworkBehaviourInspector shows it only if has OnSerialize.
@@ -62,12 +60,12 @@ namespace Mirror
         /// <summary>
         /// True if this object only exists on the server
         /// </summary>
-        public bool isServerOnly => isServer && !isClient;
+        public bool isServerOnly => netIdentity.isServerOnly;
 
         /// <summary>
         /// True if this object exists on a client that is not also acting as a server
         /// </summary>
-        public bool isClientOnly => isClient && !isServer;
+        public bool isClientOnly => netIdentity.isClientOnly;
 
         /// <summary>
         /// This returns true if this object is the authoritative version of the object in the distributed network application.
@@ -130,7 +128,7 @@ namespace Mirror
                     // do this 2nd check inside first if so that we are not checking == twice on unity Object
                     if (netIdentityCache is null)
                     {
-                        logger.LogError("There is no NetworkIdentity on " + name + ". Please add one.");
+                        Debug.LogError("There is no NetworkIdentity on " + name + ". Please add one.");
                     }
                 }
                 return netIdentityCache;
@@ -153,7 +151,7 @@ namespace Mirror
                 }
 
                 // this should never happen
-                logger.LogError("Could not find component in GameObject. You should not add/remove components in networked objects dynamically", this);
+                Debug.LogError("Could not find component in GameObject. You should not add/remove components in networked objects dynamically", this);
 
                 return -1;
             }
@@ -165,32 +163,32 @@ namespace Mirror
         protected void InitSyncObject(SyncObject syncObject)
         {
             if (syncObject == null)
-                logger.LogError("Uninitialized SyncObject. Manually call the constructor on your SyncList, SyncSet or SyncDictionary");
+                Debug.LogError("Uninitialized SyncObject. Manually call the constructor on your SyncList, SyncSet or SyncDictionary");
             else
                 syncObjects.Add(syncObject);
         }
 
         #region Commands
-        protected void SendCommandInternal(Type invokeClass, string cmdName, NetworkWriter writer, int channelId, bool ignoreAuthority = false)
+        protected void SendCommandInternal(Type invokeClass, string cmdName, NetworkWriter writer, int channelId, bool requiresAuthority = true)
         {
             // this was in Weaver before
             // NOTE: we could remove this later to allow calling Cmds on Server
             //       to avoid Wrapper functions. a lot of people requested this.
             if (!NetworkClient.active)
             {
-                logger.LogError($"Command Function {cmdName} called without an active client.");
+                Debug.LogError($"Command Function {cmdName} called without an active client.");
                 return;
             }
             // local players can always send commands, regardless of authority, other objects must have authority.
-            if (!(ignoreAuthority || isLocalPlayer || hasAuthority))
+            if (!(!requiresAuthority || isLocalPlayer || hasAuthority))
             {
-                logger.LogWarning($"Trying to send command for object without authority. {invokeClass.ToString()}.{cmdName}");
+                Debug.LogWarning($"Trying to send command for object without authority. {invokeClass.ToString()}.{cmdName}");
                 return;
             }
 
             if (ClientScene.readyConnection == null)
             {
-                logger.LogError("Send command attempted with no client running [client=" + connectionToServer + "].");
+                Debug.LogError("Send command attempted with no client running [client=" + connectionToServer + "].");
                 return;
             }
 
@@ -211,18 +209,18 @@ namespace Mirror
         #endregion
 
         #region Client RPCs
-        protected void SendRPCInternal(Type invokeClass, string rpcName, NetworkWriter writer, int channelId, bool excludeOwner)
+        protected void SendRPCInternal(Type invokeClass, string rpcName, NetworkWriter writer, int channelId, bool includeOwner)
         {
             // this was in Weaver before
             if (!NetworkServer.active)
             {
-                logger.LogError("RPC Function " + rpcName + " called on Client.");
+                Debug.LogError("RPC Function " + rpcName + " called on Client.");
                 return;
             }
             // This cannot use NetworkServer.active, as that is not specific to this object.
             if (!isServer)
             {
-                logger.LogWarning("ClientRpc " + rpcName + " called on un-spawned object: " + name);
+                Debug.LogWarning("ClientRpc " + rpcName + " called on un-spawned object: " + name);
                 return;
             }
 
@@ -237,9 +235,6 @@ namespace Mirror
                 payload = writer.ToArraySegment()
             };
 
-            // The public facing parameter is excludeOwner in [ClientRpc]
-            // so we negate it here to logically align with SendToReady.
-            bool includeOwner = !excludeOwner;
             NetworkServer.SendToReady(netIdentity, message, includeOwner, channelId);
         }
 
@@ -247,13 +242,13 @@ namespace Mirror
         {
             if (!NetworkServer.active)
             {
-                logger.LogError($"TargetRPC {rpcName} called when server not active");
+                Debug.LogError($"TargetRPC {rpcName} called when server not active");
                 return;
             }
 
             if (!isServer)
             {
-                logger.LogWarning($"TargetRpc {rpcName} called on {name} but that object has not been spawned or has been unspawned");
+                Debug.LogWarning($"TargetRpc {rpcName} called on {name} but that object has not been spawned or has been unspawned");
                 return;
             }
 
@@ -266,13 +261,13 @@ namespace Mirror
             // if still null
             if (conn is null)
             {
-                logger.LogError($"TargetRPC {rpcName} was given a null connection, make sure the object has an owner or you pass in the target connection");
+                Debug.LogError($"TargetRPC {rpcName} was given a null connection, make sure the object has an owner or you pass in the target connection");
                 return;
             }
 
             if (!(conn is NetworkConnectionToClient))
             {
-                logger.LogError($"TargetRPC {rpcName} requires a NetworkConnectionToClient but was given {conn.GetType().Name}");
+                Debug.LogError($"TargetRPC {rpcName} requires a NetworkConnectionToClient but was given {conn.GetType().Name}");
                 return;
             }
 
@@ -308,7 +303,7 @@ namespace Mirror
                     newNetId = identity.netId;
                     if (newNetId == 0)
                     {
-                        logger.LogWarning("SetSyncVarGameObject GameObject " + newGameObject + " has a zero netId. Maybe it is not spawned yet?");
+                        Debug.LogWarning("SetSyncVarGameObject GameObject " + newGameObject + " has a zero netId. Maybe it is not spawned yet?");
                     }
                 }
             }
@@ -331,12 +326,12 @@ namespace Mirror
                     newNetId = identity.netId;
                     if (newNetId == 0)
                     {
-                        logger.LogWarning("SetSyncVarGameObject GameObject " + newGameObject + " has a zero netId. Maybe it is not spawned yet?");
+                        Debug.LogWarning("SetSyncVarGameObject GameObject " + newGameObject + " has a zero netId. Maybe it is not spawned yet?");
                     }
                 }
             }
 
-            if (logger.LogEnabled()) logger.Log("SetSyncVar GameObject " + GetType().Name + " bit [" + dirtyBit + "] netfieldId:" + netIdField + "->" + newNetId);
+            // Debug.Log("SetSyncVar GameObject " + GetType().Name + " bit [" + dirtyBit + "] netfieldId:" + netIdField + "->" + newNetId);
             SetDirtyBit(dirtyBit);
             // assign new one on the server, and in case we ever need it on client too
             gameObjectField = newGameObject;
@@ -371,7 +366,7 @@ namespace Mirror
                 newNetId = newIdentity.netId;
                 if (newNetId == 0)
                 {
-                    logger.LogWarning("SetSyncVarNetworkIdentity NetworkIdentity " + newIdentity + " has a zero netId. Maybe it is not spawned yet?");
+                    Debug.LogWarning("SetSyncVarNetworkIdentity NetworkIdentity " + newIdentity + " has a zero netId. Maybe it is not spawned yet?");
                 }
             }
 
@@ -391,11 +386,11 @@ namespace Mirror
                 newNetId = newIdentity.netId;
                 if (newNetId == 0)
                 {
-                    logger.LogWarning("SetSyncVarNetworkIdentity NetworkIdentity " + newIdentity + " has a zero netId. Maybe it is not spawned yet?");
+                    Debug.LogWarning("SetSyncVarNetworkIdentity NetworkIdentity " + newIdentity + " has a zero netId. Maybe it is not spawned yet?");
                 }
             }
 
-            if (logger.LogEnabled()) logger.Log("SetSyncVarNetworkIdentity NetworkIdentity " + GetType().Name + " bit [" + dirtyBit + "] netIdField:" + netIdField + "->" + newNetId);
+            // Debug.Log("SetSyncVarNetworkIdentity NetworkIdentity " + GetType().Name + " bit [" + dirtyBit + "] netIdField:" + netIdField + "->" + newNetId);
             SetDirtyBit(dirtyBit);
             netIdField = newNetId;
             // assign new one on the server, and in case we ever need it on client too
@@ -428,7 +423,7 @@ namespace Mirror
                 newComponentIndex = newBehaviour.ComponentIndex;
                 if (newNetId == 0)
                 {
-                    logger.LogWarning("SetSyncVarNetworkIdentity NetworkIdentity " + newBehaviour + " has a zero netId. Maybe it is not spawned yet?");
+                    Debug.LogWarning("SetSyncVarNetworkIdentity NetworkIdentity " + newBehaviour + " has a zero netId. Maybe it is not spawned yet?");
                 }
             }
 
@@ -450,7 +445,7 @@ namespace Mirror
                 componentIndex = newBehaviour.ComponentIndex;
                 if (newNetId == 0)
                 {
-                    logger.LogWarning($"{nameof(SetSyncVarNetworkBehaviour)} NetworkIdentity " + newBehaviour + " has a zero netId. Maybe it is not spawned yet?");
+                    Debug.LogWarning($"{nameof(SetSyncVarNetworkBehaviour)} NetworkIdentity " + newBehaviour + " has a zero netId. Maybe it is not spawned yet?");
                 }
             }
 
@@ -463,7 +458,7 @@ namespace Mirror
             // assign new one on the server, and in case we ever need it on client too
             behaviourField = newBehaviour;
 
-            if (logger.LogEnabled()) logger.Log($"SetSyncVarNetworkBehaviour NetworkIdentity {GetType().Name} bit [{dirtyBit}] netIdField:{oldField}->{syncField}");
+            // Debug.Log($"SetSyncVarNetworkBehaviour NetworkIdentity {GetType().Name} bit [{dirtyBit}] netIdField:{oldField}->{syncField}");
         }
 
         // helper function for [SyncVar] NetworkIdentities.
@@ -494,7 +489,7 @@ namespace Mirror
         public struct NetworkBehaviourSyncVar : IEquatable<NetworkBehaviourSyncVar>
         {
             public uint netId;
-            // limtied to 255 behaviours per identity
+            // limited to 255 behaviours per identity
             public byte componentIndex;
 
             public NetworkBehaviourSyncVar(uint netId, int componentIndex) : this()
@@ -527,7 +522,7 @@ namespace Mirror
 
         protected void SetSyncVar<T>(T value, ref T fieldValue, ulong dirtyBit)
         {
-            if (logger.LogEnabled()) logger.Log("SetSyncVar " + GetType().Name + " bit [" + dirtyBit + "] " + fieldValue + "->" + value);
+            // Debug.Log("SetSyncVar " + GetType().Name + " bit [" + dirtyBit + "] " + fieldValue + "->" + value);
             SetDirtyBit(dirtyBit);
             fieldValue = value;
         }
@@ -641,7 +636,7 @@ namespace Mirror
         {
             return false;
 
-            // SyncVar are writen here in subclass
+            // SyncVar are written here in subclass
 
             // if initialState
             //   write all SyncVars
@@ -737,47 +732,47 @@ namespace Mirror
         }
 
         /// <summary>
-        /// This is invoked on clients when the server has caused this object to be destroyed.
-        /// <para>This can be used as a hook to invoke effects or do client specific cleanup.</para>
-        /// </summary>
-        public virtual void OnStopClient() { }
-
-        /// <summary>
         /// This is invoked for NetworkBehaviour objects when they become active on the server.
         /// <para>This could be triggered by NetworkServer.Listen() for objects in the scene, or by NetworkServer.Spawn() for objects that are dynamically created.</para>
         /// <para>This will be called for objects on a "host" as well as for object on a dedicated server.</para>
         /// </summary>
-        public virtual void OnStartServer() { }
+        public virtual void OnStartServer() {}
 
         /// <summary>
         /// Invoked on the server when the object is unspawned
-        /// <para>Useful for saving object data in persistant storage</para>
+        /// <para>Useful for saving object data in persistent storage</para>
         /// </summary>
-        public virtual void OnStopServer() { }
+        public virtual void OnStopServer() {}
 
         /// <summary>
         /// Called on every NetworkBehaviour when it is activated on a client.
         /// <para>Objects on the host have this function called, as there is a local client on the host. The values of SyncVars on object are guaranteed to be initialized correctly with the latest state from the server when this function is called on the client.</para>
         /// </summary>
-        public virtual void OnStartClient() { }
+        public virtual void OnStartClient() {}
+
+        /// <summary>
+        /// This is invoked on clients when the server has caused this object to be destroyed.
+        /// <para>This can be used as a hook to invoke effects or do client specific cleanup.</para>
+        /// </summary>
+        public virtual void OnStopClient() {}
 
         /// <summary>
         /// Called when the local player object has been set up.
         /// <para>This happens after OnStartClient(), as it is triggered by an ownership message from the server. This is an appropriate place to activate components or functionality that should only be active for the local player, such as cameras and input.</para>
         /// </summary>
-        public virtual void OnStartLocalPlayer() { }
+        public virtual void OnStartLocalPlayer() {}
 
         /// <summary>
         /// This is invoked on behaviours that have authority, based on context and <see cref="NetworkIdentity.hasAuthority">NetworkIdentity.hasAuthority</see>.
         /// <para>This is called after <see cref="OnStartServer">OnStartServer</see> and before <see cref="OnStartClient">OnStartClient.</see></para>
         /// <para>When <see cref="NetworkIdentity.AssignClientAuthority">AssignClientAuthority</see> is called on the server, this will be called on the client that owns the object. When an object is spawned with <see cref="NetworkServer.Spawn">NetworkServer.Spawn</see> with a NetworkConnection parameter included, this will be called on the client that owns the object.</para>
         /// </summary>
-        public virtual void OnStartAuthority() { }
+        public virtual void OnStartAuthority() {}
 
         /// <summary>
         /// This is invoked on behaviours when authority is removed.
         /// <para>When NetworkIdentity.RemoveClientAuthority is called on the server, this will be called on the client that owns the object.</para>
         /// </summary>
-        public virtual void OnStopAuthority() { }
+        public virtual void OnStopAuthority() {}
     }
 }

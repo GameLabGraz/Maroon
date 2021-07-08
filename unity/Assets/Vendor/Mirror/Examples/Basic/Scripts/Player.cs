@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Mirror.Examples.Basic
@@ -73,7 +72,7 @@ namespace Mirror.Examples.Basic
 
         /// <summary>
         /// Invoked on the server when the object is unspawned
-        /// <para>Useful for saving object data in persistant storage</para>
+        /// <para>Useful for saving object data in persistent storage</para>
         /// </summary>
         public override void OnStopServer()
         {

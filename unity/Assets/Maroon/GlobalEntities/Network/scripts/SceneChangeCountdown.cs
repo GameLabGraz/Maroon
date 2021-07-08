@@ -64,7 +64,7 @@ public class SceneChangeCountdown : NetworkBehaviour
         Maroon.NetworkManager.Instance.SceneCountdownActive = false;
     }
 
-    [Command(ignoreAuthority = true)]
+    [Command(requiresAuthority = false)]
     private void CmdStopCountdown()
     {
         Destroy(gameObject);

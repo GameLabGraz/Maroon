@@ -102,7 +102,7 @@ public class ExperimentNetworkSync : NetworkBehaviour
             CmdSyncEvent(eventActivatedCoroutine);
     }
     
-    [Command(ignoreAuthority = true)]
+    [Command(requiresAuthority = false)]
     private void CmdSyncEvent(string eventActivatedCoroutine)
     {
         RpcSyncEvent(eventActivatedCoroutine);
@@ -125,7 +125,7 @@ public class ExperimentNetworkSync : NetworkBehaviour
             CmdSyncFloatEvent(eventActivatedCoroutine, value);
     }
     
-    [Command(ignoreAuthority = true)]
+    [Command(requiresAuthority = false)]
     private void CmdSyncFloatEvent(string eventActivatedCoroutine, float value)
     {
         RpcSyncFloatEvent(eventActivatedCoroutine, value);
@@ -148,7 +148,7 @@ public class ExperimentNetworkSync : NetworkBehaviour
             CmdSyncIntEvent(eventActivatedCoroutine, value);
     }
     
-    [Command(ignoreAuthority = true)]
+    [Command(requiresAuthority = false)]
     private void CmdSyncIntEvent(string eventActivatedCoroutine, int value)
     {
         RpcSyncIntEvent(eventActivatedCoroutine, value);
@@ -171,7 +171,7 @@ public class ExperimentNetworkSync : NetworkBehaviour
             CmdSyncStringEvent(eventActivatedCoroutine, value);
     }
     
-    [Command(ignoreAuthority = true)]
+    [Command(requiresAuthority = false)]
     private void CmdSyncStringEvent(string eventActivatedCoroutine, string value)
     {
         RpcSyncStringEvent(eventActivatedCoroutine, value);
@@ -194,7 +194,7 @@ public class ExperimentNetworkSync : NetworkBehaviour
             CmdSyncBoolEvent(eventActivatedCoroutine, value);
     }
     
-    [Command(ignoreAuthority = true)]
+    [Command(requiresAuthority = false)]
     private void CmdSyncBoolEvent(string eventActivatedCoroutine, bool value)
     {
         RpcSyncBoolEvent(eventActivatedCoroutine, value);
