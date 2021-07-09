@@ -140,7 +140,7 @@ public class VanDeGraaffNetworkSync : ExperimentNetworkSync
         }
     }
     
-    [Command(ignoreAuthority = true)]
+    [Command(requiresAuthority = false)]
     private void CmdSetGrounderPosition(Vector3 newPosition)
     {
         _grounderPosition = newPosition;

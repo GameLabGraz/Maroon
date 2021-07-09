@@ -12,38 +12,40 @@ public class HuygensNetworkSync : ExperimentNetworkSync
     //Control
     //Control Buttons
     [SerializeField] private Button _resetButton;
+
+    [SerializeField] private Button _playButton;
     
-    [SerializeField] private Button _playPauseButton;
+    [SerializeField] private Button _pauseButton;
     
     [SerializeField] private Button _stepForwardButton;
     
     //parameters
-    [SerializeField] private PC_Slider _amplitudeSlider;
+    [SerializeField] private Maroon.UI.Slider _amplitudeSlider;
     
-    [SerializeField] private PC_InputField _amplitudeInputField;
+    [SerializeField] private Maroon.UI.InputField _amplitudeInputField;
     
-    [SerializeField] private PC_Slider _lengthSlider;
+    [SerializeField] private Maroon.UI.Slider _lengthSlider;
     
-    [SerializeField] private PC_InputField _lengthInputField;
+    [SerializeField] private Maroon.UI.InputField _lengthInputField;
     
-    [SerializeField] private PC_Slider _frequencySlider;
+    [SerializeField] private Maroon.UI.Slider _frequencySlider;
     
-    [SerializeField] private PC_InputField _frequencyInputField;
+    [SerializeField] private Maroon.UI.InputField _frequencyInputField;
 
-    [SerializeField] private PC_LocalizedDropDown _propagationModeDropDown;
+    [SerializeField] private Maroon.UI.Dropdown _propagationModeDropDown;
     
-    [SerializeField] private PC_Slider _slitNumberSlider;
+    [SerializeField] private Maroon.UI.Slider _slitNumberSlider;
     
-    [SerializeField] private PC_InputField _slitNumberInputField;
+    [SerializeField] private Maroon.UI.InputField _slitNumberInputField;
     
-    [SerializeField] private PC_Slider _slitWidthSlider;
+    [SerializeField] private Maroon.UI.Slider _slitWidthSlider;
     
-    [SerializeField] private PC_InputField _slitWidthInputField;
+    [SerializeField] private Maroon.UI.InputField _slitWidthInputField;
     
     //Visualization
-    [SerializeField] private PC_Slider _peakColorSlider;
+    [SerializeField] private Maroon.UI.Slider _peakColorSlider;
     
-    [SerializeField] private PC_Slider _troughColorSlider;
+    [SerializeField] private Maroon.UI.Slider _troughColorSlider;
     
     //Experiment
     [SerializeField] private PC_MouseMovement _plateMovement;
@@ -57,7 +59,8 @@ public class HuygensNetworkSync : ExperimentNetworkSync
     protected override void OnGetControl()
     {
         _resetButton.interactable = true;
-        _playPauseButton.interactable = true;
+        _playButton.interactable = true;
+        _pauseButton.interactable = true;
         _stepForwardButton.interactable = true;
 
         _amplitudeSlider.interactable = true;
@@ -81,7 +84,8 @@ public class HuygensNetworkSync : ExperimentNetworkSync
     protected override void OnLoseControl()
     {
         _resetButton.interactable = false;
-        _playPauseButton.interactable = false;
+        _playButton.interactable = false;
+        _pauseButton.interactable = false;
         _stepForwardButton.interactable = false;
 
         _amplitudeSlider.interactable = false;
@@ -197,7 +201,7 @@ public class HuygensNetworkSync : ExperimentNetworkSync
         }
     }
     
-    [Command(ignoreAuthority = true)]
+    [Command(requiresAuthority = false)]
     private void CmdSetPlatePosition(Vector3 newPosition)
     {
         _platePosition = newPosition;
