@@ -214,7 +214,7 @@ public class PendulumNetworkSync : ExperimentNetworkSync
         }
     }
 
-    [Command(ignoreAuthority = true)]
+    [Command(requiresAuthority = false)]
     private void CmdSetPendulumAngle(float value)
     {
         _pendulumAngle = value;

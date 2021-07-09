@@ -98,7 +98,7 @@ public class SortingNetworkSync : ExperimentNetworkSync
         sortingController.GoOffline();
     }
     
-    [Command(ignoreAuthority = true)]
+    [Command(requiresAuthority = false)]
     private void SpawnMyQuizPlayer(string playerName)
     {
         GameObject newQuizScore = Instantiate(quizScorePrefab);
@@ -113,7 +113,7 @@ public class SortingNetworkSync : ExperimentNetworkSync
         }
     }
 
-    [Command(ignoreAuthority = true)]
+    [Command(requiresAuthority = false)]
     private void CmdSyncArray(int[] array)
     {
         RpcSyncArray(array);
@@ -136,7 +136,7 @@ public class SortingNetworkSync : ExperimentNetworkSync
         }
     }
 
-    [Command(ignoreAuthority = true)]
+    [Command(requiresAuthority = false)]
     private void CmdSyncBattleOrder(int[] order)
     {
         RpcSyncBattleOrder(order);

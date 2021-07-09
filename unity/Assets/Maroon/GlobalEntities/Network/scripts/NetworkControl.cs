@@ -177,7 +177,7 @@ public class NetworkControl : NetworkBehaviour
         CmdClientRequestsControl(Maroon.NetworkManager.Instance.PlayerName);
     }
     
-    [Command(ignoreAuthority = true)]
+    [Command(requiresAuthority = false)]
     private void CmdClientRequestsControl(string client)
     {
         if (_countdownActive)
@@ -245,7 +245,7 @@ public class NetworkControl : NetworkBehaviour
         CmdCancelCountdown();
     }
 
-    [Command(ignoreAuthority = true)]
+    [Command(requiresAuthority = false)]
     private void CmdCancelCountdown()
     {
         RpcCancelCountdown();
