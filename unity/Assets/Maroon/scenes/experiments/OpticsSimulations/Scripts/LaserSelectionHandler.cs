@@ -9,45 +9,45 @@ public class LaserSelectionHandler : MonoBehaviour
 {
     // Start is called before the first frame update
     [HideInInspector]
-    public GameObject currActiveLaser;
-    public GameObject laserControlPanel;
-    public GameObject laserPointerPrefab;
+    public GameObject CurrActiveLaser;
+    public GameObject LaserControlPanel;
+    public GameObject LaserPointerPrefab;
 
     public QuantityFloat activeLaserIntensity;
     public QuantityFloat activeLaserWavelength;
 
     public QuantityFloat activeLaserRefractiveIndex;
 
-    private int numlaserpointers = 0;
-    public int maxlasers = 100;
+    private int _numLaserPointers = 0;
+    public int MaxLasers = 100;
 
 
-    public bool onUIpanel { get; set; } = false;
+    public bool OnUIpanel { get; set; } = false;
 
 
-    private Vector3 laserArrayStartPoint;
-    private Vector3 laserArrayEndPoint;
+    private Vector3 _laserArrayStartPoint;
+    private Vector3 _laserArrayEndPoint;
 
-    private Vector3 lensPos;
+    private Vector3 _lensPos;
 
     
     void Start()
     {
-        currActiveLaser = null;
+        CurrActiveLaser = null;
 
-        laserArrayStartPoint = GameObject.Find("LaserArrayStart").transform.position;
-        laserArrayEndPoint = GameObject.Find("LaserArrayEnd").transform.position;
-        lensPos = GameObject.Find("LensObject").transform.position;
+        _laserArrayStartPoint = GameObject.Find("LaserArrayStart").transform.position;
+        _laserArrayEndPoint = GameObject.Find("LaserArrayEnd").transform.position;
+        _lensPos = GameObject.Find("LensObject").transform.position;
 
 
-        addLaserArray();
+        AddLaserArray();
     }
     // returns true for can add, false for cannot add
-    private bool checkLaserLimit(int toAdd)
+    private bool CheckLaserLimit(int toAdd)
     {
-        if(numlaserpointers + toAdd < maxlasers)
+        if(_numLaserPointers + toAdd < MaxLasers)
         {
-            numlaserpointers += toAdd;
+            _numLaserPointers += toAdd;
             return true;
         }
         // show dialogue for max number of lasers
@@ -55,74 +55,74 @@ public class LaserSelectionHandler : MonoBehaviour
         LanguageManager langman = FindObjectOfType<LanguageManager>();
 
         string message = langman.GetString("maxnumberoflasers");
-        diagman.ShowMessage(string.Format(message, (numlaserpointers+1)));
+        diagman.ShowMessage(string.Format(message, (_numLaserPointers+1)));
 
         return false;
     }
 
 
-    public void setActiveIntensityAndWavelength(float intensity, float wavelength) 
+    public void SetActiveIntensityAndWavelength(float intensity, float wavelength) 
     {
         activeLaserIntensity.Value = intensity;
         activeLaserWavelength.Value = wavelength;
     }
 
 
-    public void setActiveIntensity(float intensity)
+    public void SetActiveIntensity(float intensity)
     {
         
-        if(currActiveLaser != null)
+        if(CurrActiveLaser != null)
         {
-            currActiveLaser.GetComponent<LPProperties>().laserIntensity = intensity;
+            CurrActiveLaser.GetComponent<LPProperties>().laserIntensity = intensity;
         }
     }
-    public void setActiveWavelength(float wavelength)
+    public void SetActiveWavelength(float wavelength)
     {
 
-        if (currActiveLaser != null)
+        if (CurrActiveLaser != null)
         {
-            currActiveLaser.GetComponent<LPProperties>().laserWavelength = wavelength;
+            CurrActiveLaser.GetComponent<LPProperties>().laserWavelength = wavelength;
         }
     }
-    public GameObject[] getAllLaserPointers()
+    public GameObject[] GetAllLaserPointers()
     {
         return GameObject.FindGameObjectsWithTag("LaserPointer"); ;
     }
 
-    public void removeAllLaserPointers()
+    public void RemoveAllLaserPointers()
     {
-        var lps = getAllLaserPointers();
+        var lps = GetAllLaserPointers();
 
         foreach(var lp in lps)
         {
             Destroy(lp);
         }
-        numlaserpointers = 0;
+        _numLaserPointers = 0;
     }
 
-    public void addLaserArray()
+    public void AddLaserArray()
     {
-        if (!checkLaserLimit(1)) return;
+        if (!CheckLaserLimit(1)) return;
 
         int lasers_in_array = 7;
 
-        Vector3 offset = (laserArrayEndPoint - laserArrayStartPoint) / lasers_in_array;
+        Vector3 offset = (_laserArrayEndPoint - _laserArrayStartPoint) / lasers_in_array;
 
         for(int i = 1; i < lasers_in_array; i++)
         {
-            Instantiate(laserPointerPrefab, laserArrayStartPoint + i * offset, laserPointerPrefab.transform.rotation);
+            Instantiate(LaserPointerPrefab, _laserArrayStartPoint + i * offset, LaserPointerPrefab.transform.rotation);
         }
 
     }
 
-    private void addLaserArrayWithOptions(int numlasers, Vector3 startpoint, Vector3 endpoint, Vector3 focalpoint, float intensity, float wavelength)
+    private void AddLaserArrayWithOptions(int numlasers, Vector3 startpoint, Vector3 endpoint, Vector3 focalpoint, float intensity, float wavelength)
     {
-        if (!checkLaserLimit(numlasers)) return;
+        if (!CheckLaserLimit(numlasers)) return;
         Vector3 offset = (endpoint - startpoint) / numlasers;
 
         for(int i = 1; i< numlasers; i++)
         {
-            var lpprefab = Instantiate(laserPointerPrefab, startpoint + i * offset, laserPointerPrefab.transform.rotation);
+            var lpprefab = Instantiate(LaserPointerPrefab, startpoint + i * offset, LaserPointerPrefab.transform.rotation);
             var lpprops = lpprefab.GetComponent<LPProperties>();
             lpprops.laserIntensity = intensity;
             lpprops.laserWavelength = wavelength;
@@ -137,53 +137,56 @@ public class LaserSelectionHandler : MonoBehaviour
 
     }
 
-    public void addFocusedLaserArray()
+    public void AddFocusedLaserArray()
     {
-        addLaserArrayWithOptions(7, laserArrayStartPoint, laserArrayEndPoint, (laserArrayStartPoint + laserArrayEndPoint)/2 + Vector3.right*0.5f, 1.0f, 680f);
+        AddLaserArrayWithOptions(7, _laserArrayStartPoint, _laserArrayEndPoint, (_laserArrayStartPoint + _laserArrayEndPoint)/2 + Vector3.right*0.5f, 1.0f, 680f);
     }
 
-    public void addFocusedLaserArrayWithOffset()
+    public void AddFocusedLaserArrayWithOffset()
     {
         Vector3 offsetVec = - Vector3.right * 0.3f;
-        addLaserArrayWithOptions(7, laserArrayStartPoint +offsetVec, laserArrayEndPoint +offsetVec , (laserArrayStartPoint + laserArrayEndPoint) / 2 + Vector3.right * 0.5f +offsetVec, 1.0f, 680f);
+        AddLaserArrayWithOptions(7, _laserArrayStartPoint +offsetVec, _laserArrayEndPoint +offsetVec , (_laserArrayStartPoint + _laserArrayEndPoint) / 2 + Vector3.right * 0.5f +offsetVec, 1.0f, 680f);
     }
 
-    public void addRGBLaserArray()
+    public void AddRGBLaserArray()
     {
-        addLaserArrayWithOptions(7, laserArrayStartPoint, laserArrayEndPoint, laserArrayStartPoint + Vector3.right * 10000.0f, 1.0f, 450f);
-        addLaserArrayWithOptions(7, laserArrayStartPoint - Vector3.right*0.2f, laserArrayEndPoint - Vector3.right * 0.2f, laserArrayStartPoint + Vector3.right * 10000.0f, 1.0f, 500f);
-        addLaserArrayWithOptions(7, laserArrayStartPoint - Vector3.right * 0.4f, laserArrayEndPoint - Vector3.right * 0.4f, laserArrayStartPoint + Vector3.right * 10000.0f, 1.0f, 700f);
+        AddLaserArrayWithOptions(7, _laserArrayStartPoint, _laserArrayEndPoint, _laserArrayStartPoint + Vector3.right * 10000.0f, 1.0f, 450f);
+        AddLaserArrayWithOptions(7, _laserArrayStartPoint - Vector3.right*0.2f, _laserArrayEndPoint - Vector3.right * 0.2f, _laserArrayStartPoint + Vector3.right * 10000.0f, 1.0f, 500f);
+        AddLaserArrayWithOptions(7, _laserArrayStartPoint - Vector3.right * 0.4f, _laserArrayEndPoint - Vector3.right * 0.4f, _laserArrayStartPoint + Vector3.right * 10000.0f, 1.0f, 700f);
     }
 
     public void AddLaserPointer()
     {
-        if (!checkLaserLimit(1)) return;
-        Instantiate(laserPointerPrefab, new Vector3(-1.0f, lensPos.y, 2.5f), laserPointerPrefab.transform.rotation);
-        numlaserpointers++;
+        if (!CheckLaserLimit(1)) return;
+        Instantiate(LaserPointerPrefab, new Vector3(-1.0f, _lensPos.y, 2.5f), LaserPointerPrefab.transform.rotation);
+        _numLaserPointers++;
     }
     public void RemoveLaserPointer()
     {
-        if(currActiveLaser != null)
+        if(CurrActiveLaser != null)
         {
-            Destroy(currActiveLaser);
-            numlaserpointers--;
+            Destroy(CurrActiveLaser);
+            _numLaserPointers--;
         }
 
     }
 
-    public void setLaserArrangements(int arr)
+    public void SetLaserArrangements(int arr)
     {
+
+
+        Debug.Log("SetlaserArrangements" + arr);
         if(!(arr == 0))
         {
-            removeAllLaserPointers();
+            RemoveAllLaserPointers();
         }
         switch (arr)
         {
             case 0: break;
-            case 1: addLaserArray(); break;
-            case 2: addRGBLaserArray(); break;
-            case 3: addFocusedLaserArray(); break;
-            case 4: addFocusedLaserArrayWithOffset(); break;
+            case 1: AddLaserArray(); break;
+            case 2: AddRGBLaserArray(); break;
+            case 3: AddFocusedLaserArray(); break;
+            case 4: AddFocusedLaserArrayWithOffset(); break;
             default: break;
         }
     }
@@ -194,14 +197,14 @@ public class LaserSelectionHandler : MonoBehaviour
     {
 
         //if current active laser is null disable lasercontrolpanel
-        if (currActiveLaser == null)
+        if (CurrActiveLaser == null)
         {
-            laserControlPanel.SetActive(false);
+            LaserControlPanel.SetActive(false);
         }
         else
         {
-            laserControlPanel.SetActive(true);
-            currActiveLaser.GetComponent<LPProperties>().setLaserColor();
+            LaserControlPanel.SetActive(true);
+            CurrActiveLaser.GetComponent<LPProperties>().setLaserColor();
         }
 
         if(Input.GetMouseButtonDown(0))
@@ -213,33 +216,31 @@ public class LaserSelectionHandler : MonoBehaviour
 
             if (rhit.collider.tag == "LaserPointer")
             {
-                if(currActiveLaser != null) currActiveLaser.GetComponent<DragLaserObject>().makeInactive();
-                currActiveLaser = rhit.collider.gameObject;
-                currActiveLaser.GetComponent<DragLaserObject>().makeActive();
+                if(CurrActiveLaser != null) CurrActiveLaser.GetComponent<DragLaserObject>().MakeInactive();
+                CurrActiveLaser = rhit.collider.gameObject;
+                CurrActiveLaser.GetComponent<DragLaserObject>().MakeActive();
             }
             else
             {
-                if(! (rhit.collider.tag == "LPHandle") && currActiveLaser != null) //todo make klick on table deselect of laser.
+                if(! (rhit.collider.tag == "LPHandle") && CurrActiveLaser != null) //todo make klick on table deselect of laser.
                 {
                     if (rhit.collider.gameObject.name == "OpticsTable" || rhit.collider.gameObject.name == "OpticsTable2") //todo change to optical tables
                     {
-                        if (!onUIpanel)
+                        if (!OnUIpanel)
                         {
-                            currActiveLaser.GetComponent<DragLaserObject>().makeInactive();
-                            currActiveLaser = null;
+                            CurrActiveLaser.GetComponent<DragLaserObject>().MakeInactive();
+                            CurrActiveLaser = null;
                         }
                        
                     }
                 }
             }
         }
-        setActiveIntensity(activeLaserIntensity);
-        setActiveWavelength(activeLaserWavelength);
-        if(currActiveLaser!= null)
+        SetActiveIntensity(activeLaserIntensity);
+        SetActiveWavelength(activeLaserWavelength);
+        if(CurrActiveLaser!= null)
         {
-            activeLaserRefractiveIndex.Value = currActiveLaser.GetComponent<LPProperties>().getCauchyForCurrentWavelength();
+            activeLaserRefractiveIndex.Value = CurrActiveLaser.GetComponent<LPProperties>().getCauchyForCurrentWavelength();
         }
-
-
     }
 }

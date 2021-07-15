@@ -5,138 +5,133 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class DragLaserObject : MonoBehaviour
 {
-    private Camera mainCamera;
-    private Plane movementPlane;
-    private Material laserMat;
-    private Color ogColor;
+    private Camera _mainCamera;
+    private Plane _movementPlane;
+    private Material _laserMat;
+    private Color _ogColor;
 
-    private LPProperties laserProperties;
+    private LPProperties _laserProperties;
 
     [SerializeField]
-    private Color hoverColor;
+    private Color _hoverColor;
     [SerializeField]
-    private Color draggingColor;
+    private Color _draggingColor;
     [SerializeField]
-    private Color activeColor;
+    private Color _activeColor;
 
 
-    private bool currentlyDragging;
-    private bool activeLP;
+    private bool _currentlyDragging;
 
-    private MeshRenderer handleRenderer;
-    private Collider handleCollider;
-    private LaserSelectionHandler laserHandler;
+    private MeshRenderer _handleRenderer;
+    private Collider _handleCollider;
+    private LaserSelectionHandler _laserHandler;
 
-    Collider thisColl;
+    private Collider _thisColl;
 
-    private Vector3 offset = Vector3.zero;
+    private Vector3 _offset = Vector3.zero;
 
 
     void Start()
     {
-        mainCamera = Camera.main;
-        movementPlane = new Plane(Vector3.up, new Vector3(0.0f, 0.0f, 0.0f)); //such an init needed?
-        thisColl = GetComponent<Collider>();
-        laserMat = GetComponent<Renderer>().material;
+        _mainCamera = Camera.main;
+        _movementPlane = new Plane(Vector3.up, new Vector3(0.0f, 0.0f, 0.0f)); //such an init needed?
+        _thisColl = GetComponent<Collider>();
+        _laserMat = GetComponent<Renderer>().material;
 
-        ogColor = laserMat.color;
+        _ogColor = _laserMat.color;
 
-        hoverColor = Color.red;
-        activeColor = Color.green;
-        draggingColor = Color.grey;
-        currentlyDragging = false;
-        
-        activeLP = false;
-        laserProperties = GetComponent<LPProperties>();
-        laserHandler = GameObject.FindGameObjectWithTag("LaserSelectionHandler").GetComponent<LaserSelectionHandler>();
+        _hoverColor = Color.red;
+        _activeColor = Color.green;
+        _draggingColor = Color.grey;
+        _currentlyDragging = false;
 
-        handleRenderer = gameObject.transform.GetChild(0).GetComponent<MeshRenderer>();
-        handleCollider = gameObject.transform.GetChild(0).GetComponent<Collider>();
-        handleCollider.enabled = false;
-        handleRenderer.enabled = false;
+        _laserProperties = GetComponent<LPProperties>();
+        _laserHandler = GameObject.FindGameObjectWithTag("LaserSelectionHandler").GetComponent<LaserSelectionHandler>();
+
+        _handleRenderer = gameObject.transform.GetChild(0).GetComponent<MeshRenderer>();
+        _handleCollider = gameObject.transform.GetChild(0).GetComponent<Collider>();
+        _handleCollider.enabled = false;
+        _handleRenderer.enabled = false;
     }
 
 
     void OnMouseDown()
     {
-        currentlyDragging = true;
-        Ray objIntersectRay = mainCamera.ScreenPointToRay(Input.mousePosition);
+        _currentlyDragging = true;
+        Ray objIntersectRay = _mainCamera.ScreenPointToRay(Input.mousePosition);
         RaycastHit thisHit;
-        thisColl.Raycast(objIntersectRay, out thisHit, Mathf.Infinity);
+        _thisColl.Raycast(objIntersectRay, out thisHit, Mathf.Infinity);
 
-        movementPlane.SetNormalAndPosition(Vector3.up, thisHit.point);
+        _movementPlane.SetNormalAndPosition(Vector3.up, thisHit.point);
 
-        offset = thisHit.point - transform.position;
+        _offset = thisHit.point - transform.position;
 
 
-        makeActive();
+        MakeActive();
     }
 
     private void OnMouseEnter()
     {
-        if(!currentlyDragging) laserMat.color = hoverColor;
+        if(!_currentlyDragging) _laserMat.color = _hoverColor;
     }
 
     private void OnMouseExit()
     {
-        if(!currentlyDragging)
+        if(!_currentlyDragging)
         {
-            if (isActiveLP())
+            if (IsActiveLP())
             {
-                makeActive();
+                MakeActive();
             }
             else
             {
-                laserMat.color = ogColor;
+                _laserMat.color = _ogColor;
             }
         }   
     }
 
     private void OnMouseUp()
     {
-        currentlyDragging = false;
-        laserMat.color = hoverColor;
+        _currentlyDragging = false;
+        _laserMat.color = _hoverColor;
     }
 
     void OnMouseDrag()
     {
         float dist;
-        Ray distRay = mainCamera.ScreenPointToRay(Input.mousePosition);
-        movementPlane.Raycast(distRay, out dist);
+        Ray distRay = _mainCamera.ScreenPointToRay(Input.mousePosition);
+        _movementPlane.Raycast(distRay, out dist);
 
         Vector3 pointonplane = distRay.GetPoint(dist);
-        transform.position = pointonplane - offset;
-        laserMat.color = draggingColor;
+        transform.position = pointonplane - _offset;
+        _laserMat.color = _draggingColor;
     }
 
 
-    bool isActiveLP()
+    bool IsActiveLP()
     {
-        GameObject activeLaser = laserHandler.currActiveLaser;
+        GameObject activeLaser = _laserHandler.CurrActiveLaser;
 
         if (activeLaser == null)
         {
-            activeLP = false;
             return false;
         }
         return ReferenceEquals(gameObject, activeLaser);
     }
 
-    public void makeActive()
+    public void MakeActive()
     {
-        laserHandler.setActiveIntensityAndWavelength(laserProperties.laserIntensity, laserProperties.laserWavelength);
-        activeLP = true;
-        laserMat.color = activeColor;
-        handleRenderer.enabled = true;
-        handleCollider.enabled = true;
+        _laserHandler.SetActiveIntensityAndWavelength(_laserProperties.laserIntensity, _laserProperties.laserWavelength);
+        _laserMat.color = _activeColor;
+        _handleRenderer.enabled = true;
+        _handleCollider.enabled = true;
     }
     
-    public void makeInactive()
+    public void MakeInactive()
     {
-        activeLP = false;
-        laserMat.color = ogColor;
-        handleRenderer.enabled = false;
-        handleCollider.enabled = false;
+        _laserMat.color = _ogColor;
+        _handleRenderer.enabled = false;
+        _handleCollider.enabled = false;
     }
 
 }

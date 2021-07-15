@@ -25,7 +25,7 @@ public class LPProperties : MonoBehaviour
     public float getCauchyForCurrentWavelength()
     {
 
-        OpticsLens currLens = (OpticsLens) FindObjectOfType<LaserRenderer>().currentLens;
+        OpticsLens currLens = (OpticsLens) FindObjectOfType<LaserRenderer>().CurrentLens;
 
         OpticsSim os = FindObjectOfType<OpticsSim>();
 
