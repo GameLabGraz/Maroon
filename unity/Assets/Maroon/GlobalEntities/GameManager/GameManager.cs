@@ -13,6 +13,9 @@ namespace Maroon
     {
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Fields
+
+        [SerializeField] private ExperimentScores experimentScores;
+        
         private static GameManager _instance = null;
 
         private string _version;
@@ -177,6 +180,14 @@ namespace Maroon
         public Quaternion GetPlayerRotation()
         {
             return _playerRotation;
+        }
+
+        private void OnApplicationQuit()
+        {
+            foreach (ExperimentScore experimentScore in experimentScores)
+            {
+                experimentScore.Score = 0;
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Events;
 
 public class WhiteboardController : MonoBehaviour 
 {
@@ -12,6 +13,10 @@ public class WhiteboardController : MonoBehaviour
 	public List<Lecture> Lectures{ get{ return lectures; } }
 	public Lecture SelectedLecture{ get{ return selectedLecture; } }
 	public int CurrentContentIndex{ get{ return currentContentIndex; } }
+
+    public UnityEvent OnLastLectureContent;
+
+    public UnityEvent OnFirstLectureContent;
 
 	public void Start()
     {
@@ -56,6 +61,10 @@ public class WhiteboardController : MonoBehaviour
         {
 			if (selectedLecture.Contents.Count > currentContentIndex + 1)
 				myRenderer.material.mainTexture = selectedLecture.Contents[++currentContentIndex];
+            else
+            {
+				OnLastLectureContent?.Invoke();
+            }
 		}
 	}
 
@@ -67,6 +76,10 @@ public class WhiteboardController : MonoBehaviour
         {
 			if (currentContentIndex > 0)
                 myRenderer.material.mainTexture = selectedLecture.Contents[--currentContentIndex];
+            else
+            {
+                OnFirstLectureContent?.Invoke();
+            }
 		}
 	}
 }
