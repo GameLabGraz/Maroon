@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -10,11 +9,12 @@ public class LPProperties : MonoBehaviour
     public float LaserIntensity = 1.0f;
     public float LaserWavelength = 680f;
 
-    public Color[] spectrumcolors = new Color[20];
 
-    private Color linearInterpolate(Color col1, Color col2, float interpolfactor)
+    public Color[] SpectrumColors = new Color[20];
+
+    private Color LinearInterpolate(Color col1, Color col2, float interpolFactor)
     {
-        return col1*(1-interpolfactor) + col2*(interpolfactor);
+        return col1*(1-interpolFactor) + col2*(interpolFactor);
     }
 
     public void SetLaserColor()
@@ -29,11 +29,10 @@ public class LPProperties : MonoBehaviour
         // 380-720nm
         wavelength = (wavelength - 380.0f) / 340.0f;
         wavelength = Mathf.Clamp(wavelength, 0.0f, 0.9999f);
-        // should set color of laser depending on its wavelength.
 
         List<Color> colors = new List<Color>();
 
-        colors.AddRange(spectrumcolors);
+        colors.AddRange(SpectrumColors);
 
         int toInterpolate = colors.Count - 1;
 
@@ -42,7 +41,7 @@ public class LPProperties : MonoBehaviour
 
         float interpolatePercent = interpolationFactor - firstColorIndex;
 
-        Color interpolatedColor = linearInterpolate(colors[firstColorIndex], colors[firstColorIndex + 1], interpolatePercent);
+        Color interpolatedColor = LinearInterpolate(colors[firstColorIndex], colors[firstColorIndex + 1], interpolatePercent);
 
         LaserColor = interpolatedColor;
         return;
@@ -56,7 +55,7 @@ public class LPProperties : MonoBehaviour
 
         OpticsSim os = FindObjectOfType<OpticsSim>();
 
-        return os.GetCauchy(currentLens.cauchyA, currentLens.cauchyB, LaserWavelength);
+        return os.GetCauchy(currentLens.CauchyA, currentLens.CauchyB, LaserWavelength);
     }
 
 }

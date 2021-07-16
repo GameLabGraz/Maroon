@@ -8,7 +8,7 @@ public class LaserRenderer : MonoBehaviour
 {
 
     [SerializeField]
-    private LineRenderer[] _lineRenderers = new LineRenderer[100];
+    private LineRenderer[] _lineRenderers = new LineRenderer[500];
     public Material LaserMaterial;
     private List<OpticsSegment> _laserSegments;
 
@@ -16,48 +16,32 @@ public class LaserRenderer : MonoBehaviour
 
     [SerializeField]
     private float _laserWidth = 0.003f;
-    /* values to change */
-    [SerializeField]
-    [Range(1.0f, 10f)]
-    private float _lensOuterRI = 1.3f;
-    [SerializeField]
-    [Range(0.0f, 10f)]
-    private float _lensInnerRI = 0.0f;
 
     public QuantityFloat CauchyA;
-    
     public QuantityFloat CauchyB;
 
-    public QuantityFloat lensradius1;
-    public QuantityFloat lensradius2;
-    public QuantityFloat lensrad3;
+    public QuantityFloat LensRadius1;
+    public QuantityFloat LensRadius2;
+    public QuantityFloat LensDiameter;
 
     public OpticsLens CurrentLens;
 
-    [SerializeField]
-    [Range(0.0f, 1.0f)]
-    private float _reflectionVsRefraction = 0.3f;
+    private LensMeshGenerator _lensMeshGenerator;
 
-    public QuantityFloat refl_vs_refr;
+    public QuantityFloat ReflectionVsRefraction;
 
     [SerializeField]
     [Range(0.0f, 0.99f)]
     private float _loss = 0.9f;
-
     private GameObject _thisLens;
 
     void Start()
     {
         // add line renderers to parent object
-        //find all laserpointers we wanna use
-
         _laserSegments = new List<OpticsSegment>();
         _thisLens = GameObject.FindGameObjectWithTag("Lens");
+        _lensMeshGenerator = _thisLens.GetComponent<LensMeshGenerator>();
 
-        //foreach (Transform child in transform)// destroy all lasers that belong to the lens, to make everything work in editmode
-        //{
-        //    DestroyImmediate(child.gameObject);
-        //}
 
         for (int i = 0; i < _lineRenderers.Length; i++)
         {
@@ -76,42 +60,40 @@ public class LaserRenderer : MonoBehaviour
 
     void Update()
     {
-        //update what the renderers showed, and change if it differs now.
-        if(_laserSegments == null)
+        //update what the renderers showed, and change if it differs now
+        if (_laserSegments == null)
         {
             _laserSegments = new List<OpticsSegment>();
         }
         _laserSegments.Clear();
 
         //get all laserpointers in scene 
-
+        //could also be done by tracking deleted and added lasers
         LaserPointers = GameObject.FindGameObjectsWithTag("LaserPointer");
-        GameObject opLens = GameObject.FindGameObjectWithTag("Lens");
-        OpticsLens currLens = opLens.GetComponent<LensMeshGenerator>().thisLensLens; // todo this chould be changed, not pretty
+        OpticsLens currLens = _lensMeshGenerator.ThisLensLens;
 
-        lensradius1.Value = currLens.leftCircle.radius;
-        lensradius2.Value = currLens.rightCircle.radius;
-        currLens.radius = opLens.GetComponent<LensMeshGenerator>().lensRadius;
-        currLens.cauchyA = CauchyA;
-        currLens.cauchyB = CauchyB;
-        CurrentLens = currLens;
+        LensRadius1.Value = currLens.LeftCircle.Radius;
+        LensRadius2.Value = currLens.RightCircle.Radius;
+        currLens.Radius = _lensMeshGenerator.LensRadius;
+        currLens.CauchyA = CauchyA;
+        currLens.CauchyB = CauchyB;
+        CurrentLens = currLens; //make current lens struct accessible to other scripts
 
-        lensrad3.Value = 0.0f;
-        (float left, float right ) = opLens.GetComponent<OpticsSim>().GetBoundsHit(currLens);
-        lensrad3.Value = (right - left) + opLens.GetComponent<LensMeshGenerator>().radcalc.Value - opLens.GetComponent<LensMeshGenerator>().radcalc2.Value;
+        LensDiameter.Value = 0.0f;
+        (float left, float right ) = _thisLens.GetComponent<OpticsSim>().GetBoundsHit(currLens);
+        LensDiameter.Value = (right - left) + _thisLens.GetComponent<LensMeshGenerator>().RadiusInput1.Value - _thisLens.GetComponent<LensMeshGenerator>().RadiusInput2.Value;
 
-        foreach (var laserp in LaserPointers)
+        foreach (var laserPointer in LaserPointers)
         {
-            Vector3 relLaserPos = gameObject.transform.InverseTransformPoint(laserp.transform.position);
-            Vector3 relLaserDir = gameObject.transform.InverseTransformDirection(laserp.transform.up);
-            var lpprop = laserp.GetComponent<LPProperties>();
+            Vector3 relLaserPos = gameObject.transform.InverseTransformPoint(laserPointer.transform.position);
+            Vector3 relLaserDir = gameObject.transform.InverseTransformDirection(laserPointer.transform.up);
+            var laserPointerProperties = laserPointer.GetComponent<LPProperties>();
 
-            float intensity = lpprop.LaserIntensity;
-            float wavelength = lpprop.LaserWavelength;
-            //todo add laserpointer properties
+            float intensity = laserPointerProperties.LaserIntensity;
+            float wavelength = laserPointerProperties.LaserWavelength;
 
-            OpticsRay laserRay = new OpticsRay(new Vector2(relLaserPos.x, relLaserPos.z), new Vector2(relLaserDir.x, relLaserDir.z), intensity, lpprop.LaserColor, wavelength);
-            opLens.GetComponent<OpticsSim>().CalculateHitsRecursive(laserRay, currLens, true, ref _laserSegments, _loss, refl_vs_refr);
+            OpticsRay laserRay = new OpticsRay(new Vector2(relLaserPos.x, relLaserPos.z), new Vector2(relLaserDir.x, relLaserDir.z), intensity, laserPointerProperties.LaserColor, wavelength);
+            _thisLens.GetComponent<OpticsSim>().CalculateHitsRecursive(laserRay, currLens, true, ref _laserSegments, _loss, ReflectionVsRefraction);
 
         }
         UpdateLasers();
@@ -137,13 +119,10 @@ public class LaserRenderer : MonoBehaviour
 
     void UpdateLR(OpticsSegment opticsSeg, LineRenderer Lr, bool useIntensity = true)
     {
-        Lr.SetPosition(0, new Vector3( opticsSeg.p1.x, 0.0f, opticsSeg.p1.y)*_thisLens.transform.localScale.x + _thisLens.transform.position); // mby works with vec2? 
-        Lr.SetPosition(1, new Vector3( opticsSeg.p2.x, 0.0f, opticsSeg.p2.y)*_thisLens.transform.localScale.x + _thisLens.transform.position);
-        if(useIntensity) Lr.material.SetColor("_TintColor", new Color(opticsSeg.segmentColor.r, opticsSeg.segmentColor.g, opticsSeg.segmentColor.b, opticsSeg.intensity));
+        Lr.SetPosition(0, new Vector3( opticsSeg.P1.x, 0.0f, opticsSeg.P1.y)*_thisLens.transform.localScale.x + _thisLens.transform.position); 
+        Lr.SetPosition(1, new Vector3( opticsSeg.P2.x, 0.0f, opticsSeg.P2.y)*_thisLens.transform.localScale.x + _thisLens.transform.position);
+        if(useIntensity) Lr.material.SetColor("_TintColor", new Color(opticsSeg.SegmentColor.r, opticsSeg.SegmentColor.g, opticsSeg.SegmentColor.b, opticsSeg.Intensity));
     }
-
-
-
 
     public void SetCauchyVariables(int dropdownSelection) //todo maybe move this in extra class
     {
@@ -151,24 +130,24 @@ public class LaserRenderer : MonoBehaviour
         if (dropdownSelection == 0) return;
         dropdownSelection--;
 
-        List<float> cauchy_As = new List<float>();
-        List<float> cauchy_Bs = new List<float>();
+        List<float> cauchyAs = new List<float>();
+        List<float> cauchyBs = new List<float>();
 
-        cauchy_As.Add(1.7387f);
-        cauchy_As.Add(1.5111f);
-        cauchy_As.Add(1.4767f);
-        cauchy_As.Add(1.3244f);
-        cauchy_As.Add(2.3818f);
-        cauchy_As.Add(1.7522f);
+        cauchyAs.Add(1.7387f);
+        cauchyAs.Add(1.5111f);
+        cauchyAs.Add(1.4767f);
+        cauchyAs.Add(1.3244f);
+        cauchyAs.Add(2.3818f);
+        cauchyAs.Add(1.7522f);
 
-        cauchy_Bs.Add(0.0159f);
-        cauchy_Bs.Add(0.00425f);
-        cauchy_Bs.Add(0.0048f);
-        cauchy_Bs.Add(0.0031f);
-        cauchy_Bs.Add(0.0121f);
-        cauchy_Bs.Add(0.0055f);
+        cauchyBs.Add(0.0159f);
+        cauchyBs.Add(0.00425f);
+        cauchyBs.Add(0.0048f);
+        cauchyBs.Add(0.0031f);
+        cauchyBs.Add(0.0121f);
+        cauchyBs.Add(0.0055f);
 
-        CauchyA.Value = cauchy_As[dropdownSelection];
-        CauchyB.Value = cauchy_Bs[dropdownSelection];
+        CauchyA.Value = cauchyAs[dropdownSelection];
+        CauchyB.Value = cauchyBs[dropdownSelection];
     }
 }

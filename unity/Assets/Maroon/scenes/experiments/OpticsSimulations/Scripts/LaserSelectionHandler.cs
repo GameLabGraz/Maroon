@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Maroon.Physics;
 using Maroon.UI;
 using GEAR.Localization;
@@ -13,10 +11,10 @@ public class LaserSelectionHandler : MonoBehaviour
     public GameObject LaserControlPanel;
     public GameObject LaserPointerPrefab;
 
-    public QuantityFloat activeLaserIntensity;
-    public QuantityFloat activeLaserWavelength;
+    public QuantityFloat ActiveLaserIntensity;
+    public QuantityFloat ActiveLaserWavelength;
 
-    public QuantityFloat activeLaserRefractiveIndex;
+    public QuantityFloat ActiveLaserRefractiveIndex;
 
     private int _numLaserPointers = 0;
     public int MaxLasers = 100;
@@ -63,8 +61,8 @@ public class LaserSelectionHandler : MonoBehaviour
 
     public void SetActiveIntensityAndWavelength(float intensity, float wavelength) 
     {
-        activeLaserIntensity.Value = intensity;
-        activeLaserWavelength.Value = wavelength;
+        ActiveLaserIntensity.Value = intensity;
+        ActiveLaserWavelength.Value = wavelength;
     }
 
 
@@ -236,11 +234,11 @@ public class LaserSelectionHandler : MonoBehaviour
                 }
             }
         }
-        SetActiveIntensity(activeLaserIntensity);
-        SetActiveWavelength(activeLaserWavelength);
+        SetActiveIntensity(ActiveLaserIntensity);
+        SetActiveWavelength(ActiveLaserWavelength);
         if(CurrActiveLaser!= null)
         {
-            activeLaserRefractiveIndex.Value = CurrActiveLaser.GetComponent<LPProperties>().GetCauchyForCurrentWavelength();
+            ActiveLaserRefractiveIndex.Value = CurrActiveLaser.GetComponent<LPProperties>().GetCauchyForCurrentWavelength();
         }
     }
 }
