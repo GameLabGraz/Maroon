@@ -121,7 +121,7 @@ public class DragLaserObject : MonoBehaviour
 
     public void MakeActive()
     {
-        _laserHandler.SetActiveIntensityAndWavelength(_laserProperties.laserIntensity, _laserProperties.laserWavelength);
+        _laserHandler.SetActiveIntensityAndWavelength(_laserProperties.LaserIntensity, _laserProperties.LaserWavelength);
         _laserMat.color = _activeColor;
         _handleRenderer.enabled = true;
         _handleCollider.enabled = true;

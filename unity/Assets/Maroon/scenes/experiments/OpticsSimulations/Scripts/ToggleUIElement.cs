@@ -1,17 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ToggleUIElement : MonoBehaviour
 {
     [SerializeField]
     public GameObject UiElement;
-    private bool isactive = true;
+    private bool _isActive = true;
 
 
-    public void toggleElement()
+    public void ToggleElement()
     {
-        isactive = !isactive;
-        UiElement.active = isactive;
+        _isActive = !_isActive;
+        UiElement.SetActive(_isActive);
     }
 }

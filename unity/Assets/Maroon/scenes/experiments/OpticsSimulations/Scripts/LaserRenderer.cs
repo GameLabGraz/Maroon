@@ -92,12 +92,12 @@ public class LaserRenderer : MonoBehaviour
         lensradius1.Value = currLens.leftCircle.radius;
         lensradius2.Value = currLens.rightCircle.radius;
         currLens.radius = opLens.GetComponent<LensMeshGenerator>().lensRadius;
-        currLens.innerRefractiveidx = CauchyA;
-        currLens.outerRefractiveidx = CauchyB;
+        currLens.cauchyA = CauchyA;
+        currLens.cauchyB = CauchyB;
         CurrentLens = currLens;
 
         lensrad3.Value = 0.0f;
-        (float left, float right ) = opLens.GetComponent<OpticsSim>().getBoundsHit(currLens);
+        (float left, float right ) = opLens.GetComponent<OpticsSim>().GetBoundsHit(currLens);
         lensrad3.Value = (right - left) + opLens.GetComponent<LensMeshGenerator>().radcalc.Value - opLens.GetComponent<LensMeshGenerator>().radcalc2.Value;
 
         foreach (var laserp in LaserPointers)
@@ -106,12 +106,12 @@ public class LaserRenderer : MonoBehaviour
             Vector3 relLaserDir = gameObject.transform.InverseTransformDirection(laserp.transform.up);
             var lpprop = laserp.GetComponent<LPProperties>();
 
-            float intensity = lpprop.laserIntensity;
-            float wavelength = lpprop.laserWavelength;
+            float intensity = lpprop.LaserIntensity;
+            float wavelength = lpprop.LaserWavelength;
             //todo add laserpointer properties
 
-            OpticsRay laserRay = new OpticsRay(new Vector2(relLaserPos.x, relLaserPos.z), new Vector2(relLaserDir.x, relLaserDir.z), intensity, lpprop.laserColor, wavelength);
-            opLens.GetComponent<OpticsSim>().calcHitsRecursive(laserRay, currLens, true, ref _laserSegments, _loss, refl_vs_refr);
+            OpticsRay laserRay = new OpticsRay(new Vector2(relLaserPos.x, relLaserPos.z), new Vector2(relLaserDir.x, relLaserDir.z), intensity, lpprop.LaserColor, wavelength);
+            opLens.GetComponent<OpticsSim>().CalculateHitsRecursive(laserRay, currLens, true, ref _laserSegments, _loss, refl_vs_refr);
 
         }
         UpdateLasers();

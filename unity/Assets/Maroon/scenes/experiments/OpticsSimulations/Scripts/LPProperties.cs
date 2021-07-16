@@ -6,9 +6,9 @@ using UnityEngine;
 public class LPProperties : MonoBehaviour
 {
 
-    public Color laserColor = Color.red;
-    public float laserIntensity = 1.0f;
-    public float laserWavelength = 680f;
+    public Color LaserColor = Color.red;
+    public float LaserIntensity = 1.0f;
+    public float LaserWavelength = 680f;
 
     public Color[] spectrumcolors = new Color[20];
 
@@ -17,21 +17,12 @@ public class LPProperties : MonoBehaviour
         return col1*(1-interpolfactor) + col2*(interpolfactor);
     }
 
-    public void setLaserColor()
+    public void SetLaserColor()
     {
-        setLaserColor(laserWavelength);
+        SetLaserColor(LaserWavelength);
     }
 
-    public float getCauchyForCurrentWavelength()
-    {
-
-        OpticsLens currLens = (OpticsLens) FindObjectOfType<LaserRenderer>().CurrentLens;
-
-        OpticsSim os = FindObjectOfType<OpticsSim>();
-
-        return os.getCauchy(currLens.innerRefractiveidx, currLens.outerRefractiveidx, laserWavelength);
-    }
-    public void setLaserColor(float wavelength)
+    public void SetLaserColor(float wavelength)
     {
         //wavelength between 0 and 1
         //float wavelength2 = (wavelength - 400.0f) / 300.0f;
@@ -40,20 +31,32 @@ public class LPProperties : MonoBehaviour
         wavelength = Mathf.Clamp(wavelength, 0.0f, 0.9999f);
         // should set color of laser depending on its wavelength.
 
-        List<Color> Colors = new List<Color>();
+        List<Color> colors = new List<Color>();
 
-        Colors.AddRange(spectrumcolors);
+        colors.AddRange(spectrumcolors);
 
-        int toInterpolate = Colors.Count - 1;
+        int toInterpolate = colors.Count - 1;
 
-        float interpolfactor = wavelength * toInterpolate;
-        int firstintcolor = (int) Mathf.Floor(interpolfactor);
+        float interpolationFactor = wavelength * toInterpolate;
+        int firstColorIndex = (int)Mathf.Floor(interpolationFactor);
 
-        float tointerpol = interpolfactor - firstintcolor;
+        float interpolatePercent = interpolationFactor - firstColorIndex;
 
-        Color intpold = linearInterpolate(Colors[firstintcolor], Colors[firstintcolor + 1], tointerpol);
+        Color interpolatedColor = linearInterpolate(colors[firstColorIndex], colors[firstColorIndex + 1], interpolatePercent);
 
-        laserColor = intpold;
+        LaserColor = interpolatedColor;
         return;
     }
+
+
+    public float GetCauchyForCurrentWavelength()
+    {
+
+        OpticsLens currentLens = FindObjectOfType<LaserRenderer>().CurrentLens;
+
+        OpticsSim os = FindObjectOfType<OpticsSim>();
+
+        return os.GetCauchy(currentLens.cauchyA, currentLens.cauchyB, LaserWavelength);
+    }
+
 }

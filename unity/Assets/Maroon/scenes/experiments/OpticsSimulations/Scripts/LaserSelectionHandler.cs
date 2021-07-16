@@ -73,7 +73,7 @@ public class LaserSelectionHandler : MonoBehaviour
         
         if(CurrActiveLaser != null)
         {
-            CurrActiveLaser.GetComponent<LPProperties>().laserIntensity = intensity;
+            CurrActiveLaser.GetComponent<LPProperties>().LaserIntensity = intensity;
         }
     }
     public void SetActiveWavelength(float wavelength)
@@ -81,7 +81,7 @@ public class LaserSelectionHandler : MonoBehaviour
 
         if (CurrActiveLaser != null)
         {
-            CurrActiveLaser.GetComponent<LPProperties>().laserWavelength = wavelength;
+            CurrActiveLaser.GetComponent<LPProperties>().LaserWavelength = wavelength;
         }
     }
     public GameObject[] GetAllLaserPointers()
@@ -124,9 +124,9 @@ public class LaserSelectionHandler : MonoBehaviour
         {
             var lpprefab = Instantiate(LaserPointerPrefab, startpoint + i * offset, LaserPointerPrefab.transform.rotation);
             var lpprops = lpprefab.GetComponent<LPProperties>();
-            lpprops.laserIntensity = intensity;
-            lpprops.laserWavelength = wavelength;
-            lpprops.setLaserColor();
+            lpprops.LaserIntensity = intensity;
+            lpprops.LaserWavelength = wavelength;
+            lpprops.SetLaserColor();
 
             Vector3 tofocalpoint = focalpoint - lpprefab.transform.position;  
             
@@ -204,7 +204,7 @@ public class LaserSelectionHandler : MonoBehaviour
         else
         {
             LaserControlPanel.SetActive(true);
-            CurrActiveLaser.GetComponent<LPProperties>().setLaserColor();
+            CurrActiveLaser.GetComponent<LPProperties>().SetLaserColor();
         }
 
         if(Input.GetMouseButtonDown(0))
@@ -240,7 +240,7 @@ public class LaserSelectionHandler : MonoBehaviour
         SetActiveWavelength(activeLaserWavelength);
         if(CurrActiveLaser!= null)
         {
-            activeLaserRefractiveIndex.Value = CurrActiveLaser.GetComponent<LPProperties>().getCauchyForCurrentWavelength();
+            activeLaserRefractiveIndex.Value = CurrActiveLaser.GetComponent<LPProperties>().GetCauchyForCurrentWavelength();
         }
     }
 }

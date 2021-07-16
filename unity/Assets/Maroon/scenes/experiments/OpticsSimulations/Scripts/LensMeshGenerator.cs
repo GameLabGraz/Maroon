@@ -1,21 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Maroon.Physics;
 
-//[ExecuteInEditMode]
 public class LensMeshGenerator : MonoBehaviour
 {
-    MeshFilter testmeshfilter;
+    private MeshFilter _meshFilter;
     public Vector3 offset_vec = new Vector3(1.0f, 0, 0);
     public QuantityFloat cylinderthickness;
-    private float cylinderthickness_old = 0.0f;
-    public float circradius = 3.0f;
+    private float _cylinderThicknessOld = 0.0f;
+    private float _circRadius = 3.0f;
+    private float _circRadius2 = 3.0f;
 
     public QuantityFloat radcalc;
 
     public QuantityFloat radcalc2;
-    private float circradius2 = 3.0f;
+    
     public QuantityFloat lensRadius;
     private float lensRadius_old;
 
@@ -66,11 +65,11 @@ public class LensMeshGenerator : MonoBehaviour
     {
         if(gameObject.GetComponent<MeshFilter>() != null)
         {
-            testmeshfilter = gameObject.GetComponent<MeshFilter>();
+            _meshFilter = gameObject.GetComponent<MeshFilter>();
         }
         else
         {
-            testmeshfilter = gameObject.AddComponent<MeshFilter>();
+            _meshFilter = gameObject.AddComponent<MeshFilter>();
         }
 
         if(gameObject.GetComponent<MeshRenderer>() == null)
@@ -319,8 +318,8 @@ public class LensMeshGenerator : MonoBehaviour
         toReturn.radius =  0.5f;
         toReturn.leftCircle.midpoint = new Vector2(-distance / 2.0f - offset - rad1, 0.0f);
         toReturn.rightCircle.midpoint = new Vector2(+distance / 2.0f - offset - rad2, 0.0f);
-        toReturn.innerRefractiveidx = 1.0f;
-        toReturn.outerRefractiveidx = 1.0f;
+        toReturn.cauchyA = 1.0f;
+        toReturn.cauchyB = 1.0f;
         toReturn.leftbound = 0.0f;
         toReturn.rightbound = 0.0f;
         return toReturn;
@@ -330,7 +329,7 @@ public class LensMeshGenerator : MonoBehaviour
     void Update()
     {
         //check for lens update.
-        if (Mathf.Approximately(radcalc, radcalc_old) && Mathf.Approximately(radcalc2, radcalc_old2) && Mathf.Approximately(cylinderthickness, cylinderthickness_old) && Mathf.Approximately(lensRadius, lensRadius_old))
+        if (Mathf.Approximately(radcalc, radcalc_old) && Mathf.Approximately(radcalc2, radcalc_old2) && Mathf.Approximately(cylinderthickness, _cylinderThicknessOld) && Mathf.Approximately(lensRadius, lensRadius_old))
         {
             return;
         }
@@ -339,7 +338,7 @@ public class LensMeshGenerator : MonoBehaviour
             radcalc_old = radcalc;
             radcalc_old2 = radcalc2;
             lensRadius_old = lensRadius;
-            cylinderthickness_old = cylinderthickness;
+            _cylinderThicknessOld = cylinderthickness;
         }
         Mesh mymesh = new Mesh();
         // this makes the lens holder scale along with the lens
@@ -351,17 +350,17 @@ public class LensMeshGenerator : MonoBehaviour
 
         float radiuss = calcRadiusFromTopedge(radcalc*lensRadius, lensRadius);
         float radiuss2 = calcRadiusFromTopedge(radcalc2*lensRadius, lensRadius);
-        circradius = radiuss;
-        circradius2 = radiuss2;
+        _circRadius = radiuss;
+        _circRadius2 = radiuss2;
 
         thisLensLens = getOpticsLens(lensdist, averageoffset, radiuss, radiuss2);
 
-        float sectionangle = calcSectionAngle(circradius, lensRadius); //circradius
-        float sectionangle2 = calcSectionAngle(circradius2, lensRadius);
+        float sectionangle = calcSectionAngle(_circRadius, lensRadius); //circradius
+        float sectionangle2 = calcSectionAngle(_circRadius2, lensRadius);
 
 
-        var pts = getSectionPoints(sectionPoints, sectionangle, circradius, circradius); //circradiuss
-        var pts2 = getSectionPoints(sectionPoints, sectionangle2, circradius2, circradius2);
+        var pts = getSectionPoints(sectionPoints, sectionangle, _circRadius, _circRadius); //circradiuss
+        var pts2 = getSectionPoints(sectionPoints, sectionangle2, _circRadius2, _circRadius2);
 
         // first vertex is 0 0 0 
         var domeL = getDomeVertices(pts, domeSegments);
@@ -378,8 +377,8 @@ public class LensMeshGenerator : MonoBehaviour
         float leftlensdisplacement = -lensdist / 2.0f - averageoffset;
         float rightlensdisplacement = +lensdist / 2.0f - averageoffset;
 
-        Vector3 leftlensmidpoint = new Vector3(leftlensdisplacement - circradius, 0.0f, 0.0f);
-        Vector3 rightlensmidpoint = new Vector3(rightlensdisplacement - circradius2, 0.0f, 0.0f);
+        Vector3 leftlensmidpoint = new Vector3(leftlensdisplacement - _circRadius, 0.0f, 0.0f);
+        Vector3 rightlensmidpoint = new Vector3(rightlensdisplacement - _circRadius2, 0.0f, 0.0f);
         List<Vector3> normals1 = new List<Vector3>(verts.Count);
         List<Vector3> normals2 = new List<Vector3>(verts.Count);
 
@@ -471,15 +470,15 @@ public class LensMeshGenerator : MonoBehaviour
         mymesh.SetVertices(lensmeshverts);
         mymesh.SetTriangles(lensmeshtris, 0);
         mymesh.SetNormals(lensmeshnormals);
-        if(testmeshfilter == null) // not particularly beautiful, but it works
+        if(_meshFilter == null) // not particularly beautiful, but it works
         {
             //add mesh filter if not added already
-            testmeshfilter = gameObject.GetComponent<MeshFilter>();
+            _meshFilter = gameObject.GetComponent<MeshFilter>();
 
         }
         else
         {
-            testmeshfilter.mesh = mymesh;
+            _meshFilter.mesh = mymesh;
             mymesh.RecalculateNormals();
         }
     }

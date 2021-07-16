@@ -12,7 +12,7 @@ using Maroon.UI;
 [RequireComponent(typeof(QuantityPropertyView))]
 public class SliderBackgroundImage : MonoBehaviour
 {
-    [SerializeField] private Sprite imageSource;
+    [SerializeField] private Sprite _imageSource;
 
     public void UpdateSliderBackgroundImage()
     {
@@ -25,9 +25,7 @@ public class SliderBackgroundImage : MonoBehaviour
         var slider = gameObject.GetComponentInChildren<Slider>();
         var backgroundImage = slider.transform.Find("Background").GetComponent<UnityEngine.UI.Image>();
         var fillImage = slider.transform.Find("Fill Area").transform.Find("Fill").GetComponent<UnityEngine.UI.Image>();
-        //var handleImage = slider.transform.Find("Handle Slide Area").transform.Find("Handle").GetComponent<UnityEngine.UI.Image>();
-        // -> set color of handle accordingly? maybe.
-        fillImage.color = new Color(1, 1, 1, 0); //white, but transparent
-        backgroundImage.sprite = imageSource;
+        fillImage.color = new Color(1, 1, 1, 0); //transparent
+        backgroundImage.sprite = _imageSource;
     }
 }
