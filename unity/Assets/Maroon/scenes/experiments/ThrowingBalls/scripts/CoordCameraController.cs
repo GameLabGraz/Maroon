@@ -5,8 +5,8 @@ using UnityEngine;
 public class CoordCameraController : MonoBehaviour, IResetObject
 {
     [Header("Movement Settings")]
-    [SerializeField] private float movementSpeed = 100f;
-    [SerializeField] private float rotationSpeed = 100f;
+    [SerializeField] private float movementSpeed = 0.5f;
+    [SerializeField] private float rotationSpeed = 150f;
     [SerializeField] private float zoomSpeed = 5f;
 
     [SerializeField] Transform minPosition;
@@ -19,6 +19,7 @@ public class CoordCameraController : MonoBehaviour, IResetObject
     private Quaternion _origRot;
 
     [SerializeField] private Transform target;
+    [SerializeField] private bool fixCameraAtTarget = true;
 
     private void Awake()
     {
@@ -29,14 +30,44 @@ public class CoordCameraController : MonoBehaviour, IResetObject
     }
     private void LateUpdate()
     {
-        transform.LookAt(target);
-        
+        //transform.LookAt(target);
+
         // Camera Rotation
         if (Input.GetButton("Fire2"))
         {
+            /*
+            var pos = _camera.ScreenToViewportPoint(Input.mousePosition - _mouseOrigin);
+            transform.RotateAround(transform.position, transform.right, -pos.y * rotationSpeed);
+            transform.RotateAround(transform.position, Vector3.up, pos.x * rotationSpeed);
+            */
+
+            var pos = _camera.ScreenToViewportPoint(_mouseOrigin - Input.mousePosition);
+            var move = new Vector3(pos.x * movementSpeed, pos.y * movementSpeed, 0);
+            if ((maxPosition.position.x > pos.x || maxPosition.position.y > pos.y) && (minPosition.position.x < pos.x || minPosition.position.y < pos.y))
+            {
+                transform.Translate(move);
+                transform.position = ClampCamPosition(transform.position);
+            }
+            
+        }
+
+        // Camera Rotation
+        if (Input.GetButton("Fire1"))
+        {
+            if (fixCameraAtTarget)
+            {
+                transform.LookAt(target);
+                fixCameraAtTarget = false;
+            }
+                
+
             var pos = _camera.ScreenToViewportPoint(Input.mousePosition - _mouseOrigin);
             transform.RotateAround(target.position, transform.right, -pos.y * rotationSpeed);
             transform.RotateAround(target.position, Vector3.up, pos.x * rotationSpeed);
+        }
+        else
+        {
+            fixCameraAtTarget = true;
         }
 
         // Camera Zoom

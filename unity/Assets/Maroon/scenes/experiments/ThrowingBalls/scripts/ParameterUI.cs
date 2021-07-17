@@ -3,9 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Maroon.UI;
+using ObjectsInUse;
+
+namespace ObjectsInUse
+{
+    public enum ParticleObject
+    {
+        Default,
+        Ball,
+        Satellite
+    }
+}
 
 public class ParameterUI : MonoBehaviour, IResetObject
 {
+    private ParticleObject particle_in_use_ = ParticleObject.Default;
+
     private static ParameterUI _instance;
     private DialogueManager _dialogueManager;
 
@@ -106,6 +119,7 @@ public class ParameterUI : MonoBehaviour, IResetObject
     {
         if (mass_ <= 0)
         {
+            showError("Mass can not be negativ or equal to 0. Mass is set to 1");
             mass_ = 1f;
             if_mass.text = "1";
         }
@@ -137,16 +151,19 @@ public class ParameterUI : MonoBehaviour, IResetObject
     {
         if (t0_ < 0)
         {
+            showError("t0 can not be a negativ value. t0 is set to 0");
             t0_ = 0f;
             if_t0.text = "0";
         }
         if (deltat_ <= 0)
         {
+            showError("Delta t can not be negativ or equal to 0. Delta t is set to 1");
             deltat_ = 1f;
             if_deltat.text = "1";
         }     
         if (steps_ <= 0)
         {
+            showError("Step size can not be negativ or equal to 0. Step size is set to 1");
             steps_ = 1f;
             if_steps.text = "1";
         }        
@@ -210,14 +227,17 @@ public class ParameterUI : MonoBehaviour, IResetObject
             case 0:
                 loadDefault();
                 dropdown.SetValueWithoutNotify(0);
+                particle_in_use_ = ParticleObject.Default;
                 break;
             case 1:
                 loadSatellite();
                 dropdown.SetValueWithoutNotify(1);
+                particle_in_use_ = ParticleObject.Satellite;
                 break;
             case 2:
                 loadBallInTheWind();
                 dropdown.SetValueWithoutNotify(2);
+                particle_in_use_ = ParticleObject.Ball;
                 break;
             default:
                 break;
@@ -339,7 +359,12 @@ public class ParameterUI : MonoBehaviour, IResetObject
 
         _dialogueManager.ShowMessage(message);
     }
-    
+
+    public ParticleObject getObjectInUse()
+    {
+        return particle_in_use_;
+    }
+
     public static ParameterUI Instance
     {
         get
@@ -355,10 +380,16 @@ public class ParameterUI : MonoBehaviour, IResetObject
     /// </summary>
     public void ResetObject()
     {
-        Debug.Log("Reset Parameter UI\n");
-        Debug.Log("Reset Parameter UI - load default\n");
+        //Debug.Log("Reset Parameter UI\n");
+        //Debug.Log("Reset Parameter UI - load default\n");
         showLabelToggle_.isOn = true;
         showOriginGrid_.isOn = true;
+        particle_in_use_ = ParticleObject.Default;
         //loadDefault();
+    }
+
+    private void showError(string message)
+    {
+        displayMessage(message);
     }
 }

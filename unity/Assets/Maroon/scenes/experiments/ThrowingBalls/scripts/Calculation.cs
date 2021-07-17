@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using NCalc;
 using Maroon.UI;
+using ObjectsInUse;
 
 public class Calculation : PausableObject, IResetObject
 {
     private static Calculation _instance;
-
+    private ParticleObject particle_in_use_;
     private Vector3 point_;
     
     private bool stop_simulation_ = false;
@@ -16,6 +17,7 @@ public class Calculation : PausableObject, IResetObject
     private int current_update_rate_ = 0;
     private bool draw_trajectory_ = true;
     private bool first_it = true;
+    private bool initialized = false;
 
     private float x_max_ = System.Int64.MinValue;
     private float y_max_ = System.Int64.MinValue;
@@ -88,13 +90,16 @@ public class Calculation : PausableObject, IResetObject
     /// </summary>
     protected override void HandleFixedUpdate()
     {
+        if (!start_calc_plot_ && !initialized)
+            startCalcPlot();
+
         try
         {
             if (start_calc_plot_ && current_steps_ < steps_ && current_update_rate_ == 1)
             {
                 point_ = new Vector3(data_x_[current_steps_].y, data_z_[current_steps_].y, data_y_[current_steps_].y);
                 Vector3 mappedPoint = initCoordSystem.Instance.mapValues(point_);
-                initCoordSystem.Instance.drawPoint(mappedPoint, draw_trajectory_);
+                initCoordSystem.Instance.drawPoint(mappedPoint, draw_trajectory_, particle_in_use_);
                 
                 current_steps_++;
                 current_update_rate_ = 0;
@@ -111,7 +116,6 @@ public class Calculation : PausableObject, IResetObject
             }
         } catch
         {
-            Debug.Log("HandleFixedUpdate() exception\n");
             showError();
             SimulationController.Instance.ResetSimulation();
             start_calc_plot_ = false;
@@ -121,7 +125,6 @@ public class Calculation : PausableObject, IResetObject
     // GUI button
     public void startCalcPlot()
     {
-        Debug.Log("startCalcPlot()\n");
         stop_simulation_ = false;
         
         // load parameters from GUI
@@ -135,8 +138,12 @@ public class Calculation : PausableObject, IResetObject
             Vector3 border_max = new Vector3(x_max_, z_max_, y_max_);
             initCoordSystem.Instance.setRealCoordBorders(border_min, border_max);
 
+            initialized = true;
             start_calc_plot_ = true;
-            initCoordSystem.Instance.setParticleActive();
+
+            particle_in_use_ = ParameterUI.Instance.getObjectInUse();
+            Debug.Log(particle_in_use_);
+            initCoordSystem.Instance.setParticleActive(particle_in_use_);
         }
     }
 
@@ -287,10 +294,7 @@ public class Calculation : PausableObject, IResetObject
 
         calcForces();
         calcEnergies();
-
         addData();
-
-        debugCurrentValues();
 
         current_time_ += delta_t_;
     }
@@ -301,12 +305,7 @@ public class Calculation : PausableObject, IResetObject
         formula_fx_ = ParameterUI.Instance.getFunctionFx();
         formula_fy_ = ParameterUI.Instance.getFunctionFy();
         formula_fz_ = ParameterUI.Instance.getFunctionFz();
-        /*
-        mass_ = System.Convert.ToDouble(ParameterUI.Instance.getMass(), System.Globalization.CultureInfo.InvariantCulture);
-        current_time_ = System.Convert.ToDouble(ParameterUI.Instance.getTimes().x);
-        delta_t_ = System.Convert.ToDouble(ParameterUI.Instance.getTimes().y, System.Globalization.CultureInfo.InvariantCulture);
-        steps_ = System.Convert.ToDouble(ParameterUI.Instance.getTimes().z);
-        */
+        
         mass_ = (double) ParameterUI.Instance.getMass();
         current_time_ = (double) ParameterUI.Instance.getTimes().x;
         delta_t_ = (double) ParameterUI.Instance.getTimes().y;
@@ -325,14 +324,11 @@ public class Calculation : PausableObject, IResetObject
         current_w_ = 0;
 
         clearData();
-        debugGUIParameters();
     }
 
     // calculate min, max to set the borders of the coord-system
     private void calcMinMax()
     {
-        Debug.Log("Current x start: " + current_x_.ToString());
-
         for (int i = 0; i < steps_; i++)
         {
             calcValues();
@@ -469,10 +465,11 @@ public class Calculation : PausableObject, IResetObject
     /// </summary>
     public void ResetObject()
     {
-        Debug.Log("Reset Calculation\n");
+        //Debug.Log("Reset Calculation\n");
 
         stop_simulation_ = true;
         start_calc_plot_ = false;
+        initialized = false;
         first_it = true;
         draw_trajectory_ = true;
         current_steps_ = 0;

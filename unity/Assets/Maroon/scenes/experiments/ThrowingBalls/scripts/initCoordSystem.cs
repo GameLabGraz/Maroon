@@ -2,25 +2,33 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using ObjectsInUse;
 
 public class initCoordSystem : MonoBehaviour, IResetObject
 {
     private static initCoordSystem _instance;
+    
 
     [SerializeField] private Transform coordOrigin;
     [SerializeField] private GameObject trajectory;
     [SerializeField] private GameObject particle;
+    [SerializeField] private GameObject satellite;
+    [SerializeField] private GameObject soccer_ball;
 
     [SerializeField] private TMP_Text xLabel;
     [SerializeField] private TMP_Text yLabel;
     [SerializeField] private TMP_Text zLabel;
-    [SerializeField] private TMP_Text originLabel;
+    [SerializeField] private TMP_Text xLabel2;
+    [SerializeField] private TMP_Text yLabel2;
+    [SerializeField] private TMP_Text zLabel2;
 
     private string text;
-    private string text_x_ = "X ";
-    private string text_y_ = "Y ";
-    private string text_z_ = "Z ";
-    private string text_origin_ = "X: Y: Z: ";
+    private string text_x_ = "";
+    private string text_y_ = "";
+    private string text_z_ = "";
+    private string text_x2_ = "";
+    private string text_y2_ = "";
+    private string text_z2_ = "";
 
     private Vector3 coordOriginPosition;
     private Vector3 xMax;
@@ -32,7 +40,8 @@ public class initCoordSystem : MonoBehaviour, IResetObject
     private List<GameObject> objects_ = new List<GameObject>();
     private List<GameObject> origin_ = new List<GameObject>();
 
-    [SerializeField] private Vector3 scale_xyz = new Vector3(3.5f, 2.5f, 2.5f);
+    private Vector3 scale_xyz = new Vector3(4.5f, 3.5f, 3.5f);
+    //[SerializeField] private Vector3 scale_xyz = new Vector3(3.5f, 2.5f, 2.5f);
 
     [SerializeField] private Vector3 real_xyz_min = new Vector3(-30.0f, -30.0f, -30.0f);
     [SerializeField] private Vector3 real_xyz_max = new Vector3(30.0f, 30.0f, 30.0f);
@@ -45,8 +54,9 @@ public class initCoordSystem : MonoBehaviour, IResetObject
 
         trajectory.transform.localScale = scaleTrajectory;
         particle.transform.localScale = scaleParticle;
+        satellite.transform.localScale = scaleParticle;
 
-        drawAxis();
+        drawAxis(false); // set this to true if u want to display the coord-box
     }
 
     // Update is called once per frame
@@ -55,8 +65,7 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         
     }
 
-    //IEnumerator drawAxis()
-    void drawAxis()
+    void drawAxis(bool show_box)
     {
         Vector3 end;
         float origin_x = coordOrigin.position.x;
@@ -64,60 +73,62 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         float origin_z = coordOrigin.position.z;
         coordOriginPosition = new Vector3(origin_x, origin_y, origin_z);
 
-        // yield return new WaitForSeconds(1);
-
-        // draw x-axis
         end = new Vector3(origin_x + scale_xyz.x, origin_y, origin_z);
         xMax = end;
-        drawLine(coordOriginPosition, xMax);
-
-        // draw y-axis
         end = new Vector3(origin_x, origin_y + scale_xyz.y, origin_z);
         yMax = end;
-        drawLine(coordOriginPosition, yMax);
-
-        // draw x-axis
         end = new Vector3(origin_x, origin_y, origin_z + scale_xyz.z);
         zMax = end;
-        drawLine(coordOriginPosition, zMax);
 
-        // draw helper lines
-        Vector3 tmp;
-        Vector3 tmp2;
+        if (show_box)
+        {
+            // draw x-axis
+            drawLine(coordOriginPosition, xMax);
 
-        // x line
-        tmp = new Vector3(xMax.x, xMax.y, zMax.z);
-        drawHelperLine(zMax, tmp);
-        // 
-        tmp = new Vector3(xMax.x, yMax.y, xMax.z);
-        drawHelperLine(yMax, tmp);
-        //
-        tmp = new Vector3(xMax.x, yMax.y, zMax.z);
-        tmp2 = new Vector3(zMax.x, yMax.y, zMax.z);
-        drawHelperLine(tmp, tmp2);
+            // draw y-axis
+            drawLine(coordOriginPosition, yMax);
 
+            // draw x-axis
+            drawLine(coordOriginPosition, zMax);
 
-        // y lines
-        tmp = new Vector3(zMax.x, yMax.y, zMax.z);
-        drawHelperLine(zMax, tmp);
-        // 
-        tmp = new Vector3(xMax.x, origin_y, zMax.z);
-        tmp2 = new Vector3(xMax.x, yMax.y, zMax.z);
-        drawHelperLine(tmp, tmp2);
-        //
-        tmp = new Vector3(xMax.x, yMax.y, xMax.z);
-        drawHelperLine(xMax, tmp);
+            // draw helper lines
+            Vector3 tmp;
+            Vector3 tmp2;
 
-        // z line
-        tmp = new Vector3(xMax.x, xMax.y, zMax.z);
-        drawHelperLine(xMax, tmp);
-        //
-        tmp = new Vector3(xMax.x, yMax.y, xMax.z);
-        tmp2 = new Vector3(xMax.x, yMax.y, zMax.z);
-        drawHelperLine(tmp, tmp2);
-        //
-        tmp = new Vector3(origin_x, yMax.y, zMax.z);
-        drawHelperLine(yMax, tmp);
+            // x line
+            tmp = new Vector3(xMax.x, xMax.y, zMax.z);
+            drawHelperLine(zMax, tmp);
+            // 
+            tmp = new Vector3(xMax.x, yMax.y, xMax.z);
+            drawHelperLine(yMax, tmp);
+            //
+            tmp = new Vector3(xMax.x, yMax.y, zMax.z);
+            tmp2 = new Vector3(zMax.x, yMax.y, zMax.z);
+            drawHelperLine(tmp, tmp2);
+
+            // y lines
+            tmp = new Vector3(zMax.x, yMax.y, zMax.z);
+            drawHelperLine(zMax, tmp);
+            // 
+            tmp = new Vector3(xMax.x, origin_y, zMax.z);
+            tmp2 = new Vector3(xMax.x, yMax.y, zMax.z);
+            drawHelperLine(tmp, tmp2);
+            //
+            tmp = new Vector3(xMax.x, yMax.y, xMax.z);
+            drawHelperLine(xMax, tmp);
+
+            // z line
+            tmp = new Vector3(xMax.x, xMax.y, zMax.z);
+            drawHelperLine(xMax, tmp);
+            //
+            tmp = new Vector3(xMax.x, yMax.y, xMax.z);
+            tmp2 = new Vector3(xMax.x, yMax.y, zMax.z);
+            drawHelperLine(tmp, tmp2);
+            //
+            tmp = new Vector3(origin_x, yMax.y, zMax.z);
+            drawHelperLine(yMax, tmp);
+        }
+        
 
 
     }
@@ -183,12 +194,7 @@ public class initCoordSystem : MonoBehaviour, IResetObject
 
     public void setLabelOrigin(string text)
     {
-        originLabel.text = text;
-    }
-
-    public void setScaleXYZ(Vector3 scale)
-    {
-        scale_xyz = scale;
+        xLabel2.text = text;
     }
 
     // set real coord-values 
@@ -197,21 +203,24 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         real_xyz_min = min;
         real_xyz_max = max;
         
-        text_x_ = "X " + (real_xyz_max.x).ToString() + "m";
+        text_x_ = "X: " + (real_xyz_max.x).ToString() + "m";
         setLabelX(text_x_);
 
-        text_y_ = "Y " + (real_xyz_max.z).ToString() + "m";
+        text_y_ = "Y: " + (real_xyz_max.z).ToString() + "m";
         setLabelY(text_y_);
 
-        text_z_ = "Z " + (real_xyz_max.y).ToString() + "m";
+        text_z_ = "Z: " + (real_xyz_max.y).ToString() + "m";
         setLabelZ(text_z_);
 
-        text_origin_ = "X: " + (real_xyz_min.x).ToString() + " Y: " + (real_xyz_min.z).ToString() + " Z: " + (real_xyz_min.y).ToString();
-        setLabelOrigin(text_origin_);
+        text_x2_ = "X: " + (real_xyz_min.x).ToString() + "m";
+        text_y2_ = "Y: " + (real_xyz_min.z).ToString() + "m";
+        text_z2_ = "Z: " + (real_xyz_min.y).ToString() + "m";
+        xLabel2.text = text_x2_;
+        yLabel2.text = text_y2_;
+        zLabel2.text = text_z2_;
 
         border_values_set_ = true;
         drawOriginGrid(true);
-
     }
 
     // map real coord-values to unity-coord values
@@ -222,11 +231,7 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         tmp.x = scaleCoords(point.x, real_xyz_min.x, real_xyz_max.x, coordOriginPosition.x, xMax.x);
         tmp.y = scaleCoords(point.y, real_xyz_min.y, real_xyz_max.y, coordOriginPosition.y, yMax.y);
         tmp.z = scaleCoords(point.z, real_xyz_min.z, real_xyz_max.z, coordOriginPosition.z, zMax.z);
-        /*
-        Debug.Log("DEBUG MAP VALUES\nXold = " + (point.x).ToString() + " -> Xnew = " + (tmp.x).ToString() + "\n" +
-            "Yold = " + (point.y).ToString() + "->Ynew = " + (tmp.y).ToString() + "\n" +
-            "Zold = " + (point.z).ToString() + "->Znew = " + (tmp.z).ToString());
-        */
+        
         return tmp;
     }
 
@@ -237,11 +242,7 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         tmp.x = scaleCoordsBack(point.x, real_xyz_min.x, real_xyz_max.x, coordOriginPosition.x, xMax.x);
         tmp.y = scaleCoordsBack(point.y, real_xyz_min.y, real_xyz_max.y, coordOriginPosition.y, yMax.y);
         tmp.z = scaleCoordsBack(point.z, real_xyz_min.z, real_xyz_max.z, coordOriginPosition.z, zMax.z);
-        /*
-        Debug.Log("DEBUG MAP VALUES BACK\nXold = " + (point.x).ToString() + " -> Xnew = " + (tmp.x).ToString() + "\n" +
-            "Yold = " + (point.y).ToString() + "->Ynew = " + (tmp.y).ToString() + "\n" +
-            "Zold = " + (point.z).ToString() + "->Znew = " + (tmp.z).ToString());
-        */
+        
         return tmp;
     }
 
@@ -256,9 +257,23 @@ public class initCoordSystem : MonoBehaviour, IResetObject
     }
 
 
-    public void drawPoint(Vector3 point, bool draw_trajectory)
+    public void drawPoint(Vector3 point, bool draw_trajectory, ParticleObject particle_in_use_)
     {
-        particle.transform.position = point;
+        switch (particle_in_use_)
+        {
+            case ParticleObject.Default:
+                particle.transform.position = point;
+                break;
+            case ParticleObject.Ball:
+                soccer_ball.transform.position = point;
+                break;
+            case ParticleObject.Satellite:
+                satellite.transform.position = point;
+                break;
+            default:
+                particle.transform.position = point;
+                break;
+        }
 
         if (draw_trajectory)
         {
@@ -282,7 +297,7 @@ public class initCoordSystem : MonoBehaviour, IResetObject
     /// </summary>
     public void ResetObject()
     {
-        Debug.Log("Reset Coord System\n");
+        //Debug.Log("Reset Coord System\n");
 
         // deleting game objects
         foreach (GameObject trajectory in objects_)
@@ -296,23 +311,43 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         origin_.Clear();
 
         particle.SetActive(false);
+        satellite.SetActive(false);
+        soccer_ball.SetActive(false);
 
-        text_x_ = "X ";
-        text_y_ = "Y ";
-        text_z_ = "Z ";
-        text_origin_ = "X: Y: Z: ";
+        text_x_ = "";
+        text_y_ = "";
+        text_z_ = "";
+        text_x2_ = "";
+        text_y2_ = "";
+        text_z2_ = "";
 
         setLabelX(text_x_);
         setLabelY(text_y_);
         setLabelZ(text_z_);
-        setLabelOrigin(text_origin_);
+        xLabel2.text = "";
+        yLabel2.text = "";
+        zLabel2.text = "";
 
         border_values_set_ = false;
     }
 
-    public void setParticleActive()
+    public void setParticleActive(ParticleObject particle_in_use_)
     {
-        particle.SetActive(true);
+        switch (particle_in_use_)
+        {
+            case ParticleObject.Default:
+                particle.SetActive(true);
+                break;
+            case ParticleObject.Ball:
+                soccer_ball.SetActive(true);
+                break;
+            case ParticleObject.Satellite:
+                satellite.SetActive(true);
+                break;
+            default:
+                particle.SetActive(true);
+                break;
+        }
     }
 
     public void showLabels(bool show)
@@ -322,14 +357,18 @@ public class initCoordSystem : MonoBehaviour, IResetObject
             setLabelX(text_x_);
             setLabelY(text_y_);
             setLabelZ(text_z_);
-            setLabelOrigin(text_origin_);
+            xLabel2.text = text_x2_;
+            yLabel2.text = text_y2_;
+            zLabel2.text = text_z2_;
         }
         else
         {
             setLabelX("");
             setLabelY("");
             setLabelZ("");
-            setLabelOrigin("");
+            xLabel2.text = "";
+            yLabel2.text = "";
+            zLabel2.text = "";
         }
     }
 
@@ -337,7 +376,7 @@ public class initCoordSystem : MonoBehaviour, IResetObject
     {
         if (draw && border_values_set_)
         {
-            Debug.Log("Draw Grid");
+            //Debug.Log("Draw Grid");
 
             Vector3 start;
             Vector3 end;
@@ -346,20 +385,27 @@ public class initCoordSystem : MonoBehaviour, IResetObject
             start = new Vector3(real_xyz_min.x, 0, 0);
             end = new Vector3(real_xyz_max.x, 0, 0);
             drawOrigin(mapValues(start), mapValues(end));
+            end = new Vector3(real_xyz_max.x + 0.5f, 0, 0);
+            xLabel.transform.position = mapValues(end);
+            xLabel2.transform.position = mapValues(start);
 
             // y line
-            start = new Vector3(0, real_xyz_min.y, 0);
-            end = new Vector3(0, real_xyz_max.y, 0);
-            drawOrigin(mapValues(start), mapValues(end));
-
-            // z line
             start = new Vector3(0, 0, real_xyz_min.z);
             end = new Vector3(0, 0, real_xyz_max.z);
             drawOrigin(mapValues(start), mapValues(end));
+            yLabel.transform.position = mapValues(end);
+            yLabel2.transform.position = mapValues(start);
+
+            // z line
+            start = new Vector3(0, real_xyz_min.y, 0);
+            end = new Vector3(0, real_xyz_max.y, 0);
+            drawOrigin(mapValues(start), mapValues(end));
+            zLabel.transform.position = mapValues(end);
+            zLabel2.transform.position = mapValues(start);
         }
         else
         {
-            Debug.Log("Clear Grid");
+            //Debug.Log("Clear Grid");
             // deleting origin lines
             foreach (GameObject line in origin_)
                 Destroy(line);
