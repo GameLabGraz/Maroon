@@ -172,8 +172,6 @@ public class LaserSelectionHandler : MonoBehaviour
     public void SetLaserArrangements(int arr)
     {
 
-
-        Debug.Log("SetlaserArrangements" + arr);
         if(!(arr == 0))
         {
             RemoveAllLaserPointers();
