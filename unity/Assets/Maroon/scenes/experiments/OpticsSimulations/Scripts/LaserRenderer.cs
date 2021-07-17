@@ -140,12 +140,23 @@ public class LaserRenderer : MonoBehaviour
         cauchyAs.Add(2.3818f);
         cauchyAs.Add(1.7522f);
 
+        cauchyAs.Add(1.5220f);
+        cauchyAs.Add(1.7280f);
+        cauchyAs.Add(1.4580f);
+        cauchyAs.Add(1.5046f);
+
         cauchyBs.Add(0.0159f);
         cauchyBs.Add(0.00425f);
         cauchyBs.Add(0.0048f);
         cauchyBs.Add(0.0031f);
         cauchyBs.Add(0.0121f);
         cauchyBs.Add(0.0055f);
+
+        cauchyBs.Add(0.00459f);
+        cauchyBs.Add(0.01342f);
+        cauchyBs.Add(0.00354f);
+        cauchyBs.Add(0.00420f);
+
 
         CauchyA.Value = cauchyAs[dropdownSelection];
         CauchyB.Value = cauchyBs[dropdownSelection];
