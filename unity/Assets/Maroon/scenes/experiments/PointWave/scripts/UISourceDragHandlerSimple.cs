@@ -1,9 +1,7 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
-using Vector3 = UnityEngine.Vector3;
 
-public class UISourceDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
+public class UISourceDragHandleSimple : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
     [Header("General Settings")]
     public Canvas parentCanvas;
@@ -12,56 +10,46 @@ public class UISourceDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDrag
     [Tooltip("The object which is set as the new child, if empty the generated Object will be used as childObject.")]
     public GameObject childObject = null;
     public bool resetRotation = true;
-    
+
     [Header("Other Affected GameObjects")]
     public GameObject changeLayerObject;
-    
-    private Vector3 _initialPosition;
-    private Vector3 _initialMousePosition;
 
-    private bool _slowlyReturnToOrigin = false;
-    private Vector3 _returnDirection;
-    private float _time;
-    
-    private void Start()
+    private GameObject _item;
+    private Transform _parent;
+
+    protected void Start()
     {
         if (childObject == null)
             childObject = generatedObject;
+
+        _parent = transform.parent;
     }
 
-    private void Update()
-    {
-        if (_slowlyReturnToOrigin)
-        {
-            transform.position += Time.deltaTime * _returnDirection / returnTime;
-            _time += Time.deltaTime;
-
-            if (_time >= returnTime)
-            {
-                transform.position = _initialPosition;
-                _slowlyReturnToOrigin = false;
-            }
-        }
-    }
-    
     public void OnBeginDrag(PointerEventData eventData)
     {
-        // Debug.Log("OnBegin Drag: " + changeLayerObject);
-        _initialPosition = transform.position;
+        Debug.Log("OnBeginDrag");
+        _item = Instantiate(gameObject, parentCanvas.transform);
+        var recTransformOrig = gameObject.GetComponent<RectTransform>();
+        var recTransform = _item.GetComponent<RectTransform>();
+
+        recTransform.sizeDelta = recTransformOrig.sizeDelta;
+        recTransform.localScale = recTransformOrig.localScale;
+
+
         if (changeLayerObject)
         {
-            // Debug.Log("Change Layer: " + changeLayerObject);
-
-            changeLayerObject.layer = 0; //Default Layer
+            changeLayerObject.layer = 0;
         }
     }
-    
+
     public void OnDrag(PointerEventData eventData)
     {
+        //_item.transform.parent = parentCanvas.transform;
+
         var screenPoint = Input.mousePosition;
         var finish = parentCanvas.worldCamera.ScreenToWorldPoint(screenPoint);
         finish.z = 0f;
-        transform.position = finish;
+        _item.transform.position = finish;
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -69,29 +57,30 @@ public class UISourceDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDrag
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         var hits = Physics.RaycastAll(ray, 100f);
 
-        var hitVectorField = false;
         foreach (var hit in hits)
         {
-            // Debug.Log("Hit " + hit.transform.tag + " - " + hit.transform.gameObject.name);
-            if(!hit.transform.CompareTag("WaterPlane"))
+            if (!hit.transform.CompareTag("WaterPlane"))
                 continue;
 
-           // Debug.Log("" + hit.point.x + ": " + hit.transform.parent.position.x);
-            hitVectorField = true;
             ShowObject(hit.point, hit.transform.parent);
-            transform.position = _initialPosition;
         }
 
-        if (!hitVectorField)
-        {
-            _slowlyReturnToOrigin = true;
-            _time = 0f;
-            _returnDirection = _initialPosition - transform.position;
-        }
-        
         if (changeLayerObject)
         {
             changeLayerObject.layer = 2; //IgnoreRaycast
+        }
+
+        Destroy(_item);
+    }
+
+    public virtual void SetObjectToOrigin()
+    {
+        var vecFields = GameObject.FindGameObjectsWithTag("WaterPlane"); //should be 2 -> one 2d and one 3d, where only one should be active at a time
+
+        foreach (var vecField in vecFields)
+        {
+            if (!vecField.activeInHierarchy) continue;
+            ShowObject(vecField.transform.position, vecField.transform.parent);
         }
     }
 
@@ -101,7 +90,7 @@ public class UISourceDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDrag
 
         childObject.transform.parent = parent;
         generatedObject.transform.position = position;
-        if(resetRotation)
+        if (resetRotation)
             generatedObject.transform.localRotation = Quaternion.identity;
         generatedObject.SetActive(false);
         generatedObject.SetActive(true);

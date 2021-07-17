@@ -741,23 +741,23 @@ namespace Maroon
     }
 }
 
-public class ConnectMessage : MessageBase
+public struct ConnectMessage : NetworkMessage
 {
     public string password;
 }
 
-public class CharacterSpawnMessage : MessageBase
+public struct CharacterSpawnMessage : NetworkMessage
 {
     public Vector3 CharacterPosition;
     public Quaternion CharacterRotation;
 }
 
-public class NetworkControlMessage : MessageBase
+public struct NetworkControlMessage : NetworkMessage
 {
     public string NewPlayerInControl;
 }
 
-public class ChangeSceneMessage : MessageBase
+public struct ChangeSceneMessage : NetworkMessage
 {
     public string SceneName;
 }
@@ -772,7 +772,7 @@ public enum LeaveReason
     NoConnection
 }
 
-public class LeaveMessage : MessageBase
+public struct LeaveMessage : NetworkMessage
 {
     public LeaveReason Reason;
 }

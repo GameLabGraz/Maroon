@@ -219,7 +219,7 @@ public class FaradysLawNetworkSync : ExperimentNetworkSync
         }
     }
 
-    [Command(ignoreAuthority = true)]
+    [Command(requiresAuthority = false)]
     private void CmdSetMagnetPosition(Vector3 newPosition)
     {
         _magnetPosition = newPosition;
