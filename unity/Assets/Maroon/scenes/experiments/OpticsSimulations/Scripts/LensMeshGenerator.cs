@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿//
+//Author: Tobias Stöckl
+//
+using System.Collections.Generic;
 using UnityEngine;
 using Maroon.Physics;
 
@@ -96,12 +99,7 @@ public class LensMeshGenerator : MonoBehaviour
         if (edgeInput < -0.999f) edgeInput = -0.999f;
 
         float alpha = Mathf.Atan(lensRadius / edgeInput) * Mathf.Rad2Deg; 
-        //2ndtriangle = 90 - (180 - 90 - alpha)
-
-        // segmentr = 90 - 2ndtriangle
-
         float radiusangle =  Mathf.Abs(alpha)*2 -90.0f;
-        // radius = lensradius / sin ( segmentr)
 
         float radius = lensRadius / Mathf.Sin((radiusangle + 90) *Mathf.Deg2Rad); 
         if (edgeInputStart >= 0.0f) radius = radius * -1.0f;
@@ -112,8 +110,7 @@ public class LensMeshGenerator : MonoBehaviour
 
     float CalculateSectionAngle(float radius, float lensradius)
     {
-        //return Mathf.Rad2Deg *Mathf.Atan2(1.0f, radius); // hardcoded, lenssize could be bigger/smaller
-        float angle=  Mathf.Rad2Deg* Mathf.Asin((lensradius/ radius));
+        float angle =  Mathf.Rad2Deg* Mathf.Asin((lensradius/ radius));
         return angle;
 
     }
@@ -122,19 +119,16 @@ public class LensMeshGenerator : MonoBehaviour
     {
         Vector3 radvec = new Vector3(radius, 0.0f, 0.0f);
 
-        //radvec = Quaternion.Euler(0, sectionangle / 10.0f, 0)*radvec; // what axis? 
-
         Vector3[] points = new Vector3[numpoints];
         //iterate over all points
         for(int i = 0; i < numpoints; i++)
         {
-            //i+1/numpoints
             points[i] = Quaternion.Euler(0, sectionangle * (i + 1) / numpoints, 0) * radvec;
             points[i].x = points[i].x - circrad;
         }
 
         // return list of points in array
-        //afterwards rotate whole section and connect them together
+        // afterwards rotate whole section and connect them together
         return points;
     }
 
@@ -171,8 +165,6 @@ public class LensMeshGenerator : MonoBehaviour
     (List<Vector3>, List<int>) MakeFacesAndVertices(List<Vector3[]> dome)
     {
         Vector3 startVec = new Vector3(0.0f, 0.0f, 0.0f);
-
-        //startVec.x = 3.0f;
 
         int dcount = dome[0].Length;
 
@@ -231,7 +223,6 @@ public class LensMeshGenerator : MonoBehaviour
         {
             // inner edges meet
             // domes just need to be moved so that the outer edges are symmetrical.
-
             // domediff is the value how much outer edges are separated. additionalthickness - (-domediff) is the amount we need to separate the inner edges to reach the desired outer edge separation
             if(-domediff > additionalthickness)
             {
@@ -247,9 +238,6 @@ public class LensMeshGenerator : MonoBehaviour
 
     (List<Vector3>,List<int>) MakeDomeConnection(List<Vector3> stackedDomeVerts)
     {
-        //domeSegments, sectionpoints
-        //stackeddomeVerts
-
         List<int> domeConnects = new List<int>();
         List<Vector3> dupliRingVerts = new List<Vector3>();
         int startFirst = sectionPoints;
@@ -356,7 +344,6 @@ public class LensMeshGenerator : MonoBehaviour
         // first vertex is 0 0 0 
         var domeL = GetDomeVertices(pts, domeSegments);
         (List<Vector3> verts, List<int> tris) = MakeFacesAndVertices(domeL);
-        //Debug.Log("vertct trict " + verts.Count + " " + tris.Count);
 
         var domeL2 = GetDomeVertices(pts2, domeSegments);
         (List<Vector3> verts2, List<int> tris2) = MakeFacesAndVertices(domeL2);

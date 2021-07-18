@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿//
+//Author: Tobias Stöckl
+//
+using UnityEngine;
 
 public class ToggleUIElement : MonoBehaviour
 {

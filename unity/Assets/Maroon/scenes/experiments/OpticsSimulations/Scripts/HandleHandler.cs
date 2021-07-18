@@ -1,5 +1,9 @@
-﻿using UnityEngine;
+﻿//
+//Author: Tobias Stöckl
+//
+using UnityEngine;
 
+//handles the laserpointer rotation handle ;)
 public class HandleHandler : MonoBehaviour
 {
 
@@ -33,7 +37,7 @@ public class HandleHandler : MonoBehaviour
         _rotationAnchor = transform.parent.up;
         _yRotation = transform.parent.eulerAngles.y;
     }
-
+    //on mouse drag, we get the direction of the cursor from the midpoint, project it and rotate the laser object accordingly
     private void OnMouseDrag()
     {
         float dist;

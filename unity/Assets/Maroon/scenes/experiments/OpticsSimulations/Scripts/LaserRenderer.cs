@@ -1,9 +1,10 @@
-﻿using System.Collections;
+﻿//
+//Author: Tobias Stöckl
+//
 using System.Collections.Generic;
 using UnityEngine;
 using Maroon.Physics;
 
-//[ExecuteInEditMode]
 public class LaserRenderer : MonoBehaviour
 {
 

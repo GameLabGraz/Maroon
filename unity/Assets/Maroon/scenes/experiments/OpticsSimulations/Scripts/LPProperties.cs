@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿//
+//Author: Tobias Stöckl
+//
+using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -24,11 +27,9 @@ public class LPProperties : MonoBehaviour
 
     public void SetLaserColor(float wavelength)
     {
-        //wavelength between 0 and 1
-        //float wavelength2 = (wavelength - 400.0f) / 300.0f;
-        // 380-720nm
+        //wavelength between 0 and 1 from 380-720nm
         wavelength = (wavelength - 380.0f) / 340.0f;
-        wavelength = Mathf.Clamp(wavelength, 0.0f, 0.9999f);
+        wavelength = Mathf.Clamp(wavelength, 0.0f, 0.9999f); //just to be sure
 
         List<Color> colors = new List<Color>();
 

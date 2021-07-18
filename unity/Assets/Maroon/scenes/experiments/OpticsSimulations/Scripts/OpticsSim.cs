@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿//
+//Author: Tobias Stöckl
+//
+using System.Collections.Generic;
 using UnityEngine;
 
 public struct OpticsRay
@@ -167,7 +170,7 @@ public class OpticsSim : MonoBehaviour
             return (false, false, Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero); // return no hitpoint
         }
         //else intersect the 1 ray with the other 2, get the 2 hitpoints, check if they are in the respective correct x bounds
-        //and return bool bool point point normal normal;  
+        //and return bool bool point point normal normal
         (float leftb, float rightb) = GetBoundsHit(lens);
 
         float upperRay = lens.LeftCircle.MidPoint.y + lens.Radius;
@@ -194,15 +197,12 @@ public class OpticsSim : MonoBehaviour
     {
 
         (bool didHit, Vector2 int1, Vector2 int2) = IntersectRay(currentRay, circ);
-        // if hit and there is atleast one intersection on the correct side and in the limits of the diameter (y-coord)
-        // then we can add it to the 
+        // if hit and there is atleast one intersection on the correct side and in the limits of the diameter (y-coord), add it
         Vector2 topLeft;
         Vector2 botRight;
 
         Vector2 nor1 = new Vector2(0.0f, 0.0f);
         Vector2 nor2 = new Vector2(0.0f, 0.0f);
-
-        //(float leftb, float rightb) = getBoundsHit(lens);
         
         // make hitbox for inside-check
         if (isLeftSegment)
@@ -233,8 +233,6 @@ public class OpticsSim : MonoBehaviour
         float nor_length = Vector2.Dot(entryDir, norm);
 
         Vector2 ret1 = -nor_length*norm*2.0f + entryDir;
-
-        //Vector2 ret = entryDir - 2 * (Vector2.Dot(entryDir,norm)) * norm;
         return ret1;
     }
 
@@ -260,7 +258,7 @@ public class OpticsSim : MonoBehaviour
         float t1 = Mathf.Sin(angle) * refractiveIndex1;
 
         float t2 = t1 / refractiveIndex2;
-        float res = Mathf.Asin(t2); // seems correct for now 
+        float res = Mathf.Asin(t2);
 
         if(float.IsNaN(res)) //nan -> total internal reflection
         {
@@ -294,7 +292,7 @@ public class OpticsSim : MonoBehaviour
 
     public (Vector2, Vector2, bool) GetFirstLensHit(OpticsRay r, OpticsLens lens)
     {
-        // should return hitpoint and normal, or miss 
+        // returns hitpoint and normal, or miss (bool) 
         bool[] hit = new bool[6];
         Vector2[] intersects = new Vector2[6];
         Vector2[] normals = new Vector2[6];
@@ -332,7 +330,7 @@ public class OpticsSim : MonoBehaviour
 
     public void CalculateHitsRecursive(OpticsRay myRay, OpticsLens myLens, bool outside, ref List<OpticsSegment> segs, float loss = 0.9f, float reflectionVsRefraction = 0.3f)
     {
-        if (myRay.Intensity < 0.02) return; // dont go further if intensity low.
+        if (myRay.Intensity < 0.02) return; // dont go further if intensity lower than 0.02
 
         (Vector2 hit, Vector2 norm, bool didHit) = GetFirstLensHit(myRay, myLens);
 

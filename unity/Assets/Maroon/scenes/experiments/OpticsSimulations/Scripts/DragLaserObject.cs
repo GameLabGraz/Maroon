@@ -1,6 +1,10 @@
-﻿using UnityEngine;
+﻿//
+//Author: Tobias Stöckl
+//
+using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
+//handles everything needed for dragging & dropping the lasers
 public class DragLaserObject : MonoBehaviour
 {
     private Camera _mainCamera;

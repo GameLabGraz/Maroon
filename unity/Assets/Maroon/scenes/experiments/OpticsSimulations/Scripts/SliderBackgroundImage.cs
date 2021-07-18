@@ -1,17 +1,20 @@
-﻿using UnityEngine;
-using Maroon.Physics;
-using Maroon.UI;
-//
+﻿//
 // Author: Michael Holly 
 //
 // Modifications: Tobias Stöckl
 //
+using UnityEngine;
+using Maroon.Physics;
+using Maroon.UI;
 
 [RequireComponent(typeof(QuantityPropertyView))]
 public class SliderBackgroundImage : MonoBehaviour
 {
     [SerializeField] private Sprite _imageSource;
 
+
+    // on function call, sets the backgroundimage of a quantitypropertyview of the object this script is attached to.
+    // fillimage is set to transparent, so that one can see the whole backgroundimage.
     public void UpdateSliderBackgroundImage()
     {
         var quantityPropertyView = GetComponent<QuantityPropertyView>();

@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿//
+//Author: Tobias Stöckl
+//
+using UnityEngine;
 using Maroon.UI;
 
 public class DropdownReset : MonoBehaviour

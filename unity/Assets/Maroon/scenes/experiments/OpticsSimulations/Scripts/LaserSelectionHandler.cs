@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿//
+//Author: Tobias Stöckl
+//
+using UnityEngine;
 using Maroon.Physics;
 using Maroon.UI;
 using GEAR.Localization;

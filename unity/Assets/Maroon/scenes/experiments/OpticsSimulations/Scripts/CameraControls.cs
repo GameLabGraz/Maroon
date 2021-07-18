@@ -1,8 +1,10 @@
-﻿using UnityEngine;
+﻿//
+//Author: Tobias Stöckl
+//
+using UnityEngine;
 
 public class CameraControls : MonoBehaviour
 {
-    // Start is called before the first frame update
 
     private Vector3 _mainCamStartPosition;
     private Quaternion _mainCamStartRotation;
@@ -34,8 +36,7 @@ public class CameraControls : MonoBehaviour
         _mainCam = Camera.main;
         _currentCamXoffset = Camera.main.transform.position.x;
     }
-
-    // Update is called once per frame
+    //simple script that handles where the camera position should be, so that every transition is always smooth
     void Update()
     {
         if (Input.GetMouseButtonDown(_mouseButton))
