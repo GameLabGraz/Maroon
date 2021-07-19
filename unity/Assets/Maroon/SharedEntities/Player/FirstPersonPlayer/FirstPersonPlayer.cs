@@ -1,18 +1,27 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine.InputSystem;
 
-public class FirstPersonPlayer : MonoBehaviour
+public class FirstPersonPlayer : UnityEngine.MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private MaroonInputActions _maroonInputActions = null;
+
+    private void Start()
     {
-        
+        UnityEngine.Debug.Log("First person player start");
+
+        // Get input action definitions
+        _maroonInputActions = Maroon.GlobalInputManager.Instance.MaroonInputActions;
+
+        // Link input actions to functions
+        _maroonInputActions.FirstPersonPlayer.Jump.performed += context => InputJump();
     }
 
-    // Update is called once per frame
-    void Update()
+    void Movement()
     {
-        
+
+    }
+
+    void InputJump()
+    {
+        UnityEngine.Debug.Log("INPUT SYS JUMP");
     }
 }
