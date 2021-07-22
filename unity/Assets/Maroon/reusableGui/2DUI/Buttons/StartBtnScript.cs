@@ -38,18 +38,8 @@ namespace Maroon.UI.Buttons
         protected  override void Start()
         {
             base.Start();
-            SimulationController.Instance.OnStart += OnStartHandler;
-            SimulationController.Instance.OnStop += OnStopHandler;
-        }
-
-        private void OnStartHandler(object sender, EventArgs e)
-        {
-            Button.image.sprite = _pauseIcon;
-        }
-
-        private void OnStopHandler(object sender, EventArgs e)
-        {
-            Button.image.sprite = _playIcon;
+            SimulationController.Instance.OnStart.AddListener(() => { Button.image.sprite = _pauseIcon; });
+            SimulationController.Instance.OnStop.AddListener(() => { Button.image.sprite = _playIcon; });
         }
 
         /// <summary>

@@ -22,18 +22,8 @@ namespace Maroon.UI.Buttons
         protected override void Start()
         {
             base.Start();
-            SimulationController.Instance.OnStart += OnStartHandler;
-            SimulationController.Instance.OnStop += OnStopHandler;
-        }
-
-        private void OnStartHandler(object sender, EventArgs e)
-        {
-            Disable();
-        }
-
-        private void OnStopHandler(object sender, EventArgs e)
-        {
-            Enable();
+            SimulationController.Instance.OnStart.AddListener(Disable);
+            SimulationController.Instance.OnStop.AddListener(Enable);
         }
 
         /// <summary>
