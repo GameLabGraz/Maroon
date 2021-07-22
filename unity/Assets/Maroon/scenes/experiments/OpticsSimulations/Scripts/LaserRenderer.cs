@@ -24,10 +24,12 @@ public class LaserRenderer : MonoBehaviour
     public QuantityFloat LensRadius1;
     public QuantityFloat LensRadius2;
     public QuantityFloat LensDiameter;
+    private float _unitMultiplier = 10.0f;
 
     public OpticsLens CurrentLens;
 
     private LensMeshGenerator _lensMeshGenerator;
+    
 
     public QuantityFloat ReflectionVsRefraction;
 
@@ -73,8 +75,8 @@ public class LaserRenderer : MonoBehaviour
         LaserPointers = GameObject.FindGameObjectsWithTag("LaserPointer");
         OpticsLens currLens = _lensMeshGenerator.ThisLensLens;
 
-        LensRadius1.Value = currLens.LeftCircle.Radius;
-        LensRadius2.Value = currLens.RightCircle.Radius;
+        LensRadius1.Value = _unitMultiplier*currLens.LeftCircle.Radius;
+        LensRadius2.Value = _unitMultiplier*currLens.RightCircle.Radius;
         currLens.Radius = _lensMeshGenerator.LensRadius;
         currLens.CauchyA = CauchyA;
         currLens.CauchyB = CauchyB;
@@ -82,7 +84,7 @@ public class LaserRenderer : MonoBehaviour
 
         LensDiameter.Value = 0.0f;
         (float left, float right ) = _thisLens.GetComponent<OpticsSim>().GetBoundsHit(currLens);
-        LensDiameter.Value = (right - left) + _thisLens.GetComponent<LensMeshGenerator>().RadiusInput1.Value - _thisLens.GetComponent<LensMeshGenerator>().RadiusInput2.Value;
+        LensDiameter.Value = _unitMultiplier *((right - left) + _thisLens.GetComponent<LensMeshGenerator>().RadiusInput1.Value - _thisLens.GetComponent<LensMeshGenerator>().RadiusInput2.Value); //correcting for units
 
         foreach (var laserPointer in LaserPointers)
         {
