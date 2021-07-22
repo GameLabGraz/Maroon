@@ -93,7 +93,10 @@ public class Coil : EMObject, IResetObject
         field_strength = (current * number_of_turns) / Mathf.Sqrt(length * length + diameter * diameter);
 
         if (force_active)
+        {
             GetComponent<Rigidbody>().AddForce(getExternalForce() * transform.up);
+        }
+
     }
 
     /// <summary>
