@@ -9,9 +9,9 @@
 
             gameObject.SetActive(SimulationController.Instance.SimulationRunning);
             
-            SimulationController.Instance.OnStart += (sender, args) => { gameObject.SetActive(true); };
+            SimulationController.Instance.OnStart.AddListener(() => { gameObject.SetActive(true); });
 
-            SimulationController.Instance.OnStop += (sender, args) => { gameObject.SetActive(false); };
+            SimulationController.Instance.OnStop.AddListener(() => { gameObject.SetActive(false); });
         }
     }
 }
