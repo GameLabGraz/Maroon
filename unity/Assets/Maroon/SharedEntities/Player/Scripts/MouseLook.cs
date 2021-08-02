@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityStandardAssets.CrossPlatformInput;
 
 namespace UnityStandardAssets.Characters.FirstPerson
 {
@@ -19,18 +18,16 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private Quaternion m_CharacterTargetRot;
         private Quaternion m_CameraTargetRot;
 
-
         public void Init(Transform character, Transform camera)
         {
             m_CharacterTargetRot = character.localRotation;
             m_CameraTargetRot = camera.localRotation;
         }
 
-
-        public void LookRotation(Transform character, Transform camera)
+        public void LookRotation(Transform character, Transform camera, MaroonInputActions _maroonInputActions)
         {
-            float yRot = CrossPlatformInputManager.GetAxis("Mouse X") * XSensitivity;
-            float xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * YSensitivity;
+            float yRot = _maroonInputActions.FirstPersonPlayer.Look.ReadValue<Vector2>().x * XSensitivity; // /*CrossPlatformInputManager.GetAxis("Mouse X")*/ 0 * XSensitivity; // TODO new input system
+            float xRot = _maroonInputActions.FirstPersonPlayer.Look.ReadValue<Vector2>().y * YSensitivity; // /*CrossPlatformInputManager.GetAxis("Mouse Y")*/ 0 * YSensitivity; // TODO new input system
 
             m_CharacterTargetRot *= Quaternion.Euler (0f, yRot, 0f);
             m_CameraTargetRot *= Quaternion.Euler (-xRot, 0f, 0f);

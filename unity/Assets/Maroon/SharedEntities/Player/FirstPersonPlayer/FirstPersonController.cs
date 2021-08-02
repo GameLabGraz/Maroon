@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityStandardAssets.CrossPlatformInput;
 using UnityStandardAssets.Utility;
 using Random = UnityEngine.Random;
 
@@ -26,6 +25,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [SerializeField] private AudioClip[] m_FootstepSounds;    // an array of footstep sounds that will be randomly selected from.
         [SerializeField] private AudioClip m_JumpSound;           // the sound played when character leaves the ground.
         [SerializeField] private AudioClip m_LandSound;           // the sound played when character touches back on ground.
+
+
+
+        private MaroonInputActions _maroonInputActions = null;
+
 
         private Camera m_Camera;
         private bool m_Jump;
@@ -54,6 +58,13 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_Jumping = false;
             m_AudioSource = GetComponent<AudioSource>();
 			m_MouseLook.Init(transform , m_Camera.transform);
+
+
+
+
+
+            // Get input action definitions
+            _maroonInputActions = Maroon.GlobalInputManager.Instance.MaroonInputActions;
         }
 
 
@@ -64,7 +75,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             // the jump state needs to read here to make sure it is not missed
             if (!m_Jump)
             {
-                m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
+                m_Jump = /*CrossPlatformInputManager.GetButtonDown("Jump")*/ false; // TODO: new input system
             }
 
             if (!m_PreviouslyGrounded && m_CharacterController.isGrounded)
@@ -201,16 +212,15 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private void GetInput(out float speed)
         {
             // Read input
-            float horizontal = CrossPlatformInputManager.GetAxis("Horizontal");
-            float vertical = CrossPlatformInputManager.GetAxis("Vertical");
+            float horizontal = _maroonInputActions.FirstPersonPlayer.Move.ReadValue<Vector2>().x; // /* CrossPlatformInputManager.GetAxis("Horizontal") */ 0; // TODO new input system
+            float vertical = _maroonInputActions.FirstPersonPlayer.Move.ReadValue<Vector2>().y;  // /* CrossPlatformInputManager.GetAxis("Vertical") */ 0; // TODO new input system
 
             bool waswalking = m_IsWalking;
 
-#if !MOBILE_INPUT
             // On standalone builds, walk/run speed is modified by a key press.
             // keep track of whether or not the character is walking or running
-            m_IsWalking = !Input.GetKey(KeyCode.LeftShift);
-#endif
+            m_IsWalking = true; // !Input.GetKey(KeyCode.LeftShift); // TODO new input system
+
             // set the desired speed to be walking or running
             speed = m_IsWalking ? m_WalkSpeed : m_RunSpeed;
             m_Input = new Vector2(horizontal, vertical);
@@ -235,7 +245,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         {
             if(Time.timeScale > 0.00001)
             {
-                m_MouseLook.LookRotation (transform, m_Camera.transform);
+                m_MouseLook.LookRotation(transform, m_Camera.transform, _maroonInputActions);
             }
         }
 
