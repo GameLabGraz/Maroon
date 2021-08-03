@@ -1,6 +1,6 @@
 ﻿using UnityEngine.InputSystem;
 
-public class FirstPersonPlayer : UnityEngine.MonoBehaviour
+public class FirstPersonPlayerOld : UnityEngine.MonoBehaviour
 {
     private MaroonInputActions _maroonInputActions = null;
 
