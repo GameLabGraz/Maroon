@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class PlayerInputHandler : MonoBehaviour
+public class ModeFirstPersonInputHandler : MonoBehaviour
 {
     [Tooltip("Sensitivity multiplier for moving the camera around")]
     public float lookSensitivity = 1f;
@@ -13,12 +13,12 @@ public class PlayerInputHandler : MonoBehaviour
     [Tooltip("Limit to consider an input when using a trigger on a controller")]
     public float triggerAxisThreshold = 0.4f;
 
-    PlayerCharacterController m_PlayerCharacterController;
+    ModeFirstPerson m_PlayerCharacterController;
     bool m_FireInputWasHeld;
 
     private void Start()
     {
-        m_PlayerCharacterController = GetComponent<PlayerCharacterController>();
+        m_PlayerCharacterController = GetComponent<ModeFirstPerson>();
 
         /*
         Cursor.lockState = CursorLockMode.Locked;

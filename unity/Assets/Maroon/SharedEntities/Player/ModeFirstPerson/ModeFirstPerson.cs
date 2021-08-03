@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(CharacterController), typeof(PlayerInputHandler), typeof(AudioSource))]
-public class PlayerCharacterController : MonoBehaviour
+[RequireComponent(typeof(CharacterController), typeof(ModeFirstPersonInputHandler), typeof(AudioSource))]
+public class ModeFirstPerson : MonoBehaviour
 {
     [Header("References")]
     [Tooltip("Reference to the main camera used for the player")]
@@ -98,7 +98,7 @@ public class PlayerCharacterController : MonoBehaviour
         }
     }
         
-    PlayerInputHandler m_InputHandler;
+    ModeFirstPersonInputHandler m_InputHandler;
     CharacterController m_Controller;
     Vector3 m_GroundNormal;
     Vector3 m_CharacterVelocity;
@@ -116,7 +116,7 @@ public class PlayerCharacterController : MonoBehaviour
         // fetch components on the same gameObject
         m_Controller = GetComponent<CharacterController>();
 
-        m_InputHandler = GetComponent<PlayerInputHandler>();
+        m_InputHandler = GetComponent<ModeFirstPersonInputHandler>();
 
         m_Controller.enableOverlapRecovery = true;
 
