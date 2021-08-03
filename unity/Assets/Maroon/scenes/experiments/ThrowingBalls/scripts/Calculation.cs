@@ -125,24 +125,30 @@ public class Calculation : PausableObject, IResetObject
     // GUI button
     public void startCalcPlot()
     {
+        Debug.Log("START CALC PLOT");
         stop_simulation_ = false;
         
         // load parameters from GUI
         initParameter();
 
+        particle_in_use_ = ParameterUI.Instance.getObjectInUse();
         // calc min max for x,y,z coords
         calcMinMax();
         if (!stop_simulation_)
         {
             Vector3 border_min = new Vector3(x_min_, z_min_, y_min_);
             Vector3 border_max = new Vector3(x_max_, z_max_, y_max_);
+
+            //particle_in_use_ = ParameterUI.Instance.getObjectInUse();
+            Debug.Log(particle_in_use_);
+
+            if (particle_in_use_ == ParticleObject.Satellite)
+                initCoordSystem.Instance.setColor(Color.white);
             initCoordSystem.Instance.setRealCoordBorders(border_min, border_max);
 
             initialized = true;
             start_calc_plot_ = true;
 
-            particle_in_use_ = ParameterUI.Instance.getObjectInUse();
-            Debug.Log(particle_in_use_);
             initCoordSystem.Instance.setParticleActive(particle_in_use_);
         }
     }
@@ -364,14 +370,33 @@ public class Calculation : PausableObject, IResetObject
         }
 
         Debug.Log("xmin: " + x_min_.ToString() + " xmax: " + x_max_.ToString());
+        /*
+        x_min_ = (float)System.Math.Floor(x_min_) - getMinScaleFactor(x_min_);
+        y_min_ = (float)System.Math.Floor(y_min_) - getMinScaleFactor(y_min_);
+        z_min_ = (float)System.Math.Floor(z_min_) - getMinScaleFactor(z_min_);
 
-        x_min_ = (float)System.Math.Floor(x_min_) - 1;
-        y_min_ = (float)System.Math.Floor(y_min_) - 1;
-        z_min_ = (float)System.Math.Floor(z_min_) - 1;
+        x_max_ = (float)System.Math.Ceiling(x_max_) + getMinScaleFactor(x_max_);
+        y_max_ = (float)System.Math.Ceiling(y_max_) + getMinScaleFactor(y_max_);
+        z_max_ = (float)System.Math.Ceiling(z_max_) + getMinScaleFactor(z_max_);
+        */
+        x_min_ = x_min_ - getMinMaxScaleFactor(x_min_);
+        y_min_ = y_min_ - getMinMaxScaleFactor(y_min_);
+        z_min_ = z_min_ - getMinMaxScaleFactor(z_min_);
 
-        x_max_ = (float)System.Math.Ceiling(x_max_) + 1;
-        y_max_ = (float)System.Math.Ceiling(y_max_) + 1;
-        z_max_ = (float)System.Math.Ceiling(z_max_) + 1;
+        x_max_ = x_max_ + getMinMaxScaleFactor(x_max_);
+        y_max_ = y_max_ + getMinMaxScaleFactor(y_max_);
+        z_max_ = z_max_ + getMinMaxScaleFactor(z_max_);
+
+    }
+
+    private float getMinMaxScaleFactor(float value)
+    {
+        value = System.Math.Abs(value);
+
+        if (value == 0)
+            return 1f;
+        else
+            return 0f;
     }
 
     // debugging GUI parameters

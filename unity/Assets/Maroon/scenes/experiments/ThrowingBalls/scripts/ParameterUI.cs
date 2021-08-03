@@ -15,9 +15,11 @@ namespace ObjectsInUse
     }
 }
 
-public class ParameterUI : MonoBehaviour, IResetObject
+public class ParameterUI : PausableObject, IResetObject
 {
     private ParticleObject particle_in_use_ = ParticleObject.Default;
+    [SerializeField] private GameObject parameters_;
+    [SerializeField] private GameObject initial_conditions_;
 
     private static ParameterUI _instance;
     private DialogueManager _dialogueManager;
@@ -26,6 +28,14 @@ public class ParameterUI : MonoBehaviour, IResetObject
    
     public Dropdown dropdown;
     List<Dropdown.OptionData> menuOptions;
+
+    [SerializeField] private UnityEngine.UI.Button showInputPanelButton;
+    [SerializeField] private TMP_Text InputPanelButtonText;
+    private bool show_panels_ = false;
+
+    private string background_ = "ExperimentRoom";
+    private bool reset_background_ = true;
+    private bool dropdown_reset_ = false;
 
     [SerializeField] InputField fxIF;
     [SerializeField] InputField fyIF;
@@ -65,8 +75,10 @@ public class ParameterUI : MonoBehaviour, IResetObject
     [SerializeField] private UnityEngine.UI.Toggle showLabelToggle_;
     [SerializeField] private UnityEngine.UI.Toggle showOriginGrid_;
 
-    // Start is called before the first frame update
-    void Start()
+    /// <summary>
+    /// Initialization
+    /// </summary>
+    protected override void Start()
     {
         if (_dialogueManager == null)
             _dialogueManager = FindObjectOfType<DialogueManager>();
@@ -92,12 +104,49 @@ public class ParameterUI : MonoBehaviour, IResetObject
         functions_.Add("tan", "Tan");
         functions_.Add("truncate", "Truncate");
 
+        displayMessage("Welcome to the Throwing Balls Experiment. You can use the control buttons at the bottom to Start, Reset or Step through the " +
+            "calculation. Please press the reset button if you change any parameters beforehand.");
+
+        showInputPanelButton.interactable = false;
     }
 
-    // Update is called once per frame
-    void Update()
+    /// <summary>
+    /// Update is called every frame
+    /// </summary>
+    protected override void HandleUpdate()
     {
-        
+
+    }
+
+    /// <summary>
+    /// Update is called every frame
+    /// </summary>
+    protected override void HandleFixedUpdate()
+    {
+        if (show_panels_)
+        {
+            parameters_.SetActive(true);
+            initial_conditions_.SetActive(true);
+            showInputPanelButton.interactable = true;
+            InputPanelButtonText.text = "Hide Input Field";
+        }
+        else
+        {
+            parameters_.SetActive(false);
+            initial_conditions_.SetActive(false);
+            showInputPanelButton.interactable = true;
+            InputPanelButtonText.text = "Show Input Field";
+        }
+    }
+
+    public void showInputPanel()
+    {
+        if (show_panels_)
+            show_panels_ = false;
+        else
+        {
+            show_panels_ = true;
+        }
     }
 
     public string getFunctionFx()
@@ -219,127 +268,148 @@ public class ParameterUI : MonoBehaviour, IResetObject
 
     public void loadParameters(int choice)
     {
-        // liste aus objekten -> list[choice]
-        SimulationController.Instance.ResetSimulation();
+        reset_background_ = false;
+  
+        //if (dropdown_reset_)
+            SimulationController.Instance.ResetSimulation();
 
         switch (choice)
         {
             case 0:
+                //loadParametersFromFile(choice);
                 loadDefault();
                 dropdown.SetValueWithoutNotify(0);
-                particle_in_use_ = ParticleObject.Default;
+                //particle_in_use_ = ParticleObject.Default;
                 break;
             case 1:
-                loadSatellite();
+                //loadSatellite();
+                loadParametersFromFile(choice);
                 dropdown.SetValueWithoutNotify(1);
-                particle_in_use_ = ParticleObject.Satellite;
+                //particle_in_use_ = ParticleObject.Satellite;
                 break;
             case 2:
-                loadBallInTheWind();
+                //loadBallInTheWind();
+                loadParametersFromFile(choice);
                 dropdown.SetValueWithoutNotify(2);
-                particle_in_use_ = ParticleObject.Ball;
+                //particle_in_use_ = ParticleObject.Ball;
+                break;
+            case 3:
+                //loadBallInTheWind();
+                loadParametersFromFile(choice);
+                dropdown.SetValueWithoutNotify(3);
+                //particle_in_use_ = ParticleObject.Default;
+                break;
+            case 4:
+                //loadBallInTheWind();
+                loadParametersFromFile(choice);
+                dropdown.SetValueWithoutNotify(5);
+                //particle_in_use_ = ParticleObject.Default;
+                break;
+            case 5:
+                //loadBallInTheWind();
+                loadParametersFromFile(choice);
+                dropdown.SetValueWithoutNotify(6);
+                //particle_in_use_ = ParticleObject.Default;
+                break;
+            case 6:
+                //loadBallInTheWind();
+                loadParametersFromFile(choice);
+                dropdown.SetValueWithoutNotify(7);
+                //particle_in_use_ = ParticleObject.Default;
                 break;
             default:
+                //loadParametersFromFile(0);
+                loadDefault();
+                dropdown.SetValueWithoutNotify(0);
+                //particle_in_use_ = ParticleObject.Default;
                 break;
+        }
+        SkyboxController.Instance.setBackground(background_);
+    }
+
+    private void loadParametersFromFile(int file)
+    {
+        Debug.Log("loadParametersFromFile(" + file + ")");
+        List<FileController.Parameters> parameters = FileController.Instance.loadJsonFile(file);
+
+        foreach (var par in parameters)     
+        {
+            background_ = par.Background;
+
+            if (par.Particle == "Satellite")
+                particle_in_use_ = ParticleObject.Satellite;
+            else if (par.Particle == "Ball")
+                particle_in_use_ = ParticleObject.Ball;
+            else
+                particle_in_use_ = ParticleObject.Default;
+
+            fxIF.text = getCorrectedFormula(par.FunctionX);
+            fyIF.text = getCorrectedFormula(par.FunctionY);
+            fzIF.text = getCorrectedFormula(par.FunctionZ);
+
+            if_mass.text = par.Mass.ToString();
+            
+            if_t0.text = par.T0.ToString();
+            if_deltat.text = par.DeltaT.ToString();
+            if_steps.text = par.Steps.ToString();
+
+            if_x.text = par.X.ToString();
+            if_y.text = par.Y.ToString();
+            if_z.text = par.Z.ToString();
+
+            if_vx.text = par.Vx.ToString();
+            if_vy.text = par.Vy.ToString();
+            if_vz.text = par.Vz.ToString();
         }
     }
 
-    private void loadDefault()
+  
+    public void loadExternParametersFromFile(List<FileController.Parameters> parameters)
     {
-        fxIF.text = "-x";
-        fyIF.text = "0";
-        fzIF.text = "0";
+        Debug.Log("loadExternParametersFromFile");
 
-        if_mass.text = "1";
-        
-        if_t0.text = "0";        
-        if_deltat.text = "0,05";        
-        if_steps.text = "500";
-        
-        if_x.text = "0";        
-        if_y.text = "0";       
-        if_z.text = "0";       
+        foreach (var par in parameters) 
+        {
+            background_ = par.Background;
+            Debug.Log("background: " + background_);
 
-        if_vx.text = "1";       
-        if_vy.text = "0";        
-        if_vz.text = "0";
-        
-        mass_ = 1;
-        t0_ = 0;
-        deltat_ = 0.05f;
-        steps_ = 500;
-        x_ = 0;
-        y_ = 0;
-        z_ = 0;
-        vx_ = 1;
-        vy_ = 0;
-        vz_ = 0;
+            Debug.Log("Object = " + par.Particle);
+
+            if (par.Particle == "Satellite")
+            {
+                Debug.Log("loadExternParametersFromFile Object = " + par.Particle);
+                particle_in_use_ = ParticleObject.Satellite;
+            }
+            else if (par.Particle == "Ball")
+                particle_in_use_ = ParticleObject.Ball;
+            else
+                particle_in_use_ = ParticleObject.Default;
+
+            fxIF.text = getCorrectedFormula(par.FunctionX);
+            Debug.Log("fxIF.text: " + fxIF.text);
+            fyIF.text = getCorrectedFormula(par.FunctionY);
+            fzIF.text = getCorrectedFormula(par.FunctionZ);
+            
+            if_mass.text = par.Mass.ToString();
+            Debug.Log("if_mass.text: " + if_mass.text);
+
+            if_t0.text = par.T0.ToString();
+            if_deltat.text = par.DeltaT.ToString();
+            if_steps.text = par.Steps.ToString();
+
+            if_x.text = par.X.ToString();
+            if_y.text = par.Y.ToString();
+            if_z.text = par.Z.ToString();
+
+            if_vx.text = par.Vx.ToString();
+            if_vy.text = par.Vy.ToString();
+            if_vz.text = par.Vz.ToString();
+        }
+        Debug.Log("loadExternParametersFromFile done");
+        SkyboxController.Instance.setBackground(background_);
+        //particle_in_use_ = ParticleObject.Default;
     }
-
-    private void loadSatellite()
-    {
-        fxIF.text = "-100*x*6.6726E-11*5.97219E24/Pow(x*x+y*y+z*z,3/2)";
-        fyIF.text = "-100*y*6.6726E-11*5.97219E24/Pow(x*x+y*y+z*z,3/2)";
-        fzIF.text = "-100*z*6.6726E-11*5.97219E24/Pow(x*x+y*y+z*z,3/2)";
-
-        if_mass.text = "100";
-
-        if_t0.text = "0";
-        if_deltat.text = "60";
-        if_steps.text = "1500";
-
-        if_x.text = "0";
-        if_y.text = "6371000";
-        if_z.text = "0";
-
-        if_vx.text = "7900";
-        if_vy.text = "0";
-        if_vz.text = "0";
-
-        mass_ = 100;
-        t0_ = 0;
-        deltat_ = 60;
-        steps_ = 1500;
-        x_ = 0;
-        y_ = 6371000;
-        z_ = 0;
-        vx_ = 7900;
-        vy_ = 0;
-        vz_ = 0;
-    }
-
-    private void loadBallInTheWind()
-    {
-        fxIF.text = "(-0.01*(vx-(1))-0.03*(vx-(1))*Sqrt((vx-(1))*(vx-(1))+(vy-(7*Exp(-x*x)))*(vy-(7*Exp(-x*x)))+(vz-(-3*Exp(-t*t)))*(vz-(-3*Exp(-t*t)))))";
-        fyIF.text = "(-0.01*(vy-(7*Exp(-x*x)))-0.03*(vy-(7*Exp(-x*x)))*Sqrt((vx-(1))*(vx-(1))+(vy-(7*Exp(-x*x)))*(vy-(7*Exp(-x*x)))+(vz-(-3*Exp(-t*t)))*(vz-(-3*Exp(-t*t)))))";
-        fzIF.text = "(-0.01*(vz-(-3*Exp(-t*t)))-0.03*(vz-(-3*Exp(-t*t)))*Sqrt((vx-(1))*(vx-(1))+(vy-(7*Exp(-x*x)))*(vy-(7*Exp(-x*x)))+(vz-(-3*Exp(-t*t)))*(vz-(-3*Exp(-t*t)))))-9.81*0.1";
-
-        if_mass.text = "0,1";
-
-        if_t0.text = "0";
-        if_deltat.text = "0,01";
-        if_steps.text = "100";
-
-        if_x.text = "0";
-        if_y.text = "0";
-        if_z.text = "0";
-
-        if_vx.text = "-7";
-        if_vy.text = "5";
-        if_vz.text = "10";
-
-        mass_ = 0.1f;
-        t0_ = 0;
-        deltat_ = 0.01f;
-        steps_ = 100;
-        x_ = 0;
-        y_ = 0;
-        z_ = 0;
-        vx_ = -7;
-        vy_ = 5;
-        vz_ = 10;
-    }
-
+   
     private string getCorrectedFormula(string formula)
     {
         string tmp = formula.ToLower();
@@ -365,6 +435,11 @@ public class ParameterUI : MonoBehaviour, IResetObject
         return particle_in_use_;
     }
 
+    public string getBackground()
+    {
+        return background_;
+    }
+
     public static ParameterUI Instance
     {
         get
@@ -382,14 +457,59 @@ public class ParameterUI : MonoBehaviour, IResetObject
     {
         //Debug.Log("Reset Parameter UI\n");
         //Debug.Log("Reset Parameter UI - load default\n");
-        showLabelToggle_.isOn = true;
+        showLabelToggle_.isOn = false;
         showOriginGrid_.isOn = true;
+        show_panels_ = false;
+        showInputPanelButton.interactable = false;
+        InputPanelButtonText.text = "Show Input Field";
+        parameters_.SetActive(true);
+        initial_conditions_.SetActive(true);
+
         particle_in_use_ = ParticleObject.Default;
-        //loadDefault();
+        if (reset_background_)
+            background_ = "ExperimentRoom";
+        
+        reset_background_ = true;
+        dropdown.SetValueWithoutNotify(0);
+        loadDefault();
     }
 
     private void showError(string message)
     {
         displayMessage(message);
+    }
+
+    private void loadDefault()
+    {
+        background_ = "ExperimentRoom";
+
+        fxIF.text = "-x";
+        fyIF.text = "0";
+        fzIF.text = "0";
+
+        if_mass.text = "1";
+
+        if_t0.text = "0";
+        if_deltat.text = "0,05";
+        if_steps.text = "500";
+
+        if_x.text = "0";
+        if_y.text = "0";
+        if_z.text = "0";
+
+        if_vx.text = "1";
+        if_vy.text = "0";
+        if_vz.text = "0";
+
+        mass_ = 1;
+        t0_ = 0;
+        deltat_ = 0.05f;
+        steps_ = 500;
+        x_ = 0;
+        y_ = 0;
+        z_ = 0;
+        vx_ = 1;
+        vy_ = 0;
+        vz_ = 0;
     }
 }

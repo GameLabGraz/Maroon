@@ -5,8 +5,8 @@ using UnityEngine;
 public class CoordCameraController : MonoBehaviour, IResetObject
 {
     [Header("Movement Settings")]
-    [SerializeField] private float movementSpeed = 0.5f;
-    [SerializeField] private float rotationSpeed = 150f;
+    private float movementSpeed = 10f;
+    private float rotationSpeed = 300f;
     [SerializeField] private float zoomSpeed = 5f;
 
     [SerializeField] Transform minPosition;
@@ -24,23 +24,16 @@ public class CoordCameraController : MonoBehaviour, IResetObject
     private void Awake()
     {
         _camera = GetComponent<Camera>();
+        transform.LookAt(target);
 
         UpdateOrigPosition();
         UpdateOrigRotation();
     }
     private void LateUpdate()
     {
-        //transform.LookAt(target);
-
-        // Camera Rotation
+        // Camera Movement
         if (Input.GetButton("Fire2"))
         {
-            /*
-            var pos = _camera.ScreenToViewportPoint(Input.mousePosition - _mouseOrigin);
-            transform.RotateAround(transform.position, transform.right, -pos.y * rotationSpeed);
-            transform.RotateAround(transform.position, Vector3.up, pos.x * rotationSpeed);
-            */
-
             var pos = _camera.ScreenToViewportPoint(_mouseOrigin - Input.mousePosition);
             var move = new Vector3(pos.x * movementSpeed, pos.y * movementSpeed, 0);
             if ((maxPosition.position.x > pos.x || maxPosition.position.y > pos.y) && (minPosition.position.x < pos.x || minPosition.position.y < pos.y))
@@ -48,7 +41,6 @@ public class CoordCameraController : MonoBehaviour, IResetObject
                 transform.Translate(move);
                 transform.position = ClampCamPosition(transform.position);
             }
-            
         }
 
         // Camera Rotation

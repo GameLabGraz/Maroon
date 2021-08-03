@@ -14,6 +14,7 @@ public class initCoordSystem : MonoBehaviour, IResetObject
     [SerializeField] private GameObject particle;
     [SerializeField] private GameObject satellite;
     [SerializeField] private GameObject soccer_ball;
+    [SerializeField] private GameObject planet_;
 
     [SerializeField] private TMP_Text xLabel;
     [SerializeField] private TMP_Text yLabel;
@@ -36,6 +37,7 @@ public class initCoordSystem : MonoBehaviour, IResetObject
     private Vector3 zMax;
     //
     private bool border_values_set_ = false;
+    Color color = Color.black;
 
     private List<GameObject> objects_ = new List<GameObject>();
     private List<GameObject> origin_ = new List<GameObject>();
@@ -51,10 +53,12 @@ public class initCoordSystem : MonoBehaviour, IResetObject
     {
         Vector3 scaleTrajectory = new Vector3(-0.05f, -0.05f, -0.05f);
         Vector3 scaleParticle = new Vector3(-0.09f, -0.09f, -0.09f);
+        Vector3 scalePlanet = new Vector3(-0.02f, -0.02f, -0.02f);
 
         trajectory.transform.localScale = scaleTrajectory;
         particle.transform.localScale = scaleParticle;
         satellite.transform.localScale = scaleParticle;
+        planet_.transform.localScale = scalePlanet;
 
         drawAxis(false); // set this to true if u want to display the coord-box
     }
@@ -162,14 +166,14 @@ public class initCoordSystem : MonoBehaviour, IResetObject
 
     }
 
-    void drawOrigin(Vector3 start, Vector3 end, float duration = 0.2f)
+    void drawOrigin(Vector3 start, Vector3 end, Color color, float duration = 0.2f)
     {
         GameObject myLine = new GameObject();
         myLine.transform.position = start;
         myLine.AddComponent<LineRenderer>();
         LineRenderer lr = myLine.GetComponent<LineRenderer>();
         lr.material = new Material(Shader.Find("Specular"));
-        lr.material.color = Color.black;
+        lr.material.color = color;
         lr.SetWidth(0.02f, 0.02f);
         lr.SetPosition(0, start);
         lr.SetPosition(1, end);
@@ -202,25 +206,34 @@ public class initCoordSystem : MonoBehaviour, IResetObject
     {
         real_xyz_min = min;
         real_xyz_max = max;
-        
-        text_x_ = "X: " + (real_xyz_max.x).ToString() + "m";
-        setLabelX(text_x_);
 
-        text_y_ = "Y: " + (real_xyz_max.z).ToString() + "m";
-        setLabelY(text_y_);
+        text_x_ = "X: " + roundDisplayedValues(real_xyz_max.x) + "m";
+        //setLabelX(text_x_);
 
-        text_z_ = "Z: " + (real_xyz_max.y).ToString() + "m";
-        setLabelZ(text_z_);
+        text_y_ = "Y: " + roundDisplayedValues(real_xyz_max.z) + "m";
+        //setLabelY(text_y_);
 
-        text_x2_ = "X: " + (real_xyz_min.x).ToString() + "m";
-        text_y2_ = "Y: " + (real_xyz_min.z).ToString() + "m";
-        text_z2_ = "Z: " + (real_xyz_min.y).ToString() + "m";
-        xLabel2.text = text_x2_;
-        yLabel2.text = text_y2_;
-        zLabel2.text = text_z2_;
+        text_z_ = "Z: " + roundDisplayedValues(real_xyz_max.y) + "m";
+        //setLabelZ(text_z_);
+
+        text_x2_ = "X: " + roundDisplayedValues(real_xyz_max.x) + "m";
+        text_y2_ = "Y: " + roundDisplayedValues(real_xyz_max.z) + "m";
+        text_z2_ = "Z: " + roundDisplayedValues(real_xyz_max.y) + "m";
+
+        //xLabel2.text = text_x2_;
+        //yLabel2.text = text_y2_;
+        //zLabel2.text = text_z2_;
 
         border_values_set_ = true;
         drawOriginGrid(true);
+    }
+
+    private string roundDisplayedValues(float value)
+    {
+        if (System.Math.Round(value, 2) == 0.00f)
+            return value.ToString();
+        else
+            return (System.Math.Round(value, 2)).ToString();
     }
 
     // map real coord-values to unity-coord values
@@ -264,7 +277,7 @@ public class initCoordSystem : MonoBehaviour, IResetObject
             case ParticleObject.Default:
                 particle.transform.position = point;
                 break;
-            case ParticleObject.Ball:
+            case ParticleObject.Ball:           
                 soccer_ball.transform.position = point;
                 break;
             case ParticleObject.Satellite:
@@ -313,6 +326,7 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         particle.SetActive(false);
         satellite.SetActive(false);
         soccer_ball.SetActive(false);
+        planet_.SetActive(false);
 
         text_x_ = "";
         text_y_ = "";
@@ -320,15 +334,18 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         text_x2_ = "";
         text_y2_ = "";
         text_z2_ = "";
-
+        /*
         setLabelX(text_x_);
         setLabelY(text_y_);
         setLabelZ(text_z_);
         xLabel2.text = "";
         yLabel2.text = "";
         zLabel2.text = "";
+        */
 
         border_values_set_ = false;
+
+        color = Color.black;
     }
 
     public void setParticleActive(ParticleObject particle_in_use_)
@@ -343,6 +360,7 @@ public class initCoordSystem : MonoBehaviour, IResetObject
                 break;
             case ParticleObject.Satellite:
                 satellite.SetActive(true);
+                planet_.SetActive(true);
                 break;
             default:
                 particle.SetActive(true);
@@ -350,6 +368,7 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         }
     }
 
+    // UI toggle
     public void showLabels(bool show)
     {
         if (show)
@@ -377,31 +396,32 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         if (draw && border_values_set_)
         {
             //Debug.Log("Draw Grid");
-
             Vector3 start;
             Vector3 end;
 
             // x line
             start = new Vector3(real_xyz_min.x, 0, 0);
             end = new Vector3(real_xyz_max.x, 0, 0);
-            drawOrigin(mapValues(start), mapValues(end));
-            end = new Vector3(real_xyz_max.x + 0.5f, 0, 0);
+            drawOrigin(mapValues(start), mapValues(end), color);
+            //end = new Vector3(real_xyz_max.x + 0.5f, 0, 0);
             xLabel.transform.position = mapValues(end);
             xLabel2.transform.position = mapValues(start);
 
             // y line
             start = new Vector3(0, 0, real_xyz_min.z);
             end = new Vector3(0, 0, real_xyz_max.z);
-            drawOrigin(mapValues(start), mapValues(end));
+            drawOrigin(mapValues(start), mapValues(end), color);
             yLabel.transform.position = mapValues(end);
             yLabel2.transform.position = mapValues(start);
 
             // z line
             start = new Vector3(0, real_xyz_min.y, 0);
             end = new Vector3(0, real_xyz_max.y, 0);
-            drawOrigin(mapValues(start), mapValues(end));
+            drawOrigin(mapValues(start), mapValues(end), color);
             zLabel.transform.position = mapValues(end);
             zLabel2.transform.position = mapValues(start);
+ 
+            planet_.transform.position = new Vector3(-0.2f, 1.75f, 6.4f);
         }
         else
         {
@@ -411,6 +431,10 @@ public class initCoordSystem : MonoBehaviour, IResetObject
                 Destroy(line);
             origin_.Clear();
         }
-        
+    }
+
+    public void setColor(Color col)
+    {
+        color = col;
     }
 }
