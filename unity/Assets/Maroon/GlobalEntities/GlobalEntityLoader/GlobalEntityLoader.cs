@@ -23,7 +23,7 @@ namespace Maroon
         [SerializeField] private GameObject _platformManagerPrefab = null;
         [SerializeField] private GameObject _sceneManagerPrefab = null;
         [SerializeField] private GameObject _bootstrappingManagerPrefab = null;
-        [SerializeField] private GameObject _globalInputManagerPrefab = null;
+        [SerializeField] private GameObject _playerManagerPrefab = null;
         [SerializeField] private GameObject _gameManagerPrefab = null;
         [SerializeField] private GameObject _soundManagerPrefab = null;
         [SerializeField] private GameObject _networkManagerPrefab = null;
@@ -81,9 +81,9 @@ namespace Maroon
             }
 
             // Order not thought through yet
-            if(Maroon.GlobalInputManager.Instance == null)
+            if(Maroon.PlayerManager.Instance == null)
             {
-                Instantiate(this._globalInputManagerPrefab).transform.SetParent(this.transform);
+                Instantiate(this._playerManagerPrefab).transform.SetParent(this.transform);
             }
 
             // Order not thought through yet
