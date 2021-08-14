@@ -4,6 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+
+/*
+ * Currently doing nothing
+ */
+
 public class SystemChangeHandler : MonoBehaviour
 {
     private static SystemChangeHandler _instance;

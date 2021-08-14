@@ -61,7 +61,6 @@ public class CoordAxis : MonoBehaviour
         //SystemChangeHandler.Instance.onWorldSpaceAxisScaleChange += UpdateWorldSpaceLength;
         //SystemChangeHandler.Instance.onLocalSpaceAxisLengthChange += UpdateLocalSpaceLength;
         //SystemChangeHandler.Instance.onEnableNegativeDirectionChange += UpdateNegativeAxisDirection;
-
     }
 
     public void UpdateFontSize(float value)
@@ -82,15 +81,8 @@ public class CoordAxis : MonoBehaviour
 
     private void GenerateMarkers()
     {
-        var numberOfMarkers = CalculateNumberOfMarkers(out bool isDivisionRestless);
+        var numberOfMarkers = CalculateNumberOfMarkers();
         var worldSpaceDistance = _axisWorldLength / numberOfMarkers;
-
-        if(!isDivisionRestless)
-        {
-            var text = _axisID == Axis.Y ? $"- {_axisLocalLength} {_lengthUnit.ToString()}" : $"{_axisLocalLength} {_lengthUnit.ToString()}\n |";
-            InstantiateMarker(_direction * _axisWorldLength, text);
-        }
-
 
         for (var count = 1; count <= numberOfMarkers; count++)
         {
@@ -103,12 +95,11 @@ public class CoordAxis : MonoBehaviour
         }
     }
 
-    private int CalculateNumberOfMarkers(out bool isDivisionRestless)
+    private int CalculateNumberOfMarkers()
     {
         int numberOfMarkers = 0;
         if (_lengthUnit == Unit.none || _divisionUnit == Unit.none)
         {
-            isDivisionRestless = _axisLocalLength % _axisSubdivision == 0 ? true : false;
             numberOfMarkers = (int)Math.Floor(_axisLocalLength / _axisSubdivision);
         }
         else
@@ -116,7 +107,6 @@ public class CoordAxis : MonoBehaviour
             var actualLocalLength = _axisLocalLength * Mathf.Pow(10, (float)_lengthUnit);
             var subdivisionLength = _axisSubdivision * Mathf.Pow(10, (float)_divisionUnit);
 
-            isDivisionRestless = actualLocalLength % subdivisionLength == 0 ? true : false;
             numberOfMarkers = (int)Math.Floor(actualLocalLength / subdivisionLength);
         }
 
@@ -178,9 +168,7 @@ public class CoordAxis : MonoBehaviour
     private void UpdateAxisSubdivision(Axis id, int value)
     {
         if (id != _axisID)
-            return;
-
-       
+            return;  
     }*/
 
 }
