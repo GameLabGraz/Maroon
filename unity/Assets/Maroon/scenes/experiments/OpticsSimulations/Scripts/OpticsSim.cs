@@ -63,8 +63,8 @@ public struct OpticsLens
     public float Radius;
     public float CauchyA;
     public float CauchyB;
-    public float Leftbound;
-    public float Rightbound;
+    public float LeftBound;
+    public float RightBound;
 }
 
 

@@ -16,7 +16,7 @@ public class HandleHandler : MonoBehaviour
 
     private Vector3 _rotationAnchor;
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         _mainCamera = Camera.main;
         _thisColl = GetComponent<Collider>();
@@ -27,8 +27,8 @@ public class HandleHandler : MonoBehaviour
     private void OnMouseDown()
     {
         Ray objIntersectRay = _mainCamera.ScreenPointToRay(Input.mousePosition);
-        RaycastHit thisHit;
-        _thisColl.Raycast(objIntersectRay, out thisHit, Mathf.Infinity);
+
+        _thisColl.Raycast(objIntersectRay, out var thisHit, Mathf.Infinity);
 
         _rotatePlane.SetNormalAndPosition(Vector3.up, thisHit.point);
 
@@ -40,17 +40,16 @@ public class HandleHandler : MonoBehaviour
     //on mouse drag, we get the direction of the cursor from the midpoint, project it and rotate the laser object accordingly
     private void OnMouseDrag()
     {
-        float dist;
         Ray distRay = _mainCamera.ScreenPointToRay(Input.mousePosition);
-        _rotatePlane.Raycast(distRay, out dist);
+        _rotatePlane.Raycast(distRay, out var dist);
 
-        Vector3 pointonplane = distRay.GetPoint(dist);
+        Vector3 pointOnPlane = distRay.GetPoint(dist);
         
-        Vector3 rotVector = pointonplane - _offset;
+        Vector3 rotVector = pointOnPlane - _offset;
 
         Vector3 direction = rotVector - _dragAnchor;
 
-        var angl = Vector3.SignedAngle(direction, _rotationAnchor, Vector3.up);
-        transform.parent.rotation = Quaternion.Euler(0.0f, -(angl) + 180.0f + _yRotation, -90.0f);
+        var angle = Vector3.SignedAngle(direction, _rotationAnchor, Vector3.up);
+        transform.parent.rotation = Quaternion.Euler(0.0f, -(angle) + 180.0f + _yRotation, -90.0f);
     }
 }

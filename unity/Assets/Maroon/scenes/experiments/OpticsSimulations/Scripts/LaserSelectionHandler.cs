@@ -9,15 +9,15 @@ using GEAR.Localization;
 public class LaserSelectionHandler : MonoBehaviour
 {
     // Start is called before the first frame update
-    [HideInInspector]
-    public GameObject CurrActiveLaser;
+    public GameObject CurrActiveLaser { get; private set; }
     public GameObject LaserControlPanel;
     public GameObject LaserPointerPrefab;
 
     public QuantityFloat ActiveLaserIntensity;
     public QuantityFloat ActiveLaserWavelength;
-
     public QuantityFloat ActiveLaserRefractiveIndex;
+
+    private DialogueManager _diagMan;
 
     private int _numLaserPointers = 0;
     public int MaxLasers = 100;
@@ -32,13 +32,14 @@ public class LaserSelectionHandler : MonoBehaviour
     private Vector3 _lensPos;
 
     
-    void Start()
+    private void Start()
     {
         CurrActiveLaser = null;
 
         _laserArrayStartPoint = GameObject.Find("LaserArrayStart").transform.position;
         _laserArrayEndPoint = GameObject.Find("LaserArrayEnd").transform.position;
         _lensPos = GameObject.Find("LensObject").transform.position;
+        _diagMan = FindObjectOfType<DialogueManager>();
 
 
         AddLaserArray();
@@ -52,11 +53,9 @@ public class LaserSelectionHandler : MonoBehaviour
             return true;
         }
         // show dialogue for max number of lasers
-        DialogueManager diagman = FindObjectOfType<DialogueManager>();
-        LanguageManager langman = FindObjectOfType<LanguageManager>();
 
-        string message = langman.GetString("maxnumberoflasers");
-        diagman.ShowMessage(string.Format(message, (_numLaserPointers+1)));
+        string message = LanguageManager.Instance.GetString("maxnumberoflasers");
+        _diagMan.ShowMessage(string.Format(message, (_numLaserPointers+1)));
 
         return false;
     }
@@ -105,11 +104,11 @@ public class LaserSelectionHandler : MonoBehaviour
     {
         if (!CheckLaserLimit(1)) return;
 
-        int lasers_in_array = 7;
+        const int lasersInArray = 7;
 
-        Vector3 offset = (_laserArrayEndPoint - _laserArrayStartPoint) / lasers_in_array;
+        Vector3 offset = (_laserArrayEndPoint - _laserArrayStartPoint) / lasersInArray;
 
-        for(int i = 1; i < lasers_in_array; i++)
+        for(int i = 1; i < lasersInArray; i++)
         {
             Instantiate(LaserPointerPrefab, _laserArrayStartPoint + i * offset, LaserPointerPrefab.transform.rotation);
         }
@@ -129,10 +128,10 @@ public class LaserSelectionHandler : MonoBehaviour
             lpprops.LaserWavelength = wavelength;
             lpprops.SetLaserColor();
 
-            Vector3 tofocalpoint = focalpoint - lpprefab.transform.position;  
+            Vector3 toFocalPoint = focalpoint - lpprefab.transform.position;  
             
-            var angl = Vector3.SignedAngle(tofocalpoint, Vector3.right, Vector3.up);
-            lpprefab.transform.rotation = Quaternion.Euler(0.0f, -(angl), -90.0f);
+            var angle = Vector3.SignedAngle(toFocalPoint, Vector3.right, Vector3.up);
+            lpprefab.transform.rotation = Quaternion.Euler(0.0f, -(angle), -90.0f);
         }
 
 
@@ -172,27 +171,36 @@ public class LaserSelectionHandler : MonoBehaviour
 
     }
 
+    private enum LaserArrayType
+    {
+        removeLaserPointers,
+        addArray,
+        addRGBArray,
+        addFocusedArray,
+        addFocusedArrayWithOffset
+    }
+
     public void SetLaserArrangements(int arr)
     {
 
-        if(!(arr == 0))
+        if(arr != 0)
         {
             RemoveAllLaserPointers();
         }
         switch (arr)
         {
-            case 0: break;
-            case 1: AddLaserArray(); break;
-            case 2: AddRGBLaserArray(); break;
-            case 3: AddFocusedLaserArray(); break;
-            case 4: AddFocusedLaserArrayWithOffset(); break;
+            case (int)LaserArrayType.removeLaserPointers: break;
+            case (int)LaserArrayType.addArray: AddLaserArray(); break;
+            case (int)LaserArrayType.addRGBArray: AddRGBLaserArray(); break;
+            case (int)LaserArrayType.addFocusedArray: AddFocusedLaserArray(); break;
+            case (int)LaserArrayType.addFocusedArrayWithOffset: AddFocusedLaserArrayWithOffset(); break;
             default: break;
         }
     }
-    
+
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
 
         //if current active laser is null disable lasercontrolpanel
@@ -210,8 +218,8 @@ public class LaserSelectionHandler : MonoBehaviour
         {
             //shoot ray and collide with scene
             Ray testray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit rhit;
-            Physics.Raycast(testray.origin, testray.direction, out rhit, Mathf.Infinity, Physics.AllLayers); // todo layermask?
+
+            Physics.Raycast(testray.origin, testray.direction, out var rhit, Mathf.Infinity, Physics.AllLayers); // todo layermask?
 
             if (rhit.collider.tag == "LaserPointer")
             {
@@ -221,7 +229,7 @@ public class LaserSelectionHandler : MonoBehaviour
             }
             else
             {
-                if(! (rhit.collider.tag == "LPHandle") && CurrActiveLaser != null) //todo make klick on table deselect of laser.
+                if(rhit.collider.tag != "LPHandle" && CurrActiveLaser != null) //todo make klick on table deselect of laser.
                 {
                     if (rhit.collider.gameObject.name == "OpticsTable" || rhit.collider.gameObject.name == "OpticsTable2") //todo change to optical tables
                     {

@@ -10,7 +10,8 @@ public class LaserRenderer : MonoBehaviour
 
     [SerializeField]
     private LineRenderer[] _lineRenderers = new LineRenderer[500];
-    public Material LaserMaterial;
+    [SerializeField]
+    private Material LaserMaterial;
     private List<OpticsSegment> _laserSegments;
 
     public GameObject[] LaserPointers;
@@ -37,12 +38,14 @@ public class LaserRenderer : MonoBehaviour
     [Range(0.0f, 0.99f)]
     private float _loss = 0.9f;
     private GameObject _thisLens;
+    private OpticsSim _thisLensOpticsSim;
 
-    void Start()
+    private void Start()
     {
         // add line renderers to parent object
         _laserSegments = new List<OpticsSegment>();
         _thisLens = GameObject.FindGameObjectWithTag("Lens");
+        _thisLensOpticsSim = _thisLens.GetComponent<OpticsSim>();
         _lensMeshGenerator = _thisLens.GetComponent<LensMeshGenerator>();
 
 
@@ -61,7 +64,7 @@ public class LaserRenderer : MonoBehaviour
     }
 
 
-    void Update()
+    private void Update()
     {
         //update what the renderers showed, and change if it differs now
         if (_laserSegments == null)
@@ -83,8 +86,8 @@ public class LaserRenderer : MonoBehaviour
         CurrentLens = currLens; //make current lens struct accessible to other scripts
 
         LensDiameter.Value = 0.0f;
-        (float left, float right ) = _thisLens.GetComponent<OpticsSim>().GetBoundsHit(currLens);
-        LensDiameter.Value = _unitMultiplier *((right - left) + _thisLens.GetComponent<LensMeshGenerator>().RadiusInput1.Value - _thisLens.GetComponent<LensMeshGenerator>().RadiusInput2.Value); //correcting for units
+        (float left, float right ) = _thisLensOpticsSim.GetBoundsHit(currLens);
+        LensDiameter.Value = _unitMultiplier *((right - left) + _lensMeshGenerator.RadiusInput1.Value - _lensMeshGenerator.RadiusInput2.Value); //correcting for units
 
         foreach (var laserPointer in LaserPointers)
         {
@@ -96,14 +99,14 @@ public class LaserRenderer : MonoBehaviour
             float wavelength = laserPointerProperties.LaserWavelength;
 
             OpticsRay laserRay = new OpticsRay(new Vector2(relLaserPos.x, relLaserPos.z), new Vector2(relLaserDir.x, relLaserDir.z), intensity, laserPointerProperties.LaserColor, wavelength);
-            _thisLens.GetComponent<OpticsSim>().CalculateHitsRecursive(laserRay, currLens, true, ref _laserSegments, _loss, ReflectionVsRefraction);
+            _thisLensOpticsSim.CalculateHitsRecursive(laserRay, currLens, true, ref _laserSegments, _loss, ReflectionVsRefraction);
 
         }
         UpdateLasers();
 
     }
 
-    void UpdateLasers()
+    private void UpdateLasers()
     {
 
         for(int i = 0; i < _lineRenderers.Length; i++)
@@ -120,7 +123,7 @@ public class LaserRenderer : MonoBehaviour
         }
     }
 
-    void UpdateLR(OpticsSegment opticsSeg, LineRenderer Lr, bool useIntensity = true)
+    private void UpdateLR(OpticsSegment opticsSeg, LineRenderer Lr, bool useIntensity = true)
     {
         Lr.SetPosition(0, new Vector3( opticsSeg.P1.x, 0.0f, opticsSeg.P1.y)*_thisLens.transform.localScale.x + _thisLens.transform.position); 
         Lr.SetPosition(1, new Vector3( opticsSeg.P2.x, 0.0f, opticsSeg.P2.y)*_thisLens.transform.localScale.x + _thisLens.transform.position);
@@ -133,34 +136,8 @@ public class LaserRenderer : MonoBehaviour
         if (dropdownSelection == 0) return;
         dropdownSelection--;
 
-        List<float> cauchyAs = new List<float>();
-        List<float> cauchyBs = new List<float>();
-
-        cauchyAs.Add(1.7387f);
-        cauchyAs.Add(1.5111f);
-        cauchyAs.Add(1.4767f);
-        cauchyAs.Add(1.3244f);
-        cauchyAs.Add(2.3818f);
-        cauchyAs.Add(1.7522f);
-
-        cauchyAs.Add(1.5220f);
-        cauchyAs.Add(1.7280f);
-        cauchyAs.Add(1.4580f);
-        cauchyAs.Add(1.5046f);
-
-        cauchyBs.Add(0.0159f);
-        cauchyBs.Add(0.00425f);
-        cauchyBs.Add(0.0048f);
-        cauchyBs.Add(0.0031f);
-        cauchyBs.Add(0.0121f);
-        cauchyBs.Add(0.0055f);
-
-        cauchyBs.Add(0.00459f);
-        cauchyBs.Add(0.01342f);
-        cauchyBs.Add(0.00354f);
-        cauchyBs.Add(0.00420f);
-
-
+        List<float> cauchyAs = new List<float>() { 1.7387f,  1.5111f,  1.4767f,  1.3244f,  2.3818f,  1.7522f,  1.5220f,  1.7280f,  1.4580f,  1.5046f};
+        List<float> cauchyBs = new List<float>() { 0.01590f, 0.00425f, 0.00425f, 0.00310f, 0.01210f, 0.00550f, 0.00459f, 0.01342f, 0.00354f, 0.00420f};
         CauchyA.Value = cauchyAs[dropdownSelection];
         CauchyB.Value = cauchyBs[dropdownSelection];
     }

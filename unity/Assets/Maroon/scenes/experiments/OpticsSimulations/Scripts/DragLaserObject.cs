@@ -8,18 +8,18 @@ using UnityEngine;
 public class DragLaserObject : MonoBehaviour
 {
     private Camera _mainCamera;
-    private Plane _movementPlane;
+    private Plane _movementPlane = new Plane(Vector3.up, new Vector3(0.0f, 0.0f, 0.0f));
     private Material _laserMat;
     private Color _ogColor;
 
     private LPProperties _laserProperties;
 
     [SerializeField]
-    private Color _hoverColor;
+    private Color _hoverColor = Color.red;
     [SerializeField]
-    private Color _draggingColor;
+    private Color _draggingColor = Color.green;
     [SerializeField]
-    private Color _activeColor;
+    private Color _activeColor = Color.grey;
 
 
     private bool _currentlyDragging;
@@ -33,19 +33,18 @@ public class DragLaserObject : MonoBehaviour
     private Vector3 _offset = Vector3.zero;
 
 
-    void Start()
+    private void Start()
     {
         _mainCamera = Camera.main;
-        _movementPlane = new Plane(Vector3.up, new Vector3(0.0f, 0.0f, 0.0f)); //such an init needed?
         _thisColl = GetComponent<Collider>();
         _laserMat = GetComponent<Renderer>().material;
 
         _ogColor = _laserMat.color;
+        _currentlyDragging = false;
 
         _hoverColor = Color.red;
-        _activeColor = Color.green;
-        _draggingColor = Color.grey;
-        _currentlyDragging = false;
+        _draggingColor = Color.green;
+        _activeColor = Color.grey;
 
         _laserProperties = GetComponent<LPProperties>();
         _laserHandler = GameObject.FindGameObjectWithTag("LaserSelectionHandler").GetComponent<LaserSelectionHandler>();
@@ -57,18 +56,15 @@ public class DragLaserObject : MonoBehaviour
     }
 
 
-    void OnMouseDown()
+    private void OnMouseDown()
     {
         _currentlyDragging = true;
         Ray objIntersectRay = _mainCamera.ScreenPointToRay(Input.mousePosition);
-        RaycastHit thisHit;
-        _thisColl.Raycast(objIntersectRay, out thisHit, Mathf.Infinity);
+        _thisColl.Raycast(objIntersectRay, out var thisHit, Mathf.Infinity);
 
         _movementPlane.SetNormalAndPosition(Vector3.up, thisHit.point);
 
         _offset = thisHit.point - transform.position;
-
-
         MakeActive();
     }
 
@@ -79,17 +75,17 @@ public class DragLaserObject : MonoBehaviour
 
     private void OnMouseExit()
     {
-        if(!_currentlyDragging)
+        if (_currentlyDragging) return;
+        
+        if (IsActiveLP())
         {
-            if (IsActiveLP())
-            {
-                MakeActive();
-            }
-            else
-            {
-                _laserMat.color = _ogColor;
-            }
-        }   
+            MakeActive();
+        }
+        else
+        {
+            _laserMat.color = _ogColor;
+        }
+        
     }
 
     private void OnMouseUp()
@@ -98,19 +94,18 @@ public class DragLaserObject : MonoBehaviour
         _laserMat.color = _hoverColor;
     }
 
-    void OnMouseDrag()
+    private void OnMouseDrag()
     {
-        float dist;
         Ray distRay = _mainCamera.ScreenPointToRay(Input.mousePosition);
-        _movementPlane.Raycast(distRay, out dist);
+        _movementPlane.Raycast(distRay, out var dist);
 
-        Vector3 pointonplane = distRay.GetPoint(dist);
-        transform.position = pointonplane - _offset;
+        Vector3 pointOnPlane = distRay.GetPoint(dist);
+        transform.position = pointOnPlane - _offset;
         _laserMat.color = _draggingColor;
     }
 
 
-    bool IsActiveLP()
+    private bool IsActiveLP()
     {
         GameObject activeLaser = _laserHandler.CurrActiveLaser;
 

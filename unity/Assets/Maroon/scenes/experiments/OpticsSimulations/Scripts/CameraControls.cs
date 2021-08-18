@@ -17,8 +17,9 @@ public class CameraControls : MonoBehaviour
     private float _currentCamXpos;
     private float _currentCamXoffset;
 
-    private Vector3 camTopPosition = new Vector3(3, 2.5f, 2.5f);
-    private Quaternion camTopRotation = Quaternion.Euler(90, 0, 0);
+    private readonly Vector3 _camTopPosition = new Vector3(3, 2.5f, 2.5f);
+    private readonly Quaternion _camTopRotation = Quaternion.Euler(90, 0, 0);
+
     public bool IsTopPosition = false;
     private bool lastFrameTopPos = false;
     private float timeCount = 0.0f;
@@ -28,7 +29,7 @@ public class CameraControls : MonoBehaviour
     [SerializeField]
     private float _clampSliderRight = 2f;
 
-    void Start()
+    private void Start()
     {
         _mainCamStartPosition = Camera.main.transform.position;
         _mainCamStartRotation = Camera.main.transform.rotation;
@@ -37,7 +38,7 @@ public class CameraControls : MonoBehaviour
         _currentCamXoffset = Camera.main.transform.position.x;
     }
     //simple script that handles where the camera position should be, so that every transition is always smooth
-    void Update()
+    private void Update()
     {
         if (Input.GetMouseButtonDown(_mouseButton))
         {
@@ -54,8 +55,8 @@ public class CameraControls : MonoBehaviour
         //camera smooth transition between 2 points
         _currentCamXpos = Mathf.Clamp(_currentCamXpos, _clampSliderLeft, _clampSliderRight);
 
-        Quaternion rotateTo = camTopRotation;
-        Vector3 moveTo = new Vector3(_currentCamXpos, camTopPosition.y, camTopPosition.z);
+        Quaternion rotateTo = _camTopRotation;
+        Vector3 moveTo = new Vector3(_currentCamXpos, _camTopPosition.y, _camTopPosition.z);
         Vector3 topBottom = new Vector3(_currentCamXpos, _mainCamStartPosition.y, _mainCamStartPosition.z);
         if(IsTopPosition == lastFrameTopPos)
         {

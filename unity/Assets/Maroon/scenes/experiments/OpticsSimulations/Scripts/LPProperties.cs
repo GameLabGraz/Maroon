@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
 public class LPProperties : MonoBehaviour
 {
 
@@ -12,8 +11,8 @@ public class LPProperties : MonoBehaviour
     public float LaserIntensity = 1.0f;
     public float LaserWavelength = 680f;
 
-
-    public Color[] SpectrumColors = new Color[20];
+    [SerializeField]
+    private Color[] SpectrumColors = new Color[20];
 
     private Color LinearInterpolate(Color col1, Color col2, float interpolFactor)
     {

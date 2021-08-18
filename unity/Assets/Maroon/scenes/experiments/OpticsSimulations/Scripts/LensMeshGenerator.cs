@@ -303,8 +303,8 @@ public class LensMeshGenerator : MonoBehaviour
         toReturn.RightCircle.MidPoint = new Vector2(+distance / 2.0f - offset - rad2, 0.0f);
         toReturn.CauchyA = 1.0f;
         toReturn.CauchyB = 1.0f;
-        toReturn.Leftbound = 0.0f;
-        toReturn.Rightbound = 0.0f;
+        toReturn.LeftBound = 0.0f;
+        toReturn.RightBound = 0.0f;
         return toReturn;
     }
     void Update()
