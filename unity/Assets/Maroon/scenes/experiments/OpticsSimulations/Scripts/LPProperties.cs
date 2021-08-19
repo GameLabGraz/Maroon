@@ -3,10 +3,12 @@
 //
 using System.Collections.Generic;
 using UnityEngine;
+using Maroon.Physics;
 
 public class LPProperties : MonoBehaviour
 {
 
+    [SerializeField]
     public Color LaserColor = Color.red;
     public float LaserIntensity = 1.0f;
     public float LaserWavelength = 680f;

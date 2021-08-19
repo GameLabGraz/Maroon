@@ -2,6 +2,7 @@
 //Author: Tobias Stöckl
 //
 using UnityEngine;
+using Maroon.PlatformControls.PC;
 
 [RequireComponent(typeof(Collider))]
 //handles everything needed for dragging & dropping the lasers
