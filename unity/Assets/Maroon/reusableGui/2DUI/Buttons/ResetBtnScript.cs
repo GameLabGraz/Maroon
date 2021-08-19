@@ -32,8 +32,8 @@ namespace Maroon.UI.Buttons
         {
             base.Start();
 
-            SimulationController.Instance.OnReset += OnResetHandler;
-            SimulationController.Instance.OnStart += OnStartHandler;
+            SimulationController.Instance.OnReset.AddListener(OnResetHandler);
+            SimulationController.Instance.OnStart.AddListener(OnStartHandler);
 
             _button = gameObject.GetComponent<Button>();
             _canvasRenderer = gameObject.GetComponent<CanvasRenderer>();
@@ -47,13 +47,13 @@ namespace Maroon.UI.Buttons
             if (_inWholeResetMode && SimulationController.Instance.SimulationRunning) _inWholeResetMode = false;
         }
 
-        private void OnStartHandler(object sender, EventArgs e)
+        private void OnStartHandler()
         {
             if (AllowWholeReset) Enable();
             else _inWholeResetMode = false;
         }
 
-        private void OnResetHandler(object sender, EventArgs e)
+        private void OnResetHandler()
         {
             if (!AllowWholeReset) Disable();
             else _inWholeResetMode = true;

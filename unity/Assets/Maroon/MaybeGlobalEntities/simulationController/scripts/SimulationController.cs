@@ -60,11 +60,11 @@ public class SimulationController : MonoBehaviour
     /// </summary>
     private IEnumerable<IResetObject> _resetObjects => FindObjectsOfType<MonoBehaviour>().OfType<IResetObject>();
 
-    public event EventHandler<EventArgs> OnStart;
+    public UnityEvent OnStart;
 
-    public event EventHandler<EventArgs> OnStop;
+    public UnityEvent OnStop;
 
-    public event EventHandler<EventArgs> OnReset;
+    public UnityEvent OnReset;
 
     private static SimulationController _instance;
 
@@ -175,7 +175,7 @@ public class SimulationController : MonoBehaviour
         _inWholeResetMode = false;
 
         if(!stepSimulation)
-            OnStart?.Invoke(this, EventArgs.Empty);
+            OnStart?.Invoke();
     }
 
     /// <summary>
@@ -196,7 +196,7 @@ public class SimulationController : MonoBehaviour
     public void StopSimulation()
     {
         SimulationRunning = false;
-        OnStop?.Invoke(this, EventArgs.Empty);
+        OnStop?.Invoke();
     }
 
     /// <summary>
@@ -212,7 +212,7 @@ public class SimulationController : MonoBehaviour
         StopSimulation();
         simulationReset = true;
 
-        OnReset?.Invoke(this, EventArgs.Empty);
+        OnReset?.Invoke();
 
         _inWholeResetMode = true;
     }
