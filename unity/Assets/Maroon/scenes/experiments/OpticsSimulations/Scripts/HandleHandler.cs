@@ -20,7 +20,6 @@ public class HandleHandler : MonoBehaviour
     {
         _mainCamera = Camera.main;
         _thisColl = GetComponent<Collider>();
-        new Plane(Vector3.up, new Vector3(0.0f, 0.0f, 0.0f));
     }
 
 

@@ -13,8 +13,8 @@ public class LaserRenderer : MonoBehaviour
     [SerializeField]
     private Material LaserMaterial;
     private List<OpticsSegment> _laserSegments;
-
-    public GameObject[] LaserPointers;
+    [SerializeField]
+    private GameObject[] LaserPointers;
 
     [SerializeField]
     private float _laserWidth = 0.003f;

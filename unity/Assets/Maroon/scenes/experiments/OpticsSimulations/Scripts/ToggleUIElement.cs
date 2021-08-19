@@ -6,7 +6,7 @@ using UnityEngine;
 public class ToggleUIElement : MonoBehaviour
 {
     [SerializeField]
-    public GameObject UiElement;
+    private GameObject UiElement;
     private bool _isActive = true;
 
 
