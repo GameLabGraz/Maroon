@@ -49,7 +49,7 @@ public class DragLaserObject : MonoBehaviour
         _activeColor = Color.grey;
 
         _laserProperties = GetComponent<Maroon.Physics.LaserPointer>();
-        _laserHandler = GameObject.FindGameObjectWithTag("LaserSelectionHandler").GetComponent<LaserSelectionHandler>();
+        _laserHandler = GameObject.Find("LaserSelectionHandler").GetComponent<LaserSelectionHandler>();
 
         _handleRenderer = gameObject.transform.GetChild(0).GetComponent<MeshRenderer>();
         _handleCollider = gameObject.transform.GetChild(0).GetComponent<Collider>();

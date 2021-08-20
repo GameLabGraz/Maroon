@@ -44,7 +44,7 @@ public class LaserRenderer : MonoBehaviour
     {
         // add line renderers to parent object
         _laserSegments = new List<OpticsSegment>();
-        _thisLens = GameObject.FindGameObjectWithTag("Lens");
+        _thisLens = GameObject.Find("LensObject");
         _thisLensOpticsSim = _thisLens.GetComponent<OpticsSim>();
         _lensMeshGenerator = _thisLens.GetComponent<LensMeshGenerator>();
 
@@ -75,14 +75,9 @@ public class LaserRenderer : MonoBehaviour
 
         //get all laserpointers in scene 
 
-        LaserPointers = GameObject.FindGameObjectsWithTag("LaserPointer");
+        //LaserPointers = GameObject.FindGameObjectsWithTag("LaserPointer");
 
-        LaserPointer[] LaserPointers2 = FindObjectsOfType<LaserPointer>();
-        if(LaserPointers2 != null)
-        {
-            Debug.Log(LaserPointers2.Length);
-        }
-
+        Maroon.Physics.LaserPointer[] LaserPointers2 = FindObjectsOfType<Maroon.Physics.LaserPointer>();
         
         OpticsLens currLens = _lensMeshGenerator.ThisLensLens;
 
@@ -97,8 +92,9 @@ public class LaserRenderer : MonoBehaviour
         (float left, float right ) = _thisLensOpticsSim.GetBoundsHit(currLens);
         LensDiameter.Value = _unitMultiplier *((right - left) + _lensMeshGenerator.RadiusInput1.Value - _lensMeshGenerator.RadiusInput2.Value); //correcting for units
 
-        foreach (var laserPointer in LaserPointers)
+        foreach (var laserPointerScript in LaserPointers2)
         {
+            var laserPointer = laserPointerScript.gameObject;
             Vector3 relLaserPos = gameObject.transform.InverseTransformPoint(laserPointer.transform.position);
             Vector3 relLaserDir = gameObject.transform.InverseTransformDirection(laserPointer.transform.up);
             var laserPointerProperties = laserPointer.GetComponent<Maroon.Physics.LaserPointer>();

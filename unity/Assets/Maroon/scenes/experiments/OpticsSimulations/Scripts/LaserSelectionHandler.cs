@@ -5,6 +5,7 @@ using UnityEngine;
 using Maroon.Physics;
 using Maroon.UI;
 using GEAR.Localization;
+using System.Collections.Generic;
 
 namespace Maroon.PlatformControls.PC
 {
@@ -93,7 +94,16 @@ namespace Maroon.PlatformControls.PC
         }
         public GameObject[] GetAllLaserPointers()
         {
-            return GameObject.FindGameObjectsWithTag("LaserPointer"); ;
+            var lps = GameObject.FindObjectsOfType<Maroon.Physics.LaserPointer>();
+
+            List<GameObject> laserPointers = new List<GameObject>();
+
+            foreach(var lp in lps)
+            {
+                laserPointers.Add(lp.gameObject);
+            }
+
+            return laserPointers.ToArray();
         }
 
         public void RemoveAllLaserPointers()
@@ -228,7 +238,7 @@ namespace Maroon.PlatformControls.PC
 
                 UnityEngine.Physics.Raycast(testray.origin, testray.direction, out var rhit, Mathf.Infinity, UnityEngine.Physics.AllLayers); // todo layermask?
 
-                if (rhit.collider.tag == "LaserPointer")
+                if (rhit.collider.gameObject.GetComponent<Maroon.Physics.LaserPointer>() != null)
                 {
                     if (CurrActiveLaser != null) CurrActiveLaser.GetComponent<DragLaserObject>().MakeInactive();
                     CurrActiveLaser = rhit.collider.gameObject;
@@ -236,7 +246,7 @@ namespace Maroon.PlatformControls.PC
                 }
                 else
                 {
-                    if (rhit.collider.tag != "LPHandle" && CurrActiveLaser != null) //todo make klick on table deselect of laser.
+                    if (rhit.collider.gameObject.GetComponent<HandleController>() == null && CurrActiveLaser != null) //todo make klick on table deselect of laser.
                     {
                         if (rhit.collider.gameObject.name == "OpticsTable" || rhit.collider.gameObject.name == "OpticsTable2") //todo change to optical tables
                         {
