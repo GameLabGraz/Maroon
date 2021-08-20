@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Maroon.UI
+namespace Maroon.UI.Charts
 {
     [Serializable] public class ValueGetterCallback : SerializableCallback<float> { };
 

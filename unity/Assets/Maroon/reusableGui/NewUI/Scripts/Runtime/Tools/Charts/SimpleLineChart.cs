@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Maroon.UI
+namespace Maroon.UI.Charts
 {
     public class SimpleLineChart : BaseLineChart
     {
