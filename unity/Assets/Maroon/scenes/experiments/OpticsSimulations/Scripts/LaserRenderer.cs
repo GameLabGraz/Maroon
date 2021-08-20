@@ -74,8 +74,16 @@ public class LaserRenderer : MonoBehaviour
         _laserSegments.Clear();
 
         //get all laserpointers in scene 
-        //could also be done by tracking deleted and added lasers
+
         LaserPointers = GameObject.FindGameObjectsWithTag("LaserPointer");
+
+        LaserPointer[] LaserPointers2 = FindObjectsOfType<LaserPointer>();
+        if(LaserPointers2 != null)
+        {
+            Debug.Log(LaserPointers2.Length);
+        }
+
+        
         OpticsLens currLens = _lensMeshGenerator.ThisLensLens;
 
         LensRadius1.Value = _unitMultiplier*currLens.LeftCircle.Radius;
@@ -132,13 +140,10 @@ public class LaserRenderer : MonoBehaviour
 
     public void SetCauchyVariables(int dropdownSelection) //todo maybe move this in extra class
     {
-
         if (dropdownSelection == 0) return;
         dropdownSelection--;
-
-        List<float> cauchyAs = new List<float>() { 1.7387f,  1.5111f,  1.4767f,  1.3244f,  2.3818f,  1.7522f,  1.5220f,  1.7280f,  1.4580f,  1.5046f};
-        List<float> cauchyBs = new List<float>() { 0.01590f, 0.00425f, 0.00425f, 0.00310f, 0.01210f, 0.00550f, 0.00459f, 0.01342f, 0.00354f, 0.00420f};
-        CauchyA.Value = cauchyAs[dropdownSelection];
-        CauchyB.Value = cauchyBs[dropdownSelection];
+        Cauchy currMat = PhysicalConstants.CauchyValues[(CauchyMaterial)dropdownSelection];
+        CauchyA.Value = currMat.A;
+        CauchyB.Value = currMat.B;
     }
 }
