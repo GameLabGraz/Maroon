@@ -15,6 +15,11 @@ namespace Maroon.PlatformControls.PC
         public GameObject LaserControlPanel;
         public GameObject LaserPointerPrefab;
 
+        [SerializeField]
+        private GameObject LaserArrayStart;
+        [SerializeField]
+        private GameObject LaserArrayEnd;
+
         public QuantityFloat ActiveLaserIntensity;
         public QuantityFloat ActiveLaserWavelength;
         public QuantityFloat ActiveLaserRefractiveIndex;
@@ -38,8 +43,8 @@ namespace Maroon.PlatformControls.PC
         {
             CurrActiveLaser = null;
 
-            _laserArrayStartPoint = GameObject.Find("LaserArrayStart").transform.position;
-            _laserArrayEndPoint = GameObject.Find("LaserArrayEnd").transform.position;
+            _laserArrayStartPoint = LaserArrayStart.transform.position;
+            _laserArrayEndPoint = LaserArrayEnd.transform.position;
             _lensPos = GameObject.Find("LensObject").transform.position;
             _diagMan = FindObjectOfType<DialogueManager>();
 

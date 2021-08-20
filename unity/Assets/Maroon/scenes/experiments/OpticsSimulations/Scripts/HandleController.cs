@@ -4,7 +4,7 @@
 using UnityEngine;
 
 //handles the laserpointer rotation handle ;)
-public class HandleHandler : MonoBehaviour
+public class HandleController : MonoBehaviour
 {
 
     private Camera _mainCamera;
