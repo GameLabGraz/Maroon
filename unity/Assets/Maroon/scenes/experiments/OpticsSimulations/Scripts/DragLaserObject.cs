@@ -3,6 +3,7 @@
 //
 using UnityEngine;
 using Maroon.PlatformControls.PC;
+using Maroon.Physics;
 
 [RequireComponent(typeof(Collider))]
 //handles everything needed for dragging & dropping the lasers
@@ -13,7 +14,7 @@ public class DragLaserObject : MonoBehaviour
     private Material _laserMat;
     private Color _ogColor;
 
-    private LPProperties _laserProperties;
+    private Maroon.Physics.LaserPointer _laserProperties;
 
     [SerializeField]
     private Color _hoverColor = Color.red;
@@ -47,7 +48,7 @@ public class DragLaserObject : MonoBehaviour
         _draggingColor = Color.green;
         _activeColor = Color.grey;
 
-        _laserProperties = GetComponent<LPProperties>();
+        _laserProperties = GetComponent<Maroon.Physics.LaserPointer>();
         _laserHandler = GameObject.FindGameObjectWithTag("LaserSelectionHandler").GetComponent<LaserSelectionHandler>();
 
         _handleRenderer = gameObject.transform.GetChild(0).GetComponent<MeshRenderer>();

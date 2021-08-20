@@ -75,7 +75,7 @@ namespace Maroon.PlatformControls.PC
 
             if (CurrActiveLaser != null)
             {
-                CurrActiveLaser.GetComponent<LPProperties>().LaserIntensity = intensity;
+                CurrActiveLaser.GetComponent<Physics.LaserPointer>().LaserIntensity = intensity;
             }
         }
         public void SetActiveWavelength(float wavelength)
@@ -83,7 +83,7 @@ namespace Maroon.PlatformControls.PC
 
             if (CurrActiveLaser != null)
             {
-                CurrActiveLaser.GetComponent<LPProperties>().LaserWavelength = wavelength;
+                CurrActiveLaser.GetComponent<Physics.LaserPointer>().LaserWavelength = wavelength;
             }
         }
         public GameObject[] GetAllLaserPointers()
@@ -125,7 +125,7 @@ namespace Maroon.PlatformControls.PC
             for (int i = 1; i < numlasers; i++)
             {
                 var lpprefab = Instantiate(LaserPointerPrefab, startpoint + i * offset, LaserPointerPrefab.transform.rotation);
-                var lpprops = lpprefab.GetComponent<LPProperties>();
+                var lpprops = lpprefab.GetComponent<Physics.LaserPointer>();
                 lpprops.LaserIntensity = intensity;
                 lpprops.LaserWavelength = wavelength;
                 lpprops.SetLaserColor();
@@ -213,7 +213,7 @@ namespace Maroon.PlatformControls.PC
             else
             {
                 LaserControlPanel.SetActive(true);
-                CurrActiveLaser.GetComponent<LPProperties>().SetLaserColor();
+                CurrActiveLaser.GetComponent<Physics.LaserPointer>().SetLaserColor();
             }
 
             if (Input.GetMouseButtonDown(0))
@@ -249,7 +249,7 @@ namespace Maroon.PlatformControls.PC
             SetActiveWavelength(ActiveLaserWavelength);
             if (CurrActiveLaser != null)
             {
-                ActiveLaserRefractiveIndex.Value = CurrActiveLaser.GetComponent<LPProperties>().GetCauchyForCurrentWavelength();
+                ActiveLaserRefractiveIndex.Value = CurrActiveLaser.GetComponent<Physics.LaserPointer>().GetCauchyForCurrentWavelength();
             }
         }
     }

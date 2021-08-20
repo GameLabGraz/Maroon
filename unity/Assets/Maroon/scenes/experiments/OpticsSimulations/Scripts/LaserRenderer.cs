@@ -93,7 +93,7 @@ public class LaserRenderer : MonoBehaviour
         {
             Vector3 relLaserPos = gameObject.transform.InverseTransformPoint(laserPointer.transform.position);
             Vector3 relLaserDir = gameObject.transform.InverseTransformDirection(laserPointer.transform.up);
-            var laserPointerProperties = laserPointer.GetComponent<LPProperties>();
+            var laserPointerProperties = laserPointer.GetComponent<Maroon.Physics.LaserPointer>();
 
             float intensity = laserPointerProperties.LaserIntensity;
             float wavelength = laserPointerProperties.LaserWavelength;
