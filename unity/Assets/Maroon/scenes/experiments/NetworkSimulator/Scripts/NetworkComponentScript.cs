@@ -5,25 +5,41 @@ using UnityEngine.EventSystems;
 
 public class NetworkComponentScript : MonoBehaviour, IPointerClickHandler
 {
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
+        AddPhysics2DRaycaster();
     }
-    public void OnPointerClick(PointerEventData pointerEventData)
+
+    public void OnPointerClick(PointerEventData eventData)
     {
-        //Output to console the clicked GameObject's name and the following message. You can replace this with your own actions for when clicking the GameObject.
-        Debug.Log(name + " Game Object Clicked!");
-        if (pointerEventData.clickCount >= 2)
+       // if(eventData.clickCount >= 2)
+            Debug.Log("Clicked: " + eventData.pointerCurrentRaycast.gameObject.name);
+    }
+
+    private void AddPhysics2DRaycaster()
+    {
+        PhysicsRaycaster physicsRaycaster = FindObjectOfType<PhysicsRaycaster>();
+        if (physicsRaycaster == null)
         {
-            //change to new scene
-            Debug.Log(name + " Scene will be changed soon!!!!");
+            Camera.main.gameObject.AddComponent<PhysicsRaycaster>();
         }
     }
 
-    // Update is called once per frame
-    void Update()
+ /*   void Update()
     {
-        
-    }
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                Debug.Log("gameobject " + hit.transform.name + " has been clicked on!!!");
+                //Select stage    
+                if (hit.transform.name == "wifi_router")
+                {
+                   // SceneManager.LoadScene("SceneTwo");
+                }
+            }
+        }
+    }*/
 }
