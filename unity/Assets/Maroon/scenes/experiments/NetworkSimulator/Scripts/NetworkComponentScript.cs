@@ -5,15 +5,20 @@ using UnityEngine.EventSystems;
 
 public class NetworkComponentScript : MonoBehaviour, IPointerClickHandler
 {
+    private  SceneSwitcher sceneSwitcher;
+
     private void Start()
     {
-        AddPhysics2DRaycaster();
+       AddPhysics2DRaycaster();
+       sceneSwitcher = FindObjectOfType<SceneSwitcher>();
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
        // if(eventData.clickCount >= 2)
-            Debug.Log("Clicked: " + eventData.pointerCurrentRaycast.gameObject.name);
+        Debug.Log("Clicked: " + eventData.pointerCurrentRaycast.gameObject.name);
+        sceneSwitcher.GoToRouterScene();
+
     }
 
     private void AddPhysics2DRaycaster()
