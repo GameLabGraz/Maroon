@@ -5,7 +5,8 @@ using UnityEngine.EventSystems;
 
 public class NetworkComponentScript : MonoBehaviour
 {
-    private  SceneSwitcher sceneSwitcher;
+    private SceneSwitcher sceneSwitcher;
+    public NetworkComponentType type;
 
     private void Start()
     {
