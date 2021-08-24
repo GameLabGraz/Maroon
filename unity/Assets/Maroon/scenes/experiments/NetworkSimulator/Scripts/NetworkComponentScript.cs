@@ -13,14 +13,12 @@ public class NetworkComponentScript : MonoBehaviour, IPointerClickHandler
        sceneSwitcher = FindObjectOfType<SceneSwitcher>();
     }
 
-    public void OnPointerClick(PointerEventData eventData)
+    void OnMouseDown()
     {
-       // if(eventData.clickCount >= 2)
-        Debug.Log("Clicked: " + eventData.pointerCurrentRaycast.gameObject.name);
+        // Destroy the gameObject after clicking on it
+        Debug.Log("Clicked: ");
         sceneSwitcher.GoToRouterScene();
-
     }
-
     private void AddPhysics2DRaycaster()
     {
         PhysicsRaycaster physicsRaycaster = FindObjectOfType<PhysicsRaycaster>();
@@ -30,21 +28,4 @@ public class NetworkComponentScript : MonoBehaviour, IPointerClickHandler
         }
     }
 
- /*   void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
-            {
-                Debug.Log("gameobject " + hit.transform.name + " has been clicked on!!!");
-                //Select stage    
-                if (hit.transform.name == "wifi_router")
-                {
-                   // SceneManager.LoadScene("SceneTwo");
-                }
-            }
-        }
-    }*/
 }
