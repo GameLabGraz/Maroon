@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class NetworkComponentScript : MonoBehaviour, IPointerClickHandler
+public class NetworkComponentScript : MonoBehaviour
 {
     private  SceneSwitcher sceneSwitcher;
 
