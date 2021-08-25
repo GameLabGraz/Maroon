@@ -3,24 +3,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 using System;
+using Maroon.Physics;
+using TMPro;
 
 [RequireComponent(typeof(TitrationController))]
 public class AcidTitration : MonoBehaviour
 {
-    private readonly Dictionary<string, int> _strongBases = new Dictionary<string, int>
-    {
-        {"NaOH", 0}, 
-        {"KOH", 1}
-
-    };
-
-    private readonly Dictionary<string, int> _strongAcids = new Dictionary<string, int>
-    {
-        {"HCl", 0},
-        {"HNO3", 1},
-        {"H2SO4", 2}
-    };
-
     private readonly Dictionary<string, double> _weakAcids = new Dictionary<string, double>
     {
         {"CH3CO2H", 4.75}
@@ -46,6 +34,9 @@ public class AcidTitration : MonoBehaviour
     private string _dropdownBaseText = "NaOH";
 
     public string analyteText = "";
+
+    private QuantityFloat _equivalenzPointPh = new QuantityFloat();
+    private QuantityFloat _equivalenzPointMl = new QuantityFloat();
 
     private void Start()
     {
@@ -95,6 +86,10 @@ public class AcidTitration : MonoBehaviour
                         ph = 0.5 * (_weakBases[_dropdownBaseText] - Math.Log10(X));
                     }
                     equivalenzPoint.Add(i, ph);
+
+                    _equivalenzPointPh.Value = (float)ph;
+                    _equivalenzPointMl.Value = (float)i;
+
                     _checkEquivalencePoint = false;
                 }
                 else // after equivalence point
@@ -213,7 +208,8 @@ public class AcidTitration : MonoBehaviour
         return ph_;
     }
 
-    public void ValidateBaseDropdown(Text label)
+
+    public void ValidateBaseDropdown(TMP_Text label)
     {
         _dropdownBaseText = label.text;
         _weakBase = false;
@@ -234,7 +230,7 @@ public class AcidTitration : MonoBehaviour
             analyteText = _dropdownBaseText;
     }
 
-    public void ValidateAcidDropdown(Text label)
+    public void ValidateAcidDropdown(TMP_Text label)
     {
         _dropddownAcidText = label.text;
         _weakAcid = false;
@@ -285,22 +281,5 @@ public class AcidTitration : MonoBehaviour
         _weakBase = false;
         _checkEquivalencePoint = true;
         analyteText = "HCl";
-    }
-
-    public void GetEquivalenzPointPh(MessageArgs args)
-    {
-        if (equivalenzPoint.Count == 0)
-            args.value = 0f;
-        else
-            args.value = (float)equivalenzPoint.First().Value;
-    }
-
-    public void GetEquivalenzPointMl(MessageArgs args)
-    {
-        if (equivalenzPoint.Count == 0)
-            args.value = 0f;
-        else
-            args.value = (float)equivalenzPoint.First().Key;
-
     }
 }
