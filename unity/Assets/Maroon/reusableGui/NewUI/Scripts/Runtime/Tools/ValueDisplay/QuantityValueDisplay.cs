@@ -1,55 +1,53 @@
-﻿using System.Globalization;
-using Maroon.Physics;
+﻿using Maroon.Physics;
 using UnityEngine;
 
-namespace Maroon.UI
+namespace Maroon.UI.ValueDisplay
 {
-
-    [RequireComponent(typeof(InputField))]
-    public class QuantityValueDisplay : MonoBehaviour
+    public abstract class QuantityValueDisplay : MonoBehaviour
     {
-        [SerializeField] private QuantityReferenceValue valueReference;
+        [SerializeField] protected QuantityReferenceValue valueReference;
 
-        [SerializeField] private string unit;
+        [SerializeField] protected string unit;
 
-        private void Start()
+        [SerializeField] protected QuantityDisplayFormat displayFormat;
+
+        protected void Start()
         {
-            var valueDisplayField = GetComponent<InputField>();
-            valueDisplayField.interactable = false; // only for displaying the value.
-
             switch (valueReference.Value)
             {
                 case QuantityInt quantityInt:
                     quantityInt.onValueChanged.AddListener(intValue =>
                     {
-                        valueDisplayField.text = $"{intValue.ToString("D", CultureInfo.InvariantCulture)} {unit}";
+                        UpdateDisplay(string.Format(displayFormat, "{0} {1}", intValue, unit));
                     });
                     break;
                 case QuantityFloat quantityFloat:
                     quantityFloat.onValueChanged.AddListener(floatValue =>
                     {
-                        valueDisplayField.text = $"{floatValue.ToString(CultureInfo.InvariantCulture)} {unit}";
+                        UpdateDisplay(string.Format(displayFormat, "{0} {1}", floatValue, unit));
                     });
                     break;
                 case QuantityBool quantityBool:
                     quantityBool.onValueChanged.AddListener(boolValue =>
                     {
-                        valueDisplayField.text = $"{boolValue} {unit}";
+                        UpdateDisplay(string.Format(displayFormat, "{0} {1}", boolValue, unit));
                     });
                     break;
                 case QuantityString quantityString:
                     quantityString.onValueChanged.AddListener(stringValue =>
                     {
-                        valueDisplayField.text = $"{stringValue} {unit}";
+                        UpdateDisplay(string.Format(displayFormat, "{0} {1}", stringValue, unit));
                     });
                     break;
                 case QuantityVector3 quantityVector3:
                     quantityVector3.onValueChanged.AddListener(vector3Value =>
                     {
-                        valueDisplayField.text = $"({vector3Value.x}, {vector3Value.y}, {vector3Value.z}) {unit}";
+                        UpdateDisplay(string.Format(displayFormat, "{0} {1}", vector3Value, unit));
                     });
                     break;
             }
         }
+
+        protected abstract void UpdateDisplay(string value);
     }
 }
