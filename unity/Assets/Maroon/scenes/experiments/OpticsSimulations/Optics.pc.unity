@@ -614,6 +614,26 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 3201826832906648423}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &55075816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 55075809}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd7d14a078350dc48b8d972b38171d1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueReference:
+    index: 2
+    objectInfo:
+      Object: {fileID: 426972997}
+      ComponentName: Maroon.PlatformControls.PC.LaserSelectionHandler
+      FieldName: ActiveLaserRefractiveIndex
+  unit: 
+  displayFormat: {fileID: 0}
 --- !u!1 &61483237 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4370550776525760810, guid: 5c79149608e055446ae721a812143cd5,
@@ -12795,6 +12815,38 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 3201826831640268202}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1639326870
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1639326868}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd7d14a078350dc48b8d972b38171d1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueReference:
+    index: 8
+    objectInfo:
+      Object: {fileID: 1720216397}
+      ComponentName: LaserRenderer
+      FieldName: LensDiameter
+  unit: cm
+  displayFormat: {fileID: 1639326871}
+--- !u!114 &1639326871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1639326868}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4685238bb009f044a9522284eecb8eaa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1641554203
 GameObject:
   m_ObjectHideFlags: 0
@@ -16632,7 +16684,7 @@ PrefabInstance:
     - target: {fileID: 6183878073129598398, guid: 4698ba446015d9f4ea6cde9f4c774547,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000038146973
+      value: 0.000061035156
       objectReference: {fileID: 0}
     - target: {fileID: 6429804060770831422, guid: 4698ba446015d9f4ea6cde9f4c774547,
         type: 3}
@@ -17088,25 +17140,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e2b704602653a724bbbe19e9499fd447, type: 3}
---- !u!114 &3201826831400212300
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5150805763621945272}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76d28c75cb0991947b2534f7c1bc337f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  valueReference:
-    index: 6
-    objectInfo:
-      Object: {fileID: 1720216397}
-      ComponentName: LaserRenderer
-      FieldName: LensRadius1
-  unit: cm
 --- !u!222 &3201826831419632091
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -17154,25 +17187,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &3201826831640268201
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1639326868}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76d28c75cb0991947b2534f7c1bc337f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  valueReference:
-    index: 8
-    objectInfo:
-      Object: {fileID: 1720216397}
-      ComponentName: LaserRenderer
-      FieldName: LensDiameter
-  unit: cm
 --- !u!1001 &3201826831640268202
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17655,13 +17669,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76d28c75cb0991947b2534f7c1bc337f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  valueReference:
-    index: 7
-    objectInfo:
-      Object: {fileID: 1720216397}
-      ComponentName: LaserRenderer
-      FieldName: LensRadius2
-  unit: cm
 --- !u!1 &3201826832752946088
 GameObject:
   m_ObjectHideFlags: 0
@@ -17756,25 +17763,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &3201826832906648420
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 55075809}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76d28c75cb0991947b2534f7c1bc337f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  valueReference:
-    index: 2
-    objectInfo:
-      Object: {fileID: 426972997}
-      ComponentName: LaserSelectionHandler
-      FieldName: ActiveLaserRefractiveIndex
-  unit: 
 --- !u!1001 &3201826832906648423
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18478,8 +18466,10 @@ GameObject:
   - component: {fileID: 7331906632561756445}
   - component: {fileID: 4390941152791869418}
   - component: {fileID: 7015569510990543728}
-  - component: {fileID: 6107423883832813281}
   - component: {fileID: 3201826832717829434}
+  - component: {fileID: 6107423883832813281}
+  - component: {fileID: 5150805762789948879}
+  - component: {fileID: 5150805762789948880}
   m_Layer: 5
   m_Name: ValueField
   m_TagString: Untagged
@@ -18487,6 +18477,38 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &5150805762789948879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5150805762789948878}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd7d14a078350dc48b8d972b38171d1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueReference:
+    index: 7
+    objectInfo:
+      Object: {fileID: 1720216397}
+      ComponentName: LaserRenderer
+      FieldName: LensRadius2
+  unit: cm
+  displayFormat: {fileID: 5150805762789948880}
+--- !u!114 &5150805762789948880
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5150805762789948878}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4685238bb009f044a9522284eecb8eaa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5150805763621945272
 GameObject:
   m_ObjectHideFlags: 0
@@ -18500,7 +18522,8 @@ GameObject:
   - component: {fileID: 4390941151425000860}
   - component: {fileID: 7015569509624822022}
   - component: {fileID: 6107423882498417815}
-  - component: {fileID: 3201826831400212300}
+  - component: {fileID: 5150805763621945273}
+  - component: {fileID: 5150805763621945274}
   m_Layer: 5
   m_Name: ValueField
   m_TagString: Untagged
@@ -18508,6 +18531,38 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &5150805763621945273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5150805763621945272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd7d14a078350dc48b8d972b38171d1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valueReference:
+    index: 6
+    objectInfo:
+      Object: {fileID: 1720216397}
+      ComponentName: LaserRenderer
+      FieldName: LensRadius1
+  unit: cm
+  displayFormat: {fileID: 5150805763621945274}
+--- !u!114 &5150805763621945274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5150805763621945272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4685238bb009f044a9522284eecb8eaa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!222 &5300072168956595981
 CanvasRenderer:
   m_ObjectHideFlags: 0
