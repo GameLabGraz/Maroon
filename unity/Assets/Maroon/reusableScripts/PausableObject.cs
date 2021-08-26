@@ -15,6 +15,8 @@ public abstract class PausableObject : MonoBehaviour
 
     protected virtual void Update()
     {
+        if (SimulationController.Instance == null) return;
+
         if(SimulationController.Instance.SimulationRunning)
         {
             if(IsPause)
@@ -42,6 +44,8 @@ public abstract class PausableObject : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
+        if (SimulationController.Instance == null) return;
+
         if (SimulationController.Instance.SimulationRunning)
             HandleFixedUpdate();
     }

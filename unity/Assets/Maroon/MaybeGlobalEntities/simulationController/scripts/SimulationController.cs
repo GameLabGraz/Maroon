@@ -75,9 +75,6 @@ public class SimulationController : MonoBehaviour
             if (_instance == null)
                 _instance = FindObjectOfType<SimulationController>();
 
-            if(_instance == null)
-                throw  new NullReferenceException("There is no simulation controller.");
-
             return _instance;
         }
     }

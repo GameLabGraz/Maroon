@@ -50,8 +50,6 @@ public class PointWaveSource : MonoBehaviour, IResetObject, IDeleteObject
         if (obj)
             _poolHandler = obj.GetComponent<PointWavePoolHandler>();
 
-        Debug.Assert(_poolHandler != null);
-
         transform.localRotation = Quaternion.identity;
         GetComponent<Rigidbody>().constraints |= RigidbodyConstraints.FreezePositionY;
     }
