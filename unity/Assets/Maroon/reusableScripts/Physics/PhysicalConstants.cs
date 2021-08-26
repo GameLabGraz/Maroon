@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 namespace Maroon.Physics
 {
-
-
     public enum CauchyMaterial
     {
         PrismGlass,
@@ -30,7 +28,6 @@ namespace Maroon.Physics
         public float B;
     }
 
-
     public static class PhysicalConstants
     {
         /// <summary>
@@ -53,7 +50,9 @@ namespace Maroon.Physics
         /// </summary>
         public static readonly int FieldStrengthFactor = 100;
 
-
+        /// <summary>
+        /// The Cauchy coefficients
+        /// </summary>
         public static readonly Dictionary<CauchyMaterial, Cauchy> CauchyValues = new Dictionary<CauchyMaterial, Cauchy>
         {
             {CauchyMaterial.PrismGlass,         new Cauchy(1.7387f, 0.01590f)},
@@ -67,7 +66,5 @@ namespace Maroon.Physics
             {CauchyMaterial.FusedSilica,        new Cauchy(1.4580f, 0.00354f)},
             {CauchyMaterial.BorosilicateGlass,  new Cauchy(1.5046f, 0.00420f)},
         };
-
-
     }
 }
