@@ -4,7 +4,6 @@ using UnityEngine.UI;
 
 public class ShowNameAndFluidcolor : MonoBehaviour 
 {
-    [SerializeField] private Text label;
     [SerializeField] private Renderer labelRend;
     [SerializeField] private MeshRenderer fluidRend;
 
@@ -13,7 +12,6 @@ public class ShowNameAndFluidcolor : MonoBehaviour
     private void Start () 
     {
         _showFluidScript = ShowFluid.Instance;
-        ChangeName(label);
     }
 
     public void ChangeName(Text label)
