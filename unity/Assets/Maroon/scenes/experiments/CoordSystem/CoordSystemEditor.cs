@@ -19,11 +19,11 @@ public class CoordSystemManagerEditor : Editor
     private void OnEnable()
     {
         _axisList = serializedObject.FindProperty("_axisList");
-        _markerFontSize = serializedObject.FindProperty("markerFontSize");
-        _enableThirdDimension = serializedObject.FindProperty("enableThirdDimension");
-        _isWorldLengthUniform = serializedObject.FindProperty("isWorldLengthUniform");
-        _uniformWorldAxisLength = serializedObject.FindProperty("uniformWorldAxisLength");
-        _enableNegativeDirection = serializedObject.FindProperty("enableNegativeDirection");
+        _markerFontSize = serializedObject.FindProperty("_markerFontSize");
+        _enableThirdDimension = serializedObject.FindProperty("_enableThirdDimension");
+        _isWorldLengthUniform = serializedObject.FindProperty("_lengthUniform");
+        _uniformWorldAxisLength = serializedObject.FindProperty("_uniformWorldAxisLength");
+        _enableNegativeDirection = serializedObject.FindProperty("_enableNegativeDirection");
     }
 
     public override void OnInspectorGUI()
