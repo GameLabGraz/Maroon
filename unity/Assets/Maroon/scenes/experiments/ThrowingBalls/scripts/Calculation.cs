@@ -8,66 +8,66 @@ using ObjectsInUse;
 public class Calculation : PausableObject, IResetObject
 {
     private static Calculation _instance;
-    private ParticleObject particle_in_use_;
-    private Vector3 point_;
+    private ParticleObject _particleInUse;
+    private Vector3 _point;
     
-    private bool stop_simulation_ = false;
-    private bool start_calc_plot_ = false;
-    private int current_steps_ = 0;
-    private int current_update_rate_ = 0;
-    private bool draw_trajectory_ = true;
-    private bool first_it = true;
-    private bool initialized = false;
+    private bool _stopSimulation = false;
+    private bool _startCalcPlot = false;
+    private int _currentSteps = 0;
+    private int _currentUpdateRate = 0;
+    private bool _drawTrajectory = true;
+    private bool _firstIteration = true;
+    private bool _initialized = false;
 
-    private float x_max_ = System.Int64.MinValue;
-    private float y_max_ = System.Int64.MinValue;
-    private float z_max_ = System.Int64.MinValue;
+    private float _xMax = System.Int64.MinValue;
+    private float _yMax = System.Int64.MinValue;
+    private float _zMax = System.Int64.MinValue;
 
-    private float x_min_ = System.Int64.MaxValue;
-    private float y_min_ = System.Int64.MaxValue;
-    private float z_min_ = System.Int64.MaxValue;
+    private float _xMin = System.Int64.MaxValue;
+    private float _yMin = System.Int64.MaxValue;
+    private float _zMin = System.Int64.MaxValue;
 
-    private string formula_fx_; 
-    private string formula_fy_; 
-    private string formula_fz_; 
+    private string _formulaFx; 
+    private string _formulaFy; 
+    private string _formulaFz; 
 
-    private double current_Fx_ = 0;
-    private double current_Fy_ = 0;
-    private double current_Fz_ = 0;
+    private double _currentFx = 0;
+    private double _currentFy = 0;
+    private double _currentFz = 0;
 
-    private double current_x_ = 0;
-    private double current_y_ = 0;
-    private double current_z_ = 0;
+    private double _currentX = 0;
+    private double _currentY = 0;
+    private double _currentZ = 0;
 
-    private double current_vx_ = 0;
-    private double current_vy_ = 0;
-    private double current_vz_ = 0;
+    private double _currentVx = 0;
+    private double _currentVy = 0;
+    private double _currentVz = 0;
 
-    private double current_p_ = 0;
-    private double current_ekin_ = 0;
-    private double current_w_ = 0;
-    private double old_power_ = 0;
+    private double _currentP = 0;
+    private double _currentEkin = 0;
+    private double _currentW = 0;
+    private double _oldPower = 0;
 
-    private double delta_t_ = 0;
-    private double steps_ = 0;
-    private double current_time_ = 0;
-    private double mass_ = 1;
+    private double _deltaT = 0;
+    private double _steps = 0;
+    private double _currentTime = 0;
+    private double _mass = 1;
    
-    private List<Vector2> data_x_ = new List<Vector2>();
-    private List<Vector2> data_y_ = new List<Vector2>();
-    private List<Vector2> data_z_ = new List<Vector2>();
+    private List<Vector2> _dataX = new List<Vector2>();
+    private List<Vector2> _dataY = new List<Vector2>();
+    private List<Vector2> _dataZ = new List<Vector2>();
 
-    private List<Vector2> data_vx_ = new List<Vector2>();
-    private List<Vector2> data_vy_ = new List<Vector2>();
-    private List<Vector2> data_vz_ = new List<Vector2>();
+    private List<Vector2> _dataVx = new List<Vector2>();
+    private List<Vector2> _dataVy = new List<Vector2>();
+    private List<Vector2> _dataVz = new List<Vector2>();
 
-    private List<Vector2> data_fx_ = new List<Vector2>();
-    private List<Vector2> data_fy_ = new List<Vector2>();
-    private List<Vector2> data_fz_ = new List<Vector2>();
+    private List<Vector2> _dataFx = new List<Vector2>();
+    private List<Vector2> _dataFy = new List<Vector2>();
+    private List<Vector2> _dataFz = new List<Vector2>();
 
-    private List<Vector2> data_p_ = new List<Vector2>();
-    private List<Vector2> data_ekin_ = new List<Vector2>();
-    private List<Vector2> data_w_ = new List<Vector2>();
+    private List<Vector2> _dataP = new List<Vector2>();
+    private List<Vector2> _dataEkin = new List<Vector2>();
+    private List<Vector2> _data_W = new List<Vector2>();
 
     /// <summary>
     /// Initialization
@@ -90,306 +90,291 @@ public class Calculation : PausableObject, IResetObject
     /// </summary>
     protected override void HandleFixedUpdate()
     {
-        if (!start_calc_plot_ && !initialized)
-            startCalcPlot();
+        if (!_startCalcPlot && !_initialized)
+            StartCalcPlot();
 
         try
         {
-            if (start_calc_plot_ && current_steps_ < steps_ && current_update_rate_ == 1)
+            if (_startCalcPlot && _currentSteps < _steps && _currentUpdateRate == 1)
             {
-                point_ = new Vector3(data_x_[current_steps_].y, data_z_[current_steps_].y, data_y_[current_steps_].y);
-                Vector3 mappedPoint = initCoordSystem.Instance.mapValues(point_);
-                initCoordSystem.Instance.drawPoint(mappedPoint, draw_trajectory_, particle_in_use_);
+                _point = new Vector3(_dataX[_currentSteps].y, _dataZ[_currentSteps].y, _dataY[_currentSteps].y);
+                Vector3 mappedPoint = initCoordSystem.Instance.MapValues(_point);
+                initCoordSystem.Instance.DrawPoint(mappedPoint, _drawTrajectory, _particleInUse);
                 
-                current_steps_++;
-                current_update_rate_ = 0;
+                _currentSteps++;
+                _currentUpdateRate = 0;
             }
-            else if (start_calc_plot_ && current_steps_ >= steps_)
+            else if (_startCalcPlot && _currentSteps >= _steps)
             {
-                current_steps_ = 0;
-                draw_trajectory_ = false;
+                _currentSteps = 0;
+                _drawTrajectory = false;
             }
             else
             {
-                if (start_calc_plot_)
-                    current_update_rate_++;
+                if (_startCalcPlot)
+                    _currentUpdateRate++;
             }
         } catch
         {
-            showError();
+            ShowError();
             SimulationController.Instance.ResetSimulation();
-            start_calc_plot_ = false;
+            _startCalcPlot = false;
         }
     }
 
     // GUI button
-    public void startCalcPlot()
+    public void StartCalcPlot()
     {
-        Debug.Log("START CALC PLOT");
-        stop_simulation_ = false;
+        _stopSimulation = false;
         
         // load parameters from GUI
-        initParameter();
+        InitParameter();
 
-        particle_in_use_ = ParameterUI.Instance.getObjectInUse();
+        _particleInUse = ParameterUI.Instance.GetObjectInUse();
         // calc min max for x,y,z coords
-        calcMinMax();
-        if (!stop_simulation_)
+        CalcMinMax();
+        if (!_stopSimulation)
         {
-            Vector3 border_min = new Vector3(x_min_, z_min_, y_min_);
-            Vector3 border_max = new Vector3(x_max_, z_max_, y_max_);
+            Vector3 border_min = new Vector3(_xMin, _zMin, _yMin);
+            Vector3 border_max = new Vector3(_xMax, _zMax, _yMax);
 
-            //particle_in_use_ = ParameterUI.Instance.getObjectInUse();
-            Debug.Log(particle_in_use_);
+            if (_particleInUse == ParticleObject.Satellite)
+                initCoordSystem.Instance.SetColor(Color.white);
+            initCoordSystem.Instance.SetRealCoordBorders(border_min, border_max);
 
-            if (particle_in_use_ == ParticleObject.Satellite)
-                initCoordSystem.Instance.setColor(Color.white);
-            initCoordSystem.Instance.setRealCoordBorders(border_min, border_max);
+            _initialized = true;
+            _startCalcPlot = true;
 
-            initialized = true;
-            start_calc_plot_ = true;
-
-            initCoordSystem.Instance.setParticleActive(particle_in_use_);
+            initCoordSystem.Instance.SetParticleActive(_particleInUse);
         }
     }
 
     // get formula expression with dynamic parameters
-    private Expression getExpression(string formula)
+    private Expression GetExpression(string formula)
     {
         Expression e = new Expression(formula);
-        e.Parameters["x"] = current_x_;
-        e.Parameters["y"] = current_y_;
-        e.Parameters["z"] = current_z_;
+        e.Parameters["x"] = _currentX;
+        e.Parameters["y"] = _currentY;
+        e.Parameters["z"] = _currentZ;
 
-        e.Parameters["vx"] = current_vx_;
-        e.Parameters["vy"] = current_vy_;
-        e.Parameters["vz"] = current_vz_;
+        e.Parameters["vx"] = _currentVx;
+        e.Parameters["vy"] = _currentVy;
+        e.Parameters["vz"] = _currentVz;
 
-        e.Parameters["m"] = mass_;
-        e.Parameters["t"] = current_time_;
+        e.Parameters["m"] = _mass;
+        e.Parameters["t"] = _currentTime;
 
         return e;
     }
 
     // calculate the forces Fx, Fy, Fz
-    private void calcForces()
+    private void CalcForces()
     {
         Expression e;
 
         try
         {
             // calc x-force
-            if (!System.String.IsNullOrEmpty(formula_fx_))
+            if (!System.String.IsNullOrEmpty(_formulaFx))
             {
-                e = getExpression(formula_fx_);
-                current_Fx_ = System.Convert.ToDouble(e.Evaluate());
+                e = GetExpression(_formulaFx);
+                _currentFx = System.Convert.ToDouble(e.Evaluate());
             }
 
             // calc y-force
-            if (!System.String.IsNullOrEmpty(formula_fx_))
+            if (!System.String.IsNullOrEmpty(_formulaFx))
             {
-                e = getExpression(formula_fy_);
-                current_Fy_ = System.Convert.ToDouble(e.Evaluate());
+                e = GetExpression(_formulaFy);
+                _currentFy = System.Convert.ToDouble(e.Evaluate());
             }
 
             // calc z-force
-            if (!System.String.IsNullOrEmpty(formula_fx_))
+            if (!System.String.IsNullOrEmpty(_formulaFx))
             {
-                e = getExpression(formula_fz_);
-                current_Fz_ = System.Convert.ToDouble(e.Evaluate());
+                e = GetExpression(_formulaFz);
+                _currentFz = System.Convert.ToDouble(e.Evaluate());
             }
         } 
         catch
         {
-            Debug.Log("calcForces() exception\n");
-            showError();
+            ShowError();
             SimulationController.Instance.ResetSimulation();
-            stop_simulation_ = true;
+            _stopSimulation = true;
         }
         
     }
 
     // calculates the values with the 4th order Runge-Kutta method
-    private void calcValues()
+    private void CalcValues()
     {
-        double temp_x = current_x_;
-        double temp_y = current_y_;
-        double temp_z = current_z_;
+        double tempX = _currentX;
+        double tempY = _currentY;
+        double tempZ = _currentZ;
 
-        double temp_vx = current_vx_;
-        double temp_vy = current_vy_;
-        double temp_vz = current_vz_;
+        double tempVx = _currentVx;
+        double tempVy = _currentVy;
+        double tempVz = _currentVz;
 
-        if (first_it)
+        if (_firstIteration)
         {
-            calcForces();
-            first_it = false;
+            CalcForces();
+            _firstIteration = false;
         }
-        if (stop_simulation_)
+        if (_stopSimulation)
             return;
             
-        double k1x = current_vx_ * delta_t_;
-        double k1y = current_vy_ * delta_t_;
-        double k1z = current_vz_ * delta_t_;
+        double k1x = _currentVx * _deltaT;
+        double k1y = _currentVy * _deltaT;
+        double k1z = _currentVz * _deltaT;
 
-        double k1vx = current_Fx_ / mass_ * delta_t_;
-        double k1vy = current_Fy_ / mass_ * delta_t_;
-        double k1vz = current_Fz_ / mass_ * delta_t_;
+        double k1vx = _currentFx / _mass * _deltaT;
+        double k1vy = _currentFy / _mass * _deltaT;
+        double k1vz = _currentFz / _mass * _deltaT;
 
-        current_x_ = temp_x + 0.5 * k1x;
-        current_y_ = temp_y + 0.5 * k1y;
-        current_z_ = temp_z + 0.5 * k1z;
+        _currentX = tempX + 0.5 * k1x;
+        _currentY = tempY + 0.5 * k1y;
+        _currentZ = tempZ + 0.5 * k1z;
 
-        current_vx_ = temp_vx + 0.5 * k1vx;
-        current_vy_ = temp_vy + 0.5 * k1vy;
-        current_vz_ = temp_vz + 0.5 * k1vz;
+        _currentVx = tempVx + 0.5 * k1vx;
+        _currentVy = tempVy + 0.5 * k1vy;
+        _currentVz = tempVz + 0.5 * k1vz;
 
-        calcForces();
+        CalcForces();
     
-        double k2x = current_vx_ * delta_t_;
-        double k2y = current_vy_ * delta_t_;
-        double k2z = current_vz_ * delta_t_;
+        double k2x = _currentVx * _deltaT;
+        double k2y = _currentVy * _deltaT;
+        double k2z = _currentVz * _deltaT;
 
-        double k2vx = current_Fx_ / mass_ * delta_t_;
-        double k2vy = current_Fy_ / mass_ * delta_t_;
-        double k2vz = current_Fz_ / mass_ * delta_t_;
+        double k2vx = _currentFx / _mass * _deltaT;
+        double k2vy = _currentFy / _mass * _deltaT;
+        double k2vz = _currentFz / _mass * _deltaT;
 
-        current_x_ = temp_x + 0.5 * k2x;
-        current_y_ = temp_y + 0.5 * k2y;
-        current_z_ = temp_z + 0.5 * k2z;
+        _currentX = tempX + 0.5 * k2x;
+        _currentY = tempY + 0.5 * k2y;
+        _currentZ = tempZ + 0.5 * k2z;
 
-        current_vx_ = temp_vx + 0.5 * k2vx;
-        current_vy_ = temp_vy + 0.5 * k2vy;
-        current_vz_ = temp_vz + 0.5 * k2vz;
+        _currentVx = tempVx + 0.5 * k2vx;
+        _currentVy = tempVy + 0.5 * k2vy;
+        _currentVz = tempVz + 0.5 * k2vz;
 
-        calcForces();
+        CalcForces();
 
-        double k3x = current_vx_ * delta_t_;
-        double k3y = current_vy_ * delta_t_;
-        double k3z = current_vz_ * delta_t_;
+        double k3x = _currentVx * _deltaT;
+        double k3y = _currentVy * _deltaT;
+        double k3z = _currentVz * _deltaT;
 
-        double k3vx = current_Fx_ / mass_ * delta_t_;
-        double k3vy = current_Fy_ / mass_ * delta_t_;
-        double k3vz = current_Fz_ / mass_ * delta_t_;
+        double k3vx = _currentFx / _mass * _deltaT;
+        double k3vy = _currentFy / _mass * _deltaT;
+        double k3vz = _currentFz / _mass * _deltaT;
 
-        current_x_ = temp_x + k3x;
-        current_y_ = temp_y + k3y;
-        current_z_ = temp_z + k3z;
+        _currentX = tempX + k3x;
+        _currentY = tempY + k3y;
+        _currentZ = tempZ + k3z;
 
-        current_vx_ = temp_vx + k3vx;
-        current_vy_ = temp_vy + k3vy;
-        current_vz_ = temp_vz + k3vz;
+        _currentVx = tempVx + k3vx;
+        _currentVy = tempVy + k3vy;
+        _currentVz = tempVz + k3vz;
 
-        calcForces();
+        CalcForces();
 
-        double k4x = current_vx_ * delta_t_;
-        double k4y = current_vy_ * delta_t_;
-        double k4z = current_vz_ * delta_t_;
+        double k4x = _currentVx * _deltaT;
+        double k4y = _currentVy * _deltaT;
+        double k4z = _currentVz * _deltaT;
 
-        double k4vx = current_Fx_ / mass_ * delta_t_;
-        double k4vy = current_Fy_ / mass_ * delta_t_;
-        double k4vz = current_Fz_ / mass_ * delta_t_;
+        double k4vx = _currentFx / _mass * _deltaT;
+        double k4vy = _currentFy / _mass * _deltaT;
+        double k4vz = _currentFz / _mass * _deltaT;
 
-        current_x_ = temp_x + (1.0 / 6.0) * (k1x + 2 * k2x + 2 * k3x + k4x);
-        current_y_ = temp_y + (1.0 / 6.0) * (k1y + 2 * k2y + 2 * k3y + k4y);
-        current_z_ = temp_z + (1.0 / 6.0) * (k1z + 2 * k2z + 2 * k3z + k4z);
+        _currentX = tempX + (1.0 / 6.0) * (k1x + 2 * k2x + 2 * k3x + k4x);
+        _currentY = tempY + (1.0 / 6.0) * (k1y + 2 * k2y + 2 * k3y + k4y);
+        _currentZ = tempZ + (1.0 / 6.0) * (k1z + 2 * k2z + 2 * k3z + k4z);
 
-        current_vx_ = temp_vx + (1.0 / 6.0) * (k1vx + 2 * k2vx + 2 * k3vx + k4vx);
-        current_vy_ = temp_vy + (1.0 / 6.0) * (k1vy + 2 * k2vy + 2 * k3vy + k4vy);
-        current_vz_ = temp_vz + (1.0 / 6.0) * (k1vz + 2 * k2vz + 2 * k3vz + k4vz);
+        _currentVx = tempVx + (1.0 / 6.0) * (k1vx + 2 * k2vx + 2 * k3vx + k4vx);
+        _currentVy = tempVy + (1.0 / 6.0) * (k1vy + 2 * k2vy + 2 * k3vy + k4vy);
+        _currentVz = tempVz + (1.0 / 6.0) * (k1vz + 2 * k2vz + 2 * k3vz + k4vz);
 
-        calcForces();
-        calcEnergies();
-        addData();
+        CalcForces();
+        CalcEnergies();
+        AddData();
 
-        current_time_ += delta_t_;
+        _currentTime += _deltaT;
     }
 
     // init the parameters from GUI
-    private void initParameter()
+    private void InitParameter()
     {
-        formula_fx_ = ParameterUI.Instance.getFunctionFx();
-        formula_fy_ = ParameterUI.Instance.getFunctionFy();
-        formula_fz_ = ParameterUI.Instance.getFunctionFz();
+        _formulaFx = ParameterUI.Instance.GetFunctionFx();
+        _formulaFy = ParameterUI.Instance.GetFunctionFy();
+        _formulaFz = ParameterUI.Instance.GetFunctionFz();
         
-        mass_ = (double) ParameterUI.Instance.getMass();
-        current_time_ = (double) ParameterUI.Instance.getTimes().x;
-        delta_t_ = (double) ParameterUI.Instance.getTimes().y;
-        steps_ = (double) ParameterUI.Instance.getTimes().z;
+        _mass = (double) ParameterUI.Instance.GetMass();
+        _currentTime = (double) ParameterUI.Instance.GetTimes().x;
+        _deltaT = (double) ParameterUI.Instance.GetTimes().y;
+        _steps = (double) ParameterUI.Instance.GetTimes().z;
 
-        current_x_ = (double) ParameterUI.Instance.getXYZ().x;
-        current_y_ = (double) ParameterUI.Instance.getXYZ().y;
-        current_z_ = (double) ParameterUI.Instance.getXYZ().z;
+        _currentX = (double) ParameterUI.Instance.GetXYZ().x;
+        _currentY = (double) ParameterUI.Instance.GetXYZ().y;
+        _currentZ = (double) ParameterUI.Instance.GetXYZ().z;
 
-        current_vx_ = (double) ParameterUI.Instance.getVxVyVz().x;
-        current_vy_ = (double) ParameterUI.Instance.getVxVyVz().y;
-        current_vz_ = (double) ParameterUI.Instance.getVxVyVz().z;
+        _currentVx = (double) ParameterUI.Instance.GetVxVyVz().x;
+        _currentVy = (double) ParameterUI.Instance.GetVxVyVz().y;
+        _currentVz = (double) ParameterUI.Instance.GetVxVyVz().z;
 
-        current_p_ = 0;
-        current_ekin_ = 0;
-        current_w_ = 0;
+        _currentP = 0;
+        _currentEkin = 0;
+        _currentW = 0;
 
-        clearData();
+        ClearData();
     }
 
     // calculate min, max to set the borders of the coord-system
-    private void calcMinMax()
+    private void CalcMinMax()
     {
-        for (int i = 0; i < steps_; i++)
+        for (int i = 0; i < _steps; i++)
         {
-            calcValues();
-            if (stop_simulation_)
+            CalcValues();
+            if (_stopSimulation)
                 return;
             // get min
-            if (x_min_ > current_x_)
+            if (_xMin > _currentX)
             {
-                x_min_ = (float)current_x_;
+                _xMin = (float)_currentX;
             }
-            if (y_min_ > current_y_)
+            if (_yMin > _currentY)
             {
-                y_min_ = (float)current_y_;
+                _yMin = (float)_currentY;
             }
-            if (z_min_ > current_z_)
+            if (_zMin > _currentZ)
             {
-                z_min_ = (float)current_z_;
+                _zMin = (float)_currentZ;
             }
 
             // get max
-            if (x_max_ < current_x_)
+            if (_xMax < _currentX)
             {
-                x_max_ = (float)current_x_;
+                _xMax = (float)_currentX;
             }
-            if (y_max_ < current_y_)
+            if (_yMax < _currentY)
             {
-                y_max_ = (float)current_y_;
+                _yMax = (float)_currentY;
             }
-            if (z_max_ < current_z_)
+            if (_zMax < _currentZ)
             {
-                z_max_ = (float)current_z_;
+                _zMax = (float)_currentZ;
             }
         }
 
-        Debug.Log("xmin: " + x_min_.ToString() + " xmax: " + x_max_.ToString());
-        /*
-        x_min_ = (float)System.Math.Floor(x_min_) - getMinScaleFactor(x_min_);
-        y_min_ = (float)System.Math.Floor(y_min_) - getMinScaleFactor(y_min_);
-        z_min_ = (float)System.Math.Floor(z_min_) - getMinScaleFactor(z_min_);
+        _xMin = _xMin - GetMinMaxScaleFactor(_xMin);
+        _yMin = _yMin - GetMinMaxScaleFactor(_yMin);
+        _zMin = _zMin - GetMinMaxScaleFactor(_zMin);
 
-        x_max_ = (float)System.Math.Ceiling(x_max_) + getMinScaleFactor(x_max_);
-        y_max_ = (float)System.Math.Ceiling(y_max_) + getMinScaleFactor(y_max_);
-        z_max_ = (float)System.Math.Ceiling(z_max_) + getMinScaleFactor(z_max_);
-        */
-        x_min_ = x_min_ - getMinMaxScaleFactor(x_min_);
-        y_min_ = y_min_ - getMinMaxScaleFactor(y_min_);
-        z_min_ = z_min_ - getMinMaxScaleFactor(z_min_);
-
-        x_max_ = x_max_ + getMinMaxScaleFactor(x_max_);
-        y_max_ = y_max_ + getMinMaxScaleFactor(y_max_);
-        z_max_ = z_max_ + getMinMaxScaleFactor(z_max_);
+        _xMax = _xMax + GetMinMaxScaleFactor(_xMax);
+        _yMax = _yMax + GetMinMaxScaleFactor(_yMax);
+        _zMax = _zMax + GetMinMaxScaleFactor(_zMax);
 
     }
 
-    private float getMinMaxScaleFactor(float value)
+    private float GetMinMaxScaleFactor(float value)
     {
         value = System.Math.Abs(value);
 
@@ -400,29 +385,29 @@ public class Calculation : PausableObject, IResetObject
     }
 
     // debugging GUI parameters
-    private void debugGUIParameters()
+    private void DebugGUIParameters()
     {
         Debug.Log("PARAMETERS\n");
-        Debug.Log("Fx: " + formula_fx_ + "\nFy: " + formula_fy_ +
-            "\nFz: " + formula_fz_);
-        Debug.Log("Mass: " + mass_.ToString());
-        Debug.Log("To: " + current_time_.ToString() +
-            "\nDeltaT: " + delta_t_.ToString() +
-            "\nSteps: " + steps_.ToString());
-        Debug.Log("X: " + current_x_.ToString() +
-            "\nY: " + current_y_.ToString() +
-            "\nZ: " + current_z_.ToString());
-        Debug.Log("VX: " + current_vx_.ToString() +
-            "\nVY: " + current_vy_.ToString() +
-            "\nVZ: " + current_vz_.ToString());
+        Debug.Log("Fx: " + _formulaFx + "\nFy: " + _formulaFy +
+            "\nFz: " + _formulaFz);
+        Debug.Log("Mass: " + _mass.ToString());
+        Debug.Log("To: " + _currentTime.ToString() +
+            "\nDeltaT: " + _deltaT.ToString() +
+            "\nSteps: " + _steps.ToString());
+        Debug.Log("X: " + _currentX.ToString() +
+            "\nY: " + _currentY.ToString() +
+            "\nZ: " + _currentZ.ToString());
+        Debug.Log("VX: " + _currentVx.ToString() +
+            "\nVY: " + _currentVy.ToString() +
+            "\nVZ: " + _currentVz.ToString());
     }
 
     // debugging current values
-    private void debugCurrentValues()
+    private void DebugCurrentValues()
     {
-        Debug.Log("Time: " + current_time_.ToString() + " X: " + current_x_.ToString() + " Y: " + current_y_.ToString() + " Z: " + current_z_.ToString() +
-                "\nVx: " + current_vx_.ToString() + " Vy: " + current_vy_.ToString() + " Vz: " + current_vz_.ToString() +
-                "\nFx: " + current_Fx_.ToString() + " Fy: " + current_Fy_.ToString() + " Fz: " + current_Fz_.ToString());
+        Debug.Log("Time: " + _currentTime.ToString() + " X: " + _currentX.ToString() + " Y: " + _currentY.ToString() + " Z: " + _currentZ.ToString() +
+                "\nVx: " + _currentVx.ToString() + " Vy: " + _currentVy.ToString() + " Vz: " + _currentVz.ToString() +
+                "\nFx: " + _currentFx.ToString() + " Fy: " + _currentFy.ToString() + " Fz: " + _currentFz.ToString());
     }
     
     public static Calculation Instance
@@ -435,54 +420,54 @@ public class Calculation : PausableObject, IResetObject
         }
     }
 
-    private void addData()
+    private void AddData()
     {
         Vector2 tmp;
 
-        tmp = new Vector2((float)current_time_, (float)current_x_);
-        data_x_.Add(tmp);
-        tmp = new Vector2((float)current_time_, (float)current_y_);
-        data_y_.Add(tmp);
-        tmp = new Vector2((float)current_time_, (float)current_z_);
-        data_z_.Add(tmp);
+        tmp = new Vector2((float)_currentTime, (float)_currentX);
+        _dataX.Add(tmp);
+        tmp = new Vector2((float)_currentTime, (float)_currentY);
+        _dataY.Add(tmp);
+        tmp = new Vector2((float)_currentTime, (float)_currentZ);
+        _dataZ.Add(tmp);
 
-        tmp = new Vector2((float)current_time_, (float)current_vx_);
-        data_vx_.Add(tmp);
-        tmp = new Vector2((float)current_time_, (float)current_vy_);
-        data_vy_.Add(tmp);
-        tmp = new Vector2((float)current_time_, (float)current_vz_);
-        data_vz_.Add(tmp);
+        tmp = new Vector2((float)_currentTime, (float)_currentVx);
+        _dataVx.Add(tmp);
+        tmp = new Vector2((float)_currentTime, (float)_currentVy);
+        _dataVy.Add(tmp);
+        tmp = new Vector2((float)_currentTime, (float)_currentVz);
+        _dataVz.Add(tmp);
         
-        tmp = new Vector2((float)current_time_, (float)current_Fx_);
-        data_fx_.Add(tmp);
-        tmp = new Vector2((float)current_time_, (float)current_Fy_);
-        data_fy_.Add(tmp);
-        tmp = new Vector2((float)current_time_, (float)current_Fz_);
-        data_fz_.Add(tmp);
+        tmp = new Vector2((float)_currentTime, (float)_currentFx);
+        _dataFx.Add(tmp);
+        tmp = new Vector2((float)_currentTime, (float)_currentFy);
+        _dataFy.Add(tmp);
+        tmp = new Vector2((float)_currentTime, (float)_currentFz);
+        _dataFz.Add(tmp);
 
-        tmp = new Vector2((float)current_time_, (float)current_ekin_);
-        data_ekin_.Add(tmp);
-        tmp = new Vector2((float)current_time_, (float)current_p_);
-        data_p_.Add(tmp);
-        tmp = new Vector2((float)current_time_, (float)current_w_);
-        data_w_.Add(tmp);
+        tmp = new Vector2((float)_currentTime, (float)_currentEkin);
+        _dataEkin.Add(tmp);
+        tmp = new Vector2((float)_currentTime, (float)_currentP);
+        _dataP.Add(tmp);
+        tmp = new Vector2((float)_currentTime, (float)_currentW);
+        _data_W.Add(tmp);
     }
 
-    public List<Vector2> getDataX() { return data_x_; }
-    public List<Vector2> getDataY() { return data_y_; }
-    public List<Vector2> getDataZ() { return data_z_; }
+    public List<Vector2> GetDataX() { return _dataX; }
+    public List<Vector2> GetDataY() { return _dataY; }
+    public List<Vector2> GetDataZ() { return _dataZ; }
 
-    public List<Vector2> getDataVX() { return data_vx_; }
-    public List<Vector2> getDataVY() { return data_vy_; }
-    public List<Vector2> getDataVZ() { return data_vz_; }
+    public List<Vector2> GetDataVX() { return _dataVx; }
+    public List<Vector2> GetDataVY() { return _dataVy; }
+    public List<Vector2> GetDataVZ() { return _dataVz; }
 
-    public List<Vector2> getDataFX() { return data_fx_; }
-    public List<Vector2> getDataFY() { return data_fy_; }
-    public List<Vector2> getDataFZ() { return data_fz_; }
+    public List<Vector2> GetDataFX() { return _dataFx; }
+    public List<Vector2> GetDataFY() { return _dataFy; }
+    public List<Vector2> GetDataFZ() { return _dataFz; }
 
-    public List<Vector2> getDataP() { return data_p_; }
-    public List<Vector2> getDataEkin() { return data_ekin_; }
-    public List<Vector2> getDataW() { return data_w_; }
+    public List<Vector2> GetDataP() { return _dataP; }
+    public List<Vector2> GetDataEkin() { return _dataEkin; }
+    public List<Vector2> GetDataW() { return _data_W; }
 
 
     /// <summary>
@@ -492,67 +477,67 @@ public class Calculation : PausableObject, IResetObject
     {
         //Debug.Log("Reset Calculation\n");
 
-        stop_simulation_ = true;
-        start_calc_plot_ = false;
-        initialized = false;
-        first_it = true;
-        draw_trajectory_ = true;
-        current_steps_ = 0;
-        current_update_rate_ = 0;
-        current_time_ = 0;
+        _stopSimulation = true;
+        _startCalcPlot = false;
+        _initialized = false;
+        _firstIteration = true;
+        _drawTrajectory = true;
+        _currentSteps = 0;
+        _currentUpdateRate = 0;
+        _currentTime = 0;
 
-        current_Fx_ = 0;
-        current_Fy_ = 0;
-        current_Fz_ = 0;
+        _currentFx = 0;
+        _currentFy = 0;
+        _currentFz = 0;
 
-        current_p_ = 0;
-        current_ekin_ = 0;
-        current_w_ = 0;
-        old_power_ = 0;
+        _currentP = 0;
+        _currentEkin = 0;
+        _currentW = 0;
+        _oldPower = 0;
 
-        x_max_ = System.Int64.MinValue;
-        y_max_ = System.Int64.MinValue;
-        z_max_ = System.Int64.MinValue;
+        _xMax = System.Int64.MinValue;
+        _yMax = System.Int64.MinValue;
+        _zMax = System.Int64.MinValue;
 
-        x_min_ = System.Int64.MaxValue;
-        y_min_ = System.Int64.MaxValue;
-        z_min_ = System.Int64.MaxValue;
+        _xMin = System.Int64.MaxValue;
+        _yMin = System.Int64.MaxValue;
+        _zMin = System.Int64.MaxValue;
 
-        clearData();
+        ClearData();
     }
 
-    private void clearData()
+    private void ClearData()
     {
-        data_x_.Clear();
-        data_y_.Clear();
-        data_z_.Clear();
+        _dataX.Clear();
+        _dataY.Clear();
+        _dataZ.Clear();
 
-        data_vx_.Clear();
-        data_vy_.Clear();
-        data_vz_.Clear();
+        _dataVx.Clear();
+        _dataVy.Clear();
+        _dataVz.Clear();
 
-        data_fx_.Clear();
-        data_fy_.Clear();
-        data_fz_.Clear();
+        _dataFx.Clear();
+        _dataFy.Clear();
+        _dataFz.Clear();
 
-        data_ekin_.Clear();
-        data_p_.Clear();
-        data_w_.Clear();
+        _dataEkin.Clear();
+        _dataP.Clear();
+        _data_W.Clear();
     }
 
-    private void calcEnergies()
+    private void CalcEnergies()
     {
-        current_ekin_ = (System.Math.Pow(current_vx_, 2) + System.Math.Pow(current_vy_, 2) + System.Math.Pow(current_vz_, 2)) /
-                        (2 * mass_);
+        _currentEkin = (System.Math.Pow(_currentVx, 2) + System.Math.Pow(_currentVy, 2) + System.Math.Pow(_currentVz, 2)) /
+                        (2 * _mass);
         
-        current_p_ = current_vx_ * current_Fx_ + current_vy_ * current_Fy_ + current_vz_ * current_Fz_;
-        current_w_ += 0.5 * (current_p_ + old_power_) * delta_t_;
-        old_power_ = current_p_;
+        _currentP = _currentVx * _currentFx + _currentVy * _currentFy + _currentVz * _currentFz;
+        _currentW += 0.5 * (_currentP + _oldPower) * _deltaT;
+        _oldPower = _currentP;
 
     }
-    private void showError()
+    private void ShowError()
     {
-        ParameterUI.Instance.displayMessage("Something went wrong with the calculation. Please check the formula.");
+        ParameterUI.Instance.DisplayMessage("Something went wrong with the calculation. Please check the formula.");
     }
 
 }

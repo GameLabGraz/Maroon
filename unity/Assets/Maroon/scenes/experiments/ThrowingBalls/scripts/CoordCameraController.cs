@@ -5,12 +5,12 @@ using UnityEngine;
 public class CoordCameraController : MonoBehaviour, IResetObject
 {
     [Header("Movement Settings")]
-    private float movementSpeed = 10f;
-    private float rotationSpeed = 300f;
-    [SerializeField] private float zoomSpeed = 5f;
+    private float _movementSpeed = 10f;
+    private float _rotationSpeed = 300f;
+    [SerializeField] private float _zoomSpeed = 5f;
 
-    [SerializeField] Transform minPosition;
-    [SerializeField] private Transform maxPosition;
+    [SerializeField] private Transform _minPosition;
+    [SerializeField] private Transform _maxPosition;
 
     private Camera _camera;
 
@@ -18,13 +18,13 @@ public class CoordCameraController : MonoBehaviour, IResetObject
     private Vector3 _origPos;
     private Quaternion _origRot;
 
-    [SerializeField] private Transform target;
-    [SerializeField] private bool fixCameraAtTarget = true;
+    [SerializeField] private Transform _target;
+    [SerializeField] private bool _fixCameraAtTarget = true;
 
     private void Awake()
     {
         _camera = GetComponent<Camera>();
-        transform.LookAt(target);
+        transform.LookAt(_target);
 
         UpdateOrigPosition();
         UpdateOrigRotation();
@@ -35,8 +35,8 @@ public class CoordCameraController : MonoBehaviour, IResetObject
         if (Input.GetButton("Fire2"))
         {
             var pos = _camera.ScreenToViewportPoint(_mouseOrigin - Input.mousePosition);
-            var move = new Vector3(pos.x * movementSpeed, pos.y * movementSpeed, 0);
-            if ((maxPosition.position.x > pos.x || maxPosition.position.y > pos.y) && (minPosition.position.x < pos.x || minPosition.position.y < pos.y))
+            var move = new Vector3(pos.x * _movementSpeed, pos.y * _movementSpeed, 0);
+            if ((_maxPosition.position.x > pos.x || _maxPosition.position.y > pos.y) && (_minPosition.position.x < pos.x || _minPosition.position.y < pos.y))
             {
                 transform.Translate(move);
                 transform.position = ClampCamPosition(transform.position);
@@ -46,25 +46,25 @@ public class CoordCameraController : MonoBehaviour, IResetObject
         // Camera Rotation
         if (Input.GetButton("Fire1"))
         {
-            if (fixCameraAtTarget)
+            if (_fixCameraAtTarget)
             {
-                transform.LookAt(target);
-                fixCameraAtTarget = false;
+                transform.LookAt(_target);
+                _fixCameraAtTarget = false;
             }
                 
 
             var pos = _camera.ScreenToViewportPoint(Input.mousePosition - _mouseOrigin);
-            transform.RotateAround(target.position, transform.right, -pos.y * rotationSpeed);
-            transform.RotateAround(target.position, Vector3.up, pos.x * rotationSpeed);
+            transform.RotateAround(_target.position, transform.right, -pos.y * _rotationSpeed);
+            transform.RotateAround(_target.position, Vector3.up, pos.x * _rotationSpeed);
         }
         else
         {
-            fixCameraAtTarget = true;
+            _fixCameraAtTarget = true;
         }
 
         // Camera Zoom
         var mouseScroll = Input.GetAxis("Mouse ScrollWheel");
-        var zoom = new Vector3(0, 0, mouseScroll * zoomSpeed);
+        var zoom = new Vector3(0, 0, mouseScroll * _zoomSpeed);
         transform.Translate(zoom);
         transform.position = ClampCamPosition(transform.position);
 
@@ -73,9 +73,9 @@ public class CoordCameraController : MonoBehaviour, IResetObject
 
     private Vector3 ClampCamPosition(Vector3 position)
     {
-        position.x = Mathf.Clamp(position.x, minPosition.position.x, maxPosition.position.x);
-        position.y = Mathf.Clamp(position.y, minPosition.position.y, maxPosition.position.y);
-        position.z = Mathf.Clamp(position.z, minPosition.position.z, maxPosition.position.z);
+        position.x = Mathf.Clamp(position.x, _minPosition.position.x, _maxPosition.position.x);
+        position.y = Mathf.Clamp(position.y, _minPosition.position.y, _maxPosition.position.y);
+        position.z = Mathf.Clamp(position.z, _minPosition.position.z, _maxPosition.position.z);
 
         return position;
     }

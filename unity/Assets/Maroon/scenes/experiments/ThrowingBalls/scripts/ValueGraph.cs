@@ -8,7 +8,7 @@ public class ValueGraph : MonoBehaviour
 {
 
     private static ValueGraph _instance;
-    public SimpleLineChart simplelinechart;
+    public SimpleLineChart simpleLineChart;
 
     // Start is called before the first frame update
     void Start()
@@ -22,123 +22,123 @@ public class ValueGraph : MonoBehaviour
         
     }
 
-    public void loadChoosenValue(int choice)
+    public void LoadChoosenValue(int choice)
     {
         switch (choice)
         {
             case 0:
                 break;
             case 1:
-                simplelinechart.ResetObject();
-                plotX();
+                simpleLineChart.ResetObject();
+                PlotX();
                 break;
             case 2:
-                simplelinechart.ResetObject();
-                plotY();
+                simpleLineChart.ResetObject();
+                PlotY();
                 break;
             case 3:
-                simplelinechart.ResetObject();
-                plotZ();
+                simpleLineChart.ResetObject();
+                PlotZ();
                 break;
             case 4:
-                simplelinechart.ResetObject();
-                plotVX();
+                simpleLineChart.ResetObject();
+                PlotVX();
                 break;
             case 5:
-                simplelinechart.ResetObject();
-                plotVY();
+                simpleLineChart.ResetObject();
+                PlotVY();
                 break;
             case 6:
-                simplelinechart.ResetObject();
-                plotVZ();
+                simpleLineChart.ResetObject();
+                PlotVZ();
                 break;
             case 7:
-                simplelinechart.ResetObject();
-                plotFX();
+                simpleLineChart.ResetObject();
+                PlotFX();
                 break;
             case 8:
-                simplelinechart.ResetObject();
-                plotFY();
+                simpleLineChart.ResetObject();
+                PlotFY();
                 break;
             case 9:
-                simplelinechart.ResetObject();
-                plotFZ();
+                simpleLineChart.ResetObject();
+                PlotFZ();
                 break;
             case 10:
-                simplelinechart.ResetObject();
-                plotP();
+                simpleLineChart.ResetObject();
+                PlotP();
                 break;
             case 11:
-                simplelinechart.ResetObject();
-                plotEkin();
+                simpleLineChart.ResetObject();
+                PlotEkin();
                 break;
             case 12:
-                simplelinechart.ResetObject();
-                plotW();
+                simpleLineChart.ResetObject();
+                PlotW();
                 break;
             default:
                 break;
         }
     }
 
-    private void plotX()
+    private void PlotX()
     {
-        simplelinechart.AddData(Calculation.Instance.getDataX());
+        simpleLineChart.AddData(Calculation.Instance.GetDataX());
     }
 
-    private void plotY()
+    private void PlotY()
     {
-        simplelinechart.AddData(Calculation.Instance.getDataY());
+        simpleLineChart.AddData(Calculation.Instance.GetDataY());
     }
 
-    private void plotZ()
+    private void PlotZ()
     {
-        simplelinechart.AddData(Calculation.Instance.getDataZ());
+        simpleLineChart.AddData(Calculation.Instance.GetDataZ());
     }
 
-    private void plotVX()
+    private void PlotVX()
     {
-        simplelinechart.AddData(Calculation.Instance.getDataVX());
+        simpleLineChart.AddData(Calculation.Instance.GetDataVX());
     }
 
-    private void plotVY()
+    private void PlotVY()
     {
-        simplelinechart.AddData(Calculation.Instance.getDataVY());
+        simpleLineChart.AddData(Calculation.Instance.GetDataVY());
     }
 
-    private void plotVZ()
+    private void PlotVZ()
     {
-        simplelinechart.AddData(Calculation.Instance.getDataVZ());
+        simpleLineChart.AddData(Calculation.Instance.GetDataVZ());
     }
 
-    private void plotFX()
+    private void PlotFX()
     {
-        simplelinechart.AddData(Calculation.Instance.getDataFX());
+        simpleLineChart.AddData(Calculation.Instance.GetDataFX());
     }
 
-    private void plotFY()
+    private void PlotFY()
     {
-        simplelinechart.AddData(Calculation.Instance.getDataFY());
+        simpleLineChart.AddData(Calculation.Instance.GetDataFY());
     }
 
-    private void plotFZ()
+    private void PlotFZ()
     {
-        simplelinechart.AddData(Calculation.Instance.getDataFZ());
+        simpleLineChart.AddData(Calculation.Instance.GetDataFZ());
     }
 
-    private void plotP()
+    private void PlotP()
     {
-        simplelinechart.AddData(Calculation.Instance.getDataP());
+        simpleLineChart.AddData(Calculation.Instance.GetDataP());
     }
 
-    private void plotEkin()
+    private void PlotEkin()
     {
-        simplelinechart.AddData(Calculation.Instance.getDataEkin());
+        simpleLineChart.AddData(Calculation.Instance.GetDataEkin());
     }
 
-    private void plotW()
+    private void PlotW()
     {
-        simplelinechart.AddData(Calculation.Instance.getDataW());
+        simpleLineChart.AddData(Calculation.Instance.GetDataW());
     }
 
     public static ValueGraph Instance

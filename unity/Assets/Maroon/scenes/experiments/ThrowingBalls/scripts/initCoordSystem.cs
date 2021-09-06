@@ -8,45 +8,43 @@ public class initCoordSystem : MonoBehaviour, IResetObject
 {
     private static initCoordSystem _instance;
     
+    [SerializeField] private Transform _coordOrigin;
+    [SerializeField] private GameObject _trajectory;
+    [SerializeField] private GameObject _particle;
+    [SerializeField] private GameObject _satellite;
+    [SerializeField] private GameObject _soccerBall;
+    [SerializeField] private GameObject _planet;
 
-    [SerializeField] private Transform coordOrigin;
-    [SerializeField] private GameObject trajectory;
-    [SerializeField] private GameObject particle;
-    [SerializeField] private GameObject satellite;
-    [SerializeField] private GameObject soccer_ball;
-    [SerializeField] private GameObject planet_;
+    [SerializeField] private TMP_Text _xLabel;
+    [SerializeField] private TMP_Text _yLabel;
+    [SerializeField] private TMP_Text _zLabel;
+    [SerializeField] private TMP_Text _xLabel2;
+    [SerializeField] private TMP_Text _yLabel2;
+    [SerializeField] private TMP_Text _zLabel2;
 
-    [SerializeField] private TMP_Text xLabel;
-    [SerializeField] private TMP_Text yLabel;
-    [SerializeField] private TMP_Text zLabel;
-    [SerializeField] private TMP_Text xLabel2;
-    [SerializeField] private TMP_Text yLabel2;
-    [SerializeField] private TMP_Text zLabel2;
+    private string _text;
+    private string _textX = "";
+    private string _textY = "";
+    private string _textZ = "";
+    private string _textX2 = "";
+    private string _textY2 = "";
+    private string _textZ2 = "";
 
-    private string text;
-    private string text_x_ = "";
-    private string text_y_ = "";
-    private string text_z_ = "";
-    private string text_x2_ = "";
-    private string text_y2_ = "";
-    private string text_z2_ = "";
+    private Vector3 _coordOriginPosition;
+    private Vector3 _xMax;
+    private Vector3 _yMax;
+    private Vector3 _zMax;
+    
+    private bool _borderValuesSet = false;
+    private Color _color = Color.black;
 
-    private Vector3 coordOriginPosition;
-    private Vector3 xMax;
-    private Vector3 yMax;
-    private Vector3 zMax;
-    //
-    private bool border_values_set_ = false;
-    Color color = Color.black;
+    private List<GameObject> _objects = new List<GameObject>();
+    private List<GameObject> _origin = new List<GameObject>();
 
-    private List<GameObject> objects_ = new List<GameObject>();
-    private List<GameObject> origin_ = new List<GameObject>();
+    private Vector3 _scaleXYZ = new Vector3(4.5f, 3.5f, 3.5f);
 
-    private Vector3 scale_xyz = new Vector3(4.5f, 3.5f, 3.5f);
-    //[SerializeField] private Vector3 scale_xyz = new Vector3(3.5f, 2.5f, 2.5f);
-
-    [SerializeField] private Vector3 real_xyz_min = new Vector3(-30.0f, -30.0f, -30.0f);
-    [SerializeField] private Vector3 real_xyz_max = new Vector3(30.0f, 30.0f, 30.0f);
+    [SerializeField] private Vector3 _realXYZMin = new Vector3(-30.0f, -30.0f, -30.0f);
+    [SerializeField] private Vector3 _realXYZMax = new Vector3(30.0f, 30.0f, 30.0f);
 
     // Start is called before the first frame update
     void Start()
@@ -55,12 +53,12 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         Vector3 scaleParticle = new Vector3(-0.09f, -0.09f, -0.09f);
         Vector3 scalePlanet = new Vector3(-0.02f, -0.02f, -0.02f);
 
-        trajectory.transform.localScale = scaleTrajectory;
-        particle.transform.localScale = scaleParticle;
-        satellite.transform.localScale = scaleParticle;
-        planet_.transform.localScale = scalePlanet;
+        _trajectory.transform.localScale = scaleTrajectory;
+        _particle.transform.localScale = scaleParticle;
+        _satellite.transform.localScale = scaleParticle;
+        _planet.transform.localScale = scalePlanet;
 
-        drawAxis(false); // set this to true if u want to display the coord-box
+        DrawAxis();
     }
 
     // Update is called once per frame
@@ -69,75 +67,23 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         
     }
 
-    void drawAxis(bool show_box)
+    void DrawAxis()
     {
         Vector3 end;
-        float origin_x = coordOrigin.position.x;
-        float origin_y = coordOrigin.position.y;
-        float origin_z = coordOrigin.position.z;
-        coordOriginPosition = new Vector3(origin_x, origin_y, origin_z);
+        float origin_x = _coordOrigin.position.x;
+        float origin_y = _coordOrigin.position.y;
+        float origin_z = _coordOrigin.position.z;
+        _coordOriginPosition = new Vector3(origin_x, origin_y, origin_z);
 
-        end = new Vector3(origin_x + scale_xyz.x, origin_y, origin_z);
-        xMax = end;
-        end = new Vector3(origin_x, origin_y + scale_xyz.y, origin_z);
-        yMax = end;
-        end = new Vector3(origin_x, origin_y, origin_z + scale_xyz.z);
-        zMax = end;
-
-        if (show_box)
-        {
-            // draw x-axis
-            drawLine(coordOriginPosition, xMax);
-
-            // draw y-axis
-            drawLine(coordOriginPosition, yMax);
-
-            // draw x-axis
-            drawLine(coordOriginPosition, zMax);
-
-            // draw helper lines
-            Vector3 tmp;
-            Vector3 tmp2;
-
-            // x line
-            tmp = new Vector3(xMax.x, xMax.y, zMax.z);
-            drawHelperLine(zMax, tmp);
-            // 
-            tmp = new Vector3(xMax.x, yMax.y, xMax.z);
-            drawHelperLine(yMax, tmp);
-            //
-            tmp = new Vector3(xMax.x, yMax.y, zMax.z);
-            tmp2 = new Vector3(zMax.x, yMax.y, zMax.z);
-            drawHelperLine(tmp, tmp2);
-
-            // y lines
-            tmp = new Vector3(zMax.x, yMax.y, zMax.z);
-            drawHelperLine(zMax, tmp);
-            // 
-            tmp = new Vector3(xMax.x, origin_y, zMax.z);
-            tmp2 = new Vector3(xMax.x, yMax.y, zMax.z);
-            drawHelperLine(tmp, tmp2);
-            //
-            tmp = new Vector3(xMax.x, yMax.y, xMax.z);
-            drawHelperLine(xMax, tmp);
-
-            // z line
-            tmp = new Vector3(xMax.x, xMax.y, zMax.z);
-            drawHelperLine(xMax, tmp);
-            //
-            tmp = new Vector3(xMax.x, yMax.y, xMax.z);
-            tmp2 = new Vector3(xMax.x, yMax.y, zMax.z);
-            drawHelperLine(tmp, tmp2);
-            //
-            tmp = new Vector3(origin_x, yMax.y, zMax.z);
-            drawHelperLine(yMax, tmp);
-        }
-        
-
-
+        end = new Vector3(origin_x + _scaleXYZ.x, origin_y, origin_z);
+        _xMax = end;
+        end = new Vector3(origin_x, origin_y + _scaleXYZ.y, origin_z);
+        _yMax = end;
+        end = new Vector3(origin_x, origin_y, origin_z + _scaleXYZ.z);
+        _zMax = end;
     }
 
-    void drawHelperLine(Vector3 start, Vector3 end, float duration = 0.2f)
+    void DrawHelperLine(Vector3 start, Vector3 end, float duration = 0.2f)
     {
         GameObject myLine = new GameObject();
         myLine.transform.position = start;
@@ -151,7 +97,7 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         lr.numCapVertices = 5;
     }
 
-    void drawLine(Vector3 start, Vector3 end, float duration = 0.2f)
+    void DrawLine(Vector3 start, Vector3 end, float duration = 0.2f)
     {
         GameObject myLine = new GameObject();
         myLine.transform.position = start;
@@ -166,7 +112,7 @@ public class initCoordSystem : MonoBehaviour, IResetObject
 
     }
 
-    void drawOrigin(Vector3 start, Vector3 end, Color color, float duration = 0.2f)
+    void DrawOrigin(Vector3 start, Vector3 end, Color color, float duration = 0.2f)
     {
         GameObject myLine = new GameObject();
         myLine.transform.position = start;
@@ -177,58 +123,49 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         lr.SetWidth(0.02f, 0.02f);
         lr.SetPosition(0, start);
         lr.SetPosition(1, end);
-        origin_.Add(myLine);
+        _origin.Add(myLine);
         lr.numCapVertices = 5;
     }
 
-    public void setLabelX(string text)
+    public void SetLabelX(string text)
     {
-        xLabel.text = text;
+        _xLabel.text = text;
     }
 
-    public void setLabelY(string text)
+    public void SetLabelY(string text)
     {
-        yLabel.text = text;
+        _yLabel.text = text;
     }
 
-    public void setLabelZ(string text)
+    public void SetLabelZ(string text)
     {
-        zLabel.text = text;
+        _zLabel.text = text;
     }
 
-    public void setLabelOrigin(string text)
+    public void SetLabelOrigin(string text)
     {
-        xLabel2.text = text;
+        _xLabel2.text = text;
     }
 
     // set real coord-values 
-    public void setRealCoordBorders(Vector3 min, Vector3 max)
+    public void SetRealCoordBorders(Vector3 min, Vector3 max)
     {
-        real_xyz_min = min;
-        real_xyz_max = max;
+        _realXYZMin = min;
+        _realXYZMax = max;
 
-        text_x_ = "X: " + roundDisplayedValues(real_xyz_max.x) + "m";
-        //setLabelX(text_x_);
+        _textX = "X: " + RoundDisplayedValues(_realXYZMax.x) + "m";
+        _textY = "Y: " + RoundDisplayedValues(_realXYZMax.z) + "m";
+        _textZ = "Z: " + RoundDisplayedValues(_realXYZMax.y) + "m";
 
-        text_y_ = "Y: " + roundDisplayedValues(real_xyz_max.z) + "m";
-        //setLabelY(text_y_);
+        _textX2 = "X: " + RoundDisplayedValues(_realXYZMax.x) + "m";
+        _textY2 = "Y: " + RoundDisplayedValues(_realXYZMax.z) + "m";
+        _textZ2 = "Z: " + RoundDisplayedValues(_realXYZMax.y) + "m";
 
-        text_z_ = "Z: " + roundDisplayedValues(real_xyz_max.y) + "m";
-        //setLabelZ(text_z_);
-
-        text_x2_ = "X: " + roundDisplayedValues(real_xyz_max.x) + "m";
-        text_y2_ = "Y: " + roundDisplayedValues(real_xyz_max.z) + "m";
-        text_z2_ = "Z: " + roundDisplayedValues(real_xyz_max.y) + "m";
-
-        //xLabel2.text = text_x2_;
-        //yLabel2.text = text_y2_;
-        //zLabel2.text = text_z2_;
-
-        border_values_set_ = true;
-        drawOriginGrid(true);
+        _borderValuesSet = true;
+        DrawOriginGrid(true);
     }
 
-    private string roundDisplayedValues(float value)
+    private string RoundDisplayedValues(float value)
     {
         if (System.Math.Round(value, 2) == 0.00f)
             return value.ToString();
@@ -237,60 +174,60 @@ public class initCoordSystem : MonoBehaviour, IResetObject
     }
 
     // map real coord-values to unity-coord values
-    public Vector3 mapValues(Vector3 point)
+    public Vector3 MapValues(Vector3 point)
     {
         Vector3 tmp = point;
 
-        tmp.x = scaleCoords(point.x, real_xyz_min.x, real_xyz_max.x, coordOriginPosition.x, xMax.x);
-        tmp.y = scaleCoords(point.y, real_xyz_min.y, real_xyz_max.y, coordOriginPosition.y, yMax.y);
-        tmp.z = scaleCoords(point.z, real_xyz_min.z, real_xyz_max.z, coordOriginPosition.z, zMax.z);
+        tmp.x = ScaleCoords(point.x, _realXYZMin.x, _realXYZMax.x, _coordOriginPosition.x, _xMax.x);
+        tmp.y = ScaleCoords(point.y, _realXYZMin.y, _realXYZMax.y, _coordOriginPosition.y, _yMax.y);
+        tmp.z = ScaleCoords(point.z, _realXYZMin.z, _realXYZMax.z, _coordOriginPosition.z, _zMax.z);
         
         return tmp;
     }
 
-    public Vector3 mapValuesBack(Vector3 point)
+    public Vector3 MapValuesBack(Vector3 point)
     {
         Vector3 tmp = point;
 
-        tmp.x = scaleCoordsBack(point.x, real_xyz_min.x, real_xyz_max.x, coordOriginPosition.x, xMax.x);
-        tmp.y = scaleCoordsBack(point.y, real_xyz_min.y, real_xyz_max.y, coordOriginPosition.y, yMax.y);
-        tmp.z = scaleCoordsBack(point.z, real_xyz_min.z, real_xyz_max.z, coordOriginPosition.z, zMax.z);
+        tmp.x = ScaleCoordsBack(point.x, _realXYZMin.x, _realXYZMax.x, _coordOriginPosition.x, _xMax.x);
+        tmp.y = ScaleCoordsBack(point.y, _realXYZMin.y, _realXYZMax.y, _coordOriginPosition.y, _yMax.y);
+        tmp.z = ScaleCoordsBack(point.z, _realXYZMin.z, _realXYZMax.z, _coordOriginPosition.z, _zMax.z);
         
         return tmp;
     }
 
-    private float scaleCoords(double value, double min, double max, double unity_coord_a, double unity_coord_b)
+    private float ScaleCoords(double value, double min, double max, double unityCoordA, double unityCoordB)
     {
-        return (float)((((unity_coord_b - unity_coord_a) * (value - min)) / (max - min)) + unity_coord_a);
+        return (float)((((unityCoordB - unityCoordA) * (value - min)) / (max - min)) + unityCoordA);
     }
 
-    private float scaleCoordsBack(double value, double unity_coord_a, double unity_coord_b, double min, double max)
+    private float ScaleCoordsBack(double value, double unityCoordA, double unityCoordB, double min, double max)
     {
-        return (float)((((unity_coord_b - unity_coord_a) * (value - min)) / (max - min)) + unity_coord_a);
+        return (float)((((unityCoordB - unityCoordA) * (value - min)) / (max - min)) + unityCoordA);
     }
 
 
-    public void drawPoint(Vector3 point, bool draw_trajectory, ParticleObject particle_in_use_)
+    public void DrawPoint(Vector3 point, bool drawTrajectory, ParticleObject particleInUse)
     {
-        switch (particle_in_use_)
+        switch (particleInUse)
         {
             case ParticleObject.Default:
-                particle.transform.position = point;
+                _particle.transform.position = point;
                 break;
             case ParticleObject.Ball:           
-                soccer_ball.transform.position = point;
+                _soccerBall.transform.position = point;
                 break;
             case ParticleObject.Satellite:
-                satellite.transform.position = point;
+                _satellite.transform.position = point;
                 break;
             default:
-                particle.transform.position = point;
+                _particle.transform.position = point;
                 break;
         }
 
-        if (draw_trajectory)
+        if (drawTrajectory)
         {
-            objects_.Add(Instantiate(trajectory, point, Quaternion.identity));
+            _objects.Add(Instantiate(_trajectory, point, Quaternion.identity));
         }
         
     }
@@ -310,131 +247,119 @@ public class initCoordSystem : MonoBehaviour, IResetObject
     /// </summary>
     public void ResetObject()
     {
-        //Debug.Log("Reset Coord System\n");
-
         // deleting game objects
-        foreach (GameObject trajectory in objects_)
+        foreach (GameObject trajectory in _objects)
             Destroy(trajectory);
 
         // deleting origin lines
-        foreach (GameObject line in origin_)
+        foreach (GameObject line in _origin)
             Destroy(line);
 
-        objects_.Clear();
-        origin_.Clear();
+        _objects.Clear();
+        _origin.Clear();
 
-        particle.SetActive(false);
-        satellite.SetActive(false);
-        soccer_ball.SetActive(false);
-        planet_.SetActive(false);
+        _particle.SetActive(false);
+        _satellite.SetActive(false);
+        _soccerBall.SetActive(false);
+        _planet.SetActive(false);
 
-        text_x_ = "";
-        text_y_ = "";
-        text_z_ = "";
-        text_x2_ = "";
-        text_y2_ = "";
-        text_z2_ = "";
-        /*
-        setLabelX(text_x_);
-        setLabelY(text_y_);
-        setLabelZ(text_z_);
-        xLabel2.text = "";
-        yLabel2.text = "";
-        zLabel2.text = "";
-        */
+        _textX = "";
+        _textY = "";
+        _textZ = "";
+        _textX2 = "";
+        _textY2 = "";
+        _textZ2 = "";
 
-        border_values_set_ = false;
-
-        color = Color.black;
+        _borderValuesSet = false;
+        _color = Color.black;
     }
 
-    public void setParticleActive(ParticleObject particle_in_use_)
+    public void SetParticleActive(ParticleObject particleInUse)
     {
-        switch (particle_in_use_)
+        switch (particleInUse)
         {
             case ParticleObject.Default:
-                particle.SetActive(true);
+                _particle.SetActive(true);
                 break;
             case ParticleObject.Ball:
-                soccer_ball.SetActive(true);
+                _soccerBall.SetActive(true);
                 break;
             case ParticleObject.Satellite:
-                satellite.SetActive(true);
-                planet_.SetActive(true);
+                _satellite.SetActive(true);
+                _planet.SetActive(true);
                 break;
             default:
-                particle.SetActive(true);
+                _particle.SetActive(true);
                 break;
         }
     }
 
     // UI toggle
-    public void showLabels(bool show)
+    public void ShowLabels(bool show)
     {
         if (show)
         {
-            setLabelX(text_x_);
-            setLabelY(text_y_);
-            setLabelZ(text_z_);
-            xLabel2.text = text_x2_;
-            yLabel2.text = text_y2_;
-            zLabel2.text = text_z2_;
+            SetLabelX(_textX);
+            SetLabelY(_textY);
+            SetLabelZ(_textZ);
+            _xLabel2.text = _textX2;
+            _yLabel2.text = _textY2;
+            _zLabel2.text = _textZ2;
         }
         else
         {
-            setLabelX("");
-            setLabelY("");
-            setLabelZ("");
-            xLabel2.text = "";
-            yLabel2.text = "";
-            zLabel2.text = "";
+            SetLabelX("");
+            SetLabelY("");
+            SetLabelZ("");
+            _xLabel2.text = "";
+            _yLabel2.text = "";
+            _zLabel2.text = "";
         }
     }
 
-    public void drawOriginGrid(bool draw)
+    public void DrawOriginGrid(bool draw)
     {
-        if (draw && border_values_set_)
+        if (draw && _borderValuesSet)
         {
             //Debug.Log("Draw Grid");
             Vector3 start;
             Vector3 end;
 
             // x line
-            start = new Vector3(real_xyz_min.x, 0, 0);
-            end = new Vector3(real_xyz_max.x, 0, 0);
-            drawOrigin(mapValues(start), mapValues(end), color);
+            start = new Vector3(_realXYZMin.x, 0, 0);
+            end = new Vector3(_realXYZMax.x, 0, 0);
+            DrawOrigin(MapValues(start), MapValues(end), _color);
             //end = new Vector3(real_xyz_max.x + 0.5f, 0, 0);
-            xLabel.transform.position = mapValues(end);
-            xLabel2.transform.position = mapValues(start);
+            _xLabel.transform.position = MapValues(end);
+            _xLabel2.transform.position = MapValues(start);
 
             // y line
-            start = new Vector3(0, 0, real_xyz_min.z);
-            end = new Vector3(0, 0, real_xyz_max.z);
-            drawOrigin(mapValues(start), mapValues(end), color);
-            yLabel.transform.position = mapValues(end);
-            yLabel2.transform.position = mapValues(start);
+            start = new Vector3(0, 0, _realXYZMin.z);
+            end = new Vector3(0, 0, _realXYZMax.z);
+            DrawOrigin(MapValues(start), MapValues(end), _color);
+            _yLabel.transform.position = MapValues(end);
+            _yLabel2.transform.position = MapValues(start);
 
             // z line
-            start = new Vector3(0, real_xyz_min.y, 0);
-            end = new Vector3(0, real_xyz_max.y, 0);
-            drawOrigin(mapValues(start), mapValues(end), color);
-            zLabel.transform.position = mapValues(end);
-            zLabel2.transform.position = mapValues(start);
+            start = new Vector3(0, _realXYZMin.y, 0);
+            end = new Vector3(0, _realXYZMax.y, 0);
+            DrawOrigin(MapValues(start), MapValues(end), _color);
+            _zLabel.transform.position = MapValues(end);
+            _zLabel2.transform.position = MapValues(start);
  
-            planet_.transform.position = new Vector3(-0.2f, 1.75f, 6.4f);
+            _planet.transform.position = new Vector3(-0.2f, 1.75f, 6.4f);
         }
         else
         {
-            //Debug.Log("Clear Grid");
             // deleting origin lines
-            foreach (GameObject line in origin_)
+            foreach (GameObject line in _origin)
                 Destroy(line);
-            origin_.Clear();
+            _origin.Clear();
         }
     }
 
-    public void setColor(Color col)
+    public void SetColor(Color col)
     {
-        color = col;
+        _color = col;
     }
 }

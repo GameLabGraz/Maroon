@@ -6,20 +6,15 @@ public class SkyboxController : MonoBehaviour, IResetObject
 {
     private static SkyboxController _instance;
 
-    [SerializeField] private Material grass;
-    [SerializeField] private Material space;
-    [SerializeField] private Material experiment_room;
-
-
+    [SerializeField] private Material _grass;
+    [SerializeField] private Material _space;
+    [SerializeField] private Material _experimentRoom;
 
     // Start is called before the first frame update
     void Start()
     {
-        /*
-        Camera.main.clearFlags = CameraClearFlags.Skybox;
-        RenderSettings.skybox = space;*/
-    }
 
+    }
 
     // Update is called once per frame
     void Update()
@@ -27,44 +22,39 @@ public class SkyboxController : MonoBehaviour, IResetObject
         
     }
 
-    public void setBackground(string background)
+    public void SetBackground(string background)
     {
-        Debug.Log("setting background to: " + background);
-
         if (background == "ExperimentRoom")
-            setExperimentRoom();
+            SetExperimentRoom();
         else if (background == "Grass")
-            setGrass();
+            SetGrass();
         else if (background == "Space")
-            setSpace();
+            SetSpace();
         else
-            setExperimentRoom();
+            SetExperimentRoom();
         
     }
 
-    public void setSpace()
+    public void SetSpace()
     {
-        Debug.Log("setSpace()");
-        MaxCameraPosition.Instance.changePosition();
-        MinCameraPosition.Instance.changePosition();
+        MaxCameraPosition.Instance.ChangePosition();
+        MinCameraPosition.Instance.ChangePosition();
         Camera.main.clearFlags = CameraClearFlags.Skybox;
-        RenderSettings.skybox = space;
+        RenderSettings.skybox = _space;
     }
 
-    public void setGrass()
+    public void SetGrass()
     {
-        Debug.Log("setGrass()");
-        MaxCameraPosition.Instance.changePosition();
-        MinCameraPosition.Instance.changePosition();
+        MaxCameraPosition.Instance.ChangePosition();
+        MinCameraPosition.Instance.ChangePosition();
         Camera.main.clearFlags = CameraClearFlags.Skybox;
-        RenderSettings.skybox = grass;
+        RenderSettings.skybox = _grass;
     }
 
-    public void setExperimentRoom()
+    public void SetExperimentRoom()
     {
-        Debug.Log("setExperimentRoom()");
         Camera.main.clearFlags = CameraClearFlags.Depth;
-        RenderSettings.skybox = experiment_room;
+        RenderSettings.skybox = _experimentRoom;
     }
 
     public static SkyboxController Instance
@@ -82,6 +72,6 @@ public class SkyboxController : MonoBehaviour, IResetObject
     /// </summary>
     public void ResetObject()
     {
-        setExperimentRoom();
+        SetExperimentRoom();
     }
 }

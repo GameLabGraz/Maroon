@@ -5,15 +5,15 @@ using UnityEngine;
 public class MinCameraPosition : MonoBehaviour, IResetObject
 {
     private static MinCameraPosition _instance;
-    private Vector3 start_position_;
+    private Vector3 _startPosition;
 
     // Start is called before the first frame update
     void Start()
     {
-        start_position_ = transform.position;
+        _startPosition = transform.position;
     }
 
-    public void changePosition()
+    public void ChangePosition()
     {
         transform.position = new Vector3(-8.6f, -6.4f, -5.9f);
     }
@@ -33,6 +33,6 @@ public class MinCameraPosition : MonoBehaviour, IResetObject
     /// </summary>
     public void ResetObject()
     {
-        transform.position = start_position_;
+        transform.position = _startPosition;
     }
 }
