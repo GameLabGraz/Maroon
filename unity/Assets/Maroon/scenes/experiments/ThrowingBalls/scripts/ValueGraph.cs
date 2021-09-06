@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Maroon.UI;
+using Maroon.UI.Charts;
 using TMPro;
 
 public class ValueGraph : MonoBehaviour

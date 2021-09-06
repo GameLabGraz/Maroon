@@ -20,6 +20,7 @@ public class ParameterUI : PausableObject, IResetObject
     private ParticleObject _particleInUse = ParticleObject.Default;
     [SerializeField] private GameObject _parameters;
     [SerializeField] private GameObject _initialConditions;
+    [SerializeField] private GameObject _dataVisualization;
 
     private static ParameterUI _instance;
     private DialogueManager _dialogueManager;
@@ -31,7 +32,10 @@ public class ParameterUI : PausableObject, IResetObject
 
     [SerializeField] private UnityEngine.UI.Button _showInputPanelButton;
     [SerializeField] private TMP_Text _inputPanelButtonText;
-    private bool _showPanels = false;
+    [SerializeField] private UnityEngine.UI.Button _showDataVisualizationButton;
+    [SerializeField] private TMP_Text _dataVisualizationButtonText;
+    private bool _showInputPanel = false;
+    private bool _showDataPanel = false;
 
     private string _background = "ExperimentRoom";
     private bool _resetBackground = true;
@@ -108,6 +112,7 @@ public class ParameterUI : PausableObject, IResetObject
             "calculation. Please press the reset button if you change any parameters beforehand.");
 
         _showInputPanelButton.interactable = false;
+        _showDataVisualizationButton.interactable = false;
     }
 
     /// <summary>
@@ -123,7 +128,7 @@ public class ParameterUI : PausableObject, IResetObject
     /// </summary>
     protected override void HandleFixedUpdate()
     {
-        if (_showPanels)
+        if (_showInputPanel)
         {
             _parameters.SetActive(true);
             _initialConditions.SetActive(true);
@@ -137,15 +142,38 @@ public class ParameterUI : PausableObject, IResetObject
             _showInputPanelButton.interactable = true;
             _inputPanelButtonText.text = "Show Input Field";
         }
+
+        if (_showDataPanel)
+        {
+            _dataVisualization.SetActive(true);
+            _showDataVisualizationButton.interactable = true;
+            _dataVisualizationButtonText.text = "Hide Data Visualization";
+        }
+        else
+        {
+            _dataVisualization.SetActive(false);
+            _showDataVisualizationButton.interactable = true;
+            _dataVisualizationButtonText.text = "Show Data Visualization";
+        }
     }
 
     public void ShowInputPanel()
     {
-        if (_showPanels)
-            _showPanels = false;
+        if (_showInputPanel)
+            _showInputPanel = false;
         else
         {
-            _showPanels = true;
+            _showInputPanel = true;
+        }
+    }
+
+    public void ShowDataVisualizationPanel()
+    {
+        if (_showDataPanel)
+            _showDataPanel = false;
+        else
+        {
+            _showDataPanel = true;
         }
     }
 
@@ -425,11 +453,15 @@ public class ParameterUI : PausableObject, IResetObject
     {
         _showLabel.isOn = false;
         _showOriginGrid.isOn = true;
-        _showPanels = false;
+        _showInputPanel = false;
+        _showDataPanel = false;
         _showInputPanelButton.interactable = false;
+        _showDataVisualizationButton.interactable = false;
         _inputPanelButtonText.text = "Show Input Field";
+        _dataVisualizationButtonText.text = "Show Data Visualization";
         _parameters.SetActive(true);
         _initialConditions.SetActive(true);
+        _dataVisualization.SetActive(true);
 
         _particleInUse = ParticleObject.Default;
         if (_resetBackground)
