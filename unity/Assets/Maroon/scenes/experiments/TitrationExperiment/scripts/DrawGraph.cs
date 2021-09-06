@@ -38,8 +38,6 @@ public class DrawGraph : MonoBehaviour, IResetObject
     {
         _showFluidScript = ShowFluid.Instance;
         _rect = GetComponent<RectTransform>();
-        
-        Debug.Log($"W: {Screen.width}, H: {Screen.height}");
 
         _lineRenderers = GetComponentsInChildren<LineRenderer>();
         _titrationCurveLine = _lineRenderers[0];
