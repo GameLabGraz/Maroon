@@ -56,8 +56,8 @@ public class ExperimentNetworkSync : NetworkBehaviour
             SimulationController.Instance.onStopRunning.AddListener(OnSimulationStop);
 
             //Needed so Buttons are not randomly reactivated
-            SimulationController.Instance.OnStart += DeactivateInteractionIfNotInControl;
-            SimulationController.Instance.OnStop += DeactivateInteractionIfNotInControl;
+            SimulationController.Instance.OnStart.AddListener(DeactivateInteractionIfNotInControl);
+            SimulationController.Instance.OnStop.AddListener(DeactivateInteractionIfNotInControl);
         }
         catch (NullReferenceException e)
         {
@@ -76,8 +76,8 @@ public class ExperimentNetworkSync : NetworkBehaviour
             SimulationController.Instance.onStopRunning.RemoveListener(OnSimulationStop);
 
             //Needed so Buttons are not randomly reactivated
-            SimulationController.Instance.OnStart -= DeactivateInteractionIfNotInControl;
-            SimulationController.Instance.OnStop -= DeactivateInteractionIfNotInControl;
+            SimulationController.Instance.OnStart.RemoveListener(DeactivateInteractionIfNotInControl);
+            SimulationController.Instance.OnStop.RemoveListener(DeactivateInteractionIfNotInControl);
         }
         catch (NullReferenceException e)
         {
@@ -85,7 +85,7 @@ public class ExperimentNetworkSync : NetworkBehaviour
         }
     }
     
-    public void DeactivateInteractionIfNotInControl(object sender = null, EventArgs e = null)
+    public void DeactivateInteractionIfNotInControl()
     {
         if (!Maroon.NetworkManager.Instance.IsInControl)
         {

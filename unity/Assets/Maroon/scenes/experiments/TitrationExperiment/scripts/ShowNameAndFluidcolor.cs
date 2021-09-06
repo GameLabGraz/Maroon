@@ -1,10 +1,9 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class ShowNameAndFluidcolor : MonoBehaviour 
 {
-
-    [SerializeField] private Text label;
     [SerializeField] private Renderer labelRend;
     [SerializeField] private MeshRenderer fluidRend;
 
@@ -13,14 +12,23 @@ public class ShowNameAndFluidcolor : MonoBehaviour
     private void Start () 
     {
         _showFluidScript = ShowFluid.Instance;
-        ChangeName(label);
     }
-    
-    public void ChangeName (Text label) 
-    {
-        labelRend.material.mainTexture = Resources.Load<Texture>("Sprites/" + label.text);
 
-        if (label.text.Equals("HNO3"))
+    public void ChangeName(Text label)
+    {
+        ChangeName(label.text);
+    }
+
+    public void ChangeName(TMP_Text label)
+    {
+        ChangeName(label.text);
+    }
+
+    public void ChangeName (string name) 
+    {
+        labelRend.material.mainTexture = Resources.Load<Texture>("Sprites/" + name);
+
+        if (name.Equals("HNO3"))
             fluidRend.material = _showFluidScript.FluidWaterYellow;
         else
             fluidRend.material = _showFluidScript.FluidWaterColorless;

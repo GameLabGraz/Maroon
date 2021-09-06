@@ -11,7 +11,7 @@ public class OptimizeTexture : ScriptableObject
         compressionQuality = 75,
         name = "WebGL",
         overridden = true,
-        maxTextureSize = 64
+        maxTextureSize = 512
     };
 
     [MenuItem("Assets/Optimize Texture for Platform/WebGL")]
