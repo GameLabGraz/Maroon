@@ -41,15 +41,13 @@ public class ServerStatus
 [RequireComponent(typeof(NetworkManager))]
 public class ListServer : MonoBehaviour
 {
-    static readonly ILogger logger = LogFactory.GetLogger(typeof(ListServer));
-
     [Header("List Server Connection")]
     public string listServerIp = "127.0.0.1";
     public ushort gameServerToListenPort = 8887;
     public ushort clientToListenPort = 8888;
 
-    Telepathy.Client gameServerToListenConnection = new Telepathy.Client();
-    Telepathy.Client clientToListenConnection = new Telepathy.Client();
+    Telepathy.Client gameServerToListenConnection = new Telepathy.Client(16 * 1024); //TODO: This message size is just a guess based on TelepathyTransport.clientMaxMessageSize to make it compile, check if this is a sensible value
+    Telepathy.Client clientToListenConnection = new Telepathy.Client(16 * 1024); //TODO: This message size is just a guess based on TelepathyTransport.clientMaxMessageSize to make it compile, check if this is a sensible value
 
     // all the servers, stored as dict with unique ip key so we can
     // update them more easily
@@ -77,7 +75,13 @@ public class ListServer : MonoBehaviour
     // should we use the client to listen connection?
     bool UseClientToListen()
     {
-        return !NetworkManager.isHeadless && !NetworkServer.active && !FullyConnected();
+
+#if UNITY_SERVER
+        return false;
+#endif
+
+        return !NetworkServer.active && !FullyConnected();
+        //return !NetworkManager.isHeadless && !NetworkServer.active && !FullyConnected();
     }
 
     // should we use the game server to listen connection?
@@ -109,9 +113,14 @@ public class ListServer : MonoBehaviour
         if (writer.BaseStream.Position <= 128)
         {
             // send it
-            gameServerToListenConnection.Send(((MemoryStream)writer.BaseStream).ToArray());
+            System.ArraySegment<byte> send_it_message = new System.ArraySegment<byte>(((MemoryStream)writer.BaseStream).ToArray());
+            gameServerToListenConnection.Send(send_it_message);
         }
-        else logger.LogError("[List Server] List Server will reject messages longer than 128 bytes. Please use a shorter title.");
+        else
+        {
+            // TODO: Use logger
+            Debug.Log("[List Server] List Server will reject messages longer than 128 bytes. Please use a shorter title.");
+        } 
     }
 
     void TickGameServer()
@@ -129,7 +138,8 @@ public class ListServer : MonoBehaviour
             // (we may have just started the game)
             else if (!gameServerToListenConnection.Connecting)
             {
-                logger.Log("[List Server] GameServer connecting......");
+                // TODO: Use logger
+                Debug.Log("[List Server] GameServer connecting......");
                 gameServerToListenConnection.Connect(listServerIp, gameServerToListenPort);
             }
         }
@@ -185,18 +195,33 @@ public class ListServer : MonoBehaviour
             if (clientToListenConnection.Connected)
             {
                 // receive latest game server info
+                // TODO: The transport does not support this function anymore, need to find another way or rewrite the whole list server or use websockets or something
+                // TODO: HEEEEEEEEEEEEEEEEEEEEEEEEERE
+
+                /*
                 while (clientToListenConnection.GetNextMessage(out Telepathy.Message message))
                 {
                     // connected?
                     if (message.eventType == Telepathy.EventType.Connected)
-                        logger.Log("[List Server] Client connected!");
+                    {
+                        // TODO: Use logger
+                        Debug.Log("[List Server] Client connected!");
+                    }
+
                     // data message?
                     else if (message.eventType == Telepathy.EventType.Data)
+                    {
                         ParseMessage(message.data);
+                    }
+
                     // disconnected?
                     else if (message.eventType == Telepathy.EventType.Disconnected)
-                        logger.Log("[List Server] Client disconnected.");
+                    {
+                        // TODO: Use logger
+                        Debug.Log("[List Server] Client disconnected.");
+                    }
                 }
+                */
 
 #if !UNITY_WEBGL
                 // Ping isn't known in WebGL builds
@@ -215,7 +240,9 @@ public class ListServer : MonoBehaviour
             // (we may have just joined the menu/disconnect from game server)
             else if (!clientToListenConnection.Connecting)
             {
-                logger.Log("[List Server] Client connecting...");
+                // TODO: Use logger
+                Debug.Log("[List Server] Client connecting...");
+
                 clientToListenConnection.Connect(listServerIp, clientToListenPort);
             }
         }

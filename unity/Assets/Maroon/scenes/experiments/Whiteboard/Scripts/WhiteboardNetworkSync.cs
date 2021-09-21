@@ -78,7 +78,7 @@ public class WhiteboardNetworkSync : ExperimentNetworkSync
         }
     }
 
-    [Command(ignoreAuthority = true)]
+    [Command(requiresAuthority = false)]
     private void CmdSetLectureIndex(int i)
     {
         _currentLectureIndex = i;

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Net;
 using Mirror;
 using Mirror.Discovery;
@@ -8,25 +6,30 @@ using UnityEngine;
 using UnityEngine.Events;
 
 /*
-	Discovery Guide: https://mirror-networking.com/docs/Guides/NetworkDiscovery.html
-    Documentation: https://mirror-networking.com/docs/Components/NetworkDiscovery.html
+    Documentation: https://mirror-networking.gitbook.io/docs/components/network-discovery
     API Reference: https://mirror-networking.com/docs/api/Mirror.Discovery.NetworkDiscovery.html
 */
-
-public class DiscoveryRequest : ServerRequest
+ 
+public class DiscoveryRequest : NetworkMessage
 {
     // Add properties for whatever information you want sent by clients
     // in their broadcast messages that servers will consume.
 }
 
-public class DiscoveryResponse : ServerResponse
+public class DiscoveryResponse : NetworkMessage
 {
     // Add properties for whatever information you want the server to return to
     // clients for them to display or consume for establishing a connection.
+
     public string name;
+    public long serverId;
+
+    public Uri uri;
 
     public int connectedPlayers;
     public int maximumPlayers;
+
+    public string EndPointAddress;
 }
 
 [Serializable]
@@ -45,7 +48,7 @@ public class MaroonNetworkDiscovery : NetworkDiscoveryBase<DiscoveryRequest, Dis
     /// Override if you wish to ignore server requests based on
     /// custom criteria such as language, full server game mode or difficulty
     /// </remarks>
-    /// <param name="request">Request comming from client</param>
+    /// <param name="request">Request coming from client</param>
     /// <param name="endpoint">Address of the client that sent the request</param>
     protected override void ProcessClientRequest(DiscoveryRequest request, IPEndPoint endpoint)
     {
@@ -78,7 +81,7 @@ public class MaroonNetworkDiscovery : NetworkDiscoveryBase<DiscoveryRequest, Dis
     /// Override if you wish to provide more information to the clients
     /// such as the name of the host player
     /// </remarks>
-    /// <param name="request">Request comming from client</param>
+    /// <param name="request">Request coming from client</param>
     /// <param name="endpoint">Address of the client that sent the request</param>
     /// <returns>A message containing information about this server</returns>
     protected override DiscoveryResponse ProcessRequest(DiscoveryRequest request, IPEndPoint endpoint)
@@ -102,8 +105,8 @@ public class MaroonNetworkDiscovery : NetworkDiscoveryBase<DiscoveryRequest, Dis
     
     public void OnDiscoveredServer(DiscoveryResponse info)
     {
-
-        string ip = info.EndPoint.Address.ToString();
+        //string ip = info.EndPoint.Address.ToString();
+        string ip = info.EndPointAddress;
         
         ServerStatus server = new ServerStatus(ip, info.name, (ushort)info.connectedPlayers, (ushort)info.maximumPlayers, true);
 
@@ -134,7 +137,7 @@ public class MaroonNetworkDiscovery : NetworkDiscoveryBase<DiscoveryRequest, Dis
     protected override void ProcessResponse(DiscoveryResponse response, IPEndPoint endpoint)
     {
         // we received a message from the remote endpoint
-        response.EndPoint = endpoint;
+        response.EndPointAddress = endpoint.Address.ToString();
 
         // although we got a supposedly valid url, we may not be able to resolve
         // the provided host
@@ -142,7 +145,7 @@ public class MaroonNetworkDiscovery : NetworkDiscoveryBase<DiscoveryRequest, Dis
         // received a packet from it,  so use that as host.
         UriBuilder realUri = new UriBuilder(response.uri)
         {
-            Host = response.EndPoint.Address.ToString()
+            Host = response.EndPointAddress
         };
         response.uri = realUri.Uri;
 

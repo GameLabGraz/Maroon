@@ -56,8 +56,8 @@ public class ExperimentNetworkSync : NetworkBehaviour
             SimulationController.Instance.onStopRunning.AddListener(OnSimulationStop);
 
             //Needed so Buttons are not randomly reactivated
-            SimulationController.Instance.OnStart += DeactivateInteractionIfNotInControl;
-            SimulationController.Instance.OnStop += DeactivateInteractionIfNotInControl;
+            SimulationController.Instance.OnStart.AddListener(DeactivateInteractionIfNotInControl);
+            SimulationController.Instance.OnStop.AddListener(DeactivateInteractionIfNotInControl);
         }
         catch (NullReferenceException e)
         {
@@ -76,8 +76,8 @@ public class ExperimentNetworkSync : NetworkBehaviour
             SimulationController.Instance.onStopRunning.RemoveListener(OnSimulationStop);
 
             //Needed so Buttons are not randomly reactivated
-            SimulationController.Instance.OnStart -= DeactivateInteractionIfNotInControl;
-            SimulationController.Instance.OnStop -= DeactivateInteractionIfNotInControl;
+            SimulationController.Instance.OnStart.RemoveListener(DeactivateInteractionIfNotInControl);
+            SimulationController.Instance.OnStop.RemoveListener(DeactivateInteractionIfNotInControl);
         }
         catch (NullReferenceException e)
         {
@@ -85,7 +85,7 @@ public class ExperimentNetworkSync : NetworkBehaviour
         }
     }
     
-    public void DeactivateInteractionIfNotInControl(object sender = null, EventArgs e = null)
+    public void DeactivateInteractionIfNotInControl()
     {
         if (!Maroon.NetworkManager.Instance.IsInControl)
         {
@@ -102,7 +102,7 @@ public class ExperimentNetworkSync : NetworkBehaviour
             CmdSyncEvent(eventActivatedCoroutine);
     }
     
-    [Command(ignoreAuthority = true)]
+    [Command(requiresAuthority = false)]
     private void CmdSyncEvent(string eventActivatedCoroutine)
     {
         RpcSyncEvent(eventActivatedCoroutine);
@@ -125,7 +125,7 @@ public class ExperimentNetworkSync : NetworkBehaviour
             CmdSyncFloatEvent(eventActivatedCoroutine, value);
     }
     
-    [Command(ignoreAuthority = true)]
+    [Command(requiresAuthority = false)]
     private void CmdSyncFloatEvent(string eventActivatedCoroutine, float value)
     {
         RpcSyncFloatEvent(eventActivatedCoroutine, value);
@@ -148,7 +148,7 @@ public class ExperimentNetworkSync : NetworkBehaviour
             CmdSyncIntEvent(eventActivatedCoroutine, value);
     }
     
-    [Command(ignoreAuthority = true)]
+    [Command(requiresAuthority = false)]
     private void CmdSyncIntEvent(string eventActivatedCoroutine, int value)
     {
         RpcSyncIntEvent(eventActivatedCoroutine, value);
@@ -171,7 +171,7 @@ public class ExperimentNetworkSync : NetworkBehaviour
             CmdSyncStringEvent(eventActivatedCoroutine, value);
     }
     
-    [Command(ignoreAuthority = true)]
+    [Command(requiresAuthority = false)]
     private void CmdSyncStringEvent(string eventActivatedCoroutine, string value)
     {
         RpcSyncStringEvent(eventActivatedCoroutine, value);
@@ -194,7 +194,7 @@ public class ExperimentNetworkSync : NetworkBehaviour
             CmdSyncBoolEvent(eventActivatedCoroutine, value);
     }
     
-    [Command(ignoreAuthority = true)]
+    [Command(requiresAuthority = false)]
     private void CmdSyncBoolEvent(string eventActivatedCoroutine, bool value)
     {
         RpcSyncBoolEvent(eventActivatedCoroutine, value);
