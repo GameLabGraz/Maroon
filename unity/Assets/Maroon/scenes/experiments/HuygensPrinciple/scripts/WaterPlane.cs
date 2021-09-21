@@ -1,4 +1,5 @@
-﻿using Maroon.Physics.HuygensPrinciple;
+﻿using System;
+using Maroon.Physics.HuygensPrinciple;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -43,6 +44,12 @@ public class WaterPlane : PausableObject, IResetObject
     private static int _maxNumberOfBasinGenerators = 30;
     private static int _maxNumberOfPlateGenerators = 30;
 
+    protected override void Awake()
+    {
+        base.Awake();
+        _meshRenderer = GetComponent<MeshRenderer>(); 
+    }
+
     protected override void Start()
     {
         base.Start();
@@ -52,7 +59,8 @@ public class WaterPlane : PausableObject, IResetObject
             CalculatePlaneMesh();
         }
 
-        _meshRenderer = GetComponent<MeshRenderer>(); 
+        if (!_meshRenderer)
+            _meshRenderer = GetComponent<MeshRenderer>();
         slitPlate = FindObjectOfType<SlitPlate>(); 
        
         if(slitPlate == null)
@@ -63,7 +71,8 @@ public class WaterPlane : PausableObject, IResetObject
         _startMinColor = _meshRenderer.sharedMaterial.GetColor("_ColorMin");
         _startMaxColor = _meshRenderer.sharedMaterial.GetColor("_ColorMax");
 
-        Init();       
+        Init();
+        UpdatePlatePosition();
     }
 
     private void Init()
@@ -210,6 +219,8 @@ public class WaterPlane : PausableObject, IResetObject
 
     public void UpdatePlatePosition()
     {
+        if (!_meshRenderer || !slitPlate)
+            return;
         _meshRenderer.sharedMaterial.SetVector(Shader.PropertyToID("_PlatePosition"), slitPlate.transform.position);
         UpdatePlane();
     }

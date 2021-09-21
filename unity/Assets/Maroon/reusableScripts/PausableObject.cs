@@ -8,9 +8,15 @@ public abstract class PausableObject : MonoBehaviour
 
     protected Rigidbody _rigidbody;
 
-    protected virtual void Start()
+    protected virtual void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
+    }
+
+    protected virtual void Start()
+    {
+        if(!_rigidbody) 
+            _rigidbody = GetComponent<Rigidbody>();
     }
 
     protected virtual void Update()

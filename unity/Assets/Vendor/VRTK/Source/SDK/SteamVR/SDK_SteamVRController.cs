@@ -40,21 +40,7 @@ namespace VRTK
         /// <param name="setup">The SDK Setup which is using this SDK.</param>
         public override void OnAfterSetupUnload(VRTK_SDKSetup setup)
         {
-            base.OnAfterSetupUnload(setup);
 
-            SteamVR_ControllerManager controllerManager = setup.actualLeftController.transform.parent.GetComponent<SteamVR_ControllerManager>();
-            FieldInfo connectedField = typeof(SteamVR_ControllerManager).GetField(
-                "connected",
-                BindingFlags.NonPublic | BindingFlags.Instance
-            );
-            if (connectedField == null)
-            {
-                return;
-            }
-
-            bool[] connected = (bool[])connectedField.GetValue(controllerManager);
-            Array.Clear(connected, 0, connected.Length);
-            connectedField.SetValue(controllerManager, connected);
         }
 #endif
 
@@ -263,7 +249,6 @@ namespace VRTK
             GameObject controller = GetSDKManagerControllerLeftHand(actual);
             if (controller == null && actual)
             {
-                controller = VRTK_SharedMethods.FindEvenInactiveGameObject<SteamVR_ControllerManager>("Controller (left)", true);
             }
             return controller;
         }
@@ -278,7 +263,6 @@ namespace VRTK
             GameObject controller = GetSDKManagerControllerRightHand(actual);
             if (controller == null && actual)
             {
-                controller = VRTK_SharedMethods.FindEvenInactiveGameObject<SteamVR_ControllerManager>("Controller (right)", true);
             }
             return controller;
         }
@@ -404,8 +388,6 @@ namespace VRTK
             if (index < OpenVR.k_unTrackedDeviceIndexInvalid)
             {
                 float convertedStrength = maxHapticVibration * strength;
-                SteamVR_Controller.Device device = SteamVR_Controller.Input((int)index);
-                device.TriggerHapticPulse((ushort)convertedStrength, EVRButtonId.k_EButton_Axis0);
             }
         }
 
@@ -438,13 +420,8 @@ namespace VRTK
         /// <returns>A Vector3 containing the current velocity of the tracked object.</returns>
         public override Vector3 GetVelocity(VRTK_ControllerReference controllerReference)
         {
-            uint index = VRTK_ControllerReference.GetRealIndex(controllerReference);
-            if (index <= (uint)SteamVR_TrackedObject.EIndex.Hmd || index >= OpenVR.k_unTrackedDeviceIndexInvalid)
-            {
+
                 return Vector3.zero;
-            }
-            SteamVR_Controller.Device device = SteamVR_Controller.Input((int)index);
-            return device.velocity;
         }
 
         /// <summary>
@@ -454,13 +431,8 @@ namespace VRTK
         /// <returns>A Vector3 containing the current angular velocity of the tracked object.</returns>
         public override Vector3 GetAngularVelocity(VRTK_ControllerReference controllerReference)
         {
-            uint index = VRTK_ControllerReference.GetRealIndex(controllerReference);
-            if (index <= (uint)SteamVR_TrackedObject.EIndex.Hmd || index >= OpenVR.k_unTrackedDeviceIndexInvalid)
-            {
-                return Vector3.zero;
-            }
-            SteamVR_Controller.Device device = SteamVR_Controller.Input((int)index);
-            return device.angularVelocity;
+
+            return Vector3.zero;
         }
 
         /// <summary>
@@ -483,31 +455,7 @@ namespace VRTK
         /// <returns>A Vector2 of the X/Y values of the button axis. If no axis values exist for the given button, then a Vector2.Zero is returned.</returns>
         public override Vector2 GetButtonAxis(ButtonTypes buttonType, VRTK_ControllerReference controllerReference)
         {
-            uint index = VRTK_ControllerReference.GetRealIndex(controllerReference);
-            if (index >= OpenVR.k_unTrackedDeviceIndexInvalid)
-            {
-                return Vector2.zero;
-            }
 
-            SteamVR_Controller.Device device = SteamVR_Controller.Input((int)index);
-            switch (buttonType)
-            {
-                case ButtonTypes.Touchpad:
-                    return device.GetAxis();
-                case ButtonTypes.TouchpadTwo:
-                    return (VRTK_DeviceFinder.GetCurrentControllerType() == ControllerType.SteamVR_WindowsMRController ? device.GetAxis(EVRButtonId.k_EButton_Axis2) : Vector2.zero);
-                case ButtonTypes.Trigger:
-                    return device.GetAxis(EVRButtonId.k_EButton_SteamVR_Trigger);
-                case ButtonTypes.Grip:
-                    switch (GetCurrentControllerType())
-                    {
-                        case ControllerType.SteamVR_OculusTouch:
-                        case ControllerType.SteamVR_ValveKnuckles:
-                            return device.GetAxis(EVRButtonId.k_EButton_Axis2);
-                        default:
-                            return new Vector2((GetControllerButtonState(buttonType, ButtonPressTypes.Press, controllerReference) ? 1f : 0f), 0f);
-                    }
-            }
             return Vector2.zero;
         }
 
@@ -519,26 +467,7 @@ namespace VRTK
         /// <returns>The current sense axis value.</returns>
         public override float GetButtonSenseAxis(ButtonTypes buttonType, VRTK_ControllerReference controllerReference)
         {
-            uint index = VRTK_ControllerReference.GetRealIndex(controllerReference);
-            if (index >= OpenVR.k_unTrackedDeviceIndexInvalid)
-            {
-                return 0f;
-            }
 
-            SteamVR_Controller.Device device = SteamVR_Controller.Input((int)index);
-            switch (buttonType)
-            {
-                case ButtonTypes.Trigger:
-                    return device.GetAxis(EVRButtonId.k_EButton_Axis3).x;
-                case ButtonTypes.Grip:
-                    return device.GetAxis(EVRButtonId.k_EButton_Axis2).x;
-                case ButtonTypes.MiddleFinger:
-                    return device.GetAxis(EVRButtonId.k_EButton_Axis3).y;
-                case ButtonTypes.RingFinger:
-                    return device.GetAxis(EVRButtonId.k_EButton_Axis4).x;
-                case ButtonTypes.PinkyFinger:
-                    return device.GetAxis(EVRButtonId.k_EButton_Axis4).y;
-            }
             return 0f;
         }
 
@@ -550,14 +479,7 @@ namespace VRTK
         /// <returns>The delta between the button presses.</returns>
         public override float GetButtonHairlineDelta(ButtonTypes buttonType, VRTK_ControllerReference controllerReference)
         {
-            uint index = VRTK_ControllerReference.GetRealIndex(controllerReference);
-            if (index >= OpenVR.k_unTrackedDeviceIndexInvalid)
-            {
-                return 0f;
-            }
-            SteamVR_Controller.Device device = SteamVR_Controller.Input((int)index);
-
-            return (buttonType == ButtonTypes.Trigger || buttonType == ButtonTypes.TriggerHairline ? device.hairTriggerDelta : 0f);
+            return 0;
         }
 
         /// <summary>
@@ -575,33 +497,6 @@ namespace VRTK
                 return false;
             }
 
-            switch (buttonType)
-            {
-                case ButtonTypes.Trigger:
-                    return IsButtonPressed(index, pressType, SteamVR_Controller.ButtonMask.Trigger);
-                case ButtonTypes.TriggerHairline:
-                    if (pressType == ButtonPressTypes.PressDown)
-                    {
-                        return SteamVR_Controller.Input((int)index).GetHairTriggerDown();
-                    }
-                    else if (pressType == ButtonPressTypes.PressUp)
-                    {
-                        return SteamVR_Controller.Input((int)index).GetHairTriggerUp();
-                    }
-                    break;
-                case ButtonTypes.Grip:
-                    return IsButtonPressed(index, pressType, SteamVR_Controller.ButtonMask.Grip);
-                case ButtonTypes.Touchpad:
-                    return IsButtonPressed(index, pressType, SteamVR_Controller.ButtonMask.Touchpad);
-                case ButtonTypes.ButtonOne:
-                    return IsButtonPressed(index, pressType, (1ul << (int)EVRButtonId.k_EButton_A));
-                case ButtonTypes.ButtonTwo:
-                    return IsButtonPressed(index, pressType, SteamVR_Controller.ButtonMask.ApplicationMenu);
-                case ButtonTypes.StartMenu:
-                    return IsButtonPressed(index, pressType, SteamVR_Controller.ButtonMask.System);
-                case ButtonTypes.TouchpadTwo:
-                    return (VRTK_DeviceFinder.GetCurrentControllerType() == ControllerType.SteamVR_WindowsMRController ? CheckAxisTouch(index, pressType, EVRButtonId.k_EButton_Axis2) : false);
-            }
             return false;
         }
 
@@ -612,7 +507,6 @@ namespace VRTK
 
 #if VRTK_DEFINE_STEAMVR_PLUGIN_1_1_1_OR_OLDER
             SteamVR_Utils.Event.Listen("TrackedDeviceRoleChanged", OnTrackedDeviceRoleChanged);
-            SteamVR_Utils.Event.Listen("render_model_loaded", OnRenderModelLoaded);
 #elif VRTK_DEFINE_STEAMVR_PLUGIN_1_2_0
             SteamVR_Events.System("TrackedDeviceRoleChanged").Listen(OnTrackedDeviceRoleChanged);
             SteamVR_Events.RenderModelLoaded.Listen(OnRenderModelLoaded);
@@ -714,58 +608,13 @@ namespace VRTK
             {
                 return false;
             }
-            SteamVR_Controller.Device device = SteamVR_Controller.Input((int)index);
-
-            switch (type)
-            {
-                case ButtonPressTypes.Press:
-                    return device.GetPress(button);
-                case ButtonPressTypes.PressDown:
-                    return device.GetPressDown(button);
-                case ButtonPressTypes.PressUp:
-                    return device.GetPressUp(button);
-                case ButtonPressTypes.Touch:
-                    return device.GetTouch(button);
-                case ButtonPressTypes.TouchDown:
-                    return device.GetTouchDown(button);
-                case ButtonPressTypes.TouchUp:
-                    return device.GetTouchUp(button);
-            }
 
             return false;
         }
 
         protected virtual bool CheckAxisTouch(uint index, ButtonPressTypes type, EVRButtonId axisId)
         {
-            if (index >= OpenVR.k_unTrackedDeviceIndexInvalid)
-            {
-                return false;
-            }
-            SteamVR_Controller.Device device = SteamVR_Controller.Input((int)index);
-            Vector2 axisValue = device.GetAxis(axisId);
 
-            bool currentAxisPressState = VRTK_SharedMethods.GetDictionaryValue(axisTouchStates, axisId, false, true);
-            float axisFidelity = VRTK_SharedMethods.GetDictionaryValue(axisTouchFidelity, axisId);
-
-            switch (type)
-            {
-                case ButtonPressTypes.Touch:
-                    return (!VRTK_SharedMethods.Vector3ShallowCompare(axisValue, Vector2.zero, axisFidelity));
-                case ButtonPressTypes.TouchDown:
-                    if (!currentAxisPressState && !VRTK_SharedMethods.Vector3ShallowCompare(axisValue, Vector2.zero, axisFidelity))
-                    {
-                        VRTK_SharedMethods.AddDictionaryValue(axisTouchStates, axisId, true, true);
-                        return true;
-                    }
-                    return false;
-                case ButtonPressTypes.TouchUp:
-                    if (currentAxisPressState && VRTK_SharedMethods.Vector3ShallowCompare(axisValue, Vector2.zero, axisFidelity))
-                    {
-                        VRTK_SharedMethods.AddDictionaryValue(axisTouchStates, axisId, false, true);
-                        return true;
-                    }
-                    return false;
-            }
             return false;
         }
 

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using VRTK;
 using Util;
@@ -12,8 +14,12 @@ public class scrInfoSignEnterScene : MonoBehaviour
     private Maroon.CustomSceneAsset targetScene;
 
     // Settings
+    [Header("Setting")]
     [SerializeField] private Color highlightColor;
     [SerializeField] private GameObject highlightMesh;
+
+    [SerializeField] private List<GameObject> PCOnlyGameObjects;
+    [SerializeField] private List<GameObject> VROnlyGameObjects;
 
     // #################################################################################################################
     // Methods
@@ -22,6 +28,20 @@ public class scrInfoSignEnterScene : MonoBehaviour
     public void EnterScene()
     {
         Maroon.SceneManager.Instance.LoadSceneRequest(this.targetScene);
+    }
+
+    private void Awake()
+    {
+        var isVR = Maroon.PlatformManager.Instance.CurrentPlatformIsVR;
+        foreach (var pcObj in PCOnlyGameObjects)
+        {
+            pcObj.SetActive(!isVR);
+        }
+
+        foreach (var vrObj in VROnlyGameObjects)
+        {
+            vrObj.SetActive(isVR);
+        }
     }
 
     // Start is called before the first frame update

@@ -1,4 +1,7 @@
 ﻿// SteamVR Boundaries|SDK_SteamVR|005
+
+using Valve.VR;
+
 namespace VRTK
 {
 #if VRTK_DEFINE_SDK_STEAMVR

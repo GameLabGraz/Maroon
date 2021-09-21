@@ -113,7 +113,7 @@ namespace VRTK
         /// <returns>A Vector3 containing the current velocity of the headset.</returns>
         public override Vector3 GetHeadsetVelocity()
         {
-            return SteamVR_Controller.Input((int)SteamVR_TrackedObject.EIndex.Hmd).velocity;
+            return Vector3.zero;
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace VRTK
         /// <returns>A Vector3 containing the current angular velocity of the headset.</returns>
         public override Vector3 GetHeadsetAngularVelocity()
         {
-            return SteamVR_Controller.Input((int)SteamVR_TrackedObject.EIndex.Hmd).angularVelocity;
+            return Vector3.zero;
         }
 
         /// <summary>
