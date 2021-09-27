@@ -12,7 +12,7 @@ namespace Maroon
 
         // Settings
         [SerializeField] private bool _webglEnableSceneLoadingViaUrlParameter = true;
-        [SerializeField] private string _webglSceneUrlParameterName = "LoadScene";
+        [SerializeField] private string _webglUrlParameterName = "LoadScene";
         [SerializeField] private Maroon.CustomSceneAsset _firstStandardScene = null;
         [SerializeField] private Maroon.CustomSceneAsset _firstVRScene = null;
 
@@ -57,17 +57,32 @@ namespace Maroon
                 // Redirects: Only enable if on bootstrapping scene, if standalone scene, don't redirect somewhere else
                 if(Maroon.SceneManager.Instance.ActiveSceneNameWithoutPlatformExtension == "Bootstrapping")
                 {
+
+                    // Stores if SceneManager was already requested to change to another scene
+                    bool alreadyRedirected = false;
+
                     // Webgl redirect
-                    if((Maroon.PlatformManager.Instance.CurrentPlatform == Maroon.Platform.WebGL) &&
-                    (this._webglEnableSceneLoadingViaUrlParameter))
+                    // If on WebGL platform and URL redirect enabled
+                    if( (Maroon.PlatformManager.Instance.CurrentPlatform == Maroon.Platform.WebGL) &&
+                        (this._webglEnableSceneLoadingViaUrlParameter) )
                     {
-                        string parameter = Maroon.WebGLUrlParameterReader.GetUrlParameter(this._webglSceneUrlParameterName);
-                        Maroon.SceneManager.Instance.LoadSceneRequest(
-                            Maroon.SceneManager.Instance.GetSceneAssetBySceneName(parameter + ".pc"));
+                        // Read URL parameter
+                        string parameter = Maroon.WebGLUrlParameterReader.GetUrlParameter(this._webglUrlParameterName);
+
+                        // Get scene asset
+                        Maroon.CustomSceneAsset urlScene;
+                        urlScene = Maroon.SceneManager.Instance.GetSceneAssetBySceneName(parameter + ".pc");
+
+                        // Check if scene requested by parameter exists, and try to load it
+                        if((urlScene != null) && (Maroon.SceneManager.Instance.LoadSceneRequest(urlScene)))
+                        {
+                            alreadyRedirected = true;
+                        }
                     }
 
                     // First Scene Redirect
-                    else
+                    // On any platform, but on WebGL only if not redirected via URL
+                    if(!alreadyRedirected)
                     {
                         if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
                         {

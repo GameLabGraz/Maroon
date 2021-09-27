@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Maroon.Physics;
 
 public class DrawGraph : MonoBehaviour, IResetObject
 {
@@ -12,8 +13,6 @@ public class DrawGraph : MonoBehaviour, IResetObject
     private Dictionary<double, double> _equivalenzPoint = new Dictionary<double, double>();
 
     private RectTransform _rect;
-    private float _height;
-    private float _width;
 
     private const float MaxMl = 100.0f;
     private const float Ph = 14.0f;
@@ -24,29 +23,25 @@ public class DrawGraph : MonoBehaviour, IResetObject
     private LineRenderer[] _lineRenderers;
     private LineRenderer _equivalenzLine;
     private LineRenderer _titrationCurveLine;
-    private LineRenderer _axisLine;
 
     private double _equivalenzPointKey;
     private ShowFluid _showFluidScript;
 
     // Display Panel values
-    private double _volumeAddedPh;
-    private double _volumeAddedMl;
+    private QuantityFloat _volumeAddedPh = new QuantityFloat();
+    private QuantityFloat _volumeAddedMl = new QuantityFloat();
     
- 
+    private float Height => _rect.rect.height;
+    private float Width => _rect.rect.width;
+
     private void Start()
     {
         _showFluidScript = ShowFluid.Instance;
         _rect = GetComponent<RectTransform>();
-        _height = _rect.rect.height;
-        _width = _rect.rect.width;
 
         _lineRenderers = GetComponentsInChildren<LineRenderer>();
         _titrationCurveLine = _lineRenderers[0];
         _equivalenzLine = _lineRenderers[1];
-        _axisLine = _lineRenderers[2];
-
-        DrawAxisLines();
     }
 
     public void Initialise()
@@ -75,8 +70,8 @@ public class DrawGraph : MonoBehaviour, IResetObject
             _equivalenzLine.positionCount = 0;
 
         _counter = 0;
-        _volumeAddedMl = 0f;
-        _volumeAddedPh = 0f;
+        _volumeAddedMl.Value = 0f;
+        _volumeAddedPh.Value = 0f;
 
         _result.Clear();
         _equivalenzPoint.Clear();
@@ -115,16 +110,16 @@ public class DrawGraph : MonoBehaviour, IResetObject
                     }
                 }
 
-                var tmpMl = ((float)entry.Key / MaxMl) * _width;
-                var tmpPh = ((float)entry.Value / Ph) * _height;
+                var tmpMl = ((float)entry.Key / MaxMl) * Width;
+                var tmpPh = ((float)entry.Value / Ph) * Height;
 
                 // Renders line
                 _titrationCurveLine.positionCount = _counter + 1;
                 _titrationCurveLine.SetPosition(_counter, new Vector3(tmpMl, tmpPh, 0));
                 _counter++;
 
-                _volumeAddedMl = entry.Key;
-                _volumeAddedPh = entry.Value;
+                _volumeAddedMl.Value = (float)entry.Key;
+                _volumeAddedPh.Value = (float)entry.Value;
 
                 _showFluidScript.DetermineAnalyteColor((float)entry.Value);
 
@@ -135,10 +130,10 @@ public class DrawGraph : MonoBehaviour, IResetObject
                         // Equivalence point horizontal line
                         foreach (KeyValuePair<double, double> entryEqu in _equivalenzPoint)
                         {
-                            var tmpMl_ = ((float)entryEqu.Key / MaxMl) * _width;
-                            var tmpPh_ = ((float)entryEqu.Value / Ph) * _height;
+                            var tmpMl_ = ((float)entryEqu.Key / MaxMl) * Width;
+                            var tmpPh_ = ((float)entryEqu.Value / Ph) * Height;
 
-                            var equivalenzlinewidth = (5 / MaxMl) * _width;
+                            var equivalenzlinewidth = (5 / MaxMl) * Width;
 
                             _equivalenzLine.SetPosition(0, new Vector3(tmpMl_ - equivalenzlinewidth, tmpPh_, 0));
                             _equivalenzLine.SetPosition(1, new Vector3(tmpMl_, tmpPh_, 0));
@@ -166,75 +161,6 @@ public class DrawGraph : MonoBehaviour, IResetObject
                 break;
             default:
                 break;
-        }
-    }
-
-    public void GetVolumeAddedPh(MessageArgs args)
-    {
-        args.value = (float)_volumeAddedPh;
-    }
-
-    public void GetVolumeAddedMl(MessageArgs args)
-    {
-        args.value = (float)_volumeAddedMl;
-    }
-
-    public void DrawAxisLines()
-    {
-        var heightHalf = _height / 2;
-
-        var numberOfPosForTick = 4;
-        var tickSpacing = _width / 10; // 10ml
-        var tickSpacingBig = _width / 2; // 50ml
-        var counterForTicks = _width;
-        var tmpCounter = 0;
-
-        var tickHeightSmall = new List<int> {0, 5, -2, 0};
-        var tickHeightBig = new List<int> {0, 10, -10, 0};
-        
-        // x-Axis
-        while(counterForTicks > 0)
-        {
-            _axisLine.positionCount += numberOfPosForTick;
-            for(int i = 0; i < numberOfPosForTick; i++)
-            {
-                if (counterForTicks % tickSpacingBig == 0 && counterForTicks != 0)
-                {
-                    _axisLine.SetPosition(tmpCounter + i, new Vector3(counterForTicks, tickHeightBig[i], 0));
-                }
-                else
-                {
-                    _axisLine.SetPosition(tmpCounter + i, new Vector3(counterForTicks, tickHeightSmall[i], 0));
-                }
-            }
-            counterForTicks -= tickSpacing;
-            tmpCounter += numberOfPosForTick;
-        }
-
-        _axisLine.positionCount += 1;
-        _axisLine.SetPosition(tmpCounter, new Vector3(0, 0, 0));
-        tmpCounter++;
-        
-        tickSpacing = _height / 14;
-        counterForTicks = tickSpacing;
-
-        // y-Axis
-        while (counterForTicks <= _height)
-        {
-            _axisLine.positionCount += numberOfPosForTick;
-            for (var i = 0; i < numberOfPosForTick; i++)
-            {
-                if (Mathf.Approximately(counterForTicks, heightHalf))
-                {
-                    _axisLine.SetPosition(tmpCounter + i, new Vector3(tickHeightBig[i], counterForTicks, 0));
-                }
-                else
-                {
-                    _axisLine.SetPosition(tmpCounter + i, new Vector3(tickHeightSmall[i], counterForTicks, 0));
-                }
-            }
-            counterForTicks += tickSpacing;
-            tmpCounter += numberOfPosForTick;
         }
     }
 }
