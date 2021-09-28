@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using Maroon.GlobalEntities;
+using UnityEngine;
 
 namespace PlatformControls.BaseControls
 {
@@ -10,8 +10,8 @@ namespace PlatformControls.BaseControls
 
         public void Enter()
         {
-            Maroon.CustomSceneAsset asset = Maroon.SceneManager.Instance.GetSceneAssetBySceneName(_sceneName);
-            Maroon.SceneManager.Instance.LoadSceneRequest(asset);
+            var asset = SceneManager.Instance.GetSceneAssetBySceneName(_sceneName);
+            SceneManager.Instance.LoadSceneRequest(asset);
         }
     }
 }

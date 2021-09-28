@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Maroon.GlobalEntities;
+using UnityEngine;
 using UnityEngine.UI;
 
 
@@ -30,11 +31,11 @@ public class scrMenuColumnAudio : MonoBehaviour
 
     void OnChangeMusicSlider(float value)
     {
-        Maroon.SoundManager.Instance.MusicVolume = value;
+        SoundManager.Instance.MusicVolume = value;
     }
 
     void OnChangeSoundEffectSlider(float value)
     {
-        Maroon.SoundManager.Instance.SoundEffectVolume = value;
+        SoundManager.Instance.SoundEffectVolume = value;
     }
 }

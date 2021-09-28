@@ -1,9 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Maroon
+namespace Maroon.GlobalEntities
 {
+    public interface GlobalEntity
+    {
+        MonoBehaviour Instance { get; }
+    }
+
     /// <summary>
     ///     Handles the creation and instantiation of global entities.
     ///
@@ -19,21 +23,13 @@ namespace Maroon
         private static GlobalEntityLoader _instance = null;
 
         // Prefabs
-        [SerializeField] private GameObject _bootstrappingManagerPrefab = null;
-        [SerializeField] private GameObject _platformManagerPrefab = null;
-        [SerializeField] private GameObject _sceneManagerPrefab = null;
-        [SerializeField] private GameObject _gameManagerPrefab = null;
-        [SerializeField] private GameObject _soundManagerPrefab = null;
-        [SerializeField] private GameObject _networkManagerPrefab = null;
+        [SerializeField] private List<GameObject> _globalEntities  = new List<GameObject>();
 
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Getters and Properties
 
-        public static GlobalEntityLoader Instance
-        {
-            get { return GlobalEntityLoader._instance; }
-        }
+        public static GlobalEntityLoader Instance => GlobalEntityLoader._instance;
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Methods
@@ -55,29 +51,13 @@ namespace Maroon
             DontDestroyOnLoad(this.gameObject);
 
             // Create instances
-            if(Maroon.PlatformManager.Instance == null)
+            foreach (var globalEntityPrefab in _globalEntities)
             {
-                Instantiate(this._platformManagerPrefab).transform.SetParent(this.transform);
-            }
-            if(Maroon.SceneManager.Instance == null)
-            {
-                Instantiate(this._sceneManagerPrefab).transform.SetParent(this.transform);
-            }
-            if(Maroon.BootstrappingManager.Instance == null)
-            {
-                Instantiate(this._bootstrappingManagerPrefab).transform.SetParent(this.transform);
-            }
-            if(Maroon.GameManager.Instance == null)
-            {
-                Instantiate(this._gameManagerPrefab).transform.SetParent(this.transform);
-            }
-            if(Maroon.SoundManager.Instance == null)
-            {
-                Instantiate(this._soundManagerPrefab).transform.SetParent(this.transform);
-            }
-            if(Maroon.NetworkManager.Instance == null)
-            {
-                Instantiate(this._networkManagerPrefab).transform.SetParent(this.transform);
+                var globalEntity = globalEntityPrefab.GetComponent<GlobalEntity>();
+                if (globalEntity == null || globalEntity.Instance != null) continue;
+
+                var clone = Instantiate(globalEntityPrefab, transform);
+                clone.name = globalEntityPrefab.name;
             }
         }
     }

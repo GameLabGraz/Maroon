@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityStandardAssets.Characters.FirstPerson;
 
-namespace Maroon
+namespace Maroon.GlobalEntities
 {
 
     //This manager will be created one time at the beginning and stays troughout all scenes to manage 
     //the game and save settings etc. Since the game doesn't have a load/save function, we don't need Prefabs
-    public class GameManager : MonoBehaviour
+    public class GameManager : MonoBehaviour, GlobalEntity
     {
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Fields
@@ -38,13 +36,9 @@ namespace Maroon
         /// <summary>
         ///     The GameManager instance
         /// </summary>
-        public static GameManager Instance
-        {
-            get
-            {
-                return GameManager._instance;
-            }
-        }
+        public static GameManager Instance => GameManager._instance;
+
+        MonoBehaviour GlobalEntity.Instance => Instance;
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Methods
@@ -89,8 +83,8 @@ namespace Maroon
         public void ResetPlayerRef()
         {
             _player = GameObject.FindGameObjectWithTag("Player");
-            if (_player != null && Maroon.SceneManager.Instance.ActiveSceneName.Contains("Laboratory") && 
-                _lastCategory == Maroon.SceneManager.Instance.ActiveSceneCategory)
+            if (_player != null && SceneManager.Instance.ActiveSceneName.Contains("Laboratory") && 
+                _lastCategory == SceneManager.Instance.ActiveSceneCategory)
             {
                 /*
                     TODO: This needs to be done in a Player script, because the lab looks different every time now
@@ -104,11 +98,11 @@ namespace Maroon
         private void Update()
         {
             // TODO: This should be done by the Player OR the Laboratory
-            if(_player != null && Maroon.SceneManager.Instance.ActiveSceneName.Contains("Laboratory"))
+            if(_player != null && SceneManager.Instance.ActiveSceneName.Contains("Laboratory"))
             {
                 _playerPosition = _player.transform.position;
                 _playerRotation = _player.transform.rotation;
-                _lastCategory = Maroon.SceneManager.Instance.ActiveSceneCategory;
+                _lastCategory = SceneManager.Instance.ActiveSceneCategory;
             }
         }
 
