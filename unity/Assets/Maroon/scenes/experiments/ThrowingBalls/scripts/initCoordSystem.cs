@@ -46,7 +46,10 @@ public class initCoordSystem : MonoBehaviour, IResetObject
     [SerializeField] private Vector3 _realXYZMin = new Vector3(-30.0f, -30.0f, -30.0f);
     [SerializeField] private Vector3 _realXYZMax = new Vector3(30.0f, 30.0f, 30.0f);
 
-    // Start is called before the first frame update
+    /// <summary>
+    /// Inits the scale of objects, trajectory
+    /// Inits the coord system (visibility range)
+    /// </summary>
     void Start()
     {
         Vector3 scaleTrajectory = new Vector3(-0.05f, -0.05f, -0.05f);
@@ -64,9 +67,11 @@ public class initCoordSystem : MonoBehaviour, IResetObject
     // Update is called once per frame
     void Update()
     {
-        
     }
 
+    /// <summary>
+    /// Inits the max/min range of the coordinate system
+    /// </summary>
     void DrawAxis()
     {
         Vector3 end;
@@ -83,36 +88,13 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         _zMax = end;
     }
 
-    void DrawHelperLine(Vector3 start, Vector3 end, float duration = 0.2f)
-    {
-        GameObject myLine = new GameObject();
-        myLine.transform.position = start;
-        myLine.AddComponent<LineRenderer>();
-        LineRenderer lr = myLine.GetComponent<LineRenderer>();
-        lr.material = new Material(Shader.Find("Specular"));
-        lr.material.color = Color.blue;
-        lr.SetWidth(0.04f, 0.04f);
-        lr.SetPosition(0, start);
-        lr.SetPosition(1, end);
-        lr.numCapVertices = 5;
-    }
-
-    void DrawLine(Vector3 start, Vector3 end, float duration = 0.2f)
-    {
-        GameObject myLine = new GameObject();
-        myLine.transform.position = start;
-        myLine.AddComponent<LineRenderer>();
-        LineRenderer lr = myLine.GetComponent<LineRenderer>();
-        lr.material = new Material(Shader.Find("Specular"));
-        lr.material.color = Color.black;
-        lr.SetWidth(0.04f, 0.04f);
-        lr.SetPosition(0, start);
-        lr.SetPosition(1, end);
-        lr.numCapVertices = 5;
-
-    }
-
-    void DrawOrigin(Vector3 start, Vector3 end, Color color, float duration = 0.2f)
+    /// <summary>
+    /// Draws the coordinate origin lines
+    /// </summary>
+    /// <param name="start">Start points of the lines</param>
+    /// <param name="end">End points of the lines</param>
+    /// <param name="color">Colour of the lines</param>
+    void DrawOrigin(Vector3 start, Vector3 end, Color color)
     {
         GameObject myLine = new GameObject();
         myLine.transform.position = start;
@@ -127,27 +109,48 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         lr.numCapVertices = 5;
     }
 
+    /// <summary>
+    /// Sets the text of the x label
+    /// </summary>
+    /// <param name="text">Text to show</param>
     public void SetLabelX(string text)
     {
         _xLabel.text = text;
     }
 
+    /// <summary>
+    /// Sets the text of the y label
+    /// </summary>
+    /// <param name="text">Text to show</param>
     public void SetLabelY(string text)
     {
         _yLabel.text = text;
     }
 
+    /// <summary>
+    /// Sets the text of the z label
+    /// </summary>
+    /// <param name="text">Text to show</param>
     public void SetLabelZ(string text)
     {
         _zLabel.text = text;
     }
 
+    /// <summary>
+    /// Sets the text of the origin label
+    /// </summary>
+    /// <param name="text">Text to show</param>
     public void SetLabelOrigin(string text)
     {
         _xLabel2.text = text;
     }
 
-    // set real coord-values 
+    /// <summary>
+    /// Sets the min/max values of the coordinate system to the calculated values
+    /// and rounds the values for the visualization 
+    /// </summary>
+    /// <param name="min">Calculated min values</param>
+    /// <param name="max">Calculated max values</param>
     public void SetRealCoordBorders(Vector3 min, Vector3 max)
     {
         _realXYZMin = min;
@@ -165,6 +168,11 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         DrawOriginGrid(true);
     }
 
+    /// <summary>
+    /// Rounds calculated values into the form x.xx for visualization
+    /// </summary>
+    /// <param name="value">Original value</param>
+    /// <returns>Rounded value</returns>
     private string RoundDisplayedValues(float value)
     {
         if (System.Math.Round(value, 2) == 0.00f)
@@ -173,7 +181,11 @@ public class initCoordSystem : MonoBehaviour, IResetObject
             return (System.Math.Round(value, 2)).ToString();
     }
 
-    // map real coord-values to unity-coord values
+    /// <summary>
+    /// Maps the calculated coord values to unity coord values
+    /// </summary>
+    /// <param name="point">Points to map</param>
+    /// <returns>Mapped points</returns>
     public Vector3 MapValues(Vector3 point)
     {
         Vector3 tmp = point;
@@ -185,6 +197,11 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         return tmp;
     }
 
+    /// <summary>
+    /// Maps the unity coord values back to the calculated coord values
+    /// </summary>
+    /// <param name="point">Points to map back</param>
+    /// <returns>Back-Mapped points</returns>
     public Vector3 MapValuesBack(Vector3 point)
     {
         Vector3 tmp = point;
@@ -196,17 +213,41 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         return tmp;
     }
 
+    /// <summary>
+    /// Method for scaling points into a given range
+    /// </summary>
+    /// <param name="value">Value to scale</param>
+    /// <param name="min">Calculated min value</param>
+    /// <param name="max">Calculated max value</param>
+    /// <param name="unityCoordA">Unity min value</param>
+    /// <param name="unityCoordB">Unity max value</param>
+    /// <returns>Scaled point</returns>
     private float ScaleCoords(double value, double min, double max, double unityCoordA, double unityCoordB)
     {
         return (float)((((unityCoordB - unityCoordA) * (value - min)) / (max - min)) + unityCoordA);
     }
 
+    /// <summary>
+    /// Method for scaling calculated points back into the original range
+    /// </summary>
+    /// <param name="value">Value to scale</param>
+    /// <param name="unityCoordA">Unity min value</param>
+    /// <param name="unityCoordB">Unity max value</param>
+    /// <param name="min">Calculated min value</param>
+    /// <param name="max">Calculated max value</param>
+    /// <returns>Scaled point</returns>
     private float ScaleCoordsBack(double value, double unityCoordA, double unityCoordB, double min, double max)
     {
         return (float)((((unityCoordB - unityCoordA) * (value - min)) / (max - min)) + unityCoordA);
     }
 
-
+    /// <summary>
+    /// Draws the point at the given coordinates
+    /// If drawTrajectory is true -> Trajectory is drawn too and added to a list for deleting at reset
+    /// </summary>
+    /// <param name="point">Point coordinates to draw</param>
+    /// <param name="drawTrajectory">Bool if trajectory should be drawn</param>
+    /// <param name="particleInUse">Current object in use (e.g. Particle, Ball, Satellite)</param>
     public void DrawPoint(Vector3 point, bool drawTrajectory, ParticleObject particleInUse)
     {
         switch (particleInUse)
@@ -274,6 +315,10 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         _color = Color.black;
     }
 
+    /// <summary>
+    /// Sets the particle which is used active
+    /// </summary>
+    /// <param name="particleInUse">Particle to set active</param>
     public void SetParticleActive(ParticleObject particleInUse)
     {
         switch (particleInUse)
@@ -294,7 +339,10 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         }
     }
 
-    // UI toggle
+    /// <summary>
+    /// UI checkbox for show/hide labels
+    /// </summary>
+    /// <param name="show">Bool if checkbox is active</param>
     public void ShowLabels(bool show)
     {
         if (show)
@@ -317,11 +365,15 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         }
     }
 
+    /// <summary>
+    /// UI checkbox for show/hide origin grid
+    /// Method calculates the origin points and map them for drawing
+    /// </summary>
+    /// <param name="draw">Bool if grid should be drawn or deleted</param>
     public void DrawOriginGrid(bool draw)
     {
         if (draw && _borderValuesSet)
         {
-            //Debug.Log("Draw Grid");
             Vector3 start;
             Vector3 end;
 
@@ -329,7 +381,6 @@ public class initCoordSystem : MonoBehaviour, IResetObject
             start = new Vector3(_realXYZMin.x, 0, 0);
             end = new Vector3(_realXYZMax.x, 0, 0);
             DrawOrigin(MapValues(start), MapValues(end), _color);
-            //end = new Vector3(real_xyz_max.x + 0.5f, 0, 0);
             _xLabel.transform.position = MapValues(end);
             _xLabel2.transform.position = MapValues(start);
 
@@ -357,9 +408,14 @@ public class initCoordSystem : MonoBehaviour, IResetObject
             _origin.Clear();
         }
     }
-
+    
+    /// <summary>
+    /// Sets the member color
+    /// </summary>
+    /// <param name="col">Color to use</param>    
     public void SetColor(Color col)
     {
         _color = col;
     }
+    
 }

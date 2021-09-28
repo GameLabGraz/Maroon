@@ -22,6 +22,10 @@ public class SkyboxController : MonoBehaviour, IResetObject
         
     }
 
+    /// <summary>
+    /// Sets the background of the scene
+    /// </summary>
+    /// <param name="background">Background to use</param>
     public void SetBackground(string background)
     {
         if (background == "ExperimentRoom")
@@ -35,6 +39,9 @@ public class SkyboxController : MonoBehaviour, IResetObject
         
     }
 
+    /// <summary>
+    /// Sets the space background 
+    /// </summary>
     public void SetSpace()
     {
         MaxCameraPosition.Instance.ChangePosition();
@@ -43,6 +50,9 @@ public class SkyboxController : MonoBehaviour, IResetObject
         RenderSettings.skybox = _space;
     }
 
+    /// <summary>
+    /// Sets the grass background 
+    /// </summary>
     public void SetGrass()
     {
         MaxCameraPosition.Instance.ChangePosition();
@@ -51,6 +61,9 @@ public class SkyboxController : MonoBehaviour, IResetObject
         RenderSettings.skybox = _grass;
     }
 
+    /// <summary>
+    /// Sets the default experiment room as background
+    /// </summary>
     public void SetExperimentRoom()
     {
         Camera.main.clearFlags = CameraClearFlags.Depth;

@@ -7,13 +7,12 @@ using System.IO;
 public class FileController : MonoBehaviour
 {
     private static FileController _instance;
-    private string _fileType = ".json";
-    private string _fileContent = "EMPTY";
-
     [SerializeField] private List<TextAsset> _jsonFile = new List<TextAsset>();
-
     private List<Parameters> _parameters;
 
+    /// <summary>
+    /// Class for storing parameters from a JSON-File
+    /// </summary>
     [System.Serializable]
     public class Parameters
     {
@@ -35,11 +34,26 @@ public class FileController : MonoBehaviour
 
     }
 
+    // Start is called before the first frame update
+    void Start()
+    {
+
+    }
+
+    /// <summary>
+    /// Getter for the stored parameters
+    /// </summary>
+    /// <returns>Parameter list</returns>
     public List<Parameters> GetParameters()
     {
         return _parameters;
     }
 
+    /// <summary>
+    /// Method for loading intern JSON-File
+    /// </summary>
+    /// <param name="file">File to load</param>
+    /// <returns>Parameters</returns>
     public List<Parameters> LoadJsonFile(int file)
     {  
         string json_text = _jsonFile[file].text;
@@ -52,12 +66,17 @@ public class FileController : MonoBehaviour
         {
             
             string json = r.ReadToEnd();
-            Debug.Log("Json data: " + json);
+            //Debug.Log("Json data: " + json);
             _parameters = JsonConvert.DeserializeObject<List<Parameters>>(json);
         }
         return _parameters;
     }
 
+    /// <summary>
+    /// Method for loading extern JSON-File
+    /// Triggers the calculation process
+    /// </summary>
+    /// <param name="data">JSON data</param>
     public void LoadExternJsonFile(string data)
     {
         byte[] byteArray = System.Text.Encoding.ASCII.GetBytes(data);
@@ -71,12 +90,6 @@ public class FileController : MonoBehaviour
         }
 
         ParameterUI.Instance.LoadExternParametersFromFile(_parameters);
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-       
     }
 
     public static FileController Instance

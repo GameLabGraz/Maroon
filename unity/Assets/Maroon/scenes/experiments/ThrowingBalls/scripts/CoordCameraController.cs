@@ -29,6 +29,10 @@ public class CoordCameraController : MonoBehaviour, IResetObject
         UpdateOrigPosition();
         UpdateOrigRotation();
     }
+
+    /// <summary>
+    /// Adapted functionality of the original CameraController-Script
+    /// </summary>
     private void LateUpdate()
     {
         // Camera Movement

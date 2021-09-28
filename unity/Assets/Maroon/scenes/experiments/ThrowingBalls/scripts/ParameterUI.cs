@@ -80,7 +80,8 @@ public class ParameterUI : PausableObject, IResetObject
     [SerializeField] private UnityEngine.UI.Toggle _showOriginGrid;
 
     /// <summary>
-    /// Initialization
+    /// Inits the dictionary for the formulas and handles the visibility of UI elements
+    /// Displays the welcome message
     /// </summary>
     protected override void Start()
     {
@@ -124,7 +125,7 @@ public class ParameterUI : PausableObject, IResetObject
     }
 
     /// <summary>
-    /// Update is called every frame
+    /// Dynamic Show/Hide functionality of the UI panels
     /// </summary>
     protected override void HandleFixedUpdate()
     {
@@ -157,41 +158,59 @@ public class ParameterUI : PausableObject, IResetObject
         }
     }
 
+    /// <summary>
+    /// Show/Hide the Input Panel
+    /// </summary>
     public void ShowInputPanel()
     {
         if (_showInputPanel)
             _showInputPanel = false;
         else
-        {
             _showInputPanel = true;
-        }
     }
 
+    /// <summary>
+    /// Show/Hide Data Visualization Panel
+    /// </summary>
     public void ShowDataVisualizationPanel()
     {
         if (_showDataPanel)
             _showDataPanel = false;
         else
-        {
             _showDataPanel = true;
-        }
     }
 
+    /// <summary>
+    /// Gets the Function Fx from the UI and brings the formula to the right form
+    /// </summary>
+    /// <returns>The corrected formula Fx</returns>
     public string GetFunctionFx()
     {
         return GetCorrectedFormula(fxIF.text);
     }
 
+    /// <summary>
+    /// Gets the Function Fy from the UI and brings the formula to the right form
+    /// </summary>
+    /// <returns>The corrected formula Fy</returns>
     public string GetFunctionFy()
     {
         return GetCorrectedFormula(fyIF.text);
     }
 
+    /// <summary>
+    /// Gets the Function Fz from the UI and brings the formula to the right form
+    /// </summary>
+    /// <returns>The corrected formula Fz</returns>
     public string GetFunctionFz()
     {
         return GetCorrectedFormula(fzIF.text);
     }
 
+    /// <summary>
+    /// Gets the mass from the UI and checks the value range
+    /// </summary>
+    /// <returns>The mass</returns>
     public float GetMass()
     {
         if (_mass <= 0)
@@ -204,26 +223,46 @@ public class ParameterUI : PausableObject, IResetObject
         return _mass;
     }
 
+    /// <summary>
+    /// Sets the value for mass from the UI
+    /// </summary>
+    /// <param name="value">Mass</param>
     public void SetMass(string value)
     {
         _mass = float.Parse(value); 
     }
 
+    /// <summary>
+    /// Sets the value for t0 from the UI
+    /// </summary>
+    /// <param name="value">T0</param>
     public void SetT0(string value)
     {
         _t0 = System.Convert.ToSingle(value);
     }
 
+    /// <summary>
+    /// Sets the value for DeltaT from the UI
+    /// </summary>
+    /// <param name="value">DeltaT</param>
     public void SetDeltaT(string value)
     {
         _deltaT = float.Parse(value);
     }
 
+    /// <summary>
+    /// Sets the value for steps from the UI
+    /// </summary>
+    /// <param name="value">Steps</param>
     public void SetSteps(string value)
     {
         _steps = System.Convert.ToSingle(value);
     }
 
+    /// <summary>
+    /// Getter for t0, deltaT and steps. Adapts values if not in valid range
+    /// </summary>
+    /// <returns>T0, deltaT and steps</returns>
     public Vector3 GetTimes()
     {
         if (_t0 < 0)
@@ -250,21 +289,37 @@ public class ParameterUI : PausableObject, IResetObject
         return _toDeltatSteps;
     }
 
+    /// <summary>
+    /// Sets the value for x from the UI
+    /// </summary>
+    /// <param name="value">X</param>
     public void SetX(string value)
     {
         _x = System.Convert.ToSingle(value);
     }
 
+    /// <summary>
+    /// Sets the value for y from the UI
+    /// </summary>
+    /// <param name="value">Y</param>
     public void SetY(string value)
     {
         _y = System.Convert.ToSingle(value);
     }
 
+    /// <summary>
+    /// Sets the value for z from the UI
+    /// </summary>
+    /// <param name="value">Z</param>
     public void SetZ(string value)
     {
         _z = System.Convert.ToSingle(value);
     }
 
+    /// <summary>
+    /// Getter for x,y and z values
+    /// </summary>
+    /// <returns>x,y,z</returns>
     public Vector3 GetXYZ()
     {
         _xyz = new Vector3(_x, _y, _z);
@@ -272,21 +327,37 @@ public class ParameterUI : PausableObject, IResetObject
         return _xyz;
     }
 
+    /// <summary>
+    /// Sets the value for vx from the UI
+    /// </summary>
+    /// <param name="value">Vx</param>
     public void SetVX(string value)
     {
         _vx = System.Convert.ToSingle(value);
     }
 
+    /// <summary>
+    /// Sets the value for vy from the UI
+    /// </summary>
+    /// <param name="value">Vy</param>
     public void SetVY(string value)
     {
         _vy = System.Convert.ToSingle(value);
     }
 
+    /// <summary>
+    /// Sets the value for vz from the UI
+    /// </summary>
+    /// <param name="value">Vzx</param>
     public void SetVZ(string value)
     {
         _vz = System.Convert.ToSingle(value);
     }
 
+    /// <summary>
+    /// Getter for Vx,Vy and Vz values
+    /// </summary>
+    /// <returns>Vx,Vy,Vz</returns>
     public Vector3 GetVxVyVz()
     {
         _vxvyvz = new Vector3(_vx, _vy, _vz);
@@ -294,6 +365,10 @@ public class ParameterUI : PausableObject, IResetObject
         return _vxvyvz;
     }
 
+    /// <summary>
+    /// Loads the chosen parameters from the JSON file 
+    /// </summary>
+    /// <param name="choice">The choice from the UI (Dropdown menu)</param>
     public void LoadParameters(int choice)
     {
         _resetBackground = false;
@@ -337,6 +412,10 @@ public class ParameterUI : PausableObject, IResetObject
         SkyboxController.Instance.SetBackground(_background);
     }
 
+    /// <summary>
+    /// Handles loading the parameters from the (intern) JSON file and sets the member variables
+    /// </summary>
+    /// <param name="file">File to load</param>
     private void LoadParametersFromFile(int file)
     {
         List<FileController.Parameters> parameters = FileController.Instance.LoadJsonFile(file);
@@ -372,7 +451,10 @@ public class ParameterUI : PausableObject, IResetObject
         }
     }
 
-  
+    /// <summary>
+    /// Handles loading the parameters from the EXTERN JSON file and sets the member variables
+    /// </summary>
+    /// <param name="parameters">Parameter list of the extern JSON file</param>
     public void LoadExternParametersFromFile(List<FileController.Parameters> parameters)
     {
         foreach (var par in parameters) 
@@ -406,6 +488,11 @@ public class ParameterUI : PausableObject, IResetObject
         SkyboxController.Instance.SetBackground(_background);
     }
    
+    /// <summary>
+    /// Brings the given formula into the correct form for evaluating
+    /// </summary>
+    /// <param name="formula">Formula to check</param>
+    /// <returns>The corrected formula</returns>
     private string GetCorrectedFormula(string formula)
     {
         string tmp = formula.ToLower();
@@ -418,6 +505,10 @@ public class ParameterUI : PausableObject, IResetObject
         return tmp;
     }
 
+    /// <summary>
+    /// Displays a message on the screen. (welcome message, error messages)
+    /// </summary>
+    /// <param name="message">Message to show</param>
     public void DisplayMessage(string message)
     {
         if (_dialogueManager == null)
@@ -426,11 +517,19 @@ public class ParameterUI : PausableObject, IResetObject
         _dialogueManager.ShowMessage(message);
     }
 
+    /// <summary>
+    /// Getter for the object in use (e.g Ball or Satellite)
+    /// </summary>
+    /// <returns>Object in use</returns>
     public ParticleObject GetObjectInUse()
     {
         return _particleInUse;
     }
 
+    /// <summary>
+    /// Getter for the background of the experiment
+    /// </summary>
+    /// <returns>Background</returns>
     public string GetBackground()
     {
         return _background;
@@ -464,6 +563,7 @@ public class ParameterUI : PausableObject, IResetObject
         _dataVisualization.SetActive(true);
 
         _particleInUse = ParticleObject.Default;
+
         if (_resetBackground)
             _background = "ExperimentRoom";
         
@@ -472,11 +572,19 @@ public class ParameterUI : PausableObject, IResetObject
         LoadDefault();
     }
 
+    /// <summary>
+    /// Function to display error messages
+    /// </summary>
+    /// <param name="message">Message to show</param>
     private void ShowError(string message)
     {
         DisplayMessage(message);
     }
 
+    /// <summary>
+    /// Loads the default parameters for resetting the experiment.
+    /// Hard coded because of WebGL version
+    /// </summary>
     private void LoadDefault()
     {
         _background = "ExperimentRoom";

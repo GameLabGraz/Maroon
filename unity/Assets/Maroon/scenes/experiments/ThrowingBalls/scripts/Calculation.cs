@@ -86,7 +86,9 @@ public class Calculation : PausableObject, IResetObject
     }
 
     /// <summary>
-    /// This function is called every fixed framerate frame 
+    /// Handles the Play/Pause/Step functionality
+    /// Play button triggers the start of the calculation and displaying results
+    /// On error -> shows error message and resets the experiment
     /// </summary>
     protected override void HandleFixedUpdate()
     {
@@ -122,7 +124,9 @@ public class Calculation : PausableObject, IResetObject
         }
     }
 
-    // GUI button
+    /// <summary>
+    /// Inits the calculation process
+    /// </summary>
     public void StartCalcPlot()
     {
         _stopSimulation = false;
@@ -131,15 +135,19 @@ public class Calculation : PausableObject, IResetObject
         InitParameter();
 
         _particleInUse = ParameterUI.Instance.GetObjectInUse();
+
         // calc min max for x,y,z coords
         CalcMinMax();
+
         if (!_stopSimulation)
         {
             Vector3 border_min = new Vector3(_xMin, _zMin, _yMin);
             Vector3 border_max = new Vector3(_xMax, _zMax, _yMax);
 
+            // when satellite/space background is used -> white color for coord lines
             if (_particleInUse == ParticleObject.Satellite)
                 initCoordSystem.Instance.SetColor(Color.white);
+
             initCoordSystem.Instance.SetRealCoordBorders(border_min, border_max);
 
             _initialized = true;
@@ -149,7 +157,11 @@ public class Calculation : PausableObject, IResetObject
         }
     }
 
-    // get formula expression with dynamic parameters
+    /// <summary>
+    /// Gets and evaluates the given formula with dynamic variables
+    /// </summary>
+    /// <param name="formula">Formula to evaluate</param>
+    /// <returns>Expression for further evaluation</returns>
     private Expression GetExpression(string formula)
     {
         Expression e = new Expression(formula);
@@ -167,7 +179,10 @@ public class Calculation : PausableObject, IResetObject
         return e;
     }
 
-    // calculate the forces Fx, Fy, Fz
+    /// <summary>
+    /// Calculates the forces for Fx, Fy and Fz
+    /// Evaluates the formula and handles errors while evaluating
+    /// </summary>
     private void CalcForces()
     {
         Expression e;
@@ -204,7 +219,9 @@ public class Calculation : PausableObject, IResetObject
         
     }
 
-    // calculates the values with the 4th order Runge-Kutta method
+    /// <summary>
+    /// Calculates all needed values for the experiment with the 4th order Runge-Kutta algorithm
+    /// </summary>
     private void CalcValues()
     {
         double tempX = _currentX;
@@ -300,7 +317,9 @@ public class Calculation : PausableObject, IResetObject
         _currentTime += _deltaT;
     }
 
-    // init the parameters from GUI
+    /// <summary>
+    /// Inits the parameters from the GUI 
+    /// </summary>
     private void InitParameter()
     {
         _formulaFx = ParameterUI.Instance.GetFunctionFx();
@@ -327,7 +346,9 @@ public class Calculation : PausableObject, IResetObject
         ClearData();
     }
 
-    // calculate min, max to set the borders of the coord-system
+    /// <summary>
+    /// Calculates min/max values to set the borders of the coord-system
+    /// </summary>
     private void CalcMinMax()
     {
         for (int i = 0; i < _steps; i++)
@@ -364,6 +385,7 @@ public class Calculation : PausableObject, IResetObject
             }
         }
 
+        // add scaling for nicer visualization
         _xMin = _xMin - GetMinMaxScaleFactor(_xMin);
         _yMin = _yMin - GetMinMaxScaleFactor(_yMin);
         _zMin = _zMin - GetMinMaxScaleFactor(_zMin);
@@ -374,6 +396,11 @@ public class Calculation : PausableObject, IResetObject
 
     }
 
+    /// <summary>
+    /// Method to scale min/max values for visualization
+    /// </summary>
+    /// <param name="value">Value to scale</param>
+    /// <returns>Adapted value</returns>
     private float GetMinMaxScaleFactor(float value)
     {
         value = System.Math.Abs(value);
@@ -384,7 +411,10 @@ public class Calculation : PausableObject, IResetObject
             return 0f;
     }
 
-    // debugging GUI parameters
+    /// <summary>
+    /// THIS FUNCTION IS NOT ACTIVE
+    /// Can be used for debugging GUI parameters
+    /// </summary>
     private void DebugGUIParameters()
     {
         Debug.Log("PARAMETERS\n");
@@ -402,7 +432,10 @@ public class Calculation : PausableObject, IResetObject
             "\nVZ: " + _currentVz.ToString());
     }
 
-    // debugging current values
+    /// <summary>
+    /// THIS FUNCTION IS NOT ACTIVE
+    /// Can be used for debugging calculated values
+    /// </summary>
     private void DebugCurrentValues()
     {
         Debug.Log("Time: " + _currentTime.ToString() + " X: " + _currentX.ToString() + " Y: " + _currentY.ToString() + " Z: " + _currentZ.ToString() +
@@ -420,6 +453,9 @@ public class Calculation : PausableObject, IResetObject
         }
     }
 
+    /// <summary>
+    /// Since the values are calculated only once at the beginning -> store them for later visualization
+    /// </summary>
     private void AddData()
     {
         Vector2 tmp;
@@ -453,6 +489,8 @@ public class Calculation : PausableObject, IResetObject
         _data_W.Add(tmp);
     }
 
+    // Getter for all values
+    // --------------------------------------------------------------
     public List<Vector2> GetDataX() { return _dataX; }
     public List<Vector2> GetDataY() { return _dataY; }
     public List<Vector2> GetDataZ() { return _dataZ; }
@@ -468,15 +506,13 @@ public class Calculation : PausableObject, IResetObject
     public List<Vector2> GetDataP() { return _dataP; }
     public List<Vector2> GetDataEkin() { return _dataEkin; }
     public List<Vector2> GetDataW() { return _data_W; }
-
+    // --------------------------------------------------------------
 
     /// <summary>
     /// Resets the object
     /// </summary>
     public void ResetObject()
     {
-        //Debug.Log("Reset Calculation\n");
-
         _stopSimulation = true;
         _startCalcPlot = false;
         _initialized = false;
@@ -506,6 +542,9 @@ public class Calculation : PausableObject, IResetObject
         ClearData();
     }
 
+    /// <summary>
+    /// Deletes all stored data
+    /// </summary>
     private void ClearData()
     {
         _dataX.Clear();
@@ -525,6 +564,9 @@ public class Calculation : PausableObject, IResetObject
         _data_W.Clear();
     }
 
+    /// <summary>
+    /// Method for calculating KineticEnergy, Work and Power
+    /// </summary>
     private void CalcEnergies()
     {
         _currentEkin = (System.Math.Pow(_currentVx, 2) + System.Math.Pow(_currentVy, 2) + System.Math.Pow(_currentVz, 2)) /
@@ -535,6 +577,10 @@ public class Calculation : PausableObject, IResetObject
         _oldPower = _currentP;
 
     }
+
+    /// <summary>
+    /// Method for showing error messages
+    /// </summary>
     private void ShowError()
     {
         ParameterUI.Instance.DisplayMessage("Something went wrong with the calculation. Please check the formula.");

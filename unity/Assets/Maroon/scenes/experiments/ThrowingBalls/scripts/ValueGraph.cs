@@ -4,24 +4,40 @@ using UnityEngine;
 using Maroon.UI.Charts;
 using TMPro;
 
-public class ValueGraph : MonoBehaviour
+public class ValueGraph : PausableObject, IResetObject
 {
 
     private static ValueGraph _instance;
     public SimpleLineChart simpleLineChart;
 
-    // Start is called before the first frame update
-    void Start()
+    /// <summary>
+    /// Initialization
+    /// </summary>
+    protected override void Start()
     {
        
     }
 
-    // Update is called once per frame
-    void Update()
+    /// <summary>
+    /// Update is called every frame
+    /// </summary>
+    protected override void HandleUpdate()
     {
-        
+
     }
 
+    /// <summary>
+    /// Update is called every frame
+    /// </summary>
+    protected override void HandleFixedUpdate()
+    {
+       
+    }
+
+    /// <summary>
+    /// Loads and displays the choosen value in the LineChart (GUI)
+    /// </summary>
+    /// <param name="choice">Data to load</param>
     public void LoadChoosenValue(int choice)
     {
         switch (choice)
@@ -81,6 +97,8 @@ public class ValueGraph : MonoBehaviour
         }
     }
 
+    // Methods for plotting the desired values
+    // -----------------------------------------------------------------
     private void PlotX()
     {
         simpleLineChart.AddData(Calculation.Instance.GetDataX());
@@ -140,6 +158,7 @@ public class ValueGraph : MonoBehaviour
     {
         simpleLineChart.AddData(Calculation.Instance.GetDataW());
     }
+    // -----------------------------------------------------------------
 
     public static ValueGraph Instance
     {
@@ -149,5 +168,13 @@ public class ValueGraph : MonoBehaviour
                 _instance = FindObjectOfType<ValueGraph>();
             return _instance;
         }
+    }
+
+    /// <summary>
+    /// Resets the object
+    /// </summary>
+    public void ResetObject()
+    {
+        simpleLineChart.ResetObject();
     }
 }
