@@ -394,15 +394,15 @@ public class ParameterUI : PausableObject, IResetObject
                 break;
             case 4:
                 LoadParametersFromFile(choice);
-                dropdown.SetValueWithoutNotify(5);
+                dropdown.SetValueWithoutNotify(4);
                 break;
             case 5:
                 LoadParametersFromFile(choice);
-                dropdown.SetValueWithoutNotify(6);
+                dropdown.SetValueWithoutNotify(5);
                 break;
             case 6:
                 LoadParametersFromFile(choice);
-                dropdown.SetValueWithoutNotify(7);
+                dropdown.SetValueWithoutNotify(6);
                 break;
             default:
                 LoadDefault();

@@ -4,9 +4,9 @@ using UnityEngine;
 using TMPro;
 using ObjectsInUse;
 
-public class initCoordSystem : MonoBehaviour, IResetObject
+public class CoordSystem : MonoBehaviour, IResetObject
 {
-    private static initCoordSystem _instance;
+    private static CoordSystem _instance;
     
     [SerializeField] private Transform _coordOrigin;
     [SerializeField] private GameObject _trajectory;
@@ -108,43 +108,7 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         _origin.Add(myLine);
         lr.numCapVertices = 5;
     }
-
-    /// <summary>
-    /// Sets the text of the x label
-    /// </summary>
-    /// <param name="text">Text to show</param>
-    public void SetLabelX(string text)
-    {
-        _xLabel.text = text;
-    }
-
-    /// <summary>
-    /// Sets the text of the y label
-    /// </summary>
-    /// <param name="text">Text to show</param>
-    public void SetLabelY(string text)
-    {
-        _yLabel.text = text;
-    }
-
-    /// <summary>
-    /// Sets the text of the z label
-    /// </summary>
-    /// <param name="text">Text to show</param>
-    public void SetLabelZ(string text)
-    {
-        _zLabel.text = text;
-    }
-
-    /// <summary>
-    /// Sets the text of the origin label
-    /// </summary>
-    /// <param name="text">Text to show</param>
-    public void SetLabelOrigin(string text)
-    {
-        _xLabel2.text = text;
-    }
-
+    
     /// <summary>
     /// Sets the min/max values of the coordinate system to the calculated values
     /// and rounds the values for the visualization 
@@ -160,9 +124,9 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         _textY = "Y: " + RoundDisplayedValues(_realXYZMax.z) + "m";
         _textZ = "Z: " + RoundDisplayedValues(_realXYZMax.y) + "m";
 
-        _textX2 = "X: " + RoundDisplayedValues(_realXYZMax.x) + "m";
-        _textY2 = "Y: " + RoundDisplayedValues(_realXYZMax.z) + "m";
-        _textZ2 = "Z: " + RoundDisplayedValues(_realXYZMax.y) + "m";
+        _textX2 = "X: " + RoundDisplayedValues(_realXYZMin.x) + "m";
+        _textY2 = "Y: " + RoundDisplayedValues(_realXYZMin.z) + "m";
+        _textZ2 = "Z: " + RoundDisplayedValues(_realXYZMin.y) + "m";
 
         _borderValuesSet = true;
         DrawOriginGrid(true);
@@ -273,12 +237,12 @@ public class initCoordSystem : MonoBehaviour, IResetObject
         
     }
 
-    public static initCoordSystem Instance
+    public static CoordSystem Instance
     {
         get
         {
             if (_instance == null)
-                _instance = FindObjectOfType<initCoordSystem>();
+                _instance = FindObjectOfType<CoordSystem>();
             return _instance;
         }
     }
@@ -347,18 +311,18 @@ public class initCoordSystem : MonoBehaviour, IResetObject
     {
         if (show)
         {
-            SetLabelX(_textX);
-            SetLabelY(_textY);
-            SetLabelZ(_textZ);
+            _xLabel.text = _textX;
+            _yLabel.text = _textY;
+            _zLabel.text = _textZ;
             _xLabel2.text = _textX2;
             _yLabel2.text = _textY2;
             _zLabel2.text = _textZ2;
         }
         else
         {
-            SetLabelX("");
-            SetLabelY("");
-            SetLabelZ("");
+            _xLabel.text = "";
+            _yLabel.text = "";
+            _zLabel.text = "";
             _xLabel2.text = "";
             _yLabel2.text = "";
             _zLabel2.text = "";

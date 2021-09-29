@@ -18,6 +18,7 @@ public class Calculation : PausableObject, IResetObject
     private bool _drawTrajectory = true;
     private bool _firstIteration = true;
     private bool _initialized = false;
+    private const float _threshold = 0.001f;
 
     private float _xMax = System.Int64.MinValue;
     private float _yMax = System.Int64.MinValue;
@@ -100,8 +101,8 @@ public class Calculation : PausableObject, IResetObject
             if (_startCalcPlot && _currentSteps < _steps && _currentUpdateRate == 1)
             {
                 _point = new Vector3(_dataX[_currentSteps].y, _dataZ[_currentSteps].y, _dataY[_currentSteps].y);
-                Vector3 mappedPoint = initCoordSystem.Instance.MapValues(_point);
-                initCoordSystem.Instance.DrawPoint(mappedPoint, _drawTrajectory, _particleInUse);
+                Vector3 mappedPoint = CoordSystem.Instance.MapValues(_point);
+                CoordSystem.Instance.DrawPoint(mappedPoint, _drawTrajectory, _particleInUse);
                 
                 _currentSteps++;
                 _currentUpdateRate = 0;
@@ -146,14 +147,14 @@ public class Calculation : PausableObject, IResetObject
 
             // when satellite/space background is used -> white color for coord lines
             if (_particleInUse == ParticleObject.Satellite)
-                initCoordSystem.Instance.SetColor(Color.white);
+                CoordSystem.Instance.SetColor(Color.white);
 
-            initCoordSystem.Instance.SetRealCoordBorders(border_min, border_max);
+            CoordSystem.Instance.SetRealCoordBorders(border_min, border_max);
 
             _initialized = true;
             _startCalcPlot = true;
 
-            initCoordSystem.Instance.SetParticleActive(_particleInUse);
+            CoordSystem.Instance.SetParticleActive(_particleInUse);
         }
     }
 
@@ -235,7 +236,10 @@ public class Calculation : PausableObject, IResetObject
         if (_firstIteration)
         {
             CalcForces();
+            CalcEnergies();
+            AddData();
             _firstIteration = false;
+            return;
         }
         if (_stopSimulation)
             return;
@@ -384,16 +388,34 @@ public class Calculation : PausableObject, IResetObject
                 _zMax = (float)_currentZ;
             }
         }
-
-        // add scaling for nicer visualization
+        
+        // add scaling for nice visualization
         _xMin = _xMin - GetMinMaxScaleFactor(_xMin);
         _yMin = _yMin - GetMinMaxScaleFactor(_yMin);
         _zMin = _zMin - GetMinMaxScaleFactor(_zMin);
 
-        _xMax = _xMax + GetMinMaxScaleFactor(_xMax);
-        _yMax = _yMax + GetMinMaxScaleFactor(_yMax);
-        _zMax = _zMax + GetMinMaxScaleFactor(_zMax);
+        if (ScalingNeeded(_xMin))
+            _xMax = _xMax + GetMinMaxScaleFactor(_xMax);
+        if (ScalingNeeded(_yMin))
+            _yMax = _yMax + GetMinMaxScaleFactor(_yMax);
+        if (ScalingNeeded(_zMin))
+            _zMax = _zMax + GetMinMaxScaleFactor(_zMax);
+        
+    }
 
+    /// <summary>
+    /// This method checks if scaling is needed
+    /// If a certain value is smaller than the threshold -> scaling leads to 
+    /// incorrect visualization
+    /// </summary>
+    /// <param name="value">Value to check</param>
+    /// <returns>Bool if scaling is needed</returns>
+    private bool ScalingNeeded(float value)
+    {
+        if (System.Math.Abs(value) < _threshold)
+            return false;
+        else
+            return true;
     }
 
     /// <summary>
@@ -406,7 +428,7 @@ public class Calculation : PausableObject, IResetObject
         value = System.Math.Abs(value);
 
         if (value == 0)
-            return 1f;
+            return 0.5f;
         else
             return 0f;
     }
