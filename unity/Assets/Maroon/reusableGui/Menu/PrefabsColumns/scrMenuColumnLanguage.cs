@@ -1,6 +1,7 @@
 ﻿using GEAR.Localization;
 using UnityEngine;
 using UnityEngine.UI;
+using Valve.VR.InteractionSystem;
 
 public class scrMenuColumnLanguage : MonoBehaviour
 {
@@ -14,9 +15,9 @@ public class scrMenuColumnLanguage : MonoBehaviour
 
 
     private void Start()
-    {
-        this.ButtonGerman.GetComponent<Button>().onClick.AddListener(() => this.OnClickGerman());
-        this.ButtonEnglish.GetComponent<Button>().onClick.AddListener(() => this.OnClickEnglish());
+    { 
+        this.ButtonGerman.GetComponent<Button>().onClick.AddListener(() => this.OnClickGerman()); 
+        this.ButtonEnglish.GetComponent<Button>().onClick.AddListener(() => this.OnClickEnglish()); 
         this.UpdateActiveButton();
     }
 
