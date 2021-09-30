@@ -37,6 +37,9 @@ namespace Maroon.Physics.HuygensPrinciple
         [SerializeField]
         private Material plateMaterial;
 
+        [SerializeField] private bool ignorePositionReset = false;
+        [SerializeField] private bool ignoreScaleReset = false;
+
         private Vector3 TopSize => top.GetComponentInChildren<MeshRenderer>().bounds.size;
         private Vector3 BottomSize => bottom.GetComponentInChildren<MeshRenderer>().bounds.size;
         private Vector3 RightSize => right.GetComponentInChildren<MeshRenderer>().bounds.size;
@@ -280,8 +283,10 @@ namespace Maroon.Physics.HuygensPrinciple
 
         private void LoadPreviousState()
         {
-            gameObject.transform.localScale = previousPlateScale;
-            gameObject.transform.position = previousPlatePosition;
+            if(!ignoreScaleReset)
+                gameObject.transform.localScale = previousPlateScale;
+            if(!ignorePositionReset)
+                gameObject.transform.position = previousPlatePosition;
         }
 
         public void ResetObject()
