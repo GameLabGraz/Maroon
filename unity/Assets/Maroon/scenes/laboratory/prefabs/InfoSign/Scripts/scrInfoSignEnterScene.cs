@@ -11,15 +11,12 @@ public class scrInfoSignEnterScene : MonoBehaviour
     // Members
     [SerializeField] private Maroon.CustomSceneAsset targetLabScenePC;
     [SerializeField] private Maroon.CustomSceneAsset targetLabSceneVR;
-    private Maroon.CustomSceneAsset targetScene;
+    public Maroon.CustomSceneAsset targetScene;
 
     // Settings
     [Header("Setting")]
     [SerializeField] private Color highlightColor;
     [SerializeField] private GameObject highlightMesh;
-
-    [SerializeField] private List<GameObject> PCOnlyGameObjects;
-    [SerializeField] private List<GameObject> VROnlyGameObjects;
 
     // #################################################################################################################
     // Methods
@@ -27,25 +24,12 @@ public class scrInfoSignEnterScene : MonoBehaviour
     // Load new scene
     public void EnterScene()
     {
+        Debug.Log("Enter Scene : " + this.targetScene);
         Maroon.SceneManager.Instance.LoadSceneRequest(this.targetScene);
     }
 
-    private void Awake()
-    {
-        var isVR = Maroon.PlatformManager.Instance.CurrentPlatformIsVR;
-        foreach (var pcObj in PCOnlyGameObjects)
-        {
-            pcObj.SetActive(!isVR);
-        }
-
-        foreach (var vrObj in VROnlyGameObjects)
-        {
-            vrObj.SetActive(isVR);
-        }
-    }
-
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         // Detect Scene type
         if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
@@ -57,19 +41,19 @@ public class scrInfoSignEnterScene : MonoBehaviour
             this.targetScene = targetLabScenePC;
         }
         
-        // Prepare scene for VR entering
-        if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
-        {
-            // Highlighter
-            var highlighter = this.gameObject.AddComponent<VRTK_InteractObjectHighlighter>();
-            highlighter.touchHighlight = this.highlightColor;
-            highlighter.objectToHighlight = this.highlightMesh;
-
-            // Interactable Object
-            var interactableObject = this.gameObject.AddComponent<VRTK_InteractableObject>();
-            interactableObject.isUsable = true;
-            interactableObject.InteractableObjectUsed += (sender, e) => this.EnterScene();
-        }
+        // // Prepare scene for VR entering
+        // if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
+        // {
+        //     // Highlighter
+        //     var highlighter = this.gameObject.AddComponent<VRTK_InteractObjectHighlighter>();
+        //     highlighter.touchHighlight = this.highlightColor;
+        //     highlighter.objectToHighlight = this.highlightMesh;
+        //
+        //     // Interactable Object
+        //     var interactableObject = this.gameObject.AddComponent<VRTK_InteractableObject>();
+        //     interactableObject.isUsable = true;
+        //     interactableObject.InteractableObjectUsed += (sender, e) => this.EnterScene();
+        // }
     }
 
     // PC enter scene

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Valve.VR.InteractionSystem;
 
 public class scrMenuColumnLaboratorySelectionDetail : MonoBehaviour
 {
@@ -58,21 +59,15 @@ public class scrMenuColumnLaboratorySelectionDetail : MonoBehaviour
             text.GetComponent<LocalizedTMP>().Key = current_scene.SceneNameWithoutPlatformExtension;
 
             // Link function
-            newButton.GetComponent<Button>().onClick.AddListener(() =>
+            newButton.GetComponent<Button>().onClick.AddListener(() => 
                 Maroon.SceneManager.Instance.LoadSceneRequest(current_scene));
         }
     }
 
     private void OnClickGo()
     {
-        if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
-        {
-            Maroon.SceneManager.Instance.LoadSceneRequest(this.targetLabSceneVR);
-        }
-
-        else
-        {
-            Maroon.SceneManager.Instance.LoadSceneRequest(this.targetLabScenePC);
-        }
+        Maroon.SceneManager.Instance.LoadSceneRequest(Maroon.PlatformManager.Instance.CurrentPlatformIsVR
+            ? this.targetLabSceneVR
+            : this.targetLabScenePC);
     }
 }

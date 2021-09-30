@@ -1,5 +1,8 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
+using Valve.VR.InteractionSystem;
 
 public class scrMenuColumnMainMenu : MonoBehaviour
 {
@@ -55,7 +58,7 @@ public class scrMenuColumnMainMenu : MonoBehaviour
         this.ButtonCredits.GetComponent<Button>().onClick.AddListener(() => this.OnClickCredits());
         this.ButtonExit.GetComponent<Button>().onClick.AddListener(() => this.OnClickExit());
     }
-
+    
     void OnEnable()
     {
     }
@@ -68,7 +71,7 @@ public class scrMenuColumnMainMenu : MonoBehaviour
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Button Actions
 
-    private void OnClickLaboratory()
+    public void OnClickLaboratory()
     {
         this.Menu.RemoveAllMenuColumnsButFirst();
         this.Menu.AddMenuColumn(this.ColumnLaboratory);

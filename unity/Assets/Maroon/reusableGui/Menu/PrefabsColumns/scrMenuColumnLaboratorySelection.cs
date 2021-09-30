@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Valve.VR.InteractionSystem;
 
 public class scrMenuColumnLaboratorySelection : MonoBehaviour
 {
@@ -43,9 +44,9 @@ public class scrMenuColumnLaboratorySelection : MonoBehaviour
             text.GetComponent<LocalizedTMP>().Key = current_category.Name;
 
             // Link function
-            newButton.GetComponent<Button>().onClick.AddListener(() => this.SetCategoryAndOpenColumn(newButton, current_category));
+            newButton.GetComponent<Button>().onClick
+                .AddListener(() => this.SetCategoryAndOpenColumn(newButton, current_category));
         }
-
     }
 
     private void SetCategoryAndOpenColumn(GameObject pressedButton, Maroon.SceneCategory category)
