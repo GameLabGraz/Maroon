@@ -58,11 +58,16 @@ namespace Maroon.GlobalEntities
             foreach (var globalEntityPrefab in _globalEntities)
             {
                 var globalEntity = globalEntityPrefab.GetComponent<GlobalEntity>();
-                if (globalEntity == null || globalEntity.Instance != null) continue;
+                
+                if(globalEntity == null || globalEntity.Instance != null)
+                {
+                    continue;
+                }
 
                 var clone = Instantiate(globalEntityPrefab, transform);
                 clone.name = globalEntityPrefab.name;
             }
+
         }
     }
 }
