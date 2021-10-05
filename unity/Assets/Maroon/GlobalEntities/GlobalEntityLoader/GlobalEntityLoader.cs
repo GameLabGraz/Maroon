@@ -26,6 +26,7 @@ namespace Maroon.GlobalEntities
         [SerializeField] private List<GameObject> _globalEntities  = new List<GameObject>();
 
 
+
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Getters and Properties
 
@@ -36,6 +37,7 @@ namespace Maroon.GlobalEntities
 
         private void Awake()
         {
+            // ---------------------------------------------------------------------------------------------------------
             // Singleton
             if(GlobalEntityLoader._instance == null)
             {
@@ -47,9 +49,11 @@ namespace Maroon.GlobalEntities
                 return;
             }
 
+            // ---------------------------------------------------------------------------------------------------------
             // Keep alive
             DontDestroyOnLoad(this.gameObject);
 
+            // ---------------------------------------------------------------------------------------------------------
             // Create instances
             foreach (var globalEntityPrefab in _globalEntities)
             {

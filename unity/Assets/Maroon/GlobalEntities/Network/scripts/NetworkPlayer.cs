@@ -2,7 +2,6 @@
 using Mirror;
 using TMPro;
 using UnityEngine;
-using UnityStandardAssets.Characters.FirstPerson;
 
 public class NetworkPlayer : NetworkBehaviour
 {
@@ -13,7 +12,7 @@ public class NetworkPlayer : NetworkBehaviour
 
     private CharacterController _cc;
     private AudioSource _as;
-    private FirstPersonController _fpc;
+    private ModeFirstPerson _fpc;
     private GameManager _gm;
 
     private Color _noControlColor = new Color(0.5f, 0, 0);
@@ -34,7 +33,7 @@ public class NetworkPlayer : NetworkBehaviour
             return;
         _cc = GetComponent<CharacterController>();
         _as = GetComponent<AudioSource>();
-        _fpc = GetComponent<FirstPersonController>();
+        _fpc = GetComponent<ModeFirstPerson>();
         _gm = FindObjectOfType<GameManager>();
 
         if (isLocalPlayer)
