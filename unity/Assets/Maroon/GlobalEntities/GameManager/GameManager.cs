@@ -2,7 +2,6 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityStandardAssets.Characters.FirstPerson;
 
 namespace Maroon
 {
@@ -163,7 +162,7 @@ namespace Maroon
             _offlinePlayer.SetActive(true);
             _offlinePlayer.transform.position = _playerPosition;
             //cannot set _offlinePlayer.transform.rotation = _playerRotation; because overruled by First Person Controller
-            _offlinePlayer.GetComponent<FirstPersonController>().SetPlayerRotation(_playerRotation);
+            // TODO: _offlinePlayer.GetComponent<ModeFirstPerson>().SetPlayerRotation(_playerRotation);
             _player = _offlinePlayer;
         }
 
