@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace Maroon
+namespace Maroon.GlobalEntities
 {
-    public class BootstrappingManager : MonoBehaviour
+    public class BootstrappingManager : MonoBehaviour, GlobalEntity
     {
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Fields
@@ -13,8 +13,8 @@ namespace Maroon
         // Settings
         [SerializeField] private bool _webglEnableSceneLoadingViaUrlParameter = true;
         [SerializeField] private string _webglUrlParameterName = "LoadScene";
-        [SerializeField] private Maroon.CustomSceneAsset _firstStandardScene = null;
-        [SerializeField] private Maroon.CustomSceneAsset _firstVRScene = null;
+        [SerializeField] private CustomSceneAsset _firstStandardScene = null;
+        [SerializeField] private CustomSceneAsset _firstVRScene = null;
 
         // State
         private bool _bootstrappingFinished = false;
@@ -22,10 +22,9 @@ namespace Maroon
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Getters and Properties
 
-        public static BootstrappingManager Instance
-        {
-            get { return BootstrappingManager._instance; }
-        }
+        public static BootstrappingManager Instance => BootstrappingManager._instance;
+
+        MonoBehaviour GlobalEntity.Instance => Instance;
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Methods
@@ -52,10 +51,10 @@ namespace Maroon
             if(!this._bootstrappingFinished)        
             {
                 // Update platform VR state
-                Maroon.PlatformManager.Instance.UpdatePlatformVRStateBasedOnScene();
+                PlatformManager.Instance.UpdatePlatformVRStateBasedOnScene();
 
                 // Redirects: Only enable if on bootstrapping scene, if standalone scene, don't redirect somewhere else
-                if(Maroon.SceneManager.Instance.ActiveSceneNameWithoutPlatformExtension == "Bootstrapping")
+                if(SceneManager.Instance.ActiveSceneNameWithoutPlatformExtension == "Bootstrapping")
                 {
 
                     // Stores if SceneManager was already requested to change to another scene
@@ -63,7 +62,7 @@ namespace Maroon
 
                     // Webgl redirect
                     // If on WebGL platform and URL redirect enabled
-                    if( (Maroon.PlatformManager.Instance.CurrentPlatform == Maroon.Platform.WebGL) &&
+                    if( (PlatformManager.Instance.CurrentPlatform == Platform.WebGL) &&
                         (this._webglEnableSceneLoadingViaUrlParameter) )
                     {
                         // Read URL parameter
@@ -71,10 +70,10 @@ namespace Maroon
 
                         // Get scene asset
                         Maroon.CustomSceneAsset urlScene;
-                        urlScene = Maroon.SceneManager.Instance.GetSceneAssetBySceneName(parameter + ".pc");
+                        urlScene = SceneManager.Instance.GetSceneAssetBySceneName(parameter + ".pc");
 
                         // Check if scene requested by parameter exists, and try to load it
-                        if((urlScene != null) && (Maroon.SceneManager.Instance.LoadSceneRequest(urlScene)))
+                        if((urlScene != null) && (SceneManager.Instance.LoadSceneRequest(urlScene)))
                         {
                             alreadyRedirected = true;
                         }
@@ -84,13 +83,13 @@ namespace Maroon
                     // On any platform, but on WebGL only if not redirected via URL
                     if(!alreadyRedirected)
                     {
-                        if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
+                        if(PlatformManager.Instance.CurrentPlatformIsVR)
                         {
-                            Maroon.SceneManager.Instance.LoadSceneRequest(this._firstVRScene);
+                            SceneManager.Instance.LoadSceneRequest(this._firstVRScene);
                         }
                         else
                         {
-                            Maroon.SceneManager.Instance.LoadSceneRequest(this._firstStandardScene);
+                            SceneManager.Instance.LoadSceneRequest(this._firstStandardScene);
                         }
                     }
                 }

@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using Maroon.GlobalEntities;
+using UnityEngine;
 using VRTK;
 using Util;
 
@@ -21,24 +21,17 @@ public class scrInfoSignEnterScene : MonoBehaviour
     // Load new scene
     public void EnterScene()
     {
-        Maroon.SceneManager.Instance.LoadSceneRequest(this.targetScene);
+        SceneManager.Instance.LoadSceneRequest(this.targetScene);
     }
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         // Detect Scene type
-        if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
-        {
-            this.targetScene = targetLabSceneVR;
-        }
-        else
-        {
-            this.targetScene = targetLabScenePC;
-        }
-        
+        this.targetScene = PlatformManager.Instance.CurrentPlatformIsVR ? targetLabSceneVR : targetLabScenePC;
+
         // Prepare scene for VR entering
-        if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
+        if(PlatformManager.Instance.CurrentPlatformIsVR)
         {
             // Highlighter
             var highlighter = this.gameObject.AddComponent<VRTK_InteractObjectHighlighter>();
@@ -55,7 +48,7 @@ public class scrInfoSignEnterScene : MonoBehaviour
     // PC enter scene
     private void OnTriggerStay(Collider other)
     {
-        if(!(Maroon.PlatformManager.Instance.CurrentPlatformIsVR))
+        if(!(PlatformManager.Instance.CurrentPlatformIsVR))
         {
             if (!PlayerUtil.IsPlayer(other.gameObject))
                 return;
