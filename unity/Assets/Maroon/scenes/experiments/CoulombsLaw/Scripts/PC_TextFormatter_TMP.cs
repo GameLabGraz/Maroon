@@ -11,7 +11,7 @@ public class PC_TextFormatter_TMP : MonoBehaviour
 
     public void FormatString(float number)
     {
-        var text = number.ToString(format, CultureInfo.InvariantCulture) + (addSpaceBetweenUnit? " " : "") + unit;
+        var text = number.ToString(format, CultureInfo.CurrentCulture) + (addSpaceBetweenUnit? " " : "") + unit;
         if (GetComponent<TMP_InputField>())
             GetComponent<TMP_InputField>().text = text;
         else if (GetComponent<TextMeshProUGUI>())

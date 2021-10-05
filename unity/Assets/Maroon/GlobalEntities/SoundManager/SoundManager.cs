@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 
-namespace Maroon
+namespace Maroon.GlobalEntities
 {
     /// <summary>
     ///     Handles tasks related to sound in Maroon. It keeps settings about audio levels, can play audio effects that
     ///     are common in Maroon (e.g. alerts or clicks) and plays background music.
     /// </summary>
-    public class SoundManager : MonoBehaviour
+    public class SoundManager : MonoBehaviour, GlobalEntity
     {
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Fields
@@ -63,13 +63,8 @@ namespace Maroon
         /// <summary>
         ///     The GameManager instance
         /// </summary>
-        public static SoundManager Instance
-        {
-            get
-            {
-                return SoundManager._instance;
-            }
-        }
+        public static SoundManager Instance => SoundManager._instance;
+        MonoBehaviour GlobalEntity.Instance => Instance;
 
         // -------------------------------------------------------------------------------------------------------------
         // Volume

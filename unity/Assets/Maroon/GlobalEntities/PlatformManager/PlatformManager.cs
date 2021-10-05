@@ -1,48 +1,30 @@
 ﻿using UnityEngine;
 
-namespace Maroon
+namespace Maroon.GlobalEntities
 {
-    public class PlatformManager : MonoBehaviour
+    public class PlatformManager : MonoBehaviour, GlobalEntity
     {
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Fields
 
         private static PlatformManager _instance = null;
 
-        private Maroon.Platform _currentPlatform;
+        private Platform _currentPlatform;
         
         private bool _currentPlatformIsVR = false;
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Getters and Properties
 
-        public static PlatformManager Instance
-        {
-            get { return PlatformManager._instance; }
-        }
+        public static PlatformManager Instance => PlatformManager._instance;
 
-        public Maroon.Platform CurrentPlatform
-        {
-            get { return this._currentPlatform; }
-        }
+        MonoBehaviour GlobalEntity.Instance => Instance;
 
-        public bool CurrentPlatformIsVR
-        {
-            get { return this._currentPlatformIsVR; }
-        }
+        public Platform CurrentPlatform => this._currentPlatform;
 
-        public Maroon.SceneType SceneTypeBasedOnPlatform
-        {
-            get
-            {
-                if(this._currentPlatformIsVR)
-                {
-                    return Maroon.SceneType.VR;
-                }
+        public bool CurrentPlatformIsVR => this._currentPlatformIsVR;
 
-                return Maroon.SceneType.Standard;
-            }
-        }
+        public SceneType SceneTypeBasedOnPlatform => this._currentPlatformIsVR ? SceneType.VR : SceneType.Standard;
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Methods
@@ -65,23 +47,23 @@ namespace Maroon
 
             // Detect platform
             #if UNITY_EDITOR
-                this._currentPlatform = Maroon.Platform.Editor;
+                this._currentPlatform = Platform.Editor;
             #elif UNITY_STANDALONE_WIN
-                this._currentPlatform = Maroon.Platform.PC;
+                this._currentPlatform = Platform.PC;
             #elif UNITY_WEBGL
-                this._currentPlatform = Maroon.Platform.WebGL;
+                this._currentPlatform = Platform.WebGL;
             #elif UNITY_STANDALONE_OSX
-                this._currentPlatform = Maroon.Platform.Mac;
+                this._currentPlatform = Platform.Mac;
             #elif UNITY_ANDROID
-                this._currentPlatform = Maroon.Platform.Android;
+                this._currentPlatform = Platform.Android;
             #elif UNITY_IOS 
-                this._currentPlatform = Maroon.Platform.iOS;
+                this._currentPlatform = Platform.iOS;
             #endif
         }
 
         public void UpdatePlatformVRStateBasedOnScene()
         {
-            this._currentPlatformIsVR = Maroon.SceneManager.Instance.activeSceneIsVR();
+            this._currentPlatformIsVR = SceneManager.Instance.activeSceneIsVR();
         }
     }
 
