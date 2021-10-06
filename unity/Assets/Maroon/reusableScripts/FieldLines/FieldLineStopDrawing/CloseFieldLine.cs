@@ -23,7 +23,7 @@ public class CloseFieldLine : MonoBehaviour
         if (useCoilHack) // hack for coil
             dist -= 1.5f * new Vector3(Mathf.Abs(emObj.transform.up.x), Mathf.Abs(emObj.transform.up.y), Mathf.Abs(emObj.transform.up.z));
 
-        return Vector3.Distance(position, dist) <= 0.8f ||
-               Vector3.Distance(position, transform.position) <= 0.4f;
+        return Vector3.Distance(position, dist) <= 0.053f ||
+               Vector3.Distance(position, transform.position) <= 0.027f;
     }
 }
