@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using Maroon.GlobalEntities;
+using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 
 public class scrMenuColumnPauseMenu : MonoBehaviour
@@ -55,9 +55,9 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
         this.ButtonNetwork.GetComponent<Button>().onClick.AddListener(() => this.OnClickNetwork());
 
         // Enable WebGL button only for PC or Editor, non-VR Build
-        Maroon.Platform currentPlatform = Maroon.PlatformManager.Instance.CurrentPlatform;
-        if(!((currentPlatform == Maroon.Platform.PC || currentPlatform == Maroon.Platform.Editor) &&
-           (Maroon.PlatformManager.Instance.CurrentPlatformIsVR == false)))
+        Platform currentPlatform = PlatformManager.Instance.CurrentPlatform;
+        if(!((currentPlatform == Platform.PC || currentPlatform == Platform.Editor) &&
+           (PlatformManager.Instance.CurrentPlatformIsVR == false)))
         {
             this.ButtonNetwork.GetComponent<Button>().interactable = false;
         }
@@ -114,14 +114,14 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
 
     private void OnClickMainMenu()
     {
-        if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
+        if(PlatformManager.Instance.CurrentPlatformIsVR)
         {
-            Maroon.SceneManager.Instance.LoadSceneRequest(this.targetMainMenuSceneVR);
+            SceneManager.Instance.LoadSceneRequest(this.targetMainMenuSceneVR);
         }
         
         else
         {
-            Maroon.SceneManager.Instance.LoadSceneRequest(this.targetMainMenuScenePC);
+            SceneManager.Instance.LoadSceneRequest(this.targetMainMenuScenePC);
         }
         this.Menu.CloseMenu();
     }

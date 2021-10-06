@@ -1,5 +1,5 @@
 ﻿using GEAR.Localization.Text;
-using System.Collections.Generic;
+using Maroon.GlobalEntities;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,22 +24,22 @@ public class scrMenuColumnLaboratorySelectionDetail : MonoBehaviour
     private void Start()
     {
         // Do not init anything if no category is selected, because no lab can be built and no experiments will show up
-        if(Maroon.SceneManager.Instance.ActiveSceneCategory == null)
+        if(SceneManager.Instance.ActiveSceneCategory == null)
         {
             return;
         }
 
         // Update Title
         // TODO: Make this work with localization
-        Title.transform.GetComponent<LocalizedTMP>().Key = Maroon.SceneManager.Instance.ActiveSceneCategory.Name;
+        Title.transform.GetComponent<LocalizedTMP>().Key = SceneManager.Instance.ActiveSceneCategory.Name;
 
         // Link go button action
         this.ButtonGo.GetComponent<Button>().onClick.AddListener(() => this.OnClickGo());
 
         // Get experiment scenes based on current category
-        Maroon.CustomSceneAsset[] scenes = Maroon.SceneManager.Instance.ActiveSceneCategory.Scenes;
+        var scenes = SceneManager.Instance.ActiveSceneCategory.Scenes;
         ButtonGo.transform.Find("ContentContainer").transform.Find("Text (TMP)").GetComponent<LocalizedTMP>().Key =
-            "Go to " + Maroon.SceneManager.Instance.ActiveSceneCategory.Name + " Lab";
+            "Go to " + SceneManager.Instance.ActiveSceneCategory.Name + " Lab";
 
         // Create buttons based on category experiments
         for(int iScenes = 0; iScenes < scenes.Length; iScenes++)
@@ -59,20 +59,20 @@ public class scrMenuColumnLaboratorySelectionDetail : MonoBehaviour
 
             // Link function
             newButton.GetComponent<Button>().onClick.AddListener(() =>
-                Maroon.SceneManager.Instance.LoadSceneRequest(current_scene));
+                SceneManager.Instance.LoadSceneRequest(current_scene));
         }
     }
 
     private void OnClickGo()
     {
-        if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
+        if(PlatformManager.Instance.CurrentPlatformIsVR)
         {
-            Maroon.SceneManager.Instance.LoadSceneRequest(this.targetLabSceneVR);
+            SceneManager.Instance.LoadSceneRequest(this.targetLabSceneVR);
         }
 
         else
         {
-            Maroon.SceneManager.Instance.LoadSceneRequest(this.targetLabScenePC);
+            SceneManager.Instance.LoadSceneRequest(this.targetLabScenePC);
         }
     }
 }

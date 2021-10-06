@@ -1,16 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-namespace Maroon
+namespace Maroon.GlobalEntities
 {
     /// <summary>
     ///     Handles tasks related to scenes in Maroon, including finding scene categories, scene assets and loading
     ///     scenes.
     /// </summary>
-    public class SceneManager : MonoBehaviour
+    public class SceneManager : MonoBehaviour, GlobalEntity
     {
-        // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        // Fields
+
 
         private static SceneManager _instance = null;
 
@@ -34,27 +33,19 @@ namespace Maroon
         /// <summary>
         ///     The SceneManager instance
         /// </summary>
-        public static SceneManager Instance
-        {
-            get
-            {
-                return SceneManager._instance;
-            }
-        }
+        public static SceneManager Instance => SceneManager._instance;
+        MonoBehaviour GlobalEntity.Instance => Instance;
 
         // -------------------------------------------------------------------------------------------------------------
         // Categories
 
         /// <summary>
         ///     The SceneCategory that is currently active.
-        //      For example if the player is in the physics lab/category, the physics category should be set to active.
+        ///     For example if the player is in the physics lab/category, the physics category should be set to active.
         /// </summary>
-        public Maroon.SceneCategory ActiveSceneCategory
+        public SceneCategory ActiveSceneCategory
         {
-            get
-            {
-                return this._activeSceneCategory;
-            }
+            get => this._activeSceneCategory;
 
             set
             {
@@ -72,24 +63,12 @@ namespace Maroon
         /// <summary>
         ///     The name of the scene that is currently active.
         /// </summary>
-        public string ActiveSceneName
-        {
-            get
-            {
-                return UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-            }
-        }
+        public string ActiveSceneName => UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
 
         /// <summary>
         ///     The name of the scene that is currently active, without the platform-specific extension (.vr or .pc).
         /// </summary>
-        public string ActiveSceneNameWithoutPlatformExtension
-        {
-            get
-            {
-                return this.ActiveSceneName.Substring(0, this.ActiveSceneName.LastIndexOf('.'));
-            }
-        }
+        public string ActiveSceneNameWithoutPlatformExtension => this.ActiveSceneName.Substring(0, this.ActiveSceneName.LastIndexOf('.'));
 
         /// <summary>
         ///     Maroon.PlatformManager has the properties CurrentPlatformIsVR and SceneTypeBasedOnPlatform. You might
@@ -99,11 +78,7 @@ namespace Maroon
         /// </summary>
         public bool activeSceneIsVR()
         {
-            if(this.ActiveSceneName.Contains(".vr"))
-            {
-                return true;
-            }
-            return false;
+            return this.ActiveSceneName.Contains(".vr");
         }
 
         // -------------------------------------------------------------------------------------------------------------
@@ -119,7 +94,7 @@ namespace Maroon
         /// <param name="includeHidden">
         ///     Hidden categories are excluded by default. Set to true to include hidden categories.
         /// </param>
-        public List<Maroon.SceneCategory> getSceneCategories(Maroon.SceneType sceneType = Maroon.SceneType.Mixed,
+        public List<Maroon.SceneCategory> getSceneCategories(SceneType sceneType = SceneType.Mixed,
                                                              bool includeHidden = false)
         {
             // Create list
@@ -138,7 +113,7 @@ namespace Maroon
                 }
 
                 // Select if all types allowed or if desired type eqal to current type
-                if((sceneType == Maroon.SceneType.Mixed) || (sceneType == current_category.SceneTypeInThisCategory))
+                if((sceneType == SceneType.Mixed) || (sceneType == current_category.SceneTypeInThisCategory))
                 {
                     categories.Add(current_category);
                 }
@@ -158,8 +133,8 @@ namespace Maroon
         /// <param name="sceneType">
         ///     Mixed allows any scene category type, others limit returned categories to the given type.
         /// </param>
-        public Maroon.SceneCategory getSceneCategoryByName(string categoryName, Maroon.SceneType sceneType =
-                                                           Maroon.SceneType.Mixed)
+        public Maroon.SceneCategory getSceneCategoryByName(string categoryName, SceneType sceneType =
+                                                           SceneType.Mixed)
         {
             // Check if category exists
             Maroon.SceneCategory categoryFound = null;
@@ -168,10 +143,10 @@ namespace Maroon
                 if(categoryName == this._sceneCategories[iCategories].Name)
                 {
                     // Extract current category
-                    Maroon.SceneCategory current_category = this._sceneCategories[iCategories];
+                    SceneCategory current_category = this._sceneCategories[iCategories];
 
                     // Select if all types allowed or if desired type eqal to current type
-                    if((sceneType == Maroon.SceneType.Mixed) || (sceneType == current_category.SceneTypeInThisCategory))
+                    if((sceneType == SceneType.Mixed) || (sceneType == current_category.SceneTypeInThisCategory))
                     {
                         categoryFound = current_category;
                         break;
@@ -193,8 +168,8 @@ namespace Maroon
         /// <param name="sceneType">
         ///     Mixed allows any scene type, others limit returned scenes to the given type.
         /// </param>
-        private List<Maroon.CustomSceneAsset> getScenesFromAllCategories(Maroon.SceneType sceneType =
-                                                                         Maroon.SceneType.Mixed)
+        private List<Maroon.CustomSceneAsset> getScenesFromAllCategories(SceneType sceneType =
+                                                                         SceneType.Mixed)
         {
             // Create list
             List<Maroon.CustomSceneAsset> scenesFromAllCategories = new List<Maroon.CustomSceneAsset>();
@@ -208,7 +183,7 @@ namespace Maroon
                     Maroon.CustomSceneAsset current_scene = this._sceneCategories[iCategories].Scenes[iScenes];
 
                     // Add if all types allowed or if desired type eqal to current type
-                    if((sceneType == Maroon.SceneType.Mixed) || (sceneType == current_scene.SceneType))
+                    if((sceneType == SceneType.Mixed) || (sceneType == current_scene.SceneType))
                     {
                         scenesFromAllCategories.Add(current_scene);
                     }
@@ -226,7 +201,7 @@ namespace Maroon
         /// <param name="sceneType">
         ///     Mixed allows any scene type, others limit returned scenes to the given type.
         /// </param>
-        public string[] getSceneNamesFromAllCategories(Maroon.SceneType sceneType = Maroon.SceneType.Mixed)
+        public string[] getSceneNamesFromAllCategories(SceneType sceneType = SceneType.Mixed)
         {
             // Get Maroon.CustomSceneAsset list containing all registered scenes
             List<Maroon.CustomSceneAsset> scenesFromAllCategories = this.getScenesFromAllCategories(sceneType);
@@ -251,8 +226,8 @@ namespace Maroon
         /// <param name="sceneType">
         ///     Mixed allows any scene type, others limit returned scenes to the given type.
         /// </param>
-        public string[] getSceneNamesWithoutPlatformExtensionFromAllCategories(Maroon.SceneType sceneType =
-                                                                               Maroon.SceneType.Mixed)
+        public string[] getSceneNamesWithoutPlatformExtensionFromAllCategories(SceneType sceneType =
+                                                                               SceneType.Mixed)
         {
             // Get Maroon.CustomSceneAsset list containing all registered scenes
             List<Maroon.CustomSceneAsset> scenesFromAllCategories = this.getScenesFromAllCategories(sceneType);
@@ -386,7 +361,7 @@ namespace Maroon
         public void LoadMainMenu(bool showLoadingScreen = false)
         {
             // Return VR main menu for VR platform
-            if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
+            if(PlatformManager.Instance.CurrentPlatformIsVR)
             {
                 this.LoadSceneRequest(this._sceneMainMenuVR);
             }
@@ -434,7 +409,7 @@ namespace Maroon
             }
 
             // If scene to be loaded has wrong platform
-            if(scene.IsVirtualRealityScene != Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
+            if(scene.IsVirtualRealityScene != PlatformManager.Instance.CurrentPlatformIsVR)
             {
                 // TODO: Convert to warning after fixing warnings
                 Debug.Log("WARNING: Tried to load scene that does not match platform type."); 
@@ -497,16 +472,5 @@ namespace Maroon
                 this._sceneHistory.Push(scene);
             }
         }
-    }
-
-    /// <summary>
-    ///     Describes types of scenes used in Maroon. Standard is used for PC, Mac and WebGL. VR is used for Virtual
-    ///     Reality scenes. Mixed is used for scene categories or functions that work with both types.
-    /// </summary>
-    public enum SceneType
-    {
-        Standard,
-        VR,
-        Mixed
     }
 }

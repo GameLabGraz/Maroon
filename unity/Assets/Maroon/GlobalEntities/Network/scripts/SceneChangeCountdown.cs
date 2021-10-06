@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
+using Maroon.GlobalEntities;
 using Mirror;
 using TMPro;
 using UnityEngine;
@@ -43,8 +42,8 @@ public class SceneChangeCountdown : NetworkBehaviour
         }
         if (isServer)
         {
-            Maroon.CustomSceneAsset sceneAsset = Maroon.SceneManager.Instance.GetSceneAssetBySceneName(_sceneName);
-            Maroon.SceneManager.Instance.LoadSceneExecute(sceneAsset);
+            Maroon.CustomSceneAsset sceneAsset = SceneManager.Instance.GetSceneAssetBySceneName(_sceneName);
+            SceneManager.Instance.LoadSceneExecute(sceneAsset);
             Destroy(gameObject);
         }
         else
