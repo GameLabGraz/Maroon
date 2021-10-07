@@ -2,9 +2,16 @@
 
 public abstract class PausableObject : MonoBehaviour
 {
-    private Vector3 CurrentVelocity;
+    [SerializeField] private int fixedUpdateRate = 1;
 
-    private bool IsPause = false;
+    private int _fixedUpdateCount = 0;
+
+    private bool save = false;
+
+    protected Vector3 CurrentVelocity;
+
+    protected bool IsPause = false;
+
 
     protected Rigidbody _rigidbody;
 
@@ -26,6 +33,7 @@ public abstract class PausableObject : MonoBehaviour
                 {
                     _rigidbody.isKinematic = false;
                     _rigidbody.velocity = CurrentVelocity;
+                    save = false;
                 }
             }
 
@@ -34,10 +42,11 @@ public abstract class PausableObject : MonoBehaviour
         else if(!IsPause)
         {
             IsPause = true;
-            if (_rigidbody != null)
+            if (_rigidbody != null && !save)
             {
                 CurrentVelocity = _rigidbody.velocity;
                 _rigidbody.isKinematic = true;
+                save = true;
             }
         }
     }
@@ -47,7 +56,29 @@ public abstract class PausableObject : MonoBehaviour
         if (SimulationController.Instance == null) return;
 
         if (SimulationController.Instance.SimulationRunning)
-            HandleFixedUpdate();
+        {
+            if (++_fixedUpdateCount % fixedUpdateRate == 0)
+            {
+                if (_rigidbody != null)
+                {
+                    _rigidbody.isKinematic = false;
+                    _rigidbody.velocity = CurrentVelocity;
+                    _fixedUpdateCount = 0;
+                    save = false;
+                }
+
+                HandleFixedUpdate();
+            }
+            else
+            {
+                if (_rigidbody == null) return;
+                if (save) return;
+
+                CurrentVelocity = _rigidbody.velocity;
+                _rigidbody.isKinematic = true;
+                save = true;
+            }
+        }
     }
 
     protected abstract void HandleUpdate();
