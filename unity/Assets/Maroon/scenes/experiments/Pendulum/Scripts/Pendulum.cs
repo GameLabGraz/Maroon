@@ -80,7 +80,7 @@ namespace Maroon.Physics
         public void UpdatePendulum()
         {
             //weight
-            _rigidbody.mass = weight.Value;
+            _rigidBody.mass = weight.Value;
             _weightObj.transform.localScale = Vector3.one * weight.Value;
             
             //rope len
@@ -100,7 +100,7 @@ namespace Maroon.Physics
             base.Start();
             Joint = GetComponent<HingeJoint>();
 
-            _rigidbody.mass = Weight;
+            _rigidBody.mass = Weight;
 
             _startPos = transform.position;
             _startRot = transform.rotation;
@@ -194,8 +194,8 @@ namespace Maroon.Physics
             transform.position = _startPos;
             transform.rotation = _startRot;
 
-            _rigidbody.velocity = Vector3.zero;
-            _rigidbody.angularVelocity = Vector3.zero;
+            _rigidBody.velocity = Vector3.zero;
+            _rigidBody.angularVelocity = Vector3.zero;
         }
 
         public void PendulumReleased()

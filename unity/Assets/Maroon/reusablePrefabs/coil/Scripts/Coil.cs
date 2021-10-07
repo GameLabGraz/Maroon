@@ -102,7 +102,7 @@ public class Coil : EMObject, IResetObject
         FieldStrength = (Current * numberOfTurns) / Mathf.Sqrt(Length * Length + diameter * diameter);
 
         if (forceActive)
-            GetComponent<Rigidbody>().AddForce(GetExternalForce() * transform.up);
+            _rigidBody.AddForce(GetExternalForce() * transform.up);
     }
 
     /// <summary>
@@ -155,10 +155,10 @@ public class Coil : EMObject, IResetObject
     /// </summary>
     public override void ResetObject()
     {
-        if (_rigidbody)
+        if (_rigidBody)
         {
-            _rigidbody.velocity = Vector3.zero;
-            _rigidbody.angularVelocity = Vector3.zero;
+            _rigidBody.velocity = Vector3.zero;
+            _rigidBody.angularVelocity = Vector3.zero;
         }
         transform.position = startPos;
         transform.rotation = startRot;
