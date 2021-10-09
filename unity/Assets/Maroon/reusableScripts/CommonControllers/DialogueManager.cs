@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
+using Maroon.GlobalEntities;
 
 namespace Maroon.UI
 {
@@ -89,7 +90,7 @@ namespace Maroon.UI
             TypeMessageRunning = true;
 
             dialogView.SetActive(true);
-            Maroon.SoundManager.Instance.PlaySoundEffect(typeSound);
+            SoundManager.Instance.PlaySoundEffect(typeSound);
 
             var text = "";
             dialogView.ClearMessage();

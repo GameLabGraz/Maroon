@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Maroon.GlobalEntities;
+using UnityEngine;
 using Util;
 
 public class ExitToMainMenuPC : MonoBehaviour
@@ -12,6 +13,6 @@ public class ExitToMainMenuPC : MonoBehaviour
             return;
 
         if (Input.GetKey(KeyCode.Return))
-            Maroon.SceneManager.Instance.LoadSceneRequest(this.targetMainMenuScenePC);
+            SceneManager.Instance.LoadSceneRequest(this.targetMainMenuScenePC);
     }
 }

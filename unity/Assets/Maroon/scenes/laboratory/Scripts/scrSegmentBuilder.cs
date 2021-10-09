@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Maroon.GlobalEntities;
 using UnityEngine;
 
 public class scrSegmentBuilder : MonoBehaviour
@@ -63,16 +64,16 @@ public class scrSegmentBuilder : MonoBehaviour
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         // Reset laboratory blocks
         this.laboratoryBlocks.Clear();
 
         // TODO: This needs to be refactored, done by player
-        Maroon.GameManager.Instance.enteringLab();
+        GameManager.Instance.enteringLab();
 
         // Get scenes to select new laboratory blocks
-        Maroon.CustomSceneAsset[] scenes = Maroon.SceneManager.Instance.ActiveSceneCategory.Scenes;
+        Maroon.CustomSceneAsset[] scenes = SceneManager.Instance.ActiveSceneCategory.Scenes;
 
         // Get new laboratory blocks
         for(int iScenes = 0; iScenes < scenes.Length; iScenes++)
