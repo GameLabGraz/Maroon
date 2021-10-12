@@ -52,16 +52,8 @@ namespace Maroon.Tools
 
         public float TimeScale
         {
-            get => SimulationController.Instance ? 
-                SimulationController.Instance.TimeScale : Time.timeScale;
-
-            set
-            {
-                if (SimulationController.Instance)
-                    SimulationController.Instance.TimeScale = value;
-                else
-                    Time.timeScale = value;
-            }
+            get => Time.timeScale;
+            set => Time.timeScale = value;
         }
 
         private void Start()

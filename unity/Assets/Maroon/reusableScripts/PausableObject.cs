@@ -26,8 +26,8 @@ public class RigidBodyState
 
 public abstract class PausableObject : MonoBehaviour
 {
-    [SerializeField] private int updateRate = 1;
-    [SerializeField] private int fixedUpdateRate = 1;
+    private int _updateRate = 1;
+    private int _fixedUpdateRate = 1;
 
     private int _updateCount = 0;
     private int _fixedUpdateCount = 0;
@@ -38,11 +38,15 @@ public abstract class PausableObject : MonoBehaviour
 
     protected virtual void Start()
     {
-        _rigidBody = GetComponent<Rigidbody>();
+        if (SimulationController.Instance == null) return;
 
+        _updateRate = SimulationController.Instance.UpdateRate;
+        _fixedUpdateRate = SimulationController.Instance.FixedUpdateRate;
+
+        _rigidBody = GetComponent<Rigidbody>();
         startRigidBodyState = new RigidBodyState(_rigidBody);
         StoreRigidBodyState();
-
+        
         SimulationController.Instance.OnReset.AddListener(() =>
         {
             _updateCount = 0;
@@ -69,36 +73,34 @@ public abstract class PausableObject : MonoBehaviour
 
     protected virtual void Update()
     {
-        if (SimulationController.Instance == null) return;
+        if (SimulationController.Instance == null || !SimulationController.Instance.SimulationRunning) 
+            return;
 
-        if(SimulationController.Instance.SimulationRunning)
+        if (++_updateCount % _updateRate == 0)
         {
-            if (++_updateCount % updateRate == 0)
-            {
-                HandleUpdate();
-            }
+            HandleUpdate();
         }
     }
 
     protected virtual void FixedUpdate()
     {
-        if (SimulationController.Instance == null) return;
+        if (SimulationController.Instance == null || !SimulationController.Instance.SimulationRunning)
+            return;
 
-        if (SimulationController.Instance.SimulationRunning)
+        if (++_fixedUpdateCount % _fixedUpdateRate == 0)
         {
-            if (++_fixedUpdateCount % fixedUpdateRate == 0)
-            {
+            if(_fixedUpdateRate > 1)
                 RestoreRigidBody();
-                HandleFixedUpdate();
-            }
-            else
-            {
-                if (_rigidBody == null || rigidBodyState.IsStored)
-                    return;
+                
+            HandleFixedUpdate();
+        }
+        else
+        {
+            if (_rigidBody == null || rigidBodyState.IsStored)
+                return;
 
-                StoreRigidBodyState();
-                _rigidBody.isKinematic = true;
-            }
+            StoreRigidBodyState();
+            _rigidBody.isKinematic = true;
         }
     }
 
