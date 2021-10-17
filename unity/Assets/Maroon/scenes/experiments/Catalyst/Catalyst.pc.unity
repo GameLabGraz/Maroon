@@ -134,6 +134,18 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 3663683978170475299}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &514853967 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7961712169081724842, guid: 0943774d46980104d8880a9e80e43c6f,
+    type: 3}
+  m_PrefabInstance: {fileID: 3663683978170475299}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 514853965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ab9a6e33e1f1a941847d4fe4f57a9e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!54 &514853971
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -150,6 +162,12 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!20 &1008399240 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 2131119208124075152, guid: 4698ba446015d9f4ea6cde9f4c774547,
+    type: 3}
+  m_PrefabInstance: {fileID: 2131119208208072625}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1416551059
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -342,6 +360,36 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2027354881
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2027354882}
+  m_Layer: 0
+  m_Name: CatalystSpawnTransform
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2027354882
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2027354881}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.669, y: 0.765, z: 3.68}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 231983078}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2131119208208072625
 PrefabInstance:
@@ -1374,6 +1422,27 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8226137981584974561, guid: 0eb3a977f5b2d5d47ba16b4106424a97,
+        type: 3}
+      propertyPath: playerCamera
+      value: 
+      objectReference: {fileID: 1008399240}
+    - target: {fileID: 8226137981584974561, guid: 0eb3a977f5b2d5d47ba16b4106424a97,
+        type: 3}
+      propertyPath: catalystReactor
+      value: 
+      objectReference: {fileID: 514853967}
+    - target: {fileID: 8226137981584974561, guid: 0eb3a977f5b2d5d47ba16b4106424a97,
+        type: 3}
+      propertyPath: catalystSurfacePrefab
+      value: 
+      objectReference: {fileID: 7095831970976657655, guid: 42e7904566f623941b40e93a3d6da5bb,
+        type: 3}
+    - target: {fileID: 8226137981584974561, guid: 0eb3a977f5b2d5d47ba16b4106424a97,
+        type: 3}
+      propertyPath: catalystSurfaceSpawnTransform
+      value: 
+      objectReference: {fileID: 2027354882}
     - target: {fileID: 8226137981584974563, guid: 0eb3a977f5b2d5d47ba16b4106424a97,
         type: 3}
       propertyPath: m_Name
