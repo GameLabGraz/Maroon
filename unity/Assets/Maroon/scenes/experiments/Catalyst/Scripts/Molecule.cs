@@ -16,6 +16,11 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
     {
         [SerializeField] MoleculeType type;
         [SerializeField] List<MoleculeType> canConnectToList = new List<MoleculeType>();
+
+        [Header("Molecule Movement")]
+        [SerializeField] bool isFixedMolecule;
+        [SerializeField] float movementSpeed;
+        
         
         public MoleculeType Type { get => type; } }
 }
