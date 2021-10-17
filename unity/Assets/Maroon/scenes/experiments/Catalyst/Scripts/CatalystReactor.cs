@@ -5,7 +5,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 {
     public class CatalystReactor : MonoBehaviour, IResetObject
     {
-
+        public Action OnSpawnCatalystSurface;
+        
         private bool _reactorFilled;
         
         private void OnTriggerEnter(Collider other)
@@ -14,6 +15,15 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             {
                 _reactorFilled = true;
             }
+        }
+        
+        public void OnMouseDown()
+        {
+            if (SimulationController.Instance.SimulationRunning && _reactorFilled)
+            {
+                OnSpawnCatalystSurface?.Invoke();
+            }
+
         }
 
         public void ResetObject()

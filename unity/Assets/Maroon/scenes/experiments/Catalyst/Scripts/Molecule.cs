@@ -6,7 +6,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
     {
         CO,
         CO2,
-        O2
+        O2,
+        Pt
     }
 
     public class Molecule : MonoBehaviour
