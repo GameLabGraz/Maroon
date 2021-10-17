@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Maroon.scenes.experiments.Catalyst.Scripts
 {
@@ -6,6 +7,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
     {
         CO,
         CO2,
+        O,
         O2,
         Pt
     }
@@ -13,7 +15,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
     public class Molecule : MonoBehaviour
     {
         [SerializeField] MoleculeType type;
+        [SerializeField] List<MoleculeType> canConnectToList = new List<MoleculeType>();
         
-        public MoleculeType Type { get { return type; } }
-    }
+        public MoleculeType Type { get => type; } }
 }
