@@ -9,6 +9,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         Medium = 128,
         Big = 256
     }
+
     public class CatalystSurface : MonoBehaviour
     {
         [SerializeField] GameObject platinumMoleculePrefab;
@@ -36,9 +37,9 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                         platMolecule.transform.position = moleculePosition;
                         if (layerNum == 0)
                         {
-                            GameObject coMolecule = Instantiate(coMoleculePrefab, platMolecule.transform);
-                            Vector3 moleculePos = coMolecule.transform.localPosition;
-                            moleculePos.y = 0.8f;
+                            GameObject coMolecule = Instantiate(coMoleculePrefab, surfaceLayerParent);
+                            Vector3 moleculePos = platMolecule.transform.localPosition;
+                            moleculePos.y = 0.18f;
                             coMolecule.transform.localPosition = moleculePos;
                             Quaternion moleculeRot = Quaternion.Euler(0.0f, 0.0f, 90.0f);
                             coMolecule.transform.localRotation = moleculeRot;
