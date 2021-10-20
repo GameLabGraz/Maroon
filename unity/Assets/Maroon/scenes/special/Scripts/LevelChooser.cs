@@ -26,6 +26,7 @@ public class LevelChooser : MonoBehaviour
     public void OnDiskSnapped(VRSnapDropZone zone, GameObject newObject)
     {
         _currentDisk = newObject.GetComponent<LevelDisk>();
+        Debug.Assert(_currentDisk);
         button.SetActive(_currentDisk != null);
     }
     

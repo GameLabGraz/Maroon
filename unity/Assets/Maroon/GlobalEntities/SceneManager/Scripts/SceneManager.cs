@@ -66,6 +66,13 @@ namespace Maroon
             }
         }
 
+        public void SetActiveSceneCategory(string categoryName)
+        {
+            var cat = getSceneCategoryByName(categoryName);
+            Debug.Assert(cat != null, "Scene Category '" + categoryName + "' not found.");
+            ActiveSceneCategory = cat;
+        }
+
         // -------------------------------------------------------------------------------------------------------------
         // Active Scene
 
