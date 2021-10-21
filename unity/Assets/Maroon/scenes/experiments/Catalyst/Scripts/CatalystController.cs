@@ -1,10 +1,15 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
+using Maroon.Physics;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.Catalyst.Scripts
 {
     public class CatalystController : MonoBehaviour
     {
+        [Header("Simulation Parameters")]
+        [SerializeField] QuantityFloat temperature;
+        
         [Header("Catalyst specific objects")]
         [SerializeField] CatalystReactor catalystReactor;
         [SerializeField] CatalystSurface catalystSurfacePrefab;
@@ -18,13 +23,14 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         [SerializeField] GameObject player;
         
         private CatalystSurface _catalystSurface;
-
+        private List<Molecule> _activeMolecules = new List<Molecule>();
         private void Start()
         {
             SimulationController.Instance.OnStart.AddListener(StartSimulation);
             SimulationController.Instance.OnStop.AddListener(StopSimulation);
 
             catalystReactor.OnSpawnCatalystSurface += SpawnCatalystSurfaceObject;
+            SpawnCatalystSurfaceObject();
         }
 
         private void OnDestroy()
@@ -49,7 +55,11 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private void SpawnCatalystSurfaceObject()
         {
             _catalystSurface = Instantiate(catalystSurfacePrefab, catalystSurfaceSpawnTransform);
-            StartCoroutine(SpawnCatalystReactionMaterial());
+            _catalystSurface.Setup(list =>
+            {
+                _activeMolecules = list;
+                StartCoroutine(SpawnCatalystReactionMaterial());
+            });
         }
 
         private IEnumerator SpawnCatalystReactionMaterial()
@@ -64,6 +74,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 Molecule molecule = Instantiate(prefabs[Random.Range(0, prefabs.Length)], catalystSurfaceTransform);
                 molecule.gameObject.transform.localPosition = spawnPos;
                 molecule.gameObject.transform.localRotation = spawnRot;
+                _activeMolecules.Add(molecule);
             }
         }
     }
