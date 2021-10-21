@@ -12,16 +12,17 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
     public class CatalystSurface : MonoBehaviour
     {
-        [SerializeField] GameObject platinumMoleculePrefab;
-        [SerializeField] GameObject coMoleculePrefab;
+        [SerializeField] Molecule platinumMoleculePrefab;
+        [SerializeField] Molecule coMoleculePrefab;
         [SerializeField] CatalystSurfaceSize surfaceSize;
         [SerializeField] Transform surfaceLayerParent;
         [SerializeField] int numSubLayers;
         
         private float _spaceBetweenMolecules;
         
-        private void Start()
+        public void Setup(System.Action<List<Molecule>> onComplete)
         {
+            List<Molecule> activeMolecules = new List<Molecule>();
             _spaceBetweenMolecules = platinumMoleculePrefab.transform.localScale.x;
             for (int layerNum = 0; layerNum < numSubLayers; layerNum++)
             {
@@ -33,22 +34,27 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                     for (int sizeZ = 0; sizeZ < (int)surfaceSize / 4; sizeZ++)
                     {
                         moleculePosition.z += _spaceBetweenMolecules;
-                        GameObject platMolecule = Instantiate(platinumMoleculePrefab, surfaceLayerParent);
+                        Molecule platMolecule = Instantiate(platinumMoleculePrefab, surfaceLayerParent);
                         platMolecule.transform.position = moleculePosition;
+                        platMolecule.IsFixedMolecule = true;
                         if (layerNum == 0)
                         {
-                            GameObject coMolecule = Instantiate(coMoleculePrefab, surfaceLayerParent);
+                            Molecule coMolecule = Instantiate(coMoleculePrefab, surfaceLayerParent);
+                            coMolecule.IsFixedMolecule = true;
                             Vector3 moleculePos = platMolecule.transform.localPosition;
                             moleculePos.y = 0.18f;
                             coMolecule.transform.localPosition = moleculePos;
                             Quaternion moleculeRot = Quaternion.Euler(0.0f, 0.0f, 90.0f);
                             coMolecule.transform.localRotation = moleculeRot;
+                            activeMolecules.Add(platMolecule);
+                            activeMolecules.Add(coMolecule);
                         }
                     }
                     moleculePosition.z = surfaceLayerParent.position.z;
                 }
                 moleculePosition.x = surfaceLayerParent.transform.position.x;
             }
+            onComplete?.Invoke(activeMolecules);
         }
     }
 }
