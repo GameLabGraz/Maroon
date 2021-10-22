@@ -87,10 +87,6 @@ public class CoordAxis : MonoBehaviour
     void Start()
     {
         SetupAxis();
-        
-        //SystemChangeHandler.Instance.onWorldSpaceAxisScaleChange += UpdateWorldSpaceLength;
-        //SystemChangeHandler.Instance.onLocalSpaceAxisLengthChange += UpdateLocalSpaceLength;
-        //SystemChangeHandler.Instance.onEnableNegativeDirectionChange += UpdateNegativeAxisDirection;
     }
 
     public void UpdateFontSize(float value)
@@ -128,6 +124,11 @@ public class CoordAxis : MonoBehaviour
     private int CalculateNumberOfMarkers()
     {
         int numberOfMarkers = 0;
+        if (Math.Abs(_divisionUnit - _lengthUnit) > 3)
+        {
+            return numberOfMarkers = 200;
+        }
+        
         if (_lengthUnit == Unit.none || _divisionUnit == Unit.none)
         {
             numberOfMarkers = (int)Math.Floor(_axisLocalLength / _axisSubdivision);
@@ -161,8 +162,7 @@ public class CoordAxis : MonoBehaviour
     {
         foreach (var marker in this.GetComponentsInChildren<TextMeshPro>())
         {
-            if(marker != null)
-                GameObject.DestroyImmediate(marker.transform.parent.gameObject);
+            GameObject.DestroyImmediate(marker.transform.parent.gameObject);
         }
 
         _axisMarkers.Clear();
@@ -193,36 +193,8 @@ public class CoordAxis : MonoBehaviour
             default:
                 throw new ArgumentOutOfRangeException();
         }
-
-        
-        /*
-        _direction = (_axisID) switch
-        {
-            Axis.X => new Vector3(1, 0, 0),
-            Axis.Y => new Vector3(0, 1, 0),
-            Axis.Z => new Vector3(0, 0, 1),
-            Axis.NX => new Vector3(-1, 0, 0),
-            Axis.NY => new Vector3(0, -1, 0),
-            Axis.NZ => new Vector3(0, 0, -1),
-            _ => new Vector3(0, 0, 0)
-        };*/
     }
-
     
-    /*
-    private void UpdateNegativeAxisDirection(Axis id)
-    {
-        if (id != _axisID)
-            return;
-    }
-
-    private void UpdateLocalSpaceLength(Axis id, float value)
-    {
-        if (id != _axisID)
-            return;
-       
-    }
-    */
     private void UniformWorldSpaceLengthUpdate(float value)
     {
         this._axisWorldLength = value; 
@@ -231,18 +203,16 @@ public class CoordAxis : MonoBehaviour
 
     public float GetValueFromAxisPoint(float point)
     {
-        //TODO FIX
         var pointOnAxis =  _axisLocalLength * point;
         var unitConversion = Mathf.Pow(10, (float) _lengthUnit) / Mathf.Pow(10, (float) _divisionUnit);
 
         return (pointOnAxis * unitConversion);
     }
 
-    /*
-    private void UpdateAxisSubdivision(Axis id, int value)
+    public float GetAxisPointFromValue(float value, Unit inputUnit)
     {
-        if (id != _axisID)
-            return;  
-    }*/
-
+        var quotient = value * (Mathf.Pow(10, (float) inputUnit));
+        var dividend = _axisLocalLength * (Mathf.Pow(10, (float) _lengthUnit));
+        return quotient / dividend;
+    }
 }

@@ -7,7 +7,7 @@ using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
 
 public enum Axis { X = 1, Y = 2, Z = 3, NX = -1, NY = -2, NZ = -3}
-public enum Unit { none = -999,nm = -9, µm = -6, mm = -3, cm = -2, dm = -1, m = 0, km = 3}
+public enum Unit { none = -999, femto = -15, pico = -12 ,nm = -9, µm = -6, mm = -3, cm = -2, dm = -1, m = 0, km = 3}
 
 public class CoordSystemManager : MonoBehaviour
 {
@@ -32,20 +32,36 @@ public class CoordSystemManager : MonoBehaviour
     private Dictionary<Axis, CoordAxis> _axisDictionary;
     public Dictionary<Axis, CoordAxis> GetAxisDictionary() => _axisDictionary;
 
+    #region Accessors & Mutators
+    
     public float FontSize
     {
         get => _markerFontSize;
         set 
         {
             _markerFontSize = value;
-            SystemChangeHandler.Instance.FontSizeChanged(_markerFontSize); 
+            UpdateAxisFontSize();
         }
     }
 
     public bool EnableNegativeDirection 
     { 
         get => _enableNegativeDirection;
-        set => _enableNegativeDirection = value;
+        set
+        {
+            _enableNegativeDirection = value;
+            ToggleNegativeAxisVisibility();
+        }
+    }
+    
+    public bool EnableThirdDimension
+    {
+        get => _enableThirdDimension;
+        set
+        {
+            _enableThirdDimension = value;
+            ToggleThirdDimension();
+        }
     }
 
     public float UniformWorldAxisLength
@@ -57,6 +73,8 @@ public class CoordSystemManager : MonoBehaviour
             SetAxisWorldLengthUniform();
         }
     }
+    
+    #endregion
 
     private void Awake()
     {
@@ -73,9 +91,9 @@ public class CoordSystemManager : MonoBehaviour
 
     private void Start()
     {
-        ToggleThirdDimension(_enableThirdDimension);
-        ToggleNegativeAxisVisibility(_enableNegativeDirection);
-        ToggleSpaceIndicatorVisibility(_enableVisualIndicator);
+        ToggleThirdDimension();
+        ToggleNegativeAxisVisibility();
+        ToggleSpaceIndicatorVisibility();
         UpdateAxisFontSize();
     }
 
@@ -88,16 +106,16 @@ public class CoordSystemManager : MonoBehaviour
         }
     }
     
-    public void ToggleNegativeAxisVisibility(bool active)
+    public void ToggleNegativeAxisVisibility()
     {
-        _axisList.ElementAt(FindInList(Axis.NX)).gameObject.SetActive(active);
-        _axisList.ElementAt(FindInList(Axis.NY)).gameObject.SetActive(active);
+        _axisList.ElementAt(FindInList(Axis.NX)).gameObject.SetActive(_enableNegativeDirection);
+        _axisList.ElementAt(FindInList(Axis.NY)).gameObject.SetActive(_enableNegativeDirection);
         
         if (_enableThirdDimension)
-            _axisList.ElementAt(FindInList(Axis.NZ)).gameObject.SetActive(active);
+            _axisList.ElementAt(FindInList(Axis.NZ)).gameObject.SetActive(_enableNegativeDirection);
     }
 
-    public void ToggleSpaceIndicatorVisibility(bool active)
+    public void ToggleSpaceIndicatorVisibility()
     {
         var axisWorldLengths = GetWorldLengthsOfDirection(true);
         var negativeAxisWorldLengths = GetWorldLengthsOfDirection(false);
@@ -105,7 +123,7 @@ public class CoordSystemManager : MonoBehaviour
         PlaceIndicators(axisWorldLengths, negativeAxisWorldLengths);
         ScaleIndicators(axisWorldLengths, negativeAxisWorldLengths);
 
-        _spaceIndicator.gameObject.SetActive(active);
+        _spaceIndicator.gameObject.SetActive(_enableVisualIndicator);
     }
     
     public void UpdateAxisFontSize()
@@ -116,12 +134,12 @@ public class CoordSystemManager : MonoBehaviour
         }
     }
 
-    public void ToggleThirdDimension(bool active)
+    public void ToggleThirdDimension()
     {
-        _axisList.ElementAt(FindInList(Axis.Z)).gameObject.SetActive(active);
+        _axisList.ElementAt(FindInList(Axis.Z)).gameObject.SetActive(_enableThirdDimension);
         
         if(_enableNegativeDirection)
-           _axisList.ElementAt(FindInList(Axis.NZ)).gameObject.SetActive(active);
+           _axisList.ElementAt(FindInList(Axis.NZ)).gameObject.SetActive(_enableThirdDimension);
     }
 
     private void PlaceIndicators(Vector3 axisWorldLengths, Vector3 negativeAxisWorldLengths)

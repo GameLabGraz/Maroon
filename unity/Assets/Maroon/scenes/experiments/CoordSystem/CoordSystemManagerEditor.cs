@@ -40,8 +40,8 @@ public class CoordSystemManagerEditor : Editor
          serializedObject.ApplyModifiedProperties();
          if (EditorGUI.EndChangeCheck())
          {
-             _manager.ToggleNegativeAxisVisibility(_enableNegativeDirection.boolValue);
-             _manager.ToggleSpaceIndicatorVisibility(_enableVisualIndicator.boolValue);
+             _manager.ToggleNegativeAxisVisibility();
+             _manager.ToggleSpaceIndicatorVisibility();
         }
 
         EditorGUI.BeginChangeCheck();
@@ -49,8 +49,8 @@ public class CoordSystemManagerEditor : Editor
         serializedObject.ApplyModifiedProperties();
         if (EditorGUI.EndChangeCheck())
         {
-            _manager.ToggleThirdDimension(_enableThirdDimension.boolValue);
-            _manager.ToggleSpaceIndicatorVisibility(_enableVisualIndicator.boolValue);
+            _manager.ToggleThirdDimension();
+            _manager.ToggleSpaceIndicatorVisibility();
         }
         
         EditorGUILayout.Separator();
@@ -60,7 +60,7 @@ public class CoordSystemManagerEditor : Editor
         serializedObject.ApplyModifiedProperties();
         if (EditorGUI.EndChangeCheck())
         {
-            _manager.ToggleSpaceIndicatorVisibility(_enableVisualIndicator.boolValue);
+            _manager.ToggleSpaceIndicatorVisibility();
         }
 
         EditorGUILayout.PropertyField(_spaceIndicator);
