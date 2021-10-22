@@ -5,9 +5,9 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 {
     public enum CatalystSurfaceSize
     {
-        Small = 64,
-        Medium = 128,
-        Big = 256
+        Small = 16,
+        Medium = 32,
+        Big = 64
     }
 
     public class CatalystSurface : MonoBehaviour
@@ -27,10 +27,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             {
                 Vector3 moleculePosition = surfaceLayerParent.position;
                 moleculePosition.y += -layerNum * _spaceBetweenMolecules;
-                for (int sizeX = 0; sizeX < (int)surfaceSize / 4; sizeX++)
+                for (int sizeX = 0; sizeX < surfaceSize; sizeX++)
                 {
                     moleculePosition.x += _spaceBetweenMolecules;
-                    for (int sizeZ = 0; sizeZ < (int)surfaceSize / 4; sizeZ++)
+                    for (int sizeZ = 0; sizeZ < surfaceSize; sizeZ++)
                     {
                         moleculePosition.z += _spaceBetweenMolecules;
                         Molecule platMolecule = Instantiate(platinumMoleculePrefab, surfaceLayerParent);
@@ -41,7 +41,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                             Molecule coMolecule = Instantiate(coMoleculePrefab, surfaceLayerParent);
                             coMolecule.IsFixedMolecule = true;
                             Vector3 moleculePos = platMolecule.transform.localPosition;
-                            moleculePos.y = 0.18f;
+                            moleculePos.y = CatalystController.FixedMoleculeYDist;
                             coMolecule.transform.localPosition = moleculePos;
                             Quaternion moleculeRot = Quaternion.Euler(0.0f, 0.0f, 90.0f);
                             coMolecule.transform.localRotation = moleculeRot;
