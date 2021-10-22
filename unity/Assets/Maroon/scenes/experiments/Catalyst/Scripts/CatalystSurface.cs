@@ -16,11 +16,20 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         [SerializeField] Molecule coMoleculePrefab;
         [SerializeField] Transform surfaceLayerParent;
         [SerializeField] int numSubLayers;
+        [SerializeField] private GameObject boundaryXMin;
+        [SerializeField] private GameObject boundaryXMax;
+        [SerializeField] private GameObject boundaryZMin;
+        [SerializeField] private GameObject boundaryZMax;
         
         private float _spaceBetweenMolecules;
         
         public void Setup(int surfaceSize, System.Action<List<Molecule>> onComplete)
         {
+            float maxOffset = platinumMoleculePrefab.transform.localScale.x * surfaceSize;
+            boundaryXMin.transform.localPosition = new Vector3(0.1f, 0.0f, 0.0f);
+            boundaryZMin.transform.localPosition = new Vector3(0.0f, 0.0f, 0.1f);
+            boundaryXMax.transform.localPosition = new Vector3(0.1f + maxOffset, 0.0f, 0.0f);
+            boundaryZMax.transform.localPosition = new Vector3(0.0f, 0.0f, 0.1f + maxOffset);
             List<Molecule> activeMolecules = new List<Molecule>();
             _spaceBetweenMolecules = platinumMoleculePrefab.transform.localScale.x;
             for (int layerNum = 0; layerNum < numSubLayers; layerNum++)
