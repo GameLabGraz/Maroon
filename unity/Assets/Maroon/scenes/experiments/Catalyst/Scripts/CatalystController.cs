@@ -9,6 +9,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
     {
         [Header("Simulation Parameters")]
         [SerializeField] QuantityFloat temperature;
+        [SerializeField] CatalystSurfaceSize catalystSurfaceSize;
         
         [Header("Catalyst specific objects")]
         [SerializeField] CatalystReactor catalystReactor;
@@ -55,10 +56,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private void SpawnCatalystSurfaceObject()
         {
             _catalystSurface = Instantiate(catalystSurfacePrefab, catalystSurfaceSpawnTransform);
-            _catalystSurface.Setup(list =>
+            _catalystSurface.Setup((int)catalystSurfaceSize, list =>
             {
                 _activeMolecules = list;
-                StartCoroutine(SpawnCatalystReactionMaterial());
+                //StartCoroutine(SpawnCatalystReactionMaterial());
             });
         }
 
