@@ -9,7 +9,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
     {
         [Header("Simulation Parameters")]
         [SerializeField] QuantityFloat temperature;
-        [SerializeField] CatalystSurfaceSize catalystSurfaceSize;
+        [SerializeField] CatalystSurfaceSize catalystSurfaceSize = CatalystSurfaceSize.Small;
         
         [Header("Catalyst specific objects")]
         [SerializeField] CatalystReactor catalystReactor;
@@ -18,6 +18,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         [SerializeField] Molecule o2MoleculePrefab;
         [SerializeField] Molecule coMoleculePrefab;
+        [SerializeField] Molecule oMoleculePrefab;
         [SerializeField] int numSpawnedMolecules;
 
         [Header("Player specific objects")]
@@ -25,6 +26,9 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         
         private CatalystSurface _catalystSurface;
         private List<Molecule> _activeMolecules = new List<Molecule>();
+
+        public const float FixedMoleculeYDist = 0.18f; // todo move to own const class?
+
         private void Start()
         {
             SimulationController.Instance.OnStart.AddListener(StartSimulation);
@@ -59,7 +63,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             _catalystSurface.Setup((int)catalystSurfaceSize, list =>
             {
                 _activeMolecules = list;
-                //StartCoroutine(SpawnCatalystReactionMaterial());
+                StartCoroutine(SpawnCatalystReactionMaterial());
             });
         }
 
@@ -75,6 +79,31 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 Molecule molecule = Instantiate(prefabs[Random.Range(0, prefabs.Length)], catalystSurfaceTransform);
                 molecule.gameObject.transform.localPosition = spawnPos;
                 molecule.gameObject.transform.localRotation = spawnRot;
+                _activeMolecules.Add(molecule);
+                if (molecule.Type == MoleculeType.O2)
+                {
+                    molecule.OnDissociate += DissociateO2;
+                }
+            }
+        }
+
+        private void DissociateO2(Molecule o2Molecule)
+        {
+            _activeMolecules.Remove(o2Molecule);
+            Transform parentTransform = o2Molecule.transform.parent;
+            Vector3 o2Position = o2Molecule.transform.position;
+            o2Molecule.ConnectedMolecule.ConnectedMolecule = null;
+            Destroy(o2Molecule.gameObject);
+            List<Molecule> oMolecules = new List<Molecule>()
+            {
+                Instantiate(oMoleculePrefab, parentTransform),
+                Instantiate(oMoleculePrefab, parentTransform)
+            };
+
+            foreach (Molecule molecule in oMolecules)
+            {
+                molecule.IsFixedMolecule = true;
+                molecule.transform.position = o2Position;
                 _activeMolecules.Add(molecule);
             }
         }
