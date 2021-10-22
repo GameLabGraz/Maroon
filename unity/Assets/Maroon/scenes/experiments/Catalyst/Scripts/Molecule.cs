@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -13,10 +15,12 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         Pt
     }
 
-    public class Molecule : MonoBehaviour
+    public class Molecule : PausableObject
     {
+        [Header("Molecule Specifics")]
         [SerializeField] MoleculeType type;
         [SerializeField] List<MoleculeType> canConnectToList = new List<MoleculeType>();
+        [SerializeField] Collider collider;
 
         [Header("Molecule Movement")]
         [SerializeField] bool isFixedMolecule;
@@ -31,27 +35,53 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private Molecule _connectedMolecule;
         private bool _desorbMoveActive;
 
+        private bool _isDrawnByMolecule;
+        private float _currenTimeDrawn = 0.0f;
+        private Vector3 _drawingMoleculePosition;
+
         public MoleculeType Type { get => type; }
-        public bool IsFixedMolecule { get => IsFixedMolecule; set => isFixedMolecule = value; }
+
+        public bool IsFixedMolecule
+        {
+            get => isFixedMolecule;
+            set {
+                isFixedMolecule = value;
+                if (value)
+                {
+                    GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+                }
+                else
+                {
+                    GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+                }
+            }
+        }
+
         public float MovementSpeed { get => movementSpeed; set => movementSpeed = value; }
         public Molecule ConnectedMolecule { get => _connectedMolecule; set => _connectedMolecule = value; }
 
+        public Action<Molecule> OnDissociate;
 
-        public void Desorb()
+
+        public void SetMoleculeDrawn(Molecule drawingMolecule)
         {
-            _newRandomPosition = new Vector3(transform.position.x, transform.position.y + 1.0f, transform.position.z);
-            _currentTimeMove = 0.0f;
-            _connectedMolecule = null;
-            isFixedMolecule = false;
-            _desorbMoveActive = true;
+            _isDrawnByMolecule = true;
+            _drawingMoleculePosition = drawingMolecule.transform.position;
+            _connectedMolecule = drawingMolecule;
         }
 
-        private void Start()
+        protected override void Start()
         {
+            base.Start();
             GetRandomPositionAndRotation();
         }
 
-        private void FixedUpdate()
+        protected override void HandleUpdate()
+        {
+            
+        }
+
+        protected override void HandleFixedUpdate()
         {
             if (isFixedMolecule && _connectedMolecule == null) return;
             if (isFixedMolecule && _connectedMolecule != null && !_desorbMoveActive)
@@ -64,14 +94,14 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                     {
                         if (Random.Range(0, 100) > 95)
                         {
-                            Desorb();
+                            DesorbCO();
                         }
                         _currentTimeDesorb = 0.0f;
                     }
                 }
                 else if (Type == MoleculeType.O2 && _connectedMolecule.Type == MoleculeType.Pt)
                 {
-                    // todo handle O2 split
+                    // todo handle O2 split? currently done once movement is complete
                 }
 
                 return;
@@ -79,11 +109,16 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
             if (_desorbMoveActive)
             {
-                HandleDesorbMovement();
-                return;
+                HandleCODesorbMovement();
             }
-            
-            HandleRandomMovement();
+            else if (_isDrawnByMolecule)
+            {
+                HandleDrawnToMoleculeMovement();
+            }
+            else
+            {
+                HandleRandomMovement();
+            }
         }
 
         private void HandleRandomMovement()
@@ -95,17 +130,15 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 Quaternion currentRotation = transform.rotation;
                 transform.position = Vector3.Lerp(currentPosition, _newRandomPosition, Time.deltaTime * movementSpeed);
                 transform.rotation = Quaternion.Lerp(currentRotation, _newRandomRotation, Time.deltaTime * movementSpeed);
-
-                float dist = Vector3.Distance(transform.position, _newRandomPosition);
-                if (dist <= 0.04f)
-                {
-                    GetRandomPositionAndRotation();
-                    _currentTimeMove = 0.0f;
-                }
+            }
+            else
+            {
+                GetRandomPositionAndRotation();
+                _currentTimeMove = 0.0f;
             }
         }
 
-        private void HandleDesorbMovement()
+        private void HandleCODesorbMovement()
         {
             _currentTimeMove += Time.deltaTime;
             if (timeToMove >= _currentTimeMove)
@@ -122,10 +155,55 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             }
         }
 
+        private void HandleDrawnToMoleculeMovement()
+        {
+            _currenTimeDrawn += Time.deltaTime;
+            if (timeToMove >= _currenTimeDrawn)
+            {
+                Vector3 currentPosition = transform.position;
+                transform.position = Vector3.Lerp(currentPosition, _drawingMoleculePosition, Time.deltaTime * movementSpeed);
+            }
+            else
+            {
+                //transform.position = new Vector3(_drawingMoleculePosition.x, _drawingMoleculePosition.y += CatalystController.FixedMoleculeYDist, _drawingMoleculePosition.z);
+                transform.localRotation = Quaternion.Euler(0.0f, 0.0f, 90.0f);
+                StartCoroutine(DissociateO2());
+            }
+        }
+        
+        private void DesorbCO()
+        {
+            _newRandomPosition = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z);
+            _currentTimeMove = 0.0f;
+            isFixedMolecule = false;
+            _desorbMoveActive = true;
+            _connectedMolecule.ConnectedMolecule = null;
+            _connectedMolecule = null;
+        }
+
+        private IEnumerator DissociateO2()
+        {
+            yield return new WaitForSeconds(2.0f);
+            OnDissociate?.Invoke(this);
+        }
+
         private void GetRandomPositionAndRotation()
         {
-            _newRandomPosition = transform.position + new Vector3(Random.Range(-0.05f, 0.2f), Random.Range(0.1f, -0.2f), Random.Range(-0.1f, 0.1f));
+            _newRandomPosition = transform.position + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(0.05f, -0.2f), Random.Range(-0.2f, 0.2f));
             _newRandomRotation = Quaternion.Euler(Random.Range(-180.0f, 180.0f),Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
+        }
+
+        private void OnCollisionEnter(Collision other)
+        {
+            if (Type == MoleculeType.Pt && _connectedMolecule == null)
+            {
+                Molecule molecule = other.gameObject.GetComponent<Molecule>();
+                if (molecule != null && molecule.Type == MoleculeType.O2)
+                {
+                    _connectedMolecule = molecule;
+                    molecule.SetMoleculeDrawn(this);
+                }
+            }
         }
     }
 }
