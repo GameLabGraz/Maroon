@@ -10,10 +10,12 @@ public class CoordSystemManagerEditor : Editor
     private SerializedProperty _isWorldLengthUniform;
     private SerializedProperty _uniformWorldAxisLength;
     private SerializedProperty _axisList;
+    private SerializedProperty _enableVisualIndicator;
+    private SerializedProperty _spaceIndicator;
 
     private void Awake()
     {
-        _manager = (CoordSystemManager)target;
+        _manager = (CoordSystemManager) target;
     }
 
     private void OnEnable()
@@ -24,19 +26,23 @@ public class CoordSystemManagerEditor : Editor
         _isWorldLengthUniform = serializedObject.FindProperty("_lengthUniform");
         _uniformWorldAxisLength = serializedObject.FindProperty("_uniformWorldAxisLength");
         _enableNegativeDirection = serializedObject.FindProperty("_enableNegativeDirection");
+
+        _enableVisualIndicator = serializedObject.FindProperty("_enableVisualIndicator");
+        _spaceIndicator = serializedObject.FindProperty("_spaceIndicator");
     }
 
     public override void OnInspectorGUI()
     {
         EditorGUILayout.LabelField("General", EditorStyles.boldLabel);
 
-       /* EditorGUI.BeginChangeCheck();
-        EditorGUILayout.PropertyField(_enableNegativeDirection);
-        serializedObject.ApplyModifiedProperties();
-        if (EditorGUI.EndChangeCheck())
-        {
-            
-        }*/
+         EditorGUI.BeginChangeCheck();
+         EditorGUILayout.PropertyField(_enableNegativeDirection);
+         serializedObject.ApplyModifiedProperties();
+         if (EditorGUI.EndChangeCheck())
+         {
+             _manager.ToggleNegativeAxisVisibility(_enableNegativeDirection.boolValue);
+             _manager.ToggleSpaceIndicatorVisibility(_enableVisualIndicator.boolValue);
+        }
 
         EditorGUI.BeginChangeCheck();
         EditorGUILayout.PropertyField(_enableThirdDimension);
@@ -44,8 +50,20 @@ public class CoordSystemManagerEditor : Editor
         if (EditorGUI.EndChangeCheck())
         {
             _manager.ToggleThirdDimension(_enableThirdDimension.boolValue);
+            _manager.ToggleSpaceIndicatorVisibility(_enableVisualIndicator.boolValue);
+        }
+        
+        EditorGUILayout.Separator();
+       
+        EditorGUI.BeginChangeCheck();
+        EditorGUILayout.PropertyField(_enableVisualIndicator);
+        serializedObject.ApplyModifiedProperties();
+        if (EditorGUI.EndChangeCheck())
+        {
+            _manager.ToggleSpaceIndicatorVisibility(_enableVisualIndicator.boolValue);
         }
 
+        EditorGUILayout.PropertyField(_spaceIndicator);
 
         EditorGUILayout.Separator();
         EditorGUILayout.LabelField("Uniformity", EditorStyles.boldLabel);
@@ -67,10 +85,10 @@ public class CoordSystemManagerEditor : Editor
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(_uniformWorldAxisLength);
             serializedObject.ApplyModifiedProperties();
-            
+
             if (EditorGUI.EndChangeCheck())
             {
-                _manager.SetAxisWorldLengthUniform(_uniformWorldAxisLength.floatValue);
+                _manager.SetAxisWorldLengthUniform();
             }
 
             EditorGUI.indentLevel--;
@@ -80,6 +98,7 @@ public class CoordSystemManagerEditor : Editor
         {
             _manager.UpdateAxisFontSize();
         }
+
         EditorGUILayout.Separator();
         EditorGUILayout.LabelField("Axis", EditorStyles.boldLabel);
 

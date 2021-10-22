@@ -6,9 +6,7 @@ using System.Globalization;
 using System.Linq;
 using UnityEngine;
 using UnityEditor;
-using UnityEngine.Events;
 using TMPro;
-using UnityEngine.Purchasing;
 
 public class CoordAxis : MonoBehaviour
 {
@@ -18,7 +16,7 @@ public class CoordAxis : MonoBehaviour
     [SerializeField]
     private float _axisWorldLength;
     [SerializeField]
-    public GameObject _axisMarkerPrefab;
+    private GameObject _axisMarkerPrefab;
 
     [SerializeField]
     private float _axisLocalLength;
@@ -30,12 +28,44 @@ public class CoordAxis : MonoBehaviour
     [SerializeField]
     private Unit _divisionUnit;
 
-    public float AxisWorldLength {get { return _axisWorldLength;} set { _axisWorldLength = value; } }
-
+    private Vector3 _direction;
     private float _fontSize = 0.5f;
     private List<GameObject> _axisMarkers = new List<GameObject>();
-    private Vector3 _direction;
 
+    #region Accessors & Mutators
+
+    public float AxisWorldLength
+    {
+        get => _axisWorldLength;
+        set => _axisWorldLength = value;
+    }
+
+    public float AxisLocalLength
+    {
+        get => _axisLocalLength;
+        set => _axisLocalLength = value;
+    }
+
+    public Unit AxisLengthUnit
+    {
+        get => _lengthUnit;
+        set => _lengthUnit = value;
+    }
+
+    public Unit AxisSubdivisionUnit
+    {
+        get => _divisionUnit;
+        set => _divisionUnit = value;
+    }
+
+    public Axis AxisID
+    {
+        get => _axisID;
+        set => _axisID = value;
+    }
+
+    #endregion
+    
     private void OnEnable()
     {
         SystemChangeHandler.Instance.OnUniformWorldLength += UniformWorldSpaceLengthUpdate;
@@ -50,14 +80,14 @@ public class CoordAxis : MonoBehaviour
     {
         _ = _axisMarkerPrefab ?? throw new NullReferenceException("Missing axis marker prefab!");
         _ = _axisID == 0 ? throw new NullReferenceException("Axis id is not set") : 0;
-        _ = _divisionUnit == 0 ? throw new NullReferenceException("The unit of the subdivision is not set!(mm,cm,m)") : 0;
-        _ = _lengthUnit == 0 ? throw new NullReferenceException("The length unit of the axis is not set! (mm,cm,m)") : 0;
-        
-        SetupAxis();
+        _ = _divisionUnit == Unit.none ? throw new NullReferenceException("The unit of the subdivision is not set!(mm,cm,m)") : 0;
+        _ = _lengthUnit == Unit.none ? throw new NullReferenceException("The length unit of the axis is not set! (mm,cm,m)") : 0;
     }
 
     void Start()
     {
+        SetupAxis();
+        
         //SystemChangeHandler.Instance.onWorldSpaceAxisScaleChange += UpdateWorldSpaceLength;
         //SystemChangeHandler.Instance.onLocalSpaceAxisLengthChange += UpdateLocalSpaceLength;
         //SystemChangeHandler.Instance.onEnableNegativeDirectionChange += UpdateNegativeAxisDirection;
@@ -86,10 +116,10 @@ public class CoordAxis : MonoBehaviour
 
         for (var count = 1; count <= numberOfMarkers; count++)
         {
-            var translate = _direction * worldSpaceDistance * count;
+            var translate = _direction * (worldSpaceDistance * count);
             var unitText = (_divisionUnit != Unit.none && _lengthUnit != Unit.none) ? _divisionUnit.ToString() : "";
             var valueText = (count * _axisSubdivision).ToString(CultureInfo.CurrentCulture);
-            var completeText = _axisID == Axis.Y ? $"- {valueText} {unitText}" : $"{valueText} {unitText}\n |";
+            var completeText = _axisID == Axis.Y || _axisID == Axis.NY ? $"- {valueText} {unitText}" : $"{valueText} {unitText}\n |";
 
             InstantiateMarker(translate, completeText);
         }
@@ -115,7 +145,7 @@ public class CoordAxis : MonoBehaviour
 
     private GameObject InstantiateMarker(Vector3 translation, string text)
     {
-        var marker = Instantiate(_axisMarkerPrefab, this.transform);
+        var marker = Instantiate(_axisMarkerPrefab, gameObject.transform);
         marker.transform.Translate(translation);
         
         var textMeshText = marker.transform.Find("Marker_Text").GetComponent<TextMeshPro>();
@@ -140,7 +170,42 @@ public class CoordAxis : MonoBehaviour
 
     public void DetermineAxisDirection()
     {
-        _direction = _axisID is Axis.X ? new Vector3(1, 0, 0) : _axisID is Axis.Y ? new Vector3(0, 1, 0) : new Vector3(0, 0, 1);
+        switch (_axisID)
+        {
+            case Axis.X:
+                _direction = new Vector3(1, 0, 0);
+                break;
+            case Axis.Y:
+                _direction = new Vector3(0, 1, 0);
+                break;
+            case Axis.Z:
+                _direction = new Vector3(0, 0, 1);
+                break;
+            case Axis.NX:
+                _direction = new Vector3(-1, 0, 0);
+                break;
+            case Axis.NY:
+                _direction = new Vector3(0, -1, 0);
+                break;
+            case Axis.NZ:
+                _direction = new Vector3(0, 0, -1);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
+        
+        /*
+        _direction = (_axisID) switch
+        {
+            Axis.X => new Vector3(1, 0, 0),
+            Axis.Y => new Vector3(0, 1, 0),
+            Axis.Z => new Vector3(0, 0, 1),
+            Axis.NX => new Vector3(-1, 0, 0),
+            Axis.NY => new Vector3(0, -1, 0),
+            Axis.NZ => new Vector3(0, 0, -1),
+            _ => new Vector3(0, 0, 0)
+        };*/
     }
 
     
@@ -162,6 +227,15 @@ public class CoordAxis : MonoBehaviour
     {
         this._axisWorldLength = value; 
         SetupAxis();
+    }
+
+    public float GetValueFromAxisPoint(float point)
+    {
+        //TODO FIX
+        var pointOnAxis =  _axisLocalLength * point;
+        var unitConversion = Mathf.Pow(10, (float) _lengthUnit) / Mathf.Pow(10, (float) _divisionUnit);
+
+        return (pointOnAxis * unitConversion);
     }
 
     /*
