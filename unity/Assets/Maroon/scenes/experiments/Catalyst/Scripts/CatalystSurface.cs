@@ -14,13 +14,12 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
     {
         [SerializeField] Molecule platinumMoleculePrefab;
         [SerializeField] Molecule coMoleculePrefab;
-        [SerializeField] CatalystSurfaceSize surfaceSize;
         [SerializeField] Transform surfaceLayerParent;
         [SerializeField] int numSubLayers;
         
         private float _spaceBetweenMolecules;
         
-        public void Setup(System.Action<List<Molecule>> onComplete)
+        public void Setup(int surfaceSize, System.Action<List<Molecule>> onComplete)
         {
             List<Molecule> activeMolecules = new List<Molecule>();
             _spaceBetweenMolecules = platinumMoleculePrefab.transform.localScale.x;
@@ -46,6 +45,9 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                             coMolecule.transform.localPosition = moleculePos;
                             Quaternion moleculeRot = Quaternion.Euler(0.0f, 0.0f, 90.0f);
                             coMolecule.transform.localRotation = moleculeRot;
+
+                            platMolecule.ConnectedMolecule = coMolecule;
+                            coMolecule.ConnectedMolecule = platMolecule;
                             activeMolecules.Add(platMolecule);
                             activeMolecules.Add(coMolecule);
                         }
