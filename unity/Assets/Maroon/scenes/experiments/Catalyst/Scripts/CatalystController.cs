@@ -28,6 +28,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private List<Molecule> _activeMolecules = new List<Molecule>();
 
         public const float FixedMoleculeYDist = 0.18f; // todo move to own const class?
+        public const float PlatinumScale = 0.2f;
 
         private void Start()
         {
@@ -72,9 +73,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             Transform catalystSurfaceTransform = _catalystSurface.GetComponentInChildren<CatalystSurface>().transform;
             yield return new WaitForSeconds(2.0f); // use simple delay for now
             Molecule[] prefabs = new Molecule[] { coMoleculePrefab, o2MoleculePrefab };
+            float maxOffset = PlatinumScale * (int)catalystSurfaceSize;
             for (int i = 0; i < numSpawnedMolecules; i++)
             {
-                Vector3 spawnPos = new Vector3(Random.Range(0.2f, 3.2f), Random.Range(0.2f, 1.3f), Random.Range(0.2f, 3.2f));
+                Vector3 spawnPos = new Vector3(Random.Range(0.1f, 0.1f + maxOffset), Random.Range(0.5f, 1.3f), Random.Range(0.1f, 0.1f + maxOffset));
                 Quaternion spawnRot = Quaternion.Euler(Random.Range(-180.0f, 180.0f),Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
                 Molecule molecule = Instantiate(prefabs[Random.Range(0, prefabs.Length)], catalystSurfaceTransform);
                 molecule.gameObject.transform.localPosition = spawnPos;
@@ -102,6 +104,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
             foreach (Molecule molecule in oMolecules)
             {
+                // todo adjust position
                 molecule.IsFixedMolecule = true;
                 molecule.transform.position = o2Position;
                 _activeMolecules.Add(molecule);

@@ -49,14 +49,18 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                         {
                             Molecule coMolecule = Instantiate(coMoleculePrefab, surfaceLayerParent);
                             coMolecule.IsFixedMolecule = true;
+                            
                             Vector3 moleculePos = platMolecule.transform.localPosition;
                             moleculePos.y = CatalystController.FixedMoleculeYDist;
                             coMolecule.transform.localPosition = moleculePos;
+                            
                             Quaternion moleculeRot = Quaternion.Euler(0.0f, 0.0f, 90.0f);
                             coMolecule.transform.localRotation = moleculeRot;
 
                             platMolecule.ConnectedMolecule = coMolecule;
+                            platMolecule.GetComponent<CapsuleCollider>().enabled = true;
                             coMolecule.ConnectedMolecule = platMolecule;
+                            
                             activeMolecules.Add(platMolecule);
                             activeMolecules.Add(coMolecule);
                         }
