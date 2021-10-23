@@ -32,10 +32,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private float _currentTimeDesorb = 0.0f;
         private Vector3 _newRandomPosition;
         private Quaternion _newRandomRotation;
-        private Molecule _connectedMolecule;
+        public Molecule _connectedMolecule;
         private bool _desorbMoveActive;
 
-        private bool _isDrawnByMolecule;
+        private bool _isDrawnByPlat;
         private float _currenTimeDrawn = 0.0f;
         private Vector3 _drawingMoleculePosition;
 
@@ -46,26 +46,21 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             get => isFixedMolecule;
             set {
                 isFixedMolecule = value;
-                if (value)
-                {
-                    GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
-                }
-                else
-                {
-                    GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
-                }
+                GetComponent<Rigidbody>().constraints = value ? RigidbodyConstraints.FreezeAll : RigidbodyConstraints.None;
             }
         }
 
         public float MovementSpeed { get => movementSpeed; set => movementSpeed = value; }
         public Molecule ConnectedMolecule { get => _connectedMolecule; set => _connectedMolecule = value; }
+        
+        public bool IsDrawnByPlat { get; set; }
 
         public Action<Molecule> OnDissociate;
 
 
         public void SetMoleculeDrawn(Molecule drawingMolecule)
         {
-            _isDrawnByMolecule = true;
+            _isDrawnByPlat = true;
             _drawingMoleculePosition = drawingMolecule.transform.position;
             _connectedMolecule = drawingMolecule;
         }
@@ -86,7 +81,6 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             if (isFixedMolecule && _connectedMolecule == null) return;
             if (isFixedMolecule && _connectedMolecule != null && !_desorbMoveActive)
             {
-                // desorbtion or splitting of O2 molecule
                 if (Type == MoleculeType.CO && _connectedMolecule.Type == MoleculeType.Pt)
                 {
                     _currentTimeDesorb += Time.deltaTime;
@@ -111,7 +105,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             {
                 HandleCODesorbMovement();
             }
-            else if (_isDrawnByMolecule)
+            else if (_isDrawnByPlat)
             {
                 HandleDrawnToMoleculeMovement();
             }
@@ -161,13 +155,13 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             if (timeToMove >= _currenTimeDrawn)
             {
                 Vector3 currentPosition = transform.position;
+                Quaternion currentRotation = transform.localRotation;
                 transform.position = Vector3.Lerp(currentPosition, _drawingMoleculePosition, Time.deltaTime * movementSpeed);
+                transform.localRotation = Quaternion.Lerp(currentRotation, Quaternion.Euler(0.0f, 0.0f, 90.0f), Time.deltaTime * movementSpeed);
             }
             else
             {
-                //transform.position = new Vector3(_drawingMoleculePosition.x, _drawingMoleculePosition.y += CatalystController.FixedMoleculeYDist, _drawingMoleculePosition.z);
-                transform.localRotation = Quaternion.Euler(0.0f, 0.0f, 90.0f);
-                StartCoroutine(DissociateO2());
+                HandleO2TouchingPlat();
             }
         }
         
@@ -184,7 +178,17 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private IEnumerator DissociateO2()
         {
             yield return new WaitForSeconds(2.0f);
+            _connectedMolecule.ActivateDrawingCollider(true);
             OnDissociate?.Invoke(this);
+        }
+
+        private void HandleO2TouchingPlat()
+        {
+            _isDrawnByPlat = false;
+            IsFixedMolecule = true;
+            transform.position = new Vector3(_drawingMoleculePosition.x, _drawingMoleculePosition.y += CatalystController.FixedMoleculeYDist, _drawingMoleculePosition.z);
+            transform.localRotation = Quaternion.Euler(0.0f, 0.0f, 90.0f);
+            StartCoroutine(DissociateO2());
         }
 
         private void GetRandomPositionAndRotation()
@@ -193,16 +197,37 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             _newRandomRotation = Quaternion.Euler(Random.Range(-180.0f, 180.0f),Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
         }
 
+        public void ActivateDrawingCollider(bool activate)
+        {
+            if (type != MoleculeType.Pt) return;
+
+            collider.enabled = activate;
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (type == MoleculeType.Pt && _connectedMolecule == null)
+            {
+                Molecule otherMolecule = other.gameObject.GetComponent<Molecule>();
+                if (otherMolecule != null && otherMolecule.Type == MoleculeType.O2 && otherMolecule.ConnectedMolecule == null)
+                {
+                    _connectedMolecule = otherMolecule;
+                    otherMolecule.SetMoleculeDrawn(this);
+                    ActivateDrawingCollider(false);
+                }
+            }
+        }
+
         private void OnCollisionEnter(Collision other)
         {
-            if (Type == MoleculeType.Pt && _connectedMolecule == null)
+            Molecule otherMolecule = other.gameObject.GetComponent<Molecule>();
+            if (otherMolecule == null) return;
+            if (type == MoleculeType.O2 
+                && _connectedMolecule != null
+                && other.gameObject.GetComponent<Molecule>().Type == MoleculeType.Pt
+                && _connectedMolecule.Type == MoleculeType.Pt)
             {
-                Molecule molecule = other.gameObject.GetComponent<Molecule>();
-                if (molecule != null && molecule.Type == MoleculeType.O2)
-                {
-                    _connectedMolecule = molecule;
-                    molecule.SetMoleculeDrawn(this);
-                }
+                HandleO2TouchingPlat();
             }
         }
     }
