@@ -11,21 +11,58 @@ public class LanguageChangeHelper : MonoBehaviour
 
     [SerializeField] private GameObject germanButton;
     [SerializeField] private GameObject englishButton;
+    
+    private bool _ignoreEvents = false;
 
     protected void Start()
     {
         var germanBtn = germanButton.GetComponent<VRHoverButton>();
-        if (germanBtn)
-        {
-            germanBtn.OnButtonOn.AddListener(() => OnSwitchToGerman());
-            germanBtn.OnButtonOff.AddListener(() => OnSwitchToEnglish());
-        }
-
         var englishBtn = englishButton.GetComponent<VRHoverButton>();
-        if (englishBtn)
+        if (germanBtn && englishBtn)
         {
-            englishBtn.OnButtonOn.AddListener(() => OnSwitchToEnglish());
-            englishBtn.OnButtonOff.AddListener(() => OnSwitchToGerman());
+            if (LanguageManager.Instance.CurrentLanguage == SystemLanguage.German)
+            {
+                germanBtn.ForceButtonState(true);
+            }
+            else
+            {
+                englishBtn.ForceButtonState(true);
+            }
+            
+            
+            germanBtn.OnButtonOn.AddListener(() =>
+            {
+                if (_ignoreEvents) return;
+                _ignoreEvents = true;
+                OnSwitchToGerman();
+                englishBtn.ForceButtonState(false);
+                _ignoreEvents = false;
+            });
+            germanBtn.OnButtonOff.AddListener(() =>
+            {
+                if (_ignoreEvents) return;
+                _ignoreEvents = true;
+                OnSwitchToEnglish();
+                englishBtn.ForceButtonState(true);
+                _ignoreEvents = false;
+            });
+            
+            englishBtn.OnButtonOn.AddListener(() =>
+            {
+                if (_ignoreEvents) return;
+                _ignoreEvents = true;
+                OnSwitchToEnglish();
+                germanBtn.ForceButtonState(false);
+                _ignoreEvents = false;
+            });
+            englishBtn.OnButtonOff.AddListener(() =>
+            {
+                if (_ignoreEvents) return;
+                _ignoreEvents = true;
+                OnSwitchToGerman();
+                germanBtn.ForceButtonState(true);
+                _ignoreEvents = false;
+            });
         }
     }
 

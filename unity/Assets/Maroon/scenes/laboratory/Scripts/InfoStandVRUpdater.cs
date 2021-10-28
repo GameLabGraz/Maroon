@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using Maroon.GlobalEntities;
 
 public class InfoStandVRUpdater : MonoBehaviour
 {
@@ -10,7 +10,7 @@ public class InfoStandVRUpdater : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        var isVR = Maroon.PlatformManager.Instance.CurrentPlatformIsVR;
+        var isVR = Maroon.GlobalEntities.PlatformManager.Instance.CurrentPlatformIsVR;
         
         foreach(var pcObj in PC_Only)
             pcObj.SetActive(!isVR);

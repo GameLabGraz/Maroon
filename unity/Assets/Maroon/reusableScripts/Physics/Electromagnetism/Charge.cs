@@ -28,7 +28,7 @@ namespace Maroon.Physics.Electromagnetism
         {
             base.Start();
 
-            _rigidbody = GetComponent<Rigidbody>();
+            _rigidBody = GetComponent<Rigidbody>();
             _eField = GameObject.FindObjectOfType<EField>();
         }
 
@@ -68,7 +68,7 @@ namespace Maroon.Physics.Electromagnetism
             if (!enableForces || !_eField) return;
 
             var force = strength * forceFactor * _eField.get(transform.position, gameObject);
-            _rigidbody.AddForce(force);
+            _rigidBody.AddForce(force);
         }
     }
 }

@@ -2,11 +2,6 @@
 // FieldLine.cs
 //
 // Script to draw the field lines
-//
-//
-// Authors: Michael Stefan Holly
-//          Michael Schiller
-//          Christopher Schinnerl
 //-----------------------------------------------------------------------------
 //
 
@@ -165,7 +160,7 @@ namespace Maroon.Physics.Electromagnetism
             switch (field.getFieldType())
             {
                 case FieldType.BField:
-                    return emObj.GetComponent<IGenerateB>().getFieldStrength();
+                    return emObj.GetComponent<IGenerateB>().GetFieldStrength();
                 case FieldType.EField:
                     return emObj.GetComponent<IGenerateE>().getFieldStrength();
                 default:

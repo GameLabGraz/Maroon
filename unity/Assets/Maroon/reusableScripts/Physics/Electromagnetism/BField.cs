@@ -2,16 +2,10 @@
 // BField.cs
 //
 // Class to represent a magnetic field
-//
-//
-// Authors: Michael Stefan Holly
-//          Michael Schiller
-//          Christopher Schinnerl
 //-----------------------------------------------------------------------------
 //
 
 using UnityEngine;
-using System.Collections.Generic;
 using System.Linq;
 
 /// <summary>
@@ -65,7 +59,7 @@ public class BField : IField
             {
                 if (producer != null && producer.Enabled)
                 {
-                    field += producer.getB(position);
+                    field += producer.GetB(position);
                 }
             }
         }
@@ -94,7 +88,7 @@ public class BField : IField
                 if (producer != null && producer.Enabled)
                 {
                     if (((Component)producer).gameObject != xobj)
-                        field += producer.getB(position);
+                        field += producer.GetB(position);
                 }
             }
         }

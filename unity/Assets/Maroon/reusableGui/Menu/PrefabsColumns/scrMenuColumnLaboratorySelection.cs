@@ -1,5 +1,6 @@
 ﻿using GEAR.Localization.Text;
 using System.Collections.Generic;
+using Maroon.GlobalEntities;
 using UnityEngine;
 using UnityEngine.UI;
 using Valve.VR.InteractionSystem;
@@ -25,8 +26,8 @@ public class scrMenuColumnLaboratorySelection : MonoBehaviour
         this.Menu = FindObjectOfType<scrMenu>();
 
         // Get scene categories based on current platform
-        Maroon.SceneType platformSceneType = Maroon.PlatformManager.Instance.SceneTypeBasedOnPlatform;
-        List<Maroon.SceneCategory> categories = Maroon.SceneManager.Instance.getSceneCategories(platformSceneType);
+        Maroon.SceneType platformSceneType = PlatformManager.Instance.SceneTypeBasedOnPlatform;
+        List<Maroon.SceneCategory> categories = SceneManager.Instance.getSceneCategories(platformSceneType);
 
         // Create buttons based on categories
         for (int iCategories = 0; iCategories < categories.Count; iCategories++)
@@ -52,7 +53,7 @@ public class scrMenuColumnLaboratorySelection : MonoBehaviour
     private void SetCategoryAndOpenColumn(GameObject pressedButton, Maroon.SceneCategory category)
     {
         // Set category
-        Maroon.SceneManager.Instance.ActiveSceneCategory = category;
+        SceneManager.Instance.ActiveSceneCategory = category;
 
         // Load laboratory scene
         this.Menu.RemoveAllMenuColumnsButTwo();

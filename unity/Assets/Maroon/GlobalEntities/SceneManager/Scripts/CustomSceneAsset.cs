@@ -44,16 +44,16 @@ namespace Maroon
             get { return this.isVirtualRealityScene; }
         }
         
-        public Maroon.SceneType SceneType
+        public SceneType SceneType
         {
-            get { if(this.isVirtualRealityScene){return Maroon.SceneType.VR;} return Maroon.SceneType.Standard; }
+            get { if(this.isVirtualRealityScene){return SceneType.VR;} return SceneType.Standard; }
         }
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Operators
 
         // Make it work with the existing Unity methods (LoadLevel/LoadScene)
-        public static implicit operator string(Maroon.CustomSceneAsset customSceneAsset)
+        public static implicit operator string(CustomSceneAsset customSceneAsset)
         {
             return customSceneAsset.ScenePath;
         }
@@ -62,7 +62,7 @@ namespace Maroon
     // #################################################################################################################
     // Custom Scene Asset Property Drawer
     #if UNITY_EDITOR
-    [CustomPropertyDrawer(typeof(Maroon.CustomSceneAsset))] class CustomSceneAssetPropertyDrawer : PropertyDrawer
+    [CustomPropertyDrawer(typeof(CustomSceneAsset))] class CustomSceneAssetPropertyDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {

@@ -33,7 +33,8 @@ namespace Maroon.Lighting
 
                 foreach (var obj in ignoreForLightBaking)
                 {
-                    obj.SetActive(true);
+                    if(obj)
+                        obj.SetActive(true);
                 }
             };
 #endif

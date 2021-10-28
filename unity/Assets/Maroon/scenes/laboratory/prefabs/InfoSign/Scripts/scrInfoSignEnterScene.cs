@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using VRTK;
+using Maroon.GlobalEntities;
 using Util;
 
 public class scrInfoSignEnterScene : MonoBehaviour
@@ -25,14 +22,14 @@ public class scrInfoSignEnterScene : MonoBehaviour
     public void EnterScene()
     {
         Debug.Log("Enter Scene : " + this.targetScene);
-        Maroon.SceneManager.Instance.LoadSceneRequest(this.targetScene);
+        Maroon.GlobalEntities.SceneManager.Instance.LoadSceneRequest(this.targetScene);
     }
 
     // Start is called before the first frame update
     void Awake()
     {
         // Detect Scene type
-        if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
+        if(Maroon.GlobalEntities.PlatformManager.Instance.CurrentPlatformIsVR)
         {
             this.targetScene = targetLabSceneVR;
         }
@@ -40,26 +37,12 @@ public class scrInfoSignEnterScene : MonoBehaviour
         {
             this.targetScene = targetLabScenePC;
         }
-        
-        // // Prepare scene for VR entering
-        // if(Maroon.PlatformManager.Instance.CurrentPlatformIsVR)
-        // {
-        //     // Highlighter
-        //     var highlighter = this.gameObject.AddComponent<VRTK_InteractObjectHighlighter>();
-        //     highlighter.touchHighlight = this.highlightColor;
-        //     highlighter.objectToHighlight = this.highlightMesh;
-        //
-        //     // Interactable Object
-        //     var interactableObject = this.gameObject.AddComponent<VRTK_InteractableObject>();
-        //     interactableObject.isUsable = true;
-        //     interactableObject.InteractableObjectUsed += (sender, e) => this.EnterScene();
-        // }
     }
-
+    
     // PC enter scene
     private void OnTriggerStay(Collider other)
     {
-        if(!(Maroon.PlatformManager.Instance.CurrentPlatformIsVR))
+        if(!(PlatformManager.Instance.CurrentPlatformIsVR))
         {
             if (!PlayerUtil.IsPlayer(other.gameObject))
                 return;

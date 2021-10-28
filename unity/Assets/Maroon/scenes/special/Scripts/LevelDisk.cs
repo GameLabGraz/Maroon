@@ -1,5 +1,5 @@
-﻿using TMPro;
-using UnityEngine;
+﻿using UnityEngine;
+using Maroon.GlobalEntities;
 
 public class LevelDisk : Disk
 {
@@ -40,8 +40,8 @@ public class LevelDisk : Disk
         
         if (isLabScene)
         {
-            Maroon.SceneManager.Instance.SetActiveSceneCategory(category.Name); //otherwise we have (thanks to c#) not the same pointer
+            Maroon.GlobalEntities.SceneManager.Instance.SetActiveSceneCategory(category.Name); //otherwise we have (thanks to c#) not the same pointer
         } 
-        Maroon.SceneManager.Instance.LoadSceneRequest(experimentScene);
+        Maroon.GlobalEntities.SceneManager.Instance.LoadSceneRequest(experimentScene);
     }
 }

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using GEAR.Localization.Text;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
+using Maroon.GlobalEntities;
 
 public class LevelAutomat : MonoBehaviour
 {
@@ -178,7 +176,7 @@ public class LevelAutomat : MonoBehaviour
         var disk = generalDisk.GetComponent<LevelDisk>();
         Debug.Assert(disk);
 
-        disk.SetupLaboratory(category, Maroon.PlatformManager.Instance.CurrentPlatformIsVR ? targetLabSceneVR : targetLabScenePC);
+        disk.SetupLaboratory(category, Maroon.GlobalEntities.PlatformManager.Instance.CurrentPlatformIsVR ? targetLabSceneVR : targetLabScenePC);
         disk.Setup(generalLabMaterial, GetMaterialForCategory(category.Name, true),
             category.Name + " Lab");
 
@@ -194,8 +192,8 @@ public class LevelAutomat : MonoBehaviour
 
     public void FillAutomat()
     {
-        var platformSceneType = Maroon.PlatformManager.Instance.SceneTypeBasedOnPlatform;
-        var categories = Maroon.SceneManager.Instance.getSceneCategories(platformSceneType);
+        var platformSceneType = Maroon.GlobalEntities.PlatformManager.Instance.SceneTypeBasedOnPlatform;
+        var categories = Maroon.GlobalEntities.SceneManager.Instance.getSceneCategories(platformSceneType);
         // var categories = Maroon.SceneManager.Instance.getSceneCategories(SceneType.Standard);
 
         int currentTransform = 0;

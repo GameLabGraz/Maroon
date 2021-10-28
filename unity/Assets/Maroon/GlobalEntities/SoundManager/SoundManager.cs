@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 
-namespace Maroon
+namespace Maroon.GlobalEntities
 {
     /// <summary>
     ///     Handles tasks related to sound in Maroon. It keeps settings about audio levels, can play audio effects that
     ///     are common in Maroon (e.g. alerts or clicks) and plays background music.
     /// </summary>
-    public class SoundManager : MonoBehaviour
+    public class SoundManager : MonoBehaviour, GlobalEntity
     {
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Fields
@@ -63,13 +63,8 @@ namespace Maroon
         /// <summary>
         ///     The GameManager instance
         /// </summary>
-        public static SoundManager Instance
-        {
-            get
-            {
-                return SoundManager._instance;
-            }
-        }
+        public static SoundManager Instance => SoundManager._instance;
+        MonoBehaviour GlobalEntity.Instance => Instance;
 
         // -------------------------------------------------------------------------------------------------------------
         // Volume
@@ -80,7 +75,10 @@ namespace Maroon
         public float MusicVolume
         {
             get { return _musicSource ? _musicSource.volume : 0f; }
-            set { _musicSource.volume = Mathf.Clamp(value, 0f, 1f); }
+            set { 
+                if(_musicSource)
+                    _musicSource.volume = Mathf.Clamp(value, 0f, 1f); 
+            }
         }
 
         /// <summary>
@@ -89,7 +87,11 @@ namespace Maroon
         public float SoundEffectVolume
         {
             get { return _soundEffectSource ? _soundEffectSource.volume : 0f; }
-            set { _soundEffectSource.volume = Mathf.Clamp(value, 0f, 1f); }
+            set
+            {
+                if(_soundEffectSource)
+                    _soundEffectSource.volume = Mathf.Clamp(value, 0f, 1f);
+            }
         }
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

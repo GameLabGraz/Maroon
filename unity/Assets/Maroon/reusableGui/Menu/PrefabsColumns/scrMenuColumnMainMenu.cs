@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+using Maroon.GlobalEntities;
 using UnityEngine;
 using UnityEngine.UI;
-using Valve.VR.InteractionSystem;
 
 public class scrMenuColumnMainMenu : MonoBehaviour
 {
@@ -46,7 +44,7 @@ public class scrMenuColumnMainMenu : MonoBehaviour
         this.Menu = FindObjectOfType<scrMenu>();
 
         // Hide exit button on WebGL
-        if(Maroon.PlatformManager.Instance.CurrentPlatform == Maroon.Platform.WebGL)
+        if(PlatformManager.Instance.CurrentPlatform == Platform.WebGL)
         {
             this.ButtonExit.SetActive(false);
         }

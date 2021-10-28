@@ -2,57 +2,43 @@
 // Coil.cs
 //
 // Class for a live coil.
-// Is also a electro magnetic object.  
-//
-//
-// Authors: Michael Stefan Holly
-//          Michael Schiller
-//          Christopher Schinnerl
+// Is also a electromagnetic object.  
 //-----------------------------------------------------------------------------
 //
 
+using System;
 using UnityEngine;
 
 /// <summary>
 /// Class for a live coil.
-/// Is also a electro magnetic object. 
+/// Is also a electromagnetic object. 
 /// </summary>
 public class Coil : EMObject, IResetObject
 {
     /// <summary>
     /// The magnetic field
     /// </summary>
-    public BField field;
+    [SerializeField] private BField field;
 
     /// <summary>
-    /// The electrical current in the conductor
+    /// The coil diameter
     /// </summary>
-    public float current = 0.0f;
-
-    /// <summary>
-    /// The coild diameter
-    /// </summary>
-    public float diameter = 5f;
-
-    /// <summary>
-    /// The length of the coil
-    /// </summary>
-    public float length = 0.75f;
+    [SerializeField] private float diameter = 0.33f;
 
     /// <summary>
     /// The electrical resistance of the coil
     /// </summary>
-    public float resistance = 250;
+    [SerializeField] private float resistance = 33f;
 
     /// <summary>
     /// The number of turns
     /// </summary>
-    public int number_of_turns = 6;
+    [SerializeField] private int numberOfTurns = 6;
 
     /// <summary>
-    /// The start flux for reseting
+    /// The start flux for resetting
     /// </summary>
-    private float start_flux;
+    private float _startFlux;
 
     /// <summary>
     /// The current flux
@@ -62,7 +48,29 @@ public class Coil : EMObject, IResetObject
     /// <summary>
     /// The resistance factor
     /// </summary>
-    private float resistance_factor = 0;
+    private float _resistanceFactor = 0;
+
+    /// <summary>
+    /// The electrical current in the conductor
+    /// </summary>
+    private float _current = 0.0f;
+
+    /// <summary>
+    /// The length of the coil
+    /// </summary>
+    private float Length => diameter * Mathf.PI * numberOfTurns;
+
+    public float Current
+    {
+        set => _current = value;
+        get => _current;
+    }
+
+    public float ResistanceFactor
+    {
+        set => _resistanceFactor = value;
+        get => _resistanceFactor;
+    }
 
     /// <summary>
     /// Initialization
@@ -71,8 +79,8 @@ public class Coil : EMObject, IResetObject
     {
         base.Start();
 
-        flux = getMagneticFluxInCoil();
-        start_flux = flux;
+        flux = GetMagneticFluxInCoil();
+        _startFlux = flux;
     }
 
     /// <summary>
@@ -84,68 +92,27 @@ public class Coil : EMObject, IResetObject
     }
 
     /// <summary>
-    /// This function is called every fixed framerate frame and calculates induction and the field strength.
+    /// This function is called every fixed frame rate frame and calculates induction and the field strength.
     /// Also adds the force to the rigidbody if force effects are active.
     /// </summary>
     protected override void HandleFixedUpdate()
     {
-        calculateInduction();
-        field_strength = (current * number_of_turns) / Mathf.Sqrt(length * length + diameter * diameter);
+        CalculateInduction();
 
-        if (force_active)
-        {
-            GetComponent<Rigidbody>().AddForce(getExternalForce() * transform.up);
-        }
+        FieldStrength = (Current * numberOfTurns) / Mathf.Sqrt(Length * Length + diameter * diameter);
 
-    }
-
-    /// <summary>
-    /// Sets the current
-    /// </summary>
-    /// <param name="current">The current value</param>
-    public void setCurrent(float current)
-    {
-        this.current = current;
-    }
-
-    /// <summary>
-    /// Gets the current
-    /// </summary>
-    /// <returns></returns>
-    public float getCurrent()
-    {
-        return this.current;
-    }
-
-    public void getCurrentByReference(MessageArgs args)
-    {
-        args.value = this.current;
-    }
-
-    /// <summary>
-    /// Sets the risistance factor.
-    /// User can sets the risistance factor by a slider.
-    /// </summary>
-    /// <param name="resistance_factor">The silder to get selected value from user</param>
-    public void setResistanceFactor(float resistance_factor)
-    {
-        this.resistance_factor = resistance_factor;
-    }
-
-    public float GetResistanceFactor()
-    {
-        return resistance_factor;
+        if (forceActive)
+            _rigidBody.AddForce(GetExternalForce() * transform.up);
     }
 
     /// <summary>
     /// Gets the magnetic flux in the coil.
     /// </summary>
-    /// <returns>The magnetix flux</returns>
-    private float getMagneticFluxInCoil()
+    /// <returns>The magnetic flux</returns>
+    private float GetMagneticFluxInCoil()
     {
-        float field = getExternalField();
-        float flux = field * (diameter / 2.0f) * (diameter / 2.0f) * Mathf.PI;
-        return flux;
+        return  GetExternalField() * 
+                (diameter / 2.0f) * (diameter / 2.0f) * Mathf.PI;
     }
 
     /// <summary>
@@ -153,38 +120,34 @@ public class Coil : EMObject, IResetObject
     /// This is just a approximation for the B field in the coil.
     /// </summary>
     /// <returns>The external field in the coil</returns>
-    private float getExternalField()
+    private float GetExternalField()
     {
         if (field == null)
             return 0.0f;
-        else
-        {
-            float B = field.get(transform.position + new Vector3(0, 0, diameter / 2f), gameObject).magnitude * (diameter / 2f) * (diameter / 2f) * Mathf.PI;
-            return B;
-        }
+
+        return field.get(transform.position + new Vector3(0, 0, diameter / 2f), gameObject).magnitude * (diameter / 2f) * (diameter / 2f) * Mathf.PI;
     }
 
     /// <summary>
     /// Gets the external force which affects the coil.
     /// </summary>
     /// <returns>The external force</returns>
-    public float getExternalForce()
+    public float GetExternalForce()
     {
-        float F = -2 * Mathf.PI * (diameter / 2.0f) * number_of_turns * current * getExternalField();
-        return F;
+        return -2 * Mathf.PI * (diameter / 2.0f) * numberOfTurns * _current * GetExternalField();
     }
 
     /// <summary>
     /// Calculates the induction by the flux change.
     /// </summary>
-    private void calculateInduction()
+    private void CalculateInduction()
     {
-        float new_flux = getMagneticFluxInCoil();
-        float delta_flux = new_flux - flux;
-        float voltage = (number_of_turns * -delta_flux) / Time.fixedDeltaTime;
+        var newFlux = GetMagneticFluxInCoil();
+        var deltaFlux = newFlux - flux;
+        var voltage = (numberOfTurns * -deltaFlux) / Time.fixedDeltaTime;
 
-        current += voltage / (resistance + resistance * resistance_factor);
-        flux = new_flux;
+        _current += voltage / (resistance + resistance * _resistanceFactor);
+        flux = newFlux;
     }
 
     /// <summary>
@@ -192,15 +155,15 @@ public class Coil : EMObject, IResetObject
     /// </summary>
     public override void ResetObject()
     {
-        if (_rigidbody)
+        if (_rigidBody)
         {
-            _rigidbody.velocity = Vector3.zero;
-            _rigidbody.angularVelocity = Vector3.zero;
+            _rigidBody.velocity = Vector3.zero;
+            _rigidBody.angularVelocity = Vector3.zero;
         }
         transform.position = startPos;
         transform.rotation = startRot;
-        current = 0.0f;
-        field_strength = 0.0f;
-        flux = start_flux;
+        _current = 0.0f;
+        fieldStrength = 0.0f;
+        flux = _startFlux;
     }
 }

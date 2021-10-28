@@ -2,12 +2,7 @@
 // Magnet.cs
 //
 // Class for a permanent magnet.
-// Is also a electro magnetic object.  
-//
-//
-// Authors: Michael Stefan Holly
-//          Michael Schiller
-//          Christopher Schinnerl
+// Is also a electromagnetic object.  
 //-----------------------------------------------------------------------------
 //
 
@@ -15,7 +10,7 @@ using UnityEngine;
 
 /// <summary>
 /// Class for a permanent magnet.
-/// Is also a electro magnetic object.  
+/// Is also a electromagnetic object.  
 /// </summary>
 public class Magnet : EMObject
 {
@@ -23,10 +18,10 @@ public class Magnet : EMObject
     /// Sets the field strength factor.
     /// User can sets the strength factor by a slider.
     /// </summary>
-    /// <param name="field_strength">The silder to get selected value from user</param>
-    public void setFieldStrength(float field_strength)
+    /// <param name="fieldStrength">The field strength to be set</param>
+    public void SetFieldStrength(float fieldStrength)
     {
-        this.field_strength = field_strength;
+        FieldStrength = fieldStrength;
     }
 
     /// <summary>
@@ -50,15 +45,15 @@ public class Magnet : EMObject
     /// </summary>
     protected override void HandleFixedUpdate()
     {
-        if (force_active)
+        if (forceActive)
         {
-            GetComponent<Rigidbody>().AddForce(getExternalForce()); 
+            GetComponent<Rigidbody>().AddForce(GetExternalForce()); 
         }
     }
 
-    public Vector3 getExternalForce()
+    public Vector3 GetExternalForce()
     {
-        return GameObject.Find("Coil").GetComponent<Coil>().getExternalForce() * transform.up; //hack to get force from coil
+        return GameObject.Find("Coil").GetComponent<Coil>().GetExternalForce() * transform.up; //hack to get force from coil
     }
 
     protected override void HandleUpdate()

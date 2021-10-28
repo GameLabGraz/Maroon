@@ -43,7 +43,7 @@ public class FieldLineManager : MonoBehaviour
             var parent = sensedTag.transform.parent.gameObject;
             AddFieldLine(parent.GetComponent<FieldLine>());
         }
-        // Debug.Log("FieldLines: " + sensedObjects.Length);
+        DrawFieldLines();
     }
 
     private void Update()
@@ -116,10 +116,11 @@ public class FieldLineManager : MonoBehaviour
     /// </summary>
     public void LateUpdate()
     {
-        if (++updateCount % updateRate != 0)
+        if (SimulationController.Instance == null || !SimulationController.Instance.SimulationRunning)
             return;
 
-        DrawFieldLines();
+        if (++updateCount % updateRate == 0)
+            DrawFieldLines();
     }
 
     protected virtual void DrawFieldLines()
