@@ -10,7 +10,7 @@ public class LevelChooser : MonoBehaviour
     [SerializeField]
     private GameObject button;
     
-    private LevelDisk _currentDisk = null;
+    private Disk _currentDisk = null;
     
     // Start is called before the first frame update
     void Start()
@@ -25,26 +25,42 @@ public class LevelChooser : MonoBehaviour
 
     public void OnDiskSnapped(VRSnapDropZone zone, GameObject newObject)
     {
-        _currentDisk = newObject.GetComponent<LevelDisk>();
-        Debug.Assert(_currentDisk);
-        button.SetActive(_currentDisk != null);
+        _currentDisk = newObject.GetComponent<Disk>();
+        if (!_currentDisk) return;
+        
+        if (_currentDisk.GetActivateSnapObject())
+        {
+            _currentDisk.GetActivateSnapObject().SetActive(true);
+        }
+
+        var levelDisk = _currentDisk as LevelDisk;
+        if (levelDisk && levelDisk.HasScene())
+        {
+            button.SetActive(true);
+        }
     }
     
     public void OnDiskUnsnapped(VRSnapDropZone zone, GameObject newObject)
     {
-        var tmp = newObject.GetComponent<LevelDisk>();
-        if (tmp == _currentDisk)
+        var disk = newObject.GetComponent<Disk>();
+        if (disk != _currentDisk) return;
+        
+        if (disk.GetActivateSnapObject())
         {
-            _currentDisk = null;
-            button.SetActive(true);
+            disk.GetActivateSnapObject().SetActive(false);
         }
+            
+        _currentDisk = null;
+        button.SetActive(false);
     }
 
     public void LoadCurrentLevel()
     {
-        Debug.Log("Load Current Level");
-        Debug.Assert(_currentDisk && _currentDisk.HasScene());
-        _currentDisk.GoToScene();
+        var levelDisk = _currentDisk as LevelDisk;
+        if (levelDisk && levelDisk.HasScene())
+        {
+            levelDisk.GoToScene();
+        }
     }
     
 }

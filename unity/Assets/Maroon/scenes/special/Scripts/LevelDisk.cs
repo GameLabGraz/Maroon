@@ -1,21 +1,12 @@
 ﻿using TMPro;
 using UnityEngine;
 
-public class LevelDisk : MonoBehaviour
+public class LevelDisk : Disk
 {
     [Header("Loading Settings")]
     [SerializeField] private bool isLabScene = false;
     [SerializeField] private Maroon.CustomSceneAsset experimentScene;
     [SerializeField] private Maroon.SceneCategory category;
-
-    [Header("Design Settings")]
-    [SerializeField] private GameObject innerModel;
-    [SerializeField] private TextMeshPro nameField;
-    
-    protected void Start()
-    {
-
-    }
 
     public void SetupLaboratory(Maroon.SceneCategory cat, Maroon.CustomSceneAsset scene)
     {
@@ -52,23 +43,5 @@ public class LevelDisk : MonoBehaviour
             Maroon.SceneManager.Instance.SetActiveSceneCategory(category.Name); //otherwise we have (thanks to c#) not the same pointer
         } 
         Maroon.SceneManager.Instance.LoadSceneRequest(experimentScene);
-    }
-
-    public void Setup(Material outsideMaterial, Material highlightImageMaterial, string displayName)
-    {
-        if (!innerModel)
-            return;
-
-        var rend = innerModel.GetComponent<Renderer>();
-        if(!rend)
-            return;
-        
-        Debug.Assert(rend.materials.Length == 2);
-        var materials = rend.materials;
-        materials[0] = outsideMaterial;
-        materials[1] = highlightImageMaterial;
-        rend.materials = materials;
-
-        nameField.text = displayName;
     }
 }

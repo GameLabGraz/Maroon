@@ -28,10 +28,11 @@ public class LevelAutomat : MonoBehaviour
     [SerializeField] private Maroon.CustomSceneAsset targetLabScenePC;
     [SerializeField] private Maroon.CustomSceneAsset targetLabSceneVR;
 
+    [SerializeField] private List<GameObject> AdditionalDisks;
+    
     [Header("Materials and Representation")] 
     [SerializeField] private Material generalLabMaterial;
     [SerializeField] private List<CategoryMaterial> categoryMaterials;
-
 
     [Header("Debug Variables")] 
     [SerializeField] private bool showNext = false;
@@ -244,6 +245,27 @@ public class LevelAutomat : MonoBehaviour
             }
         }
 
+        foreach (var disk in AdditionalDisks)
+        {
+            //add all the additional disks
+            disk.transform.position = defaultPositions[currentTransform].position;
+            disk.transform.rotation = Quaternion.identity;
+            disk.transform.parent = diskParent.transform;
+            
+            if(currentTransform == 0)
+                diskCollection.Add(currentPage, new List<GameObject>());
+            diskCollection[currentPage].Add(disk);
+            FreezeObject(disk);
+            disk.SetActive(currentPage == 0);
+
+            currentTransform++;
+            if (currentTransform >= 9)
+            {
+                currentTransform = 0;
+                currentPage++;
+            }
+        }
+        
         _pageCount = currentPage + 1;
     }
 
