@@ -21,14 +21,14 @@ public abstract class EMObject : PausableObject, IGenerateB, IResetObject
     /// <summary>
     /// The field strength factor
     /// </summary>
-    public float field_strength = 0;
+    [SerializeField] protected float fieldStrength = 0;
 
-    public FieldAxis fieldAxis = FieldAxis.Up;
-    
+    [SerializeField] protected FieldAxis fieldAxis = FieldAxis.Up;
+
     /// <summary>
     /// Activated acting forces on the object
     /// </summary>
-    public bool force_active = false;
+    [SerializeField] protected bool forceActive = false;
 
     /// <summary>
     /// The start position of the object for reseting
@@ -39,6 +39,12 @@ public abstract class EMObject : PausableObject, IGenerateB, IResetObject
     /// The start rotation of the object for reseting
     /// </summary>
     protected Quaternion startRot;
+
+    public float FieldStrength
+    {
+        set => fieldStrength = value;
+        get => fieldStrength;
+    }
 
     public bool Enabled
     {
@@ -79,18 +85,9 @@ public abstract class EMObject : PausableObject, IGenerateB, IResetObject
     /// Gets the dipole moment
     /// </summary>
     /// <returns>The dipole moment</returns>
-    private Vector3 getDipoleMoment()
+    private Vector3 GetDipoleMoment()
     {
-        return FieldAlignment * field_strength;
-    }
-
-    /// <summary>
-    /// Gets the field strength factor
-    /// </summary>
-    /// <returns>The field strength</returns>
-    public float getFieldStrength()
-    {
-        return this.field_strength;
+        return FieldAlignment * fieldStrength;
     }
 
     /// <summary>
@@ -98,10 +95,10 @@ public abstract class EMObject : PausableObject, IGenerateB, IResetObject
     /// </summary>
     /// <param name="position">The required position</param>
     /// <returns>The magnetic field vector at the position</returns>
-    public Vector3 getB(Vector3 position)
+    public Vector3 GetB(Vector3 position)
     {
         var n = position - transform.position;
-        var m = getDipoleMoment();
+        var m = GetDipoleMoment();
         var r = n.magnitude; //length
 
         n.Normalize();
@@ -117,6 +114,11 @@ public abstract class EMObject : PausableObject, IGenerateB, IResetObject
                             PhysicalConstants.erVacuumOver4Pi,
                             PhysicalConstants.erVacuumOver4Pi));
         return B;
+    }
+
+    public float GetFieldStrength()
+    {
+        return FieldStrength;
     }
 
     /// <summary>

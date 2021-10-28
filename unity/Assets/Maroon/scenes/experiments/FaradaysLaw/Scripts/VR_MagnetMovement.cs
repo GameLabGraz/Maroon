@@ -41,7 +41,7 @@ namespace PlatformControls.VR
         {
             while (IsMoving)
             {
-                var hapticPulseStrength = _magnet.getExternalForce().magnitude / 10;
+                var hapticPulseStrength = _magnet.GetExternalForce().magnitude / 10;
 
                 VRTK_ControllerHaptics.TriggerHapticPulse(
                     VRTK_ControllerReference.GetControllerReference(_grabbingObject),

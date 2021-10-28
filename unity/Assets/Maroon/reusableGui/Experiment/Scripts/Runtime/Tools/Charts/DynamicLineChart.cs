@@ -26,6 +26,7 @@ namespace Maroon.UI.Charts
 
             if (Chart.series.GetSerie(0).GetDataList().Count > _maxValueCount)
             {
+                _time--;
                 Chart.xAxis0.min = Chart.xAxis0.max;
                 Chart.xAxis0.max += _maxValueCount;
                 Serie0.ClearData();

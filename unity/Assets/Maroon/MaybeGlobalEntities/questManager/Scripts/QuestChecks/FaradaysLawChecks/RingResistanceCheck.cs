@@ -12,12 +12,12 @@ namespace QuestManager
             _coil = FindObjectOfType<Coil>();
             if (_coil == null) throw new NullReferenceException("There is no coil in the scene.");
 
-            _initResistancefactor = _coil.GetResistanceFactor();
+            _initResistancefactor = _coil.ResistanceFactor;
         }
 
         protected override bool CheckCompliance()
         {
-            return Math.Abs(_initResistancefactor - _coil.GetResistanceFactor()) > 0.1f;
+            return Math.Abs(_initResistancefactor - _coil.ResistanceFactor) > 0.1f;
         }
     }
 }
