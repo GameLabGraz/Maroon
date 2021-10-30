@@ -36,6 +36,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private bool _desorbMoveActive;
 
         private bool _isDrawnByPlat;
+        private bool _isDrawnByCO;
         private float _currenTimeDrawn = 0.0f;
         private Vector3 _drawingMoleculePosition;
 
@@ -54,13 +55,16 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         public Molecule ConnectedMolecule { get => _connectedMolecule; set => _connectedMolecule = value; }
         
         public bool IsDrawnByPlat { get; set; }
+        public bool IsDrawnByCO { get; set; }
 
         public Action<Molecule> OnDissociate;
+        public Action<Molecule, Molecule> OnCO2Created;
 
 
-        public void SetMoleculeDrawn(Molecule drawingMolecule)
+        public void SetMoleculeDrawn(Molecule drawingMolecule, bool drawnByPlat = false, bool drawnByCO = false)
         {
-            _isDrawnByPlat = true;
+            _isDrawnByPlat = drawnByPlat;
+            _isDrawnByCO = drawnByCO;
             _drawingMoleculePosition = drawingMolecule.transform.position;
             _connectedMolecule = drawingMolecule;
         }
@@ -78,8 +82,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         protected override void HandleFixedUpdate()
         {
-            if (isFixedMolecule && _connectedMolecule == null) return;
-            if (isFixedMolecule && _connectedMolecule != null && !_desorbMoveActive)
+            if (isFixedMolecule && _connectedMolecule == null && !_isDrawnByCO) return;
+            if (isFixedMolecule && _connectedMolecule != null && _connectedMolecule.Type == MoleculeType.Pt && !_desorbMoveActive)
             {
                 if (Type == MoleculeType.CO && _connectedMolecule.Type == MoleculeType.Pt)
                 {
@@ -105,11 +109,11 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             {
                 HandleCODesorbMovement();
             }
-            else if (_isDrawnByPlat)
+            else if (_isDrawnByPlat || _isDrawnByCO)
             {
                 HandleDrawnToMoleculeMovement();
             }
-            else
+            else if (!isFixedMolecule)
             {
                 HandleRandomMovement();
             }
@@ -161,7 +165,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             }
             else
             {
-                HandleO2TouchingPlat();
+                if (_isDrawnByPlat)
+                    HandleO2TouchingPlat();
+                else if (_isDrawnByCO)
+                    HandleOTouchingCO();
             }
         }
         
@@ -191,6 +198,12 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             StartCoroutine(DissociateO2());
         }
 
+        private void HandleOTouchingCO()
+        {
+            _isDrawnByCO = false;
+            OnCO2Created?.Invoke(this, _connectedMolecule);
+        }
+
         private void GetRandomPositionAndRotation()
         {
             _newRandomPosition = transform.position + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(0.05f, -0.2f), Random.Range(-0.2f, 0.2f));
@@ -199,21 +212,34 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         public void ActivateDrawingCollider(bool activate)
         {
-            if (type != MoleculeType.Pt) return;
+            if (type != MoleculeType.Pt && type != MoleculeType.O) return;
 
             collider.enabled = activate;
         }
 
         private void OnTriggerEnter(Collider other)
         {
+            if (_isDrawnByPlat || _isDrawnByCO) return;
             if (type == MoleculeType.Pt && _connectedMolecule == null)
             {
                 Molecule otherMolecule = other.gameObject.GetComponent<Molecule>();
                 if (otherMolecule != null && otherMolecule.Type == MoleculeType.O2 && otherMolecule.ConnectedMolecule == null)
                 {
                     _connectedMolecule = otherMolecule;
-                    otherMolecule.SetMoleculeDrawn(this);
+                    otherMolecule.SetMoleculeDrawn(this, true, false);
                     ActivateDrawingCollider(false);
+                }
+            }
+            else if (type == MoleculeType.O && _connectedMolecule == null)
+            {
+                Molecule otherMolecule = other.gameObject.GetComponent<Molecule>();
+                if (otherMolecule != null && otherMolecule.Type == MoleculeType.CO && // todo find cause of possible nullref exception
+                    otherMolecule.isFixedMolecule && otherMolecule.ConnectedMolecule.Type == MoleculeType.Pt)
+                {
+                    SetMoleculeDrawn(otherMolecule, false, true);
+                    otherMolecule.ConnectedMolecule = this;
+                    ActivateDrawingCollider(false);
+                    otherMolecule.ActivateDrawingCollider(false);
                 }
             }
         }
@@ -228,6 +254,13 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 && _connectedMolecule.Type == MoleculeType.Pt)
             {
                 HandleO2TouchingPlat();
+            }
+            if (type == MoleculeType.O 
+                && _connectedMolecule != null
+                && other.gameObject.GetComponent<Molecule>().Type == MoleculeType.CO
+                && _connectedMolecule.Type == MoleculeType.Pt)
+            {
+                HandleOTouchingCO();
             }
         }
     }
