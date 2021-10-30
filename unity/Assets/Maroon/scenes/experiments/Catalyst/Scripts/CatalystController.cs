@@ -16,9 +16,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         [SerializeField] CatalystSurface catalystSurfacePrefab;
         [SerializeField] Transform catalystSurfaceSpawnTransform;
 
+        [SerializeField] Molecule oMoleculePrefab;
         [SerializeField] Molecule o2MoleculePrefab;
         [SerializeField] Molecule coMoleculePrefab;
-        [SerializeField] Molecule oMoleculePrefab;
+        [SerializeField] Molecule co2MoleculePrefab;
         [SerializeField] int numSpawnedMolecules;
 
         [Header("Player specific objects")]
@@ -91,6 +92,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         private void DissociateO2(Molecule o2Molecule)
         {
+            o2Molecule.OnDissociate -= DissociateO2;
             _activeMolecules.Remove(o2Molecule);
             Transform parentTransform = o2Molecule.transform.parent;
             Vector3 o2Position = o2Molecule.transform.position;
@@ -102,13 +104,35 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 Instantiate(oMoleculePrefab, parentTransform)
             };
 
+            bool alternate = false;
             foreach (Molecule molecule in oMolecules)
             {
-                // todo adjust position
+                molecule.OnCO2Created += CreateCO2;
                 molecule.IsFixedMolecule = true;
-                molecule.transform.position = o2Position;
+                molecule.gameObject.transform.position = new Vector3(alternate ? o2Position.x + PlatinumScale / 4.0f : o2Position.x - PlatinumScale / 4.0f, o2Position.y - 0.04f, o2Position.z);
                 _activeMolecules.Add(molecule);
+                alternate = !alternate;
             }
+        }
+
+        private void CreateCO2(Molecule oMolecule, Molecule coMolecule)
+        {
+            oMolecule.OnCO2Created -= CreateCO2;
+            _activeMolecules.Remove(oMolecule);
+            _activeMolecules.Remove(coMolecule);
+            Transform parentTransform = coMolecule.gameObject.transform.parent;
+            Vector3 coPosition = coMolecule.gameObject.transform.position;
+            
+            coMolecule.ConnectedMolecule.ActivateDrawingCollider(true);
+            coMolecule.ConnectedMolecule = null;
+            
+            Destroy(oMolecule.gameObject);
+            Destroy(coMolecule.gameObject);
+
+            Molecule co2Molecule = Instantiate(co2MoleculePrefab, parentTransform);
+            co2Molecule.gameObject.transform.position = coPosition;
+            _activeMolecules.Add(co2Molecule);
+            
         }
     }
 }
