@@ -38,6 +38,7 @@ public class SecondScreenPositionUpdater : MonoBehaviour
         {
             Debug.Log("[SecondScreenPositionUpdater] SecondScreenPositionTracker not found");
             Invoke("LinkSecondScreenPositionTracker", this._reconnectDelay);
+            return;
         }
 
         // If found, set connection
