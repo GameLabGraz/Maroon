@@ -109,7 +109,7 @@ public class ParameterUI : PausableObject, IResetObject
         _functions.Add("tan", "Tan");
         _functions.Add("truncate", "Truncate");
 
-        DisplayMessage("Welcome to the Throwing Balls Experiment. You can use the control buttons at the bottom to Start, Reset or Step through the " +
+        DisplayMessage("Welcome to the 3D Motion Simulation experiment. You can use the control buttons at the bottom to start, reset or step through the " +
             "calculation. Please press the reset button if you change any parameters beforehand.");
 
         _showInputPanelButton.interactable = false;
