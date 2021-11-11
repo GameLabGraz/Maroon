@@ -5,6 +5,7 @@
 //
 //-----------------------------------------------------------------------------
 
+using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -28,6 +29,7 @@ public class SimulationController : MonoBehaviour
     [SerializeField] private QuantityBool simulationRunning = false;
     [SerializeField] private QuantityBool simulationAllowed = true;
 
+    public UnityEvent onEnteredScene;
     public UnityEvent onStartRunning;
     public UnityEvent onStopRunning;
     
@@ -82,6 +84,11 @@ public class SimulationController : MonoBehaviour
         {
             Time.timeScale = 1;
         };
+    }
+
+    private void Start()
+    {
+        onEnteredScene.Invoke();
     }
 
     /// <summary>
@@ -185,6 +192,8 @@ public class SimulationController : MonoBehaviour
         simulationReset = true;
 
         OnReset?.Invoke();
+        Debug.Log("onReset: " + OnReset);
+        Debug.Log("Simulation reset");
 
         _inWholeResetMode = true;
     }

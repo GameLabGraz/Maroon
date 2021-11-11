@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using GEAR.Localization.Text;
+using TMPro;
 using UnityEngine;
 
 public class Disk : MonoBehaviour
@@ -6,11 +7,12 @@ public class Disk : MonoBehaviour
     [Header("Design Settings")]
     [SerializeField] protected GameObject innerModel;
     [SerializeField] protected TextMeshPro nameField;
+    [SerializeField] protected LocalizedTMP descriptionField;
 
     [SerializeField] protected GameObject activateSnapObject = null;
     
     // Start is called before the first frame update
-    public void Setup(Material outsideMaterial, Material highlightImageMaterial, string displayName = "")
+    public void Setup(Material outsideMaterial, Material highlightImageMaterial, string displayName = "", string descriptionKey = "")
     {
         if (!innerModel)
             return;
@@ -27,6 +29,12 @@ public class Disk : MonoBehaviour
 
         if(displayName != "")
             nameField.text = displayName;
+
+        if (descriptionKey != "")
+        {
+            descriptionField.Key = descriptionKey;
+            descriptionField.UpdateLocalizedText();
+        }
     }
 
     public GameObject GetActivateSnapObject()

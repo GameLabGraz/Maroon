@@ -13,6 +13,7 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 using System.Collections.Generic;
+using UnityEngine.Events;
 
 /// <summary>
 /// Class to create a field image with iron filing
@@ -66,6 +67,8 @@ public class scrIronFilings : MonoBehaviour, IResetObject
     [SerializeField]
     private float lineEndWidth = 0.004f;
 
+    [SerializeField] private UnityEvent onHideIronFilings;
+
     /// <summary>
     /// Initialization
     /// </summary>
@@ -98,6 +101,7 @@ public class scrIronFilings : MonoBehaviour, IResetObject
             linerenderers[i] = linerenderer;
         }
         gameObject.SetActive(false);
+        onHideIronFilings.Invoke();
     }
 
     /// <summary>
@@ -106,7 +110,10 @@ public class scrIronFilings : MonoBehaviour, IResetObject
     private void Update()
     {
         if (SimulationController.Instance.SimulationRunning)
+        {
             gameObject.SetActive(false);
+            onHideIronFilings.Invoke();
+        }
     }
 
     /// <summary>
@@ -144,6 +151,7 @@ public class scrIronFilings : MonoBehaviour, IResetObject
             if(child.name == "line")
                 child.gameObject.SetActive(false);
         }
+        onHideIronFilings.Invoke();
     }
 
     /// <summary>
@@ -184,5 +192,6 @@ public class scrIronFilings : MonoBehaviour, IResetObject
     public void ResetObject()
     {
         gameObject.SetActive(false);
+        onHideIronFilings.Invoke();
     }
 }

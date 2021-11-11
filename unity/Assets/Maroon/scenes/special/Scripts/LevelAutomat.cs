@@ -163,7 +163,8 @@ public class LevelAutomat : MonoBehaviour
         Debug.Assert(disk);
 
         disk.SetupExperiment(scene);
-        disk.Setup(mat, highlightMat, scene.SceneNameWithoutPlatformExtension);
+        disk.Setup(mat, highlightMat, scene.SceneNameWithoutPlatformExtension, 
+            "Description " + scene.SceneNameWithoutPlatformExtension);
 
         return sceneDisk;
     }
@@ -178,7 +179,7 @@ public class LevelAutomat : MonoBehaviour
 
         disk.SetupLaboratory(category, Maroon.GlobalEntities.PlatformManager.Instance.CurrentPlatformIsVR ? targetLabSceneVR : targetLabScenePC);
         disk.Setup(generalLabMaterial, GetMaterialForCategory(category.Name, true),
-            category.Name + " Lab");
+            category.Name + " Lab", "Description " + category.Name);
 
         return generalDisk;
     }
@@ -201,31 +202,29 @@ public class LevelAutomat : MonoBehaviour
 
         foreach (var cat in categories)
         {
-            //general disk for the whole e.g. 'physics lab'
-            var generalDisk = CreateGeneralDisk(cat, defaultPositions[currentTransform].position, currentPage);
-            if(currentTransform == 0)
-                diskCollection.Add(currentPage, new List<GameObject>());
-            diskCollection[currentPage].Add(generalDisk);
-            FreezeObject(generalDisk);
-            generalDisk.SetActive(currentPage == 0);
-
-            currentTransform++;
-            if (currentTransform >= 9)
+            if (cat.Scenes.Length > 1)
             {
-                currentTransform = 0;
-                currentPage++;
+                //general disk for the whole e.g. 'physics lab'
+                var generalDisk = CreateGeneralDisk(cat, defaultPositions[currentTransform].position, currentPage);
+                if (currentTransform == 0)
+                    diskCollection.Add(currentPage, new List<GameObject>());
+                diskCollection[currentPage].Add(generalDisk);
+                FreezeObject(generalDisk);
+                generalDisk.SetActive(currentPage == 0);
+
+                currentTransform++;
+                if (currentTransform >= 9)
+                {
+                    currentTransform = 0;
+                    currentPage++;
+                }
             }
 
             var categoryMat = GetMaterialForCategory(cat.Name);
             var categoryHighlightMat = GetMaterialForCategory(cat.Name, true);
 
-            int i = 0;
             foreach (var scene in cat.Scenes)
             {
-                ++i;
-                if (i == 5)
-                    break;
-                
                 var sceneDisk = CreateSceneDisk(scene, defaultPositions[currentTransform].position, currentPage,
                     categoryMat, categoryHighlightMat);
                 if(currentTransform == 0)
