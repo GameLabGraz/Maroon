@@ -22,11 +22,11 @@ public class ScreenSetup : MonoBehaviour
         float pixelHeight = localScale.y;
         float pixelWidth = localScale.z;
         
-        for (float y = screenPosition.y - screenScale.y / 2; 
+        for (float y = screenPosition.y - screenScale.y / 2 + pixelHeight / 2; 
             y <= screenPosition.y + screenScale.y / 2; 
             y += pixelHeight)
         {
-            for (float z = screenPosition.z - screenScale.z / 2;
+            for (float z = screenPosition.z - screenScale.z / 2 + pixelWidth / 2;
                 z <= screenPosition.z + screenScale.z / 2;
                 z += pixelWidth)
             {
