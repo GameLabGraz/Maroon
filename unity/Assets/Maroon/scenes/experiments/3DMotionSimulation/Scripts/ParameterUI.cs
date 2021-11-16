@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using Maroon.UI;
 using ObjectsInUse;
+using GEAR.Localization;
 
 namespace ObjectsInUse
 {
@@ -109,8 +110,8 @@ public class ParameterUI : PausableObject, IResetObject
         _functions.Add("tan", "Tan");
         _functions.Add("truncate", "Truncate");
 
-        DisplayMessage("Welcome to the 3D Motion Simulation experiment. You can use the control buttons at the bottom to start, reset or step through the " +
-            "calculation. Please press the reset button if you change any parameters beforehand.");
+        string message = LanguageManager.Instance.GetString("welcome");
+        DisplayMessage(message);
 
         _showInputPanelButton.interactable = false;
         _showDataVisualizationButton.interactable = false;
@@ -134,27 +135,27 @@ public class ParameterUI : PausableObject, IResetObject
             _parameters.SetActive(true);
             _initialConditions.SetActive(true);
             _showInputPanelButton.interactable = true;
-            _inputPanelButtonText.text = "Hide Input Field";
+            _inputPanelButtonText.text = LanguageManager.Instance.GetString("HideInputField");
         }
         else
         {
             _parameters.SetActive(false);
             _initialConditions.SetActive(false);
             _showInputPanelButton.interactable = true;
-            _inputPanelButtonText.text = "Show Input Field";
+            _inputPanelButtonText.text = LanguageManager.Instance.GetString("ShowInputField");
         }
 
         if (_showDataPanel)
         {
             _dataVisualization.SetActive(true);
             _showDataVisualizationButton.interactable = true;
-            _dataVisualizationButtonText.text = "Hide Data Visualization";
+            _dataVisualizationButtonText.text = LanguageManager.Instance.GetString("HideDataVisu");
         }
         else
         {
             _dataVisualization.SetActive(false);
             _showDataVisualizationButton.interactable = true;
-            _dataVisualizationButtonText.text = "Show Data Visualization";
+            _dataVisualizationButtonText.text = LanguageManager.Instance.GetString("ShowDataVisu");
         }
     }
 
@@ -556,8 +557,8 @@ public class ParameterUI : PausableObject, IResetObject
         _showDataPanel = false;
         _showInputPanelButton.interactable = false;
         _showDataVisualizationButton.interactable = false;
-        _inputPanelButtonText.text = "Show Input Field";
-        _dataVisualizationButtonText.text = "Show Data Visualization";
+        _inputPanelButtonText.text = LanguageManager.Instance.GetString("ShowInputField");
+        _dataVisualizationButtonText.text = LanguageManager.Instance.GetString("ShowDataVisu");
         _parameters.SetActive(true);
         _initialConditions.SetActive(true);
         _dataVisualization.SetActive(true);

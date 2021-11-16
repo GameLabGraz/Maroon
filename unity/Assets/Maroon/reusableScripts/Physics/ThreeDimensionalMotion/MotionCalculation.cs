@@ -3,6 +3,7 @@ using UnityEngine;
 using NCalc;
 using ObjectsInUse;
 using System;
+using GEAR.Localization;
 
 namespace Maroon.Physics.ThreeDimensionalMotion
 {
@@ -581,7 +582,8 @@ namespace Maroon.Physics.ThreeDimensionalMotion
         /// </summary>
         private void ShowError()
         {
-            ParameterUI.Instance.DisplayMessage("Something went wrong with the calculation. Please check the formula.");
+            string message = LanguageManager.Instance.GetString("error");
+            ParameterUI.Instance.DisplayMessage(message);
         }
 
     }
