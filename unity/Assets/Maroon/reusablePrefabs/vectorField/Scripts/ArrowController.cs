@@ -16,7 +16,7 @@ using UnityEngine;
 /// <summary>
 /// Controller class for field arrows
 /// </summary>
-public class ArrowController : MonoBehaviour, IResetObject
+public class ArrowController : PausableObject, IResetObject
 {
     /// <summary>
     /// The physical field
@@ -53,8 +53,10 @@ public class ArrowController : MonoBehaviour, IResetObject
     /// <summary>
     /// Initialization
     /// </summary>
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
+
         _isParentNull = transform.parent == null; //init it here as this null look up is expensive in update
         // Field = GameObject.FindGameObjectWithTag("Field"); -> super inefficient if 20x20 arrows search for the same tag at once...
         Debug.Assert(Field != null);
@@ -63,24 +65,33 @@ public class ArrowController : MonoBehaviour, IResetObject
         _scalingArrow = GetComponent<ScalingArrow>();
         _hasScaling = _scalingArrow != null;
         
-        rotateArrow();
+        RotateArrow();
         start_rot = transform.rotation;
     }
 
     /// <summary>
     /// Update is called every frame and rotates the arrow
     /// </summary>
-    private void Update()
+    protected override void Update()
     {
-        if (!isActiveAndEnabled) return;
-        if (OnlyUpdateInRunMode && !SimulationController.Instance.SimulationRunning) return;
-        rotateArrow();
+        if (!OnlyUpdateInRunMode) // Coulombs Law Hack 
+            RotateArrow();
+    }
+
+    protected override void HandleUpdate()
+    {
+
+    }
+
+    protected override void HandleFixedUpdate()
+    {
+        RotateArrow();
     }
 
     /// <summary>
     /// Rotates the arrow based on the field
     /// </summary>
-    private void rotateArrow()
+    private void RotateArrow()
     {
         if (_field == null) return;
 
@@ -123,7 +134,6 @@ public class ArrowController : MonoBehaviour, IResetObject
         }
 
         transform.localRotation = Quaternion.Euler(-90, rot, 0);
-//        transform.localRotation = Quaternion.Euler(-90, rot, 0);
     }
 
     /// <summary>
@@ -132,6 +142,6 @@ public class ArrowController : MonoBehaviour, IResetObject
     public void ResetObject()
     {
         if(isActiveAndEnabled)
-            rotateArrow();
+            RotateArrow();
     }
 }
