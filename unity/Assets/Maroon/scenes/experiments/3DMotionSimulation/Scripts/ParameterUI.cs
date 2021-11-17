@@ -215,7 +215,7 @@ public class ParameterUI : PausableObject, IResetObject
     {
         if (_mass <= 0)
         {
-            ShowError("Mass can not be negativ or equal to 0. Mass is set to 1");
+            ShowError(LanguageManager.Instance.GetString("Mass"));
             _mass = 1f;
             ifMass.text = "1";
         }
@@ -267,19 +267,19 @@ public class ParameterUI : PausableObject, IResetObject
     {
         if (_t0 < 0)
         {
-            ShowError("t0 can not be a negativ value. t0 is set to 0");
+            ShowError(LanguageManager.Instance.GetString("T0"));
             _t0 = 0f;
             ifT0.text = "0";
         }
         if (_deltaT <= 0)
         {
-            ShowError("Delta t can not be negativ or equal to 0. Delta t is set to 1");
+            ShowError(LanguageManager.Instance.GetString("DeltaT"));
             _deltaT = 1f;
             ifDeltat.text = "1";
         }     
         if (_steps <= 0)
         {
-            ShowError("Step size can not be negativ or equal to 0. Step size is set to 1");
+            ShowError(LanguageManager.Instance.GetString("StepSize"));
             _steps = 1f;
             ifSteps.text = "1";
         }        
