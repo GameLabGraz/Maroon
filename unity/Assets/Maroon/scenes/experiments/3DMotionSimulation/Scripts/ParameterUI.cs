@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Maroon.UI;
@@ -110,7 +109,7 @@ public class ParameterUI : PausableObject, IResetObject
         _functions.Add("tan", "Tan");
         _functions.Add("truncate", "Truncate");
 
-        string message = LanguageManager.Instance.GetString("welcome");
+        string message = LanguageManager.Instance.GetString("Welcome");
         DisplayMessage(message);
 
         _showInputPanelButton.interactable = false;
@@ -149,13 +148,13 @@ public class ParameterUI : PausableObject, IResetObject
         {
             _dataVisualization.SetActive(true);
             _showDataVisualizationButton.interactable = true;
-            _dataVisualizationButtonText.text = LanguageManager.Instance.GetString("HideDataVisu");
+            _dataVisualizationButtonText.text = LanguageManager.Instance.GetString("HideDataVisualization");
         }
         else
         {
             _dataVisualization.SetActive(false);
             _showDataVisualizationButton.interactable = true;
-            _dataVisualizationButtonText.text = LanguageManager.Instance.GetString("ShowDataVisu");
+            _dataVisualizationButtonText.text = LanguageManager.Instance.GetString("ShowDataVisualization");
         }
     }
 
@@ -558,7 +557,7 @@ public class ParameterUI : PausableObject, IResetObject
         _showInputPanelButton.interactable = false;
         _showDataVisualizationButton.interactable = false;
         _inputPanelButtonText.text = LanguageManager.Instance.GetString("ShowInputField");
-        _dataVisualizationButtonText.text = LanguageManager.Instance.GetString("ShowDataVisu");
+        _dataVisualizationButtonText.text = LanguageManager.Instance.GetString("ShowDataVisualization");
         _parameters.SetActive(true);
         _initialConditions.SetActive(true);
         _dataVisualization.SetActive(true);
