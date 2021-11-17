@@ -582,7 +582,7 @@ namespace Maroon.Physics.ThreeDimensionalMotion
         /// </summary>
         private void ShowError()
         {
-            string message = LanguageManager.Instance.GetString("Error");
+            string message = LanguageManager.Instance.GetString("CalculationError");
             ParameterUI.Instance.DisplayMessage(message);
         }
 

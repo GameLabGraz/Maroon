@@ -215,7 +215,7 @@ public class ParameterUI : PausableObject, IResetObject
     {
         if (_mass <= 0)
         {
-            ShowError(LanguageManager.Instance.GetString("Mass"));
+            ShowError(LanguageManager.Instance.GetString("MassError"));
             _mass = 1f;
             ifMass.text = "1";
         }
@@ -267,19 +267,19 @@ public class ParameterUI : PausableObject, IResetObject
     {
         if (_t0 < 0)
         {
-            ShowError(LanguageManager.Instance.GetString("T0"));
+            ShowError(LanguageManager.Instance.GetString("T0Error"));
             _t0 = 0f;
             ifT0.text = "0";
         }
         if (_deltaT <= 0)
         {
-            ShowError(LanguageManager.Instance.GetString("DeltaT"));
+            ShowError(LanguageManager.Instance.GetString("DeltaTError"));
             _deltaT = 1f;
             ifDeltat.text = "1";
         }     
         if (_steps <= 0)
         {
-            ShowError(LanguageManager.Instance.GetString("StepSize"));
+            ShowError(LanguageManager.Instance.GetString("StepSizeError"));
             _steps = 1f;
             ifSteps.text = "1";
         }        
