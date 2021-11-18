@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Maroon.Physics;
 using UnityEngine;
 
 public class Capacitor : PausableObject, IResetObject
