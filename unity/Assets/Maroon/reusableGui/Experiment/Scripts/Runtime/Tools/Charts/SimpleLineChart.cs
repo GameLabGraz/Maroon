@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Maroon.UI.Charts
 {
@@ -32,6 +33,12 @@ namespace Maroon.UI.Charts
         {
             foreach (var value in values)
                 Chart.AddData(0, value.Item1, value.Item2);
+        }
+
+        public void AddData(List<Vector2> values)
+        {
+            foreach (var value in values)
+                Chart.AddData(0, value.x, value.y);
         }
 
         protected override void HandleUpdate() { }
