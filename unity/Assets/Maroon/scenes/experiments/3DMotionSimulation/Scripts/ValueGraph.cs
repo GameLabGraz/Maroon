@@ -1,4 +1,5 @@
-﻿using Maroon.UI.Charts;
+﻿using Maroon.Physics;
+using Maroon.UI.Charts;
 using Maroon.Physics.ThreeDimensionalMotion;
 using PlottableValues;
 

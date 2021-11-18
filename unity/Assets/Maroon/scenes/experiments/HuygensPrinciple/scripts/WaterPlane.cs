@@ -1,5 +1,6 @@
 ﻿using Maroon.Physics.HuygensPrinciple;
 using System.Collections.Generic;
+using Maroon.Physics;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]

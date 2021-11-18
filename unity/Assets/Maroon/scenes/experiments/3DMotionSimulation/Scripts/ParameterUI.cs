@@ -4,6 +4,7 @@ using TMPro;
 using Maroon.UI;
 using ObjectsInUse;
 using GEAR.Localization;
+using Maroon.Physics;
 
 namespace ObjectsInUse
 {
