@@ -6,6 +6,7 @@ using UnityEngine;
 public class WheelAdjuster : MonoBehaviour
 {
     [SerializeField] private List<Transform> wheels = new List<Transform>();
+    [SerializeField] private float distanceOffset = 0.01f;
 
     private Vector3 _position;
     // Start is called before the first frame update
@@ -17,7 +18,7 @@ public class WheelAdjuster : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (transform.position == _position) return;
+        if (Vector3.Distance(transform.position ,_position) < distanceOffset) return;
         
         var currentPos = transform.position;
         var rad = Mathf.Atan2(currentPos.z - _position.z, currentPos.x -_position.x);
