@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Maroon.Physics;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -28,6 +29,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         [SerializeField] float timeToMove = 3.0f;
         [SerializeField] float timeUntilNextDesorb = 3.0f;
 
+        private QuantityFloat _temperature;
+        
         private float _currentTimeMove = 0.0f;
         private float _currentTimeDesorb = 0.0f;
         private Vector3 _newRandomPosition;
@@ -51,7 +54,6 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             }
         }
 
-        public float MovementSpeed { get => movementSpeed; set => movementSpeed = value; }
         public Molecule ConnectedMolecule { get => _connectedMolecule; set => _connectedMolecule = value; }
         
         public bool IsDrawnByPlat { get; set; }
@@ -69,6 +71,12 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             _connectedMolecule = drawingMolecule;
         }
 
+        public void TemperatureChanged(float temp)
+        {
+            _temperature = temp;
+            movementSpeed = _temperature / 20.0f;
+        }
+        
         protected override void Start()
         {
             base.Start();

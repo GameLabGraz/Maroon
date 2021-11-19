@@ -82,7 +82,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 Molecule molecule = Instantiate(prefabs[Random.Range(0, prefabs.Length)], catalystSurfaceTransform);
                 molecule.gameObject.transform.localPosition = spawnPos;
                 molecule.gameObject.transform.localRotation = spawnRot;
-                _activeMolecules.Add(molecule);
+                AddMoleculeToActiveList(molecule);
                 if (molecule.Type == MoleculeType.O2)
                 {
                     molecule.OnDissociate += DissociateO2;
@@ -93,10 +93,11 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private void DissociateO2(Molecule o2Molecule)
         {
             o2Molecule.OnDissociate -= DissociateO2;
-            _activeMolecules.Remove(o2Molecule);
+            RemoveMoleculeFromActiveList(o2Molecule);
             Transform parentTransform = o2Molecule.transform.parent;
             Vector3 o2Position = o2Molecule.transform.position;
             o2Molecule.ConnectedMolecule.ConnectedMolecule = null;
+            temperature.onValueChanged.RemoveListener(o2Molecule.TemperatureChanged);
             Destroy(o2Molecule.gameObject);
             List<Molecule> oMolecules = new List<Molecule>()
             {
@@ -110,7 +111,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 molecule.OnCO2Created += CreateCO2;
                 molecule.IsFixedMolecule = true;
                 molecule.gameObject.transform.position = new Vector3(alternate ? o2Position.x + PlatinumScale / 4.0f : o2Position.x - PlatinumScale / 4.0f, o2Position.y - 0.04f, o2Position.z);
-                _activeMolecules.Add(molecule);
+                AddMoleculeToActiveList(molecule);
                 alternate = !alternate;
             }
         }
@@ -118,8 +119,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private void CreateCO2(Molecule oMolecule, Molecule coMolecule)
         {
             oMolecule.OnCO2Created -= CreateCO2;
-            _activeMolecules.Remove(oMolecule);
-            _activeMolecules.Remove(coMolecule);
+            RemoveMoleculeFromActiveList(oMolecule);
+            RemoveMoleculeFromActiveList(coMolecule);
             Transform parentTransform = coMolecule.gameObject.transform.parent;
             Vector3 coPosition = coMolecule.gameObject.transform.position;
             
@@ -131,8 +132,20 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
             Molecule co2Molecule = Instantiate(co2MoleculePrefab, parentTransform);
             co2Molecule.gameObject.transform.position = coPosition;
-            _activeMolecules.Add(co2Molecule);
-            
+            AddMoleculeToActiveList(co2Molecule);
+        }
+
+        private void AddMoleculeToActiveList(Molecule molecule)
+        {
+            molecule.TemperatureChanged(temperature);
+            temperature.onValueChanged.AddListener(molecule.TemperatureChanged);
+            _activeMolecules.Add(molecule);
+        }
+
+        private void RemoveMoleculeFromActiveList(Molecule molecule)
+        {
+            temperature.onValueChanged.RemoveListener(molecule.TemperatureChanged);
+            _activeMolecules.Remove(molecule);
         }
     }
 }
