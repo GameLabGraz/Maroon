@@ -9,6 +9,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
     {
         [Header("Simulation Parameters")]
         [SerializeField] QuantityFloat temperature;
+        [SerializeField] QuantityFloat partialPressure;
         [SerializeField] CatalystSurfaceSize catalystSurfaceSize = CatalystSurfaceSize.Small;
         
         [Header("Catalyst specific objects")]
@@ -97,7 +98,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             Transform parentTransform = o2Molecule.transform.parent;
             Vector3 o2Position = o2Molecule.transform.position;
             o2Molecule.ConnectedMolecule.ConnectedMolecule = null;
-            temperature.onValueChanged.RemoveListener(o2Molecule.TemperatureChanged);
+            RemoveMoleculeFromActiveList(o2Molecule);
             Destroy(o2Molecule.gameObject);
             List<Molecule> oMolecules = new List<Molecule>()
             {
@@ -138,13 +139,16 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private void AddMoleculeToActiveList(Molecule molecule)
         {
             molecule.TemperatureChanged(temperature);
+            molecule.PressureChanged(partialPressure);
             temperature.onValueChanged.AddListener(molecule.TemperatureChanged);
+            partialPressure.onValueChanged.AddListener(molecule.PressureChanged);
             _activeMolecules.Add(molecule);
         }
 
         private void RemoveMoleculeFromActiveList(Molecule molecule)
         {
             temperature.onValueChanged.RemoveListener(molecule.TemperatureChanged);
+            partialPressure.onValueChanged.RemoveListener(molecule.PressureChanged);
             _activeMolecules.Remove(molecule);
         }
     }

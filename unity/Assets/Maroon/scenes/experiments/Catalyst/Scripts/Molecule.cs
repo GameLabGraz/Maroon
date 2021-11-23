@@ -30,6 +30,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         [SerializeField] float timeUntilNextDesorb = 3.0f;
 
         private QuantityFloat _temperature;
+        private QuantityFloat _partialPressure;
         
         private float _currentTimeMove = 0.0f;
         private float _currentTimeDesorb = 0.0f;
@@ -75,6 +76,11 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         {
             _temperature = temp;
             movementSpeed = _temperature / 20.0f;
+        }
+
+        public void PressureChanged(float pressure)
+        {
+            _partialPressure = pressure;
         }
         
         protected override void Start()
