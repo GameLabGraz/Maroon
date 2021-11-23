@@ -25,13 +25,13 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         
         public void Setup(int surfaceSize, System.Action<List<Molecule>> onComplete)
         {
-            float maxOffset = platinumMoleculePrefab.transform.localScale.x * surfaceSize;
+            float maxOffset = platinumMoleculePrefab.transform.GetChild(0).transform.localScale.x * surfaceSize;
             boundaryXMin.transform.localPosition = new Vector3(0.1f, 0.0f, 0.0f);
             boundaryZMin.transform.localPosition = new Vector3(0.0f, 0.0f, 0.1f);
             boundaryXMax.transform.localPosition = new Vector3(0.1f + maxOffset, 0.0f, 0.0f);
             boundaryZMax.transform.localPosition = new Vector3(0.0f, 0.0f, 0.1f + maxOffset);
             List<Molecule> activeMolecules = new List<Molecule>();
-            _spaceBetweenMolecules = platinumMoleculePrefab.transform.localScale.x;
+            _spaceBetweenMolecules = platinumMoleculePrefab.transform.GetChild(0).transform.localScale.x;
             for (int layerNum = 0; layerNum < numSubLayers; layerNum++)
             {
                 Vector3 moleculePosition = surfaceLayerParent.position;

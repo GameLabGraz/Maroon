@@ -28,8 +28,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private CatalystSurface _catalystSurface;
         private List<Molecule> _activeMolecules = new List<Molecule>();
 
-        public const float FixedMoleculeYDist = 0.18f; // todo move to own const class?
-        public const float PlatinumScale = 0.2f;
+        public const float FixedMoleculeYDist = 0.28f;
+        public const float PlatinumScale = 0.14f;
 
         private void Start()
         {
