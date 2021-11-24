@@ -3,12 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HorizontalCapacitorZoneController : MonoBehaviour
+namespace Maroon.Physics.CathodeRayTube
 {
-    public float verticalDeflect;
-    private void OnTriggerEnter(Collider zoneCollision)
+    public class HorizontalCapacitorZoneController : MonoBehaviour
     {
-        zoneCollision.gameObject.GetComponent<Rigidbody>().AddRelativeForce(new Vector3(verticalDeflect, 0,0));
+        [SerializeField] private float verticalDeflect;
+
+        private void OnTriggerEnter(Collider zoneCollision)
+        {
+            zoneCollision.gameObject.GetComponent<Rigidbody>().AddRelativeForce(new Vector3(verticalDeflect, 0, 0));
+        }
     }
 }
 

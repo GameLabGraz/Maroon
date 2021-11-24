@@ -3,21 +3,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ElectronGunController : MonoBehaviour
+
+namespace Maroon.Physics.CathodeRayTube
 {
-    public GameObject Electron;
-    public float ElectronSpeed;
-    private GameObject TempElectron = null;
-
-    // Start is called before the first frame update
-
-    private void Update()
+    public class ElectronGunController : PausableObject
     {
-        if (TempElectron == null)
+        [SerializeField] private GameObject Electron;
+        [SerializeField] private float ElectronSpeed;
+        private GameObject TempElectron = null;
+
+        protected override void HandleUpdate()
         {
-            TempElectron = Instantiate(Electron, transform.position, transform.rotation);
-            TempElectron.transform.name = "Electron";
-            TempElectron.GetComponent<Rigidbody>().AddRelativeForce(new Vector3(0, -ElectronSpeed,0));
+            if (TempElectron == null)
+            {
+                TempElectron = Instantiate(Electron, transform.position, transform.rotation);
+                TempElectron.transform.name = "Electron";
+                TempElectron.GetComponent<Rigidbody>().AddRelativeForce(new Vector3(0, -ElectronSpeed, 0));
+            }
+        }
+        
+        protected override void HandleFixedUpdate()
+        {
+
         }
     }
 }
