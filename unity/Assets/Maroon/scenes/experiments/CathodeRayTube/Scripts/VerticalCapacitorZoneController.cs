@@ -7,11 +7,11 @@ namespace Maroon.Physics.CathodeRayTube
 {
     public class VerticalCapacitorZoneController : MonoBehaviour
     {
-        [SerializeField] private float horizontalDeflect;
+        [SerializeField] private QuantityFloat horizontalVoltage;
 
         private void OnTriggerEnter(Collider zoneCollision)
         {
-            zoneCollision.gameObject.GetComponent<Rigidbody>().AddRelativeForce(new Vector3(0, 0, horizontalDeflect));
+            zoneCollision.gameObject.GetComponent<Rigidbody>().AddRelativeForce(new Vector3(0, 0, horizontalVoltage));
         }
     }
 }
