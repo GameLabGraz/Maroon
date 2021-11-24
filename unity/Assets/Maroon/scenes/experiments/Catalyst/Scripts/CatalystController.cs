@@ -1,7 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using Maroon.Physics;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Maroon.scenes.experiments.Catalyst.Scripts
 {
@@ -25,12 +29,33 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         [Header("Player specific objects")]
         [SerializeField] GameObject player;
-        
+
+        private List<Vector3> _platSpawnPoints = new List<Vector3>();
         private CatalystSurface _catalystSurface;
         private List<Molecule> _activeMolecules = new List<Molecule>();
 
         public const float FixedMoleculeYDist = 0.28f;
         public const float PlatinumScale = 0.14f;
+
+        private void Awake()
+        {
+            var coordFile = Resources.Load<TextAsset>("Pt-111");
+            string[] lines = coordFile.text.Split('\n');
+            foreach (var line in lines)
+            {
+                string[] lineValues = line.Split(',');
+                if (lineValues.Length == 3)
+                {
+                    _platSpawnPoints.Add(
+                        new Vector3(
+                            float.Parse(lineValues[0], CultureInfo.InvariantCulture.NumberFormat), 
+                            float.Parse(lineValues[1], CultureInfo.InvariantCulture.NumberFormat), 
+                            float.Parse(lineValues[2], CultureInfo.InvariantCulture.NumberFormat)
+                            )
+                        );
+                }
+            }
+        }
 
         private void Start()
         {
@@ -63,11 +88,14 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private void SpawnCatalystSurfaceObject()
         {
             _catalystSurface = Instantiate(catalystSurfacePrefab, catalystSurfaceSpawnTransform);
-            _catalystSurface.Setup((int)catalystSurfaceSize, list =>
+            _catalystSurface.SetupCoords(_platSpawnPoints);
+            // list we get is tilted, so tilt parent after spawning the molecules
+            _catalystSurface.transform.localRotation = Quaternion.Euler(-35.2f, 0.0f, 45.0f);
+            /*_catalystSurface.Setup((int)catalystSurfaceSize, list =>
             {
                 _activeMolecules = list;
                 StartCoroutine(SpawnCatalystReactionMaterial());
-            });
+            });*/
         }
 
         private IEnumerator SpawnCatalystReactionMaterial()
@@ -110,7 +138,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             foreach (Molecule molecule in oMolecules)
             {
                 molecule.OnCO2Created += CreateCO2;
-                molecule.IsFixedMolecule = true;
+                molecule.State = MoleculeState.Fixed;
                 molecule.gameObject.transform.position = new Vector3(alternate ? o2Position.x + PlatinumScale / 4.0f : o2Position.x - PlatinumScale / 4.0f, o2Position.y - 0.04f, o2Position.z);
                 AddMoleculeToActiveList(molecule);
                 alternate = !alternate;

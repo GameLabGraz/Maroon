@@ -22,6 +22,17 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         [SerializeField] private GameObject boundaryZMax;
         
         private float _spaceBetweenMolecules;
+
+        public void SetupCoords(List<Vector3> platCoords)
+        {
+            
+            foreach (var coord in platCoords)
+            {
+                Molecule platMolecule = Instantiate(platinumMoleculePrefab, surfaceLayerParent);
+                platMolecule.transform.position = coord / 20.0f;
+                platMolecule.State = MoleculeState.Fixed;
+            }
+        }
         
         public void Setup(int surfaceSize, System.Action<List<Molecule>> onComplete)
         {
@@ -44,11 +55,11 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                         moleculePosition.z += _spaceBetweenMolecules;
                         Molecule platMolecule = Instantiate(platinumMoleculePrefab, surfaceLayerParent);
                         platMolecule.transform.position = moleculePosition;
-                        platMolecule.IsFixedMolecule = true;
+                        platMolecule.State = MoleculeState.Fixed;
                         if (layerNum == 0)
                         {
                             Molecule coMolecule = Instantiate(coMoleculePrefab, surfaceLayerParent);
-                            coMolecule.IsFixedMolecule = true;
+                            coMolecule.State = MoleculeState.Fixed;
                             
                             Vector3 moleculePos = platMolecule.transform.localPosition;
                             moleculePos.y = CatalystController.FixedMoleculeYDist;
