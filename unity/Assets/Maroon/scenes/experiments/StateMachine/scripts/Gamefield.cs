@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using StateMachine;
 
-public class Gamefield : MonoBehaviour
+public class Gamefield
 {
     private List<List<Field>> _map;
 

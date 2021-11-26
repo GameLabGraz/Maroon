@@ -13,18 +13,15 @@ namespace StateMachine {
         private Rulesets _rulesets = new Rulesets();
         private States _states;
         private Directions _directions = new Directions();
-
         private Moves _moves = new Moves();
-
         private Modes _modes = new Modes();
         // Rule counter increases every time a rule is added, but does NOT decrease (so names are always unique)
         private int _ruleCounter = 0;
-
         private bool _isLastRowColorFirstColor = false;
-
         private Color _rowColor1 = new Color(0.9f, 0.9f, 0.9f);
         private Color _rowColor2 = new Color(1.0f, 1.0f, 1.0f);
 
+        private Map _map = new Map();
 
 
         // Start is called before the first frame update
@@ -34,8 +31,14 @@ namespace StateMachine {
             InitStates();
             InitDirections();
             InitMoves();
+            InitScenarios();
         }
 
+        void InitScenarios() {
+            _map.InitMap();
+            Scenario1 scenario1 = new Scenario1();
+            scenario1.InitScenario(_map.GetMap());
+        }
 
         void InitGameField() {
             GameObject test = GameObject.Find("a2White");
@@ -61,7 +64,7 @@ namespace StateMachine {
             foreach (Direction item in _directions)
             {
                 Dropdown.OptionData option = new Dropdown.OptionData();
-                option.text = item.getDirectionName();
+                option.text = item.GetDirectionName();
                 dropdown.options.Add(option);
             }
             
@@ -81,7 +84,7 @@ namespace StateMachine {
             foreach (Mode item in _modes)
             {
                 Dropdown.OptionData option = new Dropdown.OptionData();
-                option.text = item.getModeName();
+                option.text = item.GetModeName();
                 dropdown.options.Add(option);
             }
 
@@ -106,10 +109,8 @@ namespace StateMachine {
             int endStateValue = endStateDropdown.value;
 
             string testOutput = directionDropdown.options[directionValue].text + modeDropdown.options[modeValue].text + startStateDropdown.options[startStateValue].text + endStateDropdown.options[endStateValue].text;
-            Debug.Log(testOutput);
 
             State start = _states.FindState(startStateDropdown.options[startStateValue].text);
-            Debug.Log(start.getStateName());
             State end = _states.FindState(endStateDropdown.options[endStateValue].text);
             Direction direction = _directions.FindDirection(directionDropdown.options[directionValue].text);
             Mode mode = _modes.FindMode(modeDropdown.options[modeValue].text);
@@ -167,7 +168,6 @@ namespace StateMachine {
                 if (index != -1) {
                     defaultName = defaultName.Remove(index, stringToRemove.Length);
                 }
-                Debug.Log(defaultName);
                 rulesetTextBackgroundObject.name = defaultName + "_" + _ruleCounter;
 
                 rulesetTextBackgroundObject.transform.SetParent(rulesetTextTableObject.transform);
@@ -200,5 +200,51 @@ namespace StateMachine {
         {
             
         }
+
+
+        public void RunStateMachine() {
+            //Test move one pawn forward
+
+            // Get pawn.001
+            GameObject directionDropdownObject = GameObject.Find("rook.001");
+
+
+
+            // run state machine
+
+            int fieldMoveDistance = 3;
+
+            // TODO this must be start text from language plugin
+            string start = "start";
+
+
+            for (int counter = 0; counter < fieldMoveDistance; counter++) {
+
+                // Find ruleset which should be executed
+                List<Ruleset> startRulesetsFound = new List<Ruleset>();
+
+                foreach (Ruleset ruleset in _rulesets)
+                {
+                    if (ruleset.GetStartState().IsStartState()) {
+                        startRulesetsFound.Add(ruleset);
+                    }
+                }
+
+
+                // TODO compare mode 
+                // TODO compare surrounding of rule to surrounding of the figure to move => only one rule must be available after that comparison
+
+                // TODO move figure one field
+
+                // set figure to new field
+                // remove figure from old field
+                // depending on mode remove hit figure and remove it from field
+
+
+                int test = 4;
+            }
+
+        }
+
     }
 }

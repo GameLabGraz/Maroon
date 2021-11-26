@@ -14,6 +14,6 @@ public class Modes : IEnumerable
     }
 
      public Mode FindMode(string name) {
-        return _modes.Find(element => element.getModeName() == name);
+        return _modes.Find(element => element.GetModeName() == name);
     }
 }

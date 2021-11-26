@@ -14,6 +14,6 @@ public class Directions : IEnumerable
     }
 
      public Direction FindDirection(string name) {
-        return _directions.Find(element => element.getDirectionName() == name);
+        return _directions.Find(element => element.GetDirectionName() == name);
     }
 }

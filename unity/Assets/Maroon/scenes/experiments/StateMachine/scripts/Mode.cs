@@ -10,7 +10,7 @@ public class Mode : MonoBehaviour
         _name = modeName;
     }
 
-    public string getModeName() {
+    public string GetModeName() {
         return _name;
     }
 }

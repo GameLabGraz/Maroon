@@ -24,11 +24,19 @@ public class Ruleset
 
     public List<string> ToStringArray() {
         List<string> data = new List<string>();
-        data.Add(_startState.getStateName());
-        data.Add(_endState.getStateName());
-        data.Add(_direction.getDirectionName());
-        data.Add(_mode.getModeName());
+        data.Add(_startState.GetStateName());
+        data.Add(_endState.GetStateName());
+        data.Add(_direction.GetDirectionName());
+        data.Add(_mode.GetModeName());
         return data;
+    }
+
+    public State GetStartState() {
+        return _startState;
+    }
+
+     public State GetEndState() {
+        return _endState;
     }
 
 }

@@ -13,8 +13,11 @@ public class Field : MonoBehaviour
         _figure = _figure;
     }
 
-    public void removeFigure() {
-        _figure = null;
+    public void RemoveFigure() {
+        if (_figure != null) {
+            _figure.gameObject.SetActive(false);
+            _figure = null;
+        }
     }
 
     public string getName() {

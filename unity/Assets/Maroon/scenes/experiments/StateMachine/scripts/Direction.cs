@@ -10,7 +10,7 @@ public class Direction
         _name = directionName;
     }
 
-    public string getDirectionName() {
+    public string GetDirectionName() {
         return _name;
     }
     // Start is called before the first frame update

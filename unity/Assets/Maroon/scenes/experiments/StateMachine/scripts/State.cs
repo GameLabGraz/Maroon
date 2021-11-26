@@ -12,18 +12,18 @@ public class State
         _stateName = name;
     }
 
-    public void setStateName(string name) {
+    public void SetStateName(string name) {
 
         //_stateName = name;
     }
 
-    public bool isStartState() {
+    public bool IsStartState() {
         return _stateName.Equals("Start");
     }
-     public bool isEndState() {
+     public bool IsEndState() {
         return _stateName.Equals("End");
     }
-    public string getStateName() {
+    public string GetStateName() {
         return _stateName;
     }
 }

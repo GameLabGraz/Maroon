@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using StateMachine;
+
 public class Brook : Figure
 {
     [SerializeField] private Moves _moves;
