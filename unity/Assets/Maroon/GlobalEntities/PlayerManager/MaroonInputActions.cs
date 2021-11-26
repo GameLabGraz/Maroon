@@ -1,4 +1,4 @@
-// GENERATED AUTOMATICALLY FROM 'Assets/Maroon/GlobalEntities/GlobalInputManager/MaroonInputActions.inputactions'
+// GENERATED AUTOMATICALLY FROM 'Assets/Maroon/GlobalEntities/PlayerManager/MaroonInputActions.inputactions'
 
 using System;
 using System.Collections;

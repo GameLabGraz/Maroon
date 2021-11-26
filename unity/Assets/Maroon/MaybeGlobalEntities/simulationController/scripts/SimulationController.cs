@@ -1,11 +1,10 @@
-﻿//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 // SimulationController.cs
 //
 // Class to handle the simulation flow
 //
 //-----------------------------------------------------------------------------
 
-using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,32 +18,21 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class SimulationController : MonoBehaviour
 {
+
+    [SerializeField] private int updateRate = 1;
+    [SerializeField] private int fixedUpdateRate = 1;
+    
     /// <summary>
     /// Indicates whether the simulation is running
     /// </summary>
-    [SerializeField]
-    private QuantityBool simulationRunning = false;
-    [SerializeField]
-    private QuantityBool simulationAllowed = true;
-
-    [SerializeField]
-    private float timeScale = 1;
+    [SerializeField] private QuantityBool simulationRunning = false;
+    [SerializeField] private QuantityBool simulationAllowed = true;
 
     public UnityEvent onStartRunning;
     public UnityEvent onStopRunning;
     
     private bool _inWholeResetMode = false;
-
-    public float TimeScale
-    {
-        get => timeScale;
-        set
-        {
-            timeScale = value;
-            Time.timeScale = value;
-        }
-    }
-
+    
     /// <summary>
     /// Indicates whether a single step should be simulated
     /// </summary>
@@ -79,34 +67,21 @@ public class SimulationController : MonoBehaviour
         }
     }
 
+    public int UpdateRate => updateRate;
+    public int FixedUpdateRate => fixedUpdateRate;
+
     /// <summary>
     /// Initialization
     /// </summary>
     private void Awake()
     {
-        SceneManager.sceneUnloaded += OnSceneUnloaded;
-        InitSimController();
-    }
-
-    /// <summary>
-    /// Initialization function for the Sim Controller
-    /// </summary>
-    private void InitSimController()
-    {
         stepSimulation = false;
         simulationReset = true;
-        Time.timeScale = timeScale;
-    }
 
-    /// <summary>
-    /// Delegate to get notification when the scene has unloaded.
-    /// Reset timeScale to 1.0f.
-    /// </summary>
-    /// <param name="scene">Unloaded scene</param>
-    private void OnSceneUnloaded(Scene scene)
-    {
-        TimeScale = 1.0f;
-        SceneManager.sceneUnloaded -= OnSceneUnloaded;
+        SceneManager.sceneUnloaded += (Scene scene) =>
+        {
+            Time.timeScale = 1;
+        };
     }
 
     /// <summary>

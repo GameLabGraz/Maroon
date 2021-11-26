@@ -36,7 +36,7 @@ public class MagnetController : VRTK_InteractableObject
     {
         while (_isMoving)
         {
-            var hapticPulseStrength = GetComponent<Magnet>().getExternalForce().magnitude / 10;
+            var hapticPulseStrength = GetComponent<Magnet>().GetExternalForce().magnitude / 10;
 
             VRTK_ControllerHaptics.TriggerHapticPulse(
                     VRTK_ControllerReference.GetControllerReference(_grabbingObject),

@@ -25,7 +25,7 @@ public class VectorField : MonoBehaviour
     /// </summary>
     protected List<GameObject> vectorFieldArrows = new List<GameObject>();
     
-    [Range(1f, 20f)]
+    [Range(0.1f, 20f)]
     public float scalingDivider = 3f;
     
     /// <summary>
