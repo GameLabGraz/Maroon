@@ -1,0 +1,16 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Mode : MonoBehaviour
+{
+    private string _name;
+
+    public Mode (string modeName) {
+        _name = modeName;
+    }
+
+    public string getModeName() {
+        return _name;
+    }
+}
