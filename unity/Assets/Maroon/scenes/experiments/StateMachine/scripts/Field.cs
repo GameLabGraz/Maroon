@@ -24,6 +24,8 @@ public class Field : MonoBehaviour
         return _name;
     }
     
-
+    public Figure GetFigure() {
+        return _figure;
+    }
     
 }

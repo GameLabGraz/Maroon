@@ -13,7 +13,12 @@ public class Scenario1
         //Init first map
         foreach (List<Field> column in map) {
             foreach(Field field in column) {
-               field.RemoveFigure();
+                
+                Figure figure = field.GetFigure();
+                
+                if (figure && figure.gameObject.name != "pawn.003" && figure.gameObject.name != "pawn.003black") {
+                    field.RemoveFigure();
+                }               
             }
         }
 
