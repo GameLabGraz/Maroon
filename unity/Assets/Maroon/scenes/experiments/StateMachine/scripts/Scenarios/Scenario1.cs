@@ -19,11 +19,14 @@ public class Scenario1
                 
                 Figure figure = field.GetFigure();
                 
+                // Defines which figures should not be removed from the field
+                // TODO position changes of figures should also be made
                 if (figure && figure.gameObject.name != "pawn.003" && figure.gameObject.name != "pawn.003black") {
                     field.RemoveFigure();
                 } 
 
-                if (figure) {
+                // Defines which figure should be moved by the player
+                if (figure && figure.gameObject.name == "pawn.003") {
                     _figure  = figure;
                     int indexRow = _map.IndexOf(column);
                     int indexColumn = 0;

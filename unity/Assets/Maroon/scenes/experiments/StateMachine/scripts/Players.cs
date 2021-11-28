@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using StateMachine;
 
-public class Players : MonoBehaviour
+public class Players
 {
-
     private List<Player> _players = new List<Player>();
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+
+    public Player GetPlayerAtIndex(int index) {
+        if (index >= _players.Count) {
+            return null;
+        }
+        return _players[index];
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public void AddPlayer(Player player) {
+        _players.Add(player);
     }
 }

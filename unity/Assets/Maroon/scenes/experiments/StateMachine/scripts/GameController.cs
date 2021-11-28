@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using Maroon.UI;
 using TMPro;
+using System.Threading;
 
 namespace StateMachine {
     public class GameController : MonoBehaviour
     {
 
         private Gamefield _gamefield;
-        private List<Player> _players;
+        private Players _players = new Players();
         private Rulesets _rulesets = new Rulesets();
         private States _states;
         private Directions _directions = new Directions();
@@ -38,6 +39,7 @@ namespace StateMachine {
             _map.InitMap();
             Scenario1 scenario1 = new Scenario1(_map.GetMap());
             Figure figure = scenario1.GetFigure();
+            _players.AddPlayer(new Player("Player white", figure));
         }
 
         void InitGameField() {
@@ -203,20 +205,25 @@ namespace StateMachine {
 
 
         public void RunStateMachine() {
+            StartCoroutine(MakeMove());
+        }
+
+        IEnumerator MakeMove() {
+
             //Test move one pawn forward
 
             // Get pawn.001
             GameObject directionDropdownObject = GameObject.Find("pawn.001");
 
-
-
             // run state machine
 
-            int fieldMoveDistance = 3;
+            int fieldMoveDistance = 4;
 
             // TODO this must be start text from language plugin
             string start = "start";
 
+            Player player = _players.GetPlayerAtIndex(0);
+            Figure figureToMove = player.GetFigure();
 
             for (int counter = 0; counter < fieldMoveDistance; counter++) {
 
@@ -230,21 +237,26 @@ namespace StateMachine {
                     }
                 }
 
-
                 // TODO compare mode 
                 // TODO compare surrounding of rule to surrounding of the figure to move => only one rule must be available after that comparison
 
                 // TODO move figure one field
+                 Vector3 position = figureToMove.transform.position;
+                // move one field up
+                figureToMove.transform.position = new Vector3(position.x, position.y + (float)0.18, position.z);
+                yield return new WaitForSeconds(1);
+                
+                // bounce check move
+                // is field free check
+                // can figure hit other one check
 
                 // set figure to new field
                 // remove figure from old field
                 // depending on mode remove hit figure and remove it from field
-
-
-                int test = 4;
             }
-
+           
         }
+        
 
     }
 }
