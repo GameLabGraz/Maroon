@@ -37,4 +37,8 @@ public class Map
     public List<List<Field>> GetMap() {
         return _map;
     }
+
+    public List<Field> GetColumnByIndex(int index) {
+        return _map[index];
+    }
 }

@@ -36,8 +36,8 @@ namespace StateMachine {
 
         void InitScenarios() {
             _map.InitMap();
-            Scenario1 scenario1 = new Scenario1();
-            scenario1.InitScenario(_map.GetMap());
+            Scenario1 scenario1 = new Scenario1(_map.GetMap());
+            Figure figure = scenario1.GetFigure();
         }
 
         void InitGameField() {
@@ -206,7 +206,7 @@ namespace StateMachine {
             //Test move one pawn forward
 
             // Get pawn.001
-            GameObject directionDropdownObject = GameObject.Find("rook.001");
+            GameObject directionDropdownObject = GameObject.Find("pawn.001");
 
 
 
