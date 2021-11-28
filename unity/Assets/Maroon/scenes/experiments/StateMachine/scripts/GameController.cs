@@ -8,11 +8,10 @@ using System.Threading;
 namespace StateMachine {
     public class GameController : MonoBehaviour
     {
-
-        private Gamefield _gamefield;
         private Players _players = new Players();
         private Rulesets _rulesets = new Rulesets();
         private States _states;
+        private State _actualState = new State("Start");
         private Directions _directions = new Directions();
         private Moves _moves = new Moves();
         private Modes _modes = new Modes();
@@ -21,8 +20,8 @@ namespace StateMachine {
         private bool _isLastRowColorFirstColor = false;
         private Color _rowColor1 = new Color(0.9f, 0.9f, 0.9f);
         private Color _rowColor2 = new Color(1.0f, 1.0f, 1.0f);
-
         private Map _map = new Map();
+        private Logger _logger = new Logger();
 
 
         // Start is called before the first frame update
@@ -37,9 +36,10 @@ namespace StateMachine {
 
         void InitScenarios() {
             _map.InitMap();
+            _players.AddPlayer(new Player("Player white"));
+            _players.AddPlayer(new Player("Player black"));
             Scenario1 scenario1 = new Scenario1(_map.GetMap());
-            Figure figure = scenario1.GetFigure();
-            _players.AddPlayer(new Player("Player white", figure));
+            scenario1.InitScenario(_players);
         }
 
         void InitGameField() {
@@ -57,11 +57,10 @@ namespace StateMachine {
             Dropdown dropdown = dropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
             dropdown.ClearOptions();
 
-            _directions.AddDirection("Oben");
-            _directions.AddDirection("Unten");
-            _directions.AddDirection("Links");
-            _directions.AddDirection("Rechts");
-
+            _directions.AddDirection(new Direction("Oben", 1, 0));
+            _directions.AddDirection(new Direction("Unten", -1, 0));
+            _directions.AddDirection(new Direction("Links", 0, -1));
+            _directions.AddDirection(new Direction("Rechts", 0, 1));
 
             foreach (Direction item in _directions)
             {
@@ -80,8 +79,9 @@ namespace StateMachine {
             Dropdown dropdown = dropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
             dropdown.ClearOptions();
 
-            _modes.AddMode("Figur schlagen");
-            _modes.AddMode("Leeres Feld betreten");
+            // TODO remove magic values and make enum
+            _modes.AddMode(new Mode("Figur schlagen", 1));
+            _modes.AddMode(new Mode("Leeres Feld betreten", 0));
 
             foreach (Mode item in _modes)
             {
@@ -215,36 +215,88 @@ namespace StateMachine {
             // Get pawn.001
             GameObject directionDropdownObject = GameObject.Find("pawn.001");
 
-            // run state machine
-
-            int fieldMoveDistance = 4;
 
             // TODO this must be start text from language plugin
             string start = "start";
 
             Player player = _players.GetPlayerAtIndex(0);
             Figure figureToMove = player.GetFigure();
-
-            for (int counter = 0; counter < fieldMoveDistance; counter++) {
+            while (true) {
 
                 // Find ruleset which should be executed
-                List<Ruleset> startRulesetsFound = new List<Ruleset>();
+                Ruleset ruleToExecute = null;
+                int rulesetId = 0;
+                Field fieldAfterMove = null;
 
-                foreach (Ruleset ruleset in _rulesets)
-                {
-                    if (ruleset.GetStartState().IsStartState()) {
-                        startRulesetsFound.Add(ruleset);
+
+                // TODO make own method
+                for (int rulesetCounter = 0; rulesetCounter < _rulesets.GetCount(); rulesetCounter++)
+                {   
+                    Ruleset ruleset = _rulesets.GetRulesetAtPosition(rulesetCounter);
+                    
+
+                    // check if rule has right start state
+                    if (ruleset.GetStartState().GetStateName() == _actualState.GetStateName()) {
+                        Direction direction = ruleset.GetDirection();
+                        Field fieldToCheck = null;fieldToCheck = _map.GetFieldByIndices(figureToMove._positionColumn + direction.GetRowMovementFactor(), figureToMove._positionRow + direction.GetColumnMovementFactor());
+
+                        // check if move would end outside of the board
+                        if (fieldToCheck == null) {
+                            continue;
+                        }
+
+                        // check if field is empty (when mode is 0)
+                        // TODO remove magic value
+                        if (ruleset.GetMode().GetModeCode() == 0 && fieldToCheck.GetFigure() != null) {
+                            continue;
+                        }                        
+
+                        // if no figure is on field to hit
+                        if (ruleset.GetMode().GetModeCode() == 1 && fieldToCheck.GetFigure() == null) {
+                            continue;
+                        }
+
+                        // if own figure would be hit
+                        if (ruleset.GetMode().GetModeCode() == 1 && fieldToCheck.GetFigure() && figureToMove._player._playerName == fieldToCheck.GetFigure()._player._playerName) {
+                            continue;
+                        }
+                        
+                        ruleToExecute = ruleset;
+                        rulesetId = rulesetCounter;
+                        fieldAfterMove = fieldToCheck;
                     }
                 }
 
                 // TODO compare mode 
+                
                 // TODO compare surrounding of rule to surrounding of the figure to move => only one rule must be available after that comparison
 
-                // TODO move figure one field
-                 Vector3 position = figureToMove.transform.position;
-                // move one field up
-                figureToMove.transform.position = new Vector3(position.x, position.y + (float)0.18, position.z);
+                // Check if field is empty (no hitting move) 
+                if (ruleToExecute == null) {
+                    _logger.LogStateMachineMessage("Keine Regel gefunden");
+                    yield break;
+                } else {
+                    _logger.LogStateMachineMessage("Regel " + (rulesetId + 1) + " wird ausgeführt");
+                }
+                // Set new state
+                _actualState = ruleToExecute.GetEndState();
+
+                // Set moving factors according to move
+                int columnMovementFactor = ruleToExecute.GetDirection().GetColumnMovementFactor();
+                int rowMovementFactor = ruleToExecute.GetDirection().GetRowMovementFactor();
+
+                Vector3 position = figureToMove.transform.position;
+
+                figureToMove.transform.position = new Vector3(position.x + (float)0.18 * rowMovementFactor, position.y + (float)0.18 * columnMovementFactor, position.z);
+
+                // set figure to new field
+                fieldAfterMove.SetFigure(figureToMove);
+                // set new position in figure
+                figureToMove._positionColumn += ruleToExecute.GetDirection().GetRowMovementFactor(); 
+                figureToMove._positionRow += ruleToExecute.GetDirection().GetColumnMovementFactor();
+
                 yield return new WaitForSeconds(1);
+
                 
                 // bounce check move
                 // is field free check
@@ -256,6 +308,7 @@ namespace StateMachine {
             }
            
         }
+
         
 
     }

@@ -6,8 +6,8 @@ public class Directions : IEnumerable
 {
     private List<Direction> _directions = new List<Direction>();
     
-    public void AddDirection(string directionName) {
-         _directions.Add(new Direction(directionName));
+    public void AddDirection(Direction direction) {
+         _directions.Add(direction);
     }
     public IEnumerator GetEnumerator() {
         return _directions.GetEnumerator();

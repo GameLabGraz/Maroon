@@ -28,4 +28,8 @@ public class Rulesets : IEnumerable
     public IEnumerator GetEnumerator() {
         return _rules.GetEnumerator();
     }
+
+    public int GetCount() {
+        return _rules.Count;
+    }
 }

@@ -6,13 +6,12 @@ public class Scenario1
 {
     private Figure _figure;
     private List<List<Field>> _map;
-    private bool _isInitialised = false;
 
     public Scenario1 (List<List<Field>> map) {
         _map = map;
     }
 
-    private void InitScenario() {
+    public void InitScenario(Players players) {
         //Init first map
         foreach (List<Field> column in _map) {
             foreach(Field field in column) {
@@ -21,38 +20,37 @@ public class Scenario1
                 
                 // Defines which figures should not be removed from the field
                 // TODO position changes of figures should also be made
-                if (figure && figure.gameObject.name != "pawn.003" && figure.gameObject.name != "pawn.003black") {
+                if (!figure) {
+                    continue;
+                }
+                if (figure.gameObject.name != "pawn.003" && figure.gameObject.name != "pawn.003black") {
                     field.RemoveFigure();
-                } 
+                } else {
+                    // add player to figure
+                    if (figure.gameObject.name.Contains("black")) {
+                        figure._player = players.GetPlayerAtIndex(1);
+                    } else {
+                        figure._player = players.GetPlayerAtIndex(0);
+                    }
+                }
 
                 // Defines which figure should be moved by the player
-                if (figure && figure.gameObject.name == "pawn.003") {
+                if (figure.gameObject.name == "pawn.003") {
                     _figure  = figure;
-                    int indexRow = _map.IndexOf(column);
-                    int indexColumn = 0;
-                    if (indexRow < _map.Count) {
-                        indexColumn = _map[indexRow].IndexOf(field);
+                    int indexColumn = _map.IndexOf(column);
+                    int indexRow = 0;
+                    if (indexColumn < _map.Count) {
+                        indexRow = _map[indexColumn].IndexOf(field);
                     }
                     _figure._positionRow = indexRow;
                     _figure._positionColumn = indexColumn;
+                    players.GetPlayerAtIndex(0).SetFigure(_figure);
                 }              
             }
         }
-        _isInitialised = true;
     }
 
     public List<List<Field>> GetMap() {
-        if (!_isInitialised) {
-            this.InitScenario();
-        }
         return _map;
     }
-
-    public Figure GetFigure() {
-        if (!_isInitialised) {
-            this.InitScenario();
-        }
-        return _figure;
-    }
-
 }

@@ -41,4 +41,16 @@ public class Map
     public List<Field> GetColumnByIndex(int index) {
         return _map[index];
     }
+
+    public Field GetFieldByIndices(int column, int row) {
+        
+        if (column >= _map.Count) {
+            return null;
+        }
+        if (row >= _map[column].Count) {
+            return null;
+        }
+
+        return _map[column][row];
+    }
 }

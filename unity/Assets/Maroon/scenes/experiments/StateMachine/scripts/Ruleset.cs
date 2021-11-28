@@ -39,4 +39,12 @@ public class Ruleset
         return _endState;
     }
 
+    public Direction GetDirection() {
+        return _direction;
+    }
+
+    public Mode GetMode() {
+        return _mode;
+    }
+
 }

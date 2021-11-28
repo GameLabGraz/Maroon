@@ -9,7 +9,7 @@ public class Field : MonoBehaviour
 
     [SerializeField] string _name;
     
-    public void setFigure(Figure newFigure) {
+    public void SetFigure(Figure newFigure) {
         _figure = _figure;
     }
 

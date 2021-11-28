@@ -5,16 +5,20 @@ using StateMachine;
 
 public class Player
 {
-    private string _playerName;
+        public string _playerName {get;set;}
 
-    private Figure _figure;
-   
-   public Player(string name, Figure figure) {
-       _figure = figure;
-       _playerName = name;
-   }
+        private Figure _figure = null;
+    
+    public Player(string name) {;
+        _playerName = name;
+    }
 
-   public Figure GetFigure() {
-       return _figure;
-   }
+    public Figure GetFigure() {
+        return _figure;
+    }
+
+    public void SetFigure(Figure figure) {
+        _figure = figure;
+    }
+
 }

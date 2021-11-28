@@ -6,8 +6,8 @@ public class Modes : IEnumerable
 {
     private List<Mode> _modes = new List<Mode>();
     
-    public void AddMode(string modeName) {
-         _modes.Add(new Mode(modeName));
+    public void AddMode(Mode mode) {
+         _modes.Add(mode);
     }
     public IEnumerator GetEnumerator() {
         return _modes.GetEnumerator();
