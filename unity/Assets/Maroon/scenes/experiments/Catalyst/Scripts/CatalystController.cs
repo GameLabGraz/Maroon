@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using Maroon.Physics;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -26,13 +24,18 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         [SerializeField] Molecule coMoleculePrefab;
         [SerializeField] Molecule co2MoleculePrefab;
         [SerializeField] int numSpawnedMolecules;
+        [SerializeField] int numberSpawnedO2Molecules;
+        [SerializeField] int numberSpawnedCOMolecules;
 
         [Header("Player specific objects")]
         [SerializeField] GameObject player;
 
+        private int freedMoleculeCounter = 0;
         private List<Vector3> _platSpawnPoints = new List<Vector3>();
-        private CatalystSurface _catalystSurface;
         private List<Molecule> _activeMolecules = new List<Molecule>();
+        private CatalystSurface _catalystSurface;
+
+        private System.Action onReactionStart;
 
         public const float FixedMoleculeYDist = 0.28f;
         public const float PlatinumScale = 0.14f;
@@ -88,9 +91,18 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private void SpawnCatalystSurfaceObject()
         {
             _catalystSurface = Instantiate(catalystSurfacePrefab, catalystSurfaceSpawnTransform);
-            _catalystSurface.SetupCoords(_platSpawnPoints);
-            // list we get is tilted, so tilt parent after spawning the molecules
-            _catalystSurface.transform.localRotation = Quaternion.Euler(-35.2f, 0.0f, 45.0f);
+            _catalystSurface.SetupCoords(_platSpawnPoints, list => 
+                {
+                    _activeMolecules = list;
+                    SpawnReactionMaterial();
+                    // list we get is tilted, so tilt parent after spawning the molecules
+                    // update: added list to surface manually so tilt is gone
+                    //_catalystSurface.transform.localRotation = Quaternion.Euler(-35.2f, 0.0f, 45.0f);
+                    //_catalystSurface.transform.localPosition = new Vector3(1.4f, 2.0f, 3.0f);
+                },
+                onMoleculeFreed,
+                onReactionStart);
+
             /*_catalystSurface.Setup((int)catalystSurfaceSize, list =>
             {
                 _activeMolecules = list;
@@ -119,10 +131,36 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             }
         }
 
+        private void SpawnReactionMaterial()
+        {
+            Transform catalystSurfaceTransform = _catalystSurface.GetComponentInChildren<CatalystSurface>().transform;
+            float maxOffset = PlatinumScale * (int)catalystSurfaceSize;
+            for (int i = 0; i < numberSpawnedO2Molecules; i++)
+            {
+                Vector3 spawnPos = new Vector3(Random.Range(0.1f, 0.1f + maxOffset), Random.Range(0.5f, 1.3f), Random.Range(0.1f, 0.1f + maxOffset));
+                Quaternion spawnRot = Quaternion.Euler(Random.Range(-180.0f, 180.0f),Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
+                Molecule molecule = Instantiate(o2MoleculePrefab, catalystSurfaceTransform);
+                molecule.gameObject.transform.localPosition = spawnPos;
+                molecule.gameObject.transform.localRotation = spawnRot;
+                molecule.OnDissociate += DissociateO2;
+                onReactionStart += molecule.ReactionStart;
+                AddMoleculeToActiveList(molecule);
+            }
+            for (int i = 0; i < numberSpawnedCOMolecules; i++)
+            {
+                Vector3 spawnPos = new Vector3(Random.Range(0.1f, 0.1f + maxOffset), Random.Range(0.5f, 1.3f), Random.Range(0.1f, 0.1f + maxOffset));
+                Quaternion spawnRot = Quaternion.Euler(Random.Range(-180.0f, 180.0f),Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
+                Molecule molecule = Instantiate(coMoleculePrefab, catalystSurfaceTransform);
+                molecule.gameObject.transform.localPosition = spawnPos;
+                molecule.gameObject.transform.localRotation = spawnRot;
+                onReactionStart += molecule.ReactionStart;
+                AddMoleculeToActiveList(molecule);
+            }
+        }
+
         private void DissociateO2(Molecule o2Molecule)
         {
             o2Molecule.OnDissociate -= DissociateO2;
-            RemoveMoleculeFromActiveList(o2Molecule);
             Transform parentTransform = o2Molecule.transform.parent;
             Vector3 o2Position = o2Molecule.transform.position;
             o2Molecule.ConnectedMolecule.ConnectedMolecule = null;
@@ -143,6 +181,15 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 AddMoleculeToActiveList(molecule);
                 alternate = !alternate;
             }
+        }
+
+        private void onMoleculeFreed()
+        {
+            if (freedMoleculeCounter == 4)
+            {
+                onReactionStart?.Invoke();
+            }
+            freedMoleculeCounter++;
         }
 
         private void CreateCO2(Molecule oMolecule, Molecule coMolecule)

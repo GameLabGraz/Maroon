@@ -36,10 +36,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         [SerializeField] float timeToMove = 3.0f;
         [SerializeField] float timeUntilNextDesorb = 3.0f;
 
-        private QuantityFloat _temperature;
-        private QuantityFloat _partialPressure;
+        private QuantityFloat _temperature = new QuantityFloat();
+        private QuantityFloat _partialPressure = new QuantityFloat();
 
-        private MoleculeState _state;
+        public MoleculeState _state;
         
         private float _currentTimeMove = 0.0f;
         private float _currentTimeDesorb = 0.0f;
@@ -50,6 +50,9 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         
         private float _currenTimeDrawn = 0.0f;
         private Vector3 _drawingMoleculePosition;
+
+        private int _moleculeClickCounter = 0;
+        private bool _reactionStarted = false;
 
         public MoleculeType Type { get => type; }
 
@@ -76,7 +79,20 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         public Action<Molecule> OnDissociate;
         public Action<Molecule, Molecule> OnCO2Created;
+        public Action OnMoleculeFreed;
 
+        public void OnMouseDown()
+        {
+            if (type != MoleculeType.CO || State != MoleculeState.Fixed) return;
+            if (_moleculeClickCounter == 3 && SimulationController.Instance.SimulationRunning)
+            {
+                DesorbCO();
+                OnMoleculeFreed?.Invoke();
+            }
+            
+            // todo make molecule wobble a bit
+            _moleculeClickCounter++;
+        }
 
         public void SetMoleculeDrawn(Molecule drawingMolecule, MoleculeState state)
         {
@@ -87,19 +103,28 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         public void TemperatureChanged(float temp)
         {
-            _temperature = temp;
-            movementSpeed = _temperature / 20.0f;
+            // normal temp goes from -23.15f to 76.85 degree celsius, since we divide here we define
+            // the temp of molecules to go from 0 - 100 hence we add 23.15 here
+            _temperature.Value = temp + 23.15f;
+            movementSpeed = _temperature.Value / _temperature.maxValue;
         }
 
         public void PressureChanged(float pressure)
         {
             _partialPressure = pressure;
         }
+
+        public void ReactionStart()
+        {
+            _reactionStarted = true;
+        }
         
         protected override void Start()
         {
             base.Start();
             GetRandomPositionAndRotation();
+            _temperature.minValue = 0.0f;
+            _temperature.maxValue = 100.0f;
         }
 
         protected override void HandleUpdate()
@@ -112,7 +137,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             if (State == MoleculeState.Fixed && _connectedMolecule == null && State != MoleculeState.DrawnByCO) return;
             if (State == MoleculeState.Fixed  && _connectedMolecule != null && _connectedMolecule.Type == MoleculeType.Pt && !_desorbMoveActive)
             {
-                if (Type == MoleculeType.CO && _connectedMolecule.Type == MoleculeType.Pt)
+                if (Type == MoleculeType.CO && _connectedMolecule.Type == MoleculeType.Pt && _reactionStarted)
                 {
                     _currentTimeDesorb += Time.deltaTime;
                     if (timeUntilNextDesorb <= _currentTimeDesorb)
