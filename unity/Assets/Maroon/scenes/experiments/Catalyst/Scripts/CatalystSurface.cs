@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.Catalyst.Scripts
@@ -16,22 +17,43 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         [SerializeField] Molecule coMoleculePrefab;
         [SerializeField] Transform surfaceLayerParent;
         [SerializeField] int numSubLayers;
-        [SerializeField] private GameObject boundaryXMin;
-        [SerializeField] private GameObject boundaryXMax;
-        [SerializeField] private GameObject boundaryZMin;
-        [SerializeField] private GameObject boundaryZMax;
+        [SerializeField] GameObject boundaryXMin;
+        [SerializeField] GameObject boundaryXMax;
+        [SerializeField] GameObject boundaryZMin;
+        [SerializeField] GameObject boundaryZMax;
+        [SerializeField] GameObject topLayerParent;
         
         private float _spaceBetweenMolecules;
+        private List<Molecule> _topLayerMolecules = new List<Molecule>();
 
-        public void SetupCoords(List<Vector3> platCoords)
+        public void SetupCoords(List<Vector3> platCoords, 
+            System.Action<List<Molecule>> onComplete, 
+            System.Action onMoleculeFreed,
+            System.Action onReactionStart)
         {
-            
-            foreach (var coord in platCoords)
+            List<Molecule> activeMolecules = new List<Molecule>();
+            foreach (var molecule in _topLayerMolecules)
             {
-                Molecule platMolecule = Instantiate(platinumMoleculePrefab, surfaceLayerParent);
-                platMolecule.transform.position = coord / 20.0f;
-                platMolecule.State = MoleculeState.Fixed;
+                Molecule coMolecule = Instantiate(coMoleculePrefab, surfaceLayerParent);
+                coMolecule.State = MoleculeState.Fixed;
+                            
+                Vector3 moleculePos = molecule.transform.localPosition;
+                moleculePos.y += CatalystController.FixedMoleculeYDist -0.075f;
+                coMolecule.transform.localPosition = moleculePos;
+                            
+                Quaternion moleculeRot = Quaternion.Euler(0.0f, 0.0f, 90.0f);
+                coMolecule.transform.localRotation = moleculeRot;
+
+                molecule.ConnectedMolecule = coMolecule;
+                molecule.GetComponent<CapsuleCollider>().enabled = true;
+                coMolecule.ConnectedMolecule = molecule;
+                coMolecule.OnMoleculeFreed += onMoleculeFreed;
+                onReactionStart += coMolecule.ReactionStart;
+                            
+                activeMolecules.Add(molecule);
+                activeMolecules.Add(coMolecule);
             }
+            onComplete?.Invoke(activeMolecules);
         }
         
         public void Setup(int surfaceSize, System.Action<List<Molecule>> onComplete)
@@ -81,6 +103,11 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 moleculePosition.x = surfaceLayerParent.transform.position.x;
             }
             onComplete?.Invoke(activeMolecules);
+        }
+            
+        private void Awake()
+        {
+            _topLayerMolecules = topLayerParent.transform.GetComponentsInChildren<Molecule>().ToList();
         }
     }
 }
