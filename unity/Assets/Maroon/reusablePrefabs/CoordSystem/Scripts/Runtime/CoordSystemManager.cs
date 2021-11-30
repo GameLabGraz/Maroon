@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using RotaryHeart.Lib.AutoComplete;
 using UnityEngine;
 
 namespace Maroon.Physics.CoordinateSystem
@@ -48,7 +49,7 @@ namespace Maroon.Physics.CoordinateSystem
 
         [SerializeField] private List<CoordAxis> _axisList = new List<CoordAxis>(6);
 
-        private Dictionary<Axis, CoordAxis> _axisDictionary;
+        private Dictionary<Axis, CoordAxis> _axisDictionary = new Dictionary<Axis, CoordAxis>();
         public Dictionary<Axis, CoordAxis> GetAxisDictionary() => _axisDictionary;
 
         #region Accessors & Mutators
@@ -93,15 +94,23 @@ namespace Maroon.Physics.CoordinateSystem
             }
         }
 
+        public Vector3 PositiveWorldLengths => new Vector3(FindInList(Axis.X).AxisWorldLength,
+            FindInList(Axis.Y).AxisWorldLength,
+            FindInList(Axis.Z).AxisWorldLength);
+
+        public Vector3 NegativeWorldLengths => new Vector3(FindInList(Axis.NX).AxisWorldLength,
+            FindInList(Axis.NY).AxisWorldLength,
+            FindInList(Axis.NZ).AxisWorldLength);
+
+
         #endregion
 
         private void Awake()
         {
-            _axisDictionary = DictionaryFromAxisList();
-
             foreach (var axis in _axisList)
             {
                 _ = axis ?? throw new NullReferenceException();
+                _axisDictionary[axis.AxisID] = axis;
             }
 
             if (_lengthUniform)
@@ -127,17 +136,17 @@ namespace Maroon.Physics.CoordinateSystem
 
         public void ToggleNegativeAxisVisibility()
         {
-            _axisList.ElementAt(FindInList(Axis.NX)).gameObject.SetActive(_enableNegativeDirection);
-            _axisList.ElementAt(FindInList(Axis.NY)).gameObject.SetActive(_enableNegativeDirection);
+            FindInList(Axis.NX).gameObject.SetActive(_enableNegativeDirection);
+            FindInList(Axis.NY).gameObject.SetActive(_enableNegativeDirection);
 
             if (_enableThirdDimension)
-                _axisList.ElementAt(FindInList(Axis.NZ)).gameObject.SetActive(_enableNegativeDirection);
+                FindInList(Axis.NZ).gameObject.SetActive(_enableNegativeDirection);
         }
 
         public void ToggleSpaceIndicatorVisibility()
         {
-            var axisWorldLengths = GetWorldLengthsOfDirection(true);
-            var negativeAxisWorldLengths = GetWorldLengthsOfDirection(false);
+            var axisWorldLengths = PositiveWorldLengths;
+            var negativeAxisWorldLengths = NegativeWorldLengths;
 
             PlaceIndicators(axisWorldLengths, negativeAxisWorldLengths);
             ScaleIndicators(axisWorldLengths, negativeAxisWorldLengths);
@@ -155,10 +164,10 @@ namespace Maroon.Physics.CoordinateSystem
 
         public void ToggleThirdDimension()
         {
-            _axisList.ElementAt(FindInList(Axis.Z)).gameObject.SetActive(_enableThirdDimension);
+            FindInList(Axis.Z).gameObject.SetActive(_enableThirdDimension);
 
             if (_enableNegativeDirection)
-                _axisList.ElementAt(FindInList(Axis.NZ)).gameObject.SetActive(_enableThirdDimension);
+                FindInList(Axis.NZ).gameObject.SetActive(_enableThirdDimension);
         }
 
         private void PlaceIndicators(Vector3 axisWorldLengths, Vector3 negativeAxisWorldLengths)
@@ -203,47 +212,6 @@ namespace Maroon.Physics.CoordinateSystem
             }
         }
 
-        public Vector3 GetWorldLengthsOfDirection(bool positive)
-        {
-            if (positive)
-            {
-                var x_worldLength = _axisList.ElementAt(FindInList(Axis.X)).AxisWorldLength;
-                var y_worldLength = _axisList.ElementAt(FindInList(Axis.Y)).AxisWorldLength;
-                var z_worldLength = _axisList.ElementAt(FindInList(Axis.Z)).AxisWorldLength;
-
-                return new Vector3(x_worldLength, y_worldLength, z_worldLength);
-            }
-
-            var nx_worldLength = _axisList.ElementAt(FindInList(Axis.NX)).AxisWorldLength;
-            var ny_worldLength = _axisList.ElementAt(FindInList(Axis.NY)).AxisWorldLength;
-            var nz_worldLength = _axisList.ElementAt(FindInList(Axis.NZ)).AxisWorldLength;
-
-            return new Vector3(nx_worldLength, ny_worldLength, nz_worldLength);
-        }
-
-
-        private Dictionary<Axis, CoordAxis> DictionaryFromAxisList()
-        {
-            return new Dictionary<Axis, CoordAxis>()
-            {
-                { Axis.X, _axisList.ElementAt(FindInList(Axis.X)) },
-                { Axis.Y, _axisList.ElementAt(FindInList(Axis.Y)) },
-                { Axis.Z, _axisList.ElementAt(FindInList(Axis.Z)) },
-                { Axis.NX, _axisList.ElementAt(FindInList(Axis.NX)) },
-                { Axis.NY, _axisList.ElementAt(FindInList(Axis.NY)) },
-                { Axis.NZ, _axisList.ElementAt(FindInList(Axis.NZ)) }
-            };
-        }
-
-        private int FindInList(Axis direction)
-        {
-            for (var index = 0; index < _axisList.Count; index++)
-            {
-                if (direction.ToString() == _axisList.ElementAt(index).AxisID.ToString())
-                    return index;
-            }
-
-            throw new NullReferenceException($"There was no axis to be found {direction}");
-        }
+        private CoordAxis FindInList(Axis direction) => _axisList.Find(axis => axis.AxisID == direction);
     }
 }

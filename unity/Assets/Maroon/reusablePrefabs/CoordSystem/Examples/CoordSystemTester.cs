@@ -16,7 +16,7 @@ public class CoordSystemTester : MonoBehaviour
         set
         {
             _x = value;
-            this.transform.position = CoordSystem.Instance.GetPositionInWorldSpace(new Vector3(_x,_y,_z), array);
+            this.transform.position = CoordSystem.Instance.GetPositionInWorldSpace(new Vector3(_x,_y,_z));
             Debug.Log($" Unit coords {CoordSystem.Instance.GetPositionInAxisUnits(transform.position)}");
         }
     }
@@ -27,7 +27,7 @@ public class CoordSystemTester : MonoBehaviour
         set
         {
             _y = value;
-            this.transform.position = CoordSystem.Instance.GetPositionInWorldSpace(new Vector3(_x,_y,_z), array);
+            this.transform.position = CoordSystem.Instance.GetPositionInWorldSpace(new Vector3(_x,_y,_z));
             Debug.Log($" Unit coords {CoordSystem.Instance.GetPositionInAxisUnits(transform.position)}");
         }
     }
@@ -38,7 +38,7 @@ public class CoordSystemTester : MonoBehaviour
         set
         {
             _z = value;
-            this.transform.position = CoordSystem.Instance.GetPositionInWorldSpace(new Vector3(_x,_y,_z), array);
+            this.transform.position = CoordSystem.Instance.GetPositionInWorldSpace(new Vector3(_x,_y,_z));
             Debug.Log($" Unit coords {CoordSystem.Instance.GetPositionInAxisUnits(transform.position)}");
         }
     }

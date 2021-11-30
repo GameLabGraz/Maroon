@@ -42,11 +42,13 @@ namespace Maroon.Physics.CoordinateSystem
             return new Vector3(xValue, yValue, zValue);
         }
 
-        public Vector3 GetPositionInWorldSpace(Vector3 localSpacePosition, Unit[] respectiveUnits)
+        public Vector3 GetPositionInWorldSpace(Vector3 localSpacePosition, Unit[] respectiveUnits = null)
         {
             var xAxis = _axisDictionary[Axis.X];
             var yAxis = _axisDictionary[Axis.Y];
             var zAxis = _axisDictionary[Axis.Z];
+
+            respectiveUnits = respectiveUnits ?? new[] { Unit.m, Unit.m, Unit.m };
 
             var xValue = xAxis.GetAxisPointFromValue(localSpacePosition.x, respectiveUnits[0]) * xAxis.AxisWorldLength;
             var yValue = yAxis.GetAxisPointFromValue(localSpacePosition.y, respectiveUnits[1]) * yAxis.AxisWorldLength;
@@ -58,7 +60,7 @@ namespace Maroon.Physics.CoordinateSystem
 
         public Vector3 WorldCoordinatesToSystemSpace(Vector3 objectTransform)
         {
-            var axisLengths = systemManager.GetWorldLengthsOfDirection(true);
+            var axisLengths = systemManager.PositiveWorldLengths;
             var objectPosition = origin.InverseTransformDirection(objectTransform);
 
             var objectPositionRelativeToAxisLength = new Vector3(objectPosition.x / axisLengths.x,

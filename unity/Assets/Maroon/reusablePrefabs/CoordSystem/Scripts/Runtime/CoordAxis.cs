@@ -57,15 +57,6 @@ namespace Maroon.Physics.CoordinateSystem
 
         #endregion
 
-        private void OnEnable()
-        {
-            SystemChangeHandler.Instance.OnUniformWorldLength += UniformWorldSpaceLengthUpdate;
-        }
-
-        private void OnDisable()
-        {
-            SystemChangeHandler.Instance.OnUniformWorldLength -= UniformWorldSpaceLengthUpdate;
-        }
 
         private void Awake()
         {
@@ -208,7 +199,8 @@ namespace Maroon.Physics.CoordinateSystem
 
         public float GetAxisPointFromValue(float value, Unit inputUnit)
         {
-            var quotient = value * (Mathf.Pow(10, (float)inputUnit));
+            var unit = inputUnit != Unit.none ? inputUnit : 0; 
+            var quotient = value * (Mathf.Pow(10, (float)unit));
             var dividend = _axisLocalLength * (Mathf.Pow(10, (float)_lengthUnit));
             return quotient / dividend;
         }
