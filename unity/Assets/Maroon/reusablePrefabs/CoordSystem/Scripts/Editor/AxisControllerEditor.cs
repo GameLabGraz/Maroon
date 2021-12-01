@@ -85,7 +85,7 @@ namespace Maroon.Physics.CoordinateSystem.Editor
             {
                 EditorGUI.indentLevel++;
                 EditorGUI.BeginChangeCheck();
-                EditorGUILayout.PropertyField(_uniformWorldAxisLength);
+                EditorGUILayout.Slider(_uniformWorldAxisLength, 0f, 100f);
                 serializedObject.ApplyModifiedProperties();
 
                 if (EditorGUI.EndChangeCheck())
