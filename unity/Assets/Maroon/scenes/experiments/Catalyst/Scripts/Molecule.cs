@@ -117,6 +117,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         public void ReactionStart()
         {
             _reactionStarted = true;
+            if (type == MoleculeType.Pt)
+            {
+                GetComponent<CapsuleCollider>().enabled = true;
+            }
         }
         
         protected override void Start()

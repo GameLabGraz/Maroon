@@ -28,8 +28,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         public void SetupCoords(List<Vector3> platCoords, 
             System.Action<List<Molecule>> onComplete, 
-            System.Action onMoleculeFreed,
-            System.Action onReactionStart)
+            System.Action onMoleculeFreed)
         {
             List<Molecule> activeMolecules = new List<Molecule>();
             foreach (var molecule in _topLayerMolecules)
@@ -45,10 +44,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 coMolecule.transform.localRotation = moleculeRot;
 
                 molecule.ConnectedMolecule = coMolecule;
-                molecule.GetComponent<CapsuleCollider>().enabled = true;
                 coMolecule.ConnectedMolecule = molecule;
                 coMolecule.OnMoleculeFreed += onMoleculeFreed;
-                onReactionStart += coMolecule.ReactionStart;
                             
                 activeMolecules.Add(molecule);
                 activeMolecules.Add(coMolecule);
@@ -104,7 +101,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             }
             onComplete?.Invoke(activeMolecules);
         }
-            
+
         private void Awake()
         {
             _topLayerMolecules = topLayerParent.transform.GetComponentsInChildren<Molecule>().ToList();
