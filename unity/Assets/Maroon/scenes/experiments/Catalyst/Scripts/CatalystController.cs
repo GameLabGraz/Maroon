@@ -100,8 +100,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                     //_catalystSurface.transform.localRotation = Quaternion.Euler(-35.2f, 0.0f, 45.0f);
                     //_catalystSurface.transform.localPosition = new Vector3(1.4f, 2.0f, 3.0f);
                 },
-                onMoleculeFreed,
-                onReactionStart);
+                OnMoleculeFreed);
 
             /*_catalystSurface.Setup((int)catalystSurfaceSize, list =>
             {
@@ -183,11 +182,14 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             }
         }
 
-        private void onMoleculeFreed()
+        private void OnMoleculeFreed()
         {
             if (freedMoleculeCounter == 4)
             {
-                onReactionStart?.Invoke();
+                foreach (var molecule in _activeMolecules)
+                {
+                    molecule.ReactionStart();
+                }
             }
             freedMoleculeCounter++;
         }
