@@ -2,10 +2,10 @@
 
 namespace Maroon.Physics.CoordinateSystem.Editor
 {
-    [CustomEditor(typeof(CoordSystemManager))]
-    public class CoordSystemManagerEditor : UnityEditor.Editor
+    [CustomEditor(typeof(AxisController))]
+    public class AxisControllerEditor : UnityEditor.Editor
     {
-        private CoordSystemManager _manager;
+        private AxisController _manager;
         private SerializedProperty _enableNegativeDirection;
         private SerializedProperty _enableThirdDimension;
         private SerializedProperty _markerFontSize;
@@ -17,7 +17,7 @@ namespace Maroon.Physics.CoordinateSystem.Editor
 
         private void Awake()
         {
-            _manager = (CoordSystemManager)target;
+            _manager = (AxisController)target;
         }
 
         private void OnEnable()

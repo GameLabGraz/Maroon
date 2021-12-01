@@ -1,4 +1,5 @@
 ﻿using UnityEditor;
+using UnityEngine;
 
 namespace Maroon.Physics.CoordinateSystem.Editor
 {
@@ -35,33 +36,28 @@ namespace Maroon.Physics.CoordinateSystem.Editor
         public override void OnInspectorGUI()
         {
             EditorGUILayout.LabelField("General", EditorStyles.boldLabel);
-
+            
+            EditorGUI.BeginChangeCheck();
+            
             EditorGUILayout.PropertyField(_id);
             EditorGUILayout.PropertyField(_prefab);
 
-            EditorGUI.BeginChangeCheck();
-            EditorGUILayout.PropertyField(_worldLength);
+            GUILayout.Space(10);
+            EditorGUILayout.Slider(_worldLength, 0f, 1000f);
             serializedObject.ApplyModifiedProperties();
-            if (EditorGUI.EndChangeCheck())
-            {
-                axis.SetupAxis();
-            }
 
+            GUILayout.Space(20);
             EditorGUILayout.LabelField("Local Axis Length/Unit", EditorStyles.boldLabel);
 
-            EditorGUI.BeginChangeCheck();
-            EditorGUILayout.PropertyField(_localLength);
+
+            EditorGUILayout.Slider(_localLength, 0f, 1000f);
             EditorGUILayout.PropertyField(_localLengthUnit);
             serializedObject.ApplyModifiedProperties();
-            if (EditorGUI.EndChangeCheck())
-            {
-                axis.SetupAxis();
-            }
 
+            GUILayout.Space(20);
             EditorGUILayout.LabelField("Subdivision of Axis", EditorStyles.boldLabel);
 
-            EditorGUI.BeginChangeCheck();
-            EditorGUILayout.PropertyField(_axisSubdivision);
+            EditorGUILayout.IntSlider(_axisSubdivision, 0, 1000);
             EditorGUILayout.PropertyField(_subdivisionUnit);
             serializedObject.ApplyModifiedProperties();
             if (EditorGUI.EndChangeCheck())

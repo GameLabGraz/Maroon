@@ -16,7 +16,7 @@ namespace Maroon.Physics.CoordinateSystem
         [SerializeField] private float _axisLocalLength;
         [SerializeField] private Unit _lengthUnit;
 
-        [SerializeField] private float _axisSubdivision;
+        [SerializeField] private int _axisSubdivision;
         [SerializeField] private Unit _divisionUnit;
 
         private Vector3 _direction;
@@ -78,9 +78,9 @@ namespace Maroon.Physics.CoordinateSystem
         public void UpdateFontSize(float value)
         {
             _fontSize = value;
-            foreach (var marker in GetComponentsInChildren<TextMeshPro>())
+            foreach (var marker in _axisMarkers)
             {
-                marker.fontSize = value;
+                marker.GetComponentInChildren<TextMeshPro>().fontSize = value;
             }
         }
 
@@ -179,7 +179,8 @@ namespace Maroon.Physics.CoordinateSystem
                     _direction = Vector3.back;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    Debug.LogError("Axis is not set up correctly");
+                    break;
             }
         }
 

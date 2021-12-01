@@ -30,7 +30,7 @@ namespace Maroon.Physics.CoordinateSystem
         km = 3
     }
 
-    public class CoordSystemManager : MonoBehaviour
+    public class AxisController : MonoBehaviour
     {
         // Start is called before the first frame update
         [SerializeField] private bool _enableNegativeDirection = false;

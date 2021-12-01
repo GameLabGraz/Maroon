@@ -7,7 +7,7 @@ namespace Maroon.Physics.CoordinateSystem
     public class CoordSystem : MonoBehaviour
     {
         [SerializeField] private Transform origin;
-        [SerializeField] private CoordSystemManager systemManager;
+        [SerializeField] private AxisController systemManager;
 
         private Dictionary<Axis, CoordAxis> _axisDictionary;
 
