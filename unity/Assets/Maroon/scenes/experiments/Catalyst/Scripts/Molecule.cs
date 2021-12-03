@@ -52,6 +52,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private Vector3 _drawingMoleculePosition;
 
         private int _moleculeClickCounter = 0;
+        private float _wobbleStrength = 0.1f;
+        private bool _isWobbling = false;
         private bool _reactionStarted = false;
 
         public MoleculeType Type { get => type; }
@@ -83,14 +85,14 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         public void OnMouseDown()
         {
-            if (type != MoleculeType.CO || State != MoleculeState.Fixed) return;
+            if (type != MoleculeType.CO || State != MoleculeState.Fixed || !SimulationController.Instance.SimulationRunning) return;
             if (_moleculeClickCounter == 3 && SimulationController.Instance.SimulationRunning)
             {
                 DesorbCO();
                 OnMoleculeFreed?.Invoke();
             }
-            
-            // todo make molecule wobble a bit
+
+            StartCoroutine(Wobble());
             _moleculeClickCounter++;
         }
 
@@ -133,7 +135,12 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         protected override void HandleUpdate()
         {
-            
+            if (_isWobbling)
+            {
+                Vector3 newPos = transform.position + Random.insideUnitSphere * (Time.deltaTime * _wobbleStrength);
+                newPos.z = transform.position.z;
+                transform.position = newPos;
+            }
         }
 
         protected override void HandleFixedUpdate()
@@ -153,11 +160,6 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                         _currentTimeDesorb = 0.0f;
                     }
                 }
-                else if (Type == MoleculeType.O2 && _connectedMolecule.Type == MoleculeType.Pt)
-                {
-                    // todo handle O2 split? currently done once movement is complete
-                }
-
                 return;
             }
 
@@ -317,6 +319,20 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             {
                 HandleOTouchingCO();
             }
+        }
+
+        private IEnumerator Wobble()
+        {
+            Vector3 currentPosition = transform.position;
+            if (!_isWobbling)
+            {
+                _isWobbling = true;
+            }
+            yield return new WaitForSeconds(0.3f);
+            _isWobbling = false;
+            transform.position = currentPosition;
+
+
         }
     }
 }

@@ -30,81 +30,47 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             System.Action<List<Molecule>> onComplete, 
             System.Action onMoleculeFreed)
         {
-            List<Molecule> activeMolecules = new List<Molecule>();
-            foreach (var molecule in _topLayerMolecules)
+            List<Molecule> platMolecules = new List<Molecule>();
+            float maxYVal = -100.0f;
+            for (int i = 0; i < platCoords.Count; i++)
             {
-                Molecule coMolecule = Instantiate(coMoleculePrefab, surfaceLayerParent);
-                coMolecule.State = MoleculeState.Fixed;
-                            
-                Vector3 moleculePos = molecule.transform.localPosition;
-                moleculePos.y += CatalystController.FixedMoleculeYDist -0.075f;
-                coMolecule.transform.localPosition = moleculePos;
-                            
-                Quaternion moleculeRot = Quaternion.Euler(0.0f, 0.0f, 90.0f);
-                coMolecule.transform.localRotation = moleculeRot;
+                Molecule platMolecule = Instantiate(platinumMoleculePrefab, surfaceLayerParent);
+                platMolecule.transform.position = platCoords[i] / 20.0f;
+                platMolecule.State = MoleculeState.Fixed;
 
-                molecule.ConnectedMolecule = coMolecule;
-                coMolecule.ConnectedMolecule = molecule;
-                coMolecule.OnMoleculeFreed += onMoleculeFreed;
-                            
-                activeMolecules.Add(molecule);
-                activeMolecules.Add(coMolecule);
-            }
-            onComplete?.Invoke(activeMolecules);
-        }
-        
-        public void Setup(int surfaceSize, System.Action<List<Molecule>> onComplete)
-        {
-            float maxOffset = platinumMoleculePrefab.transform.GetChild(0).transform.localScale.x * surfaceSize;
-            boundaryXMin.transform.localPosition = new Vector3(0.1f, 0.0f, 0.0f);
-            boundaryZMin.transform.localPosition = new Vector3(0.0f, 0.0f, 0.1f);
-            boundaryXMax.transform.localPosition = new Vector3(0.1f + maxOffset, 0.0f, 0.0f);
-            boundaryZMax.transform.localPosition = new Vector3(0.0f, 0.0f, 0.1f + maxOffset);
-            List<Molecule> activeMolecules = new List<Molecule>();
-            _spaceBetweenMolecules = platinumMoleculePrefab.transform.GetChild(0).transform.localScale.x;
-            for (int layerNum = 0; layerNum < numSubLayers; layerNum++)
-            {
-                Vector3 moleculePosition = surfaceLayerParent.position;
-                moleculePosition.y += -layerNum * _spaceBetweenMolecules;
-                for (int sizeX = 0; sizeX < surfaceSize; sizeX++)
+                // find top layer molecules based on y position
+                if (maxYVal < platMolecule.transform.localPosition.y)
                 {
-                    moleculePosition.x += _spaceBetweenMolecules;
-                    for (int sizeZ = 0; sizeZ < surfaceSize; sizeZ++)
-                    {
-                        moleculePosition.z += _spaceBetweenMolecules;
-                        Molecule platMolecule = Instantiate(platinumMoleculePrefab, surfaceLayerParent);
-                        platMolecule.transform.position = moleculePosition;
-                        platMolecule.State = MoleculeState.Fixed;
-                        if (layerNum == 0)
-                        {
-                            Molecule coMolecule = Instantiate(coMoleculePrefab, surfaceLayerParent);
-                            coMolecule.State = MoleculeState.Fixed;
-                            
-                            Vector3 moleculePos = platMolecule.transform.localPosition;
-                            moleculePos.y = CatalystController.FixedMoleculeYDist;
-                            coMolecule.transform.localPosition = moleculePos;
-                            
-                            Quaternion moleculeRot = Quaternion.Euler(0.0f, 0.0f, 90.0f);
-                            coMolecule.transform.localRotation = moleculeRot;
-
-                            platMolecule.ConnectedMolecule = coMolecule;
-                            platMolecule.GetComponent<CapsuleCollider>().enabled = true;
-                            coMolecule.ConnectedMolecule = platMolecule;
-                            
-                            activeMolecules.Add(platMolecule);
-                            activeMolecules.Add(coMolecule);
-                        }
-                    }
-                    moleculePosition.z = surfaceLayerParent.position.z;
+                    maxYVal = platMolecule.transform.localPosition.y;
                 }
-                moleculePosition.x = surfaceLayerParent.transform.position.x;
+                platMolecules.Add(platMolecule);
+            }
+
+            // only spawn co molecules on top layer
+            List<Molecule> activeMolecules = new List<Molecule>();
+            foreach (var platMolecule in platMolecules)
+            {
+                if (Mathf.Abs(platMolecule.transform.localPosition.y - maxYVal) < 0.01f)
+                {
+                    Molecule coMolecule = Instantiate(coMoleculePrefab, surfaceLayerParent);
+                    coMolecule.State = MoleculeState.Fixed;
+
+                    Vector3 moleculePos = platMolecule.transform.localPosition;
+                    moleculePos.y += CatalystController.FixedMoleculeYDist - 0.075f;
+                    coMolecule.transform.localPosition = moleculePos;
+
+                    Quaternion moleculeRot = Quaternion.Euler(0.0f, 0.0f, 90.0f);
+                    coMolecule.transform.localRotation = moleculeRot;
+
+                    platMolecule.ConnectedMolecule = coMolecule;
+                    coMolecule.ConnectedMolecule = platMolecule;
+                    coMolecule.OnMoleculeFreed += onMoleculeFreed;
+
+                    activeMolecules.Add(coMolecule);
+                    activeMolecules.Add(platMolecule);
+                }
             }
             onComplete?.Invoke(activeMolecules);
-        }
-
-        private void Awake()
-        {
-            _topLayerMolecules = topLayerParent.transform.GetComponentsInChildren<Molecule>().ToList();
         }
     }
 }
