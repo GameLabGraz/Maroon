@@ -13,6 +13,8 @@ namespace Maroon.Physics.CoordinateSystem
 
         private static CoordSystem _instance;
 
+        public Dictionary<Axis, CoordAxis> AxisDictionary => _axisDictionary;
+
         public static CoordSystem Instance
         {
             get
@@ -31,13 +33,13 @@ namespace Maroon.Physics.CoordinateSystem
             _axisDictionary = systemManager.GetAxisDictionary();
         }
 
-        public Vector3 GetPositionInAxisUnits(Vector3 objectTransform)
+        public Vector3 GetPositionInAxisUnits(Vector3 objectTransform, Unit targetUnit = Unit.none)
         {
             var systemSpaceCoordinates = WorldCoordinatesToSystemSpace(objectTransform);
 
-            var xValue = _axisDictionary[Axis.X].GetValueFromAxisPoint(systemSpaceCoordinates.x);
-            var yValue = _axisDictionary[Axis.Y].GetValueFromAxisPoint(systemSpaceCoordinates.y);
-            var zValue = _axisDictionary[Axis.Z].GetValueFromAxisPoint(systemSpaceCoordinates.z);
+            var xValue = _axisDictionary[Axis.X].GetValueFromAxisPoint(systemSpaceCoordinates.x, targetUnit);
+            var yValue = _axisDictionary[Axis.Y].GetValueFromAxisPoint(systemSpaceCoordinates.y, targetUnit);
+            var zValue = _axisDictionary[Axis.Z].GetValueFromAxisPoint(systemSpaceCoordinates.z, targetUnit);
 
             return new Vector3(xValue, yValue, zValue);
         }
@@ -67,7 +69,6 @@ namespace Maroon.Physics.CoordinateSystem
                 objectPosition.y / axisLengths.y,
                 objectPosition.z / axisLengths.z);
 
-            Debug.Log($"POSITION OF TEST CUBE: {objectPositionRelativeToAxisLength}");
             return objectPositionRelativeToAxisLength;
         }
     }
