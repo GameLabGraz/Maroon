@@ -1,10 +1,16 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using GEAR.Serialize;
 using System.Collections.Generic;
 using UnityEngine.Events;
 
 namespace Maroon.Physics.HuygensPrinciple
 {
+    [System.Serializable]
+    public class SlitWidthChangeEvent : UnityEvent<float>
+    {
+    }
+    
     //[ExecuteInEditMode]
     public class SlitPlate : MonoBehaviour, IResetObject
     {
@@ -39,6 +45,8 @@ namespace Maroon.Physics.HuygensPrinciple
 
         [SerializeField] private bool ignorePositionReset = false;
         [SerializeField] private bool ignoreScaleReset = false;
+
+        public SlitWidthChangeEvent onSlitWithAdapted;
 
         private Vector3 TopSize => top.GetComponentInChildren<MeshRenderer>().bounds.size;
         private Vector3 BottomSize => bottom.GetComponentInChildren<MeshRenderer>().bounds.size;
@@ -84,6 +92,7 @@ namespace Maroon.Physics.HuygensPrinciple
 
         public void SetNumberOfSlits(float value)
         {
+            var prevWidth = slitWidth;
             numberOfSlits = (int)value;
             generatorCountPerSlit = CalculateGeneratorsPerSlit();
             ResetCubes();
@@ -126,8 +135,18 @@ namespace Maroon.Physics.HuygensPrinciple
             var cubeCount = numberOfSlits + 1;
             var scale = right.transform.localScale;
             var scaleInBounds = PlateWidth - SlitWidth * numberOfSlits >= 0 ; 
+            if (!scaleInBounds)
+            {
+                SlitWidth = (PlateWidth - 0.01f) / numberOfSlits;
+                scaleInBounds = PlateWidth - SlitWidth * numberOfSlits >= 0;
+                Debug.Assert(scaleInBounds);
 
-            scale.x = scaleInBounds ? (PlateWidth - (slitWidth * numberOfSlits)) / cubeCount : 0.0f ; 
+                onSlitWithAdapted.Invoke(SlitWidth);
+            }
+            
+
+            scale.x = scaleInBounds ? (PlateWidth - (slitWidth * numberOfSlits)) / cubeCount : 0.0f ;
+
             right.transform.localScale = left.transform.localScale = scale;
 
             if (numberOfSlitsChanged)

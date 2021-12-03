@@ -1,57 +1,112 @@
-﻿using PlatformControls.BaseControls;
+﻿using System;
+using GEAR.VRInteraction;
+using PlatformControls.BaseControls;
 using UnityEngine;
-using VRTK;
+using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace PlatformControls.VR
 {
-    public class VR_GrounderMovement : GrounderMovement
+    public class VR_GrounderMovement : MonoBehaviour
     {
         [SerializeField]
-        private float _hapticPulseStrength = 0.5f;
+        protected float MaxMovementLeft = 0;
 
-        private GameObject _leftController;
-        private GameObject _rightController;
+        [SerializeField]
+        protected float MaxMovementRight = 0;
 
-        protected override void Start()
+        [SerializeField] 
+        protected bool invertInputAngle = false;
+        
+        [SerializeField]
+        protected float MovementSpeedPerAngle = 0.05f; //moves 0.05m/s per one degree
+
+        [SerializeField] 
+        protected VRCircularDrive circularDrive;
+
+        public UnityEvent onLeftEndReached;
+        public UnityEvent onRightEndReached;
+        public UnityEvent onBelowEndAgain;
+        public UnityEvent onMove;
+        
+        private Vector3 _initialPosition;
+        private float _currentAngle;
+        private float _lastDistance;
+
+        private bool _endReached = false;
+
+        protected void Start()
         {
-            base.Start();
+            _currentAngle = circularDrive.startAngle;
+            _initialPosition = transform.position;
+        }
+        
+        public void OnDegreeChanged()
+        {
+            Debug.Log("OnDegreeChanged" + circularDrive.outAngle);
+            var newAngle = circularDrive.outAngle;
+            var movementAngles = Mathf.Abs(_currentAngle - newAngle);
+            
+            if (newAngle < _currentAngle)
+            {
+                //move left
+                Debug.Log("Move left");
+                MoveLeft(invertInputAngle ? Vector3.right : Vector3.left, movementAngles);
+            }
+            else if (newAngle > _currentAngle)
+            {
+                //move right
+                Debug.Log("Move right");
+                MoveRight(invertInputAngle ? Vector3.left : Vector3.right, movementAngles);
+            }
 
-            _leftController = VRTK_DeviceFinder.GetControllerLeftHand();
-            _rightController = VRTK_DeviceFinder.GetControllerRightHand();
+            _currentAngle = newAngle;
         }
 
-        private void Update()
-        {       
-            if(!_leftController)
-                _leftController = VRTK_DeviceFinder.GetControllerLeftHand();
-            if(!_rightController)
-                _rightController = VRTK_DeviceFinder.GetControllerRightHand();
+        public void ResetCurrentAngle()
+        {
+            _currentAngle = circularDrive.outAngle;
+        }
+        
+        protected void MoveLeft(Vector3 direction, float angles)
+        {
+            Move(direction, angles, MaxMovementLeft, onLeftEndReached);
+        }
+        
+        protected void MoveRight(Vector3 direction, float angles)
+        {
+            Move(direction, angles, MaxMovementRight, onRightEndReached);
+        }
 
-            if (_leftController)
+        private void Move(Vector3 direction, float angles, float maxMovement, UnityEvent endReachedEvent)
+        {
+            var translateVector = direction * Time.deltaTime * MovementSpeedPerAngle * angles;
+            var newPosition = transform.position + transform.TransformDirection(translateVector);
+
+            var distance = Vector3.Distance(_initialPosition, newPosition);
+            Debug.Log("Distance: " + distance);
+            if (distance >= maxMovement && !_endReached)
             {
-                var controllerEvent = _leftController.GetComponent<VRTK_ControllerEvents>();
-                if(controllerEvent.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.GripPress))
-                {
-                    Debug.Log("Move grounder to LEFT");
-                    Move(Vector3.left, MaxMovementLeft);
+                endReachedEvent?.Invoke();
+                _endReached = true;
 
-                    VRTK_ControllerHaptics.TriggerHapticPulse(
-                        VRTK_ControllerReference.GetControllerReference(_leftController),
-                        _hapticPulseStrength);
-                }
+                newPosition = _initialPosition + direction * maxMovement;
+                distance = Vector3.Distance(_initialPosition, newPosition);
+                Debug.Assert(distance <= maxMovement);
             }
-            if(_rightController)
-            {
-                var controllerEvent = _rightController.GetComponent<VRTK_ControllerEvents>();
-                if (controllerEvent.IsButtonPressed(VRTK_ControllerEvents.ButtonAlias.GripPress))
-                {
-                    Debug.Log("Move grounder to RIGHT");
-                    Move(Vector3.right, MaxMovementLeft);
 
-                    VRTK_ControllerHaptics.TriggerHapticPulse(
-                        VRTK_ControllerReference.GetControllerReference(_rightController),
-                        _hapticPulseStrength);
-                }
+            if (distance <= maxMovement || distance < _lastDistance)
+            {
+                transform.Translate(translateVector);
+                _lastDistance = distance;
+                
+                onMove?.Invoke();
+            }
+            
+            if (_endReached && (distance < maxMovement || distance < _lastDistance))
+            {
+                onBelowEndAgain.Invoke();
+                _endReached = false;
             }
         }
     }

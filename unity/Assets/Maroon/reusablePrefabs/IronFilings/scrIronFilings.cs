@@ -69,6 +69,8 @@ public class scrIronFilings : MonoBehaviour, IResetObject
 
     [SerializeField] private UnityEvent onHideIronFilings;
 
+
+    private List<GameObject> _lines = new List<GameObject>();
     /// <summary>
     /// Initialization
     /// </summary>
@@ -88,6 +90,7 @@ public class scrIronFilings : MonoBehaviour, IResetObject
         {
             var line = new GameObject("line");
             line.transform.parent = this.transform;
+            _lines.Add(line);
             //line.transform.localRotation = Quaternion.identity;
 
             var linerenderer = line.AddComponent<LineRenderer>();
@@ -128,10 +131,9 @@ public class scrIronFilings : MonoBehaviour, IResetObject
 
         Debug.Log("Start IronFiling");
         
-        foreach (Transform child in transform)
+        foreach( var child in _lines)
         {
-            if(child.name == "line")
-                child.gameObject.SetActive(true);
+            child.SetActive(true);
         }
 
         for (var i = 0; i < iterations * 2; i++)
@@ -146,10 +148,9 @@ public class scrIronFilings : MonoBehaviour, IResetObject
 
     public void hideFieldImage()
     {
-        foreach (Transform child in transform)
+        foreach (var child in _lines)
         {
-            if(child.name == "line")
-                child.gameObject.SetActive(false);
+            child.SetActive(false);
         }
         onHideIronFilings.Invoke();
     }

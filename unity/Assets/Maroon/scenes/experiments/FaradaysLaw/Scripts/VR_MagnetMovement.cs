@@ -1,52 +1,47 @@
 ﻿using System.Collections;
 using PlatformControls.BaseControls;
 using UnityEngine;
-using VRTK;
+using Valve.VR.InteractionSystem;
 
 namespace PlatformControls.VR
 {
-    [RequireComponent(typeof(VRTK_Slider))]
-    [RequireComponent(typeof(VRTK_InteractableObject))]
+    [RequireComponent(typeof(Magnet))]
+    [RequireComponent(typeof(Interactable))]
     public class VR_MagnetMovement : Movement
     {
+        [Range(0f, 320f)] public float hapticFeedbackFrequency = 100f;
+        
         private Magnet _magnet;
-
-        private GameObject _grabbingObject;
+        private Hand _hand;
 
         protected void Awake()
         {
             _magnet = GetComponent<Magnet>();
-
-            var minPositionCollider = MinPosition.GetComponent<Collider>();
-            var maxPositionCollider = MaxPosition.GetComponent<Collider>();
-
-            var slider = GetComponent<VRTK_Slider>();
-            slider.minimumLimit = minPositionCollider ? minPositionCollider : MinPosition.AddComponent<BoxCollider>();
-            slider.maximumLimit = maxPositionCollider ? maxPositionCollider : MaxPosition.AddComponent<BoxCollider>();
-
-            var interactableObject = GetComponent<VRTK_InteractableObject>();
-            interactableObject.isGrabbable = true;
-
-            interactableObject.InteractableObjectGrabbed += (sender, e) =>
-            {
-                _grabbingObject = e.interactingObject;
-                StartMoving();
-                StartCoroutine(TriggerHapticPulse());
-            };
-
-            interactableObject.InteractableObjectUngrabbed += (sender, e) => StopMoving();
+        }
+        
+        private void OnAttachedToHand( Hand hand )
+        {
+            Debug.Log("Magnet attached to hand");
+            _hand = hand;
+            StartMoving();
+            StartCoroutine(TriggerHapticPulse());
         }
 
+        private void OnDetachedFromHand( Hand hand )
+        {
+            Debug.Log("Magnet detached From hand");
+
+            _hand = null;
+            StopMoving();
+        }
+        
         private IEnumerator TriggerHapticPulse()
         {
             while (IsMoving)
             {
                 var hapticPulseStrength = _magnet.GetExternalForce().magnitude / 10;
-
-                VRTK_ControllerHaptics.TriggerHapticPulse(
-                    VRTK_ControllerReference.GetControllerReference(_grabbingObject),
-                    hapticPulseStrength);
-
+                
+                _hand.TriggerHapticPulse(Time.fixedDeltaTime, hapticFeedbackFrequency, hapticPulseStrength);
                 yield return new WaitForFixedUpdate();
             }
         }

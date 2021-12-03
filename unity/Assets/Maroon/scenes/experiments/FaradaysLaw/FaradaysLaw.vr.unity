@@ -368,7 +368,7 @@ MonoBehaviour:
   _SortingOrder: 0
 --- !u!222 &96839736
 CanvasRenderer:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -590,7 +590,7 @@ MonoBehaviour:
   _SortingOrder: 0
 --- !u!222 &335797506
 CanvasRenderer:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -972,7 +972,7 @@ MonoBehaviour:
   _SortingOrder: 0
 --- !u!222 &374367762
 CanvasRenderer:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -2919,6 +2919,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6906795356831879451, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7080847694316621784, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
       propertyPath: OnReset.m_PersistentCalls.m_Calls.Array.size
@@ -3549,9 +3554,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  onValueChangedInt:
-    m_PersistentCalls:
-      m_Calls:
       - m_Target: {fileID: 1252003189}
         m_MethodName: setSymmetryCount
         m_Mode: 0
@@ -3563,6 +3565,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  onValueChangedInt:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &572902582
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3877,12 +3882,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!1 &642538887 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1518533635147890, guid: b523193efcd4e074ab3a36220d8e3703,
-    type: 3}
-  m_PrefabInstance: {fileID: 1252003180}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &703953745
 GameObject:
   m_ObjectHideFlags: 0
@@ -4182,7 +4181,7 @@ MonoBehaviour:
   _SortingOrder: 0
 --- !u!222 &800022895
 CanvasRenderer:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -5242,7 +5241,7 @@ MonoBehaviour:
   _SortingOrder: 0
 --- !u!222 &1184240760
 CanvasRenderer:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -5601,10 +5600,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: FaradaysLawExperiment
       objectReference: {fileID: 0}
-    - target: {fileID: 4082273022283910, guid: b523193efcd4e074ab3a36220d8e3703, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -69.33
-      objectReference: {fileID: 0}
     - target: {fileID: 4136362258603276, guid: b523193efcd4e074ab3a36220d8e3703, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -5679,17 +5674,13 @@ PrefabInstance:
       propertyPath: onHideIronFilings.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
-    - target: {fileID: 114394124176279328, guid: b523193efcd4e074ab3a36220d8e3703,
-        type: 3}
-      propertyPath: Field
-      value: 
-      objectReference: {fileID: 642538887}
     - target: {fileID: 6417875621421751892, guid: b523193efcd4e074ab3a36220d8e3703,
         type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1569596360, guid: b523193efcd4e074ab3a36220d8e3703, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: b523193efcd4e074ab3a36220d8e3703, type: 3}
 --- !u!114 &1252003181 stripped
 MonoBehaviour:
@@ -5851,6 +5842,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69e6e14f88da74d48af217adf1414b40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1252003191 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1873798252212520, guid: b523193efcd4e074ab3a36220d8e3703,
+    type: 3}
+  m_PrefabInstance: {fileID: 1252003180}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1252003192 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1940610905041724, guid: b523193efcd4e074ab3a36220d8e3703,
+    type: 3}
+  m_PrefabInstance: {fileID: 1252003180}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1252003193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1252003184}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9dbf43ace0a3bb5438009a86afbf4e50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Speed: 1.33
+  MinPosition: {fileID: 1252003192}
+  MaxPosition: {fileID: 1252003191}
+  SimulationRunningDuringMovement: 0
+  onMovementStart:
+    m_PersistentCalls:
+      m_Calls: []
+  onMovementStopped:
+    m_PersistentCalls:
+      m_Calls: []
+  onMovement:
+    m_PersistentCalls:
+      m_Calls: []
+  hapticFeedbackFrequency: 100
 --- !u!1 &1298670505
 GameObject:
   m_ObjectHideFlags: 0
@@ -5997,7 +6026,7 @@ MonoBehaviour:
   _SortingOrder: 0
 --- !u!222 &1298670509
 CanvasRenderer:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
