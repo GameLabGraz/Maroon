@@ -94,40 +94,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             _catalystSurface.SetupCoords(_platSpawnPoints, list => 
                 {
                     _activeMolecules = list;
+                    _catalystSurface.transform.position = new Vector3(4.5f, 3.2f, 10.5f);
                     SpawnReactionMaterial();
-                    // list we get is tilted, so tilt parent after spawning the molecules
-                    // update: added list to surface manually so tilt is gone
-                    //_catalystSurface.transform.localRotation = Quaternion.Euler(-35.2f, 0.0f, 45.0f);
-                    //_catalystSurface.transform.localPosition = new Vector3(1.4f, 2.0f, 3.0f);
                 },
                 OnMoleculeFreed);
-
-            /*_catalystSurface.Setup((int)catalystSurfaceSize, list =>
-            {
-                _activeMolecules = list;
-                StartCoroutine(SpawnCatalystReactionMaterial());
-            });*/
-        }
-
-        private IEnumerator SpawnCatalystReactionMaterial()
-        {
-            Transform catalystSurfaceTransform = _catalystSurface.GetComponentInChildren<CatalystSurface>().transform;
-            yield return new WaitForSeconds(2.0f); // use simple delay for now
-            Molecule[] prefabs = new Molecule[] { coMoleculePrefab, o2MoleculePrefab };
-            float maxOffset = PlatinumScale * (int)catalystSurfaceSize;
-            for (int i = 0; i < numSpawnedMolecules; i++)
-            {
-                Vector3 spawnPos = new Vector3(Random.Range(0.1f, 0.1f + maxOffset), Random.Range(0.5f, 1.3f), Random.Range(0.1f, 0.1f + maxOffset));
-                Quaternion spawnRot = Quaternion.Euler(Random.Range(-180.0f, 180.0f),Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
-                Molecule molecule = Instantiate(prefabs[Random.Range(0, prefabs.Length)], catalystSurfaceTransform);
-                molecule.gameObject.transform.localPosition = spawnPos;
-                molecule.gameObject.transform.localRotation = spawnRot;
-                AddMoleculeToActiveList(molecule);
-                if (molecule.Type == MoleculeType.O2)
-                {
-                    molecule.OnDissociate += DissociateO2;
-                }
-            }
         }
 
         private void SpawnReactionMaterial()
