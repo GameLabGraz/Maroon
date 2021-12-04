@@ -12,7 +12,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         [Header("Simulation Parameters")]
         [SerializeField] QuantityFloat temperature;
         [SerializeField] QuantityFloat partialPressure;
-        [SerializeField] CatalystSurfaceSize catalystSurfaceSize = CatalystSurfaceSize.Small;
+        //[SerializeField] CatalystSurfaceSize catalystSurfaceSize = CatalystSurfaceSize.Small;
         
         [Header("Catalyst specific objects")]
         [SerializeField] CatalystReactor catalystReactor;
@@ -23,7 +23,6 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         [SerializeField] Molecule o2MoleculePrefab;
         [SerializeField] Molecule coMoleculePrefab;
         [SerializeField] Molecule co2MoleculePrefab;
-        [SerializeField] int numSpawnedMolecules;
         [SerializeField] int numberSpawnedO2Molecules;
         [SerializeField] int numberSpawnedCOMolecules;
 
@@ -94,7 +93,6 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             _catalystSurface.SetupCoords(_platSpawnPoints, list => 
                 {
                     _activeMolecules = list;
-                    _catalystSurface.transform.position = new Vector3(4.5f, 3.2f, 10.5f);
                     SpawnReactionMaterial();
                 },
                 OnMoleculeFreed);
@@ -102,11 +100,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         private void SpawnReactionMaterial()
         {
-            Transform catalystSurfaceTransform = _catalystSurface.GetComponentInChildren<CatalystSurface>().transform;
-            float maxOffset = PlatinumScale * (int)catalystSurfaceSize;
+            Transform catalystSurfaceTransform = _catalystSurface.gameObject.transform;
             for (int i = 0; i < numberSpawnedO2Molecules; i++)
             {
-                Vector3 spawnPos = new Vector3(Random.Range(0.1f, 0.1f + maxOffset), Random.Range(0.5f, 1.3f), Random.Range(0.1f, 0.1f + maxOffset));
+                Vector3 spawnPos = new Vector3(Random.Range(-0.8f, 2.2f), Random.Range(0.5f, 2.0f), Random.Range(0.3f, -2.0f));
                 Quaternion spawnRot = Quaternion.Euler(Random.Range(-180.0f, 180.0f),Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
                 Molecule molecule = Instantiate(o2MoleculePrefab, catalystSurfaceTransform);
                 molecule.gameObject.transform.localPosition = spawnPos;
@@ -117,7 +114,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             }
             for (int i = 0; i < numberSpawnedCOMolecules; i++)
             {
-                Vector3 spawnPos = new Vector3(Random.Range(0.1f, 0.1f + maxOffset), Random.Range(0.5f, 1.3f), Random.Range(0.1f, 0.1f + maxOffset));
+                Vector3 spawnPos = new Vector3(Random.Range(-0.8f, 2.2f), Random.Range(0.5f, 2.0f), Random.Range(0.3f, -2.0f));
                 Quaternion spawnRot = Quaternion.Euler(Random.Range(-180.0f, 180.0f),Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
                 Molecule molecule = Instantiate(coMoleculePrefab, catalystSurfaceTransform);
                 molecule.gameObject.transform.localPosition = spawnPos;
