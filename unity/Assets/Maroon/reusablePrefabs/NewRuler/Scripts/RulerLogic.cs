@@ -37,8 +37,6 @@ namespace Assets.Maroon.reusablePrefabs.NewRuler.Scripts
         // Change this to a event system??
         void Update()
         {
-
-            CalculateDistance();
             if (RulerStart.activeSelf && RulerEnd.activeSelf)
             {
                 if (!RulerLine.gameObject.activeSelf)
@@ -55,7 +53,7 @@ namespace Assets.Maroon.reusablePrefabs.NewRuler.Scripts
             }
         }
 
-        public void CalculateDistance()
+        public float CalculateDistance(Unit targetUnit = Unit.cm)
         {
             var startPosition = RulerStart.transform.position;
             var endPosition = RulerEnd.transform.position;
@@ -67,10 +65,9 @@ namespace Assets.Maroon.reusablePrefabs.NewRuler.Scripts
             }
             else
             {
-                var localStartPos = CoordSystem.Instance.GetPositionInAxisUnits(startPosition, Unit.cm);
-                var localEndPos = CoordSystem.Instance.GetPositionInAxisUnits(endPosition, Unit.cm);
+                var localStartPos = CoordSystem.Instance.GetPositionInAxisUnits(startPosition, targetUnit);
+                var localEndPos = CoordSystem.Instance.GetPositionInAxisUnits(endPosition, targetUnit);
 
-                
                 calcDist = Vector3.Distance(localStartPos, localEndPos);
             }
             
@@ -78,8 +75,8 @@ namespace Assets.Maroon.reusablePrefabs.NewRuler.Scripts
             {
                 _pinDistance = calcDist;
             }
-            
-            Debug.Log($"Distance: {calcDist}");
+
+            return _pinDistance;
         }
 
        /* private void ConvertToCommonUnit()

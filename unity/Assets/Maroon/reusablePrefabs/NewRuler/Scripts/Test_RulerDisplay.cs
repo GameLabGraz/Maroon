@@ -1,13 +1,15 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using Assets.Maroon.reusablePrefabs.NewRuler.Scripts;
 using Maroon.Physics.CoordinateSystem;
 using TMPro;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
-public class C_RulerDisplay : MonoBehaviour
+public class Test_RulerDisplay : MonoBehaviour
 {
     [SerializeField] private RulerLogic ruler;
 
@@ -21,8 +23,16 @@ public class C_RulerDisplay : MonoBehaviour
     [SerializeField] private GameObject EndPositionY;
     [SerializeField] private GameObject EndPositionZ;
 
-    private Vector3 startMeasuringPosition => CoordSystem.Instance.GetPositionInAxisUnits(ruler.RulerStart.transform.position, Unit.cm);
-    private Vector3 endMeasuringPosition => CoordSystem.Instance.GetPositionInAxisUnits(ruler.RulerEnd.transform.position, Unit.cm);
+    [SerializeField] private GameObject StartPositionXUnit;
+    [SerializeField] private GameObject StartPositionYUnit;
+    [SerializeField] private GameObject StartPositionZUnit;
+
+    [SerializeField] private GameObject EndPositionXUnit;
+    [SerializeField] private GameObject EndPositionYUnit;
+    [SerializeField] private GameObject EndPositionZUnit;
+
+    private Vector3 startMeasuringPosition => CoordSystem.Instance.GetPositionInAxisUnits(ruler.RulerStart.transform.position);
+    private Vector3 endMeasuringPosition => CoordSystem.Instance.GetPositionInAxisUnits(ruler.RulerEnd.transform.position);
 
     private void Start()
     {
@@ -52,16 +62,25 @@ public class C_RulerDisplay : MonoBehaviour
             CheckVariable(endVal, Vector3.forward, ruler.RulerEnd.GetComponent<PC_SelectScript>());
         });
 
+        var subDivUnits = CoordSystem.Instance.GetAxisSubDivisionUnits();
+
+        StartPositionXUnit.GetComponent<TextMeshProUGUI>().text = Enum.GetName(typeof(Unit), subDivUnits.ElementAt(0));
+        StartPositionYUnit.GetComponent<TextMeshProUGUI>().text = Enum.GetName(typeof(Unit), subDivUnits.ElementAt(1));
+        StartPositionZUnit.GetComponent<TextMeshProUGUI>().text = Enum.GetName(typeof(Unit), subDivUnits.ElementAt(2));
+
+        EndPositionXUnit.GetComponent<TextMeshProUGUI>().text = Enum.GetName(typeof(Unit), subDivUnits.ElementAt(0));
+        EndPositionYUnit.GetComponent<TextMeshProUGUI>().text = Enum.GetName(typeof(Unit), subDivUnits.ElementAt(1));
+        EndPositionZUnit.GetComponent<TextMeshProUGUI>().text = Enum.GetName(typeof(Unit), subDivUnits.ElementAt(2));
 
         //StartPositionZ.GetComponent<TMP_InputField>().interactable = CoulombLogic.Instance.IsIn3dMode();
         //EndPositionZ.GetComponent<TMP_InputField>().interactable = CoulombLogic.Instance.IsIn3dMode();
 
 
-       /* CoulombLogic.Instance.onModeChange.AddListener(in3dMode =>
-        {
-            StartPositionZ.GetComponent<TMP_InputField>().interactable = in3dMode;
-            EndPositionZ.GetComponent<TMP_InputField>().interactable = in3dMode;
-        });*/
+        /* CoulombLogic.Instance.onModeChange.AddListener(in3dMode =>
+         {
+             StartPositionZ.GetComponent<TMP_InputField>().interactable = in3dMode;
+             EndPositionZ.GetComponent<TMP_InputField>().interactable = in3dMode;
+         });*/
     }
 
     private static void CheckVariable(float endValue, Vector3 affectedAxis, PC_SelectScript selectedObject)
@@ -123,8 +142,10 @@ public class C_RulerDisplay : MonoBehaviour
         }
         else
         {
-            var distance = Vector3.Distance(startMeasuringPosition, endMeasuringPosition);
-            DistanceText.text = string.Format(CultureInfo.InvariantCulture, "{0:0.###} m", distance);
+            //var distance = Vector3.Distance(startMeasuringPosition, endMeasuringPosition);
+            var distance = ruler.CalculateDistance();
+            //TODO ADD unit
+            DistanceText.text = string.Format(CultureInfo.InvariantCulture, "{0:0.###} cm", distance);
         }
 
 

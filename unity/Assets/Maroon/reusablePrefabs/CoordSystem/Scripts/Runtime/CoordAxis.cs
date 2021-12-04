@@ -190,12 +190,17 @@ namespace Maroon.Physics.CoordinateSystem
             SetupAxis();
         }
 
-        public float GetValueFromAxisPoint(float point, Unit targetUnit = Unit.none)
+        public float GetValueFromAxisPoint(float point, Unit targetUnit = Unit.respective)
         {
             var pointOnAxis = _axisLocalLength * point;
             var unitConversion = Mathf.Pow(10, (float)_lengthUnit) / Mathf.Pow(10, (float)_divisionUnit);
 
-            return targetUnit == Unit.none ? (pointOnAxis * unitConversion) : pointOnAxis * (Mathf.Pow(10, (float)_lengthUnit) / Mathf.Pow(10, (float)targetUnit));
+            if (targetUnit == Unit.respective)
+            {
+                return _lengthUnit == Unit.none || _divisionUnit == Unit.none ? pointOnAxis : (pointOnAxis * unitConversion);
+            }
+
+            return _lengthUnit == Unit.none || _divisionUnit == Unit.none ? pointOnAxis : (pointOnAxis * (Mathf.Pow(10, (float)_lengthUnit) / Mathf.Pow(10, (float)targetUnit)));
         }
 
         public float GetAxisPointFromValue(float value, Unit inputUnit)

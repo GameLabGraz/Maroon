@@ -18,6 +18,7 @@ namespace Maroon.Physics.CoordinateSystem
 
     public enum Unit
     {
+        respective = -1000,
         none = -999,
         femto = -15,
         pico = -12,
@@ -211,6 +212,21 @@ namespace Maroon.Physics.CoordinateSystem
                     : new Vector3(axisWorldLengths.x, axisWorldLengths.y, 0.2f);
             }
         }
+
+        public List<Unit> GetAxisUnits() => new List<Unit>()
+        {
+            FindInList(Axis.X).AxisLengthUnit,
+            FindInList(Axis.Y).AxisLengthUnit,
+            FindInList(Axis.Z).AxisLengthUnit
+        };
+
+        public List<Unit> GetAxisSubdivisionUnits() => new List<Unit>()
+        {
+            FindInList(Axis.X).AxisSubdivisionUnit,
+            FindInList(Axis.Y).AxisSubdivisionUnit,
+            FindInList(Axis.Z).AxisSubdivisionUnit
+        };
+     
 
         private CoordAxis FindInList(Axis direction) => _axisList.Find(axis => axis.AxisID == direction);
     }

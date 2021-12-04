@@ -7,7 +7,7 @@ namespace Maroon.Physics.CoordinateSystem
     public class CoordSystem : MonoBehaviour
     {
         [SerializeField] private Transform origin;
-        [SerializeField] private AxisController systemManager;
+        [SerializeField] private AxisController axisController;
 
         private Dictionary<Axis, CoordAxis> _axisDictionary;
 
@@ -28,12 +28,15 @@ namespace Maroon.Physics.CoordinateSystem
         private void Start()
         {
             _ = origin ?? throw new NullReferenceException();
-            _ = systemManager ?? throw new NullReferenceException();
+            _ = axisController ?? throw new NullReferenceException();
 
-            _axisDictionary = systemManager.GetAxisDictionary();
+            _axisDictionary = axisController.GetAxisDictionary();
         }
 
-        public Vector3 GetPositionInAxisUnits(Vector3 objectTransform, Unit targetUnit = Unit.none)
+        public List<Unit> GetAxisUnits() => axisController.GetAxisUnits();
+        public List<Unit> GetAxisSubDivisionUnits() => axisController.GetAxisSubdivisionUnits();
+
+        public Vector3 GetPositionInAxisUnits(Vector3 objectTransform, Unit targetUnit = Unit.respective)
         {
             var systemSpaceCoordinates = WorldCoordinatesToSystemSpace(objectTransform);
 
@@ -62,7 +65,7 @@ namespace Maroon.Physics.CoordinateSystem
 
         public Vector3 WorldCoordinatesToSystemSpace(Vector3 objectTransform)
         {
-            var axisLengths = systemManager.PositiveWorldLengths;
+            var axisLengths = axisController.PositiveWorldLengths;
             var objectPosition = origin.InverseTransformDirection(objectTransform);
 
             var objectPositionRelativeToAxisLength = new Vector3(objectPosition.x / axisLengths.x,
