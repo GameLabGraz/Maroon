@@ -49,7 +49,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                     coMolecule.State = MoleculeState.Fixed;
 
                     Vector3 moleculePos = platMolecule.transform.localPosition;
-                    moleculePos.y += CatalystController.FixedMoleculeYDist - 0.075f;
+                    moleculePos.y += CatalystController.FixedMoleculeYDist;
                     coMolecule.transform.localPosition = moleculePos;
 
                     Quaternion moleculeRot = Quaternion.Euler(0.0f, 0.0f, 90.0f);

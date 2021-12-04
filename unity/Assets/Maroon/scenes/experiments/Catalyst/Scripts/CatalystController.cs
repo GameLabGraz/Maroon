@@ -36,7 +36,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         private System.Action onReactionStart;
 
-        public const float FixedMoleculeYDist = 0.28f;
+        public const float FixedMoleculeYDist = 0.28f - 0.075f;
         public const float PlatinumScale = 0.14f;
 
         private void Awake()
@@ -145,7 +145,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             {
                 molecule.OnCO2Created += CreateCO2;
                 molecule.State = MoleculeState.Fixed;
-                molecule.gameObject.transform.position = new Vector3(alternate ? o2Position.x + PlatinumScale / 4.0f : o2Position.x - PlatinumScale / 4.0f, o2Position.y - 0.04f, o2Position.z);
+                molecule.gameObject.transform.position = new Vector3(alternate ? o2Position.x + PlatinumScale / 4.0f : o2Position.x - PlatinumScale / 4.0f, o2Position.y - 0.06f, o2Position.z);
                 AddMoleculeToActiveList(molecule);
                 alternate = !alternate;
             }
