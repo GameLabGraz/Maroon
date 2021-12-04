@@ -16,15 +16,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         [SerializeField] Molecule platinumMoleculePrefab;
         [SerializeField] Molecule coMoleculePrefab;
         [SerializeField] Transform surfaceLayerParent;
-        [SerializeField] int numSubLayers;
-        [SerializeField] GameObject boundaryXMin;
-        [SerializeField] GameObject boundaryXMax;
-        [SerializeField] GameObject boundaryZMin;
-        [SerializeField] GameObject boundaryZMax;
-        [SerializeField] GameObject topLayerParent;
         
         private float _spaceBetweenMolecules;
-        private List<Molecule> _topLayerMolecules = new List<Molecule>();
 
         public void SetupCoords(List<Vector3> platCoords, 
             System.Action<List<Molecule>> onComplete, 
@@ -35,7 +28,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             for (int i = 0; i < platCoords.Count; i++)
             {
                 Molecule platMolecule = Instantiate(platinumMoleculePrefab, surfaceLayerParent);
-                platMolecule.transform.position = platCoords[i] / 20.0f;
+                platMolecule.transform.localPosition = (platCoords[i] / 20.0f) - new Vector3(1.75f, 1.0f, 4.0f);
                 platMolecule.State = MoleculeState.Fixed;
 
                 // find top layer molecules based on y position
