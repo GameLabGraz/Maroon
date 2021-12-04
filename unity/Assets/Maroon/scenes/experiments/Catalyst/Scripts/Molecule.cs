@@ -56,6 +56,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private bool _isWobbling = false;
         private bool _reactionStarted = false;
 
+        private System.Random _random;
+
         public MoleculeType Type { get => type; }
 
         public MoleculeState State
@@ -129,6 +131,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         {
             base.Start();
             GetRandomPositionAndRotation();
+
+            _random = new System.Random();
         }
 
         protected override void HandleUpdate()
@@ -151,7 +155,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                     _currentTimeDesorb += Time.deltaTime;
                     if (timeUntilNextDesorb <= _currentTimeDesorb)
                     {
-                        if (Random.Range(0, 100) > 95)
+                        if (_random.Next(0, 100) > 95)
                         {
                             DesorbCO();
                         }
@@ -230,7 +234,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         
         private void DesorbCO()
         {
-            _newRandomPosition = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z);
+            _newRandomPosition = new Vector3(transform.position.x, transform.position.y + 0.8f, transform.position.z);
             _currentTimeMove = 0.0f;
             State = MoleculeState.Moving;
             _desorbMoveActive = true;
@@ -261,7 +265,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         private void GetRandomPositionAndRotation()
         {
-            _newRandomPosition = transform.position + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(0.05f, -0.2f), Random.Range(-0.2f, 0.2f));
+            _newRandomPosition = transform.position + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(0.1f, -0.2f), Random.Range(-0.2f, 0.2f));
             _newRandomRotation = Quaternion.Euler(Random.Range(-180.0f, 180.0f),Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
         }
 
