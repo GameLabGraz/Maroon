@@ -32,14 +32,14 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         [SerializeField] Collider collider;
 
         [Header("Molecule Movement")]
-        [SerializeField] float movementSpeed;
+        [SerializeField] float movementSpeed = 1;
         [SerializeField] float timeToMove = 3.0f;
         [SerializeField] float timeUntilNextDesorb = 3.0f;
 
-        private QuantityFloat _temperature = new QuantityFloat();
+        [SerializeField] QuantityFloat temperature = new QuantityFloat();
         private QuantityFloat _partialPressure = new QuantityFloat();
 
-        public MoleculeState _state;
+        private MoleculeState _state;
         
         private float _currentTimeMove = 0.0f;
         private float _currentTimeDesorb = 0.0f;
@@ -107,8 +107,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         {
             // normal temp goes from -23.15f to 76.85 degree celsius, since we divide here we define
             // the temp of molecules to go from 0 - 100 hence we add 23.15 here
-            _temperature.Value = temp + 23.15f;
-            movementSpeed = _temperature.Value / _temperature.maxValue;
+            temperature.Value = temp + 23.15f;
+            movementSpeed = temperature.Value / temperature.maxValue;
         }
 
         public void PressureChanged(float pressure)
@@ -129,8 +129,6 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         {
             base.Start();
             GetRandomPositionAndRotation();
-            _temperature.minValue = 0.0f;
-            _temperature.maxValue = 100.0f;
         }
 
         protected override void HandleUpdate()
