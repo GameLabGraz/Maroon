@@ -109,6 +109,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 molecule.gameObject.transform.localPosition = spawnPos;
                 molecule.gameObject.transform.localRotation = spawnRot;
                 molecule.OnDissociate += DissociateO2;
+                molecule.State = MoleculeState.Moving;
                 onReactionStart += molecule.ReactionStart;
                 AddMoleculeToActiveList(molecule);
             }
@@ -119,6 +120,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 Molecule molecule = Instantiate(coMoleculePrefab, catalystSurfaceTransform);
                 molecule.gameObject.transform.localPosition = spawnPos;
                 molecule.gameObject.transform.localRotation = spawnRot;
+                molecule.State = MoleculeState.Moving;
                 onReactionStart += molecule.ReactionStart;
                 AddMoleculeToActiveList(molecule);
             }
