@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using VRTK;
 
-public class CapacitorPlateController : VRTK_InteractableObject, IGenerateE, IResetObject
+public class CapacitorPlateController :  MonoBehaviour, //VRTK_InteractableObject,
+    IGenerateE, IResetObject
 {
     private GameObject resizeHeightObject1;
     private GameObject resizeHeightObject2;
@@ -32,20 +32,24 @@ public class CapacitorPlateController : VRTK_InteractableObject, IGenerateE, IRe
 
     private Vector3 startScale;
 
+    private bool enabled = true;
+    private Renderer _renderer;
+
     public bool Enabled
-    {
+     {
         get => enabled;
         set => enabled = value;
-    }
+     }
 
     private void Start()
     {
-        startScale = transform.localScale;
-
-        oldPosition = transform.position;
-        oldLocalScale = transform.localScale;
-
-        capacitor =  GetComponentInParent<Capacitor>();
+        _renderer = GetComponent<Renderer>();
+        // startScale = transform.localScale;
+        //
+        // oldPosition = transform.position;
+        // oldLocalScale = transform.localScale;
+        //
+        // capacitor =  GetComponentInParent<Capacitor>();
 
         resizeWidthObject1 = CreateResizeObject(Vector3.right, maxWidthSize);
         resizeWidthObject2 = CreateResizeObject(Vector3.right, maxWidthSize);
@@ -54,34 +58,34 @@ public class CapacitorPlateController : VRTK_InteractableObject, IGenerateE, IRe
 
         EnableResizeObjects(false);
 
-        disableWhenIdle = false;
+        // disableWhenIdle = false;
     }
 
-    protected override void Update()
+    protected  void Update()
     {
-        base.Update();
-
-        if (oldPosition != transform.position || oldLocalScale != transform.localScale)
-        {
-            eFieldCalculations.Clear();
-
-            oldPosition = transform.position;
-            oldLocalScale = transform.localScale;
-        }
+        // base.Update();
+        //
+        // if (oldPosition != transform.position || oldLocalScale != transform.localScale)
+        // {
+        //     eFieldCalculations.Clear();
+        //
+        //     oldPosition = transform.position;
+        //     oldLocalScale = transform.localScale;
+        // }
            
 
-        Vector3 size = GetComponent<Renderer>().bounds.size;
-        Vector3 offset_x = new Vector3(size.x / 2, 0, 0);
-        Vector3 offset_y = new Vector3(0, size.y / 2, 0);
-
-        if (resizeWidthObject1 != null)
-            resizeWidthObject1.transform.position = transform.position + offset_x;
-        if(resizeWidthObject2 != null)
-            resizeWidthObject2.transform.position = transform.position - offset_x;
-        if (resizeHeightObject1 != null)
-            resizeHeightObject1.transform.position = transform.position + offset_y;
-        if (resizeHeightObject2 != null)
-            resizeHeightObject2.transform.position = transform.position - offset_y;
+        // Vector3 size = GetComponent<Renderer>().bounds.size;
+        // Vector3 offset_x = new Vector3(size.x / 2, 0, 0);
+        // Vector3 offset_y = new Vector3(0, size.y / 2, 0);
+        //
+        // if (resizeWidthObject1 != null)
+        //     resizeWidthObject1.transform.position = transform.position + offset_x;
+        // if(resizeWidthObject2 != null)
+        //     resizeWidthObject2.transform.position = transform.position - offset_x;
+        // if (resizeHeightObject1 != null)
+        //     resizeHeightObject1.transform.position = transform.position + offset_y;
+        // if (resizeHeightObject2 != null)
+        //     resizeHeightObject2.transform.position = transform.position - offset_y;
     }
 
     private GameObject CreateResizeObject(Vector3 resizeAxis, float maxSize)
@@ -91,8 +95,8 @@ public class CapacitorPlateController : VRTK_InteractableObject, IGenerateE, IRe
         resizeObject.transform.localScale = new Vector3(resizeObjectSize, resizeObjectSize, resizeObjectSize);
         resizeObject.GetComponent<Renderer>().material.color = Color.black;
 
-        CapacitorPlateResizeController resizeController = resizeObject.AddComponent<CapacitorPlateResizeController>();
-        resizeController.isUsable = true;
+        var resizeController = resizeObject.AddComponent<CapacitorPlateResizeController>();
+        // resizeController.isUsable = true;
         resizeController.setCapacitorPlate(this);
         resizeController.setResizeAxsis(resizeAxis);
         resizeController.setMaxSize(maxSize);
@@ -108,19 +112,21 @@ public class CapacitorPlateController : VRTK_InteractableObject, IGenerateE, IRe
         resizeHeightObject2.GetComponent<Renderer>().enabled = value;
     }
 
-    public override void StartTouching(VRTK_InteractTouch currentTouchingObject = null)
-    {
-        base.StartTouching(currentTouchingObject);
+    
+    
+    // public override void StartTouching(VRTK_InteractTouch currentTouchingObject = null)
+    // {
+    //     base.StartTouching(currentTouchingObject);
+    //
+    //     EnableResizeObjects(true);
+    // }
 
-        EnableResizeObjects(true);
-    }
-
-    public override void StopTouching(VRTK_InteractTouch previousTouchingObject = null)
-    {
-        base.StopTouching(previousTouchingObject);
-
-        EnableResizeObjects(false);
-    }
+    // public override void StopTouching(VRTK_InteractTouch previousTouchingObject = null)
+    // {
+    //     base.StopTouching(previousTouchingObject);
+    //
+    //     EnableResizeObjects(false);
+    // }
 
     public float GetChargeValue()
     {
@@ -133,28 +139,28 @@ public class CapacitorPlateController : VRTK_InteractableObject, IGenerateE, IRe
 
     public Vector3 getE(Vector3 position)
     {
-        Vector3 eField = Vector3.zero;
-        Vector3 size = GetComponent<Renderer>().bounds.size;
-        Vector3 offset = new Vector3(-size.x / 2, -size.y / 2, 0);
-
-        float dw = 0.08f;
-        float dh = 0.08f;
-        float dq = (GetChargeValue() / (size.x * size.y)) * dw * dh;
-
-        Tuple<float, float, float> tPosition = new Tuple<float, float, float>(position.x, position.y, position.z);
+        var eField = Vector3.zero;
+        var size = _renderer.bounds.size;
+        var offset = new Vector3(-size.x / 2, -size.y / 2, 0);
+        
+        var dw = 0.08f;
+        var dh = 0.08f;
+        var dq = (GetChargeValue() / (size.x * size.y)) * dw * dh;
+        
+        var tPosition = new Tuple<float, float, float>(position.x, position.y, position.z);
         if (eFieldCalculations.ContainsKey(tPosition))
             return dq * eFieldCalculations[tPosition];
-      
-        for(int i = 0; i <= (int)(size.x / dw); i++)
+        
+        for(var i = 0; i <= (int)(size.x / dw); i++)
         {
-            for(int j = 0;  j <= (int)(size.y / dh); j++)
+            for (var j = 0; j <= (int) (size.y / dh); j++)
             {
-                Vector3 s = transform.position + offset;
+                var s = transform.position + offset;
                 s.x += i * dw;
                 s.y += j * dh;
 
-                Vector3 direction = position - s;
-                float distance = Vector3.Distance(s, position);
+                var direction = position - s;
+                var distance = Vector3.Distance(s, position);
 
                 eField += direction / (4 * Mathf.PI * 8.8542e-12f * Mathf.Pow(distance, 3));
             }
