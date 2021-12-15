@@ -38,7 +38,7 @@ namespace StateMachine {
             _map.InitMap();
             _players.AddPlayer(new Player("Player white"));
             _players.AddPlayer(new Player("Player black"));
-            Scenario1 scenario1 = new Scenario1(_map.GetMap());
+            Scenario1 scenario1 = new Scenario1(_map);
             scenario1.InitScenario(_players);
         }
 
@@ -238,7 +238,8 @@ namespace StateMachine {
                     // check if rule has right start state
                     if (ruleset.GetStartState().GetStateName() == _actualState.GetStateName()) {
                         Direction direction = ruleset.GetDirection();
-                        Field fieldToCheck = null;fieldToCheck = _map.GetFieldByIndices(figureToMove._positionColumn + direction.GetRowMovementFactor(), figureToMove._positionRow + direction.GetColumnMovementFactor());
+                        Field fieldToCheck = null;
+                        fieldToCheck = _map.GetFieldByIndices(figureToMove._positionColumn + direction.GetRowMovementFactor(), figureToMove._positionRow + direction.GetColumnMovementFactor());
 
                         // check if move would end outside of the board
                         if (fieldToCheck == null) {

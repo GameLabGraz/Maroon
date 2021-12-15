@@ -17,6 +17,7 @@ public class Map
 
         int columnCount = 0;
         List<Field> column = new List<Field>();
+        int rowCount = 0;
 
         for (int counter = 0; counter < tiles.transform.childCount; counter++) {
 
@@ -24,14 +25,29 @@ public class Map
                 _map.Add(column);
                 column = new List<Field>();
                 columnCount = 0;
+                rowCount++;
             }
 
             GameObject fieldObject = tiles.transform.GetChild(counter).gameObject;
             Field field = fieldObject.GetComponent(typeof(Field)) as Field;
+            if (field.GetFigure()) {
+                field.GetFigure()._positionColumn = rowCount;
+                field.GetFigure()._positionRow = columnCount;
+            }
             column.Add(field);
             columnCount++;
         }
         _map.Add(column);
+    }
+
+    public void ClearMap() {
+        foreach (var column in _map)
+        {
+            foreach (var field in column)
+            {
+                field.RemoveFigure();
+            }
+        }
     }
 
     public List<List<Field>> GetMap() {
