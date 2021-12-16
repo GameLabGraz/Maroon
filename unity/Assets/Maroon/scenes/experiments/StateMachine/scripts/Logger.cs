@@ -11,7 +11,7 @@ namespace StateMachine {
         private int logId = 1;
         public void LogStateMachineMessage(string text) {
             GameObject stateMachineOverviewObject = GameObject.Find("StateMachineOverview");
-            GameObject stateMachineOutputLog = Instantiate(stateMachineOverviewObject.transform.GetChild(1).GetChild(0).gameObject);
+            GameObject stateMachineOutputLog = Instantiate(GameObject.Find("StateMachineLog"));
             TextMeshProUGUI textmeshObject = stateMachineOutputLog.GetComponent(typeof(TextMeshProUGUI)) as TextMeshProUGUI;
             textmeshObject.text = " " + logId + ": " + text;
             stateMachineOutputLog.transform.SetParent(stateMachineOverviewObject.transform);

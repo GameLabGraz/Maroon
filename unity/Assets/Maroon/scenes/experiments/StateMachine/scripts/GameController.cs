@@ -25,9 +25,14 @@ namespace StateMachine {
         private Map _map = new Map();
         private Logger _logger = new Logger();
 
+        private GameObject _stateMenu;
+        private GameObject _rulesetMenu;
+
         // Start is called before the first frame update
         void Start()
         {
+            _stateMenu = GameObject.Find("StateMenu");   
+            _rulesetMenu = GameObject.Find("RulesetMenu");
             InitGameField();
             InitStates();
             InitDirections();
@@ -213,7 +218,25 @@ namespace StateMachine {
         }
 
         public void RunStateMachine() {
+            SetVisibilityOfMenus(false);
             StartCoroutine(MakeMove());
+        }
+
+        private void SetVisibilityOfMenus(bool isVisible) {
+            if (_rulesetMenu) {
+                _rulesetMenu.SetActive(isVisible);
+            } else {
+                Debug.Log("[ERROR]: RulesetMenu GameObject could not be found!");
+            }
+            if (_stateMenu) {
+                _stateMenu.SetActive(isVisible);
+            } else {
+                Debug.Log("[ERROR]: StateMenu GameObject could not be found!");
+            }
+        }
+        public void ChangeToEditMode() {
+            SetVisibilityOfMenus(true);
+            ResetScenario();
         }
 
         public void ResetScenario() {
