@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using StateMachine;
 
-public class Players
+public class Players : IEnumerable
 {
     private List<Player> _players = new List<Player>();
 
@@ -14,7 +14,16 @@ public class Players
         return _players[index];
     }
 
+    public IEnumerator GetEnumerator() {
+        return _players.GetEnumerator();
+    }
+
+
     public void AddPlayer(Player player) {
         _players.Add(player);
+    }
+
+    public Player getPlayerByName(string name) {
+        return _players.Find(element => element._playerName == name);
     }
 }

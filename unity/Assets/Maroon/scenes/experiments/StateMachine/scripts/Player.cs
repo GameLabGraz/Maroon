@@ -7,18 +7,17 @@ public class Player
 {
         public string _playerName {get;set;}
 
-        private Figure _figure = null;
+        private Figures _figuresToMove = new Figures();
     
     public Player(string name) {;
         _playerName = name;
     }
-
-    public Figure GetFigure() {
-        return _figure;
+   
+     public Figures GetFigures() {
+        return _figuresToMove;
     }
 
-    public void SetFigure(Figure figure) {
-        _figure = figure;
+    public void RemoveFigures() {
+        _figuresToMove = new Figures();
     }
-
 }

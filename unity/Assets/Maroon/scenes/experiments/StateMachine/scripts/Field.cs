@@ -10,7 +10,7 @@ public class Field : MonoBehaviour
     [SerializeField] string _name;
     
     public void SetFigure(Figure newFigure) {
-        _figure = _figure;
+        _figure = newFigure;
     }
 
     public void RemoveFigure() {

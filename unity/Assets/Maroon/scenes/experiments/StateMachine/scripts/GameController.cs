@@ -10,8 +10,10 @@ namespace StateMachine {
     {
         private Players _players = new Players();
         private Rulesets _rulesets = new Rulesets();
+
+        private Scenario _scenario;
         private States _states;
-        private State _actualState = new State("Start");
+        private State _actualState;
         private Directions _directions = new Directions();
         private Moves _moves = new Moves();
         private Modes _modes = new Modes();
@@ -22,7 +24,6 @@ namespace StateMachine {
         private Color _rowColor2 = new Color(1.0f, 1.0f, 1.0f);
         private Map _map = new Map();
         private Logger _logger = new Logger();
-
 
         // Start is called before the first frame update
         void Start()
@@ -36,11 +37,26 @@ namespace StateMachine {
 
         void InitScenarios() {
             _map.InitMap();
-            _players.AddPlayer(new Player("Player white"));
-            _players.AddPlayer(new Player("Player black"));
-            Scenario1 scenario1 = new Scenario1(_map);
-            scenario1.InitScenario(_players);
+            _players.AddPlayer(new Player("white"));
+            _players.AddPlayer(new Player("black"));
+            _scenario = new Scenario(_map);
+            _scenario.InitScenario(_players, "scenario1");
+
+            GameObject dropdownObject = GameObject.Find("ScenarioSelectionDropdown");
+            Dropdown dropdown = dropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
+            dropdown.ClearOptions();
+
+            foreach (string scenarioName in _scenario.GetScenarioList()) {
+                Dropdown.OptionData option = new Dropdown.OptionData();
+                option.text = scenarioName;
+                dropdown.options.Add(option);
+            }
+            dropdown.value = 0;
+            dropdown.RefreshShownValue();
+
+            _actualState = new State("Start");
         }
+
 
         void InitGameField() {
             GameObject test = GameObject.Find("a2White");
@@ -69,7 +85,6 @@ namespace StateMachine {
                 dropdown.options.Add(option);
             }
             
-            //dropdown.value = 1;
             dropdown.value = 0;
             dropdown.RefreshShownValue();
         }
@@ -197,30 +212,29 @@ namespace StateMachine {
             _isLastRowColorFirstColor = !_isLastRowColorFirstColor;
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-            
-        }
-
-
         public void RunStateMachine() {
             StartCoroutine(MakeMove());
         }
 
+        public void ResetScenario() {
+
+            GameObject scenarioDropdownObject = GameObject.Find("ScenarioSelectionDropdown");
+            Dropdown scenarioDropdown = scenarioDropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
+            int scenarioValue = scenarioDropdown.value;
+            string scenarioName = scenarioDropdown.options[scenarioValue].text;
+
+            foreach(Player player in _players) {
+                player.RemoveFigures();
+            }
+            _scenario.InitScenario(_players, scenarioName);
+            _actualState = new State("Start");
+        }
+
         IEnumerator MakeMove() {
 
-            //Test move one pawn forward
-
-            // Get pawn.001
-            GameObject directionDropdownObject = GameObject.Find("pawn.001");
-
-
-            // TODO this must be start text from language plugin
-            string start = "start";
-
             Player player = _players.GetPlayerAtIndex(0);
-            Figure figureToMove = player.GetFigure();
+            Figure figureToMove = player.GetFigures().GetFigureAtPosition(0);
+
             while (true) {
 
                 // Find ruleset which should be executed
@@ -239,7 +253,7 @@ namespace StateMachine {
                     if (ruleset.GetStartState().GetStateName() == _actualState.GetStateName()) {
                         Direction direction = ruleset.GetDirection();
                         Field fieldToCheck = null;
-                        fieldToCheck = _map.GetFieldByIndices(figureToMove._positionColumn + direction.GetRowMovementFactor(), figureToMove._positionRow + direction.GetColumnMovementFactor());
+                        fieldToCheck = _map.GetFieldByIndices(figureToMove._positionColumn + direction.GetColumnMovementFactor(), figureToMove._positionRow + direction.GetRowMovementFactor() );
 
                         // check if move would end outside of the board
                         if (fieldToCheck == null) {
@@ -288,13 +302,18 @@ namespace StateMachine {
 
                 Vector3 position = figureToMove.transform.position;
 
-                figureToMove.transform.position = new Vector3(position.x + (float)0.18 * rowMovementFactor, position.y + (float)0.18 * columnMovementFactor, position.z);
+                figureToMove.transform.position = new Vector3(position.x + (float)0.18 * columnMovementFactor, position.y + (float)0.18 * rowMovementFactor, position.z);
+
+                // figure is hit
+                if (fieldAfterMove.GetFigure() != null) {
+                    fieldAfterMove.RemoveFigure();
+                }
 
                 // set figure to new field
                 fieldAfterMove.SetFigure(figureToMove);
                 // set new position in figure
-                figureToMove._positionColumn += ruleToExecute.GetDirection().GetRowMovementFactor(); 
-                figureToMove._positionRow += ruleToExecute.GetDirection().GetColumnMovementFactor();
+                figureToMove._positionColumn += ruleToExecute.GetDirection().GetColumnMovementFactor(); 
+                figureToMove._positionRow += ruleToExecute.GetDirection().GetRowMovementFactor();
 
                 yield return new WaitForSeconds(1);
 

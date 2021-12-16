@@ -6,5 +6,7 @@ using UnityEngine;
 public class JsonScenario 
 {
     public JsonFigure[] figures;
-    public JsonFigure figureToMove;
+    public JsonFigure[] figuresToMove;
+
+    public string playerToPlay;
 }

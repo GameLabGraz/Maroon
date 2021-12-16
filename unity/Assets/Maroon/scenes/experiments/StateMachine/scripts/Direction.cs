@@ -12,7 +12,7 @@ public class Direction
     // -1 = move left
     private int _rowMovement;
 
-    public Direction (string directionName, int columnMovement, int rowMovement) {
+    public Direction (string directionName, int rowMovement, int columnMovement) {
         _name = directionName;
         _columnMovement =  columnMovement;
         _rowMovement = rowMovement;
