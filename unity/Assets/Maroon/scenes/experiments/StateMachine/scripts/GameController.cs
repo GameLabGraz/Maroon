@@ -230,6 +230,26 @@ namespace StateMachine {
             _actualState = new State("Start");
         }
 
+        public void ResetRules() {
+            _rulesets = new Rulesets();
+
+            GameObject rulesetTextTableObject = GameObject.Find("RulesetTextTable");
+
+            if (rulesetTextTableObject == null) {
+                Debug.Log("[ERROR]: RulesetTextTable cound not be found!");
+                return;
+            }
+            
+            int index = 0;
+            foreach (Transform ruleTextElement in rulesetTextTableObject.transform)
+            {
+                if (index > 3) {
+                    GameObject.Destroy(ruleTextElement.gameObject);
+                }
+                index++;
+            }
+        }
+
         IEnumerator MakeMove() {
 
             Player player = _players.GetPlayerAtIndex(0);

@@ -63,6 +63,7 @@ public class States : MonoBehaviour, IEnumerable
             _states.Add(new State(inputField.text));
             addOption(inputField.text);
         }
+        inputField.text = "";
     }
 
     public State FindState(string name) {
