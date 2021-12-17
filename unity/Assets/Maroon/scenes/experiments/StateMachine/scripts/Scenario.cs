@@ -4,6 +4,7 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using StateMachine;
+using TMPro;
 
 public enum ChessBoardColumn {
         a = 0,
@@ -77,6 +78,21 @@ public class Scenario
 
         if (players.getPlayerByName(jsonScenario.playerToPlay).GetFigures() == null) {
             Debug.LogFormat("There is no figure to move definded ({0}.json)", scenarioName);
+            return;
+        }
+
+        GameObject descriptionObject = GameObject.Find("ScenarioDescription");
+        TextMeshProUGUI descriptionTextMesh = descriptionObject.GetComponent(typeof(TextMeshProUGUI)) as TextMeshProUGUI;
+        if (descriptionTextMesh != null) {
+            descriptionTextMesh.text = jsonScenario.description;
+        }
+
+        GameObject destination = GameObject.Find(jsonScenario.destination);
+        if (destination) {
+            var dest = destination.GetComponent(typeof(Field)) as Field;
+            dest.SetDestination(true);
+        } else {
+            Debug.LogFormat("There is destination definded ({0}.json)", scenarioName);
             return;
         }
 

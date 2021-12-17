@@ -21,7 +21,7 @@ public class State
         return _stateName.Equals("Start");
     }
      public bool IsEndState() {
-        return _stateName.Equals("End");
+        return _stateName.Equals("Ende");
     }
     public string GetStateName() {
         return _stateName;

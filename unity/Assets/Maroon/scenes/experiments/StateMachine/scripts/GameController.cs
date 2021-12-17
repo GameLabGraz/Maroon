@@ -296,7 +296,7 @@ namespace StateMachine {
                     if (ruleset.GetStartState().GetStateName() == _actualState.GetStateName()) {
                         Direction direction = ruleset.GetDirection();
                         Field fieldToCheck = null;
-                        fieldToCheck = _map.GetFieldByIndices(figureToMove._positionColumn + direction.GetColumnMovementFactor(), figureToMove._positionRow + direction.GetRowMovementFactor() );
+                        fieldToCheck = _map.GetFieldByIndices(figureToMove._positionColumn + direction.GetColumnMovementFactor(), figureToMove._positionRow + direction.GetRowMovementFactor());
 
                         // check if move would end outside of the board
                         if (fieldToCheck == null) {
@@ -331,10 +331,20 @@ namespace StateMachine {
 
                 // Check if field is empty (no hitting move) 
                 if (ruleToExecute == null) {
-                    _logger.LogStateMachineMessage("Keine Regel gefunden");
+                    _logger.LogStateMachineMessage("Keine Regel gefunden", new Color32(0, 0, 0, 255));
+
+                    Field endField = _map.GetFieldByIndices(figureToMove._positionColumn, figureToMove._positionRow);
+                    
+                    if (endField && endField.IsDestination() && _actualState.IsEndState()) {
+                        //TODO implement figure hit counter and better output for success
+                        _logger.LogStateMachineMessage("Endziel mit richtigen State erreicht", new Color32(65, 154, 40, 255));
+                    } else {
+                        _logger.LogStateMachineMessage("Endziel oder End State falsch", new Color32(154, 0, 11, 255));
+                    }
+
                     yield break;
                 } else {
-                    _logger.LogStateMachineMessage("Regel " + (rulesetId + 1) + " wird ausgeführt");
+                    _logger.LogStateMachineMessage("Regel " + (rulesetId + 1) + " wird ausgeführt", new Color32(0, 0, 0, 255));
                 }
                 // Set new state
                 _actualState = ruleToExecute.GetEndState();

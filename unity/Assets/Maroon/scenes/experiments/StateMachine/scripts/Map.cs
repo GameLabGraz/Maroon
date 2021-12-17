@@ -46,6 +46,7 @@ public class Map
             foreach (var field in column)
             {
                 field.RemoveFigure();
+                field.SetDestination(false);
             }
         }
     }
@@ -60,10 +61,10 @@ public class Map
 
     public Field GetFieldByIndices(int column, int row) {
         
-        if (column >= _map.Count) {
+        if (column >= _map.Count || column < 0) {
             return null;
         }
-        if (row >= _map[column].Count) {
+        if (row >= _map[column].Count || row < 0) {
             return null;
         }
 
