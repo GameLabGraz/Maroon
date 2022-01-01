@@ -20,8 +20,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
     {
         Fixed,
         Moving,
+        Desorb,
         DrawnByPlat,
-        DrawnByCO
+        DrawnByCO,
+        Disappear
     }
 
     public class Molecule : PausableObject
@@ -46,7 +48,6 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private Vector3 _newRandomPosition;
         private Quaternion _newRandomRotation;
         public Molecule _connectedMolecule;
-        private bool _desorbMoveActive;
         
         private float _currenTimeDrawn = 0.0f;
         private Vector3 _drawingMoleculePosition;
@@ -104,6 +105,17 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             _connectedMolecule = drawingMolecule;
         }
 
+        public void MoveOutCO2()
+        {
+            if (type != MoleculeType.CO2) return; // in case this is called on non co2 molecules somehow
+            
+            _newRandomPosition = new Vector3(transform.position.x, transform.position.y + 2.0f, transform.position.z);
+            _currentTimeMove = 0.0f;
+            State = MoleculeState.Disappear;
+            _connectedMolecule = null;
+            timeToMove = 4.0f;
+        }
+        
         public void TemperatureChanged(float temp)
         {
             // normal temp goes from -23.15f to 76.85 degree celsius, since we divide here we define
@@ -145,7 +157,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         protected override void HandleFixedUpdate()
         {
             if (State == MoleculeState.Fixed && _connectedMolecule == null && State != MoleculeState.DrawnByCO) return;
-            if (State == MoleculeState.Fixed  && _connectedMolecule != null && _connectedMolecule.Type == MoleculeType.Pt && !_desorbMoveActive)
+            if (State == MoleculeState.Fixed && State != MoleculeState.Desorb &&
+               _connectedMolecule != null && _connectedMolecule.Type == MoleculeType.Pt)
             {
                 if (Type == MoleculeType.CO && _connectedMolecule.Type == MoleculeType.Pt && _reactionStarted)
                 {
@@ -162,9 +175,13 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 return;
             }
 
-            if (_desorbMoveActive)
+            if (State == MoleculeState.Desorb)
             {
                 HandleCODesorbMovement();
+            }
+            else if (State == MoleculeState.Disappear)
+            {
+                HandleCO2Disappear();
             }
             else if (State == MoleculeState.DrawnByPlat || State == MoleculeState.DrawnByCO)
             {
@@ -176,6 +193,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             }
         }
 
+        // todo unify all the movement methods into one method with parameters
+        
         private void HandleRandomMovement()
         {
             _currentTimeMove += Time.deltaTime;
@@ -205,8 +224,22 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             {
                 _currentTimeMove = 0.0f;
                 _currentTimeDesorb = 0.0f;
-                _desorbMoveActive = false;
+                State = MoleculeState.Moving;
                 GetRandomPositionAndRotation();
+            }
+        }
+        
+        private void HandleCO2Disappear()
+        {
+            _currentTimeMove += Time.deltaTime;
+            if (timeToMove >= _currentTimeMove)
+            {
+                Vector3 currentPosition = transform.position;
+                transform.position = Vector3.Lerp(currentPosition, _newRandomPosition, Time.deltaTime);
+            }
+            else
+            {
+                Destroy(this.gameObject);
             }
         }
 
@@ -233,8 +266,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         {
             _newRandomPosition = new Vector3(transform.position.x, transform.position.y + 0.8f, transform.position.z);
             _currentTimeMove = 0.0f;
-            State = MoleculeState.Moving;
-            _desorbMoveActive = true;
+            State = MoleculeState.Desorb;
             _connectedMolecule.ConnectedMolecule = null;
             _connectedMolecule = null;
         }
