@@ -180,7 +180,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
             Molecule co2Molecule = Instantiate(co2MoleculePrefab, parentTransform);
             co2Molecule.gameObject.transform.position = coPosition;
-            AddMoleculeToActiveList(co2Molecule);
+            co2Molecule.MoveOutCO2();
         }
 
         private void AddMoleculeToActiveList(Molecule molecule)
