@@ -56,8 +56,6 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private bool _isWobbling = false;
         private bool _reactionStarted = false;
 
-        private System.Random _random;
-
         public MoleculeType Type { get => type; }
 
         public MoleculeState State
@@ -92,6 +90,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             {
                 DesorbCO();
                 OnMoleculeFreed?.Invoke();
+                return;
             }
 
             StartCoroutine(Wobble());
@@ -131,8 +130,6 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         {
             base.Start();
             GetRandomPositionAndRotation();
-
-            _random = new System.Random();
         }
 
         protected override void HandleUpdate()
@@ -155,7 +152,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                     _currentTimeDesorb += Time.deltaTime;
                     if (timeUntilNextDesorb <= _currentTimeDesorb)
                     {
-                        if (_random.Next(0, 100) > 95)
+                        if (Random.Range(0, 100) > 95)
                         {
                             DesorbCO();
                         }

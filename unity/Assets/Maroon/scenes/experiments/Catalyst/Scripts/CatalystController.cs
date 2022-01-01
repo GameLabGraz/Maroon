@@ -93,6 +93,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             _catalystSurface.SetupCoords(_platSpawnPoints, list => 
                 {
                     _activeMolecules = list;
+                    foreach (var molecule in _activeMolecules)
+                    {
+                        onReactionStart += molecule.ReactionStart;
+                    }
                     SpawnReactionMaterial();
                 },
                 OnMoleculeFreed);
@@ -155,10 +159,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         {
             if (freedMoleculeCounter == 4)
             {
-                foreach (var molecule in _activeMolecules)
-                {
-                    molecule.ReactionStart();
-                }
+                onReactionStart?.Invoke();
             }
             freedMoleculeCounter++;
         }
