@@ -41,11 +41,13 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         [SerializeField] QuantityFloat temperature = new QuantityFloat();
         private QuantityFloat _partialPressure = new QuantityFloat();
 
-        private MoleculeState _state;
+        [SerializeField] private MoleculeState _state;
         
         private float _currentTimeMove = 0.0f;
         private float _currentTimeDesorb = 0.0f;
+        private Vector3 _startMoleculePosition;
         private Vector3 _newMoleculePosition;
+        private Quaternion _startMoleculeRotation;
         private Quaternion _newMoleculeRotation;
         public Molecule _connectedMolecule;
         
@@ -100,6 +102,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         public void SetMoleculeDrawn(Molecule drawingMolecule, MoleculeState state)
         {
             State = state;
+            _startMoleculePosition = transform.position;
+            _startMoleculeRotation = transform.rotation;
             _newMoleculePosition = drawingMolecule.transform.position;
             _newMoleculeRotation = Quaternion.Euler(0.0f, 0.0f, 90.0f);
             _connectedMolecule = drawingMolecule;
@@ -108,8 +112,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         public void MoveOutCO2()
         {
             if (type != MoleculeType.CO2) return; // in case this is called on non co2 molecules somehow
-            
-            _newMoleculePosition = new Vector3(transform.position.x, transform.position.y + 2.0f, transform.position.z);
+            _startMoleculePosition = transform.position;
+            _newMoleculePosition = new Vector3(_startMoleculePosition.x, _startMoleculePosition.y + 2.0f, _startMoleculePosition.z);
             _currentTimeMove = 0.0f;
             State = MoleculeState.Disappear;
             _connectedMolecule = null;
@@ -188,13 +192,12 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         private void HandleMoleculeMovement()
         {
-            _currentTimeMove += Time.deltaTime;
-            if (timeToMove >= _currentTimeMove)
+            _currentTimeMove += Time.deltaTime * movementSpeed;
+            if (Vector3.Distance(transform.position, _newMoleculePosition) > 0.05f)
             {
-                Vector3 currentPosition = transform.position;
                 Quaternion currentRotation = transform.rotation;
-                transform.position = Vector3.Lerp(currentPosition, _newMoleculePosition, Time.deltaTime * movementSpeed);
-                transform.rotation = Quaternion.Lerp(currentRotation, _newMoleculeRotation, Time.deltaTime * movementSpeed);
+                transform.position = Vector3.Lerp(_startMoleculePosition, _newMoleculePosition, _currentTimeMove);
+                transform.rotation = Quaternion.Lerp(_startMoleculeRotation, _newMoleculeRotation, _currentTimeMove);
             }
             else
             {
@@ -220,8 +223,9 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         private void DesorbCO()
         {
-            Vector3 pos = transform.position;
-            _newMoleculePosition = new Vector3(pos.x, pos.y + 0.8f, pos.z);
+            _startMoleculePosition = transform.position;
+            _startMoleculeRotation = transform.rotation;
+            _newMoleculePosition = new Vector3(_startMoleculePosition.x, _startMoleculePosition.y + 0.8f, _startMoleculePosition.z);
             _currentTimeMove = 0.0f;
             State = MoleculeState.Desorb;
             _connectedMolecule.ConnectedMolecule = null;
@@ -252,7 +256,9 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         private void GetRandomPositionAndRotation()
         {
-            _newMoleculePosition = transform.position + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(0.1f, -0.2f), Random.Range(-0.2f, 0.2f));
+            _startMoleculePosition = transform.position;
+            _startMoleculeRotation = transform.rotation;
+            _newMoleculePosition = _startMoleculePosition + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(0.1f, -0.2f), Random.Range(-0.2f, 0.2f));
             _newMoleculeRotation = Quaternion.Euler(Random.Range(-180.0f, 180.0f),Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
         }
 
