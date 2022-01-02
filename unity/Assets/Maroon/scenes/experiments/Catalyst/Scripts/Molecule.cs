@@ -45,12 +45,11 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         
         private float _currentTimeMove = 0.0f;
         private float _currentTimeDesorb = 0.0f;
-        private Vector3 _newRandomPosition;
-        private Quaternion _newRandomRotation;
+        private Vector3 _newMoleculePosition;
+        private Quaternion _newMoleculeRotation;
         public Molecule _connectedMolecule;
         
         private float _currenTimeDrawn = 0.0f;
-        private Vector3 _drawingMoleculePosition;
 
         private int _moleculeClickCounter = 0;
         private float _wobbleStrength = 0.1f;
@@ -101,7 +100,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         public void SetMoleculeDrawn(Molecule drawingMolecule, MoleculeState state)
         {
             State = state;
-            _drawingMoleculePosition = drawingMolecule.transform.position;
+            _newMoleculePosition = drawingMolecule.transform.position;
+            _newMoleculeRotation = Quaternion.Euler(0.0f, 0.0f, 90.0f);
             _connectedMolecule = drawingMolecule;
         }
 
@@ -109,7 +109,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         {
             if (type != MoleculeType.CO2) return; // in case this is called on non co2 molecules somehow
             
-            _newRandomPosition = new Vector3(transform.position.x, transform.position.y + 2.0f, transform.position.z);
+            _newMoleculePosition = new Vector3(transform.position.x, transform.position.y + 2.0f, transform.position.z);
             _currentTimeMove = 0.0f;
             State = MoleculeState.Disappear;
             _connectedMolecule = null;
@@ -174,97 +174,54 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 }
                 return;
             }
-
-            if (State == MoleculeState.Desorb)
+            
+            if (_state != MoleculeState.Fixed &&
+                (_state == MoleculeState.Moving ||
+                 _state == MoleculeState.Desorb ||
+                 _state == MoleculeState.Disappear ||
+                 _state == MoleculeState.DrawnByPlat ||
+                 _state == MoleculeState.DrawnByCO) )
             {
-                HandleCODesorbMovement();
-            }
-            else if (State == MoleculeState.Disappear)
-            {
-                HandleCO2Disappear();
-            }
-            else if (State == MoleculeState.DrawnByPlat || State == MoleculeState.DrawnByCO)
-            {
-                HandleDrawnToMoleculeMovement();
-            }
-            else if (State != MoleculeState.Fixed)
-            {
-                HandleRandomMovement();
+                HandleMoleculeMovement();
             }
         }
 
-        // todo unify all the movement methods into one method with parameters
-        
-        private void HandleRandomMovement()
+        private void HandleMoleculeMovement()
         {
             _currentTimeMove += Time.deltaTime;
             if (timeToMove >= _currentTimeMove)
             {
                 Vector3 currentPosition = transform.position;
                 Quaternion currentRotation = transform.rotation;
-                transform.position = Vector3.Lerp(currentPosition, _newRandomPosition, Time.deltaTime * movementSpeed);
-                transform.rotation = Quaternion.Lerp(currentRotation, _newRandomRotation, Time.deltaTime * movementSpeed);
+                transform.position = Vector3.Lerp(currentPosition, _newMoleculePosition, Time.deltaTime * movementSpeed);
+                transform.rotation = Quaternion.Lerp(currentRotation, _newMoleculeRotation, Time.deltaTime * movementSpeed);
             }
             else
             {
-                GetRandomPositionAndRotation();
-                _currentTimeMove = 0.0f;
-            }
-        }
-
-        private void HandleCODesorbMovement()
-        {
-            _currentTimeMove += Time.deltaTime;
-            if (timeToMove >= _currentTimeMove)
-            {
-                Vector3 currentPosition = transform.position;
-                transform.position = Vector3.Lerp(currentPosition, _newRandomPosition, Time.deltaTime * movementSpeed);
-            }
-            else
-            {
-                _currentTimeMove = 0.0f;
-                _currentTimeDesorb = 0.0f;
-                State = MoleculeState.Moving;
-                GetRandomPositionAndRotation();
-            }
-        }
-        
-        private void HandleCO2Disappear()
-        {
-            _currentTimeMove += Time.deltaTime;
-            if (timeToMove >= _currentTimeMove)
-            {
-                Vector3 currentPosition = transform.position;
-                transform.position = Vector3.Lerp(currentPosition, _newRandomPosition, Time.deltaTime);
-            }
-            else
-            {
-                Destroy(this.gameObject);
-            }
-        }
-
-        private void HandleDrawnToMoleculeMovement()
-        {
-            _currenTimeDrawn += Time.deltaTime;
-            if (timeToMove >= _currenTimeDrawn)
-            {
-                Vector3 currentPosition = transform.position;
-                Quaternion currentRotation = transform.localRotation;
-                transform.position = Vector3.Lerp(currentPosition, _drawingMoleculePosition, Time.deltaTime * movementSpeed);
-                transform.localRotation = Quaternion.Lerp(currentRotation, Quaternion.Euler(0.0f, 0.0f, 90.0f), Time.deltaTime * movementSpeed);
-            }
-            else
-            {
-                if (State == MoleculeState.DrawnByPlat)
+                if (_state == MoleculeState.Desorb)
+                {
+                    _currentTimeDesorb = 0.0f;
+                    State = MoleculeState.Moving;
+                }
+                else if (_state == MoleculeState.Disappear)
+                    Destroy(this.gameObject);
+                else if (State == MoleculeState.DrawnByPlat)
                     HandleO2TouchingPlat();
                 else if (State == MoleculeState.DrawnByCO)
                     HandleOTouchingCO();
+
+                if (_state == MoleculeState.Moving)
+                {
+                    _currentTimeMove = 0.0f;
+                    GetRandomPositionAndRotation();
+                }
             }
         }
-        
+
         private void DesorbCO()
         {
-            _newRandomPosition = new Vector3(transform.position.x, transform.position.y + 0.8f, transform.position.z);
+            Vector3 pos = transform.position;
+            _newMoleculePosition = new Vector3(pos.x, pos.y + 0.8f, pos.z);
             _currentTimeMove = 0.0f;
             State = MoleculeState.Desorb;
             _connectedMolecule.ConnectedMolecule = null;
@@ -281,8 +238,9 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private void HandleO2TouchingPlat()
         {
             State = MoleculeState.Fixed;
-            transform.position = new Vector3(_drawingMoleculePosition.x, _drawingMoleculePosition.y += CatalystController.FixedMoleculeYDist, _drawingMoleculePosition.z);
+            transform.position = new Vector3(_newMoleculePosition.x, _newMoleculePosition.y += CatalystController.FixedMoleculeYDist, _newMoleculePosition.z);
             transform.localRotation = Quaternion.Euler(0.0f, 0.0f, 90.0f);
+            // todo perform radial check here and only dissociate of 2 co molecules are nearby
             StartCoroutine(DissociateO2());
         }
 
@@ -294,8 +252,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         private void GetRandomPositionAndRotation()
         {
-            _newRandomPosition = transform.position + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(0.1f, -0.2f), Random.Range(-0.2f, 0.2f));
-            _newRandomRotation = Quaternion.Euler(Random.Range(-180.0f, 180.0f),Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
+            _newMoleculePosition = transform.position + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(0.1f, -0.2f), Random.Range(-0.2f, 0.2f));
+            _newMoleculeRotation = Quaternion.Euler(Random.Range(-180.0f, 180.0f),Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
         }
 
         public void ActivateDrawingCollider(bool activate)
