@@ -27,6 +27,8 @@ namespace StateMachine {
 
         private GameObject _stateMenu;
         private GameObject _rulesetMenu;
+        
+        private int _dataTableRowLength = 4;
 
         // Start is called before the first frame update
         void Start()
@@ -137,9 +139,31 @@ namespace StateMachine {
             Direction direction = _directions.FindDirection(directionDropdown.options[directionValue].text);
             Mode mode = _modes.FindMode(modeDropdown.options[modeValue].text);
             Ruleset ruleset = new Ruleset(start, end, direction, mode, null);
+
             _rulesets.AddRuleset(ruleset);
 
+            ResetDeleteRulesetDropdown();
             CreateNewRulesetGameObject(ruleset);
+        }
+
+        public void ResetDeleteRulesetDropdown() {
+            GameObject deleteSingleRulesetDropdownObject = GameObject.Find("DeleteSingleRulesetDropdown");
+            Dropdown deleteSingleRulesetDropdown = deleteSingleRulesetDropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
+
+            if (deleteSingleRulesetDropdown) {
+                deleteSingleRulesetDropdown.ClearOptions();
+            } else {
+                Debug.Log("[ERROR]: There is no deleteSingleRulesetDropdown element!");
+                return;
+            }
+
+            for (int rulesetCounter = 0; rulesetCounter < _rulesets.GetCount(); rulesetCounter++) {
+                Dropdown.OptionData option = new Dropdown.OptionData();
+                option.text = System.Convert.ToString(rulesetCounter + 1);
+                deleteSingleRulesetDropdown.options.Add(option);
+            }
+
+            deleteSingleRulesetDropdown.RefreshShownValue();
         }
 
         public void CreateNewRulesetGameObject(Ruleset ruleset) {
@@ -239,6 +263,39 @@ namespace StateMachine {
             ResetScenario();
         }
 
+        public void DeleteRuleset() {
+            GameObject deleteSingleRulesetDropdownObject = GameObject.Find("DeleteSingleRulesetDropdown");
+            Dropdown deleteSingleRulesetDropdown = deleteSingleRulesetDropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
+
+            int deleteSingleRulesetValue = deleteSingleRulesetDropdown.value;
+
+            if (deleteSingleRulesetDropdown.options.Count == 0) {
+                Debug.Log("[ERROR]: There is no ruleset to delete!");
+                return;
+            }
+
+            GameObject rulesetTextTableObject = GameObject.Find("RulesetTextTable");
+
+            if (rulesetTextTableObject == null) {
+                Debug.Log("[ERROR]: RulesetTextTable cound not be found!");
+                return;
+            }
+            
+            int index = 0;
+            
+            foreach (Transform ruleTextElement in rulesetTextTableObject.transform)
+            {
+                if (index >= deleteSingleRulesetValue * _dataTableRowLength + _dataTableRowLength && index < deleteSingleRulesetValue * _dataTableRowLength + 2 * _dataTableRowLength) {
+                    GameObject.Destroy(ruleTextElement.gameObject);
+                }
+                index++;
+            }
+
+            _rulesets.RemoveRuleset(deleteSingleRulesetValue);
+
+            ResetDeleteRulesetDropdown();
+        }
+
         public void ResetScenario() {
 
             GameObject scenarioDropdownObject = GameObject.Find("ScenarioSelectionDropdown");
@@ -256,6 +313,8 @@ namespace StateMachine {
         public void ResetRules() {
             _rulesets = new Rulesets();
 
+            ResetDeleteRulesetDropdown();
+
             GameObject rulesetTextTableObject = GameObject.Find("RulesetTextTable");
 
             if (rulesetTextTableObject == null) {
@@ -266,12 +325,13 @@ namespace StateMachine {
             int index = 0;
             foreach (Transform ruleTextElement in rulesetTextTableObject.transform)
             {
-                if (index > 3) {
+                if (index > _dataTableRowLength - 1) {
                     GameObject.Destroy(ruleTextElement.gameObject);
                 }
                 index++;
             }
         }
+
 
         IEnumerator MakeMove() {
 
