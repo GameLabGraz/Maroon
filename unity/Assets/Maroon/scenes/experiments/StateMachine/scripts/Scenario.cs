@@ -25,9 +25,9 @@ public class Scenario
     }
 
     
-    public void InitScenario(Players players, string scenarioName) {
+    public void InitScenario(Players players, EnemyMoves enemyMoves, string scenarioName) {
         InitScenariosList();
-        LoadJson(players, scenarioName);
+        LoadJson(players, enemyMoves, scenarioName);
         return;
     }
     public List<string> GetScenarioList() {
@@ -44,7 +44,7 @@ public class Scenario
             }
         }
     }
-    private void LoadJson(Players players, string scenarioName) {
+    private void LoadJson(Players players, EnemyMoves enemyMoves, string scenarioName) {
 
         // load json file and resolve it to object
         string scenarioFile;
@@ -96,8 +96,37 @@ public class Scenario
             return;
         }
 
+        InitialiseEnemyMoves(jsonScenario, enemyMoves);
         return;
     }
+
+    private void InitialiseEnemyMoves(JsonScenario jsonScenario, EnemyMoves enemyMoves) {
+        // initialise directions for enemies moves
+        Directions enemyDirections = new Directions();
+
+        foreach (var direction in jsonScenario.directions) {
+            enemyDirections.AddDirection(new Direction(direction.name, direction.rowMovement, direction.columnMovement));
+        }
+
+        // initialise enemies moves
+        foreach (var enemyMove in jsonScenario.enemyMoves) {
+
+            Direction direction = enemyDirections.FindDirection(enemyMove.move);
+            
+            if (direction == null) {
+                continue;
+            }
+            
+            Figure figureToMove = GetFigure(enemyMove.enemyFigureToMove);
+
+            if (figureToMove == null) {
+                continue;
+            }
+            enemyMoves.AddEnemyMove(new EnemyMove(figureToMove, direction));
+        }
+        int counter = 0;
+    }
+
 
     private void moveFigureToDestination(Players players, JsonFigure jsonFigureToMove, string scenarioName, int figureLineNumber) {
 
@@ -136,22 +165,7 @@ public class Scenario
             return;
         }
 
-        // get figure object
-        GameObject figuresGameObject = GameObject.Find("figures");
-        Transform figureTransform = figuresGameObject.transform.Find(jsonFigureToMove.name);
-
-        if (figureTransform == null) {
-            Debug.LogFormat("{0} is no valid figure (figures: line {1}, {2}.json)", jsonFigureToMove.name, figureLineNumber, scenarioName);
-            return;
-        }
-
-        GameObject figureGameObject = figureTransform.gameObject;
-        
-        if (figureGameObject == null) {
-            return;
-        }
-
-        Figure figureToMove = figureGameObject.GetComponent(typeof(Figure)) as Figure;
+        Figure figureToMove = GetFigure(jsonFigureToMove.name);
         
         if (figureToMove == null) {
             return;
@@ -186,5 +200,26 @@ public class Scenario
         figureToMove.gameObject.SetActive(true);
         
         return;
+    }
+
+    private Figure GetFigure(string figureName) {
+
+        // get figure object
+        GameObject figuresGameObject = GameObject.Find("figures");
+        Transform figureTransform = figuresGameObject.transform.Find(figureName);
+
+        if (figureTransform == null) {
+            // TODO update log
+            // Debug.LogFormat("{0} is no valid figure (figures: line {1}, {2}.json)", figureName, figureLineNumber, scenarioName);
+            return null;
+        }
+
+        GameObject figureGameObject = figureTransform.gameObject;
+        
+        if (figureGameObject == null) {
+            return null;
+        }
+
+        return figureGameObject.GetComponent(typeof(Figure)) as Figure;
     }
 }

@@ -16,6 +16,8 @@ namespace StateMachine {
         private State _actualState;
         private Directions _directions = new Directions();
         private Moves _moves = new Moves();
+
+        private EnemyMoves _enemyMoves = new EnemyMoves();
         private Modes _modes = new Modes();
         // Rule counter increases every time a rule is added, but does NOT decrease (so names are always unique)
         private int _ruleCounter = 0;
@@ -47,7 +49,7 @@ namespace StateMachine {
             _players.AddPlayer(new Player("white"));
             _players.AddPlayer(new Player("black"));
             _scenario = new Scenario(_map);
-            _scenario.InitScenario(_players, "scenario1");
+            _scenario.InitScenario(_players, _enemyMoves, "scenario1");
 
             GameObject dropdownObject = GameObject.Find("ScenarioSelectionDropdown");
             Dropdown dropdown = dropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
@@ -293,6 +295,8 @@ namespace StateMachine {
 
             _rulesets.RemoveRuleset(deleteSingleRulesetValue);
 
+            //TODO change color of all textElements depending on the color of the ruleset removed
+
             ResetDeleteRulesetDropdown();
         }
 
@@ -306,7 +310,7 @@ namespace StateMachine {
             foreach(Player player in _players) {
                 player.RemoveFigures();
             }
-            _scenario.InitScenario(_players, scenarioName);
+            _scenario.InitScenario(_players, _enemyMoves, scenarioName);
             _actualState = new State("Start");
         }
 
