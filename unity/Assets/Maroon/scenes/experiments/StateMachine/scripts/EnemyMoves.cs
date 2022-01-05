@@ -14,11 +14,21 @@ public class EnemyMoves : IEnumerable
         return _enemyMoves.GetEnumerator();
     }
 
-    public EnemyMove GetNextMove() {
-        // TODO find good variant
-        if (_enemyMoves.Count > 0) {
-            return _enemyMoves[0];
+    public Rulesets GetNextMove(string name, State state, Modes modes) {
+        EnemyMove move = _enemyMoves.Find(element => element.GetFigure().gameObject.name == name);
+
+        // TODO build from move one hit and one empty field move
+
+        if (move == null) {
+            return null;
         }
-        return null;
+
+        // TODO check which mode is possible for a figure
+        Rulesets rulesets = new Rulesets();
+
+        foreach(Mode mode in modes) {
+            rulesets.AddRuleset(new Ruleset(state, state, move.GetDirection(), mode, null));
+        }
+        return rulesets;
     }
 }

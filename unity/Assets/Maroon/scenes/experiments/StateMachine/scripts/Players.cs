@@ -6,6 +6,7 @@ using StateMachine;
 public class Players : IEnumerable
 {
     private List<Player> _players = new List<Player>();
+    private int _actualPlayer = 0;
 
     public Player GetPlayerAtIndex(int index) {
         if (index >= _players.Count) {
@@ -25,5 +26,16 @@ public class Players : IEnumerable
 
     public Player getPlayerByName(string name) {
         return _players.Find(element => element._playerName == name);
+    }
+
+    public Player GetNextPlayer() {
+        Player player = GetPlayerAtIndex(_actualPlayer + 1);
+
+        if (player == null) {
+            _actualPlayer = 0;
+            return GetPlayerAtIndex(0);
+        }
+        _actualPlayer++;
+        return player;
     }
 }

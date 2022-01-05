@@ -336,26 +336,13 @@ namespace StateMachine {
             }
         }
 
+    
 
-        IEnumerator MakeMove() {
-
-            Player player = _players.GetPlayerAtIndex(0);
-            Figure figureToMove = player.GetFigures().GetFigureAtPosition(0);
-
-            while (true) {
-
-                // Find ruleset which should be executed
-                Ruleset ruleToExecute = null;
-                int rulesetId = 0;
-                Field fieldAfterMove = null;
-
-
-                // TODO make own method
-                for (int rulesetCounter = 0; rulesetCounter < _rulesets.GetCount(); rulesetCounter++)
+    private (Ruleset ruleToExecute, int rulesetId, Field fieldAfterMove) FindRuleToExecute(Figure figureToMove, Rulesets rulesets) {
+        for (int rulesetCounter = 0; rulesetCounter < rulesets.GetCount(); rulesetCounter++)
                 {   
-                    Ruleset ruleset = _rulesets.GetRulesetAtPosition(rulesetCounter);
+                    Ruleset ruleset = rulesets.GetRulesetAtPosition(rulesetCounter);
                     
-
                     // check if rule has right start state
                     if (ruleset.GetStartState().GetStateName() == _actualState.GetStateName()) {
                         Direction direction = ruleset.GetDirection();
@@ -383,14 +370,48 @@ namespace StateMachine {
                             continue;
                         }
                         
-                        ruleToExecute = ruleset;
-                        rulesetId = rulesetCounter;
-                        fieldAfterMove = fieldToCheck;
+                        return (ruleset, rulesetCounter, fieldToCheck);
                     }
                 }
+        return (null, 0, null);
+    }
 
-                // TODO compare mode 
+        IEnumerator MakeMove() {
+
+            // TODO change to right player depending on scenario in .json file
+            Player player = _players.GetPlayerAtIndex(0);
+
+            while (true) {
+ 
+                Figure figureToMove = player.GetFigures().GetFigureAtPosition(0);
                 
+                //TODO only if other player should do something
+                while (!figureToMove.gameObject.activeSelf) {
+                    player.GetFigures().RemoveFigure(0);
+
+                    // no figure to move available
+                    if (player.GetFigures().Count() == 0) {
+                        _logger.LogStateMachineMessage("Keine bewegbare Figur mehr vorhanden", new Color32(0, 0, 0, 255));
+                        yield break;
+                    }
+
+                    figureToMove = player.GetFigures().GetFigureAtPosition(0);
+                }
+
+                string name = figureToMove.gameObject.name;
+                Rulesets rulesets =  _enemyMoves.GetNextMove(name,_actualState, _modes);
+
+                Ruleset ruleToExecute = null;
+                int rulesetId = 0;
+                Field fieldAfterMove = null;
+
+                // TODO change to ai player which is defined in the .json file
+                if (player == _players.GetPlayerAtIndex(0)) {
+                    (ruleToExecute, rulesetId, fieldAfterMove) = FindRuleToExecute(figureToMove, _rulesets);
+                } else {
+                    (ruleToExecute, rulesetId, fieldAfterMove) = FindRuleToExecute(figureToMove, rulesets);
+                }
+
                 // TODO compare surrounding of rule to surrounding of the figure to move => only one rule must be available after that comparison
 
                 // Check if field is empty (no hitting move) 
@@ -422,8 +443,20 @@ namespace StateMachine {
                 figureToMove.transform.position = new Vector3(position.x + (float)0.18 * columnMovementFactor, position.y + (float)0.18 * rowMovementFactor, position.z);
 
                 // figure is hit
+                
                 if (fieldAfterMove.GetFigure() != null) {
                     fieldAfterMove.RemoveFigure();
+
+                    Player nextPlayer =  _players.GetNextPlayer();
+
+                    if (nextPlayer != null) {
+                        player = nextPlayer;
+                    }
+                } else {
+                    //TODO now every figure of ai just moves one step
+                    if (player == _players.GetPlayerAtIndex(1)) {
+                        player = _players.GetNextPlayer();
+                    }
                 }
 
                 // set figure to new field
