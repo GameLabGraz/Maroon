@@ -9,7 +9,7 @@ public class Player
 
         private Figures _figuresToMove = new Figures();
     
-    public Player(string name) {;
+    public Player(string name) {
         _playerName = name;
     }
    

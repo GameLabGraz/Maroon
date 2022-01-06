@@ -27,7 +27,10 @@ public class EnemyMoves : IEnumerable
         Rulesets rulesets = new Rulesets();
 
         foreach(Mode mode in modes) {
-            rulesets.AddRuleset(new Ruleset(state, state, move.GetDirection(), mode, null));
+            if (mode.GetModeName() == "Figur schlagen" && move.GetFigure().gameObject.name.Contains("pawn")) {
+                continue;
+            }
+            rulesets.AddRuleset(new Ruleset(state, state, move.GetDirection(), mode, null, new List<List<SurroundingField>>()));
         }
         return rulesets;
     }

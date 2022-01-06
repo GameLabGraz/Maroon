@@ -22,6 +22,10 @@ public class Field : MonoBehaviour
         }
     }
 
+    public void MoveFigureAway() {
+        _figure = null;
+    }
+
     public void SetDestination(bool isDestination) {
         _isDestination = isDestination;
     }

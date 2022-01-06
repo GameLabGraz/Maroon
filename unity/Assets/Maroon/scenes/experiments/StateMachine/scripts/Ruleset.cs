@@ -14,12 +14,15 @@ public class Ruleset
     private int _moveDistance = 1;
     private Mode _mode;
 
-    public Ruleset(State start, State end, Direction direction, Mode mode, Figure figure) {
+    private List<List<SurroundingField>> _surrounding;
+
+    public Ruleset(State start, State end, Direction direction, Mode mode, Figure figure, List<List<SurroundingField>> surrounding) {
         _startState = start;
         _endState = end;
         _direction = direction;
         _mode = mode;
         _figure = figure;
+        _surrounding = surrounding;
     }
 
     public List<string> ToStringArray() {

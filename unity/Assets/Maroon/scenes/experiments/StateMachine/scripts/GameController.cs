@@ -14,6 +14,7 @@ namespace StateMachine {
         private Scenario _scenario;
         private States _states;
         private State _actualState;
+        private Direction _actualDirection;
         private Directions _directions = new Directions();
         private Moves _moves = new Moves();
 
@@ -26,7 +27,7 @@ namespace StateMachine {
         private Color _rowColor2 = new Color(1.0f, 1.0f, 1.0f);
         private Map _map = new Map();
         private Logger _logger = new Logger();
-
+        private Surrounding _surrounding;
         private GameObject _stateMenu;
         private GameObject _rulesetMenu;
         
@@ -37,6 +38,9 @@ namespace StateMachine {
         {
             _stateMenu = GameObject.Find("StateMenu");   
             _rulesetMenu = GameObject.Find("RulesetMenu");
+            GameObject surroundingObject = GameObject.Find("Surrounding");
+            Surrounding surrounding = surroundingObject.GetComponent(typeof(Surrounding)) as Surrounding;
+            _surrounding = surrounding;
             InitGameField();
             InitStates();
             InitDirections();
@@ -140,7 +144,7 @@ namespace StateMachine {
             State end = _states.FindState(endStateDropdown.options[endStateValue].text);
             Direction direction = _directions.FindDirection(directionDropdown.options[directionValue].text);
             Mode mode = _modes.FindMode(modeDropdown.options[modeValue].text);
-            Ruleset ruleset = new Ruleset(start, end, direction, mode, null);
+            Ruleset ruleset = new Ruleset(start, end, direction, mode, null, _surrounding.CloneSurrounding());
 
             _rulesets.AddRuleset(ruleset);
 
@@ -336,50 +340,58 @@ namespace StateMachine {
             }
         }
 
+        public void ChangeSurroundingValue() {
+
+        }
+
     
 
-    private (Ruleset ruleToExecute, int rulesetId, Field fieldAfterMove) FindRuleToExecute(Figure figureToMove, Rulesets rulesets) {
-        for (int rulesetCounter = 0; rulesetCounter < rulesets.GetCount(); rulesetCounter++)
-                {   
-                    Ruleset ruleset = rulesets.GetRulesetAtPosition(rulesetCounter);
-                    
-                    // check if rule has right start state
-                    if (ruleset.GetStartState().GetStateName() == _actualState.GetStateName()) {
-                        Direction direction = ruleset.GetDirection();
-                        Field fieldToCheck = null;
-                        fieldToCheck = _map.GetFieldByIndices(figureToMove._positionColumn + direction.GetColumnMovementFactor(), figureToMove._positionRow + direction.GetRowMovementFactor());
-
-                        // check if move would end outside of the board
-                        if (fieldToCheck == null) {
-                            continue;
-                        }
-
-                        // check if field is empty (when mode is 0)
-                        // TODO remove magic value
-                        if (ruleset.GetMode().GetModeCode() == 0 && fieldToCheck.GetFigure() != null) {
-                            continue;
-                        }                        
-
-                        // if no figure is on field to hit
-                        if (ruleset.GetMode().GetModeCode() == 1 && fieldToCheck.GetFigure() == null) {
-                            continue;
-                        }
-
-                        // if own figure would be hit
-                        if (ruleset.GetMode().GetModeCode() == 1 && fieldToCheck.GetFigure() && figureToMove._player._playerName == fieldToCheck.GetFigure()._player._playerName) {
-                            continue;
-                        }
+        private (Ruleset ruleToExecute, int rulesetId, Field fieldAfterMove) FindRuleToExecute(Figure figureToMove, Rulesets rulesets) {
+            for (int rulesetCounter = 0; rulesetCounter < rulesets.GetCount(); rulesetCounter++)
+                    {   
+                        Ruleset ruleset = rulesets.GetRulesetAtPosition(rulesetCounter);
                         
-                        return (ruleset, rulesetCounter, fieldToCheck);
+                        // check if rule has right start state
+                        if (ruleset.GetStartState().GetStateName() == _actualState.GetStateName()) {
+                            Direction direction = ruleset.GetDirection();
+                            Field fieldToCheck = null;
+                            fieldToCheck = _map.GetFieldByIndices(figureToMove._positionColumn + direction.GetColumnMovementFactor(), figureToMove._positionRow + direction.GetRowMovementFactor());
+
+                            // check if move would end outside of the board
+                            if (fieldToCheck == null) {
+                                continue;
+                            }
+
+                            // check if field is empty (when mode is 0)
+                            // TODO remove magic value
+                            if (ruleset.GetMode().GetModeCode() == 0 && fieldToCheck.GetFigure() != null) {
+                                continue;
+                            }                        
+
+                            // if no figure is on field to hit
+                            if (ruleset.GetMode().GetModeCode() == 1 && fieldToCheck.GetFigure() == null) {
+                                continue;
+                            }
+
+                            // if own figure would be hit
+                            if (ruleset.GetMode().GetModeCode() == 1 && fieldToCheck.GetFigure() && figureToMove._player._playerName == fieldToCheck.GetFigure()._player._playerName) {
+                                continue;
+                            }
+                            
+                            return (ruleset, rulesetCounter, fieldToCheck);
+                        }
                     }
-                }
-        return (null, 0, null);
-    }
+            return (null, 0, null);
+        }
+
+
 
         IEnumerator MakeMove() {
 
             // TODO change to right player depending on scenario in .json file
             Player player = _players.GetPlayerAtIndex(0);
+            _actualDirection = null;
+            bool moveEnds = false;
 
             while (true) {
  
@@ -438,28 +450,36 @@ namespace StateMachine {
                 int columnMovementFactor = ruleToExecute.GetDirection().GetColumnMovementFactor();
                 int rowMovementFactor = ruleToExecute.GetDirection().GetRowMovementFactor();
 
+                if (_actualDirection != null && _actualDirection.GetDirectionName() != ruleToExecute.GetDirection().GetDirectionName()) {
+                    // Move ends
+                    moveEnds = true;
+                }
+
+                _actualDirection = ruleToExecute.GetDirection();
+
                 Vector3 position = figureToMove.transform.position;
 
                 figureToMove.transform.position = new Vector3(position.x + (float)0.18 * columnMovementFactor, position.y + (float)0.18 * rowMovementFactor, position.z);
 
                 // figure is hit
-                
                 if (fieldAfterMove.GetFigure() != null) {
                     fieldAfterMove.RemoveFigure();
+                    moveEnds = true;
+                } 
 
+                //TODO now every figure of ai just moves one step
+                if (moveEnds || player == _players.GetPlayerAtIndex(1)) {
                     Player nextPlayer =  _players.GetNextPlayer();
-
                     if (nextPlayer != null) {
                         player = nextPlayer;
                     }
-                } else {
-                    //TODO now every figure of ai just moves one step
-                    if (player == _players.GetPlayerAtIndex(1)) {
-                        player = _players.GetNextPlayer();
-                    }
+                    moveEnds = false;
+                    _actualDirection = null;
                 }
 
                 // set figure to new field
+                Field actualField = _map.GetFieldByIndices(figureToMove._positionColumn, figureToMove._positionRow);
+                actualField.MoveFigureAway();
                 fieldAfterMove.SetFigure(figureToMove);
                 // set new position in figure
                 figureToMove._positionColumn += ruleToExecute.GetDirection().GetColumnMovementFactor(); 
