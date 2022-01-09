@@ -293,8 +293,20 @@ namespace StateMachine {
         }
 
         public void RunStateMachine() {
-            //SetVisibilityOfMenus(false);
+            SetVisibilityOfMenus(false);
+            ClearStateMenu();
             StartCoroutine(MakeMove());
+        }
+
+        private void ClearStateMenu() {
+            GameObject overviewObject = GameObject.Find("StateMachineOverview");
+
+            for (int counter = 0; counter < overviewObject.transform.childCount; counter++) {
+                if (counter > 1) {
+                    GameObject.Destroy(overviewObject.transform.GetChild(counter).gameObject);
+                }  
+            }
+            _logger.ResetLogCounter();
         }
 
         private void SetVisibilityOfMenus(bool isVisible) {

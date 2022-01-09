@@ -19,6 +19,9 @@ namespace StateMachine {
             stateMachineOutputLog.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
             logId++;
         }
+        public void ResetLogCounter() {
+            logId = 1;
+        }
  
     }
 }
