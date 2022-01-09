@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Maroon.UI;
+using Button = UnityEngine.UI.Button;
+using VerticalLayoutGroup = UnityEngine.UI.VerticalLayoutGroup;
+using Selectable = UnityEngine.UI.Selectable;
 using TMPro;
 using System.Threading;
 
@@ -31,7 +34,7 @@ namespace StateMachine {
         private GameObject _stateMenu;
         private GameObject _rulesetMenu;
         
-        private int _dataTableRowLength = 4;
+        private int _dataTableRowLength = 5;
 
         // Start is called before the first frame update
         void Start()
@@ -182,57 +185,14 @@ namespace StateMachine {
             }
             List<string> rulesetTextArray = ruleset.ToStringArray();
 
-            
-
             // For every column clone default element and fill it with new data
             for (int counter = 0; counter < rulesetTextArray.Count; counter++) {
                
-                GameObject rulesetTextBackgroundObject;
-                GameObject rulesetTextObject;
+                (GameObject backgroundObject, GameObject rulesetTextObject) = CreateBackgroundObject(rulesetTextTableObject);
 
-                GameObject defaultRulesetTextBackgroundObject = rulesetTextTableObject.transform.GetChild(counter).gameObject;
-
-                if (defaultRulesetTextBackgroundObject == null) {
-                    Debug.Log("[ERROR]: There is no default rulesetBackgroundText element!");
+                if (rulesetTextObject == null) {
                     return;
                 }
-
-                if (defaultRulesetTextBackgroundObject.transform.childCount > 0) {
-                    rulesetTextBackgroundObject = Instantiate(defaultRulesetTextBackgroundObject);
-                } else {
-                    Debug.Log("[ERROR]: RulesetTextColumn child could not be found!");
-                    return;
-                }
-
-                if (rulesetTextBackgroundObject != null && rulesetTextBackgroundObject.transform.childCount > 0) {
-                    rulesetTextObject = rulesetTextBackgroundObject.transform.GetChild(0).gameObject;
-                } else {
-                    Debug.Log("[ERROR]: RulesetTextBackgroundObject or its child could not be found!");
-                    return;
-                }
-
-                string defaultName = rulesetTextObject.name;
-                rulesetTextObject.name = defaultName + "_" + _ruleCounter;
-
-                defaultName = rulesetTextBackgroundObject.name;
-                string stringToRemove = "(Clone)";
-                int index = defaultName.IndexOf(stringToRemove);
-                if (index != -1) {
-                    defaultName = defaultName.Remove(index, stringToRemove.Length);
-                }
-                rulesetTextBackgroundObject.name = defaultName + "_" + _ruleCounter;
-
-                rulesetTextBackgroundObject.transform.SetParent(rulesetTextTableObject.transform);
-                rulesetTextObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-                UnityEngine.UI.Image background = rulesetTextBackgroundObject.GetComponent(typeof(UnityEngine.UI.Image)) as UnityEngine.UI.Image;
-                
-                if (_isLastRowColorFirstColor) {
-                    background.color = _rowColor2;
-                } else {
-                    background.color = _rowColor1;
-                }
-
-                rulesetTextBackgroundObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 
                 TextMeshProUGUI textmeshObject = rulesetTextObject.GetComponent(typeof(TextMeshProUGUI)) as TextMeshProUGUI;
 
@@ -243,12 +203,97 @@ namespace StateMachine {
 
                 textmeshObject.text = rulesetTextArray[counter];
             }
+
+            // add surrounding info
+            CloneSurroundingUiAndDisableButtons(rulesetTextTableObject);
+
             _ruleCounter += 1;
             _isLastRowColorFirstColor = !_isLastRowColorFirstColor;
         }
 
+        public (GameObject backgroundObject, GameObject textObject) CreateBackgroundObject(GameObject rulesetTextTableObject) {
+
+            GameObject rulesetTextBackgroundObject;
+            GameObject rulesetTextObject;
+
+            GameObject defaultRulesetTextBackgroundObject = rulesetTextTableObject.transform.GetChild(0).gameObject;
+
+            if (defaultRulesetTextBackgroundObject == null) {
+                Debug.Log("[ERROR]: There is no default rulesetBackgroundText element!");
+                return (null, null);
+            }
+
+            if (defaultRulesetTextBackgroundObject.transform.childCount > 0) {
+                rulesetTextBackgroundObject = Instantiate(defaultRulesetTextBackgroundObject);
+            } else {
+                Debug.Log("[ERROR]: RulesetTextColumn child could not be found!");
+                return (null, null);
+            }
+
+            if (rulesetTextBackgroundObject != null && rulesetTextBackgroundObject.transform.childCount > 0) {
+                rulesetTextObject = rulesetTextBackgroundObject.transform.GetChild(0).gameObject;
+            } else {
+                Debug.Log("[ERROR]: RulesetTextBackgroundObject or its child could not be found!");
+                return (null, null);
+            }
+
+            string defaultName = rulesetTextObject.name;
+            rulesetTextObject.name = defaultName + "_" + _ruleCounter;
+
+            defaultName = rulesetTextBackgroundObject.name;
+            string stringToRemove = "(Clone)";
+            int index = defaultName.IndexOf(stringToRemove);
+            if (index != -1) {
+                defaultName = defaultName.Remove(index, stringToRemove.Length);
+            }
+            rulesetTextBackgroundObject.name = defaultName + "_" + _ruleCounter;
+
+            rulesetTextBackgroundObject.transform.SetParent(rulesetTextTableObject.transform);
+            rulesetTextObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+            UnityEngine.UI.Image background = rulesetTextBackgroundObject.GetComponent(typeof(UnityEngine.UI.Image)) as UnityEngine.UI.Image;
+            
+            if (_isLastRowColorFirstColor) {
+                background.color = _rowColor2;
+            } else {
+                background.color = _rowColor1;
+            }
+
+            rulesetTextBackgroundObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+
+            return (rulesetTextBackgroundObject, rulesetTextObject);
+        }
+
+
+        public void CloneSurroundingUiAndDisableButtons(GameObject objectToClone) {
+            GameObject output = Instantiate(GameObject.Find("SurroundingButtonGrid"));
+            output.transform.SetParent(objectToClone.transform);
+            output.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);    
+
+            GameObject rulesetTextTableObject = GameObject.Find("RulesetTextTable");
+            (GameObject backgroundObject, GameObject textObject) = CreateBackgroundObject(rulesetTextTableObject);
+
+            VerticalLayoutGroup group = output.GetComponent(typeof(VerticalLayoutGroup)) as VerticalLayoutGroup;
+            group.childAlignment = TextAnchor.UpperLeft;
+            RectOffset offset = new RectOffset(20,0,0,0);
+            group.padding = offset;
+            group.childForceExpandWidth = false;
+
+            for (int counter = 0; counter < output.transform.childCount; counter++) {
+                GameObject child = output.transform.GetChild(counter).gameObject;
+                for (int counter2 = 0; counter2 < child.transform.childCount; counter2++) {
+                    GameObject buttonGameObject = child.transform.GetChild(counter2).gameObject;
+                    Button buttonObject = buttonGameObject.GetComponent(typeof(Button)) as Button;
+                    buttonObject.transition = Selectable.Transition.None;
+                    buttonObject.interactable = !buttonObject.interactable;
+                }
+            }
+
+            output.transform.SetParent(backgroundObject.transform);
+            textObject.SetActive(false);;
+        }
+
         public void RunStateMachine() {
-            SetVisibilityOfMenus(false);
+            //SetVisibilityOfMenus(false);
             StartCoroutine(MakeMove());
         }
 
@@ -340,13 +385,7 @@ namespace StateMachine {
             }
         }
 
-        public void ChangeSurroundingValue() {
-
-        }
-
-    
-
-        private (Ruleset ruleToExecute, int rulesetId, Field fieldAfterMove) FindRuleToExecute(Figure figureToMove, Rulesets rulesets) {
+        private (Ruleset ruleToExecute, int rulesetId, Field fieldAfterMove) FindRuleToExecute(Figure figureToMove, Rulesets rulesets, bool isPlayer) {
             for (int rulesetCounter = 0; rulesetCounter < rulesets.GetCount(); rulesetCounter++)
                     {   
                         Ruleset ruleset = rulesets.GetRulesetAtPosition(rulesetCounter);
@@ -377,6 +416,11 @@ namespace StateMachine {
                             if (ruleset.GetMode().GetModeCode() == 1 && fieldToCheck.GetFigure() && figureToMove._player._playerName == fieldToCheck.GetFigure()._player._playerName) {
                                 continue;
                             }
+
+                            // check surrounding
+                            if (!_surrounding.CompareSurrounding(ruleset.GetSurrounding()) && isPlayer) {
+                                continue;
+                            }
                             
                             return (ruleset, rulesetCounter, fieldToCheck);
                         }
@@ -384,19 +428,22 @@ namespace StateMachine {
             return (null, 0, null);
         }
 
+        
 
 
         IEnumerator MakeMove() {
 
             // TODO change to right player depending on scenario in .json file
             Player player = _players.GetPlayerAtIndex(0);
+           
             _actualDirection = null;
             bool moveEnds = false;
 
+            Figure figureToMove = player.GetFigures().GetFigureAtPosition(0);
+            Field actualField = _map.GetFieldByIndices(figureToMove._positionColumn, figureToMove._positionRow);
+            _surrounding.UpdateSurrounding(actualField, _map);
+
             while (true) {
- 
-                Figure figureToMove = player.GetFigures().GetFigureAtPosition(0);
-                
                 //TODO only if other player should do something
                 while (!figureToMove.gameObject.activeSelf) {
                     player.GetFigures().RemoveFigure(0);
@@ -419,9 +466,9 @@ namespace StateMachine {
 
                 // TODO change to ai player which is defined in the .json file
                 if (player == _players.GetPlayerAtIndex(0)) {
-                    (ruleToExecute, rulesetId, fieldAfterMove) = FindRuleToExecute(figureToMove, _rulesets);
+                    (ruleToExecute, rulesetId, fieldAfterMove) = FindRuleToExecute(figureToMove, _rulesets, true);
                 } else {
-                    (ruleToExecute, rulesetId, fieldAfterMove) = FindRuleToExecute(figureToMove, rulesets);
+                    (ruleToExecute, rulesetId, fieldAfterMove) = FindRuleToExecute(figureToMove, rulesets, false);
                 }
 
                 // TODO compare surrounding of rule to surrounding of the figure to move => only one rule must be available after that comparison
@@ -478,23 +525,19 @@ namespace StateMachine {
                 }
 
                 // set figure to new field
-                Field actualField = _map.GetFieldByIndices(figureToMove._positionColumn, figureToMove._positionRow);
+                actualField = _map.GetFieldByIndices(figureToMove._positionColumn, figureToMove._positionRow);
                 actualField.MoveFigureAway();
                 fieldAfterMove.SetFigure(figureToMove);
+                
                 // set new position in figure
                 figureToMove._positionColumn += ruleToExecute.GetDirection().GetColumnMovementFactor(); 
                 figureToMove._positionRow += ruleToExecute.GetDirection().GetRowMovementFactor();
+                
+                figureToMove = player.GetFigures().GetFigureAtPosition(0);
+                actualField = _map.GetFieldByIndices(figureToMove._positionColumn, figureToMove._positionRow);
+                _surrounding.UpdateSurrounding(actualField, _map);
 
                 yield return new WaitForSeconds(1);
-
-                
-                // bounce check move
-                // is field free check
-                // can figure hit other one check
-
-                // set figure to new field
-                // remove figure from old field
-                // depending on mode remove hit figure and remove it from field
             }
            
         }

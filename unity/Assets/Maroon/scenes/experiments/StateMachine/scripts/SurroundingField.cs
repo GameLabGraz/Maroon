@@ -15,7 +15,7 @@ public class SurroundingField
         _names.Add("E");
         _names.Add("W");
         _names.Add("B");
-        value = _value;
+        _value = value;
     }
 
     public void UpdateValue () {
@@ -25,6 +25,10 @@ public class SurroundingField
         if (_value >= _names.Count) {
             _value = 0;
         }
+    }
+
+    public void SetValue(SurroundingValue value) {
+        _value = (int)value;
     }
 
     public string GetName() {

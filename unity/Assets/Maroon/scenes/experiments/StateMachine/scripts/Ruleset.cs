@@ -50,4 +50,8 @@ public class Ruleset
         return _mode;
     }
 
+    public List<List<SurroundingField>> GetSurrounding() {
+        return _surrounding;
+    }
+
 }

@@ -34,30 +34,37 @@ public class Surrounding : MonoBehaviour
         textmeshObject.text = _surrounding[column][row].GetName();
     }
 
+    private void SetValue(int column, int row, string objectName, SurroundingValue value) {
+        GameObject surroundingFieldObject = GameObject.Find(objectName);   
+        GameObject textObject =  surroundingFieldObject.transform.GetChild(0).gameObject;
+        TextMeshProUGUI textmeshObject = textObject.GetComponent(typeof(TextMeshProUGUI)) as TextMeshProUGUI;
+        _surrounding[column][row].SetValue(value);
+        textmeshObject.text = _surrounding[column][row].GetName();
+    }
+
     public void SetUpperLeftButton() {
-        SetValue(0, 0, "UpperLeftButton");
+        SetValue(2, 0, "UpperLeftButton");
     }
     public void SetUpperMiddleButton() {
-        SetValue(0, 1, "UpperMiddleButton");
+        SetValue(2, 1, "UpperMiddleButton");
     }
     public void SetUpperRightButton() {
-        SetValue(0, 2, "UpperRightButton");
+        SetValue(2, 2, "UpperRightButton");
     }
     public void SetMiddleLeftButton() {
         SetValue(1, 0, "MiddleLeftButton");
-        //_surrounding[1][0] = _surrounding[1][0] + 1;
     }
     public void SetMiddleRightButton() {
         SetValue(1, 2, "MiddleRightButton");
     }
     public void SetLowerLeftButton() {
-       SetValue(2, 0, "LowerLeftButton");
+       SetValue(0, 0, "LowerLeftButton");
     }
     public void SetLowerMiddleButton() {
-       SetValue(2, 1, "LowerMiddleButton");
+       SetValue(0, 1, "LowerMiddleButton");
     }
     public void SetLowerRightButton() {
-        SetValue(2, 2, "LowerRightButton");
+        SetValue(0, 2, "LowerRightButton");
     }
 
     public SurroundingField GetSurroundingValueAt(int row, int column) {
@@ -82,5 +89,68 @@ public class Surrounding : MonoBehaviour
             clonedList.Add(tempList);
         }
         return clonedList;
+    }
+
+    public bool CompareSurrounding(List<List<SurroundingField>> surroundingToCheck) {
+
+        if (surroundingToCheck.Count != _surrounding.Count) {
+            return false;
+        }
+
+        for (int counter = 0; counter < _surrounding.Count; counter++) {
+            if (surroundingToCheck[counter].Count != _surrounding[counter].Count) {
+                return false;
+            }
+            for(int counter2 = 0; counter2 < _surrounding[counter].Count; counter2++) {
+                if (surroundingToCheck[counter][counter2].GetValue() != _surrounding[counter][counter2].GetValue()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public void UpdateSurrounding(Field field, Map map) {
+    
+        SetElement(map, field, 1, -1, "UpperLeftButton");
+        SetElement(map, field, 1, 0, "UpperMiddleButton");
+        SetElement(map, field, 1, 1, "UpperRightButton");
+
+        SetElement(map, field, 0, -1, "MiddleLeftButton");
+        SetElement(map, field, 0, 1, "MiddleRightButton");
+
+        SetElement(map, field, -1, 1, "LowerRightButton");
+        SetElement(map, field, -1, 0, "LowerMiddleButton");
+        SetElement(map, field, -1, -1, "LowerLeftButton");
+    }
+
+    public void SetElement(Map map, Field actualField, int column, int row, string objectName) {
+        Figure figure = actualField.GetFigure();
+        int positionRow = figure._positionRow;
+        int positionColumn = figure._positionColumn;
+
+        Field field = map.GetFieldByIndices(positionColumn + row, positionRow + column);
+
+        if (field == null) {
+            SetValue(column + 1, row + 1, objectName, SurroundingValue.EDGE);
+            return;
+        }
+
+        if (field.GetFigure() == null) {
+            SetValue(column + 1, row + 1, objectName, SurroundingValue.EMPTY);
+            return;
+        }
+
+        if (field.GetFigure()._player._playerName == "white") {
+            SetValue(column + 1, row + 1, objectName, SurroundingValue.WHITE);
+            return;
+        }
+
+        if (field.GetFigure()._player._playerName == "black") {
+            SetValue(column + 1, row + 1, objectName, SurroundingValue.BLACK);
+            return;
+        }
+
+       
     }
 }
