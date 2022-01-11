@@ -21,6 +21,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         Fixed,
         Moving,
         Desorb,
+        InDrawingCollider,
         DrawnByPlat,
         DrawnByCO,
         Disappear
@@ -49,7 +50,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private Vector3 _newMoleculePosition;
         private Quaternion _startMoleculeRotation;
         private Quaternion _newMoleculeRotation;
-        public Molecule _connectedMolecule;
+        private Molecule _possibleDrawingMolecule; // should always be a platinum molecule
+        private Molecule _connectedMolecule;
         
         private float _currenTimeDrawn = 0.0f;
 
@@ -77,6 +79,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         }
 
         public Molecule ConnectedMolecule { get => _connectedMolecule; set => _connectedMolecule = value; }
+        public Molecule PossibleDrawingMolecule { get => _possibleDrawingMolecule; set => _possibleDrawingMolecule = value; }
         
         public bool IsDrawnByPlat { get; set; }
         public bool IsDrawnByCO { get; set; }
@@ -180,14 +183,16 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 return;
             }
             
-            if (_state != MoleculeState.Fixed &&
-                (_state == MoleculeState.Moving ||
-                 _state == MoleculeState.Desorb ||
-                 _state == MoleculeState.Disappear ||
-                 _state == MoleculeState.DrawnByPlat ||
-                 _state == MoleculeState.DrawnByCO) )
+            if (_state != MoleculeState.Fixed)
             {
                 HandleMoleculeMovement();
+            }
+
+            if (_state == MoleculeState.InDrawingCollider && _possibleDrawingMolecule != null)
+            {
+                _possibleDrawingMolecule.ConnectedMolecule = this; // connect this (O2 or CO) to plat molecule
+                SetMoleculeDrawn(_possibleDrawingMolecule, MoleculeState.DrawnByPlat); // drawn by plat
+                _connectedMolecule.ActivateDrawingCollider(false); // deactivate plat drawing collider
             }
         }
 
@@ -272,20 +277,21 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private void OnTriggerEnter(Collider other)
         {
             if (State == MoleculeState.DrawnByPlat || State == MoleculeState.DrawnByCO) return;
-            if (type == MoleculeType.Pt && _connectedMolecule == null)
+            if (type == MoleculeType.Pt && _connectedMolecule == null) // draw in O2 or CO molecules
             {
                 Molecule otherMolecule = other.gameObject.GetComponent<Molecule>();
-                if (otherMolecule != null && otherMolecule.Type == MoleculeType.O2 && otherMolecule.ConnectedMolecule == null)
+                if (otherMolecule != null && 
+                    (otherMolecule.Type == MoleculeType.O2 || otherMolecule.Type == MoleculeType.CO) &&
+                     otherMolecule.ConnectedMolecule == null)
                 {
-                    _connectedMolecule = otherMolecule;
-                    otherMolecule.SetMoleculeDrawn(this, MoleculeState.DrawnByPlat);
-                    ActivateDrawingCollider(false);
+                    otherMolecule.State = MoleculeState.InDrawingCollider;
+                    otherMolecule.PossibleDrawingMolecule = this;
                 }
             }
-            else if (type == MoleculeType.O && _connectedMolecule == null)
+            else if (type == MoleculeType.O && _connectedMolecule == null) // draw O atoms to nearby CO molecules
             {
                 Molecule otherMolecule = other.gameObject.GetComponent<Molecule>();
-                if (otherMolecule != null && otherMolecule.Type == MoleculeType.CO && // todo find cause of possible nullref exception
+                if (otherMolecule != null && otherMolecule.Type == MoleculeType.CO && // todo find cause of possible nullref exception - maybe CO gets desorbed while O atom is drawn?
                     otherMolecule.State == MoleculeState.Fixed && otherMolecule.ConnectedMolecule.Type == MoleculeType.Pt)
                 {
                     SetMoleculeDrawn(otherMolecule, MoleculeState.DrawnByCO);
@@ -294,6 +300,23 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                     otherMolecule.ActivateDrawingCollider(false);
                 }
             }
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (State == MoleculeState.DrawnByPlat || State == MoleculeState.DrawnByCO) return;
+            if (type == MoleculeType.Pt && _connectedMolecule == null) // reset drawing state and possible drawing molecule
+            {
+                Molecule otherMolecule = other.gameObject.GetComponent<Molecule>();
+                if (otherMolecule != null && 
+                    (otherMolecule.Type == MoleculeType.O2 || otherMolecule.Type == MoleculeType.CO) &&
+                    otherMolecule.ConnectedMolecule == null)
+                {
+                    otherMolecule.State = MoleculeState.Moving;
+                    otherMolecule.PossibleDrawingMolecule = null;
+                }
+            }
+
         }
 
         private void OnCollisionEnter(Collision other)
