@@ -3,18 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.U2D;
+using VRTK;
 
 namespace Maroon.Physics.CathodeRayTube
 {
-    public class ScreenSetup : MonoBehaviour
+    public class ScreenSetup : PausableObject, IResetObject
     {
-
+        private CRTController _crtController;
+        
         [SerializeField] private GameObject Pixel;
         private List<GameObject> pixelList = new List<GameObject>();
-
-        // Start is called before the first frame update
+        
         void Start()
         {
+            _crtController = transform.parent.gameObject.GetComponent<CRTController>();
+            
             var screenTransform = transform;
             Vector3 screenPosition = screenTransform.position;
             Vector3 screenScale = screenTransform.localScale;
@@ -24,11 +27,11 @@ namespace Maroon.Physics.CathodeRayTube
             float pixelHeight = localScale.y;
             float pixelWidth = localScale.z;
 
-            for (float y = screenPosition.y - screenScale.y / 2 + pixelHeight / 2;
+            for (float y = screenPosition.y - screenScale.y / 2 + pixelHeight;
                 y <= screenPosition.y + screenScale.y / 2;
                 y += pixelHeight)
             {
-                for (float z = screenPosition.z - screenScale.z / 2 + pixelWidth / 2;
+                for (float z = screenPosition.z - screenScale.z / 2 + pixelWidth;
                     z <= screenPosition.z + screenScale.z / 2;
                     z += pixelWidth)
                 {
@@ -41,15 +44,21 @@ namespace Maroon.Physics.CathodeRayTube
             }
         }
 
-        private void OnCollisionEnter(Collision collision)
+        protected override void HandleUpdate()
         {
-            Destroy(collision.gameObject);
-            Vector3 contactPoint = collision.GetContact(0).point;
-            ActivatePixel(contactPoint);
+
+        }
+
+        protected override void HandleFixedUpdate()
+        {
+            ActivatePixel(_crtController.GetContactPoint());
         }
 
         private void ActivatePixel(Vector3 contactPoint)
         {
+            if (!GetComponent<Collider>().bounds.Contains(contactPoint))
+                return;
+            
             GameObject closestPixel = pixelList[0];
             float closestDistance = float.MaxValue;
 
@@ -62,6 +71,14 @@ namespace Maroon.Physics.CathodeRayTube
             }
 
             closestPixel.GetComponent<MeshRenderer>().enabled = true;
+        }
+        
+        public void ResetObject()
+        {
+            foreach (var pixel in pixelList)
+            {
+                pixel.GetComponent<MeshRenderer>().enabled = false;
+            }
         }
     }
 }
