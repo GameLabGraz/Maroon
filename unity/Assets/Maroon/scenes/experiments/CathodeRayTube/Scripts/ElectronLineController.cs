@@ -31,9 +31,9 @@ namespace Maroon.Physics.CathodeRayTube
         {
             LineRenderer lineRenderer = GetComponent<LineRenderer>();
             lineRenderer.positionCount = _crtController.lineResolution;
-            var points = new Vector3[_crtController.lineResolution];
+            List<Vector3> points = new List<Vector3>();
             Vector3 startPoint = _crtController.GetCRTStart();
-            points[0] = startPoint;
+            points.Add(startPoint);
 
             float currentVelX = 0;
             float currentVelY = 0;
@@ -41,18 +41,23 @@ namespace Maroon.Physics.CathodeRayTube
             
             for (int i = 1; i < _crtController.lineResolution; i++)
             {
-                currentVelX += _crtController.RK4(0, points[i - 1].x);
-                currentVelY += _crtController.RK4(1, points[i - 1].x);
-                currentVelZ += _crtController.RK4(2, points[i - 1].x);
+                Vector3 oldPoint = points[i - 1];
+                
+                currentVelX += _crtController.RK4(0, oldPoint.x);
+                currentVelY += _crtController.RK4(1, oldPoint.x);
+                currentVelZ += _crtController.RK4(2, oldPoint.x);
 
-                Vector3 newPoint = points[i - 1];
+                Vector3 newPoint = oldPoint;
                 newPoint.x += currentVelX * _timeStep;
                 newPoint.y += currentVelY * _timeStep;
                 newPoint.z += currentVelZ * _timeStep;
 
-                points[i] = newPoint;
+                if (UnityEngine.Physics.Linecast(oldPoint, newPoint))
+                    points.Add(oldPoint);
+                else
+                    points.Add(newPoint);
             }
-            lineRenderer.SetPositions(points);
+            lineRenderer.SetPositions(points.ToArray());
         }
 
         public void ResetObject()
