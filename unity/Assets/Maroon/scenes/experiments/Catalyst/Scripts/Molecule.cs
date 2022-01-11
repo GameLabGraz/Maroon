@@ -88,6 +88,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         public void OnMouseDown()
         {
             if (type != MoleculeType.CO || State != MoleculeState.Fixed || !SimulationController.Instance.SimulationRunning) return;
+            if (_isWobbling) return;
             if (_moleculeClickCounter == 3 && SimulationController.Instance.SimulationRunning)
             {
                 DesorbCO();
@@ -195,7 +196,6 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             _currentTimeMove += Time.deltaTime * movementSpeed;
             if (Vector3.Distance(transform.position, _newMoleculePosition) > 0.05f)
             {
-                Quaternion currentRotation = transform.rotation;
                 transform.position = Vector3.Lerp(_startMoleculePosition, _newMoleculePosition, _currentTimeMove);
                 transform.rotation = Quaternion.Lerp(_startMoleculeRotation, _newMoleculeRotation, _currentTimeMove);
             }
