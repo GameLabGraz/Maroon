@@ -190,9 +190,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
             if (_state == MoleculeState.InDrawingCollider && _possibleDrawingMolecule != null)
             {
-                _possibleDrawingMolecule.ConnectedMolecule = this; // connect this (O2 or CO) to plat molecule
-                SetMoleculeDrawn(_possibleDrawingMolecule, MoleculeState.DrawnByPlat); // drawn by plat
-                _connectedMolecule.ActivateDrawingCollider(false); // deactivate plat drawing collider
+                HandleDrawingPossibility();
             }
         }
 
@@ -259,6 +257,17 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             OnCO2Created?.Invoke(this, _connectedMolecule);
         }
 
+        private void HandleDrawingPossibility()
+        {
+            if (Random.Range(0, 100) > 95)
+            {
+                _possibleDrawingMolecule.ConnectedMolecule = this; // connect this (O2 or CO) to plat molecule
+                SetMoleculeDrawn(_possibleDrawingMolecule, MoleculeState.DrawnByPlat); // drawn by plat
+                _connectedMolecule.ActivateDrawingCollider(false); // deactivate plat drawing collider
+            }
+
+        }
+
         private void GetRandomPositionAndRotation()
         {
             _startMoleculePosition = transform.position;
@@ -276,10 +285,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         private void OnTriggerEnter(Collider other)
         {
-            if (_state == MoleculeState.DrawnByPlat ||
-                _state == MoleculeState.DrawnByCO ||
-                _state != MoleculeState.InDrawingCollider)
-                return;
+            if (_state == MoleculeState.DrawnByPlat || _state == MoleculeState.DrawnByCO) return;
             if (type == MoleculeType.Pt && _connectedMolecule == null) // draw in O2 or CO molecules
             {
                 Molecule otherMolecule = other.gameObject.GetComponent<Molecule>();
@@ -307,10 +313,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         private void OnTriggerExit(Collider other)
         {
-            if (_state == MoleculeState.DrawnByPlat ||
-                _state == MoleculeState.DrawnByCO ||
-                _state != MoleculeState.InDrawingCollider)
-                return;
+            if (_state == MoleculeState.DrawnByPlat || _state == MoleculeState.DrawnByCO) return;
             if (type == MoleculeType.Pt && _connectedMolecule == null) // reset drawing state and possible drawing molecule
             {
                 Molecule otherMolecule = other.gameObject.GetComponent<Molecule>();
