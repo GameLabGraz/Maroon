@@ -9,15 +9,11 @@ namespace Maroon.Physics.CathodeRayTube
 {
     public class ScreenSetup : PausableObject, IResetObject
     {
-        private CRTController _crtController;
-        
         [SerializeField] private GameObject Pixel;
         private List<GameObject> pixelList = new List<GameObject>();
         
         void Start()
         {
-            _crtController = transform.parent.gameObject.GetComponent<CRTController>();
-            
             var screenTransform = transform;
             Vector3 screenPosition = screenTransform.position;
             Vector3 screenScale = screenTransform.localScale;
@@ -51,10 +47,10 @@ namespace Maroon.Physics.CathodeRayTube
 
         protected override void HandleFixedUpdate()
         {
-            ActivatePixel(_crtController.GetContactPoint());
+            
         }
 
-        private void ActivatePixel(Vector3 contactPoint)
+        public void ActivatePixel(Vector3 contactPoint)
         {
             if (!GetComponent<Collider>().bounds.Contains(contactPoint))
                 return;

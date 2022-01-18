@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using GEAR.Gadgets.ReferenceValue;
 using Maroon.UI;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UIElements;
+using XCharts;
 
 namespace Maroon.Physics.CathodeRayTube
 {
@@ -19,6 +21,9 @@ namespace Maroon.Physics.CathodeRayTube
         [SerializeField] private QuantityInt V_z;
         [SerializeField] private QuantityFloat d; 
         public int Order { get; set; }
+        public int Distance { get; set; }
+        private ScreenSetup _screenController;
+        private UnityEvent screenHit;
 
         private GameObject HorizontalCapacitorTop;
         private GameObject HorizontalCapacitorBottom;
@@ -29,7 +34,14 @@ namespace Maroon.Physics.CathodeRayTube
         private Vector3 VertCapStartPos;
         private Vector3 HorizCapStartScale;
         private Vector3 VertCapStartScale;
-        
+
+        private float horizontalDistance;
+        private float verticalDistance;
+
+        [SerializeField] private QuantityFloat Fx;
+        [SerializeField] private QuantityFloat Fy;
+        [SerializeField] private QuantityFloat Fz;
+
         private const float _electronCharge = -1.6022e-19f;
         private const float _electronMass = 9.11e-31f;
         private float _electronGunLength;
@@ -37,7 +49,15 @@ namespace Maroon.Physics.CathodeRayTube
 
         private void Start()
         {
+            _screenController = Screen.GetComponent<ScreenSetup>();
+            if (screenHit == null)
+                screenHit = new UnityEvent();
+            screenHit.AddListener(ActivatePixel);
+
             _electronGunLength = ElectronGun.GetComponent<Renderer>().bounds.size.x / 2;
+                
+            horizontalDistance = d;
+            verticalDistance = d;
             
             HorizontalCapacitorTop = HorizontalCapacitor.transform.GetChild(0).gameObject;
             HorizontalCapacitorBottom = HorizontalCapacitor.transform.GetChild(1).gameObject;
@@ -52,6 +72,25 @@ namespace Maroon.Physics.CathodeRayTube
 
         private void FixedUpdate()
         {
+            switch (Distance)
+            {
+                case 0:
+                    horizontalDistance = d;
+                    verticalDistance = d;
+                    break;
+                case 1:
+                    horizontalDistance = d;
+                    break;
+                case 2:
+                    verticalDistance = d;
+                    break;
+                default:
+                    horizontalDistance = d;
+                    verticalDistance = d;
+                    break;
+            }
+
+            Vector3 position;
             switch (Order)
             {
                 case 0:
@@ -69,17 +108,31 @@ namespace Maroon.Physics.CathodeRayTube
                     break;
                 
                 case 2:
-                    Vector3 position = HorizCapStartPos;
+                    position = HorizCapStartPos;
                     position.x += (VertCapStartPos.x - HorizCapStartPos.x) / 2;
                     HorizontalCapacitor.transform.position = position;
                     VerticalCapacitor.transform.position = position;
 
                     Vector3 scale = HorizCapStartScale;
-                    scale.z = d;
+                    scale.z = horizontalDistance;
                     HorizontalCapacitor.transform.localScale = scale;
                     scale = VertCapStartScale;
-                    scale.y = d;
+                    scale.y = verticalDistance;
                     VerticalCapacitor.transform.localScale = scale;
+                    break;
+                
+                case 3:
+                    position = HorizCapStartPos;
+                    position.x += (VertCapStartPos.x - HorizCapStartPos.x) / 2;
+                    HorizontalCapacitor.transform.position = position;
+                    VerticalCapacitor.transform.position = new Vector3(0, 0, 0);
+                    break;
+                
+                case 4:
+                    position = HorizCapStartPos;
+                    position.x += (VertCapStartPos.x - HorizCapStartPos.x) / 2;
+                    VerticalCapacitor.transform.position = position;
+                    HorizontalCapacitor.transform.position = new Vector3(0, 0, 0);
                     break;
                 
                 default:
@@ -89,28 +142,36 @@ namespace Maroon.Physics.CathodeRayTube
                     VerticalCapacitor.transform.localScale = VertCapStartScale;
                     break;
             }
+            
+            Fx.Value = (-_electronCharge) * (V_x / _electronGunLength) * (float)Math.Pow(10, 15);
+            Fy.Value = (-_electronCharge) * (V_y / horizontalDistance) * (float)Math.Pow(10, 15);
+            Fz.Value = (-_electronCharge) * (V_z / verticalDistance) * (float)Math.Pow(10, 15);
 
             var newPosition = HorizontalCapacitor.transform.position;
-            HorizontalCapacitorTop.transform.position = newPosition + new Vector3(0, d/2, 0);
-            HorizontalCapacitorBottom.transform.position = newPosition - new Vector3(0, d/2, 0);
+            HorizontalCapacitorTop.transform.position = newPosition + new Vector3(0, horizontalDistance / 2, 0);
+            HorizontalCapacitorBottom.transform.position = newPosition - new Vector3(0, horizontalDistance / 2, 0);
             newPosition = VerticalCapacitor.transform.position;
-            VerticalCapacitorRight.transform.position = newPosition + new Vector3(0, 0,d/2);
-            VerticalCapacitorLeft.transform.position = newPosition - new Vector3(0, 0, d/2);
+            VerticalCapacitorRight.transform.position = newPosition + new Vector3(0, 0,verticalDistance / 2);
+            VerticalCapacitorLeft.transform.position = newPosition - new Vector3(0, 0, verticalDistance / 2);
 
         }
 
         public float GetVerticalDeflection()
         {
+            if (HorizontalCapacitor.transform.position == new Vector3(0, 0, 0))
+                return 0;
             float dist = Screen.transform.position.x - HorizontalCapacitor.transform.position.x;
             float scale = HorizontalCapacitorTop.GetComponent<Renderer>().bounds.size.x;
-            return (dist * scale * V_y) / (2 * d * V_x);
+            return (dist * scale * V_y) / (2 * horizontalDistance * V_x);
         }
         
         public float GetHorizontalDeflection()
         {
+            if (VerticalCapacitor.transform.position == new Vector3(0, 0, 0))
+                return 0;
             float dist = Screen.transform.position.x - VerticalCapacitor.transform.position.x;
             float scale = VerticalCapacitorLeft.GetComponent<Renderer>().bounds.size.x;
-            return (dist * scale * V_z) / (2 * d * V_x);
+            return (dist * scale * V_z) / (2 * verticalDistance * V_x);
         }
         
         public Vector3 GetContactPoint()
@@ -147,15 +208,25 @@ namespace Maroon.Physics.CathodeRayTube
                     break;
                 case 1:
                     voltage = V_y;
-                    plateDistance = d;
+                    plateDistance = horizontalDistance;
                     scale = HorizontalCapacitorTop.GetComponent<Renderer>().bounds.size.x;
+                    if (HorizontalCapacitor.transform.position == new Vector3(0, 0, 0))
+                    {
+                        x = -1;
+                        break;
+                    }
                     length = Math.Abs(ElectronGun.transform.position.x - HorizontalCapacitor.transform.position.x);
                     x = (scale / 2) - Math.Abs(currentX - (ElectronGun.transform.position.x + length));
                     break;
                 case 2:
                     voltage = V_z;
-                    plateDistance = d;
+                    plateDistance = verticalDistance;
                     scale = VerticalCapacitorLeft.GetComponent<Renderer>().bounds.size.x;
+                    if (VerticalCapacitor.transform.position == new Vector3(0, 0, 0))
+                    {
+                        x = -1;
+                        break;
+                    }
                     length = Math.Abs(ElectronGun.transform.position.x - VerticalCapacitor.transform.position.x);
                     x = (scale / 2) - Math.Abs(currentX - (ElectronGun.transform.position.x + length));
                     break;
@@ -191,6 +262,17 @@ namespace Maroon.Physics.CathodeRayTube
         public Vector3 GetCRTStart()
         {
             return ElectronGun.transform.position;
+        }
+
+        public void checkScreenHit(Vector3 lastPoint)
+        {
+            if (lastPoint.x >= Screen.transform.position.x - 0.1f)
+                screenHit.Invoke();
+        }
+
+        public void ActivatePixel()
+        {
+            _screenController.ActivatePixel(GetContactPoint());
         }
     }
 }

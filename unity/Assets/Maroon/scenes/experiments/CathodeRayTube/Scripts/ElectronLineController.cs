@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Maroon.Physics.CathodeRayTube
 {
@@ -57,6 +59,7 @@ namespace Maroon.Physics.CathodeRayTube
                 else
                     points.Add(newPoint);
             }
+            _crtController.checkScreenHit(points.Last());
             lineRenderer.SetPositions(points.ToArray());
         }
 
