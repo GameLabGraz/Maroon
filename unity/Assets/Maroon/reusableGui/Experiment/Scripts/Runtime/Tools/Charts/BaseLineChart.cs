@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Maroon.Physics;
+using UnityEngine;
 
 namespace Maroon.UI.Charts
 {

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using GEAR.Localization;
+using Maroon.GlobalEntities;
 using Maroon.UI;
 using Mirror;
 using UnityEngine;
@@ -12,7 +13,7 @@ using UnityEngine.SceneManagement;
 
 namespace Maroon
 {
-    public class NetworkManager : Mirror.NetworkManager
+    public class NetworkManager : Mirror.NetworkManager, GlobalEntity
     {
         private static Maroon.NetworkManager _instance = null;
 
@@ -27,7 +28,7 @@ namespace Maroon
         private ListServer _listServer;
         private MaroonNetworkDiscovery _networkDiscovery;
         private PortForwarding _upnp;
-        private Maroon.GameManager _gameManager;
+        private GlobalEntities.GameManager _gameManager;
         private DialogueManager _dialogueManager;
 
         private bool _isStarted;
@@ -42,13 +43,8 @@ namespace Maroon
         /// <summary>
         ///     The NetworkManager instance
         /// </summary>
-        public static Maroon.NetworkManager Instance
-        {
-            get
-            {
-                return _instance;
-            }
-        }
+        public static Maroon.NetworkManager Instance => _instance;
+        MonoBehaviour GlobalEntity.Instance => Instance;
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Methods
@@ -80,7 +76,7 @@ namespace Maroon
             _listServer = GetComponent<ListServer>();
             _networkDiscovery = GetComponent<MaroonNetworkDiscovery>();
             _upnp = GetComponent<PortForwarding>();
-            _gameManager = FindObjectOfType<Maroon.GameManager>();
+            _gameManager = FindObjectOfType<GameManager>();
 
             UnityEngine.SceneManagement.SceneManager.sceneLoaded += DisplayServerInExperimentMessage;
         }
@@ -436,7 +432,7 @@ namespace Maroon
 
         public override void OnStartClient()
         {
-            _sceneBeforeJoin = Maroon.SceneManager.Instance.ActiveSceneName;
+            _sceneBeforeJoin = GlobalEntities.SceneManager.Instance.ActiveSceneName;
 
             base.OnStartClient();
             
@@ -481,8 +477,8 @@ namespace Maroon
                 case LeaveReason.InExperiment:
                     leaveMessageKey = "ServerInExperiment";
                     _serverInExperiment = true;
-                    Maroon.CustomSceneAsset asset = Maroon.SceneManager.Instance.GetSceneAssetBySceneName(_sceneBeforeJoin);
-                    Maroon.SceneManager.Instance.LoadSceneLocalOnlyExecuteForce(asset);
+                    CustomSceneAsset asset = GlobalEntities.SceneManager.Instance.GetSceneAssetBySceneName(_sceneBeforeJoin);
+                    GlobalEntities.SceneManager.Instance.LoadSceneLocalOnlyExecuteForce(asset);
                     break;
                 case LeaveReason.Kicked:
                     leaveMessageKey = "ClientKicked";
@@ -534,8 +530,8 @@ namespace Maroon
                 onLoseControl.Invoke();
             }
 
-            Maroon.CustomSceneAsset asset = Maroon.SceneManager.Instance.GetSceneAssetBySceneName(Maroon.SceneManager.Instance.ActiveSceneName);
-            Maroon.SceneManager.Instance.AddToSceneHistory(asset);
+            CustomSceneAsset asset = GlobalEntities.SceneManager.Instance.GetSceneAssetBySceneName(GlobalEntities.SceneManager.Instance.ActiveSceneName);
+            GlobalEntities.SceneManager.Instance.AddToSceneHistory(asset);
         }
 
         private void OnCharacterSpawnMessage(NetworkConnection conn, CharacterSpawnMessage msg)

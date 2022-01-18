@@ -2,11 +2,6 @@
 // IGenerateB.cs
 //
 // Interface for objects which generates a magnetic field.
-//
-//
-// Authors: Michael Stefan Holly
-//          Michael Schiller
-//          Christopher Schinnerl
 //-----------------------------------------------------------------------------
 //
 
@@ -24,7 +19,7 @@ public interface IGenerateB
     /// </summary>
     /// <param name="position"></param>
     /// <returns></returns>
-	Vector3 getB(Vector3 position);
+	Vector3 GetB(Vector3 position);
 
-    float getFieldStrength();
+    float GetFieldStrength();
 }
