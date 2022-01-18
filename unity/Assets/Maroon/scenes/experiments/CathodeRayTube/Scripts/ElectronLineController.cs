@@ -45,9 +45,9 @@ namespace Maroon.Physics.CathodeRayTube
             {
                 Vector3 oldPoint = points[i - 1];
                 
-                currentVelX += _crtController.RK4(0, oldPoint.x);
-                currentVelY += _crtController.RK4(1, oldPoint.x);
-                currentVelZ += _crtController.RK4(2, oldPoint.x);
+                currentVelX += _crtController.RK4(0, oldPoint);
+                currentVelY += _crtController.RK4(1, oldPoint);
+                currentVelZ += _crtController.RK4(2, oldPoint);
 
                 Vector3 newPoint = oldPoint;
                 newPoint.x += currentVelX * _timeStep;

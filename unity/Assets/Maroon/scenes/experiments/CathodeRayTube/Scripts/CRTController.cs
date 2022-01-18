@@ -191,57 +191,81 @@ namespace Maroon.Physics.CathodeRayTube
             return x == 0 ? 0.5f : (1 + x / Math.Abs(x)) / 2;
         }
 
-        private float ApplyForce(int cap, float currentX)
+        private float ApplyForce(int cap, Vector3 currentPoint)
         {
             float x = 0;
+            float y = 0;
+            float z = 0;
             int voltage = 0;
             float plateDistance = 0;
             float scale;
             float length;
+            float size;
+            float dist;
 
             switch (cap)
             {
                 case 0:
                     voltage = V_x;
                     plateDistance = _electronGunLength;
-                    x = (ElectronGun.transform.position.x + _electronGunLength) - currentX;
+                    x = (ElectronGun.transform.position.x + _electronGunLength) - currentPoint.x;
+                    y = 1;
+                    z = 1;
                     break;
+                
                 case 1:
                     voltage = V_y;
                     plateDistance = horizontalDistance;
                     scale = HorizontalCapacitorTop.GetComponent<Renderer>().bounds.size.x;
+                    
                     if (HorizontalCapacitor.transform.position == new Vector3(0, 0, 0))
                     {
                         x = -1;
                         break;
                     }
+                    
                     length = Math.Abs(ElectronGun.transform.position.x - HorizontalCapacitor.transform.position.x);
-                    x = (scale / 2) - Math.Abs(currentX - (ElectronGun.transform.position.x + length));
+                    x = (scale / 2) - Math.Abs(currentPoint.x - (ElectronGun.transform.position.x + length));
+                    
+                    dist = horizontalDistance / 2;
+                    y = dist - Math.Abs(currentPoint.y - ElectronGun.transform.position.y);
+
+                    size = HorizontalCapacitorTop.GetComponent<Renderer>().bounds.size.z / 2;
+                    z = size - Math.Abs(currentPoint.z - ElectronGun.transform.position.z);
                     break;
+                
                 case 2:
                     voltage = V_z;
                     plateDistance = verticalDistance;
                     scale = VerticalCapacitorLeft.GetComponent<Renderer>().bounds.size.x;
+                    
                     if (VerticalCapacitor.transform.position == new Vector3(0, 0, 0))
                     {
                         x = -1;
                         break;
                     }
+                    
                     length = Math.Abs(ElectronGun.transform.position.x - VerticalCapacitor.transform.position.x);
-                    x = (scale / 2) - Math.Abs(currentX - (ElectronGun.transform.position.x + length));
+                    x = (scale / 2) - Math.Abs(currentPoint.x - (ElectronGun.transform.position.x + length));
+                    
+                    size = VerticalCapacitorLeft.GetComponent<Renderer>().bounds.size.y / 2;
+                    y = size - Math.Abs(currentPoint.y - ElectronGun.transform.position.y);
+                    
+                    dist = verticalDistance / 2 ;
+                    z = dist - Math.Abs(currentPoint.z - ElectronGun.transform.position.z);
                     break;
             }
             
-            return (-_electronCharge) * (voltage / plateDistance) * H(x);
+            return (-_electronCharge) * (voltage / plateDistance) * H(x) * H(y) * H(z);
         }
 
-        public float RK4(int cap, float currentX)
+        public float RK4(int cap, Vector3 currentPoint)
         {
             float timeStep = getTimeStep();
-            float k1 = timeStep * ApplyForce(cap, currentX) / _electronMass;
-            float k2 = timeStep * ApplyForce(cap, currentX + timeStep / 2) / _electronMass;
-            float k3 = timeStep * ApplyForce(cap, currentX + timeStep / 2) / _electronMass;
-            float k4 = timeStep * ApplyForce(cap, currentX + timeStep) / _electronMass;
+            float k1 = timeStep * ApplyForce(cap, currentPoint) / _electronMass;
+            float k2 = timeStep * ApplyForce(cap, currentPoint + new Vector3(timeStep / 2, 0, 0)) / _electronMass;
+            float k3 = timeStep * ApplyForce(cap, currentPoint + new Vector3(timeStep / 2, 0, 0)) / _electronMass;
+            float k4 = timeStep * ApplyForce(cap, currentPoint + new Vector3(timeStep, 0, 0)) / _electronMass;
             return (k1 + 2 * k2 + 2 * k3 + k4) / 6;
         }
 
