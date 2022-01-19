@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Numerics;
-using Maroon.Physics.CathodeRayTube;
+﻿using Maroon.Physics.CathodeRayTube;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Quaternion = UnityEngine.Quaternion;

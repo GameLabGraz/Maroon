@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using GEAR.Gadgets.ReferenceValue;
-using Maroon.UI;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UIElements;
-using XCharts;
 
 namespace Maroon.Physics.CathodeRayTube
 {
@@ -22,8 +15,6 @@ namespace Maroon.Physics.CathodeRayTube
         [SerializeField] private QuantityFloat d; 
         public int Order { get; set; }
         public int Distance { get; set; }
-        private ScreenSetup _screenController;
-        private UnityEvent screenHit;
 
         private GameObject HorizontalCapacitorTop;
         private GameObject HorizontalCapacitorBottom;
@@ -49,13 +40,7 @@ namespace Maroon.Physics.CathodeRayTube
 
         private void Start()
         {
-            _screenController = Screen.GetComponent<ScreenSetup>();
-            if (screenHit == null)
-                screenHit = new UnityEvent();
-            screenHit.AddListener(ActivatePixel);
-
             _electronGunLength = ElectronGun.GetComponent<Renderer>().bounds.size.x / 2;
-                
             horizontalDistance = d;
             verticalDistance = d;
             
@@ -156,36 +141,6 @@ namespace Maroon.Physics.CathodeRayTube
 
         }
 
-        public float GetVerticalDeflection()
-        {
-            if (HorizontalCapacitor.transform.position == new Vector3(0, 0, 0))
-                return 0;
-            float dist = Screen.transform.position.x - HorizontalCapacitor.transform.position.x;
-            float scale = HorizontalCapacitorTop.GetComponent<Renderer>().bounds.size.x;
-            return (dist * scale * V_y) / (2 * horizontalDistance * V_x);
-        }
-        
-        public float GetHorizontalDeflection()
-        {
-            if (VerticalCapacitor.transform.position == new Vector3(0, 0, 0))
-                return 0;
-            float dist = Screen.transform.position.x - VerticalCapacitor.transform.position.x;
-            float scale = VerticalCapacitorLeft.GetComponent<Renderer>().bounds.size.x;
-            return (dist * scale * V_z) / (2 * verticalDistance * V_x);
-        }
-        
-        public Vector3 GetContactPoint()
-        {
-            Vector3 screenPos = Screen.transform.position;
-            Vector3 contactPoint = new Vector3
-            {
-                x = screenPos.x,
-                y = screenPos.y + GetVerticalDeflection(),
-                z = screenPos.z + GetHorizontalDeflection()
-            };
-            return contactPoint;
-        }
-        
         private float H(float x)
         {
             return x == 0 ? 0.5f : (1 + x / Math.Abs(x)) / 2;
@@ -274,7 +229,7 @@ namespace Maroon.Physics.CathodeRayTube
             float v = (float)Math.Sqrt(-2 * _electronCharge * V_x / _electronMass);
             
             float t = (float)Math.Sqrt(2 * _electronGunLength * _electronMass / (_electronCharge * (-V_x / _electronGunLength))); 
-            t += (GetCRTDist() - _electronGunLength) / v;
+            t += GetCRTDist() / v;
             return t / lineResolution;
         }
 
@@ -286,17 +241,6 @@ namespace Maroon.Physics.CathodeRayTube
         public Vector3 GetCRTStart()
         {
             return ElectronGun.transform.position;
-        }
-
-        public void checkScreenHit(Vector3 lastPoint)
-        {
-            if (lastPoint.x >= Screen.transform.position.x - 0.1f)
-                screenHit.Invoke();
-        }
-
-        public void ActivatePixel()
-        {
-            _screenController.ActivatePixel(GetContactPoint());
         }
     }
 }

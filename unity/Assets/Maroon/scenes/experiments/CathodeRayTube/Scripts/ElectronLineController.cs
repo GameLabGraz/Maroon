@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Maroon.Physics.CathodeRayTube
 {
     public class ElectronLineController : PausableObject, IResetObject
     {
         private CRTController _crtController;
+        [SerializeField] private GameObject screen;
         
         [SerializeField] private Material material;
         private float _timeStep;
@@ -40,16 +37,19 @@ namespace Maroon.Physics.CathodeRayTube
             float currentVelX = 0;
             float currentVelY = 0;
             float currentVelZ = 0;
+
+            Vector3 oldPoint = startPoint;
+            Vector3 newPoint = startPoint;
             
             for (int i = 1; i < _crtController.lineResolution; i++)
             {
-                Vector3 oldPoint = points[i - 1];
+                oldPoint = points[i - 1];
                 
                 currentVelX += _crtController.RK4(0, oldPoint);
                 currentVelY += _crtController.RK4(1, oldPoint);
                 currentVelZ += _crtController.RK4(2, oldPoint);
 
-                Vector3 newPoint = oldPoint;
+                newPoint = oldPoint;
                 newPoint.x += currentVelX * _timeStep;
                 newPoint.y += currentVelY * _timeStep;
                 newPoint.z += currentVelZ * _timeStep;
@@ -59,7 +59,11 @@ namespace Maroon.Physics.CathodeRayTube
                 else
                     points.Add(newPoint);
             }
-            _crtController.checkScreenHit(points.Last());
+
+            UnityEngine.Physics.Linecast(oldPoint, newPoint, out var hitInfo);
+            if (hitInfo.collider != null && hitInfo.collider.name.Equals("Screen"))
+                screen.GetComponent<ScreenSetup>().ActivatePixel(hitInfo.point);
+            
             lineRenderer.SetPositions(points.ToArray());
         }
 
