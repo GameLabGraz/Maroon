@@ -6,7 +6,8 @@ using Vector3 = UnityEngine.Vector3;
 
 public class MainCameraController : MonoBehaviour, IResetObject
 {
-    [SerializeField] private CRTController _crtController; 
+    [SerializeField] private CRTController _crtController;
+    [SerializeField] private GameObject _furniture;
     
     private float _movementSpeed = 3f;
     private float _rotationSpeed = 150f;
@@ -33,6 +34,8 @@ public class MainCameraController : MonoBehaviour, IResetObject
 
         _origPos = transform.position;
         _origRot = transform.rotation;
+        
+        _furniture.SetActive(true);
     }
 
     /// <summary>
@@ -90,6 +93,18 @@ public class MainCameraController : MonoBehaviour, IResetObject
         position.z = Mathf.Clamp(position.z, _minPosition.z, _maxPosition.z);
 
         return position;
+    }
+    
+    public void TwoDimensionView()
+    {
+        Vector3 sideView = _target + new Vector3(0, -2, -0.6f);
+        transform.position = ClampCamPosition(sideView);
+        transform.rotation = Quaternion.identity;
+    }
+
+    public void ToggleFurniture()
+    {
+        _furniture.SetActive(!_furniture.activeSelf);
     }
 
     public void ResetObject()

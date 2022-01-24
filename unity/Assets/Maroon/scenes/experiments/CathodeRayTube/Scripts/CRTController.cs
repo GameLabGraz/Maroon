@@ -91,29 +91,15 @@ namespace Maroon.Physics.CathodeRayTube
                     HorizontalCapacitor.transform.localScale = HorizCapStartScale;
                     VerticalCapacitor.transform.localScale = VertCapStartScale;
                     break;
-                
-                case 2:
-                    position = HorizCapStartPos;
-                    position.x += (VertCapStartPos.x - HorizCapStartPos.x) / 2;
-                    HorizontalCapacitor.transform.position = position;
-                    VerticalCapacitor.transform.position = position;
 
-                    Vector3 scale = HorizCapStartScale;
-                    scale.z = horizontalDistance;
-                    HorizontalCapacitor.transform.localScale = scale;
-                    scale = VertCapStartScale;
-                    scale.y = verticalDistance;
-                    VerticalCapacitor.transform.localScale = scale;
-                    break;
-                
-                case 3:
+                case 2:
                     position = HorizCapStartPos;
                     position.x += (VertCapStartPos.x - HorizCapStartPos.x) / 2;
                     HorizontalCapacitor.transform.position = position;
                     VerticalCapacitor.transform.position = new Vector3(0, 0, 0);
                     break;
                 
-                case 4:
+                case 3:
                     position = HorizCapStartPos;
                     position.x += (VertCapStartPos.x - HorizCapStartPos.x) / 2;
                     VerticalCapacitor.transform.position = position;
