@@ -12,4 +12,5 @@ public class JsonScenario
     public string description;
     public string playerToPlay;
     public string destination;
+    public bool mustHitAllEnemies;
 }

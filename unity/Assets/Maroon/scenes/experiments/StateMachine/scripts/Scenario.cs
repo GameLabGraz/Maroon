@@ -20,10 +20,14 @@ public class Scenario
 {
     private Map _map;
     private List<string> _scenarios;
+    private bool _mustHitAllEnemies;
     public Scenario (Map map) {
         _map = map;
     }
 
+    public bool MustHitAllEnemies() {
+        return _mustHitAllEnemies;
+    }
     
     public void InitScenario(Players players, EnemyMoves enemyMoves, string scenarioName) {
         InitScenariosList();
@@ -68,6 +72,13 @@ public class Scenario
             moveFigureToDestination(players, figureToMove, scenarioName, index);
             index++;
         }
+        foreach (Player player in players) {
+            if (jsonScenario.playerToPlay == player._playerName) {
+                player._isUser = true;
+            } else {
+                player._isUser = false;
+            }
+        }
 
         // initialse moveable figures
         index = 0;
@@ -94,6 +105,12 @@ public class Scenario
         } else {
             Debug.LogFormat("There is destination definded ({0}.json)", scenarioName);
             return;
+        }
+
+        if (jsonScenario.mustHitAllEnemies) {
+            _mustHitAllEnemies = true;
+        } else {
+            _mustHitAllEnemies = false;
         }
 
         InitialiseEnemyMoves(jsonScenario, enemyMoves);
@@ -180,6 +197,7 @@ public class Scenario
             }
         }
 
+
         if (figureToMove._player == null) {
             Debug.LogFormat("No defined player could be found for {0} (figures: line {1}, {2}.json)", jsonFigureToMove.name, figureLineNumber, scenarioName);
             return;
@@ -191,7 +209,7 @@ public class Scenario
         int rowMovementFactor = (jsonFigureToMove.row - 1) - figureToMove._positionRow;
         int columnMovementFactor = (int)column - figureToMove._positionColumn;
 
-        figureToMove.transform.position = new Vector3(position.x + (float)0.18 * columnMovementFactor, position.y + (float)0.18 * rowMovementFactor, position.z);
+        figureToMove.transform.position = new Vector3(position.x + (float)0.055 * columnMovementFactor, position.y, position.z + (float)0.055 * rowMovementFactor);
         
         figureToMove._positionColumn = (int)column;
         figureToMove._positionRow = jsonFigureToMove.row - 1;

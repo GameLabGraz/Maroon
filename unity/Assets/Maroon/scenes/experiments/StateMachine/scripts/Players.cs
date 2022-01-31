@@ -38,4 +38,8 @@ public class Players : IEnumerable
         _actualPlayer++;
         return player;
     }
+
+    public Player GetUserPlayer() {
+       return _players.Find(element => element._isUser == true);
+    }
 }

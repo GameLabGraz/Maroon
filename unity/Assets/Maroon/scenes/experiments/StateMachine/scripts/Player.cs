@@ -6,6 +6,7 @@ using StateMachine;
 public class Player
 {
         public string _playerName {get;set;}
+        public bool _isUser {get;set;}
 
         private Figures _figuresToMove = new Figures();
     

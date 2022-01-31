@@ -17,6 +17,7 @@ namespace StateMachine {
         private Scenario _scenario;
         private States _states;
         private State _actualState;
+        private Player _playerToPlay;
         private Direction _actualDirection;
         private Directions _directions = new Directions();
         private Moves _moves = new Moves();
@@ -44,14 +45,13 @@ namespace StateMachine {
             GameObject surroundingObject = GameObject.Find("Surrounding");
             Surrounding surrounding = surroundingObject.GetComponent(typeof(Surrounding)) as Surrounding;
             _surrounding = surrounding;
-            InitGameField();
             InitStates();
             InitDirections();
             InitMoves();
             InitScenarios();
         }
 
-        void InitScenarios() {
+        private void InitScenarios() {
             _map.InitMap();
             _players.AddPlayer(new Player("white"));
             _players.AddPlayer(new Player("black"));
@@ -73,18 +73,12 @@ namespace StateMachine {
             _actualState = new State("Start");
         }
 
-
-        void InitGameField() {
-            GameObject test = GameObject.Find("a2White");
-            Field test2 = test.GetComponent(typeof(Field)) as Field;
-        }
-
-        void InitStates() {
+        private void InitStates() {
             GameObject test = GameObject.Find("States");
             _states = test.GetComponent(typeof(States)) as States;
         }
 
-        void InitDirections() {
+        private void InitDirections() {
             GameObject dropdownObject = GameObject.Find("DirectionDropdown");
             Dropdown dropdown = dropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
             dropdown.ClearOptions();
@@ -105,7 +99,7 @@ namespace StateMachine {
             dropdown.RefreshShownValue();
         }
 
-        void InitMoves() {
+        private void InitMoves() {
             GameObject dropdownObject = GameObject.Find("ModeDropdown");
             Dropdown dropdown = dropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
             dropdown.ClearOptions();
@@ -149,10 +143,12 @@ namespace StateMachine {
             Mode mode = _modes.FindMode(modeDropdown.options[modeValue].text);
             Ruleset ruleset = new Ruleset(start, end, direction, mode, null, _surrounding.CloneSurrounding());
 
-            _rulesets.AddRuleset(ruleset);
-
-            ResetDeleteRulesetDropdown();
-            CreateNewRulesetGameObject(ruleset);
+            bool isAdded = _rulesets.AddRuleset(ruleset);
+            
+            if (isAdded) {
+                ResetDeleteRulesetDropdown();
+                CreateNewRulesetGameObject(ruleset);
+            }
         }
 
         public void ResetDeleteRulesetDropdown() {
@@ -175,7 +171,7 @@ namespace StateMachine {
             deleteSingleRulesetDropdown.RefreshShownValue();
         }
 
-        public void CreateNewRulesetGameObject(Ruleset ruleset) {
+        void CreateNewRulesetGameObject(Ruleset ruleset) {
 
             GameObject rulesetTextTableObject = GameObject.Find("RulesetTextTable");
             
@@ -205,13 +201,13 @@ namespace StateMachine {
             }
 
             // add surrounding info
-            CloneSurroundingUiAndDisableButtons(rulesetTextTableObject);
+            CloneSurroundingUIAndDisableButtons(rulesetTextTableObject);
 
             _ruleCounter += 1;
             _isLastRowColorFirstColor = !_isLastRowColorFirstColor;
         }
 
-        public (GameObject backgroundObject, GameObject textObject) CreateBackgroundObject(GameObject rulesetTextTableObject) {
+        private (GameObject backgroundObject, GameObject textObject) CreateBackgroundObject(GameObject rulesetTextTableObject) {
 
             GameObject rulesetTextBackgroundObject;
             GameObject rulesetTextObject;
@@ -264,7 +260,7 @@ namespace StateMachine {
         }
 
 
-        public void CloneSurroundingUiAndDisableButtons(GameObject objectToClone) {
+        private void CloneSurroundingUIAndDisableButtons(GameObject objectToClone) {
             GameObject output = Instantiate(GameObject.Find("SurroundingButtonGrid"));
             output.transform.SetParent(objectToClone.transform);
             output.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);    
@@ -441,12 +437,49 @@ namespace StateMachine {
         }
 
         
+        public void CheckEndConditions() {
 
+            Player player = _players.GetUserPlayer();
+            Figure figureToMove = player.GetFigures().GetFigureAtPosition(0);
+
+            _logger.LogStateMachineMessage("Keine Regel gefunden", new Color32(0, 0, 0, 255), player._isUser);
+
+            Field endField = _map.GetFieldByIndices(figureToMove._positionColumn, figureToMove._positionRow);
+            
+            bool isSuccess = true;
+            bool allFiguresHit = true;
+
+            if (_scenario.MustHitAllEnemies()) {
+                foreach(Player playerToCheck in _players) {
+                    if (playerToCheck.GetFigures().Count() != 0 && playerToCheck != _players.GetUserPlayer()) {
+                        _logger.LogStateMachineMessage("Nicht alle Figuren wurden geschlagen", new Color32(154, 0, 11, 255), player._isUser);
+                        isSuccess = false;
+                        allFiguresHit = false;
+                    }
+                }
+                if (allFiguresHit) {
+                    _logger.LogStateMachineMessage("Alle Figuren wurden geschlagen", new Color32(65, 154, 40, 255), player._isUser);
+                }
+            }
+
+            
+
+            if (!endField ||! endField.IsDestination() || !_actualState.IsEndState()) {
+                isSuccess = false;
+            } 
+
+            if (isSuccess) {
+                _logger.LogStateMachineMessage("Endziel mit richtigen State erreicht", new Color32(65, 154, 40, 255), player._isUser);
+            } else {
+                _logger.LogStateMachineMessage("Endziel oder End State falsch", new Color32(154, 0, 11, 255), player._isUser);
+            }
+
+        }
 
         IEnumerator MakeMove() {
 
             // TODO change to right player depending on scenario in .json file
-            Player player = _players.GetPlayerAtIndex(0);
+            Player player = _players.GetUserPlayer();
            
             _actualDirection = null;
             bool moveEnds = false;
@@ -462,7 +495,9 @@ namespace StateMachine {
 
                     // no figure to move available
                     if (player.GetFigures().Count() == 0) {
-                        _logger.LogStateMachineMessage("Keine bewegbare Figur mehr vorhanden", new Color32(0, 0, 0, 255));
+                        _logger.LogStateMachineMessage("Keine bewegbare Figur mehr vorhanden", new Color32(0, 0, 0, 255), player._isUser);
+                        
+                        CheckEndConditions();
                         yield break;
                     }
 
@@ -477,7 +512,7 @@ namespace StateMachine {
                 Field fieldAfterMove = null;
 
                 // TODO change to ai player which is defined in the .json file
-                if (player == _players.GetPlayerAtIndex(0)) {
+                if (player == _players.GetUserPlayer()) {
                     (ruleToExecute, rulesetId, fieldAfterMove) = FindRuleToExecute(figureToMove, _rulesets, true);
                 } else {
                     (ruleToExecute, rulesetId, fieldAfterMove) = FindRuleToExecute(figureToMove, rulesets, false);
@@ -487,24 +522,12 @@ namespace StateMachine {
 
                 // Check if field is empty (no hitting move) 
                 if (ruleToExecute == null) {
-                    _logger.LogStateMachineMessage("Keine Regel gefunden", new Color32(0, 0, 0, 255));
-
-                    Field endField = _map.GetFieldByIndices(figureToMove._positionColumn, figureToMove._positionRow);
-                    
-                    if (endField && endField.IsDestination() && _actualState.IsEndState()) {
-                        //TODO implement figure hit counter and better output for success
-                        _logger.LogStateMachineMessage("Endziel mit richtigen State erreicht", new Color32(65, 154, 40, 255));
-                    } else {
-                        _logger.LogStateMachineMessage("Endziel oder End State falsch", new Color32(154, 0, 11, 255));
-                    }
-
+                    CheckEndConditions();
                     yield break;
                 } else {
-                    _logger.LogStateMachineMessage("Regel " + (rulesetId + 1) + " wird ausgeführt", new Color32(0, 0, 0, 255));
+                    _logger.LogStateMachineMessage("Regel " + (rulesetId + 1) + " wird ausgeführt", new Color32(0, 0, 0, 255), player._isUser);
                 }
-                // Set new state
-                _actualState = ruleToExecute.GetEndState();
-
+                
                 // Set moving factors according to move
                 int columnMovementFactor = ruleToExecute.GetDirection().GetColumnMovementFactor();
                 int rowMovementFactor = ruleToExecute.GetDirection().GetRowMovementFactor();
@@ -514,11 +537,24 @@ namespace StateMachine {
                     moveEnds = true;
                 }
 
+                /*if (moveEnds) {
+                    Player nextPlayer =  _players.GetNextPlayer();
+                    if (nextPlayer != null) {
+                        player = nextPlayer;
+                    }
+                    moveEnds = false;
+                    _actualDirection = null;
+                    yield break;
+                }*/
+
+                // Set new state
+                _actualState = ruleToExecute.GetEndState();
+
                 _actualDirection = ruleToExecute.GetDirection();
 
                 Vector3 position = figureToMove.transform.position;
 
-                figureToMove.transform.position = new Vector3(position.x + (float)0.18 * columnMovementFactor, position.y + (float)0.18 * rowMovementFactor, position.z);
+                figureToMove.transform.position = new Vector3(position.x + (float)0.055 * columnMovementFactor, position.y, position.z + (float)0.055 * rowMovementFactor);
 
                 // figure is hit
                 if (fieldAfterMove.GetFigure() != null) {
@@ -553,8 +589,5 @@ namespace StateMachine {
             }
            
         }
-
-        
-
     }
 }
