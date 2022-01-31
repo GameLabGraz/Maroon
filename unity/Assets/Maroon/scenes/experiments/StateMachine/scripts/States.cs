@@ -60,8 +60,18 @@ public class States : MonoBehaviour, IEnumerable
         InputField inputField = inputFieldObject.GetComponent(typeof(InputField)) as InputField;
 
         if (inputField != null) {
-            _states.Add(new State(inputField.text));
-            addOption(inputField.text);
+
+            bool stateNameAlreadyInUse = false;
+            foreach(State stateToCheck in _states) {
+                if (stateToCheck.GetStateName().ToUpper() == inputField.text.ToUpper()) {
+                    stateNameAlreadyInUse = true;
+                }
+            }
+
+            if (!stateNameAlreadyInUse) {
+                _states.Add(new State(inputField.text));
+                addOption(inputField.text);
+            }
         }
         inputField.text = "";
     }

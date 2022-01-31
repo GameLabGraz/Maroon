@@ -107,6 +107,8 @@ namespace StateMachine {
             // TODO remove magic values and make enum
             _modes.AddMode(new Mode("Figur schlagen", 1));
             _modes.AddMode(new Mode("Leeres Feld betreten", 0));
+            _modes.AddMode(new Mode("Leeres Feld + Zug beenden", 2));
+
 
             foreach (Mode item in _modes)
             {
@@ -411,7 +413,7 @@ namespace StateMachine {
 
                             // check if field is empty (when mode is 0)
                             // TODO remove magic value
-                            if (ruleset.GetMode().GetModeCode() == 0 && fieldToCheck.GetFigure() != null) {
+                            if ((ruleset.GetMode().GetModeCode() == 0 || ruleset.GetMode().GetModeCode() == 2) && fieldToCheck.GetFigure() != null) {
                                 continue;
                             }                        
 
@@ -478,7 +480,6 @@ namespace StateMachine {
 
         IEnumerator MakeMove() {
 
-            // TODO change to right player depending on scenario in .json file
             Player player = _players.GetUserPlayer();
            
             _actualDirection = null;
@@ -489,7 +490,6 @@ namespace StateMachine {
             _surrounding.UpdateSurrounding(actualField, _map);
 
             while (true) {
-                //TODO only if other player should do something
                 while (!figureToMove.gameObject.activeSelf) {
                     player.GetFigures().RemoveFigure(0);
 
@@ -511,14 +511,11 @@ namespace StateMachine {
                 int rulesetId = 0;
                 Field fieldAfterMove = null;
 
-                // TODO change to ai player which is defined in the .json file
                 if (player == _players.GetUserPlayer()) {
                     (ruleToExecute, rulesetId, fieldAfterMove) = FindRuleToExecute(figureToMove, _rulesets, true);
                 } else {
                     (ruleToExecute, rulesetId, fieldAfterMove) = FindRuleToExecute(figureToMove, rulesets, false);
                 }
-
-                // TODO compare surrounding of rule to surrounding of the figure to move => only one rule must be available after that comparison
 
                 // Check if field is empty (no hitting move) 
                 if (ruleToExecute == null) {
@@ -533,19 +530,22 @@ namespace StateMachine {
                 int rowMovementFactor = ruleToExecute.GetDirection().GetRowMovementFactor();
 
                 if (_actualDirection != null && _actualDirection.GetDirectionName() != ruleToExecute.GetDirection().GetDirectionName()) {
-                    // Move ends
-                    moveEnds = true;
-                }
-
-                /*if (moveEnds) {
                     Player nextPlayer =  _players.GetNextPlayer();
                     if (nextPlayer != null) {
                         player = nextPlayer;
                     }
                     moveEnds = false;
                     _actualDirection = null;
-                    yield break;
-                }*/
+                    Debug.Log("new direction is chosen");
+
+
+                    figureToMove = player.GetFigures().GetFigureAtPosition(0);
+                    actualField = _map.GetFieldByIndices(figureToMove._positionColumn, figureToMove._positionRow);
+                    _surrounding.UpdateSurrounding(actualField, _map);
+
+                    continue;
+                }
+
 
                 // Set new state
                 _actualState = ruleToExecute.GetEndState();
@@ -563,10 +563,13 @@ namespace StateMachine {
                 } 
 
                 //TODO now every figure of ai just moves one step
-                if (moveEnds || player == _players.GetPlayerAtIndex(1)) {
+                if (moveEnds || player == _players.GetPlayerAtIndex(1) || ruleToExecute.GetMode().GetModeCode() == 2) {
                     Player nextPlayer =  _players.GetNextPlayer();
                     if (nextPlayer != null) {
                         player = nextPlayer;
+                    }
+                    if (ruleToExecute.GetMode().GetModeCode() == 2) {
+                        Debug.Log("move end is chosen");
                     }
                     moveEnds = false;
                     _actualDirection = null;
