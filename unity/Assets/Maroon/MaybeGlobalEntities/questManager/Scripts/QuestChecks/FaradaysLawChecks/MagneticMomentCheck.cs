@@ -14,12 +14,12 @@ namespace QuestManager
             _magnet = FindObjectOfType<Magnet>();
             if (_magnet == null) throw new NullReferenceException("There is no magnet in the scene.");
 
-            _initFieldStrength = _magnet.field_strength;
+            _initFieldStrength = _magnet.FieldStrength;
         }
 
         protected override bool CheckCompliance()
         {
-            return Math.Abs(_initFieldStrength - _magnet.field_strength) > 0.1f;
+            return Math.Abs(_initFieldStrength - _magnet.FieldStrength) > 0.1f;
         }
     }
 }
