@@ -352,10 +352,40 @@ namespace StateMachine {
                 index++;
             }
 
-            _rulesets.RemoveRuleset(deleteSingleRulesetValue);
 
             //TODO change color of all textElements depending on the color of the ruleset removed
+            var colorCounter = 0;
+            bool isFirstColor = true;
+            rulesetTextTableObject = GameObject.Find("RulesetTextTable");
+            for (var counter = 5; counter < rulesetTextTableObject.transform.childCount; counter++) {
+                if (counter >= deleteSingleRulesetValue * _dataTableRowLength + _dataTableRowLength && counter < deleteSingleRulesetValue * _dataTableRowLength + 2 * _dataTableRowLength) {
+                   continue;
+                }
+                GameObject rulesetTextBackgroundObject = rulesetTextTableObject.transform.GetChild(counter).gameObject;               
+                UnityEngine.UI.Image background = rulesetTextBackgroundObject.GetComponent(typeof(UnityEngine.UI.Image)) as UnityEngine.UI.Image;
+                
+                if (colorCounter % _dataTableRowLength == 0 && colorCounter != 0) {
+                    isFirstColor = !isFirstColor;
+                }
+                Debug.LogFormat("{0} {1} {2}", counter, isFirstColor, colorCounter % _dataTableRowLength);
 
+                if (isFirstColor) {
+                    background.color = _rowColor1;
+                } else {
+                    background.color = _rowColor2;
+                }
+
+                colorCounter++;
+            }
+
+            if (isFirstColor) {
+                _isLastRowColorFirstColor = true;
+            } else {
+                _isLastRowColorFirstColor = false;
+            }
+
+            
+            _rulesets.RemoveRuleset(deleteSingleRulesetValue);
             ResetDeleteRulesetDropdown();
         }
 
@@ -536,8 +566,6 @@ namespace StateMachine {
                     }
                     moveEnds = false;
                     _actualDirection = null;
-                    Debug.Log("new direction is chosen");
-
 
                     figureToMove = player.GetFigures().GetFigureAtPosition(0);
                     actualField = _map.GetFieldByIndices(figureToMove._positionColumn, figureToMove._positionRow);
@@ -567,9 +595,6 @@ namespace StateMachine {
                     Player nextPlayer =  _players.GetNextPlayer();
                     if (nextPlayer != null) {
                         player = nextPlayer;
-                    }
-                    if (ruleToExecute.GetMode().GetModeCode() == 2) {
-                        Debug.Log("move end is chosen");
                     }
                     moveEnds = false;
                     _actualDirection = null;

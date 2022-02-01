@@ -20,7 +20,7 @@ public class Rulesets : IEnumerable
                 rule.GetDirection().GetDirectionName() == newRuleset.GetDirection().GetDirectionName() &&
                 rule.GetMode().GetModeName() == newRuleset.GetMode().GetModeName() &&
                 CompareSurrounding(surroundingToCheck, surroundingToCheck2)) {
-                    Debug.Log("Same rule found");
+                    //Debug.Log("Same rule found");
                     return false;
                 }
             
@@ -28,7 +28,7 @@ public class Rulesets : IEnumerable
             if (rule.GetStartState().GetStateName() == newRuleset.GetStartState().GetStateName() &&
                 rule.GetEndState().GetStateName() == newRuleset.GetEndState().GetStateName() &&
                 CompareSurrounding(surroundingToCheck, surroundingToCheck2)) {
-                    Debug.Log("Similar rule already exists");
+                    //Debug.Log("Similar rule already exists");
                     return false;
                 }
         }
