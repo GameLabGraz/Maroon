@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System;
+﻿using System;
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
-using StateMachine;
 using TMPro;
 
 public enum ChessBoardColumn {
@@ -40,7 +38,7 @@ public class Scenario
 
     private void InitScenariosList() {
         _scenarios = new List<string>();
-        var files = Directory.EnumerateFiles(@"Assets/Maroon/scenes/experiments/StateMachine/Resources", "*.json");
+        var files = Directory.EnumerateFiles(@"Assets/Maroon/scenes/experiments/StateMachine/Resources/Scenarios", "*.json");
         foreach (var file in files) {
             string name = Path.GetFileNameWithoutExtension(file);
             if (name != null) {

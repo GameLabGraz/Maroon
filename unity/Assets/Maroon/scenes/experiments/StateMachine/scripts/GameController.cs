@@ -6,7 +6,6 @@ using Button = UnityEngine.UI.Button;
 using VerticalLayoutGroup = UnityEngine.UI.VerticalLayoutGroup;
 using Selectable = UnityEngine.UI.Selectable;
 using TMPro;
-using System.Threading;
 
 namespace StateMachine {
     public class GameController : MonoBehaviour
