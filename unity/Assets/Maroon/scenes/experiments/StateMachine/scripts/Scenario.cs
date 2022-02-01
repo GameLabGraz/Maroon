@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
+using GEAR.Localization;
 using UnityEngine;
 using TMPro;
 
@@ -53,7 +54,7 @@ public class Scenario
         JsonScenario jsonScenario;
 
         try {
-            scenarioFile = Resources.Load<TextAsset>(scenarioName).ToString();
+            scenarioFile = Resources.Load<TextAsset>($"Scenarios/{scenarioName}").ToString();
             jsonScenario = JsonUtility.FromJson<JsonScenario>(scenarioFile);
         } catch (Exception ex) {
             Debug.LogFormat("There exists no file with name {0}.json", scenarioName);
@@ -93,7 +94,11 @@ public class Scenario
         GameObject descriptionObject = GameObject.Find("ScenarioDescription");
         TextMeshProUGUI descriptionTextMesh = descriptionObject.GetComponent(typeof(TextMeshProUGUI)) as TextMeshProUGUI;
         if (descriptionTextMesh != null) {
-            descriptionTextMesh.text = jsonScenario.description;
+            LanguageManager.Instance.OnLanguageChanged.AddListener(language =>
+            {
+                descriptionTextMesh.text = LanguageManager.Instance.GetString(jsonScenario.description, language);
+            });
+            descriptionTextMesh.text = LanguageManager.Instance.GetString(jsonScenario.description);
         }
 
         GameObject destination = GameObject.Find(jsonScenario.destination);

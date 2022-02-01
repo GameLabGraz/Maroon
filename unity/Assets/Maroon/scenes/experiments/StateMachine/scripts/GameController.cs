@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using GEAR.Localization;
 using UnityEngine;
 using Maroon.UI;
 using Button = UnityEngine.UI.Button;
@@ -82,16 +83,27 @@ namespace StateMachine {
             Dropdown dropdown = dropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
             dropdown.ClearOptions();
 
-            _directions.AddDirection(new Direction("Oben", 1, 0));
-            _directions.AddDirection(new Direction("Unten", -1, 0));
-            _directions.AddDirection(new Direction("Links", 0, -1));
-            _directions.AddDirection(new Direction("Rechts", 0, 1));
+            // ToDo: Use a Localized DropDown!!!
+            _directions.AddDirection(new Direction("Up", 1, 0));
+            _directions.AddDirection(new Direction("Down", -1, 0));
+            _directions.AddDirection(new Direction("Left", 0, -1));
+            _directions.AddDirection(new Direction("Right", 0, 1));
+
+            LanguageManager.Instance.OnLanguageChanged.AddListener(language =>
+            {
+                dropdown.ClearOptions();
+                foreach (Direction item in _directions)
+                {
+                    dropdown.options.Add(new TMP_Dropdown.OptionData(
+                        LanguageManager.Instance.GetString(item.GetDirectionName(), language)));
+                }
+                dropdown.RefreshShownValue();
+            });
 
             foreach (Direction item in _directions)
             {
-                Dropdown.OptionData option = new Dropdown.OptionData();
-                option.text = item.GetDirectionName();
-                dropdown.options.Add(option);
+                dropdown.options.Add(new TMP_Dropdown.OptionData(
+                    LanguageManager.Instance.GetString(item.GetDirectionName())));
             }
             
             dropdown.value = 0;
@@ -104,16 +116,26 @@ namespace StateMachine {
             dropdown.ClearOptions();
 
             // TODO remove magic values and make enum
-            _modes.AddMode(new Mode("Figur schlagen", 1));
-            _modes.AddMode(new Mode("Leeres Feld betreten", 0));
-            _modes.AddMode(new Mode("Leeres Feld + Zug beenden", 2));
+            // ToDO use localized DropDown
+            _modes.AddMode(new Mode("CaptureFigure", 1));
+            _modes.AddMode(new Mode("EnterEmptyField", 0));
+            _modes.AddMode(new Mode("EmptyFieldEndMove", 2));
 
+            LanguageManager.Instance.OnLanguageChanged.AddListener(language =>
+            {
+                dropdown.ClearOptions();
+                foreach (Mode item in _modes)
+                {
+                    dropdown.options.Add(new TMP_Dropdown.OptionData(
+                        LanguageManager.Instance.GetString(item.GetModeName(), language)));
+                }
+                dropdown.RefreshShownValue();
+            });
 
             foreach (Mode item in _modes)
             {
-                Dropdown.OptionData option = new Dropdown.OptionData();
-                option.text = item.GetModeName();
-                dropdown.options.Add(option);
+                dropdown.options.Add(new TMP_Dropdown.OptionData(
+                    LanguageManager.Instance.GetString(item.GetModeName())));
             }
 
             dropdown.value = 1;
@@ -473,7 +495,7 @@ namespace StateMachine {
             Player player = _players.GetUserPlayer();
             Figure figureToMove = player.GetFigures().GetFigureAtPosition(0);
 
-            _logger.LogStateMachineMessage("Keine Regel gefunden", new Color32(0, 0, 0, 255), player._isUser);
+            _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorNoRule"), new Color32(0, 0, 0, 255), player._isUser);
 
             Field endField = _map.GetFieldByIndices(figureToMove._positionColumn, figureToMove._positionRow);
             
@@ -483,26 +505,25 @@ namespace StateMachine {
             if (_scenario.MustHitAllEnemies()) {
                 foreach(Player playerToCheck in _players) {
                     if (playerToCheck.GetFigures().Count() != 0 && playerToCheck != _players.GetUserPlayer()) {
-                        _logger.LogStateMachineMessage("Nicht alle Figuren wurden geschlagen", new Color32(154, 0, 11, 255), player._isUser);
+                        _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorNotAllFiguresCaptured"), new Color32(154, 0, 11, 255), player._isUser);
                         isSuccess = false;
                         allFiguresHit = false;
                     }
                 }
                 if (allFiguresHit) {
-                    _logger.LogStateMachineMessage("Alle Figuren wurden geschlagen", new Color32(65, 154, 40, 255), player._isUser);
+                    _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("AllFiguresCaptured"), new Color32(65, 154, 40, 255), player._isUser);
                 }
             }
 
             
-
             if (!endField ||! endField.IsDestination() || !_actualState.IsEndState()) {
                 isSuccess = false;
             } 
 
             if (isSuccess) {
-                _logger.LogStateMachineMessage("Endziel mit richtigen State erreicht", new Color32(65, 154, 40, 255), player._isUser);
+                _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("CorrectTargetAndEndState"), new Color32(65, 154, 40, 255), player._isUser);
             } else {
-                _logger.LogStateMachineMessage("Endziel oder End State falsch", new Color32(154, 0, 11, 255), player._isUser);
+                _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorIncorrectTargetOrEndState"), new Color32(154, 0, 11, 255), player._isUser);
             }
 
         }

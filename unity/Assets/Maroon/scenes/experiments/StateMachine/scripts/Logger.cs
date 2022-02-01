@@ -1,9 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Maroon.UI;
+﻿using UnityEngine;
 using TMPro;
-using System.Threading;
 
 namespace StateMachine {
     public class Logger : MonoBehaviour
