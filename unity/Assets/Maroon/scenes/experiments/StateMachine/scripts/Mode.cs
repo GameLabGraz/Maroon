@@ -7,7 +7,7 @@ public class Mode
     private string _name;
     // 0 = go on empty field
     // 1 = hit figure
-    // 2 = Rochade
+    // 2 = go on empty field and end move
     // .....
     private int _modeCode;
 

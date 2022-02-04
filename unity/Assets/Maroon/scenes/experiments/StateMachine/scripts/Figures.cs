@@ -13,7 +13,9 @@ public class Figures : IEnumerable
     }
 
     public void RemoveFigure(int position) {
-        _figures.RemoveAt(position);
+        if (_figures.Count > position) {
+            _figures.RemoveAt(position);
+        }
     }
 
     public Figure GetFigureAtPosition(int position) {

@@ -591,6 +591,15 @@ namespace StateMachine {
                 } else {
                     Rulesets rulesets =  _enemyMoves.GetNextMove(name, _actualState, _modes, _map);
                     (ruleToExecute, rulesetId, fieldAfterMove) = FindRuleToExecute(figureToMove, rulesets, false);
+                    if (ruleToExecute == null) {
+                        player.GetFigures().RemoveFigure(0);
+                        if (player.GetFigures().Count() == 0){
+                            CheckEndConditions();
+                            yield break;
+                        }
+                        figureToMove = player.GetFigures().GetFigureAtPosition(0);
+                        continue;
+                    }
                 }
 
                 // Check if field is empty (no hitting move) 
@@ -636,16 +645,6 @@ namespace StateMachine {
                     moveEnds = true;
                 } 
 
-                //TODO now every figure of ai just moves one step
-                if (moveEnds || player == _players.GetPlayerAtIndex(1) || ruleToExecute.GetMode().GetModeCode() == 1) {
-                    Player nextPlayer =  _players.GetNextPlayer();
-                    if (nextPlayer != null) {
-                        player = nextPlayer;
-                    }
-                    moveEnds = false;
-                    _actualDirection = null;
-                }
-
                 // set figure to new field
                 actualField = _map.GetFieldByIndices(figureToMove._positionColumn, figureToMove._positionRow);
                 actualField.MoveFigureAway();
@@ -654,6 +653,28 @@ namespace StateMachine {
                 // set new position in figure
                 figureToMove._positionColumn += ruleToExecute.GetDirection().GetColumnMovementFactor(); 
                 figureToMove._positionRow += ruleToExecute.GetDirection().GetRowMovementFactor();
+
+                // check if pawn is on last row
+                if (player != _players.GetUserPlayer()) {
+                    if (player._playerName == "black" && figureToMove._positionRow == 0 ||
+                        player._playerName == "white" && figureToMove._positionRow == 8
+                        ) {
+                            _dialogueManager.ShowMessage(LanguageManager.Instance.GetString("ErrorPawnToQueen"));
+                            _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorPawnToQueen"), new Color32(154, 0, 11, 255), player._isUser);
+                            yield break;
+                            
+                    }
+                }
+
+                //TODO now every figure of ai just moves one step
+                if (moveEnds || player == _players.GetPlayerAtIndex(1) || ruleToExecute.GetMode().GetModeCode() == 1 || ruleToExecute.GetMode().GetModeCode() == 2) {
+                    Player nextPlayer =  _players.GetNextPlayer();
+                    if (nextPlayer != null) {
+                        player = nextPlayer;
+                    }
+                    moveEnds = false;
+                    _actualDirection = null;
+                }
                 
                 figureToMove = player.GetFigures().GetFigureAtPosition(0);
                 actualField = _map.GetFieldByIndices(figureToMove._positionColumn, figureToMove._positionRow);
