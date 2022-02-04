@@ -578,7 +578,7 @@ namespace StateMachine {
             } 
 
             if (isSuccess) {
-                _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString("CorrectTargetAndEndState"), _errorColor, MessageIcon.MI_Ok));
+                _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString("CorrectTargetAndEndState"), _winColor, MessageIcon.MI_Ok));
                 _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("CorrectTargetAndEndState"), _winColor, player._isUser);
             } else {
                 _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString("ErrorIncorrectTargetOrEndState"), _errorColor, MessageIcon.MI_Error));
