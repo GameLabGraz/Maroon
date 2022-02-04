@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Maroon.Physics.CathodeRayTube
@@ -15,6 +16,8 @@ namespace Maroon.Physics.CathodeRayTube
         [SerializeField] private QuantityFloat d; 
         public int Order { get; set; }
         public int Distance { get; set; }
+        public int xAxis { get; set; }
+        public int yAxis { get; set; }
 
         private GameObject HorizontalCapacitorTop;
         private GameObject HorizontalCapacitorBottom;
@@ -32,10 +35,16 @@ namespace Maroon.Physics.CathodeRayTube
         [SerializeField] private QuantityInt Ex;
         [SerializeField] private QuantityInt Ey;
         [SerializeField] private QuantityInt Ez;
+        [SerializeField] private QuantityString ExCalc;
+        [SerializeField] private QuantityString EyCalc;
+        [SerializeField] private QuantityString EzCalc;
 
         [SerializeField] private QuantityFloat Fx;
         [SerializeField] private QuantityFloat Fy;
         [SerializeField] private QuantityFloat Fz;
+        [SerializeField] private QuantityString FxCalc;
+        [SerializeField] private QuantityString FyCalc;
+        [SerializeField] private QuantityString FzCalc;
 
         private const float _electronCharge = -1.6022e-19f;
         private const float _electronMass = 9.11e-31f;
@@ -61,77 +70,10 @@ namespace Maroon.Physics.CathodeRayTube
 
         private void FixedUpdate()
         {
-            switch (Distance)
-            {
-                case 0:
-                    horizontalDistance = d;
-                    verticalDistance = d;
-                    break;
-                case 1:
-                    horizontalDistance = d;
-                    break;
-                case 2:
-                    verticalDistance = d;
-                    break;
-                default:
-                    horizontalDistance = d;
-                    verticalDistance = d;
-                    break;
-            }
-
-            Vector3 position;
-            switch (Order)
-            {
-                case 0:
-                    HorizontalCapacitor.transform.position = HorizCapStartPos;
-                    VerticalCapacitor.transform.position = VertCapStartPos;
-                    HorizontalCapacitor.transform.localScale = HorizCapStartScale;
-                    VerticalCapacitor.transform.localScale = VertCapStartScale;
-                    break;
-                
-                case 1:
-                    HorizontalCapacitor.transform.position = VertCapStartPos;
-                    VerticalCapacitor.transform.position = HorizCapStartPos;
-                    HorizontalCapacitor.transform.localScale = HorizCapStartScale;
-                    VerticalCapacitor.transform.localScale = VertCapStartScale;
-                    break;
-
-                case 2:
-                    position = HorizCapStartPos;
-                    position.x += (VertCapStartPos.x - HorizCapStartPos.x) / 2;
-                    HorizontalCapacitor.transform.position = position;
-                    VerticalCapacitor.transform.position = new Vector3(0, 0, 0);
-                    break;
-                
-                case 3:
-                    position = HorizCapStartPos;
-                    position.x += (VertCapStartPos.x - HorizCapStartPos.x) / 2;
-                    VerticalCapacitor.transform.position = position;
-                    HorizontalCapacitor.transform.position = new Vector3(0, 0, 0);
-                    break;
-                
-                default:
-                    HorizontalCapacitor.transform.position = HorizCapStartPos;
-                    VerticalCapacitor.transform.position = VertCapStartPos;
-                    HorizontalCapacitor.transform.localScale = HorizCapStartScale;
-                    VerticalCapacitor.transform.localScale = VertCapStartScale;
-                    break;
-            }
-            Ex.Value = (int)(V_x / _electronGunLength);
-            Ey.Value = (int)(V_y / horizontalDistance);
-            Ez.Value = (int)(V_z / verticalDistance);
-            
-            Fx.Value = (-_electronCharge) * (V_x / _electronGunLength) * (float)Math.Pow(10, 15);
-            Fy.Value = (-_electronCharge) * (V_y / horizontalDistance) * (float)Math.Pow(10, 15);
-            Fz.Value = (-_electronCharge) * (V_z / verticalDistance) * (float)Math.Pow(10, 15);
-            
-            var newPosition = HorizontalCapacitor.transform.position;
-            HorizontalCapacitorTop.transform.position = newPosition + new Vector3(0, horizontalDistance / 2, 0);
-            HorizontalCapacitorBottom.transform.position = newPosition - new Vector3(0, horizontalDistance / 2, 0);
-            newPosition = VerticalCapacitor.transform.position;
-            VerticalCapacitorRight.transform.position = newPosition + new Vector3(0, 0,verticalDistance / 2);
-            VerticalCapacitorLeft.transform.position = newPosition - new Vector3(0, 0, verticalDistance / 2);
-
+            updateDistance();
+            updateOrder();
+            updateInformation();
+            updatePlot();
         }
 
         private float H(float x)
@@ -234,6 +176,119 @@ namespace Maroon.Physics.CathodeRayTube
         public Vector3 GetCRTStart()
         {
             return ElectronGun.transform.position;
+        }
+
+        void updateDistance()
+        {
+            switch (Distance)
+            {
+                case 0:
+                    horizontalDistance = d;
+                    verticalDistance = d;
+                    break;
+                case 1:
+                    horizontalDistance = d;
+                    break;
+                case 2:
+                    verticalDistance = d;
+                    break;
+                default:
+                    horizontalDistance = d;
+                    verticalDistance = d;
+                    break;
+            }
+        }
+        
+        void updateOrder()
+        {
+            Vector3 position;
+            switch (Order)
+            {
+                case 0:
+                    HorizontalCapacitor.transform.position = HorizCapStartPos;
+                    VerticalCapacitor.transform.position = VertCapStartPos;
+                    HorizontalCapacitor.transform.localScale = HorizCapStartScale;
+                    VerticalCapacitor.transform.localScale = VertCapStartScale;
+                    break;
+                
+                case 1:
+                    HorizontalCapacitor.transform.position = VertCapStartPos;
+                    VerticalCapacitor.transform.position = HorizCapStartPos;
+                    HorizontalCapacitor.transform.localScale = HorizCapStartScale;
+                    VerticalCapacitor.transform.localScale = VertCapStartScale;
+                    break;
+
+                case 2:
+                    position = HorizCapStartPos;
+                    position.x += (VertCapStartPos.x - HorizCapStartPos.x) / 2;
+                    HorizontalCapacitor.transform.position = position;
+                    VerticalCapacitor.transform.position = new Vector3(0, 0, 0);
+                    break;
+                
+                case 3:
+                    position = HorizCapStartPos;
+                    position.x += (VertCapStartPos.x - HorizCapStartPos.x) / 2;
+                    VerticalCapacitor.transform.position = position;
+                    HorizontalCapacitor.transform.position = new Vector3(0, 0, 0);
+                    break;
+                
+                default:
+                    HorizontalCapacitor.transform.position = HorizCapStartPos;
+                    VerticalCapacitor.transform.position = VertCapStartPos;
+                    HorizontalCapacitor.transform.localScale = HorizCapStartScale;
+                    VerticalCapacitor.transform.localScale = VertCapStartScale;
+                    break;
+            }
+
+            var newPosition = HorizontalCapacitor.transform.position;
+            HorizontalCapacitorTop.transform.position = newPosition + new Vector3(0, horizontalDistance / 2, 0);
+            HorizontalCapacitorBottom.transform.position = newPosition - new Vector3(0, horizontalDistance / 2, 0);
+            newPosition = VerticalCapacitor.transform.position;
+            VerticalCapacitorRight.transform.position = newPosition + new Vector3(0, 0,verticalDistance / 2);
+            VerticalCapacitorLeft.transform.position = newPosition - new Vector3(0, 0, verticalDistance / 2);
+        }
+        
+        void updateInformation()
+        {
+            int informationResolution = 1000;
+            float length;
+            float size;
+            
+            Ex.Value = (int)(V_x / (Math.Truncate(informationResolution * _electronGunLength) / informationResolution));
+            Ey.Value = (int)(V_y / (Math.Truncate(informationResolution * horizontalDistance) / informationResolution));
+            Ez.Value = (int)(V_z / (Math.Truncate(informationResolution * verticalDistance) / informationResolution));
+
+            ExCalc.Value = V_x.Value + " / " + (Math.Truncate(informationResolution * _electronGunLength) / informationResolution);
+            EyCalc.Value = V_y.Value + " / " + (Math.Truncate(informationResolution * horizontalDistance) / informationResolution);
+            EzCalc.Value = V_z.Value + " / " + (Math.Truncate(informationResolution * verticalDistance) / informationResolution);
+            
+            Fx.Value = (-_electronCharge) * (V_x / (float)(Math.Truncate(informationResolution * _electronGunLength) / informationResolution)) * (float)Math.Pow(10, 15);
+            Fy.Value = (-_electronCharge) * (V_y / (float)(Math.Truncate(informationResolution * horizontalDistance) / informationResolution)) * (float)Math.Pow(10, 15);
+            Fz.Value = (-_electronCharge) * (V_z / (float)(Math.Truncate(informationResolution * verticalDistance) / informationResolution)) * (float)Math.Pow(10, 15);
+
+            FxCalc.Value = "1.6022e-19 * " + Ex.Value + " * H(" + (Math.Truncate(informationResolution * _electronGunLength) / informationResolution) + " - x)";
+
+            size = HorizontalCapacitorTop.GetComponent<Renderer>().bounds.size.z / 2;
+            length = Math.Abs(ElectronGun.transform.position.x - HorizontalCapacitor.transform.position.x);
+            FyCalc.Value = "1.6022e-19 * " + Ey.Value + " * H(" + (Math.Truncate(informationResolution * size) / informationResolution) 
+                           + " - abs(x - " + (Math.Truncate(informationResolution * length) / informationResolution) + "))";
+
+            size = VerticalCapacitorLeft.GetComponent<Renderer>().bounds.size.y / 2;
+            length = Math.Abs(ElectronGun.transform.position.x - VerticalCapacitor.transform.position.x);
+            FzCalc.Value = "1.6022e-19 * " + Ez.Value + " * H(" + (Math.Truncate(informationResolution * size) / informationResolution) 
+                           + " - abs(x - " + (Math.Truncate(informationResolution * length) / informationResolution) + "))";
+        }
+        
+        void updatePlot()
+        {
+            List<float> tList;
+            List<float> xList;
+            List<float> yList;
+            List<float> zList;
+            List<float> fxList;
+            List<float> fyList;
+            List<float> fzList;
+            
         }
     }
 }
