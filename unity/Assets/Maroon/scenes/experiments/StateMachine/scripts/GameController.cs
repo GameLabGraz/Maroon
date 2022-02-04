@@ -65,7 +65,7 @@ namespace StateMachine {
             _players.AddPlayer(new Player("white"));
             _players.AddPlayer(new Player("black"));
             _scenario = new Scenario(_map);
-            _scenario.InitScenario(_players, _enemyMoves, "scenario1");
+            _scenario.InitScenario(_players, _enemyMoves, "0_Tutorial");
 
             GameObject dropdownObject = GameObject.Find("ScenarioSelectionDropdown");
             Dropdown dropdown = dropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
