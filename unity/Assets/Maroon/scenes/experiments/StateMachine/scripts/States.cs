@@ -63,7 +63,7 @@ public class States : MonoBehaviour, IEnumerable
 
         if (inputField != null) {
             if (inputField.text == "") {
-                 _dialogueManager.ShowMessage(LanguageManager.Instance.GetString("ErrorNoStateEntered"));
+                _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString("ErrorNoStateEntered"),  new Color32(154, 0, 11, 255), MessageIcon.MI_Error));
                 return;
             }
 
@@ -79,7 +79,7 @@ public class States : MonoBehaviour, IEnumerable
                 addOption(inputField.text);
             } else {
                 if (_dialogueManager != null) {
-                    _dialogueManager.ShowMessage(LanguageManager.Instance.GetString("ErrorSameState"));
+                    _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString("ErrorSameState"),  new Color32(154, 0, 11, 255), MessageIcon.MI_Error));
                 }
             }
         }

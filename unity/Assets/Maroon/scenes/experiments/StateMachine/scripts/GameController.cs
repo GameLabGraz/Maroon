@@ -30,6 +30,9 @@ namespace StateMachine {
         private bool _isLastRowColorFirstColor = false;
         private Color _rowColor1 = new Color(0.9f, 0.9f, 0.9f);
         private Color _rowColor2 = new Color(1.0f, 1.0f, 1.0f);
+        
+        private Color _errorColor = new Color32(154, 0, 11, 255);
+        private Color _winColor = new Color32(65, 154, 40, 255);
         private Map _map = new Map();
         private Logger _logger = new Logger();
         private Surrounding _surrounding;
@@ -192,7 +195,7 @@ namespace StateMachine {
                 ResetDeleteRulesetDropdown();
                 CreateNewRulesetGameObject(ruleset);
             } else {
-                _dialogueManager.ShowMessage(LanguageManager.Instance.GetString(message));
+                _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString("ErrorPawnToQueen"), _errorColor, MessageIcon.MI_Error));
             }
         }
 
@@ -398,7 +401,7 @@ namespace StateMachine {
             int deleteSingleRulesetValue = deleteSingleRulesetDropdown.value;
 
             if (deleteSingleRulesetDropdown.options.Count == 0) {
-                _dialogueManager.ShowMessage(LanguageManager.Instance.GetString("ErrorNoRuleToDelete"));
+                _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString("ErrorNoRuleToDelete"), _errorColor, MessageIcon.MI_Error));
                 return;
             }
 
@@ -544,7 +547,7 @@ namespace StateMachine {
             Figure figureToMove = player.GetFigures().GetNextActiveFigure();
         
             if (figureToMove == null) {
-                _dialogueManager.ShowMessage(LanguageManager.Instance.GetString("ErrorNoFigureToMove"));
+                _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString("ErrorNoFigureToMove"), _errorColor, MessageIcon.MI_Error));
                 return;
             }
 
@@ -556,27 +559,27 @@ namespace StateMachine {
             if (_scenario.MustHitAllEnemies()) {
                 foreach(Player playerToCheck in _players) {
                     if (playerToCheck.GetFigures().Count() != 0 && playerToCheck != _players.GetUserPlayer()) {
-                        _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorNotAllFiguresCaptured"), new Color32(154, 0, 11, 255), player._isUser);
+                        _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorNotAllFiguresCaptured"), _errorColor, player._isUser);
                         isSuccess = false;
                         allFiguresHit = false;
                     }
                 }
                 if (allFiguresHit) {
-                    _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("AllFiguresCaptured"), new Color32(65, 154, 40, 255), player._isUser);
+                    _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("AllFiguresCaptured"), _winColor, player._isUser);
                 }
             }
 
-            //if (!endField ||! endField.IsDestination() || !_actualState.IsEndState())
+            // TODO implement end field in a reasonable way. if (!endField ||! endField.IsDestination() || !_actualState.IsEndState())
             if (!_actualState.IsEndState()) {
                 isSuccess = false;
             } 
 
             if (isSuccess) {
-                _dialogueManager.ShowMessage(LanguageManager.Instance.GetString("CorrectTargetAndEndState"));
-                _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("CorrectTargetAndEndState"), new Color32(65, 154, 40, 255), player._isUser);
+                _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString("CorrectTargetAndEndState"), _errorColor, MessageIcon.MI_Ok));
+                _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("CorrectTargetAndEndState"), _winColor, player._isUser);
             } else {
-                _dialogueManager.ShowMessage(LanguageManager.Instance.GetString("ErrorIncorrectTargetOrEndState"));
-                _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorIncorrectTargetOrEndState"), new Color32(154, 0, 11, 255), player._isUser);
+                _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString("ErrorIncorrectTargetOrEndState"), _errorColor, MessageIcon.MI_Error));
+                _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorIncorrectTargetOrEndState"), _errorColor, player._isUser);
             }
 
         }
@@ -596,7 +599,7 @@ namespace StateMachine {
 
                 if (player == _players.GetUserPlayer()) {
                     if (figureToMove == null) {
-                        _logger.LogStateMachineMessage("Keine bewegbare Figur mehr vorhanden", new Color32(154, 0, 11, 255), player._isUser);
+                        _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorNoFigureToMove"), _errorColor, player._isUser);
                         CheckEndConditions();
                         yield break;
                     }
@@ -607,7 +610,7 @@ namespace StateMachine {
                 figureToMove = player.GetFigures().GetNextActiveFigure();
 
                 if (figureToMove == null) {
-                    _logger.LogStateMachineMessage("Keine bewegbare Figur mehr vorhanden", new Color32(154, 0, 11, 255), player._isUser);
+                    _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorNoFigureToMove"), _errorColor, player._isUser);
                     CheckEndConditions();
                     yield break;
                 }
@@ -630,7 +633,7 @@ namespace StateMachine {
 
                 // Check if field is empty (no hitting move) 
                 if (ruleToExecute == null) {
-                    _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorNoRule"), new Color32(0, 0, 0, 255), player._isUser);
+                    _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorNoRule"), _errorColor, player._isUser);
                     CheckEndConditions();
                     yield break;
                 } else {
@@ -688,10 +691,9 @@ namespace StateMachine {
                     if (player._playerName == "black" && figureToMove._positionRow == 0 ||
                         player._playerName == "white" && figureToMove._positionRow == 8
                         ) {
-                            _dialogueManager.ShowMessage(LanguageManager.Instance.GetString("ErrorPawnToQueen"));
-                            _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorPawnToQueen"), new Color32(154, 0, 11, 255), player._isUser);
+                            _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString("ErrorPawnToQueen"), _errorColor, MessageIcon.MI_Error));
+                            _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorPawnToQueen"), _errorColor, player._isUser);
                             yield break;
-                            
                     }
                 }
 
