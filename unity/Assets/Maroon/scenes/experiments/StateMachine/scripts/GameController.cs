@@ -40,6 +40,8 @@ namespace StateMachine {
 
         private DialogueManager _dialogueManager;
 
+        private bool _runStateMachine = false;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -338,6 +340,7 @@ namespace StateMachine {
         }
 
         public void RunStateMachine() {
+            _runStateMachine = true;
             SetVisibilityOfMenus(false);
             ClearStateMenu();
             GameObject scenarioDropdownObject = GameObject.Find("ScenarioSelectionDropdown");
@@ -369,13 +372,23 @@ namespace StateMachine {
                 Debug.Log("[ERROR]: StateMenu GameObject could not be found!");
             }
         }
-        public void ChangeToEditMode() {
+
+        IEnumerator PlayDisable() {
+            _runStateMachine = false;
             StopCoroutine(MakeMove());
+            GameObject playButtonObject = GameObject.Find("ButtonPlay"); 
+            Button playButton = playButtonObject.GetComponent<Button>();
+            playButton.interactable = false;
+            yield return new WaitForSeconds(0.5f);
+            playButton.interactable = true;
             SetVisibilityOfMenus(true);
             ResetScenario();
             GameObject scenarioDropdownObject = GameObject.Find("ScenarioSelectionDropdown");
             Dropdown scenarioDropdown = scenarioDropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
             scenarioDropdown.enabled = true;
+        }
+        public void ChangeToEditMode() {
+            StartCoroutine(PlayDisable());
         }
 
         public void DeleteRuleset() {
@@ -529,8 +542,6 @@ namespace StateMachine {
 
             Player player = _players.GetUserPlayer();
             Figure figureToMove = player.GetFigures().GetNextActiveFigure();
-
-            _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorNoRule"), new Color32(0, 0, 0, 255), player._isUser);
         
             if (figureToMove == null) {
                 _dialogueManager.ShowMessage(LanguageManager.Instance.GetString("ErrorNoFigureToMove"));
@@ -555,8 +566,8 @@ namespace StateMachine {
                 }
             }
 
-            
-            if (!endField ||! endField.IsDestination() || !_actualState.IsEndState()) {
+            //if (!endField ||! endField.IsDestination() || !_actualState.IsEndState())
+            if (!_actualState.IsEndState()) {
                 isSuccess = false;
             } 
 
@@ -581,7 +592,17 @@ namespace StateMachine {
             Field actualField = _map.GetFieldByIndices(figureToMove._positionColumn, figureToMove._positionRow);
             _surrounding.UpdateSurrounding(actualField, _map);
 
-            while (true) {
+            while (_runStateMachine) {
+
+                if (player == _players.GetUserPlayer()) {
+                    if (figureToMove == null) {
+                        _logger.LogStateMachineMessage("Keine bewegbare Figur mehr vorhanden", new Color32(154, 0, 11, 255), player._isUser);
+                        CheckEndConditions();
+                        yield break;
+                    }
+                    actualField = _map.GetFieldByIndices(figureToMove._positionColumn, figureToMove._positionRow);
+                    _surrounding.UpdateSurrounding(actualField, _map);
+                }
 
                 figureToMove = player.GetFigures().GetNextActiveFigure();
 
@@ -609,6 +630,7 @@ namespace StateMachine {
 
                 // Check if field is empty (no hitting move) 
                 if (ruleToExecute == null) {
+                    _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorNoRule"), new Color32(0, 0, 0, 255), player._isUser);
                     CheckEndConditions();
                     yield break;
                 } else {
@@ -673,10 +695,6 @@ namespace StateMachine {
                     }
                 }
 
-                if (player == _players.GetUserPlayer()) {
-                    actualField = _map.GetFieldByIndices(figureToMove._positionColumn, figureToMove._positionRow);
-                    _surrounding.UpdateSurrounding(actualField, _map);
-                }
 
                 //TODO now every figure of ai just moves one step
                 if (moveEnds || player != _players.GetUserPlayer() || ruleToExecute.GetMode().GetModeCode() == 1 || ruleToExecute.GetMode().GetModeCode() == 2) {
@@ -690,7 +708,7 @@ namespace StateMachine {
                 
                 figureToMove = player.GetFigures().GetNextActiveFigure();
 
-                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(0.5f);
             }
            
         }
