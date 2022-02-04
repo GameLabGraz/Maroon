@@ -39,7 +39,7 @@ public class Scenario
 
     private void InitScenariosList() {
         _scenarios = new List<string>();
-        var files = Directory.EnumerateFiles(@"Assets/Maroon/scenes/experiments/StateMachine/Resources/Scenarios", "*.json");
+        var files = Directory.EnumerateFiles(Application.dataPath + "/StreamingAssets/ChessScenarios", "*.json");
         foreach (var file in files) {
             string name = Path.GetFileNameWithoutExtension(file);
             if (name != null) {
@@ -54,7 +54,7 @@ public class Scenario
         JsonScenario jsonScenario;
 
         try {
-            scenarioFile = Resources.Load<TextAsset>($"Scenarios/{scenarioName}").ToString();
+            scenarioFile = File.ReadAllText(Application.dataPath + "/StreamingAssets/ChessScenarios/" + scenarioName + ".json");
             jsonScenario = JsonUtility.FromJson<JsonScenario>(scenarioFile);
         } catch (Exception ex) {
             Debug.LogFormat("There exists no file with name {0}.json", scenarioName);
