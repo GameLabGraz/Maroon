@@ -16,6 +16,9 @@ public class ToolTipHandler : MonoBehaviour
     {
         if (!partInfoToggle.GetComponent<Toggle>().isOn)
             return;
+
+        if (Camera.main != camera)
+            return;
         
         RaycastHit hit;
         Ray ray = camera.ScreenPointToRay(Input.mousePosition);
