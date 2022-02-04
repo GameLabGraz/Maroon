@@ -195,7 +195,7 @@ namespace StateMachine {
                 ResetDeleteRulesetDropdown();
                 CreateNewRulesetGameObject(ruleset);
             } else {
-                _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString("ErrorPawnToQueen"), _errorColor, MessageIcon.MI_Error));
+                _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString("ErrorSameRuleTwice"), _errorColor, MessageIcon.MI_Error));
             }
         }
 
