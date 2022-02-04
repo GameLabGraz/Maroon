@@ -472,6 +472,9 @@ namespace StateMachine {
             _enemyMoves = new EnemyMoves();
             _players.ResetPlayerCounter();
             _scenario.InitScenario(_players, _enemyMoves, scenarioName);
+            foreach(Player player in _players) {
+                player.GetFigures().ResetFiguresToActive();
+            }
             _actualState = new State("Start");
         }
 
@@ -637,7 +640,7 @@ namespace StateMachine {
                     CheckEndConditions();
                     yield break;
                 } else {
-                    _logger.LogStateMachineMessage("Regel " + (rulesetId + 1) + " wird ausgeführt", new Color32(0, 0, 0, 255), player._isUser);
+                    _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("Rule") + " " + (rulesetId + 1) + " " + LanguageManager.Instance.GetString("IsExecuted"), new Color32(0, 0, 0, 255), player._isUser);
                 }
 
                 // reset can move flag of figures
