@@ -102,7 +102,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 OnMoleculeFreed);
         }
 
-        private void SpawnReactionMaterial()
+        private void SpawnReactionMaterial(bool isSpawnButtonClicked = false)
         {
             Transform catalystSurfaceTransform = _catalystSurface.gameObject.transform;
             for (int i = 0; i < numberSpawnedO2Molecules; i++)
@@ -117,6 +117,9 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 onReactionStart += molecule.ReactionStart;
                 AddMoleculeToActiveList(molecule);
             }
+
+            if (isSpawnButtonClicked) return;
+            
             for (int i = 0; i < numberSpawnedCOMolecules; i++)
             {
                 Vector3 spawnPos = new Vector3(Random.Range(-0.8f, 2.2f), Random.Range(0.5f, 2.0f), Random.Range(0.3f, -2.0f));
@@ -197,6 +200,11 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             temperature.onValueChanged.RemoveListener(molecule.TemperatureChanged);
             partialPressure.onValueChanged.RemoveListener(molecule.PressureChanged);
             _activeMolecules.Remove(molecule);
+        }
+
+        public void SpawnO2ButtonClicked()
+        {
+            SpawnReactionMaterial(true);
         }
     }
 }
