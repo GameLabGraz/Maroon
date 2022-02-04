@@ -12,6 +12,9 @@ using TMPro;
 namespace StateMachine {
     public class GameController : MonoBehaviour
     {
+        [SerializeField]
+        private List<TextAsset> _scenarios = new List<TextAsset>();
+
         private Players _players = new Players();
         private Rulesets _rulesets = new Rulesets();
 
@@ -65,16 +68,18 @@ namespace StateMachine {
             _players.AddPlayer(new Player("white"));
             _players.AddPlayer(new Player("black"));
             _scenario = new Scenario(_map);
-            _scenario.InitScenario(_players, _enemyMoves, "0_Tutorial");
+            _scenario.InitScenario(_players, _enemyMoves, _scenarios[0]);
 
-            GameObject dropdownObject = GameObject.Find("ScenarioSelectionDropdown");
-            Dropdown dropdown = dropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
+            var dropdownObject = GameObject.Find("ScenarioSelectionDropdown");
+            var dropdown = dropdownObject.GetComponent<Dropdown>();
             dropdown.ClearOptions();
 
-            foreach (string scenarioName in _scenario.GetScenarioList()) {
-                Dropdown.OptionData option = new Dropdown.OptionData();
-                option.text = scenarioName;
-                dropdown.options.Add(option);
+            foreach (var scenario in _scenarios)
+            {
+                dropdown.options.Add(new TMP_Dropdown.OptionData
+                {
+                    text = scenario.name
+                });
             }
             dropdown.value = 0;
             dropdown.RefreshShownValue();
@@ -463,15 +468,14 @@ namespace StateMachine {
 
             GameObject scenarioDropdownObject = GameObject.Find("ScenarioSelectionDropdown");
             Dropdown scenarioDropdown = scenarioDropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
-            int scenarioValue = scenarioDropdown.value;
-            string scenarioName = scenarioDropdown.options[scenarioValue].text;
+            int scenarioIndex = scenarioDropdown.value;
 
             foreach(Player player in _players) {
                 player.RemoveFigures();
             }
             _enemyMoves = new EnemyMoves();
             _players.ResetPlayerCounter();
-            _scenario.InitScenario(_players, _enemyMoves, scenarioName);
+            _scenario.InitScenario(_players, _enemyMoves, _scenarios[scenarioIndex]);
             foreach(Player player in _players) {
                 player.GetFigures().ResetFiguresToActive();
             }
