@@ -6,6 +6,7 @@ using Maroon.UI;
 using Button = UnityEngine.UI.Button;
 using VerticalLayoutGroup = UnityEngine.UI.VerticalLayoutGroup;
 using Selectable = UnityEngine.UI.Selectable;
+using LocalizedTMP = GEAR.Localization.Text.LocalizedTMP;
 using TMPro;
 
 namespace StateMachine {
@@ -234,6 +235,9 @@ namespace StateMachine {
 
                 TextMeshProUGUI textmeshObject = rulesetTextObject.GetComponent(typeof(TextMeshProUGUI)) as TextMeshProUGUI;
 
+                LocalizedTMP localizedTMPObject = rulesetTextObject.GetComponent<LocalizedTMP>();
+                localizedTMPObject.enabled = false;
+                
                 if (textmeshObject == null) {
                     Debug.Log("[ERROR]: TextMeshProUGUI cloning did not work properly!");
                     return;
@@ -444,6 +448,7 @@ namespace StateMachine {
                 player.RemoveFigures();
             }
             _enemyMoves = new EnemyMoves();
+            _players.ResetPlayerCounter();
             _scenario.InitScenario(_players, _enemyMoves, scenarioName);
             _actualState = new State("Start");
         }
@@ -668,7 +673,7 @@ namespace StateMachine {
                 }
 
                 //TODO now every figure of ai just moves one step
-                if (moveEnds || player == _players.GetPlayerAtIndex(1) || ruleToExecute.GetMode().GetModeCode() == 1 || ruleToExecute.GetMode().GetModeCode() == 2) {
+                if (moveEnds || player != _players.GetUserPlayer() || ruleToExecute.GetMode().GetModeCode() == 1 || ruleToExecute.GetMode().GetModeCode() == 2) {
                     Player nextPlayer =  _players.GetNextPlayer();
                     if (nextPlayer != null) {
                         player = nextPlayer;

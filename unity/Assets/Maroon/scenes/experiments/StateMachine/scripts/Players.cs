@@ -42,4 +42,8 @@ public class Players : IEnumerable
     public Player GetUserPlayer() {
        return _players.Find(element => element._isUser == true);
     }
+
+    public void ResetPlayerCounter() {
+        _actualPlayer = 0;
+    }
 }
