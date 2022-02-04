@@ -37,9 +37,12 @@ namespace StateMachine {
         
         private int _dataTableRowLength = 5;
 
+        private DialogueManager _dialogueManager;
+
         // Start is called before the first frame update
         void Start()
         {
+            _dialogueManager = FindObjectOfType<DialogueManager>();
             _stateMenu = GameObject.Find("StateMenu");   
             _rulesetMenu = GameObject.Find("RulesetMenu");
             GameObject surroundingObject = GameObject.Find("Surrounding");
@@ -94,16 +97,23 @@ namespace StateMachine {
                 dropdown.ClearOptions();
                 foreach (Direction item in _directions)
                 {
-                    dropdown.options.Add(new TMP_Dropdown.OptionData(
-                        LanguageManager.Instance.GetString(item.GetDirectionName(), language)));
+                    string directionName = LanguageManager.Instance.GetString(item.GetDirectionName(), language);
+                    dropdown.options.Add(new TMP_Dropdown.OptionData(directionName));
+                    
+                    if (directionName != null) {
+                        item.SetDirectionName(directionName);
+                    }
                 }
                 dropdown.RefreshShownValue();
             });
 
             foreach (Direction item in _directions)
             {
-                dropdown.options.Add(new TMP_Dropdown.OptionData(
-                    LanguageManager.Instance.GetString(item.GetDirectionName())));
+                string directionName = LanguageManager.Instance.GetString(item.GetDirectionName());
+                dropdown.options.Add(new TMP_Dropdown.OptionData(directionName));
+                if (directionName != null) {
+                    item.SetDirectionName(directionName);
+                }
             }
             
             dropdown.value = 0;
@@ -126,16 +136,23 @@ namespace StateMachine {
                 dropdown.ClearOptions();
                 foreach (Mode item in _modes)
                 {
-                    dropdown.options.Add(new TMP_Dropdown.OptionData(
-                        LanguageManager.Instance.GetString(item.GetModeName(), language)));
+                    string modeName = LanguageManager.Instance.GetString(item.GetModeName(), language);
+                    dropdown.options.Add(new TMP_Dropdown.OptionData(modeName));
+
+                    if (modeName != null) {
+                        item.SetModeName(modeName);
+                    }
                 }
                 dropdown.RefreshShownValue();
             });
 
             foreach (Mode item in _modes)
             {
-                dropdown.options.Add(new TMP_Dropdown.OptionData(
-                    LanguageManager.Instance.GetString(item.GetModeName())));
+                string modeName = LanguageManager.Instance.GetString(item.GetModeName());
+                dropdown.options.Add(new TMP_Dropdown.OptionData(modeName));
+                if (modeName != null) {
+                    item.SetModeName(modeName);
+                }
             }
 
             dropdown.value = 1;
@@ -166,11 +183,13 @@ namespace StateMachine {
             Mode mode = _modes.FindMode(modeDropdown.options[modeValue].text);
             Ruleset ruleset = new Ruleset(start, end, direction, mode, null, _surrounding.CloneSurrounding());
 
-            bool isAdded = _rulesets.AddRuleset(ruleset);
+            (bool isAdded, string message) = _rulesets.AddRuleset(ruleset);
             
             if (isAdded) {
                 ResetDeleteRulesetDropdown();
                 CreateNewRulesetGameObject(ruleset);
+            } else {
+                _dialogueManager.ShowMessage(LanguageManager.Instance.GetString(message));
             }
         }
 
@@ -314,7 +333,7 @@ namespace StateMachine {
         public void RunStateMachine() {
             SetVisibilityOfMenus(false);
             ClearStateMenu();
-            StartCoroutine(MakeMove());
+            StartCoroutine(MakeMove()); 
         }
 
         private void ClearStateMenu() {
@@ -341,6 +360,7 @@ namespace StateMachine {
             }
         }
         public void ChangeToEditMode() {
+            StopCoroutine(MakeMove());
             SetVisibilityOfMenus(true);
             ResetScenario();
         }
@@ -352,7 +372,7 @@ namespace StateMachine {
             int deleteSingleRulesetValue = deleteSingleRulesetDropdown.value;
 
             if (deleteSingleRulesetDropdown.options.Count == 0) {
-                Debug.Log("[ERROR]: There is no ruleset to delete!");
+                _dialogueManager.ShowMessage(LanguageManager.Instance.GetString("ErrorNoRuleToDelete"));
                 return;
             }
 
@@ -420,6 +440,7 @@ namespace StateMachine {
             foreach(Player player in _players) {
                 player.RemoveFigures();
             }
+            _enemyMoves = new EnemyMoves();
             _scenario.InitScenario(_players, _enemyMoves, scenarioName);
             _actualState = new State("Start");
         }
@@ -496,6 +517,11 @@ namespace StateMachine {
             Figure figureToMove = player.GetFigures().GetFigureAtPosition(0);
 
             _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorNoRule"), new Color32(0, 0, 0, 255), player._isUser);
+        
+            if (figureToMove == null) {
+                _dialogueManager.ShowMessage(LanguageManager.Instance.GetString("ErrorNoFigureToMove"));
+                return;
+            }
 
             Field endField = _map.GetFieldByIndices(figureToMove._positionColumn, figureToMove._positionRow);
             
@@ -521,8 +547,10 @@ namespace StateMachine {
             } 
 
             if (isSuccess) {
+                _dialogueManager.ShowMessage(LanguageManager.Instance.GetString("CorrectTargetAndEndState"));
                 _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("CorrectTargetAndEndState"), new Color32(65, 154, 40, 255), player._isUser);
             } else {
+                _dialogueManager.ShowMessage(LanguageManager.Instance.GetString("ErrorIncorrectTargetOrEndState"));
                 _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorIncorrectTargetOrEndState"), new Color32(154, 0, 11, 255), player._isUser);
             }
 
@@ -545,8 +573,7 @@ namespace StateMachine {
 
                     // no figure to move available
                     if (player.GetFigures().Count() == 0) {
-                        _logger.LogStateMachineMessage("Keine bewegbare Figur mehr vorhanden", new Color32(0, 0, 0, 255), player._isUser);
-                        
+                        _logger.LogStateMachineMessage("Keine bewegbare Figur mehr vorhanden", new Color32(154, 0, 11, 255), player._isUser);
                         CheckEndConditions();
                         yield break;
                     }
@@ -555,8 +582,6 @@ namespace StateMachine {
                 }
 
                 string name = figureToMove.gameObject.name;
-                Rulesets rulesets =  _enemyMoves.GetNextMove(name,_actualState, _modes);
-
                 Ruleset ruleToExecute = null;
                 int rulesetId = 0;
                 Field fieldAfterMove = null;
@@ -564,6 +589,7 @@ namespace StateMachine {
                 if (player == _players.GetUserPlayer()) {
                     (ruleToExecute, rulesetId, fieldAfterMove) = FindRuleToExecute(figureToMove, _rulesets, true);
                 } else {
+                    Rulesets rulesets =  _enemyMoves.GetNextMove(name, _actualState, _modes, _map);
                     (ruleToExecute, rulesetId, fieldAfterMove) = FindRuleToExecute(figureToMove, rulesets, false);
                 }
 
@@ -611,7 +637,7 @@ namespace StateMachine {
                 } 
 
                 //TODO now every figure of ai just moves one step
-                if (moveEnds || player == _players.GetPlayerAtIndex(1) || ruleToExecute.GetMode().GetModeCode() == 2) {
+                if (moveEnds || player == _players.GetPlayerAtIndex(1) || ruleToExecute.GetMode().GetModeCode() == 1) {
                     Player nextPlayer =  _players.GetNextPlayer();
                     if (nextPlayer != null) {
                         player = nextPlayer;

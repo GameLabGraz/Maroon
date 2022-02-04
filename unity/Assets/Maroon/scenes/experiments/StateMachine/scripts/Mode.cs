@@ -23,4 +23,8 @@ public class Mode
     public int GetModeCode() {
         return _modeCode;
     }
+
+    public void SetModeName(string modeName) {
+        _name = modeName;
+    }
 }

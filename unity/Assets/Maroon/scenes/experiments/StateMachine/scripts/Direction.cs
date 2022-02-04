@@ -29,4 +29,8 @@ public class Direction
     public int GetRowMovementFactor() {
         return _rowMovement;
     }
+
+    public void SetDirectionName(string directionName) {
+        _name = directionName;
+    }
 }

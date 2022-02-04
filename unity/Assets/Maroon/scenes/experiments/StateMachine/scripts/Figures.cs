@@ -17,7 +17,10 @@ public class Figures : IEnumerable
     }
 
     public Figure GetFigureAtPosition(int position) {
-        return _figures[position];
+        if (position < _figures.Count) {
+            return _figures[position];
+        }
+        return null;
     }
     public Figure GetFigureByName(string name) {
         return _figures.Find(element => element.gameObject.name == name);

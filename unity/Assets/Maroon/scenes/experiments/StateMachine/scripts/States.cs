@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Maroon.UI;
+using GEAR.Localization;
 
 public class States : MonoBehaviour, IEnumerable
 {
     private List<State> _states = new List<State>();
-
+    private DialogueManager _dialogueManager;
     void Start() {
+        _dialogueManager = FindObjectOfType<DialogueManager>();
         initDropdownMenus();
     }
 
@@ -60,6 +62,10 @@ public class States : MonoBehaviour, IEnumerable
         InputField inputField = inputFieldObject.GetComponent(typeof(InputField)) as InputField;
 
         if (inputField != null) {
+            if (inputField.text == "") {
+                 _dialogueManager.ShowMessage(LanguageManager.Instance.GetString("ErrorNoStateEntered"));
+                return;
+            }
 
             bool stateNameAlreadyInUse = false;
             foreach(State stateToCheck in _states) {
@@ -71,6 +77,10 @@ public class States : MonoBehaviour, IEnumerable
             if (!stateNameAlreadyInUse) {
                 _states.Add(new State(inputField.text));
                 addOption(inputField.text);
+            } else {
+                if (_dialogueManager != null) {
+                    _dialogueManager.ShowMessage(LanguageManager.Instance.GetString("ErrorSameState"));
+                }
             }
         }
         inputField.text = "";

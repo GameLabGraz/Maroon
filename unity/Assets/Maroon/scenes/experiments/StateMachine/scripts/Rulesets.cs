@@ -7,7 +7,7 @@ public class Rulesets : IEnumerable
 {
     private List<Ruleset> _rules = new List<Ruleset>();
 
-    public bool AddRuleset(Ruleset newRuleset) {
+    public (bool, string) AddRuleset(Ruleset newRuleset) {
 
        
         foreach (Ruleset rule in _rules) {
@@ -20,20 +20,18 @@ public class Rulesets : IEnumerable
                 rule.GetDirection().GetDirectionName() == newRuleset.GetDirection().GetDirectionName() &&
                 rule.GetMode().GetModeName() == newRuleset.GetMode().GetModeName() &&
                 CompareSurrounding(surroundingToCheck, surroundingToCheck2)) {
-                    //Debug.Log("Same rule found");
-                    return false;
+                    return (false, "ErrorSameRuleTwice");
                 }
             
             // If rule could not be desided by the state machine
             if (rule.GetStartState().GetStateName() == newRuleset.GetStartState().GetStateName() &&
                 rule.GetEndState().GetStateName() == newRuleset.GetEndState().GetStateName() &&
                 CompareSurrounding(surroundingToCheck, surroundingToCheck2)) {
-                    //Debug.Log("Similar rule already exists");
-                    return false;
+                    return (false, "ErrorSimilarRule");
                 }
         }
         _rules.Add(newRuleset);
-        return true;
+        return (true, "");
     }
 
     private bool CompareSurrounding(List<List<SurroundingField>> surroundingToCheck, List<List<SurroundingField>> surroundingToCheck2) {

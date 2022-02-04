@@ -14,12 +14,10 @@ public class EnemyMoves : IEnumerable
         return _enemyMoves.GetEnumerator();
     }
 
-    public Rulesets GetNextMove(string name, State state, Modes modes) {
-        EnemyMove move = _enemyMoves.Find(element => element.GetFigure().gameObject.name == name);
+    public Rulesets GetNextMove(string name, State state, Modes modes, Map map) {
+        List<EnemyMove> moves = _enemyMoves.FindAll(element => element.GetFigure().gameObject.name == name);
 
-        // TODO build from move one hit and one empty field move
-
-        if (move == null) {
+        if (moves == null) {
             return null;
         }
 
@@ -27,10 +25,25 @@ public class EnemyMoves : IEnumerable
         Rulesets rulesets = new Rulesets();
 
         foreach(Mode mode in modes) {
-            if (mode.GetModeName() == "Figur schlagen" && move.GetFigure().gameObject.name.Contains("pawn")) {
-                continue;
+            foreach(EnemyMove enemyMove in moves) {
+                if (mode.GetModeCode() == 1 && 
+                    (enemyMove.GetDirection().GetDirectionName() == "hitleftdown" || enemyMove.GetDirection().GetDirectionName() == "hitrightdown" ||
+                     enemyMove.GetDirection().GetDirectionName() == "hitleftup" || enemyMove.GetDirection().GetDirectionName() == "hitrightup")){//&&  enemyMove.GetFigure().gameObject.name.Contains("pawn")) {
+
+                       Field field = map.GetFieldByIndices(enemyMove.GetFigure()._positionColumn + enemyMove.GetDirection().GetColumnMovementFactor(), enemyMove.GetFigure()._positionRow + enemyMove.GetDirection().GetRowMovementFactor());
+                       if (field != null && field.GetFigure() != null && enemyMove.GetFigure()._player._playerName != field.GetFigure()._player._playerName) {
+                           rulesets = new Rulesets();
+                           rulesets.AddRuleset(new Ruleset(state, state, enemyMove.GetDirection(), mode, null, new List<List<SurroundingField>>()));
+                           return rulesets;
+                       }
+                }
+                rulesets.AddRuleset(new Ruleset(state, state, enemyMove.GetDirection(), mode, null, new List<List<SurroundingField>>()));
+
             }
-            rulesets.AddRuleset(new Ruleset(state, state, move.GetDirection(), mode, null, new List<List<SurroundingField>>()));
+            //if (mode.GetModeName() == "Figur schlagen" && move.GetFigure().gameObject.name.Contains("pawn")) {
+            //    continue;
+            //}
+            //rulesets.AddRuleset(new Ruleset(state, state, move.GetDirection(), mode, null, new List<List<SurroundingField>>()));
         }
         return rulesets;
     }
