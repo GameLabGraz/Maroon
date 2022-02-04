@@ -8,7 +8,6 @@ using Maroon.GlobalEntities;
 using Maroon.Physics.CoordinateSystem;
 using TMPro;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 using Maroon.GlobalEntities;
 
 public class Test_RulerDisplay : MonoBehaviour
@@ -78,28 +77,14 @@ public class Test_RulerDisplay : MonoBehaviour
         EndPositionXUnit.GetComponent<TextMeshProUGUI>().text = Enum.GetName(typeof(Unit), subDivUnits.ElementAt(0));
         EndPositionYUnit.GetComponent<TextMeshProUGUI>().text = Enum.GetName(typeof(Unit), subDivUnits.ElementAt(1));
         EndPositionZUnit.GetComponent<TextMeshProUGUI>().text = Enum.GetName(typeof(Unit), subDivUnits.ElementAt(2));
-
-        //StartPositionZ.GetComponent<TMP_InputField>().interactable = CoulombLogic.Instance.IsIn3dMode();
-        //EndPositionZ.GetComponent<TMP_InputField>().interactable = CoulombLogic.Instance.IsIn3dMode();
-
-        /* CoulombLogic.Instance.onModeChange.AddListener(in3dMode =>
-         {
-             StartPositionZ.GetComponent<TMP_InputField>().interactable = in3dMode;
-             EndPositionZ.GetComponent<TMP_InputField>().interactable = in3dMode;
-         });*/
     }
 
     private void CheckVariable(float endValue, Vector3 affectedAxis, GameObject selectedObject)
     {
-       // if (!selectedObject) return;
-
-        //Update each position -> when in coord system, display coords from origin of system
         var newPosition = CoordSystemHelper.Instance.CalculateNewWorldPosition(selectedObject.transform.position, endValue, affectedAxis);
         selectedObject.transform.position = newPosition;
 
         UpdateDisplay();
-        
-       // selectedObject.onPositionChanged.Invoke(selectedObject);
     }
 
     public void UpdateDisplay()
