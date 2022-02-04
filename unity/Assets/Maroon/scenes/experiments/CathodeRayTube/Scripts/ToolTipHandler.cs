@@ -8,27 +8,35 @@ using UnityEngine.UI;
 public class ToolTipHandler : MonoBehaviour
 {
     [SerializeField] private Camera camera;
-    [SerializeField] private GameObject toolTipPanel;
-    [SerializeField] private GameObject toolTipText;
+    [SerializeField] private GameObject partInfoToggle;
+    private bool collision;
+    private Transform hitObject;
 
-    private void Start()
+    private void Update()
     {
-        toolTipPanel.SetActive(false);
-        toolTipText.GetComponent<TextMeshProUGUI>().text = "";
-    }
-
-    void Update()
-    {
+        if (!partInfoToggle.GetComponent<Toggle>().isOn)
+            return;
+        
         RaycastHit hit;
         Ray ray = camera.ScreenPointToRay(Input.mousePosition);
-        
-        toolTipPanel.SetActive(false);
-        toolTipText.GetComponent<TextMeshProUGUI>().text = "";
-        
+
+        collision = false;
         if (Physics.Raycast(ray, out hit) && hit.transform.IsChildOf(transform))
         {
-            toolTipPanel.SetActive(true);
-            toolTipText.GetComponent<TextMeshProUGUI>().text = hit.transform.name;
+            collision = true;
+            hitObject = hit.transform;
+        }
+    }
+    
+    private void OnGUI()
+    {
+        if (collision)
+        {
+            Vector2 screenPos = Event.current.mousePosition;
+            Vector2 convertedGUIPos = GUIUtility.ScreenToGUIPoint(screenPos);
+ 
+            GUI.contentColor = Color.black;
+            GUI.Label(new Rect(convertedGUIPos.x + 15, convertedGUIPos.y, 200, 20), hitObject.name);
         }
     }
 }
