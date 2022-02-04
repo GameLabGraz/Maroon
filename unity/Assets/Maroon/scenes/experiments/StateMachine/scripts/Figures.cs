@@ -43,7 +43,13 @@ public class Figures : IEnumerable
         return _figures.Find(element => element.gameObject.name == name);
     }
     public int Count() {
-        return _figures.Count;
+        int counter = 0;
+        foreach(Figure figure in _figures) {
+            if (figure.gameObject.activeSelf) {
+                counter++;
+            }
+        }
+        return counter;
     }
 
     public IEnumerator GetEnumerator() {

@@ -237,7 +237,7 @@ namespace StateMachine {
 
                 LocalizedTMP localizedTMPObject = rulesetTextObject.GetComponent<LocalizedTMP>();
                 localizedTMPObject.enabled = false;
-                
+
                 if (textmeshObject == null) {
                     Debug.Log("[ERROR]: TextMeshProUGUI cloning did not work properly!");
                     return;
@@ -340,6 +340,9 @@ namespace StateMachine {
         public void RunStateMachine() {
             SetVisibilityOfMenus(false);
             ClearStateMenu();
+            GameObject scenarioDropdownObject = GameObject.Find("ScenarioSelectionDropdown");
+            Dropdown scenarioDropdown = scenarioDropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
+            scenarioDropdown.enabled = false;
             StartCoroutine(MakeMove()); 
         }
 
@@ -370,6 +373,9 @@ namespace StateMachine {
             StopCoroutine(MakeMove());
             SetVisibilityOfMenus(true);
             ResetScenario();
+            GameObject scenarioDropdownObject = GameObject.Find("ScenarioSelectionDropdown");
+            Dropdown scenarioDropdown = scenarioDropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
+            scenarioDropdown.enabled = true;
         }
 
         public void DeleteRuleset() {
