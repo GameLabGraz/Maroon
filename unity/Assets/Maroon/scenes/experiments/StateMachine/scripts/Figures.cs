@@ -12,6 +12,21 @@ public class Figures : IEnumerable
         _figures.Add(newFigure);
     }
 
+    public Figure GetNextActiveFigure() {
+        foreach(Figure figure in _figures) {
+            if (figure._canMove && figure.gameObject.activeSelf) {
+                return figure;
+            }
+        }
+        return null;
+    }
+
+    public void ResetFiguresToActive() {
+        foreach(Figure figure in _figures) {
+            figure._canMove = true;
+        }
+    }
+
     public void RemoveFigure(int position) {
         if (_figures.Count > position) {
             _figures.RemoveAt(position);

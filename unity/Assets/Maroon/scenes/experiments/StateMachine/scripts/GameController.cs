@@ -238,7 +238,11 @@ namespace StateMachine {
                     Debug.Log("[ERROR]: TextMeshProUGUI cloning did not work properly!");
                     return;
                 }
-
+                
+                for (var counter2 = 0; counter2 < rulesetTextObject.transform.childCount; counter2++) {
+                    GameObject objtest = rulesetTextObject.transform.GetChild(counter2).gameObject;
+                    textmeshObject.text = rulesetTextArray[counter];
+                }
                 textmeshObject.text = rulesetTextArray[counter];
             }
 
@@ -297,7 +301,6 @@ namespace StateMachine {
             }
 
             rulesetTextBackgroundObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-
             return (rulesetTextBackgroundObject, rulesetTextObject);
         }
 
@@ -514,7 +517,7 @@ namespace StateMachine {
         public void CheckEndConditions() {
 
             Player player = _players.GetUserPlayer();
-            Figure figureToMove = player.GetFigures().GetFigureAtPosition(0);
+            Figure figureToMove = player.GetFigures().GetNextActiveFigure();
 
             _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorNoRule"), new Color32(0, 0, 0, 255), player._isUser);
         
@@ -563,22 +566,18 @@ namespace StateMachine {
             _actualDirection = null;
             bool moveEnds = false;
 
-            Figure figureToMove = player.GetFigures().GetFigureAtPosition(0);
+            Figure figureToMove = player.GetFigures().GetNextActiveFigure();
             Field actualField = _map.GetFieldByIndices(figureToMove._positionColumn, figureToMove._positionRow);
             _surrounding.UpdateSurrounding(actualField, _map);
 
             while (true) {
-                while (!figureToMove.gameObject.activeSelf) {
-                    player.GetFigures().RemoveFigure(0);
 
-                    // no figure to move available
-                    if (player.GetFigures().Count() == 0) {
-                        _logger.LogStateMachineMessage("Keine bewegbare Figur mehr vorhanden", new Color32(154, 0, 11, 255), player._isUser);
-                        CheckEndConditions();
-                        yield break;
-                    }
+                figureToMove = player.GetFigures().GetNextActiveFigure();
 
-                    figureToMove = player.GetFigures().GetFigureAtPosition(0);
+                if (figureToMove == null) {
+                    _logger.LogStateMachineMessage("Keine bewegbare Figur mehr vorhanden", new Color32(154, 0, 11, 255), player._isUser);
+                    CheckEndConditions();
+                    yield break;
                 }
 
                 string name = figureToMove.gameObject.name;
@@ -592,12 +591,7 @@ namespace StateMachine {
                     Rulesets rulesets =  _enemyMoves.GetNextMove(name, _actualState, _modes, _map);
                     (ruleToExecute, rulesetId, fieldAfterMove) = FindRuleToExecute(figureToMove, rulesets, false);
                     if (ruleToExecute == null) {
-                        player.GetFigures().RemoveFigure(0);
-                        if (player.GetFigures().Count() == 0){
-                            CheckEndConditions();
-                            yield break;
-                        }
-                        figureToMove = player.GetFigures().GetFigureAtPosition(0);
+                        figureToMove._canMove = false;
                         continue;
                     }
                 }
@@ -609,6 +603,9 @@ namespace StateMachine {
                 } else {
                     _logger.LogStateMachineMessage("Regel " + (rulesetId + 1) + " wird ausgeführt", new Color32(0, 0, 0, 255), player._isUser);
                 }
+
+                // reset can move flag of figures
+                player.GetFigures().ResetFiguresToActive();
                 
                 // Set moving factors according to move
                 int columnMovementFactor = ruleToExecute.GetDirection().GetColumnMovementFactor();
@@ -622,13 +619,12 @@ namespace StateMachine {
                     moveEnds = false;
                     _actualDirection = null;
 
-                    figureToMove = player.GetFigures().GetFigureAtPosition(0);
+                    figureToMove = player.GetFigures().GetNextActiveFigure();
                     actualField = _map.GetFieldByIndices(figureToMove._positionColumn, figureToMove._positionRow);
                     _surrounding.UpdateSurrounding(actualField, _map);
 
                     continue;
                 }
-
 
                 // Set new state
                 _actualState = ruleToExecute.GetEndState();
@@ -666,6 +662,11 @@ namespace StateMachine {
                     }
                 }
 
+                if (player == _players.GetUserPlayer()) {
+                    actualField = _map.GetFieldByIndices(figureToMove._positionColumn, figureToMove._positionRow);
+                    _surrounding.UpdateSurrounding(actualField, _map);
+                }
+
                 //TODO now every figure of ai just moves one step
                 if (moveEnds || player == _players.GetPlayerAtIndex(1) || ruleToExecute.GetMode().GetModeCode() == 1 || ruleToExecute.GetMode().GetModeCode() == 2) {
                     Player nextPlayer =  _players.GetNextPlayer();
@@ -676,9 +677,7 @@ namespace StateMachine {
                     _actualDirection = null;
                 }
                 
-                figureToMove = player.GetFigures().GetFigureAtPosition(0);
-                actualField = _map.GetFieldByIndices(figureToMove._positionColumn, figureToMove._positionRow);
-                _surrounding.UpdateSurrounding(actualField, _map);
+                figureToMove = player.GetFigures().GetNextActiveFigure();
 
                 yield return new WaitForSeconds(1);
             }
