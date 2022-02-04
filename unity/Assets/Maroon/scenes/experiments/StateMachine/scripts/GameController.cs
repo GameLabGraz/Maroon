@@ -93,17 +93,17 @@ namespace StateMachine {
             dropdown.ClearOptions();
 
             // ToDo: Use a Localized DropDown!!!
-            _directions.AddDirection(new Direction("Up", 1, 0));
-            _directions.AddDirection(new Direction("Down", -1, 0));
-            _directions.AddDirection(new Direction("Left", 0, -1));
-            _directions.AddDirection(new Direction("Right", 0, 1));
+            _directions.AddDirection(new Direction("Up", "Up", 1, 0));
+            _directions.AddDirection(new Direction("Down", "Down", -1, 0));
+            _directions.AddDirection(new Direction("Left", "Left", 0, -1));
+            _directions.AddDirection(new Direction("Right", "Right", 0, 1));
 
             LanguageManager.Instance.OnLanguageChanged.AddListener(language =>
             {
                 dropdown.ClearOptions();
                 foreach (Direction item in _directions)
                 {
-                    string directionName = LanguageManager.Instance.GetString(item.GetDirectionName(), language);
+                    string directionName = LanguageManager.Instance.GetString(item.GetDirectionKey(), language);
                     dropdown.options.Add(new TMP_Dropdown.OptionData(directionName));
                     
                     if (directionName != null) {
@@ -115,7 +115,7 @@ namespace StateMachine {
 
             foreach (Direction item in _directions)
             {
-                string directionName = LanguageManager.Instance.GetString(item.GetDirectionName());
+                string directionName = LanguageManager.Instance.GetString(item.GetDirectionKey());
                 dropdown.options.Add(new TMP_Dropdown.OptionData(directionName));
                 if (directionName != null) {
                     item.SetDirectionName(directionName);
@@ -133,16 +133,16 @@ namespace StateMachine {
 
             // TODO remove magic values and make enum
             // ToDO use localized DropDown
-            _modes.AddMode(new Mode("CaptureFigure", 1));
-            _modes.AddMode(new Mode("EnterEmptyField", 0));
-            _modes.AddMode(new Mode("EmptyFieldEndMove", 2));
+            _modes.AddMode(new Mode("CaptureFigure", "CaptureFigure",1));
+            _modes.AddMode(new Mode("EnterEmptyField", "EnterEmptyField", 0));
+            _modes.AddMode(new Mode("EmptyFieldEndMove", "EmptyFieldEndMove", 2));
 
             LanguageManager.Instance.OnLanguageChanged.AddListener(language =>
             {
                 dropdown.ClearOptions();
                 foreach (Mode item in _modes)
                 {
-                    string modeName = LanguageManager.Instance.GetString(item.GetModeName(), language);
+                    string modeName = LanguageManager.Instance.GetString(item.GetModeKey(), language);
                     dropdown.options.Add(new TMP_Dropdown.OptionData(modeName));
 
                     if (modeName != null) {
@@ -154,7 +154,7 @@ namespace StateMachine {
 
             foreach (Mode item in _modes)
             {
-                string modeName = LanguageManager.Instance.GetString(item.GetModeName());
+                string modeName = LanguageManager.Instance.GetString(item.GetModeKey());
                 dropdown.options.Add(new TMP_Dropdown.OptionData(modeName));
                 if (modeName != null) {
                     item.SetModeName(modeName);

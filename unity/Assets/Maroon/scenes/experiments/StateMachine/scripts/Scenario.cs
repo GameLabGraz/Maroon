@@ -125,7 +125,7 @@ public class Scenario
         Directions enemyDirections = new Directions();
 
         foreach (var direction in jsonScenario.directions) {
-            enemyDirections.AddDirection(new Direction(direction.name, direction.rowMovement, direction.columnMovement));
+            enemyDirections.AddDirection(new Direction(direction.name, direction.name, direction.rowMovement, direction.columnMovement));
         }
 
         // initialise enemies moves
