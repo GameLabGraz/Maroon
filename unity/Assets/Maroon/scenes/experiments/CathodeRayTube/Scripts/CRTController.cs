@@ -28,6 +28,10 @@ namespace Maroon.Physics.CathodeRayTube
 
         private float horizontalDistance;
         private float verticalDistance;
+        
+        [SerializeField] private QuantityInt Ex;
+        [SerializeField] private QuantityInt Ey;
+        [SerializeField] private QuantityInt Ez;
 
         [SerializeField] private QuantityFloat Fx;
         [SerializeField] private QuantityFloat Fy;
@@ -113,11 +117,14 @@ namespace Maroon.Physics.CathodeRayTube
                     VerticalCapacitor.transform.localScale = VertCapStartScale;
                     break;
             }
+            Ex.Value = (int)(V_x / _electronGunLength);
+            Ey.Value = (int)(V_y / horizontalDistance);
+            Ez.Value = (int)(V_z / verticalDistance);
             
             Fx.Value = (-_electronCharge) * (V_x / _electronGunLength) * (float)Math.Pow(10, 15);
             Fy.Value = (-_electronCharge) * (V_y / horizontalDistance) * (float)Math.Pow(10, 15);
             Fz.Value = (-_electronCharge) * (V_z / verticalDistance) * (float)Math.Pow(10, 15);
-
+            
             var newPosition = HorizontalCapacitor.transform.position;
             HorizontalCapacitorTop.transform.position = newPosition + new Vector3(0, horizontalDistance / 2, 0);
             HorizontalCapacitorBottom.transform.position = newPosition - new Vector3(0, horizontalDistance / 2, 0);
