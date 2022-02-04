@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Assets.Maroon.reusablePrefabs.NewRuler.Scripts;
+using Maroon.GlobalEntities;
 using Maroon.Physics.CoordinateSystem;
 using TMPro;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
+using Maroon.GlobalEntities;
 
 public class Test_RulerDisplay : MonoBehaviour
 {
@@ -30,39 +32,44 @@ public class Test_RulerDisplay : MonoBehaviour
     [SerializeField] private GameObject EndPositionXUnit;
     [SerializeField] private GameObject EndPositionYUnit;
     [SerializeField] private GameObject EndPositionZUnit;
+    
+    private Vector3 startMeasuringPosition;
+    private Vector3 endMeasuringPosition;
 
-    private Vector3 startMeasuringPosition => CoordSystem.Instance.GetPositionInAxisUnits(ruler.RulerStart.transform.position);
-    private Vector3 endMeasuringPosition => CoordSystem.Instance.GetPositionInAxisUnits(ruler.RulerEnd.transform.position);
+    public Vector3 StartMeasuringPosition => CoordSystemHelper.Instance.GetSystemPosition(ruler.RulerStart.transform.position);
 
+    public Vector3 EndMeasuringPosition => CoordSystemHelper.Instance.GetSystemPosition(ruler.RulerEnd.transform.position);
+
+    //TODO: Third parameter of CheckVariable should be the select script e.g. ruler.RulerStart.GetComponent<PC_SelectScript>() to invoke coloumbs law change logic.
     private void Start()
     {
         StartPositionX.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(endVal =>
         {
-            CheckVariable(endVal, Vector3.right, ruler.RulerStart.GetComponent<PC_SelectScript>());
+            CheckVariable(endVal, Vector3.right , ruler.RulerStart);
         });
         StartPositionY.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(endVal =>
         {
-            CheckVariable(endVal, Vector3.up, ruler.RulerStart.GetComponent<PC_SelectScript>());
+            CheckVariable(endVal, Vector3.up, ruler.RulerStart);
         });
         StartPositionZ.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(endVal =>
         {
-            CheckVariable(endVal, Vector3.forward, ruler.RulerStart.GetComponent<PC_SelectScript>());
+            CheckVariable(endVal, Vector3.forward, ruler.RulerStart);
         });
 
         EndPositionX.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(endVal =>
         {
-            CheckVariable(endVal, Vector3.right, ruler.RulerEnd.GetComponent<PC_SelectScript>());
+            CheckVariable(endVal, Vector3.right, ruler.RulerEnd);
         });
         EndPositionY.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(endVal =>
         {
-            CheckVariable(endVal, Vector3.up, ruler.RulerEnd.GetComponent<PC_SelectScript>());
+            CheckVariable(endVal, Vector3.up, ruler.RulerEnd);
         });
         EndPositionZ.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(endVal =>
         {
-            CheckVariable(endVal, Vector3.forward, ruler.RulerEnd.GetComponent<PC_SelectScript>());
+            CheckVariable(endVal, Vector3.forward, ruler.RulerEnd);
         });
 
-        var subDivUnits = CoordSystem.Instance.GetAxisSubDivisionUnits();
+        List<Unit> subDivUnits = CoordSystemHelper.Instance.GetSubdivisionUnits();
 
         StartPositionXUnit.GetComponent<TextMeshProUGUI>().text = Enum.GetName(typeof(Unit), subDivUnits.ElementAt(0));
         StartPositionYUnit.GetComponent<TextMeshProUGUI>().text = Enum.GetName(typeof(Unit), subDivUnits.ElementAt(1));
@@ -75,7 +82,6 @@ public class Test_RulerDisplay : MonoBehaviour
         //StartPositionZ.GetComponent<TMP_InputField>().interactable = CoulombLogic.Instance.IsIn3dMode();
         //EndPositionZ.GetComponent<TMP_InputField>().interactable = CoulombLogic.Instance.IsIn3dMode();
 
-
         /* CoulombLogic.Instance.onModeChange.AddListener(in3dMode =>
          {
              StartPositionZ.GetComponent<TMP_InputField>().interactable = in3dMode;
@@ -83,53 +89,17 @@ public class Test_RulerDisplay : MonoBehaviour
          });*/
     }
 
-    private static void CheckVariable(float endValue, Vector3 affectedAxis, PC_SelectScript selectedObject)
+    private void CheckVariable(float endValue, Vector3 affectedAxis, GameObject selectedObject)
     {
-        if (!selectedObject) return;
+       // if (!selectedObject) return;
 
+        //Update each position -> when in coord system, display coords from origin of system
+        var newPosition = CoordSystemHelper.Instance.CalculateNewWorldPosition(selectedObject.transform.position, endValue, affectedAxis);
+        selectedObject.transform.position = newPosition;
 
-        /* if (CoulombLogic.Instance.IsIn2dMode())
-         {
-             var currentPos = selectedObject.transform.position;
-             if (affectedAxis.x > 0.1)
-                 currentPos.x =
-                     CoulombLogic.Instance.xOrigin2d.position.x +
-                     CoulombLogic.Instance.CalcToWorldSpace(endValue); //end Value is between 0 and 1
-             if (affectedAxis.y > 0.1)
-                 currentPos.y =
-                     CoulombLogic.Instance.xOrigin2d.position.y +
-                     CoulombLogic.Instance.CalcToWorldSpace(endValue); //end Value is between 0 and 1
-             if (affectedAxis.z > 0.1)
-                 currentPos.z =
-                     CoulombLogic.Instance.xOrigin2d.position.z +
-                     CoulombLogic.Instance.CalcToWorldSpace(endValue); //end Value is between 0 and 1
-             selectedObject.transform.position = currentPos;
-
-             selectedObject.onPositionChanged.Invoke(currentPos);
-         }
-         else
-         {
-             var currentPos = CoulombLogic.Instance.scene3D.transform.InverseTransformPoint(selectedObject.transform.position);
-
-             if (affectedAxis.x > 0.1)
-                 currentPos.x = CoulombLogic.Instance.xOrigin3d.localPosition.x +
-                                CoulombLogic.Instance.CalcToWorldSpace(endValue, true); //end Value is between 0 and 1
-             if (affectedAxis.y > 0.1)
-                 currentPos.y = CoulombLogic.Instance.xOrigin3d.localPosition.y +
-                                CoulombLogic.Instance.CalcToWorldSpace(endValue, true); //end Value is between 0 and 1
-             if (affectedAxis.z > 0.1)
-                 currentPos.z = CoulombLogic.Instance.xOrigin3d.localPosition.z +
-                                CoulombLogic.Instance.CalcToWorldSpace(endValue, true); //end Value is between 0 and 1
-
-             selectedObject.transform.position = CoulombLogic.Instance.scene3D.transform.TransformPoint(currentPos);
-
-             selectedObject.onPositionChanged.Invoke(currentPos);
-         }*/
-    }
-
-    void Update()
-    {
         UpdateDisplay();
+        
+       // selectedObject.onPositionChanged.Invoke(selectedObject);
     }
 
     public void UpdateDisplay()
@@ -142,12 +112,10 @@ public class Test_RulerDisplay : MonoBehaviour
         }
         else
         {
-            //var distance = Vector3.Distance(startMeasuringPosition, endMeasuringPosition);
-            var distance = ruler.CalculateDistance();
-            //TODO ADD unit
-            DistanceText.text = string.Format(CultureInfo.InvariantCulture, "{0:0.###} cm", distance);
+            var displayUnit = CoordSystemHelper.Instance.IsCoordSystemAvailable ? Unit.mm : Unit.m;
+            var distance = ruler.CalculateDistance(displayUnit);
+            DistanceText.text = string.Format(CultureInfo.InvariantCulture, "{0:0.###} ", distance) + displayUnit.ToString();
         }
-
 
         if (!ruler.RulerStart.gameObject.activeSelf)
         {
@@ -157,7 +125,7 @@ public class Test_RulerDisplay : MonoBehaviour
         }
         else
         {
-            var startPosition = startMeasuringPosition;
+            var startPosition = StartMeasuringPosition;
             StartPositionX.GetComponent<PC_TextFormatter_TMP>().FormatString(startPosition.x);
             StartPositionY.GetComponent<PC_TextFormatter_TMP>().FormatString(startPosition.y);
             StartPositionZ.GetComponent<PC_TextFormatter_TMP>().FormatString(startPosition.z);
@@ -171,7 +139,7 @@ public class Test_RulerDisplay : MonoBehaviour
         }
         else
         {
-            var posPosition = endMeasuringPosition;
+            var posPosition = EndMeasuringPosition;
             EndPositionX.GetComponent<PC_TextFormatter_TMP>().FormatString(posPosition.x);
             EndPositionY.GetComponent<PC_TextFormatter_TMP>().FormatString(posPosition.y);
             EndPositionZ.GetComponent<PC_TextFormatter_TMP>().FormatString(posPosition.z);
