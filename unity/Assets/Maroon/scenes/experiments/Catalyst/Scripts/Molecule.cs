@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Maroon.Physics;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -40,7 +41,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         [SerializeField] float timeUntilNextDesorb = 3.0f;
 
         [SerializeField] QuantityFloat temperature = new QuantityFloat();
-        private QuantityFloat _partialPressure = new QuantityFloat();
+        [SerializeField] QuantityFloat partialPressure = new QuantityFloat();
 
         [SerializeField] private MoleculeState _state;
         
@@ -59,6 +60,24 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private float _wobbleStrength = 0.1f;
         private bool _isWobbling = false;
         private bool _reactionStarted = false;
+
+        private int[] _temperatureStageValues = new[] { 250, 275, 300, 325, 350, 375, 400, 425, 450 };
+        private float[] _partialPressureValues = new[] { 0.01f, 0.02f, 0.04f, 0.2f };
+        private float _currentTurnOverRate = 0.0f;
+
+        private static readonly float[][] TurnOverRates = new float[][]
+        {
+            new float[] { 0f, 0f, 0.047619048f, 0.285714286f, 8.571428571f },
+            new float[] { 0f, 0.047619048f, 0.142857143f, 0.666666667f, 8.571428571f },
+            new float[] { 0f, 0.095238095f, 0.238095238f, 1.19047619f, 8.571428571f },
+            new float[] { 0.047619048f, 0.19047619f, 0.380952381f, 1.952380952f, 8.571428571f },
+            new float[] { 0.095238095f, 0.285714286f, 0.571428571f, 2.952380952f, 8.571428571f },
+            new float[] { 0.19047619f, 0.380952381f, 0.80952381f, 4.19047619f, 8.571428571f },
+            new float[] { 0.285714286f, 0.571428571f, 1.142857143f, 5.904761905f, 8.571428571f },
+            new float[] { 0.333333333f, 0.714285714f, 1.428571429f, 7.428571429f, 8.571428571f },
+            new float[] { 0.380952381f, 0.80952381f, 1.619047619f, 8.571428571f, 8.571428571f }
+        };
+
 
         public MoleculeType Type { get => type; }
 
@@ -124,17 +143,22 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             timeToMove = 4.0f;
         }
         
-        public void TemperatureChanged(float temp)
+        public void TemperatureChanged(float newTemp)
         {
-            // normal temp goes from -23.15f to 76.85 degree celsius, since we divide here we define
-            // the temp of molecules to go from 0 - 100 hence we add 23.15 here
-            temperature.Value = temp + 23.15f;
-            movementSpeed = temperature.Value / temperature.maxValue;
+            // normal temp goes from -23.15f to 176.85 degree celsius
+            // scale this between 0 - 1 for movement speed by adding 23.15 to current and max value before dividing
+            temperature.Value = newTemp;
+            movementSpeed = Mathf.Clamp((temperature.Value + 23.15f) / (temperature.maxValue + 23.15f), 0.1f, 1.0f); // only temperature influences movement speed
+            // update turnover rates
+            _currentTurnOverRate = TurnOverRates[GetTemperatureIndex()][GetPartialPressureIndex()];
+
         }
 
         public void PressureChanged(float pressure)
         {
-            _partialPressure = pressure;
+            partialPressure.Value = pressure;
+            // update turnover rates
+            _currentTurnOverRate = TurnOverRates[GetTemperatureIndex()][GetPartialPressureIndex()];
         }
 
         public void ReactionStart()
@@ -145,7 +169,14 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 GetComponent<CapsuleCollider>().enabled = true;
             }
         }
-        
+
+        public void ActivateDrawingCollider(bool activate)
+        {
+            if (type != MoleculeType.Pt && type != MoleculeType.O) return;
+
+            collider.enabled = activate;
+        }
+
         protected override void Start()
         {
             base.Start();
@@ -276,13 +307,6 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             _newMoleculeRotation = Quaternion.Euler(Random.Range(-180.0f, 180.0f),Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
         }
 
-        public void ActivateDrawingCollider(bool activate)
-        {
-            if (type != MoleculeType.Pt && type != MoleculeType.O) return;
-
-            collider.enabled = activate;
-        }
-
         private void OnTriggerEnter(Collider other)
         {
             if (_state == MoleculeState.DrawnByPlat || _state == MoleculeState.DrawnByCO) return;
@@ -358,8 +382,17 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             yield return new WaitForSeconds(0.3f);
             _isWobbling = false;
             transform.position = currentPosition;
+        }
 
-
+        private int GetTemperatureIndex()
+        {
+            // add 273.16 instead of 273.15 to always get at least the first element index
+            return Array.IndexOf(_temperatureStageValues, _temperatureStageValues.TakeWhile(num => num <= temperature.Value + 273.16f).Last());
+        }
+        
+        private int GetPartialPressureIndex()
+        {
+            return Array.IndexOf(_partialPressureValues, _partialPressureValues.TakeWhile(num => num <= partialPressure.Value).Last());
         }
     }
 }
