@@ -1,7 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using Maroon.Physics;
+using Maroon.UI;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -12,27 +15,49 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         [Header("Simulation Parameters")]
         [SerializeField] QuantityFloat temperature;
         [SerializeField] QuantityFloat partialPressure;
-        //[SerializeField] CatalystSurfaceSize catalystSurfaceSize = CatalystSurfaceSize.Small;
+        [SerializeField] int numberSpawnedO2Molecules;
+        [SerializeField] int numberSpawnedCOMolecules;
         
         [Header("Catalyst specific objects")]
         [SerializeField] CatalystReactor catalystReactor;
         [SerializeField] CatalystSurface catalystSurfacePrefab;
         [SerializeField] Transform catalystSurfaceSpawnTransform;
 
+        [Header("Molecule Prefabs")]
         [SerializeField] Molecule oMoleculePrefab;
         [SerializeField] Molecule o2MoleculePrefab;
         [SerializeField] Molecule coMoleculePrefab;
         [SerializeField] Molecule co2MoleculePrefab;
-        [SerializeField] int numberSpawnedO2Molecules;
-        [SerializeField] int numberSpawnedCOMolecules;
 
         [Header("Player specific objects")]
         [SerializeField] GameObject player;
+
+        [Header("UI Elements")]
+        [SerializeField] InputField turnOverRateInputField;
 
         private int freedMoleculeCounter = 0;
         private List<Vector3> _platSpawnPoints = new List<Vector3>();
         private List<Molecule> _activeMolecules = new List<Molecule>();
         private CatalystSurface _catalystSurface;
+        
+        private float _currentTurnOverRate = 0.0f;
+        
+        private static readonly int[] TemperatureStageValues = new[] { 250, 275, 300, 325, 350, 375, 400, 425, 450 };
+        private static readonly float[] PartialPressureValues = new[] { 0.01f, 0.02f, 0.04f, 0.2f };
+        public static readonly float[][] TurnOverRates = new float[][]
+        {
+            new float[] { 0f, 0f, 0.047619048f, 0.285714286f, 8.571428571f },
+            new float[] { 0f, 0.047619048f, 0.142857143f, 0.666666667f, 8.571428571f },
+            new float[] { 0f, 0.095238095f, 0.238095238f, 1.19047619f, 8.571428571f },
+            new float[] { 0.047619048f, 0.19047619f, 0.380952381f, 1.952380952f, 8.571428571f },
+            new float[] { 0.095238095f, 0.285714286f, 0.571428571f, 2.952380952f, 8.571428571f },
+            new float[] { 0.19047619f, 0.380952381f, 0.80952381f, 4.19047619f, 8.571428571f },
+            new float[] { 0.285714286f, 0.571428571f, 1.142857143f, 5.904761905f, 8.571428571f },
+            new float[] { 0.333333333f, 0.714285714f, 1.428571429f, 7.428571429f, 8.571428571f },
+            new float[] { 0.380952381f, 0.80952381f, 1.619047619f, 8.571428571f, 8.571428571f }
+        };
+        
+        
 
         private System.Action onReactionStart;
 
@@ -65,6 +90,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             SimulationController.Instance.OnStop.AddListener(StopSimulation);
 
             catalystReactor.OnSpawnCatalystSurface += SpawnCatalystSurfaceObject;
+            
+            temperature.onValueChanged.AddListener(TemperatureChanged);
+            partialPressure.onValueChanged.AddListener(PartialPressureChanged);
+            
             SpawnCatalystSurfaceObject();
         }
 
@@ -72,6 +101,9 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         {
             SimulationController.Instance.OnStart.RemoveListener(StartSimulation);
             SimulationController.Instance.OnStop.RemoveListener(StopSimulation);
+            
+            temperature.onValueChanged.RemoveListener(TemperatureChanged);
+            partialPressure.onValueChanged.RemoveListener(PartialPressureChanged);
             
             catalystReactor.OnSpawnCatalystSurface -= SpawnCatalystSurfaceObject;
         }
@@ -202,9 +234,40 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             _activeMolecules.Remove(molecule);
         }
 
+        private void TemperatureChanged(float newTemperature)
+        {
+            // update turnover rates
+            _currentTurnOverRate = TurnOverRates[GetTemperatureIndex(temperature.Value)][GetPartialPressureIndex(partialPressure.Value)];
+            UpdateTurnOverRateUI();
+        }
+
+        private void PartialPressureChanged(float newPartialPressure)
+        {
+            // update turnover rates
+            _currentTurnOverRate = TurnOverRates[GetTemperatureIndex(temperature.Value)][GetPartialPressureIndex(partialPressure.Value)];
+            UpdateTurnOverRateUI();
+        }
+
+        private void UpdateTurnOverRateUI()
+        {
+            turnOverRateInputField.text = _currentTurnOverRate.ToString(CultureInfo.InvariantCulture.NumberFormat);
+        }
+
         public void SpawnO2ButtonClicked()
         {
             SpawnReactionMaterial(true);
+        }
+        
+        
+        public static int GetTemperatureIndex(float temperatureValue)
+        {
+            // add 273.16 instead of 273.15 to always get at least the first element index
+            return Array.IndexOf(TemperatureStageValues, TemperatureStageValues.TakeWhile(num => num <= temperatureValue + 273.16f).Last());
+        }
+
+        public static int GetPartialPressureIndex(float partialPressureValue)
+        {
+            return Array.IndexOf(PartialPressureValues, PartialPressureValues.TakeWhile(num => num <= partialPressureValue + 0.00001f).Last());
         }
     }
 }
