@@ -45,28 +45,45 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   temperature:
     assessmentName: 
-    isDynamic: 1
+    isDynamic: 0
     alwaysSendValueChangedEvent: 1
     allowSystemChange: 1
     _value: 0
-    minValue: 0
-    maxValue: 0
+    minValue: -23.15
+    maxValue: 176.85
     onValueChanged:
       m_PersistentCalls:
         m_Calls: []
     onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
-  catalystSurfaceSize: 16
+  partialPressure:
+    assessmentName: 
+    isDynamic: 0
+    alwaysSendValueChangedEvent: 1
+    allowSystemChange: 1
+    _value: 0.02
+    minValue: 0.01
+    maxValue: 0.2
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    onNewValueFromSystem:
+      m_PersistentCalls:
+        m_Calls: []
+  numberSpawnedO2Molecules: 100
+  numberSpawnedCOMolecules: 10
   catalystReactor: {fileID: 0}
   catalystSurfacePrefab: {fileID: 7095831970976657655, guid: 42e7904566f623941b40e93a3d6da5bb,
     type: 3}
   catalystSurfaceSpawnTransform: {fileID: 0}
+  oMoleculePrefab: {fileID: 9201737708395207697, guid: 62d7f2b7dfba5a241bb94438f2bc8395,
+    type: 3}
   o2MoleculePrefab: {fileID: 9201737708395207697, guid: 78b5e44d54114f24280652f2443008d9,
     type: 3}
   coMoleculePrefab: {fileID: 9201737708395207697, guid: ef61a79bd7a3f894d85c0ec943d4138d,
     type: 3}
-  oMoleculePrefab: {fileID: 9201737708395207697, guid: 62d7f2b7dfba5a241bb94438f2bc8395,
+  co2MoleculePrefab: {fileID: 9201737708395207697, guid: 01362201552f40047bbce31c9e8f4b6b,
     type: 3}
-  numSpawnedMolecules: 200
   player: {fileID: 0}
+  turnOverRateInputField: {fileID: 0}
