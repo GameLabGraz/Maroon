@@ -7,7 +7,8 @@ namespace Maroon.Physics.CathodeRayTube
     public class CRTController : MonoBehaviour
     {
         [SerializeField] private GameObject Screen;
-        [SerializeField] private GameObject ElectronGun;
+        [SerializeField] private GameObject Cathode;
+        [SerializeField] private GameObject Anode;
         [SerializeField] private GameObject HorizontalCapacitor;
         [SerializeField] private GameObject VerticalCapacitor;
         [SerializeField] private QuantityInt V_x;
@@ -53,7 +54,7 @@ namespace Maroon.Physics.CathodeRayTube
 
         private void Start()
         {
-            _electronGunLength = ElectronGun.GetComponent<Renderer>().bounds.size.x / 2;
+            _electronGunLength = Anode.transform.position.x - GetCRTStart().x;
             horizontalDistance = d;
             verticalDistance = d;
             
@@ -98,7 +99,7 @@ namespace Maroon.Physics.CathodeRayTube
                 case 0:
                     voltage = V_x;
                     plateDistance = _electronGunLength;
-                    x = (ElectronGun.transform.position.x + _electronGunLength) - currentPoint.x;
+                    x = (GetCRTStart().x + _electronGunLength) - currentPoint.x;
                     y = 1;
                     z = 1;
                     break;
@@ -114,14 +115,14 @@ namespace Maroon.Physics.CathodeRayTube
                         break;
                     }
                     
-                    length = Math.Abs(ElectronGun.transform.position.x - HorizontalCapacitor.transform.position.x);
-                    x = (scale / 2) - Math.Abs(currentPoint.x - (ElectronGun.transform.position.x + length));
+                    length = Math.Abs(GetCRTStart().x - HorizontalCapacitor.transform.position.x);
+                    x = (scale / 2) - Math.Abs(currentPoint.x - (GetCRTStart().x + length));
                     
                     dist = horizontalDistance / 2;
-                    y = dist - Math.Abs(currentPoint.y - ElectronGun.transform.position.y);
+                    y = dist - Math.Abs(currentPoint.y - GetCRTStart().y);
 
                     size = HorizontalCapacitorTop.GetComponent<Renderer>().bounds.size.z / 2;
-                    z = size - Math.Abs(currentPoint.z - ElectronGun.transform.position.z);
+                    z = size - Math.Abs(currentPoint.z - GetCRTStart().z);
                     break;
                 
                 case 2:
@@ -135,14 +136,14 @@ namespace Maroon.Physics.CathodeRayTube
                         break;
                     }
                     
-                    length = Math.Abs(ElectronGun.transform.position.x - VerticalCapacitor.transform.position.x);
-                    x = (scale / 2) - Math.Abs(currentPoint.x - (ElectronGun.transform.position.x + length));
+                    length = Math.Abs(GetCRTStart().x - VerticalCapacitor.transform.position.x);
+                    x = (scale / 2) - Math.Abs(currentPoint.x - (GetCRTStart().x + length));
                     
                     size = VerticalCapacitorLeft.GetComponent<Renderer>().bounds.size.y / 2;
-                    y = size - Math.Abs(currentPoint.y - ElectronGun.transform.position.y);
+                    y = size - Math.Abs(currentPoint.y - GetCRTStart().y);
                     
                     dist = verticalDistance / 2 ;
-                    z = dist - Math.Abs(currentPoint.z - ElectronGun.transform.position.z);
+                    z = dist - Math.Abs(currentPoint.z - GetCRTStart().z);
                     break;
             }
             
@@ -170,12 +171,14 @@ namespace Maroon.Physics.CathodeRayTube
 
         public float GetCRTDist()
         {
-            return Screen.transform.position.x - ElectronGun.transform.position.x;
+            return Screen.transform.position.x - GetCRTStart().x;
         }
 
         public Vector3 GetCRTStart()
         {
-            return ElectronGun.transform.position;
+            Vector3 point = Cathode.transform.position;
+            point.x += Cathode.GetComponent<Renderer>().bounds.size.x / 2;
+            return point;
         }
 
         void updateDistance()
@@ -269,12 +272,12 @@ namespace Maroon.Physics.CathodeRayTube
             FxCalc.Value = "1.6022e-19 * " + Ex.Value + " * H(" + (Math.Truncate(informationResolution * _electronGunLength) / informationResolution) + " - x)";
 
             size = HorizontalCapacitorTop.GetComponent<Renderer>().bounds.size.z / 2;
-            length = Math.Abs(ElectronGun.transform.position.x - HorizontalCapacitor.transform.position.x);
+            length = Math.Abs(GetCRTStart().x - HorizontalCapacitor.transform.position.x);
             FyCalc.Value = "1.6022e-19 * " + Ey.Value + " * H(" + (Math.Truncate(informationResolution * size) / informationResolution) 
                            + " - abs(x - " + (Math.Truncate(informationResolution * length) / informationResolution) + "))";
 
             size = VerticalCapacitorLeft.GetComponent<Renderer>().bounds.size.y / 2;
-            length = Math.Abs(ElectronGun.transform.position.x - VerticalCapacitor.transform.position.x);
+            length = Math.Abs(GetCRTStart().x - VerticalCapacitor.transform.position.x);
             FzCalc.Value = "1.6022e-19 * " + Ez.Value + " * H(" + (Math.Truncate(informationResolution * size) / informationResolution) 
                            + " - abs(x - " + (Math.Truncate(informationResolution * length) / informationResolution) + "))";
         }

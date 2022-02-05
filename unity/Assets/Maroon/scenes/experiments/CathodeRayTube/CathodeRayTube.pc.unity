@@ -2458,8 +2458,8 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1658012443}
   m_PrefabAsset: {fileID: 0}
---- !u!136 &354254246
-CapsuleCollider:
+--- !u!64 &354254246
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -2468,10 +2468,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.024998026
-  m_Height: 0.05
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 2534964839176971238, guid: 984109c7c43f76543914280c187ead05, type: 3}
 --- !u!1001 &407348694
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3729,7 +3729,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &540557137
 Transform:
   m_ObjectHideFlags: 0
@@ -3753,7 +3753,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 540557136}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   m_Radius: 0.5000001
   m_Height: 2
   m_Direction: 1
@@ -7821,7 +7821,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Screen: {fileID: 639823039}
-  ElectronGun: {fileID: 540557136}
+  Cathode: {fileID: 1998555291}
+  Anode: {fileID: 354254244}
   HorizontalCapacitor: {fileID: 90771409}
   VerticalCapacitor: {fileID: 2031753361}
   V_x:
