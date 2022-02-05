@@ -147,19 +147,39 @@ MonoBehaviour:
   timeUntilNextDesorb: 3
   temperature:
     assessmentName: 
-    isDynamic: 1
+    isDynamic: 0
     alwaysSendValueChangedEvent: 1
     allowSystemChange: 1
     _value: 0
-    minValue: 0
-    maxValue: 100
+    minValue: -23.15
+    maxValue: 176.85
     onValueChanged:
       m_PersistentCalls:
         m_Calls: []
     onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
-  _connectedMolecule: {fileID: 0}
+  partialPressure:
+    assessmentName: 
+    isDynamic: 0
+    alwaysSendValueChangedEvent: 1
+    allowSystemChange: 1
+    _value: 0.01
+    minValue: 0.01
+    maxValue: 0.2
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    onNewValueFromSystem:
+      m_PersistentCalls:
+        m_Calls: []
+  _state: 0
+  _temperatureStageValues: fa000000130100002c010000450100005e0100007701000090010000a9010000c2010000
+  _partialPressureValues:
+  - 0.01
+  - 0.02
+  - 0.04
+  - 0.2
 --- !u!135 &6053066872662406567
 SphereCollider:
   m_ObjectHideFlags: 0
