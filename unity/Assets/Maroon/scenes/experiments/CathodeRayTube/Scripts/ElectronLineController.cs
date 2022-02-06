@@ -30,10 +30,14 @@ namespace Maroon.Physics.CathodeRayTube
         {
             LineRenderer lineRenderer = GetComponent<LineRenderer>();
             lineRenderer.positionCount = _crtController.lineResolution;
-            List<Vector3> points = new List<Vector3>();
             Vector3 currentVel = new Vector3();
+            List<Vector3> points = new List<Vector3>();
+            List<Vector3> velocities = new List<Vector3>();
+            List<Vector3> forces = new List<Vector3>();
 
             points.Add(_crtController.GetCRTStart());
+            velocities.Add(new Vector3(0, 0, 0));
+            forces.Add(_crtController.ApplyForce(points[0]));
             Vector3 oldPoint = points[0];
             Vector3 newPoint = points[0];
             
@@ -44,14 +48,15 @@ namespace Maroon.Physics.CathodeRayTube
                 currentVel += _crtController.RK4(oldPoint);
 
                 newPoint = oldPoint;
-                newPoint.x += currentVel.x * _timeStep;
-                newPoint.y += currentVel.y * _timeStep;
-                newPoint.z += currentVel.z * _timeStep;
+                newPoint += currentVel * _timeStep;
 
                 if (UnityEngine.Physics.Linecast(oldPoint, newPoint))
                     points.Add(oldPoint);
                 else
                     points.Add(newPoint);
+                
+                velocities.Add(currentVel);
+                forces.Add(_crtController.ApplyForce(points[i]));
             }
 
             UnityEngine.Physics.Linecast(oldPoint, newPoint, out var hitInfo);
@@ -59,6 +64,7 @@ namespace Maroon.Physics.CathodeRayTube
                 screen.GetComponent<ScreenSetup>().ActivatePixel(hitInfo.point);
             
             lineRenderer.SetPositions(points.ToArray());
+            _crtController.updateData(points, velocities, forces);
         }
 
         public void ResetObject()
