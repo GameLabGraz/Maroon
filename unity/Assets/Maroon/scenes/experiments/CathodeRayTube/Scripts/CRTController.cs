@@ -44,8 +44,7 @@ namespace Maroon.Physics.CathodeRayTube
         private float horizontalDistance;
         private float verticalDistance;
         
-
-        private const float _electronCharge = -1.6022e-19f;
+        private const float _electronCharge = 1.6022e-19f;
         private const float _electronMass = 9.11e-31f;
         private float _electronGunLength;
         public int lineResolution = 1000;
@@ -89,7 +88,7 @@ namespace Maroon.Physics.CathodeRayTube
 
             Vector3 point = new Vector3(0, 0, 0);
 
-            point.x = (-_electronCharge) * (V_x / _electronGunLength) * H((GetCRTStart().x + _electronGunLength) - currentPoint.x);
+            point.x = _electronCharge * (V_x / _electronGunLength) * H((GetCRTStart().x + _electronGunLength) - currentPoint.x);
             
             float scale = HorizontalCapacitorTop.GetComponent<Renderer>().bounds.size.x;
             if (HorizontalCapacitor.transform.position != new Vector3(0, 0, 0))
@@ -103,7 +102,7 @@ namespace Maroon.Physics.CathodeRayTube
                 size = HorizontalCapacitorTop.GetComponent<Renderer>().bounds.size.z / 2;
                 z = size - Math.Abs(currentPoint.z - GetCRTStart().z);
                 
-                point.y = (-_electronCharge) * (V_y / horizontalDistance) * H(x) * H(y) * H(z);
+                point.y = _electronCharge * (V_y / horizontalDistance) * H(x) * H(y) * H(z);
             }
 
             scale = VerticalCapacitorLeft.GetComponent<Renderer>().bounds.size.x;
@@ -118,7 +117,7 @@ namespace Maroon.Physics.CathodeRayTube
                 dist = verticalDistance / 2 ;
                 z = dist - Math.Abs(currentPoint.z - GetCRTStart().z);
                 
-                point.z = (-_electronCharge) * (V_z / verticalDistance) * H(x) * H(y) * H(z);
+                point.z = _electronCharge * (V_z / verticalDistance) * H(x) * H(y) * H(z);
             }
 
             return point;
@@ -135,8 +134,8 @@ namespace Maroon.Physics.CathodeRayTube
 
         public float getTimeStep()
         {
-            float v = (float)Math.Sqrt(-2 * _electronCharge * V_x / _electronMass);
-            float t = (float)Math.Sqrt(2 * _electronGunLength * _electronMass / (_electronCharge * (-V_x / _electronGunLength))); 
+            float v = (float)Math.Sqrt(2 * _electronCharge * V_x / _electronMass);
+            float t = (float)Math.Sqrt(2 * _electronGunLength * _electronMass / (_electronCharge * (V_x / _electronGunLength))); 
             t += GetCRTDist() / v;
             return t / lineResolution;
         }
@@ -231,9 +230,9 @@ namespace Maroon.Physics.CathodeRayTube
             EyCalc.Value = V_y.Value + " / " + (Math.Truncate(informationResolution * horizontalDistance) / informationResolution);
             EzCalc.Value = V_z.Value + " / " + (Math.Truncate(informationResolution * verticalDistance) / informationResolution);
             
-            Fx.Value = (-_electronCharge) * (V_x / (float)(Math.Truncate(informationResolution * _electronGunLength) / informationResolution)) * (float)Math.Pow(10, 15);
-            Fy.Value = (-_electronCharge) * (V_y / (float)(Math.Truncate(informationResolution * horizontalDistance) / informationResolution)) * (float)Math.Pow(10, 15);
-            Fz.Value = (-_electronCharge) * (V_z / (float)(Math.Truncate(informationResolution * verticalDistance) / informationResolution)) * (float)Math.Pow(10, 15);
+            Fx.Value = _electronCharge * (V_x / (float)(Math.Truncate(informationResolution * _electronGunLength) / informationResolution)) * (float)Math.Pow(10, 15);
+            Fy.Value = _electronCharge * (V_y / (float)(Math.Truncate(informationResolution * horizontalDistance) / informationResolution)) * (float)Math.Pow(10, 15);
+            Fz.Value = _electronCharge * (V_z / (float)(Math.Truncate(informationResolution * verticalDistance) / informationResolution)) * (float)Math.Pow(10, 15);
 
             FxCalc.Value = "1.6022e-19 * " + Ex.Value + " * H(" + (Math.Truncate(informationResolution * _electronGunLength) / informationResolution) + " - x)";
 
