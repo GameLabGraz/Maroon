@@ -71,6 +71,19 @@ namespace Maroon.Physics.CathodeRayTube
         {
             LineRenderer lineRenderer = GetComponent<LineRenderer>();
             lineRenderer.positionCount = 0;
+            
+            List<Vector3> points = new List<Vector3>();
+            List<Vector3> velocities = new List<Vector3>();
+            List<Vector3> forces = new List<Vector3>();
+            
+            for (int i = 0; i < _crtController.lineResolution; i++)
+            {
+                points.Add(new Vector3(0, 0, 0));
+                velocities.Add(new Vector3(0, 0, 0));
+                forces.Add(new Vector3(0, 0, 0));
+            }
+            
+            _crtController.updateData(points, velocities, forces);
         }
     }
 }

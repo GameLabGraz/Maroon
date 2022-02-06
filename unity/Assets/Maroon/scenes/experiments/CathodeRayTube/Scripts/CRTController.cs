@@ -236,8 +236,8 @@ namespace Maroon.Physics.CathodeRayTube
                     break;
                 case 2:
                     lineChart.yAxis0.minMaxType = Axis.AxisMinMaxType.Custom;
-                    lineChart.yAxis0.min = -(float)Math.Pow(10, -15);
-                    lineChart.yAxis0.max = (float)Math.Pow(10, -15);
+                    lineChart.yAxis0.min = V_x / 100 * -(float)Math.Pow(10, -15);
+                    lineChart.yAxis0.max = V_x / 100 * (float)Math.Pow(10, -15);
                     for (int i = 0; i < lineResolution; i++)
                         yAxisData.Add(forceData[i].x);
                     break;
