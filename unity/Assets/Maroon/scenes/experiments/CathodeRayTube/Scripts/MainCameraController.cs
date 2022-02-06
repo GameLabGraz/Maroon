@@ -102,11 +102,6 @@ public class MainCameraController : MonoBehaviour, IResetObject
         transform.rotation = Quaternion.identity;
     }
 
-    public void ToggleFurniture()
-    {
-        _furniture.SetActive(!_furniture.activeSelf);
-    }
-
     public void ResetObject()
     {
         transform.position = _origPos;

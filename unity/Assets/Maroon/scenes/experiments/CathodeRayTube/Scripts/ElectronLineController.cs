@@ -31,28 +31,22 @@ namespace Maroon.Physics.CathodeRayTube
             LineRenderer lineRenderer = GetComponent<LineRenderer>();
             lineRenderer.positionCount = _crtController.lineResolution;
             List<Vector3> points = new List<Vector3>();
-            Vector3 startPoint = _crtController.GetCRTStart();
-            points.Add(startPoint);
+            Vector3 currentVel = new Vector3();
 
-            float currentVelX = 0;
-            float currentVelY = 0;
-            float currentVelZ = 0;
-
-            Vector3 oldPoint = startPoint;
-            Vector3 newPoint = startPoint;
+            points.Add(_crtController.GetCRTStart());
+            Vector3 oldPoint = points[0];
+            Vector3 newPoint = points[0];
             
             for (int i = 1; i < _crtController.lineResolution; i++)
             {
                 oldPoint = points[i - 1];
                 
-                currentVelX += _crtController.RK4(0, oldPoint);
-                currentVelY += _crtController.RK4(1, oldPoint);
-                currentVelZ += _crtController.RK4(2, oldPoint);
+                currentVel += _crtController.RK4(oldPoint);
 
                 newPoint = oldPoint;
-                newPoint.x += currentVelX * _timeStep;
-                newPoint.y += currentVelY * _timeStep;
-                newPoint.z += currentVelZ * _timeStep;
+                newPoint.x += currentVel.x * _timeStep;
+                newPoint.y += currentVel.y * _timeStep;
+                newPoint.z += currentVel.z * _timeStep;
 
                 if (UnityEngine.Physics.Linecast(oldPoint, newPoint))
                     points.Add(oldPoint);

@@ -20,7 +20,7 @@ namespace Maroon.Physics.CathodeRayTube
             float pixelWidth = localScale.z;
 
             for (float y = screenPosition.y - screenScale.y / 2 + pixelHeight;
-                y <= screenPosition.y + screenScale.y / 2;
+                y <= screenPosition.y + screenScale.y / 2 - pixelHeight;
                 y += pixelHeight)
             {
                 for (float z = screenPosition.z - screenScale.z / 2 + pixelWidth;

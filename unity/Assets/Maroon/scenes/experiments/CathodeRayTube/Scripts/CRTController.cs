@@ -15,6 +15,19 @@ namespace Maroon.Physics.CathodeRayTube
         [SerializeField] private QuantityInt V_y;
         [SerializeField] private QuantityInt V_z;
         [SerializeField] private QuantityFloat d; 
+        
+        [SerializeField] private QuantityInt Ex;
+        [SerializeField] private QuantityInt Ey;
+        [SerializeField] private QuantityInt Ez;
+        [SerializeField] private QuantityString ExCalc;
+        [SerializeField] private QuantityString EyCalc;
+        [SerializeField] private QuantityString EzCalc;
+        [SerializeField] private QuantityFloat Fx;
+        [SerializeField] private QuantityFloat Fy;
+        [SerializeField] private QuantityFloat Fz;
+        [SerializeField] private QuantityString FxCalc;
+        [SerializeField] private QuantityString FyCalc;
+        [SerializeField] private QuantityString FzCalc;
         public int Order { get; set; }
         public int Distance { get; set; }
         public int xAxis { get; set; }
@@ -27,25 +40,10 @@ namespace Maroon.Physics.CathodeRayTube
 
         private Vector3 HorizCapStartPos;
         private Vector3 VertCapStartPos;
-        private Vector3 HorizCapStartScale;
-        private Vector3 VertCapStartScale;
 
         private float horizontalDistance;
         private float verticalDistance;
         
-        [SerializeField] private QuantityInt Ex;
-        [SerializeField] private QuantityInt Ey;
-        [SerializeField] private QuantityInt Ez;
-        [SerializeField] private QuantityString ExCalc;
-        [SerializeField] private QuantityString EyCalc;
-        [SerializeField] private QuantityString EzCalc;
-
-        [SerializeField] private QuantityFloat Fx;
-        [SerializeField] private QuantityFloat Fy;
-        [SerializeField] private QuantityFloat Fz;
-        [SerializeField] private QuantityString FxCalc;
-        [SerializeField] private QuantityString FyCalc;
-        [SerializeField] private QuantityString FzCalc;
 
         private const float _electronCharge = -1.6022e-19f;
         private const float _electronMass = 9.11e-31f;
@@ -65,8 +63,6 @@ namespace Maroon.Physics.CathodeRayTube
             
             HorizCapStartPos = HorizontalCapacitor.transform.position;
             VertCapStartPos = VerticalCapacitor.transform.position;
-            HorizCapStartScale = HorizontalCapacitor.transform.localScale;
-            VertCapStartScale = VerticalCapacitor.transform.localScale;
         }
 
         private void FixedUpdate()
@@ -82,88 +78,64 @@ namespace Maroon.Physics.CathodeRayTube
             return x == 0 ? 0.5f : (1 + x / Math.Abs(x)) / 2;
         }
 
-        private float ApplyForce(int cap, Vector3 currentPoint)
+        private Vector3 ApplyForce(Vector3 currentPoint)
         {
             float x = 0;
             float y = 0;
             float z = 0;
-            int voltage = 0;
-            float plateDistance = 0;
-            float scale;
             float length;
             float size;
             float dist;
 
-            switch (cap)
-            {
-                case 0:
-                    voltage = V_x;
-                    plateDistance = _electronGunLength;
-                    x = (GetCRTStart().x + _electronGunLength) - currentPoint.x;
-                    y = 1;
-                    z = 1;
-                    break;
-                
-                case 1:
-                    voltage = V_y;
-                    plateDistance = horizontalDistance;
-                    scale = HorizontalCapacitorTop.GetComponent<Renderer>().bounds.size.x;
-                    
-                    if (HorizontalCapacitor.transform.position == new Vector3(0, 0, 0))
-                    {
-                        x = -1;
-                        break;
-                    }
-                    
-                    length = Math.Abs(GetCRTStart().x - HorizontalCapacitor.transform.position.x);
-                    x = (scale / 2) - Math.Abs(currentPoint.x - (GetCRTStart().x + length));
-                    
-                    dist = horizontalDistance / 2;
-                    y = dist - Math.Abs(currentPoint.y - GetCRTStart().y);
+            Vector3 point = new Vector3(0, 0, 0);
 
-                    size = HorizontalCapacitorTop.GetComponent<Renderer>().bounds.size.z / 2;
-                    z = size - Math.Abs(currentPoint.z - GetCRTStart().z);
-                    break;
-                
-                case 2:
-                    voltage = V_z;
-                    plateDistance = verticalDistance;
-                    scale = VerticalCapacitorLeft.GetComponent<Renderer>().bounds.size.x;
-                    
-                    if (VerticalCapacitor.transform.position == new Vector3(0, 0, 0))
-                    {
-                        x = -1;
-                        break;
-                    }
-                    
-                    length = Math.Abs(GetCRTStart().x - VerticalCapacitor.transform.position.x);
-                    x = (scale / 2) - Math.Abs(currentPoint.x - (GetCRTStart().x + length));
-                    
-                    size = VerticalCapacitorLeft.GetComponent<Renderer>().bounds.size.y / 2;
-                    y = size - Math.Abs(currentPoint.y - GetCRTStart().y);
-                    
-                    dist = verticalDistance / 2 ;
-                    z = dist - Math.Abs(currentPoint.z - GetCRTStart().z);
-                    break;
-            }
+            point.x = (-_electronCharge) * (V_x / _electronGunLength) * H((GetCRTStart().x + _electronGunLength) - currentPoint.x);
             
-            return (-_electronCharge) * (voltage / plateDistance) * H(x) * H(y) * H(z);
+            float scale = HorizontalCapacitorTop.GetComponent<Renderer>().bounds.size.x;
+            if (HorizontalCapacitor.transform.position != new Vector3(0, 0, 0))
+            {
+                length = Math.Abs(GetCRTStart().x - HorizontalCapacitor.transform.position.x);
+                x = (scale / 2) - Math.Abs(currentPoint.x - (GetCRTStart().x + length));
+            
+                dist = horizontalDistance / 2;
+                y = dist - Math.Abs(currentPoint.y - GetCRTStart().y);
+
+                size = HorizontalCapacitorTop.GetComponent<Renderer>().bounds.size.z / 2;
+                z = size - Math.Abs(currentPoint.z - GetCRTStart().z);
+                
+                point.y = (-_electronCharge) * (V_y / horizontalDistance) * H(x) * H(y) * H(z);
+            }
+
+            scale = VerticalCapacitorLeft.GetComponent<Renderer>().bounds.size.x;
+            if (VerticalCapacitor.transform.position != new Vector3(0, 0, 0))
+            {
+                length = Math.Abs(GetCRTStart().x - VerticalCapacitor.transform.position.x);
+                x = (scale / 2) - Math.Abs(currentPoint.x - (GetCRTStart().x + length));
+            
+                size = VerticalCapacitorLeft.GetComponent<Renderer>().bounds.size.y / 2;
+                y = size - Math.Abs(currentPoint.y - GetCRTStart().y);
+            
+                dist = verticalDistance / 2 ;
+                z = dist - Math.Abs(currentPoint.z - GetCRTStart().z);
+                
+                point.z = (-_electronCharge) * (V_z / verticalDistance) * H(x) * H(y) * H(z);
+            }
+
+            return point;
         }
 
-        public float RK4(int cap, Vector3 currentPoint)
+        public Vector3 RK4(Vector3 currentPoint)
         {
             float timeStep = getTimeStep();
-            float k1 = timeStep * ApplyForce(cap, currentPoint) / _electronMass;
-            float k2 = timeStep * ApplyForce(cap, currentPoint + new Vector3(timeStep / 2, 0, 0)) / _electronMass;
-            float k3 = timeStep * ApplyForce(cap, currentPoint + new Vector3(timeStep / 2, 0, 0)) / _electronMass;
-            float k4 = timeStep * ApplyForce(cap, currentPoint + new Vector3(timeStep, 0, 0)) / _electronMass;
-            return (k1 + 2 * k2 + 2 * k3 + k4) / 6;
+            Vector3 k1 = timeStep * ApplyForce(currentPoint) / _electronMass;
+            Vector3 k2_3 = timeStep * ApplyForce(currentPoint + new Vector3(timeStep / 2, 0, 0)) / _electronMass;
+            Vector3 k4 = timeStep * ApplyForce(currentPoint + new Vector3(timeStep, 0, 0)) / _electronMass;
+            return (k1 + 2 * k2_3 + 2 * k2_3 + k4) / 6;
         }
 
         public float getTimeStep()
         {
             float v = (float)Math.Sqrt(-2 * _electronCharge * V_x / _electronMass);
-            
             float t = (float)Math.Sqrt(2 * _electronGunLength * _electronMass / (_electronCharge * (-V_x / _electronGunLength))); 
             t += GetCRTDist() / v;
             return t / lineResolution;
@@ -210,15 +182,11 @@ namespace Maroon.Physics.CathodeRayTube
                 case 0:
                     HorizontalCapacitor.transform.position = HorizCapStartPos;
                     VerticalCapacitor.transform.position = VertCapStartPos;
-                    HorizontalCapacitor.transform.localScale = HorizCapStartScale;
-                    VerticalCapacitor.transform.localScale = VertCapStartScale;
                     break;
                 
                 case 1:
                     HorizontalCapacitor.transform.position = VertCapStartPos;
                     VerticalCapacitor.transform.position = HorizCapStartPos;
-                    HorizontalCapacitor.transform.localScale = HorizCapStartScale;
-                    VerticalCapacitor.transform.localScale = VertCapStartScale;
                     break;
 
                 case 2:
@@ -238,8 +206,6 @@ namespace Maroon.Physics.CathodeRayTube
                 default:
                     HorizontalCapacitor.transform.position = HorizCapStartPos;
                     VerticalCapacitor.transform.position = VertCapStartPos;
-                    HorizontalCapacitor.transform.localScale = HorizCapStartScale;
-                    VerticalCapacitor.transform.localScale = VertCapStartScale;
                     break;
             }
 
