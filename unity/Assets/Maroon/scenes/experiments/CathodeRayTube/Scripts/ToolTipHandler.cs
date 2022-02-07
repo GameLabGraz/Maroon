@@ -34,13 +34,13 @@ public class ToolTipHandler : MonoBehaviour
 
     private void OnGUI()
     {
-        if (_collision)
-        {
-            Vector2 screenPos = Event.current.mousePosition;
-            Vector2 convertedGUIPos = GUIUtility.ScreenToGUIPoint(screenPos);
+        if (!_collision|| !partInfoToggle.GetComponent<Toggle>().isOn) 
+            return;
+        
+        Vector2 screenPos = Event.current.mousePosition;
+        Vector2 convertedGUIPos = GUIUtility.ScreenToGUIPoint(screenPos);
 
-            GUI.Label(new Rect(convertedGUIPos.x + 15, convertedGUIPos.y, 200, 20),
-                LanguageManager.Instance.GetString(_hitObject.name), _guiStyle);
-        }
+        GUI.Label(new Rect(convertedGUIPos.x + 15, convertedGUIPos.y, 200, 20),
+            LanguageManager.Instance.GetString(_hitObject.name), _guiStyle);
     }
 }
