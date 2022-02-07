@@ -22,17 +22,14 @@ public class ToolTipHandler : MonoBehaviour
 
     private void Update()
     {
-        if (!partInfoToggle.GetComponent<Toggle>().isOn)
+        if (!partInfoToggle.GetComponent<Toggle>().isOn || Camera.main != camera)
             return;
 
-        if (Camera.main != camera)
-            return;
-        
         RaycastHit hit;
         Ray ray = camera.ScreenPointToRay(Input.mousePosition);
 
         collision = false;
-        if (Physics.Raycast(ray, out hit) && hit.transform.IsChildOf(transform))
+        if (Physics.Raycast(ray, out hit, 10.0f, LayerMask.NameToLayer("IgnorePostProcessing")) && hit.transform.CompareTag("crtPart"))
         {
             collision = true;
             hitObject = hit.transform;
