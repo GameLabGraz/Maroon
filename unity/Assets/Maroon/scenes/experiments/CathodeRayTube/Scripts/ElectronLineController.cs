@@ -52,7 +52,7 @@ namespace Maroon.Physics.CathodeRayTube
                 newPoint = oldPoint;
                 newPoint += currentVel * _timeStep;
 
-                if (UnityEngine.Physics.Linecast(oldPoint, newPoint))
+                if (UnityEngine.Physics.Linecast(newPoint, oldPoint))
                     points.Add(oldPoint);
                 else
                     points.Add(newPoint);
@@ -61,7 +61,7 @@ namespace Maroon.Physics.CathodeRayTube
                 forces.Add(_crtController.ApplyForce(points[i]));
             }
 
-            UnityEngine.Physics.Linecast(oldPoint, newPoint, out var hitInfo);
+            UnityEngine.Physics.Linecast(newPoint, oldPoint, out var hitInfo);
             if (hitInfo.collider != null && hitInfo.collider.name.Equals("Screen"))
                 screen.GetComponent<ScreenSetup>().ActivatePixel(hitInfo.point);
             
