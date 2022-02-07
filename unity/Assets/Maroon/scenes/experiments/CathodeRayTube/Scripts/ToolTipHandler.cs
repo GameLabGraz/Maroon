@@ -1,49 +1,46 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using GEAR.Localization;
-using TMPro;
+﻿using GEAR.Localization;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ToolTipHandler : MonoBehaviour
 {
-    [SerializeField] private Camera camera;
+    [SerializeField] private Camera mainCamera;
     [SerializeField] private GameObject partInfoToggle;
-    private bool collision;
-    private Transform hitObject;
-    GUIStyle guiStyle = new GUIStyle();
+    private bool _collision;
+    private Transform _hitObject;
+    private GUIStyle _guiStyle = new GUIStyle();
 
     private void Start()
     {
-        guiStyle.normal.textColor = Color.black;
-        guiStyle.fontSize = 14;
+        _guiStyle.normal.textColor = Color.black;
+        _guiStyle.fontSize = 14;
     }
 
     private void Update()
     {
-        if (!partInfoToggle.GetComponent<Toggle>().isOn || Camera.main != camera)
+        if (!partInfoToggle.GetComponent<Toggle>().isOn || Camera.main != mainCamera)
             return;
 
-        RaycastHit hit;
-        Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
-        collision = false;
-        if (Physics.Raycast(ray, out hit, 10.0f, LayerMask.NameToLayer("IgnorePostProcessing")) && hit.transform.CompareTag("crtPart"))
+        _collision = false;
+        if (Physics.Raycast(ray, out var hit, 10.0f, LayerMask.NameToLayer("IgnorePostProcessing")) &&
+            hit.transform.CompareTag("crtPart"))
         {
-            collision = true;
-            hitObject = hit.transform;
+            _collision = true;
+            _hitObject = hit.transform;
         }
     }
-    
+
     private void OnGUI()
     {
-        if (collision)
+        if (_collision)
         {
             Vector2 screenPos = Event.current.mousePosition;
             Vector2 convertedGUIPos = GUIUtility.ScreenToGUIPoint(screenPos);
-            
-            GUI.Label(new Rect(convertedGUIPos.x + 15, convertedGUIPos.y, 200, 20), LanguageManager.Instance.GetString(hitObject.name), guiStyle);
+
+            GUI.Label(new Rect(convertedGUIPos.x + 15, convertedGUIPos.y, 200, 20),
+                LanguageManager.Instance.GetString(_hitObject.name), _guiStyle);
         }
     }
 }

@@ -42,217 +42,232 @@ namespace Maroon.Physics.CathodeRayTube
 {
     public class CRTController : MonoBehaviour
     {
-        [SerializeField] private GameObject Screen;
-        [SerializeField] private GameObject Cathode;
-        [SerializeField] private GameObject Anode;
-        [SerializeField] private GameObject HorizontalCapacitor;
-        [SerializeField] private GameObject VerticalCapacitor;
-        [SerializeField] private QuantityInt V_x;
-        [SerializeField] private QuantityInt V_y;
-        [SerializeField] private QuantityInt V_z;
+        [SerializeField] private GameObject screen;
+        [SerializeField] private GameObject cathode;
+        [SerializeField] private GameObject anode;
+        [SerializeField] private GameObject horizontalCapacitor;
+        [SerializeField] private GameObject verticalCapacitor;
+        [SerializeField] private QuantityInt vX;
+        [SerializeField] private QuantityInt vY;
+        [SerializeField] private QuantityInt vZ;
         [SerializeField] private QuantityFloat d;
         [SerializeField] private SimpleLineChart plot;
-        
-        [SerializeField] private QuantityInt Ex;
-        [SerializeField] private QuantityInt Ey;
-        [SerializeField] private QuantityInt Ez;
-        [SerializeField] private QuantityString ExCalc;
-        [SerializeField] private QuantityString EyCalc;
-        [SerializeField] private QuantityString EzCalc;
-        [SerializeField] private QuantityFloat Fx;
-        [SerializeField] private QuantityFloat Fy;
-        [SerializeField] private QuantityFloat Fz;
-        [SerializeField] private QuantityString FxCalc;
-        [SerializeField] private QuantityString FyCalc;
-        [SerializeField] private QuantityString FzCalc;
+
+        [SerializeField] private QuantityInt eX;
+        [SerializeField] private QuantityInt eY;
+        [SerializeField] private QuantityInt eZ;
+        [SerializeField] private QuantityString exCalc;
+        [SerializeField] private QuantityString eyCalc;
+        [SerializeField] private QuantityString ezCalc;
+        [SerializeField] private QuantityFloat fX;
+        [SerializeField] private QuantityFloat fY;
+        [SerializeField] private QuantityFloat fZ;
+        [SerializeField] private QuantityString fxCalc;
+        [SerializeField] private QuantityString fyCalc;
+        [SerializeField] private QuantityString fzCalc;
         public int Order { get; set; }
         public int Distance { get; set; }
-        public int xAxis { get; set; }
-        public int yAxis { get; set; }
-        
-        private const float _electronCharge = -1.6022e-19f;
-        private const float _electronMass = 9.11e-31f;
+        public int XAxis { get; set; }
+        public int YAxis { get; set; }
+
+        private const float ElectronCharge = -1.6022e-19f;
+        private const float ElectronMass = 9.11e-31f;
         private float _electronGunLength;
         public int lineResolution = 500;
 
-        private GameObject HorizontalCapacitorTop;
-        private GameObject HorizontalCapacitorBottom;
-        private GameObject VerticalCapacitorLeft;
-        private GameObject VerticalCapacitorRight;
+        private GameObject _horizontalCapacitorTop;
+        private GameObject _horizontalCapacitorBottom;
+        private GameObject _verticalCapacitorLeft;
+        private GameObject _verticalCapacitorRight;
 
-        private Vector3 HorizCapStartPos;
-        private Vector3 VertCapStartPos;
+        private Vector3 _horizCapStartPos;
+        private Vector3 _vertCapStartPos;
 
-        private float horizontalDistance;
-        private float verticalDistance;
+        private float _horizontalDistance;
+        private float _verticalDistance;
 
-        private List<Vector3> pointData = new List<Vector3>();
-        private List<Vector3> velocityData = new List<Vector3>();
-        private List<Vector3> forceData = new List<Vector3>();
+        private List<Vector3> _pointData = new List<Vector3>();
+        private List<Vector3> _velocityData = new List<Vector3>();
+        private List<Vector3> _forceData = new List<Vector3>();
 
         private void Start()
         {
-            _electronGunLength = Anode.transform.position.x - GetCRTStart().x;
-            horizontalDistance = d;
-            verticalDistance = d;
-            
-            HorizontalCapacitorTop = HorizontalCapacitor.transform.GetChild(0).gameObject;
-            HorizontalCapacitorBottom = HorizontalCapacitor.transform.GetChild(1).gameObject;
-            VerticalCapacitorLeft = VerticalCapacitor.transform.GetChild(0).gameObject;
-            VerticalCapacitorRight = VerticalCapacitor.transform.GetChild(1).gameObject;
-            
-            HorizCapStartPos = HorizontalCapacitor.transform.position;
-            VertCapStartPos = VerticalCapacitor.transform.position;
+            _electronGunLength = anode.transform.position.x - GetCRTStart().x;
+            _horizontalDistance = d;
+            _verticalDistance = d;
+
+            _horizontalCapacitorTop = horizontalCapacitor.transform.GetChild(0).gameObject;
+            _horizontalCapacitorBottom = horizontalCapacitor.transform.GetChild(1).gameObject;
+            _verticalCapacitorLeft = verticalCapacitor.transform.GetChild(0).gameObject;
+            _verticalCapacitorRight = verticalCapacitor.transform.GetChild(1).gameObject;
+
+            _horizCapStartPos = horizontalCapacitor.transform.position;
+            _vertCapStartPos = verticalCapacitor.transform.position;
 
             for (int i = 0; i < lineResolution; i++)
             {
-                pointData.Add(Vector3.zero);
-                velocityData.Add(Vector3.zero);
-                forceData.Add(Vector3.zero);
+                _pointData.Add(Vector3.zero);
+                _velocityData.Add(Vector3.zero);
+                _forceData.Add(Vector3.zero);
             }
 
-            xAxis = (int)XAxisEnum.X;
-            yAxis = (int)YAxisEnum.Y;
+            XAxis = (int)XAxisEnum.X;
+            YAxis = (int)YAxisEnum.Y;
         }
 
         private void FixedUpdate()
         {
-            updateDistance();
-            updateOrder();
-            updateInformation();
+            UpdateDistance();
+            UpdateOrder();
+            UpdateInformation();
         }
 
-        void updateDistance()
+        private void UpdateDistance()
         {
             switch ((DistanceEnum)Distance)
             {
                 case DistanceEnum.Both:
-                    horizontalDistance = d;
-                    verticalDistance = d;
+                    _horizontalDistance = d;
+                    _verticalDistance = d;
                     break;
                 case DistanceEnum.Horizontal:
-                    horizontalDistance = d;
+                    _horizontalDistance = d;
                     break;
                 case DistanceEnum.Vertical:
-                    verticalDistance = d;
+                    _verticalDistance = d;
                     break;
                 default:
-                    horizontalDistance = d;
-                    verticalDistance = d;
+                    _horizontalDistance = d;
+                    _verticalDistance = d;
                     break;
             }
         }
-        
-        void updateOrder()
+
+        private void UpdateOrder()
         {
-            VerticalCapacitorLeft.SetActive(true);
-            VerticalCapacitorRight.SetActive(true);
-            HorizontalCapacitorTop.SetActive(true);
-            HorizontalCapacitorBottom.SetActive(true);
-            
+            _verticalCapacitorLeft.SetActive(true);
+            _verticalCapacitorRight.SetActive(true);
+            _horizontalCapacitorTop.SetActive(true);
+            _horizontalCapacitorBottom.SetActive(true);
+
             Vector3 position;
             switch ((OrderEnum)Order)
             {
                 case OrderEnum.HorizontalVertical:
-                    HorizontalCapacitor.transform.position = HorizCapStartPos;
-                    VerticalCapacitor.transform.position = VertCapStartPos;
+                    horizontalCapacitor.transform.position = _horizCapStartPos;
+                    verticalCapacitor.transform.position = _vertCapStartPos;
                     break;
-                
+
                 case OrderEnum.VerticalHorizontal:
-                    HorizontalCapacitor.transform.position = VertCapStartPos;
-                    VerticalCapacitor.transform.position = HorizCapStartPos;
+                    horizontalCapacitor.transform.position = _vertCapStartPos;
+                    verticalCapacitor.transform.position = _horizCapStartPos;
                     break;
 
                 case OrderEnum.Horizontal:
-                    position = HorizCapStartPos;
-                    position.x += (VertCapStartPos.x - HorizCapStartPos.x) / 2;
-                    HorizontalCapacitor.transform.position = position;
-                    VerticalCapacitor.transform.position = Vector3.zero;
-                    VerticalCapacitorLeft.SetActive(false);
-                    VerticalCapacitorRight.SetActive(false);
+                    position = _horizCapStartPos;
+                    position.x += (_vertCapStartPos.x - _horizCapStartPos.x) / 2;
+                    horizontalCapacitor.transform.position = position;
+                    verticalCapacitor.transform.position = Vector3.zero;
+                    _verticalCapacitorLeft.SetActive(false);
+                    _verticalCapacitorRight.SetActive(false);
                     break;
-                
+
                 case OrderEnum.Vertical:
-                    position = HorizCapStartPos;
-                    position.x += (VertCapStartPos.x - HorizCapStartPos.x) / 2;
-                    VerticalCapacitor.transform.position = position;
-                    HorizontalCapacitor.transform.position = Vector3.zero;
-                    HorizontalCapacitorTop.SetActive(false);
-                    HorizontalCapacitorBottom.SetActive(false);
+                    position = _horizCapStartPos;
+                    position.x += (_vertCapStartPos.x - _horizCapStartPos.x) / 2;
+                    verticalCapacitor.transform.position = position;
+                    horizontalCapacitor.transform.position = Vector3.zero;
+                    _horizontalCapacitorTop.SetActive(false);
+                    _horizontalCapacitorBottom.SetActive(false);
                     break;
-                
+
                 default:
-                    HorizontalCapacitor.transform.position = HorizCapStartPos;
-                    VerticalCapacitor.transform.position = VertCapStartPos;
+                    horizontalCapacitor.transform.position = _horizCapStartPos;
+                    verticalCapacitor.transform.position = _vertCapStartPos;
                     break;
             }
 
-            var newPosition = HorizontalCapacitor.transform.position;
-            HorizontalCapacitorTop.transform.position = newPosition + new Vector3(0, horizontalDistance / 2, 0);
-            HorizontalCapacitorBottom.transform.position = newPosition - new Vector3(0, horizontalDistance / 2, 0);
-            newPosition = VerticalCapacitor.transform.position;
-            VerticalCapacitorRight.transform.position = newPosition + new Vector3(0, 0,verticalDistance / 2);
-            VerticalCapacitorLeft.transform.position = newPosition - new Vector3(0, 0, verticalDistance / 2);
+            var newPosition = horizontalCapacitor.transform.position;
+            _horizontalCapacitorTop.transform.position = newPosition + new Vector3(0, _horizontalDistance / 2, 0);
+            _horizontalCapacitorBottom.transform.position = newPosition - new Vector3(0, _horizontalDistance / 2, 0);
+            newPosition = verticalCapacitor.transform.position;
+            _verticalCapacitorRight.transform.position = newPosition + new Vector3(0, 0, _verticalDistance / 2);
+            _verticalCapacitorLeft.transform.position = newPosition - new Vector3(0, 0, _verticalDistance / 2);
         }
-        
-        void updateInformation()
+
+        private void UpdateInformation()
         {
             int informationResolution = 1000;
             float length;
             float size;
-            
-            Ex.Value = (int)(V_x / (Math.Truncate(informationResolution * _electronGunLength) / informationResolution));
-            Ey.Value = (int)(V_y / (Math.Truncate(informationResolution * horizontalDistance) / informationResolution));
-            Ez.Value = (int)(V_z / (Math.Truncate(informationResolution * verticalDistance) / informationResolution));
 
-            ExCalc.Value = V_x.Value + " / " + (Math.Truncate(informationResolution * _electronGunLength) / informationResolution);
-            EyCalc.Value = V_y.Value + " / " + (Math.Truncate(informationResolution * horizontalDistance) / informationResolution);
-            EzCalc.Value = V_z.Value + " / " + (Math.Truncate(informationResolution * verticalDistance) / informationResolution);
-            
-            Fx.Value = -_electronCharge * (V_x / (float)(Math.Truncate(informationResolution * _electronGunLength) / informationResolution)) * (float)Math.Pow(10, 15);
-            Fy.Value = -_electronCharge * (V_y / (float)(Math.Truncate(informationResolution * horizontalDistance) / informationResolution)) * (float)Math.Pow(10, 15);
-            Fz.Value = -_electronCharge * (V_z / (float)(Math.Truncate(informationResolution * verticalDistance) / informationResolution)) * (float)Math.Pow(10, 15);
+            eX.Value = (int)(vX / (Math.Truncate(informationResolution * _electronGunLength) / informationResolution));
+            eY.Value = (int)(vY / (Math.Truncate(informationResolution * _horizontalDistance) / informationResolution));
+            eZ.Value = (int)(vZ / (Math.Truncate(informationResolution * _verticalDistance) / informationResolution));
 
-            FxCalc.Value = "1.6022e-19 * " + Ex.Value + " * H(" + (Math.Truncate(informationResolution * _electronGunLength) / informationResolution) + " - x)";
+            exCalc.Value = vX.Value + " / " +
+                           (Math.Truncate(informationResolution * _electronGunLength) / informationResolution);
+            eyCalc.Value = vY.Value + " / " +
+                           (Math.Truncate(informationResolution * _horizontalDistance) / informationResolution);
+            ezCalc.Value = vZ.Value + " / " +
+                           (Math.Truncate(informationResolution * _verticalDistance) / informationResolution);
 
-            size = HorizontalCapacitorTop.GetComponent<Renderer>().bounds.size.z / 2;
-            length = Math.Abs(GetCRTStart().x - HorizontalCapacitor.transform.position.x);
-            FyCalc.Value = "1.6022e-19 * " + Ey.Value + " * H(" + (Math.Truncate(informationResolution * size) / informationResolution) 
-                           + " - abs(x - " + (Math.Truncate(informationResolution * length) / informationResolution) + "))";
+            fX.Value = -ElectronCharge *
+                       (vX / (float)(Math.Truncate(informationResolution * _electronGunLength) /
+                                     informationResolution)) * (float)Math.Pow(10, 15);
+            fY.Value = -ElectronCharge *
+                       (vY / (float)(Math.Truncate(informationResolution * _horizontalDistance) /
+                                     informationResolution)) * (float)Math.Pow(10, 15);
+            fZ.Value = -ElectronCharge *
+                       (vZ / (float)(Math.Truncate(informationResolution * _verticalDistance) /
+                                     informationResolution)) * (float)Math.Pow(10, 15);
 
-            size = VerticalCapacitorLeft.GetComponent<Renderer>().bounds.size.y / 2;
-            length = Math.Abs(GetCRTStart().x - VerticalCapacitor.transform.position.x);
-            FzCalc.Value = "1.6022e-19 * " + Ez.Value + " * H(" + (Math.Truncate(informationResolution * size) / informationResolution) 
-                           + " - abs(x - " + (Math.Truncate(informationResolution * length) / informationResolution) + "))";
+            fxCalc.Value = "1.6022e-19 * " + eX.Value + " * H(" +
+                           (Math.Truncate(informationResolution * _electronGunLength) / informationResolution) +
+                           " - x)";
+
+            size = _horizontalCapacitorTop.GetComponent<Renderer>().bounds.size.z / 2;
+            length = Math.Abs(GetCRTStart().x - horizontalCapacitor.transform.position.x);
+            fyCalc.Value = "1.6022e-19 * " + eY.Value + " * H(" +
+                           (Math.Truncate(informationResolution * size) / informationResolution)
+                           + " - abs(x - " + (Math.Truncate(informationResolution * length) / informationResolution) +
+                           "))";
+
+            size = _verticalCapacitorLeft.GetComponent<Renderer>().bounds.size.y / 2;
+            length = Math.Abs(GetCRTStart().x - verticalCapacitor.transform.position.x);
+            fzCalc.Value = "1.6022e-19 * " + eZ.Value + " * H(" +
+                           (Math.Truncate(informationResolution * size) / informationResolution)
+                           + " - abs(x - " + (Math.Truncate(informationResolution * length) / informationResolution) +
+                           "))";
         }
 
-        public void updateData(List<Vector3> points, List<Vector3> velocities, List<Vector3> forces)
+        public void UpdateData(List<Vector3> points, List<Vector3> velocities, List<Vector3> forces)
         {
-            pointData = points;
-            velocityData = velocities;
-            forceData = forces;
+            _pointData = points;
+            _velocityData = velocities;
+            _forceData = forces;
         }
 
-        public void updatePlot()
+        public void UpdatePlot()
         {
             plot.ResetObject();
-            float timeStep = getTimeStep();
+            float timeStep = GetTimeStep();
             LineChart lineChart = plot.GetComponent<LineChart>();
             lineChart.series.GetSerie(0).maxShow = lineResolution;
             List<float> xAxisData = new List<float>();
             List<float> yAxisData = new List<float>();
-            
+
             lineChart.xAxis0.minMaxType = Axis.AxisMinMaxType.Default;
             lineChart.yAxis0.minMaxType = Axis.AxisMinMaxType.Default;
 
-            switch ((XAxisEnum)xAxis)
+            switch ((XAxisEnum)XAxis)
             {
                 case XAxisEnum.X:
                     lineChart.xAxis0.minMaxType = Axis.AxisMinMaxType.Custom;
                     lineChart.xAxis0.min = GetCRTStart().x;
-                    lineChart.xAxis0.max = Screen.transform.position.x;
+                    lineChart.xAxis0.max = screen.transform.position.x;
                     for (int i = 0; i < lineResolution; i++)
-                        xAxisData.Add(pointData[i].x);
+                        xAxisData.Add(_pointData[i].x);
                     break;
                 case XAxisEnum.Time:
                     lineChart.xAxis0.minMaxType = Axis.AxisMinMaxType.Custom;
@@ -263,69 +278,73 @@ namespace Maroon.Physics.CathodeRayTube
                     break;
             }
 
-            switch ((YAxisEnum)yAxis)
+            switch ((YAxisEnum)YAxis)
             {
                 case YAxisEnum.X:
                     lineChart.yAxis0.minMaxType = Axis.AxisMinMaxType.Custom;
                     lineChart.yAxis0.min = GetCRTStart().x;
-                    lineChart.yAxis0.max = Screen.transform.position.x;
+                    lineChart.yAxis0.max = screen.transform.position.x;
                     for (int i = 0; i < lineResolution; i++)
-                        yAxisData.Add(pointData[i].x);
+                        yAxisData.Add(_pointData[i].x);
                     break;
                 case YAxisEnum.Vx:
                     for (int i = 0; i < lineResolution; i++)
-                        yAxisData.Add(velocityData[i].x);
+                        yAxisData.Add(_velocityData[i].x);
                     break;
                 case YAxisEnum.Fx:
                     lineChart.yAxis0.minMaxType = Axis.AxisMinMaxType.Custom;
-                    lineChart.yAxis0.min = V_x / 100 * -(float)Math.Pow(10, -15);
-                    lineChart.yAxis0.max = V_x / 100 * (float)Math.Pow(10, -15);
+                    lineChart.yAxis0.min = vX / 100 * -(float)Math.Pow(10, -15);
+                    lineChart.yAxis0.max = vX / 100 * (float)Math.Pow(10, -15);
                     for (int i = 0; i < lineResolution; i++)
-                        yAxisData.Add(forceData[i].x);
+                        yAxisData.Add(_forceData[i].x);
                     break;
                 case YAxisEnum.Y:
                     lineChart.yAxis0.minMaxType = Axis.AxisMinMaxType.Custom;
-                    lineChart.yAxis0.min = Screen.transform.position.y - Screen.GetComponent<Renderer>().bounds.size.y / 2;
-                    lineChart.yAxis0.max = Screen.transform.position.y + Screen.GetComponent<Renderer>().bounds.size.y / 2;
+                    lineChart.yAxis0.min =
+                        screen.transform.position.y - screen.GetComponent<Renderer>().bounds.size.y / 2;
+                    lineChart.yAxis0.max =
+                        screen.transform.position.y + screen.GetComponent<Renderer>().bounds.size.y / 2;
                     for (int i = 0; i < lineResolution; i++)
-                        yAxisData.Add(pointData[i].y);
+                        yAxisData.Add(_pointData[i].y);
                     break;
                 case YAxisEnum.Vy:
                     for (int i = 0; i < lineResolution; i++)
-                        yAxisData.Add(velocityData[i].y);
+                        yAxisData.Add(_velocityData[i].y);
                     break;
                 case YAxisEnum.Fy:
                     lineChart.yAxis0.minMaxType = Axis.AxisMinMaxType.Custom;
                     lineChart.yAxis0.min = -(float)Math.Pow(10, -15);
                     lineChart.yAxis0.max = (float)Math.Pow(10, -15);
                     for (int i = 0; i < lineResolution; i++)
-                        yAxisData.Add(forceData[i].y);
+                        yAxisData.Add(_forceData[i].y);
                     break;
                 case YAxisEnum.Z:
                     lineChart.yAxis0.minMaxType = Axis.AxisMinMaxType.Custom;
-                    lineChart.yAxis0.min = Screen.transform.position.z - Screen.GetComponent<Renderer>().bounds.size.z / 2;
-                    lineChart.yAxis0.max = Screen.transform.position.z + Screen.GetComponent<Renderer>().bounds.size.z / 2;
+                    lineChart.yAxis0.min =
+                        screen.transform.position.z - screen.GetComponent<Renderer>().bounds.size.z / 2;
+                    lineChart.yAxis0.max =
+                        screen.transform.position.z + screen.GetComponent<Renderer>().bounds.size.z / 2;
                     for (int i = 0; i < lineResolution; i++)
-                        yAxisData.Add(pointData[i].z);
+                        yAxisData.Add(_pointData[i].z);
                     break;
                 case YAxisEnum.Vz:
                     for (int i = 0; i < lineResolution; i++)
-                        yAxisData.Add(velocityData[i].z);
+                        yAxisData.Add(_velocityData[i].z);
                     break;
                 case YAxisEnum.Fz:
                     lineChart.yAxis0.minMaxType = Axis.AxisMinMaxType.Custom;
                     lineChart.yAxis0.min = -(float)Math.Pow(10, -15);
                     lineChart.yAxis0.max = (float)Math.Pow(10, -15);
                     for (int i = 0; i < lineResolution; i++)
-                        yAxisData.Add(forceData[i].z);
+                        yAxisData.Add(_forceData[i].z);
                     break;
             }
 
             for (int i = 0; i < lineResolution; i++)
                 plot.AddData(xAxisData[i], yAxisData[i]);
         }
-        
-         private float H(float x)
+
+        private float H(float x)
         {
             return x == 0 ? 0.5f : (1 + x / Math.Abs(x)) / 2;
         }
@@ -341,36 +360,37 @@ namespace Maroon.Physics.CathodeRayTube
 
             Vector3 point = Vector3.zero;
 
-            point.x = -_electronCharge * (V_x / _electronGunLength) * H((GetCRTStart().x + _electronGunLength) - currentPoint.x);
-            
-            float scale = HorizontalCapacitorTop.GetComponent<Renderer>().bounds.size.x;
-            if (HorizontalCapacitor.transform.position != Vector3.zero)
+            point.x = -ElectronCharge * (vX / _electronGunLength) *
+                      H((GetCRTStart().x + _electronGunLength) - currentPoint.x);
+
+            float scale = _horizontalCapacitorTop.GetComponent<Renderer>().bounds.size.x;
+            if (horizontalCapacitor.transform.position != Vector3.zero)
             {
-                length = Math.Abs(GetCRTStart().x - HorizontalCapacitor.transform.position.x);
+                length = Math.Abs(GetCRTStart().x - horizontalCapacitor.transform.position.x);
                 x = (scale / 2) - Math.Abs(currentPoint.x - (GetCRTStart().x + length));
-            
-                dist = horizontalDistance / 2;
+
+                dist = _horizontalDistance / 2;
                 y = dist - Math.Abs(currentPoint.y - GetCRTStart().y);
 
-                size = HorizontalCapacitorTop.GetComponent<Renderer>().bounds.size.z / 2;
+                size = _horizontalCapacitorTop.GetComponent<Renderer>().bounds.size.z / 2;
                 z = size - Math.Abs(currentPoint.z - GetCRTStart().z);
-                
-                point.y = -_electronCharge * (V_y / horizontalDistance) * H(x) * H(y) * H(z);
+
+                point.y = -ElectronCharge * (vY / _horizontalDistance) * H(x) * H(y) * H(z);
             }
 
-            scale = VerticalCapacitorLeft.GetComponent<Renderer>().bounds.size.x;
-            if (VerticalCapacitor.transform.position != Vector3.zero)
+            scale = _verticalCapacitorLeft.GetComponent<Renderer>().bounds.size.x;
+            if (verticalCapacitor.transform.position != Vector3.zero)
             {
-                length = Math.Abs(GetCRTStart().x - VerticalCapacitor.transform.position.x);
+                length = Math.Abs(GetCRTStart().x - verticalCapacitor.transform.position.x);
                 x = (scale / 2) - Math.Abs(currentPoint.x - (GetCRTStart().x + length));
-            
-                size = VerticalCapacitorLeft.GetComponent<Renderer>().bounds.size.y / 2;
+
+                size = _verticalCapacitorLeft.GetComponent<Renderer>().bounds.size.y / 2;
                 y = size - Math.Abs(currentPoint.y - GetCRTStart().y);
-            
-                dist = verticalDistance / 2 ;
+
+                dist = _verticalDistance / 2;
                 z = dist - Math.Abs(currentPoint.z - GetCRTStart().z);
-                
-                point.z = -_electronCharge * (V_z / verticalDistance) * H(x) * H(y) * H(z);
+
+                point.z = -ElectronCharge * (vZ / _verticalDistance) * H(x) * H(y) * H(z);
             }
 
             return point;
@@ -378,30 +398,31 @@ namespace Maroon.Physics.CathodeRayTube
 
         public Vector3 RK4(Vector3 currentPoint)
         {
-            float timeStep = getTimeStep();
-            Vector3 k1 = timeStep * ApplyForce(currentPoint) / _electronMass;
-            Vector3 k2_3 = timeStep * ApplyForce(currentPoint + new Vector3(timeStep / 2, 0, 0)) / _electronMass;
-            Vector3 k4 = timeStep * ApplyForce(currentPoint + new Vector3(timeStep, 0, 0)) / _electronMass;
-            return (k1 + 2 * k2_3 + 2 * k2_3 + k4) / 6;
+            float timeStep = GetTimeStep();
+            Vector3 k1 = timeStep * ApplyForce(currentPoint) / ElectronMass;
+            Vector3 k23 = timeStep * ApplyForce(currentPoint + new Vector3(timeStep / 2, 0, 0)) / ElectronMass;
+            Vector3 k4 = timeStep * ApplyForce(currentPoint + new Vector3(timeStep, 0, 0)) / ElectronMass;
+            return (k1 + 2 * k23 + 2 * k23 + k4) / 6;
         }
 
-        public float getTimeStep()
+        public float GetTimeStep()
         {
-            float v = (float)Math.Sqrt(-2 * _electronCharge * V_x / _electronMass);
-            float t = (float)Math.Sqrt(2 * _electronGunLength * _electronMass / (_electronCharge * (-V_x / _electronGunLength))); 
+            float v = (float)Math.Sqrt(-2 * ElectronCharge * vX / ElectronMass);
+            float t = (float)Math.Sqrt(2 * _electronGunLength * ElectronMass /
+                                       (ElectronCharge * (-vX / _electronGunLength)));
             t += GetCRTDist() / v;
             return t / lineResolution;
         }
-        
+
         public float GetCRTDist()
         {
-            return Screen.transform.position.x - GetCRTStart().x;
+            return screen.transform.position.x - GetCRTStart().x;
         }
 
         public Vector3 GetCRTStart()
         {
-            Vector3 point = Cathode.transform.position;
-            point.x += Cathode.GetComponent<Renderer>().bounds.size.x / 2;
+            Vector3 point = cathode.transform.position;
+            point.x += cathode.GetComponent<Renderer>().bounds.size.x / 2;
             return point;
         }
     }

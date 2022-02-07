@@ -6,12 +6,12 @@ using Vector3 = UnityEngine.Vector3;
 
 public class MainCameraController : MonoBehaviour, IResetObject
 {
-    [SerializeField] private CRTController _crtController;
-    [SerializeField] private GameObject _furniture;
-    
-    private float _movementSpeed = 3f;
-    private float _rotationSpeed = 150f;
-    private float _zoomSpeed = 1f;
+    [SerializeField] private CRTController crtController;
+    [SerializeField] private GameObject furniture;
+
+    private const float MovementSpeed = 3f;
+    private const float RotationSpeed = 150f;
+    private const float ZoomSpeed = 1f;
 
     private Vector3 _minPosition;
     private Vector3 _maxPosition;
@@ -25,17 +25,17 @@ public class MainCameraController : MonoBehaviour, IResetObject
 
     private void Awake()
     {
-        Vector3 crtStart = _crtController.GetCRTStart();
+        Vector3 crtStart = crtController.GetCRTStart();
         _target = new Vector3(0, crtStart.y, crtStart.z);
         transform.LookAt(_target);
 
-        _minPosition = _crtController.GetCRTStart() + new Vector3(-0.5f, 0, -1);
-        _maxPosition = _crtController.GetCRTStart() + new Vector3(_crtController.GetCRTDist() + 0.5f, 0.5f, 0);
+        _minPosition = crtController.GetCRTStart() + new Vector3(-0.5f, 0, -1);
+        _maxPosition = crtController.GetCRTStart() + new Vector3(crtController.GetCRTDist() + 0.5f, 0.5f, 0);
 
         _origPos = transform.position;
         _origRot = transform.rotation;
-        
-        _furniture.SetActive(true);
+
+        furniture.SetActive(true);
     }
 
     /// <summary>
@@ -45,13 +45,14 @@ public class MainCameraController : MonoBehaviour, IResetObject
     {
         if (EventSystem.current.IsPointerOverGameObject())
             return;
-        
+
         // Camera Movement
         if (Input.GetButton("Fire2"))
         {
             var pos = GetComponent<Camera>().ScreenToViewportPoint(_mouseOrigin - Input.mousePosition);
-            var move = new Vector3(pos.x * _movementSpeed, pos.y * _movementSpeed, 0);
-            if ((_maxPosition.x > pos.x || _maxPosition.y > pos.y) && (_minPosition.x < pos.x || _minPosition.y < pos.y))
+            var move = new Vector3(pos.x * MovementSpeed, pos.y * MovementSpeed, 0);
+            if ((_maxPosition.x > pos.x || _maxPosition.y > pos.y) &&
+                (_minPosition.x < pos.x || _minPosition.y < pos.y))
             {
                 transform.Translate(move);
                 transform.position = ClampCamPosition(transform.position);
@@ -66,11 +67,11 @@ public class MainCameraController : MonoBehaviour, IResetObject
                 transform.LookAt(_target);
                 _fixCameraAtTarget = false;
             }
-                
+
 
             var pos = GetComponent<Camera>().ScreenToViewportPoint(Input.mousePosition - _mouseOrigin);
-            transform.RotateAround(_target, transform.right, -pos.y * _rotationSpeed);
-            transform.RotateAround(_target, Vector3.up, pos.x * _rotationSpeed);
+            transform.RotateAround(_target, transform.right, -pos.y * RotationSpeed);
+            transform.RotateAround(_target, Vector3.up, pos.x * RotationSpeed);
         }
         else
         {
@@ -79,7 +80,7 @@ public class MainCameraController : MonoBehaviour, IResetObject
 
         // Camera Zoom
         var mouseScroll = Input.GetAxis("Mouse ScrollWheel");
-        var zoom = new Vector3(0, 0, mouseScroll * _zoomSpeed);
+        var zoom = new Vector3(0, 0, mouseScroll * ZoomSpeed);
         transform.Translate(zoom);
         transform.position = ClampCamPosition(transform.position);
 
@@ -94,7 +95,7 @@ public class MainCameraController : MonoBehaviour, IResetObject
 
         return position;
     }
-    
+
     public void TwoDimensionView()
     {
         Vector3 sideView = _target + new Vector3(0, -2, -0.6f);
