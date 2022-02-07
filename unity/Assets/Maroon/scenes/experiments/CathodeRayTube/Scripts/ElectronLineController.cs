@@ -19,6 +19,7 @@ namespace Maroon.Physics.CathodeRayTube
             lineRenderer.material = material;
             lineRenderer.widthMultiplier = 0.005f;
             lineRenderer.positionCount = _crtController.lineResolution;
+            lineRenderer.enabled = false;
         }
         
         protected override void HandleUpdate()
@@ -29,6 +30,7 @@ namespace Maroon.Physics.CathodeRayTube
         protected override void HandleFixedUpdate()
         {
             LineRenderer lineRenderer = GetComponent<LineRenderer>();
+            lineRenderer.enabled = true;
             lineRenderer.positionCount = _crtController.lineResolution;
             Vector3 currentVel = new Vector3();
             List<Vector3> points = new List<Vector3>();
@@ -36,7 +38,7 @@ namespace Maroon.Physics.CathodeRayTube
             List<Vector3> forces = new List<Vector3>();
 
             points.Add(_crtController.GetCRTStart());
-            velocities.Add(new Vector3(0, 0, 0));
+            velocities.Add(Vector3.zero);
             forces.Add(_crtController.ApplyForce(points[0]));
             Vector3 oldPoint = points[0];
             Vector3 newPoint = points[0];
@@ -78,9 +80,9 @@ namespace Maroon.Physics.CathodeRayTube
             
             for (int i = 0; i < _crtController.lineResolution; i++)
             {
-                points.Add(new Vector3(0, 0, 0));
-                velocities.Add(new Vector3(0, 0, 0));
-                forces.Add(new Vector3(0, 0, 0));
+                points.Add(Vector3.zero);
+                velocities.Add(Vector3.zero);
+                forces.Add(Vector3.zero);
             }
             
             _crtController.updateData(points, velocities, forces);

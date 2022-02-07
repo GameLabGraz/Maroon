@@ -1,9 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Maroon.UI.Charts;
 using UnityEngine;
 using XCharts;
+
+public enum DistanceEnum
+{
+    Both,
+    Horizontal,
+    Vertical
+}
+
+public enum OrderEnum
+{
+    HorizontalVertical,
+    VerticalHorizontal,
+    Horizontal,
+    Vertical
+}
+
+public enum XAxisEnum
+{
+    X,
+    Time
+}
+
+public enum YAxisEnum
+{
+    X,
+    Vx,
+    Fx,
+    Y,
+    Vy,
+    Fy,
+    Z,
+    Vz,
+    Fz
+}
 
 namespace Maroon.Physics.CathodeRayTube
 {
@@ -73,13 +106,13 @@ namespace Maroon.Physics.CathodeRayTube
 
             for (int i = 0; i < lineResolution; i++)
             {
-                pointData.Add(new Vector3(0, 0, 0));
-                velocityData.Add(new Vector3(0, 0, 0));
-                forceData.Add(new Vector3(0, 0, 0));
+                pointData.Add(Vector3.zero);
+                velocityData.Add(Vector3.zero);
+                forceData.Add(Vector3.zero);
             }
 
-            xAxis = 0;
-            yAxis = 3;
+            xAxis = (int)XAxisEnum.X;
+            yAxis = (int)YAxisEnum.Y;
         }
 
         private void FixedUpdate()
@@ -91,16 +124,16 @@ namespace Maroon.Physics.CathodeRayTube
 
         void updateDistance()
         {
-            switch (Distance)
+            switch ((DistanceEnum)Distance)
             {
-                case 0:
+                case DistanceEnum.Both:
                     horizontalDistance = d;
                     verticalDistance = d;
                     break;
-                case 1:
+                case DistanceEnum.Horizontal:
                     horizontalDistance = d;
                     break;
-                case 2:
+                case DistanceEnum.Vertical:
                     verticalDistance = d;
                     break;
                 default:
@@ -112,31 +145,40 @@ namespace Maroon.Physics.CathodeRayTube
         
         void updateOrder()
         {
+            VerticalCapacitorLeft.SetActive(true);
+            VerticalCapacitorRight.SetActive(true);
+            HorizontalCapacitorTop.SetActive(true);
+            HorizontalCapacitorBottom.SetActive(true);
+            
             Vector3 position;
-            switch (Order)
+            switch ((OrderEnum)Order)
             {
-                case 0:
+                case OrderEnum.HorizontalVertical:
                     HorizontalCapacitor.transform.position = HorizCapStartPos;
                     VerticalCapacitor.transform.position = VertCapStartPos;
                     break;
                 
-                case 1:
+                case OrderEnum.VerticalHorizontal:
                     HorizontalCapacitor.transform.position = VertCapStartPos;
                     VerticalCapacitor.transform.position = HorizCapStartPos;
                     break;
 
-                case 2:
+                case OrderEnum.Horizontal:
                     position = HorizCapStartPos;
                     position.x += (VertCapStartPos.x - HorizCapStartPos.x) / 2;
                     HorizontalCapacitor.transform.position = position;
-                    VerticalCapacitor.transform.position = new Vector3(0, 0, 0);
+                    VerticalCapacitor.transform.position = Vector3.zero;
+                    VerticalCapacitorLeft.SetActive(false);
+                    VerticalCapacitorRight.SetActive(false);
                     break;
                 
-                case 3:
+                case OrderEnum.Vertical:
                     position = HorizCapStartPos;
                     position.x += (VertCapStartPos.x - HorizCapStartPos.x) / 2;
                     VerticalCapacitor.transform.position = position;
-                    HorizontalCapacitor.transform.position = new Vector3(0, 0, 0);
+                    HorizontalCapacitor.transform.position = Vector3.zero;
+                    HorizontalCapacitorTop.SetActive(false);
+                    HorizontalCapacitorBottom.SetActive(false);
                     break;
                 
                 default:
@@ -203,16 +245,16 @@ namespace Maroon.Physics.CathodeRayTube
             lineChart.xAxis0.minMaxType = Axis.AxisMinMaxType.Default;
             lineChart.yAxis0.minMaxType = Axis.AxisMinMaxType.Default;
 
-            switch (xAxis)
+            switch ((XAxisEnum)xAxis)
             {
-                case 0:
+                case XAxisEnum.X:
                     lineChart.xAxis0.minMaxType = Axis.AxisMinMaxType.Custom;
                     lineChart.xAxis0.min = GetCRTStart().x;
                     lineChart.xAxis0.max = Screen.transform.position.x;
                     for (int i = 0; i < lineResolution; i++)
                         xAxisData.Add(pointData[i].x);
                     break;
-                case 1:
+                case XAxisEnum.Time:
                     lineChart.xAxis0.minMaxType = Axis.AxisMinMaxType.Custom;
                     lineChart.xAxis0.min = 0;
                     lineChart.xAxis0.max = lineResolution * timeStep;
@@ -221,56 +263,56 @@ namespace Maroon.Physics.CathodeRayTube
                     break;
             }
 
-            switch (yAxis)
+            switch ((YAxisEnum)yAxis)
             {
-                case 0:
+                case YAxisEnum.X:
                     lineChart.yAxis0.minMaxType = Axis.AxisMinMaxType.Custom;
                     lineChart.yAxis0.min = GetCRTStart().x;
                     lineChart.yAxis0.max = Screen.transform.position.x;
                     for (int i = 0; i < lineResolution; i++)
                         yAxisData.Add(pointData[i].x);
                     break;
-                case 1:
+                case YAxisEnum.Vx:
                     for (int i = 0; i < lineResolution; i++)
                         yAxisData.Add(velocityData[i].x);
                     break;
-                case 2:
+                case YAxisEnum.Fx:
                     lineChart.yAxis0.minMaxType = Axis.AxisMinMaxType.Custom;
                     lineChart.yAxis0.min = V_x / 100 * -(float)Math.Pow(10, -15);
                     lineChart.yAxis0.max = V_x / 100 * (float)Math.Pow(10, -15);
                     for (int i = 0; i < lineResolution; i++)
                         yAxisData.Add(forceData[i].x);
                     break;
-                case 3:
+                case YAxisEnum.Y:
                     lineChart.yAxis0.minMaxType = Axis.AxisMinMaxType.Custom;
                     lineChart.yAxis0.min = Screen.transform.position.y - Screen.GetComponent<Renderer>().bounds.size.y / 2;
                     lineChart.yAxis0.max = Screen.transform.position.y + Screen.GetComponent<Renderer>().bounds.size.y / 2;
                     for (int i = 0; i < lineResolution; i++)
                         yAxisData.Add(pointData[i].y);
                     break;
-                case 4:
+                case YAxisEnum.Vy:
                     for (int i = 0; i < lineResolution; i++)
                         yAxisData.Add(velocityData[i].y);
                     break;
-                case 5:
+                case YAxisEnum.Fy:
                     lineChart.yAxis0.minMaxType = Axis.AxisMinMaxType.Custom;
                     lineChart.yAxis0.min = -(float)Math.Pow(10, -15);
                     lineChart.yAxis0.max = (float)Math.Pow(10, -15);
                     for (int i = 0; i < lineResolution; i++)
                         yAxisData.Add(forceData[i].y);
                     break;
-                case 6:
+                case YAxisEnum.Z:
                     lineChart.yAxis0.minMaxType = Axis.AxisMinMaxType.Custom;
                     lineChart.yAxis0.min = Screen.transform.position.z - Screen.GetComponent<Renderer>().bounds.size.z / 2;
                     lineChart.yAxis0.max = Screen.transform.position.z + Screen.GetComponent<Renderer>().bounds.size.z / 2;
                     for (int i = 0; i < lineResolution; i++)
                         yAxisData.Add(pointData[i].z);
                     break;
-                case 7:
+                case YAxisEnum.Vz:
                     for (int i = 0; i < lineResolution; i++)
                         yAxisData.Add(velocityData[i].z);
                     break;
-                case 8:
+                case YAxisEnum.Fz:
                     lineChart.yAxis0.minMaxType = Axis.AxisMinMaxType.Custom;
                     lineChart.yAxis0.min = -(float)Math.Pow(10, -15);
                     lineChart.yAxis0.max = (float)Math.Pow(10, -15);
@@ -290,19 +332,19 @@ namespace Maroon.Physics.CathodeRayTube
 
         public Vector3 ApplyForce(Vector3 currentPoint)
         {
-            float x = 0;
-            float y = 0;
-            float z = 0;
+            float x;
+            float y;
+            float z;
             float length;
             float size;
             float dist;
 
-            Vector3 point = new Vector3(0, 0, 0);
+            Vector3 point = Vector3.zero;
 
             point.x = -_electronCharge * (V_x / _electronGunLength) * H((GetCRTStart().x + _electronGunLength) - currentPoint.x);
             
             float scale = HorizontalCapacitorTop.GetComponent<Renderer>().bounds.size.x;
-            if (HorizontalCapacitor.transform.position != new Vector3(0, 0, 0))
+            if (HorizontalCapacitor.transform.position != Vector3.zero)
             {
                 length = Math.Abs(GetCRTStart().x - HorizontalCapacitor.transform.position.x);
                 x = (scale / 2) - Math.Abs(currentPoint.x - (GetCRTStart().x + length));
@@ -317,7 +359,7 @@ namespace Maroon.Physics.CathodeRayTube
             }
 
             scale = VerticalCapacitorLeft.GetComponent<Renderer>().bounds.size.x;
-            if (VerticalCapacitor.transform.position != new Vector3(0, 0, 0))
+            if (VerticalCapacitor.transform.position != Vector3.zero)
             {
                 length = Math.Abs(GetCRTStart().x - VerticalCapacitor.transform.position.x);
                 x = (scale / 2) - Math.Abs(currentPoint.x - (GetCRTStart().x + length));

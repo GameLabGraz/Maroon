@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using GEAR.Localization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,6 +12,13 @@ public class ToolTipHandler : MonoBehaviour
     [SerializeField] private GameObject partInfoToggle;
     private bool collision;
     private Transform hitObject;
+    GUIStyle guiStyle = new GUIStyle();
+
+    private void Start()
+    {
+        guiStyle.normal.textColor = Color.black;
+        guiStyle.fontSize = 14;
+    }
 
     private void Update()
     {
@@ -37,9 +45,8 @@ public class ToolTipHandler : MonoBehaviour
         {
             Vector2 screenPos = Event.current.mousePosition;
             Vector2 convertedGUIPos = GUIUtility.ScreenToGUIPoint(screenPos);
- 
-            GUI.contentColor = Color.black;
-            GUI.Label(new Rect(convertedGUIPos.x + 15, convertedGUIPos.y, 200, 20), hitObject.name);
+            
+            GUI.Label(new Rect(convertedGUIPos.x + 15, convertedGUIPos.y, 200, 20), LanguageManager.Instance.GetString(hitObject.name), guiStyle);
         }
     }
 }
