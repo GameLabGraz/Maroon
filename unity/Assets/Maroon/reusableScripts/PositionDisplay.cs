@@ -2,7 +2,6 @@
 using Maroon.GlobalEntities;
 using Maroon.Physics.CoordinateSystem;
 using Maroon.UI;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
