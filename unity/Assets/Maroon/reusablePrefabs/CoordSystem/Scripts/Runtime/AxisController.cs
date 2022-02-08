@@ -1,7 +1,6 @@
-﻿using System;
+﻿using GEAR.Gadgets.Attribute;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using RotaryHeart.Lib.AutoComplete;
 using UnityEngine;
 
 namespace Maroon.Physics.CoordinateSystem
@@ -18,17 +17,17 @@ namespace Maroon.Physics.CoordinateSystem
 
     public enum Unit
     {
-        respective = -1000,
-        none = -999,
-        femto = -15,
-        pico = -12,
-        nm = -9,
-        µm = -6,
-        mm = -3,
-        cm = -2,
-        dm = -1,
-        m = 0,
-        km = 3
+        [StringValue("respective")] respective = -1000,
+        [StringValue("none")] none = -999,
+        [StringValue("femto")] femto = -15,
+        [StringValue("pico")] pico = -12,
+        [StringValue("nm")] nm = -9,
+        [StringValue("µm")] µm = -6,
+        [StringValue("mm")] mm = -3,
+        [StringValue("cm")] cm = -2,
+        [StringValue("dm")] dm = -1,
+        [StringValue("m")] m = 0,
+        [StringValue("km")] km = 3
     }
 
     public class AxisController : MonoBehaviour

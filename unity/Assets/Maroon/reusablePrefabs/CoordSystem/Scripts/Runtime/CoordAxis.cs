@@ -205,7 +205,8 @@ namespace Maroon.Physics.CoordinateSystem
 
         public float GetAxisPointFromValue(float value, Unit inputUnit)
         {
-            var unit = inputUnit != Unit.none ? inputUnit : 0; 
+            var unit = inputUnit != Unit.none ? inputUnit : inputUnit == Unit.respective ? AxisLengthUnit : 0; 
+                      
             var quotient = value * (Mathf.Pow(10, (float)unit));
             var dividend = _axisLocalLength * (Mathf.Pow(10, (float)_lengthUnit));
             return quotient / dividend;
