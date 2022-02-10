@@ -184,7 +184,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                     _currentTimeDesorb += Time.deltaTime;
                     if (timeUntilNextDesorb <= _currentTimeDesorb)
                     {
-                        if (Random.Range(0, 100) > 95)
+                        if (Random.Range(0, 100) > 99 - _currentTurnOverRate)
                         {
                             DesorbCO();
                         }
@@ -270,7 +270,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         private void HandleDrawingPossibility()
         {
-            if (Random.Range(0, 100) > 95)
+            if (Random.Range(0, 100) > 99 - _currentTurnOverRate)
             {
                 _possibleDrawingMolecule.ConnectedMolecule = this; // connect this (O2 or CO) to plat molecule
                 SetMoleculeDrawn(_possibleDrawingMolecule, MoleculeState.DrawnByPlat); // drawn by plat

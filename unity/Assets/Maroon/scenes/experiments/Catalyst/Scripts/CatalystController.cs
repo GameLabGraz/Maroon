@@ -128,6 +128,11 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                     foreach (var molecule in _activeMolecules)
                     {
                         onReactionStart += molecule.ReactionStart;
+                        if (molecule.Type == MoleculeType.Pt) continue;
+                        molecule.TemperatureChanged(temperature);
+                        molecule.PressureChanged(partialPressure);
+                        temperature.onValueChanged.AddListener(molecule.TemperatureChanged);
+                        partialPressure.onValueChanged.AddListener(molecule.PressureChanged);
                     }
                     SpawnReactionMaterial();
                 },
