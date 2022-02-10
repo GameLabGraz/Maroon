@@ -1,11 +1,10 @@
 ﻿using System.Globalization;
-using Assets.Maroon.reusablePrefabs.NewRuler.Scripts;
 using Maroon.GlobalEntities;
 using Maroon.Physics.CoordinateSystem;
 using TMPro;
 using UnityEngine;
 
-namespace Maroon.Tools
+namespace Maroon.Tools.Ruler
 {
    public class RulerDisplay : MonoBehaviour
     {
@@ -14,11 +13,6 @@ namespace Maroon.Tools
 
         public Vector3 StartMeasuringPosition => CoordSystemHandler.Instance.GetSystemPosition(ruler.RulerStart.transform.position);
         public Vector3 EndMeasuringPosition => CoordSystemHandler.Instance.GetSystemPosition(ruler.RulerEnd.transform.position);
-
-        private void Start()
-        {
-            UpdateDisplay();
-        }
 
         public void UpdateDisplay()
         {

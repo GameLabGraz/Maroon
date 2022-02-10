@@ -8,7 +8,6 @@ namespace Maroon.Physics.CoordinateSystem
 {
     public class CoordAxis : MonoBehaviour
     {
-        // Start is called before the first frame update
         [SerializeField] private Axis _axisID;
         [SerializeField] private float _axisWorldLength;
         [SerializeField] private GameObject _axisMarkerPrefab;
@@ -57,7 +56,6 @@ namespace Maroon.Physics.CoordinateSystem
 
         #endregion
 
-
         private void Awake()
         {
             _ = _axisMarkerPrefab ?? throw new NullReferenceException("Missing axis marker prefab!");
@@ -82,6 +80,18 @@ namespace Maroon.Physics.CoordinateSystem
             {
                 marker.GetComponentInChildren<TextMeshPro>().fontSize = value;
             }
+        }
+
+        public void CopyAxisValuesFrom(CoordAxis source, bool reset = false)
+        {
+            AxisWorldLength = source.AxisWorldLength;
+            AxisLocalLength = source.AxisLocalLength;
+            AxisLengthUnit = source.AxisLengthUnit;
+            AxisSubdivisionUnit = source.AxisSubdivisionUnit;
+            _axisSubdivision = source._axisSubdivision;
+
+            if (reset)
+                SetupAxis();
         }
 
         public void SetupAxis()

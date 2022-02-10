@@ -4,12 +4,12 @@ using Maroon.Physics.CoordinateSystem;
 using UnityEngine;
 using Maroon.GlobalEntities;
 
-namespace Assets.Maroon.reusablePrefabs.NewRuler.Scripts
+namespace Maroon.Tools.Ruler
 {
     public class RulerLogic : MonoBehaviour, IResetObject
     {
-        public GameObject RulerStart;
-        public GameObject RulerEnd;
+        public Pin RulerStart;
+        public Pin RulerEnd;
         public LineRenderer RulerLine;
         private QuantityFloat _pinDistance = 0;
         private Vector3 _resetPosition;
@@ -22,18 +22,18 @@ namespace Assets.Maroon.reusablePrefabs.NewRuler.Scripts
 
         private void Start()
         {
-            RulerStart.GetComponent<RulerNotify>().onRulerPinEnable += OnEnableRulerPin;
-            RulerStart.GetComponent<RulerNotify>().onRulerPinDisable += OnDisableRulerPin;
+            RulerStart.onRulerPinEnable.AddListener(OnEnableRulerPin);     
+            RulerStart.onRulerPinDisable.AddListener(OnDisableRulerPin);
 
-            RulerEnd.GetComponent<RulerNotify>().onRulerPinEnable += OnEnableRulerPin;
-            RulerEnd.GetComponent<RulerNotify>().onRulerPinDisable += OnDisableRulerPin;
+            RulerEnd.onRulerPinEnable.AddListener(OnEnableRulerPin);
+            RulerEnd.onRulerPinDisable.AddListener(OnDisableRulerPin);
 
             _resetPosition = transform.position;
 
             if (RulerLine.positionCount < 2)
             {
                 RulerLine.SetPositions(new []{RulerStart.transform.position, RulerEnd.transform.position});
-                UpdateRulerLine();
+                //UpdateRulerLine();
             }
 
             PinDistance.Value = 0f;
@@ -56,7 +56,7 @@ namespace Assets.Maroon.reusablePrefabs.NewRuler.Scripts
 
         public void OnEnableRulerPin()
         {
-            if (RulerStart.activeSelf && RulerEnd.activeSelf)
+            if (RulerStart.gameObject.activeSelf && RulerEnd.gameObject.activeSelf)
             {
                 if (!RulerLine.gameObject.activeSelf)
                     RulerLine.gameObject.SetActive(true);

@@ -32,7 +32,6 @@ namespace Maroon.Physics.CoordinateSystem
 
     public class AxisController : MonoBehaviour
     {
-        // Start is called before the first frame update
         [SerializeField] private bool _enableNegativeDirection = false;
 
         [SerializeField] private bool _enableThirdDimension = false;
@@ -94,6 +93,13 @@ namespace Maroon.Physics.CoordinateSystem
             }
         }
 
+        public List<CoordAxis> PositveAxis => new List<CoordAxis> { FindInList(Axis.X), 
+            FindInList(Axis.Y), 
+            FindInList(Axis.Z) };
+        public List<CoordAxis> NegativeAxis => new List<CoordAxis> { FindInList(Axis.NX),
+            FindInList(Axis.NY),
+            FindInList(Axis.NZ) };
+
         public Vector3 PositiveWorldLengths => new Vector3(FindInList(Axis.X).AxisWorldLength,
             FindInList(Axis.Y).AxisWorldLength,
             FindInList(Axis.Z).AxisWorldLength);
@@ -136,11 +142,21 @@ namespace Maroon.Physics.CoordinateSystem
 
         public void ToggleNegativeAxisVisibility()
         {
-            FindInList(Axis.NX).gameObject.SetActive(_enableNegativeDirection);
-            FindInList(Axis.NY).gameObject.SetActive(_enableNegativeDirection);
+            var negativeAxis = NegativeAxis;
 
+            if (_enableNegativeDirection)
+            {
+                var positiveAxis = PositveAxis;
+                negativeAxis[0].CopyAxisValuesFrom(positiveAxis[0], true);
+                negativeAxis[1].CopyAxisValuesFrom(positiveAxis[1], true);
+                negativeAxis[2].CopyAxisValuesFrom(positiveAxis[2], true);
+            }
+
+            negativeAxis[0].gameObject.SetActive(_enableNegativeDirection);
+            negativeAxis[1].gameObject.SetActive(_enableNegativeDirection);
+           
             if (_enableThirdDimension)
-                FindInList(Axis.NZ).gameObject.SetActive(_enableNegativeDirection);
+                negativeAxis[2].gameObject.SetActive(_enableNegativeDirection);     
         }
 
         public void ToggleSpaceIndicatorVisibility()
@@ -160,6 +176,14 @@ namespace Maroon.Physics.CoordinateSystem
             {
                 axis?.UpdateFontSize(FontSize);
             }
+        }
+
+        private void UpdateNegativeAxisDimensions(CoordAxis pAxis, CoordAxis nAxis)
+        {
+            nAxis.AxisWorldLength = pAxis.AxisWorldLength;
+            nAxis.AxisLocalLength = pAxis.AxisLocalLength;
+            nAxis.AxisLengthUnit = pAxis.AxisLengthUnit;
+            nAxis.AxisSubdivisionUnit = pAxis.AxisSubdivisionUnit;
         }
 
         public void ToggleThirdDimension()

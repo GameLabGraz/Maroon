@@ -3,7 +3,6 @@ using Maroon.GlobalEntities;
 using Maroon.Physics.CoordinateSystem;
 using Maroon.UI;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -31,7 +30,6 @@ public class PositionDisplay : MonoBehaviour
         PositionZ.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(endVal => CheckVariable(endVal, Axis.Z));
 
         UpdatePositionUnits();
-        UpdateDisplay();
     }
 
     private void UpdatePositionUnits()
@@ -39,13 +37,13 @@ public class PositionDisplay : MonoBehaviour
         List<Unit> subDivUnits = CoordSystemHandler.Instance.GetSubdivisionUnits();
 
         if (PositionXUnit)
-            PositionXUnit.GetComponent<TMP_Text>().text = subDivUnits.ElementAt(0).GetStringValue();
+            PositionXUnit.GetComponent<TMP_Text>().text = subDivUnits[0].GetStringValue();
 
         if(PositionYUnit)
-            PositionYUnit.GetComponent<TMP_Text>().text = subDivUnits.ElementAt(1).GetStringValue();
+            PositionYUnit.GetComponent<TMP_Text>().text = subDivUnits[1].GetStringValue();
 
         if (PositionZUnit)
-            PositionZUnit.GetComponent<TMP_Text>().text = subDivUnits.ElementAt(2).GetStringValue();
+            PositionZUnit.GetComponent<TMP_Text>().text = subDivUnits[2].GetStringValue();
     }
 
     private void CheckVariable(float endValue, Axis affectedAxis)
