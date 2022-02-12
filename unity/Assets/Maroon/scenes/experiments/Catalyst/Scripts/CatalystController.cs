@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Maroon.Physics;
 using Maroon.UI;
 using UnityEngine;
@@ -37,6 +38,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         private int freedMoleculeCounter = 0;
         private List<Vector3> _platSpawnPoints = new List<Vector3>();
+        private List<Vector3> _cOSpawnPoints = new List<Vector3>();
+        private List<Vector3> _oSpawnPoints = new List<Vector3>();
         private List<Molecule> _activeMolecules = new List<Molecule>();
         private CatalystSurface _catalystSurface;
         
@@ -61,6 +64,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         private System.Action onReactionStart;
 
+        private static readonly Regex WhiteSpaces = new Regex(@"\s+");
+
         public const float FixedMoleculeYDist = 0.28f - 0.075f;
         public const float PlatinumScale = 0.14f;
 
@@ -70,16 +75,26 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             string[] lines = coordFile.text.Split('\n');
             foreach (var line in lines)
             {
-                string[] lineValues = line.Split(',');
-                if (lineValues.Length == 3)
+                string[] lineValues = WhiteSpaces.Replace(line, ",").Split(',');
+                if (lineValues.Length >= 4)
                 {
-                    _platSpawnPoints.Add(
-                        new Vector3(
-                            float.Parse(lineValues[0], CultureInfo.InvariantCulture.NumberFormat), 
-                            float.Parse(lineValues[1], CultureInfo.InvariantCulture.NumberFormat), 
-                            float.Parse(lineValues[2], CultureInfo.InvariantCulture.NumberFormat)
-                            )
-                        );
+                    Vector3 spawnPoint = new Vector3(
+                        float.Parse(lineValues[1], CultureInfo.InvariantCulture.NumberFormat),
+                        float.Parse(lineValues[2], CultureInfo.InvariantCulture.NumberFormat),
+                        float.Parse(lineValues[3], CultureInfo.InvariantCulture.NumberFormat)
+                    );
+                    if (lineValues[0].Equals("Pt"))
+                    {
+                        _platSpawnPoints.Add(spawnPoint);
+                    }
+                    else if (lineValues[0].Equals("Co"))
+                    {
+                        _cOSpawnPoints.Add(spawnPoint);
+                    }
+                    else if (lineValues[0].Equals("O"))
+                    {
+                        _oSpawnPoints.Add(spawnPoint);
+                    }
                 }
             }
         }
