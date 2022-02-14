@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Maroon.Physics;
 using Maroon.UI;
+using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -14,6 +14,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
     public class CatalystController : MonoBehaviour
     {
         [Header("Simulation Parameters")]
+        [SerializeField] TextMeshProUGUI variantLabel;
         [SerializeField] QuantityFloat temperature;
         [SerializeField] QuantityFloat partialPressure;
         [SerializeField] int numberSpawnedO2Molecules;
@@ -49,6 +50,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private static readonly float[] PartialPressureValues = new[] { 0.01f, 0.02f, 0.04f, 0.2f };
         public static readonly float[][] TurnOverRates = new float[][]
         {
+            // todo made a mistake copying?
             new float[] { 0f, 0f, 0.047619048f, 0.285714286f, 8.571428571f },
             new float[] { 0f, 0.047619048f, 0.142857143f, 0.666666667f, 8.571428571f },
             new float[] { 0f, 0.095238095f, 0.238095238f, 1.19047619f, 8.571428571f },
@@ -72,31 +74,9 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private void Awake()
         {
             var coordFile = Resources.Load<TextAsset>("Pt-111");
-            string[] lines = coordFile.text.Split('\n');
-            foreach (var line in lines)
-            {
-                string[] lineValues = WhiteSpaces.Replace(line, ",").Split(',');
-                if (lineValues.Length >= 4)
-                {
-                    Vector3 spawnPoint = new Vector3(
-                        float.Parse(lineValues[1], CultureInfo.InvariantCulture.NumberFormat),
-                        float.Parse(lineValues[2], CultureInfo.InvariantCulture.NumberFormat),
-                        float.Parse(lineValues[3], CultureInfo.InvariantCulture.NumberFormat)
-                    );
-                    if (lineValues[0].Equals("Pt"))
-                    {
-                        _platSpawnPoints.Add(spawnPoint);
-                    }
-                    else if (lineValues[0].Equals("Co"))
-                    {
-                        _cOSpawnPoints.Add(spawnPoint);
-                    }
-                    else if (lineValues[0].Equals("O"))
-                    {
-                        _oSpawnPoints.Add(spawnPoint);
-                    }
-                }
-            }
+            FillSpawnPoints(coordFile);
+            coordFile = Resources.Load<TextAsset>("Co3O4_111");
+            FillSpawnPoints(coordFile);
         }
 
         private void Start()
@@ -123,6 +103,37 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             catalystReactor.OnSpawnCatalystSurface -= SpawnCatalystSurfaceObject;
         }
         
+        private void FillSpawnPoints(TextAsset coordFile)
+        {
+            string[] lines = coordFile.text.Split('\n');
+            foreach (var line in lines)
+            {
+                string trimmedLine = line.TrimStart(); // O entry have a leading whitespace
+                string[] lineValues = WhiteSpaces.Replace(trimmedLine, ",").Split(',');
+                if (lineValues.Length >= 4)
+                {
+                    Vector3 spawnPoint = new Vector3(
+                        float.Parse(lineValues[1], CultureInfo.InvariantCulture.NumberFormat),
+                        float.Parse(lineValues[2], CultureInfo.InvariantCulture.NumberFormat),
+                        float.Parse(lineValues[3], CultureInfo.InvariantCulture.NumberFormat)
+                    );
+
+                    if (lineValues[0].Equals("Pt"))
+                    {
+                        _platSpawnPoints.Add(spawnPoint);
+                    }
+                    else if (lineValues[0].Equals("Co"))
+                    {
+                        _cOSpawnPoints.Add(spawnPoint);
+                    }
+                    else if (lineValues[0].Equals("O"))
+                    {
+                        _oSpawnPoints.Add(spawnPoint);
+                    }
+                }
+            }
+        }
+        
 
         private void StartSimulation()
         {
@@ -136,22 +147,57 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         private void SpawnCatalystSurfaceObject()
         {
+            EnsureCleanSurface();
+
             _catalystSurface = Instantiate(catalystSurfacePrefab, catalystSurfaceSpawnTransform);
-            _catalystSurface.SetupCoords(_platSpawnPoints, list => 
-                {
-                    _activeMolecules = list;
-                    foreach (var molecule in _activeMolecules)
+            if (variantLabel.text.Equals("Platin Surface"))
+            {
+                _catalystSurface.SetupCoords(_platSpawnPoints,list =>
                     {
-                        onReactionStart += molecule.ReactionStart;
-                        if (molecule.Type == MoleculeType.Pt) continue;
-                        molecule.TemperatureChanged(temperature);
-                        molecule.PressureChanged(partialPressure);
-                        temperature.onValueChanged.AddListener(molecule.TemperatureChanged);
-                        partialPressure.onValueChanged.AddListener(molecule.PressureChanged);
-                    }
-                    SpawnReactionMaterial();
-                },
-                OnMoleculeFreed);
+                        _activeMolecules = list;
+                        foreach (var molecule in _activeMolecules)
+                        {
+                            onReactionStart += molecule.ReactionStart;
+                            if (molecule.Type == MoleculeType.Pt) continue;
+                            molecule.TemperatureChanged(temperature);
+                            molecule.PressureChanged(partialPressure);
+                            temperature.onValueChanged.AddListener(molecule.TemperatureChanged);
+                            partialPressure.onValueChanged.AddListener(molecule.PressureChanged);
+                        }
+                        SpawnReactionMaterial();
+                    },
+                    OnMoleculeFreed);
+            }
+            else if (variantLabel.text.Equals("Other Surface"))
+            {
+                _catalystSurface.SetupOtherCoords(_cOSpawnPoints, _oSpawnPoints, list =>
+                    {
+                        
+                    },
+                    OnMoleculeFreed);
+            }
+        }
+
+        private void EnsureCleanSurface()
+        {
+            if (catalystSurfaceSpawnTransform.childCount == 0) return;
+            
+            foreach (Transform childTransform in catalystSurfaceSpawnTransform.GetChild(0).transform)
+            {
+                Molecule molecule = childTransform.GetComponent<Molecule>();
+                if (molecule != null)
+                {
+                    onReactionStart -= molecule.ReactionStart;
+                    // do we also need to remove OnDissociate?
+                    temperature.onValueChanged.RemoveListener(molecule.TemperatureChanged);
+                    partialPressure.onValueChanged.RemoveListener(molecule.PressureChanged);
+                    _activeMolecules.Remove(molecule);
+                    Destroy(molecule.gameObject);
+                }
+            }
+            Destroy(catalystSurfaceSpawnTransform.GetChild(0).gameObject);
+
+            _activeMolecules.Clear();
         }
 
         private void SpawnReactionMaterial(bool isSpawnButtonClicked = false)
@@ -249,6 +295,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         private void RemoveMoleculeFromActiveList(Molecule molecule)
         {
+            onReactionStart -= molecule.ReactionStart;
             temperature.onValueChanged.RemoveListener(molecule.TemperatureChanged);
             partialPressure.onValueChanged.RemoveListener(molecule.PressureChanged);
             _activeMolecules.Remove(molecule);

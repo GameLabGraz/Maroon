@@ -65,5 +65,13 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             }
             onComplete?.Invoke(activeMolecules);
         }
+
+        public void SetupOtherCoords(List<Vector3> cOCoords, 
+            List<Vector3> oCoords,
+            System.Action<List<Molecule>> onComplete, 
+            System.Action onMoleculeFreed)
+        {
+            Debug.Log("test");
+        }
     }
 }
