@@ -21,6 +21,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         {
             if (SimulationController.Instance.SimulationRunning && _reactorFilled)
             {
+                _reactorFilled = false;
                 OnSpawnCatalystSurface?.Invoke();
             }
 
