@@ -14,7 +14,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
     public class CatalystController : MonoBehaviour
     {
         [Header("Simulation Parameters")]
-        [SerializeField] TextMeshProUGUI variantLabel;
+        [SerializeField] Dropdown variantDropdown;
         [SerializeField] QuantityFloat temperature;
         [SerializeField] QuantityFloat partialPressure;
         [SerializeField] int numberSpawnedO2Molecules;
@@ -46,9 +46,6 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         
         private float _currentTurnOverRate = 0.0f;
 
-        private const string ExperimentVariant1 = "Langmuir-Hinshelwood";
-        private const string ExperimentVariant2 = "Mars-van-Krevelen";
-        
         private static readonly int[] TemperatureStageValues = new[] { 250, 275, 300, 325, 350, 375, 400, 425, 450 };
         private static readonly float[] PartialPressureValues = new[] { 0.01f, 0.02f, 0.04f, 0.2f };
         public static readonly float[][] TurnOverRates = new float[][]
@@ -152,7 +149,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             EnsureCleanSurface();
 
             _catalystSurface = Instantiate(catalystSurfacePrefab, catalystSurfaceSpawnTransform);
-            if (variantLabel.text.Equals(ExperimentVariant1))
+            if (variantDropdown.value == 0)
             {
                 _catalystSurface.SetupCoords(_platSpawnPoints,list =>
                     {
@@ -170,7 +167,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                     },
                     OnMoleculeFreed);
             }
-            else if (variantLabel.text.Equals(ExperimentVariant2))
+            else if (variantDropdown.value == 1)
             {
                 _catalystSurface.SetupOtherCoords(_cOSpawnPoints, _oSpawnPoints, list =>
                     {
@@ -283,6 +280,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
             Molecule co2Molecule = Instantiate(co2MoleculePrefab, parentTransform);
             co2Molecule.gameObject.transform.position = coPosition;
+            // todo rotate co2 in up facing position
             co2Molecule.MoveOutCO2();
         }
 
