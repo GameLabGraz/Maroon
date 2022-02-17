@@ -45,21 +45,23 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private CatalystSurface _catalystSurface;
         
         private float _currentTurnOverRate = 0.0f;
+
+        private const string ExperimentVariant1 = "Langmuir-Hinshelwood";
+        private const string ExperimentVariant2 = "Mars-van-Krevelen";
         
         private static readonly int[] TemperatureStageValues = new[] { 250, 275, 300, 325, 350, 375, 400, 425, 450 };
         private static readonly float[] PartialPressureValues = new[] { 0.01f, 0.02f, 0.04f, 0.2f };
         public static readonly float[][] TurnOverRates = new float[][]
         {
-            // todo made a mistake copying?
-            new float[] { 0f, 0f, 0.047619048f, 0.285714286f, 8.571428571f },
-            new float[] { 0f, 0.047619048f, 0.142857143f, 0.666666667f, 8.571428571f },
-            new float[] { 0f, 0.095238095f, 0.238095238f, 1.19047619f, 8.571428571f },
-            new float[] { 0.047619048f, 0.19047619f, 0.380952381f, 1.952380952f, 8.571428571f },
-            new float[] { 0.095238095f, 0.285714286f, 0.571428571f, 2.952380952f, 8.571428571f },
-            new float[] { 0.19047619f, 0.380952381f, 0.80952381f, 4.19047619f, 8.571428571f },
-            new float[] { 0.285714286f, 0.571428571f, 1.142857143f, 5.904761905f, 8.571428571f },
-            new float[] { 0.333333333f, 0.714285714f, 1.428571429f, 7.428571429f, 8.571428571f },
-            new float[] { 0.380952381f, 0.80952381f, 1.619047619f, 8.571428571f, 8.571428571f }
+            new float[] { 0f, 0f, 0.047619048f, 0.285714286f },
+            new float[] { 0f, 0.047619048f, 0.142857143f, 0.666666667f },
+            new float[] { 0f, 0.095238095f, 0.238095238f, 1.19047619f },
+            new float[] { 0.047619048f, 0.19047619f, 0.380952381f, 1.952380952f },
+            new float[] { 0.095238095f, 0.285714286f, 0.571428571f, 2.952380952f },
+            new float[] { 0.19047619f, 0.380952381f, 0.80952381f, 4.19047619f },
+            new float[] { 0.285714286f, 0.571428571f, 1.142857143f, 5.904761905f },
+            new float[] { 0.333333333f, 0.714285714f, 1.428571429f, 7.428571429f },
+            new float[] { 0.380952381f, 0.80952381f, 1.619047619f, 8.571428571f }
         };
         
         
@@ -150,7 +152,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             EnsureCleanSurface();
 
             _catalystSurface = Instantiate(catalystSurfacePrefab, catalystSurfaceSpawnTransform);
-            if (variantLabel.text.Equals("Platin Surface"))
+            if (variantLabel.text.Equals(ExperimentVariant1))
             {
                 _catalystSurface.SetupCoords(_platSpawnPoints,list =>
                     {
@@ -168,7 +170,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                     },
                     OnMoleculeFreed);
             }
-            else if (variantLabel.text.Equals("Other Surface"))
+            else if (variantLabel.text.Equals(ExperimentVariant2))
             {
                 _catalystSurface.SetupOtherCoords(_cOSpawnPoints, _oSpawnPoints, list =>
                     {
