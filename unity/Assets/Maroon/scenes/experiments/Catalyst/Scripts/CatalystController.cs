@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Maroon.Physics;
 using Maroon.UI;
-using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -30,6 +29,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         [SerializeField] Molecule o2MoleculePrefab;
         [SerializeField] Molecule coMoleculePrefab;
         [SerializeField] Molecule co2MoleculePrefab;
+        [SerializeField] Molecule cobaltMoleculePrefab;
 
         [Header("Player specific objects")]
         [SerializeField] GameObject player;
@@ -39,7 +39,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         private int freedMoleculeCounter = 0;
         private List<Vector3> _platSpawnPoints = new List<Vector3>();
-        private List<Vector3> _cOSpawnPoints = new List<Vector3>();
+        private List<Vector3> _coSpawnPoints = new List<Vector3>();
         private List<Vector3> _oSpawnPoints = new List<Vector3>();
         private List<Molecule> _activeMolecules = new List<Molecule>();
         private CatalystSurface _catalystSurface;
@@ -123,7 +123,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                     }
                     else if (lineValues[0].Equals("Co"))
                     {
-                        _cOSpawnPoints.Add(spawnPoint);
+                        _coSpawnPoints.Add(spawnPoint);
                     }
                     else if (lineValues[0].Equals("O"))
                     {
@@ -169,7 +169,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             }
             else if (variantDropdown.value == 1)
             {
-                _catalystSurface.SetupOtherCoords(_cOSpawnPoints, _oSpawnPoints, list =>
+                _catalystSurface.SetupOtherCoords(_coSpawnPoints, _oSpawnPoints, list =>
                     {
                         
                     },
