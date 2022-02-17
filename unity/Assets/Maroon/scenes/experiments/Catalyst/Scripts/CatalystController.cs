@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Maroon.Physics;
+using Maroon.scenes.experiments.Catalyst.Scripts.Molecules;
 using Maroon.UI;
 using UnityEngine;
 using Random = UnityEngine.Random;
