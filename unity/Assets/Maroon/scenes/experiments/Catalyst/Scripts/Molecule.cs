@@ -13,7 +13,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         CO2,
         O,
         O2,
-        Pt
+        Pt,
+        Co
     }
 
     public enum MoleculeState
@@ -31,7 +32,6 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
     {
         [Header("Molecule Specifics")]
         [SerializeField] MoleculeType type;
-        [SerializeField] List<MoleculeType> canConnectToList = new List<MoleculeType>();
         [SerializeField] Collider collider;
 
         [Header("Molecule Movement")]
