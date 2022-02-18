@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using Maroon.Physics;
 using Maroon.scenes.experiments.Catalyst.Scripts.Molecules;
 using Maroon.UI;
+using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -15,6 +16,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
     {
         [Header("Simulation Parameters")]
         [SerializeField] Dropdown variantDropdown;
+        [SerializeField] UnityEngine.UI.Toggle stepWiseSimulationToggle;
         [SerializeField] QuantityFloat temperature;
         [SerializeField] QuantityFloat partialPressure;
         [SerializeField] int numberSpawnedO2Molecules;
@@ -47,6 +49,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         
         private float _currentTurnOverRate = 0.0f;
 
+        private System.Action onReactionStart;
+        
+        private static readonly Regex WhiteSpaces = new Regex(@"\s+");
+
         private static readonly int[] TemperatureStageValues = new[] { 250, 275, 300, 325, 350, 375, 400, 425, 450 };
         private static readonly float[] PartialPressureValues = new[] { 0.01f, 0.02f, 0.04f, 0.2f };
         public static readonly float[][] TurnOverRates = new float[][]
@@ -61,16 +67,11 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             new float[] { 0.333333333f, 0.714285714f, 1.428571429f, 7.428571429f },
             new float[] { 0.380952381f, 0.80952381f, 1.619047619f, 8.571428571f }
         };
-        
-        
-
-        private System.Action onReactionStart;
-
-        private static readonly Regex WhiteSpaces = new Regex(@"\s+");
 
         public const float FixedMoleculeYDist = 0.28f - 0.075f;
         public const float PlatinumScale = 0.14f;
 
+        public static bool DoStepWiseSimulation = false;
         private void Awake()
         {
             var coordFile = Resources.Load<TextAsset>("Pt-111");
@@ -138,11 +139,14 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private void StartSimulation()
         {
             Debug.Log("Start catalyst simulation");
+            stepWiseSimulationToggle.interactable = false;
+            DoStepWiseSimulation = stepWiseSimulationToggle.isOn;
         }
 
         private void StopSimulation()
         {
             Debug.Log("Stop catalyst simulation");
+            stepWiseSimulationToggle.interactable = true;
         }
 
         private void SpawnCatalystSurfaceObject()
@@ -323,7 +327,17 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         public void SpawnO2ButtonClicked()
         {
-            SpawnReactionMaterial(true);
+            if (_activeMolecules.Count < 900)
+            {
+                SpawnReactionMaterial(true);
+            }
+            // show info that too many molecules are active?
+        }
+
+        public void StepWiseSimulationValueChanged(bool val)
+        {
+            stepWiseSimulationToggle.GetComponentInChildren<TextMeshProUGUI>().text = 
+                val ? "enabled" : "disabled";
         }
         
         
