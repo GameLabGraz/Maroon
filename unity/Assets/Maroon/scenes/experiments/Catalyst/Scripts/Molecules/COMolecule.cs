@@ -79,10 +79,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
 
         private void DesorbCO()
         {
-            _startMoleculePosition = transform.position;
-            _startMoleculeRotation = transform.rotation;
-            _newMoleculePosition = new Vector3(_startMoleculePosition.x, _startMoleculePosition.y + 0.8f, _startMoleculePosition.z);
-            _currentTimeMove = 0.0f;
+            StartMoleculePosition = transform.position;
+            StartMoleculeRotation = transform.rotation;
+            NewMoleculePosition = new Vector3(StartMoleculePosition.x, StartMoleculePosition.y + 0.8f, StartMoleculePosition.z);
+            CurrentTimeMove = 0.0f;
             State = MoleculeState.Desorb;
             ConnectedMolecule.ConnectedMolecule = null;
             ConnectedMolecule = null;

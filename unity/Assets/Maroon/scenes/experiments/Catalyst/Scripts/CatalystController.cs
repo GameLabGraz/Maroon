@@ -276,6 +276,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             RemoveMoleculeFromActiveList(coMolecule);
             Transform parentTransform = coMolecule.gameObject.transform.parent;
             Vector3 coPosition = coMolecule.gameObject.transform.position;
+            Quaternion coRotation = coMolecule.gameObject.transform.rotation;
             
             coMolecule.ConnectedMolecule.ActivateDrawingCollider(true);
             coMolecule.ConnectedMolecule = null;
@@ -285,8 +286,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
             Molecule co2Molecule = Instantiate(co2MoleculePrefab, parentTransform);
             co2Molecule.gameObject.transform.position = coPosition;
-            // todo rotate co2 in up facing position
-            co2Molecule.MoveOutCO2();
+            co2Molecule.gameObject.transform.rotation = coRotation;
+            (co2Molecule as CO2Molecule)?.MoveOutCO2();
         }
 
         private void AddMoleculeToActiveList(Molecule molecule)
