@@ -16,6 +16,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
     {
         [SerializeField] Molecule platinumMoleculePrefab;
         [SerializeField] Molecule coMoleculePrefab;
+        [SerializeField] Molecule cobaltMoleculePrefab;
+        [SerializeField] Molecule oxygenMoleculePrefab;
         [SerializeField] Transform surfaceLayerParent;
         
         private float _spaceBetweenMolecules;
@@ -29,7 +31,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             for (int i = 0; i < platCoords.Count; i++)
             {
                 Molecule platMolecule = Instantiate(platinumMoleculePrefab, surfaceLayerParent);
-                platMolecule.transform.localPosition = (platCoords[i] / 20.0f) - new Vector3(1.75f, 1.0f, 4.0f);
+                platMolecule.transform.localPosition = platCoords[i] / 20.0f;
                 platMolecule.State = MoleculeState.Fixed;
 
                 // find top layer molecules based on y position
@@ -67,12 +69,31 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             onComplete?.Invoke(activeMolecules);
         }
 
-        public void SetupOtherCoords(List<Vector3> cOCoords, 
+        public void SetupOtherCoords(List<Vector3> cobaltCoords, 
             List<Vector3> oCoords,
             System.Action<List<Molecule>> onComplete, 
             System.Action onMoleculeFreed)
         {
-            Debug.Log("test");
+            List<Molecule> surfaceMolecules = new List<Molecule>();
+            for (int i = 0; i < cobaltCoords.Count; i++)
+            {
+                Molecule cobaltMolecule = Instantiate(cobaltMoleculePrefab, surfaceLayerParent);
+                cobaltMolecule.transform.localPosition = cobaltCoords[i] / 20.0f;
+                cobaltMolecule.State = MoleculeState.Fixed;
+                
+                surfaceMolecules.Add(cobaltMolecule);
+            }
+
+            for (int i = 0; i < oCoords.Count / 2; i++)
+            {
+                Molecule oxygentMolecule = Instantiate(oxygenMoleculePrefab, surfaceLayerParent);
+                oxygentMolecule.transform.localPosition = (oCoords[i] / 20.0f);
+                oxygentMolecule.State = MoleculeState.Fixed;
+                
+                surfaceMolecules.Add(oxygentMolecule);
+            }
+            
+            onComplete?.Invoke(surfaceMolecules);
         }
     }
 }
