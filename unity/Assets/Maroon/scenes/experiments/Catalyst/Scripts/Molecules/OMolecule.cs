@@ -4,19 +4,34 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
 {
     public class OMolecule : Molecule
     {
-        // was never called
-        /*private void OnCollisionEnter(Collision other)
-        {
-            Molecule otherMolecule = other.gameObject.GetComponent<Molecule>();
-            if (otherMolecule == null) return;
+        private SphereCollider _collider;
+        private float _timeToIncreaseCollider = 2.0f;
+        private float _currentTime = 0.0f;
 
-            if (ConnectedMolecule != null
-                && other.gameObject.GetComponent<Molecule>().Type == MoleculeType.CO
-                && ConnectedMolecule.Type == MoleculeType.Pt)
+        protected override void Start()
+        {
+            base.Start();
+            _collider = GetComponent<SphereCollider>();
+        }
+
+        protected override void HandleFixedUpdate()
+        {
+            if (State == MoleculeState.DrawnByCO)
             {
-                HandleOTouchingCO();
+                // handle drawing to CO molecule
+                base.HandleFixedUpdate();
             }
-        }*/
+            else
+            {
+                // gradually increase drawing collider
+                _currentTime += Time.deltaTime;
+                if (_currentTime >= _timeToIncreaseCollider && _collider.radius <= 4)
+                {
+                    _collider.radius *= 2;
+                    _currentTime = 0.0f;
+                }
+            }
+        }
         
         private void OnTriggerEnter(Collider other)
         {
@@ -25,7 +40,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             {
                 Molecule otherMolecule = other.gameObject.GetComponent<Molecule>();
                 if (otherMolecule != null && otherMolecule.Type == MoleculeType.CO &&
-                    otherMolecule.State == MoleculeState.Fixed && otherMolecule.ConnectedMolecule.Type == MoleculeType.Pt)
+                    otherMolecule.State == MoleculeState.Fixed &&
+                    otherMolecule.ConnectedMolecule != null && otherMolecule.ConnectedMolecule.Type == MoleculeType.Pt)
                 {
                     SetMoleculeDrawn(otherMolecule, MoleculeState.DrawnByCO);
                     otherMolecule.ConnectedMolecule = this;
