@@ -89,7 +89,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             
             temperature.onValueChanged.AddListener(TemperatureChanged);
             partialPressure.onValueChanged.AddListener(PartialPressureChanged);
-            
+            variantDropdown.value = 1;
             SpawnCatalystSurfaceObject();
         }
 

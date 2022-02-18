@@ -16,6 +16,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
 
         protected override void HandleFixedUpdate()
         {
+            if (State == MoleculeState.Fixed) return;
             if (State == MoleculeState.DrawnByCO)
             {
                 // handle drawing to CO molecule
