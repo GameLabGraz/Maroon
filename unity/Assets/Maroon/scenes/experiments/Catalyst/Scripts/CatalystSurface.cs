@@ -77,16 +77,22 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             System.Action onMoleculeFreed)
         {
             List<Molecule> surfaceMolecules = new List<Molecule>();
+            float maxYVal = cobaltCoords.Max(vector => vector.y);
             for (int i = 0; i < cobaltCoords.Count; i++)
             {
                 Molecule cobaltMolecule = Instantiate(cobaltMoleculePrefab, surfaceLayerParent);
                 cobaltMolecule.transform.localPosition = cobaltCoords[i] / 20.0f + new Vector3(1.0f, 0.0f, 3.5f); // todo remove offsets when i get centered coords
                 cobaltMolecule.State = MoleculeState.Fixed;
                 
+                if (Mathf.Abs(cobaltCoords[i].y - maxYVal) < 0.01f)
+                {
+                    cobaltMolecule.SetIsTopLayerSurfaceMolecule(true);
+                }
+                
                 surfaceMolecules.Add(cobaltMolecule);
             }
 
-            float maxYVal = oCoords.Max(vector => vector.y);
+            maxYVal = oCoords.Max(vector => vector.y);
             
             for (int i = 0; i < oCoords.Count / 2; i++)
             {
