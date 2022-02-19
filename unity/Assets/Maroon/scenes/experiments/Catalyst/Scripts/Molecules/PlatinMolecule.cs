@@ -6,7 +6,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
     {
         protected override void ReactionStart_Impl()
         {
-            GetComponent<CapsuleCollider>().enabled = true;
+            if (IsTopLayerSurfaceMolecule)
+                ActivateDrawingCollider(true);
         }
 
         private void OnTriggerEnter(Collider other)

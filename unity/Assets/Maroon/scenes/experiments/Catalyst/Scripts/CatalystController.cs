@@ -12,6 +12,12 @@ using Random = UnityEngine.Random;
 
 namespace Maroon.scenes.experiments.Catalyst.Scripts
 {
+    public enum ExperimentVariation
+    {
+        LangmuirHinshelwood,
+        MarsVanKrevelen
+    }
+
     public class CatalystController : MonoBehaviour
     {
         [Header("Simulation Parameters")]
@@ -72,6 +78,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         public const float PlatinumScale = 0.14f;
 
         public static bool DoStepWiseSimulation = false;
+        public static ExperimentVariation ExperimentVariation = ExperimentVariation.LangmuirHinshelwood;
+
         private void Awake()
         {
             var coordFile = Resources.Load<TextAsset>("Pt-111");
@@ -89,7 +97,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             
             temperature.onValueChanged.AddListener(TemperatureChanged);
             partialPressure.onValueChanged.AddListener(PartialPressureChanged);
-            variantDropdown.value = 1;
+            //variantDropdown.value = 1;
+            //ExperimentVariation = (ExperimentVariation)variantDropdown.value;
             SpawnCatalystSurfaceObject();
         }
 
@@ -141,6 +150,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             Debug.Log("Start catalyst simulation");
             stepWiseSimulationToggle.interactable = false;
             DoStepWiseSimulation = stepWiseSimulationToggle.isOn;
+            ExperimentVariation = (ExperimentVariation)variantDropdown.value;
         }
 
         private void StopSimulation()
@@ -154,7 +164,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             EnsureCleanSurface();
 
             _catalystSurface = Instantiate(catalystSurfacePrefab, catalystSurfaceSpawnTransform);
-            if (variantDropdown.value == 0)
+            if (ExperimentVariation.Equals(Scripts.ExperimentVariation.LangmuirHinshelwood))
             {
                 _catalystSurface.SetupCoords(_platSpawnPoints,list =>
                     {
@@ -172,7 +182,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                     },
                     OnMoleculeFreed);
             }
-            else if (variantDropdown.value == 1)
+            else if (ExperimentVariation.Equals(Scripts.ExperimentVariation.MarsVanKrevelen))
             {
                 _catalystSurface.SetupOtherCoords(_coSpawnPoints, _oSpawnPoints, list =>
                     {
@@ -207,9 +217,14 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private void SpawnReactionMaterial(bool isSpawnButtonClicked = false)
         {
             Transform catalystSurfaceTransform = _catalystSurface.gameObject.transform;
+            float minXVal = _activeMolecules.Min(molecule => molecule.gameObject.transform.localPosition.x) + 0.4f;
+            float maxXVal = _activeMolecules.Max(molecule => molecule.gameObject.transform.localPosition.x) - 0.4f;
+            float minZVal = _activeMolecules.Min(molecule => molecule.gameObject.transform.localPosition.z) + 0.4f;
+            float maxZVal = _activeMolecules.Max(molecule => molecule.gameObject.transform.localPosition.z) - 0.4f;
+            
             for (int i = 0; i < numberSpawnedO2Molecules; i++)
             {
-                Vector3 spawnPos = new Vector3(Random.Range(-0.8f, 2.2f), Random.Range(0.5f, 2.0f), Random.Range(0.3f, -2.0f));
+                Vector3 spawnPos = new Vector3(Random.Range(minXVal, maxXVal), Random.Range(0.5f, 2.0f), Random.Range(minZVal, maxZVal));
                 Quaternion spawnRot = Quaternion.Euler(Random.Range(-180.0f, 180.0f),Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
                 Molecule molecule = Instantiate(o2MoleculePrefab, catalystSurfaceTransform);
                 molecule.gameObject.transform.localPosition = spawnPos;
@@ -224,7 +239,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             
             for (int i = 0; i < numberSpawnedCOMolecules; i++)
             {
-                Vector3 spawnPos = new Vector3(Random.Range(-0.8f, 2.2f), Random.Range(0.5f, 2.0f), Random.Range(0.3f, -2.0f));
+                Vector3 spawnPos = new Vector3(Random.Range(minXVal, maxXVal), Random.Range(0.5f, 2.0f), Random.Range(minZVal, maxZVal));
                 Quaternion spawnRot = Quaternion.Euler(Random.Range(-180.0f, 180.0f),Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
                 Molecule molecule = Instantiate(coMoleculePrefab, catalystSurfaceTransform);
                 molecule.gameObject.transform.localPosition = spawnPos;

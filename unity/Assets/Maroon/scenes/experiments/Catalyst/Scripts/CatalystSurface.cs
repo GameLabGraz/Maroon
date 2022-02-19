@@ -62,6 +62,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                     coMolecule.ConnectedMolecule = platMolecule;
                     coMolecule.OnMoleculeFreed += onMoleculeFreed;
 
+                    platMolecule.SetIsTopLayerSurfaceMolecule(true);
+                    
                     activeMolecules.Add(coMolecule);
                     activeMolecules.Add(platMolecule);
                 }
@@ -78,19 +80,25 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             for (int i = 0; i < cobaltCoords.Count; i++)
             {
                 Molecule cobaltMolecule = Instantiate(cobaltMoleculePrefab, surfaceLayerParent);
-                cobaltMolecule.transform.localPosition = cobaltCoords[i] / 20.0f;
+                cobaltMolecule.transform.localPosition = cobaltCoords[i] / 20.0f + new Vector3(1.0f, 0.0f, 3.5f); // todo remove offsets when i get centered coords
                 cobaltMolecule.State = MoleculeState.Fixed;
                 
                 surfaceMolecules.Add(cobaltMolecule);
             }
 
+            float maxYVal = oCoords.Max(vector => vector.y);
+            
             for (int i = 0; i < oCoords.Count / 2; i++)
             {
-                Molecule oxygentMolecule = Instantiate(oxygenMoleculePrefab, surfaceLayerParent);
-                oxygentMolecule.transform.localPosition = (oCoords[i] / 20.0f);
-                oxygentMolecule.State = MoleculeState.Fixed;
+                Molecule oxygenMolecule = Instantiate(oxygenMoleculePrefab, surfaceLayerParent);
+                oxygenMolecule.transform.localPosition = (oCoords[i] / 20.0f) + new Vector3(1.0f, 0.0f, 3.5f); // todo remove offsets when i get centered coords
+                oxygenMolecule.State = MoleculeState.Fixed;
+                if (Mathf.Abs(oCoords[i].y - maxYVal) < 0.01f)
+                {
+                    (oxygenMolecule as OMolecule)?.SetCanBeDrawn(true);
+                }
                 
-                surfaceMolecules.Add(oxygentMolecule);
+                surfaceMolecules.Add(oxygenMolecule);
             }
             
             onComplete?.Invoke(surfaceMolecules);
