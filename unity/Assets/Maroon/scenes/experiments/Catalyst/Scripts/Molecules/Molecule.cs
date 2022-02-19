@@ -22,7 +22,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
         Moving,
         Desorb,
         InDrawingCollider,
-        DrawnByPlat,
+        DrawnBySurfaceMolecule, // either platinum or cobalt
         DrawnByCO,
         Disappear
     }
@@ -51,6 +51,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
         protected Quaternion NewMoleculeRotation;
 
         protected bool ReactionStarted = false;
+        protected bool IsTopLayerSurfaceMolecule = false;
 
         protected float CurrentTurnOverRate = 0.0f;
 
@@ -120,6 +121,11 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             collider.enabled = activate;
         }
 
+        public void SetIsTopLayerSurfaceMolecule(bool isTopLayerMolecule)
+        {
+            IsTopLayerSurfaceMolecule = isTopLayerMolecule;
+        }
+
         protected override void Start()
         {
             base.Start();
@@ -158,12 +164,11 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             {
                 if (state == MoleculeState.Desorb)
                 {
-                    //_currentTimeDesorb = 0.0f;
                     State = MoleculeState.Moving;
                 }
                 else if (state == MoleculeState.Disappear)
                     Destroy(this.gameObject);
-                else if (State == MoleculeState.DrawnByPlat)
+                else if (State == MoleculeState.DrawnBySurfaceMolecule)
                     HandleMoleculeTouchingPlat();
                 else if (State == MoleculeState.DrawnByCO)
                     HandleOTouchingCO();
@@ -202,7 +207,6 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
         protected virtual void HandleDrawingPossibility()
         {
             // only used in CO and O2 molecules
-            // note that the prob of O2 being drawn is slightly less than the prob of CO
         }
 
         private void GetRandomPositionAndRotation()

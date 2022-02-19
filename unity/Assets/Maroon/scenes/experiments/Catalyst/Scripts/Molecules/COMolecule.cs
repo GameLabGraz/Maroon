@@ -33,12 +33,12 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             if (State == MoleculeState.Fixed && State != MoleculeState.Desorb &&
                 ConnectedMolecule != null && ConnectedMolecule.Type == MoleculeType.Pt)
             {
-                if (Type == MoleculeType.CO && ConnectedMolecule.Type == MoleculeType.Pt && ReactionStarted)
+                if (ConnectedMolecule.Type == MoleculeType.Pt && ReactionStarted)
                 {
                     _currentTimeDesorb += Time.deltaTime;
                     if (timeUntilNextDesorb <= _currentTimeDesorb)
                     {
-                        if (Random.Range(0, 100) > 99 - CurrentTurnOverRate)
+                        if (Random.Range(0, 100) > 100 - CurrentTurnOverRate)
                         {
                             DesorbCO();
                         }
@@ -72,7 +72,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             if (Random.Range(0, 100) > 100 - CurrentTurnOverRate)
             {
                 PossibleDrawingMolecule.ConnectedMolecule = this; // connect this (CO) to plat molecule
-                SetMoleculeDrawn(PossibleDrawingMolecule, MoleculeState.DrawnByPlat); // drawn by plat
+                SetMoleculeDrawn(PossibleDrawingMolecule, MoleculeState.DrawnBySurfaceMolecule); // drawn by plat
                 ConnectedMolecule.ActivateDrawingCollider(false); // deactivate plat drawing collider
             }
         }
