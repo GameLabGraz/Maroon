@@ -2,6 +2,10 @@
 {
     public class CobaltMolecule : Molecule
     {
-        
+        protected override void ReactionStart_Impl()
+        {
+            if (IsTopLayerSurfaceMolecule)
+                ActivateDrawingCollider(true);
+        }
     }
 }
