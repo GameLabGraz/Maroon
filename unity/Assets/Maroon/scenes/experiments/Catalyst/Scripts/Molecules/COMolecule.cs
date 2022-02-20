@@ -31,7 +31,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
         protected override void HandleFixedUpdate()
         {
             if (State == MoleculeState.Fixed && State != MoleculeState.Desorb &&
-                ConnectedMolecule != null && ConnectedMolecule.Type == MoleculeType.Pt)
+                ConnectedMolecule != null && ConnectedMolecule.Type == MoleculeType.Pt &&
+                ( !CatalystController.DoStepWiseSimulation ||
+                 CatalystController.DoStepWiseSimulation && CatalystController.CurrentExperimentStage == ExperimentStages.CODesorb )
+                )
             {
                 if (ConnectedMolecule.Type == MoleculeType.Pt && ReactionStarted)
                 {
@@ -51,7 +54,9 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             base.HandleFixedUpdate();
             
             // can only happen to O2 or CO
-            if (State == MoleculeState.InDrawingCollider && PossibleDrawingMolecule != null)
+            if (State == MoleculeState.InDrawingCollider && PossibleDrawingMolecule != null &&
+                ( !CatalystController.DoStepWiseSimulation ||
+                  CatalystController.DoStepWiseSimulation && CatalystController.CurrentExperimentStage == ExperimentStages.COAdsorb ))
             {
                 HandleDrawingPossibility();
             }
@@ -81,7 +86,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
         {
             StartMoleculePosition = transform.position;
             StartMoleculeRotation = transform.rotation;
-            NewMoleculePosition = new Vector3(StartMoleculePosition.x, StartMoleculePosition.y + 0.8f, StartMoleculePosition.z);
+            NewMoleculePosition = new Vector3(StartMoleculePosition.x, StartMoleculePosition.y + 1.5f, StartMoleculePosition.z);
             CurrentTimeMove = 0.0f;
             State = MoleculeState.Desorb;
             ConnectedMolecule.ConnectedMolecule = null;

@@ -12,7 +12,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
 
         private void OnTriggerEnter(Collider other)
         {
-            if (ConnectedMolecule == null) // draw in O2 or CO molecules
+            if (ConnectedMolecule == null) // let O2 or CO molecules know they can be drawn
             {
                 Molecule otherMolecule = other.gameObject.GetComponent<Molecule>();
                 if (otherMolecule != null && 

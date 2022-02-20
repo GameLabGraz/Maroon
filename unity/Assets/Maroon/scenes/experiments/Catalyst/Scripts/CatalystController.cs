@@ -5,9 +5,10 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Maroon.Physics;
 using Maroon.scenes.experiments.Catalyst.Scripts.Molecules;
-using Maroon.UI;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using Dropdown = Maroon.UI.Dropdown;
 using Random = UnityEngine.Random;
 
 namespace Maroon.scenes.experiments.Catalyst.Scripts
@@ -18,11 +19,25 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         MarsVanKrevelen
     }
 
+    public enum ExperimentStages
+    {
+        Init,
+        CODesorb,
+        COAdsorb,
+        O2Adsorb,
+        O2Dissociate,
+        OReacting,
+        OReactCO,
+        CO2Desorb,
+        Finished
+    }
+
     public class CatalystController : MonoBehaviour
     {
         [Header("Simulation Parameters")]
         [SerializeField] Dropdown variantDropdown;
         [SerializeField] UnityEngine.UI.Toggle stepWiseSimulationToggle;
+        [SerializeField] Button nextStepButton;
         [SerializeField] QuantityFloat temperature;
         [SerializeField] QuantityFloat partialPressure;
         [SerializeField] int numberSpawnedO2Molecules;
@@ -44,7 +59,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         [SerializeField] GameObject player;
 
         [Header("UI Elements")]
-        [SerializeField] InputField turnOverRateInputField;
+        [SerializeField] TextMeshProUGUI turnOverRateText;
 
         private int freedMoleculeCounter = 0;
         private List<Vector3> _platSpawnPoints = new List<Vector3>();
@@ -74,10 +89,34 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             new float[] { 0.380952381f, 0.80952381f, 1.619047619f, 8.571428571f }
         };
 
+        private static readonly List<ExperimentStages> HinshelwoodStages = new List<ExperimentStages>()
+        {
+            ExperimentStages.Init,
+            ExperimentStages.CODesorb,
+            ExperimentStages.O2Adsorb,
+            ExperimentStages.O2Dissociate,
+            ExperimentStages.OReactCO,
+            ExperimentStages.CO2Desorb,
+            ExperimentStages.Finished
+        };
+
+        private static readonly List<ExperimentStages> KrevelenStages = new List<ExperimentStages>()
+        {
+            ExperimentStages.Init,
+            ExperimentStages.COAdsorb,
+            ExperimentStages.OReactCO,
+            ExperimentStages.CO2Desorb,
+            ExperimentStages.O2Adsorb,
+            ExperimentStages.O2Dissociate,
+            ExperimentStages.OReacting,
+            ExperimentStages.Finished
+        };
+
         public const float FixedMoleculeYDist = 0.28f - 0.075f;
         public const float PlatinumScale = 0.14f;
 
         public static bool DoStepWiseSimulation = false;
+        public static ExperimentStages CurrentExperimentStage = ExperimentStages.Init;
         public static ExperimentVariation ExperimentVariation = ExperimentVariation.LangmuirHinshelwood;
 
         private void Awake()
@@ -302,7 +341,6 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             Molecule co2Molecule = Instantiate(co2MoleculePrefab, parentTransform);
             co2Molecule.gameObject.transform.position = coPosition;
             co2Molecule.gameObject.transform.rotation = coRotation;
-            (co2Molecule as CO2Molecule)?.MoveOutCO2();
         }
 
         private void AddMoleculeToActiveList(Molecule molecule)
@@ -338,7 +376,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         private void UpdateTurnOverRateUI()
         {
-            turnOverRateInputField.text = _currentTurnOverRate.ToString(CultureInfo.InvariantCulture.NumberFormat);
+            turnOverRateText.text = _currentTurnOverRate.ToString(CultureInfo.InvariantCulture.NumberFormat);
         }
 
         public void SpawnO2ButtonClicked()
@@ -354,9 +392,20 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         {
             stepWiseSimulationToggle.GetComponentInChildren<TextMeshProUGUI>().text = 
                 val ? "enabled" : "disabled";
+            nextStepButton.gameObject.SetActive(val);
         }
-        
-        
+
+        public void NextStepButtonClicked()
+        {
+            if (CurrentExperimentStage == ExperimentStages.Finished) return;
+            if (ExperimentVariation == ExperimentVariation.LangmuirHinshelwood)
+                CurrentExperimentStage = HinshelwoodStages[HinshelwoodStages.IndexOf(CurrentExperimentStage)+1];
+            else if (ExperimentVariation == ExperimentVariation.MarsVanKrevelen)
+                CurrentExperimentStage = KrevelenStages[KrevelenStages.IndexOf(CurrentExperimentStage)+1];
+            
+            Debug.Log($"current stage: {CurrentExperimentStage}");
+        }
+
         public static int GetTemperatureIndex(float temperatureValue)
         {
             // add 273.16 instead of 273.15 to always get at least the first element index

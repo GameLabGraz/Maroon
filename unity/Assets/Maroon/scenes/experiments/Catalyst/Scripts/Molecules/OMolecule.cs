@@ -29,7 +29,9 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
                 base.HandleFixedUpdate();
             }
             else if (State == MoleculeState.Fixed && 
-                     CatalystController.ExperimentVariation == ExperimentVariation.LangmuirHinshelwood)
+                     CatalystController.ExperimentVariation == ExperimentVariation.LangmuirHinshelwood &&
+                     ( !CatalystController.DoStepWiseSimulation ||
+                       CatalystController.DoStepWiseSimulation && CatalystController.CurrentExperimentStage == ExperimentStages.OReactCO ))
             {
                 // gradually increase drawing collider if spawned on plat to find a fixed CO molecule
                 _currentTimeColliderIncrease += Time.deltaTime;
@@ -49,7 +51,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
                 Molecule otherMolecule = other.gameObject.GetComponent<Molecule>();
                 if (otherMolecule != null && otherMolecule.Type == MoleculeType.CO &&
                     otherMolecule.State == MoleculeState.Fixed &&
-                    otherMolecule.ConnectedMolecule != null && otherMolecule.ConnectedMolecule.Type == MoleculeType.Pt)
+                    otherMolecule.ConnectedMolecule != null && otherMolecule.ConnectedMolecule.Type == MoleculeType.Pt &&
+                    ( !CatalystController.DoStepWiseSimulation ||
+                      CatalystController.DoStepWiseSimulation && CatalystController.CurrentExperimentStage == ExperimentStages.OReactCO )
+                    )
                 {
                     SetMoleculeDrawn(otherMolecule, MoleculeState.DrawnByCO);
                     otherMolecule.ConnectedMolecule = this;
