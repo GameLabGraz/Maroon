@@ -24,7 +24,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
         InDrawingCollider,
         DrawnBySurfaceMolecule, // either platinum or cobalt
         DrawnByCO,
-        Disappear
+        Disappear,
+        WaitingToDissociate
     }
 
     public class Molecule : PausableObject//, IMoleculeInterface
@@ -41,7 +42,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
 
         [SerializeField] MoleculeState state;
 
-        private Molecule _possibleDrawingMolecule; // should always be a platinum molecule
+        private Molecule _possibleDrawingMolecule; // should always be a platinum or cobalt molecule
         private Molecule _connectedMolecule;
         
         protected float CurrentTimeMove = 0.0f;
@@ -173,19 +174,12 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
                 else if (State == MoleculeState.DrawnByCO)
                     HandleOTouchingCO();
 
-                if (state == MoleculeState.Moving)
+                if (state == MoleculeState.Moving || state == MoleculeState.InDrawingCollider)
                 {
                     CurrentTimeMove = 0.0f;
                     GetRandomPositionAndRotation();
                 }
             }
-        }
-
-        private IEnumerator DissociateO2()
-        {
-            yield return new WaitForSeconds(2.0f);
-            _connectedMolecule.ActivateDrawingCollider(true);
-            OnDissociate?.Invoke(this);
         }
 
         private void HandleMoleculeTouchingPlat()
@@ -195,7 +189,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             transform.position = new Vector3(NewMoleculePosition.x, NewMoleculePosition.y += CatalystController.FixedMoleculeYDist, NewMoleculePosition.z);
             transform.localRotation = Quaternion.Euler(0.0f, 0.0f, 90.0f);
             if (type == MoleculeType.O2)
-                StartCoroutine(DissociateO2());
+                State = MoleculeState.WaitingToDissociate;
         }
 
         private void HandleOTouchingCO()
