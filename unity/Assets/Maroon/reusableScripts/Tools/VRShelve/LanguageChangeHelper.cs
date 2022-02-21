@@ -1,6 +1,6 @@
 ﻿using System;
 using GEAR.Localization;
-using GEAR.VRInteraction;
+using GameLabGraz.VRInteraction;
 using UnityEngine;
 using UnityEngine.Events;
 
