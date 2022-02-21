@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using GEAR.VRInteraction;
+using GameLabGraz.VRInteraction;
 using UnityEngine;
 
 public class VRScrollingHelper : MonoBehaviour

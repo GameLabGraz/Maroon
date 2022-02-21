@@ -1,4 +1,4 @@
-﻿using GEAR.VRInteraction;
+﻿using GameLabGraz.VRInteraction;
 using UnityEngine;
 
 namespace Util

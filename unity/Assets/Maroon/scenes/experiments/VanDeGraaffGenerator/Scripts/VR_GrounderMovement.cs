@@ -1,5 +1,5 @@
 ﻿using System;
-using GEAR.VRInteraction;
+using GameLabGraz.VRInteraction;
 using PlatformControls.BaseControls;
 using UnityEngine;
 using UnityEngine.Events;
