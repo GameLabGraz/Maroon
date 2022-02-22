@@ -18,7 +18,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             else
                 base.HandleFixedUpdate();
 
-            // can only happen to O2 or CO
+            // can only happen to O2, CO, or O
             if (State == MoleculeState.InDrawingCollider && PossibleDrawingMolecule != null &&
                 ( !CatalystController.DoStepWiseSimulation ||
                   CatalystController.DoStepWiseSimulation && CatalystController.CurrentExperimentStage == ExperimentStages.O2Adsorb)

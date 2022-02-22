@@ -19,10 +19,11 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         [SerializeField] Molecule cobaltMoleculePrefab;
         [SerializeField] Molecule oxygenMoleculePrefab;
         [SerializeField] Transform surfaceLayerParent;
-        
+        [SerializeField] ODrawingSpot oDrawingSpotPrefab;
+
         private float _spaceBetweenMolecules;
 
-        public void SetupCoords(List<Vector3> platCoords, 
+        public void SetupCoordsLangmuir(List<Vector3> platCoords, 
             System.Action<List<Molecule>> onComplete, 
             System.Action onMoleculeFreed)
         {
@@ -71,10 +72,9 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             onComplete?.Invoke(activeMolecules);
         }
 
-        public void SetupOtherCoords(List<Vector3> cobaltCoords, 
+        public void SetupCoordsKrevelen(List<Vector3> cobaltCoords, 
             List<Vector3> oCoords,
-            System.Action<List<Molecule>> onComplete, 
-            System.Action onMoleculeFreed)
+            System.Action<List<Molecule>> onComplete)
         {
             List<Molecule> surfaceMolecules = new List<Molecule>();
             float maxYVal = cobaltCoords.Max(vector => vector.y);
@@ -94,17 +94,23 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
             maxYVal = oCoords.Max(vector => vector.y);
             
-            for (int i = 0; i < oCoords.Count / 2; i++)
+            for (int i = 0; i < oCoords.Count; i++)
             {
-                Molecule oxygenMolecule = Instantiate(oxygenMoleculePrefab, surfaceLayerParent);
-                oxygenMolecule.transform.localPosition = (oCoords[i] / 20.0f) + new Vector3(1.0f, 0.0f, 3.5f); // todo remove offsets when i get centered coords
-                oxygenMolecule.State = MoleculeState.Fixed;
+                // for now just spawn the top o2 molecules
                 if (Mathf.Abs(oCoords[i].y - maxYVal) < 0.01f)
                 {
+                    Molecule oxygenMolecule = Instantiate(oxygenMoleculePrefab, surfaceLayerParent);
+                    oxygenMolecule.transform.localPosition = (oCoords[i] / 20.0f) + new Vector3(1.0f, 0.0f, 3.5f); // todo remove offsets when i get centered coords
+                    oxygenMolecule.State = MoleculeState.InSurfaceDrawingSpot;
                     (oxygenMolecule as OMolecule)?.SetCanBeDrawn(true);
+                    oxygenMolecule.SetIsTopLayerSurfaceMolecule(true);
+                    // set drawing spot so we can refill O molecule at same position later
+                    ODrawingSpot oDrawingSpot = Instantiate(oDrawingSpotPrefab, surfaceLayerParent);
+                    oDrawingSpot.transform.localPosition = (oCoords[i] / 20.0f) + new Vector3(1.0f, 0.0f, 3.5f); // todo remove offsets when i get centered coords
+                    oDrawingSpot.SetAttachedMolecule(oxygenMolecule);
+                    surfaceMolecules.Add(oxygenMolecule);
                 }
-                
-                surfaceMolecules.Add(oxygenMolecule);
+
             }
             
             onComplete?.Invoke(surfaceMolecules);

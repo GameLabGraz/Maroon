@@ -30,30 +30,27 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
 
         protected override void HandleFixedUpdate()
         {
-            if (State == MoleculeState.Fixed && State != MoleculeState.Desorb &&
+            if (ReactionStarted && State == MoleculeState.Fixed && State != MoleculeState.Desorb &&
                 ConnectedMolecule != null && ConnectedMolecule.Type == MoleculeType.Pt &&
                 ( !CatalystController.DoStepWiseSimulation ||
                  CatalystController.DoStepWiseSimulation && CatalystController.CurrentExperimentStage == ExperimentStages.CODesorb )
                 )
             {
-                if (ConnectedMolecule.Type == MoleculeType.Pt && ReactionStarted)
+                _currentTimeDesorb += Time.deltaTime;
+                if (timeUntilNextDesorb <= _currentTimeDesorb)
                 {
-                    _currentTimeDesorb += Time.deltaTime;
-                    if (timeUntilNextDesorb <= _currentTimeDesorb)
+                    if (Random.Range(0, 100) > 100 - CurrentTurnOverRate)
                     {
-                        if (Random.Range(0, 100) > 100 - CurrentTurnOverRate)
-                        {
-                            DesorbCO();
-                        }
-                        _currentTimeDesorb = 0.0f;
+                        DesorbCO();
                     }
+                    _currentTimeDesorb = 0.0f;
                 }
                 return;
             }
             
             base.HandleFixedUpdate();
             
-            // can only happen to O2 or CO
+            // can only happen to O2, CO, or O
             if (State == MoleculeState.InDrawingCollider && PossibleDrawingMolecule != null &&
                 ( !CatalystController.DoStepWiseSimulation ||
                   CatalystController.DoStepWiseSimulation && CatalystController.CurrentExperimentStage == ExperimentStages.COAdsorb ))
@@ -76,9 +73,9 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
         {
             if (Random.Range(0, 100) > 100 - CurrentTurnOverRate)
             {
-                PossibleDrawingMolecule.ConnectedMolecule = this; // connect this (CO) to plat molecule
-                SetMoleculeDrawn(PossibleDrawingMolecule, MoleculeState.DrawnBySurfaceMolecule); // drawn by plat
-                ConnectedMolecule.ActivateDrawingCollider(false); // deactivate plat drawing collider
+                PossibleDrawingMolecule.ConnectedMolecule = this; // connect this (CO) to plat or cobalt molecule
+                SetMoleculeDrawn(PossibleDrawingMolecule, MoleculeState.DrawnBySurfaceMolecule); // drawn by plat or cobalt
+                ConnectedMolecule.ActivateDrawingCollider(false); // deactivate plat or cobalt drawing collider
             }
         }
 
