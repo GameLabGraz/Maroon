@@ -26,7 +26,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         COAdsorb,
         O2Adsorb,
         O2Dissociate,
-        OReacting,
+        OFillSurface,
         OReactCO,
         CO2Desorb,
         Finished
@@ -108,7 +108,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             ExperimentStages.CO2Desorb,
             ExperimentStages.O2Adsorb,
             ExperimentStages.O2Dissociate,
-            ExperimentStages.OReacting,
+            ExperimentStages.OFillSurface,
             ExperimentStages.Finished
         };
 
@@ -136,8 +136,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             
             temperature.onValueChanged.AddListener(TemperatureChanged);
             partialPressure.onValueChanged.AddListener(PartialPressureChanged);
-            //variantDropdown.value = 1;
-            //ExperimentVariation = (ExperimentVariation)variantDropdown.value;
+            variantDropdown.value = 1;
+            ExperimentVariation = (ExperimentVariation)variantDropdown.value;
             SpawnCatalystSurfaceObject();
         }
 
@@ -205,7 +205,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             _catalystSurface = Instantiate(catalystSurfacePrefab, catalystSurfaceSpawnTransform);
             if (ExperimentVariation.Equals(Scripts.ExperimentVariation.LangmuirHinshelwood))
             {
-                _catalystSurface.SetupCoords(_platSpawnPoints,list =>
+                _catalystSurface.SetupCoordsLangmuir(_platSpawnPoints,list =>
                     {
                         _activeMolecules = list;
                         foreach (var molecule in _activeMolecules)
@@ -223,11 +223,23 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             }
             else if (ExperimentVariation.Equals(Scripts.ExperimentVariation.MarsVanKrevelen))
             {
-                _catalystSurface.SetupOtherCoords(_coSpawnPoints, _oSpawnPoints, list =>
+                _catalystSurface.SetupCoordsKrevelen(_coSpawnPoints, _oSpawnPoints, list =>
                     {
-                        
-                    },
-                    OnMoleculeFreed);
+                        _activeMolecules = list;
+                        foreach (var molecule in _activeMolecules)
+                        {
+                            onReactionStart += molecule.ReactionStart;
+                            if (molecule.Type == MoleculeType.Co) continue;
+                            if (molecule.Type == MoleculeType.O)
+                                molecule.OnCO2Created += CreateCO2;
+                            molecule.TemperatureChanged(temperature);
+                            molecule.PressureChanged(partialPressure);
+                            temperature.onValueChanged.AddListener(molecule.TemperatureChanged);
+                            partialPressure.onValueChanged.AddListener(molecule.PressureChanged);
+                        }
+                        SpawnReactionMaterial();
+                        onReactionStart?.Invoke();
+                    });
             }
         }
 
@@ -308,6 +320,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             {
                 molecule.OnCO2Created += CreateCO2;
                 molecule.State = MoleculeState.Fixed;
+                molecule.SetIsTopLayerSurfaceMolecule(true);
                 molecule.gameObject.transform.position = new Vector3(alternate ? o2Position.x + PlatinumScale / 4.0f : o2Position.x - PlatinumScale / 4.0f, o2Position.y - 0.06f, o2Position.z);
                 AddMoleculeToActiveList(molecule);
                 alternate = !alternate;

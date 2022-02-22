@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using Maroon.Physics;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -13,7 +12,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
         O,
         O2,
         Pt,
-        Co
+        Co,
+        DrawingSpot
     }
 
     public enum MoleculeState
@@ -24,11 +24,13 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
         InDrawingCollider,
         DrawnBySurfaceMolecule, // either platinum or cobalt
         DrawnByCO,
+        DrawnByDrawingSpot,
         Disappear,
-        WaitingToDissociate
+        WaitingToDissociate,
+        InSurfaceDrawingSpot
     }
 
-    public class Molecule : PausableObject//, IMoleculeInterface
+    public class Molecule : PausableObject
     {
         [Header("Molecule Specifics")]
         [SerializeField] MoleculeType type;
@@ -40,10 +42,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
         [SerializeField] QuantityFloat temperature = new QuantityFloat();
         [SerializeField] QuantityFloat partialPressure = new QuantityFloat();
 
-        [SerializeField] MoleculeState state;
+        [SerializeField] MoleculeState state; // do not set this directly, use the property setter below
 
         private Molecule _possibleDrawingMolecule; // should always be a platinum or cobalt molecule
-        private Molecule _connectedMolecule;
+        public Molecule _connectedMolecule;
         
         protected float CurrentTimeMove = 0.0f;
         protected Vector3 StartMoleculePosition;
@@ -52,7 +54,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
         protected Quaternion NewMoleculeRotation;
 
         protected bool ReactionStarted = false;
-        protected bool IsTopLayerSurfaceMolecule = false;
+        public bool IsTopLayerSurfaceMolecule = false;
 
         protected float CurrentTurnOverRate = 0.0f;
 
@@ -76,17 +78,14 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
 
         public Molecule ConnectedMolecule { get => _connectedMolecule; set => _connectedMolecule = value; }
         public Molecule PossibleDrawingMolecule { get => _possibleDrawingMolecule; set => _possibleDrawingMolecule = value; }
-        
-        public bool IsDrawnByPlat { get; set; }
-        public bool IsDrawnByCO { get; set; }
 
         public Action<Molecule> OnDissociate;
         public Action<Molecule, Molecule> OnCO2Created;
         public Action OnMoleculeFreed;
 
-        public void SetMoleculeDrawn(Molecule drawingMolecule, MoleculeState state)
+        public void SetMoleculeDrawn(Molecule drawingMolecule, MoleculeState drawnState)
         {
-            State = state;
+            State = drawnState;
             StartMoleculePosition = transform.position;
             StartMoleculeRotation = transform.rotation;
             NewMoleculePosition = drawingMolecule.transform.position;
@@ -117,7 +116,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
 
         public void ActivateDrawingCollider(bool activate)
         {
-            if (type != MoleculeType.Pt && type != MoleculeType.O) return;
+            // activate drawing colliders for platinum, cobalt and oxygen
+            if (type != MoleculeType.Pt && type != MoleculeType.Co && type != MoleculeType.O) return;
 
             collider.enabled = activate;
         }
@@ -145,9 +145,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
 
         protected override void HandleFixedUpdate()
         {
-            if (State == MoleculeState.Fixed && _connectedMolecule == null && State != MoleculeState.DrawnByCO) return;
+            if (state == MoleculeState.Fixed && _connectedMolecule == null &&
+                state != MoleculeState.DrawnByCO && state != MoleculeState.DrawnByDrawingSpot) return;
 
-            if (state != MoleculeState.Fixed)
+            if (state != MoleculeState.Fixed && state != MoleculeState.InSurfaceDrawingSpot)
             {
                 HandleMoleculeMovement();
             }
@@ -169,10 +170,12 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
                 }
                 else if (state == MoleculeState.Disappear)
                     Destroy(this.gameObject);
-                else if (State == MoleculeState.DrawnBySurfaceMolecule)
-                    HandleMoleculeTouchingPlat();
-                else if (State == MoleculeState.DrawnByCO)
+                else if (state == MoleculeState.DrawnBySurfaceMolecule)
+                    HandleMoleculeTouchingSurface();
+                else if (state == MoleculeState.DrawnByCO)
                     HandleOTouchingCO();
+                else if (state == MoleculeState.DrawnByDrawingSpot)
+                    HandleOFillDrawingSpot();
 
                 if (state == MoleculeState.Moving || state == MoleculeState.InDrawingCollider)
                 {
@@ -182,7 +185,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             }
         }
 
-        private void HandleMoleculeTouchingPlat()
+        private void HandleMoleculeTouchingSurface()
         {
             if (type != MoleculeType.CO && type != MoleculeType.O2) return;
             State = MoleculeState.Fixed;
@@ -196,6 +199,13 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
         {
             State = MoleculeState.Fixed;
             OnCO2Created?.Invoke(this, _connectedMolecule);
+        }
+
+        private void HandleOFillDrawingSpot()
+        {
+            if (type != MoleculeType.O) return;
+            State = MoleculeState.Fixed;
+            transform.position = NewMoleculePosition;
         }
 
         protected virtual void HandleDrawingPossibility()

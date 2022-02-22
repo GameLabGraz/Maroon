@@ -128,7 +128,6 @@ MonoBehaviour:
   type: 2
   collider: {fileID: 6053066872662406567}
   movementSpeed: 1
-  timeToMove: 3
   temperature:
     assessmentName: 
     isDynamic: 0
@@ -157,7 +156,10 @@ MonoBehaviour:
     onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
-  _state: 0
+  state: 0
+  _connectedMolecule: {fileID: 0}
+  IsTopLayerSurfaceMolecule: 0
+  potentialDrawMolecules: []
 --- !u!135 &6053066872662406567
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -169,7 +171,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.25
+  m_Radius: 0.3
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &4612165014388229691
 Rigidbody:
