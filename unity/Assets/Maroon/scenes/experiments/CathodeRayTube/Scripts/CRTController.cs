@@ -53,18 +53,13 @@ namespace Maroon.Physics.CathodeRayTube
         [SerializeField] private QuantityFloat d;
         [SerializeField] private SimpleLineChart plot;
 
-        [SerializeField] private QuantityInt eX;
-        [SerializeField] private QuantityInt eY;
-        [SerializeField] private QuantityInt eZ;
-        [SerializeField] private QuantityString exCalc;
-        [SerializeField] private QuantityString eyCalc;
-        [SerializeField] private QuantityString ezCalc;
-        [SerializeField] private QuantityFloat fX;
-        [SerializeField] private QuantityFloat fY;
-        [SerializeField] private QuantityFloat fZ;
-        [SerializeField] private QuantityString fxCalc;
-        [SerializeField] private QuantityString fyCalc;
-        [SerializeField] private QuantityString fzCalc;
+        [SerializeField] private QuantityString fXInfo;
+        [SerializeField] private QuantityString fYInfo;
+        [SerializeField] private QuantityString fZInfo;
+        [SerializeField] private QuantityString eXInfo;
+        [SerializeField] private QuantityString eYInfo;
+        [SerializeField] private QuantityString eZInfo;
+
         public int Order { get; set; }
         public int Distance { get; set; }
         public int XAxis { get; set; }
@@ -201,44 +196,51 @@ namespace Maroon.Physics.CathodeRayTube
             float length;
             float size;
 
-            eX.Value = (int)(vX / (Math.Truncate(informationResolution * _electronGunLength) / informationResolution));
-            eY.Value = (int)(vY / (Math.Truncate(informationResolution * _horizontalDistance) / informationResolution));
-            eZ.Value = (int)(vZ / (Math.Truncate(informationResolution * _verticalDistance) / informationResolution));
+            int eXValue = (int)(vX / (Math.Truncate(informationResolution * _electronGunLength) / informationResolution));
+            int eYValue = (int)(vY / (Math.Truncate(informationResolution * _horizontalDistance) / informationResolution));
+            int eZValue = (int)(vZ / (Math.Truncate(informationResolution * _verticalDistance) / informationResolution));
 
-            exCalc.Value = vX.Value + " / " +
-                           (Math.Truncate(informationResolution * _electronGunLength) / informationResolution);
-            eyCalc.Value = vY.Value + " / " +
-                           (Math.Truncate(informationResolution * _horizontalDistance) / informationResolution);
-            ezCalc.Value = vZ.Value + " / " +
-                           (Math.Truncate(informationResolution * _verticalDistance) / informationResolution);
+            eXInfo.Value = vX.Value + " / " +
+                           (Math.Truncate(informationResolution * _electronGunLength) / informationResolution)
+                           + " \n= " + eXValue + " V/m";
+            eYInfo.Value = vY.Value + " / " +
+                           (Math.Truncate(informationResolution * _horizontalDistance) / informationResolution)
+                           + " \n= " + eYValue + " V/m";
+            eZInfo.Value = vZ.Value + " / " +
+                           (Math.Truncate(informationResolution * _verticalDistance) / informationResolution)
+                           + " \n= " + eZValue + " V/m";
 
-            fX.Value = -ElectronCharge *
+            float fXValue = -ElectronCharge *
                        (vX / (float)(Math.Truncate(informationResolution * _electronGunLength) /
                                      informationResolution)) * (float)Math.Pow(10, 15);
-            fY.Value = -ElectronCharge *
-                       (vY / (float)(Math.Truncate(informationResolution * _horizontalDistance) /
-                                     informationResolution)) * (float)Math.Pow(10, 15);
-            fZ.Value = -ElectronCharge *
-                       (vZ / (float)(Math.Truncate(informationResolution * _verticalDistance) /
-                                     informationResolution)) * (float)Math.Pow(10, 15);
+            float fYValue = -ElectronCharge *
+                            (vY / (float)(Math.Truncate(informationResolution * _horizontalDistance) /
+                                          informationResolution)) * (float)Math.Pow(10, 15);
+            float fZValue = -ElectronCharge *
+                            (vZ / (float)(Math.Truncate(informationResolution * _verticalDistance) /
+                                          informationResolution)) * (float)Math.Pow(10, 15);
 
-            fxCalc.Value = "1.6022e-19 * " + eX.Value + " * H(" +
+            fXInfo.Value = "1.6022e-19 * " + eXValue + " * H(" +
                            (Math.Truncate(informationResolution * _electronGunLength) / informationResolution) +
-                           " - x)";
+                           " - x)" + " \n= " + fXValue + " * (10 ^ -15) N"  ;
 
             size = _horizontalCapacitorTop.GetComponent<Renderer>().bounds.size.z / 2;
             length = Math.Abs(GetCRTStart().x - horizontalCapacitor.transform.position.x);
-            fyCalc.Value = "1.6022e-19 * " + eY.Value + " * H(" +
+            fYInfo.Value = "1.6022e-19 * " + eYValue + " * \nH(" +
                            (Math.Truncate(informationResolution * size) / informationResolution)
                            + " - abs(x - " + (Math.Truncate(informationResolution * length) / informationResolution) +
-                           "))";
+                           "))" + " * \nH(" + _horizontalCapacitorTop.GetComponent<Renderer>().bounds.size.z / 2 
+                           + " - abs(z - " + GetCRTStart().z + "))"
+                           + " \n= " + fYValue + " * (10 ^ -15) N";
 
             size = _verticalCapacitorLeft.GetComponent<Renderer>().bounds.size.y / 2;
             length = Math.Abs(GetCRTStart().x - verticalCapacitor.transform.position.x);
-            fzCalc.Value = "1.6022e-19 * " + eZ.Value + " * H(" +
+            fZInfo.Value = "1.6022e-19 * " + eZValue + " * \nH(" +
                            (Math.Truncate(informationResolution * size) / informationResolution)
                            + " - abs(x - " + (Math.Truncate(informationResolution * length) / informationResolution) +
-                           "))";
+                           "))" + " * \nH(" + _verticalCapacitorLeft.GetComponent<Renderer>().bounds.size.y / 2 
+                           + " - abs(y - " + GetCRTStart().y + "))"
+                           + " \n= " + fZValue + " * (10 ^ -15) N";
         }
 
         public void UpdateData(List<Vector3> points, List<Vector3> velocities, List<Vector3> forces)
