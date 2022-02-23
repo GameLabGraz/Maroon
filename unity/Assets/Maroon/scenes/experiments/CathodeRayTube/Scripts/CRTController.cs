@@ -7,16 +7,16 @@ using XCharts;
 public enum DistanceEnum
 {
     Both,
-    Horizontal,
-    Vertical
+    Vertical,
+    Horizontal
 }
 
 public enum OrderEnum
 {
-    HorizontalVertical,
     VerticalHorizontal,
-    Horizontal,
-    Vertical
+    HorizontalVertical,
+    Vertical,
+    Horizontal
 }
 
 public enum XAxisEnum
@@ -45,8 +45,8 @@ namespace Maroon.Physics.CathodeRayTube
         [SerializeField] private GameObject screen;
         [SerializeField] private GameObject cathode;
         [SerializeField] private GameObject anode;
-        [SerializeField] private GameObject horizontalCapacitor;
-        [SerializeField] private GameObject verticalCapacitor;
+        [SerializeField] private GameObject verticalDeflectionPlate;
+        [SerializeField] private GameObject horizontalDeflectionPlate;
         [SerializeField] private QuantityInt vX;
         [SerializeField] private QuantityInt vY;
         [SerializeField] private QuantityInt vZ;
@@ -70,16 +70,16 @@ namespace Maroon.Physics.CathodeRayTube
         private float _electronGunLength;
         public int lineResolution = 500;
 
-        private GameObject _horizontalCapacitorTop;
-        private GameObject _horizontalCapacitorBottom;
-        private GameObject _verticalCapacitorLeft;
-        private GameObject _verticalCapacitorRight;
+        private GameObject _verticalDeflectionPlateTop;
+        private GameObject _verticalDeflectionPlateBottom;
+        private GameObject _horizontalDeflectionPlateLeft;
+        private GameObject _horizontalDeflectionPlateRight;
 
-        private Vector3 _horizCapStartPos;
-        private Vector3 _vertCapStartPos;
+        private Vector3 _verticalDeflectionPlateStartPos;
+        private Vector3 _horizontalDeflectionPlateStartPos;
 
-        private float _horizontalDistance;
-        private float _verticalDistance;
+        private float _vertDeflPlateDistance;
+        private float _horizDeflPlateDistance;
 
         private List<Vector3> _pointData = new List<Vector3>();
         private List<Vector3> _velocityData = new List<Vector3>();
@@ -88,16 +88,16 @@ namespace Maroon.Physics.CathodeRayTube
         private void Start()
         {
             _electronGunLength = anode.transform.position.x - GetCRTStart().x;
-            _horizontalDistance = d;
-            _verticalDistance = d;
+            _vertDeflPlateDistance = d;
+            _horizDeflPlateDistance = d;
 
-            _horizontalCapacitorTop = horizontalCapacitor.transform.GetChild(0).gameObject;
-            _horizontalCapacitorBottom = horizontalCapacitor.transform.GetChild(1).gameObject;
-            _verticalCapacitorLeft = verticalCapacitor.transform.GetChild(0).gameObject;
-            _verticalCapacitorRight = verticalCapacitor.transform.GetChild(1).gameObject;
+            _verticalDeflectionPlateTop = verticalDeflectionPlate.transform.GetChild(0).gameObject;
+            _verticalDeflectionPlateBottom = verticalDeflectionPlate.transform.GetChild(1).gameObject;
+            _horizontalDeflectionPlateLeft = horizontalDeflectionPlate.transform.GetChild(0).gameObject;
+            _horizontalDeflectionPlateRight = horizontalDeflectionPlate.transform.GetChild(1).gameObject;
 
-            _horizCapStartPos = horizontalCapacitor.transform.position;
-            _vertCapStartPos = verticalCapacitor.transform.position;
+            _verticalDeflectionPlateStartPos = verticalDeflectionPlate.transform.position;
+            _horizontalDeflectionPlateStartPos = horizontalDeflectionPlate.transform.position;
 
             for (int i = 0; i < lineResolution; i++)
             {
@@ -122,72 +122,72 @@ namespace Maroon.Physics.CathodeRayTube
             switch ((DistanceEnum)Distance)
             {
                 case DistanceEnum.Both:
-                    _horizontalDistance = d;
-                    _verticalDistance = d;
-                    break;
-                case DistanceEnum.Horizontal:
-                    _horizontalDistance = d;
+                    _vertDeflPlateDistance = d;
+                    _horizDeflPlateDistance = d;
                     break;
                 case DistanceEnum.Vertical:
-                    _verticalDistance = d;
+                    _vertDeflPlateDistance = d;
+                    break;
+                case DistanceEnum.Horizontal:
+                    _horizDeflPlateDistance = d;
                     break;
                 default:
-                    _horizontalDistance = d;
-                    _verticalDistance = d;
+                    _vertDeflPlateDistance = d;
+                    _horizDeflPlateDistance = d;
                     break;
             }
         }
 
         private void UpdateOrder()
         {
-            _verticalCapacitorLeft.SetActive(true);
-            _verticalCapacitorRight.SetActive(true);
-            _horizontalCapacitorTop.SetActive(true);
-            _horizontalCapacitorBottom.SetActive(true);
+            _horizontalDeflectionPlateLeft.SetActive(true);
+            _horizontalDeflectionPlateRight.SetActive(true);
+            _verticalDeflectionPlateTop.SetActive(true);
+            _verticalDeflectionPlateBottom.SetActive(true);
 
             Vector3 position;
             switch ((OrderEnum)Order)
             {
                 case OrderEnum.HorizontalVertical:
-                    horizontalCapacitor.transform.position = _horizCapStartPos;
-                    verticalCapacitor.transform.position = _vertCapStartPos;
+                    verticalDeflectionPlate.transform.position = _horizontalDeflectionPlateStartPos;
+                    horizontalDeflectionPlate.transform.position = _verticalDeflectionPlateStartPos;
                     break;
-
+                
                 case OrderEnum.VerticalHorizontal:
-                    horizontalCapacitor.transform.position = _vertCapStartPos;
-                    verticalCapacitor.transform.position = _horizCapStartPos;
+                    verticalDeflectionPlate.transform.position = _verticalDeflectionPlateStartPos;
+                    horizontalDeflectionPlate.transform.position = _horizontalDeflectionPlateStartPos;
                     break;
 
                 case OrderEnum.Horizontal:
-                    position = _horizCapStartPos;
-                    position.x += (_vertCapStartPos.x - _horizCapStartPos.x) / 2;
-                    horizontalCapacitor.transform.position = position;
-                    verticalCapacitor.transform.position = Vector3.zero;
-                    _verticalCapacitorLeft.SetActive(false);
-                    _verticalCapacitorRight.SetActive(false);
+                    position = _verticalDeflectionPlateStartPos;
+                    position.x += (_horizontalDeflectionPlateStartPos.x - _verticalDeflectionPlateStartPos.x) / 2;
+                    horizontalDeflectionPlate.transform.position = position;
+                    verticalDeflectionPlate.transform.position = Vector3.zero;
+                    _verticalDeflectionPlateTop.SetActive(false);
+                    _verticalDeflectionPlateBottom.SetActive(false);
                     break;
-
+                
                 case OrderEnum.Vertical:
-                    position = _horizCapStartPos;
-                    position.x += (_vertCapStartPos.x - _horizCapStartPos.x) / 2;
-                    verticalCapacitor.transform.position = position;
-                    horizontalCapacitor.transform.position = Vector3.zero;
-                    _horizontalCapacitorTop.SetActive(false);
-                    _horizontalCapacitorBottom.SetActive(false);
+                    position = _verticalDeflectionPlateStartPos;
+                    position.x += (_horizontalDeflectionPlateStartPos.x - _verticalDeflectionPlateStartPos.x) / 2;
+                    verticalDeflectionPlate.transform.position = position;
+                    horizontalDeflectionPlate.transform.position = Vector3.zero;
+                    _horizontalDeflectionPlateLeft.SetActive(false);
+                    _horizontalDeflectionPlateRight.SetActive(false);
                     break;
 
                 default:
-                    horizontalCapacitor.transform.position = _horizCapStartPos;
-                    verticalCapacitor.transform.position = _vertCapStartPos;
+                    verticalDeflectionPlate.transform.position = _verticalDeflectionPlateStartPos;
+                    horizontalDeflectionPlate.transform.position = _horizontalDeflectionPlateStartPos;
                     break;
             }
 
-            var newPosition = horizontalCapacitor.transform.position;
-            _horizontalCapacitorTop.transform.position = newPosition + new Vector3(0, _horizontalDistance / 2, 0);
-            _horizontalCapacitorBottom.transform.position = newPosition - new Vector3(0, _horizontalDistance / 2, 0);
-            newPosition = verticalCapacitor.transform.position;
-            _verticalCapacitorRight.transform.position = newPosition + new Vector3(0, 0, _verticalDistance / 2);
-            _verticalCapacitorLeft.transform.position = newPosition - new Vector3(0, 0, _verticalDistance / 2);
+            var newPosition = verticalDeflectionPlate.transform.position;
+            _verticalDeflectionPlateTop.transform.position = newPosition + new Vector3(0, _vertDeflPlateDistance / 2, 0);
+            _verticalDeflectionPlateBottom.transform.position = newPosition - new Vector3(0, _vertDeflPlateDistance / 2, 0);
+            newPosition = horizontalDeflectionPlate.transform.position;
+            _horizontalDeflectionPlateRight.transform.position = newPosition + new Vector3(0, 0, _horizDeflPlateDistance / 2);
+            _horizontalDeflectionPlateLeft.transform.position = newPosition - new Vector3(0, 0, _horizDeflPlateDistance / 2);
         }
 
         private void UpdateInformation()
@@ -197,48 +197,48 @@ namespace Maroon.Physics.CathodeRayTube
             float size;
 
             int eXValue = (int)(vX / (Math.Truncate(informationResolution * _electronGunLength) / informationResolution));
-            int eYValue = (int)(vY / (Math.Truncate(informationResolution * _horizontalDistance) / informationResolution));
-            int eZValue = (int)(vZ / (Math.Truncate(informationResolution * _verticalDistance) / informationResolution));
+            int eYValue = (int)(vY / (Math.Truncate(informationResolution * _vertDeflPlateDistance) / informationResolution));
+            int eZValue = (int)(vZ / (Math.Truncate(informationResolution * _horizDeflPlateDistance) / informationResolution));
 
             eXInfo.Value = vX.Value + " / " +
                            (Math.Truncate(informationResolution * _electronGunLength) / informationResolution)
                            + " \n= " + eXValue + " V/m";
             eYInfo.Value = vY.Value + " / " +
-                           (Math.Truncate(informationResolution * _horizontalDistance) / informationResolution)
+                           (Math.Truncate(informationResolution * _vertDeflPlateDistance) / informationResolution)
                            + " \n= " + eYValue + " V/m";
             eZInfo.Value = vZ.Value + " / " +
-                           (Math.Truncate(informationResolution * _verticalDistance) / informationResolution)
+                           (Math.Truncate(informationResolution * _horizDeflPlateDistance) / informationResolution)
                            + " \n= " + eZValue + " V/m";
 
             float fXValue = -ElectronCharge *
                        (vX / (float)(Math.Truncate(informationResolution * _electronGunLength) /
                                      informationResolution)) * (float)Math.Pow(10, 15);
             float fYValue = -ElectronCharge *
-                            (vY / (float)(Math.Truncate(informationResolution * _horizontalDistance) /
+                            (vY / (float)(Math.Truncate(informationResolution * _vertDeflPlateDistance) /
                                           informationResolution)) * (float)Math.Pow(10, 15);
             float fZValue = -ElectronCharge *
-                            (vZ / (float)(Math.Truncate(informationResolution * _verticalDistance) /
+                            (vZ / (float)(Math.Truncate(informationResolution * _horizDeflPlateDistance) /
                                           informationResolution)) * (float)Math.Pow(10, 15);
 
             fXInfo.Value = "1.6022e-19 * " + eXValue + " * H(" +
                            (Math.Truncate(informationResolution * _electronGunLength) / informationResolution) +
                            " - x)" + " \n= " + fXValue + " * (10 ^ -15) N"  ;
 
-            size = _horizontalCapacitorTop.GetComponent<Renderer>().bounds.size.z / 2;
-            length = Math.Abs(GetCRTStart().x - horizontalCapacitor.transform.position.x);
+            size = _verticalDeflectionPlateTop.GetComponent<Renderer>().bounds.size.z / 2;
+            length = Math.Abs(GetCRTStart().x - verticalDeflectionPlate.transform.position.x);
             fYInfo.Value = "1.6022e-19 * " + eYValue + " * \nH(" +
                            (Math.Truncate(informationResolution * size) / informationResolution)
                            + " - abs(x - " + (Math.Truncate(informationResolution * length) / informationResolution) +
-                           "))" + " * \nH(" + _horizontalCapacitorTop.GetComponent<Renderer>().bounds.size.z / 2 
+                           "))" + " * \nH(" + _verticalDeflectionPlateTop.GetComponent<Renderer>().bounds.size.z / 2 
                            + " - abs(z - " + GetCRTStart().z + "))"
                            + " \n= " + fYValue + " * (10 ^ -15) N";
 
-            size = _verticalCapacitorLeft.GetComponent<Renderer>().bounds.size.y / 2;
-            length = Math.Abs(GetCRTStart().x - verticalCapacitor.transform.position.x);
+            size = _horizontalDeflectionPlateLeft.GetComponent<Renderer>().bounds.size.y / 2;
+            length = Math.Abs(GetCRTStart().x - horizontalDeflectionPlate.transform.position.x);
             fZInfo.Value = "1.6022e-19 * " + eZValue + " * \nH(" +
                            (Math.Truncate(informationResolution * size) / informationResolution)
                            + " - abs(x - " + (Math.Truncate(informationResolution * length) / informationResolution) +
-                           "))" + " * \nH(" + _verticalCapacitorLeft.GetComponent<Renderer>().bounds.size.y / 2 
+                           "))" + " * \nH(" + _horizontalDeflectionPlateLeft.GetComponent<Renderer>().bounds.size.y / 2 
                            + " - abs(y - " + GetCRTStart().y + "))"
                            + " \n= " + fZValue + " * (10 ^ -15) N";
         }
@@ -365,34 +365,34 @@ namespace Maroon.Physics.CathodeRayTube
             point.x = -ElectronCharge * (vX / _electronGunLength) *
                       H((GetCRTStart().x + _electronGunLength) - currentPoint.x);
 
-            float scale = _horizontalCapacitorTop.GetComponent<Renderer>().bounds.size.x;
-            if (horizontalCapacitor.transform.position != Vector3.zero)
+            float scale = _verticalDeflectionPlateTop.GetComponent<Renderer>().bounds.size.x;
+            if (verticalDeflectionPlate.transform.position != Vector3.zero)
             {
-                length = Math.Abs(GetCRTStart().x - horizontalCapacitor.transform.position.x);
+                length = Math.Abs(GetCRTStart().x - verticalDeflectionPlate.transform.position.x);
                 x = (scale / 2) - Math.Abs(currentPoint.x - (GetCRTStart().x + length));
 
-                dist = _horizontalDistance / 2;
+                dist = _vertDeflPlateDistance / 2;
                 y = dist - Math.Abs(currentPoint.y - GetCRTStart().y);
 
-                size = _horizontalCapacitorTop.GetComponent<Renderer>().bounds.size.z / 2;
+                size = _verticalDeflectionPlateTop.GetComponent<Renderer>().bounds.size.z / 2;
                 z = size - Math.Abs(currentPoint.z - GetCRTStart().z);
 
-                point.y = -ElectronCharge * (vY / _horizontalDistance) * H(x) * H(y) * H(z);
+                point.y = -ElectronCharge * (vY / _vertDeflPlateDistance) * H(x) * H(y) * H(z);
             }
 
-            scale = _verticalCapacitorLeft.GetComponent<Renderer>().bounds.size.x;
-            if (verticalCapacitor.transform.position != Vector3.zero)
+            scale = _horizontalDeflectionPlateLeft.GetComponent<Renderer>().bounds.size.x;
+            if (horizontalDeflectionPlate.transform.position != Vector3.zero)
             {
-                length = Math.Abs(GetCRTStart().x - verticalCapacitor.transform.position.x);
+                length = Math.Abs(GetCRTStart().x - horizontalDeflectionPlate.transform.position.x);
                 x = (scale / 2) - Math.Abs(currentPoint.x - (GetCRTStart().x + length));
 
-                size = _verticalCapacitorLeft.GetComponent<Renderer>().bounds.size.y / 2;
+                size = _horizontalDeflectionPlateLeft.GetComponent<Renderer>().bounds.size.y / 2;
                 y = size - Math.Abs(currentPoint.y - GetCRTStart().y);
 
-                dist = _verticalDistance / 2;
+                dist = _horizDeflPlateDistance / 2;
                 z = dist - Math.Abs(currentPoint.z - GetCRTStart().z);
 
-                point.z = -ElectronCharge * (vZ / _verticalDistance) * H(x) * H(y) * H(z);
+                point.z = -ElectronCharge * (vZ / _horizDeflPlateDistance) * H(x) * H(y) * H(z);
             }
 
             return point;
