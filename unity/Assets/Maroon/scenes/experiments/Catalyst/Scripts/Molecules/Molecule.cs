@@ -45,7 +45,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
         [SerializeField] MoleculeState state; // do not set this directly, use the property setter below
 
         private Molecule _possibleDrawingMolecule; // should always be a platinum or cobalt molecule
-        public Molecule _connectedMolecule;
+        private Molecule _connectedMolecule;
         
         protected float CurrentTimeMove = 0.0f;
         protected Vector3 StartMoleculePosition;
@@ -54,7 +54,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
         protected Quaternion NewMoleculeRotation;
 
         protected bool ReactionStarted = false;
-        public bool IsTopLayerSurfaceMolecule = false;
+        protected bool IsTopLayerSurfaceMolecule = false;
 
         protected float CurrentTurnOverRate = 0.0f;
 
