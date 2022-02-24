@@ -42,6 +42,7 @@ namespace Maroon.Physics.CathodeRayTube
 {
     public class CRTController : MonoBehaviour
     {
+        private ElectronLineController _electronLineController;
         [SerializeField] private GameObject screen;
         [SerializeField] private GameObject cathode;
         [SerializeField] private GameObject anode;
@@ -60,7 +61,17 @@ namespace Maroon.Physics.CathodeRayTube
         [SerializeField] private QuantityString eYInfo;
         [SerializeField] private QuantityString eZInfo;
 
-        public int Order { get; set; }
+        private int _order;
+        public int Order
+        {
+            get => _order;
+            set
+            {
+                _order = value;
+                UpdateOrder();
+            }
+        }
+
         public int Distance { get; set; }
         public int XAxis { get; set; }
         public int YAxis { get; set; }
@@ -87,6 +98,7 @@ namespace Maroon.Physics.CathodeRayTube
 
         private void Start()
         {
+            _electronLineController = gameObject.GetComponentInChildren<ElectronLineController>();
             _electronGunLength = anode.transform.position.x - GetCRTStart().x;
             _vertDeflPlateDistance = d;
             _horizDeflPlateDistance = d;
@@ -116,16 +128,14 @@ namespace Maroon.Physics.CathodeRayTube
 
         private void FixedUpdate()
         {
-            if (SimulationController.Instance.SimulationRunning)
-            {
-                UpdateDistance();
-                UpdateOrder();
-            }
             UpdateInformation();
         }
 
-        private void UpdateDistance()
+        public void UpdateDistance()
         {
+            if (!SimulationController.Instance.SimulationRunning)
+                return;
+            
             switch ((DistanceEnum)Distance)
             {
                 case DistanceEnum.Both:
@@ -143,10 +153,22 @@ namespace Maroon.Physics.CathodeRayTube
                     _horizDeflPlateDistance = d;
                     break;
             }
+            
+            var position = verticalDeflectionPlate.transform.position;
+            _verticalDeflectionPlateTop.transform.position = position + new Vector3(0, _vertDeflPlateDistance / 2, 0);
+            _verticalDeflectionPlateBottom.transform.position = position - new Vector3(0, _vertDeflPlateDistance / 2, 0);
+            position = horizontalDeflectionPlate.transform.position;
+            _horizontalDeflectionPlateRight.transform.position = position + new Vector3(0, 0, _horizDeflPlateDistance / 2);
+            _horizontalDeflectionPlateLeft.transform.position = position - new Vector3(0, 0, _horizDeflPlateDistance / 2);
+                        
+            _electronLineController.UpdateElectronLine();
         }
 
-        private void UpdateOrder()
+        public void UpdateOrder()
         {
+            if (!SimulationController.Instance.SimulationRunning)
+                return;
+            
             _horizontalDeflectionPlateLeft.SetActive(true);
             _horizontalDeflectionPlateRight.SetActive(true);
             _verticalDeflectionPlateTop.SetActive(true);
@@ -195,6 +217,8 @@ namespace Maroon.Physics.CathodeRayTube
             newPosition = horizontalDeflectionPlate.transform.position;
             _horizontalDeflectionPlateRight.transform.position = newPosition + new Vector3(0, 0, _horizDeflPlateDistance / 2);
             _horizontalDeflectionPlateLeft.transform.position = newPosition - new Vector3(0, 0, _horizDeflPlateDistance / 2);
+            
+            _electronLineController.UpdateElectronLine();
         }
 
         private void UpdateInformation()

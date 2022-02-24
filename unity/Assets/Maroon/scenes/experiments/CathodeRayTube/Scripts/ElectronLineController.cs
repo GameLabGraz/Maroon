@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Maroon.Physics.CathodeRayTube
@@ -33,6 +34,18 @@ namespace Maroon.Physics.CathodeRayTube
         }
 
         protected override void HandleFixedUpdate()
+        {
+            
+        }
+
+        public void UpdateElectronLine()
+        {
+            if (!SimulationController.Instance.SimulationRunning)
+                return;
+            StartCoroutine(UpdateElectronLineCoRoutine());
+        }
+
+        private IEnumerator UpdateElectronLineCoRoutine()
         {
             LineRenderer lineRenderer = GetComponent<LineRenderer>();
             lineRenderer.positionCount = _crtController.lineResolution;
@@ -78,6 +91,7 @@ namespace Maroon.Physics.CathodeRayTube
             
             lineRenderer.SetPositions(lineRendererPoints.ToArray());
             _crtController.UpdateData(points, velocities, forces);
+            yield return null;
         }
 
         public void ResetObject()

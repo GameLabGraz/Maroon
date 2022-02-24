@@ -13,7 +13,7 @@ public class ToolTipHandler : MonoBehaviour
     private void Start()
     {
         _guiStyle.normal.textColor = Color.black;
-        _guiStyle.fontSize = 14;
+        _guiStyle.fontSize = 18;
     }
 
     private void Update()
