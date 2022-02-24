@@ -121,8 +121,7 @@ namespace Maroon.Physics.CathodeRayTube
             XAxis = (int)XAxisEnum.X;
             YAxis = (int)YAxisEnum.Y;
             
-            UpdateDistance();
-            UpdateOrder();
+            setPlatePositions();
             UpdateInformation();
         }
 
@@ -153,14 +152,8 @@ namespace Maroon.Physics.CathodeRayTube
                     _horizDeflPlateDistance = d;
                     break;
             }
-            
-            var position = verticalDeflectionPlate.transform.position;
-            _verticalDeflectionPlateTop.transform.position = position + new Vector3(0, _vertDeflPlateDistance / 2, 0);
-            _verticalDeflectionPlateBottom.transform.position = position - new Vector3(0, _vertDeflPlateDistance / 2, 0);
-            position = horizontalDeflectionPlate.transform.position;
-            _horizontalDeflectionPlateRight.transform.position = position + new Vector3(0, 0, _horizDeflPlateDistance / 2);
-            _horizontalDeflectionPlateLeft.transform.position = position - new Vector3(0, 0, _horizDeflPlateDistance / 2);
-                        
+
+            setPlatePositions();            
             _electronLineController.UpdateElectronLine();
         }
 
@@ -211,14 +204,18 @@ namespace Maroon.Physics.CathodeRayTube
                     break;
             }
 
+            setPlatePositions();
+            _electronLineController.UpdateElectronLine();
+        }
+
+        private void setPlatePositions()
+        {
             var newPosition = verticalDeflectionPlate.transform.position;
             _verticalDeflectionPlateTop.transform.position = newPosition + new Vector3(0, _vertDeflPlateDistance / 2, 0);
             _verticalDeflectionPlateBottom.transform.position = newPosition - new Vector3(0, _vertDeflPlateDistance / 2, 0);
             newPosition = horizontalDeflectionPlate.transform.position;
             _horizontalDeflectionPlateRight.transform.position = newPosition + new Vector3(0, 0, _horizDeflPlateDistance / 2);
             _horizontalDeflectionPlateLeft.transform.position = newPosition - new Vector3(0, 0, _horizDeflPlateDistance / 2);
-            
-            _electronLineController.UpdateElectronLine();
         }
 
         private void UpdateInformation()
