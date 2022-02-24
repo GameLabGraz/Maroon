@@ -108,12 +108,19 @@ namespace Maroon.Physics.CathodeRayTube
 
             XAxis = (int)XAxisEnum.X;
             YAxis = (int)YAxisEnum.Y;
+            
+            UpdateDistance();
+            UpdateOrder();
+            UpdateInformation();
         }
 
         private void FixedUpdate()
         {
-            UpdateDistance();
-            UpdateOrder();
+            if (SimulationController.Instance.SimulationRunning)
+            {
+                UpdateDistance();
+                UpdateOrder();
+            }
             UpdateInformation();
         }
 
