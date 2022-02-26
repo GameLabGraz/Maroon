@@ -60,6 +60,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
 
         public MoleculeType Type { get => type; }
 
+        /**
+         * Property to set state as well as handle RigidbodyConstraints. Always use this to
+         * set the state of a molecule!
+         */
         public MoleculeState State
         {
             get => state;
@@ -83,6 +87,14 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
         public Action<Molecule, Molecule> OnCO2Created;
         public Action OnMoleculeFreed;
 
+        /**
+         * Sets the molecule state to a drawn state which is either DrawnBySurfaceMolecule, DrawnByDrawingSpot, or
+         * DrawnByCO.
+         * Sets the new position and rotation to the molecule this is drawn to.
+         * Sets the connected molecule to the drawn molecule.
+         * <param name="drawingMolecule"> The molecule that draws this molecule in. </param>
+         * <param name="drawnState"> State specifying the kind of drawing state. </param>
+         */
         public void SetMoleculeDrawn(Molecule drawingMolecule, MoleculeState drawnState)
         {
             State = drawnState;
@@ -93,6 +105,12 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             _connectedMolecule = drawingMolecule;
         }
 
+        /**
+         * Temperature changed callback.
+         * Movement speed of molecules is adjusted based on temperature.
+         * Influences turn over rates / frequencies.
+         * <param name="newTemp"> New Temperature. </param>
+         */
         public void TemperatureChanged(float newTemp)
         {
             // normal temp goes from -23.15f to 176.85 degree celsius
@@ -102,6 +120,11 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             CurrentTurnOverRate = CatalystController.TurnOverRates[CatalystController.GetTemperatureIndex(temperature.Value)][CatalystController.GetPartialPressureIndex(partialPressure.Value)];
         }
 
+        /**
+         * Partial pressure changed callback.
+         * Influences turn over rates / frequencies.
+         * <param name="pressure"> New pressure. </param>
+         */
         public void PressureChanged(float pressure)
         {
             partialPressure.Value = pressure;
@@ -114,14 +137,27 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             ReactionStart_Impl();
         }
 
+        /**
+         * Activate or deactivate drawing colliders of of platin, cobalt, CO, and O molecules.
+         * The collider is used to detect other molecules and then draw them in.
+         * <param name="activate"> Whether to activate or deactivate the collider. </param>
+         */
         public void ActivateDrawingCollider(bool activate)
         {
             // activate drawing colliders for platinum, cobalt and oxygen
-            if (type != MoleculeType.Pt && type != MoleculeType.Co && type != MoleculeType.O) return;
+            if (type != MoleculeType.Pt &&
+                type != MoleculeType.CO &&
+                type != MoleculeType.Co &&
+                type != MoleculeType.O) return;
 
             collider.enabled = activate;
         }
 
+        /**
+         * Set if the molecule is a surface molecule = molecule at the top of the surface.
+         * The top molecules are the ones that are part of the reaction.
+         * <param name="isTopLayerMolecule"> Whether this is a top layer molecule or not. </param>
+         */
         public void SetIsTopLayerSurfaceMolecule(bool isTopLayerMolecule)
         {
             IsTopLayerSurfaceMolecule = isTopLayerMolecule;
@@ -143,6 +179,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             
         }
 
+        /**
+         * Movement and other decisions are made each FixedUpdate.
+         * Most molecules override this, add custom logic and call the base method if they are moving.
+         */
         protected override void HandleFixedUpdate()
         {
             if (state == MoleculeState.Fixed && _connectedMolecule == null &&
@@ -154,6 +194,13 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             }
         }
 
+        /**
+         * Handle movement of molecules. Called each fixed update if molecule is moving
+         * or drawn to another molecule.
+         * Uses time based movement with movement speed. If the distance of the current position
+         * to the new desired position is smaller than some threshold different handling functions
+         * are used to handle arrival at the desired position and possibly get a new random position.
+         */
         private void HandleMoleculeMovement()
         {
             CurrentTimeMove += Time.deltaTime * movementSpeed;
@@ -185,6 +232,11 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             }
         }
 
+        /**
+         * Called after a atom / molecule that is drawn to a surface atom (platin or cobalt) has moved
+         * near enough. Set final position such that is does not intersect with the surface atom
+         * and adjust rotation.
+         */
         private void HandleMoleculeTouchingSurface()
         {
             if (type != MoleculeType.CO && type != MoleculeType.O2) return;
@@ -195,12 +247,20 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
                 State = MoleculeState.WaitingToDissociate;
         }
 
+        /**
+         * Handle O atom being near enough to a CO molecule. Calls an action that creates CO2 in the
+         * CatalystController.
+         */
         private void HandleOTouchingCO()
         {
             State = MoleculeState.Fixed;
             OnCO2Created?.Invoke(this, _connectedMolecule);
         }
 
+        /**
+         * Handle an O atom being near enough to a surface drawing spot. Set final position and update
+         * state.
+         */
         private void HandleOFillDrawingSpot()
         {
             if (type != MoleculeType.O) return;
@@ -213,6 +273,9 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             // only used in CO and O2 molecules
         }
 
+        /**
+         * Gets a random position and rotation withing a certain random range.
+         */
         private void GetRandomPositionAndRotation()
         {
             StartMoleculePosition = transform.position;

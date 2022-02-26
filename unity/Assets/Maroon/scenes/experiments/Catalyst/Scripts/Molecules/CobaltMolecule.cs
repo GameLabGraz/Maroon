@@ -10,6 +10,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
                 ActivateDrawingCollider(true);
         }
 
+        /**
+         * Use the collider trigger to possibly draw in O2 or CO molecules.
+         * <param name="other"> Collider of object entering this collider. </param>
+         */
         private void OnTriggerEnter(Collider other)
         {
             if (ConnectedMolecule == null) // draw in O2 or CO molecules
@@ -25,6 +29,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             }
         }
 
+        /**
+         * Reset possibility to draw in O2 or CO molecule
+         * <param name="other"> Collider of object leaving this collider. </param>
+         */
         private void OnTriggerExit(Collider other)
         {
             if (ConnectedMolecule == null) // reset drawing state and possible drawn molecule

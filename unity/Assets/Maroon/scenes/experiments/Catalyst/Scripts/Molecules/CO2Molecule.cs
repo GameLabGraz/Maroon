@@ -4,6 +4,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
 {
     public class CO2Molecule : Molecule
     {
+        /**
+         * Override base method to handle moving out of CO2.
+         * Calls base method to move the molecule.
+         */
         protected override void HandleFixedUpdate()
         {
             if (State == MoleculeState.Fixed && 
@@ -14,6 +18,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             base.HandleFixedUpdate();
         }
 
+        /**
+         * Set the new molecule position to go straight up.
+         * Molecule will disappear after it reaches its destination.
+         */
         public void MoveOutCO2()
         {
             GetComponent<CapsuleCollider>().enabled = false;

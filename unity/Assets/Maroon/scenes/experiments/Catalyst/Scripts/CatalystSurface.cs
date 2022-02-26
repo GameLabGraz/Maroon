@@ -23,6 +23,15 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         private float _spaceBetweenMolecules;
 
+        /**
+         * Instantiate surface atoms / molecules of the Langmuir variant based on the given coordinates.
+         * <param name="platCoords"> Coordinates of surface atoms </param>
+         * <param name="onComplete"> Action that should be called once all surface atoms / molecules have
+         * been instantiated. Returns the list of instantiated molecules to the
+         * CatalystController. </param>
+         * <param name="onMoleculeFreed"> Action that the CO molecules subscribe to. Called when CO molecules
+         * are removed from the surface by hand (only happens for the first four). </param>
+         */
         public void SetupCoordsLangmuir(List<Vector3> platCoords, 
             System.Action<List<Molecule>> onComplete, 
             System.Action onMoleculeFreed)
@@ -72,6 +81,14 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             onComplete?.Invoke(activeMolecules);
         }
 
+        /**
+         * Instantiate surface atoms of the van Krevelen variant based on the given coordinates.
+         * <param name="cobaltCoords"> Coordinates of cobalt surface atoms </param>
+         * <param name="oCoords"> Coordinates of O surface atoms </param>
+         * <param name="onComplete"> Action that should be called once all surface atoms / molecules have
+         * been instantiated. Returns the list of instantiated molecules to the
+         * CatalystController. </param>
+         */
         public void SetupCoordsKrevelen(List<Vector3> cobaltCoords, 
             List<Vector3> oCoords,
             System.Action<List<Molecule>> onComplete)

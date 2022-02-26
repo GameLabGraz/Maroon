@@ -13,6 +13,13 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
         
         private float _currentTimeDesorb = 0.0f;
 
+        /**
+         * Only needed for the Langmuir variant.
+         * If CO molecule is fixed and stuck in surface make it wobble a bit.
+         * Fourth time clicking it will free it and call the OnMoleculeFreed action which
+         * increments a counter in the CatalystController which in turn starts the reaction
+         * if 4 CO molecules have been removed manually.
+         */
         public void OnMouseDown()
         {
             if (State != MoleculeState.Fixed || !SimulationController.Instance.SimulationRunning) return;
@@ -28,6 +35,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             _moleculeClickCounter++;
         }
 
+        /**
+         * Override base method to handle desorb and drawing possibility.
+         * Also calls the base method to keep molecule moving.
+         */
         protected override void HandleFixedUpdate()
         {
             if (ReactionStarted && State == MoleculeState.Fixed && State != MoleculeState.Desorb &&
@@ -69,6 +80,11 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             }
         }
 
+        /**
+         * Handle possibly being drawn to a surface molecule.
+         * Possibility is based on current turn over rate / frequency.
+         * If drawn sets connected molecule, draws molecule, and deactivates drawing collider.
+         */
         protected override void HandleDrawingPossibility()
         {
             if (Random.Range(0, 100) > 100 - CurrentTurnOverRate)
@@ -79,6 +95,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             }
         }
 
+        /**
+         * Handle desorb movement of molecule by setting new position and rotation.
+         * Resets connected molecules.
+         */
         private void DesorbCO()
         {
             StartMoleculePosition = transform.position;

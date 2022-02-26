@@ -33,8 +33,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             if (Random.Range(0, 100) > 100 - CurrentTurnOverRate)
             {
                 PossibleDrawingMolecule.ConnectedMolecule = this; // connect this (O2) to plat molecule
-                SetMoleculeDrawn(PossibleDrawingMolecule, MoleculeState.DrawnBySurfaceMolecule); // drawn by plat
-                ConnectedMolecule.ActivateDrawingCollider(false); // deactivate plat drawing collider
+                SetMoleculeDrawn(PossibleDrawingMolecule, MoleculeState.DrawnBySurfaceMolecule); // drawn by plat or cobalt
+                ConnectedMolecule.ActivateDrawingCollider(false); // deactivate plat or cobalt drawing collider
             }
         }
 
