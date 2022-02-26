@@ -14,6 +14,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
 
         public List<Molecule> potentialDrawMolecules = new List<Molecule>();
 
+        /**
+         * Set whether this atom can be drawn (only used in van Krevelen variant for
+         * O atoms sit on the surface.
+         */
         public void SetCanBeDrawn(bool canBeDrawn)
         {
             _canBeDrawn = canBeDrawn;
@@ -25,6 +29,12 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             _collider = GetComponent<SphereCollider>();
         }
 
+        /**
+         * Override base method to handle increasing of collider in Langmuir method if state is fixed.
+         * Also handles potential drawing to other molecules if potentialDrawMolecules list contains
+         * suitable molecules.
+         * Calls the base method to keep molecule moving if state not fixed.
+         */
         protected override void HandleFixedUpdate()
         {
             if (State != MoleculeState.Fixed)
@@ -71,6 +81,14 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
                 potentialDrawMolecules.Clear();
         }
         
+        /**
+         * Use the collider trigger to possibly get drawn to a CO molecule that is fixed and connected to
+         * a surface molecule (either platinum or cobalt).
+         * We put molecules that enter the collider into a list since we can not be sure that these
+         * molecules are in a fixed state and connected to a surface atom when they enter. We use that list
+         * to periodically check if we find a molecule this O atom can be drawn to.
+         * <param name="other"> Collider of object entering this collider. </param>
+         */
         private void OnTriggerEnter(Collider other)
         {
             if (State == MoleculeState.DrawnBySurfaceMolecule || State == MoleculeState.DrawnByCO) return;
@@ -89,6 +107,11 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             }
         }
         
+        /**
+         * Handle removal from potential CO molecules that this O atom could have been drawn to from the
+         * potential drawing list.
+         * * <param name="other"> Collider of object leaving this collider. </param>
+         */
         private void OnTriggerExit(Collider other)
         {
             if (State == MoleculeState.DrawnBySurfaceMolecule || State == MoleculeState.DrawnByCO) return;

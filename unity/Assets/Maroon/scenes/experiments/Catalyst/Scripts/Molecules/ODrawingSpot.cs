@@ -2,6 +2,13 @@
 
 namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
 {
+    /**
+     * This class is used to draw in new O atom into the surface in the van Krevelen
+     * variant. In addition to each original O surface atom a ODrawingSpot is spawned
+     * and connected to that O atom.
+     * When the O atom eventually leaves to react with a CO molecule this spot is empty
+     * and uses it's trigger collider to draw in O atoms.
+     */
     public class ODrawingSpot : Molecule
     {
 
@@ -20,6 +27,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             
         }
 
+        /**
+         * Override base method to handle finding a new O atom to attach to this drawing point.
+         * Periodically check if there are any O atoms in a sphere around this drawing spot.
+         */
         protected override void HandleFixedUpdate()
         {
             if (_attachedMolecule == null)

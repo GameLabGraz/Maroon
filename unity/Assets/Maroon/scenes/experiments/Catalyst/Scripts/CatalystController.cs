@@ -136,8 +136,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             
             temperature.onValueChanged.AddListener(TemperatureChanged);
             partialPressure.onValueChanged.AddListener(PartialPressureChanged);
-            variantDropdown.value = 1;
-            ExperimentVariation = (ExperimentVariation)variantDropdown.value;
+            //variantDropdown.value = 1;
+            //ExperimentVariation = (ExperimentVariation)variantDropdown.value;
             SpawnCatalystSurfaceObject();
         }
 
@@ -152,6 +152,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             catalystReactor.OnSpawnCatalystSurface -= SpawnCatalystSurfaceObject;
         }
         
+        /**
+         * Fill platin, cobalt, and O spawn point lists.
+         * <param name="coordFile"> CSV file with coordinates </param>
+         */
         private void FillSpawnPoints(TextAsset coordFile)
         {
             string[] lines = coordFile.text.Split('\n');
@@ -198,6 +202,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             stepWiseSimulationToggle.interactable = true;
         }
 
+        /**
+         * Spawns the catalyst reaction surface and call the setup coordinates method for the
+         * selected variant.
+         */
         private void SpawnCatalystSurfaceObject()
         {
             EnsureCleanSurface();
@@ -243,6 +251,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             }
         }
 
+        /**
+         * Ensures that the catalyst surface is cleared when selecting another variant by
+         * deleting all child objects from the catalyst surface spawn transform parent.
+         */
         private void EnsureCleanSurface()
         {
             if (catalystSurfaceSpawnTransform.childCount == 0) return;
@@ -265,6 +277,11 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             _activeMolecules.Clear();
         }
 
+        /**
+         * Spawns reaction material (O atoms and CO molecules).
+         * Called once at start. Can subsequently be called via button click but then
+         * only O atoms are spawned.
+         */
         private void SpawnReactionMaterial(bool isSpawnButtonClicked = false)
         {
             Transform catalystSurfaceTransform = _catalystSurface.gameObject.transform;
@@ -301,6 +318,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             }
         }
 
+        /**
+         * Called via callback from O2 molecules.
+         * Removes O2 molecule and creates 2 O atoms.
+         */
         private void DissociateO2(Molecule o2Molecule)
         {
             o2Molecule.OnDissociate -= DissociateO2;
@@ -327,6 +348,11 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             }
         }
 
+        /**
+         * Callback that is called from CO molecules in the Langmuir method when these
+         * molecules haven been removed by hand.
+         * Increments a counter and starts the reaction when four molecules have been removed.
+         */
         private void OnMoleculeFreed()
         {
             if (freedMoleculeCounter == 4)
@@ -336,6 +362,11 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             freedMoleculeCounter++;
         }
 
+        /**
+         * Creates CO2 molecule. Called from O atoms when they are near a CO molecule that
+         * they have been drawn to.
+         * Also called when two O atoms collide (todo implement this).
+         */
         private void CreateCO2(Molecule oMolecule, Molecule coMolecule)
         {
             oMolecule.OnCO2Created -= CreateCO2;
