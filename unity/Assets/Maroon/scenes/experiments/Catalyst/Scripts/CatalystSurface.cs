@@ -72,10 +72,12 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                     coMolecule.ConnectedMolecule = platMolecule;
                     coMolecule.OnMoleculeFreed += onMoleculeFreed;
 
-                    platMolecule.SetIsTopLayerSurfaceMolecule(true);
-                    
                     activeMolecules.Add(coMolecule);
                     activeMolecules.Add(platMolecule);
+                }
+                else
+                {
+                    platMolecule.gameObject.GetComponent<Molecule>().enabled = false;
                 }
             }
             onComplete?.Invoke(activeMolecules);
@@ -103,10 +105,13 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 
                 if (Mathf.Abs(cobaltCoords[i].y - maxYVal) < 0.01f)
                 {
-                    cobaltMolecule.SetIsTopLayerSurfaceMolecule(true);
+                    surfaceMolecules.Add(cobaltMolecule);
+                }
+                else
+                {
+                    cobaltMolecule.gameObject.GetComponent<Molecule>().enabled = false;
                 }
                 
-                surfaceMolecules.Add(cobaltMolecule);
             }
 
             maxYVal = oCoords.Max(vector => vector.y);
@@ -120,7 +125,6 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                     oxygenMolecule.transform.localPosition = (oCoords[i] / 20.0f) + new Vector3(1.0f, 0.0f, 3.5f); // todo remove offsets when i get centered coords
                     oxygenMolecule.State = MoleculeState.InSurfaceDrawingSpot;
                     (oxygenMolecule as OMolecule)?.SetCanBeDrawn(true);
-                    oxygenMolecule.SetIsTopLayerSurfaceMolecule(true);
                     // set drawing spot so we can refill O molecule at same position later
                     ODrawingSpot oDrawingSpot = Instantiate(oDrawingSpotPrefab, surfaceLayerParent);
                     oDrawingSpot.transform.localPosition = (oCoords[i] / 20.0f) + new Vector3(1.0f, 0.0f, 3.5f); // todo remove offsets when i get centered coords

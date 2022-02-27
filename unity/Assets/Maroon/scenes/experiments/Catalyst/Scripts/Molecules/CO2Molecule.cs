@@ -12,7 +12,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
         {
             if (State == MoleculeState.Fixed && 
                 ( !CatalystController.DoStepWiseSimulation ||
-                  CatalystController.DoStepWiseSimulation && CatalystController.CurrentExperimentStage == ExperimentStages.CO2Desorb )
+                  CatalystController.DoStepWiseSimulation && CatalystController.CurrentExperimentStage == ExperimentStages.OReactCO_CO2Desorb )
                 ) MoveOutCO2();
             
             base.HandleFixedUpdate();

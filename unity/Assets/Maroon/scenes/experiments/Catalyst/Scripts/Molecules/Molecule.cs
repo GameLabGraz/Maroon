@@ -54,7 +54,6 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
         protected Quaternion NewMoleculeRotation;
 
         protected bool ReactionStarted = false;
-        protected bool IsTopLayerSurfaceMolecule = false;
 
         protected float CurrentTurnOverRate = 0.0f;
 
@@ -68,7 +67,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
         {
             get => state;
             set {
-                if (value == MoleculeState.Fixed)
+                if (value == MoleculeState.Fixed || value == MoleculeState.InSurfaceDrawingSpot)
                 {
                     GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
                 } 
@@ -151,16 +150,6 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
                 type != MoleculeType.O) return;
 
             collider.enabled = activate;
-        }
-
-        /**
-         * Set if the molecule is a surface molecule = molecule at the top of the surface.
-         * The top molecules are the ones that are part of the reaction.
-         * <param name="isTopLayerMolecule"> Whether this is a top layer molecule or not. </param>
-         */
-        public void SetIsTopLayerSurfaceMolecule(bool isTopLayerMolecule)
-        {
-            IsTopLayerSurfaceMolecule = isTopLayerMolecule;
         }
 
         protected override void Start()
