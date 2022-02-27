@@ -90,6 +90,7 @@ GameObject:
   - component: {fileID: 9201737708395207698}
   - component: {fileID: 684029413386375373}
   - component: {fileID: 6053066872662406567}
+  - component: {fileID: 7065838665368116169}
   - component: {fileID: 4612165014388229691}
   m_Layer: 0
   m_Name: OMolecule
@@ -157,8 +158,6 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   state: 0
-  _connectedMolecule: {fileID: 0}
-  IsTopLayerSurfaceMolecule: 0
   potentialDrawMolecules: []
 --- !u!135 &6053066872662406567
 SphereCollider:
@@ -172,6 +171,19 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.3
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!135 &7065838665368116169
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9201737708395207699}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.03
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &4612165014388229691
 Rigidbody:

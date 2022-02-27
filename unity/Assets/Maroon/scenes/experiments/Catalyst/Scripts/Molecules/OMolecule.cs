@@ -6,28 +6,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
 {
     public class OMolecule : Molecule
     {
-        private SphereCollider _collider;
-        private float _timeToIncreaseCollider = 2.0f;
-        private float _currentTimeColliderIncrease = 0.0f;
-
-        private bool _canBeDrawn = false;
-
         public List<Molecule> potentialDrawMolecules = new List<Molecule>();
 
-        /**
-         * Set whether this atom can be drawn (only used in van Krevelen variant for
-         * O atoms sit on the surface.
-         */
-        public void SetCanBeDrawn(bool canBeDrawn)
-        {
-            _canBeDrawn = canBeDrawn;
-        }
-
-        protected override void Start()
-        {
-            base.Start();
-            _collider = GetComponent<SphereCollider>();
-        }
+        public Action<Molecule, Molecule> CreateO2;
+        public DateTime CreationTimeStamp = DateTime.Now;
 
         /**
          * Override base method to handle increasing of collider in Langmuir method if state is fixed.
@@ -39,22 +21,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
         {
             if (State != MoleculeState.Fixed)
             {
-                // handle drawing to CO molecule
+                // handle general movement and drawing to CO molecule or surface drawing spot
                 base.HandleFixedUpdate();
-            }
-            else if (State == MoleculeState.Fixed && 
-                     CatalystController.ExperimentVariation == ExperimentVariation.LangmuirHinshelwood &&
-                     ( !CatalystController.DoStepWiseSimulation ||
-                       CatalystController.DoStepWiseSimulation && CatalystController.CurrentExperimentStage == ExperimentStages.OReactCO_CO2Desorb ))
-            {
-                // O can move across whole surface to react with CO in the Langmuir Hinshelwood variant
-                // so gradually increase drawing collider if spawned on plat to find a fixed CO molecule
-                _currentTimeColliderIncrease += Time.deltaTime;
-                if (_currentTimeColliderIncrease >= _timeToIncreaseCollider && _collider.radius <= 4)
-                {
-                    _collider.radius *= 2;
-                    _currentTimeColliderIncrease = 0.0f;
-                }
             }
 
             bool clearList = false;
@@ -123,6 +91,20 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
                     // if CO exits collider remove from list
                     if (potentialDrawMolecules.Contains(otherMolecule))
                         potentialDrawMolecules.Remove(otherMolecule);
+                }
+            }
+        }
+        
+        private void OnCollisionEnter(Collision other)
+        {
+            if (State == MoleculeState.Moving)
+            {
+                OMolecule otherMolecule = other.gameObject.GetComponent<Molecule>() as OMolecule;
+                if (otherMolecule != null)
+                {
+                    // make sure only one O2 is created, just take timestamps and the molecule that is earlier spawns it
+                    if (CreationTimeStamp.Ticks < otherMolecule.CreationTimeStamp.Ticks)
+                        CreateO2?.Invoke(this, otherMolecule);
                 }
             }
         }

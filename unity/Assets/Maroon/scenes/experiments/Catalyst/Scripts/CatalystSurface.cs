@@ -124,7 +124,6 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                     Molecule oxygenMolecule = Instantiate(oxygenMoleculePrefab, surfaceLayerParent);
                     oxygenMolecule.transform.localPosition = (oCoords[i] / 20.0f) + new Vector3(1.0f, 0.0f, 3.5f); // todo remove offsets when i get centered coords
                     oxygenMolecule.State = MoleculeState.InSurfaceDrawingSpot;
-                    (oxygenMolecule as OMolecule)?.SetCanBeDrawn(true);
                     // set drawing spot so we can refill O molecule at same position later
                     ODrawingSpot oDrawingSpot = Instantiate(oDrawingSpotPrefab, surfaceLayerParent);
                     oDrawingSpot.transform.localPosition = (oCoords[i] / 20.0f) + new Vector3(1.0f, 0.0f, 3.5f); // todo remove offsets when i get centered coords
