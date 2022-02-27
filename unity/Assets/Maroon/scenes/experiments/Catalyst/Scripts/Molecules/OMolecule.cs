@@ -95,6 +95,12 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             }
         }
         
+        /**
+         * Create O2 if two O atoms collide.
+         * To now create two O2 atoms with the action call we use DateTime.Ticks as it is very accurate
+         * (single tick represents one hundred nanoseconds). It can still happen that two atoms have the
+         * same value and do not create O2.
+         */
         private void OnCollisionEnter(Collision other)
         {
             if (State == MoleculeState.Moving)
