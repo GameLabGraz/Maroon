@@ -134,8 +134,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 if (currentStepText.gameObject.activeSelf)
                     currentStepText.text = CurrentExperimentStage.ToString();
             });
-            //variantDropdown.value = 1;
-            //ExperimentVariation = (ExperimentVariation)variantDropdown.value;
+            variantDropdown.value = 1;
+            ExperimentVariation = (ExperimentVariation)variantDropdown.value;
             SpawnCatalystSurfaceObject();
         }
 
@@ -338,8 +338,9 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             foreach (Molecule molecule in oMolecules)
             {
                 molecule.OnCO2Created += CreateCO2;
-                molecule.State = MoleculeState.Fixed;
-                molecule.gameObject.transform.position = new Vector3(alternate ? o2Position.x + PlatinumScale / 4.0f : o2Position.x - PlatinumScale / 4.0f, o2Position.y - 0.06f, o2Position.z);
+                molecule.State = MoleculeState.Moving;
+                (molecule as OMolecule).CreateO2 += CreateO2;
+                molecule.gameObject.transform.position = new Vector3(alternate ? o2Position.x + PlatinumScale / 3.0f : o2Position.x - PlatinumScale / 3.0f, o2Position.y - 0.05f, o2Position.z);
                 AddMoleculeToActiveList(molecule);
                 alternate = !alternate;
             }
@@ -382,6 +383,26 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             Molecule co2Molecule = Instantiate(co2MoleculePrefab, parentTransform);
             co2Molecule.gameObject.transform.position = coPosition;
             co2Molecule.gameObject.transform.rotation = coRotation;
+        }
+
+        /**
+         * Create O2 molecule. Called when two O atoms are colliding.
+         */
+        private void CreateO2(Molecule oMolecule1, Molecule oMolecule2)
+        {
+            Transform parentTransform = oMolecule1.gameObject.transform.parent;
+            Vector3 oPosition = oMolecule1.gameObject.transform.position;
+            RemoveMoleculeFromActiveList(oMolecule1);
+            RemoveMoleculeFromActiveList(oMolecule2);
+            
+            Destroy(oMolecule1.gameObject);
+            Destroy(oMolecule2.gameObject);
+
+            Molecule o2Molecule = Instantiate(o2MoleculePrefab, parentTransform);
+            o2Molecule.gameObject.transform.position = oPosition;
+            o2Molecule.OnDissociate += DissociateO2;
+            o2Molecule.State = MoleculeState.Moving;
+            AddMoleculeToActiveList(o2Molecule);
         }
 
         private void AddMoleculeToActiveList(Molecule molecule)

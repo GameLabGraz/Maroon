@@ -269,7 +269,10 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
         {
             StartMoleculePosition = transform.position;
             StartMoleculeRotation = transform.rotation;
-            NewMoleculePosition = StartMoleculePosition + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(0.1f, -0.2f), Random.Range(-0.2f, 0.2f));
+            if (type == MoleculeType.O)
+                NewMoleculePosition = StartMoleculePosition + new Vector3(Random.Range(-0.2f, 0.2f), 0.0f, Random.Range(-0.2f, 0.2f));
+            else
+                NewMoleculePosition = StartMoleculePosition + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(0.1f, -0.2f), Random.Range(-0.2f, 0.2f));
             NewMoleculeRotation = Quaternion.Euler(Random.Range(-180.0f, 180.0f),Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
         }
 
