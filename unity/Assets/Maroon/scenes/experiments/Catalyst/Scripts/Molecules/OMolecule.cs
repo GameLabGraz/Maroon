@@ -45,7 +45,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             else if (State == MoleculeState.Fixed && 
                      CatalystController.ExperimentVariation == ExperimentVariation.LangmuirHinshelwood &&
                      ( !CatalystController.DoStepWiseSimulation ||
-                       CatalystController.DoStepWiseSimulation && CatalystController.CurrentExperimentStage == ExperimentStages.OReactCO ))
+                       CatalystController.DoStepWiseSimulation && CatalystController.CurrentExperimentStage == ExperimentStages.OReactCO_CO2Desorb ))
             {
                 // O can move across whole surface to react with CO in the Langmuir Hinshelwood variant
                 // so gradually increase drawing collider if spawned on plat to find a fixed CO molecule
@@ -66,7 +66,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
                     (potentialDrawMolecule.ConnectedMolecule.Type == MoleculeType.Pt ||
                      potentialDrawMolecule.ConnectedMolecule.Type == MoleculeType.Co ) &&
                     ( !CatalystController.DoStepWiseSimulation ||
-                      CatalystController.DoStepWiseSimulation && CatalystController.CurrentExperimentStage == ExperimentStages.OReactCO )
+                      CatalystController.DoStepWiseSimulation && CatalystController.CurrentExperimentStage == ExperimentStages.OReactCO_CO2Desorb )
                 )
                 {
                     SetMoleculeDrawn(potentialDrawMolecule, MoleculeState.DrawnByCO);

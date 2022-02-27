@@ -10,7 +10,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             if (State == MoleculeState.WaitingToDissociate)
             {
                 if (!CatalystController.DoStepWiseSimulation ||
-                    CatalystController.DoStepWiseSimulation && CatalystController.CurrentExperimentStage == ExperimentStages.O2Dissociate)
+                    CatalystController.DoStepWiseSimulation && CatalystController.CurrentExperimentStage == ExperimentStages.O2Adsorb_O2Dissociate)
                 {
                     StartCoroutine(DissociateO2());
                 }
@@ -21,7 +21,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
             // can only happen to O2, CO, or O
             if (State == MoleculeState.InDrawingCollider && PossibleDrawingMolecule != null &&
                 ( !CatalystController.DoStepWiseSimulation ||
-                  CatalystController.DoStepWiseSimulation && CatalystController.CurrentExperimentStage == ExperimentStages.O2Adsorb)
+                  CatalystController.DoStepWiseSimulation && CatalystController.CurrentExperimentStage == ExperimentStages.O2Adsorb_O2Dissociate)
                 )
             {
                 HandleDrawingPossibility();

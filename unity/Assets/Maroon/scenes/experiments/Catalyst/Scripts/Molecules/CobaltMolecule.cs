@@ -6,8 +6,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
     {
         protected override void ReactionStart_Impl()
         {
-            if (IsTopLayerSurfaceMolecule)
-                ActivateDrawingCollider(true);
+            ActivateDrawingCollider(true);
         }
 
         /**
