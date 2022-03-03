@@ -57,21 +57,21 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             foreach (var platMolecule in platMolecules)
             {
                 Molecule coMolecule = Instantiate(coMoleculePrefab, surfaceLayerParent);
-                    coMolecule.State = MoleculeState.Fixed;
+                coMolecule.State = MoleculeState.Fixed;
 
-                    Vector3 moleculePos = platMolecule.transform.localPosition;
-                    moleculePos.y += CatalystController.FixedMoleculeYDist;
-                    coMolecule.transform.localPosition = moleculePos;
+                Vector3 moleculePos = platMolecule.transform.localPosition;
+                moleculePos.y += CatalystController.FixedMoleculeYDist;
+                coMolecule.transform.localPosition = moleculePos;
 
-                    Quaternion moleculeRot = Quaternion.Euler(0.0f, 0.0f, 90.0f);
-                    coMolecule.transform.localRotation = moleculeRot;
+                Quaternion moleculeRot = Quaternion.Euler(0.0f, 0.0f, 90.0f);
+                coMolecule.transform.localRotation = moleculeRot;
 
-                    platMolecule.ConnectedMolecule = coMolecule;
-                    coMolecule.ConnectedMolecule = platMolecule;
-                    coMolecule.OnMoleculeFreed += onMoleculeFreed;
+                platMolecule.ConnectedMolecule = coMolecule;
+                coMolecule.ConnectedMolecule = platMolecule;
+                coMolecule.OnMoleculeFreed += onMoleculeFreed;
 
-                    activeMolecules.Add(coMolecule);
-                    activeMolecules.Add(platMolecule);
+                activeMolecules.Add(coMolecule);
+                activeMolecules.Add(platMolecule);
             }
             onComplete?.Invoke(activeMolecules);
         }

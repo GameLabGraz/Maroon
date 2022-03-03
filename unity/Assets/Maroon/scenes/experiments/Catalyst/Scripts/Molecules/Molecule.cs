@@ -269,10 +269,26 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
         {
             StartMoleculePosition = transform.position;
             StartMoleculeRotation = transform.rotation;
+
+            float xDirVal = Random.Range(-0.2f, 0.2f);
+            float yDirVal = Random.Range(0.15f, -0.2f);
+            float zDirVal = Random.Range(-0.2f, 0.2f);
+
+            if (StartMoleculePosition.x + xDirVal > CatalystController.MaxXCoord ||
+                StartMoleculePosition.x + xDirVal < CatalystController.MinXCoord)
+                xDirVal *= -1;
+            if (StartMoleculePosition.y + yDirVal > CatalystController.MaxYCoord ||
+                StartMoleculePosition.y + yDirVal < CatalystController.MinYCoord)
+                yDirVal *= -1;
+            if (StartMoleculePosition.z + zDirVal > CatalystController.MaxZCoord ||
+                StartMoleculePosition.z + zDirVal < CatalystController.MinZCoord)
+                zDirVal *= -1;
+            
+            
             if (type == MoleculeType.O)
-                NewMoleculePosition = StartMoleculePosition + new Vector3(Random.Range(-0.2f, 0.2f), 0.0f, Random.Range(-0.2f, 0.2f));
+                NewMoleculePosition = StartMoleculePosition + new Vector3(xDirVal, 0.0f, zDirVal);
             else
-                NewMoleculePosition = StartMoleculePosition + new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(0.1f, -0.2f), Random.Range(-0.2f, 0.2f));
+                NewMoleculePosition = StartMoleculePosition + new Vector3(xDirVal, yDirVal, zDirVal);
             NewMoleculeRotation = Quaternion.Euler(Random.Range(-180.0f, 180.0f),Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
         }
 

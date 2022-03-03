@@ -110,6 +110,15 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         public static ExperimentStages CurrentExperimentStage = ExperimentStages.Init;
         public static ExperimentVariation ExperimentVariation = ExperimentVariation.LangmuirHinshelwood;
 
+        // plane above surface where molecules can be spawned, and move
+        public static float MinXCoord = 0.0f;
+        public static float MaxXCoord = 0.0f;
+        public static float MaxZCoord = 0.0f;
+        public static float MinZCoord = 0.0f;
+        // height above surface max and min coordinates
+        public static float MinYCoord = 0.0f;
+        public static float MaxYCoord = 0.0f;
+
         private void Awake()
         {
             var coordFile = Resources.Load<TextAsset>("Pt-111");
@@ -249,6 +258,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                             temperature.onValueChanged.AddListener(molecule.TemperatureChanged);
                             partialPressure.onValueChanged.AddListener(molecule.PressureChanged);
                         }
+                        SetMovementCoordinateMinMax();
                         SpawnReactionMaterial();
                     },
                     OnMoleculeFreed);
@@ -269,6 +279,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                             temperature.onValueChanged.AddListener(molecule.TemperatureChanged);
                             partialPressure.onValueChanged.AddListener(molecule.PressureChanged);
                         }
+                        SetMovementCoordinateMinMax();
                         SpawnReactionMaterial();
                         onReactionStart?.Invoke();
                     });
@@ -465,6 +476,17 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private void UpdateTurnOverRateUI()
         {
             turnOverRateText.text = _currentTurnOverRate.ToString(CultureInfo.InvariantCulture.NumberFormat);
+        }
+
+        private void SetMovementCoordinateMinMax()
+        {
+            MinXCoord = _activeMolecules.Min(molecule => molecule.gameObject.transform.position.x) + 0.4f;
+            MaxXCoord = _activeMolecules.Max(molecule => molecule.gameObject.transform.position.x) - 0.4f;
+            MinZCoord = _activeMolecules.Min(molecule => molecule.gameObject.transform.position.z) + 0.4f;
+            MaxZCoord = _activeMolecules.Max(molecule => molecule.gameObject.transform.position.z) - 0.4f;
+
+            MinYCoord = _activeMolecules.Min(molecule => molecule.gameObject.transform.position.y) + 0.1f;
+            MaxYCoord = 4.0f;
         }
 
         public void SpawnO2ButtonClicked()
