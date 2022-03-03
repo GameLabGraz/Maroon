@@ -7,7 +7,6 @@ using Maroon.Physics;
 using Maroon.scenes.experiments.Catalyst.Scripts.Molecules;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using Dropdown = Maroon.UI.Dropdown;
 using Random = UnityEngine.Random;
 
@@ -60,6 +59,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         private int _freedMoleculeCounter = 0;
         private List<Vector3> _platSpawnPoints = new List<Vector3>();
+        private List<Vector3> _activePlatSpawnPoints = new List<Vector3>();
         private List<Vector3> _coSpawnPoints = new List<Vector3>();
         private List<Vector3> _oSpawnPoints = new List<Vector3>();
         private List<Molecule> _activeMolecules = new List<Molecule>();
@@ -116,6 +116,9 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             FillSpawnPoints(coordFile);
             coordFile = Resources.Load<TextAsset>("Co3O4_111");
             FillSpawnPoints(coordFile);
+            
+            var surfaceCoords = Resources.Load<TextAsset>("Pt-111-active_surface");
+            FillActiveSurfaceSpawnPoints(surfaceCoords);
         }
 
         private void Start()
@@ -134,8 +137,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 if (currentStepText.gameObject.activeSelf)
                     currentStepText.text = CurrentExperimentStage.ToString();
             });
-            variantDropdown.value = 1;
-            ExperimentVariation = (ExperimentVariation)variantDropdown.value;
+            //variantDropdown.value = 1;
+            //ExperimentVariation = (ExperimentVariation)variantDropdown.value;
             SpawnCatalystSurfaceObject();
         }
 
@@ -184,6 +187,29 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 }
             }
         }
+
+        private void FillActiveSurfaceSpawnPoints(TextAsset coordFile)
+        {
+            string[] lines = coordFile.text.Split('\n');
+            foreach (var line in lines)
+            {
+                string trimmedLine = line.TrimStart(); // O entry have a leading whitespace
+                string[] lineValues = WhiteSpaces.Replace(trimmedLine, ",").Split(',');
+                if (lineValues.Length >= 4)
+                {
+                    Vector3 spawnPoint = new Vector3(
+                        float.Parse(lineValues[1], CultureInfo.InvariantCulture.NumberFormat),
+                        float.Parse(lineValues[2], CultureInfo.InvariantCulture.NumberFormat),
+                        float.Parse(lineValues[3], CultureInfo.InvariantCulture.NumberFormat)
+                    );
+
+                    if (lineValues[0].Equals("Pt"))
+                    {
+                        _activePlatSpawnPoints.Add(spawnPoint);
+                    }
+                }
+            }
+        }
         
 
         private void StartSimulation()
@@ -211,7 +237,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             _catalystSurface = Instantiate(catalystSurfacePrefab, catalystSurfaceSpawnTransform);
             if (ExperimentVariation.Equals(Scripts.ExperimentVariation.LangmuirHinshelwood))
             {
-                _catalystSurface.SetupCoordsLangmuir(_platSpawnPoints,list =>
+                _catalystSurface.SetupCoordsLangmuir(_platSpawnPoints,_activePlatSpawnPoints,list =>
                     {
                         _activeMolecules = list;
                         foreach (var molecule in _activeMolecules)

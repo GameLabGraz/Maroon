@@ -26,39 +26,37 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         /**
          * Instantiate surface atoms / molecules of the Langmuir variant based on the given coordinates.
          * <param name="platCoords"> Coordinates of surface atoms </param>
+         * <param name="activePlatCoords"> Coordinates of surface atoms that should have CO attached to them </param>
          * <param name="onComplete"> Action that should be called once all surface atoms / molecules have
          * been instantiated. Returns the list of instantiated molecules to the
          * CatalystController. </param>
          * <param name="onMoleculeFreed"> Action that the CO molecules subscribe to. Called when CO molecules
          * are removed from the surface by hand (only happens for the first four). </param>
          */
-        public void SetupCoordsLangmuir(List<Vector3> platCoords, 
+        public void SetupCoordsLangmuir(List<Vector3> platCoords,
+            List<Vector3> activePlatCoords,
             System.Action<List<Molecule>> onComplete, 
             System.Action onMoleculeFreed)
         {
             List<Molecule> platMolecules = new List<Molecule>();
-            float maxYVal = -100.0f;
             for (int i = 0; i < platCoords.Count; i++)
             {
+                
                 Molecule platMolecule = Instantiate(platinumMoleculePrefab, surfaceLayerParent);
                 platMolecule.transform.localPosition = platCoords[i] / 20.0f;
                 platMolecule.State = MoleculeState.Fixed;
 
-                // find top layer molecules based on y position
-                if (maxYVal < platMolecule.transform.localPosition.y)
-                {
-                    maxYVal = platMolecule.transform.localPosition.y;
-                }
-                platMolecules.Add(platMolecule);
+                if (activePlatCoords.Contains(platCoords[i]))
+                    platMolecules.Add(platMolecule);
+                else
+                    platMolecule.gameObject.GetComponent<Molecule>().enabled = false;
             }
 
             // only spawn co molecules on top layer
             List<Molecule> activeMolecules = new List<Molecule>();
             foreach (var platMolecule in platMolecules)
             {
-                if (Mathf.Abs(platMolecule.transform.localPosition.y - maxYVal) < 0.01f)
-                {
-                    Molecule coMolecule = Instantiate(coMoleculePrefab, surfaceLayerParent);
+                Molecule coMolecule = Instantiate(coMoleculePrefab, surfaceLayerParent);
                     coMolecule.State = MoleculeState.Fixed;
 
                     Vector3 moleculePos = platMolecule.transform.localPosition;
@@ -74,11 +72,6 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
                     activeMolecules.Add(coMolecule);
                     activeMolecules.Add(platMolecule);
-                }
-                else
-                {
-                    platMolecule.gameObject.GetComponent<Molecule>().enabled = false;
-                }
             }
             onComplete?.Invoke(activeMolecules);
         }
