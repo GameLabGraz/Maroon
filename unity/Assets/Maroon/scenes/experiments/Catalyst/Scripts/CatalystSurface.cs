@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Maroon.scenes.experiments.Catalyst.Scripts.Molecules;
 using UnityEngine;
@@ -112,7 +113,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             for (int i = 0; i < oCoords.Count; i++)
             {
                 // for now just spawn the top o2 molecules
-                if (Mathf.Abs(oCoords[i].y - maxYVal) < 0.01f)
+                if (Mathf.Abs(oCoords[i].y - maxYVal) < 2.0f)
                 {
                     Molecule oxygenMolecule = Instantiate(oxygenMoleculePrefab, surfaceLayerParent);
                     oxygenMolecule.transform.localPosition = (oCoords[i] / 20.0f) + new Vector3(1.0f, 0.0f, 3.5f); // todo remove offsets when i get centered coords
@@ -123,10 +124,30 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                     oDrawingSpot.SetAttachedMolecule(oxygenMolecule);
                     surfaceMolecules.Add(oxygenMolecule);
                 }
-
             }
             
             onComplete?.Invoke(surfaceMolecules);
+            StartCoroutine(SpawnODelayed(oCoords));
+        }
+
+        public IEnumerator SpawnODelayed(List<Vector3> oCoords)
+        {
+            yield return new WaitForSeconds(0.5f);
+            float maxYVal = oCoords.Max(vector => vector.y);
+            for (int i = 0; i < oCoords.Count; i++)
+            {
+                // spawn the rest of the molecules
+                if (Mathf.Abs(oCoords[i].y - maxYVal) > 2.0f)
+                {
+                    Molecule oxygenMolecule = Instantiate(oxygenMoleculePrefab, surfaceLayerParent);
+                    oxygenMolecule.transform.localPosition = (oCoords[i] / 20.0f) + new Vector3(1.0f, 0.0f, 3.5f); // todo remove offsets when i get centered coords
+                    oxygenMolecule.State = MoleculeState.Fixed;
+                    oxygenMolecule.gameObject.GetComponent<Molecule>().enabled = false;
+                }
+
+                if (i % 500 == 0)
+                    yield return null;
+            }
         }
     }
 }
