@@ -145,7 +145,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                     oxygenMolecule.gameObject.GetComponent<Molecule>().enabled = false;
                 }
 
-                if (i % 500 == 0)
+                if (i % 100 == 0)
                     yield return null;
             }
         }
