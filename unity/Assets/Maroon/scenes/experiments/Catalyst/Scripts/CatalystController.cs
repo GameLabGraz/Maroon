@@ -42,6 +42,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         [Header("Catalyst specific objects")]
         [SerializeField] CatalystReactor catalystReactor;
         [SerializeField] CatalystSurface catalystSurfacePrefab;
+        [SerializeField] GameObject catalystReactionBoxGameObject;
+        [SerializeField] Transform catalystReactionBoxPlayerSpawnTransform;
         [SerializeField] Transform catalystSurfaceSpawnTransform;
 
         [Header("Molecule Prefabs")]
@@ -132,10 +134,11 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 
         private void Start()
         {
+            catalystReactionBoxGameObject.SetActive(false);
             SimulationController.Instance.OnStart.AddListener(StartSimulation);
             SimulationController.Instance.OnStop.AddListener(StopSimulation);
 
-            catalystReactor.OnSpawnCatalystSurface += SpawnCatalystSurfaceObject;
+            catalystReactor.OnReactorFilled += HandleCatalystSurfaceSetup;
             
             temperature.onValueChanged.AddListener(TemperatureChanged);
             partialPressure.onValueChanged.AddListener(PartialPressureChanged);
@@ -146,9 +149,9 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 if (currentStepText.gameObject.activeSelf)
                     currentStepText.text = CurrentExperimentStage.ToString();
             });
-            variantDropdown.value = 1;
-            ExperimentVariation = (ExperimentVariation)variantDropdown.value;
-            SpawnCatalystSurfaceObject();
+            //variantDropdown.value = 1;
+            //ExperimentVariation = (ExperimentVariation)variantDropdown.value;
+            //SpawnCatalystSurfaceObject();
         }
 
         private void OnDestroy()
@@ -159,7 +162,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             temperature.onValueChanged.RemoveListener(TemperatureChanged);
             partialPressure.onValueChanged.RemoveListener(PartialPressureChanged);
             
-            catalystReactor.OnSpawnCatalystSurface -= SpawnCatalystSurfaceObject;
+            catalystReactor.OnReactorFilled -= SpawnCatalystSurfaceObject;
         }
         
         /**
@@ -233,6 +236,13 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         {
             Debug.Log("Stop catalyst simulation");
             stepWiseSimulationToggle.interactable = true;
+        }
+
+        private void HandleCatalystSurfaceSetup()
+        {
+            catalystReactionBoxGameObject.SetActive(true);
+            player.transform.position = catalystReactionBoxPlayerSpawnTransform.position;
+            SpawnCatalystSurfaceObject();
         }
 
         /**
