@@ -5,7 +5,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
 {
     public class CatalystReactor : MonoBehaviour, IResetObject
     {
-        public Action OnSpawnCatalystSurface;
+        public Action OnReactorFilled;
         
         private bool _reactorFilled;
         
@@ -22,7 +22,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             if (SimulationController.Instance.SimulationRunning && _reactorFilled)
             {
                 _reactorFilled = false;
-                OnSpawnCatalystSurface?.Invoke();
+                OnReactorFilled?.Invoke();
             }
 
         }
