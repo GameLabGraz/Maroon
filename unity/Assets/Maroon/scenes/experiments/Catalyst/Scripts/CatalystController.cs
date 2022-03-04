@@ -146,8 +146,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 if (currentStepText.gameObject.activeSelf)
                     currentStepText.text = CurrentExperimentStage.ToString();
             });
-            //variantDropdown.value = 1;
-            //ExperimentVariation = (ExperimentVariation)variantDropdown.value;
+            variantDropdown.value = 1;
+            ExperimentVariation = (ExperimentVariation)variantDropdown.value;
             SpawnCatalystSurfaceObject();
         }
 
