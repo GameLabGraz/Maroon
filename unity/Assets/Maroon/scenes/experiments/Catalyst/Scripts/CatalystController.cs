@@ -44,6 +44,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         [SerializeField] CatalystSurface catalystSurfacePrefab;
         [SerializeField] GameObject catalystReactionBoxGameObject;
         [SerializeField] Transform catalystReactionBoxPlayerSpawnTransform;
+        [SerializeField] Transform experimentRoomPlayerSpawnTransform;
         [SerializeField] Transform catalystSurfaceSpawnTransform;
 
         [Header("Molecule Prefabs")]
@@ -137,6 +138,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             catalystReactionBoxGameObject.SetActive(false);
             SimulationController.Instance.OnStart.AddListener(StartSimulation);
             SimulationController.Instance.OnStop.AddListener(StopSimulation);
+            SimulationController.Instance.OnReset.AddListener(Reset);
 
             catalystReactor.OnReactorFilled += HandleCatalystSurfaceSetup;
             
@@ -149,9 +151,6 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 if (currentStepText.gameObject.activeSelf)
                     currentStepText.text = CurrentExperimentStage.ToString();
             });
-            //variantDropdown.value = 1;
-            //ExperimentVariation = (ExperimentVariation)variantDropdown.value;
-            //SpawnCatalystSurfaceObject();
         }
 
         private void OnDestroy()
@@ -229,6 +228,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             Debug.Log("Start catalyst simulation");
             stepWiseSimulationToggle.interactable = false;
             DoStepWiseSimulation = stepWiseSimulationToggle.isOn;
+            variantDropdown.interactable = false;
             ExperimentVariation = (ExperimentVariation)variantDropdown.value;
         }
 
@@ -236,6 +236,20 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         {
             Debug.Log("Stop catalyst simulation");
             stepWiseSimulationToggle.interactable = true;
+        }
+
+        private void Reset()
+        {
+            EnsureCleanSurface();
+            
+            catalystReactionBoxGameObject.SetActive(false);
+            player.transform.position = experimentRoomPlayerSpawnTransform.position;
+            
+            stepWiseSimulationToggle.interactable = true;
+            stepWiseSimulationToggle.isOn = false;
+            
+            variantDropdown.interactable = true;
+            variantDropdown.value = (int) ExperimentVariation.LangmuirHinshelwood;
         }
 
         private void HandleCatalystSurfaceSetup()
