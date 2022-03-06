@@ -7,6 +7,7 @@ using Maroon.Physics;
 using Maroon.scenes.experiments.Catalyst.Scripts.Molecules;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using Dropdown = Maroon.UI.Dropdown;
 using Random = UnityEngine.Random;
 
@@ -52,13 +53,15 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         [SerializeField] Molecule o2MoleculePrefab;
         [SerializeField] Molecule coMoleculePrefab;
         [SerializeField] Molecule co2MoleculePrefab;
-        [SerializeField] Molecule cobaltMoleculePrefab;
 
         [Header("Player specific objects")]
         [SerializeField] GameObject player;
 
         [Header("UI Elements")]
         [SerializeField] TextMeshProUGUI turnOverRateText;
+        [SerializeField] Image graphImage;
+        [SerializeField] Sprite graphLangmuirSprite;
+        [SerializeField] Sprite graphVanKrevelenSprite;
 
         private int _freedMoleculeCounter = 0;
         private List<Vector3> _platSpawnPoints = new List<Vector3>();
@@ -230,6 +233,9 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             DoStepWiseSimulation = stepWiseSimulationToggle.isOn;
             variantDropdown.interactable = false;
             ExperimentVariation = (ExperimentVariation)variantDropdown.value;
+            graphImage.sprite = ExperimentVariation == ExperimentVariation.LangmuirHinshelwood
+                ? graphLangmuirSprite
+                : graphVanKrevelenSprite;
         }
 
         private void StopSimulation()
@@ -241,6 +247,8 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
         private void Reset()
         {
             EnsureCleanSurface();
+
+            graphImage.sprite = null;
             
             catalystReactionBoxGameObject.SetActive(false);
             player.transform.position = experimentRoomPlayerSpawnTransform.position;
