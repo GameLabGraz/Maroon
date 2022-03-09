@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
+namespace Maroon.Chemistry.Catalyst
 {
     public class PlatinMolecule : Molecule
     {

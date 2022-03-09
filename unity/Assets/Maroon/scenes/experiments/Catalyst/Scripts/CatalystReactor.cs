@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Maroon.scenes.experiments.Catalyst.Scripts
+namespace Maroon.Chemistry.Catalyst
 {
     public class CatalystReactor : MonoBehaviour, IResetObject
     {

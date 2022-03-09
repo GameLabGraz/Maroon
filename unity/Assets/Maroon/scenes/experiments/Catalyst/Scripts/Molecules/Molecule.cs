@@ -3,7 +3,7 @@ using Maroon.Physics;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
+namespace Maroon.Chemistry.Catalyst
 {
     public enum MoleculeType
     {
