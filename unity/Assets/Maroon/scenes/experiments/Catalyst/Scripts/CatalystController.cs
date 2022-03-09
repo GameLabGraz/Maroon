@@ -34,6 +34,8 @@ namespace Maroon.Chemistry.Catalyst
         [SerializeField] Dropdown variantDropdown;
         [SerializeField] UnityEngine.UI.Toggle stepWiseSimulationToggle;
         [SerializeField] TextMeshProUGUI currentStepText;
+        [SerializeField] Button addO2Button;
+        [SerializeField] Button addCOButton;
         [SerializeField] QuantityFloat temperature;
         [SerializeField] QuantityFloat partialPressure;
         [SerializeField] int numberSpawnedO2Molecules;
@@ -137,6 +139,8 @@ namespace Maroon.Chemistry.Catalyst
 
         private void Start()
         {
+            addO2Button.interactable = false;
+            addCOButton.interactable = false;
             catalystReactionBoxGameObject.SetActive(false);
             SimulationController.Instance.OnStart.AddListener(StartSimulation);
             SimulationController.Instance.OnStop.AddListener(StopSimulation);
@@ -250,6 +254,8 @@ namespace Maroon.Chemistry.Catalyst
             graphImage.sprite = null;
             
             catalystReactionBoxGameObject.SetActive(false);
+            addO2Button.interactable = false;
+            addCOButton.interactable = false;
             player.transform.position = experimentRoomPlayerSpawnTransform.position;
             
             stepWiseSimulationToggle.interactable = true;
@@ -262,6 +268,8 @@ namespace Maroon.Chemistry.Catalyst
         private void HandleCatalystSurfaceSetup()
         {
             catalystReactionBoxGameObject.SetActive(true);
+            addO2Button.interactable = true;
+            addCOButton.interactable = true;
             player.transform.position = catalystReactionBoxPlayerSpawnTransform.position;
             SpawnCatalystSurfaceObject();
         }
@@ -290,7 +298,7 @@ namespace Maroon.Chemistry.Catalyst
                             partialPressure.onValueChanged.AddListener(molecule.PressureChanged);
                         }
                         SetMovementCoordinateMinMax();
-                        SpawnReactionMaterial();
+                        SpawnReactionMaterial(true, true);
                     },
                     OnMoleculeFreed);
             }
@@ -311,7 +319,7 @@ namespace Maroon.Chemistry.Catalyst
                             partialPressure.onValueChanged.AddListener(molecule.PressureChanged);
                         }
                         SetMovementCoordinateMinMax();
-                        SpawnReactionMaterial();
+                        SpawnReactionMaterial(true, true);
                         onReactionStart?.Invoke();
                     });
             }
@@ -348,39 +356,43 @@ namespace Maroon.Chemistry.Catalyst
          * Called once at start. Can subsequently be called via button click but then
          * only O atoms are spawned.
          */
-        private void SpawnReactionMaterial(bool isSpawnButtonClicked = false)
+        private void SpawnReactionMaterial(bool spawnO2, bool spawnCO)
         {
             Transform catalystSurfaceTransform = _catalystSurface.gameObject.transform;
             float minXVal = _activeMolecules.Min(molecule => molecule.gameObject.transform.localPosition.x) + 0.4f;
             float maxXVal = _activeMolecules.Max(molecule => molecule.gameObject.transform.localPosition.x) - 0.4f;
             float minZVal = _activeMolecules.Min(molecule => molecule.gameObject.transform.localPosition.z) + 0.4f;
             float maxZVal = _activeMolecules.Max(molecule => molecule.gameObject.transform.localPosition.z) - 0.4f;
-            
-            for (int i = 0; i < numberSpawnedO2Molecules; i++)
+
+            if (spawnO2)
             {
-                Vector3 spawnPos = new Vector3(Random.Range(minXVal, maxXVal), Random.Range(0.5f, 2.0f), Random.Range(minZVal, maxZVal));
-                Quaternion spawnRot = Quaternion.Euler(Random.Range(-180.0f, 180.0f),Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
-                Molecule molecule = Instantiate(o2MoleculePrefab, catalystSurfaceTransform);
-                molecule.gameObject.transform.localPosition = spawnPos;
-                molecule.gameObject.transform.localRotation = spawnRot;
-                molecule.OnDissociate += DissociateO2;
-                molecule.State = MoleculeState.Moving;
-                onReactionStart += molecule.ReactionStart;
-                AddMoleculeToActiveList(molecule);
+                for (int i = 0; i < numberSpawnedO2Molecules; i++)
+                {
+                    Vector3 spawnPos = new Vector3(Random.Range(minXVal, maxXVal), Random.Range(0.5f, 2.0f), Random.Range(minZVal, maxZVal));
+                    Quaternion spawnRot = Quaternion.Euler(Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
+                    Molecule molecule = Instantiate(o2MoleculePrefab, catalystSurfaceTransform);
+                    molecule.gameObject.transform.localPosition = spawnPos;
+                    molecule.gameObject.transform.localRotation = spawnRot;
+                    molecule.OnDissociate += DissociateO2;
+                    molecule.State = MoleculeState.Moving;
+                    onReactionStart += molecule.ReactionStart;
+                    AddMoleculeToActiveList(molecule);
+                }
             }
 
-            if (isSpawnButtonClicked) return;
-            
-            for (int i = 0; i < numberSpawnedCOMolecules; i++)
+            if (spawnCO)
             {
-                Vector3 spawnPos = new Vector3(Random.Range(minXVal, maxXVal), Random.Range(0.5f, 2.0f), Random.Range(minZVal, maxZVal));
-                Quaternion spawnRot = Quaternion.Euler(Random.Range(-180.0f, 180.0f),Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
-                Molecule molecule = Instantiate(coMoleculePrefab, catalystSurfaceTransform);
-                molecule.gameObject.transform.localPosition = spawnPos;
-                molecule.gameObject.transform.localRotation = spawnRot;
-                molecule.State = MoleculeState.Moving;
-                onReactionStart += molecule.ReactionStart;
-                AddMoleculeToActiveList(molecule);
+                for (int i = 0; i < numberSpawnedCOMolecules; i++)
+                {
+                    Vector3 spawnPos = new Vector3(Random.Range(minXVal, maxXVal), Random.Range(0.5f, 2.0f), Random.Range(minZVal, maxZVal));
+                    Quaternion spawnRot = Quaternion.Euler(Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
+                    Molecule molecule = Instantiate(coMoleculePrefab, catalystSurfaceTransform);
+                    molecule.gameObject.transform.localPosition = spawnPos;
+                    molecule.gameObject.transform.localRotation = spawnRot;
+                    molecule.State = MoleculeState.Moving;
+                    onReactionStart += molecule.ReactionStart;
+                    AddMoleculeToActiveList(molecule);
+                }
             }
         }
 
@@ -522,11 +534,12 @@ namespace Maroon.Chemistry.Catalyst
 
         public void SpawnO2ButtonClicked()
         {
-            if (_activeMolecules.Count < 900)
-            {
-                SpawnReactionMaterial(true);
-            }
-            // show info that too many molecules are active?
+            SpawnReactionMaterial(true, false);
+        }
+
+        public void SpawnCOButtonClicked()
+        {
+            SpawnReactionMaterial(false, true);
         }
 
         public void StepWiseSimulationValueChanged(bool val)
