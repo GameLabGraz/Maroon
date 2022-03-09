@@ -126,12 +126,12 @@ namespace Maroon.Chemistry.Catalyst
 
         private void Awake()
         {
-            var coordFile = Resources.Load<TextAsset>("Pt-111");
+            var coordFile = Resources.Load<TextAsset>("SurfaceData/Pt-111");
             FillSpawnPoints(coordFile);
-            coordFile = Resources.Load<TextAsset>("Co3O4_111");
+            coordFile = Resources.Load<TextAsset>("SurfaceData/Co3O4_111");
             FillSpawnPoints(coordFile);
             
-            var surfaceCoords = Resources.Load<TextAsset>("Pt-111-active_surface");
+            var surfaceCoords = Resources.Load<TextAsset>("SurfaceData/Pt-111-active_surface");
             FillActiveSurfaceSpawnPoints(surfaceCoords);
         }
 
