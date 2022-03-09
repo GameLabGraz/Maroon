@@ -4,14 +4,13 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Maroon.Physics;
-using Maroon.scenes.experiments.Catalyst.Scripts.Molecules;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Dropdown = Maroon.UI.Dropdown;
 using Random = UnityEngine.Random;
 
-namespace Maroon.scenes.experiments.Catalyst.Scripts
+namespace Maroon.Chemistry.Catalyst
 {
     public enum ExperimentVariation
     {
@@ -276,7 +275,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             EnsureCleanSurface();
 
             _catalystSurface = Instantiate(catalystSurfacePrefab, catalystSurfaceSpawnTransform);
-            if (ExperimentVariation.Equals(Scripts.ExperimentVariation.LangmuirHinshelwood))
+            if (ExperimentVariation.Equals(ExperimentVariation.LangmuirHinshelwood))
             {
                 _catalystSurface.SetupCoordsLangmuir(_platSpawnPoints,_activePlatSpawnPoints,list =>
                     {
@@ -295,7 +294,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                     },
                     OnMoleculeFreed);
             }
-            else if (ExperimentVariation.Equals(Scripts.ExperimentVariation.MarsVanKrevelen))
+            else if (ExperimentVariation.Equals(ExperimentVariation.MarsVanKrevelen))
             {
                 _catalystSurface.SetupCoordsKrevelen(_coSpawnPoints, _oSpawnPoints, list =>
                     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
+namespace Maroon.Chemistry.Catalyst
 {
     public class COMolecule : Molecule
     {

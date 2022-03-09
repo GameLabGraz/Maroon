@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
+namespace Maroon.Chemistry.Catalyst
 {
     public class OMolecule : Molecule
     {

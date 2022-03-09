@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Maroon.scenes.experiments.Catalyst.Scripts.Molecules
+namespace Maroon.Chemistry.Catalyst
 {
     /**
      * This class is used to draw in new O atom into the surface in the van Krevelen
