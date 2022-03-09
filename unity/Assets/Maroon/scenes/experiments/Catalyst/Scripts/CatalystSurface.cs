@@ -94,7 +94,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
             for (int i = 0; i < cobaltCoords.Count; i++)
             {
                 Molecule cobaltMolecule = Instantiate(cobaltMoleculePrefab, surfaceLayerParent);
-                cobaltMolecule.transform.localPosition = cobaltCoords[i] / 20.0f + new Vector3(1.0f, 0.0f, 3.5f); // todo remove offsets when i get centered coords
+                cobaltMolecule.transform.localPosition = cobaltCoords[i] / 20.0f;
                 cobaltMolecule.State = MoleculeState.Fixed;
                 
                 if (Mathf.Abs(cobaltCoords[i].y - maxYVal) < 0.01f)
@@ -116,11 +116,11 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 if (Mathf.Abs(oCoords[i].y - maxYVal) < 2.0f)
                 {
                     Molecule oxygenMolecule = Instantiate(oxygenMoleculePrefab, surfaceLayerParent);
-                    oxygenMolecule.transform.localPosition = (oCoords[i] / 20.0f) + new Vector3(1.0f, 0.0f, 3.5f); // todo remove offsets when i get centered coords
+                    oxygenMolecule.transform.localPosition = oCoords[i] / 20.0f;
                     oxygenMolecule.State = MoleculeState.InSurfaceDrawingSpot;
                     // set drawing spot so we can refill O molecule at same position later
                     ODrawingSpot oDrawingSpot = Instantiate(oDrawingSpotPrefab, surfaceLayerParent);
-                    oDrawingSpot.transform.localPosition = (oCoords[i] / 20.0f) + new Vector3(1.0f, 0.0f, 3.5f); // todo remove offsets when i get centered coords
+                    oDrawingSpot.transform.localPosition = oCoords[i] / 20.0f;
                     oDrawingSpot.SetAttachedMolecule(oxygenMolecule);
                     surfaceMolecules.Add(oxygenMolecule);
                 }
@@ -140,7 +140,7 @@ namespace Maroon.scenes.experiments.Catalyst.Scripts
                 if (Mathf.Abs(oCoords[i].y - maxYVal) > 2.0f)
                 {
                     Molecule oxygenMolecule = Instantiate(oxygenMoleculePrefab, surfaceLayerParent);
-                    oxygenMolecule.transform.localPosition = (oCoords[i] / 20.0f) + new Vector3(1.0f, 0.0f, 3.5f); // todo remove offsets when i get centered coords
+                    oxygenMolecule.transform.localPosition = oCoords[i] / 20.0f;
                     oxygenMolecule.State = MoleculeState.Fixed;
                     oxygenMolecule.gameObject.GetComponent<Molecule>().enabled = false;
                 }
