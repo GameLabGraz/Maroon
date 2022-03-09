@@ -422,8 +422,9 @@ namespace Maroon.Chemistry.Catalyst
             Quaternion coRotation = coMolecule.gameObject.transform.rotation;
             
             coMolecule.ConnectedMolecule.ActivateDrawingCollider(true);
+            coMolecule.ConnectedMolecule.ConnectedMolecule = null;
             coMolecule.ConnectedMolecule = null;
-            
+
             Destroy(oMolecule.gameObject);
             Destroy(coMolecule.gameObject);
 
