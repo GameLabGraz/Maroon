@@ -112,11 +112,13 @@ namespace Maroon.Chemistry.Catalyst
          */
         public void TemperatureChanged(float newTemp)
         {
-            // normal temp goes from -23.15f to 176.85 degree celsius
-            // scale this between 0 - 1 for movement speed by adding 23.15 to current and max value before dividing
+            // normal temp goes from -23.15f to 176.85 (Langmuir) or from 47.85 to 89,85 ( van Krevelen) degree celsius
+            // scale this between 0 - 1 for movement speed
             temperature.Value = newTemp;
-            movementSpeed = Mathf.Clamp((temperature.Value + 23.15f) / (temperature.maxValue + 23.15f), 0.1f, 1.0f); // only temperature influences movement speed
-            CurrentTurnOverRate = CatalystController.TurnOverRates[CatalystController.GetTemperatureIndex(temperature.Value)][CatalystController.GetPartialPressureIndex(partialPressure.Value)];
+            movementSpeed = CatalystController.ExperimentVariation == ExperimentVariation.LangmuirHinshelwood
+                ? Mathf.Clamp((temperature.Value + 23.15f) / (temperature.maxValue + 23.15f), 0.1f, 1.0f)
+                : Mathf.Clamp((temperature.Value) / (temperature.maxValue), 0.1f, 1.0f);
+            CurrentTurnOverRate = CatalystController.GetTurnOverFrequency(temperature.Value, partialPressure.Value);
         }
 
         /**
@@ -127,7 +129,7 @@ namespace Maroon.Chemistry.Catalyst
         public void PressureChanged(float pressure)
         {
             partialPressure.Value = pressure;
-            CurrentTurnOverRate = CatalystController.TurnOverRates[CatalystController.GetTemperatureIndex(temperature.Value)][CatalystController.GetPartialPressureIndex(partialPressure.Value)];
+            CurrentTurnOverRate = CatalystController.GetTurnOverFrequency(temperature.Value, partialPressure.Value);
         }
 
         public void ReactionStart()
