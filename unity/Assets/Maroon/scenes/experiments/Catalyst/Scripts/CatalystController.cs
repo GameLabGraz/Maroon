@@ -165,25 +165,12 @@ namespace Maroon.Chemistry.Catalyst
             addO2Button.interactable = false;
             addCOButton.interactable = false;
             catalystReactionBoxGameObject.SetActive(false);
-            SimulationController.Instance.OnStart.AddListener(StartSimulation);
-            SimulationController.Instance.OnStop.AddListener(StopSimulation);
-            SimulationController.Instance.OnReset.AddListener(Reset);
 
             catalystReactor.OnReactorFilled += HandleCatalystSurfaceSetup;
-            
-            temperature.onValueChanged.AddListener(TemperatureChanged);
-            partialPressure.onValueChanged.AddListener(PartialPressureChanged);
-            variantDropdown.onValueChanged.AddListener(ChangExperimentVariation);
         }
 
         private void OnDestroy()
         {
-            SimulationController.Instance.OnStart.RemoveListener(StartSimulation);
-            SimulationController.Instance.OnStop.RemoveListener(StopSimulation);
-            
-            temperature.onValueChanged.RemoveListener(TemperatureChanged);
-            partialPressure.onValueChanged.RemoveListener(PartialPressureChanged);
-            
             catalystReactor.OnReactorFilled -= SpawnCatalystSurfaceObject;
         }
         
@@ -243,43 +230,6 @@ namespace Maroon.Chemistry.Catalyst
                     }
                 }
             }
-        }
-        
-
-        private void StartSimulation()
-        {
-            Debug.Log("Start catalyst simulation");
-            stepWiseSimulationToggle.interactable = false;
-            DoStepWiseSimulation = stepWiseSimulationToggle.isOn;
-            variantDropdown.interactable = false;
-            ExperimentVariation = (ExperimentVariation)variantDropdown.value;
-            graphImage.sprite = ExperimentVariation == ExperimentVariation.LangmuirHinshelwood
-                ? graphLangmuirSprite
-                : graphVanKrevelenSprite;
-        }
-
-        private void StopSimulation()
-        {
-            Debug.Log("Stop catalyst simulation");
-            stepWiseSimulationToggle.interactable = true;
-        }
-
-        private void Reset()
-        {
-            EnsureCleanSurface();
-
-            graphImage.sprite = null;
-            
-            catalystReactionBoxGameObject.SetActive(false);
-            addO2Button.interactable = false;
-            addCOButton.interactable = false;
-            player.transform.position = experimentRoomPlayerSpawnTransform.position;
-            
-            stepWiseSimulationToggle.interactable = true;
-            stepWiseSimulationToggle.isOn = false;
-            
-            variantDropdown.interactable = true;
-            variantDropdown.value = (int) ExperimentVariation.LangmuirHinshelwood;
         }
 
         private void HandleCatalystSurfaceSetup()
@@ -519,20 +469,6 @@ namespace Maroon.Chemistry.Catalyst
             _activeMolecules.Remove(molecule);
         }
 
-        private void TemperatureChanged(float newTemperature)
-        {
-            // update turnover rates
-            _currentTurnOverRate = TurnOverRates[(int)ExperimentVariation][GetTemperatureIndex(temperature.Value)][GetPartialPressureIndex(partialPressure.Value)];
-            UpdateTurnOverRateUI();
-        }
-
-        private void PartialPressureChanged(float newPartialPressure)
-        {
-            // update turnover rates
-            _currentTurnOverRate = TurnOverRates[(int)ExperimentVariation][GetTemperatureIndex(temperature.Value)][GetPartialPressureIndex(partialPressure.Value)];
-            UpdateTurnOverRateUI();
-        }
-
         private void UpdateTurnOverRateUI()
         {
             turnOverRateText.text = _currentTurnOverRate.ToString(CultureInfo.InvariantCulture.NumberFormat);
@@ -547,15 +483,6 @@ namespace Maroon.Chemistry.Catalyst
 
             MinYCoord = _activeMolecules.Min(molecule => molecule.gameObject.transform.position.y) + 0.1f;
             MaxYCoord = 4.0f;
-        }
-
-        private void ChangExperimentVariation(int val)
-        {
-            ExperimentVariation = (ExperimentVariation)val;
-            CurrentExperimentStage = ExperimentVariation == ExperimentVariation.LangmuirHinshelwood ? HinshelwoodStages[0] : KrevelenStages[0];
-            if (currentStepText.gameObject.activeSelf)
-                currentStepText.text = CurrentExperimentStage.ToString();
-            SetSimulationParametersMinMax(ExperimentVariation);
         }
 
         private void SetSimulationParametersMinMax(ExperimentVariation variation)
@@ -587,6 +514,65 @@ namespace Maroon.Chemistry.Catalyst
             temperatureView.ShowUI();
             partialPressureView.ShowUI();
 
+        }
+
+        public void StartSimulation()
+        {
+            Debug.Log("Start catalyst simulation");
+            stepWiseSimulationToggle.interactable = false;
+            DoStepWiseSimulation = stepWiseSimulationToggle.isOn;
+            variantDropdown.interactable = false;
+            ExperimentVariation = (ExperimentVariation)variantDropdown.value;
+            graphImage.sprite = ExperimentVariation == ExperimentVariation.LangmuirHinshelwood
+                ? graphLangmuirSprite
+                : graphVanKrevelenSprite;
+        }
+
+        public void StopSimulation()
+        {
+            Debug.Log("Stop catalyst simulation");
+            stepWiseSimulationToggle.interactable = true;
+        }
+
+        public void Reset()
+        {
+            EnsureCleanSurface();
+
+            graphImage.sprite = null;
+            
+            catalystReactionBoxGameObject.SetActive(false);
+            addO2Button.interactable = false;
+            addCOButton.interactable = false;
+            player.transform.position = experimentRoomPlayerSpawnTransform.position;
+            
+            stepWiseSimulationToggle.interactable = true;
+            stepWiseSimulationToggle.isOn = false;
+            
+            variantDropdown.interactable = true;
+            variantDropdown.value = (int) ExperimentVariation.LangmuirHinshelwood;
+        }
+
+        public void TemperatureChanged(float newTemperature)
+        {
+            // update turnover rates
+            _currentTurnOverRate = TurnOverRates[(int)ExperimentVariation][GetTemperatureIndex(temperature.Value)][GetPartialPressureIndex(partialPressure.Value)];
+            UpdateTurnOverRateUI();
+        }
+
+        public void PartialPressureChanged(float newPartialPressure)
+        {
+            // update turnover rates
+            _currentTurnOverRate = TurnOverRates[(int)ExperimentVariation][GetTemperatureIndex(temperature.Value)][GetPartialPressureIndex(partialPressure.Value)];
+            UpdateTurnOverRateUI();
+        }
+        
+        public void ChangExperimentVariation(int val)
+        {
+            ExperimentVariation = (ExperimentVariation)val;
+            CurrentExperimentStage = ExperimentVariation == ExperimentVariation.LangmuirHinshelwood ? HinshelwoodStages[0] : KrevelenStages[0];
+            if (currentStepText.gameObject.activeSelf)
+                currentStepText.text = CurrentExperimentStage.ToString();
+            SetSimulationParametersMinMax(ExperimentVariation);
         }
 
         public void SpawnO2ButtonClicked()
