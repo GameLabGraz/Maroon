@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Maroon.Physics;
 using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -10,10 +11,11 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
     public class PerlinNoiseExperiment : MonoBehaviour
     {
         [SerializeField, Range(3, 40)] int size = 10;
-        [SerializeField, Range(0, 1)] float scale = 1;
         [SerializeField, Range(0, 5)] float height_scale = 1;
         [SerializeField, Range(0, 1)] float thickness = 1;
-        [SerializeField, Range(1, 10)] int octaves = 2;
+        [SerializeField] QuantityFloat scale = 1;
+        [SerializeField] QuantityInt octaves = 2;
+        [SerializeField] QuantityBool animate = true;
 
         [Space(10)] [SerializeField, Range(0, 2)]
         float speed = 1;
@@ -36,6 +38,9 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         // Update is called once per frame
         void Update()
         {
+            if (!animate)
+                return;
+
             rotation += Time.deltaTime * rotation_speed;
             meshFilter.transform.localRotation = Quaternion.Euler(Vector3.up * rotation);
 
@@ -234,7 +239,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             height -= 0.5f;
             height *= height_scale;
             coordinates += Vector2.one * (size - 1) * -0.5f;
-            coordinates /= (size - 1);
+            coordinates /= size - 1;
             return new Vector3(coordinates.x, height, coordinates.y);
         }
 
@@ -272,6 +277,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             if (!mesh || mesh.vertexCount == vertex_count)
                 return;
             GenerateMesh();
+            return;
             if (!EditorApplication.update.GetInvocationList().Contains((Action) Update))
                 EditorApplication.update += Update;
         }
