@@ -185,7 +185,7 @@ public class WaterPlane : PausableObject, IResetObject
 
     public void UpdateMaterial()
     {
-        GetComponent<Renderer>().material = material;
+        _meshRenderer.material = material;
     }
 
     public void RegisterWaveGenerator(WaveGenerator waveGenerator)
@@ -209,8 +209,8 @@ public class WaterPlane : PausableObject, IResetObject
 
     public void ResetObject()
     {
-        GetComponent<Renderer>().material.SetColor("_ColorMin", _startMinColor);
-        GetComponent<Renderer>().material.SetColor("_ColorMax", _startMaxColor);
+        _meshRenderer.material.SetColor("_ColorMin", _startMinColor);
+        _meshRenderer.material.SetColor("_ColorMax", _startMaxColor);
 
         UpdateWaveLength();
         UpdateWaveFrequency();
@@ -236,5 +236,15 @@ public class WaterPlane : PausableObject, IResetObject
     {
         _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_WaveFrequency"),
             (WaveGeneratorPoolHandler.Instance.WaveFrequency));
+    }
+
+    public void UpdateWavePeakColor(Color col)
+    {
+        _meshRenderer.material.SetColor("_ColorMax", col);
+    }
+
+    public void UpdateWaveTroughColor(Color col)
+    {
+        _meshRenderer.material.SetColor("_ColorMin", col);
     }
 }

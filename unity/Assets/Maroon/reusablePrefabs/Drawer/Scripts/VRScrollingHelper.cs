@@ -11,31 +11,33 @@ public class VRScrollingHelper : MonoBehaviour
     private const int MaxDisplayObjects = 4;
     private const float LocalZOffset = -0.12f;
     private int _currentPage = 0;
+    private bool _firstUpdate = true;
     
     // Start is called before the first frame update
-    void Start()
+    void FixedUpdate()
     {
-        Debug.Assert(scrollhandle != null);
-
-        if (controls.Count <= MaxDisplayObjects)
+        if (_firstUpdate) //need this otherwise not all StartFunctions of our controls are being called 
         {
-            //thats the maximum of current displayed controls
-            scrollhandle.gameObject.SetActive(false); // not needed
-        }
-        else
-        {
-            scrollhandle.maximum = controls.Count - MaxDisplayObjects;
-            scrollhandle.stepSize = 1f;
-            scrollhandle.useAsInteger = true;
+            Debug.Assert(scrollhandle != null);
 
-            scrollhandle.onValueChangedInt.AddListener(x =>
+            if (controls.Count <= MaxDisplayObjects)
             {
-                UpdateControlsToCurrentPage(x);
-            });
+                //thats the maximum of current displayed controls
+                scrollhandle.gameObject.SetActive(false); // not needed
+            }
+            else
+            {
+                scrollhandle.maximum = controls.Count - MaxDisplayObjects;
+                scrollhandle.stepSize = 1f;
+                scrollhandle.useAsInteger = true;
+
+                scrollhandle.onValueChangedInt.AddListener(x => { UpdateControlsToCurrentPage(x); });
+            }
+
+            _currentPage = 0;
+            UpdateControlsToCurrentPage(_currentPage, true);
+            _firstUpdate = false;
         }
-        
-        _currentPage = 0;
-        UpdateControlsToCurrentPage(_currentPage, true);
     }
 
     protected void UpdateControlsToCurrentPage(int current, bool force = false)

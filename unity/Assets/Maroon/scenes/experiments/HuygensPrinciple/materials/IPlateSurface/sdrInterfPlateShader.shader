@@ -23,13 +23,17 @@
 				#define PI 3.1415926535897932384626433832795
 
 				struct vertexInput {
-						float4 pos : POSITION;
+					float4 pos : POSITION;
+
+					UNITY_VERTEX_INPUT_INSTANCE_ID //Insert to render on both eyes VR
 				};
 
 				struct v2f {
 					float4 sv_position   : SV_POSITION;
 					float4 object_space : TEXCOORD0;
 					fixed3 color : COLOR0;
+
+					UNITY_VERTEX_OUTPUT_STEREO //Insert to render on both eyes VR
 				};
 
 				fixed4 _ColorMin;
@@ -44,6 +48,11 @@
 				v2f vert(vertexInput v)
 				{
 					v2f output;
+
+					UNITY_SETUP_INSTANCE_ID(v); //Insert to render on both eyes VR
+					UNITY_INITIALIZE_OUTPUT(v2f, output); //Insert to render on both eyes VR
+					UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output); //Insert to render on both eyes VR
+					
 					output.sv_position = UnityObjectToClipPos(v.pos);
 					output.object_space = v.pos;
 					output.color = fixed3(0, 0, 0);
