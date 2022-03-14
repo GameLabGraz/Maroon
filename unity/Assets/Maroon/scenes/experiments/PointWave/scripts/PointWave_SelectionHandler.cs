@@ -2,7 +2,8 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Slider = Maroon.UI.Slider;
+using Maroon.UI;
+using Slider = GameLabGraz.UI.Slider;
 
 public class PointWave_SelectionHandler : MonoBehaviour
 {
@@ -154,10 +155,10 @@ public class PointWave_SelectionHandler : MonoBehaviour
 
         if (selectedObject != null && selectedObject.type == PointWaveSelectScript.SelectObjectType.SourceSelect)
         {
-            waveSourceAmplitudeSlider.AllowReset = false;
-            waveSourceLengthSlider.AllowReset = false;
-            waveSourceFrequencySlider.AllowReset = false;
-            waveSourcePhaseSlider.AllowReset = false;
+            waveSourceAmplitudeSlider.AllowReset(false);
+            waveSourceLengthSlider.AllowReset(false);
+            waveSourceFrequencySlider.AllowReset(false);
+            waveSourcePhaseSlider.AllowReset(false);
 
             var obj = selectedObject.GetComponent<PointWaveSource>();
 
@@ -245,10 +246,10 @@ public class PointWave_SelectionHandler : MonoBehaviour
             {
                 case PointWaveSelectScript.SelectObjectType.SourceSelect:
                     AdaptButtonTextCharge();
-                    waveSourceAmplitudeSlider.AllowReset = true;
-                    waveSourceLengthSlider.AllowReset = true;
-                    waveSourceFrequencySlider.AllowReset = true;
-                    waveSourcePhaseSlider.AllowReset = true;
+                    waveSourceAmplitudeSlider.AllowReset(true);
+                    waveSourceLengthSlider.AllowReset(true);
+                    waveSourceFrequencySlider.AllowReset(true);
+                    waveSourcePhaseSlider.AllowReset(true);
                     break;
                 case PointWaveSelectScript.SelectObjectType.VisualizationPlaneSelect:
                     break;

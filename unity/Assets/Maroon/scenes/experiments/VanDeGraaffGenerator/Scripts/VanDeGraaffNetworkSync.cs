@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using Mirror;
 using PlatformControls.PC;
 using UnityEngine;
 using UnityEngine.UI;
-using InputField = Maroon.UI.InputField;
-using Slider = Maroon.UI.Slider;
+using InputField = GameLabGraz.UI.InputField;
+using Slider = GameLabGraz.UI.Slider;
 
 public class VanDeGraaffNetworkSync : ExperimentNetworkSync
 {

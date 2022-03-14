@@ -3,9 +3,11 @@
 //
 // Modifications: Tobias Stöckl
 //
+
 using UnityEngine;
 using Maroon.Physics;
 using Maroon.UI;
+using GameLabGraz.UI;
 
 [RequireComponent(typeof(QuantityPropertyView))]
 public class SliderBackgroundImage : MonoBehaviour
