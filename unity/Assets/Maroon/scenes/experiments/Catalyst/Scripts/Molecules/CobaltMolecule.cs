@@ -20,7 +20,7 @@ namespace Maroon.Chemistry.Catalyst
                 Molecule otherMolecule = other.gameObject.GetComponent<Molecule>();
                 if (otherMolecule != null && 
                     (otherMolecule.Type == MoleculeType.O2 || otherMolecule.Type == MoleculeType.CO) &&
-                    otherMolecule.ConnectedMolecule == null)
+                    otherMolecule.ConnectedMolecule == null && otherMolecule.State == MoleculeState.Moving)
                 {
                     otherMolecule.State = MoleculeState.InDrawingCollider;
                     otherMolecule.PossibleDrawingMolecule = this;

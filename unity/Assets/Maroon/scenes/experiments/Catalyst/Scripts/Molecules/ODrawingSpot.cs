@@ -46,7 +46,7 @@ namespace Maroon.Chemistry.Catalyst
                         {
                             Molecule otherMolecule = otherCollider.gameObject.GetComponent<Molecule>();
                             if (otherMolecule != null && otherMolecule.Type == MoleculeType.O &&
-                                otherMolecule.ConnectedMolecule == null && otherMolecule.State == MoleculeState.Fixed)
+                                otherMolecule.ConnectedMolecule == null && otherMolecule.State == MoleculeState.Moving)
                             {
                                 otherMolecule.SetMoleculeDrawn(this, MoleculeState.DrawnByDrawingSpot);
                                 SetAttachedMolecule(otherMolecule);
