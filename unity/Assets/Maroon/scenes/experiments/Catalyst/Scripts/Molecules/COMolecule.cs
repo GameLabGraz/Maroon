@@ -13,6 +13,13 @@ namespace Maroon.Chemistry.Catalyst
         
         private float _currentTimeDesorb = 0.0f;
 
+        private bool _desorbActivatesConnectedMoleculeCollider = false;
+
+        protected override void ReactionStart_Impl()
+        {
+            _desorbActivatesConnectedMoleculeCollider = true;
+        }
+        
         /**
          * Only needed for the Langmuir variant.
          * If CO molecule is fixed and stuck in surface make it wobble a bit.
@@ -107,6 +114,8 @@ namespace Maroon.Chemistry.Catalyst
             CurrentTimeMove = 0.0f;
             State = MoleculeState.Desorb;
             ConnectedMolecule.ConnectedMolecule = null;
+            if (_desorbActivatesConnectedMoleculeCollider)
+                ConnectedMolecule.ActivateDrawingCollider(true);
             ConnectedMolecule = null;
         }
 

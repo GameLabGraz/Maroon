@@ -78,6 +78,11 @@ namespace Maroon.Chemistry.Catalyst
         private float _currentTurnOverRate = 0.0f;
 
         private System.Action onReactionStart;
+
+        private float _minXValLocal = 0.0f;
+        private float _maxXValLocal = 0.0f;
+        private float _minZValLocal = 0.0f;
+        private float _maxZValLocal = 0.0f;
         
         private static readonly Regex WhiteSpaces = new Regex(@"\s+");
 
@@ -326,16 +331,11 @@ namespace Maroon.Chemistry.Catalyst
         private void SpawnReactionMaterial(bool spawnO2, bool spawnCO)
         {
             Transform catalystSurfaceTransform = _catalystSurface.gameObject.transform;
-            float minXVal = _activeMolecules.Min(molecule => molecule.gameObject.transform.localPosition.x) + 0.4f;
-            float maxXVal = _activeMolecules.Max(molecule => molecule.gameObject.transform.localPosition.x) - 0.4f;
-            float minZVal = _activeMolecules.Min(molecule => molecule.gameObject.transform.localPosition.z) + 0.4f;
-            float maxZVal = _activeMolecules.Max(molecule => molecule.gameObject.transform.localPosition.z) - 0.4f;
-
             if (spawnO2)
             {
                 for (int i = 0; i < numberSpawnedO2Molecules; i++)
                 {
-                    Vector3 spawnPos = new Vector3(Random.Range(minXVal, maxXVal), Random.Range(0.5f, 2.0f), Random.Range(minZVal, maxZVal));
+                    Vector3 spawnPos = new Vector3(Random.Range(_minXValLocal, _maxXValLocal), Random.Range(0.5f, 2.0f), Random.Range(_minZValLocal, _maxZValLocal));
                     Quaternion spawnRot = Quaternion.Euler(Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
                     Molecule molecule = Instantiate(o2MoleculePrefab, catalystSurfaceTransform);
                     molecule.gameObject.transform.localPosition = spawnPos;
@@ -351,7 +351,7 @@ namespace Maroon.Chemistry.Catalyst
             {
                 for (int i = 0; i < numberSpawnedCOMolecules; i++)
                 {
-                    Vector3 spawnPos = new Vector3(Random.Range(minXVal, maxXVal), Random.Range(0.5f, 2.0f), Random.Range(minZVal, maxZVal));
+                    Vector3 spawnPos = new Vector3(Random.Range(_minXValLocal, _maxXValLocal), Random.Range(0.5f, 2.0f), Random.Range(_minZValLocal, _maxZValLocal));
                     Quaternion spawnRot = Quaternion.Euler(Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
                     Molecule molecule = Instantiate(coMoleculePrefab, catalystSurfaceTransform);
                     molecule.gameObject.transform.localPosition = spawnPos;
@@ -387,7 +387,7 @@ namespace Maroon.Chemistry.Catalyst
                 molecule.OnCO2Created += CreateCO2;
                 molecule.State = MoleculeState.Moving;
                 (molecule as OMolecule).CreateO2 += CreateO2;
-                molecule.gameObject.transform.position = new Vector3(alternate ? o2Position.x + PlatinumScale / 3.0f : o2Position.x - PlatinumScale / 3.0f, o2Position.y - 0.05f, o2Position.z);
+                molecule.gameObject.transform.position = new Vector3(alternate ? o2Position.x + PlatinumScale / 3.0f : o2Position.x - PlatinumScale / 3.0f, o2Position.y - 0.07f, o2Position.z);
                 AddMoleculeToActiveList(molecule);
                 alternate = !alternate;
             }
@@ -422,7 +422,6 @@ namespace Maroon.Chemistry.Catalyst
             Quaternion coRotation = coMolecule.gameObject.transform.rotation;
             
             coMolecule.ConnectedMolecule.ActivateDrawingCollider(true);
-            coMolecule.ConnectedMolecule.ConnectedMolecule = null;
             coMolecule.ConnectedMolecule = null;
 
             Destroy(oMolecule.gameObject);
@@ -484,6 +483,11 @@ namespace Maroon.Chemistry.Catalyst
 
             MinYCoord = _activeMolecules.Min(molecule => molecule.gameObject.transform.position.y) + 0.1f;
             MaxYCoord = 4.0f;
+            
+            _minXValLocal = _activeMolecules.Min(molecule => molecule.gameObject.transform.localPosition.x) + 0.4f;
+            _maxXValLocal = _activeMolecules.Max(molecule => molecule.gameObject.transform.localPosition.x) - 0.4f;
+            _minZValLocal = _activeMolecules.Min(molecule => molecule.gameObject.transform.localPosition.z) + 0.4f;
+            _maxZValLocal = _activeMolecules.Max(molecule => molecule.gameObject.transform.localPosition.z) - 0.4f;
         }
 
         private void SetSimulationParametersMinMax(ExperimentVariation variation)

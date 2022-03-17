@@ -5,13 +5,6 @@ using UnityEngine;
 
 namespace Maroon.Chemistry.Catalyst
 {
-    public enum CatalystSurfaceSize
-    {
-        Small = 16,
-        Medium = 32,
-        Big = 64
-    }
-
     public class CatalystSurface : MonoBehaviour
     {
         [SerializeField] Molecule platinumMoleculePrefab;

@@ -38,6 +38,11 @@ namespace Maroon.Chemistry.Catalyst
                 )
                 {
                     SetMoleculeDrawn(potentialDrawMolecule, MoleculeState.DrawnByCO);
+                    
+                    // reenable surface molecule drawing capabilities
+                    potentialDrawMolecule.ConnectedMolecule.ConnectedMolecule = null;
+                    potentialDrawMolecule.ConnectedMolecule.ActivateDrawingCollider(true);
+
                     potentialDrawMolecule.ConnectedMolecule = this;
                     ActivateDrawingCollider(false);
                     potentialDrawMolecule.ActivateDrawingCollider(false);
@@ -106,7 +111,7 @@ namespace Maroon.Chemistry.Catalyst
             if (State == MoleculeState.Moving)
             {
                 OMolecule otherMolecule = other.gameObject.GetComponent<Molecule>() as OMolecule;
-                if (otherMolecule != null)
+                if (otherMolecule != null && otherMolecule.State == MoleculeState.Moving)
                 {
                     // make sure only one O2 is created, just take timestamps and the molecule that is earlier spawns it
                     if (CreationTimeStamp.Ticks < otherMolecule.CreationTimeStamp.Ticks)
