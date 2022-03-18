@@ -387,6 +387,8 @@ namespace Maroon.Chemistry.Catalyst
                 molecule.OnCO2Created += CreateCO2;
                 molecule.State = MoleculeState.Moving;
                 (molecule as OMolecule).CreateO2 += CreateO2;
+                if (ExperimentVariation == ExperimentVariation.MarsVanKrevelen)
+                    (molecule as OMolecule).SetDarkMaterial();
                 molecule.gameObject.transform.position = new Vector3(alternate ? o2Position.x + PlatinumScale / 3.0f : o2Position.x - PlatinumScale / 3.0f, o2Position.y - 0.07f, o2Position.z);
                 AddMoleculeToActiveList(molecule);
                 alternate = !alternate;
