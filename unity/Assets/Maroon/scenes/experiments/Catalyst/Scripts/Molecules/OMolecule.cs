@@ -6,6 +6,8 @@ namespace Maroon.Chemistry.Catalyst
 {
     public class OMolecule : Molecule
     {
+        [SerializeField] Material darkRedMaterial;
+
         public List<Molecule> potentialDrawMolecules = new List<Molecule>();
 
         public Action<Molecule, Molecule> CreateO2;
@@ -52,6 +54,11 @@ namespace Maroon.Chemistry.Catalyst
             }
             if (clearList)
                 potentialDrawMolecules.Clear();
+        }
+
+        public void SetDarkMaterial()
+        {
+            gameObject.transform.GetChild(0).transform.GetComponent<MeshRenderer>().material = darkRedMaterial;
         }
         
         /**
