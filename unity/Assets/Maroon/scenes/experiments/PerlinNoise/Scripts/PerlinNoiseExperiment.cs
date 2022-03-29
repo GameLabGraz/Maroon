@@ -10,12 +10,12 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 {
     public class PerlinNoiseExperiment : MonoBehaviour
     {
-        [SerializeField, Range(3, 40)] int size = 10;
+        [SerializeField, Range(3, 100)] int size = 10;
         [SerializeField, Range(0, 5)] float height_scale = 1;
-        [SerializeField, Range(0, 1)] float thickness = 1;
-        [SerializeField] QuantityFloat scale = 1;
-        [SerializeField] QuantityInt octaves = 2;
-        [SerializeField] QuantityBool animate = true;
+        [SerializeField, Range(0, 0.2f)] float thickness = 1;
+        [SerializeField, Range(0, 10)] float scale = 1;
+        [SerializeField, Range(1, 10)] int octaves = 2;
+        [SerializeField] bool animate = true;
 
         [Space(10)] [SerializeField, Range(0, 2)]
         float speed = 1;
@@ -28,6 +28,10 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         private Vector2 offset;
         private float time;
         private float rotation;
+        
+        public void SetOctaves(float octave) => octaves = (int) octave;
+        public void SetScale(float s) => scale = s;
+        public void SetAnimate(bool a) => animate = a;
 
         // Start is called before the first frame update
         void Start()
@@ -233,13 +237,11 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         private Vector3 GetVertexNoise(float x, float y)
         {
-            var coordinates = new Vector2(x, y);
-            var pos = (offset + coordinates) * scale;
+            var coordinates = new Vector2(x, y) / (size - 1) - Utils.half_vector;
+            var center = offset + Utils.half_vector;
+            var pos = center + coordinates * scale;
             var height = PerlinNoise3D(pos.x, pos.y, time);
-            height -= 0.5f;
             height *= height_scale;
-            coordinates += Vector2.one * (size - 1) * -0.5f;
-            coordinates /= size - 1;
             return new Vector3(coordinates.x, height, coordinates.y);
         }
 
@@ -257,11 +259,16 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         public float PerlinNoise2D(float x, float y)
         {
-            return Mathf.PerlinNoise(x, y);
             var noise = 0f;
             for (int i = 1; i <= octaves; i++)
-                noise += (Mathf.PerlinNoise(x * i, y * i) - 0.5f) / i;
+                noise += (PerlinNoiseIrregular(x * i, y * i) - 0.5f) / i;
             return noise;
+        }
+
+        private float PerlinNoiseIrregular(float x, float y)
+        {
+            return Mathf.PerlinNoise(x, y);
+            return Mathf.Sin(Mathf.PI * (1 + Mathf.PerlinNoise(x, y)));
         }
 
         private void OnValidate()
@@ -275,11 +282,26 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             mesh = meshFilter.sharedMesh;
             var vertex_count = size * size * 2 + size * 8;
             if (!mesh || mesh.vertexCount == vertex_count)
+            {
+                try
+                {
+                    UpdateMesh();
+                }
+                catch (Exception)
+                {
+                    GenerateMesh();
+                }
                 return;
+            }
             GenerateMesh();
             return;
             if (!EditorApplication.update.GetInvocationList().Contains((Action) Update))
                 EditorApplication.update += Update;
         }
+    }
+
+    public static class Utils
+    {
+        public static Vector2 half_vector => new Vector2(0.5f, 0.5f);
     }
 }
