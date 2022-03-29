@@ -14,46 +14,53 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         [SerializeField, Range(0, 5)] float height_scale = 1;
         [SerializeField, Range(0, 0.2f)] float thickness = 1;
         [SerializeField, Range(0, 10)] float scale = 1;
-        [SerializeField, Range(1, 10)] int octaves = 2;
-        [SerializeField] bool animate = true;
+        [SerializeField, Range(1, 10)] float octaves = 2;
 
         [Space(10)] [SerializeField, Range(0, 2)]
         float speed = 1;
 
         [SerializeField, Range(0, 20)] private float rotation_speed = 0;
-        [SerializeField] private bool refresh;
         private MeshFilter meshFilter;
         private Mesh mesh;
         private List<Vector3> vertices;
         private Vector2 offset;
         private float time;
         private float rotation;
-        
-        public void SetOctaves(float octave) => octaves = (int) octave;
-        public void SetScale(float s) => scale = s;
-        public void SetAnimate(bool a) => animate = a;
+        private bool dirty;
+
+        public void SetOctaves(float octave)
+        {
+            dirty = true;
+            octaves = octave;
+        }
+
+        public void SetScale(float s)
+        {
+            dirty = true;
+            scale = s;
+        }
 
         // Start is called before the first frame update
         void Start()
         {
             GenerateMesh();
+            SimulationController.Instance.StartSimulation();
         }
 
         // Update is called once per frame
         void Update()
         {
-            if (!animate)
-                return;
+            if (SimulationController.Instance && SimulationController.Instance.SimulationRunning)
+            {
+                rotation += Time.deltaTime * rotation_speed;
+                meshFilter.transform.localRotation = Quaternion.Euler(Vector3.up * rotation);
+                time += Time.deltaTime * speed;
+                dirty = true;
+            }
 
-            rotation += Time.deltaTime * rotation_speed;
-            meshFilter.transform.localRotation = Quaternion.Euler(Vector3.up * rotation);
-
-            if (speed == 0)
-                return;
-
-            time += Time.deltaTime * speed;
-
-            UpdateMesh();
+            if (dirty)
+                UpdateMesh();
+            dirty = false;
         }
 
         private void UpdateMesh()
@@ -260,8 +267,12 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         public float PerlinNoise2D(float x, float y)
         {
             var noise = 0f;
-            for (int i = 1; i <= octaves; i++)
+            int i;
+            for (i = 1; i < octaves; i++)
                 noise += (PerlinNoiseIrregular(x * i, y * i) - 0.5f) / i;
+            var last_octave_fraction = octaves - i + 1;
+            noise += (PerlinNoiseIrregular(x * i, y * i) - 0.5f) * last_octave_fraction / i;
+
             return noise;
         }
 
@@ -273,7 +284,6 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         private void OnValidate()
         {
-            refresh = false;
             if (!meshFilter)
                 meshFilter = GetComponentInChildren<MeshFilter>();
             if (!meshFilter)
@@ -291,8 +301,10 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
                 {
                     GenerateMesh();
                 }
+
                 return;
             }
+
             GenerateMesh();
             return;
             if (!EditorApplication.update.GetInvocationList().Contains((Action) Update))
