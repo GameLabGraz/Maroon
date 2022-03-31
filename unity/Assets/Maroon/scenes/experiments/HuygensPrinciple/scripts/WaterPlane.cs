@@ -27,6 +27,9 @@ public class WaterPlane : PausableObject, IResetObject
 
     [SerializeField]
     private GameObject waterBasinGeneratorPosition;
+    
+    [SerializeField]
+    private bool useMaterialReset = true;
 
     private List<WaveGenerator> _waveGenerators = new List<WaveGenerator>();
 
@@ -209,8 +212,11 @@ public class WaterPlane : PausableObject, IResetObject
 
     public void ResetObject()
     {
-        _meshRenderer.material.SetColor("_ColorMin", _startMinColor);
-        _meshRenderer.material.SetColor("_ColorMax", _startMaxColor);
+        if (useMaterialReset)
+        {
+            _meshRenderer.material.SetColor("_ColorMin", _startMinColor);
+            _meshRenderer.material.SetColor("_ColorMax", _startMaxColor);
+        }
 
         UpdateWaveLength();
         UpdateWaveFrequency();

@@ -209,15 +209,30 @@ namespace Maroon.Physics.HuygensPrinciple
 
                 for (var slitCount = 0; slitCount < numberOfSlits; slitCount++)
                 {
-                    var slitC = new GameObject("SlitCenter");
-                    slitC.transform.parent = gameObject.transform;
-                    slitCenters.Add(slitC);
+                    GameObject slitC = null;
+                    if (slitCount < slitCenters.Count)
+                    {
+                        slitC = slitCenters[slitCount];
+                    }
+                    else
+                    {
+                        slitC = new GameObject("SlitCenter");
+                        slitCenters.Add(slitC);
+                    }
 
-                    slitCenters[slitCount].transform.localPosition = new Vector4(
+                    slitC.transform.parent = gameObject.transform;
+                    slitC.transform.localPosition= new Vector4(
                         (initialPositionLeft + slitWidth / 2) + (transition * slitCount), 
                         left.transform.localPosition.y, 
                         left.transform.localPosition.z, 
                         0);
+                }
+
+                //just to be sure that there are only numberOfSlits elements in slitCenters
+                while (slitCenters.Count > numberOfSlits)
+                {
+                    Destroy(slitCenters[slitCenters.Count - 1]);
+                    slitCenters.RemoveAt(slitCenters.Count - 1);
                 }
             }
             else
@@ -323,6 +338,19 @@ namespace Maroon.Physics.HuygensPrinciple
         public float GetDistanceBetweenSlitCenters()
         {
             return slitCenterDistance; 
+        }
+
+        public void ChangeMidSectionColors(Color col)
+        {
+            plateMaterial.color = col;
+            
+            foreach (var section in midSections)
+            {
+                var mr = section.GetComponent<MeshRenderer>();
+                if(!mr) continue;
+
+                mr.material.color = col;
+            }
         }
     }
 }
