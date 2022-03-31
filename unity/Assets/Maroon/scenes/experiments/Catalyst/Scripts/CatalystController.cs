@@ -8,7 +8,6 @@ using Maroon.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Dropdown = Maroon.UI.Dropdown;
 using Random = UnityEngine.Random;
 
 namespace Maroon.Chemistry.Catalyst
@@ -32,8 +31,7 @@ namespace Maroon.Chemistry.Catalyst
     public class CatalystController : MonoBehaviour
     {
         [Header("Simulation Parameters")]
-        [SerializeField] Dropdown variantDropdown;
-        [SerializeField] UnityEngine.UI.Toggle stepWiseSimulationToggle;
+        [SerializeField] TextMeshProUGUI stepWiseEnableText;
         [SerializeField] TextMeshProUGUI currentStepText;
         [SerializeField] Button addO2Button;
         [SerializeField] Button addCOButton;
@@ -76,6 +74,7 @@ namespace Maroon.Chemistry.Catalyst
         private CatalystSurface _catalystSurface;
         
         private float _currentTurnOverRate = 0.0f;
+        private bool _doStepWiseSimulation = false;
 
         private System.Action onReactionStart;
 
@@ -526,10 +525,7 @@ namespace Maroon.Chemistry.Catalyst
         public void StartSimulation()
         {
             Debug.Log("Start catalyst simulation");
-            stepWiseSimulationToggle.interactable = false;
-            DoStepWiseSimulation = stepWiseSimulationToggle.isOn;
-            variantDropdown.interactable = false;
-            ExperimentVariation = (ExperimentVariation)variantDropdown.value;
+            DoStepWiseSimulation = _doStepWiseSimulation;
             graphImage.sprite = ExperimentVariation == ExperimentVariation.LangmuirHinshelwood
                 ? graphLangmuirSprite
                 : graphVanKrevelenSprite;
@@ -538,7 +534,6 @@ namespace Maroon.Chemistry.Catalyst
         public void StopSimulation()
         {
             Debug.Log("Stop catalyst simulation");
-            stepWiseSimulationToggle.interactable = true;
         }
 
         public void Reset()
@@ -552,11 +547,7 @@ namespace Maroon.Chemistry.Catalyst
             addCOButton.interactable = false;
             player.transform.position = experimentRoomPlayerSpawnTransform.position;
             
-            stepWiseSimulationToggle.interactable = true;
-            stepWiseSimulationToggle.isOn = false;
-            
-            variantDropdown.interactable = true;
-            variantDropdown.value = (int) ExperimentVariation.LangmuirHinshelwood;
+            _doStepWiseSimulation = false;
         }
 
         public void TemperatureChanged(float newTemperature)
@@ -594,10 +585,15 @@ namespace Maroon.Chemistry.Catalyst
 
         public void StepWiseSimulationValueChanged(bool val)
         {
-            stepWiseSimulationToggle.GetComponentInChildren<TextMeshProUGUI>().text = 
-                val ? "enabled" : "disabled";
+            _doStepWiseSimulation = val;
+            UpdateStepWiseSimulationText();
             currentStepText.gameObject.SetActive(val);
             currentStepText.text = CurrentExperimentStage.ToString();
+        }
+
+        public void UpdateStepWiseSimulationText()
+        {
+            stepWiseEnableText.text = _doStepWiseSimulation ? "enabled" : "disabled";
         }
 
         public void NextStepButtonClicked()
@@ -623,12 +619,18 @@ namespace Maroon.Chemistry.Catalyst
         private static int GetTemperatureIndex(float temperatureValue)
         {
             // add 273.16 instead of 273.15 to always get at least the first element index
-            return Array.IndexOf(TemperatureStageValues[(int)ExperimentVariation], TemperatureStageValues[(int)ExperimentVariation].TakeWhile(num => num <= temperatureValue + 273.16f).Last());
+            int idx = Array.IndexOf(TemperatureStageValues[(int)ExperimentVariation], TemperatureStageValues[(int)ExperimentVariation].TakeWhile(num => num <= temperatureValue + 273.16f).LastOrDefault());
+            if (idx < 0)
+                idx = 0;
+            return idx;
         }
 
         private static int GetPartialPressureIndex(float partialPressureValue)
         {
-            return Array.IndexOf(PartialPressureValues[(int)ExperimentVariation], PartialPressureValues[(int)ExperimentVariation].TakeWhile(num => num <= partialPressureValue + 0.00001f).Last());
+            int idx = Array.IndexOf(PartialPressureValues[(int)ExperimentVariation], PartialPressureValues[(int)ExperimentVariation].TakeWhile(num => num <= partialPressureValue + 0.00001f).LastOrDefault());
+            if (idx < 0)
+                idx = 0;
+            return idx;
         }
 
         public static float GetTurnOverFrequency(float temperature, float partialPressure)
