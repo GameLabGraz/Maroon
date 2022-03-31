@@ -586,14 +586,9 @@ namespace Maroon.Chemistry.Catalyst
         public void StepWiseSimulationValueChanged(bool val)
         {
             _doStepWiseSimulation = val;
-            UpdateStepWiseSimulationText();
+            stepWiseEnableText.text = _doStepWiseSimulation ? "enabled" : "disabled";
             currentStepText.gameObject.SetActive(val);
             currentStepText.text = CurrentExperimentStage.ToString();
-        }
-
-        public void UpdateStepWiseSimulationText()
-        {
-            stepWiseEnableText.text = _doStepWiseSimulation ? "enabled" : "disabled";
         }
 
         public void NextStepButtonClicked()
