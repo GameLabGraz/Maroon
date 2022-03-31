@@ -33,8 +33,6 @@ namespace Maroon.Chemistry.Catalyst
         [Header("Simulation Parameters")]
         [SerializeField] TextMeshProUGUI stepWiseEnableText;
         [SerializeField] TextMeshProUGUI currentStepText;
-        [SerializeField] Button addO2Button;
-        [SerializeField] Button addCOButton;
         [SerializeField] QuantityFloat temperature;
         [SerializeField] QuantityFloat partialPressure;
         [SerializeField] int numberSpawnedO2Molecules;
@@ -166,16 +164,14 @@ namespace Maroon.Chemistry.Catalyst
 
         private void Start()
         {
-            addO2Button.interactable = false;
-            addCOButton.interactable = false;
             catalystReactionBoxGameObject.SetActive(false);
 
-            catalystReactor.OnReactorFilled += HandleCatalystSurfaceSetup;
+            catalystReactor.OnReactorFilled.AddListener(HandleCatalystSurfaceSetup);
         }
 
         private void OnDestroy()
         {
-            catalystReactor.OnReactorFilled -= SpawnCatalystSurfaceObject;
+            catalystReactor.OnReactorFilled.RemoveListener(SpawnCatalystSurfaceObject);
         }
         
         /**
@@ -239,8 +235,6 @@ namespace Maroon.Chemistry.Catalyst
         private void HandleCatalystSurfaceSetup()
         {
             catalystReactionBoxGameObject.SetActive(true);
-            addO2Button.interactable = true;
-            addCOButton.interactable = true;
             player.transform.position = catalystReactionBoxPlayerSpawnTransform.position;
             SpawnCatalystSurfaceObject();
         }
@@ -543,8 +537,6 @@ namespace Maroon.Chemistry.Catalyst
             graphImage.sprite = null;
             
             catalystReactionBoxGameObject.SetActive(false);
-            addO2Button.interactable = false;
-            addCOButton.interactable = false;
             player.transform.position = experimentRoomPlayerSpawnTransform.position;
             
             _doStepWiseSimulation = false;
