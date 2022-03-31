@@ -13,6 +13,7 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 using System.Collections.Generic;
+using UnityEngine.Events;
 
 /// <summary>
 /// Class to create a field image with iron filing
@@ -66,6 +67,10 @@ public class scrIronFilings : MonoBehaviour, IResetObject
     [SerializeField]
     private float lineEndWidth = 0.004f;
 
+    [SerializeField] private UnityEvent onHideIronFilings;
+
+    private List<GameObject> _lines = new List<GameObject>();
+    private bool _linesVisible = false;
     /// <summary>
     /// Initialization
     /// </summary>
@@ -85,6 +90,8 @@ public class scrIronFilings : MonoBehaviour, IResetObject
         {
             var line = new GameObject("line");
             line.transform.parent = this.transform;
+            line.SetActive(true);
+            _lines.Add(line);
             //line.transform.localRotation = Quaternion.identity;
 
             var linerenderer = line.AddComponent<LineRenderer>();
@@ -98,6 +105,7 @@ public class scrIronFilings : MonoBehaviour, IResetObject
             linerenderers[i] = linerenderer;
         }
         gameObject.SetActive(false);
+        onHideIronFilings.Invoke();
     }
 
     /// <summary>
@@ -106,7 +114,10 @@ public class scrIronFilings : MonoBehaviour, IResetObject
     private void Update()
     {
         if (SimulationController.Instance.SimulationRunning)
+        {
             gameObject.SetActive(false);
+            onHideIronFilings.Invoke();
+        }
     }
 
     /// <summary>
@@ -114,17 +125,16 @@ public class scrIronFilings : MonoBehaviour, IResetObject
     /// </summary>
     public void generateFieldImage()
     {
-        if (field == null)
+        if (field == null || _linesVisible)
             return;
 
         SimulationController.Instance.StopSimulation();
 
         Debug.Log("Start IronFiling");
         
-        foreach (Transform child in transform)
+        foreach( var child in _lines)
         {
-            if(child.name == "line")
-                child.gameObject.SetActive(true);
+            child.SetActive(true);
         }
 
         for (var i = 0; i < iterations * 2; i++)
@@ -135,15 +145,22 @@ public class scrIronFilings : MonoBehaviour, IResetObject
         Debug.Log("End IronFiling");
 
         gameObject.SetActive(true);
+        _linesVisible = true;
     }
 
     public void hideFieldImage()
     {
-        foreach (Transform child in transform)
-        {
-            if(child.name == "line")
-                child.gameObject.SetActive(false);
-        }
+        if (!_linesVisible) return;
+        
+        gameObject.SetActive(false);
+        
+        // foreach (var child in _lines)
+        // {
+        //     if (child) child.SetActive(false);
+        // }
+
+        _linesVisible = false;
+        onHideIronFilings.Invoke();
     }
 
     /// <summary>
@@ -184,5 +201,6 @@ public class scrIronFilings : MonoBehaviour, IResetObject
     public void ResetObject()
     {
         gameObject.SetActive(false);
+        onHideIronFilings.Invoke();
     }
 }

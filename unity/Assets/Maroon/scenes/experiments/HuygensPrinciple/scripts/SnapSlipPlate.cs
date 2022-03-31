@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using VRTK;
+// using VRTK;
 
 public class SnapSlipPlate : MonoBehaviour, IResetObject
 {
@@ -15,7 +15,8 @@ public class SnapSlipPlate : MonoBehaviour, IResetObject
     [SerializeField]
     private Vector3 plateScale = Vector3.one;
 
-    private VRTK_InteractableObject snappedPlate;
+    // private VRTK_InteractableObject snappedPlate;
+    private GameObject snappedPlate;
 
     private Vector3 previousPlateScale;
             
@@ -28,17 +29,19 @@ public class SnapSlipPlate : MonoBehaviour, IResetObject
         if (!other.CompareTag("SlitPlate") || snappedPlate)
             return;
 
-        var plate = other.GetComponent<VRTK_InteractableObject>();
-        if (!plate || plate.IsGrabbed())
+        var plate = other.gameObject;
+        // var plate = other.GetComponent<VRTK_InteractableObject>();
+        if (!plate) // || plate.IsGrabbed())
             return;
 
         snappedPlate = plate;
         StorePreviousState();
 
-        snappedPlate.transform.position = Vector3.Lerp(plateHandleBodyRight.transform.position, plateHandleBodyLeft.transform.position, 0.5f);
-        snappedPlate.transform.position = new Vector3(snappedPlate.transform.position.x, snappedPlate.transform.position.y - 0.3f, snappedPlate.transform.position.z); 
-        snappedPlate.transform.rotation = Quaternion.Euler(0, 90, 0);
-        snappedPlate.transform.localScale = plateScale;
+        Transform trans;
+        (trans = snappedPlate.transform).position = Vector3.Lerp(plateHandleBodyRight.transform.position, plateHandleBodyLeft.transform.position, 0.5f);
+        trans.position = new Vector3(trans.position.x, trans.position.y - 0.3f, trans.position.z);
+        trans.rotation = Quaternion.Euler(0, 90, 0);
+        trans.localScale = plateScale;
 
         // Create Handle Joints
         var handleJointRight = snappedPlate.gameObject.AddComponent<FixedJoint>();
@@ -49,13 +52,13 @@ public class SnapSlipPlate : MonoBehaviour, IResetObject
 
         snappedPlate.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionY;
 
-        snappedPlate.InteractableObjectGrabbed += OnSnappedPlateGrabbed;
+        // snappedPlate.InteractableObjectGrabbed += OnSnappedPlateGrabbed;
     }
 
-    private void OnSnappedPlateGrabbed(object sender, InteractableObjectEventArgs e)
-    {
-        UnplugPlate();
-    }
+    // private void OnSnappedPlateGrabbed(object sender, InteractableObjectEventArgs e)
+    // {
+        // UnplugPlate();
+    // }
 
     private void RegisterPlateWaveGenerators()
     {
@@ -94,7 +97,7 @@ public class SnapSlipPlate : MonoBehaviour, IResetObject
         UnregisterPlateWaveGenerators();
         LoadPreviousState();
 
-        snappedPlate.InteractableObjectGrabbed -= OnSnappedPlateGrabbed;
+        // snappedPlate.InteractableObjectGrabbed -= OnSnappedPlateGrabbed;
         snappedPlate = null;
     }
 
@@ -106,7 +109,7 @@ public class SnapSlipPlate : MonoBehaviour, IResetObject
         UnregisterPlateWaveGenerators();
         LoadPreviousState();
 
-        snappedPlate.InteractableObjectGrabbed -= OnSnappedPlateGrabbed;
+        // snappedPlate.InteractableObjectGrabbed -= OnSnappedPlateGrabbed;
         snappedPlate = null;
     }
 }

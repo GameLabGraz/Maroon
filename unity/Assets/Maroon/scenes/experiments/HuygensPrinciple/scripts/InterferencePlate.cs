@@ -8,12 +8,16 @@ namespace Maroon.Physics.HuygensPrinciple
         private SlitPlate slitPlate;
 
         private MeshRenderer _meshRenderer;
-        
+
+        protected override void Awake()
+        {
+            base.Awake();
+            _meshRenderer = GetComponent<MeshRenderer>();
+        }
+
         protected override void Start()
         {
             base.Start();
-
-            _meshRenderer = GetComponent<MeshRenderer>();
             UpdateParameters();
         }
 

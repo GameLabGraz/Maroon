@@ -12,7 +12,12 @@ namespace Maroon.Physics
 
         protected Rigidbody _rigidBody;
         protected RigidBodyStateControl _rigidBodyStateControl;
-
+		
+		protected virtual void Awake() 
+		{
+		
+		}
+		
         protected virtual void Start()
         {
             if (SimulationController.Instance == null) return;

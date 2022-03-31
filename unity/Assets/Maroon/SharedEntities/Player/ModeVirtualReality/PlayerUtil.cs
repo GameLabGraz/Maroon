@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using VRTK;
+﻿using GameLabGraz.VRInteraction;
+using UnityEngine;
 
 namespace Util
 {
@@ -10,7 +10,7 @@ namespace Util
             if (gameObject.CompareTag("Player"))
                 return true;
 
-            return gameObject.GetComponent<VRTK_PlayerObject>() != null && gameObject.name.Contains("Body");
+            return gameObject.GetComponent<VRPlayer>() != null;
         }
     }
 }

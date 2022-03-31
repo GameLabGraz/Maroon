@@ -1,4 +1,5 @@
-﻿using Maroon.Physics.HuygensPrinciple;
+﻿using System;
+using Maroon.Physics.HuygensPrinciple;
 using System.Collections.Generic;
 using Maroon.Physics;
 using UnityEngine;
@@ -26,6 +27,9 @@ public class WaterPlane : PausableObject, IResetObject
 
     [SerializeField]
     private GameObject waterBasinGeneratorPosition;
+    
+    [SerializeField]
+    private bool useMaterialReset = true;
 
     private List<WaveGenerator> _waveGenerators = new List<WaveGenerator>();
 
@@ -44,6 +48,12 @@ public class WaterPlane : PausableObject, IResetObject
     private static int _maxNumberOfBasinGenerators = 30;
     private static int _maxNumberOfPlateGenerators = 30;
 
+    protected override void Awake()
+    {
+        base.Awake();
+        _meshRenderer = GetComponent<MeshRenderer>(); 
+    }
+
     protected override void Start()
     {
         base.Start();
@@ -53,7 +63,8 @@ public class WaterPlane : PausableObject, IResetObject
             CalculatePlaneMesh();
         }
 
-        _meshRenderer = GetComponent<MeshRenderer>(); 
+        if (!_meshRenderer)
+            _meshRenderer = GetComponent<MeshRenderer>();
         slitPlate = FindObjectOfType<SlitPlate>(); 
        
         if(slitPlate == null)
@@ -64,7 +75,8 @@ public class WaterPlane : PausableObject, IResetObject
         _startMinColor = _meshRenderer.sharedMaterial.GetColor("_ColorMin");
         _startMaxColor = _meshRenderer.sharedMaterial.GetColor("_ColorMax");
 
-        Init();       
+        Init();
+        UpdatePlatePosition();
     }
 
     private void Init()
@@ -176,7 +188,7 @@ public class WaterPlane : PausableObject, IResetObject
 
     public void UpdateMaterial()
     {
-        GetComponent<Renderer>().material = material;
+        _meshRenderer.material = material;
     }
 
     public void RegisterWaveGenerator(WaveGenerator waveGenerator)
@@ -200,8 +212,11 @@ public class WaterPlane : PausableObject, IResetObject
 
     public void ResetObject()
     {
-        GetComponent<Renderer>().material.SetColor("_ColorMin", _startMinColor);
-        GetComponent<Renderer>().material.SetColor("_ColorMax", _startMaxColor);
+        if (useMaterialReset)
+        {
+            _meshRenderer.material.SetColor("_ColorMin", _startMinColor);
+            _meshRenderer.material.SetColor("_ColorMax", _startMaxColor);
+        }
 
         UpdateWaveLength();
         UpdateWaveFrequency();
@@ -211,6 +226,8 @@ public class WaterPlane : PausableObject, IResetObject
 
     public void UpdatePlatePosition()
     {
+        if (!_meshRenderer || !slitPlate)
+            return;
         _meshRenderer.sharedMaterial.SetVector(Shader.PropertyToID("_PlatePosition"), slitPlate.transform.position);
         UpdatePlane();
     }
@@ -225,5 +242,15 @@ public class WaterPlane : PausableObject, IResetObject
     {
         _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_WaveFrequency"),
             (WaveGeneratorPoolHandler.Instance.WaveFrequency));
+    }
+
+    public void UpdateWavePeakColor(Color col)
+    {
+        _meshRenderer.material.SetColor("_ColorMax", col);
+    }
+
+    public void UpdateWaveTroughColor(Color col)
+    {
+        _meshRenderer.material.SetColor("_ColorMin", col);
     }
 }

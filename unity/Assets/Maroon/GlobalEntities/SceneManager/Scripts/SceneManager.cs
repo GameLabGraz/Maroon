@@ -9,8 +9,6 @@ namespace Maroon.GlobalEntities
     /// </summary>
     public class SceneManager : MonoBehaviour, GlobalEntity
     {
-
-
         private static SceneManager _instance = null;
 
         /// TODO
@@ -55,6 +53,13 @@ namespace Maroon.GlobalEntities
                     this._activeSceneCategory = value;
                 }
             }
+        }
+
+        public void SetActiveSceneCategory(string categoryName)
+        {
+            var cat = getSceneCategoryByName(categoryName);
+            Debug.Assert(cat != null, "Scene Category '" + categoryName + "' not found.");
+            ActiveSceneCategory = cat;
         }
 
         // -------------------------------------------------------------------------------------------------------------

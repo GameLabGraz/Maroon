@@ -1,18 +1,18 @@
-﻿using UnityEngine;
-using VRTK;
+﻿using GameLabGraz.VRInteraction;
+using UnityEngine;
 
-[RequireComponent(typeof(VRTK_Slider))]
+[RequireComponent(typeof(VRLinearDrive))]
 public class VR_RestrictSlitWidthSliderValue : RestrictSlitWidthSliderValue
 {
-    private VRTK_Slider _slider;
+    private VRLinearDrive _slider;
 
     private void Start()
     {
-        _slider = GetComponent<VRTK_Slider>();
+        _slider = GetComponent<VRLinearDrive>();
 
         setSliderMaxValue += maxValue =>
         {
-            _slider.maximumValue = maxValue;
+            _slider.maximum = maxValue;
         };
     }
 }
