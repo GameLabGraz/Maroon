@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
+using Valve.VR;
+using Valve.VR.InteractionSystem;
 
 namespace Maroon.Chemistry.Catalyst
 {
@@ -15,9 +17,31 @@ namespace Maroon.Chemistry.Catalyst
 
         private bool _desorbActivatesConnectedMoleculeCollider = false;
 
+        private Interactable _interactable;
+        private Throwable _throwable;
+
+        protected override void Start()
+        {
+            base.Start();
+            if (CatalystController.IsVrVersion)
+            {
+                _interactable = GetComponent<Interactable>();
+                _throwable = GetComponent<Throwable>();
+                _interactable.enabled = true;
+            }
+        }
+        
         protected override void ReactionStart_Impl()
         {
             _desorbActivatesConnectedMoleculeCollider = true;
+            if (_interactable && _throwable)
+            {
+                _throwable.onDetachFromHand.Invoke();
+                Destroy(_throwable);
+                Destroy(_interactable);
+            }
+
+
         }
         
         /**
@@ -40,6 +64,19 @@ namespace Maroon.Chemistry.Catalyst
 
             StartCoroutine(Wobble());
             _moleculeClickCounter++;
+        }
+
+        public void OnVRPickup()
+        {
+            if (State != MoleculeState.Fixed || !SimulationController.Instance.SimulationRunning) return;
+            OnMoleculeFreed?.Invoke();
+            _interactable.enabled = false;
+            DesorbCO();
+        }
+
+        public void OnVRDrop()
+        {
+
         }
 
         /**
