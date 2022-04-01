@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
+using Maroon.Physics;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 {
-    public class Noise2D : MonoBehaviour, INoiseExperiment
+    public class Noise2D : NoiseExperiment
     {
-        [SerializeField, Range(0, 10)] public float scale = 1;
-        [SerializeField, Range(1, 10)] public float octaves = 2;
+        [SerializeField] private QuantityFloat scale;
+        [SerializeField] private QuantityFloat octaves;
 
         [SerializeField, Range(3, 100)] int size = 10;
         [SerializeField, Range(0, 5)] float height_scale = 1;
@@ -22,19 +23,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         private Vector2 offset;
 
 
-        public void SetOctaves(float octave)
-        {
-            PerlinNoiseExperiment.Instance.dirty = true;
-            octaves = octave;
-        }
-
-        public void SetScale(float s)
-        {
-            PerlinNoiseExperiment.Instance.dirty = true;
-            scale = s;
-        }
-
-        public void GenerateMesh(Mesh mesh)
+        public override void GenerateMesh(Mesh mesh)
         {
             offset = new Vector2(Random.value, Random.value) * 1e2f;
 
@@ -161,7 +150,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             mesh.RecalculateNormals();
         }
 
-        public void UpdateMesh(Mesh mesh)
+        public override void UpdateMesh(Mesh mesh)
         {
             time += Time.deltaTime * speed;
 

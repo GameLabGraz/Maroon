@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Maroon.Physics;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 {
-    public class NoiseVoxel : MonoBehaviour, INoiseExperiment
+    public class NoiseVoxel : NoiseExperiment
     {
-        [SerializeField, Range(0, 10)] public float scale = 1;
-        [SerializeField, Range(1, 10)] public float octaves = 2;
-        [SerializeField, Range(0, 1)] public float threshold = 0.5f;
+        [SerializeField, Range(0, 1)] public float threshold_3d = 0.5f;
         [SerializeField, Range(0, 1)] public float threshold_2d = 0.5f;
+
+        [SerializeField] private QuantityFloat scale;
+        [SerializeField] private QuantityFloat octaves;
 
         [SerializeField, Range(3, 20)] int size = 10;
 
@@ -23,20 +24,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         private readonly HashSet<Vector3Int> noise_map = new HashSet<Vector3Int>();
 
-        
-        
-        public void SetOctaves(float octave)
-        {
-            PerlinNoiseExperiment.Instance.dirty = true;
-            octaves = octave;
-        }
-
-        public void SetScale(float s)
-        {
-            PerlinNoiseExperiment.Instance.dirty = true;
-            scale = s;
-        }
-        public void GenerateMesh(Mesh mesh)
+        public override void GenerateMesh(Mesh mesh)
         {
             vertices.Clear();
             indices.Clear();
@@ -61,7 +49,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             mesh.RecalculateNormals();
         }
 
-        public void UpdateMesh(Mesh mesh)
+        public override void UpdateMesh(Mesh mesh)
         {
             GenerateMesh(mesh);
         }
@@ -76,7 +64,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
                     {
                         var n = PerlinNoiseExperiment.PerlinNoise3D(x / scale, y / scale, z / scale, octaves);
                         var n2 = PerlinNoiseExperiment.PerlinNoise2D(x / scale, z / scale, octaves);
-                        if (n + 0.5f < threshold || n2 - 0.5f + threshold_2d > y / scale)
+                        if (n + 0.5f < threshold_3d || n2 - 0.5f + threshold_2d > y / scale)
                         {
                             noise_map.Add(new Vector3Int(x, y, z));
                         }
