@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using GameLabGraz.VRInteraction;
 using Maroon.Physics;
 using Maroon.UI;
 using TMPro;
@@ -31,6 +32,7 @@ namespace Maroon.Chemistry.Catalyst
     public class CatalystController : MonoBehaviour
     {
         [Header("Simulation Parameters")]
+        [SerializeField] bool isVrVersion;
         [SerializeField] TextMeshProUGUI stepWiseEnableText;
         [SerializeField] TextMeshProUGUI currentStepText;
         [SerializeField] QuantityFloat temperature;
@@ -59,7 +61,10 @@ namespace Maroon.Chemistry.Catalyst
         [SerializeField] TextMeshProUGUI turnOverRateText;
         [SerializeField] QuantityPropertyView temperatureView;
         [SerializeField] QuantityPropertyView partialPressureView;
+        [SerializeField] VRLinearDrive temperatureViewVr;
+        [SerializeField] VRLinearDrive partialPressureViewVr;
         [SerializeField] Image graphImage;
+        [SerializeField] WhiteboardController whiteboardController;
         [SerializeField] Sprite graphLangmuirSprite;
         [SerializeField] Sprite graphVanKrevelenSprite;
 
@@ -138,6 +143,7 @@ namespace Maroon.Chemistry.Catalyst
         public const float FixedMoleculeYDist = 0.28f - 0.075f;
         public const float PlatinumScale = 0.14f;
 
+        public static bool IsVrVersion;
         public static bool DoStepWiseSimulation = false;
         public static ExperimentStages CurrentExperimentStage = ExperimentStages.Init;
         public static ExperimentVariation ExperimentVariation = ExperimentVariation.LangmuirHinshelwood;
@@ -165,6 +171,7 @@ namespace Maroon.Chemistry.Catalyst
         private void Start()
         {
             catalystReactionBoxGameObject.SetActive(false);
+            IsVrVersion = isVrVersion;
 
             catalystReactor.OnReactorFilled.AddListener(HandleCatalystSurfaceSetup);
         }
@@ -487,8 +494,11 @@ namespace Maroon.Chemistry.Catalyst
 
         private void SetSimulationParametersMinMax(ExperimentVariation variation)
         {
-            temperatureView.ClearUI();
-            partialPressureView.ClearUI();
+            if (temperatureView && partialPressureView)
+            {
+                temperatureView.ClearUI();
+                partialPressureView.ClearUI();
+            }
 
             temperature.minValue =
                 ExperimentVariation == ExperimentVariation.LangmuirHinshelwood
@@ -510,9 +520,24 @@ namespace Maroon.Chemistry.Catalyst
 
             temperature.Value = temperature.minValue;
             partialPressure.Value = partialPressure.minValue;
-            
-            temperatureView.ShowUI();
-            partialPressureView.ShowUI();
+
+            if (temperatureView && partialPressureView)
+            {
+                temperatureView.ShowUI();
+                partialPressureView.ShowUI();
+            }
+            else if (temperatureViewVr && partialPressureViewVr)
+            {
+                temperatureViewVr.minimum = temperature.minValue;
+                temperatureViewVr.maximum = temperature.maxValue;
+                partialPressureViewVr.minimum = partialPressure.minValue;
+                partialPressureViewVr.maximum = partialPressure.maxValue;
+                
+                temperatureViewVr.RecalibrateRange();
+                partialPressureViewVr.RecalibrateRange();
+                temperatureViewVr.ForceToValue(temperature.minValue);
+                partialPressureViewVr.ForceToValue(partialPressure.minValue);
+            }
 
         }
 
@@ -520,9 +545,12 @@ namespace Maroon.Chemistry.Catalyst
         {
             Debug.Log("Start catalyst simulation");
             DoStepWiseSimulation = _doStepWiseSimulation;
-            graphImage.sprite = ExperimentVariation == ExperimentVariation.LangmuirHinshelwood
-                ? graphLangmuirSprite
-                : graphVanKrevelenSprite;
+            if (graphImage)
+                graphImage.sprite = ExperimentVariation == ExperimentVariation.LangmuirHinshelwood
+                    ? graphLangmuirSprite
+                    : graphVanKrevelenSprite;
+            else if (whiteboardController)
+                whiteboardController.SelectLecture(ExperimentVariation == ExperimentVariation.LangmuirHinshelwood ? 0 : 1);
         }
 
         public void StopSimulation()
@@ -534,7 +562,8 @@ namespace Maroon.Chemistry.Catalyst
         {
             EnsureCleanSurface();
 
-            graphImage.sprite = null;
+            if (graphImage)
+                graphImage.sprite = null;
             
             catalystReactionBoxGameObject.SetActive(false);
             player.transform.position = experimentRoomPlayerSpawnTransform.position;
@@ -544,6 +573,8 @@ namespace Maroon.Chemistry.Catalyst
 
         public void TemperatureChanged(float newTemperature)
         {
+            if (!temperatureView && newTemperature != temperature.Value) // in vr scene - no QuantityView
+                temperature.Value = newTemperature;
             // update turnover rates
             _currentTurnOverRate = TurnOverRates[(int)ExperimentVariation][GetTemperatureIndex(temperature.Value)][GetPartialPressureIndex(partialPressure.Value)];
             UpdateTurnOverRateUI();
@@ -551,6 +582,8 @@ namespace Maroon.Chemistry.Catalyst
 
         public void PartialPressureChanged(float newPartialPressure)
         {
+            if (!partialPressureView && newPartialPressure != partialPressure.Value) // in vr scene - no QuantityView
+                partialPressure.Value = newPartialPressure;
             // update turnover rates
             _currentTurnOverRate = TurnOverRates[(int)ExperimentVariation][GetTemperatureIndex(temperature.Value)][GetPartialPressureIndex(partialPressure.Value)];
             UpdateTurnOverRateUI();
@@ -578,7 +611,9 @@ namespace Maroon.Chemistry.Catalyst
         public void StepWiseSimulationValueChanged(bool val)
         {
             _doStepWiseSimulation = val;
-            stepWiseEnableText.text = _doStepWiseSimulation ? "enabled" : "disabled";
+            Debug.Log($"[dbg] step wise? {val}");
+            if (stepWiseEnableText)
+                stepWiseEnableText.text = _doStepWiseSimulation ? "enabled" : "disabled";
             currentStepText.gameObject.SetActive(val);
             currentStepText.text = CurrentExperimentStage.ToString();
         }
