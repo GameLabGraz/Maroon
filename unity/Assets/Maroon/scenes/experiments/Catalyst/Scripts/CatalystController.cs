@@ -67,6 +67,7 @@ namespace Maroon.Chemistry.Catalyst
         [SerializeField] WhiteboardController whiteboardController;
         [SerializeField] Sprite graphLangmuirSprite;
         [SerializeField] Sprite graphVanKrevelenSprite;
+        [SerializeField] private CatalystVrControlPanel _controlPanel;
 
         private int _freedMoleculeCounter = 0;
         private List<Vector3> _platSpawnPoints = new List<Vector3>();
@@ -295,6 +296,7 @@ namespace Maroon.Chemistry.Catalyst
                         onReactionStart?.Invoke();
                     });
             }
+            _controlPanel.Setup(Mathf.Min(MaxXCoord - MinXCoord, MaxZCoord - MinZCoord));
         }
 
         /**
