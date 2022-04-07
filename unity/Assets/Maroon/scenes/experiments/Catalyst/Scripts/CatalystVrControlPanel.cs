@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Antares.Evaluation.LearningContent;
 using UnityEngine;
 
 public class CatalystVrControlPanel : MonoBehaviour
@@ -41,8 +42,11 @@ public class CatalystVrControlPanel : MonoBehaviour
         _previousPlayerPosition = _currentPlayerPosition;
 
         Vector3 desiredPos = _center + (_currentPlayerPosition - _center).normalized * _radius;
+        desiredPos.y = transform.position.y;
         transform.position = desiredPos;
         transform.LookAt(_playerTransform);
+        Quaternion rot = transform.rotation;
+        transform.rotation = new Quaternion(0.0f, rot.y, 0.0f, rot.w);
         _isMoving = false;
         
         //_isMoving = true;
