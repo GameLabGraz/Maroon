@@ -39,13 +39,20 @@ public class CatalystVrControlPanel : MonoBehaviour
            return;
 
         _previousPlayerPosition = _currentPlayerPosition;
-        _isMoving = true;
-        StartCoroutine(MoveObjectTowardsPlayer());
+
+        Vector3 desiredPos = _center + (_currentPlayerPosition - _center).normalized * _radius;
+        transform.position = desiredPos;
+        transform.LookAt(_playerTransform);
+        _isMoving = false;
+        
+        //_isMoving = true;
+        //StartCoroutine(MoveObjectTowardsPlayer());
     }
 
-    private IEnumerator MoveObjectTowardsPlayer()
+    // not fully working
+    /*private IEnumerator MoveObjectTowardsPlayer()
     {
-        float angle = Vector3.Angle(transform.forward, _currentPlayerPosition);
+        /*float angle = Vector3.Angle(transform.forward, _currentPlayerPosition);
         float previousDistance = 100f;
         while (_isMoving)
         {
@@ -66,5 +73,5 @@ public class CatalystVrControlPanel : MonoBehaviour
                 previousDistance = currentDistance;
             yield return null;
         }
-    }
+    }*/
 }
