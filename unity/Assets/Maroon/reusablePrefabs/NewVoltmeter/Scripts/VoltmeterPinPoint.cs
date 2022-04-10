@@ -5,7 +5,7 @@ using UnityEngine.Events;
 namespace Maroon.Tools.Voltmeter
 {
     [Serializable] public class VoltmeterEvent : UnityEvent<string> { }
-    public class VoltmeterPinPoint : MonoBehaviour, IResetObject
+    public class VoltmeterPinPoint : Pin, IResetObject
     {
         [SerializeField] private IField eField;
         [SerializeField] private float potential;
