@@ -8,18 +8,19 @@ namespace Maroon.Tools.Voltmeter
     public class VoltmeterPinPoint : Pin, IResetObject
     {
         [SerializeField] private IField eField;
-        [SerializeField] private float potential;
 
         public VoltmeterEvent onVoltageChanged;
         public VoltmeterEvent onVoltageChangedUnit;
 
-        public float GetPotential => potential;
+        private float _potential;
+
+        public float GetPotential => _potential;
 
         void Update()
         {
             if (!gameObject.activeSelf || !eField) return; 
 
-            potential = eField.getStrength(transform.position);
+            _potential = eField.getStrength(transform.position);
         }
 
         public void ResetObject()
