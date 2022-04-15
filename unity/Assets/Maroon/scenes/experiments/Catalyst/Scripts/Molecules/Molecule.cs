@@ -99,9 +99,12 @@ namespace Maroon.Chemistry.Catalyst
         {
             State = drawnState;
             StartMoleculePosition = transform.position;
+
             StartMoleculeRotation = transform.rotation;
             NewMoleculePosition = drawingMolecule.transform.position;
             NewMoleculeRotation = Quaternion.Euler(0.0f, 0.0f, 90.0f);
+            if (drawingMolecule.Type == MoleculeType.Pt || drawingMolecule.type == MoleculeType.Co)
+                NewMoleculePosition.y += FixedMoleculeYDist;
             _connectedMolecule = drawingMolecule;
         }
 
@@ -235,7 +238,7 @@ namespace Maroon.Chemistry.Catalyst
         {
             if (type != MoleculeType.CO && type != MoleculeType.O2) return;
             State = MoleculeState.Fixed;
-            transform.position = new Vector3(NewMoleculePosition.x, NewMoleculePosition.y += FixedMoleculeYDist, NewMoleculePosition.z);
+            transform.position = new Vector3(NewMoleculePosition.x, NewMoleculePosition.y, NewMoleculePosition.z);
             transform.localRotation = Quaternion.Euler(0.0f, 0.0f, 90.0f);
             if (type == MoleculeType.O2)
                 State = MoleculeState.WaitingToDissociate;
