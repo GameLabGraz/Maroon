@@ -531,13 +531,8 @@ namespace Maroon.Chemistry.Catalyst
             }
             else if (temperatureViewVr && partialPressureViewVr)
             {
-                temperatureViewVr.minimum = temperature.minValue;
-                temperatureViewVr.maximum = temperature.maxValue;
-                partialPressureViewVr.minimum = partialPressure.minValue;
-                partialPressureViewVr.maximum = partialPressure.maxValue;
-                
-                temperatureViewVr.RecalibrateRange();
-                partialPressureViewVr.RecalibrateRange();
+                temperatureViewVr.RecalibrateRange(temperature.minValue, temperature.maxValue);
+                partialPressureViewVr.RecalibrateRange(partialPressure.minValue, partialPressure.maxValue);
                 temperatureViewVr.ForceToValue(temperature.minValue);
                 partialPressureViewVr.ForceToValue(partialPressure.minValue);
             }
