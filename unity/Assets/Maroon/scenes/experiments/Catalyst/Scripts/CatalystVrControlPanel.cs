@@ -26,7 +26,7 @@ public class CatalystVrControlPanel : MonoBehaviour
         _isSetupCompleted = true;
     }
 
-    private void Update()
+    private void UpdatePositionToPlayer()
     {
         if (!_isSetupCompleted) return;
 
@@ -48,34 +48,6 @@ public class CatalystVrControlPanel : MonoBehaviour
         Quaternion rot = transform.rotation;
         transform.rotation = new Quaternion(0.0f, rot.y, 0.0f, rot.w);
         _isMoving = false;
-        
-        //_isMoving = true;
-        //StartCoroutine(MoveObjectTowardsPlayer());
     }
-
-    // not fully working
-    /*private IEnumerator MoveObjectTowardsPlayer()
-    {
-        /*float angle = Vector3.Angle(transform.forward, _currentPlayerPosition);
-        float previousDistance = 100f;
-        while (_isMoving)
-        {
-            transform.LookAt(_playerTransform);
-            if (angle < 90)
-                _angle += rotationSpeed * Time.deltaTime;
-            else
-                _angle -= rotationSpeed * Time.deltaTime;
-
-            var offset = new Vector3(Mathf.Sin(_angle), 0, Mathf.Cos(_angle)) * _radius;
-            transform.position = _center + offset;
-            
-            float currentDistance = Vector3.Distance(transform.position, _currentPlayerPosition);
-            Debug.Log($"currentDistance: {currentDistance}, previousDistance {previousDistance}, difference {currentDistance - previousDistance}");
-            if (Mathf.Abs(currentDistance - previousDistance) < 0.03f)
-                _isMoving = false;
-            else
-                previousDistance = currentDistance;
-            yield return null;
-        }
-    }*/
+    
 }
