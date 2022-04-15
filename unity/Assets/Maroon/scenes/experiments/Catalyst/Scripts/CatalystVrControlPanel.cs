@@ -6,6 +6,7 @@ public class CatalystVrControlPanel : MonoBehaviour
 {
     [SerializeField] float rotationSpeed = 0.2f;
     [SerializeField] Transform playerTransform;
+    [SerializeField] Transform centerTransform;
 
     private bool _isSetupCompleted = false;
     private bool _isMoving = false;
@@ -18,7 +19,7 @@ public class CatalystVrControlPanel : MonoBehaviour
 
     public void Setup(float radius)
     {
-        _center = transform.position;
+        _center = centerTransform.position;
         _radius = radius;
         _playerTransform = playerTransform;
         _currentPlayerPosition = playerTransform.position;

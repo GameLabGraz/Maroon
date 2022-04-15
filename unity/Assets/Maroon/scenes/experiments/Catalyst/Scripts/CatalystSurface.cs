@@ -53,7 +53,7 @@ namespace Maroon.Chemistry.Catalyst
                 coMolecule.State = MoleculeState.Fixed;
 
                 Vector3 moleculePos = platMolecule.transform.localPosition;
-                moleculePos.y += CatalystController.FixedMoleculeYDist;
+                moleculePos.y += coMolecule.FixedMoleculeYDist;
                 coMolecule.transform.localPosition = moleculePos;
 
                 Quaternion moleculeRot = Quaternion.Euler(0.0f, 0.0f, 90.0f);

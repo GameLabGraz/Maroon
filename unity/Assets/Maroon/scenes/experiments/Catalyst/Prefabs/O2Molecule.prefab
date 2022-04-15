@@ -55,6 +55,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -79,6 +80,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &2490931703194365083
 GameObject:
   m_ObjectHideFlags: 0
@@ -134,6 +136,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -158,6 +161,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &8648679889490715031
 GameObject:
   m_ObjectHideFlags: 0
@@ -213,6 +217,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -237,6 +242,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &9201737708395207699
 GameObject:
   m_ObjectHideFlags: 0
@@ -287,9 +293,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 3
   collider: {fileID: 5281235216544359750}
+  FixedMoleculeYDist: 0.2
   movementSpeed: 1
-  timeToMove: 3
-  timeUntilNextDesorb: 3
   temperature:
     assessmentName: 
     isDynamic: 0
@@ -318,7 +323,7 @@ MonoBehaviour:
     onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
-  _state: 0
+  state: 0
 --- !u!136 &5281235216544359750
 CapsuleCollider:
   m_ObjectHideFlags: 0

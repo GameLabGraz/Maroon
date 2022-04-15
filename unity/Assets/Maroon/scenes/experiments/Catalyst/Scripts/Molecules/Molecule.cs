@@ -35,6 +35,7 @@ namespace Maroon.Chemistry.Catalyst
         [Header("Molecule Specifics")]
         [SerializeField] MoleculeType type;
         [SerializeField] Collider collider;
+        [SerializeField] public float FixedMoleculeYDist; // = plat scale + endpoint atom scale
 
         [Header("Molecule Movement")]
         [SerializeField] float movementSpeed = 1;
@@ -157,6 +158,8 @@ namespace Maroon.Chemistry.Catalyst
         protected override void Start()
         {
             base.Start();
+            if (CatalystController.ExperimentVariation == ExperimentVariation.MarsVanKrevelen)
+                FixedMoleculeYDist -= 0.005f; // cobalt is 0.005 smaller
             GetRandomPositionAndRotation();
         }
 
@@ -232,7 +235,7 @@ namespace Maroon.Chemistry.Catalyst
         {
             if (type != MoleculeType.CO && type != MoleculeType.O2) return;
             State = MoleculeState.Fixed;
-            transform.position = new Vector3(NewMoleculePosition.x, NewMoleculePosition.y += CatalystController.FixedMoleculeYDist, NewMoleculePosition.z);
+            transform.position = new Vector3(NewMoleculePosition.x, NewMoleculePosition.y += FixedMoleculeYDist, NewMoleculePosition.z);
             transform.localRotation = Quaternion.Euler(0.0f, 0.0f, 90.0f);
             if (type == MoleculeType.O2)
                 State = MoleculeState.WaitingToDissociate;
