@@ -141,7 +141,7 @@ namespace Maroon.Chemistry.Catalyst
             ExperimentStages.OFillSurface
         };
 
-        public const float FixedMoleculeYDist = 0.28f - 0.075f;
+        //public const float FixedMoleculeYDist = 0.28f - 0.075f;
         public const float PlatinumScale = 0.14f;
 
         public static bool IsVrVersion;
