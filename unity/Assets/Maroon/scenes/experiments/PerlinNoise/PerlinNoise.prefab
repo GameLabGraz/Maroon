@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 3321288376727640309}
   - component: {fileID: 5508347549862600828}
   - component: {fileID: 2004588859056404946}
-  - component: {fileID: 1820848048223833132}
   m_Layer: 8
   m_Name: Mesh
   m_TagString: Untagged
@@ -26,8 +25,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2304492978552653065}
-  m_LocalRotation: {x: 0, y: 0.008726558, z: 0, w: 0.999962}
-  m_LocalPosition: {x: 0.000000025602, y: 1.083, z: 0}
+  m_LocalRotation: {x: 0, y: 0.6507311, z: 0, w: -0.7593083}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children: []
   m_Father: {fileID: 7512796908209720727}
@@ -59,7 +58,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 0546d77e207455e4ea9bd51a5069ade5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -80,19 +79,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!65 &1820848048223833132
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2304492978552653065}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4546825656559593705
 GameObject:
   m_ObjectHideFlags: 0
@@ -103,6 +89,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7512796908209720727}
   - component: {fileID: 784929167595346309}
+  - component: {fileID: 4187903809255658555}
+  - component: {fileID: 4187903809255658557}
   m_Layer: 8
   m_Name: PerlinNoise
   m_TagString: Untagged
@@ -137,11 +125,164 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 176d4c52344941a498a4ce10fa4acd2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: 100
-  height_scale: 0.44
-  thickness: 0.0185
-  scale: 3.31
-  octaves: 4
-  speed: 0.08
+  noise_experiment: {fileID: 4187903809255658555}
   rotation_speed: 4.15
-  refresh: 0
+  force_refresh: 0
+  animated: 0
+  dirty: 0
+  experiments:
+  - {fileID: 4187903809255658555}
+  - {fileID: 4187903809255658557}
+  type_selection: {fileID: 0}
+  speed: 0.1
+--- !u!114 &4187903809255658555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4546825656559593705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 316e1b7841403524f87c1c8ccb22de04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  panel: {fileID: 0}
+  experiment_name: 2D Perlin noise
+  scale:
+    assessmentName: 
+    isDynamic: 0
+    alwaysSendValueChangedEvent: 1
+    allowSystemChange: 1
+    _value: 2
+    minValue: 0
+    maxValue: 5
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 784929167595346309}
+          m_MethodName: SetDirty
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    onNewValueFromSystem:
+      m_PersistentCalls:
+        m_Calls: []
+  octaves:
+    assessmentName: 
+    isDynamic: 0
+    alwaysSendValueChangedEvent: 1
+    allowSystemChange: 1
+    _value: 1
+    minValue: 1
+    maxValue: 10
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 784929167595346309}
+          m_MethodName: SetDirty
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    onNewValueFromSystem:
+      m_PersistentCalls:
+        m_Calls: []
+  size: 67
+  height_scale: 0.1
+  thickness: 0.025
+--- !u!114 &4187903809255658557
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4546825656559593705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 931b59c86bab1be4fbf27fd4cd914182, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  panel: {fileID: 0}
+  experiment_name: 3D Voxel
+  threshold_3d_range: {x: -0.5, y: 1}
+  threshold_2d_range: {x: -1, y: 1}
+  time_scale: 0.1
+  scale:
+    assessmentName: 
+    isDynamic: 0
+    alwaysSendValueChangedEvent: 1
+    allowSystemChange: 1
+    _value: 2
+    minValue: 1
+    maxValue: 5
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 784929167595346309}
+          m_MethodName: SetDirty
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    onNewValueFromSystem:
+      m_PersistentCalls:
+        m_Calls: []
+  octaves:
+    assessmentName: 
+    isDynamic: 0
+    alwaysSendValueChangedEvent: 1
+    allowSystemChange: 1
+    _value: 1
+    minValue: 1
+    maxValue: 10
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 784929167595346309}
+          m_MethodName: SetDirty
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    onNewValueFromSystem:
+      m_PersistentCalls:
+        m_Calls: []
+  flatness:
+    assessmentName: 
+    isDynamic: 0
+    alwaysSendValueChangedEvent: 1
+    allowSystemChange: 1
+    _value: 0.87
+    minValue: 0
+    maxValue: 1
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    onNewValueFromSystem:
+      m_PersistentCalls:
+        m_Calls: []
+  size: 32
+  transform_offset: {x: 0, y: 8, z: 0}
+  speed: 1

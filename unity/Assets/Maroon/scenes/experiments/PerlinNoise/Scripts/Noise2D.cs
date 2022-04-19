@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Maroon.Physics;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -14,19 +15,20 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         [SerializeField, Range(0, 5)] float height_scale = 1;
         [SerializeField, Range(0, 0.2f)] float thickness = 1;
 
-        [Space(10)] [SerializeField, Range(0, 2)]
-        float speed = 1;
 
         private List<Vector3> vertices;
 
-        private float time;
         private Vector2 offset;
+        
+        private float total_noise_height = 0;
+        private int noise_samples;
 
 
         public override void GenerateMesh(Mesh mesh)
         {
             offset = new Vector2(Random.value, Random.value) * 1e2f;
-
+            noise_samples = 0;
+            total_noise_height = 0;
 
             var vertex_count = size * size * 2 + size * 8;
             vertices = new List<Vector3>(vertex_count);
@@ -143,8 +145,10 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
             if (!mesh)
                 return;
+            
+            mesh.Clear();
 
-            mesh.vertices = vertices.ToArray();
+            mesh.vertices = vertices.Select(v => v - new Vector3(0, total_noise_height / noise_samples, 0)).ToArray();
             mesh.uv = UVs.ToArray();
             mesh.triangles = indices.ToArray();
             mesh.RecalculateNormals();
@@ -152,8 +156,9 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         public override void UpdateMesh(Mesh mesh)
         {
-            time += Time.deltaTime * speed;
-
+            noise_samples = 0;
+            total_noise_height = 0;
+            
             var index = size * size;
             for (int x = 0; x < size; x++)
             {
@@ -199,24 +204,37 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             if (!mesh)
                 return;
 
-            mesh.vertices = vertices.ToArray();
+            mesh.vertices = vertices.Select(v => v - new Vector3(0, total_noise_height / noise_samples, 0)).ToArray();
+
+            mesh.colors = vertices
+                .Select(v => PerlinNoiseExperiment.Instance.GetVertexColor(v.y, -height_scale, 0, height_scale))
+                .ToArray();
             mesh.RecalculateNormals();
         }
 
 
         private Vector3 GetVertexNoise(float x, float y)
         {
-            var coordinates = new Vector2(x, y) / (size - 1) - Utils.half_vector;
-            var center = offset + Utils.half_vector;
-            var pos = center + coordinates * scale;
-            var height = PerlinNoiseExperiment.PerlinNoise3D(pos.x, pos.y, time, octaves);
+            var coordinates01 = new Vector2(x, y) / (size - 1) - Utils.half_vector_2;
+            var center = offset + Utils.half_vector_2;
+            var pos = center + coordinates01 * scale;
+            var height = PerlinNoiseExperiment.PerlinNoise3D(pos.x, pos.y, PerlinNoiseExperiment.Instance.time, octaves);
             height *= height_scale;
-            return new Vector3(coordinates.x, height, coordinates.y);
+
+            total_noise_height += height;
+            noise_samples++;
+            
+            return new Vector3(coordinates01.x, height, coordinates01.y);
         }
 
         private void OnValidate()
         {
             PerlinNoiseExperiment.Instance.OnValidate();
+            
+            scale.onValueChanged.RemoveAllListeners();
+            scale.onValueChanged.AddListener(_ => PerlinNoiseExperiment.Instance.SetDirty());
+            octaves.onValueChanged.RemoveAllListeners();
+            octaves.onValueChanged.AddListener(_ => PerlinNoiseExperiment.Instance.SetDirty());
         }
     }
 }
