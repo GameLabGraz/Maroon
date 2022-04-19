@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Maroon.Physics;
 using Maroon.UI;
 using TMPro;
 using UnityEditor;
@@ -35,6 +36,8 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         [SerializeField] private NoiseExperiment[] experiments;
         [SerializeField] private Dropdown type_selection;
 
+        [SerializeField] private QuantityFloat seed;
+
         private (Color32 top, Color32 middle, Color32 bottom) colors = (Color.gray, Color.yellow, Color.cyan);
 
         public void SetTopColor(float color)
@@ -65,12 +68,10 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         public void SetDirty() => dirty = true;
 
-        public void ResetSeed() => simplex_noise = new OpenSimplexNoise();
-
         [Space(10)] [SerializeField, Range(0, 2)]
         float speed = 1;
 
-        private static OpenSimplexNoise simplex_noise = new OpenSimplexNoise();
+        private static readonly OpenSimplexNoise simplex_noise = new OpenSimplexNoise(0);
 
         public float time { get; private set; }
 
@@ -140,9 +141,9 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             var noise = 0.0;
             int i;
             for (i = 1; i < octaves - float.Epsilon; i++)
-                noise += (simplex_noise.Evaluate(x * i, y * i) - 0.5f) / i;
+                noise += (simplex_noise.Evaluate(x * i, y * i, Instance.seed) - 0.5f) / i;
             var last_octave_fraction = octaves - i + 1;
-            noise += (simplex_noise.Evaluate(x * i, y * i) - 0.5f) * last_octave_fraction / i;
+            noise += (simplex_noise.Evaluate(x * i, y * i, Instance.seed) - 0.5f) * last_octave_fraction / i;
 
             return (float) noise;
         }
@@ -152,18 +153,18 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             var noise = 0.0;
             int i;
             for (i = 1; i < octaves - float.Epsilon; i++)
-                noise += (simplex_noise.Evaluate(x * i, y * i, z * i) - 0.5f) / i;
+                noise += (simplex_noise.Evaluate(x * i, y * i, z * i, Instance.seed) - 0.5f) / i;
             var last_octave_fraction = octaves - i + 1;
-            noise += (simplex_noise.Evaluate(x * i, y * i, z * i) - 0.5f) * last_octave_fraction / i;
+            noise += (simplex_noise.Evaluate(x * i, y * i, z * i, Instance.seed) - 0.5f) * last_octave_fraction / i;
 
             return (float) noise;
         }
 
         public static float PerlinNoise3D(float x, float y, float z) =>
-            (float) simplex_noise.Evaluate(x, y, z) - 0.5f;
+            (float) simplex_noise.Evaluate(x, y, z, Instance.seed) - 0.5f;
 
         public static float PerlinNoise2D(float x, float y) =>
-            (float) simplex_noise.Evaluate(x, y) - 0.5f;
+            (float) simplex_noise.Evaluate(x, y, Instance.seed) - 0.5f;
 
 
         public void OnValidate()
@@ -184,6 +185,8 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             type_selection.options = experiments.Select(e => new TMP_Dropdown.OptionData(e.experiment_name)).ToList();
             type_selection.onValueChanged.RemoveAllListeners();
             type_selection.onValueChanged.AddListener(SelectExperiment);
+            seed.onValueChanged.RemoveAllListeners();
+            seed.onValueChanged.AddListener(_ => SetDirty());
 
             if (!meshFilter)
                 meshFilter = GetComponentInChildren<MeshFilter>();
@@ -192,7 +195,6 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
             if (force_refresh)
             {
-                ResetSeed();
                 noise_experiment.GenerateMesh(meshFilter.sharedMesh);
                 force_refresh = false;
                 return;
