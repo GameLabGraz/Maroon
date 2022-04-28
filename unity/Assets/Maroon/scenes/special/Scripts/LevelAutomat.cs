@@ -40,7 +40,6 @@ public class LevelAutomat : MonoBehaviour
     [SerializeField] private string myChar = "1";
     [SerializeField] private bool clearChars = false;
     
-
     private Dictionary<int, List<GameObject>> diskCollection = new Dictionary<int, List<GameObject>>(); // <Page, Disk>
 
     private int _pageCount = 0;
@@ -226,7 +225,7 @@ public class LevelAutomat : MonoBehaviour
             foreach (var scene in cat.Scenes)
             {
                 var sceneDisk = CreateSceneDisk(scene, defaultPositions[currentTransform].position, currentPage,
-                    categoryMat, categoryHighlightMat);
+                    categoryMat, scene.SceneMaterial == null? categoryHighlightMat : scene.SceneMaterial);
                 if(currentTransform == 0)
                     diskCollection.Add(currentPage, new List<GameObject>());
                 diskCollection[currentPage].Add(sceneDisk);

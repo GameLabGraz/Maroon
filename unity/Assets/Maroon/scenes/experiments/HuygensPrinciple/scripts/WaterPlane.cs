@@ -78,7 +78,7 @@ public class WaterPlane : PausableObject, IResetObject
         Init();
         UpdatePlatePosition();
     }
-
+    
     private void Init()
     {
         CalculatePlaneMesh();

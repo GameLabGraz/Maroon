@@ -66,6 +66,8 @@ namespace Maroon.Physics.HuygensPrinciple
         private List<GameObject> midSections = new List<GameObject>();
         private List<WaveGenerator> waveGeneratorList = new List<WaveGenerator>();
 
+        private Color originalSlitPlateColor;
+
         public int NumberOfSlits
         {
             get => numberOfSlits;
@@ -106,7 +108,15 @@ namespace Maroon.Physics.HuygensPrinciple
             ResetWaveGenerators();
             SetupPlateSlits(false);
         }
-        
+
+        protected void Awake()
+        {
+            if (plateMaterial)
+                originalSlitPlateColor = plateMaterial.color;
+            else
+                originalSlitPlateColor = Color.gray;
+        }
+
         private void Start()
         {
             if(top == null)
@@ -126,11 +136,12 @@ namespace Maroon.Physics.HuygensPrinciple
                 Debug.LogError("SlitPlate::Start: Right and Left object height must be equal.");
 
             generatorCountPerSlit = CalculateGeneratorsPerSlit();
+            ResetWaveGenerators();
             SetupPlateSlits(false);
             StorePreviousState();
         }
 
-        private void SetupPlateSlits(bool numberOfSlitsChanged)
+        public void SetupPlateSlits(bool numberOfSlitsChanged)
         {
             var cubeCount = numberOfSlits + 1;
             var scale = right.transform.localScale;
@@ -258,7 +269,8 @@ namespace Maroon.Physics.HuygensPrinciple
 
         private void AddAllWaveGenerators() 
         {
-            var totalNumberOfGenerators = generatorCountPerSlit * numberOfSlits; 
+            var totalNumberOfGenerators = generatorCountPerSlit * numberOfSlits;
+            Debug.Log("TotalNumberOfGenerators: " + totalNumberOfGenerators);
             for (var count = 0; count < totalNumberOfGenerators; count++)
             {
                 AddWaveGenerator();
@@ -299,6 +311,7 @@ namespace Maroon.Physics.HuygensPrinciple
 
         public void ResetWaveGenerators()
         {
+            Debug.Log("ResetWaveGenerators");
             foreach (var generator in waveGeneratorList)
             {
                 WaveGeneratorPoolHandler.Instance.RemoveWaveGenerator(generator);
@@ -351,6 +364,11 @@ namespace Maroon.Physics.HuygensPrinciple
 
                 mr.material.color = col;
             }
+        }
+
+        protected void OnDestroy()
+        {
+            ChangeMidSectionColors(originalSlitPlateColor);
         }
     }
 }
