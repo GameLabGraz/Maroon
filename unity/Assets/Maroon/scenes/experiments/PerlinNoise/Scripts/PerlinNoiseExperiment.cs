@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Maroon.Physics;
@@ -222,6 +223,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         public static float Clamp01Exclusive(this float f) => Clamp(f, float.Epsilon, 1f - 1e-7f);
 
         public static float Clamp(this float f, float min, float max) => Mathf.Max(Mathf.Min(f, max), min);
+        public static int Clamp(this int f, int min, int max) => Mathf.Max(Mathf.Min(f, max), min);
 
         public static bool IsValidIndex<T>(this T[] list, int index) => index >= 0 && index < list.Length;
         public static bool IsValidIndex<T>(this IEnumerable<T> list, int index) => index >= 0 && index < list.Count();
@@ -234,5 +236,19 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         }
 
         public static bool IsInRange(this int value, int min, int max) => value >= min && value <= max;
+        
+        
+        //runs code at the end of the frame
+        public static void EndFrame(this MonoBehaviour mb, Action action)
+        {
+            mb.StartCoroutine(_EndFrame(action));
+        }
+
+
+        private static IEnumerator _EndFrame(Action action)
+        {
+            yield return new WaitForEndOfFrame();
+            action();
+        }
     }
 }
