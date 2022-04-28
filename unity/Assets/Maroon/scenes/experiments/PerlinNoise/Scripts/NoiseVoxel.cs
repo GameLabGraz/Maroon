@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Maroon.Physics;
 using UnityEngine;
@@ -7,7 +8,8 @@ using Random = UnityEngine.Random;
 
 namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 {
-    public class NoiseVoxel : NoiseExperiment
+    [Obsolete]
+    public class NoiseVoxel : NoiseExperiment_
     {
         [SerializeField] private Vector2 threshold_3d_range;
         [SerializeField] private Vector2 threshold_2d_range;
@@ -26,7 +28,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         private readonly List<Vector3> vertices = new List<Vector3>();
         private readonly List<int> indices = new List<int>();
         private readonly List<Color> colors = new List<Color>();
-        
+
         private Vector3 offset;
 
         private void Awake()
@@ -83,7 +85,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         public override void UpdateMesh(Mesh mesh)
         {
-            if(PerlinNoiseExperiment.Instance.noise_experiment != this)
+            if (PerlinNoiseExperimentOld.Instance.noise_experiment != this)
                 return;
 
             vertices.Clear();
@@ -94,7 +96,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
                 noise_map_array = new bool[size * size * size];
 
             FillNoiseMap(out var dirty);
-            if(!dirty)
+            if (!dirty)
                 return;
 
             var voxel = new Vector3Int();
@@ -130,15 +132,15 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
                 {
                     for (voxel.z = 0; voxel.z < size; voxel.z++)
                     {
-                        var coordinates01 = (Vector3)voxel / (size - 1) - Utils.half_vector_3;
+                        var coordinates01 = (Vector3) voxel / (size - 1) - Utils.half_vector_3;
                         var center = offset + Utils.half_vector_3;
                         var noise_pos = center + coordinates01 * scale;
-                        var time = PerlinNoiseExperiment.Instance.time * time_scale;
-                        var n3 = PerlinNoiseExperiment.PerlinNoise3D(noise_pos.x, noise_pos.y, noise_pos.z);
-                        var n2 = PerlinNoiseExperiment.PerlinNoise2D(noise_pos.x, noise_pos.z);
+                        var time = PerlinNoiseExperimentOld.Instance.time * time_scale;
+                        var n3 = PerlinNoiseExperimentOld.PerlinNoise3D(noise_pos.x, noise_pos.y, noise_pos.z);
+                        var n2 = PerlinNoiseExperimentOld.PerlinNoise2D(noise_pos.x, noise_pos.z);
                         n3 = n3.Map(threshold_3d_range.x, threshold_3d_range.y);
                         n2 = n2.Map(threshold_2d_range.x, threshold_2d_range.y);
-                        var n = n3 * (1 - flatness) + (n2 - (float)voxel.y / size) * flatness;
+                        var n = n3 * (1 - flatness) + (n2 - (float) voxel.y / size) * flatness;
                         n = BorderAdjustment(voxel, n);
                         var fill = n > 0;
 
@@ -152,11 +154,10 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         private float BorderAdjustment(Vector3Int voxel, float n)
         {
-
             var min_value = Mathf.Min(voxel.x, voxel.y, voxel.z);
             var max_value = Mathf.Max(voxel.x, voxel.y, voxel.z);
             min_value = Mathf.Min(min_value, Mathf.Abs(max_value - size));
-            
+
             return n - Mathf.Max(1 / (min_value + 0.3f) - 0.2f, 0);
         }
 
@@ -222,13 +223,14 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             // */
         }
 
-        private bool IsFaceVisible(Vector3Int voxel, Vector3Int direction) => 
+        private bool IsFaceVisible(Vector3Int voxel, Vector3Int direction) =>
             GetNoiseMapArray(voxel) && !GetNoiseMapArray(voxel + direction);
 
         private void AddFace(IReadOnlyCollection<Vector3Int> new_vertices)
         {
             vertices.AddRange(new_vertices.Select(v => v - one * 0.5f * size + transform_offset));
-            colors.AddRange(new_vertices.Select(v => PerlinNoiseExperiment.Instance.GetVertexColor(v.y, 0, size * 0.5f, size)));
+            colors.AddRange(new_vertices.Select(v =>
+                PerlinNoiseExperimentOld.Instance.GetVertexColor(v.y, 0, size * 0.5f, size)));
             indices.AddRange(new[]
             {
                 vertices.Count - 1, vertices.Count - 3, vertices.Count - 2,
@@ -240,12 +242,12 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         private void OnValidate()
         {
             offset = new Vector3(Random.value, Random.value, Random.value) * 1e2f;
-            PerlinNoiseExperiment.Instance.OnValidate();
+            PerlinNoiseExperimentOld.Instance.OnValidate();
 
             scale.onValueChanged.RemoveAllListeners();
-            scale.onValueChanged.AddListener(_ => PerlinNoiseExperiment.Instance.SetDirty());
+            scale.onValueChanged.AddListener(_ => PerlinNoiseExperimentOld.Instance.SetDirty());
             flatness.onValueChanged.RemoveAllListeners();
-            flatness.onValueChanged.AddListener(_ => PerlinNoiseExperiment.Instance.SetDirty());
+            flatness.onValueChanged.AddListener(_ => PerlinNoiseExperimentOld.Instance.SetDirty());
         }
     }
 }

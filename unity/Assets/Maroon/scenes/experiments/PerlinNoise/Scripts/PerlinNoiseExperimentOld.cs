@@ -10,7 +10,8 @@ using UnityEngine;
 
 namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 {
-    public abstract class NoiseExperiment : MonoBehaviour
+    [Obsolete]
+    public abstract class NoiseExperiment_ : MonoBehaviour
     {
         public GameObject panel;
         public abstract void GenerateMesh(Mesh mesh);
@@ -19,9 +20,10 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         public string experiment_name;
     }
 
-    public class PerlinNoiseExperiment : MonoBehaviour
+    [Obsolete]
+    public class PerlinNoiseExperimentOld : MonoBehaviour
     {
-        [SerializeField] public NoiseExperiment noise_experiment;
+        [SerializeField] public NoiseExperiment_ noise_experiment;
 
 
         [SerializeField, Range(0, 20)] private float rotation_speed = 0;
@@ -34,7 +36,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         private float rotation;
         [SerializeField] private bool dirty;
 
-        [SerializeField] private NoiseExperiment[] experiments;
+        [SerializeField] private NoiseExperiment_[] experiments;
         [SerializeField] private Dropdown type_selection;
 
         [SerializeField] private QuantityFloat seed;
@@ -92,14 +94,14 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             dirty = true;
         }
 
-        private static PerlinNoiseExperiment _instance;
+        private static PerlinNoiseExperimentOld _instance;
 
-        public static PerlinNoiseExperiment Instance
+        public static PerlinNoiseExperimentOld Instance
         {
             get
             {
                 if (_instance == null)
-                    _instance = FindObjectOfType<PerlinNoiseExperiment>();
+                    _instance = FindObjectOfType<PerlinNoiseExperimentOld>();
 
                 return _instance;
             }

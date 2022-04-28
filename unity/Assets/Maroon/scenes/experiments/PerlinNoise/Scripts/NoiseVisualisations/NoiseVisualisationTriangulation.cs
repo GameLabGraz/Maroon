@@ -1,33 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Maroon.Physics;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
-namespace Maroon.scenes.experiments.PerlinNoise.Scripts
+namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
 {
-    [Obsolete]
-    public class Noise2D : NoiseExperiment_
+    public class NoiseVisualisationTriangulation : NoiseVisualisation
     {
-        [SerializeField] private QuantityFloat scale;
-        [SerializeField] private QuantityFloat octaves;
-
-        [SerializeField, Range(3, 100)] int size = 10;
         [SerializeField, Range(0, 5)] float height_scale = 1;
         [SerializeField, Range(0, 0.2f)] float thickness = 1;
 
 
+        private NoiseType noise;
         private List<Vector3> vertices;
 
         private Vector2 offset;
-        
+
         private float total_noise_height = 0;
         private int noise_samples;
 
+        private int size;
 
-        public override void GenerateMesh(Mesh mesh)
+
+        public override void GenerateMesh(Mesh mesh, NoiseType noiseType)
         {
+            size = NoiseExperiment.Instance.size;
+            noise = noiseType;
             offset = new Vector2(Random.value, Random.value) * 1e2f;
             noise_samples = 0;
             total_noise_height = 0;
@@ -75,9 +73,9 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
             for (int x = 0; x < size; x++) //left skirt
             {
-                var noise = GetVertexNoise(x, 0);
-                vertices.Add(noise + Vector3.down * thickness);
-                vertices.Add(noise);
+                var n = GetVertexNoise(x, 0);
+                vertices.Add(n + Vector3.down * thickness);
+                vertices.Add(n);
                 UVs.Add(new Vector2(x, -1));
                 UVs.Add(new Vector2(x, 0));
 
@@ -93,9 +91,9 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
             for (int y = 0; y < size; y++) //bottom skirt
             {
-                var noise = GetVertexNoise(size - 1, y);
-                vertices.Add(noise + Vector3.down * thickness);
-                vertices.Add(noise);
+                var n = GetVertexNoise(size - 1, y);
+                vertices.Add(n + Vector3.down * thickness);
+                vertices.Add(n);
                 UVs.Add(new Vector2(size, y));
                 UVs.Add(new Vector2(size - 1, y));
 
@@ -111,9 +109,9 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
             for (int x = 0; x < size; x++) //right skirt
             {
-                var noise = GetVertexNoise(x, size - 1);
-                vertices.Add(noise + Vector3.down * thickness);
-                vertices.Add(noise);
+                var n = GetVertexNoise(x, size - 1);
+                vertices.Add(n + Vector3.down * thickness);
+                vertices.Add(n);
                 UVs.Add(new Vector2(x, size));
                 UVs.Add(new Vector2(x, size - 1));
 
@@ -129,9 +127,9 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
             for (int y = 0; y < size; y++) //top skirt
             {
-                var noise = GetVertexNoise(0, y);
-                vertices.Add(noise + Vector3.down * thickness);
-                vertices.Add(noise);
+                var n = GetVertexNoise(0, y);
+                vertices.Add(n + Vector3.down * thickness);
+                vertices.Add(n);
                 UVs.Add(new Vector2(-1, y));
                 UVs.Add(new Vector2(0, y));
 
@@ -147,7 +145,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
             if (!mesh)
                 return;
-            
+
             mesh.Clear();
 
             mesh.vertices = vertices.Select(v => v - new Vector3(0, total_noise_height / noise_samples, 0)).ToArray();
@@ -156,11 +154,21 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             mesh.RecalculateNormals();
         }
 
-        public override void UpdateMesh(Mesh mesh)
+        public override void UpdateMesh(Mesh mesh, NoiseType noiseType)
         {
+            noise = noiseType;
             noise_samples = 0;
             total_noise_height = 0;
-            
+            size = NoiseExperiment.Instance.size;
+
+
+            var vertex_count = size * size * 2 + size * 8;
+            if (vertices.Count != vertex_count)
+            {
+                GenerateMesh(mesh, noiseType);
+                return;
+            }
+
             var index = size * size;
             for (int x = 0; x < size; x++)
             {
@@ -174,33 +182,33 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             index *= 2;
             for (int x = 0; x < size; x++) //left skirt
             {
-                var noise = GetVertexNoise(x, 0);
-                vertices[index + 2 * x] = noise + Vector3.down * thickness;
-                vertices[index + 2 * x + 1] = noise;
+                var n = GetVertexNoise(x, 0);
+                vertices[index + 2 * x] = n + Vector3.down * thickness;
+                vertices[index + 2 * x + 1] = n;
             }
 
             index += size * 2;
             for (int y = 0; y < size; y++) //bottom skirt
             {
-                var noise = GetVertexNoise(size - 1, y);
-                vertices[index + 2 * y] = noise + Vector3.down * thickness;
-                vertices[index + 2 * y + 1] = noise;
+                var n = GetVertexNoise(size - 1, y);
+                vertices[index + 2 * y] = n + Vector3.down * thickness;
+                vertices[index + 2 * y + 1] = n;
             }
 
             index += size * 2;
             for (int x = 0; x < size; x++) //right skirt
             {
-                var noise = GetVertexNoise(x, size - 1);
-                vertices[index + 2 * x] = noise + Vector3.down * thickness;
-                vertices[index + 2 * x + 1] = noise;
+                var n = GetVertexNoise(x, size - 1);
+                vertices[index + 2 * x] = n + Vector3.down * thickness;
+                vertices[index + 2 * x + 1] = n;
             }
 
             index += size * 2;
             for (int y = 0; y < size; y++) //top skirt
             {
-                var noise = GetVertexNoise(0, y);
-                vertices[index + 2 * y] = noise + Vector3.down * thickness;
-                vertices[index + 2 * y + 1] = noise;
+                var n = GetVertexNoise(0, y);
+                vertices[index + 2 * y] = n + Vector3.down * thickness;
+                vertices[index + 2 * y + 1] = n;
             }
 
             if (!mesh)
@@ -209,7 +217,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             mesh.vertices = vertices.Select(v => v - new Vector3(0, total_noise_height / noise_samples, 0)).ToArray();
 
             mesh.colors = vertices
-                .Select(v => PerlinNoiseExperimentOld.Instance.GetVertexColor(v.y, -height_scale, 0, height_scale))
+                .Select(v => NoiseExperiment.Instance.GetVertexColor(v.y, -height_scale, 0, height_scale))
                 .ToArray();
             mesh.RecalculateNormals();
         }
@@ -219,24 +227,14 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         {
             var coordinates01 = new Vector2(x, y) / (size - 1) - Utils.half_vector_2;
             var center = offset + Utils.half_vector_2;
-            var pos = center + coordinates01 * scale;
-            var height = PerlinNoiseExperimentOld.PerlinNoise3D(pos.x, pos.y, PerlinNoiseExperimentOld.Instance.time, octaves);
+            var pos = center + coordinates01 * NoiseExperiment.Instance.scale;
+            var height = noise.GetNoiseMapValue(pos);
             height *= height_scale;
 
             total_noise_height += height;
             noise_samples++;
-            
-            return new Vector3(coordinates01.x, height, coordinates01.y);
-        }
 
-        private void OnValidate()
-        {
-            PerlinNoiseExperimentOld.Instance.OnValidate();
-            
-            scale.onValueChanged.RemoveAllListeners();
-            scale.onValueChanged.AddListener(_ => PerlinNoiseExperimentOld.Instance.SetDirty());
-            octaves.onValueChanged.RemoveAllListeners();
-            octaves.onValueChanged.AddListener(_ => PerlinNoiseExperimentOld.Instance.SetDirty());
+            return new Vector3(coordinates01.x, height, coordinates01.y);
         }
     }
 }
