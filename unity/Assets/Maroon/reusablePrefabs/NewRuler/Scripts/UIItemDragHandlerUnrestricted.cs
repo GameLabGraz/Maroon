@@ -8,7 +8,9 @@ namespace Maroon.Tools.Ruler
     {
         public Canvas parentCanvas;
         public GameObject generatedObject;
+        
         private GameObject _item;
+        [SerializeField] bool is2D = false;
 
         public void OnBeginDrag(PointerEventData eventData)
         {
@@ -24,7 +26,10 @@ namespace Maroon.Tools.Ruler
         {
             var screenPoint = Input.mousePosition;
             var finish = parentCanvas.worldCamera.ScreenToWorldPoint(screenPoint);
-            finish.z = 0f;
+            
+            if (!is2D)
+                finish.z = 0f;
+
             _item.transform.position = finish;
         }
 
