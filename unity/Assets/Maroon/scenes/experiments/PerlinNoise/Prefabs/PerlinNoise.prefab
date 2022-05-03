@@ -89,8 +89,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3935287607192798786}
   - component: {fileID: 2467648957187404799}
-  - component: {fileID: 7259890088693686250}
-  - component: {fileID: 1340624607847441122}
   - component: {fileID: 476483044820286854}
   - component: {fileID: 5444659040945000225}
   - component: {fileID: 6154348862582746709}
@@ -129,11 +127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c39d22369f7b73044acd1c8564bd1374, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  noise_type: {fileID: 7259890088693686250}
   noise_visualisation: {fileID: 476483044820286854}
-  noise_types:
-  - {fileID: 7259890088693686250}
-  - {fileID: 1340624607847441122}
   noise_visualisations:
   - {fileID: 476483044820286854}
   - {fileID: 5444659040945000225}
@@ -200,46 +194,6 @@ MonoBehaviour:
         m_Calls: []
   speed: 0.1
   force_refresh: 0
---- !u!114 &7259890088693686250
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7045795964604048188}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aeaa01e1061b791418691866cb9c98be, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1340624607847441122
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7045795964604048188}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7621cfc1582848746b7bc1f3c112cf2c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  flatness:
-    assessmentName: 
-    isDynamic: 0
-    alwaysSendValueChangedEvent: 1
-    allowSystemChange: 1
-    _value: 0
-    minValue: 0
-    maxValue: 1
-    onValueChanged:
-      m_PersistentCalls:
-        m_Calls: []
-    onNewValueFromSystem:
-      m_PersistentCalls:
-        m_Calls: []
-  threshold_3d_range: {x: -5, y: 5}
-  threshold_2d_range: {x: -5, y: 5}
 --- !u!114 &476483044820286854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -271,6 +225,22 @@ MonoBehaviour:
   panel: {fileID: 0}
   experiment_name: 
   transform_offset: {x: 0, y: 0, z: 0}
+  flatness:
+    assessmentName: 
+    isDynamic: 0
+    alwaysSendValueChangedEvent: 1
+    allowSystemChange: 1
+    _value: 0.5
+    minValue: 0
+    maxValue: 1
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    onNewValueFromSystem:
+      m_PersistentCalls:
+        m_Calls: []
+  threshold_3d_range: {x: 0, y: 1}
+  threshold_2d_range: {x: -2, y: 2}
 --- !u!114 &6154348862582746709
 MonoBehaviour:
   m_ObjectHideFlags: 0

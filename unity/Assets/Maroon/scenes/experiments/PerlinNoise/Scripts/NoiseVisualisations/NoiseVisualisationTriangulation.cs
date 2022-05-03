@@ -11,7 +11,6 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
         [SerializeField, Range(0, 0.2f)] float thickness = 1;
 
 
-        private NoiseType noise;
         private List<Vector3> vertices;
 
         private Vector2 offset;
@@ -22,10 +21,9 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
         private int size;
 
 
-        public override void GenerateMesh(Mesh mesh, NoiseType noiseType)
+        public override void GenerateMesh(Mesh mesh)
         {
             size = NoiseExperiment.Instance.size;
-            noise = noiseType;
             offset = new Vector2(Random.value, Random.value) * 1e2f;
             noise_samples = 0;
             total_noise_height = 0;
@@ -154,9 +152,8 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             mesh.RecalculateNormals();
         }
 
-        public override void UpdateMesh(Mesh mesh, NoiseType noiseType)
+        public override void UpdateMesh(Mesh mesh)
         {
-            noise = noiseType;
             noise_samples = 0;
             total_noise_height = 0;
             size = NoiseExperiment.Instance.size;
@@ -165,7 +162,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             var vertex_count = size * size * 2 + size * 8;
             if (vertices.Count != vertex_count)
             {
-                GenerateMesh(mesh, noiseType);
+                GenerateMesh(mesh);
                 return;
             }
 
@@ -228,7 +225,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             var coordinates01 = new Vector2(x, y) / (size - 1) - Utils.half_vector_2;
             var center = offset + Utils.half_vector_2;
             var pos = center + coordinates01 * NoiseExperiment.Instance.scale;
-            var height = noise.GetNoiseMapValue(pos);
+            var height = NoiseExperiment.Noise3D.GetNoise2D(pos.x, pos.y, NoiseExperiment.Instance.octaves);
             height *= height_scale;
 
             total_noise_height += height;

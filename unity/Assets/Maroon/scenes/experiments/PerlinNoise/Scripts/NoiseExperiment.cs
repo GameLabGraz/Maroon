@@ -7,30 +7,17 @@ using AssetUsageDetectorNamespace;
 
 namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 {
-    public abstract class NoiseType : MonoBehaviour
-    {
-        public abstract bool GenerateNoiseMap(Noise noise);
-        public abstract bool GetNoiseMapValue(Vector3 index);
-        public abstract bool GetNoiseMapValue(Vector3Int index);
-        public abstract float GetNoiseMapValue(Vector2 index);
-        public abstract float GetNoiseMapValue(Vector2Int index);
-    }
-
     public abstract class NoiseVisualisation : MonoBehaviour
     {
         public GameObject panel;
-        public abstract void GenerateMesh(Mesh mesh, NoiseType noiseType);
-        public abstract void UpdateMesh(Mesh mesh, NoiseType noiseType);
-
-        public string experiment_name;
+        public abstract void GenerateMesh(Mesh mesh);
+        public abstract void UpdateMesh(Mesh mesh);
     }
 
     public class NoiseExperiment : MonoBehaviour
     {
-        [SerializeField] private NoiseType noise_type;
         [SerializeField] private NoiseVisualisation noise_visualisation;
 
-        [SerializeField] private NoiseType[] noise_types;
         [SerializeField] private NoiseVisualisation[] noise_visualisations;
 
         [SerializeField] private bool dirty;
@@ -55,7 +42,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         private MeshFilter meshFilter;
         private float rotation;
-        private static readonly Noise noise = new Noise(0);
+        public static readonly Noise Noise3D = new Noise(0);
 
 
         private static NoiseExperiment _instance;
@@ -99,22 +86,20 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             return Color.Lerp(colors.bottom, colors.middle, value.Map(bottom, middle));
         }
 
-        public void OnSelectNoiseType(int index, string _)
-        {
-            if (!noise_types.IsValidIndex(index))
-                return;
-            dirty = true;
-            force_refresh = true;
-            noise_type = noise_types[index];
-        }
-
         public void OnSelectVisualisation(int index, string _)
         {
             if (!noise_visualisations.IsValidIndex(index))
                 return;
             dirty = true;
             force_refresh = true;
+
+            if (noise_visualisation && noise_visualisation.panel)
+                noise_visualisation.panel.SetActive(false);
+
             noise_visualisation = noise_visualisations[index];
+
+            if (noise_visualisation && noise_visualisation.panel)
+                noise_visualisation.panel.SetActive(true);
         }
 
 
@@ -124,8 +109,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         // Start is called before the first frame update
         void Start()
         {
-            noise_type.GenerateNoiseMap(noise);
-            noise_visualisation.GenerateMesh(meshFilter.sharedMesh, noise_type);
+            noise_visualisation.GenerateMesh(meshFilter.sharedMesh);
             SimulationController.Instance.StartSimulation();
 
 #if UNITY_EDITOR
@@ -147,30 +131,26 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
                 dirty = true;
             }
 
-            if (!dirty)
-                return;
             if (force_refresh)
             {
-                noise_type.GenerateNoiseMap(noise);
-                noise_visualisation.UpdateMesh(meshFilter.sharedMesh, noise_type);
+                noise_visualisation.GenerateMesh(meshFilter.sharedMesh);
+                force_refresh = false;
+                dirty = false;
+                return;
             }
-            else if (noise_type.GenerateNoiseMap(noise))
-                noise_visualisation.UpdateMesh(meshFilter.sharedMesh, noise_type);
 
+            if (!dirty)
+                return;
+
+            noise_visualisation.UpdateMesh(meshFilter.sharedMesh);
             dirty = false;
         }
 
 
         private void OnValidate()
         {
-            noise_types = GetComponents<NoiseType>();
             noise_visualisations = GetComponents<NoiseVisualisation>();
-            if (noise_types.IsEmpty() || noise_visualisations.IsEmpty())
-                return;
-
-            if (noise_type == null && noise_types.Length != 0)
-                noise_type = noise_types[0];
-            if (noise_visualisation == null && noise_visualisations.Length != 0)
+            if (noise_visualisations.Any() && noise_visualisation == null)
                 noise_visualisation = noise_visualisations[0];
 
 #if UNITY_EDITOR
@@ -196,21 +176,18 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
             if (force_refresh)
             {
-                noise_type.GenerateNoiseMap(noise);
-                noise_visualisation.GenerateMesh(meshFilter.sharedMesh, noise_type);
+                noise_visualisation.GenerateMesh(meshFilter.sharedMesh);
                 force_refresh = false;
                 return;
             }
 
             try
             {
-                if (noise_type.GenerateNoiseMap(noise))
-                    noise_visualisation.UpdateMesh(meshFilter.sharedMesh, noise_type);
+                noise_visualisation.UpdateMesh(meshFilter.sharedMesh);
             }
             catch
             {
-                if (noise_type.GenerateNoiseMap(noise))
-                    noise_visualisation.GenerateMesh(meshFilter.sharedMesh, noise_type);
+                noise_visualisation.GenerateMesh(meshFilter.sharedMesh);
             }
         }
     }

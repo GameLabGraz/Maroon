@@ -8,16 +8,15 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
     {
         [SerializeField] Vector3 transform_offset;
 
+        private Noise3D noise_3d;
         private readonly List<Vector3> vertices = new List<Vector3>();
         private readonly List<int> indices = new List<int>();
         private readonly List<Color> colors = new List<Color>();
 
         private int size;
-        private NoiseType noise;
 
-        public override void GenerateMesh(Mesh mesh, NoiseType noiseType)
+        public override void GenerateMesh(Mesh mesh)
         {
-            noise = noiseType;
             vertices.Clear();
             indices.Clear();
             colors.Clear();
@@ -45,7 +44,15 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             mesh.RecalculateNormals();
         }
 
-        public override void UpdateMesh(Mesh mesh, NoiseType noiseType) => GenerateMesh(mesh, noiseType);
+        public override void UpdateMesh(Mesh mesh)
+        {
+            var dirty = noise_3d.GenerateNoiseMap();
+
+            if (!dirty)
+                return;
+
+            GenerateMesh(mesh);
+        }
 
 
         //not doing this would allocate a new vector everytime we use this
@@ -111,7 +118,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
         }
 
         private bool IsFaceVisible(Vector3Int voxel, Vector3Int direction) =>
-            noise.GetNoiseMapValue(voxel) && !noise.GetNoiseMapValue(voxel + direction);
+            noise_3d.GetNoiseMapArrayB(voxel) && !noise_3d.GetNoiseMapArrayB(voxel + direction);
 
 
         private void AddFace(IReadOnlyCollection<Vector3Int> new_vertices)
@@ -124,6 +131,12 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
                 vertices.Count - 1, vertices.Count - 3, vertices.Count - 2,
                 vertices.Count - 4, vertices.Count - 2, vertices.Count - 3
             });
+        }
+
+
+        private void OnValidate()
+        {
+            noise_3d = GetComponent<Noise3D>();
         }
     }
 }
