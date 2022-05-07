@@ -18,6 +18,7 @@ namespace Maroon.Chemistry.Catalyst
             if (other.gameObject.name.Equals("CatalystMaterial"))
             {
                 _reactorFilled = true;
+                other.gameObject.GetComponent<MeshRenderer>().enabled = false;
                 StartCoroutine(DelayedWindowClose());
             }
         }
