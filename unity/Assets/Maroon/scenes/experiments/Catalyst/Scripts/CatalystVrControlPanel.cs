@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using Antares.Evaluation.LearningContent;
-using UnityEngine;
+﻿using UnityEngine;
+using Valve.VR;
 
 public class CatalystVrControlPanel : MonoBehaviour
 {
@@ -8,6 +7,8 @@ public class CatalystVrControlPanel : MonoBehaviour
     [SerializeField] Transform playerTransform;
     [SerializeField] Transform centerTransform;
 
+    public SteamVR_Action_Boolean triggerPress;
+    
     private bool _isSetupCompleted = false;
     private bool _isMoving = false;
     private Vector3 _center;
@@ -25,10 +26,12 @@ public class CatalystVrControlPanel : MonoBehaviour
         _currentPlayerPosition = playerTransform.position;
         _previousPlayerPosition = playerTransform.position;
         _isSetupCompleted = true;
+        triggerPress.AddOnChangeListener(UpdatePositionToPlayer, SteamVR_Input_Sources.Any);
     }
 
-    private void UpdatePositionToPlayer()
+    private void UpdatePositionToPlayer(SteamVR_Action_Boolean action, SteamVR_Input_Sources sources, bool isConnected)
     {
+        Debug.Log($"[DBG] action: {action}, sources: {sources}, isConnected: {isConnected}");
         if (!_isSetupCompleted) return;
 
         if (_isMoving) return;
