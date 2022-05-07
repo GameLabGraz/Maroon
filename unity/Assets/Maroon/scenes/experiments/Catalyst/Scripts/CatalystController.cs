@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -9,6 +10,7 @@ using Maroon.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using XCharts;
 using Random = UnityEngine.Random;
 
 namespace Maroon.Chemistry.Catalyst
@@ -90,6 +92,9 @@ namespace Maroon.Chemistry.Catalyst
         private float _maxXValLocal = 0.0f;
         private float _minZValLocal = 0.0f;
         private float _maxZValLocal = 0.0f;
+
+        private List<Serie> _langmuirGraphSeries;
+        private List<Serie> _vanKrevelenGraphSeries;
         
         private static readonly Regex WhiteSpaces = new Regex(@"\s+");
 
@@ -182,6 +187,9 @@ namespace Maroon.Chemistry.Catalyst
             graphImage.gameObject.SetActive(false);
             lineChartLangmuir.gameObject.SetActive(false);
             lineChartVanKrevelen.gameObject.SetActive(false);
+            
+            _langmuirGraphSeries = new List<Serie>(lineChartLangmuir.series.list);
+            _vanKrevelenGraphSeries = new List<Serie>(lineChartVanKrevelen.series.list);
         }
 
         private void StartExperiment()
@@ -558,19 +566,60 @@ namespace Maroon.Chemistry.Catalyst
             graphImage.gameObject.SetActive(false);
             if (ExperimentVariation == ExperimentVariation.LangmuirHinshelwood)
             {
+                lineChartLangmuir.gameObject.SetActive(true);
                 if (_doInteractiveSimulation)
                 {
-                    lineChartLangmuir.gameObject.SetActive(true);
                     lineChartLangmuir.RefreshChart();
+                }
+                else
+                {
+                    lineChartLangmuir.series.RemoveAll();
+                    StartCoroutine(CoDrawSimulationGraphs(lineChartLangmuir, _langmuirGraphSeries));
                 }
                 
             }
             else
             {
+                lineChartVanKrevelen.gameObject.SetActive(true);
                 if (_doInteractiveSimulation)
                 {
-                    lineChartVanKrevelen.gameObject.SetActive(true);
                     lineChartVanKrevelen.RefreshChart();
+                }
+                else
+                {
+                    lineChartVanKrevelen.series.RemoveAll();
+                    StartCoroutine(CoDrawSimulationGraphs(lineChartVanKrevelen, _vanKrevelenGraphSeries));
+                }
+            }
+        }
+
+        private IEnumerator CoDrawSimulationGraphs(LineChart lineChart, List<Serie> initialSeries)
+        {
+            int serieCount = 0;
+            foreach (var serie in initialSeries)
+            {
+                lineChart.AddSerie(serie.type, serie.name, serie.show);
+                var serieData = serie.data;
+                foreach (var data in serieData)
+                {
+                    lineChart.AddData(serieCount, data.data[1]);
+                    lineChart.RefreshChart();
+                    yield return new WaitForSeconds(1.6f);
+                }
+                serieCount++;
+            }
+        }
+
+        private void RestoreLineGraphObjects(LineChart lineChart, List<Serie> initialSeries)
+        {
+            lineChart.series.RemoveAll();
+            for (int i = 0; i < initialSeries.Count; i++)
+            {
+                lineChart.AddSerie(initialSeries[i].type, initialSeries[i].name, initialSeries[i].show);
+                var serieData = initialSeries[i].data;
+                foreach (var data in serieData)
+                {
+                    lineChart.AddData(i, data.data[1]);
                 }
             }
         }
@@ -602,6 +651,10 @@ namespace Maroon.Chemistry.Catalyst
             catalystReactionBoxGameObject.SetActive(false);
             player.transform.position = experimentRoomPlayerSpawnTransform.position;
             
+
+            StopAllCoroutines();
+            RestoreLineGraphObjects(lineChartLangmuir, _langmuirGraphSeries);
+            RestoreLineGraphObjects(lineChartVanKrevelen, _vanKrevelenGraphSeries);
             lineChartLangmuir.gameObject.SetActive(false);
             lineChartVanKrevelen.gameObject.SetActive(false);
             
