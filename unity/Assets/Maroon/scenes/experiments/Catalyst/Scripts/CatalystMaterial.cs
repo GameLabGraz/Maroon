@@ -14,12 +14,14 @@ namespace Maroon.Chemistry.Catalyst
         private bool _isInteractable;
         private Vector3 _initialPosition;
         private Quaternion _initialRotation;
+        private bool _isAnimatorEnabledAtStart;
         
         private void Start()
         {
             _isInteractable = true;
             _initialPosition = gameObject.transform.position;
             _initialRotation = gameObject.transform.rotation;
+            _isAnimatorEnabledAtStart = animator.enabled;
         }
 
         public void OnMouseDown()
@@ -34,11 +36,12 @@ namespace Maroon.Chemistry.Catalyst
 
         public void ResetObject()
         {
+            animator.enabled = false;
             gameObject.GetComponent<MeshRenderer>().enabled = true;
-            animator.SetTrigger(_resetAnimation);
             gameObject.transform.position = _initialPosition;
             gameObject.transform.rotation = _initialRotation;
             _isInteractable = true;
+            animator.enabled = _isAnimatorEnabledAtStart;
         }
     }
 }

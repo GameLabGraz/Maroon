@@ -33,8 +33,6 @@ namespace Maroon.Chemistry.Catalyst
     {
         [Header("Simulation Parameters")]
         [SerializeField] bool isVrVersion;
-        [SerializeField] TextMeshProUGUI stepWiseEnableText;
-        [SerializeField] TextMeshProUGUI currentStepText;
         [SerializeField] QuantityFloat temperature;
         [SerializeField] QuantityFloat partialPressure;
         [SerializeField] int numberSpawnedO2Molecules;
@@ -58,6 +56,9 @@ namespace Maroon.Chemistry.Catalyst
         [SerializeField] GameObject player;
 
         [Header("UI Elements")]
+        [SerializeField] TextMeshProUGUI stepWiseEnableText;
+        [SerializeField] TextMeshProUGUI currentStepText;
+        [SerializeField] TextMeshProUGUI interactiveSimulationText;
         [SerializeField] TextMeshProUGUI turnOverRateText;
         [SerializeField] QuantityPropertyView temperatureView;
         [SerializeField] QuantityPropertyView partialPressureView;
@@ -67,7 +68,9 @@ namespace Maroon.Chemistry.Catalyst
         [SerializeField] WhiteboardController whiteboardController;
         [SerializeField] Sprite graphLangmuirSprite;
         [SerializeField] Sprite graphVanKrevelenSprite;
-        [SerializeField] private CatalystVrControlPanel _controlPanel;
+        [SerializeField] CatalystVrControlPanel _controlPanel;
+        [SerializeField] XCharts.LineChart lineChartLangmuir;
+        [SerializeField] XCharts.LineChart lineChartVanKrevelen;
 
         private int _freedMoleculeCounter = 0;
         private List<Vector3> _platSpawnPoints = new List<Vector3>();
@@ -79,6 +82,7 @@ namespace Maroon.Chemistry.Catalyst
         
         private float _currentTurnOverRate = 0.0f;
         private bool _doStepWiseSimulation = false;
+        private bool _doInteractiveSimulation = true;
 
         private System.Action onReactionStart;
 
@@ -174,7 +178,17 @@ namespace Maroon.Chemistry.Catalyst
             catalystReactionBoxGameObject.SetActive(false);
             IsVrVersion = isVrVersion;
 
-            catalystReactor.OnReactorFilled.AddListener(HandleCatalystSurfaceSetup);
+            catalystReactor.OnReactorFilled.AddListener(StartExperiment);
+            graphImage.gameObject.SetActive(false);
+            lineChartLangmuir.gameObject.SetActive(false);
+            lineChartVanKrevelen.gameObject.SetActive(false);
+        }
+
+        private void StartExperiment()
+        {
+            if (_doInteractiveSimulation)
+                HandleCatalystSurfaceSetup();
+            DrawSimulationGraphs();
         }
 
         private void OnDestroy()
@@ -539,15 +553,37 @@ namespace Maroon.Chemistry.Catalyst
 
         }
 
+        private void DrawSimulationGraphs()
+        {
+            graphImage.gameObject.SetActive(false);
+            if (ExperimentVariation == ExperimentVariation.LangmuirHinshelwood)
+            {
+                if (_doInteractiveSimulation)
+                {
+                    lineChartLangmuir.gameObject.SetActive(true);
+                    lineChartLangmuir.RefreshChart();
+                }
+                
+            }
+            else
+            {
+                if (_doInteractiveSimulation)
+                {
+                    lineChartVanKrevelen.gameObject.SetActive(true);
+                    lineChartVanKrevelen.RefreshChart();
+                }
+            }
+        }
+
         public void StartSimulation()
         {
             Debug.Log("Start catalyst simulation");
             DoStepWiseSimulation = _doStepWiseSimulation;
-            if (graphImage)
+            if (graphImage && _doInteractiveSimulation)
                 graphImage.sprite = ExperimentVariation == ExperimentVariation.LangmuirHinshelwood
                     ? graphLangmuirSprite
                     : graphVanKrevelenSprite;
-            else if (whiteboardController)
+            else if (whiteboardController && _doInteractiveSimulation)
                 whiteboardController.SelectLecture(ExperimentVariation == ExperimentVariation.LangmuirHinshelwood ? 0 : 1);
         }
 
@@ -566,7 +602,11 @@ namespace Maroon.Chemistry.Catalyst
             catalystReactionBoxGameObject.SetActive(false);
             player.transform.position = experimentRoomPlayerSpawnTransform.position;
             
+            lineChartLangmuir.gameObject.SetActive(false);
+            lineChartVanKrevelen.gameObject.SetActive(false);
+            
             _doStepWiseSimulation = false;
+            _doInteractiveSimulation = true;
         }
 
         public void TemperatureChanged(float newTemperature)
@@ -609,7 +649,6 @@ namespace Maroon.Chemistry.Catalyst
         public void StepWiseSimulationValueChanged(bool val)
         {
             _doStepWiseSimulation = val;
-            Debug.Log($"[dbg] step wise? {val}");
             if (stepWiseEnableText)
                 stepWiseEnableText.text = _doStepWiseSimulation ? "enabled" : "disabled";
             currentStepText.gameObject.SetActive(val);
@@ -634,6 +673,13 @@ namespace Maroon.Chemistry.Catalyst
             }
 
             currentStepText.text = CurrentExperimentStage.ToString();
+        }
+
+        public void InteractiveSimulationValueChanged(bool val)
+        {
+            _doInteractiveSimulation = val;
+            if (interactiveSimulationText)
+                interactiveSimulationText.text = _doInteractiveSimulation ? "enabled" : "disabled";
         }
 
         private static int GetTemperatureIndex(float temperatureValue)
