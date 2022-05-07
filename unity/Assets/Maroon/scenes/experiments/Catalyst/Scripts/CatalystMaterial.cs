@@ -34,6 +34,7 @@ namespace Maroon.Chemistry.Catalyst
 
         public void ResetObject()
         {
+            gameObject.GetComponent<MeshRenderer>().enabled = true;
             animator.SetTrigger(_resetAnimation);
             gameObject.transform.position = _initialPosition;
             gameObject.transform.rotation = _initialRotation;
