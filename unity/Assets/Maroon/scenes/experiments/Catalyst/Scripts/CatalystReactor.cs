@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -6,6 +7,8 @@ namespace Maroon.Chemistry.Catalyst
 {
     public class CatalystReactor : MonoBehaviour, IResetObject
     {
+        [SerializeField] GameObject reactorWindowGameObject;
+        
         public UnityEvent OnReactorFilled;
         
         private bool _reactorFilled;
@@ -15,7 +18,14 @@ namespace Maroon.Chemistry.Catalyst
             if (other.gameObject.name.Equals("CatalystMaterial"))
             {
                 _reactorFilled = true;
+                StartCoroutine(DelayedWindowClose());
             }
+        }
+
+        private IEnumerator DelayedWindowClose()
+        {
+            yield return new WaitForSeconds(0.5f);
+            reactorWindowGameObject.SetActive(true);
         }
         
         public void OnMouseDown()
@@ -31,6 +41,7 @@ namespace Maroon.Chemistry.Catalyst
         public void ResetObject()
         {
             _reactorFilled = false;
+            reactorWindowGameObject.SetActive(false);
         }
     }
 }

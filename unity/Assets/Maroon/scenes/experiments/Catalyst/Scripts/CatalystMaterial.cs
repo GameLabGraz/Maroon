@@ -12,10 +12,14 @@ namespace Maroon.Chemistry.Catalyst
         private readonly int _resetAnimation = Animator.StringToHash("reset");
 
         private bool _isInteractable;
+        private Vector3 _initialPosition;
+        private Quaternion _initialRotation;
         
         private void Start()
         {
             _isInteractable = true;
+            _initialPosition = gameObject.transform.position;
+            _initialRotation = gameObject.transform.rotation;
         }
 
         public void OnMouseDown()
@@ -31,6 +35,8 @@ namespace Maroon.Chemistry.Catalyst
         public void ResetObject()
         {
             animator.SetTrigger(_resetAnimation);
+            gameObject.transform.position = _initialPosition;
+            gameObject.transform.rotation = _initialRotation;
             _isInteractable = true;
         }
     }
