@@ -7,11 +7,13 @@ namespace Maroon.Physics.CoordinateSystem
     public class CoordSystem : MonoBehaviour
     {
         [SerializeField] private Transform origin;
-        [SerializeField] private AxisController systemManager;
+        [SerializeField] private AxisController axisController;
 
         private Dictionary<Axis, CoordAxis> _axisDictionary;
 
         private static CoordSystem _instance;
+
+        public Dictionary<Axis, CoordAxis> AxisDictionary => _axisDictionary;
 
         public static CoordSystem Instance
         {
@@ -26,18 +28,21 @@ namespace Maroon.Physics.CoordinateSystem
         private void Start()
         {
             _ = origin ?? throw new NullReferenceException();
-            _ = systemManager ?? throw new NullReferenceException();
+            _ = axisController ?? throw new NullReferenceException();
 
-            _axisDictionary = systemManager.GetAxisDictionary();
+            _axisDictionary = axisController.GetAxisDictionary();
         }
 
-        public Vector3 GetPositionInAxisUnits(Vector3 objectTransform)
+        public List<Unit> GetAxisUnits() => axisController.GetAxisUnits();
+        public List<Unit> GetAxisSubDivisionUnits() => axisController.GetAxisSubdivisionUnits();
+
+        public Vector3 GetPositionInAxisUnits(Vector3 objectTransform, Unit targetUnit = Unit.respective)
         {
             var systemSpaceCoordinates = WorldCoordinatesToSystemSpace(objectTransform);
 
-            var xValue = _axisDictionary[Axis.X].GetValueFromAxisPoint(systemSpaceCoordinates.x);
-            var yValue = _axisDictionary[Axis.Y].GetValueFromAxisPoint(systemSpaceCoordinates.y);
-            var zValue = _axisDictionary[Axis.Z].GetValueFromAxisPoint(systemSpaceCoordinates.z);
+            var xValue = _axisDictionary[Axis.X].GetValueFromAxisPoint(systemSpaceCoordinates.x, targetUnit);
+            var yValue = _axisDictionary[Axis.Y].GetValueFromAxisPoint(systemSpaceCoordinates.y, targetUnit);
+            var zValue = _axisDictionary[Axis.Z].GetValueFromAxisPoint(systemSpaceCoordinates.z, targetUnit);
 
             return new Vector3(xValue, yValue, zValue);
         }
@@ -60,14 +65,13 @@ namespace Maroon.Physics.CoordinateSystem
 
         public Vector3 WorldCoordinatesToSystemSpace(Vector3 objectTransform)
         {
-            var axisLengths = systemManager.PositiveWorldLengths;
+            var axisLengths = axisController.PositiveWorldLengths;
             var objectPosition = origin.InverseTransformDirection(objectTransform);
 
             var objectPositionRelativeToAxisLength = new Vector3(objectPosition.x / axisLengths.x,
                 objectPosition.y / axisLengths.y,
                 objectPosition.z / axisLengths.z);
 
-            Debug.Log($"POSITION OF TEST CUBE: {objectPositionRelativeToAxisLength}");
             return objectPositionRelativeToAxisLength;
         }
     }
