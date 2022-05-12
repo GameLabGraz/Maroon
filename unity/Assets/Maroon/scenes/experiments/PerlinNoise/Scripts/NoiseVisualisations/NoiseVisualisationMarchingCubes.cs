@@ -8,6 +8,8 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
     public class NoiseVisualisationMarchingCubes : NoiseVisualisation
     {
         [SerializeField] Vector3 transform_offset;
+        [SerializeField] private int max_size = 30;
+        public override int GetMaxSize() => max_size;
 
         private Noise3D noise_3d;
         private readonly List<Vector3> vertices = new List<Vector3>();

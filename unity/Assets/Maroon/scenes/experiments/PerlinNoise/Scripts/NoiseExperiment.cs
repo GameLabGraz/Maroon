@@ -13,6 +13,8 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         public GameObject panel;
         public abstract void GenerateMesh(Mesh mesh);
         public abstract void UpdateMesh(Mesh mesh);
+
+        public virtual int GetMaxSize() => 50;
     }
 
     public class NoiseExperiment : MonoBehaviour
@@ -22,10 +24,13 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         [SerializeField] private NoiseVisualisation[] noise_visualisations;
 
         [SerializeField] private bool dirty;
-        [SerializeField] private bool animated;
         [SerializeField, Range(0, 20)] private float rotation_speed = 0;
         [SerializeField] private float mouse_sensitivity = 1;
+        [SerializeField] private float rotaion_reset_speed = 0.1f;
         [SerializeField] private Dropdown shader_type_dropdown;
+        [SerializeField] private Slider size_slider;
+
+        [SerializeField] private Shader[] shaders;
 
         [SerializeField, Header("Common Configuration")]
         private QuantityFloat seed;
@@ -38,8 +43,10 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         [Space(10)] [SerializeField, Range(0, 2)]
         float speed = 1;
 
-        [Header("EditorControl"), SerializeField]
+        [Header("EditorControl")] [SerializeField]
         private bool force_refresh;
+
+        [SerializeField] private bool animated;
 
         public float time { get; private set; }
 
@@ -86,13 +93,18 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         public Color GetVertexColor(float value, float bottom, float middle, float top)
         {
-            if(shader_type_dropdown.value == 0) return Color.gray;
             if (value > middle)
                 return Color.Lerp(colors.middle, colors.top, value.Map(middle, top));
             return Color.Lerp(colors.bottom, colors.middle, value.Map(bottom, middle));
         }
 
-        public void ResetRotation() => meshFilter.transform.rotation = Quaternion.identity;
+        private void SetShader(int index)
+        {
+            if (!shaders.IsValidIndex(index))
+                return;
+
+            meshFilter.GetComponent<MeshRenderer>().material.shader = shaders[index];
+        }
 
         public void OnSelectVisualisation(int index, string _)
         {
@@ -106,8 +118,17 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
             noise_visualisation = noise_visualisations[index];
 
-            if (noise_visualisation && noise_visualisation.panel)
-                noise_visualisation.panel.SetActive(true);
+            if (noise_visualisation)
+            {
+                if (noise_visualisation.panel)
+                    noise_visualisation.panel.SetActive(true);
+
+                //keep same relative size value, the slider doesnt change but the number
+                var relative_size = (float) size / size.maxValue;
+                size.maxValue = noise_visualisation.GetMaxSize();
+                size.Value = (int) (relative_size * size.maxValue);
+                size_slider.maxValue = size.maxValue;
+            }
         }
 
 
@@ -132,10 +153,20 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         void Update()
         {
             HandleInput();
-            
+
             if ((SimulationController.Instance && SimulationController.Instance.SimulationRunning) || animated)
             {
-                meshFilter.transform.Rotate(Vector3.up, Time.deltaTime * rotation_speed, Space.World);
+                if (!is_rotating)
+                {
+                    var current_rotation = meshFilter.transform.rotation;
+                    var target_y = current_rotation.eulerAngles.y + Time.deltaTime * rotation_speed;
+                    var target_rotation = Quaternion.Lerp(current_rotation, Quaternion.Euler(0, target_y, 0),
+                        rotaion_reset_speed * Time.deltaTime);
+                    target_rotation = Quaternion.Euler(target_rotation.eulerAngles.x, target_y,
+                        target_rotation.eulerAngles.z);
+                    meshFilter.transform.rotation = target_rotation;
+                }
+
                 time += Time.deltaTime * speed;
                 dirty = true;
             }
@@ -157,10 +188,9 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         void HandleInput()
         {
-
             if (is_rotating)
             {
-                var mouse_offset = (Vector2)Input.mousePosition - current_mouse_position;
+                var mouse_offset = (Vector2) Input.mousePosition - current_mouse_position;
                 mouse_offset *= mouse_sensitivity;
                 meshFilter.transform.Rotate(mouse_offset.y, -mouse_offset.x, 0, Space.World);
                 current_mouse_position = Input.mousePosition;
@@ -186,19 +216,21 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
                     EditorApplication.update -= Update;
             }
 #endif
-            
+
             void InitQuantityListener<T>(UnityEvent<T> onValueChanged)
             {
                 onValueChanged.RemoveAllListeners();
                 onValueChanged.AddListener(_ => SetDirty());
             }
-            
+
             InitQuantityListener(seed.onValueChanged);
             InitQuantityListener(size.onValueChanged);
             InitQuantityListener(scale.onValueChanged);
             InitQuantityListener(octaves.onValueChanged);
             InitQuantityListener(shader_type_dropdown.onValueChanged);
-            
+
+            shader_type_dropdown.onValueChanged.AddListener(SetShader);
+
             if (!meshFilter)
                 meshFilter = GetComponentInChildren<MeshFilter>();
             if (!meshFilter)
@@ -220,13 +252,13 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
                 noise_visualisation.GenerateMesh(meshFilter.sharedMesh);
             }
         }
- 
+
         void OnMouseDown()
         {
             is_rotating = true;
             current_mouse_position = Input.mousePosition;
         }
-     
+
         void OnMouseUp()
         {
             is_rotating = false;

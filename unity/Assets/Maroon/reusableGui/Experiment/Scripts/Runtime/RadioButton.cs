@@ -23,7 +23,7 @@ namespace Maroon.reusableGui.Experiment.Scripts.Runtime
         public ButtonToggleEvent OnSelect;
 
 
-        [SerializeField, ReadOnly] private List<Button> button_objects = new List<Button>();
+        private List<Button> button_objects = new List<Button>();
         private Button selected;
 
         // Start is called before the first frame update
