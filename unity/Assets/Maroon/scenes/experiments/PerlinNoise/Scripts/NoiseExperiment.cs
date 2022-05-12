@@ -3,7 +3,8 @@ using Maroon.Physics;
 using UnityEditor;
 using UnityEngine;
 using System.Linq;
-using AssetUsageDetectorNamespace;
+using Maroon.UI;
+using UnityEngine.Events;
 
 namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 {
@@ -23,6 +24,8 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         [SerializeField] private bool dirty;
         [SerializeField] private bool animated;
         [SerializeField, Range(0, 20)] private float rotation_speed = 0;
+        [SerializeField] private float mouse_sensitivity = 1;
+        [SerializeField] private Dropdown shader_type_dropdown;
 
         [SerializeField, Header("Common Configuration")]
         private QuantityFloat seed;
@@ -42,6 +45,8 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         private MeshFilter meshFilter;
         private float rotation;
+        private bool is_rotating;
+        private Vector2 current_mouse_position;
         public static readonly Noise Noise3D = new Noise(0);
 
 
@@ -81,10 +86,13 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         public Color GetVertexColor(float value, float bottom, float middle, float top)
         {
+            if(shader_type_dropdown.value == 0) return Color.gray;
             if (value > middle)
                 return Color.Lerp(colors.middle, colors.top, value.Map(middle, top));
             return Color.Lerp(colors.bottom, colors.middle, value.Map(bottom, middle));
         }
+
+        public void ResetRotation() => meshFilter.transform.rotation = Quaternion.identity;
 
         public void OnSelectVisualisation(int index, string _)
         {
@@ -123,10 +131,11 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         // Update is called once per frame
         void Update()
         {
-            if (SimulationController.Instance && SimulationController.Instance.SimulationRunning || animated)
+            HandleInput();
+            
+            if ((SimulationController.Instance && SimulationController.Instance.SimulationRunning) || animated)
             {
-                rotation += Time.deltaTime * rotation_speed;
-                meshFilter.transform.localRotation = Quaternion.Euler(Vector3.up * rotation);
+                meshFilter.transform.Rotate(Vector3.up, Time.deltaTime * rotation_speed, Space.World);
                 time += Time.deltaTime * speed;
                 dirty = true;
             }
@@ -144,6 +153,18 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
             noise_visualisation.UpdateMesh(meshFilter.sharedMesh);
             dirty = false;
+        }
+
+        void HandleInput()
+        {
+
+            if (is_rotating)
+            {
+                var mouse_offset = (Vector2)Input.mousePosition - current_mouse_position;
+                mouse_offset *= mouse_sensitivity;
+                meshFilter.transform.Rotate(mouse_offset.y, -mouse_offset.x, 0, Space.World);
+                current_mouse_position = Input.mousePosition;
+            }
         }
 
 
@@ -165,10 +186,19 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
                     EditorApplication.update -= Update;
             }
 #endif
-
-            seed.onValueChanged.RemoveAllListeners();
-            seed.onValueChanged.AddListener(_ => SetDirty());
-
+            
+            void InitQuantityListener<T>(UnityEvent<T> onValueChanged)
+            {
+                onValueChanged.RemoveAllListeners();
+                onValueChanged.AddListener(_ => SetDirty());
+            }
+            
+            InitQuantityListener(seed.onValueChanged);
+            InitQuantityListener(size.onValueChanged);
+            InitQuantityListener(scale.onValueChanged);
+            InitQuantityListener(octaves.onValueChanged);
+            InitQuantityListener(shader_type_dropdown.onValueChanged);
+            
             if (!meshFilter)
                 meshFilter = GetComponentInChildren<MeshFilter>();
             if (!meshFilter)
@@ -189,6 +219,17 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             {
                 noise_visualisation.GenerateMesh(meshFilter.sharedMesh);
             }
+        }
+ 
+        void OnMouseDown()
+        {
+            is_rotating = true;
+            current_mouse_position = Input.mousePosition;
+        }
+     
+        void OnMouseUp()
+        {
+            is_rotating = false;
         }
     }
 }

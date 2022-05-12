@@ -79,7 +79,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             var noise_values = cube.Select(c => noise_3d.GetNoiseMapArrayF(voxel + c)).ToArray();
 
             for (int i = 0; i < cube.Length; i++)
-                if (noise_values[i] > noise_3d.threshold)
+                if (noise_values[i] > noise_3d.threshold_mapped)
                     cube_index |= 1 << i;
 
             var vertex_list = new[]
@@ -117,7 +117,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
         {
             var diff = noise_values[id2] - noise_values[id1];
             diff = diff.Map(-1, 1);
-            diff = Mathf.Lerp(0.5f, diff, smoothness);
+            //   diff = Mathf.Lerp(0.5f, diff, smoothness);
             return Vector3.Lerp(cube[id1], cube[id2], diff);
         }
 

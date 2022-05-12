@@ -13,6 +13,9 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         [SerializeField] public QuantityFloat flatness;
         [SerializeField] public QuantityFloat threshold;
+        [SerializeField] private Vector2 threshold_bounds;
+
+        public float threshold_mapped => threshold.Value.Map(0, 1, threshold_bounds.x, threshold_bounds.y);
 
         [SerializeField] private Vector2 threshold_3d_range;
         [SerializeField] private Vector2 threshold_2d_range;
@@ -89,8 +92,9 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         public float GetNoiseMapArrayF(Vector3Int index) => GetNoiseMapArrayF(index.x, index.y, index.z);
 
-        public bool GetNoiseMapArrayB(Vector3Int index) => GetNoiseMapArrayF(index.x, index.y, index.z) > threshold;
-        public bool GetNoiseMapArrayB(int x, int y, int z) => GetNoiseMapArrayF(x, y, z) > threshold;
+        public bool GetNoiseMapArrayB(Vector3Int index) => GetNoiseMapArrayF(index.x, index.y, index.z) > threshold_mapped;
+
+        public bool GetNoiseMapArrayB(int x, int y, int z) => GetNoiseMapArrayF(x, y, z) > threshold_mapped;
 
         public bool IsValidNoiseArrayIndex(int x, int y, int z) =>
             x.IsInRange(0, size - 1) && y.IsInRange(0, size - 1) && z.IsInRange(0, size - 1);
