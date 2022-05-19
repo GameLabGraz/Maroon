@@ -13,16 +13,19 @@ public class Ruleset
     private Direction _direction;
     private int _moveDistance = 1;
     private Mode _mode;
+    
+    private int _id = 0;
 
     private List<List<SurroundingField>> _surrounding;
 
-    public Ruleset(State start, State end, Direction direction, Mode mode, Figure figure, List<List<SurroundingField>> surrounding) {
+    public Ruleset(State start, State end, Direction direction, Mode mode, Figure figure, List<List<SurroundingField>> surrounding, int id) {
         _startState = start;
         _endState = end;
         _direction = direction;
         _mode = mode;
         _figure = figure;
         _surrounding = surrounding;
+        _id = id;
     }
 
     public List<string> ToStringArray() {
@@ -32,6 +35,10 @@ public class Ruleset
         data.Add(_direction.GetDirectionName());
         data.Add(_mode.GetModeName());
         return data;
+    }
+    
+    public int GetId() {
+        return _id;
     }
 
     public State GetStartState() {

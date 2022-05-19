@@ -51,8 +51,15 @@ public class Rulesets : IEnumerable
         return true;
     }
 
-    public void RemoveRuleset(int position) {
-        _rules.RemoveAt(position);
+    public void RemoveRuleset(int id) {
+        int removeIndex = 0;
+        for (int counter = 0; counter < _rules.Count; counter++) {
+            if (_rules[counter].GetId() == id) {
+                removeIndex = counter;
+                break;
+            }
+        }
+        _rules.RemoveAt(removeIndex);
     }
 
     public Ruleset GetRulesetAtPosition(int position) {

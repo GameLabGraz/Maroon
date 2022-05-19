@@ -39,12 +39,13 @@ namespace StateMachine {
         private GameObject _stateMenu;
         private GameObject _rulesetMenu;
         
-        private int _dataTableRowLength = 5;
+        private int _dataTableRowLength = 6;
 
         private DialogueManager _dialogueManager;
 
         private bool _runStateMachine = false;
 
+        private GameObject _deleteButton;
         // Start is called before the first frame update
         void Start()
         {
@@ -54,6 +55,11 @@ namespace StateMachine {
             GameObject surroundingObject = GameObject.Find("Surrounding");
             Surrounding surrounding = surroundingObject.GetComponent(typeof(Surrounding)) as Surrounding;
             _surrounding = surrounding;
+            GameObject deleteButton = GameObject.Find("RulesetTextBackgroundDeleteButton");
+            if (deleteButton != null) {
+                _deleteButton = deleteButton;
+                deleteButton.SetActive(false);
+            }
             InitStates();
             InitDirections();
             InitMoves();
@@ -187,36 +193,15 @@ namespace StateMachine {
             State end = _states.FindState(endStateDropdown.options[endStateValue].text);
             Direction direction = _directions.FindDirection(directionDropdown.options[directionValue].text);
             Mode mode = _modes.FindMode(modeDropdown.options[modeValue].text);
-            Ruleset ruleset = new Ruleset(start, end, direction, mode, null, _surrounding.CloneSurrounding());
+            Ruleset ruleset = new Ruleset(start, end, direction, mode, null, _surrounding.CloneSurrounding(), _ruleCounter);
 
             (bool isAdded, string message) = _rulesets.AddRuleset(ruleset);
             
             if (isAdded) {
-                ResetDeleteRulesetDropdown();
                 CreateNewRulesetGameObject(ruleset);
             } else {
                 _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString("ErrorSameRuleTwice"), _errorColor, MessageIcon.MI_Error));
             }
-        }
-
-        public void ResetDeleteRulesetDropdown() {
-            GameObject deleteSingleRulesetDropdownObject = GameObject.Find("DeleteSingleRulesetDropdown");
-            Dropdown deleteSingleRulesetDropdown = deleteSingleRulesetDropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
-
-            if (deleteSingleRulesetDropdown) {
-                deleteSingleRulesetDropdown.ClearOptions();
-            } else {
-                Debug.Log("[ERROR]: There is no deleteSingleRulesetDropdown element!");
-                return;
-            }
-
-            for (int rulesetCounter = 0; rulesetCounter < _rulesets.GetCount(); rulesetCounter++) {
-                Dropdown.OptionData option = new Dropdown.OptionData();
-                option.text = System.Convert.ToString(rulesetCounter + 1);
-                deleteSingleRulesetDropdown.options.Add(option);
-            }
-
-            deleteSingleRulesetDropdown.RefreshShownValue();
         }
 
         void CreateNewRulesetGameObject(Ruleset ruleset) {
@@ -229,7 +214,7 @@ namespace StateMachine {
             }
             List<string> rulesetTextArray = ruleset.ToStringArray();
 
-            // For every column clone default element and fill it with new data
+            // For every column clone default element and fill it with new data; +1 for delete button
             for (int counter = 0; counter < rulesetTextArray.Count; counter++) {
                
                 (GameObject backgroundObject, GameObject rulesetTextObject) = CreateBackgroundObject(rulesetTextTableObject);
@@ -258,8 +243,40 @@ namespace StateMachine {
             // add surrounding info
             CloneSurroundingUIAndDisableButtons(rulesetTextTableObject);
 
+            CloneDeleteButton(rulesetTextTableObject);
+
             _ruleCounter += 1;
             _isLastRowColorFirstColor = !_isLastRowColorFirstColor;
+        }
+
+        private void CloneDeleteButton(GameObject rulesetTextTableObject) { 
+
+            GameObject deleteButtonObject = Instantiate(_deleteButton);
+            deleteButtonObject.SetActive(true);
+            string defaultName = deleteButtonObject.name;
+            deleteButtonObject.name = defaultName + "_" + _ruleCounter;
+            
+
+            deleteButtonObject.transform.SetParent(rulesetTextTableObject.transform);
+            deleteButtonObject.transform.localScale = new Vector3(0.5f, 0.5f, 1.0f);
+
+            Button buttonObject = deleteButtonObject.GetComponent(typeof(Button)) as Button;
+            int ruleId = _ruleCounter;
+            buttonObject.onClick.AddListener(() => {
+                DeleteRuleset(ruleId);
+            });
+          /*   rulesetTextBackgroundObject.transform.SetParent(rulesetTextTableObject.transform);
+            rulesetTextObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+            UnityEngine.UI.Image background = rulesetTextBackgroundObject.GetComponent(typeof(UnityEngine.UI.Image)) as UnityEngine.UI.Image;
+            
+            if (_isLastRowColorFirstColor) {
+                background.color = _rowColor2;
+            } else {
+                background.color = _rowColor1;
+            } */
+/* 
+            rulesetTextBackgroundObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f); */
+            return;
         }
 
         private (GameObject backgroundObject, GameObject textObject) CreateBackgroundObject(GameObject rulesetTextTableObject) {
@@ -350,6 +367,7 @@ namespace StateMachine {
             Dropdown scenarioDropdown = scenarioDropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
             scenarioDropdown.enabled = false;
             StartCoroutine(MakeMove()); 
+            DisableRemoveRulesetButtons();
         }
 
         private void ClearStateMenu() {
@@ -389,21 +407,41 @@ namespace StateMachine {
             GameObject scenarioDropdownObject = GameObject.Find("ScenarioSelectionDropdown");
             Dropdown scenarioDropdown = scenarioDropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
             scenarioDropdown.enabled = true;
+            EnableRemoveRulesetButtons();
         }
+        private void DisableRemoveRulesetButtons() {
+            GameObject rulesetTextTableObject = GameObject.Find("RulesetTextTable");
+
+            for (var counter = rulesetTextTableObject.transform.childCount - 1; counter > 6; counter--) {
+                GameObject rulesetObject = rulesetTextTableObject.transform.GetChild(counter).gameObject;     
+
+                if (rulesetObject.name.Contains("Button")) {
+                    Button buttonObject = rulesetObject.GetComponent(typeof(Button)) as Button;
+                    buttonObject.enabled = false;
+                }
+            }
+        }
+
+        private void EnableRemoveRulesetButtons() {
+            GameObject rulesetTextTableObject = GameObject.Find("RulesetTextTable");
+
+            for (var counter = rulesetTextTableObject.transform.childCount - 1; counter > 6; counter--) {
+                GameObject rulesetObject = rulesetTextTableObject.transform.GetChild(counter).gameObject;     
+
+                if (rulesetObject.name.Contains("Button") && !rulesetObject.name.EndsWith("Button")) {
+                    Button buttonObject = rulesetObject.GetComponent(typeof(Button)) as Button;
+                    buttonObject.enabled = true;
+                }
+            }
+        }
+
         public void ChangeToEditMode() {
             StartCoroutine(PlayDisable());
         }
 
-        public void DeleteRuleset() {
-            GameObject deleteSingleRulesetDropdownObject = GameObject.Find("DeleteSingleRulesetDropdown");
-            Dropdown deleteSingleRulesetDropdown = deleteSingleRulesetDropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
+        public void DeleteRuleset(int ruleId) {
 
-            int deleteSingleRulesetValue = deleteSingleRulesetDropdown.value;
-
-            if (deleteSingleRulesetDropdown.options.Count == 0) {
-                _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString("ErrorNoRuleToDelete"), _errorColor, MessageIcon.MI_Error));
-                return;
-            }
+            int deleteSingleRulesetValue = ruleId;
 
             GameObject rulesetTextTableObject = GameObject.Find("RulesetTextTable");
 
@@ -414,27 +452,26 @@ namespace StateMachine {
             
             int index = 0;
             
-            foreach (Transform ruleTextElement in rulesetTextTableObject.transform)
-            {
-                if (index >= deleteSingleRulesetValue * _dataTableRowLength + _dataTableRowLength && index < deleteSingleRulesetValue * _dataTableRowLength + 2 * _dataTableRowLength) {
-                    GameObject.Destroy(ruleTextElement.gameObject);
-                }
-                index++;
-            }
-
-
             //TODO change color of all textElements depending on the color of the ruleset removed
             var colorCounter = 0;
             bool isFirstColor = true;
             rulesetTextTableObject = GameObject.Find("RulesetTextTable");
-            for (var counter = 5; counter < rulesetTextTableObject.transform.childCount; counter++) {
-                if (counter >= deleteSingleRulesetValue * _dataTableRowLength + _dataTableRowLength && counter < deleteSingleRulesetValue * _dataTableRowLength + 2 * _dataTableRowLength) {
-                   continue;
-                }
+
+            for (var counter = rulesetTextTableObject.transform.childCount - 1; counter > 6; counter--) {
+
                 GameObject rulesetTextBackgroundObject = rulesetTextTableObject.transform.GetChild(counter).gameObject;               
-                UnityEngine.UI.Image background = rulesetTextBackgroundObject.GetComponent(typeof(UnityEngine.UI.Image)) as UnityEngine.UI.Image;
                 
-                if (colorCounter % _dataTableRowLength == 0 && colorCounter != 0) {
+                string[] objectId = rulesetTextBackgroundObject.name.Split('_');
+
+                if (objectId.Length < 2) {
+                    continue;
+                }
+
+                if (objectId[1] == deleteSingleRulesetValue.ToString()) {
+                    Destroy(rulesetTextBackgroundObject);
+                }
+
+                /* if (colorCounter % _dataTableRowLength == 0 && colorCounter != 0) {
                     isFirstColor = !isFirstColor;
                 }
                 Debug.LogFormat("{0} {1} {2}", counter, isFirstColor, colorCounter % _dataTableRowLength);
@@ -443,7 +480,7 @@ namespace StateMachine {
                     background.color = _rowColor1;
                 } else {
                     background.color = _rowColor2;
-                }
+                } */
 
                 colorCounter++;
             }
@@ -453,10 +490,8 @@ namespace StateMachine {
             } else {
                 _isLastRowColorFirstColor = false;
             }
-
             
             _rulesets.RemoveRuleset(deleteSingleRulesetValue);
-            ResetDeleteRulesetDropdown();
         }
 
         public void ResetScenario() {
@@ -480,8 +515,6 @@ namespace StateMachine {
 
         public void ResetRules() {
             _rulesets = new Rulesets();
-
-            ResetDeleteRulesetDropdown();
 
             GameObject rulesetTextTableObject = GameObject.Find("RulesetTextTable");
 
@@ -639,8 +672,6 @@ namespace StateMachine {
                     _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorNoRule"), _errorColor, player._isUser);
                     CheckEndConditions();
                     yield break;
-                } else {
-                    _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("Rule") + " " + (rulesetId + 1) + " " + LanguageManager.Instance.GetString("IsExecuted"), new Color32(0, 0, 0, 255), player._isUser);
                 }
 
                 // reset can move flag of figures
@@ -664,6 +695,8 @@ namespace StateMachine {
 
                     continue;
                 }
+
+                _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("Rule") + " " + (rulesetId + 1) + " " + LanguageManager.Instance.GetString("IsExecuted"), new Color32(0, 0, 0, 255), player._isUser);
 
                 // Set new state
                 _actualState = ruleToExecute.GetEndState();

@@ -34,7 +34,7 @@ public class EnemyMoves : IEnumerable
                         rulesets = new Rulesets();
                         Mode mode = modes.FindMode(LanguageManager.Instance.GetString("CaptureFigure"));
                         if (mode != null) {
-                            rulesets.AddRuleset(new Ruleset(state, state, enemyMove.GetDirection(), mode, null, new List<List<SurroundingField>>()));
+                            rulesets.AddRuleset(new Ruleset(state, state, enemyMove.GetDirection(), mode, null, new List<List<SurroundingField>>(), 0));
                         }
                             return rulesets;
                         }
@@ -43,7 +43,7 @@ public class EnemyMoves : IEnumerable
                 
                 Mode mode = modes.FindMode(LanguageManager.Instance.GetString("EnterEmptyField"));
                 if (mode != null) {
-                    rulesets.AddRuleset(new Ruleset(state, state, enemyMove.GetDirection(), mode, null, new List<List<SurroundingField>>()));
+                    rulesets.AddRuleset(new Ruleset(state, state, enemyMove.GetDirection(), mode, null, new List<List<SurroundingField>>(), 0));
                 }
             }
         }
