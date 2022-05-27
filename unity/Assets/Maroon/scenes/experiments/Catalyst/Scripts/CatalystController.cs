@@ -686,9 +686,13 @@ namespace Maroon.Chemistry.Catalyst
 
             StopAllCoroutines();
             RestoreLineGraphObjects(lineChartLangmuir, _langmuirGraphSeries);
+            RestoreLineGraphObjects(lineChartLangmuirVRBox, _langmuirGraphSeries);
             RestoreLineGraphObjects(lineChartVanKrevelen, _vanKrevelenGraphSeries);
+            RestoreLineGraphObjects(lineChartVanKrevelenVRBox, _vanKrevelenGraphSeries);
             lineChartLangmuir.gameObject.SetActive(false);
             lineChartVanKrevelen.gameObject.SetActive(false);
+            lineChartLangmuirVRBox.gameObject.SetActive(false);
+            lineChartVanKrevelenVRBox.gameObject.SetActive(false);
             
             _doStepWiseSimulation = false;
             _doInteractiveSimulation = true;
