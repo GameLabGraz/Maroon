@@ -67,6 +67,9 @@ namespace Maroon.Chemistry.Catalyst
         [SerializeField] VRLinearDrive temperatureViewVr;
         [SerializeField] VRLinearDrive partialPressureViewVr;
         [SerializeField] WhiteboardController whiteboardController;
+        [SerializeField] WhiteboardController whiteboardControllerBox;
+        [SerializeField] Image theoryImageLangmuir;
+        [SerializeField] Image theoryImageVanKrevelen;
         [SerializeField] CatalystVrControlPanel _controlPanel;
         [SerializeField] XCharts.LineChart lineChartLangmuir;
         [SerializeField] XCharts.LineChart lineChartVanKrevelen;
@@ -185,10 +188,16 @@ namespace Maroon.Chemistry.Catalyst
             catalystReactor.OnReactorFilled.AddListener(StartExperiment);
             lineChartLangmuir.gameObject.SetActive(false);
             lineChartVanKrevelen.gameObject.SetActive(false);
-            if (lineChartLangmuirVRBox != null)
+            
+            if (IsVrVersion)
             {
                 lineChartLangmuirVRBox.gameObject.SetActive(false);
                 lineChartVanKrevelenVRBox.gameObject.SetActive(false);
+            }
+            else
+            {
+                theoryImageLangmuir.gameObject.SetActive(false);
+                theoryImageVanKrevelen.gameObject.SetActive(false);
             }
 
             _langmuirGraphSeries = new List<Serie>(lineChartLangmuir.series.list);
@@ -199,7 +208,7 @@ namespace Maroon.Chemistry.Catalyst
         {
             if (_doInteractiveSimulation)
                 HandleCatalystSurfaceSetup();
-            if (lineChartLangmuirVRBox == null)
+            if (!IsVrVersion)
                 DrawSimulationGraphsPC();
             else
                 DrawSimulationGraphsVR();
@@ -525,7 +534,7 @@ namespace Maroon.Chemistry.Catalyst
 
         private void SetSimulationParametersMinMax(ExperimentVariation variation)
         {
-            if (temperatureView && partialPressureView)
+            if (!isVrVersion)
             {
                 temperatureView.ClearUI();
                 partialPressureView.ClearUI();
@@ -552,17 +561,17 @@ namespace Maroon.Chemistry.Catalyst
             temperature.Value = temperature.minValue;
             partialPressure.Value = partialPressure.minValue;
 
-            if (temperatureView && partialPressureView)
-            {
-                temperatureView.ShowUI();
-                partialPressureView.ShowUI();
-            }
-            else if (temperatureViewVr && partialPressureViewVr)
+            if (IsVrVersion)
             {
                 temperatureViewVr.RecalibrateRange(temperature.minValue, temperature.maxValue);
                 partialPressureViewVr.RecalibrateRange(partialPressure.minValue, partialPressure.maxValue);
                 temperatureViewVr.ForceToValue(temperature.minValue);
                 partialPressureViewVr.ForceToValue(partialPressure.minValue);
+            }
+            else
+            {
+                temperatureView.ShowUI();
+                partialPressureView.ShowUI();
             }
 
         }
@@ -650,6 +659,7 @@ namespace Maroon.Chemistry.Catalyst
 
         private void RestoreLineGraphObjects(LineChart lineChart, List<Serie> initialSeries)
         {
+            if (lineChart == null) return;
             lineChart.series.RemoveAll();
             for (int i = 0; i < initialSeries.Count; i++)
             {
@@ -667,8 +677,18 @@ namespace Maroon.Chemistry.Catalyst
             Debug.Log("Start catalyst simulation");
             DoStepWiseSimulation = _doStepWiseSimulation;
 
-            if (whiteboardController && _doInteractiveSimulation)
+            if (IsVrVersion)
+            {
                 whiteboardController.SelectLecture(ExperimentVariation == ExperimentVariation.LangmuirHinshelwood ? 0 : 1);
+                whiteboardControllerBox.SelectLecture(ExperimentVariation == ExperimentVariation.LangmuirHinshelwood ? 0 : 1);
+            }
+            else
+            {
+                if (ExperimentVariation == ExperimentVariation.LangmuirHinshelwood) 
+                    theoryImageLangmuir.gameObject.SetActive(true);
+                else
+                    theoryImageVanKrevelen.gameObject.SetActive(true);
+            }
         }
 
         public void StopSimulation()
@@ -691,9 +711,17 @@ namespace Maroon.Chemistry.Catalyst
             RestoreLineGraphObjects(lineChartVanKrevelenVRBox, _vanKrevelenGraphSeries);
             lineChartLangmuir.gameObject.SetActive(false);
             lineChartVanKrevelen.gameObject.SetActive(false);
-            lineChartLangmuirVRBox.gameObject.SetActive(false);
-            lineChartVanKrevelenVRBox.gameObject.SetActive(false);
-            
+            if (IsVrVersion)
+            {
+                lineChartLangmuirVRBox.gameObject.SetActive(false);
+                lineChartVanKrevelenVRBox.gameObject.SetActive(false);
+            }
+            else
+            {
+                theoryImageLangmuir.gameObject.SetActive(false);
+                theoryImageVanKrevelen.gameObject.SetActive(false);
+            }
+
             _doStepWiseSimulation = false;
             _doInteractiveSimulation = true;
         }
@@ -723,6 +751,14 @@ namespace Maroon.Chemistry.Catalyst
             if (currentStepText.gameObject.activeSelf)
                 currentStepText.text = CurrentExperimentStage.ToString();
             SetSimulationParametersMinMax(ExperimentVariation);
+            
+            if (IsVrVersion)
+            {
+                whiteboardController.SelectLecture(ExperimentVariation == ExperimentVariation.LangmuirHinshelwood ? 0 : 1);
+                whiteboardControllerBox.SelectLecture(ExperimentVariation == ExperimentVariation.LangmuirHinshelwood ? 0 : 1);
+                whiteboardController.Refresh();
+                whiteboardControllerBox.Refresh();
+            }
         }
 
         public void SpawnO2ButtonClicked()
