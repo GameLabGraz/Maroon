@@ -25,16 +25,12 @@ public class DepthFirstSeach : PathFindingAlgorithm
         : base("DepthFirstSeach")
     {
     }
-    public override void Init(int mazeSize, Vector2Int playerPosition, Vector2Int goalPosition)
-    {
-        base.Init(mazeSize, playerPosition, goalPosition);
-        _nodes = new List<Node>();
-        _steps = new Dictionary<int, PathFindingStep>();
-        _stepNum = 0;
-    }
 
     public override List<PathFindingStep> Run(MazeElement[,] elements)
     {
+        _nodes = new List<Node>();
+        _steps = new Dictionary<int, PathFindingStep>();
+        _stepNum = 0;
         PathFindingStep initialStep = new PathFindingStep();
         initialStep.MazeInfos = new string[_mazeSize, _mazeSize];
         done = false;

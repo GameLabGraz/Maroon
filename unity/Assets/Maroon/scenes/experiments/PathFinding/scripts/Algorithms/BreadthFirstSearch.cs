@@ -1,0 +1,107 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class BreadthFirstSearch : PathFindingAlgorithm
+{
+    private class Node
+    {
+        public Vector2Int position;
+        public Node parent;
+        public int distance;
+        public Node(Vector2Int pos)
+        {
+            position = pos;
+            parent = null;
+            distance = 0;
+        }
+    }
+    private List<Node> _neighbors;
+    private List<Node> _nodes;
+    private List<PathFindingStep> _steps;
+    private MazeElement.MazeElementType[,] layout;
+    private PathFindingStep _lastStep;
+    public BreadthFirstSearch()
+        : base("BreadthFirstSeach")
+    {
+    }
+    public override List<PathFindingStep> Run(MazeElement[,] elements)
+    {
+        _neighbors = new List<Node>();
+        _nodes = new List<Node>();
+        _steps = new List<PathFindingStep>();
+        PathFindingStep initialStep = new PathFindingStep();
+        initialStep.MazeInfos = new string[_mazeSize, _mazeSize];
+        layout = new MazeElement.MazeElementType[_mazeSize, _mazeSize];
+        for (int x = 0; x < _mazeSize; ++x)
+        {
+            for (int y = 0; y < _mazeSize; ++y)
+            {
+                layout[x, y] = elements[x, y].ElementType;
+                initialStep.MazeInfos[x, y] = "No parent";
+            }
+        }
+        layout[_playerPosition.x, _playerPosition.y] = MazeElement.MazeElementType.WALKED;
+
+        initialStep.Layout = (MazeElement.MazeElementType[,])layout.Clone();
+        initialStep.StepID = 0;
+        Node initialNode = new Node(_playerPosition);
+        _nodes.Add(initialNode);
+        _steps.Add(initialStep);
+        _lastStep = initialStep;
+        Search();
+
+        return _steps;
+    }
+    private void Search()
+    {
+        while(true)
+        {
+            foreach (Node node in _nodes)
+            {
+                foreach (Vector2Int n in AdjacentPaths(node.position, _lastStep.Layout, _mazeSize))
+                {
+                    if(_lastStep.Layout[n.x, n.y] == MazeElement.MazeElementType.PATH)
+                    {
+                        PathFindingStep result = new PathFindingStep(_lastStep);
+                        result.NextStepDelay = 1.0f;
+                        result.Layout[n.x, n.y] = MazeElement.MazeElementType.WALKED;
+                        Node neighbor = new Node(n);
+                        neighbor.distance = node.distance + 1;
+                        neighbor.parent = node;
+                        _neighbors.Add(neighbor);
+                        result.MazeInfos[n.x, n.y] = FormatNodeString(neighbor);
+                        _steps.Add(result);
+                        _lastStep = result;
+                        if (n == _goalPosition)
+                        {
+                            MarkCorrect(result, neighbor);
+                            result.NextStepDelay = -1.0f;
+                            result.Complete = true;
+                            return;
+                        }
+                    }
+                }
+            }
+            _nodes.Clear();
+            _nodes.AddRange(_neighbors);
+            _neighbors.Clear();
+        }
+    }
+    private void MarkCorrect(PathFindingStep step, Node node)
+    {
+        step.Layout[node.position.x, node.position.y] = MazeElement.MazeElementType.CORRECT;
+        if (node.parent != null)
+        {
+            MarkCorrect(step, node.parent);
+        }
+    }
+    private string FormatNodeString(Node node)
+    {
+        if (node.parent != null)
+        {
+            return string.Format("parent: [{0}, {1}]", node.parent.position.x, node.parent.position.y);
+        }
+        return string.Format("No parent");
+    }
+}

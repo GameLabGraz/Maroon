@@ -18,6 +18,7 @@ public class PathFindingLogic : MonoBehaviour
 
     private PathFindingAlgorithm[] algos =
     {
+        new BreadthFirstSearch(),
         new DepthFirstSeach(),
         new AStarPathFinding(),
         new DijkstraPathFinding()
