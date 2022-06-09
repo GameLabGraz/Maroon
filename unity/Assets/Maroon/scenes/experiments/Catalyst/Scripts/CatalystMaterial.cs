@@ -26,7 +26,7 @@ namespace Maroon.Chemistry.Catalyst
 
         public void OnMouseDown()
         {
-            if (SimulationController.Instance.SimulationRunning && _isInteractable)
+            if (SimulationController.Instance.SimulationRunning && _isInteractable && _isAnimatorEnabledAtStart)
             {
                 animator.SetTrigger(_insertCatalystMaterialAnimationTigger);
                 _isInteractable = false;

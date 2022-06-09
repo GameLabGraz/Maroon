@@ -112,12 +112,15 @@ namespace Maroon.Chemistry.Catalyst
          * Temperature changed callback.
          * Movement speed of molecules is adjusted based on temperature.
          * Influences turn over rates / frequencies.
+         * Note: It is on purpose that the maximal temperature is not adjusted for the
+         *  van Krevelen method to account for the lower temperature (about 1/2). Due to this
+         *  molecules are moving slower in this variant which is also true in reality.
          * <param name="newTemp"> New Temperature. </param>
          */
         public void TemperatureChanged(float newTemp)
         {
-            // normal temp goes from -23.15f to 176.85 (Langmuir) or from 47.85 to 89,85 ( van Krevelen) degree celsius
-            // scale this between 0 - 1 for movement speed
+            // normal temp goes from -23.15f to 176.85 (Langmuir) or from 47.85 to 89,85 (van Krevelen) degree celsius
+            // scale this between 0 - 1 for movement speed (0,508 max for van Krevelen)
             temperature.Value = newTemp;
             movementSpeed = CatalystController.ExperimentVariation == ExperimentVariation.LangmuirHinshelwood
                 ? Mathf.Clamp((temperature.Value + 23.15f) / (temperature.maxValue + 23.15f), 0.1f, 1.0f)
