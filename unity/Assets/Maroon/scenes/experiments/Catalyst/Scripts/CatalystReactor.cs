@@ -8,11 +8,18 @@ namespace Maroon.Chemistry.Catalyst
     public class CatalystReactor : MonoBehaviour, IResetObject
     {
         [SerializeField] GameObject reactorWindowGameObject;
+        [SerializeField] GameObject startButton;
         
         public UnityEvent OnReactorFilled;
         
         private bool _reactorFilled;
-        
+
+        private void Start()
+        {
+            if (startButton)
+                startButton.SetActive(false);
+        }
+
         private void OnTriggerEnter(Collider other)
         {
             if (other.gameObject.name.Equals("CatalystMaterial"))
@@ -27,6 +34,8 @@ namespace Maroon.Chemistry.Catalyst
         {
             yield return new WaitForSeconds(0.5f);
             reactorWindowGameObject.SetActive(true);
+            if (startButton)
+                startButton.SetActive(true);
         }
         
         public void OnMouseDown()
