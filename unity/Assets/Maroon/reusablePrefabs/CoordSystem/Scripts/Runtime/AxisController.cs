@@ -1,7 +1,6 @@
-﻿using System;
+﻿using GEAR.Gadgets.Attribute;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using RotaryHeart.Lib.AutoComplete;
 using UnityEngine;
 
 namespace Maroon.Physics.CoordinateSystem
@@ -18,21 +17,21 @@ namespace Maroon.Physics.CoordinateSystem
 
     public enum Unit
     {
-        none = -999,
-        femto = -15,
-        pico = -12,
-        nm = -9,
-        µm = -6,
-        mm = -3,
-        cm = -2,
-        dm = -1,
-        m = 0,
-        km = 3
+        [StringValue("respective")] respective = -1000,
+        [StringValue("none")] none = -999,
+        [StringValue("femto")] femto = -15,
+        [StringValue("pico")] pico = -12,
+        [StringValue("nm")] nm = -9,
+        [StringValue("µm")] µm = -6,
+        [StringValue("mm")] mm = -3,
+        [StringValue("cm")] cm = -2,
+        [StringValue("dm")] dm = -1,
+        [StringValue("m")] m = 0,
+        [StringValue("km")] km = 3
     }
 
     public class AxisController : MonoBehaviour
     {
-        // Start is called before the first frame update
         [SerializeField] private bool _enableNegativeDirection = false;
 
         [SerializeField] private bool _enableThirdDimension = false;
@@ -94,6 +93,13 @@ namespace Maroon.Physics.CoordinateSystem
             }
         }
 
+        public List<CoordAxis> PositveAxis => new List<CoordAxis> { FindInList(Axis.X), 
+            FindInList(Axis.Y), 
+            FindInList(Axis.Z) };
+        public List<CoordAxis> NegativeAxis => new List<CoordAxis> { FindInList(Axis.NX),
+            FindInList(Axis.NY),
+            FindInList(Axis.NZ) };
+
         public Vector3 PositiveWorldLengths => new Vector3(FindInList(Axis.X).AxisWorldLength,
             FindInList(Axis.Y).AxisWorldLength,
             FindInList(Axis.Z).AxisWorldLength);
@@ -136,11 +142,21 @@ namespace Maroon.Physics.CoordinateSystem
 
         public void ToggleNegativeAxisVisibility()
         {
-            FindInList(Axis.NX).gameObject.SetActive(_enableNegativeDirection);
-            FindInList(Axis.NY).gameObject.SetActive(_enableNegativeDirection);
+            var negativeAxis = NegativeAxis;
 
+            if (_enableNegativeDirection)
+            {
+                var positiveAxis = PositveAxis;
+                negativeAxis[0].CopyAxisValuesFrom(positiveAxis[0], true);
+                negativeAxis[1].CopyAxisValuesFrom(positiveAxis[1], true);
+                negativeAxis[2].CopyAxisValuesFrom(positiveAxis[2], true);
+            }
+
+            negativeAxis[0].gameObject.SetActive(_enableNegativeDirection);
+            negativeAxis[1].gameObject.SetActive(_enableNegativeDirection);
+           
             if (_enableThirdDimension)
-                FindInList(Axis.NZ).gameObject.SetActive(_enableNegativeDirection);
+                negativeAxis[2].gameObject.SetActive(_enableNegativeDirection);     
         }
 
         public void ToggleSpaceIndicatorVisibility()
@@ -160,6 +176,14 @@ namespace Maroon.Physics.CoordinateSystem
             {
                 axis?.UpdateFontSize(FontSize);
             }
+        }
+
+        private void UpdateNegativeAxisDimensions(CoordAxis pAxis, CoordAxis nAxis)
+        {
+            nAxis.AxisWorldLength = pAxis.AxisWorldLength;
+            nAxis.AxisLocalLength = pAxis.AxisLocalLength;
+            nAxis.AxisLengthUnit = pAxis.AxisLengthUnit;
+            nAxis.AxisSubdivisionUnit = pAxis.AxisSubdivisionUnit;
         }
 
         public void ToggleThirdDimension()
@@ -211,6 +235,21 @@ namespace Maroon.Physics.CoordinateSystem
                     : new Vector3(axisWorldLengths.x, axisWorldLengths.y, 0.2f);
             }
         }
+
+        public List<Unit> GetAxisUnits() => new List<Unit>()
+        {
+            FindInList(Axis.X).AxisLengthUnit,
+            FindInList(Axis.Y).AxisLengthUnit,
+            FindInList(Axis.Z).AxisLengthUnit
+        };
+
+        public List<Unit> GetAxisSubdivisionUnits() => new List<Unit>()
+        {
+            FindInList(Axis.X).AxisSubdivisionUnit,
+            FindInList(Axis.Y).AxisSubdivisionUnit,
+            FindInList(Axis.Z).AxisSubdivisionUnit
+        };
+     
 
         private CoordAxis FindInList(Axis direction) => _axisList.Find(axis => axis.AxisID == direction);
     }
