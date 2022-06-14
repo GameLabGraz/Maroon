@@ -39,6 +39,7 @@ namespace Maroon.Chemistry.Catalyst
         [SerializeField] QuantityFloat partialPressure;
         [SerializeField] int numberSpawnedO2Molecules;
         [SerializeField] int numberSpawnedCOMolecules;
+        [SerializeField] Material catalystBoxMaterial;
         
         [Header("Catalyst specific objects")]
         [SerializeField] CatalystReactor catalystReactor;
@@ -217,6 +218,7 @@ namespace Maroon.Chemistry.Catalyst
         private void OnDestroy()
         {
             catalystReactor.OnReactorFilled.RemoveListener(SpawnCatalystSurfaceObject);
+            catalystBoxMaterial.color = Color.black;
         }
         
         /**
@@ -724,12 +726,22 @@ namespace Maroon.Chemistry.Catalyst
 
             _doStepWiseSimulation = false;
             _doInteractiveSimulation = true;
+            
+            catalystBoxMaterial.color = Color.black;
         }
 
         public void TemperatureChanged(float newTemperature)
         {
             if (!temperatureView && newTemperature != temperature.Value) // in vr scene - no QuantityView
                 temperature.Value = newTemperature;
+
+            if (catalystBoxMaterial != null)
+            {
+                float redVal = Mathf.Clamp(newTemperature / 2, 0.0f, 80.0f);
+                Color currentColor = catalystBoxMaterial.color;
+                currentColor.r = redVal / 255.0f;
+                catalystBoxMaterial.color = currentColor;
+            }
             // update turnover rates
             _currentTurnOverRate = TurnOverRates[(int)ExperimentVariation][GetTemperatureIndex(temperature.Value)][GetPartialPressureIndex(partialPressure.Value)];
             UpdateTurnOverRateUI();
