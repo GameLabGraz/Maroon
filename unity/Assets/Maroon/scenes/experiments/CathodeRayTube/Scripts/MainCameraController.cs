@@ -9,7 +9,6 @@ namespace Maroon.PlatformControls.PC
     public class MainCameraController : MonoBehaviour, IResetObject
     {
         [SerializeField] private CRTController crtController;
-        [SerializeField] private GameObject furniture;
 
         private const float MovementSpeed = 3f;
         private const float RotationSpeed = 150f;
@@ -36,8 +35,6 @@ namespace Maroon.PlatformControls.PC
 
             _origPos = transform.position;
             _origRot = transform.rotation;
-
-            furniture.SetActive(true);
         }
 
         /// <summary>
