@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Maroon.Physics.CathodeRayTube
 {
-    public class ScreenSetup : PausableObject, IResetObject
+    public class ScreenSetup : MonoBehaviour, IResetObject
     {
         [SerializeField] private GameObject pixel;
         private readonly List<GameObject> _pixelList = new List<GameObject>();
@@ -34,14 +34,6 @@ namespace Maroon.Physics.CathodeRayTube
                     _pixelList.Add(tmpPixel);
                 }
             }
-        }
-
-        protected override void HandleUpdate()
-        {
-        }
-
-        protected override void HandleFixedUpdate()
-        {
         }
 
         public void ActivatePixel(Vector3 contactPoint)

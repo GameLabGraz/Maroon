@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Maroon.Physics.CathodeRayTube
 {
-    public class ElectronLineController : PausableObject, IResetObject
+    public class ElectronLineController : MonoBehaviour, IResetObject
     {
         private CRTController _crtController;
         [SerializeField] private GameObject screen;
@@ -27,15 +27,6 @@ namespace Maroon.Physics.CathodeRayTube
             lineRenderer.enabled = false;
             spiral.GetComponent<MeshRenderer>().material = metal;
             electronCloud.SetActive(false);
-        }
-
-        protected override void HandleUpdate()
-        {
-        }
-
-        protected override void HandleFixedUpdate()
-        {
-            
         }
 
         public void UpdateElectronLine()
