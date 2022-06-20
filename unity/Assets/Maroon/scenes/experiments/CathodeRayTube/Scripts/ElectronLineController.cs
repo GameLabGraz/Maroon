@@ -6,7 +6,7 @@ namespace Maroon.Physics.CathodeRayTube
 {
     public class ElectronLineController : MonoBehaviour, IResetObject
     {
-        private CRTController _crtController;
+        [SerializeField] private CRTController crtController;
         [SerializeField] private GameObject screen;
         [SerializeField] private GameObject anode;
         [SerializeField] private GameObject spiral;
@@ -14,17 +14,17 @@ namespace Maroon.Physics.CathodeRayTube
         [SerializeField] private Material hotMetal;
         [SerializeField] private GameObject electronCloud;
         [SerializeField] private Material electronLineMaterial;
+        private LineRenderer _lineRenderer;
         private float _timeStep;
 
-        private new void Start()
+        private void Start()
         {
-            _crtController = transform.parent.gameObject.GetComponent<CRTController>();
-            _timeStep = _crtController.GetTimeStep();
-            var lineRenderer = gameObject.AddComponent<LineRenderer>();
-            lineRenderer.material = electronLineMaterial;
-            lineRenderer.widthMultiplier = 0.005f;
-            lineRenderer.positionCount = _crtController.lineResolution;
-            lineRenderer.enabled = false;
+            _timeStep = crtController.GetTimeStep();
+            _lineRenderer = gameObject.AddComponent<LineRenderer>();
+            _lineRenderer.material = electronLineMaterial;
+            _lineRenderer.widthMultiplier = 0.005f;
+            _lineRenderer.positionCount = crtController.lineResolution;
+            _lineRenderer.enabled = false;
             spiral.GetComponent<MeshRenderer>().material = metal;
             electronCloud.SetActive(false);
         }
@@ -38,9 +38,8 @@ namespace Maroon.Physics.CathodeRayTube
 
         private IEnumerator UpdateElectronLineCoRoutine()
         {
-            var lineRenderer = GetComponent<LineRenderer>();
-            lineRenderer.positionCount = _crtController.lineResolution;
-            lineRenderer.enabled = true;
+            _lineRenderer.positionCount = crtController.lineResolution;
+            _lineRenderer.enabled = true;
             spiral.GetComponent<MeshRenderer>().material = hotMetal;
             electronCloud.SetActive(true);
             var currentVel = new Vector3();
@@ -49,18 +48,18 @@ namespace Maroon.Physics.CathodeRayTube
             List<Vector3> velocities = new List<Vector3>();
             List<Vector3> forces = new List<Vector3>();
 
-            points.Add(_crtController.GetCRTStart());
+            points.Add(crtController.GetCRTStart());
             lineRendererPoints.Add(anode.transform.position);
             velocities.Add(Vector3.zero);
-            forces.Add(_crtController.ApplyForce(points[0]));
+            forces.Add(crtController.ApplyForce(points[0]));
             var oldPoint = points[0];
             var newPoint = points[0];
 
-            for (int i = 1; i < _crtController.lineResolution; i++)
+            for (int i = 1; i < crtController.lineResolution; i++)
             {
                 oldPoint = points[i - 1];
 
-                currentVel += _crtController.RK4(oldPoint);
+                currentVel += crtController.RK4(oldPoint);
 
                 newPoint = oldPoint;
                 newPoint += currentVel * _timeStep;
@@ -73,24 +72,23 @@ namespace Maroon.Physics.CathodeRayTube
                     lineRendererPoints.Add(anode.transform.position);
 
                 velocities.Add(currentVel);
-                forces.Add(_crtController.ApplyForce(points[i]));
+                forces.Add(crtController.ApplyForce(points[i]));
             }
 
             UnityEngine.Physics.Linecast(newPoint, oldPoint, out var hitInfo);
             if (hitInfo.collider != null && hitInfo.collider.name.Equals("Screen"))
                 screen.GetComponent<ScreenSetup>().ActivatePixel(hitInfo.point);
             
-            lineRenderer.SetPositions(lineRendererPoints.ToArray());
-            _crtController.UpdateData(points, velocities, forces);
+            _lineRenderer.SetPositions(lineRendererPoints.ToArray());
+            crtController.UpdateData(points, velocities, forces);
             yield return null;
         }
 
         public void ResetObject()
         {
-            var lineRenderer = GetComponent<LineRenderer>();
-            lineRenderer.positionCount = 0;
+            _lineRenderer.positionCount = 0;
             
-            lineRenderer.enabled = false;
+            _lineRenderer.enabled = false;
             spiral.GetComponent<MeshRenderer>().material = metal;
             electronCloud.SetActive(false);
 
@@ -98,14 +96,14 @@ namespace Maroon.Physics.CathodeRayTube
             List<Vector3> velocities = new List<Vector3>();
             List<Vector3> forces = new List<Vector3>();
 
-            for (int i = 0; i < _crtController.lineResolution; i++)
+            for (int i = 0; i < crtController.lineResolution; i++)
             {
                 points.Add(Vector3.zero);
                 velocities.Add(Vector3.zero);
                 forces.Add(Vector3.zero);
             }
 
-            _crtController.UpdateData(points, velocities, forces);
+            crtController.UpdateData(points, velocities, forces);
         }
     }
 }
