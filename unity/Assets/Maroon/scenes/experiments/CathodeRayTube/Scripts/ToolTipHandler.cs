@@ -6,20 +6,22 @@ namespace Maroon.Physics.CathodeRayTube
 {
     public class ToolTipHandler : MonoBehaviour
     {
-        [SerializeField] private GameObject partInfoToggle;
+        public bool PartInfoToggle { get; set; }
+
         private bool _collision;
         private Transform _hitObject;
         private GUIStyle _guiStyle = new GUIStyle();
 
         private void Start()
         {
+            PartInfoToggle = true;
             _guiStyle.normal.textColor = Color.black;
             _guiStyle.fontSize = 18;
         }
 
         private void Update()
         {
-            if (!partInfoToggle.GetComponent<Toggle>().isOn || Camera.main == null)
+            if (!PartInfoToggle || Camera.main == null)
                 return;
 
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -35,7 +37,7 @@ namespace Maroon.Physics.CathodeRayTube
 
         private void OnGUI()
         {
-            if (!_collision || !partInfoToggle.GetComponent<Toggle>().isOn)
+            if (!_collision || !PartInfoToggle)
                 return;
 
             var screenPos = Event.current.mousePosition;
