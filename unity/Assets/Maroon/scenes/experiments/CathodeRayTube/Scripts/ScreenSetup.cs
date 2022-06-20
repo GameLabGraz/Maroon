@@ -11,8 +11,8 @@ namespace Maroon.Physics.CathodeRayTube
         private new void Start()
         {
             var screenTransform = transform;
-            Vector3 screenPosition = screenTransform.position;
-            Vector3 screenScale = screenTransform.localScale;
+            var screenPosition = screenTransform.position;
+            var screenScale = screenTransform.localScale;
 
 
             var localScale = pixel.transform.localScale;
@@ -49,7 +49,7 @@ namespace Maroon.Physics.CathodeRayTube
             if (!GetComponent<Collider>().bounds.Contains(contactPoint))
                 return;
 
-            GameObject closestPixel = _pixelList[0];
+            var closestPixel = _pixelList[0];
             float closestDistance = float.MaxValue;
 
             foreach (var tmpPixel in _pixelList)

@@ -20,7 +20,7 @@ namespace Maroon.Physics.CathodeRayTube
         {
             _crtController = transform.parent.gameObject.GetComponent<CRTController>();
             _timeStep = _crtController.GetTimeStep();
-            LineRenderer lineRenderer = gameObject.AddComponent<LineRenderer>();
+            var lineRenderer = gameObject.AddComponent<LineRenderer>();
             lineRenderer.material = electronLineMaterial;
             lineRenderer.widthMultiplier = 0.005f;
             lineRenderer.positionCount = _crtController.lineResolution;
@@ -47,12 +47,12 @@ namespace Maroon.Physics.CathodeRayTube
 
         private IEnumerator UpdateElectronLineCoRoutine()
         {
-            LineRenderer lineRenderer = GetComponent<LineRenderer>();
+            var lineRenderer = GetComponent<LineRenderer>();
             lineRenderer.positionCount = _crtController.lineResolution;
             lineRenderer.enabled = true;
             spiral.GetComponent<MeshRenderer>().material = hotMetal;
             electronCloud.SetActive(true);
-            Vector3 currentVel = new Vector3();
+            var currentVel = new Vector3();
             List<Vector3> points = new List<Vector3>();
             List<Vector3> lineRendererPoints = new List<Vector3>();
             List<Vector3> velocities = new List<Vector3>();
@@ -62,8 +62,8 @@ namespace Maroon.Physics.CathodeRayTube
             lineRendererPoints.Add(anode.transform.position);
             velocities.Add(Vector3.zero);
             forces.Add(_crtController.ApplyForce(points[0]));
-            Vector3 oldPoint = points[0];
-            Vector3 newPoint = points[0];
+            var oldPoint = points[0];
+            var newPoint = points[0];
 
             for (int i = 1; i < _crtController.lineResolution; i++)
             {
@@ -96,7 +96,7 @@ namespace Maroon.Physics.CathodeRayTube
 
         public void ResetObject()
         {
-            LineRenderer lineRenderer = GetComponent<LineRenderer>();
+            var lineRenderer = GetComponent<LineRenderer>();
             lineRenderer.positionCount = 0;
             
             lineRenderer.enabled = false;

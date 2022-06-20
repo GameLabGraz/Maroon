@@ -4,42 +4,42 @@ using Maroon.UI.Charts;
 using UnityEngine;
 using XCharts;
 
-public enum DistanceEnum
-{
-    Both,
-    Vertical,
-    Horizontal
-}
-
-public enum OrderEnum
-{
-    VerticalHorizontal,
-    HorizontalVertical,
-    Vertical,
-    Horizontal
-}
-
-public enum XAxisEnum
-{
-    X,
-    Time
-}
-
-public enum YAxisEnum
-{
-    X,
-    Vx,
-    Fx,
-    Y,
-    Vy,
-    Fy,
-    Z,
-    Vz,
-    Fz
-}
-
 namespace Maroon.Physics.CathodeRayTube
 {
+    public enum DistanceEnum
+    {
+        Both,
+        Vertical,
+        Horizontal
+    }
+
+    public enum OrderEnum
+    {
+        VerticalHorizontal,
+        HorizontalVertical,
+        Vertical,
+        Horizontal
+    }
+
+    public enum XAxisEnum
+    {
+        X,
+        Time
+    }
+
+    public enum YAxisEnum
+    {
+        X,
+        Vx,
+        Fx,
+        Y,
+        Vy,
+        Fy,
+        Z,
+        Vz,
+        Fz
+    }
+    
     public class CRTController : MonoBehaviour
     {
         private ElectronLineController _electronLineController;
@@ -282,7 +282,7 @@ namespace Maroon.Physics.CathodeRayTube
         {
             plot.ResetObject();
             float timeStep = GetTimeStep();
-            LineChart lineChart = plot.GetComponent<LineChart>();
+            var lineChart = plot.GetComponent<LineChart>();
             lineChart.series.GetSerie(0).maxShow = lineResolution;
             List<float> xAxisData = new List<float>();
             List<float> yAxisData = new List<float>();
@@ -388,7 +388,7 @@ namespace Maroon.Physics.CathodeRayTube
             float size;
             float dist;
 
-            Vector3 point = Vector3.zero;
+            var point = Vector3.zero;
 
             point.x = -ElectronCharge * (vX / _electronGunLength) *
                       H((GetCRTStart().x + _electronGunLength) - currentPoint.x);
@@ -429,9 +429,9 @@ namespace Maroon.Physics.CathodeRayTube
         public Vector3 RK4(Vector3 currentPoint)
         {
             float timeStep = GetTimeStep();
-            Vector3 k1 = timeStep * ApplyForce(currentPoint) / ElectronMass;
-            Vector3 k23 = timeStep * ApplyForce(currentPoint + new Vector3(timeStep / 2, 0, 0)) / ElectronMass;
-            Vector3 k4 = timeStep * ApplyForce(currentPoint + new Vector3(timeStep, 0, 0)) / ElectronMass;
+            var k1 = timeStep * ApplyForce(currentPoint) / ElectronMass;
+            var k23 = timeStep * ApplyForce(currentPoint + new Vector3(timeStep / 2, 0, 0)) / ElectronMass;
+            var k4 = timeStep * ApplyForce(currentPoint + new Vector3(timeStep, 0, 0)) / ElectronMass;
             return (k1 + 2 * k23 + 2 * k23 + k4) / 6;
         }
 
@@ -451,7 +451,7 @@ namespace Maroon.Physics.CathodeRayTube
 
         public Vector3 GetCRTStart()
         {
-            Vector3 point = cathode.transform.position;
+            var point = cathode.transform.position;
             point.x += cathode.GetComponent<Renderer>().bounds.size.x / 2;
             return point;
         }

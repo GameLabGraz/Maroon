@@ -21,7 +21,7 @@ public class ToolTipHandler : MonoBehaviour
         if (!partInfoToggle.GetComponent<Toggle>().isOn || Camera.main != mainCamera)
             return;
 
-        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+        var ray = mainCamera.ScreenPointToRay(Input.mousePosition);
 
         _collision = false;
         if (Physics.Raycast(ray, out var hit, 10.0f, LayerMask.NameToLayer("IgnorePostProcessing")) &&
@@ -37,8 +37,8 @@ public class ToolTipHandler : MonoBehaviour
         if (!_collision|| !partInfoToggle.GetComponent<Toggle>().isOn) 
             return;
         
-        Vector2 screenPos = Event.current.mousePosition;
-        Vector2 convertedGUIPos = GUIUtility.ScreenToGUIPoint(screenPos);
+        var screenPos = Event.current.mousePosition;
+        var convertedGUIPos = GUIUtility.ScreenToGUIPoint(screenPos);
 
         GUI.Label(new Rect(convertedGUIPos.x + 15, convertedGUIPos.y, 200, 20),
             LanguageManager.Instance.GetString(_hitObject.name), _guiStyle);

@@ -25,7 +25,7 @@ public class MainCameraController : MonoBehaviour, IResetObject
 
     private void Awake()
     {
-        Vector3 crtStart = crtController.GetCRTStart();
+        var crtStart = crtController.GetCRTStart();
         _target = new Vector3(0, crtStart.y, crtStart.z);
         transform.LookAt(_target);
 
@@ -98,7 +98,7 @@ public class MainCameraController : MonoBehaviour, IResetObject
 
     public void TwoDimensionView()
     {
-        Vector3 sideView = _target + new Vector3(0, -2, -0.6f);
+        var sideView = _target + new Vector3(0, -2, -0.6f);
         transform.position = ClampCamPosition(sideView);
         transform.rotation = Quaternion.identity;
     }
