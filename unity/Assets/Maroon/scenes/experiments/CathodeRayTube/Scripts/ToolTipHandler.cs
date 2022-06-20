@@ -2,45 +2,48 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ToolTipHandler : MonoBehaviour
+namespace Maroon.Physics.CathodeRayTube
 {
-    [SerializeField] private Camera mainCamera;
-    [SerializeField] private GameObject partInfoToggle;
-    private bool _collision;
-    private Transform _hitObject;
-    private GUIStyle _guiStyle = new GUIStyle();
-
-    private void Start()
+    public class ToolTipHandler : MonoBehaviour
     {
-        _guiStyle.normal.textColor = Color.black;
-        _guiStyle.fontSize = 18;
-    }
+        [SerializeField] private Camera mainCamera;
+        [SerializeField] private GameObject partInfoToggle;
+        private bool _collision;
+        private Transform _hitObject;
+        private GUIStyle _guiStyle = new GUIStyle();
 
-    private void Update()
-    {
-        if (!partInfoToggle.GetComponent<Toggle>().isOn || Camera.main != mainCamera)
-            return;
-
-        var ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-
-        _collision = false;
-        if (Physics.Raycast(ray, out var hit, 10.0f, LayerMask.NameToLayer("IgnorePostProcessing")) &&
-            hit.transform.CompareTag("crtPart"))
+        private void Start()
         {
-            _collision = true;
-            _hitObject = hit.transform;
+            _guiStyle.normal.textColor = Color.black;
+            _guiStyle.fontSize = 18;
         }
-    }
 
-    private void OnGUI()
-    {
-        if (!_collision|| !partInfoToggle.GetComponent<Toggle>().isOn) 
-            return;
-        
-        var screenPos = Event.current.mousePosition;
-        var convertedGUIPos = GUIUtility.ScreenToGUIPoint(screenPos);
+        private void Update()
+        {
+            if (!partInfoToggle.GetComponent<Toggle>().isOn || Camera.main != mainCamera)
+                return;
 
-        GUI.Label(new Rect(convertedGUIPos.x + 15, convertedGUIPos.y, 200, 20),
-            LanguageManager.Instance.GetString(_hitObject.name), _guiStyle);
+            var ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+
+            _collision = false;
+            if (UnityEngine.Physics.Raycast(ray, out var hit, 10.0f, LayerMask.NameToLayer("IgnorePostProcessing")) &&
+                hit.transform.CompareTag("crtPart"))
+            {
+                _collision = true;
+                _hitObject = hit.transform;
+            }
+        }
+
+        private void OnGUI()
+        {
+            if (!_collision || !partInfoToggle.GetComponent<Toggle>().isOn)
+                return;
+
+            var screenPos = Event.current.mousePosition;
+            var convertedGUIPos = GUIUtility.ScreenToGUIPoint(screenPos);
+
+            GUI.Label(new Rect(convertedGUIPos.x + 15, convertedGUIPos.y, 200, 20),
+                LanguageManager.Instance.GetString(_hitObject.name), _guiStyle);
+        }
     }
 }
