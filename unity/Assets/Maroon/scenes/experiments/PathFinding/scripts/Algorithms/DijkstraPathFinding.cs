@@ -36,6 +36,7 @@ public class DijkstraPathFinding : PathFindingAlgorithm
         PathFindingStep initialStep = new PathFindingStep();
         initialStep.Layout = new MazeElement.MazeElementType[_mazeSize, _mazeSize];
         initialStep.MazeInfos = new string[_mazeSize, _mazeSize];
+        initialStep.Parents = new Vector2Int[_mazeSize, _mazeSize];
         steps.Add(initialStep);
         lastStep = initialStep;
         for (int x = 0; x < _mazeSize; ++x)
@@ -44,6 +45,7 @@ public class DijkstraPathFinding : PathFindingAlgorithm
             {
                 initialStep.Layout[x, y] = layout[x, y].ElementType;
                 initialStep.MazeInfos[x, y] = FormatNodeText(new Node(new Vector2Int(x, y)));
+                initialStep.Parents[x, y] = new Vector2Int(-1, -1);
             }
         }
         while (queue.Count > 0)
@@ -63,6 +65,10 @@ public class DijkstraPathFinding : PathFindingAlgorithm
             currentNode.discovered = true;
             searchStep.Layout[currentNode.position.x, currentNode.position.y] = MazeElement.MazeElementType.IGNORED;
             searchStep.MazeInfos[currentNode.position.x, currentNode.position.y] = FormatNodeText(currentNode);
+            if(currentNode.parent != null)
+            {
+                searchStep.Parents[currentNode.position.x, currentNode.position.y] = currentNode.parent.position;
+            }
             searchStep.NextStepDelay = 1.0f;
             steps.Add(searchStep);
             lastStep = searchStep;
@@ -78,6 +84,7 @@ public class DijkstraPathFinding : PathFindingAlgorithm
                     queue.Add(node);
                     updateStep.Layout[pos.x, pos.y] = MazeElement.MazeElementType.WALKED;
                     updateStep.MazeInfos[pos.x, pos.y] = FormatNodeText(node);
+                    updateStep.Parents[pos.x, pos.y] = currentNode.position;
                     steps.Add(updateStep);
                     lastStep = updateStep;
                     if (pos == _goalPosition)
@@ -99,6 +106,7 @@ public class DijkstraPathFinding : PathFindingAlgorithm
                             node.distance = currentNode.distance + 1;
                             node.parent = currentNode;
                             updateStep.MazeInfos[pos.x, pos.y] = FormatNodeText(node);
+                            updateStep.Parents[pos.x, pos.y] = currentNode.position;
                             steps.Add(updateStep);
                             lastStep = updateStep;
                         }

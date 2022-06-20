@@ -16,7 +16,11 @@ public class MazeElement : MonoBehaviour, IResetObject
     }
     [SerializeField] private GameObject _wallObject;
     [SerializeField] private GameObject _groundObject;
-    [SerializeField] private GameObject _highlightObject;
+    [SerializeField] private Transform _hightlightLocation;
+    [SerializeField] private GameObject _northArrow;
+    [SerializeField] private GameObject _southArrow;
+    [SerializeField] private GameObject _westArrow;
+    [SerializeField] private GameObject _eastArrow;
     [SerializeField] private Material _pathMaterial;
     [SerializeField] private Material _ignoredMaterial;
     [SerializeField] private Material _walkedMaterial;
@@ -30,6 +34,8 @@ public class MazeElement : MonoBehaviour, IResetObject
 
     public string InspectorText { get { return _inspectorText; } }
 
+    public Transform HightlightLocation { get { return _hightlightLocation; } }
+
     public int X { get { return _xCoord; } }
     public int Y { get { return _yCoord; } }
 
@@ -40,10 +46,13 @@ public class MazeElement : MonoBehaviour, IResetObject
         _type = type;
         _wallObject.SetActive(type == MazeElementType.WALL);
         _groundObject.SetActive(type == MazeElementType.PATH);
-        _highlightObject.SetActive(false);
         _groundRenderer = _groundObject.GetComponent<MeshRenderer>();
         _xCoord = x;
         _yCoord = y;
+        _northArrow.SetActive(false);
+        _southArrow.SetActive(false);
+        _eastArrow.SetActive(false);
+        _westArrow.SetActive(false);
     }
 
 
@@ -53,9 +62,35 @@ public class MazeElement : MonoBehaviour, IResetObject
         {
             Init(MazeElementType.PATH, _xCoord, _yCoord);
         }
+        _northArrow.SetActive(false);
+        _southArrow.SetActive(false);
+        _eastArrow.SetActive(false);
+        _westArrow.SetActive(false);
     }
 
-    public void ApplyStep(MazeElementType type, string inspectorText)
+    public void ShowParent(int parentX, int parentY)
+    {
+        if (parentX < 0 || parentY < 0)
+            return;
+        if(parentX < _xCoord)
+        {
+            _northArrow.SetActive(true);
+        }
+        else if (parentX > _xCoord)
+        {
+            _southArrow.SetActive(true);
+        }
+        else if (parentY < _yCoord)
+        {
+            _eastArrow.SetActive(true);
+        }
+        else if (parentY > _yCoord)
+        {
+            _westArrow.SetActive(true);
+        }
+    }
+
+    public void ApplyStep(MazeElementType type, string inspectorText, Vector2Int parent)
     {
         _type = type;
         switch (type)
@@ -88,19 +123,7 @@ public class MazeElement : MonoBehaviour, IResetObject
                 break;
         }
         _inspectorText = inspectorText;
-    }
-
-    public void MarkInspected()
-    {
-        if(_type != MazeElementType.WALL)
-        {
-            _highlightObject.SetActive(true);
-        }
-    }
-
-    public void UnmarkInspected()
-    {
-        _highlightObject.SetActive(false);
+        ShowParent(parent.x, parent.y);
     }
 
     #region MazeGeneration

@@ -39,7 +39,13 @@ public class PathFindingStep
         set { mazeInfos = value; }
     }
 
+    private Vector2Int[,] parents;
 
+    public Vector2Int[,] Parents
+    {
+        get { return parents; }
+        set { parents = value; }
+    }
 
     private int stepID;
 
@@ -57,5 +63,6 @@ public class PathFindingStep
     {
         Layout = (MazeElement.MazeElementType[,])other.Layout.Clone();
         MazeInfos = (string[,])other.MazeInfos.Clone();
+        parents = (Vector2Int[,])other.parents.Clone();
     }
 }

@@ -33,12 +33,14 @@ public class BreadthFirstSearch : PathFindingAlgorithm
         PathFindingStep initialStep = new PathFindingStep();
         initialStep.MazeInfos = new string[_mazeSize, _mazeSize];
         layout = new MazeElement.MazeElementType[_mazeSize, _mazeSize];
+        initialStep.Parents = new Vector2Int[_mazeSize, _mazeSize];
         for (int x = 0; x < _mazeSize; ++x)
         {
             for (int y = 0; y < _mazeSize; ++y)
             {
                 layout[x, y] = elements[x, y].ElementType;
-                initialStep.MazeInfos[x, y] = "No parent";
+                initialStep.MazeInfos[x, y] = "";
+                initialStep.Parents[x, y] = new Vector2Int(-1, -1);
             }
         }
         layout[_playerPosition.x, _playerPosition.y] = MazeElement.MazeElementType.WALKED;
@@ -71,6 +73,7 @@ public class BreadthFirstSearch : PathFindingAlgorithm
                         neighbor.parent = node;
                         _neighbors.Add(neighbor);
                         result.MazeInfos[n.x, n.y] = FormatNodeString(neighbor);
+                        result.Parents[n.x, n.y] = node.position;
                         _steps.Add(result);
                         _lastStep = result;
                         if (n == _goalPosition)

@@ -39,12 +39,14 @@ public class AStarPathFinding : PathFindingAlgorithm
         PathFindingStep initialStep = new PathFindingStep();
         initialStep.Layout = new MazeElement.MazeElementType[_mazeSize, _mazeSize];
         initialStep.MazeInfos = new string[_mazeSize, _mazeSize];
+        initialStep.Parents = new Vector2Int[_mazeSize, _mazeSize];
         for (int x = 0; x < _mazeSize; ++x)
         {
             for (int y = 0; y < _mazeSize; ++y)
             {
                 initialStep.Layout[x, y] = layout[x, y].ElementType;
                 initialStep.MazeInfos[x, y] = FormatNodeText(new Node(new Vector2Int(x, y)));
+                initialStep.Parents[x, y] = new Vector2Int(-1, -1);
             }
         }
         steps.Add(initialStep);
@@ -64,6 +66,10 @@ public class AStarPathFinding : PathFindingAlgorithm
             _closedList.Add(_currentNode);
             searchStep.Layout[_currentNode.position.x, _currentNode.position.y] = MazeElement.MazeElementType.IGNORED;
             searchStep.MazeInfos[_currentNode.position.x, _currentNode.position.y] = FormatNodeText(_currentNode);
+            if(_currentNode.parent != null)
+            {
+                searchStep.Parents[_currentNode.position.x, _currentNode.position.y] = _currentNode.parent.position;
+            }
             searchStep.NextStepDelay = 1.0f;
             searchStep.Complete = false;
             steps.Add(searchStep);
@@ -90,6 +96,7 @@ public class AStarPathFinding : PathFindingAlgorithm
                     _openList.Add(newNode);
                     expandStep.Layout[item.x, item.y] = MazeElement.MazeElementType.WALKED;
                     expandStep.MazeInfos[item.x, item.y] = FormatNodeText(newNode);
+                    expandStep.Parents[item.x, item.y] = _currentNode.position;
                     expandStep.NextStepDelay = 1.0f;
                     steps.Add(expandStep);
                     lastStep = expandStep;
@@ -104,6 +111,7 @@ public class AStarPathFinding : PathFindingAlgorithm
                         found.g = _currentNode.g + 1;
                         found.parent = _currentNode;
                         expandStep.MazeInfos[item.x, item.y] = FormatNodeText(found);
+                        expandStep.Parents[item.x, item.y] = _currentNode.position;
                         steps.Add(expandStep);
                         lastStep = expandStep;
                     }

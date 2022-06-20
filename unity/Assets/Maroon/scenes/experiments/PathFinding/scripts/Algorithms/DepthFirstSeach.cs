@@ -33,6 +33,7 @@ public class DepthFirstSeach : PathFindingAlgorithm
         _stepNum = 0;
         PathFindingStep initialStep = new PathFindingStep();
         initialStep.MazeInfos = new string[_mazeSize, _mazeSize];
+        initialStep.Parents = new Vector2Int[_mazeSize, _mazeSize];
         done = false;
         layout = new MazeElement.MazeElementType[_mazeSize, _mazeSize];
         for (int x = 0; x < _mazeSize; ++x)
@@ -40,7 +41,8 @@ public class DepthFirstSeach : PathFindingAlgorithm
             for (int y = 0; y < _mazeSize; ++y)
             {
                 layout[x, y] = elements[x, y].ElementType;
-                initialStep.MazeInfos[x, y] = "No parent";
+                initialStep.MazeInfos[x, y] = "";
+                initialStep.Parents[x, y] = new Vector2Int(-1, -1);
             }
         }
         layout[_playerPosition.x, _playerPosition.y] = MazeElement.MazeElementType.WALKED;
@@ -62,6 +64,7 @@ public class DepthFirstSeach : PathFindingAlgorithm
                 return;
             PathFindingStep result = new PathFindingStep();
             result.MazeInfos = (string[,])previous.MazeInfos.Clone();
+            result.Parents = (Vector2Int[,])previous.Parents.Clone();
             result.StepID = _stepNum;
             result.NextStepDelay = 1.0f;
             if(layout[n.x, n.y] == MazeElement.MazeElementType.PATH)
@@ -72,6 +75,7 @@ public class DepthFirstSeach : PathFindingAlgorithm
                 _nodes.Add(node);
                 layout[n.x, n.y] = MazeElement.MazeElementType.WALKED;
                 result.Layout = (MazeElement.MazeElementType[,])layout.Clone();
+                result.Parents[n.x, n.y] = prevNode.position;
                 if (n == _goalPosition)
                 {
                     MarkCorrect(result, node);
@@ -94,6 +98,7 @@ public class DepthFirstSeach : PathFindingAlgorithm
                             node.distance = prevNode.distance + 1;
                             node.parent = prevNode;
                             result.MazeInfos[n.x, n.y] = FormatNodeString(node);
+                            result.Parents[n.x, n.y] = prevNode.position;
                         }
                     }
                 }

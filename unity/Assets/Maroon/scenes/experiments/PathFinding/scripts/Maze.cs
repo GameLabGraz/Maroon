@@ -11,22 +11,27 @@ public class Maze : PausableObject, IResetObject
     [SerializeField] private GameObject _mazeElementPrefab;
     [SerializeField] private GameObject _playerPrefab;
     [SerializeField] private GameObject _goalPrefab;
+    [SerializeField] private GameObject _camera;
     [SerializeField] private Transform _leftBorder;
     [SerializeField] private Transform _rightBorder;
     [SerializeField] private Transform _upperBorder;
     [SerializeField] private Transform _lowerBorder;
-
+    
     private GameObject _player;
     private GameObject _goal;
     private GameObject[,] _layout;
     private MazeElement[,] _mazeElements;
     private MazeGeneration _mazeGenerator;
     private PathFindingAlgorithm _pathFinding;
+    private int inspectedX = -1;
+    private int inspectedY = -1;
     private int _currentSize = 0;
     private List<PathFindingStep> _steps;
     private int _currentStep = 0;
     private float _lastUpdateTime;
     private float _speedModifier;
+    private Vector3 _cameraBaseLocation;
+    private Quaternion _cameraBaseRotation;
     // Save these up here as they can be useful for spawning and
     // moving the player, goal or other things
     private Vector3 _horizontalStep;
@@ -55,6 +60,8 @@ public class Maze : PausableObject, IResetObject
         _steps = new List<PathFindingStep>();
         _layout = new GameObject[size, size];
         _mazeElements = new MazeElement[size, size];
+        _cameraBaseLocation = _camera.transform.position;
+        _cameraBaseRotation = _camera.transform.rotation;
         _elementScale = new Vector3(1.0f / size, 1.0f / size, 1.0f / size);
         _horizontalStep = (_rightBorder.position - _leftBorder.position) / size;
         _verticalStep = (_lowerBorder.position - _upperBorder.position) / size;
@@ -94,17 +101,26 @@ public class Maze : PausableObject, IResetObject
 
     public void InspectElement(int elementX, int elementY)
     {
-        for (int x = 0; x < _currentSize; ++x)
+        if(elementX == -1 || elementY == -1 || (inspectedX == elementX && inspectedY == elementY))
         {
-            for (int y = 0; y < _currentSize; ++y)
+            _camera.transform.position = _cameraBaseLocation;
+            _camera.transform.rotation = _cameraBaseRotation;
+            inspectedX = -1;
+            inspectedY = -1;
+        }
+        else
+        {
+            for (int x = 0; x < _currentSize; ++x)
             {
-                if(x == elementX && y == elementY)
+                for (int y = 0; y < _currentSize; ++y)
                 {
-                    _mazeElements[x, y].MarkInspected();
-                }
-                else
-                {
-                    _mazeElements[x, y].UnmarkInspected();
+                    if (x == elementX && y == elementY)
+                    {
+                        _camera.transform.position = _mazeElements[x, y].HightlightLocation.position;
+                        _camera.transform.rotation = _mazeElements[x, y].HightlightLocation.rotation;
+                        inspectedX = elementX;
+                        inspectedY = elementY;
+                    }
                 }
             }
         }
@@ -192,7 +208,7 @@ public class Maze : PausableObject, IResetObject
         {
             for(int y = 0; y < _currentSize; ++y)
             {
-                _mazeElements[x, y].ApplyStep(_steps[_currentStep].Layout[x, y], _steps[_currentStep].MazeInfos[x, y]);
+                _mazeElements[x, y].ApplyStep(_steps[_currentStep].Layout[x, y], _steps[_currentStep].MazeInfos[x, y], _steps[_currentStep].Parents[x, y]);
             }
         }
     }
