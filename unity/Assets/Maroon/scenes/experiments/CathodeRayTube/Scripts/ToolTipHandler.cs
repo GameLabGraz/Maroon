@@ -6,7 +6,6 @@ namespace Maroon.Physics.CathodeRayTube
 {
     public class ToolTipHandler : MonoBehaviour
     {
-        [SerializeField] private Camera mainCamera;
         [SerializeField] private GameObject partInfoToggle;
         private bool _collision;
         private Transform _hitObject;
@@ -20,10 +19,10 @@ namespace Maroon.Physics.CathodeRayTube
 
         private void Update()
         {
-            if (!partInfoToggle.GetComponent<Toggle>().isOn || Camera.main != mainCamera)
+            if (!partInfoToggle.GetComponent<Toggle>().isOn || Camera.main == null)
                 return;
 
-            var ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
             _collision = false;
             if (UnityEngine.Physics.Raycast(ray, out var hit, 10.0f, LayerMask.NameToLayer("IgnorePostProcessing")) &&
