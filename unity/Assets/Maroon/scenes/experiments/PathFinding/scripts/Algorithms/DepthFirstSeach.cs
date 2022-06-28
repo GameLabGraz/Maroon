@@ -128,10 +128,11 @@ public class DepthFirstSeach : PathFindingAlgorithm
     }
     private string FormatNodeString(Node node)
     {
-        if(node.parent != null)
-        {
-            return string.Format("parent: [{0}, {1}]", node.parent.position.x, node.parent.position.y);
-        }
-        return string.Format("No parent");
+        return "";
+        //if(node.parent != null)
+        //{
+        //    return string.Format("parent: [{0}, {1}]", node.parent.position.x, node.parent.position.y);
+        //}
+        //return string.Format("No parent");
     }
 }

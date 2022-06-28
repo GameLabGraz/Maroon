@@ -22,11 +22,11 @@ Danach besuchen wir die neuen Nachbarn, und deren Distanz ist wiederum die Dista
         </Translation>
         <Translation Key="A*">
             <English>A*(A Star) is a derivative of dijkstra's algorithm that uses distance to prioritize what path to search next, reducing the number of steps needed.
-We start by looking at all neighbors from the player position, and since they are exactly 1 step away from the player, we save this and call it f. Now we estimate the distance for all of them to the goal, and call it g.
-Next we look for the tile with the lowest combined f + g, called h, will be selected next. For all neighbors of that tile, we again now know that it takes 1 additional step to get there. We repeat this process until the goal is one of the neighbors, in which case we have found a path.</English>
+We start by looking at all neighbors from the player position, and since they are exactly 1 step away from the player, we save this and call it g. Now we estimate the distance for all of them to the goal, and call it h.
+Next we look for the tile with the lowest combined g + h, called f, will be selected next. For all neighbors of that tile, we again now know that it takes 1 additional step to get there. We repeat this process until the goal is one of the neighbors, in which case we have found a path.</English>
             <German>A* basiert auf dem Dijkstra Algorithmus, und nutzt die geschätzte Distanz zum Ziel, um die Suche nach dem Ziel zu beschleunigen.
-Wir starten damit, die benachbarten Felder zum Spieler zu besuchen, und da diese 1 Schritt vom Start entfernt sind, merken wir uns das als f. Nun schätzen wir jeweils die Distanz ab, und merken sie uns als g.
-Als nächstes suchen wir das Feld mit der niedrigsten gesamten f + g, auch genannt h. Für dieses Feld wissen wir wieder, dass die Nachbarn 1 Schritt weiter vom Start entfernt sind. Dieser Prozess wird solange wiederholt, das Ziel einer der Nachbarn ist, womit ein Pfad dorthin gefunden wurde.</German>
+Wir starten damit, die benachbarten Felder zum Spieler zu besuchen, und da diese 1 Schritt vom Start entfernt sind, merken wir uns das als g. Nun schätzen wir jeweils die Distanz ab, und merken sie uns als h.
+Als nächstes suchen wir das Feld mit der niedrigsten gesamten g + h, auch genannt f. Für dieses Feld wissen wir wieder, dass die Nachbarn 1 Schritt weiter vom Start entfernt sind. Dieser Prozess wird solange wiederholt, das Ziel einer der Nachbarn ist, womit ein Pfad dorthin gefunden wurde.</German>
         </Translation>
         <Translation Key="PathfindingAlgo">
             <English>Pathfinding Algorithm</English>

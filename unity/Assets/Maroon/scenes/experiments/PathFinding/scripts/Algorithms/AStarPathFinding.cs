@@ -8,10 +8,10 @@ public class AStarPathFinding : PathFindingAlgorithm
         get => new List<string>()
         {
             "<style=\"sortingTitle\">A*:</style>",
-            "openList = <style=\"sortingKeyword\">PriorityQueue(0, start)</style>",
+            "fringe = <style=\"sortingKeyword\">PriorityQueue(0, start)</style>",
             "closedList = <style=\"sortingKeyword\">List()</style>",
-            "<style=\"sortingKeyword\">while</style> openList <style=\"sortingKeyword\">not empty</style>:",
-            "    node = openList.<style=\"sortingFunction\">Get</style>()",
+            "<style=\"sortingKeyword\">while</style> fringe <style=\"sortingKeyword\">not empty</style>:",
+            "    node = fringe.<style=\"sortingFunction\">Get</style>()",
             "    <style=\"sortingKeyword\">if</style> node == goal:",
             "         <style=\"sortingKeyword\">return</style> node",
             "    closedList.<style=\"sortingFunction\">Add</style>(node)",
@@ -20,7 +20,7 @@ public class AStarPathFinding : PathFindingAlgorithm
             "            g = node.g + 1",
             "            h = <style=\"sortingFunction\">EstDist(n.pos, goal)</style>",
             "            f = g + h",
-            "            openList.<style=\"sortingFunction\">Add</style>(f, n)",
+            "            fringe.<style=\"sortingFunction\">Add</style>(f, n)",
         };
     }
 

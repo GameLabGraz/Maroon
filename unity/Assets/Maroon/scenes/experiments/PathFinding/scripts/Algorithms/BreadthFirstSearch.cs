@@ -80,7 +80,7 @@ public class BreadthFirstSearch : PathFindingAlgorithm
                     {
                         PathFindingStep result = new PathFindingStep(_lastStep);
                         result.NextStepDelay = 1.0f;
-                        result.Layout[n.x, n.y] = MazeElement.MazeElementType.WALKED;
+                        result.Layout[n.x, n.y] = MazeElement.MazeElementType.IGNORED;
                         Node neighbor = new Node(n);
                         neighbor.distance = node.distance + 1;
                         neighbor.parent = node;
@@ -102,7 +102,14 @@ public class BreadthFirstSearch : PathFindingAlgorithm
                 }
             }
             _nodes.Clear();
-            _nodes.AddRange(_neighbors);
+            PathFindingStep neighborStep = new PathFindingStep(_lastStep);
+            foreach (Node n in _neighbors)
+            {
+                neighborStep.Layout[n.position.x, n.position.y] = MazeElement.MazeElementType.WALKED;
+                _nodes.Add(n);
+            }
+            _steps.Add(neighborStep);
+            _lastStep = neighborStep;
             _neighbors.Clear();
         }
     }
@@ -116,10 +123,11 @@ public class BreadthFirstSearch : PathFindingAlgorithm
     }
     private string FormatNodeString(Node node)
     {
-        if (node.parent != null)
-        {
-            return string.Format("parent: [{0}, {1}]", node.parent.position.x, node.parent.position.y);
-        }
-        return string.Format("No parent");
+        return "";
+        //if (node.parent != null)
+        //{
+        //    return string.Format("parent: [{0}, {1}]", node.parent.position.x, node.parent.position.y);
+        //}
+        //return string.Format("No parent");
     }
 }

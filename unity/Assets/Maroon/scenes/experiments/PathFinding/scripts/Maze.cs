@@ -92,6 +92,7 @@ public class Maze : PausableObject, IResetObject
 
     public void SetAlgorithm(PathFindingAlgorithm pathFindingAlgorithm)
     {
+        InspectElement(-1, -1);
         _pathFinding = pathFindingAlgorithm;
         SimulationController.Instance.ResetSimulation();
         _steps.Clear();
@@ -103,12 +104,19 @@ public class Maze : PausableObject, IResetObject
 
     public void InspectElement(int elementX, int elementY)
     {
-        if(elementX == -1 || elementY == -1 || (inspectedX == elementX && inspectedY == elementY))
+        if (elementX == -1 || elementY == -1 || (inspectedX == elementX && inspectedY == elementY))
         {
             _camera.transform.position = _cameraBaseLocation;
             _camera.transform.rotation = _cameraBaseRotation;
             inspectedX = -1;
             inspectedY = -1;
+            for (int x = 0; x < _currentSize; ++x)
+            {
+                for (int y = 0; y < _currentSize; ++y)
+                {
+                    _mazeElements[x, y].HideElementText();
+                }
+            }
         }
         else
         {
@@ -116,6 +124,7 @@ public class Maze : PausableObject, IResetObject
             {
                 for (int y = 0; y < _currentSize; ++y)
                 {
+                    _mazeElements[x, y].ShowElementText();
                     if (x == elementX && y == elementY)
                     {
                         _camera.transform.position = _mazeElements[x, y].HightlightLocation.position;
@@ -149,7 +158,7 @@ public class Maze : PausableObject, IResetObject
 
     public void SkipForward()
     {
-        InspectElement(-1, -1);
+        //InspectElement(-1, -1);
         _lastUpdateTime = 0;
         _currentStep = Math.Min(_currentStep + 1, _steps.Count - 1);
         ApplyStep();
@@ -157,7 +166,7 @@ public class Maze : PausableObject, IResetObject
 
     public void SkipBackward()
     {
-        InspectElement(-1, -1);
+        //InspectElement(-1, -1);
         _lastUpdateTime = 0;
         _currentStep = Math.Max(_currentStep - 1, 0);
         ApplyStep();

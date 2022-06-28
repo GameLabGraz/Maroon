@@ -25,6 +25,7 @@ public class MazeElement : MonoBehaviour, IResetObject
     [SerializeField] private Material _ignoredMaterial;
     [SerializeField] private Material _walkedMaterial;
     [SerializeField] private Material _correctMaterial;
+    [SerializeField] private TextMeshPro _elementText;
     private MazeElementType _type;
     private string _inspectorText;
     private int _xCoord;
@@ -32,7 +33,7 @@ public class MazeElement : MonoBehaviour, IResetObject
 
     public MazeElementType ElementType { get { return _type; } }
 
-    public string InspectorText { get { return _inspectorText; } }
+    public string ElementInfo { get { return _inspectorText; } }
 
     public Transform HightlightLocation { get { return _hightlightLocation; } }
 
@@ -89,6 +90,15 @@ public class MazeElement : MonoBehaviour, IResetObject
             _westArrow.SetActive(true);
         }
     }
+    public void ShowElementText()
+    {
+        _elementText.enabled = true;
+    }
+
+    public void HideElementText()
+    {
+        _elementText.enabled = false;
+    }
 
     public void ApplyStep(MazeElementType type, string inspectorText, Vector2Int parent)
     {
@@ -123,6 +133,7 @@ public class MazeElement : MonoBehaviour, IResetObject
                 break;
         }
         _inspectorText = inspectorText;
+        _elementText.text = inspectorText;
         ShowParent(parent.x, parent.y);
     }
 
