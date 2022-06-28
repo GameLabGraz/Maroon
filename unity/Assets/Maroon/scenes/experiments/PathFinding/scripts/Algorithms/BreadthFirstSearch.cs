@@ -4,6 +4,19 @@ using UnityEngine;
 
 public class BreadthFirstSearch : PathFindingAlgorithm
 {
+    public override List<string> PseudoCode
+    {
+        get => new List<string>()
+        {
+            "<style=\"sortingTitle\">Breadth First Search:</style>",
+            "Nodes = <style=\"sortingKeyword\">List</style>(start)",
+            "<style=\"sortingKeyword\">foreach</style> node in <style=\"sortingNumber\">Nodes</style>:",
+            "    <style=\"sortingKeyword\">foreach</style> n in <style=\"sortingFunction\">Neighbours(node)</style>:",
+            "        <style=\"sortingKeyword\">if</style> n == goal:",
+            "            <style=\"sortingKeyword\">return</style> n",
+            "        Nodes.<style=\"sortingFunction\">Add</style>(<style=\"sortingFunction\">Neighbours(node)</style>)",
+        };
+    }
     private class Node
     {
         public Vector2Int position;
@@ -74,6 +87,7 @@ public class BreadthFirstSearch : PathFindingAlgorithm
                         _neighbors.Add(neighbor);
                         result.MazeInfos[n.x, n.y] = FormatNodeString(neighbor);
                         result.Parents[n.x, n.y] = node.position;
+                        result.PseudoCodeLine = 4;
                         _steps.Add(result);
                         _lastStep = result;
                         if (n == _goalPosition)
@@ -81,6 +95,7 @@ public class BreadthFirstSearch : PathFindingAlgorithm
                             MarkCorrect(result, neighbor);
                             result.NextStepDelay = -1.0f;
                             result.Complete = true;
+                            result.PseudoCodeLine = 5;
                             return;
                         }
                     }

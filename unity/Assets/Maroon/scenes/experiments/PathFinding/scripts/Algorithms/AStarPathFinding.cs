@@ -4,6 +4,26 @@ using UnityEngine;
 
 public class AStarPathFinding : PathFindingAlgorithm
 {
+    public override List<string> PseudoCode {
+        get => new List<string>()
+        {
+            "<style=\"sortingTitle\">A*:</style>",
+            "openList = <style=\"sortingKeyword\">PriorityQueue(0, start)</style>",
+            "closedList = <style=\"sortingKeyword\">List()</style>",
+            "<style=\"sortingKeyword\">while</style> openList <style=\"sortingKeyword\">not empty</style>:",
+            "    node = openList.<style=\"sortingFunction\">Get</style>()",
+            "    <style=\"sortingKeyword\">if</style> node == goal:",
+            "         <style=\"sortingKeyword\">return</style> node",
+            "    closedList.<style=\"sortingFunction\">Add</style>(node)",
+            "    <style=\"sortingKeyword\">foreach</style> n in <style=\"sortingFunction\">Neighbours(node)</style>:",
+            "        <style=\"sortingKeyword\">if</style> closedList <style=\"sortingKeyword\">not contains</style> n:",
+            "            g = node.g + 1",
+            "            h = <style=\"sortingFunction\">EstDist(n.pos, goal)</style>",
+            "            f = g + h",
+            "            openList.<style=\"sortingFunction\">Add</style>(f, n)",
+        };
+    }
+
     private class Node
     {
         public Vector2Int position;

@@ -4,6 +4,19 @@ using UnityEngine;
 
 public class DepthFirstSeach : PathFindingAlgorithm
 {
+    public override List<string> PseudoCode
+    {
+        get => new List<string>()
+        {
+            "<style=\"sortingTitle\">Depth First Search:</style>",
+            "<style=\"sortingFunction\">Search</style>(node):",
+            "    <style=\"sortingKeyword\">foreach</style> n in <style=\"sortingFunction\">Neighbours(node)</style>:",
+            "        <style=\"sortingKeyword\">if</style> n == goal:",
+            "            <style=\"sortingKeyword\">return</style> n",
+            "        <style=\"sortingFunction\">Search</style>(n)",
+            "<style=\"sortingFunction\">Search</style>(start)"
+        };
+    }
     private class Node
     {
         public Vector2Int position;

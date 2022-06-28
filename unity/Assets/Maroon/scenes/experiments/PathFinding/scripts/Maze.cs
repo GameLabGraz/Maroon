@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Maze : PausableObject, IResetObject
@@ -16,7 +17,8 @@ public class Maze : PausableObject, IResetObject
     [SerializeField] private Transform _rightBorder;
     [SerializeField] private Transform _upperBorder;
     [SerializeField] private Transform _lowerBorder;
-    
+    [SerializeField] private TextMeshProUGUI _algoPseudoCode;
+
     private GameObject _player;
     private GameObject _goal;
     private GameObject[,] _layout;
@@ -211,6 +213,8 @@ public class Maze : PausableObject, IResetObject
                 _mazeElements[x, y].ApplyStep(_steps[_currentStep].Layout[x, y], _steps[_currentStep].MazeInfos[x, y], _steps[_currentStep].Parents[x, y]);
             }
         }
+        DisplayPseudocode(_pathFinding.PseudoCode, -1); //_steps[_currentStep].PseudoCodeLine);
+        // dont highlight lines, doesnt really make sense for most steps
     }
 
     public void ResetObject()
@@ -226,5 +230,24 @@ public class Maze : PausableObject, IResetObject
     public void SetSpeed(float speed)
     {
         _speedModifier = speed;
+    }
+
+
+    public void DisplayPseudocode(List<string> pseudocode, int highlightLine)
+    {
+        string highlightedCode = "";
+        for (int i = 0; i < pseudocode.Count; ++i)
+        {
+            if (i == highlightLine)
+            {
+                highlightedCode += "<color=#810000>></color> " + pseudocode[i] + "\n";
+            }
+            else
+            {
+                highlightedCode += "  " + pseudocode[i] + "\n";
+            }
+        }
+
+        _algoPseudoCode.text = highlightedCode;
     }
 }

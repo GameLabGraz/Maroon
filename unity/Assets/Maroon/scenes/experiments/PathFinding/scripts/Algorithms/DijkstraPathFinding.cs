@@ -5,6 +5,21 @@ using UnityEngine;
 
 public class DijkstraPathFinding : PathFindingAlgorithm
 {
+    public override List<string> PseudoCode
+    {
+        get => new List<string>()
+        {
+            "<style=\"sortingTitle\">Dijkstra:</style>",
+            "queue = <style=\"sortingKeyword\">PriorityQueue(0, start)</style>",
+            "<style=\"sortingKeyword\">while</style> queue <style=\"sortingKeyword\">not empty</style>:",
+            "    node = queue.<style=\"sortingFunction\">Get</style>()",
+            "    <style=\"sortingKeyword\">foreach</style> n in <style=\"sortingFunction\">Neighbours(node)</style>:",
+            "        <style=\"sortingKeyword\">if</style> n == goal:",
+            "            <style=\"sortingKeyword\">return</style> n",
+            "        distance = node.distance + 1",
+            "        queue.<style=\"sortingFunction\">Add</style>(distance, n)"
+        };
+    }
     private class Node
     {
         public Vector2Int position;

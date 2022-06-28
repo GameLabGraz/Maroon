@@ -56,6 +56,15 @@ public class PathFindingStep
         set { stepID = value; }
     }
 
+    private int pseudoCodeLine = -1;
+
+    public int PseudoCodeLine
+    {
+        get { return pseudoCodeLine; }
+        set { pseudoCodeLine = value; }
+    }
+
+
     public PathFindingStep()
     { }
 

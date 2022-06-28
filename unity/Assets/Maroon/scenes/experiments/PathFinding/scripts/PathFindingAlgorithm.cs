@@ -9,6 +9,8 @@ public abstract class PathFindingAlgorithm
     protected Vector2Int _goalPosition;
     private string _name;
 
+    public abstract List<string> PseudoCode { get; }
+
     public string Name
     {
         get { return _name; }
