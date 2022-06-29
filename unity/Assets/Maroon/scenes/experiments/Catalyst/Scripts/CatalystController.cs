@@ -76,6 +76,7 @@ namespace Maroon.Chemistry.Catalyst
         [SerializeField] XCharts.LineChart lineChartVanKrevelen;
         [SerializeField] XCharts.LineChart lineChartLangmuirVRBox;
         [SerializeField] XCharts.LineChart lineChartVanKrevelenVRBox;
+        [SerializeField] XCharts.GaugeChart progressChart;
 
         private int _freedMoleculeCounter = 0;
         private List<Vector3> _platSpawnPoints = new List<Vector3>();
@@ -189,6 +190,8 @@ namespace Maroon.Chemistry.Catalyst
             catalystReactor.OnReactorFilled.AddListener(StartExperiment);
             lineChartLangmuir.gameObject.SetActive(false);
             lineChartVanKrevelen.gameObject.SetActive(false);
+            progressChart.gameObject.SetActive(false);
+            progressChart.series.list[0].data[0].data[1] = 0.0f;
             
             if (IsVrVersion)
             {
@@ -590,7 +593,11 @@ namespace Maroon.Chemistry.Catalyst
                 else
                 {
                     lineChartLangmuir.series.RemoveAll();
-                    StartCoroutine(CoDrawSimulationGraphs(lineChartLangmuir, _langmuirGraphSeries));
+                    StartCoroutine(CoDrawSimulationGraphs(lineChartLangmuir, _langmuirGraphSeries, 1.6f));
+                    progressChart.gameObject.SetActive(true);
+                    // 4 series * 9 data entries -> 1.6 seconds per entry
+                    var waitTimeProgress = 4f * 9f * 1.6f;
+                    StartCoroutine(CoDrawProgressGraph(waitTimeProgress / 360f));
                 }
                 
             }
@@ -604,7 +611,11 @@ namespace Maroon.Chemistry.Catalyst
                 else
                 {
                     lineChartVanKrevelen.series.RemoveAll();
-                    StartCoroutine(CoDrawSimulationGraphs(lineChartVanKrevelen, _vanKrevelenGraphSeries));
+                    StartCoroutine(CoDrawSimulationGraphs(lineChartVanKrevelen, _vanKrevelenGraphSeries, 1.6f));
+                    progressChart.gameObject.SetActive(true);
+                    // 4 series * 6 data entries -> 1.6 seconds per entry
+                    var waitTimeProgress = 4f * 6f * 1.6f;
+                    StartCoroutine(CoDrawProgressGraph(waitTimeProgress / 360f));
                 }
             }
         }
@@ -622,7 +633,10 @@ namespace Maroon.Chemistry.Catalyst
                 {
                     lineChartLangmuir.gameObject.SetActive(true);
                     lineChartLangmuir.series.RemoveAll();
-                    StartCoroutine(CoDrawSimulationGraphs(lineChartLangmuir, _langmuirGraphSeries));
+                    StartCoroutine(CoDrawSimulationGraphs(lineChartLangmuir, _langmuirGraphSeries, 1.6f));
+                    // 4 series * 9 data entries -> 1.6 seconds per entry
+                    var waitTimeProgress = 4f * 9f * 1.6f;
+                    StartCoroutine(CoDrawProgressGraph(waitTimeProgress / 360f));
                 }
                 
             }
@@ -637,12 +651,15 @@ namespace Maroon.Chemistry.Catalyst
                 {
                     lineChartVanKrevelen.gameObject.SetActive(true);
                     lineChartVanKrevelen.series.RemoveAll();
-                    StartCoroutine(CoDrawSimulationGraphs(lineChartVanKrevelen, _vanKrevelenGraphSeries));
+                    StartCoroutine(CoDrawSimulationGraphs(lineChartVanKrevelen, _vanKrevelenGraphSeries, 1.6f));
+                    // 4 series * 6 data entries -> 1.6 seconds per entry
+                    var waitTimeProgress = 4f * 6f * 1.6f;
+                    StartCoroutine(CoDrawProgressGraph(waitTimeProgress / 360f));
                 }
             }
         }
 
-        private IEnumerator CoDrawSimulationGraphs(LineChart lineChart, List<Serie> initialSeries)
+        private IEnumerator CoDrawSimulationGraphs(LineChart lineChart, List<Serie> initialSeries, float waitTime)
         {
             int serieCount = 0;
             foreach (var serie in initialSeries)
@@ -653,12 +670,24 @@ namespace Maroon.Chemistry.Catalyst
                 {
                     lineChart.AddData(serieCount, data.data[1]);
                     lineChart.RefreshChart();
-                    yield return new WaitForSeconds(1.6f);
+                    yield return new WaitForSeconds(waitTime);
                 }
                 serieCount++;
             }
         }
 
+        private IEnumerator CoDrawProgressGraph(float waitTime)
+        {
+            var progress = 0.0f;
+            while (progress < 360f)
+            {
+                progress += 1.0f;
+                progressChart.series.list[0].data[0].data[1] = progress;
+                progressChart.RefreshChart();
+                yield return new WaitForSeconds(waitTime);
+            }
+        }
+        
         private void RestoreLineGraphObjects(LineChart lineChart, List<Serie> initialSeries)
         {
             if (lineChart == null) return;
@@ -713,6 +742,8 @@ namespace Maroon.Chemistry.Catalyst
             RestoreLineGraphObjects(lineChartVanKrevelenVRBox, _vanKrevelenGraphSeries);
             lineChartLangmuir.gameObject.SetActive(false);
             lineChartVanKrevelen.gameObject.SetActive(false);
+            progressChart.gameObject.SetActive(false);
+            progressChart.series.list[0].data[0].data[1] = 0.0f;
             if (IsVrVersion)
             {
                 lineChartLangmuirVRBox.gameObject.SetActive(false);
