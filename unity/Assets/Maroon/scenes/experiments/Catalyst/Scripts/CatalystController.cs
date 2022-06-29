@@ -681,8 +681,8 @@ namespace Maroon.Chemistry.Catalyst
 
             if (IsVrVersion)
             {
-                whiteboardController.SelectLecture(ExperimentVariation == ExperimentVariation.LangmuirHinshelwood ? 0 : 1);
-                whiteboardControllerBox.SelectLecture(ExperimentVariation == ExperimentVariation.LangmuirHinshelwood ? 0 : 1);
+                whiteboardController.SelectLecture(0);
+                whiteboardControllerBox.SelectLecture(0);
             }
             else
             {
@@ -766,8 +766,8 @@ namespace Maroon.Chemistry.Catalyst
             
             if (IsVrVersion)
             {
-                whiteboardController.SelectLecture(ExperimentVariation == ExperimentVariation.LangmuirHinshelwood ? 0 : 1);
-                whiteboardControllerBox.SelectLecture(ExperimentVariation == ExperimentVariation.LangmuirHinshelwood ? 0 : 1);
+                whiteboardController.SelectLecture(0);
+                whiteboardControllerBox.SelectLecture(0);
                 whiteboardController.Refresh();
                 whiteboardControllerBox.Refresh();
             }
