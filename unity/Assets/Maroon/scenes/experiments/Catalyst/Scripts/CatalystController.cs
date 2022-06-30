@@ -634,6 +634,7 @@ namespace Maroon.Chemistry.Catalyst
                     lineChartLangmuir.gameObject.SetActive(true);
                     lineChartLangmuir.series.RemoveAll();
                     StartCoroutine(CoDrawSimulationGraphs(lineChartLangmuir, _langmuirGraphSeries, 1.6f));
+                    progressChart.gameObject.SetActive(true);
                     // 4 series * 9 data entries -> 1.6 seconds per entry
                     var waitTimeProgress = 4f * 9f * 1.6f;
                     StartCoroutine(CoDrawProgressGraph(waitTimeProgress / 360f));
@@ -652,6 +653,7 @@ namespace Maroon.Chemistry.Catalyst
                     lineChartVanKrevelen.gameObject.SetActive(true);
                     lineChartVanKrevelen.series.RemoveAll();
                     StartCoroutine(CoDrawSimulationGraphs(lineChartVanKrevelen, _vanKrevelenGraphSeries, 1.6f));
+                    progressChart.gameObject.SetActive(true);
                     // 4 series * 6 data entries -> 1.6 seconds per entry
                     var waitTimeProgress = 4f * 6f * 1.6f;
                     StartCoroutine(CoDrawProgressGraph(waitTimeProgress / 360f));

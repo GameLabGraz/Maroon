@@ -9,15 +9,20 @@ namespace Maroon.Chemistry.Catalyst
     {
         [SerializeField] GameObject reactorWindowGameObject;
         [SerializeField] GameObject startButton;
+        [SerializeField] Animator animator;
+        [SerializeField] Transform cupboardDoorTransform;
         
         public UnityEvent OnReactorFilled;
         
         private bool _reactorFilled;
+        private Vector3 _cupboardInitialPosition;
 
         private void Start()
         {
             if (startButton)
                 startButton.SetActive(false);
+            Vector3 orgPos = cupboardDoorTransform.position;
+            _cupboardInitialPosition = new Vector3(orgPos.x, orgPos.y, orgPos.z);
         }
 
         private void OnTriggerEnter(Collider other)
@@ -26,6 +31,7 @@ namespace Maroon.Chemistry.Catalyst
             {
                 _reactorFilled = true;
                 other.gameObject.GetComponent<MeshRenderer>().enabled = false;
+                other.gameObject.transform.GetChild(0).gameObject.GetComponent<MeshRenderer>().enabled = false;
                 StartCoroutine(DelayedWindowClose());
             }
         }
@@ -50,6 +56,8 @@ namespace Maroon.Chemistry.Catalyst
 
         public void ResetObject()
         {
+            animator.enabled = false; // enabled through simulation controller start action
+            cupboardDoorTransform.position = _cupboardInitialPosition;
             _reactorFilled = false;
             reactorWindowGameObject.SetActive(false);
         }
