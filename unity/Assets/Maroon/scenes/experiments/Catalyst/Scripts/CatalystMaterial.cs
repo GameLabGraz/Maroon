@@ -38,6 +38,7 @@ namespace Maroon.Chemistry.Catalyst
         {
             animator.enabled = false;
             gameObject.GetComponent<MeshRenderer>().enabled = true;
+            gameObject.transform.GetChild(0).gameObject.GetComponent<MeshRenderer>().enabled = true;
             gameObject.transform.position = _initialPosition;
             gameObject.transform.rotation = _initialRotation;
             _isInteractable = true;
