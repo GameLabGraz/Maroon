@@ -48,9 +48,8 @@ public class WaterPlane : PausableObject, IResetObject
     private static int _maxNumberOfBasinGenerators = 30;
     private static int _maxNumberOfPlateGenerators = 30;
 
-    protected override void Awake()
+    protected void Awake()
     {
-        base.Awake();
         _meshRenderer = GetComponent<MeshRenderer>(); 
     }
 

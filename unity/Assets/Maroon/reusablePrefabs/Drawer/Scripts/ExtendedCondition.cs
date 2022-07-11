@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 
-public class HelperCondition : MonoBehaviour
+public class ExtendedCondition : MonoBehaviour
 {
     public int intValue = 0;
     public float floatValue = 0f;

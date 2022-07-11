@@ -9,9 +9,8 @@ namespace Maroon.Physics.HuygensPrinciple
 
         private MeshRenderer _meshRenderer;
 
-        protected override void Awake()
+        protected void Awake()
         {
-            base.Awake();
             _meshRenderer = GetComponent<MeshRenderer>();
         }
 

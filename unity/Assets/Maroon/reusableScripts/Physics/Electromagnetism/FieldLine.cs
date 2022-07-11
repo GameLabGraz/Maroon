@@ -90,7 +90,6 @@ namespace Maroon.Physics.Electromagnetism
                 return;
 
             _lineRenderer.Clear();
-            var tmp = GetFieldStrengthFromEmObj();
             
             if (!visible || Mathf.Abs(GetFieldStrengthFromEmObj()) * fieldStrengthFactor < 0.05)
                 return;
