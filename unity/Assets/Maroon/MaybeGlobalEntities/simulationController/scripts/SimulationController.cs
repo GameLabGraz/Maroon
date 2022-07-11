@@ -13,6 +13,7 @@ using System.Linq;
 using Maroon.Physics;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Class to handle the simulation flow
@@ -29,7 +30,7 @@ public class SimulationController : MonoBehaviour
     [SerializeField] private QuantityBool simulationRunning = false;
     [SerializeField] private QuantityBool simulationAllowed = true;
 
-    public UnityEvent onEnteredScene;
+    [FormerlySerializedAs("onEnteredScene")] public UnityEvent onSimulationLoaded;
     public UnityEvent onStartRunning;
     public UnityEvent onStopRunning;
     
@@ -88,7 +89,7 @@ public class SimulationController : MonoBehaviour
 
     private void Start()
     {
-        onEnteredScene.Invoke();
+        onSimulationLoaded.Invoke();
     }
 
     /// <summary>
