@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AssetUsageDetectorNamespace;
 using Maroon.scenes.experiments.PerlinNoise.Scripts;
 using TMPro;
-using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -49,20 +47,19 @@ namespace Maroon.reusableGui.Experiment.Scripts.Runtime
 
         private void OnValidate()
         {
-            if (PrefabModeIsActive())
+            if (PrefabModeIsActive() || !gameObject.activeInHierarchy)
                 return;
 
             if (button_objects == null)
                 button_objects = new List<Button>();
             if (button_objects.Count == 0) //should not happen
-                button_objects.Add(transform.GetComponentInChildren<Button>());
+                button_objects.AddRange(transform.GetComponentsInChildren<Button>());
 
             var current_size = transform.childCount;
             var target_size = Math.Max(buttons.Count, 1); //we need to keep at least one button as a template
 
             if (button_objects.Count != current_size ||
-                button_objects.IsEmpty() ||
-                button_objects.Any(b => !b))
+                button_objects.Any(b => b == null))
             {
                 Debug.LogWarning("RadioButton OnValidate: something went wrong, reset");
                 button_objects.Clear();
@@ -127,7 +124,11 @@ namespace Maroon.reusableGui.Experiment.Scripts.Runtime
 
         bool PrefabModeIsActive()
         {
+#if UNITY_EDITOR
             return UnityEditor.Experimental.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage() != null;
+#else
+            return false;
+#endif
         }
     }
 }

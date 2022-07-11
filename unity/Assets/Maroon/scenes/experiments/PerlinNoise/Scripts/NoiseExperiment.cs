@@ -24,16 +24,22 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         [SerializeField] private NoiseVisualisation[] noise_visualisations;
 
         [SerializeField] private bool dirty;
-        [SerializeField, Range(0, 20)] private float rotation_speed = 0;
+
+        [SerializeField, Range(0, 20), Header("Controls")]
+        private float rotation_speed = 0;
+
         [SerializeField] private float mouse_sensitivity = 1;
-        [SerializeField] private float rotaion_reset_speed = 0.1f;
+        [SerializeField] private float mouse_wheel_sensitivity = 1;
+        [SerializeField] private float rotaion_reset_speed = 0.08f;
+        [SerializeField] private float scale_reset_speed = 0.1f;
+        [SerializeField] private Vector2 scale_bounds = new Vector2(1, 5);
         [SerializeField] private Dropdown shader_type_dropdown;
         [SerializeField] private Slider size_slider;
 
         [SerializeField] private Shader[] shaders;
 
         [SerializeField, Header("Common Configuration")]
-        private QuantityFloat seed;
+        private QuantityInt seed;
 
         [SerializeField] public QuantityInt size;
         [SerializeField] public QuantityFloat scale;
@@ -54,7 +60,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         private float rotation;
         private bool is_rotating;
         private Vector2 current_mouse_position;
-        public static readonly Noise Noise3D = new Noise(0);
+        public static Noise Noise3D = new Noise(0);
 
 
         private static NoiseExperiment _instance;
@@ -124,10 +130,13 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
                     noise_visualisation.panel.SetActive(true);
 
                 //keep same relative size value, the slider doesnt change but the number
-                var relative_size = (float) size / size.maxValue;
-                size.maxValue = noise_visualisation.GetMaxSize();
-                size.Value = (int) (relative_size * size.maxValue);
-                size_slider.maxValue = size.maxValue;
+                var relative_size = (float)size / size.maxValue;
+                var max = noise_visualisation.GetMaxSize();
+                size.maxValue = max;
+                size.Value = (int)(relative_size * size.maxValue);
+                size_slider.maxValue = max;
+                size_slider.SetSliderValue(size.Value);
+                this.EndFrame(() => size_slider.maxValue = max);
             }
         }
 
@@ -143,7 +152,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
 #if UNITY_EDITOR
             animated = false;
-            while (EditorApplication.update.GetInvocationList().Contains((Action) Update))
+            while (EditorApplication.update.GetInvocationList().Contains((Action)Update))
                 EditorApplication.update -= Update;
 #endif
         }
@@ -158,17 +167,21 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             {
                 if (!is_rotating)
                 {
-                    var current_rotation = meshFilter.transform.rotation;
+                    var t = meshFilter.transform;
+                    var current_rotation = t.rotation;
                     var target_y = current_rotation.eulerAngles.y + Time.deltaTime * rotation_speed;
                     var target_rotation = Quaternion.Lerp(current_rotation, Quaternion.Euler(0, target_y, 0),
                         rotaion_reset_speed * Time.deltaTime);
                     target_rotation = Quaternion.Euler(target_rotation.eulerAngles.x, target_y,
                         target_rotation.eulerAngles.z);
-                    meshFilter.transform.rotation = target_rotation;
+                    t.rotation = target_rotation;
+
+                    t.localScale = Vector3.Lerp(t.localScale, new Vector3(2f, 2f, 2f),
+                        scale_reset_speed * Time.deltaTime);
                 }
 
                 time += Time.deltaTime * speed;
-                dirty = true;
+                //     dirty = true;
             }
 
             if (force_refresh)
@@ -190,13 +203,20 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         {
             if (is_rotating)
             {
-                var mouse_offset = (Vector2) Input.mousePosition - current_mouse_position;
+                var mouse_offset = (Vector2)Input.mousePosition - current_mouse_position;
                 mouse_offset *= mouse_sensitivity;
                 meshFilter.transform.Rotate(mouse_offset.y, -mouse_offset.x, 0, Space.World);
                 current_mouse_position = Input.mousePosition;
             }
+
+
+            var scale = meshFilter.transform.localScale.x;
+            scale += Input.mouseScrollDelta.y * mouse_wheel_sensitivity;
+            scale = scale.Clamp(scale_bounds.x, scale_bounds.y);
+            meshFilter.transform.localScale = Vector3.one * scale;
         }
 
+        private void SetSeed(int seed) => Noise3D.offset = seed * 1000;
 
         private void OnValidate()
         {
@@ -207,12 +227,12 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 #if UNITY_EDITOR
             if (animated)
             {
-                if (!EditorApplication.update.GetInvocationList().Contains((Action) Update))
+                if (!EditorApplication.update.GetInvocationList().Contains((Action)Update))
                     EditorApplication.update += Update;
             }
             else
             {
-                while (EditorApplication.update.GetInvocationList().Contains((Action) Update))
+                while (EditorApplication.update.GetInvocationList().Contains((Action)Update))
                     EditorApplication.update -= Update;
             }
 #endif
@@ -230,6 +250,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             InitQuantityListener(shader_type_dropdown.onValueChanged);
 
             shader_type_dropdown.onValueChanged.AddListener(SetShader);
+            seed.onValueChanged.AddListener(SetSeed);
 
             if (!meshFilter)
                 meshFilter = GetComponentInChildren<MeshFilter>();

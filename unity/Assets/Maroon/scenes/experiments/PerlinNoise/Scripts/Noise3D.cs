@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Maroon.Physics;
 using UnityEngine;
 
@@ -13,14 +14,14 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         [SerializeField] public QuantityFloat flatness;
         [SerializeField] public QuantityFloat threshold;
-        [SerializeField] private Vector2 threshold_bounds;
-
-        public float threshold_mapped => threshold.Value.Map(0, 1, threshold_bounds.x, threshold_bounds.y);
 
         [SerializeField] private Vector2 threshold_3d_range;
         [SerializeField] private Vector2 threshold_2d_range;
 
         private bool parameters_dirty = false;
+
+        public float max;
+        public float min;
 
         public bool GenerateNoiseMap()
         {
@@ -40,16 +41,16 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
                 {
                     for (voxel.z = 0; voxel.z < size; voxel.z++)
                     {
-                        var coordinates01 = (Vector3) voxel / (size - 1) - Utils.half_vector_3;
+                        var coordinates01 = (Vector3)voxel / (size - 1) - Utils.half_vector_3;
                         var center = offset + Utils.half_vector_3;
-                        var noise_pos = center + coordinates01 * (NoiseExperiment.Instance.scale + 1);
+                        var noise_pos = center + coordinates01 * ((NoiseExperiment.Instance.scale + 1) * 0.3f);
                         var n3 = NoiseExperiment.Noise3D.GetNoise3D(noise_pos.x, noise_pos.y, noise_pos.z,
                             NoiseExperiment.Instance.octaves);
                         var n2 = NoiseExperiment.Noise3D.GetNoise2D(noise_pos.x, noise_pos.z,
                             NoiseExperiment.Instance.octaves);
                         n3 = n3.Map(threshold_3d_range.x, threshold_3d_range.y);
                         n2 = n2.Map(threshold_2d_range.x, threshold_2d_range.y);
-                        var n = n3 * (1 - flatness) + (n2 - (float) voxel.y / size) * flatness;
+                        var n = n3 * (1 - flatness) + (n2 - (float)voxel.y / size) * flatness;
                         n = BorderAdjustment(voxel, n);
                         n = n.LogSigmoid();
 
@@ -59,6 +60,10 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
                     }
                 }
             }
+
+            max = noise_map_array.Max();
+            min = noise_map_array.Min();
+            noise_map_array = noise_map_array.Select(n => n.Map(min, max)).ToArray();
 
             var parameter_dirty_tmp = parameters_dirty;
             parameters_dirty = false;
@@ -86,15 +91,15 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         public float GetNoiseMapArrayF(int x, int y, int z)
         {
             if (!IsValidNoiseArrayIndex(x, y, z))
-                return float.NegativeInfinity;
+                return float.MinValue;
             return noise_map_array[x * size * size + y * size + z];
         }
 
         public float GetNoiseMapArrayF(Vector3Int index) => GetNoiseMapArrayF(index.x, index.y, index.z);
 
-        public bool GetNoiseMapArrayB(Vector3Int index) => GetNoiseMapArrayF(index.x, index.y, index.z) > threshold_mapped;
+        public bool GetNoiseMapArrayB(Vector3Int index) => GetNoiseMapArrayF(index.x, index.y, index.z) > threshold;
 
-        public bool GetNoiseMapArrayB(int x, int y, int z) => GetNoiseMapArrayF(x, y, z) > threshold_mapped;
+        public bool GetNoiseMapArrayB(int x, int y, int z) => GetNoiseMapArrayF(x, y, z) > threshold;
 
         public bool IsValidNoiseArrayIndex(int x, int y, int z) =>
             x.IsInRange(0, size - 1) && y.IsInRange(0, size - 1) && z.IsInRange(0, size - 1);
