@@ -25,13 +25,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4694184464065253084}
-  m_LocalRotation: {x: 0, y: 0.6848251, z: 0, w: 0.7287075}
+  m_LocalRotation: {x: -0, y: 0.11361667, z: -0, w: 0.9935247}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children: []
   m_Father: {fileID: 3935287607192798786}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 1, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &1346496199459548073
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -92,7 +92,8 @@ GameObject:
   - component: {fileID: 476483044820286854}
   - component: {fileID: 5444659040945000225}
   - component: {fileID: 6154348862582746709}
-  - component: {fileID: 7401072926702187396}
+  - component: {fileID: 362537069725990103}
+  - component: {fileID: 362537069725990102}
   m_Layer: 8
   m_Name: PerlinNoise
   m_TagString: Untagged
@@ -127,15 +128,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c39d22369f7b73044acd1c8564bd1374, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  noise_visualisation: {fileID: 476483044820286854}
+  noise_visualisation: {fileID: 6154348862582746709}
   noise_visualisations:
   - {fileID: 476483044820286854}
   - {fileID: 5444659040945000225}
   - {fileID: 6154348862582746709}
-  - {fileID: 7401072926702187396}
   dirty: 0
-  animated: 0
   rotation_speed: 4
+  mouse_sensitivity: 0.2
+  mouse_wheel_sensitivity: 0.2
+  rotaion_reset_speed: 0.7
+  scale_reset_speed: 0.1
+  scale_bounds: {x: 1, y: 5}
+  shader_type_dropdown: {fileID: 0}
+  size_property_view: {fileID: 0}
+  shaders:
+  - {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 4800000, guid: d67ecf1b44911d74b8c9380a1161fd79, type: 3}
+  - {fileID: 4800000, guid: 349737f389860b042946c40afa327524, type: 3}
+  - {fileID: 4800000, guid: 90cadb91a7902754f9fe5b4563306677, type: 3}
   seed:
     assessmentName: 
     isDynamic: 0
@@ -169,7 +180,7 @@ MonoBehaviour:
     isDynamic: 0
     alwaysSendValueChangedEvent: 1
     allowSystemChange: 1
-    _value: 1
+    _value: 3.56
     minValue: 0
     maxValue: 10
     onValueChanged:
@@ -194,6 +205,7 @@ MonoBehaviour:
         m_Calls: []
   speed: 0.1
   force_refresh: 0
+  animated: 0
 --- !u!114 &476483044820286854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -207,7 +219,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panel: {fileID: 0}
-  experiment_name: 
   height_scale: 0.1
   thickness: 0.025
 --- !u!114 &5444659040945000225
@@ -223,24 +234,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panel: {fileID: 0}
-  experiment_name: 
   transform_offset: {x: 0, y: 0, z: 0}
-  flatness:
-    assessmentName: 
-    isDynamic: 0
-    alwaysSendValueChangedEvent: 1
-    allowSystemChange: 1
-    _value: 0.5
-    minValue: 0
-    maxValue: 1
-    onValueChanged:
-      m_PersistentCalls:
-        m_Calls: []
-    onNewValueFromSystem:
-      m_PersistentCalls:
-        m_Calls: []
-  threshold_3d_range: {x: 0, y: 1}
-  threshold_2d_range: {x: -2, y: 2}
+  max_size: 30
 --- !u!114 &6154348862582746709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -254,8 +249,36 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panel: {fileID: 0}
-  experiment_name: 
---- !u!114 &7401072926702187396
+  transform_offset: {x: 0, y: 0, z: 0}
+  max_size: 30
+  smoothness:
+    assessmentName: 
+    isDynamic: 0
+    alwaysSendValueChangedEvent: 1
+    allowSystemChange: 1
+    _value: 0
+    minValue: 0
+    maxValue: 1
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    onNewValueFromSystem:
+      m_PersistentCalls:
+        m_Calls: []
+--- !u!135 &362537069725990103
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7045795964604048188}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 2.15
+  m_Center: {x: 0, y: 0.75, z: 0}
+--- !u!114 &362537069725990102
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -264,8 +287,38 @@ MonoBehaviour:
   m_GameObject: {fileID: 7045795964604048188}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4968672cfd9b0c41909083ceca9bea5, type: 3}
+  m_Script: {fileID: 11500000, guid: d400bff8632b4a7cb980b34378349900, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  panel: {fileID: 0}
-  experiment_name: 
+  flatness:
+    assessmentName: 
+    isDynamic: 0
+    alwaysSendValueChangedEvent: 1
+    allowSystemChange: 1
+    _value: 0
+    minValue: 0
+    maxValue: 1
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    onNewValueFromSystem:
+      m_PersistentCalls:
+        m_Calls: []
+  threshold:
+    assessmentName: 
+    isDynamic: 0
+    alwaysSendValueChangedEvent: 1
+    allowSystemChange: 1
+    _value: 0.28
+    minValue: 0
+    maxValue: 1
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    onNewValueFromSystem:
+      m_PersistentCalls:
+        m_Calls: []
+  threshold_3d_range: {x: 0, y: 1}
+  threshold_2d_range: {x: -2, y: 2}
+  max: 0.5578155
+  min: 0.23823765

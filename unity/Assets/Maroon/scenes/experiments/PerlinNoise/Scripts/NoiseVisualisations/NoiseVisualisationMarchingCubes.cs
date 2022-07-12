@@ -26,6 +26,8 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             vertices.Clear();
             indices.Clear();
             colors.Clear();
+            
+            noise_3d.GenerateNoiseMap();
 
             size = NoiseExperiment.Instance.size;
 

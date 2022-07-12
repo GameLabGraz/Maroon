@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using System.Linq;
 using Maroon.UI;
+using TMPro;
 using UnityEngine.Events;
 
 namespace Maroon.scenes.experiments.PerlinNoise.Scripts
@@ -17,92 +18,31 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         public virtual int GetMaxSize() => 50;
     }
 
-    public class NoiseExperiment : MonoBehaviour
+    public class NoiseExperiment : NoiseExperimentBase
     {
-        [SerializeField] private NoiseVisualisation noise_visualisation;
-
         [SerializeField] private NoiseVisualisation[] noise_visualisations;
 
-        [SerializeField] private bool dirty;
 
-        [SerializeField, Range(0, 20), Header("Controls")]
-        private float rotation_speed = 0;
-
-        [SerializeField] private float mouse_sensitivity = 1;
+        [SerializeField, Header("Controls")] private float mouse_sensitivity = 1;
         [SerializeField] private float mouse_wheel_sensitivity = 1;
         [SerializeField] private float rotaion_reset_speed = 0.08f;
         [SerializeField] private float scale_reset_speed = 0.1f;
         [SerializeField] private Vector2 scale_bounds = new Vector2(1, 5);
         [SerializeField] private Dropdown shader_type_dropdown;
-        [SerializeField] private Slider size_slider;
+        [SerializeField] private QuantityPropertyView size_property_view;
+
+        [SerializeField] private TextMeshProUGUI debug_text;
 
         [SerializeField] private Shader[] shaders;
 
-        [SerializeField, Header("Common Configuration")]
-        private QuantityInt seed;
-
-        [SerializeField] public QuantityInt size;
-        [SerializeField] public QuantityFloat scale;
-        [SerializeField] public QuantityFloat octaves;
-
-
-        [Space(10)] [SerializeField, Range(0, 2)]
-        float speed = 1;
 
         [Header("EditorControl")] [SerializeField]
         private bool force_refresh;
 
         [SerializeField] private bool animated;
 
-        public float time { get; private set; }
-
-        private MeshFilter meshFilter;
-        private float rotation;
-        private bool is_rotating;
         private Vector2 current_mouse_position;
-        public static Noise Noise3D = new Noise(0);
 
-
-        private static NoiseExperiment _instance;
-
-        public static NoiseExperiment Instance
-        {
-            get
-            {
-                if (_instance == null)
-                    _instance = FindObjectOfType<NoiseExperiment>();
-
-                return _instance;
-            }
-        }
-
-
-        private (Color32 top, Color32 middle, Color32 bottom) colors = (Color.gray, Color.yellow, Color.cyan);
-
-        public void SetTopColor(float color)
-        {
-            NoiseExperiment.Instance.SetDirty();
-            colors.top = Color.HSVToRGB(color, 1, 1);
-        }
-
-        public void SetBottomColor(float color)
-        {
-            NoiseExperiment.Instance.SetDirty();
-            colors.bottom = Color.HSVToRGB(color, 1, 1);
-        }
-
-        public void SetMiddleColor(float color)
-        {
-            NoiseExperiment.Instance.SetDirty();
-            colors.middle = Color.HSVToRGB(color, 1, 1);
-        }
-
-        public Color GetVertexColor(float value, float bottom, float middle, float top)
-        {
-            if (value > middle)
-                return Color.Lerp(colors.middle, colors.top, value.Map(middle, top));
-            return Color.Lerp(colors.bottom, colors.middle, value.Map(bottom, middle));
-        }
 
         private void SetShader(int index)
         {
@@ -134,33 +74,44 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
                 var max = noise_visualisation.GetMaxSize();
                 size.maxValue = max;
                 size.Value = (int)(relative_size * size.maxValue);
+                var size_slider = size_property_view.GetComponentInChildren<Slider>();
                 size_slider.maxValue = max;
                 size_slider.SetSliderValue(size.Value);
-                this.EndFrame(() => size_slider.maxValue = max);
             }
         }
 
-
-        public void SetDirty() => dirty = true;
-
-
-        // Start is called before the first frame update
-        void Start()
+        private void Awake()
         {
-            noise_visualisation.GenerateMesh(meshFilter.sharedMesh);
+            foreach (var visualisation in noise_visualisations)
+            {
+                if (visualisation.panel)
+                    visualisation.panel.SetActive(false);
+            }
+        }
+
+        new void Start()
+        {
+            debug_text.text = noise_visualisations.Length.ToString();
+            Init();
+            base.Start();
+
             SimulationController.Instance.StartSimulation();
+
 
 #if UNITY_EDITOR
             animated = false;
-            while (EditorApplication.update.GetInvocationList().Contains((Action)Update))
-                EditorApplication.update -= Update;
+            while (EditorApplication.update.GetInvocationList().Contains((Action)HandleUpdate))
+                EditorApplication.update -= HandleUpdate;
 #endif
         }
 
-
         // Update is called once per frame
-        void Update()
+        protected override void HandleUpdate()
         {
+            if (!meshFilter)
+                meshFilter = GetComponentInChildren<MeshFilter>();
+            if (!meshFilter) return;
+
             HandleInput();
 
             if ((SimulationController.Instance && SimulationController.Instance.SimulationRunning) || animated)
@@ -220,6 +171,8 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         private void OnValidate()
         {
+            return;
+            //Init();
             noise_visualisations = GetComponents<NoiseVisualisation>();
             if (noise_visualisations.Any() && noise_visualisation == null)
                 noise_visualisation = noise_visualisations[0];
@@ -227,16 +180,19 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 #if UNITY_EDITOR
             if (animated)
             {
-                if (!EditorApplication.update.GetInvocationList().Contains((Action)Update))
-                    EditorApplication.update += Update;
+                if (!EditorApplication.update.GetInvocationList().Contains((Action)HandleUpdate))
+                    EditorApplication.update += HandleUpdate;
             }
             else
             {
-                while (EditorApplication.update.GetInvocationList().Contains((Action)Update))
-                    EditorApplication.update -= Update;
+                while (EditorApplication.update.GetInvocationList().Contains((Action)HandleUpdate))
+                    EditorApplication.update -= HandleUpdate;
             }
 #endif
+        }
 
+        private void Init()
+        {
             void InitQuantityListener<T>(UnityEvent<T> onValueChanged)
             {
                 onValueChanged.RemoveAllListeners();

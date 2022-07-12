@@ -27,7 +27,14 @@ namespace Maroon.reusableGui.Experiment.Scripts.Runtime
         // Start is called before the first frame update
         void Start()
         {
+            Refresh();
             OnSelectButton(selected_index);
+        }
+
+        public void SetButtons(List<string> b)
+        {
+            buttons = b;
+            Refresh();
         }
 
         private void OnSelectButton(int index)
@@ -49,7 +56,11 @@ namespace Maroon.reusableGui.Experiment.Scripts.Runtime
         {
             if (PrefabModeIsActive() || !gameObject.activeInHierarchy)
                 return;
+            Refresh();
+        }
 
+        private void Refresh()
+        {
             if (button_objects == null)
                 button_objects = new List<Button>();
             if (button_objects.Count == 0) //should not happen
