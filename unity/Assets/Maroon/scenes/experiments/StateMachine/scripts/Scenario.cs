@@ -55,7 +55,7 @@ public class Scenario
         int index = 0;
         foreach (var figureToMove in jsonScenario.figures)
         {
-            moveFigureToDestination(players, figureToMove, index);
+            MoveFigureToDestination(players, figureToMove, index);
             index++;
         }
         foreach (Player player in players) {
@@ -69,7 +69,7 @@ public class Scenario
         // initialse moveable figures
         index = 0;
         foreach (var figureToMove in jsonScenario.figuresToMove) {
-            moveFigureToDestination(players, figureToMove, index);
+            MoveFigureToDestination(players, figureToMove, index);
             index++;
         }
 
@@ -135,7 +135,7 @@ public class Scenario
     }
 
 
-    private void moveFigureToDestination(Players players, JsonFigure jsonFigureToMove, int figureLineNumber) {
+    private void MoveFigureToDestination(Players players, JsonFigure jsonFigureToMove, int figureLineNumber) {
 
         // get destination field
         ChessBoardColumn column;

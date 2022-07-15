@@ -15,10 +15,10 @@ public class States : MonoBehaviour, IEnumerable
 
     private void initDropdownMenus() {
         _states.Add(new State("Start"));
-        _states.Add(new State("Ende"));
+        _states.Add(new State("End"));
 
         initDropdownMenu("StartStateDropdown", "Start");
-        initDropdownMenu("EndStateDropdown", "Ende");
+        initDropdownMenu("EndStateDropdown", "End");
     }
 
     public IEnumerator GetEnumerator() {

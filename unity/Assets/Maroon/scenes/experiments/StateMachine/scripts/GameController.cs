@@ -74,12 +74,13 @@ namespace StateMachine {
             _players.AddPlayer(new Player("white"));
             _players.AddPlayer(new Player("black"));
             _scenario = new Scenario(_map);
+            Debug.Log(_scenarios.Count);
             _scenario.InitScenario(_players, _enemyMoves, _scenarios[0]);
 
             var dropdownObject = GameObject.Find("ScenarioSelectionDropdown");
             var dropdown = dropdownObject.GetComponent<Dropdown>();
             dropdown.ClearOptions();
-
+            
             foreach (var scenario in _scenarios)
             {
                 dropdown.options.Add(new TMP_Dropdown.OptionData
