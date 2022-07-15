@@ -1,5 +1,4 @@
 ﻿using System;
-using Maroon.Physics;
 using UnityEditor;
 using UnityEngine;
 using System.Linq;
@@ -91,7 +90,6 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         new void Start()
         {
-            debug_text.text = noise_visualisations.Length.ToString();
             Init();
             base.Start();
 

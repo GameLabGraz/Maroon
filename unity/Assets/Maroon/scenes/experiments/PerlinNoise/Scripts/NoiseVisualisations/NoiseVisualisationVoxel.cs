@@ -22,10 +22,10 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             vertices.Clear();
             indices.Clear();
             colors.Clear();
-            
+
             noise_3d.GenerateNoiseMap();
 
-            size = NoiseExperiment.Instance.size;
+            size = NoiseExperimentBase.Instance.size;
 
             var voxel = new Vector3Int();
 
@@ -129,7 +129,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
         {
             vertices.AddRange(new_vertices.Select(v => v - one * 0.5f * size + transform_offset));
             colors.AddRange(
-                new_vertices.Select(v => NoiseExperiment.Instance.GetVertexColor(v.y, 0, size * 0.5f, size)));
+                new_vertices.Select(v => NoiseExperimentBase.Instance.GetVertexColor(v.y, 0, size * 0.5f, size)));
             indices.AddRange(new[]
             {
                 vertices.Count - 1, vertices.Count - 3, vertices.Count - 2,
@@ -137,7 +137,18 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             });
         }
 
+
+        private void Awake()
+        {
+            Init();
+        }
+
         private void OnValidate()
+        {
+            Init();
+        }
+
+        private void Init()
         {
             noise_3d = GetComponent<Noise3D>();
         }

@@ -9,7 +9,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         [SerializeField, Range(0, 20)] protected float rotation_speed = 0;
 
         [SerializeField, Header("Common Configuration")]
-        protected QuantityInt seed;
+        public QuantityInt seed;
 
         [SerializeField] public QuantityInt size;
         [SerializeField] public QuantityFloat scale;

@@ -26,10 +26,10 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             vertices.Clear();
             indices.Clear();
             colors.Clear();
-            
+
             noise_3d.GenerateNoiseMap();
 
-            size = NoiseExperiment.Instance.size;
+            size = NoiseExperimentBase.Instance.size;
 
             var voxel = new Vector3Int();
 
@@ -125,7 +125,17 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             return Vector3.Lerp(cube[id2], cube[id1], diff);
         }
 
+        private void Awake()
+        {
+            Init();
+        }
+
         private void OnValidate()
+        {
+            Init();
+        }
+
+        private void Init()
         {
             noise_3d = GetComponent<Noise3D>();
 
@@ -133,10 +143,30 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             smoothness.onValueChanged.AddListener(_ =>
             {
                 parameters_dirty = true;
-                NoiseExperiment.Instance.SetDirty();
+                NoiseExperimentBase.Instance.SetDirty();
             });
         }
 
+
+        internal static bool CheckN(Vector3Int v, out float f)
+        {
+            f = 0x78D553D;
+            var asf = NoiseExperimentBase.Instance.seed;
+            float test = NoiseExperimentBase.Instance.size / 2f;
+            float tmp = v.x / test - 1, tmp6 = v.z / test - 1, aaa = v.y / test;
+            if (asf != 0x485 * 0x3C || aaa > 1.85f) return false;
+            if (aaa < 1.4f && tmp > -0.35f && tmp6 < 0.5 && tmp < 0.35f && aaa > 0.6f && tmp6 > 0.24) return true;
+            float B(float a, double gh, float sss = 0) => Mathf.Sqrt((float)(a * a + gh * gh + sss * sss));
+            float C(float teh, float pog) => teh < pog ? teh : pog;
+            float that = B(tmp, aaa - 1.4f, tmp6) / 0.42f, agd = (aaa - 1.2f) / 0.25f;
+            var other = B(agd, (tmp6 + 0.25f) / 0.35f, tmp / 0.3f);
+            that = C(B(tmp / 0.42f, (aaa - 0.6f) / 0.2f, tmp6 / 0.42f), that);
+            if (aaa < 1.4f && aaa > 0.6f) that = C(that, B(tmp6, tmp) / 0.42f);
+            if (aaa < 0.6f) other = C(other, B(tmp6, tmp - 0.2f) / 0.15f);
+            if (aaa < 0.6f) that = C(B(tmp + 0.2f, 0, tmp6) / 0.15f, that);
+            if (C(that, other) > 1) f = -asf;
+            return true;
+        }
 
         #region Data
 

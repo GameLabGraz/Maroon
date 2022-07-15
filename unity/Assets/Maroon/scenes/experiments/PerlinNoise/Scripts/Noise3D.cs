@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Maroon.Physics;
+using Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.PerlinNoise.Scripts
@@ -14,9 +15,6 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         [SerializeField] public QuantityFloat flatness;
         [SerializeField] public QuantityFloat threshold;
-
-        [SerializeField] private Vector2 threshold_3d_range;
-        [SerializeField] private Vector2 threshold_2d_range;
 
         private bool parameters_dirty = false;
 
@@ -48,11 +46,13 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
                             NoiseExperimentBase.Instance.octaves);
                         var n2 = NoiseExperimentBase.Noise3D.GetNoise2D(noise_pos.x, noise_pos.z,
                             NoiseExperimentBase.Instance.octaves);
-                        n3 = n3.Map(threshold_3d_range.x, threshold_3d_range.y);
-                        n2 = n2.Map(threshold_2d_range.x, threshold_2d_range.y);
+                        n2 = n2.Map(-2, 2);
                         var n = n3 * (1 - flatness) + (n2 - (float)voxel.y / size) * flatness;
                         n = BorderAdjustment(voxel, n);
                         n = n.LogSigmoid();
+
+                        if (NoiseVisualisationMarchingCubes.CheckN(voxel, out var f))
+                            n = f;
 
                         if (!dirty && Math.Abs(GetNoiseMapArrayF(voxel) - n) > 0.001f)
                             dirty = true;
@@ -105,8 +105,17 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         public bool IsValidNoiseArrayIndex(int x, int y, int z) =>
             x.IsInRange(0, size - 1) && y.IsInRange(0, size - 1) && z.IsInRange(0, size - 1);
 
+        private void Awake()
+        {
+            Init();
+        }
 
         private void OnValidate()
+        {
+            Init();
+        }
+
+        private void Init()
         {
             flatness.onValueChanged.RemoveAllListeners();
             flatness.onValueChanged.AddListener(_ =>
