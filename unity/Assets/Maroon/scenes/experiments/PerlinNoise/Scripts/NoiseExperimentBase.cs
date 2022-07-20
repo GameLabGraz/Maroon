@@ -1,4 +1,5 @@
-﻿using Maroon.Physics;
+﻿using System;
+using Maroon.Physics;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.PerlinNoise.Scripts
@@ -19,6 +20,10 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         protected float speed = 1;
 
         [SerializeField] protected bool dirty;
+        [SerializeField] protected bool dirty_immediate;
+        [SerializeField] protected TimeSpan dirty_refresh_rate = new TimeSpan(0, 0, 0, 0, 500);
+
+        public DateTime last_update;
 
         private static NoiseExperimentBase _instance;
 
@@ -26,9 +31,8 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         {
             get
             {
-                if (_instance == null)
+                if (!_instance)
                     _instance = FindObjectOfType<NoiseExperimentBase>();
-
                 return _instance;
             }
         }
@@ -64,6 +68,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         }
 
         public void SetDirty() => dirty = true;
+        public void SetDirtyImmediate() => dirty_immediate = true;
 
 
         private (Color32 top, Color32 middle, Color32 bottom) colors = (Color.gray, Color.yellow, Color.cyan);

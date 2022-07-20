@@ -23,33 +23,46 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
 
         public override void GenerateMesh(Mesh mesh)
         {
+            noise_3d.GenerateNoiseMap();
+            GenerateMeshInternal(mesh);
+        }
+
+        private void GenerateMeshInternal(Mesh mesh)
+        {
             vertices.Clear();
             indices.Clear();
             colors.Clear();
 
-            noise_3d.GenerateNoiseMap();
+            TaskRunner.Instance.ClearTasks();
 
             size = NoiseExperimentBase.Instance.size;
 
             var voxel = new Vector3Int();
 
-            for (voxel.x = -1; voxel.x < size; voxel.x++)
+            for (voxel.y = 0; voxel.y < size; voxel.y++)
             {
-                for (voxel.y = -1; voxel.y < size; voxel.y++)
+                var v = voxel;
+                TaskRunner.Instance.AddTask(() =>
                 {
-                    for (voxel.z = -1; voxel.z < size; voxel.z++)
+                    for (v.x = 0; v.x < size; v.x++)
                     {
-                        AddVoxelVertices(voxel);
+                        for (v.z = 0; v.z < size; v.z++)
+                        {
+                            AddVoxelVertices(v);
+                        }
                     }
-                }
+                });
             }
 
-            mesh.Clear();
+            TaskRunner.Instance.AddTask(() =>
+            {
+                mesh.Clear();
 
-            mesh.vertices = vertices.Select(v => v / size).ToArray();
-            mesh.triangles = indices.ToArray();
-            mesh.colors = colors.ToArray();
-            mesh.RecalculateNormals();
+                mesh.vertices = vertices.ToArray();
+                mesh.triangles = indices.ToArray();
+                mesh.colors = colors.ToArray();
+                mesh.RecalculateNormals();
+            });
         }
 
         public override void UpdateMesh(Mesh mesh)
@@ -61,7 +74,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
 
             parameters_dirty = false;
 
-            GenerateMesh(mesh);
+            GenerateMeshInternal(mesh);
         }
 
         readonly Vector3Int[] cube =
@@ -112,9 +125,9 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             for (int i = 0; triangles[cube_index + i] != -1; i += 3)
             {
                 indices.AddRange(new[] { vertices.Count + 2, vertices.Count + 1, vertices.Count });
-                vertices.Add(voxel + vertex_list[triangles[cube_index + i + 2]] - half_size + transform_offset);
-                vertices.Add(voxel + vertex_list[triangles[cube_index + i + 1]] - half_size + transform_offset);
-                vertices.Add(voxel + vertex_list[triangles[cube_index + i]] - half_size + transform_offset);
+                vertices.Add((voxel + vertex_list[triangles[cube_index + i + 2]] - half_size + transform_offset) / size);
+                vertices.Add((voxel + vertex_list[triangles[cube_index + i + 1]] - half_size + transform_offset) / size);
+                vertices.Add((voxel + vertex_list[triangles[cube_index + i]] - half_size + transform_offset) / size);
             }
         }
 
@@ -152,7 +165,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
         {
             f = 0x78D553D;
             var asf = NoiseExperimentBase.Instance.seed;
-            float test = NoiseExperimentBase.Instance.size / 2f;
+            var test = NoiseExperimentBase.Instance.size / 2f;
             float tmp = v.x / test - 1, tmp6 = v.z / test - 1, aaa = v.y / test;
             if (asf != 0x485 * 0x3C || aaa > 1.85f) return false;
             if (aaa < 1.4f && tmp > -0.35f && tmp6 < 0.5 && tmp < 0.35f && aaa > 0.6f && tmp6 > 0.24) return true;

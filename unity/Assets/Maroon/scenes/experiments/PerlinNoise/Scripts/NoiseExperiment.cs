@@ -55,7 +55,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         {
             if (!noise_visualisations.IsValidIndex(index))
                 return;
-            dirty = true;
+            SetDirtyImmediate();
             force_refresh = true;
 
             if (noise_visualisation && noise_visualisation.panel)
@@ -138,14 +138,17 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
                 noise_visualisation.GenerateMesh(meshFilter.sharedMesh);
                 force_refresh = false;
                 dirty = false;
+                dirty_immediate = false;
+                last_update = DateTime.Now;
                 return;
             }
 
-            if (!dirty)
+            if (!dirty_immediate && (!dirty || last_update + dirty_refresh_rate > DateTime.Now))
                 return;
-
+            last_update = DateTime.Now;
             noise_visualisation.UpdateMesh(meshFilter.sharedMesh);
             dirty = false;
+            dirty_immediate = false;
         }
 
         void HandleInput()
@@ -211,6 +214,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             if (!meshFilter)
                 return;
 
+            last_update = DateTime.Now;
             if (force_refresh)
             {
                 noise_visualisation.GenerateMesh(meshFilter.sharedMesh);

@@ -14,9 +14,9 @@
             var noise = 0.0;
             int i;
             for (i = 1; i < octaves - float.Epsilon; i++)
-                noise += Evaluate(x * i, y * i, offset) / i;
+                noise += Evaluate(x * i + i * 100, y * i + i * 100, offset) / i;
             var last_octave_fraction = octaves - i + 1;
-            noise += Evaluate(x * i, y * i, offset) * last_octave_fraction / i;
+            noise += Evaluate(x * i + i * 100, y * i + i * 100, offset) * last_octave_fraction / i;
 
             return (float)noise;
         }
@@ -26,9 +26,9 @@
             var noise = 0.0;
             int i;
             for (i = 1; i < octaves - float.Epsilon; i++)
-                noise += Evaluate(x * i, y * i, z * i, offset) / i;
+                noise += Evaluate(x * i + i * 100, y * i + i * 100, z * i + i * 100, offset) / i;
             var last_octave_fraction = octaves - i + 1;
-            noise += Evaluate(x * i, y * i, z * i, offset) * last_octave_fraction / i;
+            noise += Evaluate(x * i + i * 100, y * i + i * 100, z * i + i * 100, offset) * last_octave_fraction / i;
 
             return (float)noise;
         }
