@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using StateMachine;
-using UnityEngine.UI;
+﻿using Maroon.CSE.StateMachine;
 
 public class State
 {
@@ -13,8 +9,7 @@ public class State
     }
 
     public void SetStateName(string name) {
-
-        //_stateName = name;
+        _stateName = name;
     }
 
     public bool IsStartState() {

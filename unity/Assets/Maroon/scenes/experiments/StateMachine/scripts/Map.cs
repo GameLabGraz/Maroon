@@ -1,11 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using Maroon.CSE.StateMachine;
+using MapList = System.Collections.Generic.List<System.Collections.Generic.List<Field>>;
 
 public class Map 
 {
-    private List<List<Field>> _map = new List<List<Field>>();
-    private int _amountFieldsPerRow = 8;
+    private MapList _map = new MapList();
     private int _amountFieldsPerColumn = 8;
 
     public Map() {
@@ -29,7 +29,7 @@ public class Map
             }
 
             GameObject fieldObject = tiles.transform.GetChild(counter).gameObject;
-            Field field = fieldObject.GetComponent(typeof(Field)) as Field;
+            Field field = fieldObject.GetComponent<Field>();
             if (field.GetFigure()) {
                 field.GetFigure()._positionColumn = rowCount;
                 field.GetFigure()._positionRow = columnCount;

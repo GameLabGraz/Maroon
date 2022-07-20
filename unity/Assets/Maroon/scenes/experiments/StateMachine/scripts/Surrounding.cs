@@ -1,7 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using StateMachine;
+using Maroon.CSE.StateMachine;
 using TMPro;
 
 public enum SurroundingValue {
@@ -13,11 +12,11 @@ public enum SurroundingValue {
 public class Surrounding : MonoBehaviour
 {
     List<List<SurroundingField>> _surrounding = new List<List<SurroundingField>>();
-    List<GameObject> _surroundingFieldObjects = new List<GameObject>();
+    [SerializeField] List<GameObject> _surroundingFieldObjects;
     private int _columnAmount = 3;
     private int _rowAmount = 3;
 
-    void Start() {
+    private void Start() {
         for (int column = 0; column < _columnAmount; column++) {
             List<SurroundingField> tempList = new List<SurroundingField>();
             for (int row = 0; row < _rowAmount; row++) {
@@ -25,21 +24,21 @@ public class Surrounding : MonoBehaviour
             }
             _surrounding.Add(tempList);
         }
-        _surroundingFieldObjects.Add(GameObject.Find("UpperLeftButton"));
+        /* _surroundingFieldObjects.Add(GameObject.Find("UpperLeftButton"));
         _surroundingFieldObjects.Add(GameObject.Find("UpperMiddleButton"));
         _surroundingFieldObjects.Add(GameObject.Find("UpperRightButton"));
         _surroundingFieldObjects.Add(GameObject.Find("MiddleLeftButton"));
         _surroundingFieldObjects.Add(GameObject.Find("MiddleRightButton"));
         _surroundingFieldObjects.Add(GameObject.Find("LowerLeftButton"));
         _surroundingFieldObjects.Add(GameObject.Find("LowerMiddleButton"));
-        _surroundingFieldObjects.Add(GameObject.Find("LowerRightButton"));
+        _surroundingFieldObjects.Add(GameObject.Find("LowerRightButton")); */
     }
 
     private void SetValue(int column, int row, string objectName) {
 
         GameObject surroundingFieldObject = _surroundingFieldObjects.Find(entry => entry.name == objectName);
         GameObject textObject =  surroundingFieldObject.transform.GetChild(0).gameObject;
-        TextMeshProUGUI textmeshObject = textObject.GetComponent(typeof(TextMeshProUGUI)) as TextMeshProUGUI;
+        TextMeshProUGUI textmeshObject = textObject.GetComponent<TextMeshProUGUI>();
         _surrounding[column][row].UpdateValue();
         textmeshObject.text = _surrounding[column][row].GetName();
     }
@@ -47,7 +46,7 @@ public class Surrounding : MonoBehaviour
     private void SetValue(int column, int row, string objectName, SurroundingValue value) {
         GameObject surroundingFieldObject = _surroundingFieldObjects.Find(entry => entry.name == objectName);
         GameObject textObject =  surroundingFieldObject.transform.GetChild(0).gameObject;
-        TextMeshProUGUI textmeshObject = textObject.GetComponent(typeof(TextMeshProUGUI)) as TextMeshProUGUI;
+        TextMeshProUGUI textmeshObject = textObject.GetComponent<TextMeshProUGUI>();
         _surrounding[column][row].SetValue(value);
         textmeshObject.text = _surrounding[column][row].GetName();
     }

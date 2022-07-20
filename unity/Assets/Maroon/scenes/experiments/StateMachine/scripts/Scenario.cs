@@ -1,9 +1,9 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
 using GEAR.Localization;
 using UnityEngine;
 using TMPro;
+using Maroon.CSE.StateMachine;
 
 public enum ChessBoardColumn {
         a = 0,
@@ -44,7 +44,7 @@ public class Scenario
         try {
             jsonScenario = JsonUtility.FromJson<JsonScenario>(scenarioData.ToString());
         } catch (Exception ex) {
-            Debug.LogFormat("There exists no file with name {0}.json", _scenarioName);
+            Debug.LogFormat($"There exists no file with name {_scenarioName}.json");
             return;
         }
 
@@ -59,27 +59,23 @@ public class Scenario
             index++;
         }
         foreach (Player player in players) {
-            if (jsonScenario.playerToPlay == player._playerName) {
-                player._isUser = true;
-            } else {
-                player._isUser = false;
-            }
+            player._isUser = jsonScenario.playerToPlay == player._playerName ? true : false;
         }
 
-        // initialse moveable figures
+        // initialise moveable figures
         index = 0;
         foreach (var figureToMove in jsonScenario.figuresToMove) {
             MoveFigureToDestination(players, figureToMove, index);
             index++;
         }
 
-        if (players.getPlayerByName(jsonScenario.playerToPlay).GetFigures() == null) {
-            Debug.LogFormat("There is no figure to move definded ({0}.json)", _scenarioName);
+        if (players.GetPlayerByName(jsonScenario.playerToPlay).GetFigures() == null) {
+            Debug.LogFormat($"There is no figure to move definded ({_scenarioName}.json)");
             return;
         }
 
         GameObject descriptionObject = GameObject.Find("ScenarioDescription");
-        TextMeshProUGUI descriptionTextMesh = descriptionObject.GetComponent(typeof(TextMeshProUGUI)) as TextMeshProUGUI;
+        TextMeshProUGUI descriptionTextMesh = descriptionObject.GetComponent<TextMeshProUGUI>();
         if (descriptionTextMesh != null) {
             LanguageManager.Instance.OnLanguageChanged.AddListener(language =>
             {
@@ -90,18 +86,14 @@ public class Scenario
 
         GameObject destination = GameObject.Find(jsonScenario.destination);
         if (destination) {
-            var dest = destination.GetComponent(typeof(Field)) as Field;
+            var dest = destination.GetComponent<Field>();
             dest.SetDestination(true);
         } else {
-            Debug.LogFormat("There is destination definded ({0}.json)", _scenarioName);
+            Debug.LogFormat($"There is no destination defined ({_scenarioName}.json)");
             return;
         }
 
-        if (jsonScenario.mustHitAllEnemies) {
-            _mustHitAllEnemies = true;
-        } else {
-            _mustHitAllEnemies = false;
-        }
+        _mustHitAllEnemies = jsonScenario.mustHitAllEnemies == true ? true : false;
 
         InitialiseEnemyMoves(jsonScenario, enemyMoves);
         return;
@@ -143,32 +135,32 @@ public class Scenario
             column = (ChessBoardColumn)Enum.Parse(typeof(ChessBoardColumn), jsonFigureToMove.column);
         } catch (Exception ex) {
             if (jsonFigureToMove.column == null) {
-                Debug.LogFormat("There is no column defined (figures: line {0}, {1}.json)", figureLineNumber, _scenarioName);
+                Debug.LogFormat($"There is no column defined (figures: line {figureLineNumber}, {_scenarioName}.json)");
                 return;
             } 
-            Debug.LogFormat("There exists no column {0} on the map (figures: line {1}, {2}.json)", jsonFigureToMove.column, figureLineNumber, _scenarioName);
+            Debug.LogFormat($"There exists no column {jsonFigureToMove.column} on the map (figures: line {figureLineNumber}, {_scenarioName}.json)");
             return;
         }
 
         if (column == null || jsonFigureToMove.row <= 0) {
-            Debug.LogFormat("There exists no row {0} where {1} should be moved (figures: line {2}, {3}.json)", (jsonFigureToMove.row), jsonFigureToMove.name, figureLineNumber, _scenarioName);
+            Debug.LogFormat($"There exists no row {jsonFigureToMove.row} where {jsonFigureToMove.name} should be moved (figures: line {figureLineNumber}, {_scenarioName}.json)");
             return;
         }
 
         Field field = _map.GetFieldByIndices((int)column, jsonFigureToMove.row - 1);
 
         if (field == null) {
-            Debug.LogFormat("There exists no field {0}{1} where {2} should be placed (figures: line {3}, {4}.json)", column, (jsonFigureToMove.row), jsonFigureToMove.name, figureLineNumber, _scenarioName);
+            Debug.LogFormat($"There exists no field {column}{jsonFigureToMove.row} where {jsonFigureToMove.name} should be placed (figures: line {figureLineNumber}, {_scenarioName}.json)");
             return;
         }
 
         if (field.GetFigure() != null) {
-            Debug.LogFormat("There already has been placed {0} on field field {1}{2} where {3} should be placed (figures: line {4}, {5}.json)", field.GetFigure().gameObject.name, column, (jsonFigureToMove.row), jsonFigureToMove.name, figureLineNumber, _scenarioName);
+            Debug.LogFormat($"There already has been placed {field.GetFigure().gameObject.name} on field field {column}{jsonFigureToMove.row} where {jsonFigureToMove.name} should be placed (figures: line {figureLineNumber}, {_scenarioName}.json)");
             return;
         }
 
         if (jsonFigureToMove.name == null) {
-            Debug.LogFormat("No figure to move is given (figures: line {0}, {1}.json)", figureLineNumber, _scenarioName);
+            Debug.LogFormat($"No figure to move is given (figures: line {figureLineNumber}, {_scenarioName}.json)");
             return;
         }
 
@@ -189,7 +181,7 @@ public class Scenario
 
 
         if (figureToMove._player == null) {
-            Debug.LogFormat("No defined player could be found for {0} (figures: line {1}, {2}.json)", jsonFigureToMove.name, figureLineNumber, _scenarioName);
+            Debug.LogFormat($"No defined player could be found for {jsonFigureToMove.name} (figures: line {figureLineNumber}, {_scenarioName}.json)");
             return;
         }
 
@@ -218,7 +210,7 @@ public class Scenario
 
         if (figureTransform == null) {
             // TODO update log
-            // Debug.LogFormat("{0} is no valid figure (figures: line {1}, {2}.json)", figureName, figureLineNumber, scenarioName);
+            // Debug.LogFormat($"{figureName} is no valid figure (figures: line {figureLineNumber}, {scenarioName}.json)");
             return null;
         }
 
@@ -228,6 +220,6 @@ public class Scenario
             return null;
         }
 
-        return figureGameObject.GetComponent(typeof(Figure)) as Figure;
+        return figureGameObject.GetComponent<Figure>();
     }
 }

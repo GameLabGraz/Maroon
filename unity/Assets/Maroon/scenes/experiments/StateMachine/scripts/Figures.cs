@@ -1,24 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using StateMachine;
+﻿using System.Collections.Generic;
+using System.Collections;
+using Maroon.CSE.StateMachine;
+using System.Linq;
 
 public class Figures : IEnumerable
 {
     private List<Figure> _figures = new List<Figure>();
 
     public void AddFigure(Figure newFigure) {
-
         _figures.Add(newFigure);
     }
 
     public Figure GetNextActiveFigure() {
-        foreach(Figure figure in _figures) {
-            if (figure._canMove && figure.gameObject.activeSelf) {
-                return figure;
-            }
-        }
-        return null;
+        return _figures.FirstOrDefault(figure => figure._canMove && figure.gameObject.activeSelf);
     }
 
     public void ResetFiguresToActive() {
@@ -34,22 +28,13 @@ public class Figures : IEnumerable
     }
 
     public Figure GetFigureAtPosition(int position) {
-        if (position < _figures.Count) {
-            return _figures[position];
-        }
-        return null;
+        return position < _figures.Count ? _figures[position] : null;
     }
     public Figure GetFigureByName(string name) {
         return _figures.Find(element => element.gameObject.name == name);
     }
     public int Count() {
-        int counter = 0;
-        foreach(Figure figure in _figures) {
-            if (figure.gameObject.activeSelf) {
-                counter++;
-            }
-        }
-        return counter;
+        return _figures.Count(figure => figure.gameObject.activeSelf);
     }
 
     public IEnumerator GetEnumerator() {

@@ -9,7 +9,7 @@ using Selectable = UnityEngine.UI.Selectable;
 using LocalizedTMP = GEAR.Localization.Text.LocalizedTMP;
 using TMPro;
 
-namespace StateMachine {
+namespace Maroon.CSE.StateMachine {
     public class GameController : MonoBehaviour
     {
         [SerializeField]
@@ -21,7 +21,6 @@ namespace StateMachine {
         private Scenario _scenario;
         private States _states;
         private State _actualState;
-        private Player _playerToPlay;
         private Direction _actualDirection;
         private Directions _directions = new Directions();
         private Moves _moves = new Moves();
@@ -42,7 +41,7 @@ namespace StateMachine {
         private GameObject _stateMenu;
         private GameObject _rulesetMenu;
         
-        private int _dataTableRowLength = 6;
+        private int _dataTableRowLength = 7;
 
         private DialogueManager _dialogueManager;
 
@@ -50,13 +49,13 @@ namespace StateMachine {
 
         private GameObject _deleteButton;
         // Start is called before the first frame update
-        void Start()
+        private void Start()
         {
             _dialogueManager = FindObjectOfType<DialogueManager>();
             _stateMenu = GameObject.Find("StateMenu");   
             _rulesetMenu = GameObject.Find("RulesetMenu");
             GameObject surroundingObject = GameObject.Find("Surrounding");
-            Surrounding surrounding = surroundingObject.GetComponent(typeof(Surrounding)) as Surrounding;
+            Surrounding surrounding = surroundingObject.GetComponent<Surrounding>();
             _surrounding = surrounding;
             GameObject deleteButton = GameObject.Find("RulesetTextBackgroundDeleteButton");
             if (deleteButton != null) {
@@ -96,12 +95,12 @@ namespace StateMachine {
 
         private void InitStates() {
             GameObject test = GameObject.Find("States");
-            _states = test.GetComponent(typeof(States)) as States;
+            _states = test.GetComponent<States>();
         }
 
         private void InitDirections() {
             GameObject dropdownObject = GameObject.Find("DirectionDropdown");
-            Dropdown dropdown = dropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
+            Dropdown dropdown = dropdownObject.GetComponent<Dropdown>();
             dropdown.ClearOptions();
 
             // ToDo: Use a Localized DropDown!!!
@@ -140,14 +139,14 @@ namespace StateMachine {
 
         private void InitMoves() {
             GameObject dropdownObject = GameObject.Find("ModeDropdown");
-            Dropdown dropdown = dropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
+            Dropdown dropdown = dropdownObject.GetComponent<Dropdown>();
             dropdown.ClearOptions();
 
             // TODO remove magic values and make enum
             // ToDO use localized DropDown
-            _modes.AddMode(new Mode("CaptureFigure", "CaptureFigure",1));
-            _modes.AddMode(new Mode("EnterEmptyField", "EnterEmptyField", 0));
-            _modes.AddMode(new Mode("EmptyFieldEndMove", "EmptyFieldEndMove", 2));
+            _modes.AddMode(new Mode("CaptureFigure", "CaptureFigure", ModeCode.HIT));
+            _modes.AddMode(new Mode("EnterEmptyField", "EnterEmptyField", ModeCode.EMPTY));
+            _modes.AddMode(new Mode("EmptyFieldEndMove", "EmptyFieldEndMove", ModeCode.EMTPY_AND_END));
 
             LanguageManager.Instance.OnLanguageChanged.AddListener(language =>
             {
@@ -178,19 +177,19 @@ namespace StateMachine {
 
         public void AddRulesetButtonClicked() {
             GameObject directionDropdownObject = GameObject.Find("DirectionDropdown");
-            Dropdown directionDropdown = directionDropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
+            Dropdown directionDropdown = directionDropdownObject.GetComponent<Dropdown>();
             int directionValue = directionDropdown.value;
 
             GameObject modeDropdownObject = GameObject.Find("ModeDropdown");
-            Dropdown modeDropdown = modeDropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
+            Dropdown modeDropdown = modeDropdownObject.GetComponent<Dropdown>();
             int modeValue = modeDropdown.value;
 
             GameObject startStateDropdownObject = GameObject.Find("StartStateDropdown");
-            Dropdown startStateDropdown = startStateDropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
+            Dropdown startStateDropdown = startStateDropdownObject.GetComponent<Dropdown>();
             int startStateValue = startStateDropdown.value;
 
             GameObject endStateDropdownObject = GameObject.Find("EndStateDropdown");
-            Dropdown endStateDropdown = endStateDropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
+            Dropdown endStateDropdown = endStateDropdownObject.GetComponent<Dropdown>();
             int endStateValue = endStateDropdown.value;
 
             string testOutput = directionDropdown.options[directionValue].text + modeDropdown.options[modeValue].text + startStateDropdown.options[startStateValue].text + endStateDropdown.options[endStateValue].text;
@@ -206,7 +205,7 @@ namespace StateMachine {
             if (isAdded) {
                 CreateNewRulesetGameObject(ruleset);
             } else {
-                _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString("ErrorSameRuleTwice"), _errorColor, MessageIcon.MI_Error));
+                _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString(message), _errorColor, MessageIcon.MI_Error));
             }
         }
 
@@ -229,7 +228,7 @@ namespace StateMachine {
                     return;
                 }
 
-                TextMeshProUGUI textmeshObject = rulesetTextObject.GetComponent(typeof(TextMeshProUGUI)) as TextMeshProUGUI;
+                TextMeshProUGUI textmeshObject = rulesetTextObject.GetComponent<TextMeshProUGUI>() ;
 
                 LocalizedTMP localizedTMPObject = rulesetTextObject.GetComponent<LocalizedTMP>();
                 localizedTMPObject.enabled = false;
@@ -266,22 +265,12 @@ namespace StateMachine {
             deleteButtonObject.transform.SetParent(rulesetTextTableObject.transform);
             deleteButtonObject.transform.localScale = new Vector3(0.5f, 0.5f, 1.0f);
 
-            Button buttonObject = deleteButtonObject.GetComponent(typeof(Button)) as Button;
+            Button buttonObject = deleteButtonObject.GetComponent<Button>();
             int ruleId = _ruleCounter;
             buttonObject.onClick.AddListener(() => {
                 DeleteRuleset(ruleId);
             });
-          /*   rulesetTextBackgroundObject.transform.SetParent(rulesetTextTableObject.transform);
-            rulesetTextObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-            UnityEngine.UI.Image background = rulesetTextBackgroundObject.GetComponent(typeof(UnityEngine.UI.Image)) as UnityEngine.UI.Image;
-            
-            if (_isLastRowColorFirstColor) {
-                background.color = _rowColor2;
-            } else {
-                background.color = _rowColor1;
-            } */
-/* 
-            rulesetTextBackgroundObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f); */
+
             return;
         }
 
@@ -324,7 +313,7 @@ namespace StateMachine {
 
             rulesetTextBackgroundObject.transform.SetParent(rulesetTextTableObject.transform);
             rulesetTextObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-            UnityEngine.UI.Image background = rulesetTextBackgroundObject.GetComponent(typeof(UnityEngine.UI.Image)) as UnityEngine.UI.Image;
+            UnityEngine.UI.Image background = rulesetTextBackgroundObject.GetComponent<UnityEngine.UI.Image>();
             
             if (_isLastRowColorFirstColor) {
                 background.color = _rowColor2;
@@ -345,7 +334,7 @@ namespace StateMachine {
             GameObject rulesetTextTableObject = GameObject.Find("RulesetTextTable");
             (GameObject backgroundObject, GameObject textObject) = CreateBackgroundObject(rulesetTextTableObject);
 
-            VerticalLayoutGroup group = output.GetComponent(typeof(VerticalLayoutGroup)) as VerticalLayoutGroup;
+            VerticalLayoutGroup group = output.GetComponent<VerticalLayoutGroup>();
             group.childAlignment = TextAnchor.UpperLeft;
             RectOffset offset = new RectOffset(20,0,0,0);
             group.padding = offset;
@@ -355,7 +344,7 @@ namespace StateMachine {
                 GameObject child = output.transform.GetChild(counter).gameObject;
                 for (int counter2 = 0; counter2 < child.transform.childCount; counter2++) {
                     GameObject buttonGameObject = child.transform.GetChild(counter2).gameObject;
-                    Button buttonObject = buttonGameObject.GetComponent(typeof(Button)) as Button;
+                    Button buttonObject = buttonGameObject.GetComponent<Button>();
                     buttonObject.transition = Selectable.Transition.None;
                     buttonObject.interactable = !buttonObject.interactable;
                 }
@@ -370,7 +359,7 @@ namespace StateMachine {
             SetVisibilityOfMenus(false);
             ClearStateMenu();
             GameObject scenarioDropdownObject = GameObject.Find("ScenarioSelectionDropdown");
-            Dropdown scenarioDropdown = scenarioDropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
+            Dropdown scenarioDropdown = scenarioDropdownObject.GetComponent<Dropdown>();
             scenarioDropdown.enabled = false;
             StartCoroutine(MakeMove()); 
             DisableRemoveRulesetButtons();
@@ -411,7 +400,7 @@ namespace StateMachine {
             SetVisibilityOfMenus(true);
             ResetScenario();
             GameObject scenarioDropdownObject = GameObject.Find("ScenarioSelectionDropdown");
-            Dropdown scenarioDropdown = scenarioDropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
+            Dropdown scenarioDropdown = scenarioDropdownObject.GetComponent<Dropdown>();
             scenarioDropdown.enabled = true;
             EnableRemoveRulesetButtons();
         }
@@ -422,7 +411,7 @@ namespace StateMachine {
                 GameObject rulesetObject = rulesetTextTableObject.transform.GetChild(counter).gameObject;     
 
                 if (rulesetObject.name.Contains("Button")) {
-                    Button buttonObject = rulesetObject.GetComponent(typeof(Button)) as Button;
+                    Button buttonObject = rulesetObject.GetComponent<Button>();
                     buttonObject.enabled = false;
                 }
             }
@@ -435,7 +424,7 @@ namespace StateMachine {
                 GameObject rulesetObject = rulesetTextTableObject.transform.GetChild(counter).gameObject;     
 
                 if (rulesetObject.name.Contains("Button") && !rulesetObject.name.EndsWith("Button")) {
-                    Button buttonObject = rulesetObject.GetComponent(typeof(Button)) as Button;
+                    Button buttonObject = rulesetObject.GetComponent<Button>();
                     buttonObject.enabled = true;
                 }
             }
@@ -480,7 +469,6 @@ namespace StateMachine {
                 /* if (colorCounter % _dataTableRowLength == 0 && colorCounter != 0) {
                     isFirstColor = !isFirstColor;
                 }
-                Debug.LogFormat("{0} {1} {2}", counter, isFirstColor, colorCounter % _dataTableRowLength);
 
                 if (isFirstColor) {
                     background.color = _rowColor1;
@@ -503,7 +491,7 @@ namespace StateMachine {
         public void ResetScenario() {
 
             GameObject scenarioDropdownObject = GameObject.Find("ScenarioSelectionDropdown");
-            Dropdown scenarioDropdown = scenarioDropdownObject.GetComponent(typeof(Dropdown)) as Dropdown;
+            Dropdown scenarioDropdown = scenarioDropdownObject.GetComponent<Dropdown>();
             int scenarioIndex = scenarioDropdown.value;
 
             foreach(Player player in _players) {
@@ -556,17 +544,17 @@ namespace StateMachine {
 
                             // check if field is empty (when mode is 0)
                             // TODO remove magic value
-                            if ((ruleset.GetMode().GetModeCode() == 0 || ruleset.GetMode().GetModeCode() == 2) && fieldToCheck.GetFigure() != null) {
+                            if ((ruleset.GetMode().GetModeCode() == ModeCode.EMPTY || ruleset.GetMode().GetModeCode() == ModeCode.EMTPY_AND_END) && fieldToCheck.GetFigure() != null) {
                                 continue;
                             }                        
 
                             // if no figure is on field to hit
-                            if (ruleset.GetMode().GetModeCode() == 1 && fieldToCheck.GetFigure() == null) {
+                            if (ruleset.GetMode().GetModeCode() == ModeCode.HIT && fieldToCheck.GetFigure() == null) {
                                 continue;
                             }
 
                             // if own figure would be hit
-                            if (ruleset.GetMode().GetModeCode() == 1 && fieldToCheck.GetFigure() && figureToMove._player._playerName == fieldToCheck.GetFigure()._player._playerName) {
+                            if (ruleset.GetMode().GetModeCode() == ModeCode.HIT && fieldToCheck.GetFigure() && figureToMove._player._playerName == fieldToCheck.GetFigure()._player._playerName) {
                                 continue;
                             }
 
@@ -740,7 +728,7 @@ namespace StateMachine {
 
 
                 //TODO now every figure of ai just moves one step
-                if (moveEnds || player != _players.GetUserPlayer() || ruleToExecute.GetMode().GetModeCode() == 1 || ruleToExecute.GetMode().GetModeCode() == 2) {
+                if (moveEnds || player != _players.GetUserPlayer() || ruleToExecute.GetMode().GetModeCode() == ModeCode.HIT || ruleToExecute.GetMode().GetModeCode() == ModeCode.EMTPY_AND_END) {
                     Player nextPlayer =  _players.GetNextPlayer();
                     if (nextPlayer != null) {
                         player = nextPlayer;

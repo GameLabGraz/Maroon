@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using StateMachine;
+using Maroon.CSE.StateMachine;
 
 public class Players : IEnumerable
 {
@@ -24,7 +23,7 @@ public class Players : IEnumerable
         _players.Add(player);
     }
 
-    public Player getPlayerByName(string name) {
+    public Player GetPlayerByName(string name) {
         return _players.Find(element => element._playerName == name);
     }
 

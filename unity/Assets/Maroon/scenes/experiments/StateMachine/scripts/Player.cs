@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using StateMachine;
+﻿using System.Collections.Generic;
+using Maroon.CSE.StateMachine;
 
 public class Player
 {
@@ -21,4 +19,5 @@ public class Player
     public void RemoveFigures() {
         _figuresToMove = new Figures();
     }
+
 }

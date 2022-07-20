@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using StateMachine;
+using Maroon.CSE.StateMachine;
+
 public class Field : MonoBehaviour
 {
     [SerializeField] Figure _figure;

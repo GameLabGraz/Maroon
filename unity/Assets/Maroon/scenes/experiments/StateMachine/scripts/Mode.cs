@@ -1,9 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using Maroon.CSE.StateMachine;
 
+public enum ModeCode {
+    EMPTY = 0,
+    HIT = 1,
+    EMTPY_AND_END = 2,
+}
 public class Mode
 {
+   
     private string _name;
 
     private string _modeKey;
@@ -11,9 +17,9 @@ public class Mode
     // 1 = hit figure
     // 2 = go on empty field and end move
     // .....
-    private int _modeCode;
+    private ModeCode _modeCode;
 
-    public Mode (string modeName, string modeKey, int modeCode) {
+    public Mode (string modeName, string modeKey, ModeCode modeCode) {
         _name = modeName;
         _modeKey = modeKey;
         _modeCode = modeCode;
@@ -28,7 +34,7 @@ public class Mode
         return _modeKey;
     }
 
-    public int GetModeCode() {
+    public ModeCode GetModeCode() {
         return _modeCode;
     }
 

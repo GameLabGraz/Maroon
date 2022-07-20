@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using StateMachine;
+using Maroon.CSE.StateMachine;
 using GEAR.Localization;
 
 public class EnemyMoves : IEnumerable
@@ -18,11 +17,10 @@ public class EnemyMoves : IEnumerable
     public Rulesets GetNextMove(string name, State state, Modes modes, Map map) {
         List<EnemyMove> moves = _enemyMoves.FindAll(element => element.GetFigure().gameObject.name == name);
 
-        if (moves == null) {
+        if (moves.Count == 0) {
             return null;
         }
 
-        // TODO check which mode is possible for a figure
         Rulesets rulesets = new Rulesets();
 
         foreach(EnemyMove enemyMove in moves) {

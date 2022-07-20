@@ -1,20 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using StateMachine;
-
+using Maroon.CSE.StateMachine;
 
 public class SurroundingField
 {    
     
     private int _value = 0;
-    private List<string> _names = new List<string>();
+    private List<string> _names = new List<string>{" ", "E", "W", "B"};
 
     public SurroundingField(int value = 0) {
-        _names.Add(" ");
-        _names.Add("E");
-        _names.Add("W");
-        _names.Add("B");
         _value = value;
     }
 

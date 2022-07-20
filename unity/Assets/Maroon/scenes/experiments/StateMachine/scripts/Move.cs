@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using StateMachine;
+using Maroon.CSE.StateMachine;
+using System.Linq;
 
 public class Move : MonoBehaviour
 {
@@ -16,13 +16,8 @@ public class Move : MonoBehaviour
         _y = y;
     }
     
-    public bool isDirectionPossible(Direction directionToCheck) {
-        for (int counter = 0; counter < _directions.Count; counter++) {
-            if (_directions[counter] == directionToCheck) {
-                return true;
-            }
-        }
-        return false;
+    public bool IsDirectionPossible(Direction directionToCheck) {
+        return _directions.Any(direction => direction == directionToCheck);
     }
 
 }

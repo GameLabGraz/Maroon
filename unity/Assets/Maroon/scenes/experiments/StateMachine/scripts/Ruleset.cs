@@ -1,17 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using StateMachine;
-
-
+using Maroon.CSE.StateMachine;
 public class Ruleset
 {
-
     private State _startState;
     private State _endState;
     private Figure _figure;
     private Direction _direction;
-    private int _moveDistance = 1;
     private Mode _mode;
     
     private int _id = 0;
@@ -29,11 +24,12 @@ public class Ruleset
     }
 
     public List<string> ToStringArray() {
-        List<string> data = new List<string>();
-        data.Add(_startState.GetStateName());
-        data.Add(_endState.GetStateName());
-        data.Add(_direction.GetDirectionName());
-        data.Add(_mode.GetModeName());
+        List<string> data = new List<string> {
+            _startState.GetStateName(),
+            _endState.GetStateName(),
+            _direction.GetDirectionName(),
+            _mode.GetModeName()
+        };
         return data;
     }
     
@@ -45,7 +41,64 @@ public class Ruleset
         return _startState;
     }
 
-     public State GetEndState() {
+    public bool IsSameRule(Ruleset newRuleset) {
+
+        List<List<SurroundingField>> surroundingToCheck = newRuleset.GetSurrounding();
+
+        if (HasSameStartStateName(newRuleset) && HasSameEndStateName(newRuleset) && 
+            HasSameDirection(newRuleset) && HasSameMode(newRuleset) &&
+            HasSameSurrounding(surroundingToCheck)) {
+                return true;
+        }
+
+        return false;
+    }
+
+    public bool IsRuleNotDesidable(Ruleset newRuleset) {
+        
+        List<List<SurroundingField>> surroundingToCheck = newRuleset.GetSurrounding();
+
+        if (HasSameStartStateName(newRuleset) && HasSameEndStateName(newRuleset) && 
+            HasSameSurrounding(surroundingToCheck)) {
+            return true;
+        }
+        return false;
+    }
+
+    private bool HasSameSurrounding(List<List<SurroundingField>> surroundingToCheck) {
+        if (_surrounding.Count != surroundingToCheck.Count) {
+            return false;
+        }
+        for (int counter = 0; counter < surroundingToCheck.Count; counter++) {
+            if (_surrounding[counter].Count != surroundingToCheck[counter].Count) {
+                return false;
+            }
+            for(int counter2 = 0; counter2 < surroundingToCheck[counter].Count; counter2++) {
+                if (_surrounding[counter][counter2].GetValue() != surroundingToCheck[counter][counter2].GetValue()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public bool HasSameStartStateName(Ruleset newRuleset) {
+        return GetStartState().GetStateName() == newRuleset.GetStartState().GetStateName();
+    }
+
+    public bool HasSameEndStateName(Ruleset newRuleset) {
+        return GetEndState().GetStateName() == newRuleset.GetEndState().GetStateName();
+    }
+
+    public bool HasSameDirection(Ruleset newRuleset) {
+        return GetDirection().GetDirectionName() == newRuleset.GetDirection().GetDirectionName();
+    }
+
+    public bool HasSameMode(Ruleset newRuleset) {
+        return GetMode().GetModeName() == newRuleset.GetMode().GetModeName();
+    }
+
+    public State GetEndState() {
         return _endState;
     }
 
