@@ -8,7 +8,6 @@ namespace Maroon.Physics.CoordinateSystem
 {
     public class CoordAxis : MonoBehaviour
     {
-        // Start is called before the first frame update
         [SerializeField] private Axis _axisID;
         [SerializeField] private float _axisWorldLength;
         [SerializeField] private GameObject _axisMarkerPrefab;
@@ -57,7 +56,6 @@ namespace Maroon.Physics.CoordinateSystem
 
         #endregion
 
-
         private void Awake()
         {
             _ = _axisMarkerPrefab ?? throw new NullReferenceException("Missing axis marker prefab!");
@@ -82,6 +80,18 @@ namespace Maroon.Physics.CoordinateSystem
             {
                 marker.GetComponentInChildren<TextMeshPro>().fontSize = value;
             }
+        }
+
+        public void CopyAxisValuesFrom(CoordAxis source, bool reset = false)
+        {
+            AxisWorldLength = source.AxisWorldLength;
+            AxisLocalLength = source.AxisLocalLength;
+            AxisLengthUnit = source.AxisLengthUnit;
+            AxisSubdivisionUnit = source.AxisSubdivisionUnit;
+            _axisSubdivision = source._axisSubdivision;
+
+            if (reset)
+                SetupAxis();
         }
 
         public void SetupAxis()
@@ -190,17 +200,23 @@ namespace Maroon.Physics.CoordinateSystem
             SetupAxis();
         }
 
-        public float GetValueFromAxisPoint(float point)
+        public float GetValueFromAxisPoint(float point, Unit targetUnit = Unit.respective)
         {
             var pointOnAxis = _axisLocalLength * point;
             var unitConversion = Mathf.Pow(10, (float)_lengthUnit) / Mathf.Pow(10, (float)_divisionUnit);
 
-            return (pointOnAxis * unitConversion);
+            if (targetUnit == Unit.respective)
+            {
+                return _lengthUnit == Unit.none || _divisionUnit == Unit.none ? pointOnAxis : (pointOnAxis * unitConversion);
+            }
+
+            return _lengthUnit == Unit.none || _divisionUnit == Unit.none ? pointOnAxis : (pointOnAxis * (Mathf.Pow(10, (float)_lengthUnit) / Mathf.Pow(10, (float)targetUnit)));
         }
 
         public float GetAxisPointFromValue(float value, Unit inputUnit)
         {
-            var unit = inputUnit != Unit.none ? inputUnit : 0; 
+            var unit = inputUnit != Unit.none ? inputUnit : inputUnit == Unit.respective ? AxisLengthUnit : 0; 
+                      
             var quotient = value * (Mathf.Pow(10, (float)unit));
             var dividend = _axisLocalLength * (Mathf.Pow(10, (float)_lengthUnit));
             return quotient / dividend;
