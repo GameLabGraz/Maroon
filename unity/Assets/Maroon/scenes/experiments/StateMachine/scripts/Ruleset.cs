@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Maroon.CSE.StateMachine;
 public class Ruleset
 {
@@ -55,7 +54,7 @@ public class Ruleset
     }
 
     public bool IsRuleNotDesidable(Ruleset newRuleset) {
-        
+
         List<List<SurroundingField>> surroundingToCheck = newRuleset.GetSurrounding();
 
         if (HasSameStartStateName(newRuleset) && HasSameEndStateName(newRuleset) && 
