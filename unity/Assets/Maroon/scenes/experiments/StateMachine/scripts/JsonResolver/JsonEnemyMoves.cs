@@ -1,6 +1,8 @@
-﻿using UnityEngine;
-
-[System.Serializable]
-public class JsonEnemyMoves {
-   public JsonEnemyMove[] enemyMoves;
+﻿namespace Maroon.CSE.StateMachine.JsonData
+{
+    [System.Serializable]
+    public class JsonEnemyMoves
+    {
+        public JsonEnemyMove[] enemyMoves;
+    }
 }

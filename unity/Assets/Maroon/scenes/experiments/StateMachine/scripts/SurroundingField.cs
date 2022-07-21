@@ -1,36 +1,42 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
-using Maroon.CSE.StateMachine;
 
-public class SurroundingField
-{    
-    
-    private int _value = 0;
-    private List<string> _names = new List<string>{" ", "E", "W", "B"};
+namespace Maroon.CSE.StateMachine
+{
+    public class SurroundingField
+    {
 
-    public SurroundingField(int value = 0) {
-        _value = value;
-    }
+        private int _value = 0;
+        private List<string> _names = new List<string> { " ", "E", "W", "B" };
 
-    public void UpdateValue () {
-
-        _value++;
-        
-        if (_value >= _names.Count) {
-            _value = 0;
+        public SurroundingField(int value = 0)
+        {
+            _value = value;
         }
-    }
 
-    public void SetValue(SurroundingValue value) {
-        _value = (int)value;
-    }
+        public void UpdateValue()
+        {
+            _value++;
 
-    public string GetName() {
-        return _names[_value];
-    }
+            if (_value >= _names.Count)
+            {
+                _value = 0;
+            }
+        }
 
-    public int GetValue() {
-        return _value;
+        public void SetValue(SurroundingValue value)
+        {
+            _value = (int)value;
+        }
+
+        public string GetName()
+        {
+            return _names[_value];
+        }
+
+        public int GetValue()
+        {
+            return _value;
+        }
     }
 }
 

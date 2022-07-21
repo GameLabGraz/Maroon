@@ -1,14 +1,15 @@
-﻿using UnityEngine;
-
-[System.Serializable]
-public class JsonScenario 
+﻿namespace Maroon.CSE.StateMachine.JsonData
 {
-    public JsonFigure[] figures;
-    public JsonFigure[] figuresToMove;
-    public JsonDirection[] directions;
-    public JsonEnemyMove[] enemyMoves;
-    public string description;
-    public string playerToPlay;
-    public string destination;
-    public bool mustHitAllEnemies;
+    [System.Serializable]
+    public class JsonScenario
+    {
+        public JsonFigure[] figures;
+        public JsonFigure[] figuresToMove;
+        public JsonDirection[] directions;
+        public JsonEnemyMove[] enemyMoves;
+        public string description;
+        public string playerToPlay;
+        public string destination;
+        public bool mustHitAllEnemies;
+    }
 }

@@ -9,11 +9,11 @@ using Selectable = UnityEngine.UI.Selectable;
 using LocalizedTMP = GEAR.Localization.Text.LocalizedTMP;
 using TMPro;
 
-namespace Maroon.CSE.StateMachine {
+namespace Maroon.CSE.StateMachine
+{
     public class GameController : MonoBehaviour
     {
-        [SerializeField]
-        private List<TextAsset> _scenarios = new List<TextAsset>();
+        [SerializeField] private List<TextAsset> _scenarios = new List<TextAsset>();
 
         private Players _players = new Players();
         private Rulesets _rulesets = new Rulesets();
@@ -26,13 +26,15 @@ namespace Maroon.CSE.StateMachine {
         private Moves _moves = new Moves();
 
         private EnemyMoves _enemyMoves = new EnemyMoves();
+
         private Modes _modes = new Modes();
+
         // Rule counter increases every time a rule is added, but does NOT decrease (so names are always unique)
         private int _ruleCounter = 0;
         private bool _isLastRowColorFirstColor = false;
         private Color _rowColor1 = new Color(0.9f, 0.9f, 0.9f);
         private Color _rowColor2 = new Color(1.0f, 1.0f, 1.0f);
-        
+
         private Color _errorColor = new Color32(154, 0, 11, 255);
         private Color _winColor = new Color32(65, 154, 40, 255);
         private Map _map = new Map();
@@ -40,7 +42,7 @@ namespace Maroon.CSE.StateMachine {
         private Surrounding _surrounding;
         private GameObject _stateMenu;
         private GameObject _rulesetMenu;
-        
+
         private int _dataTableRowLength = 7;
 
         private DialogueManager _dialogueManager;
@@ -48,27 +50,31 @@ namespace Maroon.CSE.StateMachine {
         private bool _runStateMachine = false;
 
         private GameObject _deleteButton;
+
         // Start is called before the first frame update
         private void Start()
         {
             _dialogueManager = FindObjectOfType<DialogueManager>();
-            _stateMenu = GameObject.Find("StateMenu");   
+            _stateMenu = GameObject.Find("StateMenu");
             _rulesetMenu = GameObject.Find("RulesetMenu");
             GameObject surroundingObject = GameObject.Find("Surrounding");
             Surrounding surrounding = surroundingObject.GetComponent<Surrounding>();
             _surrounding = surrounding;
             GameObject deleteButton = GameObject.Find("RulesetTextBackgroundDeleteButton");
-            if (deleteButton != null) {
+            if (deleteButton != null)
+            {
                 _deleteButton = deleteButton;
                 deleteButton.SetActive(false);
             }
+
             InitStates();
             InitDirections();
             InitMoves();
             InitScenarios();
         }
 
-        private void InitScenarios() {
+        private void InitScenarios()
+        {
             _map.InitMap();
             _players.AddPlayer(new Player("white"));
             _players.AddPlayer(new Player("black"));
@@ -79,7 +85,7 @@ namespace Maroon.CSE.StateMachine {
             var dropdownObject = GameObject.Find("ScenarioSelectionDropdown");
             var dropdown = dropdownObject.GetComponent<Dropdown>();
             dropdown.ClearOptions();
-            
+
             foreach (var scenario in _scenarios)
             {
                 dropdown.options.Add(new TMP_Dropdown.OptionData
@@ -87,18 +93,21 @@ namespace Maroon.CSE.StateMachine {
                     text = scenario.name
                 });
             }
+
             dropdown.value = 0;
             dropdown.RefreshShownValue();
 
             _actualState = new State("Start");
         }
 
-        private void InitStates() {
+        private void InitStates()
+        {
             GameObject test = GameObject.Find("States");
             _states = test.GetComponent<States>();
         }
 
-        private void InitDirections() {
+        private void InitDirections()
+        {
             GameObject dropdownObject = GameObject.Find("DirectionDropdown");
             Dropdown dropdown = dropdownObject.GetComponent<Dropdown>();
             dropdown.ClearOptions();
@@ -116,11 +125,13 @@ namespace Maroon.CSE.StateMachine {
                 {
                     string directionName = LanguageManager.Instance.GetString(item.GetDirectionKey(), language);
                     dropdown.options.Add(new TMP_Dropdown.OptionData(directionName));
-                    
-                    if (directionName != null) {
+
+                    if (directionName != null)
+                    {
                         item.SetDirectionName(directionName);
                     }
                 }
+
                 dropdown.RefreshShownValue();
             });
 
@@ -128,16 +139,18 @@ namespace Maroon.CSE.StateMachine {
             {
                 string directionName = LanguageManager.Instance.GetString(item.GetDirectionKey());
                 dropdown.options.Add(new TMP_Dropdown.OptionData(directionName));
-                if (directionName != null) {
+                if (directionName != null)
+                {
                     item.SetDirectionName(directionName);
                 }
             }
-            
+
             dropdown.value = 0;
             dropdown.RefreshShownValue();
         }
 
-        private void InitMoves() {
+        private void InitMoves()
+        {
             GameObject dropdownObject = GameObject.Find("ModeDropdown");
             Dropdown dropdown = dropdownObject.GetComponent<Dropdown>();
             dropdown.ClearOptions();
@@ -156,10 +169,12 @@ namespace Maroon.CSE.StateMachine {
                     string modeName = LanguageManager.Instance.GetString(item.GetModeKey(), language);
                     dropdown.options.Add(new TMP_Dropdown.OptionData(modeName));
 
-                    if (modeName != null) {
+                    if (modeName != null)
+                    {
                         item.SetModeName(modeName);
                     }
                 }
+
                 dropdown.RefreshShownValue();
             });
 
@@ -167,7 +182,8 @@ namespace Maroon.CSE.StateMachine {
             {
                 string modeName = LanguageManager.Instance.GetString(item.GetModeKey());
                 dropdown.options.Add(new TMP_Dropdown.OptionData(modeName));
-                if (modeName != null) {
+                if (modeName != null)
+                {
                     item.SetModeName(modeName);
                 }
             }
@@ -175,7 +191,8 @@ namespace Maroon.CSE.StateMachine {
             dropdown.value = 1;
         }
 
-        public void AddRulesetButtonClicked() {
+        public void AddRulesetButtonClicked()
+        {
             GameObject directionDropdownObject = GameObject.Find("DirectionDropdown");
             Dropdown directionDropdown = directionDropdownObject.GetComponent<Dropdown>();
             int directionValue = directionDropdown.value;
@@ -192,56 +209,72 @@ namespace Maroon.CSE.StateMachine {
             Dropdown endStateDropdown = endStateDropdownObject.GetComponent<Dropdown>();
             int endStateValue = endStateDropdown.value;
 
-            string testOutput = directionDropdown.options[directionValue].text + modeDropdown.options[modeValue].text + startStateDropdown.options[startStateValue].text + endStateDropdown.options[endStateValue].text;
+            string testOutput = directionDropdown.options[directionValue].text + modeDropdown.options[modeValue].text +
+                                startStateDropdown.options[startStateValue].text +
+                                endStateDropdown.options[endStateValue].text;
 
             State start = _states.FindState(startStateDropdown.options[startStateValue].text);
             State end = _states.FindState(endStateDropdown.options[endStateValue].text);
             Direction direction = _directions.FindDirection(directionDropdown.options[directionValue].text);
             Mode mode = _modes.FindMode(modeDropdown.options[modeValue].text);
-            Ruleset ruleset = new Ruleset(start, end, direction, mode, null, _surrounding.CloneSurrounding(), _ruleCounter);
+            Ruleset ruleset = new Ruleset(start, end, direction, mode, null, _surrounding.CloneSurrounding(),
+                _ruleCounter);
 
             (bool isAdded, string message) = _rulesets.AddRuleset(ruleset);
-            
-            if (isAdded) {
+
+            if (isAdded)
+            {
                 CreateNewRulesetGameObject(ruleset);
-            } else {
-                _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString(message), _errorColor, MessageIcon.MI_Error));
+            }
+            else
+            {
+                _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString(message), _errorColor,
+                    MessageIcon.MI_Error));
             }
         }
 
-        void CreateNewRulesetGameObject(Ruleset ruleset) {
+        void CreateNewRulesetGameObject(Ruleset ruleset)
+        {
 
             GameObject rulesetTextTableObject = GameObject.Find("RulesetTextTable");
-            
-            if (rulesetTextTableObject == null) {
+
+            if (rulesetTextTableObject == null)
+            {
                 Debug.Log("[ERROR]: RulesetTextTable cound not be found!");
                 return;
             }
+
             List<string> rulesetTextArray = ruleset.ToStringArray();
 
             // For every column clone default element and fill it with new data; +1 for delete button
-            for (int counter = 0; counter < rulesetTextArray.Count; counter++) {
-               
-                (GameObject backgroundObject, GameObject rulesetTextObject) = CreateBackgroundObject(rulesetTextTableObject);
+            for (int counter = 0; counter < rulesetTextArray.Count; counter++)
+            {
 
-                if (rulesetTextObject == null) {
+                (GameObject backgroundObject, GameObject rulesetTextObject) =
+                    CreateBackgroundObject(rulesetTextTableObject);
+
+                if (rulesetTextObject == null)
+                {
                     return;
                 }
 
-                TextMeshProUGUI textmeshObject = rulesetTextObject.GetComponent<TextMeshProUGUI>() ;
+                TextMeshProUGUI textmeshObject = rulesetTextObject.GetComponent<TextMeshProUGUI>();
 
                 LocalizedTMP localizedTMPObject = rulesetTextObject.GetComponent<LocalizedTMP>();
                 localizedTMPObject.enabled = false;
 
-                if (textmeshObject == null) {
+                if (textmeshObject == null)
+                {
                     Debug.Log("[ERROR]: TextMeshProUGUI cloning did not work properly!");
                     return;
                 }
-                
-                for (var counter2 = 0; counter2 < rulesetTextObject.transform.childCount; counter2++) {
+
+                for (var counter2 = 0; counter2 < rulesetTextObject.transform.childCount; counter2++)
+                {
                     GameObject objtest = rulesetTextObject.transform.GetChild(counter2).gameObject;
                     textmeshObject.text = rulesetTextArray[counter];
                 }
+
                 textmeshObject.text = rulesetTextArray[counter];
             }
 
@@ -254,48 +287,56 @@ namespace Maroon.CSE.StateMachine {
             _isLastRowColorFirstColor = !_isLastRowColorFirstColor;
         }
 
-        private void CloneDeleteButton(GameObject rulesetTextTableObject) { 
+        private void CloneDeleteButton(GameObject rulesetTextTableObject)
+        {
 
             GameObject deleteButtonObject = Instantiate(_deleteButton);
             deleteButtonObject.SetActive(true);
             string defaultName = deleteButtonObject.name;
             deleteButtonObject.name = defaultName + "_" + _ruleCounter;
-            
+
 
             deleteButtonObject.transform.SetParent(rulesetTextTableObject.transform);
             deleteButtonObject.transform.localScale = new Vector3(0.5f, 0.5f, 1.0f);
 
             Button buttonObject = deleteButtonObject.GetComponent<Button>();
             int ruleId = _ruleCounter;
-            buttonObject.onClick.AddListener(() => {
-                DeleteRuleset(ruleId);
-            });
+            buttonObject.onClick.AddListener(() => { DeleteRuleset(ruleId); });
 
             return;
         }
 
-        private (GameObject backgroundObject, GameObject textObject) CreateBackgroundObject(GameObject rulesetTextTableObject) {
+        private (GameObject backgroundObject, GameObject textObject) CreateBackgroundObject(
+            GameObject rulesetTextTableObject)
+        {
 
             GameObject rulesetTextBackgroundObject;
             GameObject rulesetTextObject;
 
             GameObject defaultRulesetTextBackgroundObject = rulesetTextTableObject.transform.GetChild(0).gameObject;
 
-            if (defaultRulesetTextBackgroundObject == null) {
+            if (defaultRulesetTextBackgroundObject == null)
+            {
                 Debug.Log("[ERROR]: There is no default rulesetBackgroundText element!");
                 return (null, null);
             }
 
-            if (defaultRulesetTextBackgroundObject.transform.childCount > 0) {
+            if (defaultRulesetTextBackgroundObject.transform.childCount > 0)
+            {
                 rulesetTextBackgroundObject = Instantiate(defaultRulesetTextBackgroundObject);
-            } else {
+            }
+            else
+            {
                 Debug.Log("[ERROR]: RulesetTextColumn child could not be found!");
                 return (null, null);
             }
 
-            if (rulesetTextBackgroundObject != null && rulesetTextBackgroundObject.transform.childCount > 0) {
+            if (rulesetTextBackgroundObject != null && rulesetTextBackgroundObject.transform.childCount > 0)
+            {
                 rulesetTextObject = rulesetTextBackgroundObject.transform.GetChild(0).gameObject;
-            } else {
+            }
+            else
+            {
                 Debug.Log("[ERROR]: RulesetTextBackgroundObject or its child could not be found!");
                 return (null, null);
             }
@@ -306,18 +347,23 @@ namespace Maroon.CSE.StateMachine {
             defaultName = rulesetTextBackgroundObject.name;
             string stringToRemove = "(Clone)";
             int index = defaultName.IndexOf(stringToRemove);
-            if (index != -1) {
+            if (index != -1)
+            {
                 defaultName = defaultName.Remove(index, stringToRemove.Length);
             }
+
             rulesetTextBackgroundObject.name = defaultName + "_" + _ruleCounter;
 
             rulesetTextBackgroundObject.transform.SetParent(rulesetTextTableObject.transform);
             rulesetTextObject.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
             UnityEngine.UI.Image background = rulesetTextBackgroundObject.GetComponent<UnityEngine.UI.Image>();
-            
-            if (_isLastRowColorFirstColor) {
+
+            if (_isLastRowColorFirstColor)
+            {
                 background.color = _rowColor2;
-            } else {
+            }
+            else
+            {
                 background.color = _rowColor1;
             }
 
@@ -326,23 +372,26 @@ namespace Maroon.CSE.StateMachine {
         }
 
 
-        private void CloneSurroundingUIAndDisableButtons(GameObject objectToClone) {
+        private void CloneSurroundingUIAndDisableButtons(GameObject objectToClone)
+        {
             GameObject output = Instantiate(GameObject.Find("SurroundingButtonGrid"));
             output.transform.SetParent(objectToClone.transform);
-            output.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);    
+            output.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 
             GameObject rulesetTextTableObject = GameObject.Find("RulesetTextTable");
             (GameObject backgroundObject, GameObject textObject) = CreateBackgroundObject(rulesetTextTableObject);
 
             VerticalLayoutGroup group = output.GetComponent<VerticalLayoutGroup>();
             group.childAlignment = TextAnchor.UpperLeft;
-            RectOffset offset = new RectOffset(20,0,0,0);
+            RectOffset offset = new RectOffset(20, 0, 0, 0);
             group.padding = offset;
             group.childForceExpandWidth = false;
 
-            for (int counter = 0; counter < output.transform.childCount; counter++) {
+            for (int counter = 0; counter < output.transform.childCount; counter++)
+            {
                 GameObject child = output.transform.GetChild(counter).gameObject;
-                for (int counter2 = 0; counter2 < child.transform.childCount; counter2++) {
+                for (int counter2 = 0; counter2 < child.transform.childCount; counter2++)
+                {
                     GameObject buttonGameObject = child.transform.GetChild(counter2).gameObject;
                     Button buttonObject = buttonGameObject.GetComponent<Button>();
                     buttonObject.transition = Selectable.Transition.None;
@@ -351,48 +400,62 @@ namespace Maroon.CSE.StateMachine {
             }
 
             output.transform.SetParent(backgroundObject.transform);
-            textObject.SetActive(false);;
+            textObject.SetActive(false);
+            ;
         }
 
-        public void RunStateMachine() {
+        public void RunStateMachine()
+        {
             _runStateMachine = true;
             SetVisibilityOfMenus(false);
             ClearStateMenu();
             GameObject scenarioDropdownObject = GameObject.Find("ScenarioSelectionDropdown");
             Dropdown scenarioDropdown = scenarioDropdownObject.GetComponent<Dropdown>();
             scenarioDropdown.enabled = false;
-            StartCoroutine(MakeMove()); 
+            StartCoroutine(MakeMove());
             DisableRemoveRulesetButtons();
         }
 
-        private void ClearStateMenu() {
+        private void ClearStateMenu()
+        {
             GameObject overviewObject = GameObject.Find("StateMachineOverview");
 
-            for (int counter = 0; counter < overviewObject.transform.childCount; counter++) {
-                if (counter > 1) {
+            for (int counter = 0; counter < overviewObject.transform.childCount; counter++)
+            {
+                if (counter > 1)
+                {
                     GameObject.Destroy(overviewObject.transform.GetChild(counter).gameObject);
-                }  
+                }
             }
+
             _logger.ResetLogCounter();
         }
 
-        private void SetVisibilityOfMenus(bool isVisible) {
-            if (_rulesetMenu) {
+        private void SetVisibilityOfMenus(bool isVisible)
+        {
+            if (_rulesetMenu)
+            {
                 _rulesetMenu.SetActive(isVisible);
-            } else {
+            }
+            else
+            {
                 Debug.Log("[ERROR]: RulesetMenu GameObject could not be found!");
             }
-            if (_stateMenu) {
+
+            if (_stateMenu)
+            {
                 _stateMenu.SetActive(isVisible);
-            } else {
+            }
+            else
+            {
                 Debug.Log("[ERROR]: StateMenu GameObject could not be found!");
             }
         }
-
-        IEnumerator PlayDisable() {
+        IEnumerator PlayDisable()
+        {
             _runStateMachine = false;
             StopCoroutine(MakeMove());
-            GameObject playButtonObject = GameObject.Find("ButtonPlay"); 
+            GameObject playButtonObject = GameObject.Find("ButtonPlay");
             Button playButton = playButtonObject.GetComponent<Button>();
             playButton.interactable = false;
             yield return new WaitForSeconds(0.5f);
@@ -404,65 +467,78 @@ namespace Maroon.CSE.StateMachine {
             scenarioDropdown.enabled = true;
             EnableRemoveRulesetButtons();
         }
-        private void DisableRemoveRulesetButtons() {
+
+        private void DisableRemoveRulesetButtons()
+        {
             GameObject rulesetTextTableObject = GameObject.Find("RulesetTextTable");
 
-            for (var counter = rulesetTextTableObject.transform.childCount - 1; counter > 6; counter--) {
-                GameObject rulesetObject = rulesetTextTableObject.transform.GetChild(counter).gameObject;     
+            for (var counter = rulesetTextTableObject.transform.childCount - 1; counter > 6; counter--)
+            {
+                GameObject rulesetObject = rulesetTextTableObject.transform.GetChild(counter).gameObject;
 
-                if (rulesetObject.name.Contains("Button")) {
+                if (rulesetObject.name.Contains("Button"))
+                {
                     Button buttonObject = rulesetObject.GetComponent<Button>();
                     buttonObject.enabled = false;
                 }
             }
         }
 
-        private void EnableRemoveRulesetButtons() {
+        private void EnableRemoveRulesetButtons()
+        {
             GameObject rulesetTextTableObject = GameObject.Find("RulesetTextTable");
 
-            for (var counter = rulesetTextTableObject.transform.childCount - 1; counter > 6; counter--) {
-                GameObject rulesetObject = rulesetTextTableObject.transform.GetChild(counter).gameObject;     
+            for (var counter = rulesetTextTableObject.transform.childCount - 1; counter > 6; counter--)
+            {
+                GameObject rulesetObject = rulesetTextTableObject.transform.GetChild(counter).gameObject;
 
-                if (rulesetObject.name.Contains("Button") && !rulesetObject.name.EndsWith("Button")) {
+                if (rulesetObject.name.Contains("Button") && !rulesetObject.name.EndsWith("Button"))
+                {
                     Button buttonObject = rulesetObject.GetComponent<Button>();
                     buttonObject.enabled = true;
                 }
             }
         }
 
-        public void ChangeToEditMode() {
+        public void ChangeToEditMode()
+        {
             StartCoroutine(PlayDisable());
         }
 
-        public void DeleteRuleset(int ruleId) {
+        public void DeleteRuleset(int ruleId)
+        {
 
             int deleteSingleRulesetValue = ruleId;
 
             GameObject rulesetTextTableObject = GameObject.Find("RulesetTextTable");
 
-            if (rulesetTextTableObject == null) {
+            if (rulesetTextTableObject == null)
+            {
                 Debug.Log("[ERROR]: RulesetTextTable cound not be found!");
                 return;
             }
-            
+
             int index = 0;
-            
+
             //TODO change color of all textElements depending on the color of the ruleset removed
             var colorCounter = 0;
             bool isFirstColor = true;
             rulesetTextTableObject = GameObject.Find("RulesetTextTable");
 
-            for (var counter = rulesetTextTableObject.transform.childCount - 1; counter > 6; counter--) {
+            for (var counter = rulesetTextTableObject.transform.childCount - 1; counter > 6; counter--)
+            {
 
-                GameObject rulesetTextBackgroundObject = rulesetTextTableObject.transform.GetChild(counter).gameObject;               
-                
+                GameObject rulesetTextBackgroundObject = rulesetTextTableObject.transform.GetChild(counter).gameObject;
+
                 string[] objectId = rulesetTextBackgroundObject.name.Split('_');
 
-                if (objectId.Length < 2) {
+                if (objectId.Length < 2)
+                {
                     continue;
                 }
 
-                if (objectId[1] == deleteSingleRulesetValue.ToString()) {
+                if (objectId[1] == deleteSingleRulesetValue.ToString())
+                {
                     Destroy(rulesetTextBackgroundObject);
                 }
 
@@ -479,144 +555,183 @@ namespace Maroon.CSE.StateMachine {
                 colorCounter++;
             }
 
-            if (isFirstColor) {
+            if (isFirstColor)
+            {
                 _isLastRowColorFirstColor = true;
-            } else {
+            }
+            else
+            {
                 _isLastRowColorFirstColor = false;
             }
-            
+
             _rulesets.RemoveRuleset(deleteSingleRulesetValue);
         }
-
-        public void ResetScenario() {
+        public void ResetScenario()
+        {
 
             GameObject scenarioDropdownObject = GameObject.Find("ScenarioSelectionDropdown");
             Dropdown scenarioDropdown = scenarioDropdownObject.GetComponent<Dropdown>();
             int scenarioIndex = scenarioDropdown.value;
 
-            foreach(Player player in _players) {
+            foreach (Player player in _players)
+            {
                 player.RemoveFigures();
             }
+
             _enemyMoves = new EnemyMoves();
             _players.ResetPlayerCounter();
             _scenario.InitScenario(_players, _enemyMoves, _scenarios[scenarioIndex]);
-            foreach(Player player in _players) {
+            foreach (Player player in _players)
+            {
                 player.GetFigures().ResetFiguresToActive();
             }
+
             _actualState = new State("Start");
         }
-
-        public void ResetRules() {
+        public void ResetRules()
+        {
             _rulesets = new Rulesets();
 
             GameObject rulesetTextTableObject = GameObject.Find("RulesetTextTable");
 
-            if (rulesetTextTableObject == null) {
+            if (rulesetTextTableObject == null)
+            {
                 Debug.Log("[ERROR]: RulesetTextTable cound not be found!");
                 return;
             }
-            
+
             int index = 0;
             foreach (Transform ruleTextElement in rulesetTextTableObject.transform)
             {
-                if (index > _dataTableRowLength - 1) {
+                if (index > _dataTableRowLength - 1)
+                {
                     GameObject.Destroy(ruleTextElement.gameObject);
                 }
+
                 index++;
             }
         }
-
-        private (Ruleset ruleToExecute, int rulesetId, Field fieldAfterMove) FindRuleToExecute(Figure figureToMove, Rulesets rulesets, bool isPlayer) {
+        private (Ruleset ruleToExecute, int rulesetId, Field fieldAfterMove) FindRuleToExecute(Figure figureToMove,
+            Rulesets rulesets, bool isPlayer)
+        {
             for (int rulesetCounter = 0; rulesetCounter < rulesets.GetCount(); rulesetCounter++)
-                    {   
-                        Ruleset ruleset = rulesets.GetRulesetAtPosition(rulesetCounter);
-                        
-                        // check if rule has right start state
-                        if (ruleset.GetStartState().GetStateName() == _actualState.GetStateName()) {
-                            Direction direction = ruleset.GetDirection();
-                            Field fieldToCheck = null;
-                            fieldToCheck = _map.GetFieldByIndices(figureToMove._positionColumn + direction.GetColumnMovementFactor(), figureToMove._positionRow + direction.GetRowMovementFactor());
+            {
+                Ruleset ruleset = rulesets.GetRulesetAtPosition(rulesetCounter);
 
-                            // check if move would end outside of the board
-                            if (fieldToCheck == null) {
-                                continue;
-                            }
+                // check if rule has right start state
+                if (ruleset.GetStartState().GetStateName() == _actualState.GetStateName())
+                {
+                    Direction direction = ruleset.GetDirection();
+                    Field fieldToCheck = null;
+                    fieldToCheck = _map.GetFieldByIndices(
+                        figureToMove._positionColumn + direction.GetColumnMovementFactor(),
+                        figureToMove._positionRow + direction.GetRowMovementFactor());
 
-                            // check if field is empty (when mode is 0)
-                            // TODO remove magic value
-                            if ((ruleset.GetMode().GetModeCode() == ModeCode.EMPTY || ruleset.GetMode().GetModeCode() == ModeCode.EMTPY_AND_END) && fieldToCheck.GetFigure() != null) {
-                                continue;
-                            }                        
-
-                            // if no figure is on field to hit
-                            if (ruleset.GetMode().GetModeCode() == ModeCode.HIT && fieldToCheck.GetFigure() == null) {
-                                continue;
-                            }
-
-                            // if own figure would be hit
-                            if (ruleset.GetMode().GetModeCode() == ModeCode.HIT && fieldToCheck.GetFigure() && figureToMove._player._playerName == fieldToCheck.GetFigure()._player._playerName) {
-                                continue;
-                            }
-
-                            // check surrounding
-                            if (!_surrounding.CompareSurrounding(ruleset.GetSurrounding()) && isPlayer) {
-                                continue;
-                            }
-                            
-                            return (ruleset, rulesetCounter, fieldToCheck);
-                        }
+                    // check if move would end outside of the board
+                    if (fieldToCheck == null)
+                    {
+                        continue;
                     }
+
+                    // check if field is empty (when mode is 0)
+                    // TODO remove magic value
+                    if ((ruleset.GetMode().GetModeCode() == ModeCode.EMPTY ||
+                         ruleset.GetMode().GetModeCode() == ModeCode.EMTPY_AND_END) && fieldToCheck.GetFigure() != null)
+                    {
+                        continue;
+                    }
+
+                    // if no figure is on field to hit
+                    if (ruleset.GetMode().GetModeCode() == ModeCode.HIT && fieldToCheck.GetFigure() == null)
+                    {
+                        continue;
+                    }
+
+                    // if own figure would be hit
+                    if (ruleset.GetMode().GetModeCode() == ModeCode.HIT && fieldToCheck.GetFigure() &&
+                        figureToMove._player._playerName == fieldToCheck.GetFigure()._player._playerName)
+                    {
+                        continue;
+                    }
+
+                    // check surrounding
+                    if (!_surrounding.CompareSurrounding(ruleset.GetSurrounding()) && isPlayer)
+                    {
+                        continue;
+                    }
+
+                    return (ruleset, rulesetCounter, fieldToCheck);
+                }
+            }
+
             return (null, 0, null);
         }
-
-        
-        public void CheckEndConditions() {
+        public void CheckEndConditions()
+        {
 
             Player player = _players.GetUserPlayer();
             Figure figureToMove = player.GetFigures().GetNextActiveFigure();
-        
-            if (figureToMove == null) {
-                _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString("ErrorNoFigureToMove"), _errorColor, MessageIcon.MI_Error));
+
+            if (figureToMove == null)
+            {
+                _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString("ErrorNoFigureToMove"),
+                    _errorColor, MessageIcon.MI_Error));
                 return;
             }
 
             Field endField = _map.GetFieldByIndices(figureToMove._positionColumn, figureToMove._positionRow);
-            
+
             bool isSuccess = true;
             bool allFiguresHit = true;
 
-            if (_scenario.MustHitAllEnemies()) {
-                foreach(Player playerToCheck in _players) {
-                    if (playerToCheck.GetFigures().Count() != 0 && playerToCheck != _players.GetUserPlayer()) {
-                        _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorNotAllFiguresCaptured"), _errorColor, player._isUser);
+            if (_scenario.MustHitAllEnemies())
+            {
+                foreach (Player playerToCheck in _players)
+                {
+                    if (playerToCheck.GetFigures().Count() != 0 && playerToCheck != _players.GetUserPlayer())
+                    {
+                        _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorNotAllFiguresCaptured"),
+                            _errorColor, player._isUser);
                         isSuccess = false;
                         allFiguresHit = false;
                     }
                 }
-                if (allFiguresHit) {
-                    _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("AllFiguresCaptured"), _winColor, player._isUser);
+
+                if (allFiguresHit)
+                {
+                    _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("AllFiguresCaptured"), _winColor,
+                        player._isUser);
                 }
             }
 
             // TODO implement end field in a reasonable way. if (!endField ||! endField.IsDestination() || !_actualState.IsEndState())
-            if (!_actualState.IsEndState()) {
+            if (!_actualState.IsEndState())
+            {
                 isSuccess = false;
-            } 
+            }
 
-            if (isSuccess) {
-                _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString("CorrectTargetAndEndState"), _winColor, MessageIcon.MI_Ok));
-                _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("CorrectTargetAndEndState"), _winColor, player._isUser);
-            } else {
-                _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString("ErrorIncorrectTargetOrEndState"), _errorColor, MessageIcon.MI_Error));
-                _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorIncorrectTargetOrEndState"), _errorColor, player._isUser);
+            if (isSuccess)
+            {
+                _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString("CorrectTargetAndEndState"),
+                    _winColor, MessageIcon.MI_Ok));
+                _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("CorrectTargetAndEndState"),
+                    _winColor, player._isUser);
+            }
+            else
+            {
+                _dialogueManager.ShowMessage(new Message(
+                    LanguageManager.Instance.GetString("ErrorIncorrectTargetOrEndState"), _errorColor,
+                    MessageIcon.MI_Error));
+                _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorIncorrectTargetOrEndState"),
+                    _errorColor, player._isUser);
             }
 
         }
 
-        IEnumerator MakeMove() {
-
+        IEnumerator MakeMove()
+        {
             Player player = _players.GetUserPlayer();
-           
+
             _actualDirection = null;
             bool moveEnds = false;
 
@@ -624,22 +739,29 @@ namespace Maroon.CSE.StateMachine {
             Field actualField = _map.GetFieldByIndices(figureToMove._positionColumn, figureToMove._positionRow);
             _surrounding.UpdateSurrounding(actualField, _map);
 
-            while (_runStateMachine) {
+            while (_runStateMachine)
+            {
 
-                if (player == _players.GetUserPlayer()) {
-                    if (figureToMove == null) {
-                        _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorNoFigureToMove"), _errorColor, player._isUser);
+                if (player == _players.GetUserPlayer())
+                {
+                    if (figureToMove == null)
+                    {
+                        _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorNoFigureToMove"),
+                            _errorColor, player._isUser);
                         CheckEndConditions();
                         yield break;
                     }
+
                     actualField = _map.GetFieldByIndices(figureToMove._positionColumn, figureToMove._positionRow);
                     _surrounding.UpdateSurrounding(actualField, _map);
                 }
 
                 figureToMove = player.GetFigures().GetNextActiveFigure();
 
-                if (figureToMove == null) {
-                    _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorNoFigureToMove"), _errorColor, player._isUser);
+                if (figureToMove == null)
+                {
+                    _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorNoFigureToMove"),
+                        _errorColor, player._isUser);
                     CheckEndConditions();
                     yield break;
                 }
@@ -649,36 +771,46 @@ namespace Maroon.CSE.StateMachine {
                 int rulesetId = 0;
                 Field fieldAfterMove = null;
 
-                if (player == _players.GetUserPlayer()) {
+                if (player == _players.GetUserPlayer())
+                {
                     (ruleToExecute, rulesetId, fieldAfterMove) = FindRuleToExecute(figureToMove, _rulesets, true);
-                } else {
-                    Rulesets rulesets =  _enemyMoves.GetNextMove(name, _actualState, _modes, _map);
+                }
+                else
+                {
+                    Rulesets rulesets = _enemyMoves.GetNextMove(name, _actualState, _modes, _map);
                     (ruleToExecute, rulesetId, fieldAfterMove) = FindRuleToExecute(figureToMove, rulesets, false);
-                    if (ruleToExecute == null) {
+                    if (ruleToExecute == null)
+                    {
                         figureToMove._canMove = false;
                         continue;
                     }
                 }
 
                 // Check if field is empty (no hitting move) 
-                if (ruleToExecute == null) {
-                    _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorNoRule"), _errorColor, player._isUser);
+                if (ruleToExecute == null)
+                {
+                    _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorNoRule"), _errorColor,
+                        player._isUser);
                     CheckEndConditions();
                     yield break;
                 }
 
                 // reset can move flag of figures
                 player.GetFigures().ResetFiguresToActive();
-                
+
                 // Set moving factors according to move
                 int columnMovementFactor = ruleToExecute.GetDirection().GetColumnMovementFactor();
                 int rowMovementFactor = ruleToExecute.GetDirection().GetRowMovementFactor();
 
-                if (_actualDirection != null && _actualDirection.GetDirectionName() != ruleToExecute.GetDirection().GetDirectionName()) {
-                    Player nextPlayer =  _players.GetNextPlayer();
-                    if (nextPlayer != null) {
+                if (_actualDirection != null && _actualDirection.GetDirectionName() !=
+                    ruleToExecute.GetDirection().GetDirectionName())
+                {
+                    Player nextPlayer = _players.GetNextPlayer();
+                    if (nextPlayer != null)
+                    {
                         player = nextPlayer;
                     }
+
                     moveEnds = false;
                     _actualDirection = null;
 
@@ -689,7 +821,9 @@ namespace Maroon.CSE.StateMachine {
                     continue;
                 }
 
-                _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("Rule") + " " + (rulesetId + 1) + " " + LanguageManager.Instance.GetString("IsExecuted"), new Color32(0, 0, 0, 255), player._isUser);
+                _logger.LogStateMachineMessage(
+                    LanguageManager.Instance.GetString("Rule") + " " + (rulesetId + 1) + " " +
+                    LanguageManager.Instance.GetString("IsExecuted"), new Color32(0, 0, 0, 255), player._isUser);
 
                 // Set new state
                 _actualState = ruleToExecute.GetEndState();
@@ -698,50 +832,61 @@ namespace Maroon.CSE.StateMachine {
 
                 Vector3 position = figureToMove.transform.position;
 
-                figureToMove.transform.position = new Vector3(position.x + (float)0.055 * columnMovementFactor, position.y, position.z + (float)0.055 * rowMovementFactor);
+                figureToMove.transform.position = new Vector3(position.x + (float)0.055 * columnMovementFactor,
+                    position.y, position.z + (float)0.055 * rowMovementFactor);
 
                 // figure is hit
-                if (fieldAfterMove.GetFigure() != null) {
+                if (fieldAfterMove.GetFigure() != null)
+                {
                     fieldAfterMove.RemoveFigure();
                     moveEnds = true;
-                } 
+                }
 
                 // set figure to new field
                 actualField = _map.GetFieldByIndices(figureToMove._positionColumn, figureToMove._positionRow);
                 actualField.MoveFigureAway();
                 fieldAfterMove.SetFigure(figureToMove);
-                
+
                 // set new position in figure
-                figureToMove._positionColumn += ruleToExecute.GetDirection().GetColumnMovementFactor(); 
+                figureToMove._positionColumn += ruleToExecute.GetDirection().GetColumnMovementFactor();
                 figureToMove._positionRow += ruleToExecute.GetDirection().GetRowMovementFactor();
 
                 // check if pawn is on last row
-                if (player != _players.GetUserPlayer()) {
+                if (player != _players.GetUserPlayer())
+                {
                     if (player._playerName == "black" && figureToMove._positionRow == 0 ||
                         player._playerName == "white" && figureToMove._positionRow == 8
-                        ) {
-                            _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString("ErrorPawnToQueen"), _errorColor, MessageIcon.MI_Error));
-                            _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorPawnToQueen"), _errorColor, player._isUser);
-                            yield break;
+                       )
+                    {
+                        _dialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString("ErrorPawnToQueen"),
+                            _errorColor, MessageIcon.MI_Error));
+                        _logger.LogStateMachineMessage(LanguageManager.Instance.GetString("ErrorPawnToQueen"),
+                            _errorColor, player._isUser);
+                        yield break;
                     }
                 }
 
 
                 //TODO now every figure of ai just moves one step
-                if (moveEnds || player != _players.GetUserPlayer() || ruleToExecute.GetMode().GetModeCode() == ModeCode.HIT || ruleToExecute.GetMode().GetModeCode() == ModeCode.EMTPY_AND_END) {
-                    Player nextPlayer =  _players.GetNextPlayer();
-                    if (nextPlayer != null) {
+                if (moveEnds || player != _players.GetUserPlayer() ||
+                    ruleToExecute.GetMode().GetModeCode() == ModeCode.HIT ||
+                    ruleToExecute.GetMode().GetModeCode() == ModeCode.EMTPY_AND_END)
+                {
+                    Player nextPlayer = _players.GetNextPlayer();
+                    if (nextPlayer != null)
+                    {
                         player = nextPlayer;
                     }
+
                     moveEnds = false;
                     _actualDirection = null;
                 }
-                
+
                 figureToMove = player.GetFigures().GetNextActiveFigure();
 
                 yield return new WaitForSeconds(0.5f);
             }
-           
+
         }
     }
 }

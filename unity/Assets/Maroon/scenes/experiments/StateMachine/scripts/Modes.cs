@@ -1,19 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Maroon.CSE.StateMachine;
 
-public class Modes : IEnumerable
+namespace Maroon.CSE.StateMachine
 {
-    private List<Mode> _modes = new List<Mode>();
-    
-    public void AddMode(Mode mode) {
-         _modes.Add(mode);
-    }
-    public IEnumerator GetEnumerator() {
-        return _modes.GetEnumerator();
-    }
+    public class Modes : IEnumerable
+    {
+        private List<Mode> _modes = new List<Mode>();
 
-     public Mode FindMode(string name) {
-        return _modes.Find(element => element.GetModeName() == name);
+        public void AddMode(Mode mode)
+        {
+            _modes.Add(mode);
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            return _modes.GetEnumerator();
+        }
+
+        public Mode FindMode(string name)
+        {
+            return _modes.Find(element => element.GetModeName() == name);
+        }
     }
 }

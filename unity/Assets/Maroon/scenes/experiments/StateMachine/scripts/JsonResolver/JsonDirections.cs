@@ -1,7 +1,8 @@
-﻿using UnityEngine;
-
-[System.Serializable]
-public class JsonDirections
+﻿namespace Maroon.CSE.StateMachine.JsonData
 {
-   public JsonDirection[] directions;
+    [System.Serializable]
+    public class JsonDirections
+    {
+       public JsonDirection[] directions;
+    }
 }

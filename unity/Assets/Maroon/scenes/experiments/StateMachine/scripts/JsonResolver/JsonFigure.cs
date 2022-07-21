@@ -1,9 +1,10 @@
-﻿using UnityEngine;
-
-[System.Serializable]
-public class JsonFigure  
+﻿namespace Maroon.CSE.StateMachine.JsonData
 {
-    public string name;
-    public string column;
-    public int row;
+    [System.Serializable]
+    public class JsonFigure
+    {
+        public string name;
+        public string column;
+        public int row;
+    }
 }

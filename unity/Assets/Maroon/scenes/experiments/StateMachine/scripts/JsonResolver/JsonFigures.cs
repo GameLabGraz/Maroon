@@ -1,7 +1,8 @@
-﻿using UnityEngine;
-
-[System.Serializable]
-public class JsonFigures
+﻿namespace Maroon.CSE.StateMachine.JsonData
 {
-   public JsonFigure[] figures;
+    [System.Serializable]
+    public class JsonFigures
+    {
+        public JsonFigure[] figures;
+    }
 }

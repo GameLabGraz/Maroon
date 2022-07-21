@@ -1,10 +1,11 @@
-﻿using UnityEngine;
-
-[System.Serializable]
-public class JsonDirection
-  
+﻿namespace Maroon.CSE.StateMachine.JsonData
 {
-    public string name;
-    public int rowMovement;
-    public int columnMovement;
+    [System.Serializable]
+    public class JsonDirection
+
+    {
+        public string name;
+        public int rowMovement;
+        public int columnMovement;
+    }
 }
