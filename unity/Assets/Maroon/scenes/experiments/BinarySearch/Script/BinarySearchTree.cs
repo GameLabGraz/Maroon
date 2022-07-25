@@ -13,13 +13,14 @@ namespace Maroon.CSE.BinarySearchTree {
         void Start() {}
 
         void Update() {
-            if (Input.GetKeyDown(KeyCode.Space)) {
-                insert(Random.Range(0,99));
-            }
+            // if (Input.GetKeyDown(KeyCode.Space)) {
+            //     insert(Random.Range(0,99));
+            // }
         }
 
         public void insert(int val) {
             val = int.Parse(input_field.text);
+            Debug.Log(val);
             Maroon.CSE.BinarySearchTree.Node newNode = Instantiate(nodePrefab); //cloning nodePrefab to newNode to specify the cloned object's position and rotation
             newNode.gameObject.transform.SetParent(GameObject.Find("root").transform); //determine the position, rotation and scale of object in the scene
             newNode.value = val;
