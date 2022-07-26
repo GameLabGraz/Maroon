@@ -5,6 +5,8 @@ namespace Maroon.Chemistry.Catalyst
 {
     public class O2Molecule : Molecule
     {
+        [SerializeField] Material darkRedMaterial;
+        
         protected override void HandleFixedUpdate()
         {
             if (State == MoleculeState.WaitingToDissociate)
@@ -38,6 +40,13 @@ namespace Maroon.Chemistry.Catalyst
             }
         }
 
+        public void SetDarkMaterial()
+        {
+            gameObject.transform.GetChild(0).transform.GetComponent<MeshRenderer>().material = darkRedMaterial;
+            gameObject.transform.GetChild(1).transform.GetComponent<MeshRenderer>().material = darkRedMaterial;
+            gameObject.transform.GetChild(2).transform.GetComponent<MeshRenderer>().material = darkRedMaterial;
+        }
+        
         private IEnumerator DissociateO2()
         {
             yield return new WaitForSeconds(2.0f);
