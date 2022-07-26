@@ -10,6 +10,9 @@ namespace Maroon.Physics
         private float start_weight_;
         private float start_radius_;
         private bool dropped_ = true;
+        private bool touching_oil = false;
+
+
 
         public QuantityFloat radius_ = 0.5f;
         public QuantityFloat weight_ = 1f;
@@ -41,9 +44,11 @@ namespace Maroon.Physics
         
         protected override void Start()
         {
+            base.Start();
             start_weight_ = weight_;
             start_radius_ = radius_;
             start_position_ = transform.position;
+
         }
 
         protected override void HandleUpdate()
@@ -52,8 +57,11 @@ namespace Maroon.Physics
             {
                 return;
             }
-            Debug.Log("HandleUpdate");
-            gameObject.GetComponent<Rigidbody>().AddForce(0, 0, 1);
+            if(touching_oil)
+            {
+                gameObject.GetComponent<Rigidbody>().AddForce(transform.up * 10, ForceMode.Acceleration);
+                Debug.Log("Touching Oil!");
+            }
         }
 
         protected override void HandleFixedUpdate()
@@ -65,6 +73,7 @@ namespace Maroon.Physics
         {
             float diameter = radius_ * 2;
             transform.localScale.Set(diameter, diameter, diameter);
+            
         }
 
         public void ResetObject()
@@ -81,6 +90,18 @@ namespace Maroon.Physics
         {
             dropped_ = true;
         }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            touching_oil = true;
+            
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            touching_oil = false;
+        }
+
     }
 
 
