@@ -77,6 +77,10 @@ namespace Maroon.Chemistry.Catalyst
         [SerializeField] XCharts.LineChart lineChartLangmuirVRBox;
         [SerializeField] XCharts.LineChart lineChartVanKrevelenVRBox;
         [SerializeField] XCharts.GaugeChart progressChart;
+        [SerializeField] GameObject questManagerLabObject;
+        [SerializeField] GameObject questManagerLangmuirObject;
+        [SerializeField] GameObject questManagerKrevelenObject;
+        
 
         private int _freedMoleculeCounter = 0;
         private List<Vector3> _platSpawnPoints = new List<Vector3>();
@@ -197,6 +201,8 @@ namespace Maroon.Chemistry.Catalyst
             {
                 lineChartLangmuirVRBox.gameObject.SetActive(false);
                 lineChartVanKrevelenVRBox.gameObject.SetActive(false);
+                questManagerLangmuirObject.SetActive(false);
+                questManagerKrevelenObject.SetActive(false);
             }
             else
             {
@@ -216,6 +222,8 @@ namespace Maroon.Chemistry.Catalyst
                 DrawSimulationGraphsPC();
             else
                 DrawSimulationGraphsVR();
+
+            TryEnableQuestManager();
         }
 
         private void OnDestroy()
@@ -707,6 +715,17 @@ namespace Maroon.Chemistry.Catalyst
             }
         }
 
+        private void TryEnableQuestManager()
+        {
+            if (isVrVersion && _doInteractiveSimulation)
+            {
+                if (ExperimentVariation == ExperimentVariation.LangmuirHinshelwood)
+                    questManagerLangmuirObject.SetActive(true);
+                else
+                    questManagerKrevelenObject.SetActive(true);
+            }
+        }
+
         public void StartSimulation()
         {
             Debug.Log("Start catalyst simulation");
@@ -752,6 +771,11 @@ namespace Maroon.Chemistry.Catalyst
             {
                 lineChartLangmuirVRBox.gameObject.SetActive(false);
                 lineChartVanKrevelenVRBox.gameObject.SetActive(false);
+                questManagerLabObject.GetComponent<QuestManager.QuestManager>().ResetQuests();
+                questManagerLangmuirObject.GetComponent<QuestManager.QuestManager>().ResetQuests();
+                questManagerKrevelenObject.GetComponent<QuestManager.QuestManager>().ResetQuests();
+                questManagerLangmuirObject.SetActive(false);
+                questManagerKrevelenObject.SetActive(false);
             }
             else
             {

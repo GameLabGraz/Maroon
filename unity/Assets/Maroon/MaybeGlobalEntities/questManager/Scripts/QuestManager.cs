@@ -128,5 +128,17 @@ namespace QuestManager
                 Cover.transform.localRotation = Quaternion.Euler(new Vector3(0f, -90f, 90f));
             }
         }
+
+        public void ResetQuests()
+        {
+            foreach (Transform child in DataObjectRoot.transform)
+            {
+                Destroy(child.gameObject);
+            }
+
+            _mainQuestIndex = 0;
+            ReadQuestXml();
+            ActivateNextMainQuest();
+        }
     }
 }
