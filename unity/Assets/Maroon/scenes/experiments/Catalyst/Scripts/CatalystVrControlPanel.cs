@@ -17,9 +17,16 @@ public class CatalystVrControlPanel : MonoBehaviour
     private Transform _playerTransform;
     private Vector3 _currentPlayerPosition;
     private Vector3 _previousPlayerPosition;
+    private Vector3 _initialPosition;
+    private Quaternion _initialRotation;
 
     public void Setup(float radius)
     {
+        Vector3 pos = transform.position;
+        Quaternion rot = transform.rotation;
+        _initialPosition = new Vector3(pos.x, pos.y, pos.z);
+        _initialRotation = new Quaternion(rot.x, rot.y, rot.z, rot.w);
+        
         _center = centerTransform.position;
         _radius = radius;
         _playerTransform = playerTransform;
@@ -27,6 +34,12 @@ public class CatalystVrControlPanel : MonoBehaviour
         _previousPlayerPosition = playerTransform.position;
         _isSetupCompleted = true;
         triggerPress.AddOnChangeListener(UpdatePositionToPlayer, SteamVR_Input_Sources.Any);
+    }
+
+    public void ResetToInitialPosition()
+    {
+        transform.position = _initialPosition;
+        transform.rotation = _initialRotation;
     }
 
     private void UpdatePositionToPlayer(SteamVR_Action_Boolean action, SteamVR_Input_Sources sources, bool isConnected)
