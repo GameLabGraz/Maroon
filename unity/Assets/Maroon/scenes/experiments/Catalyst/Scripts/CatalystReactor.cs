@@ -13,7 +13,8 @@ namespace Maroon.Chemistry.Catalyst
         [SerializeField] Transform cupboardDoorTransform;
         
         public UnityEvent OnReactorFilled;
-        
+        public bool ReactorFilled { get => _reactorFilled; }
+        public bool ReactionStarted { get; set; }
         private bool _reactorFilled;
         private Vector3 _cupboardInitialPosition;
 
@@ -49,9 +50,9 @@ namespace Maroon.Chemistry.Catalyst
             if (SimulationController.Instance.SimulationRunning && _reactorFilled)
             {
                 _reactorFilled = false;
+                ReactionStarted = true;
                 OnReactorFilled?.Invoke(); // also sets the button to add CO and O2 to interactable
             }
-
         }
 
         public void ResetObject()
@@ -59,6 +60,7 @@ namespace Maroon.Chemistry.Catalyst
             animator.enabled = false; // enabled through simulation controller start action
             cupboardDoorTransform.position = _cupboardInitialPosition;
             _reactorFilled = false;
+            ReactionStarted = false;
             reactorWindowGameObject.SetActive(false);
         }
     }
