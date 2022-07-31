@@ -71,7 +71,7 @@ namespace Maroon.Chemistry.Catalyst
         [SerializeField] WhiteboardController whiteboardControllerBox;
         [SerializeField] Image theoryImageLangmuir;
         [SerializeField] Image theoryImageVanKrevelen;
-        [SerializeField] CatalystVrControlPanel _controlPanel;
+        [SerializeField] CatalystVrControlPanel controlPanel;
         [SerializeField] XCharts.LineChart lineChartLangmuir;
         [SerializeField] XCharts.LineChart lineChartVanKrevelen;
         [SerializeField] XCharts.LineChart lineChartLangmuirVRBox;
@@ -349,8 +349,8 @@ namespace Maroon.Chemistry.Catalyst
                         onReactionStart?.Invoke();
                     });
             }
-            if (_controlPanel)
-                _controlPanel.Setup(Mathf.Min(MaxXCoord - MinXCoord, MaxZCoord - MinZCoord));
+            if (controlPanel)
+                controlPanel.Setup(Mathf.Min(MaxXCoord - MinXCoord, MaxZCoord - MinZCoord));
         }
 
         /**
@@ -733,6 +733,8 @@ namespace Maroon.Chemistry.Catalyst
         {
             Debug.Log("Start catalyst simulation");
             DoStepWiseSimulation = _doStepWiseSimulation;
+            
+            SetSimulationParametersMinMax(ExperimentVariation);
 
             if (IsVrVersion)
             {
@@ -755,6 +757,7 @@ namespace Maroon.Chemistry.Catalyst
 
         public void Reset()
         {
+            _freedMoleculeCounter = 0;
             EnsureCleanSurface();
 
             catalystReactionBoxGameObject.SetActive(false);
@@ -779,6 +782,8 @@ namespace Maroon.Chemistry.Catalyst
                 questManagerKrevelenObject.GetComponent<QuestManager.QuestManager>().ResetQuests();
                 questManagerLangmuirObject.SetActive(false);
                 questManagerKrevelenObject.SetActive(false);
+                if (controlPanel)
+                    controlPanel.ResetToInitialPosition();
             }
             else
             {

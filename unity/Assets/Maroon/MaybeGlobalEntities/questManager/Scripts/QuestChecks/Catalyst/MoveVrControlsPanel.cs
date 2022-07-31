@@ -21,7 +21,7 @@ namespace QuestManager
         protected override bool CheckCompliance()
         {
             // todo deal with different setup for study!
-            return Vector3.Distance(_initialPosition, _catalystVrControlPanel.transform.position) > 2f;
+            return Vector3.Distance(_initialPosition, _catalystVrControlPanel.transform.position) > 0.5f;
         }
 
     }
