@@ -83,6 +83,7 @@ namespace Maroon.Chemistry.Catalyst
         
 
         private int _freedMoleculeCounter = 0;
+        private int _moleculesToFree = 4;
         private List<Vector3> _platSpawnPoints = new List<Vector3>();
         private List<Vector3> _activePlatSpawnPoints = new List<Vector3>();
         private List<Vector3> _coSpawnPoints = new List<Vector3>();
@@ -174,6 +175,8 @@ namespace Maroon.Chemistry.Catalyst
         // height above surface max and min coordinates
         public static float MinYCoord = 0.0f;
         public static float MaxYCoord = 0.0f;
+        
+        public bool AreHinshelwoodMoleculesFreed { get => _freedMoleculeCounter == _moleculesToFree; }
 
         private void Awake()
         {
@@ -457,11 +460,11 @@ namespace Maroon.Chemistry.Catalyst
          */
         private void OnMoleculeFreed()
         {
-            if (_freedMoleculeCounter == 4)
+            _freedMoleculeCounter++;
+            if (_freedMoleculeCounter == _moleculesToFree)
             {
                 onReactionStart?.Invoke();
             }
-            _freedMoleculeCounter++;
         }
 
         /**
