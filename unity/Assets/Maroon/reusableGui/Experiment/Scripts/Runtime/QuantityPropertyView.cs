@@ -108,10 +108,12 @@ namespace Maroon.UI
                         zInputField.text = value.z.ToString(CultureInfo.InvariantCulture);
                     });
 
-                     break;
+                    //ToDo: Add a reset script to vector quantity.
+                    break;
 
                 case QuantityBool boolQuantity:
-                    Instantiate(UIContent.ToggleGroup, transform);
+                    var toggle = (GameObject)Instantiate(UIContent.ToggleGroup, transform);
+                    toggle.AddComponent<ResetToggle>();
                     break;
                 case QuantityString stringQuantity:
                     break;
@@ -150,6 +152,9 @@ namespace Maroon.UI
             slider.minValue = minValue;
             slider.maxValue = maxValue;
             slider.wholeNumbers = wholeNumbers;
+
+            slider.gameObject.AddComponent<ResetSlider>();
+
             return slider;
         }
 
