@@ -5,11 +5,11 @@ using System.Linq;
 using GEAR.Localization;
 using Maroon.UI;
 using Mirror;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Dropdown = Maroon.UI.Dropdown;
 using Random = System.Random;
-using Slider = Maroon.UI.Slider;
+using Slider = GameLabGraz.UI.Slider;
 
 public class SortingController : MonoBehaviour, IResetObject
 {
@@ -38,7 +38,7 @@ public class SortingController : MonoBehaviour, IResetObject
         RandomizeDetailArray();
         SetDetailArraySize(detailArraySize);
         EnterDetailMode();
-        arrangementDropdown.AllowReset = false;
+        arrangementDropdown.AllowReset(false);
         _arrangementMode = (ArrangementMode)arrangementDropdown.value;
         SetBattleOperationsPerSeconds(speedSlider.value);
         
@@ -183,10 +183,10 @@ public class SortingController : MonoBehaviour, IResetObject
         AM_Reversed
     }
     private ArrangementMode _arrangementMode;
-    [SerializeField] private Dropdown arrangementDropdown;
+    [SerializeField] private TMP_Dropdown arrangementDropdown;
     
-    [SerializeField] private Dropdown battleAlgorithmDropdownLeft;
-    [SerializeField] private Dropdown battleAlgorithmDropdownRight;
+    [SerializeField] private TMP_Dropdown battleAlgorithmDropdownLeft;
+    [SerializeField] private TMP_Dropdown battleAlgorithmDropdownRight;
     
     [SerializeField] private Slider speedSlider;
     

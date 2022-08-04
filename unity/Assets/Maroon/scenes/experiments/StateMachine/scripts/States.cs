@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using GameLabGraz.UI;
 using UnityEngine;
 using Maroon.UI;
 using GEAR.Localization;
+using TMPro;
 
 namespace Maroon.CSE.StateMachine
 {
@@ -35,12 +37,12 @@ namespace Maroon.CSE.StateMachine
         {
 
             GameObject dropdownObject = GameObject.Find(dropdownName);
-            Dropdown dropdown = dropdownObject.GetComponent<Dropdown>();
+            TMP_Dropdown dropdown = dropdownObject.GetComponent<TMP_Dropdown>();
 
             dropdown.ClearOptions();
             foreach (var item in _states)
             {
-                Dropdown.OptionData option = new Dropdown.OptionData();
+                TMP_Dropdown.OptionData option = new TMP_Dropdown.OptionData();
                 option.text = item.GetStateName();
                 dropdown.options.Add(option);
             }
@@ -59,9 +61,9 @@ namespace Maroon.CSE.StateMachine
         public void AddDropdownOption(string dropdownName, string optionName)
         {
             GameObject dropdownObject = GameObject.Find(dropdownName);
-            Dropdown dropdown = dropdownObject.GetComponent<Dropdown>();
+            TMP_Dropdown dropdown = dropdownObject.GetComponent<TMP_Dropdown>();
 
-            Dropdown.OptionData option = new Dropdown.OptionData();
+            TMP_Dropdown.OptionData option = new TMP_Dropdown.OptionData();
             option.text = optionName;
             dropdown.options.Add(option);
         }

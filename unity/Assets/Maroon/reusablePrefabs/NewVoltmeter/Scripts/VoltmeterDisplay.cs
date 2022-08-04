@@ -1,8 +1,8 @@
 ﻿using GEAR.Gadgets.Extensions;
 using Maroon.GlobalEntities;
 using Maroon.Physics.CoordinateSystem;
-using Maroon.UI;
 using System.Globalization;
+using GameLabGraz.UI;
 using UnityEngine;
 
 namespace Maroon.Tools.Voltmeter

@@ -83,7 +83,7 @@ namespace Maroon.CSE.StateMachine
             _scenario.InitScenario(_players, _enemyMoves, _scenarios[0]);
 
             var dropdownObject = GameObject.Find("ScenarioSelectionDropdown");
-            var dropdown = dropdownObject.GetComponent<Dropdown>();
+            var dropdown = dropdownObject.GetComponent<TMP_Dropdown>();
             dropdown.ClearOptions();
 
             foreach (var scenario in _scenarios)
@@ -109,7 +109,7 @@ namespace Maroon.CSE.StateMachine
         private void InitDirections()
         {
             GameObject dropdownObject = GameObject.Find("DirectionDropdown");
-            Dropdown dropdown = dropdownObject.GetComponent<Dropdown>();
+            TMP_Dropdown dropdown = dropdownObject.GetComponent<TMP_Dropdown>();
             dropdown.ClearOptions();
 
             // ToDo: Use a Localized DropDown!!!
@@ -152,7 +152,7 @@ namespace Maroon.CSE.StateMachine
         private void InitMoves()
         {
             GameObject dropdownObject = GameObject.Find("ModeDropdown");
-            Dropdown dropdown = dropdownObject.GetComponent<Dropdown>();
+            TMP_Dropdown dropdown = dropdownObject.GetComponent<TMP_Dropdown>();
             dropdown.ClearOptions();
 
             // TODO remove magic values and make enum
@@ -194,19 +194,19 @@ namespace Maroon.CSE.StateMachine
         public void AddRulesetButtonClicked()
         {
             GameObject directionDropdownObject = GameObject.Find("DirectionDropdown");
-            Dropdown directionDropdown = directionDropdownObject.GetComponent<Dropdown>();
+            TMP_Dropdown directionDropdown = directionDropdownObject.GetComponent<TMP_Dropdown>();
             int directionValue = directionDropdown.value;
 
             GameObject modeDropdownObject = GameObject.Find("ModeDropdown");
-            Dropdown modeDropdown = modeDropdownObject.GetComponent<Dropdown>();
+            TMP_Dropdown modeDropdown = modeDropdownObject.GetComponent<TMP_Dropdown>();
             int modeValue = modeDropdown.value;
 
             GameObject startStateDropdownObject = GameObject.Find("StartStateDropdown");
-            Dropdown startStateDropdown = startStateDropdownObject.GetComponent<Dropdown>();
+            TMP_Dropdown startStateDropdown = startStateDropdownObject.GetComponent<TMP_Dropdown>();
             int startStateValue = startStateDropdown.value;
 
             GameObject endStateDropdownObject = GameObject.Find("EndStateDropdown");
-            Dropdown endStateDropdown = endStateDropdownObject.GetComponent<Dropdown>();
+            TMP_Dropdown endStateDropdown = endStateDropdownObject.GetComponent<TMP_Dropdown>();
             int endStateValue = endStateDropdown.value;
 
             string testOutput = directionDropdown.options[directionValue].text + modeDropdown.options[modeValue].text +
@@ -410,7 +410,7 @@ namespace Maroon.CSE.StateMachine
             SetVisibilityOfMenus(false);
             ClearStateMenu();
             GameObject scenarioDropdownObject = GameObject.Find("ScenarioSelectionDropdown");
-            Dropdown scenarioDropdown = scenarioDropdownObject.GetComponent<Dropdown>();
+            TMP_Dropdown scenarioDropdown = scenarioDropdownObject.GetComponent<TMP_Dropdown>();
             scenarioDropdown.enabled = false;
             StartCoroutine(MakeMove());
             DisableRemoveRulesetButtons();
@@ -463,7 +463,7 @@ namespace Maroon.CSE.StateMachine
             SetVisibilityOfMenus(true);
             ResetScenario();
             GameObject scenarioDropdownObject = GameObject.Find("ScenarioSelectionDropdown");
-            Dropdown scenarioDropdown = scenarioDropdownObject.GetComponent<Dropdown>();
+            TMP_Dropdown scenarioDropdown = scenarioDropdownObject.GetComponent<TMP_Dropdown>();
             scenarioDropdown.enabled = true;
             EnableRemoveRulesetButtons();
         }
@@ -570,7 +570,7 @@ namespace Maroon.CSE.StateMachine
         {
 
             GameObject scenarioDropdownObject = GameObject.Find("ScenarioSelectionDropdown");
-            Dropdown scenarioDropdown = scenarioDropdownObject.GetComponent<Dropdown>();
+            TMP_Dropdown scenarioDropdown = scenarioDropdownObject.GetComponent<TMP_Dropdown>();
             int scenarioIndex = scenarioDropdown.value;
 
             foreach (Player player in _players)

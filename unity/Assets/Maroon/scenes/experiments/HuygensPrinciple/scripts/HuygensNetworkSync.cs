@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using Mirror;
 using PlatformControls.PC;
 using UnityEngine;
@@ -20,32 +19,32 @@ public class HuygensNetworkSync : ExperimentNetworkSync
     [SerializeField] private Button _stepForwardButton;
     
     //parameters
-    [SerializeField] private Maroon.UI.Slider _amplitudeSlider;
+    [SerializeField] private GameLabGraz.UI.Slider _amplitudeSlider;
     
-    [SerializeField] private Maroon.UI.InputField _amplitudeInputField;
+    [SerializeField] private GameLabGraz.UI.InputField _amplitudeInputField;
     
-    [SerializeField] private Maroon.UI.Slider _lengthSlider;
+    [SerializeField] private GameLabGraz.UI.Slider _lengthSlider;
     
-    [SerializeField] private Maroon.UI.InputField _lengthInputField;
+    [SerializeField] private GameLabGraz.UI.InputField _lengthInputField;
     
-    [SerializeField] private Maroon.UI.Slider _frequencySlider;
+    [SerializeField] private GameLabGraz.UI.Slider _frequencySlider;
     
-    [SerializeField] private Maroon.UI.InputField _frequencyInputField;
+    [SerializeField] private GameLabGraz.UI.InputField _frequencyInputField;
 
-    [SerializeField] private Maroon.UI.Dropdown _propagationModeDropDown;
+    [SerializeField] private TMPro.TMP_Dropdown _propagationModeDropDown;
     
-    [SerializeField] private Maroon.UI.Slider _slitNumberSlider;
+    [SerializeField] private GameLabGraz.UI.Slider _slitNumberSlider;
     
-    [SerializeField] private Maroon.UI.InputField _slitNumberInputField;
+    [SerializeField] private GameLabGraz.UI.InputField _slitNumberInputField;
     
-    [SerializeField] private Maroon.UI.Slider _slitWidthSlider;
+    [SerializeField] private GameLabGraz.UI.Slider _slitWidthSlider;
     
-    [SerializeField] private Maroon.UI.InputField _slitWidthInputField;
+    [SerializeField] private GameLabGraz.UI.InputField _slitWidthInputField;
     
     //Visualization
-    [SerializeField] private Maroon.UI.Slider _peakColorSlider;
+    [SerializeField] private GameLabGraz.UI.Slider _peakColorSlider;
     
-    [SerializeField] private Maroon.UI.Slider _troughColorSlider;
+    [SerializeField] private GameLabGraz.UI.Slider _troughColorSlider;
     
     //Experiment
     [SerializeField] private PC_MouseMovement _plateMovement;
