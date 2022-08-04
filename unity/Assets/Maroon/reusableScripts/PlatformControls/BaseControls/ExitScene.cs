@@ -9,5 +9,10 @@ namespace PlatformControls.BaseControls
         {
             SceneManager.Instance.LoadPreviousScene();
         }
+        
+        public void ExitApplication() 
+        {
+            SceneManager.Instance.ExitApplication();
+        }
     }
 }

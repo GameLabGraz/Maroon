@@ -477,5 +477,12 @@ namespace Maroon.GlobalEntities
                 this._sceneHistory.Push(scene);
             }
         }
+
+        // Called when the game should be closed
+        public void ExitApplication()
+        {
+            Application.Quit();
+        }
+        
     }
 }
