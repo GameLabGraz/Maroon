@@ -72,11 +72,12 @@ public class DijkstraPathFinding : PathFindingAlgorithm
             {
                 if (node.discovered)
                     continue;
-                if (node.distance > currentNode.distance)
+                if (node.distance < currentNode.distance)
                 {
                     currentNode = node;
                 }
             }
+            queue.Remove(currentNode);
             currentNode.discovered = true;
             searchStep.Layout[currentNode.position.x, currentNode.position.y] = MazeElement.MazeElementType.IGNORED;
             searchStep.MazeInfos[currentNode.position.x, currentNode.position.y] = FormatNodeText(currentNode);
@@ -102,13 +103,6 @@ public class DijkstraPathFinding : PathFindingAlgorithm
                     updateStep.Parents[pos.x, pos.y] = currentNode.position;
                     steps.Add(updateStep);
                     lastStep = updateStep;
-                    if (pos == _goalPosition)
-                    {
-                        MarkCorrect(updateStep, node);
-                        updateStep.NextStepDelay = -1.0f;
-                        updateStep.Complete = true;
-                        return steps;
-                    }
                 }
                 // The element is already part of _queue
                 else
@@ -129,14 +123,19 @@ public class DijkstraPathFinding : PathFindingAlgorithm
                 }
             }
         }
+        PathFindingStep finalStep = new PathFindingStep(lastStep);
+        MarkCorrect(finalStep, _goalPosition);
+        finalStep.Complete = true;
+        finalStep.NextStepDelay = -1.0f;
+        steps.Add(finalStep);
         return steps;
     }
-    private void MarkCorrect(PathFindingStep step, Node node)
+    private void MarkCorrect(PathFindingStep step, Vector2Int position)
     {
-        step.Layout[node.position.x, node.position.y] = MazeElement.MazeElementType.CORRECT;
-        if (node.parent != null)
+        step.Layout[position.x, position.y] = MazeElement.MazeElementType.CORRECT;
+        if (step.Parents[position.x, position.y] != new Vector2Int(-1, -1))
         {
-            MarkCorrect(step, node.parent);
+            MarkCorrect(step, step.Parents[position.x, position.y]);
         }
     }
 

@@ -31,7 +31,7 @@ public class Maze : PausableObject, IResetObject
     private List<PathFindingStep> _steps;
     private int _currentStep = 0;
     private float _lastUpdateTime;
-    private float _speedModifier;
+    private float _speedModifier = 1.0f;
     private Vector3 _cameraBaseLocation;
     private Quaternion _cameraBaseRotation;
     // Save these up here as they can be useful for spawning and
@@ -58,7 +58,6 @@ public class Maze : PausableObject, IResetObject
         _mazeGenerator = new RandomizedPrimsAlgorithm();
         _pathFinding = algo;
         _currentSize = size;
-        _speedModifier = 1.0f;
         _steps = new List<PathFindingStep>();
         _layout = new GameObject[size, size];
         _mazeElements = new MazeElement[size, size];

@@ -108,6 +108,7 @@ public class BreadthFirstSearch : PathFindingAlgorithm
                 neighborStep.Layout[n.position.x, n.position.y] = MazeElement.MazeElementType.WALKED;
                 _nodes.Add(n);
             }
+            neighborStep.NextStepDelay = 1.0f;
             _steps.Add(neighborStep);
             _lastStep = neighborStep;
             _neighbors.Clear();
