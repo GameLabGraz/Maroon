@@ -177,6 +177,13 @@ namespace Maroon.Chemistry.Catalyst
         public static float MaxYCoord = 0.0f;
         
         public bool AreHinshelwoodMoleculesFreed { get => _freedMoleculeCounter == _moleculesToFree; }
+        public bool HasInitialTempChanged { get => Mathf.Abs(temperature.Value - temperatureViewVr.initialValue) > 20.0f ; }
+
+        public bool HasInitialPressureChanged
+        {
+            get => Mathf.Abs(partialPressure.Value - partialPressureViewVr.initialValue) > 
+                   (ExperimentVariation == ExperimentVariation.LangmuirHinshelwood ? 0.02f : 0.002f);
+        }
 
         private void Awake()
         {
