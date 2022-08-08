@@ -44,13 +44,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _axisID: -1
-  _axisWorldLength: 13.16
+  _axisWorldLength: 10.3
   _axisMarkerPrefab: {fileID: 4518505451669440003, guid: 733270383ae75fe47a65f2e6a5342a93,
     type: 3}
   _axisLocalLength: 1
   _lengthUnit: 0
-  _axisSubdivision: 5
-  _divisionUnit: -2
+  _axisSubdivision: 200
+  _divisionUnit: -3
 --- !u!1 &3179612546499109083
 GameObject:
   m_ObjectHideFlags: 0
@@ -116,7 +116,7 @@ GameObject:
   - component: {fileID: 1584415158096860885}
   m_Layer: 0
   m_Name: SpaceIndicator
-  m_TagString: Untagged
+  m_TagString: VectorField
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -130,7 +130,7 @@ Transform:
   m_GameObject: {fileID: 4671644432030543195}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 22.84, y: 22.84, z: 22.84}
+  m_LocalScale: {x: 21.1, y: 10.5, z: 10.5}
   m_Children: []
   m_Father: {fileID: 6981118902474165964}
   m_RootOrder: 7
@@ -318,13 +318,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _axisID: 1
-  _axisWorldLength: 13.25
+  _axisWorldLength: 10.3
   _axisMarkerPrefab: {fileID: 4518505451669440003, guid: 733270383ae75fe47a65f2e6a5342a93,
     type: 3}
   _axisLocalLength: 1
-  _lengthUnit: 0
-  _axisSubdivision: 5
-  _divisionUnit: -2
+  _lengthUnit: -1
+  _axisSubdivision: 46
+  _divisionUnit: -3
 --- !u!1 &6981118901579286979
 GameObject:
   m_ObjectHideFlags: 0
@@ -438,6 +438,7 @@ GameObject:
   - component: {fileID: 6981118902474165964}
   - component: {fileID: 3782035006018104010}
   - component: {fileID: 4682599006615905338}
+  - component: {fileID: 744932861}
   m_Layer: 0
   m_Name: CoordinateSystem
   m_TagString: Untagged
@@ -482,8 +483,8 @@ MonoBehaviour:
   _enableNegativeDirection: 1
   _enableThirdDimension: 1
   _lengthUniform: 1
-  _uniformWorldAxisLength: 9
-  _markerFontSize: 1.73
+  _uniformWorldAxisLength: 25
+  _markerFontSize: 4.84
   _enableVisualIndicator: 0
   _spaceIndicator: {fileID: 4671644432030543195}
   _axisList:
@@ -506,7 +507,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   origin: {fileID: 6448960656283534534}
-  systemManager: {fileID: 3782035006018104010}
+  axisController: {fileID: 3782035006018104010}
+--- !u!135 &744932861
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6981118902474165965}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8036137645384989429
 GameObject:
   m_ObjectHideFlags: 0

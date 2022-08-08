@@ -1,4 +1,4 @@
-﻿using PlatformControls.BaseControls;
+﻿using GameLabGraz.BaseControls;
 using UnityEngine;
 using VRTK;
 

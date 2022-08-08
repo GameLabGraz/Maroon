@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GameLabGraz.UI;
 using UnityEngine;
 using TMPro;
 using Maroon.UI;
@@ -28,8 +29,8 @@ public class ParameterUI : PausableObject, IResetObject
 
     private Dictionary<string, string> _functions = new Dictionary<string, string>();
    
-    public Dropdown dropdown;
-    List<Dropdown.OptionData> menuOptions;
+    public TMP_Dropdown dropdown;
+    List<TMP_Dropdown.OptionData> menuOptions;
 
     [SerializeField] private UnityEngine.UI.Button _showInputPanelButton;
     [SerializeField] private TMP_Text _inputPanelButtonText;
