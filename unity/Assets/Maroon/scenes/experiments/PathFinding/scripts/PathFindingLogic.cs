@@ -1,9 +1,5 @@
 ﻿using GEAR.Localization.Text;
-using Maroon.Physics;
-using Maroon.UI;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using GameLabGraz.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -13,7 +9,7 @@ public class PathFindingLogic : MonoBehaviour
     [SerializeField] Maze _maze;
     [SerializeField] Slider _mazeSizeSlider;
     [SerializeField] Slider _speedSlider;
-    [SerializeField] Dropdown _algoDropdown;
+    [SerializeField] TMP_Dropdown _algoDropdown;
     [SerializeField] LocalizedTMP _algoDescription;
 
     private PathFindingAlgorithm[] algos =
