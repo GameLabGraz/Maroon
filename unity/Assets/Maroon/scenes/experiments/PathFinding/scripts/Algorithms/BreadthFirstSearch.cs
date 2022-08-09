@@ -1,22 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class BreadthFirstSearch : PathFindingAlgorithm
 {
-    public override List<string> PseudoCode
+    public override List<string> PseudoCode => new List<string>()
     {
-        get => new List<string>()
-        {
-            "<style=\"sortingTitle\">Breadth First Search:</style>",
-            "Nodes = <style=\"sortingKeyword\">List</style>(start)",
-            "<style=\"sortingKeyword\">foreach</style> node in <style=\"sortingNumber\">Nodes</style>:",
-            "    <style=\"sortingKeyword\">foreach</style> n in <style=\"sortingFunction\">Neighbours(node)</style>:",
-            "        <style=\"sortingKeyword\">if</style> n == goal:",
-            "            <style=\"sortingKeyword\">return</style> n",
-            "        Nodes.<style=\"sortingFunction\">Add</style>(<style=\"sortingFunction\">Neighbours(node)</style>)",
-        };
-    }
+        "<style=\"sortingTitle\">Breadth First Search:</style>",
+        "Nodes = <style=\"sortingKeyword\">List</style>(start)",
+        "<style=\"sortingKeyword\">foreach</style> node in <style=\"sortingNumber\">Nodes</style>:",
+        "    <style=\"sortingKeyword\">foreach</style> n in <style=\"sortingFunction\">Neighbours(node)</style>:",
+        "        <style=\"sortingKeyword\">if</style> n == goal:",
+        "            <style=\"sortingKeyword\">return</style> n",
+        "        Nodes.<style=\"sortingFunction\">Add</style>(<style=\"sortingFunction\">Neighbours(node)</style>)",
+    };
+
     private class Node
     {
         public Vector2Int position;
@@ -70,13 +67,13 @@ public class BreadthFirstSearch : PathFindingAlgorithm
     }
     private void Search()
     {
-        while(true)
+        while (true)
         {
             foreach (Node node in _nodes)
             {
                 foreach (Vector2Int n in AdjacentPaths(node.position, _lastStep.Layout, _mazeSize))
                 {
-                    if(_lastStep.Layout[n.x, n.y] == MazeElement.MazeElementType.PATH)
+                    if (_lastStep.Layout[n.x, n.y] == MazeElement.MazeElementType.PATH)
                     {
                         PathFindingStep result = new PathFindingStep(_lastStep);
                         result.NextStepDelay = 1.0f;
@@ -85,7 +82,6 @@ public class BreadthFirstSearch : PathFindingAlgorithm
                         neighbor.distance = node.distance + 1;
                         neighbor.parent = node;
                         _neighbors.Add(neighbor);
-                        result.MazeInfos[n.x, n.y] = FormatNodeString(neighbor);
                         result.Parents[n.x, n.y] = node.position;
                         result.PseudoCodeLine = 4;
                         _steps.Add(result);
@@ -121,14 +117,5 @@ public class BreadthFirstSearch : PathFindingAlgorithm
         {
             MarkCorrect(step, node.parent);
         }
-    }
-    private string FormatNodeString(Node node)
-    {
-        return "";
-        //if (node.parent != null)
-        //{
-        //    return string.Format("parent: [{0}, {1}]", node.parent.position.x, node.parent.position.y);
-        //}
-        //return string.Format("No parent");
     }
 }

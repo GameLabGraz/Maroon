@@ -1,25 +1,21 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class DijkstraPathFinding : PathFindingAlgorithm
 {
-    public override List<string> PseudoCode
+    public override List<string> PseudoCode => new List<string>()
     {
-        get => new List<string>()
-        {
-            "<style=\"sortingTitle\">Dijkstra:</style>",
-            "queue = <style=\"sortingKeyword\">PriorityQueue(0, start)</style>",
-            "<style=\"sortingKeyword\">while</style> queue <style=\"sortingKeyword\">not empty</style>:",
-            "    node = queue.<style=\"sortingFunction\">Get</style>()",
-            "    <style=\"sortingKeyword\">foreach</style> n in <style=\"sortingFunction\">Neighbours(node)</style>:",
-            "        <style=\"sortingKeyword\">if</style> n == goal:",
-            "            <style=\"sortingKeyword\">return</style> n",
-            "        distance = node.distance + 1",
-            "        queue.<style=\"sortingFunction\">Add</style>(distance, n)"
-        };
-    }
+        "<style=\"sortingTitle\">Dijkstra:</style>",
+        "queue = <style=\"sortingKeyword\">PriorityQueue(0, start)</style>",
+        "<style=\"sortingKeyword\">while</style> queue <style=\"sortingKeyword\">not empty</style>:",
+        "    node = queue.<style=\"sortingFunction\">Get</style>()",
+        "    <style=\"sortingKeyword\">foreach</style> n in <style=\"sortingFunction\">Neighbours(node)</style>:",
+        "        <style=\"sortingKeyword\">if</style> n == goal:",
+        "            <style=\"sortingKeyword\">return</style> n",
+        "        distance = node.distance + 1",
+        "        queue.<style=\"sortingFunction\">Add</style>(distance, n)"
+    };
+
     private class Node
     {
         public Vector2Int position;
@@ -35,7 +31,7 @@ public class DijkstraPathFinding : PathFindingAlgorithm
         }
     }
     // list used as priority queue, as there apparently is none in C# whatever unity uses, and performance doesnt matter here
-    
+
     public DijkstraPathFinding()
         : base("Dijkstra")
     { }
@@ -81,7 +77,7 @@ public class DijkstraPathFinding : PathFindingAlgorithm
             currentNode.discovered = true;
             searchStep.Layout[currentNode.position.x, currentNode.position.y] = MazeElement.MazeElementType.IGNORED;
             searchStep.MazeInfos[currentNode.position.x, currentNode.position.y] = FormatNodeText(currentNode);
-            if(currentNode.parent != null)
+            if (currentNode.parent != null)
             {
                 searchStep.Parents[currentNode.position.x, currentNode.position.y] = currentNode.parent.position;
             }
@@ -141,6 +137,7 @@ public class DijkstraPathFinding : PathFindingAlgorithm
 
     private static string FormatNodeText(Node node)
     {
-        return string.Format("Distance: {0}\nDiscovered: {1}", node.distance == int.MaxValue ? "?" : ""+node.distance, node.discovered);
+        string distanceStr = node.distance == int.MaxValue ? "?" : "" + node.distance;
+        return $"Distance: {distanceStr}\nDiscovered: {node.discovered}";
     }
 }

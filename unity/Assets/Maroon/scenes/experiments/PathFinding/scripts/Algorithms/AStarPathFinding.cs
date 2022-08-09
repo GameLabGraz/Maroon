@@ -1,28 +1,26 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class AStarPathFinding : PathFindingAlgorithm
 {
-    public override List<string> PseudoCode {
-        get => new List<string>()
-        {
-            "<style=\"sortingTitle\">A*:</style>",
-            "fringe = <style=\"sortingKeyword\">PriorityQueue(0, start)</style>",
-            "closedList = <style=\"sortingKeyword\">List()</style>",
-            "<style=\"sortingKeyword\">while</style> fringe <style=\"sortingKeyword\">not empty</style>:",
-            "    node = fringe.<style=\"sortingFunction\">Get</style>()",
-            "    <style=\"sortingKeyword\">if</style> node == goal:",
-            "         <style=\"sortingKeyword\">return</style> node",
-            "    closedList.<style=\"sortingFunction\">Add</style>(node)",
-            "    <style=\"sortingKeyword\">foreach</style> n in <style=\"sortingFunction\">Neighbours(node)</style>:",
-            "        <style=\"sortingKeyword\">if</style> closedList <style=\"sortingKeyword\">not contains</style> n:",
-            "            g = node.g + 1",
-            "            h = <style=\"sortingFunction\">EstDist(n.pos, goal)</style>",
-            "            f = g + h",
-            "            fringe.<style=\"sortingFunction\">Add</style>(f, n)",
-        };
-    }
+    public override List<string> PseudoCode => new List<string>()
+    {
+        "<style=\"sortingTitle\">A*:</style>",
+        "fringe = <style=\"sortingKeyword\">PriorityQueue(0, start)</style>",
+        "closedList = <style=\"sortingKeyword\">List()</style>",
+        "<style=\"sortingKeyword\">while</style> fringe <style=\"sortingKeyword\">not empty</style>:",
+        "    node = fringe.<style=\"sortingFunction\">Get</style>()",
+        "    <style=\"sortingKeyword\">if</style> node == goal:",
+        "         <style=\"sortingKeyword\">return</style> node",
+        "    closedList.<style=\"sortingFunction\">Add</style>(node)",
+        "    <style=\"sortingKeyword\">foreach</style> n in <style=\"sortingFunction\">Neighbours(node)</style>:",
+        "        <style=\"sortingKeyword\">if</style> closedList <style=\"sortingKeyword\">not contains</style> n:",
+        "            g = node.g + 1",
+        "            h = <style=\"sortingFunction\">EstDist(n.pos, goal)</style>",
+        "            f = g + h",
+        "            fringe.<style=\"sortingFunction\">Add</style>(f, n)",
+    };
+
 
     private class Node
     {
@@ -44,10 +42,6 @@ public class AStarPathFinding : PathFindingAlgorithm
         : base("A*")
     { }
 
-    public override void Init(int mazeSize, Vector2Int playerPosition, Vector2Int goalPosition)
-    {
-        base.Init(mazeSize, playerPosition, goalPosition);
-    }
     public override List<PathFindingStep> Run(MazeElement[,] layout)
     {
         List<Node> _openList = new List<Node>();
@@ -86,7 +80,7 @@ public class AStarPathFinding : PathFindingAlgorithm
             _closedList.Add(_currentNode);
             searchStep.Layout[_currentNode.position.x, _currentNode.position.y] = MazeElement.MazeElementType.IGNORED;
             searchStep.MazeInfos[_currentNode.position.x, _currentNode.position.y] = FormatNodeText(_currentNode);
-            if(_currentNode.parent != null)
+            if (_currentNode.parent != null)
             {
                 searchStep.Parents[_currentNode.position.x, _currentNode.position.y] = _currentNode.parent.position;
             }
@@ -144,7 +138,7 @@ public class AStarPathFinding : PathFindingAlgorithm
     private void MarkCorrect(PathFindingStep step, Node node)
     {
         step.Layout[node.position.x, node.position.y] = MazeElement.MazeElementType.CORRECT;
-        if(node.parent != null)
+        if (node.parent != null)
         {
             MarkCorrect(step, node.parent);
         }
@@ -158,7 +152,7 @@ public class AStarPathFinding : PathFindingAlgorithm
 
     private static string FormatNodeText(Node node)
     {
-        return string.Format("g: {0}\nh: {1}\nf: {2}", node.g, node.h, node.f);
+        return $"g: {node.g}\nh: {node.h}\nf: {node.f}";
     }
 
 }
