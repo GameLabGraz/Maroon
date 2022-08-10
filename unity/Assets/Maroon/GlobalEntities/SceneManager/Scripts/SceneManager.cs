@@ -18,6 +18,8 @@ namespace Maroon.GlobalEntities
 
         [SerializeField] private Maroon.SceneCategory[] _sceneCategories = null;
 
+        public bool ShowDebugMessages = true;
+        
         private Maroon.SceneCategory _activeSceneCategory;
 
         private Stack<Maroon.CustomSceneAsset> _sceneHistory = new Stack<Maroon.CustomSceneAsset>();
@@ -370,9 +372,11 @@ namespace Maroon.GlobalEntities
             {
                 this.LoadSceneRequest(this._sceneMainMenuVR);
             }
-
-            // Return PC main menu
-            this.LoadSceneRequest(this._sceneMainMenuPC);
+            else
+            {
+                // Return PC main menu
+                this.LoadSceneRequest(this._sceneMainMenuPC);
+            }
         }
 
         /// <summary>
@@ -382,15 +386,30 @@ namespace Maroon.GlobalEntities
         public void LoadPreviousScene()
         {
             // If there is no previous scene available, load main menu
-            if(this._sceneHistory.Count < 2)
+            if(this._sceneHistory.Count < 2 && !PlatformManager.Instance.CurrentPlatformIsVR)
             {
+                if(ShowDebugMessages)
+                    Debug.Log("[SceneManager] sceneHistory count < 2 and current Platform is not VR: Loading Main Menu");
                 this.LoadMainMenu();
                 return;
             }
 
             // If previous scene available, remove current scene and load previous scene
-            this._sceneHistory.Pop();
-            this.LoadSceneRequest(this._sceneHistory.Pop());            
+            Debug.Assert(_sceneHistory.Count > 0);
+            var currentScene = this._sceneHistory.Pop();
+            if (ShowDebugMessages)
+            {
+                Debug.Log("[SceneManager] Removing current scene '" + currentScene.SceneName + "' from stack");
+                if(_sceneHistory.Count != 0)
+                    Debug.Log("[SceneManager] Loading scene '" + _sceneHistory.Peek().SceneName + "' from top of the stack");
+                else 
+                    Debug.Log("[SceneManager] Stack is empty -> loading Main Menu");
+            }
+
+            if (_sceneHistory.Count > 0)
+                this.LoadSceneRequest(this._sceneHistory.Peek());
+            else
+                this.LoadMainMenu();
         }
 
 
@@ -461,6 +480,10 @@ namespace Maroon.GlobalEntities
             // Check if scene is valid
             if(!LoadSceneValidate(scene))
             {
+                if (ShowDebugMessages)
+                {
+                    Debug.Log("[SceneManager]: Scene " + scene.SceneName + "could not be loaded or validated.");
+                }
                 return false;
             }    
         
@@ -474,6 +497,8 @@ namespace Maroon.GlobalEntities
         {
             if(_sceneHistory.Count == 0 || scene.SceneName != _sceneHistory.Peek().SceneName)
             {
+                if(ShowDebugMessages)
+                    Debug.Log("[SceneManager] Push Scene to history: " + scene.SceneName);
                 this._sceneHistory.Push(scene);
             }
         }
@@ -481,6 +506,8 @@ namespace Maroon.GlobalEntities
         // Called when the game should be closed
         public void ExitApplication()
         {
+            if(ShowDebugMessages)
+                Debug.Log("[SceneManager] Exit Application");
             Application.Quit();
         }
         
