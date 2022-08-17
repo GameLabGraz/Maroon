@@ -1,11 +1,18 @@
+
+using GameLabGraz.VRInteraction;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class VRPlayerPositionHelper : MonoBehaviour
 {
+
+    private VRPlayer _player = null;
     // Start is called before the first frame update
     void Start()
     {
+        _player = GetComponent<VRPlayer>();
+        Debug.Assert(_player != null);
+
         UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnNewSceneLoaded;
     }
 
@@ -19,6 +26,8 @@ public class VRPlayerPositionHelper : MonoBehaviour
         //1. find all player objects in the scene
         var players = GameObject.FindGameObjectsWithTag("Player");
 
+        var playerFeetOffset = _player.trackingOriginTransform.position - _player.feetPositionGuess;
+
         //2. deactivate all other player except me
         foreach (var player in players)
         {
@@ -26,12 +35,15 @@ public class VRPlayerPositionHelper : MonoBehaviour
             {
                 player.SetActive(false);
                 var position = player.transform.position;
-                position.y = transform.position.y;
+                //var rotation = player.transform.rotation;
+                
+                //_player.trackingOriginTransform.rotation = rotation;
+                _player.trackingOriginTransform.position = position + playerFeetOffset;
 
-                var rotation = player.transform.rotation;
-
-                transform.position = position;
-                transform.rotation = rotation;
+                if (_player.leftHand.currentAttachedObjectInfo.HasValue)
+                    _player.leftHand.ResetAttachedTransform(_player.leftHand.currentAttachedObjectInfo.Value);
+                if (_player.rightHand.currentAttachedObjectInfo.HasValue)
+                    _player.rightHand.ResetAttachedTransform(_player.rightHand.currentAttachedObjectInfo.Value);
             }
         }
     }
