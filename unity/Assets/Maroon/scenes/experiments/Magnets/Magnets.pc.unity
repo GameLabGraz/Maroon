@@ -1245,6 +1245,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
+      propertyPath: m_IsOn
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -1295,6 +1300,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   key: ShowVectorFieldGrid
   suffix: 
+--- !u!1 &696551598 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9085299239375179210, guid: 47808144d6757244da5be7e2e38f1f94,
+    type: 3}
+  m_PrefabInstance: {fileID: 696551595}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &696551599
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 696551598}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7542ed335d867f498624575fd954ee8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  allowReset: 1
 --- !u!1 &707327384
 GameObject:
   m_ObjectHideFlags: 0
@@ -2138,9 +2162,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83654afd125489243843b22706a34d25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  field_strength: 10
+  fieldStrength: 3
   fieldAxis: 0
-  force_active: 0
+  forceActive: 0
 --- !u!1 &1103448774
 GameObject:
   m_ObjectHideFlags: 0
@@ -2282,9 +2306,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83654afd125489243843b22706a34d25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  field_strength: 10
+  fieldStrength: 3
   fieldAxis: 0
-  force_active: 0
+  forceActive: 0
 --- !u!1 &1175382414
 GameObject:
   m_ObjectHideFlags: 0
@@ -2765,6 +2789,25 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 09c73ed225a086845b90fbeaba0dc5ea, type: 3}
+--- !u!1 &1398175505 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1347347726476049598, guid: 09c73ed225a086845b90fbeaba0dc5ea,
+    type: 3}
+  m_PrefabInstance: {fileID: 1398175504}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1398175506
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1398175505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7a5b5bde85f7244fab3a6f93af26554, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  allowReset: 1
 --- !u!1 &1426171347
 GameObject:
   m_ObjectHideFlags: 0
@@ -3521,6 +3564,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
+      propertyPath: m_IsOn
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -3571,6 +3619,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   key: ShowFieldLines
   suffix: 
+--- !u!1 &1710268108 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9085299239375179210, guid: 47808144d6757244da5be7e2e38f1f94,
+    type: 3}
+  m_PrefabInstance: {fileID: 1710268105}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1710268109
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1710268108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7542ed335d867f498624575fd954ee8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  allowReset: 1
 --- !u!1001 &1717057500
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6428,6 +6495,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fb080c8a2120a24b91de31503e911ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  updateRate: 1
+  fixedUpdateRate: 1
   simulationRunning:
     assessmentName: 
     isDynamic: 0
@@ -6452,7 +6521,6 @@ MonoBehaviour:
     onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
-  timeScale: 1
   onStartRunning:
     m_PersistentCalls:
       m_Calls: []

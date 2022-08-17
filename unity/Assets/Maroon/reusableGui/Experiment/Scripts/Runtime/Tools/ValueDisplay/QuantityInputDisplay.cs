@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using GameLabGraz.UI;
+using UnityEngine;
 
 namespace Maroon.UI.ValueDisplay
 {
