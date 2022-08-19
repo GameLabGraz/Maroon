@@ -535,7 +535,40 @@ MonoBehaviour:
       m_Calls: []
   OnMove:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_MethodName: UpdateDisplay
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 0}
+        m_MethodName: UpdateDisplay
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 8167284104948070404}
+        m_MethodName: UpdateRulerLine
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnMovementFinish:
     m_PersistentCalls:
       m_Calls: []
@@ -682,13 +715,14 @@ GameObject:
   - component: {fileID: 1868934271926398209}
   - component: {fileID: 4209236518993689527}
   - component: {fileID: 4201606569830674114}
+  - component: {fileID: 1905071099}
   m_Layer: 0
   m_Name: RulerStart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2222670609454138047
 Transform:
   m_ObjectHideFlags: 0
@@ -697,7 +731,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2792781189551255133}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -3.27, y: 3.44, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7075297525098979563}
@@ -776,7 +810,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 233dba56b7c33c54f9a9b1982ce376b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movingObject: {fileID: 0}
+  movingObject: {fileID: 2792781189551255133}
   minBoundary: {fileID: 0}
   maxBoundary: {fileID: 0}
   allowedXMovement: 1
@@ -791,7 +825,40 @@ MonoBehaviour:
       m_Calls: []
   onMove:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_MethodName: UpdateDisplay
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 0}
+        m_MethodName: UpdateDisplay
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 8167284104948070404}
+        m_MethodName: UpdateRulerLine
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onEndMovingOutsideBoundaries:
     m_PersistentCalls:
       m_Calls: []
@@ -802,6 +869,24 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   onDisabled:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &1905071099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2792781189551255133}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2b5968f72a721f499c43e35a3c527e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onRulerPinEnable:
+    m_PersistentCalls:
+      m_Calls: []
+  onRulerPinDisable:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &3767839463319138934
@@ -941,13 +1026,14 @@ GameObject:
   - component: {fileID: 2031832825775252536}
   - component: {fileID: 2411551839009300190}
   - component: {fileID: 5036532127402512476}
+  - component: {fileID: 1544720590}
   m_Layer: 0
   m_Name: RulerEnd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8206984259736167506
 Transform:
   m_ObjectHideFlags: 0
@@ -956,7 +1042,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3784915407541068464}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 19.8, y: 0, z: 0}
+  m_LocalPosition: {x: 6.72, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4537094812411218682}
@@ -1035,7 +1121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 233dba56b7c33c54f9a9b1982ce376b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movingObject: {fileID: 0}
+  movingObject: {fileID: 3784915407541068464}
   minBoundary: {fileID: 0}
   maxBoundary: {fileID: 0}
   allowedXMovement: 1
@@ -1050,7 +1136,40 @@ MonoBehaviour:
       m_Calls: []
   onMove:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_MethodName: UpdateDisplay
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 0}
+        m_MethodName: UpdateDisplay
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 8167284104948070404}
+        m_MethodName: UpdateRulerLine
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onEndMovingOutsideBoundaries:
     m_PersistentCalls:
       m_Calls: []
@@ -1061,6 +1180,24 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   onDisabled:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &1544720590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3784915407541068464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2b5968f72a721f499c43e35a3c527e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onRulerPinEnable:
+    m_PersistentCalls:
+      m_Calls: []
+  onRulerPinDisable:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &4087249291573043427
@@ -1474,7 +1611,40 @@ MonoBehaviour:
       m_Calls: []
   OnMove:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_MethodName: UpdateDisplay
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 0}
+        m_MethodName: UpdateDisplay
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 8167284104948070404}
+        m_MethodName: UpdateRulerLine
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnMovementFinish:
     m_PersistentCalls:
       m_Calls: []
@@ -1996,7 +2166,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6764303990822915484
 Transform:
   m_ObjectHideFlags: 0
@@ -2190,9 +2360,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96651d9e625f06448aad6f575fb4ccde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RulerStart: {fileID: 0}
-  RulerEnd: {fileID: 0}
-  RulerLine: {fileID: 0}
+  RulerStart: {fileID: 1905071099}
+  RulerEnd: {fileID: 1544720590}
+  RulerLine: {fileID: 3863614276310913548}
 --- !u!1 &9203492988955299812
 GameObject:
   m_ObjectHideFlags: 0

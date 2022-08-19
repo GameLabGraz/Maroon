@@ -142,5 +142,15 @@ namespace Maroon.Physics.Electromagnetism
             // Debug.Log("OnCurve: " + onCurve);
             return onCurve; //distributionCurveForStrength.Evaluate(strengthInRealPercent);
         }
+
+        public override void addProducerToSet(GameObject producer)
+        {
+            producers.Add(producer);
+        }
+
+        public override void removeProducerFromSet(GameObject producer)
+        {
+            producers.Remove(producer);
+        }
     }
 }
