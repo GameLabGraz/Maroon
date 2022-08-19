@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Assets.Maroon.reusableGui.Experiment.ToolsUI.Scripts
 {
-    public class UiParticleDragHandler : UIItemDragHandlerSimple, IBeginDragHandler, IEndDragHandler
+    public class UIParticleDragHandler : UIItemDragHandlerSimple, IBeginDragHandler, IEndDragHandler
     {
         [SerializeField] private ParticleManager _particleManager;
         [SerializeField] private PC_Slider _chargeValueSlider;
