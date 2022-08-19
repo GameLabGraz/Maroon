@@ -1,10 +1,7 @@
-﻿using GEAR.Gadgets.Attribute;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Maroon.Tools
+namespace Assets.Maroon.reusableGui.Experiment.ToolsUI.Scripts
 {
     public class ToolDictionary : MonoBehaviour
     {

@@ -1,4 +1,5 @@
-﻿using Maroon.Physics.Electromagnetism;
+﻿using System.Collections.Generic;
+using Maroon.Physics.Electromagnetism;
 using UnityEngine;
 
 public class ParticleManager : MonoBehaviour
@@ -7,6 +8,13 @@ public class ParticleManager : MonoBehaviour
     [SerializeField] private GameObject maxBoundary;
 
     [SerializeField] private EField eField;
+    [SerializeField] private int maxChargeCount = 10;
+    [SerializeField] private bool allowVisualization = true;
+
+    public int GetMaxChargesCount() => maxChargeCount;
+    public bool IsVisualizationAllowed() => allowVisualization;
+   
+    private List<Maroon.Physics.Electromagnetism.Charge> _charges = new List<Maroon.Physics.Electromagnetism.Charge>();
 
     public GameObject CreateSource(GameObject prefab, Vector3 position, float chargeStrength)
     {
@@ -19,8 +27,11 @@ public class ParticleManager : MonoBehaviour
         {
             movement.SetBoundaries(minBoundary, maxBoundary);
         }
-        
-        obj.GetComponent<Maroon.Physics.Electromagnetism.Charge>().strength = chargeStrength;
+
+        var charge = obj.GetComponent<Maroon.Physics.Electromagnetism.Charge>();
+        charge.strength = chargeStrength;
+
+        _charges.Add(charge);
 
         eField.addProducerToSet(obj);
         eField.updateProducers();
@@ -33,6 +44,7 @@ public class ParticleManager : MonoBehaviour
     public void RemoveSourceFromEField(GameObject source)
     {
         eField.removeProducerFromSet(source);
+        _charges.Remove(source.GetComponent<Maroon.Physics.Electromagnetism.Charge>());
     }
 
     public void ChangeColorOfParticle(GameObject obj, float chargeStrength)
@@ -43,8 +55,8 @@ public class ParticleManager : MonoBehaviour
         if (chargeStrength < 0)
         {
             mat[0].color = Color.blue;
-            mat[2].color = mat[0].color;
             mat[1].color = Color.white;
+            mat[2].color = mat[0].color;
         }
         else if (chargeStrength > 0)
         {
@@ -59,4 +71,17 @@ public class ParticleManager : MonoBehaviour
 
         particleBase.materials = mat;
     }
+
+    public List<Vector4> GetChargesAsVector()
+    {
+        var list = new List<Vector4>();
+        foreach (var charge in _charges)
+        {
+            var pos = charge.transform.position;
+            list.Add(new Vector4(pos.x, pos.y, pos.z, charge.Strength));
+        }
+
+        return list;
+    }
+
 }

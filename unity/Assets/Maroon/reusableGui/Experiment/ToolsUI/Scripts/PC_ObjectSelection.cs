@@ -1,42 +1,45 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class PC_ObjectSelection : MonoBehaviour
+namespace Assets.Maroon.reusableGui.Experiment.ToolsUI.Scripts
 {
-    public enum SelectObjectType
+    public class PC_ObjectSelection : MonoBehaviour
     {
-        SourceSelect,
-        VisualizationPlaneSelect,
-    }
-
-    public List<GameObject> highlightObjects = new List<GameObject>();
-    public SelectObjectType type;
-
-    private PC_ObjectSelectionHandler _objectSelectionHandler;
-
-    void Start()
-    {
-        if (!_objectSelectionHandler)
-            _objectSelectionHandler = GameObject.FindObjectOfType<PC_ObjectSelectionHandler>();
-    }
-
-    private void OnMouseDown()
-    {
-        if (!_objectSelectionHandler)
-            _objectSelectionHandler = GameObject.FindObjectOfType<PC_ObjectSelectionHandler>();
-
-        Select();
-    }
-
-    public void Select()
-    {
-        if (this.type == SelectObjectType.SourceSelect)
+        public enum SelectObjectType
         {
-            _objectSelectionHandler.SelectObject(this);
+            SourceSelect,
+            VisualizationPlaneSelect,
         }
-        else
+
+        public List<GameObject> highlightObjects = new List<GameObject>();
+        public SelectObjectType type;
+
+        private PC_ObjectSelectionHandler _objectSelectionHandler;
+
+        void Start()
         {
-            _objectSelectionHandler.DeselectAll();
+            if (!_objectSelectionHandler)
+                _objectSelectionHandler = GameObject.FindObjectOfType<PC_ObjectSelectionHandler>();
+        }
+
+        private void OnMouseDown()
+        {
+            if (!_objectSelectionHandler)
+                _objectSelectionHandler = GameObject.FindObjectOfType<PC_ObjectSelectionHandler>();
+
+            Select();
+        }
+
+        public void Select()
+        {
+            if (this.type == SelectObjectType.SourceSelect)
+            {
+                _objectSelectionHandler.SelectObject(this);
+            }
+            else
+            {
+                _objectSelectionHandler.DeselectAll();
+            }
         }
     }
 }

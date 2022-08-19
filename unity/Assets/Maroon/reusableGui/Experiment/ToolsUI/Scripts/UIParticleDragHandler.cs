@@ -3,47 +3,50 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UIParticleDragHandler : UIItemDragHandlerSimple, IBeginDragHandler, IEndDragHandler
+namespace Assets.Maroon.reusableGui.Experiment.ToolsUI.Scripts
 {
-    [SerializeField] private ParticleManager _particleManager;
-    [SerializeField] private PC_Slider _chargeValueSlider;
-
-    [Header("Image Components")]
-    [SerializeField] private Image BackgroundImage;
-    [SerializeField] private Image MinusImage;
-    [SerializeField] private Image PlusImage;
-
-    private float _chargeValue = 0.0f;
-
-    public float ChargeValue
+    public class UiParticleDragHandler : UIItemDragHandlerSimple, IBeginDragHandler, IEndDragHandler
     {
-        get => _chargeValue;
-        set
+        [SerializeField] private ParticleManager _particleManager;
+        [SerializeField] private PC_Slider _chargeValueSlider;
+
+        [Header("Image Components")]
+        [SerializeField] private Image BackgroundImage;
+        [SerializeField] private Image MinusImage;
+        [SerializeField] private Image PlusImage;
+
+        private float _chargeValue = 0.0f;
+
+        public float ChargeValue
         {
-            _chargeValue = value;
-
-            if (Mathf.Abs(_chargeValue) < Mathf.Epsilon)
+            get => _chargeValue;
+            set
             {
-                BackgroundImage.color = Color.green;
-                MinusImage.gameObject.SetActive(false);
-                PlusImage.gameObject.SetActive(false);
-                return;
+                _chargeValue = value;
+
+                if (Mathf.Abs(_chargeValue) < Mathf.Epsilon)
+                {
+                    BackgroundImage.color = Color.green;
+                    MinusImage.gameObject.SetActive(false);
+                    PlusImage.gameObject.SetActive(false);
+                    return;
+                }
+
+                MinusImage.gameObject.SetActive(_chargeValue < 0);
+                PlusImage.gameObject.SetActive(_chargeValue > 0);
+                BackgroundImage.color = _chargeValue < 0 ? Color.blue : Color.red;
             }
-
-            MinusImage.gameObject.SetActive(_chargeValue < 0);
-            PlusImage.gameObject.SetActive(_chargeValue > 0);
-            BackgroundImage.color = _chargeValue < 0 ? Color.blue : Color.red;
         }
-    }
 
-    private void Start()
-    {
-        ChargeValue = _chargeValueSlider.value;
-        _chargeValueSlider.onValueChanged.AddListener((newValue) => ChargeValue = newValue);
-    }
+        private void Start()
+        {
+            ChargeValue = _chargeValueSlider.value;
+            _chargeValueSlider.onValueChanged.AddListener((newValue) => ChargeValue = newValue);
+        }
 
-    protected override void ShowObject(Vector3 position, Transform parent)
-    {
-        var obj = _particleManager.CreateSource(generatedObject, position, ChargeValue);
+        protected override void ShowObject(Vector3 position, Transform parent)
+        {
+            var obj = _particleManager.CreateSource(generatedObject, position, ChargeValue);
+        }
     }
 }
