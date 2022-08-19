@@ -27,7 +27,7 @@ namespace Maroon.Tools.Ruler
             var screenPoint = Input.mousePosition;
             var finish = parentCanvas.worldCamera.ScreenToWorldPoint(screenPoint);
             
-            if (!is2D)
+            if (is2D)
                 finish.z = 0f;
 
             _item.transform.position = finish;

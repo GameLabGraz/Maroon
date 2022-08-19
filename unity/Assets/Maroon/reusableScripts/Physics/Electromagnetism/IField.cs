@@ -83,4 +83,8 @@ public abstract class IField : MonoBehaviour
     public abstract float getStrength(Vector3 position);
 
     public abstract float getStrengthInPercent(Vector3 position);
+
+    public abstract void addProducerToSet(GameObject producer);
+
+    public abstract void removeProducerFromSet(GameObject producer);
 }

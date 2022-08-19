@@ -28,7 +28,7 @@ public class PositionDisplay : MonoBehaviour
         PositionX.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(endVal => CheckVariable(endVal, Axis.X));
         PositionY.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(endVal => CheckVariable(endVal, Axis.Y));
         PositionZ.GetComponent<PC_InputParser_Float_TMP>().onValueChangedFloat.AddListener(endVal => CheckVariable(endVal, Axis.Z));
-
+       
         UpdatePositionUnits();
     }
 
@@ -75,8 +75,7 @@ public class PositionDisplay : MonoBehaviour
     public Vector3 DetermineNewPosition(float value, Axis axis)
     {
         var newPosition = affectedObject.transform.position;
-  
-        if(axis == Axis.X)
+         if(axis == Axis.X)
             newPosition.x = CoordSystemHandler.Instance.GetWorldPosition(new Vector3(value, 0, 0)).x;
 
         if(axis == Axis.Y)
