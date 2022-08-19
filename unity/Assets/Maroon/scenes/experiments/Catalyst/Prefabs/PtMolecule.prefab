@@ -56,10 +56,11 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a9d23ec8c6d194443afd74684b8060fb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -80,6 +81,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!135 &5697660957398785804
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -141,8 +143,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 4
   collider: {fileID: 2216740001849344916}
+  FixedMoleculeYDist: 0
   movementSpeed: 0
-  timeToMove: 3
   temperature:
     assessmentName: 
     isDynamic: 0
@@ -171,7 +173,7 @@ MonoBehaviour:
     onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
-  _state: 0
+  state: 0
 --- !u!136 &2216740001849344916
 CapsuleCollider:
   m_ObjectHideFlags: 0
