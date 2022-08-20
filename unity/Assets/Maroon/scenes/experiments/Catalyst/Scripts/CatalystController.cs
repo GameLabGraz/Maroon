@@ -40,6 +40,7 @@ namespace Maroon.Chemistry.Catalyst
         [SerializeField] int numberSpawnedO2Molecules;
         [SerializeField] int numberSpawnedCOMolecules;
         [SerializeField] Material catalystBoxMaterial;
+        [SerializeField] ParticleSystem pressureParticleSystem;
         
         [Header("Catalyst specific objects")]
         [SerializeField] CatalystReactor catalystReactor;
@@ -826,6 +827,13 @@ namespace Maroon.Chemistry.Catalyst
             if (!partialPressureView && newPartialPressure != partialPressure.Value) // in vr scene - no QuantityView
                 partialPressure.Value = newPartialPressure;
             // update turnover rates
+            if (pressureParticleSystem != null)
+            {
+                // adjust speed for newly spawned particle
+                float pressureStep = partialPressure.Value / partialPressure.maxValue; // % of max
+                var main = pressureParticleSystem.main;
+                main.simulationSpeed = Mathf.Clamp(pressureStep * 2, 0.2f, 2.0f); // speed should go from 0.2 to 2
+            }
             _currentTurnOverRate = TurnOverRates[(int)ExperimentVariation][GetTemperatureIndex(temperature.Value)][GetPartialPressureIndex(partialPressure.Value)];
             UpdateTurnOverRateUI();
         }
