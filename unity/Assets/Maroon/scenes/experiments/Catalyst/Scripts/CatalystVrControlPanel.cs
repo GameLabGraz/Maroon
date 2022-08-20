@@ -3,12 +3,11 @@ using Valve.VR;
 
 public class CatalystVrControlPanel : MonoBehaviour
 {
-    [SerializeField] float rotationSpeed = 0.2f;
     [SerializeField] Transform playerTransform;
     [SerializeField] Transform centerTransform;
+    [SerializeField] GameObject stepWiseButtonGameObject;
+    [SerializeField] GameObject GloveSpawnObject;
 
-    public SteamVR_Action_Boolean triggerPress;
-    
     private bool _isSetupCompleted = false;
     private bool _isMoving = false;
     private Vector3 _center;
@@ -20,7 +19,7 @@ public class CatalystVrControlPanel : MonoBehaviour
     private Vector3 _initialPosition;
     private Quaternion _initialRotation;
 
-    public void Setup(float radius)
+    public void Setup(float radius, bool enableStepWiseButton)
     {
         Vector3 pos = transform.position;
         Quaternion rot = transform.rotation;
@@ -32,8 +31,9 @@ public class CatalystVrControlPanel : MonoBehaviour
         _playerTransform = playerTransform;
         _currentPlayerPosition = playerTransform.position;
         _previousPlayerPosition = playerTransform.position;
+        stepWiseButtonGameObject.SetActive(enableStepWiseButton);
+        GloveSpawnObject.SetActive(true);
         _isSetupCompleted = true;
-        triggerPress.AddOnChangeListener(UpdatePositionToPlayer, SteamVR_Input_Sources.Any);
     }
 
     public void ResetToInitialPosition()
@@ -42,9 +42,8 @@ public class CatalystVrControlPanel : MonoBehaviour
         transform.rotation = _initialRotation;
     }
 
-    private void UpdatePositionToPlayer(SteamVR_Action_Boolean action, SteamVR_Input_Sources sources, bool isConnected)
+    public void UpdatePositionToPlayer()
     {
-        Debug.Log($"[DBG] action: {action}, sources: {sources}, isConnected: {isConnected}");
         if (!_isSetupCompleted) return;
 
         if (_isMoving) return;

@@ -357,7 +357,7 @@ namespace Maroon.Chemistry.Catalyst
                     });
             }
             if (controlPanel)
-                controlPanel.Setup(Mathf.Min(MaxXCoord - MinXCoord, MaxZCoord - MinZCoord));
+                controlPanel.Setup(Mathf.Min(MaxXCoord - MinXCoord, MaxZCoord - MinZCoord), _doStepWiseSimulation);
         }
 
         /**
