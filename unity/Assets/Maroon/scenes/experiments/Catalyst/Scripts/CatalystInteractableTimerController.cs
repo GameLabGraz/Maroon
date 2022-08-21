@@ -7,6 +7,7 @@ public class CatalystInteractableTimerController : MonoBehaviour
 {
     private float _timeInteracted = 0.0f;
     private string _userId = "";
+    private int _interactionCount = 0;
 
     private bool _addToTime = false;
 
@@ -24,6 +25,7 @@ public class CatalystInteractableTimerController : MonoBehaviour
     public void StartAddToInteractionTime()
     {
         _addToTime = true;
+        _interactionCount++;
     }
 
     public void StopAddToInteractionTime()
@@ -34,7 +36,7 @@ public class CatalystInteractableTimerController : MonoBehaviour
     public void WriteDataToFile()
     {
         using StreamWriter file = new StreamWriter("timing_data.csv", true);
-        file.WriteLine($"{_userId},{_timeInteracted.ToString(CultureInfo.InvariantCulture)}");
+        file.WriteLine($"{_userId},{_interactionCount},{_timeInteracted.ToString(CultureInfo.InvariantCulture)}");
     }
 
     private void FixedUpdate()
