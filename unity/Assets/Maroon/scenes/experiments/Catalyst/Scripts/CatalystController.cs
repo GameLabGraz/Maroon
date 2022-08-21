@@ -41,6 +41,7 @@ namespace Maroon.Chemistry.Catalyst
         [SerializeField] int numberSpawnedCOMolecules;
         [SerializeField] Material catalystBoxMaterial;
         [SerializeField] ParticleSystem pressureParticleSystem;
+        [SerializeField] Transform pressureArrowParent;
         
         [Header("Catalyst specific objects")]
         [SerializeField] CatalystReactor catalystReactor;
@@ -91,6 +92,7 @@ namespace Maroon.Chemistry.Catalyst
         private List<Vector3> _oSpawnPoints = new List<Vector3>();
         private List<Molecule> _activeMolecules = new List<Molecule>();
         private CatalystSurface _catalystSurface;
+        private List<CatalystPressureArrow> _pressureArrows = new List<CatalystPressureArrow>();
         
         private float _currentTurnOverRate = 0.0f;
         private bool _doStepWiseSimulation = false;
@@ -223,6 +225,12 @@ namespace Maroon.Chemistry.Catalyst
 
             _langmuirGraphSeries = new List<Serie>(lineChartLangmuir.series.list);
             _vanKrevelenGraphSeries = new List<Serie>(lineChartVanKrevelen.series.list);
+            foreach (Transform childTransform in pressureArrowParent)
+            {
+                var arrow = childTransform.gameObject.GetComponent<CatalystPressureArrow>();
+                if (arrow != null)
+                    _pressureArrows.Add(arrow);
+            }
         }
 
         private void StartExperiment()
@@ -833,6 +841,11 @@ namespace Maroon.Chemistry.Catalyst
                 float pressureStep = partialPressure.Value / partialPressure.maxValue; // % of max
                 var main = pressureParticleSystem.main;
                 main.simulationSpeed = Mathf.Clamp(pressureStep * 2, 0.2f, 2.0f); // speed should go from 0.2 to 2
+            }
+
+            foreach (var arrow in _pressureArrows)
+            {
+                arrow.PressureChanged(partialPressure.Value, partialPressure.maxValue);
             }
             _currentTurnOverRate = TurnOverRates[(int)ExperimentVariation][GetTemperatureIndex(temperature.Value)][GetPartialPressureIndex(partialPressure.Value)];
             UpdateTurnOverRateUI();
