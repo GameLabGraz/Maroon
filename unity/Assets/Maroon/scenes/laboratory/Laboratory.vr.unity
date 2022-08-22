@@ -2709,12 +2709,12 @@ PrefabInstance:
     - target: {fileID: 3185346666097812144, guid: c702bd809945e8641ba7a9c46d2e539c,
         type: 3}
       propertyPath: onSegmentsBuildFinished.m_PersistentCalls.m_Calls.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3185346666097812144, guid: c702bd809945e8641ba7a9c46d2e539c,
         type: 3}
       propertyPath: onSegmentsBuildFinished.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 6
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3185346666097812144, guid: c702bd809945e8641ba7a9c46d2e539c,
         type: 3}
@@ -2729,7 +2729,12 @@ PrefabInstance:
     - target: {fileID: 3185346666097812144, guid: c702bd809945e8641ba7a9c46d2e539c,
         type: 3}
       propertyPath: onSegmentsBuildFinished.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SetActive
+      value: ReinitTeleports
+      objectReference: {fileID: 0}
+    - target: {fileID: 3185346666097812144, guid: c702bd809945e8641ba7a9c46d2e539c,
+        type: 3}
+      propertyPath: onSegmentsBuildFinished.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GameLabGraz.VRInteraction.VRTeleport, com.gamelabgraz.vrinteraction
       objectReference: {fileID: 0}
     - target: {fileID: 3185346666097812144, guid: c702bd809945e8641ba7a9c46d2e539c,
         type: 3}
@@ -6163,24 +6168,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1e658be50a6ec054b9ef64b24e320f4c, type: 3}
---- !u!1 &1268379444 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5289868304097788727, guid: 1e658be50a6ec054b9ef64b24e320f4c,
-    type: 3}
-  m_PrefabInstance: {fileID: 1268379443}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1268379445
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1268379444}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 27d1910cd628dd741853e505086cdc76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1647006007
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6334,12 +6321,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: df21f0165285dc74fa7fd4be4e53d31e, type: 3}
---- !u!1 &1651355450 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8245451448643972449, guid: df21f0165285dc74fa7fd4be4e53d31e,
+--- !u!114 &1651355450 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 170433219416135941, guid: df21f0165285dc74fa7fd4be4e53d31e,
     type: 3}
   m_PrefabInstance: {fileID: 1651355449}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e619cb014a81f54ca47941fc2c02ae7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1775211031
 GameObject:
   m_ObjectHideFlags: 0
