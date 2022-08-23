@@ -97,7 +97,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 112000000, guid: 1ec8f6e4e118e5540ac432063239ed25,
+  m_LightingDataAsset: {fileID: 112000000, guid: 7e60a36c555f4c440b5bc5f381efc76b,
     type: 2}
   m_LightingSettings: {fileID: 4890085278179872738, guid: b996d2972b6a36849ad9e0fe04129270,
     type: 2}
@@ -2391,6 +2391,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[2]
       value: 
       objectReference: {fileID: 2100000, guid: 7bcebdd40a49eff4982c1a622b304e1c, type: 2}
+    - target: {fileID: 720917713898283974, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1272221726380181259, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
       propertyPath: m_Name
@@ -2450,6 +2455,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1446584086037527596, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1474708998924499288, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
@@ -2640,11 +2650,16 @@ PrefabInstance:
         type: 3}
       propertyPath: onButtonDown.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1428322527}
     - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
       propertyPath: onButtonDown.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ResetSimulation
+      value: StartSimulation
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: onButtonDown.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SimulationController, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 6636143630868744952, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
@@ -4645,6 +4660,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.011657585, y: 0.00036529204, z: 0.0000910005}
   m_Center: {x: -6.0988714e-10, y: 0.00013208996, z: -0.00031018382}
+--- !u!114 &1428322527 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7080847694316621784, guid: 31a6116c7cb92304fae6c40f09b2d852,
+    type: 3}
+  m_PrefabInstance: {fileID: 550665745}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fb080c8a2120a24b91de31503e911ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1540314955
 GameObject:
   m_ObjectHideFlags: 0
