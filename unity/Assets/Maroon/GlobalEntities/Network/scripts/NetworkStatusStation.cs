@@ -10,6 +10,7 @@ public class NetworkStatusStation : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textScreen;
 
     [SerializeField] private Light statusLight;
+    [SerializeField] private bool isActive = true;
     
     private ListServer _ls;
     
@@ -17,7 +18,11 @@ public class NetworkStatusStation : MonoBehaviour
     void Start()
     {
         _ls = FindObjectOfType<ListServer>();
-        InvokeRepeating(nameof(UpdateNetworkInformation), 0, 1);
+
+        if (isActive)
+        {
+            InvokeRepeating(nameof(UpdateNetworkInformation), 0, 1);
+        }
     }
 
     private void UpdateNetworkInformation()

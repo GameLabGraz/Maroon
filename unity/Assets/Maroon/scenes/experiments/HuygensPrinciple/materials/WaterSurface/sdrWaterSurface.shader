@@ -50,6 +50,9 @@
                 struct vertexInput
                 {
                     float4 pos : POSITION;
+
+                    
+                    UNITY_VERTEX_INPUT_INSTANCE_ID //Insert
                 };
 
                 struct v2f
@@ -57,11 +60,19 @@
                     float4 sv_position : SV_POSITION;
                     float4 pos_world_space : TEXCOORD1;
                     fixed3 color : COLOR0;
+
+                    
+                    UNITY_VERTEX_OUTPUT_STEREO //Insert
                 };
 
                 v2f vert(vertexInput v)
                 {
                     v2f output;
+
+                    UNITY_SETUP_INSTANCE_ID(v); //Insert
+                    UNITY_INITIALIZE_OUTPUT(v2f, output); //Insert
+                    UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output); //Insert
+                    
                     output.sv_position = UnityObjectToClipPos(v.pos);
                     output.pos_world_space = mul(unity_ObjectToWorld, v.pos);
 

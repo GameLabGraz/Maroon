@@ -10,6 +10,10 @@ public class WaterPlaneEditor : Editor
     private SerializedProperty verticesPerLength;
     private SerializedProperty verticesPerWidth;
 
+    private SerializedProperty slitPlate;
+    private SerializedProperty waterBasinGeneratorPosition;
+    private SerializedProperty useMaterialReset;
+
     private void Awake()
     {
         waterPlane = (WaterPlane)target;
@@ -21,6 +25,10 @@ public class WaterPlaneEditor : Editor
 
         verticesPerLength = serializedObject.FindProperty("verticesPerLength");
         verticesPerWidth = serializedObject.FindProperty("verticesPerWidth");
+
+        slitPlate = serializedObject.FindProperty("slitPlate");
+        waterBasinGeneratorPosition = serializedObject.FindProperty("waterBasinGeneratorPosition");
+        useMaterialReset = serializedObject.FindProperty("useMaterialReset");
     }
 
     public override void OnInspectorGUI()
@@ -48,6 +56,11 @@ public class WaterPlaneEditor : Editor
         if (EditorGUI.EndChangeCheck())
             waterPlane.CalculatePlaneMesh();
 
+        serializedObject.ApplyModifiedProperties();
+
+        EditorGUILayout.PropertyField(slitPlate);
+        EditorGUILayout.PropertyField(waterBasinGeneratorPosition);
+        EditorGUILayout.PropertyField(useMaterialReset);
         serializedObject.ApplyModifiedProperties();
     }
 }

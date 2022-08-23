@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<QuestManager>
+    <QuestList>
+
+		<MainQuest>
+			<TranslationKey>QM_WaveSimulation</TranslationKey>
+			<DefaultText>Wave Simulation</DefaultText>
+
+			<SubQuest>
+				<TranslationKey>QM_StartSimulation</TranslationKey>
+				<DefaultText>Start Simulation</DefaultText>
+				<Script>QuestManager.StartSimulationCheck</Script>
+			</SubQuest>
+
+			<SubQuest>
+				<TranslationKey>QM_MoveSlitPlate</TranslationKey>
+				<DefaultText>Move Slit Plate</DefaultText>
+				<Script>QuestManager.MoveSlitPlateCheck</Script>
+			</SubQuest>
+		</MainQuest>
+		
+		<MainQuest>
+			<TranslationKey>QM_ChangeParameters</TranslationKey>
+			<DefaultText>Change Experiment Parameters</DefaultText>
+			
+            <SubQuest>
+				<TranslationKey>QM_ChangeSlitPlate</TranslationKey>
+				<DefaultText>Change Slite Plate</DefaultText>
+				<Script>QuestManager.SlitPlateCheck</Script>
+			</SubQuest>
+
+            <SubQuest>
+				<TranslationKey>QM_ChangeWaveParameter</TranslationKey>
+				<DefaultText>Change Wave Parameter</DefaultText>
+				<Script>QuestManager.WaveParameterCheck</Script>
+			</SubQuest>
+			
+            <SubQuest>
+				<TranslationKey>QM_ChangePropagationMode</TranslationKey>
+				<DefaultText>Change Propagation Mode</DefaultText>
+				<Script>QuestManager.PropagationModeCheck</Script>
+			</SubQuest>
+        </MainQuest>
+    </QuestList>
+</QuestManager>

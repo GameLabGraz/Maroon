@@ -12,7 +12,7 @@ namespace Maroon.Physics
 
         protected Rigidbody _rigidBody;
         protected RigidBodyStateControl _rigidBodyStateControl;
-
+		
         protected virtual void Start()
         {
             if (SimulationController.Instance == null) return;
@@ -33,7 +33,7 @@ namespace Maroon.Physics
             });
             SimulationController.Instance.OnStop.AddListener(() =>
             {
-                if (_rigidBody == null || _rigidBodyStateControl.IsStateStored)
+                if (_rigidBody == null || _rigidBodyStateControl == null || _rigidBodyStateControl.IsStateStored)
                     return;
 
                 _rigidBodyStateControl.StoreRigidBodyState();
