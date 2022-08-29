@@ -100,7 +100,7 @@ namespace DigitalRuby.ThunderAndLightning
                     Vector3 direction = (gizmoPosition - previousPoint.Value);
                     Vector3 center = (previousPoint.Value + gizmoPosition) * 0.5f;
                     float arrowSize = Mathf.Min(1.0f, direction.magnitude);
-                    UnityEditor.Handles.ArrowCap(0, center, Quaternion.LookRotation(direction), arrowSize);
+                    UnityEditor.Handles.ArrowHandleCap(0, center, Quaternion.LookRotation(direction), arrowSize, EventType.Repaint);
                 }
 
                 previousPoint = gizmoPosition;

@@ -36,6 +36,9 @@ namespace Maroon.Physics
 
         public void StoreRigidBodyState()
         {
+            if(_currentState == null || _rigidBody == null)
+                return;
+        
             _currentState.Position = _rigidBody.position;
             _currentState.Rotation = _rigidBody.rotation;
             _currentState.Velocity = _rigidBody.velocity;

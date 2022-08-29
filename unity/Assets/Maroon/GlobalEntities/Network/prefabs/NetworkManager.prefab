@@ -48,10 +48,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dontDestroyOnLoad: 1
+  PersistNetworkManagerToOfflineScene: 0
   runInBackground: 1
-  startOnHeadless: 1
-  showDebugMessages: 0
+  autoStartServerBuild: 1
   serverTickRate: 30
+  serverBatching: 1
+  serverBatchInterval: 0
   offlineScene: 
   onlineScene: Assets/Maroon/scenes/laboratory/Laboratory.pc.unity
   transport: {fileID: 2811340506612267991}
@@ -107,36 +109,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7424c1070fad4ba2a7a96b02fbeb4bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OnClientConnected:
-    m_PersistentCalls:
-      m_Calls: []
-  OnClientDataReceived:
-    m_PersistentCalls:
-      m_Calls: []
-  OnClientError:
-    m_PersistentCalls:
-      m_Calls: []
-  OnClientDisconnected:
-    m_PersistentCalls:
-      m_Calls: []
-  OnServerConnected:
-    m_PersistentCalls:
-      m_Calls: []
-  OnServerDataReceived:
-    m_PersistentCalls:
-      m_Calls: []
-  OnServerError:
-    m_PersistentCalls:
-      m_Calls: []
-  OnServerDisconnected:
-    m_PersistentCalls:
-      m_Calls: []
   port: 13118
   NoDelay: 1
+  SendTimeout: 5000
+  ReceiveTimeout: 30000
   serverMaxMessageSize: 16384
   serverMaxReceivesPerTick: 10000
+  serverSendQueueLimitPerConnection: 10000
+  serverReceiveQueueLimitPerConnection: 10000
   clientMaxMessageSize: 16384
   clientMaxReceivesPerTick: 1000
+  clientSendQueueLimit: 10000
+  clientReceiveQueueLimit: 10000
 --- !u!114 &2811340506612267990
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -166,6 +150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   secretHandshake: -1134502752279003414
   serverBroadcastListenPort: 13121
+  enableActiveDiscovery: 1
   ActiveDiscoveryInterval: 3
   transport: {fileID: 2811340506612267991}
   OnServerFound:

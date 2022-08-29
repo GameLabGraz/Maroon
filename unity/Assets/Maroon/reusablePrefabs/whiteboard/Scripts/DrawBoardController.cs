@@ -4,19 +4,14 @@ using UnityEngine;
 
 public class DrawBoardController : MonoBehaviour
 {
-    private Dictionary<PenController, Vector3> penPositions;
-
-    private void Start()
-    {
-        penPositions = new Dictionary<PenController, Vector3>();
-    }
+    private Dictionary<PenController, Vector3> _penPositions = new Dictionary<PenController, Vector3>();
 
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Pen"))
             return;
  
-        PenController pen = other.GetComponent<PenController>();
+        var pen = other.GetComponent<PenController>();
         AddPen(pen);
     }
 
@@ -25,38 +20,38 @@ public class DrawBoardController : MonoBehaviour
         if (!other.CompareTag("Pen"))
             return;
 
-        PenController pen = other.GetComponent<PenController>();
-        DrawLineController drawLineController = AddDrawLineController(pen);
+        var pen = other.GetComponent<PenController>();
+        var drawLineController = AddDrawLineController(pen);
 
-        Vector3 lineStartPosition = transform.InverseTransformPoint(penPositions[pen]);
+        var lineStartPosition = transform.InverseTransformPoint(_penPositions[pen]);
         drawLineController.transform.localPosition = new Vector3(lineStartPosition.x, 0.004f, lineStartPosition.z);
 
-        Vector3 lineEndPosition = drawLineController.transform.InverseTransformPoint(other.transform.position);
+        var lineEndPosition = drawLineController.transform.InverseTransformPoint(other.transform.position);
         lineEndPosition.y = 0;
 
-        Vector3 lineStartPositionWorld = drawLineController.transform.position;
-        Vector3 lineEndPositionWorld = drawLineController.transform.TransformPoint(lineEndPosition);
+        var lineStartPositionWorld = drawLineController.transform.position;
+        var lineEndPositionWorld = drawLineController.transform.TransformPoint(lineEndPosition);
 
         drawLineController.DrawLine(lineStartPositionWorld, lineEndPositionWorld);
 
-        penPositions[pen] = pen.transform.position;
+        _penPositions[pen] = pen.transform.position;
     }
 
     private void AddPen(PenController pen)
     {
         try
         {
-            penPositions.Add(pen, pen.transform.position);
+            _penPositions.Add(pen, pen.transform.position);
         }
         catch (ArgumentException)
         {
-            penPositions[pen] = pen.transform.position;
+            _penPositions[pen] = pen.transform.position;
         }
     }
    
     private DrawLineController AddDrawLineController(PenController pen)
     {
-        DrawLineController drawLineConroller = new GameObject("DrawLine").AddComponent<DrawLineController>();
+        var drawLineConroller = new GameObject("DrawLine").AddComponent<DrawLineController>();
         drawLineConroller.transform.parent = this.transform;
         drawLineConroller.transform.localRotation = Quaternion.Euler(0, 0, 0);
         drawLineConroller.SetMaterial(pen.getPenMaterial());

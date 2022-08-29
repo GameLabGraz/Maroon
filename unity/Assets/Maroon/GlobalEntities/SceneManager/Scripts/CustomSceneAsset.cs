@@ -20,6 +20,7 @@ namespace Maroon
         [SerializeField] private string unityScenePath = "";
         [SerializeField] private string unitySceneName = "";
         [SerializeField] private bool isVirtualRealityScene = false;
+        [SerializeField] private Material specialSceneMaterial = null;
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Getters and Properties
@@ -43,10 +44,15 @@ namespace Maroon
         {
             get { return this.isVirtualRealityScene; }
         }
-        
+
         public SceneType SceneType
         {
             get { if(this.isVirtualRealityScene){return SceneType.VR;} return SceneType.Standard; }
+        }
+        
+        public Material SceneMaterial
+        {
+            get { return this.specialSceneMaterial; }
         }
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -71,16 +77,26 @@ namespace Maroon
             var propertyUnityScenePath = property.FindPropertyRelative("unityScenePath");
             var propertyUnitySceneName = property.FindPropertyRelative("unitySceneName");
             var propertyIsVirtualRealityScene = property.FindPropertyRelative("isVirtualRealityScene");
+            var propertyMaterial= property.FindPropertyRelative("specialSceneMaterial");
 
             position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
 
             if(propertyUnitySceneAsset != null)
             {
                 EditorGUI.BeginChangeCheck();
-                var value = EditorGUI.ObjectField(position, propertyUnitySceneAsset.objectReferenceValue, typeof(SceneAsset), false);
+                var pos1 = position;
+                pos1.width = Mathf.Max(position.width / 2 - 1, 0);
+                
+                var value = EditorGUI.ObjectField(pos1, propertyUnitySceneAsset.objectReferenceValue, typeof(SceneAsset), false);
+                var pos2 = position;
+                pos2.width = pos1.width;
+                pos2.x = position.x + pos1.width + 2;
+                var mat = EditorGUI.ObjectField(pos2, propertyMaterial.objectReferenceValue, typeof(Material), false);
+
                 if(EditorGUI.EndChangeCheck())
                 {
                     propertyUnitySceneAsset.objectReferenceValue = value;
+                    propertyMaterial.objectReferenceValue = mat;
                     if(propertyUnitySceneAsset.objectReferenceValue != null)
                     {
                         var scenePath = AssetDatabase.GetAssetPath(propertyUnitySceneAsset.objectReferenceValue);
@@ -101,7 +117,6 @@ namespace Maroon
                     }
                 }
             }
-
             EditorGUI.EndProperty();
         }
     }

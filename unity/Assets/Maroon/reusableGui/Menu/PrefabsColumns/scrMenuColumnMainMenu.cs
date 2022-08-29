@@ -1,4 +1,4 @@
-﻿using Maroon.GlobalEntities;
+using Maroon.GlobalEntities;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -56,7 +56,7 @@ public class scrMenuColumnMainMenu : MonoBehaviour
         this.ButtonCredits.GetComponent<Button>().onClick.AddListener(() => this.OnClickCredits());
         this.ButtonExit.GetComponent<Button>().onClick.AddListener(() => this.OnClickExit());
     }
-
+    
     void OnEnable()
     {
     }
@@ -69,7 +69,7 @@ public class scrMenuColumnMainMenu : MonoBehaviour
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Button Actions
 
-    private void OnClickLaboratory()
+    public void OnClickLaboratory()
     {
         this.Menu.RemoveAllMenuColumnsButFirst();
         this.Menu.AddMenuColumn(this.ColumnLaboratory);

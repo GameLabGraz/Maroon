@@ -75,7 +75,10 @@ namespace Maroon.GlobalEntities
         public float MusicVolume
         {
             get { return _musicSource ? _musicSource.volume : 0f; }
-            set { _musicSource.volume = Mathf.Clamp(value, 0f, 1f); }
+            set { 
+                if(_musicSource)
+                    _musicSource.volume = Mathf.Clamp(value, 0f, 1f); 
+            }
         }
 
         /// <summary>
@@ -84,7 +87,11 @@ namespace Maroon.GlobalEntities
         public float SoundEffectVolume
         {
             get { return _soundEffectSource ? _soundEffectSource.volume : 0f; }
-            set { _soundEffectSource.volume = Mathf.Clamp(value, 0f, 1f); }
+            set
+            {
+                if(_soundEffectSource)
+                    _soundEffectSource.volume = Mathf.Clamp(value, 0f, 1f);
+            }
         }
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

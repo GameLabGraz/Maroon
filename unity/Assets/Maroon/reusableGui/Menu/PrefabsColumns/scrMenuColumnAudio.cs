@@ -21,20 +21,26 @@ public class scrMenuColumnAudio : MonoBehaviour
     void Start()
     {
         // Listen to music slider
-        _musicSlider.GetComponent<Slider>().onValueChanged
-                    .AddListener((value) => this.OnChangeMusicSlider(value));
+        if (_musicSlider)
+        {
+            _musicSlider.GetComponent<Slider>().onValueChanged
+                .AddListener((value) => this.OnChangeMusicSlider(value));
+        }
 
         // Listen to sound effect slider
-        _soundEffectSlider.GetComponent<Slider>().onValueChanged
-                          .AddListener((value) => this.OnChangeSoundEffectSlider(value));
+        if (_soundEffectSlider)
+        {
+            _soundEffectSlider.GetComponent<Slider>().onValueChanged
+                .AddListener((value) => this.OnChangeSoundEffectSlider(value));
+        }
     }
 
-    void OnChangeMusicSlider(float value)
+    public void OnChangeMusicSlider(float value)
     {
         SoundManager.Instance.MusicVolume = value;
     }
 
-    void OnChangeSoundEffectSlider(float value)
+    public void OnChangeSoundEffectSlider(float value)
     {
         SoundManager.Instance.SoundEffectVolume = value;
     }

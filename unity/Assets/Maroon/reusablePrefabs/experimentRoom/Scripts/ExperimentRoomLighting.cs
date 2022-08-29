@@ -16,14 +16,14 @@ namespace Maroon.Lighting
         {
 #if UNITY_EDITOR
             Lightmapping.giWorkflowMode = Lightmapping.GIWorkflowMode.OnDemand;
-
             Lightmapping.bakeStarted += () =>
             {
                 Debug.Log("Disable Roof and FrontWall for Lightning");
 
                 foreach (var obj in ignoreForLightBaking)
                 {
-                    obj.SetActive(false);
+                    if(obj) 
+                        obj.SetActive(false);
                 }
             };
 
@@ -33,7 +33,8 @@ namespace Maroon.Lighting
 
                 foreach (var obj in ignoreForLightBaking)
                 {
-                    obj.SetActive(true);
+                    if(obj)
+                        obj.SetActive(true);
                 }
             };
 #endif
