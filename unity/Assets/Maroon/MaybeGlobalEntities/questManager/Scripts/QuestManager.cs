@@ -69,6 +69,12 @@ namespace QuestManager
                     if (subQuest.Attribute("HasAdditionalInformation")?.Value == "True")
                         subQuestObject.HasAdditionalInformation = true;
 
+                    subQuestObject.QuestHint = GameObject.Find(subQuest.Element("QuestHint")?.Value);
+                    subQuestObject.QuestHint?.SetActive(false);
+
+                    subQuestObject.QuestAchievement = GameObject.Find(subQuest.Element("QuestAchievement")?.Value);
+                    subQuestObject.QuestAchievement?.SetActive(false);
+
                     var subQuestScript = subQuest.Element("Script")?.Value;
                     if (subQuestScript != null)
                     {
