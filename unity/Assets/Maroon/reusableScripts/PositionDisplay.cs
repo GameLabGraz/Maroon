@@ -1,8 +1,8 @@
 ﻿using GEAR.Gadgets.Extensions;
 using Maroon.GlobalEntities;
 using Maroon.Physics.CoordinateSystem;
-using Maroon.UI;
 using System.Collections.Generic;
+using GameLabGraz.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;

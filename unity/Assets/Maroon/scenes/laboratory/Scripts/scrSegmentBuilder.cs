@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Maroon.GlobalEntities;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class scrSegmentBuilder : MonoBehaviour
 {
@@ -50,6 +51,8 @@ public class scrSegmentBuilder : MonoBehaviour
     // Prefab to be placed in a scene if no experiment preview is available   
     [SerializeField] private GameObject prefabEmptyPreview;
 
+    public UnityEvent onSegmentsBuildFinished = new UnityEvent();
+
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Counters (exclude start and end segment)
 
@@ -68,7 +71,7 @@ public class scrSegmentBuilder : MonoBehaviour
     {
         // Reset laboratory blocks
         this.laboratoryBlocks.Clear();
-
+        
         // TODO: This needs to be refactored, done by player
         GameManager.Instance.enteringLab();
 
@@ -140,6 +143,7 @@ public class scrSegmentBuilder : MonoBehaviour
             yield return new WaitForSeconds(6);
         }
         this.staticSegmentEnd.SetActive(true);
+        onSegmentsBuildFinished.Invoke();
     }
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

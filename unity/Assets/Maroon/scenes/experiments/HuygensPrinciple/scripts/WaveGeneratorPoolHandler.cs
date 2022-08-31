@@ -62,6 +62,12 @@ public class WaveGeneratorPoolHandler : MonoBehaviour
         }
     }
 
+    public void SetPropagationMode(bool isCircular)
+    {
+        wavePropagationMode = isCircular ? WavePropagation.Circular : WavePropagation.Rectilinear;
+        ChangePropagationMode();
+    }
+    
     public void SetPropagationMode(int propagationMode)
     {
         wavePropagationMode = (WavePropagation)propagationMode;

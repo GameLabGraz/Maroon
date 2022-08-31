@@ -4,6 +4,7 @@ using Maroon.Physics;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using GameLabGraz.UI;
 
 namespace Maroon.UI
 {
@@ -70,7 +71,7 @@ namespace Maroon.UI
                 
                 case QuantityVector3 vectorQuantity:
 
-                    var xInputField = ((GameObject)Instantiate(UserInterfaceContent.InputPrefab, transform)).GetComponent<TMP_InputField>();
+                    var xInputField = ((GameObject)Instantiate(UIContent.Input, transform)).GetComponent<TMP_InputField>();
                     xInputField.contentType = TMP_InputField.ContentType.DecimalNumber;
                     xInputField.text = vectorQuantity.Value.x.ToString(CultureInfo.InvariantCulture);
                     xInputField.onEndEdit.AddListener(value =>
@@ -80,7 +81,7 @@ namespace Maroon.UI
                         vectorQuantity.Value = vector;
                     });
 
-                    var yInputField = ((GameObject) Instantiate(UserInterfaceContent.InputPrefab, transform)).GetComponent<TMP_InputField>();
+                    var yInputField = ((GameObject) Instantiate(UIContent.Input, transform)).GetComponent<TMP_InputField>();
                     yInputField.contentType = TMP_InputField.ContentType.DecimalNumber;
                     yInputField.text = vectorQuantity.Value.y.ToString(CultureInfo.InvariantCulture);
                     yInputField.onEndEdit.AddListener(value =>
@@ -90,7 +91,7 @@ namespace Maroon.UI
                         vectorQuantity.Value = vector;
                     });
 
-                    var zInputField = ((GameObject)Instantiate(UserInterfaceContent.InputPrefab, transform)).GetComponent<TMP_InputField>();
+                    var zInputField = ((GameObject)Instantiate(UIContent.Input, transform)).GetComponent<TMP_InputField>();
                     zInputField.contentType = TMP_InputField.ContentType.DecimalNumber;
                     zInputField.text = vectorQuantity.Value.z.ToString(CultureInfo.InvariantCulture);
                     zInputField.onEndEdit.AddListener(value =>
@@ -107,10 +108,12 @@ namespace Maroon.UI
                         zInputField.text = value.z.ToString(CultureInfo.InvariantCulture);
                     });
 
-                     break;
+                    //ToDo: Add a reset script to vector quantity.
+                    break;
 
                 case QuantityBool boolQuantity:
-                    Instantiate(UserInterfaceContent.TogglePrefab, transform);
+                    var toggle = (GameObject)Instantiate(UIContent.ToggleGroup, transform);
+                    toggle.AddComponent<ResetToggle>();
                     break;
                 case QuantityString stringQuantity:
                     break;
@@ -123,7 +126,7 @@ namespace Maroon.UI
 
         private TextMeshProUGUI InstantiateLabel(string text)
         {
-            var label = ((GameObject)Instantiate(UserInterfaceContent.TextPrefab, transform))?.GetComponent<TextMeshProUGUI>();
+            var label = ((GameObject)Instantiate(UIContent.Text, transform))?.GetComponent<TextMeshProUGUI>();
             if (label == null) return null;
 
             if (LanguageManager.Instance)
@@ -143,12 +146,15 @@ namespace Maroon.UI
 
         private Slider InstantiateSlider(float minValue, float maxValue, Transform parent, bool wholeNumbers = false)
         {
-            var slider = ((GameObject)Instantiate(UserInterfaceContent.SliderPrefab, parent))?.GetComponentInChildren<Slider>();
+            var slider = ((GameObject)Instantiate(UIContent.SliderPrefab, parent))?.GetComponentInChildren<Slider>();
             if (slider == null) return null;
 
             slider.minValue = minValue;
             slider.maxValue = maxValue;
             slider.wholeNumbers = wholeNumbers;
+
+            slider.gameObject.AddComponent<ResetSlider>();
+
             return slider;
         }
 

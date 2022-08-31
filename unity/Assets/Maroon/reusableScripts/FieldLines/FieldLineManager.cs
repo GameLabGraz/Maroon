@@ -73,6 +73,27 @@ public class FieldLineManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Sets how many field lines are visible (you cannot add more field lines here)
+    /// </summary>
+    /// <param name="numFieldLines">The number of how many field lines should be visible</param>
+    public void SetFieldLinesVisible(float numFieldLines)
+    {
+        var visibleLines = Mathf.RoundToInt(numFieldLines);
+        if (visibleLines <= 0)
+        {
+            SetFieldLinesVisible(false);
+            return;
+        }
+
+        var cnt = 0;
+        foreach(var line in fieldLines)
+        {
+            line.SetVisibility(cnt < visibleLines);
+            cnt++;
+        }
+    }
+
+    /// <summary>
     /// Adds the given field line to list
     /// </summary>
     /// <param name="fL">The field line</param>

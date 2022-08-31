@@ -1,5 +1,33 @@
 {
   "dependencies": {
+    "com.gamelabgraz.limesurveyuploader": {
+      "version": "https://github.com/GameLabGraz/Utilities.git#package/limesurveyuploader",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.gear.gadgets": "1.0.0",
+        "com.gamelabgraz.userinterface": "1.0.0",
+        "com.unity.nuget.newtonsoft-json": "2.0.0"
+      },
+      "hash": "fcc7b953ed3b86f77f8b57a217643a22fbbec16b"
+    },
+    "com.gamelabgraz.userinterface": {
+      "version": "https://github.com/GameLabGraz/Utilities.git#package/userinterface",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "3c4f8ec5eb11b4121a8108f8c801aeb78ea4ded8"
+    },
+    "com.gamelabgraz.vrinteraction": {
+      "version": "https://github.com/GameLabGraz/Utilities.git#package/vrinteraction",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.textmeshpro": "1.4.1",
+        "com.gear.languagemanager": "1.0.2"
+      },
+      "hash": "5be665a94fb13f571d7d2a5114ba18192a889e6d"
+    },
     "com.gear.gadgets": {
       "version": "https://github.com/GameLabGraz/Utilities.git#package/gadgets",
       "depth": 0,
@@ -21,7 +49,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "52b5f5d526bbd170a699f009a832b1d7cf02328a"
+      "hash": "756ae5e3be234ae9d0fc7666367532bf65426c77"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
@@ -54,10 +82,13 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.collab-proxy": {
-      "version": "1.14.15",
+      "version": "1.15.7",
       "depth": 0,
       "source": "registry",
-      "dependencies": {},
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "2.0.0",
+        "com.unity.services.core": "1.0.1"
+      },
       "url": "https://packages.unity.com"
     },
     "com.unity.ext.nunit": {
@@ -68,7 +99,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.rider": {
-      "version": "1.2.1",
+      "version": "2.0.7",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -110,11 +141,29 @@
       },
       "url": "https://packages.unity.com"
     },
-    "com.unity.postprocessing": {
-      "version": "2.3.0",
-      "depth": 0,
+    "com.unity.nuget.newtonsoft-json": {
+      "version": "2.0.0",
+      "depth": 1,
       "source": "registry",
       "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.postprocessing": {
+      "version": "3.0.3",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.modules.physics": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.progrids": {
+      "version": "3.0.3-preview.6",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.settings-manager": "1.0.2"
+      },
       "url": "https://packages.unity.com"
     },
     "com.unity.purchasing": {
@@ -138,6 +187,20 @@
       "dependencies": {
         "com.unity.modules.unitywebrequest": "1.0.0"
       },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.settings-manager": {
+      "version": "1.0.2",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.subsystemregistration": {
+      "version": "1.0.6",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
       "url": "https://packages.unity.com"
     },
     "com.unity.sysroot": {
@@ -168,7 +231,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.textmeshpro": {
-      "version": "2.1.4",
+      "version": "3.0.6",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -177,7 +240,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.timeline": {
-      "version": "1.2.18",
+      "version": "1.4.8",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -217,28 +280,29 @@
       },
       "url": "https://packages.unity.com"
     },
-    "com.unity.xr.oculus.standalone": {
-      "version": "2.38.4",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://packages.unity.com"
-    },
-    "com.unity.xr.openvr.standalone": {
-      "version": "2.0.5",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://packages.unity.com"
-    },
-    "com.unity.xr.windowsmr.metro": {
-      "version": "4.2.3",
+    "com.unity.xr.management": {
+      "version": "4.2.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.ugui": "1.0.0"
+        "com.unity.modules.subsystems": "1.0.0",
+        "com.unity.modules.vr": "1.0.0",
+        "com.unity.modules.xr": "1.0.0",
+        "com.unity.xr.legacyinputhelpers": "2.1.7",
+        "com.unity.subsystemregistration": "1.0.6"
       },
       "url": "https://packages.unity.com"
+    },
+    "com.valvesoftware.unity.openvr": {
+      "version": "https://github.com/ValveSoftware/unity-xr-plugin.git?path=/com.valve.openvr#v1.1.4",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.xr.management": "3.2.13",
+        "com.unity.ugui": "1.0.0",
+        "com.unity.xr.legacyinputhelpers": "2.1.4"
+      },
+      "hash": "739417c8787cc17078a7c5207ce8ecc5dd2d5cb3"
     },
     "nuget.mono-cecil": {
       "version": "0.1.6-preview",
@@ -380,6 +444,18 @@
       "depth": 0,
       "source": "builtin",
       "dependencies": {
+        "com.unity.modules.ui": "1.0.0",
+        "com.unity.modules.imgui": "1.0.0",
+        "com.unity.modules.jsonserialize": "1.0.0",
+        "com.unity.modules.uielementsnative": "1.0.0"
+      }
+    },
+    "com.unity.modules.uielementsnative": {
+      "version": "1.0.0",
+      "depth": 1,
+      "source": "builtin",
+      "dependencies": {
+        "com.unity.modules.ui": "1.0.0",
         "com.unity.modules.imgui": "1.0.0",
         "com.unity.modules.jsonserialize": "1.0.0"
       }

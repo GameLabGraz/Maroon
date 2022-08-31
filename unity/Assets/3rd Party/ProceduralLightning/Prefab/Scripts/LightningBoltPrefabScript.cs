@@ -186,7 +186,7 @@ namespace DigitalRuby.ThunderAndLightning
                 Vector3 direction = (Destination.transform.position - Source.transform.position);
                 Vector3 center = (Source.transform.position + Destination.transform.position) * 0.5f;
                 float arrowSize = Mathf.Min(2.0f, direction.magnitude);
-                UnityEditor.Handles.ArrowCap(0, center, Quaternion.LookRotation(direction), arrowSize);
+                UnityEditor.Handles.ArrowHandleCap(0, center, Quaternion.LookRotation(direction), arrowSize, EventType.Repaint);
             }
         }
 

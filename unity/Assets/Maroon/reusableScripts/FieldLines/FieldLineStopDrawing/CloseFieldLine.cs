@@ -7,7 +7,7 @@ public class CloseFieldLine : MonoBehaviour
     [SerializeField]
     private bool useCoilHack = false;
 
-    private void Start()
+    private void Awake()
     {
         var fieldLine = GetComponent<FieldLine>();
         if (fieldLine)
