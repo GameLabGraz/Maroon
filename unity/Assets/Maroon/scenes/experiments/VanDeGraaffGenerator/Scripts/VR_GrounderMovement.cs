@@ -7,7 +7,7 @@ using UnityEngine.Serialization;
 
 namespace PlatformControls.VR
 {
-    public class VR_GrounderMovement : MonoBehaviour
+    public class VR_GrounderMovement : MonoBehaviour, IResetObject
     {
         [SerializeField]
         protected float MaxMovementLeft = 0;
@@ -108,6 +108,12 @@ namespace PlatformControls.VR
                 onBelowEndAgain.Invoke();
                 _endReached = false;
             }
+        }
+
+        public void ResetObject()
+        {
+            transform.position = _initialPosition;
+            onMove?.Invoke();
         }
     }
 }
