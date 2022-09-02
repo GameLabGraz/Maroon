@@ -60,7 +60,6 @@ public class CatalystVrControlPanel : MonoBehaviour
         Vector3 desiredPos = _center + (_currentPlayerPosition - _center).normalized * _radius;
         desiredPos.y = transform.position.y;
         transform.position = desiredPos;
-        transform.LookAt(_center);
         Quaternion rot = Quaternion.LookRotation(desiredPos - _center);
         transform.rotation = new Quaternion(0.0f, rot.y, 0.0f, rot.w);
         _isMoving = false;
