@@ -1,3 +1,4 @@
+using System;
 using GameLabGraz.VRInteraction;
 using UnityEngine;
 using Valve.VR.InteractionSystem;
@@ -13,23 +14,42 @@ public class LockedDrawer : MonoBehaviour
         if(lockIcon)
             lockIcon.SetActive(false);
     }
-
-
+    
     protected virtual void OnHandHoverBegin(Hand hand)
     {
-        if(lockIcon)
-            lockIcon.SetActive(true);
-        
-        if(highlighter)
-            highlighter.Highlight(highlightColor);
+        if (!isActiveAndEnabled) return;
+        ShowLockIcon(true);
     }
 
     protected virtual void OnHandHoverEnd(Hand hand)
     {
+        if (!isActiveAndEnabled) return;
+        ShowLockIcon(false);
+    }
+
+    protected void OnEnable()
+    {
+        var interactable = GetComponent<VRInteractable>();
+        if (interactable && interactable.hoverable && interactable.isHovering)
+        {
+            ShowLockIcon(true);
+        }
+    }
+
+    protected void OnDisable()
+    {
+        ShowLockIcon(false);
+    }
+
+    public void ShowLockIcon(bool show)
+    {
         if(lockIcon)
-            lockIcon.SetActive(false);
-        
-        if(highlighter)
-            highlighter.ResetToDefault();
+            lockIcon.SetActive(show);
+
+        if (highlighter)
+        {
+            if(show) highlighter.Highlight(highlightColor);
+            else highlighter.ResetToDefault();
+        }
     }
 }
