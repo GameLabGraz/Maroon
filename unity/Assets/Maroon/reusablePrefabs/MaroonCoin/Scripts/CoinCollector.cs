@@ -1,10 +1,11 @@
 using UnityEngine;
+using UnityEngine.Events;
 using Valve.VR.InteractionSystem;
 
 [RequireComponent(typeof(Interactable))]
 public class CoinCollector : MonoBehaviour
 {
-    [SerializeField] private ParticleSystem _particleSystem;
+    [SerializeField] private UnityEvent onCoinCollect;
 
     private Interactable _interactableCoin;
 
@@ -21,7 +22,7 @@ public class CoinCollector : MonoBehaviour
             && startingGrabType != GrabTypes.None)
         {
             gameObject.SetActive(false);
-            _particleSystem.Play();
+            onCoinCollect?.Invoke();
         }
     }
 }
