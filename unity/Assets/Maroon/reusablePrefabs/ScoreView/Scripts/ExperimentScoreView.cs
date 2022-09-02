@@ -34,7 +34,7 @@ namespace Maroon.ScoreView
             if(ExperimentScore == null) return;
             for (var starIndex = 0; starIndex < 3; starIndex++)
             {
-                var starColor = ExperimentScore.Score >= (ExperimentScore.MaxScore / 3) * (starIndex + 1)
+                var starColor = ExperimentScore.Score >= (ExperimentScore.MaxScore / 3f) * (starIndex + 1)
                     ? Color.yellow
                     : Color.gray;
 
