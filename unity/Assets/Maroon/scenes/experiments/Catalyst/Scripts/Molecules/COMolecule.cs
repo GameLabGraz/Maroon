@@ -19,10 +19,12 @@ namespace Maroon.Chemistry.Catalyst
 
         private Interactable _interactable;
         private Throwable _throwable;
+        private Transform _prePickupParent;
 
         protected override void Start()
         {
             base.Start();
+            _prePickupParent = gameObject.transform.parent;
             if (CatalystController.IsVrVersion)
             {
                 _interactable = GetComponent<Interactable>();
@@ -76,7 +78,7 @@ namespace Maroon.Chemistry.Catalyst
 
         public void OnVRDrop()
         {
-
+            gameObject.transform.SetParent(_prePickupParent);
         }
 
         /**
