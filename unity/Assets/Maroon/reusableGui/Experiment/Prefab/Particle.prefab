@@ -146,6 +146,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials: []
@@ -169,6 +170,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &7333818732060180025
 GameObject:
   m_ObjectHideFlags: 0
@@ -224,6 +226,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -248,6 +251,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &7333818732060180029
 GameObject:
   m_ObjectHideFlags: 0
@@ -261,6 +265,7 @@ GameObject:
   - component: {fileID: 8554967671942967482}
   - component: {fileID: 7408494834055568930}
   - component: {fileID: -8858256535807306838}
+  - component: {fileID: 3585642964279435368}
   m_Layer: 0
   m_Name: Particle
   m_TagString: Particle
@@ -332,7 +337,19 @@ MonoBehaviour:
       m_Calls: []
   onEndMovingOutsideBoundaries:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7333818732060180029}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   onEndMovingInsideBoundaries:
     m_PersistentCalls:
       m_Calls: []
@@ -368,8 +385,8 @@ MonoBehaviour:
     onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
-  enableForces: 0
-  forceFactor: 0.5
+  enableForces: 1
+  forceFactor: 0.000000005
 --- !u!114 &-8858256535807306838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -384,6 +401,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   highlightObjects: []
   type: 0
+--- !u!54 &3585642964279435368
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7333818732060180029}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 1
+  m_AngularDrag: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 120
+  m_CollisionDetection: 0
 --- !u!1 &7333818732060180031
 GameObject:
   m_ObjectHideFlags: 0
@@ -439,6 +472,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -465,6 +499,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &7370981188701674940
 GameObject:
   m_ObjectHideFlags: 0
