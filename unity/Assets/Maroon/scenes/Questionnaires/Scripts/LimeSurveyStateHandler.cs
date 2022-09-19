@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using GameLabGraz.LimeSurvey;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(GameLabGraz.LimeSurvey.LimeSurveyEvents))]
 public class LimeSurveyStateHandler : MonoBehaviour
@@ -130,6 +130,7 @@ public class LimeSurveyStateHandler : MonoBehaviour
             case LimeSurveyState.SubmitFailed:
                 QuestionnairePanel.SetActive(true);
                 LoadingPanel.SetActive(false);
+                SubmitButton.interactable = true; 
                 break;
             case LimeSurveyState.SubmitSuccessful:
                 QuestionnairePanel.SetActive(false);
