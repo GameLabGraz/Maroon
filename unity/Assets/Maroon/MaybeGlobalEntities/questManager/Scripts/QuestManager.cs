@@ -25,6 +25,7 @@ namespace QuestManager
 
         public MainQuest[] MainQuests => _mainQuests.ToArray();
 
+        public bool AllQuestsFinished => MainQuests.All(mainQuest => mainQuest.IsFinished);
         private void Start()
         {
             _mainQuestIndex = 0;

@@ -26,7 +26,7 @@ public class UnlockableDrawer : MonoBehaviour
     [Range(0, 3)]
     public int DebugLockLevel = 0;
 
-    private int _currentLockeLevel = -1;
+    private int _currentLockLevel = -1;
     private VRInteractable _interactable;
     private SteamVR_Skeleton_Poser _skeletonPoser;
     private LockedDrawer _lockedDrawer;
@@ -34,12 +34,12 @@ public class UnlockableDrawer : MonoBehaviour
     
     public int LockLevel
     {
-        get => _currentLockeLevel;
+        get => _currentLockLevel;
         set
         {
             Debug.Assert(0 <= value && value <= levels.Count);
-            if (value == _currentLockeLevel) return;
-            _currentLockeLevel = value;
+            if (value == _currentLockLevel) return;
+            _currentLockLevel = DebugLockLevel = value;
             UpdateLockLevel();
         }
     }

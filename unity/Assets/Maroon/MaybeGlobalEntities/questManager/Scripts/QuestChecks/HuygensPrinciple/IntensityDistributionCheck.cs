@@ -11,6 +11,7 @@ namespace QuestManager
 
         protected float tolerance = 0.05f;
 
+        protected int taregetNumberOfSlits = 2;
         protected float targetSlitWidth = 0.3f;
         protected float targetWaveLength = 0.2f;
         protected Vector3 targetSlitPlatePosition = new Vector3(-0.51f, 0.63f, 1.61f);
@@ -26,7 +27,8 @@ namespace QuestManager
 
         protected override bool CheckCompliance()
         {
-            return targetSlitWidth * (1 - tolerance) <= _slitPlate.SlitWidth &&
+            return taregetNumberOfSlits == _slitPlate.NumberOfSlits &&
+                   targetSlitWidth * (1 - tolerance) <= _slitPlate.SlitWidth &&
                    _slitPlate.SlitWidth <= targetSlitWidth * (1 + tolerance) &&
                    targetWaveLength * (1 - tolerance) <= _wavePoolHandler.WaveLength &&
                    _wavePoolHandler.WaveLength <= targetWaveLength * (1 + tolerance) &&
