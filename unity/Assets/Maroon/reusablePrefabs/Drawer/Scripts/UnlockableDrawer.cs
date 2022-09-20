@@ -1,8 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using GameLabGraz.VRInteraction;
-using PrivateAccess;
 using UnityEngine;
 using Valve.VR;
 

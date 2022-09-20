@@ -1,11 +1,16 @@
+using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Maroon.ScoreView
 {
+    [Serializable] public class ScoreCollectEvent : UnityEvent<ExperimentScore>{}
+
     public class ScoreCollector : MonoBehaviour
     {
         [SerializeField] private ExperimentScore experimentScore;
-        [SerializeField] private UnlockableDrawer unlockableDrawer;
+
+        public ScoreCollectEvent OnScoreCollect;
 
         private void Start()
         {
@@ -15,14 +20,7 @@ namespace Maroon.ScoreView
         public void CollectScore()
         {
             experimentScore.Score++;
-            if(experimentScore.Score >= experimentScore.MaxScore / 3)
-                unlockableDrawer.LockLevel = 1;
-            else if (experimentScore.Score >= experimentScore.MaxScore * 2 / 3)
-                unlockableDrawer.LockLevel = 2;
-            else if (experimentScore.Score >= experimentScore.MaxScore)
-                unlockableDrawer.LockLevel = 3;
-            else
-                unlockableDrawer.LockLevel = 0;
+            OnScoreCollect?.Invoke(experimentScore);
         }
     }
 }
