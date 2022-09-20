@@ -119,8 +119,6 @@ namespace QuestManager
             });
         }
 
-
-
         private void CleanObjects()
         {
             foreach (var mainQuest in _mainQuests)

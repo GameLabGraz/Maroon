@@ -9,7 +9,7 @@ namespace QuestManager
         private SlitPlate _slitPlate;
         private WaveGeneratorPoolHandler _wavePoolHandler;
 
-        protected float tolerance = 0.05f;
+        protected float tolerance = 0.10f;
 
         protected int taregetNumberOfSlits = 2;
         protected float targetSlitWidth = 0.3f;
