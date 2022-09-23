@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -8,11 +6,11 @@ namespace LimeSurveyData
 {
     public class HuygensDataCollector : MonoBehaviour
     {
-        [SerializeField] private SurveyDataCollector _surveyDataCollector;
+        [SerializeField] private ExperimentData _surveyDataCollector;
         
         private enum Position { ExitDoor, Experiment, WhiteBoard, QuestManager }
         
-        private HuygensSurveySceneInfo _info;
+        private HuygensPrincipleMeasurements _info;
         
         private float _startTime = 0f;
         private float _teleportStartTime = 0f;
@@ -83,12 +81,12 @@ namespace LimeSurveyData
         
         public void OnSimulationStarted()
         {
-            _info.PressedStartSimulation.Add(new TimeIncluded<bool>(true));
+            _info.PressedStartSimulation.Add(new TimeMeasurementBool(true));
         }
         
         public void OnSimulationStopped()
         {
-            _info.PressedStartSimulation.Add(new TimeIncluded<bool>(false));
+            _info.PressedStartSimulation.Add(new TimeMeasurementBool(false));
         }
         
         public void OnSimulationReset()
@@ -98,67 +96,67 @@ namespace LimeSurveyData
         
         public void OnFloorChanged(int newValue)
         {
-            _info.FloorChanges.Add(new TimeIncluded<int>(newValue));
+            _info.FloorChanges.Add(new TimeMeasurementInt(newValue));
         }
                 
         public void OnWallChanged(int newValue)
         {
-            _info.WallChanges.Add(new TimeIncluded<int>(newValue));
+            _info.WallChanges.Add(new TimeMeasurementInt(newValue));
         }
                 
         public void OnDecoChanged(bool newValue)
         {
-            _info.DecoChanges.Add(new TimeIncluded<bool>(newValue));
+            _info.DecoChanges.Add(new TimeMeasurementBool(newValue));
         }
         
         public void OnPlantsChanged(bool newValue)
         {
-            _info.PlantChanges.Add(new TimeIncluded<bool>(newValue));
+            _info.PlantChanges.Add(new TimeMeasurementBool(newValue));
         }
         
         public void OnPicturesChanged(int newValue)
         {
-            _info.PictureChanges.Add(new TimeIncluded<int>(newValue));
+            _info.PictureChanges.Add(new TimeMeasurementInt(newValue));
         }
 
         public void OnHandModelChanged(int newValue)
         {
-            _info.HandModelChanges.Add(new TimeIncluded<int>(newValue));
+            _info.HandModelChanges.Add(new TimeMeasurementInt(newValue));
         }
 
         public void OnHandControllerChanged(bool newValue)
         {
-            _info.HandControllerChanges.Add(new TimeIncluded<bool>(newValue));
+            _info.HandControllerChanges.Add(new TimeMeasurementBool(newValue));
         }
         
         public void OnSlitNumberChanged(int newValue)
         {
-            _info.SlitNumberChanges.Add(new TimeIncluded<int>(newValue));
+            _info.SlitNumberChanges.Add(new TimeMeasurementInt(newValue));
         }
         
         public void OnSlitWidthChanged(float newValue)
         {
-            _info.SlitWidthChanges.Add(new TimeIncluded<float>(newValue));
+            _info.SlitWidthChanges.Add(new TimeMeasurementFloat(newValue));
         }
         
         public void OnWaveAmplitudeChanged(float newValue)
         {
-            _info.WaveAmplitudeChanges.Add(new TimeIncluded<float>(newValue));
+            _info.WaveAmplitudeChanges.Add(new TimeMeasurementFloat(newValue));
         }       
         
         public void OnWaveLengthChanged(float newValue)
         {
-            _info.WaveLengthChanges.Add(new TimeIncluded<float>(newValue));
+            _info.WaveLengthChanges.Add(new TimeMeasurementFloat(newValue));
         }
         
         public void OnWaveFrequencyChanged(float newValue)
         {
-            _info.WaveFrequencyChanges.Add(new TimeIncluded<float>(newValue));
+            _info.WaveFrequencyChanges.Add(new TimeMeasurementFloat(newValue));
         }
         
         public void OnPropagationModeChanged(int newValue)
         {
-            _info.PropagationModeChanges.Add(new TimeIncluded<int>(newValue));
+            _info.PropagationModeChanges.Add(new TimeMeasurementInt(newValue));
         }
     }
 }
