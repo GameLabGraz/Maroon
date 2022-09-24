@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UnityEngine.Events;
 
 namespace Maroon.Tools.Ruler
@@ -48,14 +49,12 @@ namespace Maroon.Tools.Ruler
         public void OnEndDrag(PointerEventData eventData)
         {
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            var hits = Physics.RaycastAll(ray, 1000f);
+            var hits = Physics.RaycastAll(ray, 100f);
 
             if (_objectInsideBoundaries)
             {
-                foreach (var hit in hits)
-                {
-                    ShowObject(hit.point, hit.transform.parent);
-                }
+                if(hits.Length != 0) 
+                    ShowObject(hits.First().point, hits.First().transform.parent);
             }
             
             Destroy(_item);

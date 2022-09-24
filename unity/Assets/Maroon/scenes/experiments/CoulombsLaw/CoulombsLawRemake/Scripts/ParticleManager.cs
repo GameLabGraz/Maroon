@@ -47,6 +47,17 @@ public class ParticleManager : MonoBehaviour
         _charges.Remove(source.GetComponent<Maroon.Physics.Electromagnetism.Charge>());
     }
 
+    public void RemoveAllSourcesFromEField()
+    {
+        foreach (var charge in _charges)
+        {
+            eField.removeProducerFromSet(charge.gameObject);
+            Destroy(charge.gameObject);
+        }
+
+        _charges.Clear();
+    }
+
     public void ChangeColorOfParticle(GameObject obj, float chargeStrength)
     {
         var particleBase = obj.transform.Find("Base").GetComponent<MeshRenderer>();
