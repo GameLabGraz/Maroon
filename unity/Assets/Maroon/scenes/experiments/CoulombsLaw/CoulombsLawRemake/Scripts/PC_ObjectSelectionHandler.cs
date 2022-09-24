@@ -5,7 +5,7 @@ using PlatformControls.PC;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Assets.Maroon.reusableGui.Experiment.ToolsUI.Scripts
+namespace Maroon.UI
 {
     public class PC_ObjectSelectionHandler : MonoBehaviour 
     {
