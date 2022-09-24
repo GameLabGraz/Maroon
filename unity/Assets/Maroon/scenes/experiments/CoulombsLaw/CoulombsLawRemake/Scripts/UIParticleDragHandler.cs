@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Assets.Maroon.reusableGui.Experiment.ToolsUI.Scripts
+namespace Assets.Maroon.scenes.experiments.CoulombsLaw.CoulombsLawRemake.Scripts
 {
     public class UIParticleDragHandler : UIItemDragHandlerSimple, IBeginDragHandler, IEndDragHandler
     {
