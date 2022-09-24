@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class ToggleToolUI : MonoBehaviour
+public class ToggleToolSuiteUI : MonoBehaviour
 {
     [SerializeField] private GameObject ToolControls;
     [SerializeField] private GameObject ToolContents;
