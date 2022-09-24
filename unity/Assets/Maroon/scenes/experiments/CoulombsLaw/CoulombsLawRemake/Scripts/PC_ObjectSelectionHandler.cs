@@ -11,7 +11,8 @@ namespace Maroon.UI
     {
         [SerializeField] private GameObject inputXVariable;
         [SerializeField] private GameObject inputYVariable;
-    
+        [SerializeField] private GameObject inputZVariable;
+
         [SerializeField] private PC_Slider coulombValueSlider;
         [SerializeField] private GameObject particlePrefab;
 
@@ -23,7 +24,8 @@ namespace Maroon.UI
         [SerializeField] private ParticleManager _particleManager;
 
         private PC_InputParser_Float_TMP _xVariableInputParser; 
-        private PC_InputParser_Float_TMP _yVariableInputParser; 
+        private PC_InputParser_Float_TMP _yVariableInputParser;
+        private PC_InputParser_Float_TMP _zVariableInputParser;
 
         void Start()
         {
@@ -31,17 +33,24 @@ namespace Maroon.UI
 
             _xVariableInputParser = inputXVariable.GetComponent<PC_InputParser_Float_TMP>();
             _yVariableInputParser = inputYVariable.GetComponent<PC_InputParser_Float_TMP>();
+            _zVariableInputParser = inputZVariable.GetComponent<PC_InputParser_Float_TMP>();
 
             _xVariableInputParser?.onValueChangedFloat.AddListener((endVal) =>
             {
                 if (IsSelectedObjectOfType(PC_ObjectSelection.SelectObjectType.SourceSelect))
-                    MoveToNewPosition(new Vector3(endVal, _yVariableInputParser.GetValue(), 0));
+                    MoveToNewPosition(new Vector3(endVal, _yVariableInputParser.GetValue(), _zVariableInputParser.GetValue()));
             });
 
             _yVariableInputParser?.onValueChangedFloat.AddListener((endVal) =>
             {
                 if (IsSelectedObjectOfType(PC_ObjectSelection.SelectObjectType.SourceSelect))
-                    MoveToNewPosition(new Vector3(_xVariableInputParser.GetValue(), endVal , 0));
+                    MoveToNewPosition(new Vector3(_xVariableInputParser.GetValue(), endVal , _zVariableInputParser.GetValue()));
+            });
+
+            _yVariableInputParser?.onValueChangedFloat.AddListener((endVal) =>
+            {
+                if (IsSelectedObjectOfType(PC_ObjectSelection.SelectObjectType.SourceSelect))
+                    MoveToNewPosition(new Vector3(_xVariableInputParser.GetValue(), _yVariableInputParser.GetValue(), endVal));
             });
 
             coulombValueSlider.onValueChanged.AddListener((newValue) =>
@@ -62,7 +71,7 @@ namespace Maroon.UI
                 else
                 {
                     _particleManager.CreateSource(particlePrefab, CoordSystemHandler.Instance.GetWorldPosition(new Vector3(_xVariableInputParser.GetValue(),
-                        _yVariableInputParser.GetValue(),0)), coulombValueSlider.value);
+                        _yVariableInputParser.GetValue(), _zVariableInputParser.GetValue())), coulombValueSlider.value);
                
                     AdaptButtonTextCharge();
                 }
@@ -109,6 +118,7 @@ namespace Maroon.UI
 
             _xVariableInputParser.SetValue(selectedObjectSystemPosition.x);
             _yVariableInputParser.SetValue(selectedObjectSystemPosition.y);
+            _zVariableInputParser.SetValue(selectedObjectSystemPosition.z);
         }
 
         private void UpdateChargeValueText()
