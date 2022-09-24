@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Maroon.reusableGui.Experiment.ToolsUI.Scripts
+namespace Maroon.UI
 {
     public class PC_ObjectSelection : MonoBehaviour
     {
