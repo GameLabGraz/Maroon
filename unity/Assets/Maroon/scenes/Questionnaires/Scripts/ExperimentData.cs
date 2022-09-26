@@ -32,8 +32,6 @@ namespace LimeSurveyData
         public float QuestManagerTime = 0f;
         [Tooltip("Time the user spends in the teleport zone of the whiteboard.")]
         public float WhiteboardTime = 0f;
-        [Tooltip("Time the user spends in the teleport zone of the exit door.")]
-        public float ExitDoorTime = 0f;
 
         [Header("General Button Counts")]
         [Tooltip("How often the user started (resp. stopped) the simulation.")]

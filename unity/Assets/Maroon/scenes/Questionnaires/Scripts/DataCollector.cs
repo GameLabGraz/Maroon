@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
@@ -6,17 +5,19 @@ namespace LimeSurveyData
 {
     public abstract class DataCollector : MonoBehaviour
     {
-        protected enum Position { ExitDoor, Experiment, WhiteBoard, QuestManager }
-        [SerializeField] protected Position _userPosition = Position.ExitDoor;
+        public enum MeasurementArea { ExitDoor, Experiment, WhiteBoard, QuestManager }
+        [SerializeField] protected MeasurementArea _userPosition = MeasurementArea.ExitDoor;
 
         protected ExperimentMeasurements _measurements;
         protected float _startTime = 0f;
         protected float _teleportStartTime = 0f;
+        protected float _measurementAreaStartTime;
 
         protected virtual void Start()
         {
             _startTime = _teleportStartTime = Time.time;
             UnityEngine.SceneManagement.SceneManager.sceneUnloaded += SceneUnloadedHandler;
+
 
             //StartCoroutine(LoadScene());
         }
@@ -33,43 +34,28 @@ namespace LimeSurveyData
             UnityEngine.SceneManagement.SceneManager.sceneUnloaded -= SceneUnloadedHandler;
         }
 
-        
-        public void TeleportToExperiment()
+        public void EnterMeasurementArea(MeasurementArea measurementArea)
         {
-            ChangePosition(Position.Experiment);
+            _measurementAreaStartTime = Time.time;
         }
-        
-        public void TeleportToQuestManager()
+
+        public void LeaveMeasurementArea(MeasurementArea measurementArea)
         {
-            ChangePosition(Position.QuestManager);
-        }
-        
-        public void TeleportToWhiteboard()
-        {
-            ChangePosition(Position.WhiteBoard);
-        }
-        
-        public void TeleportToExitDoor()
-        {
-            ChangePosition(Position.ExitDoor);
-        }
-        
-        private void ChangePosition(Position newPosition)
-        {
-            if (newPosition == _userPosition) return; 
-            
-            var current = Time.time;
-            switch (_userPosition) {
-                case Position.ExitDoor: _measurements.ExitDoorTime += current - _teleportStartTime; break;
-                case Position.Experiment: _measurements.ExperimentTime += current - _teleportStartTime; break;
-                case Position.WhiteBoard: _measurements.WhiteboardTime += current - _teleportStartTime; break;
-                case Position.QuestManager: _measurements.QuestManagerTime += current - _teleportStartTime; break;
-                default: throw new ArgumentOutOfRangeException();
+            Debug.Log(Time.time);
+            switch (measurementArea)
+            {
+                case MeasurementArea.Experiment:
+                    _measurements.ExperimentTime += Time.time - _measurementAreaStartTime; 
+                    break;
+                case MeasurementArea.WhiteBoard: 
+                    _measurements.WhiteboardTime += Time.time - _measurementAreaStartTime; 
+                    break;
+                case MeasurementArea.QuestManager: 
+                    _measurements.QuestManagerTime += Time.time - _measurementAreaStartTime; 
+                    break;
             }
-            _teleportStartTime = current;
-            _userPosition = newPosition;
         }
-        
+
         public void OnSimulationStarted()
         {
             _measurements.PressedStartSimulation.Add(new TimeMeasurementBool(true));
