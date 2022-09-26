@@ -18,6 +18,9 @@ namespace LimeSurveyData
             _startTime = _teleportStartTime = Time.time;
             UnityEngine.SceneManagement.SceneManager.sceneUnloaded += SceneUnloadedHandler;
 
+            SimulationController.Instance?.OnStart.AddListener(OnSimulationStarted);
+            SimulationController.Instance?.OnStop.AddListener(OnSimulationStopped);
+            SimulationController.Instance?.OnReset.AddListener(OnSimulationReset);
 
             //StartCoroutine(LoadScene());
         }

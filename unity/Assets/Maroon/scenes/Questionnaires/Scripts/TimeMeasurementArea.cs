@@ -16,7 +16,7 @@ namespace LimeSurveyData
 
         private void OnTriggerEnter(Collider other)
         {
-            if(other.CompareTag("Player") || _dataCollector == null) return;
+            if(!other.CompareTag("Player") || _dataCollector == null) return;
 
             Debug.Log($"{other.tag} entered time measurement area: {measurementArea}");
 
@@ -25,7 +25,7 @@ namespace LimeSurveyData
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.CompareTag("Player") || _dataCollector == null) return;
+            if (!other.CompareTag("Player") || _dataCollector == null) return;
 
             Debug.Log($"{other.tag} left time measurement area: {measurementArea}");
             
