@@ -1,4 +1,4 @@
-using System.Collections;
+using Maroon.ScoreView;
 using UnityEngine;
 
 namespace LimeSurveyData
@@ -21,14 +21,6 @@ namespace LimeSurveyData
             SimulationController.Instance?.OnStart.AddListener(OnSimulationStarted);
             SimulationController.Instance?.OnStop.AddListener(OnSimulationStopped);
             SimulationController.Instance?.OnReset.AddListener(OnSimulationReset);
-
-            //StartCoroutine(LoadScene());
-        }
-
-        private IEnumerator LoadScene()
-        {
-            yield return new WaitForSeconds(10);
-            UnityEngine.SceneManagement.SceneManager.LoadScene("HuygensPrinciple.vr");
         }
 
         private void SceneUnloadedHandler(UnityEngine.SceneManagement.Scene scene)
@@ -61,53 +53,58 @@ namespace LimeSurveyData
 
         public void OnSimulationStarted()
         {
-            _measurements.PressedStartSimulation.Add(new TimeMeasurementBool(true));
+            _measurements?.PressedStartSimulation.Add(new TimeMeasurementBool(true));
         }
         
         public void OnSimulationStopped()
         {
-            _measurements.PressedStartSimulation.Add(new TimeMeasurementBool(false));
+            _measurements?.PressedStartSimulation.Add(new TimeMeasurementBool(false));
         }
         
         public void OnSimulationReset()
         {
-            _measurements.PressedResetSimulation.Add(Time.time);
+            _measurements?.PressedResetSimulation.Add(Time.time);
         }
         
         public void OnFloorChanged(int newValue)
         {
-            _measurements.FloorChanges.Add(new TimeMeasurementInt(newValue));
+            _measurements?.FloorChanges.Add(new TimeMeasurementInt(newValue));
         }
                 
         public void OnWallChanged(int newValue)
         {
-            _measurements.WallChanges.Add(new TimeMeasurementInt(newValue));
+            _measurements?.WallChanges.Add(new TimeMeasurementInt(newValue));
         }
                 
         public void OnDecoChanged(bool newValue)
         {
-            _measurements.DecoChanges.Add(new TimeMeasurementBool(newValue));
+            _measurements?.DecoChanges.Add(new TimeMeasurementBool(newValue));
         }
         
         public void OnPlantsChanged(bool newValue)
         {
-            _measurements.PlantChanges.Add(new TimeMeasurementBool(newValue));
+            _measurements?.PlantChanges.Add(new TimeMeasurementBool(newValue));
         }
         
         public void OnPicturesChanged(int newValue)
         {
-            _measurements.PictureChanges.Add(new TimeMeasurementInt(newValue));
+            _measurements?.PictureChanges.Add(new TimeMeasurementInt(newValue));
         }
 
         public void OnHandModelChanged(int newValue)
         {
-            _measurements.HandModelChanges.Add(new TimeMeasurementInt(newValue));
+            _measurements?.HandModelChanges.Add(new TimeMeasurementInt(newValue));
         }
 
         public void OnHandControllerChanged(bool newValue)
         {
-            _measurements.HandControllerChanges.Add(new TimeMeasurementBool(newValue));
+            _measurements?.HandControllerChanges.Add(new TimeMeasurementBool(newValue));
         }
 
+        public void OnScoreCollect(ExperimentScore experimentScore)
+        {
+            if(_measurements == null) return;
+            _measurements.ExperimentScore = experimentScore.Score;
+        }
     }
 }

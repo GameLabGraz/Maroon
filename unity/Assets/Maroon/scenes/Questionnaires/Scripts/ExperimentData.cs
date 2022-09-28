@@ -4,25 +4,32 @@ using UnityEngine;
 
 namespace LimeSurveyData
 {
-    [Serializable] public class LaboratoryDataEntry
+    [Serializable] public abstract class MeasurementData : ScriptableObject
     {
-        public string ExperimentName;
-        public ScriptableObject ExperimentMeasurements;
+        public abstract string ToJson();
+        public abstract void RestData();
     }
 
-    [CreateAssetMenu(fileName = "LaboratoryData", menuName = "ExperimentData/LaboratoryData")]
-    public class LaboratoryData : ScriptableObject
-    {
-        public List<LaboratoryDataEntry> LabMeasurements;
-    }
-
-    public abstract class ExperimentData<Measurements> : ScriptableObject
+    public abstract class ExperimentData<Measurements> : MeasurementData
     {
         public List<Measurements> measurements;
+        public override string ToJson()
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(measurements);
+        }
+
+        public override void RestData()
+        {
+            measurements.Clear();
+        }
     }
 
     [Serializable] public abstract class ExperimentMeasurements
     {
+        [Header("Experiment Score - Coins")]
+        [Tooltip("How many coins were collected.")]
+        public int ExperimentScore = 0;
+
         [Header("Time Measurements")]
         [Tooltip("Total Time the user spends in the scene.")]
         public float TotalTime = 0f;

@@ -1063,7 +1063,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
   m_MinWidth: -1
-  m_MinHeight: 780
+  m_MinHeight: 600
   m_PreferredWidth: -1
   m_PreferredHeight: -1
   m_FlexibleWidth: -1
@@ -1345,6 +1345,8 @@ Transform:
   m_Children:
   - {fileID: 1565045098993265653}
   - {fileID: 1565045099478606335}
+  - {fileID: 2709771057833418558}
+  - {fileID: 6076291915240060066}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1504,7 +1506,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1565045098194132419}
   m_HandleRect: {fileID: 1565045098194132028}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -1628,7 +1630,19 @@ MonoBehaviour:
       m_Calls: []
   OnSubmissionFinished:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8780325942567790982}
+        m_TargetAssemblyTypeName: QuestionnaireSceneLoader, Assembly-CSharp
+        m_MethodName: LoadScene
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1565045098993265659
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2794,6 +2808,100 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!1 &1705613755326740630
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2709771057833418558}
+  - component: {fileID: 7056328869588955447}
+  m_Layer: 0
+  m_Name: ResponseID
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2709771057833418558
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1705613755326740630}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1565045098833921954}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7056328869588955447
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1705613755326740630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dabdaddc6e4316d46bf82c48d947706d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  limeSurveyView: {fileID: 1565045098419080650}
+  measurements: {fileID: 11400000, guid: 2bfbd432e6c514d4986369ad90eff450, type: 2}
+--- !u!1 &8617131230918372971
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6076291915240060066}
+  - component: {fileID: 8780325942567790982}
+  m_Layer: 0
+  m_Name: QuestionnaireSceneLoader
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6076291915240060066
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8617131230918372971}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 511, y: 336.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1565045098833921954}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8780325942567790982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8617131230918372971}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6df037b0b9a00954984b95287d844659, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetScene:
+    unitySceneAsset: {fileID: 0}
+    unityScenePath: 
+    unitySceneName: 
+    isVirtualRealityScene: 0
+    specialSceneMaterial: {fileID: 0}
 --- !u!1001 &1565045098565651170
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2913,15 +3021,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4ab7336f5fff04c4db64ac441d9b3268, type: 3}
---- !u!1 &794480185508950124 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2215392498298141326, guid: 4ab7336f5fff04c4db64ac441d9b3268,
-    type: 3}
-  m_PrefabInstance: {fileID: 1565045098565651170}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &794480185508950127 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2215392498298141325, guid: 4ab7336f5fff04c4db64ac441d9b3268,
+    type: 3}
+  m_PrefabInstance: {fileID: 1565045098565651170}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &794480185508950124 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2215392498298141326, guid: 4ab7336f5fff04c4db64ac441d9b3268,
     type: 3}
   m_PrefabInstance: {fileID: 1565045098565651170}
   m_PrefabAsset: {fileID: 0}

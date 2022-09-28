@@ -270,7 +270,7 @@ namespace Maroon.Physics.HuygensPrinciple
         private void AddAllWaveGenerators() 
         {
             var totalNumberOfGenerators = generatorCountPerSlit * numberOfSlits;
-            Debug.Log("TotalNumberOfGenerators: " + totalNumberOfGenerators);
+            //Debug.Log("TotalNumberOfGenerators: " + totalNumberOfGenerators);
             for (var count = 0; count < totalNumberOfGenerators; count++)
             {
                 AddWaveGenerator();
@@ -311,7 +311,7 @@ namespace Maroon.Physics.HuygensPrinciple
 
         public void ResetWaveGenerators()
         {
-            Debug.Log("ResetWaveGenerators");
+            //Debug.Log("ResetWaveGenerators");
             foreach (var generator in waveGeneratorList)
             {
                 WaveGeneratorPoolHandler.Instance.RemoveWaveGenerator(generator);

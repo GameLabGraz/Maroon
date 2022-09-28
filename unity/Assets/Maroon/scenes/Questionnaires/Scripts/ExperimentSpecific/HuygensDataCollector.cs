@@ -44,5 +44,15 @@ namespace LimeSurveyData
         {
             Measurements.PropagationModeChanges.Add(new TimeMeasurementInt(newValue));
         }
+
+        public void OnSlitPlateMoved(float newValue)
+        {
+            Measurements.PlateMovementChanges.Add(new TimeMeasurementFloat(newValue));
+        }
+
+        public void ConvertToJson()
+        {
+            Debug.Log(JsonUtility.ToJson(Measurements));
+        }
     }
 }

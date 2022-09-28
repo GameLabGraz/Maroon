@@ -25,5 +25,7 @@ namespace LimeSurveyData
         public List<TimeMeasurementFloat> WaveFrequencyChanges = new List<TimeMeasurementFloat>();
         [Tooltip("How often, to what and when the propagation mode changed.")]
         public List<TimeMeasurementInt> PropagationModeChanges = new List<TimeMeasurementInt>();
+        [Tooltip("How often, to what and when the plate movement changed.")]
+        public List<TimeMeasurementFloat> PlateMovementChanges = new List<TimeMeasurementFloat>();
     }
 }
