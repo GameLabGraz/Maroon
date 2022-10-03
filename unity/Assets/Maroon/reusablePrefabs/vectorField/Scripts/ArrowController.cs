@@ -11,6 +11,7 @@
 //
 
 using Maroon.Physics;
+using Maroon.Physics.CoordinateSystem;
 using UnityEngine;
 
 /// <summary>
@@ -97,11 +98,11 @@ public class ArrowController : PausableObject, IResetObject
 
         if (_hasScaling)
         {
-            _scalingArrow.size = _field.getStrengthInPercent(transform.position) * 100f;
+            _scalingArrow.size = _field.getStrengthInPercent(gameObject.SystemPosition()) * 100f;
 
         }
 
-        var rotate = _field.get(transform.position) * fieldStrengthFactor;
+        var rotate = _field.get(gameObject.SystemPosition()) * fieldStrengthFactor;
         
         rotate.Normalize();
         float rot = 0;
