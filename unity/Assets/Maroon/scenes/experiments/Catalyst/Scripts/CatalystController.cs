@@ -41,7 +41,6 @@ namespace Maroon.Chemistry.Catalyst
         [SerializeField] int numberSpawnedCOMolecules;
         [SerializeField] Material catalystBoxMaterial;
         [SerializeField] ParticleSystem pressureParticleSystem;
-        [SerializeField] Transform pressureArrowParent;
         
         [Header("Catalyst specific objects")]
         [SerializeField] CatalystReactor catalystReactor;
@@ -225,12 +224,6 @@ namespace Maroon.Chemistry.Catalyst
 
             _langmuirGraphSeries = new List<Serie>(lineChartLangmuir.series.list);
             _vanKrevelenGraphSeries = new List<Serie>(lineChartVanKrevelen.series.list);
-            foreach (Transform childTransform in pressureArrowParent)
-            {
-                var arrow = childTransform.gameObject.GetComponent<CatalystPressureArrow>();
-                if (arrow != null)
-                    _pressureArrows.Add(arrow);
-            }
         }
 
         private void StartExperiment()
