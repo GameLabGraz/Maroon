@@ -1,6 +1,6 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using Valve.VR;
 using Valve.VR.InteractionSystem;
 
 namespace Maroon.Chemistry.Catalyst
@@ -8,6 +8,8 @@ namespace Maroon.Chemistry.Catalyst
     public class COMolecule : Molecule
     {
         [SerializeField] float timeUntilNextDesorb = 3.0f;
+        
+        public List<Molecule> potentialDrawMolecules = new List<Molecule>();
         
         private int _moleculeClickCounter = 0;
         private float _wobbleStrength = 0.1f;
@@ -31,6 +33,11 @@ namespace Maroon.Chemistry.Catalyst
                 _throwable = GetComponent<Throwable>();
                 _interactable.enabled = true;
             }
+                        
+            if (CatalystController.ExperimentVariation == ExperimentVariation.EleyRideal)
+                ActivateDrawingCollider(true);
+            else
+                ActivateDrawingCollider(false);
         }
         
         protected override void ReactionStart_Impl()
@@ -107,6 +114,33 @@ namespace Maroon.Chemistry.Catalyst
             
             base.HandleFixedUpdate();
             
+            bool clearList = false;
+            foreach (var potentialDrawMolecule in potentialDrawMolecules)
+            {
+                if (potentialDrawMolecule != null && potentialDrawMolecule.Type == MoleculeType.O2 &&
+                    potentialDrawMolecule.State == MoleculeState.Fixed &&
+                    potentialDrawMolecule.ConnectedMolecule != null &&
+                    potentialDrawMolecule.ConnectedMolecule.Type == MoleculeType.Pt &&
+                    ( !CatalystController.DoStepWiseSimulation ||
+                      CatalystController.DoStepWiseSimulation && CatalystController.CurrentExperimentStage == ExperimentStages.O2ReactCO_CO2Desorb ))
+                {
+                    SetMoleculeDrawn(potentialDrawMolecule, MoleculeState.DrawnByO2);
+                    
+                    // reenable surface molecule drawing capabilities
+                    potentialDrawMolecule.ConnectedMolecule.ConnectedMolecule = null;
+                    potentialDrawMolecule.ConnectedMolecule.ActivateDrawingCollider(true);
+
+                    potentialDrawMolecule.ConnectedMolecule = this;
+                    ActivateDrawingCollider(false);
+                    potentialDrawMolecule.ActivateDrawingCollider(false);
+                    clearList = true;
+                    break;
+                }
+            }
+            if (clearList)
+                potentialDrawMolecules.Clear();
+            
+            
             // can only happen to O2, CO, or O
             if (State == MoleculeState.InDrawingCollider && PossibleDrawingMolecule != null &&
                 ( !CatalystController.DoStepWiseSimulation ||
@@ -168,6 +202,47 @@ namespace Maroon.Chemistry.Catalyst
             yield return new WaitForSeconds(0.3f);
             _isWobbling = false;
             transform.position = currentPosition;
+        }
+        
+        /**
+         * Use the collider trigger to possibly get drawn to an O2 molecule that is fixed and connected to
+         * a surface molecule (platinum).
+         * Is only used in the Eley-Rideal variant (trigger collider not active otherwise).
+         * <param name="other"> Collider of object entering this collider. </param>
+         */
+        private void OnTriggerEnter(Collider other)
+        {
+            if (State != MoleculeState.Moving) return;
+            if (ConnectedMolecule == null) // draw O atoms to nearby CO molecules
+            {
+                Molecule otherMolecule = other.gameObject.GetComponent<Molecule>();
+                if (otherMolecule != null && otherMolecule.Type == MoleculeType.O2 && otherMolecule.State == MoleculeState.Fixed)
+                {
+                    if (!potentialDrawMolecules.Contains(otherMolecule))
+                        potentialDrawMolecules.Add(otherMolecule);
+                }
+            }
+        }
+        
+        /**
+         * Handle removal from potential O2 molecules that this CO atom could have been drawn to from the
+         * potential drawing list.
+         * Is only used in the Eley-Rideal variant (trigger collider not active otherwise).
+         * * <param name="other"> Collider of object leaving this collider. </param>
+         */
+        private void OnTriggerExit(Collider other)
+        {
+            if (State != MoleculeState.Moving) return;
+            if (ConnectedMolecule == null)
+            {
+                Molecule otherMolecule = other.gameObject.GetComponent<Molecule>();
+                if (otherMolecule != null && otherMolecule.Type == MoleculeType.O2 && otherMolecule.State == MoleculeState.Fixed)
+                {
+                    // if O2 exits collider remove from list
+                    if (potentialDrawMolecules.Contains(otherMolecule))
+                        potentialDrawMolecules.Remove(otherMolecule);
+                }
+            }
         }
     }
 }

@@ -10,7 +10,8 @@ namespace Maroon.Chemistry.Catalyst
         [SerializeField] Molecule platinumMoleculePrefab;
         [SerializeField] Molecule coMoleculePrefab;
         [SerializeField] Molecule cobaltMoleculePrefab;
-        [SerializeField] Molecule oxygenMoleculePrefab;
+        [SerializeField] Molecule oMoleculePrefab;
+        [SerializeField] Molecule o2MoleculePrefab;
         [SerializeField] Transform surfaceLayerParent;
         [SerializeField] ODrawingSpot oDrawingSpotPrefab;
 
@@ -107,7 +108,7 @@ namespace Maroon.Chemistry.Catalyst
                 // for now just spawn the top o2 molecules
                 if (Mathf.Abs(oCoords[i].y - maxYVal) < 2.0f)
                 {
-                    Molecule oxygenMolecule = Instantiate(oxygenMoleculePrefab, surfaceLayerParent);
+                    Molecule oxygenMolecule = Instantiate(oMoleculePrefab, surfaceLayerParent);
                     oxygenMolecule.transform.localPosition = oCoords[i] / 20.0f;
                     oxygenMolecule.State = MoleculeState.InSurfaceDrawingSpot;
                     // set drawing spot so we can refill O molecule at same position later
@@ -121,6 +122,55 @@ namespace Maroon.Chemistry.Catalyst
             onComplete?.Invoke(surfaceMolecules);
             StartCoroutine(SpawnODelayed(oCoords));
         }
+        
+        /**
+         * Instantiate surface atoms / molecules of the Eley-Rideal variant based on the given coordinates.
+         * <param name="platCoords"> Coordinates of surface atoms </param>
+         * <param name="activePlatCoords"> Coordinates of surface atoms that should have O2 attached to them </param>
+         * <param name="onComplete"> Action that should be called once all surface atoms / molecules have
+         * been instantiated. Returns the list of instantiated molecules to the
+         * CatalystController. </param>
+         */
+        public void SetupCoordsEley(List<Vector3> platCoords,
+            List<Vector3> activePlatCoords,
+            System.Action<List<Molecule>> onComplete)
+        {
+            List<Molecule> platMolecules = new List<Molecule>();
+            for (int i = 0; i < platCoords.Count; i++)
+            {
+                
+                Molecule platMolecule = Instantiate(platinumMoleculePrefab, surfaceLayerParent);
+                platMolecule.transform.localPosition = platCoords[i] / 20.0f;
+                platMolecule.State = MoleculeState.Fixed;
+
+                if (activePlatCoords.Contains(platCoords[i]))
+                    platMolecules.Add(platMolecule);
+                else
+                    platMolecule.gameObject.GetComponent<Molecule>().enabled = false;
+            }
+
+            // only spawn o2 molecules on top layer
+            List<Molecule> activeMolecules = new List<Molecule>();
+            foreach (var platMolecule in platMolecules)
+            {
+                Molecule o2Molecule = Instantiate(o2MoleculePrefab, surfaceLayerParent);
+                o2Molecule.State = MoleculeState.Fixed;
+
+                Vector3 moleculePos = platMolecule.transform.localPosition;
+                moleculePos.y += o2Molecule.FixedMoleculeYDist;
+                o2Molecule.transform.localPosition = moleculePos;
+
+                Quaternion moleculeRot = Quaternion.Euler(0.0f, 0.0f, 90.0f);
+                o2Molecule.transform.localRotation = moleculeRot;
+
+                platMolecule.ConnectedMolecule = o2Molecule;
+                o2Molecule.ConnectedMolecule = platMolecule;
+
+                activeMolecules.Add(o2Molecule);
+                activeMolecules.Add(platMolecule);
+            }
+            onComplete?.Invoke(activeMolecules);
+        }
 
         public IEnumerator SpawnODelayed(List<Vector3> oCoords)
         {
@@ -131,7 +181,7 @@ namespace Maroon.Chemistry.Catalyst
                 // spawn the rest of the molecules
                 if (Mathf.Abs(oCoords[i].y - maxYVal) > 2.0f)
                 {
-                    Molecule oxygenMolecule = Instantiate(oxygenMoleculePrefab, surfaceLayerParent);
+                    Molecule oxygenMolecule = Instantiate(oMoleculePrefab, surfaceLayerParent);
                     oxygenMolecule.transform.localPosition = oCoords[i] / 20.0f;
                     oxygenMolecule.State = MoleculeState.Fixed;
                     oxygenMolecule.gameObject.GetComponent<Molecule>().enabled = false;

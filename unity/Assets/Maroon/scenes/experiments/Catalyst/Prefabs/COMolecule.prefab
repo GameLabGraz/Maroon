@@ -334,6 +334,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9201737708395207698}
   - component: {fileID: 2372393903890976028}
+  - component: {fileID: 3221385016645297414}
   - component: {fileID: 3990006234335495563}
   - component: {fileID: 8644056029575331758}
   - component: {fileID: 4513131665161036208}
@@ -376,7 +377,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
-  collider: {fileID: 3990006234335495563}
+  collider: {fileID: 3221385016645297414}
   FixedMoleculeYDist: 0.21
   movementSpeed: 1
   temperature:
@@ -408,7 +409,22 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   state: 0
+  formedOf2O: 0
   timeUntilNextDesorb: 3
+  potentialDrawMolecules: []
+--- !u!135 &3221385016645297414
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9201737708395207699}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!136 &3990006234335495563
 CapsuleCollider:
   m_ObjectHideFlags: 0

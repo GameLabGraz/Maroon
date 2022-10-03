@@ -24,6 +24,7 @@ namespace Maroon.Chemistry.Catalyst
         InDrawingCollider,
         DrawnBySurfaceMolecule, // either platinum or cobalt
         DrawnByCO,
+        DrawnByO2,
         DrawnByDrawingSpot,
         Disappear,
         WaitingToDissociate,
@@ -85,6 +86,7 @@ namespace Maroon.Chemistry.Catalyst
 
         public Action<Molecule> OnDissociate;
         public Action<Molecule, Molecule> OnCO2Created;
+        public Action<Molecule, Molecule> OnCO2AndOCreated;
         public Action OnMoleculeFreed;
 
         /**
@@ -122,9 +124,13 @@ namespace Maroon.Chemistry.Catalyst
             // normal temp goes from -23.15f to 176.85 (Langmuir) or from 47.85 to 89,85 (van Krevelen) degree celsius
             // scale this between 0 - 1 for movement speed (0,508 max for van Krevelen)
             temperature.Value = newTemp;
-            movementSpeed = CatalystController.ExperimentVariation == ExperimentVariation.LangmuirHinshelwood
-                ? Mathf.Clamp((temperature.Value + 23.15f) / (temperature.maxValue + 23.15f), 0.1f, 1.0f)
-                : Mathf.Clamp((temperature.Value) / (temperature.maxValue), 0.1f, 1.0f);
+            float offsetToZero = 0;
+            if (CatalystController.ExperimentVariation == ExperimentVariation.LangmuirHinshelwood ||
+                CatalystController.ExperimentVariation == ExperimentVariation.EleyRideal)
+            {
+                offsetToZero = 23.15f;
+            }
+            movementSpeed = Mathf.Clamp((temperature.Value + offsetToZero) / (temperature.maxValue + offsetToZero), 0.1f, 1.0f);
             CurrentTurnOverRate = CatalystController.GetTurnOverFrequency(temperature.Value, partialPressure.Value);
         }
 
@@ -186,7 +192,8 @@ namespace Maroon.Chemistry.Catalyst
         protected override void HandleFixedUpdate()
         {
             if (state == MoleculeState.Fixed && _connectedMolecule == null &&
-                state != MoleculeState.DrawnByCO && state != MoleculeState.DrawnByDrawingSpot) return;
+                state != MoleculeState.DrawnByCO && state != MoleculeState.DrawnByDrawingSpot &&
+                state != MoleculeState.DrawnByO2) return;
 
             if (state != MoleculeState.Fixed && state != MoleculeState.InSurfaceDrawingSpot)
             {
@@ -221,6 +228,8 @@ namespace Maroon.Chemistry.Catalyst
                     HandleMoleculeTouchingSurface();
                 else if (state == MoleculeState.DrawnByCO)
                     HandleOTouchingCO();
+                else if (state == MoleculeState.DrawnByO2)
+                    HandleCOTouchingO2();
                 else if (state == MoleculeState.DrawnByDrawingSpot)
                     HandleOFillDrawingSpot();
 
@@ -229,6 +238,13 @@ namespace Maroon.Chemistry.Catalyst
                     CurrentTimeMove = 0.0f;
                     GetRandomPositionAndRotation();
                 }
+            }
+
+            // fallback since some CO2 did not get destroyed for some reason.
+            if (Vector3.Distance(transform.position, NewMoleculePosition) < 0.05f && Type == MoleculeType.CO2)
+            {
+                if (state == MoleculeState.Disappear)
+                    Destroy(this.gameObject);
             }
         }
 
@@ -243,7 +259,7 @@ namespace Maroon.Chemistry.Catalyst
             State = MoleculeState.Fixed;
             transform.position = new Vector3(NewMoleculePosition.x, NewMoleculePosition.y, NewMoleculePosition.z);
             transform.localRotation = Quaternion.Euler(0.0f, 0.0f, 90.0f);
-            if (type == MoleculeType.O2)
+            if (type == MoleculeType.O2 && CatalystController.ExperimentVariation != ExperimentVariation.EleyRideal)
                 State = MoleculeState.WaitingToDissociate;
         }
 
@@ -255,6 +271,15 @@ namespace Maroon.Chemistry.Catalyst
         {
             State = MoleculeState.Fixed;
             OnCO2Created?.Invoke(this, _connectedMolecule);
+        }
+        
+        /**
+         * Handle CO atom being near enough to a O2 molecule. Calls an action that creates CO2 and a single O in the
+         * CatalystController.
+         */
+        private void HandleCOTouchingO2()
+        {
+            OnCO2AndOCreated?.Invoke(_connectedMolecule, this);
         }
 
         /**

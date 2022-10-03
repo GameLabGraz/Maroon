@@ -27,7 +27,7 @@ namespace Maroon.Chemistry.Catalyst
             GetComponent<CapsuleCollider>().enabled = false;
             StartMoleculePosition = gameObject.transform.position;
             StartMoleculeRotation = gameObject.transform.rotation;
-            NewMoleculePosition = new Vector3(StartMoleculePosition.x, StartMoleculePosition.y + 1.5f, StartMoleculePosition.z);
+            NewMoleculePosition = new Vector3(StartMoleculePosition.x, StartMoleculePosition.y + 2.5f, StartMoleculePosition.z);
             CurrentTimeMove = 0.0f;
             State = MoleculeState.Disappear;
             ConnectedMolecule = null;
