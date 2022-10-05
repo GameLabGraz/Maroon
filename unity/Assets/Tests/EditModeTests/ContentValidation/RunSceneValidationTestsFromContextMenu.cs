@@ -96,7 +96,7 @@ namespace Tests.EditModeTests.ContentValidation
             }
             else if (result.FailCount == 0)
             {
-                EditorUtility.DisplayDialog(title, $"All {result.PassCount} validation tests passed.", "Ok");
+                EditorUtility.DisplayDialog(title, $"All {result.PassCount} validation test{(result.PassCount > 1 ? "s" : "")} passed.", "Ok");
             }
             else
             {
@@ -109,7 +109,7 @@ namespace Tests.EditModeTests.ContentValidation
                 }
 
                 var failedTestNames = string.Join("\n", GetFailedTestNames(result).Select(t => $"\t{t}"));
-                EditorUtility.DisplayDialog(title, $"{result.FailCount} validation tests failed:\n{failedTestNames}", "Ok");
+                EditorUtility.DisplayDialog(title, $"{result.FailCount} validation test{(result.FailCount > 1 ? "s" : "")} failed:\n{failedTestNames}", "Ok");
                 
                 EditorApplication.ExecuteMenuItem("Window/General/Test Runner");
             }
