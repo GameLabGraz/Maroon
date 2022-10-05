@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Text.RegularExpressions;
 using UnityEditor;
-using UnityEngine;
 
 namespace Tests.EditModeTests.ContentValidation
 {
@@ -21,7 +20,6 @@ namespace Tests.EditModeTests.ContentValidation
                 {
                     // Return the experiment name extracted from its path - this defines test fixture name
                     var experimentName = experimentNameRegex.Match(scene.path).ToString();
-                    Debug.Log(experimentName + ", " +  scene.path);
                     yield return new object[] { experimentName, scene.path };
                 }
             }
