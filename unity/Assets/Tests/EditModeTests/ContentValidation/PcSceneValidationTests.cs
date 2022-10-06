@@ -7,6 +7,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static Tests.Utilities.Utilities;
 
 namespace Tests.EditModeTests.ContentValidation
 {
@@ -43,30 +44,20 @@ namespace Tests.EditModeTests.ContentValidation
         public void SceneHasMainCamera()
         {
             // Check GameObject exists
-            var cameraGameObject = GameObject.FindWithTag("MainCamera");
-            Assert.NotNull(cameraGameObject, "No GameObject tagged 'MainCamera' found");
+            var cameraGameObject = FindAndValidateObjectByTag("MainCamera");
 
-            // Check Camera component and its settings
-            var cameraComponent = cameraGameObject.GetComponent<Camera>();
-            Assert.NotNull(cameraComponent, "No 'Camera' component in GameObject 'MainCamera'");
-            
-            Assert.True(cameraComponent.enabled, 
-                "The 'Camera' component of 'MainCamera' is disabled");
+            // Check Camera component
+            GetAndValidateBehaviourFromGameObject<Camera>(cameraGameObject);
         }
         
         [Test, Description("Must have a GameObject named 'UICamera' with configured <Camera> component")]
         public void SceneHasUICamera()
         {
             // Check GameObject exists
-            var cameraGameObject = GameObject.Find("UICamera");
-            Assert.NotNull(cameraGameObject, "No 'UICamera' GameObject found");
-
-            // Check Camera component and its settings
-            var cameraComponent = cameraGameObject.GetComponent<Camera>();
-            Assert.NotNull(cameraComponent, "No 'Camera' component in GameObject 'UICamera'");
+            var cameraGameObject = FindAndValidateObjectByName("UICamera");
             
-            Assert.True(cameraComponent.enabled,
-                "The 'Camera' component of 'UICamera' is disabled");
+            // Check Camera component and its settings
+            var cameraComponent = GetAndValidateBehaviourFromGameObject<Camera>(cameraGameObject);
             
             Assert.AreEqual(LayerMask.GetMask("UI"), cameraComponent.cullingMask,
                 "Wrong culling mask for 'Camera' component of 'UICamera'");
@@ -95,9 +86,9 @@ namespace Tests.EditModeTests.ContentValidation
              */
             
             // Get prefab data
-            var prefab = Utilities.GetPrefabByName("UI");
-            var prefabCanvas = Utilities.GetComponentFromPrefab<Canvas>(prefab);
-            var prefabCanvasScaler = Utilities.GetComponentFromPrefab<CanvasScaler>(prefab);
+            var prefab = GetPrefabByName("UI");
+            var prefabCanvas = GetComponentFromPrefab<Canvas>(prefab);
+            var prefabCanvasScaler = GetComponentFromPrefab<CanvasScaler>(prefab);
 
             // Check GameObject exists
             var uiGameObject = GameObject.Find("UI");
