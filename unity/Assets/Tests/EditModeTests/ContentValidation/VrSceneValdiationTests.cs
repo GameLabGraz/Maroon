@@ -40,7 +40,7 @@ namespace Tests.EditModeTests.ContentValidation
         [Test, Description("Must include a 'PlayerVR' Prefab tagged as 'Player'")]
         public void SceneHasPlayer()
         {
-            var playerGameObject = GameObject.Find("PlayerVR");
+            var playerGameObject = GameObject.Find("VRPlayer");
             Assert.NotNull(playerGameObject, "No 'Player' GameObject found");
             Assert.AreEqual("Player", playerGameObject.tag, "GameObject 'PlayerVR' not tagged as 'Player'");
         }
