@@ -27,37 +27,26 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             vertices.Clear();
             indices.Clear();
 
-            TaskRunner.Instance.ClearTasks();
-
             size = NoiseExperimentBase.Instance.size;
 
             var voxel = new Vector3Int();
-
-            for (voxel.y = 0; voxel.y < size; voxel.y++)
+            for (voxel.x = 0; voxel.x < size; voxel.x++)
             {
-                var v = voxel;
-                TaskRunner.Instance.AddTask(() =>
-                { 
-                    for (v.x = 0; v.x < size; v.x++)
+                for (voxel.y = 0; voxel.y < size; voxel.y++)
+                {
+                    for (voxel.z = 0; voxel.z < size; voxel.z++)
                     {
-                        for (v.z = 0; v.z < size; v.z++)
-                        {
-                            AddVoxelVertices(v);
-                        }
+                        AddVoxelVertices(voxel);
                     }
-                });
-
+                }
             }
-            
-            
-            TaskRunner.Instance.AddTask(() =>
-            {
-                mesh.Clear();
-                mesh.vertices = vertices.ToArray();
-                mesh.triangles = indices.ToArray();
-                mesh.colors = vertices.Select(v_ => NoiseExperimentBase.Instance.GetVertexColor(v_.y, 0, size * 0.5f, size)).ToArray();
-                mesh.RecalculateNormals();
-            });
+
+            mesh.Clear();
+            mesh.vertices = vertices.ToArray();
+            mesh.triangles = indices.ToArray();
+            mesh.colors = vertices.Select(v_ => NoiseExperimentBase.Instance.GetVertexColor(v_.y, 0, size * 0.5f, size))
+                .ToArray();
+            mesh.RecalculateNormals();
         }
 
         public override void UpdateMesh(Mesh mesh)
@@ -84,6 +73,8 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
         private readonly Vector3Int front_up_left = new Vector3Int(-1, 1, 1);
         private readonly Vector3 one = Vector3.one;
 
+        private Vector3[] vec = new Vector3[4];
+
         private void AddVoxelVertices(Vector3Int voxel)
         {
             var is_left_visible = IsFaceVisible(voxel, left);
@@ -100,59 +91,72 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
                              (is_front_visible ? 1 : 0) +
                              (is_back_visible ? 1 : 0);
 
-            vertices.Capacity += face_count * 4;
-      //      colors.Capacity += face_count * 4;
-            indices.Capacity += face_count * 6;
-            
             if (is_left_visible)
-                AddFace(new[]
-                {
-                    voxel + left, voxel + left_up,
-                    voxel + front_left, voxel + front_up_left
-                });
+            {
+                vec[0] = voxel + left;
+                vec[1] = voxel + left_up;
+                vec[2] = voxel + front_left;
+                vec[3] = voxel + front_up_left;
+                AddFace(vec);
+            }
+
             if (is_right_visible)
-                AddFace(new[]
-                {
-                    voxel, voxel + front,
-                    voxel + up, voxel + front_up
-                });
+            {
+                vec[0] = voxel;
+                vec[1] = voxel + front;
+                vec[2] = voxel + up;
+                vec[3] = voxel + front_up;
+                AddFace(vec);
+            }
 
             if (is_down_visible)
-                AddFace(new[]
-                {
-                    voxel, voxel + left,
-                    voxel + front, voxel + front_left
-                });
+            {
+                vec[0] = voxel;
+                vec[1] = voxel + left;
+                vec[2] = voxel + front;
+                vec[3] = voxel + front_left;
+                AddFace(vec);
+            }
+
             if (is_up_visible)
-                AddFace(new[]
-                {
-                    voxel + up, voxel + front_up,
-                    voxel + left_up, voxel + front_up_left
-                });
+            {
+                vec[0] = voxel + up;
+                vec[1] = voxel + front_up;
+                vec[2] = voxel + left_up;
+                vec[3] = voxel + front_up_left;
+                AddFace(vec);
+            }
+
             if (is_front_visible)
-                AddFace(new[]
-                {
-                    voxel + front, voxel + front_left,
-                    voxel + front_up, voxel + front_up_left
-                });
+            {
+                vec[0] = voxel + front;
+                vec[1] = voxel + front_left;
+                vec[2] = voxel + front_up;
+                vec[3] = voxel + front_up_left;
+                AddFace(vec);
+            }
+
             if (is_back_visible)
-                AddFace(new[]
-                {
-                    voxel, voxel + up,
-                    voxel + left, voxel + left_up
-                });
-            // */
+            {
+                vec[0] = voxel;
+                vec[1] = voxel + up;
+                vec[2] = voxel + left;
+                vec[3] = voxel + left_up;
+                AddFace(vec);
+            }
         }
 
         private bool IsFaceVisible(Vector3Int voxel, Vector3Int direction) =>
             noise_3d.GetNoiseMapArrayB(voxel) && !noise_3d.GetNoiseMapArrayB(voxel + direction);
 
 
-        private void AddFace(IReadOnlyCollection<Vector3Int> new_vertices)
+        private void AddFace(IList<Vector3> new_vertices)
         {
-            vertices.AddRange(new_vertices.Select(v => (v - one * (0.5f * size) + transform_offset) / size));
-       //     colors.AddRange(
-         //       new_vertices.Select(v => NoiseExperimentBase.Instance.GetVertexColor(v.y, 0, size * 0.5f, size)));
+            for (int i = 0; i < 4; i++)
+                new_vertices[i] = (new_vertices[i] - one * (0.5f * size) + transform_offset) / size;
+            vertices.AddRange(new_vertices);
+            //     colors.AddRange(
+            //       new_vertices.Select(v => NoiseExperimentBase.Instance.GetVertexColor(v.y, 0, size * 0.5f, size)));
             indices.AddRange(new[]
             {
                 vertices.Count - 1, vertices.Count - 3, vertices.Count - 2,

@@ -21,7 +21,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         [SerializeField] protected bool dirty;
         [SerializeField] protected bool dirty_immediate;
-        [SerializeField] protected TimeSpan dirty_refresh_rate = new TimeSpan(0, 0, 0, 0, 500);
+        [SerializeField] protected TimeSpan dirty_refresh_rate = new TimeSpan(0, 0, 0, 0, 50);
 
         public DateTime last_update;
 

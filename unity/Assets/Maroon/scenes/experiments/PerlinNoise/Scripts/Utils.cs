@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.PerlinNoise.Scripts
@@ -20,7 +20,6 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         public static int Clamp(this int f, int min, int max) => Mathf.Max(Mathf.Min(f, max), min);
 
         public static bool IsValidIndex<T>(this T[] list, int index) => index >= 0 && index < list.Length;
-        public static bool IsValidIndex<T>(this IEnumerable<T> list, int index) => index >= 0 && index < list.Count();
         public static bool IsValidIndex<T>(this List<T> list, int index) => index >= 0 && index < list.Count;
 
         public static float Map(this float value, float min_source, float max_source, float min_target = 0,
@@ -28,7 +27,8 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         {
             return (value - min_source) / (max_source - min_source) * (max_target - min_target) + min_target;
         }
-
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsInRange(this int value, int min, int max) => value >= min && value <= max;
 
 

@@ -33,36 +33,27 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             indices.Clear();
             colors.Clear();
 
-            TaskRunner.Instance.ClearTasks();
-
             size = NoiseExperimentBase.Instance.size;
 
             var voxel = new Vector3Int();
 
-            for (voxel.y = 0; voxel.y < size; voxel.y++)
+            for (voxel.x = 0; voxel.x < size; voxel.x++)
             {
-                var v = voxel;
-                TaskRunner.Instance.AddTask(() =>
+                for (voxel.y = 0; voxel.y < size; voxel.y++)
                 {
-                    for (v.x = 0; v.x < size; v.x++)
+                    for (voxel.z = 0; voxel.z < size; voxel.z++)
                     {
-                        for (v.z = 0; v.z < size; v.z++)
-                        {
-                            AddVoxelVertices(v);
-                        }
+                        AddVoxelVertices(voxel);
                     }
-                });
+                }
             }
 
-            TaskRunner.Instance.AddTask(() =>
-            {
-                mesh.Clear();
+            mesh.Clear();
 
-                mesh.vertices = vertices.ToArray();
-                mesh.triangles = indices.ToArray();
-                mesh.colors = colors.ToArray();
-                mesh.RecalculateNormals();
-            });
+            mesh.vertices = vertices.ToArray();
+            mesh.triangles = indices.ToArray();
+            mesh.colors = colors.ToArray();
+            mesh.RecalculateNormals();
         }
 
         public override void UpdateMesh(Mesh mesh)
