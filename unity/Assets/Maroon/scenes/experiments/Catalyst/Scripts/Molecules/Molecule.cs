@@ -70,7 +70,9 @@ namespace Maroon.Chemistry.Catalyst
         {
             get => state;
             set {
-                if (value == MoleculeState.Fixed || value == MoleculeState.InSurfaceDrawingSpot)
+                if (value == MoleculeState.Fixed ||
+                    value == MoleculeState.InSurfaceDrawingSpot || 
+                    value == MoleculeState.WaitingToDissociate)
                 {
                     GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
                 } 
