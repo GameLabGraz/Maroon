@@ -26,12 +26,11 @@ namespace Maroon.Chemistry.Catalyst
     {
         Init,
         CODesorb,
+        O2Desorb,
         COAdsorb,
         O2Adsorb_O2Dissociate,
         OFillSurface,
-        OReactCO_CO2Desorb,
-        O2ReactCO_CO2Desorb,
-        O2Adsorb
+        OReactCO_CO2Desorb
     }
 
     public class CatalystController : MonoBehaviour
@@ -181,8 +180,8 @@ namespace Maroon.Chemistry.Catalyst
         private static readonly List<ExperimentStages> EleyStages = new List<ExperimentStages>()
         {
             ExperimentStages.Init,
-            ExperimentStages.O2ReactCO_CO2Desorb,
-            ExperimentStages.O2Adsorb
+            ExperimentStages.O2Adsorb_O2Dissociate,
+            ExperimentStages.OReactCO_CO2Desorb
         };
 
         //public const float FixedMoleculeYDist = 0.28f - 0.075f;
@@ -263,7 +262,7 @@ namespace Maroon.Chemistry.Catalyst
 
         private void OnDestroy()
         {
-            catalystReactor.OnReactorFilled.RemoveListener(SpawnCatalystSurfaceObject);
+            catalystReactor.OnReactorFilled.RemoveListener(StartExperiment);
             catalystBoxMaterial.color = Color.black;
         }
         
@@ -463,8 +462,6 @@ namespace Maroon.Chemistry.Catalyst
                     Vector3 spawnPos = new Vector3(Random.Range(_minXValLocal, _maxXValLocal), Random.Range(0.5f, 2.0f), Random.Range(_minZValLocal, _maxZValLocal));
                     Quaternion spawnRot = Quaternion.Euler(Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f), Random.Range(-180.0f, 180.0f));
                     Molecule molecule = Instantiate(coMoleculePrefab, catalystSurfaceTransform);
-                    if (ExperimentVariation == ExperimentVariation.EleyRideal)
-                        molecule.OnCO2AndOCreated += CreateCO2AndO;
                     molecule.ActivateDrawingCollider(true);
                     molecule.gameObject.transform.localPosition = spawnPos;
                     molecule.gameObject.transform.localRotation = spawnRot;
@@ -533,9 +530,11 @@ namespace Maroon.Chemistry.Catalyst
             Transform parentTransform = coMolecule.gameObject.transform.parent;
             Vector3 coPosition = coMolecule.gameObject.transform.position;
             Quaternion coRotation = coMolecule.gameObject.transform.rotation;
-            
-            coMolecule.ConnectedMolecule.ActivateDrawingCollider(true);
-            coMolecule.ConnectedMolecule = null;
+            if (coMolecule.ConnectedMolecule) // eley-rideal CO has no connected molecule
+            {
+                coMolecule.ConnectedMolecule.ActivateDrawingCollider(true);
+                coMolecule.ConnectedMolecule = null;
+            }
 
             Destroy(oMolecule.gameObject);
             Destroy(coMolecule.gameObject);
@@ -563,39 +562,6 @@ namespace Maroon.Chemistry.Catalyst
             o2Molecule.OnDissociate += DissociateO2;
             o2Molecule.State = MoleculeState.Moving;
             AddMoleculeToActiveList(o2Molecule);
-        }
-        
-        /**
-         * Creates a CO2 molecule and a O atom. Called from O2 molecules when a CO molecule has been drawn in close enough.
-         * Used in the Eley-Ridel variant.
-         */
-        private void CreateCO2AndO(Molecule o2Molecule, Molecule coMolecule)
-        {
-            o2Molecule.OnCO2AndOCreated -= CreateCO2AndO;
-            RemoveMoleculeFromActiveList(o2Molecule);
-            RemoveMoleculeFromActiveList(coMolecule);
-
-            Transform parentTransform = coMolecule.gameObject.transform.parent;
-            Vector3 coPosition = coMolecule.gameObject.transform.position;
-            Quaternion coRotation = coMolecule.gameObject.transform.rotation;
-        
-            o2Molecule.ConnectedMolecule.ActivateDrawingCollider(true);
-            o2Molecule.ConnectedMolecule = null;
-
-            Destroy(o2Molecule.gameObject);
-            Destroy(coMolecule.gameObject);
-
-            Molecule co2Molecule = Instantiate(co2MoleculePrefab, parentTransform);
-            co2Molecule.gameObject.transform.position = coPosition;
-            co2Molecule.gameObject.transform.rotation = coRotation;
-        
-            Molecule oMolecule = Instantiate(oMoleculePrefab, parentTransform);
-            oMolecule.OnCO2Created += CreateCO2;
-            (oMolecule as OMolecule).CreateO2 += CreateO2;
-            oMolecule.gameObject.transform.position = coPosition;
-            oMolecule.gameObject.transform.rotation = coRotation;
-            oMolecule.State = MoleculeState.Moving;
-            AddMoleculeToActiveList(oMolecule);
         }
 
         private void AddMoleculeToActiveList(Molecule molecule)

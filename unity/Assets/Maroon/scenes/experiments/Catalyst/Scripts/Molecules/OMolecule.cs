@@ -27,6 +27,9 @@ namespace Maroon.Chemistry.Catalyst
                 base.HandleFixedUpdate();
             }
 
+            if (CatalystController.ExperimentVariation == ExperimentVariation.EleyRideal)
+                return;
+            
             bool clearList = false;
             foreach (var potentialDrawMolecule in potentialDrawMolecules)
             {

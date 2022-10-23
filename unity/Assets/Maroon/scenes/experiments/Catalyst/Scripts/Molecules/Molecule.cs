@@ -23,8 +23,8 @@ namespace Maroon.Chemistry.Catalyst
         Desorb,
         InDrawingCollider,
         DrawnBySurfaceMolecule, // either platinum or cobalt
+        DrawingMolecule,
         DrawnByCO,
-        DrawnByO2,
         DrawnByDrawingSpot,
         Disappear,
         WaitingToDissociate,
@@ -86,7 +86,6 @@ namespace Maroon.Chemistry.Catalyst
 
         public Action<Molecule> OnDissociate;
         public Action<Molecule, Molecule> OnCO2Created;
-        public Action<Molecule, Molecule> OnCO2AndOCreated;
         public Action OnMoleculeFreed;
 
         /**
@@ -192,8 +191,7 @@ namespace Maroon.Chemistry.Catalyst
         protected override void HandleFixedUpdate()
         {
             if (state == MoleculeState.Fixed && _connectedMolecule == null &&
-                state != MoleculeState.DrawnByCO && state != MoleculeState.DrawnByDrawingSpot &&
-                state != MoleculeState.DrawnByO2) return;
+                state != MoleculeState.DrawnByCO && state != MoleculeState.DrawnByDrawingSpot) return;
 
             if (state != MoleculeState.Fixed && state != MoleculeState.InSurfaceDrawingSpot)
             {
@@ -228,8 +226,6 @@ namespace Maroon.Chemistry.Catalyst
                     HandleMoleculeTouchingSurface();
                 else if (state == MoleculeState.DrawnByCO)
                     HandleOTouchingCO();
-                else if (state == MoleculeState.DrawnByO2)
-                    HandleCOTouchingO2();
                 else if (state == MoleculeState.DrawnByDrawingSpot)
                     HandleOFillDrawingSpot();
 
@@ -271,15 +267,6 @@ namespace Maroon.Chemistry.Catalyst
         {
             State = MoleculeState.Fixed;
             OnCO2Created?.Invoke(this, _connectedMolecule);
-        }
-        
-        /**
-         * Handle CO atom being near enough to a O2 molecule. Calls an action that creates CO2 and a single O in the
-         * CatalystController.
-         */
-        private void HandleCOTouchingO2()
-        {
-            OnCO2AndOCreated?.Invoke(_connectedMolecule, this);
         }
 
         /**

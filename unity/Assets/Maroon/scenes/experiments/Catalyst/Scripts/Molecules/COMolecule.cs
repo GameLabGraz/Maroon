@@ -117,18 +117,13 @@ namespace Maroon.Chemistry.Catalyst
             bool clearList = false;
             foreach (var potentialDrawMolecule in potentialDrawMolecules)
             {
-                if (potentialDrawMolecule != null && potentialDrawMolecule.Type == MoleculeType.O2 &&
-                    potentialDrawMolecule.State == MoleculeState.Fixed &&
-                    potentialDrawMolecule.ConnectedMolecule != null &&
-                    potentialDrawMolecule.ConnectedMolecule.Type == MoleculeType.Pt &&
+                if (potentialDrawMolecule != null && potentialDrawMolecule.Type == MoleculeType.O &&
+                    potentialDrawMolecule.State == MoleculeState.Moving &&
+                    potentialDrawMolecule.ConnectedMolecule == null &&
                     ( !CatalystController.DoStepWiseSimulation ||
-                      CatalystController.DoStepWiseSimulation && CatalystController.CurrentExperimentStage == ExperimentStages.O2ReactCO_CO2Desorb ))
+                      CatalystController.DoStepWiseSimulation && CatalystController.CurrentExperimentStage == ExperimentStages.OReactCO_CO2Desorb ))
                 {
-                    SetMoleculeDrawn(potentialDrawMolecule, MoleculeState.DrawnByO2);
-                    
-                    // reenable surface molecule drawing capabilities
-                    potentialDrawMolecule.ConnectedMolecule.ConnectedMolecule = null;
-                    potentialDrawMolecule.ConnectedMolecule.ActivateDrawingCollider(true);
+                    potentialDrawMolecule.SetMoleculeDrawn(this, MoleculeState.DrawnByCO);
 
                     potentialDrawMolecule.ConnectedMolecule = this;
                     ActivateDrawingCollider(false);
@@ -167,7 +162,7 @@ namespace Maroon.Chemistry.Catalyst
          */
         protected override void HandleDrawingPossibility()
         {
-            if (Random.Range(0, 100) > 100 - CurrentTurnOverRate)
+            if (Random.Range(0, 100) > 100 - CurrentTurnOverRate  && PossibleDrawingMolecule.ConnectedMolecule == null)
             {
                 PossibleDrawingMolecule.ConnectedMolecule = this; // connect this (CO) to plat or cobalt molecule
                 SetMoleculeDrawn(PossibleDrawingMolecule, MoleculeState.DrawnBySurfaceMolecule); // drawn by plat or cobalt
@@ -205,7 +200,7 @@ namespace Maroon.Chemistry.Catalyst
         }
         
         /**
-         * Use the collider trigger to possibly get drawn to an O2 molecule that is fixed and connected to
+         * Use the collider trigger to possibly drawn in an O molecule that is fixed and connected to
          * a surface molecule (platinum).
          * Is only used in the Eley-Rideal variant (trigger collider not active otherwise).
          * <param name="other"> Collider of object entering this collider. </param>
@@ -216,7 +211,8 @@ namespace Maroon.Chemistry.Catalyst
             if (ConnectedMolecule == null) // draw O atoms to nearby CO molecules
             {
                 Molecule otherMolecule = other.gameObject.GetComponent<Molecule>();
-                if (otherMolecule != null && otherMolecule.Type == MoleculeType.O2 && otherMolecule.State == MoleculeState.Fixed)
+                if (otherMolecule != null && otherMolecule.Type == MoleculeType.O && otherMolecule.State == MoleculeState.Moving &&
+                    otherMolecule.ConnectedMolecule == null)
                 {
                     if (!potentialDrawMolecules.Contains(otherMolecule))
                         potentialDrawMolecules.Add(otherMolecule);
@@ -225,7 +221,7 @@ namespace Maroon.Chemistry.Catalyst
         }
         
         /**
-         * Handle removal from potential O2 molecules that this CO atom could have been drawn to from the
+         * Handle removal from potential O molecules that this C atom could have drawn in from the
          * potential drawing list.
          * Is only used in the Eley-Rideal variant (trigger collider not active otherwise).
          * * <param name="other"> Collider of object leaving this collider. </param>
@@ -236,7 +232,7 @@ namespace Maroon.Chemistry.Catalyst
             if (ConnectedMolecule == null)
             {
                 Molecule otherMolecule = other.gameObject.GetComponent<Molecule>();
-                if (otherMolecule != null && otherMolecule.Type == MoleculeType.O2 && otherMolecule.State == MoleculeState.Fixed)
+                if (otherMolecule != null && otherMolecule.Type == MoleculeType.O)
                 {
                     // if O2 exits collider remove from list
                     if (potentialDrawMolecules.Contains(otherMolecule))

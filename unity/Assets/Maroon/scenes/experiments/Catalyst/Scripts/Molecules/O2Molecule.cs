@@ -32,7 +32,7 @@ namespace Maroon.Chemistry.Catalyst
         
         protected override void HandleDrawingPossibility()
         {
-            if (Random.Range(0, 100) > 100 - CurrentTurnOverRate)
+            if (Random.Range(0, 100) > 100 - CurrentTurnOverRate && PossibleDrawingMolecule.ConnectedMolecule == null)
             {
                 PossibleDrawingMolecule.ConnectedMolecule = this; // connect this (O2) to plat molecule
                 SetMoleculeDrawn(PossibleDrawingMolecule, MoleculeState.DrawnBySurfaceMolecule); // drawn by plat or cobalt
