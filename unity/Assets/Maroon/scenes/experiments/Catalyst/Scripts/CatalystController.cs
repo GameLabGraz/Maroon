@@ -231,7 +231,7 @@ namespace Maroon.Chemistry.Catalyst
             progressChart.gameObject.SetActive(false);
             progressChart.series.list[0].data[0].data[1] = 0.0f;
             
-            if (IsVrVersion)
+            if (isVrVersion)
             {
                 lineChartLangmuirVRBox.gameObject.SetActive(false);
                 lineChartVanKrevelenVRBox.gameObject.SetActive(false);
@@ -252,7 +252,7 @@ namespace Maroon.Chemistry.Catalyst
         {
             if (_doInteractiveSimulation)
                 HandleCatalystSurfaceSetup();
-            if (!IsVrVersion)
+            if (!isVrVersion)
                 DrawSimulationGraphsPC();
             else
                 DrawSimulationGraphsVR();
@@ -527,17 +527,20 @@ namespace Maroon.Chemistry.Catalyst
             oMolecule.OnCO2Created -= CreateCO2;
             RemoveMoleculeFromActiveList(oMolecule);
             RemoveMoleculeFromActiveList(coMolecule);
-            Transform parentTransform = coMolecule.gameObject.transform.parent;
-            Vector3 coPosition = coMolecule.gameObject.transform.position;
-            Quaternion coRotation = coMolecule.gameObject.transform.rotation;
-            if (coMolecule.ConnectedMolecule) // eley-rideal CO has no connected molecule
+            Transform parentTransform = coMolecule ? coMolecule.gameObject.transform.parent : oMolecule.gameObject.transform.parent;
+            Vector3 coPosition = coMolecule ? coMolecule.gameObject.transform.position : oMolecule.gameObject.transform.position;
+            Quaternion coRotation = coMolecule ? coMolecule.gameObject.transform.rotation : oMolecule.gameObject.transform.rotation;
+            if (coMolecule)
             {
-                coMolecule.ConnectedMolecule.ActivateDrawingCollider(true);
-                coMolecule.ConnectedMolecule = null;
+                if (coMolecule.ConnectedMolecule) // eley-rideal CO has no connected molecule
+                {
+                    coMolecule.ConnectedMolecule.ActivateDrawingCollider(true);
+                    coMolecule.ConnectedMolecule = null;
+                }
+                Destroy(coMolecule.gameObject);
             }
 
             Destroy(oMolecule.gameObject);
-            Destroy(coMolecule.gameObject);
 
             Molecule co2Molecule = Instantiate(co2MoleculePrefab, parentTransform);
             co2Molecule.gameObject.transform.position = coPosition;
@@ -610,16 +613,16 @@ namespace Maroon.Chemistry.Catalyst
                 partialPressureView.ClearUI();
             }
 
-            temperature.minValue = TemperatureStageValues[(int) ExperimentVariation][0] - 273.15f;
-            temperature.maxValue = TemperatureStageValues[(int) ExperimentVariation][TemperatureStageValues[(int) ExperimentVariation].Length - 1] - 273.15f;
+            temperature.minValue = TemperatureStageValues[(int) variation][0] - 273.15f;
+            temperature.maxValue = TemperatureStageValues[(int) variation][TemperatureStageValues[(int) variation].Length - 1] - 273.15f;
 
-            partialPressure.minValue = PartialPressureValues[(int) ExperimentVariation][0];
-            partialPressure.maxValue = PartialPressureValues[(int) ExperimentVariation][PartialPressureValues[(int) ExperimentVariation].Length - 1];
+            partialPressure.minValue = PartialPressureValues[(int) variation][0];
+            partialPressure.maxValue = PartialPressureValues[(int) variation][PartialPressureValues[(int) variation].Length - 1];
 
             temperature.Value = temperature.minValue;
             partialPressure.Value = partialPressure.minValue;
 
-            if (IsVrVersion)
+            if (isVrVersion)
             {
                 temperatureViewVr.RecalibrateRange(temperature.minValue, temperature.maxValue);
                 partialPressureViewVr.RecalibrateRange(partialPressure.minValue, partialPressure.maxValue);
@@ -782,7 +785,7 @@ namespace Maroon.Chemistry.Catalyst
             
             SetSimulationParametersMinMax(ExperimentVariation);
 
-            if (IsVrVersion)
+            if (isVrVersion)
             {
                 whiteboardController.SelectLecture(0);
                 whiteboardControllerBox.SelectLecture(0);
@@ -821,7 +824,7 @@ namespace Maroon.Chemistry.Catalyst
             lineChartVanKrevelen.gameObject.SetActive(false);
             progressChart.gameObject.SetActive(false);
             progressChart.series.list[0].data[0].data[1] = 0.0f;
-            if (IsVrVersion)
+            if (isVrVersion)
             {
                 lineChartLangmuirVRBox.gameObject.SetActive(false);
                 lineChartVanKrevelenVRBox.gameObject.SetActive(false);
@@ -897,7 +900,7 @@ namespace Maroon.Chemistry.Catalyst
                 currentStepText.text = CurrentExperimentStage.ToString();
             SetSimulationParametersMinMax(ExperimentVariation);
             
-            if (IsVrVersion)
+            if (isVrVersion)
             {
                 whiteboardController.SelectLecture(0);
                 whiteboardControllerBox.SelectLecture(0);
