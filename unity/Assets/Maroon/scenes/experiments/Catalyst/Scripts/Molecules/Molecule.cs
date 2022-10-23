@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using Maroon.Physics;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -163,7 +164,16 @@ namespace Maroon.Chemistry.Catalyst
                 type != MoleculeType.Co &&
                 type != MoleculeType.O) return;
 
-            collider.enabled = activate;
+            if (activate && (type == MoleculeType.Pt || type == MoleculeType.Co))
+                StartCoroutine(CoActivateSurfaceDrawingDelayed());
+            else
+                collider.enabled = activate;
+        }
+
+        private IEnumerator CoActivateSurfaceDrawingDelayed()
+        {
+            yield return new WaitForSeconds(1.0f);
+            collider.enabled = true;
         }
 
         protected override void Start()
