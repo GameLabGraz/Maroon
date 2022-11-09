@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class SolarSystem : MonoBehaviour
 {
-    readonly float G = 100f; //G = gravitational constant
+    //readonly float G = 100f; //G = gravitational constant
+    public float G = 100f; //G = gravitational constant
+    //public float semi_mayor_axis;
     GameObject[] planets;
 
 
