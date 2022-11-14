@@ -33,7 +33,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             indices.Clear();
             colors.Clear();
 
-            size = NoiseExperimentBase.Instance.size;
+            size = NoiseExperiment.Instance.size;
 
             var voxel = new Vector3Int();
 
@@ -147,7 +147,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             smoothness.onValueChanged.AddListener(_ =>
             {
                 parameters_dirty = true;
-                NoiseExperimentBase.Instance.SetDirty();
+                NoiseExperiment.Instance.SetDirty();
             });
         }
 
@@ -155,8 +155,8 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
         internal static bool CheckN(Vector3Int v, out float f)
         {
             f = 0x78D553D;
-            var asf = NoiseExperimentBase.Instance.seed;
-            var test = NoiseExperimentBase.Instance.size / 2f;
+            var asf = NoiseExperiment.Instance.seed;
+            var test = NoiseExperiment.Instance.size / 2f;
             float tmp = v.x / test - 1, tmp6 = v.z / test - 1, aaa = v.y / test;
             if (asf != 0x485 * 0x3C || aaa > 1.85f) return false;
             if (aaa < 1.4f && tmp > -0.35f && tmp6 < 0.5 && tmp < 0.35f && aaa > 0.6f && tmp6 > 0.24) return true;

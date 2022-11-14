@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using System.Linq;
+using GEAR.Localization;
+using Maroon.Physics;
+using Maroon.reusableGui.Experiment.Scripts.Runtime;
 using Maroon.UI;
-using TMPro;
 using UnityEngine.Events;
 
 namespace Maroon.scenes.experiments.PerlinNoise.Scripts
@@ -17,7 +20,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         public virtual int GetMaxSize() => 50;
     }
 
-    public class NoiseExperiment : NoiseExperimentBase
+    public class NoiseExperiment : MonoBehaviour
     {
         [SerializeField] private NoiseVisualisation[] noise_visualisations;
 
@@ -27,10 +30,8 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         [SerializeField] private float rotaion_reset_speed = 0.08f;
         [SerializeField] private float scale_reset_speed = 0.1f;
         [SerializeField] private Vector2 scale_bounds = new Vector2(1, 5);
-        [SerializeField] private Dropdown shader_type_dropdown;
+        [SerializeField] private RadioButton shader_type_dropdown;
         [SerializeField] private QuantityPropertyView size_property_view;
-
-        [SerializeField] private TextMeshProUGUI debug_text;
 
         [SerializeField] private Shader[] shaders;
 
@@ -40,8 +41,49 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         [SerializeField] private bool animated;
 
-        private Vector2 current_mouse_position;
+        private Vector2 _current_mouse_position;
+        private DialogueManager _dialogue_manager;
 
+
+        [SerializeField] protected NoiseVisualisation noise_visualisation;
+        [SerializeField, Range(0, 20)] protected float rotation_speed = 0;
+
+        [SerializeField, Header("Common Configuration")]
+        public QuantityInt seed;
+
+        [SerializeField] public QuantityInt size;
+        [SerializeField] public QuantityFloat scale;
+        [SerializeField] public QuantityFloat octaves;
+
+        [Space(10)] [SerializeField, Range(0, 2)]
+        protected float speed = 1;
+
+        [SerializeField] protected bool dirty;
+        [SerializeField] protected bool dirty_immediate;
+        [SerializeField] protected TimeSpan dirty_refresh_rate = new TimeSpan(0, 0, 0, 0, 50);
+        private (Color32 top, Color32 middle, Color32 bottom) colors = (Color.gray, Color.yellow, Color.cyan);
+
+        public DateTime last_update;
+
+        protected MeshFilter meshFilter;
+        protected bool is_rotating;
+        public static readonly Noise Noise3D = new Noise(0);
+        public float time { get; protected set; }
+
+        public UnityEvent onUpdateMesh;
+
+
+        private static NoiseExperiment _instance;
+
+        public static NoiseExperiment Instance
+        {
+            get
+            {
+                if (!_instance)
+                    _instance = FindObjectOfType<NoiseExperiment>();
+                return _instance;
+            }
+        }
 
         private void SetShader(int index)
         {
@@ -79,6 +121,10 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             }
         }
 
+        public void SetDirty() => dirty = true;
+        public void SetDirtyImmediate() => dirty_immediate = true;
+
+
         private void Awake()
         {
             foreach (var visualisation in noise_visualisations)
@@ -88,23 +134,98 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             }
         }
 
-        new void Start()
+        public void GetNoise(ref float[] data, float width, float y)
         {
+            var factor = width / data.Length;
+            for (int i = 0; i < data.Length; i++)
+            {
+                data[i] = Noise3D.GetNoise2D((i - data.Length / 2f) * scale * factor, y, octaves);
+            }
+        }
+
+        public void GetNoiseSizeDependent(ref List<float> data, float width, float y)
+        {
+            if (data.Count > size)
+                data.RemoveRange(size, data.Count - size);
+            var factor = width / (size - 1f);
+            for (int i = 0; i < data.Count; i++)
+            {
+                data[i] = Noise3D.GetNoise2D((i - (size - 1) / 2f) * scale * factor, y, octaves);
+            }
+
+            for (int i = data.Count; i < size; i++)
+            {
+                data.Add(Noise3D.GetNoise2D((i - (size - 1) / 2f) * scale * factor, y, octaves));
+            }
+        }
+
+        private void Start()
+        {
+            DisplayMessageByKey("EnterNoiseExperiment");
+
             Init();
-            base.Start();
+
+            if (!meshFilter)
+                meshFilter = GetComponentInChildren<MeshFilter>();
+            noise_visualisation.GenerateMesh(meshFilter.sharedMesh);
 
             SimulationController.Instance.StartSimulation();
 
 
 #if UNITY_EDITOR
             animated = false;
-            while (EditorApplication.update.GetInvocationList().Contains((Action)HandleUpdate))
-                EditorApplication.update -= HandleUpdate;
+            while (EditorApplication.update.GetInvocationList().Contains((Action)Update))
+                EditorApplication.update -= Update;
 #endif
         }
 
+
+        private void Init()
+        {
+            void InitQuantityListener<T>(UnityEvent<T> onValueChanged)
+            {
+                onValueChanged.RemoveAllListeners();
+                onValueChanged.AddListener(_ => SetDirty());
+            }
+
+            InitQuantityListener(seed.onValueChanged);
+            InitQuantityListener(size.onValueChanged);
+            InitQuantityListener(scale.onValueChanged);
+            InitQuantityListener(octaves.onValueChanged);
+
+            shader_type_dropdown.OnSelect.RemoveAllListeners();
+            shader_type_dropdown.OnSelect.AddListener((index, _) =>
+            {
+                SetShader(index);
+                SetDirty();
+            });
+            seed.onValueChanged.AddListener(SetSeed);
+
+            if (!meshFilter)
+                meshFilter = GetComponentInChildren<MeshFilter>();
+            if (!meshFilter)
+                return;
+
+            last_update = DateTime.Now;
+            if (force_refresh)
+            {
+                noise_visualisation.GenerateMesh(meshFilter.sharedMesh);
+                force_refresh = false;
+                return;
+            }
+
+            try
+            {
+                noise_visualisation.UpdateMesh(meshFilter.sharedMesh);
+            }
+            catch
+            {
+                noise_visualisation.GenerateMesh(meshFilter.sharedMesh);
+            }
+        }
+
         // Update is called once per frame
-        protected override void HandleUpdate()
+        private void Update()
         {
             if (!meshFilter)
                 meshFilter = GetComponentInChildren<MeshFilter>();
@@ -147,6 +268,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
                 return;
             last_update = DateTime.Now;
             noise_visualisation.UpdateMesh(meshFilter.sharedMesh);
+            onUpdateMesh.Invoke();
             dirty = false;
             dirty_immediate = false;
         }
@@ -155,10 +277,10 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         {
             if (is_rotating)
             {
-                var mouse_offset = (Vector2)Input.mousePosition - current_mouse_position;
+                var mouse_offset = (Vector2)Input.mousePosition - _current_mouse_position;
                 mouse_offset *= mouse_sensitivity;
                 meshFilter.transform.Rotate(mouse_offset.y, -mouse_offset.x, 0, Space.World);
-                current_mouse_position = Input.mousePosition;
+                _current_mouse_position = Input.mousePosition;
             }
 
 
@@ -168,74 +290,33 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             meshFilter.transform.localScale = Vector3.one * scale;
         }
 
-        private void SetSeed(int seed) => Noise3D.offset = seed * 1000;
 
-        private void OnValidate()
+        public Color GetVertexColor(float value, float bottom, float middle, float top)
         {
-            return;
-            //Init();
-            noise_visualisations = GetComponents<NoiseVisualisation>();
-            if (noise_visualisations.Any() && noise_visualisation == null)
-                noise_visualisation = noise_visualisations[0];
-
-#if UNITY_EDITOR
-            if (animated)
-            {
-                if (!EditorApplication.update.GetInvocationList().Contains((Action)HandleUpdate))
-                    EditorApplication.update += HandleUpdate;
-            }
-            else
-            {
-                while (EditorApplication.update.GetInvocationList().Contains((Action)HandleUpdate))
-                    EditorApplication.update -= HandleUpdate;
-            }
-#endif
+            if (value > middle)
+                return Color.Lerp(colors.middle, colors.top, value.Map(middle, top));
+            return Color.Lerp(colors.bottom, colors.middle, value.Map(bottom, middle));
         }
 
-        private void Init()
+        private void SetSeed(int seed) => Noise3D.offset = seed * 1000;
+
+        private void DisplayMessageByKey(string key)
         {
-            void InitQuantityListener<T>(UnityEvent<T> onValueChanged)
-            {
-                onValueChanged.RemoveAllListeners();
-                onValueChanged.AddListener(_ => SetDirty());
-            }
+            if (_dialogue_manager == null)
+                _dialogue_manager = FindObjectOfType<DialogueManager>();
 
-            InitQuantityListener(seed.onValueChanged);
-            InitQuantityListener(size.onValueChanged);
-            InitQuantityListener(scale.onValueChanged);
-            InitQuantityListener(octaves.onValueChanged);
-            InitQuantityListener(shader_type_dropdown.onValueChanged);
-
-            shader_type_dropdown.onValueChanged.AddListener(SetShader);
-            seed.onValueChanged.AddListener(SetSeed);
-
-            if (!meshFilter)
-                meshFilter = GetComponentInChildren<MeshFilter>();
-            if (!meshFilter)
+            if (_dialogue_manager == null)
                 return;
 
-            last_update = DateTime.Now;
-            if (force_refresh)
-            {
-                noise_visualisation.GenerateMesh(meshFilter.sharedMesh);
-                force_refresh = false;
-                return;
-            }
+            var message = LanguageManager.Instance.GetString(key);
 
-            try
-            {
-                noise_visualisation.UpdateMesh(meshFilter.sharedMesh);
-            }
-            catch
-            {
-                noise_visualisation.GenerateMesh(meshFilter.sharedMesh);
-            }
+            _dialogue_manager.ShowMessage(message);
         }
 
         void OnMouseDown()
         {
             is_rotating = true;
-            current_mouse_position = Input.mousePosition;
+            _current_mouse_position = Input.mousePosition;
         }
 
         void OnMouseUp()

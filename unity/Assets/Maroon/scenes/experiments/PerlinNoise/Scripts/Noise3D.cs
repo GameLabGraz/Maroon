@@ -24,7 +24,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         public bool GenerateNoiseMap()
         {
             var dirty = false;
-            size = NoiseExperimentBase.Instance.size;
+            size = NoiseExperiment.Instance.size;
             if (noise_map_array?.Length != size * size * size)
             {
                 noise_map_array = new float[size * size * size];
@@ -41,11 +41,11 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
                     {
                         var coordinates01 = (Vector3)voxel / (size - 1) - Utils.half_vector_3;
                         var center = offset + Utils.half_vector_3;
-                        var noise_pos = center + coordinates01 * ((NoiseExperimentBase.Instance.scale + 1) * 0.3f);
-                        var n3 = NoiseExperimentBase.Noise3D.GetNoise3D(noise_pos.x, noise_pos.y, noise_pos.z,
-                            NoiseExperimentBase.Instance.octaves);
-                        var n2 = NoiseExperimentBase.Noise3D.GetNoise2D(noise_pos.x, noise_pos.z,
-                            NoiseExperimentBase.Instance.octaves);
+                        var noise_pos = center + coordinates01 * ((NoiseExperiment.Instance.scale + 1) * 0.3f);
+                        var n3 = NoiseExperiment.Noise3D.GetNoise3D(noise_pos.x, noise_pos.y, noise_pos.z,
+                            NoiseExperiment.Instance.octaves);
+                        var n2 = NoiseExperiment.Noise3D.GetNoise2D(noise_pos.x, noise_pos.z,
+                            NoiseExperiment.Instance.octaves);
                         n2 = n2.Map(-2, 2);
                         var n = n3 * (1 - flatness) + (n2 - (float)voxel.y / size) * flatness;
                         n = BorderAdjustment(voxel, n);
@@ -121,13 +121,13 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             flatness.onValueChanged.AddListener(_ =>
             {
                 parameters_dirty = true;
-                NoiseExperimentBase.Instance.SetDirty();
+                NoiseExperiment.Instance.SetDirty();
             });
             threshold.onValueChanged.RemoveAllListeners();
             threshold.onValueChanged.AddListener(_ =>
             {
                 parameters_dirty = true;
-                NoiseExperimentBase.Instance.SetDirty();
+                NoiseExperiment.Instance.SetDirty();
             });
         }
     }

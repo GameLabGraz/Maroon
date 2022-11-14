@@ -27,7 +27,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             vertices.Clear();
             indices.Clear();
 
-            size = NoiseExperimentBase.Instance.size;
+            size = NoiseExperiment.Instance.size;
 
             var voxel = new Vector3Int();
             for (voxel.x = 0; voxel.x < size; voxel.x++)
@@ -44,7 +44,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             mesh.Clear();
             mesh.vertices = vertices.ToArray();
             mesh.triangles = indices.ToArray();
-            mesh.colors = vertices.Select(v_ => NoiseExperimentBase.Instance.GetVertexColor(v_.y, 0, size * 0.5f, size))
+            mesh.colors = vertices.Select(v_ => NoiseExperiment.Instance.GetVertexColor(v_.y, 0, size * 0.5f, size))
                 .ToArray();
             mesh.RecalculateNormals();
         }
@@ -83,13 +83,6 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             var is_up_visible = IsFaceVisible(voxel, up);
             var is_front_visible = IsFaceVisible(voxel, front);
             var is_back_visible = IsFaceVisible(voxel, back);
-
-            var face_count = (is_left_visible ? 1 : 0) +
-                             (is_right_visible ? 1 : 0) +
-                             (is_down_visible ? 1 : 0) +
-                             (is_up_visible ? 1 : 0) +
-                             (is_front_visible ? 1 : 0) +
-                             (is_back_visible ? 1 : 0);
 
             if (is_left_visible)
             {
@@ -155,8 +148,6 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             for (int i = 0; i < 4; i++)
                 new_vertices[i] = (new_vertices[i] - one * (0.5f * size) + transform_offset) / size;
             vertices.AddRange(new_vertices);
-            //     colors.AddRange(
-            //       new_vertices.Select(v => NoiseExperimentBase.Instance.GetVertexColor(v.y, 0, size * 0.5f, size)));
             indices.AddRange(new[]
             {
                 vertices.Count - 1, vertices.Count - 3, vertices.Count - 2,

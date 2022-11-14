@@ -21,7 +21,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
 
         public override void GenerateMesh(Mesh mesh)
         {
-            size = NoiseExperimentBase.Instance.size;
+            size = NoiseExperiment.Instance.size;
             noise_samples = 0;
             total_noise_height = 0;
 
@@ -146,7 +146,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             mesh.vertices = vertices.Select(v => v - new Vector3(0, total_noise_height / noise_samples, 0)).ToArray();
             mesh.uv = UVs.ToArray();
             mesh.colors = vertices
-                .Select(v => NoiseExperimentBase.Instance.GetVertexColor(v.y, -height_scale, 0, height_scale))
+                .Select(v => NoiseExperiment.Instance.GetVertexColor(v.y, -height_scale, 0, height_scale))
                 .ToArray();
             mesh.triangles = indices.ToArray();
             mesh.RecalculateNormals();
@@ -156,7 +156,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
         {
             noise_samples = 0;
             total_noise_height = 0;
-            size = NoiseExperimentBase.Instance.size;
+            size = NoiseExperiment.Instance.size;
 
 
             var vertex_count = size * size * 2 + size * 8;
@@ -214,7 +214,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             mesh.vertices = vertices.Select(v => v - new Vector3(0, total_noise_height / noise_samples, 0)).ToArray();
 
             mesh.colors = vertices
-                .Select(v => NoiseExperimentBase.Instance.GetVertexColor(v.y, -height_scale, 0, height_scale))
+                .Select(v => NoiseExperiment.Instance.GetVertexColor(v.y, -height_scale, 0, height_scale))
                 .ToArray();
             mesh.RecalculateNormals();
         }
@@ -224,8 +224,8 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
         {
             var coordinates01 = new Vector2(x, y) / (size - 1) - Utils.half_vector_2;
             var center = Utils.half_vector_2;
-            var pos = center + coordinates01 * NoiseExperimentBase.Instance.scale;
-            var height = NoiseExperimentBase.Noise3D.GetNoise2D(pos.x, pos.y, NoiseExperimentBase.Instance.octaves);
+            var pos = center + coordinates01 * NoiseExperiment.Instance.scale;
+            var height = NoiseExperiment.Noise3D.GetNoise2D(pos.x, pos.y, NoiseExperiment.Instance.octaves);
             height *= height_scale;
 
             total_noise_height += height;
