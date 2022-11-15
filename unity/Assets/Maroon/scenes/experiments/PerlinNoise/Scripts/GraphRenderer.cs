@@ -30,6 +30,9 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
             NoiseExperiment.Instance.GetNoiseSizeDependent(ref _data2, width, _y);
             lineChart.SetData(_data2, 1);
+
+            var threshold = NoiseExperiment.Instance.GetThreshold();
+            lineChart.SetData(2, threshold, threshold);
         }
     }
 }

@@ -18,6 +18,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
 
         [SerializeField] private QuantityFloat smoothness;
         private bool parameters_dirty = false;
+        public float threshold => noise_3d.threshold;
 
         private int size;
 

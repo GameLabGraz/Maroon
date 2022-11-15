@@ -6,6 +6,7 @@ using System.Linq;
 using GEAR.Localization;
 using Maroon.Physics;
 using Maroon.reusableGui.Experiment.Scripts.Runtime;
+using Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations;
 using Maroon.UI;
 using UnityEngine.Events;
 
@@ -13,11 +14,19 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 {
     public abstract class NoiseVisualisation : MonoBehaviour
     {
-        public GameObject panel;
+        public GameObject[] panel;
         public abstract void GenerateMesh(Mesh mesh);
         public abstract void UpdateMesh(Mesh mesh);
 
         public virtual int GetMaxSize() => 50;
+
+        public void SetPanelActive(bool active)
+        {
+            foreach (var p in panel)
+            {
+                if(p) p.SetActive(active);
+            }
+        }
     }
 
     public class NoiseExperiment : MonoBehaviour
@@ -67,7 +76,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         protected MeshFilter meshFilter;
         protected bool is_rotating;
-        public static readonly Noise Noise3D = new Noise(0);
+        public static readonly Noise noise = new Noise(0);
         public float time { get; protected set; }
 
         public UnityEvent onUpdateMesh;
@@ -100,15 +109,14 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             SetDirtyImmediate();
             force_refresh = true;
 
-            if (noise_visualisation && noise_visualisation.panel)
-                noise_visualisation.panel.SetActive(false);
+            if (noise_visualisation)
+                noise_visualisation.SetPanelActive(false);
 
             noise_visualisation = noise_visualisations[index];
 
             if (noise_visualisation)
             {
-                if (noise_visualisation.panel)
-                    noise_visualisation.panel.SetActive(true);
+                noise_visualisation.SetPanelActive(true);
 
                 //keep same relative size value, the slider doesnt change but the number
                 var relative_size = (float)size / size.maxValue;
@@ -129,8 +137,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         {
             foreach (var visualisation in noise_visualisations)
             {
-                if (visualisation.panel)
-                    visualisation.panel.SetActive(false);
+                visualisation.SetPanelActive(false);
             }
         }
 
@@ -139,7 +146,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             var factor = width / data.Length;
             for (int i = 0; i < data.Length; i++)
             {
-                data[i] = Noise3D.GetNoise2D((i - data.Length / 2f) * scale * factor, y, octaves);
+                data[i] = noise.GetNoise2D((i - data.Length / 2f) * scale * factor, y, octaves);
             }
         }
 
@@ -150,12 +157,12 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             var factor = width / (size - 1f);
             for (int i = 0; i < data.Count; i++)
             {
-                data[i] = Noise3D.GetNoise2D((i - (size - 1) / 2f) * scale * factor, y, octaves);
+                data[i] = noise.GetNoise2D((i - (size - 1) / 2f) * scale * factor, y, octaves);
             }
 
             for (int i = data.Count; i < size; i++)
             {
-                data.Add(Noise3D.GetNoise2D((i - (size - 1) / 2f) * scale * factor, y, octaves));
+                data.Add(noise.GetNoise2D((i - (size - 1) / 2f) * scale * factor, y, octaves));
             }
         }
 
@@ -257,6 +264,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             if (force_refresh)
             {
                 noise_visualisation.GenerateMesh(meshFilter.sharedMesh);
+                onUpdateMesh.Invoke();
                 force_refresh = false;
                 dirty = false;
                 dirty_immediate = false;
@@ -298,7 +306,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             return Color.Lerp(colors.bottom, colors.middle, value.Map(bottom, middle));
         }
 
-        private void SetSeed(int seed) => Noise3D.offset = seed * 1000;
+        private void SetSeed(int seed) => noise.offset = seed * 1000;
 
         private void DisplayMessageByKey(string key)
         {
@@ -322,6 +330,19 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         void OnMouseUp()
         {
             is_rotating = false;
+        }
+
+        public float GetThreshold()
+        {
+            switch (noise_visualisation)
+            {
+                case NoiseVisualisationVoxel visualisationVoxel:
+                    return -visualisationVoxel.threshold + 0.5f;
+                case NoiseVisualisationMarchingCubes marchingCubes:
+                    return -marchingCubes.threshold + 0.5f;
+                default:
+                    return 0;
+            }
         }
     }
 }

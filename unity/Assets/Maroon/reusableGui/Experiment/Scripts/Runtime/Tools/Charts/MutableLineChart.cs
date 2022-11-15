@@ -22,6 +22,8 @@ namespace Maroon.UI.Charts
         {
         }
 
+        public void SetData(int series, params float[] values) => SetData(values, series);
+
         public void SetData(IReadOnlyList<float> values, int series = 0)
         {
             var serie = Chart.series.GetSerie(series) ?? Chart.series.AddSerie(SerieType.Line, string.Empty);

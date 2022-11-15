@@ -225,7 +225,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             var coordinates01 = new Vector2(x, y) / (size - 1) - Utils.half_vector_2;
             var center = Utils.half_vector_2;
             var pos = center + coordinates01 * NoiseExperiment.Instance.scale;
-            var height = NoiseExperiment.Noise3D.GetNoise2D(pos.x, pos.y, NoiseExperiment.Instance.octaves);
+            var height = NoiseExperiment.noise.GetNoise2D(pos.x, pos.y, NoiseExperiment.Instance.octaves);
             height *= height_scale;
 
             total_noise_height += height;

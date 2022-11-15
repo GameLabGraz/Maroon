@@ -13,7 +13,6 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         private float[] noise_map_array;
 
-        [SerializeField] public QuantityFloat flatness;
         [SerializeField] public QuantityFloat threshold;
 
         private bool parameters_dirty = false;
@@ -42,12 +41,8 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
                         var coordinates01 = (Vector3)voxel / (size - 1) - Utils.half_vector_3;
                         var center = offset + Utils.half_vector_3;
                         var noise_pos = center + coordinates01 * ((NoiseExperiment.Instance.scale + 1) * 0.3f);
-                        var n3 = NoiseExperiment.Noise3D.GetNoise3D(noise_pos.x, noise_pos.y, noise_pos.z,
+                        var n = NoiseExperiment.noise.GetNoise3D(noise_pos.x, noise_pos.y, noise_pos.z,
                             NoiseExperiment.Instance.octaves);
-                        var n2 = NoiseExperiment.Noise3D.GetNoise2D(noise_pos.x, noise_pos.z,
-                            NoiseExperiment.Instance.octaves);
-                        n2 = n2.Map(-2, 2);
-                        var n = n3 * (1 - flatness) + (n2 - (float)voxel.y / size) * flatness;
                         n = BorderAdjustment(voxel, n);
                         n = n.LogSigmoid();
 
@@ -117,12 +112,6 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         private void Init()
         {
-            flatness.onValueChanged.RemoveAllListeners();
-            flatness.onValueChanged.AddListener(_ =>
-            {
-                parameters_dirty = true;
-                NoiseExperiment.Instance.SetDirty();
-            });
             threshold.onValueChanged.RemoveAllListeners();
             threshold.onValueChanged.AddListener(_ =>
             {

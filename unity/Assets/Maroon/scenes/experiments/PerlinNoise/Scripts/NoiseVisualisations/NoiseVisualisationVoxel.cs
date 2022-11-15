@@ -74,6 +74,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
         private readonly Vector3 one = Vector3.one;
 
         private Vector3[] vec = new Vector3[4];
+        public float threshold => noise_3d.threshold;
 
         private void AddVoxelVertices(Vector3Int voxel)
         {
