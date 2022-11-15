@@ -16,19 +16,19 @@ namespace Maroon.reusableGui.Experiment.Scripts.Runtime
 
     public class RadioButton : MonoBehaviour
     {
-        public int selected_index { get; private set; }
+        public int SelectedIndex { get; private set; }
         [SerializeField] private List<string> buttons;
-        public ButtonToggleEvent OnSelect;
+        public ButtonToggleEvent onSelect;
 
 
-        private List<Button> button_objects = new List<Button>();
-        private Button selected;
+        private List<Button> _button_objects = new List<Button>();
+        private Button _selected;
 
         // Start is called before the first frame update
-        void Start()
+        private void Start()
         {
             Refresh();
-            OnSelectButton(selected_index);
+            OnSelectButton(SelectedIndex);
         }
 
         public void SetButtons(List<string> b)
@@ -39,17 +39,17 @@ namespace Maroon.reusableGui.Experiment.Scripts.Runtime
 
         private void OnSelectButton(int index)
         {
-            Debug.Assert(button_objects.IsValidIndex(index),
+            Debug.Assert(_button_objects.IsValidIndex(index),
                 $"ButtonToggle: Selected button id {index} is not in buttons list");
 
-            selected_index = index;
-            if (selected)
-                selected.interactable = true;
+            SelectedIndex = index;
+            if (_selected)
+                _selected.interactable = true;
 
-            selected = button_objects[selected_index];
-            selected.interactable = false;
+            _selected = _button_objects[SelectedIndex];
+            _selected.interactable = false;
 
-            OnSelect.Invoke(selected_index, buttons[selected_index]);
+            onSelect.Invoke(SelectedIndex, buttons[SelectedIndex]);
         }
 
         private void OnValidate()
@@ -61,20 +61,20 @@ namespace Maroon.reusableGui.Experiment.Scripts.Runtime
 
         private void Refresh()
         {
-            if (button_objects == null)
-                button_objects = new List<Button>();
-            if (button_objects.Count == 0) //should not happen
-                button_objects.AddRange(transform.GetComponentsInChildren<Button>());
+            if (_button_objects == null)
+                _button_objects = new List<Button>();
+            if (_button_objects.Count == 0) //should not happen
+                _button_objects.AddRange(transform.GetComponentsInChildren<Button>());
 
-            var current_size = transform.childCount;
-            var target_size = Math.Max(buttons.Count, 1); //we need to keep at least one button as a template
+            var currentSize = transform.childCount;
+            var targetSize = Math.Max(buttons.Count, 1); //we need to keep at least one button as a template
 
-            if (button_objects.Count != current_size ||
-                button_objects.Any(b => b == null))
+            if (_button_objects.Count != currentSize ||
+                _button_objects.Any(b => b == null))
             {
                 Debug.LogWarning("RadioButton OnValidate: something went wrong, reset");
-                button_objects.Clear();
-                for (int i = 1; i < current_size; i++)
+                _button_objects.Clear();
+                for (int i = 1; i < currentSize; i++)
                 {
                     var go = transform.GetChild(i).gameObject;
                     this.EndFrame(() => DestroyImmediate(go));
@@ -82,55 +82,55 @@ namespace Maroon.reusableGui.Experiment.Scripts.Runtime
 
                 var template = transform.GetChild(0);
                 template.gameObject.SetActive(true);
-                button_objects.Add(GetComponentInChildren<Button>());
-                current_size = 1;
+                _button_objects.Add(GetComponentInChildren<Button>());
+                currentSize = 1;
             }
 
-            button_objects[0].gameObject
+            _button_objects[0].gameObject
                 .SetActive(buttons.Count != 0); //we cant delete the last button so we disable it
 
 
-            for (int i = current_size - 1; i >= target_size; i--)
+            for (int i = currentSize - 1; i >= targetSize; i--)
             {
                 //delete excess buttons
                 var go = transform.GetChild(i).gameObject;
                 this.EndFrame(() => DestroyImmediate(go));
-                button_objects.RemoveAt(i);
+                _button_objects.RemoveAt(i);
             }
 
-            var button_prefab = transform.GetChild(0);
-            for (int i = current_size; i < target_size; i++)
+            var buttonPrefab = transform.GetChild(0);
+            for (int i = currentSize; i < targetSize; i++)
             {
                 //add missing buttons
-                var go = Instantiate(button_prefab, transform);
+                var go = Instantiate(buttonPrefab, transform);
                 Debug.Assert(go);
 
                 var button = go.GetComponent<Button>();
                 Debug.Assert(button);
-                button_objects.Add(button);
+                _button_objects.Add(button);
             }
 
             for (int i = 0; i < buttons.Count; i++)
             {
                 //set button text
-                var text = button_objects[i].GetComponentInChildren<TextMeshProUGUI>();
+                var text = _button_objects[i].GetComponentInChildren<TextMeshProUGUI>();
                 Debug.Assert(text);
                 text.text = buttons[i];
-                button_objects[i].name = "button_" + buttons[i];
+                _button_objects[i].name = "button_" + buttons[i];
 
                 //set button listeners
-                var button = button_objects[i];
+                var button = _button_objects[i];
                 button.onClick.RemoveAllListeners();
                 var index = i;
                 button.onClick.AddListener(() => OnSelectButton(index));
                 button.gameObject.SetActive(true);
             }
 
-            selected_index = selected_index.Clamp(0, button_objects.Count - 1);
-            selected = button_objects[selected_index];
+            SelectedIndex = SelectedIndex.Clamp(0, _button_objects.Count - 1);
+            _selected = _button_objects[SelectedIndex];
 
-            foreach (var button in button_objects)
-                button.interactable = button != selected;
+            foreach (var button in _button_objects)
+                button.interactable = button != _selected;
         }
 
         bool PrefabModeIsActive()

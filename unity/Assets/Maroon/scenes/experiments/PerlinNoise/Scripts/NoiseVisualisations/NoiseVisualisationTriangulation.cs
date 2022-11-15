@@ -1,40 +1,34 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Maroon.Physics;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
 {
     public class NoiseVisualisationTriangulation : NoiseVisualisation
     {
-        [SerializeField, Range(0, 5)] float height_scale = 1;
-        [SerializeField, Range(0, 0.2f)] float thickness = 1;
-
-
-        private List<Vector3> vertices;
-
-        private float total_noise_height = 0;
-        private int noise_samples;
-
-        private int size;
-
+        [SerializeField] [Range(0, 5)] private float heightScale = 1;
+        [SerializeField] [Range(0, 0.2f)] private float thickness = 1;
+        private int _noise_samples;
+        private int _size;
+        private float _total_noise_height;
+        private List<Vector3> _vertices;
 
         public override void GenerateMesh(Mesh mesh)
         {
-            size = NoiseExperiment.Instance.size;
-            noise_samples = 0;
-            total_noise_height = 0;
+            _size = NoiseExperiment.Instance.size;
+            _noise_samples = 0;
+            _total_noise_height = 0;
 
-            var vertex_count = size * size * 2 + size * 8;
-            vertices = new List<Vector3>(vertex_count);
-            var UVs = new List<Vector2>(vertex_count);
+            var vertexCount = _size * _size * 2 + _size * 8;
+            _vertices = new List<Vector3>(vertexCount);
+            var UVs = new List<Vector2>(vertexCount);
             var indices = new List<int>();
 
-            for (int x = 0; x < size; x++)
+            for (var x = 0; x < _size; x++)
             {
-                for (int y = 0; y < size; y++)
+                for (var y = 0; y < _size; y++)
                 {
-                    vertices.Add(GetVertexNoise(x, y));
+                    _vertices.Add(GetVertexNoise(x, y));
                     UVs.Add(new Vector2(x, y));
 
                     if (x == 0 || y == 0)
@@ -42,17 +36,17 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
 
                     indices.AddRange(new[]
                     {
-                        vertices.Count - 1, vertices.Count - 2, vertices.Count - 1 - size,
-                        vertices.Count - 2 - size, vertices.Count - 1 - size, vertices.Count - 2
+                        _vertices.Count - 1, _vertices.Count - 2, _vertices.Count - 1 - _size,
+                        _vertices.Count - 2 - _size, _vertices.Count - 1 - _size, _vertices.Count - 2
                     });
                 }
             }
 
-            for (int x = 0; x < size; x++)
+            for (var x = 0; x < _size; x++)
             {
-                for (int y = 0; y < size; y++)
+                for (var y = 0; y < _size; y++)
                 {
-                    vertices.Add(vertices[x * size + y] + Vector3.down * thickness);
+                    _vertices.Add(_vertices[x * _size + y] + Vector3.down * thickness);
                     UVs.Add(new Vector2(x, y));
 
                     if (x == 0 || y == 0)
@@ -60,17 +54,17 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
 
                     indices.AddRange(new[]
                     {
-                        vertices.Count - 1, vertices.Count - 1 - size, vertices.Count - 2,
-                        vertices.Count - 2 - size, vertices.Count - 2, vertices.Count - 1 - size
+                        _vertices.Count - 1, _vertices.Count - 1 - _size, _vertices.Count - 2,
+                        _vertices.Count - 2 - _size, _vertices.Count - 2, _vertices.Count - 1 - _size
                     });
                 }
             }
 
-            for (int x = 0; x < size; x++) //left skirt
+            for (var x = 0; x < _size; x++) //left skirt
             {
                 var n = GetVertexNoise(x, 0);
-                vertices.Add(n + Vector3.down * thickness);
-                vertices.Add(n);
+                _vertices.Add(n + Vector3.down * thickness);
+                _vertices.Add(n);
                 UVs.Add(new Vector2(x, -1));
                 UVs.Add(new Vector2(x, 0));
 
@@ -79,52 +73,52 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
 
                 indices.AddRange(new[]
                 {
-                    vertices.Count - 1, vertices.Count - 2, vertices.Count - 3,
-                    vertices.Count - 4, vertices.Count - 3, vertices.Count - 2
+                    _vertices.Count - 1, _vertices.Count - 2, _vertices.Count - 3,
+                    _vertices.Count - 4, _vertices.Count - 3, _vertices.Count - 2
                 });
             }
 
-            for (int y = 0; y < size; y++) //bottom skirt
+            for (var y = 0; y < _size; y++) //bottom skirt
             {
-                var n = GetVertexNoise(size - 1, y);
-                vertices.Add(n + Vector3.down * thickness);
-                vertices.Add(n);
-                UVs.Add(new Vector2(size, y));
-                UVs.Add(new Vector2(size - 1, y));
+                var n = GetVertexNoise(_size - 1, y);
+                _vertices.Add(n + Vector3.down * thickness);
+                _vertices.Add(n);
+                UVs.Add(new Vector2(_size, y));
+                UVs.Add(new Vector2(_size - 1, y));
 
                 if (y == 0)
                     continue;
 
                 indices.AddRange(new[]
                 {
-                    vertices.Count - 1, vertices.Count - 2, vertices.Count - 3,
-                    vertices.Count - 4, vertices.Count - 3, vertices.Count - 2
+                    _vertices.Count - 1, _vertices.Count - 2, _vertices.Count - 3,
+                    _vertices.Count - 4, _vertices.Count - 3, _vertices.Count - 2
                 });
             }
 
-            for (int x = 0; x < size; x++) //right skirt
+            for (var x = 0; x < _size; x++) //right skirt
             {
-                var n = GetVertexNoise(x, size - 1);
-                vertices.Add(n + Vector3.down * thickness);
-                vertices.Add(n);
-                UVs.Add(new Vector2(x, size));
-                UVs.Add(new Vector2(x, size - 1));
+                var n = GetVertexNoise(x, _size - 1);
+                _vertices.Add(n + Vector3.down * thickness);
+                _vertices.Add(n);
+                UVs.Add(new Vector2(x, _size));
+                UVs.Add(new Vector2(x, _size - 1));
 
                 if (x == 0)
                     continue;
 
                 indices.AddRange(new[]
                 {
-                    vertices.Count - 1, vertices.Count - 3, vertices.Count - 2,
-                    vertices.Count - 4, vertices.Count - 2, vertices.Count - 3
+                    _vertices.Count - 1, _vertices.Count - 3, _vertices.Count - 2,
+                    _vertices.Count - 4, _vertices.Count - 2, _vertices.Count - 3
                 });
             }
 
-            for (int y = 0; y < size; y++) //top skirt
+            for (var y = 0; y < _size; y++) //top skirt
             {
                 var n = GetVertexNoise(0, y);
-                vertices.Add(n + Vector3.down * thickness);
-                vertices.Add(n);
+                _vertices.Add(n + Vector3.down * thickness);
+                _vertices.Add(n);
                 UVs.Add(new Vector2(-1, y));
                 UVs.Add(new Vector2(0, y));
 
@@ -133,8 +127,8 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
 
                 indices.AddRange(new[]
                 {
-                    vertices.Count - 1, vertices.Count - 3, vertices.Count - 2,
-                    vertices.Count - 4, vertices.Count - 2, vertices.Count - 3
+                    _vertices.Count - 1, _vertices.Count - 3, _vertices.Count - 2,
+                    _vertices.Count - 4, _vertices.Count - 2, _vertices.Count - 3
                 });
             }
 
@@ -143,10 +137,11 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
 
             mesh.Clear();
 
-            mesh.vertices = vertices.Select(v => v - new Vector3(0, total_noise_height / noise_samples, 0)).ToArray();
+            mesh.vertices = _vertices.Select(v => v - new Vector3(0, _total_noise_height / _noise_samples, 0))
+                .ToArray();
             mesh.uv = UVs.ToArray();
-            mesh.colors = vertices
-                .Select(v => NoiseExperiment.Instance.GetVertexColor(v.y, -height_scale, 0, height_scale))
+            mesh.colors = _vertices
+                .Select(v => NoiseExperiment.Instance.GetVertexColor(v.y.Map(-heightScale, heightScale)))
                 .ToArray();
             mesh.triangles = indices.ToArray();
             mesh.RecalculateNormals();
@@ -154,67 +149,68 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
 
         public override void UpdateMesh(Mesh mesh)
         {
-            noise_samples = 0;
-            total_noise_height = 0;
-            size = NoiseExperiment.Instance.size;
+            _noise_samples = 0;
+            _total_noise_height = 0;
+            _size = NoiseExperiment.Instance.size;
 
 
-            var vertex_count = size * size * 2 + size * 8;
-            if (vertices == null || vertices.Count != vertex_count)
+            var vertexCount = _size * _size * 2 + _size * 8;
+            if (_vertices == null || _vertices.Count != vertexCount)
             {
                 GenerateMesh(mesh);
                 return;
             }
 
-            var index = size * size;
-            for (int x = 0; x < size; x++)
+            var index = _size * _size;
+            for (var x = 0; x < _size; x++)
             {
-                for (int y = 0; y < size; y++)
+                for (var y = 0; y < _size; y++)
                 {
-                    vertices[x * size + y] = GetVertexNoise(x, y);
-                    vertices[x * size + y + index] = vertices[x * size + y] + Vector3.down * thickness;
+                    _vertices[x * _size + y] = GetVertexNoise(x, y);
+                    _vertices[x * _size + y + index] = _vertices[x * _size + y] + Vector3.down * thickness;
                 }
             }
 
             index *= 2;
-            for (int x = 0; x < size; x++) //left skirt
+            for (var x = 0; x < _size; x++) //left skirt
             {
                 var n = GetVertexNoise(x, 0);
-                vertices[index + 2 * x] = n + Vector3.down * thickness;
-                vertices[index + 2 * x + 1] = n;
+                _vertices[index + 2 * x] = n + Vector3.down * thickness;
+                _vertices[index + 2 * x + 1] = n;
             }
 
-            index += size * 2;
-            for (int y = 0; y < size; y++) //bottom skirt
+            index += _size * 2;
+            for (var y = 0; y < _size; y++) //bottom skirt
             {
-                var n = GetVertexNoise(size - 1, y);
-                vertices[index + 2 * y] = n + Vector3.down * thickness;
-                vertices[index + 2 * y + 1] = n;
+                var n = GetVertexNoise(_size - 1, y);
+                _vertices[index + 2 * y] = n + Vector3.down * thickness;
+                _vertices[index + 2 * y + 1] = n;
             }
 
-            index += size * 2;
-            for (int x = 0; x < size; x++) //right skirt
+            index += _size * 2;
+            for (var x = 0; x < _size; x++) //right skirt
             {
-                var n = GetVertexNoise(x, size - 1);
-                vertices[index + 2 * x] = n + Vector3.down * thickness;
-                vertices[index + 2 * x + 1] = n;
+                var n = GetVertexNoise(x, _size - 1);
+                _vertices[index + 2 * x] = n + Vector3.down * thickness;
+                _vertices[index + 2 * x + 1] = n;
             }
 
-            index += size * 2;
-            for (int y = 0; y < size; y++) //top skirt
+            index += _size * 2;
+            for (var y = 0; y < _size; y++) //top skirt
             {
                 var n = GetVertexNoise(0, y);
-                vertices[index + 2 * y] = n + Vector3.down * thickness;
-                vertices[index + 2 * y + 1] = n;
+                _vertices[index + 2 * y] = n + Vector3.down * thickness;
+                _vertices[index + 2 * y + 1] = n;
             }
 
             if (!mesh)
                 return;
 
-            mesh.vertices = vertices.Select(v => v - new Vector3(0, total_noise_height / noise_samples, 0)).ToArray();
+            mesh.vertices = _vertices.Select(v => v - new Vector3(0, _total_noise_height / _noise_samples, 0))
+                .ToArray();
 
-            mesh.colors = vertices
-                .Select(v => NoiseExperiment.Instance.GetVertexColor(v.y, -height_scale, 0, height_scale))
+            mesh.colors = _vertices
+                .Select(v => NoiseExperiment.Instance.GetVertexColor(v.y.Map(-heightScale, heightScale)))
                 .ToArray();
             mesh.RecalculateNormals();
         }
@@ -222,14 +218,14 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
 
         private Vector3 GetVertexNoise(float x, float y)
         {
-            var coordinates01 = new Vector2(x, y) / (size - 1) - Utils.half_vector_2;
-            var center = Utils.half_vector_2;
+            var coordinates01 = new Vector2(x, y) / (_size - 1) - Utils.HalfVector2;
+            var center = Utils.HalfVector2;
             var pos = center + coordinates01 * NoiseExperiment.Instance.scale;
-            var height = NoiseExperiment.noise.GetNoise2D(pos.x, pos.y, NoiseExperiment.Instance.octaves);
-            height *= height_scale;
+            var height = NoiseExperiment.noise.GetNoise2D(pos, NoiseExperiment.Instance.octaves);
+            height *= heightScale;
 
-            total_noise_height += height;
-            noise_samples++;
+            _total_noise_height += height;
+            _noise_samples++;
 
             return new Vector3(coordinates01.x, height, coordinates01.y);
         }

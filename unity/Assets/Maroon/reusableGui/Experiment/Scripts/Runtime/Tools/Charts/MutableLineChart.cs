@@ -5,13 +5,16 @@ namespace Maroon.UI.Charts
 {
     public class MutableLineChart : BaseLineChart
     {
-        private int _time;
-        private int _maxValueCount;
+        //I created this class for the Noise Experiment, it has only the minimum necessary features for that.
+        // feel free to extend this class 
+        //I also didnt do a lot of testing so it might have some bugs
+
+        private int _max_value_count;
 
         protected override void Start()
         {
             base.Start();
-            _maxValueCount = (int)Chart.xAxis0.max;
+            _max_value_count = (int)Chart.xAxis0.max;
         }
 
         protected override void HandleUpdate()
@@ -50,9 +53,8 @@ namespace Maroon.UI.Charts
 
         public override void ResetObject()
         {
-            _time = 0;
             Chart.xAxis0.min = 0;
-            Chart.xAxis0.max = _maxValueCount;
+            Chart.xAxis0.max = _max_value_count;
 
             base.ResetObject();
         }

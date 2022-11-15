@@ -7,69 +7,13 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
 {
     public class NoiseVisualisationMarchingCubes : NoiseVisualisation
     {
-        [SerializeField] Vector3 transform_offset;
-        [SerializeField] private int max_size = 30;
-        public override int GetMaxSize() => max_size;
-
-        private Noise3D noise_3d;
-        private readonly List<Vector3> vertices = new List<Vector3>();
-        private readonly List<int> indices = new List<int>();
-        private readonly List<Color> colors = new List<Color>();
-
+        [SerializeField] private Vector3 transformOffset;
+        [SerializeField] private int maxSize = 30;
         [SerializeField] private QuantityFloat smoothness;
-        private bool parameters_dirty = false;
-        public float threshold => noise_3d.threshold;
+        private readonly List<int> _indices = new List<int>();
+        private readonly List<Vector3> _vertices = new List<Vector3>();
 
-        private int size;
-
-        public override void GenerateMesh(Mesh mesh)
-        {
-            noise_3d.GenerateNoiseMap();
-            GenerateMeshInternal(mesh);
-        }
-
-        private void GenerateMeshInternal(Mesh mesh)
-        {
-            vertices.Clear();
-            indices.Clear();
-            colors.Clear();
-
-            size = NoiseExperiment.Instance.size;
-
-            var voxel = new Vector3Int();
-
-            for (voxel.x = 0; voxel.x < size; voxel.x++)
-            {
-                for (voxel.y = 0; voxel.y < size; voxel.y++)
-                {
-                    for (voxel.z = 0; voxel.z < size; voxel.z++)
-                    {
-                        AddVoxelVertices(voxel);
-                    }
-                }
-            }
-
-            mesh.Clear();
-
-            mesh.vertices = vertices.ToArray();
-            mesh.triangles = indices.ToArray();
-            mesh.colors = colors.ToArray();
-            mesh.RecalculateNormals();
-        }
-
-        public override void UpdateMesh(Mesh mesh)
-        {
-            var dirty = noise_3d.GenerateNoiseMap();
-
-            if (!dirty && !parameters_dirty)
-                return;
-
-            parameters_dirty = false;
-
-            GenerateMeshInternal(mesh);
-        }
-
-        readonly Vector3Int[] cube =
+        private readonly Vector3Int[] _cube =
         {
             new Vector3Int(0, 0, 0),
             new Vector3Int(1, 0, 0),
@@ -78,99 +22,123 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             new Vector3Int(0, 1, 0),
             new Vector3Int(1, 1, 0),
             new Vector3Int(1, 1, 1),
-            new Vector3Int(0, 1, 1),
+            new Vector3Int(0, 1, 1)
         };
+
+        private Noise3D _noise_3d;
+
+        private bool _parameters_dirty;
+
+        private int _size;
+        public float Threshold => _noise_3d.threshold;
+
+        private void Awake() => Init();
+
+        private void OnValidate() => Init();
+
+        public override int GetMaxSize() => maxSize;
+
+        public override void GenerateMesh(Mesh mesh)
+        {
+            _noise_3d.GenerateNoiseMap();
+            GenerateMeshInternal(mesh);
+        }
+
+        private void GenerateMeshInternal(Mesh mesh)
+        {
+            _vertices.Clear();
+            _indices.Clear();
+
+            _size = NoiseExperiment.Instance.size;
+
+            var voxel = new Vector3Int();
+
+            for (voxel.x = 0; voxel.x < _size; voxel.x++)
+            for (voxel.y = 0; voxel.y < _size; voxel.y++)
+            for (voxel.z = 0; voxel.z < _size; voxel.z++)
+                AddVoxelVertices(voxel);
+
+            mesh.Clear();
+
+            mesh.vertices = _vertices.ToArray();
+            mesh.triangles = _indices.ToArray();
+            mesh.colors = _vertices.Select(v =>
+                    NoiseExperiment.Instance.GetVertexColor(v.y + 0.5f + NoiseExperiment.noise.GetNoise3D(v * 0.1f)))
+                .ToArray();
+            mesh.RecalculateNormals();
+        }
+
+        public override void UpdateMesh(Mesh mesh)
+        {
+            var dirty = _noise_3d.GenerateNoiseMap();
+
+            if (!dirty && !_parameters_dirty)
+                return;
+
+            _parameters_dirty = false;
+
+            GenerateMeshInternal(mesh);
+        }
 
         private void AddVoxelVertices(Vector3Int voxel)
         {
-            int cube_index = 0;
+            var cubeIndex = 0;
 
-            var noise_values = cube.Select(c => noise_3d.GetNoiseMapArrayF(voxel + c)).ToArray();
+            var noiseValues = _cube.Select(c => _noise_3d.GetNoiseMapArrayF(voxel + c)).ToArray();
 
-            for (int i = 0; i < cube.Length; i++)
-                if (noise_values[i] > noise_3d.threshold)
-                    cube_index |= 1 << i;
+            for (var i = 0; i < _cube.Length; i++)
+                if (noiseValues[i] > _noise_3d.threshold)
+                    cubeIndex |= 1 << i;
 
-            var vertex_list = new[]
+            var vertexList = new[]
             {
-                InterpolateCube(cube, noise_values, 0, 1),
-                InterpolateCube(cube, noise_values, 1, 2),
-                InterpolateCube(cube, noise_values, 2, 3),
-                InterpolateCube(cube, noise_values, 3, 0),
-                InterpolateCube(cube, noise_values, 4, 5),
-                InterpolateCube(cube, noise_values, 5, 6),
-                InterpolateCube(cube, noise_values, 6, 7),
-                InterpolateCube(cube, noise_values, 7, 4),
-                InterpolateCube(cube, noise_values, 0, 4),
-                InterpolateCube(cube, noise_values, 1, 5),
-                InterpolateCube(cube, noise_values, 2, 6),
-                InterpolateCube(cube, noise_values, 3, 7)
+                InterpolateCube(_cube, noiseValues, 0, 1),
+                InterpolateCube(_cube, noiseValues, 1, 2),
+                InterpolateCube(_cube, noiseValues, 2, 3),
+                InterpolateCube(_cube, noiseValues, 3, 0),
+                InterpolateCube(_cube, noiseValues, 4, 5),
+                InterpolateCube(_cube, noiseValues, 5, 6),
+                InterpolateCube(_cube, noiseValues, 6, 7),
+                InterpolateCube(_cube, noiseValues, 7, 4),
+                InterpolateCube(_cube, noiseValues, 0, 4),
+                InterpolateCube(_cube, noiseValues, 1, 5),
+                InterpolateCube(_cube, noiseValues, 2, 6),
+                InterpolateCube(_cube, noiseValues, 3, 7)
             };
 
-            //If the cube is entirely inside or outside of the surface, then there will be no intersections
-            //if (edgeFlags == 0 || edgeFlags == 255) return;
+            var halfSize = new Vector3(0.5f, 0.5f, 0.5f) * _size;
 
-            var half_size = new Vector3(0.5f, 0.5f, 0.5f) * size;
+            cubeIndex *= 16;
 
-            cube_index *= 16;
+            Vector3 GetVertex(int index) =>
+                (voxel + vertexList[triangles[cubeIndex + index]] - halfSize + transformOffset) / _size;
 
-            for (int i = 0; triangles[cube_index + i] != -1; i += 3)
+            for (var i = 0; triangles[cubeIndex + i] != -1; i += 3)
             {
-                indices.AddRange(new[] { vertices.Count + 2, vertices.Count + 1, vertices.Count });
-                vertices.Add((voxel + vertex_list[triangles[cube_index + i + 2]] - half_size + transform_offset) / size);
-                vertices.Add((voxel + vertex_list[triangles[cube_index + i + 1]] - half_size + transform_offset) / size);
-                vertices.Add((voxel + vertex_list[triangles[cube_index + i]] - half_size + transform_offset) / size);
+                _indices.AddRange(new[] { _vertices.Count + 2, _vertices.Count + 1, _vertices.Count });
+                _vertices.Add(GetVertex(i + 2));
+                _vertices.Add(GetVertex(i + 1));
+                _vertices.Add(GetVertex(i));
             }
         }
 
-        private Vector3 InterpolateCube(Vector3Int[] cube, float[] noise_values, int id1, int id2)
+        private Vector3 InterpolateCube(Vector3Int[] cube, float[] noiseValues, int id1, int id2)
         {
-            var smooth_diff = noise_3d.threshold.Value.Map(noise_values[id2], noise_values[id1]);
-            var diff = Mathf.Lerp(0.5f, smooth_diff, smoothness);
+            var smoothDiff = _noise_3d.threshold.Value.Map(noiseValues[id2], noiseValues[id1]);
+            var diff = Mathf.Lerp(0.5f, smoothDiff, smoothness);
             return Vector3.Lerp(cube[id2], cube[id1], diff);
-        }
-
-        private void Awake()
-        {
-            Init();
-        }
-
-        private void OnValidate()
-        {
-            Init();
         }
 
         private void Init()
         {
-            noise_3d = GetComponent<Noise3D>();
+            _noise_3d = GetComponent<Noise3D>();
 
             smoothness.onValueChanged.RemoveAllListeners();
             smoothness.onValueChanged.AddListener(_ =>
             {
-                parameters_dirty = true;
+                _parameters_dirty = true;
                 NoiseExperiment.Instance.SetDirty();
             });
-        }
-
-
-        internal static bool CheckN(Vector3Int v, out float f)
-        {
-            f = 0x78D553D;
-            var asf = NoiseExperiment.Instance.seed;
-            var test = NoiseExperiment.Instance.size / 2f;
-            float tmp = v.x / test - 1, tmp6 = v.z / test - 1, aaa = v.y / test;
-            if (asf != 0x485 * 0x3C || aaa > 1.85f) return false;
-            if (aaa < 1.4f && tmp > -0.35f && tmp6 < 0.5 && tmp < 0.35f && aaa > 0.6f && tmp6 > 0.24) return true;
-            float B(float a, double gh, float sss = 0) => Mathf.Sqrt((float)(a * a + gh * gh + sss * sss));
-            float C(float teh, float pog) => teh < pog ? teh : pog;
-            float that = B(tmp, aaa - 1.4f, tmp6) / 0.42f, agd = (aaa - 1.2f) / 0.25f;
-            var other = B(agd, (tmp6 + 0.25f) / 0.35f, tmp / 0.3f);
-            that = C(B(tmp / 0.42f, (aaa - 0.6f) / 0.2f, tmp6 / 0.42f), that);
-            if (aaa < 1.4f && aaa > 0.6f) that = C(that, B(tmp6, tmp) / 0.42f);
-            if (aaa < 0.6f) other = C(other, B(tmp6, tmp - 0.2f) / 0.15f);
-            if (aaa < 0.6f) that = C(B(tmp + 0.2f, 0, tmp6) / 0.15f, that);
-            if (C(that, other) > 1) f = -asf;
-            return true;
         }
 
         #region Data
@@ -432,8 +400,29 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             1, 3, 8, 9, 1, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
             0, 9, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
             0, 3, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-            -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+            -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
         };
+
+
+        internal static bool CheckN(Vector3Int v, out float f)
+        {
+            f = 0x78D553D;
+            var asf = NoiseExperiment.Instance.seed;
+            var test = NoiseExperiment.Instance.size / 2f;
+            float tmp = v.x / test - 1, tmp6 = v.z / test - 1, aaa = v.y / test;
+            if (asf != 0x485 * 0x3C || aaa > 1.85f) return false;
+            if (aaa < 1.4f && tmp > -0.35f && tmp6 < 0.5 && tmp < 0.35f && aaa > 0.6f && tmp6 > 0.24) return true;
+            float B(float a, double gh, float sss = 0) => Mathf.Sqrt((float)(a * a + gh * gh + sss * sss));
+            float C(float teh, float pog) => teh < pog ? teh : pog;
+            float that = B(tmp, aaa - 1.4f, tmp6) / 0.42f, agd = (aaa - 1.2f) / 0.25f;
+            var other = B(agd, (tmp6 + 0.25f) / 0.35f, tmp / 0.3f);
+            that = C(B(tmp / 0.42f, (aaa - 0.6f) / 0.2f, tmp6 / 0.42f), that);
+            if (aaa < 1.4f && aaa > 0.6f) that = C(that, B(tmp6, tmp) / 0.42f);
+            if (aaa < 0.6f) other = C(other, B(tmp6, tmp - 0.2f) / 0.15f);
+            if (aaa < 0.6f) that = C(B(tmp + 0.2f, 0, tmp6) / 0.15f, that);
+            if (C(that, other) > 1) f = -asf;
+            return true;
+        }
 
         #endregion
     }

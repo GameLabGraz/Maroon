@@ -8,13 +8,8 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 {
     public static class Utils
     {
-        public static Vector2 half_vector_2 => new Vector2(0.5f, 0.5f);
-        public static Vector3 half_vector_3 => new Vector3(0.5f, 0.5f, 0.5f);
-
-        public static float Clamp01(this float f) => Clamp(f, 0, 1);
-
-        // clamps f to be 0 < f < 1
-        public static float Clamp01Exclusive(this float f) => Clamp(f, float.Epsilon, 1f - 1e-7f);
+        public static Vector2 HalfVector2 => new Vector2(0.5f, 0.5f);
+        public static Vector3 HalfVector3 => new Vector3(0.5f, 0.5f, 0.5f);
 
         public static float Clamp(this float f, float min, float max) => Mathf.Max(Mathf.Min(f, max), min);
         public static int Clamp(this int f, int min, int max) => Mathf.Max(Mathf.Min(f, max), min);
