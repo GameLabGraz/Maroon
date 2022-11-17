@@ -25,7 +25,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         public bool GenerateNoiseMap()
         {
             var dirty = false;
-            _size = NoiseExperiment.Instance.size;
+            _size = NoiseExperimentBase.Instance.size;
             if (_noise_map_array?.Length != _size * _size * _size)
             {
                 _noise_map_array = new float[_size * _size * _size];
@@ -42,8 +42,9 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
                     {
                         var coordinates01 = (Vector3)voxel / (_size - 1) - Utils.HalfVector3;
                         var center = _offset + Utils.HalfVector3;
-                        var noisePos = center + coordinates01 * ((NoiseExperiment.Instance.scale + 1) * 0.3f);
-                        var n = NoiseExperiment.noise.GetNoise3D(noisePos, NoiseExperiment.Instance.octaves);
+                        var noisePos = center + coordinates01 * ((
+                            NoiseExperimentBase.Instance.scale + 1) * 0.3f);
+                        var n = NoiseExperimentBase.noise.GetNoise3D(noisePos, NoiseExperimentBase.Instance.octaves);
                         n = BorderAdjustment(voxel, n);
                         n = n.LogSigmoid();
 
@@ -117,7 +118,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             threshold.onValueChanged.AddListener(_ =>
             {
                 _parameters_dirty = true;
-                NoiseExperiment.Instance.SetDirty();
+                NoiseExperimentBase.Instance.SetDirty();
             });
         }
     }

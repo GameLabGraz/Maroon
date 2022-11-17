@@ -17,10 +17,10 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         public static bool IsValidIndex<T>(this T[] list, int index) => index >= 0 && index < list.Length;
         public static bool IsValidIndex<T>(this List<T> list, int index) => index >= 0 && index < list.Count;
 
-        public static float Map(this float value, float min_source, float max_source, float min_target = 0,
-            float max_target = 1)
+        public static float Map(this float value, float minSource, float maxSource, float minTarget = 0,
+            float maxTarget = 1)
         {
-            return (value - min_source) / (max_source - min_source) * (max_target - min_target) + min_target;
+            return (value - minSource) / (maxSource - minSource) * (maxTarget - minTarget) + minTarget;
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

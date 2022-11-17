@@ -15,7 +15,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
 
         public override void GenerateMesh(Mesh mesh)
         {
-            _size = NoiseExperiment.Instance.size;
+            _size = NoiseExperimentBase.Instance.size;
             _noise_samples = 0;
             _total_noise_height = 0;
 
@@ -141,7 +141,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
                 .ToArray();
             mesh.uv = UVs.ToArray();
             mesh.colors = _vertices
-                .Select(v => NoiseExperiment.Instance.GetVertexColor(v.y.Map(-heightScale, heightScale)))
+                .Select(v => NoiseExperimentBase.Instance.GetVertexColor(v.y.Map(-heightScale, heightScale)))
                 .ToArray();
             mesh.triangles = indices.ToArray();
             mesh.RecalculateNormals();
@@ -151,7 +151,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
         {
             _noise_samples = 0;
             _total_noise_height = 0;
-            _size = NoiseExperiment.Instance.size;
+            _size = NoiseExperimentBase.Instance.size;
 
 
             var vertexCount = _size * _size * 2 + _size * 8;
@@ -210,7 +210,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
                 .ToArray();
 
             mesh.colors = _vertices
-                .Select(v => NoiseExperiment.Instance.GetVertexColor(v.y.Map(-heightScale, heightScale)))
+                .Select(v => NoiseExperimentBase.Instance.GetVertexColor(v.y.Map(-heightScale, heightScale)))
                 .ToArray();
             mesh.RecalculateNormals();
         }
@@ -220,8 +220,8 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
         {
             var coordinates01 = new Vector2(x, y) / (_size - 1) - Utils.HalfVector2;
             var center = Utils.HalfVector2;
-            var pos = center + coordinates01 * NoiseExperiment.Instance.scale;
-            var height = NoiseExperiment.noise.GetNoise2D(pos, NoiseExperiment.Instance.octaves);
+            var pos = center + coordinates01 * NoiseExperimentBase.Instance.scale;
+            var height = NoiseExperimentBase.noise.GetNoise2D(pos, NoiseExperimentBase.Instance.octaves);
             height *= heightScale;
 
             _total_noise_height += height;

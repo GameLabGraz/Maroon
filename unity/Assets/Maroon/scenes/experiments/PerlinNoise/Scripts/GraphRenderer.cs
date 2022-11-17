@@ -25,13 +25,13 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         public void UpdateGraph()
         {
-            NoiseExperiment.Instance.GetNoise(ref _data, width, _y);
+            NoiseExperimentBase.Instance.GetNoise(ref _data, width, _y);
             lineChart.SetData(_data);
 
-            NoiseExperiment.Instance.GetNoiseSizeDependent(ref _data2, width, _y);
+            NoiseExperimentBase.Instance.GetNoiseSizeDependent(ref _data2, width, _y);
             lineChart.SetData(_data2, 1);
 
-            var threshold = NoiseExperiment.Instance.GetThreshold();
+            var threshold = NoiseExperimentBase.Instance.GetThreshold();
             lineChart.SetData(2, threshold, threshold);
         }
     }

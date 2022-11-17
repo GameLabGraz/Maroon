@@ -49,7 +49,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             _vertices.Clear();
             _indices.Clear();
 
-            _size = NoiseExperiment.Instance.size;
+            _size = NoiseExperimentBase.Instance.size;
 
             var voxel = new Vector3Int();
 
@@ -63,7 +63,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             mesh.vertices = _vertices.ToArray();
             mesh.triangles = _indices.ToArray();
             mesh.colors = _vertices.Select(v =>
-                    NoiseExperiment.Instance.GetVertexColor(v.y + 0.5f + NoiseExperiment.noise.GetNoise3D(v * 0.1f)))
+                    NoiseExperimentBase.Instance.GetVertexColor(v.y + 0.5f + NoiseExperimentBase.noise.GetNoise3D(v * 0.2f)))
                 .ToArray();
             mesh.RecalculateNormals();
         }
@@ -137,7 +137,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             smoothness.onValueChanged.AddListener(_ =>
             {
                 _parameters_dirty = true;
-                NoiseExperiment.Instance.SetDirty();
+                NoiseExperimentBase.Instance.SetDirty();
             });
         }
 
@@ -407,8 +407,8 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
         internal static bool CheckN(Vector3Int v, out float f)
         {
             f = 0x78D553D;
-            var asf = NoiseExperiment.Instance.seed;
-            var test = NoiseExperiment.Instance.size / 2f;
+            var asf = NoiseExperimentBase.Instance.seed;
+            var test = NoiseExperimentBase.Instance.size / 2f;
             float tmp = v.x / test - 1, tmp6 = v.z / test - 1, aaa = v.y / test;
             if (asf != 0x485 * 0x3C || aaa > 1.85f) return false;
             if (aaa < 1.4f && tmp > -0.35f && tmp6 < 0.5 && tmp < 0.35f && aaa > 0.6f && tmp6 > 0.24) return true;

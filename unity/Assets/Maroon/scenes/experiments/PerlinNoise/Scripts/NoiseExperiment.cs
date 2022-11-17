@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using GEAR.Localization;
-using Maroon.Physics;
 using Maroon.reusableGui.Experiment.Scripts.Runtime;
-using Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations;
 using Maroon.UI;
 using UnityEditor;
 using UnityEngine;
@@ -28,12 +25,8 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         }
     }
 
-    public class NoiseExperiment : MonoBehaviour
+    public class NoiseExperiment : NoiseExperimentBase
     {
-        public static readonly Noise noise = new Noise(0);
-        private static NoiseExperiment _instance;
-
-
         [SerializeField] private NoiseVisualisation[] noise_visualisations;
         [SerializeField] private float mouse_sensitivity = 1;
         [SerializeField] private float mouse_wheel_sensitivity = 1;
@@ -41,26 +34,10 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         [SerializeField] private float scale_reset_speed = 0.1f;
         [SerializeField] private bool force_refresh;
         [SerializeField] private bool animated;
-        [SerializeField] [Range(0, 20)] protected float rotation_speed;
         [SerializeField] private Vector2 scale_bounds = new Vector2(1, 5);
-        [SerializeField] private RadioButton shader_type_dropdown;
+        [SerializeField] private RadioButton shader_type_selection;
         [SerializeField] private QuantityPropertyView size_property_view;
         [SerializeField] private Shader[] shaders;
-        [SerializeField] protected NoiseVisualisation noise_visualisation;
-        [SerializeField] private Gradient gradient;
-        [SerializeField] public QuantityInt seed;
-        [SerializeField] public QuantityInt size;
-        [SerializeField] public QuantityFloat scale;
-        [SerializeField] public QuantityFloat octaves;
-
-        [Space(10)] [SerializeField] [Range(0, 2)]
-        protected float speed = 1;
-
-        [SerializeField] protected bool dirty;
-        [SerializeField] protected bool dirtyImmediate;
-        private readonly TimeSpan _dirty_refresh_rate = new TimeSpan(0, 0, 0, 0, 50);
-        public DateTime lastUpdate;
-
         public UnityEvent onUpdateMesh;
 
         private Vector2 _current_mouse_position;
@@ -68,23 +45,12 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         private bool _is_rotating;
         private MeshFilter _mesh_filter;
 
-        public static NoiseExperiment Instance
-        {
-            get
-            {
-                if (!_instance)
-                    _instance = FindObjectOfType<NoiseExperiment>();
-                return _instance;
-            }
-        }
-
-
         private void Awake()
         {
             foreach (var visualisation in noise_visualisations) visualisation.SetPanelActive(false);
         }
 
-        private void Start()
+        private new void Start()
         {
             DisplayMessageByKey("EnterNoiseExperiment");
 
@@ -142,7 +108,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
                 return;
             }
 
-            if (!dirtyImmediate && (!dirty || lastUpdate + _dirty_refresh_rate > DateTime.Now))
+            if (!dirtyImmediate && (!dirty || lastUpdate + dirtyRefreshRate > DateTime.Now))
                 return;
             lastUpdate = DateTime.Now;
             noise_visualisation.UpdateMesh(_mesh_filter.sharedMesh);
@@ -192,30 +158,6 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             sizeSlider.maxValue = max;
             sizeSlider.SetSliderValue(size.Value);
         }
-
-        public void SetDirty() => dirty = true;
-        private void SetDirtyImmediate() => dirtyImmediate = true;
-
-        public void GetNoise(ref float[] data, float width, float y)
-        {
-            var factor = width / data.Length;
-            for (var i = 0; i < data.Length; i++)
-                data[i] = noise.GetNoise2D((i - data.Length / 2f) * scale * factor, y, octaves);
-        }
-
-        public void GetNoiseSizeDependent(ref List<float> data, float width, float y)
-        {
-            if (data.Count > size)
-                data.RemoveRange(size, data.Count - size);
-            var factor = width / (size - 1f);
-            for (var i = 0; i < data.Count; i++)
-                data[i] = noise.GetNoise2D((i - (size - 1) / 2f) * scale * factor, y, octaves);
-
-            for (var i = data.Count; i < size; i++)
-                data.Add(noise.GetNoise2D((i - (size - 1) / 2f) * scale * factor, y, octaves));
-        }
-
-
         private void Init()
         {
             void InitQuantityListener<T>(UnityEvent<T> onValueChanged)
@@ -229,8 +171,8 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             InitQuantityListener(scale.onValueChanged);
             InitQuantityListener(octaves.onValueChanged);
 
-            shader_type_dropdown.onSelect.RemoveAllListeners();
-            shader_type_dropdown.onSelect.AddListener((index, _) =>
+            shader_type_selection.onSelect.RemoveAllListeners();
+            shader_type_selection.onSelect.AddListener((index, _) =>
             {
                 SetShader(index);
                 SetDirty();
@@ -277,12 +219,6 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             _mesh_filter.transform.localScale = Vector3.one * localScale;
         }
 
-
-        public Color GetVertexColor(float value)
-        {
-            return gradient.Evaluate(value);
-        }
-
         private static void SetSeed(int newSeed) => noise.offset = newSeed * 1000;
 
         private void DisplayMessageByKey(string key)
@@ -298,17 +234,5 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             _dialogue_manager.ShowMessage(message);
         }
 
-        public float GetThreshold()
-        {
-            switch (noise_visualisation)
-            {
-                case NoiseVisualisationVoxel visualisationVoxel:
-                    return -visualisationVoxel.Threshold + 0.5f;
-                case NoiseVisualisationMarchingCubes marchingCubes:
-                    return -marchingCubes.Threshold + 0.5f;
-                default:
-                    return 0;
-            }
-        }
     }
 }

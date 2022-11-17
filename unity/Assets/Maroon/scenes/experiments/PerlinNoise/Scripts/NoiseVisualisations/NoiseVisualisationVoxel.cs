@@ -10,13 +10,13 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
         [SerializeField] private int maxSize = 30;
 
         private readonly List<int> _indices = new List<int>();
-        private readonly List<Vector3> vertices = new List<Vector3>();
+        private readonly List<Vector3> _vertices = new List<Vector3>();
 
-        private Noise3D noise_3d;
+        private Noise3D _noise_3d;
 
-        private int size;
+        private int _size;
         private readonly Vector3[] _vec = new Vector3[4];
-        public float Threshold => noise_3d.threshold;
+        public float Threshold => _noise_3d.threshold;
 
         private void Awake() => Init();
 
@@ -26,23 +26,23 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
 
         public override void GenerateMesh(Mesh mesh)
         {
-            noise_3d.GenerateNoiseMap();
+            _noise_3d.GenerateNoiseMap();
             GenerateMeshInternal(mesh);
         }
 
         private void GenerateMeshInternal(Mesh mesh)
         {
-            vertices.Clear();
+            _vertices.Clear();
             _indices.Clear();
 
-            size = NoiseExperiment.Instance.size;
+            _size = NoiseExperimentBase.Instance.size;
 
             var voxel = new Vector3Int();
-            for (voxel.x = 0; voxel.x < size; voxel.x++)
+            for (voxel.x = 0; voxel.x < _size; voxel.x++)
             {
-                for (voxel.y = 0; voxel.y < size; voxel.y++)
+                for (voxel.y = 0; voxel.y < _size; voxel.y++)
                 {
-                    for (voxel.z = 0; voxel.z < size; voxel.z++)
+                    for (voxel.z = 0; voxel.z < _size; voxel.z++)
                     {
                         AddVoxelVertices(voxel);
                     }
@@ -50,17 +50,17 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
             }
 
             mesh.Clear();
-            mesh.vertices = vertices.ToArray();
+            mesh.vertices = _vertices.ToArray();
             mesh.triangles = _indices.ToArray();
-            mesh.colors = vertices.Select(v =>
-                    NoiseExperiment.Instance.GetVertexColor(v.y + 0.5f + NoiseExperiment.noise.GetNoise3D(v * 0.1f)))
+            mesh.colors = _vertices.Select(v =>
+                    NoiseExperimentBase.Instance.GetVertexColor(v.y + 0.5f + NoiseExperimentBase.noise.GetNoise3D(v * 0.2f)))
                 .ToArray();
             mesh.RecalculateNormals();
         }
 
         public override void UpdateMesh(Mesh mesh)
         {
-            var dirty = noise_3d.GenerateNoiseMap();
+            var dirty = _noise_3d.GenerateNoiseMap();
 
             if (!dirty)
                 return;
@@ -140,21 +140,21 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
         }
 
         private bool IsFaceVisible(Vector3Int voxel, Vector3Int direction) =>
-            noise_3d.GetNoiseMapArrayB(voxel) && !noise_3d.GetNoiseMapArrayB(voxel + direction);
+            _noise_3d.GetNoiseMapArrayB(voxel) && !_noise_3d.GetNoiseMapArrayB(voxel + direction);
 
 
         private void AddFace(IList<Vector3> newVertices)
         {
             for (var i = 0; i < 4; i++)
-                newVertices[i] = (newVertices[i] - Vector3.one * (0.5f * size) + transformOffset) / size;
-            vertices.AddRange(newVertices);
+                newVertices[i] = (newVertices[i] - Vector3.one * (0.5f * _size) + transformOffset) / _size;
+            _vertices.AddRange(newVertices);
             _indices.AddRange(new[]
             {
-                vertices.Count - 1, vertices.Count - 3, vertices.Count - 2,
-                vertices.Count - 4, vertices.Count - 2, vertices.Count - 3
+                _vertices.Count - 1, _vertices.Count - 3, _vertices.Count - 2,
+                _vertices.Count - 4, _vertices.Count - 2, _vertices.Count - 3
             });
         }
 
-        private void Init() => noise_3d = GetComponent<Noise3D>();
+        private void Init() => _noise_3d = GetComponent<Noise3D>();
     }
 }

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &1578724617559190405
+--- !u!114 &3488337465784032595
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2374346792287462871}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a46143f1bc049d9b495996844aababa, type: 3}
+  m_Script: {fileID: 11500000, guid: e38059c143164a92b34e77bc6a84dcdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   noise_visualisation: {fileID: 5163415475517487981}
@@ -33,9 +33,9 @@ MonoBehaviour:
     isDynamic: 0
     alwaysSendValueChangedEvent: 1
     allowSystemChange: 1
-    _value: 10
+    _value: 30
     minValue: 0
-    maxValue: 0
+    maxValue: 50
     onValueChanged:
       m_PersistentCalls:
         m_Calls: []
@@ -49,7 +49,7 @@ MonoBehaviour:
     allowSystemChange: 1
     _value: 3
     minValue: 0
-    maxValue: 0
+    maxValue: 20
     onValueChanged:
       m_PersistentCalls:
         m_Calls: []
@@ -61,17 +61,47 @@ MonoBehaviour:
     isDynamic: 0
     alwaysSendValueChangedEvent: 1
     allowSystemChange: 1
-    _value: 1
+    _value: 2
     minValue: 0
-    maxValue: 0
+    maxValue: 10
     onValueChanged:
       m_PersistentCalls:
         m_Calls: []
     onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
-  speed: 0.46
+  gradient:
+    serializedVersion: 2
+    key0: {r: 0.08018869, g: 0.14427827, b: 1, a: 1}
+    key1: {r: 0.24313724, g: 1, b: 0.97005916, a: 1}
+    key2: {r: 1, g: 0.8443469, b: 0.30980396, a: 0}
+    key3: {r: 0.41956124, g: 1, b: 0.3843137, a: 0}
+    key4: {r: 0.6792453, g: 0.40834996, b: 0.0993236, a: 0}
+    key5: {r: 1, g: 1, b: 1, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 11565
+    ctime2: 16191
+    ctime3: 23901
+    ctime4: 43754
+    ctime5: 65535
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 6
+    m_NumAlphaKeys: 2
+  speed: 0.1
   dirty: 0
+  dirtyImmediate: 0
 --- !u!1001 &3853732990597321416
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -162,6 +192,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7270804806676281124}
     m_Modifications:
+    - target: {fileID: 476483044820286854, guid: 5623f270c90727547b376ff94c02bc97,
+        type: 3}
+      propertyPath: heightScale
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 476483044820286854, guid: 5623f270c90727547b376ff94c02bc97,
+        type: 3}
+      propertyPath: panel.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2467648957187404799, guid: 5623f270c90727547b376ff94c02bc97,
         type: 3}
       propertyPath: force_refresh
