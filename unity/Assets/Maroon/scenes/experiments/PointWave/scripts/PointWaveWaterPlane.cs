@@ -40,6 +40,14 @@ public class PointWaveWaterPlane : PausableObject, IResetObject
         
     }
 
+
+    // Tim testing
+    public void AddMouseData(Vector3 data)
+    {
+        _meshRenderer.sharedMaterial.SetVector(Shader.PropertyToID("_ClickCoordinates"), new Vector4(data.x, data.y, data.z, 0));
+        Debug.Log(data);
+    }
+
     public void UpdateParameterAndPosition()
     {
         Vector4 empty = Vector4.zero;
@@ -70,6 +78,10 @@ public class PointWaveWaterPlane : PausableObject, IResetObject
         _meshRenderer.sharedMaterial.SetVectorArray(Shader.PropertyToID("_sourceCoordinates"), coordinatesArray);
     }
 
+    public void OnMouseDown()
+    {
+        Debug.LogWarning("HERE IN THE MEESH ");
+    }
     public void RegisterWaveSource(PointWaveSource waveSource)
     {
         waveSources.Add(waveSource);

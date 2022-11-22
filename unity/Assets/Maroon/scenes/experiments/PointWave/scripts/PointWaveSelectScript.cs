@@ -13,7 +13,12 @@ public class PointWaveSelectScript : MonoBehaviour
     public List<GameObject> highlightObjects = new List<GameObject>();
     public SelectObjectType type;
     public string nameKey;
-    
+
+
+
+    //Testing mouse detection 
+
+    public PointWaveWaterPlane waterPlane;
     private PointWavePoolHandler _waveLogic;
     private void OnDisable()
     {
@@ -21,6 +26,7 @@ public class PointWaveSelectScript : MonoBehaviour
         Deselect();
         DeselectMe();
     }
+
 
     private void OnMouseDown()
     {
@@ -30,7 +36,11 @@ public class PointWaveSelectScript : MonoBehaviour
             if (obj)
                 _waveLogic = obj.GetComponent<PointWavePoolHandler>();
         }
-
+        Debug.LogWarning("here");
+    //    Debug.LogWarning(Input.mousePosition);
+        waterPlane.AddMouseData(Input.mousePosition);
+     //   var test =  _waveLogic.GetComponent<PointWaveWaterPlane>();
+       // test.AddMouseData(Input.mousePosition);
         Select();
     }
 

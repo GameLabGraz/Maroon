@@ -29,8 +29,48 @@
             uniform float _SceneTime;
 
 
+            // How to transform ? 
+            uniform int4 _ClickCoordinates;
+
+
             fixed4 _ColorMin;
             fixed4 _ColorMax;
+
+            float SIGMA = 0.01;
+
+            /* COPY PASTE */
+
+          /*N = 60;
+            W = 200;
+
+            
+            H = W;
+
+            D = 10;
+
+            C = 0.04;
+
+            C2 = C * C;
+
+            DAMPING = 0.001;
+
+            SIM_SPEED = 1;
+
+            DELTA_X = W / N;
+
+            DELTA_X2 = DELTA_X * DELTA_X;
+
+            DELTA_Z = H / N;
+
+            DELTA_Z2 = DELTA_Z * DELTA_Z;
+
+            MAX_DT = 12;
+
+            MAX_ITERATRED_DT = 100;
+
+            MAX_Y = 50;
+            */  
+            //SIGMA = 0.01;
                 
             struct vertexInput 
             {
@@ -47,13 +87,16 @@
             sampler2D _MainTex;
             float4 _MainTex_ST;
 
+
+
+
             v2f vert (vertexInput v)
             {
+
                 v2f output;
                 output.sv_position = UnityObjectToClipPos(v.pos);
                 output.pos_world_space = mul(unity_ObjectToWorld, v.pos);
                 output.color = fixed3(1, 1, 1);
-
                 float amp = 0;
                 float mamp = 0.01f;
                 _distance = 0;
@@ -67,9 +110,35 @@
                     float k = (2 * PI) / (_sourceParameters[j].y * 0.2f);
                     float r = sqrt(_distance);
                     float u = (_sourceParameters[j].x * cos(k * _distance - w * _SceneTime + _sourceParameters[j].w)) / r;
-
+                  //  u += (_ClickCoordinates.x / 100);
                     amp += u;
                 }
+
+                // TESTING 
+                    /*    var d2x, d2z, i, iNextX, iNextZ, iPrevX, iPrevZ, v, x, z, _i, _j, _k, _l;
+                    v = geometry.vertices;
+                    // we itterate all the points in the shared ?  i think so 
+                    for (z = _i = 1; 1 <= N ? _i < N : _i > N; z = 1 <= N ? ++_i : --_i) {
+                      for (x = _j = 1; 1 <= N ? _j < N : _j > N; x = 1 <= N ? ++_j : --_j) {
+                        i = idx(x, z);
+                        iPrevX = idx(x - 1, z);
+                        iNextX = idx(x + 1, z);
+                        iPrevZ = idx(x, z - 1);
+                        iNextZ = idx(x, z + 1);
+                        d2x = (v[iNextX].y - 2 * v[i].y + v[iPrevX].y) / DELTA_X2;
+                        d2z = (v[iNextZ].y - 2 * v[i].y + v[iPrevZ].y) / DELTA_Z2;
+                        v[i].ay = C2 * (d2x + d2z);
+                        v[i].ay += -DAMPING * v[i].uy;
+                        v[i].uy += dt * v[i].ay;
+                        v[i].newY = v[i].y + dt * v[i].uy;
+                      }
+                    }
+                    for (z = _k = 1; 1 <= N ? _k < N : _k > N; z = 1 <= N ? ++_k : --_k) {
+                      for (x = _l = 1; 1 <= N ? _l < N : _l > N; x = 1 <= N ? ++_l : --_l) {
+                        i = idx(x, z);
+                        v[i].y = v[i].newY;
+                      }
+                    }*/
 
                 output.pos_world_space.y = output.pos_world_space.y + lerp(0, 0.03f, amp);
                 output.sv_position = mul(UNITY_MATRIX_VP, output.pos_world_space);
@@ -80,6 +149,11 @@
                     output.color = _ColorMin;
                 }
 
+                // Tim testing
+                /*if (_ClickCoordinates.x == v.x)
+                {
+                    output.color = fixed3(0, 0, 0);
+                }*/
                  
                 return output;
             }

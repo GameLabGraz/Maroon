@@ -53,6 +53,7 @@ public class WaveEquationPoolHandler : MonoBehaviour
 
     private static WaveEquationPoolHandler _instance;
 
+   // private Shader _compute =  //ComputeShader(Shader.Find("Unlit/sdr WaterPW"));//Shader.Find("Unlit/sdr WaterPW");
     public static WaveEquationPoolHandler Instance
     {
         get
