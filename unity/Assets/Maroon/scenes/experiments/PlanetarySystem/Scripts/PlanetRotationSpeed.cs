@@ -1,16 +1,17 @@
+//
+//Author: Marcel Lohfeyer
+//
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlanetRotationSpeed : MonoBehaviour
 {
-    public float planet_rotation_degree_per_second;
+    public float rotationSpeed;
 
-
-    // Update is called once per frame
     void Update()
     {
-        transform.Rotate(new Vector3(0, planet_rotation_degree_per_second, 0) * Time.deltaTime);
+        transform.Rotate(new Vector3(0, (rotationSpeed * (0 - 1)), 0) * Time.deltaTime);
     }
 
 }

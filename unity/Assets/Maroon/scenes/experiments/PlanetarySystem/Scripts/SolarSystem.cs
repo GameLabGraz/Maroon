@@ -1,3 +1,6 @@
+//
+//Author: Marcel Lohfeyer
+//
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,7 +8,7 @@ using UnityEngine;
 public class SolarSystem : MonoBehaviour
 {
     //readonly float G = 100f; //G = gravitational constant
-    public float G = 100f; //G = gravitational constant
+    public float G;//= 100f; //G = gravitational constant
     //public float semi_mayor_axis;
     GameObject[] planets;
 
