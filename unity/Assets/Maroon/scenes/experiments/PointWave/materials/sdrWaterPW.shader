@@ -27,7 +27,11 @@
             uniform float4 _sourceParameters[10];
             uniform float4 _sourceCoordinates[10];
             uniform float _SceneTime;
-
+            uniform float _DeltaTime;
+           // uniform int3 _test;
+       //     uniform float4 _Vertices[10000];
+            // We need Compute Buffer, because this limit ist 1024 something to pass laut  
+        // https://forum.unity.com/threads/material-setvectorarray-array-size-limit.512068/
 
             // How to transform ? 
             uniform int4 _ClickCoordinates;
@@ -95,6 +99,7 @@
 
                 v2f output;
                 output.sv_position = UnityObjectToClipPos(v.pos);
+                float4 click = UnityObjectToClipPos(_ClickCoordinates);
                 output.pos_world_space = mul(unity_ObjectToWorld, v.pos);
                 output.color = fixed3(1, 1, 1);
                 float amp = 0;
@@ -150,10 +155,13 @@
                 }
 
                 // Tim testing
-                /*if (_ClickCoordinates.x == v.x)
+                if (_ClickCoordinates.x == v.pos.x)
                 {
-                    output.color = fixed3(0, 0, 0);
-                }*/
+                    output.color = _ColorMax;
+                }
+               // {
+              //      output.color = _ColorMax;
+               // }
                  
                 return output;
             }

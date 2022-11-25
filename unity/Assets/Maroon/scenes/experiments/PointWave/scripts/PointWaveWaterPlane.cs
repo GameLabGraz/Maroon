@@ -78,10 +78,7 @@ public class PointWaveWaterPlane : PausableObject, IResetObject
         _meshRenderer.sharedMaterial.SetVectorArray(Shader.PropertyToID("_sourceCoordinates"), coordinatesArray);
     }
 
-    public void OnMouseDown()
-    {
-        Debug.LogWarning("HERE IN THE MEESH ");
-    }
+
     public void RegisterWaveSource(PointWaveSource waveSource)
     {
         waveSources.Add(waveSource);
@@ -91,7 +88,19 @@ public class PointWaveWaterPlane : PausableObject, IResetObject
         waveSources.Remove(waveSource);
     }
 
-    protected override void HandleUpdate()
+     public void UpdateMeshData()
+    {
+        Vector3[] vertices = GetComponent<MeshFilter>().mesh.vertices;
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            Debug.LogWarning(vertices[i].x);
+
+        }
+            _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_DeltaTime"), Time.deltaTime);// does it work ? 
+       // _meshRenderer.sharedMaterial.SetVectorArray(Shader.PropertyToID)
+    }
+
+protected override void HandleUpdate()
     {
         timer += Time.deltaTime;
         _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_SceneTime"), timer);

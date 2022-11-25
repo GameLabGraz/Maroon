@@ -26,7 +26,7 @@ public class PointWaveSelectScript : MonoBehaviour
         Deselect();
         DeselectMe();
     }
-
+ 
 
     private void OnMouseDown()
     {
@@ -37,12 +37,23 @@ public class PointWaveSelectScript : MonoBehaviour
                 _waveLogic = obj.GetComponent<PointWavePoolHandler>();
         }
         Debug.LogWarning("here");
-    //    Debug.LogWarning(Input.mousePosition);
-        waterPlane.AddMouseData(Input.mousePosition);
+        //    Debug.LogWarning(Input.mousePosition);
+        Vector3 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        worldPosition = Input.mousePosition;
+        Debug.LogWarning(worldPosition);
+
+        waterPlane.AddMouseData(worldPosition);
      //   var test =  _waveLogic.GetComponent<PointWaveWaterPlane>();
        // test.AddMouseData(Input.mousePosition);
         Select();
     }
+
+    public void Update()
+    {
+        waterPlane.UpdateMeshData();
+    }
+
+
 
     public void Select()
     {        
