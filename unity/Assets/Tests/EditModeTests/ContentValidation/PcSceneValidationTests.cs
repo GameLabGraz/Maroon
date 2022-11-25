@@ -44,7 +44,8 @@ namespace Tests.EditModeTests.ContentValidation
         public void SceneHasMainCamera()
         {
             // Check GameObject exists
-            var cameraGameObject = FindAndValidateObjectByTag("MainCamera");
+            var cameraGameObject = FindObjectByTag("MainCamera");
+            ValidateGameObject(cameraGameObject);
 
             // Check Camera component
             GetAndValidateBehaviourFromGameObject<Camera>(cameraGameObject);
@@ -54,11 +55,13 @@ namespace Tests.EditModeTests.ContentValidation
         public void SceneHasUICamera()
         {
             // Check GameObject exists
-            var cameraGameObject = FindAndValidateObjectByName("UICamera");
+            var cameraGameObject = FindObjectByName("UICamera");
+            ValidateGameObject(cameraGameObject);
             
             // Check Camera component and its settings
             var cameraComponent = GetAndValidateBehaviourFromGameObject<Camera>(cameraGameObject);
             
+            // Check UI camera's properties
             Assert.AreEqual(LayerMask.GetMask("UI"), cameraComponent.cullingMask,
                 "Wrong culling mask for 'Camera' component of 'UICamera'");
 

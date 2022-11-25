@@ -104,7 +104,7 @@ namespace Tests.Utilities
          * Find any inactive GameObject by name
          * Adjusted from https://stackoverflow.com/a/44456334/7262963
          */
-        public static GameObject FindAndValidateObjectByName(string name)
+        public static GameObject FindObjectByName(string name)
         {
             GameObject found = null;
             
@@ -115,13 +115,8 @@ namespace Tests.Utilities
                     found = transform.gameObject;
                 }
             }
-            
+
             Assert.NotNull(found, $"No GameObject named '{name}' found");
-            Debug.Log(found.name);
-            Debug.Log(found.activeInHierarchy); // TODO stopped here, why is it not active in hierarchy!? check documentation!
-            Debug.Log(found.activeSelf);
-            Assert.True(found.activeInHierarchy, $"The GameObject named '{name}' should be active");
-            
             return found;
         }
         
@@ -130,7 +125,7 @@ namespace Tests.Utilities
          * Assert its existence and active state
          * Adjusted from https://stackoverflow.com/a/44456334/7262963
          */
-        public static GameObject FindAndValidateObjectByTag(string tag)
+        public static GameObject FindObjectByTag(string tag)
         {
             GameObject found = null;
             
@@ -141,10 +136,18 @@ namespace Tests.Utilities
                     found = transform.gameObject;
                 }
             }
-            Assert.NotNull(found, $"No GameObject with tag '{tag}' found");
-            Assert.True(found.activeInHierarchy, $"The GameObject with tag '{tag}' should be active");
             
+            Assert.NotNull(found, $"No GameObject tagged '{tag}' found");
             return found;
+        }
+
+        public static void ValidateGameObject(GameObject gameObject)
+        {
+            Debug.Log(gameObject.name);
+            Debug.Log(gameObject.activeInHierarchy); // TODO FIXME why is it not active in hierarchy? problem while running in editor mode?
+            Debug.Log(gameObject.activeSelf);
+            Assert.True(gameObject.activeSelf, $"The GameObject '{gameObject.name}' should be active (activeSelf)");
+            Assert.True(gameObject.activeInHierarchy, $"The GameObject '{gameObject.name}' should be active (activeInHierarchy)");
         }
         
         /*
