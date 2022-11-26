@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEditor;
@@ -100,61 +102,64 @@ namespace Tests.Utilities
             return component;
         }
         
-        /*
-         * Find any inactive GameObject by name
-         * Adjusted from https://stackoverflow.com/a/44456334/7262963
+        /**
+         * Find any (in-)active GameObject by name
          */
         public static GameObject FindObjectByName(string name)
         {
-            GameObject found = null;
-            
-            foreach (var transform in Resources.FindObjectsOfTypeAll<Transform>())
-            {
-                if (transform.hideFlags == HideFlags.None && transform.name == name)
-                {
-                    found = transform.gameObject;
-                }
-            }
+            List<GameObject> taggedObjectsInScene = new List<GameObject>();
 
+            foreach (GameObject go in Resources.FindObjectsOfTypeAll(typeof(GameObject)) as GameObject[])
+            {
+                if (!EditorUtility.IsPersistent(go.transform.root.gameObject) &&
+                    !(go.hideFlags == HideFlags.NotEditable || go.hideFlags == HideFlags.HideAndDontSave) &&
+                    go.name.Equals(name))
+                    taggedObjectsInScene.Add(go);
+            }
+            Assert.AreEqual(1, taggedObjectsInScene.Count, $"Found multiple ({taggedObjectsInScene.Count}) gameObjects named '{name}'");
+
+            GameObject found = taggedObjectsInScene.First();
             Assert.NotNull(found, $"No GameObject named '{name}' found");
+            
             return found;
         }
         
-        /*
-         * Find any active or inactive GameObject by tag
-         * Assert its existence and active state
-         * Adjusted from https://stackoverflow.com/a/44456334/7262963
+        /**
+         * Find any (in-)active GameObject by tag
          */
         public static GameObject FindObjectByTag(string tag)
         {
-            GameObject found = null;
-            
-            foreach (var transform in Resources.FindObjectsOfTypeAll<Transform>())
+            List<GameObject> taggedObjectsInScene = new List<GameObject>();
+
+            foreach (GameObject go in Resources.FindObjectsOfTypeAll(typeof(GameObject)) as GameObject[])
             {
-                if (transform.hideFlags == HideFlags.None && transform.CompareTag(tag))
-                {
-                    found = transform.gameObject;
-                }
+                if (!EditorUtility.IsPersistent(go.transform.root.gameObject) &&
+                    !(go.hideFlags == HideFlags.NotEditable || go.hideFlags == HideFlags.HideAndDontSave) &&
+                    go.CompareTag(tag))
+                    taggedObjectsInScene.Add(go);
             }
-            
+            Assert.AreEqual(1, taggedObjectsInScene.Count, $"Found multiple ({taggedObjectsInScene.Count}) gameObjects tagged '{tag}'");
+
+            GameObject found = taggedObjectsInScene.First();
             Assert.NotNull(found, $"No GameObject tagged '{tag}' found");
+            
             return found;
         }
 
-        public static void ValidateGameObject(GameObject gameObject)
+        /**
+         * Asserts that the GameObject and all of its parent GameObjects in scene hierarchy are active
+         */
+        public static void AssertGameObjectIsActive(GameObject gameObject)
         {
-            Debug.Log(gameObject.name);
-            Debug.Log(gameObject.activeInHierarchy); // TODO FIXME why is it not active in hierarchy? problem while running in editor mode?
-            Debug.Log(gameObject.activeSelf);
             Assert.True(gameObject.activeSelf, $"The GameObject '{gameObject.name}' should be active (activeSelf)");
             Assert.True(gameObject.activeInHierarchy, $"The GameObject '{gameObject.name}' should be active (activeInHierarchy)");
         }
         
         /*
-         * Get a Behaviour:Component from a GameObject
+         * Get a Component (Behaviour) from a GameObject
          * Assert its existence and whether it's enabled
          */
-        public static T GetAndValidateBehaviourFromGameObject<T>(GameObject gameObject) where T:Behaviour {
+        public static T GetAndValidateComponentFromGameObject<T>(GameObject gameObject) where T:Behaviour {
             var component = gameObject.GetComponent<T>();
             
             Assert.NotNull(component, $"No '{nameof(T)}' component in GameObject '{gameObject.name}'");
