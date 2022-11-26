@@ -22,7 +22,6 @@ namespace Tests.Utilities
                 path = AssetDatabase.GUIDToAssetPath(guid);
                 if (regex.IsMatch(path))
                 {
-                    Debug.Log(path);
                     found = true;
                     break;
                 }
@@ -44,8 +43,8 @@ namespace Tests.Utilities
 
             return component;
         }
-        
-                /*
+
+        /*
          * Returns a Button component matching the buttonText string
          */
         public static Button GetButtonViaText(string buttonText)

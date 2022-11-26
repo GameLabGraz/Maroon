@@ -23,7 +23,6 @@ namespace Tests.EditModeTests.ContentValidation
     {
         private readonly string _experimentName;
         private readonly string _scenePath;
-        private Scene _scene;
 
         public PcSceneValidationTests(string experimentName, string scenePath)
         {
@@ -35,10 +34,10 @@ namespace Tests.EditModeTests.ContentValidation
         [OneTimeSetUp]
         public void LoadScene()
         {
-            _scene = SceneManager.GetSceneAt(0);
-            if (SceneManager.sceneCount > 1 || _scene.path != _scenePath)
+            var scene = SceneManager.GetSceneAt(0);
+            if (SceneManager.sceneCount > 1 || scene.path != _scenePath)
             {
-                _scene = EditorSceneManager.OpenScene(_scenePath, OpenSceneMode.Single);
+                EditorSceneManager.OpenScene(_scenePath, OpenSceneMode.Single);
             }
         }
         
