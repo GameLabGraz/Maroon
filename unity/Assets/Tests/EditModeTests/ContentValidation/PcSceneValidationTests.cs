@@ -37,36 +37,50 @@ namespace Tests.EditModeTests.ContentValidation
         {
             _scene = SceneManager.GetSceneAt(0);
             if (SceneManager.sceneCount > 1 || _scene.path != _scenePath)
+            {
                 _scene = EditorSceneManager.OpenScene(_scenePath, OpenSceneMode.Single);
+            }
         }
         
         [Test, Description("Must have a GameObject with enabled <Camera> component tagged as 'MainCamera'")]
         public void SceneHasMainCamera()
         {
-            // Check GameObject exists
+            
+            // List of scenes that skip the test
+            var scenesToSkip = new List<string> { "StateMachine" };
+            
+            // Skip listed scene(s) TODO can this be done on top of class for all tests ?
+            if (scenesToSkip.Any(x => _experimentName.ToUpper().Contains(x.ToUpper())))
+                Assert.Ignore($"{_experimentName} scene intentionally has no 'LanguageManager'");
+            
+            // Check GameObject exists and is active
             var cameraGameObject = FindObjectByTag("MainCamera");
-            ValidateGameObject(cameraGameObject);
+            AssertGameObjectIsActive(cameraGameObject);
 
-            // Check Camera component
-            GetAndValidateBehaviourFromGameObject<Camera>(cameraGameObject);
+            // Check Camera component is attached
+            var cameraComponent = GetAndValidateComponentFromGameObject<Camera>(cameraGameObject);
+            
+            // Check UI camera's properties
+            Assert.False(cameraComponent.orthographic,
+                $"Wrong projection type for '{cameraComponent.name}' component of '{cameraGameObject.name}'");
         }
         
         [Test, Description("Must have a GameObject named 'UICamera' with configured <Camera> component")]
         public void SceneHasUICamera()
         {
-            // Check GameObject exists
+            // Check GameObject exists and is active
             var cameraGameObject = FindObjectByName("UICamera");
-            ValidateGameObject(cameraGameObject);
+            AssertGameObjectIsActive(cameraGameObject);
             
-            // Check Camera component and its settings
-            var cameraComponent = GetAndValidateBehaviourFromGameObject<Camera>(cameraGameObject);
+            // Check Camera component is attached
+            var cameraComponent = GetAndValidateComponentFromGameObject<Camera>(cameraGameObject);
             
             // Check UI camera's properties
             Assert.AreEqual(LayerMask.GetMask("UI"), cameraComponent.cullingMask,
-                "Wrong culling mask for 'Camera' component of 'UICamera'");
+                $"Wrong culling mask for '{cameraComponent.name}' component of '{cameraGameObject.name}'");
 
             Assert.True(cameraComponent.orthographic,
-                "Wrong projection type for 'Camera' component of 'UICamera'");
+                $"Wrong projection type for '{cameraComponent.name}' component of '{cameraGameObject.name}'");
         }
 
         [Test, Description("Must have a GameObject named 'UI' with configured 'Canvas' component")]
