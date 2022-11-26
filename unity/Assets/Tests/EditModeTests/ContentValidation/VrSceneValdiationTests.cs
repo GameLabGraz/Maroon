@@ -81,7 +81,7 @@ namespace Tests.EditModeTests.ContentValidation
             
             // Skip listed scene(s)
             if (scenesToSkip.Any(x => _experimentName.ToUpper().Contains(x.ToUpper())))
-                Assert.Ignore($"{_experimentName} scene has intentionally no 'LanguageManager'");
+                Assert.Ignore($"{_experimentName} scene intentionally has no 'LanguageManager'");
 
             var languageManagerGameObject = GameObject.Find("LanguageManager"); 
             Assert.NotNull(languageManagerGameObject);
