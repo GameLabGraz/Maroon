@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEditor;
@@ -39,7 +40,7 @@ namespace Tests.Utilities
         {
             string name = ((Func<GameObject, string>)((a) => a.name))(prefab);
             var component = prefab.GetComponent<T>();
-            Assert.NotNull(component, $"'{name}' prefab has no '{typeof(T)}' component - faulty test?");
+            Assert.NotNull(component, $"'{name}' prefab has no '{typeof(T).Name}' component - faulty test?");
 
             return component;
         }
@@ -165,6 +166,18 @@ namespace Tests.Utilities
             Assert.True(component.enabled, $"The '{nameof(T)}' component of '{gameObject.name}' should be enabled");
 
             return component;
+        }
+        
+        public static void AddDescendantsUntilDepth(Transform parent, List<GameObject> list, int maxDepth, int depth=1)
+        {
+            if (depth > maxDepth)
+                return;
+            
+            foreach (Transform child in parent)
+            {
+                list.Add(child.gameObject);
+                AddDescendantsUntilDepth(child, list, maxDepth, depth+1);
+            }
         }
     }
 }

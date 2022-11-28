@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using GEAR.Localization;
 using NUnit.Framework;
+using Tests.Utilities;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -24,16 +26,30 @@ namespace Tests.EditModeTests.ContentValidation
         private readonly string _experimentName;
         private readonly string _scenePath;
 
+        private const string ExperimentPrefabName = "ExperimentSetting.pc";
+        private string[] _objectNamesFromExperimentPrefab;
+        private List<GameObject> _gameObjectsFromExperimentPrefab;
+
         public PcSceneValidationTests(string experimentName, string scenePath)
         {
             _experimentName = experimentName;
             _scenePath = scenePath;
         }
-        
-        // Load scene if not yet loaded before running the scene's tests
+
+        // Before running any tests, query ExperimentSetting prefab and load the scene if it's not yet loaded
         [OneTimeSetUp]
-        public void LoadScene()
+        public void OneTimeSetUp()
         {
+            // Get "mandatory" object names from ExperimentSetting prefab
+            var experimentSettingPrefab = GetPrefabByName(ExperimentPrefabName);
+            _gameObjectsFromExperimentPrefab = new List<GameObject>();
+            AddDescendantsUntilDepth(experimentSettingPrefab.transform, _gameObjectsFromExperimentPrefab, 3);
+            
+            _objectNamesFromExperimentPrefab = _gameObjectsFromExperimentPrefab
+                .Where(child => !child.name.Contains("="))
+                .Select(x => x.name).ToArray();
+
+            // Load scene if necessary
             var scene = SceneManager.GetSceneAt(0);
             if (SceneManager.sceneCount > 1 || scene.path != _scenePath)
             {
@@ -41,34 +57,41 @@ namespace Tests.EditModeTests.ContentValidation
             }
         }
         
+        [SkipTestFor("StateMachine")]
         [Test, Description("Must have a GameObject with enabled <Camera> component tagged as 'MainCamera'")]
         public void SceneHasMainCamera()
         {
-            
-            // List of scenes that skip the test
-            var scenesToSkip = new List<string> { "StateMachine" };
-            
-            // Skip listed scene(s) TODO can this be done on top of class for all tests ?
-            if (scenesToSkip.Any(x => _experimentName.ToUpper().Contains(x.ToUpper())))
-                Assert.Ignore($"{_experimentName} scene intentionally has no 'LanguageManager'");
-            
+            const string objectNameUnderTest = "MainCamera";
+
+            ToSkipOrNotToSkip(objectNameUnderTest);
+
+            GameObject prefab = _gameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
+            Camera prefabCameraComponent = prefab.GetComponent<Camera>();
+
             // Check GameObject exists and is active
-            var cameraGameObject = FindObjectByTag("MainCamera");
+            var cameraGameObject = FindObjectByName(objectNameUnderTest);
             AssertGameObjectIsActive(cameraGameObject);
 
             // Check Camera component is attached
             var cameraComponent = GetAndValidateComponentFromGameObject<Camera>(cameraGameObject);
             
-            // Check UI camera's properties
-            Assert.False(cameraComponent.orthographic,
-                $"Wrong projection type for '{cameraComponent.name}' component of '{cameraGameObject.name}'");
+            // Check camera component's properties
+            Assert.AreEqual(prefabCameraComponent.orthographic, cameraComponent.orthographic,
+                $"Wrong projection type for '{cameraComponent.GetType().Name}' component of '{cameraGameObject.name}'");
+            
+            Assert.AreEqual(prefabCameraComponent.cullingMask, cameraComponent.cullingMask,
+                $"Wrong cullingMask for '{cameraComponent.GetType().Name}' component of '{cameraGameObject.name}'");
+            
+            Assert.AreEqual(prefabCameraComponent.fieldOfView, cameraComponent.fieldOfView, 5f,
+                $"Wrong fieldOfView for '{cameraComponent.GetType().Name}' component of '{cameraGameObject.name}'");
         }
         
         [Test, Description("Must have a GameObject named 'UICamera' with configured <Camera> component")]
         public void SceneHasUICamera()
         {
+            const string objectUnderTest = "UICamera";
             // Check GameObject exists and is active
-            var cameraGameObject = FindObjectByName("UICamera");
+            var cameraGameObject = FindObjectByName(objectUnderTest);
             AssertGameObjectIsActive(cameraGameObject);
             
             // Check Camera component is attached
@@ -179,6 +202,25 @@ namespace Tests.EditModeTests.ContentValidation
         {
             var pauseMenuGameObject = GameObject.Find("prePauseMenu") ?? GameObject.Find("PauseMenu");
             Assert.NotNull(pauseMenuGameObject, "No 'prePauseMenu' or 'PauseMenu' GameObject found");
+        }
+        
+        /**
+         * Checks whether a test case should be skipped if either is true:
+         * 1.) The test case is decorated with the custom attribute [SkipTestFor("SomeExperimentName")] and the experiment matches
+         * 2.) The objectNameUnderTest is not part of the experiment prefab
+         */
+        private void ToSkipOrNotToSkip(string objectNameUnderTest, [CallerMemberName] string callingMethodName = null)
+        {
+            // Get instance of the attribute
+            var myCustomAttribute = SkipTestFor.GetAttributeCustom<PcSceneValidationTests>(callingMethodName);
+            if (myCustomAttribute != null)
+            {
+                if (myCustomAttribute.ExperimentNames.Any(x => _experimentName.ToUpper().Contains(x.ToUpper())))
+                    Assert.Ignore($"{_experimentName} scene intentionally has no '{objectNameUnderTest}'");
+            }
+
+            if (!_objectNamesFromExperimentPrefab.Contains(objectNameUnderTest))
+                Assert.Ignore($"{ExperimentPrefabName} contains no {objectNameUnderTest} - skipping test!");
         }
     }
 }
