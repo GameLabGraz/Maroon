@@ -36,7 +36,10 @@ namespace Tests.Utilities
             return prefab;
         }
 
-        public static T GetComponentFromPrefab<T>(GameObject prefab)
+        /**
+         * Returns a component from a GameObject if it's not null otherwise an Assert fails
+         */
+        public static T GetComponentFromGameObject<T>(GameObject prefab)
         {
             string name = ((Func<GameObject, string>)((a) => a.name))(prefab);
             var component = prefab.GetComponent<T>();
@@ -107,21 +110,19 @@ namespace Tests.Utilities
          */
         public static GameObject FindObjectByName(string name)
         {
-            List<GameObject> taggedObjectsInScene = new List<GameObject>();
+            var namedObjectsInScene = new List<GameObject>();
 
-            foreach (GameObject go in Resources.FindObjectsOfTypeAll(typeof(GameObject)) as GameObject[])
+            foreach (var go in Resources.FindObjectsOfTypeAll(typeof(GameObject)) as GameObject[])
             {
                 if (!EditorUtility.IsPersistent(go.transform.root.gameObject) &&
                     !(go.hideFlags == HideFlags.NotEditable || go.hideFlags == HideFlags.HideAndDontSave) &&
                     go.name.Equals(name))
-                    taggedObjectsInScene.Add(go);
+                    namedObjectsInScene.Add(go);
             }
-            Assert.AreEqual(1, taggedObjectsInScene.Count, $"Found multiple ({taggedObjectsInScene.Count}) gameObjects named '{name}'");
+            Assert.True(namedObjectsInScene.Count > 0, $"Could not find gameObject named '{name}'");
+            Assert.AreEqual(1, namedObjectsInScene.Count, $"Found multiple ({namedObjectsInScene.Count}) gameObjects named '{name}'");
 
-            GameObject found = taggedObjectsInScene.First();
-            Assert.NotNull(found, $"No GameObject named '{name}' found");
-            
-            return found;
+            return namedObjectsInScene.First();
         }
         
         /**
@@ -159,7 +160,7 @@ namespace Tests.Utilities
          * Get a Component (Behaviour) from a GameObject
          * Assert its existence and whether it's enabled
          */
-        public static T GetAndValidateComponentFromGameObject<T>(GameObject gameObject) where T:Behaviour {
+        public static T GetEnabledComponentFromGameObject<T>(GameObject gameObject) where T:Behaviour {
             var component = gameObject.GetComponent<T>();
             
             Assert.NotNull(component, $"No '{nameof(T)}' component in GameObject '{gameObject.name}'");

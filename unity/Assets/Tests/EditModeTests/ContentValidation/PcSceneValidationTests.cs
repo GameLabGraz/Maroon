@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using GEAR.Localization;
 using NUnit.Framework;
-using Tests.Utilities;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -26,9 +27,10 @@ namespace Tests.EditModeTests.ContentValidation
         private readonly string _experimentName;
         private readonly string _scenePath;
 
-        private const string ExperimentPrefabName = "ExperimentSetting.pc";
-        private string[] _objectNamesFromExperimentPrefab;
+        private const string PcExperimentPrefabName = "ExperimentSetting.pc";
+        
         private List<GameObject> _gameObjectsFromExperimentPrefab;
+        private string[] _objectNamesFromExperimentPrefab;
 
         public PcSceneValidationTests(string experimentName, string scenePath)
         {
@@ -41,14 +43,14 @@ namespace Tests.EditModeTests.ContentValidation
         public void OneTimeSetUp()
         {
             // Get "mandatory" object names from ExperimentSetting prefab
-            var experimentSettingPrefab = GetPrefabByName(ExperimentPrefabName);
+            var experimentSettingPrefab = GetPrefabByName(PcExperimentPrefabName);
             _gameObjectsFromExperimentPrefab = new List<GameObject>();
             AddDescendantsUntilDepth(experimentSettingPrefab.transform, _gameObjectsFromExperimentPrefab, 3);
             
             _objectNamesFromExperimentPrefab = _gameObjectsFromExperimentPrefab
                 .Where(child => !child.name.Contains("="))
                 .Select(x => x.name).ToArray();
-
+            
             // Load scene if necessary
             var scene = SceneManager.GetSceneAt(0);
             if (SceneManager.sceneCount > 1 || scene.path != _scenePath)
@@ -61,19 +63,20 @@ namespace Tests.EditModeTests.ContentValidation
         [Test, Description("Must have a GameObject with enabled <Camera> component tagged as 'MainCamera'")]
         public void SceneHasMainCamera()
         {
+            // GameObject to be tested
             const string objectNameUnderTest = "MainCamera";
-
             ToSkipOrNotToSkip(objectNameUnderTest);
 
-            GameObject prefab = _gameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
-            Camera prefabCameraComponent = prefab.GetComponent<Camera>();
+            // Get prefab and component
+            var prefab = _gameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
+            var prefabCameraComponent = GetComponentFromGameObject<Camera>(prefab);
 
             // Check GameObject exists and is active
             var cameraGameObject = FindObjectByName(objectNameUnderTest);
             AssertGameObjectIsActive(cameraGameObject);
 
             // Check Camera component is attached
-            var cameraComponent = GetAndValidateComponentFromGameObject<Camera>(cameraGameObject);
+            var cameraComponent = GetEnabledComponentFromGameObject<Camera>(cameraGameObject);
             
             // Check camera component's properties
             Assert.AreEqual(prefabCameraComponent.orthographic, cameraComponent.orthographic,
@@ -89,65 +92,89 @@ namespace Tests.EditModeTests.ContentValidation
         [Test, Description("Must have a GameObject named 'UICamera' with configured <Camera> component")]
         public void SceneHasUICamera()
         {
-            const string objectUnderTest = "UICamera";
+            // GameObject to be tested
+            const string objectNameUnderTest = "UICamera";
+            ToSkipOrNotToSkip(objectNameUnderTest);
+            
+            // Get prefab and component
+            var prefab = _gameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
+            var prefabCameraComponent = GetComponentFromGameObject<Camera>(prefab);
+            
             // Check GameObject exists and is active
-            var cameraGameObject = FindObjectByName(objectUnderTest);
+            var cameraGameObject = FindObjectByName(objectNameUnderTest);
             AssertGameObjectIsActive(cameraGameObject);
             
             // Check Camera component is attached
-            var cameraComponent = GetAndValidateComponentFromGameObject<Camera>(cameraGameObject);
+            var cameraComponent = GetEnabledComponentFromGameObject<Camera>(cameraGameObject);
             
             // Check UI camera's properties
-            Assert.AreEqual(LayerMask.GetMask("UI"), cameraComponent.cullingMask,
-                $"Wrong culling mask for '{cameraComponent.name}' component of '{cameraGameObject.name}'");
+            Assert.AreEqual(prefabCameraComponent.cullingMask, cameraComponent.cullingMask,
+                $"Wrong culling mask for '{cameraComponent.GetType().Name}' component of '{cameraGameObject.name}'");
 
-            Assert.True(cameraComponent.orthographic,
-                $"Wrong projection type for '{cameraComponent.name}' component of '{cameraGameObject.name}'");
+            Assert.AreEqual(prefabCameraComponent.orthographic, cameraComponent.orthographic,
+                $"Wrong projection type for '{cameraComponent.GetType().Name}' component of '{cameraGameObject.name}'");
+            
+            Assert.AreEqual(prefabCameraComponent.nearClipPlane, cameraComponent.nearClipPlane,
+                $"Wrong Clipping Plane Near value for '{cameraComponent.GetType().Name}' component of '{cameraGameObject.name}'");
+            
+            Assert.AreEqual(prefabCameraComponent.farClipPlane, cameraComponent.farClipPlane,
+                $"Wrong Clipping Plane Far value for '{cameraComponent.GetType().Name}' component of '{cameraGameObject.name}'");
         }
 
         [Test, Description("Must have a GameObject named 'UI' with configured 'Canvas' component")]
         public void SceneHasUserInterface()
         {
-            /* TODO food for thought
-             * Is direct comparison against prefab a good idea? Could throw unexpected errors when a prefab is changed
-             * in an impactful way.
-             * On the other hand, if we check for hardcoded values and a prefab is changed, a test checking against it
-             * will fail either way.
-             * What could we do to mitigate broken scene tests? Run prefab tests before scene tests and stop test run!
-             * This should reduce any possible confusion with broken prefab checks in scene tests.
-             *
-             * What about child objects like EventSystem?
-             * Is it possible to compare Prefab's and GameObject's child?
-             * Is there any other way to compare a GameObject with its Prefab? I haven't found a way yet.
-             * Random idea, but couldn't get GUID of GameObject to compare with either.
-             * 
-             * Anyway, stopped here with a mix of prefab and hardcoded comparisons.
-             */
+            // GameObject to be tested
+            const string objectNameUnderTest = "UI";
+            ToSkipOrNotToSkip(objectNameUnderTest);
             
-            // Get prefab data
-            var prefab = GetPrefabByName("UI");
-            var prefabCanvas = GetComponentFromPrefab<Canvas>(prefab);
-            var prefabCanvasScaler = GetComponentFromPrefab<CanvasScaler>(prefab);
-
-            // Check GameObject exists
-            var uiGameObject = GameObject.Find("UI");
-            Assert.NotNull(uiGameObject, "No 'UI' GameObject found");
+            // Get prefab and components
+            var prefab = _gameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
+            var prefabCanvasComponent = GetComponentFromGameObject<Canvas>(prefab);
+            var prefabCanvasScalerComponent = GetComponentFromGameObject<CanvasScaler>(prefab);
+            var prefabGraphicRaycasterComponent = GetComponentFromGameObject<GraphicRaycaster>(prefab);
             
-            // Check GameObject is set to UI layer
+            // Check GameObject exists and is active
+            var uiGameObject = FindObjectByName(objectNameUnderTest);
+            AssertGameObjectIsActive(uiGameObject);
+            
+            // Check components are attached
+            var canvasComponent = GetEnabledComponentFromGameObject<Canvas>(uiGameObject);
+            var canvasScalerComponent = GetEnabledComponentFromGameObject<CanvasScaler>(uiGameObject);
+            var graphicRaycasterComponent = GetEnabledComponentFromGameObject<GraphicRaycaster>(uiGameObject);
+            
+            // Check GameObject is set to correct layer
             Assert.AreEqual(prefab.layer, uiGameObject.layer);
-            //Assert.AreEqual(LayerMask.NameToLayer("UI"), uiGameObject.layer);
-            
-            // Check Canvas component and its settings
-            var canvasComponent = uiGameObject.GetComponent<Canvas>();
-            Assert.NotNull(canvasComponent, "No 'Canvas' component in GameObject 'UI'");
-            Assert.AreEqual(prefabCanvas.renderMode,canvasComponent.renderMode);
-            // Assert.AreEqual(RenderMode.ScreenSpaceCamera, canvasComponent.renderMode);
 
-            // Check Canvas Scaler component and its settings
-            var canvasScalerComponent = uiGameObject.GetComponent<CanvasScaler>();
-            Assert.NotNull(canvasScalerComponent, "No 'Canvas Scaler' component in GameObject 'UI'");
-            Assert.AreEqual(prefabCanvasScaler.uiScaleMode, canvasScalerComponent.uiScaleMode);
-            //Assert.AreEqual(CanvasScaler.ScaleMode.ScaleWithScreenSize, canvasScalerComponent.uiScaleMode);
+            // Check Canvas component's properties
+            Assert.AreEqual(prefabCanvasComponent.renderMode,canvasComponent.renderMode,
+                $"Wrong Render Mode for '{canvasComponent.GetType().Name}' component of '{uiGameObject.name}'");
+            Assert.AreEqual(prefabCanvasComponent.pixelPerfect,canvasComponent.pixelPerfect,
+                $"Wrong Pixel Perfect setting for '{canvasComponent.GetType().Name}' component of '{uiGameObject.name}'");
+            Assert.AreEqual(prefabCanvasComponent.worldCamera.name,canvasComponent.worldCamera.name,
+                $"Wrong Camera for '{canvasComponent.GetType().Name}' component of '{uiGameObject.name}'");
+            Assert.AreEqual(prefabCanvasComponent.planeDistance,canvasComponent.planeDistance,
+                $"Wrong Plane Distance value for '{canvasComponent.GetType().Name}' component of '{uiGameObject.name}'");
+
+            // Check Canvas Scaler component's properties
+            Assert.AreEqual(prefabCanvasScalerComponent.uiScaleMode, canvasScalerComponent.uiScaleMode,
+                $"Wrong UI Scale Mode for '{prefabCanvasScalerComponent.GetType().Name}' component of '{uiGameObject.name}'");
+            Assert.AreEqual(prefabCanvasScalerComponent.referenceResolution, canvasScalerComponent.referenceResolution,
+                $"Wrong Reference Resolution for '{prefabCanvasScalerComponent.GetType().Name}' component of '{uiGameObject.name}'");
+            Assert.AreEqual(prefabCanvasScalerComponent.screenMatchMode, canvasScalerComponent.screenMatchMode,
+                $"Wrong Screen Match Mode for '{prefabCanvasScalerComponent.GetType().Name}' component of '{uiGameObject.name}'");
+            Assert.AreEqual(prefabCanvasScalerComponent.matchWidthOrHeight, canvasScalerComponent.matchWidthOrHeight,
+                $"Wrong Match value for '{prefabCanvasScalerComponent.GetType().Name}' component of '{uiGameObject.name}'");
+            Assert.AreEqual(prefabCanvasScalerComponent.referencePixelsPerUnit, canvasScalerComponent.referencePixelsPerUnit,
+                $"Wrong Reference Pixels Per Unit for '{prefabCanvasScalerComponent.GetType().Name}' component of '{uiGameObject.name}'");
+            
+            // Check Graphics Raycaster component's properties
+            Assert.AreEqual(prefabGraphicRaycasterComponent.blockingMask, graphicRaycasterComponent.blockingMask,
+                $"Wrong Blocking Mask for '{prefabGraphicRaycasterComponent.GetType().Name}' component of '{uiGameObject.name}'");
+            Assert.AreEqual(prefabGraphicRaycasterComponent.blockingObjects, graphicRaycasterComponent.blockingObjects,
+                $"Wrong Blocking Objects for '{prefabGraphicRaycasterComponent.GetType().Name}' component of '{uiGameObject.name}'");
+            Assert.AreEqual(prefabGraphicRaycasterComponent.ignoreReversedGraphics, graphicRaycasterComponent.ignoreReversedGraphics,
+                $"Wrong ignoreReversedGraphics value for '{prefabGraphicRaycasterComponent.GetType().Name}' component of '{uiGameObject.name}'");
 
             // Check EventSystem exists
             var eventSystem = GameObject.Find("EventSystem");
@@ -155,53 +182,172 @@ namespace Tests.EditModeTests.ContentValidation
             Assert.AreEqual(uiGameObject.transform, eventSystem.transform.parent, "EventSystem is not a child GameObject of 'UI'");
         }
         
-        [Test, Description("Must use the 'ExperimentRoom' Prefab")]
+        [SkipTestFor("FaradaysLaw")] // TODO: experiment has two event systems!
+        [Test, Description("Must have a GameObject named 'EventSystem'")]
+        public void SceneHasEventSystem()
+        {
+            // GameObject to be tested
+            const string objectNameUnderTest = "EventSystem";
+            ToSkipOrNotToSkip(objectNameUnderTest);
+            
+            // Check GameObject exists and is active
+            var uiGameObject = FindObjectByName(objectNameUnderTest);
+            AssertGameObjectIsActive(uiGameObject);
+        }
+        
+        [SkipTestFor("CathodeRayTube", "CoulombsLaw")]
+        [Test, Description("Must have a GameObject named 'PanelAssessment'")]
+        public void SceneHasUiPanelAssessment()
+        {
+            // GameObject to be tested
+            const string objectNameUnderTest = "PanelAssessment";
+            ToSkipOrNotToSkip(objectNameUnderTest);
+            
+            // Check GameObject exists and is active
+            var uiGameObject = FindObjectByName(objectNameUnderTest);
+            AssertGameObjectIsActive(uiGameObject);
+        }
+        
+        [SkipTestFor("Optics")]
+        [Test, Description("Must have a GameObject named 'PanelControls'")]
+        public void SceneHasUiPanelControls()
+        {
+            // GameObject to be tested
+            const string objectNameUnderTest = "PanelControls";
+            ToSkipOrNotToSkip(objectNameUnderTest);
+            
+            // Check GameObject exists and is active
+            var uiGameObject = FindObjectByName(objectNameUnderTest);
+            AssertGameObjectIsActive(uiGameObject);
+        }
+        
+        [Test, Description("Must have a GameObject named 'PanelDialogue '")]
+        public void SceneHasUiPanelDialogue()
+        {
+            // GameObject to be tested
+            const string objectNameUnderTest = "PanelDialogue ";
+            ToSkipOrNotToSkip(objectNameUnderTest);
+            
+            // Check GameObject exists and is active
+            var uiGameObject = FindObjectByName(objectNameUnderTest);
+            AssertGameObjectIsActive(uiGameObject);
+        }
+               
+        [Test, Description("Must have a GameObject named 'PanelExit'")]
+        public void SceneHasUiPanelExit()
+        {
+            // GameObject to be tested
+            const string objectNameUnderTest = "PanelExit";
+            ToSkipOrNotToSkip(objectNameUnderTest);
+            
+            // Check GameObject exists and is active
+            var uiGameObject = FindObjectByName(objectNameUnderTest);
+            AssertGameObjectIsActive(uiGameObject);
+        }
+        
+        [Test, Description("Must have a GameObject named 'PanelOptions'")]
+        public void SceneHasUiPanelOptions()
+        {
+            // GameObject to be tested
+            const string objectNameUnderTest = "PanelOptions";
+            ToSkipOrNotToSkip(objectNameUnderTest);
+            
+            // Check GameObject exists and is active
+            var uiGameObject = FindObjectByName(objectNameUnderTest);
+            AssertGameObjectIsActive(uiGameObject);
+        }
+
+        [Test, Description("Must have a GameObject named 'ExperimentRoom'")]
         public void SceneHasExperimentRoom()
         {
-            // Check GameObject exists
-            var experimentRoomGameObject = GameObject.Find("ExperimentRoom");
-            Assert.NotNull(experimentRoomGameObject, "No 'ExperimentRoom' GameObject found");
+            // GameObject to be tested
+            const string objectNameUnderTest = "ExperimentRoom";
+            ToSkipOrNotToSkip(objectNameUnderTest);
+
+            // Check GameObject exists and is active
+            var uiGameObject = FindObjectByName(objectNameUnderTest);
+            AssertGameObjectIsActive(uiGameObject);
         }
         
-        [Test, Description("Must include the 'SimulationController' Prefab")]
+        [SkipTestFor("Whiteboard")]
+        [Test, Description("Must have a GameObject named 'SimulationController'")]
         public void SceneHasSimulationController()
         {
-            // List of scenes that skip the test
-            var scenesToSkip = new List<string> { "Whiteboard" };
-            
-            // Skip listed scene(s)
-            if (scenesToSkip.Any(x => _experimentName.ToUpper().Contains(x.ToUpper())))
-                Assert.Ignore($"{_experimentName} scene has intentionally no SimulationController");
+            // GameObject to be tested
+            const string objectNameUnderTest = "SimulationController";
+            ToSkipOrNotToSkip(objectNameUnderTest);
 
-            // Check GameObject exists
-            var simulationControllerGameObject = GameObject.Find("SimulationController");
-            Assert.NotNull(simulationControllerGameObject, "No 'SimulationController' GameObject found");
+            // Check GameObject exists and is active
+            var uiGameObject = FindObjectByName(objectNameUnderTest);
+            AssertGameObjectIsActive(uiGameObject);
         }
         
-        [Test, Description("Must include the 'LanguageManager' Prefab")]
+        [Test, Description("Must have a GameObject named 'LanguageManager'")]
         public void SceneHasLanguageManager()
         {
-            // Check GameObject exists
-            var languageManagerGameObject = GameObject.Find("LanguageManager");
-            Assert.NotNull(languageManagerGameObject, "No 'LanguageManager' GameObject found");
-            
-            // The package provides an assembly definition, enabling us to directly check for the script component
-            var languageManagerScriptComponent = languageManagerGameObject.GetComponent<LanguageManager>();
-            Assert.NotNull(languageManagerScriptComponent, "No 'LanguageManager' component in GameObject 'LanguageManager'");
+            // GameObject to be tested
+            const string objectNameUnderTest = "LanguageManager";
+            ToSkipOrNotToSkip(objectNameUnderTest);
+
+            // Check GameObject exists and is active
+            var uiGameObject = FindObjectByName(objectNameUnderTest);
+            AssertGameObjectIsActive(uiGameObject);
         }
-        
-        [Test, Description("Must include the 'GlobalEntities' Prefab")]
+
+        [Test, Description("Must have a GameObject named 'GlobalEntities'")]
         public void SceneHasGlobalEntities()
         {
-            var globalEntitiesGameObject = GameObject.Find("GlobalEntities");
-            Assert.NotNull(globalEntitiesGameObject, "No 'GlobalEntities' GameObject found");
+            // GameObject to be tested
+            const string objectNameUnderTest = "GlobalEntities";
+            ToSkipOrNotToSkip(objectNameUnderTest);
+
+            // Check GameObject exists and is active
+            var uiGameObject = FindObjectByName(objectNameUnderTest);
+            AssertGameObjectIsActive(uiGameObject);
         }
         
-        [Test, Description("Must include the 'prePauseMenu' Prefab")]
+        // Skip all experiments not using the updated template
+        [SkipTestFor("CoulombsLaw", "HuygensPrinciple", "Pendulum", "VandeGraaffBalloon", "VandeGraaffGenerator", "Whiteboard")]
+        [Test, Description("Must have a GameObject named 'PauseMenu'")]
         public void SceneHasPauseMenu()
         {
-            var pauseMenuGameObject = GameObject.Find("prePauseMenu") ?? GameObject.Find("PauseMenu");
-            Assert.NotNull(pauseMenuGameObject, "No 'prePauseMenu' or 'PauseMenu' GameObject found");
+            // GameObject to be tested
+            const string objectNameUnderTest = "PauseMenu";
+            ToSkipOrNotToSkip(objectNameUnderTest);
+
+            // Check GameObject exists and is active
+            var uiGameObject = FindObjectByName(objectNameUnderTest);
+            AssertGameObjectIsActive(uiGameObject);
+
+            var canvasGameObject = uiGameObject.transform.Find("Canvas");
+            Assert.False(canvasGameObject.gameObject.activeInHierarchy, $"{objectNameUnderTest}'s Canvas should be disabled by default!");
+        }
+        
+        
+        /**
+         * Custom attribute (decorator) for tests
+         * Provides a list of experiment names to skip the respective test
+         */
+        [AttributeUsage(AttributeTargets.Method)]
+        private class SkipTestFor : Attribute
+        {
+            public string[] ExperimentNames { get; }
+
+            public SkipTestFor(params string[] experimentNames) {
+                ExperimentNames = experimentNames;
+            }
+
+            public static SkipTestFor GetAttributeCustom<T>(string methodName) where T : class
+            {
+                try
+                {
+                    return (SkipTestFor)typeof(T).GetMethod(methodName).GetCustomAttributes(typeof(SkipTestFor), false).FirstOrDefault();
+                }
+                catch(SystemException)
+                {
+                    return null;
+                }
+            }
         }
         
         /**
@@ -219,8 +365,8 @@ namespace Tests.EditModeTests.ContentValidation
                     Assert.Ignore($"{_experimentName} scene intentionally has no '{objectNameUnderTest}'");
             }
 
-            if (!_objectNamesFromExperimentPrefab.Contains(objectNameUnderTest))
-                Assert.Ignore($"{ExperimentPrefabName} contains no {objectNameUnderTest} - skipping test!");
+            if (!_objectNamesFromExperimentPrefab.Any(x => x.ToUpper().Contains(objectNameUnderTest.ToUpper())))
+                Assert.Ignore($"{PcExperimentPrefabName} contains no {objectNameUnderTest} - skipping test!");
         }
     }
 }
