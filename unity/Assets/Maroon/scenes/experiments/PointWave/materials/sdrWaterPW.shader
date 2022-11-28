@@ -159,6 +159,10 @@
                 {
                     output.color = _ColorMax;
                 }
+                if (_ClickCoordinates.z == v.pos.z)
+                {
+                    output.color = _ColorMax;
+                }
                // {
               //      output.color = _ColorMax;
                // }

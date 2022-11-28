@@ -44,8 +44,14 @@ public class PointWaveWaterPlane : PausableObject, IResetObject
     // Tim testing
     public void AddMouseData(Vector3 data)
     {
+
+       var test =  _meshRenderer.bounds.size;
+        Debug.Log("Mesh  size  = " +test);
+        //Debug.Log(data);
+        data.x = data.x * (verticesPerLength);
+        data.z = data.z * verticesPerWidth;
+        Debug.Log("calc data :" + data);
         _meshRenderer.sharedMaterial.SetVector(Shader.PropertyToID("_ClickCoordinates"), new Vector4(data.x, data.y, data.z, 0));
-        Debug.Log(data);
     }
 
     public void UpdateParameterAndPosition()
@@ -90,12 +96,12 @@ public class PointWaveWaterPlane : PausableObject, IResetObject
 
      public void UpdateMeshData()
     {
-        Vector3[] vertices = GetComponent<MeshFilter>().mesh.vertices;
+      /*  Vector3[] vertices = GetComponent<MeshFilter>().mesh.vertices;
         for (int i = 0; i < vertices.Length; i++)
         {
             Debug.LogWarning(vertices[i].x);
 
-        }
+        }*/
             _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_DeltaTime"), Time.deltaTime);// does it work ? 
        // _meshRenderer.sharedMaterial.SetVectorArray(Shader.PropertyToID)
     }

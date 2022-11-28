@@ -38,8 +38,52 @@ public class PointWaveSelectScript : MonoBehaviour
         }
         Debug.LogWarning("here");
         //    Debug.LogWarning(Input.mousePosition);
-        Vector3 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        worldPosition = Input.mousePosition;
+        Vector3 worldPosition = new Vector3();
+        Camera c = Camera.main;
+        Ray ray = c.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, 100f))
+        {
+           // Debug.DrawRay(ray.origin, ray.direction * 100, Color.yellow);
+            Debug.Log("normal :" + hit.normal);
+            //hit.collider;
+            if(hit.transform.gameObject == GameObject.Find("innerBathub")) // can add boundary maybe
+            {
+              var test =   hit.point;
+                Debug.Log("test x: "+ test.x);
+                Debug.Log("test y: "+ test.y);
+                Debug.Log("test z: "+ test.z);
+                worldPosition = hit.point;
+                BoxCollider col = GetComponent<BoxCollider>();
+            //    Debug.Log(col.size.x/2);
+
+                var data =  transform.InverseTransformPoint(worldPosition);
+              //  Debug.Log("Data : " + data);
+                float x = 0;
+                float z = 0;
+
+                x = (data.x / (col.size.x / 2));
+                z = (data.z / (col.size.z / 2));
+
+           
+
+
+                
+                worldPosition = data;
+                worldPosition.x = x;
+                worldPosition.z = z;
+                //GetComponent<GameObject.bounds.size;
+                //   Debug.Log("BATHTUB");
+            }
+            Debug.Log(hit.transform.gameObject);
+
+        //    Debug.Log("Area from normal/direction : " + CalculateFacingArea(selcectedMesh, hit.normal));
+          //  return CalculateFacingArea(selcectedMesh, hit.normal);
+        }
+        Debug.Log(hit.ToString());
+     //   return 0f;
+    
+        //worldPosition = Input.mousePosition;
         Debug.LogWarning(worldPosition);
 
         waterPlane.AddMouseData(worldPosition);
