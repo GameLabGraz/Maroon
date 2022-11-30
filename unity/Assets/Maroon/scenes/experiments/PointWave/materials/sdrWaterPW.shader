@@ -35,50 +35,21 @@
 
             // How to transform ? 
             uniform int4 _ClickCoordinates;
-
-
+            uniform int _ClickedOn;
+            uniform int _verticesPerLength;
+            uniform int _verticesPerWidth;
             fixed4 _ColorMin;
             fixed4 _ColorMax;
 
             float SIGMA = 0.01;
-
-            /* COPY PASTE */
-
-          /*N = 60;
-            W = 200;
-
-            
-            H = W;
-
-            D = 10;
-
-            C = 0.04;
-
-            C2 = C * C;
-
-            DAMPING = 0.001;
-
-            SIM_SPEED = 1;
-
-            DELTA_X = W / N;
-
-            DELTA_X2 = DELTA_X * DELTA_X;
-
-            DELTA_Z = H / N;
-
-            DELTA_Z2 = DELTA_Z * DELTA_Z;
-
-            MAX_DT = 12;
-
-            MAX_ITERATRED_DT = 100;
-
-            MAX_Y = 50;
-            */  
-            //SIGMA = 0.01;
                 
             struct vertexInput 
             {
                 float4 pos : POSITION;
+             //   float4 x1p
+             //   float4 x1m
+             //   float4 z1p
+             //   float4 z1n
             };
 
             struct v2f 
@@ -119,32 +90,6 @@
                     amp += u;
                 }
 
-                // TESTING 
-                    /*    var d2x, d2z, i, iNextX, iNextZ, iPrevX, iPrevZ, v, x, z, _i, _j, _k, _l;
-                    v = geometry.vertices;
-                    // we itterate all the points in the shared ?  i think so 
-                    for (z = _i = 1; 1 <= N ? _i < N : _i > N; z = 1 <= N ? ++_i : --_i) {
-                      for (x = _j = 1; 1 <= N ? _j < N : _j > N; x = 1 <= N ? ++_j : --_j) {
-                        i = idx(x, z);
-                        iPrevX = idx(x - 1, z);
-                        iNextX = idx(x + 1, z);
-                        iPrevZ = idx(x, z - 1);
-                        iNextZ = idx(x, z + 1);
-                        d2x = (v[iNextX].y - 2 * v[i].y + v[iPrevX].y) / DELTA_X2;
-                        d2z = (v[iNextZ].y - 2 * v[i].y + v[iPrevZ].y) / DELTA_Z2;
-                        v[i].ay = C2 * (d2x + d2z);
-                        v[i].ay += -DAMPING * v[i].uy;
-                        v[i].uy += dt * v[i].ay;
-                        v[i].newY = v[i].y + dt * v[i].uy;
-                      }
-                    }
-                    for (z = _k = 1; 1 <= N ? _k < N : _k > N; z = 1 <= N ? ++_k : --_k) {
-                      for (x = _l = 1; 1 <= N ? _l < N : _l > N; x = 1 <= N ? ++_l : --_l) {
-                        i = idx(x, z);
-                        v[i].y = v[i].newY;
-                      }
-                    }*/
-
                 output.pos_world_space.y = output.pos_world_space.y + lerp(0, 0.03f, amp);
                 output.sv_position = mul(UNITY_MATRIX_VP, output.pos_world_space);
                 output.color = lerp(_ColorMin, _ColorMax, (amp / mamp));
@@ -154,18 +99,34 @@
                     output.color = _ColorMin;
                 }
 
-                // Tim testing
-                if (_ClickCoordinates.x == v.pos.x)
+                if (_ClickedOn == 1)
                 {
-                    output.color = _ColorMax;
+                    // acording to the webpage
+                    float x = v.pos.x - _ClickCoordinates.x;
+                    float z = v.pos.z - _ClickCoordinates.z;
+
+                    // TODO LOOK HOW TO SEND BUFFER TO GPU
+
+                        /*
+                output.pos_world_space.y = output.pos_world_space.y + lerp(0, 0.03f, amp);
+                output.sv_position = mul(UNITY_MATRIX_VP, output.pos_world_space);
+                output.color = lerp(_ColorMin, _ColorMax, (amp / mamp));
+                        */
+                    if (v.pos.x == ((-_verticesPerLength) / 2) || v.pos.x == (_verticesPerLength / 2) || v.pos.z == (_verticesPerWidth / 2) || v.pos.y == (-_verticesPerWidth / 2))
+                    {
+                        output.pos_world_space.y = 0; 
+                        // when o nthe side, the nebougt has to be 0 so the reflection work.
+                    }
+                    if (_ClickCoordinates.x == v.pos.x && _ClickCoordinates.z == v.pos.z ) // we get it where the click is
+
+                    {
+                        output.color = _ColorMax;
+                        amp = 10;
+                        output.pos_world_space.y = output.pos_world_space.y + lerp(0, 0.03f, amp); // further work 
+                       // output.color = lerp(_ColorMin, _ColorMax, (amp / mamp));
+                  //      output.sv_position = mul(UNITY_MATRIX_VP, output.pos_world_space);
+                    }
                 }
-                if (_ClickCoordinates.z == v.pos.z)
-                {
-                    output.color = _ColorMax;
-                }
-               // {
-              //      output.color = _ColorMax;
-               // }
                  
                 return output;
             }

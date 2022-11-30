@@ -37,12 +37,15 @@ public class PointWaveWaterPlane : PausableObject, IResetObject
         
 
         CalculatePlaneMesh();
-        
+
+        _meshRenderer.sharedMaterial.SetInt(Shader.PropertyToID("_verticesPerLength"), verticesPerLength);
+        _meshRenderer.sharedMaterial.SetInt(Shader.PropertyToID("_verticesPerWidth"), verticesPerWidth);
+
     }
 
 
     // Tim testing
-    public void AddMouseData(Vector3 data)
+    public void AddMouseData(Vector3 data, int hit)
     {
 
        var test =  _meshRenderer.bounds.size;
@@ -52,6 +55,8 @@ public class PointWaveWaterPlane : PausableObject, IResetObject
         data.z = data.z * verticesPerWidth;
         Debug.Log("calc data :" + data);
         _meshRenderer.sharedMaterial.SetVector(Shader.PropertyToID("_ClickCoordinates"), new Vector4(data.x, data.y, data.z, 0));
+        _meshRenderer.sharedMaterial.SetInt(Shader.PropertyToID("_ClickedOn"), hit);
+
     }
 
     public void UpdateParameterAndPosition()
@@ -96,14 +101,8 @@ public class PointWaveWaterPlane : PausableObject, IResetObject
 
      public void UpdateMeshData()
     {
-      /*  Vector3[] vertices = GetComponent<MeshFilter>().mesh.vertices;
-        for (int i = 0; i < vertices.Length; i++)
-        {
-            Debug.LogWarning(vertices[i].x);
 
-        }*/
             _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_DeltaTime"), Time.deltaTime);// does it work ? 
-       // _meshRenderer.sharedMaterial.SetVectorArray(Shader.PropertyToID)
     }
 
 protected override void HandleUpdate()
