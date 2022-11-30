@@ -180,5 +180,59 @@ namespace Tests.Utilities
                 AddDescendantsUntilDepth(child, list, maxDepth, depth+1);
             }
         }
+        
+        /**
+         * Custom attribute (decorator) for tests
+         * Use it to on tests and as argument provide any number of experiment names to skip the respective test
+         * e.g.: [SkipTestFor("FallingCoil"]
+         */
+        [AttributeUsage(AttributeTargets.Method)]
+        public class SkipTestFor : Attribute
+        {
+            public string[] ExperimentNames { get; }
+
+            public SkipTestFor(params string[] experimentNames) {
+                ExperimentNames = experimentNames;
+            }
+
+            public static SkipTestFor GetAttributeCustom<T>(string methodName) where T : class
+            {
+                try
+                {
+                    return (SkipTestFor)typeof(T).GetMethod(methodName).GetCustomAttributes(typeof(SkipTestFor), false).FirstOrDefault();
+                }
+                catch(SystemException)
+                {
+                    return null;
+                }
+            }
+        }
+        
+        /**
+-         * Checks whether a test case should be skipped if either is true:
+-         * 1.) The test case is decorated with the custom attribute [SkipTestFor("SomeExperimentName")] and the experiment matches
+-         * 2.) The objectNameUnderTest is not part of the experiment prefab
+          */
+        public static void SkipCheckLong<T>(string experimentPrefabName, string[] objectNamesFromExperimentPrefab, string currentExperimentName,
+            string objectNameUnderTest, [CallerMemberName] string callingMethodName = null) where T : class
+        {
+            // Get attribute
+            var myCustomAttribute = SkipTestFor.GetAttributeCustom<T>(callingMethodName);
+            if (myCustomAttribute != null)
+            {
+                // Check if the provided scene(s) match the current test, if yes then skip test
+                if (myCustomAttribute.ExperimentNames.Any(x => currentExperimentName.ToUpper().Contains(x.ToUpper())))
+                {
+                    Assert.Ignore($"{currentExperimentName} scene intentionally has no '{objectNameUnderTest}'");
+                }
+            }
+
+            // Check if the object is part of our ExperimentSetting prefab otherwise skip test
+            if (!objectNamesFromExperimentPrefab.Any(x => x.ToUpper().Contains(objectNameUnderTest.ToUpper())))
+            {
+                Assert.Ignore($"{experimentPrefabName} contains no {objectNameUnderTest} - skipping test!");
+            }
+             
+        }
     }
 }

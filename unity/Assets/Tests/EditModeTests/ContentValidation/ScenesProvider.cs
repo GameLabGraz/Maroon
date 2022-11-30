@@ -15,7 +15,7 @@ namespace Tests.EditModeTests.ContentValidation
         {
             foreach (var scene in EditorBuildSettings.scenes)
             {
-                // Only return PC scenes from the experiments folder that are enabled in build settings
+                // Only return scenes that are enabled in build settings, reside the experiments folder and match the file ending 
                 if (scene.enabled && scene.path != null && scene.path.Contains("experiments") && scene.path.EndsWith(fileEnding))
                 {
                     // Return the experiment name extracted from its path - this defines test fixture name
