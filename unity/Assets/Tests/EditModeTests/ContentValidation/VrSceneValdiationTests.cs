@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static Tests.Utilities.Utilities;
 
 namespace Tests.EditModeTests.ContentValidation
 {
@@ -20,7 +22,11 @@ namespace Tests.EditModeTests.ContentValidation
     {
         private readonly string _experimentName;
         private readonly string _scenePath;
-        private Scene _scene;
+
+        private const string VrExperimentPrefabName = "ExperimentSetting.vr";
+        
+        private List<GameObject> _gameObjectsFromExperimentPrefab;
+        private string[] _objectNamesFromExperimentPrefab;
 
         public VrSceneValidationTests(string experimentName, string scenePath)
         {
@@ -28,21 +34,42 @@ namespace Tests.EditModeTests.ContentValidation
             _scenePath = scenePath;
         }
         
-        // Load scene if not yet loaded before running the scene's tests
+        // Before running any tests, query ExperimentSetting prefab and load the scene if it's not yet loaded
         [OneTimeSetUp]
-        public void LoadScene()
+        public void OneTimeSetUp()
         {
-            _scene = SceneManager.GetSceneAt(0);
-            if (SceneManager.sceneCount > 1 || _scene.path != _scenePath)
-                _scene = EditorSceneManager.OpenScene(_scenePath, OpenSceneMode.Single);
+            // Get "mandatory" object names from ExperimentSetting prefab
+            var experimentSettingPrefab = GetPrefabByName(VrExperimentPrefabName);
+            _gameObjectsFromExperimentPrefab = new List<GameObject>();
+            AddDescendantsUntilDepth(experimentSettingPrefab.transform, _gameObjectsFromExperimentPrefab, 3);
+            
+            _objectNamesFromExperimentPrefab = _gameObjectsFromExperimentPrefab
+                .Where(child => !child.name.Contains("="))
+                .Select(x => x.name).ToArray();
+            
+            // Load scene if necessary
+            var scene = SceneManager.GetSceneAt(0);
+            if (SceneManager.sceneCount > 1 || scene.path != _scenePath)
+            {
+                EditorSceneManager.OpenScene(_scenePath, OpenSceneMode.Single);
+            }
         }
         
         [Test, Description("Must include a 'PlayerVR' Prefab tagged as 'Player'")]
-        public void SceneHasPlayer()
+        public void SceneHasVrPlayer()
         {
-            var playerGameObject = GameObject.Find("VRPlayer");
-            Assert.NotNull(playerGameObject, "No 'Player' GameObject found");
-            Assert.AreEqual("Player", playerGameObject.tag, "GameObject 'PlayerVR' not tagged as 'Player'");
+            // GameObject to be tested
+            const string objectNameUnderTest = "VRPlayer";
+            SkipCheck(objectNameUnderTest);
+            
+            var prefab = _gameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
+            var expectedTag = prefab.tag;
+            
+            // Check GameObject exists, is active and tagged
+            var gameObjectUnderTest = FindObjectByName(objectNameUnderTest);
+            AssertGameObjectIsActive(gameObjectUnderTest);
+            Assert.AreEqual(expectedTag, gameObjectUnderTest.tag,
+                $"GameObject '{gameObjectUnderTest.name}' is missing its tag '{expectedTag}'");
         }
 
         [Test, Description("Must include an 'IndoorWorld' Prefab")]
@@ -57,41 +84,54 @@ namespace Tests.EditModeTests.ContentValidation
         {
             var doorGameObject = GameObject.Find("preDoorVR") ?? GameObject.Find("Door");
             Assert.NotNull(doorGameObject, "No 'preDoorVR' or 'Door' GameObject found");
+            // TODO stopped here
         }
         
+        [SkipTestFor("FaradaysLaw")]
         [Test, Description("Must include the 'WhiteboardInteractive' Prefab")]
         public void SceneHasWhiteboardInteractive()
         {
-            // List of scenes that skip the test
-            var scenesToSkip = new List<string> { "FaradaysLaw" };
-            
-            // Skip listed scene(s)
-            if (scenesToSkip.Any(x => _experimentName.ToUpper().Contains(x.ToUpper())))
-                Assert.Ignore($"{_experimentName} scene has intentionally no 'WhiteBoardInteractive'");
+            // GameObject to be tested
+            const string objectNameUnderTest = "WhiteboardInteractive";
+            SkipCheck(objectNameUnderTest);
 
-            var whiteboardInteractiveGameObject = GameObject.Find("WhiteboardInteractive");
-            Assert.NotNull(whiteboardInteractiveGameObject, "No 'WhiteboardInteractive' GameObject found");
+            // Check GameObject exists and is active
+            var gameObjectUnderTest = FindObjectByName(objectNameUnderTest);
+            AssertGameObjectIsActive(gameObjectUnderTest);
         }
-        
-        [Test, Description("Must include the 'LanguageManager' Prefab")]
+
+        [Test, Description("Must have a GameObject named 'LanguageManager'")]
         public void SceneHasLanguageManager()
         {
-            // List of scenes that skip the test
-            var scenesToSkip = new List<string> { "Whiteboard" };
-            
-            // Skip listed scene(s)
-            if (scenesToSkip.Any(x => _experimentName.ToUpper().Contains(x.ToUpper())))
-                Assert.Ignore($"{_experimentName} scene intentionally has no 'LanguageManager'");
+            // GameObject to be tested
+            const string objectNameUnderTest = "LanguageManager";
+            SkipCheck(objectNameUnderTest);
 
-            var languageManagerGameObject = GameObject.Find("LanguageManager"); 
-            Assert.NotNull(languageManagerGameObject);
+            // Check GameObject exists and is active
+            var gameObjectUnderTest = FindObjectByName(objectNameUnderTest);
+            AssertGameObjectIsActive(gameObjectUnderTest);
         }
-        
-        [Test, Description("Must include the 'GlobalEntities' Prefab")]
+
+        [Test, Description("Must have a GameObject named 'GlobalEntities'")]
         public void SceneHasGlobalEntities()
         {
-            var globalEntitiesGameObject = GameObject.Find("GlobalEntities"); 
-            Assert.NotNull(globalEntitiesGameObject, "No 'GlobalEntities' GameObject found");
+            // GameObject to be tested
+            const string objectNameUnderTest = "GlobalEntities";
+            SkipCheck(objectNameUnderTest);
+
+            // Check GameObject exists and is active
+            var gameObject = FindObjectByName(objectNameUnderTest);
+            AssertGameObjectIsActive(gameObject);
+        }
+        
+        /**
+         * Wrapper for utility function with shorter param list
+         * Skips test if check is triggered
+         */
+        private void SkipCheck(string objectNameUnderTest, [CallerMemberName] string callingMethodName = null)
+        {
+            SkipCheckLong<PcSceneValidationTests>(VrExperimentPrefabName, _objectNamesFromExperimentPrefab,
+                _experimentName, objectNameUnderTest, callingMethodName);
         }
     }
 }
