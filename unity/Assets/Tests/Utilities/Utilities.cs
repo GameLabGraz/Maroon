@@ -182,8 +182,9 @@ namespace Tests.Utilities
         }
         
         /**
-         * Custom attribute (decorator) for tests
-         * Use it to on tests and as argument provide any number of experiment names to skip the respective test
+         * Custom attribute (decorator) for tests.
+         * Use it on test methods.
+         * Provide argument(s): any number of experiment names to skip the respective test for
          * e.g.: [SkipTestFor("FallingCoil"]
          */
         [AttributeUsage(AttributeTargets.Method)]
@@ -214,12 +215,15 @@ namespace Tests.Utilities
 -         * 2.) The objectNameUnderTest is not part of the experiment prefab
           */
         public static void SkipCheckLong<T>(string experimentPrefabName, string[] objectNamesFromExperimentPrefab, string currentExperimentName,
-            string objectNameUnderTest, [CallerMemberName] string callingMethodName = null) where T : class
+            string objectNameUnderTest, string callingMethodName) where T : class
         {
             // Get attribute
             var myCustomAttribute = SkipTestFor.GetAttributeCustom<T>(callingMethodName);
+
+            // Array.ForEach(myCustomAttribute.ExperimentNames, Debug.Log);
             if (myCustomAttribute != null)
             {
+                Debug.Log("myCustomAttribute != null");
                 // Check if the provided scene(s) match the current test, if yes then skip test
                 if (myCustomAttribute.ExperimentNames.Any(x => currentExperimentName.ToUpper().Contains(x.ToUpper())))
                 {

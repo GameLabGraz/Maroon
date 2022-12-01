@@ -62,6 +62,7 @@ namespace Tests.EditModeTests.ContentValidation
             const string objectNameUnderTest = "VRPlayer";
             SkipCheck(objectNameUnderTest);
             
+            // Get prefab
             var prefab = _gameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
             var expectedTag = prefab.tag;
             
@@ -72,22 +73,44 @@ namespace Tests.EditModeTests.ContentValidation
                 $"GameObject '{gameObjectUnderTest.name}' is missing its tag '{expectedTag}'");
         }
 
-        [Test, Description("Must include an 'IndoorWorld' Prefab")]
-        public void SceneHasIndoorWorld()
+        [SkipTestFor("Whiteboard")]
+        [Test, Description("Must include an 'ExperimentRoom' Prefab")]
+        public void SceneHasExperimentRoom()
         {
-            var indoorWorldGameObject = GameObject.Find("Indoor World") ?? GameObject.Find("IndoorWorld");
-            Assert.NotNull(indoorWorldGameObject, "No 'IndoorWorld' or 'Indoor World' GameObject found");
+            // GameObject to be tested
+            const string objectNameUnderTest = "ExperimentRoom";
+            SkipCheck(objectNameUnderTest);
+            
+            // Get prefab
+            var prefab = _gameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
+            var expectedTag = prefab.tag;
+            
+            // Check GameObject exists, is active and tagged
+            var gameObjectUnderTest = FindObjectByName(objectNameUnderTest);
+            AssertGameObjectIsActive(gameObjectUnderTest);
+            Assert.AreEqual(expectedTag, gameObjectUnderTest.tag,
+                $"GameObject '{gameObjectUnderTest.name}' is missing its tag '{expectedTag}'");
         }
         
-        [Test, Description("Must include a 'preDoorVR' Prefab")]
+        [SkipTestFor("Whiteboard")]
+        [Test, Description("Must include a 'DoorVR' Prefab")]
         public void SceneHasDoorMesh()
         {
-            var doorGameObject = GameObject.Find("preDoorVR") ?? GameObject.Find("Door");
-            Assert.NotNull(doorGameObject, "No 'preDoorVR' or 'Door' GameObject found");
-            // TODO stopped here
+            // GameObject to be tested
+            const string objectNameUnderTest = "DoorVR";
+            SkipCheck(objectNameUnderTest);
+            
+            // Get prefab
+            var prefab = _gameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
+            var expectedTag = prefab.tag;
+            
+            // Check GameObject exists, is active and tagged
+            var gameObjectUnderTest = FindObjectByName(objectNameUnderTest);
+            AssertGameObjectIsActive(gameObjectUnderTest);
+            Assert.AreEqual(expectedTag, gameObjectUnderTest.tag,
+                $"GameObject '{gameObjectUnderTest.name}' is missing its tag '{expectedTag}'");
         }
         
-        [SkipTestFor("FaradaysLaw")]
         [Test, Description("Must include the 'WhiteboardInteractive' Prefab")]
         public void SceneHasWhiteboardInteractive()
         {
@@ -100,6 +123,7 @@ namespace Tests.EditModeTests.ContentValidation
             AssertGameObjectIsActive(gameObjectUnderTest);
         }
 
+        [SkipTestFor("Whiteboard")]
         [Test, Description("Must have a GameObject named 'LanguageManager'")]
         public void SceneHasLanguageManager()
         {
@@ -124,13 +148,15 @@ namespace Tests.EditModeTests.ContentValidation
             AssertGameObjectIsActive(gameObject);
         }
         
+        // TODO add the rest of the "highlevel" GameObjects to check for
+        
         /**
          * Wrapper for utility function with shorter param list
          * Skips test if check is triggered
          */
         private void SkipCheck(string objectNameUnderTest, [CallerMemberName] string callingMethodName = null)
         {
-            SkipCheckLong<PcSceneValidationTests>(VrExperimentPrefabName, _objectNamesFromExperimentPrefab,
+            SkipCheckLong<VrSceneValidationTests>(VrExperimentPrefabName, _objectNamesFromExperimentPrefab,
                 _experimentName, objectNameUnderTest, callingMethodName);
         }
     }
