@@ -38,6 +38,7 @@
             uniform int _ClickedOn;
             uniform int _verticesPerLength;
             uniform int _verticesPerWidth;
+            StructuredBuffer<float4> pixels;
             fixed4 _ColorMin;
             fixed4 _ColorMax;
 
@@ -62,7 +63,13 @@
             sampler2D _MainTex;
             float4 _MainTex_ST;
 
-
+            int vertextIndex(int x, int z)
+            {
+                int quotient = (_verticesPerLength + x)  ; // shoul work;
+                return quotient * 162 - z; // must be ok? magic number;
+         
+           
+            }
 
 
             v2f vert (vertexInput v)
@@ -105,7 +112,6 @@
                     float x = v.pos.x - _ClickCoordinates.x;
                     float z = v.pos.z - _ClickCoordinates.z;
 
-                    // TODO LOOK HOW TO SEND BUFFER TO GPU
 
                         /*
                 output.pos_world_space.y = output.pos_world_space.y + lerp(0, 0.03f, amp);
@@ -115,7 +121,6 @@
                     if (v.pos.x == ((-_verticesPerLength) / 2) || v.pos.x == (_verticesPerLength / 2) || v.pos.z == (_verticesPerWidth / 2) || v.pos.y == (-_verticesPerWidth / 2))
                     {
                         output.pos_world_space.y = 0; 
-                        // when o nthe side, the nebougt has to be 0 so the reflection work.
                     }
                     if (_ClickCoordinates.x == v.pos.x && _ClickCoordinates.z == v.pos.z ) // we get it where the click is
 
@@ -123,9 +128,14 @@
                         output.color = _ColorMax;
                         amp = 10;
                         output.pos_world_space.y = output.pos_world_space.y + lerp(0, 0.03f, amp); // further work 
+
                        // output.color = lerp(_ColorMin, _ColorMax, (amp / mamp));
                   //      output.sv_position = mul(UNITY_MATRIX_VP, output.pos_world_space);
                     }
+
+
+                    // TESTING THE FUNCTION ;
+                    
                 }
                  
                 return output;

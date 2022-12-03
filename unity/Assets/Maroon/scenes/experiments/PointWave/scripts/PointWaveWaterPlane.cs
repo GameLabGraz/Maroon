@@ -28,6 +28,9 @@ public class PointWaveWaterPlane : PausableObject, IResetObject
  
     private Vector4[] coordinatesArray = new Vector4[10];
     private Vector4[] parametersArray = new Vector4[10];
+
+    // testing
+    private ComputeBuffer buffer;
     protected override void Start()
     {
         base.Start();
@@ -45,15 +48,30 @@ public class PointWaveWaterPlane : PausableObject, IResetObject
 
 
     // Tim testing
+
+    private Vector3 click;
     public void AddMouseData(Vector3 data, int hit)
     {
+        Vector3[] mesh = GetComponent<MeshFilter>().mesh.vertices;
 
-       var test =  _meshRenderer.bounds.size;
+        var test =  _meshRenderer.bounds.size;
         Debug.Log("Mesh  size  = " +test);
         //Debug.Log(data);
-        data.x = data.x * (verticesPerLength);
-        data.z = data.z * verticesPerWidth;
-        Debug.Log("calc data :" + data);
+        data.x = Mathf.FloorToInt(data.x * (verticesPerLength));
+        data.z = Mathf.FloorToInt(data.z * verticesPerWidth);
+        int index = vertextIndex((int)data.x, (int)data.z);
+        int indexp1 = vertextIndex((int)data.x + 1, (int)data.z);
+        int indexm1 = vertextIndex((int)data.x - 1, (int)data.z);
+        int indezp1 = vertextIndex((int)data.x, (int)data.z + 1 );
+        int indezm1 = vertextIndex((int)data.x, (int)data.z - 1 );
+        click = data;
+        Debug.Log("click data :" + data);
+        Debug.Log("index data :" + mesh[index]);
+        Debug.Log("indexp1 data :" + mesh[indexp1]);
+        Debug.Log("indexm1 data :" + mesh[indexm1]);
+        Debug.Log("indezp1 data :" + mesh[indezp1]);
+        Debug.Log(" indezm1 data :" + mesh[indezm1]);
+        Debug.Log("###########");
         _meshRenderer.sharedMaterial.SetVector(Shader.PropertyToID("_ClickCoordinates"), new Vector4(data.x, data.y, data.z, 0));
         _meshRenderer.sharedMaterial.SetInt(Shader.PropertyToID("_ClickedOn"), hit);
 
@@ -98,11 +116,34 @@ public class PointWaveWaterPlane : PausableObject, IResetObject
     {
         waveSources.Remove(waveSource);
     }
+    // TODO WORK HERE
+    private int debug = 1;
 
+    private int vertextIndex( int x, int z)
+    {
+        int quotient = verticesPerLength + x + 1; ;
+        if (z < 1)
+        {
+            return (quotient * (verticesPerWidth * 2  + 1) ) - (verticesPerWidth -  z) - 1 ;
+        }
+        else
+        {
+            return ((quotient - 1 ) * (verticesPerWidth* 2 + 1) ) +  (verticesPerWidth + z);
+        }
+       
+    }
      public void UpdateMeshData()
     {
+        
+            Vector3[] mesh = GetComponent<MeshFilter>().mesh.vertices;
+            int stride = System.Runtime.InteropServices.Marshal.SizeOf(typeof(Vector3));
+            buffer = new ComputeBuffer(mesh.Length, stride, ComputeBufferType.Default);
 
+            buffer.SetData(mesh);
+            _meshRenderer.sharedMaterial.SetBuffer("pixels", buffer);
             _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_DeltaTime"), Time.deltaTime);// does it work ? 
+             buffer.Release(); // Not sure if correct
+
     }
 
 protected override void HandleUpdate()
