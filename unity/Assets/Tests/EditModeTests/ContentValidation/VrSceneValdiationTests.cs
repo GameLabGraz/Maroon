@@ -55,7 +55,7 @@ namespace Tests.EditModeTests.ContentValidation
             }
         }
         
-        [Test, Description("Must include a 'PlayerVR' Prefab tagged as 'Player'")]
+        [Test, Description("Must include a 'VRPlayer' Prefab tagged as 'Player'")]
         public void SceneHasVrPlayer()
         {
             // GameObject to be tested
@@ -72,9 +72,21 @@ namespace Tests.EditModeTests.ContentValidation
             Assert.AreEqual(expectedTag, gameObjectUnderTest.tag,
                 $"GameObject '{gameObjectUnderTest.name}' is missing its tag '{expectedTag}'");
         }
+        
+        [Test, Description("Must include a 'Teleporting' Prefab")]
+        public void SceneHasTeleporting()
+        {
+            // GameObject to be tested
+            const string objectNameUnderTest = "Teleporting";
+            SkipCheck(objectNameUnderTest);
 
-        [SkipTestFor("Whiteboard")]
-        [Test, Description("Must include an 'ExperimentRoom' Prefab")]
+            // Check GameObject exists and is active
+            var gameObjectUnderTest = FindObjectByName(objectNameUnderTest);
+            AssertGameObjectIsActive(gameObjectUnderTest);
+        }
+
+        [SkipTestForScenesWithReason("Whiteboard", "scene is not using the up-to-date 'ExperimentSetting.vr' prefab")]
+        [Test, Description("Must include an 'ExperimentRoom' Prefab set to layer 'Inventary'")]
         public void SceneHasExperimentRoom()
         {
             // GameObject to be tested
@@ -83,32 +95,62 @@ namespace Tests.EditModeTests.ContentValidation
             
             // Get prefab
             var prefab = _gameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
-            var expectedTag = prefab.tag;
+            var expectedLayer = prefab.layer;
             
-            // Check GameObject exists, is active and tagged
+            // Check GameObject exists, is active and on correct layer
             var gameObjectUnderTest = FindObjectByName(objectNameUnderTest);
             AssertGameObjectIsActive(gameObjectUnderTest);
-            Assert.AreEqual(expectedTag, gameObjectUnderTest.tag,
-                $"GameObject '{gameObjectUnderTest.name}' is missing its tag '{expectedTag}'");
+            Assert.AreEqual(expectedLayer, gameObjectUnderTest.layer,
+                $"GameObject '{gameObjectUnderTest.name}' is not set to layer '{expectedLayer}'");
         }
         
-        [SkipTestFor("Whiteboard")]
-        [Test, Description("Must include a 'DoorVR' Prefab")]
-        public void SceneHasDoorMesh()
+        [SkipTestForScenesWithReason("Whiteboard", "scene is not using the up-to-date 'ExperimentSetting.vr' prefab")]
+        [SkipTestForScenesWithReason("FallingCoil", "scene accidently(?) has two Experiment Tables!")] // TODO fixme
+        [Test, Description("Must include an 'ExperimentTable' Prefab set to layer 'Inventary'")]
+        public void SceneHasExperimentTable()
         {
             // GameObject to be tested
-            const string objectNameUnderTest = "DoorVR";
+            const string objectNameUnderTest = "Experiment_Table";
             SkipCheck(objectNameUnderTest);
             
             // Get prefab
             var prefab = _gameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
-            var expectedTag = prefab.tag;
+            var expectedLayer = prefab.layer;
             
-            // Check GameObject exists, is active and tagged
+            // Check GameObject exists, is active and on correct layer
             var gameObjectUnderTest = FindObjectByName(objectNameUnderTest);
             AssertGameObjectIsActive(gameObjectUnderTest);
-            Assert.AreEqual(expectedTag, gameObjectUnderTest.tag,
-                $"GameObject '{gameObjectUnderTest.name}' is missing its tag '{expectedTag}'");
+            Assert.AreEqual(expectedLayer, gameObjectUnderTest.layer,
+                $"GameObject '{gameObjectUnderTest.name}' is not set to layer '{expectedLayer}'");
+        }
+
+        [SkipTestForScenesWithReason("Whiteboard", "scene is not using the up-to-date 'ExperimentSetting.vr' prefab")]
+        [Test, Description("Must include a 'DoorVR' Prefab")]
+        public void SceneHasDoorVr()
+        {
+            // GameObject to be tested
+            const string objectNameUnderTest = "DoorVR";
+            SkipCheck(objectNameUnderTest);
+
+            // Check GameObject exists and is active
+            var gameObjectUnderTest = FindObjectByName(objectNameUnderTest);
+            AssertGameObjectIsActive(gameObjectUnderTest);
+        }
+        
+        [SkipTestForScenesWithReason("Whiteboard", "scene is not using the up-to-date 'ExperimentSetting.vr' prefab")]
+        [Test, Description("Must include a 'TeleportPoints' Prefab")]
+        public void SceneHasTeleportPoints()
+        {
+            // GameObject to be tested
+            const string objectNameUnderTest = "TeleportPoints";
+            SkipCheck(objectNameUnderTest);
+
+            // Check GameObject exists and is active
+            var gameObjectUnderTest = FindObjectByName(objectNameUnderTest);
+            AssertGameObjectIsActive(gameObjectUnderTest);
+            
+            Assert.True(gameObjectUnderTest.transform.childCount > 0,
+                $"GameObject '{gameObjectUnderTest.name}' has no 'TeleportPoint' child objects");
         }
         
         [Test, Description("Must include the 'WhiteboardInteractive' Prefab")]
@@ -122,8 +164,47 @@ namespace Tests.EditModeTests.ContentValidation
             var gameObjectUnderTest = FindObjectByName(objectNameUnderTest);
             AssertGameObjectIsActive(gameObjectUnderTest);
         }
+        
+        [SkipTestForScenesWithReason("Whiteboard", "scene is not using the up-to-date 'ExperimentSetting.vr' prefab")]
+        [Test, Description("Must include the 'QuestManager' Prefab")]
+        public void SceneHasQuestManager()
+        {
+            // GameObject to be tested
+            const string objectNameUnderTest = "QuestManager";
+            SkipCheck(objectNameUnderTest);
 
-        [SkipTestFor("Whiteboard")]
+            // Check GameObject exists and is active
+            var gameObjectUnderTest = FindObjectByName(objectNameUnderTest);
+            AssertGameObjectIsActive(gameObjectUnderTest);
+        }
+
+        [SkipTestForScenesWithReason("Whiteboard", "scene is not using the up-to-date 'ExperimentSetting.vr' prefab")]
+        [Test, Description("Must include the 'VR_Controls' Prefab")]
+        public void SceneHasVrControls()
+        {
+            // GameObject to be tested
+            const string objectNameUnderTest = "VR_Controls";
+            SkipCheck(objectNameUnderTest);
+
+            // Check GameObject exists and is active
+            var gameObjectUnderTest = FindObjectByName(objectNameUnderTest);
+            AssertGameObjectIsActive(gameObjectUnderTest);
+        }
+        
+        [SkipTestForScenesWithReason("Whiteboard", "scene is not using the up-to-date 'ExperimentSetting.vr' prefab")]
+        [Test, Description("Must include the 'ShelveWithDrawer' Prefab")]
+        public void SceneHasShelveWithDrawer()
+        {
+            // GameObject to be tested
+            const string objectNameUnderTest = "ShelveWithDrawer";
+            SkipCheck(objectNameUnderTest);
+
+            // Check GameObject exists and is active
+            var gameObjectUnderTest = FindObjectByName(objectNameUnderTest);
+            AssertGameObjectIsActive(gameObjectUnderTest);
+        }
+        
+        [SkipTestForScenesWithReason("Whiteboard", "scene is not using the up-to-date 'ExperimentSetting.vr' prefab")]
         [Test, Description("Must have a GameObject named 'LanguageManager'")]
         public void SceneHasLanguageManager()
         {
@@ -148,8 +229,19 @@ namespace Tests.EditModeTests.ContentValidation
             AssertGameObjectIsActive(gameObject);
         }
         
-        // TODO add the rest of the "highlevel" GameObjects to check for
-        
+        [SkipTestForScenesWithReason("Whiteboard", "scene is not using the up-to-date 'ExperimentSetting.vr' prefab")]
+        [Test, Description("Must have a GameObject named 'SimulationController'")]
+        public void SceneHasSimulationController()
+        {
+            // GameObject to be tested
+            const string objectNameUnderTest = "SimulationController";
+            SkipCheck(objectNameUnderTest);
+
+            // Check GameObject exists and is active
+            var gameObject = FindObjectByName(objectNameUnderTest);
+            AssertGameObjectIsActive(gameObject);
+        }
+
         /**
          * Wrapper for utility function with shorter param list
          * Skips test if check is triggered

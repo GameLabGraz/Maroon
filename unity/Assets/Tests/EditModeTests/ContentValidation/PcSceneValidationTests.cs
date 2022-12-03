@@ -56,7 +56,7 @@ namespace Tests.EditModeTests.ContentValidation
             }
         }
         
-        [SkipTestFor("StateMachine")]
+        [SkipTestForScenesWithReason("StateMachine", "scene has a different camera setup")]
         [Test, Description("Must have a GameObject named 'MainCamera' with a configured <Camera> component")]
         public void SceneHasMainCamera()
         {
@@ -177,7 +177,7 @@ namespace Tests.EditModeTests.ContentValidation
                 $"Wrong ignoreReversedGraphics value for <{prefabGraphicRaycasterComponent.GetType().Name}> component of '{gameObjectUnderTest.name}'");
         }
         
-        [SkipTestFor("FaradaysLaw")] // TODO: experiment has two event systems!
+        [SkipTestForScenesWithReason("FaradaysLaw", "scene accidently(?) has two EventSystems!")] // TODO fixme
         [Test, Description("Must have a GameObject named 'EventSystem'")]
         public void SceneHasEventSystem()
         {
@@ -197,10 +197,11 @@ namespace Tests.EditModeTests.ContentValidation
             
             // Check GameObject is child of UI
             Assert.AreEqual(prefab.transform.parent.name, gameObjectUnderTest.transform.parent.name,
-                $"GameObject '{objectNameUnderTest}' is not a child GameObject of 'UI'");
+                $"GameObject '{objectNameUnderTest}' is not a child GameObject of '{prefab.transform.parent.name}'");
         }
         
-        [SkipTestFor("CathodeRayTube", "CoulombsLaw")]
+        [SkipTestForScenesWithReason("CathodeRayTube", "scene intentionally(?) has no Assessment Panel")]
+        [SkipTestForScenesWithReason("CoulombsLaw", "scene is not using the up-to-date 'ExperimentSetting.pc' prefab")]
         [Test, Description("Must have a GameObject named 'PanelAssessment'")]
         public void SceneHasUiPanelAssessment()
         {
@@ -220,10 +221,10 @@ namespace Tests.EditModeTests.ContentValidation
             
             // Check GameObject is child of UI
             Assert.AreEqual(prefab.transform.parent.name, gameObjectUnderTest.transform.parent.name,
-                $"GameObject '{objectNameUnderTest}' is not a child GameObject of 'UI'");
+                $"GameObject '{objectNameUnderTest}' is not a child GameObject of '{prefab.transform.parent.name}'");
         }
         
-        [SkipTestFor("Optics")]
+        [SkipTestForScenesWithReason("Optics", "scene intentionally disabled the Controls Panels")]
         [Test, Description("Must have a GameObject named 'PanelControls'")]
         public void SceneHasUiPanelControls()
         {
@@ -243,7 +244,7 @@ namespace Tests.EditModeTests.ContentValidation
             
             // Check GameObject is child of UI
             Assert.AreEqual(prefab.transform.parent.name, gameObjectUnderTest.transform.parent.name,
-                $"GameObject '{objectNameUnderTest}' is not a child GameObject of 'UI'");
+                $"GameObject '{objectNameUnderTest}' is not a child GameObject of '{prefab.transform.parent.name}'");
         }
         
         [Test, Description("Must have a GameObject named 'PanelDialogue '")]
@@ -265,7 +266,7 @@ namespace Tests.EditModeTests.ContentValidation
             
             // Check GameObject is child of UI
             Assert.AreEqual(prefab.transform.parent.name, gameObjectUnderTest.transform.parent.name,
-                $"GameObject '{objectNameUnderTest}' is not a child GameObject of 'UI'");
+                $"GameObject '{objectNameUnderTest}' is not a child GameObject of '{prefab.transform.parent.name}'");
         }
                
         [Test, Description("Must have a GameObject named 'PanelExit'")]
@@ -287,7 +288,7 @@ namespace Tests.EditModeTests.ContentValidation
             
             // Check GameObject is child of UI
             Assert.AreEqual(prefab.transform.parent.name, gameObjectUnderTest.transform.parent.name,
-                $"GameObject '{objectNameUnderTest}' is not a child GameObject of 'UI'");
+                $"GameObject '{objectNameUnderTest}' is not a child GameObject of '{prefab.transform.parent.name}'");
         }
         
         [Test, Description("Must have a GameObject named 'PanelOptions'")]
@@ -309,11 +310,12 @@ namespace Tests.EditModeTests.ContentValidation
             
             // Check GameObject is child of UI
             Assert.AreEqual(prefab.transform.parent.name, gameObjectUnderTest.transform.parent.name,
-                $"GameObject '{objectNameUnderTest}' is not a child GameObject of 'UI'");
+                $"GameObject '{objectNameUnderTest}' is not a child GameObject of '{prefab.transform.parent.name}'");
         }
         
-        // Skip this test for all experiments not using the updated template
-        [SkipTestFor("CoulombsLaw", "HuygensPrinciple", "Pendulum", "VandeGraaffBalloon", "VandeGraaffGenerator", "Whiteboard")]
+        [SkipTestForScenesWithReason(
+             "CoulombsLaw, HuygensPrinciple, Pendulum, VandeGraaffBalloon, VandeGraaffGenerator, Whiteboard",
+             "scene is not using the up-to-date 'ExperimentSetting.pc' prefab")]
         [Test, Description("Must have a GameObject named 'PauseMenu'")]
         public void SceneHasPauseMenu()
         {
@@ -351,7 +353,7 @@ namespace Tests.EditModeTests.ContentValidation
                 $"GameObject '{gameObjectUnderTest.name}' is missing its tag '{expectedTag}'");
         }
         
-        [SkipTestFor("Whiteboard")]
+        [SkipTestForScenesWithReason("Whiteboard", "scene is not using the up-to-date 'ExperimentSetting.pc' prefab")]
         [Test, Description("Must have a GameObject named 'SimulationController'")]
         public void SceneHasSimulationController()
         {
