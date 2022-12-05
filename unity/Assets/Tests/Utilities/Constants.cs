@@ -1,5 +1,8 @@
 namespace Tests.Utilities
 {
+    /// <summary>
+    /// Collection of test related constant values
+    /// </summary>
     public static class Constants
     {
         /// <summary>

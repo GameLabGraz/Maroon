@@ -12,6 +12,9 @@ using UnityEngine.SceneManagement;
 
 namespace Tests.Utilities
 {
+    /// <summary>
+    /// Collection of test related utility functions 
+    /// </summary>
     public static class UtilityFunctions
     {
         public static GameObject GetPrefabByName(string name)

@@ -29,6 +29,10 @@ namespace Tests.EditModeTests.ContentValidation
         /// </summary>
         private Regex experimentNameRegex => new Regex(@"\w+\." + sceneType.ToLower());
 
+        /// <summary>
+        /// Queries all scenes from Build Settings menu and filters experiments of specified type.
+        /// </summary>
+        /// <returns>It yields a pair of an experiment scene's name and its matching scene path on each iteration</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             foreach (var scene in EditorBuildSettings.scenes)

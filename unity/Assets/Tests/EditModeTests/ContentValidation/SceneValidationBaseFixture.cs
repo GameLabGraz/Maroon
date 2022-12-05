@@ -6,6 +6,15 @@ using static Tests.Utilities.Constants;
 
 namespace Tests.EditModeTests.ContentValidation
 {
+    /// <summary>
+    /// Base class for scene validation test fixtures.
+    /// </summary>
+    /// <typeparam name="Type">type of the derived class</typeparam>
+    /// <example>
+    /// <code>
+    /// public sealed class PcSceneValidationTests : SceneValidationBaseFixture<PcSceneValidationTests> { ... }
+    /// </code>
+    /// </example>
     public class SceneValidationBaseFixture<Type> where Type : class
     {
         /// <summary>

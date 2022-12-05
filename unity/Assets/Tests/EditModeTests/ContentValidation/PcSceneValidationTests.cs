@@ -12,7 +12,7 @@ namespace Tests.EditModeTests.ContentValidation
     /// Contains all test methods for scenes provided by <see cref="PcScenesProvider"/>.
     /// </summary>
     [TestFixtureSource(typeof(PcScenesProvider))]
-    public class PcSceneValidationTests : SceneValidationBaseFixture<PcSceneValidationTests>
+    public sealed class PcSceneValidationTests : SceneValidationBaseFixture<PcSceneValidationTests>
     {
         /// <summary>
         /// Provides all scenes in Build Settings of type PC
