@@ -1,59 +1,46 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
 using NUnit.Framework;
-using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static Tests.Utilities.Utilities;
+using static Tests.Utilities.UtilityFunctions;
+using static Tests.Utilities.Constants;
 
 namespace Tests.EditModeTests.ContentValidation
 {
-    public class PcScenesProvider : ScenesProvider
-    {
-        protected override Regex experimentNameRegex => new Regex(@"\w+\.pc");
-        protected override string fileEnding => ".pc.unity";
-    }
-    
-    // Runs OneTimeSetUp and all Tests once for each provided experiment scene path
+    /// <summary>
+    ///  Runs all contained test methods for all scenes provided by <see cref="PcScenesProvider"/>
+    /// </summary>
     [TestFixtureSource(typeof(PcScenesProvider))]
     public class PcSceneValidationTests
     {
         private readonly string _experimentName;
         private readonly string _scenePath;
-
-        private const string PcExperimentPrefabName = "ExperimentSetting.pc";
         
-        private List<GameObject> _gameObjectsFromExperimentPrefab;
+        private GameObject[] _gameObjectsFromExperimentPrefab;
         private string[] _objectNamesFromExperimentPrefab;
 
-        public PcSceneValidationTests(string experimentName, string scenePath)
-        {
-            _experimentName = experimentName;
-            _scenePath = scenePath;
-        }
-
-        // Before running any tests, query ExperimentSetting prefab and load the scene if it's not yet loaded
+        /// <summary>
+        /// Constructor used by TestFixtureSource annotation to initialize attributes
+        /// </summary>
+        /// <param name="experimentName"></param>
+        /// <param name="scenePath"></param>
+        public PcSceneValidationTests(string experimentName, string scenePath) =>
+            (_experimentName, _scenePath) = (experimentName, scenePath);
+        
+        /// <summary>
+        /// Runs once for each test fixture on test execution.
+        /// Queries all GameObjects from ExperimentSetting prefab and if necessary loads the scene matching the test fixture.
+        /// </summary>
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            // Get "mandatory" object names from ExperimentSetting prefab
-            var experimentSettingPrefab = GetPrefabByName(PcExperimentPrefabName);
-            _gameObjectsFromExperimentPrefab = new List<GameObject>();
-            AddDescendantsUntilDepth(experimentSettingPrefab.transform, _gameObjectsFromExperimentPrefab, 3);
+            // Get objects and names from ExperimentSetting prefab
+            _gameObjectsFromExperimentPrefab = GetAllGameObjectsFromPrefab(ExperimentPrefabName + "." + TypePC);
+            _objectNamesFromExperimentPrefab = _gameObjectsFromExperimentPrefab.Select(x => x.name).ToArray();
             
-            _objectNamesFromExperimentPrefab = _gameObjectsFromExperimentPrefab
-                .Where(child => !child.name.Contains("="))
-                .Select(x => x.name).ToArray();
-            
-            // Load scene if necessary
-            var scene = SceneManager.GetSceneAt(0);
-            if (SceneManager.sceneCount > 1 || scene.path != _scenePath)
-            {
-                EditorSceneManager.OpenScene(_scenePath, OpenSceneMode.Single);
-            }
+            // Load scene
+            LoadSceneIfNotYetLoaded(_scenePath);
         }
         
         [SkipTestForScenesWithReason("StateMachine", "scene has a different camera setup")]
@@ -201,7 +188,7 @@ namespace Tests.EditModeTests.ContentValidation
         }
         
         [SkipTestForScenesWithReason("CathodeRayTube", "scene intentionally(?) has no Assessment Panel")]
-        [SkipTestForScenesWithReason("CoulombsLaw", "scene is not using the up-to-date 'ExperimentSetting.pc' prefab")]
+        [SkipTestForScenesWithReason("CoulombsLaw", ReasonItsOutdated)]
         [Test, Description("Must have a GameObject named 'PanelAssessment'")]
         public void SceneHasUiPanelAssessment()
         {
@@ -315,7 +302,7 @@ namespace Tests.EditModeTests.ContentValidation
         
         [SkipTestForScenesWithReason(
              "CoulombsLaw, HuygensPrinciple, Pendulum, VandeGraaffBalloon, VandeGraaffGenerator, Whiteboard",
-             "scene is not using the up-to-date 'ExperimentSetting.pc' prefab")]
+             ReasonItsOutdated)]
         [Test, Description("Must have a GameObject named 'PauseMenu'")]
         public void SceneHasPauseMenu()
         {
@@ -353,7 +340,7 @@ namespace Tests.EditModeTests.ContentValidation
                 $"GameObject '{gameObjectUnderTest.name}' is missing its tag '{expectedTag}'");
         }
         
-        [SkipTestForScenesWithReason("Whiteboard", "scene is not using the up-to-date 'ExperimentSetting.pc' prefab")]
+        [SkipTestForScenesWithReason("Whiteboard", ReasonItsOutdated)]
         [Test, Description("Must have a GameObject named 'SimulationController'")]
         public void SceneHasSimulationController()
         {
@@ -389,14 +376,27 @@ namespace Tests.EditModeTests.ContentValidation
             var gameObject = FindObjectByName(objectNameUnderTest);
             AssertGameObjectIsActive(gameObject);
         }
+        
+        /*************
+         * Utilities *
+         *************/
 
-        /**
-         * Wrapper for utility function with shorter param list
-         * Skips test if check is triggered
-         */
+        /// <summary>
+        /// Provides scenes of type PC
+        /// </summary>
+        private class PcScenesProvider : ScenesProvider { protected override string sceneType => "pc"; }
+        
+        /// <summary>
+        ///  Skips test if check is triggered
+        /// </summary>
+        /// <param name="objectNameUnderTest">name of object under test</param>
+        /// <param name="callingMethodName">test method name (automatically provided through <see cref="CallerMemberNameAttribute"/>)</param>
+        /// <remarks>
+        /// Wrapper for utility function <see cref="SkipCheckBase"/> with shorter param list and fixture specific arguments
+        /// </remarks>
         private void SkipCheck(string objectNameUnderTest, [CallerMemberName] string callingMethodName = null)
         {
-            SkipCheckLong<PcSceneValidationTests>(PcExperimentPrefabName, _objectNamesFromExperimentPrefab,
+            SkipCheckBase<PcSceneValidationTests>(TypePC, _objectNamesFromExperimentPrefab,
                 _experimentName, objectNameUnderTest, callingMethodName);
         }
     }

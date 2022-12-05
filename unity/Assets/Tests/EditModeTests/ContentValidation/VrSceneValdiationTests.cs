@@ -1,58 +1,40 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
 using NUnit.Framework;
-using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using static Tests.Utilities.Utilities;
+using static Tests.Utilities.UtilityFunctions;
+using static Tests.Utilities.Constants;
 
 namespace Tests.EditModeTests.ContentValidation
 {
-    public class VrScenesProvider : ScenesProvider
-    {
-        protected override Regex experimentNameRegex => new Regex(@"\w+\.vr");
-        protected override string fileEnding => ".vr.unity";
-    }
-
-    // Runs OneTimeSetUp and all Tests once for each provided experiment scene path
+    /// <summary>
+    ///  Runs all contained test methods for all scenes provided by <see cref="VrScenesProvider"/>
+    /// </summary>
     [TestFixtureSource(typeof(VrScenesProvider))]
     public class VrSceneValidationTests
     {
+        /// <summary>
+        /// 
+        /// </summary>
         private readonly string _experimentName;
         private readonly string _scenePath;
-
-        private const string VrExperimentPrefabName = "ExperimentSetting.vr";
         
-        private List<GameObject> _gameObjectsFromExperimentPrefab;
+        private GameObject[] _gameObjectsFromExperimentPrefab;
         private string[] _objectNamesFromExperimentPrefab;
-
-        public VrSceneValidationTests(string experimentName, string scenePath)
-        {
-            _experimentName = experimentName;
-            _scenePath = scenePath;
-        }
+        
+        public VrSceneValidationTests(string experimentName, string scenePath) =>
+            (_experimentName, _scenePath) = (experimentName, scenePath);
         
         // Before running any tests, query ExperimentSetting prefab and load the scene if it's not yet loaded
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            // Get "mandatory" object names from ExperimentSetting prefab
-            var experimentSettingPrefab = GetPrefabByName(VrExperimentPrefabName);
-            _gameObjectsFromExperimentPrefab = new List<GameObject>();
-            AddDescendantsUntilDepth(experimentSettingPrefab.transform, _gameObjectsFromExperimentPrefab, 3);
+            // Get objects and names from ExperimentSetting prefab
+            _gameObjectsFromExperimentPrefab = GetAllGameObjectsFromPrefab(ExperimentPrefabName + "." + TypeVR);
+            _objectNamesFromExperimentPrefab = _gameObjectsFromExperimentPrefab.Select(x => x.name).ToArray();
             
-            _objectNamesFromExperimentPrefab = _gameObjectsFromExperimentPrefab
-                .Where(child => !child.name.Contains("="))
-                .Select(x => x.name).ToArray();
-            
-            // Load scene if necessary
-            var scene = SceneManager.GetSceneAt(0);
-            if (SceneManager.sceneCount > 1 || scene.path != _scenePath)
-            {
-                EditorSceneManager.OpenScene(_scenePath, OpenSceneMode.Single);
-            }
+            // Load scene
+            LoadSceneIfNotYetLoaded(_scenePath);
         }
         
         [Test, Description("Must include a 'VRPlayer' Prefab tagged as 'Player'")]
@@ -85,7 +67,7 @@ namespace Tests.EditModeTests.ContentValidation
             AssertGameObjectIsActive(gameObjectUnderTest);
         }
 
-        [SkipTestForScenesWithReason("Whiteboard", "scene is not using the up-to-date 'ExperimentSetting.vr' prefab")]
+        [SkipTestForScenesWithReason("Whiteboard", ReasonItsOutdated)]
         [Test, Description("Must include an 'ExperimentRoom' Prefab set to layer 'Inventary'")]
         public void SceneHasExperimentRoom()
         {
@@ -104,8 +86,9 @@ namespace Tests.EditModeTests.ContentValidation
                 $"GameObject '{gameObjectUnderTest.name}' is not set to layer '{expectedLayer}'");
         }
         
-        [SkipTestForScenesWithReason("Whiteboard", "scene is not using the up-to-date 'ExperimentSetting.vr' prefab")]
-        [SkipTestForScenesWithReason("FallingCoil", "scene accidently(?) has two Experiment Tables!")] // TODO fixme
+        [SkipTestForScenesWithReason("Whiteboard", ReasonItsOutdated)]
+        [SkipTestForScenesWithReason("HuygensPrinciple", "scene intentionally has an inactive Experiment Table")]
+        [SkipTestForScenesWithReason("FallingCoil, FaradaysLaw", "scene accidently(?) has two Experiment Tables!")] // TODO fixme
         [Test, Description("Must include an 'ExperimentTable' Prefab set to layer 'Inventary'")]
         public void SceneHasExperimentTable()
         {
@@ -124,7 +107,7 @@ namespace Tests.EditModeTests.ContentValidation
                 $"GameObject '{gameObjectUnderTest.name}' is not set to layer '{expectedLayer}'");
         }
 
-        [SkipTestForScenesWithReason("Whiteboard", "scene is not using the up-to-date 'ExperimentSetting.vr' prefab")]
+        [SkipTestForScenesWithReason("Whiteboard", ReasonItsOutdated)]
         [Test, Description("Must include a 'DoorVR' Prefab")]
         public void SceneHasDoorVr()
         {
@@ -137,7 +120,7 @@ namespace Tests.EditModeTests.ContentValidation
             AssertGameObjectIsActive(gameObjectUnderTest);
         }
         
-        [SkipTestForScenesWithReason("Whiteboard", "scene is not using the up-to-date 'ExperimentSetting.vr' prefab")]
+        [SkipTestForScenesWithReason("Whiteboard", ReasonItsOutdated)]
         [Test, Description("Must include a 'TeleportPoints' Prefab")]
         public void SceneHasTeleportPoints()
         {
@@ -165,7 +148,7 @@ namespace Tests.EditModeTests.ContentValidation
             AssertGameObjectIsActive(gameObjectUnderTest);
         }
         
-        [SkipTestForScenesWithReason("Whiteboard", "scene is not using the up-to-date 'ExperimentSetting.vr' prefab")]
+        [SkipTestForScenesWithReason("Whiteboard", ReasonItsOutdated)]
         [Test, Description("Must include the 'QuestManager' Prefab")]
         public void SceneHasQuestManager()
         {
@@ -178,7 +161,7 @@ namespace Tests.EditModeTests.ContentValidation
             AssertGameObjectIsActive(gameObjectUnderTest);
         }
 
-        [SkipTestForScenesWithReason("Whiteboard", "scene is not using the up-to-date 'ExperimentSetting.vr' prefab")]
+        [SkipTestForScenesWithReason("Whiteboard", ReasonItsOutdated)]
         [Test, Description("Must include the 'VR_Controls' Prefab")]
         public void SceneHasVrControls()
         {
@@ -191,7 +174,7 @@ namespace Tests.EditModeTests.ContentValidation
             AssertGameObjectIsActive(gameObjectUnderTest);
         }
         
-        [SkipTestForScenesWithReason("Whiteboard", "scene is not using the up-to-date 'ExperimentSetting.vr' prefab")]
+        [SkipTestForScenesWithReason("Whiteboard", ReasonItsOutdated)]
         [Test, Description("Must include the 'ShelveWithDrawer' Prefab")]
         public void SceneHasShelveWithDrawer()
         {
@@ -204,7 +187,7 @@ namespace Tests.EditModeTests.ContentValidation
             AssertGameObjectIsActive(gameObjectUnderTest);
         }
         
-        [SkipTestForScenesWithReason("Whiteboard", "scene is not using the up-to-date 'ExperimentSetting.vr' prefab")]
+        [SkipTestForScenesWithReason("Whiteboard", ReasonItsOutdated)]
         [Test, Description("Must have a GameObject named 'LanguageManager'")]
         public void SceneHasLanguageManager()
         {
@@ -229,7 +212,7 @@ namespace Tests.EditModeTests.ContentValidation
             AssertGameObjectIsActive(gameObject);
         }
         
-        [SkipTestForScenesWithReason("Whiteboard", "scene is not using the up-to-date 'ExperimentSetting.vr' prefab")]
+        [SkipTestForScenesWithReason("Whiteboard", ReasonItsOutdated)]
         [Test, Description("Must have a GameObject named 'SimulationController'")]
         public void SceneHasSimulationController()
         {
@@ -241,14 +224,27 @@ namespace Tests.EditModeTests.ContentValidation
             var gameObject = FindObjectByName(objectNameUnderTest);
             AssertGameObjectIsActive(gameObject);
         }
+        
+        /*************
+         * Utilities *
+         *************/
+        
+        /// <summary>
+        /// Provides scenes of type VR
+        /// </summary>
+        private class VrScenesProvider : ScenesProvider { protected override string sceneType => "vr"; }
 
-        /**
-         * Wrapper for utility function with shorter param list
-         * Skips test if check is triggered
-         */
+        /// <summary>
+        ///  Skips test if check is triggered
+        /// </summary>
+        /// <param name="objectNameUnderTest">name of object under test</param>
+        /// <param name="callingMethodName">test method name (automatically provided through <see cref="CallerMemberNameAttribute"/>)</param>
+        /// <remarks>
+        /// Wrapper for utility function <see cref="SkipCheckBase"/> with shorter param list and fixture specific arguments
+        /// </remarks>
         private void SkipCheck(string objectNameUnderTest, [CallerMemberName] string callingMethodName = null)
         {
-            SkipCheckLong<VrSceneValidationTests>(VrExperimentPrefabName, _objectNamesFromExperimentPrefab,
+            SkipCheckBase<VrSceneValidationTests>(TypeVR, _objectNamesFromExperimentPrefab,
                 _experimentName, objectNameUnderTest, callingMethodName);
         }
     }

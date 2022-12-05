@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using NUnit.Framework;
+using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 
 namespace Tests.Utilities
 {
-    public static class Utilities
+    public static class UtilityFunctions
     {
         public static GameObject GetPrefabByName(string name)
         {
@@ -168,44 +169,87 @@ namespace Tests.Utilities
 
             return component;
         }
+
+        public static void LoadSceneIfNotYetLoaded(string scenePath)
+        {
+            // Load scene if necessary
+            var scene = SceneManager.GetSceneAt(0);
+            if (SceneManager.sceneCount > 1 || scene.path != scenePath)
+            {
+                EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+            }
+        }
+
+        /// <summary>
+        /// Tries to get all GameObjects of a given prefab name up a to hierarchy depth of 5 
+        /// </summary>
+        /// <param name="prefabName">name of the prefab</param>
+        /// <returns>GameObject array filled with all GameObjects that are part of the prefab except the root</returns>
+        /// <remarks>triggers a test failure if anything goes wrong, e.g. prefab is not found</remarks>
+        public static GameObject[] GetAllGameObjectsFromPrefab(string prefabName)
+        {
+            var experimentSettingPrefab = GetPrefabByName(prefabName);
+            var allGameObjectsFromPrefab = new List<GameObject>();
+            AddDescendantsUntilDepth(experimentSettingPrefab.transform, allGameObjectsFromPrefab);
+            
+            return allGameObjectsFromPrefab.ToArray();
+        }
         
-        public static void AddDescendantsUntilDepth(Transform parent, List<GameObject> list, int maxDepth, int depth=1)
+        /// <summary>
+        /// Recursion helper method for <see cref="GetAllGameObjectsFromPrefab"/>. It moves through the object hierarchy until all children are added to the provided list
+        /// </summary>
+        /// <param name="parent">the parent GameObject, e.g. the prefab</param>
+        /// <param name="list">all found child GameObjects are added to this list</param>
+        /// <param name="maxDepth">the max depth to move through in the prefab's object hierarchy</param>
+        /// <param name="depth">the starting depth, defaults to 1</param>
+        private static void AddDescendantsUntilDepth(Transform parent, ICollection<GameObject> list, int maxDepth=int.MaxValue, int depth=1)
         {
             if (depth > maxDepth)
                 return;
             
             foreach (Transform child in parent)
             {
-                list.Add(child.gameObject);
+                if (!child.gameObject.name.Contains("==="))
+                    list.Add(child.gameObject);
                 AddDescendantsUntilDepth(child, list, maxDepth, depth+1);
             }
         }
-        
-        /**
-         * Custom attribute (decorator) for tests.
-         * Use it on test methods.
-         * Provide argument(s): any number of experiment names to skip the respective test for
-         * e.g.: [SkipTestFor("FallingCoil"]
-         */
+
+        /// <summary>
+        /// Use on test methods, where multiple uses per test case are possible.
+        /// </summary>
+        /// <param name="experimentNames">One or more experiment names in a comma separated string with optional spaces</param>
+        /// <param name="reasonToSkip">Explanation why test case is skipped for specified experiment</param>
+        /// <example>
+        /// <code>
+        /// [SkipTestFor("FallingCoil, "CoulombsLaw", "we prefer darkness")]
+        /// [Test, Description("...")]
+        /// public void sceneHasLights() { ... }
+        /// </code>
+        /// results in the test case "sceneHasLights" being skipped for FallingCoil and CoulombsLaw with the TestRunner info displaying "we prefer darkness" 
+        /// </example>
         [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-        public sealed class SkipTestForScenesWithReason : Attribute
+        public sealed class SkipTestForScenesWithReasonAttribute : Attribute
         {
             public string[] ExperimentNames { get; }
             public string ReasonToSkip { get; }
 
-            public SkipTestForScenesWithReason(string experimentNames, string reasonToSkip) {
+            public SkipTestForScenesWithReasonAttribute(string experimentNames, string reasonToSkip) {
                 ExperimentNames = experimentNames.Split(',').Select(experimentName => experimentName.Trim()).ToArray();
                 ReasonToSkip = reasonToSkip;
             }
-
-            /**
-             * Returns attribute data as array of attributes
-             */
-            public static SkipTestForScenesWithReason[] GetAttributeCustom<T>(string methodName) where T : class
+            
+            /// <summary>
+            /// Get all attached <c>SkipTestForScenesWithReason</c> attributes of an annotated test method
+            /// </summary>
+            /// <typeparam name="T">The annotated test method's test fixture class</typeparam>
+            /// <param name="methodName">The annotated test method's name</param>
+            /// <returns>All attached custom attribute objects in an array</returns>
+            public static SkipTestForScenesWithReasonAttribute[] GetAttributeCustom<T>(string methodName) where T : class
             {
                 try
                 {
-                    return (SkipTestForScenesWithReason[])typeof(T).GetMethod(methodName).GetCustomAttributes(typeof(SkipTestForScenesWithReason), false);
+                    return (SkipTestForScenesWithReasonAttribute[])typeof(T).GetMethod(methodName).GetCustomAttributes(typeof(SkipTestForScenesWithReasonAttribute), false);
                 }
                 catch(SystemException)
                 {
@@ -214,41 +258,48 @@ namespace Tests.Utilities
             }
         }
         
-        /**
--         * Checks whether a test case should be skipped if either is true:
--         * 1.) The test case is decorated with the custom attribute [SkipTestFor("SomeExperimentName")] and the experiment matches
--         * 2.) The objectNameUnderTest is not part of the experiment prefab
-          */
-        public static void SkipCheckLong<T>(string experimentPrefabName, IEnumerable<string> objectNamesFromExperimentPrefab, string currentExperimentName,
+        /// <summary>
+        /// Checks if either is true and the test case should be skipped:
+        /// <list type="number">
+        /// <item>
+        /// <description>The test case is annotated with [<see cref="SkipTestForScenesWithReasonAttribute"/>] and the experiment name matches</description>
+        /// </item>
+        /// <item>
+        /// <description>The <paramref name="nameOfObjectUnderTest"/> is not part of the experimentSettings prefab</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <remarks>
+        /// Don't call this directly, use a test fixture's associated wrapper method <c>SkipCheck</c> instead
+        /// </remarks>
+        /// <param name="sceneType">Type of scene: either PC or VR</param>
+        /// <param name="objectNamesFromExperimentPrefab">Contains object names from experimentSetting prefab</param>
+        /// <param name="currentExperimentName">Name of the current experiment under test</param>
+        /// <param name="nameOfObjectUnderTest">Name of the object under test. It is matched against <paramref name="objectNamesFromExperimentPrefab"/></param>
+        /// <param name="callingMethodName">The test method's name</param>
+        public static void SkipCheckBase<T>(string sceneType, IEnumerable<string> objectNamesFromExperimentPrefab, string currentExperimentName,
             string nameOfObjectUnderTest, string callingMethodName) where T : class
         {
-            // Get attribute
-            var skipTestForAttributes = SkipTestForScenesWithReason.GetAttributeCustom<T>(callingMethodName);
+            // Get any attached attribute objects
+            var skipTestForAttributes = SkipTestForScenesWithReasonAttribute.GetAttributeCustom<T>(callingMethodName);
             
+            // Check if the provided scene(s) match the current test, if yes then skip test
             if (skipTestForAttributes != null)
             {
-                // TODO iterate over all custom attributes, in each one check all contained experiment names and assert with provided reason!
-                // TODO afterwards: adjust all skipped tests :)
-                var concatenatedExperimentNames = new List<string>();
                 foreach (var skipTestForAttribute in skipTestForAttributes)
                 {
-                    concatenatedExperimentNames = concatenatedExperimentNames.Concat(skipTestForAttribute.ExperimentNames).ToList();
-                    // Check if the provided scene(s) match the current test, if yes then skip test
                     if (skipTestForAttribute.ExperimentNames.Any(x => currentExperimentName.ToUpper().Contains(x.ToUpper())))
                     {
-                        Assert.Ignore($"Skipped test for '{nameOfObjectUnderTest}'! Reason: {skipTestForAttribute.ReasonToSkip})");
+                        Assert.Ignore($"Skipped test! Reason: {skipTestForAttribute.ReasonToSkip})");
                     }
                 }
-
-                
             }
 
             // Check if the object is part of our ExperimentSetting prefab otherwise skip test
             if (!objectNamesFromExperimentPrefab.Any(x => x.ToUpper().Contains(nameOfObjectUnderTest.ToUpper())))
             {
-                Assert.Ignore($"{experimentPrefabName} contains no {nameOfObjectUnderTest} - skipping test!");
+                Assert.Ignore($"{Constants.ExperimentPrefabName + "." + sceneType} contains no {nameOfObjectUnderTest} - skipping test!");
             }
-             
         }
     }
 }
