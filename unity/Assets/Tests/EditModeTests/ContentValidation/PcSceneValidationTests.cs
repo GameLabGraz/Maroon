@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Runtime.CompilerServices;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,40 +8,36 @@ using static Tests.Utilities.Constants;
 namespace Tests.EditModeTests.ContentValidation
 {
     /// <summary>
-    ///  Runs all contained test methods for all scenes provided by <see cref="PcScenesProvider"/>
+    /// Content validation TestFixture for PC scenes.
+    /// Contains all test methods for scenes provided by <see cref="PcScenesProvider"/>.
     /// </summary>
     [TestFixtureSource(typeof(PcScenesProvider))]
-    public class PcSceneValidationTests
+    public class PcSceneValidationTests : SceneValidationBaseFixture<PcSceneValidationTests>
     {
-        private readonly string _experimentName;
-        private readonly string _scenePath;
+        /// <summary>
+        /// Provides all scenes in Build Settings of type PC
+        /// </summary>
+        private class PcScenesProvider : ScenesProvider { protected override string sceneType => TypePC; }
         
-        private GameObject[] _gameObjectsFromExperimentPrefab;
-        private string[] _objectNamesFromExperimentPrefab;
+        /// <summary>
+        /// Derived constructor used by TestFixtureSource annotation to initialize attributes
+        /// </summary>
+        /// <param name="experimentName">Name of the experiment scene to be tested</param>
+        /// <param name="scenePath">Relative path to scene starting from "Assets" folder</param>
+        public PcSceneValidationTests(string experimentName, string scenePath) :
+            base(experimentName, scenePath, TypePC) {}
 
         /// <summary>
-        /// Constructor used by TestFixtureSource annotation to initialize attributes
-        /// </summary>
-        /// <param name="experimentName"></param>
-        /// <param name="scenePath"></param>
-        public PcSceneValidationTests(string experimentName, string scenePath) =>
-            (_experimentName, _scenePath) = (experimentName, scenePath);
-        
-        /// <summary>
-        /// Runs once for each test fixture on test execution.
-        /// Queries all GameObjects from ExperimentSetting prefab and if necessary loads the scene matching the test fixture.
+        /// Called once per scene before any tests are started
         /// </summary>
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            // Get objects and names from ExperimentSetting prefab
-            _gameObjectsFromExperimentPrefab = GetAllGameObjectsFromPrefab(ExperimentPrefabName + "." + TypePC);
-            _objectNamesFromExperimentPrefab = _gameObjectsFromExperimentPrefab.Select(x => x.name).ToArray();
-            
-            // Load scene
-            LoadSceneIfNotYetLoaded(_scenePath);
+            BaseOneTimeSetup();
         }
         
+        /* Tests start here! */
+
         [SkipTestForScenesWithReason("StateMachine", "scene has a different camera setup")]
         [Test, Description("Must have a GameObject named 'MainCamera' with a configured <Camera> component")]
         public void SceneHasMainCamera()
@@ -52,7 +47,7 @@ namespace Tests.EditModeTests.ContentValidation
             SkipCheck(objectNameUnderTest);
 
             // Get prefab and component
-            var prefab = _gameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
+            var prefab = GameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
             var prefabCameraComponent = GetComponentFromGameObject<Camera>(prefab);
             var expectedTag = prefab.tag;
 
@@ -84,7 +79,7 @@ namespace Tests.EditModeTests.ContentValidation
             SkipCheck(objectNameUnderTest);
             
             // Get prefab and component
-            var prefab = _gameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
+            var prefab = GameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
             var prefabCameraComponent = GetComponentFromGameObject<Camera>(prefab);
             
             // Check GameObject exists and is active
@@ -116,7 +111,7 @@ namespace Tests.EditModeTests.ContentValidation
             SkipCheck(objectNameUnderTest);
             
             // Get prefab and components
-            var prefab = _gameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
+            var prefab = GameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
             var prefabCanvasComponent = GetComponentFromGameObject<Canvas>(prefab);
             var prefabCanvasScalerComponent = GetComponentFromGameObject<CanvasScaler>(prefab);
             var prefabGraphicRaycasterComponent = GetComponentFromGameObject<GraphicRaycaster>(prefab);
@@ -164,7 +159,7 @@ namespace Tests.EditModeTests.ContentValidation
                 $"Wrong ignoreReversedGraphics value for <{prefabGraphicRaycasterComponent.GetType().Name}> component of '{gameObjectUnderTest.name}'");
         }
         
-        [SkipTestForScenesWithReason("FaradaysLaw", "scene accidently(?) has two EventSystems!")] // TODO fixme
+        // [SkipTestForScenesWithReason("FaradaysLaw", "scene accidently(?) has two EventSystems!")] // TODO fixme
         [Test, Description("Must have a GameObject named 'EventSystem'")]
         public void SceneHasEventSystem()
         {
@@ -173,7 +168,7 @@ namespace Tests.EditModeTests.ContentValidation
             SkipCheck(objectNameUnderTest);
             
             // Get matching prefab
-            var prefab = _gameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
+            var prefab = GameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
             
             // Check GameObject exists and is active
             var gameObjectUnderTest = FindObjectByName(objectNameUnderTest);
@@ -187,7 +182,7 @@ namespace Tests.EditModeTests.ContentValidation
                 $"GameObject '{objectNameUnderTest}' is not a child GameObject of '{prefab.transform.parent.name}'");
         }
         
-        [SkipTestForScenesWithReason("CathodeRayTube", "scene intentionally(?) has no Assessment Panel")]
+        [SkipTestForScenesWithReason("CathodeRayTube", ReasonIntentionallyMissing)]
         [SkipTestForScenesWithReason("CoulombsLaw", ReasonItsOutdated)]
         [Test, Description("Must have a GameObject named 'PanelAssessment'")]
         public void SceneHasUiPanelAssessment()
@@ -197,7 +192,7 @@ namespace Tests.EditModeTests.ContentValidation
             SkipCheck(objectNameUnderTest);
             
             // Get matching prefab
-            var prefab = _gameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
+            var prefab = GameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
             
             // Check GameObject exists and is active
             var gameObjectUnderTest = FindObjectByName(objectNameUnderTest);
@@ -211,7 +206,7 @@ namespace Tests.EditModeTests.ContentValidation
                 $"GameObject '{objectNameUnderTest}' is not a child GameObject of '{prefab.transform.parent.name}'");
         }
         
-        [SkipTestForScenesWithReason("Optics", "scene intentionally disabled the Controls Panels")]
+        [SkipTestForScenesWithReason("Optics", ReasonIntentionallyMissing)]
         [Test, Description("Must have a GameObject named 'PanelControls'")]
         public void SceneHasUiPanelControls()
         {
@@ -220,7 +215,7 @@ namespace Tests.EditModeTests.ContentValidation
             SkipCheck(objectNameUnderTest);
             
             // Get matching prefab
-            var prefab = _gameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
+            var prefab = GameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
             
             // Check GameObject exists and is active
             var gameObjectUnderTest = FindObjectByName(objectNameUnderTest);
@@ -242,7 +237,7 @@ namespace Tests.EditModeTests.ContentValidation
             SkipCheck(objectNameUnderTest);
             
             // Get matching prefab
-            var prefab = _gameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
+            var prefab = GameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
             
             // Check GameObject exists and is active
             var gameObjectUnderTest = FindObjectByName(objectNameUnderTest);
@@ -264,7 +259,7 @@ namespace Tests.EditModeTests.ContentValidation
             SkipCheck(objectNameUnderTest);
             
             // Get matching prefab
-            var prefab = _gameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
+            var prefab = GameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
             
             // Check GameObject exists and is active
             var gameObjectUnderTest = FindObjectByName(objectNameUnderTest);
@@ -286,7 +281,7 @@ namespace Tests.EditModeTests.ContentValidation
             SkipCheck(objectNameUnderTest);
             
             // Get matching prefab
-            var prefab = _gameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
+            var prefab = GameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
             
             // Check GameObject exists and is active
             var gameObjectUnderTest = FindObjectByName(objectNameUnderTest);
@@ -311,7 +306,7 @@ namespace Tests.EditModeTests.ContentValidation
             SkipCheck(objectNameUnderTest);
             
             // Get matching prefab
-            var prefab = _gameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
+            var prefab = GameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
 
             // Check GameObject exists and is active
             var gameObjectUnderTest = FindObjectByName(objectNameUnderTest);
@@ -330,7 +325,7 @@ namespace Tests.EditModeTests.ContentValidation
             SkipCheck(objectNameUnderTest);
             
             // Get prefab
-            var prefab = _gameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
+            var prefab = GameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
             var expectedTag = prefab.tag;
 
             // Check GameObject exists, is active and tagged
@@ -375,29 +370,6 @@ namespace Tests.EditModeTests.ContentValidation
             // Check GameObject exists and is active
             var gameObject = FindObjectByName(objectNameUnderTest);
             AssertGameObjectIsActive(gameObject);
-        }
-        
-        /*************
-         * Utilities *
-         *************/
-
-        /// <summary>
-        /// Provides scenes of type PC
-        /// </summary>
-        private class PcScenesProvider : ScenesProvider { protected override string sceneType => "pc"; }
-        
-        /// <summary>
-        ///  Skips test if check is triggered
-        /// </summary>
-        /// <param name="objectNameUnderTest">name of object under test</param>
-        /// <param name="callingMethodName">test method name (automatically provided through <see cref="CallerMemberNameAttribute"/>)</param>
-        /// <remarks>
-        /// Wrapper for utility function <see cref="SkipCheckBase"/> with shorter param list and fixture specific arguments
-        /// </remarks>
-        private void SkipCheck(string objectNameUnderTest, [CallerMemberName] string callingMethodName = null)
-        {
-            SkipCheckBase<PcSceneValidationTests>(TypePC, _objectNamesFromExperimentPrefab,
-                _experimentName, objectNameUnderTest, callingMethodName);
         }
     }
 }

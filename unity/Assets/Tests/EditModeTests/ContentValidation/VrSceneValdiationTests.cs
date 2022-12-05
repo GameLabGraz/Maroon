@@ -1,41 +1,40 @@
 ﻿using System.Linq;
-using System.Runtime.CompilerServices;
 using NUnit.Framework;
-using UnityEngine;
 using static Tests.Utilities.UtilityFunctions;
 using static Tests.Utilities.Constants;
 
 namespace Tests.EditModeTests.ContentValidation
 {
     /// <summary>
-    ///  Runs all contained test methods for all scenes provided by <see cref="VrScenesProvider"/>
+    /// Content validation TestFixture for VR scenes.
+    /// Contains all test methods for scenes provided by <see cref="VrScenesProvider"/>.
     /// </summary>
     [TestFixtureSource(typeof(VrScenesProvider))]
-    public class VrSceneValidationTests
+    public class VrSceneValidationTests : SceneValidationBaseFixture<VrSceneValidationTests>
     {
         /// <summary>
-        /// 
+        /// Provides all scenes in Build Settings of type PC
         /// </summary>
-        private readonly string _experimentName;
-        private readonly string _scenePath;
-        
-        private GameObject[] _gameObjectsFromExperimentPrefab;
-        private string[] _objectNamesFromExperimentPrefab;
-        
-        public VrSceneValidationTests(string experimentName, string scenePath) =>
-            (_experimentName, _scenePath) = (experimentName, scenePath);
-        
-        // Before running any tests, query ExperimentSetting prefab and load the scene if it's not yet loaded
+        private class VrScenesProvider : ScenesProvider { protected override string sceneType => TypeVR; }
+    
+        /// <summary>
+        /// Derived constructor used by TestFixtureSource annotation to initialize attributes
+        /// </summary>
+        /// <param name="experimentName">Name of the experiment scene to be tested</param>
+        /// <param name="scenePath">Relative path to scene starting from "Assets" folder</param>
+        public VrSceneValidationTests(string experimentName, string scenePath) :
+            base(experimentName, scenePath, TypeVR) {}
+
+        /// <summary>
+        /// Called once per scene before any tests are started
+        /// </summary>
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            // Get objects and names from ExperimentSetting prefab
-            _gameObjectsFromExperimentPrefab = GetAllGameObjectsFromPrefab(ExperimentPrefabName + "." + TypeVR);
-            _objectNamesFromExperimentPrefab = _gameObjectsFromExperimentPrefab.Select(x => x.name).ToArray();
-            
-            // Load scene
-            LoadSceneIfNotYetLoaded(_scenePath);
+            BaseOneTimeSetup();
         }
+        
+        /* Tests start here! */
         
         [Test, Description("Must include a 'VRPlayer' Prefab tagged as 'Player'")]
         public void SceneHasVrPlayer()
@@ -45,7 +44,7 @@ namespace Tests.EditModeTests.ContentValidation
             SkipCheck(objectNameUnderTest);
             
             // Get prefab
-            var prefab = _gameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
+            var prefab = GameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
             var expectedTag = prefab.tag;
             
             // Check GameObject exists, is active and tagged
@@ -76,7 +75,7 @@ namespace Tests.EditModeTests.ContentValidation
             SkipCheck(objectNameUnderTest);
             
             // Get prefab
-            var prefab = _gameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
+            var prefab = GameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
             var expectedLayer = prefab.layer;
             
             // Check GameObject exists, is active and on correct layer
@@ -87,8 +86,8 @@ namespace Tests.EditModeTests.ContentValidation
         }
         
         [SkipTestForScenesWithReason("Whiteboard", ReasonItsOutdated)]
-        [SkipTestForScenesWithReason("HuygensPrinciple", "scene intentionally has an inactive Experiment Table")]
-        [SkipTestForScenesWithReason("FallingCoil, FaradaysLaw", "scene accidently(?) has two Experiment Tables!")] // TODO fixme
+        [SkipTestForScenesWithReason("HuygensPrinciple", ReasonIntentionallyMissing)]
+        // [SkipTestForScenesWithReason("FallingCoil, FaradaysLaw", "scene accidently(?) has two Experiment Tables!")] // TODO fixme
         [Test, Description("Must include an 'ExperimentTable' Prefab set to layer 'Inventary'")]
         public void SceneHasExperimentTable()
         {
@@ -97,7 +96,7 @@ namespace Tests.EditModeTests.ContentValidation
             SkipCheck(objectNameUnderTest);
             
             // Get prefab
-            var prefab = _gameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
+            var prefab = GameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
             var expectedLayer = prefab.layer;
             
             // Check GameObject exists, is active and on correct layer
@@ -223,29 +222,6 @@ namespace Tests.EditModeTests.ContentValidation
             // Check GameObject exists and is active
             var gameObject = FindObjectByName(objectNameUnderTest);
             AssertGameObjectIsActive(gameObject);
-        }
-        
-        /*************
-         * Utilities *
-         *************/
-        
-        /// <summary>
-        /// Provides scenes of type VR
-        /// </summary>
-        private class VrScenesProvider : ScenesProvider { protected override string sceneType => "vr"; }
-
-        /// <summary>
-        ///  Skips test if check is triggered
-        /// </summary>
-        /// <param name="objectNameUnderTest">name of object under test</param>
-        /// <param name="callingMethodName">test method name (automatically provided through <see cref="CallerMemberNameAttribute"/>)</param>
-        /// <remarks>
-        /// Wrapper for utility function <see cref="SkipCheckBase"/> with shorter param list and fixture specific arguments
-        /// </remarks>
-        private void SkipCheck(string objectNameUnderTest, [CallerMemberName] string callingMethodName = null)
-        {
-            SkipCheckBase<VrSceneValidationTests>(TypeVR, _objectNamesFromExperimentPrefab,
-                _experimentName, objectNameUnderTest, callingMethodName);
         }
     }
 }

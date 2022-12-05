@@ -181,26 +181,28 @@ namespace Tests.Utilities
         }
 
         /// <summary>
-        /// Tries to get all GameObjects of a given prefab name up a to hierarchy depth of 5 
+        /// Gets all child GameObjects from a given prefab name up to a specified hierarchy depth 
         /// </summary>
         /// <param name="prefabName">name of the prefab</param>
+        /// <param name="maxHierarchyDepth">the max depth to move through the prefab's object hierarchy</param>
         /// <returns>GameObject array filled with all GameObjects that are part of the prefab except the root</returns>
         /// <remarks>triggers a test failure if anything goes wrong, e.g. prefab is not found</remarks>
-        public static GameObject[] GetAllGameObjectsFromPrefab(string prefabName)
+        public static GameObject[] GetObjectsFromPrefabOfDepth(string prefabName, int maxHierarchyDepth)
         {
             var experimentSettingPrefab = GetPrefabByName(prefabName);
             var allGameObjectsFromPrefab = new List<GameObject>();
-            AddDescendantsUntilDepth(experimentSettingPrefab.transform, allGameObjectsFromPrefab);
+            AddDescendantsUntilDepth(experimentSettingPrefab.transform, allGameObjectsFromPrefab, maxHierarchyDepth);
             
             return allGameObjectsFromPrefab.ToArray();
         }
         
         /// <summary>
-        /// Recursion helper method for <see cref="GetAllGameObjectsFromPrefab"/>. It moves through the object hierarchy until all children are added to the provided list
+        /// Recursion helper method for <see cref="GetObjectsFromPrefabOfDepth"/>. It moves through the object hierarchy
+        /// until either <see cref="maxDepth"/> is reached or all children are added to the provided list
         /// </summary>
         /// <param name="parent">the parent GameObject, e.g. the prefab</param>
         /// <param name="list">all found child GameObjects are added to this list</param>
-        /// <param name="maxDepth">the max depth to move through in the prefab's object hierarchy</param>
+        /// <param name="maxDepth">the max depth to move through the prefab's object hierarchy</param>
         /// <param name="depth">the starting depth, defaults to 1</param>
         private static void AddDescendantsUntilDepth(Transform parent, ICollection<GameObject> list, int maxDepth=int.MaxValue, int depth=1)
         {
@@ -298,7 +300,7 @@ namespace Tests.Utilities
             // Check if the object is part of our ExperimentSetting prefab otherwise skip test
             if (!objectNamesFromExperimentPrefab.Any(x => x.ToUpper().Contains(nameOfObjectUnderTest.ToUpper())))
             {
-                Assert.Ignore($"{Constants.ExperimentPrefabName + "." + sceneType} contains no {nameOfObjectUnderTest} - skipping test!");
+                Assert.Ignore($"{Constants.ExperimentPrefabName + sceneType} contains no {nameOfObjectUnderTest} - skipping test!");
             }
         }
     }
