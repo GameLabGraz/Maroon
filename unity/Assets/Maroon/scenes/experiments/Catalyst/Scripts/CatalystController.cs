@@ -93,7 +93,6 @@ namespace Maroon.Chemistry.Catalyst
         private List<Vector3> _oSpawnPoints = new List<Vector3>();
         private List<Molecule> _activeMolecules = new List<Molecule>();
         private CatalystSurface _catalystSurface;
-        private List<CatalystPressureArrow> _pressureArrows = new List<CatalystPressureArrow>();
         
         private float _currentTurnOverRate = 0.0f;
         private bool _doStepWiseSimulation = false;
@@ -109,20 +108,31 @@ namespace Maroon.Chemistry.Catalyst
         private List<Serie> _langmuirGraphSeries;
         private List<Serie> _vanKrevelenGraphSeries;
         
+        private static float EleyTemperatureValue = 0;
+        
         private static readonly Regex WhiteSpaces = new Regex(@"\s+");
 
         private static readonly int[][] TemperatureStageValues = new int [][]
         {
-            new int[] {250, 275, 300, 325, 350, 375, 400, 425, 450 }, // langmuir-hinshelwood
-            new int[] {321, 334, 348, 363}, // mars van krevelen
-            new int[] {250, 275, 300, 325, 350, 375, 400, 425, 450 } // eley-rideal use same as for langmuir as long as we do not get other data
+            new int[] { 250, 275, 300, 325, 350, 375, 400, 425, 450 }, // langmuir-hinshelwood
+            new int[] { 321, 334, 348, 363 }, // mars van krevelen
+            new int[] { 481, 499, 519, 533, 553 } // eley-rideal
         };
         
         private static readonly float[][] PartialPressureValues = new float[][]
         {
-            new float[] {0.01f, 0.02f, 0.04f, 0.2f}, // langmuir-hinshelwood
-            new float[] {0.001f, 0.002f, 0.004f, 0.008f, 0.014f, 0.026f}, // mars van krevelen
-            new float[] {0.01f, 0.02f, 0.04f, 0.2f} // eley-rideal use same as for langmuir as long as we do not get other data
+            new float[] { 0.01f, 0.02f, 0.04f, 0.2f }, // langmuir-hinshelwood
+            new float[] { 0.001f, 0.002f, 0.004f, 0.008f, 0.014f, 0.026f }, // mars van krevelen
+            // eley-rideal: pressure is different for each temperature stage
+            // each row below corresponds on one temperature (first line = pressure values for 208 in temp values)
+            new float[]
+            {
+                0.0010855f, 0.0019737f, 0.0062171f, 0.011053f, 0.001523f, 0f, 0f, // temperature 208
+                0.00069079f, 0.0016118f, 0.0023355f, 0.0031579f, 0.0065461f, 0.008125f, 0.013257f, // temperature 226
+                0.0010197f, 0.0022697f, 0.0028947f, 0.0042763f, 0.0098355f, 0.012434f, 0.015822f, // temperature 246
+                0.0013816f, 0.0031908f, 0.0045395f, 0.0054934f, 0.0066447f, 0.0077961f, 0f, // temperature 260
+                0.0019408f, 0.0025658f, 0.0036513f, 0.0046053f, 0.0055921f, 0.0070395f, 0.0089803f // temperature 280
+            } 
         };
         
         private static readonly float[][][] TurnOverRates = new float[][][]
@@ -146,17 +156,13 @@ namespace Maroon.Chemistry.Catalyst
                 new float[] { 0.26437f, 0.54023f, 0.71648f, 1.023f, 1.1686f, 1.3678f },
                 new float[] { 0.63985f, 1.1456f, 1.5747f, 2.3563f, 2.9234f, 3.6743f }
             },
-            new float[][] // eley-rideal use same as for langmuir as long as we do not get other data
+            new float[][] // eley-rideal
             {
-                new float[] { 0f, 0f, 0.047619048f, 0.285714286f },
-                new float[] { 0f, 0.047619048f, 0.142857143f, 0.666666667f },
-                new float[] { 0f, 0.095238095f, 0.238095238f, 1.19047619f },
-                new float[] { 0.047619048f, 0.19047619f, 0.380952381f, 1.952380952f },
-                new float[] { 0.095238095f, 0.285714286f, 0.571428571f, 2.952380952f },
-                new float[] { 0.19047619f, 0.380952381f, 0.80952381f, 4.19047619f },
-                new float[] { 0.285714286f, 0.571428571f, 1.142857143f, 5.904761905f },
-                new float[] { 0.333333333f, 0.714285714f, 1.428571429f, 7.428571429f },
-                new float[] { 0.380952381f, 0.80952381f, 1.619047619f, 8.571428571f }
+                new float[] { 0.000721806f, 0.001361116f, 0.001051789f, 0.000907325f, 0.00078371f, 0f, 0f },
+                new float[] { 0.001381773f, 0.002351066f, 0.002722298f, 0.002887225f, 0.002206666f, 0.001938587f, 0.001381773f },
+                new float[] { 0.001979835f, 0.003279112f, 0.004145254f, 0.00486706f, 0.003567847f, 0.002887225f, 0.002227323f },
+                new float[] { 0.002598554f, 0.005258947f, 0.006846895f, 0.007424624f, 0.008682072f, 0.009775561f, 0f },
+                new float[] { 0.004928964f, 0.006537697f, 0.008455499f, 0.010105415f, 0.011280884f, 0.012786207f, 0.014312831f }
             },
         };
 
@@ -613,11 +619,12 @@ namespace Maroon.Chemistry.Catalyst
                 partialPressureView.ClearUI();
             }
 
+            // use faster direct array access since temperature is sorted
             temperature.minValue = TemperatureStageValues[(int) variation][0] - 273.15f;
             temperature.maxValue = TemperatureStageValues[(int) variation][TemperatureStageValues[(int) variation].Length - 1] - 273.15f;
-
-            partialPressure.minValue = PartialPressureValues[(int) variation][0];
-            partialPressure.maxValue = PartialPressureValues[(int) variation][PartialPressureValues[(int) variation].Length - 1];
+            // use min max due to eley-rideal partial pressure not being sorted
+            partialPressure.minValue = PartialPressureValues[(int) variation].Min();
+            partialPressure.maxValue = PartialPressureValues[(int) variation].Max();
 
             temperature.Value = temperature.minValue;
             partialPressure.Value = partialPressure.minValue;
@@ -877,11 +884,6 @@ namespace Maroon.Chemistry.Catalyst
                 var main = pressureParticleSystem.main;
                 main.simulationSpeed = Mathf.Clamp(pressureStep * 2, 0.2f, 2.0f); // speed should go from 0.2 to 2
             }
-
-            foreach (var arrow in _pressureArrows)
-            {
-                arrow.PressureChanged(partialPressure.Value, partialPressure.maxValue);
-            }
             _currentTurnOverRate = TurnOverRates[(int)ExperimentVariation][GetTemperatureIndex(temperature.Value)][GetPartialPressureIndex(partialPressure.Value)];
             UpdateTurnOverRateUI();
         }
@@ -968,12 +970,30 @@ namespace Maroon.Chemistry.Catalyst
             int idx = Array.IndexOf(TemperatureStageValues[(int)ExperimentVariation], TemperatureStageValues[(int)ExperimentVariation].TakeWhile(num => num <= temperatureValue + 273.16f).LastOrDefault());
             if (idx < 0)
                 idx = 0;
+            
+            EleyTemperatureValue = temperatureValue;
             return idx;
         }
 
         private static int GetPartialPressureIndex(float partialPressureValue)
         {
-            int idx = Array.IndexOf(PartialPressureValues[(int)ExperimentVariation], PartialPressureValues[(int)ExperimentVariation].TakeWhile(num => num <= partialPressureValue + 0.00001f).LastOrDefault());
+            int idx = 0;
+            if (ExperimentVariation == ExperimentVariation.EleyRideal)
+            {
+                int tempStage = GetTemperatureIndex(EleyTemperatureValue);
+                int pressureValsPerTemp = PartialPressureValues[(int) ExperimentVariation].Length /
+                                          TemperatureStageValues[(int) ExperimentVariation].Length;
+                // get offset into the pressure array row
+                // stage * pressure vals per temp = first of correct row
+                int offsetIntoPressureArray = tempStage * pressureValsPerTemp;
+
+                // get slice of array for the correct temperature row with 7 values
+                var arraySlice = new ArraySegment<float>(PartialPressureValues[(int) ExperimentVariation],
+                    offsetIntoPressureArray, pressureValsPerTemp).ToArray();
+                idx = Array.IndexOf(arraySlice, arraySlice.OrderBy(num => num).TakeWhile(num => num <= partialPressureValue + 0.00001f).LastOrDefault());
+            }
+            else 
+                idx = Array.IndexOf(PartialPressureValues[(int)ExperimentVariation], PartialPressureValues[(int)ExperimentVariation].TakeWhile(num => num <= partialPressureValue + 0.00001f).LastOrDefault());
             if (idx < 0)
                 idx = 0;
             return idx;
