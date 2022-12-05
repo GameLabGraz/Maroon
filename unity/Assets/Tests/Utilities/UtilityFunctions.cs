@@ -204,7 +204,7 @@ namespace Tests.Utilities
         /// <param name="list">all found child GameObjects are added to this list</param>
         /// <param name="maxDepth">the max depth to move through the prefab's object hierarchy</param>
         /// <param name="depth">the starting depth, defaults to 1</param>
-        private static void AddDescendantsUntilDepth(Transform parent, ICollection<GameObject> list, int maxDepth=int.MaxValue, int depth=1)
+        private static void AddDescendantsUntilDepth(Transform parent, ICollection<GameObject> list, int maxDepth, int depth=1)
         {
             if (depth > maxDepth)
                 return;
