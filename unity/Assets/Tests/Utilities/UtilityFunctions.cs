@@ -8,7 +8,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using NUnit.Framework;
 using UnityEditor.SceneManagement;
+using UnityEditor.TestTools.TestRunner.Api;
 using UnityEngine.SceneManagement;
+using static Tests.Utilities.Constants;
 
 namespace Tests.Utilities
 {
@@ -303,8 +305,32 @@ namespace Tests.Utilities
             // Check if the object is part of our ExperimentSetting prefab otherwise skip test
             if (!objectNamesFromExperimentPrefab.Any(x => x.ToUpper().Contains(nameOfObjectUnderTest.ToUpper())))
             {
-                Assert.Ignore($"{Constants.ExperimentPrefabName + sceneType} contains no {nameOfObjectUnderTest} - skipping test!");
+                Assert.Ignore($"{ExperimentPrefabName + sceneType} contains no {nameOfObjectUnderTest} - skipping test!");
             }
+        }
+        
+        /// <summary>
+        /// Recursion helper to retrieve all failed test names from TestRunner results
+        /// </summary>
+        /// <param name="result">the test results</param>
+        /// <returns>string array containing all failed test names</returns>
+        public static IEnumerable<string> GetFailedTestNames(ITestResultAdaptor result)
+        {
+            if (result.HasChildren)
+                return result.Children.SelectMany(GetFailedTestNames);
+
+            return result.TestStatus == TestStatus.Failed ? new[] { result.Name } : Array.Empty<string>();
+        }
+
+        /// <summary>
+        /// Gathers all failed test names and displays them in a simple popup
+        /// </summary>
+        /// <param name="result">the test results</param>
+        public static void ReportTestFailureWithPopup(ITestResultAdaptor result)
+        {
+            var failedTestNames = string.Join("\n", GetFailedTestNames(result).Select(t => $"\t• {t}"));
+            EditorUtility.DisplayDialog(GuiPopupTitle, $"{result.FailCount} test{(result.FailCount > 1 ? "s" : "")} failed:\n{failedTestNames}\n\n" +
+                                                       "Check Test Runner window for more information", "Ok");
         }
     }
 }

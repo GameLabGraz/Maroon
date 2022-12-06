@@ -1,19 +1,22 @@
 ﻿using System.Text.RegularExpressions;
+using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEditor.TestTools.TestRunner.Api;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static Tests.Utilities.UtilityFunctions;
 
 namespace Tests.EditModeTests.ContentValidation
 {
     /// <summary>
     /// Runs content validation tests on build.
     /// When the build loads a specific scene all related content validation tests are started.
-    /// The build process stops if any test should fail.
+    /// The build process stops if any test should fail and a popup with all failed tests is shown.
     /// </summary>
-    ///
-    /// TODO test this! also with test runner closed to see if we need a "force refresh" similar to context menu
+    /// <remarks>
+    /// To disable the tests during build, simply comment out the entire class :)
+    /// </remarks>
     public class RunSceneValidationTestsDuringBuild : IProcessSceneWithReport
     {
         public int callbackOrder => 0;
@@ -33,7 +36,7 @@ namespace Tests.EditModeTests.ContentValidation
             if (!scenePath.Contains("experiments"))
                 return;
             
-            var results = new ResultCollector("SceneValidationTests");
+            var results = new ResultCollector();
             var api = ScriptableObject.CreateInstance<TestRunnerApi>();
             api.RegisterCallbacks(results);
             api.Execute(new ExecutionSettings
@@ -48,21 +51,21 @@ namespace Tests.EditModeTests.ContentValidation
                 }
             });
             
-            if (results.Failed)
-                throw new BuildFailedException($"{results.Result.FailCount} scene validation tests failed!");
+            if (results.Result.FailCount > 0)
+            {
+                ReportTestFailureWithPopup(results.Result);
+                EditorApplication.ExecuteMenuItem("Window/General/Test Runner");
+                throw new BuildFailedException($"{results.Result.FailCount} Scene Validation Tests failed! Check Test Runner window for more information");
+            }
+                
             
-            Debug.Log($"{results.Result.PassCount} scene validation tests passed for {scenePath} ({results.Result.SkipCount} skipped).");
+            Debug.Log($"{scenePath}: {results.Result.PassCount} test{(results.Result.PassCount > 1 ? "s" : "")} passed ({results.Result.SkipCount} skipped).");
         }
     
         private class ResultCollector : ICallbacks
         {
-            public ResultCollector(string tag)
-            {
-                
-            }
             public ITestResultAdaptor Result { get; private set; }
-            public bool Failed { get; private set; }
-    
+
             public void RunStarted(ITestAdaptor testsToRun) { }
             public void TestStarted(ITestAdaptor test) { }
             public void TestFinished(ITestResultAdaptor result) { }
@@ -70,13 +73,7 @@ namespace Tests.EditModeTests.ContentValidation
             public void RunFinished(ITestResultAdaptor result)
             {
                 Result = result;
-                if (Result.FailCount > 0)
-                {
-                    Failed = true;
-                }
             }
-    
-            
         }
     }
 }

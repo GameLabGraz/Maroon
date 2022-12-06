@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEditor.TestTools.TestRunner;
@@ -9,6 +6,7 @@ using UnityEditor.TestTools.TestRunner.Api;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using static Tests.Utilities.Constants;
+using static Tests.Utilities.UtilityFunctions;
 
 namespace Tests.EditModeTests.ContentValidation
 {
@@ -112,17 +110,7 @@ namespace Tests.EditModeTests.ContentValidation
             // 1 or more tests failed
             else
             {
-                IEnumerable<string> GetFailedTestNames(ITestResultAdaptor test)
-                {
-                    if (test.HasChildren)
-                        return test.Children.SelectMany(GetFailedTestNames);
-
-                    return test.TestStatus == TestStatus.Failed ? new[] { test.Name } : Array.Empty<string>();
-                }
-
-                var failedTestNames = string.Join("\n", GetFailedTestNames(result).Select(t => $"\t• {t}"));
-                EditorUtility.DisplayDialog(GuiPopupTitle, $"{result.FailCount} test{(result.FailCount > 1 ? "s" : "")} failed:\n{failedTestNames}", "Ok");
-                
+                ReportTestFailureWithPopup(result);
                 EditorApplication.ExecuteMenuItem("Window/General/Test Runner");
             }
 

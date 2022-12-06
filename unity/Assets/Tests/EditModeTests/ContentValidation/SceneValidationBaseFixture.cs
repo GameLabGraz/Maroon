@@ -1,8 +1,8 @@
 using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
-using static Tests.Utilities.UtilityFunctions;
 using static Tests.Utilities.Constants;
+using static Tests.Utilities.UtilityFunctions;
 
 namespace Tests.EditModeTests.ContentValidation
 {
