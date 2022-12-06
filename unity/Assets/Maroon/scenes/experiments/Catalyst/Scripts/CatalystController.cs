@@ -79,8 +79,8 @@ namespace Maroon.Chemistry.Catalyst
         [SerializeField] List<XCharts.LineChart> lineChartsVRBox;
         [SerializeField] XCharts.GaugeChart progressChart;
         [SerializeField] GameObject questManagerLabObject;
-        [SerializeField] GameObject questManagerLangmuirObject;
-        [SerializeField] GameObject questManagerKrevelenObject;
+        [Header("order quest manager objects the same as the experiment variant enum!")]
+        [SerializeField] List<GameObject> questManagerVariantObjects;
         
 
         private int _freedMoleculeCounter = 0;
@@ -242,8 +242,11 @@ namespace Maroon.Chemistry.Catalyst
                 {
                     chart.gameObject.SetActive(false);
                 }
-                questManagerLangmuirObject.SetActive(false);
-                questManagerKrevelenObject.SetActive(false);
+
+                foreach (var questManagerObject in questManagerVariantObjects)
+                {
+                    questManagerObject.SetActive(false);
+                }
             }
             else
             {
@@ -755,12 +758,7 @@ namespace Maroon.Chemistry.Catalyst
         {
             if (isVrVersion && _doInteractiveSimulation)
             {
-                if (ExperimentVariation == ExperimentVariation.LangmuirHinshelwood)
-                    questManagerLangmuirObject.SetActive(true);
-                else if (ExperimentVariation == ExperimentVariation.MarsVanKrevelen)
-                    questManagerKrevelenObject.SetActive(true);
-                else if (ExperimentVariation == ExperimentVariation.EleyRideal)
-                    Debug.LogWarning("no quest manager for eley-rideal yet!");
+                questManagerVariantObjects[(int) ExperimentVariation].SetActive(true);
             }
         }
 
@@ -811,10 +809,11 @@ namespace Maroon.Chemistry.Catalyst
                     chart.gameObject.SetActive(false);
                 }
                 questManagerLabObject.GetComponent<QuestManager.QuestManager>().ResetQuests();
-                questManagerLangmuirObject.GetComponent<QuestManager.QuestManager>().ResetQuests();
-                questManagerKrevelenObject.GetComponent<QuestManager.QuestManager>().ResetQuests();
-                questManagerLangmuirObject.SetActive(false);
-                questManagerKrevelenObject.SetActive(false);
+                foreach (var questManagerVariantObject in questManagerVariantObjects)
+                {
+                    questManagerVariantObject.GetComponent<QuestManager.QuestManager>().ResetQuests();
+                    questManagerVariantObject.SetActive(false);
+                }
                 if (controlPanel)
                     controlPanel.ResetToInitialPosition();
             }
