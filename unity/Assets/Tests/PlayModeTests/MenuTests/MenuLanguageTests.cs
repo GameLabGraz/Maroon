@@ -7,6 +7,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 
+// TODO move utility functions to Utilities and/or use those already there
+
 namespace Tests.PlayModeTests.MenuTests
 {
     using static PlaymodeTestUtils;

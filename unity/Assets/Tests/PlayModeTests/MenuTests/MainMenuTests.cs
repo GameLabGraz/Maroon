@@ -14,13 +14,13 @@ using static Tests.Utilities.Constants;
  * "End to end" testing
  */
 
+// TODO move utility functions to Utilities and/or use those already there
+
 namespace Tests.PlayModeTests.MenuTests
 {
     using static PlaymodeTestUtils;
     public class MainMenuPcTests
     {
-        private const SystemLanguage DefaultLanguage = SystemLanguage.English;
-
         private const string EnterLabLabel = "Menu Lab";
 
         [UnitySetUp]
@@ -29,13 +29,8 @@ namespace Tests.PlayModeTests.MenuTests
             // Start from Main Menu for every following test
             yield return EditorSceneManager.LoadSceneAsyncInPlayMode(MainMenuScenePath, new LoadSceneParameters(LoadSceneMode.Single));
 
-            var platformManager = GameObject.Find("PlatformManager");
-
             var currentSceneName = SceneManager.GetActiveScene().name;
             Assert.AreEqual("MainMenu.pc", currentSceneName, "'MainMenu.pc' scene did not load");
-            
-            Assert.AreEqual(DefaultLanguage, LanguageManager.Instance.CurrentLanguage,
-                $"Default language is not set to '{DefaultLanguage.ToString()}'");
         }
         
         // Manually matched menu labels and prefabs to click through and open submenus
