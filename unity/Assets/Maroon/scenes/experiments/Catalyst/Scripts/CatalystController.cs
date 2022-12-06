@@ -72,13 +72,11 @@ namespace Maroon.Chemistry.Catalyst
         [SerializeField] VRLinearDrive partialPressureViewVr;
         [SerializeField] WhiteboardController whiteboardController;
         [SerializeField] WhiteboardController whiteboardControllerBox;
-        [SerializeField] Image theoryImageLangmuir;
-        [SerializeField] Image theoryImageVanKrevelen;
+        [SerializeField] List<Image> theoryImages; // ordered same as the experiment variants!
         [SerializeField] CatalystVrControlPanel controlPanel;
-        [SerializeField] XCharts.LineChart lineChartLangmuir;
-        [SerializeField] XCharts.LineChart lineChartVanKrevelen;
-        [SerializeField] XCharts.LineChart lineChartLangmuirVRBox;
-        [SerializeField] XCharts.LineChart lineChartVanKrevelenVRBox;
+        [Header("order line charts the same as the experiment variant enum!")]
+        [SerializeField] List<XCharts.LineChart> lineCharts;
+        [SerializeField] List<XCharts.LineChart> lineChartsVRBox;
         [SerializeField] XCharts.GaugeChart progressChart;
         [SerializeField] GameObject questManagerLabObject;
         [SerializeField] GameObject questManagerLangmuirObject;
@@ -105,8 +103,7 @@ namespace Maroon.Chemistry.Catalyst
         private float _minZValLocal = 0.0f;
         private float _maxZValLocal = 0.0f;
 
-        private List<Serie> _langmuirGraphSeries;
-        private List<Serie> _vanKrevelenGraphSeries;
+        private List<List<Serie>> _graphSeriesList = new List<List<Serie>>();
         
         private static float EleyTemperatureValue = 0;
         
@@ -232,26 +229,36 @@ namespace Maroon.Chemistry.Catalyst
             IsVrVersion = isVrVersion;
 
             catalystReactor.OnReactorFilled.AddListener(StartExperiment);
-            lineChartLangmuir.gameObject.SetActive(false);
-            lineChartVanKrevelen.gameObject.SetActive(false);
+            foreach (var chart in lineCharts)
+            {
+                chart.gameObject.SetActive(false);
+            }
             progressChart.gameObject.SetActive(false);
             progressChart.series.list[0].data[0].data[1] = 0.0f;
             
             if (isVrVersion)
             {
-                lineChartLangmuirVRBox.gameObject.SetActive(false);
-                lineChartVanKrevelenVRBox.gameObject.SetActive(false);
+                foreach (var chart in lineChartsVRBox)
+                {
+                    chart.gameObject.SetActive(false);
+                }
                 questManagerLangmuirObject.SetActive(false);
                 questManagerKrevelenObject.SetActive(false);
             }
             else
             {
-                theoryImageLangmuir.gameObject.SetActive(false);
-                theoryImageVanKrevelen.gameObject.SetActive(false);
+                foreach (var img in theoryImages)
+                {
+                   img.gameObject.SetActive(false); 
+                }
             }
 
-            _langmuirGraphSeries = new List<Serie>(lineChartLangmuir.series.list);
-            _vanKrevelenGraphSeries = new List<Serie>(lineChartVanKrevelen.series.list);
+            foreach (var chart in lineCharts)
+            {
+                _graphSeriesList.Add(new List<Serie>(chart.series.list));
+            }
+
+
         }
 
         private void StartExperiment()
@@ -649,98 +656,52 @@ namespace Maroon.Chemistry.Catalyst
 
         private void DrawSimulationGraphsPC()
         {
-            if (ExperimentVariation == ExperimentVariation.LangmuirHinshelwood)
+            LineChart lineChart = lineCharts[(int) ExperimentVariation];
+            lineChart.gameObject.SetActive(true);
+            if (_doInteractiveSimulation)
             {
-                lineChartLangmuir.gameObject.SetActive(true);
-                if (_doInteractiveSimulation)
-                {
-                    lineChartLangmuir.RefreshChart();
-                }
-                else
-                {
-                    lineChartLangmuir.series.RemoveAll();
-                    StartCoroutine(CoDrawSimulationGraphs(lineChartLangmuir, _langmuirGraphSeries, 1.6f));
-                    progressChart.gameObject.SetActive(true);
-                    // 4 series * 9 data entries -> 1.6 seconds per entry
-                    var waitTimeProgress = 4f * 9f * 1.6f;
-                    StartCoroutine(CoDrawProgressGraph(waitTimeProgress / 360f));
-                }
-                
+                lineChart.RefreshChart();
             }
-            else if (ExperimentVariation == ExperimentVariation.MarsVanKrevelen)
+            else
             {
-                lineChartVanKrevelen.gameObject.SetActive(true);
-                if (_doInteractiveSimulation)
-                {
-                    lineChartVanKrevelen.RefreshChart();
-                }
-                else
-                {
-                    lineChartVanKrevelen.series.RemoveAll();
-                    StartCoroutine(CoDrawSimulationGraphs(lineChartVanKrevelen, _vanKrevelenGraphSeries, 1.6f));
-                    progressChart.gameObject.SetActive(true);
-                    // 4 series * 6 data entries -> 1.6 seconds per entry
-                    var waitTimeProgress = 4f * 6f * 1.6f;
-                    StartCoroutine(CoDrawProgressGraph(waitTimeProgress / 360f));
-                }
+                lineChart.series.RemoveAll();
+                StartCoroutine(CoDrawSimulationGraphs(lineChart, _graphSeriesList[(int)ExperimentVariation], 1.6f));
+                progressChart.gameObject.SetActive(true);
+                StartCoroutine(CoDrawProgressGraph());
             }
-            else if (ExperimentVariation == ExperimentVariation.EleyRideal)
-                Debug.LogWarning("No simulation graph for eley-rideal yet!");
         }
         
         private void DrawSimulationGraphsVR()
         {
-            if (ExperimentVariation == ExperimentVariation.LangmuirHinshelwood)
+            if (_doInteractiveSimulation)
             {
-                if (_doInteractiveSimulation)
-                {
-                    lineChartLangmuirVRBox.gameObject.SetActive(true);
-                    lineChartLangmuirVRBox.RefreshChart();
-                }
-                else
-                {
-                    lineChartLangmuir.gameObject.SetActive(true);
-                    lineChartLangmuir.series.RemoveAll();
-                    StartCoroutine(CoDrawSimulationGraphs(lineChartLangmuir, _langmuirGraphSeries, 1.6f));
-                    progressChart.gameObject.SetActive(true);
-                    // 4 series * 9 data entries -> 1.6 seconds per entry
-                    var waitTimeProgress = 4f * 9f * 1.6f;
-                    StartCoroutine(CoDrawProgressGraph(waitTimeProgress / 360f));
-                }
-                
+                LineChart lineChartVRBox = lineChartsVRBox[(int) ExperimentVariation];
+                lineChartVRBox.gameObject.SetActive(true);
+                lineChartVRBox.RefreshChart();
             }
-            else if (ExperimentVariation == ExperimentVariation.MarsVanKrevelen)
+            else
             {
-                if (_doInteractiveSimulation)
-                {
-                    lineChartVanKrevelenVRBox.gameObject.SetActive(true);
-                    lineChartVanKrevelenVRBox.RefreshChart();
-                }
-                else
-                {
-                    lineChartVanKrevelen.gameObject.SetActive(true);
-                    lineChartVanKrevelen.series.RemoveAll();
-                    StartCoroutine(CoDrawSimulationGraphs(lineChartVanKrevelen, _vanKrevelenGraphSeries, 1.6f));
-                    progressChart.gameObject.SetActive(true);
-                    // 4 series * 6 data entries -> 1.6 seconds per entry
-                    var waitTimeProgress = 4f * 6f * 1.6f;
-                    StartCoroutine(CoDrawProgressGraph(waitTimeProgress / 360f));
-                }
+                LineChart lineChart = lineCharts[(int) ExperimentVariation];
+                lineChart.gameObject.SetActive(true);
+                lineChart.series.RemoveAll();
+                StartCoroutine(CoDrawSimulationGraphs(lineChart, _graphSeriesList[(int)ExperimentVariation], 1.6f));
+                progressChart.gameObject.SetActive(true);
+                StartCoroutine(CoDrawProgressGraph());
             }
-            else if (ExperimentVariation == ExperimentVariation.EleyRideal)
-                Debug.LogWarning("No simulation graph for eley-rideal yet!");
         }
 
         private IEnumerator CoDrawSimulationGraphs(LineChart lineChart, List<Serie> initialSeries, float waitTime)
         {
             int serieCount = 0;
-            foreach (var serie in initialSeries)
+            foreach (var initialSerie in initialSeries)
             {
-                lineChart.AddSerie(serie.type, serie.name, serie.show);
-                var serieData = serie.data;
+                Serie serie = lineChart.AddSerie(initialSerie.type, initialSerie.name, initialSerie.show);
+                serie.lineType = initialSerie.lineType;
+                serie.showDataDimension = initialSerie.showDataDimension;
+                var serieData = initialSerie.data;
                 foreach (var data in serieData)
                 {
-                    lineChart.AddData(serieCount, data.data[1]);
+                    lineChart.AddData(serieCount, new List<float>(data.data));
                     lineChart.RefreshChart();
                     yield return new WaitForSeconds(waitTime);
                 }
@@ -748,8 +709,16 @@ namespace Maroon.Chemistry.Catalyst
             }
         }
 
-        private IEnumerator CoDrawProgressGraph(float waitTime)
+        private IEnumerator CoDrawProgressGraph()
         {
+            var waitTime = 0f;
+            if (ExperimentVariation == ExperimentVariation.LangmuirHinshelwood)
+                waitTime = 4f * 9f * 1.6f; // 4 series * 9 data entries -> 1.6 seconds per entry
+            else if (ExperimentVariation == ExperimentVariation.MarsVanKrevelen)
+                waitTime = 4f * 6f * 1.6f; // 4 series * 6 data entries -> 1.6 seconds per entry
+            else if (ExperimentVariation == ExperimentVariation.EleyRideal)
+                waitTime = (5f + 6f + 3f * 7f) * 1.6f; // 5 series (1 with 5 data points, 1 with 6 data points, and 3 with 7 data points) -> 1.6 seconds per entry
+            waitTime /= 360;
             var progress = 0.0f;
             while (progress < 360f)
             {
@@ -760,17 +729,24 @@ namespace Maroon.Chemistry.Catalyst
             }
         }
         
-        private void RestoreLineGraphObjects(LineChart lineChart, List<Serie> initialSeries)
+        private void RestoreLineGraphObjects()
         {
-            if (lineChart == null) return;
-            lineChart.series.RemoveAll();
-            for (int i = 0; i < initialSeries.Count; i++)
+            for (int i = 0; i < lineCharts.Count; i++)
             {
-                lineChart.AddSerie(initialSeries[i].type, initialSeries[i].name, initialSeries[i].show);
-                var serieData = initialSeries[i].data;
-                foreach (var data in serieData)
+                LineChart lineChart = lineCharts[i];
+                List<Serie> initialSeries = _graphSeriesList[i];
+                if (lineChart == null) return;
+                lineChart.series.RemoveAll();
+                for (int j = 0; j < initialSeries.Count; j++)
                 {
-                    lineChart.AddData(i, data.data[1]);
+                    Serie serie = lineChart.AddSerie(initialSeries[j].type, initialSeries[j].name, initialSeries[j].show);
+                    serie.lineType = initialSeries[j].lineType;
+                    serie.showDataDimension = initialSeries[j].showDataDimension;
+                    var serieData = initialSeries[j].data;
+                    foreach (var data in serieData)
+                    {
+                        lineChart.AddData(j, new List<float>(data.data));
+                    }
                 }
             }
         }
@@ -802,12 +778,7 @@ namespace Maroon.Chemistry.Catalyst
             }
             else
             {
-                if (ExperimentVariation == ExperimentVariation.LangmuirHinshelwood) 
-                    theoryImageLangmuir.gameObject.SetActive(true);
-                else if (ExperimentVariation == ExperimentVariation.MarsVanKrevelen)
-                    theoryImageVanKrevelen.gameObject.SetActive(true);
-                else if (ExperimentVariation == ExperimentVariation.EleyRideal)
-                    Debug.LogWarning("no theory image for eley-rideal yet!");
+                theoryImages[(int)ExperimentVariation].gameObject.SetActive(true);
             }
         }
 
@@ -826,18 +797,19 @@ namespace Maroon.Chemistry.Catalyst
             
 
             StopAllCoroutines();
-            RestoreLineGraphObjects(lineChartLangmuir, _langmuirGraphSeries);
-            RestoreLineGraphObjects(lineChartLangmuirVRBox, _langmuirGraphSeries);
-            RestoreLineGraphObjects(lineChartVanKrevelen, _vanKrevelenGraphSeries);
-            RestoreLineGraphObjects(lineChartVanKrevelenVRBox, _vanKrevelenGraphSeries);
-            lineChartLangmuir.gameObject.SetActive(false);
-            lineChartVanKrevelen.gameObject.SetActive(false);
+            RestoreLineGraphObjects();
+            foreach (var chart in lineCharts)
+            {
+                chart.gameObject.SetActive(false);
+            }
             progressChart.gameObject.SetActive(false);
             progressChart.series.list[0].data[0].data[1] = 0.0f;
             if (isVrVersion)
             {
-                lineChartLangmuirVRBox.gameObject.SetActive(false);
-                lineChartVanKrevelenVRBox.gameObject.SetActive(false);
+                foreach (var chart in lineChartsVRBox)
+                {
+                    chart.gameObject.SetActive(false);
+                }
                 questManagerLabObject.GetComponent<QuestManager.QuestManager>().ResetQuests();
                 questManagerLangmuirObject.GetComponent<QuestManager.QuestManager>().ResetQuests();
                 questManagerKrevelenObject.GetComponent<QuestManager.QuestManager>().ResetQuests();
@@ -848,8 +820,10 @@ namespace Maroon.Chemistry.Catalyst
             }
             else
             {
-                theoryImageLangmuir.gameObject.SetActive(false);
-                theoryImageVanKrevelen.gameObject.SetActive(false);
+                foreach (var img in theoryImages)
+                {
+                    img.gameObject.SetActive(false); 
+                }
             }
 
             _doStepWiseSimulation = false;
