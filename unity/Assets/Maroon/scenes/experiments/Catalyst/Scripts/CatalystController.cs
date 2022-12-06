@@ -592,7 +592,10 @@ namespace Maroon.Chemistry.Catalyst
 
         private void UpdateTurnOverRateUI()
         {
-            turnOverRateText.text = _currentTurnOverRate.ToString(CultureInfo.InvariantCulture.NumberFormat);
+            if (ExperimentVariation == ExperimentVariation.EleyRideal)
+                turnOverRateText.text = (100 * TurnOverRates[(int) ExperimentVariation][GetTemperatureIndex(temperature)][GetPartialPressureIndex(partialPressure)]).ToString(CultureInfo.InvariantCulture.NumberFormat);
+            else
+                turnOverRateText.text = _currentTurnOverRate.ToString(CultureInfo.InvariantCulture.NumberFormat);
         }
 
         private void SetMovementCoordinateMinMax()
@@ -1001,6 +1004,8 @@ namespace Maroon.Chemistry.Catalyst
 
         public static float GetTurnOverFrequency(float temperature, float partialPressure)
         {
+            if (ExperimentVariation == ExperimentVariation.EleyRideal)
+                return 100 * TurnOverRates[(int) ExperimentVariation][GetTemperatureIndex(temperature)][GetPartialPressureIndex(partialPressure)];
             return TurnOverRates[(int)ExperimentVariation][GetTemperatureIndex(temperature)][GetPartialPressureIndex(partialPressure)];
         }
     }
