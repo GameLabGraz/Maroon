@@ -8,9 +8,14 @@ using UnityEditor.TestTools.TestRunner;
 using UnityEditor.TestTools.TestRunner.Api;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static Tests.Utilities.Constants;
 
 namespace Tests.EditModeTests.ContentValidation
 {
+    /// <summary>
+    /// Adds a "Run Tests" entry to the hierarchy window's scene context menu.
+    /// On click starts all scene specific content validation tests and shows the results in a small popup.
+    /// </summary>
     [InitializeOnLoad]
     public class RunSceneValidationTestsFromContextMenu : ScriptableObject, ICallbacks 
     {
@@ -21,11 +26,11 @@ namespace Tests.EditModeTests.ContentValidation
             {
                 // Only add to context menu for experiment scenes
                 if (scene.path.Contains("experiments"))
-                    menu.AddItem(new GUIContent("Run validation tests"), false, DoRunTests, scene);
+                    menu.AddItem(new GUIContent(GuiDropDownText), false, DoRunTests, scene);
             };
         }
 
-        static void DoRunTests(object userData)
+        private static void DoRunTests(object userData)
         {
             CreateInstance<RunSceneValidationTestsFromContextMenu>()
                 .StartTestRun((Scene) userData);
@@ -35,7 +40,7 @@ namespace Tests.EditModeTests.ContentValidation
         private static TestRunnerApi RunnerApi =>
             _runnerApi ? _runnerApi : (_runnerApi = CreateInstance<TestRunnerApi>());
         
-        private readonly Regex _experimentNameRegex = new Regex(@"\w+\.(pc|vr)");
+        private readonly Regex _experimentNameRegex = new Regex($@"\w+\.({TypePC}|{TypeVR})");
 
         private void StartTestRun(Scene scene)
         {
@@ -86,18 +91,25 @@ namespace Tests.EditModeTests.ContentValidation
 
         public void TestFinished(ITestResultAdaptor result) { }
 
+        /// <summary>
+        /// Display test results as a small popup window with confirmation button
+        /// </summary>
         public void RunFinished(ITestResultAdaptor result)
         {
-            var title = "Validation test result";
-            
+            // No tests found
             if (!result.HasChildren)
             {
-                EditorUtility.DisplayDialog(title, "No tests found.", "Ok");
+                EditorUtility.DisplayDialog(GuiPopupTitle, GuiNoTestsFound, GuiConfirm);
             }
+            // No failed tests: all passed or skipped
             else if (result.FailCount == 0)
             {
-                EditorUtility.DisplayDialog(title, $"All {result.PassCount} validation test{(result.PassCount > 1 ? "s" : "")} passed.", "Ok");
+                EditorUtility.DisplayDialog(GuiPopupTitle,
+                    result.SkipCount > 0
+                        ? $"{result.PassCount} test{(result.PassCount > 1 ? "s" : "")} passed ({result.SkipCount} skipped)."
+                        : $"All {result.PassCount} test{(result.PassCount > 1 ? "s" : "")} passed.", "Ok");
             }
+            // 1 or more tests failed
             else
             {
                 IEnumerable<string> GetFailedTestNames(ITestResultAdaptor test)
@@ -108,8 +120,8 @@ namespace Tests.EditModeTests.ContentValidation
                     return test.TestStatus == TestStatus.Failed ? new[] { test.Name } : Array.Empty<string>();
                 }
 
-                var failedTestNames = string.Join("\n", GetFailedTestNames(result).Select(t => $"\t{t}"));
-                EditorUtility.DisplayDialog(title, $"{result.FailCount} validation test{(result.FailCount > 1 ? "s" : "")} failed:\n{failedTestNames}", "Ok");
+                var failedTestNames = string.Join("\n", GetFailedTestNames(result).Select(t => $"\t• {t}"));
+                EditorUtility.DisplayDialog(GuiPopupTitle, $"{result.FailCount} test{(result.FailCount > 1 ? "s" : "")} failed:\n{failedTestNames}", "Ok");
                 
                 EditorApplication.ExecuteMenuItem("Window/General/Test Runner");
             }

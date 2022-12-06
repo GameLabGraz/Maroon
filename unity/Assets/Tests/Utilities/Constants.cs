@@ -14,7 +14,7 @@ namespace Tests.Utilities
         /// File ending for VR scenes and prefabs
         /// </summary>
         public const string TypeVR = "vr";
-        
+
         /// <summary>
         /// template experiment room prefab name without type
         /// </summary>
@@ -29,5 +29,13 @@ namespace Tests.Utilities
         /// Reason for skipping a scene with a missing or disabled GameObject
         /// </summary>
         public const string ReasonIntentionallyMissing = "scene intentionally disabled or removed the GameObject";
+        
+        /*
+         * Editor GUI strings
+         */
+        public const string GuiDropDownText = "Run Scene Validation Tests";
+        public const string GuiNoTestsFound = "No tests found.";
+        public const string GuiConfirm = "Ok";
+        public const string GuiPopupTitle = "Test Result";
     }
 }

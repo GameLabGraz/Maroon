@@ -7,6 +7,13 @@ using UnityEngine.SceneManagement;
 
 namespace Tests.EditModeTests.ContentValidation
 {
+    /// <summary>
+    /// Runs content validation tests on build.
+    /// When the build loads a specific scene all related content validation tests are started.
+    /// The build process stops if any test should fail.
+    /// </summary>
+    ///
+    /// TODO test this! also with test runner closed to see if we need a "force refresh" similar to context menu
     public class RunSceneValidationTestsDuringBuild : IProcessSceneWithReport
     {
         public int callbackOrder => 0;
