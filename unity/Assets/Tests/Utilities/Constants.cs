@@ -37,5 +37,16 @@ namespace Tests.Utilities
         public const string GuiNoTestsFound = "No tests found.";
         public const string GuiConfirm = "Ok";
         public const string GuiPopupTitle = "Test Result";
+        
+        /*
+         * Scene paths
+         */
+        public const string MainMenuScenePath = "Assets/Maroon/scenes/special/MainMenu.pc.unity";
+        public const string FallingCoilScenePath = "Assets/Maroon/scenes/experiments/FallingCoil/FallingCoil.pc.unity";
+        
+        /*
+         * Prefab paths
+         */
+        public const string PrefabsColumnsPath = "Assets/Maroon/reusableGui/Menu/PrefabsColumns/";
     }
 }

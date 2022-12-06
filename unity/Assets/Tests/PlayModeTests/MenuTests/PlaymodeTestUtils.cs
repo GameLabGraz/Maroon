@@ -5,13 +5,14 @@ using UnityEngine.UI;
 using System.Collections;
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
+using static Tests.Utilities.Constants;
 
 namespace Tests.PlayModeTests
 {
     public static class PlaymodeTestUtils
     {
-        private static string MainMenuScenePath = "Assets/Maroon/scenes/special/MainMenu.pc.unity";
-        private static string FallingCoilScenePath = "Assets/Maroon/scenes/experiments/FallingCoil/FallingCoil.pc.unity";
+        // private static string MainMenuScenePath = "Assets/Maroon/scenes/special/MainMenu.pc.unity";
+        // private static string FallingCoilScenePath = "Assets/Maroon/scenes/experiments/FallingCoil/FallingCoil.pc.unity";
         
         /*
          * Loads the main menu and checks if it's the active scene

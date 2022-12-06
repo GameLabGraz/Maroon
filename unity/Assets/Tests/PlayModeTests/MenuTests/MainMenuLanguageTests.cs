@@ -2,15 +2,12 @@
 using System.Linq;
 using GEAR.Localization;
 using NUnit.Framework;
-using TMPro;
-using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
-using UnityEngine.UI;
 
-namespace Tests.PlayModeTests
+namespace Tests.PlayModeTests.MenuTests
 {
     using static PlaymodeTestUtils;
     /*

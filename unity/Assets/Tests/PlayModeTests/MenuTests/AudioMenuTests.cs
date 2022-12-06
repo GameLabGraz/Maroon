@@ -10,7 +10,7 @@ using UnityEngine.UI;
  * Tests audio sliders of Main/Pause audio menu
  */
 
-namespace Tests.PlayModeTests
+namespace Tests.PlayModeTests.MenuTests
 {
     using static PlaymodeTestUtils;
     
@@ -62,9 +62,11 @@ namespace Tests.PlayModeTests
                 yield return new EnterPlayMode();
 
                 // Pause menu requires activating the menu (usually done by pressing ESC)
-                // Look into Input Tests and try simulating ESC keypress if possible
                 if (_menuType == "PauseMenu")
                 {
+                    // Workaround to pressing ESC: enable the Pause Menu Canvas
+                    // Looked into Input System tests to try simulating ESC keypress but was not fruitful :(
+                    // https://docs.unity3d.com/Packages/com.unity.inputsystem@1.3/manual/Testing.html
                     var canvasGameObject = FindInActiveGameObjectByName("Canvas");
                     Assert.NotNull(canvasGameObject);
                     Assert.AreEqual(canvasGameObject.transform.parent.name, "PauseMenu");

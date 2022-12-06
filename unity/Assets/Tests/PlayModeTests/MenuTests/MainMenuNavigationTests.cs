@@ -1,14 +1,12 @@
 ﻿using System.Collections;
-using System.Linq;
 using GEAR.Localization;
 using NUnit.Framework;
-using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
-using UnityEngine.UI;
+using static Tests.Utilities.Constants;
 
 /*
  * Inspired by https://forum.unity.com/threads/play-mode-tests-scenehandling.751049/
@@ -16,13 +14,11 @@ using UnityEngine.UI;
  * "End to end" testing
  */
 
-namespace Tests.PlayModeTests
+namespace Tests.PlayModeTests.MenuTests
 {
     using static PlaymodeTestUtils;
-    public class MainMenuPcNavigationTests // TODO change name to MainMenuPcTests (didnt do it on laptop, recompiling takes forever)
+    public class MainMenuPcTests
     {
-        private const string MainMenuScenePath = "Assets/Maroon/scenes/special/MainMenu.pc.unity";
-        private const string PrefabsColumnsPath = "Assets/Maroon/reusableGui/Menu/PrefabsColumns/";
         private const SystemLanguage DefaultLanguage = SystemLanguage.English;
 
         private const string EnterLabLabel = "Menu Lab";
@@ -42,6 +38,8 @@ namespace Tests.PlayModeTests
                 $"Default language is not set to '{DefaultLanguage.ToString()}'");
         }
         
+        // Manually matched menu labels and prefabs to click through and open submenus
+        // Auto-generated combinations would require access of the necessary data from a static context outside of the test fixture
         public static readonly ButtonLabelMatchingMenuColumnSource[] TopLevelMenuPaths =
         {
             new ButtonLabelMatchingMenuColumnSource(EnterLabLabel, "preMenuColumnLaboratorySelection.prefab"),
@@ -50,29 +48,24 @@ namespace Tests.PlayModeTests
             new ButtonLabelMatchingMenuColumnSource("Menu Credits", "preMenuColumnCredits.prefab")
         };
         
-        [UnityTest]
-        public IEnumerator WhenClickTopLevelMenuItemThenOpenIt([ValueSource(nameof(TopLevelMenuPaths))]ButtonLabelMatchingMenuColumnSource source)
+        [UnityTest, Description("Clicking on the top-level Main Menu entries must open the matching SubMenu")]
+        public IEnumerator WhenClickTopLevelMenuItemThenSubmenuOpens([ValueSource(nameof(TopLevelMenuPaths))]ButtonLabelMatchingMenuColumnSource source)
         {
+            // Get correct buttonLabel from LanguageManager
             string buttonLabel = LanguageManager.Instance.GetString(source.LanguageManagerButtonLabel);
             string expectedMenuColumn = source.ExpectedMenuColumn;
-            Debug.Log($"expectedMenuColumn: {expectedMenuColumn}");
-            
+
             // Click labeled button
             GetButtonViaText(buttonLabel).onClick.Invoke();
             yield return null;
 
             // Check correct menu has appeared
             var menuColumn = GameObject.Find(expectedMenuColumn);
-            Assert.NotNull(menuColumn, $"Could not find '{buttonLabel}' menu Gameobject '{expectedMenuColumn}'");
+            Assert.NotNull(menuColumn, $"SubMenu GameObject '{expectedMenuColumn}' did not appear after clicking Button '{buttonLabel}'");
         }
 
-        // TODO Test "selected button" idea:
-        // draft: check if select icon activates on button click (small square with arrow inside)
-        // 1. preliminary check that no button has the icon active
-        // 2. then check clicked button if icon is active
-        
-        // TODO Try to use PcScenesProvider instead! edit: makes no sense, as its missing categories :/
-        // Can I access the menu somehow? Probably not since the logic is stored in Maroon scripts that arent accessible from Playmode tests
+        // Manually defined menu "paths" to click through and load experiment scenes
+        // Auto-generated paths would require access of the necessary data from a static context outside of the test fixture
         public static readonly LabMenuPathSource[] LaboratoryMenuPaths =
         {
             new LabMenuPathSource("Physics", "CathodeRayTube"),
@@ -91,9 +84,10 @@ namespace Tests.PlayModeTests
             new LabMenuPathSource("Computer Science", "Sorting")
         };
         
-        [UnityTest]
+        [UnityTest, Description("Clicking through 'Enter Lab -> Category -> Experiment' must load the associated experiment scene")]
         public IEnumerator WhenClickLabCategoryExperimentThenLoadScene([ValueSource(nameof(LaboratoryMenuPaths))] LabMenuPathSource source)
         {
+            // Get correct buttonLabel from LanguageManager
             string labsButtonLabel = LanguageManager.Instance.GetString(EnterLabLabel);
             string categoryButtonLabel = source.Category;
             string experimentButtonLabel = source.Experiment;
@@ -109,9 +103,8 @@ namespace Tests.PlayModeTests
             yield return null;
             
             var currentSceneName = SceneManager.GetActiveScene().name;
-            Assert.AreEqual(sceneName, currentSceneName, $"Scene '{sceneName}' did not load");
+            Assert.AreEqual(sceneName, currentSceneName, $"Scene '{sceneName}' did not load after clicking Buttons '{source.ToString()}'");
         }
-
         
         public readonly struct LabMenuPathSource
         {
