@@ -28,10 +28,6 @@
             uniform float4 _sourceCoordinates[10];
             uniform float _SceneTime;
             uniform float _DeltaTime;
-           // uniform int3 _test;
-       //     uniform float4 _Vertices[10000];
-            // We need Compute Buffer, because this limit ist 1024 something to pass laut  
-        // https://forum.unity.com/threads/material-setvectorarray-array-size-limit.512068/
 
             // How to transform ? 
             uniform int4 _ClickCoordinates;
@@ -39,37 +35,71 @@
             uniform int _verticesPerLength;
             uniform int _verticesPerWidth;
             StructuredBuffer<float4> pixels;
+            StructuredBuffer<float> _uy;
+            uniform int _pixelsSize;
             fixed4 _ColorMin;
             fixed4 _ColorMax;
-
+         //   int localClicked= _ClickedOn;
             float SIGMA = 0.01;
                 
             struct vertexInput 
             {
-                float4 pos : POSITION;
-             //   float4 x1p
-             //   float4 x1m
-             //   float4 z1p
-             //   float4 z1n
+                float4 pos : POSITION; 
+                float4 color : COLOR;
             };
 
             struct v2f 
             {
                 float4 sv_position   : SV_POSITION;
                 float4 pos_world_space  : TEXCOORD1;
-                fixed3 color : COLOR0;
+                fixed3 color : COLOR;
             };
 
             sampler2D _MainTex;
             float4 _MainTex_ST;
 
-            int vertextIndex(int x, int z)
+            int _uyIndex(int x, int z)
             {
-                int quotient = (_verticesPerLength + x)  ; // shoul work;
-                return quotient * 162 - z; // must be ok? magic number;
-         
-           
+               int quotient = _verticesPerLength + x + 1; ;
+                int retval = 0;
+                if (z < 1)
+                {
+                    retval = (quotient * (_verticesPerWidth * 2 + 1)) - (_verticesPerWidth - z) - 1;
+                }
+                else
+                {
+                    retval = ((quotient - 1) * (_verticesPerWidth * 2 + 1)) + (_verticesPerWidth + z);
+                }
+                return retval; 
+
             }
+
+            float _uyElement(int x, int z)
+            {
+                return _uy[_uyIndex(x, z)];
+            }
+
+            float4 vertextIndex(int x, int z)
+            {
+                int quotient = _verticesPerLength + x + 1; ;
+                int retval = 0;
+                float4 value = float4(0, 0, 0, 0);
+                if (z < 1)
+                {
+                    retval = (quotient * (_verticesPerWidth * 2 + 1)) - (_verticesPerWidth - z) - 1;
+                }
+                else
+                {
+                    retval = ((quotient - 1) * (_verticesPerWidth * 2 + 1)) + (_verticesPerWidth + z);
+                }
+                if (retval < 0  || retval > _pixelsSize)// test if not error by one 
+                {
+                    return value;
+                }
+  
+                return  pixels[retval];
+            }
+
 
 
             v2f vert (vertexInput v)
@@ -96,48 +126,61 @@
                   //  u += (_ClickCoordinates.x / 100);
                     amp += u;
                 }
-
-                output.pos_world_space.y = output.pos_world_space.y + lerp(0, 0.03f, amp);
-                output.sv_position = mul(UNITY_MATRIX_VP, output.pos_world_space);
-                output.color = lerp(_ColorMin, _ColorMax, (amp / mamp));
-
                 if (_EntryCount == 0)
                 {
                     output.color = _ColorMin;
                 }
-
                 if (_ClickedOn == 1)
                 {
-                    // acording to the webpage
-                    float x = v.pos.x - _ClickCoordinates.x;
-                    float z = v.pos.z - _ClickCoordinates.z;
-
-
-                        /*
-                output.pos_world_space.y = output.pos_world_space.y + lerp(0, 0.03f, amp);
-                output.sv_position = mul(UNITY_MATRIX_VP, output.pos_world_space);
-                output.color = lerp(_ColorMin, _ColorMax, (amp / mamp));
-                        */
-                    if (v.pos.x == ((-_verticesPerLength) / 2) || v.pos.x == (_verticesPerLength / 2) || v.pos.z == (_verticesPerWidth / 2) || v.pos.y == (-_verticesPerWidth / 2))
-                    {
-                        output.pos_world_space.y = 0; 
-                    }
                     if (_ClickCoordinates.x == v.pos.x && _ClickCoordinates.z == v.pos.z ) // we get it where the click is
-
                     {
                         output.color = _ColorMax;
-                        amp = 10;
-                        output.pos_world_space.y = output.pos_world_space.y + lerp(0, 0.03f, amp); // further work 
-
-                       // output.color = lerp(_ColorMin, _ColorMax, (amp / mamp));
-                  //      output.sv_position = mul(UNITY_MATRIX_VP, output.pos_world_space);
+                        output.pos_world_space.w = 1; // needs to be 1, if not somewhing weirds happens
+                        output.pos_world_space.y = output.pos_world_space.y +  1; // local vs wolrd coordinates 
+                        //output.,
+   
                     }
-
-
-                    // TESTING THE FUNCTION ;
-                    
                 }
-                 
+              //  v.vertex;
+                // physic i guess;
+                /*
+                iPrevX = idx(x - 1, z);
+                iNextX = idx(x + 1, z);
+                iPrevZ = idx(x, z - 1);
+                iNextZ = idx(x, z + 1);
+                d2x = (v[iNextX].y - 2 * v[i].y + v[iPrevX].y) / DELTA_X2;
+                d2z = (v[iNextZ].y - 2 * v[i].y + v[iPrevZ].y) / DELTA_Z2;
+                v[i].ay = C2 * (d2x + d2z);
+                v[i].ay += -DAMPING * v[i].uy; // asking  where uy what it is look up.
+                v[i].uy += dt * v[i].ay;
+                v[i].newY = v[i].y + dt * v[i].uy;*/
+                /*
+                *   N = 60;
+
+                      W = 200;
+
+                *   DELTA_Z = H / N;
+
+                 DELTA_Z2 = DELTA_Z * DELTA_Z;
+               / */
+                float C = 0.04;
+                float damping = -0.001;
+                float C2 = C * C;
+                int N = 60;
+                int W = 100;
+                float4 iPrex = vertextIndex(v.pos.x - 1, v.pos.z);
+                float4 iNextx = vertextIndex(v.pos.x + 1, v.pos.z);
+                float4 iPrez = vertextIndex(v.pos.x, v.pos.z - 1 );
+                float4 iNextz = vertextIndex(v.pos.x, v.pos.z + 1);
+                float Delta_z = W / N;
+                float d2x = (iNextx.y - 2 * v.pos.y + iPrex.y) / Delta_z;
+                float d2z = (iNextz.y - 2 * v.pos.y + iPrez.y) / Delta_z;
+                float ay = damping *(C2 * (d2x + d2z));
+               // _uy[5]
+              //  _uy[_uyIndex(v.pos.x, v.pos.z)] = _DeltaTime * ay;
+
+               // float hecommon =  _uyElement(v.pos.x, v.pos.z);
+                output.sv_position = mul(UNITY_MATRIX_VP, output.pos_world_space); // Local to global transformation important!
                 return output;
             }
 
