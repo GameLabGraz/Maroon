@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using NUnit.Framework;
 using static Tests.Utilities.Constants;
+using static Tests.Utilities.CustomAttributes;
 using static Tests.Utilities.UtilityFunctions;
 
 namespace Tests.EditModeTests.ContentValidation

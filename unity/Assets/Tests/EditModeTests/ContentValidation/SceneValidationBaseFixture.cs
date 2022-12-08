@@ -1,7 +1,10 @@
 using System.Linq;
 using System.Runtime.CompilerServices;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using static Tests.Utilities.Constants;
+using static Tests.Utilities.CustomAttributes;
 using static Tests.Utilities.UtilityFunctions;
 
 namespace Tests.EditModeTests.ContentValidation
@@ -33,14 +36,14 @@ namespace Tests.EditModeTests.ContentValidation
         private readonly string _prefabName;
 
         /// <summary>
-        /// Contains all GameObjects of the ExperimentSetting prefab up to a specified depth in the object hierarchy
+        /// Contains all GameObjects of the ExperimentSetting prefab up to depth <see cref="MaxDepth"/> in the object hierarchy
         /// </summary>
         protected GameObject[] GameObjectsFromExperimentPrefab;
 
         /// <summary>
-        /// Specifies max depth for <see cref="GameObjectsFromExperimentPrefab"/>
+        /// Specifies max depth to fill <see cref="GameObjectsFromExperimentPrefab"/> with <see cref="GetChildrenFromGameObject"/>
         /// </summary>
-        private const int GetObjectsFromPrefabMaxDepth = 5;
+        private const int MaxDepth = 5;
         
         /// <summary>
         /// Holds all objects' names contained in <see cref="GameObjectsFromExperimentPrefab"/>
@@ -63,11 +66,16 @@ namespace Tests.EditModeTests.ContentValidation
         protected void BaseOneTimeSetup()
         {
             // Get objects and names from ExperimentSetting prefab
-            GameObjectsFromExperimentPrefab = GetObjectsFromPrefabOfDepth(_prefabName, GetObjectsFromPrefabMaxDepth);
+            var experimentSettingPrefab = GetPrefabByName(_prefabName);
+            GameObjectsFromExperimentPrefab = GetChildrenFromGameObject(experimentSettingPrefab, MaxDepth);
             _objectNamesFromExperimentPrefab = GameObjectsFromExperimentPrefab.Select(x => x.name).ToArray();
-
-            // Load scene
-            LoadSceneIfNotYetLoaded(_scenePath);
+            
+            // Load scene if necessary
+            var scene = SceneManager.GetSceneAt(0);
+            if (SceneManager.sceneCount > 1 || scene.path != _scenePath)
+            {
+                EditorSceneManager.OpenScene(_scenePath, OpenSceneMode.Single);
+            }
         }
         
         /// <summary>

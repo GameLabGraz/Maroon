@@ -5,19 +5,16 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
-
-/*
- * Tests audio sliders of Main/Pause audio menu
- */
-
-// TODO move utility functions to Utilities and/or use those already there
+using static Tests.Utilities.Constants;
+using static Tests.Utilities.UtilityFunctions;
 
 namespace Tests.PlayModeTests.MenuTests
 {
-    using static PlaymodeTestUtils;
-    
-    [TestFixture("MainMenu")]
-    [TestFixture("PauseMenu")]
+    /// <summary>
+    /// Tests functionality of audio settings in Main Menu and Pause Menu
+    /// </summary>
+    [TestFixture(MainMenu)]
+    [TestFixture(PauseMenu)]
     public class AudioMenuTests
     {
         private readonly string _menuType;
@@ -48,32 +45,38 @@ namespace Tests.PlayModeTests.MenuTests
             // https://forum.unity.com/threads/add-coroutine-version-of-onetimesetup.890092/
             if (!_sceneLoaded)
             {
-                // Load scene
+                // Load scene matching the TestFixture parameter
                 if (_menuType == "MainMenu")
                 {
-                    yield return LoadMainMenuScene();
+                    yield return LoadSceneAndCheckItsLoadedCorrectly(MainMenuScenePath);
                 }
                 else if (_menuType == "PauseMenu")
                 {
-                    yield return LoadFallingCoilScene();
+                    yield return LoadSceneAndCheckItsLoadedCorrectly(FallingCoilScenePath);
+                }
+                else
+                {
+                    Assert.Fail("Unknown parameter provided to TestFixture");
                 }
                 
                 _sceneLoaded = true;
                 
-                // Enter playmode to initialize scene
+                // Enter playmode to enable proper testing
                 yield return new EnterPlayMode();
 
-                // Pause menu requires activating the menu (usually done by pressing ESC)
+                // Testing the Pause Menu requires activating it (usually done by pressing ESC)
                 if (_menuType == "PauseMenu")
                 {
                     // Workaround to pressing ESC: enable the Pause Menu Canvas
-                    // Looked into Input System tests to try simulating ESC keypress but was not fruitful :(
+                    // Looked into Input System tests to try simulating ESC keypress but could not access InputSystem assemblies :(
                     // https://docs.unity3d.com/Packages/com.unity.inputsystem@1.3/manual/Testing.html
-                    var canvasGameObject = FindInActiveGameObjectByName("Canvas");
-                    Assert.NotNull(canvasGameObject);
-                    Assert.AreEqual(canvasGameObject.transform.parent.name, "PauseMenu");
+                    var canvasGameObject = FindObjectByName("Canvas");
+                    Assert.AreEqual(canvasGameObject.transform.parent.name, PauseMenu);
                     canvasGameObject.SetActive(true);
+                    
+                    // skip a frame and verify it's now active
                     yield return null;
+                    AssertGameObjectIsActive(canvasGameObject);
                 }
                 
                 // Find audio submenu button
@@ -86,12 +89,12 @@ namespace Tests.PlayModeTests.MenuTests
             _audioButton.onClick.Invoke();
             
             // Get AudioSource components
-            _musicAudioSourceComponent = GetComponentFromGameObjectWithName<AudioSource>(MusicAudioSourceName);
-            _fxAudioSourceComponent = GetComponentFromGameObjectWithName<AudioSource>(FxAudioSourceName);
+            _musicAudioSourceComponent = GetComponentFromGameObjectOrItsChildrenByName<AudioSource>(MusicAudioSourceName);
+            _fxAudioSourceComponent = GetComponentFromGameObjectOrItsChildrenByName<AudioSource>(FxAudioSourceName);
             
             // Get Slider components
-            _musicAudioSliderComponent = GetComponentInChildrenFromGameObjectWithName<Slider>(MusicSliderName);
-            _fxAudioSliderComponent = GetComponentInChildrenFromGameObjectWithName<Slider>(FxSliderName);
+            _musicAudioSliderComponent = GetComponentFromGameObjectOrItsChildrenByName<Slider>(MusicSliderName);
+            _fxAudioSliderComponent = GetComponentFromGameObjectOrItsChildrenByName<Slider>(FxSliderName);
         }
         
         [UnityTest, Order(1), Description("On opening audio menu, slider values and audio sources' volume must match")]
@@ -194,8 +197,8 @@ namespace Tests.PlayModeTests.MenuTests
             yield return null;
             
             // Get newly created sliders
-            _musicAudioSliderComponent = GetComponentInChildrenFromGameObjectWithName<Slider>(MusicSliderName);
-            _fxAudioSliderComponent = GetComponentInChildrenFromGameObjectWithName<Slider>(FxSliderName);
+            _musicAudioSliderComponent = GetComponentFromGameObjectOrItsChildrenByName<Slider>(MusicSliderName);
+            _fxAudioSliderComponent = GetComponentFromGameObjectOrItsChildrenByName<Slider>(FxSliderName);
 
             Assert.AreEqual(expectedMusicVolume, _musicAudioSliderComponent.value, 0.0, 
                 $"After audio menu reload, unexpected slider '{MusicSliderName}' value");

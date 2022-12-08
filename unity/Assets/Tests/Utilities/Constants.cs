@@ -45,8 +45,20 @@ namespace Tests.Utilities
         public const string FallingCoilScenePath = "Assets/Maroon/scenes/experiments/FallingCoil/FallingCoil.pc.unity";
         
         /*
+         * Scene names
+         */
+        public const string MainMenuPcSceneName = "MainMenu.pc";
+        public const string FallingCoilPcSceneName = "FallingCoil.pc";
+        
+        /*
          * Prefab paths
          */
         public const string PrefabsColumnsPath = "Assets/Maroon/reusableGui/Menu/PrefabsColumns/";
+        
+        /*
+         * Menu types
+         */
+        public const string MainMenu = "MainMenu";
+        public const string PauseMenu = "PauseMenu";
     }
 }

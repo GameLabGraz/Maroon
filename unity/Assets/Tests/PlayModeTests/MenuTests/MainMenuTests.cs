@@ -1,12 +1,13 @@
 ﻿using System.Collections;
 using GEAR.Localization;
 using NUnit.Framework;
-using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+using UnityEditor;
 using static Tests.Utilities.Constants;
+using static Tests.Utilities.UtilityFunctions;
 
 /*
  * Inspired by https://forum.unity.com/threads/play-mode-tests-scenehandling.751049/
@@ -14,11 +15,11 @@ using static Tests.Utilities.Constants;
  * "End to end" testing
  */
 
-// TODO move utility functions to Utilities and/or use those already there
-
 namespace Tests.PlayModeTests.MenuTests
 {
-    using static PlaymodeTestUtils;
+    /// <summary>
+    /// Tests Main Menu functionality: top level navigation and loading experiments 
+    /// </summary>
     public class MainMenuPcTests
     {
         private const string EnterLabLabel = "Menu Lab";
@@ -30,12 +31,20 @@ namespace Tests.PlayModeTests.MenuTests
             yield return EditorSceneManager.LoadSceneAsyncInPlayMode(MainMenuScenePath, new LoadSceneParameters(LoadSceneMode.Single));
 
             var currentSceneName = SceneManager.GetActiveScene().name;
-            Assert.AreEqual("MainMenu.pc", currentSceneName, "'MainMenu.pc' scene did not load");
+            Assert.AreEqual(MainMenuPcSceneName, currentSceneName, $"Scene '{MainMenuPcSceneName}' did not load");
+        }
+        
+        [TearDown]
+        public void TearDown()
+        {
+            // Destroy DontDestroyOnLoad'ed objects after each test to prevent tests possibly affecting each other
+            Object.Destroy(FindObjectByName("LanguageManager"));
+            Object.Destroy(FindObjectByName("GlobalEntities"));
         }
         
         // Manually matched menu labels and prefabs to click through and open submenus
         // Auto-generated combinations would require access of the necessary data from a static context outside of the test fixture
-        public static readonly ButtonLabelMatchingMenuColumnSource[] TopLevelMenuPaths =
+        private static readonly ButtonLabelMatchingMenuColumnSource[] TopLevelMenuPaths =
         {
             new ButtonLabelMatchingMenuColumnSource(EnterLabLabel, "preMenuColumnLaboratorySelection.prefab"),
             new ButtonLabelMatchingMenuColumnSource("Menu Audio", "preMenuColumnAudio.prefab"),
@@ -59,9 +68,9 @@ namespace Tests.PlayModeTests.MenuTests
             Assert.NotNull(menuColumn, $"SubMenu GameObject '{expectedMenuColumn}' did not appear after clicking Button '{buttonLabel}'");
         }
 
-        // Manually defined menu "paths" to click through and load experiment scenes
+        // Manually defined menu "paths" to click through and load lab or experiment scenes
         // Auto-generated paths would require access of the necessary data from a static context outside of the test fixture
-        public static readonly LabMenuPathSource[] LaboratoryMenuPaths =
+        private static readonly LabMenuPathSource[] ExperimentMenuPaths =
         {
             new LabMenuPathSource("Physics", "CathodeRayTube"),
             new LabMenuPathSource("Physics", "CoulombsLaw"),
@@ -76,11 +85,13 @@ namespace Tests.PlayModeTests.MenuTests
             new LabMenuPathSource("Physics", "3DMotionSimulation"),
             new LabMenuPathSource("Physics", "Whiteboard"),
             new LabMenuPathSource("Chemistry", "TitrationExperiment"),
-            new LabMenuPathSource("Computer Science", "Sorting")
+            new LabMenuPathSource("Computer Science", "Sorting"),
+            new LabMenuPathSource("Computer Science", "StateMachine"),
+            new LabMenuPathSource("Computer Science", "PathFinding")
         };
         
-        [UnityTest, Description("Clicking through 'Enter Lab -> Category -> Experiment' must load the associated experiment scene")]
-        public IEnumerator WhenClickLabCategoryExperimentThenLoadScene([ValueSource(nameof(LaboratoryMenuPaths))] LabMenuPathSource source)
+        [UnityTest, Description("Clicking through 'Enter Lab -> Category -> Experiment' must load the associated scene")]
+        public IEnumerator WhenClickLabCategoryExperimentThenLoadScene([ValueSource(nameof(ExperimentMenuPaths))] LabMenuPathSource source)
         {
             // Get correct buttonLabel from LanguageManager
             string labsButtonLabel = LanguageManager.Instance.GetString(EnterLabLabel);
@@ -101,6 +112,43 @@ namespace Tests.PlayModeTests.MenuTests
             Assert.AreEqual(sceneName, currentSceneName, $"Scene '{sceneName}' did not load after clicking Buttons '{source.ToString()}'");
         }
         
+        // Manually defined menu "paths" to click through and load lab or experiment scenes
+        // Auto-generated paths would require access of the necessary data from a static context outside of the test fixture
+        private static readonly LabMenuPathSource[] LabMenuPaths =
+        {
+            new LabMenuPathSource("Physics", "Lab"),
+            new LabMenuPathSource("Chemistry", "Lab"),
+            new LabMenuPathSource("Computer Science", "Lab"),
+        };
+        
+        [UnityTest, Description("Clicking through 'Enter Lab -> Category -> Go to ... Lab' must load the associated scene")]
+        public IEnumerator WhenClickLabCategoryGoToLabThenLoadScene([ValueSource(nameof(LabMenuPaths))] LabMenuPathSource source)
+        {
+            // Get correct buttonLabel from LanguageManager
+            string labsButtonLabel = LanguageManager.Instance.GetString(EnterLabLabel);
+            string categoryButtonLabel = source.Category;
+            string experimentButtonLabel = $"{categoryButtonLabel} {source.Experiment}";
+            string sceneName = "Laboratory.pc";
+            
+            GetButtonViaText(labsButtonLabel).onClick.Invoke();
+            yield return null;
+            
+            GetButtonViaText(categoryButtonLabel).onClick.Invoke();
+            yield return null;
+            
+            // Get button that contains experimentButtonLabel (instead of fully matching it)
+            GetButtonViaText(experimentButtonLabel, (a, b) => a.Contains(b)).onClick.Invoke();
+            yield return null;
+            
+            var currentSceneName = SceneManager.GetActiveScene().name;
+            Assert.AreEqual(sceneName, currentSceneName, $"Scene '{sceneName}' did not load after clicking Buttons '{source.ToString()}'");
+        }
+        
+        /// <summary>
+        /// A data source for test case <see cref="WhenClickLabCategoryExperimentThenLoadScene"/>
+        /// used together with (for <see cref="ValueSourceAttribute"/>).
+        /// Provides Lab paths in Main Menu to click through: Category -> Experiment
+        /// </summary>
         public readonly struct LabMenuPathSource
         {
             public LabMenuPathSource(string category, string experiment)
@@ -115,6 +163,11 @@ namespace Tests.PlayModeTests.MenuTests
             public override string ToString() => $"{Category} -> {Experiment}";
         }
         
+        /// <summary>
+        /// A data source for test case <see cref="WhenClickTopLevelMenuItemThenSubmenuOpens"/>
+        /// used together with (for <see cref="ValueSourceAttribute"/>).
+        /// Provides toplevel Main Menu buttons to navigate through
+        /// </summary>
         public readonly struct ButtonLabelMatchingMenuColumnSource
         {
             public ButtonLabelMatchingMenuColumnSource(string languageManagerButtonLabel, string expectedMenuColumn)

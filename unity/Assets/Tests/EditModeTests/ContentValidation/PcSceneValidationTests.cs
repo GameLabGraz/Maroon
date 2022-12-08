@@ -3,6 +3,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.UI;
 using static Tests.Utilities.Constants;
+using static Tests.Utilities.CustomAttributes;
 using static Tests.Utilities.UtilityFunctions;
 
 namespace Tests.EditModeTests.ContentValidation
@@ -48,7 +49,7 @@ namespace Tests.EditModeTests.ContentValidation
 
             // Get prefab and component
             var prefab = GameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
-            var prefabCameraComponent = GetComponentFromGameObject<Camera>(prefab);
+            var prefabCameraComponent = GetComponentFromPrefab<Camera>(prefab);
             var expectedTag = prefab.tag;
 
             // Check GameObject exists, is active and tagged
@@ -80,7 +81,7 @@ namespace Tests.EditModeTests.ContentValidation
             
             // Get prefab and component
             var prefab = GameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
-            var prefabCameraComponent = GetComponentFromGameObject<Camera>(prefab);
+            var prefabCameraComponent = GetComponentFromPrefab<Camera>(prefab);
             
             // Check GameObject exists and is active
             var gameObjectUnderTest = FindObjectByName(objectNameUnderTest);
@@ -112,9 +113,9 @@ namespace Tests.EditModeTests.ContentValidation
             
             // Get prefab and components
             var prefab = GameObjectsFromExperimentPrefab.First(go => go.name == objectNameUnderTest);
-            var prefabCanvasComponent = GetComponentFromGameObject<Canvas>(prefab);
-            var prefabCanvasScalerComponent = GetComponentFromGameObject<CanvasScaler>(prefab);
-            var prefabGraphicRaycasterComponent = GetComponentFromGameObject<GraphicRaycaster>(prefab);
+            var prefabCanvasComponent = GetComponentFromPrefab<Canvas>(prefab);
+            var prefabCanvasScalerComponent = GetComponentFromPrefab<CanvasScaler>(prefab);
+            var prefabGraphicRaycasterComponent = GetComponentFromPrefab<GraphicRaycaster>(prefab);
             
             // Check GameObject exists and is active
             var gameObjectUnderTest = FindObjectByName(objectNameUnderTest);
