@@ -8,10 +8,10 @@ using UnityEngine.UI;
 using static Tests.Utilities.Constants;
 using static Tests.Utilities.UtilityFunctions;
 
-namespace Tests.PlayModeTests.MenuTests
+namespace Tests.PlayModeTests.PcMenuTests
 {
     /// <summary>
-    /// Tests functionality of audio settings in Main Menu and Pause Menu
+    /// Tests Audio Menu functionality by manipulating audio sliders in Main and Pause Menu
     /// </summary>
     [TestFixture(MainMenu)]
     [TestFixture(PauseMenu)]
@@ -167,16 +167,16 @@ namespace Tests.PlayModeTests.MenuTests
                 yield return null;
                 
                 Assert.AreEqual(expectedMusicVolume, _musicAudioSliderComponent.value, 0.0, 
-                    $"After audio volume change, unexpected slider '{MusicSliderName}' value");
+                    $"After setting music slider value, unexpected slider '{MusicSliderName}' value");
                 
                 Assert.AreEqual(expectedMusicVolume, _musicAudioSourceComponent.volume, 0.0, 
-                    $"After audio volume change, unexpected audio source '{MusicAudioSourceName}' volume");
+                    $"After setting music slider value, unexpected audio source '{MusicAudioSourceName}' volume");
                 
                 Assert.AreEqual(expectedFxVolume, _fxAudioSliderComponent.value, 0.0, 
-                    $"After audio volume change, unexpected slider '{FxSliderName}' value");
+                    $"After setting FX slider value, unexpected slider '{FxSliderName}' value");
                 
                 Assert.AreEqual(expectedFxVolume, _fxAudioSourceComponent.volume, 0.0, 
-                    $"After audio volume change, unexpected audio source '{FxAudioSourceName}' volume");
+                    $"After setting FX slider value, unexpected audio source '{FxAudioSourceName}' volume");
             }
         }
         

@@ -15,12 +15,12 @@ using static Tests.Utilities.UtilityFunctions;
  * "End to end" testing
  */
 
-namespace Tests.PlayModeTests.MenuTests
+namespace Tests.PlayModeTests.PcMenuTests
 {
     /// <summary>
-    /// Tests Main Menu functionality: top level navigation and loading experiments 
+    /// Tests Main Menu functionality by navigating and loading laboratories and experiments 
     /// </summary>
-    public class MainMenuPcTests
+    public class MainMenuTests
     {
         private const string EnterLabLabel = "Menu Lab";
 

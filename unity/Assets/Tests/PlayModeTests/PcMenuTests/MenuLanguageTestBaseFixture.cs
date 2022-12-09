@@ -6,7 +6,7 @@ using UnityEngine.TestTools;
 using static Tests.Utilities.Constants;
 using static Tests.Utilities.UtilityFunctions;
 
-namespace Tests.PlayModeTests.MenuTests
+namespace Tests.PlayModeTests.PcMenuTests
 {
     public abstract class MenuLanguageTestBaseFixture
     {
@@ -58,7 +58,7 @@ namespace Tests.PlayModeTests.MenuTests
             var canvasGameObject = FindObjectByName("Canvas");
             Assert.AreEqual(canvasGameObject.transform.parent.name, PauseMenu);
             canvasGameObject.SetActive(true);
-                    
+            
             // skip a frame and verify it's now active
             yield return null;
             AssertGameObjectIsActive(canvasGameObject);
