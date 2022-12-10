@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
 using static Tests.Utilities.Constants;
+using static Tests.Utilities.PlaymodeUtilities;
 using static Tests.Utilities.UtilityFunctions;
 
 namespace Tests.PlayModeTests.PcMenuTests

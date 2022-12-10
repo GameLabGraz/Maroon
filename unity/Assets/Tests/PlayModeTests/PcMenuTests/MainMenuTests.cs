@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using UnityEditor;
 using static Tests.Utilities.Constants;
+using static Tests.Utilities.PlaymodeUtilities;
 using static Tests.Utilities.UtilityFunctions;
 
 /*
