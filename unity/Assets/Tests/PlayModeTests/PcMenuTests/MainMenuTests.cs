@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using GEAR.Localization;
 using NUnit.Framework;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
@@ -27,19 +26,13 @@ namespace Tests.PlayModeTests.PcMenuTests
         [UnitySetUp]
         public IEnumerator Setup()
         {
-            // Start from Main Menu for every following test
-            yield return EditorSceneManager.LoadSceneAsyncInPlayMode(MainMenuScenePath, new LoadSceneParameters(LoadSceneMode.Single));
-
-            var currentSceneName = SceneManager.GetActiveScene().name;
-            Assert.AreEqual(MainMenuPcSceneName, currentSceneName, $"Scene '{MainMenuPcSceneName}' did not load");
+            yield return LoadSceneAndCheckItsLoadedCorrectly(MainMenuScenePath);
         }
         
         [TearDown]
         public void TearDown()
         {
-            // Destroy DontDestroyOnLoad'ed objects after each test to prevent tests possibly affecting each other
-            Object.Destroy(FindObjectByName("LanguageManager"));
-            Object.Destroy(FindObjectByName("GlobalEntities"));
+            DestroyPermanentObjects();
         }
         
         // Manually matched menu labels and prefabs to click through and open submenus
@@ -60,7 +53,7 @@ namespace Tests.PlayModeTests.PcMenuTests
             string expectedMenuColumn = source.ExpectedMenuColumn;
 
             // Click labeled button
-            GetButtonViaText(buttonLabel).onClick.Invoke();
+            GetButtonViaTextLabel(buttonLabel).onClick.Invoke();
             yield return null;
 
             // Check correct menu has appeared
@@ -99,13 +92,13 @@ namespace Tests.PlayModeTests.PcMenuTests
             string experimentButtonLabel = source.Experiment;
             string sceneName = experimentButtonLabel + ".pc";
 
-            GetButtonViaText(labsButtonLabel).onClick.Invoke();
+            GetButtonViaTextLabel(labsButtonLabel).onClick.Invoke();
             yield return null;
             
-            GetButtonViaText(categoryButtonLabel).onClick.Invoke();
+            GetButtonViaTextLabel(categoryButtonLabel).onClick.Invoke();
             yield return null;
             
-            GetButtonViaText(experimentButtonLabel).onClick.Invoke();
+            GetButtonViaTextLabel(experimentButtonLabel).onClick.Invoke();
             yield return null;
             
             var currentSceneName = SceneManager.GetActiveScene().name;
@@ -130,14 +123,14 @@ namespace Tests.PlayModeTests.PcMenuTests
             string experimentButtonLabel = $"{categoryButtonLabel} {source.Experiment}";
             string sceneName = "Laboratory.pc";
             
-            GetButtonViaText(labsButtonLabel).onClick.Invoke();
+            GetButtonViaTextLabel(labsButtonLabel).onClick.Invoke();
             yield return null;
             
-            GetButtonViaText(categoryButtonLabel).onClick.Invoke();
+            GetButtonViaTextLabel(categoryButtonLabel).onClick.Invoke();
             yield return null;
             
             // Get button that contains experimentButtonLabel (instead of fully matching it)
-            GetButtonViaText(experimentButtonLabel, (a, b) => a.Contains(b)).onClick.Invoke();
+            GetButtonViaTextLabel(experimentButtonLabel, (a, b) => a.Contains(b)).onClick.Invoke();
             yield return null;
             
             var currentSceneName = SceneManager.GetActiveScene().name;

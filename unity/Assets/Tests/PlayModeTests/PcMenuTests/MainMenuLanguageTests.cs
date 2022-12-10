@@ -44,7 +44,7 @@ namespace Tests.PlayModeTests.PcMenuTests.LanguageMenuTests
         public IEnumerator WhenSelectGermanLanguageThenMainMenuButtonsAreGerman(string buttonKey)
         {
             // Find and store top level main menu button
-            var button = GetButtonViaText(LanguageManager.Instance.GetString(buttonKey, DefaultLanguage));
+            var button = GetButtonViaTextLabel(LanguageManager.Instance.GetString(buttonKey, DefaultLanguage));
             
             yield return OpenLanguageSubMenu();
             yield return ClickGermanLanguageButton();
@@ -87,7 +87,7 @@ namespace Tests.PlayModeTests.PcMenuTests.LanguageMenuTests
          
             // Find and click sourced Main Menu button
             string sourceButtonLabel = LanguageManager.Instance.GetString(titleKey, ExpectedLanguage);
-            GetButtonViaText(sourceButtonLabel).onClick.Invoke();
+            GetButtonViaTextLabel(sourceButtonLabel).onClick.Invoke();
             yield return null;
             
             // Get SubMenu's title
@@ -108,7 +108,7 @@ namespace Tests.PlayModeTests.PcMenuTests.LanguageMenuTests
             
             // Find and click Main Menu Audio button
             string audioButtonLabel = LanguageManager.Instance.GetString("Menu Audio", ExpectedLanguage);
-            GetButtonViaText(audioButtonLabel).onClick.Invoke();
+            GetButtonViaTextLabel(audioButtonLabel).onClick.Invoke();
             yield return null;
 
             var expectedMusicSliderLabel = LanguageManager.Instance.GetString("Menu Music", ExpectedLanguage);
@@ -133,8 +133,8 @@ namespace Tests.PlayModeTests.PcMenuTests.LanguageMenuTests
             // Find English and German buttons
             string germanButtonLabel = LanguageManager.Instance.GetString("German", ExpectedLanguage);
             string englishButtonLabel = LanguageManager.Instance.GetString("English", ExpectedLanguage);
-            Button germanButton = GetButtonViaText(germanButtonLabel);
-            Button englishButton = GetButtonViaText(englishButtonLabel);
+            Button germanButton = GetButtonViaTextLabel(germanButtonLabel);
+            Button englishButton = GetButtonViaTextLabel(englishButtonLabel);
             
             var expectedGermanButtonLabel = LanguageManager.Instance.GetString("German", ExpectedLanguage);
             var actualGermanButtonLabel = germanButton.GetComponentInChildren<TextMeshProUGUI>().text;

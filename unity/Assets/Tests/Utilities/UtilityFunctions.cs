@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using GEAR.Localization;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -12,6 +13,7 @@ using UnityEditor.SceneManagement;
 using UnityEditor.TestTools.TestRunner.Api;
 using UnityEngine.SceneManagement;
 using static Tests.Utilities.Constants;
+using Object = UnityEngine.Object;
 
 // TODO if feasable split into three files: playmode, editmode and general functions
 
@@ -70,13 +72,14 @@ namespace Tests.Utilities
         }
 
         /// <summary>
-        /// Get a <see cref="Button"/> component where a child object has a matching TextMeshPro label with buttonText.
-        /// Useful for clicking a button in test cases.
+        /// Get a <see cref="Button"/> component from GameObject where a child has a matching TextMeshPro label with buttonText.
+        /// Useful for clicking a button in menus for test cases.
         /// </summary>
-        /// <param name="buttonText">The Button to get</param>
+        /// <param name="buttonTextLabel">The Button to get</param>
+        /// <param name="comparisonMethod">Optional (Default: String.Equals) - string comparison method for button text matching</param>
         /// <returns>the Button with given buttonText</returns>
         /// <remarks>triggers a test failure if no or more than one button was found</remarks>
-        public static Button GetButtonViaText(string buttonText, Func<string, string, bool> comparisonMethod=null)
+        public static Button GetButtonViaTextLabel(string buttonTextLabel, Func<string, string, bool> comparisonMethod=null)
         {
             Button buttonToReturn = null;
             comparisonMethod ??= String.Equals;
@@ -88,17 +91,17 @@ namespace Tests.Utilities
                 var buttonComponent = buttonGameObject.GetComponent<Button>();
                 var textComponent = buttonGameObject.GetComponentInChildren<TextMeshProUGUI>();
                 
-                if (buttonComponent && textComponent && comparisonMethod(textComponent.text,buttonText))
+                if (buttonComponent && textComponent && comparisonMethod(textComponent.text,buttonTextLabel))
                 {
                     if (buttonToReturn != null)
                     {
-                        Assert.Fail($"Found more than one Button with Text '{buttonText}'");
+                        Assert.Fail($"Found more than one Button with Text '{buttonTextLabel}'");
                     }
                     buttonToReturn = buttonGameObject.GetComponent<Button>();
                 }
             }
             
-            Assert.NotNull(buttonToReturn, $"Could not find any Button with Text '{buttonText}'");
+            Assert.NotNull(buttonToReturn, $"Could not find any Button with Text '{buttonTextLabel}'");
             
             return buttonToReturn;
         }
@@ -247,6 +250,34 @@ namespace Tests.Utilities
 
             var currentSceneName = SceneManager.GetActiveScene().path;
             Assert.AreEqual(pathOfSceneToLoad, currentSceneName, $"'{pathOfSceneToLoad}' scene was not loaded");
+        }
+
+        /// <summary>
+        /// Destroy DontDestroyOnLoad'ed objects to prevent tests possibly affecting each other
+        /// </summary>
+        /// <remarks>Use only in playmode tests</remarks>
+        public static void DestroyPermanentObjects()
+        {
+            Object.Destroy(FindObjectByName("LanguageManager"));
+            Object.Destroy(FindObjectByName("GlobalEntities"));
+        }
+        
+        /// <summary>
+        /// Find and click Menu's Language button
+        /// </summary>
+        /// <remarks>Use only in playmode tests</remarks>
+        public static IEnumerator ClickButtonByLanguageManagerKey(string buttonLmKey, SystemLanguage language)
+        {
+            string languageButtonLabel = LanguageManager.Instance.GetString(buttonLmKey, language);
+            GetButtonViaTextLabel(languageButtonLabel).onClick.Invoke();
+            yield return null;
+        }
+        
+        public static IEnumerator ClickButtonByName(string buttonName)
+        {
+            string languageButtonLabel = LanguageManager.Instance.GetString(buttonName);
+            GetButtonViaTextLabel(languageButtonLabel).onClick.Invoke();
+            yield return null;
         }
     }
 }

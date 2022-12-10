@@ -81,7 +81,7 @@ namespace Tests.PlayModeTests.PcMenuTests
                 
                 // Find audio submenu button
                 string mainMenuAudioButtonLabel = LanguageManager.Instance.GetString("Menu Audio");
-                _audioButton = GetButtonViaText(mainMenuAudioButtonLabel);
+                _audioButton = GetButtonViaTextLabel(mainMenuAudioButtonLabel);
             }
             
             // The code below is run before every test case in the test fixture

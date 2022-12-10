@@ -47,7 +47,7 @@ namespace Tests.PlayModeTests.PcMenuTests.LanguageMenuTests
             yield return ClickGermanLanguageButton();
             
             // Find top level pause menu button
-            var button = GetButtonViaText(LanguageManager.Instance.GetString(buttonKey, ExpectedLanguage));
+            var button = GetButtonViaTextLabel(LanguageManager.Instance.GetString(buttonKey, ExpectedLanguage));
             
             // Check if button text language matches
             var expectedButtonLabel = LanguageManager.Instance.GetString(buttonKey, ExpectedLanguage);
@@ -88,7 +88,7 @@ namespace Tests.PlayModeTests.PcMenuTests.LanguageMenuTests
          
             // Find and click sourced Pause Menu button
             string sourceButtonLabel = LanguageManager.Instance.GetString(titleKey, ExpectedLanguage);
-            GetButtonViaText(sourceButtonLabel).onClick.Invoke();
+            GetButtonViaTextLabel(sourceButtonLabel).onClick.Invoke();
             yield return null;
             
             // Get SubMenu's title
@@ -110,7 +110,7 @@ namespace Tests.PlayModeTests.PcMenuTests.LanguageMenuTests
             
             // Find and click Pause Menu Audio button
             string audioButtonLabel = LanguageManager.Instance.GetString("Menu Audio", ExpectedLanguage);
-            GetButtonViaText(audioButtonLabel).onClick.Invoke();
+            GetButtonViaTextLabel(audioButtonLabel).onClick.Invoke();
             yield return null;
 
             var expectedMusicSliderLabel = LanguageManager.Instance.GetString("Menu Music", ExpectedLanguage);
@@ -136,8 +136,8 @@ namespace Tests.PlayModeTests.PcMenuTests.LanguageMenuTests
             var expectedEnglishButtonLabel = LanguageManager.Instance.GetString("English", ExpectedLanguage);
             
             // Find language selection buttons for English and German
-            Button germanButton = GetButtonViaText(expectedGermanButtonLabel);
-            Button englishButton = GetButtonViaText(expectedEnglishButtonLabel);
+            Button germanButton = GetButtonViaTextLabel(expectedGermanButtonLabel);
+            Button englishButton = GetButtonViaTextLabel(expectedEnglishButtonLabel);
             
             // Get translated text labels from Buttons
             var actualGermanButtonLabel = germanButton.GetComponentInChildren<TextMeshProUGUI>().text;
@@ -157,15 +157,15 @@ namespace Tests.PlayModeTests.PcMenuTests.LanguageMenuTests
 
             // Find and click Pause Menu Network button
             string networkButtonLabel = LanguageManager.Instance.GetString("Menu Network", ExpectedLanguage);
-            GetButtonViaText(networkButtonLabel).onClick.Invoke();
+            GetButtonViaTextLabel(networkButtonLabel).onClick.Invoke();
             yield return null;
             
             var expectedJoinButtonLabel = LanguageManager.Instance.GetString("Menu Join Server", ExpectedLanguage);
             var expectedHostButtonLabel = LanguageManager.Instance.GetString("Menu Host Server", ExpectedLanguage);
             
             // Find Network Menu's Join and Host Server buttons
-            Button joinButton = GetButtonViaText(expectedJoinButtonLabel);
-            Button hostButton = GetButtonViaText(expectedHostButtonLabel);
+            Button joinButton = GetButtonViaTextLabel(expectedJoinButtonLabel);
+            Button hostButton = GetButtonViaTextLabel(expectedHostButtonLabel);
             
             // Get translated text labels from Buttons
             var actualJoinButtonLabel = joinButton.GetComponentInChildren<TextMeshProUGUI>().text;

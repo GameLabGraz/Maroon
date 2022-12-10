@@ -32,6 +32,10 @@ namespace Tests.PlayModeTests.PcMenuTests
         
         protected MenuLanguageTestBaseFixture(string scenePathToLoad) => _scenePathToLoad = scenePathToLoad;
         
+        /// <summary>
+        /// Load appropriate scene, verify default language, prepare pause menu tests
+        /// </summary>
+        /// <returns></returns>
         [UnitySetUp]
         public IEnumerator Setup()
         {
@@ -63,13 +67,11 @@ namespace Tests.PlayModeTests.PcMenuTests
             yield return null;
             AssertGameObjectIsActive(canvasGameObject);
         }
-            
+        
         [TearDown]
         public void TearDown()
         {
-            // Destroy DontDestroyOnLoad'ed objects to prevent tests possibly affecting each other
-            Object.Destroy(FindObjectByName("LanguageManager"));
-            Object.Destroy(FindObjectByName("GlobalEntities"));
+            DestroyPermanentObjects();
         }
 
         /// <summary>
@@ -77,9 +79,7 @@ namespace Tests.PlayModeTests.PcMenuTests
         /// </summary>
         protected IEnumerator OpenLanguageSubMenu()
         {
-            string languageButtonLabel = LanguageManager.Instance.GetString("Menu Language", DefaultLanguage);
-            GetButtonViaText(languageButtonLabel).onClick.Invoke();
-            yield return null;
+            yield return ClickButtonByLanguageManagerKey("Menu Language", DefaultLanguage);
         }
 
         /// <summary>
@@ -87,9 +87,7 @@ namespace Tests.PlayModeTests.PcMenuTests
         /// </summary>
         protected IEnumerator ClickGermanLanguageButton()
         {
-            string germanButtonLabel = LanguageManager.Instance.GetString("German", DefaultLanguage);
-            GetButtonViaText(germanButtonLabel).onClick.Invoke();
-            yield return null;
+            yield return ClickButtonByLanguageManagerKey("German", DefaultLanguage);
         }
     }
 }
