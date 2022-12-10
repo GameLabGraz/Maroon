@@ -40,6 +40,14 @@ namespace Tests.PlayModeTests.ProofOfConcept
             Assert.AreNotEqual(coilStartPosition, coilNewPosition,
                 "Coil is expected to move after starting the experiment, but it didn't!");
         }
+        
+        // TODO test ideas
+        // show vector field grid on click -> check objects active (maybe with and without starting simulation, via TestCaseSource)
+        // same for show field lines
+        // test if reset works (change lots of stuff then play then reset maybe)
+        // test if stepping forward works
+        // performance test for Toggle Iron Filings
+        
     }
 }
 
