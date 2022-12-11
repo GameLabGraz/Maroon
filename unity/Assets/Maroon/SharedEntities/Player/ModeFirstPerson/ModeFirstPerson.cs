@@ -3,14 +3,14 @@ using Maroon.GlobalEntities;
 using UnityEngine;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(CharacterController), typeof(ModeFirstPersonInputHandler), typeof(AudioSource))]
+[RequireComponent(typeof(CharacterController), typeof(ModeFirstPersonInputHandler))]
 public class ModeFirstPerson : MonoBehaviour
 {
     [Header("References")]
     [Tooltip("Reference to the main camera used for the player")]
     public Camera playerCamera;
     [Tooltip("Audio source for footsteps, jump, etc...")]
-    public AudioSource audioSource;
+    private AudioSource audioSource;
 
     [Header("General")]
     [Tooltip("Force applied downward when in the air")]
