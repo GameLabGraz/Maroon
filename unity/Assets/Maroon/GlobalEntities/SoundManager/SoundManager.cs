@@ -67,6 +67,14 @@ namespace Maroon.GlobalEntities
         MonoBehaviour GlobalEntity.Instance => Instance;
 
         // -------------------------------------------------------------------------------------------------------------
+        // Audio sources
+        
+        /// <summary>
+        ///     Getter for Sound Effect AudioSource component
+        /// </summary>
+        public AudioSource soundEffectSource => _soundEffectSource;
+
+        // -------------------------------------------------------------------------------------------------------------
         // Volume
 
         /// <summary>
@@ -118,9 +126,6 @@ namespace Maroon.GlobalEntities
 
             // Keep alive
             DontDestroyOnLoad(this.gameObject);
-
-            // TODO: Cleanup
-            _musicSource = GetComponent<AudioSource>();
         }
 
         // -------------------------------------------------------------------------------------------------------------
