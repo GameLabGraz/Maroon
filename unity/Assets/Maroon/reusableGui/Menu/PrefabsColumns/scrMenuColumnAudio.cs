@@ -20,12 +20,10 @@ public class scrMenuColumnAudio : MonoBehaviour
 
     void Start()
     {
-        var musicSliderComponent = _musicSlider.GetComponent<Slider>();
-        var soundEffectSliderComponent = _soundEffectSlider.GetComponent<Slider>();
-        
         // Apply initial slider value from Music AudioSource and listen to music slider
         if (_musicSlider)
         {
+            var musicSliderComponent = _musicSlider.GetComponent<Slider>();
             musicSliderComponent.value = SoundManager.Instance.MusicVolume;
             musicSliderComponent.onValueChanged.AddListener(this.OnChangeMusicSlider);
         }
@@ -33,6 +31,7 @@ public class scrMenuColumnAudio : MonoBehaviour
         // Apply initial slider value from Sound Effect AudioSource and listen to sound effect slider
         if (_soundEffectSlider)
         {
+            var soundEffectSliderComponent = _soundEffectSlider.GetComponent<Slider>();
             soundEffectSliderComponent.value = SoundManager.Instance.SoundEffectVolume;
             soundEffectSliderComponent.onValueChanged.AddListener(this.OnChangeSoundEffectSlider);
         }
