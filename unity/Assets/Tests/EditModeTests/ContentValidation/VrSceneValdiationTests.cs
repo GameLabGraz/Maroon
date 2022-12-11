@@ -88,7 +88,7 @@ namespace Tests.EditModeTests.ContentValidation
         
         [SkipTestForScenesWithReason("Whiteboard", ReasonItsOutdated)]
         [SkipTestForScenesWithReason("HuygensPrinciple", ReasonIntentionallyMissing)]
-        // [SkipTestForScenesWithReason("FallingCoil, FaradaysLaw", "scene accidently(?) has two Experiment Tables!")] // TODO fixme
+        [SkipTestForScenesWithReason("FallingCoil, FaradaysLaw", "scene accidently(?) has two Experiment Tables!")] // TODO fixme
         [Test, Description("Must include an 'ExperimentTable' Prefab set to layer 'Inventary'")]
         public void SceneHasExperimentTable()
         {

@@ -297,7 +297,7 @@ namespace Tests.EditModeTests.ContentValidation
         }
         
         [SkipTestForScenesWithReason(
-             "CoulombsLaw, HuygensPrinciple, Pendulum, VandeGraaffBalloon, VandeGraaffGenerator, Whiteboard",
+             "CoulombsLaw, HuygensPrinciple, Pendulum, PointWaveExperiment, TitrationExperiment, VandeGraaffBalloon, VandeGraaffGenerator, Whiteboard",
              ReasonItsOutdated)]
         [Test, Description("Must have a GameObject named 'PauseMenu'")]
         public void SceneHasPauseMenu()
