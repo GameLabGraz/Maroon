@@ -127,10 +127,8 @@ public class ModeFirstPerson : MonoBehaviour
         UpdateCharacterHeight(true);
 
         // Wait for SoundManager to be instantiated, then get its soundEffect AudioSource
-        Debug.Log("Waiting on audio source");
         yield return new WaitUntil(() => SoundManager.Instance != null);
         audioSource = SoundManager.Instance.soundEffectSource;
-        Debug.Log("Applied audio source to ModeFirstPerson prefab");
     }
 
     void Update()
