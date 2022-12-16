@@ -40436,6 +40436,25 @@ RectTransform:
   m_AnchoredPosition: {x: -31, y: -53.693573}
   m_SizeDelta: {x: 37.6, y: 26.4}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &636420945 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 828459494, guid: 50989c3fc31845d47b1606a9f1a6f5d7,
+    type: 3}
+  m_PrefabInstance: {fileID: 834103291}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &636420946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 636420945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46f8e9e70f68ee3418ad85992778c116, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  value: 0
 --- !u!1 &636702723
 GameObject:
   m_ObjectHideFlags: 0
@@ -62621,6 +62640,9 @@ MonoBehaviour:
   OnButtonOff:
     m_PersistentCalls:
       m_Calls: []
+  OnForcedButtonState:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &825273940
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62910,7 +62932,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 834103291}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 636420945}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5701f2821f7ba1e469aef7f532de7676, type: 3}
@@ -63080,9 +63102,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1158274657}
     - target: {fileID: 245512221, guid: 50989c3fc31845d47b1606a9f1a6f5d7, type: 3}
+      propertyPath: linearMapping
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 245512221, guid: 50989c3fc31845d47b1606a9f1a6f5d7, type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 1158274657}
+    - target: {fileID: 828459496, guid: 50989c3fc31845d47b1606a9f1a6f5d7, type: 3}
+      propertyPath: linearMapping
+      value: 
+      objectReference: {fileID: 636420946}
     - target: {fileID: 828459496, guid: 50989c3fc31845d47b1606a9f1a6f5d7, type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
@@ -63091,6 +63121,10 @@ PrefabInstance:
       propertyPath: onButtonDown.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1158274657}
+    - target: {fileID: 1629913199, guid: 50989c3fc31845d47b1606a9f1a6f5d7, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: a07de8d463ab3d041b5bf392c9659bdc, type: 2}
     - target: {fileID: 2139715782, guid: 50989c3fc31845d47b1606a9f1a6f5d7, type: 3}
       propertyPath: onButtonDown.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -75314,6 +75348,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  OnForcedButtonState:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1108618038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -77838,6 +77875,9 @@ MonoBehaviour:
           m_StringArgument: inactive
           m_BoolArgument: 0
         m_CallState: 2
+  OnForcedButtonState:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &1157492270
 Transform:
   m_ObjectHideFlags: 0
@@ -93437,7 +93477,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 18ddea7c5687c4846aecda24914d4b19, type: 2}
+      objectReference: {fileID: 2100000, guid: a07de8d463ab3d041b5bf392c9659bdc, type: 2}
     - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
       propertyPath: onButtonDown.m_PersistentCalls.m_Calls.Array.size
@@ -99741,6 +99781,9 @@ MonoBehaviour:
           m_StringArgument: inactive
           m_BoolArgument: 0
         m_CallState: 2
+  OnForcedButtonState:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1419428769
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131166,6 +131209,9 @@ MonoBehaviour:
           m_StringArgument: inactive
           m_BoolArgument: 0
         m_CallState: 2
+  OnForcedButtonState:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &2025198317
 MonoBehaviour:
   m_ObjectHideFlags: 0

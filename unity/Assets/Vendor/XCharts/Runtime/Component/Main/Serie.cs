@@ -785,7 +785,7 @@ namespace XCharts
         /// <summary>
         /// 数据项里的数据维数。
         /// </summary>
-        public int showDataDimension { get { return m_ShowDataDimension; } set { m_ShowDataDimension = value; } }
+        public int showDataDimension { get { return m_ShowDataDimension; } internal set { m_ShowDataDimension = value; } }
         /// <summary>
         /// 在Editor的inpsector上是否显示name参数
         /// </summary>

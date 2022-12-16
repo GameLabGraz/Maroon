@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using GameLabGraz.VRInteraction;
 using Maroon.Physics;
 using Maroon.UI;
+using PrivateAccess;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -644,8 +645,8 @@ namespace Maroon.Chemistry.Catalyst
 
             if (isVrVersion)
             {
-                temperatureViewVr.RecalibrateRange(temperature.minValue, temperature.maxValue);
-                partialPressureViewVr.RecalibrateRange(partialPressure.minValue, partialPressure.maxValue);
+                temperatureViewVr.SetMinMax(temperature.minValue, temperature.maxValue);
+                partialPressureViewVr.SetMinMax(partialPressure.minValue, partialPressure.maxValue);
                 temperatureViewVr.ForceToValue(temperature.minValue);
                 partialPressureViewVr.ForceToValue(partialPressure.minValue);
             }
@@ -700,7 +701,7 @@ namespace Maroon.Chemistry.Catalyst
             {
                 Serie serie = lineChart.AddSerie(initialSerie.type, initialSerie.name, initialSerie.show);
                 serie.lineType = initialSerie.lineType;
-                serie.showDataDimension = initialSerie.showDataDimension;
+                PrivateAccessExtension.SetFieldValue(serie, "showDataDimension", initialSerie.showDataDimension);
                 var serieData = initialSerie.data;
                 foreach (var data in serieData)
                 {
@@ -744,7 +745,7 @@ namespace Maroon.Chemistry.Catalyst
                 {
                     Serie serie = lineChart.AddSerie(initialSeries[j].type, initialSeries[j].name, initialSeries[j].show);
                     serie.lineType = initialSeries[j].lineType;
-                    serie.showDataDimension = initialSeries[j].showDataDimension;
+                    PrivateAccessExtension.SetFieldValue(serie, "showDataDimension", initialSeries[j].showDataDimension);
                     var serieData = initialSeries[j].data;
                     foreach (var data in serieData)
                     {
