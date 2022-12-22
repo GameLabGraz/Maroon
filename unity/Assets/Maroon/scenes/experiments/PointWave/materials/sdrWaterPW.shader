@@ -28,14 +28,18 @@
             uniform float4 _sourceCoordinates[10];
             uniform float _SceneTime;
             uniform float _DeltaTime;
+            uniform float _DeltaTimePrev;
 
             // How to transform ? 
             uniform int4 _ClickCoordinates;
             uniform int _ClickedOn;
             uniform int _verticesPerLength;
             uniform int _verticesPerWidth;
-            StructuredBuffer<float4> pixels;
-            StructuredBuffer<float> _uy;
+            RWStructuredBuffer<float4> pixels;
+            StructuredBuffer<float4> pixelsPrev;
+                      
+
+       
             uniform int _pixelsSize;
             fixed4 _ColorMin;
             fixed4 _ColorMax;
@@ -47,14 +51,21 @@
                 float4 pos : POSITION; 
                 float4 color : COLOR;
             };
+                
+            struct RWMehs
+            {
+                float test[33000];
+            };
+
+            RWStructuredBuffer<RWMehs>_uy : register(u2);
 
             struct v2f 
             {
                 float4 sv_position   : SV_POSITION;
                 float4 pos_world_space  : TEXCOORD1;
-                fixed3 color : COLOR;
+                float3 color : COLOR;
             };
-
+           
             sampler2D _MainTex;
             float4 _MainTex_ST;
 
@@ -74,10 +85,6 @@
 
             }
 
-            float _uyElement(int x, int z)
-            {
-                return _uy[_uyIndex(x, z)];
-            }
 
             float4 vertextIndex(int x, int z)
             {
@@ -104,12 +111,16 @@
 
             v2f vert (vertexInput v)
             {
+                int test1 = _uyIndex(v.pos.x, v.pos.z);
+            //   _uy[0].test[0] = 1.0f;
+
 
                 v2f output;
                 output.sv_position = UnityObjectToClipPos(v.pos);
                 float4 click = UnityObjectToClipPos(_ClickCoordinates);
                 output.pos_world_space = mul(unity_ObjectToWorld, v.pos);
                 output.color = fixed3(1, 1, 1);
+
                 float amp = 0;
                 float mamp = 0.01f;
                 _distance = 0;
@@ -134,13 +145,18 @@
                 {
                     if (_ClickCoordinates.x == v.pos.x && _ClickCoordinates.z == v.pos.z ) // we get it where the click is
                     {
+                     //   output.color = _ColorMax;
+                      // output.pos_world_space.w = 1; // needs to be 1, if not somewhing weirds happens
+                        output.pos_world_space.y = output.pos_world_space.y + 1;
                         output.color = _ColorMax;
-                        output.pos_world_space.w = 1; // needs to be 1, if not somewhing weirds happens
-                        output.pos_world_space.y = output.pos_world_space.y +  1; // local vs wolrd coordinates 
+                    //    output.pos_world_space.y = output.pos_world_space.y + v.color.w; // local vs wolrd coordinates 
+
                         //output.,
    
                     }
                 }
+    
+             //   _uy[0] = 1.0f;
               //  v.vertex;
                 // physic i guess;
                 /*
@@ -163,9 +179,9 @@
 
                  DELTA_Z2 = DELTA_Z * DELTA_Z;
                / */
-                float C = 0.04;
-                float damping = -0.001;
-                float C2 = C * C;
+          //    float C = 0.04;
+            ///    float damping = -0.001;
+            /*    float C2 = C * C;
                 int N = 60;
                 int W = 100;
                 float4 iPrex = vertextIndex(v.pos.x - 1, v.pos.z);
@@ -178,15 +194,16 @@
                 float ay = damping *(C2 * (d2x + d2z));
                // _uy[5]
               //  _uy[_uyIndex(v.pos.x, v.pos.z)] = _DeltaTime * ay;
-
+              */
                // float hecommon =  _uyElement(v.pos.x, v.pos.z);
+                output.color = float4(output.color.x, output.color.y, output.color.z, 21);
                 output.sv_position = mul(UNITY_MATRIX_VP, output.pos_world_space); // Local to global transformation important!
                 return output;
             }
 
             fixed4 frag(v2f i) : SV_Target
             {           
-                return fixed4(i.color, 1);
+                return fixed4(i.color, 5);
             }
             ENDCG
         }

@@ -61,7 +61,9 @@ public class PointWaveSelectScript : MonoBehaviour
 
     public void Update()
     {
-        waterPlane.UpdateMeshData();
+        // here probs zthe calcualktion
+
+        StartCoroutine(waterPlane.UpdateMeshData());
     }
     public void LateUpdate()
     {
