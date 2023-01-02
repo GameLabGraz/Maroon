@@ -97,6 +97,8 @@ namespace Maroon.Chemistry.Catalyst
         private bool _doStepWiseSimulation = false;
         private bool _doInteractiveSimulation = true;
 
+        private bool _resetPlayer = false;
+
         private System.Action onReactionStart;
 
         private float _minXValLocal = 0.0f;
@@ -345,6 +347,7 @@ namespace Maroon.Chemistry.Catalyst
         {
             catalystReactionBoxGameObject.SetActive(true);
             player.transform.position = catalystReactionBoxPlayerSpawnTransform.position;
+            _resetPlayer = true;
             SpawnCatalystSurfaceObject();
         }
 
@@ -792,7 +795,9 @@ namespace Maroon.Chemistry.Catalyst
             EnsureCleanSurface();
 
             catalystReactionBoxGameObject.SetActive(false);
-            player.transform.position = experimentRoomPlayerSpawnTransform.position;
+            if (_resetPlayer)
+                player.transform.position = experimentRoomPlayerSpawnTransform.position;
+            _resetPlayer = false;
             
 
             StopAllCoroutines();
