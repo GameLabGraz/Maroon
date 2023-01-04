@@ -43,18 +43,6 @@ namespace Maroon.Physics
     }
 
     //fluid variables
-    float fluid_density_ = 0.0f;
-
-    public QuantityFloat fluid_temperature_ = 25.0f;
-    public float FluidTemperature
-    {
-      get => fluid_temperature_;
-      set
-      {
-        fluid_temperature_.Value = value;
-        updateBall();
-      }
-    }
 
     //private Rigidbody rigidbody_ = this.gameObject.GetComponent<Rigidbody>();
 
@@ -102,20 +90,11 @@ namespace Maroon.Physics
     }
 
 
-
-    void calculateFluidDensity()
-    {
-      fluid_density_ = (fluid_temperature_ * -0.37f + 891.83f); //kg/m^3
-      Debug.Log("Fluid Density: " + fluid_density_);
-    }
-
-
-
     void calculateBuoyancy()
     {
       //to make this more accurate volume should only be the displaced volume
       float volume = calculateVolume();
-      buoyancy_force_ = (volume * fluid_density_ * 9.81f) / 1000; //kg/m^3
+      buoyancy_force_ = (volume * ViscosimeterManager.Instance.fluid_density_ * 9.81f) / 1000; //kg/m^3
       Debug.Log("Buoyancy: " + buoyancy_force_);
     }
 
@@ -123,23 +102,20 @@ namespace Maroon.Physics
     void calculateViscosityForce()
     {
       float velocity = gameObject.GetComponent<Rigidbody>().velocity.magnitude;
-      float viscosity = (2.0f / 9.0f) * ((ball_density_ - fluid_density_) / velocity) * 9.81f * radius_ * radius_;
+      float viscosity = (2.0f / 9.0f) * ((ball_density_ - ViscosimeterManager.Instance.fluid_density_) / velocity) * 9.81f * radius_ * radius_;
       viscosity_force_ = 6.0f * Mathf.PI * viscosity * radius_ * velocity * 0.001f;
       Debug.Log("Visc-Friction-Force: " + viscosity_force_);
     }
 
 
 
-    void updateBall()
+    public void updateBall()
     {
       float diameter = radius_ * 2;
       transform.localScale.Set(diameter, diameter, diameter);
       ball_density_ = calculateVolume() / weight_;
-      calculateFluidDensity();
       calculateBuoyancy();
     }
-
-
 
 
     public void ResetObject()
