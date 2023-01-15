@@ -53,6 +53,10 @@ public class PointWavePoolHandler : MonoBehaviour
 
     private static PointWavePoolHandler _instance;
 
+
+
+
+
     public static PointWavePoolHandler Instance
     {
         get
@@ -62,6 +66,13 @@ public class PointWavePoolHandler : MonoBehaviour
             return _instance;
         }
     }
+
+  /*  void InitiliteTextture(ref RenderTexture tex)
+    {
+        tex = new RenderTexture(resolution.x, resolution.y, 1, UnityEngine.Experimental.Rendering.GraphicsFormat.R16G16B16A16_SNorm);
+        tex.enableRandomWrite = true;
+        tex.Create();
+    }*/
 
     private void Awake()
     {
@@ -82,6 +93,11 @@ public class PointWavePoolHandler : MonoBehaviour
         _worldToCalcSpaceFactor2d = Mathf.Abs(xAt1m2d.position.x - xOrigin2d.position.x);
         _worldToCalcSpaceFactor2dLocal = Mathf.Abs(xAt1m2d.localPosition.x - xOrigin2d.localPosition.x);
         _initialized = true;
+     //   InitiliteTextture(ref Nstate);
+      //  InitiliteTextture(ref Nm1state);
+       // InitiliteTextture(ref Np1state);
+
+
     }
 
     private void FixedUpdate()

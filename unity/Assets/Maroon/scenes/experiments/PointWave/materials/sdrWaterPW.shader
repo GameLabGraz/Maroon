@@ -124,7 +124,7 @@
                 float amp = 0;
                 float mamp = 0.01f;
                 _distance = 0;
-
+/*
                 for (int j = 0; j < _EntryCount; j++)
                 {
                     mamp += _sourceParameters[j].x;
@@ -135,8 +135,8 @@
                     float r = sqrt(_distance);
                     float u = (_sourceParameters[j].x * cos(k * _distance - w * _SceneTime + _sourceParameters[j].w)) / r;
                   //  u += (_ClickCoordinates.x / 100);
-                    amp += u;
-                }
+               //     amp += u;
+                }*/
                 if (_EntryCount == 0)
                 {
                     output.color = _ColorMin;

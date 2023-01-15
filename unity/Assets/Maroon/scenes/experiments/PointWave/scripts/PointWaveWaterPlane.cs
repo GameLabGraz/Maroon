@@ -83,7 +83,7 @@ public class PointWaveWaterPlane : PausableObject, IResetObject
     public void AddMouseData(Vector3 data, int hit)
     {
         Vector3[] mesh = GetComponent<MeshFilter>().mesh.vertices;
-
+        
         var test = _meshRenderer.bounds.size;
         Debug.Log("Mesh  size  = " + test);
         //Debug.Log(data);
@@ -171,111 +171,7 @@ public class PointWaveWaterPlane : PausableObject, IResetObject
         return vertices[retval];
 
     }
-  
-
-     public IEnumerator UpdateMeshData()
-    {
-        int N = 60; // same as the webpage
-        float DELTA_X = verticesPerWidth / N;
-        float DELTA_X2 = DELTA_X * DELTA_X;
-        float C = 0.04f; // speed? 
-        float C2 = C * C;
-        float DAMPING = 0.001f;
-        float DELTA_Z = verticesPerLength / N;
-        float DELTA_Z2 = DELTA_Z * DELTA_Z;
-        Mesh mesh = GetComponent<MeshFilter>().mesh;
-      //  Mesh mesh = GetComponent<MeshFilter>().mesh;
-        Vector3[] vertices = mesh.vertices;
-        Vector3[] normals = mesh.normals;
-        var dt = Time.deltaTime;
-      //  Debug.Log(vertices.Length);
-        for (int i = 0; i < vertices.Length; i++)
-        {
-            int x = (int)vertices[i].x;
-            int z = (int)vertices[i].z;
-            var iPrevX = vertextIndex(x - 1, z);
-            var iNextX = vertextIndex(x + 1, z);
-            var iPrevZ = vertextIndex(x, z - 1);
-            var iNextZ = vertextIndex(x, z + 1);
-            if (vertices[i].y > 0)
-            {
-                Debug.LogError(vertices[i]);
-            }
-            /*Debug.Log("NEW VERTICES CALCULATED");
-            Debug.Log(x);
-            Debug.Log(z);
-            Debug.Log(iPrevX);
-            Debug.Log(iNextX);
-            Debug.Log(iPrevZ);
-            Debug.Log(iNextZ);
-            // vertices[i].y += 0.001f;
-
-            var d2x = (iNextX.y - 2 * vertices[i].y + iPrevX.y); /// DELTA_X2;
-            var d2z = (iNextZ.y - 2 * vertices[i].y + iPrevZ.y); //   / DELTA_Z2;
-            tmpData[i].x = C2 * (d2x + d2z);
-
-            Debug.Log("DZF");
-            Debug.Log(d2x);
-            Debug.Log(d2z);
-            */
-
-            tmpData[i].x += -DAMPING * tmpData[i].x;
-
-            tmpData[i].y += dt * tmpData[i].x;
-
-            vertices[i].y = vertices[i].y + dt * tmpData[i].y;
-
-            /*  if ( vertices[i].y != 0)
-              {
-                  Debug.LogWarning(vertices[i]);
-              }*/
-            //    Debug.LogWarning(vertices[i]);
-
-            //     # use Euler integration to find the new velocity w.r.t. time
-            //# and the new vertical position
-            //# see https://en.wikipedia.org/wiki/Euler_integration
-            //           v[i].uy += dt * v[i].ay
-            //         v[i].newY = v[i].y + dt *
-            //         v[i].uy
-          //  Debug.LogWarning(i);
-            // here is the problem, that only the start of the for loop is processed 
-        }
-        mesh.vertices = vertices;
-        yield return null;
-
-        /*DELTA_X = W / N
-        DELTA_X2 = DELTA_X * DELTA_X
-        DELTA_Z = H / N
-        DELTA_Z2 = DELTA_Z * DELTA_Z*/
-
-
-        // mesh.vertices = vertices;
-
-        /* prevDeltaTime = currentDeltaTime;
-         currentDeltaTime = Time.deltaTime;
-         int stride = System.Runtime.InteropServices.Marshal.SizeOf(typeof(Vector3));
-         bufferPrev = new ComputeBuffer(n1mesh.Length, stride, ComputeBufferType.Default); // maybe not needed here biutthe stride msut be the correct size
-         bufferPrevPrev = new ComputeBuffer(n1mesh.Length, stride, ComputeBufferType.Default);
-         n2mesh = n1mesh;
-             n1mesh = GetComponent<MeshFilter>().mesh.vertices;
-
-             Debug.Log(n1mesh.Length);
-             bufferPrev.SetData(n1mesh);
-             _meshRenderer.sharedMaterial.SetBuffer("pixels", bufferPrev);
-             _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_DeltaTime"), currentDeltaTime);// does it work ? 
-             _meshRenderer.sharedMaterial.SetInt(Shader.PropertyToID("_pixelsSize"), n1mesh.Length);
-             bufferPrev.Release(); // Not sure if correct
-
-         bufferPrevPrev.SetData(n2mesh);
-         _meshRenderer.sharedMaterial.SetBuffer("pixelsPrev", bufferPrevPrev);
-         _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_DeltaTimePrev"), Time.deltaTime);// does it work ? 
-         _meshRenderer.sharedMaterial.SetInt(Shader.PropertyToID("_pixelsSize"), n2mesh.Length);
-         bufferPrevPrev.Release(); // Not sure if correct
-         // add support for previous delta time */
-
-    }
-
-    protected override void HandleUpdate()
+      protected override void HandleUpdate()
     {
         timer += Time.deltaTime;
         _meshRenderer.sharedMaterial.SetFloat(Shader.PropertyToID("_SceneTime"), timer);
