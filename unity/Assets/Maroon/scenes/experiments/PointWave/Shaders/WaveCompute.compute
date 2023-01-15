@@ -5,11 +5,25 @@
 // with cs.SetTexture
 RWTexture2D<float4> Nstate;
 float Resolution;
+float3 Clicked;
 [numthreads(8,8,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
     // TODO: insert actual code here!
     float x = (id.x / Resolution);
     float y = (id.y / Resolution);
-    Nstate[id.xy] = float4(x, y, 0.0, 0.0);
+    if (id.x == Clicked.x && id.y == Clicked.z)
+    {
+        Nstate[id.xy] = float4(0, 0, 255, 0.0);
+    }
+
+   /* if (id.x == 50 && id.y == 160)
+    {
+        Nstate[id.xy] = float4(255, 0, 255, 0.0);
+    }*/
+    else
+    {
+        Nstate[id.xy] = float4(x, y, 0.0, 0.0);
+
+    }
 }

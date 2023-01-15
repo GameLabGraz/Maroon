@@ -41,12 +41,13 @@ public class PointWaveSelectScript : MonoBehaviour
         Ray ray = c.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         int rightObject = 0;
-        if (Physics.Raycast(ray, out hit, 100f))
+        if (Physics.Raycast(ray, out hit, 100f)) // refactor
         {
             if(hit.transform.gameObject == GameObject.Find("innerBathub")) // can add boundary maybe
             {
            
                 BoxCollider col = GetComponent<BoxCollider>();
+            //    Debug.Log(col.size);
                 var data =  transform.InverseTransformPoint(hit.point);
                 worldPosition = data;
                 worldPosition.x = (data.x / (col.size.x / 2)); ;
@@ -55,10 +56,10 @@ public class PointWaveSelectScript : MonoBehaviour
             }
         }
 
-        waterPlane.AddMouseData(worldPosition, rightObject);
+   //     waterPlane.AddMouseData(worldPosition, rightObject);
         Select();
     }
-
+  
     public void Update()
     {
         // here probs zthe calcualktion
