@@ -4,26 +4,40 @@
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
 RWTexture2D<float4> Nstate;
+RWTexture2D<float4> Prevstate;
+RWTexture2D<float4> Nextstate;
+int2 dimensions;
 float Resolution;
 float3 Clicked;
-[numthreads(8,8,1)]
-void CSMain (uint3 id : SV_DispatchThreadID)
+float phase;
+[numthreads(8, 8, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
 {
     // TODO: insert actual code here!
     float x = (id.x / Resolution);
     float y = (id.y / Resolution);
-    if (id.x == Clicked.x && id.y == Clicked.z)
+    float ns_ij = Nstate[id.xy].x;
+    float nm1_ij = Prevstate[id.xy].x;
+    int2 pxy = id.xy;
+    int2 mxy = id.xy;
+    int2 xpy = id.xy;
+    int2 xmy = id.xy;
+    pxy.x = pxy.x + 1;
+    mxy.x = mxy.x - 1;
+    xpy.y = xpy.y + 1;
+    xmy.y = xmy.y - 1; // mamybe uint() rewrite 
+    float ns_ip1j = Nstate[pxy].x;
+    float ns_ijpj = Nstate[xpy].x;
+    float ns_im1j = Nstate[mxy].x;
+    float ns_ij1j = Nstate[xmy].x;
+    float t = ns_ip1j + ns_ijpj + ns_im1j + ns_ij1j - 4 * ns_ij;
+    float newWaveHeight = ns_ij * 2 - nm1_ij + 0.25 * t;
+    newWaveHeight = newWaveHeight * phase;
+    if (id.x == Clicked.x && id.y == Clicked.y)
     {
-        Nstate[id.xy] = float4(0, 0, 255, 0.0);
+        newWaveHeight = Clicked.z;
     }
+    Nextstate[id.xy] = float4(newWaveHeight, newWaveHeight, newWaveHeight, 1);
 
-   /* if (id.x == 50 && id.y == 160)
-    {
-        Nstate[id.xy] = float4(255, 0, 255, 0.0);
-    }*/
-    else
-    {
-        Nstate[id.xy] = float4(x, y, 0.0, 0.0);
 
-    }
 }
