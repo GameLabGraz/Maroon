@@ -18,8 +18,10 @@ public class WaveManager : MonoBehaviour
     public Mesh planeMesh;
     private Vector3 clickedData;
     public float phase = 0.99f;
+    public PointWaveWaterPlane script;
     void Start()
     {
+        script = new PointWaveWaterPlane();
         clickedData = new Vector3(0, 0, 0);
         resolution = new Vector2Int(256, 256); // ask -- maybe performance
         initializeTexture(ref Nstate);
@@ -37,6 +39,44 @@ public class WaveManager : MonoBehaviour
 
     }
 
+    private void ClickCoordinated(RaycastHit hit)
+    {
+        if (hit.transform.gameObject == GameObject.Find("innerBathub")) // can add boundary maybe
+        {
+            var data = transform.InverseTransformPoint(hit.point);
+            BoxCollider col = GameObject.Find("innerBathub").GetComponent<BoxCollider>();
+
+            int xPixel = 0;
+            int zPixel = 0;
+            float xRes = resolution.x / 2;
+            float zRes = resolution.y / 2;
+
+            if (data.x > 0)
+            {
+                float prozentx = (5 - data.x) / 5;
+                xPixel = (int)((xRes * prozentx));
+            }
+            else
+            {
+                float prozentx = (5 + data.x) / 5;
+                xPixel = (int)(resolution.x - (xRes * prozentx));
+            }
+            if (data.z > 0)
+            {
+                float prozentz = (5 - data.z) / 5;
+                zPixel = (int)((zRes * prozentz));
+            }
+            else
+            {
+                float prozentz = (5 + data.z) / 5;
+                zPixel = (int)(resolution.y - (zRes * prozentz));
+            }
+            clickedData = new Vector3(xPixel, zPixel, 1); // add the height from the gui ? 
+            waveCompute.SetVector("Clicked", clickedData);
+            // plane.
+        }
+    }
+
 
     void initializeTexture(ref RenderTexture material)
     {
@@ -48,48 +88,14 @@ public class WaveManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+  
         if (Input.GetMouseButtonDown(0))
         {
             RaycastHit hit;
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit, 100f)) // refactor
             {
-
-                if (hit.transform.gameObject == GameObject.Find("innerBathub")) // can add boundary maybe
-                {
-                    var data = transform.InverseTransformPoint(hit.point);
-                    BoxCollider col = GameObject.Find("innerBathub").GetComponent<BoxCollider>();
-
-                    int xPixel = 0;
-                    int zPixel = 0;
-                    float xRes = resolution.x / 2;
-                    float zRes = resolution.y / 2;
-
-                    if (data.x > 0)
-                    {
-                        float prozentx = (5 - data.x) / 5;
-                        xPixel = (int)((xRes * prozentx));
-                    }
-                    else
-                    {
-                        float prozentx = (5 + data.x) / 5;
-                        xPixel = (int)(resolution.x - (xRes * prozentx));
-                    }
-                    if (data.z > 0)
-                    {
-                        float prozentz = (5 - data.z) / 5;
-                        zPixel = (int)((zRes * prozentz));
-                    }
-                    else
-                    {
-                        float prozentz = (5 + data.z) / 5;
-                        zPixel = (int)(resolution.y - (zRes * prozentz));
-                    }
-                    clickedData = new Vector3(xPixel, zPixel, 1); // add the height from the gui ? 
-                    waveCompute.SetVector("Clicked", clickedData);
-                    // plane.
-                }
+                ClickCoordinated(hit);
             }
             // Debug.Log("Pressed primary button.");
         }

@@ -246,10 +246,12 @@ MonoBehaviour:
   waveCompute: {fileID: 7200000, guid: 9925a5aef23b50b4080e25ea15789a60, type: 3}
   waveMaterial: {fileID: 2100000, guid: 771de2acb7f2b55419d1fc47f2b5599a, type: 2}
   Nstate: {fileID: 0}
-  Nm1state: {fileID: 0}
-  Np1state: {fileID: 0}
+  Prevstate: {fileID: 0}
+  Nextstate: {fileID: 0}
   resolution: {x: 0, y: 0}
   planeMesh: {fileID: 0}
+  phase: 0.99
+  script: {fileID: 0}
 --- !u!114 &269359214 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2399235266715423803, guid: 09c73ed225a086845b90fbeaba0dc5ea,
@@ -5888,7 +5890,7 @@ PrefabInstance:
     - target: {fileID: 5756646805208765773, guid: 100f7925faf97134580c2a2e2918472f,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.224
+      value: 0.22
       objectReference: {fileID: 0}
     - target: {fileID: 5756646805208765773, guid: 100f7925faf97134580c2a2e2918472f,
         type: 3}

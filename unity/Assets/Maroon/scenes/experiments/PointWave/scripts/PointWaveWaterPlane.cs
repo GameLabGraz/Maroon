@@ -58,19 +58,6 @@ public class PointWaveWaterPlane : PausableObject, IResetObject
         }
 
         CalculatePlaneMesh();
-
-        _meshRenderer.sharedMaterial.SetInt(Shader.PropertyToID("_verticesPerLength"), verticesPerLength);
-        _meshRenderer.sharedMaterial.SetInt(Shader.PropertyToID("_verticesPerWidth"), verticesPerWidth);
-        // object p = _meshRenderer.additionalVertexStreams();
-        n2mesh = GetComponent<MeshFilter>().mesh.vertices;
-        n1mesh = GetComponent<MeshFilter>().mesh.vertices;
-
-        //  int sizeOfMesh = GetComponent<MeshFilter>().mesh.vertices.Length;
-        int sizeOfMesh = 4 * 33000;
-        int stride = System.Runtime.InteropServices.Marshal.SizeOf(typeof(float));
-        m_ShadowParamsCB = new ComputeBuffer(1, sizeOfMesh);
-        Graphics.SetRandomWriteTarget(2, m_ShadowParamsCB, true);
-        _meshRenderer.sharedMaterial.SetBuffer(Shader.PropertyToID("_uy"), m_ShadowParamsCB);
     }
 
 
@@ -78,36 +65,8 @@ public class PointWaveWaterPlane : PausableObject, IResetObject
 
     public void RemoveClick()
     {
-        //  _meshRenderer.sharedMaterial.SetInt(Shader.PropertyToID("_ClickedOn"), 0); I guess it works 
     }
-    public void AddMouseData(Vector3 data, int hit)
-    {
-        Vector3[] mesh = GetComponent<MeshFilter>().mesh.vertices;
-        
-        var test = _meshRenderer.bounds.size;
-        Debug.Log("Mesh  size  = " + test);
-        //Debug.Log(data);
-        data.x = Mathf.FloorToInt(data.x * (verticesPerLength));
-        data.z = Mathf.FloorToInt(data.z * verticesPerWidth);
-        Vector3 index = vertextIndex((int)data.x, (int)data.z);
-        Vector3 indexp1 = vertextIndex((int)data.x + 1, (int)data.z);
-        Vector3 indexm1 = vertextIndex((int)data.x - 1, (int)data.z);
-        Vector3 indezp1 = vertextIndex((int)data.x, (int)data.z + 1);
-        Vector3 indezm1 = vertextIndex((int)data.x, (int)data.z - 1);
-
-        Debug.Log("click data :" + data);
-        Debug.Log("index data :" + index);
-        Debug.Log("indexp1 data :" + indexp1);
-        Debug.Log("indexm1 data :" + indexm1);
-        Debug.Log("indezp1 data :" + indezp1);
-        Debug.Log(" indezm1 data :" + indezm1);
-        Debug.Log("###########");
-        // set here size to 1 ;
-        _meshRenderer.sharedMaterial.SetVector(Shader.PropertyToID("_ClickCoordinates"), new Vector4(data.x, data.y, data.z, 0));
-        _meshRenderer.sharedMaterial.SetInt(Shader.PropertyToID("_ClickedOn"), hit);
-
-    }
-
+    
     public void UpdateParameterAndPosition()
     {
         Vector4 empty = Vector4.zero;
@@ -132,10 +91,6 @@ public class PointWaveWaterPlane : PausableObject, IResetObject
             coordinatesArray[count] = coordinates;
             parametersArray[count] = parameter;
         }
-
-        _meshRenderer.sharedMaterial.SetInt(Shader.PropertyToID("_EntryCount"), entryCount);
-        _meshRenderer.sharedMaterial.SetVectorArray(Shader.PropertyToID("_sourceParameters"), parametersArray);
-        _meshRenderer.sharedMaterial.SetVectorArray(Shader.PropertyToID("_sourceCoordinates"), coordinatesArray);
     }
 
 
@@ -148,29 +103,7 @@ public class PointWaveWaterPlane : PausableObject, IResetObject
         waveSources.Remove(waveSource);
     }
 
-    private Vector3 vertextIndex(int x, int z)
-    {
-        Vector3[] vertices = GetComponent<MeshFilter>().mesh.vertices; // optimisation problem ? 
-        int quotient = verticesPerLength + x + 1; ;
-        int retval = 0;
-        if (z < 1)
-        {
-            // Debug.LogWarning((quotient * (verticesPerWidth * 2 + 1)) - (verticesPerWidth - z) - 1);
-            //  return (quotient * (verticesPerWidth * 2  + 1) ) - (verticesPerWidth -  z) - 1 ;
-            retval = (quotient * (verticesPerWidth * 2 + 1)) - (verticesPerWidth - z) - 1;
-        }
-        else
-        {
-            //  Debug.LogWarning(((quotient - 1) * (verticesPerWidth * 2 + 1)) + (verticesPerWidth + z));
-            retval = ((quotient - 1) * (verticesPerWidth * 2 + 1)) + (verticesPerWidth + z);
-        }
-        if (retval < 0 || retval > vertices.Length) // maybe ? also over? 
-        {
-            return new Vector3(x, 0, z); // maybe  0 0 0 ? 
-        }
-        return vertices[retval];
 
-    }
       protected override void HandleUpdate()
     {
         timer += Time.deltaTime;
@@ -193,10 +126,6 @@ public class PointWaveWaterPlane : PausableObject, IResetObject
         GetComponent<Renderer>().material.SetColor("_ColorMax", startMaxColor);
     }
 
-    public void SetPWParameterChangeTrue()
-    {
-        _parameterHasChanged = true;
-    }
 
     public void CalculatePlaneMesh()
     {
