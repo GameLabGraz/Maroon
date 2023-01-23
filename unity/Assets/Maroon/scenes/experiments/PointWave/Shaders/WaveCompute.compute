@@ -10,6 +10,7 @@ int2 dimensions;
 float Resolution;
 float3 Clicked;
 float phase;
+bool Top;
 [numthreads(8, 8, 1)]
 void CSMain(uint3 id : SV_DispatchThreadID)
 {
