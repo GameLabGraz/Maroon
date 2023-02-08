@@ -5,19 +5,19 @@ on: [push, pull_request]
 jobs:
   build:
     name: Build Maroon
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       # pull repo
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       
       # Caching
-      - uses: actions/cache@v2
-        with:
-          path: Library
-          key: Library-${{ hashFiles('./unity/Assets/**', './unity/Packages/**', './unity/ProjectSettings/**') }}
-          restore-keys: |
-            Library-
+      #- uses: actions/cache@v3
+      #  with:
+      #    path: Library
+      #    key: Library-${{ hashFiles('./unity/Assets/**', './unity/Packages/**', './unity/ProjectSettings/**') }}
+      #    restore-keys: |
+      #      Library-
 
       # build
       - name: Build
