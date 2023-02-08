@@ -1,11 +1,11 @@
 name: Build
 
-on: [push, pull_request]
+on: push
 
 jobs:
   build:
     name: Build Maroon
-    runs-on: windows-latest
+    runs-on: windows-2019
     steps:
       # pull repo
       - name: Checkout
