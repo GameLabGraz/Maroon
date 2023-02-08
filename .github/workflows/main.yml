@@ -11,7 +11,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       
-      # TODO caching
+      # Caching
+      - uses: actions/cache@v2
+        with:
+          path: Library
+          key: Library-${{ hashFiles('./unity/Assets/**', './unity/Packages/**', './unity/ProjectSettings/**') }}
+          restore-keys: |
+            Library-
 
       # build
       - name: Build
