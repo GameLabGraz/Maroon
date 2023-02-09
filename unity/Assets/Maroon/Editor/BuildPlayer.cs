@@ -267,7 +267,7 @@ namespace Maroon.Build
             // commence horrible arg parsing
             var maroonBuildType = args[Array.IndexOf(args, "-maroonBuildType") + 1];
             var maroonBuildTarget = (MaroonBuildTarget)Enum.Parse(typeof(MaroonBuildTarget), args[Array.IndexOf(args, "-maroonBuildTarget") + 1]);
-            var maroonBuildPath = args[Array.IndexOf(args, "-maroonBuildPath") + 1]
+            var maroonBuildPath = args[Array.IndexOf(args, "-maroonBuildPath") + 1];
 
             if (maroonBuildType == "LAB" || maroonBuildType == "ALL")
             {
