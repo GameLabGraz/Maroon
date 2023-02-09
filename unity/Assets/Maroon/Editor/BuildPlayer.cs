@@ -264,24 +264,18 @@ namespace Maroon.Build
         {
             var args = Environment.GetCommandLineArgs();
 
-            var executeMethodIndex = Array.IndexOf(args, "-executeMethod");
-            if (executeMethodIndex + 4 >= args.Length)
-            {
-                Log("[BatchModeBuild] Incorrect Parameters for -executeMethod Format: -executeMethod <type> <platform> <output dir>");
-                return;
-            }
+            // commence horrible arg parsing
+            var maroonBuildType = args[Array.IndexOf(args, "-maroonBuildType") + 1];
+            var maroonBuildTarget = (MaroonBuildTarget)Enum.Parse(typeof(MaroonBuildTarget), args[Array.IndexOf(args, "-maroonBuildTarget") + 1]);
+            var maroonBuildPath = args[Array.IndexOf(args, "-maroonBuildPath") + 1]
 
-            var buildType = args[executeMethodIndex + 2];
-            var buildTarget = (MaroonBuildTarget)Enum.Parse(typeof(MaroonBuildTarget), args[executeMethodIndex + 3]);
-            var buildPath = args[executeMethodIndex + 4];
-
-            if (buildType == "LAB" || buildType == "ALL")
+            if (maroonBuildType == "LAB" || maroonBuildType == "ALL")
             {
-                BuildConventionalMaroon(buildTarget, buildPath);
+                BuildConventionalMaroon(maroonBuildTarget, maroonBuildPath);
             }
-            if (buildType == "EXP" || buildType == "ALL")
+            if (maroonBuildType == "EXP" || maroonBuildType == "ALL")
             {
-                BuildStandaloneExperiments(buildTarget, buildPath);
+                BuildStandaloneExperiments(maroonBuildTarget, maroonBuildPath);
             }
         }
 
