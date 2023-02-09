@@ -257,6 +257,33 @@ namespace Maroon.Build
                 BuildStandaloneExperiments(buildTarget, $"{buildPath}/Experiments");
             }
         }
+        
+        // usage: -executeMethod BatchModeBuild <type> <platform> <output dir>
+        // example: -executeMethod BatchModeBuild <EXP> PC "C:/Users/username/Desktop/Build"
+        public static void BatchModeBuild()
+        {
+            var args = Environment.GetCommandLineArgs();
+
+            var executeMethodIndex = Array.IndexOf(args, "-executeMethod");
+            if (executeMethodIndex + 4 >= args.Length)
+            {
+                Log("[BatchModeBuild] Incorrect Parameters for -executeMethod Format: -executeMethod <type> <platform> <output dir>");
+                return;
+            }
+
+            var buildType = args[executeMethodIndex + 2];
+            var buildTarget = (MaroonBuildTarget)Enum.Parse(typeof(MaroonBuildTarget), args[executeMethodIndex + 3]);
+            var buildPath = args[executeMethodIndex + 4];
+
+            if (buildType == "LAB" || buildType == "ALL")
+            {
+                BuildConventionalMaroon(buildTarget, buildPath);
+            }
+            if (buildType == "EXP" || buildType == "ALL")
+            {
+                BuildStandaloneExperiments(buildTarget, buildPath);
+            }
+        }
 
         // #############################################################################################################
         // Helper Methods
