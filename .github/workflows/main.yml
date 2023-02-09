@@ -12,12 +12,13 @@ jobs:
         uses: actions/checkout@v3
       
       # Caching
-      #- uses: actions/cache@v3
-      #  with:
-      #    path: Library
-      #    key: Library-${{ hashFiles('./unity/Assets/**', './unity/Packages/**', './unity/ProjectSettings/**') }}
-      #    restore-keys: |
-      #      Library-
+      - name: Cache
+        uses: actions/cache@v3
+        with:
+          path: Library
+          key: Library-${{ hashFiles('./unity/Assets/**', './unity/Packages/**', './unity/ProjectSettings/**') }}
+          restore-keys: |
+            Library-
 
       # build
       - name: Build
@@ -29,8 +30,8 @@ jobs:
         with:
           #targetPlatform: StandaloneWindows
           buildMethod: Maroon.Build.BuildPlayer.BatchModeBuild
-          customParameters: -maroonBuildType LAB -maroonBuildTarget PC -marooBuildPath ./build
-          projectPath: ./unity/
+          customParameters: -maroonBuildType LAB -maroonBuildTarget PC -marooBuildPath build
+          projectPath: unity
       
       # artifacts
       - uses: actions/upload-artifact@v2
