@@ -5,7 +5,7 @@ on: push
 jobs:
   build:
     name: Build Maroon
-    runs-on: windows-2019
+    runs-on: ubuntu-latest
     steps:
       # pull repo
       - name: Checkout
@@ -27,8 +27,9 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
-          customImage: 'unityci/editor:windows-2020.3.28f1-universal-windows-platform-1.0.1'
-          targetPlatform: StandaloneWindows
+          #targetPlatform: StandaloneWindows
+          buildMethod: Maroon.Build.BuildPlayer.BatchModeBuild
+          customParameters: -type LAB -platform PC -output /build
           projectPath: ./unity/
       
       # artifacts
