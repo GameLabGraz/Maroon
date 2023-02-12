@@ -30,11 +30,11 @@ jobs:
         with:
           #targetPlatform: StandaloneWindows
           buildMethod: Maroon.Build.BuildPlayer.BatchModeBuild
-          customParameters: -maroonBuildType LAB -maroonBuildTarget PC -maroonBuildPath ${{ GITHUB_WORKSPACE }}/build
+          customParameters: -maroonBuildType LAB -maroonBuildTarget PC -maroonBuildPath ${{ github.workspace }}/build
           projectPath: unity
       
       # artifacts
       - uses: actions/upload-artifact@v2
         with:
           name: Build
-          path: ${{ GITHUB_WORKSPACE }}/build
+          path: ${{ github.workspace }}/build
