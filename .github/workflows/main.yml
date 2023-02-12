@@ -16,7 +16,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/unity/Library
-          key: Library-${{ hashFiles('${{ github.workspace }}/unity/unity/Assets/**', '${{ github.workspace }}/unity/unity/Packages/**', '${{ github.workspace }}/unity/unity/ProjectSettings/**') }}
+          key: Library-${{ hashFiles('${{ github.workspace }}/unity/Assets/**', '${{ github.workspace }}/unity/Packages/**', '${{ github.workspace }}/unity/ProjectSettings/**') }}
           restore-keys: |
             Library-
 
@@ -30,7 +30,7 @@ jobs:
         with:
           #targetPlatform: StandaloneWindows
           buildMethod: Maroon.Build.BuildPlayer.BatchModeBuild
-          customParameters: -maroonBuildType LAB -maroonBuildTarget PC -maroonBuildPath build
+          customParameters: -maroonBuildType LAB -maroonBuildTarget PC -maroonBuildPath $(pwd)/build
           projectPath: ./unity
           buildsPath: build
       
