@@ -1,5 +1,5 @@
-﻿//
-//Author: Tobias Stöckl
+//
+//Author: Tobias St�ckl
 //
 using UnityEngine;
 
