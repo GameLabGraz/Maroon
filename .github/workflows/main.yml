@@ -8,15 +8,13 @@ jobs:
     runs-on: self-hosted
     steps:
 
-
-    - name: Get Actions user id
-
       # get uid from actions runner
-      id: get_uid
-      run: |
-        actions_user_id=`id -u $USER`
-        echo $actions_user_id
-        echo "uid=$actions_user_id" >> $GITHUB_OUTPUT
+      - name: Get Actions user id
+        id: get_uid
+        run: |
+          actions_user_id=`id -u $USER`
+          echo $actions_user_id
+          echo "uid=$actions_user_id" >> $GITHUB_OUTPUT
 
       # pull repo
       - name: Checkout
