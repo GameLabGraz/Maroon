@@ -46,7 +46,9 @@ jobs:
       # https://github.com/actions/runner/issues/434
       # restore ownership of files
       - name: Correct Ownership in GITHUB_WORKSPACE directory
-        uses: peter-murray/reset-workspace-ownership-action@v1
+        #uses: peter-murray/reset-workspace-ownership-action@v1
+        # use fork of original action, due to bug (https://github.com/peter-murray/reset-workspace-ownership-action/issues/5)
+        uses: derekroberts/reset-workspace-ownership-action@bug/workspaceSpaces
         with:
           user_id: ${{ steps.get_uid.outputs.uid }}
       
