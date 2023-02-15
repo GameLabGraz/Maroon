@@ -297,8 +297,8 @@ namespace Maroon.Build
 
             foreach (var target in targets)
             {
-                BuildConventionalMaroon(buildTarget, $"{maroonBuildPath}/Laboratory");
-                BuildStandaloneExperiments(buildTarget, $"{maroonBuildPath}/Experiments");
+                BuildConventionalMaroon(target, $"{maroonBuildPath}/Laboratory");
+                BuildStandaloneExperiments(target, $"{maroonBuildPath}/Experiments");
             }
         }
 
