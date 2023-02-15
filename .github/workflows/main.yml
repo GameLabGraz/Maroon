@@ -38,8 +38,8 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           #targetPlatform: StandaloneWindows
-          buildMethod: Maroon.Build.BuildPlayer.BatchModeBuild
-          customParameters: -maroonBuildType LAB -maroonBuildTarget PC -maroonBuildPath /github/workspace/build
+          buildMethod: Maroon.Build.BuildPlayer.ActionsBuild
+          customParameters: -maroonBuildPath /github/workspace/build
           projectPath: ./unity
           buildsPath: /github/workspace/build
         

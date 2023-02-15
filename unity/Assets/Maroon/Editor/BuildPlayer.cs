@@ -260,6 +260,7 @@ namespace Maroon.Build
         
         // usage: -executeMethod BatchModeBuild <type> <platform> <output dir>
         // example: -executeMethod BatchModeBuild <EXP> PC "C:/Users/username/Desktop/Build"
+        // TODO: remove if no longer required
         public static void BatchModeBuild()
         {
             var args = Environment.GetCommandLineArgs();
@@ -276,6 +277,28 @@ namespace Maroon.Build
             if (maroonBuildType == "EXP" || maroonBuildType == "ALL")
             {
                 BuildStandaloneExperiments(maroonBuildTarget, maroonBuildPath);
+            }
+        }
+
+        public static void ActionsBuild()
+        {
+            var args = Environment.GetCommandLineArgs();
+
+            // array of (working) build targets
+            // TODO: add WebGL, once it is fixed
+            MaroonBuildTarget[] targets = {
+                MaroonBuildTarget.PC,
+                MaroonBuildTarget.VR,
+            };
+            var args = Environment.GetCommandLineArgs();
+            
+            // usage: -maroonBuildPath </path/to/build/dir>
+            var maroonBuildPath = args[Array.IndexOf(args, "-maroonBuildPath") + 1];
+
+            foreach (var target in targets)
+            {
+                BuildConventionalMaroon(buildTarget, $"{buildPath}/Laboratory");
+                BuildStandaloneExperiments(buildTarget, $"{buildPath}/Experiments");
             }
         }
 
