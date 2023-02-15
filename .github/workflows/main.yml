@@ -3,24 +3,30 @@ name: Build
 on: push
 
 jobs:
-  build:
-    name: Build Maroon
+
+  checkout:
+    name: Checkout
     runs-on: self-hosted
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      # get uid from actions runner
+  fetch-uid:
+    name: Fetch runenr uid
+    runs-on: self-hosted
+    steps:
       - name: Get Actions user id
         id: get_uid
         run: |
           actions_user_id=`id -u $USER`
           echo $actions_user_id
           echo "uid=$actions_user_id" >> $GITHUB_OUTPUT
-
-      # pull repo
-      - name: Checkout
-        uses: actions/checkout@v3
-      
-      # Caching
+  
+  cache:
+    name: Cache
+    runs-on: self-hosted
+    needs: checkout
+    steps:
       - name: Cache
         uses: actions/cache@v3
         with:
@@ -28,7 +34,12 @@ jobs:
           key: Library-${{ hashFiles('${{ github.workspace }}/unity/Assets/**', '${{ github.workspace }}/unity/Packages/**', '${{ github.workspace }}/unity/ProjectSettings/**') }}
           restore-keys: |
             Library-
-
+  
+  build:
+    name: Build Maroon
+    runs-on: self-hosted
+    needs: [checkout, cache]
+    steps:
       # build
       - name: Build
         uses: game-ci/unity-builder@v2
@@ -42,21 +53,33 @@ jobs:
           customParameters: -maroonBuildPath /github/workspace/build
           projectPath: ./unity
           buildsPath: /github/workspace/build
-        
-      # https://github.com/actions/runner/issues/434
-      # restore ownership of files
+
+
+    # https://github.com/actions/runner/issues/434
+    # restore ownership of files
+  fix-ownership:
+    name: Fix file ownership
+    runs-on: self-hosted
+    # run always, even if previous steps failed
+    if: ${{ always() }}
+    needs: [build, fetch-uid]
+    steps:
+      # use fork of original action, due to bug (https://github.com/peter-murray/reset-workspace-ownership-action/issues/5)
+      #uses: peter-murray/reset-workspace-ownership-action@v1
       - name: Correct Ownership in GITHUB_WORKSPACE directory
-        #uses: peter-murray/reset-workspace-ownership-action@v1
-        # use fork of original action, due to bug (https://github.com/peter-murray/reset-workspace-ownership-action/issues/5)
         uses: derekroberts/reset-workspace-ownership-action@bug/workspaceSpaces
         with:
           user_id: ${{ steps.get_uid.outputs.uid }}
-      
-      # artifacts
-      - uses: actions/upload-artifact@v3
+    
+  upload-artifacts:
+    name: Upload artifacts
+    runs-on: self-hosted
+    needs: [build, fix-ownership]
+    steps:
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
         with:
           name: Build
           path: ${{ github.workspace }}/build
-          #path: build
           
           
