@@ -10,6 +10,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+    
+  lint:
+    name: Lint
+    runs-on: self-hosted
+    needs: checkout
+    steps:
+      - name: Lint
+        uses: github/super-linter@v4
+        env:
+          VALIDATE_CSHARP: true
+          VALIDATE_HTML: true
+          VALIDATE_JAVASCRIPT_STANDARD: true
+          VALIDATE_CSS: true
 
   cache:
     name: Cache
@@ -27,7 +40,7 @@ jobs:
   build:
     name: Build Maroon
     runs-on: self-hosted
-    needs: [checkout, cache]
+    needs: [checkout, cache, lint]
     steps:
       # build
       - name: Build
@@ -44,8 +57,8 @@ jobs:
           buildsPath: /github/workspace/build
 
 
-    # https://github.com/actions/runner/issues/434
-    # restore ownership of files
+  # https://github.com/actions/runner/issues/434
+  # restore ownership of files
   fix-ownership:
     name: Fix file ownership
     runs-on: self-hosted
