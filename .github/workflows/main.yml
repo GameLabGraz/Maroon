@@ -72,11 +72,14 @@ jobs:
     runs-on: self-hosted
     needs: build
     steps:
+      - name: Compress build folder
+        run: zip -r build.zip build
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
           name: Build
-          path: ${{ github.workspace }}/build
+          path: ${{ github.workspace }}/build/build.zip
     
   cleanup:
     name: Cleanup
