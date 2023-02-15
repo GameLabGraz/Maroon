@@ -78,8 +78,9 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: Build
-          path: ${{ github.workspace }}/build/build.zip
+          name: MaroonBuild
+          path: ${{ github.workspace }}/build.zip
+          if-no-files-found: error
     
   cleanup:
     name: Cleanup
