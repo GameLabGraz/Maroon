@@ -11,11 +11,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-  cache:
-    name: Cache
+  build:
+    name: Build Maroon
     runs-on: self-hosted
     needs: checkout
     steps:
+
+      # cache      
       - name: Cache
         uses: actions/cache@v3
         with:
@@ -24,11 +26,6 @@ jobs:
           restore-keys: |
             Library-
   
-  build:
-    name: Build Maroon
-    runs-on: self-hosted
-    needs: [checkout, cache]
-    steps:
       # build
       - name: Build
         uses: game-ci/unity-builder@v2
@@ -46,39 +43,48 @@ jobs:
 
   # https://github.com/actions/runner/issues/434
   # restore ownership of files
-  fix-ownership:
-    name: Fix file ownership
-    runs-on: self-hosted
-    # run always, even if previous steps failed
-    if: ${{ always() }}
-    needs: build
-    steps:
+  # fix-ownership:
+  #   name: Fix file ownership
+  #   runs-on: self-hosted
+  #   # run always, even if previous steps failed
+  #   if: ${{ always() }}
+  #   needs: build
+  #   steps:
       
-      # first we need the original uid
-      - name: Get Actions user id
-        id: get_uid
-        run: |
-          actions_user_id=`id -u $USER`
-          echo $actions_user_id
-          echo "uid=$actions_user_id" >> $GITHUB_OUTPUT
+  #     # first we need the original uid
+  #     - name: Get Actions user id
+  #       id: get_uid
+  #       run: |
+  #         actions_user_id=`id -u $USER`
+  #         echo $actions_user_id
+  #         echo "uid=$actions_user_id" >> $GITHUB_OUTPUT
 
-      # then we can reset the ownership of the files
-      - name: Correct Ownership in GITHUB_WORKSPACE directory
-        uses: derekroberts/reset-workspace-ownership-action@bug/workspaceSpaces
-        # use fork of original action, due to bug (https://github.com/peter-murray/reset-workspace-ownership-action/issues/5)
-        #uses: peter-murray/reset-workspace-ownership-action@v1
-        with:
-          user_id: ${{ steps.get_uid.outputs.uid }}
+  #     # then we can reset the ownership of the files
+  #     - name: Correct Ownership in GITHUB_WORKSPACE directory
+  #       uses: derekroberts/reset-workspace-ownership-action@bug/workspaceSpaces
+  #       # use fork of original action, due to bug (https://github.com/peter-murray/reset-workspace-ownership-action/issues/5)
+  #       #uses: peter-murray/reset-workspace-ownership-action@v1
+  #       with:
+  #         user_id: ${{ steps.get_uid.outputs.uid }}
     
   upload-artifacts:
     name: Upload artifacts
     runs-on: self-hosted
-    needs: [build, fix-ownership]
+    needs: build
     steps:
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
           name: Build
           path: ${{ github.workspace }}/build
+    
+  cleanup:
+    name: Cleanup
+    runs-on: self-hosted
+    needs: upload-artifacts
+    if: ${{ always() }}
+    steps:
+      - name: Cleanup
+        uses: AutoModality/action-clean@v1
           
           
