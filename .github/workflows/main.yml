@@ -11,17 +11,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-  fetch-uid:
-    name: Fetch runenr uid
-    runs-on: self-hosted
-    steps:
-      - name: Get Actions user id
-        id: get_uid
-        run: |
-          actions_user_id=`id -u $USER`
-          echo $actions_user_id
-          echo "uid=$actions_user_id" >> $GITHUB_OUTPUT
-  
   cache:
     name: Cache
     runs-on: self-hosted
@@ -62,12 +51,22 @@ jobs:
     runs-on: self-hosted
     # run always, even if previous steps failed
     if: ${{ always() }}
-    needs: [build, fetch-uid]
+    needs: build
     steps:
-      # use fork of original action, due to bug (https://github.com/peter-murray/reset-workspace-ownership-action/issues/5)
-      #uses: peter-murray/reset-workspace-ownership-action@v1
+      
+      # first we need the original uid
+      - name: Get Actions user id
+        id: get_uid
+        run: |
+          actions_user_id=`id -u $USER`
+          echo $actions_user_id
+          echo "uid=$actions_user_id" >> $GITHUB_OUTPUT
+
+      # then we can reset the ownership of the files
       - name: Correct Ownership in GITHUB_WORKSPACE directory
         uses: derekroberts/reset-workspace-ownership-action@bug/workspaceSpaces
+        # use fork of original action, due to bug (https://github.com/peter-murray/reset-workspace-ownership-action/issues/5)
+        #uses: peter-murray/reset-workspace-ownership-action@v1
         with:
           user_id: ${{ steps.get_uid.outputs.uid }}
     
