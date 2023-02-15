@@ -290,7 +290,6 @@ namespace Maroon.Build
                 MaroonBuildTarget.PC,
                 MaroonBuildTarget.VR,
             };
-            var args = Environment.GetCommandLineArgs();
             
             // usage: -maroonBuildPath </path/to/build/dir>
             var maroonBuildPath = args[Array.IndexOf(args, "-maroonBuildPath") + 1];
