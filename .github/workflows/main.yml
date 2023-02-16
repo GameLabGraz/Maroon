@@ -39,33 +39,6 @@ jobs:
           customParameters: -maroonBuildPath /github/workspace/build
           projectPath: ./unity
           buildsPath: /github/workspace/build
-
-
-  # https://github.com/actions/runner/issues/434
-  # restore ownership of files
-  # fix-ownership:
-  #   name: Fix file ownership
-  #   runs-on: self-hosted
-  #   # run always, even if previous steps failed
-  #   if: ${{ always() }}
-  #   needs: build
-  #   steps:
-      
-  #     # first we need the original uid
-  #     - name: Get Actions user id
-  #       id: get_uid
-  #       run: |
-  #         actions_user_id=`id -u $USER`
-  #         echo $actions_user_id
-  #         echo "uid=$actions_user_id" >> $GITHUB_OUTPUT
-
-  #     # then we can reset the ownership of the files
-  #     - name: Correct Ownership in GITHUB_WORKSPACE directory
-  #       uses: derekroberts/reset-workspace-ownership-action@bug/workspaceSpaces
-  #       # use fork of original action, due to bug (https://github.com/peter-murray/reset-workspace-ownership-action/issues/5)
-  #       #uses: peter-murray/reset-workspace-ownership-action@v1
-  #       with:
-  #         user_id: ${{ steps.get_uid.outputs.uid }}
     
   upload-artifacts:
     name: Upload artifacts
