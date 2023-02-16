@@ -1,8 +1,4 @@
-﻿
-#if !UNITY_WEBGL
-using GameLabGraz.VRInteraction;
-#endif
-
+﻿using GameLabGraz.VRInteraction;
 using UnityEngine;
 
 namespace Util
@@ -14,11 +10,7 @@ namespace Util
             if (gameObject.CompareTag("Player"))
                 return true;
 
-#if UNITY_WEBGL
-            return false;
-#else
             return gameObject.GetComponent<VRPlayer>() != null;
-#endif
         }
     }
 }
