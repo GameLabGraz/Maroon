@@ -75,7 +75,7 @@ jobs:
     name: Upload artifacts
     runs-on: self-hosted
     # we want to upload artifacts even if the tests fail
-    needs: build
+    needs: [build, test]
     steps:
       - name: Compress build folder
         run: zip -r build.zip build
