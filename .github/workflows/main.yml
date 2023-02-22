@@ -4,17 +4,6 @@ on: push
 
 jobs:
 
-  activate:
-    name: Activate Unity license
-    runs-on: self-hosted
-    steps:
-      - name: Activate Unity license
-        uses: game-ci/unity-activate@v2.0.0
-        env:
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-
   checkout:
     name: Checkout
     runs-on: self-hosted
@@ -22,11 +11,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+  activate:
+    name: Activate Unity license
+    runs-on: self-hosted
+    needs: checkout
+    steps:
+      - name: Activate Unity license
+        uses: game-ci/unity-activate@v2.0.0
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
  
   build:
     name: Build Maroon
     runs-on: self-hosted
-    needs: checkout
+    needs: [activate, checkout]
 
     steps:
       - name: Cache
