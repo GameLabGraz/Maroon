@@ -43,10 +43,10 @@ jobs:
         with:
           projectPath: ${{ matrix.projectPath }}
           testMode: ${{ matrix.testMode }}
-          artifactsPath: ${{ matrix.testMode }}-artifacts
+          artifactsPath: ./test/${{ matrix.testMode }}-artifacts
 
       - name: Upload test results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: always()
         with:
           name: Test results for ${{ matrix.testMode }}
@@ -56,16 +56,13 @@ jobs:
     name: Build Maroon
     runs-on: self-hosted
     needs: [checkout, test]
+    # causes build job to run even if test job fails
+    # TODO
+    # discuss what should happen upon failed test
+    if: always() 
     steps:
 
-      # # cache      
-      # - name: Cache
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: ${{ github.workspace }}/unity/Library
-      #     key: Library-${{ hashFiles('${{ github.workspace }}/unity/Assets/**', '${{ github.workspace }}/unity/Packages/**', '${{ github.workspace }}/unity/ProjectSettings/**') }}
-      #     restore-keys: |
-      #       Library-
+      # no longer cache here, as it already happens during testing
   
       # build
       - name: Build
@@ -75,7 +72,6 @@ jobs:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
-          #targetPlatform: StandaloneWindows
           buildMethod: Maroon.Build.BuildPlayer.ActionsBuild
           customParameters: -maroonBuildPath /github/workspace/build
           projectPath: ./unity
