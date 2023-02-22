@@ -11,20 +11,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-  test:
-    name: Test
+ 
+  build:
+    name: Build Maroon
     runs-on: self-hosted
     needs: checkout
-    strategy:
-      fail-fast: false
-      matrix:
-        projectPath:
-          - ./unity
-        testMode:
-          - playmode
-          - editmode
-    steps:
 
+    steps:
       - name: Cache
         uses: actions/cache@v3
         with:
@@ -32,37 +25,6 @@ jobs:
           key: Library-${{ hashFiles('${{ github.workspace }}/unity/Assets/**', '${{ github.workspace }}/unity/Packages/**', '${{ github.workspace }}/unity/ProjectSettings/**') }}
           restore-keys: |
             Library-
-      
-      - name: Test
-        uses: game-ci/unity-test-runner@v2
-        id: tests
-        env:
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        with:
-          projectPath: ${{ matrix.projectPath }}
-          testMode: ${{ matrix.testMode }}
-          artifactsPath: ./test/${{ matrix.testMode }}-artifacts
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: Test results for ${{ matrix.testMode }}
-          path: ${{ steps.tests.outputs.artifactsPath }}
-
-  build:
-    name: Build Maroon
-    runs-on: self-hosted
-    needs: [checkout, test]
-    # causes build job to run even if test job fails
-    # TODO
-    # discuss what should happen upon failed test
-    if: always() 
-    steps:
-
-      # no longer cache here, as it already happens during testing
   
       # build
       - name: Build
@@ -77,10 +39,43 @@ jobs:
           projectPath: ./unity
           buildsPath: /github/workspace/build
     
+
+  test:
+    name: Test
+    runs-on: self-hosted
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        projectPath:
+          - ./unity
+        testMode:
+          - playmode
+          - editmode
+    steps:
+      - name: Test
+        uses: game-ci/unity-test-runner@v2
+        id: tests
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: ${{ matrix.projectPath }}
+          testMode: ${{ matrix.testMode }}
+          artifactsPath: ./test/${{ matrix.testMode }}-artifacts
+
+      # - name: Upload test results
+      #   uses: actions/upload-artifact@v3
+      #   if: always()
+      #   with:
+      #     name: Test results for ${{ matrix.testMode }}
+      #     path: ${{ steps.tests.outputs.artifactsPath }}
+
   upload-artifacts:
     name: Upload artifacts
     runs-on: self-hosted
-    needs: build
+    needs: [build, test]
     steps:
       - name: Compress build folder
         run: zip -r build.zip build
@@ -88,8 +83,10 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: MaroonBuild
-          path: ${{ github.workspace }}/build.zip
+          name: MaroonArtifacts
+          path: |
+            ${{ github.workspace }}/build.zip
+            ${{ github.workspace }}/test
           if-no-files-found: error
     
   cleanup:
