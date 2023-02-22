@@ -282,7 +282,6 @@ namespace Maroon.Build
 
         public static void ActionsBuild()
         {
-            3RROR
             var args = Environment.GetCommandLineArgs();
 
             // array of (working) build targets
