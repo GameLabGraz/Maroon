@@ -70,7 +70,7 @@ jobs:
     # we want to upload artifacts even if the tests fail
     # if both build and test fail, we don't want to upload
     needs: [build, test]
-    if: ${{ jobs.build.result == 'success' || jobs.test.result == 'success' }}
+    if: ${{ needs.build.result == 'success' || needs.test.result == 'success' }}
     steps:
       - name: Compress build folder
         run: zip -r build.zip build
