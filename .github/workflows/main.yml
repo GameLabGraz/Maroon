@@ -64,18 +64,13 @@ jobs:
           testMode: ${{ matrix.testMode }}
           artifactsPath: ./test/${{ matrix.testMode }}-artifacts
 
-      # - name: Upload test results
-      #   uses: actions/upload-artifact@v3
-      #   if: always()
-      #   with:
-      #     name: Test results for ${{ matrix.testMode }}
-      #     path: ${{ steps.tests.outputs.artifactsPath }}
-
   upload-artifacts:
     name: Upload artifacts
     runs-on: self-hosted
     # we want to upload artifacts even if the tests fail
+    # if both build and test fail, we don't want to upload
     needs: [build, test]
+    if jobs.build.result == 'success' || jobs.test.result == 'success'
     steps:
       - name: Compress build folder
         run: zip -r build.zip build
