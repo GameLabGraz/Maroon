@@ -4,6 +4,17 @@ on: push
 
 jobs:
 
+  activate:
+    name: Activate Unity license
+    runs-on: self-hosted
+    steps:
+      - name: Activate Unity license
+        uses: game-ci/unity-activate@v2.0.0
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+
   checkout:
     name: Checkout
     runs-on: self-hosted
@@ -75,7 +86,8 @@ jobs:
   upload-artifacts:
     name: Upload artifacts
     runs-on: self-hosted
-    needs: [build, test]
+    # we want to upload artifacts even if the tests fail
+    needs: build
     steps:
       - name: Compress build folder
         run: zip -r build.zip build
