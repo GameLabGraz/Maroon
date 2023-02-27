@@ -67,9 +67,8 @@ public class IslandSetUp : MonoBehaviour
         Object[] islandPrefabArray = { islandPrefab01, islandPrefab02, islandPrefab03, islandPrefab04 };
 
         int counter = 0;
-        for (; counter < numberOfIslands; counter++)
+        for (; counter < 10; counter++)
         {
-
             if (counter < islandClones.Count)
             {
                 islandClones[counter].SetActive(true);
@@ -85,7 +84,7 @@ public class IslandSetUp : MonoBehaviour
 
                 // set transform after so clones are child of Islands parent
                 var island = Instantiate(islandPrefabArray[islandPrefabPicker], transform) as GameObject;
-                
+
                 Vector3 radius = island.transform.localScale / 1.4f;
                 //Debug.Log("Scale = " + island.transform.localScale + "  island.transform.localScale / 1.4f = " + radius);
                 int tmp = 0;
@@ -94,7 +93,7 @@ public class IslandSetUp : MonoBehaviour
                     islandPosition = setIslandPosition();
                     tmp++;
                     //just force break after too many tries -> maybe there is no free space anymore
-                    if(tmp > 1000000)
+                    if (tmp > 1000000)
                     {
                         if (radius == island.transform.localScale / 1.4f)
                         {
@@ -108,21 +107,23 @@ public class IslandSetUp : MonoBehaviour
                             break;
                         }
                     }
-                    
+
                 }
 
                 island.transform.SetPositionAndRotation(islandPosition, islandRotation);
-                
+
                 islandClones.Add(island);
             }
         }
-
+        counter = numberOfIslands;
+        Debug.Log("createIslands(): counter= " + counter);
         for (; counter < islandClones.Count; counter++)
         {
             // break if already deactivated
             if (!islandClones[counter].activeSelf) break;
             islandClones[counter].SetActive(false);
         }
+
     }
 
     // Update is called once per frame
@@ -148,8 +149,24 @@ public class IslandSetUp : MonoBehaviour
     /// 
     public void changeNumberOfIslands()
     {
-        createIslands();
+        int counter = 0;
+        for (; counter < numberOfIslands; counter++)
+        {
+
+            if (counter < islandClones.Count)
+            {
+                islandClones[counter].SetActive(true);
+            }
+        }
+
+        for (; counter < islandClones.Count; counter++)
+        {
+            // break if already deactivated
+            if (!islandClones[counter].activeSelf) break;
+            islandClones[counter].SetActive(false);
+        }
     }
+
     // static function setNumberOfIslands
     public void setNumberOfIslands(int numberOfIslands)
     {
@@ -164,5 +181,16 @@ public class IslandSetUp : MonoBehaviour
         NumberOfIslands = (int)numberOfIslands;
         //Debug.Log("(with float) changed Number of Islands to: " + NumberOfIslands + " bzw. " + numberOfIslands);
         changeNumberOfIslands();
+    }
+
+
+    void PrimsAlgorithm()
+    {
+        int numVertex = 0;
+        int numEdge = 0;
+
+        Transform islandTranform = islandClones[numVertex].gameObject.transform;
+        Vector3 islandPosition = islandClones[numVertex].gameObject.transform.position;
+
     }
 }
