@@ -7,7 +7,6 @@ public class HidePreviewIslands : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //previewIslandsParent
         foreach ( Transform child in transform )
         {
             //Debug.Log("IslandPreview: " + child.name);
@@ -16,9 +15,4 @@ public class HidePreviewIslands : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

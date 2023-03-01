@@ -14,15 +14,15 @@ public class IslandSetUp : MonoBehaviour
         }
     }
 
-    public Object islandPrefab01;
-    public Object islandPrefab02;
-    public Object islandPrefab03;
-    public Object islandPrefab04;
+    public GameObject islandPrefab01;
+    public GameObject islandPrefab02;
+    public GameObject islandPrefab03;
+    public GameObject islandPrefab04;
+    
+    public Transform topLeftBorder;
+    public Transform bottomRightBorder;
 
-    public Transform topBorder;
-    public Transform bottomBorder;
-    public Transform leftBorder;
-    public Transform rightBorder;
+    static Vector3 radius;
 
     protected List<GameObject> islandClones = new List<GameObject>();
 
@@ -32,15 +32,17 @@ public class IslandSetUp : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // 1.9f for a little extra space
+        radius = islandPrefab01.GetComponent<MeshRenderer>().bounds.size / 1.9f;
         createIslands();
     }
 
     Vector3 setIslandPosition()
     {
-        float xRange = Random.Range(10000 * (leftBorder.position.x + 0.2f), 10000 *
-            (rightBorder.position.x - 0.2f)) / 10000;
-        float zRange = Random.Range(10000 * (bottomBorder.position.z + 0.2f), 10000 *
-            (topBorder.position.z - 0.2f)) / 10000;
+        float xRange = Random.Range(topLeftBorder.position.x + radius.x, 
+                bottomRightBorder.position.x - radius.x);
+        float zRange = Random.Range(bottomRightBorder.position.z + radius.z, 
+                topLeftBorder.position.z - radius.z);
         Vector3 pos = new Vector3(xRange, transform.position.y, zRange);
 
         return pos;
@@ -48,15 +50,7 @@ public class IslandSetUp : MonoBehaviour
 
     bool checkIslandCollision(Vector3 islandPosition, Vector3 radius)
     {
-        // halfExtends means its the radius so normally /2 but i want to extend the Collider region
-        var collide = Physics.OverlapBox(islandPosition, radius); 
-        
-        // Test with these which is better
-        var collider = Physics.OverlapSphere(islandPosition, radius.x);
-        var coll = Physics.CheckSphere(islandPosition, radius.x);
-
-
-        // OverlapBox durch Overlap Sphere ersetzen
+        var collide = Physics.OverlapSphere(islandPosition, radius.x);
 
         for (int i = 0; i < collide.Length; i++)
         {
@@ -72,7 +66,7 @@ public class IslandSetUp : MonoBehaviour
 
     protected void createIslands()
     {
-        Object[] islandPrefabArray = { islandPrefab01, islandPrefab02, islandPrefab03, islandPrefab04 };
+        GameObject[] islandPrefabArray = { islandPrefab01, islandPrefab02, islandPrefab03, islandPrefab04 };
 
         int counter = 0;
         for (; counter < 10; counter++)
@@ -85,16 +79,11 @@ public class IslandSetUp : MonoBehaviour
             {
                 int islandPrefabPicker = counter % 4;
 
-                Vector3 islandPosition = setIslandPosition();
-
                 float angle = Random.Range(0f, 360f);
                 Quaternion islandRotation = Quaternion.Euler(0, angle, 0);
-
-                // set transform after so clones are child of Islands parent
-                var island = Instantiate(islandPrefabArray[islandPrefabPicker], transform) as GameObject;
-
-                Vector3 radius = island.transform.localScale / 1.4f;
-                //Debug.Log("Scale = " + island.transform.localScale + "  island.transform.localScale / 1.4f = " + radius);
+                                
+                Vector3 islandPosition = setIslandPosition();
+                //Debug.Log("radius: "  + radius + "  Size: " + island.GetComponent<MeshRenderer>().bounds.size);
                 int tmp = 0;
                 while (checkIslandCollision(islandPosition, radius))
                 {
@@ -103,21 +92,12 @@ public class IslandSetUp : MonoBehaviour
                     //just force break after too many tries -> maybe there is no free space anymore
                     if (tmp > 1000000)
                     {
-                        if (radius == island.transform.localScale / 1.4f)
-                        {
-                            radius = island.transform.localScale / 1.75f;
-                            tmp = 0;
-                            Debug.Log("createIslands(): No free space -> change radius");
-                        }
-                        else
-                        {
-                            Debug.Log("createIslands(): No free space for new Island!");
-                            break;
-                        }
+                        Debug.Log("createIslands(): No free space for new Island!");
+                        break;
                     }
 
                 }
-
+                var island = Instantiate(islandPrefabArray[islandPrefabPicker], transform) as GameObject;
                 island.transform.SetPositionAndRotation(islandPosition, islandRotation);
 
                 islandClones.Add(island);
