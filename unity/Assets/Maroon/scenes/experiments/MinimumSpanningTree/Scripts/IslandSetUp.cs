@@ -49,7 +49,15 @@ public class IslandSetUp : MonoBehaviour
     bool checkIslandCollision(Vector3 islandPosition, Vector3 radius)
     {
         // halfExtends means its the radius so normally /2 but i want to extend the Collider region
-        var collide = Physics.OverlapBox(islandPosition, radius);
+        var collide = Physics.OverlapBox(islandPosition, radius); 
+        
+        // Test with these which is better
+        var collider = Physics.OverlapSphere(islandPosition, radius.x);
+        var coll = Physics.CheckSphere(islandPosition, radius.x);
+
+
+        // OverlapBox durch Overlap Sphere ersetzen
+
         for (int i = 0; i < collide.Length; i++)
         {
             //Debug.Log("Collision!! Clone0" + islandClones.Count + "  " + collide[i].name);
