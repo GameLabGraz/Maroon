@@ -50,8 +50,12 @@ public class IslandSetUp : MonoBehaviour
 
     bool checkIslandCollision(Vector3 islandPosition, Vector3 radius)
     {
-        var collide = Physics.OverlapSphere(islandPosition, radius.x);
+        // Using Layer
+        //var collider = Physics.CheckSphere(islandPosition, radius.x, LayerMask.GetMask("Island"));
+        //Debug.Log("Collider is " + collider);
 
+        //Check with Tag
+        /*var collide = Physics.OverlapSphere(islandPosition, radius.x);
         for (int i = 0; i < collide.Length; i++)
         {
             //Debug.Log("Collision!! Clone0" + islandClones.Count + "  " + collide[i].name);
@@ -62,6 +66,8 @@ public class IslandSetUp : MonoBehaviour
             }
         }
         return false;
+        */
+        return Physics.CheckSphere(islandPosition, radius.x, LayerMask.GetMask("Island"));
     }
 
     protected void createIslands()
