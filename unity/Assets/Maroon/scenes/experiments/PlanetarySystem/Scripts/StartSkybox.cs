@@ -9,7 +9,8 @@ public class StartSkybox : MonoBehaviour
     public GameObject Experiment;
     public GameObject Environment;
     public GameObject MainCamera;
-    public GameObject TestCamera;
+    public GameObject SolarSystemCamera;
+    public GameObject Planets;
 
     void OnMouseDown()
     {
@@ -20,7 +21,8 @@ public class StartSkybox : MonoBehaviour
         Experiment.SetActive(false);
         Environment.SetActive(false);
         MainCamera.SetActive(false);
-        TestCamera.SetActive(true);
+        SolarSystemCamera.SetActive(true);
+        Planets.SetActive(true);
     }
 
 
@@ -43,7 +45,8 @@ public class StartSkybox : MonoBehaviour
             Experiment.SetActive(false);
             Environment.SetActive(false);
             MainCamera.SetActive(false);
-            TestCamera.SetActive(true);
+            SolarSystemCamera.SetActive(true);
+            Planets.SetActive(true);
         }
         
 
