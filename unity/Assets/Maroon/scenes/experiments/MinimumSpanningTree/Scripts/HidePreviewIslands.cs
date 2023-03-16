@@ -11,6 +11,7 @@ public class HidePreviewIslands : MonoBehaviour
         {
             //Debug.Log("IslandPreview: " + child.name);
             child.gameObject.SetActive(false);
+            //child.gameObject.GetComponent<Renderer>().enabled = false;
 
         }
     }

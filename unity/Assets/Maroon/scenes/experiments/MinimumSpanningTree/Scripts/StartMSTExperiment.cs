@@ -4,42 +4,12 @@ using UnityEngine;
 using System;
 
 
-struct EndPoint
-{
-    public GameObject toIsland;
-    public float distance;
-
-    public EndPoint(GameObject toIsland, float distance)
-    {
-        this.toIsland = toIsland;
-        this.distance = distance;
-    }
-
-}
-
-struct Edge
-{
-    public GameObject fromIsland;
-    public GameObject toIsland;
-    public float distance;
-
-    public Edge(GameObject fromIsland, GameObject toIsland, float distance)
-    {
-        this.fromIsland = fromIsland;
-        this.toIsland = toIsland;
-        this.distance = distance;
-    }
-
-}
 
 public class StartMSTExperiment : MonoBehaviour
 {
     public GameObject bridgeSegment;
     public GameObject islandPrefab;
     public GameObject Bridges;
-    //GameObject start, end;
-    Vector3 startPoint;
-    Vector3 endPoint;
     Vector3 instantiatePosition;
     float lerpValue; //percentage
     float distance;
@@ -49,34 +19,6 @@ public class StartMSTExperiment : MonoBehaviour
     MeshRenderer islandRenderer;
     static float islandHalf;
     GameObject[] islands;
-
-
-
-    void InstantiateSegments(GameObject bridge)
-    {
-        Debug.Log("startPoint:  " + startPoint + " endPoint: " + endPoint + "  bridgeSize: " + size);
-
-        Vector3 newStartPoint = Vector3.MoveTowards(startPoint, endPoint, islandHalf);
-        Vector3 newEndPoint = Vector3.MoveTowards(endPoint, startPoint, islandHalf);
-        Quaternion rot = Quaternion.LookRotation(newEndPoint - newStartPoint);
-
-        segmentsToCreate = Mathf.RoundToInt(Vector3.Distance(newStartPoint, newEndPoint) / size.z);
-        distance = 1f / segmentsToCreate;
-        Debug.Log("segmentsToCreate:  " + segmentsToCreate + " Distance: " + Vector3.Distance(newStartPoint, newEndPoint) + "  betweenSegments: " + distance);
-        for (int i = 0; i < segmentsToCreate; i++)
-        {
-            lerpValue += distance;
-
-            //Debug.Log("lerpValue: " + lerpValue + " distance: " + distance);
-
-            instantiatePosition = Vector3.Lerp(newStartPoint, newEndPoint, lerpValue);
-            instantiatePosition.y = 0.9f;
-
-            Instantiate(bridgeSegment, instantiatePosition, rot, bridge.transform);
-        }
-
-        Debug.Log("segments created!");
-    }
 
 
     // Start is called before the first frame update
@@ -101,19 +43,7 @@ public class StartMSTExperiment : MonoBehaviour
         //endPoint = islands[1].transform.position;
     }
 
-    public void startTestBridge()
-    {
-        islands = GameObject.FindGameObjectsWithTag("Island");
-        //Debug.Log("Find Island Clones:  " + islands.Length);
-        if (islands.Length >= 1)
-        {
-            startPoint = islands[0].transform.position;
-            endPoint = islands[1].transform.position;
-        }
-        GameObject bridge = new GameObject("Bridge " + 1 + "--"+ 2);
-        bridge.transform.parent = Bridges.transform;
-        InstantiateSegments(bridge);
-    }
+
 
     float getDistance(GameObject from, GameObject to)
     {
@@ -134,8 +64,7 @@ public class StartMSTExperiment : MonoBehaviour
         }
         int vertices = islands.Length;
 
-        // Dictionary<Key, value> .....
-        //Dictionary<GameObject, float[]> graph = new Dictionary<GameObject, float[]>();
+
         Dictionary<int, float[]> graph = new Dictionary<int, float[]>();
         
         int[] parent = new int[vertices];
@@ -231,16 +160,20 @@ public class StartMSTExperiment : MonoBehaviour
     void InstantiateBridgeSegments(GameObject bridge, Vector3 startPos, Vector3 endPos)
     {
         Debug.Log("startPos:  " + startPos + " endPos: " + endPos + "  bridgeSize: " + size);
-        lerpValue = 0;
 
         Vector3 newStartPoint = Vector3.MoveTowards(startPos, endPos, islandHalf);
         Vector3 newEndPoint = Vector3.MoveTowards(endPos, startPos, islandHalf);
         Quaternion rot = Quaternion.LookRotation(newEndPoint - newStartPoint);
 
         segmentsToCreate = Mathf.RoundToInt(Vector3.Distance(newStartPoint, newEndPoint) / size.z);
+        float d = Vector3.Distance(newStartPoint, newEndPoint) / size.z;
+        segmentsToCreate = (int)d + 1;
+        Debug.Log("Segments: " + d + " : " + segmentsToCreate);
         distance = 1f / segmentsToCreate;
+
+        lerpValue = 0 - distance;
         Debug.Log("segmentsToCreate:  " + segmentsToCreate + " Distance: " + Vector3.Distance(newStartPoint, newEndPoint) + "  betweenSegments: " + distance);
-        for (int i = 0; i < segmentsToCreate; i++)
+        for (int i = 0; i <= segmentsToCreate; i++)
         {
             lerpValue += distance;
 
@@ -274,124 +207,7 @@ public class StartMSTExperiment : MonoBehaviour
      * 
      * ***********************************************************************/
 
-    public void PrimTest2()
-    {
-        //For MST - graph T (V', E')
-        //Dictionary<GameObject, GameObject> MST = new Dictionary<GameObject, GameObject>();
-        Dictionary<GameObject, Edge> MST = new Dictionary<GameObject, Edge>();
-
-        Dictionary<GameObject, Edge> notInMST = new Dictionary<GameObject, Edge>();
-
-        islands = GameObject.FindGameObjectsWithTag("Island");
-        if (islands.Length <= 0)
-        {
-            //Should not happen
-            Debug.Log("No Islands Found:  " + islands.Length);
-        }
 
 
-        // Dictionary<Key, value> .....
-        Dictionary<GameObject, float[]> edges = new Dictionary<GameObject, float[]>();
-
-
-        // i = from
-        for (int i = 0; i < islands.Length; i++)
-        {
-            float[] distances = new float[islands.Length];
-            // j = to
-            for (int j = 0; j < islands.Length; j++)
-            {
-                distances[j] = getDistance(islands[i], islands[j]);
-            }
-
-            /*
-            foreach (float val in distances)
-            {
-                Debug.Log("i " + i + " distances " + val);
-            }
-            */
-            //Array.Sort(distances);
-            // Exception if key is already used
-            try
-            {
-                // Add all distances from island to disctionary
-                edges.Add(islands[i], distances);
-            }
-            catch (ArgumentException)
-            {
-                //Console.WriteLine("An element with Key " + islands[i] + " already exists.");
-                Debug.Log("An element with Key " + islands[i] + " already exists.");
-            }
-
-        }
-
-        /*foreach( KeyValuePair<GameObject, float[]> kvp in edges)
-        {
-            foreach(float val in kvp.Value)
-            { 
-                Debug.Log("dict edges " + kvp.Key + "  " + val);
-            }
-
-        }*/
-
-
-
-        /*---------------------------------------------------------------------------------------*/
-        //float[] dist = edges[islands[0]];
-        //Vector3 newEdge = //dist[1];
-
-        /*while (MST.Count < islands.Length)
-        {
-            break;
-
-        }*/
-
-
-        Debug.Log("End of PrimTest!");
-    }
-
-
-    void buildBridge2()
-    {
-        Vector3 startingPoint;
-        Vector3 endingPoint;
-        islands = GameObject.FindGameObjectsWithTag("Island");
-        //Debug.Log("Find Island Clones:  " + islands.Length);
-        if (islands.Length >= 1)
-        {
-            startPoint = islands[0].transform.position;
-            endPoint = islands[1].transform.position;
-        }
-        startingPoint = islands[0].transform.position;
-        endingPoint = islands[1].transform.position;
-        GameObject bridge = new GameObject("Bridge " + 1 + "--" + 2);
-        bridge.transform.parent = Bridges.transform;
-        InstantiateSegments(bridge, startingPoint, endingPoint);
-    }
-
-    void InstantiateSegments(GameObject bridge, Vector3 startingPoint, Vector3 endingPoint)
-    {
-        Debug.Log("startPoint:  " + startPoint + " endPoint: " + endPoint + "  bridgeSize: " + size);
-
-        Vector3 newStartPoint = Vector3.MoveTowards(startPoint, endPoint, islandHalf);
-        Vector3 newEndPoint = Vector3.MoveTowards(endPoint, startPoint, islandHalf);
-        Quaternion rot = Quaternion.LookRotation(newEndPoint - newStartPoint);
-
-        segmentsToCreate = Mathf.RoundToInt(Vector3.Distance(newStartPoint, newEndPoint) / size.z);
-        distance = 1f / segmentsToCreate;
-        Debug.Log("segmentsToCreate:  " + segmentsToCreate + " Distance: " + Vector3.Distance(newStartPoint, newEndPoint) + "  betweenSegments: " + distance);
-        for (int i = 0; i < segmentsToCreate; i++)
-        {
-            lerpValue += distance;
-
-            //Debug.Log("lerpValue: " + lerpValue + " distance: " + distance);
-
-            instantiatePosition = Vector3.Lerp(newStartPoint, newEndPoint, lerpValue);
-            instantiatePosition.y = 0.9f;
-
-            Instantiate(bridgeSegment, instantiatePosition, rot, bridge.transform);
-        }
-
-        Debug.Log("segments created!");
-    }
+   
 }

@@ -105,6 +105,7 @@ public class IslandSetUp : MonoBehaviour
                 }
                 var island = Instantiate(islandPrefabArray[islandPrefabPicker], transform) as GameObject;
                 island.transform.SetPositionAndRotation(islandPosition, islandRotation);
+                island.name = ("Island " + counter);
 
                 islandClones.Add(island);
             }
