@@ -14,7 +14,7 @@ public class StartMSTExperiment : MonoBehaviour
     float lerpValue; //percentage
     float distance;
     int segmentsToCreate;
-    static Vector3 size;
+    float size;
     MeshRenderer bridgeRenderer;
     MeshRenderer islandRenderer;
     static float islandHalf;
@@ -25,7 +25,7 @@ public class StartMSTExperiment : MonoBehaviour
     void Start()
     {
         bridgeRenderer = bridgeSegment.GetComponent<MeshRenderer>();
-        size = bridgeRenderer.bounds.size * 1.001f;
+        size = bridgeRenderer.bounds.size.z * 1.011f;
 
         islandRenderer = islandPrefab.GetComponent<MeshRenderer>();
         islandHalf = islandRenderer.bounds.size.x / 3f;
@@ -52,6 +52,11 @@ public class StartMSTExperiment : MonoBehaviour
 
     public void PrimTest()
     {
+        StartCoroutine(PrimsAlgorithm());
+    }
+
+    IEnumerator PrimsAlgorithm()
+    {
         //For MST - graph T (V', E')
         //Dictionary<GameObject, GameObject> MST = new Dictionary<GameObject, GameObject>();
         //Dictionary<GameObject, EndPoint> MST = new Dictionary<GameObject, EndPoint>();
@@ -64,22 +69,30 @@ public class StartMSTExperiment : MonoBehaviour
         }
         int vertices = islands.Length;
 
+        int[] edges = new int[vertices];
+        foreach (int e in edges)
+        {
+            edges[e] = -1;
+        }
+
+        // Dictionary<Key, value> .....
+        //Dictionary<GameObject, float[]> graph = new Dictionary<GameObject, float[]>();
 
         Dictionary<int, float[]> graph = new Dictionary<int, float[]>();
-        
+
         int[] parent = new int[vertices];
         float[] key = new float[vertices];
         bool[] MST = new bool[vertices];
 
         // i = from
-        for(int i = 0; i < vertices; i++)
+        for (int i = 0; i < vertices; i++)
         {
             float[] distances = new float[vertices];
             // j = to
             for (int j = 0; j < vertices; j++)
             {
                 distances[j] = getDistance(islands[i], islands[j]);
-            }   
+            }
             // Exception if key is already used
             try
             {
@@ -109,16 +122,16 @@ public class StartMSTExperiment : MonoBehaviour
 
         key[0] = 0;
         parent[0] = -1;
-        for(int count = 0; count < vertices - 1; count++)
+        for (int count = 0; count < vertices - 1; count++)
         {
             int u;
 
             //---extra function?-------------
             float least = int.MaxValue;
             int min_index = -1;
-            for(int vec = 0; vec < vertices; vec++)
+            for (int vec = 0; vec < vertices; vec++)
             {
-                if(MST[vec] == false && key[vec] < least)
+                if (MST[vec] == false && key[vec] < least)
                 {
                     least = key[vec];
                     min_index = vec;
@@ -133,10 +146,11 @@ public class StartMSTExperiment : MonoBehaviour
             MST[u] = true;
             for (int v = 0; v < vertices; v++)
             {
-                if(graph[u][v] != 0  && MST[v] == false && graph[u][v] < key[v])
+                if (graph[u][v] != 0 && MST[v] == false && graph[u][v] < key[v])
                 {
                     parent[v] = u;
                     key[v] = graph[u][v];
+                    edges[u] = v;
                 }
             }
         }
@@ -150,11 +164,29 @@ public class StartMSTExperiment : MonoBehaviour
             Vector3 endPos = islands[i].transform.position;
             GameObject bridge = new GameObject("Bridge " + parent[i] + "--" + i);
             bridge.transform.parent = Bridges.transform;
+            yield return new WaitForSeconds(1);
             InstantiateBridgeSegments(bridge, startPos, endPos);
+        }
+        for (int i = 0; i < vertices; i++)
+        {
+            //Debug.Log("edge: " + edges[i] + " i: " + i );
+            //Debug.Log("edge: " + edges[i] + " i: " + i + " parent: " + parent[edges[i]]);
+            Debug.Log("start: " + parent[edges[i]] + " end: " + edges[i] + " order: " + i);
+            Debug.Log("Vergleich: parent[i] start " + parent[edges[i]] + " end: " + edges[i]);
+            /*if (edges[i] != -1 && edges[i] != 0)
+            {
+                // von -parent[i]-  zu  -i-  mit  Distanz -graph[i][parent[i]]-
+                Vector3 startPos = islands[parent[edges[i]]].transform.position;
+                Vector3 endPos = islands[edges[i]].transform.position;
+                GameObject bridge = new GameObject("Bridge " + parent[edges[i]] + "--" + edges[i]);
+                bridge.transform.parent = Bridges.transform;
+                InstantiateBridgeSegments(bridge, startPos, endPos);
+            }*/
         }
 
 
         Debug.Log("End of PrimTest!");
+        yield break;
     }
 
     void InstantiateBridgeSegments(GameObject bridge, Vector3 startPos, Vector3 endPos)
@@ -165,14 +197,15 @@ public class StartMSTExperiment : MonoBehaviour
         Vector3 newEndPoint = Vector3.MoveTowards(endPos, startPos, islandHalf);
         Quaternion rot = Quaternion.LookRotation(newEndPoint - newStartPoint);
 
-        segmentsToCreate = Mathf.RoundToInt(Vector3.Distance(newStartPoint, newEndPoint) / size.z);
-        float d = Vector3.Distance(newStartPoint, newEndPoint) / size.z;
-        segmentsToCreate = (int)d + 1;
-        Debug.Log("Segments: " + d + " : " + segmentsToCreate);
-        distance = 1f / segmentsToCreate;
+        //segmentsToCreate = Mathf.RoundToInt(Vector3.Distance(newStartPoint, newEndPoint) / size);
+        float d = Vector3.Distance(newStartPoint, newEndPoint) / size;
+        segmentsToCreate = (int)d;
+        //Debug.Log("Segments: " + d + " : " + segmentsToCreate);
+        distance = 1f / d;
 
         lerpValue = 0 - distance;
-        Debug.Log("segmentsToCreate:  " + segmentsToCreate + " Distance: " + Vector3.Distance(newStartPoint, newEndPoint) + "  betweenSegments: " + distance);
+        //Debug.Log("segmentsToCreate:  " + segmentsToCreate + " Distance: " + Vector3.Distance(newStartPoint, newEndPoint) + "  betweenSegments: " + distance);
+        Debug.Log("segmentsToCreate:  " + segmentsToCreate);
         for (int i = 0; i <= segmentsToCreate; i++)
         {
             lerpValue += distance;
