@@ -64,32 +64,6 @@ jobs:
           testMode: ${{ matrix.testMode }}
           artifactsPath: ./test/${{ matrix.testMode }}-artifacts
   
-  
-  deploy: 
-    name: Deploy to Steam
-    runs-on: self-hosted
-    needs: [build, test]
-    # for now, also proceed, even if tests fail
-    if: ${{ success() || (needs.build.result == 'success' || needs.test.result == 'success') }}
-    steps:
-      - name: Upload to Steam
-        uses: game-ci/steam-deploy@v2
-        with:
-          username: ${{ secrets.STEAM_USERNAME }}
-          password: ${{ secrets.STEAM_PASSWORD }}
-          configVdf: ${{ secrets.STEAM_CONFIG_VDF}}
-          ssfnFileName: ${{ secrets.STEAM_SSFN_FILE_NAME }}
-          ssfnFileContents: ${{ secrets.STEAM_SSFN_FILE_CONTENTS }}
-          appId: ${{ secrets.STEAM_APP_ID }}
-          buildDescription: CI/CD build
-          rootPath: build/Laboratory
-          
-          # depot 1 -> PC
-          depot1Path: PC
-          # depot 2 -> VR
-          depot2Path: VR
-          
-          releaseBranch: development
 
   upload-artifacts:
     name: Upload artifacts
@@ -110,7 +84,32 @@ jobs:
             ${{ github.workspace }}/build.zip
             ${{ github.workspace }}/test
           if-no-files-found: error
-    
+
+
+  
+  deploy: 
+    name: Deploy to Steam
+    runs-on: self-hosted
+    needs: [build, test, upload-artifacts]
+    # for now, also proceed, even if tests fail
+    if: ${{ success() || (needs.build.result == 'success' || needs.test.result == 'success') }}
+    steps:
+      - name: Upload to Steam
+        uses: game-ci/steam-deploy@v2
+        with:
+          username: ${{ secrets.STEAM_USERNAME }}
+          password: ${{ secrets.STEAM_PASSWORD }}
+          configVdf: ${{ secrets.STEAM_CONFIG_VDF}}
+          ssfnFileName: ${{ secrets.STEAM_SSFN_FILE_NAME }}
+          ssfnFileContents: ${{ secrets.STEAM_SSFN_FILE_CONTENTS }}
+          appId: ${{ secrets.STEAM_APP_ID }}
+          buildDescription: CI/CD {{github.sha}}
+          rootPath: build
+          depot1Path: Laboratory
+          releaseBranch: development
+
+
+
   cleanup:
     name: Cleanup
     runs-on: self-hosted
