@@ -9,7 +9,9 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: dummy
-        run: date > dummy.txt
+        run: |
+          mkdir dummy
+          date > dummy/dummy.txt
           
       
       - name: deploy
@@ -22,7 +24,7 @@ jobs:
           ssfnFileContents: ${{ secrets.STEAM_SSFN_FILE_CONTENTS }}
           appId: ${{ secrets.STEAM_APP_ID }}
           buildDescription: testing steam deploy
-          rootPath: .
+          rootPath: dummy
           depot2Path: .
           releaseBranch: development
    
