@@ -9,7 +9,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: dummy
-        run: echo "${{github.sha}}" > dummy.txt
+        run: date > dummy.txt
           
       
       - name: deploy
@@ -21,7 +21,7 @@ jobs:
           ssfnFileName: ${{ secrets.STEAM_SSFN_FILE_NAME }}
           ssfnFileContents: ${{ secrets.STEAM_SSFN_FILE_CONTENTS }}
           appId: ${{ secrets.STEAM_APP_ID }}
-          buildDescription: testing steam deploy ${{github.sha}}
+          buildDescription: testing steam deploy
           rootPath: .
           depot2Path: dummy.txt
           releaseBranch: development
