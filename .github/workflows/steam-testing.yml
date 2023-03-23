@@ -9,8 +9,8 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: dummy
-          run: |
-            echo "${{github.sha}} > dummy.txt
+        run: echo "${{github.sha}} > dummy.txt
+          
       
       - name: deploy
         uses: game-ci/steam-deploy@v2
@@ -25,7 +25,7 @@ jobs:
           rootPath: .
           depot2Path: dummy.txt
           releaseBranch: development
-          
+   
 
   cleanup:
     name: Cleanup
