@@ -6,11 +6,17 @@
 RWTexture2D<float4> Nstate;
 RWTexture2D<float4> Prevstate;
 RWTexture2D<float4> Nextstate;
+RWTexture2D<float4> TestState;
+RWTexture2D<float4> RightState;
 int2 dimensions;
 float Resolution;
 float3 Clicked;
 float phase;
+float phase2;
 bool Top;
+bool Bottom;
+bool Left;
+bool Right;
 [numthreads(8, 8, 1)]
 void CSMain(uint3 id : SV_DispatchThreadID)
 {
@@ -38,7 +44,69 @@ void CSMain(uint3 id : SV_DispatchThreadID)
     {
         newWaveHeight = Clicked.z;
     }
+    if (Right)
+    {
+        if (id.x < 10)
+        {
+
+            if (newWaveHeight <= 0)
+            {
+                newWaveHeight = newWaveHeight * (0);// or 0 muss see
+            }
+        }
+    }
+    if (Bottom)
+    {
+        if (id.y > 70)
+        {
+
+            if (newWaveHeight <= 0)
+            {
+                newWaveHeight = newWaveHeight * (0);
+            }
+        }
+    }
+    if (Top)
+    {
+        if (id.y < 10)
+        {
+
+            if (newWaveHeight <= 0)
+            {
+                newWaveHeight = newWaveHeight * (0);
+            }
+        }
+    }
+    if (Left)
+    {
+        if (id.x > 70)
+        {
+
+            if (newWaveHeight <= 0)
+            {
+                newWaveHeight = newWaveHeight * (0);
+            }
+        }
+    }
+    if (newWaveHeight <= 0)
+    {
+        newWaveHeight = newWaveHeight * (0);
+    }
     Nextstate[id.xy] = float4(newWaveHeight, newWaveHeight, newWaveHeight, 1);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }

@@ -189,6 +189,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   compute: {fileID: 7200000, guid: 9925a5aef23b50b4080e25ea15789a60, type: 3}
   Top: {fileID: 409981326}
+  Bottom: {fileID: 699743245}
+  Left: {fileID: 1650800399}
+  Right: {fileID: 1976648521}
 --- !u!65 &220373972
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -290,7 +293,7 @@ MonoBehaviour:
   Nextstate: {fileID: 0}
   resolution: {x: 0, y: 0}
   planeMesh: {fileID: 0}
-  phase: 0.99
+  phase: 0.9999
   script: {fileID: 0}
 --- !u!114 &269359214 stripped
 MonoBehaviour:
@@ -1422,13 +1425,13 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
+      - m_Target: {fileID: 220373971}
+        m_TargetAssemblyTypeName: WallControler, Assembly-CSharp
+        m_MethodName: setBottom
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -3284,7 +3287,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1650800400}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 220373971}
+        m_TargetAssemblyTypeName: WallControler, Assembly-CSharp
+        m_MethodName: setLeft
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1650800400
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4370,7 +4385,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1976648522}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 220373971}
+        m_TargetAssemblyTypeName: WallControler, Assembly-CSharp
+        m_MethodName: setRight
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1976648522
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4973,7 +5000,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 10, y: 0}
-  m_SizeDelta: {x: 663.1686, y: 0}
+  m_SizeDelta: {x: 744.0431, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &2029724101
 MonoBehaviour:
@@ -5161,6 +5188,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3278572994891445752, guid: 17a8edfe802a9ab4caccb7dc9014a7ef,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.00001335144
       objectReference: {fileID: 0}
     - target: {fileID: 4000219186957279639, guid: 17a8edfe802a9ab4caccb7dc9014a7ef,
         type: 3}
