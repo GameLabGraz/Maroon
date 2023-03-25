@@ -2,7 +2,7 @@ using System.Linq;
 using UnityEngine;
 
 namespace Maroon.NetworkSimulator {
-    public class NetworkDevice : MonoBehaviour {
+    public abstract class NetworkDevice : MonoBehaviour {
         [SerializeField]
         private BoxCollider networkAreaCollider;
         [SerializeField]
@@ -14,10 +14,17 @@ namespace Maroon.NetworkSimulator {
         private Vector3 kitPosition;
         private Vector3 dragStartPosition;
         private Vector3 clickStartPosition;
+        private AddCableScript addCableScript;
+
+        public int NumberOfPorts { get => Ports.Length; }
+        public bool HasFreePort { get => Ports.Any(p => p.IsFree); }
+        [SerializeField]
+        private Port[] Ports;
 
         void Start() {
             plane = new Plane(Vector3.up, transform.position);
             kitPosition = transform.position;
+            addCableScript = FindObjectOfType<AddCableScript>();
         }
 
         private void OnMouseDown() {
@@ -29,6 +36,9 @@ namespace Maroon.NetworkSimulator {
         }
 
         void OnMouseDrag() {
+            if(addCableScript.IsAddingCable) {
+                return;
+            }
             var newMousePosition = Input.mousePosition;
             if((clickStartPosition - newMousePosition).sqrMagnitude < clickVsDragThreshold) {
                 return;
@@ -66,12 +76,23 @@ namespace Maroon.NetworkSimulator {
             else {
                 var newMousePosition = Input.mousePosition;
                 if((clickStartPosition - newMousePosition).sqrMagnitude < clickVsDragThreshold) {
-                    UIController.ShowDeviceOptions();
+                    ClickedDevice();
                     return;
                 }
                 if(!isInNetworkArea) {
                     transform.position = dragStartPosition;
                 }
+            }
+        }
+
+        private void ClickedDevice() {
+            if(addCableScript.IsAddingCable) {
+                if(HasFreePort) {
+                    addCableScript.ClickedDevice(this);
+                }
+            }
+            else {
+                UIController.ShowDeviceOptions();
             }
         }
     }

@@ -8,7 +8,7 @@ namespace Maroon.NetworkSimulator {
         private GameObject deviceOptionsPanel;
 
         public static UIController Instance { get; private set; }
-        // Start is called before the first frame update
+        
         void Start() {
             if(Instance == null) {
                 Instance = this;
@@ -20,7 +20,6 @@ namespace Maroon.NetworkSimulator {
             HideDeviceOptions();
         }
 
-        // Update is called once per frame
         void Update() {
 
         }
