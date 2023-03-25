@@ -20,6 +20,11 @@ namespace Maroon.NetworkSimulator {
         public bool HasFreePort { get => Ports.Any(p => p.IsFree); }
         [SerializeField]
         private Port[] Ports;
+        public Port ConnectCableToFreePort(Cable cable) {
+            var port = Ports.Where(p => p.IsFree).First();
+            port.Cable = cable;
+            return port;
+        }
 
         void Start() {
             plane = new Plane(Vector3.up, transform.position);
@@ -59,6 +64,7 @@ namespace Maroon.NetworkSimulator {
                     transform.position = closestNetworkPoint;
                 }
             }
+            UpdateCables();
         }
 
         private void OnMouseUp() {
@@ -83,6 +89,7 @@ namespace Maroon.NetworkSimulator {
                     transform.position = dragStartPosition;
                 }
             }
+            UpdateCables();
         }
 
         private void ClickedDevice() {
@@ -93,6 +100,11 @@ namespace Maroon.NetworkSimulator {
             }
             else {
                 UIController.ShowDeviceOptions();
+            }
+        }
+        private void UpdateCables() {
+            foreach(var port in Ports.Where(p => !p.IsFree)) {
+                port.Cable.UpdateCurve();
             }
         }
     }

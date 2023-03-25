@@ -4,7 +4,10 @@ using UnityEngine;
 
 namespace Maroon.NetworkSimulator {
     public class AddCableScript : MonoBehaviour {
-
+        [SerializeField]
+        private Cable cablePrefab;
+        [SerializeField]
+        private Transform cableParent;
         [SerializeField]
         private Material activeMaterial;
         private Material defaultMaterial;
@@ -43,7 +46,10 @@ namespace Maroon.NetworkSimulator {
             }
             if(secondNetworkDevice == null) {
                 secondNetworkDevice = device;
-                Debug.Log("Connect Devices");
+                var cable = Instantiate(cablePrefab, cableParent);
+                var port1 = firstNetworkDevice.ConnectCableToFreePort(cable);
+                var port2 = secondNetworkDevice.ConnectCableToFreePort(cable);
+                cable.Initalize(port1, port2);
                 ResetState();
             }
         }
