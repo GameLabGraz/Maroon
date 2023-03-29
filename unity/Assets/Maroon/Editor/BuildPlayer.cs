@@ -292,13 +292,16 @@ namespace Maroon.Build
                 MaroonBuildTarget.WebGL
             };
             
-            // usage: -maroonBuildPath </path/to/build/dir>
+            // usage: -maroonBuildPath </path/to/build/dir> -maroonBuildTarget (WebGL/PC/VR)
             var maroonBuildPath = args[Array.IndexOf(args, "-maroonBuildPath") + 1];
-
+            var maroonBuildTarget = (MaroonBuildTarget)Enum.Parse(typeof(MaroonBuildTarget), args[Array.IndexOf(args, "-maroonBuildTarget") + 1]);
+            /*
             foreach (var target in targets)
             {
                 BuildConventionalMaroon(target, maroonBuildPath);
             }
+            */
+            BuildConventionalMaroon(maroonBuildTarget, maroonBuildPath)
         }
 
         // #############################################################################################################

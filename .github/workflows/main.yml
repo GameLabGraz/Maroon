@@ -10,22 +10,63 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
  
-  build:
-    name: Build Maroon
-    runs-on: self-hosted
-    needs: checkout
+  # build:
+  #   name: Build Maroon
+  #   runs-on: self-hosted
+  #   needs: checkout
 
+    # steps:
+    #   - name: Cache
+    #     uses: actions/cache@v3
+    #     with:
+    #       path: ${{ github.workspace }}/unity/Library
+    #       key: Library-${{ hashFiles('${{ github.workspace }}/unity/Assets/**', '${{ github.workspace }}/unity/Packages/**', '${{ github.workspace }}/unity/ProjectSettings/**') }}
+    #       restore-keys: |
+    #         Library-
+  
+    #   # build
+    #   - name: Build
+    #     uses: game-ci/unity-builder@v2
+    #     env:
+    #       UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+    #       UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+    #       UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+    #     with:
+    #       buildMethod: Maroon.Build.BuildPlayer.ActionsBuild
+    #       customParameters: -maroonBuildPath /github/workspace/build
+    #       projectPath: ./unity
+    #       buildsPath: /github/workspace/build
+      
+  
+  build:
+    name: Build for ${{ matrix.targetPlatform }}
+    needs: checkout
+    runs-on: self-hosted
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - targetPlatform: StandaloneWindows64
+            customParameters: -maroonBuildPath /github/workspace/build -maroonBuildTarget PC
+
+          - targetPlatform: StandaloneWindows64
+            customParameters: -maroonBuildPath /github/workspace/build -maroonBuildTarget VR
+
+          - targetPlatform: WebGL
+            customParameters: -maroonBuildPath /github/workspace/build -maroonBuildTarget WebGL
+      
     steps:
       - name: Cache
         uses: actions/cache@v3
-        with:
+          with:
           path: ${{ github.workspace }}/unity/Library
           key: Library-${{ hashFiles('${{ github.workspace }}/unity/Assets/**', '${{ github.workspace }}/unity/Packages/**', '${{ github.workspace }}/unity/ProjectSettings/**') }}
           restore-keys: |
             Library-
-  
-      # build
+      
       - name: Build
         uses: game-ci/unity-builder@v2
         env:
@@ -34,7 +75,8 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           buildMethod: Maroon.Build.BuildPlayer.ActionsBuild
-          customParameters: -maroonBuildPath /github/workspace/build
+          customParameters: ${{ matrix.customParameters }}
+          targetPlatform: ${{ matrix.targetPlatform }}
           projectPath: ./unity
           buildsPath: /github/workspace/build
     
