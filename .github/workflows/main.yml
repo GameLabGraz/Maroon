@@ -185,7 +185,7 @@ jobs:
   cleanup:
     name: Cleanup
     runs-on: self-hosted
-    needs: [upload-artifacts]
+    needs: [test, build]
     if: ${{ always() }}
     steps:
       - name: Cleanup
