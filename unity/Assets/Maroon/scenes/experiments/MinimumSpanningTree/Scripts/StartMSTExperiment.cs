@@ -11,7 +11,7 @@ public class StartMSTExperiment : MonoBehaviour
     public GameObject islandPrefab;
     public GameObject Bridges;
     Vector3 instantiatePosition;
-    float lerpValue; //percentage
+    float lerpValue; //percentage 0 - 100%
     float distance;
     int segmentsToCreate;
     float size;
@@ -44,152 +44,25 @@ public class StartMSTExperiment : MonoBehaviour
     }
 
 
-
+    /**
+     * Calculate distance between GameObjects
+     * */
     float getDistance(GameObject from, GameObject to)
     {
         return Vector3.Distance(from.transform.position, to.transform.position);
     }
 
+    /**
+     * Start PrimTest - from Button
+     * */
     public void PrimTest()
     {
-        //StartCoroutine(PrimsAlgorithm());
-        StartCoroutine(PrimsAlgorithm2());
+        StartCoroutine(PrimsAlgorithm());
     }
 
-    IEnumerator PrimsAlgorithm()
-    {
-        //For MST - graph T (V', E')
-        //Dictionary<GameObject, GameObject> MST = new Dictionary<GameObject, GameObject>();
-        //Dictionary<GameObject, EndPoint> MST = new Dictionary<GameObject, EndPoint>();
-
-        islands = GameObject.FindGameObjectsWithTag("Island");
-        if (islands.Length <= 0)
-        {
-            //Should not happen
-            Debug.Log("No Islands Found:  " + islands.Length);
-        }
-        int vertices = islands.Length;
-
-        int[] edges = new int[vertices];
-        foreach (int e in edges)
-        {
-            edges[e] = -1;
-        }
-
-        // Dictionary<Key, value> .....
-        //Dictionary<GameObject, float[]> graph = new Dictionary<GameObject, float[]>();
-
-        Dictionary<int, float[]> graph = new Dictionary<int, float[]>();
-
-        int[] parent = new int[vertices];
-        float[] key = new float[vertices];
-        bool[] MST = new bool[vertices];
-
-        // i = from
-        for (int i = 0; i < vertices; i++)
-        {
-            float[] distances = new float[vertices];
-            // j = to
-            for (int j = 0; j < vertices; j++)
-            {
-                distances[j] = getDistance(islands[i], islands[j]);
-            }
-            // Exception if key is already used
-            try
-            {
-                // Add all distances from island to disctionary
-                //graph.Add(islands[i], distances);
-                graph.Add(i, distances);
-                //Debug.Log("graph:  " + graph[i].Length);
-            }
-            catch (ArgumentException)
-            {
-                //Console.WriteLine("An element with Key " + islands[i] + " already exists.");
-                Debug.Log("An element with Key " + islands[i] + " already exists.");
-            }
-            key[i] = float.MaxValue;
-            MST[i] = false;
-
-        }
-
-        /*foreach( KeyValuePair<GameObject, float[]> kvp in edges)
-        {
-            foreach(float val in kvp.Value)
-            { 
-                Debug.Log("dict edges " + kvp.Key + "  " + val);
-            }
-
-        }*/
-
-        key[0] = 0;
-        parent[0] = -1;
-        for (int count = 0; count < vertices - 1; count++)
-        {
-            int u;
-
-            //---extra function?-------------
-            float least = int.MaxValue;
-            int min_index = -1;
-            for (int vec = 0; vec < vertices; vec++)
-            {
-                if (MST[vec] == false && key[vec] < least)
-                {
-                    least = key[vec];
-                    min_index = vec;
-                }
-            }
-            u = min_index;
-
-            Debug.Log("After Finding Least ");
-
-
-            //-------------------------------
-            MST[u] = true;
-            for (int v = 0; v < vertices; v++)
-            {
-                if (graph[u][v] != 0 && MST[v] == false && graph[u][v] < key[v])
-                {
-                    parent[v] = u;
-                    key[v] = graph[u][v];
-                    edges[u] = v;
-                }
-            }
-        }
-        Debug.Log("Now building the bridges ");
-
-        /*---------------------------------------------------------------------------------------*/
-        for (int i = 1; i < vertices; i++)
-        {
-            // von -parent[i]-  zu  -i-  mit  Distanz -graph[i][parent[i]]-
-            Vector3 startPos = islands[parent[i]].transform.position;
-            Vector3 endPos = islands[i].transform.position;
-            GameObject bridge = new GameObject("Bridge " + parent[i] + "--" + i);
-            bridge.transform.parent = Bridges.transform;
-            yield return new WaitForSeconds(1);
-            InstantiateBridgeSegments(bridge, startPos, endPos);
-        }
-        for (int i = 0; i < vertices; i++)
-        {
-            //Debug.Log("edge: " + edges[i] + " i: " + i );
-            //Debug.Log("edge: " + edges[i] + " i: " + i + " parent: " + parent[edges[i]]);
-            Debug.Log("start: " + parent[edges[i]] + " end: " + edges[i] + " order: " + i);
-            Debug.Log("Vergleich: parent[i] start " + parent[edges[i]] + " end: " + edges[i]);
-            /*if (edges[i] != -1 && edges[i] != 0)
-            {
-                // von -parent[i]-  zu  -i-  mit  Distanz -graph[i][parent[i]]-
-                Vector3 startPos = islands[parent[edges[i]]].transform.position;
-                Vector3 endPos = islands[edges[i]].transform.position;
-                GameObject bridge = new GameObject("Bridge " + parent[edges[i]] + "--" + edges[i]);
-                bridge.transform.parent = Bridges.transform;
-                InstantiateBridgeSegments(bridge, startPos, endPos);
-            }*/
-        }
-
-
-        Debug.Log("End of PrimTest!");
-        yield break;
-    }
-
+    /**
+     * Instantiate Bridgesegments to Build a Bridge
+     * */
     void InstantiateBridgeSegments(GameObject bridge, Vector3 startPos, Vector3 endPos)
     {
         //Debug.Log("startPos:  " + startPos + " endPos: " + endPos + "  bridgeSize: " + size);
@@ -222,24 +95,9 @@ public class StartMSTExperiment : MonoBehaviour
         Debug.Log("segments created!");
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**************************************************************************
-     * 
-     * 
-     * 
-     * ***********************************************************************/
+    /**
+     * find vertex (Island) which is NOT in MST that has the least key (distance/edge)
+     * */
     int FindMinEdge(float[] key, bool[] isInMST, int vertices)
     {
         float least = float.MaxValue;
@@ -256,7 +114,10 @@ public class StartMSTExperiment : MonoBehaviour
         return min_index;
     }
 
-    IEnumerator PrimsAlgorithm2()
+    /*
+     * Using Prims Algorithm for creating the MST and building the Bridges
+     * */
+    IEnumerator PrimsAlgorithm()
     {
         islands = GameObject.FindGameObjectsWithTag("Island");
         if (islands.Length <= 0)
@@ -308,29 +169,16 @@ public class StartMSTExperiment : MonoBehaviour
 
         }
 
-        /*foreach( KeyValuePair<GameObject, float[]> kvp in edges)
-        {
-            foreach(float val in kvp.Value)
-            { 
-                Debug.Log("dict edges " + kvp.Key + "  " + val);
-            }
-
-        }*/
-
         // Set start vertex
         key[0] = 0;
         // Set to -1 because it's the root of the MST
         parent[0] = -1;
         for (int count = 0; count < vertices - 1; count++)
         {
-            int u;
-
-            u = FindMinEdge(key, isInMST, vertices);
-
-            //Debug.Log("After Finding Least ");
-
-
-            //-------------------------------
+            // find vertex with lowest key that is NOT in MST
+            int u = FindMinEdge(key, isInMST, vertices);
+            
+            // add vertex to MST
             isInMST[u] = true;
             
             edges[count] = u;
@@ -345,6 +193,7 @@ public class StartMSTExperiment : MonoBehaviour
             }
 
         }
+
         for(int v = 0; v < vertices; v++)
         {
             if(isInMST[v] == false)
@@ -356,7 +205,9 @@ public class StartMSTExperiment : MonoBehaviour
 
         Debug.Log("Now building the bridges ");
 
-        /*---------------------------------------------------------------------------------------*/
+        /* --------------------------------------------------------------------------------------
+         * Building Bridges without order (just per island 1-9)
+         * ----------------------------------------------------------------------------------- */
         /*for (int i = 1; i < vertices; i++)
         {
             // von -parent[i]-  zu  -i-  mit  Distanz -graph[i][parent[i]]-
@@ -367,6 +218,7 @@ public class StartMSTExperiment : MonoBehaviour
             yield return new WaitForSeconds(1);
             InstantiateBridgeSegments(bridge, startPos, endPos);
         }*/
+
         for (int i = 1; i < vertices; i++)
         {
             //Debug.Log("edge: " + edges[i] + " i: " + i );
@@ -386,7 +238,7 @@ public class StartMSTExperiment : MonoBehaviour
         }
 
 
-        Debug.Log("End of PrimTest2!");
+        Debug.Log("End of Prims Algorithm!");
         yield break;
     }
 
