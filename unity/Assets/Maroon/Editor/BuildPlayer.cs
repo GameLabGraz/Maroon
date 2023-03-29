@@ -288,7 +288,8 @@ namespace Maroon.Build
             // TODO: add WebGL, once it is fixed
             MaroonBuildTarget[] targets = {
                 MaroonBuildTarget.PC,
-                MaroonBuildTarget.VR
+                MaroonBuildTarget.VR,
+                MaroonBuildTarget.WebGL
             };
             
             // usage: -maroonBuildPath </path/to/build/dir>

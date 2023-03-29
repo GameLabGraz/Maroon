@@ -38,7 +38,8 @@ jobs:
           projectPath: ./unity
           buildsPath: /github/workspace/build
     
-
+  # TODO
+  # fix failing tests (playmode)
   test:
     name: Test
     runs-on: self-hosted
@@ -86,34 +87,41 @@ jobs:
           if-no-files-found: error
 
 
-  
-  deploy: 
-    name: Deploy to Steam
-    runs-on: self-hosted
-    needs: [build, test, upload-artifacts]
-    # for now, also proceed, even if tests fail
-    if: ${{ success() || (needs.build.result == 'success' || needs.test.result == 'success') }}
-    steps:
-      - name: Upload to Steam
-        uses: game-ci/steam-deploy@v2
-        with:
-          username: ${{ secrets.STEAM_USERNAME }}
-          password: ${{ secrets.STEAM_PASSWORD }}
-          configVdf: ${{ secrets.STEAM_CONFIG_VDF}}
-          ssfnFileName: ${{ secrets.STEAM_SSFN_FILE_NAME }}
-          ssfnFileContents: ${{ secrets.STEAM_SSFN_FILE_CONTENTS }}
-          appId: ${{ secrets.STEAM_APP_ID }}
-          buildDescription: CI/CD {{github.sha}}
-          rootPath: build
-          depot1Path: .
-          releaseBranch: development
+  # TODO
+  # make sure we don't upload WebGL build to steam
+  # wait for https://github.com/game-ci/steam-deploy/issues/56 to be fixed, so steam does not lock us out after one pipeline run
+
+  # deploy: 
+  #   name: Deploy to Steam
+  #   runs-on: self-hosted
+  #   needs: [build, test, upload-artifacts]
+  #   # for now, also proceed, even if tests fail
+  #   if: ${{ success() || (needs.build.result == 'success' || needs.test.result == 'success') }}
+  #   steps:
+  #     - name: Upload to Steam
+  #       uses: game-ci/steam-deploy@v2
+  #       with:
+  #         username: ${{ secrets.STEAM_USERNAME }}
+  #         password: ${{ secrets.STEAM_PASSWORD }}
+  #         configVdf: ${{ secrets.STEAM_CONFIG_VDF}}
+  #         ssfnFileName: ${{ secrets.STEAM_SSFN_FILE_NAME }}
+  #         ssfnFileContents: ${{ secrets.STEAM_SSFN_FILE_CONTENTS }}
+  #         appId: ${{ secrets.STEAM_APP_ID }}
+  #         buildDescription: CI/CD {{github.sha}}
+  #         rootPath: build
+  #         depot1Path: .
+  #         releaseBranch: development
 
 
-
+  # this is needed because in some instances, there might be some leftover files
+  # in the working directory, that have funky (=root) permissions
+  # this is not a problem on ephemeral runners, but on self-hosted ones it is
+  # thus, we make sure that the working dir is clean before our next pipeline run
+  # this step ALWAYS runs
   cleanup:
     name: Cleanup
     runs-on: self-hosted
-    needs: [upload-artifacts, deploy]
+    needs: [upload-artifacts]
     if: ${{ always() }}
     steps:
       - name: Cleanup
