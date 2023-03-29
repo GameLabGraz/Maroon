@@ -60,13 +60,8 @@ jobs:
           - targetPlatform: WebGL
             maroonBuildTarget: WebGL
             #customParameters: -maroonBuildPath /github/workspace/build -maroonBuildTarget WebGL
-      
-    # steps:
-    #   - name: Checkout
-    #     uses: actions/checkout@v2
-    #     with:
-    #       fetch-depth: 0
-
+            
+    steps:
       - name: Cache
         uses: actions/cache@v3
         with:
