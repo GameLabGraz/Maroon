@@ -60,7 +60,7 @@ jobs:
           - targetPlatform: WebGL
             maroonBuildTarget: WebGL
             #customParameters: -maroonBuildPath /github/workspace/build -maroonBuildTarget WebGL
-            
+
     steps:
       - name: Cache
         uses: actions/cache@v3
@@ -78,7 +78,6 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           buildMethod: Maroon.Build.BuildPlayer.ActionsBuild
-          customParameters: ${{ matrix.customParameters }}
           targetPlatform: ${{ matrix.targetPlatform }}
           projectPath: ./unity
           buildsPath: /github/workspace/build
