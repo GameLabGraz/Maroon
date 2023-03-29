@@ -4,14 +4,14 @@ on: [push, workflow_dispatch]
 
 jobs:
 
-  # checkout:
-  #  name: Checkout
-    # runs-on: self-hosted
-    # steps:
-    #   - name: Checkout
-    #     uses: actions/checkout@v3
-    #     with:
-    #       fetch-depth: 0
+  checkout:
+    name: Checkout
+      runs-on: self-hosted
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+          with:
+            fetch-depth: 0
  
   # build:
   #   name: Build Maroon
@@ -49,19 +49,22 @@ jobs:
       matrix:
         include:
           - targetPlatform: StandaloneWindows64
-            customParameters: -maroonBuildPath /github/workspace/build -maroonBuildTarget PC
+            maroonBuildTarget: PC
+            #customParameters: -maroonBuildPath /github/workspace/build -maroonBuildTarget PC
 
           - targetPlatform: StandaloneWindows64
-            customParameters: -maroonBuildPath /github/workspace/build -maroonBuildTarget VR
+            maroonBuildTarget: VR
+            #customParameters: -maroonBuildPath /github/workspace/build -maroonBuildTarget VR
 
           - targetPlatform: WebGL
-            customParameters: -maroonBuildPath /github/workspace/build -maroonBuildTarget WebGL
+            maroonBuildTarget: WebGL
+            #customParameters: -maroonBuildPath /github/workspace/build -maroonBuildTarget WebGL
       
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+    # steps:
+    #   - name: Checkout
+    #     uses: actions/checkout@v2
+    #     with:
+    #       fetch-depth: 0
 
       - name: Cache
         uses: actions/cache@v3
@@ -83,7 +86,10 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
           projectPath: ./unity
           buildsPath: /github/workspace/build
-          chownFilesTo: flex:flex
+          customParameters: -maroonBuildPath /github/workspace/build/${{ matrix.maroonBuildTarget }} -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
+          allowDirtyBuild: true
+      
+    
     
   # TODO
   # fix failing tests (playmode)
