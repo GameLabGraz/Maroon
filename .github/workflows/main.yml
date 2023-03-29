@@ -61,11 +61,11 @@ jobs:
     steps:
       - name: Cache
         uses: actions/cache@v3
-          with:
-            path: ${{ github.workspace }}/unity/Library
-            key: Library-${{ hashFiles('${{ github.workspace }}/unity/Assets/**', '${{ github.workspace }}/unity/Packages/**', '${{ github.workspace }}/unity/ProjectSettings/**') }}
-            restore-keys: |
-              Library-
+        with:
+          path: ${{ github.workspace }}/unity/Library
+          key: Library-${{ hashFiles('${{ github.workspace }}/unity/Assets/**', '${{ github.workspace }}/unity/Packages/**', '${{ github.workspace }}/unity/ProjectSettings/**') }}
+          restore-keys: |
+            Library-
       
       - name: Build
         uses: game-ci/unity-builder@v2
