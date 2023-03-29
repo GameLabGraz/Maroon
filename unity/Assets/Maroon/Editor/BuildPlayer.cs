@@ -81,7 +81,7 @@ namespace Maroon.Build
         [MenuItem("Build/Standalone Experiments/PC VR")]
         public static void BuildExperimentsVR()
         {
-            BuildStandaloneExperiments(MaroonBuildTarget.MAC);
+            BuildStandaloneExperiments(MaroonBuildTarget.VR);
         }
 
         [MenuItem("Build/Standalone Experiments/Mac")]
