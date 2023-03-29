@@ -4,14 +4,14 @@ on: [push, workflow_dispatch]
 
 jobs:
 
-  checkout:
-    name: Checkout
-    runs-on: self-hosted
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+  # checkout:
+  #  name: Checkout
+    # runs-on: self-hosted
+    # steps:
+    #   - name: Checkout
+    #     uses: actions/checkout@v3
+    #     with:
+    #       fetch-depth: 0
  
   # build:
   #   name: Build Maroon
@@ -43,7 +43,6 @@ jobs:
   
   build:
     name: Build for ${{ matrix.targetPlatform }}
-    needs: checkout
     runs-on: self-hosted
     strategy:
       fail-fast: false
@@ -59,6 +58,11 @@ jobs:
             customParameters: -maroonBuildPath /github/workspace/build -maroonBuildTarget WebGL
       
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
       - name: Cache
         uses: actions/cache@v3
         with:
