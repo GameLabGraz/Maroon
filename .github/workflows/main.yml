@@ -4,14 +4,14 @@ on: [push, workflow_dispatch]
 
 jobs:
 
-  checkout:
-    name: Checkout
-    runs-on: self-hosted
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+  # checkout:
+  #   name: Checkout
+  #   runs-on: self-hosted
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
  
   # build:
   #   name: Build Maroon
@@ -42,9 +42,8 @@ jobs:
       
   
   build:
-    name: Build for ${{ matrix.targetPlatform }}
+    name: Build for ${{ matrix.maroonBuildTarget }}
     runs-on: self-hosted
-    needs: checkout
     strategy:
       fail-fast: false
       matrix:
@@ -62,6 +61,12 @@ jobs:
             #customParameters: -maroonBuildPath /github/workspace/build -maroonBuildTarget WebGL
 
     steps:
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
       - name: Cache
         uses: actions/cache@v3
         with:
@@ -82,7 +87,18 @@ jobs:
           projectPath: ./unity
           buildsPath: /github/workspace/build
           customParameters: -maroonBuildPath /github/workspace/build/${{ matrix.maroonBuildTarget }} -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
-          allowDirtyBuild: true
+      
+      - name: Upload Artifacts for ${{ matrix.maroonBuildTarget }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: MaroonArtifacts
+          path: |
+            ${{ github.workspace }}/build/${{ matrix.maroonBuildTarget }}
+          if-no-files-found: error
+
+
+      - name: Cleanup
+        uses: AutoModality/action-clean@v1
       
     
     
@@ -114,25 +130,25 @@ jobs:
           artifactsPath: ./test/${{ matrix.testMode }}-artifacts
   
 
-  upload-artifacts:
-    name: Upload artifacts
-    runs-on: self-hosted
-    # we want to upload artifacts even if the tests fail
-    # if both build and test fail, we don't want to upload
-    needs: [build, test]
-    if: ${{ success() || (needs.build.result == 'success' || needs.test.result == 'success') }}
-    steps:
-      - name: Compress build folder
-        run: zip -r build.zip build
+  # upload-artifacts:
+  #   name: Upload artifacts
+  #   runs-on: self-hosted
+  #   # we want to upload artifacts even if the tests fail
+  #   # if both build and test fail, we don't want to upload
+  #   needs: [build, test]
+  #   if: ${{ success() || (needs.build.result == 'success' || needs.test.result == 'success') }}
+  #   steps:
+  #     - name: Compress build folder
+  #       run: zip -r build.zip build
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: MaroonArtifacts
-          path: |
-            ${{ github.workspace }}/build.zip
-            ${{ github.workspace }}/test
-          if-no-files-found: error
+  #     - name: Upload artifacts
+  #       uses: actions/upload-artifact@v3
+  #       with:
+  #         name: MaroonArtifacts
+  #         path: |
+  #           ${{ github.workspace }}/build.zip
+  #           ${{ github.workspace }}/test
+  #         if-no-files-found: error
 
 
   # TODO
