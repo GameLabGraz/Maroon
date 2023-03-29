@@ -44,6 +44,7 @@ jobs:
   build:
     name: Build for ${{ matrix.targetPlatform }}
     runs-on: self-hosted
+    needs: checkout
     strategy:
       fail-fast: false
       matrix:
