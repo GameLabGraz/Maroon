@@ -301,7 +301,7 @@ namespace Maroon.Build
                 BuildConventionalMaroon(target, maroonBuildPath);
             }
             */
-            BuildConventionalMaroon(maroonBuildTarget, maroonBuildPath)
+            BuildConventionalMaroon(maroonBuildTarget, maroonBuildPath);
         }
 
         // #############################################################################################################
