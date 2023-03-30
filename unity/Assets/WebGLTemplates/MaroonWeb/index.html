@@ -10,22 +10,19 @@
 
     <!-- CSS -->
     <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css"
-          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
+          integrity="sha384-bV6r9/7i+/heC9X2fTco10rqP8i+i5mDFpYC9cMVYDfqSxJdm0p6nRDcycDO2etW" crossorigin="anonymous" />
     <link rel="stylesheet" href="style.css" />
 
     <!-- Title, icon -->
-    <title>%UNITY_WEB_NAME%</title>
+    <title>{{{ PRODUCT_NAME }}}</title>
     <link rel="icon" type="image/png" href="images/favicon.png" />
 
     <!-- Scripts -->
     <script>
 
       // Progress Bar
-      function UnityProgress(gameInstance, progress)
+      function UnityProgress(progress)
       {
-          if (!gameInstance.Module)
-              return;
-          
           var row_progress    = document.getElementById('row-progress');
           var row_game        = document.getElementById('row-game');
           var progressbar     = document.getElementById('load-progressbar');
@@ -45,8 +42,8 @@
       {
         // Elements
         var target_col  = document.getElementById('target-game-size');
-        var container   = gameInstance.container;
-        var canvas      = gameInstance.Module.canvas;
+        var container   = document.getElementById('gameContainer');
+        var canvas      = document.getElementById('unity-canvas');
 
         // Reset
         canvas.style.width = container.style.width = 0;
@@ -82,12 +79,7 @@
 
     </script>
 
-    <script src="%UNITY_WEBGL_LOADER_URL%"></script>
-
-    <script>
-      var gameInstance = UnityLoader.instantiate("gameContainer", "%UNITY_WEBGL_BUILD_URL%",
-                                                 {onProgress: UnityProgress});
-    </script>
+    <script src="Build/{{{ LOADER_FILENAME }}}"></script>
 
   </head>
   
@@ -107,7 +99,7 @@
             </span>
           </a>
 
-          <div class="btn middle-margin" onclick="gameInstance.SetFullscreen(1)">
+          <div class="btn middle-margin" onclick="unityInstance.SetFullscreen(1)">
             <img src="vendor/bootstrap-icons/arrows-fullscreen.svg" />
             <span>
               Fullscreen
@@ -157,7 +149,9 @@
       <div class="row flex-grow-1" id="row-game">
         <div class="col" id="target-game-size">
 
-          <div id="gameContainer"></div>
+          <div id="gameContainer">
+            <canvas id="unity-canvas"></canvas>
+          </div>
 
         </div>
       </div>
@@ -198,7 +192,7 @@
             integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous">
     </script>
     <script src="vendor/bootstrap/js/bootstrap.min.js"
-            integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous">
+            integrity="sha384-4dtSXCGienG16nRqwQanmBKY2UwR3sPvrc8u4VlsQ6UbxEQ0vli6NjS5UkuLxw8Z" crossorigin="anonymous">
     </script>
   
     <!-- Typed.js -->
@@ -206,9 +200,33 @@
 
     <!-- Scripts -->
     <script>
+      var buildUrl = "Build";
+      var canvas = document.querySelector("#unity-canvas");
+      var config = {
+        dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
+        frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
+        codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
+#if MEMORY_FILENAME
+        memoryUrl: buildUrl + "/{{{ MEMORY_FILENAME }}}",
+#endif
+#if SYMBOLS_FILENAME
+        symbolsUrl: buildUrl + "/{{{ SYMBOLS_FILENAME }}}",
+#endif
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "{{{ COMPANY_NAME }}}",
+        productName: "{{{ PRODUCT_NAME }}}",
+        productVersion: "{{{ PRODUCT_VERSION }}}",
+      };
+
+      var unityInstance;
+      createUnityInstance(canvas, config, UnityProgress).then((instance) => {
+        unityInstance = instance;
+      });
+    </script>
+    <script>
 
       // Check for mobile platform
-      if(UnityLoader.SystemInfo.mobile)
+      if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
       {
         $( document ).ready(function()
         {

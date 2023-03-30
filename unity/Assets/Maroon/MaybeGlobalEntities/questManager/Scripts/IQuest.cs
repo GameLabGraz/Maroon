@@ -17,6 +17,9 @@ namespace QuestManager
 
         public string Text { get; set; }
 
+        public GameObject QuestHint { get; set; }
+        public GameObject QuestAchievement { get; set; }
+
         public bool IsHidden { get; set; }
 
         private bool _isActive;
@@ -26,6 +29,8 @@ namespace QuestManager
             set
             { 
                 _isActive = value;
+                QuestHint?.SetActive(value);
+
                 if (DeactiveLamp != null)
                 {
                     DeactiveLamp.SetActive(!value);
@@ -55,6 +60,8 @@ namespace QuestManager
             {
                 IsFinished = true;
                 IsActive = false;
+
+                QuestAchievement?.SetActive(true);
                 OnQuestFinished.Invoke();
             }
         }
