@@ -1,14 +1,16 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using Maroon.GlobalEntities;
+using UnityEngine;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(CharacterController), typeof(ModeFirstPersonInputHandler), typeof(AudioSource))]
+[RequireComponent(typeof(CharacterController), typeof(ModeFirstPersonInputHandler))]
 public class ModeFirstPerson : MonoBehaviour
 {
     [Header("References")]
     [Tooltip("Reference to the main camera used for the player")]
     public Camera playerCamera;
     [Tooltip("Audio source for footsteps, jump, etc...")]
-    public AudioSource audioSource;
+    private AudioSource audioSource;
 
     [Header("General")]
     [Tooltip("Force applied downward when in the air")]
@@ -111,7 +113,7 @@ public class ModeFirstPerson : MonoBehaviour
     const float k_JumpGroundingPreventionTime = 0.2f;
     const float k_GroundCheckDistanceInAir = 0.07f;
 
-    void Start()
+    IEnumerator Start()
     {
         // fetch components on the same gameObject
         m_Controller = GetComponent<CharacterController>();
@@ -123,6 +125,10 @@ public class ModeFirstPerson : MonoBehaviour
         // force the crouch state to false when starting
         SetCrouchingState(false, true);
         UpdateCharacterHeight(true);
+
+        // Wait for SoundManager to be instantiated, then get its soundEffect AudioSource
+        yield return new WaitUntil(() => SoundManager.Instance != null);
+        audioSource = SoundManager.Instance.soundEffectSource;
     }
 
     void Update()

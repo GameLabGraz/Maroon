@@ -38,7 +38,9 @@ public class ParameterLoader : MonoBehaviour
     private void Start()
     {
         // Listener for extern json data 
+#if UNITY_WEBGL
         WebGlReceiver.Instance.OnIncomingData.AddListener(LoadExternJsonFile);
+#endif
     }
 
     /// <summary>

@@ -25,6 +25,7 @@ namespace QuestManager
 
         public MainQuest[] MainQuests => _mainQuests.ToArray();
 
+        public bool AllQuestsFinished => MainQuests.All(mainQuest => mainQuest.IsFinished);
         private void Start()
         {
             _mainQuestIndex = 0;
@@ -69,6 +70,12 @@ namespace QuestManager
                     if (subQuest.Attribute("HasAdditionalInformation")?.Value == "True")
                         subQuestObject.HasAdditionalInformation = true;
 
+                    subQuestObject.QuestHint = GameObject.Find(subQuest.Element("QuestHint")?.Value);
+                    subQuestObject.QuestHint?.SetActive(false);
+
+                    subQuestObject.QuestAchievement = GameObject.Find(subQuest.Element("QuestAchievement")?.Value);
+                    subQuestObject.QuestAchievement?.SetActive(false);
+
                     var subQuestScript = subQuest.Element("Script")?.Value;
                     if (subQuestScript != null)
                     {
@@ -111,8 +118,6 @@ namespace QuestManager
                 ActivateNextMainQuest();
             });
         }
-
-
 
         private void CleanObjects()
         {
