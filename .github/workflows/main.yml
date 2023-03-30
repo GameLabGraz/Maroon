@@ -60,6 +60,7 @@ jobs:
   build:
     name: Build for ${{ matrix.maroonBuildTarget }}
     runs-on: self-hosted
+    needs: setup
     strategy:
       fail-fast: false
       matrix:
@@ -110,7 +111,7 @@ jobs:
   test:
     name: Test
     runs-on: self-hosted
-    needs: setup
+    needs: [setup, build]
     strategy:
       fail-fast: false
       matrix:
