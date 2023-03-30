@@ -11,6 +11,7 @@ public class ChangeSkybox : MonoBehaviour
     public Material default_skybox;
     public Material stars_skybox;
     public Material space_skybox;
+    public Material black_skybox;
 
 
     // Start is called before the first frame update
@@ -38,6 +39,10 @@ public class ChangeSkybox : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             RenderSettings.skybox = space_skybox;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            RenderSettings.skybox = black_skybox;
         }
     }
 }
