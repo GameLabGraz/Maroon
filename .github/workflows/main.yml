@@ -67,15 +67,12 @@ jobs:
         include:
           - targetPlatform: StandaloneWindows64
             maroonBuildTarget: PC
-            #customParameters: -maroonBuildPath /github/workspace/build -maroonBuildTarget PC
 
           - targetPlatform: StandaloneWindows64
             maroonBuildTarget: VR
-            #customParameters: -maroonBuildPath /github/workspace/build -maroonBuildTarget VR
 
           - targetPlatform: WebGL
             maroonBuildTarget: WebGL
-            #customParameters: -maroonBuildPath /github/workspace/build -maroonBuildTarget WebGL
 
     steps:
       - name: Build
@@ -103,15 +100,14 @@ jobs:
         with:
           path: ${{ github.workspace }}/unity/Library
           key: Library-${{ hashFiles('${{ github.workspace }}/unity/Assets/**', '${{ github.workspace }}/unity/Packages/**', '${{ github.workspace }}/unity/ProjectSettings/**') }}
-          restore-keys: |
-            Library-
+
 
   # TODO
   # fix failing tests (playmode)
   test:
     name: Test
     runs-on: self-hosted
-    needs: [setup, build]
+    needs: [setup, build, save-cache]
     strategy:
       fail-fast: false
       matrix:
@@ -139,11 +135,11 @@ jobs:
     runs-on: self-hosted
     # we want to upload artifacts even if the tests fail
     # if both build and test fail, we don't want to upload
-    needs: [build, test]
+    needs: [build, test, save-cache]
     if: ${{ success() || (needs.build.result == 'success' || needs.test.result == 'success') }}
     steps:
       - name: Compress build folder
-        run: zip -r build.zip build
+        run: zip -r ${{ github.workspace }}/build.zip ${{ github.workspace }}/build
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
