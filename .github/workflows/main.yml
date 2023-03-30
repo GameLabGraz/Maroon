@@ -39,8 +39,24 @@ jobs:
     #       customParameters: -maroonBuildPath /github/workspace/build
     #       projectPath: ./unity
     #       buildsPath: /github/workspace/build
-      
   
+  setup:
+    name: Setup
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Restore Cache
+        uses: actions/cache/restore@v3
+        with:
+          path: ${{ github.workspace }}/unity/Library
+          key: Library-${{ hashFiles('${{ github.workspace }}/unity/Assets/**', '${{ github.workspace }}/unity/Packages/**', '${{ github.workspace }}/unity/ProjectSettings/**') }}
+          restore-keys: |
+            Library-
+
   build:
     name: Build for ${{ matrix.maroonBuildTarget }}
     runs-on: self-hosted
@@ -61,20 +77,6 @@ jobs:
             #customParameters: -maroonBuildPath /github/workspace/build -maroonBuildTarget WebGL
 
     steps:
-
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ github.workspace }}/unity/Library
-          key: Library-${{ hashFiles('${{ github.workspace }}/unity/Assets/**', '${{ github.workspace }}/unity/Packages/**', '${{ github.workspace }}/unity/ProjectSettings/**') }}
-          restore-keys: |
-            Library-
-      
       - name: Build
         uses: game-ci/unity-builder@v2
         env:
@@ -85,29 +87,30 @@ jobs:
           buildMethod: Maroon.Build.BuildPlayer.ActionsBuild
           targetPlatform: ${{ matrix.targetPlatform }}
           projectPath: ./unity
+          allowDirtyBuild: true
           buildsPath: /github/workspace/build
           customParameters: -maroonBuildPath /github/workspace/build/${{ matrix.maroonBuildTarget }} -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
-      
-      - name: Upload Artifacts for ${{ matrix.maroonBuildTarget }}
-        uses: actions/upload-artifact@v3
+  
+
+  save-cache:
+    name: Save Cache
+    runs-on: self-hosted
+    needs: build
+    steps:
+      - name: Save Cache
+        uses: actions/cache/save@v3
         with:
-          name: MaroonArtifacts
-          path: |
-            ${{ github.workspace }}/build/${{ matrix.maroonBuildTarget }}
-          if-no-files-found: error
+          path: ${{ github.workspace }}/unity/Library
+          key: Library-${{ hashFiles('${{ github.workspace }}/unity/Assets/**', '${{ github.workspace }}/unity/Packages/**', '${{ github.workspace }}/unity/ProjectSettings/**') }}
+          restore-keys: |
+            Library-
 
-
-      - name: Cleanup
-        uses: AutoModality/action-clean@v1
-      
-    
-    
   # TODO
   # fix failing tests (playmode)
   test:
     name: Test
     runs-on: self-hosted
-    needs: build
+    needs: setup
     strategy:
       fail-fast: false
       matrix:
@@ -130,25 +133,25 @@ jobs:
           artifactsPath: ./test/${{ matrix.testMode }}-artifacts
   
 
-  # upload-artifacts:
-  #   name: Upload artifacts
-  #   runs-on: self-hosted
-  #   # we want to upload artifacts even if the tests fail
-  #   # if both build and test fail, we don't want to upload
-  #   needs: [build, test]
-  #   if: ${{ success() || (needs.build.result == 'success' || needs.test.result == 'success') }}
-  #   steps:
-  #     - name: Compress build folder
-  #       run: zip -r build.zip build
+  upload-artifacts:
+    name: Upload artifacts
+    runs-on: self-hosted
+    # we want to upload artifacts even if the tests fail
+    # if both build and test fail, we don't want to upload
+    needs: [build, test]
+    if: ${{ success() || (needs.build.result == 'success' || needs.test.result == 'success') }}
+    steps:
+      - name: Compress build folder
+        run: zip -r build.zip build
 
-  #     - name: Upload artifacts
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         name: MaroonArtifacts
-  #         path: |
-  #           ${{ github.workspace }}/build.zip
-  #           ${{ github.workspace }}/test
-  #         if-no-files-found: error
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: MaroonArtifacts
+          path: |
+            ${{ github.workspace }}/build.zip
+            ${{ github.workspace }}/test
+          if-no-files-found: error
 
 
   # TODO
