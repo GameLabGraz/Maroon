@@ -14,12 +14,6 @@ jobs:
     env:
       SEGMENT_DOWNLOAD_TIMEOUT_MINS: 5
     steps:
-
-      - name: Set GITHUB_WORKSPACE
-        shell: bash
-        run: |
-          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE" >> $GITHUB_ENV
-
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -29,8 +23,8 @@ jobs:
         id: restore-cache
         uses: actions/cache/restore@v3
         with:
-          path: ${{ env.GITHUB_WORKSPACE }}/unity/Library
-          key: Library-${{ hashFiles('${{ env.GITHUB_WORKSPACE }}/unity/Assets/**', '${{ env.GITHUB_WORKSPACE }}/unity/Packages/**', '${{ env.GITHUB_WORKSPACE }}/unity/ProjectSettings/**') }}
+          path: ${{ github.workspace }}/unity/Library
+          key: Library-${{ hashFiles('${{ github.workspace }}/unity/Assets/**', '${{ github.workspace }}/unity/Packages/**', '${{ github.workspace }}/unity/ProjectSettings/**') }}
 
 
   build:
@@ -49,8 +43,13 @@ jobs:
 
           - targetPlatform: WebGL
             maroonBuildTarget: WebGL
-
     steps:
+
+      - name: Set GITHUB_WORKSPACE
+        shell: bash
+        run: |
+          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE" >> $GITHUB_ENV
+
       - name: Build
         uses: game-ci/unity-builder@v2
         env:
@@ -75,8 +74,8 @@ jobs:
       - name: Save Cache
         uses: actions/cache/save@v3
         with:
-          path: ${{ env.GITHUB_WORKSPACE }}/unity/Library
-          key: Library-${{ hashFiles('${{ env.GITHUB_WORKSPACE }}/unity/Assets/**', '${{ env.GITHUB_WORKSPACE }}/unity/Packages/**', '${{ env.GITHUB_WORKSPACE }}/unity/ProjectSettings/**') }}
+          path: ${{ github.workspace }}/unity/Library
+          key: Library-${{ hashFiles('${{ github.workspace }}/unity/Assets/**', '${{ github.workspace }}/unity/Packages/**', '${{ github.workspace }}/unity/ProjectSettings/**') }}
 
 
   # TODO
@@ -116,15 +115,15 @@ jobs:
     if: ${{ success() || (needs.build.result == 'success' || needs.test.result == 'success') }}
     steps:
       - name: Compress build folder
-        run: zip -r ${{ env.GITHUB_WORKSPACE }}/build.zip ${{ env.GITHUB_WORKSPACE }}/build
+        run: zip -r ${{ github.workspace }}/build.zip ${{ github.workspace }}/build
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
           name: MaroonArtifacts
           path: |
-            ${{ env.GITHUB_WORKSPACE }}/build.zip
-            ${{ env.GITHUB_WORKSPACE }}/test
+            ${{ github.workspace }}/build.zip
+            ${{ github.workspace }}/test
           if-no-files-found: error
 
 
