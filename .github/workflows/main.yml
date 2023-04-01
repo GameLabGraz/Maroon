@@ -50,12 +50,12 @@ jobs:
           fetch-depth: 0
 
       - name: Restore Cache
+        id: restore-cache
         uses: actions/cache/restore@v3
         with:
           path: ${{ github.workspace }}/unity/Library
           key: Library-${{ hashFiles('${{ github.workspace }}/unity/Assets/**', '${{ github.workspace }}/unity/Packages/**', '${{ github.workspace }}/unity/ProjectSettings/**') }}
-          restore-keys: |
-            Library-
+
 
   build:
     name: Build for ${{ matrix.maroonBuildTarget }}
@@ -92,6 +92,7 @@ jobs:
 
   save-cache:
     name: Save Cache
+    if: setup.restore-cache.outputs.cache-hit != 'true'
     runs-on: self-hosted
     needs: build
     steps:
