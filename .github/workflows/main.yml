@@ -4,42 +4,6 @@ on: [push, workflow_dispatch]
 
 jobs:
 
-  # checkout:
-  #   name: Checkout
-  #   runs-on: self-hosted
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: 0
- 
-  # build:
-  #   name: Build Maroon
-  #   runs-on: self-hosted
-  #   needs: checkout
-
-    # steps:
-    #   - name: Cache
-    #     uses: actions/cache@v3
-    #     with:
-    #       path: ${{ github.workspace }}/unity/Library
-    #       key: Library-${{ hashFiles('${{ github.workspace }}/unity/Assets/**', '${{ github.workspace }}/unity/Packages/**', '${{ github.workspace }}/unity/ProjectSettings/**') }}
-    #       restore-keys: |
-    #         Library-
-  
-    #   # build
-    #   - name: Build
-    #     uses: game-ci/unity-builder@v2
-    #     env:
-    #       UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-    #       UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-    #       UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-    #     with:
-    #       buildMethod: Maroon.Build.BuildPlayer.ActionsBuild
-    #       customParameters: -maroonBuildPath /github/workspace/build
-    #       projectPath: ./unity
-    #       buildsPath: /github/workspace/build
-  
   setup:
     name: Setup
     runs-on: self-hosted
@@ -86,17 +50,17 @@ jobs:
         with:
           buildMethod: Maroon.Build.BuildPlayer.ActionsBuild
           targetPlatform: ${{ matrix.targetPlatform }}
-          projectPath: ./unity
+          projectPath: ${{ github.workspace }}/unity
           allowDirtyBuild: true
-          buildsPath: /github/workspace/build
-          customParameters: -maroonBuildPath /github/workspace/build/${{ matrix.maroonBuildTarget }} -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
+          buildsPath: ${{ github.workspace }}/build
+          customParameters: -maroonBuildPath ${{ github.workspace }}/build -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
   
 
   save-cache:
     name: Save Cache
     runs-on: self-hosted
     needs: [setup, build]
-    if: ${{ needs.setup.outputs.cache-hit}} != 'true'
+    if: ${{ needs.setup.outputs.cache-hit}} == false
     steps:
       - name: Save Cache
         uses: actions/cache/save@v3
