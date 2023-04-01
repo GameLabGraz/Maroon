@@ -92,9 +92,9 @@ jobs:
 
   save-cache:
     name: Save Cache
-    if: setup.restore-cache.outputs.cache-hit != 'true'
+    if: needs.setup.restore-cache.outputs.cache-hit != 'true'
     runs-on: self-hosted
-    needs: build
+    needs: [setup, build]
     steps:
       - name: Save Cache
         uses: actions/cache/save@v3
