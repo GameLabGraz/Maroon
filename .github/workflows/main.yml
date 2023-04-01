@@ -59,10 +59,10 @@ jobs:
         with:
           buildMethod: Maroon.Build.BuildPlayer.ActionsBuild
           targetPlatform: ${{ matrix.targetPlatform }}
-          projectPath: ./unity
+          projectPath: unity
           allowDirtyBuild: true
           buildsPath: ${{ env.GITHUB_WORKSPACE }}/build
-          customParameters: -maroonBuildPath ${{ env.GITHUB_WORKSPACE }}/build -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
+          customParameters: -maroonBuildPath ../build -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
   
 
   save-cache:
@@ -88,7 +88,7 @@ jobs:
       fail-fast: false
       matrix:
         projectPath:
-          - ./unity
+          - unity
         testMode:
           - playmode
           - editmode
