@@ -59,7 +59,7 @@ jobs:
         with:
           buildMethod: Maroon.Build.BuildPlayer.ActionsBuild
           targetPlatform: ${{ matrix.targetPlatform }}
-          projectPath: ${{ env.GITHUB_WORKSPACE }}/unity
+          projectPath: ./unity
           allowDirtyBuild: true
           buildsPath: ${{ env.GITHUB_WORKSPACE }}/build
           customParameters: -maroonBuildPath ${{ env.GITHUB_WORKSPACE }}/build -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
