@@ -46,13 +46,14 @@ void CSMain(uint3 id : SV_DispatchThreadID)
     }
     if (Right)
     {
-        if (id.x < 10)
+        if (id.x < 40)
         {
+            newWaveHeight = newWaveHeight * (phase2);
 
-            if (newWaveHeight <= 0)
+            /*if (newWaveHeight <= 0)
             {
                 newWaveHeight = newWaveHeight * (0);// or 0 muss see
-            }
+            }*/
         }
     }
     if (Bottom)

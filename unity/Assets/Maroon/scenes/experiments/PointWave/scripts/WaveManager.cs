@@ -18,6 +18,7 @@ public class WaveManager : MonoBehaviour
     public Mesh planeMesh;
     private Vector3 clickedData;
     public float phase = 0.99f;
+    public float boundaryphase = 0.99f;
     public PointWaveWaterPlane script;
     void Start()
     {
@@ -36,6 +37,7 @@ public class WaveManager : MonoBehaviour
         cam = Camera.main;
         planeMesh = GetComponent<MeshFilter>().mesh;
         waveCompute.SetVector("Clicked", clickedData);
+        waveCompute.SetFloat("phase2", boundaryphase);
 
     }
 
