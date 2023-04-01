@@ -43,6 +43,8 @@ jobs:
   setup:
     name: Setup
     runs-on: self-hosted
+    outputs:
+      cache-hit: ${{ steps.restore-cache.cache-hit }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -94,9 +96,9 @@ jobs:
     name: Save Cache
     runs-on: self-hosted
     needs: [setup, build]
+    if: ${{ needs.setup.outputs.cache-hit}} != 'true'
     steps:
       - name: Save Cache
-        if: needs.setup.restore-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v3
         with:
           path: ${{ github.workspace }}/unity/Library
