@@ -10,6 +10,12 @@ jobs:
     outputs:
       cache-hit: ${{ steps.restore-cache.cache-hit }}
     steps:
+
+      - name: Set GITHUB_WORKSPACE
+        shell: bash
+        run: |
+          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -19,8 +25,8 @@ jobs:
         id: restore-cache
         uses: actions/cache/restore@v3
         with:
-          path: ${{ github.workspace }}/unity/Library
-          key: Library-${{ hashFiles('${{ github.workspace }}/unity/Assets/**', '${{ github.workspace }}/unity/Packages/**', '${{ github.workspace }}/unity/ProjectSettings/**') }}
+          path: ${{ env.GITHUB_WORKSPACE }}/unity/Library
+          key: Library-${{ hashFiles('${{ env.GITHUB_WORKSPACE }}/unity/Assets/**', '${{ env.GITHUB_WORKSPACE }}/unity/Packages/**', '${{ env.GITHUB_WORKSPACE }}/unity/ProjectSettings/**') }}
 
 
   build:
@@ -50,10 +56,10 @@ jobs:
         with:
           buildMethod: Maroon.Build.BuildPlayer.ActionsBuild
           targetPlatform: ${{ matrix.targetPlatform }}
-          projectPath: ${{ github.workspace }}/unity
+          projectPath: ${{ env.GITHUB_WORKSPACE }}/unity
           allowDirtyBuild: true
-          buildsPath: ${{ github.workspace }}/build
-          customParameters: -maroonBuildPath ${{ github.workspace }}/build -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
+          buildsPath: ${{ env.GITHUB_WORKSPACE }}/build
+          customParameters: -maroonBuildPath ${{ env.GITHUB_WORKSPACE }}/build -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
   
 
   save-cache:
@@ -65,8 +71,8 @@ jobs:
       - name: Save Cache
         uses: actions/cache/save@v3
         with:
-          path: ${{ github.workspace }}/unity/Library
-          key: Library-${{ hashFiles('${{ github.workspace }}/unity/Assets/**', '${{ github.workspace }}/unity/Packages/**', '${{ github.workspace }}/unity/ProjectSettings/**') }}
+          path: ${{ env.GITHUB_WORKSPACE }}/unity/Library
+          key: Library-${{ hashFiles('${{ env.GITHUB_WORKSPACE }}/unity/Assets/**', '${{ env.GITHUB_WORKSPACE }}/unity/Packages/**', '${{ env.GITHUB_WORKSPACE }}/unity/ProjectSettings/**') }}
 
 
   # TODO
@@ -106,15 +112,15 @@ jobs:
     if: ${{ success() || (needs.build.result == 'success' || needs.test.result == 'success') }}
     steps:
       - name: Compress build folder
-        run: zip -r ${{ github.workspace }}/build.zip ${{ github.workspace }}/build
+        run: zip -r ${{ env.GITHUB_WORKSPACE }}/build.zip ${{ env.GITHUB_WORKSPACE }}/build
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
           name: MaroonArtifacts
           path: |
-            ${{ github.workspace }}/build.zip
-            ${{ github.workspace }}/test
+            ${{ env.GITHUB_WORKSPACE }}/build.zip
+            ${{ env.GITHUB_WORKSPACE }}/test
           if-no-files-found: error
 
 
