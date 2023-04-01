@@ -1,0 +1,13 @@
+name: Clean up workspace
+
+on: [workflow_dispatch]
+
+jobs:
+  cleanup:
+    name: Cleanup
+    runs-on: self-hosted
+    steps:
+      - name: Cleanup
+        uses: AutoModality/action-clean@v1
+          
+          
