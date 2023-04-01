@@ -7,9 +7,6 @@ jobs:
   setup:
     name: Setup
     runs-on: self-hosted
-    outputs:
-      cache-hit: ${{ steps.restore-cache.cache-hit }}
-    
     # if the cache download gets stuck for some reason, abort after 5 minutes (default=10 minutes)
     env:
       SEGMENT_DOWNLOAD_TIMEOUT_MINS: 5
@@ -69,7 +66,7 @@ jobs:
     name: Save Cache
     runs-on: self-hosted
     needs: [setup, build]
-    if: ${{ needs.setup.outputs.cache-hit}} == false
+    if: steps.restore-cache.outputs.cache-hit != 'true'
     steps:
       - name: Save Cache
         uses: actions/cache/save@v3
