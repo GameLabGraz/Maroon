@@ -10,6 +10,9 @@ jobs:
     # if the cache download gets stuck for some reason, abort after 5 minutes (default=10 minutes)
     env:
       SEGMENT_DOWNLOAD_TIMEOUT_MINS: 5
+    outputs:
+      hit:  ${{ steps.restore-cache.outputs.cache-hit }}
+      key: ${{ steps.restore-cache.outputs.cache-primary-key }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -66,13 +69,13 @@ jobs:
     name: Save Cache
     runs-on: self-hosted
     needs: [setup, build]
-    if: needs.setup.restore-cache.outputs.cache-hit != 'true'
+    if: needs.setup.restore-cache.outputs.cache-hit != true
     steps:
       - name: Save Cache
         uses: actions/cache/save@v3
         with:
           path: ${{ github.workspace }}/unity/Library
-          key: ${{ needs.setup.restore-cache.outputs.cache-primary-key }}
+          key: ${{ needs.setup.outputs.key }}
           #key: Library-${{ hashFiles('${{ github.workspace }}/unity/Assets/**', '${{ github.workspace }}/unity/Packages/**', '${{ github.workspace }}/unity/ProjectSettings/**') }}
 
 
