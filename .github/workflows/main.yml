@@ -64,10 +64,10 @@ jobs:
           buildsPath: ${{ env.GITHUB_WORKSPACE }}/build
           customParameters: -maroonBuildPath ../build -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
         
-        - name: Restore Build Environment
-          shell: bash
-          run: |
-            cd ${{ github.workspace }} && git reset --hard
+      - name: Restore Build Environment
+        shell: bash
+        run: |
+          cd ${{ github.workspace }} && git reset --hard
 
   
 
