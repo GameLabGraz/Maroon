@@ -24,7 +24,7 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           path: ${{ github.workspace }}/unity/Library
-          key: Library-${{ hashFiles('${{ github.workspace }}/unity/Assets/**', '${{ github.workspace }}/unity/Packages/**', '${{ github.workspace }}/unity/ProjectSettings/**') }}
+          key: Library-${{ hashFiles('unity/Assets/**', 'unity/Packages/**', 'unity/ProjectSettings/**') }}
 
 
   build:
@@ -75,7 +75,7 @@ jobs:
     name: Save Cache
     runs-on: self-hosted
     needs: [setup, build]
-    if: needs.setup.outputs.hit != true
+    if: needs.setup.outputs.hit != 'true'
     steps:
       - name: Save Cache
         uses: actions/cache/save@v3
