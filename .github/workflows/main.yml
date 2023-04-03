@@ -90,7 +90,7 @@ jobs:
   test:
     name: Test
     runs-on: self-hosted
-    needs: [setup, build, save-cache]
+    needs: [setup, build]
     strategy:
       fail-fast: false
       matrix:
@@ -118,7 +118,7 @@ jobs:
     runs-on: self-hosted
     # we want to upload artifacts even if the tests fail
     # if both build and test fail, we don't want to upload
-    needs: [build, test, save-cache]
+    needs: [build, test]
     if: ${{ success() || (needs.build.result == 'success' || needs.test.result == 'success') }}
     steps:
       - name: Compress build folder
@@ -168,7 +168,7 @@ jobs:
   cleanup:
     name: Cleanup
     runs-on: self-hosted
-    needs: [test, build, upload-artifacts]
+    needs: [test, build, upload-artifacts, save-cache]
     if: ${{ always() }}
     steps:
       - name: Cleanup
