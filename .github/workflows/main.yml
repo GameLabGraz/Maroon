@@ -88,7 +88,7 @@ jobs:
   # TODO
   # fix failing tests (playmode)
   test:
-    name: Test
+    name: Run ${{ matrix.testMode }} tests
     runs-on: self-hosted
     needs: [setup, build]
     strategy:
@@ -110,7 +110,7 @@ jobs:
         with:
           projectPath: ${{ matrix.projectPath }}
           testMode: ${{ matrix.testMode }}
-          artifactsPath: ./test/${{ matrix.testMode }}-artifacts
+          artifactsPath: ./test-results/${{ matrix.testMode }}-results
   
 
   upload-artifacts:
@@ -122,7 +122,7 @@ jobs:
     if: ${{ success() || (needs.build.result == 'success' || needs.test.result == 'success') }}
     steps:
       - name: Compress build folder
-        run: zip -r ${{ github.workspace }}/build.zip ${{ github.workspace }}/build
+        run: zip -r build.zip build
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
@@ -130,7 +130,7 @@ jobs:
           name: MaroonArtifacts
           path: |
             ${{ github.workspace }}/build.zip
-            ${{ github.workspace }}/test
+            ${{ github.workspace }}/test-results
           if-no-files-found: error
 
 
