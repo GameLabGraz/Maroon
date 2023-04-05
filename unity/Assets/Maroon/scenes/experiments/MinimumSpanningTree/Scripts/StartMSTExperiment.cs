@@ -43,6 +43,14 @@ public class StartMSTExperiment : MonoBehaviour
         //endPoint = islands[1].transform.position;
     }
 
+    /**
+     * Start Prims Algorithm - from Play Button
+     * */
+    public void PlayPrim()
+    {
+        StartCoroutine(PrimsAlgorithm());
+    }
+
 
     /**
      * Calculate distance between GameObjects
@@ -63,7 +71,7 @@ public class StartMSTExperiment : MonoBehaviour
     /**
      * Instantiate Bridgesegments to Build a Bridge
      * */
-    void InstantiateBridgeSegments(GameObject bridge, Vector3 startPos, Vector3 endPos)
+    IEnumerator InstantiateBridgeSegments(GameObject bridge, Vector3 startPos, Vector3 endPos)
     {
         //Debug.Log("startPos:  " + startPos + " endPos: " + endPos + "  bridgeSize: " + size);
 
@@ -82,6 +90,7 @@ public class StartMSTExperiment : MonoBehaviour
         //Debug.Log("segmentsToCreate:  " + segmentsToCreate);
         for (int i = 0; i <= segmentsToCreate; i++)
         {
+            yield return new WaitForSeconds(0.2f);
             lerpValue += distance;
 
             //Debug.Log("lerpValue: " + lerpValue + " distance: " + distance);
@@ -93,6 +102,8 @@ public class StartMSTExperiment : MonoBehaviour
         }
 
         Debug.Log("segments created!");
+        yield break;
+        //yield return new WaitForSeconds(0);
     }
 
     /**
@@ -231,8 +242,10 @@ public class StartMSTExperiment : MonoBehaviour
                 Vector3 endPos = islands[edges[i]].transform.position;
                 GameObject bridge = new GameObject("Bridge " + parent[edges[i]] + "--" + edges[i]);
                 bridge.transform.parent = Bridges.transform;
-                yield return new WaitForSeconds(1);
-                InstantiateBridgeSegments(bridge, startPos, endPos);
+                //yield return new WaitForSeconds(1);
+                //InstantiateBridgeSegments(bridge, startPos, endPos);
+                yield return InstantiateBridgeSegments(bridge, startPos, endPos);
+                
             }
             
         }
@@ -241,6 +254,7 @@ public class StartMSTExperiment : MonoBehaviour
         Debug.Log("End of Prims Algorithm!");
         yield break;
     }
+
 
 
 }
