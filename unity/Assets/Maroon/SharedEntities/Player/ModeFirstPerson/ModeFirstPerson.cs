@@ -126,8 +126,11 @@ public class ModeFirstPerson : MonoBehaviour
         SetCrouchingState(false, true);
         UpdateCharacterHeight(true);
 
-        // Wait for SoundManager to be instantiated, then get its soundEffect AudioSource
-        yield return new WaitUntil(() => SoundManager.Instance != null);
+        // Wait for SoundManager to be instantiated if its Instance is null, then get its soundEffect AudioSource
+        if (SoundManager.Instance == null)
+        {
+            yield return new WaitUntil(() => SoundManager.Instance != null);
+        }
         audioSource = SoundManager.Instance.soundEffectSource;
     }
 
