@@ -6,7 +6,7 @@ on:
 jobs:
   test:
     name: test
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: dummy
         run: |
@@ -29,13 +29,13 @@ jobs:
           releaseBranch: development
    
 
-  # cleanup:
-  #   name: Cleanup
-  #   runs-on: self-hosted
-  #   needs: [test]
-  #   if: ${{ always() }}
-  #   steps:
-  #     - name: Cleanup
-  #       uses: AutoModality/action-clean@v1
+  cleanup:
+    name: Cleanup
+    runs-on: self-hosted
+    needs: [test]
+    if: ${{ always() }}
+    steps:
+      - name: Cleanup
+        uses: AutoModality/action-clean@v1
           
           
