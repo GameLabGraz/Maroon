@@ -15,7 +15,8 @@ jobs:
           
       
       - name: deploy
-        uses: game-ci/steam-deploy@v2
+        #uses: game-ci/steam-deploy@v2
+        uses: mfbrantner/steam-deploy-no-mfa@v0.1
         with:
           username: ${{ secrets.STEAM_USERNAME }}
           password: ${{ secrets.STEAM_PASSWORD }}
