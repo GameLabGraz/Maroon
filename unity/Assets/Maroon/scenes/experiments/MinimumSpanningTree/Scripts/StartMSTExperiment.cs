@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using TMPro;
 
 
 
@@ -20,6 +21,13 @@ public class StartMSTExperiment : MonoBehaviour
     static float islandHalf;
     GameObject[] islands;
 
+    float endDistance;
+    float endLengthOfBridges;
+    int bridgeSegments;
+
+    [SerializeField] private TextMeshProUGUI lengthOfBridges;
+    [SerializeField] private TextMeshProUGUI numberOfBridgeSegments;
+
 
     // Start is called before the first frame update
     void Start()
@@ -30,6 +38,12 @@ public class StartMSTExperiment : MonoBehaviour
         islandRenderer = islandPrefab.GetComponent<MeshRenderer>();
         islandHalf = islandRenderer.bounds.size.x / 3f;
 
+        endDistance = 0;
+        endLengthOfBridges = 0;
+        bridgeSegments = 0;
+
+        lengthOfBridges.text = " ";
+        numberOfBridgeSegments.text = " ";
     }
 
     // Update is called once per frame
@@ -48,6 +62,9 @@ public class StartMSTExperiment : MonoBehaviour
      * */
     public void PlayPrim()
     {
+        endDistance = 0;
+        endLengthOfBridges = 0;
+        bridgeSegments = 0;
         StartCoroutine(PrimsAlgorithm());
     }
 
@@ -65,6 +82,9 @@ public class StartMSTExperiment : MonoBehaviour
      * */
     public void PrimTest()
     {
+        endDistance = 0;
+        endLengthOfBridges = 0;
+        bridgeSegments = 0;
         StartCoroutine(PrimsAlgorithm());
     }
 
@@ -74,14 +94,19 @@ public class StartMSTExperiment : MonoBehaviour
     IEnumerator InstantiateBridgeSegments(GameObject bridge, Vector3 startPos, Vector3 endPos)
     {
         //Debug.Log("startPos:  " + startPos + " endPos: " + endPos + "  bridgeSize: " + size);
+        float dist = Vector3.Distance(startPos, endPos);
+        endLengthOfBridges += dist;
+        Debug.Log("dist " + dist + " endLenghtOfBridges: " + endLengthOfBridges);
 
         Vector3 newStartPoint = Vector3.MoveTowards(startPos, endPos, islandHalf);
         Vector3 newEndPoint = Vector3.MoveTowards(endPos, startPos, islandHalf);
         Quaternion rot = Quaternion.LookRotation(newEndPoint - newStartPoint);
 
+
         //segmentsToCreate = Mathf.RoundToInt(Vector3.Distance(newStartPoint, newEndPoint) / size);
         float d = Vector3.Distance(newStartPoint, newEndPoint) / size;
         segmentsToCreate = (int)d;
+        bridgeSegments += segmentsToCreate + 1;
         //Debug.Log("Segments: " + d + " : " + segmentsToCreate);
         distance = 1f / d;
 
@@ -121,7 +146,11 @@ public class StartMSTExperiment : MonoBehaviour
                 min_index = vec;
             }
         }
-        Debug.Log("min_index is: " + min_index);
+
+        endDistance += least;
+
+
+        Debug.Log("min_index is: " + min_index + " least value: " + least + " endDistance: " + endDistance);
         return min_index;
     }
 
@@ -210,6 +239,9 @@ public class StartMSTExperiment : MonoBehaviour
             if(isInMST[v] == false)
             {
                 edges[vertices - 1] = v;
+                float dist = getDistance(islands[parent[v]], islands[v]);
+                endDistance += dist;
+                Debug.Log("last edge: " + v + " least " + dist + " endDistance " + endDistance);
                 break;
             }
         }
@@ -245,16 +277,16 @@ public class StartMSTExperiment : MonoBehaviour
                 //yield return new WaitForSeconds(1);
                 //InstantiateBridgeSegments(bridge, startPos, endPos);
                 yield return InstantiateBridgeSegments(bridge, startPos, endPos);
-                
+                lengthOfBridges.text = "length of all bridges: " + endLengthOfBridges.ToString();
+                numberOfBridgeSegments.text = "bridgesegments: " + bridgeSegments.ToString();
             }
             
         }
 
-
+        lengthOfBridges.text =  "length of all bridges: " + endLengthOfBridges.ToString();
+        numberOfBridgeSegments.text = "bridgesegments: " + bridgeSegments.ToString();
         Debug.Log("End of Prims Algorithm!");
         yield break;
     }
-
-
 
 }

@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class IslandSetUp : MonoBehaviour
 {
-    [SerializeField] protected int numberOfIslands = 4;
+    //[SerializeField] protected int numberOfIslands = 4;
+    [SerializeField] protected int numberOfIslands;
     public int NumberOfIslands
     {
         get => numberOfIslands;
@@ -26,12 +28,24 @@ public class IslandSetUp : MonoBehaviour
 
     protected List<GameObject> islandClones = new List<GameObject>();
 
+    //static int tmp;
 
     //public LayerMask m_LayerMask;
+
+    private void Awake()
+    {
+
+        //Debug.Log("Awake " + NumberOfIslands + "  " + numberOfIslands);
+        /*Debug.Log("tmp " + tmp);
+        if(tmp != 0)
+            NumberOfIslands = tmp;
+        Debug.Log("Awake " + NumberOfIslands + "  " + numberOfIslands);*/
+    }
 
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log("Start");
         // 1.9f for a little extra space
         radius = islandPrefab01.GetComponent<MeshRenderer>().bounds.size / 1.9f;
         createIslands();
@@ -144,6 +158,12 @@ public class IslandSetUp : MonoBehaviour
     /// 
     public void changeNumberOfIslands()
     {
+        if(SimulationController.Instance.SimulationRunning)
+        {
+            resetIslands();
+            Debug.Log("Change Number of Islands - Simulation is Running!");
+        }
+
         int counter = 0;
         for (; counter < numberOfIslands; counter++)
         {
@@ -179,13 +199,11 @@ public class IslandSetUp : MonoBehaviour
     }
 
 
-    void PrimsAlgorithm()
+    public void resetIslands()
     {
-        int numVertex = 0;
-        int numEdge = 0;
-
-        Transform islandTranform = islandClones[numVertex].gameObject.transform;
-        Vector3 islandPosition = islandClones[numVertex].gameObject.transform.position;
-
+        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        //tmp = NumberOfIslands;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        Debug.Log("Reset Islands!");
     }
 }
