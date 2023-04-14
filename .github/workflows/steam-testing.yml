@@ -16,11 +16,11 @@ jobs:
       
       - name: deploy
         #uses: game-ci/steam-deploy@v2
-        uses: mfbrantner/steam-deploy-no-mfa@v0.1
+        uses: mfbrantner/steam-deploy-no-mfa@v0.2
         with:
           username: ${{ secrets.STEAM_USERNAME }}
           password: ${{ secrets.STEAM_PASSWORD }}
-          #configVdf: ${{ secrets.STEAM_CONFIG_VDF}}
+          configVdf: ${{ secrets.STEAM_CONFIG_VDF}}
           #ssfnFileName: ${{ secrets.STEAM_SSFN_FILE_NAME }}
           #ssfnFileContents: ${{ secrets.STEAM_SSFN_FILE_CONTENTS }}
           appId: ${{ secrets.STEAM_APP_ID }}
