@@ -5,17 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class IslandSetUp : MonoBehaviour
 {
-    //[SerializeField] protected int numberOfIslands = 4;
-    [SerializeField] protected int numberOfIslands;
-    public int NumberOfIslands
-    {
-        get => numberOfIslands;
-        set
-        {
-            numberOfIslands = value;
-        }
-    }
-
     public GameObject islandPrefab01;
     public GameObject islandPrefab02;
     public GameObject islandPrefab03;
@@ -25,27 +14,22 @@ public class IslandSetUp : MonoBehaviour
     public Transform bottomRightBorder;
 
     static Vector3 radius;
+    int _numberOfIslands;
 
     protected List<GameObject> islandClones = new List<GameObject>();
 
-    //static int tmp;
 
     //public LayerMask m_LayerMask;
 
     private void Awake()
     {
-
-        //Debug.Log("Awake " + NumberOfIslands + "  " + numberOfIslands);
-        /*Debug.Log("tmp " + tmp);
-        if(tmp != 0)
-            NumberOfIslands = tmp;
-        Debug.Log("Awake " + NumberOfIslands + "  " + numberOfIslands);*/
+        //Debug.Log("IslandSetUp Awake");
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("Start");
+        Debug.Log("IslandSetUp Start");
         // 1.9f for a little extra space
         radius = islandPrefab01.GetComponent<MeshRenderer>().bounds.size / 1.9f;
         createIslands();
@@ -89,7 +73,7 @@ public class IslandSetUp : MonoBehaviour
         GameObject[] islandPrefabArray = { islandPrefab01, islandPrefab02, islandPrefab03, islandPrefab04 };
 
         int counter = 0;
-        for (; counter < 10; counter++)
+        for (; counter < MSTConstants.MAX_Islands; counter++)
         {
             if (counter < islandClones.Count)
             {
@@ -124,7 +108,7 @@ public class IslandSetUp : MonoBehaviour
                 islandClones.Add(island);
             }
         }
-        counter = numberOfIslands;
+        counter = (int)MSTController.Instance.NumberOfIslands;
         Debug.Log("createIslands(): counter= " + counter);
         for (; counter < islandClones.Count; counter++)
         {
@@ -165,7 +149,7 @@ public class IslandSetUp : MonoBehaviour
         }
 
         int counter = 0;
-        for (; counter < numberOfIslands; counter++)
+        for (; counter < _numberOfIslands; counter++)
         {
 
             if (counter < islandClones.Count)
@@ -182,28 +166,34 @@ public class IslandSetUp : MonoBehaviour
         }
     }
 
-    // static function setNumberOfIslands
-    public void setNumberOfIslands(int numberOfIslands)
-    {
-        NumberOfIslands = numberOfIslands;
-        //Debug.Log("changed Number of Islands to: " + NumberOfIslands + " bzw. " + numberOfIslands);
-        changeNumberOfIslands();
-    }
-
-    // dynamic function setNumberOfIslands
-    public void setNumberOfIslands(float numberOfIslands)
-    {
-        NumberOfIslands = (int)numberOfIslands;
-        //Debug.Log("(with float) changed Number of Islands to: " + NumberOfIslands + " bzw. " + numberOfIslands);
-        changeNumberOfIslands();
-    }
-
-
     public void resetIslands()
     {
         //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         //tmp = NumberOfIslands;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         Debug.Log("Reset Islands!");
+    }
+
+    // dynamic function setNumberOfIslands
+    public void setNumberOfIslands(float numberOfIslands)
+    {
+        _numberOfIslands = (int)numberOfIslands;
+        //Debug.Log("(with float) changed Number of Islands to: " + NumberOfIslands + " bzw. " + numberOfIslands);
+        changeNumberOfIslands();
+    }
+
+    public GameObject[] GetActiveIslandsAsArray()
+    {
+        GameObject[] islands = new GameObject[(int)MSTController.Instance.NumberOfIslands];
+        for(int c = 0; c < (int)MSTController.Instance.NumberOfIslands; c++)
+        {
+            islands[c] = islandClones[c];
+        }
+        return islands;
+    }
+
+    public List<GameObject> GetActiveIslandsAsList()
+    {
+        return islandClones;
     }
 }

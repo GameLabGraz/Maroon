@@ -4,12 +4,27 @@ using UnityEngine;
 using System;
 using TMPro;
 
-
-public class StartMSTExperiment : MonoBehaviour
+public class MSTConstants
 {
-    public GameObject bridgeSegment;
+    public const int MAX_Islands = 10;
+}
+
+
+public class MSTController : MonoBehaviour
+{
+    public GameObject IslandsParent;
+    public GameObject BridgesParent;
+
+    public GameObject bridgeSegmentPrefab;
     public GameObject islandPrefab;
-    public GameObject Bridges;
+
+    private int _numberOfIslands = 4;
+    public float NumberOfIslands
+    {
+        set => _numberOfIslands = ((int)value);
+        get => _numberOfIslands;
+    }
+
     Vector3 instantiatePosition;
     float lerpValue; //percentage 0 - 100%
     float distance;
@@ -36,28 +51,30 @@ public class StartMSTExperiment : MonoBehaviour
     GameObject manualToIsland;
     bool[] isInManualSet;
     int manualStart;
-    int islandAmount;
-    [SerializeField] GameObject IslandParent;
+    int manualCases;
 
 
-    public static StartMSTExperiment Instance { get; private set; } // static singleton
+
+
+
+    public static MSTController Instance { get; private set; } // static singleton
     void Awake()
     {
-        if (Instance == null) 
+        if (Instance == null)
         {
-            Instance = this; 
+            Instance = this;
             Debug.Log("Awake This is: " + this.name);
         }
         else
         {
-            Destroy(gameObject); 
+            Destroy(gameObject);
         }
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        bridgeRenderer = bridgeSegment.GetComponent<MeshRenderer>();
+        bridgeRenderer = bridgeSegmentPrefab.GetComponent<MeshRenderer>();
         size = bridgeRenderer.bounds.size.z * 1.011f;
 
         islandRenderer = islandPrefab.GetComponent<MeshRenderer>();
@@ -70,26 +87,33 @@ public class StartMSTExperiment : MonoBehaviour
         lengthOfBridges.text = " ";
         numberOfBridgeSegments.text = " ";
 
-        islandAmount = IslandParent.GetComponent<CreateIslands>().NumberOfIslands;
-        Debug.Log("islandAmount: " + islandAmount);
-        List<GameObject> islandList = IslandParent.GetComponent<CreateIslands>().GetActiveIslandsAsList();
-        Debug.Log("islandAmount: " + islandAmount);
-        islands = new GameObject[islandAmount];
-        for (int c = 0; c < islandAmount; c++)
+
+        /*List<GameObject> islandList = IslandsParent.GetComponent<IslandSetUp>().GetActiveIslandsAsList();
+        Debug.Log("islandList: " + islandList.Count);
+        islands = new GameObject[_numberOfIslands];
+        for (int c = 0; c < _numberOfIslands; c++)
         {
             islands[c] = islandList[c];
         }
-        Debug.Log("islandAmount: " + islandAmount);
-
-        /*islands = GameObject.FindGameObjectsWithTag("Island");
+        Debug.Log("islandsAmount: " + islands.Length);
+        */
+        islands = GameObject.FindGameObjectsWithTag("Island");
         if (islands.Length <= 0)
         {
             //Should not happen
             Debug.Log("No Islands Found:  " + islands.Length);
-        }*/
-        isInManualSet = new bool[MSTConstants.MAX_Islands];
-        manualStart = 0;
+        }
+        Debug.Log("islandsAmount: " + islands.Length);
 
+
+
+
+
+        isInManualSet = new bool[MSTConstants.MAX_Islands];
+        manualStart = -1;
+
+        Debug.Log("NumberIslands: " + NumberOfIslands);
+        Debug.Log("_numberIslands: " + _numberOfIslands);
     }
 
     // Update is called once per frame
@@ -169,7 +193,7 @@ public class StartMSTExperiment : MonoBehaviour
             instantiatePosition = Vector3.Lerp(newStartPoint, newEndPoint, lerpValue);
             instantiatePosition.y = 0.9f;
 
-            Instantiate(bridgeSegment, instantiatePosition, rot, bridge.transform);
+            Instantiate(bridgeSegmentPrefab, instantiatePosition, rot, bridge.transform);
         }
 
         Debug.Log("segments created!");
@@ -205,13 +229,7 @@ public class StartMSTExperiment : MonoBehaviour
      * */
     IEnumerator PrimsAlgorithm()
     {
-        islands = GameObject.FindGameObjectsWithTag("Island");
-        if (islands.Length <= 0)
-        {
-            //Should not happen
-            Debug.Log("No Islands Found:  " + islands.Length);
-        }
-        int vertices = islands.Length;
+        int vertices = _numberOfIslands;
 
 
         int[] edges = new int[vertices];
@@ -248,7 +266,7 @@ public class StartMSTExperiment : MonoBehaviour
                 //Console.WriteLine("An element with Key " + islands[i] + " already exists.");
                 Debug.Log("An element with Key " + islands[i] + " already exists.");
             }
-            
+
             // Initialize with MaxValue and false
             key[i] = float.MaxValue;
             isInMST[i] = false;
@@ -263,10 +281,10 @@ public class StartMSTExperiment : MonoBehaviour
         {
             // find vertex with lowest key that is NOT in MST
             int u = FindMinEdge(key, isInMST, vertices);
-            
+
             // add vertex to MST
             isInMST[u] = true;
-            
+
             edges[count] = u;
             //Find
             for (int v = 0; v < vertices; v++)
@@ -280,9 +298,9 @@ public class StartMSTExperiment : MonoBehaviour
 
         }
 
-        for(int v = 0; v < vertices; v++)
+        for (int v = 0; v < vertices; v++)
         {
-            if(isInMST[v] == false)
+            if (isInMST[v] == false)
             {
                 edges[vertices - 1] = v;
                 float dist = getDistance(islands[parent[v]], islands[v]);
@@ -313,20 +331,20 @@ public class StartMSTExperiment : MonoBehaviour
             //Debug.Log("edge: " + edges[i] + " i: " + i );
             //Debug.Log("edge: " + edges[i] + " i: " + i + " parent: " + parent[edges[i]]);
             Debug.Log("start: " + parent[edges[i]] + " end: " + edges[i] + " order: " + i);
-            
+
             if (parent[edges[i]] != -1)// && edges[i] != -1)
             {
                 Vector3 startPos = islands[parent[edges[i]]].transform.position;
                 Vector3 endPos = islands[edges[i]].transform.position;
                 GameObject bridge = new GameObject("Bridge " + parent[edges[i]] + "--" + edges[i]);
-                bridge.transform.parent = Bridges.transform;
+                bridge.transform.parent = BridgesParent.transform;
                 //yield return new WaitForSeconds(1);
                 //InstantiateBridgeSegments(bridge, startPos, endPos);
                 yield return InstantiateBridgeSegments(bridge, startPos, endPos);
                 lengthOfBridges.text = "length of all bridges: " + endLengthOfBridges.ToString();
                 numberOfBridgeSegments.text = "bridgesegments: " + bridgeSegments.ToString();
             }
-            
+
         }
 
         //lengthOfBridges.text = "<color=#810000>test test test</color> " + "length of all bridges: " + endLengthOfBridges.ToString();
@@ -345,23 +363,16 @@ public class StartMSTExperiment : MonoBehaviour
             //Should not happen
             Debug.Log("No Islands Found:  " + islands.Length);
         }
-        islandAmount = islands.Length;
     }
-    
+
 
     /*
     * 
     * */
     void ManualBridgeBuilder()
     {
-        islands = GameObject.FindGameObjectsWithTag("Island");
-        if (islands.Length <= 0)
-        {
-            //Should not happen
-            Debug.Log("No Islands Found:  " + islands.Length);
-        }
-        islandAmount = islands.Length;
-        bool[] isInManualSet = new bool[islandAmount];
+
+        bool[] isInManualSet = new bool[_numberOfIslands];
 
 
     }
@@ -370,25 +381,42 @@ public class StartMSTExperiment : MonoBehaviour
     {
         string _text = text;
         int index = -1;
-        for(int c = 0; c < islandAmount; c++)
+        for (int c = 0; c < _numberOfIslands; c++)
         {
-            if(String.Compare(islands[c].name, _text) == 0)
+            if (String.Compare(islands[c].name, _text) == 0)
             {
                 index = c;
             }
             Debug.Log("islandAmount.name: " + islands[c].name + "  _text: " + _text);
         }
 
-        if(index < 0)
+        if (index < 0)
         {
             Debug.Log("Error - Selected Island not found!");
         }
 
-        if(manualStart == 0)
+        if (manualStart < 0)
         {
-            Debug.Log("Manual Start Island is: " + _text);
+            Debug.Log("Manual Start Island is: " + index);
+            manualStart = index;
         }
 
+
+        /*switch (expression)
+        {
+            case 0:
+                // code block
+                break;
+            case 1:
+                // code block
+                break;
+            case 2:
+                // code block
+                break;
+            default:
+                // code block
+                break;
+        }*/
     }
 
     public void SetFromButton(string text)
@@ -406,6 +434,28 @@ public class StartMSTExperiment : MonoBehaviour
     }
 
 
+
+
+
+    /// <summary>
+    /// Resets the object
+    /// </summary>
+    //public override void ResetObject()
+    //{
+        //TODO:
+
+        //Copy from Coil.cs
+        /*if (_rigidBody)
+        {
+            _rigidBody.velocity = Vector3.zero;
+            _rigidBody.angularVelocity = Vector3.zero;
+        }
+        transform.position = startPos;
+        transform.rotation = startRot;
+        _current = 0.0f;
+        fieldStrength = 0.0f;
+        flux = _startFlux;*/
+    //}
 
 
 
