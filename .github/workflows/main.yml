@@ -137,26 +137,35 @@ jobs:
             ${{ github.workspace }}/test-results
           if-no-files-found: error
 
-
-  # TODO
-  # make sure we don't upload WebGL build to steam
-
   deploy: 
     name: Deploy to Steam
     runs-on: self-hosted
     needs: [build, test, upload-artifacts]
     # for now, also proceed, even if tests fail
-    # TODO: adapt once tests are fiexed
+    # TODO: adapt once tests are fixed
     # we do not want to deploy if we are doing a scheduled run
     if: ${{ (github.event_name != 'schedule') && (success() || (needs.build.result == 'success' || needs.test.result == 'success')) }}
     steps:
 
+        # fetch UID of user running the workflow
+      - name: Get Actions user id
+        id: get_uid
+        run: |
+          actions_user_id=`id -u $USER`
+          echo $actions_user_id
+          echo "uid=$actions_user_id" >> $GITHUB_OUTPUT 
+
+        # chown files to the user that was identified in the prev step
+      - name: Restore file ownership
+        uses: peter-murray/reset-workspace-ownership-action@v1
+        with:
+          user_id: ${{ steps.get_uid.outputs.uid }}
+
         # remove the WebGL directory so we do not accidentally publish it to steam
-      - name: Setup
-        container: steamcmd:latest
+      - name: Prepare deployment
         run: rm -rf build/WebGL
-    
-      - name: Deploy to Steam
+
+      - name: Deploy
         # use patched version of game-ci/steam-deploy to deploy
         # this can be switched back once is fixed on the upstream
         # see: 
@@ -185,5 +194,3 @@ jobs:
     steps:
       - name: Cleanup
         uses: AutoModality/action-clean@v1
-          
-          
