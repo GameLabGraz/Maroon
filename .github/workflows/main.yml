@@ -153,6 +153,7 @@ jobs:
 
         # remove the WebGL directory so we do not accidentally publish it to steam
       - name: Setup
+        container: steamcmd:latest
         run: rm -rf build/WebGL
     
       - name: Deploy to Steam
