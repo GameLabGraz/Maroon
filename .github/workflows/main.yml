@@ -4,8 +4,8 @@ on:
   push:
   workflow_dispatch:
   schedule:
-    # run at 8am and 20pm UTC
-    - cron: 0 8,20 * * *
+    # run daily at 6am UTC
+    - cron: 0 6 * * *
 
 jobs:
 
@@ -87,7 +87,6 @@ jobs:
         with:
           path: ${{ github.workspace }}/unity/Library
           key: ${{ needs.setup.outputs.key }}
-          #key: Library-${{ hashFiles('${{ github.workspace }}/unity/Assets/**', '${{ github.workspace }}/unity/Packages/**', '${{ github.workspace }}/unity/ProjectSettings/**') }}
 
 
   # TODO
@@ -141,28 +140,35 @@ jobs:
 
   # TODO
   # make sure we don't upload WebGL build to steam
-  # wait for https://github.com/game-ci/steam-deploy/issues/56 to be fixed, so steam does not lock us out after one pipeline run
 
-  # deploy: 
-  #   name: Deploy to Steam
-  #   runs-on: self-hosted
-  #   needs: [build, test, upload-artifacts]
-  #   # for now, also proceed, even if tests fail
-  #   if: ${{ success() || (needs.build.result == 'success' || needs.test.result == 'success') }}
-  #   steps:
-  #     - name: Upload to Steam
-  #       uses: game-ci/steam-deploy@v2
-  #       with:
-  #         username: ${{ secrets.STEAM_USERNAME }}
-  #         password: ${{ secrets.STEAM_PASSWORD }}
-  #         configVdf: ${{ secrets.STEAM_CONFIG_VDF}}
-  #         ssfnFileName: ${{ secrets.STEAM_SSFN_FILE_NAME }}
-  #         ssfnFileContents: ${{ secrets.STEAM_SSFN_FILE_CONTENTS }}
-  #         appId: ${{ secrets.STEAM_APP_ID }}
-  #         buildDescription: CI/CD {{github.sha}}
-  #         rootPath: build
-  #         depot1Path: .
-  #         releaseBranch: development
+  deploy: 
+    name: Deploy to Steam
+    runs-on: self-hosted
+    needs: [build, test, upload-artifacts]
+    # for now, also proceed, even if tests fail
+    # TODO: adapt once tests are fiexed
+    # we do not want to deploy if we are doing a scheduled run
+    if: ${{ (github.event_name != 'schedule') && (success() || (needs.build.result == 'success' || needs.test.result == 'success')) }}
+    steps:
+
+        # remove the WebGL directory so we do not accidentally publish it to steam
+      - name: Setup
+        run: rm -rf build/WebGL
+    
+      - name: Deploy to Steam
+        # use patched version of game-ci/steam-deploy to deploy
+        # this can be switched back once is fixed on the upstream
+        # see: 
+        # https://github.com/game-ci/steam-deploy/issues/56
+        uses: mfbrantner/steam-deploy@v0.3
+        with:
+          username: ${{ secrets.STEAM_USERNAME }}
+          configVdf: ${{ secrets.STEAM_CONFIG_VDF}}
+          appId: ${{ secrets.STEAM_APP_ID }}
+          buildDescription: CI/CD build ${{ github.sha }}
+          rootPath: build
+          depot1Path: .
+          releaseBranch: development
 
 
   # this is needed because in some instances, there might be some leftover files
@@ -173,7 +179,7 @@ jobs:
   cleanup:
     name: Cleanup
     runs-on: self-hosted
-    needs: [test, build, upload-artifacts, save-cache]
+    needs: [test, build, upload-artifacts, save-cache, deploy]
     if: ${{ always() }}
     steps:
       - name: Cleanup
