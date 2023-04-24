@@ -9,11 +9,19 @@ public class MSTConstants
     public const int MAX_Islands = 10;
 }
 
+/*enum ManualIslandPickerOptions
+{
+    noneSelected,
+    oneSelected,
+    bothSelected
+}*/
+
 
 public class MSTController : MonoBehaviour
 {
     public GameObject IslandsParent;
     public GameObject BridgesParent;
+    public GameObject ManualBridgesParent;
 
     public GameObject bridgeSegmentPrefab;
     public GameObject islandPrefab;
@@ -25,20 +33,17 @@ public class MSTController : MonoBehaviour
         get => _numberOfIslands;
     }
 
-    Vector3 instantiatePosition;
-    float lerpValue; //percentage 0 - 100%
-    float distance;
-    int segmentsToCreate;
     float size;
     MeshRenderer bridgeRenderer;
     MeshRenderer islandRenderer;
     static float islandHalf;
     GameObject[] islands;
 
+    //
     float endDistance;
     float endLengthOfBridges;
-    int bridgeSegments;
-    int numVertices;
+    int allBridgeSegments;
+    //int numVertices;
 
     [SerializeField] private TextMeshProUGUI lengthOfBridges;
     [SerializeField] private TextMeshProUGUI numberOfBridgeSegments;
@@ -48,13 +53,16 @@ public class MSTController : MonoBehaviour
     public GameObject FromButton;
     public GameObject ToButton;
     GameObject manualFromIsland;
+    int manualFromIslandIndex;
     GameObject manualToIsland;
     bool[] isInManualSet;
     int manualStart;
-    int manualCases;
+    //ManualIslandPickerOptions manualCases;
+    bool isManualIslandPicked;
 
 
-
+    int[] startIndices;
+    int[] endIndices;
 
 
     public static MSTController Instance { get; private set; } // static singleton
@@ -82,21 +90,12 @@ public class MSTController : MonoBehaviour
 
         endDistance = 0;
         endLengthOfBridges = 0;
-        bridgeSegments = 0;
+        allBridgeSegments = 0;
 
         lengthOfBridges.text = " ";
         numberOfBridgeSegments.text = " ";
 
 
-        /*List<GameObject> islandList = IslandsParent.GetComponent<IslandSetUp>().GetActiveIslandsAsList();
-        Debug.Log("islandList: " + islandList.Count);
-        islands = new GameObject[_numberOfIslands];
-        for (int c = 0; c < _numberOfIslands; c++)
-        {
-            islands[c] = islandList[c];
-        }
-        Debug.Log("islandsAmount: " + islands.Length);
-        */
         islands = GameObject.FindGameObjectsWithTag("Island");
         if (islands.Length <= 0)
         {
@@ -106,11 +105,14 @@ public class MSTController : MonoBehaviour
         Debug.Log("islandsAmount: " + islands.Length);
 
 
-
-
-
         isInManualSet = new bool[MSTConstants.MAX_Islands];
+        for(int i = 0; i < isInManualSet.Length; i++)
+        {
+            isInManualSet[i] = false;
+        }
         manualStart = -1;
+        //manualCases = ManualIslandPickerOptions.noneSelected;
+        isManualIslandPicked = false;
 
         Debug.Log("NumberIslands: " + NumberOfIslands);
         Debug.Log("_numberIslands: " + _numberOfIslands);
@@ -119,12 +121,6 @@ public class MSTController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-        //Debug.Log("startPoint:  " + startPoint + " " + tt + " " + " endPoint: " + endPoint);
-
-
-        //startPoint = islands[0].transform.position;
-        //endPoint = islands[1].transform.position;
     }
 
     /**
@@ -132,10 +128,11 @@ public class MSTController : MonoBehaviour
      * */
     public void PlayPrim()
     {
-        endDistance = 0;
         endLengthOfBridges = 0;
-        bridgeSegments = 0;
-        StartCoroutine(PrimsAlgorithm());
+        allBridgeSegments = 0;
+        //StartCoroutine(PrimsAlgorithm());
+        PrimsAlgorithm();
+        StartCoroutine(BuildBrigdesPrim());
     }
 
 
@@ -148,14 +145,28 @@ public class MSTController : MonoBehaviour
     }
 
     /**
-     * Start PrimTest - from Button
+     * Start PrimTest - from Testbutton
      * */
     public void PrimTest()
     {
-        endDistance = 0;
         endLengthOfBridges = 0;
-        bridgeSegments = 0;
-        StartCoroutine(PrimsAlgorithm());
+        allBridgeSegments = 0;
+        //StartCoroutine(PrimsAlgorithm());
+        PrimsAlgorithm();
+    }
+
+    void CalculateSegmentsToCreate(Vector3 startPos, Vector3 endPos)
+    {
+        float dist = Vector3.Distance(startPos, endPos);
+        endLengthOfBridges += dist;
+        //Debug.Log("dist: " + dist + " endLenghtOfBridges: " + endLengthOfBridges);
+
+        Vector3 newStartPoint = Vector3.MoveTowards(startPos, endPos, islandHalf);
+        Vector3 newEndPoint = Vector3.MoveTowards(endPos, startPos, islandHalf);
+
+        float d = Vector3.Distance(newStartPoint, newEndPoint) / size;
+        allBridgeSegments += (int)d + 1;
+        //Debug.Log("Segments: " + allBridgeSegments);
     }
 
     /**
@@ -164,33 +175,29 @@ public class MSTController : MonoBehaviour
     IEnumerator InstantiateBridgeSegments(GameObject bridge, Vector3 startPos, Vector3 endPos)
     {
         //Debug.Log("startPos:  " + startPos + " endPos: " + endPos + "  bridgeSize: " + size);
-        float dist = Vector3.Distance(startPos, endPos);
-        endLengthOfBridges += dist;
-        Debug.Log("dist " + dist + " endLenghtOfBridges: " + endLengthOfBridges);
-
         Vector3 newStartPoint = Vector3.MoveTowards(startPos, endPos, islandHalf);
         Vector3 newEndPoint = Vector3.MoveTowards(endPos, startPos, islandHalf);
+
         Quaternion rot = Quaternion.LookRotation(newEndPoint - newStartPoint);
 
+        float d = Vector3.Distance(newStartPoint, newEndPoint) / size;
 
         //segmentsToCreate = Mathf.RoundToInt(Vector3.Distance(newStartPoint, newEndPoint) / size);
-        float d = Vector3.Distance(newStartPoint, newEndPoint) / size;
-        segmentsToCreate = (int)d;
-        bridgeSegments += segmentsToCreate + 1;
-        //Debug.Log("Segments: " + d + " : " + segmentsToCreate);
-        distance = 1f / d;
+        int segmentsToCreate = (int)d;
+        float distance = 1f / d;
 
-        lerpValue = 0 - distance;
+        //percentage 0 - 100%
+        float lerpValue = 0 - distance;
         //Debug.Log("segmentsToCreate:  " + segmentsToCreate + " Distance: " + Vector3.Distance(newStartPoint, newEndPoint) + "  betweenSegments: " + distance);
         //Debug.Log("segmentsToCreate:  " + segmentsToCreate);
         for (int i = 0; i <= segmentsToCreate; i++)
         {
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.15f);
             lerpValue += distance;
 
             //Debug.Log("lerpValue: " + lerpValue + " distance: " + distance);
 
-            instantiatePosition = Vector3.Lerp(newStartPoint, newEndPoint, lerpValue);
+            Vector3 instantiatePosition = Vector3.Lerp(newStartPoint, newEndPoint, lerpValue);
             instantiatePosition.y = 0.9f;
 
             Instantiate(bridgeSegmentPrefab, instantiatePosition, rot, bridge.transform);
@@ -202,8 +209,8 @@ public class MSTController : MonoBehaviour
     }
 
     /**
-     * find vertex (Island) which is NOT in MST that has the least key (distance/edge)
-     * */
+    * find vertex (Island) which is NOT in MST that has the least key (distance/edge)
+    * */
     int FindMinEdge(float[] key, bool[] isInMST, int vertices)
     {
         float least = float.MaxValue;
@@ -219,25 +226,24 @@ public class MSTController : MonoBehaviour
 
         endDistance += least;
 
-
         Debug.Log("min_index is: " + min_index + " least value: " + least + " endDistance: " + endDistance);
         return min_index;
     }
 
-    /*
+    /**
      * Using Prims Algorithm for creating the MST and building the Bridges
      * */
-    IEnumerator PrimsAlgorithm()
+    void PrimsAlgorithm()
     {
+        endDistance = 0;
         int vertices = _numberOfIslands;
 
-
+        //to get right order for building bridges
         int[] edges = new int[vertices];
         foreach (int e in edges)
         {
             edges[e] = -1;
         }
-
 
         Dictionary<int, float[]> graph = new Dictionary<int, float[]>();
 
@@ -310,26 +316,41 @@ public class MSTController : MonoBehaviour
             }
         }
 
-        Debug.Log("Now building the bridges ");
+        //set globally to build bridges later
+        startIndices = parent;
+        endIndices = edges;
 
-        /* --------------------------------------------------------------------------------------
-         * Building Bridges without order (just per island 1-9)
-         * ----------------------------------------------------------------------------------- */
-        /*for (int i = 1; i < vertices; i++)
-        {
-            // von -parent[i]-  zu  -i-  mit  Distanz -graph[i][parent[i]]-
-            Vector3 startPos = islands[parent[i]].transform.position;
-            Vector3 endPos = islands[i].transform.position;
-            GameObject bridge = new GameObject("Bridge " + parent[i] + "--" + i);
-            bridge.transform.parent = Bridges.transform;
-            yield return new WaitForSeconds(1);
-            InstantiateBridgeSegments(bridge, startPos, endPos);
-        }*/
+        Debug.Log("End of Prims Algorithm!");
+    }
+
+    void CalculateMSTDistance()
+    {
+        int vertices = _numberOfIslands;
+        int[] parent = startIndices;
+        int[] edges = endIndices;
 
         for (int i = 1; i < vertices; i++)
         {
-            //Debug.Log("edge: " + edges[i] + " i: " + i );
-            //Debug.Log("edge: " + edges[i] + " i: " + i + " parent: " + parent[edges[i]]);
+            Debug.Log("start: " + parent[edges[i]] + " end: " + edges[i] + " order: " + i);
+
+            if (parent[edges[i]] != -1)
+            {
+                Vector3 startPos = islands[parent[edges[i]]].transform.position;
+                Vector3 endPos = islands[edges[i]].transform.position;
+                CalculateSegmentsToCreate(startPos, endPos);
+            }
+
+        }
+    }
+
+    IEnumerator BuildBrigdesPrim()
+    {
+        int vertices = _numberOfIslands;
+        int[] parent = startIndices;
+        int[] edges = endIndices;
+
+        for (int i = 1; i < vertices; i++)
+        {
             Debug.Log("start: " + parent[edges[i]] + " end: " + edges[i] + " order: " + i);
 
             if (parent[edges[i]] != -1)// && edges[i] != -1)
@@ -339,48 +360,60 @@ public class MSTController : MonoBehaviour
                 GameObject bridge = new GameObject("Bridge " + parent[edges[i]] + "--" + edges[i]);
                 bridge.transform.parent = BridgesParent.transform;
                 //yield return new WaitForSeconds(1);
-                //InstantiateBridgeSegments(bridge, startPos, endPos);
-                yield return InstantiateBridgeSegments(bridge, startPos, endPos);
-                lengthOfBridges.text = "length of all bridges: " + endLengthOfBridges.ToString();
-                numberOfBridgeSegments.text = "bridgesegments: " + bridgeSegments.ToString();
+                 yield return InstantiateBridgeSegments(bridge, startPos, endPos);
+                //lengthOfBridges.text = "length of all bridges: " + endLengthOfBridges.ToString();
+                //numberOfBridgeSegments.text = "allBridgeSegments: " + allBridgeSegments.ToString();
             }
 
         }
-
-        //lengthOfBridges.text = "<color=#810000>test test test</color> " + "length of all bridges: " + endLengthOfBridges.ToString();
-        lengthOfBridges.text = "length of all bridges: " + endLengthOfBridges.ToString();
-        numberOfBridgeSegments.text = "bridgesegments: " + bridgeSegments.ToString();
-        Debug.Log("End of Prims Algorithm!");
-        yield break;
     }
 
 
     public void UpdateIslands()
     {
+        endLengthOfBridges = 0;
+        allBridgeSegments = 0;
         islands = GameObject.FindGameObjectsWithTag("Island");
         if (islands.Length <= 0)
         {
             //Should not happen
             Debug.Log("No Islands Found:  " + islands.Length);
         }
+        PrimsAlgorithm();
+        CalculateMSTDistance();
     }
 
 
     /*
     * 
     * */
-    void ManualBridgeBuilder()
+    IEnumerator ManualBridgeBuilder(GameObject manualFromIsland, GameObject manualToIsland, int fromIndex, int toIndex)
     {
 
-        bool[] isInManualSet = new bool[_numberOfIslands];
+        Vector3 startPos = manualFromIsland.transform.position;
+        Vector3 endPos = manualToIsland.transform.position;
 
+        Ray ray = new Ray(startPos, (endPos - startPos));
 
+        float dist = getDistance(manualFromIsland, manualToIsland);
+        if(Physics.Raycast(ray, out RaycastHit hit, dist, LayerMask.GetMask("Island")) && hit.collider.gameObject != manualToIsland)
+        {
+            Debug.Log(hit.collider.gameObject.name + " was hit!");
+        }
+        else
+        {
+            GameObject bridge = new GameObject("ManualBridge " + fromIndex + "--" + toIndex);
+            bridge.transform.parent = ManualBridgesParent.transform;
+            //StartCoroutine(InstantiateBridgeSegments(bridge, startPos, endPos));
+            yield return InstantiateBridgeSegments(bridge, startPos, endPos);
+        }
     }
 
-    public void SelectIsland(string text)
+    public IEnumerator SelectIsland(string text)
     {
         string _text = text;
         int index = -1;
+
         for (int c = 0; c < _numberOfIslands; c++)
         {
             if (String.Compare(islands[c].name, _text) == 0)
@@ -401,22 +434,51 @@ public class MSTController : MonoBehaviour
             manualStart = index;
         }
 
-
-        /*switch (expression)
+        if (isManualIslandPicked == false)
         {
-            case 0:
-                // code block
+            manualFromIsland = islands[index];
+            SetFromButton(manualFromIsland.name);
+            isManualIslandPicked = true;
+            manualFromIslandIndex = index;
+        }
+        else if(isManualIslandPicked == true && manualFromIsland != islands[index] && 
+            (!isInManualSet[index] || !isInManualSet[manualFromIslandIndex]) )
+        {
+            manualToIsland = islands[index];
+            SetToButton(manualToIsland.name);
+
+            // Check for Collisions and build Bridge
+            yield return ManualBridgeBuilder(manualFromIsland, manualToIsland, manualFromIslandIndex, index);
+
+            isInManualSet[manualFromIslandIndex] = true;
+            isInManualSet[index] = true;
+
+            //Reset Buttons after
+            SetFromButton("Select Island");
+            SetToButton("Select Island");
+            isManualIslandPicked = false;
+        }
+
+
+        /*switch(manualCases)
+        {
+            case ManualIslandPickerOptions.noneSelected:
+                manualFromIsland = islands[index];
+                SetFromButton(manualFromIsland.name);
+                manualCases = ManualIslandPickerOptions.oneSelected;
                 break;
-            case 1:
-                // code block
+            case ManualIslandPickerOptions.oneSelected:
+                manualFromIsland = islands[index];
+                SetFromButton(manualFromIsland.name);
+                manualCases = ManualIslandPickerOptions.oneSelected;
                 break;
-            case 2:
-                // code block
+            case ManualIslandPickerOptions.bothSelected:
+
                 break;
             default:
-                // code block
                 break;
         }*/
+        yield break;
     }
 
     public void SetFromButton(string text)
@@ -432,6 +494,7 @@ public class MSTController : MonoBehaviour
         Debug.Log("SetToButton: " + _text);
         ToButton.GetComponent<TextMeshProUGUI>().text = _text;
     }
+
 
 
 

@@ -139,7 +139,6 @@ public class IslandSetUp : MonoBehaviour
     /// <summary>
     /// Changed the number of islands
     /// </summary>
-    /// 
     public void changeNumberOfIslands()
     {
         if(SimulationController.Instance.SimulationRunning)
@@ -180,20 +179,5 @@ public class IslandSetUp : MonoBehaviour
         _numberOfIslands = (int)numberOfIslands;
         //Debug.Log("(with float) changed Number of Islands to: " + NumberOfIslands + " bzw. " + numberOfIslands);
         changeNumberOfIslands();
-    }
-
-    public GameObject[] GetActiveIslandsAsArray()
-    {
-        GameObject[] islands = new GameObject[(int)MSTController.Instance.NumberOfIslands];
-        for(int c = 0; c < (int)MSTController.Instance.NumberOfIslands; c++)
-        {
-            islands[c] = islandClones[c];
-        }
-        return islands;
-    }
-
-    public List<GameObject> GetActiveIslandsAsList()
-    {
-        return islandClones;
     }
 }

@@ -23,6 +23,6 @@ public class OnMouseEvent : MonoBehaviour
         string text = this.name;
         Debug.Log("OnMouseDown " + text);
         //StartMSTExperiment.Instance.SelectIsland(text);
-        MSTController.Instance.SelectIsland(text);
+        StartCoroutine(MSTController.Instance.SelectIsland(text));
     }
 }
