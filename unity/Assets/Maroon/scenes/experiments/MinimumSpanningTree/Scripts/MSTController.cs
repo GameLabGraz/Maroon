@@ -9,12 +9,12 @@ public class MSTConstants
     public const int MAX_Islands = 10;
 }
 
-/*enum ManualIslandPickerOptions
+enum ManualIslandPickerOptions
 {
     noneSelected,
     oneSelected,
     bothSelected
-}*/
+}
 
 
 public class MSTController : MonoBehaviour
@@ -23,7 +23,9 @@ public class MSTController : MonoBehaviour
     public GameObject BridgesParent;
     public GameObject ManualBridgesParent;
 
+    public float bridgeHeightY = 0.9f;
     public GameObject bridgeSegmentPrefab;
+    public GameObject bridgeSegmentGreyPrefab;
     public GameObject islandPrefab;
 
     private int _numberOfIslands = 4;
@@ -57,8 +59,8 @@ public class MSTController : MonoBehaviour
     GameObject manualToIsland;
     bool[] isInManualSet;
     int manualStart;
-    //ManualIslandPickerOptions manualCases;
-    bool isManualIslandPicked;
+    ManualIslandPickerOptions manualCases;
+    //bool isManualIslandPicked;
 
 
     int[] startIndices;
@@ -111,11 +113,11 @@ public class MSTController : MonoBehaviour
             isInManualSet[i] = false;
         }
         manualStart = -1;
-        //manualCases = ManualIslandPickerOptions.noneSelected;
-        isManualIslandPicked = false;
+        manualCases = ManualIslandPickerOptions.noneSelected;
+        //isManualIslandPicked = false;
 
-        Debug.Log("NumberIslands: " + NumberOfIslands);
-        Debug.Log("_numberIslands: " + _numberOfIslands);
+        //Debug.Log("NumberIslands: " + NumberOfIslands);
+        //Debug.Log("_numberIslands: " + _numberOfIslands);
     }
 
     // Update is called once per frame
@@ -172,7 +174,7 @@ public class MSTController : MonoBehaviour
     /**
      * Instantiate Bridgesegments to Build a Bridge
      * */
-    IEnumerator InstantiateBridgeSegments(GameObject bridge, Vector3 startPos, Vector3 endPos)
+    IEnumerator InstantiateBridgeSegments(GameObject bridge, Vector3 startPos, Vector3 endPos, GameObject bridgeSegment)
     {
         //Debug.Log("startPos:  " + startPos + " endPos: " + endPos + "  bridgeSize: " + size);
         Vector3 newStartPoint = Vector3.MoveTowards(startPos, endPos, islandHalf);
@@ -198,9 +200,10 @@ public class MSTController : MonoBehaviour
             //Debug.Log("lerpValue: " + lerpValue + " distance: " + distance);
 
             Vector3 instantiatePosition = Vector3.Lerp(newStartPoint, newEndPoint, lerpValue);
-            instantiatePosition.y = 0.9f;
+            //instantiatePosition.y = 0.9f;
+            instantiatePosition.y = bridgeHeightY;
 
-            Instantiate(bridgeSegmentPrefab, instantiatePosition, rot, bridge.transform);
+            Instantiate(bridgeSegment, instantiatePosition, rot, bridge.transform);
         }
 
         Debug.Log("segments created!");
@@ -360,7 +363,7 @@ public class MSTController : MonoBehaviour
                 GameObject bridge = new GameObject("Bridge " + parent[edges[i]] + "--" + edges[i]);
                 bridge.transform.parent = BridgesParent.transform;
                 //yield return new WaitForSeconds(1);
-                 yield return InstantiateBridgeSegments(bridge, startPos, endPos);
+                 yield return InstantiateBridgeSegments(bridge, startPos, endPos, bridgeSegmentPrefab);
                 //lengthOfBridges.text = "length of all bridges: " + endLengthOfBridges.ToString();
                 //numberOfBridgeSegments.text = "allBridgeSegments: " + allBridgeSegments.ToString();
             }
@@ -402,10 +405,12 @@ public class MSTController : MonoBehaviour
         }
         else
         {
+            isInManualSet[manualFromIslandIndex] = true;
+            isInManualSet[toIndex] = true;
             GameObject bridge = new GameObject("ManualBridge " + fromIndex + "--" + toIndex);
             bridge.transform.parent = ManualBridgesParent.transform;
             //StartCoroutine(InstantiateBridgeSegments(bridge, startPos, endPos));
-            yield return InstantiateBridgeSegments(bridge, startPos, endPos);
+            yield return InstantiateBridgeSegments(bridge, startPos, endPos, bridgeSegmentGreyPrefab);
         }
     }
 
@@ -419,8 +424,9 @@ public class MSTController : MonoBehaviour
             if (String.Compare(islands[c].name, _text) == 0)
             {
                 index = c;
+                Debug.Log("islandAmount.name: " + islands[c].name + "  _text: " + _text);
             }
-            Debug.Log("islandAmount.name: " + islands[c].name + "  _text: " + _text);
+            //Debug.Log("islandAmount.name: " + islands[c].name + "  _text: " + _text);
         }
 
         if (index < 0)
@@ -434,7 +440,7 @@ public class MSTController : MonoBehaviour
             manualStart = index;
         }
 
-        if (isManualIslandPicked == false)
+        /*if (isManualIslandPicked == false)
         {
             manualFromIsland = islands[index];
             SetFromButton(manualFromIsland.name);
@@ -457,44 +463,79 @@ public class MSTController : MonoBehaviour
             SetFromButton("Select Island");
             SetToButton("Select Island");
             isManualIslandPicked = false;
-        }
+        }*/
 
 
-        /*switch(manualCases)
+        switch(manualCases)
         {
             case ManualIslandPickerOptions.noneSelected:
                 manualFromIsland = islands[index];
                 SetFromButton(manualFromIsland.name);
+                manualFromIslandIndex = index;
                 manualCases = ManualIslandPickerOptions.oneSelected;
                 break;
             case ManualIslandPickerOptions.oneSelected:
-                manualFromIsland = islands[index];
-                SetFromButton(manualFromIsland.name);
-                manualCases = ManualIslandPickerOptions.oneSelected;
+                //if (manualFromIsland != islands[index] && (!isInManualSet[index] || !isInManualSet[manualFromIslandIndex]))
+                if (manualFromIsland != islands[index] && 
+                    ((isInManualSet[index] ^ isInManualSet[manualFromIslandIndex]) || 
+                    ((manualStart == index || manualStart == manualFromIslandIndex) && (!isInManualSet[index] && !isInManualSet[manualFromIslandIndex]))) )
+                {
+                    manualToIsland = islands[index];
+                    SetToButton(manualToIsland.name);
+                    manualCases = ManualIslandPickerOptions.bothSelected;
+                    // Check for Collisions and build Bridge
+                    yield return ManualBridgeBuilder(manualFromIsland, manualToIsland, manualFromIslandIndex, index);
+                }
+                if (manualCases == ManualIslandPickerOptions.bothSelected)
+                { 
+                    SetFromButton("Select Island");
+                    SetToButton("Select Island");
+                    manualCases = ManualIslandPickerOptions.noneSelected;
+                }
                 break;
             case ManualIslandPickerOptions.bothSelected:
-
+                SetFromButton("Select Island");
+                SetToButton("Select Island");
+                manualCases = ManualIslandPickerOptions.noneSelected;
                 break;
             default:
                 break;
-        }*/
+        }
+
         yield break;
     }
 
     public void SetFromButton(string text)
     {
         string _text = text;
-        Debug.Log("SetFromButton: " + _text);
+        //Debug.Log("SetFromButton: " + _text);
         FromButton.GetComponent<TextMeshProUGUI>().text = _text;
     }
 
     public void SetToButton(string text)
     {
         string _text = text;
-        Debug.Log("SetToButton: " + _text);
+        //Debug.Log("SetToButton: " + _text);
         ToButton.GetComponent<TextMeshProUGUI>().text = _text;
     }
 
+    public void HideMyTry(bool hideTry)
+    {
+        if (hideTry)
+        {
+            foreach (Transform child in ManualBridgesParent.transform)
+            {
+                child.gameObject.SetActive(false);
+            }
+        }
+        else
+        {
+            foreach (Transform child in ManualBridgesParent.transform)
+            {
+                child.gameObject.SetActive(true);
+            }
+        }
+    }
 
 
 
