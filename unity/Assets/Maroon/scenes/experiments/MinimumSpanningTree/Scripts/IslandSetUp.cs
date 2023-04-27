@@ -18,7 +18,6 @@ public class IslandSetUp : MonoBehaviour
 
     protected List<GameObject> islandClones = new List<GameObject>();
 
-
     //public LayerMask m_LayerMask;
 
     private void Awake()
@@ -35,6 +34,9 @@ public class IslandSetUp : MonoBehaviour
         createIslands();
     }
 
+    /**
+     * Set a Random Position within Range
+     * */
     Vector3 setIslandPosition()
     {
         float xRange = Random.Range(topLeftBorder.position.x + radius.x, 
@@ -46,8 +48,12 @@ public class IslandSetUp : MonoBehaviour
         return pos;
     }
 
+    /**
+     * Check for collisions
+     * */
     bool checkIslandCollision(Vector3 islandPosition, Vector3 radius)
     {
+        #region check Collision using Layer (NOT used!)
         // Using Layer
         //var collider = Physics.CheckSphere(islandPosition, radius.x, LayerMask.GetMask("Island"));
         //Debug.Log("Collider is " + collider);
@@ -65,9 +71,14 @@ public class IslandSetUp : MonoBehaviour
         }
         return false;
         */
+        #endregion
+
         return Physics.CheckSphere(islandPosition, radius.x, LayerMask.GetMask("Island"));
     }
 
+    /**
+     * Create all Islands on random positions in Pool
+     * */
     protected void createIslands()
     {
         GameObject[] islandPrefabArray = { islandPrefab01, islandPrefab02, islandPrefab03, islandPrefab04 };
@@ -116,18 +127,16 @@ public class IslandSetUp : MonoBehaviour
             if (!islandClones[counter].activeSelf) break;
             islandClones[counter].SetActive(false);
         }
-
     }
 
     // Update is called once per frame
     void Update()
-    {
-        
+    {        
     }
 
-    /// <summary>
-    /// Clears All the islands Clones
-    /// </summary>
+    /**
+    * deactivates all the islands Clones
+    * */
     protected void clearAllIslandClones()
     {
         foreach (var island in islandClones)
@@ -136,9 +145,9 @@ public class IslandSetUp : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Changed the number of islands
-    /// </summary>
+    /**
+    * Change the number of active islands
+    * */
     public void changeNumberOfIslands()
     {
         if(SimulationController.Instance.SimulationRunning)
@@ -150,7 +159,6 @@ public class IslandSetUp : MonoBehaviour
         int counter = 0;
         for (; counter < _numberOfIslands; counter++)
         {
-
             if (counter < islandClones.Count)
             {
                 islandClones[counter].SetActive(true);
@@ -173,7 +181,9 @@ public class IslandSetUp : MonoBehaviour
         Debug.Log("Reset Islands!");
     }
 
-    // dynamic function setNumberOfIslands
+    /**
+    * dynamic function to setNumberOfIslands from Slider
+    * */
     public void setNumberOfIslands(float numberOfIslands)
     {
         _numberOfIslands = (int)numberOfIslands;
