@@ -60,6 +60,11 @@ public class Maze : PausableObject, IResetObject
         _steps = new List<PathFindingStep>();
         _layout = new GameObject[size, size];
         _mazeElements = new MazeElement[size, size];
+        if (_camera == null)
+        {
+            // If we are the segment prefab we do not have a Camera set => return (otherwise NullReferenceExceptions will be thrown)
+            return;
+        }
         _cameraBaseLocation = _camera.transform.position;
         _cameraBaseRotation = _camera.transform.rotation;
         _elementScale = new Vector3(1.0f / size, 1.0f / size, 1.0f / size);
