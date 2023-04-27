@@ -5,27 +5,27 @@ using UnityEngine.UI;
 
 public class CameraFieldOfView : MonoBehaviour
 {
-    public Camera mainCamera;
+    public Camera fovCamera;
     public Slider fovSlider;
 
     void Start()
     {
-        if (mainCamera == null)
+        if (fovCamera == null)
         {
-            mainCamera = Camera.main;
+            fovCamera = Camera.main;
         }
 
         if (fovSlider != null)
         {
-            fovSlider.minValue = 1;
-            fovSlider.maxValue = 179;
-            fovSlider.value = mainCamera.fieldOfView;
+            fovSlider.minValue = 10;
+            fovSlider.maxValue = 200;
+            fovSlider.value = fovCamera.fieldOfView;
             fovSlider.onValueChanged.AddListener(OnFOVSliderValueChanged);
         }
     }
 
     private void OnFOVSliderValueChanged(float value)
     {
-        mainCamera.fieldOfView = value;
+        fovCamera.fieldOfView = value;
     }
 }

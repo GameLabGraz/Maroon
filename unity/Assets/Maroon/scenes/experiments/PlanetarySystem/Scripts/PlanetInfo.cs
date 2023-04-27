@@ -11,6 +11,7 @@ public class PlanetInfo : MonoBehaviour
     public float gravity;
     public float escapeVelocity;
     public float rotationPeriod;
+    public float rotationAngle;
     public float lengthOfDay;
     public float semiMajorAxisIDistanceFromSun;
     public float orbitalPeriod;
