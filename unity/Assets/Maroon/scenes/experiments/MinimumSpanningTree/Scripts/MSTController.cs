@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using TMPro;
+using Maroon.UI; // for DialogueManager
+using GEAR.Localization; // for LanguageManager
 
 public class MSTConstants
 {
@@ -41,6 +43,19 @@ public class MSTController : MonoBehaviour, IResetObject
     static float islandHalf;
     GameObject[] islands;
 
+    public GameObject FromButton;
+    public GameObject ToButton;
+    GameObject manualFromIsland;
+    int manualFromIslandIndex;
+    GameObject manualToIsland;
+    int isInManualSetCounter;
+    bool[] isInManualSet;
+    int manualStart;
+    ManualIslandPickerOptions manualCases;
+
+    int[] startIndices;
+    int[] endIndices;
+
     // to show in UI
     float endDistance;
     float endLengthOfBridges;
@@ -48,18 +63,8 @@ public class MSTController : MonoBehaviour, IResetObject
     [SerializeField] private TextMeshProUGUI lengthOfBridges;
     [SerializeField] private TextMeshProUGUI numberOfBridgeSegments;
 
+    private DialogueManager _dialogueManager;
 
-    public GameObject FromButton;
-    public GameObject ToButton;
-    GameObject manualFromIsland;
-    int manualFromIslandIndex;
-    GameObject manualToIsland;
-    bool[] isInManualSet;
-    int manualStart;
-    ManualIslandPickerOptions manualCases;
-
-    int[] startIndices;
-    int[] endIndices;
 
     public static MSTController Instance { get; private set; } // static singleton
     
@@ -108,6 +113,9 @@ public class MSTController : MonoBehaviour, IResetObject
         }
         manualStart = -1;
         manualCases = ManualIslandPickerOptions.noneSelected;
+        isInManualSetCounter = 0;
+
+        DisplayMessageByKey("welcome message");
     }
 
     // Update is called once per frame
@@ -307,6 +315,10 @@ public class MSTController : MonoBehaviour, IResetObject
     {
         endLengthOfBridges = 0;
         allBridgeSegments = 0;
+
+
+        DeletePrimsBridges();
+        UpdateIslands();
         //StartCoroutine(PrimsAlgorithm());
         PrimsAlgorithm();
         StartCoroutine(BuildBrigdesPrim());
@@ -361,11 +373,29 @@ public class MSTController : MonoBehaviour, IResetObject
         }
         else
         {
-            isInManualSet[manualFromIslandIndex] = true;
-            isInManualSet[toIndex] = true;
+            if (!isInManualSet[manualFromIslandIndex])
+            {
+                isInManualSet[manualFromIslandIndex] = true;
+                isInManualSetCounter++;
+            }
+            if (!isInManualSet[toIndex])
+            {
+                isInManualSet[toIndex] = true;
+                isInManualSetCounter++;
+
+            }
             GameObject bridge = new GameObject("ManualBridge " + fromIndex + "--" + toIndex);
             bridge.transform.parent = ManualBridgesParent.transform;
             yield return InstantiateBridgeSegments(bridge, startPos, endPos, bridgeSegmentGreyPrefab);
+        }
+
+        if(isInManualSetCounter == _numberOfIslands)
+        {
+            Debug.Log("All Islands connected (manually)!: " + isInManualSetCounter);
+            DisplayMessageByKey("islands manually connected");
+            //if(minimum weight)
+            yield return new WaitForSeconds(1);
+            DisplayMessageByKey("islands manually connected minimum case");
         }
     }
 
@@ -375,6 +405,7 @@ public class MSTController : MonoBehaviour, IResetObject
      * */
     public IEnumerator SelectIsland(string text)
     {
+        var message = LanguageManager.Instance.GetString("SelectIsland");
         string _text = text;
         int index = -1;
 
@@ -418,15 +449,15 @@ public class MSTController : MonoBehaviour, IResetObject
                     yield return ManualBridgeBuilder(manualFromIsland, manualToIsland, manualFromIslandIndex, index);
                 }
                 if (manualCases == ManualIslandPickerOptions.bothSelected)
-                { 
-                    SetFromButton("Select Island");
-                    SetToButton("Select Island");
+                {
+                    SetFromButton(message);
+                    SetToButton(message);
                     manualCases = ManualIslandPickerOptions.noneSelected;
                 }
                 break;
             case ManualIslandPickerOptions.bothSelected:
-                SetFromButton("Select Island");
-                SetToButton("Select Island");
+                SetFromButton(message);
+                SetToButton(message);
                 manualCases = ManualIslandPickerOptions.noneSelected;
                 break;
             default:
@@ -558,6 +589,7 @@ public class MSTController : MonoBehaviour, IResetObject
         {
             isInManualSet[i] = false;
         }
+        isInManualSetCounter = 0;
         manualStart = -1;
         manualCases = ManualIslandPickerOptions.noneSelected;
         SetFromButton("Select Island");
@@ -571,4 +603,18 @@ public class MSTController : MonoBehaviour, IResetObject
 
     #endregion
 
+    
+    private void DisplayMessageByKey(string key)
+    {
+        if (_dialogueManager == null)
+            _dialogueManager = FindObjectOfType<DialogueManager>();
+
+        if (_dialogueManager == null)
+            return;
+
+        var message = LanguageManager.Instance.GetString(key);
+
+        _dialogueManager.ShowMessage(message);
+    }
+    
 }
