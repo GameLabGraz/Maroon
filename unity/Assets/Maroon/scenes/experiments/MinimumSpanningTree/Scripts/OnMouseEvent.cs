@@ -14,6 +14,9 @@ public class OnMouseEvent : MonoBehaviour
     {       
     }
 
+    /**
+     * on mouse click event listener on every island to then select it
+     * */
     private void OnMouseDown()
     {
         string text = this.name;

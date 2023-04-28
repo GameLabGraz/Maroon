@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class IslandSetUp : MonoBehaviour
+public class IslandSetUp : MonoBehaviour, IResetObject
 {
     public GameObject islandPrefab01;
     public GameObject islandPrefab02;
@@ -14,7 +14,7 @@ public class IslandSetUp : MonoBehaviour
     public Transform bottomRightBorder;
 
     static Vector3 radius;
-    int _numberOfIslands;
+    int _numberOfIslands = 4;
 
     protected List<GameObject> islandClones = new List<GameObject>();
 
@@ -152,7 +152,7 @@ public class IslandSetUp : MonoBehaviour
     {
         if(SimulationController.Instance.SimulationRunning)
         {
-            resetIslands();
+            resetIslandPositions();
             Debug.Log("Change Number of Islands - Simulation is Running!");
         }
 
@@ -173,14 +173,6 @@ public class IslandSetUp : MonoBehaviour
         }
     }
 
-    public void resetIslands()
-    {
-        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        //tmp = NumberOfIslands;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        Debug.Log("Reset Islands!");
-    }
-
     /**
     * dynamic function to setNumberOfIslands from Slider
     * */
@@ -189,5 +181,49 @@ public class IslandSetUp : MonoBehaviour
         _numberOfIslands = (int)numberOfIslands;
         //Debug.Log("(with float) changed Number of Islands to: " + NumberOfIslands + " bzw. " + numberOfIslands);
         changeNumberOfIslands();
+    }
+
+    /**
+     * resets all islandpositions
+     * sets the number of islands active that are set in slider
+     * */
+    public void resetIslandPositions()
+    {
+        clearAllIslandClones();
+        for (int i = 0; i < MSTConstants.MAX_Islands; i++)
+        {
+            float angle = Random.Range(0f, 360f);
+            Quaternion islandRotation = Quaternion.Euler(0, angle, 0);
+
+            Vector3 islandPosition = setIslandPosition();
+            
+            int tmp = 0;
+            while (checkIslandCollision(islandPosition, radius))
+            {
+                islandPosition = setIslandPosition();
+                tmp++;
+                //just force break after too many tries -> maybe there is no free space anymore
+                if (tmp > 1000000)
+                {
+                    Debug.Log("resetIslandPositions(): No free space for Island!");
+                    break;
+                }
+
+            }
+            var island = islandClones[i];
+            island.transform.SetPositionAndRotation(islandPosition, islandRotation);
+            island.SetActive(true);
+        }
+        changeNumberOfIslands();
+
+    }
+
+    /**
+     * Resets the object
+     * */
+    public void ResetObject()
+    {
+        Debug.Log("ResetObject: Reset Islandpositions");
+        resetIslandPositions();
     }
 }

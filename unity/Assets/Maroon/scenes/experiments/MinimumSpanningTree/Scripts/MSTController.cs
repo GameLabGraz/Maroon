@@ -17,7 +17,7 @@ enum ManualIslandPickerOptions
     bothSelected
 }
 
-public class MSTController : MonoBehaviour
+public class MSTController : MonoBehaviour, IResetObject
 {
     public GameObject IslandsParent;
     public GameObject BridgesParent;
@@ -520,28 +520,55 @@ public class MSTController : MonoBehaviour
 
     #endregion
 
+    #region Reset everything
 
-    /// <summary>
-    /// Resets the object
-    /// </summary>
-    //public override void ResetObject()
-    //{
-    //TODO:
-
-    //Copy from Coil.cs
-    /*if (_rigidBody)
+    /**
+     * destroy all manual build bridges
+     * */
+    void DeleteManualBridges()
     {
-        _rigidBody.velocity = Vector3.zero;
-        _rigidBody.angularVelocity = Vector3.zero;
+        foreach (Transform child in ManualBridgesParent.transform)
+        {
+            Destroy(child.gameObject);
+        }
     }
-    transform.position = startPos;
-    transform.rotation = startRot;
-    _current = 0.0f;
-    fieldStrength = 0.0f;
-    flux = _startFlux;*/
-    //}
+
+    /**
+     * destroy all with Prims Algorithm build Bridges
+     * */
+    void DeletePrimsBridges()
+    {
+        foreach (Transform child in BridgesParent.transform)
+        {
+            Destroy(child.gameObject);
+        }
+    }
+
+    /**
+    * Resets the object
+    * */
+    public void ResetObject()
+    {
+        //TODO:
+
+        Debug.Log("MSTController: ResetObject()");
+        DeleteManualBridges();
+
+        for (int i = 0; i < isInManualSet.Length; i++)
+        {
+            isInManualSet[i] = false;
+        }
+        manualStart = -1;
+        manualCases = ManualIslandPickerOptions.noneSelected;
+        SetFromButton("Select Island");
+        SetToButton("Select Island");
+
+        DeletePrimsBridges();
+        UpdateIslands();
 
 
+    }
 
+    #endregion
 
 }
