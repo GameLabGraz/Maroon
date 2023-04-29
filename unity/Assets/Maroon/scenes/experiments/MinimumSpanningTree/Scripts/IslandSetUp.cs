@@ -150,7 +150,7 @@ public class IslandSetUp : MonoBehaviour, IResetObject
     * */
     public void changeNumberOfIslands()
     {
-        if(SimulationController.Instance.SimulationRunning)
+        if (SimulationController.Instance.SimulationRunning)
         {
             Debug.Log("changeNumberOfIslands(): SimulationRunning");
             ResetObject();

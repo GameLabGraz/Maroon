@@ -52,12 +52,15 @@ public class MSTController : MonoBehaviour
     bool[] isInManualSet;
     int manualStart;
     ManualIslandPickerOptions manualCases;
+    float endLengthOfManualBridges;
+    int allManualBridgeSegments;
+
 
     int[] startIndices;
     int[] endIndices;
 
     // to show in UI
-    float endDistance;
+    //float endDistance;
     float endLengthOfBridges;
     int allBridgeSegments;
     //[SerializeField] private TextMeshProUGUI lengthOfBridges;
@@ -90,9 +93,13 @@ public class MSTController : MonoBehaviour
         islandRenderer = islandPrefab.GetComponent<MeshRenderer>();
         islandHalf = islandRenderer.bounds.size.x / 3f;
 
-        endDistance = 0;
+        //endDistance = 0;
         endLengthOfBridges = 0;
         allBridgeSegments = 0;
+
+        endLengthOfManualBridges = 0;
+        allManualBridgeSegments = 0;
+
 
         //lengthOfBridges.text = " ";
         //numberOfBridgeSegments.text = " ";
@@ -131,6 +138,10 @@ public class MSTController : MonoBehaviour
     {
         endLengthOfBridges = 0;
         allBridgeSegments = 0;
+
+        endLengthOfManualBridges = 0;
+        allManualBridgeSegments = 0;
+
         islands = GameObject.FindGameObjectsWithTag("Island");
         if (islands.Length <= 0)
         {
@@ -139,6 +150,8 @@ public class MSTController : MonoBehaviour
         }
         PrimsAlgorithm();
         CalculateMSTDistance();
+
+        ResetManualBridges();
     }
 
     /**
@@ -166,7 +179,7 @@ public class MSTController : MonoBehaviour
                 min_index = vec;
             }
         }
-        endDistance += least;
+        //endDistance += least;
         //Debug.Log("min_index is: " + min_index + " least value: " + least + " endDistance: " + endDistance);
         return min_index;
     }
@@ -176,7 +189,7 @@ public class MSTController : MonoBehaviour
      * */
     void PrimsAlgorithm()
     {
-        endDistance = 0;
+        //endDistance = 0;
         int vertices = _numberOfIslands;
 
         //to get right order for building bridges
@@ -249,7 +262,7 @@ public class MSTController : MonoBehaviour
             {
                 edges[vertices - 1] = v;
                 float dist = getDistance(islands[parent[v]], islands[v]);
-                endDistance += dist;
+                //endDistance += dist;
                 //Debug.Log("last edge: " + v + " least " + dist + " endDistance " + endDistance);
                 break;
             }
@@ -316,13 +329,19 @@ public class MSTController : MonoBehaviour
         endLengthOfBridges = 0;
         allBridgeSegments = 0;
 
-
+        StopAllCoroutines();
         DeletePrimsBridges();
         UpdateIslands();
         //StartCoroutine(PrimsAlgorithm());
         PrimsAlgorithm();
         StartCoroutine(BuildBrigdesPrim());
         //Debug.Log("PlayPrim Finished!");
+    }
+
+    public void StopPrim()
+    {
+        StopAllCoroutines();
+        DeletePrimsBridges();
     }
 
     /**
@@ -389,13 +408,17 @@ public class MSTController : MonoBehaviour
             }
             GameObject bridge = new GameObject("ManualBridge " + fromIndex + "--" + toIndex);
             bridge.transform.parent = ManualBridgesParent.transform;
-            yield return InstantiateBridgeSegments(bridge, startPos, endPos, bridgeSegmentGreyPrefab);
+            yield return StartCoroutine(InstantiateBridgeSegments(bridge, startPos, endPos, bridgeSegmentGreyPrefab));
         }
 
-        if(isInManualSetCounter == _numberOfIslands)
+        if (isInManualSetCounter == _numberOfIslands)
         {
             Debug.Log("All Islands connected (manually)!: " + isInManualSetCounter);
+            yield return new WaitForSeconds(0.2f);
             DisplayMessageByKey("islands manually connected");
+            ///TODO
+            //Debug.Log("lengthOfBridges " + endLengthOfBridges + " numberOfBridgeSegments " + allBridgeSegments + " endDistance " + endDistance);
+            Debug.Log("lengthOfBridges " + endLengthOfBridges + " numberOfBridgeSegments " + allBridgeSegments);
             //if(minimum weight)
             yield return new WaitForSeconds(1);
             DisplayMessageByKey("islands manually connected minimum case");
@@ -579,17 +602,10 @@ public class MSTController : MonoBehaviour
     }
 
     /**
-    * Resets the object
+    * resets the manually built bridges
     * */
-    public void ResetMSTController()
+    private void ResetManualBridges()
     {
-        //TODO:
-        if (SimulationController.Instance.SimulationRunning)
-        {
-            StopAllCoroutines();
-            Debug.Log("ResetMSTController(): Simulation is Running!");
-        }
-        Debug.Log("MSTController: ResetObject()");
         DeleteManualBridges();
 
         for (int i = 0; i < isInManualSet.Length; i++)
@@ -602,9 +618,26 @@ public class MSTController : MonoBehaviour
         var message = LanguageManager.Instance.GetString("SelectIsland");
         SetFromButton(message);
         SetToButton(message);
+    }
+
+    /**
+    * resets the object
+    * called from ResetObject in IslandSetUp
+    * */
+    public void ResetMSTController()
+    {
+        if (SimulationController.Instance.SimulationRunning)
+        {
+            StopAllCoroutines();
+            Debug.Log("ResetMSTController(): Simulation is Running!");
+        }
+        Debug.Log("MSTController: ResetObject()");
+        ResetManualBridges();
 
         DeletePrimsBridges();
     }
+
+
 
     #endregion
 

@@ -3836,18 +3836,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!114 &815670479 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1654587299958954632, guid: 4698ba446015d9f4ea6cde9f4c774547,
-    type: 3}
-  m_PrefabInstance: {fileID: 2131119208208072625}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8fb080c8a2120a24b91de31503e911ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &818713586
 GameObject:
   m_ObjectHideFlags: 0
@@ -5891,7 +5879,7 @@ PrefabInstance:
     - target: {fileID: 2399235266715423803, guid: 09c73ed225a086845b90fbeaba0dc5ea,
         type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2399235266715423803, guid: 09c73ed225a086845b90fbeaba0dc5ea,
         type: 3}
@@ -5942,7 +5930,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[5].m_Target
       value: 
-      objectReference: {fileID: 1218098522}
+      objectReference: {fileID: 0}
     - target: {fileID: 2399235266715423803, guid: 09c73ed225a086845b90fbeaba0dc5ea,
         type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
@@ -5986,12 +5974,12 @@ PrefabInstance:
     - target: {fileID: 2399235266715423803, guid: 09c73ed225a086845b90fbeaba0dc5ea,
         type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[4].m_MethodName
-      value: UpdateIslands
+      value: StopAllCoroutines
       objectReference: {fileID: 0}
     - target: {fileID: 2399235266715423803, guid: 09c73ed225a086845b90fbeaba0dc5ea,
         type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[5].m_MethodName
-      value: UpdateIslands
+      value: StopAllCoroutines
       objectReference: {fileID: 0}
     - target: {fileID: 2399235266715423803, guid: 09c73ed225a086845b90fbeaba0dc5ea,
         type: 3}
@@ -6021,12 +6009,12 @@ PrefabInstance:
     - target: {fileID: 2399235266715423803, guid: 09c73ed225a086845b90fbeaba0dc5ea,
         type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[4].m_TargetAssemblyTypeName
-      value: MSTController, Maroon.Experiments.MinimumSpanningTree
+      value: UnityEngine.MonoBehaviour, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 2399235266715423803, guid: 09c73ed225a086845b90fbeaba0dc5ea,
         type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[5].m_TargetAssemblyTypeName
-      value: MSTController, Maroon.Experiments.MinimumSpanningTree
+      value: UnityEngine.MonoBehaviour, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 2399235266715423803, guid: 09c73ed225a086845b90fbeaba0dc5ea,
         type: 3}
@@ -9874,7 +9862,7 @@ PrefabInstance:
     - target: {fileID: 1654587299958954632, guid: 4698ba446015d9f4ea6cde9f4c774547,
         type: 3}
       propertyPath: OnStop.m_PersistentCalls.m_Calls.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1654587299958954632, guid: 4698ba446015d9f4ea6cde9f4c774547,
         type: 3}
@@ -9905,7 +9893,7 @@ PrefabInstance:
         type: 3}
       propertyPath: OnStop.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 815670479}
+      objectReference: {fileID: 1218098522}
     - target: {fileID: 1654587299958954632, guid: 4698ba446015d9f4ea6cde9f4c774547,
         type: 3}
       propertyPath: OnReset.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -9934,7 +9922,7 @@ PrefabInstance:
     - target: {fileID: 1654587299958954632, guid: 4698ba446015d9f4ea6cde9f4c774547,
         type: 3}
       propertyPath: OnStop.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: StopSimulation
+      value: StopPrim
       objectReference: {fileID: 0}
     - target: {fileID: 1654587299958954632, guid: 4698ba446015d9f4ea6cde9f4c774547,
         type: 3}
@@ -9949,7 +9937,7 @@ PrefabInstance:
     - target: {fileID: 1654587299958954632, guid: 4698ba446015d9f4ea6cde9f4c774547,
         type: 3}
       propertyPath: OnStop.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: SimulationController, Maroon.SimulationController
+      value: MSTController, Maroon.Experiments.MinimumSpanningTree
       objectReference: {fileID: 0}
     - target: {fileID: 1654587299958954632, guid: 4698ba446015d9f4ea6cde9f4c774547,
         type: 3}
