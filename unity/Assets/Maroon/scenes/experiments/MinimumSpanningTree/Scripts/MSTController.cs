@@ -19,7 +19,7 @@ enum ManualIslandPickerOptions
     bothSelected
 }
 
-public class MSTController : MonoBehaviour, IResetObject
+public class MSTController : MonoBehaviour
 {
     public GameObject IslandsParent;
     public GameObject BridgesParent;
@@ -60,8 +60,8 @@ public class MSTController : MonoBehaviour, IResetObject
     float endDistance;
     float endLengthOfBridges;
     int allBridgeSegments;
-    [SerializeField] private TextMeshProUGUI lengthOfBridges;
-    [SerializeField] private TextMeshProUGUI numberOfBridgeSegments;
+    //[SerializeField] private TextMeshProUGUI lengthOfBridges;
+    //[SerializeField] private TextMeshProUGUI numberOfBridgeSegments;
 
     private DialogueManager _dialogueManager;
 
@@ -94,8 +94,8 @@ public class MSTController : MonoBehaviour, IResetObject
         endLengthOfBridges = 0;
         allBridgeSegments = 0;
 
-        lengthOfBridges.text = " ";
-        numberOfBridgeSegments.text = " ";
+        //lengthOfBridges.text = " ";
+        //numberOfBridgeSegments.text = " ";
 
 
         islands = GameObject.FindGameObjectsWithTag("Island");
@@ -167,7 +167,7 @@ public class MSTController : MonoBehaviour, IResetObject
             }
         }
         endDistance += least;
-        Debug.Log("min_index is: " + min_index + " least value: " + least + " endDistance: " + endDistance);
+        //Debug.Log("min_index is: " + min_index + " least value: " + least + " endDistance: " + endDistance);
         return min_index;
     }
 
@@ -250,7 +250,7 @@ public class MSTController : MonoBehaviour, IResetObject
                 edges[vertices - 1] = v;
                 float dist = getDistance(islands[parent[v]], islands[v]);
                 endDistance += dist;
-                Debug.Log("last edge: " + v + " least " + dist + " endDistance " + endDistance);
+                //Debug.Log("last edge: " + v + " least " + dist + " endDistance " + endDistance);
                 break;
             }
         }
@@ -292,7 +292,7 @@ public class MSTController : MonoBehaviour, IResetObject
 
         for (int i = 1; i < vertices; i++)
         {
-            Debug.Log("start: " + parent[edges[i]] + " end: " + edges[i] + " order: " + i);
+            //Debug.Log("start: " + parent[edges[i]] + " end: " + edges[i] + " order: " + i);
 
             if (parent[edges[i]] != -1)
             {
@@ -322,6 +322,7 @@ public class MSTController : MonoBehaviour, IResetObject
         //StartCoroutine(PrimsAlgorithm());
         PrimsAlgorithm();
         StartCoroutine(BuildBrigdesPrim());
+        //Debug.Log("PlayPrim Finished!");
     }
 
     /**
@@ -335,7 +336,7 @@ public class MSTController : MonoBehaviour, IResetObject
 
         for (int i = 1; i < vertices; i++)
         {
-            Debug.Log("start: " + parent[edges[i]] + " end: " + edges[i] + " order: " + i);
+            //Debug.Log("start: " + parent[edges[i]] + " end: " + edges[i] + " order: " + i);
 
             if (parent[edges[i]] != -1)// && edges[i] != -1)
             {
@@ -349,6 +350,8 @@ public class MSTController : MonoBehaviour, IResetObject
             }
 
         }
+        Debug.Log("BuildBrigdesPrim Finished!");
+
     }
 
     #endregion
@@ -578,10 +581,14 @@ public class MSTController : MonoBehaviour, IResetObject
     /**
     * Resets the object
     * */
-    public void ResetObject()
+    public void ResetMSTController()
     {
         //TODO:
-
+        if (SimulationController.Instance.SimulationRunning)
+        {
+            StopAllCoroutines();
+            Debug.Log("ResetMSTController(): Simulation is Running!");
+        }
         Debug.Log("MSTController: ResetObject()");
         DeleteManualBridges();
 
@@ -592,18 +599,16 @@ public class MSTController : MonoBehaviour, IResetObject
         isInManualSetCounter = 0;
         manualStart = -1;
         manualCases = ManualIslandPickerOptions.noneSelected;
-        SetFromButton("Select Island");
-        SetToButton("Select Island");
+        var message = LanguageManager.Instance.GetString("SelectIsland");
+        SetFromButton(message);
+        SetToButton(message);
 
         DeletePrimsBridges();
-        UpdateIslands();
-
-
     }
 
     #endregion
 
-    
+
     private void DisplayMessageByKey(string key)
     {
         if (_dialogueManager == null)

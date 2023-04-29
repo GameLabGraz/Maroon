@@ -152,8 +152,8 @@ public class IslandSetUp : MonoBehaviour, IResetObject
     {
         if(SimulationController.Instance.SimulationRunning)
         {
-            resetIslandPositions();
-            Debug.Log("Change Number of Islands - Simulation is Running!");
+            Debug.Log("changeNumberOfIslands(): SimulationRunning");
+            ResetObject();
         }
 
         int counter = 0;
@@ -189,6 +189,11 @@ public class IslandSetUp : MonoBehaviour, IResetObject
      * */
     public void resetIslandPositions()
     {
+        if(SimulationController.Instance.SimulationRunning)
+        {
+            //should already be stopped if this function is called!
+            Debug.Log("resetIslandPosition(): SimulationRunning");
+        }
         clearAllIslandClones();
         for (int i = 0; i < MSTConstants.MAX_Islands; i++)
         {
@@ -223,7 +228,15 @@ public class IslandSetUp : MonoBehaviour, IResetObject
      * */
     public void ResetObject()
     {
-        Debug.Log("ResetObject: Reset Islandpositions");
+        MSTController.Instance.ResetMSTController();
+        if (SimulationController.Instance.SimulationRunning)
+        {
+            SimulationController.Instance.StopSimulation();
+            StopAllCoroutines();
+            Debug.Log("IslandSetUp ResetObject(): Simulation is Running!");
+        }
+        Debug.Log("IslandSetUp ResetObject(): Reset Islandpositions");
         resetIslandPositions();
+        MSTController.Instance.UpdateIslands();
     }
 }
