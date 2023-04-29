@@ -5,40 +5,38 @@ using UnityEngine;
 public class StartSortingGame : MonoBehaviour
 {
     //public GameObject Environment;
-    public GameObject MainCamera;
-    public GameObject SortingGameCamera;
-    public GameObject Planets;
+    public GameObject MainCamera;      //off
+    public GameObject SortingMinigame; //on
+    public GameObject Userinterface;   //off
 
     void OnMouseDown()
     {
-        Debug.Log("StartSortingGameScreen pressed!");
+        Debug.Log("StartSortingGameScreen OnMouseDown() pressed!");
 
-        //Environment.SetActive(false);
+        SortingMinigame.SetActive(true);
+        Userinterface.SetActive(false);
         MainCamera.SetActive(false);
-        SortingGameCamera.SetActive(true);
-        Planets.SetActive(true);
     }
 
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
-
-        Planets.SetActive(false);
-
-
+        Debug.Log("Star Sorting Game Awake()");
+        SortingMinigame.SetActive(false);
     }
+
+
 
     // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyUp(KeyCode.A))
         {
+            SortingMinigame.SetActive(true);
+            Userinterface.SetActive(false);
             MainCamera.SetActive(false);
-            SortingGameCamera.SetActive(true);
-            Planets.SetActive(true);
-        }
 
+        }
 
     }
 }

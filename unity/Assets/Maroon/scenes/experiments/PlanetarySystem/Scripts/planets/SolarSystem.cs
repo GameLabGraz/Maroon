@@ -7,21 +7,26 @@ public class SolarSystem : MonoBehaviour
     //public float semi_mayor_axis;
     GameObject[] planets;
 
+    private void Awake()
+    {
+        Debug.Log("Solar System Awake()");
 
-    // Start is called before the first frame update
+        planets = GameObject.FindGameObjectsWithTag("Planet");
+        if (planets.Length <= 0)
+        {
+            //Should not happen
+            Debug.Log("No Planets Found:  " + planets.Length);
+        }
+    }
+
     void Start()
     {
-        planets = GameObject.FindGameObjectsWithTag("Planet");
+        Debug.Log("Solar System Start()");
 
         InitialVelocity();
         //InitialVelocityEliptical();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     private void FixedUpdate()
     {
