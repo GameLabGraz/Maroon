@@ -30,7 +30,7 @@ public class StartAnimation : MonoBehaviour
 
     private void Awake()
     {
-        Debug.Log("Start Animation Awake()");
+        //Debug.Log("Start Animation Awake()");
         sun.SetActive(true);
         
         
@@ -39,14 +39,14 @@ public class StartAnimation : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("Start Animation Start()");
+        //Debug.Log("Start Animation Start()");
         Planets.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyUp(KeyCode.S))
+        if (Input.GetKeyUp(KeyCode.A))
         {
             RenderSettings.skybox = stars_skybox;
 

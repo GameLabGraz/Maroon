@@ -11,12 +11,13 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour
 
     public Transform sortingPlanetTarget; // The specific target for each planet
     private float scaleFactor = 1.02f;    // The scale factor to adjust the object size based on the target
-    private float snapDistance = 0.4f;    // Distance to snap the planet to the target
+    private float snapDistance = 0.2f;
+    public float altSnapDistance = 0.2f;     // Distance to snap the planet to the target
 
     private bool isSnapped = false;
 
     Vector3 mousePosition;
-    Vector3 initialScale;
+    Vector3 initialPosition;
 
     private Vector3 GetMousePos()
     {
@@ -25,11 +26,13 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour
 
     private void Start()
     {
-        initialScale = transform.localScale;
+        snapDistance = altSnapDistance;
+        initialPosition = transform.position;
     }
 
     private void OnMouseDown()
     {
+        //Debug.Log("snapDistance: " + snapDistance);
         if (!isSnapped)
         {
             audioSource.PlayOneShot(pickUpClip);
@@ -39,12 +42,10 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour
 
     private void OnMouseDrag()
     {
-        //transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition - mousePosition);
         if (!isSnapped)
         {
             Vector3 newPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition - mousePosition);
             transform.position = newPosition;
-
         }
     }
 
@@ -52,38 +53,48 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour
     {
         if (!isSnapped)
         {
-            float distanceToTarget = Vector2.Distance(transform.position, sortingPlanetTarget.position);
-            Debug.Log("Distance to targe" + distanceToTarget);
 
-
-            float distanceX = transform.position.x - sortingPlanetTarget.position.x;
-            float distanceY = transform.position.y - sortingPlanetTarget.position.y;
-            //if (distanceToTarget <= snapDistance)
-
-            Debug.Log("ScreenToWorldPoint" + Camera.main.ScreenToWorldPoint(transform.position) + "ScreenToWorldPoint - Input.mousePosition" + Camera.main.ScreenToWorldPoint(transform.position - Input.mousePosition) +"Input.mousePosition - ScreenToWorldPoint" + Camera.main.ScreenToWorldPoint(Input.mousePosition - transform.position));
-            Debug.Log("ScreenToWorldPoint sortingPlanetTarget.position" + Camera.main.ScreenToWorldPoint(sortingPlanetTarget.position) + "WorldToScreenPoint sortingPlanetTarget.position" + Camera.main.WorldToScreenPoint(sortingPlanetTarget.position));
-            Debug.Log("Distance:" + " x: " + transform.position.x + " y: " + transform.position.y + " z: " + transform.position.z);
-            Debug.Log("sortingPlanetTarget Distance:" + " x: " + sortingPlanetTarget.position.x + " y: " + sortingPlanetTarget.position.y + " z: " + sortingPlanetTarget.position.z);
-
-            if (distanceX > -snapDistance && distanceX < snapDistance &&
-                distanceY > -snapDistance && distanceY < snapDistance)
-
+            Vector2 distanceVector = new Vector2(transform.position.x - sortingPlanetTarget.position.x, transform.position.y - sortingPlanetTarget.position.y);
+                        
+            //Debug.Log("SortingPlanetsDragAndDrop(): distanceVector.magnitude: " + distanceVector.magnitude);
+            if (distanceVector.magnitude <= snapDistance)
             {
                 SnapToTarget();
             }
+            else
+            {
+                transform.position = initialPosition;
+                isSnapped = false;
+                //StartCoroutine(MoveToPosition(initialPosition, 1.0f));
+            }
         }
     }
-
+   
     private void SnapToTarget()
     {
         transform.SetParent(sortingPlanetTarget);
         transform.position = sortingPlanetTarget.position;
-
         transform.localScale = new Vector3(1,1,1) * scaleFactor;
 
         isSnapped = true;
         audioSource.PlayOneShot(dropClip);
     }
 
+    // planet interpolates back to start position
+    /*
+    IEnumerator MoveToPosition(Vector3 targetPosition, float duration)
+    {
+        float elapsedTime = 0;
+
+        while (elapsedTime < duration)
+        {
+            transform.position = Vector3.Lerp(transform.position, targetPosition, (elapsedTime / duration));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.position = targetPosition;
+    }
+    */
 
 }

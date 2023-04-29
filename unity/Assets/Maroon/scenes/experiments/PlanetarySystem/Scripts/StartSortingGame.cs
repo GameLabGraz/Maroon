@@ -21,7 +21,7 @@ public class StartSortingGame : MonoBehaviour
 
     private void Awake()
     {
-        Debug.Log("Star Sorting Game Awake()");
+        //Debug.Log("Star Sorting Game Awake()");
         SortingMinigame.SetActive(false);
     }
 
@@ -30,7 +30,7 @@ public class StartSortingGame : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyUp(KeyCode.A))
+        if (Input.GetKeyUp(KeyCode.S))
         {
             SortingMinigame.SetActive(true);
             Userinterface.SetActive(false);
