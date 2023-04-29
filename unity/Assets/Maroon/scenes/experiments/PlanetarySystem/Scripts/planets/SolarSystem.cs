@@ -6,6 +6,8 @@ public class SolarSystem : MonoBehaviour
     //public float semi_mayor_axis;
     GameObject[] planets;
 
+    public PlanetInfo planetInfo;
+
     private void Awake()
     {
         //Debug.Log("Solar System Awake()");
@@ -30,6 +32,12 @@ public class SolarSystem : MonoBehaviour
     private void FixedUpdate()
     {
         Gravity(); 
+    }
+
+    public class PlanetData : MonoBehaviour
+    {
+        public float semiMajorAxis;
+        public float initialVelocity;
     }
 
     void Gravity()
@@ -78,6 +86,7 @@ public class SolarSystem : MonoBehaviour
         }
     }
 
+    public int hgosögh;
 
     void InitialVelocityEliptical()
     {
@@ -92,11 +101,12 @@ public class SolarSystem : MonoBehaviour
                     // r = distance between the objects
                     float r = Vector3.Distance(a.transform.position, b.transform.position);
                     // a = length of the semi-mayor axis
-                    float a_axis = 0f; //TODO
+                    float a_axis = a.GetComponent<PlanetData>().semiMajorAxis;
 
                     a.transform.LookAt(b.transform);
 
                     // eliptic orbit instant velocity: v0 = G * m2 * (2 / r - 1 / a)
+                    a.GetComponent<Rigidbody>().velocity += a.transform.right * (G * m2 * (2 / r - 1 / a_axis));
                     a.GetComponent<Rigidbody>().velocity += a.transform.right * (G * m2 * (2 / r - 1 / a_axis));
                 }
             }

@@ -28,7 +28,7 @@ public class PlanetInfo : MonoBehaviour
     public float rotationPeriod;
     public float rotationAngle;
     public float lengthOfDay;
-    public float semiMajorAxisIDistanceFromSun;
+    public float semiMajorAxisDistanceFromSun;
     public float orbitalPeriod;
     public float orbitalVelocity;
     public float orbitalInclination;
@@ -51,7 +51,7 @@ public class PlanetInfo : MonoBehaviour
                 rotationPeriod                  = 609.12f;
                 rotationAngle                   = 0f;
                 lengthOfDay                     = 0f;
-                semiMajorAxisIDistanceFromSun   = 0f;
+                semiMajorAxisDistanceFromSun    = 0f;
                 orbitalPeriod                   = 0f;
                 orbitalVelocity                 = 19.4f;
                 orbitalInclination              = 0f;
@@ -69,7 +69,7 @@ public class PlanetInfo : MonoBehaviour
                 rotationPeriod                  = 1407.6f;
                 rotationAngle                   = -0.01f;
                 lengthOfDay                     = 4222.6f;
-                semiMajorAxisIDistanceFromSun   = 57.9f;
+                semiMajorAxisDistanceFromSun    = 57.9f;
                 orbitalPeriod                   = 88f;
                 orbitalVelocity                 = 47.4f;
                 orbitalInclination              = 7f;
@@ -87,7 +87,7 @@ public class PlanetInfo : MonoBehaviour
                 rotationPeriod                  = -5832.5f;
                 rotationAngle                   = 2.64f;
                 lengthOfDay                     = 2802f;
-                semiMajorAxisIDistanceFromSun   = 108.2f;
+                semiMajorAxisDistanceFromSun    = 108.2f;
                 orbitalPeriod                   = 224.7f;
                 orbitalVelocity                 = 35f;
                 orbitalInclination              = 3.4f;
@@ -105,7 +105,7 @@ public class PlanetInfo : MonoBehaviour
                 rotationPeriod                  = -23.9f;
                 rotationAngle                   = 23.44f;
                 lengthOfDay                     = 24f;
-                semiMajorAxisIDistanceFromSun   = 149.6f;
+                semiMajorAxisDistanceFromSun    = 149.6f;
                 orbitalPeriod                   = 365.2f;
                 orbitalVelocity                 = 29.8f;
                 orbitalInclination              = 0f;
@@ -123,7 +123,7 @@ public class PlanetInfo : MonoBehaviour
                 rotationPeriod                  = 24.6f;
                 rotationAngle                   = -25.19f;
                 lengthOfDay                     = 24.7f;
-                semiMajorAxisIDistanceFromSun   = 228f;
+                semiMajorAxisDistanceFromSun    = 228f;
                 orbitalPeriod                   = 687f;
                 orbitalVelocity                 = 24.1f;
                 orbitalInclination              = 1.8f;
@@ -140,7 +140,7 @@ public class PlanetInfo : MonoBehaviour
                 rotationPeriod                  = 9.9f;
                 rotationAngle                   = -3.12f;
                 lengthOfDay                     = 9.9f;
-                semiMajorAxisIDistanceFromSun   = 778.5f;
+                semiMajorAxisDistanceFromSun    = 778.5f;
                 orbitalPeriod                   = 4331;
                 orbitalVelocity                 = 13.1f;
                 orbitalInclination              = 1.3f;
@@ -158,7 +158,7 @@ public class PlanetInfo : MonoBehaviour
                 rotationPeriod                  = 10.7f;
                 rotationAngle                   = -26.73f;
                 lengthOfDay                     = 10.7f;
-                semiMajorAxisIDistanceFromSun   = 1432f;
+                semiMajorAxisDistanceFromSun    = 1432f;
                 orbitalPeriod                   = 10747f;
                 orbitalVelocity                 = 9.7f;
                 orbitalInclination              = 2.5f;
@@ -176,7 +176,7 @@ public class PlanetInfo : MonoBehaviour
                 rotationPeriod                  = 17.2f;
                 rotationAngle                   = -82.23f;
                 lengthOfDay                     = 17.2f;
-                semiMajorAxisIDistanceFromSun   = 2867f;
+                semiMajorAxisDistanceFromSun    = 2867f;
                 orbitalPeriod                   = 30589f;
                 orbitalVelocity                 = 6.8f;
                 orbitalInclination              = 0.8f;
@@ -194,7 +194,7 @@ public class PlanetInfo : MonoBehaviour
                 rotationPeriod                  = 16.1f;
                 rotationAngle                   = -28.33f;
                 lengthOfDay                     = 16.1f;
-                semiMajorAxisIDistanceFromSun   = 4515f;
+                semiMajorAxisDistanceFromSun    = 4515f;
                 orbitalPeriod                   = 59.8f;
                 orbitalVelocity                 = 5.4f;
                 orbitalInclination              = 1.8f;
@@ -212,7 +212,7 @@ public class PlanetInfo : MonoBehaviour
                 rotationPeriod                  = 655.7f;
                 rotationAngle                   = -1.54f;
                 lengthOfDay                     = 708.7f;
-                semiMajorAxisIDistanceFromSun   = 0.384f;
+                semiMajorAxisDistanceFromSun    = 0.384f;
                 orbitalPeriod                   = 27.3f;
                 orbitalVelocity                 = 1f;
                 orbitalInclination              = 5.1f;
@@ -230,7 +230,7 @@ public class PlanetInfo : MonoBehaviour
                 rotationPeriod                  = 0f;
                 rotationAngle                   = 0f;
                 lengthOfDay                     = 0f;
-                semiMajorAxisIDistanceFromSun   = 0f;
+                semiMajorAxisDistanceFromSun    = 0f;
                 orbitalPeriod                   = 0f;
                 orbitalVelocity                 = 0f;
                 orbitalInclination              = 0f;

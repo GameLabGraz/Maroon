@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OrbitMotion : MonoBehaviour
+public class OrbitMotion2 : MonoBehaviour
 {
     public Transform orbitCenter;
     public float semiMajorAxis;
