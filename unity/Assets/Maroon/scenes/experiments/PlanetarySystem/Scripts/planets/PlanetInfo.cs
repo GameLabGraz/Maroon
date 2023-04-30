@@ -190,7 +190,7 @@ public class PlanetInfo : MonoBehaviour
                 density                         = 5243f;
                 gravity                         = 8.9f;
                 escapeVelocity                  = 10.4f;
-                rotationPeriod                  = -5832.5f;
+                rotationPeriod                  = 5832.5f; //-5832.5f
                 lengthOfDay                     = 2802f;
                 distanceFromSun                 = 108.2f;
                 perihelion                      = 107.5f;

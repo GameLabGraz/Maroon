@@ -5,8 +5,8 @@ public class PlanetRotation : MonoBehaviour
 
     public PlanetInfo planetInfo;
 
-    private float obliquityToOrbit; //rotation angle
-    private float rotationPeriod;
+    private float obliquityToOrbit; //rotation angle //z
+    private float rotationPeriod; //y
 
     void Start()
     {
@@ -20,7 +20,7 @@ public class PlanetRotation : MonoBehaviour
     void Update()
     {
         //transform.Rotate(new Vector3(0, (rotationPeriod * (0 - 1)), 0) * Time.deltaTime);
-        transform.Rotate(new Vector3(0, (planetInfo.rotationPeriod), 0) * Time.deltaTime);
+        transform.Rotate(new Vector3(0, (-planetInfo.rotationPeriod), 0) * Time.deltaTime);
     }
 }
 
