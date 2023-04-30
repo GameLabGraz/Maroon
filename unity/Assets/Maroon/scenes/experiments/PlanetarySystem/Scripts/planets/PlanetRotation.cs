@@ -2,20 +2,25 @@ using UnityEngine;
 
 public class PlanetRotation : MonoBehaviour
 {
-    public float planetRotationAngle; // z-achsis
-    public float planetRotationSpeed;
+
+    public PlanetInfo planetInfo;
+
+    private float obliquityToOrbit; //rotation angle
+    private float rotationPeriod;
 
     void Start()
     {
-        planetRotationAngle = 50f;
-        transform.Rotate(new Vector3(0, 0, planetRotationAngle));
+        //transform.Rotate(new Vector3(0, 0, obliquityToOrbit));
+        obliquityToOrbit = planetInfo.obliquityToOrbit;
+        rotationPeriod = planetInfo.rotationPeriod;
+        transform.Rotate(new Vector3(0, 0, planetInfo.obliquityToOrbit));
     }
 
 
     void Update()
     {
-        planetRotationSpeed = 50f;
-        transform.Rotate(new Vector3(0, (planetRotationSpeed * (0 - 1)), 0) * Time.deltaTime);
+        //transform.Rotate(new Vector3(0, (rotationPeriod * (0 - 1)), 0) * Time.deltaTime);
+        transform.Rotate(new Vector3(0, (planetInfo.rotationPeriod), 0) * Time.deltaTime);
     }
 }
 

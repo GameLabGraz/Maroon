@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
+    public Camera followCamera;
     public Transform targetObject;
     private Vector3 offset;
 

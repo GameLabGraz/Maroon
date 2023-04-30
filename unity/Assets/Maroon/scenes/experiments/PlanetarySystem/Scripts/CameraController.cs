@@ -8,11 +8,17 @@ public class CameraController : MonoBehaviour
     public Slider camereAngleSlider;
 
     private float initialFieldOfView;
+
+    public Dropdown cameraLookAtDropdown;
+    public Dropdown cameraFollowDropdown;
+
     public float distance = 10f;
     public float height = 10f;
 
     private Vector3 initialPosition;
     private Quaternion initialRotation;
+
+    //public List<GameObject> targetPlanet; // Create a list of GameObjects that will be the targets
 
     void Start()
     {
@@ -41,6 +47,25 @@ public class CameraController : MonoBehaviour
             camereAngleSlider.onValueChanged.AddListener(OnCameraAngleSliderValueChanged);
         }
 
+        if (cameraLookAtDropdown != null)
+        {
+            /* cameraLookAtDropdown.ClearOptions();
+             List<string> targetNames = new List<string>();
+             foreach (GameObject target in targetPlanet)
+             {
+                 targetNames.Add(target.name);
+             }
+             cameraLookAtDropdown.AddOptions(targetNames);
+             cameraLookAtDropdown.onValueChanged.AddListener(OnTargetDropdownValueChanged);
+            */
+        }
+
+    }
+
+    private void OnTargetDropdownValueChanged(int index)
+    {
+        //GameObject target = targetPlanet[index];
+        //controlledCamera.transform.LookAt(targetPlanet.transform);
     }
 
     private void OnCameraAngleSliderValueChanged(float angleValue)

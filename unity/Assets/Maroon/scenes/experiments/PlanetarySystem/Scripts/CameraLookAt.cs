@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class CameraLookAt : MonoBehaviour
 {
+    public Camera lookAtCamera;
     public Transform targetObject;
 
 

@@ -12,6 +12,9 @@ public class StartAnimation : MonoBehaviour
     public GameObject SortingMinigame;      //off
     public GameObject Interactibles;        //off
     public GameObject Userinterface;        //on
+    public GameObject GameController;
+
+    private FlyCamera flyCameraScript;      //on
 
     void OnMouseDown()
     {
@@ -26,6 +29,7 @@ public class StartAnimation : MonoBehaviour
         SortingMinigame.SetActive(false);
         Interactibles.SetActive(false);
         Userinterface.SetActive(true);
+        flyCameraScript.enabled = true;
     }
 
     private void Awake()
@@ -41,6 +45,12 @@ public class StartAnimation : MonoBehaviour
     {
         //Debug.Log("Start Animation Start()");
         Planets.SetActive(false);
+
+        flyCameraScript = GameController.GetComponent<FlyCamera>();
+        if (flyCameraScript == null)
+        {
+            Debug.LogError("Skript FlyCamera not found");
+        }
     }
 
     // Update is called once per frame
@@ -57,6 +67,7 @@ public class StartAnimation : MonoBehaviour
             SortingMinigame.SetActive(false);
             Interactibles.SetActive(false);
             Userinterface.SetActive(true);
+            flyCameraScript.enabled = true;
         }
         
     }
