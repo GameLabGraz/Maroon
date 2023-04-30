@@ -115,6 +115,7 @@ jobs:
           projectPath: ${{ matrix.projectPath }}
           testMode: ${{ matrix.testMode }}
           artifactsPath: ./test-results/${{ matrix.testMode }}-results
+          customParameters: -playerGraphicsAPI Null
   
 
   upload-artifacts:
