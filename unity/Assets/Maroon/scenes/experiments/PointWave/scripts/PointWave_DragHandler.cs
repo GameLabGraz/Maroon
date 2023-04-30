@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using PlatformControls.BaseControls;
 using UnityEngine.Assertions;
-using UnityStandardAssets.Water;
 
 public class PointWave_DragHandler : MonoBehaviour
 {
