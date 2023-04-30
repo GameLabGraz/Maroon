@@ -59,7 +59,6 @@ public class CameraController : MonoBehaviour
              cameraLookAtDropdown.onValueChanged.AddListener(OnTargetDropdownValueChanged);
             */
         }
-
     }
 
     private void OnTargetDropdownValueChanged(int index)
@@ -104,9 +103,5 @@ public class CameraController : MonoBehaviour
         // reset slider
         cameraFovSlider.value               = initialFieldOfView;
         //camereAngleSlider.value             = 9;
-
-
-
-
     }
 }

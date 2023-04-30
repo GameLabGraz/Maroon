@@ -111,8 +111,4 @@ public class SolarSystem : MonoBehaviour
             }
         }
     }
-
-
-
-
 }

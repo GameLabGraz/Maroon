@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameHandler : MonoBehaviour
 {
@@ -18,21 +19,10 @@ public class GameHandler : MonoBehaviour
         public ParticleSystem uranusParticleSystem;
     public GameObject neptune;
 
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-
-    }
-
-
+    /*
+     * toggle planets visibilty after the UI radiobButton is pressed
+     */
+    #region toggle planets;
     public void UIToggle0(bool checkmark)
     {
         Debug.Log("current checkbox state: sun: " + !checkmark);
@@ -94,5 +84,5 @@ public class GameHandler : MonoBehaviour
         Debug.Log("current checkbox state: neptune: " + !checkmark);
         neptune.GetComponent<Renderer>().enabled = !checkmark;
     }
-
+    #endregion toggle planets;
 }

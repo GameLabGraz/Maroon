@@ -95,6 +95,9 @@ public class FlyCamera : MonoBehaviour
         }
     }
 
+    /*
+     * focus the camera on public object (sun after reset or toggle camera)
+     */
     private void LookAtFokus()
     {
         if (cameraControlActive)

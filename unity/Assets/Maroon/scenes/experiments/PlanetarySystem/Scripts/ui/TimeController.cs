@@ -8,7 +8,7 @@ public class TimeController : MonoBehaviour
 
     void Start()
     {
-        timeSlider.minValue = 0.5f;
+        timeSlider.minValue = 0f;
         timeSlider.maxValue = 20f;
         Time.timeScale = timeSlider.value;
 

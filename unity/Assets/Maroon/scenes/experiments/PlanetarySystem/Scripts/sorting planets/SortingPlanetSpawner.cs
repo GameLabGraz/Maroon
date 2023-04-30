@@ -4,14 +4,14 @@ using UnityEngine;
 public class SortingPlanetSpawner : MonoBehaviour
 {
     public GameObject placeholder_slot;
-    private GameObject[] sortingPlanets; // Array to store the prefabs of Sun, Moon, and planets
+    private GameObject[] sortingPlanets; 
 
-    private List<int> availablePositions = new List<int>(); // List to store available positions
+    private List<int> availablePositions = new List<int>();
 
     void Start()
     {
-        // Initialize the availablePositions list with all possible positions (0 to 19)
-        for (int i = 0; i < 20; i++)
+        // Initialize the availablePositions list with all possible positions
+        for (int i = 0; i < 24; i++)
         {
             availablePositions.Add(i);
         }
@@ -20,7 +20,6 @@ public class SortingPlanetSpawner : MonoBehaviour
         if (sortingPlanets.Length < 1)
             Debug.Log("no sortable planets found");
 
-        // Spawn celestial objects
         SpawnSortingPlanets();
     }
 
@@ -39,15 +38,6 @@ public class SortingPlanetSpawner : MonoBehaviour
             Transform spawnPosition = placeholder_slot.transform.GetChild(positionIndex);
             sortingPlanets[i].transform.SetParent(spawnPosition);
             sortingPlanets[i].transform.position = spawnPosition.position;
-
-            // Instantiate the celestial object at the spawn position and set the parent to the placeholder GameObject
-            //GameObject spawnedObject = Instantiate(sortingPlanets[i], spawnPosition.position, Quaternion.identity);
-
-            // Scale the spawned object to the desired size
-            // spawnedObject.transform.localScale = new Vector3(0.26f, 0.26f, 0.26f);
-
-            // Set the parent of the spawned object to the placeholder GameObject
-            //spawnedObject.transform.SetParent(placeholder_slot.transform);
         }
     }
 }

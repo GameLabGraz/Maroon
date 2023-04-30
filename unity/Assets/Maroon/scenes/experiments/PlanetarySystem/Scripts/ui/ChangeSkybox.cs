@@ -1,6 +1,3 @@
-//
-//Author: Marcel Lohfeyer
-//s
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,23 +13,22 @@ public class ChangeSkybox : MonoBehaviour
     void Start()
     {
         RenderSettings.skybox = stars_skybox;
-        
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            RenderSettings.skybox = stars_skybox;
-        }
         if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            RenderSettings.skybox = black_skybox;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             RenderSettings.skybox = space_skybox;
         }
         if (Input.GetKeyDown(KeyCode.Alpha5))
         {
-            RenderSettings.skybox = black_skybox;
+            RenderSettings.skybox = stars_skybox;
         }
     }
 }
