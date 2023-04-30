@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Maroon.Physics
 {
-  public class Ball : PausableObject, IResetObject
+  public class Ball : PausableObject, IResetObject, IWeighableObject
   {
     //ball variables
     private Vector3 start_position_;
@@ -30,9 +30,9 @@ namespace Maroon.Physics
     }
 
 
-    public QuantityFloat weight_ = 0.033f / 1000f;
+    private QuantityFloat weight_ = 0.033f / 1000f;
 
-    public float Weight
+    private float Weight
     {
       get => weight_;
       set
@@ -142,8 +142,19 @@ namespace Maroon.Physics
     {
       touching_oil = false;
     }
-
+    public float getWeight()
+    {
+      return weight_.Value;
+    }
+  
+    public void setWeight(float value)
+    {
+      weight_.Value = value;
+    }
   }
+
+
+
 
 
 }
