@@ -30,7 +30,7 @@ public class StartSortingGame : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyUp(KeyCode.S))
+        if (Input.GetKeyUp(KeyCode.Alpha1))
         {
             SortingMinigame.SetActive(true);
             Userinterface.SetActive(false);

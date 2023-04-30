@@ -109,6 +109,7 @@ GameObject:
   - component: {fileID: 546305578989583217}
   - component: {fileID: 546305578989583218}
   - component: {fileID: 4847343448053288553}
+  - component: {fileID: 5128527956804391766}
   m_Layer: 0
   m_Name: planet
   m_TagString: Untagged
@@ -205,7 +206,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b039f2ebb48caa47a087cd4dfd8a501, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlanetInfoOfPlanet: 10
+  PlanetInformationOf: 9
   mass: 0
   diameter: 0
   density: 0
@@ -214,10 +215,30 @@ MonoBehaviour:
   rotationPeriod: 0
   rotationAngle: 0
   lengthOfDay: 0
-  semiMajorAxisIDistanceFromSun: 0
+  semiMajorAxisDistanceFromSun: 0
   orbitalPeriod: 0
   orbitalVelocity: 0
   orbitalInclination: 0
   orbitalEccentricity: 0
   obliquityToOrbit: 0
   meanTemperature: 0
+--- !u!114 &5128527956804391766
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5466093576532734486}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c274b5ff954fa445894e16dd097e37a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  planetInfo: {fileID: 0}
+  orbitingObject: {fileID: 0}
+  orbitPath:
+    semiMajorAxis: 0
+    eccentricity: 0
+  orbitProgress: 0
+  orbitPeriod: 0
+  orbitActive: 1

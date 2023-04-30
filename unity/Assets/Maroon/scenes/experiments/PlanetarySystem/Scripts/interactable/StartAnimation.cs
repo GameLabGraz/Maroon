@@ -46,7 +46,7 @@ public class StartAnimation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyUp(KeyCode.A))
+        if (Input.GetKeyUp(KeyCode.Alpha2))
         {
             RenderSettings.skybox = stars_skybox;
 

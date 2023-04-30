@@ -17,7 +17,7 @@ public enum PlanetInformation
 
 public class PlanetInfo : MonoBehaviour
 {
-    public PlanetInformation PlanetInfoOfPlanet;
+    public PlanetInformation PlanetInformationOf;
 
     //source: https://nssdc.gsfc.nasa.gov/planetary/factsheet/planetfact_notes.html
     public float mass;
@@ -39,8 +39,9 @@ public class PlanetInfo : MonoBehaviour
 
     private void Awake()
     {
+        Debug.Log("PlanetInfo Awake()");
 
-        switch (PlanetInfoOfPlanet)
+        switch (PlanetInformationOf)
         {
             case PlanetInformation.sun_0:
                 mass                            = 1988500f;

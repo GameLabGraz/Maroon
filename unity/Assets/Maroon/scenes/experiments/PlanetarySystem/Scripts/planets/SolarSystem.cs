@@ -86,7 +86,6 @@ public class SolarSystem : MonoBehaviour
         }
     }
 
-    public int hgosögh;
 
     void InitialVelocityEliptical()
     {
