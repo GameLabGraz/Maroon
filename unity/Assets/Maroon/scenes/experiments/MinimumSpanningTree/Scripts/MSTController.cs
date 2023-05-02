@@ -63,6 +63,8 @@ public class MSTController : MonoBehaviour
     //float endDistance;
     float endLengthOfBridges;
     int allBridgeSegments;
+    [SerializeField] private TextMeshProUGUI PseudoCode;
+
     //[SerializeField] private TextMeshProUGUI lengthOfBridges;
     //[SerializeField] private TextMeshProUGUI numberOfBridgeSegments;
 
@@ -100,6 +102,7 @@ public class MSTController : MonoBehaviour
         endLengthOfManualBridges = 0;
         allManualBridgeSegments = 0;
 
+        setPseudoCode();
 
         //lengthOfBridges.text = " ";
         //numberOfBridgeSegments.text = " ";
@@ -331,7 +334,7 @@ public class MSTController : MonoBehaviour
 
         StopAllCoroutines();
         DeletePrimsBridges();
-        UpdateIslands();
+        //UpdateIslands();
         //StartCoroutine(PrimsAlgorithm());
         PrimsAlgorithm();
         StartCoroutine(BuildBrigdesPrim());
@@ -414,15 +417,21 @@ public class MSTController : MonoBehaviour
         if (isInManualSetCounter == _numberOfIslands)
         {
             Debug.Log("All Islands connected (manually)!: " + isInManualSetCounter);
+            isInManualSetCounter = -1;
             yield return new WaitForSeconds(0.2f);
-            DisplayMessageByKey("islands manually connected");
+            if(endLengthOfBridges == endLengthOfManualBridges)
+            {
+                DisplayMessageByKey("islands manually connected minimum case");
+            }
+            else
+            {
+                DisplayMessageByKey("islands manually connected");
+            }
             ///TODO
             //Debug.Log("lengthOfBridges " + endLengthOfBridges + " numberOfBridgeSegments " + allBridgeSegments + " endDistance " + endDistance);
             Debug.Log("lengthOfBridges " + endLengthOfBridges + " numberOfBridgeSegments " + allBridgeSegments);
-            //if(minimum weight)
-            yield return new WaitForSeconds(1);
-            DisplayMessageByKey("islands manually connected minimum case");
         }
+        yield break;
     }
 
     /**
@@ -632,7 +641,7 @@ public class MSTController : MonoBehaviour
             Debug.Log("ResetMSTController(): Simulation is Running!");
         }
         Debug.Log("MSTController: ResetObject()");
-        ResetManualBridges();
+        //ResetManualBridges();
 
         DeletePrimsBridges();
     }
@@ -642,7 +651,7 @@ public class MSTController : MonoBehaviour
     #endregion
 
 
-    private void DisplayMessageByKey(string key)
+    void DisplayMessageByKey(string key)
     {
         if (_dialogueManager == null)
             _dialogueManager = FindObjectOfType<DialogueManager>();
@@ -654,5 +663,60 @@ public class MSTController : MonoBehaviour
 
         _dialogueManager.ShowMessage(message);
     }
-    
+
+    /**
+     * Set PseudoCode in UI Text field
+     * */
+    void setPseudoCode()
+    {
+        string myText = "";
+        List<string> myPseudoCode = new List<string>();
+
+        myPseudoCode.Add("<style=\"Normal\">mst = empty set</style>");
+        myPseudoCode.Add("<style=\"Normal\">startVertex = first vertex in graph</style>");
+        myPseudoCode.Add("<style=\"Normal\">mst.<style=\"sortingKeyword\">add</style>(startVertex)</style>");
+        myPseudoCode.Add("");
+        myPseudoCode.Add("<style=\"Normal\">edgesToCheck = edges connected to startVertex</style>");
+        myPseudoCode.Add("");
+        myPseudoCode.Add("<style=\"sortingKeyword\">while</style><style=\"Normal\"> mst has fewer vertices than graph:</style>");
+        myPseudoCode.Add("   <style=\"Normal\">minEdge, minWeight = <style=\"sortingKeyword\">findMinEdge</style><style=\"Normal\">(edges)</style>");
+        myPseudoCode.Add("");
+        myPseudoCode.Add("<style=\"Normal\">mst.</style><style=\"sortingKeyword\">add</style><style=\"Normal\">(minEdge)</style>");
+        myPseudoCode.Add("");
+        myPseudoCode.Add("<style=\"sortingKeyword\">for</style><style=\"Normal\"> edge </style><style=\"sortingKeyword\">in</style><style=\"Normal\"> edges connected to minEdge:</style>");
+        myPseudoCode.Add("   <style=\"sortingKeyword\">if</style><style=\"Normal\"> edge is not in mst:</style>");
+        myPseudoCode.Add("   <style=\"Normal\">edges.</style><style=\"sortingKeyword\">add</style><style=\"Normal\">(edge)</style>");
+        myPseudoCode.Add("");
+        myPseudoCode.Add("<style=\"Normal\">edges.</style><style=\"sortingKeyword\">remove</style><style=\"Normal\">(minEdge)</style>");
+        myPseudoCode.Add("");
+        myPseudoCode.Add("<style=\"sortingFunction\">return</style><style=\"Normal\"> mst as an array</style>");
+        myPseudoCode.Add("");
+
+        for (int i = 0; i < myPseudoCode.Count; i++)
+        {
+            myText += "  " + myPseudoCode[i] + "\n";
+        }
+
+        PseudoCode.text = myText;
+        /*
+            mst = empty set
+            startVertex = first vertex in graph
+            mst.add(startVertex)
+
+            edges = edges connected to startVertex
+
+            while mst has fewer vertices than graph:
+                    minEdge, minWeight = findMinEdge(edges)
+
+                mst.add(minEdge)
+
+                for edge in edges connected to minEdge:
+                    if edge is not in mst:
+                    edges.add(edge)
+
+                edges.remove(minEdge)
+
+            return mst as an array
+*/
+    }
 }
