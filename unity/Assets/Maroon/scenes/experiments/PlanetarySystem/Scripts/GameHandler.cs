@@ -19,6 +19,19 @@ public class GameHandler : MonoBehaviour
         public ParticleSystem uranusParticleSystem;
     public GameObject neptune;
 
+    private static GameHandler _instance;
+
+
+    public static GameHandler Instance
+    {
+        get
+        {
+            if (_instance == null)
+                _instance = FindObjectOfType<GameHandler>();
+            return _instance;
+        }
+    }
+
     /*
      * toggle planets visibilty after the UI radiobButton is pressed
      */
