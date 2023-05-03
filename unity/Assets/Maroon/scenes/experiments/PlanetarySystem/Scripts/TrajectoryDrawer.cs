@@ -1,18 +1,20 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class SolarSystemTrajectoryDrawer : MonoBehaviour
+public class TrajectoryDrawer : MonoBehaviour
 {
+
     [System.Serializable]
     public class PlanetTrajectory
     {
         public GameObject planet;
-        public Color color;
+        public Material trajectoryMaterial;
     }
 
     public List<PlanetTrajectory> planetTrajectories;
     public int numSegments = 1000;
     public float lineThickness = 0.5f;
+
 
     private List<LineRenderer> lineRenderers;
     private List<Queue<Vector3>> previousPositionsList;
@@ -20,11 +22,13 @@ public class SolarSystemTrajectoryDrawer : MonoBehaviour
     void Start()
     {
         lineRenderers = new List<LineRenderer>();
-        previousPositionsList = new List<Queue<Vector3>>();
 
-        foreach (PlanetTrajectory pt in planetTrajectories)
+            previousPositionsList = new List<Queue<Vector3>>();
+
+        foreach (PlanetTrajectory orbit in planetTrajectories)
         {
-            GameObject trajectory = new GameObject(pt.planet.name + "Trajectory");
+    
+            GameObject trajectory = new GameObject(orbit.planet.name + "Trajectory");
             trajectory.transform.SetParent(transform);
 
             LineRenderer lr = trajectory.AddComponent<LineRenderer>();
@@ -32,9 +36,7 @@ public class SolarSystemTrajectoryDrawer : MonoBehaviour
             lr.startWidth = lineThickness;
             lr.endWidth = lineThickness;
 
-            Material trajectoryMaterial = new Material(Shader.Find("Unlit/Color"));
-            trajectoryMaterial.color = pt.color;
-            lr.material = trajectoryMaterial;
+            lr.material = orbit.trajectoryMaterial;
 
             lineRenderers.Add(lr);
 
@@ -44,6 +46,8 @@ public class SolarSystemTrajectoryDrawer : MonoBehaviour
 
     void Update()
     {
+        Debug.Log("TrajectoryDrawer(): Update():");
+
         for (int i = 0; i < planetTrajectories.Count; i++)
         {
             PlanetTrajectory pt = planetTrajectories[i];
@@ -55,9 +59,24 @@ public class SolarSystemTrajectoryDrawer : MonoBehaviour
             }
 
             previousPositions.Enqueue(pt.planet.transform.position);
-
+            if(lineRenderers[i].enabled == false)
+            {
+                Debug.Log("Linerenderer[" + i + "] disabled ");
+            }
             lineRenderers[i].positionCount = previousPositions.Count;
             lineRenderers[i].SetPositions(previousPositions.ToArray());
         }
     }
+
+    public void ToggleTrajectory(int index, bool enabled)
+    {
+
+        if (index >= 0 && index < lineRenderers.Count)
+        {
+            lineRenderers[index].enabled = enabled;
+        }
+    }
+
+  
+
 }
