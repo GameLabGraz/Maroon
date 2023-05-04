@@ -2,12 +2,28 @@ using UnityEngine;
 
 public class SolarSystem : MonoBehaviour
 {
-    public float G;//= 100f; //G = gravitational constant
+    public float G;
     //public float semi_mayor_axis;
     GameObject[] planets;
 
     public PlanetInfo planetInfo;
+    public bool isSunKinematic = true;
 
+    [System.Serializable]
+    public class PlanetInfo
+    {
+        public GameObject sun;
+    }
+
+    public class PlanetData : MonoBehaviour
+    {
+        public float semiMajorAxis;
+        public float initialVelocity;
+    }
+
+    /*
+     *
+     */
     private void Awake()
     {
         //Debug.Log("Solar System Awake()");
@@ -20,6 +36,10 @@ public class SolarSystem : MonoBehaviour
         }
     }
 
+
+    /*
+     *
+     */
     void Start()
     {
         Debug.Log("Solar System Start()");
@@ -29,26 +49,54 @@ public class SolarSystem : MonoBehaviour
     }
 
 
+    /*
+     *
+     */
     private void FixedUpdate()
     {
         Gravity(); 
     }
 
-    public class PlanetData : MonoBehaviour
-    {
-        public float semiMajorAxis;
-        public float initialVelocity;
-    }
 
-    void Gravity()
-    {    
-        foreach(GameObject a in planets)
-        {
-            foreach(GameObject b in planets)
+    /*
+     *
+     */
+    /*
+        void Gravity()
+        {    
+            foreach(GameObject a in planets)
             {
-                // object can't orbit itself
-                if(!a.Equals(b))
+                foreach(GameObject b in planets)
                 {
+                    // object can't orbit itself
+                    if(!a.Equals(b))
+                    {
+                        float m1 = a.GetComponent<Rigidbody>().mass;
+                        float m2 = b.GetComponent<Rigidbody>().mass;
+
+                        float r = Vector3.Distance(a.transform.position, b.transform.position);
+
+                        // Newton's law of universal gravitation
+                        // F = G * ((m1 * m2) / (r^2))
+                        a.GetComponent<Rigidbody>().AddForce((b.transform.position - a.transform.position).normalized *
+                            (G * (m1 * m2) / (r * r)));
+                    }
+                }
+            }
+        }
+        */
+    void Gravity()
+    {
+        foreach (GameObject a in planets)
+        {
+            foreach (GameObject b in planets)
+            {
+                // Object can't orbit itself
+                if (!a.Equals(b))
+                {
+                    Rigidbody aRigidbody = a.GetComponent<Rigidbody>();
+                    Rigidbody bRigidbody = b.GetComponent<Rigidbody>();
+
                     float m1 = a.GetComponent<Rigidbody>().mass;
                     float m2 = b.GetComponent<Rigidbody>().mass;
 
@@ -56,7 +104,7 @@ public class SolarSystem : MonoBehaviour
 
                     // Newton's law of universal gravitation
                     // F = G * ((m1 * m2) / (r^2))
-                    a.GetComponent<Rigidbody>().AddForce((b.transform.position - a.transform.position).normalized *
+                    aRigidbody.AddForce((b.transform.position - a.transform.position).normalized *
                         (G * (m1 * m2) / (r * r)));
                 }
             }
@@ -64,6 +112,9 @@ public class SolarSystem : MonoBehaviour
     }
 
 
+    /*
+     *
+     */
     void InitialVelocity()
     {
         foreach(GameObject a in planets)
@@ -87,6 +138,29 @@ public class SolarSystem : MonoBehaviour
     }
 
 
+    /*
+     *
+     */
+    public void RecalculateInitialVelocity(GameObject a)
+    {
+        foreach (GameObject b in planets)
+        {
+            if (!a.Equals(b))
+            {
+                float m2 = b.GetComponent<Rigidbody>().mass;
+                float r = Vector3.Distance(a.transform.position, b.transform.position);
+
+                a.transform.LookAt(b.transform);
+
+                a.GetComponent<Rigidbody>().velocity += a.transform.right * Mathf.Sqrt((G * m2) / r);
+            }
+        }
+    }
+
+
+    /*
+     *
+     */
     void InitialVelocityEliptical()
     {
         foreach (GameObject a in planets)

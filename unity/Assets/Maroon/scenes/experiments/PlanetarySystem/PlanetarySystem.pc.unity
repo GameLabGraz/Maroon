@@ -574,12 +574,12 @@ PrefabInstance:
     - target: {fileID: 6137969441731438065, guid: 3606421e3647c8f45a70859e9cde2a31,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: UIToggle31
+      value: UIToggle9
       objectReference: {fileID: 0}
     - target: {fileID: 6137969441731438065, guid: 3606421e3647c8f45a70859e9cde2a31,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: GameHandler, Assembly-CSharp
+      value: PlanetController, Maroon.Experiments.PlanetarySystem
       objectReference: {fileID: 0}
     - target: {fileID: 6137969441731438065, guid: 3606421e3647c8f45a70859e9cde2a31,
         type: 3}
@@ -3082,6 +3082,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5c79149608e055446ae721a812143cd5, type: 3}
+--- !u!114 &435838954 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+    type: 3}
+  m_PrefabInstance: {fileID: 601667547}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &443170712
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3089,6 +3101,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1194055663}
     m_Modifications:
+    - target: {fileID: 660405559, guid: 4494938a0e9fab942a083b4034a49449, type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 465628784679414670, guid: 4494938a0e9fab942a083b4034a49449,
         type: 3}
       propertyPath: m_Name
@@ -3097,7 +3113,7 @@ PrefabInstance:
     - target: {fileID: 465628784679414670, guid: 4494938a0e9fab942a083b4034a49449,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1932376953047475194, guid: 4494938a0e9fab942a083b4034a49449,
         type: 3}
@@ -3556,6 +3572,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: 6_saturn Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 9127931490668959842, guid: d4079d5c14557a64a923a917f7ba195d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d4079d5c14557a64a923a917f7ba195d, type: 3}
 --- !u!1001 &553984539
@@ -3610,6 +3631,11 @@ PrefabInstance:
       propertyPath: GameController
       value: 
       objectReference: {fileID: 1319881022}
+    - target: {fileID: 2877514899421733981, guid: 8f0f040f465d2754a9e71de187920861,
+        type: 3}
+      propertyPath: PlanetCameraTop
+      value: 
+      objectReference: {fileID: 1779433759}
     - target: {fileID: 2877514899421733981, guid: 8f0f040f465d2754a9e71de187920861,
         type: 3}
       propertyPath: SortingMinigame
@@ -4355,7 +4381,52 @@ PrefabInstance:
     - target: {fileID: 9085299239375179210, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_Name
-      value: kineticSun
+      value: sun kinematic
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: m_IsOn
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1319881025}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: UIToggleSunKinematic
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: PlanetController, Maroon.Experiments.PlanetarySystem
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_BoolArgument
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 47808144d6757244da5be7e2e38f1f94, type: 3}
@@ -5435,6 +5506,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: 8_neptune Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 555671736883735308, guid: 4592cacd0449421428dd97ee86b714c0,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1950398320336003960, guid: 4592cacd0449421428dd97ee86b714c0,
         type: 3}
@@ -6780,6 +6856,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e2b704602653a724bbbe19e9499fd447, type: 3}
+--- !u!114 &894214465 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+    type: 3}
+  m_PrefabInstance: {fileID: 1486078833}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &895339472
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7434,7 +7522,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   G: 100
-  planetInfo: {fileID: 0}
+  planetInfo:
+    sun: {fileID: 1800277319}
+  isSunKinematic: 1
 --- !u!4 &913915864
 Transform:
   m_ObjectHideFlags: 0
@@ -7447,7 +7537,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &913915866
 MonoBehaviour:
@@ -7507,7 +7597,7 @@ Transform:
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &940602302
 PrefabInstance:
@@ -7890,6 +7980,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: 5_jupiter Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 690479309813556600, guid: 08d38073cea0caa4ca3f73c0b948f0ed,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1527286755248123148, guid: 08d38073cea0caa4ca3f73c0b948f0ed,
         type: 3}
@@ -9566,7 +9661,7 @@ PrefabInstance:
     - target: {fileID: 2399235266715423803, guid: 09c73ed225a086845b90fbeaba0dc5ea,
         type: 3}
       propertyPath: m_MaxValue
-      value: 20
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 2399235266715423803, guid: 09c73ed225a086845b90fbeaba0dc5ea,
         type: 3}
@@ -10152,6 +10247,46 @@ PrefabInstance:
       propertyPath: m_Name
       value: orientation
       objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: m_IsOn
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Toggle
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: ToggleOrientation, Maroon.Experiments.PlanetarySystem
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 47808144d6757244da5be7e2e38f1f94, type: 3}
 --- !u!1 &1137207352
@@ -10450,6 +10585,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: 7_uranus Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 5326502725215214714, guid: 572f4dd08ec2333428885fbf01b8538f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6146457403875578894, guid: 572f4dd08ec2333428885fbf01b8538f,
         type: 3}
@@ -11093,7 +11233,7 @@ Transform:
   - {fileID: 1893293365}
   - {fileID: 1192173675}
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1239216289
 PrefabInstance:
@@ -11548,10 +11688,12 @@ GameObject:
   - component: {fileID: 1319881026}
   - component: {fileID: 1319881028}
   - component: {fileID: 1319881032}
+  - component: {fileID: 1319881033}
   - component: {fileID: 1319881030}
   - component: {fileID: 1319881027}
   - component: {fileID: 1319881029}
   - component: {fileID: 1319881024}
+  - component: {fileID: 1319881035}
   m_Layer: 0
   m_Name: Game Controller
   m_TagString: Untagged
@@ -11571,7 +11713,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1319881024
 MonoBehaviour:
@@ -11603,7 +11745,6 @@ MonoBehaviour:
   mercury: {fileID: 1461655646}
   venus: {fileID: 1468704637}
   earth: {fileID: 1660245535}
-  moon: {fileID: 1588339040}
   mars: {fileID: 674126824}
   jupiter: {fileID: 1595243390}
   saturn: {fileID: 1738750107}
@@ -11612,6 +11753,42 @@ MonoBehaviour:
   uranus: {fileID: 1893293364}
   uranusParticleSystem: {fileID: 274497922}
   neptune: {fileID: 1192173674}
+  moon: {fileID: 1588339040}
+  planetTrajectories:
+  - planet: {fileID: 1800277319}
+    trajectoryMaterial: {fileID: 2100000, guid: 4cdac7132c0186a4b8ae48d56e2cfd4a,
+      type: 2}
+  - planet: {fileID: 1461655646}
+    trajectoryMaterial: {fileID: 2100000, guid: 18389c9032e6ab045b3d2fd4fc9aaa81,
+      type: 2}
+  - planet: {fileID: 1468704637}
+    trajectoryMaterial: {fileID: 2100000, guid: f55d6a00fafd9cf49a4cc3991f3804f1,
+      type: 2}
+  - planet: {fileID: 1660245535}
+    trajectoryMaterial: {fileID: 2100000, guid: 1efed4becf3834649839909497f4b2a8,
+      type: 2}
+  - planet: {fileID: 674126824}
+    trajectoryMaterial: {fileID: 2100000, guid: 5dc004c4762a5fe4f924ddfb1100e992,
+      type: 2}
+  - planet: {fileID: 1595243390}
+    trajectoryMaterial: {fileID: 2100000, guid: 77cc47484825c1c4283dacd3a3b1cdab,
+      type: 2}
+  - planet: {fileID: 1738750107}
+    trajectoryMaterial: {fileID: 2100000, guid: d14ca7b062918e6429b8943dd4f5e956,
+      type: 2}
+  - planet: {fileID: 1893293364}
+    trajectoryMaterial: {fileID: 2100000, guid: fa5b850c0548e504994cad386071daf1,
+      type: 2}
+  - planet: {fileID: 1192173674}
+    trajectoryMaterial: {fileID: 2100000, guid: bb37b00583c387847b24d4b9abfbfd46,
+      type: 2}
+  - planet: {fileID: 1588339040}
+    trajectoryMaterial: {fileID: 2100000, guid: 4cdac7132c0186a4b8ae48d56e2cfd4a,
+      type: 2}
+  numSegments: 1000
+  lineThickness: 0.5
+  toggleAllTrajectories: {fileID: 894214465}
+  toggleSunKinematic: {fileID: 435838954}
 --- !u!114 &1319881026
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11643,7 +11820,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   flyCamera: {fileID: 1779433763}
   cameraController: {fileID: 1319881030}
-  flyCameraFocus: {fileID: 0}
+  flyCameraFocus: {fileID: 1800277319}
   speed: 50
   mouseSensitivity: 100
 --- !u!114 &1319881028
@@ -11750,6 +11927,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timeSlider: {fileID: 1017797483}
+--- !u!114 &1319881033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1319881022}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e874be6ce49a41499d624ab74d8db90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  toggleOrientation: {fileID: 1982790479}
+  planetPrefab: {fileID: 5466093576532734486, guid: 9d80b2335a44d094494afc73ac9d983c,
+    type: 3}
+  toggleIsKinematic: {fileID: 435838954}
+  solarSystem: {fileID: 913915863}
+  sun: {fileID: 1800277319}
+--- !u!114 &1319881035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1319881022}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 889673e987a8f0f47bb55da24170c97c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  toggle: {fileID: 0}
 --- !u!1001 &1323812446
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12973,6 +13181,51 @@ PrefabInstance:
       propertyPath: m_Name
       value: trajectories
       objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: m_IsOn
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1319881025}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: UIToggleAllTrajectories
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: PlanetController, Maroon.Experiments.PlanetarySystem
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_BoolArgument
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 47808144d6757244da5be7e2e38f1f94, type: 3}
 --- !u!1001 &1493989940
@@ -13269,72 +13522,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1497463980}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1536440630
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1536440632}
-  - component: {fileID: 1536440631}
-  m_Layer: 0
-  m_Name: SolarSystem Trajectory Controller
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &1536440631
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1536440630}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 567270174d912f042b44e5f4bc0e3159, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  planetTrajectories:
-  - planet: {fileID: 0}
-    color: {r: 0.8488277, g: 1, b: 0, a: 0}
-  - planet: {fileID: 0}
-    color: {r: 0.17790854, g: 1, b: 0, a: 0}
-  - planet: {fileID: 0}
-    color: {r: 1, g: 0, b: 0, a: 0}
-  - planet: {fileID: 0}
-    color: {r: 0, g: 0.26190615, b: 1, a: 0}
-  - planet: {fileID: 0}
-    color: {r: 1, g: 0.9965647, b: 0.03459108, a: 0}
-  - planet: {fileID: 0}
-    color: {r: 1, g: 0.5450527, b: 0, a: 0}
-  - planet: {fileID: 0}
-    color: {r: 1, g: 0, b: 0.73389435, a: 0}
-  - planet: {fileID: 0}
-    color: {r: 0, g: 1, b: 0.72477436, a: 0}
-  - planet: {fileID: 0}
-    color: {r: 0.9622642, g: 0.3328586, b: 0.75542474, a: 0}
-  - planet: {fileID: 0}
-    color: {r: 0.99765426, g: 1, b: 0.9968553, a: 0}
-  numSegments: 1000
-  lineThickness: 0.1
---- !u!4 &1536440632
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1536440630}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 44.395554, y: -3.0049477, z: -19.638456}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1550142739
 GameObject:
   m_ObjectHideFlags: 0
@@ -13927,152 +14114,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 940602302}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1629719565
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1629719568}
-  - component: {fileID: 1629719570}
-  - component: {fileID: 1629719566}
-  m_Layer: 0
-  m_Name: Trajectory Controller
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!120 &1629719566
-LineRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1629719565}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 0
-  m_LightProbeUsage: 0
-  m_ReflectionProbeUsage: 0
-  m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 119767a637b5d6243b2cce06f4b3e493, type: 2}
-  - {fileID: 2100000, guid: 20cf7538bce0bab47b2829ff9eac378d, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Positions:
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 1}
-  m_Parameters:
-    serializedVersion: 3
-    widthMultiplier: 1
-    widthCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0.6013603
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    colorGradient:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    numCornerVertices: 0
-    numCapVertices: 0
-    alignment: 0
-    textureMode: 0
-    shadowBias: 0.5
-    generateLightingData: 0
-  m_UseWorldSpace: 1
-  m_Loop: 0
---- !u!4 &1629719568
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1629719565}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.7, y: 150, z: -3.5}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1629719570
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1629719565}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 161719931bcd5d642a5f51b8a69cf409, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  planet: {fileID: 0}
-  numSegments: 250
-  lineThickness: 0.5
 --- !u!1 &1635374290
 GameObject:
   m_ObjectHideFlags: 0
@@ -14514,10 +14555,19 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1194055663}
     m_Modifications:
+    - target: {fileID: 73429063, guid: cdc985ef3ba89df419757ff8183e3c0c, type: 3}
+      propertyPath: m_IsKinematic
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4921792550970812371, guid: cdc985ef3ba89df419757ff8183e3c0c,
         type: 3}
       propertyPath: m_Name
       value: 4_mars Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 4921792550970812371, guid: cdc985ef3ba89df419757ff8183e3c0c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6407118481242714023, guid: cdc985ef3ba89df419757ff8183e3c0c,
         type: 3}
@@ -14694,6 +14744,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: 1_mercury Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 5012982800980082052, guid: 16c8073483b8a1e4989a2c5a6e7feb67,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6428502798446884336, guid: 16c8073483b8a1e4989a2c5a6e7feb67,
         type: 3}
@@ -15047,7 +15102,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1779433760
 Transform:
   m_ObjectHideFlags: 0
@@ -15182,7 +15237,7 @@ Transform:
   - {fileID: 948815606}
   - {fileID: 148612947}
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &1793246960
 GameObject:
@@ -15212,7 +15267,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1800277319 stripped
 GameObject:
@@ -16820,7 +16875,7 @@ Transform:
   - {fileID: 469339852}
   - {fileID: 1926725373}
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1001 &1944756744
 PrefabInstance:
@@ -17034,6 +17089,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: rotation
       objectReference: {fileID: 0}
+    - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+        type: 3}
+      propertyPath: m_IsOn
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 47808144d6757244da5be7e2e38f1f94, type: 3}
 --- !u!1 &1973103596
@@ -17143,6 +17203,18 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &1982790479 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
+    type: 3}
+  m_PrefabInstance: {fileID: 1126590944}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1989343150
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17677,6 +17749,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: 3_earth
       objectReference: {fileID: 0}
+    - target: {fileID: 1544999406139042149, guid: 68cb90c1f97618044acaf5997c5b086c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6821695473512049126, guid: 68cb90c1f97618044acaf5997c5b086c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6821695473522573892, guid: 68cb90c1f97618044acaf5997c5b086c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 68cb90c1f97618044acaf5997c5b086c, type: 3}
 --- !u!4 &2026848986 stripped
@@ -17696,6 +17783,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: 2_venus Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 255220877192087476, guid: a3dd7218f7a10ed43a7b68c283f94100,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2246639227855228864, guid: a3dd7218f7a10ed43a7b68c283f94100,
         type: 3}
@@ -21626,12 +21718,12 @@ PrefabInstance:
     - target: {fileID: 5836639678399279200, guid: 4698ba446015d9f4ea6cde9f4c774547,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.00024414062
+      value: 0.00012207031
       objectReference: {fileID: 0}
     - target: {fileID: 5836639678399279200, guid: 4698ba446015d9f4ea6cde9f4c774547,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000061035156
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5882824874382203115, guid: 4698ba446015d9f4ea6cde9f4c774547,
         type: 3}
