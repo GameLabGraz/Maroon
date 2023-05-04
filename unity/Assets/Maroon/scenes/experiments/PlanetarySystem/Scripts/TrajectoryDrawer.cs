@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class TrajectoryDrawer : MonoBehaviour
 {
@@ -15,12 +16,16 @@ public class TrajectoryDrawer : MonoBehaviour
     public int numSegments = 1000;
     public float lineThickness = 0.5f;
 
+    public Toggle toggleAllTrajectories;
+
 
     private List<LineRenderer> lineRenderers;
     private List<Queue<Vector3>> previousPositionsList;
 
     void Start()
     {
+        SetupToggle();
+
         lineRenderers = new List<LineRenderer>();
 
             previousPositionsList = new List<Queue<Vector3>>();
@@ -68,15 +73,32 @@ public class TrajectoryDrawer : MonoBehaviour
         }
     }
 
-    public void ToggleTrajectory(int index, bool enabled)
+    public void ToggleTrajectory(int index, bool isOn)
     {
 
         if (index >= 0 && index < lineRenderers.Count)
         {
-            lineRenderers[index].enabled = enabled;
+            lineRenderers[index].enabled = isOn;
         }
     }
 
-  
+    public void UIToggleAllTrajectories(bool isOn)
+    {
+        Debug.Log("trajectoryDrawer(): ToggleAllTrajectories = " + isOn);
+        for (int index = 0; index < planetTrajectories.Count; index++)
+        {
+            lineRenderers[index].enabled = isOn;
+        }
+    }
+
+    private void SetupToggle()
+    {
+        toggleAllTrajectories.onValueChanged.AddListener(UIToggleAllTrajectories);
+    }
+
+    private void OnDestroy()
+    {
+        toggleAllTrajectories.onValueChanged.RemoveListener(UIToggleAllTrajectories);
+    }
 
 }
