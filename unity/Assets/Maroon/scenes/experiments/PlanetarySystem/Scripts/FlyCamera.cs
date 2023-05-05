@@ -12,8 +12,12 @@ public class FlyCamera : MonoBehaviour
 
     private float xRotation = 0f;
     private float yRotation = 0f;
-    private bool cameraControlActive = false;
+    private bool isCameraControlActive = false;
 
+
+    /*
+     *
+     */
     void Start()
     {
         if (flyCamera == null)
@@ -34,21 +38,27 @@ public class FlyCamera : MonoBehaviour
             return;
         }
 
-        ToggleCameraControl(cameraControlActive);
+        ToggleCameraControl(isCameraControlActive);
     }
 
+
+    /*
+     *
+     */
     void Update()
     {
-        if (flyCamera == null || cameraController == null || flyCameraFocus == null) return;
+        if (flyCamera == null || cameraController == null || flyCameraFocus == null)
+            return;
 
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            cameraControlActive = !cameraControlActive;
-            ToggleCameraControl(cameraControlActive);
+            isCameraControlActive = !isCameraControlActive;
+            ToggleCameraControl(isCameraControlActive);
             LookAtFokus();
         }
 
-        if (!cameraControlActive) return;
+        if (!isCameraControlActive)
+            return;
 
         // Camera movement
         float x = Input.GetAxis("Horizontal") * speed * Time.deltaTime;
@@ -81,6 +91,10 @@ public class FlyCamera : MonoBehaviour
         flyCamera.fieldOfView = cameraController.controlledCamera.fieldOfView;
     }
 
+
+    /*
+     *
+     */
     private void ToggleCameraControl(bool active)
     {
         if (active)
@@ -100,7 +114,7 @@ public class FlyCamera : MonoBehaviour
      */
     private void LookAtFokus()
     {
-        if (cameraControlActive)
+        if (isCameraControlActive)
         {
             flyCamera.transform.LookAt(flyCameraFocus.transform);
             Vector3 eulerAngles = flyCamera.transform.localEulerAngles;

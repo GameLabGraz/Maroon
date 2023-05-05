@@ -5,7 +5,9 @@ public class TimeController : MonoBehaviour
 {
     [SerializeField] private Slider timeSlider;
 
-
+    /*
+     * 
+     */
     void Start()
     {
         timeSlider.minValue = 0f;
@@ -15,6 +17,9 @@ public class TimeController : MonoBehaviour
         timeSlider.onValueChanged.AddListener(OnTimeSliderValueChanged);
     }
 
+    /*
+     * 
+     */
     void OnTimeSliderValueChanged(float value)
     {
         Time.timeScale = value;

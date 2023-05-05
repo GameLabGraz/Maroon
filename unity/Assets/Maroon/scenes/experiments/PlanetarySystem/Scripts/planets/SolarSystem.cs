@@ -3,7 +3,6 @@ using UnityEngine;
 public class SolarSystem : MonoBehaviour
 {
     public float G;
-    //public float semi_mayor_axis;
     GameObject[] planets;
 
     public PlanetInfo planetInfo;
@@ -20,6 +19,7 @@ public class SolarSystem : MonoBehaviour
         public float semiMajorAxis;
         public float initialVelocity;
     }
+
 
     /*
      *

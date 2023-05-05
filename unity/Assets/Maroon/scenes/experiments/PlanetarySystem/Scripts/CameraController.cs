@@ -102,6 +102,6 @@ public class CameraController : MonoBehaviour
 
         // reset slider
         cameraFovSlider.value               = initialFieldOfView;
-        //camereAngleSlider.value             = 9;
+        //camereAngleSlider.value             = ;
     }
 }

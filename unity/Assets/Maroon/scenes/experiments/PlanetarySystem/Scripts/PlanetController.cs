@@ -20,7 +20,7 @@ public class PlanetController : MonoBehaviour
     public GameObject moon;
 
     public List<PlanetTrajectory> planetTrajectories;
-    public int numSegments = 1000;
+    public int segments = 1000;
     public float lineThickness = 0.5f;
 
     public Toggle toggleAllTrajectories;
@@ -36,6 +36,7 @@ public class PlanetController : MonoBehaviour
         public GameObject planet;
         public Material trajectoryMaterial;
     }
+
 
     private static PlanetController _instance;
     public static PlanetController Instance
@@ -65,14 +66,14 @@ public class PlanetController : MonoBehaviour
             trajectory.transform.SetParent(transform);
 
             LineRenderer lr = trajectory.AddComponent<LineRenderer>();
-            lr.positionCount = numSegments;
+            lr.positionCount = segments;
             lr.startWidth = lineThickness;
             lr.endWidth = lineThickness;
 
             lr.material = orbit.trajectoryMaterial;
 
             lineRenderers.Add(lr);
-            previousPositionsList.Add(new Queue<Vector3>(numSegments));
+            previousPositionsList.Add(new Queue<Vector3>(segments));
 
             lr.enabled = false;
         }
@@ -85,23 +86,21 @@ public class PlanetController : MonoBehaviour
      */
     void Update()
     {
-        Debug.Log("PlanetController(): Update():");
-
+        //Debug.Log("PlanetController(): Update():");
         for (int i = 0; i < planetTrajectories.Count; i++)
         {
             PlanetTrajectory pt = planetTrajectories[i];
             Queue<Vector3> previousPositions = previousPositionsList[i];
 
-            if (previousPositions.Count >= numSegments)
+            if (previousPositions.Count >= segments)
             {
                 previousPositions.Dequeue();
             }
 
             previousPositions.Enqueue(pt.planet.transform.position);
-            if (lineRenderers[i].enabled == false)
-            {
-                Debug.Log("Linerenderer[" + i + "] disabled ");
-            }
+            //if (lineRenderers[i].enabled == false)
+            //    Debug.Log("Linerenderer[" + i + "] disabled ");
+
             lineRenderers[i].positionCount = previousPositions.Count;
             lineRenderers[i].SetPositions(previousPositions.ToArray());
         }
@@ -109,7 +108,7 @@ public class PlanetController : MonoBehaviour
 
 
     /*
-     *
+     * toggles specific planets trajectory after button press
      */
     public void ToggleTrajectory(int index, bool isOn)
     {
@@ -122,7 +121,7 @@ public class PlanetController : MonoBehaviour
 
 
     /*
-     *
+     * toggles all trajectories after button press
      */
     public void UIToggleAllTrajectories(bool isOn)
     {
@@ -135,11 +134,10 @@ public class PlanetController : MonoBehaviour
 
 
     /*
-     *
+     * toggles the sun#s kinematic and recalcuates its initial velocity after button press
      */
     public void UIToggleSunKinematic(bool isKinematic)
     {
-  
         Rigidbody sunRb = sun.GetComponent<Rigidbody>();
         sunRb.isKinematic = isKinematic;
         if (!isKinematic)
@@ -152,7 +150,7 @@ public class PlanetController : MonoBehaviour
 
 
     /*
-     *
+     * sets up listeners for toggle buttons
      */
     private void SetupToggle()
     {
@@ -162,7 +160,7 @@ public class PlanetController : MonoBehaviour
 
 
     /*
-     *
+     * removes listeners for toggle buttons
      */
     private void OnDestroy()
     {
@@ -172,54 +170,54 @@ public class PlanetController : MonoBehaviour
 
 
     /*
-    *
+    * hidesplanets and trajectories after radiobutton is pressed
     */
-    #region toggle planets;
+    #region hide planets
     public void UIToggle0(bool isOn)
     {
-        Debug.Log("current checkbox state: sun: " + !isOn);
+        //Debug.Log("current checkbox state: sun: " + !isOn);
         sun.GetComponent<Renderer>().enabled = !isOn;
         ToggleTrajectory(0, !isOn);
     }
 
     public void UIToggle1(bool isOn)
     {
-        Debug.Log("current checkbox state: mercury: " + !isOn);
+        //Debug.Log("current checkbox state: mercury: " + !isOn);
         mercury.GetComponent<Renderer>().enabled = !isOn;
         ToggleTrajectory(1, !isOn);
     }
 
     public void UIToggle2(bool isOn)
     {
-        Debug.Log("current checkbox state: venus: " + !isOn);
+        //Debug.Log("current checkbox state: venus: " + !isOn);
         venus.GetComponent<Renderer>().enabled = !isOn;
         ToggleTrajectory(2, !isOn);
     }
 
     public void UIToggle3(bool isOn)
     {
-        Debug.Log("current checkbox state: earth: " + !isOn);
+        //Debug.Log("current checkbox state: earth: " + !isOn);
         earth.GetComponent<Renderer>().enabled = !isOn;
         ToggleTrajectory(3, !isOn);
     }
 
     public void UIToggle4(bool isOn)
     {
-        Debug.Log("current checkbox state: mars: " + !isOn);
+        //Debug.Log("current checkbox state: mars: " + !isOn);
         mars.GetComponent<Renderer>().enabled = !isOn;
         ToggleTrajectory(4, !isOn);
     }
 
     public void UIToggle5(bool isOn)
     {
-        Debug.Log("current checkbox state: jupiter: " + !isOn);
+        //Debug.Log("current checkbox state: jupiter: " + !isOn);
         jupiter.GetComponent<Renderer>().enabled = !isOn;
         ToggleTrajectory(5, !isOn);
     }
 
     public void UIToggle6(bool isOn)
     {
-        Debug.Log("current checkbox state: saturn: " + !isOn);
+        //Debug.Log("current checkbox state: saturn: " + !isOn);
         saturn.GetComponent<Renderer>().enabled = !saturn.GetComponent<Renderer>().enabled;
         saturn_ring_1.GetComponent<Renderer>().enabled = !saturn_ring_1.GetComponent<Renderer>().enabled;
         saturn_ring_2.GetComponent<Renderer>().enabled = !saturn_ring_2.GetComponent<Renderer>().enabled;
@@ -228,23 +226,23 @@ public class PlanetController : MonoBehaviour
 
     public void UIToggle7(bool isOn)
     {
-        Debug.Log("current checkbox state: uranus: " + !isOn);
+        //Debug.Log("current checkbox state: uranus: " + !isOn);
         uranus.GetComponent<Renderer>().enabled = !isOn;
         uranusParticleSystem.gameObject.GetComponent<Renderer>().enabled = !isOn;
         ToggleTrajectory(7, !isOn);
     }
     public void UIToggle8(bool isOn)
     {
-        Debug.Log("current checkbox state: neptune: " + !isOn);
+        //Debug.Log("current checkbox state: neptune: " + !isOn);
         neptune.GetComponent<Renderer>().enabled = !isOn;
         ToggleTrajectory(8, !isOn);
     }
 
     public void UIToggle9(bool isOn)
     {
-        Debug.Log("current checkbox state: moon: " + !isOn);
+        //Debug.Log("current checkbox state: moon: " + !isOn);
         moon.GetComponent<Renderer>().enabled = !isOn;
         ToggleTrajectory(9, isOn);
     }
-    #endregion toggle planets;
+    #endregion hide planets
 }

@@ -19,11 +19,6 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour
     Vector3 mousePosition;
     Vector3 initialPosition;
 
-    private Vector3 GetMousePos()
-    {
-        return Camera.main.WorldToScreenPoint(transform.position);
-    }
-
 
     /*
      * 
@@ -32,6 +27,15 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour
     {
         snapDistance = altSnapDistance;
         initialPosition = transform.position;
+    }
+
+
+    /*
+     * 
+     */
+    private Vector3 GetMousePos()
+    {
+        return Camera.main.WorldToScreenPoint(transform.position);
     }
 
 
@@ -69,7 +73,6 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour
     {
         if (!isSnapped)
         {
-
             Vector2 distanceVector = new Vector2(transform.position.x - sortingPlanetTarget.position.x, transform.position.y - sortingPlanetTarget.position.y);
                         
             //Debug.Log("SortingPlanetsDragAndDrop(): distanceVector.magnitude: " + distanceVector.magnitude);
@@ -81,7 +84,6 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour
             {
                 transform.position = initialPosition;
                 isSnapped = false;
-                //StartCoroutine(MoveToPosition(initialPosition, 1.0f));
             }
         }
     }
@@ -99,22 +101,4 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour
         isSnapped = true;
         audioSource.PlayOneShot(dropClip);
     }
-
-    // planet interpolates back to start position
-    /*
-    IEnumerator MoveToPosition(Vector3 targetPosition, float duration)
-    {
-        float elapsedTime = 0;
-
-        while (elapsedTime < duration)
-        {
-            transform.position = Vector3.Lerp(transform.position, targetPosition, (elapsedTime / duration));
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        transform.position = targetPosition;
-    }
-    */
-
 }

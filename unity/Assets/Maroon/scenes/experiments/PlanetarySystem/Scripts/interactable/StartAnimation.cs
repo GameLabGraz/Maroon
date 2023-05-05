@@ -1,7 +1,7 @@
 using UnityEngine;
 
 public class StartAnimation : MonoBehaviour
-{
+{                                           //want it:
     public Material stars_skybox;           //on
 
     public GameObject sun;                  //on
@@ -16,10 +16,39 @@ public class StartAnimation : MonoBehaviour
 
     private FlyCamera flyCameraScript;      //on
 
+
+    /*
+     * 
+     */
+    private void Awake()
+    {
+        //Debug.Log("Start Animation Awake()");
+        sun.SetActive(true);
+    }
+
+
+    /*
+     * 
+     */
+    void Start()
+    {
+        //Debug.Log("Start Animation Start()");
+        Planets.SetActive(false);
+
+        flyCameraScript = GameController.GetComponent<FlyCamera>();
+        if (flyCameraScript == null)
+        {
+            Debug.LogError("Script FlyCamera not found");
+        }
+    }
+
+
+    /*
+     * 
+     */
     void OnMouseDown()
     {
-        Debug.Log("StartAnimationScreen OnMouseDown() pressed!");
-
+        //Debug.Log("StartAnimationScreen OnMouseDown() pressed!");
         RenderSettings.skybox = stars_skybox;
 
         Environment.SetActive(false);
@@ -32,28 +61,10 @@ public class StartAnimation : MonoBehaviour
         flyCameraScript.enabled = true;
     }
 
-    private void Awake()
-    {
-        //Debug.Log("Start Animation Awake()");
-        sun.SetActive(true);
-        
-        
-    }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        //Debug.Log("Start Animation Start()");
-        Planets.SetActive(false);
-
-        flyCameraScript = GameController.GetComponent<FlyCamera>();
-        if (flyCameraScript == null)
-        {
-            Debug.LogError("Skript FlyCamera not found");
-        }
-    }
-
-    // Update is called once per frame
+    /*
+     * 
+     */
     void Update()
     {
         if (Input.GetKeyUp(KeyCode.Alpha2))
