@@ -12,6 +12,7 @@ public enum PlanetInformation
     uranus_7,
     neptune_8,
     moon_9,
+    pluto_10,
     empty
 }
 
@@ -375,6 +376,29 @@ public class PlanetInfo : MonoBehaviour
                 orbitalEccentricity             = 0.055f;
                 obliquityToOrbit                = 6.7f;
                 meanTemperature                 = -20f;
+                surfacePressure                 = 0f;
+                numberOfMoons                   = 0;
+                ringSystem                      = false;
+                globalMagneticField             = false;
+                break;
+
+            case PlanetInformation.pluto_10:
+                mass                            = 0f;
+                diameter                        = 0f;
+                density                         = 0f;
+                gravity                         = 0f;
+                escapeVelocity                  = 0f;
+                rotationPeriod                  = 153f;
+                lengthOfDay                     = 0f;
+                distanceFromSun                 = 0f;
+                perihelion                      = 0f;
+                aphelion                        = 0f;
+                orbitalPeriod                   = 0f;
+                orbitalVelocity                 = 0f;
+                orbitalInclination              = 0f;
+                orbitalEccentricity             = 0f;
+                obliquityToOrbit                = -57f;
+                meanTemperature                 = 0f;
                 surfacePressure                 = 0f;
                 numberOfMoons                   = 0;
                 ringSystem                      = false;

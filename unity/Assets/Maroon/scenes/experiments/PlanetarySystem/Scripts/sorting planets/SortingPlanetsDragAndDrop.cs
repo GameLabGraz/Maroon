@@ -24,12 +24,20 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour
         return Camera.main.WorldToScreenPoint(transform.position);
     }
 
+
+    /*
+     * 
+     */
     private void Start()
     {
         snapDistance = altSnapDistance;
         initialPosition = transform.position;
     }
 
+
+    /*
+     * 
+     */
     private void OnMouseDown()
     {
         //Debug.Log("snapDistance: " + snapDistance);
@@ -40,6 +48,10 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour
         }
     }
 
+
+    /*
+     * 
+     */
     private void OnMouseDrag()
     {
         if (!isSnapped)
@@ -49,6 +61,10 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour
         }
     }
 
+
+    /*
+     * 
+     */
     private void OnMouseUp()
     {
         if (!isSnapped)
@@ -69,7 +85,11 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour
             }
         }
     }
-   
+
+
+    /*
+     * 
+     */
     private void SnapToTarget()
     {
         transform.SetParent(sortingPlanetTarget);

@@ -8,6 +8,10 @@ public class SortingPlanetSpawner : MonoBehaviour
 
     private List<int> availablePositions = new List<int>();
 
+
+    /*
+     * 
+     */
     void Start()
     {
         // Initialize the availablePositions list with all possible positions
@@ -23,6 +27,10 @@ public class SortingPlanetSpawner : MonoBehaviour
         SpawnSortingPlanets();
     }
 
+
+   /*
+    * 
+    */ 
     void SpawnSortingPlanets()
     {
         for (int i = 0; i < sortingPlanets.Length; i++)
