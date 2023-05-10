@@ -12,7 +12,10 @@ public class StartAnimation : MonoBehaviour
     public GameObject SortingMinigame;      //off
     public GameObject Interactibles;        //off
     public GameObject Userinterface;        //on
-    public GameObject UserinterfaceHideUI;  //on
+    public GameObject HideUI;               //on
+    public GameObject PlanetInfoUI;         //off
+    public GameObject FormulaUI;            //on
+
     public GameObject GameController;
 
     private FlyCamera flyCameraScript;      //on
@@ -69,7 +72,9 @@ public class StartAnimation : MonoBehaviour
         SortingMinigame.SetActive(false);
         Interactibles.SetActive(false);
         Userinterface.SetActive(true);
-        UserinterfaceHideUI.SetActive(true);
+        HideUI.SetActive(true);
+        PlanetInfoUI.SetActive(false);
+        FormulaUI.SetActive(false);
         flyCameraScript.enabled = true;
     }
 }

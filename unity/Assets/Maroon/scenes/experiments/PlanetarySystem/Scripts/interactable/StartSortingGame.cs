@@ -7,13 +7,16 @@ public class StartSortingGame : MonoBehaviour
     public GameObject MainCamera;      //off
     public GameObject SortingMinigame; //on
     public GameObject Userinterface;   //off
-    public GameObject HideUI;   //off
+    public GameObject HideUI;          //off
+    public GameObject PlanetInfoUI;    //on
+    public GameObject FormulaUI;       //off
 
 
     private void Awake()
     {
         //Debug.Log("Star Sorting Game Awake()");
         SortingMinigame.SetActive(false);
+        PlanetInfoUI.SetActive(false);
     }
 
 
@@ -41,6 +44,8 @@ public class StartSortingGame : MonoBehaviour
         SortingMinigame.SetActive(true);
         Userinterface.SetActive(false);
         HideUI.SetActive(false);
+        PlanetInfoUI.SetActive(true);
+        FormulaUI.SetActive(false);
         MainCamera.SetActive(false);
     }
 }
