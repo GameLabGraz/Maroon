@@ -7,7 +7,7 @@ public class StartSortingGame : MonoBehaviour
     public GameObject MainCamera;      //off
     public GameObject SortingMinigame; //on
     public GameObject Userinterface;   //off
-    public GameObject UserinterfaceHideUI;   //off
+    public GameObject HideUI;   //off
 
 
     private void Awake()
@@ -40,7 +40,7 @@ public class StartSortingGame : MonoBehaviour
         //Debug.Log("StartSortingGameOnInput OnMouseDown() pressed!");
         SortingMinigame.SetActive(true);
         Userinterface.SetActive(false);
-        UserinterfaceHideUI.SetActive(false);
+        HideUI.SetActive(false);
         MainCamera.SetActive(false);
     }
 }
