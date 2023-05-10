@@ -17,9 +17,6 @@ public class StartAnimation : MonoBehaviour
     private FlyCamera flyCameraScript;      //on
 
 
-    /*
-     * 
-     */
     private void Awake()
     {
         //Debug.Log("Start Animation Awake()");
@@ -27,9 +24,6 @@ public class StartAnimation : MonoBehaviour
     }
 
 
-    /*
-     * 
-     */
     void Start()
     {
         //Debug.Log("Start Animation Start()");
@@ -43,12 +37,28 @@ public class StartAnimation : MonoBehaviour
     }
 
 
+    void OnMouseDown()
+    {
+        StartAnimationOnInput();
+    }
+
+
+    void Update()
+    {
+        if (Input.GetKeyUp(KeyCode.Alpha2))
+        {
+            StartAnimationOnInput();
+        }
+        
+    }
+
+
     /*
      * 
      */
-    void OnMouseDown()
+    void StartAnimationOnInput()
     {
-        //Debug.Log("StartAnimationScreen OnMouseDown() pressed!");
+        //Debug.Log("StartAnimationOnInput OnMouseDown() pressed!");
         RenderSettings.skybox = stars_skybox;
 
         Environment.SetActive(false);
@@ -59,27 +69,5 @@ public class StartAnimation : MonoBehaviour
         Interactibles.SetActive(false);
         Userinterface.SetActive(true);
         flyCameraScript.enabled = true;
-    }
-
-
-    /*
-     * 
-     */
-    void Update()
-    {
-        if (Input.GetKeyUp(KeyCode.Alpha2))
-        {
-            RenderSettings.skybox = stars_skybox;
-
-            Environment.SetActive(false);
-            MainCamera.SetActive(false);
-            SolarSystemCamera.SetActive(true);
-            Planets.SetActive(true);
-            SortingMinigame.SetActive(false);
-            Interactibles.SetActive(false);
-            Userinterface.SetActive(true);
-            flyCameraScript.enabled = true;
-        }
-        
     }
 }

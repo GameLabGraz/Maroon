@@ -24,10 +24,7 @@ public class StartSortingGame : MonoBehaviour
      */
     void OnMouseDown()
     {
-        //Debug.Log("StartSortingGameScreen OnMouseDown() pressed!");
-        SortingMinigame.SetActive(true);
-        Userinterface.SetActive(false);
-        MainCamera.SetActive(false);
+        StartSortingGameOnInput();
     }
 
 
@@ -38,11 +35,20 @@ public class StartSortingGame : MonoBehaviour
     {
         if (Input.GetKeyUp(KeyCode.Alpha1))
         {
-            SortingMinigame.SetActive(true);
-            Userinterface.SetActive(false);
-            MainCamera.SetActive(false);
-
+            StartSortingGameOnInput();
         }
 
+    }
+
+
+   /*
+    * 
+    */
+    void StartSortingGameOnInput()
+    {
+        //Debug.Log("StartSortingGameOnInput OnMouseDown() pressed!");
+        SortingMinigame.SetActive(true);
+        Userinterface.SetActive(false);
+        MainCamera.SetActive(false);
     }
 }
