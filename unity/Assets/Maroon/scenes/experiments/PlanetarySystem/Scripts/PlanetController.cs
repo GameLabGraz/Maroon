@@ -59,16 +59,23 @@ public class PlanetController : MonoBehaviour
     }
 
 
-     /*
-      *
-      */
+    /*
+     * initialize lineRenderers before toggle
+     */
+    private void Awake()
+    {
+        lineRenderers = new List<LineRenderer>();
+        previousPositionsList = new List<Queue<Vector3>>();
+    }
+
+
+    /*
+     *
+     */
     void Start()
     {
         SetupToggle();
-        Debug.Log("PlanetController Start():");
-
-        lineRenderers = new List<LineRenderer>();
-        previousPositionsList = new List<Queue<Vector3>>();
+        //Debug.Log("PlanetController Start():");
 
         foreach (PlanetTrajectory orbit in planetTrajectories)
         {
@@ -127,9 +134,6 @@ public class PlanetController : MonoBehaviour
             toggleSunLight.isOn = sunLight.gameObject.activeSelf;
         }
     }
-
-
-
 
 
    /*
@@ -256,10 +260,23 @@ public class PlanetController : MonoBehaviour
     public void ToggleTrajectory(int index, bool isOn)
     {
         //Debug.Log("PlanetController(): ToggleTrajectory [" + index + "] = " + isOn);
-        if (index >= 0 && index < lineRenderers.Count)
+        if (lineRenderers == null)
         {
-            lineRenderers[index].enabled = isOn;
+            Debug.Log("PlanetController: ToggleTrajectory(): lineRenderers is null");
+            return;
         }
+        if (index >= lineRenderers.Count || index < 0)
+        {
+            Debug.Log("PlanetController: ToggleTrajectory(): Invalid index: " + index);
+            return;
+        }
+        LineRenderer lr = lineRenderers[index];
+        if (lr == null)
+        {
+            Debug.Log("PlanetController: ToggleTrajectory(): LineRenderer at index " + index + " is null");
+            return;
+        }
+        lr.enabled = isOn;
     }
 
 
@@ -357,7 +374,7 @@ public class PlanetController : MonoBehaviour
     #region hide planets
     public void UIToggle0(bool isOn)
     {
-        //Debug.Log("current checkbox state: sun: " + !isOn);
+        //Debug.Log("current checkbox state: mercury: " + !isOn);
         sun.GetComponent<Renderer>().enabled = !isOn;
         ToggleTrajectory(0, !isOn);
     }
