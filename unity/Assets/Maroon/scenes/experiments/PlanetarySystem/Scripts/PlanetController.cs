@@ -65,6 +65,7 @@ public class PlanetController : MonoBehaviour
     void Start()
     {
         SetupToggle();
+        Debug.Log("PlanetController Start():");
 
         lineRenderers = new List<LineRenderer>();
         previousPositionsList = new List<Queue<Vector3>>();
