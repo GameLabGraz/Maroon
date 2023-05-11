@@ -20,7 +20,6 @@ public class PlanetController : MonoBehaviour
     public GameObject moon;
 
     public List<PlanetTrajectory> planetTrajectories;
-    public int segments = 1000;
     public float lineThickness = 0.5f;
 
     public Toggle toggleAllTrajectories;
@@ -35,6 +34,7 @@ public class PlanetController : MonoBehaviour
     {
         public GameObject planet;
         public Material trajectoryMaterial;
+        public int segments = 2000;
     }
 
 
@@ -66,14 +66,14 @@ public class PlanetController : MonoBehaviour
             trajectory.transform.SetParent(transform);
 
             LineRenderer lr = trajectory.AddComponent<LineRenderer>();
-            lr.positionCount = segments;
+            lr.positionCount = orbit.segments;
             lr.startWidth = lineThickness;
             lr.endWidth = lineThickness;
 
             lr.material = orbit.trajectoryMaterial;
 
             lineRenderers.Add(lr);
-            previousPositionsList.Add(new Queue<Vector3>(segments));
+            previousPositionsList.Add(new Queue<Vector3>(orbit.segments));
 
             lr.enabled = false;
         }
@@ -92,7 +92,7 @@ public class PlanetController : MonoBehaviour
             PlanetTrajectory pt = planetTrajectories[i];
             Queue<Vector3> previousPositions = previousPositionsList[i];
 
-            if (previousPositions.Count >= segments)
+            if (previousPositions.Count >= pt.segments)
             {
                 previousPositions.Dequeue();
             }
@@ -169,7 +169,7 @@ public class PlanetController : MonoBehaviour
     }
 
 
-    /*
+   /*
     * hidesplanets and trajectories after radiobutton is pressed
     */
     #region hide planets
