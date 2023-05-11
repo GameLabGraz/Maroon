@@ -5,15 +5,11 @@ public class CameraController : MonoBehaviour
 {
     public Camera controlledCamera;
     public Slider cameraFovSlider;
-    public Slider camereAngleSlider;
 
     private float initialFieldOfView;
 
     public Dropdown cameraLookAtDropdown;
     public Dropdown cameraFollowDropdown;
-
-    public float distance = 10f;
-    public float height = 10f;
 
     private Vector3 initialPosition;
     private Quaternion initialRotation;
