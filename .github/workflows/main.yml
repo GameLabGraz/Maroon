@@ -68,7 +68,8 @@ jobs:
           allowDirtyBuild: true
           buildsPath: ${{ env.GITHUB_WORKSPACE }}/build
           customParameters: -maroonBuildPath ../build -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
-        
+      
+      # needed because otherwise game-ci will warn that repo is not clean
       - name: Restore Build Environment
         shell: bash
         run: |
@@ -77,9 +78,10 @@ jobs:
   
 
   save-cache:
-    name: Save Cache
+    name: Save cache
     runs-on: self-hosted
     needs: [setup, build]
+    # only save the cache if we had a cache miss during setup
     if: needs.setup.outputs.hit != 'true'
     steps:
       - name: Save Cache
@@ -89,10 +91,8 @@ jobs:
           key: ${{ needs.setup.outputs.key }}
 
 
-  # TODO
-  # fix failing tests (playmode)
   test:
-    name: Run ${{ matrix.testMode }} tests
+    name: Run tests
     runs-on: self-hosted
     needs: [setup, build]
     strategy:
@@ -115,7 +115,6 @@ jobs:
           projectPath: ${{ matrix.projectPath }}
           testMode: ${{ matrix.testMode }}
           artifactsPath: ./test-results/${{ matrix.testMode }}-results
-          customParameters: -playerGraphicsAPI Null
   
 
   upload-artifacts:
@@ -142,10 +141,9 @@ jobs:
     name: Deploy to Steam
     runs-on: self-hosted
     needs: [build, test, upload-artifacts]
-    # for now, also proceed, even if tests fail
-    # TODO: adapt once tests are fixed
+    
     # we do not want to deploy if we are doing a scheduled run
-    if: ${{ (github.event_name != 'schedule') && (success() || (needs.build.result == 'success' || needs.test.result == 'success')) }}
+    if: ${{ (github.event_name != 'schedule') && (needs.build.result == 'success' || needs.test.result == 'success') }}
     steps:
 
         # fetch UID of user running the workflow
@@ -183,10 +181,10 @@ jobs:
 
 
   # this is needed because in some instances, there might be some leftover files
-  # in the working directory, that have funky (=root) permissions
+  # in the working directory, that have funky (=root:root) permissions
   # this is not a problem on ephemeral runners, but on self-hosted ones it is
-  # thus, we make sure that the working dir is clean before our next pipeline run
-  # this step ALWAYS runs
+  # thus, we ensure that the working dir is clean before our next pipeline run
+  # this step must *ALWAYS* run
   cleanup:
     name: Cleanup
     runs-on: self-hosted
