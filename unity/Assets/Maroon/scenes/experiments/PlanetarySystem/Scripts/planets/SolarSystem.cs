@@ -27,7 +27,6 @@ public class SolarSystem : MonoBehaviour
     private void Awake()
     {
         //Debug.Log("Solar System Awake()");
-
         planets = GameObject.FindGameObjectsWithTag("Planet");
         if (planets.Length <= 0)
         {
@@ -42,8 +41,7 @@ public class SolarSystem : MonoBehaviour
      */
     void Start()
     {
-        Debug.Log("Solar System Start()");
-
+        //Debug.Log("Solar System Start()");
         InitialVelocity();
         //InitialVelocityEliptical();
     }
@@ -58,33 +56,7 @@ public class SolarSystem : MonoBehaviour
     }
 
 
-    /*
-     *
-     */
-    /*
-        void Gravity()
-        {    
-            foreach(GameObject a in planets)
-            {
-                foreach(GameObject b in planets)
-                {
-                    // object can't orbit itself
-                    if(!a.Equals(b))
-                    {
-                        float m1 = a.GetComponent<Rigidbody>().mass;
-                        float m2 = b.GetComponent<Rigidbody>().mass;
 
-                        float r = Vector3.Distance(a.transform.position, b.transform.position);
-
-                        // Newton's law of universal gravitation
-                        // F = G * ((m1 * m2) / (r^2))
-                        a.GetComponent<Rigidbody>().AddForce((b.transform.position - a.transform.position).normalized *
-                            (G * (m1 * m2) / (r * r)));
-                    }
-                }
-            }
-        }
-        */
     void Gravity()
     {
         foreach (GameObject a in planets)
@@ -139,7 +111,7 @@ public class SolarSystem : MonoBehaviour
 
 
     /*
-     *
+     * recalculates the InitialVelocity after toggle the sun's isKinematic in the animation
      */
     public void RecalculateInitialVelocity(GameObject a)
     {
@@ -159,7 +131,8 @@ public class SolarSystem : MonoBehaviour
 
 
     /*
-     *
+     * unused: semi mayor axis missing
+     * 
      */
     void InitialVelocityEliptical()
     {
@@ -175,7 +148,6 @@ public class SolarSystem : MonoBehaviour
                     float r = Vector3.Distance(a.transform.position, b.transform.position);
                     // a = length of the semi-mayor axis
                     float a_axis = a.GetComponent<PlanetData>().semiMajorAxis;
-
                     a.transform.LookAt(b.transform);
 
                     // eliptic orbit instant velocity: v0 = G * m2 * (2 / r - 1 / a)

@@ -19,11 +19,18 @@ public class PlanetController : MonoBehaviour
     public GameObject neptune;
     public GameObject moon;
 
+    public Light sunLight;
+    public ParticleSystem solarFlares;
+
     public List<PlanetTrajectory> planetTrajectories;
     public float lineThickness = 0.5f;
 
     public Toggle toggleAllTrajectories;
     public Toggle toggleSunKinematic;
+    public Toggle toggleSunLight;
+    public Toggle toggleSolarFlares;
+    public Toggle toggleRotation;
+    public Toggle toggleOrientationGizmo;
 
 
     private List<LineRenderer> lineRenderers;
@@ -104,6 +111,80 @@ public class PlanetController : MonoBehaviour
             lineRenderers[i].positionCount = previousPositions.Count;
             lineRenderers[i].SetPositions(previousPositions.ToArray());
         }
+
+
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            //Debug.Log("L key pressed.");
+            // If sunLight is active, deactivate it. If it's inactive, activate it.
+            sunLight.gameObject.SetActive(!sunLight.gameObject.activeSelf);
+            // Sync the toggle button state with sunLight's state
+            toggleSunLight.isOn = sunLight.gameObject.activeSelf;
+        }
+    }
+
+
+
+
+
+   /*
+    * sets up and handles UI toggle buttons
+    */
+    #region UIToggleButtons
+   /*
+    * toggles the rotation of the minigame sortable planets button press
+    */
+    public void UIToggleRotation(bool isOn)
+    {
+        //Debug.Log("PlanetController(): UIToggleRotation = " + isOn);
+
+        GameObject[] sortablePlanets = GameObject.FindGameObjectsWithTag("sortablePlanet");
+        if (sortablePlanets.Length <= 0)
+        {
+            Debug.Log("No sortablePlanet found:  " + sortablePlanets.Length);
+            return;
+        }
+
+        //Debug.Log("PlanetController(): UIToggleRotation(): sortablePlanets.Length = " + sortablePlanets.Length);
+        foreach (GameObject planet in sortablePlanets)
+        {
+            //Debug.Log("PlanetController(): UIToggleRotation(): planet = " + planet);
+            PlanetRotation rotationScript = planet.GetComponent<PlanetRotation>();
+            if (rotationScript != null)
+            {
+                rotationScript.enabled = isOn;
+            }
+        }
+    }
+
+
+    /*
+     * toggles the rotation of the minigame sortable planets button press
+     */
+    public void UIToggleOrientation(bool isOn)
+    {
+        //Debug.Log("PlanetController(): UIToggleOrientation = " + isOn);
+        GameObject[] sortablePlanets = GameObject.FindGameObjectsWithTag("sortablePlanet");
+        if (sortablePlanets.Length <= 0)
+        {
+            Debug.Log("No sortablePlanet found:  " + sortablePlanets.Length);
+            return;
+        }
+
+        //Debug.Log("PlanetController(): UIToggleOrientation(): sortablePlanets.Length = " + sortablePlanets.Length);
+        foreach (GameObject planet in sortablePlanets)
+        {
+            //Debug.Log("PlanetController(): UIToggleOrientation(): planet = " + planet);
+            GameObject orientationGizmo = planet.transform.Find("orientation gizmo").gameObject;
+            if (orientationGizmo != null)
+            {
+                orientationGizmo.SetActive(isOn);
+            }
+            else
+            {
+                Debug.Log("PlanetController(): UIToggleOrientation(): No orientation gizmo found");
+            }
+        }
     }
 
 
@@ -112,7 +193,7 @@ public class PlanetController : MonoBehaviour
      */
     public void ToggleTrajectory(int index, bool isOn)
     {
-        Debug.Log("PlanetController(): ToggleTrajectory [" + index + "] = " + isOn);
+        //Debug.Log("PlanetController(): ToggleTrajectory [" + index + "] = " + isOn);
         if (index >= 0 && index < lineRenderers.Count)
         {
             lineRenderers[index].enabled = isOn;
@@ -125,7 +206,7 @@ public class PlanetController : MonoBehaviour
      */
     public void UIToggleAllTrajectories(bool isOn)
     {
-        Debug.Log("PlanetController(): ToggleAllTrajectories = " + isOn);
+        //Debug.Log("PlanetController(): ToggleAllTrajectories = " + isOn);
         for (int index = 0; index < planetTrajectories.Count; index++)
         {
             lineRenderers[index].enabled = isOn;
@@ -134,7 +215,7 @@ public class PlanetController : MonoBehaviour
 
 
     /*
-     * toggles the sun#s kinematic and recalcuates its initial velocity after button press
+     * toggles the sun's kinematic and recalcuates its initial velocity after button press
      */
     public void UIToggleSunKinematic(bool isKinematic)
     {
@@ -145,7 +226,34 @@ public class PlanetController : MonoBehaviour
             SolarSystem solarSystem = FindObjectOfType<SolarSystem>();
             solarSystem.RecalculateInitialVelocity(sun);
         }
+    }
 
+
+   /*
+    * toggles the sun's solarflares in the sorting game after button press
+    */
+    public void UIToggleSolarFlares(bool isOn)
+    {
+        //Debug.Log("PlanetController(): UIToggleSolarFlares = " + isOn);
+        solarFlares.gameObject.SetActive(isOn);
+        if (isOn)
+        {
+            solarFlares.Play();
+        }
+        else
+        {
+            solarFlares.Stop();
+        }
+    }
+
+
+    /*
+     * toggles the sun's pointlight in the sorting game after button press
+     */
+    public void UIToggleSunLight(bool isOn)
+    {
+        //Debug.Log("PlanetController(): UIToggleSunLight = " + !isOn);
+        sunLight.gameObject.SetActive(isOn);
     }
 
 
@@ -156,6 +264,10 @@ public class PlanetController : MonoBehaviour
     {
         toggleAllTrajectories.onValueChanged.AddListener(UIToggleAllTrajectories);
         toggleSunKinematic.onValueChanged.AddListener(UIToggleSunKinematic);
+        toggleSunLight.onValueChanged.AddListener(UIToggleSunLight);
+        toggleSolarFlares.onValueChanged.AddListener(UIToggleSolarFlares);
+        toggleRotation.onValueChanged.AddListener(UIToggleRotation);
+        toggleOrientationGizmo.onValueChanged.AddListener(UIToggleOrientation);
     }
 
 
@@ -166,12 +278,16 @@ public class PlanetController : MonoBehaviour
     {
         toggleAllTrajectories.onValueChanged.RemoveListener(UIToggleAllTrajectories);
         toggleSunKinematic.onValueChanged.RemoveListener(UIToggleSunKinematic);
+        toggleSunLight.onValueChanged.RemoveListener(UIToggleSunLight);
+        toggleSolarFlares.onValueChanged.RemoveListener(UIToggleSolarFlares);
+        toggleRotation.onValueChanged.RemoveListener(UIToggleRotation);
+        toggleOrientationGizmo.onValueChanged.RemoveListener(UIToggleOrientation);
     }
+    #endregion UIToggleButtons
 
-
-   /*
-    * hidesplanets and trajectories after radiobutton is pressed
-    */
+    /*
+     * hidesplanets and trajectories after radiobutton is pressed
+     */
     #region hide planets
     public void UIToggle0(bool isOn)
     {
