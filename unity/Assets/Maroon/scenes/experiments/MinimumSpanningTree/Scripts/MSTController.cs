@@ -43,13 +43,12 @@ public class MSTController : MonoBehaviour
     static float islandHalf;
     GameObject[] islands;
 
-    //private Coroutine routineBuildPrim;
     private Coroutine routineInstantiatePrim;
+    private Coroutine routineInstantiateManual;
 
     //To Build Bridges Manually
     public GameObject FromButton;
     public GameObject ToButton;
-    //public GameObject TryAgainButton;
     GameObject manualFromIsland;
     int manualFromIslandIndex;
     GameObject manualToIsland;
@@ -92,6 +91,7 @@ public class MSTController : MonoBehaviour
         }
         
         routineInstantiatePrim = null;
+        routineInstantiateManual = null;
     }
 
     // Start is called before the first frame update
@@ -354,7 +354,6 @@ public class MSTController : MonoBehaviour
         {
             StopCoroutine(routineInstantiatePrim);
         }
-        //StopCoroutine(routineBuildPrim);
         StopCoroutine(BuildBrigdesPrim());
         DeletePrimsBridges();
     }
@@ -426,7 +425,8 @@ public class MSTController : MonoBehaviour
             }
             GameObject bridge = new GameObject("ManualBridge " + fromIndex + "--" + toIndex);
             bridge.transform.parent = ManualBridgesParent.transform;
-            yield return StartCoroutine(InstantiateBridgeSegments(bridge, startPos, endPos, bridgeSegmentGreyPrefab));
+            routineInstantiateManual = StartCoroutine(InstantiateBridgeSegments(bridge, startPos, endPos, bridgeSegmentGreyPrefab));
+            yield return routineInstantiateManual;
         }
 
         if (isInManualSetCounter == _numberOfIslands)
@@ -558,6 +558,19 @@ public class MSTController : MonoBehaviour
         }
     }
 
+    /**
+     * delete the already built manual bridges
+     * */
+    public void TryAgain()
+    {
+        if (routineInstantiateManual != null)
+        {
+            //Debug.Log("MSTController: TryAgain() Stop Coroutine");
+            StopCoroutine(routineInstantiateManual);
+        }
+        ResetManualBridges();
+    }
+
     #endregion
 
     #region Instantiate Bridge
@@ -650,18 +663,14 @@ public class MSTController : MonoBehaviour
     * */
     public void ResetMSTController()
     {
-        if (SimulationController.Instance.SimulationRunning)
-        {
-            StopAllCoroutines();
-            Debug.Log("ResetMSTController(): Simulation is Running!");
-        }
-        Debug.Log("MSTController: ResetObject()");
-        //ResetManualBridges();
-
+        StopAllCoroutines();
+        Debug.Log("MSTController: ResetMSTController()");
         DeletePrimsBridges();
     }
 
     #endregion
+
+    #region UI messages
 
     /**
      *  Show message by key from LanguageManager in Helpi's dialogue
@@ -714,4 +723,7 @@ public class MSTController : MonoBehaviour
 
         PseudoCode.text = myText;
     }
+
+    #endregion
+
 }
