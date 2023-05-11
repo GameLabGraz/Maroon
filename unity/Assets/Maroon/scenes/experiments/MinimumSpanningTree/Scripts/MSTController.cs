@@ -43,8 +43,13 @@ public class MSTController : MonoBehaviour
     static float islandHalf;
     GameObject[] islands;
 
+    //private Coroutine routineBuildPrim;
+    private Coroutine routineInstantiatePrim;
+
+    //To Build Bridges Manually
     public GameObject FromButton;
     public GameObject ToButton;
+    //public GameObject TryAgainButton;
     GameObject manualFromIsland;
     int manualFromIslandIndex;
     GameObject manualToIsland;
@@ -52,6 +57,7 @@ public class MSTController : MonoBehaviour
     bool[] isInManualSet;
     int manualStart;
     ManualIslandPickerOptions manualCases;
+
     float endLengthOfManualBridges;
     int allManualBridgeSegments;
 
@@ -59,7 +65,7 @@ public class MSTController : MonoBehaviour
     int[] startIndices;
     int[] endIndices;
 
-    // to show in UI
+    // to show in DialogueManager
     //float endDistance;
     float endLengthOfBridges;
     int allBridgeSegments;
@@ -84,6 +90,8 @@ public class MSTController : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        
+        routineInstantiatePrim = null;
     }
 
     // Start is called before the first frame update
@@ -322,22 +330,18 @@ public class MSTController : MonoBehaviour
 
     #endregion
 
-    #region Prim Bridge Building
+    #region Prim Bridge Building (Start and Stop Algorithm)
 
     /**
      * Start Prims Algorithm and Build Bridges - from Play Button
      * */
     public void PlayPrim()
     {
+        //Debug.Log("PlayPrim()");
         endLengthOfBridges = 0;
         allBridgeSegments = 0;
-
-        //StopAllCoroutines();
-        //StopCoroutine("InstantiateBridgeSegments");
-        StartCoroutine(BuildBrigdesPrim());
+        //StopCoroutine(BuildBrigdesPrim());
         DeletePrimsBridges();
-        //UpdateIslands();
-        //StartCoroutine(PrimsAlgorithm());
         PrimsAlgorithm();
         StartCoroutine(BuildBrigdesPrim());
         //Debug.Log("PlayPrim Finished!");
@@ -345,7 +349,13 @@ public class MSTController : MonoBehaviour
 
     public void StopPrim()
     {
-        StopAllCoroutines();
+        //StopAllCoroutines();
+        if (routineInstantiatePrim != null)
+        {
+            StopCoroutine(routineInstantiatePrim);
+        }
+        //StopCoroutine(routineBuildPrim);
+        StopCoroutine(BuildBrigdesPrim());
         DeletePrimsBridges();
     }
 
@@ -368,7 +378,10 @@ public class MSTController : MonoBehaviour
                 Vector3 endPos = islands[edges[i]].transform.position;
                 GameObject bridge = new GameObject("Bridge " + parent[edges[i]] + "--" + edges[i]);
                 bridge.transform.parent = BridgesParent.transform;
-                yield return InstantiateBridgeSegments(bridge, startPos, endPos, bridgeSegmentPrefab);
+                routineInstantiatePrim = StartCoroutine(InstantiateBridgeSegments(bridge, startPos, endPos, bridgeSegmentPrefab));
+                yield return routineInstantiatePrim;
+
+                //yield return InstantiateBridgeSegments(bridge, startPos, endPos, bridgeSegmentPrefab);
                 //lengthOfBridges.text = "length of all bridges: " + endLengthOfBridges.ToString();
                 //numberOfBridgeSegments.text = "allBridgeSegments: " + allBridgeSegments.ToString();
             }
@@ -674,28 +687,6 @@ public class MSTController : MonoBehaviour
         string myText = "";
         List<string> myPseudoCode = new List<string>();
 
-        /*
-        myPseudoCode.Add("<style=\"Normal\">mst = empty set</style>");
-        myPseudoCode.Add("<style=\"Normal\">startVertex = first vertex in graph</style>");
-        myPseudoCode.Add("<style=\"Normal\">mst.<style=\"sortingFunction\">add</style>(startVertex)</style>");
-        myPseudoCode.Add("");
-        myPseudoCode.Add("<style=\"Normal\">edgesToCheck = edges connected to startVertex</style>");
-        myPseudoCode.Add("");
-        myPseudoCode.Add("<style=\"sortingKeyword\">while</style><style=\"Normal\"> mst <style=\"sortingKeyword\">has fewer vertices than</style> graph:</style>");
-        myPseudoCode.Add("      <style=\"Normal\">minEdge, minWeight = <style=\"sortingFunction\">findMinEdge</style><style=\"Normal\">(edges)</style>");
-        myPseudoCode.Add("");
-        myPseudoCode.Add("<style=\"Normal\">mst.</style><style=\"sortingFunction\">add</style><style=\"Normal\">(minEdge)</style>");
-        myPseudoCode.Add("");
-        myPseudoCode.Add("<style=\"sortingKeyword\">for</style><style=\"Normal\"> edge </style><style=\"sortingKeyword\">in</style><style=\"Normal\"> edges connected to minEdge:</style>");
-        myPseudoCode.Add("      <style=\"sortingKeyword\">if</style><style=\"Normal\"> edge <style=\"sortingKeyword\">is not</style> in mst:</style>");
-        myPseudoCode.Add("      <style=\"Normal\">edges.</style><style=\"sortingFunction\">add</style><style=\"Normal\">(edge)</style>");
-        myPseudoCode.Add("");
-        myPseudoCode.Add("<style=\"Normal\">edges.</style><style=\"sortingFunction\">remove</style><style=\"Normal\">(minEdge)</style>");
-        myPseudoCode.Add("");
-        myPseudoCode.Add("<style=\"sortingFunction\">return</style><style=\"Normal\"> mst as an array</style>");
-        myPseudoCode.Add("");
-        */
-
         myPseudoCode.Add("<style=\"Normal\">mst = empty set</style>");
         myPseudoCode.Add("<style=\"Normal\">startVertex = first vertex in graph</style>");
         myPseudoCode.Add("<style=\"Normal\">mst.<style=\"sortingFunction\">add</style>(startVertex)</style>");
@@ -716,32 +707,11 @@ public class MSTController : MonoBehaviour
         myPseudoCode.Add("<style=\"sortingFunction\">return</style><style=\"Normal\"> mst as an array</style>");
         myPseudoCode.Add("");
 
-
         for (int i = 0; i < myPseudoCode.Count; i++)
         {
             myText += "  " + myPseudoCode[i] + "\n";
         }
 
         PseudoCode.text = myText;
-        /*
-            mst = empty set
-            startVertex = first vertex in graph
-            mst.add(startVertex)
-
-            edges = edges connected to startVertex
-
-            while mst has fewer vertices than graph:
-                    minEdge, minWeight = findMinEdge(edges)
-
-                mst.add(minEdge)
-
-                for edge in edges connected to minEdge:
-                    if edge is not in mst:
-                    edges.add(edge)
-
-                edges.remove(minEdge)
-
-            return mst as an array
-*/
     }
 }
