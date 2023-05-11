@@ -42,11 +42,7 @@ public class CameraController : MonoBehaviour
             cameraFovSlider.onValueChanged.AddListener(OnFOVSliderValueChanged);
         }
 
-        if (camereAngleSlider != null)
-        {
-            camereAngleSlider.onValueChanged.AddListener(OnCameraAngleSliderValueChanged);
-        }
-
+  
         if (cameraLookAtDropdown != null)
         {
             /* cameraLookAtDropdown.ClearOptions();
@@ -67,26 +63,6 @@ public class CameraController : MonoBehaviour
         //controlledCamera.transform.LookAt(targetPlanet.transform);
     }
 
-    private void OnCameraAngleSliderValueChanged(float angleValue)
-    {
-        /* float angle = angleValue * 90f;
-
-         Vector3 position = new Vector3(
-             Mathf.Cos(angle * Mathf.Deg2Rad) * distance,
-             height,
-             Mathf.Sin(angle * Mathf.Deg2Rad) * distance
-         );
-
-         Quaternion rotation = Quaternion.LookRotation(
-             Vector3.zero - position,
-             Vector3.up
-         );
-
-         transform.position = position;
-         transform.rotation = rotation;
-
-         */
-    }
 
     private void OnFOVSliderValueChanged(float fovValue)
     {
@@ -95,13 +71,11 @@ public class CameraController : MonoBehaviour
 
     public void ResetCamera()
     {
-        // reset the camera's position, rotation, and field of view to their initial values
+        // reset the camera's position and field of view to their initial values
         controlledCamera.transform.position = initialPosition;
         controlledCamera.transform.rotation = initialRotation;
         controlledCamera.fieldOfView        = initialFieldOfView;
 
-        // reset slider
         cameraFovSlider.value               = initialFieldOfView;
-        //camereAngleSlider.value             = ;
     }
 }

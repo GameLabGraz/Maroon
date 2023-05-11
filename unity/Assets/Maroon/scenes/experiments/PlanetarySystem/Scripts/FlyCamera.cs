@@ -22,19 +22,19 @@ public class FlyCamera : MonoBehaviour
     {
         if (flyCamera == null)
         {
-            Debug.LogError("FlyCamera: Camera not assigned.");
+            Debug.Log("FlyCamera: Camera not assigned.");
             return;
         }
 
         if (cameraController == null)
         {
-            Debug.LogError("FlyCamera: CameraController not assigned.");
+            Debug.Log("FlyCamera: CameraController not assigned.");
             return;
         }
 
         if (flyCameraFocus == null)
         {
-            Debug.LogError("FlyCamera: Sun GameObject not assigned.");
+            Debug.Log("FlyCamera: Sun not assigned.");
             return;
         }
 
@@ -47,9 +47,6 @@ public class FlyCamera : MonoBehaviour
      */
     void Update()
     {
-        if (flyCamera == null || cameraController == null || flyCameraFocus == null)
-            return;
-
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             isCameraControlActive = !isCameraControlActive;
@@ -59,6 +56,7 @@ public class FlyCamera : MonoBehaviour
 
         if (!isCameraControlActive)
             return;
+
 
         // Camera movement
         float x = Input.GetAxis("Horizontal") * speed * Time.deltaTime;
