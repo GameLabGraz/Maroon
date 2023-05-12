@@ -1,7 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Maroon.UI;            //Dialogue Manager
+using GEAR.Localization;    //MLG
 
 public class PlanetController : MonoBehaviour
 {
@@ -37,6 +38,8 @@ public class PlanetController : MonoBehaviour
 
     private List<LineRenderer> lineRenderers;
     private List<Queue<Vector3>> previousPositionsList;
+
+    private DialogueManager _dialogueManager;
 
     [System.Serializable]
     public class PlanetTrajectory
@@ -136,13 +139,33 @@ public class PlanetController : MonoBehaviour
     }
 
 
-   /*
-    * sets up and handles UI toggle buttons
-    */
+    #region helpi
+    /*
+     * displays Halpi masseges by key
+     */
+    private void DisplayMessageByKey(string key)
+    {
+        if (_dialogueManager == null)
+            _dialogueManager = FindObjectOfType<DialogueManager>();
+
+        if (_dialogueManager == null)
+            return;
+
+        var message = LanguageManager.Instance.GetString(key);
+
+        _dialogueManager.ShowMessage(message);
+    }
+    #endregion helpi
+
+
+
+    /*
+     * sets up and handles UI toggle buttons
+     */
     #region UIToggleButtons
-   /*
-    * toggles the rotation of the minigame sortable planets after button press
-    */
+    /*
+     * toggles the rotation of the minigame sortable planets after button press
+     */
     public void UIToggleSGRotation(bool isOn)
     {
         //Debug.Log("PlanetController(): UIToggleSGRotation = " + isOn);
