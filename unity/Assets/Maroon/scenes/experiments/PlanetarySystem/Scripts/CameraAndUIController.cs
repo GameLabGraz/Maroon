@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CameraController : MonoBehaviour
+public class CameraAndUIController : MonoBehaviour
 {
     public Camera controlledCamera;
     [SerializeField] public Slider cameraFovSlider;
@@ -10,6 +10,10 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Slider gSlider;
     [SerializeField] private float G = 100f;
     [SerializeField] private SolarSystem solarSystem;
+
+    public GameObject AnimationUI;
+    public GameObject SortingGamePlanetInformationUI;
+    public Toggle toggleHideUI;
 
 
     private float initialFieldOfView;
@@ -63,7 +67,9 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        //transform.LookAt(lookAtTargetObject);
+        HideUIOnKeyInput();
+
+        //transform.LookAt(lookAtTargetObject);     
     }
 
 
@@ -83,6 +89,58 @@ public class CameraController : MonoBehaviour
         //controlledCamera.transform.LookAt(targetPlanet.transform);
     }
 
+
+    /*
+     * hide UI on key or toggle input 
+     */
+    #region ToggleUI
+    /*
+     *  hide UI on Key input and update toggle
+     */
+    void HideUIOnKeyInput()
+    {
+        if (Input.GetKeyUp(KeyCode.H))
+        {
+            if (!AnimationUI.activeSelf)// && (!SortingGamePlanetInformationUI.activeSelf))
+            {
+                AnimationUI.SetActive(true); //turn on UI
+                SortingGamePlanetInformationUI.SetActive(true); //turn on UI
+                toggleHideUI.isOn = false;
+                //Debug.Log("CameraAndUIController: HideUIOnKeyInput(): [H] UI Active Self: " + AnimationUI.activeSelf);
+            }
+            else
+            {
+                AnimationUI.SetActive(false); //turn off UI
+                SortingGamePlanetInformationUI.SetActive(false); //turn off UI
+                toggleHideUI.isOn = true;
+                //Debug.Log("CameraAndUIController: HideUIOnKeyInput(): [H] UI Active Self: " + AnimationUI.activeSelf);
+            }
+        }
+    }
+
+
+    /*
+     *  change with boolean from ToggleGroup function
+     */
+    public void ToggleHideUI(bool hide)
+    {
+        //Debug.Log("CameraAndUIController: ToggleHideUI(): " +  isHidden);
+        if (hide)
+        {
+            AnimationUI.SetActive(false); //turn on UI
+            SortingGamePlanetInformationUI.SetActive(false); //turn on UI
+            //Debug.Log("CameraAndUIController: ToggleHideUI(): " + ui.activeSelf);
+        }
+        else
+        {
+            AnimationUI.SetActive(true); //turn off UI
+            SortingGamePlanetInformationUI.SetActive(true); //turn off UI
+            //Debug.Log("CameraAndUIController: ToggleHideUI(): " + ui.activeSelf);
+        }
+    }
+    #endregion ToggleUI
+
+
     /*
      * ControlledCamera store/reset
      */
@@ -94,7 +152,7 @@ public class CameraController : MonoBehaviour
     {
         if (controlledCamera == null)
         {
-            Debug.Log("CameraController: StoreInitialCamera(): controlledCamera missing");
+            Debug.Log("CameraAndUIController: StoreInitialCamera(): controlledCamera missing");
             controlledCamera = Camera.main;
         }
 
