@@ -14544,6 +14544,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2399235266715423803, guid: 09c73ed225a086845b90fbeaba0dc5ea,
         type: 3}
+      propertyPath: m_WholeNumbers
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2399235266715423803, guid: 09c73ed225a086845b90fbeaba0dc5ea,
+        type: 3}
       propertyPath: onSliderInit.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: GameLabGraz.UI.InputField, GameLabGraz.UserInterface
       objectReference: {fileID: 0}
@@ -17308,7 +17313,6 @@ GameObject:
   - component: {fileID: 1319881025}
   - component: {fileID: 1319881026}
   - component: {fileID: 1319881032}
-  - component: {fileID: 1319881024}
   - component: {fileID: 1319881033}
   m_Layer: 0
   m_Name: Game Controller
@@ -17331,19 +17335,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1319881024
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1319881022}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46806c5268518d040a820dde0b95b418, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sortingPlanetsPlaceholderSlots: {fileID: 163324475}
 --- !u!114 &1319881025
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17473,6 +17464,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controlledCamera: {fileID: 1779433763}
   cameraFovSlider: {fileID: 1437618919}
+  timeSpeedSlider: {fileID: 1017797483}
 --- !u!20 &1319881031
 Camera:
   m_ObjectHideFlags: 0
@@ -17523,7 +17515,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1319881022}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 445a7df7111a21f44bab63a86ff7afc7, type: 3}
   m_Name: 
