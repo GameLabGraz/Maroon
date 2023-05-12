@@ -43,6 +43,9 @@ public class MSTController : MonoBehaviour
     static float islandHalf;
     GameObject[] islands;
 
+    int[] startIndices;
+    int[] endIndices;
+
     private Coroutine routineInstantiatePrim;
     private Coroutine routineInstantiateManual;
 
@@ -57,21 +60,15 @@ public class MSTController : MonoBehaviour
     int manualStart;
     ManualIslandPickerOptions manualCases;
 
-    float endLengthOfManualBridges;
+    //float endDistanceManual;
+    //float endLengthOfManualBridges;
     int allManualBridgeSegments;
-
-
-    int[] startIndices;
-    int[] endIndices;
 
     // to show in DialogueManager
     //float endDistance;
-    float endLengthOfBridges;
+    //float endLengthOfBridges;
     int allBridgeSegments;
     [SerializeField] private TextMeshProUGUI PseudoCode;
-
-    //[SerializeField] private TextMeshProUGUI lengthOfBridges;
-    //[SerializeField] private TextMeshProUGUI numberOfBridgeSegments;
 
     private DialogueManager _dialogueManager;
 
@@ -83,7 +80,7 @@ public class MSTController : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            Debug.Log("Awake This is: " + this.name);
+            //Debug.Log("Awake This is: " + this.name);
         }
         else
         {
@@ -99,22 +96,20 @@ public class MSTController : MonoBehaviour
     {
         bridgeRenderer = bridgeSegmentPrefab.GetComponent<MeshRenderer>();
         size = bridgeRenderer.bounds.size.z * 1.011f;
+        //Debug.Log("BridgeSize: " + bridgeRenderer.bounds.size);
 
         islandRenderer = islandPrefab.GetComponent<MeshRenderer>();
         islandHalf = islandRenderer.bounds.size.x / 3f;
 
         //endDistance = 0;
-        endLengthOfBridges = 0;
+        //endLengthOfBridges = 0;
         allBridgeSegments = 0;
 
-        endLengthOfManualBridges = 0;
+        //endDistanceManual = 0;
+        //endLengthOfManualBridges = 0;
         allManualBridgeSegments = 0;
 
         SetPseudoCode();
-
-        //lengthOfBridges.text = " ";
-        //numberOfBridgeSegments.text = " ";
-
 
         islands = GameObject.FindGameObjectsWithTag("Island");
         if (islands.Length <= 0)
@@ -122,7 +117,7 @@ public class MSTController : MonoBehaviour
             //Should not happen
             Debug.Log("No Islands Found:  " + islands.Length);
         }
-        Debug.Log("islandsAmount: " + islands.Length);
+        //Debug.Log("islandsAmount: " + islands.Length);
 
         isInManualSet = new bool[MSTConstants.MAX_Islands];
         for(int i = 0; i < isInManualSet.Length; i++)
@@ -134,6 +129,9 @@ public class MSTController : MonoBehaviour
         isInManualSetCounter = 0;
 
         DisplayMessageByKey("welcome message");
+
+        PrimsAlgorithm();
+        CalculateMSTDistance();
     }
 
     // Update is called once per frame
@@ -147,10 +145,12 @@ public class MSTController : MonoBehaviour
      * */
     public void UpdateIslands()
     {
-        endLengthOfBridges = 0;
+        //endDistance = 0;
+        //endLengthOfBridges = 0;
         allBridgeSegments = 0;
 
-        endLengthOfManualBridges = 0;
+        //endDistanceManual = 0;
+        //endLengthOfManualBridges = 0;
         allManualBridgeSegments = 0;
 
         islands = GameObject.FindGameObjectsWithTag("Island");
@@ -168,7 +168,7 @@ public class MSTController : MonoBehaviour
     /**
      * Calculate distance between GameObjects
      * */
-    float getDistance(GameObject from, GameObject to)
+    float GetDistance(GameObject from, GameObject to)
     {
         return Vector3.Distance(from.transform.position, to.transform.position);
     }
@@ -190,8 +190,7 @@ public class MSTController : MonoBehaviour
                 min_index = vec;
             }
         }
-        //endDistance += least;
-        //Debug.Log("min_index is: " + min_index + " least value: " + least + " endDistance: " + endDistance);
+        //Debug.Log("min_index is: " + min_index + " least value: " + least);
         return min_index;
     }
 
@@ -200,7 +199,6 @@ public class MSTController : MonoBehaviour
      * */
     void PrimsAlgorithm()
     {
-        //endDistance = 0;
         int vertices = _numberOfIslands;
 
         //to get right order for building bridges
@@ -223,7 +221,7 @@ public class MSTController : MonoBehaviour
             // j = to
             for (int j = 0; j < vertices; j++)
             {
-                distances[j] = getDistance(islands[i], islands[j]);
+                distances[j] = GetDistance(islands[i], islands[j]);
             }
             // Exception if key is already used
             try
@@ -272,9 +270,8 @@ public class MSTController : MonoBehaviour
             if (isInMST[v] == false)
             {
                 edges[vertices - 1] = v;
-                float dist = getDistance(islands[parent[v]], islands[v]);
-                //endDistance += dist;
-                //Debug.Log("last edge: " + v + " least " + dist + " endDistance " + endDistance);
+                //float dist = getDistance(islands[parent[v]], islands[v]);
+                //Debug.Log("last edge: " + v + " least " + dist);
                 break;
             }
         }
@@ -283,7 +280,7 @@ public class MSTController : MonoBehaviour
         startIndices = parent;
         endIndices = edges;
 
-        Debug.Log("End of Prims Algorithm!");
+        //Debug.Log("End of Prims Algorithm!");
     }
 
     /**
@@ -293,16 +290,17 @@ public class MSTController : MonoBehaviour
      * */
     void CalculateSegmentsToCreate(Vector3 startPos, Vector3 endPos)
     {
-        float dist = Vector3.Distance(startPos, endPos);
-        endLengthOfBridges += dist;
-        //Debug.Log("dist: " + dist + " endLenghtOfBridges: " + endLengthOfBridges);
+        //float dist = Vector3.Distance(startPos, endPos);
+        //endDistance += dist;
+        //Debug.Log("dist: " + dist + " endDistance: " + endDistance);
 
         Vector3 newStartPoint = Vector3.MoveTowards(startPos, endPos, islandHalf);
         Vector3 newEndPoint = Vector3.MoveTowards(endPos, startPos, islandHalf);
 
         float d = Vector3.Distance(newStartPoint, newEndPoint) / size;
         allBridgeSegments += (int)d + 1;
-        //Debug.Log("Segments: " + allBridgeSegments);
+        //endLengthOfBridges += (allBridgeSegments * size);
+        //Debug.Log("Segments: " + allBridgeSegments + " endLengthOfBridges: " + endLengthOfBridges);
     }
 
     /**
@@ -338,8 +336,6 @@ public class MSTController : MonoBehaviour
     public void PlayPrim()
     {
         //Debug.Log("PlayPrim()");
-        endLengthOfBridges = 0;
-        allBridgeSegments = 0;
         //StopCoroutine(BuildBrigdesPrim());
         DeletePrimsBridges();
         PrimsAlgorithm();
@@ -349,7 +345,6 @@ public class MSTController : MonoBehaviour
 
     public void StopPrim()
     {
-        //StopAllCoroutines();
         if (routineInstantiatePrim != null)
         {
             StopCoroutine(routineInstantiatePrim);
@@ -379,14 +374,10 @@ public class MSTController : MonoBehaviour
                 bridge.transform.parent = BridgesParent.transform;
                 routineInstantiatePrim = StartCoroutine(InstantiateBridgeSegments(bridge, startPos, endPos, bridgeSegmentPrefab));
                 yield return routineInstantiatePrim;
-
-                //yield return InstantiateBridgeSegments(bridge, startPos, endPos, bridgeSegmentPrefab);
-                //lengthOfBridges.text = "length of all bridges: " + endLengthOfBridges.ToString();
-                //numberOfBridgeSegments.text = "allBridgeSegments: " + allBridgeSegments.ToString();
             }
 
         }
-        Debug.Log("BuildBrigdesPrim Finished!");
+        //Debug.Log("BuildBrigdesPrim Finished!");
 
     }
 
@@ -404,47 +395,65 @@ public class MSTController : MonoBehaviour
 
         Ray ray = new Ray(startPos, (endPos - startPos));
 
-        float dist = getDistance(manualFromIsland, manualToIsland);
+        float dist = GetDistance(manualFromIsland, manualToIsland);
 
         if(Physics.Raycast(ray, out RaycastHit hit, dist, LayerMask.GetMask("Island")) && hit.collider.gameObject != manualToIsland)
         {
-            Debug.Log(hit.collider.gameObject.name + " was hit!");
+            //Debug.Log(hit.collider.gameObject.name + " was hit!");
+            yield break;
         }
-        else
-        {
-            if (!isInManualSet[manualFromIslandIndex])
-            {
-                isInManualSet[manualFromIslandIndex] = true;
-                isInManualSetCounter++;
-            }
-            if (!isInManualSet[toIndex])
-            {
-                isInManualSet[toIndex] = true;
-                isInManualSetCounter++;
 
-            }
-            GameObject bridge = new GameObject("ManualBridge " + fromIndex + "--" + toIndex);
-            bridge.transform.parent = ManualBridgesParent.transform;
-            routineInstantiateManual = StartCoroutine(InstantiateBridgeSegments(bridge, startPos, endPos, bridgeSegmentGreyPrefab));
-            yield return routineInstantiateManual;
+        //endDistanceManual += dist;
+
+        // Calculate here to show in UI
+        Vector3 newStartPoint = Vector3.MoveTowards(startPos, endPos, islandHalf);
+        Vector3 newEndPoint = Vector3.MoveTowards(endPos, startPos, islandHalf);
+        float d = Vector3.Distance(newStartPoint, newEndPoint) / size;
+        allManualBridgeSegments += (int)d + 1;
+        //endLengthOfManualBridges += (allManualBridgeSegments * size);
+        //Debug.Log("Segments: " + allManualBridgeSegments + " endLengthOfManualBridges: " + endLengthOfManualBridges);
+
+
+        if (!isInManualSet[manualFromIslandIndex])
+        {
+            isInManualSet[manualFromIslandIndex] = true;
+            isInManualSetCounter++;
         }
+        if (!isInManualSet[toIndex])
+        {
+            isInManualSet[toIndex] = true;
+            isInManualSetCounter++;
+
+        }
+        GameObject bridge = new GameObject("ManualBridge " + fromIndex + "--" + toIndex);
+        bridge.transform.parent = ManualBridgesParent.transform;
+        routineInstantiateManual = StartCoroutine(InstantiateBridgeSegments(bridge, startPos, endPos, bridgeSegmentGreyPrefab));
+        yield return routineInstantiateManual;
+        
 
         if (isInManualSetCounter == _numberOfIslands)
         {
-            Debug.Log("All Islands connected (manually)!: " + isInManualSetCounter);
+            //Debug.Log("All Islands connected (manually)!: " + isInManualSetCounter);
             isInManualSetCounter = -1;
-            yield return new WaitForSeconds(0.2f);
-            if(endLengthOfBridges == endLengthOfManualBridges)
+            yield return new WaitForSeconds(0.5f);
+            if(allBridgeSegments == allManualBridgeSegments)
             {
                 DisplayMessageByKey("islands manually connected minimum case");                
             }
             else
             {
-                DisplayMessageByKey("islands manually connected");
+                //DisplayMessageByKey("islands manually connected");
+                var message = LanguageManager.Instance.GetString("islands manually connected");
+                //float length = (int)endLengthOfBridges * 10;
+                //float lengthManual = endLengthOfManualBridges * 10;
+                //DisplayMessage(string.Format(message, allManualBridgeSegments, lengthManual, allBridgeSegments, length));
+                DisplayMessage(string.Format(message, allManualBridgeSegments, allBridgeSegments));
+                //DisplayMessage(string.Format(message, allManualBridgeSegments, endLengthOfManualBridges, allBridgeSegments, endLengthOfBridges));
+                //Debug.Log(string.Format(message, allManualBridgeSegments, endLengthOfManualBridges, allBridgeSegments, endLengthOfBridges));
             }
-            ///TODO
-            //Debug.Log("lengthOfBridges " + endLengthOfBridges + " numberOfBridgeSegments " + allBridgeSegments + " endDistance " + endDistance);
-            Debug.Log("lengthOfBridges " + endLengthOfBridges + " numberOfBridgeSegments " + allBridgeSegments);
+            ///TODO        
+            //Debug.Log("lengthOfBridges " + endLengthOfBridges + " numberOfBridgeSegments " + allBridgeSegments);
+            //Debug.Log("endLengthOfManualBridges " + endLengthOfManualBridges + " numberOfManualBridgeSegments " + allManualBridgeSegments);
         }
         yield break;
     }
@@ -464,7 +473,7 @@ public class MSTController : MonoBehaviour
             if (String.Compare(islands[c].name, _text) == 0)
             {
                 index = c;
-                Debug.Log("islandAmount.name: " + islands[c].name + "  _text: " + _text);
+                //Debug.Log("islandAmount.name: " + islands[c].name + "  _text: " + _text);
             }
         }
 
@@ -475,7 +484,7 @@ public class MSTController : MonoBehaviour
 
         if (manualStart < 0)
         {
-            Debug.Log("Manual Start Island is: " + index);
+            //Debug.Log("Manual Start Island is: " + index);
             manualStart = index;
         }
 
@@ -608,7 +617,7 @@ public class MSTController : MonoBehaviour
             Instantiate(bridgeSegment, instantiatePosition, rot, bridge.transform);
         }
 
-        Debug.Log("segments created!");
+        //Debug.Log("segments created!");
         yield break;
     }
 
@@ -645,6 +654,7 @@ public class MSTController : MonoBehaviour
     {
         DeleteManualBridges();
 
+        allManualBridgeSegments = 0;
         for (int i = 0; i < isInManualSet.Length; i++)
         {
             isInManualSet[i] = false;
@@ -664,7 +674,7 @@ public class MSTController : MonoBehaviour
     public void ResetMSTController()
     {
         StopAllCoroutines();
-        Debug.Log("MSTController: ResetMSTController()");
+        //Debug.Log("MSTController: ResetMSTController()");
         DeletePrimsBridges();
     }
 
@@ -684,6 +694,17 @@ public class MSTController : MonoBehaviour
             return;
 
         var message = LanguageManager.Instance.GetString(key);
+
+        _dialogueManager.ShowMessage(message);
+    }
+
+    void DisplayMessage(string message)
+    {
+        if (_dialogueManager == null)
+            _dialogueManager = FindObjectOfType<DialogueManager>();
+
+        if (_dialogueManager == null)
+            return;
 
         _dialogueManager.ShowMessage(message);
     }

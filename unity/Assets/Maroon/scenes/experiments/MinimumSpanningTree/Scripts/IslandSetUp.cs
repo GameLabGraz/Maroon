@@ -28,7 +28,7 @@ public class IslandSetUp : MonoBehaviour, IResetObject
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("IslandSetUp Start");
+        //Debug.Log("IslandSetUp Start");
         // 1.9f for a little extra space
         radius = islandPrefab01.GetComponent<MeshRenderer>().bounds.size / 1.9f;
         createIslands();
@@ -120,7 +120,7 @@ public class IslandSetUp : MonoBehaviour, IResetObject
             }
         }
         counter = (int)MSTController.Instance.NumberOfIslands;
-        Debug.Log("createIslands(): counter= " + counter);
+        //Debug.Log("createIslands(): counter= " + counter);
         for (; counter < islandClones.Count; counter++)
         {
             // break if already deactivated
@@ -152,7 +152,7 @@ public class IslandSetUp : MonoBehaviour, IResetObject
     {
         if (SimulationController.Instance.SimulationRunning)
         {
-            Debug.Log("changeNumberOfIslands(): SimulationRunning");
+            //Debug.Log("changeNumberOfIslands(): SimulationRunning");
             ResetObject();
         }
 
@@ -233,9 +233,9 @@ public class IslandSetUp : MonoBehaviour, IResetObject
         {
             SimulationController.Instance.StopSimulation();
             StopAllCoroutines();
-            Debug.Log("IslandSetUp ResetObject(): Simulation is Running!");
+            //Debug.Log("IslandSetUp ResetObject(): Simulation is Running!");
         }
-        Debug.Log("IslandSetUp ResetObject(): Reset Islandpositions");
+        //Debug.Log("IslandSetUp ResetObject(): Reset Islandpositions");
         resetIslandPositions();
         MSTController.Instance.UpdateIslands();
     }
