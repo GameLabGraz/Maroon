@@ -39,11 +39,15 @@ public class PlanetaryController : MonoBehaviour
     public Toggle toggleARotation;
     public Toggle toggleAOrientationGizmo;
 
+    public GameObject sortingGamePlanetPlaceholderSlots;
+    private GameObject[] sortingPlanets;
+    private readonly List<int> sortingGameAvailableSlotPositions = new List<int>();
 
     private List<LineRenderer> lineRenderers;
     private List<Queue<Vector3>> previousPositionsList;
 
     private DialogueManager _dialogueManager;
+
 
     [System.Serializable]
     public class PlanetTrajectory
@@ -88,6 +92,10 @@ public class PlanetaryController : MonoBehaviour
     {
         //Debug.Log("PlanetController Start():");
         SetupToggle();
+
+        //SortingGame
+        InitializeAvailableSortingGameSlotPositions();
+        SpawnSortingPlanets();
 
 
         foreach (PlanetTrajectory orbit in planetTrajectories)
@@ -150,25 +158,6 @@ public class PlanetaryController : MonoBehaviour
     }
 
 
-    #region helpi
-    /*
-     * displays Halpi masseges by key
-     */
-    public void DisplayMessageByKey(string key)
-    {
-        if (_dialogueManager == null)
-            _dialogueManager = FindObjectOfType<DialogueManager>();
-
-        if (_dialogueManager == null)
-            return;
-
-        var message = LanguageManager.Instance.GetString(key);
-
-        _dialogueManager.ShowMessage(message);
-    }
-    #endregion helpi
-
-
     /*
      * changes the skybox on key 3,4,5
      */
@@ -187,6 +176,75 @@ public class PlanetaryController : MonoBehaviour
             RenderSettings.skybox = skyboxStars;
         }
     }
+
+
+    /*
+     * handles the SortingGame
+     */
+    #region SortingGameSpawner
+    /*
+     * Initialize the availablePositions list with all possible sorting positions
+     */
+    void InitializeAvailableSortingGameSlotPositions()
+    {
+        int boxSize = 24;
+        for (int i = 0; i < boxSize; i++)
+        {
+            sortingGameAvailableSlotPositions.Add(i);
+        }
+
+        sortingPlanets = GameObject.FindGameObjectsWithTag("sortablePlanet");
+        if (sortingPlanets.Length < 1)
+            Debug.Log("SortingPlanetSpawner: InitializeAvailableSortingGameSlotPositions(): no sortingPlanets found");
+    }
+
+
+    /*
+     * Spawn the SortingPlanets on a random available position
+     */
+    void SpawnSortingPlanets()
+    {
+        for (int i = 0; i < sortingPlanets.Length; i++)
+        {
+            // Randomly select a position index from the availablePositions list
+            int randomIndex = Random.Range(0, sortingGameAvailableSlotPositions.Count);
+
+            // Get the selected position index and remove it from the list to avoid duplicate positions
+            int positionIndex = sortingGameAvailableSlotPositions[randomIndex];
+            sortingGameAvailableSlotPositions.RemoveAt(randomIndex);
+
+            // Get the child object of the placeholder GameObject at the selected position index
+            Transform spawnPosition = sortingGamePlanetPlaceholderSlots.transform.GetChild(positionIndex);
+            sortingPlanets[i].transform.SetParent(spawnPosition);
+            sortingPlanets[i].transform.position = spawnPosition.position;
+        }
+    }
+    #endregion SortingGameSpawner
+
+
+
+
+
+    /*
+     * displays Halpi masseges by key
+     */
+    #region Helpi
+    /*
+     * displays Halpi masseges by key
+     */
+    public void DisplayMessageByKey(string key)
+    {
+        if (_dialogueManager == null)
+            _dialogueManager = FindObjectOfType<DialogueManager>();
+
+        if (_dialogueManager == null)
+            return;
+
+        var message = LanguageManager.Instance.GetString(key);
+
+        _dialogueManager.ShowMessage(message);
+    }
+    #endregion Helpi
 
     /*
      * sets up and handles UI toggle buttons
