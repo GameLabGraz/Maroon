@@ -9566,7 +9566,7 @@ GameObject:
   m_Component:
   - component: {fileID: 700084747}
   m_Layer: 0
-  m_Name: UserInterface Permanent
+  m_Name: UserInterface PermanentUI + SortingGameUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12238,7 +12238,7 @@ PrefabInstance:
     - target: {fileID: 4370550776525760810, guid: 5c79149608e055446ae721a812143cd5,
         type: 3}
       propertyPath: m_Name
-      value: Panel Planet Info
+      value: PlanetInformationUI
       objectReference: {fileID: 0}
     - target: {fileID: 4370550776525760810, guid: 5c79149608e055446ae721a812143cd5,
         type: 3}
@@ -16558,7 +16558,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1319881033}
+      objectReference: {fileID: 0}
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_Target
@@ -17311,8 +17311,6 @@ GameObject:
   - component: {fileID: 1319881027}
   - component: {fileID: 1319881030}
   - component: {fileID: 1319881025}
-  - component: {fileID: 1319881026}
-  - component: {fileID: 1319881033}
   m_Layer: 0
   m_Name: Game Controller
   m_TagString: Untagged
@@ -17415,23 +17413,6 @@ MonoBehaviour:
   toggleARotation: {fileID: 1998397635}
   toggleAOrientationGizmo: {fileID: 1112207553}
   sortingGamePlanetPlaceholderSlots: {fileID: 163324475}
---- !u!114 &1319881026
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1319881022}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bec59c8d8992ca64382d5b82f71c7fa5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  solarSystem: {fileID: 913915863}
-  gSlider: {fileID: 1853700500}
-  minG: 9.81
-  maxG: 250
-  startG: 100
 --- !u!114 &1319881027
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17445,7 +17426,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flyCamera: {fileID: 1779433763}
-  cameraController: {fileID: 1319881030}
+  cameraAndUIController: {fileID: 0}
   flyCameraFocus: {fileID: 1800277319}
   speed: 50
   mouseSensitivity: 100
@@ -17465,10 +17446,11 @@ MonoBehaviour:
   cameraFovSlider: {fileID: 1437618919}
   timeSpeedSlider: {fileID: 1017797483}
   gSlider: {fileID: 1853700500}
-  solarSystem: {fileID: 913915863}
-  minG: 9.81
-  maxG: 300
   G: 100
+  solarSystem: {fileID: 913915863}
+  AnimationUI: {fileID: 2137634723}
+  SortingGamePlanetInformationUI: {fileID: 1917993098}
+  toggleHideUI: {fileID: 738462474}
 --- !u!20 &1319881031
 Camera:
   m_ObjectHideFlags: 0
@@ -17512,21 +17494,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!114 &1319881033
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1319881022}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b6d347e24806751438e7a3c8d160033e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  AnimationUI: {fileID: 2137634723}
-  SortingGameUIPlanetInfo: {fileID: 1917993098}
-  toggleHideUI: {fileID: 738462474}
 --- !u!1001 &1323812446
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19774,7 +19741,7 @@ GameObject:
   - component: {fileID: 1482898995}
   - component: {fileID: 1482898996}
   m_Layer: 5
-  m_Name: Panel Formula UI left
+  m_Name: Panel FormulaUI left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26338,7 +26305,7 @@ GameObject:
   - component: {fileID: 2033498729}
   - component: {fileID: 2033498730}
   m_Layer: 5
-  m_Name: Panel SortingGame UI Planet Info
+  m_Name: Panel SortingGameUI Planet Info
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28276,7 +28243,7 @@ PrefabInstance:
     - target: {fileID: 58754831700831825, guid: 4698ba446015d9f4ea6cde9f4c774547,
         type: 3}
       propertyPath: m_Name
-      value: PanelOptions UI right
+      value: PanelOptionsUI right
       objectReference: {fileID: 0}
     - target: {fileID: 58754831700831825, guid: 4698ba446015d9f4ea6cde9f4c774547,
         type: 3}
@@ -28291,7 +28258,7 @@ PrefabInstance:
     - target: {fileID: 58754831700844273, guid: 4698ba446015d9f4ea6cde9f4c774547,
         type: 3}
       propertyPath: m_Name
-      value: Animation UI
+      value: AnimationUI
       objectReference: {fileID: 0}
     - target: {fileID: 58754831700844273, guid: 4698ba446015d9f4ea6cde9f4c774547,
         type: 3}
@@ -29831,7 +29798,7 @@ PrefabInstance:
     - target: {fileID: 2131119207646241845, guid: 4698ba446015d9f4ea6cde9f4c774547,
         type: 3}
       propertyPath: m_Name
-      value: UserInterface Animation UI
+      value: UserInterface AnimationUI
       objectReference: {fileID: 0}
     - target: {fileID: 2131119207646241845, guid: 4698ba446015d9f4ea6cde9f4c774547,
         type: 3}
@@ -30481,7 +30448,7 @@ PrefabInstance:
     - target: {fileID: 3884335669717982136, guid: 4698ba446015d9f4ea6cde9f4c774547,
         type: 3}
       propertyPath: m_Name
-      value: PanelAssessment UI left
+      value: PanelAssessment
       objectReference: {fileID: 0}
     - target: {fileID: 3884335669717982136, guid: 4698ba446015d9f4ea6cde9f4c774547,
         type: 3}
@@ -33228,7 +33195,7 @@ GameObject:
   - component: {fileID: 8495975920821084151}
   - component: {fileID: 8495975920821457049}
   m_Layer: 5
-  m_Name: Panel Hide UI
+  m_Name: HideUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33247,7 +33214,7 @@ GameObject:
   - component: {fileID: 8495975920826931401}
   - component: {fileID: 8495975920827083599}
   m_Layer: 5
-  m_Name: Permanent UI
+  m_Name: PermanentUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

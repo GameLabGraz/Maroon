@@ -3,7 +3,7 @@ using UnityEngine;
 public class FlyCamera : MonoBehaviour
 {
     public Camera flyCamera;
-    public CameraController cameraController;
+    public CameraAndUIController cameraAndUIController;
     public GameObject flyCameraFocus;
     public float speed = 50f;
     public float mouseSensitivity = 100f;
@@ -12,7 +12,6 @@ public class FlyCamera : MonoBehaviour
     private float yRotation = 0f;
     private bool isCameraControlActive = false;
     private bool hasCameraBeenToggled = false;
-
 
     /*
      * check camera control state
@@ -25,7 +24,7 @@ public class FlyCamera : MonoBehaviour
             return;
         }
 
-        if (cameraController == null)
+        if (cameraAndUIController == null)
         {
             Debug.Log("FlyCamera: Start(): CameraController not assigned.");
             return;
@@ -69,7 +68,7 @@ public class FlyCamera : MonoBehaviour
         FlyCamerMovement();
 
         // Update camera FOV and angle from CameraController
-        flyCamera.fieldOfView = cameraController.controlledCamera.fieldOfView;
+        flyCamera.fieldOfView = cameraAndUIController.controlledCamera.fieldOfView;
     }
 
 
