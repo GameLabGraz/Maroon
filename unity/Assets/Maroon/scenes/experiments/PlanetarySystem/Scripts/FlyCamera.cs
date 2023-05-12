@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FlyCamera : MonoBehaviour
@@ -55,7 +53,7 @@ public class FlyCamera : MonoBehaviour
             //send Helpi FlyCameraExplained message after first FlyCamera toggle
             if (!hasCameraBeenToggled)
             {
-                Debug.Log("FlyCamera: Update(): Camera has been toggled for the first time");
+                //Debug.Log("FlyCamera: Update(): FlyCamera has been toggled for the first time");
                 hasCameraBeenToggled = true;
                 PlanetaryController.Instance.DisplayMessageByKey("FlyCameraExplained");
             }
