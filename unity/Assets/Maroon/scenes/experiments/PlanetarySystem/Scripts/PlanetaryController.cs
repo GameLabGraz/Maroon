@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using Maroon.UI;            //Dialogue Manager
 using GEAR.Localization;    //MLG
 
-public class PlanetController : MonoBehaviour
+public class PlanetaryController : MonoBehaviour
 {
     public GameObject sun;
     public GameObject mercury;
@@ -54,13 +54,13 @@ public class PlanetController : MonoBehaviour
     }
 
 
-    private static PlanetController _instance;
-    public static PlanetController Instance
+    private static PlanetaryController _instance;
+    public static PlanetaryController Instance
     {
         get
         {
             if (_instance == null)
-                _instance = FindObjectOfType<PlanetController>();
+                _instance = FindObjectOfType<PlanetaryController>();
             return _instance;
         }
     }
