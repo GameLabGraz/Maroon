@@ -43,8 +43,8 @@ GameObject:
   - component: {fileID: 546305578989583216}
   - component: {fileID: 546305578989583217}
   - component: {fileID: 546305578989583218}
-  - component: {fileID: 4847343448053288553}
   - component: {fileID: 5538564681797508851}
+  - component: {fileID: 4847343448053288553}
   m_Layer: 0
   m_Name: planet
   m_TagString: Untagged
@@ -129,6 +129,19 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5538564681797508851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5466093576532734486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 016c498ce6d07d247bbe0d167d5f619d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  planetInfo: {fileID: 4847343448053288553}
 --- !u!114 &4847343448053288553
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -141,7 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b039f2ebb48caa47a087cd4dfd8a501, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlanetInformationOf: 9
+  PlanetInformationOf: 11
   mass: 0
   diameter: 0
   density: 0
@@ -162,19 +175,6 @@ MonoBehaviour:
   numberOfMoons: 0
   ringSystem: 0
   globalMagneticField: 0
---- !u!114 &5538564681797508851
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5466093576532734486}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 016c498ce6d07d247bbe0d167d5f619d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  planetInfo: {fileID: 4847343448053288553}
 --- !u!1001 &7680243745491198936
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -15,8 +15,7 @@ public class CameraAndUIController : MonoBehaviour
     public GameObject SortingGamePlanetInformationUI;
     public Toggle toggleHideUI;
 
-
-    private float initialFieldOfView;
+    [SerializeField] private float initialFieldOfView;
 
     //cameraLookAt
     //public Camera lookAtCamera;
@@ -29,8 +28,8 @@ public class CameraAndUIController : MonoBehaviour
     //private Vector3 cameraFollowOffset;
     //public Dropdown cameraFollowDropdown;
 
-    private Vector3 initialPosition;
-    private Quaternion initialRotation;
+    [SerializeField] private Vector3 initialPosition;
+    [SerializeField] private Quaternion initialRotation;
 
     //public List<GameObject> targetPlanet; // Create a list of GameObjects that will be the targets
 
