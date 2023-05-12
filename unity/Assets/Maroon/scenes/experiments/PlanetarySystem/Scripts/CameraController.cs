@@ -7,6 +7,11 @@ public class CameraController : MonoBehaviour
     [SerializeField] public Slider cameraFovSlider;
     [SerializeField] private Slider timeSpeedSlider;
 
+    [SerializeField] private Slider gSlider;
+    [SerializeField] private float G = 100f;
+    [SerializeField] private SolarSystem solarSystem;
+
+
     private float initialFieldOfView;
 
     //cameraLookAt
@@ -34,6 +39,7 @@ public class CameraController : MonoBehaviour
     {
         StoreInitialCamera();
 
+        SetupGSlider();
         SetupTimeSpeedSlider();
         SetupFOVSlider();
 
@@ -116,6 +122,20 @@ public class CameraController : MonoBehaviour
      */
     #region slider
     /*
+     * setup gravitational constant G slider
+     */
+    void SetupGSlider()
+    {
+        if (gSlider != null)
+        {
+            gSlider.value = G;
+            solarSystem.G = G;
+            gSlider.onValueChanged.AddListener(OnGValueChanged);
+        }
+    }
+
+
+    /*
      * setup time/speed slider
      */
     void SetupTimeSpeedSlider()
@@ -145,13 +165,21 @@ public class CameraController : MonoBehaviour
         }
     }
 
+    /*
+     * changes the G value after slider input
+     */
+    private void OnGValueChanged(float gValue)
+    {
+        solarSystem.G = gValue;
+    }
+
 
     /*
      * changes the time/speed value after slider input
      */
-    void OnTimeSliderValueChanged(float value)
+    void OnTimeSliderValueChanged(float timeSpeedValue)
     {
-        Time.timeScale = value;
+        Time.timeScale = timeSpeedValue;
     }
 
 
@@ -168,6 +196,9 @@ public class CameraController : MonoBehaviour
      */
     private void OnDestroy()
     {
+        if (gSlider != null)
+            gSlider.onValueChanged.RemoveListener(OnGValueChanged);
+
         if (timeSpeedSlider != null)
             timeSpeedSlider.onValueChanged.RemoveListener(OnTimeSliderValueChanged);
 
