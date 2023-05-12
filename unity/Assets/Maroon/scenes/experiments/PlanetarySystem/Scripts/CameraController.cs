@@ -4,7 +4,8 @@ using UnityEngine.UI;
 public class CameraController : MonoBehaviour
 {
     public Camera controlledCamera;
-    public Slider cameraFovSlider;
+    [SerializeField] public Slider cameraFovSlider;
+    [SerializeField] private Slider timeSpeedSlider;
 
     private float initialFieldOfView;
 
@@ -26,30 +27,15 @@ public class CameraController : MonoBehaviour
 
 
     /*
-     * stores initial camera position
-     * setup FOV slider
+     * stores initial camera 
+     * setup slider
      */
     void Start()
     {
-        if (controlledCamera == null)
-        {
-            Debug.Log("CameraController(): controlledCamera missing");
-            controlledCamera = Camera.main;
-        }
+        StoreInitialCamera();
 
-        // Store the camera's initial position, rotation, and field of view
-        initialPosition     = controlledCamera.transform.position;
-        initialRotation     = controlledCamera.transform.rotation;
-        initialFieldOfView  = controlledCamera.fieldOfView;
-
-
-        if (cameraFovSlider != null)
-        {
-            cameraFovSlider.minValue = 10;
-            cameraFovSlider.maxValue = 200;
-            cameraFovSlider.value = controlledCamera.fieldOfView;
-            cameraFovSlider.onValueChanged.AddListener(OnFOVSliderValueChanged);
-        }
+        SetupTimeSpeedSlider();
+        SetupFOVSlider();
 
         /*
               if (cameraLookAtDropdown != null)
@@ -62,30 +48,25 @@ public class CameraController : MonoBehaviour
                    }
                    cameraLookAtDropdown.AddOptions(targetNames);
                    cameraLookAtDropdown.onValueChanged.AddListener(OnTargetDropdownValueChanged);
-
               }
           */
         //cameraFollow
         //cameraFollowOffset = transform.position - cameraFollowTargetObject.transform.position;
     }
 
-   /*
-    *
-    */
+
     void Update()
     {
         //transform.LookAt(lookAtTargetObject);
     }
 
 
-   /*
-    *
-    */
     void LateUpdate()
     {
         //transform.LookAt(cameraFollowTargetObject);
         //transform.position = cameraFollowTargetObject.transform.position + cameraFollowOffset;
     }
+
 
     /*
      *
@@ -97,11 +78,23 @@ public class CameraController : MonoBehaviour
     }
 
     /*
-     * changes the FOV value
+     * ControlledCamera store/reset
      */
-    private void OnFOVSliderValueChanged(float fovValue)
+    #region ControlledCamera
+    /*
+     * Store the camera's initial position, rotation, and field of view
+     */
+    void StoreInitialCamera()
     {
-        controlledCamera.fieldOfView = fovValue;
+        if (controlledCamera == null)
+        {
+            Debug.Log("CameraController: StoreInitialCamera(): controlledCamera missing");
+            controlledCamera = Camera.main;
+        }
+
+        initialPosition = controlledCamera.transform.position;
+        initialRotation = controlledCamera.transform.rotation;
+        initialFieldOfView = controlledCamera.fieldOfView;
     }
 
     /*
@@ -115,16 +108,71 @@ public class CameraController : MonoBehaviour
 
         cameraFovSlider.value               = initialFieldOfView;
     }
+    #endregion ControlledCamera
 
+
+    /*
+     * handles slider
+     */
+    #region slider
+    /*
+     * setup time/speed slider
+     */
+    void SetupTimeSpeedSlider()
+    {
+        if (timeSpeedSlider != null)
+        {
+            timeSpeedSlider.minValue = 0f;
+            timeSpeedSlider.maxValue = 25f;
+            Time.timeScale = timeSpeedSlider.value;
+
+            timeSpeedSlider.onValueChanged.AddListener(OnTimeSliderValueChanged);
+        }
+    }
+
+
+    /*
+     * setup FOV slider
+     */
+    void SetupFOVSlider()
+    {
+        if (cameraFovSlider != null)
+        {
+            cameraFovSlider.minValue = 10;
+            cameraFovSlider.maxValue = 200;
+            cameraFovSlider.value = controlledCamera.fieldOfView;
+            cameraFovSlider.onValueChanged.AddListener(OnFOVSliderValueChanged);
+        }
+    }
+
+
+    /*
+     * changes the time/speed value after slider input
+     */
+    void OnTimeSliderValueChanged(float value)
+    {
+        Time.timeScale = value;
+    }
+
+
+    /*
+     * changes the FOV value after slider input
+     */
+    private void OnFOVSliderValueChanged(float fovValue)
+    {
+        controlledCamera.fieldOfView = fovValue;
+    }
 
     /*
      * removes listeners OnDestroy
      */
     private void OnDestroy()
     {
+        if (timeSpeedSlider != null)
+            timeSpeedSlider.onValueChanged.RemoveListener(OnTimeSliderValueChanged);
+
         if (cameraFovSlider != null)
-        {
             cameraFovSlider.onValueChanged.RemoveListener(OnFOVSliderValueChanged);
-        }
     }
+    #endregion slider
 }
