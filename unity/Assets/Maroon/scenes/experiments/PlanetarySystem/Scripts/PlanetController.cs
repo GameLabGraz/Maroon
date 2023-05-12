@@ -20,6 +20,10 @@ public class PlanetController : MonoBehaviour
     public GameObject neptune;
     public GameObject moon;
 
+    public Material skyboxStars;
+    public Material skyboxDiverseSpace;
+    public Material skyboxBlack;
+
     public Light sunLight;
     public ParticleSystem solarFlares;
 
@@ -68,6 +72,10 @@ public class PlanetController : MonoBehaviour
     private void Awake()
     {
         DisplayMessageByKey("EnterPlanetarySystem");
+
+        //set skybox
+        RenderSettings.skybox = skyboxBlack;
+
         lineRenderers = new List<LineRenderer>();
         previousPositionsList = new List<Queue<Vector3>>();
     }
@@ -78,8 +86,9 @@ public class PlanetController : MonoBehaviour
      */
     void Start()
     {
-        SetupToggle();
         //Debug.Log("PlanetController Start():");
+        SetupToggle();
+
 
         foreach (PlanetTrajectory orbit in planetTrajectories)
         {
@@ -109,8 +118,9 @@ public class PlanetController : MonoBehaviour
      */
     void Update()
     {
-
         //Debug.Log("PlanetController(): Update():");
+        ChangeSkybox();
+
         for (int i = 0; i < planetTrajectories.Count; i++)
         {
             PlanetTrajectory pt = planetTrajectories[i];
@@ -159,6 +169,24 @@ public class PlanetController : MonoBehaviour
     #endregion helpi
 
 
+    /*
+     * changes the skybox on key 3,4,5
+     */
+    void ChangeSkybox()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            RenderSettings.skybox = skyboxBlack;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            RenderSettings.skybox = skyboxDiverseSpace;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            RenderSettings.skybox = skyboxStars;
+        }
+    }
 
     /*
      * sets up and handles UI toggle buttons
