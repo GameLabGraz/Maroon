@@ -43,6 +43,8 @@ public class PlanetaryController : MonoBehaviour
     private GameObject[] sortingPlanets;
     private readonly List<int> sortingGameAvailableSlotPositions = new List<int>();
 
+    public int snappedPlanetCount = 0;
+
     private List<LineRenderer> lineRenderers;
     private List<Queue<Vector3>> previousPositionsList;
 

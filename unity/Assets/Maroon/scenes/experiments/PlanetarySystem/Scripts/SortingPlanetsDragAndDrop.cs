@@ -89,8 +89,25 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour
     }
 
 
+
+   /*
+    * Increments the snapped planets and displays a Helpi message when all planets except pluto are in its place 
+    */
+    private void IncrementSnappedPlanetCount()
+    {
+        int solarSystemPlanet = 8 + 2;
+        PlanetaryController.Instance.snappedPlanetCount++;
+
+        // Check if we have snapped all 10 out of 11 planets, excluding pluto
+        if (PlanetaryController.Instance.snappedPlanetCount >= solarSystemPlanet)
+        {
+            PlanetaryController.Instance.DisplayMessageByKey("OrderedSortingGame");
+        }
+    }
+
+
     /*
-     * 
+     * snaps the planets to target by setting its parent and scales them
      */
     private void SnapToTarget()
     {
@@ -99,6 +116,7 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour
         transform.localScale = new Vector3(1,1,1) * scaleFactor;
 
         isSnapped = true;
+        IncrementSnappedPlanetCount();
         audioSource.PlayOneShot(dropClip);
     }
 }
