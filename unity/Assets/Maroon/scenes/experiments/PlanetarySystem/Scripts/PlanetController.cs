@@ -67,6 +67,7 @@ public class PlanetController : MonoBehaviour
      */
     private void Awake()
     {
+        DisplayMessageByKey("EnterPlanetarySystem");
         lineRenderers = new List<LineRenderer>();
         previousPositionsList = new List<Queue<Vector3>>();
     }
@@ -143,7 +144,7 @@ public class PlanetController : MonoBehaviour
     /*
      * displays Halpi masseges by key
      */
-    private void DisplayMessageByKey(string key)
+    public void DisplayMessageByKey(string key)
     {
         if (_dialogueManager == null)
             _dialogueManager = FindObjectOfType<DialogueManager>();

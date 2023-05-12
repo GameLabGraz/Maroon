@@ -76,5 +76,6 @@ public class StartAnimation : MonoBehaviour
         PlanetInfoUI.SetActive(false);
         FormulaUI.SetActive(false);
         flyCameraScript.enabled = true;
+        PlanetController.Instance.DisplayMessageByKey("EnterAnimation");
     }
 }

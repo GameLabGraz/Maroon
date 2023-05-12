@@ -7,7 +7,6 @@ public class StartSortingGame : MonoBehaviour
     public GameObject MainCamera;      //off
     public GameObject SortingMinigame; //on
     public GameObject Userinterface;   //off
-    //public GameObject HideUI;          //off
     public GameObject PlanetInfoUI;    //on
     public GameObject FormulaUI;       //off
 
@@ -43,9 +42,9 @@ public class StartSortingGame : MonoBehaviour
         //Debug.Log("StartSortingGameOnInput OnMouseDown() pressed!");
         SortingMinigame.SetActive(true);
         Userinterface.SetActive(false);
-        //HideUI.SetActive(false);
         PlanetInfoUI.SetActive(true);
         FormulaUI.SetActive(false);
         MainCamera.SetActive(false);
+        PlanetController.Instance.DisplayMessageByKey("EnterSortingGame");
     }
 }
