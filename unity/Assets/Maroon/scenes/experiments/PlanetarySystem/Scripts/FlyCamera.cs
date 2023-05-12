@@ -13,28 +13,29 @@ public class FlyCamera : MonoBehaviour
     private float xRotation = 0f;
     private float yRotation = 0f;
     private bool isCameraControlActive = false;
+    private bool hasCameraBeenToggled = false;
 
 
     /*
-     *
+     * check camera control state
      */
     void Start()
     {
         if (flyCamera == null)
         {
-            Debug.Log("FlyCamera: Camera not assigned.");
+            Debug.Log("FlyCamera: Start(): Camera not assigned.");
             return;
         }
 
         if (cameraController == null)
         {
-            Debug.Log("FlyCamera: CameraController not assigned.");
+            Debug.Log("FlyCamera: Start(): CameraController not assigned.");
             return;
         }
 
         if (flyCameraFocus == null)
         {
-            Debug.Log("FlyCamera: Sun not assigned.");
+            Debug.Log("FlyCamera: Start(): Sun not assigned.");
             return;
         }
 
@@ -43,12 +44,22 @@ public class FlyCamera : MonoBehaviour
 
 
     /*
-     *
+     * enables FlyCam after [TAB] key is pressed
+     * Helpi message after first [TAB]
+     * updating Camera
      */
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
+            //send Helpi FlyCameraExplained message after first FlyCamera toggle
+            if (!hasCameraBeenToggled)
+            {
+                Debug.Log("FlyCamera: Update(): Camera has been toggled for the first time");
+                hasCameraBeenToggled = true;
+                PlanetaryController.Instance.DisplayMessageByKey("FlyCameraExplained");
+            }
+
             isCameraControlActive = !isCameraControlActive;
             ToggleCameraControl(isCameraControlActive);
             LookAtFokus();
@@ -57,8 +68,18 @@ public class FlyCamera : MonoBehaviour
         if (!isCameraControlActive)
             return;
 
+        FlyCamerMovement();
 
-        // Camera movement
+        // Update camera FOV and angle from CameraController
+        flyCamera.fieldOfView = cameraController.controlledCamera.fieldOfView;
+    }
+
+
+    /*
+     * movement of the FlyCamera
+     */
+    void FlyCamerMovement()
+    {
         float x = Input.GetAxis("Horizontal") * speed * Time.deltaTime;
         float y = Input.GetAxis("Vertical") * speed * Time.deltaTime;
         float z = 0f;
@@ -84,14 +105,12 @@ public class FlyCamera : MonoBehaviour
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
         flyCamera.transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0f);
-
-        // Update camera FOV and angle from CameraController
-        flyCamera.fieldOfView = cameraController.controlledCamera.fieldOfView;
     }
 
 
+
     /*
-     *
+     * locks the cursor when switched between normal mode and FlyCam mode
      */
     private void ToggleCameraControl(bool active)
     {
