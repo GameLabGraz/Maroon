@@ -45,6 +45,6 @@ public class StartSortingGame : MonoBehaviour
         PlanetInfoUI.SetActive(true);
         FormulaUI.SetActive(false);
         MainCamera.SetActive(false);
-        PlanetController.Instance.DisplayMessageByKey("EnterSortingGame");
+        PlanetaryController.Instance.DisplayMessageByKey("EnterSortingGame");
     }
 }
