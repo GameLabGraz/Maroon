@@ -12549,7 +12549,7 @@ PrefabInstance:
     - target: {fileID: 4370550776525760810, guid: 5c79149608e055446ae721a812143cd5,
         type: 3}
       propertyPath: m_Name
-      value: Panel Time
+      value: Panel Time/Speed
       objectReference: {fileID: 0}
     - target: {fileID: 4504238018872534901, guid: 5c79149608e055446ae721a812143cd5,
         type: 3}
@@ -16061,7 +16061,7 @@ PrefabInstance:
     - target: {fileID: 4370550776525760810, guid: 5c79149608e055446ae721a812143cd5,
         type: 3}
       propertyPath: m_Name
-      value: Panel Gravitational Force
+      value: Panel Gravitational Constant G
       objectReference: {fileID: 0}
     - target: {fileID: 4504238018872534901, guid: 5c79149608e055446ae721a812143cd5,
         type: 3}
@@ -17312,7 +17312,6 @@ GameObject:
   - component: {fileID: 1319881030}
   - component: {fileID: 1319881025}
   - component: {fileID: 1319881026}
-  - component: {fileID: 1319881032}
   - component: {fileID: 1319881033}
   m_Layer: 0
   m_Name: Game Controller
@@ -17423,7 +17422,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1319881022}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bec59c8d8992ca64382d5b82f71c7fa5, type: 3}
   m_Name: 
@@ -17465,6 +17464,11 @@ MonoBehaviour:
   controlledCamera: {fileID: 1779433763}
   cameraFovSlider: {fileID: 1437618919}
   timeSpeedSlider: {fileID: 1017797483}
+  gSlider: {fileID: 1853700500}
+  solarSystem: {fileID: 913915863}
+  minG: 9.81
+  maxG: 300
+  G: 100
 --- !u!20 &1319881031
 Camera:
   m_ObjectHideFlags: 0
@@ -17508,19 +17512,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!114 &1319881032
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1319881022}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 445a7df7111a21f44bab63a86ff7afc7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  timeSlider: {fileID: 1017797483}
 --- !u!114 &1319881033
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21833,7 +21824,17 @@ PrefabInstance:
     - target: {fileID: 2399235266715423803, guid: 09c73ed225a086845b90fbeaba0dc5ea,
         type: 3}
       propertyPath: m_Value
-      value: 0
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2399235266715423803, guid: 09c73ed225a086845b90fbeaba0dc5ea,
+        type: 3}
+      propertyPath: m_MaxValue
+      value: 250
+      objectReference: {fileID: 0}
+    - target: {fileID: 2399235266715423803, guid: 09c73ed225a086845b90fbeaba0dc5ea,
+        type: 3}
+      propertyPath: m_MinValue
+      value: 9.81
       objectReference: {fileID: 0}
     - target: {fileID: 2399235266715423803, guid: 09c73ed225a086845b90fbeaba0dc5ea,
         type: 3}
