@@ -94,11 +94,13 @@ public class PlanetaryController : MonoBehaviour
         Debug.Log("PlanetaryController: Start(): ");
         SetupToggle();
 
+        /*
         //SortingGame
         Debug.Log("PlanetaryController: Start(): InitializeAvailableSortingGameSlotPositions()");
         InitializeAvailableSortingGameSlotPositions();
         Debug.Log("PlanetaryController: Start(): SpawnSortingPlanets()");
         SpawnSortingPlanets();
+        */
 
         SetupLineRenderer();
     }
@@ -215,7 +217,6 @@ public class PlanetaryController : MonoBehaviour
      * changes the skybox on key 3,4,5
      */
     #region Skybox
-
     void ChangeSkybox()
     {
         if (Input.GetKeyDown(KeyCode.Alpha3))
@@ -249,20 +250,20 @@ public class PlanetaryController : MonoBehaviour
             sortingGameAvailableSlotPositions.Add(i);
         }
 
-        sortingPlanets = GameObject.FindGameObjectsWithTag("sortablePlanet");
+        sortingPlanets = GameObject.FindGameObjectsWithTag("SortingGamePlanet");
         if (sortingPlanets.Length < 1)
             Debug.Log("SortingPlanetSpawner: InitializeAvailableSortingGameSlotPositions(): no sortingPlanets found");
     }
 
 
     /*
-     * Spawn the SortingPlanets on a random available position
+     * Spawn the SortingPlanets on a random sortingGameAvailableSlotPositions
      */
     void SpawnSortingPlanets()
     {
         for (int i = 0; i < sortingPlanets.Length; i++)
         {
-            // Randomly select a position index from the availablePositions list
+            // Randomly select a position index from the sortingGameAvailableSlotPositions list
             int randomIndex = Random.Range(0, sortingGameAvailableSlotPositions.Count);
 
             // Get the selected position index and remove it from the list to avoid duplicate positions
