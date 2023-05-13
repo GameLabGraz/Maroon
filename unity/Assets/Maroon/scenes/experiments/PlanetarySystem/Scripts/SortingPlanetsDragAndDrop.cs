@@ -78,10 +78,12 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour
             //Debug.Log("SortingPlanetsDragAndDrop(): distanceVector.magnitude: " + distanceVector.magnitude);
             if (distanceVector.magnitude <= snapDistance)
             {
+                Debug.Log("SortingPlanetsDragAndDrop: OnMouseUp(): snapped successfully to placeholder slot");
                 SnapToTarget();
             }
             else
             {
+                Debug.Log("SortingPlanetsDragAndDrop: OnMouseUp():  transform.position = initialPosition = " + initialPosition);
                 transform.position = initialPosition;
                 isSnapped = false;
             }
@@ -96,10 +98,10 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour
     private void IncrementSnappedPlanetCount()
     {
         int solarSystemPlanet = 8 + 2;
-        PlanetaryController.Instance.snappedPlanetCount++;
+        PlanetaryController.Instance.sortedPlanetCount++;
 
         // Check if we have snapped all 10 out of 11 planets, excluding pluto
-        if (PlanetaryController.Instance.snappedPlanetCount >= solarSystemPlanet)
+        if (PlanetaryController.Instance.sortedPlanetCount >= solarSystemPlanet)
         {
             PlanetaryController.Instance.DisplayMessageByKey("OrderedSortingGame");
         }

@@ -43,7 +43,7 @@ public class PlanetaryController : MonoBehaviour
     private GameObject[] sortingPlanets;
     private readonly List<int> sortingGameAvailableSlotPositions = new List<int>();
 
-    public int snappedPlanetCount = 0;
+    public int sortedPlanetCount = 0;
 
     private List<LineRenderer> lineRenderers;
     private List<Queue<Vector3>> previousPositionsList;
@@ -59,7 +59,10 @@ public class PlanetaryController : MonoBehaviour
         public int segments = 2000;
     }
 
-
+    /*
+     * Instance of PlanetaryController
+     */
+    #region PlanetaryControllerInstance
     private static PlanetaryController _instance;
     public static PlanetaryController Instance
     {
@@ -70,6 +73,7 @@ public class PlanetaryController : MonoBehaviour
             return _instance;
         }
     }
+    #endregion PlanetaryControllerInstance
 
 
     /*
@@ -238,10 +242,11 @@ public class PlanetaryController : MonoBehaviour
     /*
      * handles the SortingGame
      */
-    #region SortingGameSpawner
     /*
+    #region SortingGameSpawner
      * Initialize the availablePositions list with all possible sorting positions
      */
+    /*
     void InitializeAvailableSortingGameSlotPositions()
     {
         int boxSize = 24;
@@ -259,6 +264,7 @@ public class PlanetaryController : MonoBehaviour
     /*
      * Spawn the SortingPlanets on a random sortingGameAvailableSlotPositions
      */
+    /*
     void SpawnSortingPlanets()
     {
         for (int i = 0; i < sortingPlanets.Length; i++)
@@ -277,9 +283,6 @@ public class PlanetaryController : MonoBehaviour
         }
     }
     #endregion SortingGameSpawner
-
-
-
 
 
     /*
@@ -314,7 +317,7 @@ public class PlanetaryController : MonoBehaviour
     {
         //Debug.Log("PlanetController(): UIToggleSGRotation = " + isOn);
 
-        GameObject[] sortablePlanets = GameObject.FindGameObjectsWithTag("sortablePlanet");
+        GameObject[] sortablePlanets = GameObject.FindGameObjectsWithTag("SortingGamePlanet");
         if (sortablePlanets.Length <= 0)
         {
             Debug.Log("No sortablePlanet found:  " + sortablePlanets.Length);
@@ -367,7 +370,7 @@ public class PlanetaryController : MonoBehaviour
     public void UIToggleSGOrientation(bool isOn)
     {
         //Debug.Log("PlanetController(): UIToggleSGOrientation = " + isOn);
-        GameObject[] sortablePlanets = GameObject.FindGameObjectsWithTag("sortablePlanet");
+        GameObject[] sortablePlanets = GameObject.FindGameObjectsWithTag("SortingGamePlanet");
         if (sortablePlanets.Length <= 0)
         {
             Debug.Log("No sortablePlanet found:  " + sortablePlanets.Length);

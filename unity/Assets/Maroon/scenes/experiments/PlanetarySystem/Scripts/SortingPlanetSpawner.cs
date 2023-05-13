@@ -12,14 +12,14 @@ public class SortingPlanetSpawner : MonoBehaviour
     /*
      *
      */
-    void Start()
+    void Awake()
     {
-        Debug.Log("SortingPlanetSpawner: Start(): ");
+        Debug.Log("SortingPlanetSpawner: Awake(): ");
 
         //SortingGame
-        Debug.Log("SortingPlanetSpawner: Start(): InitializeAvailableSortingGameSlotPositions()");
+        Debug.Log("SortingPlanetSpawner: Awake(): InitializeAvailableSortingGameSlotPositions()");
         InitializeAvailableSortingGameSlotPositions();
-        Debug.Log("SortingPlanetSpawner: Start(): SpawnSortingPlanets()");
+        Debug.Log("SortingPlanetSpawner: Awake(): SpawnSortingPlanets()");
         SpawnSortingPlanets();
     }
 
@@ -66,5 +66,4 @@ public class SortingPlanetSpawner : MonoBehaviour
         }
     }
     #endregion SortingGameSpawner
-
 }

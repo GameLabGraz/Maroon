@@ -36,7 +36,7 @@ public class StartAnimation : MonoBehaviour
         flyCameraScript = GameController.GetComponent<FlyCamera>();
         if (flyCameraScript == null)
         {
-            Debug.Log("Script FlyCamera not found");
+            Debug.Log("StartAnimation: Start(): Script FlyCamera not found");
         }
     }
 
