@@ -8,7 +8,7 @@ public class CameraAndUIController : MonoBehaviour
     [SerializeField] private Slider timeSpeedSlider;
 
     [SerializeField] private Slider gSlider;
-    [SerializeField] private float G = 100f;
+    [SerializeField] private float G = 98.1f;
     [SerializeField] private SolarSystem solarSystem;
 
     public GameObject AnimationUI;
@@ -199,8 +199,8 @@ public class CameraAndUIController : MonoBehaviour
     {
         if (timeSpeedSlider != null)
         {
-            timeSpeedSlider.minValue = 0f;
-            timeSpeedSlider.maxValue = 25f;
+            //timeSpeedSlider.minValue = 0f;
+            //timeSpeedSlider.maxValue = 50f;
             Time.timeScale = timeSpeedSlider.value;
 
             timeSpeedSlider.onValueChanged.AddListener(OnTimeSliderValueChanged);
