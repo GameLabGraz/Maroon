@@ -95,17 +95,8 @@ public class PlanetaryController : MonoBehaviour
      */
     void Start()
     {
-        Debug.Log("PlanetaryController: Start(): ");
+        //Debug.Log("PlanetaryController: Start(): ");
         SetupToggle();
-
-        /*
-        //SortingGame
-        Debug.Log("PlanetaryController: Start(): InitializeAvailableSortingGameSlotPositions()");
-        InitializeAvailableSortingGameSlotPositions();
-        Debug.Log("PlanetaryController: Start(): SpawnSortingPlanets()");
-        SpawnSortingPlanets();
-        */
-
         SetupLineRenderer();
     }
 
@@ -242,13 +233,14 @@ public class PlanetaryController : MonoBehaviour
     /*
      * handles the SortingGame
      */
-    /*
     #region SortingGameSpawner
-     * Initialize the availablePositions list with all possible sorting positions
-     */
     /*
-    void InitializeAvailableSortingGameSlotPositions()
+     * Initialize the availablePositions list with all possible sorting positions
+     * called from StartSortingGame
+     */
+    public void InitializeAvailableSortingGameSlotPositions()
     {
+        //Debug.Log("PlanetaryController: InitializeAvailableSortingGameSlotPositions():");
         int boxSize = 24;
         for (int i = 0; i < boxSize; i++)
         {
@@ -257,16 +249,18 @@ public class PlanetaryController : MonoBehaviour
 
         sortingPlanets = GameObject.FindGameObjectsWithTag("SortingGamePlanet");
         if (sortingPlanets.Length < 1)
-            Debug.Log("SortingPlanetSpawner: InitializeAvailableSortingGameSlotPositions(): no sortingPlanets found");
+            Debug.Log("PlanetaryController: InitializeAvailableSortingGameSlotPositions(): no sortingPlanets found");
+
+        SpawnSortingPlanets();
     }
 
 
     /*
      * Spawn the SortingPlanets on a random sortingGameAvailableSlotPositions
      */
-    /*
     void SpawnSortingPlanets()
     {
+        //Debug.Log("PlanetaryController: SpawnSortingPlanets():");
         for (int i = 0; i < sortingPlanets.Length; i++)
         {
             // Randomly select a position index from the sortingGameAvailableSlotPositions list
@@ -432,7 +426,7 @@ public class PlanetaryController : MonoBehaviour
         //Debug.Log("PlanetController(): ToggleTrajectory [" + index + "] = " + isOn);
         if (lineRenderers == null)
         {
-            Debug.Log("PlanetController: ToggleTrajectory(): lineRenderers is null");
+            //Debug.Log("PlanetController: ToggleTrajectory(): lineRenderers is null");
             return;
         }
         if (index >= lineRenderers.Count || index < 0)

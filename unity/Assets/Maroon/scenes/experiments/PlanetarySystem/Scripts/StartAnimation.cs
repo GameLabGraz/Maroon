@@ -11,7 +11,8 @@ public class StartAnimation : MonoBehaviour
     public GameObject Planets;              //off/on
     public GameObject SortingMinigame;      //off
     public GameObject Interactibles;        //off
-    public GameObject Userinterface;        //on
+    public GameObject UserinterfaceRoomUI;  //on
+    public GameObject AnimationUI;          //on
     public GameObject HideUI;               //on
     public GameObject PlanetInfoUI;         //off
     public GameObject FormulaUI;            //on
@@ -71,7 +72,8 @@ public class StartAnimation : MonoBehaviour
         Planets.SetActive(true);
         SortingMinigame.SetActive(false);
         Interactibles.SetActive(false);
-        Userinterface.SetActive(true);
+        UserinterfaceRoomUI.SetActive(true);
+        AnimationUI.SetActive(true);
         HideUI.SetActive(true);
         PlanetInfoUI.SetActive(false);
         FormulaUI.SetActive(false);

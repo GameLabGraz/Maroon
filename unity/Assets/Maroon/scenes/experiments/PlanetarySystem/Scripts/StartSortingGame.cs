@@ -6,7 +6,7 @@ public class StartSortingGame : MonoBehaviour
 {                                      //want it:
     public GameObject MainCamera;      //off
     public GameObject SortingMinigame; //on
-    public GameObject Userinterface;   //off
+    public GameObject UserinterfaceRoomUI;   //off
     public GameObject PlanetInfoUI;    //on
     public GameObject FormulaUI;       //off
 
@@ -41,10 +41,11 @@ public class StartSortingGame : MonoBehaviour
     {
         //Debug.Log("StartSortingGameOnInput OnMouseDown() pressed!");
         SortingMinigame.SetActive(true);
-        Userinterface.SetActive(false);
+        UserinterfaceRoomUI.SetActive(false);
         PlanetInfoUI.SetActive(true);
         FormulaUI.SetActive(false);
         MainCamera.SetActive(false);
         PlanetaryController.Instance.DisplayMessageByKey("EnterSortingGame");
+        PlanetaryController.Instance.InitializeAvailableSortingGameSlotPositions();
     }
 }

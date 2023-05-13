@@ -4,15 +4,14 @@ using UnityEngine;
 
 public class SortingPlanetsDragAndDrop : MonoBehaviour
 {
-
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip pickUpClip;
     [SerializeField] private AudioClip dropClip;
 
-    public Transform sortingPlanetTarget; // The specific target for each planet
-    private float scaleFactor = 1.02f;    // The scale factor to adjust the object size based on the target
+    public Transform sortingPlanetTarget; 
+    private float scaleFactor = 1.02f;   
     private float snapDistance = 0.2f;
-    public float altSnapDistance = 0.2f;     // Distance to snap the planet to the target
+    public float altSnapDistance = 0.2f;  
 
     private bool isSnapped = false;
 
@@ -78,12 +77,12 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour
             //Debug.Log("SortingPlanetsDragAndDrop(): distanceVector.magnitude: " + distanceVector.magnitude);
             if (distanceVector.magnitude <= snapDistance)
             {
-                Debug.Log("SortingPlanetsDragAndDrop: OnMouseUp(): snapped successfully to placeholder slot");
+                //Debug.Log("SortingPlanetsDragAndDrop: OnMouseUp(): snapped successfully to placeholder slot");
                 SnapToTarget();
             }
             else
             {
-                Debug.Log("SortingPlanetsDragAndDrop: OnMouseUp():  transform.position = initialPosition = " + initialPosition);
+                //Debug.Log("SortingPlanetsDragAndDrop: OnMouseUp():  transform.position = initialPosition = " + initialPosition);
                 transform.position = initialPosition;
                 isSnapped = false;
             }
