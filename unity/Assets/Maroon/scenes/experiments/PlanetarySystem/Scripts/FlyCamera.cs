@@ -26,7 +26,7 @@ public class FlyCamera : MonoBehaviour
 
         if (cameraAndUIController == null)
         {
-            Debug.Log("FlyCamera: Start(): CameraController not assigned.");
+            Debug.Log("FlyCamera: Start(): cameraAndUIController not assigned.");
             return;
         }
 

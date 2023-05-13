@@ -73,7 +73,7 @@ public class PlanetaryController : MonoBehaviour
 
 
     /*
-     * initialize lineRenderers before toggle
+     * initialize LineRenderer before toggle
      */
     private void Awake()
     {
@@ -82,8 +82,7 @@ public class PlanetaryController : MonoBehaviour
         //set skybox
         RenderSettings.skybox = skyboxBlack;
 
-        lineRenderers = new List<LineRenderer>();
-        previousPositionsList = new List<Queue<Vector3>>();
+        InitializeLineRenderer();
     }
 
 
@@ -92,14 +91,59 @@ public class PlanetaryController : MonoBehaviour
      */
     void Start()
     {
-        //Debug.Log("PlanetController Start():");
+        Debug.Log("PlanetaryController: Start(): ");
         SetupToggle();
 
         //SortingGame
+        Debug.Log("PlanetaryController: Start(): InitializeAvailableSortingGameSlotPositions()");
         InitializeAvailableSortingGameSlotPositions();
+        Debug.Log("PlanetaryController: Start(): SpawnSortingPlanets()");
         SpawnSortingPlanets();
 
+        SetupLineRenderer();
+    }
 
+
+
+
+    /*
+     * updates he LineRenderer to draw the paths 
+     * Dequeue the drawn trajectory paths to be deleted number of segments 
+     * toggles the sunlight on key [L]
+     */
+    void Update()
+    {
+        //Debug.Log("PlanetaryController: Update(): ");
+        ChangeSkybox();
+        TurnOnSunlightOnInput();
+
+        DrawTrajectory();
+    }
+
+    /*
+     * create LineRender and Trajectories
+     */
+    #region Trajectories
+    /*
+     * initialize LineRenderer
+     */
+    void InitializeLineRenderer()
+    {
+        lineRenderers = new List<LineRenderer>();
+        previousPositionsList = new List<Queue<Vector3>>();
+    }
+
+
+    /*
+     * create a child Trajectory  GameObject for each planet
+     * adds and sets up LineRenderer
+     * add LineRenderer to LineRenderers list
+     * creates a position queue sized number of segments and adds it to  previousPositionsList
+     * initially hide the Trajecories
+     * update Toggle
+     */
+    void SetupLineRenderer()
+    {
         foreach (PlanetTrajectory orbit in planetTrajectories)
         {
             GameObject trajectory = new GameObject(orbit.planet.name + "Trajectory");
@@ -122,15 +166,12 @@ public class PlanetaryController : MonoBehaviour
 
 
     /*
-     * updates he linerenderer to draw the paths 
-     * Dequeue the drawn trajectory paths to be deleted number of segments 
-     * toggles the sunlight on key L
+     * loops through planetTrajectories and accesses the queue od previous positions
+     * creating/drawing a trail trajectorie
+     * dequeues oldest position when segments reched
      */
-    void Update()
+    void DrawTrajectory()
     {
-        //Debug.Log("PlanetController(): Update():");
-        ChangeSkybox();
-
         for (int i = 0; i < planetTrajectories.Count; i++)
         {
             PlanetTrajectory pt = planetTrajectories[i];
@@ -148,8 +189,16 @@ public class PlanetaryController : MonoBehaviour
             lineRenderers[i].positionCount = previousPositions.Count;
             lineRenderers[i].SetPositions(previousPositions.ToArray());
         }
+    }
+    #endregion Trajectories
 
 
+    /*
+     * toggle sunlight after key [L] is pressed
+     */
+    #region Sunlight
+    void TurnOnSunlightOnInput()
+    {
         if (Input.GetKeyDown(KeyCode.L))
         {
             //Debug.Log("L key pressed.");
@@ -158,11 +207,15 @@ public class PlanetaryController : MonoBehaviour
             toggleSunLight.isOn = sunLight.gameObject.activeSelf;
         }
     }
+    #endregion Sunlight
+
 
 
     /*
      * changes the skybox on key 3,4,5
      */
+    #region Skybox
+
     void ChangeSkybox()
     {
         if (Input.GetKeyDown(KeyCode.Alpha3))
@@ -178,6 +231,7 @@ public class PlanetaryController : MonoBehaviour
             RenderSettings.skybox = skyboxStars;
         }
     }
+    #endregion Skybox
 
 
     /*
@@ -228,7 +282,7 @@ public class PlanetaryController : MonoBehaviour
 
 
     /*
-     * displays Halpi masseges by key
+     * displays Helpi masseges by key
      */
     #region Helpi
     /*
