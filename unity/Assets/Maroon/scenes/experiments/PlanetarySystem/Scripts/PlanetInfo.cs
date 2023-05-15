@@ -18,9 +18,11 @@ public enum PlanetInformation
 
 public class PlanetInfo : MonoBehaviour
 {
+    /*
+     * Instance of PlanetInfo
+     */
+    #region PlanetInfoInstance  
     private static PlanetInfo _instance;
-
-
     public static PlanetInfo Instance
     {
         get
@@ -30,6 +32,7 @@ public class PlanetInfo : MonoBehaviour
             return _instance;
         }
     }
+    #endregion PlanetInfoInstance
 
 
     public PlanetInformation PlanetInformationOf;
@@ -148,7 +151,7 @@ public class PlanetInfo : MonoBehaviour
 
     private void Awake()
     {
-        //Debug.Log("PlanetInfo Awake()");
+        //Debug.Log("PlanetInfo: Awake()");
         switch (PlanetInformationOf)
         {
             case PlanetInformation.sun_0:

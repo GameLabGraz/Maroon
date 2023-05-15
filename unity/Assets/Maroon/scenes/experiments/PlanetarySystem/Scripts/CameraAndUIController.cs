@@ -9,7 +9,6 @@ public class CameraAndUIController : MonoBehaviour
 
     [SerializeField] private Slider gSlider;
     [SerializeField] private float G = 98.1f;
-    [SerializeField] private SolarSystem solarSystem;
 
     public GameObject AnimationUI;
     public GameObject SortingGamePlanetInformationUI;
@@ -186,7 +185,7 @@ public class CameraAndUIController : MonoBehaviour
         if (gSlider != null)
         {
             gSlider.value = G;
-            solarSystem.G = G;
+            PlanetaryController.Instance.G = G;
             gSlider.onValueChanged.AddListener(OnGValueChanged);
         }
     }
@@ -227,7 +226,7 @@ public class CameraAndUIController : MonoBehaviour
      */
     private void OnGValueChanged(float gValue)
     {
-        solarSystem.G = gValue;
+        PlanetaryController.Instance.G = gValue;
     }
 
 

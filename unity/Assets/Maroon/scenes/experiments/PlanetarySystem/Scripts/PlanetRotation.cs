@@ -4,24 +4,20 @@ public class PlanetRotation : MonoBehaviour
 {
     public PlanetInfo planetInfo;
 
-    private float obliquityToOrbit; //rotation angle //z
-    private float rotationPeriod;   //y
-
 
     /*
-     *
+     * rotate planets obliquityToOrbit = rotation angle
+     * z axis
      */
     void Start()
     {
-        obliquityToOrbit = planetInfo.obliquityToOrbit;
-        rotationPeriod = planetInfo.rotationPeriod;
-
-        transform.Rotate(new Vector3(0, 0, planetInfo.obliquityToOrbit));
+        transform.Rotate(new Vector3(0, 0, planetInfo.obliquityToOrbit)); 
     }
 
 
     /*
-     *
+     * rotate planet in its rotation period
+     * y axis
      */
     void Update()
     {
