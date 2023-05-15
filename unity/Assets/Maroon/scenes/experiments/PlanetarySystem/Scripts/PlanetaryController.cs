@@ -28,7 +28,7 @@ public class PlanetaryController : MonoBehaviour
     public ParticleSystem solarFlares;
 
     public List<PlanetTrajectory> planetTrajectories;
-    public float lineThickness = 0.5f;
+    public float lineThickness = 0.4f;
 
     public Toggle toggleAllTrajectories;
     public Toggle toggleSunKinematic;
@@ -111,7 +111,7 @@ public class PlanetaryController : MonoBehaviour
     void Update()
     {
         //Debug.Log("PlanetaryController: Update(): ");
-        ChangeSkybox();
+        ChangeSkyboxOnInput();
         TurnOnSunlightOnInput();
 
         DrawTrajectory();
@@ -207,12 +207,11 @@ public class PlanetaryController : MonoBehaviour
     #endregion Sunlight
 
 
-
     /*
      * changes the skybox on key 3,4,5
      */
     #region Skybox
-    void ChangeSkybox()
+    void ChangeSkyboxOnInput()
     {
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
