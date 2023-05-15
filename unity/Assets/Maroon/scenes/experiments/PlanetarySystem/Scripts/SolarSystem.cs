@@ -69,8 +69,8 @@ public class SolarSystem : MonoBehaviour
                     Rigidbody aRigidbody = a.GetComponent<Rigidbody>();
                     Rigidbody bRigidbody = b.GetComponent<Rigidbody>();
 
-                    float m1 = a.GetComponent<Rigidbody>().mass;
-                    float m2 = b.GetComponent<Rigidbody>().mass;
+                    float m1 = aRigidbody.mass;
+                    float m2 = bRigidbody.mass;
 
                     float r = Vector3.Distance(a.transform.position, b.transform.position);
 

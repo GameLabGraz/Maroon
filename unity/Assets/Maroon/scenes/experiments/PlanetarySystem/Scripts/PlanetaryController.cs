@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using Maroon.UI;            //Dialogue Manager
 using GEAR.Localization;    //MLG
 
-public class PlanetaryController : MonoBehaviour
+public class PlanetaryController : MonoBehaviour, IResetObject
 {
     public GameObject sun;
     public GameObject mercury;
@@ -75,7 +75,6 @@ public class PlanetaryController : MonoBehaviour
     }
     #endregion PlanetaryControllerInstance
 
-
     /*
      * initialize LineRenderer before toggle
      */
@@ -101,8 +100,6 @@ public class PlanetaryController : MonoBehaviour
     }
 
 
-
-
     /*
      * updates he LineRenderer to draw the paths 
      * Dequeue the drawn trajectory paths to be deleted number of segments 
@@ -116,6 +113,30 @@ public class PlanetaryController : MonoBehaviour
 
         DrawTrajectory();
     }
+
+
+    /*
+     * reset
+     */
+    public void ResetObject()
+    {
+        Debug.Log("PlanetaryController: ResetObject(): pressed reset button");
+        /*
+        if (_rigidBody)
+        {
+            _rigidBody.velocity = Vector3.zero;
+            _rigidBody.angularVelocity = Vector3.zero;
+        }
+        transform.position = startPos;
+        transform.rotation = startRot;
+        _current = 0.0f;
+        fieldStrength = 0.0f;
+        flux = _startFlux;
+        */
+    }
+
+
+
 
     /*
      * create LineRender and Trajectories
