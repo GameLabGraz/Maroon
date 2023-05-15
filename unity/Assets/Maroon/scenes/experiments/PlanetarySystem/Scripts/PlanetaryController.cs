@@ -20,6 +20,24 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     public GameObject neptune;
     public GameObject moon;
 
+    //start Animation                       //want it:
+    public GameObject MainCamera;           //off
+    public GameObject UserinterfaceRoomUI;  //off
+    public GameObject FormulaUI;            //off
+
+    //start SortingGame                     //want it:
+    public GameObject Environment;          //off
+    public GameObject SolarSystemCamera;    //on
+    public GameObject Planets;              //off/on
+    public GameObject SortingMinigame;      //off
+    public GameObject Interactibles;        //off
+    public GameObject AnimationUI;          //on
+    public GameObject HideUI;               //on
+    public GameObject PlanetInfoUI;         //off
+    private FlyCamera flyCameraScript;      //on
+
+
+
     public Material skyboxStars;
     public Material skyboxDiverseSpace;
     public Material skyboxBlack;
@@ -86,6 +104,15 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         RenderSettings.skybox = skyboxBlack;
 
         InitializeLineRenderer();
+
+
+        //Debug.Log("Star Sorting Game Awake()");
+        SortingMinigame.SetActive(false);
+        PlanetInfoUI.SetActive(false);
+
+
+        //Debug.Log("Start Animation Awake()");
+        sun.SetActive(true);
     }
 
 
@@ -97,6 +124,18 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         //Debug.Log("PlanetaryController: Start(): ");
         SetupToggle();
         SetupLineRenderer();
+
+
+
+
+        //Debug.Log("Start Animation Start()");
+        Planets.SetActive(false);
+
+        flyCameraScript = GetComponent<FlyCamera>();
+        if (flyCameraScript == null)
+        {
+            Debug.Log("StartAnimation: Start(): Script FlyCamera not found");
+        }
     }
 
 
@@ -108,35 +147,18 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     void Update()
     {
         //Debug.Log("PlanetaryController: Update(): ");
-        ChangeSkyboxOnInput();
+        ChangeScreenOnKeyInput();
+
+        ChangeSkyboxOnKeyInput();
         TurnOnSunlightOnInput();
 
         DrawTrajectory();
     }
 
-
-    /*
-     * reset
-     */
-    public void ResetObject()
+    void HandleKeyInput()
     {
-        Debug.Log("PlanetaryController: ResetObject(): pressed reset button");
-        /*
-        if (_rigidBody)
-        {
-            _rigidBody.velocity = Vector3.zero;
-            _rigidBody.angularVelocity = Vector3.zero;
-        }
-        transform.position = startPos;
-        transform.rotation = startRot;
-        _current = 0.0f;
-        fieldStrength = 0.0f;
-        flux = _startFlux;
-        */
+
     }
-
-
-
 
     /*
      * create LineRender and Trajectories
@@ -231,9 +253,10 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     /*
      * changes the skybox on key 3,4,5
      */
-    #region Skybox
-    void ChangeSkyboxOnInput()
+    #region ChangeSkybox
+    void ChangeSkyboxOnKeyInput()
     {
+        //change skybox
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             RenderSettings.skybox = skyboxBlack;
@@ -247,7 +270,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
             RenderSettings.skybox = skyboxStars;
         }
     }
-    #endregion Skybox
+    #endregion ChangeSkybox
 
 
     /*
@@ -323,7 +346,25 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     /*
      * sets up and handles UI toggle buttons
      */
-    #region UIToggleButtons
+    #region ButtonsAndKeys
+    /*
+     * switch to StartSortingGameOnInput on Key [1]
+     * switch to StartAnimationOnInput on Key [2]
+     */
+    void ChangeScreenOnKeyInput()
+    {
+        if (Input.GetKeyUp(KeyCode.Alpha1))
+        {
+            StartSortingGameOnInput();
+        }
+
+        if (Input.GetKeyUp(KeyCode.Alpha2))
+        {
+            StartAnimationOnInput();
+        }
+    }
+
+
     /*
      * toggles the rotation of the minigame sortable planets after button press
      */
@@ -550,7 +591,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         toggleSGOrientationGizmo.onValueChanged.RemoveListener(UIToggleSGOrientation);
         toggleAOrientationGizmo.onValueChanged.RemoveListener(UIToggleAOrientation);
     }
-    #endregion UIToggleButtons
+    #endregion ButtonsAndKeys
 
     /*
      * hidesplanets and trajectories after radiobutton is pressed
@@ -628,4 +669,66 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         ToggleTrajectory(9, isOn);
     }
     #endregion hide planets
+
+
+    /*
+     * StartSortingGameOnInput and de/activates gameobjects
+     */
+    public void StartSortingGameOnInput()
+    {
+        //Debug.Log("PlanetaryController: StartAnimationOnInput(): ");
+        SortingMinigame.SetActive(true);
+        UserinterfaceRoomUI.SetActive(false);
+        PlanetInfoUI.SetActive(true);
+        FormulaUI.SetActive(false);
+        MainCamera.SetActive(false);
+        DisplayMessageByKey("EnterSortingGame");
+        InitializeAvailableSortingGameSlotPositions();
+    }
+
+
+    /*
+     * StartAnimationOnInput and de/activates gameobjects
+     * StartAnimationOnInput and de/activates gameobjects
+     */
+    #region startScreenScenes
+    /*
+     * StartAnimationOnInput and de/activates gameobjects
+     */
+    public void StartAnimationOnInput()
+    {
+        //Debug.Log("PlanetaryController: StartAnimationOnInput(): ");
+        RenderSettings.skybox = skyboxStars;
+
+        Environment.SetActive(false);
+        MainCamera.SetActive(false);
+        SolarSystemCamera.SetActive(true);
+        Planets.SetActive(true);
+        SortingMinigame.SetActive(false);
+        Interactibles.SetActive(false);
+        UserinterfaceRoomUI.SetActive(true);
+        AnimationUI.SetActive(true);
+        HideUI.SetActive(true);
+        PlanetInfoUI.SetActive(false);
+        FormulaUI.SetActive(false);
+        flyCameraScript.enabled = true;
+        DisplayMessageByKey("EnterAnimation");
+    }
+    #endregion startScreenScenes
+
+
+    /*
+     * reset
+     */
+    public void ResetObject()
+    {
+        Debug.Log("StartAnimation: ResetObject(): pressed reset button");
+    }
+
+
+
+
+
+
+
 }
