@@ -17,7 +17,6 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour, IResetObject
     private bool isSnapped = false;
 
     Vector3 mousePosition;
-    Vector3 initialPosition;
 
 
     /*
@@ -26,7 +25,6 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour, IResetObject
     private void Start()
     {
         snapDistance = altSnapDistance;
-        initialPosition = transform.position;
         placeholder_slot = transform.parent;
     }
 
@@ -85,7 +83,7 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour, IResetObject
             else
             {
                 //Debug.Log("SortingPlanetsDragAndDrop: OnMouseUp():  transform.position = initialPosition = " + initialPosition);
-                transform.position = initialPosition;
+                transform.position = transform.parent.position;
                 isSnapped = false;
             }
         }
@@ -129,12 +127,11 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour, IResetObject
      */
     public void ResetObject()
     {
-        transform.SetParent(placeholder_slot);
-        transform.position = placeholder_slot.position;
+        //transform.SetParent(placeholder_slot);
+        //transform.position = placeholder_slot.position;
         transform.localScale = new Vector3(1, 1, 1);
 
         PlanetaryController.Instance.ResetSortingGame();
-        initialPosition = transform.position;
 
         isSnapped = false;
         PlanetaryController.Instance.sortedPlanetCount = 0;

@@ -64,14 +64,10 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
     #region ResetAnimation
     private List<Vector3> initialPlanetPositions = new List<Vector3>();
+    public float resetAnimationDelay = 0.5f;
+
     public float resetG = 100;
-    public float resetDelay = 1f;
     public float initialTime = 2f;
-
-
-
-
-
     #endregion ResetAnimation
 
     #region Trajectories
@@ -661,7 +657,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         }
         if (index >= lineRenderers.Count || index < 0)
         {
-            Debug.Log("PlanetController: ToggleTrajectory(): Invalid index: " + index);
+            //Debug.Log("PlanetController: ToggleTrajectory(): Invalid index: " + index);
             return;
         }
         LineRenderer lr = lineRenderers[index];
@@ -868,7 +864,8 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         PlanetInfoUI.SetActive(true);
         FormulaUI.SetActive(false);
 
-        InitializeAvailableSortingGameSlotPositions();
+        //sortingGameAvailableSlotPositions.Clear();
+        //InitializeAvailableSortingGameSlotPositions();
         DisplayMessageByKey("EnterSortingGame");
     }
 
@@ -905,9 +902,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         FormulaUI.SetActive(false);
         flyCameraScript.enabled = true;
 
-        InitialVelocity();
-        //InitialVelocityEliptical();
-
+        ResetAnimation();
         DisplayMessageByKey("EnterAnimation");
     }
 
@@ -945,21 +940,15 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
 
     /*
-     * reset
+     * ResetAnimation on reet and on StartAnimation
      */
-
-    public void ResetObject()
+    void ResetAnimation()
     {
-
-        Debug.Log("PlanetaryController: ResetObject(): button pressed");
-    
-        //reset Animation
-
         //resetG
         G = resetG;
 
         //reset time
-        Time.timeScale = initialTime; 
+        Time.timeScale = initialTime;
 
         //reset to initialPlanetPosition
         for (int i = 0; i < planets.Length; i++)
@@ -979,19 +968,18 @@ public class PlanetaryController : MonoBehaviour, IResetObject
             LineRenderer lr = lineRenderers[i];
             lr.positionCount = 0;
         }
-
-        //delay
+        
         StartCoroutine(RestartAnimationDelay());
-
     }
 
 
     /*
-     * 
+     * after delay sets all planets kinematic to stop physics
+     * reaplies InitialVelocity
      */
     IEnumerator RestartAnimationDelay()
     {
-        yield return new WaitForSeconds(resetDelay);
+        yield return new WaitForSeconds(resetAnimationDelay);
 
         //reapply initial velocities and start planet movement after delay
         //start from index 1; check for sun is kinematic
@@ -1001,9 +989,21 @@ public class PlanetaryController : MonoBehaviour, IResetObject
             rb.isKinematic = false;  
         }
         UIToggleSunKinematic(true);
+
         InitialVelocity();
+        //InitialVelocityEliptical();
     }
 
+    
+    /*
+     * reset
+     */
+    public void ResetObject()
+    {
+        Debug.Log("PlanetaryController: ResetObject(): button pressed");
+
+        ResetAnimation();
+    }
 
 
     /*
