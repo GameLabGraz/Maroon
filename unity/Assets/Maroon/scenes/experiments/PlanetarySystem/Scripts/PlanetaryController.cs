@@ -17,7 +17,6 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     #region StartScreenScenes
     //start Animation                       //want it:
     public GameObject MainCamera;           //off
-    public GameObject UserinterfaceRoomUI;  //off
     public GameObject FormulaUI;            //off
 
     //start SortingGame                     //want it:
@@ -27,7 +26,6 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     public GameObject SortingMinigame;      //off
     public GameObject Interactibles;        //off
     public GameObject AnimationUI;          //on
-    public GameObject HideUI;               //on
     public GameObject PlanetInfoUI;         //off
     private FlyCamera flyCameraScript;      //on
     #endregion StartScreenScenes
@@ -64,12 +62,17 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     public int sortedPlanetCount = 0;
     #endregion SortingGameSpawner
 
-    #region Animation
+    #region ResetAnimation
     private List<Vector3> initialPlanetPositions = new List<Vector3>();
+    public float resetG = 100;
+    public float resetDelay = 1f;
+    public float initialTime = 2f;
 
 
 
-    #endregion Animation
+
+
+    #endregion ResetAnimation
 
     #region Trajectories
     public List<PlanetTrajectory> planetTrajectories;
@@ -851,46 +854,71 @@ public class PlanetaryController : MonoBehaviour, IResetObject
      */
     #region StartScreenScenes
     /*
-     * StartSortingGameOnInput and de/activates gameobjects
+     * StartSortingGameOnInput and activates gameobjects
      */
     public void StartSortingGameOnInput()
     {
         //Debug.Log("PlanetaryController: StartAnimationOnInput(): ");
+        LeaveAnimation();
+
         SortingMinigame.SetActive(true);
-        UserinterfaceRoomUI.SetActive(false);
         PlanetInfoUI.SetActive(true);
         FormulaUI.SetActive(false);
-        MainCamera.SetActive(false);
-        DisplayMessageByKey("EnterSortingGame");
+
         InitializeAvailableSortingGameSlotPositions();
+        DisplayMessageByKey("EnterSortingGame");
     }
 
 
     /*
-     * StartAnimationOnInput and de/activates gameobjects
+     * LeaveSortingGame and deactivates gameobjects
+     */
+    public void LeaveSortingGame()
+    {
+        //Debug.Log("PlanetaryController: LeaveSortingGame(): ");
+        SortingMinigame.SetActive(false);
+        PlanetInfoUI.SetActive(false); 
+    }
+
+
+    /*
+     * StartAnimationOnInput and activates gameobjects
      */
     public void StartAnimationOnInput()
     {
         //Debug.Log("PlanetaryController: StartAnimationOnInput(): ");
+        LeaveSortingGame();
         SetSkybox();
 
         Environment.SetActive(false);
         MainCamera.SetActive(false);
         SolarSystemCamera.SetActive(true);
         Planets.SetActive(true);
-        SortingMinigame.SetActive(false);
         Interactibles.SetActive(false);
-        UserinterfaceRoomUI.SetActive(true);
         AnimationUI.SetActive(true);
         FormulaUI.SetActive(false);
-        HideUI.SetActive(true);
-        PlanetInfoUI.SetActive(false);
         flyCameraScript.enabled = true;
 
         InitialVelocity();
         //InitialVelocityEliptical();
 
         DisplayMessageByKey("EnterAnimation");
+        LeaveSortingGame();
+    }
+
+
+    /*
+     * LeaveAnimation and deactivates gameobjects
+     */
+    public void LeaveAnimation()
+    {
+        Environment.SetActive(true);
+        MainCamera.SetActive(true);
+        SolarSystemCamera.SetActive(false);
+        Planets.SetActive(false);
+        Interactibles.SetActive(true);
+        AnimationUI.SetActive(false);
+        flyCameraScript.enabled = false;
     }
     #endregion StartScreenScenes
 
@@ -900,9 +928,9 @@ public class PlanetaryController : MonoBehaviour, IResetObject
      * homeReset / reset
      */
     #region ResetBar
-   /*
-    * ResetSortingGame planet positions
-    */
+    /*
+     * ResetSortingGame planet positions
+     */
     public void ResetSortingGame()
     {
         sortingGameAvailableSlotPositions.Clear();
@@ -913,16 +941,26 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     /*
      * reset
      */
-    /*
+
     public void ResetObject()
     {
         Debug.Log("PlanetaryController: ResetObject(): button pressed");
+    
         //reset Animation
+
+        //resetG
+        G = resetG;
+
+        //reset time
+        Time.timeScale = initialTime; 
 
         //reset to initialPlanetPosition
         for (int i = 0; i < planets.Length; i++)
         {
             planets[i].transform.position = initialPlanetPositions[i];
+            //set is kinematic to stop all physics
+            Rigidbody rb = planets[i].GetComponent<Rigidbody>();
+            rb.isKinematic = true;
         }
 
         //reset trajectory pathy by resetting previousPosition queue and resetting LineRenderer
@@ -935,45 +973,44 @@ public class PlanetaryController : MonoBehaviour, IResetObject
             lr.positionCount = 0;
         }
 
-        ///activate stuff
         //delay
-        //StartCoroutine(DelayedRestart());
-        //InitialVelocity();
-
-
+        StartCoroutine(RestartAnimationDelay());
 
     }
 
-    IEnumerator DelayedRestart()
+
+    /*
+     * 
+     */
+    IEnumerator RestartAnimationDelay()
     {
-        yield return new WaitForSeconds(1);  
-        //InitialVelocity();  
+        yield return new WaitForSeconds(resetDelay);
+
+        //reapply initial velocities and start planet movement after delay
+        //start from index 1; check for sun is kinematic
+        for (int i = 1; i < planets.Length; i++) 
+        {
+            Rigidbody rb = planets[i].GetComponent<Rigidbody>();
+            rb.isKinematic = false;  
+        }
+        UIToggleSunKinematic(true);
+        InitialVelocity();
+
     }
 
 
 
     /*
      * ResetHome button deactivates Animation and SortingGame Gameobjects and cameras
+     * activates FormulaUI
      */
     public void ResetHome()
     {
         //Debug.Log("PlanetaryController: ResetHome(): button pressed");
+        LeaveSortingGame();
+        LeaveAnimation();
 
-        MainCamera.SetActive(true);
-        SolarSystemCamera.SetActive(false);
-
-        Environment.SetActive(true);
-        Interactibles.SetActive(true);
-
-        SortingMinigame.SetActive(false);
-        Planets.SetActive(false);
-        flyCameraScript.enabled = false;
-
-        UserinterfaceRoomUI.SetActive(true);
-        HideUI.SetActive(true);
-        AnimationUI.SetActive(false);
         FormulaUI.SetActive(true);
-        PlanetInfoUI.SetActive(false);
     }
     #endregion ResetBar
 }
