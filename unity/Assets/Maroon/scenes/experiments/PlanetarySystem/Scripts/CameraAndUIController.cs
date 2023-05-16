@@ -8,7 +8,7 @@ public class CameraAndUIController : MonoBehaviour
     [SerializeField] private Slider timeSpeedSlider;
 
     [SerializeField] private Slider gSlider;
-    [SerializeField] private float G = 98.1f;
+    [SerializeField] private float G;
 
     public GameObject AnimationUI;
     public GameObject SortingGamePlanetInformationUI;

@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SortingPlanetsDragAndDrop : MonoBehaviour
+public class SortingPlanetsDragAndDrop : MonoBehaviour, IResetObject
 {
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip pickUpClip;
     [SerializeField] private AudioClip dropClip;
 
     public Transform sortingPlanetTarget; 
+    private Transform placeholder_slot; 
     private float scaleFactor = 1.02f;   
     private float snapDistance = 0.2f;
     public float altSnapDistance = 0.2f;  
@@ -26,6 +27,7 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour
     {
         snapDistance = altSnapDistance;
         initialPosition = transform.position;
+        placeholder_slot = transform.parent;
     }
 
 
@@ -119,5 +121,22 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour
         isSnapped = true;
         IncrementSnappedPlanetCount();
         audioSource.PlayOneShot(dropClip);
+    }
+
+
+    /*
+     * reset sortingPlanet parent, scale, position, sortedPlanetCount
+     */
+    public void ResetObject()
+    {
+        transform.SetParent(placeholder_slot);
+        transform.position = placeholder_slot.position;
+        transform.localScale = new Vector3(1, 1, 1);
+
+        PlanetaryController.Instance.ResetSortingGame();
+        initialPosition = transform.position;
+
+        isSnapped = false;
+        PlanetaryController.Instance.sortedPlanetCount = 0;
     }
 }
