@@ -91,6 +91,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
     #region Helpi
     private DialogueManager _dialogueManager;
+    public GameObject HelpiDialogueUI;
     #endregion Helpi
 
     #region KeyInput
@@ -184,6 +185,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
      */
     public void DisplayMessageByKey(string key)
     {
+
         if (_dialogueManager == null)
             _dialogueManager = FindObjectOfType<DialogueManager>();
 
@@ -861,6 +863,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         //Debug.Log("PlanetaryController: StartAnimationOnInput(): ");
         LeaveAnimation();
 
+        MainCamera.SetActive(false);
         SortingMinigame.SetActive(true);
         PlanetInfoUI.SetActive(true);
         FormulaUI.SetActive(false);
@@ -875,9 +878,12 @@ public class PlanetaryController : MonoBehaviour, IResetObject
      */
     public void LeaveSortingGame()
     {
+        HelpiDialogueUI.SetActive(false);
+
         //Debug.Log("PlanetaryController: LeaveSortingGame(): ");
         SortingMinigame.SetActive(false);
-        PlanetInfoUI.SetActive(false); 
+        PlanetInfoUI.SetActive(false);
+
     }
 
 
@@ -903,7 +909,6 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         //InitialVelocityEliptical();
 
         DisplayMessageByKey("EnterAnimation");
-        LeaveSortingGame();
     }
 
 
@@ -912,8 +917,9 @@ public class PlanetaryController : MonoBehaviour, IResetObject
      */
     public void LeaveAnimation()
     {
+        HelpiDialogueUI.SetActive(false);
+
         Environment.SetActive(true);
-        MainCamera.SetActive(true);
         SolarSystemCamera.SetActive(false);
         Planets.SetActive(false);
         Interactibles.SetActive(true);
@@ -944,6 +950,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
     public void ResetObject()
     {
+
         Debug.Log("PlanetaryController: ResetObject(): button pressed");
     
         //reset Animation
@@ -995,7 +1002,6 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         }
         UIToggleSunKinematic(true);
         InitialVelocity();
-
     }
 
 
@@ -1010,7 +1016,9 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         LeaveSortingGame();
         LeaveAnimation();
 
+        MainCamera.SetActive(true);
         FormulaUI.SetActive(true);
+        DisplayMessageByKey("EnterPlanetarySystem");
     }
     #endregion ResetBar
 }
