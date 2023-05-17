@@ -23,4 +23,12 @@ public class OnMouseEvent : MonoBehaviour
         //Debug.Log("OnMouseDown " + text);
         StartCoroutine(MSTController.Instance.SelectIsland(text));
     }
+
+    private void OnMouseOver()
+    {
+        //string text = this.name;
+        //Debug.Log("OnMouseOver " + text);
+        //this.GetComponent<MeshRenderer>().
+
+    }
 }
