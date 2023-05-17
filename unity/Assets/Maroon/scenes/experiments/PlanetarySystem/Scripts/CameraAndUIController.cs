@@ -11,7 +11,7 @@ public class CameraAndUIController : MonoBehaviour
     [SerializeField] private float G;
 
     public GameObject AnimationUI;
-    public GameObject SortingGamePlanetInformationUI;
+    public GameObject SortingGamePlanetInfoUI;
     public Toggle toggleHideUI;
 
     [SerializeField] private float initialFieldOfView;
@@ -27,10 +27,28 @@ public class CameraAndUIController : MonoBehaviour
     //private Vector3 cameraFollowOffset;
     //public Dropdown cameraFollowDropdown;
 
-    [SerializeField] private Vector3 initialPosition;
-    [SerializeField] private Quaternion initialRotation;
+    private Vector3 initialPosition;
+    private Quaternion initialRotation;
 
     //public List<GameObject> targetPlanet; // Create a list of GameObjects that will be the targets
+
+    //---------------------------------------------------------------------------------------
+    /*
+     * Instance of CameraAndUIController
+     */
+    #region CameraAndUIControllerIntance
+    private static CameraAndUIController _instance;
+    public static CameraAndUIController Instance
+    {
+        get
+        {
+            if (_instance == null)
+                _instance = FindObjectOfType<CameraAndUIController>();
+            return _instance;
+        }
+    }
+    #endregion CameraAndUIControllerInstance
+
 
 
     /*
@@ -102,14 +120,14 @@ public class CameraAndUIController : MonoBehaviour
             if (!AnimationUI.activeSelf)// && (!SortingGamePlanetInformationUI.activeSelf))
             {
                 AnimationUI.SetActive(true); //turn on UI
-                SortingGamePlanetInformationUI.SetActive(true); //turn on UI
+                SortingGamePlanetInfoUI.SetActive(true); //turn on UI
                 toggleHideUI.isOn = false;
                 //Debug.Log("CameraAndUIController: HideUIOnKeyInput(): [H] UI Active Self: " + AnimationUI.activeSelf);
             }
             else
             {
                 AnimationUI.SetActive(false); //turn off UI
-                SortingGamePlanetInformationUI.SetActive(false); //turn off UI
+                SortingGamePlanetInfoUI.SetActive(false); //turn off UI
                 toggleHideUI.isOn = true;
                 //Debug.Log("CameraAndUIController: HideUIOnKeyInput(): [H] UI Active Self: " + AnimationUI.activeSelf);
             }
@@ -126,13 +144,13 @@ public class CameraAndUIController : MonoBehaviour
         if (hide)
         {
             AnimationUI.SetActive(false); //turn on UI
-            SortingGamePlanetInformationUI.SetActive(false); //turn on UI
+            SortingGamePlanetInfoUI.SetActive(false); //turn on UI
             //Debug.Log("CameraAndUIController: ToggleHideUI(): " + ui.activeSelf);
         }
         else
         {
             AnimationUI.SetActive(true); //turn off UI
-            SortingGamePlanetInformationUI.SetActive(true); //turn off UI
+            SortingGamePlanetInfoUI.SetActive(true); //turn off UI
             //Debug.Log("CameraAndUIController: ToggleHideUI(): " + ui.activeSelf);
         }
     }
@@ -144,7 +162,7 @@ public class CameraAndUIController : MonoBehaviour
      */
     #region ControlledCamera
     /*
-     * Store the camera's initial position, rotation, and field of view
+     * store the camera's initial position, rotation, and field of view
      */
     void StoreInitialCamera()
     {

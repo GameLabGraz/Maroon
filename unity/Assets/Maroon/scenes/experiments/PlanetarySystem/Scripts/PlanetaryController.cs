@@ -14,6 +14,11 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     public ParticleSystem uranusParticleSystem;
     #endregion HidePlanets
 
+    //public int solveCompilerError = 1;
+    public int solveCompilerError2 = 1;
+
+    public float lerpDuration = 2f;
+    public GameObject TelescopeCamera;      //off
     #region StartScreenScenes
     //start Animation                       //want it:
     public GameObject MainCamera;           //off
@@ -24,9 +29,10 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     public GameObject SolarSystemCamera;    //on
     public GameObject Planets;              //off//on
     public GameObject SortingMinigame;      //off
+    public GameObject SortingGameCamera;    //off
     public GameObject Interactibles;        //off
     public GameObject AnimationUI;          //on
-    public GameObject PlanetInfoUI;         //off
+    public GameObject SortingGamePlanetInfoUI;         //off
     private FlyCamera flyCameraScript;      //on
     #endregion StartScreenScenes
 
@@ -56,7 +62,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
     #region SortingGameSpawner
     public GameObject sortingGamePlanetPlaceholderSlots;
-    private GameObject[] sortingPlanets;
+    GameObject[] sortingPlanets;
     private readonly List<int> sortingGameAvailableSlotPositions = new List<int>();
 
     public int sortedPlanetCount = 0;
@@ -124,7 +130,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         DisplayMessageByKey("EnterPlanetarySystem");
         
         SortingMinigame.SetActive(false);
-        PlanetInfoUI.SetActive(false);
+        SortingGamePlanetInfoUI.SetActive(false);
         sun.SetActive(true);
         //Debug.Log("PlanetaryController: Awake(): sun.SetActive= " + sun.activeSelf);
 
@@ -145,6 +151,12 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         SetupLineRenderer();
         //turn off planets before Animation
         Planets.SetActive(false);
+
+        //SortingMinigame.SetActive(true);
+        //SortingGameCamera.SetActive(false);
+        //StartCoroutine(LerpCameraPosition(MainCamera, SortingGameCamera, SortingGameCamera, lerpDuration)) ;
+
+        //StartCoroutine(LerpCameraPosition(MainCamera, TelescopeCamera, SolarSystemCamera, lerpDuration));
     }
 
 
@@ -254,6 +266,21 @@ public class PlanetaryController : MonoBehaviour, IResetObject
      */
     #region SortingGameSpawner
     /*
+     * find planets with tag Planet and initializes them
+     */
+    void InitializeSortingPlanets()
+    {
+        //Debug.Log("PlanetaryController: InitializePlanets():");
+        sortingPlanets = GameObject.FindGameObjectsWithTag("SortingGamePlanet");
+        if (planets.Length <= 0)
+        {
+            //Should not happen
+            Debug.Log("PlanetaryController: InitializeSortingPlanets(): No sortingPlanets found:  " + sortingPlanets.Length);
+        }
+    }
+
+
+    /*
      * Initialize the availablePositions list with all possible sorting positions
      * called from StartSortingGame
      */
@@ -266,10 +293,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
             sortingGameAvailableSlotPositions.Add(i);
         }
 
-        sortingPlanets = GameObject.FindGameObjectsWithTag("SortingGamePlanet");
-        if (sortingPlanets.Length < 1)
-            Debug.Log("PlanetaryController: InitializeAvailableSortingGameSlotPositions(): no sortingPlanets found");
-
+        InitializeSortingPlanets();
         SpawnSortingPlanets();
     }
 
@@ -303,7 +327,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     */
     #region SolarSystem
     /*
-     * find planets with tag and initializes them
+     * find planets with tag Planet and initializes them
      */
     void InitializePlanets()
     {
@@ -312,7 +336,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         if (planets.Length <= 0)
         {
             //Should not happen
-            Debug.Log("No Planets Found:  " + planets.Length);
+            Debug.Log("PlanetaryController: InitializePlanets(): No planets found:  " + planets.Length);
         }
         else
         {
@@ -552,16 +576,9 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     public void UIToggleSGRotation(bool isOn)
     {
         //Debug.Log("PlanetController(): UIToggleSGRotation = " + isOn);
+        InitializeSortingPlanets();
 
-        GameObject[] sortablePlanets = GameObject.FindGameObjectsWithTag("SortingGamePlanet");
-        if (sortablePlanets.Length <= 0)
-        {
-            Debug.Log("No sortablePlanet found:  " + sortablePlanets.Length);
-            return;
-        }
-
-        //Debug.Log("PlanetController(): UIToggleSGRotation(): sortablePlanets.Length = " + sortablePlanets.Length);
-        foreach (GameObject planet in sortablePlanets)
+        foreach (GameObject planet in sortingPlanets)
         {
             //Debug.Log("PlanetController(): UIToggleSGRotation(): planet = " + planet);
             PlanetRotation rotationScript = planet.GetComponent<PlanetRotation>();
@@ -579,15 +596,6 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     public void UIToggleARotation(bool isOn)
     {
         //Debug.Log("PlanetController(): UIToggleARotation = " + isOn);
-
-        GameObject[] planets = GameObject.FindGameObjectsWithTag("Planet");
-        if (planets.Length <= 0)
-        {
-            Debug.Log("No sortablePlanet found:  " + planets.Length);
-            return;
-        }
-
-        //Debug.Log("PlanetController(): UIToggleARotation(): planets.Length = " + sortablePlanets.Length);
         foreach (GameObject planet in planets)
         {
             //Debug.Log("PlanetController(): UIToggleARotation(): planet = " + planet);
@@ -606,18 +614,12 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     public void UIToggleSGOrientation(bool isOn)
     {
         //Debug.Log("PlanetController(): UIToggleSGOrientation = " + isOn);
-        GameObject[] sortablePlanets = GameObject.FindGameObjectsWithTag("SortingGamePlanet");
-        if (sortablePlanets.Length <= 0)
-        {
-            Debug.Log("No sortablePlanet found:  " + sortablePlanets.Length);
-            return;
-        }
+        InitializeSortingPlanets();
 
-        //Debug.Log("PlanetController(): UIToggleSGOrientation(): sortablePlanets.Length = " + sortablePlanets.Length);
-        foreach (GameObject planet in sortablePlanets)
+        foreach (GameObject sortingPlanet in sortingPlanets)
         {
             //Debug.Log("PlanetController(): UIToggleSGOrientation(): planet = " + planet);
-            GameObject orientationGizmo = planet.transform.Find("orientation gizmo").gameObject;
+            GameObject orientationGizmo = sortingPlanet.transform.Find("orientation gizmo").gameObject;
             if (orientationGizmo != null)
             {
                 orientationGizmo.SetActive(isOn);
@@ -635,15 +637,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     */
     public void UIToggleAOrientation(bool isOn)
     {
-        //Debug.Log("PlanetController(): UIToggleAOrientation = " + isOn);
-        GameObject[] planets = GameObject.FindGameObjectsWithTag("Planet");
-        if (planets.Length <= 0)
-        {
-            Debug.Log("No sortablePlanet found:  " + planets.Length);
-            return;
-        }
-
-        //Debug.Log("PlanetController(): UIToggleAOrientation(): sortablePlanets.Length = " + sortablePlanets.Length);
+        //Debug.Log("PlanetController(): UIToggleAOrientation(): planet.Length = " + planet.Length);
         foreach (GameObject planet in planets)
         {
             //Debug.Log("PlanetController(): UIToggleAOrientation(): planet = " + planet);
@@ -863,6 +857,36 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
 
     /*
+     * LERP camera
+     */
+    #region LerpCamera
+    IEnumerator LerpCameraPosition(GameObject currentCamera, GameObject targetCamera, GameObject switchToCamera,  float duration)
+    {
+        float time = 0f;
+        Vector3 initialPosition = currentCamera.transform.position;
+        Quaternion initialRotation = currentCamera.transform.rotation;
+        float initialFOV = currentCamera.GetComponent<Camera>().fieldOfView;
+        float targetFOV = targetCamera.GetComponent<Camera>().fieldOfView;
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            float t = time / duration;
+
+            currentCamera.transform.position = Vector3.Lerp(initialPosition, targetCamera.transform.position, t);
+            currentCamera.transform.rotation = Quaternion.Lerp(initialRotation, targetCamera.transform.rotation, t);
+            currentCamera.GetComponent<Camera>().fieldOfView = Mathf.Lerp(initialFOV, targetFOV, t);
+
+            yield return null;
+        }
+
+        currentCamera.SetActive(false);
+        switchToCamera.SetActive(true);
+    }
+    #endregion LerpCamera
+
+
+    /*
      * StartAnimationOnInput and de/activates gameobjects
      * StartAnimationOnInput and de/activates gameobjects
      */
@@ -875,9 +899,10 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         //Debug.Log("PlanetaryController: StartAnimationOnInput(): ");
         LeaveAnimation();
 
+        //StartCoroutine(LerpCameraPosition(SortingGameCamera, lerpDuration));
         MainCamera.SetActive(false);
         SortingMinigame.SetActive(true);
-        PlanetInfoUI.SetActive(true);
+        SortingGamePlanetInfoUI.SetActive(true);
         FormulaUI.SetActive(false);
 
         //sortingGameAvailableSlotPositions.Clear();
@@ -895,7 +920,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
         //Debug.Log("PlanetaryController: LeaveSortingGame(): ");
         SortingMinigame.SetActive(false);
-        PlanetInfoUI.SetActive(false);
+        SortingGamePlanetInfoUI.SetActive(false);
 
     }
 
@@ -936,6 +961,9 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         Interactibles.SetActive(true);
         AnimationUI.SetActive(false);
         flyCameraScript.enabled = false;
+
+        CameraAndUIController.Instance.ResetCamera();
+        Time.timeScale = 1f; 
     }
     #endregion StartScreenScenes
 
@@ -964,7 +992,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         G = resetG;
 
         //reset time
-        Time.timeScale = initialTime;
+        //Time.timeScale = initialTime;
 
         //reset to initialPlanetPosition
         for (int i = 0; i < planets.Length; i++)
