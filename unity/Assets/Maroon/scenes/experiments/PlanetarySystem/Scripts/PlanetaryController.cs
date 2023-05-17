@@ -523,6 +523,22 @@ public class PlanetaryController : MonoBehaviour, IResetObject
             lineRenderers[i].SetPositions(previousPositions.ToArray());
         }
     }
+
+
+   /*
+    * clear trajectory path by resetting previousPosition queue and resetting LineRenderer
+    */
+    public void ClearTrajectories()
+    {
+        for (int i = 0; i < previousPositionsList.Count; i++)
+        {
+            Queue<Vector3> previousPositions = previousPositionsList[i];
+            previousPositions.Clear();
+
+            LineRenderer lr = lineRenderers[i];
+            lr.positionCount = 0;
+        }
+    }
     #endregion Trajectories
 
 
@@ -968,7 +984,9 @@ public class PlanetaryController : MonoBehaviour, IResetObject
             LineRenderer lr = lineRenderers[i];
             lr.positionCount = 0;
         }
-        
+
+        ClearTrajectories();
+
         StartCoroutine(RestartAnimationDelay());
     }
 
