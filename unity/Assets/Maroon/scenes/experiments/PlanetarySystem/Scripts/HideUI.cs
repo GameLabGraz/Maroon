@@ -1,69 +1,16 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CameraAndUIController : MonoBehaviour
+public class HideUI : MonoBehaviour
 {
     public GameObject AnimationUI;
     public GameObject SortingGamePlanetInfoUI;
     public Toggle toggleHideUI;
 
 
-    //cameraLookAt
-    //public Camera lookAtCamera;
-    //public Transform lookAtTargetObject;
-    //public Dropdown cameraLookAtDropdown;
-
-    //cameraFollow
-    //public Camera followCamera;
-    //public Transform cameraFollowTargetObject;
-    //private Vector3 cameraFollowOffset;
-    //public Dropdown cameraFollowDropdown;
-
-    //public List<GameObject> targetPlanet; // Create a list of GameObjects that will be the targets
-
-
-    void Start()
-    {
-        /*
-              if (cameraLookAtDropdown != null)
-              {
-                   cameraLookAtDropdown.ClearOptions();
-                   List<string> targetNames = new List<string>();
-                   foreach (GameObject target in targetPlanet)
-                   {
-                       targetNames.Add(target.name);
-                   }
-                   cameraLookAtDropdown.AddOptions(targetNames);
-                   cameraLookAtDropdown.onValueChanged.AddListener(OnTargetDropdownValueChanged);
-              }
-          */
-        //cameraFollow
-        //cameraFollowOffset = transform.position - cameraFollowTargetObject.transform.position;
-    }
-
-
     void Update()
     {
         HideUIOnKeyInput();
-
-        //transform.LookAt(lookAtTargetObject);     
-    }
-
-
-    void LateUpdate()
-    {
-        //transform.LookAt(cameraFollowTargetObject);
-        //transform.position = cameraFollowTargetObject.transform.position + cameraFollowOffset;
-    }
-
-
-    /*
-     *
-     */
-    private void OnTargetDropdownValueChanged(int index)
-    {
-        //GameObject target = targetPlanet[index];
-        //controlledCamera.transform.LookAt(targetPlanet.transform);
     }
 
 

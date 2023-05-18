@@ -3,15 +3,15 @@ using UnityEngine;
 public class FlyCamera : MonoBehaviour
 {
     public Camera flyCamera;
-    public CameraAndUIController cameraAndUIController;
     public GameObject flyCameraFocus;
-    public float speed = 50f;
+    public float mouseSpeed = 50f;
     public float mouseSensitivity = 100f;
 
     private float xRotation = 0f;
     private float yRotation = 0f;
     private bool isCameraControlActive = false;
     private bool hasCameraBeenToggled = false;
+
 
     /*
      * check camera control state
@@ -21,12 +21,6 @@ public class FlyCamera : MonoBehaviour
         if (flyCamera == null)
         {
             Debug.Log("FlyCamera: Start(): Camera not assigned.");
-            return;
-        }
-
-        if (cameraAndUIController == null)
-        {
-            Debug.Log("FlyCamera: Start(): cameraAndUIController not assigned.");
             return;
         }
 
@@ -77,17 +71,17 @@ public class FlyCamera : MonoBehaviour
      */
     void FlyCamerMovement()
     {
-        float x = Input.GetAxis("Horizontal") * speed * Time.deltaTime;
-        float y = Input.GetAxis("Vertical") * speed * Time.deltaTime;
+        float x = Input.GetAxis("Horizontal") * mouseSpeed * Time.deltaTime;
+        float y = Input.GetAxis("Vertical") * mouseSpeed * Time.deltaTime;
         float z = 0f;
 
         if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.Q))
         {
-            z += speed * Time.deltaTime;
+            z += mouseSpeed * Time.deltaTime;
         }
         if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.E))
         {
-            z -= speed * Time.deltaTime;
+            z -= mouseSpeed * Time.deltaTime;
         }
 
         flyCamera.transform.Translate(new Vector3(x, z, y));
