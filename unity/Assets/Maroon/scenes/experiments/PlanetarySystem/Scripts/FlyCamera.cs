@@ -67,8 +67,8 @@ public class FlyCamera : MonoBehaviour
 
         FlyCamerMovement();
 
-        // Update camera FOV and angle from CameraController
-        flyCamera.fieldOfView = cameraAndUIController.controlledCamera.fieldOfView;
+        // Update AnimationCameraFov and angle from PlanetaryController
+        flyCamera.fieldOfView = PlanetaryController.Instance.AnimationCamera.fieldOfView;
     }
 
 

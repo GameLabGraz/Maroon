@@ -14,10 +14,9 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     public ParticleSystem uranusParticleSystem;
     #endregion HidePlanets
 
-    //public int solveCompilerError = 1;
     public int solveCompilerError2 = 1;
 
-    public float lerpDuration = 2f;
+    public float CameraLerpDuration = 2f;
     public GameObject TelescopeCamera;      //off
     #region StartScreenScenes
     //start Animation                       //want it:
@@ -38,7 +37,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
     #region SolarSystem
     GameObject[] planets;
-    public float G;
+    private float G;
     public bool isSunKinematic = true;
 
     [System.Serializable]
@@ -72,8 +71,8 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     private List<Vector3> initialPlanetPositions = new List<Vector3>();
     public float resetAnimationDelay = 0.5f;
 
-    public float resetG = 100;
-    public float initialTime = 2f;
+    public float gravitationalConstantG = 9.81f;
+    public float timeSpeed = 1f;
     #endregion ResetAnimation
 
     #region Trajectories
@@ -103,6 +102,19 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     public Light sunLight;
     public ParticleSystem solarFlares;
     #endregion KeyInput
+
+    #region Slider
+    public Slider sliderG;
+    public Slider sliderTimeSpeed;
+    public Slider sliderAnimationCameraFov;
+    #endregion Slider
+
+    #region AnimationCamera
+    public Camera AnimationCamera;
+    private float initialAnimationCameraFov;
+    private Vector3 initialAnimationCameraPosition;
+    private Quaternion initialAnimationCameraRotation;
+    #endregion AnimationCamera
 
     //---------------------------------------------------------------------------------------
     /*
@@ -145,8 +157,9 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     void Start()
     {
         //Debug.Log("PlanetaryController: Start(): ");
-
         SetupToggle();
+        SetupSliders();
+        StoreInitialAnimationCamera();
         GetFlyCameraScript();
         SetupLineRenderer();
         //turn off planets before Animation
@@ -348,6 +361,9 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     }
 
 
+    /*
+     *
+     */
     void Gravity()
     {
         foreach (GameObject a in planets)
@@ -357,18 +373,15 @@ public class PlanetaryController : MonoBehaviour, IResetObject
                 // Object can't orbit itself
                 if (!a.Equals(b))
                 {
-                    Rigidbody aRigidbody = a.GetComponent<Rigidbody>();
-                    Rigidbody bRigidbody = b.GetComponent<Rigidbody>();
-
-                    float m1 = aRigidbody.mass;
-                    float m2 = bRigidbody.mass;
+                    float m1 = a.GetComponent<Rigidbody>().mass;
+                    float m2 = b.GetComponent<Rigidbody>().mass;
 
                     float r = Vector3.Distance(a.transform.position, b.transform.position);
 
                     // Newton's law of universal gravitation
                     // F = G * ((m1 * m2) / (r^2))
-                    aRigidbody.AddForce((b.transform.position - a.transform.position).normalized *
-                        (G * (m1 * m2) / (r * r)));
+                    a.GetComponent<Rigidbody>().AddForce((b.transform.position - a.transform.position).normalized *
+                        (G*10 * (m1 * m2) / (r * r)));
                 }
             }
         }
@@ -394,7 +407,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
                     a.transform.LookAt(b.transform);
 
                     // circular orbit instant velocity: v0 = sqrt((G * m2) / r)
-                    a.GetComponent<Rigidbody>().velocity += a.transform.right * Mathf.Sqrt((G * m2) / r);
+                    a.GetComponent<Rigidbody>().velocity += a.transform.right * Mathf.Sqrt((G * 10 * m2) / r);
                 }
             }
         }
@@ -415,7 +428,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
                 a.transform.LookAt(b.transform);
 
-                a.GetComponent<Rigidbody>().velocity += a.transform.right * Mathf.Sqrt((G * m2) / r);
+                a.GetComponent<Rigidbody>().velocity += a.transform.right * Mathf.Sqrt((G * 10 * m2) / r);
             }
         }
     }
@@ -442,17 +455,18 @@ public class PlanetaryController : MonoBehaviour, IResetObject
                     a.transform.LookAt(b.transform);
 
                     // eliptic orbit instant velocity: v0 = G * m2 * (2 / r - 1 / a)
-                    a.GetComponent<Rigidbody>().velocity += a.transform.right * (G * m2 * (2 / r - 1 / a_axis));
-                    a.GetComponent<Rigidbody>().velocity += a.transform.right * (G * m2 * (2 / r - 1 / a_axis));
+                    a.GetComponent<Rigidbody>().velocity += a.transform.right * (G * 10 * m2 * (2 / r - 1 / a_axis));
+                    a.GetComponent<Rigidbody>().velocity += a.transform.right * (G * 10 * m2 * (2 / r - 1 / a_axis));
                 }
             }
         }
     }
     #endregion SolarSystem
-    
+
 
     /*
      * Animation
+     * AnimationCamera store/reset
      */
     #region Animation
     /*
@@ -462,6 +476,37 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     {
         RenderSettings.skybox = skyboxStars;
     }
+
+
+    /*
+     * store the camera's initial position, rotation, and field of view
+     */
+    void StoreInitialAnimationCamera()
+    {
+        if (AnimationCamera == null)
+        {
+            Debug.Log("CameraAndUIController: StoreInitialAnimationCamera(): controlledCamera missing");
+            AnimationCamera = Camera.main;
+        }
+
+        initialAnimationCameraPosition = AnimationCamera.transform.position;
+        initialAnimationCameraRotation = AnimationCamera.transform.rotation;
+        initialAnimationCameraFov = AnimationCamera.fieldOfView;
+    }
+
+
+    /*
+     *  reset the camera's position and field of view to their initial values
+     */
+    public void ResetCamera()
+    {
+        AnimationCamera.transform.position = initialAnimationCameraPosition;
+        AnimationCamera.transform.rotation = initialAnimationCameraRotation;
+        AnimationCamera.fieldOfView = initialAnimationCameraFov;
+
+        sliderAnimationCameraFov.value = initialAnimationCameraFov;
+    }
+
 
     /*
      * get flycamere script to dis/enable later
@@ -764,6 +809,10 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         toggleARotation.onValueChanged.RemoveListener(UIToggleARotation);
         toggleSGOrientationGizmo.onValueChanged.RemoveListener(UIToggleSGOrientation);
         toggleAOrientationGizmo.onValueChanged.RemoveListener(UIToggleAOrientation);
+
+        sliderG.onValueChanged.RemoveListener(OnGValueChanged);
+        sliderTimeSpeed.onValueChanged.RemoveListener(OnTimeSliderValueChanged);
+        sliderAnimationCameraFov.onValueChanged.RemoveListener(OnFOVSliderValueChanged);
     }
     #endregion UIToggleButtons
 
@@ -962,8 +1011,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         AnimationUI.SetActive(false);
         flyCameraScript.enabled = false;
 
-        CameraAndUIController.Instance.ResetCamera();
-        Time.timeScale = 1f; 
+        ResetCamera();
     }
     #endregion StartScreenScenes
 
@@ -988,11 +1036,9 @@ public class PlanetaryController : MonoBehaviour, IResetObject
      */
     void ResetAnimation()
     {
-        //resetG
-        G = resetG;
+        sliderG.value = gravitationalConstantG;
+        sliderTimeSpeed.value = timeSpeed;
 
-        //reset time
-        //Time.timeScale = initialTime;
 
         //reset to initialPlanetPosition
         for (int i = 0; i < planets.Length; i++)
@@ -1001,16 +1047,6 @@ public class PlanetaryController : MonoBehaviour, IResetObject
             //set is kinematic to stop all physics
             Rigidbody rb = planets[i].GetComponent<Rigidbody>();
             rb.isKinematic = true;
-        }
-
-        //reset trajectory pathy by resetting previousPosition queue and resetting LineRenderer
-        for (int i = 0; i < previousPositionsList.Count; i++)
-        {
-            Queue<Vector3> previousPositions = previousPositionsList[i];
-            previousPositions.Clear();
-
-            LineRenderer lr = lineRenderers[i];
-            lr.positionCount = 0;
         }
 
         ClearTrajectories();
@@ -1029,10 +1065,11 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
         //reapply initial velocities and start planet movement after delay
         //start from index 1; check for sun is kinematic
-        for (int i = 1; i < planets.Length; i++) 
+        for (int i = 0; i < planets.Length; i++) 
         {
             Rigidbody rb = planets[i].GetComponent<Rigidbody>();
-            rb.isKinematic = false;  
+            rb.isKinematic = false;
+            Debug.Log("PlanetaryController: RestartAnimationDelay(): planets[" + i+"] = isKinematic: " + rb.isKinematic);
         }
         UIToggleSunKinematic(true);
 
@@ -1067,4 +1104,66 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         DisplayMessageByKey("EnterPlanetarySystem");
     }
     #endregion ResetBar
+
+
+    /*
+     * SetupSlider FOV, G, time
+     */
+    #region slider
+    /*
+     * SetupSlider FOV, G, time
+     */
+    void SetupSliders()
+    {
+        if (sliderG != null)
+        {
+            sliderG.minValue = 0f;
+            sliderG.maxValue = 25f;
+            sliderG.onValueChanged.AddListener(OnGValueChanged);
+        }
+
+        if (sliderTimeSpeed != null)
+        {
+            sliderTimeSpeed.minValue = 0f;
+            sliderTimeSpeed.maxValue = 35f;
+            sliderTimeSpeed.onValueChanged.AddListener(OnTimeSliderValueChanged);
+        }
+
+        if (sliderAnimationCameraFov != null)
+        {
+            sliderAnimationCameraFov.minValue = 10;
+            sliderAnimationCameraFov.maxValue = 180;
+            sliderAnimationCameraFov.value = AnimationCamera.fieldOfView;
+            sliderAnimationCameraFov.onValueChanged.AddListener(OnFOVSliderValueChanged);
+        }
+    }
+
+
+    /*
+     * changes the G value after slider input
+     */
+    private void OnGValueChanged(float gValue)
+    {
+        G = gValue;
+    }
+
+
+    /*
+     * changes the time/speed value after slider input
+     */
+    void OnTimeSliderValueChanged(float timeSpeedValue)
+    {
+        Time.timeScale = timeSpeedValue;
+    }
+
+
+    /*
+     * changes the FOV value after slider input
+     */
+    private void OnFOVSliderValueChanged(float fovValue)
+    {
+        AnimationCamera.fieldOfView = fovValue;
+    }
+
+    #endregion slider
 }
