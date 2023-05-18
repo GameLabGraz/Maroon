@@ -4,56 +4,32 @@ using UnityEngine;
 
 public class SortingPlanetsDragAndDrop : MonoBehaviour, IResetObject
 {
-    [SerializeField] private AudioSource audioSource;
-    [SerializeField] private AudioClip pickUpClip;
-    [SerializeField] private AudioClip dropClip;
+    public AudioSource audioSource;
+    public AudioClip pickUpClip;
+    public AudioClip dropClip;
 
     public Transform sortingPlanetTarget; 
-    private Transform placeholder_slot; 
-    private float scaleFactor = 1.02f;   
-    private float snapDistance = 0.2f;
-    public float altSnapDistance = 0.2f;  
-
+    public float snapDistance;  
     private bool isSnapped = false;
-
+    private readonly float scaleFactor = 1.02f;   
     Vector3 mousePosition;
 
 
     /*
-     * 
-     */
-    private void Start()
-    {
-        snapDistance = altSnapDistance;
-        placeholder_slot = transform.parent;
-    }
-
-
-    /*
-     * 
-     */
-    private Vector3 GetMousePos()
-    {
-        return Camera.main.WorldToScreenPoint(transform.position);
-    }
-
-
-    /*
-     * 
+     * get mouse position
      */
     private void OnMouseDown()
     {
-        //Debug.Log("snapDistance: " + snapDistance);
         if (!isSnapped)
         {
             audioSource.PlayOneShot(pickUpClip);
-            mousePosition = Input.mousePosition - GetMousePos();
+            mousePosition = Input.mousePosition - Camera.main.WorldToScreenPoint(transform.position);
         }
     }
 
 
     /*
-     * 
+     * calculate position
      */
     private void OnMouseDrag()
     {
@@ -66,7 +42,8 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour, IResetObject
 
 
     /*
-     * 
+     * snap to target when distance is smaller han snap distance
+     * or snap back to start slot
      */
     private void OnMouseUp()
     {
@@ -77,12 +54,10 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour, IResetObject
             //Debug.Log("SortingPlanetsDragAndDrop(): distanceVector.magnitude: " + distanceVector.magnitude);
             if (distanceVector.magnitude <= snapDistance)
             {
-                //Debug.Log("SortingPlanetsDragAndDrop: OnMouseUp(): snapped successfully to placeholder slot");
                 SnapToTarget();
             }
             else
             {
-                //Debug.Log("SortingPlanetsDragAndDrop: OnMouseUp():  transform.position = initialPosition = " + initialPosition);
                 transform.position = transform.parent.position;
                 isSnapped = false;
             }
@@ -92,14 +67,14 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour, IResetObject
 
 
    /*
-    * Increments the snapped planets and displays a Helpi message when all planets except pluto are in its place 
+    * increments the snapped planets and displays a Helpi message when all planets except pluto are in its place 
     */
     private void IncrementSnappedPlanetCount()
     {
-        int solarSystemPlanet = 8 + 2;
+        int solarSystemPlanet = 10;
         PlanetaryController.Instance.sortedPlanetCount++;
 
-        // Check if we have snapped all 10 out of 11 planets, excluding pluto
+        // check if we have snapped all 10 out of 11 planets, excluding pluto, including moon ad sun
         if (PlanetaryController.Instance.sortedPlanetCount >= solarSystemPlanet)
         {
             PlanetaryController.Instance.DisplayMessageByKey("OrderedSortingGame");
@@ -127,10 +102,7 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour, IResetObject
      */
     public void ResetObject()
     {
-        //transform.SetParent(placeholder_slot);
-        //transform.position = placeholder_slot.position;
         transform.localScale = new Vector3(1, 1, 1);
-
         PlanetaryController.Instance.ResetSortingGame();
 
         isSnapped = false;

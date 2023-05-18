@@ -14,63 +14,57 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     public ParticleSystem uranusParticleSystem;
     #endregion HidePlanets
 
-    public int solveCompilerError2 = 1;
+    #region Cameras
+    [SerializeField] private GameObject MainCamera;           //off
+    [SerializeField] private GameObject SolarSystemCamera;    //on
+    [SerializeField] private GameObject SortingGameCamera;    //off
+    [SerializeField] private GameObject TelescopeCamera;      //off
+    public Camera AnimationCamera;
 
-    public float CameraLerpDuration = 2f;
-    public GameObject TelescopeCamera;      //off
+    private float initialAnimationCameraFov;
+    private Vector3 initialAnimationCameraPosition;
+    private Quaternion initialAnimationCameraRotation;
+
+    private Vector3 initialMainCameraPosition;
+    private Quaternion initialMainCameraRotation;
+    private float initialMainCameraFOV;
+    #endregion Cameras
+
     #region StartScreenScenes
-    //start Animation                       //want it:
-    public GameObject MainCamera;           //off
-    public GameObject FormulaUI;            //off
-
-    //start SortingGame                     //want it:
-    public GameObject Environment;          //off
-    public GameObject SolarSystemCamera;    //on
-    public GameObject Planets;              //off//on
-    public GameObject SortingMinigame;      //off
-    public GameObject SortingGameCamera;    //off
-    public GameObject Interactibles;        //off
-    public GameObject AnimationUI;          //on
-    public GameObject SortingGamePlanetInfoUI;         //off
-    private FlyCamera flyCameraScript;      //on
+                                                              //want it:
+    [SerializeField] private GameObject FormulaUI;              //off
+    [SerializeField] private GameObject Environment;            //off
+    [SerializeField] private GameObject Planets;                //off//on
+    [SerializeField] private GameObject SortingMinigame;        //off
+    [SerializeField] private GameObject Interactibles;          //off
+    [SerializeField] private GameObject AnimationUI;            //on
+    [SerializeField] private GameObject SortingGamePlanetInfoUI;//off
+    [SerializeField] private FlyCamera flyCameraScript;         //on
     #endregion StartScreenScenes
 
     #region SolarSystem
     GameObject[] planets;
     private float G;
-    public bool isSunKinematic = true;
+    //[SerializeField] private bool isSunKinematic = true;
 
     [System.Serializable]
     public class PlanetData : MonoBehaviour
     {
-        public float semiMajorAxis;
-        public float initialVelocity;
+       public float semiMajorAxis;
+        [SerializeField] private float initialVelocity;
     }
     #endregion SolarSystem
 
-    #region UIToggleButtons
-    public Toggle toggleAllTrajectories;
-    public Toggle toggleSunKinematic;
-    public Toggle toggleSunLight;
-    public Toggle toggleSolarFlares;
-    public Toggle toggleSGRotation;
-    public Toggle toggleSGOrientationGizmo;
-    public Toggle toggleARotation;
-    public Toggle toggleAOrientationGizmo;
-    #endregion UIToggleButtons
-
     #region SortingGameSpawner
-    public GameObject sortingGamePlanetPlaceholderSlots;
+    public int sortedPlanetCount = 0;
+    [SerializeField] private GameObject sortingGamePlanetPlaceholderSlots;
     GameObject[] sortingPlanets;
     private readonly List<int> sortingGameAvailableSlotPositions = new List<int>();
-
-    public int sortedPlanetCount = 0;
     #endregion SortingGameSpawner
 
     #region ResetAnimation
-    private List<Vector3> initialPlanetPositions = new List<Vector3>();
-    public float resetAnimationDelay = 0.5f;
-
+    private readonly List<Vector3> initialPlanetPositions = new List<Vector3>();
+    public float resetAnimationDelay = 0.3f;
     public float gravitationalConstantG = 9.81f;
     public float timeSpeed = 1f;
     #endregion ResetAnimation
@@ -96,25 +90,29 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     #endregion Helpi
 
     #region KeyInput
-    public Material skyboxStars;
-    public Material skyboxDiverseSpace;
-    public Material skyboxBlack;
-    public Light sunLight;
-    public ParticleSystem solarFlares;
+    [SerializeField] private Material skyboxStars;
+    [SerializeField] private Material skyboxDiverseSpace;
+    [SerializeField] private Material skyboxBlack;
+    [SerializeField] private Light sunLight;
+    [SerializeField] private ParticleSystem solarFlares;
     #endregion KeyInput
 
-    #region Slider
-    public Slider sliderG;
-    public Slider sliderTimeSpeed;
-    public Slider sliderAnimationCameraFov;
-    #endregion Slider
+    #region UIToggleButtons
+    [SerializeField] private Toggle toggleAllTrajectories;
+    [SerializeField] private Toggle toggleSunKinematic;
+    [SerializeField] private Toggle toggleSunLight;
+    [SerializeField] private Toggle toggleSolarFlares;
+    [SerializeField] private Toggle toggleSGRotation;
+    [SerializeField] private Toggle toggleSGOrientationGizmo;
+    [SerializeField] private Toggle toggleARotation;
+    [SerializeField] private Toggle toggleAOrientationGizmo;
+    #endregion UIToggleButtons
 
-    #region AnimationCamera
-    public Camera AnimationCamera;
-    private float initialAnimationCameraFov;
-    private Vector3 initialAnimationCameraPosition;
-    private Quaternion initialAnimationCameraRotation;
-    #endregion AnimationCamera
+    #region Slider
+    [SerializeField] private Slider sliderG;
+    [SerializeField] private Slider sliderTimeSpeed;
+    [SerializeField] private Slider sliderAnimationCameraFov;
+    #endregion Slider
 
     //---------------------------------------------------------------------------------------
     /*
@@ -132,6 +130,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         }
     }
     #endregion PlanetaryControllerInstance
+
 
     /*
      * initialize LineRenderer before toggle
@@ -159,17 +158,11 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         //Debug.Log("PlanetaryController: Start(): ");
         SetupToggle();
         SetupSliders();
-        StoreInitialAnimationCamera();
+        StoreInitialCameras();
         GetFlyCameraScript();
         SetupLineRenderer();
         //turn off planets before Animation
         Planets.SetActive(false);
-
-        //SortingMinigame.SetActive(true);
-        //SortingGameCamera.SetActive(false);
-        //StartCoroutine(LerpCameraPosition(MainCamera, SortingGameCamera, SortingGameCamera, lerpDuration)) ;
-
-        //StartCoroutine(LerpCameraPosition(MainCamera, TelescopeCamera, SolarSystemCamera, lerpDuration));
     }
 
 
@@ -180,7 +173,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
      */
     void Update()
     {
-        //Debug.Log("PlanetaryController: Update(): ");
+        //Debug.Log("PlanetaryController: Update(): is called ");
         HandleKeyInput();
         DrawTrajectory();
     }
@@ -195,7 +188,6 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         Gravity();
     }
     //---------------------------------------------------------------------------------------
-
 
     /*
      * displays Helpi masseges by key
@@ -337,6 +329,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
     /*
      * SolarSystems handles Newtons Gravity, Initial Velocity and the planets
+     * G is multiplied by 10 for scaling
     */
     #region SolarSystem
     /*
@@ -465,8 +458,8 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
 
     /*
-     * Animation
-     * AnimationCamera store/reset
+     * AnimationCamera reset
+     * Skybox
      */
     #region Animation
     /*
@@ -475,23 +468,6 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     void SetSkybox()
     {
         RenderSettings.skybox = skyboxStars;
-    }
-
-
-    /*
-     * store the camera's initial position, rotation, and field of view
-     */
-    void StoreInitialAnimationCamera()
-    {
-        if (AnimationCamera == null)
-        {
-            Debug.Log("CameraAndUIController: StoreInitialAnimationCamera(): controlledCamera missing");
-            AnimationCamera = Camera.main;
-        }
-
-        initialAnimationCameraPosition = AnimationCamera.transform.position;
-        initialAnimationCameraRotation = AnimationCamera.transform.rotation;
-        initialAnimationCameraFov = AnimationCamera.fieldOfView;
     }
 
 
@@ -506,7 +482,6 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
         sliderAnimationCameraFov.value = initialAnimationCameraFov;
     }
-
 
     /*
      * get flycamere script to dis/enable later
@@ -818,7 +793,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
 
     /*
-     * hidesplanets and trajectories after radiobutton is pressed
+     * hides planets and trajectories after radiobutton is pressed
      */
     #region hide planets
     public void UIToggle0(bool isOn)
@@ -906,10 +881,37 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
 
     /*
-     * LERP camera
+     * store the StoreInitialCameras's position, rotation, and field of view
+     * LERPs the currentCamere(MainCamera) to the targetCameras position
+     * targetCameras are just used for theire position not for theire view
+     * reverse LERP camera
      */
     #region LerpCamera
-    IEnumerator LerpCameraPosition(GameObject currentCamera, GameObject targetCamera, GameObject switchToCamera,  float duration)
+    /*
+     * store the StoreInitialCameras's position, rotation, and field of view
+     */
+    void StoreInitialCameras()
+    {
+        if (AnimationCamera == null)
+        {
+            Debug.Log("CameraAndUIController: StoreInitialAnimationCamera(): AnimationCamera missing");
+        }
+
+        initialAnimationCameraPosition = AnimationCamera.transform.position;
+        initialAnimationCameraRotation = AnimationCamera.transform.rotation;
+        initialAnimationCameraFov = AnimationCamera.fieldOfView;
+
+        initialMainCameraPosition = MainCamera.transform.position;
+        initialMainCameraRotation = MainCamera.transform.rotation;
+        initialMainCameraFOV = MainCamera.GetComponent<Camera>().fieldOfView;
+    }
+
+
+    /*
+     * LERPs the currentCamere(MainCamera) to the targetCameras position
+     * targetCameras are just used for theire position not for theire view
+     */
+    IEnumerator LerpCameraToPosition(GameObject currentCamera, GameObject targetCamera, float lerpDuration)
     {
         float time = 0f;
         Vector3 initialPosition = currentCamera.transform.position;
@@ -917,10 +919,10 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         float initialFOV = currentCamera.GetComponent<Camera>().fieldOfView;
         float targetFOV = targetCamera.GetComponent<Camera>().fieldOfView;
 
-        while (time < duration)
+        while (time < lerpDuration)
         {
             time += Time.deltaTime;
-            float t = time / duration;
+            float t = time / lerpDuration;
 
             currentCamera.transform.position = Vector3.Lerp(initialPosition, targetCamera.transform.position, t);
             currentCamera.transform.rotation = Quaternion.Lerp(initialRotation, targetCamera.transform.rotation, t);
@@ -928,35 +930,75 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
             yield return null;
         }
+    }
 
-        currentCamera.SetActive(false);
-        switchToCamera.SetActive(true);
+
+    /*
+     * Reverse LERP camera
+     */
+    IEnumerator LerpCameraToInitialPosition(GameObject currentCamera, float lerpDuration)
+    {
+        float time = 0f;
+        Vector3 initialPosition = currentCamera.transform.position;
+        Quaternion initialRotation = currentCamera.transform.rotation;
+        float initialFOV = currentCamera.GetComponent<Camera>().fieldOfView;
+
+        while (time < lerpDuration)
+        {
+            time += Time.deltaTime;
+            float t = time / lerpDuration;
+
+            currentCamera.transform.position = Vector3.Lerp(initialPosition, initialMainCameraPosition, t);
+            currentCamera.transform.rotation = Quaternion.Lerp(initialRotation, initialMainCameraRotation, t);
+            currentCamera.GetComponent<Camera>().fieldOfView = Mathf.Lerp(initialFOV, initialMainCameraFOV, t);
+
+            yield return null;
+        }
     }
     #endregion LerpCamera
 
 
     /*
-     * StartAnimationOnInput and de/activates gameobjects
-     * StartAnimationOnInput and de/activates gameobjects
+     * StartSortingGameOnInput and de/activates gameobjects after coroutine has finished 
+     * StartAnimationOnInput and de/activates gameobjects after coroutine has finished 
+     * 
      */
     #region StartScreenScenes
     /*
-     * StartSortingGameOnInput and activates gameobjects
+     * StartSortingGameOnInput and calls LERP camera couroutine
      */
     public void StartSortingGameOnInput()
     {
         //Debug.Log("PlanetaryController: StartAnimationOnInput(): ");
         LeaveAnimation();
 
-        //StartCoroutine(LerpCameraPosition(SortingGameCamera, lerpDuration));
-        MainCamera.SetActive(false);
+        SortingMinigame.SetActive(true);
+        SortingGameCamera.SetActive(false);
+        StartCoroutine(LerpCameraStartSortingGame());
+    }
+
+
+    /*
+     * Waits for LERP camera couroutine and de/activates gameobjects
+     */
+    private IEnumerator LerpCameraStartSortingGame()
+    {
+        yield return StartCoroutine(LerpCameraToPosition(MainCamera, SortingGameCamera, 1f));
         SortingMinigame.SetActive(true);
         SortingGamePlanetInfoUI.SetActive(true);
         FormulaUI.SetActive(false);
 
-        //sortingGameAvailableSlotPositions.Clear();
-        //InitializeAvailableSortingGameSlotPositions();
         DisplayMessageByKey("EnterSortingGame");
+    }
+
+
+    /*
+     * Reverse LERP camera when leaving a ScreenScene
+     */
+    private IEnumerator LerpCameraLeave()
+    {
+        yield return StartCoroutine(LerpCameraToInitialPosition(MainCamera, 0.5f));
+        SortingMinigame.SetActive(false);
     }
 
 
@@ -965,32 +1007,46 @@ public class PlanetaryController : MonoBehaviour, IResetObject
      */
     public void LeaveSortingGame()
     {
-        HelpiDialogueUI.SetActive(false);
-
         //Debug.Log("PlanetaryController: LeaveSortingGame(): ");
-        SortingMinigame.SetActive(false);
+        HelpiDialogueUI.SetActive(false);
         SortingGamePlanetInfoUI.SetActive(false);
+        FormulaUI.SetActive(false);
 
+        StartCoroutine(LerpCameraLeave());
     }
 
 
     /*
-     * StartAnimationOnInput and activates gameobjects
+     * StartAnimationOnInput and calls LERP camera couroutine
      */
     public void StartAnimationOnInput()
     {
         //Debug.Log("PlanetaryController: StartAnimationOnInput(): ");
         LeaveSortingGame();
+        FormulaUI.SetActive(false);
+
+        StartCoroutine(LerpCameraStartAnimation());
+    }
+
+
+    /*
+     * Waits for LERP camera couroutine and de/activates gameobjects
+     */
+    private IEnumerator LerpCameraStartAnimation()
+    {
+        yield return StartCoroutine(LerpCameraToPosition(MainCamera, TelescopeCamera, 1f));
+
+        AnimationUI.SetActive(true);
         SetSkybox();
 
         Environment.SetActive(false);
+        Interactibles.SetActive(false);
+        
+        Planets.SetActive(true);
+        flyCameraScript.enabled = true;
+        
         MainCamera.SetActive(false);
         SolarSystemCamera.SetActive(true);
-        Planets.SetActive(true);
-        Interactibles.SetActive(false);
-        AnimationUI.SetActive(true);
-        FormulaUI.SetActive(false);
-        flyCameraScript.enabled = true;
 
         ResetAnimation();
         DisplayMessageByKey("EnterAnimation");
@@ -1003,15 +1059,17 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     public void LeaveAnimation()
     {
         HelpiDialogueUI.SetActive(false);
+        AnimationUI.SetActive(false);
 
         Environment.SetActive(true);
-        SolarSystemCamera.SetActive(false);
-        Planets.SetActive(false);
         Interactibles.SetActive(true);
-        AnimationUI.SetActive(false);
-        flyCameraScript.enabled = false;
 
+        Planets.SetActive(false);
+        flyCameraScript.enabled = false;
         ResetCamera();
+
+        SolarSystemCamera.SetActive(false);
+        MainCamera.SetActive(true);
     }
     #endregion StartScreenScenes
 
@@ -1038,9 +1096,9 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     {
         sliderG.value = gravitationalConstantG;
         sliderTimeSpeed.value = timeSpeed;
+        ClearTrajectories();
 
-
-        //reset to initialPlanetPosition
+        //reset planets to initialPlanetPosition
         for (int i = 0; i < planets.Length; i++)
         {
             planets[i].transform.position = initialPlanetPositions[i];
@@ -1048,8 +1106,6 @@ public class PlanetaryController : MonoBehaviour, IResetObject
             Rigidbody rb = planets[i].GetComponent<Rigidbody>();
             rb.isKinematic = true;
         }
-
-        ClearTrajectories();
 
         StartCoroutine(RestartAnimationDelay());
     }
@@ -1083,25 +1139,25 @@ public class PlanetaryController : MonoBehaviour, IResetObject
      */
     public void ResetObject()
     {
-        Debug.Log("PlanetaryController: ResetObject(): button pressed");
-
+        //Debug.Log("PlanetaryController: ResetObject(): button pressed");
         ResetAnimation();
     }
 
 
     /*
-     * ResetHome button deactivates Animation and SortingGame Gameobjects and cameras
+     * ResetHome button deactivates Animation and SortingGame Gameobjects
      * activates FormulaUI
+     * stopps all LERP camera coroutines
      */
     public void ResetHome()
     {
         //Debug.Log("PlanetaryController: ResetHome(): button pressed");
+        StopAllCoroutines();
         LeaveSortingGame();
         LeaveAnimation();
 
-        MainCamera.SetActive(true);
-        FormulaUI.SetActive(true);
         DisplayMessageByKey("EnterPlanetarySystem");
+        FormulaUI.SetActive(true);
     }
     #endregion ResetBar
 

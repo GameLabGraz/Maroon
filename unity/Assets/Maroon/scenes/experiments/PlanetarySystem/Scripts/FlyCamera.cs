@@ -105,7 +105,6 @@ public class FlyCamera : MonoBehaviour
     }
 
 
-
     /*
      * locks the cursor when switched between normal mode and FlyCam mode
      */
@@ -122,6 +121,7 @@ public class FlyCamera : MonoBehaviour
             Cursor.visible = true;
         }
     }
+
 
     /*
      * focus the camera on public object (sun after reset or toggle camera)
