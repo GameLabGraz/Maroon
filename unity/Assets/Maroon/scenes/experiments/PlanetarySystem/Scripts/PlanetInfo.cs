@@ -36,44 +36,44 @@ public class PlanetInfo : MonoBehaviour
 
 
     public PlanetInformation PlanetInformationOf;
-    //source: https://nssdc.gsfc.nasa.gov/planetary/factsheet/planetfact_notes.html
+    //source: NASA.gov https://nssdc.gsfc.nasa.gov/planetary/factsheet/planetfact_notes.html
 
     /*
      * Mass (10^24kg) - This is the mass of the planet in septillion (1 followed by 24 zeros) kilograms.
      */
-    public float mass;
+    public float mass { get; private set; }
     /*
      * Diameter (km) - The diameter of the planet at the equator,
      * the distance through the center of the planet from one point on the equator to the opposite side, in kilometers.
      */
-    public float diameter;
+    public float diameter { get; private set; }
     /*
-     * Density (kg/m3) - The average density (mass divided by volume) of the whole planet (not including the atmosphere for the terrestrial planets)
+     * Density (kg/m^3) - The average density (mass divided by volume) of the whole planet (not including the atmosphere for the terrestrial planets)
      * in kilograms per cubic meter. Strictly speaking pounds are measures of weight, not mass,
      * but are used here to represent the mass of one pound of material under Earth gravity.
      */
-    public float density;
+    public float density { get; private set; }
     /*
      * Gravity (m/s^2) - The gravitational acceleration on the surface at the equator in meters per second squared,
      * including the effects of rotation. For the gas giant planets the gravity is given at the 1 bar pressure level in the atmosphere.
      * The gravity on Earth is designated as 1 "G", so the Earth ratio fact sheets gives the gravity of the other planets in G's.
      */
-    public float gravity;
+    public float gravity { get; private set; }
     /*
      * Escape Velocity (km/s) - Initial velocity, in kilometers per second, needed at the surface 
      * (at the 1 bar pressure level for the gas giants) to escape the body's gravitational pull, ignoring atmospheric drag.
      */
-    public float escapeVelocity;
+    public float escapeVelocity { get; private set; }
     /*
      * Rotation Period(hours) - This is the time it takes for the planet to complete one rotation
      * relative to the fixed background stars (not relative to the Sun) in hours.
      * Negative numbers indicate retrograde(backwards relative to the Earth) rotation.
      */
-    public float rotationPeriod;
+    public float rotationPeriod { get; private set; }
     /*
      * Length of Day (hours) - The average time in hours for the Sun to move from the noon position in the sky at a point on the equator back to the same position.
      */
-    public float lengthOfDay;
+    public float lengthOfDay { get; private set; }
     /*
      * Distance from Sun (10^6 km) - This is the average distance from the planet to the Sun in millions of kilometers, also known as the semi-major axis.
      * All planets have orbits which are elliptical, not perfectly circular,
@@ -84,36 +84,36 @@ public class PlanetInfo : MonoBehaviour
      * so the ratio table gives this distance in AU.
      * * For the Moon, the average distance from the Earth is given.
      */
-    public float distanceFromSun; //semiMayorAxis
+    public float distanceFromSun { get; private set; } //semiMayorAxis
     /*
      * Perihelion, Aphelion (10^6 km) - The closest and furthest points in a planet's orbit about the Sun, see "Distance from Sun" above.
      * * For the Moon, the closest and furthest points to Earth are given, known as the "Perigee" and "Apogee" respectively.
      */
-    public float perihelion;
-    public float aphelion;
+    public float perihelion { get; private set; }
+    public float aphelion { get; private set; }
     /*
      * Orbital Period (days) - This is the time in Earth days for a planet to orbit the Sun from one vernal equinox to the next. 
      * Also known as the tropical orbit period, this is equal to a year on Earth.
      * For the Moon, the sidereal orbit period, the time to orbit once relative to the fixed background stars, is given.
      * The time from full Moon to full Moon, or synodic period, is 29.53 days
      */
-    public float orbitalPeriod;
+    public float orbitalPeriod { get; private set; }
     /*
-     * Orbital Velocity (km/s or miles/s) - The average velocity or speed of the planet as it orbits the Sun, in kilometers per second or miles per second.
+     * Orbital Velocity (km/s) - The average velocity or speed of the planet as it orbits the Sun, in kilometers per second or miles per second.
      * For the Moon, the average velocity around the Earth is given.
      */
-    public float orbitalVelocity;
+    public float orbitalVelocity { get; private set; }
     /*
      * Orbital Inclination (degrees) - The angle in degrees at which a planets orbit around the Sun is tilted relative to the ecliptic plane.
      * The ecliptic plane is defined as the plane containing the Earth's orbit, so the Earth's inclination is 0.
      */
-    public float orbitalInclination;
+    public float orbitalInclination { get; private set; }
     /*
      * Orbital Eccentricity - This is a measure of how far a planet's orbit about the Sun (or the Moon's orbit about the Earth) is from being circular.
      * The larger the eccentricity, the more elongated is the orbit, an eccentricity of 0 means the orbit is a perfect circle.
      * There are no units for eccentricity.
      */
-    public float orbitalEccentricity;
+    public float orbitalEccentricity { get; private set; }
     /*
      * Obliquity to Orbit (degrees) - The angle in degrees the axis of a planet 
      * (the imaginary line running through the center of the planet from the north to south poles)
@@ -123,30 +123,32 @@ public class PlanetInfo : MonoBehaviour
      * Uranus rotates almost on its side relative to the orbit, Pluto is pointing slightly "down".
      * The ratios with Earth refer to the axis without reference to north or south. 
      */
-    public float obliquityToOrbit; //rotation angle
+    public float obliquityToOrbit { get; private set; } //rotation angle
     /*
-     *  Mean Temperature (C) - This is the average temperature over the whole planet's surface (or for the gas giants at the one bar level)
+     *  Mean Temperature (degree C) - This is the average temperature over the whole planet's surface (or for the gas giants at the one bar level)
      *  in degrees C (Celsius or Centigrade).
      */
-    public float meanTemperature;
+    public float meanTemperature { get; private set; }
     /*
      * Surface Pressure (bars) - This is the atmospheric pressure (the weight of the atmosphere per unit area) at the surface of the planet in bars.
      * *The surfaces of Jupiter, Saturn, Uranus, and Neptune are deep in the atmosphere and the location and pressures are not known.
      */
-    public float surfacePressure;
+    public float surfacePressure { get; private set; }
     /*
      * Number of Moons - This gives the number of IAU officially confirmed moons orbiting the planet. New moons are still being discovered.
      */
-    public int numberOfMoons;
+    public int numberOfMoons { get; private set; }
     /*
      * Ring System? - This tells whether a planet has a set of rings around it, Saturn being the most obvious example.
      */
-    public bool ringSystem;
+    public bool ringSystem { get; private set; }
     /*
      * Global Magnetic Field? - This tells whether the planet has a measurable large-scale magnetic field.
      * Mars and the Moon have localized regional magnetic fields but no global field.
      */
-    public bool globalMagneticField;
+    public bool globalMagneticField { get; private set; }
+
+
 
 
     private void Awake()
@@ -154,9 +156,10 @@ public class PlanetInfo : MonoBehaviour
         //Debug.Log("PlanetInfo: Awake()");
         switch (PlanetInformationOf)
         {
+            //sun source: NASA.gov https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html
             case PlanetInformation.sun_0:
-                mass                            = 1988500f;
-                diameter                        = 1408f; 
+                mass                            = 1988500f; 
+                diameter                        = (695700 * 2) ; //volumetric mean radius //prescale
                 density                         = 1408f;
                 gravity                         = 274f;
                 escapeVelocity                  = 617.6f;
@@ -407,26 +410,26 @@ public class PlanetInfo : MonoBehaviour
                 break;
 
             default:
-                mass                            = 0f;
-                diameter                        = 0f;
-                density                         = 0f;
-                gravity                         = 0f;
-                escapeVelocity                  = 0f;
-                rotationPeriod                  = 0f;
-                lengthOfDay                     = 0f;
-                distanceFromSun                 = 0f;
-                perihelion                      = 0f;
-                aphelion                        = 0f;
-                orbitalPeriod                   = 0f;
-                orbitalVelocity                 = 0f;
-                orbitalInclination              = 0f;
-                orbitalEccentricity             = 0f;
-                obliquityToOrbit                = 0f;
-                meanTemperature                 = 0f;
-                surfacePressure                 = 0f;
-                numberOfMoons                   = 0;
-                ringSystem                      = false;
-                globalMagneticField             = false;
+                mass                            = 0f;    //1
+                diameter                        = 0f;    //2
+                density                         = 0f;    //3
+                gravity                         = 0f;    //4
+                escapeVelocity                  = 0f;    //5
+                rotationPeriod                  = 0f;    //6
+                lengthOfDay                     = 0f;    //7
+                distanceFromSun                 = 0f;    //8
+                perihelion                      = 0f;    //9
+                aphelion                        = 0f;    //0
+                orbitalPeriod                   = 0f;    //11
+                orbitalVelocity                 = 0f;    //12
+                orbitalInclination              = 0f;    //13
+                orbitalEccentricity             = 0f;    //14
+                obliquityToOrbit                = 0f;    //15
+                meanTemperature                 = 0f;    //16
+                surfacePressure                 = 0f;    //17
+                numberOfMoons                   = 0;     //18
+                ringSystem                      = false; //19
+                globalMagneticField             = false; //20
                 break;
         }
     }
