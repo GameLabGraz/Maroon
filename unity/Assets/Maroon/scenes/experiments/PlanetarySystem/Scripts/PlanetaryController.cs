@@ -45,6 +45,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     #region SolarSystem
     GameObject[] planets;
     private float G;
+    private int reduceScaleFactor = 1000;
     //[SerializeField] private bool isSunKinematic = true;
 
     [System.Serializable]
@@ -334,6 +335,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     #region SolarSystem
     /*
      * find planets with tag Planet and initializes them
+     * set the planets rigidbody.mass to the planetInfo scaled down mass
      */
     void InitializePlanets()
     {
@@ -346,9 +348,24 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         }
         else
         {
+            //set mass
             foreach (var planet in planets)
             {
-                initialPlanetPositions.Add(planet.transform.position);
+                PlanetInfo planetInfo = planet.GetComponent<PlanetInfo>();
+                if (planetInfo != null)
+                {
+                    Rigidbody planetRigidbody = planet.GetComponent<Rigidbody>();
+                    if (planetRigidbody != null)
+                    {
+                        // Assign the mass from PlanetInfo to Rigidbody, scaled down by 1000.
+                        planetRigidbody.mass = planetInfo.mass / reduceScaleFactor;
+                    }
+                    initialPlanetPositions.Add(planet.transform.position);
+                }
+                else
+                {
+                    Debug.Log("PlanetaryController: InitializePlanets(): Missing PlanetInfo for: " + planet.name);
+                }
             }
         }
     }
