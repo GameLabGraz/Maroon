@@ -434,7 +434,7 @@ public class MSTController : MonoBehaviour
         if (isInManualSetCounter == _numberOfIslands)
         {
             //Debug.Log("All Islands connected (manually)!: " + isInManualSetCounter);
-            isInManualSetCounter = -1;
+            //isInManualSetCounter = -1;
             yield return new WaitForSeconds(0.5f);
             if(allBridgeSegments == allManualBridgeSegments)
             {
@@ -460,6 +460,7 @@ public class MSTController : MonoBehaviour
 
     /**
      * Select start- and endisland manually from MouseDownEvent
+     * highlight selected islands
      * and build a bridge between them
      * */
     public IEnumerator SelectIsland(string text)
@@ -467,8 +468,15 @@ public class MSTController : MonoBehaviour
         var message = LanguageManager.Instance.GetString("SelectIsland");
         string _text = text;
         int index = -1;
+        // Child in Prefab Islands -> Spotlight 
+        Transform light;
 
-        for (int c = 0; c < _numberOfIslands; c++)
+        if (isInManualSetCounter >= _numberOfIslands)
+        {
+            yield break;
+        }
+
+            for (int c = 0; c < _numberOfIslands; c++)
         {
             if (String.Compare(islands[c].name, _text) == 0)
             {
@@ -492,6 +500,8 @@ public class MSTController : MonoBehaviour
         {
             case ManualIslandPickerOptions.noneSelected:
                 manualFromIsland = islands[index];
+                light = manualFromIsland.transform.GetChild(0);
+                light.gameObject.SetActive(true);
                 SetFromButton(manualFromIsland.name);
                 manualFromIslandIndex = index;
                 manualCases = ManualIslandPickerOptions.oneSelected;
@@ -502,6 +512,8 @@ public class MSTController : MonoBehaviour
                     ((manualStart == index || manualStart == manualFromIslandIndex) && (!isInManualSet[index] && !isInManualSet[manualFromIslandIndex]))) )
                 {
                     manualToIsland = islands[index];
+                    light = manualToIsland.transform.GetChild(0);
+                    light.gameObject.SetActive(true);
                     SetToButton(manualToIsland.name);
                     manualCases = ManualIslandPickerOptions.bothSelected;
                     // Check for Collisions and build Bridge
@@ -509,13 +521,21 @@ public class MSTController : MonoBehaviour
                 }
                 if (manualCases == ManualIslandPickerOptions.bothSelected)
                 {
+                    light = manualFromIsland.transform.GetChild(0);
+                    light.gameObject.SetActive(false);
                     SetFromButton(message);
+                    light = manualToIsland.transform.GetChild(0);
+                    light.gameObject.SetActive(false);
                     SetToButton(message);
                     manualCases = ManualIslandPickerOptions.noneSelected;
                 }
                 break;
             case ManualIslandPickerOptions.bothSelected:
+                light = manualFromIsland.transform.GetChild(0);
+                light.gameObject.SetActive(false);
                 SetFromButton(message);
+                light = manualToIsland.transform.GetChild(0);
+                light.gameObject.SetActive(false);
                 SetToButton(message);
                 manualCases = ManualIslandPickerOptions.noneSelected;
                 break;
