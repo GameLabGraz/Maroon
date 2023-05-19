@@ -96,7 +96,6 @@ public class MSTController : MonoBehaviour
     {
         bridgeRenderer = bridgeSegmentPrefab.GetComponent<MeshRenderer>();
         size = bridgeRenderer.bounds.size.z * 1.011f;
-        //Debug.Log("BridgeSize: " + bridgeRenderer.bounds.size);
 
         islandRenderer = islandPrefab.GetComponent<MeshRenderer>();
         islandHalf = islandRenderer.bounds.size.x / 3f;
@@ -442,18 +441,10 @@ public class MSTController : MonoBehaviour
             }
             else
             {
-                //DisplayMessageByKey("islands manually connected");
                 var message = LanguageManager.Instance.GetString("islands manually connected");
-                //float length = (int)endLengthOfBridges * 10;
-                //float lengthManual = endLengthOfManualBridges * 10;
-                //DisplayMessage(string.Format(message, allManualBridgeSegments, lengthManual, allBridgeSegments, length));
                 DisplayMessage(string.Format(message, allManualBridgeSegments, allBridgeSegments));
-                //DisplayMessage(string.Format(message, allManualBridgeSegments, endLengthOfManualBridges, allBridgeSegments, endLengthOfBridges));
                 //Debug.Log(string.Format(message, allManualBridgeSegments, endLengthOfManualBridges, allBridgeSegments, endLengthOfBridges));
             }
-            ///TODO        
-            //Debug.Log("lengthOfBridges " + endLengthOfBridges + " numberOfBridgeSegments " + allBridgeSegments);
-            //Debug.Log("endLengthOfManualBridges " + endLengthOfManualBridges + " numberOfManualBridgeSegments " + allManualBridgeSegments);
         }
         yield break;
     }
