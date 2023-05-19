@@ -17,15 +17,16 @@ namespace Maroon.Physics
 
     private float ball_density_ = 0.0f;
 
-    //TODO: this is the diameter, not the radius. need to refactor this.
-    //Radius in meter
-    public QuantityFloat radius_ = 1.97f / 1000f;
-    public float Radius
+    private float radius_;
+    //diameter in meter
+    public QuantityFloat diameter_ = 1.97f / 1000f;
+    public float Diameter
     {
-      get => radius_;
+      get => diameter_;
       set
       {
-        radius_.Value = value;
+        diameter_.Value = value;
+        radius_ = diameter_.Value/2;
         updateBall();
       }
     }
@@ -49,8 +50,9 @@ namespace Maroon.Physics
     {
       base.Start();
       start_weight_ = weight_.Value;
-      start_radius_ = radius_.Value;
-      Debug.Log("Radius: " + radius_.Value);
+      start_radius_ = diameter_.Value;
+      radius_ = diameter_.Value/2;
+      Debug.Log("Diameter: " + diameter_.Value);
       start_position_ = transform.position;
       updateBall();
     }
@@ -62,19 +64,13 @@ namespace Maroon.Physics
 
     protected override void HandleFixedUpdate()
     {
-      if (!dropped_)
-      {
-        return;
-      }
+      Debug.Log("Oil " + touching_oil);
       if (touching_oil)
       {
-        //apply buoyancy
-        gameObject.GetComponent<Rigidbody>().AddForce(transform.up * buoyancy_force_, ForceMode.Force);
-        Debug.Log("Applied Bouyancy Force: " + buoyancy_force_);
         //apply viscosity friction force
         calculateViscosityForce();
-        gameObject.GetComponent<Rigidbody>().AddForce(transform.up * viscosity_force_, ForceMode.Force);
-        Debug.Log("Applied Viscosity Force: " + -viscosity_force_);
+        gameObject.GetComponent<Rigidbody>().AddForce(transform.up * (viscosity_force_ + buoyancy_force_), ForceMode.Force);
+        Debug.Log("Applied Viscosity Force: " + viscosity_force_);
       }
     }
 
@@ -98,19 +94,21 @@ namespace Maroon.Physics
 
     void calculateViscosityForce()
     {
+      Debug.Log("Radius: " + radius_);
       float velocity = gameObject.GetComponent<Rigidbody>().velocity.magnitude;
-      Debug.Log("Velocity: " + velocity);
       float viscosity = (2.0f / 9.0f) * ((ball_density_ - ViscosimeterManager.Instance.fluid_density_) / velocity) * 9.81f * radius_ * radius_;
-      viscosity_force_ = 6.0f * Mathf.PI * viscosity * radius_ * velocity;
+      Debug.Log("Velocity: " + velocity);
+      Debug.Log("Viscosity: " + viscosity);
+      viscosity_force_ = 6.0f * Mathf.PI * -viscosity * radius_ * velocity;
     }
 
 
 
     public void updateBall()
     {
-      float diameter = radius_;
-      transform.localScale.Set(diameter, diameter, diameter);
+      transform.localScale.Set(diameter_, diameter_, diameter_);
       ball_density_ = calculateVolume() / weight_;
+      gameObject.GetComponent<Rigidbody>().mass = weight_;
       calculateBuoyancy();
     }
 
@@ -119,7 +117,8 @@ namespace Maroon.Physics
     {
       dropped_ = false;
       weight_ = start_weight_;
-      radius_ = start_radius_;
+      diameter_.Value = start_radius_;
+      radius_ = diameter_.Value / 2;
       touching_oil = false;
 
       transform.position = start_position_;
