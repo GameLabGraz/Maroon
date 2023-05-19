@@ -11,7 +11,8 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour, IResetObject
     public Transform sortingPlanetTarget; 
     public float snapDistance;  
     private bool isSnapped = false;
-    private readonly float scaleFactor = 1.02f;   
+    private readonly float scaleFactor = 1.02f;
+    public Light sunLightHalo;
     Vector3 mousePosition;
 
 
@@ -90,6 +91,9 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour, IResetObject
         transform.SetParent(sortingPlanetTarget);
         transform.position = sortingPlanetTarget.position;
         transform.localScale = new Vector3(1,1,1) * scaleFactor;
+        if (sunLightHalo != null)
+            sunLightHalo.range = 1.75f;
+
 
         isSnapped = true;
         IncrementSnappedPlanetCount();
@@ -104,6 +108,8 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour, IResetObject
     {
         transform.localScale = new Vector3(1, 1, 1);
         PlanetaryController.Instance.ResetSortingGame();
+        if (sunLightHalo != null)
+            sunLightHalo.range = 0.25f;
 
         isSnapped = false;
         PlanetaryController.Instance.sortedPlanetCount = 0;

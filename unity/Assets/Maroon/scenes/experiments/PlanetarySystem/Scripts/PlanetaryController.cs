@@ -993,16 +993,6 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
 
     /*
-     * Reverse LERP camera when leaving a ScreenScene
-     */
-    private IEnumerator LerpCameraLeave()
-    {
-        yield return StartCoroutine(LerpCameraToInitialPosition(MainCamera, 0.5f));
-        SortingMinigame.SetActive(false);
-    }
-
-
-    /*
      * LeaveSortingGame and deactivates gameobjects
      */
     public void LeaveSortingGame()
@@ -1011,8 +1001,21 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         HelpiDialogueUI.SetActive(false);
         SortingGamePlanetInfoUI.SetActive(false);
         FormulaUI.SetActive(false);
-
+        
         StartCoroutine(LerpCameraLeave());
+    }
+
+
+    /*
+     * Reverse LERP camera when leaving a ScreenScene
+     */
+    private IEnumerator LerpCameraLeave()
+    {
+        yield return StartCoroutine(LerpCameraToInitialPosition(MainCamera, 0.5f));
+
+        UIToggleSunLight(false);
+        toggleSunLight.isOn = false; 
+        SortingMinigame.SetActive(false);
     }
 
 
@@ -1024,6 +1027,9 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         //Debug.Log("PlanetaryController: StartAnimationOnInput(): ");
         LeaveSortingGame();
         FormulaUI.SetActive(false);
+
+        UIToggleAllTrajectories(true);
+        toggleAllTrajectories.isOn = true;
 
         StartCoroutine(LerpCameraStartAnimation());
     }
