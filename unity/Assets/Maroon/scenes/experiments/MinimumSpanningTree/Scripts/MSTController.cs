@@ -676,6 +676,10 @@ public class MSTController : MonoBehaviour
         var message = LanguageManager.Instance.GetString("SelectIsland");
         SetFromButton(message);
         SetToButton(message);
+        foreach (GameObject island in islands)
+        {
+            island.transform.GetChild(0).gameObject.SetActive(false);
+        }
     }
 
     /**
