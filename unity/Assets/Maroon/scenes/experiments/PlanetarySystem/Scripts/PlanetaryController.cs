@@ -8,7 +8,7 @@ using System.Collections;
 public class PlanetaryController : MonoBehaviour, IResetObject
 {
     #region HidePlanets
-    public GameObject sun;
+    //public GameObject sun;
     public GameObject saturn_ring_1;
     public GameObject saturn_ring_2;
     public ParticleSystem uranusParticleSystem;
@@ -43,7 +43,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     #endregion StartScreenScenes
 
     #region SolarSystem
-    GameObject[] planets;
+    public GameObject[] planets;
     private float G;
     private int reduceScaleFactor = 1000;
     //[SerializeField] private bool isSunKinematic = true;
@@ -145,10 +145,10 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         
         SortingMinigame.SetActive(false);
         SortingGamePlanetInfoUI.SetActive(false);
-        sun.SetActive(true);
+        planets[0].SetActive(true);
         //Debug.Log("PlanetaryController: Awake(): sun.SetActive= " + sun.activeSelf);
 
-        InitializePlanets();
+        InitializeAndScalePlanets();
         InitializeLineRenderer();
     }
 
@@ -189,6 +189,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     private void FixedUpdate()
     {
         Gravity();
+        //DrawTrajectory();
     }
     //---------------------------------------------------------------------------------------
 
@@ -337,17 +338,18 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     */
     #region SolarSystem
     /*
-     * find planets with tag Planet and initializes them
+     * //find planets with tag Planet and initializes them
      * set the planets rigidbody.mass to the planetInfo scaled down mass
+     * assign the scaled PlanetInfo data
      */
-    void InitializePlanets()
+    void InitializeAndScalePlanets()
     {
-        //Debug.Log("PlanetaryController: InitializePlanets():");
-        planets = GameObject.FindGameObjectsWithTag("Planet");
+        //Debug.Log("PlanetaryController: InitializeAndScalePlanets():");
+        //planets = GameObject.FindGameObjectsWithTag("Planet");
         if (planets.Length <= 0)
         {
             //Should not happen
-            Debug.Log("PlanetaryController: InitializePlanets(): No planets found:  " + planets.Length);
+            Debug.Log("PlanetaryController: InitializeAndScalePlanets(): No planets found:  " + planets.Length);
         }
         else
         {
@@ -371,7 +373,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
                 }
                 else
                 {
-                    Debug.Log("PlanetaryController: InitializePlanets(): Missing PlanetInfo for: " + planet.name);
+                    Debug.Log("PlanetaryController: InitializeAndScalePlanets(): Missing PlanetInfo for: " + planet.name);
                 }
             }
         }
@@ -742,11 +744,11 @@ public class PlanetaryController : MonoBehaviour, IResetObject
      */
     public void UIToggleSunKinematic(bool isKinematic)
     {
-        Rigidbody sunRb = sun.GetComponent<Rigidbody>();
+        Rigidbody sunRb = planets[0].GetComponent<Rigidbody>();
         sunRb.isKinematic = isKinematic;
         if (!isKinematic)
         {
-            RecalculateInitialVelocity(sun);
+            RecalculateInitialVelocity(planets[0]);
         }
     }
 
@@ -824,7 +826,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     {
         //Sun
         //Debug.Log("Mercury checkbox: " + !isOn);
-        sun.GetComponent<Renderer>().enabled = !isOn;
+        planets[0].GetComponent<Renderer>().enabled = !isOn;
         ToggleTrajectory(0, !isOn);
     }
 
