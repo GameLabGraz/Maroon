@@ -200,9 +200,8 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour, IResetObject
      */
     public void ResetObject()
     {
-        createdPlanetInfoMessage = "";
-        planetInfoMessageText.text = createdPlanetInfoMessage;
-        //CreatePlanetInfoMessage();
+        createdPlanetInfoMessage = "PlanetDescription";
+        planetInfoMessageText.text = GetMessagByKey(createdPlanetInfoMessage);
 
         transform.localScale = new Vector3(1, 1, 1);
         PlanetaryController.Instance.ResetSortingGame();

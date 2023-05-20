@@ -234,11 +234,12 @@ public class PlanetaryController : MonoBehaviour, IResetObject
             {
                 switch (keyCode)
                 {
-                    case KeyCode.Alpha1:
+                    case KeyCode.F1:
                         StartSortingGameOnInput();
+                        ClearTrajectories();
                         break;
 
-                    case KeyCode.Alpha2:
+                    case KeyCode.F2:
                         StartAnimationOnInput();
                         break;
 
@@ -248,15 +249,15 @@ public class PlanetaryController : MonoBehaviour, IResetObject
                         toggleSunLight.isOn = sunLight.gameObject.activeSelf;
                         break;
 
-                    case KeyCode.Alpha3:
+                    case KeyCode.F3:
                         RenderSettings.skybox = skyboxBlack;
                         break;
 
-                    case KeyCode.Alpha4:
+                    case KeyCode.F4:
                         RenderSettings.skybox = skyboxDiverseSpace;
                         break;
 
-                    case KeyCode.Alpha5:
+                    case KeyCode.F5:
                         RenderSettings.skybox = skyboxStars;
                         break;
 

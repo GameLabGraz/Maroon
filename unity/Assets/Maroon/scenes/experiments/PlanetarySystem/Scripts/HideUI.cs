@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class HideUI : MonoBehaviour
 {
     public GameObject AnimationUI;
-    public GameObject SortingGamePlanetInfoUI;
+    public GameObject PlanetInformationUI;
     public Toggle toggleHideUI;
 
 
@@ -28,14 +28,14 @@ public class HideUI : MonoBehaviour
             if (!AnimationUI.activeSelf)// && (!SortingGamePlanetInformationUI.activeSelf))
             {
                 AnimationUI.SetActive(true); //turn on UI
-                SortingGamePlanetInfoUI.SetActive(true); //turn on UI
+                PlanetInformationUI.SetActive(true); //turn on UI
                 toggleHideUI.isOn = false;
                 //Debug.Log("CameraAndUIController: HideUIOnKeyInput(): [H] UI Active Self: " + AnimationUI.activeSelf);
             }
             else
             {
                 AnimationUI.SetActive(false); //turn off UI
-                SortingGamePlanetInfoUI.SetActive(false); //turn off UI
+                PlanetInformationUI.SetActive(false); //turn off UI
                 toggleHideUI.isOn = true;
                 //Debug.Log("CameraAndUIController: HideUIOnKeyInput(): [H] UI Active Self: " + AnimationUI.activeSelf);
             }
@@ -52,13 +52,13 @@ public class HideUI : MonoBehaviour
         if (hide)
         {
             AnimationUI.SetActive(false); //turn on UI
-            SortingGamePlanetInfoUI.SetActive(false); //turn on UI
+            PlanetInformationUI.SetActive(false); //turn on UI
             //Debug.Log("CameraAndUIController: ToggleHideUI(): " + ui.activeSelf);
         }
         else
         {
             AnimationUI.SetActive(true); //turn off UI
-            SortingGamePlanetInfoUI.SetActive(true); //turn off UI
+            PlanetInformationUI.SetActive(true); //turn off UI
             //Debug.Log("CameraAndUIController: ToggleHideUI(): " + ui.activeSelf);
         }
     }
