@@ -34,9 +34,9 @@ public class PlanetInfo : MonoBehaviour
     }
     #endregion PlanetInfoInstance
 
-
-    public PlanetInformation PlanetInformationOf;
     //source: NASA.gov https://nssdc.gsfc.nasa.gov/planetary/factsheet/planetfact_notes.html
+    #region Legend
+    public PlanetInformation PlanetInformationOf;
 
     /*
      * Mass (10^24kg) - This is the mass of the planet in septillion (1 followed by 24 zeros) kilograms.
@@ -147,10 +147,12 @@ public class PlanetInfo : MonoBehaviour
      * Mars and the Moon have localized regional magnetic fields but no global field.
      */
     public bool globalMagneticField { get; private set; }
+    #endregion Legend
 
-
-
-
+    /*
+     * assign PlanetInfo
+     */
+    #region PlanetInfo
     private void Awake()
     {
         //Debug.Log("PlanetInfo: Awake()");
@@ -433,4 +435,5 @@ public class PlanetInfo : MonoBehaviour
                 break;
         }
     }
+    #endregion PlanetInfo
 }

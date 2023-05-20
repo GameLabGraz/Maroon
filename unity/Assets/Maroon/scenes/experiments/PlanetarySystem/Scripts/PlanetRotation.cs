@@ -4,14 +4,27 @@ public class PlanetRotation : MonoBehaviour
 {
     public PlanetInfo planetInfo;
 
+    void Start()
+    {
+        SetObliquityToOrbit();
+    }
+
+
+    void Update()
+    {
+        RotatePlanets();
+    }
+
 
     /*
      * rotate planets obliquityToOrbit = rotation angle
+     * calles after resetting Animation
      * z axis
      */
-    void Start()
+    public void SetObliquityToOrbit()
     {
-        transform.Rotate(new Vector3(0, 0, planetInfo.obliquityToOrbit)); 
+        Debug.Log("PlanetRotation: SetObliquityToOrbit(): called");
+        transform.Rotate(new Vector3(0, 0, planetInfo.obliquityToOrbit));
     }
 
 
@@ -19,7 +32,7 @@ public class PlanetRotation : MonoBehaviour
      * rotate planet in its rotation period
      * y axis
      */
-    void Update()
+    void RotatePlanets()
     {
         transform.Rotate(new Vector3(0, (-planetInfo.rotationPeriod), 0) * Time.deltaTime);
     }

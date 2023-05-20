@@ -65,6 +65,8 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
     #region ResetAnimation
     private readonly List<Vector3> initialPlanetPositions = new List<Vector3>();
+    private readonly List<Quaternion> initialPlanetRotations = new List<Quaternion>();
+
     public float resetAnimationDelay = 0.3f;
     public float gravitationalConstantG = 9.81f;
     public float timeSpeed = 1f;
@@ -361,6 +363,10 @@ public class PlanetaryController : MonoBehaviour, IResetObject
                         planetRigidbody.mass = planetInfo.mass / reduceScaleFactor;
                     }
                     initialPlanetPositions.Add(planet.transform.position);
+                    
+                    //PlanetRotation planetRotation = planet.GetComponent<PlanetRotation>();
+                    //planetRotation.SetObliquityToOrbit();
+                    //initialPlanetRotations.Add(planet.transform.rotation);
                 }
                 else
                 {
@@ -372,7 +378,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
 
     /*
-     *
+     * Newton's law of universal gravitation
      */
     void Gravity()
     {
@@ -399,7 +405,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
 
     /*
-     *
+     * Planets InitialVelocity
      */
     public void InitialVelocity()
     {
@@ -1120,13 +1126,14 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         sliderG.value = gravitationalConstantG;
         sliderTimeSpeed.value = timeSpeed;
         ClearTrajectories();
-
+        
         //reset planets to initialPlanetPosition
-        for (int i = 0; i < planets.Length; i++)
+        for (int planet = 0; planet < planets.Length; planet++)
         {
-            planets[i].transform.position = initialPlanetPositions[i];
+            planets[planet].transform.position = initialPlanetPositions[planet];
+        
             //set is kinematic to stop all physics
-            Rigidbody rb = planets[i].GetComponent<Rigidbody>();
+            Rigidbody rb = planets[planet].GetComponent<Rigidbody>();
             rb.isKinematic = true;
         }
 
@@ -1144,11 +1151,19 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
         //reapply initial velocities and start planet movement after delay
         //start from index 1; check for sun is kinematic
-        for (int i = 0; i < planets.Length; i++) 
+        for (int planet = 0; planet < planets.Length; planet++) 
         {
-            Rigidbody rb = planets[i].GetComponent<Rigidbody>();
+            Rigidbody rb = planets[planet].GetComponent<Rigidbody>();
             rb.isKinematic = false;
-            Debug.Log("PlanetaryController: RestartAnimationDelay(): planets[" + i+"] = isKinematic: " + rb.isKinematic);
+            //Debug.Log("PlanetaryController: RestartAnimationDelay(): planets[" + i+"] = isKinematic: " + rb.isKinematic);
+
+            //planets[planet].transform.rotation = initialPlanetRotations[planet];
+            //PlanetRotation planetRotation = planets[planet].GetComponent<PlanetRotation>();
+            //if (planetRotation != null)
+            //{
+            //    // Reset the rotation to obliquity after reset
+            //    planetRotation.SetObliquityToOrbit();
+            //}
         }
         UIToggleSunKinematic(true);
 
