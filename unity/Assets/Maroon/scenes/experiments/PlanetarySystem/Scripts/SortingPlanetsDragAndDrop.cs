@@ -133,16 +133,34 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour, IResetObject
 
     /*
      * CreatePlanetInfoMessage from PlanetInfo for whole PlanetInfoUI
+     * pluto is not a planet anymore
      */
     void CreatePlanetInfoMessage()
     {
         string planetInfoMessage = "";
         PlanetInfo planetInfo = GetComponent<PlanetInfo>();
+        string messageTMP;
 
+        //pluto is not a planet
+        if (planetInfo.PlanetInformationOf == PlanetInformation.pluto_10)
+        {
+            messageTMP = GetMessagByKey("PlanetInfo0");
+            planetInfoMessage += " " + messageTMP + " " + GetMessagByKey(planetInfo.PlanetInformationOf.ToString()) + "\n\n";
 
-        string messageTMP = GetMessagByKey("PlanetInfo0");
-        Debug.Log("SortingPlanetsDragAndDrop: CreatePlanetInfoMessage(): " + messageTMP);
-        //planetInfoMessage += " " + messageTMP + " " + planetInfo.PlanetInformationOf + "\n\n";
+            messageTMP = GetMessagByKey("PlutoNotAPlanet");
+            planetInfoMessage += " " + messageTMP + " " + "\n\n";
+
+            messageTMP = GetMessagByKey("PlanetInfo6");
+            planetInfoMessage += " " + messageTMP + " " + planetInfo.rotationPeriod + "\n\n";
+            messageTMP = GetMessagByKey("PlanetInfo15");
+            planetInfoMessage += " " + messageTMP + " " + planetInfo.obliquityToOrbit + "\n\n";
+
+            createdPlanetInfoMessage = planetInfoMessage;
+            return;
+        }
+
+        messageTMP = GetMessagByKey("PlanetInfo0");
+        //Debug.Log("SortingPlanetsDragAndDrop: CreatePlanetInfoMessage(): " + messageTMP);
         planetInfoMessage += " " + messageTMP + " " + GetMessagByKey(planetInfo.PlanetInformationOf.ToString()) + "\n\n";
         messageTMP = GetMessagByKey("PlanetInfo1");
         planetInfoMessage += " " + messageTMP + " " + planetInfo.mass + "\n\n";

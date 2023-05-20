@@ -161,7 +161,7 @@ public class PlanetInfo : MonoBehaviour
             //sun source: NASA.gov https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html
             case PlanetInformation.sun_0:
                 mass                            = 1988500f; 
-                diameter                        = (695700 * 2) ; //volumetric mean radius //prescale
+                diameter                        = (695700 * 2) ; //volumetric mean radius
                 density                         = 1408f;
                 gravity                         = 274f;
                 escapeVelocity                  = 617.6f;

@@ -1001,6 +1001,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         SortingMinigame.SetActive(true);
         SortingGameCamera.SetActive(false);
         StartCoroutine(LerpCameraStartSortingGame());
+        ResetSortingGame();
     }
 
 
