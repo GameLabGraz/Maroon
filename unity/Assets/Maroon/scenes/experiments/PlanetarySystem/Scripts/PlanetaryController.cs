@@ -901,7 +901,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         //Moon
         //Debug.Log("Moon checkbox: " + !isOn);
         planets[9].GetComponent<Renderer>().enabled = !isOn;
-        ToggleTrajectory(9, isOn);
+        ToggleTrajectory(9, !isOn);
     }
     #endregion hide planets
 
