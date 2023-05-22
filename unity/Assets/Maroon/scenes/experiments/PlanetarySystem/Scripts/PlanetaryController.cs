@@ -343,6 +343,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
      * scales down PlanetInfo with various ScaleFactors to fit the visulization
      */
     private const float MASS_SCALE_FACTOR = 1000; ///1000///
+    private const float VELOCITY_SCALE_FACTOR = 1000; ///1000///
     private const float DIAMETER_SCALE_FACTOR = 10000; ///10000///
     private const float DIAMETER_ADDITIONAL_SUN_SCALE_FACTOR = 5; ///10/// additional scale factor ti shrink the sun
     private const float DISTANCE_SCALE_FACTOR = 4f; ///4///
@@ -418,23 +419,31 @@ public class PlanetaryController : MonoBehaviour, IResetObject
                 planet.transform.localScale = new Vector3(scaleSize, scaleSize, scaleSize);
             }
         }
-        // scaledDistance calculated from the PlanetInfo distanceFromSun + sunRadius applied after scaling the planets
+        // scaled distances from the PlanetInfo  + sunRadius applied after scaling the planets
+        // distanceFromSun = semiMajorAxis
+        // perihelion = distanceFromSunAtPerihelion where the velocity is maximum
         foreach (var planet in planets)
         {
             PlanetInfo planetInfo = planet.GetComponent<PlanetInfo>();
             if (planetInfo != null)
             {
-                float distanceFromSun = sunRadius + (planetInfo.distanceFromSun / DISTANCE_SCALE_FACTOR);
+                float semiMajorAxis = sunRadius + (planetInfo.distanceFromSun / DISTANCE_SCALE_FACTOR);
+                //float distanceFromSunAtPerihelion = sunRadius + planetInfo.perihelion / DISTANCE_SCALE_FACTOR;
 
                 // additional scaling for Gas Giants 5-8
                 if (planetInfo.PlanetInformationOf >= PlanetInformation.jupiter_5 && planetInfo.PlanetInformationOf <= PlanetInformation.neptune_8)
                 {
-                    distanceFromSun = sunRadius + (planetInfo.distanceFromSun / (DISTANCE_SCALE_FACTOR * GAS_GIANTS_SCALE_FACTOR));
+                    semiMajorAxis = sunRadius + (planetInfo.distanceFromSun / (DISTANCE_SCALE_FACTOR * GAS_GIANTS_SCALE_FACTOR));
+                    //distanceFromSunAtPerihelion = sunRadius + planetInfo.perihelion / (DISTANCE_SCALE_FACTOR * GAS_GIANTS_SCALE_FACTOR);
                 }
 
-                Vector3 directionFromSun = Vector3.right;
-                planet.transform.position = sun.transform.position + directionFromSun * distanceFromSun;
+                // scaled (orbital/initial velocity from Planet Info
+                // Rigidbody planetRigidbody = planet.GetComponent<Rigidbody>();
+                // Vector3 initialVelocity = new Vector3(0, 0, planetInfo.orbitalVelocity / VELOCITY_SCALE_FACTOR);
+                // planetRigidbody.velocity = initialVelocity;
 
+                Vector3 directionFromSun = Vector3.right;
+                planet.transform.position = sun.transform.position + directionFromSun * semiMajorAxis;
 
                 //Debug.Log("PlanetaryController: InitializeAndScalePlanets(): planet.transform.localScale " + planet.name + " is " + planet.transform.position);
                 initialPlanetPositions.Add(planet.transform.position);
@@ -471,7 +480,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
 
     /*
-     * Planets InitialVelocity
+     * planets InitialVelocity for circular orbits
      */
     public void InitialVelocity()
     {
@@ -517,8 +526,8 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
 
     /*
-     * unused: semi mayor axis missing
-     * 
+     * Vis - viva equation
+     * InitialVelocity for elliptical orbits
      */
     void InitialVelocityEliptical()
     {
@@ -536,7 +545,9 @@ public class PlanetaryController : MonoBehaviour, IResetObject
                     float a_axis = a.GetComponent<PlanetData>().semiMajorAxis;
                     a.transform.LookAt(b.transform);
 
+                    ///Vis - viva equation////
                     // eliptic orbit instant velocity: v0 = G * m2 * (2 / r - 1 / a)
+                    // gravitational constant * mass of sun * (2 / distance from sun(perihelion) -1 / semo-major axis
                     a.GetComponent<Rigidbody>().velocity += a.transform.right * (G * 10 * m2 * (2 / r - 1 / a_axis));
                     a.GetComponent<Rigidbody>().velocity += a.transform.right * (G * 10 * m2 * (2 / r - 1 / a_axis));
                 }
