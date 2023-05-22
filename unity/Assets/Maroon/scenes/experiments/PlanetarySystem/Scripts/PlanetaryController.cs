@@ -387,7 +387,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
                     Vector3 initialRotationAngle = new Vector3(0, 0, planetInfo.obliquityToOrbit);
                     planet.transform.localEulerAngles = initialRotationAngle;
                     initialPlanetRotations.Add(planet.transform.localEulerAngles);
-                    Debug.Log("PlanetaryController: InitializeAndScalePlanets(): Setting initial rotation for " + planet.name + " to " + initialRotationAngle);
+                    //Debug.Log("PlanetaryController: InitializeAndScalePlanets(): Setting initial rotation for " + planet.name + " to " + initialRotationAngle);
 
                     // scaledSize calculated from the PlanetInfo diameter
                     if (planetInfo.PlanetInformationOf == PlanetInformation.sun_0)
