@@ -178,6 +178,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         //Debug.Log("PlanetaryController: Update(): is called ");
         HandleKeyInput();
         DrawTrajectory();
+        AnimationCameraMouseWheelFOV();
     }
 
 
@@ -551,6 +552,25 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     void SetSkybox()
     {
         RenderSettings.skybox = skyboxStars;
+    }
+
+
+    /*
+     * change AnimationCamera FOV with mouse scroll wheel
+     */
+    void AnimationCameraMouseWheelFOV()
+    {
+        float scrollData = Input.GetAxis("Mouse ScrollWheel");
+        float mouseScrollSensitivity = 40;
+
+        if (scrollData != 0)
+        {
+            AnimationCamera.fieldOfView -= scrollData * mouseScrollSensitivity; // Adjust this value as per your needs
+            AnimationCamera.fieldOfView = Mathf.Clamp(AnimationCamera.fieldOfView, 10, 180);
+
+            // update sliderAnimationCameraFov
+            sliderAnimationCameraFov.value = AnimationCamera.fieldOfView;
+        }
     }
 
 
