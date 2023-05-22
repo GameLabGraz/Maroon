@@ -126,6 +126,9 @@ public class FlyCamera : MonoBehaviour
         {
             flyCamera.transform.LookAt(flyCameraFocus.transform);
             Vector3 eulerAngles = flyCamera.transform.localEulerAngles;
+            eulerAngles.x = 90;
+            eulerAngles.y =  0;
+            flyCamera.transform.rotation = Quaternion.Euler(eulerAngles);
             xRotation = eulerAngles.x;
             yRotation = eulerAngles.y;
         }
