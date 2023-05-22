@@ -11,7 +11,6 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     //public GameObject sun;
     public GameObject saturn_ring_1;
     public GameObject saturn_ring_2;
-    public ParticleSystem uranusParticleSystem;
     #endregion HidePlanets
 
     #region Cameras
@@ -343,13 +342,13 @@ public class PlanetaryController : MonoBehaviour, IResetObject
      * assign the original NASA Planetdata
      * scales down PlanetInfo with various ScaleFactors to fit the visulization
      */
-    private const int MASS_SCALE_FACTOR = 1000; ///1000///
-    private const int DIAMETER_SCALE_FACTOR = 10000; ///10000///
-    private const int DIAMETER_ADDITIONAL_SUN_SCALE_FACTOR = 10; ///10/// additional scale factor ti shrink the sun
+    private const float MASS_SCALE_FACTOR = 1000; ///1000///
+    private const float DIAMETER_SCALE_FACTOR = 10000; ///10000///
+    private const float DIAMETER_ADDITIONAL_SUN_SCALE_FACTOR = 5; ///10/// additional scale factor ti shrink the sun
     private const float DISTANCE_SCALE_FACTOR = 4f; ///4///
     private const float GAS_GIANTS_SCALE_FACTOR = 2.5f; ///2.5/// additional scale factor for the Gas Giants 5-8 to bring them closer for vizualisation
     private const float SUN_RADIUS_ADDITIONAL_OFFSET = 3f; ///3/// additional offset multiplying the suns radius to the distances to get more visual destinction
-                                                               /// and playability when trying out the G sliders
+                                                           /// and playability when trying out the G sliders
     void InitializeAndScalePlanets()
     {
         //Debug.Log("PlanetaryController: InitializeAndScalePlanets():");
@@ -359,80 +358,86 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         //planets = GameObject.FindGameObjectsWithTag("Planet");
         if (planets.Length <= 0)
         {
-            //Should not happen
             Debug.Log("PlanetaryController: InitializeAndScalePlanets(): No planets found:  " + planets.Length);
         }
-        else
+
+        GameObject sun = null;
+        float sunRadius = 0;
+
+        //apply data from PlanetInfo
+        foreach (var planet in planets)
         {
-            GameObject sun = null;
-            float scaleSize;
-            float sunRadius = 0;
-
-            //apply data from PlanetInfo
-            foreach (var planet in planets)
+            PlanetInfo planetInfo = planet.GetComponent<PlanetInfo>();
+            if (planetInfo == null)
             {
-                PlanetInfo planetInfo = planet.GetComponent<PlanetInfo>();
-                if (planetInfo == null)
-                {
-                    Debug.Log("PlanetaryController: InitializeAndScalePlanets(): Missing PlanetInfo for: " + planet.name);
-                }
-
-                Rigidbody planetRigidbody = planet.GetComponent<Rigidbody>();
-                if (planetRigidbody != null)
-                {
-                    // assign the mass from PlanetInfo to Rigidbody, scaled down by 1000.
-                    planetRigidbody.mass = planetInfo.mass / MASS_SCALE_FACTOR;
-
-                    // store planets obliquityToOrbit at z axis
-                    Vector3 initialRotationAngle = new Vector3(0, 0, planetInfo.obliquityToOrbit);
-                    planet.transform.localEulerAngles = initialRotationAngle;
-                    initialPlanetRotations.Add(planet.transform.localEulerAngles);
-                    //Debug.Log("PlanetaryController: InitializeAndScalePlanets(): Setting initial rotation for " + planet.name + " to " + initialRotationAngle);
-
-                    // scaledSize calculated from the PlanetInfo diameter
-                    if (planetInfo.PlanetInformationOf == PlanetInformation.sun_0)
-                    {
-                        sun = planet;
-                        sun.transform.position = Vector3.zero;
-                        scaleSize = planetInfo.diameter / (DIAMETER_SCALE_FACTOR * DIAMETER_ADDITIONAL_SUN_SCALE_FACTOR);
-                        sunRadius = (scaleSize / 2) * SUN_RADIUS_ADDITIONAL_OFFSET;
-                        //Debug.Log("PlanetaryController: InitializeAndScalePlanets(): sun radius: " + sunRadius);
-                        planet.transform.localScale = new Vector3(scaleSize, scaleSize, scaleSize);
-                    }
-                    else
-                    {
-                        scaleSize = planetInfo.diameter / DIAMETER_SCALE_FACTOR;
-
-                        // additional scaling for Gas Giants 5-8
-                        if (planetInfo.PlanetInformationOf >= PlanetInformation.jupiter_5 && planetInfo.PlanetInformationOf <= PlanetInformation.neptune_8)
-                        {
-                            scaleSize /= GAS_GIANTS_SCALE_FACTOR;
-                        }
-
-                        planet.transform.localScale = new Vector3(scaleSize, scaleSize, scaleSize);
-                    }
-                }
+                Debug.Log("PlanetaryController: InitializeAndScalePlanets(): Missing PlanetInfo for: " + planet.name);
             }
-            // scaledDistance calculated from the PlanetInfo distanceFromSun + sunRadius applied after scaling the planets
-            foreach (var planet in planets)
+
+            Rigidbody planetRigidbody = planet.GetComponent<Rigidbody>();
+            if (planetRigidbody == null)
             {
-                PlanetInfo planetInfo = planet.GetComponent<PlanetInfo>();
-                if (planetInfo != null)
+                Debug.Log("PlanetaryController: InitializeAndScalePlanets(): Missing Rigidbodies");
+            }
+
+            // assign the mass from PlanetInfo to Rigidbody, scaled down by 1000.
+            planetRigidbody.mass = planetInfo.mass / MASS_SCALE_FACTOR;
+            //Debug.Log("PlanetaryController: InitializeAndScalePlanets(): scaled planetRigidbody.mass for " + planetInfo.PlanetInformationOf + "is " + planetRigidbody.mass);
+
+
+            // store planets obliquityToOrbit at z axis
+            Vector3 initialRotationAngle = new Vector3(0, 0, planetInfo.obliquityToOrbit);
+            planet.transform.localEulerAngles = initialRotationAngle;
+            initialPlanetRotations.Add(planet.transform.localEulerAngles);
+            float scaleSize;
+            //Debug.Log("PlanetaryController: InitializeAndScalePlanets(): Setting initial rotation for " + planet.name + " to " + initialRotationAngle);
+
+
+            // scaledSize calculated from the PlanetInfo diameter
+            if (planetInfo.PlanetInformationOf == PlanetInformation.sun_0)
+            {
+                sun = planet;
+                sun.transform.position = Vector3.zero;
+                scaleSize = planetInfo.diameter / (DIAMETER_SCALE_FACTOR * DIAMETER_ADDITIONAL_SUN_SCALE_FACTOR);
+                sunRadius = (scaleSize / 2) * SUN_RADIUS_ADDITIONAL_OFFSET;
+                //Debug.Log("PlanetaryController: InitializeAndScalePlanets(): sun radius: " + sunRadius);
+
+                planet.transform.localScale = new Vector3(scaleSize, scaleSize, scaleSize);
+            }
+            else if (planetInfo.PlanetInformationOf >= PlanetInformation.jupiter_5 && planetInfo.PlanetInformationOf <= PlanetInformation.neptune_8)
+            {
+                // additional scaling for Gas Giants 5-8
+                scaleSize = planetInfo.diameter / (DIAMETER_SCALE_FACTOR * GAS_GIANTS_SCALE_FACTOR);
+
+                planet.transform.localScale = new Vector3(scaleSize, scaleSize, scaleSize);
+            }
+            else
+            {
+                //scaling for 1-4
+                scaleSize = planetInfo.diameter / DIAMETER_SCALE_FACTOR;
+
+                planet.transform.localScale = new Vector3(scaleSize, scaleSize, scaleSize);
+            }
+        }
+        // scaledDistance calculated from the PlanetInfo distanceFromSun + sunRadius applied after scaling the planets
+        foreach (var planet in planets)
+        {
+            PlanetInfo planetInfo = planet.GetComponent<PlanetInfo>();
+            if (planetInfo != null)
+            {
+                float distanceFromSun = sunRadius + (planetInfo.distanceFromSun / DISTANCE_SCALE_FACTOR);
+
+                // additional scaling for Gas Giants 5-8
+                if (planetInfo.PlanetInformationOf >= PlanetInformation.jupiter_5 && planetInfo.PlanetInformationOf <= PlanetInformation.neptune_8)
                 {
-                    float distanceFromSun = sunRadius + (planetInfo.distanceFromSun / DISTANCE_SCALE_FACTOR);
-
-                    // additional scaling for Gas Giants 5-8
-                    if (planetInfo.PlanetInformationOf >= PlanetInformation.jupiter_5 && planetInfo.PlanetInformationOf <= PlanetInformation.neptune_8)
-                    {
-                        distanceFromSun /= GAS_GIANTS_SCALE_FACTOR;
-                    }
-
-                    Vector3 directionFromSun = Vector3.right;
-                    planet.transform.position = sun.transform.position + directionFromSun * distanceFromSun;
-
-                    initialPlanetPositions.Add(planet.transform.position);
-                    //Debug.Log("PlanetaryController: InitializeAndScalePlanets(): Setting initial position for " + planet.name + " at " + planet.transform.position);
+                    distanceFromSun = sunRadius + (planetInfo.distanceFromSun / (DISTANCE_SCALE_FACTOR * GAS_GIANTS_SCALE_FACTOR));
                 }
+
+                Vector3 directionFromSun = Vector3.right;
+                planet.transform.position = sun.transform.position + directionFromSun * distanceFromSun;
+
+
+                //Debug.Log("PlanetaryController: InitializeAndScalePlanets(): planet.transform.localScale " + planet.name + " is " + planet.transform.position);
+                initialPlanetPositions.Add(planet.transform.position);
             }
         }
     }
@@ -962,7 +967,6 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         //Uranus
         //Debug.Log("Uranus checkbox: " + !isOn);
         planets[7].GetComponent<Renderer>().enabled = !isOn;
-        uranusParticleSystem.gameObject.GetComponent<Renderer>().enabled = !isOn;
         ToggleTrajectory(7, !isOn);
     }
     public void UIToggle8(bool isOn)
