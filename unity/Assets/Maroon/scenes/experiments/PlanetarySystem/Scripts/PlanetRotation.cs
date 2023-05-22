@@ -23,7 +23,7 @@ public class PlanetRotation : MonoBehaviour
      */
     public void SetObliquityToOrbit()
     {
-        Debug.Log("PlanetRotation: SetObliquityToOrbit(): called");
+        //Debug.Log("PlanetRotation: SetObliquityToOrbit(): called");
         transform.Rotate(new Vector3(0, 0, planetInfo.obliquityToOrbit));
     }
 

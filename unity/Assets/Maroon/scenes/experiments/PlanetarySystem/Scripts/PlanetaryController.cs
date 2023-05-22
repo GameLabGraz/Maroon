@@ -31,7 +31,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     #endregion Cameras
 
     #region StartScreenScenes
-                                                              //want it:
+    //want it:
     [SerializeField] private GameObject FormulaUI;              //off
     [SerializeField] private GameObject Environment;            //off
     [SerializeField] private GameObject Planets;                //off//on
@@ -45,13 +45,12 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     #region SolarSystem
     public GameObject[] planets;
     private float G;
-    private int reduceScaleFactor = 1000;
     //[SerializeField] private bool isSunKinematic = true;
 
     [System.Serializable]
     public class PlanetData : MonoBehaviour
     {
-       public float semiMajorAxis;
+        public float semiMajorAxis;
         [SerializeField] private float initialVelocity;
     }
     #endregion SolarSystem
@@ -65,10 +64,10 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
     #region ResetAnimation
     private readonly List<Vector3> initialPlanetPositions = new List<Vector3>();
-    private readonly List<Quaternion> initialPlanetRotations = new List<Quaternion>();
+    private List<Vector3> initialPlanetRotations = new List<Vector3>();
 
     public float resetAnimationDelay = 0.3f;
-    public float gravitationalConstantG = 9.81f;
+    public float gravitationalConstantG = 6.674f;
     public float timeSpeed = 1f;
     #endregion ResetAnimation
 
@@ -142,7 +141,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     {
         //Debug.Log("PlanetaryController: Awake(): ");
         DisplayMessageByKey("EnterPlanetarySystem");
-        
+
         SortingMinigame.SetActive(false);
         SortingGamePlanetInfoUI.SetActive(false);
         planets[0].SetActive(true);
@@ -335,16 +334,27 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     /*
      * SolarSystems handles Newtons Gravity, Initial Velocity and the planets
      * G is multiplied by 10 for scaling
+     *  assign the original NASA Planetdata
+     *  scales down PlanetInfo with various ScaleFactors to fit the visulization
     */
     #region SolarSystem
     /*
-     * //find planets with tag Planet and initializes them
-     * set the planets rigidbody.mass to the planetInfo scaled down mass
-     * assign the scaled PlanetInfo data
+     * assign the original NASA Planetdata
+     * scales down PlanetInfo with various ScaleFactors to fit the visulization
      */
+    private const int MASS_SCALE_FACTOR = 1000; ///1000///
+    private const int DIAMETER_SCALE_FACTOR = 10000; ///10000///
+    private const int DIAMETER_ADDITIONAL_SUN_SCALE_FACTOR = 10; ///10/// additional scale factor ti shrink the sun
+    private const float DISTANCE_SCALE_FACTOR = 4f; ///4///
+    private const float GAS_GIANTS_SCALE_FACTOR = 2.5f; ///2.5/// additional scale factor for the Gas Giants 5-8 to bring them closer for vizualisation
+    private const float SUN_RADIUS_ADDITIONAL_OFFSET = 3f; ///3/// additional offset multiplying the suns radius to the distances to get more visual destinction
+                                                               /// and playability when trying out the G sliders
     void InitializeAndScalePlanets()
     {
         //Debug.Log("PlanetaryController: InitializeAndScalePlanets():");
+
+        initialPlanetPositions.Clear();
+        initialPlanetRotations.Clear();
         //planets = GameObject.FindGameObjectsWithTag("Planet");
         if (planets.Length <= 0)
         {
@@ -353,27 +363,74 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         }
         else
         {
-            //set mass
+            GameObject sun = null;
+            float scaleSize;
+            float sunRadius = 0;
+
+            //apply data from PlanetInfo
+            foreach (var planet in planets)
+            {
+                PlanetInfo planetInfo = planet.GetComponent<PlanetInfo>();
+                if (planetInfo == null)
+                {
+                    Debug.Log("PlanetaryController: InitializeAndScalePlanets(): Missing PlanetInfo for: " + planet.name);
+                }
+
+                Rigidbody planetRigidbody = planet.GetComponent<Rigidbody>();
+                if (planetRigidbody != null)
+                {
+                    // assign the mass from PlanetInfo to Rigidbody, scaled down by 1000.
+                    planetRigidbody.mass = planetInfo.mass / MASS_SCALE_FACTOR;
+
+                    // store planets obliquityToOrbit at z axis
+                    Vector3 initialRotationAngle = new Vector3(0, 0, planetInfo.obliquityToOrbit);
+                    planet.transform.localEulerAngles = initialRotationAngle;
+                    initialPlanetRotations.Add(planet.transform.localEulerAngles);
+                    Debug.Log("PlanetaryController: InitializeAndScalePlanets(): Setting initial rotation for " + planet.name + " to " + initialRotationAngle);
+
+                    // scaledSize calculated from the PlanetInfo diameter
+                    if (planetInfo.PlanetInformationOf == PlanetInformation.sun_0)
+                    {
+                        sun = planet;
+                        sun.transform.position = Vector3.zero;
+                        scaleSize = planetInfo.diameter / (DIAMETER_SCALE_FACTOR * DIAMETER_ADDITIONAL_SUN_SCALE_FACTOR);
+                        sunRadius = (scaleSize / 2) * SUN_RADIUS_ADDITIONAL_OFFSET;
+                        //Debug.Log("PlanetaryController: InitializeAndScalePlanets(): sun radius: " + sunRadius);
+                        planet.transform.localScale = new Vector3(scaleSize, scaleSize, scaleSize);
+                    }
+                    else
+                    {
+                        scaleSize = planetInfo.diameter / DIAMETER_SCALE_FACTOR;
+
+                        // additional scaling for Gas Giants 5-8
+                        if (planetInfo.PlanetInformationOf >= PlanetInformation.jupiter_5 && planetInfo.PlanetInformationOf <= PlanetInformation.neptune_8)
+                        {
+                            scaleSize /= GAS_GIANTS_SCALE_FACTOR;
+                        }
+
+                        planet.transform.localScale = new Vector3(scaleSize, scaleSize, scaleSize);
+                    }
+                }
+            }
+            // scaledDistance calculated from the PlanetInfo distanceFromSun + sunRadius applied after scaling the planets
             foreach (var planet in planets)
             {
                 PlanetInfo planetInfo = planet.GetComponent<PlanetInfo>();
                 if (planetInfo != null)
                 {
-                    Rigidbody planetRigidbody = planet.GetComponent<Rigidbody>();
-                    if (planetRigidbody != null)
+                    float distanceFromSun = sunRadius + (planetInfo.distanceFromSun / DISTANCE_SCALE_FACTOR);
+
+                    // additional scaling for Gas Giants 5-8
+                    if (planetInfo.PlanetInformationOf >= PlanetInformation.jupiter_5 && planetInfo.PlanetInformationOf <= PlanetInformation.neptune_8)
                     {
-                        // Assign the mass from PlanetInfo to Rigidbody, scaled down by 1000.
-                        planetRigidbody.mass = planetInfo.mass / reduceScaleFactor;
+                        distanceFromSun /= GAS_GIANTS_SCALE_FACTOR;
                     }
+
+                    Vector3 directionFromSun = Vector3.right;
+                    planet.transform.position = sun.transform.position + directionFromSun * distanceFromSun;
+
                     initialPlanetPositions.Add(planet.transform.position);
-                    
-                    //PlanetRotation planetRotation = planet.GetComponent<PlanetRotation>();
-                    //planetRotation.SetObliquityToOrbit();
-                    //initialPlanetRotations.Add(planet.transform.rotation);
-                }
-                else
-                {
-                    Debug.Log("PlanetaryController: InitializeAndScalePlanets(): Missing PlanetInfo for: " + planet.name);
+                    //Debug.Log("PlanetaryController: InitializeAndScalePlanets(): Setting initial position for " + planet.name + " at " + planet.transform.position);
                 }
             }
         }
@@ -400,7 +457,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
                     // Newton's law of universal gravitation
                     // F = G * ((m1 * m2) / (r^2))
                     a.GetComponent<Rigidbody>().AddForce((b.transform.position - a.transform.position).normalized *
-                        (G*10 * (m1 * m2) / (r * r)));
+                        (G * 10 * (m1 * m2) / (r * r)));
                 }
             }
         }
@@ -595,9 +652,9 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     }
 
 
-   /*
-    * clear trajectory path by resetting previousPosition queue and resetting LineRenderer
-    */
+    /*
+     * clear trajectory path by resetting previousPosition queue and resetting LineRenderer
+     */
     public void ClearTrajectories()
     {
         for (int i = 0; i < previousPositionsList.Count; i++)
@@ -678,9 +735,9 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     }
 
 
-   /*
-    * toggles the rotation of the animation planets button press
-    */
+    /*
+     * toggles the rotation of the animation planets button press
+     */
     public void UIToggleAOrientation(bool isOn)
     {
         //Debug.Log("PlanetController(): UIToggleAOrientation(): planet.Length = " + planet.Length);
@@ -753,9 +810,9 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     }
 
 
-   /*
-    * toggles the sun's solarflares in the sorting game after button press
-    */
+    /*
+     * toggles the sun's solarflares in the sorting game after button press
+     */
     public void UIToggleSolarFlares(bool isOn)
     {
         //Debug.Log("PlanetController(): UIToggleSolarFlares = " + isOn);
@@ -1028,7 +1085,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         HelpiDialogueUI.SetActive(false);
         SortingGamePlanetInfoUI.SetActive(false);
         FormulaUI.SetActive(false);
-        
+
         StartCoroutine(LerpCameraLeave());
     }
 
@@ -1041,7 +1098,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         yield return StartCoroutine(LerpCameraToInitialPosition(MainCamera, 0.5f));
 
         UIToggleSunLight(false);
-        toggleSunLight.isOn = false; 
+        toggleSunLight.isOn = false;
         SortingMinigame.SetActive(false);
     }
 
@@ -1074,10 +1131,10 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
         Environment.SetActive(false);
         Interactibles.SetActive(false);
-        
+
         Planets.SetActive(true);
         flyCameraScript.enabled = true;
-        
+
         MainCamera.SetActive(false);
         SolarSystemCamera.SetActive(true);
 
@@ -1123,19 +1180,20 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
 
     /*
-     * ResetAnimation on reet and on StartAnimation
+     * ResetAnimation on reset and on StartAnimation
      */
     void ResetAnimation()
     {
         sliderG.value = gravitationalConstantG;
         sliderTimeSpeed.value = timeSpeed;
         ClearTrajectories();
-        
+
         //reset planets to initialPlanetPosition
         for (int planet = 0; planet < planets.Length; planet++)
         {
             planets[planet].transform.position = initialPlanetPositions[planet];
-        
+            planets[planet].transform.localEulerAngles = initialPlanetRotations[planet];
+
             //set is kinematic to stop all physics
             Rigidbody rb = planets[planet].GetComponent<Rigidbody>();
             rb.isKinematic = true;
@@ -1154,28 +1212,19 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         yield return new WaitForSeconds(resetAnimationDelay);
 
         //reapply initial velocities and start planet movement after delay
-        //start from index 1; check for sun is kinematic
-        for (int planet = 0; planet < planets.Length; planet++) 
+        for (int planet = 0; planet < planets.Length; planet++)
         {
             Rigidbody rb = planets[planet].GetComponent<Rigidbody>();
             rb.isKinematic = false;
-            //Debug.Log("PlanetaryController: RestartAnimationDelay(): planets[" + i+"] = isKinematic: " + rb.isKinematic);
-
-            //planets[planet].transform.rotation = initialPlanetRotations[planet];
-            //PlanetRotation planetRotation = planets[planet].GetComponent<PlanetRotation>();
-            //if (planetRotation != null)
-            //{
-            //    // Reset the rotation to obliquity after reset
-            //    planetRotation.SetObliquityToOrbit();
-            //}
         }
+
         UIToggleSunKinematic(true);
 
         InitialVelocity();
         //InitialVelocityEliptical();
     }
 
-    
+
     /*
      * reset
      */
