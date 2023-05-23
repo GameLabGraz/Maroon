@@ -11,6 +11,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     //public GameObject sun;
     public GameObject saturn_ring_1;
     public GameObject saturn_ring_2;
+    public Light sunHalo;
     #endregion HidePlanets
 
     #region Cameras
@@ -342,21 +343,21 @@ public class PlanetaryController : MonoBehaviour, IResetObject
      * assign the original NASA Planetdata
      * scales down PlanetInfo with various ScaleFactors to fit the visulization
      */
-    private const float MASS_SCALE_FACTOR = 1000; ///1000///
-    private const float VELOCITY_SCALE_FACTOR = 1000; ///1000///
-    private const float DIAMETER_SCALE_FACTOR = 10000; ///10000///
-    private const float DIAMETER_ADDITIONAL_SUN_SCALE_FACTOR = 5; ///10/// additional scale factor ti shrink the sun
-    private const float DISTANCE_SCALE_FACTOR = 4f; ///4///
-    private const float GAS_GIANTS_SCALE_FACTOR = 2.5f; ///2.5/// additional scale factor for the Gas Giants 5-8 to bring them closer for vizualisation
-    private const float SUN_RADIUS_ADDITIONAL_OFFSET = 3f; ///3/// additional offset multiplying the suns radius to the distances to get more visual destinction
-                                                           /// and playability when trying out the G sliders
+    private const float MASS_SCALE_FACTOR = 1000;                   /// 1000///
+    private const float VELOCITY_SCALE_FACTOR = 1000;               /// 1000///
+    private const float DIAMETER_SCALE_FACTOR = 10000;              ///10000///
+    private const float DIAMETER_ADDITIONAL_SUN_SCALE_FACTOR = 5;   ///   10/// additional scale factor ti shrink the sun
+    private const float DISTANCE_SCALE_FACTOR = 4f;                 ///    4///
+    private const float GAS_GIANTS_SCALE_FACTOR = 2.5f;             ///  2.5/// additional scale factor for the Gas Giants 5-8 to bring them closer for vizualisation
+    private const float SUN_RADIUS_ADDITIONAL_OFFSET = 3f;          ///    3/// additional offset multiplying the suns radius to the distances to get more visual destinction
+                                                                            /// and playability when trying out the G sliders
     void InitializeAndScalePlanets()
     {
         //Debug.Log("PlanetaryController: InitializeAndScalePlanets():");
 
         initialPlanetPositions.Clear();
         initialPlanetRotations.Clear();
-        //planets = GameObject.FindGameObjectsWithTag("Planet");
+
         if (planets.Length <= 0)
         {
             Debug.Log("PlanetaryController: InitializeAndScalePlanets(): No planets found:  " + planets.Length);
@@ -389,10 +390,10 @@ public class PlanetaryController : MonoBehaviour, IResetObject
             Vector3 initialRotationAngle = new Vector3(0, 0, planetInfo.obliquityToOrbit);
             planet.transform.localEulerAngles = initialRotationAngle;
             initialPlanetRotations.Add(planet.transform.localEulerAngles);
-            float scaleSize;
             //Debug.Log("PlanetaryController: InitializeAndScalePlanets(): Setting initial rotation for " + planet.name + " to " + initialRotationAngle);
 
 
+            float scaleSize;
             // scaledSize calculated from the PlanetInfo diameter
             if (planetInfo.PlanetInformationOf == PlanetInformation.sun_0)
             {
@@ -701,6 +702,16 @@ public class PlanetaryController : MonoBehaviour, IResetObject
             LineRenderer lr = lineRenderers[i];
             lr.positionCount = 0;
         }
+
+        //clear particle sytsem
+        foreach (GameObject planet in planets)
+        {
+            ParticleSystem ps = planet.GetComponentInChildren<ParticleSystem>();
+            if (ps != null)
+            {
+                ps.Clear();
+            }
+        }
     }
     #endregion Trajectories
 
@@ -799,9 +810,9 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     public void ToggleTrajectory(int index, bool isOn)
     {
         //Debug.Log("PlanetController(): ToggleTrajectory [" + index + "] = " + isOn);
-        if (lineRenderers == null)
+        if (lineRenderers == null || planets == null)
         {
-            //Debug.Log("PlanetController: ToggleTrajectory(): lineRenderers is null");
+            //Debug.Log("PlanetController: ToggleTrajectory(): lineRenderers or planets is null");
             return;
         }
         if (index >= lineRenderers.Count || index < 0)
@@ -810,12 +821,30 @@ public class PlanetaryController : MonoBehaviour, IResetObject
             return;
         }
         LineRenderer lr = lineRenderers[index];
-        if (lr == null)
+        if (lr == null || planets[index] == null)
         {
-            Debug.Log("PlanetController: ToggleTrajectory(): LineRenderer at index " + index + " is null");
+            Debug.Log("PlanetController: ToggleTrajectory(): LineRenderer or planets[index] at index " + index + " is null");
             return;
         }
         lr.enabled = isOn;
+
+        //toggle particle system
+        ParticleSystem ps = planets[index].GetComponentInChildren<ParticleSystem>();
+        if (ps == null)
+        {
+            Debug.Log("PlanetController: ToggleTrajectory(): ParticleSystem in Planet at index " + index + " is null");
+            return;
+        }
+
+        if (isOn)
+        {
+            ps.Play();
+        }
+        else
+        {
+            ps.Clear();
+            ps.Pause();
+        }
     }
 
 
@@ -828,6 +857,25 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         for (int index = 0; index < planetTrajectories.Count; index++)
         {
             lineRenderers[index].enabled = isOn;
+        }
+
+        //toggle particle system
+        // If there's a planet at this index, toggle its ParticleSystem.
+        foreach (GameObject planet in planets)
+        {
+            ParticleSystem ps = planet.GetComponentInChildren<ParticleSystem>();
+            if (ps != null)
+            {
+                if (isOn)
+                {
+                    ps.Play();
+                }
+                else
+                {
+                    ps.Clear();
+                    ps.Pause();
+                }
+            }
         }
     }
 
@@ -920,7 +968,9 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         //Sun
         //Debug.Log("Mercury checkbox: " + !isOn);
         planets[0].GetComponent<Renderer>().enabled = !isOn;
+        sunHalo.enabled = !isOn;
         ToggleTrajectory(0, !isOn);
+
     }
 
     public void UIToggle1(bool isOn)
