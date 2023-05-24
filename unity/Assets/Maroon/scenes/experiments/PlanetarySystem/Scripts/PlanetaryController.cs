@@ -161,11 +161,8 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         SetupToggle();
         SetupSliders();
         StoreInitialCameras();
-        LerpCameraToPosition(MainCamera, MainCamera, 0);
-        LerpCameraToInitialPosition(MainCamera, 0);
         GetFlyCameraScript();
         SetupLineRenderer();
-        //turn off planets before Animation
         Planets.SetActive(false);
     }
 
@@ -1143,7 +1140,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         LeaveAnimation();
 
         SortingMinigame.SetActive(true);
-        SortingGameCamera.SetActive(false);
+        UIToggleSGRotation(false);
         StartCoroutine(LerpCameraStartSortingGame());
 
         //ResetSortingGame();
