@@ -173,7 +173,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     void Update()
     {
         HandleKeyInput();
-        DrawTrajectory();
+        //DrawTrajectory();
         AnimationCameraMouseWheelFOV();
     }
 
