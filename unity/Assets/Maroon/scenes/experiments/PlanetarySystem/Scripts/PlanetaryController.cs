@@ -7,12 +7,6 @@ using System.Collections;
 
 public class PlanetaryController : MonoBehaviour, IResetObject
 {
-    #region HidePlanets
-    //public GameObject sun;
-    public GameObject saturn_ring_1;
-    public GameObject saturn_ring_2;
-    public Light sunHalo;
-    #endregion HidePlanets
 
     #region Cameras
     [SerializeField] private GameObject MainCamera;           //off
@@ -110,6 +104,13 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     [SerializeField] private Toggle toggleAOrientationGizmo;
     #endregion UIToggleButtons
 
+    #region HidePlanets
+    //public GameObject sun;
+    public GameObject saturn_ring_1;
+    public GameObject saturn_ring_2;
+    public Light sunHalo;
+    #endregion HidePlanets
+
     #region Slider
     [SerializeField] private Slider sliderG;
     [SerializeField] private Slider sliderTimeSpeed;
@@ -139,13 +140,11 @@ public class PlanetaryController : MonoBehaviour, IResetObject
      */
     private void Awake()
     {
-        //Debug.Log("PlanetaryController: Awake(): ");
         DisplayMessageByKey("EnterPlanetarySystem");
 
         SortingMinigame.SetActive(false);
         SortingGamePlanetInfoUI.SetActive(false);
         planets[0].SetActive(true);
-        //Debug.Log("PlanetaryController: Awake(): sun.SetActive= " + sun.activeSelf);
 
         InitializeAndScalePlanets();
         InitializeLineRenderer();
@@ -157,7 +156,6 @@ public class PlanetaryController : MonoBehaviour, IResetObject
      */
     void Start()
     {
-        //Debug.Log("PlanetaryController: Start(): ");
         SetupToggle();
         SetupSliders();
         StoreInitialCameras();
@@ -174,7 +172,6 @@ public class PlanetaryController : MonoBehaviour, IResetObject
      */
     void Update()
     {
-        //Debug.Log("PlanetaryController: Update(): is called ");
         HandleKeyInput();
         DrawTrajectory();
         AnimationCameraMouseWheelFOV();
