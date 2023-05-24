@@ -7,7 +7,6 @@ using System.Collections;
 
 public class PlanetaryController : MonoBehaviour, IResetObject
 {
-
     #region Cameras
     [SerializeField] private GameObject MainCamera;           //off
     [SerializeField] private GameObject SolarSystemCamera;    //on
@@ -24,8 +23,37 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     private float initialMainCameraFOV;
     #endregion Cameras
 
+    #region SolarSystem
+    private float G;
+    private GameObject sun;
+    //[SerializeField] private bool isSunKinematic = true;
+
+    [System.Serializable]
+    public class PlanetData : MonoBehaviour
+    {
+        public float semiMajorAxis;
+        [SerializeField] private float initialVelocity;
+    }
+    public GameObject[] planets;
+    #endregion SolarSystem
+
+    #region Trajectories
+    public List<PlanetTrajectory> planetTrajectories;
+    public float lineThickness = 0.4f;
+    private List<LineRenderer> lineRenderers;
+    private List<Queue<Vector3>> previousPositionsList;
+
+    [System.Serializable]
+    public class PlanetTrajectory
+    {
+        public GameObject planet;
+        public Material trajectoryMaterial;
+        public int segments = 2000;
+    }
+    #endregion Trajectories
+
     #region StartScreenScenes
-    //want it:
+                                                                //want it:
     [SerializeField] private GameObject FormulaUI;              //off
     [SerializeField] private GameObject Environment;            //off
     [SerializeField] private GameObject Planets;                //off//on
@@ -36,18 +64,11 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     [SerializeField] private FlyCamera flyCameraScript;         //on
     #endregion StartScreenScenes
 
-    #region SolarSystem
-    public GameObject[] planets;
-    private float G;
-    //[SerializeField] private bool isSunKinematic = true;
-
-    [System.Serializable]
-    public class PlanetData : MonoBehaviour
-    {
-        public float semiMajorAxis;
-        [SerializeField] private float initialVelocity;
-    }
-    #endregion SolarSystem
+    #region HidePlanets
+    public GameObject saturn_ring_1;
+    public GameObject saturn_ring_2;
+    public Light sunHalo;
+    #endregion HidePlanets
 
     #region SortingGameSpawner
     public int sortedPlanetCount = 0;
@@ -65,21 +86,6 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     public float timeSpeed = 1f;
     #endregion ResetAnimation
 
-    #region Trajectories
-    public List<PlanetTrajectory> planetTrajectories;
-    public float lineThickness = 0.4f;
-    private List<LineRenderer> lineRenderers;
-    private List<Queue<Vector3>> previousPositionsList;
-
-    [System.Serializable]
-    public class PlanetTrajectory
-    {
-        public GameObject planet;
-        public Material trajectoryMaterial;
-        public int segments = 2000;
-    }
-    #endregion Trajectories
-
     #region Helpi
     private DialogueManager _dialogueManager;
     public GameObject HelpiDialogueUI;
@@ -93,6 +99,12 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     [SerializeField] private ParticleSystem solarFlares;
     #endregion KeyInput
 
+    #region Slider
+    [SerializeField] private Slider sliderG;
+    [SerializeField] private Slider sliderTimeSpeed;
+    [SerializeField] private Slider sliderAnimationCameraFov;
+    #endregion Slider
+
     #region UIToggleButtons
     [SerializeField] private Toggle toggleAllTrajectories;
     [SerializeField] private Toggle toggleSunKinematic;
@@ -102,20 +114,18 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     [SerializeField] private Toggle toggleSGOrientationGizmo;
     [SerializeField] private Toggle toggleARotation;
     [SerializeField] private Toggle toggleAOrientationGizmo;
+
+    [SerializeField] private Toggle toggleSun;
+    [SerializeField] private Toggle toggleMercury;
+    [SerializeField] private Toggle toggleVenus;
+    [SerializeField] private Toggle toggleEarth;
+    [SerializeField] private Toggle toggleMars;
+    [SerializeField] private Toggle toggleJupiter;
+    [SerializeField] private Toggle toggleSaturn;
+    [SerializeField] private Toggle toggleUranus;
+    [SerializeField] private Toggle toggleNeptune;
     #endregion UIToggleButtons
 
-    #region HidePlanets
-    //public GameObject sun;
-    public GameObject saturn_ring_1;
-    public GameObject saturn_ring_2;
-    public Light sunHalo;
-    #endregion HidePlanets
-
-    #region Slider
-    [SerializeField] private Slider sliderG;
-    [SerializeField] private Slider sliderTimeSpeed;
-    [SerializeField] private Slider sliderAnimationCameraFov;
-    #endregion Slider
 
     //---------------------------------------------------------------------------------------
     /*
@@ -144,7 +154,8 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
         SortingMinigame.SetActive(false);
         SortingGamePlanetInfoUI.SetActive(false);
-        planets[0].SetActive(true);
+        sun = planets[0];
+        sun.SetActive(true);
 
         InitializeAndScalePlanets();
         InitializeLineRenderer();
@@ -173,8 +184,8 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     void Update()
     {
         HandleKeyInput();
-        //DrawTrajectory();
         AnimationCameraMouseWheelFOV();
+        //DrawTrajectory();
     }
 
 
@@ -185,6 +196,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     private void FixedUpdate()
     {
         Gravity();
+        CheckCollisionsWithSun();
         //DrawTrajectory();
     }
     //---------------------------------------------------------------------------------------
@@ -353,7 +365,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
         initialPlanetPositions.Clear();
         initialPlanetRotations.Clear();
-
+        
         if (planets.Length <= 0)
         {
             Debug.Log("PlanetaryController: InitializeAndScalePlanets(): No planets found:  " + planets.Length);
@@ -592,12 +604,12 @@ public class PlanetaryController : MonoBehaviour, IResetObject
      */
     public void ResetCamera()
     {
-        AnimationCamera.transform.position = initialAnimationCameraPosition;
-        AnimationCamera.transform.rotation = initialAnimationCameraRotation;
+        AnimationCamera.transform.SetPositionAndRotation(initialAnimationCameraPosition, initialAnimationCameraRotation);
         AnimationCamera.fieldOfView = initialAnimationCameraFov;
 
         sliderAnimationCameraFov.value = initialAnimationCameraFov;
     }
+
 
     /*
      * get flycamere script to dis/enable later
@@ -608,6 +620,69 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         if (flyCameraScript == null)
         {
             Debug.Log("PlanetaryController: GetFlyCameraScript(): script not found");
+        }
+    }
+
+
+    /*
+     * check if planets and suns collider intersect
+     */
+    private bool CheckCollisionWithSun(GameObject planet)
+    {
+        Collider planetCollider = planet.GetComponent<Collider>();
+        Collider sunCollider = sun.GetComponent<Collider>();
+
+        // check if planet and sun colliders intersect
+        if (planetCollider != null && sunCollider != null && 
+            planetCollider.bounds.Intersects(sunCollider.bounds))
+        {
+            return true; 
+        }
+
+        return false; 
+    }
+
+
+    /*
+     * check if planet collides with sun and toggles the planet if there is a collision
+     */
+    private void CheckCollisionsWithSun()
+    {
+        for (int index = 1; index < planets.Length; index++)
+        {
+            if (CheckCollisionWithSun(planets[index]))
+            {
+                //Debug.Log("PlanetaryController: CheckCollisionsWithSun(): " + planets[index] + " collides with sun");
+                switch (index)
+                {
+                    case 1:
+                        UIToggle1(true);
+                        break;
+                    case 2:
+                        UIToggle2(true);
+                        break;
+                    case 3:
+                        UIToggle3(true);
+                        break;
+                    case 4:
+                        UIToggle4(true);
+                        break;
+                    case 5:
+                        UIToggle5(true);
+                        break;
+                    case 6:
+                        UIToggle6(true);
+                        break;
+                    case 7:
+                        UIToggle7(true);
+                        break;
+                    case 8:
+                        UIToggle8(true);
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
     }
     #endregion Animation
@@ -931,6 +1006,17 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         toggleARotation.onValueChanged.AddListener(UIToggleARotation);
         toggleSGOrientationGizmo.onValueChanged.AddListener(UIToggleSGOrientation);
         toggleAOrientationGizmo.onValueChanged.AddListener(UIToggleAOrientation);
+
+        toggleSun.onValueChanged.AddListener(UIToggle0);
+        toggleMercury.onValueChanged.AddListener(UIToggle1);
+        toggleVenus.onValueChanged.AddListener(UIToggle2);
+        toggleEarth.onValueChanged.AddListener(UIToggle3);
+        toggleMars.onValueChanged.AddListener(UIToggle4);
+        toggleJupiter.onValueChanged.AddListener(UIToggle5);
+        toggleSaturn.onValueChanged.AddListener(UIToggle6);
+        toggleUranus.onValueChanged.AddListener(UIToggle7);
+        toggleNeptune.onValueChanged.AddListener(UIToggle8);
+
     }
 
 
@@ -951,6 +1037,16 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         sliderG.onValueChanged.RemoveListener(OnGValueChanged);
         sliderTimeSpeed.onValueChanged.RemoveListener(OnTimeSliderValueChanged);
         sliderAnimationCameraFov.onValueChanged.RemoveListener(OnFOVSliderValueChanged);
+
+        toggleSun.onValueChanged.RemoveListener(UIToggle0);
+        toggleMercury.onValueChanged.RemoveListener(UIToggle1);
+        toggleVenus.onValueChanged.RemoveListener(UIToggle2);
+        toggleEarth.onValueChanged.RemoveListener(UIToggle3);
+        toggleMars.onValueChanged.RemoveListener(UIToggle4);
+        toggleJupiter.onValueChanged.RemoveListener(UIToggle5);
+        toggleSaturn.onValueChanged.RemoveListener(UIToggle6);
+        toggleUranus.onValueChanged.RemoveListener(UIToggle7);
+        toggleNeptune.onValueChanged.RemoveListener(UIToggle8);
     }
     #endregion UIToggleButtons
 
@@ -958,14 +1054,16 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     /*
      * hides planets and trajectories after radiobutton is pressed
      */
-    #region hide planets
+    #region HidePlanets
     public void UIToggle0(bool isOn)
     {
         //Sun
         //Debug.Log("Mercury checkbox: " + !isOn);
-        planets[0].GetComponent<Renderer>().enabled = !isOn;
+      
+        planets[0].SetActive(!isOn);
         sunHalo.enabled = !isOn;
         ToggleTrajectory(0, !isOn);
+        toggleSun.isOn = isOn;
 
     }
 
@@ -973,75 +1071,75 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     {
         //Mercury
         //Debug.Log("Mercury checkbox: " + !isOn);
-        planets[1].GetComponent<Renderer>().enabled = !isOn;
+        planets[1].SetActive(!isOn);
         ToggleTrajectory(1, !isOn);
+        toggleMercury.isOn = isOn;
     }
 
     public void UIToggle2(bool isOn)
     {
         //Venus
         //Debug.Log("Venus checkbox: " + !isOn);
-        planets[2].GetComponent<Renderer>().enabled = !isOn;
+        planets[2].SetActive(!isOn);
         ToggleTrajectory(2, !isOn);
+        toggleVenus.isOn = isOn;
     }
 
     public void UIToggle3(bool isOn)
     {
         //Earth
         //Debug.Log("Earth checkbox: " + !isOn);
-        planets[3].GetComponent<Renderer>().enabled = !isOn;
+        planets[3].SetActive(!isOn);
         ToggleTrajectory(3, !isOn);
+        toggleEarth.isOn = isOn;
     }
 
     public void UIToggle4(bool isOn)
     {
         //Mars
         //Debug.Log("Mars checkbox: " + !isOn);
-        planets[4].GetComponent<Renderer>().enabled = !isOn;
+        planets[4].SetActive(!isOn);
         ToggleTrajectory(4, !isOn);
+        toggleMars.isOn = isOn;
     }
 
     public void UIToggle5(bool isOn)
     {
         //Jupiter
         //Debug.Log("Jupiter checkbox: " + !isOn);
-        planets[5].GetComponent<Renderer>().enabled = !isOn;
+        planets[5].SetActive(!isOn);
         ToggleTrajectory(5, !isOn);
+        toggleJupiter.isOn = isOn;
     }
 
     public void UIToggle6(bool isOn)
     {
         //Saturn
         //Debug.Log("Saturn checkbox: " + !isOn);
-        planets[6].GetComponent<Renderer>().enabled = !planets[6].GetComponent<Renderer>().enabled;
-        saturn_ring_1.GetComponent<Renderer>().enabled = !saturn_ring_1.GetComponent<Renderer>().enabled;
-        saturn_ring_2.GetComponent<Renderer>().enabled = !saturn_ring_2.GetComponent<Renderer>().enabled;
+        planets[6].SetActive(!isOn);
+        saturn_ring_1.SetActive(!isOn);
+        saturn_ring_2.SetActive(!isOn);
         ToggleTrajectory(6, !isOn);
+        toggleSaturn.isOn = isOn;
     }
 
     public void UIToggle7(bool isOn)
     {
         //Uranus
         //Debug.Log("Uranus checkbox: " + !isOn);
-        planets[7].GetComponent<Renderer>().enabled = !isOn;
+        planets[7].SetActive(!isOn);
         ToggleTrajectory(7, !isOn);
+        toggleUranus.isOn = isOn;
     }
     public void UIToggle8(bool isOn)
     {
         //Neptune
         //Debug.Log("Neptune checkbox: " + !isOn);
-        planets[8].GetComponent<Renderer>().enabled = !isOn;
+        planets[8].SetActive(!isOn);
         ToggleTrajectory(8, !isOn);
+        toggleNeptune.isOn = isOn;
     }
-
-    public void UIToggle9(bool isOn)
-    {
-        //Moon
-        //Debug.Log("Moon checkbox: " + !isOn);
-        planets[9].GetComponent<Renderer>().enabled = !isOn;
-        ToggleTrajectory(9, !isOn);
-    }
-    #endregion hide planets
+    #endregion HidePlanets
 
 
     /*
@@ -1266,9 +1364,20 @@ public class PlanetaryController : MonoBehaviour, IResetObject
      */
     void ResetAnimation()
     {
+        bool planetIsHidden = false;
+        UIToggle0(planetIsHidden);
+        UIToggle1(planetIsHidden);
+        UIToggle2(planetIsHidden);
+        UIToggle3(planetIsHidden);
+        UIToggle4(planetIsHidden);
+        UIToggle5(planetIsHidden);
+        UIToggle6(planetIsHidden);
+        UIToggle7(planetIsHidden);
+        UIToggle8(planetIsHidden);
+
+        ClearTrajectories();
         sliderG.value = gravitationalConstantG;
         sliderTimeSpeed.value = timeSpeed;
-        ClearTrajectories();
 
         //reset planets to initialPlanetPosition
         for (int planet = 0; planet < planets.Length; planet++)
