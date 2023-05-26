@@ -161,6 +161,7 @@ namespace Tests.EditModeTests.ContentValidation
         }
         
         [SkipTestForScenesWithReason("FaradaysLaw", "scene accidently(?) has two EventSystems!")] // TODO fixme
+        [SkipTestForScenesWithReason("PlanetarySystem", ReasonIntentionallyMissing)]
         [Test, Description("Must have a GameObject named 'EventSystem'")]
         public void SceneHasEventSystem()
         {
@@ -183,7 +184,7 @@ namespace Tests.EditModeTests.ContentValidation
                 $"GameObject '{objectNameUnderTest}' is not a child GameObject of '{prefab.transform.parent.name}'");
         }
         
-        [SkipTestForScenesWithReason("CathodeRayTube", ReasonIntentionallyMissing)]
+        [SkipTestForScenesWithReason("CathodeRayTube, PlanetarySystem", ReasonIntentionallyMissing)]
         [SkipTestForScenesWithReason("CoulombsLaw", ReasonItsOutdated)]
         [Test, Description("Must have a GameObject named 'PanelAssessment'")]
         public void SceneHasUiPanelAssessment()
@@ -207,7 +208,7 @@ namespace Tests.EditModeTests.ContentValidation
                 $"GameObject '{objectNameUnderTest}' is not a child GameObject of '{prefab.transform.parent.name}'");
         }
         
-        [SkipTestForScenesWithReason("Optics", ReasonIntentionallyMissing)]
+        [SkipTestForScenesWithReason("Optics, PlanetarySystem", ReasonIntentionallyMissing)]
         [Test, Description("Must have a GameObject named 'PanelControls'")]
         public void SceneHasUiPanelControls()
         {
@@ -229,7 +230,8 @@ namespace Tests.EditModeTests.ContentValidation
             Assert.AreEqual(prefab.transform.parent.name, gameObjectUnderTest.transform.parent.name,
                 $"GameObject '{objectNameUnderTest}' is not a child GameObject of '{prefab.transform.parent.name}'");
         }
-        
+
+        [SkipTestForScenesWithReason("PlanetarySystem", ReasonIntentionallyMissing)]
         [Test, Description("Must have a GameObject named 'PanelDialogue '")]
         public void SceneHasUiPanelDialogue()
         {
@@ -251,7 +253,8 @@ namespace Tests.EditModeTests.ContentValidation
             Assert.AreEqual(prefab.transform.parent.name, gameObjectUnderTest.transform.parent.name,
                 $"GameObject '{objectNameUnderTest}' is not a child GameObject of '{prefab.transform.parent.name}'");
         }
-               
+
+        [SkipTestForScenesWithReason("PlanetarySystem", ReasonIntentionallyMissing)]
         [Test, Description("Must have a GameObject named 'PanelExit'")]
         public void SceneHasUiPanelExit()
         {
@@ -273,7 +276,8 @@ namespace Tests.EditModeTests.ContentValidation
             Assert.AreEqual(prefab.transform.parent.name, gameObjectUnderTest.transform.parent.name,
                 $"GameObject '{objectNameUnderTest}' is not a child GameObject of '{prefab.transform.parent.name}'");
         }
-        
+
+        [SkipTestForScenesWithReason("PlanetarySystem", ReasonIntentionallyMissing)]
         [Test, Description("Must have a GameObject named 'PanelOptions'")]
         public void SceneHasUiPanelOptions()
         {

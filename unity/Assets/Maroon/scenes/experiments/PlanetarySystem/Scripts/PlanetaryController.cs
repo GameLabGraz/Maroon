@@ -8,10 +8,10 @@ using System.Collections;
 public class PlanetaryController : MonoBehaviour, IResetObject
 {
     #region Cameras
-    [SerializeField] private GameObject MainCamera;           //off
-    [SerializeField] private GameObject SolarSystemCamera;    //on
-    [SerializeField] private GameObject SortingGameCamera;    //off
-    [SerializeField] private GameObject TelescopeCamera;      //off
+    [SerializeField] private GameObject MainCamera;                 //off
+    [SerializeField] private GameObject SolarSystemAnimationCamera; //on
+    [SerializeField] private GameObject SortingGameCamera;          //off
+    [SerializeField] private GameObject TelescopeCamera;            //off
     public Camera AnimationCamera;
 
     private float initialAnimationCameraFov;
@@ -56,7 +56,7 @@ public class PlanetaryController : MonoBehaviour, IResetObject
                                                                 //want it:
     [SerializeField] private GameObject FormulaUI;              //off
     [SerializeField] private GameObject Environment;            //off
-    [SerializeField] private GameObject Planets;                //off//on
+    [SerializeField] private GameObject Animation;                //off//on
     [SerializeField] private GameObject SortingMinigame;        //off
     [SerializeField] private GameObject Interactibles;          //off
     [SerializeField] private GameObject AnimationUI;            //on
@@ -107,13 +107,14 @@ public class PlanetaryController : MonoBehaviour, IResetObject
 
     #region UIToggleButtons
     [SerializeField] private Toggle toggleAllTrajectories;
+    [SerializeField] private Toggle toggleARotation;
     [SerializeField] private Toggle toggleSunKinematic;
-    [SerializeField] private Toggle toggleSunLight;
-    [SerializeField] private Toggle toggleSolarFlares;
+    [SerializeField] private Toggle toggleAOrientationGizmo;
+
     [SerializeField] private Toggle toggleSGRotation;
     [SerializeField] private Toggle toggleSGOrientationGizmo;
-    [SerializeField] private Toggle toggleARotation;
-    [SerializeField] private Toggle toggleAOrientationGizmo;
+    [SerializeField] private Toggle toggleSunLight;
+    [SerializeField] private Toggle toggleSolarFlares;
 
     [SerializeField] private Toggle toggleSun;
     [SerializeField] private Toggle toggleMercury;
@@ -172,32 +173,30 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         StoreInitialCameras();
         GetFlyCameraScript();
         SetupLineRenderer();
-        Planets.SetActive(false);
+        Animation.SetActive(false);
     }
 
 
     /*
      * updates he LineRenderer to draw the paths 
-     * Dequeue the drawn trajectory paths to be deleted number of segments 
-     * toggles the sunlight on key [L]
+     * dequeue the drawn trajectory paths to be deleted number of segments 
      */
     void Update()
     {
         HandleKeyInput();
         AnimationCameraMouseWheelFOV();
-        //DrawTrajectory();
+        DrawTrajectory(); // switch of and activate Particle System in planet prefab for optional trajectories
     }
 
 
     /*
-     * Frame-rate independent for physics calculations;
+     * frame-rate independent for physics calculations
      * applied each fixed frame
      */
     private void FixedUpdate()
     {
         Gravity();
         CheckCollisionsWithSun();
-        //DrawTrajectory();
     }
     //---------------------------------------------------------------------------------------
 
@@ -1312,11 +1311,11 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         Environment.SetActive(false);
         Interactibles.SetActive(false);
 
-        Planets.SetActive(true);
+        Animation.SetActive(true);
         flyCameraScript.enabled = true;
 
         MainCamera.SetActive(false);
-        SolarSystemCamera.SetActive(true);
+        SolarSystemAnimationCamera.SetActive(true);
 
         ResetAnimation();
         DisplayMessageByKey("EnterAnimation");
@@ -1334,11 +1333,11 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         Environment.SetActive(true);
         Interactibles.SetActive(true);
 
-        Planets.SetActive(false);
+        Animation.SetActive(false);
         flyCameraScript.enabled = false;
         ResetCamera();
 
-        SolarSystemCamera.SetActive(false);
+        SolarSystemAnimationCamera.SetActive(false);
         MainCamera.SetActive(true);
     }
     #endregion StartScreenScenes

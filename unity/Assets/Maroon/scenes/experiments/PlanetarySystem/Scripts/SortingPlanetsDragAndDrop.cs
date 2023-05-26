@@ -8,6 +8,7 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour, IResetObject
     public AudioClip pickUpClip;
     public AudioClip dropClip;
 
+    public PlanetRotation planetRotation;
     public Transform sortingPlanetTarget; 
     public float snapDistance;  
     private bool isSnapped = false;
@@ -82,7 +83,7 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour, IResetObject
     /*
      * snap the planets to target
      */
-    #region Snap
+    #region SnapPlanet
     /*
      * increments the snapped planets and displays a Helpi message when all planets except pluto are in its place 
      */
@@ -110,12 +111,13 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour, IResetObject
         if (sunLightHalo != null)
             sunLightHalo.range = 1.75f;
 
+        planetRotation.SetObliquityToOrbit();
 
         isSnapped = true;
         IncrementSnappedPlanetCount();
         audioSource.PlayOneShot(dropClip);
     }
-    #endregion Snap
+    #endregion SnapPlanet
 
 
     /*
@@ -222,12 +224,13 @@ public class SortingPlanetsDragAndDrop : MonoBehaviour, IResetObject
         planetInfoMessageText.text = GetMessagByKey(createdPlanetInfoMessage);
 
         transform.localScale = new Vector3(1, 1, 1);
+        transform.localRotation = Quaternion.identity;
         PlanetaryController.Instance.ResetSortingGame();
         if (sunLightHalo != null)
             sunLightHalo.range = 0.25f;
 
-        isSnapped = false;
         PlanetaryController.Instance.sortedPlanetCount = 0;
+        isSnapped = false;
     }
     #endregion Reset
 }

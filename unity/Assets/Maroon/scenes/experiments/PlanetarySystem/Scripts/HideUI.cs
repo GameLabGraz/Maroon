@@ -25,10 +25,10 @@ public class HideUI : MonoBehaviour
     {
         if (Input.GetKeyUp(KeyCode.H))
         {
-            if (!AnimationUI.activeSelf)// && (!SortingGamePlanetInformationUI.activeSelf))
+            if (!AnimationUI.activeSelf)
             {
-                AnimationUI.SetActive(true); //turn on UI
-                PlanetInformationUI.SetActive(true); //turn on UI
+                AnimationUI.SetActive(true);
+                PlanetInformationUI.SetActive(true);
                 toggleHideUI.isOn = false;
                 //Debug.Log("CameraAndUIController: HideUIOnKeyInput(): [H] UI Active Self: " + AnimationUI.activeSelf);
             }
@@ -44,21 +44,21 @@ public class HideUI : MonoBehaviour
 
 
     /*
-     *  change with boolean from ToggleGroup function
+     *  toggle HideUI with boolean from ToggleGroup function
      */
     public void ToggleHideUI(bool hide)
     {
         //Debug.Log("CameraAndUIController: ToggleHideUI(): " +  isHidden);
         if (hide)
         {
-            AnimationUI.SetActive(false); //turn on UI
-            PlanetInformationUI.SetActive(false); //turn on UI
+            AnimationUI.SetActive(false);
+            PlanetInformationUI.SetActive(false);
             //Debug.Log("CameraAndUIController: ToggleHideUI(): " + ui.activeSelf);
         }
         else
         {
-            AnimationUI.SetActive(true); //turn off UI
-            PlanetInformationUI.SetActive(true); //turn off UI
+            AnimationUI.SetActive(true);
+            PlanetInformationUI.SetActive(true);
             //Debug.Log("CameraAndUIController: ToggleHideUI(): " + ui.activeSelf);
         }
     }
