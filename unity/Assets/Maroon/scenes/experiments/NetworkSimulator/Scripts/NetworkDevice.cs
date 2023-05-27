@@ -4,9 +4,13 @@ using UnityEngine;
 namespace Maroon.NetworkSimulator {
     public abstract class NetworkDevice : MonoBehaviour {
         [SerializeField]
+        private NetworkSimulationController networkSimulationController;
+        [SerializeField]
         private BoxCollider networkAreaCollider;
         [SerializeField]
         private float clickVsDragThreshold = 0.001f;
+        [SerializeField]
+        private GameObject connectableMarker;
 
         private Plane plane;
         private Vector3 offset;
@@ -15,6 +19,7 @@ namespace Maroon.NetworkSimulator {
         private Vector3 dragStartPosition;
         private Vector3 clickStartPosition;
         private AddCableScript addCableScript;
+        private UIController uiController;
 
         public int NumberOfPorts { get => Ports.Length; }
         public bool HasFreePort { get => Ports.Any(p => p.IsFree); }
@@ -30,6 +35,7 @@ namespace Maroon.NetworkSimulator {
             plane = new Plane(Vector3.up, transform.position);
             kitPosition = transform.position;
             addCableScript = FindObjectOfType<AddCableScript>();
+            uiController = FindObjectOfType<UIController>();
         }
 
         private void OnMouseDown() {
@@ -74,6 +80,7 @@ namespace Maroon.NetworkSimulator {
                     Instantiate(this, kitPosition, Quaternion.identity, transform.parent).name = name;
                     transform.parent = networkAreaCollider.transform;
                     fromKit = false;
+                    networkSimulationController.AddNetworkDevice(this);
                 }
                 else {
                     transform.position = kitPosition;
@@ -99,13 +106,22 @@ namespace Maroon.NetworkSimulator {
                 }
             }
             else {
-                UIController.ShowDeviceOptions();
+                uiController.ShowDeviceOptions();
             }
         }
         private void UpdateCables() {
             foreach(var port in Ports.Where(p => !p.IsFree)) {
                 port.Cable.UpdateCurve();
             }
+        }
+        public void ShowConnectableMarker() {
+            if(!HasFreePort) {
+                return;
+            }
+            connectableMarker.SetActive(true);
+        }
+        public void HideConnectableMarker() {
+            connectableMarker.SetActive(false);
         }
     }
 }

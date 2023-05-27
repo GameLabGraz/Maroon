@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Maroon.NetworkSimulator {
@@ -7,16 +5,7 @@ namespace Maroon.NetworkSimulator {
         [SerializeField] 
         private GameObject deviceOptionsPanel;
 
-        public static UIController Instance { get; private set; }
-        
         void Start() {
-            if(Instance == null) {
-                Instance = this;
-            }
-            else {
-                Debug.LogWarning("New instance of UIController detected");
-            }
-
             HideDeviceOptions();
         }
 
@@ -24,11 +13,11 @@ namespace Maroon.NetworkSimulator {
 
         }
 
-        public static void ShowDeviceOptions() {
-            Instance.deviceOptionsPanel.SetActive(true);
+        public void ShowDeviceOptions() {
+            deviceOptionsPanel.SetActive(true);
         }
-        public static void HideDeviceOptions() {
-            Instance.deviceOptionsPanel.SetActive(false);
+        public void HideDeviceOptions() {
+            deviceOptionsPanel.SetActive(false);
         }
     }
 }
