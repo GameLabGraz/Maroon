@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Maroon.NetworkSimulator {
     public abstract class NetworkDevice : MonoBehaviour {
         [SerializeField]
-        private NetworkSimulationController networkSimulationController;
+        protected NetworkSimulationController networkSimulationController;
         [SerializeField]
         private BoxCollider networkAreaCollider;
         [SerializeField]
@@ -106,7 +106,7 @@ namespace Maroon.NetworkSimulator {
                 }
             }
             else {
-                uiController.ShowDeviceOptions();
+                uiController.ShowDeviceOptions(this);
             }
         }
         private void UpdateCables() {
@@ -123,5 +123,8 @@ namespace Maroon.NetworkSimulator {
         public void HideConnectableMarker() {
             connectableMarker.SetActive(false);
         }
+        public abstract string GetName();
+        public abstract string GetButtonText();
+        public abstract void DeviceOptionsButtonClicked();
     }
 }
