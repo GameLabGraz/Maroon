@@ -23,8 +23,14 @@ namespace Maroon.NetworkSimulator {
         public void EnterInsideOfDevice(NetworkDevice networkDevice) {
             cameraScript.SetInsideDeviceView();
         }
+        public void ExitInsideOfDevice() {
+            cameraScript.SetNetworkView();
+        }
         public void ShowComputerScreen(Computer computer) {
             cameraScript.SetComputerView(computer.transform.position);
+        }
+        public void CloseComputerScreen() {
+            cameraScript.SetNetworkView();
         }
     }
 }

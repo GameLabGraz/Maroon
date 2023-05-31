@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using TMPro;
+using UnityEngine.UI;
 
 namespace Maroon.NetworkSimulator.NetworkDevices {
     public class Router : NetworkDevice {
         public override string GetName() => "Router";
         public override string GetButtonText() => "Enter Router";
-        public override void DeviceOptionsButtonClicked() {
+        public override void DeviceOptionsButtonClicked(Button button, TextMeshProUGUI buttonText) {
             networkSimulationController.EnterInsideOfDevice(this);
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(networkSimulationController.ExitInsideOfDevice);
+            buttonText.SetText("Back to network");
+        }
+        public override void ReceivePacket(Packet packet, Port receiver) {
         }
     }
 }

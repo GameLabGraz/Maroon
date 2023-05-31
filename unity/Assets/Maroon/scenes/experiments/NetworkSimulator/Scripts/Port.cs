@@ -9,8 +9,18 @@ namespace Maroon.NetworkSimulator {
 
         public bool IsFree { get => Cable == null; }
 
-        public void Start () {
+        public void Start() {
             Device = GetComponentInParent<NetworkDevice>();
+        }
+
+        public void SendPacket(Packet packet) {
+            if(!IsFree) {
+                Cable.SendPacket(packet, this);
+            }
+        }
+
+        public void ReceivePacket(Packet packet) {
+            Device.ReceivePacket(packet, this);
         }
     }
 }

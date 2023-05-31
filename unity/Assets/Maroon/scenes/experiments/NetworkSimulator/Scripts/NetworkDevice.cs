@@ -1,5 +1,7 @@
 using System.Linq;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Maroon.NetworkSimulator {
     public abstract class NetworkDevice : MonoBehaviour {
@@ -24,7 +26,7 @@ namespace Maroon.NetworkSimulator {
         public int NumberOfPorts { get => Ports.Length; }
         public bool HasFreePort { get => Ports.Any(p => p.IsFree); }
         [SerializeField]
-        private Port[] Ports;
+        protected Port[] Ports;
         public Port ConnectCableToFreePort(Cable cable) {
             var port = Ports.Where(p => p.IsFree).First();
             port.Cable = cable;
@@ -125,6 +127,8 @@ namespace Maroon.NetworkSimulator {
         }
         public abstract string GetName();
         public abstract string GetButtonText();
-        public abstract void DeviceOptionsButtonClicked();
+        public abstract void DeviceOptionsButtonClicked(Button button, TextMeshProUGUI buttonText);
+
+        public abstract void ReceivePacket(Packet packet, Port receiver);
     }
 }

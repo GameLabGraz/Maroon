@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 namespace Maroon.NetworkSimulator {
     public class Cable : MonoBehaviour {
@@ -8,11 +10,63 @@ namespace Maroon.NetworkSimulator {
 
         const int NumberOfCurveSteps = 25;
 
+        [SerializeField]
+        private GameObject VisualPacketPrefab;
+        private class TravellingPacket {
+            public GameObject visualPacket;
+            public Packet packet;
+            public Port sender;
+            public Port receiver;
+            public float progress;
+        }
+        private List<TravellingPacket> travellingPackets = new List<TravellingPacket>();
+        private float travellingSpeed = 1;
+
         private void Start() {
         }
 
         private void Awake() {
             lineRenderer = GetComponent<LineRenderer>();
+        }
+
+        private void Update() {
+            foreach(var packet in travellingPackets.ToList()) {
+                if(packet.progress > 1 - float.Epsilon) {
+                    travellingPackets.Remove(packet);
+                    Destroy(packet.visualPacket);
+                    packet.receiver.ReceivePacket(packet.packet);
+                }
+                else {
+                    packet.progress += Time.deltaTime * travellingSpeed;
+                    var linePositionIndexA = Mathf.FloorToInt(packet.progress / (1f / NumberOfCurveSteps));
+                    var linePositionIndexB = linePositionIndexA + 1;
+                    if(packet.sender == device2) {
+                        linePositionIndexA = NumberOfCurveSteps - linePositionIndexA;
+                        linePositionIndexB = linePositionIndexA - 1;
+                    }
+                    Vector3 a, b;
+                    if(linePositionIndexA < 0) {
+                        a = device1.Position;
+                    }
+                    else if(linePositionIndexA >= NumberOfCurveSteps) {
+                        a = device2.Position;
+                    }
+                    else {
+                        a = lineRenderer.GetPosition(linePositionIndexA);
+                    }
+
+                    if(linePositionIndexB < 0) {
+                        b = device1.Position;
+                    }
+                    else if(linePositionIndexB >= NumberOfCurveSteps) {
+                        b = device2.Position;
+                    }
+                    else {
+                        b = lineRenderer.GetPosition(linePositionIndexB);
+                    }
+                    packet.visualPacket.transform.position = Vector3.Lerp(a, b, packet.progress % 1);
+                }
+            }
         }
 
         public void Initalize(Port port1, Port port2) {
@@ -41,6 +95,21 @@ namespace Maroon.NetworkSimulator {
             var add3 = 3 * (1 - t) * Mathf.Pow(t, 2) * p2;
             var add4 = Mathf.Pow(t, 3) * p3;
             return add1 + add2 + add3 + add4;
+        }
+
+        public void SendPacket(Packet packet, Port sender) {
+            if(sender != device1 && sender != device2) {
+                throw new System.ArgumentException("Cable not connected to port", nameof(sender));
+            }
+            var travellingPacket = new TravellingPacket {
+                visualPacket = Instantiate(VisualPacketPrefab),
+                packet = packet,
+                sender = sender,
+                receiver = sender == device1 ? device2 : device1,
+                progress = 0
+            };
+            travellingPacket.visualPacket.transform.position = sender.Position;
+            travellingPackets.Add(travellingPacket);
         }
     }
 }

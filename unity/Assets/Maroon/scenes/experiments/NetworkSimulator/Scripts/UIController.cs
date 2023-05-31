@@ -24,7 +24,7 @@ namespace Maroon.NetworkSimulator {
         public void ShowDeviceOptions(NetworkDevice clickedDevice) {
             deviceOptionsTitle.SetText(clickedDevice.GetName());
             deviceOptionsButton.onClick.RemoveAllListeners();
-            deviceOptionsButton.onClick.AddListener(clickedDevice.DeviceOptionsButtonClicked);
+            deviceOptionsButton.onClick.AddListener(() => clickedDevice.DeviceOptionsButtonClicked(deviceOptionsButton, deviceOptionsButtonText));
             deviceOptionsButtonText.SetText(clickedDevice.GetButtonText());
             deviceOptionsPanel.SetActive(true);
         }
