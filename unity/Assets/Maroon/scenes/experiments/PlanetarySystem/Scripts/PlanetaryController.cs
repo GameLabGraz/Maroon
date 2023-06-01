@@ -342,8 +342,8 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     /*
      * SolarSystems handles Newtons Gravity, Initial Velocity and the planets
      * G is multiplied by 10 for scaling
-     *  assign the original NASA Planetdata
-     *  scales down PlanetInfo with various ScaleFactors to fit the visulization
+     * assign the original NASA Planetdata
+     * scales down PlanetInfo with various ScaleFactors to fit the visulization
     */
     #region SolarSystem
     /*
@@ -357,17 +357,16 @@ public class PlanetaryController : MonoBehaviour, IResetObject
     private const float DISTANCE_SCALE_FACTOR = 4f;                 ///    4///
     private const float GAS_GIANTS_SCALE_FACTOR = 2.5f;             ///  2.5/// additional scale factor for the Gas Giants 5-8 to bring them closer for vizualisation
     private const float SUN_RADIUS_ADDITIONAL_OFFSET = 3f;          ///    3/// additional offset multiplying the suns radius to the distances to get more visual destinction
-                                                                            /// and playability when trying out the G sliders
-    void InitializeAndScalePlanets()
+    private void InitializeAndScalePlanets()
     {
         //Debug.Log("PlanetaryController: InitializeAndScalePlanets():");
-
         initialPlanetPositions.Clear();
         initialPlanetRotations.Clear();
-        
+
         if (planets.Length <= 0)
         {
-            Debug.Log("PlanetaryController: InitializeAndScalePlanets(): No planets found:  " + planets.Length);
+            Debug.LogError("PlanetaryController: InitializeAndScalePlanets(): No planets found: " + planets.Length);
+            return;
         }
 
         GameObject sun = null;
@@ -377,86 +376,117 @@ public class PlanetaryController : MonoBehaviour, IResetObject
         foreach (var planet in planets)
         {
             PlanetInfo planetInfo = planet.GetComponent<PlanetInfo>();
+            Rigidbody planetRigidbody = planet.GetComponent<Rigidbody>();
+
             if (planetInfo == null)
             {
-                Debug.Log("PlanetaryController: InitializeAndScalePlanets(): Missing PlanetInfo for: " + planet.name);
+                Debug.LogError("PlanetaryController: InitializeAndScalePlanets(): Missing PlanetInfo for: " + planet.name);
+                continue;
             }
 
-            Rigidbody planetRigidbody = planet.GetComponent<Rigidbody>();
             if (planetRigidbody == null)
             {
-                Debug.Log("PlanetaryController: InitializeAndScalePlanets(): Missing Rigidbodies");
+                Debug.LogError("PlanetaryController: InitializeAndScalePlanets()");
+                continue;
             }
 
-            // assign the mass from PlanetInfo to Rigidbody, scaled down by 1000.
-            planetRigidbody.mass = planetInfo.mass / MASS_SCALE_FACTOR;
-            //Debug.Log("PlanetaryController: InitializeAndScalePlanets(): scaled planetRigidbody.mass for " + planetInfo.PlanetInformationOf + "is " + planetRigidbody.mass);
+            SetupMass(planetRigidbody, planetInfo);
+            SetupRotation(planet, planetInfo);
+            SetupInitialVelocity(planetRigidbody, planetInfo);
 
-
-            // store planets obliquityToOrbit at z axis
-            Vector3 initialRotationAngle = new Vector3(0, 0, planetInfo.obliquityToOrbit);
-            planet.transform.localEulerAngles = initialRotationAngle;
-            initialPlanetRotations.Add(planet.transform.localEulerAngles);
-            //Debug.Log("PlanetaryController: InitializeAndScalePlanets(): Setting initial rotation for " + planet.name + " to " + initialRotationAngle);
-
-
-            float scaleSize;
-            // scaledSize calculated from the PlanetInfo diameter
-            if (planetInfo.PlanetInformationOf == PlanetInformation.sun_0)
-            {
-                sun = planet;
-                sun.transform.position = Vector3.zero;
-                scaleSize = planetInfo.diameter / (DIAMETER_SCALE_FACTOR * DIAMETER_ADDITIONAL_SUN_SCALE_FACTOR);
-                sunRadius = (scaleSize / 2) * SUN_RADIUS_ADDITIONAL_OFFSET;
-                //Debug.Log("PlanetaryController: InitializeAndScalePlanets(): sun radius: " + sunRadius);
-
-                planet.transform.localScale = new Vector3(scaleSize, scaleSize, scaleSize);
-            }
-            else if (planetInfo.PlanetInformationOf >= PlanetInformation.jupiter_5 && planetInfo.PlanetInformationOf <= PlanetInformation.neptune_8)
-            {
-                // additional scaling for Gas Giants 5-8
-                scaleSize = planetInfo.diameter / (DIAMETER_SCALE_FACTOR * GAS_GIANTS_SCALE_FACTOR);
-
-                planet.transform.localScale = new Vector3(scaleSize, scaleSize, scaleSize);
-            }
-            else
-            {
-                //scaling for 1-4
-                scaleSize = planetInfo.diameter / DIAMETER_SCALE_FACTOR;
-
-                planet.transform.localScale = new Vector3(scaleSize, scaleSize, scaleSize);
-            }
+            float scaleSize = SetupSize(planet, planetInfo, ref sun, ref sunRadius);
+            planet.transform.localScale = new Vector3(scaleSize, scaleSize, scaleSize);
         }
-        // scaled distances from the PlanetInfo  + sunRadius applied after scaling the planets
-        // distanceFromSun = semiMajorAxis
-        // perihelion = distanceFromSunAtPerihelion where the velocity is maximum
+
         foreach (var planet in planets)
         {
             PlanetInfo planetInfo = planet.GetComponent<PlanetInfo>();
             if (planetInfo != null)
             {
-                float semiMajorAxis = sunRadius + (planetInfo.distanceFromSun / DISTANCE_SCALE_FACTOR);
-                //float distanceFromSunAtPerihelion = sunRadius + planetInfo.perihelion / DISTANCE_SCALE_FACTOR;
-
-                // additional scaling for Gas Giants 5-8
-                if (planetInfo.PlanetInformationOf >= PlanetInformation.jupiter_5 && planetInfo.PlanetInformationOf <= PlanetInformation.neptune_8)
-                {
-                    semiMajorAxis = sunRadius + (planetInfo.distanceFromSun / (DISTANCE_SCALE_FACTOR * GAS_GIANTS_SCALE_FACTOR));
-                    //distanceFromSunAtPerihelion = sunRadius + planetInfo.perihelion / (DISTANCE_SCALE_FACTOR * GAS_GIANTS_SCALE_FACTOR);
-                }
-
-                // scaled (orbital/initial velocity from Planet Info
-                // Rigidbody planetRigidbody = planet.GetComponent<Rigidbody>();
-                // Vector3 initialVelocity = new Vector3(0, 0, planetInfo.orbitalVelocity / VELOCITY_SCALE_FACTOR);
-                // planetRigidbody.velocity = initialVelocity;
-
-                Vector3 directionFromSun = Vector3.right;
-                planet.transform.position = sun.transform.position + directionFromSun * semiMajorAxis;
-
-                //Debug.Log("PlanetaryController: InitializeAndScalePlanets(): planet.transform.localScale " + planet.name + " is " + planet.transform.position);
-                initialPlanetPositions.Add(planet.transform.position);
+                SetupDistanceFromSun(planet, planetInfo, sun, sunRadius);
             }
         }
+    }
+
+
+    /*
+     * SetupSetupMass by assigning the mass from PlanetInfo to Rigidbody, scaled down by 1000.
+     */
+    private void SetupMass(Rigidbody rb, PlanetInfo info)
+    {
+        rb.mass = info.mass / MASS_SCALE_FACTOR;
+        //Debug.Log("PlanetaryController: SetupMass(): scaled rb.mass for " + info + "is " + rb.mass);
+    }
+
+
+    /*
+     * SetupRotation and store planets obliquityToOrbit at z axis
+     */
+    private void SetupRotation(GameObject planet, PlanetInfo info)
+    {
+        Vector3 initialRotationAngle = new Vector3(0, 0, info.obliquityToOrbit);
+        planet.transform.localEulerAngles = initialRotationAngle;
+        initialPlanetRotations.Add(planet.transform.localEulerAngles);
+        //Debug.Log("PlanetaryController: SetupRotation(): Setting initial rotation for " + planet.name + " to " + initialRotationAngle);
+    }
+
+
+    /*
+     * SetupInitialVelocity scaled orbital/initial velocity from Planet Info
+     */
+    private void SetupInitialVelocity(Rigidbody rb, PlanetInfo info)
+    {
+        Vector3 initialVelocity = new Vector3(0, 0, info.orbitalVelocity / VELOCITY_SCALE_FACTOR);
+        rb.velocity = initialVelocity;
+    }
+
+
+    /*
+     * SetupSize calculated and scaled from the PlanetInfo diameter
+     */
+    private float SetupSize(GameObject planet, PlanetInfo info, ref GameObject sun, ref float sunRadius)
+    {
+        float scaleSize = info.diameter / DIAMETER_SCALE_FACTOR;
+
+        if (info.PlanetInformationOf == PlanetInformation.sun_0)
+        {
+            sun = planet;
+            sun.transform.position = Vector3.zero;
+            scaleSize /= DIAMETER_ADDITIONAL_SUN_SCALE_FACTOR;
+            sunRadius = (scaleSize / 2) * SUN_RADIUS_ADDITIONAL_OFFSET;
+            //Debug.Log("PlanetaryController: SetupSize(): sun radius: " + sunRadius);
+        }
+        // additional scaling for Gas Giants 5-8
+        else if (info.PlanetInformationOf >= PlanetInformation.jupiter_5 && info.PlanetInformationOf <= PlanetInformation.neptune_8)
+        {
+            scaleSize /= GAS_GIANTS_SCALE_FACTOR;
+        }
+
+        return scaleSize;
+    }
+
+
+    /*
+     * SetupDistanceFromSun
+     * scaled distances from the PlanetInfo  + sunRadius applied after scaling the planets
+     * distanceFromSun = semiMajorAxis
+     * perihelion = distanceFromSunAtPerihelion where the velocity is maximum
+     */
+    private void SetupDistanceFromSun(GameObject planet, PlanetInfo info, GameObject sun, float sunRadius)
+    {
+        float semiMajorAxis = sunRadius + (info.distanceFromSun / DISTANCE_SCALE_FACTOR);
+        //float distanceFromSunAtPerihelion = sunRadius + info.perihelion / DISTANCE_SCALE_FACTOR;
+
+        if (info.PlanetInformationOf >= PlanetInformation.jupiter_5 && info.PlanetInformationOf <= PlanetInformation.neptune_8)
+        {
+            semiMajorAxis = sunRadius + (info.distanceFromSun / (DISTANCE_SCALE_FACTOR * GAS_GIANTS_SCALE_FACTOR));
+            //distanceFromSunAtPerihelion = sunRadius + info.perihelion / (DISTANCE_SCALE_FACTOR * GAS_GIANTS_SCALE_FACTOR);
+        }
+
+        Vector3 directionFromSun = Vector3.right;
+        planet.transform.position = sun.transform.position + directionFromSun * semiMajorAxis;
+        //Debug.Log("PlanetaryController: SetupDistanceFromSun(): planet.transform.localScale " + planet.name + " is " + planet.transform.position);
+        initialPlanetPositions.Add(planet.transform.position);
     }
 
 
