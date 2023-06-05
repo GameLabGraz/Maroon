@@ -21,6 +21,8 @@ namespace Maroon.GlobalEntities
                                                                                       ? CoordSystem.Instance.GetPositionInWorldSpace(localposition, CoordSystem.Instance.GetAxisSubDivisionUnits().ToArray())
                                                                                       : localposition;
 
+        public float CalculateDistanceBetween(Vector3 positionOne, Vector3 positionTwo, Unit targetUnit = Unit.m) => Vector3.Distance(GetSystemPosition(positionOne, targetUnit), GetSystemPosition(positionTwo, targetUnit));
+
         private void Awake()
         {
             if (CoordSystemHandler._instance == null)
@@ -34,7 +36,7 @@ namespace Maroon.GlobalEntities
             }
 
             DontDestroyOnLoad(this.gameObject);
-        }
+        }     
     }
 }
 

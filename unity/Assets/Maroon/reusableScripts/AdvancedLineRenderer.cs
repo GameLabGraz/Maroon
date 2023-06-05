@@ -88,7 +88,10 @@ public class AdvancedLineRenderer : MonoBehaviour
     {
         line_ = gameObject.GetComponent<LineRenderer>();
         if (line_ == null)
+        {
             line_ = gameObject.AddComponent<LineRenderer>();
+            InitLineRenderer();
+        }
 
         useWorldSpace = false;
         //material = new Material(Shader.Find("Particles/Additive"));

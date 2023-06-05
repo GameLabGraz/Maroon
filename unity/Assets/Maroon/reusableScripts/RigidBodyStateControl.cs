@@ -21,7 +21,7 @@ namespace Maroon.Physics
 
         public bool IsStateStored { get; private set; }
 
-        private void Start()
+        private void Awake()
         {
             _rigidBody = GetComponent<Rigidbody>();
 
@@ -36,6 +36,9 @@ namespace Maroon.Physics
 
         public void StoreRigidBodyState()
         {
+            if(_currentState == null || _rigidBody == null)
+                return;
+        
             _currentState.Position = _rigidBody.position;
             _currentState.Rotation = _rigidBody.rotation;
             _currentState.Velocity = _rigidBody.velocity;

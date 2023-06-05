@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Maroon.scenes.experiments.PerlinNoise.Scripts;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using Maroon.Utils;
 
 namespace Maroon.reusableGui.Experiment.Scripts.Runtime
 {
@@ -126,7 +126,7 @@ namespace Maroon.reusableGui.Experiment.Scripts.Runtime
                 button.gameObject.SetActive(true);
             }
 
-            SelectedIndex = SelectedIndex.Clamp(0, _button_objects.Count - 1);
+            SelectedIndex = Mathf.Clamp(SelectedIndex, 0, _button_objects.Count - 1);
             _selected = _button_objects[SelectedIndex];
 
             foreach (var button in _button_objects)

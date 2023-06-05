@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Mirror;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Dropdown = Maroon.UI.Dropdown;
-using Slider = Maroon.UI.Slider;
-using InputField = Maroon.UI.InputField;
+using Slider = GameLabGraz.UI.Slider;
+using InputField = GameLabGraz.UI.InputField;
 
 public class SortingNetworkSync : ExperimentNetworkSync
 {
@@ -29,7 +29,7 @@ public class SortingNetworkSync : ExperimentNetworkSync
     private Button _stepForwardButton;
     
     //Detail Mode Options
-    [SerializeField] private Dropdown _detailAlgorithmDropDown;
+    [SerializeField] private TMP_Dropdown _detailAlgorithmDropDown;
     
     [SerializeField] private Slider _detailSizeSlider;
     
@@ -38,15 +38,15 @@ public class SortingNetworkSync : ExperimentNetworkSync
     [SerializeField] private Button _battleModeButton;
     
     //Battle Mode Options
-    [SerializeField] private Dropdown _battleLeftAlgorithmDropDown;
+    [SerializeField] private TMP_Dropdown _battleLeftAlgorithmDropDown;
     
-    [SerializeField] private Dropdown _battleRightAlgorithmDropDown;
+    [SerializeField] private TMP_Dropdown _battleRightAlgorithmDropDown;
     
     [SerializeField] private Slider _battleSpeedSlider;
     
     [SerializeField] private InputField _battleSpeedInputField;
     
-    [SerializeField] private Dropdown _battleArrangementDropDown;
+    [SerializeField] private TMP_Dropdown _battleArrangementDropDown;
     
     [SerializeField] private Button _detailModeButton;
     

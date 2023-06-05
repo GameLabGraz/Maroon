@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Maroon.Utils;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
@@ -218,8 +219,8 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
 
         private Vector3 GetVertexNoise(float x, float y)
         {
-            var coordinates01 = new Vector2(x, y) / (_size - 1) - Utils.HalfVector2;
-            var center = Utils.HalfVector2;
+            var coordinates01 = new Vector2(x, y) / (_size - 1) - Maroon.Utils.Utils.HalfVector2;
+            var center = Maroon.Utils.Utils.HalfVector2;
             var pos = center + coordinates01 * NoiseExperimentBase.Instance.scale;
             var height = NoiseExperimentBase.noise.GetNoise2D(pos, NoiseExperimentBase.Instance.octaves);
             height *= heightScale;

@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageManager>
+	<Translations>
+		<Translation Key="DescriptionTitle">
+			<English>Description</English>
+			<German>Beschreibung</German>
+		</Translation>
+        
+        <Translation Key="BreadthFirstSeach">
+            <English>Breadth First is a simple search algorithm but can also be used for path finding. It first searches all neighbor nodes of the starting point, and only then moves on to their neighbors.</English>
+            <German>Breitensuche ist ein Suchalgorithmus, aber er kann auch zur Pfadfindung verwendet werden. Zuerst werden alle Nachbarn des Startpunktes besucht, und erst danach deren Nachbarn</German>
+        </Translation>
+        <Translation Key="DepthFirstSeach">
+            <English>Depth First is a simple search algorithm but can also be used for path finding. Like Breadth First search it also traverses all neighbors of the starting node, but recursively searches all possible paths of that one neighbor before moving on to the next.</English>
+            <German>Tiefensuche ist ein Suchalgorithmus, der auch zur Pfadfindung verwendet werden kann. Ähnlich wie die Breitensuche werden alle Nachbarn des Startpunktes besucht, allerdings werden rekursiv jeweils die Nachbarn durchsucht, bevor zum nächsten Nachbarn gegangen wird.</German>
+        </Translation>
+        <Translation Key="Dijkstra">
+            <English>Dijkstra's algorithm is pathfinding algorithm for finding the shortest route to any point on a network, or in this case labyrinth. We start by going through all neighbors of the start point and note their distance as 1, because they are 1 step away from the start. Now for all neighbors of these tiles, we again go though all their neighbors and repeat until we find the end.
+Because we always search neighbors, we know the their distance from the start of the original tile plus 1.</English>
+            <German>Dijkstras algorithmus ist ein Pfadfindungs Algorithmus, der den kürzesten Weg zu jedem Feld im Labyrinth berechnet. Wir starten damit die Nachbarn des Startpunktes zu besuchen. Die Distanz zu denen ist jeweils 1, da sie einen Schritt vom Start entfernt sind.
+Danach besuchen wir die neuen Nachbarn, und deren Distanz ist wiederum die Distanz des Nachbarn plus 1, bis wir das Ziel gefunden haben.</German>
+        </Translation>
+        <Translation Key="A*">
+            <English>A*(A Star) is a derivative of dijkstra's algorithm that uses distance to prioritize what path to search next, reducing the number of steps needed.
+We start by looking at all neighbors from the player position, and since they are exactly 1 step away from the player, we save this and call it g. Now we estimate the distance for all of them to the goal, and call it h.
+Next we look for the tile with the lowest combined g + h, called f, will be selected next. For all neighbors of that tile, we again now know that it takes 1 additional step to get there. We repeat this process until the goal is one of the neighbors, in which case we have found a path.</English>
+            <German>A* basiert auf dem Dijkstra Algorithmus, und nutzt die geschätzte Distanz zum Ziel, um die Suche nach dem Ziel zu beschleunigen.
+Wir starten damit, die benachbarten Felder zum Spieler zu besuchen, und da diese 1 Schritt vom Start entfernt sind, merken wir uns das als g. Nun schätzen wir jeweils die Distanz ab, und merken sie uns als h.
+Als nächstes suchen wir das Feld mit der niedrigsten gesamten g + h, auch genannt f. Für dieses Feld wissen wir wieder, dass die Nachbarn 1 Schritt weiter vom Start entfernt sind. Dieser Prozess wird solange wiederholt, das Ziel einer der Nachbarn ist, womit ein Pfad dorthin gefunden wurde.</German>
+        </Translation>
+        <Translation Key="PathfindingAlgo">
+            <English>Pathfinding Algorithm</English>
+            <German>Pfadfindungsalgorithmus</German>
+        </Translation>
+        <Translation Key="NumberOfElements">
+            <English>Maze Size</English>
+            <German>Labyrinthgröße</German>
+        </Translation>
+        <Translation Key="Speed">
+            <English>Animation Speed</English>
+            <German>Animationsgeschwindigkeit</German>
+        </Translation>
+        <Translation Key="TileInspector">
+            <English>Tile Inspector</English>
+            <German>Kacheln ansehen</German>
+        </Translation>
+        <Translation Key="TileCoords">
+            <English>Tile Coordinates</English>
+            <German>Kachel Koordinaten</German>
+        </Translation>
+	</Translations>
+</LanguageManager>

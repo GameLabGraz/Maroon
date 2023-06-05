@@ -2,6 +2,7 @@
 using System.Linq;
 using Maroon.Physics;
 using Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations;
+using Maroon.Utils;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.PerlinNoise.Scripts
@@ -40,8 +41,8 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
                 {
                     for (voxel.z = 0; voxel.z < _size; voxel.z++)
                     {
-                        var coordinates01 = (Vector3)voxel / (_size - 1) - Utils.HalfVector3;
-                        var center = _offset + Utils.HalfVector3;
+                        var coordinates01 = (Vector3)voxel / (_size - 1) - Maroon.Utils.Utils.HalfVector3;
+                        var center = _offset + Maroon.Utils.Utils.HalfVector3;
                         var noisePos = center + coordinates01 * ((
                             NoiseExperimentBase.Instance.scale + 1) * 0.3f);
                         var n = NoiseExperimentBase.noise.GetNoise3D(noisePos, NoiseExperimentBase.Instance.octaves);

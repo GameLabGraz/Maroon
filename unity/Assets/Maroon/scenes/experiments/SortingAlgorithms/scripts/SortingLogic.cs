@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using GEAR.Localization;
-using Maroon.UI;
+using TMPro;
 using UnityEngine;
+using Maroon.UI;
 
 public class SortingLogic : MonoBehaviour
 {
@@ -24,7 +25,7 @@ public class SortingLogic : MonoBehaviour
     }
     private List<LinkedList<int>> _buckets = new List<LinkedList<int>>();
 
-    [SerializeField] private Dropdown algorithmDropDown;
+    [SerializeField] private TMP_Dropdown algorithmDropDown;
     private SortingAlgorithm.SortingAlgorithmType _sortingAlgorithm;
     private SortingAlgorithm _algorithm;
 
@@ -40,7 +41,7 @@ public class SortingLogic : MonoBehaviour
         _sortingVisualization = GetComponent<DetailSortingVisualization>();
         _sortingVisualization.Init(size);
         algorithmDropDown.onValueChanged.AddListener(SetAlgorithmDropdown);
-        algorithmDropDown.AllowReset = false;
+        algorithmDropDown.AllowReset(false);
         SetAlgorithmDropdown(algorithmDropDown.value);
         _sortingVisualization.TimePerMove = 0.99f / operationsPerSecond;
         for (var i = 0; i < 10; ++i)

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Maroon.Physics;
+using Maroon.Utils;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations

@@ -1,5 +1,4 @@
 ﻿using System;
-using Maroon.scenes.experiments.PerlinNoise.Scripts;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -119,7 +118,7 @@ namespace Maroon.Physics
         public static implicit operator QuantityFloat(float value) => new QuantityFloat(value);
         public static implicit operator float(QuantityFloat quantity) => quantity.Value;
 
-        protected override float SetVaApplyValueBounds(float v) => v.Clamp(minValue, maxValue);
+        protected override float SetVaApplyValueBounds(float v) => Mathf.Clamp(v, minValue, maxValue);
     }
 
     [Serializable]
@@ -174,7 +173,7 @@ namespace Maroon.Physics
         private void OnNewValueFromSystemHandler(int value) { onNewValueFromSystem?.Invoke(value); }
         public static implicit operator QuantityInt(int value) => new QuantityInt(value);
         public static implicit operator int(QuantityInt quantity) => quantity.Value;
-        protected override int SetVaApplyValueBounds(int v) => v.Clamp(minValue, maxValue);
+        protected override int SetVaApplyValueBounds(int v) => Mathf.Clamp(v, minValue, maxValue);
     }
     
     [Serializable]

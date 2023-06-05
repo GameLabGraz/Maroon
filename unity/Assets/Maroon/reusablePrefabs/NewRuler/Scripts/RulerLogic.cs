@@ -33,7 +33,7 @@ namespace Maroon.Tools.Ruler
             if (RulerLine.positionCount < 2)
             {
                 RulerLine.SetPositions(new []{RulerStart.transform.position, RulerEnd.transform.position});
-                //UpdateRulerLine();
+                UpdateRulerLine();
             }
 
             PinDistance.Value = 0f;
@@ -41,16 +41,11 @@ namespace Maroon.Tools.Ruler
     
         public float CalculateDistance(Unit targetUnit = Unit.m)
         {
-            var endPos = CoordSystemHandler.Instance.GetSystemPosition(RulerEnd.transform.position, targetUnit);
-            var startPos = CoordSystemHandler.Instance.GetSystemPosition(RulerStart.transform.position, targetUnit);
-          
-            var calcDist = Vector3.Distance(startPos, endPos);
-       
-            if (Math.Abs(calcDist - _pinDistance) > 0.0001f)
-            {
-                _pinDistance = calcDist;
-            }
+            var calcDist = CoordSystemHandler.Instance.CalculateDistanceBetween(RulerStart.transform.position, RulerEnd.transform.position, targetUnit);
 
+            if (Math.Abs(calcDist - _pinDistance) > 0.0001f)
+                _pinDistance = calcDist;
+            
             return _pinDistance;
         }
 

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Maroon.GlobalEntities;
+using UnityEngine;
 
 namespace Maroon.Physics.Electromagnetism
 {
@@ -11,6 +12,8 @@ namespace Maroon.Physics.Electromagnetism
         [SerializeField] private float forceFactor = 0.5f;
 
         private EField _eField;
+
+        private const float CoulombConstant = 1f / (4 * Mathf.PI * 8.8542e-12f);
 
         public float Strength
         {
@@ -50,7 +53,10 @@ namespace Maroon.Physics.Electromagnetism
 
         public float getEPotential(Vector3 position)
         {
-            throw new System.NotImplementedException();
+            if (Mathf.Abs(strength) < 0.0001f) return 0f;
+
+            var distance = CoordSystemHandler.Instance.CalculateDistanceBetween(transform.position, position);
+            return CoulombConstant * strength / distance;
         }
 
         public float getFieldStrength()
