@@ -25,7 +25,7 @@ public class MSTController : MonoBehaviour
     [SerializeField] private GameObject BridgesParent;
     [SerializeField] private GameObject ManualBridgesParent;
 
-    private readonly float bridgeHeightY = 0.9f;
+    private readonly float bridgeHeightY = 0.82f;
     [SerializeField] private GameObject bridgeSegmentPrefab;
     [SerializeField] private GameObject bridgeSegmentGreyPrefab;
     [SerializeField] private GameObject islandPrefab;
@@ -105,7 +105,7 @@ public class MSTController : MonoBehaviour
         islands = GameObject.FindGameObjectsWithTag("Island");
         if (islands.Length <= 0)
         {
-            //Should not happen
+            // Should not happen
             Debug.Log("No Islands Found:  " + islands.Length);
         }
         //Debug.Log("islandsAmount: " + islands.Length);
