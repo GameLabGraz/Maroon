@@ -360,7 +360,7 @@ public class MSTController : MonoBehaviour
 
         float dist = GetDistance(manualFromIsland, manualToIsland);
 
-        if(Physics.Raycast(ray, out RaycastHit hit, dist, LayerMask.GetMask("Island")) && hit.collider.gameObject != manualToIsland)
+        if(Physics.Raycast(ray, out RaycastHit hit, dist, LayerMask.GetMask("Island", "Bridge")) && hit.collider.gameObject != manualToIsland)
         {
             //Debug.Log(hit.collider.gameObject.name + " was hit!");
             yield break;
