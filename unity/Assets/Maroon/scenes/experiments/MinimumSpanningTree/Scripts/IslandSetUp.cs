@@ -1,43 +1,35 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class IslandSetUp : MonoBehaviour, IResetObject
 {
-    public GameObject islandPrefab01;
-    public GameObject islandPrefab02;
-    public GameObject islandPrefab03;
-    public GameObject islandPrefab04;
-    
-    public Transform topLeftBorder;
-    public Transform bottomRightBorder;
+    [SerializeField] private GameObject islandPrefab01;
+    [SerializeField] private GameObject islandPrefab02;
+    [SerializeField] private GameObject islandPrefab03;
+    [SerializeField] private GameObject islandPrefab04;
 
-    static Vector3 radius;
-    int _numberOfIslands = 4;
+    [SerializeField] private Transform topLeftBorder;
+    [SerializeField] private Transform bottomRightBorder;
+
+    private static Vector3 radius;
+    private int _numberOfIslands = 4;
 
     protected List<GameObject> islandClones = new List<GameObject>();
 
-    //public LayerMask m_LayerMask;
-
-    private void Awake()
+    /**
+     * Start is called before the first frame update
+     * */
+    private void Start()
     {
-        //Debug.Log("IslandSetUp Awake");
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        //Debug.Log("IslandSetUp Start");
         // 1.9f for a little extra space
         radius = islandPrefab01.GetComponent<MeshRenderer>().bounds.size / 1.9f;
-        createIslands();
+        CreateIslands();
     }
 
     /**
      * Set a Random Position within Range
      * */
-    Vector3 setIslandPosition()
+    private Vector3 SetIslandPosition()
     {
         float xRange = Random.Range(topLeftBorder.position.x + radius.x, 
                 bottomRightBorder.position.x - radius.x);
@@ -51,40 +43,20 @@ public class IslandSetUp : MonoBehaviour, IResetObject
     /**
      * Check for collisions
      * */
-    bool checkIslandCollision(Vector3 islandPosition, Vector3 radius)
+    private bool CheckIslandCollision(Vector3 islandPosition, Vector3 radius)
     {
-        #region check Collision using Layer (NOT used!)
-        // Using Layer
-        //var collider = Physics.CheckSphere(islandPosition, radius.x, LayerMask.GetMask("Island"));
-        //Debug.Log("Collider is " + collider);
-
-        //Check with Tag
-        /*var collide = Physics.OverlapSphere(islandPosition, radius.x);
-        for (int i = 0; i < collide.Length; i++)
-        {
-            //Debug.Log("Collision!! Clone0" + islandClones.Count + "  " + collide[i].name);
-            if (collide[i].CompareTag("Island"))
-            {
-                //Debug.Log("Here already is an Island!!  " + collide[i].name);
-                return true;
-            }
-        }
-        return false;
-        */
-        #endregion
-
         return Physics.CheckSphere(islandPosition, radius.x, LayerMask.GetMask("Island"));
     }
 
     /**
      * Create all Islands on random positions in Pool
      * */
-    protected void createIslands()
+    protected void CreateIslands()
     {
         GameObject[] islandPrefabArray = { islandPrefab01, islandPrefab02, islandPrefab03, islandPrefab04 };
 
         int counter = 0;
-        for (; counter < MSTConstants.MAX_Islands; counter++)
+        for (; counter < MSTConstants.MAX_ISLANDS; counter++)
         {
             if (counter < islandClones.Count)
             {
@@ -96,21 +68,19 @@ public class IslandSetUp : MonoBehaviour, IResetObject
 
                 float angle = Random.Range(0f, 360f);
                 Quaternion islandRotation = Quaternion.Euler(0, angle, 0);
-                                
-                Vector3 islandPosition = setIslandPosition();
-                //Debug.Log("radius: "  + radius + "  Size: " + island.GetComponent<MeshRenderer>().bounds.size);
+
+                Vector3 islandPosition = SetIslandPosition();
                 int tmp = 0;
-                while (checkIslandCollision(islandPosition, radius))
+                while (CheckIslandCollision(islandPosition, radius))
                 {
-                    islandPosition = setIslandPosition();
+                    islandPosition = SetIslandPosition();
                     tmp++;
-                    //just force break after too many tries -> maybe there is no free space anymore
+                    // just force break after too many tries -> maybe there is no free space anymore
                     if (tmp > 1000000)
                     {
                         Debug.Log("createIslands(): No free space for new Island!");
                         break;
                     }
-
                 }
                 var island = Instantiate(islandPrefabArray[islandPrefabPicker], transform) as GameObject;
                 island.transform.SetPositionAndRotation(islandPosition, islandRotation);
@@ -129,15 +99,10 @@ public class IslandSetUp : MonoBehaviour, IResetObject
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {        
-    }
-
     /**
-    * deactivates all the islands Clones
-    * */
-    protected void clearAllIslandClones()
+     * deactivates all the islands Clones
+     * */
+    protected void ClearAllIslandClones()
     {
         foreach (var island in islandClones)
         {
@@ -146,13 +111,12 @@ public class IslandSetUp : MonoBehaviour, IResetObject
     }
 
     /**
-    * Change the number of active islands
-    * */
-    public void changeNumberOfIslands()
+     * Change the number of active islands
+     * */
+    public void ChangeNumberOfIslands()
     {
         if (SimulationController.Instance.SimulationRunning)
         {
-            //Debug.Log("changeNumberOfIslands(): SimulationRunning");
             ResetObject();
         }
 
@@ -174,53 +138,45 @@ public class IslandSetUp : MonoBehaviour, IResetObject
     }
 
     /**
-    * dynamic function to setNumberOfIslands from Slider
-    * */
-    public void setNumberOfIslands(float numberOfIslands)
+     * dynamic function to setNumberOfIslands from Slider
+     * */
+    public void SetNumberOfIslands(float numberOfIslands)
     {
         _numberOfIslands = (int)numberOfIslands;
-        //Debug.Log("(with float) changed Number of Islands to: " + NumberOfIslands + " bzw. " + numberOfIslands);
-        changeNumberOfIslands();
+        ChangeNumberOfIslands();
     }
 
     /**
      * resets all islandpositions
      * sets the number of islands active that are set in slider
      * */
-    public void resetIslandPositions()
+    public void ResetIslandPositions()
     {
-        if(SimulationController.Instance.SimulationRunning)
-        {
-            //should already be stopped if this function is called!
-            Debug.Log("resetIslandPosition(): SimulationRunning");
-        }
-        clearAllIslandClones();
-        for (int i = 0; i < MSTConstants.MAX_Islands; i++)
+        ClearAllIslandClones();
+        for (int i = 0; i < MSTConstants.MAX_ISLANDS; i++)
         {
             float angle = Random.Range(0f, 360f);
             Quaternion islandRotation = Quaternion.Euler(0, angle, 0);
 
-            Vector3 islandPosition = setIslandPosition();
+            Vector3 islandPosition = SetIslandPosition();
             
             int tmp = 0;
-            while (checkIslandCollision(islandPosition, radius))
+            while (CheckIslandCollision(islandPosition, radius))
             {
-                islandPosition = setIslandPosition();
+                islandPosition = SetIslandPosition();
                 tmp++;
-                //just force break after too many tries -> maybe there is no free space anymore
+                // just force break after too many tries -> maybe there is no free space anymore
                 if (tmp > 1000000)
                 {
                     Debug.Log("resetIslandPositions(): No free space for Island!");
                     break;
                 }
-
             }
             var island = islandClones[i];
             island.transform.SetPositionAndRotation(islandPosition, islandRotation);
             island.SetActive(true);
         }
-        changeNumberOfIslands();
-
+        ChangeNumberOfIslands();
     }
 
     /**
@@ -235,8 +191,7 @@ public class IslandSetUp : MonoBehaviour, IResetObject
             StopAllCoroutines();
             //Debug.Log("IslandSetUp ResetObject(): Simulation is Running!");
         }
-        //Debug.Log("IslandSetUp ResetObject(): Reset Islandpositions");
-        resetIslandPositions();
+        ResetIslandPositions();
         MSTController.Instance.UpdateIslands();
     }
 }

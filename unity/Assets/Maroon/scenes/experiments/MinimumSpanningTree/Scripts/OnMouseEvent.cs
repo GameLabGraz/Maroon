@@ -1,24 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class OnMouseEvent : MonoBehaviour
 {
-    Vector3 _initialScale;
-    readonly float _maxScale = 1.2f;
-    float scaleFactor;
+    private Vector3 _initialScale;
+    private readonly float _maxScale = 1.2f;
+    private float scaleFactor;
 
-    // Start is called before the first frame update
-    void Start()
+    /**
+     * Start is called before the first frame update
+     * */
+    private void Start()
     {
         _initialScale = transform.localScale;
         scaleFactor = 1.05f;
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
     }
 
     /**
@@ -32,13 +26,11 @@ public class OnMouseEvent : MonoBehaviour
     }
 
     /**
-    * on mouse over event listener on every island so it appears bigger
-    * to show the user to click on it
-    * */
+     * on mouse over event listener on every island so it appears bigger
+     * to show the user to click on it
+     * */
     private void OnMouseOver()
     {
-        //Debug.Log("OnMouseOver");
-
         if (scaleFactor < _maxScale)
         {
             transform.localScale = _initialScale * scaleFactor;
@@ -48,11 +40,10 @@ public class OnMouseEvent : MonoBehaviour
     }
 
     /**
-    * on mouse exit event listener on every island to change it to its original scale
-    * */
+     * on mouse exit event listener on every island to change it to its original scale
+     * */
     private void OnMouseExit()
     {
-        //Debug.Log("OnMouseExit");
         scaleFactor = 1.05f;
         transform.localScale = _initialScale;
     }

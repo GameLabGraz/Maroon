@@ -8,27 +8,27 @@ using GEAR.Localization; // for LanguageManager
 
 public class MSTConstants
 {
-    public const int MAX_Islands = 10;
+    public const int MAX_ISLANDS = 10;
 }
 
 // options for selecting start- and endislands manually
 enum ManualIslandPickerOptions
 {
-    noneSelected,
-    oneSelected,
-    bothSelected
+    NoneSelected,
+    OneSelected,
+    BothSelected
 }
 
 public class MSTController : MonoBehaviour
 {
-    public GameObject IslandsParent;
-    public GameObject BridgesParent;
-    public GameObject ManualBridgesParent;
+    [SerializeField] private GameObject IslandsParent;
+    [SerializeField] private GameObject BridgesParent;
+    [SerializeField] private GameObject ManualBridgesParent;
 
-    public float bridgeHeightY = 0.9f;
-    public GameObject bridgeSegmentPrefab;
-    public GameObject bridgeSegmentGreyPrefab;
-    public GameObject islandPrefab;
+    private readonly float bridgeHeightY = 0.9f;
+    [SerializeField] private GameObject bridgeSegmentPrefab;
+    [SerializeField] private GameObject bridgeSegmentGreyPrefab;
+    [SerializeField] private GameObject islandPrefab;
 
     private int _numberOfIslands = 4;
     public float NumberOfIslands
@@ -37,45 +37,40 @@ public class MSTController : MonoBehaviour
         get => _numberOfIslands;
     }
 
-    float size;
-    MeshRenderer bridgeRenderer;
-    MeshRenderer islandRenderer;
-    static float islandHalf;
-    GameObject[] islands;
+    private float size;
+    private MeshRenderer bridgeRenderer;
+    private MeshRenderer islandRenderer;
+    private static float islandHalf;
+    private GameObject[] islands;
 
-    int[] startIndices;
-    int[] endIndices;
+    private int[] startIndices;
+    private int[] endIndices;
 
     private Coroutine routineInstantiatePrim;
     private Coroutine routineInstantiateManual;
 
-    //To Build Bridges Manually
-    public GameObject FromButton;
-    public GameObject ToButton;
-    GameObject manualFromIsland;
-    int manualFromIslandIndex;
-    GameObject manualToIsland;
-    int isInManualSetCounter;
-    bool[] isInManualSet;
-    int manualStart;
-    ManualIslandPickerOptions manualCases;
+    // To Build Bridges Manually
+    [SerializeField] private GameObject FromButton;
+    [SerializeField] private GameObject ToButton;
+    private GameObject manualFromIsland;
+    private int manualFromIslandIndex;
+    private GameObject manualToIsland;
+    private int isInManualSetCounter;
+    private bool[] isInManualSet;
+    private int manualStart;
+    private ManualIslandPickerOptions manualCases;
 
-    //float endDistanceManual;
-    //float endLengthOfManualBridges;
-    int allManualBridgeSegments;
+    private int allManualBridgeSegments;
 
     // to show in DialogueManager
-    //float endDistance;
-    //float endLengthOfBridges;
-    int allBridgeSegments;
+    private int allBridgeSegments;
     [SerializeField] private TextMeshProUGUI PseudoCode;
 
     private DialogueManager _dialogueManager;
 
-
     public static MSTController Instance { get; private set; } // static singleton
-    
-    void Awake()
+
+    private void Awake()
     {
         if (Instance == null)
         {
@@ -86,13 +81,14 @@ public class MSTController : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        
         routineInstantiatePrim = null;
         routineInstantiateManual = null;
     }
 
-    // Start is called before the first frame update
-    void Start()
+    /**
+     * Start is called before the first frame update
+     * */
+    private void Start()
     {
         bridgeRenderer = bridgeSegmentPrefab.GetComponent<MeshRenderer>();
         size = bridgeRenderer.bounds.size.z * 1.011f;
@@ -100,12 +96,8 @@ public class MSTController : MonoBehaviour
         islandRenderer = islandPrefab.GetComponent<MeshRenderer>();
         islandHalf = islandRenderer.bounds.size.x / 3f;
 
-        //endDistance = 0;
-        //endLengthOfBridges = 0;
         allBridgeSegments = 0;
 
-        //endDistanceManual = 0;
-        //endLengthOfManualBridges = 0;
         allManualBridgeSegments = 0;
 
         SetPseudoCode();
@@ -118,24 +110,24 @@ public class MSTController : MonoBehaviour
         }
         //Debug.Log("islandsAmount: " + islands.Length);
 
-        isInManualSet = new bool[MSTConstants.MAX_Islands];
+        isInManualSet = new bool[MSTConstants.MAX_ISLANDS];
         for(int i = 0; i < isInManualSet.Length; i++)
         {
             isInManualSet[i] = false;
         }
         manualStart = -1;
-        manualCases = ManualIslandPickerOptions.noneSelected;
+        manualCases = ManualIslandPickerOptions.NoneSelected;
         isInManualSetCounter = 0;
+
+        if (_dialogueManager == null)
+        {
+            _dialogueManager = FindObjectOfType<DialogueManager>();
+        }
 
         DisplayMessageByKey("welcome message");
 
         PrimsAlgorithm();
         CalculateMSTDistance();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
     }
 
     /**
@@ -144,12 +136,7 @@ public class MSTController : MonoBehaviour
      * */
     public void UpdateIslands()
     {
-        //endDistance = 0;
-        //endLengthOfBridges = 0;
         allBridgeSegments = 0;
-
-        //endDistanceManual = 0;
-        //endLengthOfManualBridges = 0;
         allManualBridgeSegments = 0;
 
         islands = GameObject.FindGameObjectsWithTag("Island");
@@ -167,7 +154,7 @@ public class MSTController : MonoBehaviour
     /**
      * Calculate distance between GameObjects
      * */
-    float GetDistance(GameObject from, GameObject to)
+    private float GetDistance(GameObject from, GameObject to)
     {
         return Vector3.Distance(from.transform.position, to.transform.position);
     }
@@ -175,9 +162,9 @@ public class MSTController : MonoBehaviour
     #region Calculate Prims Algorithm
 
     /**
-    * find vertex (Island) which is NOT in MST that has the least key (distance/edge)
-    * */
-    int FindMinEdge(float[] key, bool[] isInMST, int vertices)
+     * find vertex (Island) which is NOT in MST that has the least key (distance/edge)
+     * */
+    private int FindMinEdge(float[] key, bool[] isInMST, int vertices)
     {
         float least = float.MaxValue;
         int min_index = -1;
@@ -196,11 +183,11 @@ public class MSTController : MonoBehaviour
     /**
      * Using Prims Algorithm for creating the MST and building the Bridges
      * */
-    void PrimsAlgorithm()
+    private void PrimsAlgorithm()
     {
         int vertices = _numberOfIslands;
 
-        //to get right order for building bridges
+        // to get right order for building bridges
         int[] edges = new int[vertices];
         foreach (int e in edges)
         {
@@ -231,13 +218,11 @@ public class MSTController : MonoBehaviour
             }
             catch (ArgumentException)
             {
-                //Console.WriteLine("An element with Key " + islands[i] + " already exists.");
                 Debug.Log("An element with Key " + islands[i] + " already exists.");
             }
             // Initialize with MaxValue and false
             key[i] = float.MaxValue;
             isInMST[i] = false;
-
         }
         // Set start vertex
         key[0] = 0;
@@ -252,7 +237,7 @@ public class MSTController : MonoBehaviour
             isInMST[u] = true;
             edges[count] = u;
 
-            // find
+            // update values for adjacent vertices
             for (int v = 0; v < vertices; v++)
             {
                 if (graph[u][v] != 0 && isInMST[v] == false && graph[u][v] < key[v])
@@ -262,24 +247,18 @@ public class MSTController : MonoBehaviour
                 }
             }
         }
-
         // add last found islandconnection to edges[]
         for (int v = 0; v < vertices; v++)
         {
             if (isInMST[v] == false)
             {
                 edges[vertices - 1] = v;
-                //float dist = getDistance(islands[parent[v]], islands[v]);
-                //Debug.Log("last edge: " + v + " least " + dist);
                 break;
             }
         }
-
-        //set globally to build bridges later
+        // set globally to build bridges later
         startIndices = parent;
         endIndices = edges;
-
-        //Debug.Log("End of Prims Algorithm!");
     }
 
     /**
@@ -287,25 +266,19 @@ public class MSTController : MonoBehaviour
      * Called from function CalculateMSTDistance()
      * to calculate global variable to show complete bridgelenght of MST
      * */
-    void CalculateSegmentsToCreate(Vector3 startPos, Vector3 endPos)
+    private void CalculateSegmentsToCreate(Vector3 startPos, Vector3 endPos)
     {
-        //float dist = Vector3.Distance(startPos, endPos);
-        //endDistance += dist;
-        //Debug.Log("dist: " + dist + " endDistance: " + endDistance);
-
         Vector3 newStartPoint = Vector3.MoveTowards(startPos, endPos, islandHalf);
         Vector3 newEndPoint = Vector3.MoveTowards(endPos, startPos, islandHalf);
 
         float d = Vector3.Distance(newStartPoint, newEndPoint) / size;
         allBridgeSegments += (int)d + 1;
-        //endLengthOfBridges += (allBridgeSegments * size);
-        //Debug.Log("Segments: " + allBridgeSegments + " endLengthOfBridges: " + endLengthOfBridges);
     }
 
     /**
      * Calculate all distances in MST with Prims Algorithm
      * */
-    void CalculateMSTDistance()
+    private void CalculateMSTDistance()
     {
         int vertices = _numberOfIslands;
         int[] parent = startIndices;
@@ -314,14 +287,12 @@ public class MSTController : MonoBehaviour
         for (int i = 1; i < vertices; i++)
         {
             //Debug.Log("start: " + parent[edges[i]] + " end: " + edges[i] + " order: " + i);
-
             if (parent[edges[i]] != -1)
             {
                 Vector3 startPos = islands[parent[edges[i]]].transform.position;
                 Vector3 endPos = islands[edges[i]].transform.position;
                 CalculateSegmentsToCreate(startPos, endPos);
             }
-
         }
     }
 
@@ -334,12 +305,9 @@ public class MSTController : MonoBehaviour
      * */
     public void PlayPrim()
     {
-        //Debug.Log("PlayPrim()");
-        //StopCoroutine(BuildBrigdesPrim());
         DeletePrimsBridges();
         PrimsAlgorithm();
         StartCoroutine(BuildBrigdesPrim());
-        //Debug.Log("PlayPrim Finished!");
     }
 
     public void StopPrim()
@@ -355,7 +323,7 @@ public class MSTController : MonoBehaviour
     /**
      * Build Bridges according to Prims Algorithm
      * */
-    IEnumerator BuildBrigdesPrim()
+    private IEnumerator BuildBrigdesPrim()
     {
         int vertices = _numberOfIslands;
         int[] parent = startIndices;
@@ -364,8 +332,7 @@ public class MSTController : MonoBehaviour
         for (int i = 1; i < vertices; i++)
         {
             //Debug.Log("start: " + parent[edges[i]] + " end: " + edges[i] + " order: " + i);
-
-            if (parent[edges[i]] != -1)// && edges[i] != -1)
+            if (parent[edges[i]] != -1)
             {
                 Vector3 startPos = islands[parent[edges[i]]].transform.position;
                 Vector3 endPos = islands[edges[i]].transform.position;
@@ -374,10 +341,7 @@ public class MSTController : MonoBehaviour
                 routineInstantiatePrim = StartCoroutine(InstantiateBridgeSegments(bridge, startPos, endPos, bridgeSegmentPrefab));
                 yield return routineInstantiatePrim;
             }
-
         }
-        //Debug.Log("BuildBrigdesPrim Finished!");
-
     }
 
     #endregion
@@ -385,9 +349,9 @@ public class MSTController : MonoBehaviour
     #region ManualBridgeBuilding
 
     /**
-    * Check for collisions between the two selected islands and build the bridge
-    * */
-    IEnumerator ManualBridgeBuilder(GameObject manualFromIsland, GameObject manualToIsland, int fromIndex, int toIndex)
+     * Check for collisions between the two selected islands and build the bridge
+     * */
+    private IEnumerator ManualBridgeBuilder(GameObject manualFromIsland, GameObject manualToIsland, int fromIndex, int toIndex)
     {
         Vector3 startPos = manualFromIsland.transform.position;
         Vector3 endPos = manualToIsland.transform.position;
@@ -402,16 +366,11 @@ public class MSTController : MonoBehaviour
             yield break;
         }
 
-        //endDistanceManual += dist;
-
         // Calculate here to show in UI
         Vector3 newStartPoint = Vector3.MoveTowards(startPos, endPos, islandHalf);
         Vector3 newEndPoint = Vector3.MoveTowards(endPos, startPos, islandHalf);
         float d = Vector3.Distance(newStartPoint, newEndPoint) / size;
         allManualBridgeSegments += (int)d + 1;
-        //endLengthOfManualBridges += (allManualBridgeSegments * size);
-        //Debug.Log("Segments: " + allManualBridgeSegments + " endLengthOfManualBridges: " + endLengthOfManualBridges);
-
 
         if (!isInManualSet[manualFromIslandIndex])
         {
@@ -422,28 +381,24 @@ public class MSTController : MonoBehaviour
         {
             isInManualSet[toIndex] = true;
             isInManualSetCounter++;
-
         }
+
         GameObject bridge = new GameObject("ManualBridge " + fromIndex + "--" + toIndex);
         bridge.transform.parent = ManualBridgesParent.transform;
         routineInstantiateManual = StartCoroutine(InstantiateBridgeSegments(bridge, startPos, endPos, bridgeSegmentGreyPrefab));
         yield return routineInstantiateManual;
-        
 
         if (isInManualSetCounter == _numberOfIslands)
         {
-            //Debug.Log("All Islands connected (manually)!: " + isInManualSetCounter);
-            //isInManualSetCounter = -1;
             yield return new WaitForSeconds(0.5f);
             if(allBridgeSegments == allManualBridgeSegments)
             {
-                DisplayMessageByKey("islands manually connected minimum case");                
+                DisplayMessageByKey("islands manually connected minimum case");
             }
             else
             {
                 var message = LanguageManager.Instance.GetString("islands manually connected");
                 DisplayMessage(string.Format(message, allManualBridgeSegments, allBridgeSegments));
-                //Debug.Log(string.Format(message, allManualBridgeSegments, endLengthOfManualBridges, allBridgeSegments, endLengthOfBridges));
             }
         }
         yield break;
@@ -467,12 +422,11 @@ public class MSTController : MonoBehaviour
             yield break;
         }
 
-            for (int c = 0; c < _numberOfIslands; c++)
+        for (int c = 0; c < _numberOfIslands; c++)
         {
             if (String.Compare(islands[c].name, _text) == 0)
             {
                 index = c;
-                //Debug.Log("islandAmount.name: " + islands[c].name + "  _text: " + _text);
             }
         }
 
@@ -489,15 +443,15 @@ public class MSTController : MonoBehaviour
 
         switch(manualCases)
         {
-            case ManualIslandPickerOptions.noneSelected:
+            case ManualIslandPickerOptions.NoneSelected:
                 manualFromIsland = islands[index];
                 light = manualFromIsland.transform.GetChild(0);
                 light.gameObject.SetActive(true);
                 SetFromButton(manualFromIsland.name);
                 manualFromIslandIndex = index;
-                manualCases = ManualIslandPickerOptions.oneSelected;
+                manualCases = ManualIslandPickerOptions.OneSelected;
                 break;
-            case ManualIslandPickerOptions.oneSelected:
+            case ManualIslandPickerOptions.OneSelected:
                 if (manualFromIsland != islands[index] && 
                     ((isInManualSet[index] ^ isInManualSet[manualFromIslandIndex]) || 
                     ((manualStart == index || manualStart == manualFromIslandIndex) && (!isInManualSet[index] && !isInManualSet[manualFromIslandIndex]))) )
@@ -506,11 +460,11 @@ public class MSTController : MonoBehaviour
                     light = manualToIsland.transform.GetChild(0);
                     light.gameObject.SetActive(true);
                     SetToButton(manualToIsland.name);
-                    manualCases = ManualIslandPickerOptions.bothSelected;
+                    manualCases = ManualIslandPickerOptions.BothSelected;
                     // Check for Collisions and build Bridge
                     yield return ManualBridgeBuilder(manualFromIsland, manualToIsland, manualFromIslandIndex, index);
                 }
-                if (manualCases == ManualIslandPickerOptions.bothSelected)
+                if (manualCases == ManualIslandPickerOptions.BothSelected)
                 {
                     light = manualFromIsland.transform.GetChild(0);
                     light.gameObject.SetActive(false);
@@ -518,22 +472,21 @@ public class MSTController : MonoBehaviour
                     light = manualToIsland.transform.GetChild(0);
                     light.gameObject.SetActive(false);
                     SetToButton(message);
-                    manualCases = ManualIslandPickerOptions.noneSelected;
+                    manualCases = ManualIslandPickerOptions.NoneSelected;
                 }
                 break;
-            case ManualIslandPickerOptions.bothSelected:
+            case ManualIslandPickerOptions.BothSelected:
                 light = manualFromIsland.transform.GetChild(0);
                 light.gameObject.SetActive(false);
                 SetFromButton(message);
                 light = manualToIsland.transform.GetChild(0);
                 light.gameObject.SetActive(false);
                 SetToButton(message);
-                manualCases = ManualIslandPickerOptions.noneSelected;
+                manualCases = ManualIslandPickerOptions.NoneSelected;
                 break;
             default:
                 break;
         }
-
         yield break;
     }
 
@@ -585,7 +538,6 @@ public class MSTController : MonoBehaviour
     {
         if (routineInstantiateManual != null)
         {
-            //Debug.Log("MSTController: TryAgain() Stop Coroutine");
             StopCoroutine(routineInstantiateManual);
         }
         ResetManualBridges();
@@ -596,9 +548,9 @@ public class MSTController : MonoBehaviour
     #region Instantiate Bridge
 
     /**
-    * Instantiate Bridgesegments to Build a Bridge
-    * */
-    IEnumerator InstantiateBridgeSegments(GameObject bridge, Vector3 startPos, Vector3 endPos, GameObject bridgeSegment)
+     * Instantiate Bridgesegments to Build a Bridge
+     * */
+    private IEnumerator InstantiateBridgeSegments(GameObject bridge, Vector3 startPos, Vector3 endPos, GameObject bridgeSegment)
     {
         //Debug.Log("startPos:  " + startPos + " endPos: " + endPos);
         Vector3 newStartPoint = Vector3.MoveTowards(startPos, endPos, islandHalf);
@@ -608,18 +560,16 @@ public class MSTController : MonoBehaviour
 
         float d = Vector3.Distance(newStartPoint, newEndPoint) / size;
 
-        //segmentsToCreate = Mathf.RoundToInt(Vector3.Distance(newStartPoint, newEndPoint) / size);
         int segmentsToCreate = (int)d;
         float distance = 1f / d;
 
-        ///percentage 0 - 100%
+        // percentage 0 - 100%
         float lerpValue = 0 - distance;
         //Debug.Log("segmentsToCreate:  " + segmentsToCreate);
         for (int i = 0; i <= segmentsToCreate; i++)
         {
             yield return new WaitForSeconds(0.15f);
             lerpValue += distance;
-
             //Debug.Log("lerpValue: " + lerpValue + " distance: " + distance);
 
             Vector3 instantiatePosition = Vector3.Lerp(newStartPoint, newEndPoint, lerpValue);
@@ -627,7 +577,6 @@ public class MSTController : MonoBehaviour
 
             Instantiate(bridgeSegment, instantiatePosition, rot, bridge.transform);
         }
-
         //Debug.Log("segments created!");
         yield break;
     }
@@ -637,9 +586,9 @@ public class MSTController : MonoBehaviour
     #region Reset everything
 
     /**
-     * destroy all manual build bridges
+     * destroy all manual built bridges
      * */
-    void DeleteManualBridges()
+    private void DeleteManualBridges()
     {
         foreach (Transform child in ManualBridgesParent.transform)
         {
@@ -648,9 +597,9 @@ public class MSTController : MonoBehaviour
     }
 
     /**
-     * destroy all with Prims Algorithm build Bridges
+     * destroy all with Prims Algorithm built bridges
      * */
-    void DeletePrimsBridges()
+    private void DeletePrimsBridges()
     {
         foreach (Transform child in BridgesParent.transform)
         {
@@ -659,8 +608,8 @@ public class MSTController : MonoBehaviour
     }
 
     /**
-    * resets the manually built bridges
-    * */
+     * resets the manually built bridges
+     * */
     private void ResetManualBridges()
     {
         DeleteManualBridges();
@@ -672,10 +621,11 @@ public class MSTController : MonoBehaviour
         }
         isInManualSetCounter = 0;
         manualStart = -1;
-        manualCases = ManualIslandPickerOptions.noneSelected;
+        manualCases = ManualIslandPickerOptions.NoneSelected;
         var message = LanguageManager.Instance.GetString("SelectIsland");
         SetFromButton(message);
         SetToButton(message);
+        // spotlights on islands should be deactivated
         foreach (GameObject island in islands)
         {
             island.transform.GetChild(0).gameObject.SetActive(false);
@@ -683,13 +633,12 @@ public class MSTController : MonoBehaviour
     }
 
     /**
-    * resets the object
-    * called from ResetObject in IslandSetUp
-    * */
+     * resets the object
+     * called from ResetObject in IslandSetUp
+     * */
     public void ResetMSTController()
     {
         StopAllCoroutines();
-        //Debug.Log("MSTController: ResetMSTController()");
         DeletePrimsBridges();
     }
 
@@ -700,11 +649,8 @@ public class MSTController : MonoBehaviour
     /**
      *  Show message by key from LanguageManager in Helpi's dialogue
      * */
-    void DisplayMessageByKey(string key)
+    private void DisplayMessageByKey(string key)
     {
-        if (_dialogueManager == null)
-            _dialogueManager = FindObjectOfType<DialogueManager>();
-
         if (_dialogueManager == null)
             return;
 
@@ -713,11 +659,11 @@ public class MSTController : MonoBehaviour
         _dialogueManager.ShowMessage(message);
     }
 
-    void DisplayMessage(string message)
+    /**
+     *  Show message string in Helpi's dialogue
+     * */
+    private void DisplayMessage(string message)
     {
-        if (_dialogueManager == null)
-            _dialogueManager = FindObjectOfType<DialogueManager>();
-
         if (_dialogueManager == null)
             return;
 
@@ -727,37 +673,29 @@ public class MSTController : MonoBehaviour
     /**
      * Set PseudoCode in UI Text field
      * */
-    void SetPseudoCode()
+    private void SetPseudoCode()
     {
-        string myText = "";
-        List<string> myPseudoCode = new List<string>();
+        var myPseudoCode =
+            "  <style=\"Normal\">mst = empty set</style>\n" +
+            "  <style=\"Normal\">startVertex = first vertex in graph</style>\n" +
+            "  <style=\"Normal\">mst.<style=\"sortingFunction\">add</style>(startVertex)</style>\n\n" +
 
-        myPseudoCode.Add("<style=\"Normal\">mst = empty set</style>");
-        myPseudoCode.Add("<style=\"Normal\">startVertex = first vertex in graph</style>");
-        myPseudoCode.Add("<style=\"Normal\">mst.<style=\"sortingFunction\">add</style>(startVertex)</style>");
-        myPseudoCode.Add("");
-        myPseudoCode.Add("<style=\"Normal\">edgesToCheck = edges connected to startVertex</style>");
-        myPseudoCode.Add("");
-        myPseudoCode.Add("<style=\"sortingKeyword\">while</style><style=\"Normal\"> mst <style=\"sortingNumber\">has fewer vertices than</style> graph:</style>");
-        myPseudoCode.Add("      <style=\"Normal\">minEdge, minWeight = <style=\"sortingFunction\">findMinEdge</style><style=\"Normal\">(edges)</style>");
-        myPseudoCode.Add("");
-        myPseudoCode.Add("<style=\"Normal\">mst.</style><style=\"sortingFunction\">add</style><style=\"Normal\">(minEdge)</style>");
-        myPseudoCode.Add("");
-        myPseudoCode.Add("<style=\"sortingKeyword\">for</style><style=\"Normal\"> edge </style><style=\"sortingKeyword\">in</style><style=\"Normal\"> edges connected to minEdge:</style>");
-        myPseudoCode.Add("      <style=\"sortingKeyword\">if</style><style=\"Normal\"> edge <style=\"sortingNumber\">is not</style> in mst:</style>");
-        myPseudoCode.Add("      <style=\"Normal\">edges.</style><style=\"sortingFunction\">add</style><style=\"Normal\">(edge)</style>");
-        myPseudoCode.Add("");
-        myPseudoCode.Add("<style=\"Normal\">edges.</style><style=\"sortingFunction\">remove</style><style=\"Normal\">(minEdge)</style>");
-        myPseudoCode.Add("");
-        myPseudoCode.Add("<style=\"sortingFunction\">return</style><style=\"Normal\"> mst as an array</style>");
-        myPseudoCode.Add("");
+            "  <style=\"Normal\">edgesToCheck = edges connected to startVertex</style>\n\n" +
 
-        for (int i = 0; i < myPseudoCode.Count; i++)
-        {
-            myText += "  " + myPseudoCode[i] + "\n";
-        }
+            "  <style=\"sortingKeyword\">while</style><style=\"Normal\"> mst <style=\"sortingNumber\">has fewer vertices than</style> graph:</style>\n" +
+            "      <style=\"Normal\">minEdge, minWeight = <style=\"sortingFunction\">findMinEdge</style><style=\"Normal\">(edges)</style>\n\n" +
 
-        PseudoCode.text = myText;
+            "  <style=\"Normal\">mst.</style><style=\"sortingFunction\">add</style><style=\"Normal\">(minEdge)</style>\n\n" +
+
+            "  <style=\"sortingKeyword\">for</style><style=\"Normal\"> edge </style><style=\"sortingKeyword\">in</style><style=\"Normal\"> edges connected to minEdge:</style>\n" +
+            "      <style=\"sortingKeyword\">if</style><style=\"Normal\"> edge <style=\"sortingNumber\">is not</style> in mst:</style>\n" +
+            "          <style=\"Normal\">edges.</style><style=\"sortingFunction\">add</style><style=\"Normal\">(edge)</style>\n\n" +
+
+            "  <style=\"Normal\">edges.</style><style=\"sortingFunction\">remove</style><style=\"Normal\">(minEdge)</style>\n\n" +
+
+            "  <style=\"sortingFunction\">return</style><style=\"Normal\"> mst as an array</style>\n\n";
+
+        PseudoCode.text = myPseudoCode;
     }
 
     #endregion
