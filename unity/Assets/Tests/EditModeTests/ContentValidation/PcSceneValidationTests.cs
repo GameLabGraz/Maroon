@@ -39,7 +39,7 @@ namespace Tests.EditModeTests.ContentValidation
         
         /* Tests start here! */
 
-        [SkipTestForScenesWithReason("StateMachine", "scene has a different camera setup")]
+        [SkipTestForScenesWithReason("StateMachine, MinimumSpanningTree", "scene has a different camera setup")]
         [Test, Description("Must have a GameObject named 'MainCamera' with a configured <Camera> component")]
         public void SceneHasMainCamera()
         {
