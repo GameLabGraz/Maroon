@@ -21,14 +21,22 @@ enum ManualIslandPickerOptions
 
 public class MSTController : MonoBehaviour
 {
+    [Header("Island Properties")]
     [SerializeField] private GameObject IslandsParent;
+    [SerializeField] private GameObject islandPrefab;
+
+    [Header("Bridge Properties")]
     [SerializeField] private GameObject BridgesParent;
     [SerializeField] private GameObject ManualBridgesParent;
-
-    private readonly float bridgeHeightY = 0.82f;
     [SerializeField] private GameObject bridgeSegmentPrefab;
     [SerializeField] private GameObject bridgeSegmentGreyPrefab;
-    [SerializeField] private GameObject islandPrefab;
+    private readonly float bridgeHeightY = 0.82f;
+
+    [Header("UI Properties")]
+    // To Build Bridges Manually
+    [SerializeField] private GameObject FromButton;
+    [SerializeField] private GameObject ToButton;
+    [SerializeField] private TextMeshProUGUI PseudoCode;
 
     private int _numberOfIslands = 4;
     public float NumberOfIslands
@@ -49,9 +57,7 @@ public class MSTController : MonoBehaviour
     private Coroutine routineInstantiatePrim;
     private Coroutine routineInstantiateManual;
 
-    // To Build Bridges Manually
-    [SerializeField] private GameObject FromButton;
-    [SerializeField] private GameObject ToButton;
+
     private GameObject manualFromIsland;
     private int manualFromIslandIndex;
     private GameObject manualToIsland;
@@ -61,11 +67,10 @@ public class MSTController : MonoBehaviour
     private ManualIslandPickerOptions manualCases;
 
     private int allManualBridgeSegments;
+  
+    private int allBridgeSegments;
 
     // to show in DialogueManager
-    private int allBridgeSegments;
-    [SerializeField] private TextMeshProUGUI PseudoCode;
-
     private DialogueManager _dialogueManager;
 
     public static MSTController Instance { get; private set; } // static singleton
