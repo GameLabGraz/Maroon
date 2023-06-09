@@ -680,7 +680,7 @@ public class MSTController : MonoBehaviour
      * */
     private void SetPseudoCode()
     {
-        var myPseudoCode =
+        PseudoCode.text =
             "  <style=\"Normal\">mst = empty set</style>\n" +
             "  <style=\"Normal\">startVertex = first vertex in graph</style>\n" +
             "  <style=\"Normal\">mst.<style=\"sortingFunction\">add</style>(startVertex)</style>\n\n" +
@@ -699,8 +699,6 @@ public class MSTController : MonoBehaviour
             "  <style=\"Normal\">edges.</style><style=\"sortingFunction\">remove</style><style=\"Normal\">(minEdge)</style>\n\n" +
 
             "  <style=\"sortingFunction\">return</style><style=\"Normal\"> mst as an array</style>\n\n";
-
-        PseudoCode.text = myPseudoCode;
     }
 
     #endregion
