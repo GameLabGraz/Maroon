@@ -6,12 +6,12 @@ using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
 {
-	public enum DrawMode { NoiseMap, ColorMap, Mesh, FalloffMap };
+	public enum DrawMode { NoiseMap, colorMap, Mesh, FalloffMap };
 	public DrawMode drawMode;
 
 	public Noise.NormalizeMode normalizeMode;
 
-	public const int mapChunkSize = 241;
+	public const int mapChunkSize = 239;
 	[Range(0, 6)]
 	public int editorPreviewLOD;
 	public float noiseScale;
@@ -38,7 +38,7 @@ public class MapGenerator : MonoBehaviour
 	Queue<MapThreadInfo<MapData>> mapDataThreadInfoQueue = new Queue<MapThreadInfo<MapData>>();
 	Queue<MapThreadInfo<MeshData>> meshDataThreadInfoQueue = new Queue<MapThreadInfo<MeshData>>();
 
-	private void Awake()
+	void Awake()
 	{
 		falloffMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize);
 	}
@@ -52,7 +52,7 @@ public class MapGenerator : MonoBehaviour
 		{
 			display.DrawTexture(TextureGenerator.TextureFromHeightMap(mapData.heightMap));
 		}
-		else if (drawMode == DrawMode.ColorMap)
+		else if (drawMode == DrawMode.colorMap)
 		{
 			display.DrawTexture(TextureGenerator.TextureFromColorMap(mapData.colorMap, mapChunkSize, mapChunkSize));
 		}
@@ -68,8 +68,7 @@ public class MapGenerator : MonoBehaviour
 
 	public void RequestMapData(Vector2 center, Action<MapData> callback)
 	{
-		ThreadStart threadStart = delegate
-		{
+		ThreadStart threadStart = delegate {
 			MapDataThread(center, callback);
 		};
 
@@ -87,8 +86,7 @@ public class MapGenerator : MonoBehaviour
 
 	public void RequestMeshData(MapData mapData, int lod, Action<MeshData> callback)
 	{
-		ThreadStart threadStart = delegate
-		{
+		ThreadStart threadStart = delegate {
 			MeshDataThread(mapData, lod, callback);
 		};
 
@@ -104,11 +102,11 @@ public class MapGenerator : MonoBehaviour
 		}
 	}
 
-	private void Update()
+	void Update()
 	{
 		if (mapDataThreadInfoQueue.Count > 0)
 		{
-			for (int i=0; i<mapDataThreadInfoQueue.Count; i++)
+			for (int i = 0; i < mapDataThreadInfoQueue.Count; i++)
 			{
 				MapThreadInfo<MapData> threadInfo = mapDataThreadInfoQueue.Dequeue();
 				threadInfo.callback(threadInfo.parameter);
@@ -117,7 +115,7 @@ public class MapGenerator : MonoBehaviour
 
 		if (meshDataThreadInfoQueue.Count > 0)
 		{
-			for (int i=0; i<meshDataThreadInfoQueue.Count; i++)
+			for (int i = 0; i < meshDataThreadInfoQueue.Count; i++)
 			{
 				MapThreadInfo<MeshData> threadInfo = meshDataThreadInfoQueue.Dequeue();
 				threadInfo.callback(threadInfo.parameter);
@@ -127,12 +125,12 @@ public class MapGenerator : MonoBehaviour
 
 	MapData GenerateMapData(Vector2 center)
 	{
-		float[,] noiseMap = Noise.GenerateNoiseMap(mapChunkSize, mapChunkSize, seed, noiseScale, octaves, persistance, lacunarity, center + offset, normalizeMode);
+		float[,] noiseMap = Noise.GenerateNoiseMap(mapChunkSize + 2, mapChunkSize + 2, seed, noiseScale, octaves, persistance, lacunarity, center + offset, normalizeMode);
 
 		Color[] colorMap = new Color[mapChunkSize * mapChunkSize];
-		for (int y=0; y<mapChunkSize; y++)
+		for (int y = 0; y < mapChunkSize; y++)
 		{
-			for (int x=0; x<mapChunkSize; x++)
+			for (int x = 0; x < mapChunkSize; x++)
 			{
 				if (useFalloff)
 				{
@@ -140,7 +138,8 @@ public class MapGenerator : MonoBehaviour
 				}
 
 				float currentHeight = noiseMap[x, y];
-				for (int i=0; i<regions.Length; i++)
+
+				for (int i = 0; i < regions.Length; i++)
 				{
 					if (currentHeight >= regions[i].height)
 					{
@@ -157,11 +156,10 @@ public class MapGenerator : MonoBehaviour
 		return new MapData(noiseMap, colorMap);
 	}
 
-	private void OnValidate()
+	void OnValidate()
 	{
 		if (lacunarity < 1) lacunarity = 1;
 		if (octaves < 0) octaves = 0;
-
 		falloffMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize);
 	}
 
