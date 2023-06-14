@@ -14,6 +14,8 @@ public class MapGenerator : MonoBehaviour
 	public const int mapChunkSize = 239;
 	[Range(0, 6)]
 	public int editorPreviewLOD;
+	[Range(0, 6)]
+	public int colliderMeshLOD;
 	public float noiseScale;
 
 	public int octaves;
@@ -25,6 +27,8 @@ public class MapGenerator : MonoBehaviour
 	public Vector2 offset;
 
 	public bool useFalloff;
+	public bool parallaxEffect;
+	public bool generateCollider;
 
 	public float meshHeightMultiplier;
 	public AnimationCurve meshHeightCurve;
@@ -58,7 +62,14 @@ public class MapGenerator : MonoBehaviour
 		}
 		else if (drawMode == DrawMode.Mesh)
 		{
-			display.DrawMesh(MeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorPreviewLOD), TextureGenerator.TextureFromColorMap(mapData.colorMap, mapChunkSize, mapChunkSize));
+			if (generateCollider)
+			{
+				display.DrawMeshWithCollider(MeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorPreviewLOD), TextureGenerator.TextureFromColorMap(mapData.colorMap, mapChunkSize, mapChunkSize), MeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, colliderMeshLOD));
+			}
+			else
+			{
+				display.DrawMesh(MeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorPreviewLOD), TextureGenerator.TextureFromColorMap(mapData.colorMap, mapChunkSize, mapChunkSize));
+			}
 		}
 		else if (drawMode == DrawMode.FalloffMap)
 		{
@@ -125,7 +136,7 @@ public class MapGenerator : MonoBehaviour
 
 	MapData GenerateMapData(Vector2 center)
 	{
-		float[,] noiseMap = Noise.GenerateNoiseMap(mapChunkSize + 2, mapChunkSize + 2, seed, noiseScale, octaves, persistance, lacunarity, center + offset, normalizeMode);
+		float[,] noiseMap = Noise.GenerateNoiseMap(mapChunkSize + 2, mapChunkSize + 2, seed, noiseScale, octaves, persistance, lacunarity, center + offset, normalizeMode, parallaxEffect);
 
 		Color[] colorMap = new Color[mapChunkSize * mapChunkSize];
 		for (int y = 0; y < mapChunkSize; y++)
@@ -160,6 +171,7 @@ public class MapGenerator : MonoBehaviour
 	{
 		if (lacunarity < 1) lacunarity = 1;
 		if (octaves < 0) octaves = 0;
+		meshHeightMultiplier = noiseScale / 2;
 		falloffMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize);
 	}
 
