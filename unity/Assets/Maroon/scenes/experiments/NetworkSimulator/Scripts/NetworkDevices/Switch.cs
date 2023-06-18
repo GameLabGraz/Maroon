@@ -14,5 +14,8 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
 
         public override void ReceivePacket(Packet packet, Port receiver) {
         }
+
+        protected override void OnStart() {
+        }
     }
 }

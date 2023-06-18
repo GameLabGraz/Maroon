@@ -11,14 +11,8 @@ namespace Maroon.NetworkSimulator {
         const int NumberOfCurveSteps = 25;
 
         [SerializeField]
-        private GameObject VisualPacketPrefab;
-        private class TravellingPacket {
-            public GameObject visualPacket;
-            public Packet packet;
-            public Port sender;
-            public Port receiver;
-            public float progress;
-        }
+        private TravellingPacket TravellingPacketPrefab;
+
         private List<TravellingPacket> travellingPackets = new List<TravellingPacket>();
         private float travellingSpeed = 1;
 
@@ -33,8 +27,8 @@ namespace Maroon.NetworkSimulator {
             foreach(var packet in travellingPackets.ToList()) {
                 if(packet.progress > 1 - float.Epsilon) {
                     travellingPackets.Remove(packet);
-                    Destroy(packet.visualPacket);
                     packet.receiver.ReceivePacket(packet.packet);
+                    Destroy(packet.gameObject);
                 }
                 else {
                     packet.progress += Time.deltaTime * travellingSpeed;
@@ -64,7 +58,7 @@ namespace Maroon.NetworkSimulator {
                     else {
                         b = lineRenderer.GetPosition(linePositionIndexB);
                     }
-                    packet.visualPacket.transform.position = Vector3.Lerp(a, b, packet.progress % 1);
+                    packet.transform.position = Vector3.Lerp(a, b, packet.progress % 1);
                 }
             }
         }
@@ -101,14 +95,8 @@ namespace Maroon.NetworkSimulator {
             if(sender != device1 && sender != device2) {
                 throw new System.ArgumentException("Cable not connected to port", nameof(sender));
             }
-            var travellingPacket = new TravellingPacket {
-                visualPacket = Instantiate(VisualPacketPrefab),
-                packet = packet,
-                sender = sender,
-                receiver = sender == device1 ? device2 : device1,
-                progress = 0
-            };
-            travellingPacket.visualPacket.transform.position = sender.Position;
+            var travellingPacket = Instantiate(TravellingPacketPrefab);
+            travellingPacket.Initialize(packet, sender, sender == device1 ? device2 : device1);
             travellingPackets.Add(travellingPacket);
         }
     }

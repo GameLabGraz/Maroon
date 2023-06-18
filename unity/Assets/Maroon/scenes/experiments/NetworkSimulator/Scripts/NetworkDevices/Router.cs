@@ -11,7 +11,11 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
             button.onClick.AddListener(networkSimulationController.ExitInsideOfDevice);
             buttonText.SetText("Back to network");
         }
+
         public override void ReceivePacket(Packet packet, Port receiver) {
+        }
+
+        protected override void OnStart() {
         }
     }
 }

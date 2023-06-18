@@ -14,12 +14,17 @@ namespace Maroon.NetworkSimulator {
         }
 
         public void SendPacket(Packet packet) {
+            packet = new Packet(packet);
             if(!IsFree) {
+                packet.HopCount--;
                 Cable.SendPacket(packet, this);
             }
         }
 
         public void ReceivePacket(Packet packet) {
+            if(packet.HopCount == 0) {
+                return;
+            }
             Device.ReceivePacket(packet, this);
         }
     }

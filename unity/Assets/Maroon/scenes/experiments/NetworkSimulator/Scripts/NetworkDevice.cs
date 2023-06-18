@@ -38,7 +38,9 @@ namespace Maroon.NetworkSimulator {
             kitPosition = transform.position;
             addCableScript = FindObjectOfType<AddCableScript>();
             uiController = FindObjectOfType<UIController>();
+            OnStart();
         }
+        protected abstract void OnStart();
 
         private void OnMouseDown() {
             clickStartPosition = Input.mousePosition;

@@ -19,5 +19,8 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
                 }
             }
         }
+
+        protected override void OnStart() {
+        }
     }
 }
