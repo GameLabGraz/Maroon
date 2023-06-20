@@ -1,12 +1,16 @@
 using UnityEngine;
 
-public class StartAnimation : MonoBehaviour
+
+namespace Maroon.Experiments.PlanetarySystem
 {
-    /*
-     * starts Animation when the screens are clicked
-     */
-    void OnMouseDown()
+    public class StartAnimation : MonoBehaviour
     {
-        PlanetaryController.Instance.StartAnimationOnInput();
+        /*
+         * starts Animation when the screens are clicked
+         */
+        private void OnMouseDown()
+        {
+            PlanetaryController.Instance.StartAnimationOnInput();
+        }
     }
 }

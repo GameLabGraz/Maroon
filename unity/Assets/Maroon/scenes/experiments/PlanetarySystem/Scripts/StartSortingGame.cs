@@ -1,12 +1,15 @@
 using UnityEngine;
 
-public class StartSortingGame : MonoBehaviour
-{       
-    /*
-     * starts SortingGame when the screen is clicked
-     */
-    void OnMouseDown()
+namespace Maroon.Experiments.PlanetarySystem
+{
+    public class StartSortingGame : MonoBehaviour
     {
-        PlanetaryController.Instance.StartSortingGameOnInput();
+        /*
+         * starts SortingGame when the screen is clicked
+         */
+        private void OnMouseDown()
+        {
+            PlanetaryController.Instance.StartSortingGameOnInput();
+        }
     }
 }

@@ -1,66 +1,60 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HideUI : MonoBehaviour
+
+namespace Maroon.Experiments.PlanetarySystem
 {
-    public GameObject AnimationUI;
-    public GameObject PlanetInformationUI;
-    public Toggle toggleHideUI;
-
-
-    void Update()
+    public class HideUI : MonoBehaviour
     {
-        HideUIOnKeyInput();
-    }
+        public GameObject AnimationUI;
+        public GameObject PlanetInformationUI;
+        public Toggle toggleHideUI;
 
 
-    /*
-     * hide UI on key or toggle input 
-     */
-    #region ToggleUI
-    /*
-     *  hide UI on Key input and update toggle
-     */
-    void HideUIOnKeyInput()
-    {
-        if (Input.GetKeyUp(KeyCode.H))
+        private void Update()
         {
-            if (!AnimationUI.activeSelf)
+            HideUIOnKeyInput();
+        }
+
+
+        /*
+         * hide UI on key or toggle input 
+         */
+        #region ToggleUI
+        /*
+         *  hide UI on Key input and update toggle
+         */
+        private void HideUIOnKeyInput()
+        {
+            if (Input.GetKeyUp(KeyCode.H))
             {
-                AnimationUI.SetActive(true);
-                PlanetInformationUI.SetActive(true);
-                toggleHideUI.isOn = false;
-                //Debug.Log("CameraAndUIController: HideUIOnKeyInput(): [H] UI Active Self: " + AnimationUI.activeSelf);
-            }
-            else
-            {
-                AnimationUI.SetActive(false); //turn off UI
-                PlanetInformationUI.SetActive(false); //turn off UI
-                toggleHideUI.isOn = true;
-                //Debug.Log("CameraAndUIController: HideUIOnKeyInput(): [H] UI Active Self: " + AnimationUI.activeSelf);
+                if (!AnimationUI.activeSelf)
+                {
+                    AnimationUI.SetActive(true);
+                    PlanetInformationUI.SetActive(true);
+                    toggleHideUI.isOn = false;
+                    //Debug.Log("CameraAndUIController: HideUIOnKeyInput(): [H] UI Active Self: " + AnimationUI.activeSelf);
+                }
+                else
+                {
+                    AnimationUI.SetActive(false); //turn off UI
+                    PlanetInformationUI.SetActive(false); //turn off UI
+                    toggleHideUI.isOn = true;
+                    //Debug.Log("CameraAndUIController: HideUIOnKeyInput(): [H] UI Active Self: " + AnimationUI.activeSelf);
+                }
             }
         }
-    }
 
 
-    /*
-     *  toggle HideUI with boolean from ToggleGroup function
-     */
-    public void ToggleHideUI(bool hide)
-    {
-        //Debug.Log("CameraAndUIController: ToggleHideUI(): " +  isHidden);
-        if (hide)
+        /*
+         *  toggle HideUI with boolean from ToggleGroup function
+         */
+        public void ToggleHideUI(bool hide)
         {
-            AnimationUI.SetActive(false);
-            PlanetInformationUI.SetActive(false);
+            AnimationUI.SetActive(!hide);
+            PlanetInformationUI.SetActive(!hide);
             //Debug.Log("CameraAndUIController: ToggleHideUI(): " + ui.activeSelf);
         }
-        else
-        {
-            AnimationUI.SetActive(true);
-            PlanetInformationUI.SetActive(true);
-            //Debug.Log("CameraAndUIController: ToggleHideUI(): " + ui.activeSelf);
-        }
+        #endregion ToggleUI
     }
-    #endregion ToggleUI
 }

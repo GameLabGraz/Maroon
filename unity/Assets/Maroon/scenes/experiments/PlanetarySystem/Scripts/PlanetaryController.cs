@@ -5,1532 +5,1492 @@ using Maroon.UI;            //Dialogue Manager
 using GEAR.Localization;    //MLG
 using System.Collections;
 
-public class PlanetaryController : MonoBehaviour, IResetObject
+
+
+namespace Maroon.Experiments.PlanetarySystem
 {
-    #region Cameras
-    [SerializeField] private GameObject MainCamera;                 //off
-    [SerializeField] private GameObject SolarSystemAnimationCamera; //on
-    [SerializeField] private GameObject SortingGameCamera;          //off
-    [SerializeField] private GameObject TelescopeCamera;            //off
-    public Camera AnimationCamera;
-
-    private float initialAnimationCameraFov;
-    private Vector3 initialAnimationCameraPosition;
-    private Quaternion initialAnimationCameraRotation;
-
-    private Vector3 initialMainCameraPosition;
-    private Quaternion initialMainCameraRotation;
-    private float initialMainCameraFOV;
-    #endregion Cameras
-
-    #region SolarSystem
-    private float G;
-    private GameObject sun;
-    //[SerializeField] private bool isSunKinematic = true;
-
-    [System.Serializable]
-    public class PlanetData : MonoBehaviour
+    public class PlanetaryController : MonoBehaviour, IResetObject
     {
-        public float semiMajorAxis;
-        [SerializeField] private float initialVelocity;
-    }
-    public GameObject[] planets;
-    #endregion SolarSystem
+        #region Cameras
+        [SerializeField] private GameObject MainCamera;                 //off
+        [SerializeField] private GameObject SolarSystemAnimationCamera; //on
+        [SerializeField] private GameObject SortingGameCamera;          //off
+        [SerializeField] private GameObject TelescopeCamera;            //off
+        public Camera AnimationCamera;
 
-    #region Trajectories
-    public List<PlanetTrajectory> planetTrajectories;
-    public float lineThickness = 0.4f;
-    private List<LineRenderer> lineRenderers;
-    private List<Queue<Vector3>> previousPositionsList;
+        private float initialAnimationCameraFov;
+        private Vector3 initialAnimationCameraPosition;
+        private Quaternion initialAnimationCameraRotation;
 
-    [System.Serializable]
-    public class PlanetTrajectory
-    {
-        public GameObject planet;
-        public Material trajectoryMaterial;
-        public int segments = 2000;
-    }
-    #endregion Trajectories
+        private Vector3 initialMainCameraPosition;
+        private Quaternion initialMainCameraRotation;
+        private float initialMainCameraFOV;
+        #endregion Cameras
 
-    #region StartScreenScenes
-                                                                //want it:
-    [SerializeField] private GameObject FormulaUI;              //off
-    [SerializeField] private GameObject Environment;            //off
-    [SerializeField] private GameObject Animation;                //off//on
-    [SerializeField] private GameObject SortingMinigame;        //off
-    [SerializeField] private GameObject Interactibles;          //off
-    [SerializeField] private GameObject AnimationUI;            //on
-    [SerializeField] private GameObject SortingGamePlanetInfoUI;//off
-    [SerializeField] private FlyCamera flyCameraScript;         //on
-    #endregion StartScreenScenes
+        #region SolarSystem
+        private float G;
+        private GameObject sun;
+        //[SerializeField] private bool isSunKinematic = true;
 
-    #region HidePlanets
-    public GameObject saturn_ring_1;
-    public GameObject saturn_ring_2;
-    public Light sunHalo;
-    #endregion HidePlanets
-
-    #region SortingGameSpawner
-    public int sortedPlanetCount = 0;
-    [SerializeField] private GameObject sortingGamePlanetPlaceholderSlots;
-    GameObject[] sortingPlanets;
-    private readonly List<int> sortingGameAvailableSlotPositions = new List<int>();
-    #endregion SortingGameSpawner
-
-    #region ResetAnimation
-    private readonly List<Vector3> initialPlanetPositions = new List<Vector3>();
-    private List<Vector3> initialPlanetRotations = new List<Vector3>();
-
-    public float resetAnimationDelay = 0.3f;
-    public float gravitationalConstantG = 6.674f;
-    public float timeSpeed = 1f;
-    #endregion ResetAnimation
-
-    #region Helpi
-    private DialogueManager _dialogueManager;
-    public GameObject HelpiDialogueUI;
-    #endregion Helpi
-
-    #region KeyInput
-    [SerializeField] private Material skyboxStars;
-    [SerializeField] private Material skyboxDiverseSpace;
-    [SerializeField] private Material skyboxBlack;
-    [SerializeField] private Light sunLight;
-    [SerializeField] private ParticleSystem solarFlares;
-    #endregion KeyInput
-
-    #region Slider
-    [SerializeField] private Slider sliderG;
-    [SerializeField] private Slider sliderTimeSpeed;
-    [SerializeField] private Slider sliderAnimationCameraFov;
-    #endregion Slider
-
-    #region UIToggleButtons
-    [SerializeField] private Toggle toggleAllTrajectories;
-    [SerializeField] private Toggle toggleARotation;
-    [SerializeField] private Toggle toggleSunKinematic;
-    [SerializeField] private Toggle toggleAOrientationGizmo;
-
-    [SerializeField] private Toggle toggleSGRotation;
-    [SerializeField] private Toggle toggleSGOrientationGizmo;
-    [SerializeField] private Toggle toggleSunLight;
-    [SerializeField] private Toggle toggleSolarFlares;
-
-    [SerializeField] private Toggle toggleSun;
-    [SerializeField] private Toggle toggleMercury;
-    [SerializeField] private Toggle toggleVenus;
-    [SerializeField] private Toggle toggleEarth;
-    [SerializeField] private Toggle toggleMars;
-    [SerializeField] private Toggle toggleJupiter;
-    [SerializeField] private Toggle toggleSaturn;
-    [SerializeField] private Toggle toggleUranus;
-    [SerializeField] private Toggle toggleNeptune;
-    #endregion UIToggleButtons
-
-
-    //---------------------------------------------------------------------------------------
-    /*
-     * Instance of PlanetaryController
-     */
-    #region PlanetaryControllerInstance
-    private static PlanetaryController _instance;
-    public static PlanetaryController Instance
-    {
-        get
+        [System.Serializable]
+        public class PlanetData : MonoBehaviour
         {
-            if (_instance == null)
-                _instance = FindObjectOfType<PlanetaryController>();
-            return _instance;
+            public float semiMajorAxis;
+            [SerializeField] private float initialVelocity;
         }
-    }
-    #endregion PlanetaryControllerInstance
+        public GameObject[] planets;
+        #endregion SolarSystem
 
+        #region Trajectories
+        public List<PlanetTrajectory> planetTrajectories;
+        public float lineThickness = 0.4f;
+        private List<LineRenderer> lineRenderers;
+        private List<Queue<Vector3>> previousPositionsList;
 
-    /*
-     * initialize LineRenderer before toggle
-     */
-    private void Awake()
-    {
-        DisplayMessageByKey("EnterPlanetarySystem");
-
-        SortingMinigame.SetActive(false);
-        SortingGamePlanetInfoUI.SetActive(false);
-        sun = planets[0];
-        sun.SetActive(true);
-
-        InitializeAndScalePlanets();
-        InitializeLineRenderer();
-    }
-
-
-    /*
-     *
-     */
-    void Start()
-    {
-        SetupToggle();
-        SetupSliders();
-        StoreInitialCameras();
-        GetFlyCameraScript();
-        SetupLineRenderer();
-        Animation.SetActive(false);
-    }
-
-
-    /*
-     * updates he LineRenderer to draw the paths 
-     * dequeue the drawn trajectory paths to be deleted number of segments 
-     */
-    void Update()
-    {
-        HandleKeyInput();
-        AnimationCameraMouseWheelFOV();
-        DrawTrajectory(); // switch of and activate Particle System in planet prefab for optional trajectories
-    }
-
-
-    /*
-     * frame-rate independent for physics calculations
-     * applied each fixed frame
-     */
-    private void FixedUpdate()
-    {
-        Gravity();
-        CheckCollisionsWithSun();
-    }
-    //---------------------------------------------------------------------------------------
-
-    /*
-     * displays Helpi masseges by key
-     */
-    #region Helpi
-    /*
-     * displays Halpi masseges by key
-     */
-    public void DisplayMessageByKey(string key)
-    {
-
-        if (_dialogueManager == null)
-            _dialogueManager = FindObjectOfType<DialogueManager>();
-
-        if (_dialogueManager == null)
-            return;
-
-        var message = LanguageManager.Instance.GetString(key);
-
-        _dialogueManager.ShowMessage(message);
-    }
-    #endregion Helpi
-
-
-    /*
-     * HandlesKeyInput during Update
-     */
-    #region KeyInput
-    /*
-     * HandlesKeyInput during Update
-     * switch to StartSortingGameOnInput on key [1]
-     * switch to StartAnimationOnInput   on key [2]
-     * change skybox                     on key [3],[4],[5]
-     * toggle sunlight                   on key [L]
-     */
-    void HandleKeyInput()
-    {
-        foreach (KeyCode keyCode in System.Enum.GetValues(typeof(KeyCode)))
+        [System.Serializable]
+        public class PlanetTrajectory
         {
-            if (Input.GetKeyDown(keyCode))
+            public GameObject planet;
+            public Material trajectoryMaterial;
+            public int segments = 2000;
+        }
+        #endregion Trajectories
+
+        #region StartScreenScenes
+        //want it:
+        [SerializeField] private GameObject FormulaUI;              //off
+        [SerializeField] private GameObject Environment;            //off
+        [SerializeField] private GameObject Animation;                //off//on
+        [SerializeField] private GameObject SortingMinigame;        //off
+        [SerializeField] private GameObject Interactibles;          //off
+        [SerializeField] private GameObject AnimationUI;            //on
+        [SerializeField] private GameObject SortingGamePlanetInfoUI;//off
+        [SerializeField] private FlyCamera flyCameraScript;         //on
+        #endregion StartScreenScenes
+
+        #region HidePlanets
+        public GameObject saturn_ring_1;
+        public GameObject saturn_ring_2;
+        public Light sunHalo;
+        #endregion HidePlanets
+
+        #region SortingGameSpawner
+        public int sortedPlanetCount = 0;
+        [SerializeField] private GameObject sortingGamePlanetPlaceholderSlots;
+        GameObject[] sortingPlanets;
+        private readonly List<int> sortingGameAvailableSlotPositions = new List<int>();
+        #endregion SortingGameSpawner
+
+        #region ResetAnimation
+        private readonly List<Vector3> initialPlanetPositions = new List<Vector3>();
+        private List<Vector3> initialPlanetRotations = new List<Vector3>();
+
+        public float resetAnimationDelay = 0.3f;
+        public float gravitationalConstantG = 6.674f;
+        public float timeSpeed = 1f;
+        #endregion ResetAnimation
+
+        #region Helpi
+        private DialogueManager _dialogueManager;
+        public GameObject HelpiDialogueUI;
+        #endregion Helpi
+
+        #region KeyInput
+        [SerializeField] private Material skyboxStars;
+        [SerializeField] private Material skyboxDiverseSpace;
+        [SerializeField] private Material skyboxBlack;
+        [SerializeField] private Light sunLight;
+        [SerializeField] private ParticleSystem solarFlares;
+        #endregion KeyInput
+
+        #region Slider
+        [SerializeField] private Slider sliderG;
+        [SerializeField] private Slider sliderTimeSpeed;
+        [SerializeField] private Slider sliderAnimationCameraFov;
+        #endregion Slider
+
+        #region UIToggleButtons
+        [SerializeField] private Toggle toggleAllTrajectories;
+        [SerializeField] private Toggle toggleARotation;
+        [SerializeField] private Toggle toggleSunKinematic;
+        [SerializeField] private Toggle toggleAOrientationGizmo;
+
+        [SerializeField] private Toggle toggleSGRotation;
+        [SerializeField] private Toggle toggleSGOrientationGizmo;
+        [SerializeField] private Toggle toggleSunLight;
+        [SerializeField] private Toggle toggleSolarFlares;
+
+        [SerializeField] private Toggle toggleSun;
+        [SerializeField] private Toggle toggleMercury;
+        [SerializeField] private Toggle toggleVenus;
+        [SerializeField] private Toggle toggleEarth;
+        [SerializeField] private Toggle toggleMars;
+        [SerializeField] private Toggle toggleJupiter;
+        [SerializeField] private Toggle toggleSaturn;
+        [SerializeField] private Toggle toggleUranus;
+        [SerializeField] private Toggle toggleNeptune;
+        #endregion UIToggleButtons
+
+
+        //---------------------------------------------------------------------------------------
+        /*
+         * Instance of PlanetaryController
+         */
+        #region PlanetaryControllerInstance
+        private static PlanetaryController _instance;
+        public static PlanetaryController Instance
+        {
+            get
             {
-                switch (keyCode)
+                if (_instance == null)
+                    _instance = FindObjectOfType<PlanetaryController>();
+                return _instance;
+            }
+        }
+        #endregion PlanetaryControllerInstance
+
+
+        /*
+         * initialize LineRenderer before toggle
+         */
+        private void Awake()
+        {
+            DisplayMessageByKey("EnterPlanetarySystem");
+
+            SortingMinigame.SetActive(false);
+            SortingGamePlanetInfoUI.SetActive(false);
+            sun = planets[0];
+            sun.SetActive(true);
+
+            InitializeAndScalePlanets();
+            InitializeLineRenderer();
+        }
+
+
+        /*
+         * general start setup
+         */
+        private void Start()
+        {
+            SetupToggle();
+            SetupSliders();
+            StoreInitialCameras();
+            GetFlyCameraScript();
+            SetupLineRenderer();
+            Animation.SetActive(false);
+        }
+
+
+        /*
+         * updates he LineRenderer to draw the paths 
+         * dequeue the drawn trajectory paths to be deleted number of segments 
+         */
+        private void Update()
+        {
+            HandleKeyInput();
+            AnimationCameraMouseWheelFOV();
+            DrawTrajectory(); // switch off and activate Particle System in planet prefab for optional trajectory approach
+        }
+
+
+        /*
+         * frame-rate independent for physics calculations
+         * applied each fixed frame
+         */
+        private void FixedUpdate()
+        {
+            Gravity();
+            CheckCollisionsWithSun();
+        }
+
+        /*
+         * displays Helpi masseges by key
+         */
+        #region Helpi
+        /*
+         * displays Halpi masseges by key
+         */
+        public void DisplayMessageByKey(string key)
+        {
+
+            if (_dialogueManager == null)
+                _dialogueManager = FindObjectOfType<DialogueManager>();
+
+            if (_dialogueManager == null)
+                return;
+
+            var message = LanguageManager.Instance.GetString(key);
+
+            _dialogueManager.ShowMessage(message);
+        }
+        #endregion Helpi
+
+
+        /*
+         * HandlesKeyInput during Update
+         */
+        #region KeyInput
+        /*
+         * HandlesKeyInput during Update
+         * switch to StartSortingGameOnInput on key [1]
+         * switch to StartAnimationOnInput   on key [2]
+         * change skybox                     on key [3],[4],[5]
+         * toggle sunlight                   on key [L]
+         */
+        private void HandleKeyInput()
+        {
+            foreach (KeyCode keyCode in System.Enum.GetValues(typeof(KeyCode)))
+            {
+                if (Input.GetKeyDown(keyCode))
                 {
-                    case KeyCode.F1:
-                        StartSortingGameOnInput();
-                        ClearTrajectories();
-                        break;
+                    switch (keyCode)
+                    {
+                        case KeyCode.F1:
+                            StartSortingGameOnInput();
+                            ClearTrajectories();
+                            break;
 
-                    case KeyCode.F2:
-                        StartAnimationOnInput();
-                        break;
+                        case KeyCode.F2:
+                            StartAnimationOnInput();
+                            break;
 
-                    case KeyCode.L:
-                        sunLight.gameObject.SetActive(!sunLight.gameObject.activeSelf);
-                        // Sync the toggle button state with sunLight's state
-                        toggleSunLight.isOn = sunLight.gameObject.activeSelf;
-                        break;
+                        case KeyCode.L:
+                            sunLight.gameObject.SetActive(!sunLight.gameObject.activeSelf);
+                            // Sync the toggle button state with sunLight's state
+                            toggleSunLight.isOn = sunLight.gameObject.activeSelf;
+                            break;
 
-                    case KeyCode.F3:
-                        RenderSettings.skybox = skyboxBlack;
-                        break;
+                        case KeyCode.F3:
+                            RenderSettings.skybox = skyboxBlack;
+                            break;
 
-                    case KeyCode.F4:
-                        RenderSettings.skybox = skyboxDiverseSpace;
-                        break;
+                        case KeyCode.F4:
+                            RenderSettings.skybox = skyboxDiverseSpace;
+                            break;
 
-                    case KeyCode.F5:
-                        RenderSettings.skybox = skyboxStars;
-                        break;
+                        case KeyCode.F5:
+                            RenderSettings.skybox = skyboxStars;
+                            break;
 
-                    default:
-                        break;
+                        default:
+                            break;
+                    }
                 }
             }
         }
-    }
-    #endregion KeyInput
+        #endregion KeyInput
 
 
-    /*
-     * handles the SortingGame
-     */
-    #region SortingGameSpawner
-    /*
-     * find planets with tag Planet and initializes them
-     */
-    void InitializeSortingPlanets()
-    {
-        //Debug.Log("PlanetaryController: InitializePlanets():");
-        sortingPlanets = GameObject.FindGameObjectsWithTag("SortingGamePlanet");
-        if (planets.Length <= 0)
+        /*
+         * handles the SortingGame
+         */
+        #region SortingGameSpawner
+        /*
+         * find planets with tag Planet and initializes them
+         */
+        private void InitializeSortingPlanets()
         {
-            //Should not happen
-            Debug.Log("PlanetaryController: InitializeSortingPlanets(): No sortingPlanets found:  " + sortingPlanets.Length);
-        }
-    }
-
-
-    /*
-     * Initialize the availablePositions list with all possible sorting positions
-     * called from StartSortingGame
-     */
-    public void InitializeAvailableSortingGameSlotPositions()
-    {
-        //Debug.Log("PlanetaryController: InitializeAvailableSortingGameSlotPositions():");
-        int boxSize = 24;
-        for (int i = 0; i < boxSize; i++)
-        {
-            sortingGameAvailableSlotPositions.Add(i);
-        }
-
-        InitializeSortingPlanets();
-        SpawnSortingPlanets();
-    }
-
-
-    /*
-     * Spawn the SortingPlanets on a random sortingGameAvailableSlotPositions
-     */
-    void SpawnSortingPlanets()
-    {
-        //Debug.Log("PlanetaryController: SpawnSortingPlanets():");
-        for (int i = 0; i < sortingPlanets.Length; i++)
-        {
-            // Randomly select a position index from the sortingGameAvailableSlotPositions list
-            int randomIndex = Random.Range(0, sortingGameAvailableSlotPositions.Count);
-
-            // Get the selected position index and remove it from the list to avoid duplicate positions
-            int positionIndex = sortingGameAvailableSlotPositions[randomIndex];
-            sortingGameAvailableSlotPositions.RemoveAt(randomIndex);
-
-            // Get the child object of the placeholder GameObject at the selected position index
-            Transform spawnPosition = sortingGamePlanetPlaceholderSlots.transform.GetChild(positionIndex);
-            sortingPlanets[i].transform.SetParent(spawnPosition);
-            sortingPlanets[i].transform.position = spawnPosition.position;
-        }
-    }
-    #endregion SortingGameSpawner
-
-
-    /*
-     * SolarSystems handles Newtons Gravity, Initial Velocity and the planets
-     * G is multiplied by 10 for scaling
-     * assign the original NASA Planetdata
-     * scales down PlanetInfo with various ScaleFactors to fit the visulization
-    */
-    #region SolarSystem
-    /*
-     * assign the original NASA Planetdata
-     * scales down PlanetInfo with various ScaleFactors to fit the visulization
-     */
-    private const float MASS_SCALE_FACTOR = 1000;                   /// 1000///
-    private const float VELOCITY_SCALE_FACTOR = 1000;               /// 1000///
-    private const float DIAMETER_SCALE_FACTOR = 10000;              ///10000///
-    private const float DIAMETER_ADDITIONAL_SUN_SCALE_FACTOR = 5;   ///   10/// additional scale factor ti shrink the sun
-    private const float DISTANCE_SCALE_FACTOR = 4f;                 ///    4///
-    private const float GAS_GIANTS_SCALE_FACTOR = 2.5f;             ///  2.5/// additional scale factor for the Gas Giants 5-8 to bring them closer for vizualisation
-    private const float SUN_RADIUS_ADDITIONAL_OFFSET = 3f;          ///    3/// additional offset multiplying the suns radius to the distances to get more visual destinction
-    private void InitializeAndScalePlanets()
-    {
-        //Debug.Log("PlanetaryController: InitializeAndScalePlanets():");
-        initialPlanetPositions.Clear();
-        initialPlanetRotations.Clear();
-
-        if (planets.Length <= 0)
-        {
-            Debug.LogError("PlanetaryController: InitializeAndScalePlanets(): No planets found: " + planets.Length);
-            return;
-        }
-
-        GameObject sun = null;
-        float sunRadius = 0;
-
-        //apply data from PlanetInfo
-        foreach (var planet in planets)
-        {
-            PlanetInfo planetInfo = planet.GetComponent<PlanetInfo>();
-            Rigidbody planetRigidbody = planet.GetComponent<Rigidbody>();
-
-            if (planetInfo == null)
+            //Debug.Log("PlanetaryController: InitializePlanets():");
+            sortingPlanets = GameObject.FindGameObjectsWithTag("SortingGamePlanet");
+            if (planets.Length <= 0)
             {
-                Debug.LogError("PlanetaryController: InitializeAndScalePlanets(): Missing PlanetInfo for: " + planet.name);
-                continue;
-            }
-
-            if (planetRigidbody == null)
-            {
-                Debug.LogError("PlanetaryController: InitializeAndScalePlanets()");
-                continue;
-            }
-
-            SetupMass(planetRigidbody, planetInfo);
-            SetupRotation(planet, planetInfo);
-            SetupInitialVelocity(planetRigidbody, planetInfo);
-
-            float scaleSize = SetupSize(planet, planetInfo, ref sun, ref sunRadius);
-            planet.transform.localScale = new Vector3(scaleSize, scaleSize, scaleSize);
-        }
-
-        foreach (var planet in planets)
-        {
-            PlanetInfo planetInfo = planet.GetComponent<PlanetInfo>();
-            if (planetInfo != null)
-            {
-                SetupDistanceFromSun(planet, planetInfo, sun, sunRadius);
+                //Should not happen
+                Debug.Log("PlanetaryController: InitializeSortingPlanets(): No sortingPlanets found:  " + sortingPlanets.Length);
             }
         }
-    }
 
 
-    /*
-     * SetupSetupMass by assigning the mass from PlanetInfo to Rigidbody, scaled down by 1000.
-     */
-    private void SetupMass(Rigidbody rb, PlanetInfo info)
-    {
-        rb.mass = info.mass / MASS_SCALE_FACTOR;
-        //Debug.Log("PlanetaryController: SetupMass(): scaled rb.mass for " + info + "is " + rb.mass);
-    }
-
-
-    /*
-     * SetupRotation and store planets obliquityToOrbit at z axis
-     */
-    private void SetupRotation(GameObject planet, PlanetInfo info)
-    {
-        Vector3 initialRotationAngle = new Vector3(0, 0, info.obliquityToOrbit);
-        planet.transform.localEulerAngles = initialRotationAngle;
-        initialPlanetRotations.Add(planet.transform.localEulerAngles);
-        //Debug.Log("PlanetaryController: SetupRotation(): Setting initial rotation for " + planet.name + " to " + initialRotationAngle);
-    }
-
-
-    /*
-     * SetupInitialVelocity scaled orbital/initial velocity from Planet Info
-     */
-    private void SetupInitialVelocity(Rigidbody rb, PlanetInfo info)
-    {
-        Vector3 initialVelocity = new Vector3(0, 0, info.orbitalVelocity / VELOCITY_SCALE_FACTOR);
-        rb.velocity = initialVelocity;
-    }
-
-
-    /*
-     * SetupSize calculated and scaled from the PlanetInfo diameter
-     */
-    private float SetupSize(GameObject planet, PlanetInfo info, ref GameObject sun, ref float sunRadius)
-    {
-        float scaleSize = info.diameter / DIAMETER_SCALE_FACTOR;
-
-        if (info.PlanetInformationOf == PlanetInformation.sun_0)
+        /*
+         * Initialize the availablePositions list with all possible sorting positions
+         * called from StartSortingGame
+         */
+        public void InitializeAvailableSortingGameSlotPositions()
         {
-            sun = planet;
-            sun.transform.position = Vector3.zero;
-            scaleSize /= DIAMETER_ADDITIONAL_SUN_SCALE_FACTOR;
-            sunRadius = (scaleSize / 2) * SUN_RADIUS_ADDITIONAL_OFFSET;
-            //Debug.Log("PlanetaryController: SetupSize(): sun radius: " + sunRadius);
-        }
-        // additional scaling for Gas Giants 5-8
-        else if (info.PlanetInformationOf >= PlanetInformation.jupiter_5 && info.PlanetInformationOf <= PlanetInformation.neptune_8)
-        {
-            scaleSize /= GAS_GIANTS_SCALE_FACTOR;
-        }
-
-        return scaleSize;
-    }
-
-
-    /*
-     * SetupDistanceFromSun
-     * scaled distances from the PlanetInfo  + sunRadius applied after scaling the planets
-     * distanceFromSun = semiMajorAxis
-     * perihelion = distanceFromSunAtPerihelion where the velocity is maximum
-     */
-    private void SetupDistanceFromSun(GameObject planet, PlanetInfo info, GameObject sun, float sunRadius)
-    {
-        float semiMajorAxis = sunRadius + (info.distanceFromSun / DISTANCE_SCALE_FACTOR);
-        //float distanceFromSunAtPerihelion = sunRadius + info.perihelion / DISTANCE_SCALE_FACTOR;
-
-        if (info.PlanetInformationOf >= PlanetInformation.jupiter_5 && info.PlanetInformationOf <= PlanetInformation.neptune_8)
-        {
-            semiMajorAxis = sunRadius + (info.distanceFromSun / (DISTANCE_SCALE_FACTOR * GAS_GIANTS_SCALE_FACTOR));
-            //distanceFromSunAtPerihelion = sunRadius + info.perihelion / (DISTANCE_SCALE_FACTOR * GAS_GIANTS_SCALE_FACTOR);
-        }
-
-        Vector3 directionFromSun = Vector3.right;
-        planet.transform.position = sun.transform.position + directionFromSun * semiMajorAxis;
-        //Debug.Log("PlanetaryController: SetupDistanceFromSun(): planet.transform.localScale " + planet.name + " is " + planet.transform.position);
-        initialPlanetPositions.Add(planet.transform.position);
-    }
-
-
-    /*
-     * Newton's law of universal gravitation
-     */
-    void Gravity()
-    {
-        foreach (GameObject a in planets)
-        {
-            foreach (GameObject b in planets)
+            //Debug.Log("PlanetaryController: InitializeAvailableSortingGameSlotPositions():");
+            int boxSize = 24;
+            for (int i = 0; i < boxSize; i++)
             {
-                // Object can't orbit itself
-                if (!a.Equals(b))
+                sortingGameAvailableSlotPositions.Add(i);
+            }
+
+            InitializeSortingPlanets();
+            SpawnSortingPlanets();
+        }
+
+
+        /*
+         * Spawn the SortingPlanets on a random sortingGameAvailableSlotPositions
+         */
+        private void SpawnSortingPlanets()
+        {
+            //Debug.Log("PlanetaryController: SpawnSortingPlanets():");
+            for (int i = 0; i < sortingPlanets.Length; i++)
+            {
+                // Randomly select a position index from the sortingGameAvailableSlotPositions list
+                int randomIndex = Random.Range(0, sortingGameAvailableSlotPositions.Count);
+
+                // Get the selected position index and remove it from the list to avoid duplicate positions
+                int positionIndex = sortingGameAvailableSlotPositions[randomIndex];
+                sortingGameAvailableSlotPositions.RemoveAt(randomIndex);
+
+                // Get the child object of the placeholder GameObject at the selected position index
+                Transform spawnPosition = sortingGamePlanetPlaceholderSlots.transform.GetChild(positionIndex);
+                sortingPlanets[i].transform.SetParent(spawnPosition);
+                sortingPlanets[i].transform.position = spawnPosition.position;
+            }
+        }
+        #endregion SortingGameSpawner
+
+
+        /*
+         * SolarSystems handles Newtons Gravity, Initial Velocity and the planets
+         * G is multiplied by 10 for scaling
+         * assign the original NASA Planetdata
+         * scales down PlanetInfo with various ScaleFactors to fit the visulization
+        */
+        #region SolarSystem
+        /*
+         * assign the original NASA Planetdata
+         * scales down PlanetInfo with various ScaleFactors to fit the visulization
+         */
+        private const float MASS_SCALE_FACTOR = 1000;                   /// 1000///
+        private const float DIAMETER_SCALE_FACTOR = 10000;              ///10000///
+        private const float DIAMETER_ADDITIONAL_SUN_SCALE_FACTOR = 5;   ///   10/// additional scale factor ti shrink the sun
+        private const float DISTANCE_SCALE_FACTOR = 4f;                 ///    4///
+        private const float GAS_GIANTS_SCALE_FACTOR = 2.5f;             ///  2.5/// additional scale factor for the Gas Giants 5-8 to bring them closer for vizualisation
+        private const float SUN_RADIUS_ADDITIONAL_OFFSET = 3f;          ///    3/// additional offset multiplying the suns radius to the distances to get more visual destinction
+        private void InitializeAndScalePlanets()
+        {
+            //Debug.Log("PlanetaryController: InitializeAndScalePlanets():");
+            initialPlanetPositions.Clear();
+            initialPlanetRotations.Clear();
+
+            if (planets.Length <= 0)
+            {
+                Debug.LogError("PlanetaryController: InitializeAndScalePlanets(): No planets found: " + planets.Length);
+                return;
+            }
+
+            GameObject sun = null;
+            float sunRadius = 0;
+
+            //apply data from PlanetInfo
+            foreach (var planet in planets)
+            {
+                PlanetInfo planetInfo = planet.GetComponent<PlanetInfo>();
+                Rigidbody planetRigidbody = planet.GetComponent<Rigidbody>();
+
+                if (planetInfo == null)
                 {
-                    float m1 = a.GetComponent<Rigidbody>().mass;
-                    float m2 = b.GetComponent<Rigidbody>().mass;
+                    Debug.LogError("PlanetaryController: InitializeAndScalePlanets(): Missing PlanetInfo for: " + planet.name);
+                    continue;
+                }
 
-                    float r = Vector3.Distance(a.transform.position, b.transform.position);
+                if (planetRigidbody == null)
+                {
+                    Debug.LogError("PlanetaryController: InitializeAndScalePlanets()");
+                    continue;
+                }
 
-                    // Newton's law of universal gravitation
-                    // F = G * ((m1 * m2) / (r^2))
-                    a.GetComponent<Rigidbody>().AddForce((b.transform.position - a.transform.position).normalized *
-                        (G * 10 * (m1 * m2) / (r * r)));
+                SetupMass(planetRigidbody, planetInfo);
+                SetupRotation(planet, planetInfo);
+
+                float scaleSize = SetupSize(planet, planetInfo, ref sun, ref sunRadius);
+                planet.transform.localScale = new Vector3(scaleSize, scaleSize, scaleSize);
+            }
+
+            foreach (var planet in planets)
+            {
+                PlanetInfo planetInfo = planet.GetComponent<PlanetInfo>();
+                if (planetInfo != null)
+                {
+                    SetupDistanceFromSun(planet, planetInfo, sun, sunRadius);
                 }
             }
         }
-    }
 
 
-    /*
-     * planets InitialVelocity for circular orbits
-     */
-    public void InitialVelocity()
-    {
-        foreach (GameObject a in planets)
+        /*
+         * SetupSetupMass by assigning the mass from PlanetInfo to Rigidbody, scaled down by 1000.
+         */
+        private void SetupMass(Rigidbody rb, PlanetInfo info)
+        {
+            rb.mass = info.mass / MASS_SCALE_FACTOR;
+            //Debug.Log("PlanetaryController: SetupMass(): scaled rb.mass for " + info + "is " + rb.mass);
+        }
+
+
+        /*
+         * SetupRotation and store planets obliquityToOrbit at z axis
+         */
+        private void SetupRotation(GameObject planet, PlanetInfo info)
+        {
+            Vector3 initialRotationAngle = new Vector3(0, 0, info.obliquityToOrbit);
+            planet.transform.localEulerAngles = initialRotationAngle;
+            initialPlanetRotations.Add(planet.transform.localEulerAngles);
+            //Debug.Log("PlanetaryController: SetupRotation(): Setting initial rotation for " + planet.name + " to " + initialRotationAngle);
+        }
+
+
+
+        /*
+         * SetupSize calculated and scaled from the PlanetInfo diameter
+         */
+        private float SetupSize(GameObject planet, PlanetInfo info, ref GameObject sun, ref float sunRadius)
+        {
+            float scaleSize = info.diameter / DIAMETER_SCALE_FACTOR;
+
+            if (info.PlanetInformationOf == PlanetInformation.Sun)
+            {
+                sun = planet;
+                sun.transform.position = Vector3.zero;
+                scaleSize /= DIAMETER_ADDITIONAL_SUN_SCALE_FACTOR;
+                sunRadius = (scaleSize / 2) * SUN_RADIUS_ADDITIONAL_OFFSET;
+                //Debug.Log("PlanetaryController: SetupSize(): sun radius: " + sunRadius);
+            }
+            // additional scaling for Gas Giants 5-8
+            else if (info.PlanetInformationOf >= PlanetInformation.Jupiter && info.PlanetInformationOf <= PlanetInformation.Neptune)
+            {
+                scaleSize /= GAS_GIANTS_SCALE_FACTOR;
+            }
+
+            return scaleSize;
+        }
+
+
+        /*
+         * SetupDistanceFromSun
+         * scaled distances from the PlanetInfo  + sunRadius applied after scaling the planets
+         * distanceFromSun = semiMajorAxis
+         * perihelion = distanceFromSunAtPerihelion where the velocity is maximum
+         */
+        private void SetupDistanceFromSun(GameObject planet, PlanetInfo info, GameObject sun, float sunRadius)
+        {
+            float semiMajorAxis = sunRadius + (info.distanceFromSun / DISTANCE_SCALE_FACTOR);
+
+            if (info.PlanetInformationOf >= PlanetInformation.Jupiter && info.PlanetInformationOf <= PlanetInformation.Neptune)
+            {
+                semiMajorAxis = sunRadius + (info.distanceFromSun / (DISTANCE_SCALE_FACTOR * GAS_GIANTS_SCALE_FACTOR));
+            }
+
+            Vector3 directionFromSun = Vector3.right;
+            planet.transform.position = sun.transform.position + directionFromSun * semiMajorAxis;
+            //Debug.Log("PlanetaryController: SetupDistanceFromSun(): planet.transform.localScale " + planet.name + " is " + planet.transform.position);
+            initialPlanetPositions.Add(planet.transform.position);
+        }
+
+
+        /*
+         * Newton's law of universal gravitation
+         */
+        private void Gravity()
+        {
+            foreach (GameObject a in planets)
+            {
+                foreach (GameObject b in planets)
+                {
+                    // Object can't orbit itself
+                    if (!a.Equals(b))
+                    {
+                        float m1 = a.GetComponent<Rigidbody>().mass;
+                        float m2 = b.GetComponent<Rigidbody>().mass;
+
+                        float r = Vector3.Distance(a.transform.position, b.transform.position);
+
+                        // Newton's law of universal gravitation
+                        // F = G * ((m1 * m2) / (r^2))
+                        a.GetComponent<Rigidbody>().AddForce((b.transform.position - a.transform.position).normalized *
+                            (G * 10 * (m1 * m2) / (r * r)));
+                    }
+                }
+            }
+        }
+
+
+        /*
+         * planets InitialVelocity for circular orbits
+         */
+        public void InitialVelocity()
+        {
+            foreach (GameObject a in planets)
+            {
+                foreach (GameObject b in planets)
+                {
+                    if (!a.Equals(b))
+                    {
+                        // m2 = mass of central object
+                        float m2 = b.GetComponent<Rigidbody>().mass;
+                        // r = distance between the objects and a is the length of the semi-mayor axis
+                        float r = Vector3.Distance(a.transform.position, b.transform.position);
+
+                        a.transform.LookAt(b.transform);
+
+                        // circular orbit instant velocity: v0 = sqrt((G * m2) / r)
+                        a.GetComponent<Rigidbody>().velocity += a.transform.right * Mathf.Sqrt((G * 10 * m2) / r);
+                    }
+                }
+            }
+        }
+
+
+        /*
+         * recalculates the InitialVelocity after toggle the sun's isKinematic in the animation
+         */
+        public void RecalculateInitialVelocity(GameObject a)
         {
             foreach (GameObject b in planets)
             {
                 if (!a.Equals(b))
                 {
-                    // m2 = mass of central object
                     float m2 = b.GetComponent<Rigidbody>().mass;
-                    // r = distance between the objects and a is the length of the semi-mayor axis
                     float r = Vector3.Distance(a.transform.position, b.transform.position);
 
                     a.transform.LookAt(b.transform);
 
-                    // circular orbit instant velocity: v0 = sqrt((G * m2) / r)
                     a.GetComponent<Rigidbody>().velocity += a.transform.right * Mathf.Sqrt((G * 10 * m2) / r);
                 }
             }
         }
-    }
+        #endregion SolarSystem
 
 
-    /*
-     * recalculates the InitialVelocity after toggle the sun's isKinematic in the animation
-     */
-    public void RecalculateInitialVelocity(GameObject a)
-    {
-        foreach (GameObject b in planets)
+        /*
+         * AnimationCamera reset
+         * Skybox
+         */
+        #region Animation
+        /*
+         * set skybox
+         */
+        private void SetSkybox()
         {
-            if (!a.Equals(b))
+            RenderSettings.skybox = skyboxStars;
+        }
+
+
+        /*
+         * change AnimationCamera FOV with mouse scroll wheel
+         */
+        private void AnimationCameraMouseWheelFOV()
+        {
+            float scrollData = Input.GetAxis("Mouse ScrollWheel");
+            float mouseScrollSensitivity = 40;
+
+            if (scrollData != 0)
             {
-                float m2 = b.GetComponent<Rigidbody>().mass;
-                float r = Vector3.Distance(a.transform.position, b.transform.position);
+                AnimationCamera.fieldOfView -= scrollData * mouseScrollSensitivity;
+                AnimationCamera.fieldOfView = Mathf.Clamp(AnimationCamera.fieldOfView, 10, 180);
 
-                a.transform.LookAt(b.transform);
-
-                a.GetComponent<Rigidbody>().velocity += a.transform.right * Mathf.Sqrt((G * 10 * m2) / r);
+                // update sliderAnimationCameraFov
+                sliderAnimationCameraFov.value = AnimationCamera.fieldOfView;
             }
         }
-    }
 
 
-    /*
-     * Vis - viva equation
-     * InitialVelocity for elliptical orbits
-     */
-    void InitialVelocityEliptical()
-    {
-        foreach (GameObject a in planets)
+        /*
+         *  reset the camera's position and field of view to their initial values
+         */
+        public void ResetCamera()
         {
-            foreach (GameObject b in planets)
-            {
-                if (!a.Equals(b))
-                {
-                    // m2 = mass of central object
-                    float m2 = b.GetComponent<Rigidbody>().mass;
-                    // r = distance between the objects
-                    float r = Vector3.Distance(a.transform.position, b.transform.position);
-                    // a = length of the semi-mayor axis
-                    float a_axis = a.GetComponent<PlanetData>().semiMajorAxis;
-                    a.transform.LookAt(b.transform);
+            AnimationCamera.transform.SetPositionAndRotation(initialAnimationCameraPosition, initialAnimationCameraRotation);
+            AnimationCamera.fieldOfView = initialAnimationCameraFov;
 
-                    ///Vis - viva equation////
-                    // eliptic orbit instant velocity: v0 = G * m2 * (2 / r - 1 / a)
-                    // gravitational constant * mass of sun * (2 / distance from sun(perihelion) -1 / semo-major axis
-                    a.GetComponent<Rigidbody>().velocity += a.transform.right * (G * 10 * m2 * (2 / r - 1 / a_axis));
-                    a.GetComponent<Rigidbody>().velocity += a.transform.right * (G * 10 * m2 * (2 / r - 1 / a_axis));
+            sliderAnimationCameraFov.value = initialAnimationCameraFov;
+        }
+
+
+        /*
+         * get flycamere script to dis/enable later
+         */
+        private void GetFlyCameraScript()
+        {
+            flyCameraScript = GetComponent<FlyCamera>();
+            if (flyCameraScript == null)
+            {
+                Debug.Log("PlanetaryController: GetFlyCameraScript(): script not found");
+            }
+        }
+
+
+        /*
+         * check if planets and suns collider intersect
+         */
+        private bool CheckCollisionWithSun(GameObject planet)
+        {
+            Collider planetCollider = planet.GetComponent<Collider>();
+            Collider sunCollider = sun.GetComponent<Collider>();
+
+            // check if planet and sun colliders intersect
+            if (planetCollider != null && sunCollider != null &&
+                planetCollider.bounds.Intersects(sunCollider.bounds))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+
+        /*
+         * check if planet collides with sun and toggles the planet if there is a collision
+         */
+        private void CheckCollisionsWithSun()
+        {
+            for (int index = 1; index < planets.Length; index++)
+            {
+                if (CheckCollisionWithSun(planets[index]))
+                {
+                    //Debug.Log("PlanetaryController: CheckCollisionsWithSun(): " + planets[index] + " collides with sun");
+                    switch (index)
+                    {
+                        case 1:
+                            UIToggle1(true);
+                            break;
+                        case 2:
+                            UIToggle2(true);
+                            break;
+                        case 3:
+                            UIToggle3(true);
+                            break;
+                        case 4:
+                            UIToggle4(true);
+                            break;
+                        case 5:
+                            UIToggle5(true);
+                            break;
+                        case 6:
+                            UIToggle6(true);
+                            break;
+                        case 7:
+                            UIToggle7(true);
+                            break;
+                        case 8:
+                            UIToggle8(true);
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         }
-    }
-    #endregion SolarSystem
+        #endregion Animation
 
 
-    /*
-     * AnimationCamera reset
-     * Skybox
-     */
-    #region Animation
-    /*
-     * set skybox
-     */
-    void SetSkybox()
-    {
-        RenderSettings.skybox = skyboxStars;
-    }
-
-
-    /*
-     * change AnimationCamera FOV with mouse scroll wheel
-     */
-    void AnimationCameraMouseWheelFOV()
-    {
-        float scrollData = Input.GetAxis("Mouse ScrollWheel");
-        float mouseScrollSensitivity = 40;
-
-        if (scrollData != 0)
+        /*
+         * create LineRender and Trajectories
+         */
+        #region Trajectories
+        /*
+         * initialize LineRenderer
+         */
+        private void InitializeLineRenderer()
         {
-            AnimationCamera.fieldOfView -= scrollData * mouseScrollSensitivity; // Adjust this value as per your needs
-            AnimationCamera.fieldOfView = Mathf.Clamp(AnimationCamera.fieldOfView, 10, 180);
-
-            // update sliderAnimationCameraFov
-            sliderAnimationCameraFov.value = AnimationCamera.fieldOfView;
-        }
-    }
-
-
-    /*
-     *  reset the camera's position and field of view to their initial values
-     */
-    public void ResetCamera()
-    {
-        AnimationCamera.transform.SetPositionAndRotation(initialAnimationCameraPosition, initialAnimationCameraRotation);
-        AnimationCamera.fieldOfView = initialAnimationCameraFov;
-
-        sliderAnimationCameraFov.value = initialAnimationCameraFov;
-    }
-
-
-    /*
-     * get flycamere script to dis/enable later
-     */
-    void GetFlyCameraScript()
-    {
-        flyCameraScript = GetComponent<FlyCamera>();
-        if (flyCameraScript == null)
-        {
-            Debug.Log("PlanetaryController: GetFlyCameraScript(): script not found");
-        }
-    }
-
-
-    /*
-     * check if planets and suns collider intersect
-     */
-    private bool CheckCollisionWithSun(GameObject planet)
-    {
-        Collider planetCollider = planet.GetComponent<Collider>();
-        Collider sunCollider = sun.GetComponent<Collider>();
-
-        // check if planet and sun colliders intersect
-        if (planetCollider != null && sunCollider != null && 
-            planetCollider.bounds.Intersects(sunCollider.bounds))
-        {
-            return true; 
+            lineRenderers = new List<LineRenderer>();
+            previousPositionsList = new List<Queue<Vector3>>();
         }
 
-        return false; 
-    }
 
-
-    /*
-     * check if planet collides with sun and toggles the planet if there is a collision
-     */
-    private void CheckCollisionsWithSun()
-    {
-        for (int index = 1; index < planets.Length; index++)
+        /*
+         * create a child Trajectory  GameObject for each planet
+         * adds and sets up LineRenderer
+         * add LineRenderer to LineRenderers list
+         * creates a position queue sized number of segments and adds it to  previousPositionsList
+         * initially hide the Trajecories
+         * update Toggle
+         */
+        private void SetupLineRenderer()
         {
-            if (CheckCollisionWithSun(planets[index]))
+            foreach (PlanetTrajectory orbit in planetTrajectories)
             {
-                //Debug.Log("PlanetaryController: CheckCollisionsWithSun(): " + planets[index] + " collides with sun");
-                switch (index)
+                GameObject trajectory = new GameObject(orbit.planet.name + "Trajectory");
+                trajectory.transform.SetParent(transform);
+
+                LineRenderer lr = trajectory.AddComponent<LineRenderer>();
+                lr.positionCount = orbit.segments;
+                lr.startWidth = lineThickness;
+                lr.endWidth = lineThickness;
+
+                lr.material = orbit.trajectoryMaterial;
+
+                lineRenderers.Add(lr);
+                previousPositionsList.Add(new Queue<Vector3>(orbit.segments));
+
+                lr.enabled = false;
+            }
+            toggleAllTrajectories.isOn = false;
+        }
+
+
+        /*
+         * loops through planetTrajectories and accesses the queue of previous positions
+         * creating/drawing a trail trajectory
+         * dequeues oldest position when segments reached
+         */
+        private void DrawTrajectory()
+        {
+            for (int i = 0; i < planetTrajectories.Count; i++)
+            {
+                PlanetTrajectory pt = planetTrajectories[i];
+                Queue<Vector3> previousPositions = previousPositionsList[i];
+
+                if (previousPositions.Count >= pt.segments)
                 {
-                    case 1:
-                        UIToggle1(true);
-                        break;
-                    case 2:
-                        UIToggle2(true);
-                        break;
-                    case 3:
-                        UIToggle3(true);
-                        break;
-                    case 4:
-                        UIToggle4(true);
-                        break;
-                    case 5:
-                        UIToggle5(true);
-                        break;
-                    case 6:
-                        UIToggle6(true);
-                        break;
-                    case 7:
-                        UIToggle7(true);
-                        break;
-                    case 8:
-                        UIToggle8(true);
-                        break;
-                    default:
-                        break;
+                    previousPositions.Dequeue();
+                }
+
+                previousPositions.Enqueue(pt.planet.transform.position);
+                //if (lineRenderers[i].enabled == false)
+                //    Debug.Log("Linerenderer[" + i + "] disabled ");
+
+                lineRenderers[i].positionCount = previousPositions.Count;
+                lineRenderers[i].SetPositions(previousPositions.ToArray());
+            }
+        }
+
+
+        /*
+         * clear trajectory path by resetting previousPosition queue and resetting LineRenderer
+         */
+        public void ClearTrajectories()
+        {
+            for (int i = 0; i < previousPositionsList.Count; i++)
+            {
+                Queue<Vector3> previousPositions = previousPositionsList[i];
+                previousPositions.Clear();
+
+                LineRenderer lr = lineRenderers[i];
+                lr.positionCount = 0;
+            }
+
+            //clear particle sytsem
+            foreach (GameObject planet in planets)
+            {
+                ParticleSystem ps = planet.GetComponentInChildren<ParticleSystem>();
+                if (ps != null)
+                {
+                    ps.Clear();
                 }
             }
         }
-    }
-    #endregion Animation
+        #endregion Trajectories
 
 
-    /*
-     * create LineRender and Trajectories
-     */
-    #region Trajectories
-    /*
-     * initialize LineRenderer
-     */
-    void InitializeLineRenderer()
-    {
-        lineRenderers = new List<LineRenderer>();
-        previousPositionsList = new List<Queue<Vector3>>();
-    }
-
-
-    /*
-     * create a child Trajectory  GameObject for each planet
-     * adds and sets up LineRenderer
-     * add LineRenderer to LineRenderers list
-     * creates a position queue sized number of segments and adds it to  previousPositionsList
-     * initially hide the Trajecories
-     * update Toggle
-     */
-    void SetupLineRenderer()
-    {
-        foreach (PlanetTrajectory orbit in planetTrajectories)
+        /*
+         * sets up and handles UI toggle buttons
+         */
+        #region UIToggleButtons
+        /*
+         * toggles the rotation of the minigame sortable planets after button press
+         */
+        public void UIToggleSGRotation(bool isOn)
         {
-            GameObject trajectory = new GameObject(orbit.planet.name + "Trajectory");
-            trajectory.transform.SetParent(transform);
+            //Debug.Log("PlanetController(): UIToggleSGRotation = " + isOn);
+            InitializeSortingPlanets();
 
-            LineRenderer lr = trajectory.AddComponent<LineRenderer>();
-            lr.positionCount = orbit.segments;
-            lr.startWidth = lineThickness;
-            lr.endWidth = lineThickness;
-
-            lr.material = orbit.trajectoryMaterial;
-
-            lineRenderers.Add(lr);
-            previousPositionsList.Add(new Queue<Vector3>(orbit.segments));
-
-            lr.enabled = false;
-        }
-        toggleAllTrajectories.isOn = false;
-    }
-
-
-    /*
-     * loops through planetTrajectories and accesses the queue od previous positions
-     * creating/drawing a trail trajectorie
-     * dequeues oldest position when segments reched
-     */
-    void DrawTrajectory()
-    {
-        for (int i = 0; i < planetTrajectories.Count; i++)
-        {
-            PlanetTrajectory pt = planetTrajectories[i];
-            Queue<Vector3> previousPositions = previousPositionsList[i];
-
-            if (previousPositions.Count >= pt.segments)
+            foreach (GameObject planet in sortingPlanets)
             {
-                previousPositions.Dequeue();
-            }
-
-            previousPositions.Enqueue(pt.planet.transform.position);
-            //if (lineRenderers[i].enabled == false)
-            //    Debug.Log("Linerenderer[" + i + "] disabled ");
-
-            lineRenderers[i].positionCount = previousPositions.Count;
-            lineRenderers[i].SetPositions(previousPositions.ToArray());
-        }
-    }
-
-
-    /*
-     * clear trajectory path by resetting previousPosition queue and resetting LineRenderer
-     */
-    public void ClearTrajectories()
-    {
-        for (int i = 0; i < previousPositionsList.Count; i++)
-        {
-            Queue<Vector3> previousPositions = previousPositionsList[i];
-            previousPositions.Clear();
-
-            LineRenderer lr = lineRenderers[i];
-            lr.positionCount = 0;
-        }
-
-        //clear particle sytsem
-        foreach (GameObject planet in planets)
-        {
-            ParticleSystem ps = planet.GetComponentInChildren<ParticleSystem>();
-            if (ps != null)
-            {
-                ps.Clear();
-            }
-        }
-    }
-    #endregion Trajectories
-
-
-    /*
-     * sets up and handles UI toggle buttons
-     */
-    #region UIToggleButtons
-    /*
-     * toggles the rotation of the minigame sortable planets after button press
-     */
-    public void UIToggleSGRotation(bool isOn)
-    {
-        //Debug.Log("PlanetController(): UIToggleSGRotation = " + isOn);
-        InitializeSortingPlanets();
-
-        foreach (GameObject planet in sortingPlanets)
-        {
-            //Debug.Log("PlanetController(): UIToggleSGRotation(): planet = " + planet);
-            PlanetRotation rotationScript = planet.GetComponent<PlanetRotation>();
-            if (rotationScript != null)
-            {
-                rotationScript.enabled = isOn;
-            }
-        }
-    }
-
-
-    /*
-     * toggles the rotation of the animation planets button press
-     */
-    public void UIToggleARotation(bool isOn)
-    {
-        //Debug.Log("PlanetController(): UIToggleARotation = " + isOn);
-        foreach (GameObject planet in planets)
-        {
-            //Debug.Log("PlanetController(): UIToggleARotation(): planet = " + planet);
-            PlanetRotation rotationScript = planet.GetComponent<PlanetRotation>();
-            if (rotationScript != null)
-            {
-                rotationScript.enabled = isOn;
-            }
-        }
-    }
-
-
-    /*
-     * toggles the rotation of the minigame sortable planets button press
-     */
-    public void UIToggleSGOrientation(bool isOn)
-    {
-        //Debug.Log("PlanetController(): UIToggleSGOrientation = " + isOn);
-        InitializeSortingPlanets();
-
-        foreach (GameObject sortingPlanet in sortingPlanets)
-        {
-            //Debug.Log("PlanetController(): UIToggleSGOrientation(): planet = " + planet);
-            GameObject orientationGizmo = sortingPlanet.transform.Find("orientation gizmo").gameObject;
-            if (orientationGizmo != null)
-            {
-                orientationGizmo.SetActive(isOn);
-            }
-            else
-            {
-                Debug.Log("PlanetController(): UIToggleSGOrientation(): No orientation gizmo found");
-            }
-        }
-    }
-
-
-    /*
-     * toggles the rotation of the animation planets button press
-     */
-    public void UIToggleAOrientation(bool isOn)
-    {
-        //Debug.Log("PlanetController(): UIToggleAOrientation(): planet.Length = " + planet.Length);
-        foreach (GameObject planet in planets)
-        {
-            //Debug.Log("PlanetController(): UIToggleAOrientation(): planet = " + planet);
-            GameObject orientationGizmo = planet.transform.Find("orientation gizmo").gameObject;
-            if (orientationGizmo != null)
-            {
-                orientationGizmo.SetActive(isOn);
-            }
-            else
-            {
-                Debug.Log("PlanetController(): UIToggleAOrientation(): No orientation gizmo found");
-            }
-        }
-    }
-
-
-    /*
-     * toggles specific planets trajectory after button press
-     */
-    public void ToggleTrajectory(int index, bool isOn)
-    {
-        //Debug.Log("PlanetController(): ToggleTrajectory [" + index + "] = " + isOn);
-        if (lineRenderers == null || planets == null)
-        {
-            //Debug.Log("PlanetController: ToggleTrajectory(): lineRenderers or planets is null");
-            return;
-        }
-        if (index >= lineRenderers.Count || index < 0)
-        {
-            //Debug.Log("PlanetController: ToggleTrajectory(): Invalid index: " + index);
-            return;
-        }
-        LineRenderer lr = lineRenderers[index];
-        if (lr == null || planets[index] == null)
-        {
-            Debug.Log("PlanetController: ToggleTrajectory(): LineRenderer or planets[index] at index " + index + " is null");
-            return;
-        }
-        lr.enabled = isOn;
-
-        //toggle particle system
-        ParticleSystem ps = planets[index].GetComponentInChildren<ParticleSystem>();
-        if (ps == null)
-        {
-            Debug.Log("PlanetController: ToggleTrajectory(): ParticleSystem in Planet at index " + index + " is null");
-            return;
-        }
-
-        if (isOn)
-        {
-            ps.Play();
-        }
-        else
-        {
-            ps.Clear();
-            ps.Pause();
-        }
-    }
-
-
-    /*
-     * toggles all trajectories after button press
-     */
-    public void UIToggleAllTrajectories(bool isOn)
-    {
-        //Debug.Log("PlanetController(): ToggleAllTrajectories = " + isOn);
-        for (int index = 0; index < planetTrajectories.Count; index++)
-        {
-            lineRenderers[index].enabled = isOn;
-        }
-
-        //toggle particle system
-        // If there's a planet at this index, toggle its ParticleSystem.
-        foreach (GameObject planet in planets)
-        {
-            ParticleSystem ps = planet.GetComponentInChildren<ParticleSystem>();
-            if (ps != null)
-            {
-                if (isOn)
+                //Debug.Log("PlanetController(): UIToggleSGRotation(): planet = " + planet);
+                PlanetRotation rotationScript = planet.GetComponent<PlanetRotation>();
+                if (rotationScript != null)
                 {
-                    ps.Play();
+                    rotationScript.enabled = isOn;
+                }
+            }
+        }
+
+
+        /*
+         * toggles the rotation of the animation planets button press
+         */
+        public void UIToggleARotation(bool isOn)
+        {
+            //Debug.Log("PlanetController(): UIToggleARotation = " + isOn);
+            foreach (GameObject planet in planets)
+            {
+                //Debug.Log("PlanetController(): UIToggleARotation(): planet = " + planet);
+                PlanetRotation rotationScript = planet.GetComponent<PlanetRotation>();
+                if (rotationScript != null)
+                {
+                    rotationScript.enabled = isOn;
+                }
+            }
+        }
+
+
+        /*
+         * toggles the rotation of the minigame sortable planets button press
+         */
+        public void UIToggleSGOrientation(bool isOn)
+        {
+            //Debug.Log("PlanetController(): UIToggleSGOrientation = " + isOn);
+            InitializeSortingPlanets();
+
+            foreach (GameObject sortingPlanet in sortingPlanets)
+            {
+                //Debug.Log("PlanetController(): UIToggleSGOrientation(): planet = " + planet);
+                GameObject orientationGizmo = sortingPlanet.transform.Find("orientation gizmo").gameObject;
+                if (orientationGizmo != null)
+                {
+                    orientationGizmo.SetActive(isOn);
                 }
                 else
                 {
-                    ps.Clear();
-                    ps.Pause();
+                    Debug.Log("PlanetController(): UIToggleSGOrientation(): No orientation gizmo found");
                 }
             }
         }
-    }
 
 
-    /*
-     * toggles the sun's kinematic and recalcuates its initial velocity after button press
-     */
-    public void UIToggleSunKinematic(bool isKinematic)
-    {
-        Rigidbody sunRb = planets[0].GetComponent<Rigidbody>();
-        sunRb.isKinematic = isKinematic;
-        if (!isKinematic)
+        /*
+         * toggles the rotation of the animation planets button press
+         */
+        public void UIToggleAOrientation(bool isOn)
         {
-            RecalculateInitialVelocity(planets[0]);
-        }
-    }
-
-
-    /*
-     * toggles the sun's solarflares in the sorting game after button press
-     */
-    public void UIToggleSolarFlares(bool isOn)
-    {
-        //Debug.Log("PlanetController(): UIToggleSolarFlares = " + isOn);
-        solarFlares.gameObject.SetActive(isOn);
-        if (isOn)
-        {
-            solarFlares.Play();
-        }
-        else
-        {
-            solarFlares.Stop();
-        }
-    }
-
-
-    /*
-     * toggles the sun's pointlight in the sorting game after button press
-     */
-    public void UIToggleSunLight(bool isOn)
-    {
-        //Debug.Log("PlanetController(): UIToggleSunLight = " + !isOn);
-        sunLight.gameObject.SetActive(isOn);
-    }
-
-
-    /*
-     * sets up listeners for toggle buttons
-     */
-    private void SetupToggle()
-    {
-        toggleAllTrajectories.onValueChanged.AddListener(UIToggleAllTrajectories);
-        toggleSunKinematic.onValueChanged.AddListener(UIToggleSunKinematic);
-        toggleSunLight.onValueChanged.AddListener(UIToggleSunLight);
-        toggleSolarFlares.onValueChanged.AddListener(UIToggleSolarFlares);
-        toggleSGRotation.onValueChanged.AddListener(UIToggleSGRotation);
-        toggleARotation.onValueChanged.AddListener(UIToggleARotation);
-        toggleSGOrientationGizmo.onValueChanged.AddListener(UIToggleSGOrientation);
-        toggleAOrientationGizmo.onValueChanged.AddListener(UIToggleAOrientation);
-
-        toggleSun.onValueChanged.AddListener(UIToggle0);
-        toggleMercury.onValueChanged.AddListener(UIToggle1);
-        toggleVenus.onValueChanged.AddListener(UIToggle2);
-        toggleEarth.onValueChanged.AddListener(UIToggle3);
-        toggleMars.onValueChanged.AddListener(UIToggle4);
-        toggleJupiter.onValueChanged.AddListener(UIToggle5);
-        toggleSaturn.onValueChanged.AddListener(UIToggle6);
-        toggleUranus.onValueChanged.AddListener(UIToggle7);
-        toggleNeptune.onValueChanged.AddListener(UIToggle8);
-
-    }
-
-
-    /*
-     * removes listeners for toggle buttons
-     */
-    private void OnDestroy()
-    {
-        toggleAllTrajectories.onValueChanged.RemoveListener(UIToggleAllTrajectories);
-        toggleSunKinematic.onValueChanged.RemoveListener(UIToggleSunKinematic);
-        toggleSunLight.onValueChanged.RemoveListener(UIToggleSunLight);
-        toggleSolarFlares.onValueChanged.RemoveListener(UIToggleSolarFlares);
-        toggleSGRotation.onValueChanged.RemoveListener(UIToggleSGRotation);
-        toggleARotation.onValueChanged.RemoveListener(UIToggleARotation);
-        toggleSGOrientationGizmo.onValueChanged.RemoveListener(UIToggleSGOrientation);
-        toggleAOrientationGizmo.onValueChanged.RemoveListener(UIToggleAOrientation);
-
-        sliderG.onValueChanged.RemoveListener(OnGValueChanged);
-        sliderTimeSpeed.onValueChanged.RemoveListener(OnTimeSliderValueChanged);
-        sliderAnimationCameraFov.onValueChanged.RemoveListener(OnFOVSliderValueChanged);
-
-        toggleSun.onValueChanged.RemoveListener(UIToggle0);
-        toggleMercury.onValueChanged.RemoveListener(UIToggle1);
-        toggleVenus.onValueChanged.RemoveListener(UIToggle2);
-        toggleEarth.onValueChanged.RemoveListener(UIToggle3);
-        toggleMars.onValueChanged.RemoveListener(UIToggle4);
-        toggleJupiter.onValueChanged.RemoveListener(UIToggle5);
-        toggleSaturn.onValueChanged.RemoveListener(UIToggle6);
-        toggleUranus.onValueChanged.RemoveListener(UIToggle7);
-        toggleNeptune.onValueChanged.RemoveListener(UIToggle8);
-    }
-    #endregion UIToggleButtons
-
-
-    /*
-     * hides planets and trajectories after radiobutton is pressed
-     */
-    #region HidePlanets
-    public void UIToggle0(bool isOn)
-    {
-        //Sun
-        //Debug.Log("Mercury checkbox: " + !isOn);
-      
-        planets[0].SetActive(!isOn);
-        sunHalo.enabled = !isOn;
-        ToggleTrajectory(0, !isOn);
-        toggleSun.isOn = isOn;
-
-    }
-
-    public void UIToggle1(bool isOn)
-    {
-        //Mercury
-        //Debug.Log("Mercury checkbox: " + !isOn);
-        planets[1].SetActive(!isOn);
-        ToggleTrajectory(1, !isOn);
-        toggleMercury.isOn = isOn;
-    }
-
-    public void UIToggle2(bool isOn)
-    {
-        //Venus
-        //Debug.Log("Venus checkbox: " + !isOn);
-        planets[2].SetActive(!isOn);
-        ToggleTrajectory(2, !isOn);
-        toggleVenus.isOn = isOn;
-    }
-
-    public void UIToggle3(bool isOn)
-    {
-        //Earth
-        //Debug.Log("Earth checkbox: " + !isOn);
-        planets[3].SetActive(!isOn);
-        ToggleTrajectory(3, !isOn);
-        toggleEarth.isOn = isOn;
-    }
-
-    public void UIToggle4(bool isOn)
-    {
-        //Mars
-        //Debug.Log("Mars checkbox: " + !isOn);
-        planets[4].SetActive(!isOn);
-        ToggleTrajectory(4, !isOn);
-        toggleMars.isOn = isOn;
-    }
-
-    public void UIToggle5(bool isOn)
-    {
-        //Jupiter
-        //Debug.Log("Jupiter checkbox: " + !isOn);
-        planets[5].SetActive(!isOn);
-        ToggleTrajectory(5, !isOn);
-        toggleJupiter.isOn = isOn;
-    }
-
-    public void UIToggle6(bool isOn)
-    {
-        //Saturn
-        //Debug.Log("Saturn checkbox: " + !isOn);
-        planets[6].SetActive(!isOn);
-        saturn_ring_1.SetActive(!isOn);
-        saturn_ring_2.SetActive(!isOn);
-        ToggleTrajectory(6, !isOn);
-        toggleSaturn.isOn = isOn;
-    }
-
-    public void UIToggle7(bool isOn)
-    {
-        //Uranus
-        //Debug.Log("Uranus checkbox: " + !isOn);
-        planets[7].SetActive(!isOn);
-        ToggleTrajectory(7, !isOn);
-        toggleUranus.isOn = isOn;
-    }
-    public void UIToggle8(bool isOn)
-    {
-        //Neptune
-        //Debug.Log("Neptune checkbox: " + !isOn);
-        planets[8].SetActive(!isOn);
-        ToggleTrajectory(8, !isOn);
-        toggleNeptune.isOn = isOn;
-    }
-    #endregion HidePlanets
-
-
-    /*
-     * store the StoreInitialCameras's position, rotation, and field of view
-     * LERPs the currentCamere(MainCamera) to the targetCameras position
-     * targetCameras are just used for theire position not for theire view
-     * reverse LERP camera
-     */
-    #region LerpCamera
-    /*
-     * store the StoreInitialCameras's position, rotation, and field of view
-     */
-    void StoreInitialCameras()
-    {
-        if (AnimationCamera == null)
-        {
-            Debug.Log("CameraAndUIController: StoreInitialAnimationCamera(): AnimationCamera missing");
+            //Debug.Log("PlanetController(): UIToggleAOrientation(): planet.Length = " + planet.Length);
+            foreach (GameObject planet in planets)
+            {
+                //Debug.Log("PlanetController(): UIToggleAOrientation(): planet = " + planet);
+                GameObject orientationGizmo = planet.transform.Find("orientation gizmo").gameObject;
+                if (orientationGizmo != null)
+                {
+                    orientationGizmo.SetActive(isOn);
+                }
+                else
+                {
+                    Debug.Log("PlanetController(): UIToggleAOrientation(): No orientation gizmo found");
+                }
+            }
         }
 
-        initialAnimationCameraPosition = AnimationCamera.transform.position;
-        initialAnimationCameraRotation = AnimationCamera.transform.rotation;
-        initialAnimationCameraFov = AnimationCamera.fieldOfView;
 
-        initialMainCameraPosition = MainCamera.transform.position;
-        initialMainCameraRotation = MainCamera.transform.rotation;
-        initialMainCameraFOV = MainCamera.GetComponent<Camera>().fieldOfView;
-    }
-
-
-    /*
-     * LERPs the currentCamere(MainCamera) to the targetCameras position
-     * targetCameras are just used for theire position not for theire view
-     */
-    IEnumerator LerpCameraToPosition(GameObject currentCamera, GameObject targetCamera, float lerpDuration)
-    {
-        float time = 0f;
-        Vector3 initialPosition = currentCamera.transform.position;
-        Quaternion initialRotation = currentCamera.transform.rotation;
-        float initialFOV = currentCamera.GetComponent<Camera>().fieldOfView;
-        float targetFOV = targetCamera.GetComponent<Camera>().fieldOfView;
-
-        while (time < lerpDuration)
+        /*
+         * toggles specific planets trajectory after button press
+         */
+        public void ToggleTrajectory(int index, bool isOn)
         {
-            time += Time.deltaTime;
-            float t = time / lerpDuration;
+            //Debug.Log("PlanetController(): ToggleTrajectory [" + index + "] = " + isOn);
+            if (lineRenderers == null || planets == null)
+            {
+                //Debug.Log("PlanetController: ToggleTrajectory(): lineRenderers or planets is null");
+                return;
+            }
+            if (index >= lineRenderers.Count || index < 0)
+            {
+                //Debug.Log("PlanetController: ToggleTrajectory(): Invalid index: " + index);
+                return;
+            }
+            LineRenderer lr = lineRenderers[index];
+            if (lr == null || planets[index] == null)
+            {
+                Debug.Log("PlanetController: ToggleTrajectory(): LineRenderer or planets[index] at index " + index + " is null");
+                return;
+            }
+            lr.enabled = isOn;
 
-            currentCamera.transform.position = Vector3.Lerp(initialPosition, targetCamera.transform.position, t);
-            currentCamera.transform.rotation = Quaternion.Lerp(initialRotation, targetCamera.transform.rotation, t);
-            currentCamera.GetComponent<Camera>().fieldOfView = Mathf.Lerp(initialFOV, targetFOV, t);
+            //toggle particle system
+            ParticleSystem ps = planets[index].GetComponentInChildren<ParticleSystem>();
+            if (ps == null)
+            {
+                Debug.Log("PlanetController: ToggleTrajectory(): ParticleSystem in Planet at index " + index + " is null");
+                return;
+            }
 
-            yield return null;
-        }
-    }
-
-
-    /*
-     * Reverse LERP camera
-     */
-    IEnumerator LerpCameraToInitialPosition(GameObject currentCamera, float lerpDuration)
-    {
-        float time = 0f;
-        Vector3 initialPosition = currentCamera.transform.position;
-        Quaternion initialRotation = currentCamera.transform.rotation;
-        float initialFOV = currentCamera.GetComponent<Camera>().fieldOfView;
-
-        while (time < lerpDuration)
-        {
-            time += Time.deltaTime;
-            float t = time / lerpDuration;
-
-            currentCamera.transform.position = Vector3.Lerp(initialPosition, initialMainCameraPosition, t);
-            currentCamera.transform.rotation = Quaternion.Lerp(initialRotation, initialMainCameraRotation, t);
-            currentCamera.GetComponent<Camera>().fieldOfView = Mathf.Lerp(initialFOV, initialMainCameraFOV, t);
-
-            yield return null;
-        }
-    }
-    #endregion LerpCamera
-
-
-    /*
-     * StartSortingGameOnInput and de/activates gameobjects after coroutine has finished 
-     * StartAnimationOnInput and de/activates gameobjects after coroutine has finished 
-     * 
-     */
-    #region StartScreenScenes
-    /*
-     * StartSortingGameOnInput and calls LERP camera couroutine
-     */
-    public void StartSortingGameOnInput()
-    {
-        //Debug.Log("PlanetaryController: StartAnimationOnInput(): ");
-        LeaveAnimation();
-
-        SortingMinigame.SetActive(true);
-        UIToggleSGRotation(false);
-        StartCoroutine(LerpCameraStartSortingGame());
-
-        //ResetSortingGame();
-    }
-
-
-    /*
-     * Waits for LERP camera couroutine and de/activates gameobjects
-     */
-    private IEnumerator LerpCameraStartSortingGame()
-    {
-        yield return StartCoroutine(LerpCameraToPosition(MainCamera, SortingGameCamera, 1f));
-        SortingMinigame.SetActive(true);
-        SortingGamePlanetInfoUI.SetActive(true);
-        FormulaUI.SetActive(false);
-
-        DisplayMessageByKey("EnterSortingGame");
-    }
-
-
-    /*
-     * LeaveSortingGame and deactivates gameobjects
-     */
-    public void LeaveSortingGame()
-    {
-        //Debug.Log("PlanetaryController: LeaveSortingGame(): ");
-        HelpiDialogueUI.SetActive(false);
-        SortingGamePlanetInfoUI.SetActive(false);
-        FormulaUI.SetActive(false);
-
-        StartCoroutine(LerpCameraLeave());
-    }
-
-
-    /*
-     * Reverse LERP camera when leaving a ScreenScene
-     */
-    private IEnumerator LerpCameraLeave()
-    {
-        yield return StartCoroutine(LerpCameraToInitialPosition(MainCamera, 0.5f));
-
-        UIToggleSunLight(false);
-        toggleSunLight.isOn = false;
-        SortingMinigame.SetActive(false);
-    }
-
-
-    /*
-     * StartAnimationOnInput and calls LERP camera couroutine
-     */
-    public void StartAnimationOnInput()
-    {
-        //Debug.Log("PlanetaryController: StartAnimationOnInput(): ");
-        LeaveSortingGame();
-        FormulaUI.SetActive(false);
-
-        UIToggleAllTrajectories(true);
-        toggleAllTrajectories.isOn = true;
-
-        StartCoroutine(LerpCameraStartAnimation());
-    }
-
-
-    /*
-     * Waits for LERP camera couroutine and de/activates gameobjects
-     */
-    private IEnumerator LerpCameraStartAnimation()
-    {
-        yield return StartCoroutine(LerpCameraToPosition(MainCamera, TelescopeCamera, 1f));
-
-        AnimationUI.SetActive(true);
-        SetSkybox();
-
-        Environment.SetActive(false);
-        Interactibles.SetActive(false);
-
-        Animation.SetActive(true);
-        flyCameraScript.enabled = true;
-
-        MainCamera.SetActive(false);
-        SolarSystemAnimationCamera.SetActive(true);
-
-        ResetAnimation();
-        DisplayMessageByKey("EnterAnimation");
-    }
-
-
-    /*
-     * LeaveAnimation and deactivates gameobjects
-     */
-    public void LeaveAnimation()
-    {
-        HelpiDialogueUI.SetActive(false);
-        AnimationUI.SetActive(false);
-
-        Environment.SetActive(true);
-        Interactibles.SetActive(true);
-
-        Animation.SetActive(false);
-        flyCameraScript.enabled = false;
-        ResetCamera();
-
-        SolarSystemAnimationCamera.SetActive(false);
-        MainCamera.SetActive(true);
-    }
-    #endregion StartScreenScenes
-
-
-    /*
-     * handles reset functionality
-     * homeReset / reset
-     */
-    #region ResetBar
-    /*
-     * ResetSortingGame planet positions
-     */
-    public void ResetSortingGame()
-    {
-        sortingGameAvailableSlotPositions.Clear();
-        InitializeAvailableSortingGameSlotPositions();
-    }
-
-
-    /*
-     * ResetAnimation on reset and on StartAnimation
-     */
-    void ResetAnimation()
-    {
-        bool planetIsHidden = false;
-        UIToggle0(planetIsHidden);
-        UIToggle1(planetIsHidden);
-        UIToggle2(planetIsHidden);
-        UIToggle3(planetIsHidden);
-        UIToggle4(planetIsHidden);
-        UIToggle5(planetIsHidden);
-        UIToggle6(planetIsHidden);
-        UIToggle7(planetIsHidden);
-        UIToggle8(planetIsHidden);
-
-        ClearTrajectories();
-        sliderG.value = gravitationalConstantG;
-        sliderTimeSpeed.value = timeSpeed;
-
-        //reset planets to initialPlanetPosition
-        for (int planet = 0; planet < planets.Length; planet++)
-        {
-            planets[planet].transform.position = initialPlanetPositions[planet];
-            planets[planet].transform.localEulerAngles = initialPlanetRotations[planet];
-
-            //set is kinematic to stop all physics
-            Rigidbody rb = planets[planet].GetComponent<Rigidbody>();
-            rb.isKinematic = true;
+            if (isOn)
+            {
+                ps.Play();
+            }
+            else
+            {
+                ps.Clear();
+                ps.Pause();
+            }
         }
 
-        StartCoroutine(RestartAnimationDelay());
-    }
 
-
-    /*
-     * after delay sets all planets kinematic to stop physics
-     * reaplies InitialVelocity
-     */
-    IEnumerator RestartAnimationDelay()
-    {
-        yield return new WaitForSeconds(resetAnimationDelay);
-
-        //reapply initial velocities and start planet movement after delay
-        for (int planet = 0; planet < planets.Length; planet++)
+        /*
+         * toggles all trajectories after button press
+         */
+        public void UIToggleAllTrajectories(bool isOn)
         {
-            Rigidbody rb = planets[planet].GetComponent<Rigidbody>();
-            rb.isKinematic = false;
+            //Debug.Log("PlanetController(): ToggleAllTrajectories = " + isOn);
+            for (int index = 0; index < planetTrajectories.Count; index++)
+            {
+                lineRenderers[index].enabled = isOn;
+            }
+
+            //toggle particle system
+            // If there's a planet at this index, toggle its ParticleSystem.
+            foreach (GameObject planet in planets)
+            {
+                ParticleSystem ps = planet.GetComponentInChildren<ParticleSystem>();
+                if (ps != null)
+                {
+                    if (isOn)
+                    {
+                        ps.Play();
+                    }
+                    else
+                    {
+                        ps.Clear();
+                        ps.Pause();
+                    }
+                }
+            }
         }
 
-        UIToggleSunKinematic(true);
 
-        InitialVelocity();
-        //InitialVelocityEliptical();
-    }
-
-
-    /*
-     * reset
-     */
-    public void ResetObject()
-    {
-        //Debug.Log("PlanetaryController: ResetObject(): button pressed");
-        ResetAnimation();
-    }
-
-
-    /*
-     * ResetHome button deactivates Animation and SortingGame Gameobjects
-     * activates FormulaUI
-     * stopps all LERP camera coroutines
-     */
-    public void ResetHome()
-    {
-        //Debug.Log("PlanetaryController: ResetHome(): button pressed");
-        StopAllCoroutines();
-        LeaveSortingGame();
-        LeaveAnimation();
-
-        DisplayMessageByKey("EnterPlanetarySystem");
-        FormulaUI.SetActive(true);
-    }
-    #endregion ResetBar
-
-
-    /*
-     * SetupSlider FOV, G, time
-     */
-    #region slider
-    /*
-     * SetupSlider FOV, G, time
-     */
-    void SetupSliders()
-    {
-        if (sliderG != null)
+        /*
+         * toggles the sun's kinematic and recalcuates its initial velocity after button press
+         */
+        public void UIToggleSunKinematic(bool isKinematic)
         {
-            sliderG.minValue = 0f;
-            sliderG.maxValue = 25f;
-            sliderG.onValueChanged.AddListener(OnGValueChanged);
+            Rigidbody sunRb = planets[0].GetComponent<Rigidbody>();
+            sunRb.isKinematic = isKinematic;
+            if (!isKinematic)
+            {
+                RecalculateInitialVelocity(planets[0]);
+            }
         }
 
-        if (sliderTimeSpeed != null)
+
+        /*
+         * toggles the sun's solarflares in the sorting game after button press
+         */
+        public void UIToggleSolarFlares(bool isOn)
         {
-            sliderTimeSpeed.minValue = 0f;
-            sliderTimeSpeed.maxValue = 35f;
-            sliderTimeSpeed.onValueChanged.AddListener(OnTimeSliderValueChanged);
+            //Debug.Log("PlanetController(): UIToggleSolarFlares = " + isOn);
+            solarFlares.gameObject.SetActive(isOn);
+            if (isOn)
+            {
+                solarFlares.Play();
+            }
+            else
+            {
+                solarFlares.Stop();
+            }
         }
 
-        if (sliderAnimationCameraFov != null)
+
+        /*
+         * toggles the sun's pointlight in the sorting game after button press
+         */
+        public void UIToggleSunLight(bool isOn)
         {
-            sliderAnimationCameraFov.minValue = 10;
-            sliderAnimationCameraFov.maxValue = 180;
-            sliderAnimationCameraFov.value = AnimationCamera.fieldOfView;
-            sliderAnimationCameraFov.onValueChanged.AddListener(OnFOVSliderValueChanged);
+            //Debug.Log("PlanetController(): UIToggleSunLight = " + !isOn);
+            sunLight.gameObject.SetActive(isOn);
         }
+
+
+        /*
+         * sets up listeners for toggle buttons
+         */
+        private void SetupToggle()
+        {
+            toggleAllTrajectories.onValueChanged.AddListener(UIToggleAllTrajectories);
+            toggleSunKinematic.onValueChanged.AddListener(UIToggleSunKinematic);
+            toggleSunLight.onValueChanged.AddListener(UIToggleSunLight);
+            toggleSolarFlares.onValueChanged.AddListener(UIToggleSolarFlares);
+            toggleSGRotation.onValueChanged.AddListener(UIToggleSGRotation);
+            toggleARotation.onValueChanged.AddListener(UIToggleARotation);
+            toggleSGOrientationGizmo.onValueChanged.AddListener(UIToggleSGOrientation);
+            toggleAOrientationGizmo.onValueChanged.AddListener(UIToggleAOrientation);
+
+            toggleSun.onValueChanged.AddListener(UIToggle0);
+            toggleMercury.onValueChanged.AddListener(UIToggle1);
+            toggleVenus.onValueChanged.AddListener(UIToggle2);
+            toggleEarth.onValueChanged.AddListener(UIToggle3);
+            toggleMars.onValueChanged.AddListener(UIToggle4);
+            toggleJupiter.onValueChanged.AddListener(UIToggle5);
+            toggleSaturn.onValueChanged.AddListener(UIToggle6);
+            toggleUranus.onValueChanged.AddListener(UIToggle7);
+            toggleNeptune.onValueChanged.AddListener(UIToggle8);
+
+        }
+
+
+        /*
+         * removes listeners for toggle buttons
+         */
+        private void OnDestroy()
+        {
+            toggleAllTrajectories.onValueChanged.RemoveListener(UIToggleAllTrajectories);
+            toggleSunKinematic.onValueChanged.RemoveListener(UIToggleSunKinematic);
+            toggleSunLight.onValueChanged.RemoveListener(UIToggleSunLight);
+            toggleSolarFlares.onValueChanged.RemoveListener(UIToggleSolarFlares);
+            toggleSGRotation.onValueChanged.RemoveListener(UIToggleSGRotation);
+            toggleARotation.onValueChanged.RemoveListener(UIToggleARotation);
+            toggleSGOrientationGizmo.onValueChanged.RemoveListener(UIToggleSGOrientation);
+            toggleAOrientationGizmo.onValueChanged.RemoveListener(UIToggleAOrientation);
+
+            sliderG.onValueChanged.RemoveListener(OnGValueChanged);
+            sliderTimeSpeed.onValueChanged.RemoveListener(OnTimeSliderValueChanged);
+            sliderAnimationCameraFov.onValueChanged.RemoveListener(OnFOVSliderValueChanged);
+
+            toggleSun.onValueChanged.RemoveListener(UIToggle0);
+            toggleMercury.onValueChanged.RemoveListener(UIToggle1);
+            toggleVenus.onValueChanged.RemoveListener(UIToggle2);
+            toggleEarth.onValueChanged.RemoveListener(UIToggle3);
+            toggleMars.onValueChanged.RemoveListener(UIToggle4);
+            toggleJupiter.onValueChanged.RemoveListener(UIToggle5);
+            toggleSaturn.onValueChanged.RemoveListener(UIToggle6);
+            toggleUranus.onValueChanged.RemoveListener(UIToggle7);
+            toggleNeptune.onValueChanged.RemoveListener(UIToggle8);
+        }
+        #endregion UIToggleButtons
+
+
+        /*
+         * hides planets and trajectories after radiobutton is pressed
+         */
+        #region HidePlanets
+        public void UIToggle0(bool isOn)
+        {
+            //Sun
+            //Debug.Log("Mercury checkbox: " + !isOn);
+
+            planets[0].SetActive(!isOn);
+            sunHalo.enabled = !isOn;
+            ToggleTrajectory(0, !isOn);
+            toggleSun.isOn = isOn;
+
+        }
+
+        public void UIToggle1(bool isOn)
+        {
+            //Mercury
+            //Debug.Log("Mercury checkbox: " + !isOn);
+            planets[1].SetActive(!isOn);
+            ToggleTrajectory(1, !isOn);
+            toggleMercury.isOn = isOn;
+        }
+
+        public void UIToggle2(bool isOn)
+        {
+            //Venus
+            //Debug.Log("Venus checkbox: " + !isOn);
+            planets[2].SetActive(!isOn);
+            ToggleTrajectory(2, !isOn);
+            toggleVenus.isOn = isOn;
+        }
+
+        public void UIToggle3(bool isOn)
+        {
+            //Earth
+            //Debug.Log("Earth checkbox: " + !isOn);
+            planets[3].SetActive(!isOn);
+            ToggleTrajectory(3, !isOn);
+            toggleEarth.isOn = isOn;
+        }
+
+        public void UIToggle4(bool isOn)
+        {
+            //Mars
+            //Debug.Log("Mars checkbox: " + !isOn);
+            planets[4].SetActive(!isOn);
+            ToggleTrajectory(4, !isOn);
+            toggleMars.isOn = isOn;
+        }
+
+        public void UIToggle5(bool isOn)
+        {
+            //Jupiter
+            //Debug.Log("Jupiter checkbox: " + !isOn);
+            planets[5].SetActive(!isOn);
+            ToggleTrajectory(5, !isOn);
+            toggleJupiter.isOn = isOn;
+        }
+
+        public void UIToggle6(bool isOn)
+        {
+            //Saturn
+            //Debug.Log("Saturn checkbox: " + !isOn);
+            planets[6].SetActive(!isOn);
+            saturn_ring_1.SetActive(!isOn);
+            saturn_ring_2.SetActive(!isOn);
+            ToggleTrajectory(6, !isOn);
+            toggleSaturn.isOn = isOn;
+        }
+
+        public void UIToggle7(bool isOn)
+        {
+            //Uranus
+            //Debug.Log("Uranus checkbox: " + !isOn);
+            planets[7].SetActive(!isOn);
+            ToggleTrajectory(7, !isOn);
+            toggleUranus.isOn = isOn;
+        }
+        public void UIToggle8(bool isOn)
+        {
+            //Neptune
+            //Debug.Log("Neptune checkbox: " + !isOn);
+            planets[8].SetActive(!isOn);
+            ToggleTrajectory(8, !isOn);
+            toggleNeptune.isOn = isOn;
+        }
+        #endregion HidePlanets
+
+
+        /*
+         * store the StoreInitialCameras's position, rotation, and field of view
+         * LERPs the currentCamera(MainCamera) to the targetCameras position
+         * targetCameras are just used for theire position not for theire view
+         * reverse LERP camera
+         */
+        #region LerpCamera
+        /*
+         * store the StoreInitialCameras's position, rotation, and field of view
+         */
+        private void StoreInitialCameras()
+        {
+            if (AnimationCamera == null)
+            {
+                Debug.Log("CameraAndUIController: StoreInitialAnimationCamera(): AnimationCamera missing");
+            }
+
+            initialAnimationCameraPosition = AnimationCamera.transform.position;
+            initialAnimationCameraRotation = AnimationCamera.transform.rotation;
+            initialAnimationCameraFov = AnimationCamera.fieldOfView;
+
+            initialMainCameraPosition = MainCamera.transform.position;
+            initialMainCameraRotation = MainCamera.transform.rotation;
+            initialMainCameraFOV = MainCamera.GetComponent<Camera>().fieldOfView;
+        }
+
+
+        /*
+         * LERPs the currentCamere(MainCamera) to the targetCameras position
+         * targetCameras are just used for theire position not for theire view
+         */
+        private IEnumerator LerpCameraToPosition(GameObject currentCamera, GameObject targetCamera, float lerpDuration)
+        {
+            float time = 0f;
+            Vector3 initialPosition = currentCamera.transform.position;
+            Quaternion initialRotation = currentCamera.transform.rotation;
+            float initialFOV = currentCamera.GetComponent<Camera>().fieldOfView;
+            float targetFOV = targetCamera.GetComponent<Camera>().fieldOfView;
+
+            while (time < lerpDuration)
+            {
+                time += Time.deltaTime;
+                float t = time / lerpDuration;
+
+                currentCamera.transform.position = Vector3.Lerp(initialPosition, targetCamera.transform.position, t);
+                currentCamera.transform.rotation = Quaternion.Lerp(initialRotation, targetCamera.transform.rotation, t);
+                currentCamera.GetComponent<Camera>().fieldOfView = Mathf.Lerp(initialFOV, targetFOV, t);
+
+                yield return null;
+            }
+        }
+
+
+        /*
+         * reverse LERP camera
+         */
+        private IEnumerator LerpCameraToInitialPosition(GameObject currentCamera, float lerpDuration)
+        {
+            float time = 0f;
+            Vector3 initialPosition = currentCamera.transform.position;
+            Quaternion initialRotation = currentCamera.transform.rotation;
+            float initialFOV = currentCamera.GetComponent<Camera>().fieldOfView;
+
+            while (time < lerpDuration)
+            {
+                time += Time.deltaTime;
+                float t = time / lerpDuration;
+
+                currentCamera.transform.position = Vector3.Lerp(initialPosition, initialMainCameraPosition, t);
+                currentCamera.transform.rotation = Quaternion.Lerp(initialRotation, initialMainCameraRotation, t);
+                currentCamera.GetComponent<Camera>().fieldOfView = Mathf.Lerp(initialFOV, initialMainCameraFOV, t);
+
+                yield return null;
+            }
+        }
+        #endregion LerpCamera
+
+
+        /*
+         * StartSortingGameOnInput and de/activates gameobjects after coroutine has finished 
+         * StartAnimationOnInput and de/activates gameobjects after coroutine has finished 
+         * 
+         */
+        #region StartScreenScenes
+        /*
+         * StartSortingGameOnInput and calls LERP camera couroutine
+         */
+        public void StartSortingGameOnInput()
+        {
+            //Debug.Log("PlanetaryController: StartAnimationOnInput(): ");
+            LeaveAnimation();
+
+            SortingMinigame.SetActive(true);
+            UIToggleSGRotation(false);
+            StartCoroutine(LerpCameraStartSortingGame());
+
+            //ResetSortingGame();
+        }
+
+
+        /*
+         * Waits for LERP camera couroutine and de/activates gameobjects
+         */
+        private IEnumerator LerpCameraStartSortingGame()
+        {
+            yield return StartCoroutine(LerpCameraToPosition(MainCamera, SortingGameCamera, 1f));
+            SortingMinigame.SetActive(true);
+            SortingGamePlanetInfoUI.SetActive(true);
+            FormulaUI.SetActive(false);
+
+            DisplayMessageByKey("EnterSortingGame");
+        }
+
+
+        /*
+         * LeaveSortingGame and deactivates gameobjects
+         */
+        public void LeaveSortingGame()
+        {
+            //Debug.Log("PlanetaryController: LeaveSortingGame(): ");
+            HelpiDialogueUI.SetActive(false);
+            SortingGamePlanetInfoUI.SetActive(false);
+            FormulaUI.SetActive(false);
+
+            StartCoroutine(LerpCameraLeave());
+        }
+
+
+        /*
+         * Reverse LERP camera when leaving a ScreenScene
+         */
+        private IEnumerator LerpCameraLeave()
+        {
+            yield return StartCoroutine(LerpCameraToInitialPosition(MainCamera, 0.5f));
+
+            UIToggleSunLight(false);
+            toggleSunLight.isOn = false;
+            SortingMinigame.SetActive(false);
+        }
+
+
+        /*
+         * StartAnimationOnInput and calls LERP camera couroutine
+         */
+        public void StartAnimationOnInput()
+        {
+            //Debug.Log("PlanetaryController: StartAnimationOnInput(): ");
+            LeaveSortingGame();
+            FormulaUI.SetActive(false);
+
+            UIToggleAllTrajectories(true);
+            toggleAllTrajectories.isOn = true;
+
+            StartCoroutine(LerpCameraStartAnimation());
+        }
+
+
+        /*
+         * Waits for LERP camera couroutine and de/activates gameobjects
+         */
+        private IEnumerator LerpCameraStartAnimation()
+        {
+            yield return StartCoroutine(LerpCameraToPosition(MainCamera, TelescopeCamera, 1f));
+
+            AnimationUI.SetActive(true);
+            SetSkybox();
+
+            Environment.SetActive(false);
+            Interactibles.SetActive(false);
+
+            Animation.SetActive(true);
+            flyCameraScript.enabled = true;
+
+            MainCamera.SetActive(false);
+            SolarSystemAnimationCamera.SetActive(true);
+
+            ResetAnimation();
+            DisplayMessageByKey("EnterAnimation");
+        }
+
+
+        /*
+         * LeaveAnimation and deactivates gameobjects
+         */
+        public void LeaveAnimation()
+        {
+            HelpiDialogueUI.SetActive(false);
+            AnimationUI.SetActive(false);
+
+            Environment.SetActive(true);
+            Interactibles.SetActive(true);
+
+            Animation.SetActive(false);
+            flyCameraScript.enabled = false;
+            ResetCamera();
+
+            SolarSystemAnimationCamera.SetActive(false);
+            MainCamera.SetActive(true);
+        }
+        #endregion StartScreenScenes
+
+
+        /*
+         * handles reset functionality
+         * homeReset / reset
+         */
+        #region ResetBar
+        /*
+         * ResetSortingGame planet positions
+         */
+        public void ResetSortingGame()
+        {
+            sortingGameAvailableSlotPositions.Clear();
+            InitializeAvailableSortingGameSlotPositions();
+        }
+
+
+        /*
+         * ResetAnimation on reset and on StartAnimation
+         */
+        private void ResetAnimation()
+        {
+            bool planetIsHidden = false;
+            UIToggle0(planetIsHidden);
+            UIToggle1(planetIsHidden);
+            UIToggle2(planetIsHidden);
+            UIToggle3(planetIsHidden);
+            UIToggle4(planetIsHidden);
+            UIToggle5(planetIsHidden);
+            UIToggle6(planetIsHidden);
+            UIToggle7(planetIsHidden);
+            UIToggle8(planetIsHidden);
+
+            ClearTrajectories();
+            sliderG.value = gravitationalConstantG;
+            sliderTimeSpeed.value = timeSpeed;
+
+            //reset planets to initialPlanetPosition
+            for (int planet = 0; planet < planets.Length; planet++)
+            {
+                planets[planet].transform.position = initialPlanetPositions[planet];
+                planets[planet].transform.localEulerAngles = initialPlanetRotations[planet];
+
+                //set is kinematic to stop all physics
+                Rigidbody rb = planets[planet].GetComponent<Rigidbody>();
+                rb.isKinematic = true;
+            }
+
+            StartCoroutine(RestartAnimationDelay());
+        }
+
+
+        /*
+         * after delay sets all planets kinematic to stop physics
+         * reaplies InitialVelocity
+         */
+        private IEnumerator RestartAnimationDelay()
+        {
+            yield return new WaitForSeconds(resetAnimationDelay);
+
+            //reapply initial velocities and start planet movement after delay
+            for (int planet = 0; planet < planets.Length; planet++)
+            {
+                Rigidbody rb = planets[planet].GetComponent<Rigidbody>();
+                rb.isKinematic = false;
+            }
+
+            UIToggleSunKinematic(true);
+
+            InitialVelocity();
+            //InitialVelocityEliptical();
+        }
+
+
+        /*
+         * reset
+         */
+        public void ResetObject()
+        {
+            //Debug.Log("PlanetaryController: ResetObject(): button pressed");
+            ResetAnimation();
+        }
+
+
+        /*
+         * ResetHome button deactivates Animation and SortingGame Gameobjects
+         * activates FormulaUI
+         * stopps all LERP camera coroutines
+         */
+        public void ResetHome()
+        {
+            //Debug.Log("PlanetaryController: ResetHome(): button pressed");
+            StopAllCoroutines();
+            LeaveSortingGame();
+            LeaveAnimation();
+
+            DisplayMessageByKey("EnterPlanetarySystem");
+            FormulaUI.SetActive(true);
+        }
+        #endregion ResetBar
+
+
+        /*
+         * SetupSlider FOV, G, time
+         */
+        #region slider
+        /*
+         * SetupSlider FOV, G, time
+         */
+        private void SetupSliders()
+        {
+            if (sliderG != null)
+            {
+                sliderG.minValue = 0f;
+                sliderG.maxValue = 25f;
+                sliderG.onValueChanged.AddListener(OnGValueChanged);
+            }
+
+            if (sliderTimeSpeed != null)
+            {
+                sliderTimeSpeed.minValue = 0f;
+                sliderTimeSpeed.maxValue = 35f;
+                sliderTimeSpeed.onValueChanged.AddListener(OnTimeSliderValueChanged);
+            }
+
+            if (sliderAnimationCameraFov != null)
+            {
+                sliderAnimationCameraFov.minValue = 10;
+                sliderAnimationCameraFov.maxValue = 180;
+                sliderAnimationCameraFov.value = AnimationCamera.fieldOfView;
+                sliderAnimationCameraFov.onValueChanged.AddListener(OnFOVSliderValueChanged);
+            }
+        }
+
+
+        /*
+         * changes the G value after slider input
+         */
+        private void OnGValueChanged(float gValue)
+        {
+            G = gValue;
+        }
+
+
+        /*
+         * changes the time/speed value after slider input
+         */
+        void OnTimeSliderValueChanged(float timeSpeedValue)
+        {
+            Time.timeScale = timeSpeedValue;
+        }
+
+
+        /*
+         * changes the FOV value after slider input
+         */
+        private void OnFOVSliderValueChanged(float fovValue)
+        {
+            AnimationCamera.fieldOfView = fovValue;
+        }
+
+        #endregion slider
     }
-
-
-    /*
-     * changes the G value after slider input
-     */
-    private void OnGValueChanged(float gValue)
-    {
-        G = gValue;
-    }
-
-
-    /*
-     * changes the time/speed value after slider input
-     */
-    void OnTimeSliderValueChanged(float timeSpeedValue)
-    {
-        Time.timeScale = timeSpeedValue;
-    }
-
-
-    /*
-     * changes the FOV value after slider input
-     */
-    private void OnFOVSliderValueChanged(float fovValue)
-    {
-        AnimationCamera.fieldOfView = fovValue;
-    }
-
-    #endregion slider
 }
