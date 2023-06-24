@@ -10,12 +10,15 @@ public class MapDisplay : MonoBehaviour
 
 	public void DrawTexture(Texture2D texture)
 	{
+		meshRenderer.gameObject.SetActive(false);
+		textureRenderer.gameObject.SetActive(true);
 		textureRenderer.sharedMaterial.mainTexture = texture;
-		textureRenderer.transform.localScale = new Vector3(texture.width, 1, texture.height);
 	}
 
 	public void DrawMesh(MeshData meshData, Texture2D texture)
 	{
+		textureRenderer.gameObject.SetActive(false);
+		meshRenderer.gameObject.SetActive(true);
 		meshFilter.sharedMesh = meshData.CreateMesh();
 		meshRenderer.sharedMaterial.mainTexture = texture;
 		meshCollider.sharedMesh = null;

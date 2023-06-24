@@ -6,37 +6,46 @@ using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
 {
-	public enum DrawMode { NoiseMap, colorMap, Mesh, FalloffMap };
+	public enum DrawMode { Mesh, ColorMap, NoiseMap, FalloffMap };
+
+	[Header("Experiment Parameters")] //these are what the user will be able to adjust and can be reset to their initial inspector values upon ResetParameters() being called
 	public DrawMode drawMode;
-
-	public Noise.NormalizeMode normalizeMode;
-
-	public const int mapChunkSize = 239;
 	[Range(0, 6)]
 	public int editorPreviewLOD;
-	[Range(0, 6)]
-	public int colliderMeshLOD;
+	[Range(10, 100)]
 	public float noiseScale;
-
-	public int octaves;
 	[Range(0, 1)]
 	public float persistance;
+	[Range(1, 6)]
 	public float lacunarity;
+	public bool useFalloff;
+	
 
+	[Header("VR Control Parameters")]
+	public float traversalSpeedMultiplier = 0.1f;
+	public float scaleSpeed = 2f;
+	public float maxScale = 200f;
+	public float minScale = 10f;
+	public float scaleHeightMultiplier = 0.5f;
+	public bool speedChangeWithScale = true;
+
+	[Header("Miscellaneous")]
+	[Range(1, 12)]
+	public int octaves;
+	public bool parallaxEffect;
+	public Noise.NormalizeMode normalizeMode;
+	public const int mapChunkSize = 239;
 	public int seed;
 	public Vector2 offset;
-
-	public bool useFalloff;
-	public bool parallaxEffect;
 	public bool generateCollider;
-
+	[Range(0, 6)]
+	public int colliderMeshLOD;
 	public float meshHeightMultiplier;
 	public AnimationCurve meshHeightCurve;
-
 	public bool autoUpdate;
-
 	public TerrainType[] regions;
 
+	ExperimentParameters initialParameters;
 	float[,] falloffMap;
 
 	Queue<MapThreadInfo<MapData>> mapDataThreadInfoQueue = new Queue<MapThreadInfo<MapData>>();
@@ -45,6 +54,12 @@ public class MapGenerator : MonoBehaviour
 	void Awake()
 	{
 		falloffMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize);
+	}
+
+	private void Start()
+	{
+		DrawMapInEditor();
+		initialParameters = new ExperimentParameters(drawMode, noiseScale, octaves, persistance, lacunarity, useFalloff, parallaxEffect, editorPreviewLOD);
 	}
 
 	public void DrawMapInEditor()
@@ -56,7 +71,7 @@ public class MapGenerator : MonoBehaviour
 		{
 			display.DrawTexture(TextureGenerator.TextureFromHeightMap(mapData.heightMap));
 		}
-		else if (drawMode == DrawMode.colorMap)
+		else if (drawMode == DrawMode.ColorMap)
 		{
 			display.DrawTexture(TextureGenerator.TextureFromColorMap(mapData.colorMap, mapChunkSize, mapChunkSize));
 		}
@@ -171,7 +186,7 @@ public class MapGenerator : MonoBehaviour
 	{
 		if (lacunarity < 1) lacunarity = 1;
 		if (octaves < 0) octaves = 0;
-		meshHeightMultiplier = noiseScale / 2;
+		meshHeightMultiplier = noiseScale * scaleHeightMultiplier;
 		falloffMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize);
 	}
 
@@ -185,6 +200,70 @@ public class MapGenerator : MonoBehaviour
 			this.callback = callback;
 			this.parameter = parameter;
 		}
+	}
+
+	public void ChangeOffset(Vector3 value)
+	{
+		Vector2 valueV2 = new Vector2(value.x, value.y);
+		valueV2 = valueV2 * 2 - Vector2.one;
+
+		if (speedChangeWithScale)
+		{
+			offset += minScale * traversalSpeedMultiplier * valueV2 / noiseScale;
+		}
+		else
+		{
+			offset += traversalSpeedMultiplier * valueV2;
+		}
+		
+		DrawMapInEditor();
+	}
+
+	public void ChangeScale(float value)
+	{
+		noiseScale = value;
+		meshHeightMultiplier = noiseScale * scaleHeightMultiplier;
+		DrawMapInEditor();
+	}
+
+	public void ChangeLOD(int value)
+	{
+		int newLOD = 6 - value;
+		editorPreviewLOD = newLOD;
+		DrawMapInEditor();
+	}
+
+	public void ChangePersistance(float value)
+	{
+		persistance = value;
+		DrawMapInEditor();
+	}
+
+	public void ChangeLacunarity(float value)
+	{
+		lacunarity = value;
+		DrawMapInEditor();
+	}
+
+	public void SetFalloff(bool value)
+	{
+		useFalloff = value;
+		DrawMapInEditor();
+	}
+
+	public void ResetParameters()
+	{
+		drawMode = initialParameters.drawMode;
+		octaves = initialParameters.octaves;
+		persistance = initialParameters.persistance;
+		lacunarity = initialParameters.lacunarity;
+		useFalloff = initialParameters.useFalloff;
+		parallaxEffect = initialParameters.parallaxEffect;
+		editorPreviewLOD = initialParameters.editorPreviewLOD;
+
+		noiseScale = initialParameters.noiseScale;
+		meshHeightMultiplier = noiseScale * scaleHeightMultiplier;
+		DrawMapInEditor();
 	}
 }
 
@@ -205,5 +284,29 @@ public struct MapData
 	{
 		this.heightMap = heightMap;
 		this.colorMap = colorMap;
+	}
+}
+
+public class ExperimentParameters
+{
+	public MapGenerator.DrawMode drawMode;
+	public float noiseScale;
+	public int octaves;
+	public float persistance;
+	public float lacunarity;
+	public bool useFalloff;
+	public bool parallaxEffect;
+	public int editorPreviewLOD;
+
+	public ExperimentParameters(MapGenerator.DrawMode drawMode, float noiseScale, int octaves, float persistance, float lacunarity, bool useFalloff, bool parallaxEffect, int editorPreviewLOD)
+	{
+		this.drawMode = drawMode;
+		this.noiseScale = noiseScale;
+		this.octaves = octaves;
+		this.persistance = persistance;
+		this.lacunarity = lacunarity;
+		this.useFalloff = useFalloff;
+		this.parallaxEffect = parallaxEffect;
+		this.editorPreviewLOD = editorPreviewLOD;
 	}
 }
