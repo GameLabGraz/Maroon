@@ -21,7 +21,6 @@ namespace Maroon.NetworkSimulator {
         private Vector3 dragStartPosition;
         private Vector3 clickStartPosition;
         private AddCableScript addCableScript;
-        private UIController uiController;
 
         public int NumberOfPorts { get => Ports.Length; }
         public bool HasFreePort { get => Ports.Any(p => p.IsFree); }
@@ -37,7 +36,6 @@ namespace Maroon.NetworkSimulator {
             plane = new Plane(Vector3.up, transform.position);
             kitPosition = transform.position;
             addCableScript = FindObjectOfType<AddCableScript>();
-            uiController = FindObjectOfType<UIController>();
             OnStart();
         }
         protected abstract void OnStart();
@@ -110,7 +108,7 @@ namespace Maroon.NetworkSimulator {
                 }
             }
             else {
-                uiController.ShowDeviceOptions(this);
+                networkSimulationController.SelectDevice(this);
             }
         }
         private void UpdateCables() {
@@ -127,9 +125,13 @@ namespace Maroon.NetworkSimulator {
         public void HideConnectableMarker() {
             connectableMarker.SetActive(false);
         }
+        public void RemoveCables() {
+            foreach(var port in Ports.Where(p => !p.IsFree)) {
+                port.Cable.Remove();
+            }
+        }
         public abstract string GetName();
         public abstract string GetButtonText();
-        public abstract void DeviceOptionsButtonClicked(Button button, TextMeshProUGUI buttonText);
 
         public abstract void ReceivePacket(Packet packet, Port receiver);
     }

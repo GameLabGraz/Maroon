@@ -99,5 +99,14 @@ namespace Maroon.NetworkSimulator {
             travellingPacket.Initialize(packet, sender, sender == device1 ? device2 : device1);
             travellingPackets.Add(travellingPacket);
         }
+
+        public void Remove() {
+            foreach(var packet in travellingPackets) {
+                Destroy(packet.gameObject);
+            }
+            device1.Cable = null;
+            device2.Cable = null;
+            Destroy(gameObject);
+        }
     }
 }
