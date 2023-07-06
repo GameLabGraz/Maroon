@@ -891,7 +891,7 @@ namespace Maroon.Experiments.PlanetarySystem
             ParticleSystem ps = planets[index].GetComponentInChildren<ParticleSystem>();
             if (ps == null)
             {
-                Debug.Log("PlanetController: ToggleTrajectory(): ParticleSystem in Planet at index " + index + " is null");
+                //Debug.Log("PlanetController: ToggleTrajectory(): ParticleSystem in Planet at index " + index + " is null or deactivated off in planet prefab");
                 return;
             }
 
