@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -21,6 +22,7 @@ namespace Maroon.NetworkSimulator {
         private Vector3 dragStartPosition;
         private Vector3 clickStartPosition;
         private AddCableScript addCableScript;
+        public bool IsInside { get; set; } = false;
 
         public int NumberOfPorts { get => Ports.Length; }
         public bool HasFreePort { get => Ports.Any(p => p.IsFree); }
@@ -134,5 +136,12 @@ namespace Maroon.NetworkSimulator {
         public abstract string GetButtonText();
 
         public abstract void ReceivePacket(Packet packet, Port receiver);
+
+        protected void ReceivePacketInside(Packet packet, Port receiver) {
+            networkSimulationController.InsideDeviceScript.ReceivePacket(packet, Array.IndexOf(Ports, receiver));
+        }
+        public void SendPacket(Packet packet, int portIndex) {
+            Ports[portIndex].SendPacket(packet);
+        }
     }
 }

@@ -8,7 +8,9 @@ namespace Maroon.NetworkSimulator {
         private CameraScript cameraScript;
         [SerializeField]
         private UIController uiController;
-        private List<NetworkDevice> networkDevices = new List<NetworkDevice>();
+        [SerializeField]
+        public InsideDeviceScript InsideDeviceScript;
+        private readonly List<NetworkDevice> networkDevices = new List<NetworkDevice>();
         private NetworkDevice selectedDevice = null;
         public void AddNetworkDevice(NetworkDevice device) {
             networkDevices.Add(device);
@@ -34,11 +36,14 @@ namespace Maroon.NetworkSimulator {
             }
             else {
                 cameraScript.SetInsideDeviceView();
+                selectedDevice.IsInside = true;
+                InsideDeviceScript.SetDevice(selectedDevice);
             }
         }
         public void ExitInsideOfDevice() {
             uiController.SetNetworkView();
             cameraScript.SetNetworkView();
+            selectedDevice.IsInside = false;
         }
         public void RemoveDevice() {
             networkDevices.Remove(selectedDevice);

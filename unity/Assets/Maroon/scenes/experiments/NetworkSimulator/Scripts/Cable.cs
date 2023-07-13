@@ -13,11 +13,8 @@ namespace Maroon.NetworkSimulator {
         [SerializeField]
         private TravellingPacket TravellingPacketPrefab;
 
-        private List<TravellingPacket> travellingPackets = new List<TravellingPacket>();
-        private float travellingSpeed = 1;
-
-        private void Start() {
-        }
+        private readonly List<TravellingPacket> travellingPackets = new List<TravellingPacket>();
+        private const float travellingSpeed = 1;
 
         private void Awake() {
             lineRenderer = GetComponent<LineRenderer>();
@@ -25,16 +22,16 @@ namespace Maroon.NetworkSimulator {
 
         private void Update() {
             foreach(var packet in travellingPackets.ToList()) {
-                if(packet.progress > 1 - float.Epsilon) {
+                if(packet.Progress > 1 - float.Epsilon) {
                     travellingPackets.Remove(packet);
-                    packet.receiver.ReceivePacket(packet.packet);
+                    packet.Receiver.ReceivePacket(packet.Packet);
                     Destroy(packet.gameObject);
                 }
                 else {
-                    packet.progress += Time.deltaTime * travellingSpeed;
-                    var linePositionIndexA = Mathf.FloorToInt(packet.progress / (1f / NumberOfCurveSteps));
+                    packet.Progress += Time.deltaTime * travellingSpeed;
+                    var linePositionIndexA = Mathf.FloorToInt(packet.Progress / (1f / NumberOfCurveSteps));
                     var linePositionIndexB = linePositionIndexA + 1;
-                    if(packet.sender == device2) {
+                    if(packet.Sender == device2) {
                         linePositionIndexA = NumberOfCurveSteps - linePositionIndexA;
                         linePositionIndexB = linePositionIndexA - 1;
                     }
@@ -58,7 +55,7 @@ namespace Maroon.NetworkSimulator {
                     else {
                         b = lineRenderer.GetPosition(linePositionIndexB);
                     }
-                    packet.transform.position = Vector3.Lerp(a, b, packet.progress % 1);
+                    packet.transform.position = Vector3.Lerp(a, b, packet.Progress % 1);
                 }
             }
         }

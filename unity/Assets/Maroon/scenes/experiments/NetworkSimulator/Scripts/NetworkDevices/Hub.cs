@@ -7,6 +7,10 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
         public override string GetButtonText() => "Enter Hub";
 
         public override void ReceivePacket(Packet packet, Port receiver) {
+            if(IsInside) {
+                ReceivePacketInside(packet, receiver);
+                return;
+            }
             foreach(var port in Ports) {
                 if(port != receiver) {
                     port.SendPacket(packet);

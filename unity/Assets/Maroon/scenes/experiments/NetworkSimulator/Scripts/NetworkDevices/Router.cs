@@ -7,6 +7,10 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
         public override string GetButtonText() => "Enter Router";
 
         public override void ReceivePacket(Packet packet, Port receiver) {
+            if(IsInside) {
+                ReceivePacketInside(packet, receiver);
+                return;
+            }
         }
 
         protected override void OnStart() {
