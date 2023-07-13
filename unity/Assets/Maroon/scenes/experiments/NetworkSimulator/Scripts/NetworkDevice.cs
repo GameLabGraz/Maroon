@@ -1,8 +1,6 @@
 using System;
 using System.Linq;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Maroon.NetworkSimulator {
     public abstract class NetworkDevice : MonoBehaviour {
@@ -11,7 +9,7 @@ namespace Maroon.NetworkSimulator {
         [SerializeField]
         private BoxCollider networkAreaCollider;
         [SerializeField]
-        private float clickVsDragThreshold = 0.001f;
+        private float clickVsDragThreshold = 0.002f;
         [SerializeField]
         private GameObject connectableMarker;
 

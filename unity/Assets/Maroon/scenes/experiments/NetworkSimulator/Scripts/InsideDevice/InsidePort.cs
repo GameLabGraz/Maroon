@@ -2,6 +2,8 @@
 
 namespace Maroon.NetworkSimulator {
     public class InsidePort : MonoBehaviour {
-        public Vector3 Position => transform.position;
+        [SerializeField]
+        private Transform packetStartEndPosition;
+        public Vector3 Position => packetStartEndPosition.position;
     }
 }

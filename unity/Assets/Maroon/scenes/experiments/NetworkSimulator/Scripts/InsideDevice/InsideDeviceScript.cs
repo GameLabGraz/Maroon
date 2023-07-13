@@ -21,7 +21,7 @@ namespace Maroon.NetworkSimulator {
         private readonly List<InsidePacket> outgoingPackets = new List<InsidePacket>();
         private const int maxQueueLength = 8;
         private const float queuePacketDistance = 0.6f;
-        private const float packetSpeed = 1.5f;
+        private const float packetSpeed = 2.5f;
         private Plane workingPlane;
         private Mode mode;
         private NetworkDevice device;
