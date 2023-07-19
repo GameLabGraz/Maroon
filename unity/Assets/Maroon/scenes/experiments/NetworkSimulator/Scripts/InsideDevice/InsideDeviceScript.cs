@@ -22,7 +22,10 @@ namespace Maroon.NetworkSimulator {
         private const int maxQueueLength = 8;
         private const float queuePacketDistance = 0.6f;
         private const float packetSpeed = 2.5f;
+        private const float distanceTolerance = 0.0001f;
+        private const float portSelectionDistance = 0.6f;
         private Plane workingPlane;
+        private Vector3[] portWorkingPlanePositions;
         private Mode mode;
         private NetworkDevice device;
 
@@ -41,47 +44,97 @@ namespace Maroon.NetworkSimulator {
 
         void Start() {
             workingPlane = new Plane(Vector3.forward, queue.position);
+            portWorkingPlanePositions = new Vector3[Ports.Length];
+            for(int i = 0; i < Ports.Length; i++) {
+                portWorkingPlanePositions[i] = workingPlane.ClosestPointOnPlane(Ports[i].Position);
+            }
         }
 
         void Update() {
-            var list = incomingPackets.ToList();
-            for(int i = 0; i < list.Count; i++) {
-                MoveToQueue(list[i], i);
+            var incoming = incomingPackets.ToList();
+            var queued = queuedPackets.ToList();
+            var outgoing = outgoingPackets.ToList();
+            for(int i = 0; i < incoming.Count; i++) {
+                MoveToQueue(incoming[i], i);
             }
-            foreach(var packet in queuedPackets.ToList()) {
-
+            for(int i = 0; i < queued.Count; i++) {
+                if(!queued[i].IsBeingDragged) {
+                    UpdateQueuePosition(queued[i], i);
+                }
             }
-            foreach(var packet in outgoingPackets.ToList()) {
-
+            foreach(var packet in outgoing) {
+                MoveOutgoing(packet);
             }
         }
 
         void MoveToQueue(InsidePacket packet, int index) {
-            if(workingPlane.GetDistanceToPoint(packet.Position) > 0.0001f) {
+            var queueIndex = queuedPackets.Count + index;
+            if(queueIndex > maxQueueLength) {
+                queueIndex = maxQueueLength;
+            }
+            if(workingPlane.GetDistanceToPoint(packet.Position) > distanceTolerance) {
                 packet.MoveTowards(packet.Position + Vector3.back, packetSpeed * Time.deltaTime);
             }
-            else if(Vector3.Distance(packet.Position, queue.position) > 0.0001f) {
-                var queueIndex = queuedPackets.Count + index;
-                if(queueIndex > maxQueueLength) {
-                    queueIndex = maxQueueLength;
-                }
+            else if(Vector3.Distance(packet.Position, queue.position) > distanceTolerance) {
                 var targetPosition = queue.position - queueIndex * queuePacketDistance * queue.right;
                 packet.MoveTowards(targetPosition, packetSpeed * Time.deltaTime);
             }
             else {
-                incomingPackets.Remove(packet);
-                queuedPackets.Add(packet);
+                if(queueIndex > maxQueueLength) {
+                    //drop packet
+                }
+                else {
+                    incomingPackets.Remove(packet);
+                    queuedPackets.Add(packet);
+                }
+            }
+        }
+
+        void UpdateQueuePosition(InsidePacket packet, int index) {
+            packet.IsDraggable = mode != Mode.Hub && index == 0;
+            var targetPosition = queue.position - index * queuePacketDistance * queue.right;
+            packet.MoveTowards(targetPosition, packetSpeed * Time.deltaTime);
+        }
+        void MoveOutgoing(InsidePacket packet) {
+            var targetOnWorkingPlane = portWorkingPlanePositions[Array.IndexOf(Ports, packet.TargetPort)];
+            var distanceToTargetOnWorkingPlane = Vector3.Distance(packet.Position, targetOnWorkingPlane);
+            var distanceToPort = Vector3.Distance(packet.Position, packet.TargetPort.Position);
+            if(distanceToTargetOnWorkingPlane > distanceTolerance && distanceToPort > Vector3.Distance(targetOnWorkingPlane, packet.TargetPort.Position)) {
+                packet.MoveTowards(targetOnWorkingPlane, packetSpeed * Time.deltaTime);
+            }
+            else if(distanceToPort > distanceTolerance) {
+                packet.MoveTowards(packet.TargetPort.Position, packetSpeed * Time.deltaTime);
+            }
+            else {
+                outgoingPackets.Remove(packet);
+                device.SendPacket(packet.Packet, Array.IndexOf(Ports, packet.TargetPort));
+                Destroy(packet.gameObject);
             }
         }
 
         public void ReceivePacket(Packet packet, int portIndex) {
             var insidePacket = Instantiate(InsidePacketPrefab);
-            insidePacket.Initialize(packet, Ports[portIndex]);
+            insidePacket.Initialize(packet, Ports[portIndex], workingPlane, PacketDragEnded);
             incomingPackets.Add(insidePacket);
         }
 
-        private void SendPacket(InsidePacket packet, InsidePort port) {
-            device.SendPacket(packet.Packet, Array.IndexOf(Ports, port));
+        public void PacketDragEnded(InsidePacket packet) {
+            var minDistance = portSelectionDistance;
+            InsidePort targetPort = null;
+            for(int i = 0; i < Ports.Length; i++) {
+                var distance = Vector3.Distance(packet.Position, portWorkingPlanePositions[i]);
+                if(distance < portSelectionDistance && distance < minDistance) {
+                    minDistance = distance;
+                    targetPort = Ports[i];
+                }
+            }
+            Debug.Log($"minDistance: {minDistance}");
+            if(targetPort != null) {
+                packet.TargetPort = targetPort;
+                packet.IsDraggable = false;
+                queuedPackets.Remove(packet);
+                outgoingPackets.Add(packet);
+            }
         }
     }
 }
