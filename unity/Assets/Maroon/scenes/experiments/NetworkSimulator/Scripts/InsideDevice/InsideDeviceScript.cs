@@ -19,6 +19,7 @@ namespace Maroon.NetworkSimulator {
         private readonly List<InsidePacket> incomingPackets = new List<InsidePacket>();
         private readonly List<InsidePacket> queuedPackets = new List<InsidePacket>();
         private readonly List<InsidePacket> outgoingPackets = new List<InsidePacket>();
+        private readonly List<InsidePacket> droppedPackets = new List<InsidePacket>();
         private const int maxQueueLength = 8;
         private const float queuePacketDistance = 0.6f;
         private const float packetSpeed = 2.5f;
@@ -60,6 +61,7 @@ namespace Maroon.NetworkSimulator {
             var incoming = incomingPackets.ToList();
             var queued = queuedPackets.ToList();
             var outgoing = outgoingPackets.ToList();
+            var dropped = droppedPackets.ToList();
             for(int i = 0; i < incoming.Count; i++) {
                 MoveToQueue(incoming[i], i);
             }
@@ -71,6 +73,15 @@ namespace Maroon.NetworkSimulator {
             foreach(var packet in outgoing) {
                 MoveOutgoing(packet);
             }
+            foreach(var packet in dropped) {
+                if(packet.Position.y > transform.position.y - 1) {
+                    packet.MoveTowards(packet.Position + Vector3.down, packetSpeed * 1.5f * Time.deltaTime);
+                }
+                else {
+                    droppedPackets.Remove(packet);
+                    Destroy(packet.gameObject);
+                }
+            }
         }
 
         void MoveToQueue(InsidePacket packet, int index) {
@@ -78,19 +89,19 @@ namespace Maroon.NetworkSimulator {
             if(queueIndex > maxQueueLength) {
                 queueIndex = maxQueueLength;
             }
+            var queueTargetPosition = queue.position - queueIndex * queuePacketDistance * queue.right;
             if(WorkingPlane.GetDistanceToPoint(packet.Position) > distanceTolerance) {
                 packet.MoveTowards(packet.Position + Vector3.back, packetSpeed * Time.deltaTime);
             }
-            else if(Vector3.Distance(packet.Position, queue.position) > distanceTolerance) {
-                var targetPosition = queue.position - queueIndex * queuePacketDistance * queue.right;
-                packet.MoveTowards(targetPosition, packetSpeed * Time.deltaTime);
+            else if(Vector3.Distance(packet.Position, queueTargetPosition) > distanceTolerance) {
+                packet.MoveTowards(queueTargetPosition, packetSpeed * Time.deltaTime);
             }
             else {
-                if(queueIndex > maxQueueLength) {
-                    //drop packet
+                incomingPackets.Remove(packet);
+                if(queueIndex >= maxQueueLength) {
+                    droppedPackets.Add(packet);
                 }
                 else {
-                    incomingPackets.Remove(packet);
                     queuedPackets.Add(packet);
                 }
             }

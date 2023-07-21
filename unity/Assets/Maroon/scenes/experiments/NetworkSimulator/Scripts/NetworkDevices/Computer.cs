@@ -1,6 +1,4 @@
-﻿using TMPro;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 namespace Maroon.NetworkSimulator.NetworkDevices {
     public class Computer : NetworkDevice {
@@ -9,6 +7,7 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
         private int NextTrafficTimeout => TrafficInterval + Random.Range(-TrafficIntervalRange, TrafficIntervalRange + 1);
         public override string GetName() => "Computer";
         public override string GetButtonText() => "Computer action";
+        public override DeviceType GetDeviceType() => DeviceType.Computer;
 
         public override void ReceivePacket(Packet packet, Port receiver) {
         }

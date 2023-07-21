@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Maroon.NetworkSimulator {
     public abstract class NetworkDevice : MonoBehaviour {
+        public enum DeviceType { Hub, Switch, Router, Computer }
         [SerializeField]
         protected NetworkSimulationController networkSimulationController;
         [SerializeField]
@@ -12,10 +13,11 @@ namespace Maroon.NetworkSimulator {
         private float clickVsDragThreshold = 0.002f;
         [SerializeField]
         private GameObject connectableMarker;
+        [SerializeField]
+        private bool fromKit = false;
 
         private Plane plane;
         private Vector3 offset;
-        private bool fromKit = true;
         private Vector3 kitPosition;
         private Vector3 dragStartPosition;
         private Vector3 clickStartPosition;
@@ -132,6 +134,7 @@ namespace Maroon.NetworkSimulator {
         }
         public abstract string GetName();
         public abstract string GetButtonText();
+        public abstract DeviceType GetDeviceType();
 
         public abstract void ReceivePacket(Packet packet, Port receiver);
 
@@ -144,6 +147,11 @@ namespace Maroon.NetworkSimulator {
 
         public bool[] GetPortConnected() {
             return Ports.Select(p => !p.IsFree).ToArray();
+        }
+
+        public void PresetInitialize(NetworkSimulationController simulationController, BoxCollider networkArea) {
+            networkSimulationController = simulationController;
+            networkAreaCollider = networkArea;
         }
     }
 }

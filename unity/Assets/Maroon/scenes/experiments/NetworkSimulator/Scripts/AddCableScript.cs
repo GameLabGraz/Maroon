@@ -50,12 +50,16 @@ namespace Maroon.NetworkSimulator {
             }
             if(secondNetworkDevice == null && device != firstNetworkDevice) {
                 secondNetworkDevice = device;
-                var cable = Instantiate(cablePrefab, cableParent);
-                var port1 = firstNetworkDevice.ConnectCableToFreePort(cable);
-                var port2 = secondNetworkDevice.ConnectCableToFreePort(cable);
-                cable.Initalize(port1, port2);
+                AddCable(firstNetworkDevice, secondNetworkDevice);
                 ResetState();
             }
+        }
+
+        public void AddCable(NetworkDevice device1, NetworkDevice device2) {
+            var cable = Instantiate(cablePrefab, cableParent);
+            var port1 = device1.ConnectCableToFreePort(cable);
+            var port2 = device2.ConnectCableToFreePort(cable);
+            cable.Initalize(port1, port2);
         }
 
         private void ResetState() {

@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 namespace Maroon.NetworkSimulator {
     public class UIController : MonoBehaviour {
+        [SerializeField]
+        private GameObject generalOptionsPanel;
         [SerializeField] 
         private GameObject deviceOptionsPanel;
         [SerializeField]
@@ -35,11 +37,13 @@ namespace Maroon.NetworkSimulator {
         }
 
         public void SetNetworkView() {
+            generalOptionsPanel.SetActive(true);
             enterDeviceButton.gameObject.SetActive(true);
             backToNetworkButton.gameObject.SetActive(false);
             removeDeviceButton.gameObject.SetActive(true);
         }
         public void SetInsideDeviceView() {
+            generalOptionsPanel.SetActive(false);
             enterDeviceButton.gameObject.SetActive(false);
             backToNetworkButton.gameObject.SetActive(true);
             removeDeviceButton.gameObject.SetActive(false);

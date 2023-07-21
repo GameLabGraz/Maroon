@@ -1,10 +1,8 @@
-﻿using TMPro;
-using UnityEngine.UI;
-
-namespace Maroon.NetworkSimulator.NetworkDevices {
+﻿namespace Maroon.NetworkSimulator.NetworkDevices {
     public class Hub : NetworkDevice {
         public override string GetName() => "Hub";
         public override string GetButtonText() => "Enter Hub";
+        public override DeviceType GetDeviceType() => DeviceType.Hub;
 
         public override void ReceivePacket(Packet packet, Port receiver) {
             if(IsInside) {

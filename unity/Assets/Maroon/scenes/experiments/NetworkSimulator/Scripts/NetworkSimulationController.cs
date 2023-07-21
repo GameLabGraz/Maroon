@@ -10,6 +10,13 @@ namespace Maroon.NetworkSimulator {
         private UIController uiController;
         [SerializeField]
         public InsideDeviceScript InsideDeviceScript;
+        [SerializeField]
+        private NetworkDevice[] devicePrefabs;
+        [SerializeField]
+        private BoxCollider networkArea;
+        [SerializeField]
+        private AddCableScript addCableScript;
+
         private readonly List<NetworkDevice> networkDevices = new List<NetworkDevice>();
         private NetworkDevice selectedDevice = null;
         public void AddNetworkDevice(NetworkDevice device) {
@@ -52,6 +59,33 @@ namespace Maroon.NetworkSimulator {
             Destroy(selectedDevice.gameObject);
             selectedDevice = null;
             uiController.HideDeviceOptions();
+        }
+
+        public void LoadPreset(int index) {
+            if(index == 0) {
+                return;
+            }
+            ClearNetwork();
+            var preset = NetworkPresets.Presets[index - 1];
+            foreach(var device in preset.Devices) {
+                var instance = Instantiate(devicePrefabs[(int)device.Type], networkArea.transform);
+                instance.transform.localPosition = device.Position;
+                instance.PresetInitialize(this, networkArea);
+                networkDevices.Add(instance);
+            }
+            foreach(var connection in preset.Cables) {
+                addCableScript.AddCable(networkDevices[connection.Item1], networkDevices[connection.Item2]);
+            }
+        }
+
+        public void ClearNetwork() {
+            foreach(var device in networkDevices) {
+                device.RemoveCables();
+                Destroy(device.gameObject);
+            }
+            selectedDevice = null;
+            uiController.HideDeviceOptions();
+            networkDevices.Clear();
         }
     }
 }
