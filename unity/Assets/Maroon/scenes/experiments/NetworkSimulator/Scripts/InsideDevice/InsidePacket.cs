@@ -11,22 +11,20 @@ namespace Maroon.NetworkSimulator {
 
         public bool IsDraggable { get; set; }
         public bool IsBeingDragged { get; private set; }
-        private Plane plane;
+        private InsideDeviceScript insideDeviceScript;
         private Vector3 offset;
         private Vector3 clickStartPosition;
-        private Action<InsidePacket> onDragEnd;
 
         private void Start() {
             IsDraggable = false;
             IsBeingDragged = false;
         }
 
-        public void Initialize(Packet packet, InsidePort receiver, Plane workingPlane, Action<InsidePacket> onDragEnd) {
+        public void Initialize(Packet packet, InsidePort receiver, InsideDeviceScript insideDeviceScript) {
             Packet = packet;
             transform.position = receiver.Position;
             GetComponentInChildren<MeshRenderer>().material.color = packet.Color;
-            plane = workingPlane;
-            this.onDragEnd = onDragEnd;
+            this.insideDeviceScript = insideDeviceScript;
         }
 
         public void MoveTowards(Vector3 target, float maxDistanceDelta) {
@@ -39,7 +37,7 @@ namespace Maroon.NetworkSimulator {
             }
             clickStartPosition = Input.mousePosition;
             var ray = Camera.main.ScreenPointToRay(clickStartPosition);
-            plane.Raycast(ray, out var distance);
+            insideDeviceScript.WorkingPlane.Raycast(ray, out var distance);
             offset = transform.position - ray.GetPoint(distance);
         }
 
@@ -50,9 +48,10 @@ namespace Maroon.NetworkSimulator {
             IsBeingDragged = true;
             var newMousePosition = Input.mousePosition;
             var ray = Camera.main.ScreenPointToRay(newMousePosition);
-            plane.Raycast(ray, out var distance);
+            insideDeviceScript.WorkingPlane.Raycast(ray, out var distance);
             var newPosition = ray.GetPoint(distance) + offset;
             transform.position = newPosition;
+            insideDeviceScript.OnPacketDrag(newPosition);
         }
 
         private void OnMouseUp() {
@@ -60,7 +59,7 @@ namespace Maroon.NetworkSimulator {
                 return;
             }
             IsBeingDragged = false;
-            onDragEnd(this);
+            insideDeviceScript.OnPacketDragEnd(this);
         }
 
     }

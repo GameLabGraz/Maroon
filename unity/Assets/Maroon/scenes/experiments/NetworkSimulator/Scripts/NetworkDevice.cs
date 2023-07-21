@@ -141,5 +141,9 @@ namespace Maroon.NetworkSimulator {
         public void SendPacket(Packet packet, int portIndex) {
             Ports[portIndex].SendPacket(packet);
         }
+
+        public bool[] GetPortConnected() {
+            return Ports.Select(p => !p.IsFree).ToArray();
+        }
     }
 }

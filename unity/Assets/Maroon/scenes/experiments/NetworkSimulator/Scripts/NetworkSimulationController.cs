@@ -44,6 +44,7 @@ namespace Maroon.NetworkSimulator {
             uiController.SetNetworkView();
             cameraScript.SetNetworkView();
             selectedDevice.IsInside = false;
+            InsideDeviceScript.Clear();
         }
         public void RemoveDevice() {
             networkDevices.Remove(selectedDevice);
