@@ -1,4 +1,6 @@
-﻿namespace Maroon.NetworkSimulator.NetworkDevices {
+﻿using System.Net;
+
+namespace Maroon.NetworkSimulator.NetworkDevices {
     public class Switch : NetworkDevice {
         public override string GetName() => "Switch";
         public override string GetButtonText() => "Enter Switch";
@@ -12,6 +14,9 @@
         }
 
         protected override void OnStart() {
+        }
+
+        protected override void OnAddedToNetwork() {
         }
     }
 }

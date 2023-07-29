@@ -41,6 +41,7 @@ namespace Maroon.NetworkSimulator {
             OnStart();
         }
         protected abstract void OnStart();
+        protected abstract void OnAddedToNetwork();
 
         private void OnMouseDown() {
             clickStartPosition = Input.mousePosition;
@@ -85,6 +86,7 @@ namespace Maroon.NetworkSimulator {
                     transform.parent = networkAreaCollider.transform;
                     fromKit = false;
                     networkSimulationController.AddNetworkDevice(this);
+                    OnAddedToNetwork();
                 }
                 else {
                     transform.position = kitPosition;
@@ -152,6 +154,7 @@ namespace Maroon.NetworkSimulator {
         public void PresetInitialize(NetworkSimulationController simulationController, BoxCollider networkArea) {
             networkSimulationController = simulationController;
             networkAreaCollider = networkArea;
+            OnAddedToNetwork();
         }
     }
 }

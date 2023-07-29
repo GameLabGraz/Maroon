@@ -1,5 +1,6 @@
 ﻿using Maroon.NetworkSimulator.NetworkDevices;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Maroon.NetworkSimulator {
@@ -19,6 +20,8 @@ namespace Maroon.NetworkSimulator {
 
         private readonly List<NetworkDevice> networkDevices = new List<NetworkDevice>();
         private NetworkDevice selectedDevice = null;
+        private int ipAddressCounter = 1;
+        private int macAddressCounter = 0;
         public void AddNetworkDevice(NetworkDevice device) {
             networkDevices.Add(device);
         }
@@ -86,6 +89,34 @@ namespace Maroon.NetworkSimulator {
             selectedDevice = null;
             uiController.HideDeviceOptions();
             networkDevices.Clear();
+            ipAddressCounter = 1;
+            macAddressCounter = 0;
+        }
+
+        public string GetIPAddress() {
+            var address = new System.Net.IPAddress(new byte[] { 10, 0, (byte)(ipAddressCounter >> 8), (byte)(ipAddressCounter % 255) });
+            ipAddressCounter++;
+            return address.ToString();
+        }
+
+        public string GetMACAddress(NetworkDevice.DeviceType deviceType) {
+            var bytes = new byte[6];
+            bytes[0] = (byte)Random.Range(0, 255);
+            bytes[1] = (byte)Random.Range(0, 255);
+            bytes[2] = (byte)(macAddressCounter >> 8);
+            bytes[3] = (byte)(macAddressCounter % 255);
+            bytes[4] = (byte)Random.Range(0, 255);
+            bytes[5] = (byte)Random.Range(0, 255);
+            macAddressCounter++;
+            if(deviceType == NetworkDevice.DeviceType.Computer) {
+                return string.Join(":", bytes.Select(b => b.ToString("X2")));
+            }
+            else if(deviceType == NetworkDevice.DeviceType.Router) {
+                return string.Join(":", bytes.Take(5).Select(b => b.ToString("X2")));
+            }
+            else {
+                return "";
+            }
         }
     }
 }
