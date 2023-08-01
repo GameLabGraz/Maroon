@@ -70,10 +70,10 @@ jobs:
           customParameters: -maroonBuildPath ../build -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
       
       # needed because otherwise game-ci will warn that repo is not clean
-      - name: Restore Build Environment
-        shell: bash
-        run: |
-          cd ${{ github.workspace }} && git reset --hard
+      # - name: Restore Build Environment
+      #   shell: bash
+      #   run: |
+      #     cd ${{ github.workspace }} && git reset --hard
 
   
 
