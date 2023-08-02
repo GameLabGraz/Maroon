@@ -165,11 +165,7 @@ jobs:
         run: rm -rf build/WebGL
 
       - name: Deploy
-        # use patched version of game-ci/steam-deploy to deploy
-        # this can be switched back once is fixed on the upstream
-        # see: 
-        # https://github.com/game-ci/steam-deploy/issues/56
-        uses: mfbrantner/steam-deploy@v0.3
+        uses: game-ci/steam-deploy@v3
         with:
           username: ${{ secrets.STEAM_USERNAME }}
           configVdf: ${{ secrets.STEAM_CONFIG_VDF}}
