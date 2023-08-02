@@ -1,12 +1,12 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Maroon.NetworkSimulator.NetworkDevices {
     public class Computer : NetworkDevice {
-        public string IPAddress;
-        public string MACAddress;
-        private int TrafficInterval = 5;
-        private int TrafficIntervalRange = 2;
-        private int NextTrafficTimeout => TrafficInterval + Random.Range(-TrafficIntervalRange, TrafficIntervalRange + 1);
+        public IPAddress IPAddress;
+        public MACAddress MACAddress;
+        private readonly Dictionary<IPAddress, AddressTableEntry<MACAddress>> arpTable = new Dictionary<IPAddress, AddressTableEntry<MACAddress>>();
         public override string GetName() => "Computer";
         public override string GetButtonText() => "Computer action";
         public override DeviceType GetDeviceType() => DeviceType.Computer;
@@ -14,8 +14,9 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
         public override void ReceivePacket(Packet packet, Port receiver) {
         }
 
-        protected override void OnStart() {
-            Invoke(nameof(GenerateTraffic), NextTrafficTimeout);
+        public void SendPacket(IPAddress destinationIPAddress) {
+            UnityEngine.Debug.Log($"Sending packet from {IPAddress} to {destinationIPAddress} ...");
+            Ports[0].SendPacket(new Packet(IPAddress, destinationIPAddress, MACAddress, arpTable[destinationIPAddress].Value));
         }
 
         protected override void OnAddedToNetwork() {
@@ -23,9 +24,23 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
             MACAddress = networkSimulationController.GetMACAddress(GetDeviceType());
         }
 
-        private void GenerateTraffic() {
-            Ports[0].SendPacket(new Packet());
-            Invoke(nameof(GenerateTraffic), NextTrafficTimeout);
+        public override void ClearAddressTables() {
+            arpTable.Clear();
+        }
+
+        public override void AddToAddressTables(IPAddress ipAddress, MACAddress macAddress, IPAddress via, Port receiver, int distance, Computer initiator) {
+            if(!arpTable.ContainsKey(ipAddress) || arpTable[ipAddress].Distance > distance) {
+                arpTable[ipAddress] = new AddressTableEntry<MACAddress>(macAddress, distance);
+            }
+        }
+        public void StartAddingAddressToTables() {
+            if(Ports[0].IsFree) {
+                return;
+            }
+            Ports[0].ConnectedDevice.AddToAddressTables(IPAddress, MACAddress, IPAddress, Ports[0].Cable.OtherPort(Ports[0]), 0, this);
+        }
+        public string GetARPTable() {
+            return string.Join(Environment.NewLine, arpTable.Select(x => $"{x.Key,-15}  {x.Value.Value}"));
         }
     }
 }

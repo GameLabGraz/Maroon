@@ -2,16 +2,14 @@
 
 namespace Maroon.NetworkSimulator {
     public class Port : MonoBehaviour {
-        public NetworkDevice Device { get; private set; }
+        [SerializeField]
+        private NetworkDevice Device;
         public Cable Cable { get; set; }
+        public NetworkDevice ConnectedDevice => Cable != null ? Cable.OtherPort(this).Device : null;
         public Vector3 Position => transform.position;
         public Vector3 BezierPoint => transform.position + transform.forward * 0.2f;
 
         public bool IsFree { get => Cable == null; }
-
-        public void Start() {
-            Device = GetComponentInParent<NetworkDevice>();
-        }
 
         public void SendPacket(Packet packet) {
             packet = new Packet(packet);

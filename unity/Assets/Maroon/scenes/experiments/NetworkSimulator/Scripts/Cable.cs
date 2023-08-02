@@ -93,8 +93,17 @@ namespace Maroon.NetworkSimulator {
                 throw new System.ArgumentException("Cable not connected to port", nameof(sender));
             }
             var travellingPacket = Instantiate(TravellingPacketPrefab);
-            travellingPacket.Initialize(packet, sender, sender == device1 ? device2 : device1);
+            travellingPacket.Initialize(packet, sender, OtherPort(sender));
             travellingPackets.Add(travellingPacket);
+        }
+
+        public Port OtherPort(Port port) {
+            if(port == device1) {
+                return device2;
+            }
+            else {
+                return device1;
+            }
         }
 
         public void Remove() {

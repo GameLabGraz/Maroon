@@ -1,4 +1,6 @@
-﻿namespace Maroon.NetworkSimulator.NetworkDevices {
+﻿using System.Linq;
+
+namespace Maroon.NetworkSimulator.NetworkDevices {
     public class Hub : NetworkDevice {
         public override string GetName() => "Hub";
         public override string GetButtonText() => "Enter Hub";
@@ -16,10 +18,22 @@
             }
         }
 
-        protected override void OnStart() {
+        protected override void OnAddedToNetwork() {
         }
 
-        protected override void OnAddedToNetwork() {
+        public override void ClearAddressTables() {
+        }
+        public override void AddToAddressTables(IPAddress ipAddress, MACAddress macAddress, IPAddress via, Port receiver, int distance, Computer initiator) {
+            if(addAddressInitiator == initiator) {
+                return;
+            }
+            addAddressInitiator = initiator;
+            foreach(var port in Ports.Where(p => !p.IsFree)) {
+                if(port != receiver) {
+                    port.ConnectedDevice.AddToAddressTables(ipAddress, macAddress, via, port.Cable.OtherPort(port), distance + 1, initiator);
+                }
+            }
+            addAddressInitiator = null;
         }
     }
 }

@@ -19,9 +19,34 @@ namespace Maroon.NetworkSimulator {
         private AddCableScript addCableScript;
 
         private readonly List<NetworkDevice> networkDevices = new List<NetworkDevice>();
+        private IEnumerable<Computer> computers => networkDevices.Where(d => d is Computer).Cast<Computer>();
         private NetworkDevice selectedDevice = null;
         private int ipAddressCounter = 1;
         private int macAddressCounter = 0;
+
+        private readonly float TrafficInterval = 4;
+        private readonly float TrafficIntervalRange = 2;
+        private float NextTrafficTimeout => TrafficInterval + Random.Range(-TrafficIntervalRange, TrafficIntervalRange);
+
+        private void Start() {
+            Invoke(nameof(GenerateTraffic), NextTrafficTimeout);
+        }
+        private void GenerateTraffic() {
+            var nextTrafficTimeout = NextTrafficTimeout;
+            if(computers.Count() > 1) {
+                var source = computers.ElementAt(Random.Range(0, computers.Count()));
+                var destinations = computers.Where(c => c != source);
+                var destinationIPAddress = destinations.ElementAt(Random.Range(0, destinations.Count())).IPAddress;
+                try {
+                    source.SendPacket(destinationIPAddress);
+                }
+                catch (KeyNotFoundException) {
+                    nextTrafficTimeout = 0.2f;
+                }
+            }
+            Invoke(nameof(GenerateTraffic), nextTrafficTimeout);
+        }
+
         public void AddNetworkDevice(NetworkDevice device) {
             networkDevices.Add(device);
         }
@@ -79,6 +104,7 @@ namespace Maroon.NetworkSimulator {
             foreach(var connection in preset.Cables) {
                 addCableScript.AddCable(networkDevices[connection.Item1], networkDevices[connection.Item2]);
             }
+            UpdateAddressTables();
         }
 
         public void ClearNetwork() {
@@ -93,13 +119,22 @@ namespace Maroon.NetworkSimulator {
             macAddressCounter = 0;
         }
 
-        public string GetIPAddress() {
-            var address = new System.Net.IPAddress(new byte[] { 10, 0, (byte)(ipAddressCounter >> 8), (byte)(ipAddressCounter % 255) });
-            ipAddressCounter++;
-            return address.ToString();
+        public void UpdateAddressTables() {
+            foreach(var device in networkDevices) {
+                device.ClearAddressTables();
+            }
+            foreach(var computer in computers) {
+                computer.StartAddingAddressToTables();
+            }
         }
 
-        public string GetMACAddress(NetworkDevice.DeviceType deviceType) {
+        public IPAddress GetIPAddress() {
+            var address = new System.Net.IPAddress(new byte[] { 10, 0, (byte)(ipAddressCounter >> 8), (byte)(ipAddressCounter % 255) });
+            ipAddressCounter++;
+            return new IPAddress(address.ToString());
+        }
+
+        public MACAddress GetMACAddress(NetworkDevice.DeviceType deviceType) {
             var bytes = new byte[6];
             bytes[0] = (byte)Random.Range(0, 255);
             bytes[1] = (byte)Random.Range(0, 255);
@@ -108,15 +143,14 @@ namespace Maroon.NetworkSimulator {
             bytes[4] = (byte)Random.Range(0, 255);
             bytes[5] = (byte)Random.Range(0, 255);
             macAddressCounter++;
+            string address = "";
             if(deviceType == NetworkDevice.DeviceType.Computer) {
-                return string.Join(":", bytes.Select(b => b.ToString("X2")));
+                address = string.Join(":", bytes.Select(b => b.ToString("X2")));
             }
             else if(deviceType == NetworkDevice.DeviceType.Router) {
-                return string.Join(":", bytes.Take(5).Select(b => b.ToString("X2")));
+                address = string.Join(":", bytes.Take(5).Select(b => b.ToString("X2")));
             }
-            else {
-                return "";
-            }
+            return new MACAddress(address);
         }
     }
 }

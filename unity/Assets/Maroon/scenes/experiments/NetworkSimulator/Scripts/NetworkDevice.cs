@@ -1,3 +1,4 @@
+using Maroon.NetworkSimulator.NetworkDevices;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -22,6 +23,7 @@ namespace Maroon.NetworkSimulator {
         private Vector3 dragStartPosition;
         private Vector3 clickStartPosition;
         private AddCableScript addCableScript;
+        protected Computer addAddressInitiator = null;
         public bool IsInside { get; set; } = false;
 
         public int NumberOfPorts { get => Ports.Length; }
@@ -38,9 +40,7 @@ namespace Maroon.NetworkSimulator {
             plane = new Plane(Vector3.up, transform.position);
             kitPosition = transform.position;
             addCableScript = FindObjectOfType<AddCableScript>();
-            OnStart();
         }
-        protected abstract void OnStart();
         protected abstract void OnAddedToNetwork();
 
         private void OnMouseDown() {
@@ -137,6 +137,8 @@ namespace Maroon.NetworkSimulator {
         public abstract string GetName();
         public abstract string GetButtonText();
         public abstract DeviceType GetDeviceType();
+        public abstract void ClearAddressTables();
+        public abstract void AddToAddressTables(IPAddress ipAddress, MACAddress macAddress, IPAddress via, Port receiver, int distance, Computer initiator);
 
         public abstract void ReceivePacket(Packet packet, Port receiver);
 

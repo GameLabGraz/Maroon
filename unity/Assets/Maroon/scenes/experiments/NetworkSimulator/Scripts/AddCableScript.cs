@@ -60,6 +60,9 @@ namespace Maroon.NetworkSimulator {
             var port1 = device1.ConnectCableToFreePort(cable);
             var port2 = device2.ConnectCableToFreePort(cable);
             cable.Initalize(port1, port2);
+            if(IsAddingCable) {
+                networkSimulationController.UpdateAddressTables();
+            }
         }
 
         private void ResetState() {
