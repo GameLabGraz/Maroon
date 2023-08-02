@@ -15,13 +15,12 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
         }
 
         public void SendPacket(IPAddress destinationIPAddress) {
-            UnityEngine.Debug.Log($"Sending packet from {IPAddress} to {destinationIPAddress} ...");
             Ports[0].SendPacket(new Packet(IPAddress, destinationIPAddress, MACAddress, arpTable[destinationIPAddress].Value));
         }
 
         protected override void OnAddedToNetwork() {
-            IPAddress = networkSimulationController.GetIPAddress();
-            MACAddress = networkSimulationController.GetMACAddress(GetDeviceType());
+            IPAddress = NetworkSimulationController.Instance.GetIPAddress();
+            MACAddress = NetworkSimulationController.Instance.GetMACAddress(GetDeviceType());
         }
 
         public override void ClearAddressTables() {

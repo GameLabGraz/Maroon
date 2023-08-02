@@ -6,6 +6,15 @@ using UnityEngine.UI;
 
 namespace Maroon.NetworkSimulator {
     public class UIController : MonoBehaviour {
+        private static UIController instance;
+        public static UIController Instance {
+            get {
+                if(instance == null) {
+                    instance = FindObjectOfType<UIController>();
+                }
+                return instance;
+            }
+        }
         [SerializeField]
         private GameObject generalOptionsPanel;
         [SerializeField] 
@@ -53,15 +62,31 @@ namespace Maroon.NetworkSimulator {
         [SerializeField]
         private TextMeshProUGUI routingTableBody;
 
+        [SerializeField]
+        private GameObject packetInfoPanel;
+        [SerializeField]
+        private TextMeshProUGUI packetSourceMACAddress;
+        [SerializeField]
+        private TextMeshProUGUI packetDestinationMACAddress;
+        [SerializeField]
+        private TextMeshProUGUI packetSourceIPAddress;
+        [SerializeField]
+        private TextMeshProUGUI packetDestinationIPAddress;
+
         void Start() {
             HideDeviceOptions();
+            HidePacketInfo();
         }
 
         void Update() {
-
+            if(Input.GetKeyDown(KeyCode.Mouse1)) {
+                HideDeviceOptions();
+                HidePacketInfo();
+            }
         }
 
         public void ShowDeviceOptions(NetworkDevice clickedDevice) {
+            HidePacketInfo();
             deviceOptionsTitle.SetText(clickedDevice.GetName());
             deviceOptionsButtonText.SetText(clickedDevice.GetButtonText());
 
@@ -128,6 +153,18 @@ namespace Maroon.NetworkSimulator {
             enterDeviceButton.gameObject.SetActive(false);
             backToNetworkButton.gameObject.SetActive(true);
             removeDeviceButton.gameObject.SetActive(false);
+        }
+
+        public void ShowPacketInfo(Packet packet) {
+            HideDeviceOptions();
+            packetSourceMACAddress.SetText(packet.SourceMACAddress.ToString());
+            packetDestinationMACAddress.SetText(packet.DestinationMACAddress.ToString());
+            packetSourceIPAddress.SetText(packet.SourceIPAddress.ToString());
+            packetDestinationIPAddress.SetText(packet.DestinationIPAddress.ToString());
+            packetInfoPanel.SetActive(true);
+        }
+        public void HidePacketInfo() {
+            packetInfoPanel.SetActive(false);
         }
     }
 }

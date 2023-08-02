@@ -58,6 +58,9 @@ namespace Maroon.NetworkSimulator {
         }
 
         void Update() {
+            if(!SimulationController.Instance.SimulationRunning) {
+                return;
+            }
             var incoming = incomingPackets.ToList();
             var queued = queuedPackets.ToList();
             var outgoing = outgoingPackets.ToList();

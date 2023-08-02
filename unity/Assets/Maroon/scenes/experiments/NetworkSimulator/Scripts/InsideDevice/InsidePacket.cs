@@ -42,7 +42,7 @@ namespace Maroon.NetworkSimulator {
         }
 
         private void OnMouseDrag() {
-            if(!IsDraggable) {
+            if(!IsDraggable || !SimulationController.Instance.SimulationRunning) {
                 return;
             }
             IsBeingDragged = true;

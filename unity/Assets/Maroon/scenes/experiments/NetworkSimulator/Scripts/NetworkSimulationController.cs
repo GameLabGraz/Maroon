@@ -5,10 +5,17 @@ using UnityEngine;
 
 namespace Maroon.NetworkSimulator {
     public class NetworkSimulationController : MonoBehaviour {
+        private static NetworkSimulationController instance;
+        public static NetworkSimulationController Instance {
+            get {
+                if(instance == null) {
+                    instance = FindObjectOfType<NetworkSimulationController>();
+                }
+                return instance;
+            }
+        }
         [SerializeField]
         private CameraScript cameraScript;
-        [SerializeField]
-        private UIController uiController;
         [SerializeField]
         public InsideDeviceScript InsideDeviceScript;
         [SerializeField]
@@ -33,14 +40,14 @@ namespace Maroon.NetworkSimulator {
         }
         private void GenerateTraffic() {
             var nextTrafficTimeout = NextTrafficTimeout;
-            if(computers.Count() > 1) {
+            if(SimulationController.Instance.SimulationRunning && computers.Count() > 1) {
                 var source = computers.ElementAt(Random.Range(0, computers.Count()));
                 var destinations = computers.Where(c => c != source);
                 var destinationIPAddress = destinations.ElementAt(Random.Range(0, destinations.Count())).IPAddress;
                 try {
                     source.SendPacket(destinationIPAddress);
                 }
-                catch (KeyNotFoundException) {
+                catch(KeyNotFoundException) {
                     nextTrafficTimeout = 0.2f;
                 }
             }
@@ -62,10 +69,10 @@ namespace Maroon.NetworkSimulator {
         }
         public void SelectDevice(NetworkDevice device) {
             selectedDevice = device;
-            uiController.ShowDeviceOptions(selectedDevice);
+            UIController.Instance.ShowDeviceOptions(selectedDevice);
         }
         public void EnterInsideOfDevice() {
-            uiController.SetInsideDeviceView();
+            UIController.Instance.SetInsideDeviceView();
             if(selectedDevice is Computer) {
                 cameraScript.SetComputerView(selectedDevice.transform.position);
             }
@@ -76,7 +83,7 @@ namespace Maroon.NetworkSimulator {
             }
         }
         public void ExitInsideOfDevice() {
-            uiController.SetNetworkView();
+            UIController.Instance.SetNetworkView();
             cameraScript.SetNetworkView();
             selectedDevice.IsInside = false;
             InsideDeviceScript.Clear();
@@ -86,7 +93,7 @@ namespace Maroon.NetworkSimulator {
             selectedDevice.RemoveCables();
             Destroy(selectedDevice.gameObject);
             selectedDevice = null;
-            uiController.HideDeviceOptions();
+            UIController.Instance.HideDeviceOptions();
         }
 
         public void LoadPreset(int index) {
@@ -98,7 +105,7 @@ namespace Maroon.NetworkSimulator {
             foreach(var device in preset.Devices) {
                 var instance = Instantiate(devicePrefabs[(int)device.Type], networkArea.transform);
                 instance.transform.localPosition = device.Position;
-                instance.PresetInitialize(this, networkArea);
+                instance.PresetInitialize(networkArea);
                 networkDevices.Add(instance);
             }
             foreach(var connection in preset.Cables) {
@@ -113,7 +120,7 @@ namespace Maroon.NetworkSimulator {
                 Destroy(device.gameObject);
             }
             selectedDevice = null;
-            uiController.HideDeviceOptions();
+            UIController.Instance.HideDeviceOptions();
             networkDevices.Clear();
             ipAddressCounter = 1;
             macAddressCounter = 0;

@@ -32,8 +32,8 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
         }
 
         protected override void OnAddedToNetwork() {
-            IPAddress = networkSimulationController.GetIPAddress();
-            var macAddress = networkSimulationController.GetMACAddress(GetDeviceType());
+            IPAddress = NetworkSimulationController.Instance.GetIPAddress();
+            var macAddress = NetworkSimulationController.Instance.GetMACAddress(GetDeviceType());
             MACAddress = new MACAddress[] {
                 new MACAddress(macAddress + ":01"),
                 new MACAddress(macAddress + ":02"),

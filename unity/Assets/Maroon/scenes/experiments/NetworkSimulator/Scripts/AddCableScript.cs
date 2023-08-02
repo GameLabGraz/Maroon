@@ -1,11 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Maroon.NetworkSimulator {
     public class AddCableScript : MonoBehaviour {
-        [SerializeField]
-        private NetworkSimulationController networkSimulationController;
         [SerializeField]
         private Cable cablePrefab;
         [SerializeField]
@@ -32,7 +28,7 @@ namespace Maroon.NetworkSimulator {
             IsAddingCable = !IsAddingCable;
             if(IsAddingCable) {
                 meshRenderer.material = activeMaterial;
-                networkSimulationController.ShowConnectableDeviceMarkers();
+                NetworkSimulationController.Instance.ShowConnectableDeviceMarkers();
             }
             else {
                 ResetState();
@@ -61,7 +57,7 @@ namespace Maroon.NetworkSimulator {
             var port2 = device2.ConnectCableToFreePort(cable);
             cable.Initalize(port1, port2);
             if(IsAddingCable) {
-                networkSimulationController.UpdateAddressTables();
+                NetworkSimulationController.Instance.UpdateAddressTables();
             }
         }
 
@@ -70,7 +66,7 @@ namespace Maroon.NetworkSimulator {
             firstNetworkDevice = null;
             secondNetworkDevice = null;
             meshRenderer.material = defaultMaterial;
-            networkSimulationController.HideConnectableDeviceMarkers();
+            NetworkSimulationController.Instance.HideConnectableDeviceMarkers();
         }
     }
 }

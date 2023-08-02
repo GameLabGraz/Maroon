@@ -19,5 +19,10 @@ namespace Maroon.NetworkSimulator {
             GetComponentInChildren<MeshRenderer>().material.color = packet.Color;
         }
 
+        private void OnMouseUpAsButton() {
+            if(!SimulationController.Instance.SimulationRunning) {
+                UIController.Instance.ShowPacketInfo(Packet);
+            }
+        }
     }
 }

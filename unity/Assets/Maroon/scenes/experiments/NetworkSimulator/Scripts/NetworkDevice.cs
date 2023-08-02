@@ -7,8 +7,6 @@ namespace Maroon.NetworkSimulator {
     public abstract class NetworkDevice : MonoBehaviour {
         public enum DeviceType { Hub, Switch, Router, Computer }
         [SerializeField]
-        protected NetworkSimulationController networkSimulationController;
-        [SerializeField]
         private BoxCollider networkAreaCollider;
         [SerializeField]
         private float clickVsDragThreshold = 0.002f;
@@ -85,7 +83,7 @@ namespace Maroon.NetworkSimulator {
                     Instantiate(this, kitPosition, Quaternion.identity, transform.parent).name = name;
                     transform.parent = networkAreaCollider.transform;
                     fromKit = false;
-                    networkSimulationController.AddNetworkDevice(this);
+                    NetworkSimulationController.Instance.AddNetworkDevice(this);
                     OnAddedToNetwork();
                 }
                 else {
@@ -112,7 +110,7 @@ namespace Maroon.NetworkSimulator {
                 }
             }
             else {
-                networkSimulationController.SelectDevice(this);
+                NetworkSimulationController.Instance.SelectDevice(this);
             }
         }
         private void UpdateCables() {
@@ -143,7 +141,7 @@ namespace Maroon.NetworkSimulator {
         public abstract void ReceivePacket(Packet packet, Port receiver);
 
         protected void ReceivePacketInside(Packet packet, Port receiver) {
-            networkSimulationController.InsideDeviceScript.ReceivePacket(packet, Array.IndexOf(Ports, receiver));
+            NetworkSimulationController.Instance.InsideDeviceScript.ReceivePacket(packet, Array.IndexOf(Ports, receiver));
         }
         public void SendPacket(Packet packet, int portIndex) {
             Ports[portIndex].SendPacket(packet);
@@ -153,8 +151,7 @@ namespace Maroon.NetworkSimulator {
             return Ports.Select(p => !p.IsFree).ToArray();
         }
 
-        public void PresetInitialize(NetworkSimulationController simulationController, BoxCollider networkArea) {
-            networkSimulationController = simulationController;
+        public void PresetInitialize(BoxCollider networkArea) {
             networkAreaCollider = networkArea;
             OnAddedToNetwork();
         }

@@ -21,6 +21,9 @@ namespace Maroon.NetworkSimulator {
         }
 
         private void Update() {
+            if(!SimulationController.Instance.SimulationRunning) {
+                return;
+            }
             foreach(var packet in travellingPackets.ToList()) {
                 if(packet.Progress > 1 - float.Epsilon) {
                     travellingPackets.Remove(packet);
@@ -29,35 +32,39 @@ namespace Maroon.NetworkSimulator {
                 }
                 else {
                     packet.Progress += Time.deltaTime * travellingSpeed;
-                    var linePositionIndexA = Mathf.FloorToInt(packet.Progress / (1f / NumberOfCurveSteps));
-                    var linePositionIndexB = linePositionIndexA + 1;
-                    if(packet.Sender == device2) {
-                        linePositionIndexA = NumberOfCurveSteps - linePositionIndexA;
-                        linePositionIndexB = linePositionIndexA - 1;
-                    }
-                    Vector3 a, b;
-                    if(linePositionIndexA < 0) {
-                        a = device1.Position;
-                    }
-                    else if(linePositionIndexA >= NumberOfCurveSteps) {
-                        a = device2.Position;
-                    }
-                    else {
-                        a = lineRenderer.GetPosition(linePositionIndexA);
-                    }
-
-                    if(linePositionIndexB < 0) {
-                        b = device1.Position;
-                    }
-                    else if(linePositionIndexB >= NumberOfCurveSteps) {
-                        b = device2.Position;
-                    }
-                    else {
-                        b = lineRenderer.GetPosition(linePositionIndexB);
-                    }
-                    packet.transform.position = Vector3.Lerp(a, b, packet.Progress % 1);
+                    UpdatePacketPosition(packet);
                 }
             }
+        }
+
+        private void UpdatePacketPosition(TravellingPacket packet) {
+            var linePositionIndexA = Mathf.FloorToInt(packet.Progress / (1f / NumberOfCurveSteps));
+            var linePositionIndexB = linePositionIndexA + 1;
+            if(packet.Sender == device2) {
+                linePositionIndexA = NumberOfCurveSteps - linePositionIndexA;
+                linePositionIndexB = linePositionIndexA - 1;
+            }
+            Vector3 a, b;
+            if(linePositionIndexA < 0) {
+                a = device1.Position;
+            }
+            else if(linePositionIndexA >= NumberOfCurveSteps) {
+                a = device2.Position;
+            }
+            else {
+                a = lineRenderer.GetPosition(linePositionIndexA);
+            }
+
+            if(linePositionIndexB < 0) {
+                b = device1.Position;
+            }
+            else if(linePositionIndexB >= NumberOfCurveSteps) {
+                b = device2.Position;
+            }
+            else {
+                b = lineRenderer.GetPosition(linePositionIndexB);
+            }
+            packet.transform.position = Vector3.Lerp(a, b, packet.Progress % 1);
         }
 
         public void Initalize(Port port1, Port port2) {
@@ -69,6 +76,11 @@ namespace Maroon.NetworkSimulator {
         public void UpdateCurve() {
             lineRenderer.positionCount = NumberOfCurveSteps;
             lineRenderer.SetPositions(GetBezierCurve(NumberOfCurveSteps));
+            if(!SimulationController.Instance.SimulationRunning) {
+                foreach(var packet in travellingPackets) {
+                    UpdatePacketPosition(packet);
+                }
+            }
         }
 
         private Vector3[] GetBezierCurve(int steps) {
