@@ -33,7 +33,6 @@ public class DragDrop : MonoBehaviour
       if (plane.Raycast(ray, out distance))
       {
         worldPosition = ray.GetPoint(distance);
-        Debug.Log(worldPosition);
       }
       transform.position = worldPosition;
     }

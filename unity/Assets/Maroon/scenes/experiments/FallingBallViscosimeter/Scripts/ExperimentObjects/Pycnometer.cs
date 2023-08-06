@@ -1,14 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Maroon.Physics
 {
-  public class Pycnometer : MonoBehaviour, IResetObject, IWeighableObject
+  public class Pycnometer : MonoBehaviour, IResetObject
   {
     float volume = 50.28f / 1000000.0f; //m^3
-
-    float empty_weight = 29.167f / 1000.0f; //kg
+    WeighableObject weighableObject;
     float weight;
     private MeshRenderer renderer_;
 
@@ -16,9 +16,9 @@ namespace Maroon.Physics
     // Start is called before the first frame update
     void Start()
     {
-
-      weight = empty_weight;
+      weighableObject = GetComponent<WeighableObject>();
       renderer_ = GetComponent<MeshRenderer>();
+      Debug.Log(renderer_);
     }
 
     // Update is called once per frame
@@ -27,29 +27,38 @@ namespace Maroon.Physics
       
     }
 
-    public void fill(float density) //kg/m^3
+    public void toggleFill(bool fill)
     {
-      weight = empty_weight + (density * volume);
+      Debug.Log(fill);
+      if(fill)
+      {
+        fillPycnometer();
+      }
+      else
+      {
+        emptyPycnometer();
+      }
+
+
+    }
+    private void fillPycnometer() //kg/m^3
+    {
+      float density = ViscosimeterManager.Instance.fluid_density_;
+      weighableObject = GetComponent<WeighableObject>();
+      Debug.Log("IID in Pycno: " + weighableObject.GetInstanceID());
+      weighableObject.setWeight(weighableObject.starting_weight + (density * volume));
+      renderer_.material.color = new Color(0.65f,0.16f,0.16f,1.0f);
     }
 
-    public void empty()
+    private void emptyPycnometer()
     {
-      weight = empty_weight;
+      weighableObject.resetWeight();
+      renderer_.material.color = Color.white;
     }
 
     public void ResetObject()
     {
-      empty();
-    }
-
-    public float getWeight()
-    {
-      return weight;
-    }
-
-    public void setWeight(float weight)
-    {
-      return;
+      emptyPycnometer();
     }
 
   }

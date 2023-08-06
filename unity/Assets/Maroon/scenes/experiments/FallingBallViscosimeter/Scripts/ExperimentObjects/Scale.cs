@@ -31,7 +31,6 @@ namespace Maroon.Physics
     {
       on_scale_position = transform.position + Vector3.up * scale_position_offset;
       scale_text = GetComponentInChildren<TMP_Text>();
-      Debug.Log(scale_text.text);
       snapPoint = GetComponentInChildren<SnapPoint>();
     }
 
@@ -49,7 +48,8 @@ namespace Maroon.Physics
       }
       else
       {
-        IWeighableObject weighable_object = snapPoint.currentObject.gameObject.GetComponent<IWeighableObject>();
+        WeighableObject weighable_object = snapPoint.currentObject.gameObject.GetComponent<WeighableObject>();
+        Debug.Log("IID in Scale: " + weighable_object.GetInstanceID());
         scale_text.SetText((weighable_object.getWeight() * 1000.0f).ToString(scale_text_format) + " g");
       }
     }
