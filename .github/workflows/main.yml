@@ -28,7 +28,7 @@ jobs:
         id: restore-cache
         uses: actions/cache/restore@v3
         with:
-          path: ${{ github.workspace }}/unity/Library
+          path: unity/Library
           key: Library-${{ hashFiles('unity/Assets/**', 'unity/Packages/**', 'unity/ProjectSettings/**') }}
 
 
@@ -50,11 +50,6 @@ jobs:
             maroonBuildTarget: WebGL
     steps:
 
-      - name: Set GITHUB_WORKSPACE
-        shell: bash
-        run: |
-          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE" >> $GITHUB_ENV
-
       - name: Build
         uses: game-ci/unity-builder@v2
         env:
@@ -66,14 +61,17 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
           projectPath: unity
           allowDirtyBuild: true
-          buildsPath: ${{ env.GITHUB_WORKSPACE }}/build
+          #buildsPath: ${{ env.GITHUB_WORKSPACE }}/build
+          # defaults to "build"
+          buildsPath: ../build
+          
           customParameters: -maroonBuildPath ../build -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
       
       # needed because otherwise game-ci will warn that repo is not clean
       - name: Restore Build Environment
         shell: bash
         run: |
-          cd ${{ github.workspace }} && git reset --hard
+          git reset --hard
 
   
 
@@ -87,7 +85,7 @@ jobs:
       - name: Save Cache
         uses: actions/cache/save@v3
         with:
-          path: ${{ github.workspace }}/unity/Library
+          path: unity/Library
           key: ${{ needs.setup.outputs.key }}
 
 
@@ -126,7 +124,7 @@ jobs:
     if: ${{ success() || (needs.build.result == 'success' || needs.test.result == 'success') }}
     steps:
       - name: Compress build folder
-        run: zip -r build.zip . -i build
+        run: zip -r build.zip build
         #run: zip -r build.zip build
 
       - name: Upload artifacts
@@ -134,8 +132,8 @@ jobs:
         with:
           name: MaroonArtifacts
           path: |
-            ${{ github.workspace }}/build.zip
-            ${{ github.workspace }}/test-results
+            build.zip
+            test-results
           if-no-files-found: error
 
   deploy: 
