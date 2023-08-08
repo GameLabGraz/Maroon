@@ -126,7 +126,8 @@ jobs:
     if: ${{ success() || (needs.build.result == 'success' || needs.test.result == 'success') }}
     steps:
       - name: Compress build folder
-        run: zip -r build.zip build
+        run: zip -r build.zip . -i build
+        #run: zip -r build.zip build
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
