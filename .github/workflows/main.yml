@@ -61,17 +61,16 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
           projectPath: unity
           allowDirtyBuild: true
-          #buildsPath: ${{ env.GITHUB_WORKSPACE }}/build
-          # defaults to "build"
-          # buildsPath: unity/build
+          buildName: ${{ matrix.targetPlatform }}
+          buildsPath: build
           
-          customParameters: -maroonBuildPath unity/build -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
+          customParameters: -maroonBuildPath build -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
       
       # needed because otherwise game-ci will warn that repo is not clean
-      - name: Restore Build Environment
-        shell: bash
-        run: |
-          git reset --hard
+      #- name: Restore Build Environment
+      #  shell: bash
+      #  run: |
+      #    git reset --hard
 
   
 
@@ -124,7 +123,7 @@ jobs:
     if: ${{ success() || (needs.build.result == 'success' || needs.test.result == 'success') }}
     steps:
       - name: Compress build folder
-        run: zip -r build.zip unity/build
+        run: zip -r build.zip build
         #run: zip -r build.zip build
 
       - name: Upload artifacts
@@ -170,7 +169,7 @@ jobs:
           configVdf: ${{ secrets.STEAM_CONFIG_VDF}}
           appId: ${{ secrets.STEAM_APP_ID }}
           buildDescription: CI/CD build ${{ github.sha }}
-          rootPath: unity/build
+          rootPath: build
           depot1Path: .
           releaseBranch: development
 
