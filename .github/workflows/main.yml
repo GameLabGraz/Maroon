@@ -65,7 +65,7 @@ jobs:
           # defaults to "build"
           # buildsPath: unity/build
           
-          customParameters: -maroonBuildPath build -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
+          customParameters: -maroonBuildPath unity/build -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
       
       # needed because otherwise game-ci will warn that repo is not clean
       - name: Restore Build Environment
@@ -124,7 +124,7 @@ jobs:
     if: ${{ success() || (needs.build.result == 'success' || needs.test.result == 'success') }}
     steps:
       - name: Compress build folder
-        run: zip -r build.zip build
+        run: zip -r build.zip unity/build
         #run: zip -r build.zip build
 
       - name: Upload artifacts
@@ -170,7 +170,7 @@ jobs:
           configVdf: ${{ secrets.STEAM_CONFIG_VDF}}
           appId: ${{ secrets.STEAM_APP_ID }}
           buildDescription: CI/CD build ${{ github.sha }}
-          rootPath: build
+          rootPath: unity/build
           depot1Path: .
           releaseBranch: development
 
