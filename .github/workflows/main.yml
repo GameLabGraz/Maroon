@@ -62,9 +62,9 @@ jobs:
           projectPath: unity
           allowDirtyBuild: true
           buildName: ${{ matrix.targetPlatform }}
-          buildsPath: build
+          buildsPath: /github/workspace/build
           
-          customParameters: -maroonBuildPath build -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
+          customParameters: -maroonBuildPath /github/workspace/build -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
       
       # needed because otherwise game-ci will warn that repo is not clean
       #- name: Restore Build Environment
