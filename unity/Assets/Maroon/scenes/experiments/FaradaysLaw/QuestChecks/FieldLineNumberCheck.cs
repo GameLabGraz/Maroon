@@ -2,7 +2,7 @@
 using UnityEngine;
 using GameLabGraz.QuestManager;
 
-namespace QuestManager
+namespace Quests
 {
     [RequireComponent(typeof(Quest))]
     public class FieldLineNumberCheck : QuestCheck
