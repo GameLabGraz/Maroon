@@ -67,10 +67,10 @@ jobs:
           customParameters: -maroonBuildPath ../build -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
       
       # needed because otherwise game-ci will warn that repo is not clean
-      #- name: Restore Build Environment
-      #  shell: bash
-      #  run: |
-      #    git reset --hard
+      - name: Restore Build Environment
+        shell: bash
+        run: |
+          git reset --hard
 
   
 
@@ -141,7 +141,7 @@ jobs:
     needs: [build, test, upload-artifacts]
     
     # we do not want to deploy if we are doing a scheduled run
-    if: ${{ (github.event_name != 'schedule') && (needs.build.result == 'success' || needs.test.result == 'success') }}
+    if: ${{ (github.event_name != 'schedule') && (needs.build.result == 'success' && needs.test.result == 'success' && needs.upload-artifacts.result == 'success') }}
     steps:
 
         # fetch UID of user running the workflow
