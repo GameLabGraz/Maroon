@@ -63,9 +63,9 @@ jobs:
           allowDirtyBuild: true
           #buildsPath: ${{ env.GITHUB_WORKSPACE }}/build
           # defaults to "build"
-          buildsPath: ../build
+          # buildsPath: unity/build
           
-          customParameters: -maroonBuildPath ../build -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
+          customParameters: -maroonBuildPath build -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
       
       # needed because otherwise game-ci will warn that repo is not clean
       - name: Restore Build Environment
