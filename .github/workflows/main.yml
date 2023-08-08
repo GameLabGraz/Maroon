@@ -61,7 +61,7 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
           projectPath: unity
           allowDirtyBuild: true
-          buildName: ${{ matrix.targetPlatform }}
+          buildName: ${{ matrix.maroonBuildTarget }}
           buildsPath: build
           
           customParameters: -maroonBuildPath ../build -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
