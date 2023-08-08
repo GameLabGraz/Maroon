@@ -406,6 +406,7 @@ namespace Maroon.Build
             {
                 case BuildResult.Succeeded:
                     Log($"Build succeeded: {summary.totalSize} bytes");
+                    Log($"Saved build to: {summary.outputPath}");
                     break;
                 case BuildResult.Failed:
                     Log("Build failed!");
