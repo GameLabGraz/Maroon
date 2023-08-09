@@ -124,11 +124,9 @@ jobs:
     steps:
       - name: Compress build folder
         run: | 
-          rmdir build/StandAloneWindows64
+          rmdir build/StandaloneWindows64
           zip -r build.zip build
         
-        #run: zip -r build.zip build
-
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
