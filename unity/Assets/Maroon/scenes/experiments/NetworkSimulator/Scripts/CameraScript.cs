@@ -42,10 +42,10 @@ namespace Maroon.NetworkSimulator {
             canPanAndTilt = true,
             minXPos = 0f,
             maxXPos = 0f,
-            minYPos = -8f,
-            maxYPos = -8f,
-            minZPos = -10f,
-            maxZPos = -10f,
+            minYPos = -8.4f,
+            maxYPos = -8.4f,
+            minZPos = -8f,
+            maxZPos = -8f,
             rotationStart = Quaternion.Euler(5, 0, 0)
         };
 

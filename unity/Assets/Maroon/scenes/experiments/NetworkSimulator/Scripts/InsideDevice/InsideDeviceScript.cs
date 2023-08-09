@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Maroon.NetworkSimulator {
     public class InsideDeviceScript : MonoBehaviour {
 
-        enum Mode { Hub, Switch, Router }
+        public enum DeviceMode { Hub, Switch, Router }
 
         [SerializeField]
         private InsidePacket InsidePacketPrefab;
@@ -26,7 +26,7 @@ namespace Maroon.NetworkSimulator {
         private const float distanceTolerance = 0.0001f;
         private const float portSelectionDistance = 0.6f;
         private Vector3[] portWorkingPlanePositions;
-        private Mode mode;
+        public DeviceMode Mode { get; private set; }
         private NetworkDevice device;
 
         public Plane WorkingPlane { get; private set; }
@@ -34,13 +34,13 @@ namespace Maroon.NetworkSimulator {
         public void SetDevice(NetworkDevice device) {
             this.device = device;
             if(device is Hub) {
-                mode = Mode.Hub;
+                Mode = DeviceMode.Hub;
             }
             else if(device is Switch) {
-                mode = Mode.Switch;
+                Mode = DeviceMode.Switch;
             }
             else if(device is Router) {
-                mode = Mode.Router;
+                Mode = DeviceMode.Router;
             }
 
             var portConnected = device.GetPortConnected();
@@ -111,7 +111,7 @@ namespace Maroon.NetworkSimulator {
         }
 
         void UpdateQueuePosition(InsidePacket packet, int index) {
-            packet.IsDraggable = mode != Mode.Hub && index == 0;
+            packet.IsDraggable = Mode != DeviceMode.Hub && index == 0;
             var targetPosition = queue.position - index * queuePacketDistance * queue.right;
             packet.MoveTowards(targetPosition, packetSpeed * Time.deltaTime);
         }

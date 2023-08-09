@@ -1,8 +1,13 @@
 using System;
+using TMPro;
 using UnityEngine;
 
 namespace Maroon.NetworkSimulator {
     public class InsidePacket : MonoBehaviour {
+        [SerializeField]
+        private TextMeshPro macAddress;
+        [SerializeField]
+        private TextMeshPro ipAddress;
         public Packet Packet { get; private set; }
 
         public Vector3 Position => transform.position;
@@ -25,6 +30,16 @@ namespace Maroon.NetworkSimulator {
             transform.position = receiver.Position;
             GetComponentInChildren<MeshRenderer>().material.color = packet.Color;
             this.insideDeviceScript = insideDeviceScript;
+            macAddress.SetText(packet.DestinationMACAddress.ToString());
+            ipAddress.SetText(packet.DestinationIPAddress.ToString());
+            if(insideDeviceScript.Mode == InsideDeviceScript.DeviceMode.Switch) {
+                macAddress.color = Color.black;
+                ipAddress.color = Color.gray;
+            }
+            else if(insideDeviceScript.Mode == InsideDeviceScript.DeviceMode.Router) {
+                macAddress.color = Color.gray;
+                ipAddress.color = Color.black;
+            }
         }
 
         public void MoveTowards(Vector3 target, float maxDistanceDelta) {
