@@ -18,7 +18,16 @@ jobs:
     outputs:
       hit:  ${{ steps.restore-cache.outputs.cache-hit }}
       key: ${{ steps.restore-cache.outputs.cache-primary-key }}
+      uid: ${{ steps.get_uid.outputs.uid }}
     steps:
+
+      - name: Get Actions user id
+        id: get_uid
+        run: |
+          actions_user_id=`id -u $USER`
+          echo $actions_user_id
+          echo "uid=$actions_user_id" >> $GITHUB_OUTPUT 
+
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -63,6 +72,7 @@ jobs:
           allowDirtyBuild: true
           buildName: ${{ matrix.maroonBuildTarget }}
           buildsPath: build
+          chownFilesTo: ${{ needs.setup.outputs.uid }}
           
           customParameters: -maroonBuildPath ../build -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
       
@@ -145,19 +155,19 @@ jobs:
     if: ${{ (github.event_name != 'schedule') && (needs.build.result == 'success' && needs.test.result == 'success' && needs.upload-artifacts.result == 'success') }}
     steps:
 
-        # fetch UID of user running the workflow
-      - name: Get Actions user id
-        id: get_uid
-        run: |
-          actions_user_id=`id -u $USER`
-          echo $actions_user_id
-          echo "uid=$actions_user_id" >> $GITHUB_OUTPUT 
+      #   # fetch UID of user running the workflow
+      # - name: Get Actions user id
+      #   id: get_uid
+      #   run: |
+      #     actions_user_id=`id -u $USER`
+      #     echo $actions_user_id
+      #     echo "uid=$actions_user_id" >> $GITHUB_OUTPUT 
 
-        # chown files to the user that was identified in the prev step
-      - name: Restore file ownership
-        uses: peter-murray/reset-workspace-ownership-action@v1
-        with:
-          user_id: ${{ steps.get_uid.outputs.uid }}
+      #   # chown files to the user that was identified in the prev step
+      # - name: Restore file ownership
+      #   uses: peter-murray/reset-workspace-ownership-action@v1
+      #   with:
+      #     user_id: ${{ steps.get_uid.outputs.uid }}
 
         # remove the WebGL directory so we do not accidentally publish it to steam
       - name: Prepare deployment
