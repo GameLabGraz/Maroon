@@ -46,21 +46,15 @@ namespace Maroon.NetworkSimulator {
         [SerializeField]
         private Toggle macAddressTableToggle;
         [SerializeField]
-        private GameObject macAddressTable;
-        [SerializeField]
-        private TextMeshProUGUI macAddressTableBody;
+        private AddressTableScript macAddressTable;
         [SerializeField]
         private Toggle arpTableToggle;
         [SerializeField]
-        private GameObject arpTable;
-        [SerializeField]
-        private TextMeshProUGUI arpTableBody;
+        private AddressTableScript arpTable;
         [SerializeField]
         private Toggle routingTableToggle;
         [SerializeField]
-        private GameObject routingTable;
-        [SerializeField]
-        private TextMeshProUGUI routingTableBody;
+        private AddressTableScript routingTable;
 
         [SerializeField]
         private GameObject packetInfoPanel;
@@ -78,13 +72,6 @@ namespace Maroon.NetworkSimulator {
             HidePacketInfo();
         }
 
-        void Update() {
-            if(Input.GetKeyDown(KeyCode.Mouse1)) {
-                HideDeviceOptions();
-                HidePacketInfo();
-            }
-        }
-
         public void ShowDeviceOptions(NetworkDevice clickedDevice) {
             HidePacketInfo();
             deviceOptionsTitle.SetText(clickedDevice.GetName());
@@ -97,9 +84,9 @@ namespace Maroon.NetworkSimulator {
             macAddressTableToggle.gameObject.SetActive(false);
             arpTableToggle.gameObject.SetActive(false);
             routingTableToggle.gameObject.SetActive(false);
-            macAddressTable.SetActive(false);
-            arpTable.SetActive(false);
-            routingTable.SetActive(false);
+            macAddressTable.gameObject.SetActive(false);
+            arpTable.gameObject.SetActive(false);
+            routingTable.gameObject.SetActive(false);
 
             if(clickedDevice is Computer computer) {
                 ipAddressText.SetText(computer.IPAddress.ToString());
@@ -107,12 +94,13 @@ namespace Maroon.NetworkSimulator {
                 ipAddressRow.SetActive(true);
                 macAddressRow.SetActive(true);
 
-                arpTableBody.SetText(computer.GetARPTable());
-                routingTableBody.SetText(computer.GetRoutingTable());
+                macAddressTable.Clear();
+                arpTable.SetRows(computer.GetARPTable());
+                routingTable.SetRows(computer.GetRoutingTable());
                 arpTableToggle.gameObject.SetActive(true);
                 routingTableToggle.gameObject.SetActive(true);
-                arpTable.SetActive(arpTableToggle.isOn);
-                routingTable.SetActive(routingTableToggle.isOn);
+                arpTable.gameObject.SetActive(arpTableToggle.isOn);
+                routingTable.gameObject.SetActive(routingTableToggle.isOn);
             }
             else if(clickedDevice is Router router) {
                 ipAddressText.SetText(router.IPAddress.ToString());
@@ -124,20 +112,22 @@ namespace Maroon.NetworkSimulator {
                 macAddressRow.SetActive(true);
                 Array.ForEach(macAddressListRow, r => r.SetActive(true));
 
-                macAddressTableBody.SetText(router.GetMACAddressTable());
-                arpTableBody.SetText(router.GetARPTable());
-                routingTableBody.SetText(router.GetRoutingTable());
+                macAddressTable.SetRows(router.GetMACAddressTable());
+                arpTable.SetRows(router.GetARPTable());
+                routingTable.SetRows(router.GetRoutingTable());
                 macAddressTableToggle.gameObject.SetActive(true);
                 arpTableToggle.gameObject.SetActive(true);
                 routingTableToggle.gameObject.SetActive(true);
-                macAddressTable.SetActive(macAddressTableToggle.isOn);
-                arpTable.SetActive(arpTableToggle.isOn);
-                routingTable.SetActive(routingTableToggle.isOn);
+                macAddressTable.gameObject.SetActive(macAddressTableToggle.isOn);
+                arpTable.gameObject.SetActive(arpTableToggle.isOn);
+                routingTable.gameObject.SetActive(routingTableToggle.isOn);
             }
             else if(clickedDevice is Switch sw) {
-                macAddressTableBody.SetText(sw.GetMACAddressTable());
+                macAddressTable.SetRows(sw.GetMACAddressTable());
                 macAddressTableToggle.gameObject.SetActive(true);
-                macAddressTable.SetActive(macAddressTableToggle.isOn);
+                macAddressTable.gameObject.SetActive(macAddressTableToggle.isOn);
+                arpTable.Clear();
+                routingTable.Clear();
             }
             deviceOptionsPanel.SetActive(true);
         }
@@ -168,6 +158,23 @@ namespace Maroon.NetworkSimulator {
         }
         public void HidePacketInfo() {
             packetInfoPanel.SetActive(false);
+        }
+
+        public void HighlightPacketAddresses(Packet packet) {
+            macAddressTable.HighlightRow(packet.DestinationMACAddress.ToString());
+            var row = routingTable.GetRow(packet.DestinationIPAddress.ToString());
+            if(row != null) {
+                row.SetFontStyleBold();
+                arpTable.HighlightRow(row.Text2);
+            }
+            else {
+                arpTable.HighlightRow(packet.DestinationIPAddress.ToString());
+            }
+        }
+        public void HideHighlightedPacketAddresses() {
+            macAddressTable.HideHighlight();
+            arpTable.HideHighlight();
+            routingTable.HideHighlight();
         }
     }
 }

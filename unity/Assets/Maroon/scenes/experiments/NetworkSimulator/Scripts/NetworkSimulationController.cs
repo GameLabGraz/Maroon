@@ -38,6 +38,14 @@ namespace Maroon.NetworkSimulator {
         private void Start() {
             Invoke(nameof(GenerateTraffic), NextTrafficTimeout);
         }
+        void Update() {
+            if(Input.GetKeyDown(KeyCode.Mouse1)) {
+                selectedDevice = null;
+                UIController.Instance.HideDeviceOptions();
+                UIController.Instance.HidePacketInfo();
+            }
+        }
+
         private void GenerateTraffic() {
             var nextTrafficTimeout = NextTrafficTimeout;
             if(SimulationController.Instance.SimulationRunning && computers.Count() > 1) {
@@ -134,6 +142,9 @@ namespace Maroon.NetworkSimulator {
             }
             foreach(var computer in computers) {
                 computer.StartAddingAddressToTables();
+            }
+            if(selectedDevice != null) {
+                UIController.Instance.ShowDeviceOptions(selectedDevice);
             }
         }
 

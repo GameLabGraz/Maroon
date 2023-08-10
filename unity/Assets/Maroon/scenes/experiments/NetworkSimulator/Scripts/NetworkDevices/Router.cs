@@ -79,14 +79,14 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
             }
             addAddressInitiator = null;
         }
-        public string GetMACAddressTable() {
-            return string.Join(Environment.NewLine, macAddressTable.Select(x => $"{x.Key,-17}  Port{Array.IndexOf(Ports, x.Value.Value)}"));
+        public IEnumerable<(string, string)> GetMACAddressTable() {
+            return macAddressTable.Select(x => (x.Key.ToString(), $"Port{Array.IndexOf(Ports, x.Value.Value)}"));
         }
-        public string GetARPTable() {
-            return string.Join(Environment.NewLine, arpTable.Select(x => $"{x.Key,-15}  {x.Value.Value}"));
+        public IEnumerable<(string, string)> GetARPTable() {
+            return arpTable.Select(x => (x.Key.ToString(), x.Value.Value.ToString()));
         }
-        public string GetRoutingTable() {
-            return string.Join(Environment.NewLine, routingTable.Select(x => $"{x.Key,-15}  {x.Value.Value}"));
+        public IEnumerable<(string, string)> GetRoutingTable() {
+            return routingTable.Select(x => (x.Key.ToString(), x.Value.Value.ToString()));
         }
     }
 }

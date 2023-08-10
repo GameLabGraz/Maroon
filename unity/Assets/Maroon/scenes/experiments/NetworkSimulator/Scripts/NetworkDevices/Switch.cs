@@ -44,8 +44,8 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
             }
             addAddressInitiator = null;
         }
-        public string GetMACAddressTable() {
-            return string.Join(Environment.NewLine, macAddressTable.Select(x => $"{x.Key,-17}  Port{Array.IndexOf(Ports, x.Value.Value)}"));
+        public IEnumerable<(string, string)> GetMACAddressTable() {
+            return macAddressTable.Select(x => (x.Key.ToString(), $"Port{Array.IndexOf(Ports, x.Value.Value)}"));
         }
     }
 }

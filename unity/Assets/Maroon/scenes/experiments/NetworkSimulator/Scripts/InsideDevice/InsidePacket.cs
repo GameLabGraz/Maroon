@@ -90,5 +90,12 @@ namespace Maroon.NetworkSimulator {
             insideDeviceScript.OnPacketDragEnd(this);
         }
 
+        private void OnMouseEnter() {
+            UIController.Instance.HighlightPacketAddresses(Packet);
+        }
+        private void OnMouseExit() {
+            UIController.Instance.HideHighlightedPacketAddresses();
+        }
+
     }
 }
