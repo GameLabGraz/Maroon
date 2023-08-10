@@ -108,8 +108,11 @@ namespace Maroon.NetworkSimulator {
                 macAddressRow.SetActive(true);
 
                 arpTableBody.SetText(computer.GetARPTable());
+                routingTableBody.SetText(computer.GetRoutingTable());
                 arpTableToggle.gameObject.SetActive(true);
+                routingTableToggle.gameObject.SetActive(true);
                 arpTable.SetActive(arpTableToggle.isOn);
+                routingTable.SetActive(routingTableToggle.isOn);
             }
             else if(clickedDevice is Router router) {
                 ipAddressText.SetText(router.IPAddress.ToString());

@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 
@@ -33,12 +32,12 @@ namespace Maroon.NetworkSimulator {
             macAddress.SetText(packet.DestinationMACAddress.ToString());
             ipAddress.SetText(packet.DestinationIPAddress.ToString());
             if(insideDeviceScript.Mode == InsideDeviceScript.DeviceMode.Switch) {
-                macAddress.color = Color.black;
-                ipAddress.color = Color.gray;
+                macAddress.color = new Color(0, 0, 0);
+                ipAddress.color = new Color(0, 0, 0, 0.4f);
             }
             else if(insideDeviceScript.Mode == InsideDeviceScript.DeviceMode.Router) {
-                macAddress.color = Color.gray;
-                ipAddress.color = Color.black;
+                macAddress.color = new Color(0, 0, 0, 0.4f);
+                ipAddress.color = new Color(0, 0, 0);
             }
         }
 

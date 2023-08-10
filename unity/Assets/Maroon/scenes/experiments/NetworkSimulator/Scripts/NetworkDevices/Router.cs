@@ -14,10 +14,6 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
         public override DeviceType GetDeviceType() => DeviceType.Router;
 
         public override void ReceivePacket(Packet packet, Port receiver) {
-            if(IsInside) {
-                ReceivePacketInside(packet, receiver);
-                return;
-            }
             MACAddress destination;
             if(routingTable.ContainsKey(packet.DestinationIPAddress)) {
                 destination = arpTable[routingTable[packet.DestinationIPAddress].Value].Value;
@@ -28,7 +24,14 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
             packet.DestinationMACAddress = destination;
             var port = macAddressTable[packet.DestinationMACAddress].Value;
             packet.SourceMACAddress = MACAddress[Array.IndexOf(Ports, port)];
-            port.SendPacket(packet);
+            if(port != receiver) {
+                if(IsInside) {
+                    ReceivePacketInside(packet, receiver);
+                }
+                else {
+                    port.SendPacket(packet);
+                }
+            }
         }
 
         protected override void OnAddedToNetwork() {
@@ -51,18 +54,24 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
                 return;
             }
             addAddressInitiator = initiator;
+
             if(!macAddressTable.ContainsKey(macAddress) || macAddressTable[macAddress].Distance > distance) {
                 macAddressTable[macAddress] = new AddressTableEntry<Port>(receiver, distance);
             }
-            if(!arpTable.ContainsKey(ipAddress) || arpTable[ipAddress].Distance > distance) {
-                arpTable[ipAddress] = new AddressTableEntry<MACAddress>(macAddress, distance);
+            if(ipAddress == via) {
+                if(!arpTable.ContainsKey(ipAddress) || arpTable[ipAddress].Distance > distance) {
+                    arpTable[ipAddress] = new AddressTableEntry<MACAddress>(macAddress, distance);
+                }
             }
-            if(!arpTable.ContainsKey(via) || arpTable[via].Distance > distance) {
-                arpTable[via] = new AddressTableEntry<MACAddress>(macAddress, distance);
+            else {
+                if(!arpTable.ContainsKey(via) || arpTable[via].Distance > distance) {
+                    arpTable[via] = new AddressTableEntry<MACAddress>(macAddress, distance);
+                }
+                if(!routingTable.ContainsKey(ipAddress) || routingTable[ipAddress].Distance > distance) {
+                    routingTable[ipAddress] = new AddressTableEntry<IPAddress>(via, distance);
+                }
             }
-            if(ipAddress != via && (!routingTable.ContainsKey(ipAddress) || routingTable[ipAddress].Distance > distance)) {
-                routingTable[ipAddress] = new AddressTableEntry<IPAddress>(via, distance);
-            }
+
             foreach(var port in Ports.Where(p => !p.IsFree)) {
                 if(port != receiver) {
                     port.ConnectedDevice.AddToAddressTables(ipAddress, MACAddress[Array.IndexOf(Ports, port)], IPAddress, port.Cable.OtherPort(port), distance + 1, initiator);

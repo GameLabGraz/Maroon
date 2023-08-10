@@ -7,6 +7,7 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
         public IPAddress IPAddress;
         public MACAddress MACAddress;
         private readonly Dictionary<IPAddress, AddressTableEntry<MACAddress>> arpTable = new Dictionary<IPAddress, AddressTableEntry<MACAddress>>();
+        private readonly Dictionary<IPAddress, AddressTableEntry<IPAddress>> routingTable = new Dictionary<IPAddress, AddressTableEntry<IPAddress>>();
         public override string GetName() => "Computer";
         public override string GetButtonText() => "Computer action";
         public override DeviceType GetDeviceType() => DeviceType.Computer;
@@ -15,7 +16,14 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
         }
 
         public void SendPacket(IPAddress destinationIPAddress) {
-            Ports[0].SendPacket(new Packet(IPAddress, destinationIPAddress, MACAddress, arpTable[destinationIPAddress].Value));
+            MACAddress destination;
+            if(routingTable.ContainsKey(destinationIPAddress)) {
+                destination = arpTable[routingTable[destinationIPAddress].Value].Value;
+            }
+            else {
+                destination = arpTable[destinationIPAddress].Value;
+            }
+            Ports[0].SendPacket(new Packet(IPAddress, destinationIPAddress, MACAddress, destination));
         }
 
         protected override void OnAddedToNetwork() {
@@ -28,8 +36,18 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
         }
 
         public override void AddToAddressTables(IPAddress ipAddress, MACAddress macAddress, IPAddress via, Port receiver, int distance, Computer initiator) {
-            if(!arpTable.ContainsKey(ipAddress) || arpTable[ipAddress].Distance > distance) {
-                arpTable[ipAddress] = new AddressTableEntry<MACAddress>(macAddress, distance);
+            if(ipAddress == via) {
+                if(!arpTable.ContainsKey(ipAddress) || arpTable[ipAddress].Distance > distance) {
+                    arpTable[ipAddress] = new AddressTableEntry<MACAddress>(macAddress, distance);
+                }
+            }
+            else {
+                if(!arpTable.ContainsKey(via) || arpTable[via].Distance > distance) {
+                    arpTable[via] = new AddressTableEntry<MACAddress>(macAddress, distance);
+                }
+                if(!routingTable.ContainsKey(ipAddress) || routingTable[ipAddress].Distance > distance) {
+                    routingTable[ipAddress] = new AddressTableEntry<IPAddress>(via, distance);
+                }
             }
         }
         public void StartAddingAddressToTables() {
@@ -40,6 +58,9 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
         }
         public string GetARPTable() {
             return string.Join(Environment.NewLine, arpTable.Select(x => $"{x.Key,-15}  {x.Value.Value}"));
+        }
+        public string GetRoutingTable() {
+            return string.Join(Environment.NewLine, routingTable.Select(x => $"{x.Key,-15}  {x.Value.Value}"));
         }
     }
 }

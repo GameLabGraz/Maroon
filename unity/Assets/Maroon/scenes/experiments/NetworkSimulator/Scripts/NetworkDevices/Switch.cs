@@ -10,13 +10,14 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
         public override DeviceType GetDeviceType() => DeviceType.Switch;
 
         public override void ReceivePacket(Packet packet, Port receiver) {
-            if(IsInside) {
-                ReceivePacketInside(packet, receiver);
-                return;
-            }
             var port = macAddressTable[packet.DestinationMACAddress].Value;
             if(port != receiver) {
-                port.SendPacket(packet);
+                if(IsInside) {
+                    ReceivePacketInside(packet, receiver);
+                }
+                else {
+                    port.SendPacket(packet);
+                }
             }
         }
 
@@ -31,10 +32,11 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
                 return;
             }
             addAddressInitiator = initiator;
+
             if(!macAddressTable.ContainsKey(macAddress) || macAddressTable[macAddress].Distance > distance) {
                 macAddressTable[macAddress] = new AddressTableEntry<Port>(receiver, distance);
-
             }
+
             foreach(var port in Ports.Where(p => !p.IsFree)) {
                 if(port != receiver) {
                     port.ConnectedDevice.AddToAddressTables(ipAddress, macAddress, via, port.Cable.OtherPort(port), distance + 1, initiator);

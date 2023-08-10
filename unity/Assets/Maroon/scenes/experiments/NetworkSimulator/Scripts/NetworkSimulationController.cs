@@ -124,6 +124,8 @@ namespace Maroon.NetworkSimulator {
             networkDevices.Clear();
             ipAddressCounter = 1;
             macAddressCounter = 0;
+            UIController.Instance.SetNetworkView();
+            cameraScript.SetNetworkView();
         }
 
         public void UpdateAddressTables() {
