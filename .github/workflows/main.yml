@@ -1,14 +1,26 @@
 name: Build
 
+# specify what events will trigger the workflow
 on:
+ # run workflow on push events on the development branch
+ # you can tell Actions to not run the pipeline 
+ # by including [ci skip] or [no ci] in the commit message
   push:
+    branches:
+      - 'development'
+  # allow to run the workflow manually
   workflow_dispatch:
+  # run daily at 6am UTC
+  # idea: quickly spot issues with workflow/runner
+  # scheduled runs do not trigger deployment to steam
   schedule:
-    # run daily at 6am UTC
     - cron: 0 6 * * *
 
 jobs:
 
+  # pulls source code
+  # tries to restore the cached library folder
+  # fetches user id of user running the workflow (needed later on)
   setup:
     name: Setup
     runs-on: self-hosted
