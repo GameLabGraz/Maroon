@@ -11,6 +11,7 @@ namespace Maroon.NetworkSimulator {
 
         public Vector3 Position => transform.position;
 
+        public InsidePort Receiver { get; private set; }
         public InsidePort TargetPort { get; set; }
 
         public bool IsDraggable { get; set; }
@@ -24,19 +25,32 @@ namespace Maroon.NetworkSimulator {
             IsBeingDragged = false;
         }
 
+        public void Initialize(Packet packet) {
+            Packet = packet;
+            GetComponentInChildren<MeshRenderer>().material.color = packet.Color;
+            macAddress.SetText(packet.DestinationMACAddress.ToString());
+            ipAddress.SetText(packet.DestinationIPAddress.ToString());
+            macAddress.color = new Color(0, 0, 0, 0.25f);
+            ipAddress.color = new Color(0, 0, 0, 0.25f);
+        }
         public void Initialize(Packet packet, InsidePort receiver, InsideDeviceScript insideDeviceScript) {
             Packet = packet;
+            Receiver = receiver;
             transform.position = receiver.Position;
             GetComponentInChildren<MeshRenderer>().material.color = packet.Color;
             this.insideDeviceScript = insideDeviceScript;
             macAddress.SetText(packet.DestinationMACAddress.ToString());
             ipAddress.SetText(packet.DestinationIPAddress.ToString());
-            if(insideDeviceScript.Mode == InsideDeviceScript.DeviceMode.Switch) {
+            if(insideDeviceScript.Mode == InsideDeviceScript.DeviceMode.Hub) {
+                macAddress.color = new Color(0, 0, 0, 0.25f);
+                ipAddress.color = new Color(0, 0, 0, 0.25f);
+            }
+            else if(insideDeviceScript.Mode == InsideDeviceScript.DeviceMode.Switch) {
                 macAddress.color = new Color(0, 0, 0);
-                ipAddress.color = new Color(0, 0, 0, 0.4f);
+                ipAddress.color = new Color(0, 0, 0, 0.25f);
             }
             else if(insideDeviceScript.Mode == InsideDeviceScript.DeviceMode.Router) {
-                macAddress.color = new Color(0, 0, 0, 0.4f);
+                macAddress.color = new Color(0, 0, 0, 0.25f);
                 ipAddress.color = new Color(0, 0, 0);
             }
         }

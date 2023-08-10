@@ -20,6 +20,7 @@ namespace Maroon.NetworkSimulator {
         private readonly List<InsidePacket> queuedPackets = new List<InsidePacket>();
         private readonly List<InsidePacket> outgoingPackets = new List<InsidePacket>();
         private readonly List<InsidePacket> droppedPackets = new List<InsidePacket>();
+        private readonly List<InsidePacket[]> hubPackets = new List<InsidePacket[]>();
         private const int maxQueueLength = 8;
         private const float queuePacketDistance = 0.6f;
         private const float packetSpeed = 2.5f;
@@ -58,7 +59,11 @@ namespace Maroon.NetworkSimulator {
         }
 
         void Update() {
-            if(!SimulationController.Instance.SimulationRunning) {
+            if(!SimulationController.Instance.SimulationRunning || device == null) {
+                return;
+            }
+            if(Mode == DeviceMode.Hub) {
+                MoveHubPackets();
                 return;
             }
             var incoming = incomingPackets.ToList();
@@ -133,6 +138,57 @@ namespace Maroon.NetworkSimulator {
             }
         }
 
+        void MoveHubPackets() {
+            var incoming = incomingPackets.ToList();
+            var hubP = hubPackets.ToList();
+            var outgoing = outgoingPackets.ToList();
+
+            foreach(var packet in incoming) {
+                if(WorkingPlane.GetDistanceToPoint(packet.Position) > distanceTolerance) {
+                    packet.MoveTowards(packet.Position + Vector3.back, packetSpeed * Time.deltaTime);
+                }
+                else {
+                    incomingPackets.Remove(packet);
+                    var portConnected = device.GetPortConnected();
+                    var targetPortIndex = new List<int>();
+                    for(int i = 0; i < portConnected.Length; i++) {
+                        if(portConnected[i] && Ports[i] != packet.Receiver) {
+                            targetPortIndex.Add(i);
+                        }
+                    }
+                    var hubPacket = new InsidePacket[targetPortIndex.Count];
+                    hubPacket[0] = packet;
+                    hubPacket[0].TargetPort = Ports[targetPortIndex[0]];
+                    for(int i = 1; i < hubPacket.Length; i++) {
+                        hubPacket[i] = Instantiate(packet);
+                        hubPacket[i].Initialize(new Packet(packet.Packet));
+                        hubPacket[i].TargetPort = Ports[targetPortIndex[i]];
+                    }
+                    hubPackets.Add(hubPacket);
+                }
+            }
+            foreach(var hubPacket in hubP) {
+                var allAtTarget = true;
+                for(int i = 0; i < hubPacket.Length; i++) {
+                    var targetPosition = portWorkingPlanePositions[Array.IndexOf(Ports, hubPacket[i].TargetPort)];
+                    if(Vector3.Distance(hubPacket[i].Position, targetPosition) > distanceTolerance) {
+                        hubPacket[i].MoveTowards(targetPosition, packetSpeed * Time.deltaTime);
+                        allAtTarget = false;
+                    }
+                }
+                if(allAtTarget) {
+                    hubPackets.Remove(hubPacket);
+                    foreach(var packet in hubPacket) {
+                        outgoingPackets.Add(packet);
+                    }
+                }
+            }
+
+            foreach(var packet in outgoing) {
+                MoveOutgoing(packet);
+            }
+        }
+
         public void ReceivePacket(Packet packet, int portIndex) {
             var insidePacket = Instantiate(InsidePacketPrefab);
             insidePacket.Initialize(packet, Ports[portIndex], this);
@@ -182,6 +238,13 @@ namespace Maroon.NetworkSimulator {
                 Destroy(packet.gameObject);
             }
             queuedPackets.Clear();
+            foreach(var hubPacket in hubPackets) {
+                foreach(var packet in hubPacket) {
+                    Destroy(packet.gameObject);
+                }
+            }
+            hubPackets.Clear();
+            device = null;
         }
     }
 }
