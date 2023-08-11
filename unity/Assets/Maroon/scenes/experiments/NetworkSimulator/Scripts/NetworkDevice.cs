@@ -13,6 +13,12 @@ namespace Maroon.NetworkSimulator {
         [SerializeField]
         private GameObject connectableMarker;
         [SerializeField]
+        private MeshRenderer selectionObject;
+        [SerializeField]
+        private Color selectionColor;
+        [SerializeField]
+        private Color hoverColor;
+        [SerializeField]
         private bool fromKit = false;
 
         private Plane plane;
@@ -20,6 +26,7 @@ namespace Maroon.NetworkSimulator {
         private Vector3 kitPosition;
         private Vector3 dragStartPosition;
         private Vector3 clickStartPosition;
+        private Color selectionObjectColor;
         private AddCableScript addCableScript;
         protected Computer addAddressInitiator = null;
         public bool IsInside { get; set; } = false;
@@ -38,6 +45,7 @@ namespace Maroon.NetworkSimulator {
             plane = new Plane(Vector3.up, transform.position);
             kitPosition = transform.position;
             addCableScript = FindObjectOfType<AddCableScript>();
+            selectionObjectColor = selectionObject.material.color;
         }
         protected abstract void OnAddedToNetwork();
 
@@ -102,6 +110,17 @@ namespace Maroon.NetworkSimulator {
             }
             UpdateCables();
         }
+        private void OnMouseEnter() {
+            if(!fromKit && selectionObject.material.color == selectionObjectColor) {
+                selectionObject.material.color = hoverColor;
+            }
+        }
+
+        private void OnMouseExit() {
+            if(selectionObject.material.color == hoverColor) {
+                ResetSelectionColor();
+            }
+        }
 
         private void ClickedDevice() {
             if(addCableScript.IsAddingCable) {
@@ -111,6 +130,7 @@ namespace Maroon.NetworkSimulator {
             }
             else {
                 NetworkSimulationController.Instance.SelectDevice(this);
+                selectionObject.material.color = selectionColor;
             }
         }
         private void UpdateCables() {
@@ -126,6 +146,9 @@ namespace Maroon.NetworkSimulator {
         }
         public void HideConnectableMarker() {
             connectableMarker.SetActive(false);
+        }
+        public void ResetSelectionColor() {
+            selectionObject.material.color = selectionObjectColor;
         }
         public void RemoveCables() {
             foreach(var port in Ports.Where(p => !p.IsFree)) {

@@ -40,6 +40,9 @@ namespace Maroon.NetworkSimulator {
         }
         void Update() {
             if(Input.GetKeyDown(KeyCode.Mouse1)) {
+                if(selectedDevice != null) {
+                    selectedDevice.ResetSelectionColor();
+                }
                 selectedDevice = null;
                 UIController.Instance.HideDeviceOptions();
                 UIController.Instance.HidePacketInfo();
@@ -76,6 +79,9 @@ namespace Maroon.NetworkSimulator {
             }
         }
         public void SelectDevice(NetworkDevice device) {
+            if(selectedDevice != null) {
+                selectedDevice.ResetSelectionColor();
+            }
             selectedDevice = device;
             UIController.Instance.ShowDeviceOptions(selectedDevice);
         }
