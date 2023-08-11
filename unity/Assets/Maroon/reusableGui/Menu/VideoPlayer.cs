@@ -17,7 +17,7 @@ public class VideoPlayer : MonoBehaviour
         videoPlayer = this.GetComponent<UnityEngine.Video.VideoPlayer>();
 
         // Obtain the location of the video clip.
-        videoPlayer.url = Path.Combine(Application.streamingAssetsPath, "maroon-main-menu-background.mp4");
+        videoPlayer.url = Path.Combine(Application.streamingAssetsPath, "maroon-main-menu-background.webm");
 
         // Restart from beginning when done.
         videoPlayer.isLooping = true;
