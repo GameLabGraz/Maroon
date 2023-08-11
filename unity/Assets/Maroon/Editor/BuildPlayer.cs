@@ -236,71 +236,26 @@ namespace Maroon.Build
             SetPlayerSettings(defaultPlayerSettings);
         }
         
-        public static void JenkinsBuild()
-        {
-            var args = Environment.GetCommandLineArgs();
 
-            var executeMethodIndex = Array.IndexOf(args, "-executeMethod");
-            if (executeMethodIndex + 2 >= args.Length)
-            {
-                Log("[JenkinsBuild] Incorrect Parameters for -executeMethod Format: -executeMethod <output dir>");
-                return;
-            }
-
-            //  args[executeMethodIndex + 1] = JenkinsBuild.Build
-            var buildPath = args[executeMethodIndex + 2];
-
-            // run build for each build target
-            foreach(var buildTarget in (MaroonBuildTarget[])Enum.GetValues(typeof(MaroonBuildTarget)))
-            {
-                BuildConventionalMaroon(buildTarget, $"{buildPath}/Laboratory");
-                BuildStandaloneExperiments(buildTarget, $"{buildPath}/Experiments");
-            }
-        }
-        
-        // usage: -executeMethod BatchModeBuild <type> <platform> <output dir>
-        // example: -executeMethod BatchModeBuild <EXP> PC "C:/Users/username/Desktop/Build"
-        // TODO: remove if no longer required
-        public static void BatchModeBuild()
-        {
-            var args = Environment.GetCommandLineArgs();
-
-            // commence horrible arg parsing
-            var maroonBuildType = args[Array.IndexOf(args, "-maroonBuildType") + 1];
-            var maroonBuildTarget = (MaroonBuildTarget)Enum.Parse(typeof(MaroonBuildTarget), args[Array.IndexOf(args, "-maroonBuildTarget") + 1]);
-            var maroonBuildPath = args[Array.IndexOf(args, "-maroonBuildPath") + 1];
-
-            if (maroonBuildType == "LAB" || maroonBuildType == "ALL")
-            {
-                BuildConventionalMaroon(maroonBuildTarget, maroonBuildPath);
-            }
-            if (maroonBuildType == "EXP" || maroonBuildType == "ALL")
-            {
-                BuildStandaloneExperiments(maroonBuildTarget, maroonBuildPath);
-            }
-        }
-
+        // called by github actions workflow
         public static void ActionsBuild()
         {
             var args = Environment.GetCommandLineArgs();
 
-            // array of (working) build targets
-            // TODO: add WebGL, once it is fixed
+            // array of build targets
             MaroonBuildTarget[] targets = {
                 MaroonBuildTarget.PC,
                 MaroonBuildTarget.VR,
                 MaroonBuildTarget.WebGL
             };
             
-            // usage: -maroonBuildPath </path/to/build/dir> -maroonBuildTarget (WebGL/PC/VR)
+            // usage: -maroonBuildPath /path/to/build/dir -maroonBuildTarget (WebGL/PC/VR)
+            // path is relative to project dir (./unity)
+
+            // extract path and build target from commandline arguments
             var maroonBuildPath = args[Array.IndexOf(args, "-maroonBuildPath") + 1];
             var maroonBuildTarget = (MaroonBuildTarget)Enum.Parse(typeof(MaroonBuildTarget), args[Array.IndexOf(args, "-maroonBuildTarget") + 1]);
-            /*
-            foreach (var target in targets)
-            {
-                BuildConventionalMaroon(target, maroonBuildPath);
-            }
-            */
+
             BuildConventionalMaroon(maroonBuildTarget, maroonBuildPath);
         }
 
