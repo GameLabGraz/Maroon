@@ -34,19 +34,10 @@ namespace Maroon.NetworkSimulator {
         private readonly float TrafficInterval = 4;
         private readonly float TrafficIntervalRange = 2;
         private float NextTrafficTimeout => TrafficInterval + Random.Range(-TrafficIntervalRange, TrafficIntervalRange);
+        public bool NetworkInteractionEnabled { get; private set; } = true;
 
         private void Start() {
             Invoke(nameof(GenerateTraffic), NextTrafficTimeout);
-        }
-        void Update() {
-            if(Input.GetKeyDown(KeyCode.Mouse1)) {
-                if(selectedDevice != null) {
-                    selectedDevice.ResetSelectionColor();
-                }
-                selectedDevice = null;
-                UIController.Instance.HideDeviceOptions();
-                UIController.Instance.HidePacketInfo();
-            }
         }
 
         private void GenerateTraffic() {
@@ -85,10 +76,16 @@ namespace Maroon.NetworkSimulator {
             selectedDevice = device;
             UIController.Instance.ShowDeviceOptions(selectedDevice);
         }
+        public void SelectPacket(Packet packet) {
+            selectedDevice = null;
+            UIController.Instance.ShowPacketInfo(packet);
+        }
         public void EnterInsideOfDevice() {
             UIController.Instance.SetInsideDeviceView();
-            if(selectedDevice is Computer) {
+            NetworkInteractionEnabled = false;
+            if(selectedDevice is Computer computer) {
                 cameraScript.SetComputerView(selectedDevice.transform.position);
+                computer.ActivateUI();
             }
             else {
                 cameraScript.SetInsideDeviceView();
@@ -99,6 +96,10 @@ namespace Maroon.NetworkSimulator {
         public void ExitInsideOfDevice() {
             UIController.Instance.SetNetworkView();
             cameraScript.SetNetworkView();
+            NetworkInteractionEnabled = true;
+            if(selectedDevice is Computer computer) {
+                computer.DeactivateUI();
+            }
             selectedDevice.IsInside = false;
             InsideDeviceScript.Clear();
         }
@@ -140,6 +141,7 @@ namespace Maroon.NetworkSimulator {
             macAddressCounter = 0;
             UIController.Instance.SetNetworkView();
             cameraScript.SetNetworkView();
+            NetworkInteractionEnabled = true;
         }
 
         public void UpdateAddressTables() {

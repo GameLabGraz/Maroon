@@ -1,21 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace Maroon.NetworkSimulator.NetworkDevices {
     public class Computer : NetworkDevice {
+        [SerializeField]
+        private ComputerUI ui;
+
         public IPAddress IPAddress;
         public MACAddress MACAddress;
         private readonly Dictionary<IPAddress, AddressTableEntry<MACAddress>> arpTable = new Dictionary<IPAddress, AddressTableEntry<MACAddress>>();
         private readonly Dictionary<IPAddress, AddressTableEntry<IPAddress>> routingTable = new Dictionary<IPAddress, AddressTableEntry<IPAddress>>();
         public override string GetName() => "Computer";
-        public override string GetButtonText() => "Computer action";
+        public override string GetButtonText() => "Interact";
         public override DeviceType GetDeviceType() => DeviceType.Computer;
 
         public override void ReceivePacket(Packet packet, Port receiver) {
+            if(packet.DestinationIPAddress == IPAddress && packet.HasMessage) {
+                ui.ReceiveMessage(packet.SourceIPAddress, packet.Message);
+            }
         }
 
-        public void SendPacket(IPAddress destinationIPAddress) {
+        public void SendPacket(IPAddress destinationIPAddress, string message = null) {
             MACAddress destination;
             if(routingTable.ContainsKey(destinationIPAddress)) {
                 destination = arpTable[routingTable[destinationIPAddress].Value].Value;
@@ -23,16 +29,19 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
             else {
                 destination = arpTable[destinationIPAddress].Value;
             }
-            Ports[0].SendPacket(new Packet(IPAddress, destinationIPAddress, MACAddress, destination));
+            Ports[0].SendPacket(new Packet(IPAddress, destinationIPAddress, MACAddress, destination, message));
         }
 
         protected override void OnAddedToNetwork() {
             IPAddress = NetworkSimulationController.Instance.GetIPAddress();
             MACAddress = NetworkSimulationController.Instance.GetMACAddress(GetDeviceType());
+            ui.gameObject.SetActive(true);
+            ui.Initialize(this);
         }
 
         public override void ClearAddressTables() {
             arpTable.Clear();
+            routingTable.Clear();
         }
 
         public override void AddToAddressTables(IPAddress ipAddress, MACAddress macAddress, IPAddress via, Port receiver, int distance, Computer initiator) {
@@ -61,6 +70,19 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
         }
         public IEnumerable<(string, string)> GetRoutingTable() {
             return routingTable.Select(x => (x.Key.ToString(), x.Value.Value.ToString()));
+        }
+
+        public void ActivateUI() {
+            ui.Activate();
+        }
+        public void DeactivateUI() {
+            ui.Deactivate();
+        }
+        public IEnumerable<string> GetRecipients() {
+            var ipAddresses = arpTable.Keys.Concat(routingTable.Keys);
+            var routerAddresses = routingTable.Values.Select(v => v.Value);
+            var recipients = ipAddresses.Except(routerAddresses);
+            return recipients.Select(r => r.ToString());
         }
     }
 }

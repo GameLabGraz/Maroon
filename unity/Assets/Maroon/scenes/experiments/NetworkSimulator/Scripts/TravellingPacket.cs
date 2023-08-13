@@ -20,8 +20,8 @@ namespace Maroon.NetworkSimulator {
         }
 
         private void OnMouseUpAsButton() {
-            if(!SimulationController.Instance.SimulationRunning) {
-                UIController.Instance.ShowPacketInfo(Packet);
+            if(!SimulationController.Instance.SimulationRunning && NetworkSimulationController.Instance.NetworkInteractionEnabled) {
+                NetworkSimulationController.Instance.SelectPacket(Packet);
             }
         }
     }

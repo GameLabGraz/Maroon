@@ -50,6 +50,9 @@ namespace Maroon.NetworkSimulator {
         protected abstract void OnAddedToNetwork();
 
         private void OnMouseDown() {
+            if(!NetworkSimulationController.Instance.NetworkInteractionEnabled) {
+                return;
+            }
             clickStartPosition = Input.mousePosition;
             dragStartPosition = transform.position;
             var ray = Camera.main.ScreenPointToRay(clickStartPosition);
@@ -58,7 +61,7 @@ namespace Maroon.NetworkSimulator {
         }
 
         void OnMouseDrag() {
-            if(addCableScript.IsAddingCable) {
+            if(addCableScript.IsAddingCable || !NetworkSimulationController.Instance.NetworkInteractionEnabled) {
                 return;
             }
             var newMousePosition = Input.mousePosition;
@@ -85,6 +88,9 @@ namespace Maroon.NetworkSimulator {
         }
 
         private void OnMouseUp() {
+            if(!NetworkSimulationController.Instance.NetworkInteractionEnabled) {
+                return;
+            }
             var isInNetworkArea = (networkAreaCollider.ClosestPoint(transform.position) - transform.position).sqrMagnitude < float.Epsilon;
             if(fromKit) {
                 if(isInNetworkArea) {
