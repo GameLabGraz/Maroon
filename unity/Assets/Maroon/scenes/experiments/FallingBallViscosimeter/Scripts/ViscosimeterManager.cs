@@ -9,6 +9,7 @@ namespace Maroon.Physics
     public static ViscosimeterManager Instance;
     
     public Ball ball;
+    public Pycnometer pycnometer;
 
 
     public float fluid_density_ = 0.0f;
@@ -49,6 +50,18 @@ namespace Maroon.Physics
     {
       fluid_density_ = (fluid_temperature_ * -0.37f + 891.83f); //kg/m^3
       Debug.Log("Fluid Density: " + fluid_density_);
+    }
+
+    public void togglePycnometerFill(bool fill)
+    {
+      if(fill)
+      {
+        pycnometer.fillPycnometer();
+      }
+      else
+      {
+        pycnometer.emptyPycnometer();
+      }
     }
 
 

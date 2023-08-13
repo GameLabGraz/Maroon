@@ -11,6 +11,7 @@ namespace Maroon.Physics
     WeighableObject weighableObject;
     float weight;
     private MeshRenderer renderer_;
+    public bool filled;
 
 
     // Start is called before the first frame update
@@ -19,6 +20,7 @@ namespace Maroon.Physics
       weighableObject = GetComponent<WeighableObject>();
       renderer_ = GetComponent<MeshRenderer>();
       Debug.Log(renderer_);
+      filled = false;
     }
 
     // Update is called once per frame
@@ -27,33 +29,21 @@ namespace Maroon.Physics
       
     }
 
-    public void toggleFill(bool fill)
-    {
-      Debug.Log(fill);
-      if(fill)
-      {
-        fillPycnometer();
-      }
-      else
-      {
-        emptyPycnometer();
-      }
 
-
-    }
-    private void fillPycnometer() //kg/m^3
+    public void fillPycnometer() //kg/m^3
     {
       float density = ViscosimeterManager.Instance.fluid_density_;
       weighableObject = GetComponent<WeighableObject>();
-      Debug.Log("IID in Pycno: " + weighableObject.GetInstanceID());
       weighableObject.setWeight(weighableObject.starting_weight + (density * volume));
-      renderer_.material.color = new Color(0.65f,0.16f,0.16f,1.0f);
+      renderer_.material.color = new Color(0.65f,0.16f,0.16f,0.3f);
+      filled = true;
     }
 
-    private void emptyPycnometer()
+    public void emptyPycnometer()
     {
       weighableObject.resetWeight();
-      renderer_.material.color = Color.white;
+      renderer_.material.color = new Color(0.3f, 0.3f, 0.3f, 0.3f);
+      filled = false;
     }
 
     public void ResetObject()
