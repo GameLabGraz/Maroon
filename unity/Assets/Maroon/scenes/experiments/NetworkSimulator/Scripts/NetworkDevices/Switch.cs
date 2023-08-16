@@ -4,13 +4,13 @@ using System.Linq;
 
 namespace Maroon.NetworkSimulator.NetworkDevices {
     public class Switch : NetworkDevice {
-        private readonly Dictionary<MACAddress, AddressTableEntry<Port>> macAddressTable = new Dictionary<MACAddress, AddressTableEntry<Port>>();
+        private readonly Dictionary<MACAddress, AddressTableEntry<int>> macAddressTable = new Dictionary<MACAddress, AddressTableEntry<int>>();
         public override string GetName() => "Switch";
         public override string GetButtonText() => "Enter Switch";
         public override DeviceType GetDeviceType() => DeviceType.Switch;
 
-        public override void ReceivePacket(Packet packet, Port receiver) {
-            var port = macAddressTable[packet.DestinationMACAddress].Value;
+        protected override void ProcessPacket(Packet packet, Port receiver) {
+            var port = Ports[GetDestinationPortIndex(packet)];
             if(port != receiver) {
                 if(IsInside) {
                     ReceivePacketInside(packet, receiver);
@@ -19,6 +19,10 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
                     port.SendPacket(packet);
                 }
             }
+        }
+
+        public override int GetDestinationPortIndex(Packet packet) {
+            return macAddressTable[packet.DestinationMACAddress].Value;
         }
 
         protected override void OnAddedToNetwork() {
@@ -34,7 +38,7 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
             addAddressInitiator = initiator;
 
             if(!macAddressTable.ContainsKey(macAddress) || macAddressTable[macAddress].Distance > distance) {
-                macAddressTable[macAddress] = new AddressTableEntry<Port>(receiver, distance);
+                macAddressTable[macAddress] = new AddressTableEntry<int>(Array.IndexOf(Ports, receiver), distance);
             }
 
             foreach(var port in Ports.Where(p => !p.IsFree)) {
@@ -45,7 +49,7 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
             addAddressInitiator = null;
         }
         public IEnumerable<(string, string)> GetMACAddressTable() {
-            return macAddressTable.Select(x => (x.Key.ToString(), $"Port{Array.IndexOf(Ports, x.Value.Value)}"));
+            return macAddressTable.Select(x => (x.Key.ToString(), $"Port{x.Value.Value}"));
         }
     }
 }

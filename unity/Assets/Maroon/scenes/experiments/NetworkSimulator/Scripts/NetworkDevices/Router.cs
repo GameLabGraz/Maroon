@@ -6,24 +6,18 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
     public class Router : NetworkDevice {
         public IPAddress IPAddress;
         public MACAddress[] MACAddress;
-        private readonly Dictionary<MACAddress, AddressTableEntry<Port>> macAddressTable = new Dictionary<MACAddress, AddressTableEntry<Port>>();
+        private readonly Dictionary<MACAddress, AddressTableEntry<int>> macAddressTable = new Dictionary<MACAddress, AddressTableEntry<int>>();
         private readonly Dictionary<IPAddress, AddressTableEntry<MACAddress>> arpTable = new Dictionary<IPAddress, AddressTableEntry<MACAddress>>();
         private readonly Dictionary<IPAddress, AddressTableEntry<IPAddress>> routingTable = new Dictionary<IPAddress, AddressTableEntry<IPAddress>>();
         public override string GetName() => "Router";
         public override string GetButtonText() => "Enter Router";
         public override DeviceType GetDeviceType() => DeviceType.Router;
 
-        public override void ReceivePacket(Packet packet, Port receiver) {
-            MACAddress destination;
-            if(routingTable.ContainsKey(packet.DestinationIPAddress)) {
-                destination = arpTable[routingTable[packet.DestinationIPAddress].Value].Value;
-            }
-            else {
-                destination = arpTable[packet.DestinationIPAddress].Value;
-            }
-            packet.DestinationMACAddress = destination;
-            var port = macAddressTable[packet.DestinationMACAddress].Value;
-            packet.SourceMACAddress = MACAddress[Array.IndexOf(Ports, port)];
+        protected override void ProcessPacket(Packet packet, Port receiver) {
+            var portIndex = GetDestinationPortIndex(packet);
+            var port = Ports[portIndex];
+            packet.DestinationMACAddress = GetDestinationMACAddress(packet);
+            packet.SourceMACAddress = MACAddress[portIndex];
             if(port != receiver) {
                 if(IsInside) {
                     ReceivePacketInside(packet, receiver);
@@ -32,6 +26,17 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
                     port.SendPacket(packet);
                 }
             }
+        }
+        private MACAddress GetDestinationMACAddress(Packet packet) {
+            if(routingTable.ContainsKey(packet.DestinationIPAddress)) {
+                return arpTable[routingTable[packet.DestinationIPAddress].Value].Value;
+            }
+            else {
+                return arpTable[packet.DestinationIPAddress].Value;
+            }
+        }
+        public override int GetDestinationPortIndex(Packet packet) {
+            return macAddressTable[GetDestinationMACAddress(packet)].Value;
         }
 
         protected override void OnAddedToNetwork() {
@@ -56,7 +61,7 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
             addAddressInitiator = initiator;
 
             if(!macAddressTable.ContainsKey(macAddress) || macAddressTable[macAddress].Distance > distance) {
-                macAddressTable[macAddress] = new AddressTableEntry<Port>(receiver, distance);
+                macAddressTable[macAddress] = new AddressTableEntry<int>(Array.IndexOf(Ports, receiver), distance);
             }
             if(ipAddress == via) {
                 if(!arpTable.ContainsKey(ipAddress) || arpTable[ipAddress].Distance > distance) {
@@ -80,7 +85,7 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
             addAddressInitiator = null;
         }
         public IEnumerable<(string, string)> GetMACAddressTable() {
-            return macAddressTable.Select(x => (x.Key.ToString(), $"Port{Array.IndexOf(Ports, x.Value.Value)}"));
+            return macAddressTable.Select(x => (x.Key.ToString(), $"Port{x.Value.Value}"));
         }
         public IEnumerable<(string, string)> GetARPTable() {
             return arpTable.Select(x => (x.Key.ToString(), x.Value.Value.ToString()));

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -11,14 +12,31 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
         public MACAddress MACAddress;
         private readonly Dictionary<IPAddress, AddressTableEntry<MACAddress>> arpTable = new Dictionary<IPAddress, AddressTableEntry<MACAddress>>();
         private readonly Dictionary<IPAddress, AddressTableEntry<IPAddress>> routingTable = new Dictionary<IPAddress, AddressTableEntry<IPAddress>>();
+        private readonly Queue<Packet> sendQueue = new Queue<Packet>();
+        private bool isProcessingSendQueue = false;
         public override string GetName() => "Computer";
         public override string GetButtonText() => "Interact";
         public override DeviceType GetDeviceType() => DeviceType.Computer;
+
+        void Update() {
+            if(!SimulationController.Instance.SimulationRunning) {
+                return;
+            }
+            if(!isProcessingSendQueue && sendQueue.Any()) {
+                isProcessingSendQueue = true;
+                StartCoroutine(ProcessSendQueue());
+            }
+        }
 
         public override void ReceivePacket(Packet packet, Port receiver) {
             if(packet.DestinationIPAddress == IPAddress && packet.HasMessage) {
                 ui.ReceiveMessage(packet.SourceIPAddress, packet.Message);
             }
+        }
+        protected override void ProcessPacket(Packet packet, Port receiver) {
+        }
+        public override int GetDestinationPortIndex(Packet packet) {
+            return 0;
         }
 
         public void SendPacket(IPAddress destinationIPAddress, string message = null) {
@@ -29,7 +47,16 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
             else {
                 destination = arpTable[destinationIPAddress].Value;
             }
-            Ports[0].SendPacket(new Packet(IPAddress, destinationIPAddress, MACAddress, destination, message));
+            sendQueue.Enqueue(new Packet(IPAddress, destinationIPAddress, MACAddress, destination, message));
+        }
+
+        private IEnumerator ProcessSendQueue() {
+            while(sendQueue.Any()) {
+                var packet = sendQueue.Dequeue();
+                Ports[0].SendPacket(packet);
+                yield return new WaitForSeconds(0.25f);
+            }
+            isProcessingSendQueue = false;
         }
 
         protected override void OnAddedToNetwork() {

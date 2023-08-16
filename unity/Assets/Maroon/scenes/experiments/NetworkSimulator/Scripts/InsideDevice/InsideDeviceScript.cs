@@ -1,4 +1,5 @@
 using Maroon.NetworkSimulator.NetworkDevices;
+using Maroon.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,7 @@ namespace Maroon.NetworkSimulator {
         private Vector3[] portWorkingPlanePositions;
         public DeviceMode Mode { get; private set; }
         private NetworkDevice device;
+        private DialogueManager dialogueManager;
 
         public Plane WorkingPlane { get; private set; }
 
@@ -56,6 +58,7 @@ namespace Maroon.NetworkSimulator {
             for(int i = 0; i < Ports.Length; i++) {
                 portWorkingPlanePositions[i] = WorkingPlane.ClosestPointOnPlane(Ports[i].Position);
             }
+            dialogueManager = FindObjectOfType<DialogueManager>();
         }
 
         void Update() {
@@ -213,6 +216,12 @@ namespace Maroon.NetworkSimulator {
                 packet.IsDraggable = false;
                 queuedPackets.Remove(packet);
                 outgoingPackets.Add(packet);
+                if(Array.IndexOf(Ports, targetPort) == device.GetDestinationPortIndex(packet.Packet)) {
+                    dialogueManager.ShowMessage("correct");
+                }
+                else {
+                    dialogueManager.ShowMessage("wrong");
+                }
             }
         }
 

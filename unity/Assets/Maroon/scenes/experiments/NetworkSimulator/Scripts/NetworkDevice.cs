@@ -1,5 +1,7 @@
 using Maroon.NetworkSimulator.NetworkDevices;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -29,6 +31,8 @@ namespace Maroon.NetworkSimulator {
         private Color selectionObjectColor;
         private AddCableScript addCableScript;
         protected Computer addAddressInitiator = null;
+        private readonly Queue<(Packet, Port)> packetQueue = new Queue<(Packet, Port)>();
+        private bool isProcessingQueue = false;
         public bool IsInside { get; set; } = false;
 
         public int NumberOfPorts { get => Ports.Length; }
@@ -46,6 +50,15 @@ namespace Maroon.NetworkSimulator {
             kitPosition = transform.position;
             addCableScript = FindObjectOfType<AddCableScript>();
             selectionObjectColor = selectionObject.material.color;
+        }
+        private void Update() {
+            if(!SimulationController.Instance.SimulationRunning) {
+                return;
+            }
+            if(!isProcessingQueue && packetQueue.Any()) {
+                isProcessingQueue = true;
+                StartCoroutine(ProcessQueue());
+            }
         }
         protected abstract void OnAddedToNetwork();
 
@@ -167,7 +180,23 @@ namespace Maroon.NetworkSimulator {
         public abstract void ClearAddressTables();
         public abstract void AddToAddressTables(IPAddress ipAddress, MACAddress macAddress, IPAddress via, Port receiver, int distance, Computer initiator);
 
-        public abstract void ReceivePacket(Packet packet, Port receiver);
+        public virtual void ReceivePacket(Packet packet, Port receiver) {
+            packetQueue.Enqueue((packet, receiver));
+        }
+        private IEnumerator ProcessQueue() {
+            while(packetQueue.Any()) {
+                var packet = packetQueue.Dequeue();
+                try {
+                    ProcessPacket(packet.Item1, packet.Item2);
+                }
+                catch(KeyNotFoundException) {
+                }
+                yield return new WaitForSeconds(0.25f);
+            }
+            isProcessingQueue = false;
+        }
+        protected abstract void ProcessPacket(Packet packet, Port receiver);
+        public abstract int GetDestinationPortIndex(Packet packet);
 
         protected void ReceivePacketInside(Packet packet, Port receiver) {
             NetworkSimulationController.Instance.InsideDeviceScript.ReceivePacket(packet, Array.IndexOf(Ports, receiver));
