@@ -1,9 +1,10 @@
-﻿using System.Linq;
+﻿using GEAR.Localization;
+using System.Linq;
 
 namespace Maroon.NetworkSimulator.NetworkDevices {
     public class Hub : NetworkDevice {
         public override string GetName() => "Hub";
-        public override string GetButtonText() => "Enter Hub";
+        public override string GetButtonText() => LanguageManager.Instance.GetString("HubButton");
         public override DeviceType GetDeviceType() => DeviceType.Hub;
 
         protected override void ProcessPacket(Packet packet, Port receiver) {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GEAR.Localization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,7 +7,7 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
     public class Switch : NetworkDevice {
         private readonly Dictionary<MACAddress, AddressTableEntry<int>> macAddressTable = new Dictionary<MACAddress, AddressTableEntry<int>>();
         public override string GetName() => "Switch";
-        public override string GetButtonText() => "Enter Switch";
+        public override string GetButtonText() => LanguageManager.Instance.GetString("SwitchButton");
         public override DeviceType GetDeviceType() => DeviceType.Switch;
 
         protected override void ProcessPacket(Packet packet, Port receiver) {

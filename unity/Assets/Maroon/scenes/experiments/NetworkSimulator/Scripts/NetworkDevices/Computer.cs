@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using GEAR.Localization;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -15,7 +16,7 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
         private readonly Queue<Packet> sendQueue = new Queue<Packet>();
         private bool isProcessingSendQueue = false;
         public override string GetName() => "Computer";
-        public override string GetButtonText() => "Interact";
+        public override string GetButtonText() => LanguageManager.Instance.GetString("ComputerButton");
         public override DeviceType GetDeviceType() => DeviceType.Computer;
 
         void Update() {

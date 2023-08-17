@@ -1,3 +1,4 @@
+using GEAR.Localization;
 using Maroon.NetworkSimulator.NetworkDevices;
 using Maroon.UI;
 using System;
@@ -216,12 +217,15 @@ namespace Maroon.NetworkSimulator {
                 packet.IsDraggable = false;
                 queuedPackets.Remove(packet);
                 outgoingPackets.Add(packet);
+
+                Message dialogueMessage;
                 if(Array.IndexOf(Ports, targetPort) == device.GetDestinationPortIndex(packet.Packet)) {
-                    dialogueManager.ShowMessage("correct");
+                    dialogueMessage = new Message(LanguageManager.Instance.GetString("PacketCorrect"), MessageIcon.MI_Ok);
                 }
                 else {
-                    dialogueManager.ShowMessage("wrong");
+                    dialogueMessage = new Message(LanguageManager.Instance.GetString("PacketWrong"), MessageIcon.MI_Error);
                 }
+                dialogueManager.ShowMessage(dialogueMessage);
             }
         }
 

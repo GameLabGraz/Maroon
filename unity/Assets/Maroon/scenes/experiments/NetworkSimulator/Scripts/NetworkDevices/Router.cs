@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GEAR.Localization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,7 +11,7 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
         private readonly Dictionary<IPAddress, AddressTableEntry<MACAddress>> arpTable = new Dictionary<IPAddress, AddressTableEntry<MACAddress>>();
         private readonly Dictionary<IPAddress, AddressTableEntry<IPAddress>> routingTable = new Dictionary<IPAddress, AddressTableEntry<IPAddress>>();
         public override string GetName() => "Router";
-        public override string GetButtonText() => "Enter Router";
+        public override string GetButtonText() => LanguageManager.Instance.GetString("RouterButton");
         public override DeviceType GetDeviceType() => DeviceType.Router;
 
         protected override void ProcessPacket(Packet packet, Port receiver) {
