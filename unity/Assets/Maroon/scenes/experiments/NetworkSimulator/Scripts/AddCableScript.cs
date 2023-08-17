@@ -7,8 +7,8 @@ namespace Maroon.NetworkSimulator {
         [SerializeField]
         private Transform cableParent;
         [SerializeField]
-        private Material activeMaterial;
-        private Material defaultMaterial;
+        private Color activeColor;
+        private Color defaultColor;
         private MeshRenderer meshRenderer;
 
         public bool IsAddingCable { get; private set; }
@@ -18,16 +18,13 @@ namespace Maroon.NetworkSimulator {
 
         void Start() {
             meshRenderer = GetComponent<MeshRenderer>();
-            defaultMaterial = meshRenderer.material;
-        }
-
-        void Update() {
+            defaultColor = meshRenderer.material.color;
         }
 
         private void OnMouseUpAsButton() {
             IsAddingCable = !IsAddingCable;
             if(IsAddingCable) {
-                meshRenderer.material = activeMaterial;
+                meshRenderer.material.color = activeColor;
                 NetworkSimulationController.Instance.ShowConnectableDeviceMarkers();
             }
             else {
@@ -65,7 +62,7 @@ namespace Maroon.NetworkSimulator {
             IsAddingCable = false;
             firstNetworkDevice = null;
             secondNetworkDevice = null;
-            meshRenderer.material = defaultMaterial;
+            meshRenderer.material.color = defaultColor;
             NetworkSimulationController.Instance.HideConnectableDeviceMarkers();
         }
     }

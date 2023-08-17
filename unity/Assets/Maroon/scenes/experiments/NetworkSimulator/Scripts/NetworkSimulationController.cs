@@ -37,6 +37,7 @@ namespace Maroon.NetworkSimulator {
         public bool NetworkInteractionEnabled { get; private set; } = true;
 
         private void Start() {
+            SimulationController.Instance.StartSimulation();
             Invoke(nameof(GenerateTraffic), NextTrafficTimeout);
         }
 
