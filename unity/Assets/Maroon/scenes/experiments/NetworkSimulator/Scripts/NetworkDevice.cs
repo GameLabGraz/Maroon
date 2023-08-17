@@ -129,7 +129,11 @@ namespace Maroon.NetworkSimulator {
             }
             UpdateCables();
         }
+
         private void OnMouseEnter() {
+            if(!NetworkSimulationController.Instance.NetworkInteractionEnabled) {
+                return;
+            }
             if(!fromKit && selectionObject.material.color == selectionObjectColor) {
                 selectionObject.material.color = hoverColor;
             }

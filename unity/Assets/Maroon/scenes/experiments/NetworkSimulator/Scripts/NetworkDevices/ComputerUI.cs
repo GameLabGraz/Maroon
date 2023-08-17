@@ -66,6 +66,7 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
                 recipients.options.Add(new Dropdown.OptionData(recipient));
             }
             recipients.interactable = recipients.options.Any();
+            recipients.RefreshShownValue();
             overlay.SetActive(false);
         }
         public void Deactivate() {

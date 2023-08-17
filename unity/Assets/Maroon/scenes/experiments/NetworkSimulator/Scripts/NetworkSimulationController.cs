@@ -109,6 +109,7 @@ namespace Maroon.NetworkSimulator {
             Destroy(selectedDevice.gameObject);
             selectedDevice = null;
             UIController.Instance.HideDeviceOptions();
+            UpdateAddressTables();
         }
 
         public void LoadPreset(int index) {
