@@ -101,8 +101,12 @@ namespace Maroon.NetworkSimulator {
             if(queueIndex > maxQueueLength) {
                 queueIndex = maxQueueLength;
             }
+            var targetPosition = queue.position - queueIndex * queuePacketDistance * queue.right;
             if(WorkingPlane.GetDistanceToPoint(packet.Position) > distanceTolerance) {
                 packet.MoveTowards(packet.Position + Vector3.back, packetSpeed * Time.deltaTime);
+            }
+            else if(queueIndex >= maxQueueLength && Vector3.Distance(packet.Position, targetPosition) > distanceTolerance) {
+                packet.MoveTowards(targetPosition, packetSpeed * Time.deltaTime);
             }
             else {
                 incomingPackets.Remove(packet);
