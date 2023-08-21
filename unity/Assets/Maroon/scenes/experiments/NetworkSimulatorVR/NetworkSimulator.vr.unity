@@ -916,6 +916,7 @@ GameObject:
   - component: {fileID: 462617679}
   - component: {fileID: 462617678}
   - component: {fileID: 462617677}
+  - component: {fileID: 462617676}
   m_Layer: 12
   m_Name: Cube (3)
   m_TagString: Untagged
@@ -942,6 +943,19 @@ RectTransform:
   m_AnchoredPosition: {x: 25.38, y: -6.02}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &462617676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 462617674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 667230ade3b20b641a0ba08bdfd760fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colliders: []
 --- !u!114 &462617677
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1319,6 +1333,7 @@ GameObject:
   - component: {fileID: 742576198}
   - component: {fileID: 742576201}
   - component: {fileID: 742576202}
+  - component: {fileID: 742576203}
   m_Layer: 0
   m_Name: Router
   m_TagString: Untagged
@@ -1471,6 +1486,41 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 742576196}
   m_CullTransparentMesh: 1
+--- !u!54 &742576203
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 742576196}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 126
+  m_CollisionDetection: 0
+--- !u!1 &1010976059 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1333794089367113665, guid: b170731a22903c540b345c545f66ae06,
+    type: 3}
+  m_PrefabInstance: {fileID: 1333794088909707787}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1010976061
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1010976059}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1242916717
 GameObject:
   m_ObjectHideFlags: 0
@@ -3022,6 +3072,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 1.098
       objectReference: {fileID: 0}
+    - target: {fileID: 1333794090043552107, guid: b170731a22903c540b345c545f66ae06,
+        type: 3}
+      propertyPath: m_Name
+      value: IP-Source
+      objectReference: {fileID: 0}
     - target: {fileID: 1333794090043552108, guid: b170731a22903c540b345c545f66ae06,
         type: 3}
       propertyPath: activateActionSetOnAttach.actionSetPath
@@ -3040,7 +3095,7 @@ PrefabInstance:
     - target: {fileID: 1333794090043552109, guid: b170731a22903c540b345c545f66ae06,
         type: 3}
       propertyPath: onDetachFromHand.m_PersistentCalls.m_Calls.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1333794090043552109, guid: b170731a22903c540b345c545f66ae06,
         type: 3}
@@ -3075,7 +3130,7 @@ PrefabInstance:
     - target: {fileID: 1333794090043552109, guid: b170731a22903c540b345c545f66ae06,
         type: 3}
       propertyPath: onDetachFromHand.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1333794090043552109, guid: b170731a22903c540b345c545f66ae06,
         type: 3}
@@ -3086,7 +3141,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onDetachFromHand.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 462617680}
+      objectReference: {fileID: 33208265}
     - target: {fileID: 1333794090043552109, guid: b170731a22903c540b345c545f66ae06,
         type: 3}
       propertyPath: onHeldUpdate.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
@@ -3100,7 +3155,7 @@ PrefabInstance:
     - target: {fileID: 1333794090043552109, guid: b170731a22903c540b345c545f66ae06,
         type: 3}
       propertyPath: onDetachFromHand.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SendMessage
+      value: set_isStatic
       objectReference: {fileID: 0}
     - target: {fileID: 1333794090043552109, guid: b170731a22903c540b345c545f66ae06,
         type: 3}
@@ -3125,7 +3180,12 @@ PrefabInstance:
     - target: {fileID: 1333794090043552109, guid: b170731a22903c540b345c545f66ae06,
         type: 3}
       propertyPath: onDetachFromHand.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: UnityEngine.Component, UnityEngine
+      value: UnityEngine.GameObject, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 1333794090043552109, guid: b170731a22903c540b345c545f66ae06,
+        type: 3}
+      propertyPath: onDetachFromHand.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_BoolArgument
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1333794090043552109, guid: b170731a22903c540b345c545f66ae06,
         type: 3}
@@ -3135,7 +3195,7 @@ PrefabInstance:
     - target: {fileID: 1333794090043552109, guid: b170731a22903c540b345c545f66ae06,
         type: 3}
       propertyPath: onDetachFromHand.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
-      value: ad
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 1333794090043552109, guid: b170731a22903c540b345c545f66ae06,
         type: 3}
