@@ -223,13 +223,11 @@ jobs:
     # we do not want to deploy if we are doing a scheduled run
     # make sure that we are on the develop branch
     if: |
-     ${{
      github.ref_name               == 'develop'  && 
      github.event_name             != 'schedule' && 
      needs.build.result            == 'success'  && 
      needs.test.result             == 'success'  && 
      needs.upload-artifacts.result == 'success' 
-     }}
      
     steps:
 
