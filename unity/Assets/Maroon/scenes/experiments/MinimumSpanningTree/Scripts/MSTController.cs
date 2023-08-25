@@ -685,18 +685,18 @@ public class MSTController : MonoBehaviour
             "  <style=\"Normal\">startVertex = first vertex in graph</style>\n" +
             "  <style=\"Normal\">mst.<style=\"sortingFunction\">add</style>(startVertex)</style>\n\n" +
 
-            "  <style=\"Normal\">edgesToCheck = edges connected to startVertex</style>\n\n" +
+            "  <style=\"Normal\">edges = edges connected to startVertex</style>\n\n" +
 
             "  <style=\"sortingKeyword\">while</style><style=\"Normal\"> mst <style=\"sortingNumber\">has fewer vertices than</style> graph:</style>\n" +
             "      <style=\"Normal\">minEdge, minWeight = <style=\"sortingFunction\">findMinEdge</style><style=\"Normal\">(edges)</style>\n\n" +
 
-            "  <style=\"Normal\">mst.</style><style=\"sortingFunction\">add</style><style=\"Normal\">(minEdge)</style>\n\n" +
+            "      <style=\"Normal\">mst.</style><style=\"sortingFunction\">add</style><style=\"Normal\">(minEdge)</style>\n\n" +
 
-            "  <style=\"sortingKeyword\">for</style><style=\"Normal\"> edge </style><style=\"sortingKeyword\">in</style><style=\"Normal\"> edges connected to minEdge:</style>\n" +
-            "      <style=\"sortingKeyword\">if</style><style=\"Normal\"> edge <style=\"sortingNumber\">is not</style> in mst:</style>\n" +
-            "          <style=\"Normal\">edges.</style><style=\"sortingFunction\">add</style><style=\"Normal\">(edge)</style>\n\n" +
+            "      <style=\"sortingKeyword\">for</style><style=\"Normal\"> edge </style><style=\"sortingKeyword\">in</style><style=\"Normal\"> edges connected to minEdge:</style>\n" +
+            "          <style=\"sortingKeyword\">if</style><style=\"Normal\"> edge <style=\"sortingNumber\">is not</style> in mst:</style>\n" +
+            "              <style=\"Normal\">edges.</style><style=\"sortingFunction\">add</style><style=\"Normal\">(edge)</style>\n\n" +
 
-            "  <style=\"Normal\">edges.</style><style=\"sortingFunction\">remove</style><style=\"Normal\">(minEdge)</style>\n\n" +
+            "      <style=\"Normal\">edges.</style><style=\"sortingFunction\">remove</style><style=\"Normal\">(minEdge)</style>\n\n" +
 
             "  <style=\"sortingFunction\">return</style><style=\"Normal\"> mst as an array</style>\n\n";
     }
