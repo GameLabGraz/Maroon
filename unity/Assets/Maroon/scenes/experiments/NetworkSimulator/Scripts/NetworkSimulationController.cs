@@ -62,8 +62,13 @@ namespace Maroon.NetworkSimulator {
         public void AddNetworkDevice(NetworkDevice device) {
             networkDevices.Add(device);
         }
-        public void ShowConnectableDeviceMarkers() {
+        public void ShowAllConnectableDeviceMarkers() {
             foreach(var device in networkDevices) {
+                device.ShowConnectableMarker();
+            }
+        }
+        public void ShowFreeConnectableDeviceMarkers() {
+            foreach(var device in networkDevices.Where(d => d.HasFreePort)) {
                 device.ShowConnectableMarker();
             }
         }

@@ -15,7 +15,7 @@ namespace Maroon.NetworkSimulator {
         [SerializeField]
         private float clickVsDragThreshold = 0.002f;
         [SerializeField]
-        private GameObject connectableMarker;
+        private ConnectableMarker connectableMarker;
         [SerializeField]
         private MeshRenderer selectionObject;
         [SerializeField]
@@ -155,9 +155,7 @@ namespace Maroon.NetworkSimulator {
 
         private void ClickedDevice() {
             if(addCableScript.IsAddingCable) {
-                if(HasFreePort) {
-                    addCableScript.ClickedDevice(this);
-                }
+                addCableScript.ClickedDevice(this);
             }
             else {
                 NetworkSimulationController.Instance.SelectDevice(this);
@@ -170,13 +168,22 @@ namespace Maroon.NetworkSimulator {
             }
         }
         public void ShowConnectableMarker() {
-            if(!HasFreePort) {
-                return;
-            }
-            connectableMarker.SetActive(true);
+            connectableMarker.SetGreen();
+            connectableMarker.gameObject.SetActive(true);
         }
         public void HideConnectableMarker() {
-            connectableMarker.SetActive(false);
+            connectableMarker.gameObject.SetActive(false);
+        }
+        public void ShowRemoveableMarkers() {
+            foreach(var port in Ports.Where((p) => !p.IsFree)) {
+                if(port.ConnectedDevice != null) {
+                    port.ConnectedDevice.connectableMarker.SetRed();
+                    port.ConnectedDevice.connectableMarker.gameObject.SetActive(true);
+                }
+            }
+        }
+        public bool IsConnectedTo(NetworkDevice device) {
+            return Ports.Any(p => p.ConnectedDevice == device);
         }
         public void ResetSelectionColor() {
             selectionObject.material.color = selectionObjectColor;
@@ -185,6 +192,10 @@ namespace Maroon.NetworkSimulator {
             foreach(var port in Ports.Where(p => !p.IsFree)) {
                 port.Cable.Remove();
             }
+        }
+        public void RemoveCable(NetworkDevice device) {
+            var port = Ports.First(p => p.ConnectedDevice == device);
+            port.Cable.Remove();
         }
         public abstract string GetName();
         public abstract string GetButtonText();

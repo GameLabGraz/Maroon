@@ -14,7 +14,6 @@ namespace Maroon.NetworkSimulator {
         public bool IsAddingCable { get; private set; }
 
         private NetworkDevice firstNetworkDevice;
-        private NetworkDevice secondNetworkDevice;
 
         void Start() {
             meshRenderer = GetComponent<MeshRenderer>();
@@ -25,7 +24,7 @@ namespace Maroon.NetworkSimulator {
             IsAddingCable = !IsAddingCable;
             if(IsAddingCable) {
                 meshRenderer.material.color = activeColor;
-                NetworkSimulationController.Instance.ShowConnectableDeviceMarkers();
+                NetworkSimulationController.Instance.ShowAllConnectableDeviceMarkers();
             }
             else {
                 ResetState();
@@ -33,18 +32,28 @@ namespace Maroon.NetworkSimulator {
         }
 
         public void ClickedDevice(NetworkDevice device) {
-            if(!IsAddingCable || !device.HasFreePort) {
+            if(!IsAddingCable) {
                 return;
             }
             if(firstNetworkDevice == null) {
                 firstNetworkDevice = device;
+                NetworkSimulationController.Instance.HideConnectableDeviceMarkers();
+                if(firstNetworkDevice.HasFreePort) {
+                    NetworkSimulationController.Instance.ShowFreeConnectableDeviceMarkers();
+                }
                 firstNetworkDevice.HideConnectableMarker();
+                firstNetworkDevice.ShowRemoveableMarkers();
                 return;
             }
-            if(secondNetworkDevice == null && device != firstNetworkDevice) {
-                secondNetworkDevice = device;
-                AddCable(firstNetworkDevice, secondNetworkDevice);
-                ResetState();
+            if(device != firstNetworkDevice) {
+                if(firstNetworkDevice.IsConnectedTo(device)) {
+                    firstNetworkDevice.RemoveCable(device);
+                    ResetState();
+                }
+                else if(firstNetworkDevice.HasFreePort && device.HasFreePort) {
+                    AddCable(firstNetworkDevice, device);
+                    ResetState();
+                }
             }
         }
 
@@ -61,7 +70,6 @@ namespace Maroon.NetworkSimulator {
         private void ResetState() {
             IsAddingCable = false;
             firstNetworkDevice = null;
-            secondNetworkDevice = null;
             meshRenderer.material.color = defaultColor;
             NetworkSimulationController.Instance.HideConnectableDeviceMarkers();
         }
