@@ -1,4 +1,6 @@
+using GEAR.Localization;
 using Maroon.NetworkSimulator.NetworkDevices;
+using Maroon.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -107,11 +109,17 @@ namespace Maroon.NetworkSimulator {
             var isInNetworkArea = (networkAreaCollider.ClosestPoint(transform.position) - transform.position).sqrMagnitude < float.Epsilon;
             if(fromKit) {
                 if(isInNetworkArea) {
-                    Instantiate(this, kitPosition, Quaternion.identity, transform.parent).name = name;
-                    transform.parent = networkAreaCollider.transform;
-                    fromKit = false;
-                    NetworkSimulationController.Instance.AddNetworkDevice(this);
-                    OnAddedToNetwork();
+                    if(NetworkSimulationController.Instance.NetworkDeviceCount < NetworkSimulationController.MaxNetworkDeviceCount) {
+                        Instantiate(this, kitPosition, Quaternion.identity, transform.parent).name = name;
+                        transform.parent = networkAreaCollider.transform;
+                        fromKit = false;
+                        NetworkSimulationController.Instance.AddNetworkDevice(this);
+                        OnAddedToNetwork();
+                    }
+                    else {
+                        UIController.Instance.DialogueManager.ShowMessage(new Message(LanguageManager.Instance.GetString("ReachedMaxDeviceCount"), MessageIcon.MI_Warning));
+                        transform.position = kitPosition;
+                    }
                 }
                 else {
                     transform.position = kitPosition;

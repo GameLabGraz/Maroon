@@ -35,6 +35,8 @@ namespace Maroon.NetworkSimulator {
         private readonly float TrafficIntervalRange = 2;
         private float NextTrafficTimeout => TrafficInterval + Random.Range(-TrafficIntervalRange, TrafficIntervalRange);
         public bool NetworkInteractionEnabled { get; private set; } = true;
+        public int NetworkDeviceCount => networkDevices.Count;
+        public const int MaxNetworkDeviceCount = 20;
 
         private void Start() {
             SimulationController.Instance.StartSimulation();

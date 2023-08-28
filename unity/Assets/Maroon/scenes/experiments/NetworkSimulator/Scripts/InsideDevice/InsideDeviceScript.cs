@@ -31,7 +31,6 @@ namespace Maroon.NetworkSimulator {
         private Vector3[] portWorkingPlanePositions;
         public DeviceMode Mode { get; private set; }
         private NetworkDevice device;
-        private DialogueManager dialogueManager;
 
         public Plane WorkingPlane { get; private set; }
 
@@ -59,7 +58,6 @@ namespace Maroon.NetworkSimulator {
             for(int i = 0; i < Ports.Length; i++) {
                 portWorkingPlanePositions[i] = WorkingPlane.ClosestPointOnPlane(Ports[i].Position);
             }
-            dialogueManager = FindObjectOfType<DialogueManager>();
         }
 
         void Update() {
@@ -225,7 +223,7 @@ namespace Maroon.NetworkSimulator {
                 else {
                     dialogueMessage = new Message(LanguageManager.Instance.GetString("PacketWrong"), MessageIcon.MI_Error);
                 }
-                dialogueManager.ShowMessage(dialogueMessage);
+                UIController.Instance.DialogueManager.ShowMessage(dialogueMessage);
             }
         }
 

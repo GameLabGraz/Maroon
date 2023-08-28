@@ -1,4 +1,5 @@
 using Maroon.NetworkSimulator.NetworkDevices;
+using Maroon.UI;
 using System;
 using TMPro;
 using UnityEngine;
@@ -67,9 +68,12 @@ namespace Maroon.NetworkSimulator {
         [SerializeField]
         private TextMeshProUGUI packetDestinationIPAddress;
 
+        public DialogueManager DialogueManager { get; private set; }
+
         void Start() {
             HideDeviceOptions();
             HidePacketInfo();
+            DialogueManager = FindObjectOfType<DialogueManager>();
         }
 
         public void ShowDeviceOptions(NetworkDevice clickedDevice) {
