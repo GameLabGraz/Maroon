@@ -8,6 +8,10 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
     public class Computer : NetworkDevice {
         [SerializeField]
         private ComputerUI ui;
+        [SerializeField]
+        private GameObject screen;
+        [SerializeField]
+        private GameObject chassis;
 
         public IPAddress IPAddress;
         public MACAddress MACAddress;
@@ -27,6 +31,15 @@ namespace Maroon.NetworkSimulator.NetworkDevices {
                 isProcessingSendQueue = true;
                 StartCoroutine(ProcessSendQueue());
             }
+        }
+
+        public void Hide() {
+            screen.SetActive(false);
+            chassis.SetActive(false);
+        }
+        public void Show() {
+            screen.SetActive(true);
+            chassis.SetActive(true);
         }
 
         public override void ReceivePacket(Packet packet, Port receiver) {

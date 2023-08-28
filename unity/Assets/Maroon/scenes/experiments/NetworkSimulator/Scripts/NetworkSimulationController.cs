@@ -93,6 +93,7 @@ namespace Maroon.NetworkSimulator {
             NetworkInteractionEnabled = false;
             if(selectedDevice is Computer computer) {
                 cameraScript.SetComputerView(selectedDevice.transform.position);
+                HideViewBlockingComputerScreens(computer);
                 computer.ActivateUI();
             }
             else {
@@ -107,6 +108,7 @@ namespace Maroon.NetworkSimulator {
             NetworkInteractionEnabled = true;
             if(selectedDevice is Computer computer) {
                 computer.DeactivateUI();
+                ShowComputerScreens();
             }
             selectedDevice.IsInside = false;
             InsideDeviceScript.Clear();
@@ -118,6 +120,21 @@ namespace Maroon.NetworkSimulator {
             selectedDevice = null;
             UIController.Instance.HideDeviceOptions();
             UpdateAddressTables();
+        }
+
+        private void HideViewBlockingComputerScreens(Computer computer) {
+            foreach(var com in computers.Where(c => c != computer)) {
+                var dx = computer.transform.position.x - com.transform.position.x;
+                var dz = computer.transform.position.z - com.transform.position.z;
+                if(dx > -0.45f && dx < 0.45f && dz > -0.25f && dz < 0.55f) {
+                    com.Hide();
+                }
+            }
+        }
+        private void ShowComputerScreens() {
+            foreach(var computer in computers) {
+                computer.Show();
+            }
         }
 
         public void LoadPreset(int index) {
