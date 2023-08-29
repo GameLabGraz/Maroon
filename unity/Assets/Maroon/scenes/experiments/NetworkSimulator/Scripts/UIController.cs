@@ -30,6 +30,8 @@ namespace Maroon.NetworkSimulator {
         private Button removeDeviceButton;
         [SerializeField]
         private TextMeshProUGUI deviceOptionsButtonText;
+        [SerializeField]
+        private Button hideDeviceOptionsButton; 
 
         [SerializeField]
         private GameObject ipAddressRow;
@@ -144,12 +146,14 @@ namespace Maroon.NetworkSimulator {
             enterDeviceButton.gameObject.SetActive(true);
             backToNetworkButton.gameObject.SetActive(false);
             removeDeviceButton.gameObject.SetActive(true);
+            hideDeviceOptionsButton.gameObject.SetActive(true);
         }
         public void SetInsideDeviceView() {
             generalOptionsPanel.SetActive(false);
             enterDeviceButton.gameObject.SetActive(false);
             backToNetworkButton.gameObject.SetActive(true);
             removeDeviceButton.gameObject.SetActive(false);
+            hideDeviceOptionsButton.gameObject.SetActive(false);
         }
 
         public void ShowPacketInfo(Packet packet) {

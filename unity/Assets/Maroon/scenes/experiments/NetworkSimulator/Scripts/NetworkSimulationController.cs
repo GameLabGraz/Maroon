@@ -88,6 +88,17 @@ namespace Maroon.NetworkSimulator {
             selectedDevice = null;
             UIController.Instance.ShowPacketInfo(packet);
         }
+        public void DeselectDeviceOrPacket() {
+            if(!NetworkInteractionEnabled) {
+                return;
+            }
+            if(selectedDevice != null) {
+                selectedDevice.ResetSelectionColor();
+            }
+            selectedDevice = null;
+            UIController.Instance.HideDeviceOptions();
+            UIController.Instance.HidePacketInfo();
+        }
         public void EnterInsideOfDevice() {
             UIController.Instance.SetInsideDeviceView();
             NetworkInteractionEnabled = false;
