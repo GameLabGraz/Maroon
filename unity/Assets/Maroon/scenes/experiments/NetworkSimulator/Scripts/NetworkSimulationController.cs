@@ -1,4 +1,5 @@
-﻿using Maroon.NetworkSimulator.NetworkDevices;
+﻿using GEAR.Localization;
+using Maroon.NetworkSimulator.NetworkDevices;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -39,6 +40,10 @@ namespace Maroon.NetworkSimulator {
         public const int MaxNetworkDeviceCount = 20;
 
         private void Start() {
+            UIController.Instance.DialogueManager.ShowMessage(LanguageManager.Instance.GetString("WelcomeMessage1"));
+            UIController.Instance.DialogueManager.ShowMessage(LanguageManager.Instance.GetString("WelcomeMessage2"));
+            UIController.Instance.DialogueManager.ShowMessage(LanguageManager.Instance.GetString("WelcomeMessage3"));
+            UIController.Instance.DialogueManager.ShowMessage(LanguageManager.Instance.GetString("WelcomeMessage4"));
             SimulationController.Instance.StartSimulation();
             Invoke(nameof(GenerateTraffic), NextTrafficTimeout);
         }
