@@ -120,15 +120,7 @@ namespace Maroon.Experiments.PlanetarySystem
         [SerializeField] private Toggle toggleSunLight;
         [SerializeField] private Toggle toggleSolarFlares;
 
-        [SerializeField] private Toggle toggleSun;
-        [SerializeField] private Toggle toggleMercury;
-        [SerializeField] private Toggle toggleVenus;
-        [SerializeField] private Toggle toggleEarth;
-        [SerializeField] private Toggle toggleMars;
-        [SerializeField] private Toggle toggleJupiter;
-        [SerializeField] private Toggle toggleSaturn;
-        [SerializeField] private Toggle toggleUranus;
-        [SerializeField] private Toggle toggleNeptune;
+        [SerializeField] private Toggle[] planetToggles;
         #endregion UIToggleButtons
 
 
@@ -641,35 +633,7 @@ namespace Maroon.Experiments.PlanetarySystem
                 if (CheckCollisionWithSun(planets[index]))
                 {
                     //Debug.Log("PlanetaryController: CheckCollisionsWithSun(): " + planets[index] + " collides with sun");
-                    switch (index)
-                    {
-                        case 1:
-                            UIToggle1(true);
-                            break;
-                        case 2:
-                            UIToggle2(true);
-                            break;
-                        case 3:
-                            UIToggle3(true);
-                            break;
-                        case 4:
-                            UIToggle4(true);
-                            break;
-                        case 5:
-                            UIToggle5(true);
-                            break;
-                        case 6:
-                            UIToggle6(true);
-                            break;
-                        case 7:
-                            UIToggle7(true);
-                            break;
-                        case 8:
-                            UIToggle8(true);
-                            break;
-                        default:
-                            break;
-                    }
+                    UIToggle(true, index);
                 }
             }
         }
@@ -995,16 +959,11 @@ namespace Maroon.Experiments.PlanetarySystem
             toggleSGOrientationGizmo.onValueChanged.AddListener(UIToggleSGOrientation);
             toggleAOrientationGizmo.onValueChanged.AddListener(UIToggleAOrientation);
 
-            toggleSun.onValueChanged.AddListener(UIToggle0);
-            toggleMercury.onValueChanged.AddListener(UIToggle1);
-            toggleVenus.onValueChanged.AddListener(UIToggle2);
-            toggleEarth.onValueChanged.AddListener(UIToggle3);
-            toggleMars.onValueChanged.AddListener(UIToggle4);
-            toggleJupiter.onValueChanged.AddListener(UIToggle5);
-            toggleSaturn.onValueChanged.AddListener(UIToggle6);
-            toggleUranus.onValueChanged.AddListener(UIToggle7);
-            toggleNeptune.onValueChanged.AddListener(UIToggle8);
-
+            for (int index = 0; index < planetToggles.Length; index++)
+            {
+                int planet_index = index;
+                planetToggles[index].onValueChanged.AddListener((bool isOn) => UIToggle(isOn, planet_index));
+            }
         }
 
 
@@ -1026,15 +985,10 @@ namespace Maroon.Experiments.PlanetarySystem
             sliderTimeSpeed.onValueChanged.RemoveListener(OnTimeSliderValueChanged);
             sliderAnimationCameraFov.onValueChanged.RemoveListener(OnFOVSliderValueChanged);
 
-            toggleSun.onValueChanged.RemoveListener(UIToggle0);
-            toggleMercury.onValueChanged.RemoveListener(UIToggle1);
-            toggleVenus.onValueChanged.RemoveListener(UIToggle2);
-            toggleEarth.onValueChanged.RemoveListener(UIToggle3);
-            toggleMars.onValueChanged.RemoveListener(UIToggle4);
-            toggleJupiter.onValueChanged.RemoveListener(UIToggle5);
-            toggleSaturn.onValueChanged.RemoveListener(UIToggle6);
-            toggleUranus.onValueChanged.RemoveListener(UIToggle7);
-            toggleNeptune.onValueChanged.RemoveListener(UIToggle8);
+            for (int index = 0; index < planetToggles.Length; index++)
+            {
+                planetToggles[index].onValueChanged.RemoveAllListeners();
+            }
         }
         #endregion UIToggleButtons
 
@@ -1043,89 +997,26 @@ namespace Maroon.Experiments.PlanetarySystem
          * hides planets and trajectories after radiobutton is pressed
          */
         #region HidePlanets
-        public void UIToggle0(bool isOn)
-        {
-            //Sun
-            //Debug.Log("Mercury checkbox: " + !isOn);
 
-            planets[0].SetActive(!isOn);
-            sunHalo.enabled = !isOn;
-            ToggleTrajectory(0, !isOn);
-            toggleSun.isOn = isOn;
-
-        }
-
-        public void UIToggle1(bool isOn)
+        public void UIToggle(bool isOn, int index)
         {
-            //Mercury
-            //Debug.Log("Mercury checkbox: " + !isOn);
-            planets[1].SetActive(!isOn);
-            ToggleTrajectory(1, !isOn);
-            toggleMercury.isOn = isOn;
-        }
+            //Debug.Log(planets[index].name + " checkbox: " + !isOn);
 
-        public void UIToggle2(bool isOn)
-        {
-            //Venus
-            //Debug.Log("Venus checkbox: " + !isOn);
-            planets[2].SetActive(!isOn);
-            ToggleTrajectory(2, !isOn);
-            toggleVenus.isOn = isOn;
-        }
+            planets[index].SetActive(!isOn);
 
-        public void UIToggle3(bool isOn)
-        {
-            //Earth
-            //Debug.Log("Earth checkbox: " + !isOn);
-            planets[3].SetActive(!isOn);
-            ToggleTrajectory(3, !isOn);
-            toggleEarth.isOn = isOn;
-        }
+            if (index == 0)
+            {
+                sunHalo.enabled = !isOn;
+            }
 
-        public void UIToggle4(bool isOn)
-        {
-            //Mars
-            //Debug.Log("Mars checkbox: " + !isOn);
-            planets[4].SetActive(!isOn);
-            ToggleTrajectory(4, !isOn);
-            toggleMars.isOn = isOn;
-        }
+            if (index == 6)
+            {
+                saturn_ring_1.SetActive(!isOn);
+                saturn_ring_2.SetActive(!isOn);
+            }
 
-        public void UIToggle5(bool isOn)
-        {
-            //Jupiter
-            //Debug.Log("Jupiter checkbox: " + !isOn);
-            planets[5].SetActive(!isOn);
-            ToggleTrajectory(5, !isOn);
-            toggleJupiter.isOn = isOn;
-        }
-
-        public void UIToggle6(bool isOn)
-        {
-            //Saturn
-            //Debug.Log("Saturn checkbox: " + !isOn);
-            planets[6].SetActive(!isOn);
-            saturn_ring_1.SetActive(!isOn);
-            saturn_ring_2.SetActive(!isOn);
-            ToggleTrajectory(6, !isOn);
-            toggleSaturn.isOn = isOn;
-        }
-
-        public void UIToggle7(bool isOn)
-        {
-            //Uranus
-            //Debug.Log("Uranus checkbox: " + !isOn);
-            planets[7].SetActive(!isOn);
-            ToggleTrajectory(7, !isOn);
-            toggleUranus.isOn = isOn;
-        }
-        public void UIToggle8(bool isOn)
-        {
-            //Neptune
-            //Debug.Log("Neptune checkbox: " + !isOn);
-            planets[8].SetActive(!isOn);
-            ToggleTrajectory(8, !isOn);
-            toggleNeptune.isOn = isOn;
+            ToggleTrajectory(index, !isOn);
+            planetToggles[index].isOn = isOn;
         }
         #endregion HidePlanets
 
@@ -1353,15 +1244,10 @@ namespace Maroon.Experiments.PlanetarySystem
         private void ResetAnimation()
         {
             bool planetIsHidden = false;
-            UIToggle0(planetIsHidden);
-            UIToggle1(planetIsHidden);
-            UIToggle2(planetIsHidden);
-            UIToggle3(planetIsHidden);
-            UIToggle4(planetIsHidden);
-            UIToggle5(planetIsHidden);
-            UIToggle6(planetIsHidden);
-            UIToggle7(planetIsHidden);
-            UIToggle8(planetIsHidden);
+            for (int index = 0; index < planetToggles.Length; index++)
+            {
+                UIToggle(planetIsHidden, index);
+            }
 
             ClearTrajectories();
             sliderG.value = gravitationalConstantG;
