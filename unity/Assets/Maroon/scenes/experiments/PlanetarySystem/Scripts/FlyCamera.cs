@@ -6,8 +6,8 @@ namespace Maroon.Experiments.PlanetarySystem
     {
         public Camera flyCamera;
         public GameObject flyCameraFocus;
-        public float mouseSpeed = 50f;
-        public float mouseSensitivity = 100f;
+        [SerializeField] private float mouseSpeed = 50f;
+        [SerializeField] private float mouseSensitivity = 100f;
 
         private float xRotation = 0f;
         private float yRotation = 0f;

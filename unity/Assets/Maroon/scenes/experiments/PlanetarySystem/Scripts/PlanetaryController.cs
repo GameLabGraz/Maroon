@@ -43,7 +43,7 @@ namespace Maroon.Experiments.PlanetarySystem
 
         #region Trajectories
         public List<PlanetTrajectory> planetTrajectories;
-        public float lineThickness = 0.4f;
+        [SerializeField] private float lineThickness = 0.4f;
         private List<LineRenderer> lineRenderers;
         private List<Queue<Vector3>> previousPositionsList;
 
@@ -60,19 +60,13 @@ namespace Maroon.Experiments.PlanetarySystem
         //want it:
         [SerializeField] private GameObject FormulaUI;              //off
         [SerializeField] private GameObject Environment;            //off
-        [SerializeField] private GameObject Animation;                //off//on
+        [SerializeField] private GameObject Animation;              //off//on
         [SerializeField] private GameObject SortingMinigame;        //off
         [SerializeField] private GameObject Interactibles;          //off
         [SerializeField] private GameObject AnimationUI;            //on
         [SerializeField] private GameObject SortingGamePlanetInfoUI;//off
         [SerializeField] private FlyCamera flyCameraScript;         //on
         #endregion StartScreenScenes
-
-        #region HidePlanets
-        public GameObject saturn_ring_1;
-        public GameObject saturn_ring_2;
-        public Light sunHalo;
-        #endregion HidePlanets
 
         #region SortingGameSpawner
         public int sortedPlanetCount = 0;
@@ -83,11 +77,11 @@ namespace Maroon.Experiments.PlanetarySystem
 
         #region ResetAnimation
         private readonly List<Vector3> initialPlanetPositions = new List<Vector3>();
-        private List<Vector3> initialPlanetRotations = new List<Vector3>();
+        private readonly List<Vector3> initialPlanetRotations = new List<Vector3>();
 
-        public float resetAnimationDelay = 0.3f;
-        public float gravitationalConstantG = 6.674f;
-        public float timeSpeed = 1f;
+        [SerializeField] private float resetAnimationDelay = 0.3f;
+        [SerializeField] private float gravitationalConstantG = 6.674f;
+        [SerializeField] private float timeSpeed = 1f;
         #endregion ResetAnimation
 
         #region Helpi
@@ -96,9 +90,7 @@ namespace Maroon.Experiments.PlanetarySystem
         #endregion Helpi
 
         #region KeyInput
-        [SerializeField] private Material skyboxStars;
-        [SerializeField] private Material skyboxDiverseSpace;
-        [SerializeField] private Material skyboxBlack;
+        [SerializeField] private Material[] skyboxes;
         [SerializeField] private Light sunLight;
         [SerializeField] private ParticleSystem solarFlares;
         #endregion KeyInput
@@ -224,9 +216,7 @@ namespace Maroon.Experiments.PlanetarySystem
         #region KeyInput
         /*
          * HandlesKeyInput during Update
-         * switch to StartSortingGameOnInput on key [1]
-         * switch to StartAnimationOnInput   on key [2]
-         * change skybox                     on key [3],[4],[5]
+         * change skybox                     on key [F1],[F2],[F3]
          * toggle sunlight                   on key [L]
          */
         private void HandleKeyInput()
@@ -237,31 +227,22 @@ namespace Maroon.Experiments.PlanetarySystem
                 {
                     switch (keyCode)
                     {
-                        case KeyCode.F1:
-                            StartSortingGameOnInput();
-                            ClearTrajectories();
-                            break;
-
-                        case KeyCode.F2:
-                            StartAnimationOnInput();
-                            break;
-
                         case KeyCode.L:
                             sunLight.gameObject.SetActive(!sunLight.gameObject.activeSelf);
                             // Sync the toggle button state with sunLight's state
                             toggleSunLight.isOn = sunLight.gameObject.activeSelf;
                             break;
 
+                        case KeyCode.F1:
+                            RenderSettings.skybox = skyboxes[0];
+                            break;
+
+                        case KeyCode.F2:
+                            RenderSettings.skybox = skyboxes[1];
+                            break;
+
                         case KeyCode.F3:
-                            RenderSettings.skybox = skyboxBlack;
-                            break;
-
-                        case KeyCode.F4:
-                            RenderSettings.skybox = skyboxDiverseSpace;
-                            break;
-
-                        case KeyCode.F5:
-                            RenderSettings.skybox = skyboxStars;
+                            RenderSettings.skybox = skyboxes[2];
                             break;
 
                         default:
@@ -556,7 +537,7 @@ namespace Maroon.Experiments.PlanetarySystem
          */
         private void SetSkybox()
         {
-            RenderSettings.skybox = skyboxStars;
+            RenderSettings.skybox = skyboxes[0];
         }
 
 
@@ -1001,19 +982,7 @@ namespace Maroon.Experiments.PlanetarySystem
         public void UIToggle(bool isOn, int index)
         {
             //Debug.Log(planets[index].name + " checkbox: " + !isOn);
-
             planets[index].SetActive(!isOn);
-
-            if (index == 0)
-            {
-                sunHalo.enabled = !isOn;
-            }
-
-            if (index == 6)
-            {
-                saturn_ring_1.SetActive(!isOn);
-                saturn_ring_2.SetActive(!isOn);
-            }
 
             ToggleTrajectory(index, !isOn);
             planetToggles[index].isOn = isOn;
@@ -1114,7 +1083,7 @@ namespace Maroon.Experiments.PlanetarySystem
             LeaveAnimation();
 
             SortingMinigame.SetActive(true);
-            UIToggleSGRotation(false);
+            UIToggleSGRotation(true);
             StartCoroutine(LerpCameraStartSortingGame());
 
             //ResetSortingGame();
