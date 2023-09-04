@@ -4,45 +4,50 @@ using UnityEngine;
 
 public class RandomMovement : MonoBehaviour
 {
-    public Rigidbody rb;
+    //public Rigidbody rb;
+
+    //Move on Y axis
+    private float frequency = 0.07f;
 
     //[SerializeField] private float speed = 0.1f;
-    private float speed = 0.001f;
-    private float timer = 0.0f;
+    // Position Storage Variables
+    Vector3 posOffset = new Vector3();
+    Vector3 tempPos = new Vector3();
 
     // Start is called before the first frame update
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        rb.AddForce(speed, speed, speed, ForceMode.Impulse);
-
-
+        //rb = GetComponent<Rigidbody>();
+        posOffset = transform.position;
     }
 
     // Update is called once per frame
     void Update()
     {
-        timer = timer + Time.deltaTime;
-        Debug.Log("timer: " + timer);
-        if( (timer > 3) && (timer <= 6) )
-        {
-            //rb.transform.position = new Vector3(transform.position.x - speed, transform.position.y - speed, transform.position.z - speed);
-            //timer = 0.0f;
-           
-            rb.AddForce(-speed, -speed, -speed, ForceMode.Impulse);
-        }
-        else
-        {
-            //rb.transform.position = new Vector3(transform.position.x + speed, transform.position.y + speed, transform.position.z + speed);
-            rb.AddForce(speed, speed, speed, ForceMode.Impulse);
-            
-        }
+        // Float up/down with a Sin()
+        tempPos = posOffset;
+        tempPos.y += Mathf.Sin(Time.fixedTime * frequency) / 2;// * amplitude;
 
-        if( timer > 6)
-        {
-            timer = 0.0f;
-        }
+        transform.position = tempPos;
 
+
+        Debug.Log("Status:\n" + tempPos.y);
     }
+
+    void FixedUpdate()
+    {
+        // Float up/down with a Sin()
+        tempPos = posOffset;
+        tempPos.y += Mathf.Sin(Time.fixedTime * frequency) / 2;// * amplitude;
+
+        transform.position = tempPos;
+
+
+        Debug.Log("Status2:\n" + tempPos.y);
+    }
+
+
+
+
 
 }
