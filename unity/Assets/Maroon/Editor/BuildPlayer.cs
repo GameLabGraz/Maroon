@@ -81,7 +81,7 @@ namespace Maroon.Build
         [MenuItem("Build/Standalone Experiments/PC VR")]
         public static void BuildExperimentsVR()
         {
-            BuildStandaloneExperiments(MaroonBuildTarget.MAC);
+            BuildStandaloneExperiments(MaroonBuildTarget.VR);
         }
 
         [MenuItem("Build/Standalone Experiments/Mac")]
@@ -236,26 +236,27 @@ namespace Maroon.Build
             SetPlayerSettings(defaultPlayerSettings);
         }
         
-        public static void JenkinsBuild()
+
+        // called by github actions workflow
+        public static void ActionsBuild()
         {
             var args = Environment.GetCommandLineArgs();
 
-            var executeMethodIndex = Array.IndexOf(args, "-executeMethod");
-            if (executeMethodIndex + 2 >= args.Length)
-            {
-                Log("[JenkinsBuild] Incorrect Parameters for -executeMethod Format: -executeMethod <output dir>");
-                return;
-            }
+            // array of build targets
+            MaroonBuildTarget[] targets = {
+                MaroonBuildTarget.PC,
+                MaroonBuildTarget.VR,
+                MaroonBuildTarget.WebGL
+            };
+            
+            // usage: -maroonBuildPath /path/to/build/dir -maroonBuildTarget (WebGL/PC/VR)
+            // path is relative to project dir (./unity)
 
-            //  args[executeMethodIndex + 1] = JenkinsBuild.Build
-            var buildPath = args[executeMethodIndex + 2];
+            // extract path and build target from commandline arguments
+            var maroonBuildPath = args[Array.IndexOf(args, "-maroonBuildPath") + 1];
+            var maroonBuildTarget = (MaroonBuildTarget)Enum.Parse(typeof(MaroonBuildTarget), args[Array.IndexOf(args, "-maroonBuildTarget") + 1]);
 
-            // run build for each build target
-            foreach(var buildTarget in (MaroonBuildTarget[])Enum.GetValues(typeof(MaroonBuildTarget)))
-            {
-                BuildConventionalMaroon(buildTarget, $"{buildPath}/Laboratory");
-                BuildStandaloneExperiments(buildTarget, $"{buildPath}/Experiments");
-            }
+            BuildConventionalMaroon(maroonBuildTarget, maroonBuildPath);
         }
 
         // #############################################################################################################
@@ -360,6 +361,7 @@ namespace Maroon.Build
             {
                 case BuildResult.Succeeded:
                     Log($"Build succeeded: {summary.totalSize} bytes");
+                    Log($"Saved build to: {summary.outputPath}");
                     break;
                 case BuildResult.Failed:
                     Log("Build failed!");
