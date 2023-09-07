@@ -35,6 +35,10 @@ namespace Maroon.Physics
         toggleMeasurementBoxes(value);
       }
     }
+    
+    MeasurableObject currentMeasurableObject;
+    public List<MeasurableObject> measurableObjects;
+
 
 
     private void Awake()
@@ -44,6 +48,7 @@ namespace Maroon.Physics
         Instance = this;
       }
       calculateFluidDensity();
+      getAllMeasurableObjects();
     }
 
     void calculateFluidDensity()
@@ -73,6 +78,18 @@ namespace Maroon.Physics
     public void toggleMeasurementMode()
     {
       MeasurementMode = !MeasurementMode;
+    }
+
+    void getAllMeasurableObjects()
+    {
+      Object[] foundObjects = Object.FindObjectsOfType<MeasurableObject>();
+
+      measurableObjects = new List<MeasurableObject>();
+
+      foreach (Object obj in foundObjects)
+      {
+        measurableObjects.Add(obj as MeasurableObject);
+      }
     }
 
 

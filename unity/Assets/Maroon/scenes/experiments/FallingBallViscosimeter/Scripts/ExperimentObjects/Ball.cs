@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Maroon.Physics
 {
-  public class Ball : PausableObject, IResetObject, IWeighableObject
+  public class Ball : PausableObject, IResetObject
   {
     //ball variables
     private Vector3 start_position_;
