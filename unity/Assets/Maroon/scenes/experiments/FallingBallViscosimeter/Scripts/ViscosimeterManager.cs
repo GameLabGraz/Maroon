@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 namespace Maroon.Physics
 {
@@ -8,6 +9,8 @@ namespace Maroon.Physics
   {
     public static ViscosimeterManager Instance;
     
+    public TMP_Text debug_text;
+
     public Ball ball;
     public Pycnometer pycnometer;
 
@@ -102,6 +105,14 @@ namespace Maroon.Physics
     // Update is called once per frame
     void Update()
     {
+      update_debug_text();
+    }
+
+    void update_debug_text()
+    {
+      float ball_velocity = ball.GetComponent<Rigidbody>().velocity.y;
+
+      debug_text.text = "Ball Velocity:\n" + ball_velocity;
       
     }
   }

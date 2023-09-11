@@ -10,18 +10,24 @@ public class DragDrop : MonoBehaviour
 
   public DragEndedDelegate dragEndedCallback;
 
-
-  public Vector3 worldPosition;
-  Plane plane = new Plane(new Vector3(0,0,-1), new Vector3(0,0,2));
-
+  public bool snap = true;
+  public Vector3 planePosition;
+  private Vector3 worldPosition;
+  Plane plane;
   private bool isDragged = false;
   public SnapPoint snapPoint = null;
 
+  private void Awake() {
+    plane = new Plane(new Vector3(0,0,-1), planePosition);
+  }
   private void OnMouseDown() 
   {
     isDragged = true;
-    snapPoint.currentObject = null;
-    snapPoint = null;
+    if(snap && snapPoint)
+    {
+      snapPoint.currentObject = null;
+      snapPoint = null;
+    }
   }
 
   private void OnMouseDrag()
@@ -41,7 +47,10 @@ public class DragDrop : MonoBehaviour
   private void OnMouseUp()
   {
     isDragged = false;
-    dragEndedCallback(this);
+    if(snap)
+    {
+      dragEndedCallback(this);
+    }
   }
 
 }
