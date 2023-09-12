@@ -9,7 +9,7 @@ public class DragManager : MonoBehaviour
     public TextMeshProUGUI IpText;
 
     public DragObject currentObject;
-    //public List<DragObject> dragObjects;
+    public List<DragObject> dragObjects;
     public List<DragSlot> slots;
 
     DragSlot lastCheckedSlot = null;
@@ -23,8 +23,8 @@ public class DragManager : MonoBehaviour
         //IpText.text = NewIpAddress();
         source_ = NewIpAddress();
         destination_ = NewIpAddress();
-        currentObject.Text.text = source_;
-
+        //currentObject.Text.text = source_;
+        dragObjects[0].Text.text = source_;
         //Show nothing at the beginning
         IpText.text = "";
         //Restart();
