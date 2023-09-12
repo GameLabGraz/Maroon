@@ -9,22 +9,25 @@ public class DragManager : MonoBehaviour
     public TextMeshProUGUI IpText;
 
     public DragObject currentObject;
-    public List<DragObject> dragObjects;
+    //public List<DragObject> dragObjects;
     public List<DragSlot> slots;
 
     DragSlot lastCheckedSlot = null;
 
-    string ip = "";
-    
-    public List<string> fixedIpList0 = new List<string>();
-    public List<string> fixedIpList1 = new List<string>();
-    public List<string> fixedIpList2 = new List<string>();
-    public List<string> fixedIpList3 = new List<string>(); 
+    string source_ = "";
+    string destination_ = "";
+
 
     private void Start()
     {
+        //IpText.text = NewIpAddress();
+        source_ = NewIpAddress();
+        destination_ = NewIpAddress();
+        currentObject.Text.text = source_;
+
+        //Show nothing at the beginning
         IpText.text = "";
-        Restart();
+        //Restart();
     }
 
     public void Check(VRSnapDropZone zone)
@@ -65,100 +68,25 @@ public class DragManager : MonoBehaviour
 
     public void Restart()
     {
+        //Reset terminal field
         IpText.text = "";
 
-        List<DragObject> shuffled = new List<DragObject>();
-        while (shuffled.Count < dragObjects.Count)
-        {
-            int r = Random.Range(0, dragObjects.Count);
-            if (!shuffled.Contains(dragObjects[r]))
-            {
-                shuffled.Add(dragObjects[r]);
-            }
-        }
+        //Assign new values
+        source_ = NewIpAddress();
+        destination_ = NewIpAddress();
 
-        int chosenList = Random.Range(0, 4);
-        List<string> chosenFixedIpList = null;
-        switch(chosenList)
-        {
-            case 0:
-                chosenFixedIpList = fixedIpList0;
-                break;
-            case 1:
-                chosenFixedIpList = fixedIpList1;
-                break;
-            case 2:
-                chosenFixedIpList = fixedIpList2;
-                break;
-            case 3:
-                chosenFixedIpList = fixedIpList3;
-                break;
-        }
-        //because first 3 elements in list are correct
-        
-        /*
-        for (int i = 0; i < shuffled.Count; ++i)
-        {
-            if (i == 0)
-            {
-                ip = chosenFixedIpList[i];
-            }
-            shuffled[i].Text.text = chosenFixedIpList[i];
-            if (i < 3)
-            {
-                shuffled[i].slot = slots[i];
-            } else
-            {
-                shuffled[i].slot = null;
-            }
-        }*/
-
-        for (int i = 0; i < shuffled.Count; ++i)
-        {
-            string generatedIP = "";
-            if (i < 3)
-            {
-                if (i == 0)
-                {
-                    ip = chosenFixedIpList[i];
-                    //generatedIP = make correct for source
-                    generatedIP = "correctSource";
-                }
-                else if (i == 1)
-                {
-                    //generatedIP = make correct for destination
-                }
-                else if (i == 2)
-                {
-                    //generatedIP = make correct for interface
-                }
-                shuffled[i].Text.text = generatedIP;
-                shuffled[i].slot = slots[i];
-            }
-            else
-            {
-                //put anything here in ip
-                generatedIP = NewIpAddress();
-                shuffled[i].slot = null;
-                shuffled[i].Text.text = generatedIP;
-            }
-        }
-
-        for (int i = 0; i < slots.Count; ++i)
-        {
-            slots[i].Restart();
-        }
+        //reset postion
     }
 
     string NewIpAddress()
     {
-       // string x = Random.Range(100,200) + "." + Random
-        string s = "192.168.0.1";
-        return s;
+        string new_ip = Random.Range(1, 254) + "." + Random.Range(1, 254) + "." + Random.Range(1, 254) + "." + Random.Range(1, 254);
+       
+        return new_ip;
     }
 
     public void ShowIP()
     {
-        IpText.text = ip;
+        IpText.text = source_;
     }
 }

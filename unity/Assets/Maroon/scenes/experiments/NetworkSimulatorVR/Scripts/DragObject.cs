@@ -16,6 +16,7 @@ public class DragObject : MonoBehaviour
 
     private void Start()
     {
+        
         startPos = transform.position;
     }
 
