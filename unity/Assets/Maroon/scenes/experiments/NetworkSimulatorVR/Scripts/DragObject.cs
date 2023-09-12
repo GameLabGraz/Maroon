@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class DragObject : MonoBehaviour
 {
+    public TextMeshPro Text;
     public bool goingToStartPosition = false;
     public DragSlot slot;
 

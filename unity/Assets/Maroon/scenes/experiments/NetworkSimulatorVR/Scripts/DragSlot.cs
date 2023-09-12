@@ -6,6 +6,10 @@ using UnityEngine.Events;
 
 public class DragSlot : MonoBehaviour
 {
+    public DragManager Manager;
+
+    public VRSnapDropZone snapZone;
+
     public GameObject HighlighBackground;
     public GameObject DefaultBackground;
     public GameObject CorrectBackground;
@@ -71,6 +75,20 @@ public class DragSlot : MonoBehaviour
         CorrectBackground.SetActive(false);
         DefaultBackground.SetActive(true);
         HighlighBackground.SetActive(false);
+        objectInSlot = null;
+    }
+
+    public void Restart()
+    {
+        WrongBackground.SetActive(false);
+        CorrectBackground.SetActive(false);
+        DefaultBackground.SetActive(true);
+        HighlighBackground.SetActive(false);
+        snapZone.snappedObject = null;
+        if (objectInSlot != null)
+        {
+            objectInSlot.SendToStartPosition();
+        }
         objectInSlot = null;
     }
 }
