@@ -92,7 +92,6 @@ public class DragManager : MonoBehaviour
     //Gateway: 10.x.x.1
     string SourceIpAddress()
     {
-
         int octect2 = Random.Range(0, 255);
         int octect3 = Random.Range(0, 255);
         int octect4 = Random.Range(2, 254);

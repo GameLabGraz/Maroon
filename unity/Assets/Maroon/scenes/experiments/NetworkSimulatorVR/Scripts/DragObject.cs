@@ -9,7 +9,7 @@ public class DragObject : MonoBehaviour
     public bool goingToStartPosition = false;
     public DragSlot slot;
 
-    public float lerpSpeed = 2f;
+    public float lerpSpeed = 1f;
 
     Vector3 startPos;
     bool waitOneFrame = false;

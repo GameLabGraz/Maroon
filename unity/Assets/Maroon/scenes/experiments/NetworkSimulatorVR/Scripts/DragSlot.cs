@@ -20,7 +20,6 @@ public class DragSlot : MonoBehaviour
     [Space(10)]
     public UnityEvent unsnapEvent;
 
-
     public VRSnapDropZone snapDropZone;
 
     public DragObject objectInSlot = null;
