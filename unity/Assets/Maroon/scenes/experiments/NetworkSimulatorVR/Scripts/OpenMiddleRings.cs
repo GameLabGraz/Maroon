@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class OpenMiddleRings : MonoBehaviour
 {
@@ -20,6 +21,9 @@ public class OpenMiddleRings : MonoBehaviour
     public float speed = 0.01f;
 
 
+    public UnityEvent animate;
+  
+
     Vector3 r1_position;
     Vector3 r1_end_position;
 
@@ -29,6 +33,7 @@ public class OpenMiddleRings : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
         r1_position = ring_to_move_up.transform.position;
         r1_end_position = pos_to_move_up.transform.position;
 
@@ -43,16 +48,22 @@ public class OpenMiddleRings : MonoBehaviour
              (destination.destination_snapped == true) &&
              (gateway.gateway_snapped == true))
         {
-            openMiddle();
+            ring_to_move_up.SetActive(true);
+            
         }
     }
 
 
-    private void openMiddle()
+    public void openMiddle()
     {//transform.position = Vector3.Lerp(transform.position, startPos, lerpSpeed * Time.deltaTime);
 
         ring_to_move_up.transform.position = Vector3.Lerp(r1_position, r1_end_position, speed * Time.deltaTime);
         ring_to_move_down.transform.position = Vector3.Lerp(r2_position, r2_end_position, speed * Time.deltaTime);
+    }
+
+    public void playAnimation()
+    {
+
     }
 
 
