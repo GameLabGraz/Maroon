@@ -7,6 +7,7 @@ using TMPro;
 public class DragManager : MonoBehaviour
 {
     public TextMeshProUGUI IpText;
+    public TextMeshProUGUI gateway;
 
     public DragObject currentObject;
     public List<DragObject> dragObjects;
@@ -19,10 +20,14 @@ public class DragManager : MonoBehaviour
     {
         
         dragObjects[0].Text.text = SourceIpAddress();
-        dragObjects[1].Text.text = DestinationIpAddress(); 
+        dragObjects[1].Text.text = DestinationIpAddress();
+       
+        //Gateways set in SourceIPAddress();
+
         //Show nothing at the beginning
         IpText.text = "";
-        //Restart();
+        gateway.text = "";
+
     }
 
     public void Check(VRSnapDropZone zone)
@@ -65,6 +70,7 @@ public class DragManager : MonoBehaviour
     {
         //Reset terminal field
         IpText.text = "";
+        gateway.text = "";
 
         // Assign new addresses
         dragObjects[0].Text.text = SourceIpAddress();
@@ -83,11 +89,20 @@ public class DragManager : MonoBehaviour
 
     //Private Range A:
     // 10.0.0.1 to 10.255.255.254
+    //Gateway: 10.x.x.1
     string SourceIpAddress()
     {
-        
-        string new_ip = "10." + Random.Range(10, 255) + "." + Random.Range(10, 255) + "." + Random.Range(10, 254);
-       
+
+        int octect2 = Random.Range(0, 255);
+        int octect3 = Random.Range(0, 255);
+        int octect4 = Random.Range(2, 254);
+
+        //Set gateway
+        dragObjects[2].Text.text = "10." + octect2 + "." + octect3 + "." + "1";
+
+        //Set IP
+        string new_ip = "10." + octect2 + "." + octect3 + "." + octect4;
+
         return new_ip;
     }
 
@@ -95,13 +110,14 @@ public class DragManager : MonoBehaviour
     // 172.16.0.0 to 172.31.255.255
     string DestinationIpAddress()
     {
-        string new_ip = "172." + Random.Range(16, 31) + "." + Random.Range(0, 255) + "." + Random.Range(0, 254);
+        string new_ip = "172." + Random.Range(16, 31) + "." + Random.Range(0, 255) + "." + Random.Range(0, 253);
 
         return new_ip;
     }
 
     public void ShowIP()
     {
-        IpText.text = dragObjects[0].Text.text;
+        IpText.text = "IP: " + dragObjects[0].Text.text;
+        gateway.text = "Gateway: " + dragObjects[2].Text.text;
     }
 }
