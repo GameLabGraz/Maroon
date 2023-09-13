@@ -55,14 +55,19 @@ public class DragSlot : MonoBehaviour
                     CorrectBackground.SetActive(true);
                     WrongBackground.SetActive(false);
                     correctSnap.Invoke();
+
+                    
                 }
                 else
                 {
                     CorrectBackground.SetActive(false);
                     WrongBackground.SetActive(true);
                     wrongSnap.Invoke();
+
+                   
                 }
                 objectInSlot = dragObject;
+
             }
         }
         HighlighBackground.SetActive(false);

@@ -117,7 +117,7 @@ public class DragManager : MonoBehaviour
 
     public void ShowIP()
     {
-        IpText.text = "IP: " + dragObjects[0].Text.text;
+        IpText.text = "IPv4: " + dragObjects[0].Text.text;
         gateway.text = "Gateway: " + dragObjects[2].Text.text;
     }
 }
