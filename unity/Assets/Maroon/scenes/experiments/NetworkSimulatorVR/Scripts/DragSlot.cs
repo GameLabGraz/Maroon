@@ -55,7 +55,27 @@ public class DragSlot : MonoBehaviour
                     WrongBackground.SetActive(false);
                     correctSnap.Invoke();
 
-                    
+
+                    if (dragObject.name == "Source")
+                    {
+                        Debug.Log("snapped: " + dragObject.name);
+                        dragObject.source_snapped = true;
+
+                    }
+
+                    if (dragObject.name == "Destination")
+                    {
+                        Debug.Log("snapped: " + dragObject.name);
+                        dragObject.destination_snapped = true;
+
+                    }
+                    if (dragObject.name == "Gateway")
+                    {
+                        Debug.Log("snapped: " + dragObject.name);
+                        dragObject.gateway_snapped = true;
+
+                    }
+
                 }
                 else
                 {
@@ -74,7 +94,29 @@ public class DragSlot : MonoBehaviour
 
     public void UnleashUnsnapEvent()
     {
+        if (objectInSlot.name == "Source")
+        {
+            Debug.Log("UNsnapped: " + objectInSlot.name);
+            objectInSlot.source_snapped = false;
+            
+        }
+
+        if (objectInSlot.name == "Destination")
+        {
+            Debug.Log("UNsnapped: " + objectInSlot.name);
+            objectInSlot.destination_snapped = false;
+
+        }
+        if (objectInSlot.name == "Gateway")
+        {
+            Debug.Log("UNsnapped: " + objectInSlot.name);
+            objectInSlot.gateway_snapped = false;
+
+        }
+
         unsnapEvent.Invoke();
+        
+        
         WrongBackground.SetActive(false);
         CorrectBackground.SetActive(false);
         DefaultBackground.SetActive(true);

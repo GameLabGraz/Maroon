@@ -9,6 +9,10 @@ public class DragObject : MonoBehaviour
     public bool goingToStartPosition = false;
     public DragSlot slot;
 
+    public bool source_snapped = false;
+    public bool destination_snapped = false;
+    public bool gateway_snapped = false;
+
     public float lerpSpeed = 1f;
 
     Vector3 startPos;

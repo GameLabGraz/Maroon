@@ -2132,6 +2132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 433740442}
+  - component: {fileID: 433740443}
   m_Layer: 12
   m_Name: HorizonatalRings
   m_TagString: Untagged
@@ -2157,6 +2158,26 @@ Transform:
   m_Father: {fileID: 1775394673}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &433740443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 433740441}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 360c9a8c54fbbf34b8c9f2efd145fc85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  source: {fileID: 1822385506}
+  destination: {fileID: 1517405796}
+  gateway: {fileID: 671782615}
+  ring_to_move_up: {fileID: 1458000235}
+  pos_to_move_up: {fileID: 812469266}
+  ring_to_move_down: {fileID: 2142865909}
+  pos_to_move_down: {fileID: 354201847}
+  speed: 0.1
 --- !u!114 &442443083 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5422565182975029356, guid: 31a6116c7cb92304fae6c40f09b2d852,
@@ -3202,6 +3223,9 @@ MonoBehaviour:
   Text: {fileID: 50081874}
   goingToStartPosition: 0
   slot: {fileID: 2132117235}
+  source_snapped: 0
+  destination_snapped: 0
+  gateway_snapped: 0
   lerpSpeed: 1
 --- !u!114 &671782616
 MonoBehaviour:
@@ -6440,6 +6464,9 @@ MonoBehaviour:
   Text: {fileID: 570322217}
   goingToStartPosition: 0
   slot: {fileID: 1849449461}
+  source_snapped: 0
+  destination_snapped: 0
+  gateway_snapped: 0
   lerpSpeed: 1
 --- !u!4 &1526573158 stripped
 Transform:
@@ -16975,6 +17002,9 @@ MonoBehaviour:
   Text: {fileID: 1173809944}
   goingToStartPosition: 0
   slot: {fileID: 345259611}
+  source_snapped: 0
+  destination_snapped: 0
+  gateway_snapped: 0
   lerpSpeed: 1
 --- !u!1 &1849449459
 GameObject:
