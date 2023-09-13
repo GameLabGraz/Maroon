@@ -13,18 +13,13 @@ public class DragManager : MonoBehaviour
     public List<DragSlot> slots;
 
     DragSlot lastCheckedSlot = null;
-
-    string source_ = "";
-    string destination_ = "";
-
+   
 
     private void Start()
     {
-        //IpText.text = NewIpAddress();
-        source_ = NewIpAddress();
-        destination_ = NewIpAddress();
-        //currentObject.Text.text = source_;
-        dragObjects[0].Text.text = source_;
+        
+        dragObjects[0].Text.text = SourceIpAddress();
+        dragObjects[1].Text.text = DestinationIpAddress(); 
         //Show nothing at the beginning
         IpText.text = "";
         //Restart();
@@ -71,22 +66,42 @@ public class DragManager : MonoBehaviour
         //Reset terminal field
         IpText.text = "";
 
-        //Assign new values
-        source_ = NewIpAddress();
-        destination_ = NewIpAddress();
+        // Assign new addresses
+        dragObjects[0].Text.text = SourceIpAddress();
+        dragObjects[1].Text.text = DestinationIpAddress();
 
-        //reset postion
+        // Reset object position
+        dragObjects[0].slot.Restart();
+        dragObjects[1].slot.Restart();
+        dragObjects[2].slot.Restart();
+
+        // Reset slots
+        slots[0].UnleashUnsnapEvent();
+        slots[1].UnleashUnsnapEvent();
+        slots[2].UnleashUnsnapEvent();
     }
 
-    string NewIpAddress()
+    //Private Range A:
+    // 10.0.0.1 to 10.255.255.254
+    string SourceIpAddress()
     {
-        string new_ip = Random.Range(1, 254) + "." + Random.Range(1, 254) + "." + Random.Range(1, 254) + "." + Random.Range(1, 254);
+        
+        string new_ip = "10." + Random.Range(10, 255) + "." + Random.Range(10, 255) + "." + Random.Range(10, 254);
        
+        return new_ip;
+    }
+
+    //Private Range B
+    // 172.16.0.0 to 172.31.255.255
+    string DestinationIpAddress()
+    {
+        string new_ip = "172." + Random.Range(16, 31) + "." + Random.Range(0, 255) + "." + Random.Range(0, 254);
+
         return new_ip;
     }
 
     public void ShowIP()
     {
-        IpText.text = source_;
+        IpText.text = dragObjects[0].Text.text;
     }
 }
