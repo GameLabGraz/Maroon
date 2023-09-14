@@ -10,61 +10,34 @@ public class OpenMiddleRings : MonoBehaviour
     public DragObject destination;
     public DragObject gateway;
 
-    // Objects to move
-    public GameObject ring_to_move_up;
-    public GameObject pos_to_move_up;
-
-
-    public GameObject ring_to_move_down;
-    public GameObject pos_to_move_down;
-
-    public float speed = 0.01f;
-
-
     public UnityEvent animate;
-  
+    public UnityEvent stop_animation;
 
-    Vector3 r1_position;
-    Vector3 r1_end_position;
-
-    Vector3 r2_position;
-    Vector3 r2_end_position;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-        r1_position = ring_to_move_up.transform.position;
-        r1_end_position = pos_to_move_up.transform.position;
-
-        r2_position = ring_to_move_down.transform.position;
-        r2_end_position = pos_to_move_down.transform.position;
-    }
+    Animator anim;
 
     // Update is called once per frame
+
+    private void Start()
+    {
+        anim = GetComponent<Animator>();
+    }
     void Update()
     {
         if ( (source.source_snapped == true) &&
              (destination.destination_snapped == true) &&
              (gateway.gateway_snapped == true))
         {
-            ring_to_move_up.SetActive(true);
-            
+            Debug.Log("here it is");
+            anim.SetTrigger("trOpen");
+
+        }
+        else
+        {
+
+            anim.SetTrigger("trClose");
         }
     }
 
-
-    public void openMiddle()
-    {//transform.position = Vector3.Lerp(transform.position, startPos, lerpSpeed * Time.deltaTime);
-
-        ring_to_move_up.transform.position = Vector3.Lerp(r1_position, r1_end_position, speed * Time.deltaTime);
-        ring_to_move_down.transform.position = Vector3.Lerp(r2_position, r2_end_position, speed * Time.deltaTime);
-    }
-
-    public void playAnimation()
-    {
-
-    }
 
 
 }
