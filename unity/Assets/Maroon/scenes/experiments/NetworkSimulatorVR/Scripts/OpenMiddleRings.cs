@@ -29,6 +29,7 @@ public class OpenMiddleRings : MonoBehaviour
         {
             Debug.Log("here it is");
             anim.SetTrigger("trOpen");
+            anim.SetTrigger("trShowTable");
 
         }
         else
