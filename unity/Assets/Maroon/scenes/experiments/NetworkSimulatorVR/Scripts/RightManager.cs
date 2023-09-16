@@ -4,14 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class DragManager : MonoBehaviour
+public class RightManager : MonoBehaviour
 {
-    public TextMeshProUGUI IpText;
-    public TextMeshProUGUI gateway;
-    public TextMeshProUGUI target;
-    public TextMeshProUGUI hop;
-
+    public DragObject sourceL;
+    public DragObject destinationL;
+    public DragObject gatewayL;
     public DragObject currentObject;
+
     public List<DragObject> dragObjects;
     public List<DragSlot> slots;
 
@@ -20,15 +19,11 @@ public class DragManager : MonoBehaviour
     private int random_value_check;
     private void Start()
     {
-        
+
         dragObjects[0].Text.text = SourceIpAddress();
         dragObjects[1].Text.text = DestinationIpAddress();
-       
-        //Gateways set in SourceIPAddress();
 
-        //Show nothing at the beginning
-        IpText.text = "";
-        gateway.text = "";
+        //Gateways set in SourceIPAddress();
 
     }
 
@@ -70,11 +65,6 @@ public class DragManager : MonoBehaviour
 
     public void Restart()
     {
-        //Reset terminal field
-        IpText.text = "";
-        gateway.text = "";
-        target.text = "";
-        hop.text = "";
 
         // Assign new addresses
         dragObjects[0].Text.text = SourceIpAddress();
@@ -98,7 +88,7 @@ public class DragManager : MonoBehaviour
     // Gateway: x.x.x.1
     string SourceIpAddress()
     {
-        int octet1, octet2, octet3,octet4;
+        int octet1, octet2, octet3, octet4;
 
         //Select address range on random
         int random = Random.Range(1, 3);
@@ -155,9 +145,9 @@ public class DragManager : MonoBehaviour
 
         //Check if the random is free,
         // otherwise assign new value
-        if(random_value_check == random)
+        if (random_value_check == random)
         {
-            if(random_value_check == 1)
+            if (random_value_check == 1)
             {
                 random = Random.Range(2, 3);
             }
@@ -202,18 +192,13 @@ public class DragManager : MonoBehaviour
         //Set IP
         string new_ip = octet1 + "." + octet2 + "." + octet3 + "." + octet4;
 
-        //Routing table informations
-        target.text = new_ip;
-        hop.text = octet1 + "." + octet2 + "." + octet3 + "." + "1";
- 
 
         return new_ip;
     }
 
     public void ShowIP()
     {
-        IpText.text = "IPv4: " + dragObjects[0].Text.text;
-        gateway.text = "Gateway: " + dragObjects[2].Text.text;
+
 
     }
 }

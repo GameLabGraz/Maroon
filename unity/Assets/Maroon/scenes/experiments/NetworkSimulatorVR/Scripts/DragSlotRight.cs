@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class DragSlot : MonoBehaviour
+public class DragSlotRight : MonoBehaviour
 {
     public LeftManager Manager;
 
@@ -83,7 +83,7 @@ public class DragSlot : MonoBehaviour
                     WrongBackground.SetActive(true);
                     wrongSnap.Invoke();
 
-                   
+
                 }
                 objectInSlot = dragObject;
 
@@ -98,7 +98,7 @@ public class DragSlot : MonoBehaviour
         {
             Debug.Log("UNsnapped: " + objectInSlot.name);
             objectInSlot.source_snapped = false;
-            
+
         }
 
         if (objectInSlot.name == "Destination")
@@ -115,8 +115,8 @@ public class DragSlot : MonoBehaviour
         }
 
         unsnapEvent.Invoke();
-        
-        
+
+
         WrongBackground.SetActive(false);
         CorrectBackground.SetActive(false);
         DefaultBackground.SetActive(true);
