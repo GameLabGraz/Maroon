@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 public class DragSlotRight : MonoBehaviour
 {
-    public LeftManager Manager;
+    public RightManager Manager;
 
     public VRSnapDropZone snapZone;
 
@@ -14,6 +14,7 @@ public class DragSlotRight : MonoBehaviour
     public GameObject DefaultBackground;
     public GameObject CorrectBackground;
     public GameObject WrongBackground;
+    public GameObject LockedBackground;
 
     public UnityEvent correctSnap;
     public UnityEvent wrongSnap;
@@ -22,7 +23,9 @@ public class DragSlotRight : MonoBehaviour
 
     public VRSnapDropZone snapDropZone;
 
-    public DragObject objectInSlot = null;
+    public DragObjectRight objectInSlot = null;
+
+
 
     public void Check(bool isOk)
     {
@@ -37,6 +40,7 @@ public class DragSlotRight : MonoBehaviour
         }
     }
 
+
     public void OnSnapExit()
     {
         HighlighBackground.SetActive(false);
@@ -44,7 +48,7 @@ public class DragSlotRight : MonoBehaviour
 
     public void UnleashSnapEvent(VRSnapDropZone zone, GameObject gameObject)
     {
-        var dragObject = gameObject.GetComponent<DragObject>();
+        var dragObject = gameObject.GetComponent<DragObjectRight>();
         if (dragObject != null)
         {
             if (objectInSlot == null)
@@ -115,7 +119,6 @@ public class DragSlotRight : MonoBehaviour
         }
 
         unsnapEvent.Invoke();
-
 
         WrongBackground.SetActive(false);
         CorrectBackground.SetActive(false);

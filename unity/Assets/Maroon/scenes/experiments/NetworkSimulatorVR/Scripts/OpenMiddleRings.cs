@@ -10,11 +10,10 @@ public class OpenMiddleRings : MonoBehaviour
     public DragObject destination;
     public DragObject gateway;
 
-    public UnityEvent animate;
-    public UnityEvent stop_animation;
-
     Animator anim;
 
+    public UnityEvent stop_animation;
+    public UnityEvent start_animation;
     // Update is called once per frame
 
     private void Start()
@@ -27,6 +26,7 @@ public class OpenMiddleRings : MonoBehaviour
              (destination.destination_snapped == true) &&
              (gateway.gateway_snapped == true))
         {
+            stop_animation.Invoke();
             Debug.Log("here it is");
             anim.SetTrigger("trOpen");
             anim.SetTrigger("trShowTable");
@@ -36,6 +36,7 @@ public class OpenMiddleRings : MonoBehaviour
         {
 
             anim.SetTrigger("trClose");
+            start_animation.Invoke();
         }
     }
 
