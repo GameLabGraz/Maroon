@@ -56,20 +56,20 @@ public class DragSlot : MonoBehaviour
                     correctSnap.Invoke();
 
 
-                    if (dragObject.name == "Source")
+                    if (dragObject.name == "SourceL")
                     {
                         Debug.Log("snapped: " + dragObject.name);
                         dragObject.source_snapped = true;
 
                     }
 
-                    if (dragObject.name == "Destination")
+                    if (dragObject.name == "DestinationL")
                     {
                         Debug.Log("snapped: " + dragObject.name);
                         dragObject.destination_snapped = true;
 
                     }
-                    if (dragObject.name == "Gateway")
+                    if (dragObject.name == "GatewayL")
                     {
                         Debug.Log("snapped: " + dragObject.name);
                         dragObject.gateway_snapped = true;
@@ -94,20 +94,20 @@ public class DragSlot : MonoBehaviour
 
     public void UnleashUnsnapEvent()
     {
-        if (objectInSlot.name == "Source")
+        if (objectInSlot.name == "SourceL")
         {
             Debug.Log("UNsnapped: " + objectInSlot.name);
             objectInSlot.source_snapped = false;
             
         }
 
-        if (objectInSlot.name == "Destination")
+        if (objectInSlot.name == "DestinationL")
         {
             Debug.Log("UNsnapped: " + objectInSlot.name);
             objectInSlot.destination_snapped = false;
 
         }
-        if (objectInSlot.name == "Gateway")
+        if (objectInSlot.name == "GatewayL")
         {
             Debug.Log("UNsnapped: " + objectInSlot.name);
             objectInSlot.gateway_snapped = false;

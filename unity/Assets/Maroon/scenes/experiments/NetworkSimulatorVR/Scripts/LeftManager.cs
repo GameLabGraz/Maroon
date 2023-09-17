@@ -12,13 +12,15 @@ public class LeftManager : MonoBehaviour
     public TextMeshProUGUI hop;
 
     public DragObject currentObject;
+    
     public List<DragObject> dragObjects;
     public List<DragSlot> slots;
 
     DragSlot lastCheckedSlot = null;
 
     private int random_value_check;
-    private void Start()
+    
+    void Start()
     {
         
         dragObjects[0].Text.text = SourceIpAddress();
@@ -31,6 +33,7 @@ public class LeftManager : MonoBehaviour
         gateway.text = "";
 
     }
+
 
     public void Check(VRSnapDropZone zone)
     {
@@ -212,7 +215,7 @@ public class LeftManager : MonoBehaviour
 
     public void ShowIP()
     {
-        IpText.text = "IPv4: " + dragObjects[0].Text.text;
+        IpText.text = "IPv4:     " + dragObjects[0].Text.text;
         gateway.text = "Gateway: " + dragObjects[2].Text.text;
 
     }

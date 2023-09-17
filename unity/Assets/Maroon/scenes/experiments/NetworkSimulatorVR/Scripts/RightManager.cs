@@ -25,7 +25,7 @@ public class RightManager : MonoBehaviour
     public bool unlocked = false;
     public UnityEvent unlockGrid;
     public UnityEvent lockGrid;
-    private void Start()
+    void Start()
     {
         InactiveSource.SetActive(true);
         InactiveDestination.SetActive(true);
@@ -38,14 +38,14 @@ public class RightManager : MonoBehaviour
 
     }
 
-    private void Update()
+    void Update()
     {
-
+        
         if ( (sourceL.source_snapped == true) &&
              (destinationL.destination_snapped == true) &&
              (gatewayL.gateway_snapped == true) )
         {
-            Debug.Log("RM:::: True");
+            //Debug.Log("RM:::: True");
             unlockGrid.Invoke();
             unlocked = true;
         }

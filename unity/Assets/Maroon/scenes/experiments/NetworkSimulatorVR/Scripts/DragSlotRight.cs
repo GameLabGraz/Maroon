@@ -14,7 +14,7 @@ public class DragSlotRight : MonoBehaviour
     public GameObject DefaultBackground;
     public GameObject CorrectBackground;
     public GameObject WrongBackground;
-    public GameObject LockedBackground;
+    //public GameObject LockedBackground;
 
     public UnityEvent correctSnap;
     public UnityEvent wrongSnap;
@@ -60,20 +60,20 @@ public class DragSlotRight : MonoBehaviour
                     correctSnap.Invoke();
 
 
-                    if (dragObject.name == "Source")
+                    if (dragObject.name == "SourceR")
                     {
                         Debug.Log("snapped: " + dragObject.name);
                         dragObject.source_snapped = true;
 
                     }
 
-                    if (dragObject.name == "Destination")
+                    if (dragObject.name == "DestinationR")
                     {
                         Debug.Log("snapped: " + dragObject.name);
                         dragObject.destination_snapped = true;
 
                     }
-                    if (dragObject.name == "Gateway")
+                    if (dragObject.name == "GatewayR")
                     {
                         Debug.Log("snapped: " + dragObject.name);
                         dragObject.gateway_snapped = true;
@@ -98,20 +98,20 @@ public class DragSlotRight : MonoBehaviour
 
     public void UnleashUnsnapEvent()
     {
-        if (objectInSlot.name == "Source")
+        if (objectInSlot.name == "SourceR")
         {
             Debug.Log("UNsnapped: " + objectInSlot.name);
             objectInSlot.source_snapped = false;
 
         }
 
-        if (objectInSlot.name == "Destination")
+        if (objectInSlot.name == "DestinationR")
         {
             Debug.Log("UNsnapped: " + objectInSlot.name);
             objectInSlot.destination_snapped = false;
 
         }
-        if (objectInSlot.name == "Gateway")
+        if (objectInSlot.name == "GatewayR")
         {
             Debug.Log("UNsnapped: " + objectInSlot.name);
             objectInSlot.gateway_snapped = false;

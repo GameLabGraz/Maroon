@@ -27,7 +27,7 @@ public class OpenMiddleRings : MonoBehaviour
              (gateway.gateway_snapped == true))
         {
             stop_animation.Invoke();
-            Debug.Log("here it is");
+            //Debug.Log("here it is");
             anim.SetTrigger("trOpen");
             anim.SetTrigger("trShowTable");
 
