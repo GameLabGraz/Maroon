@@ -116,7 +116,6 @@ public class DragSlot : MonoBehaviour
 
         unsnapEvent.Invoke();
         
-        
         WrongBackground.SetActive(false);
         CorrectBackground.SetActive(false);
         DefaultBackground.SetActive(true);

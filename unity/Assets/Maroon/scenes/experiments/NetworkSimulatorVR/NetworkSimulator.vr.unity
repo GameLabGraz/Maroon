@@ -668,7 +668,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: <u>182.123.132.134
+  m_text: <u>Destination
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1504,7 +1504,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: <u>192.123.132.132
+  m_text: <u>Gateway
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -8049,6 +8049,12 @@ Transform:
   m_Father: {fileID: 1526573158}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &500726112 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5554034982663503242, guid: 31a6116c7cb92304fae6c40f09b2d852,
+    type: 3}
+  m_PrefabInstance: {fileID: 5607392173076656200}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &513219546
 GameObject:
   m_ObjectHideFlags: 0
@@ -8062,6 +8068,7 @@ GameObject:
   - component: {fileID: 513219549}
   - component: {fileID: 513219548}
   - component: {fileID: 513219551}
+  - component: {fileID: 513219552}
   m_Layer: 12
   m_Name: middle
   m_TagString: Untagged
@@ -8164,6 +8171,18 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &513219552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 513219546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6189af48ed334ec47b3856d82867dc92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &519567955
 GameObject:
   m_ObjectHideFlags: 0
@@ -8177,6 +8196,7 @@ GameObject:
   - component: {fileID: 519567959}
   - component: {fileID: 519567958}
   - component: {fileID: 519567957}
+  - component: {fileID: 519567961}
   m_Layer: 12
   m_Name: middle (1)
   m_TagString: Untagged
@@ -8279,6 +8299,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519567955}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &519567961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519567955}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6189af48ed334ec47b3856d82867dc92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &543492528
 GameObject:
   m_ObjectHideFlags: 0
@@ -10519,7 +10551,6 @@ MonoBehaviour:
   DefaultBackground: {fileID: 323739699}
   CorrectBackground: {fileID: 1391219712}
   WrongBackground: {fileID: 279635114}
-  LockedBackground: {fileID: 0}
   correctSnap:
     m_PersistentCalls:
       m_Calls:
@@ -10994,6 +11025,7 @@ MonoBehaviour:
   sourceL: {fileID: 1822385506}
   destinationL: {fileID: 1517405796}
   gatewayL: {fileID: 671782615}
+  hop: {fileID: 237563098}
   currentObject: {fileID: 0}
   dragObjects:
   - {fileID: 1958273957}
@@ -11790,7 +11822,6 @@ MonoBehaviour:
   DefaultBackground: {fileID: 117616097}
   CorrectBackground: {fileID: 68159733}
   WrongBackground: {fileID: 325186268}
-  LockedBackground: {fileID: 0}
   correctSnap:
     m_PersistentCalls:
       m_Calls:
@@ -12921,7 +12952,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1331198479
 RectTransform:
   m_ObjectHideFlags: 0
@@ -25186,13 +25217,13 @@ MonoBehaviour:
   onPickUp:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1594264856}
-        m_TargetAssemblyTypeName: DragManager, Maroon.Experiments.NetworkSimulatorVR
+      - m_Target: {fileID: 1153510505}
+        m_TargetAssemblyTypeName: RightManager, Maroon.Experiments.NetworkSimulatorVR
         m_MethodName: OnPickupObject
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: DragObject, Maroon.Experiments.NetworkSimulatorVR
+          m_ObjectArgument: {fileID: 1724274096}
+          m_ObjectArgumentAssemblyTypeName: DragObjectRight, Maroon.Experiments.NetworkSimulatorVR
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -25201,8 +25232,8 @@ MonoBehaviour:
   onDetachFromHand:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1594264856}
-        m_TargetAssemblyTypeName: DragManager, Maroon.Experiments.NetworkSimulatorVR
+      - m_Target: {fileID: 1153510505}
+        m_TargetAssemblyTypeName: RightManager, Maroon.Experiments.NetworkSimulatorVR
         m_MethodName: OnDetach
         m_Mode: 1
         m_Arguments:
@@ -25349,7 +25380,6 @@ MonoBehaviour:
   DefaultBackground: {fileID: 1881957022}
   CorrectBackground: {fileID: 1211611943}
   WrongBackground: {fileID: 1543758226}
-  LockedBackground: {fileID: 0}
   correctSnap:
     m_PersistentCalls:
       m_Calls:
@@ -25815,13 +25845,13 @@ MonoBehaviour:
   onPickUp:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1594264856}
-        m_TargetAssemblyTypeName: DragManager, Maroon.Experiments.NetworkSimulatorVR
+      - m_Target: {fileID: 1153510505}
+        m_TargetAssemblyTypeName: RightManager, Maroon.Experiments.NetworkSimulatorVR
         m_MethodName: OnPickupObject
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: DragObject, Maroon.Experiments.NetworkSimulatorVR
+          m_ObjectArgument: {fileID: 1757354703}
+          m_ObjectArgumentAssemblyTypeName: DragObjectRight, Maroon.Experiments.NetworkSimulatorVR
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -25830,8 +25860,8 @@ MonoBehaviour:
   onDetachFromHand:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1594264856}
-        m_TargetAssemblyTypeName: DragManager, Maroon.Experiments.NetworkSimulatorVR
+      - m_Target: {fileID: 1153510505}
+        m_TargetAssemblyTypeName: RightManager, Maroon.Experiments.NetworkSimulatorVR
         m_MethodName: OnDetach
         m_Mode: 1
         m_Arguments:
@@ -26268,7 +26298,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  restoreOriginalParent: 1
+  restoreOriginalParent: 0
   onPickUp:
     m_PersistentCalls:
       m_Calls:
@@ -27997,17 +28027,17 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  restoreOriginalParent: 1
+  restoreOriginalParent: 0
   onPickUp:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1594264856}
-        m_TargetAssemblyTypeName: DragManager, Maroon.Experiments.NetworkSimulatorVR
+      - m_Target: {fileID: 1153510505}
+        m_TargetAssemblyTypeName: RightManager, Maroon.Experiments.NetworkSimulatorVR
         m_MethodName: OnPickupObject
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: DragObject, Maroon.Experiments.NetworkSimulatorVR
+          m_ObjectArgument: {fileID: 1958273957}
+          m_ObjectArgumentAssemblyTypeName: DragObjectRight, Maroon.Experiments.NetworkSimulatorVR
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -28016,8 +28046,8 @@ MonoBehaviour:
   onDetachFromHand:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1594264856}
-        m_TargetAssemblyTypeName: DragManager, Maroon.Experiments.NetworkSimulatorVR
+      - m_Target: {fileID: 1153510505}
+        m_TargetAssemblyTypeName: RightManager, Maroon.Experiments.NetworkSimulatorVR
         m_MethodName: OnDetach
         m_Mode: 1
         m_Arguments:
@@ -45317,12 +45347,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
+      propertyPath: engaged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
       propertyPath: onButtonDown.m_PersistentCalls.m_Calls.Array.size
-      value: 3
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: onButtonIsPressed.m_PersistentCalls.m_Calls.Array.size
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
       propertyPath: onButtonDown.m_PersistentCalls.m_Calls.Array.data[2].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: onButtonDown.m_PersistentCalls.m_Calls.Array.data[3].m_Mode
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
@@ -45332,8 +45377,33 @@ PrefabInstance:
       objectReference: {fileID: 1594264856}
     - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
+      propertyPath: onButtonDown.m_PersistentCalls.m_Calls.Array.data[3].m_Target
+      value: 
+      objectReference: {fileID: 1153510505}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
       propertyPath: onButtonDown.m_PersistentCalls.m_Calls.Array.data[2].m_CallState
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: onButtonDown.m_PersistentCalls.m_Calls.Array.data[3].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: onButtonIsPressed.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: onButtonIsPressed.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: onButtonIsPressed.m_PersistentCalls.m_Calls.Array.data[2].m_Mode
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
@@ -45342,13 +45412,103 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
+      propertyPath: onButtonDown.m_PersistentCalls.m_Calls.Array.data[3].m_MethodName
+      value: Restart
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: onButtonIsPressed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1594264856}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: onButtonIsPressed.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1153510505}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: onButtonIsPressed.m_PersistentCalls.m_Calls.Array.data[2].m_Target
+      value: 
+      objectReference: {fileID: 500726112}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: onButtonIsPressed.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: onButtonIsPressed.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: onButtonIsPressed.m_PersistentCalls.m_Calls.Array.data[2].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: onButtonIsPressed.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Restart
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: onButtonIsPressed.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: Restart
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: onButtonIsPressed.m_PersistentCalls.m_Calls.Array.data[2].m_MethodName
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
       propertyPath: onButtonDown.m_PersistentCalls.m_Calls.Array.data[2].m_TargetAssemblyTypeName
       value: DragManager, Maroon.Experiments.NetworkSimulatorVR
       objectReference: {fileID: 0}
     - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
+      propertyPath: onButtonDown.m_PersistentCalls.m_Calls.Array.data[3].m_TargetAssemblyTypeName
+      value: RightManager, Maroon.Experiments.NetworkSimulatorVR
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: onButtonIsPressed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: LeftManager, Maroon.Experiments.NetworkSimulatorVR
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: onButtonIsPressed.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: RightManager, Maroon.Experiments.NetworkSimulatorVR
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: onButtonIsPressed.m_PersistentCalls.m_Calls.Array.data[2].m_TargetAssemblyTypeName
+      value: RightManager, Maroon.Experiments.NetworkSimulatorVR
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
       propertyPath: onButtonDown.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: onButtonDown.m_PersistentCalls.m_Calls.Array.data[3].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: onButtonIsPressed.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: onButtonIsPressed.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 5744290691119284954, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: onButtonIsPressed.m_PersistentCalls.m_Calls.Array.data[2].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 6214647540517105381, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}

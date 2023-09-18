@@ -10,6 +10,7 @@ public class RightManager : MonoBehaviour
     public DragObject sourceL;
     public DragObject destinationL;
     public DragObject gatewayL;
+    public TextMeshProUGUI hop;
     public DragObjectRight currentObject;
 
     public List<DragObjectRight> dragObjects;
@@ -21,7 +22,6 @@ public class RightManager : MonoBehaviour
     public GameObject InactiveDestination;
     public GameObject InactiveGateway;
 
-    private int random_value_check;
     public bool unlocked = false;
     public UnityEvent unlockGrid;
     public UnityEvent lockGrid;
@@ -31,10 +31,9 @@ public class RightManager : MonoBehaviour
         InactiveDestination.SetActive(true);
         InactiveGateway.SetActive(true);
 
-        dragObjects[0].Text.text = SourceIpAddress();
-        dragObjects[1].Text.text = DestinationIpAddress();
-
-        //Gateways set in SourceIPAddress();
+        dragObjects[0].Text.text = "XXX.XXX.XXX.XXX";
+        dragObjects[1].Text.text = "XXX.XXX.XXX.XXX";
+        dragObjects[2].Text.text = "XXX.XXX.XXX.XXX";
 
     }
 
@@ -48,18 +47,24 @@ public class RightManager : MonoBehaviour
             //Debug.Log("RM:::: True");
             unlockGrid.Invoke();
             unlocked = true;
+            dragObjects[0].Text.text = gatewayL.Text.text;
+            dragObjects[1].Text.text = destinationL.Text.text;
+            dragObjects[2].Text.text = hop.text;
         }
         else
         {
             lockGrid.Invoke();
             unlocked = false;
+            dragObjects[0].Text.text = "XXX.XXX.XXX.XXX";
+            dragObjects[1].Text.text = "XXX.XXX.XXX.XXX";
+            dragObjects[2].Text.text = "XXX.XXX.XXX.XXX";
         }
         
     }
 
     public void Check(VRSnapDropZone zone)
     {
-        if (currentObject != null)
+        if ( ( currentObject != null) && (unlocked == true))
         {
             var slot = zone.GetComponent<DragSlotRight>();
             bool isOk = currentObject.slot == slot;
@@ -97,8 +102,9 @@ public class RightManager : MonoBehaviour
     {
 
         // Assign new addresses
-        dragObjects[0].Text.text = SourceIpAddress();
-        dragObjects[1].Text.text = DestinationIpAddress();
+        dragObjects[0].Text.text = gatewayL.Text.text;
+        dragObjects[1].Text.text = destinationL.Text.text;
+        dragObjects[2].Text.text = hop.text;
 
         // Reset object position
         dragObjects[0].slot.Restart();
@@ -110,125 +116,5 @@ public class RightManager : MonoBehaviour
         slots[1].UnleashUnsnapEvent();
         slots[2].UnleashUnsnapEvent();
     }
-
-    // Source Range
-    // 10.0.0.1 to 10.255.255.254
-    // 172.16.0.0 to 172.31.255.255
-    // 192.168.0.0 – 192.168.255.255
-    // Gateway: x.x.x.1
-    string SourceIpAddress()
-    {
-        int octet1, octet2, octet3, octet4;
-
-        //Select address range on random
-        int random = Random.Range(1, 3);
-
-        random_value_check = random;
-        switch (random)
-        {
-            case 1: //10
-                octet1 = 10;
-                octet2 = Random.Range(0, 255);
-                octet3 = Random.Range(0, 255);
-                octet4 = Random.Range(2, 254);
-                break;
-            case 2: //172
-                octet1 = 172;
-                octet2 = Random.Range(16, 31);
-                octet3 = Random.Range(0, 255);
-                octet4 = Random.Range(2, 254);
-                break;
-            case 3: // 192
-                octet1 = 192;
-                octet2 = 168;
-                octet3 = Random.Range(0, 255);
-                octet4 = Random.Range(2, 254);
-                break;
-            default:
-                octet1 = 0;
-                octet2 = 0;
-                octet3 = 0;
-                octet4 = 0;
-                break;
-        }
-
-        //Set gateway
-        dragObjects[2].Text.text = octet1 + "." + octet2 + "." + octet3 + "." + "1";
-
-        //Set IP
-        string new_ip = octet1 + "." + octet2 + "." + octet3 + "." + octet4;
-
-        return new_ip;
-    }
-
-    // Destination Range
-    // 10.0.0.1 to 10.255.255.254
-    // 172.16.0.0 to 172.31.255.255
-    // 192.168.0.0 – 192.168.255.255
-    // Gateway: x.x.x.1
-    string DestinationIpAddress()
-    {
-        int octet1, octet2, octet3, octet4;
-
-        //Select address range on random
-        int random = Random.Range(1, 3);
-
-        //Check if the random is free,
-        // otherwise assign new value
-        if (random_value_check == random)
-        {
-            if (random_value_check == 1)
-            {
-                random = Random.Range(2, 3);
-            }
-            else if (random_value_check == 3)
-            {
-                random = Random.Range(1, 2);
-            }
-            else if (random_value_check == 2)
-            {
-                random = 2;
-            }
-        }
-
-        switch (random)
-        {
-            case 1: //10
-                octet1 = 10;
-                octet2 = Random.Range(0, 255);
-                octet3 = Random.Range(0, 255);
-                octet4 = Random.Range(2, 254);
-                break;
-            case 2: //172
-                octet1 = 172;
-                octet2 = Random.Range(16, 31);
-                octet3 = Random.Range(0, 255);
-                octet4 = Random.Range(2, 254);
-                break;
-            case 3: // 192
-                octet1 = 192;
-                octet2 = 168;
-                octet3 = Random.Range(0, 255);
-                octet4 = Random.Range(2, 254);
-                break;
-            default:
-                octet1 = 0;
-                octet2 = 0;
-                octet3 = 0;
-                octet4 = 0;
-                break;
-        }
-
-        //Set IP
-        string new_ip = octet1 + "." + octet2 + "." + octet3 + "." + octet4;
-
-
-        return new_ip;
-    }
-
-    public void ShowIP()
-    {
-
-
-    }
+   
 }

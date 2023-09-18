@@ -25,8 +25,6 @@ public class DragSlotRight : MonoBehaviour
 
     public DragObjectRight objectInSlot = null;
 
-
-
     public void Check(bool isOk)
     {
         HighlighBackground.SetActive(true);
@@ -49,7 +47,7 @@ public class DragSlotRight : MonoBehaviour
     public void UnleashSnapEvent(VRSnapDropZone zone, GameObject gameObject)
     {
         var dragObject = gameObject.GetComponent<DragObjectRight>();
-        if (dragObject != null)
+        if ( ( dragObject != null) && (Manager.unlocked == true) )
         {
             if (objectInSlot == null)
             {
