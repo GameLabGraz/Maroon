@@ -94,26 +94,7 @@ public class DragSlot : MonoBehaviour
 
     public void UnleashUnsnapEvent()
     {
-        if (objectInSlot.name == "SourceL")
-        {
-            Debug.Log("UNsnapped: " + objectInSlot.name);
-            objectInSlot.source_snapped = false;
-            
-        }
-
-        if (objectInSlot.name == "DestinationL")
-        {
-            Debug.Log("UNsnapped: " + objectInSlot.name);
-            objectInSlot.destination_snapped = false;
-
-        }
-        if (objectInSlot.name == "GatewayL")
-        {
-            Debug.Log("UNsnapped: " + objectInSlot.name);
-            objectInSlot.gateway_snapped = false;
-
-        }
-
+        // Stop particle animations
         unsnapEvent.Invoke();
         
         WrongBackground.SetActive(false);
@@ -129,9 +110,14 @@ public class DragSlot : MonoBehaviour
         CorrectBackground.SetActive(false);
         DefaultBackground.SetActive(true);
         HighlighBackground.SetActive(false);
+
         snapZone.snappedObject = null;
+
         if (objectInSlot != null)
         {
+            objectInSlot.source_snapped = false;
+            objectInSlot.destination_snapped = false;
+            objectInSlot.gateway_snapped = false;
             objectInSlot.SendToStartPosition();
         }
         objectInSlot = null;

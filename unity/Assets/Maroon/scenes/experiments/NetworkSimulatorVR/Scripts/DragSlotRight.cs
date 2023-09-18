@@ -96,32 +96,13 @@ public class DragSlotRight : MonoBehaviour
 
     public void UnleashUnsnapEvent()
     {
-        if (objectInSlot.name == "SourceR")
-        {
-            Debug.Log("UNsnapped: " + objectInSlot.name);
-            objectInSlot.source_snapped = false;
-
-        }
-
-        if (objectInSlot.name == "DestinationR")
-        {
-            Debug.Log("UNsnapped: " + objectInSlot.name);
-            objectInSlot.destination_snapped = false;
-
-        }
-        if (objectInSlot.name == "GatewayR")
-        {
-            Debug.Log("UNsnapped: " + objectInSlot.name);
-            objectInSlot.gateway_snapped = false;
-
-        }
-
         unsnapEvent.Invoke();
 
         WrongBackground.SetActive(false);
         CorrectBackground.SetActive(false);
         DefaultBackground.SetActive(true);
         HighlighBackground.SetActive(false);
+
         objectInSlot = null;
     }
 

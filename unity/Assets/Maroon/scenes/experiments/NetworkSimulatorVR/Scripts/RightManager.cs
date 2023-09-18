@@ -11,6 +11,9 @@ public class RightManager : MonoBehaviour
     public DragObject destinationL;
     public DragObject gatewayL;
     public TextMeshProUGUI hop;
+    public GameObject connected;
+    public GameObject connecting;
+    public GameObject nosignal;
     public DragObjectRight currentObject;
 
     public List<DragObjectRight> dragObjects;
@@ -39,7 +42,7 @@ public class RightManager : MonoBehaviour
 
     void Update()
     {
-        
+
         if ( (sourceL.source_snapped == true) &&
              (destinationL.destination_snapped == true) &&
              (gatewayL.gateway_snapped == true) )
@@ -50,14 +53,35 @@ public class RightManager : MonoBehaviour
             dragObjects[0].Text.text = gatewayL.Text.text;
             dragObjects[1].Text.text = destinationL.Text.text;
             dragObjects[2].Text.text = hop.text;
+
+            connected.SetActive(true);
+            connecting.SetActive(false);
+            nosignal.SetActive(false);
         }
         else
         {
+            Restart();
             lockGrid.Invoke();
             unlocked = false;
+
             dragObjects[0].Text.text = "XXX.XXX.XXX.XXX";
             dragObjects[1].Text.text = "XXX.XXX.XXX.XXX";
             dragObjects[2].Text.text = "XXX.XXX.XXX.XXX";
+            connected.SetActive(false);
+
+            if ((sourceL.source_snapped == true) ||
+                (destinationL.destination_snapped == true) ||
+                (gatewayL.gateway_snapped == true))
+            {
+                connecting.SetActive(true);
+                nosignal.SetActive(false);
+            }
+             else
+             {
+                connecting.SetActive(false);
+                nosignal.SetActive(true);
+             }
+    
         }
         
     }
@@ -102,9 +126,9 @@ public class RightManager : MonoBehaviour
     {
 
         // Assign new addresses
-        dragObjects[0].Text.text = gatewayL.Text.text;
-        dragObjects[1].Text.text = destinationL.Text.text;
-        dragObjects[2].Text.text = hop.text;
+        //dragObjects[0].Text.text = gatewayL.Text.text;
+        //dragObjects[1].Text.text = destinationL.Text.text;
+        //dragObjects[2].Text.text = hop.text;
 
         // Reset object position
         dragObjects[0].slot.Restart();
@@ -115,6 +139,7 @@ public class RightManager : MonoBehaviour
         slots[0].UnleashUnsnapEvent();
         slots[1].UnleashUnsnapEvent();
         slots[2].UnleashUnsnapEvent();
+
     }
    
 }

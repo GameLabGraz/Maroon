@@ -9,9 +9,9 @@ public class DragObjectRight : MonoBehaviour
     public bool goingToStartPosition = false;
     public DragSlotRight slot;
 
-    public bool source_snapped = false;
-    public bool destination_snapped = false;
-    public bool gateway_snapped = false;
+    public bool source_snapped;
+    public bool destination_snapped;
+    public bool gateway_snapped;
 
     public float lerpSpeed = 1f;
 

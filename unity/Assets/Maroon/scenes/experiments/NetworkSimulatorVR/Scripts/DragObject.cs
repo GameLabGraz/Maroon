@@ -20,7 +20,6 @@ public class DragObject : MonoBehaviour
 
     private void Start()
     {
-        
         startPos = transform.position;
     }
 
@@ -44,4 +43,21 @@ public class DragObject : MonoBehaviour
         waitOneFrame = true;
         goingToStartPosition = true;
     }
+
+    public void setSourceToFalse()
+    {
+        source_snapped = false;
+    }
+
+    public void setDestinationToFalse()
+    {
+        destination_snapped = false;
+    }
+
+    public void setGatewayToFalse()
+    {
+        gateway_snapped = false;
+    }
+
+
 }
