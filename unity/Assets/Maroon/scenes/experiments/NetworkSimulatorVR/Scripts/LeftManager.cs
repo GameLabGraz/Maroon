@@ -215,7 +215,7 @@ public class LeftManager : MonoBehaviour
 
     public void ShowIP()
     {
-        IpText.text = "IPv4:     " + dragObjects[0].Text.text;
+        IpText.text =  "IPv4: " + dragObjects[0].Text.text;
         gateway.text = "Gateway: " + dragObjects[2].Text.text;
 
     }
