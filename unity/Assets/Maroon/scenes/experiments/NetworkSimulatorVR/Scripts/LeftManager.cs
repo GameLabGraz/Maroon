@@ -8,6 +8,7 @@ public class LeftManager : MonoBehaviour
 {
     public TextMeshProUGUI IpText;
     public TextMeshProUGUI gateway;
+    public TextMeshProUGUI source;
     public TextMeshProUGUI target;
     public TextMeshProUGUI hop;
 
@@ -141,6 +142,9 @@ public class LeftManager : MonoBehaviour
         //Set IP
         string new_ip = octet1 + "." + octet2 + "." + octet3 + "." + octet4;
 
+        // Routing table
+        source.text = dragObjects[2].Text.text;
+
         return new_ip;
     }
 
@@ -208,6 +212,7 @@ public class LeftManager : MonoBehaviour
         //Routing table informations
         target.text = new_ip;
         hop.text = octet1 + "." + octet2 + "." + octet3 + "." + "1";
+        
  
 
         return new_ip;
