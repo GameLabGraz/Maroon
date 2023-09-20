@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<QuestManager>
+    <QuestList>
+		<MainQuest>
+			<TranslationKey>Show IP</TranslationKey>
+			<QuestHint>ShowIPHint</QuestHint>
+			<QuestAchievement>LeftAchievement</QuestAchievement>
+			<Script>QuestManager.IntensityDistribution2SlitCheck</Script>
+		</MainQuest>
+		
+		<MainQuest>
+			<TranslationKey>Complete Sender Information</TranslationKey>
+
+			<SubQuest>
+				<TranslationKey>Source IP correctly placed</TranslationKey>
+				<QuestHint>LeftSlotsHint</QuestHint>
+				<QuestAchievement>LeftAchievement</QuestAchievement>
+				<Script>QuestManager.ReadInstructionCheck</Script>
+			</SubQuest>
+			<SubQuest>
+				<TranslationKey>Destination IP correctly placed</TranslationKey>
+				<QuestHint>LeftSlotsHint</QuestHint>
+				<QuestAchievement>LeftAchievement</QuestAchievement>
+				<Script>QuestManager.ReadInstructionCheck</Script>
+			</SubQuest>
+			<SubQuest>
+				<TranslationKey>Gateway correctly placed</TranslationKey>
+				<QuestHint>LeftSlotsHint</QuestHint>
+				<QuestAchievement>LeftAchievement</QuestAchievement>
+				<Script>QuestManager.ReadInstructionCheck</Script>
+			</SubQuest>
+		</MainQuest>
+
+		<MainQuest>
+			<TranslationKey>Complete Receiver Information</TranslationKey>
+
+			<SubQuest>
+				<TranslationKey>Sender IP correctly placed</TranslationKey>
+				<QuestHint>StartSimulationHint</QuestHint>
+				<QuestAchievement>StartSimulationAchievement</QuestAchievement>
+				<Script>QuestManager.StartSimulationCheck</Script>
+			</SubQuest>
+
+			<SubQuest>
+				<TranslationKey>Receiver IP correctly placed</TranslationKey>
+				<QuestHint>ChangeParameterHint</QuestHint>
+				<QuestAchievement>ChangeSlitNumber2Achievement</QuestAchievement>
+				<Script>QuestManager.ChangeSlitNumber2</Script>
+			</SubQuest>
+
+			<SubQuest>
+				<TranslationKey>Gateway correctly placed</TranslationKey>
+				<QuestAchievement>ChangeSlitWidthAchievement</QuestAchievement>
+				<Script>QuestManager.ChangeSlitWidthCheck</Script>
+			</SubQuest>
+
+		</MainQuest>
+
+	    <MainQuest>
+		    <TranslationKey>Run Simulation</TranslationKey>
+
+			<SubQuest>
+				<TranslationKey>QM_IntensityDistribution1</TranslationKey>
+				<QuestAchievement>IntensityDistributionAchievement1</QuestAchievement>
+				<Script>QuestManager.IntensityDistribution2SlitCheck</Script>
+			</SubQuest>
+
+
+	    </MainQuest>	
+    </QuestList>
+</QuestManager>
