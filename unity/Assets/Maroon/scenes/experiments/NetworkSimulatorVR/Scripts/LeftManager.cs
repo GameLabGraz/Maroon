@@ -20,6 +20,7 @@ public class LeftManager : MonoBehaviour
     DragSlot lastCheckedSlot = null;
 
     private int random_value_check;
+    private bool ip_showed = false;
     
     void Start()
     {
@@ -79,6 +80,7 @@ public class LeftManager : MonoBehaviour
         gateway.text = "";
         target.text = "";
         hop.text = "";
+        ip_showed = false;
 
         // Assign new addresses
         dragObjects[0].Text.text = SourceIpAddress();
@@ -222,6 +224,8 @@ public class LeftManager : MonoBehaviour
     {
         IpText.text =  "IPv4: " + dragObjects[0].Text.text;
         gateway.text = "Gateway: " + dragObjects[2].Text.text;
+
+        ip_showed = true;
 
     }
 }
