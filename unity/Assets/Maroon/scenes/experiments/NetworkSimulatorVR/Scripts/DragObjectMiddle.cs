@@ -16,7 +16,6 @@ namespace Maroon.Experiments.NetworkSimulatorVR
         public bool gateway_snapped = false;
 
         public float lerpSpeed = 1f;
-        public string next_hop;
 
         Vector3 startPos;
         bool waitOneFrame = false;
