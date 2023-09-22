@@ -10,9 +10,9 @@ namespace Maroon.Experiments.NetworkSimulatorVR
     {
         public TextMeshProUGUI IpText;
         public TextMeshProUGUI gateway;
-        public TextMeshProUGUI source;
-        public TextMeshProUGUI target;
-        public TextMeshProUGUI hop;
+        public DragObjectMiddle clientM;
+        public DragObjectMiddle targetM;
+        public DragObjectMiddle hop;
 
         public DragObject currentObject;
 
@@ -29,6 +29,10 @@ namespace Maroon.Experiments.NetworkSimulatorVR
 
             dragObjects[0].Text.text = SourceIpAddress();
             dragObjects[1].Text.text = DestinationIpAddress();
+
+            //Middle objects
+            clientM.Text.text = dragObjects[0].Text.text;
+            targetM.Text.text = dragObjects[1].Text.text;
 
             //Gateways set in SourceIPAddress();
 
@@ -80,13 +84,15 @@ namespace Maroon.Experiments.NetworkSimulatorVR
             //Reset terminal field
             IpText.text = "";
             gateway.text = "";
-            target.text = "";
-            hop.text = "";
             ip_showed = false;
 
             // Assign new addresses
             dragObjects[0].Text.text = SourceIpAddress();
             dragObjects[1].Text.text = DestinationIpAddress();
+
+            //Middle objects
+            clientM.Text.text = dragObjects[0].Text.text;
+            targetM.Text.text = dragObjects[1].Text.text;
 
             // Reset object position
             dragObjects[0].slot.Restart();
@@ -146,8 +152,6 @@ namespace Maroon.Experiments.NetworkSimulatorVR
             //Set IP
             string new_ip = octet1 + "." + octet2 + "." + octet3 + "." + octet4;
 
-            // Routing table
-            source.text = dragObjects[2].Text.text;
 
             return new_ip;
         }
@@ -213,10 +217,8 @@ namespace Maroon.Experiments.NetworkSimulatorVR
             //Set IP
             string new_ip = octet1 + "." + octet2 + "." + octet3 + "." + octet4;
 
-            //Routing table informations
-            target.text = new_ip;
-            hop.text = octet1 + "." + octet2 + "." + octet3 + "." + "1";
-
+            //Next hop
+            hop.Text.text = octet1 + "." + octet2 + "." + octet3 + ".0";
 
 
             return new_ip;

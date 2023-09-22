@@ -10,25 +10,30 @@
 		
 		<MainQuest>
 			<TranslationKey>Complete Sender Information</TranslationKey>
-
+			<QuestHint>LeftSlotsHint</QuestHint>
+			
 			<SubQuest>
 				<TranslationKey>Source IP correctly placed</TranslationKey>
-				<QuestHint>LeftSlotsHint</QuestHint>
-				<QuestAchievement>LeftAchievement</QuestAchievement>
-				<Script>QuestManager.ObjectCorrectlyPlaced</Script>
+				<Script>QuestManager.SourceLCorrectlyPlaced</Script>
 			</SubQuest>
+			
 			<SubQuest>
 				<TranslationKey>Destination IP correctly placed</TranslationKey>
-				<QuestHint>LeftSlotsHint</QuestHint>
-				<QuestAchievement>LeftAchievement</QuestAchievement>
-				
+				<Script>QuestManager.DestinationLCorrectlyPlaced</Script>
 			</SubQuest>
+			
 			<SubQuest>
 				<TranslationKey>Gateway correctly placed</TranslationKey>
-				<QuestHint>LeftSlotsHint</QuestHint>
-				<QuestAchievement>LeftAchievement</QuestAchievement>
-				
+				<Script>QuestManager.GatewayLCorrectlyPlaced</Script>
 			</SubQuest>
+
+			<SubQuest>
+				<TranslationKey>Collect Reward</TranslationKey>
+				<QuestAchievement>LeftAchievement</QuestAchievement>
+				<Script>QuestManager.LeftCorrectlyPlaced</Script>
+			</SubQuest>
+
+		
 		</MainQuest>
 
 		<MainQuest>
