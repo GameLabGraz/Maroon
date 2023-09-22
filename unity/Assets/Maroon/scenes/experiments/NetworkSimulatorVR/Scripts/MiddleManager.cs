@@ -11,7 +11,7 @@ namespace Maroon.Experiments.NetworkSimulatorVR
         public DragObject sourceL;
         public DragObject destinationL;
         public DragObject gatewayL;
-        public DragObjectMiddle next_hop;
+        public TextMeshProUGUI hop;
         public DragObjectMiddle currentObject;
 
         public List<DragObjectMiddle> dragObjects;
@@ -19,8 +19,8 @@ namespace Maroon.Experiments.NetworkSimulatorVR
 
         DragSlotMiddle lastCheckedSlot = null;
 
-        private int random_value_check;
-        private bool ip_showed = false;
+        //private int random_value_check;
+        //private bool ip_showed = false;
 
         void Start()
         {
@@ -38,7 +38,7 @@ namespace Maroon.Experiments.NetworkSimulatorVR
             {
                 dragObjects[0].Text.text = sourceL.Text.text;
                 dragObjects[1].Text.text = destinationL.Text.text;
-                dragObjects[2].Text.text = next_hop.Text.text;
+                dragObjects[2].Text.text = hop.text;
                 
             }
             else
@@ -90,7 +90,7 @@ namespace Maroon.Experiments.NetworkSimulatorVR
             // Assign new addresses
             dragObjects[0].Text.text = sourceL.Text.text;
             dragObjects[1].Text.text = destinationL.Text.text;
-            dragObjects[2].Text.text = next_hop.Text.text;
+            dragObjects[2].Text.text = hop.text;
 
             // Reset object position
             dragObjects[0].slot.Restart();
