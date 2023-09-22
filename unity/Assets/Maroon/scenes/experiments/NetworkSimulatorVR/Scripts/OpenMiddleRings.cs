@@ -3,43 +3,46 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class OpenMiddleRings : MonoBehaviour
+namespace Maroon.Experiments.NetworkSimulatorVR
 {
-    // Objects to check status
-    public DragObject source;
-    public DragObject destination;
-    public DragObject gateway;
-
-    Animator anim;
-
-    public UnityEvent stop_animation;
-    public UnityEvent start_animation;
-    // Update is called once per frame
-
-    private void Start()
+    public class OpenMiddleRings : MonoBehaviour
     {
-        anim = GetComponent<Animator>();
-    }
-    void Update()
-    {
-        if ( (source.source_snapped == true) &&
-             (destination.destination_snapped == true) &&
-             (gateway.gateway_snapped == true))
+        // Objects to check status
+        public DragObject source;
+        public DragObject destination;
+        public DragObject gateway;
+
+        Animator anim;
+
+        public UnityEvent stop_animation;
+        public UnityEvent start_animation;
+        // Update is called once per frame
+
+        private void Start()
         {
-            stop_animation.Invoke();
-            //Debug.Log("here it is");
-            anim.SetTrigger("trOpen");
-            anim.SetTrigger("trShowTable");
-
+            anim = GetComponent<Animator>();
         }
-        else
+        void Update()
         {
+            if ((source.source_snapped == true) &&
+                 (destination.destination_snapped == true) &&
+                 (gateway.gateway_snapped == true))
+            {
+                stop_animation.Invoke();
+                //Debug.Log("here it is");
+                anim.SetTrigger("trOpen");
+                anim.SetTrigger("trShowTable");
 
-            anim.SetTrigger("trClose");
-            start_animation.Invoke();
+            }
+            else
+            {
+
+                anim.SetTrigger("trClose");
+                start_animation.Invoke();
+            }
         }
+
+
+
     }
-
-
-
 }

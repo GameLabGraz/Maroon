@@ -4,122 +4,121 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class DragSlot : MonoBehaviour
+namespace Maroon.Experiments.NetworkSimulatorVR
 {
-    public LeftManager Manager;
-
-    public VRSnapDropZone snapZone;
-
-    public GameObject HighlighBackground;
-    public GameObject DefaultBackground;
-    public GameObject CorrectBackground;
-    public GameObject WrongBackground;
-
-    public UnityEvent correctSnap;
-    public UnityEvent wrongSnap;
-    [Space(10)]
-    public UnityEvent unsnapEvent;
-
-    public VRSnapDropZone snapDropZone;
-
-    public DragObject objectInSlot = null;
-
-    public void Check(bool isOk)
+    public class DragSlot : MonoBehaviour
     {
-        HighlighBackground.SetActive(true);
-        if (isOk)
+        public LeftManager Manager;
+
+        public VRSnapDropZone snapZone;
+
+        public GameObject HighlighBackground;
+        public GameObject DefaultBackground;
+        public GameObject CorrectBackground;
+        public GameObject WrongBackground;
+
+        public UnityEvent correctSnap;
+        public UnityEvent wrongSnap;
+        [Space(10)]
+        public UnityEvent unsnapEvent;
+
+        public VRSnapDropZone snapDropZone;
+
+        public DragObject objectInSlot = null;
+
+        public void Check(bool isOk)
         {
-            Debug.Log("is OK");
+            
+            HighlighBackground.SetActive(true);
+
         }
-        else
+
+        public void OnSnapExit()
         {
-            Debug.Log("is bad");
+            HighlighBackground.SetActive(false);
         }
-    }
 
-    public void OnSnapExit()
-    {
-        HighlighBackground.SetActive(false);
-    }
-
-    public void UnleashSnapEvent(VRSnapDropZone zone, GameObject gameObject)
-    {
-        var dragObject = gameObject.GetComponent<DragObject>();
-        if (dragObject != null)
+        public void UnleashSnapEvent(VRSnapDropZone zone, GameObject gameObject)
         {
-            if (objectInSlot == null)
+            var dragObject = gameObject.GetComponent<DragObject>();
+            if (dragObject != null)
             {
-                if (dragObject.slot == this)
+                if (objectInSlot == null)
                 {
-                    CorrectBackground.SetActive(true);
-                    WrongBackground.SetActive(false);
-                    correctSnap.Invoke();
-
-
-                    if (dragObject.name == "SourceL")
+                    if (dragObject.slot == this)
                     {
-                        Debug.Log("snapped: " + dragObject.name);
-                        dragObject.source_snapped = true;
+                        CorrectBackground.SetActive(true);
+                        WrongBackground.SetActive(false);
+                        correctSnap.Invoke();
+
+
+                        if (dragObject.name == "SourceL")
+                        {
+                            Debug.Log("snapped: " + dragObject.name);
+                            Debug.Log("snapped: " + dragObject.source_snapped);
+                            dragObject.source_snapped = true;
+                            Debug.Log("snapped: " + dragObject.source_snapped);
+
+                        }
+
+                        if (dragObject.name == "DestinationL")
+                        {
+                            Debug.Log("snapped: " + dragObject.name);
+                            dragObject.destination_snapped = true;
+
+                        }
+                        if (dragObject.name == "GatewayL")
+                        {
+                            Debug.Log("snapped: " + dragObject.name);
+                            dragObject.gateway_snapped = true;
+
+                        }
 
                     }
-
-                    if (dragObject.name == "DestinationL")
+                    else
                     {
-                        Debug.Log("snapped: " + dragObject.name);
-                        dragObject.destination_snapped = true;
+                        CorrectBackground.SetActive(false);
+                        WrongBackground.SetActive(true);
+                        wrongSnap.Invoke();
+
 
                     }
-                    if (dragObject.name == "GatewayL")
-                    {
-                        Debug.Log("snapped: " + dragObject.name);
-                        dragObject.gateway_snapped = true;
-
-                    }
+                    objectInSlot = dragObject;
 
                 }
-                else
-                {
-                    CorrectBackground.SetActive(false);
-                    WrongBackground.SetActive(true);
-                    wrongSnap.Invoke();
-
-                   
-                }
-                objectInSlot = dragObject;
-
             }
+            HighlighBackground.SetActive(false);
         }
-        HighlighBackground.SetActive(false);
-    }
 
-    public void UnleashUnsnapEvent()
-    {
-        // Stop particle animations
-        unsnapEvent.Invoke();
-        
-        WrongBackground.SetActive(false);
-        CorrectBackground.SetActive(false);
-        DefaultBackground.SetActive(true);
-        HighlighBackground.SetActive(false);
-        objectInSlot = null;
-    }
-
-    public void Restart()
-    {
-        WrongBackground.SetActive(false);
-        CorrectBackground.SetActive(false);
-        DefaultBackground.SetActive(true);
-        HighlighBackground.SetActive(false);
-
-        snapZone.snappedObject = null;
-
-        if (objectInSlot != null)
+        public void UnleashUnsnapEvent()
         {
-            objectInSlot.source_snapped = false;
-            objectInSlot.destination_snapped = false;
-            objectInSlot.gateway_snapped = false;
-            objectInSlot.SendToStartPosition();
+            // Stop particle animations
+            unsnapEvent.Invoke();
+
+            WrongBackground.SetActive(false);
+            CorrectBackground.SetActive(false);
+            DefaultBackground.SetActive(true);
+            HighlighBackground.SetActive(false);
+            objectInSlot = null;
         }
-        objectInSlot = null;
+
+        public void Restart()
+        {
+            WrongBackground.SetActive(false);
+            CorrectBackground.SetActive(false);
+            DefaultBackground.SetActive(true);
+            HighlighBackground.SetActive(false);
+
+            snapZone.snappedObject = null;
+
+            if (objectInSlot != null)
+            {
+                objectInSlot.source_snapped = false;
+                objectInSlot.destination_snapped = false;
+                objectInSlot.gateway_snapped = false;
+                objectInSlot.SendToStartPosition();
+            }
+            objectInSlot = null;
+        }
     }
 }

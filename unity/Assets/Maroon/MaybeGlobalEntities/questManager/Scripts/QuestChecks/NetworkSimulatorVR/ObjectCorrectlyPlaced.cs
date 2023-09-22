@@ -1,21 +1,22 @@
 using UnityEngine;
+using Maroon.Experiments.NetworkSimulatorVR;
 
 namespace QuestManager
 {
     [RequireComponent(typeof(IQuest))]
     public class ObjectCorrectlyPlaced : IQuestCheck
     {
-        //public DragObject source1;
-        
+        public DragObject source;
 
         protected override void InitCheck()
         {
-            //source = FindObjectOfType<SourceL>();
+            source = FindObjectOfType<DragObject>();
         }
 
         protected override bool CheckCompliance()
         {
-            return true;
+            //Debug.Log("checking.: " + _source.source_snapped);
+            return source.source_snapped;
         }
     }
 }
