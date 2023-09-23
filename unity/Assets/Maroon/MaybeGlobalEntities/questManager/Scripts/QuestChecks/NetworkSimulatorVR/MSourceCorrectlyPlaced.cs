@@ -4,15 +4,15 @@ using Maroon.Experiments.NetworkSimulatorVR;
 namespace QuestManager
 {
     [RequireComponent(typeof(IQuest))]
-    public class SourceLCorrectlyPlaced : IQuestCheck
+    public class MSourceCorrectlyPlaced : IQuestCheck
     {
-        private DragObject flying_object;
+        private DragObjectMiddle flying_object;
 
         protected override void InitCheck()
         {
-            var sourceLGameObject = GameObject.Find("SourceL");
-            flying_object = sourceLGameObject.GetComponent<DragObject>();
-          
+            var sourceLGameObject = GameObject.Find("SourceM");
+            flying_object = sourceLGameObject.GetComponent<DragObjectMiddle>();
+
         }
 
         protected override bool CheckCompliance()

@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <QuestManager>
     <QuestList>
-		<MainQuest>
-			<TranslationKey>Show IP</TranslationKey>
-			<QuestHint>ShowIPHint</QuestHint>
-			<QuestAchievement>LeftAchievement</QuestAchievement>
-			
-		</MainQuest>
 		
 		<MainQuest>
 			<TranslationKey>Complete Sender Information</TranslationKey>
@@ -14,17 +8,17 @@
 			
 			<SubQuest>
 				<TranslationKey>Source IP correctly placed</TranslationKey>
-				<Script>QuestManager.SourceLCorrectlyPlaced</Script>
+				<Script>QuestManager.LSourceCorrectlyPlaced</Script>
 			</SubQuest>
 			
 			<SubQuest>
 				<TranslationKey>Destination IP correctly placed</TranslationKey>
-				<Script>QuestManager.DestinationLCorrectlyPlaced</Script>
+				<Script>QuestManager.LDestinationCorrectlyPlaced</Script>
 			</SubQuest>
 			
 			<SubQuest>
 				<TranslationKey>Gateway correctly placed</TranslationKey>
-				<Script>QuestManager.GatewayLCorrectlyPlaced</Script>
+				<Script>QuestManager.LGatewayCorrectlyPlaced</Script>
 			</SubQuest>
 
 			<SubQuest>
@@ -32,10 +26,34 @@
 				<QuestAchievement>LeftAchievement</QuestAchievement>
 				<Script>QuestManager.LeftCorrectlyPlaced</Script>
 			</SubQuest>
-
-		
 		</MainQuest>
 
+		<MainQuest>
+			<TranslationKey>Complete Routing Table</TranslationKey>
+			<QuestHint>MiddleSlotsHint</QuestHint>
+
+			<SubQuest>
+				<TranslationKey>Incoming network correctly placed</TranslationKey>
+				<Script>QuestManager.MSourceCorrectlyPlaced</Script>
+			</SubQuest>
+
+			<SubQuest>
+				<TranslationKey>Outgoing network correctly placed</TranslationKey>
+				<Script>QuestManager.MDestinationCorrectlyPlaced</Script>
+			</SubQuest>
+
+			<SubQuest>
+				<TranslationKey>Next hop correctly placed</TranslationKey>
+				<Script>QuestManager.MGatewayCorrectlyPlaced</Script>
+			</SubQuest>
+
+			<SubQuest>
+				<TranslationKey>Collect Reward</TranslationKey>
+				<QuestAchievement>MiddleAchievement</QuestAchievement>
+				<Script>QuestManager.MiddleCorrectlyPlaced</Script>
+			</SubQuest>
+		</MainQuest>
+		
 		<MainQuest>
 			<TranslationKey>Complete Receiver Information</TranslationKey>
 
