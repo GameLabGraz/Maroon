@@ -14,6 +14,7 @@ namespace Maroon.Experiments.NetworkSimulatorVR
         public bool source_snapped = false;
         public bool destination_snapped = false;
         public bool gateway_snapped = false;
+        public bool position_snapped = false;
 
         public float lerpSpeed = 1f;
 
@@ -58,6 +59,12 @@ namespace Maroon.Experiments.NetworkSimulatorVR
         public void setGatewayToFalse()
         {
             gateway_snapped = false;
+        }
+
+        public void setPositionToFalse()
+        {
+            position_snapped = false;
+            
         }
 
 

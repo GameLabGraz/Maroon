@@ -8,11 +8,15 @@ namespace Maroon.Experiments.NetworkSimulatorVR
 {
     public class MiddleManager : MonoBehaviour
     {
+        // Left objects - for values and confirmation of snap
         public DragObject sourceL;
         public DragObject destinationL;
         public DragObject gatewayL;
+
+        // Set values
         public TextMeshProUGUI incoming;
         public TextMeshProUGUI outgoing;
+
         public DragObjectMiddle currentObject;
 
         public List<DragObjectMiddle> dragObjects;
@@ -68,7 +72,7 @@ namespace Maroon.Experiments.NetworkSimulatorVR
 
         public void OnPickupObject(DragObjectMiddle dragObject)
         {
-            Debug.Log("OnPickupObject");
+            //Debug.Log("OnPickupObject");
             currentObject = dragObject;
             dragObject.goingToStartPosition = false;
             lastCheckedSlot = null;

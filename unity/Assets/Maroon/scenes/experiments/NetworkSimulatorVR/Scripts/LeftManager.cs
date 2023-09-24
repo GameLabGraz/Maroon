@@ -8,12 +8,16 @@ namespace Maroon.Experiments.NetworkSimulatorVR
 {
     public class LeftManager : MonoBehaviour
     {
+        // Show IP
         public TextMeshProUGUI IpText;
         public TextMeshProUGUI gateway;
-        public DragObjectMiddle clientM;
-        public DragObjectMiddle targetM;
+
+        // Middle
         public TextMeshProUGUI incoming;
         public TextMeshProUGUI outgoing;
+
+        // right
+        public TextMeshProUGUI gatewayR;
 
         public DragObject currentObject;
 
@@ -31,18 +35,11 @@ namespace Maroon.Experiments.NetworkSimulatorVR
             dragObjects[0].Text.text = SourceIpAddress();
             dragObjects[1].Text.text = DestinationIpAddress();
 
-            //Middle objects
-            clientM.Text.text = dragObjects[0].Text.text;
-            targetM.Text.text = dragObjects[1].Text.text;
-
-            //Gateways set in SourceIPAddress();
-
             //Show nothing at the beginning
             IpText.text = "";
             gateway.text = "";
 
         }
-
 
         public void Check(VRSnapDropZone zone)
         {
@@ -60,7 +57,7 @@ namespace Maroon.Experiments.NetworkSimulatorVR
 
         public void OnPickupObject(DragObject dragObject)
         {
-            Debug.Log("OnPickupObject");
+            //Debug.Log("OnPickupObject");
             currentObject = dragObject;
             dragObject.goingToStartPosition = false;
             lastCheckedSlot = null;
@@ -90,10 +87,6 @@ namespace Maroon.Experiments.NetworkSimulatorVR
             // Assign new addresses
             dragObjects[0].Text.text = SourceIpAddress();
             dragObjects[1].Text.text = DestinationIpAddress();
-
-            //Middle objects
-            clientM.Text.text = dragObjects[0].Text.text;
-            targetM.Text.text = dragObjects[1].Text.text;
             
 
             // Reset object position
@@ -219,6 +212,9 @@ namespace Maroon.Experiments.NetworkSimulatorVR
             //Set IP
             string new_ip = octet1 + "." + octet2 + "." + octet3 + "." + octet4;
 
+            // Set gatewayR
+            gatewayR.text = octet1 + "." + octet2 + "." + octet3 + ".1";
+
             //Next hop
             outgoing.text = octet1 + "." + octet2 + "." + octet3 + ".0";
 
@@ -234,5 +230,6 @@ namespace Maroon.Experiments.NetworkSimulatorVR
             ip_showed = true;
 
         }
+
     }
 }

@@ -9,13 +9,18 @@ namespace Maroon.Experiments.NetworkSimulatorVR
 {
     public class RightManager : MonoBehaviour
     {
+        // Middle objects to check the values
         public DragObjectMiddle sourceM;
         public DragObjectMiddle destinationM;
-        public DragObjectMiddle gatewayM;
-        public TextMeshProUGUI hop;
+        public DragObjectMiddle outgoing;
+        public DragObjectMiddle incoming;
+
+        public TextMeshProUGUI gateway;
+
         public GameObject connected;
         public GameObject connecting;
         public GameObject nosignal;
+
         public DragObjectRight currentObject;
 
         public List<DragObjectRight> dragObjects;
@@ -47,14 +52,15 @@ namespace Maroon.Experiments.NetworkSimulatorVR
 
             if ((sourceM.source_snapped == true) &&
                  (destinationM.destination_snapped == true) &&
-                 (gatewayM.gateway_snapped == true))
+                 (outgoing.position_snapped == true) &&
+                 (incoming.position_snapped == true))
             {
                 //Debug.Log("RM:::: True");
                 unlockGrid.Invoke();
                 unlocked = true;
-                dragObjects[0].Text.text = gatewayM.Text.text;
+                dragObjects[0].Text.text = sourceM.Text.text;
                 dragObjects[1].Text.text = destinationM.Text.text;
-                dragObjects[2].Text.text = hop.text;
+                dragObjects[2].Text.text = gateway.text;
 
                 connected.SetActive(true);
                 connecting.SetActive(false);
@@ -73,7 +79,8 @@ namespace Maroon.Experiments.NetworkSimulatorVR
 
                 if ((sourceM.source_snapped == true) ||
                     (destinationM.destination_snapped == true) ||
-                    (gatewayM.gateway_snapped == true))
+                    (outgoing.position_snapped == true) ||
+                    (incoming.position_snapped == true))
                 {
                     connecting.SetActive(true);
                     nosignal.SetActive(false);
@@ -104,7 +111,7 @@ namespace Maroon.Experiments.NetworkSimulatorVR
 
         public void OnPickupObject(DragObjectRight dragObject)
         {
-            Debug.Log("OnPickupObject");
+            //Debug.Log("OnPickupObject");
             currentObject = dragObject;
             dragObject.goingToStartPosition = false;
             lastCheckedSlot = null;
@@ -126,11 +133,6 @@ namespace Maroon.Experiments.NetworkSimulatorVR
 
         public void Restart()
         {
-
-            // Assign new addresses
-            //dragObjects[0].Text.text = gatewayL.Text.text;
-            //dragObjects[1].Text.text = destinationL.Text.text;
-            //dragObjects[2].Text.text = hop.text;
 
             // Reset object position
             dragObjects[0].slot.Restart();

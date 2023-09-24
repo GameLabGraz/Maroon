@@ -67,10 +67,25 @@ namespace Maroon.Experiments.NetworkSimulatorVR
                             dragObject.destination_snapped = true;
 
                         }
+
                         if (dragObject.name == "GatewayL")
                         {
                             Debug.Log("snapped: " + dragObject.name);
                             dragObject.gateway_snapped = true;
+
+                        }
+
+                        if (dragObject.name == "Outgoing")
+                        {
+                            Debug.Log("snapped: " + dragObject.name);
+                            dragObject.position_snapped = true;
+
+                        }
+
+                        if (dragObject.name == "Incoming")
+                        {
+                            Debug.Log("snapped: " + dragObject.name);
+                            dragObject.position_snapped = true;
 
                         }
 
@@ -116,8 +131,10 @@ namespace Maroon.Experiments.NetworkSimulatorVR
                 objectInSlot.source_snapped = false;
                 objectInSlot.destination_snapped = false;
                 objectInSlot.gateway_snapped = false;
+                objectInSlot.position_snapped = false;
                 objectInSlot.SendToStartPosition();
             }
+
             objectInSlot = null;
         }
     }
