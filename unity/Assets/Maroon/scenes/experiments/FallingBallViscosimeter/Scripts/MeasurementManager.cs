@@ -6,15 +6,17 @@ namespace Maroon.Physics
 {
   public class MeasurementManager : MonoBehaviour
   {
+    public Caliper caliperPrefab;
+    private Caliper current_caliper = null;
     public Camera main_camera;
     public Camera zoom_camera;
     public List<MeasurableObject> measurableObjects;
     public MeasurableObject measuredObject;
+
     private bool measuring = false;
     // Start is called before the first frame update
     void Start()
     {
-      
       getAllMeasurableObjects();
     }
 
@@ -35,14 +37,26 @@ namespace Maroon.Physics
 
     void startMeasuringMode()
     {
+      if(current_caliper != null)
+      {
+        Destroy(current_caliper);
+      }
       main_camera.gameObject.SetActive(false);
-      zoom_camera.transform.position = new Vector3(measuredObject.transform.position.x, measuredObject.transform.position.y, zoom_camera.transform.position.z);
       fitObjectToCamera();
+      zoom_camera.transform.position = new Vector3(measuredObject.transform.position.x + zoom_camera.orthographicSize * 0.5f, measuredObject.transform.position.y, zoom_camera.transform.position.z);
+
+      current_caliper = Instantiate(caliperPrefab,
+                                    new Vector3(measuredObject.transform.position.x + 0.25f,
+                                                measuredObject.transform.position.y + 0.05f,
+                                                measuredObject.transform.position.z),
+                                    Quaternion.identity);
       zoom_camera.enabled = true;
     }
 
     void endMeasuringMode()
     {
+      Destroy(current_caliper);
+      current_caliper = null;
       main_camera.gameObject.SetActive(true);
       zoom_camera.enabled = false;
     }
@@ -54,11 +68,11 @@ namespace Maroon.Physics
 
       if(objectHeight >= objectWidth)
       {
-        zoom_camera.orthographicSize = objectHeight;
+        zoom_camera.orthographicSize = objectHeight * 1.6f;
       }
       else
       {
-        zoom_camera.orthographicSize = objectWidth;
+        zoom_camera.orthographicSize = objectWidth * 1.6f;
       }
 
     }
