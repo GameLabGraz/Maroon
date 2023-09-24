@@ -11,7 +11,8 @@ namespace Maroon.Experiments.NetworkSimulatorVR
         public DragObject sourceL;
         public DragObject destinationL;
         public DragObject gatewayL;
-        public TextMeshProUGUI hop;
+        public TextMeshProUGUI incoming;
+        public TextMeshProUGUI outgoing;
         public DragObjectMiddle currentObject;
 
         public List<DragObjectMiddle> dragObjects;
@@ -27,6 +28,7 @@ namespace Maroon.Experiments.NetworkSimulatorVR
             dragObjects[0].Text.text = "XXX.XXX.XXX.XXX";
             dragObjects[1].Text.text = "XXX.XXX.XXX.XXX";
             dragObjects[2].Text.text = "XXX.XXX.XXX.XXX";
+            dragObjects[3].Text.text = "XXX.XXX.XXX.XXX";
 
         }
 
@@ -38,14 +40,16 @@ namespace Maroon.Experiments.NetworkSimulatorVR
             {
                 dragObjects[0].Text.text = sourceL.Text.text;
                 dragObjects[1].Text.text = destinationL.Text.text;
-                dragObjects[2].Text.text = hop.text;
-                
+                dragObjects[2].Text.text = outgoing.text;
+                dragObjects[3].Text.text = incoming.text;
+
             }
             else
             {
                 dragObjects[0].Text.text = "XXX.XXX.XXX.XXX";
                 dragObjects[1].Text.text = "XXX.XXX.XXX.XXX";
                 dragObjects[2].Text.text = "XXX.XXX.XXX.XXX";
+                dragObjects[3].Text.text = "XXX.XXX.XXX.XXX";
             }
         }
         public void Check(VRSnapDropZone zone)
@@ -90,17 +94,20 @@ namespace Maroon.Experiments.NetworkSimulatorVR
             // Assign new addresses
             dragObjects[0].Text.text = sourceL.Text.text;
             dragObjects[1].Text.text = destinationL.Text.text;
-            dragObjects[2].Text.text = hop.text;
+            dragObjects[2].Text.text = outgoing.text;
+            dragObjects[3].Text.text = incoming.text;
 
             // Reset object position
             dragObjects[0].slot.Restart();
             dragObjects[1].slot.Restart();
             dragObjects[2].slot.Restart();
+            dragObjects[3].slot.Restart();
 
             // Reset slots
             slots[0].UnleashUnsnapEvent();
             slots[1].UnleashUnsnapEvent();
             slots[2].UnleashUnsnapEvent();
+            slots[3].UnleashUnsnapEvent();
         }
     }
 }

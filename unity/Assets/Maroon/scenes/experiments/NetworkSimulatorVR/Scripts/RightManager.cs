@@ -9,9 +9,9 @@ namespace Maroon.Experiments.NetworkSimulatorVR
 {
     public class RightManager : MonoBehaviour
     {
-        public DragObject sourceL;
-        public DragObject destinationL;
-        public DragObject gatewayL;
+        public DragObjectMiddle sourceM;
+        public DragObjectMiddle destinationM;
+        public DragObjectMiddle gatewayM;
         public TextMeshProUGUI hop;
         public GameObject connected;
         public GameObject connecting;
@@ -45,15 +45,15 @@ namespace Maroon.Experiments.NetworkSimulatorVR
         void Update()
         {
 
-            if ((sourceL.source_snapped == true) &&
-                 (destinationL.destination_snapped == true) &&
-                 (gatewayL.gateway_snapped == true))
+            if ((sourceM.source_snapped == true) &&
+                 (destinationM.destination_snapped == true) &&
+                 (gatewayM.gateway_snapped == true))
             {
                 //Debug.Log("RM:::: True");
                 unlockGrid.Invoke();
                 unlocked = true;
-                dragObjects[0].Text.text = gatewayL.Text.text;
-                dragObjects[1].Text.text = destinationL.Text.text;
+                dragObjects[0].Text.text = gatewayM.Text.text;
+                dragObjects[1].Text.text = destinationM.Text.text;
                 dragObjects[2].Text.text = hop.text;
 
                 connected.SetActive(true);
@@ -71,9 +71,9 @@ namespace Maroon.Experiments.NetworkSimulatorVR
                 dragObjects[2].Text.text = "XXX.XXX.XXX.XXX";
                 connected.SetActive(false);
 
-                if ((sourceL.source_snapped == true) ||
-                    (destinationL.destination_snapped == true) ||
-                    (gatewayL.gateway_snapped == true))
+                if ((sourceM.source_snapped == true) ||
+                    (destinationM.destination_snapped == true) ||
+                    (gatewayM.gateway_snapped == true))
                 {
                     connecting.SetActive(true);
                     nosignal.SetActive(false);

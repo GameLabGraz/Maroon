@@ -12,7 +12,8 @@ namespace Maroon.Experiments.NetworkSimulatorVR
         public TextMeshProUGUI gateway;
         public DragObjectMiddle clientM;
         public DragObjectMiddle targetM;
-        public TextMeshProUGUI hop;
+        public TextMeshProUGUI incoming;
+        public TextMeshProUGUI outgoing;
 
         public DragObject currentObject;
 
@@ -148,8 +149,8 @@ namespace Maroon.Experiments.NetworkSimulatorVR
             }
 
             //Set gateway
-            dragObjects[2].Text.text = octet1 + "." + octet2 + "." + octet3 + "." + "1";
-
+            dragObjects[2].Text.text = octet1 + "." + octet2 + "." + octet3 + ".1";
+            incoming.text = octet1 + "." + octet2 + "." + octet3 + ".0";
             //Set IP
             string new_ip = octet1 + "." + octet2 + "." + octet3 + "." + octet4;
 
@@ -219,7 +220,7 @@ namespace Maroon.Experiments.NetworkSimulatorVR
             string new_ip = octet1 + "." + octet2 + "." + octet3 + "." + octet4;
 
             //Next hop
-            hop.text = octet1 + "." + octet2 + "." + octet3 + ".0";
+            outgoing.text = octet1 + "." + octet2 + "." + octet3 + ".0";
 
 
             return new_ip;
