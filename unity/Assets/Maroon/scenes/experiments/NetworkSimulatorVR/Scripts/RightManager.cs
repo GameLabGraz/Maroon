@@ -17,10 +17,6 @@ namespace Maroon.Experiments.NetworkSimulatorVR
 
         public TextMeshProUGUI gateway;
 
-        public GameObject connected;
-        public GameObject connecting;
-        public GameObject nosignal;
-
         public DragObjectRight currentObject;
 
         public List<DragObjectRight> dragObjects;
@@ -62,9 +58,6 @@ namespace Maroon.Experiments.NetworkSimulatorVR
                 dragObjects[1].Text.text = destinationM.Text.text;
                 dragObjects[2].Text.text = gateway.text;
 
-                connected.SetActive(true);
-                connecting.SetActive(false);
-                nosignal.SetActive(false);
             }
             else
             {
@@ -75,21 +68,6 @@ namespace Maroon.Experiments.NetworkSimulatorVR
                 dragObjects[0].Text.text = "XXX.XXX.XXX.XXX";
                 dragObjects[1].Text.text = "XXX.XXX.XXX.XXX";
                 dragObjects[2].Text.text = "XXX.XXX.XXX.XXX";
-                connected.SetActive(false);
-
-                if ((sourceM.source_snapped == true) ||
-                    (destinationM.destination_snapped == true) ||
-                    (outgoing.position_snapped == true) ||
-                    (incoming.position_snapped == true))
-                {
-                    connecting.SetActive(true);
-                    nosignal.SetActive(false);
-                }
-                else
-                {
-                    connecting.SetActive(false);
-                    nosignal.SetActive(true);
-                }
 
             }
 
