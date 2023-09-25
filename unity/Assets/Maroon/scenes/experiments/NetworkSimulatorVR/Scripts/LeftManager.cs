@@ -178,7 +178,7 @@ namespace Maroon.Experiments.NetworkSimulatorVR
                 }
                 else if (random_value_check == 2)
                 {
-                    random = 2;
+                    random = 3;
                 }
             }
 

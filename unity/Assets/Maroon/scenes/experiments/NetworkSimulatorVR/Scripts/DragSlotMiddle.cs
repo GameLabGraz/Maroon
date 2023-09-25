@@ -52,7 +52,7 @@ namespace Maroon.Experiments.NetworkSimulatorVR
                         correctSnap.Invoke();
 
 
-                        if (dragObject.name == "SourceL")
+                        if (dragObject.name == "SourceM")
                         {
                             Debug.Log("snapped: " + dragObject.name);
                             Debug.Log("snapped: " + dragObject.source_snapped);
@@ -61,17 +61,10 @@ namespace Maroon.Experiments.NetworkSimulatorVR
 
                         }
 
-                        if (dragObject.name == "DestinationL")
+                        if (dragObject.name == "DestinationM")
                         {
                             Debug.Log("snapped: " + dragObject.name);
                             dragObject.destination_snapped = true;
-
-                        }
-
-                        if (dragObject.name == "GatewayL")
-                        {
-                            Debug.Log("snapped: " + dragObject.name);
-                            dragObject.gateway_snapped = true;
 
                         }
 
