@@ -50,6 +50,7 @@ namespace Maroon.Experiments.NetworkSimulatorVR
             }
             else
             {
+                Restart();
                 dragObjects[0].Text.text = "XXX.XXX.XXX.XXX";
                 dragObjects[1].Text.text = "XXX.XXX.XXX.XXX";
                 dragObjects[2].Text.text = "XXX.XXX.XXX.XXX";

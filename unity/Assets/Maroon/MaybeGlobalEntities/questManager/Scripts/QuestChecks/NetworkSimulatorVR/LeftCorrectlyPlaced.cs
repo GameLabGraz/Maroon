@@ -32,7 +32,7 @@ namespace QuestManager
             {
                 left_completed = true;
             }
-            Debug.Log("left: " + left_completed);
+            //Debug.Log("left: " + left_completed);
             return left_completed;
         }
     }
