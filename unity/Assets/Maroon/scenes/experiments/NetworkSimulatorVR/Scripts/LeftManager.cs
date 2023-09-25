@@ -87,7 +87,7 @@ namespace Maroon.Experiments.NetworkSimulatorVR
             // Assign new addresses
             dragObjects[0].Text.text = SourceIpAddress();
             dragObjects[1].Text.text = DestinationIpAddress();
-            
+            //gateway set om SourceIP
 
             // Reset object position
             dragObjects[0].slot.Restart();
@@ -144,9 +144,9 @@ namespace Maroon.Experiments.NetworkSimulatorVR
             //Set gateway
             dragObjects[2].Text.text = octet1 + "." + octet2 + "." + octet3 + ".1";
             incoming.text = octet1 + "." + octet2 + "." + octet3 + ".0";
+
             //Set IP
             string new_ip = octet1 + "." + octet2 + "." + octet3 + "." + octet4;
-
 
             return new_ip;
         }
@@ -163,6 +163,7 @@ namespace Maroon.Experiments.NetworkSimulatorVR
             //Select address range on random
             int random = Random.Range(1, 3);
 
+            Debug.Log("RandomD: " + random + "RandomS: " +random_value_check);
             //Check if the random is free,
             // otherwise assign new value
             if (random_value_check == random)
