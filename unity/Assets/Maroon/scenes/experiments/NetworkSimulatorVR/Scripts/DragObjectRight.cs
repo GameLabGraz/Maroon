@@ -47,5 +47,20 @@ namespace Maroon.Experiments.NetworkSimulatorVR
             waitOneFrame = true;
             goingToStartPosition = true;
         }
+
+        public void setSourceToFalse()
+        {
+            source_snapped = false;
+        }
+
+        public void setDestinationToFalse()
+        {
+            destination_snapped = false;
+        }
+
+        public void setGatewayToFalse()
+        {
+            gateway_snapped = false;
+        }
     }
 }

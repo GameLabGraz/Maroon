@@ -36,7 +36,7 @@ namespace QuestManager
             {
                 left_completed = true;
             }
-            Debug.Log("middle: " + left_completed);
+            //Debug.Log("middle: " + left_completed);
             return left_completed;
         }
     }
