@@ -1,42 +1,51 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace Maroon.Physics
 {
   public class MeasurementManager : MonoBehaviour
   {
+    
+    public static MeasurementManager Instance;
     public Caliper caliperPrefab;
     private Caliper current_caliper = null;
     public Camera main_camera;
     public Camera zoom_camera;
     public List<MeasurableObject> measurableObjects;
     public MeasurableObject measuredObject;
+    public MeasurementState measurementState = MeasurementState.Off;
+
+    public Button startButton;
+    public Button endButton;
 
     private bool measuring = false;
+
+    private void Awake()
+    { 
+      if(Instance == null)
+      {
+        Instance = this;
+      }
+      getAllMeasurableObjects();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-      getAllMeasurableObjects();
     }
 
     // Update is called once per frame
     void Update()
     {
-      if(measuredObject && !measuring)
-      {
-        measuring = true;
-        startMeasuringMode();
-      }
-      else if (!measuredObject && measuring)
-      {
-        measuring = false;
-        endMeasuringMode();
-      }
     }
 
     void startMeasuringMode()
     {
+      measurementState = MeasurementState.Measuring; 
       if(current_caliper != null)
       {
         Destroy(current_caliper);
@@ -51,14 +60,18 @@ namespace Maroon.Physics
                                                 measuredObject.transform.position.z),
                                     Quaternion.identity);
       zoom_camera.enabled = true;
+      startButton.interactable = false;
+      endButton.interactable = true;
     }
 
-    void endMeasuringMode()
+    public void endMeasuringMode()
     {
       Destroy(current_caliper);
       current_caliper = null;
       main_camera.gameObject.SetActive(true);
       zoom_camera.enabled = false;
+      startButton.interactable = true;
+      endButton.interactable = false;
     }
 
     void fitObjectToCamera()
@@ -77,6 +90,27 @@ namespace Maroon.Physics
 
     }
 
+    public void chooseMeasuredObject()
+    {
+      measurementState = MeasurementState.ChooseObject;
+      prepareObjectsForChoosing();
+    }
+
+
+    private void prepareObjectsForChoosing()
+    {
+      foreach (MeasurableObject mObject in measurableObjects)
+      {
+        mObject.makeChooseable();
+      }
+    }
+
+    public void setChosenObject(MeasurableObject mObject)
+    {
+      measuredObject = mObject;
+      startMeasuringMode();
+    }
+
     void resetCamera()
     {
 
@@ -93,5 +127,13 @@ namespace Maroon.Physics
         measurableObjects.Add(obj as MeasurableObject);
       }
     }
+  }
+  
+  
+  public enum MeasurementState
+  {
+    Off,
+    ChooseObject,
+    Measuring
   }
 }

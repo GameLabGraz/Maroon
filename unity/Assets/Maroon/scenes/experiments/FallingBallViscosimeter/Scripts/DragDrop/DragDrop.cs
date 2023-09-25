@@ -7,9 +7,9 @@ using UnityEngine.EventSystems;
 public class DragDrop : MonoBehaviour
 {
   public delegate void DragEndedDelegate(DragDrop dragDrop);
-
+  
   public DragEndedDelegate dragEndedCallback;
-
+  public bool enabled = true;
   public bool snap = true;
   public Vector3 planePosition;
   private Vector3 worldPosition;
@@ -22,6 +22,10 @@ public class DragDrop : MonoBehaviour
   }
   private void OnMouseDown() 
   {
+    if (!enabled)
+    {
+      return;
+    }
     isDragged = true;
     if(snap && snapPoint)
     {
@@ -32,6 +36,10 @@ public class DragDrop : MonoBehaviour
 
   private void OnMouseDrag()
   {
+    if (!enabled)
+    {
+      return;
+    }
     float distance;
     if (isDragged)
     {
@@ -46,6 +54,10 @@ public class DragDrop : MonoBehaviour
 
   private void OnMouseUp()
   {
+    if (!enabled)
+    {
+      return;
+    }
     isDragged = false;
     if(snap)
     {
