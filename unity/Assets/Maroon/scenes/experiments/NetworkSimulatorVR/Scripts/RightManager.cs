@@ -31,6 +31,7 @@ namespace Maroon.Experiments.NetworkSimulatorVR
         public bool unlocked = false;
         public UnityEvent unlockGrid;
         public UnityEvent lockGrid;
+        public UnityEvent showArrow;
         void Start()
         {
             InactiveSource.SetActive(true);
@@ -57,6 +58,13 @@ namespace Maroon.Experiments.NetworkSimulatorVR
                 dragObjects[0].Text.text = sourceM.Text.text;
                 dragObjects[1].Text.text = destinationM.Text.text;
                 dragObjects[2].Text.text = gateway.text;
+
+                if( (dragObjects[0].source_snapped == true) &&
+                    (dragObjects[1].destination_snapped == true) &&
+                    (dragObjects[2].gateway_snapped == true))
+                {
+                    showArrow.Invoke();
+                }
 
             }
             else
