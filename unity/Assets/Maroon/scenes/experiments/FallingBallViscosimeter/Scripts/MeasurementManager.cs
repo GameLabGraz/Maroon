@@ -66,7 +66,7 @@ namespace Maroon.Physics
 
     public void endMeasuringMode()
     {
-      Destroy(current_caliper);
+      Destroy(current_caliper.gameObject);
       current_caliper = null;
       main_camera.gameObject.SetActive(true);
       zoom_camera.enabled = false;
