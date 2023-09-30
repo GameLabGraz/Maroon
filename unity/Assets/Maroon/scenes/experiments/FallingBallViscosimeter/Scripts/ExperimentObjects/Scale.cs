@@ -49,7 +49,7 @@ namespace Maroon.Physics
       else
       {
         WeighableObject weighable_object = snapPoint.currentObject.gameObject.GetComponent<WeighableObject>();
-        scale_text.SetText((weighable_object.getWeight() * 1000.0f).ToString(scale_text_format) + " g");
+        scale_text.SetText((weighable_object.getWeight() * 1000.0m).ToString(scale_text_format) + " g");
       }
     }
   }
