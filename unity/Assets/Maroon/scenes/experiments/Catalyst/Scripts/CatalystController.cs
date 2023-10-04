@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using GameLabGraz.QuestManager;
 using GameLabGraz.VRInteraction;
 using Maroon.Physics;
 using Maroon.UI;
@@ -814,10 +815,10 @@ namespace Maroon.Chemistry.Catalyst
                 {
                     chart.gameObject.SetActive(false);
                 }
-                questManagerLabObject.GetComponent<QuestManager.QuestManager>().ResetQuests();
+                //questManagerLabObject.GetComponent<QuestManager>().ResetQuests();
                 foreach (var questManagerVariantObject in questManagerVariantObjects)
                 {
-                    questManagerVariantObject.GetComponent<QuestManager.QuestManager>().ResetQuests();
+                    //questManagerVariantObject.GetComponent<QuestManager>().ResetQuests();
                     questManagerVariantObject.SetActive(false);
                 }
                 if (controlPanel)

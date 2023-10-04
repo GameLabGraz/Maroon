@@ -3,3 +3,8 @@
 *.unity binary
 *.prefab binary
 *.asset binary
+
+# Force use of LF as end of line (instead of CRLF on Windows) for Javascript and CSS vendor files
+# Otherwise the hash for the integrity check is wrong
+unity/[Aa]ssets/WebGLTemplates/MaroonWeb/vendor/**/*.css text eol=lf
+unity/[Aa]ssets/WebGLTemplates/MaroonWeb/vendor/**/*.js text eol=lf
