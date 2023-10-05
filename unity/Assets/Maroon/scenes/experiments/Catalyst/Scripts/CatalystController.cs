@@ -815,10 +815,10 @@ namespace Maroon.Chemistry.Catalyst
                 {
                     chart.gameObject.SetActive(false);
                 }
-                //questManagerLabObject.GetComponent<QuestManager>().ResetQuests();
+                questManagerLabObject.GetComponent<QuestManager>().ResetQuests();
                 foreach (var questManagerVariantObject in questManagerVariantObjects)
                 {
-                    //questManagerVariantObject.GetComponent<QuestManager>().ResetQuests();
+                    questManagerVariantObject.GetComponent<QuestManager>().ResetQuests();
                     questManagerVariantObject.SetActive(false);
                 }
                 if (controlPanel)
