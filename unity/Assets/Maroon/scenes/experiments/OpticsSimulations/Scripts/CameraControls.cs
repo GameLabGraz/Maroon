@@ -1,91 +1,113 @@
 ﻿//
-//Author: Tobias Stöckl
+//Authors: Tobias Stöckl, Alexander Kassil
 //
+
+using System;
+using System.Collections;
 using UnityEngine;
 
 namespace Maroon.PlatformControls.PC
 {
     public class CameraControls : MonoBehaviour
     {
+        [SerializeField] private bool topView;
+        [SerializeField] private float moveSpeed = 3.0f;
+        [SerializeField] private float zoomSpeed = 1.0f;
+        
+        public Vector3 minPosition = new Vector3(-2.0f,1.4f,0.5f);
+        public Vector3 maxPosition = new Vector3(2.0f, 3.0f, 3.5f);
+        private Vector3 _newCameraPos;
 
-        private Vector3 _mainCamStartPosition;
-        private Quaternion _mainCamStartRotation;
-        private Camera _mainCam;
-        [SerializeField]
-        public float ScrollSpeed = 3.0f;
-        private float _currentOffset = 0.0f;
-        private int _mouseButton = 1;
-
-        private float _currentCamXpos;
-        private float _currentCamXoffset;
-
-        private readonly Vector3 _camTopPosition = new Vector3(3, 2.5f, 2.5f);
-        private readonly Quaternion _camTopRotation = Quaternion.Euler(90, 0, 0);
-
-        public bool IsTopPosition = false;
-        private bool lastFrameTopPos = false;
-        private float timeCount = 0.0f;
-
-        [SerializeField]
-        private float _clampSliderLeft = -2f;
-        [SerializeField]
-        private float _clampSliderRight = 2f;
+        private Camera cam;
+        private Vector3 _camPos;
+        private Quaternion _camRot;
+        private bool _isMoving;
+        
+        private readonly Vector3 _camTopPos = new Vector3(0, 3f, 2.5f);
+        private readonly Quaternion _camTopRot = Quaternion.Euler(90, 0, 0);
 
         private void Start()
         {
-            _mainCamStartPosition = Camera.main.transform.position;
-            _mainCamStartRotation = Camera.main.transform.rotation;
-            _currentCamXpos = Camera.main.transform.position.x;
-            _mainCam = Camera.main;
-            _currentCamXoffset = Camera.main.transform.position.x;
+            cam = GetComponent<Camera>();
         }
-        //simple script that handles where the camera position should be, so that every transition is always smooth
-        private void Update()
+
+        void Update()
         {
-            if (Input.GetMouseButtonDown(_mouseButton))
+            if (!topView && !_isMoving)
             {
-                _currentOffset = Input.mousePosition.x;
-                _currentCamXoffset = _mainCam.transform.position.x;
+                if (Input.GetMouseButton(1))
+                {
+                    float cameraOffsetX = -Input.GetAxis("Mouse X") * moveSpeed * Time.deltaTime;
+                    float cameraOffsetZ = Input.GetAxis("Mouse Y") * moveSpeed * Time.deltaTime;
+
+                    _newCameraPos = transform.position + new Vector3(cameraOffsetX, 0, cameraOffsetZ);
+
+                    if (CheckPointInCuboid(_newCameraPos, minPosition, maxPosition))
+                    {
+                        transform.position += new Vector3(cameraOffsetX, 0, cameraOffsetZ);
+                    }
+                }
+
+                _newCameraPos = transform.position + transform.forward * (zoomSpeed * Input.GetAxis("Mouse ScrollWheel"));
+                
+                if (CheckPointInCuboid(_newCameraPos, minPosition, maxPosition))
+                    transform.position = _newCameraPos;
+
             }
+        }
 
-            if (Input.GetMouseButton(_mouseButton))
+        bool CheckPointInCuboid(Vector3 p, Vector3 minCorner, Vector3 maxCorner)
+        {
+            return p.x >= minCorner.x && p.x <= maxCorner.x &&
+                   p.y >= minCorner.y && p.y <= maxCorner.y &&
+                   p.z >= minCorner.z && p.z <= maxCorner.z;
+        }
+
+        public void ToggleTopView()
+        {
+            if (!topView)
             {
-                float camxpos = ((Input.mousePosition.x - _currentOffset) / Screen.width) * ScrollSpeed;
-                _currentCamXpos = -camxpos + _currentCamXoffset;
-            }
-
-            //camera smooth transition between 2 points
-            _currentCamXpos = Mathf.Clamp(_currentCamXpos, _clampSliderLeft, _clampSliderRight);
-
-            Quaternion rotateTo = _camTopRotation;
-            Vector3 moveTo = new Vector3(_currentCamXpos, _camTopPosition.y, _camTopPosition.z);
-            Vector3 topBottom = new Vector3(_currentCamXpos, _mainCamStartPosition.y, _mainCamStartPosition.z);
-            if (IsTopPosition == lastFrameTopPos)
-            {
-                timeCount += Time.deltaTime;
+                _camPos = cam.transform.position;
+                _camRot = cam.transform.rotation;
+                StartCoroutine(ChangeCameraView(_camTopPos, _camTopRot));
             }
             else
             {
-                timeCount = 0.0f;
+                StartCoroutine(ChangeCameraView(_camPos, _camRot));
             }
-            lastFrameTopPos = IsTopPosition;
-
-            if (!IsTopPosition)
-            {
-                rotateTo = _mainCamStartRotation;
-                moveTo = topBottom;
-            }
-            timeCount = Mathf.Clamp(timeCount, 0f, 1f);
-            //set cam rotation & position
-            _mainCam.transform.rotation = Quaternion.Slerp(transform.rotation, rotateTo, timeCount);
-            _mainCam.transform.position = Vector3.Slerp(transform.position, moveTo, timeCount);
-
-
+            topView = !topView;
         }
-
-        public void SetTopView(bool viewToSet)
+        
+        private IEnumerator ChangeCameraView(Vector3 targetPos, Quaternion targetRot)
         {
-            IsTopPosition = viewToSet;
+            _isMoving = true;
+
+            float startTime = Time.time;
+            Vector3 startPos = transform.position;
+            Quaternion startRot = transform.rotation;
+
+            while (Time.time - startTime < 1f)
+            {
+                float t = (Time.time - startTime) / 1f;
+                transform.position = Vector3.Lerp(startPos, targetPos, t * 1.5f);
+                transform.rotation = Quaternion.Slerp(startRot, targetRot, t * 1.5f);
+                yield return null;
+            }
+            transform.position = targetPos;
+            transform.rotation = targetRot;
+
+            _isMoving = false;
         }
+        
+        void OnDrawGizmos()
+        {
+            Gizmos.color = Color.green;
+
+            Vector3 center = (minPosition + maxPosition) * 0.5f;
+            Vector3 size = new Vector3(Mathf.Abs(minPosition.x - maxPosition.x), Mathf.Abs(minPosition.y - maxPosition.y), Mathf.Abs(minPosition.z - maxPosition.z));
+
+            Gizmos.DrawWireCube(center, size);
+        }
+        
     }
 }
