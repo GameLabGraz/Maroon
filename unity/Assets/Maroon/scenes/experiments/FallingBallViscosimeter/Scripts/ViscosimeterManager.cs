@@ -14,7 +14,6 @@ namespace Maroon.Physics
     public Ball ball;
     public Pycnometer pycnometer;
 
-
     public decimal fluid_density_ = 0.0m;
     public Quantity<decimal> fluid_temperature_;
     public decimal FluidTemperature
@@ -41,7 +40,7 @@ namespace Maroon.Physics
     public List<MeasurableObject> measurableObjects;
 
     private decimal ballMaxSpeed = -1.0m;
-
+    private Rigidbody _rigidbody;
     private void Awake()
     {
       if(Instance == null)
@@ -50,6 +49,7 @@ namespace Maroon.Physics
       }
       calculateFluidDensity();
       getAllMeasurableObjects();
+      _rigidbody = ball.gameObject.GetComponent<Rigidbody>();
     }
 
     void calculateFluidDensity()
@@ -100,7 +100,7 @@ namespace Maroon.Physics
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
       update_debug_text();
       calculateFluidDensity();
@@ -109,7 +109,7 @@ namespace Maroon.Physics
 
     void update_debug_text()
     {
-      decimal ball_velocity = -1.0m * (decimal)ball.GetComponent<Rigidbody>().velocity.y;
+      decimal ball_velocity = -1.0m * (decimal)_rigidbody.velocity.y;
       if (ball_velocity > ballMaxSpeed)
       {
         ballMaxSpeed = ball_velocity;

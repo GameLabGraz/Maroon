@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,7 +17,7 @@ namespace Maroon.Physics
     private decimal buoyancy_force_ = 0.0m;
 
     private decimal ball_density_ = 0.0m;
-
+    
     private decimal radius_;
     //diameter in meter
     public Quantity<decimal> diameter_;
@@ -44,7 +45,12 @@ namespace Maroon.Physics
       }
     }
 
+    private Rigidbody _rigidbody;
 
+    private void Awake()
+    {
+      _rigidbody = GetComponent<Rigidbody>();
+    }
 
     protected override void Start()
     {
@@ -71,7 +77,7 @@ namespace Maroon.Physics
       {
         //apply viscosity friction force
         calculateViscosityForce();
-        gameObject.GetComponent<Rigidbody>().AddForce(transform.up * ((float)viscosity_force_ + (float)buoyancy_force_), ForceMode.Force);
+        _rigidbody.AddForce(transform.up * ((float)viscosity_force_ + (float)buoyancy_force_), ForceMode.Force);
         Debug.Log("Applied Viscosity Force: " + viscosity_force_);
       }
     }
@@ -88,19 +94,19 @@ namespace Maroon.Physics
     {
       //to make this more accurate volume should only be the displaced volume
       decimal volume = calculateVolume();
-      Debug.Log("Volume: " + volume);
+      //Debug.Log("Volume: " + volume);
       buoyancy_force_ = (volume * ViscosimeterManager.Instance.fluid_density_ * 9.81m); //kg/m^3
-      Debug.Log("Buoyancy: " + buoyancy_force_);
+      //Debug.Log("Buoyancy: " + buoyancy_force_);
     }
 
 
     void calculateViscosityForce()
     {
-      Debug.Log("Radius: " + radius_);
-      decimal velocity = (decimal)gameObject.GetComponent<Rigidbody>().velocity.magnitude;
+      //Debug.Log("Radius: " + radius_);
+      decimal velocity = (decimal)_rigidbody.velocity.magnitude;
       decimal viscosity = (2.0m / 9.0m) * ((ball_density_ - ViscosimeterManager.Instance.fluid_density_) / velocity) * 9.81m * radius_ * radius_;
-      Debug.Log("Velocity: " + velocity);
-      Debug.Log("Viscosity: " + viscosity);
+      //Debug.Log("Velocity: " + velocity);
+      //Debug.Log("Viscosity: " + viscosity);
       viscosity_force_ = 6.0m * (decimal)Mathf.PI * -viscosity * radius_ * velocity;
     }
 
@@ -110,7 +116,7 @@ namespace Maroon.Physics
     {
       transform.localScale.Set((float)Diameter, (float)Diameter, (float)Diameter);
       ball_density_ = calculateVolume() / Weight;
-      gameObject.GetComponent<Rigidbody>().mass = (float)Weight;
+      _rigidbody.mass = (float)Weight;
       calculateBuoyancy();
     }
 

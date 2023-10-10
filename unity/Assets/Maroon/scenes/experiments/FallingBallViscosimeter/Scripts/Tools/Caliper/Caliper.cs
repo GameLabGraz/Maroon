@@ -21,7 +21,7 @@ public class Caliper : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         updateText();
     }

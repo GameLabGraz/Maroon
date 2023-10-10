@@ -35,7 +35,7 @@ namespace Maroon.Physics
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
       updateText();
     }
