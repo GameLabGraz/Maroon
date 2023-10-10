@@ -7,9 +7,9 @@ namespace Maroon.Physics
 {
   public class Pycnometer : MonoBehaviour, IResetObject
   {
-    float volume = 50.28f / 1000000.0f; //m^3
+    decimal volume = 50.28m / 1000000.0m; //m^3
     WeighableObject weighableObject;
-    float weight;
+    decimal weight;
     private MeshRenderer renderer_;
     public bool filled;
 
@@ -29,10 +29,9 @@ namespace Maroon.Physics
       
     }
 
-
     public void fillPycnometer() //kg/m^3
     {
-      float density = ViscosimeterManager.Instance.fluid_density_;
+      decimal density = ViscosimeterManager.Instance.fluid_density_;
       weighableObject = GetComponent<WeighableObject>();
       weighableObject.setWeight(weighableObject.starting_weight + (density * volume));
       renderer_.material.color = new Color(0.65f,0.16f,0.16f,0.3f);

@@ -5,7 +5,7 @@ using TMPro;
 
 namespace Maroon.Physics
 {
-  public class ViscosimeterManager : MonoBehaviour
+  public class ViscosimeterManager : MonoBehaviour, IResetObject
   {
     public static ViscosimeterManager Instance;
     
@@ -15,16 +15,14 @@ namespace Maroon.Physics
     public Pycnometer pycnometer;
 
 
-    public float fluid_density_ = 0.0f;
-    public QuantityFloat fluid_temperature_ = 25.0f;
-    public float FluidTemperature
+    public decimal fluid_density_ = 0.0m;
+    public Quantity<decimal> fluid_temperature_;
+    public decimal FluidTemperature
     {
-      get => fluid_temperature_;
+      get => fluid_temperature_.Value;
       set
       {
         fluid_temperature_.Value = value;
-        calculateFluidDensity();
-        ball.updateBall();
       }
     }
 
@@ -42,7 +40,7 @@ namespace Maroon.Physics
     MeasurableObject currentMeasurableObject;
     public List<MeasurableObject> measurableObjects;
 
-
+    private decimal ballMaxSpeed = -1.0m;
 
     private void Awake()
     {
@@ -56,8 +54,7 @@ namespace Maroon.Physics
 
     void calculateFluidDensity()
     {
-      fluid_density_ = (fluid_temperature_ * -0.37f + 891.83f); //kg/m^3
-      Debug.Log("Fluid Density: " + fluid_density_);
+      fluid_density_ = (fluid_temperature_.Value * -0.37m + 891.83m); //kg/m^3
     }
 
     public void togglePycnometerFill(bool fill)
@@ -106,14 +103,24 @@ namespace Maroon.Physics
     void Update()
     {
       update_debug_text();
+      calculateFluidDensity();
+      ball.updateBall();
     }
 
     void update_debug_text()
     {
-      float ball_velocity = ball.GetComponent<Rigidbody>().velocity.y;
-
-      debug_text.text = "Ball Velocity:\n" + ball_velocity;
+      decimal ball_velocity = -1.0m * (decimal)ball.GetComponent<Rigidbody>().velocity.y;
+      if (ball_velocity > ballMaxSpeed)
+      {
+        ballMaxSpeed = ball_velocity;
+      }
+      debug_text.text = "Ball Velocity:\n" + ball_velocity + "\nMax Vel:\n" + ballMaxSpeed;
       
+    }
+
+    public void ResetObject()
+    {
+      ballMaxSpeed = -1;
     }
   }
 }

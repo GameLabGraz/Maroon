@@ -5,20 +5,20 @@ using UnityEngine;
 public class WeighableObject : MonoBehaviour, IResetObject
 {
 
-    public float starting_weight;
-    private float weight;
+    public decimal starting_weight;
+    private decimal weight;
 
     private void Awake()
     {
         ResetObject();
     }
 
-    public float getWeight()
+    public decimal getWeight()
     {
         return weight;
     }
 
-    public void setWeight(float new_weight)
+    public void setWeight(decimal new_weight)
     {
         weight = new_weight;
     }
