@@ -20,7 +20,7 @@ namespace Maroon.Physics
     
     private decimal radius_;
     //diameter in meter
-    public Quantity<decimal> diameter_;
+    public QuantityDecimal diameter_;
     public decimal Diameter
     {
       get => diameter_.Value;
@@ -33,7 +33,7 @@ namespace Maroon.Physics
     }
 
     //Weight in kg
-    public Quantity<decimal> weight_;
+    public QuantityDecimal weight_;
 
     public decimal Weight
     {
@@ -99,7 +99,7 @@ namespace Maroon.Physics
       //Debug.Log("Buoyancy: " + buoyancy_force_);
     }
 
-
+    
     void calculateViscosityForce()
     {
       //Debug.Log("Radius: " + radius_);

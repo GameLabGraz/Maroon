@@ -69,6 +69,21 @@ namespace Maroon.UI
                     floatQuantity.onValueChanged.AddListener(value => { sliderFloat.value = value; });
                     break;
                 
+                case QuantityDecimal decimalQuantity:
+                    var sliderDecimal = InstantiateSlider(
+                        (float)decimalQuantity.minValue,
+                        (float)decimalQuantity.maxValue,
+                        transform);
+                    sliderDecimal.value = (float)decimalQuantity.Value;
+
+                    sliderDecimal.onValueChanged.AddListener(value =>
+                    {
+                        decimalQuantity.Value = (decimal)value;
+                    });
+
+                    decimalQuantity.onValueChanged.AddListener(value => { sliderDecimal.value = (float)value; });
+                    break;
+
                 case QuantityVector3 vectorQuantity:
 
                     var xInputField = ((GameObject)Instantiate(UIContent.Input, transform)).GetComponent<TMP_InputField>();

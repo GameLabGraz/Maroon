@@ -18,6 +18,8 @@ namespace Maroon.Physics
     [Serializable]
     public class OnValueFloatChangeEvent : OnValueChangeEvent<float> { }
     [Serializable]
+    public class OnValueDecimalChangeEvent : OnValueChangeEvent<decimal> { }
+    [Serializable]
     public class OnValueVector3ChangeEvent : OnValueChangeEvent<Vector3> { }
     [Serializable]
     public class OnValueBoolChangeEvent : OnValueChangeEvent<bool> { }
@@ -117,6 +119,26 @@ namespace Maroon.Physics
         public static implicit operator float(QuantityFloat quantity) => quantity.Value;
     }
 
+
+    [Serializable]
+    public class QuantityDecimal : Quantity<decimal>
+    {
+        public decimal minValue;
+        public decimal maxValue;
+
+        public QuantityDecimal() : this(0) { }
+        public QuantityDecimal(decimal value) : base(value)
+        {
+            base.onValueChanged.AddListener(OnValueChangedHandler);
+            base.onNewValueFromSystem.AddListener(OnNewValueFromSystemHandler);
+        }
+        public new OnValueDecimalChangeEvent onValueChanged = new OnValueDecimalChangeEvent();
+        public new OnValueDecimalChangeEvent onNewValueFromSystem = new OnValueDecimalChangeEvent();
+        private void OnValueChangedHandler(decimal value) { onValueChanged?.Invoke(value); }
+        private void OnNewValueFromSystemHandler(decimal value) { onNewValueFromSystem?.Invoke(value); }
+        public static implicit operator QuantityDecimal(decimal value) => new QuantityDecimal(value);
+        public static implicit operator decimal(QuantityDecimal quantity) => quantity.Value;
+    }
     [Serializable]
     public class QuantityVector3 : Quantity<Vector3>
     {
