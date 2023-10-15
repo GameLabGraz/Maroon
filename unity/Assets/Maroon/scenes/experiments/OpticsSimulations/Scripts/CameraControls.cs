@@ -1,5 +1,5 @@
 ﻿//
-//Authors: Tobias Stöckl, Alexander Kassil
+//Authors: Alexander Kassil
 //
 
 using System;
