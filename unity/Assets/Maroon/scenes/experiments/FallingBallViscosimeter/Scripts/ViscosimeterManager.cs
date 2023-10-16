@@ -56,7 +56,7 @@ namespace Maroon.Physics
 
     void calculateFluidDensity()
     {
-      fluid_density_ = ((decimal)FluidTemperature * -0.37m + 891.83m); //kg/m^3
+      fluid_density_ = (FluidTemperature * -0.37m + 891.83m); //kg/m^3
     }
 
     public void togglePycnometerFill(bool fill)

@@ -13,13 +13,11 @@ namespace Maroon.Physics
     private MeshRenderer renderer_;
     public bool filled;
 
-
     // Start is called before the first frame update
     void Start()
     {
       weighableObject = GetComponent<WeighableObject>();
       renderer_ = GetComponent<MeshRenderer>();
-      Debug.Log(renderer_);
       filled = false;
     }
 
@@ -32,7 +30,6 @@ namespace Maroon.Physics
     public void fillPycnometer() //kg/m^3
     {
       decimal density = ViscosimeterManager.Instance.fluid_density_;
-      weighableObject = GetComponent<WeighableObject>();
       weighableObject.setWeight(weighableObject.starting_weight + (density * volume));
       renderer_.material.color = new Color(0.65f,0.16f,0.16f,0.3f);
       filled = true;
