@@ -1,16 +1,24 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightSource;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
 using UnityEngine;
 
-namespace Maroon.scenes.experiments.OpticsSimulations.Scripts
+namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
 {
     public class OpticalComponentManager : MonoBehaviour
     {
         public static OpticalComponentManager Instance;
 
         [SerializeField] private List<OpticalComponent> _opticalComponents; // TODO dont serialize after testing is finished
+        [SerializeField] private GameObject tableObjects;
+        
+        [Header("Prefabs: Optical Components")] 
+        [SerializeField] private OpticalComponent aperture;
+        [SerializeField] private OpticalComponent eye;
+        [SerializeField] private OpticalComponent lens;
+        [SerializeField] private OpticalComponent mirror;
 
         public List<OpticalComponent> OpticalComponents => _opticalComponents;
 
@@ -20,9 +28,13 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts
                 Instance = this;
             else
             {
-                Debug.LogError("SHOULD NOT OCCUR - Destroyed OpOpticalComponentManager");
+                Debug.LogError("SHOULD NOT OCCUR - Destroyed OpticalComponentManager");
                 Destroy(gameObject);
             }
+        }
+
+        private void Start()
+        {
         }
 
         public void AddOpticalComponent(OpticalComponent oc)

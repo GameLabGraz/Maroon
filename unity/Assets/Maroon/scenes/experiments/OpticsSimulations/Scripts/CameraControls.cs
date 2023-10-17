@@ -4,6 +4,8 @@
 
 using System;
 using System.Collections;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
 using UnityEngine;
 
 namespace Maroon.PlatformControls.PC
@@ -14,27 +16,33 @@ namespace Maroon.PlatformControls.PC
         [SerializeField] private float moveSpeed = 3.0f;
         [SerializeField] private float zoomSpeed = 1.0f;
         
-        public Vector3 minPosition = new Vector3(-2.0f,1.4f,0.5f);
-        public Vector3 maxPosition = new Vector3(2.0f, 3.0f, 3.5f);
         private Vector3 _newCameraPos;
-
-        private Camera cam;
+        private Camera _cam;
+        private Transform _camTransform;
         private Vector3 _camPos;
         private Quaternion _camRot;
         private bool _isMoving;
+        private float _moveFactor;
         
         private readonly Vector3 _camTopPos = new Vector3(0, 3f, 2.5f);
         private readonly Quaternion _camTopRot = Quaternion.Euler(90, 0, 0);
 
         private void Start()
         {
-            cam = GetComponent<Camera>();
+            _cam = GetComponent<Camera>();
+            _camTransform = _cam.transform;
         }
 
         void Update()
         {
             if (!topView && !_isMoving)
             {
+                Ray ray = new Ray(_camTransform.position, _camTransform.forward);
+
+                if (UnityEngine.Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, 1 << Constants.MouseColliderMaskIndex))
+                    _moveFactor = hit.distance + 1;
+                    
+                    
                 if (Input.GetMouseButton(1))
                 {
                     float cameraOffsetX = -Input.GetAxis("Mouse X") * moveSpeed * Time.deltaTime;
@@ -42,15 +50,15 @@ namespace Maroon.PlatformControls.PC
 
                     _newCameraPos = transform.position + new Vector3(cameraOffsetX, 0, cameraOffsetZ);
 
-                    if (CheckPointInCuboid(_newCameraPos, minPosition, maxPosition))
+                    if (CheckPointInCuboid(_newCameraPos, Constants.MinPositionCamera, Constants.MaxPositionCamera))
                     {
-                        transform.position += new Vector3(cameraOffsetX, 0, cameraOffsetZ);
+                        transform.position += new Vector3(cameraOffsetX, 0, cameraOffsetZ) * _moveFactor;
                     }
                 }
 
                 _newCameraPos = transform.position + transform.forward * (zoomSpeed * Input.GetAxis("Mouse ScrollWheel"));
                 
-                if (CheckPointInCuboid(_newCameraPos, minPosition, maxPosition))
+                if (CheckPointInCuboid(_newCameraPos, Constants.MinPositionCamera, Constants.MaxPositionCamera))
                     transform.position = _newCameraPos;
 
             }
@@ -67,8 +75,8 @@ namespace Maroon.PlatformControls.PC
         {
             if (!topView)
             {
-                _camPos = cam.transform.position;
-                _camRot = cam.transform.rotation;
+                _camPos = _cam.transform.position;
+                _camRot = _cam.transform.rotation;
                 StartCoroutine(ChangeCameraView(_camTopPos, _camTopRot));
             }
             else
@@ -103,8 +111,12 @@ namespace Maroon.PlatformControls.PC
         {
             Gizmos.color = Color.green;
 
-            Vector3 center = (minPosition + maxPosition) * 0.5f;
-            Vector3 size = new Vector3(Mathf.Abs(minPosition.x - maxPosition.x), Mathf.Abs(minPosition.y - maxPosition.y), Mathf.Abs(minPosition.z - maxPosition.z));
+            Vector3 center = (Constants.MinPositionCamera + Constants.MaxPositionCamera) * 0.5f;
+            Vector3 size = new Vector3(
+                Mathf.Abs(Constants.MinPositionCamera.x - Constants.MaxPositionCamera.x), 
+                Mathf.Abs(Constants.MinPositionCamera.y - Constants.MaxPositionCamera.y), 
+                Mathf.Abs(Constants.MinPositionCamera.z - Constants.MaxPositionCamera.z)
+                );
 
             Gizmos.DrawWireCube(center, size);
         }
