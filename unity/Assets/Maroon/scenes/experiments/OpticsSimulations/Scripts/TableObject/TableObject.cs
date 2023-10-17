@@ -72,7 +72,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject
             if (type == Type.OpticalComponent)
                 OpticalComponentManager.Instance.UnselectAll();
             else
-                LightSourceManager.Instance.UnselectAll();
+                LightComponentManager.Instance.UnselectAll();
                 
             _material.color = selected;
             _isSelected = true;

@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightSource;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
 using UnityEngine;
 
@@ -12,7 +12,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         public static OpticalComponentManager Instance;
 
         [SerializeField] private List<OpticalComponent> _opticalComponents; // TODO dont serialize after testing is finished
-        [SerializeField] private GameObject tableObjects;
+        [SerializeField] private GameObject tableLowLeftCorner;
         
         [Header("Prefabs: Optical Components")] 
         [SerializeField] private OpticalComponent aperture;
