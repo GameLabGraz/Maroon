@@ -1,8 +1,4 @@
-﻿//
-//Authors: Alexander Kassil
-//
-
-using System;
+﻿using System;
 using System.Collections;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
@@ -23,6 +19,7 @@ namespace Maroon.PlatformControls.PC
         private Quaternion _camRot;
         private bool _isMoving;
         private float _moveFactor;
+        private Plane _tablePlane;
         
         private readonly Vector3 _camTopPos = new Vector3(0, 3f, 2.5f);
         private readonly Quaternion _camTopRot = Quaternion.Euler(90, 0, 0);
@@ -31,6 +28,8 @@ namespace Maroon.PlatformControls.PC
         {
             _cam = GetComponent<Camera>();
             _camTransform = _cam.transform;
+            
+            _tablePlane = new Plane(Vector3.up, new Vector3(0, Constants.TableHeight, 0));
         }
 
         void Update()
@@ -39,9 +38,8 @@ namespace Maroon.PlatformControls.PC
             {
                 Ray ray = new Ray(_camTransform.position, _camTransform.forward);
 
-                if (UnityEngine.Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, 1 << Constants.MouseColliderMaskIndex))
-                    _moveFactor = hit.distance + 1;
-                    
+                _tablePlane.Raycast(ray, out float distance);
+                _moveFactor = distance + 1; // The +1 ensures sharper camera movement
                     
                 if (Input.GetMouseButton(1))
                 {
@@ -75,8 +73,8 @@ namespace Maroon.PlatformControls.PC
         {
             if (!topView)
             {
-                _camPos = _cam.transform.position;
-                _camRot = _cam.transform.rotation;
+                _camPos = _camTransform.position;
+                _camRot = _camTransform.rotation;
                 StartCoroutine(ChangeCameraView(_camTopPos, _camTopRot));
             }
             else

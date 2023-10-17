@@ -12,5 +12,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts
 
         public static Vector3 MinPositionTable = new Vector3(0f, 0f, 0f);
         public static Vector3 MaxPositionTable = new Vector3(4f, 0f, 2f);
+        public const float TableHeight = 1f;
     }
 }
