@@ -21,8 +21,10 @@ public class DragDrop : MonoBehaviour
   public bool axisLocked = false;
   public Axis axisLockedInto = Axis.X;
 
+  private PausableObject _pausableObject;
   private void Awake() {
     plane = new Plane(new Vector3(0,0,-1), planePosition);
+    _pausableObject = gameObject.GetComponent<PausableObject>();
   }
   private void OnMouseDown() 
   {
@@ -82,6 +84,10 @@ public class DragDrop : MonoBehaviour
       return;
     }
     isDragged = false;
+    if (_pausableObject)
+    {
+      _pausableObject.gameObject.SendMessage("SaveRigidbodyState");
+    }
     if(snap)
     {
       dragEndedCallback(this);

@@ -165,5 +165,12 @@ namespace Maroon.Physics
     {
       touching_oil = false;
     }
+
+    
+    //TODO: Fix this :)
+    private void SaveRigidbodyState()
+    { 
+      _rigidBodyStateControl.StoreRigidBodyState();
+    }
   }
 }
