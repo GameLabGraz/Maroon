@@ -156,8 +156,9 @@ namespace Maroon.Physics
       dropped_ = true;
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
+      if(other.gameObject.layer == 4) //Water
       touching_oil = true;
     }
 
@@ -166,10 +167,9 @@ namespace Maroon.Physics
       touching_oil = false;
     }
 
-    
-    //TODO: Fix this :)
     private void SaveRigidbodyState()
-    { 
+    {
+      _rigidbody.isKinematic = false;
       _rigidBodyStateControl.StoreRigidBodyState();
     }
   }
