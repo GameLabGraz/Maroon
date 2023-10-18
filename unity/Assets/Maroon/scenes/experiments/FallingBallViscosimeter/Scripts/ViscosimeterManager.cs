@@ -111,12 +111,12 @@ namespace Maroon.Physics
 
     void update_debug_text()
     {
-      decimal ball_velocity = -1.0m * (decimal)_rigidbody.velocity.y;
+      decimal ball_velocity = ball.Velocity;
       if (ball_velocity > ballMaxSpeed)
       {
         ballMaxSpeed = ball_velocity;
       }
-      debug_text.text = "Ball Velocity:\n" + ball_velocity + "\nMax Vel:\n" + ballMaxSpeed + "\nFluid density\n" + fluid_density_;
+      debug_text.text = "Ball Velocity:\n" + ball_velocity.ToString("0.00000000") + "\nMax Vel:\n" + ballMaxSpeed.ToString("0.00000000") + "\nFluid density\n" + fluid_density_;
       
     }
 
