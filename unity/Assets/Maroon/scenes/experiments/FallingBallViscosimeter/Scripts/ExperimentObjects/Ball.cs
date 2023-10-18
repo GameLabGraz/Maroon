@@ -226,7 +226,7 @@ namespace Maroon.Physics
 
     bool CheckCollision(Vector3 position, decimal velocity)
     {
-      float range = (float)(velocity * (decimal)Time.deltaTime + radius_);
+      float range = (float)(velocity * (decimal)Time.deltaTime);
       Ray ray = new Ray(position, Vector3.down * range);
       Debug.DrawRay(position, Vector3.down * range);
 
@@ -235,7 +235,7 @@ namespace Maroon.Physics
         if (hit.collider.CompareTag("Floor"))
         {
           float possibleMovement = GetPossibleMovement(ray, range);
-          transform.position = new Vector3(position.x, position.y - possibleMovement, position.z);
+          transform.position = new Vector3(position.x, position.y - possibleMovement + (float)radius_, position.z);
           _velocity = 0;
           return false;
         }
