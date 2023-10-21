@@ -9,7 +9,6 @@ namespace Maroon.Physics
 {
   public class MeasurementManager : MonoBehaviour
   {
-    
     public static MeasurementManager Instance;
     public Caliper caliperPrefab;
     private Caliper current_caliper = null;
@@ -23,6 +22,7 @@ namespace Maroon.Physics
     public Button endButton;
 
     private bool measuring = false;
+    private float minSize = 0.2f;
 
     private void Awake()
     { 
@@ -79,6 +79,12 @@ namespace Maroon.Physics
       var objectHeight = measuredObject.transform.localScale.y;
       var objectWidth = measuredObject.transform.localScale.x;
 
+      if (objectHeight * 1.6f < 0.2f && objectWidth * 1.6f < 0.2f)
+      {
+        zoom_camera.orthographicSize = 0.2f;
+        return;
+      }
+      
       if(objectHeight >= objectWidth)
       {
         zoom_camera.orthographicSize = objectHeight * 1.6f;
@@ -87,6 +93,8 @@ namespace Maroon.Physics
       {
         zoom_camera.orthographicSize = objectWidth * 1.6f;
       }
+      
+      
 
     }
 
