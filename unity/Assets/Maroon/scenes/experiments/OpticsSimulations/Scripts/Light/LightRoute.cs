@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
 using UnityEngine;
 
@@ -41,28 +43,19 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
             intensity = 1.0f;
             this.wavelength = wavelength;
 
-            for (int i = 0; i < _raySegments.Count; i++)
+
+            foreach (var rs in _raySegments)
             {
-                var tmpSegment = _raySegments[i];
-                _raySegments.Remove(tmpSegment);
-                tmpSegment.DestroyRaySegment();
+                rs.DestroyRaySegment();
             }
+
+            _raySegments.Clear();
         }
         
-        public OpticalComponent GetHitComponent(Vector3 rayOrigin, Vector3 rayDirection)
-        {
-            Vector3 globalRayOrigin =  rayOrigin + Constants.TableBaseOffset + new Vector3(0, Constants.TableObjectHeight, 0);
-            if (UnityEngine.Physics.Raycast(globalRayOrigin, rayDirection, out RaycastHit hit, Mathf.Infinity, ~(1 << 4)))
-                return hit.transform.gameObject.GetComponent<OpticalComponent>();
-            
-            Debug.LogError("Did not hit any object - can not occur!");
-            return null;
-        }
-
         public void CalculateNextRay(Vector3 rayOrigin, Vector3 rayDirection)
         {
             // Get the first hit component via raycast, so we do not need to go through every Component on the table
-            OpticalComponent hitComponent = GetHitComponent(rayOrigin, rayDirection);
+            OpticalComponent hitComponent = OpticalComponentManager.Instance.GetHitComponent(rayOrigin, rayDirection);
 
             switch (hitComponent.OpticalType)
             {
@@ -82,6 +75,14 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
                     TableObject.OpticalComponent.Mirror mirror = (TableObject.OpticalComponent.Mirror) hitComponent;
 
                     (Vector3 hitPointM, Vector3 normalM) = mirror.CalculateHitPointAndNormal(rayOrigin, rayDirection);
+                    
+                    // TODO only workaround for now because "real" mirror object is not correct
+                    if (!IsValidPoint(hitPointM))
+                    {
+                        Debug.Log(hitPointM.ToString("f2") + " not valid!");
+                        return;
+                    }
+                        
                     Debug.Log("MIRROR Hit " + hitPointM.ToString("f3"));
                     Debug.Log("MIRROR n   " + normalM.ToString("f3"));
 
@@ -96,6 +97,12 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
                 case OpticalType.Lens:
                     throw new NotImplementedException("Lens calculations not implemented yet!");
             }
+        }
+
+        public bool IsValidPoint(Vector3 p)
+        {
+            return !float.IsNaN(p.x) && !float.IsNaN(p.y) && !float.IsNaN(p.z)
+                   && !float.IsInfinity(p.x) && !float.IsInfinity(p.y) && !float.IsInfinity(p.z);
         }
         
         public RaySegment AddRaySegment(Vector3 origin, Vector3 endpoint)

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,6 +21,11 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         {
             get => r;
             set => r = value;
+        }
+        
+        public override void UpdateProperties()
+        {
+            throw new NotImplementedException();
         }
     }
 }

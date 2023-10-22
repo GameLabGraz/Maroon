@@ -23,5 +23,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             float d = Util.Math.IntersectLinePlane(incRayPos, incRayDir, r0, n);
             return (incRayPos + incRayDir * d, n);
         }
+        
+        public override void UpdateProperties()
+        {
+            r0 = transform.localPosition;
+        }
     }
 }

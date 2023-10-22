@@ -43,6 +43,11 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             get => b;
             set => b = value;
         }
+        
+        public override void UpdateProperties()
+        {
+            throw new NotImplementedException();
+        }
 
     }
 }

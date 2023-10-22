@@ -40,9 +40,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             AddLightComponent(laserPointer, new Vector3(1.70f,0,0.311f));
         }
 
-        public void CalculateMirrorReflection()
+        public void CheckOpticalComponentHit(OpticalComponent opticalComponent)
         {
-            
+            foreach (var lightComponent in _lightComponents)
+                lightComponent.RecalculateLightRoute();
         }
 
         public void AddLightComponent(LightComponent lc, Vector3 pos)

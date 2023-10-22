@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent
@@ -13,14 +14,20 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
 
         public virtual (Vector3 hitPoint, Vector3 surfaceNormal) CalculateHitPointAndNormal(Vector3 rayOrigin, Vector3 rayDirection)
         {
-            throw new NotImplementedException("Should not call base CalculateHitPoint Method!");
+            throw new Exception("Should not call base CalculateHitPoint Method!");
+        }
+
+        public virtual void UpdateProperties()
+        {
+            throw new Exception("Should not call base UpdateProperties Method!");
         }
         
         private void Update()
         {
             if (transform.hasChanged)
             {
-                
+                UpdateProperties();
+                LightComponentManager.Instance.CheckOpticalComponentHit(this);
                 transform.hasChanged = false;
             }
         }

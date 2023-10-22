@@ -39,7 +39,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             
             // Spawn 2 mirrors for testing
             AddOpticalComponent(mirror, new Vector3(2f, 0, 0.9f));
-            // AddOpticalComponent(mirror, new Vector3(2.2f, 0, 0.28f));
+            // AddOpticalComponent(mirror, new Vector3(2.2f, 0, 0.20f));
         }
 
         public void AddOpticalComponent(OpticalComponent oc, Vector3 pos)
@@ -60,6 +60,18 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             foreach (var oc in _opticalComponents)
                 oc.Unselect();
         }
+        
+        public OpticalComponent GetHitComponent(Vector3 rayOrigin, Vector3 rayDirection)
+        {
+            Vector3 globalRayOrigin =  rayOrigin + Constants.TableBaseOffset + new Vector3(0, Constants.TableObjectHeight, 0);
+            if (UnityEngine.Physics.Raycast(globalRayOrigin, rayDirection, out RaycastHit hit, Mathf.Infinity, ~(1 << 4)))
+                return hit.transform.gameObject.GetComponent<OpticalComponent>();
+            
+            Debug.LogError("Did not hit any object - can not occur!");
+            return null;
+        }
+        
+        
         
     }
 }

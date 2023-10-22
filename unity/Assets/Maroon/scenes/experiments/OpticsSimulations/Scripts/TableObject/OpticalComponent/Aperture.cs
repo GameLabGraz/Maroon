@@ -21,5 +21,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             get => rout;
             set => rout = value;
         }
+        
+        public override void UpdateProperties()
+        {
+            
+        }
     }
 }

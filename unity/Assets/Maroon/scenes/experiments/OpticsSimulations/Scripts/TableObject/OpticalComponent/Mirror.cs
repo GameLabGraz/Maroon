@@ -21,7 +21,12 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             Rc = 0.09f;
 
         }
-        
+
+        private void FixedUpdate()
+        {
+            transform.localScale = Vector3.one * R;
+        }
+
         // normal to surface at r
         public Vector3 NormR(Vector3 r)
         {
@@ -34,8 +39,14 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
          // center of Mirror
         public Vector3 Center()
         {
-            // return r + R * n;
-            return r;
+            return r + R * n;
+            // return r;
+        }
+        
+        
+        public override void UpdateProperties()
+        {
+            r = transform.localPosition;
         }
 
         public override (Vector3 hitPoint, Vector3 surfaceNormal) CalculateHitPointAndNormal(Vector3 incRayPos, Vector3 incRayDir)

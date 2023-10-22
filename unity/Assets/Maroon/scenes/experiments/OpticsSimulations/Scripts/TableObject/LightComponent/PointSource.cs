@@ -22,5 +22,18 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
             for (int i = 0; i < nrOfLights; i++)
                 _lightRoutes[i] = new LightRoute(Intensity, Wavelength);
         }
+        
+        
+        public override bool CheckHitComponent(OpticalComponent.OpticalComponent oc)
+        {
+            throw new NotImplementedException("CheckHitComponent Method not implemented for PointSource!");
+            // return false;
+        }
+        
+        public override void RecalculateLightRoute()
+        {
+            throw new NotImplementedException("RecalculateLightRoute Method not implemented for PointSource!");
+        }
+        
     }
 }
