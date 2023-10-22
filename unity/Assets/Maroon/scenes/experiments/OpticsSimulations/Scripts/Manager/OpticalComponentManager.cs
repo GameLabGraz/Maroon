@@ -11,7 +11,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
     {
         public static OpticalComponentManager Instance;
 
-        [SerializeField] private List<OpticalComponent> _opticalComponents; // TODO dont serialize after testing is finished
+        private List<OpticalComponent> _opticalComponents;
         [SerializeField] private GameObject tableLowLeftCorner;
         
         [Header("Prefabs: Optical Components")] 
@@ -31,15 +31,22 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 Debug.LogError("SHOULD NOT OCCUR - Destroyed OpticalComponentManager");
                 Destroy(gameObject);
             }
+            _opticalComponents = new List<OpticalComponent>();
         }
 
         private void Start()
         {
+            
+            // Spawn 2 mirrors for testing
+            AddOpticalComponent(mirror, new Vector3(2f, 0, 0.9f));
+            // AddOpticalComponent(mirror, new Vector3(2.2f, 0, 0.28f));
         }
 
-        public void AddOpticalComponent(OpticalComponent oc)
+        public void AddOpticalComponent(OpticalComponent oc, Vector3 pos)
         {
-            _opticalComponents.Add(oc);
+            var ocClone = Instantiate(oc, tableLowLeftCorner.transform);
+            ocClone.transform.localPosition = pos;
+            _opticalComponents.Add(ocClone);
         }
 
         public void RemoveOpticalComponent(OpticalComponent oc)

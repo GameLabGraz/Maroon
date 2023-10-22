@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
@@ -7,7 +9,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
     public class LightRoute
     {
         [Header("Light Settings")]
-        [SerializeField] private Vector3 origin;
         [SerializeField] private float intensity;
         [SerializeField] private float wavelength;
         
@@ -29,43 +30,101 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
             set => wavelength = value;
         }
 
-        public LightRoute(Vector3 origin, float intensity, float wavelength)
+        public LightRoute(float intensity, float wavelength)
         {
-            this.origin = origin;
             this.intensity = intensity;
             this.wavelength = wavelength;
+        }
+
+        public void ResetLightRoute(float wavelength)
+        {
+            intensity = 1.0f;
+            this.wavelength = wavelength;
+
+            for (int i = 0; i < _raySegments.Count; i++)
+            {
+                var tmpSegment = _raySegments[i];
+                _raySegments.Remove(tmpSegment);
+                tmpSegment.DestroyRaySegment();
+            }
+        }
+        
+        public OpticalComponent GetHitComponent(Vector3 rayOrigin, Vector3 rayDirection)
+        {
+            Vector3 globalRayOrigin =  rayOrigin + Constants.TableBaseOffset + new Vector3(0, Constants.TableObjectHeight, 0);
+            if (UnityEngine.Physics.Raycast(globalRayOrigin, rayDirection, out RaycastHit hit, Mathf.Infinity, ~(1 << 4)))
+                return hit.transform.gameObject.GetComponent<OpticalComponent>();
             
-            var rs = new RaySegment(origin, Vector3.right, intensity, wavelength);
+            Debug.LogError("Did not hit any object - can not occur!");
+            return null;
+        }
+
+        public void CalculateNextRay(Vector3 rayOrigin, Vector3 rayDirection)
+        {
+            // Get the first hit component via raycast, so we do not need to go through every Component on the table
+            OpticalComponent hitComponent = GetHitComponent(rayOrigin, rayDirection);
+
+            switch (hitComponent.OpticalType)
+            {
+                // End of ray - no further reflection/refraction
+                case OpticalType.Wall:
+                    Wall wall = (Wall) hitComponent;
+
+                    (Vector3 hitPointW, _) = wall.CalculateHitPointAndNormal(rayOrigin, rayDirection);
+                    // Debug.Log(wall.name+" Hit " + hitPointW.ToString("f3"));
+
+                    AddRaySegment(rayOrigin, hitPointW);
+                    break;
+                        
+                // Ray has 1 further reflection
+                case OpticalType.Mirror:
+                    
+                    TableObject.OpticalComponent.Mirror mirror = (TableObject.OpticalComponent.Mirror) hitComponent;
+
+                    (Vector3 hitPointM, Vector3 normalM) = mirror.CalculateHitPointAndNormal(rayOrigin, rayDirection);
+                    Debug.Log("MIRROR Hit " + hitPointM.ToString("f3"));
+                    Debug.Log("MIRROR n   " + normalM.ToString("f3"));
+
+                    AddRaySegment(rayOrigin, hitPointM);
+                    CalculateNextRay(hitPointM, normalM);
+                    break;
+                        
+                case OpticalType.Aperture:
+                    throw new NotImplementedException("Aperture calculations not implemented yet!");
+                case OpticalType.Eye:
+                    throw new NotImplementedException("Eye calculations not implemented yet!");
+                case OpticalType.Lens:
+                    throw new NotImplementedException("Lens calculations not implemented yet!");
+            }
+        }
+        
+        public RaySegment AddRaySegment(Vector3 origin, Vector3 endpoint)
+        {
+            // TODO intensity calculation
+            var rs = new RaySegment(origin, endpoint, intensity * 0.9f, wavelength);
             _raySegments.Add(rs);
-
-            // TODO restructure
-            // testing reasons
-            var distanceToIntersection =
-                Math.Util.IntersectLinePlane(rs.r0, rs.n, new Vector3(4.0f+0.5f, 1.0f, 1f) + Constants.TableBaseOffset, Vector3.left);
-            
-            Debug.Log("dist: " + distanceToIntersection);
-            rs.UpdateLength(distanceToIntersection);
+            return rs;
         }
 
-        public void UpdateOrigin(Vector3 newOrigin)
+        public RaySegment GetFirstClearRest()
         {
-            origin = newOrigin;
-            RaySegment first = GetFirstClearRest();
-            first.UpdateStartingPoint(origin);
-            
-            // TODO restructure the intersection thing
-            var distanceToIntersection =
-                Math.Util.IntersectLinePlane(first.r0, first.n, new Vector3(4.0f+0.5f, 1.0f, 1f) + Constants.TableBaseOffset, Vector3.left);
-            
-            Debug.Log("dist: " + distanceToIntersection);
-            first.UpdateLength(distanceToIntersection);
-        }
+            if (_raySegments.Count == 0)
+            {
+                Debug.LogError("LightRoute can not consist of zero rays!");
+                return null;
+            }
 
-        private RaySegment GetFirstClearRest()
-        {
-            _raySegments.RemoveRange(1, _raySegments.Count - 1);
+            for (int i = 1; i < _raySegments.Count; i++)
+            {
+                var tmpSegment = _raySegments[i];
+                tmpSegment.DestroyRaySegment();
+                _raySegments.Remove(tmpSegment);
+
+            }
+            // _raySegments.RemoveRange(1, _raySegments.Count - 1);
             return _raySegments[0];
         }
+        
 
     }
 }

@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
 using UnityEngine;
+using LightType = Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent.LightType;
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
 {
@@ -11,13 +13,13 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
     {
         public static LightComponentManager Instance;
 
-        [SerializeField] private List<LightComponent> _lightComponents; // TODO dont serialize after testing is finished
+        private List<LightComponent> _lightComponents;
         [SerializeField] private GameObject tableLowLeftCorner;
         
         [Header("Prefabs: Light Sources")] 
         [SerializeField] private LightComponent laserPointer;
 
-        public List<LightComponent> lightComponents => _lightComponents;
+        public List<LightComponent> LightComponents => _lightComponents;
 
         private void Awake()
         {
@@ -28,19 +30,19 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 Debug.LogError("SHOULD NOT OCCUR - Destroyed LightSourceManager");
                 Destroy(gameObject);
             }
+            _lightComponents = new List<LightComponent>();
         }
 
         private void Start()
         {
             // Spawn 2 lasers for testing
-            AddLightComponent(laserPointer, new Vector3(1.74f, 0, 0.5f));
-            AddLightComponent(laserPointer, new Vector3(1.69f, 0, 0.32f));
+            // AddLightComponent(laserPointer, new Vector3(1.74f, 0, 0.5f));
+            AddLightComponent(laserPointer, new Vector3(1.70f,0,0.311f));
         }
 
-        public void UpdateLightComponentPosition(LightComponent lc)
+        public void CalculateMirrorReflection()
         {
-            // TODO differ between the LightComponent
-            // ((LaserPointer)ls).RaySegments
+            
         }
 
         public void AddLightComponent(LightComponent lc, Vector3 pos)

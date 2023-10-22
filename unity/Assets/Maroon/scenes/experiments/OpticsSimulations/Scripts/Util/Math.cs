@@ -1,25 +1,38 @@
 ﻿using UnityEngine;
 
-namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Math
+namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Util
 {
-    public static class Util
+    public static class Math
     {
-        // function intersect_line_sphere(r0,n,R,C) { //find the intersection of a line and a sphere
-        //     // r0 is the intitial point on the line, n is the unit vector in the direction of the line
-        //     // R is the radius of the sphere, C is the center point of the sphere
-        //     let b = dot(n,vsub(r0,C));
-        //     let q  = dot(vsub(r0,C),vsub(r0,C)) - R*R;
-        //     let Delta = b*b - q;
-        //     if (Delta > 0) {
-        //         let d1 = -b + Math.sqrt(Delta);
-        //         let d2 = -b - Math.sqrt(Delta); 
-        //         return [d1,d2];
-        //     }
-        //     else {
-        //         return null;
-        //     }
-        // }
-
+        // find the intersection of a line and a sphere
+        // r0 is the intitial point on the line, n is the unit vector in the direction of the line
+        // R is the radius of the sphere, C is the center point of the sphere
+        public static (float, float) IntersectLineSphere(Vector3 r0, Vector3 n, float R, Vector3 C)
+        { 
+            float b = Vector3.Dot(n,r0 - C);
+            float q  = Vector3.Dot(r0 - C,r0 - C) - R * R;
+            float delta = b*b - q;
+            if (delta > 0) {
+                float d1 = -b + Mathf.Sqrt(delta);
+                float d2 = -b - Mathf.Sqrt(delta); 
+                return (d1, d2);
+            }
+            return (Mathf.Infinity, Mathf.Infinity);
+        }
+        // find the intersection of a line and a plane. 
+        // r0 is the initial point on the line, n is the unit vector in the direction of the line
+        // p0 is a point on the plane and np is the unit normal to the plane
+        // Returns the distance from r0 to plane if hit, infinity otherwise
+        public static float IntersectLinePlane(Vector3 r0, Vector3 n, Vector3 p0, Vector3 np)
+        { 
+            float ndotnp = Vector3.Dot(n,np);
+            if (ndotnp == 0)
+                return Mathf.Infinity;  // the line and plane are parallel
+            
+            float d = Vector3.Dot(np,p0-r0)/ndotnp;
+            return d;
+        }
+        
         // function intersect_line_cylinder(r0,n,R,C,nc) { //find the intersection of a line and a cylinder
         //     // r0 is the intitial point on the line, n is the unit vector in the direction of the line
         //     // R is the radius of the cylinder, n is the unit vector along the central axis, C is a point on the central axis
@@ -41,19 +54,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Math
         //     }
         // }
         
-        // find the intersection of a line and a plane. 
-        // r0 is the initial point on the line, n is the unit vector in the direction of the line
-        // p0 is a point on the plane and np is the unit normal to the plane
-        // Returns the distance from r0 to plane if hit, 0 otherwise
-        public static float IntersectLinePlane(Vector3 r0, Vector3 n, Vector3 p0, Vector3 np)
-        { 
-            float ndotnp = Vector3.Dot(n,np);
-            if (ndotnp == 0)
-                return -1;  // the line and plane are parallel
-            
-            float d = Vector3.Dot(np,p0-r0)/ndotnp;
-            return d;
-        }
         
         //http://www.physics.sfasu.edu/astro/color/spectra.html
         public static Color WavelengthToColor(float wavelength)

@@ -9,7 +9,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject
 {
     public class TableObject : MonoBehaviour
     {
-        [SerializeField] private Type type;
+        [SerializeField] private ComponentType componentType;
         
         [Header("Colors")] 
         [SerializeField] private Color standard;
@@ -27,6 +27,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject
         private Vector3 _objectToMouseTablePosLocalOffset;
         private Plane _movementPlane;
 
+        public ComponentType ComponentType => ComponentType;
         public Color Standard
         {
             get => standard;
@@ -51,8 +52,11 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject
         private void Awake()
         {
             _cam = Camera.main;
-            _material = transform.GetComponent<Renderer>().material;
-            _material.color = standard;
+            if (componentType != ComponentType.Wall)
+            {
+                _material = transform.GetComponent<Renderer>().material;
+                _material.color = standard;
+            }
             
             _collider = GetComponent<Collider>();
             if (_collider == null)
@@ -63,13 +67,16 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject
 
         private void OnMouseEnter()
         {
-            if (!_isSelected)
+            if (!_isSelected && componentType != ComponentType.Wall)
                 _material.color = hover;
         }
 
         private void OnMouseDown()
         {
-            if (type == Type.OpticalComponent)
+            if (componentType == ComponentType.Wall)
+                return;
+            
+            if (componentType == ComponentType.OpticalComponent)
                 OpticalComponentManager.Instance.UnselectAll();
             else
                 LightComponentManager.Instance.UnselectAll();
@@ -88,7 +95,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject
 
         private void OnMouseUp()
         {
-            if (_isDragged)
+            if (_isDragged && componentType != ComponentType.Wall)
             {
                 _material.color = selected;
                 _isDragged = false;
@@ -98,6 +105,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject
 
         private void OnMouseDrag()
         {
+            if (componentType == ComponentType.Wall)
+                return;
+            
             _material.color = dragging;
             _isDragged = true;
             
@@ -109,7 +119,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject
             Vector3 desiredPos = pointOnPlane - _objectToMouseTablePosOffset;
             Vector3 desiredPosLocal = pointOnPlane - _objectToMouseTablePosLocalOffset;
             if (CheckTableBounds(desiredPosLocal))
-                transform.position = desiredPos;
+                transform.position = desiredPos;        // TODO create updatePosition virtual functions
         }
 
         private bool CheckTableBounds(Vector3 desiredPos)
@@ -122,7 +132,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject
 
         private void OnMouseExit()
         {
-            if (!_isSelected)
+            if (!_isSelected && componentType != ComponentType.Wall)
                 _material.color = standard;
         }
 
@@ -144,9 +154,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject
 
     }
     
-    public enum Type
+    public enum ComponentType
     {
         LightSource = 0,
-        OpticalComponent = 1
+        OpticalComponent = 1,
+        Wall = 2,
     }
 }
