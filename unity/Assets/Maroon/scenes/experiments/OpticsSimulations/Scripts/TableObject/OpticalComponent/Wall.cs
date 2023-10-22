@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent
@@ -11,22 +10,25 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         public Vector3 r0;
         public Vector3 n;
 
-        private void Start()
+        public void SetProperties(Vector3 r0, Vector3 n)
         {
-            r0 = transform.localPosition;
-            n = transform.up;
+            this.r0 = r0;
+            this.n = n;
+        }
+
+        public override (Vector3 hitPoint, Vector3 surfaceNormal) CalculateHitPointAndNormal(Vector3 rayOrigin, Vector3 rayDirection)
+        {
+            float d = Util.Math.IntersectLinePlane(rayOrigin, rayDirection, r0, n);
+            return (rayOrigin + rayDirection * d, n);
         }
         
-        
-        public override (Vector3 hitPoint, Vector3 surfaceNormal) CalculateHitPointAndNormal(Vector3 incRayPos, Vector3 incRayDir)
+        public override float IsHit(Vector3 rayOrigin, Vector3 rayDirection)
         {
-            float d = Util.Math.IntersectLinePlane(incRayPos, incRayDir, r0, n);
-            return (incRayPos + incRayDir * d, n);
+            return Util.Math.IntersectLinePlane(rayOrigin, rayDirection, r0, n);
         }
         
         public override void UpdateProperties()
         {
-            r0 = transform.localPosition;
         }
     }
 }

@@ -16,5 +16,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts
         public static Vector3 TableBaseOffset = new Vector3(-2f, 1f, 1.5f);
         public const float TableHeight = 1f;
         public const float TableObjectHeight = 0.25f;
+        public const float Epsilon = 0.00001f;
     }
 }

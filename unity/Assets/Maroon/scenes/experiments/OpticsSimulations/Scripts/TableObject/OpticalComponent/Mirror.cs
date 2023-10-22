@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent
@@ -16,7 +17,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         private void Start()
         {
             r = transform.localPosition;
-            n = Vector3.right;
+            n = Vector3.left;
             R = 0.1f;
             Rc = 0.09f;
 
@@ -30,18 +31,27 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         // normal to surface at r
         public Vector3 NormR(Vector3 r)
         {
-            // return Vector3.Normalize(r + this.r - (r + (R * n)));
-            return Vector3.Normalize(r - (this.r + (R * n)));
-            // let vec = vsub(r,vadd(this.r,dot(this.R,this.n)));
-            // return unit(vec);
+            return Vector3.Normalize(r - (this.r + (this.R * this.n)));
         }
         
-         // center of Mirror
+        // distance along cylinder from central plane to intersection with surface R
+        public float Dc()
+        { 
+            var absR = Mathf.Abs(this.R);
+            return absR - Mathf.Sqrt(absR*absR - this.Rc*this.Rc);
+        }
+        
+        // center of Mirror
         public Vector3 Center()
         {
             return r + R * n;
             // return r;
         }
+        public float adjust_Rc()
+        {
+            return Mathf.Min(this.Rc,Mathf.Abs(this.R)); 
+        } 
+        
         
         
         public override void UpdateProperties()
@@ -49,9 +59,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             r = transform.localPosition;
         }
 
-        public override (Vector3 hitPoint, Vector3 surfaceNormal) CalculateHitPointAndNormal(Vector3 incRayPos, Vector3 incRayDir)
+        public override (Vector3 hitPoint, Vector3 surfaceNormal) CalculateHitPointAndNormal(Vector3 rayOrigin, Vector3 rayDirection)
         {
-            (float d1, float d2) = Util.Math.IntersectLineSphere(incRayPos, incRayDir, R, Center());
+            (float d1, float d2) = Util.Math.IntersectLineSphere(rayOrigin, rayDirection, R, Center());
 
             float d;
             if (d1 > 0 && d2 > 0)
@@ -61,22 +71,23 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             else
                 d = d1;
 
-            Vector3 firstHit = incRayPos + incRayDir * d;
+            Vector3 firstHit = rayOrigin + rayDirection * d;
             return (firstHit, NormR(firstHit));
         }
-        //
-        // dc() { //distance along cylinder from central plane to intersection with surface R
-        //     let absR = Math.abs(this.R);
-        //     return absR - Math.sqrt(absR*absR - this.Rc*this.Rc);
-        // }
-        //
-        // center() { // center of curvature
-        //     return vadd(this.r,dot(this.R,this.n));
-        // }
-        //
-        // adjust_Rc() {
-        //     return Math.min(this.Rc,Math.abs(this.R)); 
-        // } 
+        
+        public override float IsHit(Vector3 rayOrigin, Vector3 rayDirection)
+        {
+            (float d1, float d2) = Util.Math.IntersectLineSphere(rayOrigin, rayDirection, R, Center());
+
+            float d;
+            if (d1 > 0 && d2 > 0)
+                d = d1 < d2 ? d1 : d2;
+            else if (d1 <= 0)
+                d = d2;
+            else
+                d = d1;
+            return d;
+        }
         
     }
 }

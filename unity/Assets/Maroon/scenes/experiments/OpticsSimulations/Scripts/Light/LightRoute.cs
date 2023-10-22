@@ -55,7 +55,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
         public void CalculateNextRay(Vector3 rayOrigin, Vector3 rayDirection)
         {
             // Get the first hit component via raycast, so we do not need to go through every Component on the table
-            OpticalComponent hitComponent = OpticalComponentManager.Instance.GetHitComponent(rayOrigin, rayDirection);
+            OpticalComponent hitComponent = OpticalComponentManager.Instance.GetFirstHitComponent(rayOrigin, rayDirection);
 
             switch (hitComponent.OpticalType)
             {

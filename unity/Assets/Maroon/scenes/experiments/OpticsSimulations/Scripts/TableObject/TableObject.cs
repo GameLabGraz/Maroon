@@ -139,7 +139,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject
         public void Unselect()
         {
             _isSelected = false;
-            _material.color = standard;
+            if (componentType != ComponentType.Wall)
+                _material.color = standard;
         }
 
         private void RotationHandler()

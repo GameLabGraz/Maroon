@@ -24,8 +24,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         
         void Start()
         {
-            _walls[0] = new Wall(new Vector3(2.0f, 2.0f, 1.0f) + Constants.TableBaseOffset, Vector3.down);    // Bottom wall
-            _walls[1] = new Wall(new Vector3(2.0f, 0.0f, 1.0f) + Constants.TableBaseOffset, Vector3.up);      // Top wall
+            _walls[0] = new Wall(new Vector3(2.0f, 0.0f, 1.0f) + Constants.TableBaseOffset, Vector3.up);    // Bottom wall
+            _walls[1] = new Wall(new Vector3(2.0f, 2.0f, 1.0f) + Constants.TableBaseOffset, Vector3.down);      // Top wall
             
             _walls[2] = new Wall(new Vector3(-0.5f, 1.0f, 1.0f) + Constants.TableBaseOffset, Vector3.right);  // Left wall
             _walls[3] = new Wall(new Vector3(4.5f, 1.0f, 1.0f) + Constants.TableBaseOffset, Vector3.left);    // Right wall

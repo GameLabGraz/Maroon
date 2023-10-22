@@ -16,6 +16,11 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         {
             throw new Exception("Should not call base CalculateHitPoint Method!");
         }
+        
+        public virtual float IsHit(Vector3 rayOrigin, Vector3 rayDirection)
+        {
+            throw new Exception("Should not call base CalculateHitPoint Method!");
+        }
 
         public virtual void UpdateProperties()
         {

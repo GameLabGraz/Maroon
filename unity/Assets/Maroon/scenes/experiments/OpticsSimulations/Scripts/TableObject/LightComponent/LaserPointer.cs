@@ -39,7 +39,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
         
         public override bool CheckHitComponent(OpticalComponent.OpticalComponent oc)
         {
-            return oc == OpticalComponentManager.Instance.GetHitComponent(Origin, transform.right);
+            return oc == OpticalComponentManager.Instance.GetFirstHitComponent(Origin, transform.right);
         }
 
         // Returns the initial or starting ray from the light source
