@@ -37,7 +37,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         {
             // Spawn 2 lasers for testing
             // AddLightComponent(laserPointer, new Vector3(1.74f, 0, 0.5f));
-            AddLightComponent(laserPointer, new Vector3(1.70f,0,0.311f));
+            AddLightComponent(laserPointer, new Vector3(1.70f,0,1.09f));
         }
 
         public void CheckOpticalComponentHit(OpticalComponent opticalComponent)

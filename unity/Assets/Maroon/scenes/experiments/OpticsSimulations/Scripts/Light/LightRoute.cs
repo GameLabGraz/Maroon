@@ -62,11 +62,14 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
                 // End of ray - no further reflection/refraction
                 case OpticalType.Wall:
                     Wall wall = (Wall) hitComponent;
-
-                    (Vector3 hitPointW, _) = wall.CalculateHitPointAndNormal(rayOrigin, rayDirection);
-                    // Debug.Log(wall.name+" Hit " + hitPointW.ToString("f3"));
-
+                    (Vector3 hitPointW, _) = wall.CalculateHitPointAndOutRayDirection(rayOrigin, rayDirection);
                     AddRaySegment(rayOrigin, hitPointW);
+                    break;
+                
+                case OpticalType.Aperture:
+                    Aperture aperture = (Aperture)hitComponent;
+                    (Vector3 hitPointA, _) = aperture.CalculateHitPointAndOutRayDirection(rayOrigin, rayDirection);
+                    AddRaySegment(rayOrigin, hitPointA);
                     break;
                         
                 // Ray has 1 further reflection
@@ -74,24 +77,22 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
                     
                     TableObject.OpticalComponent.Mirror mirror = (TableObject.OpticalComponent.Mirror) hitComponent;
 
-                    (Vector3 hitPointM, Vector3 normalM) = mirror.CalculateHitPointAndNormal(rayOrigin, rayDirection);
+                    (Vector3 hitPointM, Vector3 newRayDirection) = mirror.CalculateHitPointAndOutRayDirection(rayOrigin, rayDirection);
                     
                     // TODO only workaround for now because "real" mirror object is not correct
-                    if (!IsValidPoint(hitPointM))
+                    if (!Util.Math.IsValidPoint(hitPointM))
                     {
                         Debug.Log(hitPointM.ToString("f2") + " not valid!");
                         return;
                     }
                         
-                    Debug.Log("MIRROR Hit " + hitPointM.ToString("f3"));
-                    Debug.Log("MIRROR n   " + normalM.ToString("f3"));
+                    // Debug.Log("MIRROR Hit " + hitPointM.ToString("f3"));
+                    // Debug.Log("MIRROR n   " + newRayDirection.ToString("f3"));
 
                     AddRaySegment(rayOrigin, hitPointM);
-                    CalculateNextRay(hitPointM, normalM);
+                    CalculateNextRay(hitPointM, newRayDirection);
                     break;
                         
-                case OpticalType.Aperture:
-                    throw new NotImplementedException("Aperture calculations not implemented yet!");
                 case OpticalType.Eye:
                     throw new NotImplementedException("Eye calculations not implemented yet!");
                 case OpticalType.Lens:
@@ -99,11 +100,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
             }
         }
 
-        public bool IsValidPoint(Vector3 p)
-        {
-            return !float.IsNaN(p.x) && !float.IsNaN(p.y) && !float.IsNaN(p.z)
-                   && !float.IsInfinity(p.x) && !float.IsInfinity(p.y) && !float.IsInfinity(p.z);
-        }
+        
         
         public RaySegment AddRaySegment(Vector3 origin, Vector3 endpoint)
         {

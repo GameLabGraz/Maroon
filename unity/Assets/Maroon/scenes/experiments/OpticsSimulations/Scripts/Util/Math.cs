@@ -1,9 +1,17 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Util
 {
     public static class Math
     {
+        
+        public static bool IsValidPoint(Vector3 p)
+        {
+            return !float.IsNaN(p.x) && !float.IsNaN(p.y) && !float.IsNaN(p.z)
+                   && !float.IsInfinity(p.x) && !float.IsInfinity(p.y) && !float.IsInfinity(p.z);
+        }
+        
         // find the intersection of a line and a sphere
         // r0 is the intitial point on the line, n is the unit vector in the direction of the line
         // R is the radius of the sphere, C is the center point of the sphere
@@ -17,7 +25,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Util
                 float d2 = -b - Mathf.Sqrt(delta); 
                 return (d1, d2);
             }
-            return (Mathf.Infinity, Mathf.Infinity);
+            return (Single.NaN, Single.NaN);
         }
         // find the intersection of a line and a plane. 
         // r0 is the initial point on the line, n is the unit vector in the direction of the line
@@ -27,7 +35,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Util
         { 
             float ndotnp = Vector3.Dot(n,np);
             if (ndotnp == 0)
-                return Mathf.Infinity;  // the line and plane are parallel
+                return Single.NaN;  // the line and plane are parallel
             
             float d = Vector3.Dot(np,p0-r0)/ndotnp;
             return d;

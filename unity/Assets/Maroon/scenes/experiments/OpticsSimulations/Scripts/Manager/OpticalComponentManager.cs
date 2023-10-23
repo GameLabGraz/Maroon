@@ -37,11 +37,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
 
         private void Start()
         {
-            
-            // Spawn 2 mirrors for testing
             AddWalls();
-            AddOpticalComponent(mirror, new Vector3(2f, 0, 0.9f));
-            AddOpticalComponent(mirror, new Vector3(2.2f, 0, 0.20f));
+            AddOpticalComponent(aperture, new Vector3(1.6f, 0, 0.5f));
+            AddOpticalComponent(mirror, new Vector3(2f, 0, 1f));
         }
 
         private void AddWalls()
@@ -91,6 +89,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         {
             var ocClone = Instantiate(oc, tableLowLeftCorner.transform);
             ocClone.transform.localPosition = pos;
+            ocClone.UpdateProperties();
             _opticalComponents.Add(ocClone);
         }
 
@@ -106,16 +105,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 oc.Unselect();
         }
         
-        // public OpticalComponent GetHitComponent(Vector3 rayOrigin, Vector3 rayDirection)
-        // {
-        //     Vector3 globalRayOrigin =  rayOrigin + Constants.TableBaseOffset + new Vector3(0, Constants.TableObjectHeight, 0);
-        //     if (UnityEngine.Physics.Raycast(globalRayOrigin, rayDirection, out RaycastHit hit, Mathf.Infinity, ~(1 << 4)))
-        //         return hit.transform.gameObject.GetComponent<OpticalComponent>();
-        //     
-        //     Debug.LogError("Did not hit any object - can not occur!");
-        //     return null;
-        // }
-
         public OpticalComponent GetFirstHitComponent(Vector3 rayOrigin, Vector3 rayDirection)
         {
             float dmin = Mathf.Infinity;
@@ -123,11 +112,17 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             
             foreach (var oc in _opticalComponents)
             {
-                float d = oc.IsHit(rayOrigin, rayDirection);
-                if (d > Constants.Epsilon && d < dmin)
+                // float d = oc.IsHit(rayOrigin, rayDirection);
+                (Vector3 hitPoint, Vector3 outRayDirection) = oc.CalculateHitPointAndOutRayDirection(rayOrigin, rayDirection);
+
+                if (Util.Math.IsValidPoint(hitPoint))
                 {
-                    dmin = d;
-                    firstOc = oc;
+                    float d = Vector3.Distance(rayOrigin, hitPoint);
+                    if (d > Constants.Epsilon && d < dmin)
+                    {
+                        dmin = d;
+                        firstOc = oc;
+                    }
                 }
             }
             

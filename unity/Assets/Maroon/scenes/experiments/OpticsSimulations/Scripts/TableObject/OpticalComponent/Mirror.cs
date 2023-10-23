@@ -16,22 +16,27 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
 
         private void Start()
         {
-            r = transform.localPosition;
-            n = Vector3.left;
+            r = Vector3.zero;
+            n = transform.right;
             R = 0.1f;
-            Rc = 0.09f;
-
+            Rc = 0.1f;
+        }
+             
+        public override void UpdateProperties()
+        {
+            r = Center() + R * n;
         }
 
         private void FixedUpdate()
         {
-            transform.localScale = Vector3.one * R;
+            transform.localScale = Vector3.one * (R * 2);
+            n = transform.right;
         }
 
-        // normal to surface at r
-        public Vector3 NormR(Vector3 r)
+        // normal to surface at p
+        public Vector3 NormR(Vector3 p)
         {
-            return Vector3.Normalize(r - (this.r + (this.R * this.n)));
+            return (p - Center()).normalized; 
         }
         
         // distance along cylinder from central plane to intersection with surface R
@@ -44,50 +49,66 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         // center of Mirror
         public Vector3 Center()
         {
-            return r + R * n;
-            // return r;
+            return transform.localPosition;
+            // return r + R * n;
         }
-        public float adjust_Rc()
+        public float AdjustRc()
         {
             return Mathf.Min(this.Rc,Mathf.Abs(this.R)); 
         } 
         
-        
-        
-        public override void UpdateProperties()
-        {
-            r = transform.localPosition;
-        }
-
-        public override (Vector3 hitPoint, Vector3 surfaceNormal) CalculateHitPointAndNormal(Vector3 rayOrigin, Vector3 rayDirection)
+        // Calculations from Peter
+        public override (Vector3 hitPoint, Vector3 outRayDirection) CalculateHitPointAndOutRayDirection(Vector3 rayOrigin, Vector3 rayDirection)
         {
             (float d1, float d2) = Util.Math.IntersectLineSphere(rayOrigin, rayDirection, R, Center());
 
-            float d;
-            if (d1 > 0 && d2 > 0)
-                d = d1 < d2 ? d1 : d2;
-            else if (d1 <= 0)
-                d = d2;
-            else
-                d = d1;
+            float dmin = Mathf.Infinity;
+            
+            // skip if d1 is negative, very small or NaN
+            if (d1 > Constants.Epsilon && !float.IsNaN(d1))
+            {  
+                var _r = rayOrigin + d1 * rayDirection;
+                var r1 = _r - this.r;
+                var r1dotnc = Vector3.Dot(r1, this.n);
+                var rperp = r1 - r1dotnc * this.n;
+                
+                // is r within the cylinder?
+                if (rperp.magnitude < this.AdjustRc())
+                {
+                    // close solution
+                    if (Mathf.Abs(r1dotnc) < this.Dc())
+                            dmin = d1;
+                }
+            }
+            // skip if d is negative or vey small
+            if (d2 > Constants.Epsilon && !float.IsNaN(d2))
+            {
+                var _r = rayOrigin + d2 * rayDirection;  
+                var r1 = _r - this.r;
+                var r1dotnc = Vector3.Dot(r1, this.n);
+                var rperp = r1 - r1dotnc * this.n;
+                
+                // is r within the cylinder?
+                if (rperp.magnitude < this.AdjustRc())
+                { 
+                    // close solution
+                    if (Mathf.Abs(r1dotnc) < this.Dc())
+                        if (d2 < dmin) 
+                            dmin = d2;
+                }
+            }
 
-            Vector3 firstHit = rayOrigin + rayDirection * d;
-            return (firstHit, NormR(firstHit));
+            Vector3 firstHit = rayOrigin + rayDirection * dmin;
+            return (firstHit, CalcReflectedDirection(firstHit, rayDirection));
+        }
+
+        private Vector3 CalcReflectedDirection(Vector3 hitPoint, Vector3 incRayDirection)
+        {
+            var normal = this.NormR(hitPoint);
+            return Vector3.Reflect(incRayDirection, normal);
         }
         
-        public override float IsHit(Vector3 rayOrigin, Vector3 rayDirection)
-        {
-            (float d1, float d2) = Util.Math.IntersectLineSphere(rayOrigin, rayDirection, R, Center());
-
-            float d;
-            if (d1 > 0 && d2 > 0)
-                d = d1 < d2 ? d1 : d2;
-            else if (d1 <= 0)
-                d = d2;
-            else
-                d = d1;
-            return d;
-        }
+         
         
     }
 }

@@ -16,19 +16,25 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             this.n = n;
         }
 
-        public override (Vector3 hitPoint, Vector3 surfaceNormal) CalculateHitPointAndNormal(Vector3 rayOrigin, Vector3 rayDirection)
+        public override (Vector3 hitPoint, Vector3 outRayDirection) CalculateHitPointAndOutRayDirection(Vector3 rayOrigin, Vector3 rayDirection)
         {
             float d = Util.Math.IntersectLinePlane(rayOrigin, rayDirection, r0, n);
+
+            
+            if (d < 0)
+                d = Mathf.Infinity; // To know that wall is "behind" laser
+            
             return (rayOrigin + rayDirection * d, n);
         }
         
-        public override float IsHit(Vector3 rayOrigin, Vector3 rayDirection)
-        {
-            return Util.Math.IntersectLinePlane(rayOrigin, rayDirection, r0, n);
-        }
+        // public override float IsHit(Vector3 rayOrigin, Vector3 rayDirection)
+        // {
+        //     return Util.Math.IntersectLinePlane(rayOrigin, rayDirection, r0, n);
+        // }
         
         public override void UpdateProperties()
         {
+            
         }
     }
 }

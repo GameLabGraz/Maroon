@@ -12,16 +12,11 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         
         public OpticalType OpticalType => opticalType;
 
-        public virtual (Vector3 hitPoint, Vector3 surfaceNormal) CalculateHitPointAndNormal(Vector3 rayOrigin, Vector3 rayDirection)
+        public virtual (Vector3 hitPoint, Vector3 outRayDirection) CalculateHitPointAndOutRayDirection(Vector3 rayOrigin, Vector3 rayDirection)
         {
             throw new Exception("Should not call base CalculateHitPoint Method!");
         }
         
-        public virtual float IsHit(Vector3 rayOrigin, Vector3 rayDirection)
-        {
-            throw new Exception("Should not call base CalculateHitPoint Method!");
-        }
-
         public virtual void UpdateProperties()
         {
             throw new Exception("Should not call base UpdateProperties Method!");
