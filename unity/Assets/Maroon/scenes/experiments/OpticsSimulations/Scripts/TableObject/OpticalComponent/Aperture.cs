@@ -36,7 +36,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             float d = Util.Math.IntersectLinePlane(rayOrigin, rayDirection, r, n);
             float dmin = Mathf.Infinity;
             
-            // skip if it returns null
+            // skip if d is negative, very small or NaN
             if (d > Constants.Epsilon && !float.IsNaN(d)) 
             {
                     var _r = rayOrigin + d * rayDirection;

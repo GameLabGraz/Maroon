@@ -61,7 +61,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         public override (Vector3 hitPoint, Vector3 outRayDirection) CalculateHitPointAndOutRayDirection(Vector3 rayOrigin, Vector3 rayDirection)
         {
             (float d1, float d2) = Util.Math.IntersectLineSphere(rayOrigin, rayDirection, R, Center());
-
             float dmin = Mathf.Infinity;
             
             // skip if d1 is negative, very small or NaN

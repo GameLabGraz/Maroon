@@ -40,6 +40,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             AddWalls();
             AddOpticalComponent(aperture, new Vector3(1.6f, 0, 0.5f));
             AddOpticalComponent(mirror, new Vector3(2f, 0, 1f));
+            AddOpticalComponent(eye, new Vector3(3f, 0, 1f));
         }
 
         private void AddWalls()

@@ -85,16 +85,18 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
                         Debug.Log(hitPointM.ToString("f2") + " not valid!");
                         return;
                     }
-                        
-                    // Debug.Log("MIRROR Hit " + hitPointM.ToString("f3"));
-                    // Debug.Log("MIRROR n   " + newRayDirection.ToString("f3"));
-
                     AddRaySegment(rayOrigin, hitPointM);
                     CalculateNextRay(hitPointM, newRayDirection);
                     break;
                         
                 case OpticalType.Eye:
-                    throw new NotImplementedException("Eye calculations not implemented yet!");
+                    Eye eye = (Eye)hitComponent;
+                    
+                    // TODO full eye implementation
+                    (Vector3 hitPointE, _) = eye.CalculateHitPointAndOutRayDirection(rayOrigin, rayDirection);
+                    AddRaySegment(rayOrigin, hitPointE);
+                    break;
+                
                 case OpticalType.Lens:
                     throw new NotImplementedException("Lens calculations not implemented yet!");
             }
