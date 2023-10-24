@@ -7,44 +7,25 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
 {
     public class Lens : OpticalComponent
     {
-        [Header("Lens Settings")] 
-        [SerializeField] private float r1;
-        [SerializeField] private float r2;
-        [SerializeField] private float rc;
-        [SerializeField] private float a;
-        [SerializeField] private float b;
+        [Header("Lens Properties")] 
+        public float r1;
+        public float r2;
+        public float rc;
+        public float a;
+        public float b;
 
-        public float R1
+        public override void UpdateProperties()
         {
-            get => r1;
-            set => r1 = value;
+            throw new NotImplementedException();
         }
 
-        public float R2
+        public override (Vector3 hitPoint, Vector3 outRayReflection, Vector3 outRayRefraction) CalculateHitpointReflectionRefraction(Vector3 rayOrigin, Vector3 rayDirection)
         {
-            get => r2;
-            set => r2 = value;
-        }
-
-        public float Rc
-        {
-            get => rc;
-            set => rc = value;
-        }
-
-        public float A
-        {
-            get => a;
-            set => a = value;
-        }
-
-        public float B
-        {
-            get => b;
-            set => b = value;
+            throw new NotImplementedException();
         }
         
-        public override void UpdateProperties()
+
+        public override float GetRelevantDistance(Vector3 rayOrigin, Vector3 rayDirection)
         {
             throw new NotImplementedException();
         }

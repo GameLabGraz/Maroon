@@ -38,20 +38,27 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             n = transform.right;
         }
         
-        public override (Vector3 hitPoint, Vector3 outRayDirection) CalculateHitPointAndOutRayDirection(Vector3 rayOrigin, Vector3 rayDirection)
+        public override (Vector3 hitPoint, Vector3 outRayReflection, Vector3 outRayRefraction) CalculateHitpointReflectionRefraction(Vector3 rayOrigin, Vector3 rayDirection)
+        {
+            float dmin = GetRelevantDistance(rayOrigin, rayDirection);
+            
+            // todo implement full eye behaviour
+            
+            return (rayOrigin + rayDirection * dmin, Vector3.zero, Vector3.zero);
+        }
+
+        public override float GetRelevantDistance(Vector3 rayOrigin, Vector3 rayDirection)
         {
             (float d1, float d2) = Util.Math.IntersectLineSphere(rayOrigin, rayDirection, R, r0);
             float dmin = Mathf.Infinity;
             
-            // skip if it returns null
+            // skip if (d1 or d2) is negative, very small or NaN
             if (d1 > Constants.Epsilon && !float.IsNaN(d1) && d1 < dmin)
                 dmin = d1;
             if (d2 > Constants.Epsilon && !float.IsNaN(d2) && d2 < dmin)
                 dmin = d2;
-            
-            // todo implement full eye behaviour
-            
-            return (rayOrigin + rayDirection * dmin, Vector3.zero);
+            return dmin;
         }
+        
     }
 }

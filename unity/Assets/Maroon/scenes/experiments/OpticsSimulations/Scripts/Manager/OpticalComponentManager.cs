@@ -110,16 +110,17 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         {
             float dmin = Mathf.Infinity;
             OpticalComponent firstOc = _opticalComponents[0];
+
+            // List<(OpticalComponent oc, float dist)> debugComponentDistances = new List<(OpticalComponent oc, float dist)>();
             
             foreach (var oc in _opticalComponents)
             {
-                // float d = oc.IsHit(rayOrigin, rayDirection);
-                (Vector3 hitPoint, Vector3 outRayDirection) = oc.CalculateHitPointAndOutRayDirection(rayOrigin, rayDirection);
-
-                if (Util.Math.IsValidPoint(hitPoint))
+                float d = oc.GetRelevantDistance(rayOrigin, rayDirection);
+                // debugComponentDistances.Add((oc, d));
+                
+                if (Util.Math.IsValidDistance(d))
                 {
-                    float d = Vector3.Distance(rayOrigin, hitPoint);
-                    if (d > Constants.Epsilon && d < dmin)
+                    if (d < dmin)
                     {
                         dmin = d;
                         firstOc = oc;

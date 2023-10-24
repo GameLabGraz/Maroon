@@ -11,10 +11,38 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Util
             return !float.IsNaN(p.x) && !float.IsNaN(p.y) && !float.IsNaN(p.z)
                    && !float.IsInfinity(p.x) && !float.IsInfinity(p.y) && !float.IsInfinity(p.z);
         }
+
+        public static bool IsValidDistance(float d)
+        {
+            return !float.IsInfinity(d) && !float.IsNaN(d) && d > Constants.Epsilon;
+        }
         
-        // find the intersection of a line and a sphere
-        // r0 is the intitial point on the line, n is the unit vector in the direction of the line
-        // R is the radius of the sphere, C is the center point of the sphere
+        /// <summary>
+        /// <para>Find the intersection of a line and a plane. </para>
+        /// </summary>
+        /// <param name="r0">Initial point on the line</param>
+        /// <param name="n">Unit vector in the direction of the line</param>
+        /// <param name="p0">Point on the plane</param>
+        /// <param name="np">Unit normal to the plane</param>
+        /// <returns>Distance from r0 to plane if hit, NaN otherwise (plane is parallel to line)</returns>
+        public static float IntersectLinePlane(Vector3 r0, Vector3 n, Vector3 p0, Vector3 np)
+        { 
+            float ndotnp = Vector3.Dot(n,np);
+            if (ndotnp == 0)
+                return Single.NaN;  // the line and plane are parallel
+            
+            float d = Vector3.Dot(np,p0-r0)/ndotnp;
+            return d;
+        }
+        
+        /// <summary>
+        /// <para>Find the intersection of a line and a sphere</para>
+        /// </summary>
+        /// <param name="r0">Initial point on the line</param>
+        /// <param name="n">Unit vector in the direction of the line</param>
+        /// <param name="R">Radius of the sphere</param>
+        /// <param name="C">Center point of the sphere</param>
+        /// <returns>Distances from r0 to the sphere (first and second intersection) if hit, NaN otherwise</returns>
         public static (float, float) IntersectLineSphere(Vector3 r0, Vector3 n, float R, Vector3 C)
         { 
             float b = Vector3.Dot(n,r0 - C);
@@ -27,40 +55,36 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Util
             }
             return (Single.NaN, Single.NaN);
         }
-        // find the intersection of a line and a plane. 
-        // r0 is the initial point on the line, n is the unit vector in the direction of the line
-        // p0 is a point on the plane and np is the unit normal to the plane
-        // Returns the distance from r0 to plane if hit, infinity otherwise
-        public static float IntersectLinePlane(Vector3 r0, Vector3 n, Vector3 p0, Vector3 np)
-        { 
-            float ndotnp = Vector3.Dot(n,np);
-            if (ndotnp == 0)
-                return Single.NaN;  // the line and plane are parallel
-            
-            float d = Vector3.Dot(np,p0-r0)/ndotnp;
-            return d;
-        }
         
-        // function intersect_line_cylinder(r0,n,R,C,nc) { //find the intersection of a line and a cylinder
-        //     // r0 is the intitial point on the line, n is the unit vector in the direction of the line
-        //     // R is the radius of the cylinder, n is the unit vector along the central axis, C is a point on the central axis
-        //     let r1 = vsub(r0,C); 
-        //     let r1dotnc = dot(r1,nc);
-        //     let rpara = dot(r1dotnc,nc);
-        //     let rperp = vsub(r1,rpara);
-        //     let ndotnc = dot(n,nc);
-        //     let npara = dot(ndotnc,nc);
-        //     let nperp = vsub(n,npara);
-        //     let a = dot(nperp,nperp); 
-        //     let b = 2*dot(nperp,rperp);
-        //     let c = dot(rperp,rperp) - R*R;
-        //     if ((b*b - 4*a*c) > 0) {
-        //         return [(-b + Math.sqrt(b*b - 4*a*c))/(2*a), (-b - Math.sqrt(b*b - 4*a*c))/(2*a)];
-        //     }
-        //     else {
-        //         return null;
-        //     }
-        // }
+        /// <summary>
+        /// <para>Find the intersection of a line and a cylinder</para>
+        /// </summary>
+        /// <param name="r0">Initial point on the line</param>
+        /// <param name="n">Unit vector in the direction of the line</param>
+        /// <param name="R">Radius of the cylinder</param>
+        /// <param name="C">Point on the central axis</param>
+        /// <param name="nc">Unit vector along the central axis</param>
+        /// <returns>Distances from r0 to the cylinder (first and second intersection) if hit, NaN otherwise</returns>
+        public static (float, float) IntersectLineCylinder(Vector3 r0, Vector3 n, float R, Vector3 C, Vector3 nc)
+        {
+            var r1 = r0 - C;
+            var r1dotnc = Vector3.Dot(r1, nc);
+            var rpara = r1dotnc * nc;
+            var rperp = r1 - rpara;
+            var ndotnc = Vector3.Dot(n, nc);
+            var npara = ndotnc * nc;
+            var nperp = n - npara;
+            var a = Vector3.Dot(nperp, nperp);
+            var b = 2 * Vector3.Dot(nperp, rperp);
+            var c = Vector3.Dot(rperp, rperp) - R * R;
+            if (b * b - 4 * a * c > 0)
+                return (
+                    (-b + Mathf.Sqrt(b * b - 4 * a * c)) / (2 * a),
+                    (-b - Mathf.Sqrt(b * b - 4 * a * c)) / (2 * a)
+                );
+
+            return (Single.NaN, Single.NaN);
+        }
         
         
         //http://www.physics.sfasu.edu/astro/color/spectra.html

@@ -58,7 +58,15 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         } 
         
         // Calculations from Peter
-        public override (Vector3 hitPoint, Vector3 outRayDirection) CalculateHitPointAndOutRayDirection(Vector3 rayOrigin, Vector3 rayDirection)
+        public override (Vector3 hitPoint, Vector3 outRayReflection, Vector3 outRayRefraction) CalculateHitpointReflectionRefraction(Vector3 rayOrigin, Vector3 rayDirection)
+        {
+            float dmin = GetRelevantDistance(rayOrigin, rayDirection);
+
+            Vector3 firstHit = rayOrigin + rayDirection * dmin;
+            return (firstHit, CalcReflectedDirection(firstHit, rayDirection), Vector3.zero);
+        }
+
+        public override float GetRelevantDistance(Vector3 rayOrigin, Vector3 rayDirection)
         {
             (float d1, float d2) = Util.Math.IntersectLineSphere(rayOrigin, rayDirection, R, Center());
             float dmin = Mathf.Infinity;
@@ -76,7 +84,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
                 {
                     // close solution
                     if (Mathf.Abs(r1dotnc) < this.Dc())
-                            dmin = d1;
+                        dmin = d1;
                 }
             }
             // skip if d is negative or vey small
@@ -97,8 +105,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
                 }
             }
 
-            Vector3 firstHit = rayOrigin + rayDirection * dmin;
-            return (firstHit, CalcReflectedDirection(firstHit, rayDirection));
+            return dmin;
         }
 
         private Vector3 CalcReflectedDirection(Vector3 hitPoint, Vector3 incRayDirection)

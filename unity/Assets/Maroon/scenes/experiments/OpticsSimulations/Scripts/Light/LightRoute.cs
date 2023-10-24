@@ -62,13 +62,13 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
                 // End of ray - no further reflection/refraction
                 case OpticalType.Wall:
                     Wall wall = (Wall) hitComponent;
-                    (Vector3 hitPointW, _) = wall.CalculateHitPointAndOutRayDirection(rayOrigin, rayDirection);
+                    (Vector3 hitPointW, _, _) = wall.CalculateHitpointReflectionRefraction(rayOrigin, rayDirection);
                     AddRaySegment(rayOrigin, hitPointW);
                     break;
                 
                 case OpticalType.Aperture:
                     Aperture aperture = (Aperture)hitComponent;
-                    (Vector3 hitPointA, _) = aperture.CalculateHitPointAndOutRayDirection(rayOrigin, rayDirection);
+                    (Vector3 hitPointA, _, _) = aperture.CalculateHitpointReflectionRefraction(rayOrigin, rayDirection);
                     AddRaySegment(rayOrigin, hitPointA);
                     break;
                         
@@ -77,7 +77,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
                     
                     TableObject.OpticalComponent.Mirror mirror = (TableObject.OpticalComponent.Mirror) hitComponent;
 
-                    (Vector3 hitPointM, Vector3 newRayDirection) = mirror.CalculateHitPointAndOutRayDirection(rayOrigin, rayDirection);
+                    (Vector3 hitPointM, Vector3 newRayDirection, _) = mirror.CalculateHitpointReflectionRefraction(rayOrigin, rayDirection);
                     
                     // TODO only workaround for now because "real" mirror object is not correct
                     if (!Util.Math.IsValidPoint(hitPointM))
@@ -93,7 +93,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
                     Eye eye = (Eye)hitComponent;
                     
                     // TODO full eye implementation
-                    (Vector3 hitPointE, _) = eye.CalculateHitPointAndOutRayDirection(rayOrigin, rayDirection);
+                    (Vector3 hitPointE, _, _) = eye.CalculateHitpointReflectionRefraction(rayOrigin, rayDirection);
                     AddRaySegment(rayOrigin, hitPointE);
                     break;
                 
