@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Maroon.Physics;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent;
@@ -20,11 +21,12 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         [Header("Prefabs: Light Sources")] 
         [SerializeField] private LightComponent laserPointer;
 
-        private LightComponent _selectedLightComponent;
 
         public List<LightComponent> LightComponents => _lightComponents;
 
-        public QuantityFloat testUi;
+        private LightComponent _selectedLightComponent;
+        public QuantityFloat selectedWavelength;
+        public QuantityFloat selectedIntensity;
 
         private void Awake()
         {
@@ -41,7 +43,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         private void Start()
         {
             SpawnLaserPointerTestSetup();
-            
+            // _selectedLightComponent = _lightComponents.First();
+
             // AddLightComponent(laserPointer, new Vector3(1.74f, 0, 0.5f));
             // laserPointer.Wavelength = 720;
             // AddLightComponent(laserPointer, new Vector3(1.70f,0,1.09f));
@@ -49,22 +52,23 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
 
         private void SpawnLaserPointerTestSetup()
         {
-            int wl = 390;
+            int wl = 382;
             for (float i = 0.8f; i <= 1.8f; i+=0.06f)
             {
                 laserPointer.Wavelength = wl;
                 AddLightComponent(laserPointer, new Vector3(1, 0, i));
-                wl += 20;
+                // wl += 20;
+                wl += 15;
             }
             
         }
 
         private void Update()
         {
-            // if (_selectedLightComponent != null)
-            // {
-            //     _selectedLightComponent.ChangeWavelength(testUi);
-            // }
+            if (_selectedLightComponent != null)
+            {
+                _selectedLightComponent.ChangeWavelengthAndIntensity(selectedWavelength, selectedIntensity);
+            }
         }
 
         public void CheckOpticalComponentHit(OpticalComponent opticalComponent)
@@ -95,6 +99,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         public void SelectLightComponent(LightComponent lc)
         {
             _selectedLightComponent = lc;
+            selectedIntensity.Value = lc.Intensity;
+            selectedWavelength.Value = lc.Wavelength;
         }
         
     }

@@ -43,9 +43,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
             }
         }
 
-        public void ChangeWavelength(float wl)
+        public void ChangeWavelengthAndIntensity(float wl, float it)
         {
             wavelength = wl;
+            intensity = it;
             RecalculateLightRoute();
         }
         

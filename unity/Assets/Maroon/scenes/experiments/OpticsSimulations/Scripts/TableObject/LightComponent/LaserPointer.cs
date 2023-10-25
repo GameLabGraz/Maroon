@@ -35,7 +35,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
         {
             _lightRoute.ResetLightRoute();
 
-            var initialRay = new RaySegment(Origin, 1f, Wavelength, transform.right);
+            var initialRay = new RaySegment(Origin, Intensity, Wavelength, transform.right);
             _lightRoute.AddRaySegment(initialRay);
             _lightRoute.CalculateNextRay(initialRay);
         }
