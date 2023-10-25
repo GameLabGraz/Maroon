@@ -7,6 +7,7 @@ using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
 using UnityEngine;
+using LaserPointer = Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent.LaserPointer;
 using LightType = Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent.LightType;
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
@@ -19,7 +20,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         [SerializeField] private GameObject tableLowLeftCorner;
         
         [Header("Prefabs: Light Sources")] 
-        [SerializeField] private LightComponent laserPointer;
+        [SerializeField] private LaserPointer laserPointer;
+        [SerializeField] private ParallelSource parallelSource;
 
 
         public List<LightComponent> LightComponents => _lightComponents;
@@ -42,12 +44,19 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
 
         private void Start()
         {
-            SpawnLaserPointerTestSetup();
-            // _selectedLightComponent = _lightComponents.First();
+            // SpawnLaserPointerTestSetup();
 
             // AddLightComponent(laserPointer, new Vector3(1.74f, 0, 0.5f));
             // laserPointer.Wavelength = 720;
             // AddLightComponent(laserPointer, new Vector3(1.70f,0,1.09f));
+            
+            parallelSource.numberOfRays = 10;
+            parallelSource.distanceBetweenRays = Constants.LaserWidth * 3;
+            AddLightComponent(parallelSource, new Vector3(1.70f,0,1.0f));
+            
+            parallelSource.numberOfRays = 20;
+            parallelSource.distanceBetweenRays = Constants.LaserWidth * 1.5f;
+            AddLightComponent(parallelSource, new Vector3(1.70f,0,0.6f));
         }
 
         private void SpawnLaserPointerTestSetup()

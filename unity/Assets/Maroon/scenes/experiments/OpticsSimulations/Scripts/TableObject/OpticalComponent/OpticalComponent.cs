@@ -13,11 +13,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         
         public OpticalType OpticalType => opticalType;
 
-        // public virtual (Vector3 hitPoint, Vector3 outRayReflection, Vector3 outRayRefraction) CalculateHitpointReflectionRefraction(Vector3 inRayOrigin, Vector3 inRayDirection)
-        // {
-        //     throw new Exception("Should not call base CalculateHitpointReflectionRefraction Method!");
-        // }
-        
         public virtual (float inRayLength, RaySegment reflection, RaySegment refraction) CalculateDistanceReflectionRefraction(RaySegment inRay)
         {
             throw new Exception("Should not call base CalculateHitpointReflectionRefraction Method!");

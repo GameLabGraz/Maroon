@@ -10,9 +10,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
 {
     public class LightRoute
     {
-        [Header("Light Settings")]
-        [SerializeField] private float wavelength;
-        
+        private float _wavelength;
         private List<RaySegment> _raySegments = new List<RaySegment>();
 
         public List<RaySegment> RaySegments
@@ -22,13 +20,13 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
         }
         public float Wavelength
         {
-            get => wavelength;
-            set => wavelength = value;
+            get => _wavelength;
+            set => _wavelength = value;
         }
 
-        public LightRoute(float intensity, float wavelength)
+        public LightRoute(float wavelength)
         {
-            this.wavelength = wavelength;
+            this._wavelength = wavelength;
         }
 
         public void ResetLightRoute()
@@ -119,8 +117,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
         
         public RaySegment AddRaySegment(Vector3 origin, Vector3 endpoint, float intensity)
         {
-            // TODO intensity calculation
-            var rs = new RaySegment(origin, endpoint, intensity, wavelength);
+            var rs = new RaySegment(origin, endpoint, intensity, _wavelength);
             _raySegments.Add(rs);
             return rs;
         }

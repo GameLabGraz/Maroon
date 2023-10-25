@@ -9,13 +9,14 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
 {
     public class LaserPointer : LightComponent
     {
+        [Header("Laser Pointer Settings")] 
         private LightRoute _lightRoute;
 
         public LightRoute LightRoute => _lightRoute;
 
         private void Start()
         {
-            _lightRoute = new LightRoute(Intensity, Wavelength);
+            _lightRoute = new LightRoute(Wavelength);
             Origin = transform.localPosition;
         }
         
@@ -40,17 +41,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
             _lightRoute.CalculateNextRay(initialRay);
         }
         
-        public override bool CheckHitComponent(OpticalComponent.OpticalComponent oc)
-        {
-            return oc == OpticalComponentManager.Instance.GetFirstHitComponent(Origin, transform.right);
-        }
-
-        // Returns the initial or starting ray from the light source
-        public RaySegment GetInitialRay()
-        {
-            return _lightRoute.GetFirstClearRest();
-        }
-
-        
+        // public override bool CheckHitComponent(OpticalComponent.OpticalComponent oc)
+        // {
+        //     return oc == OpticalComponentManager.Instance.GetFirstHitComponent(Origin, transform.right);
+        // }
     }
 }
