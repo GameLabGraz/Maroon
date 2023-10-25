@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Maroon.Physics;
@@ -12,6 +13,10 @@ public class DragDrop : MonoBehaviour
   public DragEndedDelegate dragEndedCallback;
   public bool enabled = true;
   public bool snap = true;
+  public bool offsetDragging = false;
+  private Vector3 mouseOffset = Vector3.zero;
+  public bool hoverSizeIncrease = true;
+  public float hoverSizeFactor = 1.2f;
   public Vector3 planePosition;
   private Vector3 worldPosition;
   Plane plane;
@@ -22,6 +27,7 @@ public class DragDrop : MonoBehaviour
   public Axis axisLockedInto = Axis.X;
 
   private PausableObject _pausableObject;
+  private Vector3 oldScale;
   private void Awake() {
     plane = new Plane(new Vector3(0,0,-1), planePosition);
     _pausableObject = gameObject.GetComponent<PausableObject>();
@@ -38,6 +44,19 @@ public class DragDrop : MonoBehaviour
       snapPoint.currentObject = null;
       snapPoint = null;
     }
+
+    if (offsetDragging)
+    {
+      //get offset from center of object
+      Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+      float distance;
+      Vector3 mousePosition;
+      if (plane.Raycast(ray, out distance))
+      {
+        mousePosition = ray.GetPoint(distance);
+        mouseOffset = transform.position - mousePosition;
+      }
+    }
   }
 
   private void OnMouseDrag()
@@ -52,7 +71,7 @@ public class DragDrop : MonoBehaviour
       Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
       if (plane.Raycast(ray, out distance))
       {
-        worldPosition = ray.GetPoint(distance);
+        worldPosition = ray.GetPoint(distance) + mouseOffset;
       }
       
       if (axisLocked)
@@ -86,7 +105,7 @@ public class DragDrop : MonoBehaviour
     isDragged = false;
     if (_pausableObject)
     {
-      _pausableObject.gameObject.SendMessage("SaveRigidbodyState");
+      _pausableObject.GetComponent<RigidBodyStateControl>().StoreRigidBodyState();
     }
     if(snap)
     {
@@ -94,4 +113,28 @@ public class DragDrop : MonoBehaviour
     }
   }
 
+  private void OnMouseEnter()
+  {
+    if (hoverSizeIncrease)
+    {
+      oldScale = transform.localScale;
+      transform.localScale = oldScale * hoverSizeFactor;
+    }
+  }
+
+  private void OnMouseOver()
+  {
+    if (hoverSizeIncrease)
+    {
+      transform.localScale = oldScale * hoverSizeFactor;
+    }
+  }
+
+  private void OnMouseExit()
+  {
+    if (hoverSizeIncrease)
+    {
+      transform.localScale = oldScale;
+    }
+  }
 }

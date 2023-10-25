@@ -42,19 +42,25 @@ namespace Maroon.Physics
       }
     }
 
-    public void makeChooseable()
+    public void setChooseable(bool chooseable)
+    {
+      if (chooseable)
+      {
+        makeChooseable();
+        return;
+      }
+      makeNotChooseable();
+    }
+    
+    private void makeChooseable()
     {
       clickable = true;
-      Debug.Log("Hello");
-      
       setDragDrop(false);
-      //TODO: Enable Outline shader
     }
 
-    public void resetChooseable()
+    private void makeNotChooseable()
     {
       clickable = false;
-
       setDragDrop(true);
     }
 

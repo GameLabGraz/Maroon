@@ -97,8 +97,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a94fdde4616c454d94d0f3946a3e2ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  worldPosition: {x: 0, y: 0, z: 0}
+  enabled: 1
+  snap: 1
+  offsetDragging: 1
+  hoverSizeIncrease: 1
+  hoverSizeFactor: 1.2
+  planePosition: {x: 0, y: 0, z: 0}
   snapPoint: {fileID: 0}
+  axisLocked: 0
+  axisLockedInto: 0
 --- !u!114 &8586945461017943361
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -111,7 +118,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b546dbf426e31aa489923365f08a9dda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  starting_weight: 0.029167
 --- !u!114 &3875044673337424666
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,6 +130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4d58407f76839d48ae435c7be08d602, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  filled: 0
 --- !u!136 &4677718191256065319
 CapsuleCollider:
   m_ObjectHideFlags: 0

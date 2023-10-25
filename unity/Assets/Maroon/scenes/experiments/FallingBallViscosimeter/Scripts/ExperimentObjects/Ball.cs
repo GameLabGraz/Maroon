@@ -145,9 +145,6 @@ namespace Maroon.Physics
     public void ResetObject()
     {
       dropped_ = false;
-      _mass = start_weight_;
-      diameter_.Value = start_diameter_;
-      radius_ = diameter_.Value / 2;
       touching_oil = false;
       _velocity = 0;
 
@@ -171,11 +168,6 @@ namespace Maroon.Physics
     private void OnTriggerExit(Collider other)
     {
       touching_oil = false;
-    }
-
-    private void SaveRigidbodyState()
-    {
-      _rigidBodyStateControl.StoreRigidBodyState();
     }
 
     void ApplyFallPhysics()
