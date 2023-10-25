@@ -33,8 +33,11 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
 
         public override void RecalculateLightRoute()
         {
-            _lightRoute.ResetLightRoute(Wavelength);
-            _lightRoute.CalculateNextRay(Origin, transform.right);
+            _lightRoute.ResetLightRoute();
+
+            var initialRay = new RaySegment(Origin, 1f, Wavelength, transform.right);
+            _lightRoute.AddRaySegment(initialRay);
+            _lightRoute.CalculateNextRay(initialRay);
         }
         
         public override bool CheckHitComponent(OpticalComponent.OpticalComponent oc)

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
 using UnityEngine;
 
@@ -32,7 +33,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             transform.localScale = Vector3.one * (R * 2);
             n = transform.right;
         }
-
+        
+        // ---- Mirror helper methods ----
+        
         // normal to surface at p
         public Vector3 NormR(Vector3 p)
         {
@@ -58,12 +61,13 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         } 
         
         // Calculations from Peter
-        public override (Vector3 hitPoint, Vector3 outRayReflection, Vector3 outRayRefraction) CalculateHitpointReflectionRefraction(Vector3 rayOrigin, Vector3 rayDirection)
+        // public override (Vector3 hitPoint, Vector3 outRayReflection, Vector3 outRayRefraction) CalculateHitpointReflectionRefraction(Vector3 rayOrigin, Vector3 rayDirection)
+        public override (float inRayLength, RaySegment reflection, RaySegment refraction) CalculateDistanceReflectionRefraction(RaySegment inRay)
         {
-            float dmin = GetRelevantDistance(rayOrigin, rayDirection);
+            float d = GetRelevantDistance(inRay.r0Local, inRay.n);
 
-            Vector3 firstHit = rayOrigin + rayDirection * dmin;
-            return (firstHit, CalcReflectedDirection(firstHit, rayDirection), Vector3.zero);
+            Vector3 hitPoint = inRay.r0Local + inRay.n * d;
+            return (d, CalcReflectedRay(hitPoint, inRay), null);
         }
 
         public override float GetRelevantDistance(Vector3 rayOrigin, Vector3 rayDirection)
@@ -73,7 +77,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             
             // skip if d1 is negative, very small or NaN
             if (d1 > Constants.Epsilon && !float.IsNaN(d1))
-            {  
+            {
                 var _r = rayOrigin + d1 * rayDirection;
                 var r1 = _r - this.r;
                 var r1dotnc = Vector3.Dot(r1, this.n);
@@ -87,7 +91,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
                         dmin = d1;
                 }
             }
-            // skip if d is negative or vey small
+            // skip if d2 is negative or vey small
             if (d2 > Constants.Epsilon && !float.IsNaN(d2))
             {
                 var _r = rayOrigin + d2 * rayDirection;  
@@ -108,10 +112,11 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             return dmin;
         }
 
-        private Vector3 CalcReflectedDirection(Vector3 hitPoint, Vector3 incRayDirection)
+        private RaySegment CalcReflectedRay(Vector3 hitPoint, RaySegment inRay)
         {
             var normal = this.NormR(hitPoint);
-            return Vector3.Reflect(incRayDirection, normal);
+            var reflectedRayDirection = Vector3.Reflect(inRay.n, normal);
+            return new RaySegment(hitPoint, inRay.intensity, inRay.wavelength, reflectedRayDirection);
         }
         
          

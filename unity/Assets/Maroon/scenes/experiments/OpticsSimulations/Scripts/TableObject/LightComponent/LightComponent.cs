@@ -32,7 +32,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
             get => _origin;
             set => _origin = value;
         }
-
         
         private void Update()
         {
@@ -42,6 +41,12 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
                 RecalculateLightRoute();
                 transform.hasChanged = false;
             }
+        }
+
+        public void ChangeWavelength(float wl)
+        {
+            wavelength = wl;
+            RecalculateLightRoute();
         }
         
         public virtual bool CheckHitComponent(OpticalComponent.OpticalComponent oc)

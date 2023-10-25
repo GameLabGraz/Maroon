@@ -11,7 +11,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
     public class LightRoute
     {
         [Header("Light Settings")]
-        [SerializeField] private float intensity;
         [SerializeField] private float wavelength;
         
         private List<RaySegment> _raySegments = new List<RaySegment>();
@@ -21,11 +20,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
             get => _raySegments;
             set => _raySegments = value;
         }
-        public float Intensity
-        {
-            get => intensity;
-            set => intensity = value;
-        }
         public float Wavelength
         {
             get => wavelength;
@@ -34,16 +28,11 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
 
         public LightRoute(float intensity, float wavelength)
         {
-            this.intensity = intensity;
             this.wavelength = wavelength;
         }
 
-        public void ResetLightRoute(float wavelength)
+        public void ResetLightRoute()
         {
-            intensity = 1.0f;
-            this.wavelength = wavelength;
-
-
             foreach (var rs in _raySegments)
             {
                 rs.DestroyRaySegment();
@@ -52,64 +41,93 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
             _raySegments.Clear();
         }
         
-        public void CalculateNextRay(Vector3 rayOrigin, Vector3 rayDirection)
+        public void CalculateNextRay(RaySegment inRay)
         {
+            // Stop when maximal number of rays (per light route) is reached
+            if (_raySegments.Count >= Constants.MaxNumberOfRays)
+                return;
+            
             // Get the first hit component via raycast, so we do not need to go through every Component on the table
-            OpticalComponent hitComponent = OpticalComponentManager.Instance.GetFirstHitComponent(rayOrigin, rayDirection);
-
+            OpticalComponent hitComponent = OpticalComponentManager.Instance.GetFirstHitComponent(inRay.r0Local, inRay.n);
+            
             switch (hitComponent.OpticalType)
             {
                 // End of ray - no further reflection/refraction
                 case OpticalType.Wall:
                     Wall wall = (Wall) hitComponent;
-                    (Vector3 hitPointW, _, _) = wall.CalculateHitpointReflectionRefraction(rayOrigin, rayDirection);
-                    AddRaySegment(rayOrigin, hitPointW);
+                    (float distanceToWall, _, _) = wall.CalculateDistanceReflectionRefraction(inRay);
+                    
+                    inRay.UpdateLength(distanceToWall);
                     break;
                 
                 case OpticalType.Aperture:
                     Aperture aperture = (Aperture)hitComponent;
-                    (Vector3 hitPointA, _, _) = aperture.CalculateHitpointReflectionRefraction(rayOrigin, rayDirection);
-                    AddRaySegment(rayOrigin, hitPointA);
+                    (float distanceToAperture, _, _) = aperture.CalculateDistanceReflectionRefraction(inRay);
+                    
+                    inRay.UpdateLength(distanceToAperture);
                     break;
                         
                 // Ray has 1 further reflection
                 case OpticalType.Mirror:
-                    
                     TableObject.OpticalComponent.Mirror mirror = (TableObject.OpticalComponent.Mirror) hitComponent;
-
-                    (Vector3 hitPointM, Vector3 newRayDirection, _) = mirror.CalculateHitpointReflectionRefraction(rayOrigin, rayDirection);
+                    (float distanceToMirror, RaySegment reflectionM, _) = mirror.CalculateDistanceReflectionRefraction(inRay);
                     
-                    // TODO only workaround for now because "real" mirror object is not correct
-                    if (!Util.Math.IsValidPoint(hitPointM))
-                    {
-                        Debug.Log(hitPointM.ToString("f2") + " not valid!");
-                        return;
-                    }
-                    AddRaySegment(rayOrigin, hitPointM);
-                    CalculateNextRay(hitPointM, newRayDirection);
+                    inRay.UpdateLength(distanceToMirror);
+                    AddRaySegment(reflectionM);
+                    CalculateNextRay(reflectionM);
                     break;
-                        
+
+                // Ray has potential reflection and refraction
                 case OpticalType.Eye:
                     Eye eye = (Eye)hitComponent;
-                    
-                    // TODO full eye implementation
-                    (Vector3 hitPointE, _, _) = eye.CalculateHitpointReflectionRefraction(rayOrigin, rayDirection);
-                    AddRaySegment(rayOrigin, hitPointE);
+                    (float distanceToEye, RaySegment reflectionEye, RaySegment refractionEye) = eye.CalculateDistanceReflectionRefraction(inRay);
+
+                    inRay.UpdateLength(distanceToEye);
+                    if (reflectionEye != null)
+                    {
+                        AddRaySegment(reflectionEye);
+                        CalculateNextRay(reflectionEye);
+                    }
+
+                    if (refractionEye != null)
+                    {
+                        AddRaySegment(refractionEye);
+                        CalculateNextRay(refractionEye);
+                    }
                     break;
                 
+                // Ray has reflection and refraction
                 case OpticalType.Lens:
-                    throw new NotImplementedException("Lens calculations not implemented yet!");
+                    Lens lens = (Lens) hitComponent;
+                    (float distanceToLens, RaySegment reflectionLens, RaySegment refractionLens) = lens.CalculateDistanceReflectionRefraction(inRay);
+                    Debug.Log("lens dist: "+ distanceToLens.ToString("F3"));
+                    inRay.UpdateLength(distanceToLens);
+                    if (reflectionLens != null)
+                    {
+                        AddRaySegment(reflectionLens);
+                        CalculateNextRay(reflectionLens);
+                    }
+
+                    if (refractionLens != null)
+                    {
+                        AddRaySegment(refractionLens);
+                        CalculateNextRay(refractionLens);
+                    }
+                    break;
             }
         }
-
         
-        
-        public RaySegment AddRaySegment(Vector3 origin, Vector3 endpoint)
+        public RaySegment AddRaySegment(Vector3 origin, Vector3 endpoint, float intensity)
         {
             // TODO intensity calculation
-            var rs = new RaySegment(origin, endpoint, intensity * 0.9f, wavelength);
+            var rs = new RaySegment(origin, endpoint, intensity, wavelength);
             _raySegments.Add(rs);
             return rs;
+        }
+
+        public void AddRaySegment(RaySegment rs)
+        {
+            _raySegments.Add(rs);
         }
 
         public RaySegment GetFirstClearRest()
@@ -127,7 +145,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
                 _raySegments.Remove(tmpSegment);
 
             }
-            // _raySegments.RemoveRange(1, _raySegments.Count - 1);
             return _raySegments[0];
         }
         

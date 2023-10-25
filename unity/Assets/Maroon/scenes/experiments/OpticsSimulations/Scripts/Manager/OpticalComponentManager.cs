@@ -38,9 +38,17 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         private void Start()
         {
             AddWalls();
-            AddOpticalComponent(aperture, new Vector3(1.6f, 0, 0.5f));
-            AddOpticalComponent(mirror, new Vector3(2f, 0, 1f));
-            AddOpticalComponent(eye, new Vector3(3f, 0, 1f));
+            AddOpticalComponent(mirror, new Vector3(1.5f, 0, 0.30f));
+            mirror.transform.Rotate(new Vector3(45, 180, 0));
+            AddOpticalComponent(mirror, new Vector3(1.8f, 0, 0.30f));
+            
+            AddOpticalComponent(aperture, new Vector3(2.1f, 0, 0.30f));
+            aperture.transform.Rotate(new Vector3(0, 45, 0));
+            AddOpticalComponent(aperture, new Vector3(2.4f, 0, 0.30f));
+            
+            AddOpticalComponent(eye, new Vector3(2.7f, 0, 0.30f));
+            AddOpticalComponent(eye, new Vector3(3.0f, 0, 0.30f));
+            // AddOpticalComponent(lens, new Vector3(3f, 0, 1f));
         }
 
         private void AddWalls()

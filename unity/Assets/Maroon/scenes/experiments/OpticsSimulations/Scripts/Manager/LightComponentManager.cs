@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Maroon.Physics;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
@@ -19,7 +20,11 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         [Header("Prefabs: Light Sources")] 
         [SerializeField] private LightComponent laserPointer;
 
+        private LightComponent _selectedLightComponent;
+
         public List<LightComponent> LightComponents => _lightComponents;
+
+        public QuantityFloat testUi;
 
         private void Awake()
         {
@@ -35,9 +40,31 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
 
         private void Start()
         {
-            // Spawn 2 lasers for testing
+            SpawnLaserPointerTestSetup();
+            
             // AddLightComponent(laserPointer, new Vector3(1.74f, 0, 0.5f));
-            AddLightComponent(laserPointer, new Vector3(1.70f,0,1.09f));
+            // laserPointer.Wavelength = 720;
+            // AddLightComponent(laserPointer, new Vector3(1.70f,0,1.09f));
+        }
+
+        private void SpawnLaserPointerTestSetup()
+        {
+            int wl = 390;
+            for (float i = 0.8f; i <= 1.8f; i+=0.06f)
+            {
+                laserPointer.Wavelength = wl;
+                AddLightComponent(laserPointer, new Vector3(1, 0, i));
+                wl += 20;
+            }
+            
+        }
+
+        private void Update()
+        {
+            // if (_selectedLightComponent != null)
+            // {
+            //     _selectedLightComponent.ChangeWavelength(testUi);
+            // }
         }
 
         public void CheckOpticalComponentHit(OpticalComponent opticalComponent)
@@ -58,11 +85,16 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             if (!_lightComponents.Remove(lc))
                 Debug.LogError($"Light Source: {lc.name} not present!");
         }
-
+        
         public void UnselectAll()
         {
             foreach (var ls in _lightComponents)
                 ls.Unselect();
+        }
+
+        public void SelectLightComponent(LightComponent lc)
+        {
+            _selectedLightComponent = lc;
         }
         
     }

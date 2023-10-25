@@ -17,6 +17,12 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Util
             return !float.IsInfinity(d) && !float.IsNaN(d) && d > Constants.Epsilon;
         }
         
+        // index of refraction of the environment
+        public static float Nenv(float lambda, float A, float B)
+        { 
+            return (A + B/(lambda*lambda)); // B is in nm^2
+        }
+        
         /// <summary>
         /// <para>Find the intersection of a line and a plane. </para>
         /// </summary>
@@ -88,24 +94,24 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Util
         
         
         //http://www.physics.sfasu.edu/astro/color/spectra.html
-        public static Color WavelengthToColor(float wavelength)
+        public static Color WavelengthToColor(float wavelength, float intensity)
         {
             if (wavelength < 381)
-                return new Color(1, 1, 1);
+                return new Color(1, 1, 1, intensity);
             if ((wavelength > 380) & (wavelength < 440)) 
-                return new Color((440-wavelength)/(440-380), 0, 1);
+                return new Color((440-wavelength)/(440-380), 0, 1, intensity);
             if ((wavelength>439)&(wavelength<490))
-                return new Color(0, (wavelength-440)/(490-440), 1);
+                return new Color(0, (wavelength-440)/(490-440), 1, intensity);
             if ((wavelength>489)&(wavelength<510))
-                return new Color(0, 1, (510-wavelength)/(510-490));
+                return new Color(0, 1, (510-wavelength)/(510-490), intensity);
             if ((wavelength>509)&(wavelength<580))
-                return new Color((wavelength-510)/(580-510), 1, 0);
+                return new Color((wavelength-510)/(580-510), 1, 0, intensity);
             if ((wavelength>579)&(wavelength<645))
-                return new Color(1, (645-wavelength)/(645-580), 0);
+                return new Color(1, (645-wavelength)/(645-580), 0, intensity);
             if ((wavelength > 644) & (wavelength < 780))
-                return new Color(1, 0, 0);
+                return new Color(1, 0, 0, intensity);
             
-            return new Color(1, 1, 1);
+            return new Color(1, 1, 1, intensity);
         }
     }
 }

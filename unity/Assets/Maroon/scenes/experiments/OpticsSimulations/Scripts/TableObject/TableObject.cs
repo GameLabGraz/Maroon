@@ -75,11 +75,17 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject
         {
             if (componentType == ComponentType.Wall)
                 return;
-            
+
             if (componentType == ComponentType.OpticalComponent)
+            {
                 OpticalComponentManager.Instance.UnselectAll();
+                
+            }
             else
+            {
                 LightComponentManager.Instance.UnselectAll();
+                LightComponentManager.Instance.SelectLightComponent((LightComponent.LightComponent)this);
+            }
                 
             _material.color = selected;
             _isSelected = true;
