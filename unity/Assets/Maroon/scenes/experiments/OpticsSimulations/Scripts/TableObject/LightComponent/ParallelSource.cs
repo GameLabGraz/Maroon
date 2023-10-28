@@ -18,10 +18,12 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
         private void Start()
         {
             _lightRoutes = new List<LightRoute>();
+            Origin = transform.localPosition;
+
             for (int i = 0; i < numberOfRays; i++)
                 _lightRoutes.Add(new LightRoute(Wavelength));
-                
-            Origin = transform.localPosition;
+
+            RecalculateLightRoute();
         }
         
         public override void RecalculateLightRoute()

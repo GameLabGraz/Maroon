@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent
@@ -12,7 +13,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         public Vector3 r0;
         public Vector3 n;
         public float f;
-        public float R = 2.4f / 100; // scale = 0.048
+        public float R = 0.024f; // scale = 0.048
 
         // normal to surface R at p
         public Vector3 NormR(Vector3 p)
@@ -20,24 +21,14 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             return 1 / this.R * (p - this.r0);
         }
         
-        // public Vector3 NormR(Vector3 p)
-        // {
-        //     return (p - r0).normalized; 
-        // }
-
         private void Start()
         {
-            r0 = transform.localPosition;
-            n = -transform.right;
-            f = 0.25f;
+            f = 0.024f;
+            UpdateProperties();
+            LightComponentManager.Instance.CheckOpticalComponentHit(this);
         }
 
         public override void UpdateProperties()
-        {
-            r0 = transform.localPosition;
-        }
-
-        private void FixedUpdate()
         {
             r0 = transform.localPosition;
             n = -transform.right;

@@ -21,5 +21,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts
         public const float TableHeight = 1f;
         public const float TableObjectHeight = 0.20f;
         public const float Epsilon = 0.000001f;
+        public const float UnitConversion = 100f;
     }
 }

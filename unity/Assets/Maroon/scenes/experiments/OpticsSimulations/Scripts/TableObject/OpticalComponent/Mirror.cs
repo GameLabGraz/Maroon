@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent
@@ -17,29 +17,32 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
 
         private void Start()
         {
-            r = Vector3.zero;
-            n = transform.right;
             R = 0.1f;
             Rc = 0.1f;
+            UpdateProperties();
+            LightComponentManager.Instance.CheckOpticalComponentHit(this);
         }
              
         public override void UpdateProperties()
         {
-            r = Center() + R * n;
+            // transform.localScale = Vector3.one * (R * 2);
+            r = transform.localPosition;
+            n = transform.right;
+            
         }
 
-        private void FixedUpdate()
-        {
-            transform.localScale = Vector3.one * (R * 2);
-            n = transform.right;
-        }
-        
         // ---- Mirror helper methods ----
+        
+        // center of Mirror
+        public Vector3 Center()
+        {
+            return r + R * n;
+        }
         
         // normal to surface at p
         public Vector3 NormR(Vector3 p)
         {
-            return (p - Center()).normalized; 
+            return (p - (this.r + this.R * this.n)).normalized;
         }
         
         // distance along cylinder from central plane to intersection with surface R
@@ -49,12 +52,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             return absR - Mathf.Sqrt(absR*absR - this.Rc*this.Rc);
         }
         
-        // center of Mirror
-        public Vector3 Center()
-        {
-            return transform.localPosition;
-            // return r + R * n;
-        }
         public float AdjustRc()
         {
             return Mathf.Min(this.Rc,Mathf.Abs(this.R)); 

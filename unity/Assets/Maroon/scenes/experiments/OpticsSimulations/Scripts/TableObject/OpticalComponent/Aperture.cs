@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Maroon.Physics;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent
@@ -15,18 +17,13 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
 
         private void Start()
         {
-            r = transform.localPosition;
-            n = transform.right;
-            Rin = 0.08f/2;
-            Rout = 0.25f/2;
+            Rin = 0.1f;
+            Rout = 0.3f;
+            UpdateProperties();
+            LightComponentManager.Instance.CheckOpticalComponentHit(this);
         }
-        
+
         public override void UpdateProperties()
-        {
-            r = transform.localPosition;
-        }
-        
-        private void FixedUpdate()
         {
             r = transform.localPosition;
             n = transform.right;

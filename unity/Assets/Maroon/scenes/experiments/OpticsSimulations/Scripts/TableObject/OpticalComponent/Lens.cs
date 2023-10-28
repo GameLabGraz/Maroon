@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent
@@ -13,7 +14,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         public Vector3 n;
         public float R1;
         public float R2;
-        public float d;
+        public float d1_TODO;
+        public float d2;
         public float Rc0;
         public float Rc;
         public float A;
@@ -22,11 +24,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         
         private void Start()
         {
-            r = Vector3.zero;
-            n = transform.right;
             R1 = 0.1f;
             R2 = 0.1f;
-            d = 0.05f;
+            d1_TODO = 0.05f;
             Rc = 0.1f;
             A = 1.728f;
             B = 13420f;
@@ -39,17 +39,17 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
                 Rc1 = Mathf.Abs(this.R1);
             else
             {
-                if (0.5 * this.d > this.R1)
+                if (0.5 * this.d1_TODO > this.R1)
                     Rc1 = Mathf.Abs(this.R1);
                 else
-                    Rc1 = Mathf.Sqrt(this.R1 * this.R1 - (this.R1 - 0.5f * this.d) * (this.R1 - 0.5f * this.d));
+                    Rc1 = Mathf.Sqrt(this.R1 * this.R1 - (this.R1 - 0.5f * this.d1_TODO) * (this.R1 - 0.5f * this.d1_TODO));
             }
             if (this.R2 < 0)
             {
-                if (0.5 * this.d > Mathf.Abs(this.R2))
+                if (0.5 * this.d1_TODO > Mathf.Abs(this.R2))
                     Rc2 = Mathf.Abs(this.R2);
                 else
-                    Rc2 = Mathf.Sqrt(this.R2 * this.R2 - (this.R2 + 0.5f * this.d) * (this.R2 + 0.5f * this.d));
+                    Rc2 = Mathf.Sqrt(this.R2 * this.R2 - (this.R2 + 0.5f * this.d1_TODO) * (this.R2 + 0.5f * this.d1_TODO));
             }
             else
                 Rc2 = Mathf.Abs(this.R2);
@@ -58,67 +58,71 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             var dn = this.n.magnitude;
             if (Mathf.Abs(1 - dn) > 1E-6)
                 throw new Exception("Lens Error: " + this.n.ToString("f3") + "is not a normalized unit vector.");
+            
+            UpdateProperties();
+            LightComponentManager.Instance.CheckOpticalComponentHit(this);
         }
              
         public override void UpdateProperties()
         {
             r = transform.localPosition;
-        }
-
-        private void FixedUpdate()
-        {
-            r = transform.localPosition;
             n = transform.right;
         }
+
+        // private void FixedUpdate()
+        // {
+        //     r = transform.localPosition;
+        //     n = transform.right;
+        // }
 
         // ---- Lens helper methods ----
 
         // center of R1 surface
         private Vector3 Center1()
         {
-            return this.r + (this.R1 - 0.5f * this.d) * this.n;
+            return this.r + (this.R1 - 0.5f * this.d1_TODO) * this.n;
         }
 
         // center of R2 surface
         private Vector3 Center2()
         {
-            return this.r + (this.R2 + 0.5f * this.d) * this.n;
+            return this.r + (this.R2 + 0.5f * this.d1_TODO) * this.n;
         }
 
         //distance along cylinder from central plane to intersection with surface R1
         private float Dc1()
         {
             if (this.R1 < 0)
-                return 0.5f * this.d + Mathf.Abs(this.R1) - Mathf.Sqrt(this.R1 * this.R1 - this.Rc * this.Rc);
+                return 0.5f * this.d1_TODO + Mathf.Abs(this.R1) - Mathf.Sqrt(this.R1 * this.R1 - this.Rc * this.Rc);
             // R1 > 0
-            return 0.5f * this.d - (this.R1 - Mathf.Sqrt(this.R1 * this.R1 - this.Rc * this.Rc));
+            return 0.5f * this.d1_TODO - (this.R1 - Mathf.Sqrt(this.R1 * this.R1 - this.Rc * this.Rc));
         }
 
         //distance along cylinder from central plane to intersection with surface R2
         private float Dc2()
         {
             if (this.R2 < 0)
-                return 0.5f * this.d - (Mathf.Abs(this.R2) - Mathf.Sqrt(this.R2 * this.R2 - this.Rc * this.Rc));
+                return 0.5f * this.d1_TODO - (Mathf.Abs(this.R2) - Mathf.Sqrt(this.R2 * this.R2 - this.Rc * this.Rc));
             // R2 > 0
-            return 0.5f * this.d + (this.R2 - Mathf.Sqrt(this.R2 * this.R2 - this.Rc * this.Rc));
+            return 0.5f * this.d1_TODO + (this.R2 - Mathf.Sqrt(this.R2 * this.R2 - this.Rc * this.Rc));
         }
 
         // maximum distance of lens from central plane to surface R1
         private float D1()
         {
             if (this.R1 < 0)
-                return 0.5f * this.d + Mathf.Abs(this.R1) - Mathf.Sqrt(this.R1 * this.R1 - this.Rc * this.Rc);
+                return 0.5f * this.d1_TODO + Mathf.Abs(this.R1) - Mathf.Sqrt(this.R1 * this.R1 - this.Rc * this.Rc);
             // R1 > 0
-            return 0.5f * this.d;
+            return 0.5f * this.d1_TODO;
         }
 
         // maximum distance of lens from central plane to surface R2
         private float D2()
         {
             if (this.R2 < 0)
-                return 0.5f * this.d;
+                return 0.5f * this.d1_TODO;
             // R2 > 0
-            return 0.5f * this.d + (this.R2 - Mathf.Sqrt(this.R2 * this.R2 - this.Rc * this.Rc));
+            return 0.5f * this.d1_TODO + (this.R2 - Mathf.Sqrt(this.R2 * this.R2 - this.Rc * this.Rc));
         }
 
         // index of refraction
@@ -156,17 +160,17 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
                 Rc1 = Mathf.Abs(this.R1);
             else
             {
-                if (0.5f * this.d > this.R1)
+                if (0.5f * this.d1_TODO > this.R1)
                     Rc1 = Mathf.Abs(this.R1);
                 else
-                    Rc1 = Mathf.Sqrt(this.R1 * this.R1 - (this.R1 - 0.5f * this.d) * (this.R1 - 0.5f * this.d));
+                    Rc1 = Mathf.Sqrt(this.R1 * this.R1 - (this.R1 - 0.5f * this.d1_TODO) * (this.R1 - 0.5f * this.d1_TODO));
             }
             if (this.R2 < 0)
             {
-                if (0.5 * this.d > Mathf.Abs(this.R2))
+                if (0.5 * this.d1_TODO > Mathf.Abs(this.R2))
                     Rc2 = Mathf.Abs(this.R2);
                 else
-                    Rc2 = Mathf.Sqrt(this.R2 * this.R2 - (this.R2 + 0.5f * this.d) * (this.R2 + 0.5f * this.d));
+                    Rc2 = Mathf.Sqrt(this.R2 * this.R2 - (this.R2 + 0.5f * this.d1_TODO) * (this.R2 + 0.5f * this.d1_TODO));
             }
             else
                 Rc2 = Mathf.Abs(this.R2);

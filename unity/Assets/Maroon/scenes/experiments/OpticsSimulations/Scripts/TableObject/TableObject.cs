@@ -79,12 +79,12 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject
             if (componentType == ComponentType.OpticalComponent)
             {
                 OpticalComponentManager.Instance.UnselectAll();
-                
+                UIManager.Instance.ActivateOpticalControlPanel((OpticalComponent.OpticalComponent)this);
             }
             else
             {
                 LightComponentManager.Instance.UnselectAll();
-                LightComponentManager.Instance.SelectLightComponent((LightComponent.LightComponent)this);
+                UIManager.Instance.SelectLightComponent((LightComponent.LightComponent)this);
             }
                 
             _material.color = selected;
@@ -125,7 +125,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject
             Vector3 desiredPos = pointOnPlane - _objectToMouseTablePosOffset;
             Vector3 desiredPosLocal = pointOnPlane - _objectToMouseTablePosLocalOffset;
             if (CheckTableBounds(desiredPosLocal))
-                transform.position = desiredPos;        // TODO create updatePosition virtual functions
+                transform.position = desiredPos;
         }
 
         private bool CheckTableBounds(Vector3 desiredPos)

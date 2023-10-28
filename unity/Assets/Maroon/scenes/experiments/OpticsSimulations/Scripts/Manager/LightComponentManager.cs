@@ -26,10 +26,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
 
         public List<LightComponent> LightComponents => _lightComponents;
 
-        private LightComponent _selectedLightComponent;
-        public QuantityFloat selectedWavelength;
-        public QuantityFloat selectedIntensity;
-
         private void Awake()
         {
             if (Instance == null)
@@ -46,16 +42,14 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         {
             // SpawnLaserPointerTestSetup();
 
-            // AddLightComponent(laserPointer, new Vector3(1.74f, 0, 0.5f));
-            // laserPointer.Wavelength = 720;
-            // AddLightComponent(laserPointer, new Vector3(1.70f,0,1.09f));
+            AddLightComponent(laserPointer, new Vector3(1.74f, 0, 0.5f));
+            laserPointer.Wavelength = 720;
+            AddLightComponent(laserPointer, new Vector3(1.70f,0,1.09f));
             
             parallelSource.numberOfRays = 10;
-            parallelSource.distanceBetweenRays = Constants.LaserWidth * 3;
             AddLightComponent(parallelSource, new Vector3(1.70f,0,1.0f));
             
             parallelSource.numberOfRays = 20;
-            parallelSource.distanceBetweenRays = Constants.LaserWidth * 1.5f;
             AddLightComponent(parallelSource, new Vector3(1.70f,0,0.6f));
         }
 
@@ -70,14 +64,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 wl += 15;
             }
             
-        }
-
-        private void Update()
-        {
-            if (_selectedLightComponent != null)
-            {
-                _selectedLightComponent.ChangeWavelengthAndIntensity(selectedWavelength, selectedIntensity);
-            }
         }
 
         public void CheckOpticalComponentHit(OpticalComponent opticalComponent)
@@ -105,12 +91,5 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 ls.Unselect();
         }
 
-        public void SelectLightComponent(LightComponent lc)
-        {
-            _selectedLightComponent = lc;
-            selectedIntensity.Value = lc.Intensity;
-            selectedWavelength.Value = lc.Wavelength;
-        }
-        
     }
 }

@@ -18,20 +18,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
         {
             _lightRoute = new LightRoute(Wavelength);
             Origin = transform.localPosition;
+            RecalculateLightRoute();
         }
         
-        // private void Update()
-        // {
-        //     if (transform.hasChanged)
-        //     {
-        //         // _lightRoute.ResetLightRoute(Wavelength);
-        //         // _lightRoute.CalculateNextRay(transform.localPosition, Vector3.right);
-        //         Origin = transform.localPosition;
-        //         RecalculateLightRoute();
-        //         transform.hasChanged = false;
-        //     }
-        // }
-
         public override void RecalculateLightRoute()
         {
             _lightRoute.ResetLightRoute();
@@ -40,10 +29,5 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
             _lightRoute.AddRaySegment(initialRay);
             _lightRoute.CalculateNextRay(initialRay);
         }
-        
-        // public override bool CheckHitComponent(OpticalComponent.OpticalComponent oc)
-        // {
-        //     return oc == OpticalComponentManager.Instance.GetFirstHitComponent(Origin, transform.right);
-        // }
     }
 }

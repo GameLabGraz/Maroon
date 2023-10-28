@@ -28,15 +28,15 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             throw new Exception("Should not call base UpdateProperties Method!");
         }
         
-        private void Update()
-        {
-            if (transform.hasChanged)
-            {
-                UpdateProperties();
-                LightComponentManager.Instance.CheckOpticalComponentHit(this);
-                transform.hasChanged = false;
-            }
-        }
+        // private void Update()
+        // {
+        //     if (transform.hasChanged)
+        //     {
+        //         UpdateProperties();
+        //         LightComponentManager.Instance.CheckOpticalComponentHit(this);
+        //         transform.hasChanged = false;
+        //     }
+        // }
 
     }
     

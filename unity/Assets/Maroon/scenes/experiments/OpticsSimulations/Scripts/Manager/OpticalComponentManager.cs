@@ -43,11 +43,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             AddOpticalComponent(mirror, new Vector3(1.8f, 0, 0.30f));
             
             AddOpticalComponent(aperture, new Vector3(2.1f, 0, 0.30f));
-            aperture.transform.Rotate(new Vector3(0, 45, 0));
             AddOpticalComponent(aperture, new Vector3(2.4f, 0, 0.30f));
             
-            AddOpticalComponent(eye, new Vector3(2.7f, 0, 0.30f));
-            AddOpticalComponent(eye, new Vector3(3.0f, 0, 0.30f));
+            // AddOpticalComponent(eye, new Vector3(2.7f, 0, 0.30f));
+            // AddOpticalComponent(eye, new Vector3(3.0f, 0, 0.30f));
             
             AddOpticalComponent(lens, new Vector3(1f, 0, 0.30f));
         }

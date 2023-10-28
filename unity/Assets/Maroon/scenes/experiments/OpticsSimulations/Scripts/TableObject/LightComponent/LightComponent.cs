@@ -32,16 +32,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
             get => _origin;
             set => _origin = value;
         }
-        
-        private void Update()
-        {
-            if (transform.hasChanged)
-            {
-                _origin = transform.localPosition;
-                RecalculateLightRoute();
-                transform.hasChanged = false;
-            }
-        }
 
         public void ChangeWavelengthAndIntensity(float wl, float it)
         {
