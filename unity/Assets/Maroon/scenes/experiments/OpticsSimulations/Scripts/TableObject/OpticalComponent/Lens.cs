@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent
@@ -30,6 +31,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             Rc = 0.1f;
             A = 1.728f;
             B = 13420f;
+            UpdateProperties();
             
             // TODO check where to call
             // adjust the radius of the cylinder if the value provided is unphysical.
@@ -59,7 +61,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             if (Mathf.Abs(1 - dn) > 1E-6)
                 throw new Exception("Lens Error: " + this.n.ToString("f3") + "is not a normalized unit vector.");
             
-            UpdateProperties();
             LightComponentManager.Instance.CheckOpticalComponentHit(this);
         }
              

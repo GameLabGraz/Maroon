@@ -2,9 +2,10 @@
 using System.Collections;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
 using UnityEngine;
 
-namespace Maroon.PlatformControls.PC
+namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Camera
 {
     public class CameraControls : MonoBehaviour
     {
@@ -13,7 +14,7 @@ namespace Maroon.PlatformControls.PC
         [SerializeField] private float zoomSpeed = 1.0f;
         
         private Vector3 _newCameraPos;
-        private Camera _cam;
+        private UnityEngine.Camera _cam;
         private Transform _camTransform;
         private Vector3 _camPos;
         private Quaternion _camRot;
@@ -26,7 +27,7 @@ namespace Maroon.PlatformControls.PC
 
         private void Start()
         {
-            _cam = GetComponent<Camera>();
+            _cam = GetComponent<UnityEngine.Camera>();
             _camTransform = _cam.transform;
             
             _tablePlane = new Plane(Vector3.up, new Vector3(0, Constants.TableHeight, 0));

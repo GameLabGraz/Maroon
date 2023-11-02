@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent
@@ -12,8 +13,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         [Header("Eye Properties")]
         public Vector3 r0;
         public Vector3 n;
-        public float f;
-        public float R = 0.024f; // scale = 0.048
+        public float f = 0.024f * 5;
+        public float R = 0.012f * 5; // scale = 0.024 * 5
 
         // normal to surface R at p
         public Vector3 NormR(Vector3 p)
@@ -23,7 +24,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         
         private void Start()
         {
-            f = 0.024f;
             UpdateProperties();
             LightComponentManager.Instance.CheckOpticalComponentHit(this);
         }

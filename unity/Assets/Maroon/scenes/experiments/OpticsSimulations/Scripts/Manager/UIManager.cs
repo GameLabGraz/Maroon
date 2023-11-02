@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Maroon.Physics;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
 using Maroon.UI;
 using PrivateAccess;
 using UnityEngine;
@@ -33,7 +34,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         
         [Header("Eye Parameters")]
         [SerializeField] private QuantityFloat eyeF;
-        [SerializeField] private QuantityFloat eyeR;
 
         [Header("Lens Parameters")]
         [SerializeField] private QuantityFloat lensR1;
@@ -119,7 +119,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         {
             eyePanel.SetActive(true);
             eyeF.Value = eye.f * Constants.UnitConversion;
-            eyeR.Value = eye.R * Constants.UnitConversion;
         }
         
         private void SetLensControlPanelValues(Lens lens)
@@ -153,7 +152,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 case OpticalType.Eye:
                     var ey = (Eye)_selectedOc;
                     ey.f = eyeF.Value / Constants.UnitConversion;
-                    ey.R = eyeR.Value / Constants.UnitConversion;
                     break;
                 case OpticalType.Lens:
                     var le = (Lens)_selectedOc;

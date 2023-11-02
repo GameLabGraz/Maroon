@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Maroon.Physics;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handlers;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
 using UnityEngine;
@@ -42,14 +43,14 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         {
             // SpawnLaserPointerTestSetup();
 
-            AddLightComponent(laserPointer, new Vector3(1.74f, 0, 0.5f));
-            laserPointer.Wavelength = 720;
+            // AddLightComponent(laserPointer, new Vector3(1.74f, 0, 0.5f));
+            // laserPointer.Wavelength = 720;
             AddLightComponent(laserPointer, new Vector3(1.70f,0,1.09f));
-            
-            parallelSource.numberOfRays = 10;
-            AddLightComponent(parallelSource, new Vector3(1.70f,0,1.0f));
-            
-            parallelSource.numberOfRays = 20;
+            //
+            // parallelSource.numberOfRays = 10;
+            // AddLightComponent(parallelSource, new Vector3(1.70f,0,1.0f));
+            //
+            parallelSource.numberOfRays = 40;
             AddLightComponent(parallelSource, new Vector3(1.70f,0,0.6f));
         }
 
@@ -88,7 +89,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         public void UnselectAll()
         {
             foreach (var ls in _lightComponents)
-                ls.Unselect();
+                ls.GetComponent<SelectionMovementHandler>().Unselect();
         }
 
     }

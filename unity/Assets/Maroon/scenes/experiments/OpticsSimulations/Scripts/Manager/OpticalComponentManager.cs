@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handlers;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
 using UnityEngine;
@@ -38,13 +39,13 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         private void Start()
         {
             AddWalls();
-            AddOpticalComponent(mirror, new Vector3(1.5f, 0, 0.30f));
-            mirror.transform.Rotate(new Vector3(45, 180, 0));
-            AddOpticalComponent(mirror, new Vector3(1.8f, 0, 0.30f));
-            
+            // AddOpticalComponent(mirror, new Vector3(1.5f, 0, 0.30f));
+            // mirror.transform.Rotate(new Vector3(45, 180, 0));
+            // AddOpticalComponent(mirror, new Vector3(1.8f, 0, 0.30f));
+            //
             AddOpticalComponent(aperture, new Vector3(2.1f, 0, 0.30f));
             AddOpticalComponent(aperture, new Vector3(2.4f, 0, 0.30f));
-            
+            //
             // AddOpticalComponent(eye, new Vector3(2.7f, 0, 0.30f));
             // AddOpticalComponent(eye, new Vector3(3.0f, 0, 0.30f));
             
@@ -111,7 +112,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         public void UnselectAll()
         {
             foreach (var oc in _opticalComponents)
-                oc.Unselect();
+            {
+                if (oc.OpticalType != OpticalType.Wall)
+                    oc.GetComponent<SelectionMovementHandler>().Unselect();
+            }
         }
         
         public OpticalComponent GetFirstHitComponent(Vector3 rayOrigin, Vector3 rayDirection)

@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handlers;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
@@ -8,8 +10,17 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
     {
         public static ExperimentManager Instance;
         
+        private UnityEngine.Camera _cam;
+        private Ray _mouseRay;
+        private RaycastHit _hit;
+
+        private Transform _currentHit;
+        private bool _isHovered;
+        private bool _isDragging;
+        
         private void Awake()
         {
+            _cam = UnityEngine.Camera.main;
             if (Instance == null)
                 Instance = this;
             else
@@ -19,9 +30,43 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             }
         }
         
+        // Main Update loop
         private void Update()
         {
-            // Main Update loop
+            // Check if mouse over TableObject 
+            _mouseRay = _cam.ScreenPointToRay(Input.mousePosition);
+            if (!_isDragging && UnityEngine.Physics.Raycast(_mouseRay, out _hit, Mathf.Infinity, Constants.TableObjectLayer))
+            {
+                if (_hit.collider != null)
+                {
+                    _isHovered = true;
+                    _currentHit = _hit.transform;
+                    _currentHit.parent.GetComponent<SelectionMovementHandler>().OnColliderMouseEnter();
+                
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        Debug.Log("DOWN " + Time.time);
+                        _isDragging = true;
+                        _currentHit.parent.GetComponent<SelectionMovementHandler>().OnColliderMouseDown();
+                    }
+
+                    if (Input.GetMouseButtonUp(0))
+                    {
+                        Debug.Log("UP " + Time.time);
+                        _currentHit.parent.GetComponent<SelectionMovementHandler>().OnColliderMouseUp();
+                    }
+                }
+            }
+            else if (_isHovered)
+            {
+                _currentHit.parent.GetComponent<SelectionMovementHandler>().OnColliderMouseExit();
+                _isHovered = false;
+            }
+
+            if (_isDragging && Input.GetMouseButton(0))
+                _currentHit.parent.GetComponent<SelectionMovementHandler>().OnColliderMouseDrag();
+            else
+                _isDragging = false;
             
             // Light Source Branch
             if (UIManager.Instance.SelectedLc != null)
