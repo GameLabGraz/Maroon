@@ -17,6 +17,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         private Transform _currentHit;
         private bool _isHovered;
         private bool _isDragging;
+        private bool _isTranslating;
         
         private void Awake()
         {
@@ -29,44 +30,14 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 Destroy(gameObject);
             }
         }
-        
         // Main Update loop
         private void Update()
         {
-            // Check if mouse over TableObject 
+            // Handle Table object selection, dragging, y-translation, y-rotation, z-rotation
             _mouseRay = _cam.ScreenPointToRay(Input.mousePosition);
-            if (!_isDragging && UnityEngine.Physics.Raycast(_mouseRay, out _hit, Mathf.Infinity, Constants.TableObjectLayer))
-            {
-                if (_hit.collider != null)
-                {
-                    _isHovered = true;
-                    _currentHit = _hit.transform;
-                    _currentHit.parent.GetComponent<SelectionMovementHandler>().OnColliderMouseEnter();
-                
-                    if (Input.GetMouseButtonDown(0))
-                    {
-                        Debug.Log("DOWN " + Time.time);
-                        _isDragging = true;
-                        _currentHit.parent.GetComponent<SelectionMovementHandler>().OnColliderMouseDown();
-                    }
-
-                    if (Input.GetMouseButtonUp(0))
-                    {
-                        Debug.Log("UP " + Time.time);
-                        _currentHit.parent.GetComponent<SelectionMovementHandler>().OnColliderMouseUp();
-                    }
-                }
-            }
-            else if (_isHovered)
-            {
-                _currentHit.parent.GetComponent<SelectionMovementHandler>().OnColliderMouseExit();
-                _isHovered = false;
-            }
-
-            if (_isDragging && Input.GetMouseButton(0))
-                _currentHit.parent.GetComponent<SelectionMovementHandler>().OnColliderMouseDrag();
-            else
-                _isDragging = false;
+            RayCollisionLogic();
+            DraggingLogic();
+            TranslationLogic();
             
             // Light Source Branch
             if (UIManager.Instance.SelectedLc != null)
@@ -98,6 +69,81 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 }
                 LightComponentManager.Instance.CheckOpticalComponentHit(oc);
             }
+        }
+
+        private void RayCollisionLogic()
+        {
+            if (!_isTranslating && !_isDragging && UnityEngine.Physics.Raycast(_mouseRay, out _hit, Mathf.Infinity, Constants.TableObjectLayer))
+            {
+                ColliderLogic();
+            }
+            else if (_isHovered)
+            {
+                _currentHit.parent.GetComponent<SelectionHandler>().OnColliderMouseExit();
+                _isHovered = false;
+            }
+        }
+        
+        private void ColliderLogic()
+        {
+            if (_hit.collider == null)
+                return;
+            
+            _currentHit = _hit.transform;
+            var translationRotationHandler = _currentHit.parent.GetComponent<TranslationRotationHandler>();
+                
+            switch (_hit.collider.tag)
+            {
+                case Constants.TagTranslationArrowY:
+                    
+                    Debug.Log("Translation Y " + Time.time);
+                    translationRotationHandler.DoTranslation(_mouseRay, _hit.point);
+                    _isTranslating = true;
+                    
+                    break;
+                case Constants.TagRotationArrowY:
+                    
+                    Debug.Log("Rotation Y " + Time.time);
+                    break;
+                case Constants.TagRotationArrowZ:
+                    
+                    Debug.Log("Rotation Z " + Time.time);
+                    break;
+                default:
+                    
+                    _isHovered = true;
+                    var selectionHandler = _currentHit.parent.GetComponent<SelectionHandler>();
+                    selectionHandler.OnColliderMouseEnter();
+                    
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        Debug.Log("DOWN " + Time.time);
+                        _isDragging = true;
+                        selectionHandler.OnColliderMouseDown();
+                    }
+                    if (Input.GetMouseButtonUp(0))
+                    {
+                        Debug.Log("UP " + Time.time);
+                        selectionHandler.OnColliderMouseUp();
+                    }
+                    break;
+            }
+        }
+
+        private void DraggingLogic()
+        {
+            if (_isDragging && Input.GetMouseButton(0))
+                _currentHit.parent.GetComponent<SelectionHandler>().OnColliderMouseDrag();
+            else
+                _isDragging = false;
+        }
+
+        private void TranslationLogic()
+        {
+            if (_isTranslating && Input.GetMouseButton(0))
+                _currentHit.parent.GetComponent<TranslationRotationHandler>().DoTranslation(_mouseRay, _hit.point);
+            else
+                _isTranslating = false;
         }
     }
 }

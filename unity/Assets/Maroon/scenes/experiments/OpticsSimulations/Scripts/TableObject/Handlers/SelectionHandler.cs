@@ -7,11 +7,8 @@ using UnityEngine;
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handlers
 {
-    public class SelectionMovementHandler : MonoBehaviour
+    public class SelectionHandler : MonoBehaviour
     {
-        [SerializeField] private GameObject component;
-        [SerializeField] private GameObject arrowUp;
-        
         [Header("Colors")] 
         [SerializeField] private Color standard;
         [SerializeField] private Color selected;
@@ -20,6 +17,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handle
         
         private Material _material;
         private bool _isSelected;
+
+        private TableObject _tableObject;
         private ComponentType _componentType;
         
         private Collider _collider;
@@ -30,7 +29,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handle
 
         private void Awake()
         {
-            _componentType = GetComponent<TableObject>().ComponentType;
+            _tableObject = GetComponent<TableObject>();
+            _componentType = _tableObject.ComponentType;
             _cam = UnityEngine.Camera.main;
             if (_componentType != ComponentType.Wall)
             {
@@ -74,8 +74,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handle
                 UIManager.Instance.SelectLightComponent((LightComponent.LightComponent)GetComponent<TableObject>());
             }
                 
-            _material.color = selected;
-            _isSelected = true;
+            Select();
             
             // Set the movement plain to the current world space mouse position (somewhere on the table object)
             Ray camMouseRay = _cam.ScreenPointToRay(Input.mousePosition);
@@ -88,11 +87,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handle
 
         public void OnColliderMouseUp()
         {
-            if (_componentType != ComponentType.Wall)
-            {
-                _material.color = selected;
-                _isSelected = true;
-            }
+            Select();
         }
 
         public void OnColliderMouseDrag()
@@ -109,23 +104,30 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handle
             
             Vector3 desiredPos = pointOnPlane - _objectToMouseTablePosOffset;
             Vector3 desiredPosLocal = pointOnPlane - _objectToMouseTablePosLocalOffset;
-            if (CheckTableBounds(desiredPosLocal))
+            if (Util.Math.CheckTableBounds(desiredPosLocal))
                 transform.position = desiredPos;
         }
 
-        private bool CheckTableBounds(Vector3 desiredPos)
+        public void Select()
         {
-            return !(desiredPos.x < Constants.MinPositionTable.x) &&
-                   !(desiredPos.z < Constants.MinPositionTable.z) &&
-                   !(desiredPos.x > Constants.MaxPositionTable.x) &&
-                   !(desiredPos.z > Constants.MaxPositionTable.z);
+            if (_componentType != ComponentType.Wall)
+            {
+                _material.color = selected;
+                _isSelected = true;
+                
+                _tableObject.SetArrowsActive(true);
+                
+            }
         }
 
         public void Unselect()
         {
-            _isSelected = false;
             if (_componentType != ComponentType.Wall)
+            {
                 _material.color = standard;
+                _isSelected = false;
+                _tableObject.SetArrowsActive(false);
+            }
         }
 
     }

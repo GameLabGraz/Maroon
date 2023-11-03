@@ -17,6 +17,16 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Util
             return !float.IsInfinity(d) && !float.IsNaN(d) && d > Constants.Epsilon;
         }
         
+        public static bool CheckTableBounds(Vector3 desiredPos)
+        {
+            return !(desiredPos.x < Constants.MinPositionTable.x) &&
+                   !(desiredPos.y < Constants.MinPositionTable.y) &&
+                   !(desiredPos.z < Constants.MinPositionTable.z) &&
+                   !(desiredPos.x > Constants.MaxPositionTable.x) &&
+                   !(desiredPos.y > Constants.MaxPositionTable.y) &&
+                   !(desiredPos.z > Constants.MaxPositionTable.z);
+        }
+        
         // index of refraction of the environment
         public static float Nenv(float lambda, float A, float B)
         { 

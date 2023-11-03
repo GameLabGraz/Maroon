@@ -50,7 +50,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             // parallelSource.numberOfRays = 10;
             // AddLightComponent(parallelSource, new Vector3(1.70f,0,1.0f));
             //
-            parallelSource.numberOfRays = 40;
+            // parallelSource.numberOfRays = 30;
             AddLightComponent(parallelSource, new Vector3(1.70f,0,0.6f));
         }
 
@@ -89,7 +89,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         public void UnselectAll()
         {
             foreach (var ls in _lightComponents)
-                ls.GetComponent<SelectionMovementHandler>().Unselect();
+                ls.GetComponent<SelectionHandler>().Unselect();
         }
 
     }

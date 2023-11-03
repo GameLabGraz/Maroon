@@ -18,8 +18,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
 
         private void Start()
         {
-            Rin = 0.1f;
-            Rout = 0.3f;
+            Rin = 0.03f;
+            Rout = 0.125f;
             UpdateProperties();
             LightComponentManager.Instance.CheckOpticalComponentHit(this);
         }
