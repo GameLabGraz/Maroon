@@ -71,7 +71,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handle
             else
             {
                 LightComponentManager.Instance.UnselectAll();
-                UIManager.Instance.SelectLightComponent((LightComponent.LightComponent)GetComponent<TableObject>());
+                UIManager.Instance.ActivateLightControlPanel((LightComponent.LightComponent)GetComponent<TableObject>());
             }
                 
             Select();

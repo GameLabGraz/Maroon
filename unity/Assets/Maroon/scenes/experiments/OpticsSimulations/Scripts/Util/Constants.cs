@@ -23,7 +23,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Util
         public const int TableObjectLayer = 1 << 4;
         
         public const float Epsilon = 0.000001f;
-        public const float UnitConversion = 100f;
+        public const float InCM = 100f;
+        public const float InMM = 1000f;
 
         public const string TagRotationArrowY = "rotationY";
         public const string TagRotationArrowZ = "rotationZ";

@@ -13,7 +13,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
         [Header("Parallel Source Settings")] 
         private List<LightRoute> _lightRoutes;
 
-        public int numberOfRays = 4;
+        public int numberOfRays = 20;
         public float distanceBetweenRays = Constants.LaserWidth * 3;
 
         private void Start()
@@ -24,6 +24,17 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
             for (int i = 0; i < numberOfRays; i++)
                 _lightRoutes.Add(new LightRoute(Wavelength));
 
+            RecalculateLightRoute();
+        }
+
+        public void ChangeNumberOfRays(int nrRays)
+        {
+            numberOfRays = nrRays;
+            foreach (var lr in _lightRoutes)
+                lr.ResetLightRoute();
+            
+            for (int i = 0; i < numberOfRays; i++)
+                _lightRoutes.Add(new LightRoute(Wavelength));
             RecalculateLightRoute();
         }
         

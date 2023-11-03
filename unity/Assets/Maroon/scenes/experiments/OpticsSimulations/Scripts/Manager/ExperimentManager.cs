@@ -48,9 +48,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             {
                 var lc = UIManager.Instance.SelectedLc;
                 
-                lc.ChangeWavelengthAndIntensity(
-                    UIManager.Instance.selectedWavelength.Value, 
-                    UIManager.Instance.selectedIntensity.Value);
+                UIManager.Instance.UpdateLightComponentValues();
                 
                 if (lc.transform.hasChanged)
                 {
