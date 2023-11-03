@@ -18,6 +18,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         private bool _isHovered;
         private bool _isDragging;
         private bool _isTranslating;
+        private bool _isYRotating;
+        private bool _isZRotating;
         
         private void Awake()
         {
@@ -38,6 +40,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             RayCollisionLogic();
             DraggingLogic();
             TranslationLogic();
+            YRotationLogic();
+            ZRotationLogic();
             
             // Light Source Branch
             if (UIManager.Instance.SelectedLc != null)
@@ -71,9 +75,14 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             }
         }
 
+        private bool CanRaycast()
+        {
+            return !_isDragging && !_isTranslating && !_isYRotating && !_isZRotating;
+        }
+
         private void RayCollisionLogic()
         {
-            if (!_isTranslating && !_isDragging && UnityEngine.Physics.Raycast(_mouseRay, out _hit, Mathf.Infinity, Constants.TableObjectLayer))
+            if (CanRaycast() && UnityEngine.Physics.Raycast(_mouseRay, out _hit, Mathf.Infinity, Constants.TableObjectLayer))
             {
                 ColliderLogic();
             }
@@ -95,35 +104,32 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             switch (_hit.collider.tag)
             {
                 case Constants.TagTranslationArrowY:
-                    
-                    Debug.Log("Translation Y " + Time.time);
                     translationRotationHandler.DoTranslation(_mouseRay, _hit.point);
                     _isTranslating = true;
-                    
                     break;
+                
                 case Constants.TagRotationArrowY:
-                    
-                    Debug.Log("Rotation Y " + Time.time);
+                    translationRotationHandler.DoYRotation(_mouseRay, _hit.point);
+                    _isYRotating = true;
                     break;
+                
                 case Constants.TagRotationArrowZ:
-                    
-                    Debug.Log("Rotation Z " + Time.time);
+                    translationRotationHandler.DoZRotation(_mouseRay, _hit.point);
+                    _isZRotating = true;
                     break;
+                
                 default:
-                    
                     _isHovered = true;
                     var selectionHandler = _currentHit.parent.GetComponent<SelectionHandler>();
                     selectionHandler.OnColliderMouseEnter();
                     
                     if (Input.GetMouseButtonDown(0))
                     {
-                        Debug.Log("DOWN " + Time.time);
                         _isDragging = true;
                         selectionHandler.OnColliderMouseDown();
                     }
                     if (Input.GetMouseButtonUp(0))
                     {
-                        Debug.Log("UP " + Time.time);
                         selectionHandler.OnColliderMouseUp();
                     }
                     break;
@@ -145,5 +151,22 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             else
                 _isTranslating = false;
         }
+
+        private void YRotationLogic()
+        {
+            if (_isYRotating && Input.GetMouseButton(0))
+                _currentHit.parent.GetComponent<TranslationRotationHandler>().DoYRotation(_mouseRay, _hit.point);
+            else
+                _isYRotating = false;
+        }
+        
+        private void ZRotationLogic()
+        {
+            if (_isZRotating && Input.GetMouseButton(0))
+                _currentHit.parent.GetComponent<TranslationRotationHandler>().DoZRotation(_mouseRay, _hit.point);
+            else
+                _isZRotating = false;
+        }
+        
     }
 }
