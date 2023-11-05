@@ -21,8 +21,6 @@ namespace Maroon.Physics
     public Button startButton;
     public Button endButton;
 
-    public float zoomSpeed = 1.1f;
-
     private bool measuring = false;
     private float minSize = 0.2f;
 
@@ -40,44 +38,6 @@ namespace Maroon.Physics
     {
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-      if (measurementState == MeasurementState.Measuring)
-      {
-        float mouseWheelDirection = Input.GetAxis("Mouse ScrollWheel");
-        if (mouseWheelDirection > 0)
-        {
-          //zoom in
-          adjustZoom(true);
-        }
-
-        if (mouseWheelDirection < 0)
-        {
-          //zoom out
-          adjustZoom(false);
-        }
-      }
-    }
-
-    void adjustZoom(bool zoomIn)
-    {
-      if (zoomIn)
-      {
-        zoom_camera.orthographicSize /= zoomSpeed;
-        moveCameraToMouse();
-      }
-      else
-      {
-        zoom_camera.orthographicSize *= zoomSpeed;
-        moveCameraToMouse();
-      }
-    }
-
-    void moveCameraToMouse()
-    {
-      
-    }
 
     void startMeasuringMode()
     {
@@ -108,6 +68,7 @@ namespace Maroon.Physics
       zoom_camera.enabled = false;
       startButton.interactable = true;
       endButton.interactable = false;
+      measurementState = MeasurementState.Off;
     }
 
     void fitObjectToCamera()
