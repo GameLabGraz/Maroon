@@ -1,0 +1,401 @@
+<grammar version="1.0" xml:lang="en-US" root="topLevel"
+ xmlns="http://www.w3.org/2001/06/grammar" tag-format="semantics/1.0">
+
+	<rule id="topLevel">
+		<one-of>
+			<item>
+				<ruleref uri="#changeValuesCommand" />
+			</item>
+		</one-of>
+	</rule>
+
+	<rule id="changeValuesCommand">
+
+		<one-of>
+			<item>change</item>
+			<item>modify</item>
+			<item>set</item>
+			<item>turn</item>
+		</one-of>
+
+		<ruleref uri="#attribute" />
+		<tag> out.attribute = rules.latest(); </tag>
+
+		<one-of>
+			<item>to</item>
+			<item>at</item>
+			<item/>
+		</one-of>
+
+		<one-of>
+			<item>
+				<ruleref uri="#value" />
+				<tag> out.value = rules.latest(); </tag>
+			</item>
+			<item/>
+		</one-of>
+
+	</rule>
+
+
+	<rule id="attribute">
+		<one-of>
+			<item>
+				wave amplitude  <tag> out = "WaveAmplitudeHandle"; </tag>
+			</item>
+			<item>
+				slit width <tag> out = "SlitWidthHandle"; </tag>
+			</item>
+			<item>
+				number of slits <tag> out = "NumSlitsHandle"; </tag>
+			</item>
+			<item>
+				wave length <tag> out = "WaveLengthHandle"; </tag>
+			</item>
+			<item>
+				wave frequency <tag> out = "WaveFrequencyHandle"; </tag>
+			</item>
+			<item>
+				propagation mode <tag> out = "PropagationModeHandle"; </tag>
+			</item>
+		</one-of>
+
+	</rule>
+
+	<rule id="value">
+		<one-of>
+
+			<item>
+				rectilinear <tag> out.shape = "rectilinear"; </tag>
+			</item>
+			<item>
+				circular <tag> out.shape = "circular"; </tag>
+			</item>
+
+			<item>
+				<ruleref uri="#number" />
+				<tag> out.value = rules.latest(); </tag>
+
+				<one-of>
+					<item>
+						percent <tag> out.unit = "percent"; </tag>
+					</item>
+					<item>
+						<tag> out.unit = "amount"; </tag>
+					</item>
+				</one-of>
+			</item>
+		</one-of>
+
+	</rule>
+
+	<rule id="number">
+		<one-of>
+			<item>
+				One<tag>out = "1"; </tag>
+			</item>
+			<item>
+				Two<tag>out = "2"; </tag>
+			</item>
+			<item>
+				Three<tag>out = "3"; </tag>
+			</item>
+			<item>
+				Four<tag>out = "4"; </tag>
+			</item>
+			<item>
+				Five<tag>out = "5"; </tag>
+			</item>
+			<item>
+				Six<tag>out = "6"; </tag>
+			</item>
+			<item>
+				Seven<tag>out = "7"; </tag>
+			</item>
+			<item>
+				Eight<tag>out = "8"; </tag>
+			</item>
+			<item>
+				Nine<tag>out = "9"; </tag>
+			</item>
+			<item>
+				Ten<tag>out = "10"; </tag>
+			</item>
+			<item>
+				Eleven<tag>out = "11"; </tag>
+			</item>
+			<item>
+				Twelve<tag>out = "12"; </tag>
+			</item>
+			<item>
+				Thirteen<tag>out = "13"; </tag>
+			</item>
+			<item>
+				Fourteen<tag>out = "14"; </tag>
+			</item>
+			<item>
+				Fifteen<tag>out = "15"; </tag>
+			</item>
+			<item>
+				Sixteen<tag>out = "16"; </tag>
+			</item>
+			<item>
+				Seventeen<tag>out = "17"; </tag>
+			</item>
+			<item>
+				Eighteen<tag>out = "18"; </tag>
+			</item>
+			<item>
+				Nineteen<tag>out = "19"; </tag>
+			</item>
+			<item>
+				Twenty<tag>out = "20"; </tag>
+			</item>
+			<item>
+				Twenty-One<tag>out = "21"; </tag>
+			</item>
+			<item>
+				Twenty-Two<tag>out = "22"; </tag>
+			</item>
+			<item>
+				Twenty-Three<tag>out = "23"; </tag>
+			</item>
+			<item>
+				Twenty-Four<tag>out = "24"; </tag>
+			</item>
+			<item>
+				Twenty-Five<tag>out = "25"; </tag>
+			</item>
+			<item>
+				Twenty-Six<tag>out = "26"; </tag>
+			</item>
+			<item>
+				Twenty-Seven<tag>out = "27"; </tag>
+			</item>
+			<item>
+				Twenty-Eight<tag>out = "28"; </tag>
+			</item>
+			<item>
+				Twenty-Nine<tag>out = "29"; </tag>
+			</item>
+			<item>
+				Thirty<tag>out = "30"; </tag>
+			</item>
+			<item>
+				Thirty-One<tag>out = "31"; </tag>
+			</item>
+			<item>
+				Thirty-Two<tag>out = "32"; </tag>
+			</item>
+			<item>
+				Thirty-Three<tag>out = "33"; </tag>
+			</item>
+			<item>
+				Thirty-Four<tag>out = "34"; </tag>
+			</item>
+			<item>
+				Thirty-Five<tag>out = "35"; </tag>
+			</item>
+			<item>
+				Thirty-Six<tag>out = "36"; </tag>
+			</item>
+			<item>
+				Thirty-Seven<tag>out = "37"; </tag>
+			</item>
+			<item>
+				Thirty-Eight<tag>out = "38"; </tag>
+			</item>
+			<item>
+				Thirty-Nine<tag>out = "39"; </tag>
+			</item>
+			<item>
+				Forty<tag>out = "40"; </tag>
+			</item>
+			<item>
+				Forty-One<tag>out = "41"; </tag>
+			</item>
+			<item>
+				Forty-Two<tag>out = "42"; </tag>
+			</item>
+			<item>
+				Forty-Three<tag>out = "43"; </tag>
+			</item>
+			<item>
+				Forty-Four<tag>out = "44"; </tag>
+			</item>
+			<item>
+				Forty-Five<tag>out = "45"; </tag>
+			</item>
+			<item>
+				Forty-Six<tag>out = "46"; </tag>
+			</item>
+			<item>
+				Forty-Seven<tag>out = "47"; </tag>
+			</item>
+			<item>
+				Forty-Eight<tag>out = "48"; </tag>
+			</item>
+			<item>
+				Forty-Nine<tag>out = "49"; </tag>
+			</item>
+			<item>
+				Fifty<tag>out = "50"; </tag>
+			</item>
+			<item>
+				Fifty-One<tag>out = "51"; </tag>
+			</item>
+			<item>
+				Fifty-Two<tag>out = "52"; </tag>
+			</item>
+			<item>
+				Fifty-Three<tag>out = "53"; </tag>
+			</item>
+			<item>
+				Fifty-Four<tag>out = "54"; </tag>
+			</item>
+			<item>
+				Fifty-Five<tag>out = "55"; </tag>
+			</item>
+			<item>
+				Fifty-Six<tag>out = "56"; </tag>
+			</item>
+			<item>
+				Fifty-Seven<tag>out = "57"; </tag>
+			</item>
+			<item>
+				Fifty-Eight<tag>out = "58"; </tag>
+			</item>
+			<item>
+				Fifty-Nine<tag>out = "59"; </tag>
+			</item>
+			<item>
+				Sixty<tag>out = "60"; </tag>
+			</item>
+			<item>
+				Sixty-One<tag>out = "61"; </tag>
+			</item>
+			<item>
+				Sixty-Two<tag>out = "62"; </tag>
+			</item>
+			<item>
+				Sixty-Three<tag>out = "63"; </tag>
+			</item>
+			<item>
+				Sixty-Four<tag>out = "64"; </tag>
+			</item>
+			<item>
+				Sixty-Five<tag>out = "65"; </tag>
+			</item>
+			<item>
+				Sixty-Six<tag>out = "66"; </tag>
+			</item>
+			<item>
+				Sixty-Seven<tag>out = "67"; </tag>
+			</item>
+			<item>
+				Sixty-Eight<tag>out = "68"; </tag>
+			</item>
+			<item>
+				Sixty-Nine<tag>out = "69"; </tag>
+			</item>
+			<item>
+				Seventy<tag>out = "70"; </tag>
+			</item>
+			<item>
+				Seventy-One<tag>out = "71"; </tag>
+			</item>
+			<item>
+				Seventy-Two<tag>out = "72"; </tag>
+			</item>
+			<item>
+				Seventy-Three<tag>out = "73"; </tag>
+			</item>
+			<item>
+				Seventy-Four<tag>out = "74"; </tag>
+			</item>
+			<item>
+				Seventy-Five<tag>out = "75"; </tag>
+			</item>
+			<item>
+				Seventy-Six<tag>out = "76"; </tag>
+			</item>
+			<item>
+				Seventy-Seven<tag>out = "77"; </tag>
+			</item>
+			<item>
+				Seventy-Eight<tag>out = "78"; </tag>
+			</item>
+			<item>
+				Seventy-Nine<tag>out = "79"; </tag>
+			</item>
+			<item>
+				Eighty<tag>out = "80"; </tag>
+			</item>
+			<item>
+				Eighty-One<tag>out = "81"; </tag>
+			</item>
+			<item>
+				Eighty-Two<tag>out = "82"; </tag>
+			</item>
+			<item>
+				Eighty-Three<tag>out = "83"; </tag>
+			</item>
+			<item>
+				Eighty-Four<tag>out = "84"; </tag>
+			</item>
+			<item>
+				Eighty-Five<tag>out = "85"; </tag>
+			</item>
+			<item>
+				Eighty-Six<tag>out = "86"; </tag>
+			</item>
+			<item>
+				Eighty-Seven<tag>out = "87"; </tag>
+			</item>
+			<item>
+				Eighty-Eight<tag>out = "88"; </tag>
+			</item>
+			<item>
+				Eighty-Nine<tag>out = "89"; </tag>
+			</item>
+			<item>
+				Ninety<tag>out = "90"; </tag>
+			</item>
+			<item>
+				Ninety-One<tag>out = "91"; </tag>
+			</item>
+			<item>
+				Ninety-Two<tag>out = "92"; </tag>
+			</item>
+			<item>
+				Ninety-Three<tag>out = "93"; </tag>
+			</item>
+			<item>
+				Ninety-Four<tag>out = "94"; </tag>
+			</item>
+			<item>
+				Ninety-Five<tag>out = "95"; </tag>
+			</item>
+			<item>
+				Ninety-Six<tag>out = "96"; </tag>
+			</item>
+			<item>
+				Ninety-Seven<tag>out = "97"; </tag>
+			</item>
+			<item>
+				Ninety-Eight<tag>out = "98"; </tag>
+			</item>
+			<item>
+				Ninety-Nine<tag>out = "99"; </tag>
+			</item>
+			<item>
+				One Hundred<tag>out = "100"; </tag>
+			</item>
+
+		</one-of>
+	</rule>
+
+
+
+
+</grammar>

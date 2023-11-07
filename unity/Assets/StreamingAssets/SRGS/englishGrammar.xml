@@ -1,0 +1,87 @@
+<grammar version="1.0" xml:lang="en-US" root="topLevel"
+ xmlns="http://www.w3.org/2001/06/grammar" tag-format="semantics/1.0">
+
+    <rule id="topLevel">
+	    <one-of>		    
+		    <item>
+			    <ruleref uri="#changeRoomCommand" />
+		    </item>
+			<item>
+				<ruleref uri="#experimentCommand" />
+			</item>
+	    </one-of>
+    </rule>
+
+	<rule id="experimentCommand">
+		<ruleref uri="#experimentAction" />
+		<tag> out.experimentAction = rules.latest(); </tag>
+
+		<one-of>
+			<item>experiment</item>
+			<item>simulation</item>
+			<item/>
+		</one-of>
+	</rule>
+
+    <rule id="changeRoomCommand">
+		<one-of>
+			<item> go to </item>
+			<item> take me to </item>
+			<item> change to </item>
+		</one-of>
+		
+		<ruleref uri="#room" />
+		<tag> out.roomName = rules.latest(); </tag>
+
+		<one-of>
+			<item>room</item>
+			<item>experiment</item>
+			<item>scene</item>
+			<item/>	
+		</one-of>
+	</rule>	
+
+	<rule id="experimentAction">
+		<one-of>
+			<item>
+				reset <tag> out = "reset"; </tag>
+			</item>
+			<item>
+				<one-of>
+					<item> begin </item>
+					<item> start </item>					
+				</one-of>
+				<tag> out = "start"; </tag>
+			</item>
+			<item>
+				stop <tag> out = "stop"; </tag>
+			</item>
+		</one-of>
+	</rule>
+   
+    <rule id="room">
+	    <one-of>
+			<item>
+				lobby <tag> out = "MainMenu.vr"; </tag>
+			</item>
+			<item>
+				falling coil <tag> out = "FallingCoil.vr"; </tag>
+			</item>
+			<item>
+				Huygens Principle <tag> out = "HuygensPrinciple.vr"; </tag>
+		    </item>
+			<item>
+				Faradays Law <tag> out = "FaradaysLaw.vr"; </tag>
+			</item>
+			<item>
+				Van de Graph 
+				<one-of>
+					<item>Generator</item>
+					<item/>
+				</one-of>
+				<tag> out = "VandeGraaffGenerator.vr"; </tag>
+			</item>			
+		</one-of>
+    </rule>	
+  
+</grammar>
