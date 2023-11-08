@@ -2,11 +2,10 @@
 using UnityEngine.Windows.Speech;
 using Maroon.GlobalEntities;
 using GameLabGraz.VRInteraction;
-using System.Collections;
 using System;
 using Maroon.Physics.Electromagnetism.VanDeGraaff;
 using GEAR.Localization;
-using Antares.Evaluation.LearningContent;
+
 
 namespace Valve.VR.InteractionSystem
 {
@@ -36,8 +35,7 @@ namespace Valve.VR.InteractionSystem
         void Start()
         {
             parameterChangerHelper = gameObject.GetComponent<ParameterChangerHelper>();
-            textTips = GameObject.Find("TextTipsObject").GetComponent<TextTips>();
-            //StartCoroutine(Welcome());
+            textTips = GameObject.Find("TextTipsObject").GetComponent<TextTips>();            
             selectedGrammarSet = englishGrammarFiles;
 
             UnityEngine.SceneManagement.SceneManager.sceneLoaded += HandleRoomChange;
@@ -70,8 +68,7 @@ namespace Valve.VR.InteractionSystem
 
             int foundIndex = Array.FindIndex(experimentScenes, element => element.SceneName.Equals(SceneManager.Instance.ActiveSceneName));
             if (foundIndex >= 0)            
-                LoadExperimentalGrammar(foundIndex + 1);
-            
+                LoadExperimentalGrammar(foundIndex + 1);            
         }
 
         private void HandleRoomChange(UnityEngine.SceneManagement.Scene currentScene, UnityEngine.SceneManagement.LoadSceneMode loadMode)
@@ -262,12 +259,10 @@ namespace Valve.VR.InteractionSystem
         void Grammar_OnError(SpeechError errorCode)
         {
             Debug.Log("malfunction: " + errorCode.ToString());
-
         }
 
         void Update()
-        {
-            
+        {            
             if (SteamVR_Actions.default_Fire.GetStateDown(SteamVR_Input_Sources.Any))
             {
                 PhraseRecognitionSystem.Restart();

@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using Reqs;
-using UnityEngine.Analytics;
 
 namespace ChatGPTWrapper {
 
