@@ -32,6 +32,9 @@ namespace Maroon.Physics
             _startState.IsKinematic = _rigidBody.isKinematic;
 
             StoreRigidBodyState();
+            
+            if (SimulationController.Instance.SimulationRunning)
+                RestoreRigidBodyState();
         }
 
         public void StoreRigidBodyState()

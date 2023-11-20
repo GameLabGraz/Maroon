@@ -1,0 +1,89 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8226137981584974563
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8226137981584974560}
+  - component: {fileID: 8226137981584974561}
+  m_Layer: 0
+  m_Name: CatalystController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8226137981584974560
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8226137981584974563}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8226137981584974561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8226137981584974563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb0ea8f46f914a13a20707454e3e3302, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  temperature:
+    assessmentName: 
+    isDynamic: 0
+    alwaysSendValueChangedEvent: 1
+    allowSystemChange: 1
+    _value: 0
+    minValue: -23.15
+    maxValue: 176.85
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    onNewValueFromSystem:
+      m_PersistentCalls:
+        m_Calls: []
+  partialPressure:
+    assessmentName: 
+    isDynamic: 0
+    alwaysSendValueChangedEvent: 1
+    allowSystemChange: 1
+    _value: 0.02
+    minValue: 0.01
+    maxValue: 0.2
+    onValueChanged:
+      m_PersistentCalls:
+        m_Calls: []
+    onNewValueFromSystem:
+      m_PersistentCalls:
+        m_Calls: []
+  numberSpawnedO2Molecules: 100
+  numberSpawnedCOMolecules: 10
+  catalystReactor: {fileID: 0}
+  catalystSurfacePrefab: {fileID: 7095831970976657655, guid: 42e7904566f623941b40e93a3d6da5bb,
+    type: 3}
+  catalystSurfaceSpawnTransform: {fileID: 0}
+  oMoleculePrefab: {fileID: 9201737708395207697, guid: 62d7f2b7dfba5a241bb94438f2bc8395,
+    type: 3}
+  o2MoleculePrefab: {fileID: 9201737708395207697, guid: 78b5e44d54114f24280652f2443008d9,
+    type: 3}
+  coMoleculePrefab: {fileID: 9201737708395207697, guid: ef61a79bd7a3f894d85c0ec943d4138d,
+    type: 3}
+  co2MoleculePrefab: {fileID: 9201737708395207697, guid: 01362201552f40047bbce31c9e8f4b6b,
+    type: 3}
+  player: {fileID: 0}
+  turnOverRateInputField: {fileID: 0}
