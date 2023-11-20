@@ -357,26 +357,6 @@ namespace Maroon.Build
 
         private static void HandleBuildResult(BuildSummary summary)
         {
-
-            // this snippet has been kinldy taken and 
-            // adapted from @mikeage from the GameCI discord
-            // ----------------------------------------------------------------
-            // This format is required by the game-ci build action
-            Log
-            (
-                $"{Environment.NewLine}" +
-                $"###########################{Environment.NewLine}" +
-                $"#      Build results      #{Environment.NewLine}" +
-                $"###########################{Environment.NewLine}" +
-                $"{Environment.NewLine}" +
-                $"Duration: {summary.totalTime.ToString()}{Environment.NewLine}" +
-                $"Warnings: {summary.totalWarnings.ToString()}{Environment.NewLine}" +
-                $"Errors: {summary.totalErrors.ToString()}{Environment.NewLine}" +
-                $"Size: {summary.totalSize.ToString()} bytes{Environment.NewLine}" +
-                $"{Environment.NewLine}"
-            );
-            
-            // ----------------------------------------------------------------
             switch (summary.result)
             {
                 case BuildResult.Succeeded:
