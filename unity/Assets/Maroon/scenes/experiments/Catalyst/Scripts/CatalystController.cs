@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using GameLabGraz.QuestManager;
 using GameLabGraz.VRInteraction;
 using GEAR.Gadgets.Extensions;
+using Maroon.Chemistry.Catalyst.VR;
 using Maroon.Physics;
 using Maroon.UI;
 using TMPro;

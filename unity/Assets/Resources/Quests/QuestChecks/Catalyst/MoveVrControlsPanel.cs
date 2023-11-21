@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using GameLabGraz.QuestManager;
+using Maroon.Chemistry.Catalyst.VR;
 
 namespace Quests
 {
