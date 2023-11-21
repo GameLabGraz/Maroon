@@ -79,7 +79,8 @@ namespace Valve.VR.InteractionSystem
                 Debug.LogErrorFormat("Dictation error: {0}; HResult = {1}.", error, hresult);
             };
 
-            //dictationRecognizer.Start();            
+            //dictationRecognizer.Start();
+            textTips.DisplayTip("Welcome to Maroon!\nPress the left menu button to issue a command, or the right menu button if you need help.");
         }
 
 

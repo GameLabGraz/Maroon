@@ -55,6 +55,9 @@ namespace Valve.VR.InteractionSystem
             
             PhraseRecognitionSystem.Shutdown();
             PhraseRecognitionSystem.OnError += Grammar_OnError;
+
+            textTips.DisplayTip("Welcome to Maroon!\nPress the menu button to issue a command.\nHere are some example commands: \n - take me to the Falling Coil Room \n - go to the Huygen's Principle experiment");
+            
         }
 
         private void HandleLanguageChange(SystemLanguage lang)
@@ -82,7 +85,7 @@ namespace Valve.VR.InteractionSystem
                     LanguageManager languageManager = LanguageManager.Instance;
                     if (languageManager != null)
                     {                        
-                        languageManager.OnLanguageChanged.AddListener(HandleLanguageChange);
+                        languageManager.OnLanguageChanged.AddListener(HandleLanguageChange);                        
                     }
                 }
                 if (currentScene.name.Equals("FallingCoil.vr"))

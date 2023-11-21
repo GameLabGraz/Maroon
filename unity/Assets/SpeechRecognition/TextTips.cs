@@ -26,7 +26,7 @@ namespace Valve.VR.InteractionSystem
             {
                 canvasGroup = theCanvas.GetComponent<CanvasGroup>();
             }
-            DisplayTipWithFade("Welcome to Maroon!\nPress the left menu button to issue a command, or the right menu button if you need help.", 6f); 
+            //DisplayTipWithFade("Welcome to Maroon!\nPress the left menu button to issue a command, or the right menu button if you need help.", 6f); 
         }
         
         void Update()
