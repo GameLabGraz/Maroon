@@ -115,6 +115,7 @@
 #endif
             o.uvgrab.xy = (float2(o.vertex.x, o.vertex.y * scale) + o.vertex.w) * 0.5;
             o.uvgrab.zw = o.vertex.zw;
+            o.color = v.color;
             return o;
         }
 
@@ -184,7 +185,6 @@
         {
             v2f OUT;
             UNITY_SETUP_INSTANCE_ID(v);
-            UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(OUT);
             OUT.worldPosition = v.vertex;
             OUT.vertex = UnityObjectToClipPos(OUT.worldPosition);
 
