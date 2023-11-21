@@ -25,10 +25,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         
         private void Start()
         {
-            R1 = 0.1f;
-            R2 = 0.1f;
-            d1_TODO = 0.05f;
-            Rc = 0.1f;
+            R1 = 0.3f;
+            R2 = -0.3f;
+            d1_TODO = 0.2f;
+            Rc = 0.3f;
             A = 1.728f;
             B = 13420f;
             UpdateProperties();
@@ -69,7 +69,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             r = transform.localPosition;
             n = transform.right;
         }
-
+        
         // private void FixedUpdate()
         // {
         //     r = transform.localPosition;

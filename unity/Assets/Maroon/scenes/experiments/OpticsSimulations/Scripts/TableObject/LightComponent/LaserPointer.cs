@@ -29,5 +29,11 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
             _lightRoute.AddRaySegment(initialRay);
             _lightRoute.CalculateNextRay(initialRay);
         }
+
+        public override void RemoveFromTable()
+        {
+            _lightRoute.ResetLightRoute();
+            Destroy(gameObject);
+        }
     }
 }

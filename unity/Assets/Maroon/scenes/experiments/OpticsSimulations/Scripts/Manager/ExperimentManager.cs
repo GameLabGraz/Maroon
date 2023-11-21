@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handlers;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
 using UnityEngine;
 
@@ -54,6 +55,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 {
                     lc.Origin = lc.transform.localPosition;
                     lc.RecalculateLightRoute();
+                    UIManager.Instance.StoreCurrentPosRot(lc);
                     lc.transform.hasChanged = false;
                 }
             }
@@ -67,6 +69,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 if (oc.transform.hasChanged)
                 {
                     oc.UpdateProperties();
+                    UIManager.Instance.StoreCurrentPosRot(oc);
                     oc.transform.hasChanged = false;
                 }
                 LightComponentManager.Instance.CheckOpticalComponentHit(oc);
@@ -164,6 +167,24 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 _currentHit.parent.GetComponent<TranslationRotationHandler>().DoZRotation(_mouseRay, _hit.point);
             else
                 _isZRotating = false;
+        }
+
+        // Removes all OCs and LCs from the table
+        public void ClearTable()
+        {
+            UIManager.Instance.SelectedLc = null;
+            UIManager.Instance.SelectedOc = null;
+
+            foreach (var lc in LightComponentManager.Instance.LightComponents)
+                lc.RemoveFromTable();
+            LightComponentManager.Instance.LightComponents.Clear();
+            UIManager.Instance.DeactivateAllLightControlPanels();
+
+            foreach (var oc in OpticalComponentManager.Instance.OpticalComponents)
+                    oc.RemoveFromTable();
+
+            OpticalComponentManager.Instance.OpticalComponents.RemoveAll(oc => oc.OpticalType != OpticalType.Wall);
+            UIManager.Instance.DeactivateAllOpticalControlPanels();
         }
         
     }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Maroon.Physics;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
@@ -9,6 +10,7 @@ using PrivateAccess;
 using UnityEngine;
 using LaserPointer = Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent.LaserPointer;
 using LightType = Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent.LightType;
+using Math = System.Math;
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
 {
@@ -54,6 +56,22 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         [SerializeField] private QuantityFloat mirrorR;
         [SerializeField] private QuantityFloat mirrorRc;
 
+        [Header("Selected LC Position and Rotation")]
+        [SerializeField] private QuantityFloat lcX;
+        [SerializeField] private QuantityFloat lcY;
+        [SerializeField] private QuantityFloat lcZ;
+        [SerializeField] private QuantityFloat lcPhiX;
+        [SerializeField] private QuantityFloat lcPhiY;
+        [SerializeField] private QuantityFloat lcPhiZ;
+        
+        [Header("Selected OC Position and Rotation")]
+        [SerializeField] private QuantityFloat ocX;
+        [SerializeField] private QuantityFloat ocY;
+        [SerializeField] private QuantityFloat ocZ;
+        [SerializeField] private QuantityFloat ocPhiX;
+        [SerializeField] private QuantityFloat ocPhiY;
+        [SerializeField] private QuantityFloat ocPhiZ;
+
         public LightComponent SelectedLc
         {
             get => _selectedLc;
@@ -84,6 +102,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             selectedIntensity.Value = lc.Intensity;
             selectedWavelength.Value = lc.Wavelength;
             
+            
             DeactivateAllLightControlPanels();
             
             switch (_selectedLc.LightType)
@@ -98,10 +117,12 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                     SetPointSourceControlPanelValues((PointSource)_selectedLc);
                     break;
             }
+
+            StoreCurrentPosRot(_selectedLc);
             lc.RecalculateLightRoute(); // todo check if call necessary 
         }
         
-        private void DeactivateAllLightControlPanels()
+        public void DeactivateAllLightControlPanels()
         {
             laserPointerPanel.SetActive(false);
             parallelSourcePanel.SetActive(false);
@@ -174,7 +195,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             oc.UpdateProperties();
         }
         
-        private void DeactivateAllOpticalControlPanels()
+        public void DeactivateAllOpticalControlPanels()
         {
             aperturePanel.SetActive(false);
             eyePanel.SetActive(false);
@@ -246,6 +267,34 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                     mi.Rc = mirrorRc.Value / Constants.InCM;
                     break;
             }
+        }
+        
+        // ----------------------------------- General -----------------------------------
+
+        public void StoreCurrentPosRot(TableObject.TableObject to)
+        {
+            var pos = to.transform.localPosition;
+            var rot = to.transform.rotation.eulerAngles;
+            
+            if (to.ComponentType == ComponentType.LightSource)
+            {
+                lcX.Value = (float)Math.Round(pos.x * Constants.InCM, 2);
+                lcY.Value = (float)Math.Round(pos.y * Constants.InCM, 2);
+                lcZ.Value = (float)Math.Round(pos.z * Constants.InCM, 2);
+                lcPhiX.Value = (float)Math.Round(rot.x, 2);
+                lcPhiY.Value = (float)Math.Round(rot.y, 2);
+                lcPhiZ.Value = (float)Math.Round(rot.z, 2);
+            }
+            else if (to.ComponentType == ComponentType.OpticalComponent)
+            {
+                ocX.Value = (float)Math.Round(pos.x * Constants.InCM, 2);
+                ocY.Value = (float)Math.Round(pos.y * Constants.InCM, 2);
+                ocZ.Value = (float)Math.Round(pos.z * Constants.InCM, 2);
+                ocPhiX.Value = (float)Math.Round(rot.x, 2);
+                ocPhiY.Value = (float)Math.Round(rot.y, 2);
+                ocPhiZ.Value = (float)Math.Round(rot.z, 2);
+            }
+            
         }
     }
 }

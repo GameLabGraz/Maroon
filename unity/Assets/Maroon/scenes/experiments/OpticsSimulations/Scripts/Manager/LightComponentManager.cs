@@ -67,6 +67,19 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             
         }
 
+        public void RemoveSelectedLC()
+        {
+            LightComponent selectedLc = UIManager.Instance.SelectedLc;
+
+            if (selectedLc != null)
+            {
+                _lightComponents.Remove(selectedLc);
+                selectedLc.RemoveFromTable();
+                UIManager.Instance.SelectedLc = null;
+                UIManager.Instance.DeactivateAllLightControlPanels();
+            }
+        }
+
         public void CheckOpticalComponentHit(OpticalComponent opticalComponent)
         {
             foreach (var lightComponent in _lightComponents)
@@ -80,11 +93,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             _lightComponents.Add(lsClone);
         }
 
-        public void RemoveLightComponent(LightComponent lc)
-        {
-            if (!_lightComponents.Remove(lc))
-                Debug.LogError($"Light Source: {lc.name} not present!");
-        }
         
         public void UnselectAll()
         {

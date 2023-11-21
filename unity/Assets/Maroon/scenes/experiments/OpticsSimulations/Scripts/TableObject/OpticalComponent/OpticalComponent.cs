@@ -28,6 +28,11 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             throw new Exception("Should not call base UpdateProperties Method!");
         }
         
+        public override void RemoveFromTable()
+        {
+            Destroy(gameObject);
+        }
+        
         // private void Update()
         // {
         //     if (transform.hasChanged)

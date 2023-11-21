@@ -30,6 +30,11 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject
             
         }
 
+        public virtual void RemoveFromTable()
+        {
+            throw new Exception("Should not call base RemoveFromTable Method!");
+        }
+
         public void SetArrowsActive(bool value)
         {
             rotationArrowY.SetActive(value);

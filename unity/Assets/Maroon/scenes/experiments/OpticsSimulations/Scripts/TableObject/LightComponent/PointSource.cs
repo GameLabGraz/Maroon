@@ -45,5 +45,12 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
             throw new NotImplementedException("RecalculateLightRoute Method not implemented for PointSource!");
         }
         
+        public override void RemoveFromTable()
+        {
+            foreach (var lr in _lightRoutes)
+                lr.ResetLightRoute();
+            Destroy(gameObject);
+        }
+        
     }
 }

@@ -50,6 +50,11 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
             throw new Exception("Should not call base RecalculateLightRoute Method!");
         }
 
+        // public virtual void RemoveFromTable()
+        // {
+        //     throw new Exception("Should not call base RemoveFromTable Method!");
+        // }
+
     }
     
     public enum LightType

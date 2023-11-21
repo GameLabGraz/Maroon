@@ -40,6 +40,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
 
             return d;
         }
+
+        // Walls are not removed
+        public override void RemoveFromTable() {}
         
         
     }

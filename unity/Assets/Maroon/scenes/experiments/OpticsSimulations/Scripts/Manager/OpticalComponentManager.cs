@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handlers;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
@@ -65,7 +66,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
 
             // Bottom wall
             var wBot = Instantiate(wall, tableLowLeftCorner.transform);
-            wBot.SetProperties(new Vector3(2.0f, 0.0f, 1.0f), Vector3.up);
+            wBot.SetProperties(new Vector3(2.0f, -Constants.TableObjectHeight, 1.0f), Vector3.up);
             _opticalComponents.Add(wBot);
             
             // Top wall
@@ -102,10 +103,17 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             _opticalComponents.Add(ocClone);
         }
 
-        public void RemoveOpticalComponent(OpticalComponent oc)
+        public void RemoveSelectedOC()
         {
-            if (!_opticalComponents.Remove(oc))
-                Debug.LogError($"Optical Component: {oc.name} not present!");
+            OpticalComponent selectedOc = UIManager.Instance.SelectedOc;
+
+            if (selectedOc != null)
+            {
+                _opticalComponents.Remove(selectedOc);
+                selectedOc.RemoveFromTable();
+                UIManager.Instance.SelectedOc = null;
+                UIManager.Instance.DeactivateAllOpticalControlPanels();
+            }
         }
 
         public void UnselectAll()
