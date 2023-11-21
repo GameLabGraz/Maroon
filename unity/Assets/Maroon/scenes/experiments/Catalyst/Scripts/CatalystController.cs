@@ -24,17 +24,6 @@ namespace Maroon.Chemistry.Catalyst
         EleyRideal
     }
 
-    public enum ExperimentStages
-    {
-        Init,
-        CODesorb,
-        O2Desorb,
-        COAdsorb,
-        O2Adsorb_O2Dissociate,
-        OFillSurface,
-        OReactCO_CO2Desorb
-    }
-
     public class CatalystController : MonoBehaviour
     {
         [Header("Simulation Parameters")]
@@ -84,7 +73,6 @@ namespace Maroon.Chemistry.Catalyst
         [Header("order quest manager objects the same as the experiment variant enum!")]
         [SerializeField] List<GameObject> questManagerVariantObjects;
         
-
         private int _freedMoleculeCounter = 0;
         private int _moleculesToFree = 4;
         private List<Vector3> _platSpawnPoints = new List<Vector3>();
@@ -109,35 +97,7 @@ namespace Maroon.Chemistry.Catalyst
 
         private List<List<Serie>> _graphSeriesList = new List<List<Serie>>();
         
-        private static float EleyTemperatureValue = 0;
-        
         private static readonly Regex WhiteSpaces = new Regex(@"\s+");
-
-
-
-        private static readonly List<ExperimentStages> HinshelwoodStages = new List<ExperimentStages>()
-        {
-            ExperimentStages.Init,
-            ExperimentStages.CODesorb,
-            ExperimentStages.O2Adsorb_O2Dissociate,
-            ExperimentStages.OReactCO_CO2Desorb
-        };
-
-        private static readonly List<ExperimentStages> KrevelenStages = new List<ExperimentStages>()
-        {
-            ExperimentStages.Init,
-            ExperimentStages.COAdsorb,
-            ExperimentStages.OReactCO_CO2Desorb,
-            ExperimentStages.O2Adsorb_O2Dissociate,
-            ExperimentStages.OFillSurface
-        };
-
-        private static readonly List<ExperimentStages> EleyStages = new List<ExperimentStages>()
-        {
-            ExperimentStages.Init,
-            ExperimentStages.O2Adsorb_O2Dissociate,
-            ExperimentStages.OReactCO_CO2Desorb
-        };
 
         //public const float FixedMoleculeYDist = 0.28f - 0.075f;
         public const float PlatinumScale = 0.14f;
@@ -212,8 +172,6 @@ namespace Maroon.Chemistry.Catalyst
             {
                 _graphSeriesList.Add(new List<Serie>(chart.series.list));
             }
-
-
         }
 
         private void StartExperiment()
@@ -822,13 +780,14 @@ namespace Maroon.Chemistry.Catalyst
         public void ChangExperimentVariation(int val)
         {
             ExperimentVariation = (ExperimentVariation)val;
-            if (ExperimentVariation == ExperimentVariation.LangmuirHinshelwood)
-                CurrentExperimentStage = HinshelwoodStages[0];
-            else if (ExperimentVariation == ExperimentVariation.MarsVanKrevelen)
-                CurrentExperimentStage = KrevelenStages[0];
-            else if (ExperimentVariation == ExperimentVariation.EleyRideal)
-                CurrentExperimentStage = EleyStages[0];
-            
+            CurrentExperimentStage = ExperimentVariation switch
+            {
+                ExperimentVariation.LangmuirHinshelwood => CatalystStages.HinshelwoodStages[0],
+                ExperimentVariation.MarsVanKrevelen => CatalystStages.KrevelenStages[0],
+                ExperimentVariation.EleyRideal => CatalystStages.EleyStages[0],
+                _ => CurrentExperimentStage
+            };
+
             if (currentStepText.gameObject.activeSelf)
                 currentStepText.text = CurrentExperimentStage.ToString();
             SetSimulationParametersMinMax(ExperimentVariation);
@@ -863,27 +822,23 @@ namespace Maroon.Chemistry.Catalyst
 
         public void NextStepButtonClicked()
         {
-            if (ExperimentVariation == ExperimentVariation.LangmuirHinshelwood)
+            CurrentExperimentStage = ExperimentVariation switch
             {
-                if (CurrentExperimentStage == HinshelwoodStages[HinshelwoodStages.Count - 1])
-                    CurrentExperimentStage = HinshelwoodStages[1];
-                else
-                    CurrentExperimentStage = HinshelwoodStages[HinshelwoodStages.IndexOf(CurrentExperimentStage) + 1];
-            }
-            else if (ExperimentVariation == ExperimentVariation.MarsVanKrevelen)
-            {
-                if (CurrentExperimentStage == KrevelenStages[KrevelenStages.Count - 1])
-                    CurrentExperimentStage = KrevelenStages[1];
-                else
-                    CurrentExperimentStage = KrevelenStages[KrevelenStages.IndexOf(CurrentExperimentStage) + 1];
-            }
-            else if (ExperimentVariation == ExperimentVariation.EleyRideal)
-            {
-                if (CurrentExperimentStage == EleyStages[EleyStages.Count - 1])
-                    CurrentExperimentStage = EleyStages[1];
-                else
-                    CurrentExperimentStage = EleyStages[EleyStages.IndexOf(CurrentExperimentStage) + 1];
-            }
+                ExperimentVariation.LangmuirHinshelwood =>
+                    CurrentExperimentStage == CatalystStages.HinshelwoodStages.Last()
+                        ? CatalystStages.HinshelwoodStages[1]
+                        : CatalystStages.HinshelwoodStages[Array.IndexOf(CatalystStages.HinshelwoodStages, CurrentExperimentStage) + 1],
+
+                ExperimentVariation.MarsVanKrevelen => CurrentExperimentStage == CatalystStages.KrevelenStages.Last()
+                    ? CatalystStages.KrevelenStages[1]
+                    : CatalystStages.KrevelenStages[Array.IndexOf(CatalystStages.KrevelenStages, CurrentExperimentStage) + 1],
+
+                ExperimentVariation.EleyRideal => CurrentExperimentStage == CatalystStages.EleyStages.Last()
+                    ? CatalystStages.EleyStages[1]
+                    : CatalystStages.EleyStages[Array.IndexOf(CatalystStages.EleyStages, CurrentExperimentStage) + 1],
+
+                _ => CurrentExperimentStage
+            };
 
             currentStepText.text = CurrentExperimentStage.ToString();
         }
@@ -902,8 +857,8 @@ namespace Maroon.Chemistry.Catalyst
                 .TakeWhile(num => num <= temperatureValue + 273.16f).LastOrDefault());
             if (idx < 0)
                 idx = 0;
-            
-            EleyTemperatureValue = temperatureValue;
+
+            CatalystConstants.EleyTemperatureValue = temperatureValue;
             return idx;
         }
 
@@ -912,7 +867,7 @@ namespace Maroon.Chemistry.Catalyst
             int idx = 0;
             if (ExperimentVariation == ExperimentVariation.EleyRideal)
             {
-                int tempStage = GetTemperatureIndex(EleyTemperatureValue);
+                int tempStage = GetTemperatureIndex(CatalystConstants.EleyTemperatureValue);
                 int pressureValsPerTemp = CatalystConstants.PartialPressureValues[(int) ExperimentVariation].Length /
                                           CatalystConstants.TemperatureStageValues[(int) ExperimentVariation].Length;
                 // get offset into the pressure array row

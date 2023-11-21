@@ -2,6 +2,8 @@ namespace Maroon.Chemistry.Catalyst
 {
     public static class CatalystConstants
     {
+        public static float EleyTemperatureValue = 0;
+
         public static readonly int[][] TemperatureStageValues = 
         {
             new[] { 250, 275, 300, 325, 350, 375, 400, 425, 450 },      // langmuir-hinshelwood
