@@ -17,13 +17,6 @@ using Random = UnityEngine.Random;
 
 namespace Maroon.Chemistry.Catalyst
 {
-    public enum ExperimentVariation
-    {
-        LangmuirHinshelwood,
-        MarsVanKrevelen,
-        EleyRideal
-    }
-
     public class CatalystController : MonoBehaviour
     {
         [Header("Simulation Parameters")]
@@ -105,7 +98,7 @@ namespace Maroon.Chemistry.Catalyst
         public static bool IsVrVersion;
         public static bool DoStepWiseSimulation = false;
         public static ExperimentStages CurrentExperimentStage = ExperimentStages.Init;
-        public static ExperimentVariation ExperimentVariation = ExperimentVariation.LangmuirHinshelwood;
+        public static CatalystVariation ExperimentVariation = CatalystVariation.LangmuirHinshelwood;
 
         // plane above surface where molecules can be spawned, and move
         public static float MinXCoord = 0.0f;
@@ -267,7 +260,7 @@ namespace Maroon.Chemistry.Catalyst
             EnsureCleanSurface();
 
             _catalystSurface = Instantiate(catalystSurfacePrefab, catalystSurfaceSpawnTransform);
-            if (ExperimentVariation.Equals(ExperimentVariation.LangmuirHinshelwood))
+            if (ExperimentVariation.Equals(CatalystVariation.LangmuirHinshelwood))
             {
                 _catalystSurface.SetupCoordsLangmuir(_platSpawnPoints,_activePlatSpawnPoints,list =>
                     {
@@ -286,7 +279,7 @@ namespace Maroon.Chemistry.Catalyst
                     },
                     OnMoleculeFreed);
             }
-            else if (ExperimentVariation.Equals(ExperimentVariation.MarsVanKrevelen))
+            else if (ExperimentVariation.Equals(CatalystVariation.MarsVanKrevelen))
             {
                 _catalystSurface.SetupCoordsKrevelen(_coSpawnPoints, _oSpawnPoints, list =>
                     {
@@ -307,7 +300,7 @@ namespace Maroon.Chemistry.Catalyst
                         onReactionStart?.Invoke();
                     });
             }
-            else if (ExperimentVariation.Equals(ExperimentVariation.EleyRideal))
+            else if (ExperimentVariation.Equals(CatalystVariation.EleyRideal))
             {
                 _catalystSurface.SetupCoordsEley(_platSpawnPoints,_activePlatSpawnPoints,list =>
                     {
@@ -375,7 +368,7 @@ namespace Maroon.Chemistry.Catalyst
                     molecule.gameObject.transform.localRotation = spawnRot;
                     molecule.OnDissociate += DissociateO2;
                     molecule.State = MoleculeState.Moving;
-                    if (ExperimentVariation == ExperimentVariation.MarsVanKrevelen)
+                    if (ExperimentVariation == CatalystVariation.MarsVanKrevelen)
                         (molecule as O2Molecule)?.SetDarkMaterial();
                     onReactionStart += molecule.ReactionStart;
                     AddMoleculeToActiveList(molecule);
@@ -423,7 +416,7 @@ namespace Maroon.Chemistry.Catalyst
                 molecule.OnCO2Created += CreateCO2;
                 molecule.State = MoleculeState.Moving;
                 (molecule as OMolecule).CreateO2 += CreateO2;
-                if (ExperimentVariation == ExperimentVariation.MarsVanKrevelen)
+                if (ExperimentVariation == CatalystVariation.MarsVanKrevelen)
                     (molecule as OMolecule)?.SetDarkMaterial();
                 molecule.gameObject.transform.position = new Vector3(alternate ? o2Position.x + PlatinumScale / 3.0f : o2Position.x - PlatinumScale / 3.0f, o2Position.y - 0.07f, o2Position.z);
                 AddMoleculeToActiveList(molecule);
@@ -513,7 +506,7 @@ namespace Maroon.Chemistry.Catalyst
 
         private void UpdateTurnOverRateUI()
         {
-            if (ExperimentVariation == ExperimentVariation.EleyRideal)
+            if (ExperimentVariation == CatalystVariation.EleyRideal)
                 turnOverRateText.text = (100 * CatalystConstants.TurnOverRates[(int) ExperimentVariation][GetTemperatureIndex(temperature)][GetPartialPressureIndex(partialPressure)]).ToString(CultureInfo.InvariantCulture.NumberFormat);
             else
                 turnOverRateText.text = _currentTurnOverRate.ToString(CultureInfo.InvariantCulture.NumberFormat);
@@ -535,7 +528,7 @@ namespace Maroon.Chemistry.Catalyst
             _maxZValLocal = _activeMolecules.Max(molecule => molecule.gameObject.transform.localPosition.z) - 0.4f;
         }
 
-        private void SetSimulationParametersMinMax(ExperimentVariation variation)
+        private void SetSimulationParametersMinMax(CatalystVariation variation)
         {
             if (!isVrVersion)
             {
@@ -626,11 +619,11 @@ namespace Maroon.Chemistry.Catalyst
         private IEnumerator CoDrawProgressGraph()
         {
             var waitTime = 0f;
-            if (ExperimentVariation == ExperimentVariation.LangmuirHinshelwood)
+            if (ExperimentVariation == CatalystVariation.LangmuirHinshelwood)
                 waitTime = 4f * 9f * 1.6f; // 4 series * 9 data entries -> 1.6 seconds per entry
-            else if (ExperimentVariation == ExperimentVariation.MarsVanKrevelen)
+            else if (ExperimentVariation == CatalystVariation.MarsVanKrevelen)
                 waitTime = 4f * 6f * 1.6f; // 4 series * 6 data entries -> 1.6 seconds per entry
-            else if (ExperimentVariation == ExperimentVariation.EleyRideal)
+            else if (ExperimentVariation == CatalystVariation.EleyRideal)
                 waitTime = (5f + 6f + 3f * 7f) * 1.6f; // 5 series (1 with 5 data points, 1 with 6 data points, and 3 with 7 data points) -> 1.6 seconds per entry
             waitTime /= 360;
             var progress = 0.0f;
@@ -779,12 +772,12 @@ namespace Maroon.Chemistry.Catalyst
         
         public void ChangExperimentVariation(int val)
         {
-            ExperimentVariation = (ExperimentVariation)val;
+            ExperimentVariation = (CatalystVariation)val;
             CurrentExperimentStage = ExperimentVariation switch
             {
-                ExperimentVariation.LangmuirHinshelwood => CatalystStages.HinshelwoodStages[0],
-                ExperimentVariation.MarsVanKrevelen => CatalystStages.KrevelenStages[0],
-                ExperimentVariation.EleyRideal => CatalystStages.EleyStages[0],
+                CatalystVariation.LangmuirHinshelwood => CatalystStages.HinshelwoodStages[0],
+                CatalystVariation.MarsVanKrevelen => CatalystStages.KrevelenStages[0],
+                CatalystVariation.EleyRideal => CatalystStages.EleyStages[0],
                 _ => CurrentExperimentStage
             };
 
@@ -824,16 +817,16 @@ namespace Maroon.Chemistry.Catalyst
         {
             CurrentExperimentStage = ExperimentVariation switch
             {
-                ExperimentVariation.LangmuirHinshelwood =>
+                CatalystVariation.LangmuirHinshelwood =>
                     CurrentExperimentStage == CatalystStages.HinshelwoodStages.Last()
                         ? CatalystStages.HinshelwoodStages[1]
                         : CatalystStages.HinshelwoodStages[Array.IndexOf(CatalystStages.HinshelwoodStages, CurrentExperimentStage) + 1],
 
-                ExperimentVariation.MarsVanKrevelen => CurrentExperimentStage == CatalystStages.KrevelenStages.Last()
+                CatalystVariation.MarsVanKrevelen => CurrentExperimentStage == CatalystStages.KrevelenStages.Last()
                     ? CatalystStages.KrevelenStages[1]
                     : CatalystStages.KrevelenStages[Array.IndexOf(CatalystStages.KrevelenStages, CurrentExperimentStage) + 1],
 
-                ExperimentVariation.EleyRideal => CurrentExperimentStage == CatalystStages.EleyStages.Last()
+                CatalystVariation.EleyRideal => CurrentExperimentStage == CatalystStages.EleyStages.Last()
                     ? CatalystStages.EleyStages[1]
                     : CatalystStages.EleyStages[Array.IndexOf(CatalystStages.EleyStages, CurrentExperimentStage) + 1],
 
@@ -865,7 +858,7 @@ namespace Maroon.Chemistry.Catalyst
         private static int GetPartialPressureIndex(float partialPressureValue)
         {
             int idx = 0;
-            if (ExperimentVariation == ExperimentVariation.EleyRideal)
+            if (ExperimentVariation == CatalystVariation.EleyRideal)
             {
                 int tempStage = GetTemperatureIndex(CatalystConstants.EleyTemperatureValue);
                 int pressureValsPerTemp = CatalystConstants.PartialPressureValues[(int) ExperimentVariation].Length /
@@ -888,7 +881,7 @@ namespace Maroon.Chemistry.Catalyst
 
         public static float GetTurnOverFrequency(float temperature, float partialPressure)
         {
-            if (ExperimentVariation == ExperimentVariation.EleyRideal)
+            if (ExperimentVariation == CatalystVariation.EleyRideal)
                 return 100 * CatalystConstants.TurnOverRates[(int) ExperimentVariation][GetTemperatureIndex(temperature)][GetPartialPressureIndex(partialPressure)];
             return CatalystConstants.TurnOverRates[(int)ExperimentVariation][GetTemperatureIndex(temperature)][GetPartialPressureIndex(partialPressure)];
         }

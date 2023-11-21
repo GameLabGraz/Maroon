@@ -34,7 +34,7 @@ namespace Maroon.Chemistry.Catalyst
                 _interactable.enabled = true;
             }
                         
-            if (CatalystController.ExperimentVariation == ExperimentVariation.EleyRideal)
+            if (CatalystController.ExperimentVariation == CatalystVariation.EleyRideal)
                 ActivateDrawingCollider(true);
             else
                 ActivateDrawingCollider(false);
