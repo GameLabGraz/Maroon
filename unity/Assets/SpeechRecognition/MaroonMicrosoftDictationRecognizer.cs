@@ -18,7 +18,7 @@ namespace Valve.VR.InteractionSystem
         public ChatGPTConversation commandConversation;
         public ChatGPTConversation tutorConversation;
         public ParameterChangerHelper parameterChangerHelper;
-        
+
 
         enum menuButton
         {
@@ -42,20 +42,20 @@ namespace Valve.VR.InteractionSystem
         void Awake()
         {
             DontDestroyOnLoad(this.gameObject);
-            audioSources = GetComponents<AudioSource>();                
+            audioSources = GetComponents<AudioSource>();
         }
 
         void Start()
         {
             parameterChangerHelper = gameObject.GetComponent<ParameterChangerHelper>();
             textTips = GameObject.Find("TextTipsObject").GetComponent<TextTips>();
-            UnityEngine.SceneManagement.SceneManager.sceneLoaded += HandleRoomChange;            
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded += HandleRoomChange;
             SystemLanguage systemLang = Application.systemLanguage;
-            
+
 
             displayString = "";
-            listeningString = "";                   
-            dictationRecognizer = new DictationRecognizer();                
+            listeningString = "";
+            dictationRecognizer = new DictationRecognizer();
 
             dictationRecognizer.DictationResult += (text, confidence) =>
             {
@@ -66,7 +66,7 @@ namespace Valve.VR.InteractionSystem
                 Debug.LogFormat("Dictation result: <{0}> with <{1}>% confidence", text, confidence.ToString());
                 if (lastButtonPressed == menuButton.Left && commandConversation != null)
                 {
-                    commandConversation.SendToChatGPT(text);                    
+                    commandConversation.SendToChatGPT(text);
                 }
                 if (lastButtonPressed == menuButton.Right && tutorConversation != null)
                 {
@@ -84,10 +84,10 @@ namespace Valve.VR.InteractionSystem
         }
 
 
-        public void HandlechatGPTResponse(string s)
+        public void HandleChatGPTResponse(string s)
         {
             Debug.Log("chatgpt said " + s);
-            textTips.DisplayTipWithFade(s, 2f);            
+            textTips.DisplayTipWithFade(s, 2f);
 
             List<StructuredCommand> commands = ParseTheString(s);
 
@@ -103,7 +103,8 @@ namespace Valve.VR.InteractionSystem
 
                     if (command.Tag.Equals("command"))
                     {
-                        if (command.Value.Equals("changeRoom")) {
+                        if (command.Value.Equals("changeRoom"))
+                        {
                             StructuredCommand nextCommand = commands[i + 1];
 
                             Debug.Log("let's change the room, to " + nextCommand.Value);
@@ -121,7 +122,7 @@ namespace Valve.VR.InteractionSystem
                                 RequestRoomChange("VandeGraaffGenerator.vr");
                         }
                         else if (command.Value.Equals("modifyVariable"))
-                        {                            
+                        {
                             StructuredCommand attributeToChange = commands[i + 1];
                             StructuredCommand unit = commands[i + 2];
                             StructuredCommand newValue = commands[i + 3];
@@ -143,7 +144,7 @@ namespace Valve.VR.InteractionSystem
                             {
                                 GameObject theParent = GameObject.Find("Experiment");
                                 if (theParent != null)
-                                {                                    
+                                {
                                     scrIronFilings theScript = theParent.GetComponentInChildren<scrIronFilings>(true);
 
                                     if (newValue.Value.Contains("off"))
@@ -164,16 +165,17 @@ namespace Valve.VR.InteractionSystem
                                 parameterChangerHelper.SetLinearDriveValue("MagneticMomentHandle", unit.Value, int.Parse(newValue.Value));
 
                         }
-                        else if (command.Value.Equals("startExperiment"))                        
-                            SimulationController.Instance.StartSimulation();                        
-                        else if (command.Value.Equals("stopExperiment"))                        
-                            SimulationController.Instance.StopSimulation();                        
-                        else if (command.Value.Equals("resetExperiment"))                        
-                            SimulationController.Instance.ResetSimulation();                        
+                        else if (command.Value.Equals("startExperiment"))
+                            SimulationController.Instance.StartSimulation();
+                        else if (command.Value.Equals("stopExperiment"))
+                            SimulationController.Instance.StopSimulation();
+                        else if (command.Value.Equals("resetExperiment"))
+                            SimulationController.Instance.ResetSimulation();
                     }
                 }
             }
-            else {
+            else
+            {
                 //Debug.Log("Speech: found no commands in chatgpt's response, so let's say it instead");
                 textTips.DisplayTip(s);
 
@@ -186,9 +188,9 @@ namespace Valve.VR.InteractionSystem
         public void HandleChatGPTtutorResponse(string s)
         {
             Debug.Log("Speech: chatgpt tutor said " + s);
-            textTips.DisplayTip(s);            
+            textTips.DisplayTip(s);
 
-            if (narrator != null)            
+            if (narrator != null)
                 narrator.speak(s);
         }
 
@@ -251,13 +253,13 @@ namespace Valve.VR.InteractionSystem
             //sceneAsset = SceneManager.Instance.getScenesFromAllCategories().Find(element => sceneName == element.SceneName);
             sceneAsset = SceneManager.Instance.GetSceneAssetBySceneName(sceneName);
             SceneManager.Instance.LoadSceneRequest(sceneAsset);
-            
+
         }
 
 
         void Update()
         {
-            
+
             if (SteamVR_Actions.default_Fire.GetStateDown(SteamVR_Input_Sources.Any))
             {
                 if (SteamVR_Actions.default_Fire.GetStateDown(SteamVR_Input_Sources.LeftHand))
@@ -285,14 +287,16 @@ namespace Valve.VR.InteractionSystem
         }
         */
         private List<StructuredCommand> ParseTheString(string stringToBeParsed)
-        {            
+        {
             List<StructuredCommand> commands = new List<StructuredCommand>();
 
-            if (stringToBeParsed != null && stringToBeParsed.Length > 0) {                
+            if (stringToBeParsed != null && stringToBeParsed.Length > 0)
+            {
                 string[] separatedString = stringToBeParsed.Split(';');
-            
 
-                if (separatedString.Length > 0) { 
+
+                if (separatedString.Length > 0)
+                {
 
                     for (int i = 0; i < separatedString.Length; i++)
                     {
@@ -323,7 +327,7 @@ namespace Valve.VR.InteractionSystem
                             }
                         }
                     }
-                }            
+                }
             }
             return commands;
         }
