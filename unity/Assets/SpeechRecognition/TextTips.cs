@@ -18,10 +18,10 @@ namespace Valve.VR.InteractionSystem
         void Start()
         {
             theCamera = GameObject.Find("VRCamera");
-            if (theCamera != null)
+            /*if (theCamera != null)
             {
-                Debug.Log("dave, found the camera.  it's at " + theCamera.transform.position.ToString());
-            }
+                Debug.Log("Speech: found the camera.  it's at " + theCamera.transform.position.ToString());
+            }*/
             if (theCanvas != null)
             {
                 canvasGroup = theCanvas.GetComponent<CanvasGroup>();

@@ -41,6 +41,7 @@ namespace Valve.VR.InteractionSystem
             UnityEngine.SceneManagement.SceneManager.sceneLoaded += HandleRoomChange;
 
             SystemLanguage systemLang = Application.systemLanguage;
+            systemLang = chosenSpeechLanguage;  // i'm overriding the above on purpose, since Unity doesn't know about speech settings.  Application.systemLanguage looks at the display language in Windows, not speech
 
             if (systemLang == SystemLanguage.English)
                 selectedGrammarSet = englishGrammarFiles;
@@ -58,7 +59,7 @@ namespace Valve.VR.InteractionSystem
 
         private void HandleLanguageChange(SystemLanguage lang)
         {
-            Debug.Log("dave, the language has changed!  now it's " + lang.ToString());
+            Debug.Log("Speech: the language has changed!  now it's " + lang.ToString());
             if (lang.Equals(SystemLanguage.English))
                 selectedGrammarSet = englishGrammarFiles;
             else if (lang.Equals(SystemLanguage.German))
@@ -73,8 +74,6 @@ namespace Valve.VR.InteractionSystem
 
         private void HandleRoomChange(UnityEngine.SceneManagement.Scene currentScene, UnityEngine.SceneManagement.LoadSceneMode loadMode)
         {
-            //Debug.Log("dave, egad!  the room has changed and is now " + currentScene.name);
-
             int foundIndex = Array.FindIndex(experimentScenes, element => element.SceneName.Equals(currentScene.name));
             if (foundIndex >= 0)
             {
@@ -82,12 +81,10 @@ namespace Valve.VR.InteractionSystem
                 {
                     LanguageManager languageManager = LanguageManager.Instance;
                     if (languageManager != null)
-                    {
-                        //Debug.Log("dave, the language manager says that the language is " + languageManager.CurrentLanguage.ToString());
+                    {                        
                         languageManager.OnLanguageChanged.AddListener(HandleLanguageChange);
                     }
                 }
-
                 if (currentScene.name.Equals("FallingCoil.vr"))
                 {                    
                     textTips.DisplayTip("here are some example commands: \n - begin experiment \n - set field lines to 45 \n - change vector field resolution to 50%");
@@ -97,7 +94,7 @@ namespace Valve.VR.InteractionSystem
             }
             else
             {
-                Debug.Log("dave, couldn't find it! i guess i'm not in an experiment room right now");
+                Debug.Log("Speech: couldn't find it! i guess i'm not in an experiment room right now");
             }
         }
 
@@ -111,7 +108,7 @@ namespace Valve.VR.InteractionSystem
             grammarRecognizer = new GrammarRecognizer(Application.streamingAssetsPath + "/SRGS/" + selectedGrammarSet[0].name + ".xml", ConfidenceLevel.Low);
             grammarRecognizer.OnPhraseRecognized += Grammar_OnPhraseRecognized;
             grammarRecognizer.Start();
-            Debug.Log("dave, just loaded grammar " + selectedGrammarSet[0].name);
+            Debug.Log("Speech: just loaded grammar " + selectedGrammarSet[0].name);
         }
 
         void LoadExperimentalGrammar(int desiredIndex)
@@ -126,7 +123,7 @@ namespace Valve.VR.InteractionSystem
             grammarRecognizerExperiment = new GrammarRecognizer(Application.streamingAssetsPath + "/SRGS/" + experimentGrammarToLoad + ".xml", ConfidenceLevel.Low);
             grammarRecognizerExperiment.OnPhraseRecognized += Grammar_OnPhraseRecognized;
             grammarRecognizerExperiment.Start();
-            Debug.Log("dave, just loaded grammar " + experimentGrammarToLoad);
+            Debug.Log("Speech: just loaded grammar " + experimentGrammarToLoad);
         }
 
         void RequestRoomChange(string roomName)
@@ -146,17 +143,17 @@ namespace Valve.VR.InteractionSystem
             audioSources[1].Play();  // play the recognize tone
             textTips.FadeOut();
 
-            Debug.Log("dave, Phrase Recognized: <" + args.text + ">");
+            Debug.Log("Speech: Phrase Recognized: <" + args.text + ">");
             SemanticMeaning[] semanticMeanings = args.semanticMeanings;  // extracting the semantic tags
             if (semanticMeanings != null)
             {
-                Debug.Log("dave, there's a semantic meaning here, with " + semanticMeanings.Length.ToString() + " items.");
+                Debug.Log("Speech: there's a semantic meaning here, with " + semanticMeanings.Length.ToString() + " items.");
 
                 // let's parse the semantic meaning to figure out what action to take               
                 for (int i = 0; i < semanticMeanings.Length; i++)
                 {
                     SemanticMeaning currentSemanticMeaning = semanticMeanings[i];
-                    Debug.Log("dave, <" + currentSemanticMeaning.key.ToString() + "> = <" + currentSemanticMeaning.values[0] + ">");
+                    Debug.Log("Speech: <" + currentSemanticMeaning.key.ToString() + "> = <" + currentSemanticMeaning.values[0] + ">");
 
                     if (currentSemanticMeaning.key.ToString().Equals("roomName"))  // let's change rooms                    
                     {
@@ -207,7 +204,7 @@ namespace Valve.VR.InteractionSystem
                     if (currentSemanticMeaning.key.ToString().Equals("attribute")) // let's change the value of an experimental variable
                     {
                         string attributeToChange = currentSemanticMeaning.values[0];
-                        Debug.Log("dave, attribute to change is <" + attributeToChange + ">");
+                        //Debug.Log("Speech: attribute to change is <" + attributeToChange + ">");
 
                         if (attributeToChange.Equals("ShowChargeButton"))
                         {
@@ -225,8 +222,7 @@ namespace Valve.VR.InteractionSystem
                         {
                             GameObject theParent = GameObject.Find("Experiment");
                             if (theParent != null)
-                            {
-                                //Debug.Log("dave, i found the IronFiling,which holds the script i want");
+                            {                                
                                 scrIronFilings theScript = theParent.GetComponentInChildren<scrIronFilings>(true);
 
                                 if (args.text.Contains("off"))
@@ -235,7 +231,7 @@ namespace Valve.VR.InteractionSystem
                                     theScript.generateFieldImage();
                             }
                             else
-                                Debug.Log("dave, the script PARENT was null");
+                                Debug.Log("Speech: the script PARENT was null");
                         }
                         else
                         {
@@ -245,7 +241,7 @@ namespace Valve.VR.InteractionSystem
                             {
                                 newValue = semanticMeanings[i + 2].values[0];
                             }                            
-                            Debug.Log("dave, they want to change <" + attributeToChange + "> to this new value: " + newValue + " percent? " + unit);
+                            //Debug.Log("Speech: they want to change <" + attributeToChange + "> to this new value: " + newValue + " percent? " + unit);
                             parameterChangerHelper.SetLinearDriveValue(attributeToChange, unit, int.Parse(newValue));
                         }
                     }
@@ -258,7 +254,7 @@ namespace Valve.VR.InteractionSystem
 
         void Grammar_OnError(SpeechError errorCode)
         {
-            Debug.Log("malfunction: " + errorCode.ToString());
+            Debug.Log("Speech: malfunction: " + errorCode.ToString());
         }
 
         void Update()
@@ -270,13 +266,6 @@ namespace Valve.VR.InteractionSystem
                 audioSources[0].Play();
             }
         }
-        /*
-        void OnGUI()
-        {
-            listeningString = "<" + PhraseRecognitionSystem.Status.ToString() + ">";
-            GUI.Label(new Rect(10, 10, 400, 20), listeningString);
-            GUI.Label(new Rect(10, 30, 400, 20), displayString);
-        }
-        */
+        
     }
 }

@@ -19,6 +19,7 @@ namespace Valve.VR.InteractionSystem
         public ChatGPTConversation tutorConversation;
         public ParameterChangerHelper parameterChangerHelper;
         
+
         enum menuButton
         {
             Left, Right
@@ -50,10 +51,11 @@ namespace Valve.VR.InteractionSystem
             textTips = GameObject.Find("TextTipsObject").GetComponent<TextTips>();
             UnityEngine.SceneManagement.SceneManager.sceneLoaded += HandleRoomChange;            
             SystemLanguage systemLang = Application.systemLanguage;
+            
 
             displayString = "";
             listeningString = "";                   
-            dictationRecognizer = new DictationRecognizer();            
+            dictationRecognizer = new DictationRecognizer();                
 
             dictationRecognizer.DictationResult += (text, confidence) =>
             {
@@ -77,7 +79,7 @@ namespace Valve.VR.InteractionSystem
                 Debug.LogErrorFormat("Dictation error: {0}; HResult = {1}.", error, hresult);
             };
 
-            dictationRecognizer.Start();
+            //dictationRecognizer.Start();            
         }
 
 
@@ -140,8 +142,7 @@ namespace Valve.VR.InteractionSystem
                             {
                                 GameObject theParent = GameObject.Find("Experiment");
                                 if (theParent != null)
-                                {
-                                    //Debug.Log("dave, i found the IronFiling,which holds the script i want");
+                                {                                    
                                     scrIronFilings theScript = theParent.GetComponentInChildren<scrIronFilings>(true);
 
                                     if (newValue.Value.Contains("off"))
@@ -150,7 +151,7 @@ namespace Valve.VR.InteractionSystem
                                         theScript.generateFieldImage();
                                 }
                                 else
-                                    Debug.Log("dave, the script PARENT was null");
+                                    Debug.Log("Speech: the script PARENT was null");
                             }
                             else if (attributeToChange.Value.Equals("field lines"))
                                 parameterChangerHelper.SetLinearDriveValue("FieldLinesHandle", unit.Value, int.Parse(newValue.Value));
@@ -172,7 +173,7 @@ namespace Valve.VR.InteractionSystem
                 }
             }
             else {
-                //Debug.Log("dave, found no commands in chatgpt's response, so let's say it instead");
+                //Debug.Log("Speech: found no commands in chatgpt's response, so let's say it instead");
                 textTips.DisplayTip(s);
 
                 if (narrator != null)
@@ -183,7 +184,7 @@ namespace Valve.VR.InteractionSystem
 
         public void HandleChatGPTtutorResponse(string s)
         {
-            Debug.Log("dave, chatgpt tutor said " + s);
+            Debug.Log("Speech: chatgpt tutor said " + s);
             textTips.DisplayTip(s);            
 
             if (narrator != null)            
@@ -193,7 +194,7 @@ namespace Valve.VR.InteractionSystem
 
         private void HandleLanguageChange(SystemLanguage lang)
         {
-            Debug.Log("dave, the language has changed!  now it's " + lang.ToString());
+            Debug.Log("Speech: the language has changed!  now it's " + lang.ToString());
             if (lang.Equals(SystemLanguage.English))
                 // do something
                 Debug.Log("english");
@@ -219,7 +220,7 @@ namespace Valve.VR.InteractionSystem
                     LanguageManager languageManager = LanguageManager.Instance;
                     if (languageManager != null)
                     {
-                        Debug.Log("dave, the language manager says that the language is " + languageManager.CurrentLanguage.ToString());
+                        Debug.Log("Speech: the language manager says that the language is " + languageManager.CurrentLanguage.ToString());
                         languageManager.OnLanguageChanged.AddListener(HandleLanguageChange);
 
                     }
@@ -230,7 +231,7 @@ namespace Valve.VR.InteractionSystem
             }
             else
             {
-                //Debug.Log("dave, couldn't find it! i guess i'm not in an experiment room right now");
+                //Debug.Log("Speech: couldn't find it! i guess i'm not in an experiment room right now");
             }
         }
 
@@ -239,10 +240,8 @@ namespace Valve.VR.InteractionSystem
         {
             string promptToLoad = roomSpecificPrompts[desiredIndex];            
             tutorConversation.ReplaceSecondaryPrompt(promptToLoad);
-            Debug.Log("dave, just loaded this prompt: " + promptToLoad);
+            Debug.Log("Speech: just loaded this prompt: " + promptToLoad);
         }*/
-
-
 
         void RequestRoomChange(string roomName)
         {

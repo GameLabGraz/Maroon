@@ -12,7 +12,7 @@ public class ParameterChangerHelper : MonoBehaviour
         if (theDriveIWant != null)
         {
             GameObject parent = theDriveIWant.transform.parent.gameObject;
-            //Debug.Log("dave, its parent is named <" + parent.name + ">, and its active setting is <" + parent.activeSelf.ToString() + ">");
+            //Debug.Log("Speech: its parent is named <" + parent.name + ">, and its active setting is <" + parent.activeSelf.ToString() + ">");
 
             bool previousParentActiveSetting = parent.activeSelf;
 
@@ -21,7 +21,7 @@ public class ParameterChangerHelper : MonoBehaviour
 
             if (handleName.Equals("PropagationModeHandle"))
             {
-                //Debug.Log("dave, propagation mode is <" + unit + ">");
+                //Debug.Log("Speech: propagation mode is <" + unit + ">");
                 if (unit.Equals("circular"))
                     theDriveIWant.ForceToValue(1);
                 else if (unit.Equals("rectilinear"))
@@ -31,12 +31,12 @@ public class ParameterChangerHelper : MonoBehaviour
             {
                 //int percentizedValue = Mathf.RoundToInt((theDrive.maximum - theDrive.minimum) * (newValue / 100f) + theDrive.minimum);
                 float percentizedValue = (theDriveIWant.maximum - theDriveIWant.minimum) * (newValue / 100f) + theDriveIWant.minimum;
-                //Debug.Log("dave, so, the new value would be..." + percentizedValue.ToString());
+                //Debug.Log("Speech: so, the new value would be..." + percentizedValue.ToString());
                 theDriveIWant.ForceToValue(percentizedValue);
             }
             else
             {
-                //Debug.Log("dave, so they want to change value, not percent, to <" + newValue.ToString() + ">");
+                //Debug.Log("Speech: so they want to change value, not percent, to <" + newValue.ToString() + ">");
                 theDriveIWant.ForceToValue(newValue);
             }
             parent.SetActive(previousParentActiveSetting);
@@ -71,8 +71,7 @@ public class ParameterChangerHelper : MonoBehaviour
     {
         GameObject theParent = GameObject.Find(parentName);
         if (theParent != null)
-        {
-            Debug.Log("dave, i found the parent");
+        {            
             VRLinearDrive[] theChildren = theParent.GetComponentsInChildren<VRLinearDrive>(true);
 
             if (theChildren != null)

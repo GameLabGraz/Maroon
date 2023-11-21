@@ -97,7 +97,7 @@ namespace ACTA
 
 
             whatToSay = speakerPreferences + whatToSay;
-            Debug.Log("dave, here's what i'm sending the narrator: " + whatToSay);
+            //Debug.Log("Speech: here's what i'm sending the narrator: " + whatToSay);
 
             Encoding encoding = Encoding.GetEncoding(System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ANSICodePage);
             var data = encoding.GetBytes(whatToSay);
@@ -141,8 +141,8 @@ namespace ACTA
             yield return new WaitForSeconds(2f);
             
             if(!isSpeaking())
-            {                
-                //Debug.Log("coroutine: dave, i finished speaking!");
+            {
+                //Debug.Log("coroutine: i finished speaking!");
                 TextTips tips = GameObject.Find("TextTipsObject").GetComponent<TextTips>();
                 if (tips != null)
                     tips.FadeOut();
