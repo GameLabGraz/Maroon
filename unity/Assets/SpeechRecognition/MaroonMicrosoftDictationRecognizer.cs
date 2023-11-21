@@ -84,7 +84,7 @@ namespace Valve.VR.InteractionSystem
         }
 
 
-        public void HandleChatGPTResponse(string s)
+        public void HandlechatGPTResponse(string s)
         {
             Debug.Log("chatgpt said " + s);
             textTips.DisplayTipWithFade(s, 2f);            
