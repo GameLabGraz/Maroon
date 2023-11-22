@@ -28,7 +28,10 @@ namespace Maroon.Chemistry.Catalyst
         [SerializeField] int numberSpawnedCOMolecules;
         [SerializeField] Material catalystBoxMaterial;
         [SerializeField] ParticleSystem pressureParticleSystem;
-        
+
+        public float Temperature => temperature.Value;
+        public float PartialPressure => partialPressure.Value;
+
         [Header("Catalyst specific objects")]
         [SerializeField] CatalystReactor catalystReactor;
         [SerializeField] CatalystSurface catalystSurfacePrefab;
@@ -110,13 +113,7 @@ namespace Maroon.Chemistry.Catalyst
         public static float MinYCoord = 0.0f;
         public static float MaxYCoord = 0.0f;
 
-        public bool AreHinshelwoodMoleculesFreed { get => _freedMoleculeCounter == _moleculesToFree; }
-        public bool HasInitialTempChanged { get => Mathf.Abs(temperature.Value - temperatureViewVr.initialValue) > 20.0f ; }
-
-        public bool HasInitialPressureChanged
-        {
-            get => Mathf.Abs(partialPressure.Value - partialPressureViewVr.initialValue) > CatalystConstants.PartialPressureValues[(int) ExperimentVariation][1];
-        }
+        public bool AreHinshelwoodMoleculesFreed => _freedMoleculeCounter == _moleculesToFree;
 
         private void Awake()
         {
