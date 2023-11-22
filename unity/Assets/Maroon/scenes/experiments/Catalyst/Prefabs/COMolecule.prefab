@@ -339,6 +339,7 @@ GameObject:
   - component: {fileID: 8644056029575331758}
   - component: {fileID: 4513131665161036208}
   - component: {fileID: 8876241635158754551}
+  - component: {fileID: 1417246085762856238}
   m_Layer: 0
   m_Name: COMolecule
   m_TagString: Untagged
@@ -409,6 +410,9 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   state: 0
+  OnReactionStarted:
+    m_PersistentCalls:
+      m_Calls: []
   timeUntilNextDesorb: 3
   potentialDrawMolecules: []
 --- !u!135 &3221385016645297414
@@ -553,9 +557,22 @@ MonoBehaviour:
   onPickUp:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2372393903890976028}
-        m_TargetAssemblyTypeName: Maroon.Chemistry.Catalyst.COMolecule, Assembly-CSharp
+      - m_Target: {fileID: 1417246085762856238}
+        m_TargetAssemblyTypeName: Maroon.Chemistry.Catalyst.VR.MoleculeVRInteractionHandler,
+          Maroon.Experiments.Catalyst
         m_MethodName: OnVRPickup
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2372393903890976028}
+        m_TargetAssemblyTypeName: Maroon.Chemistry.Catalyst.COMolecule, Maroon.Experiments.Catalyst
+        m_MethodName: DesorbCO
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -568,8 +585,9 @@ MonoBehaviour:
   onDetachFromHand:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2372393903890976028}
-        m_TargetAssemblyTypeName: Maroon.Chemistry.Catalyst.COMolecule, Assembly-CSharp
+      - m_Target: {fileID: 1417246085762856238}
+        m_TargetAssemblyTypeName: Maroon.Chemistry.Catalyst.VR.MoleculeVRInteractionHandler,
+          Maroon.Experiments.Catalyst
         m_MethodName: OnVRDrop
         m_Mode: 1
         m_Arguments:
@@ -584,3 +602,15 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   interactable: {fileID: 0}
+--- !u!114 &1417246085762856238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9201737708395207699}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c77c800e82ca8c847b714150a07ad9a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

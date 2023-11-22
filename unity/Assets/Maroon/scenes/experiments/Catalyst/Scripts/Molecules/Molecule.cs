@@ -2,6 +2,8 @@
 using System.Collections;
 using Maroon.Physics;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace Maroon.Chemistry.Catalyst
@@ -60,7 +62,9 @@ namespace Maroon.Chemistry.Catalyst
 
         protected float CurrentTurnOverRate = 0.0f;
 
-        public MoleculeType Type { get => type; }
+        public MoleculeType Type => type;
+
+        public UnityEvent OnReactionStarted;
 
         /**
          * Property to set state as well as handle RigidbodyConstraints. Always use this to
@@ -150,6 +154,8 @@ namespace Maroon.Chemistry.Catalyst
         public void ReactionStart()
         {
             ReactionStarted = true;
+            OnReactionStarted?.Invoke();
+
             ReactionStart_Impl();
         }
 

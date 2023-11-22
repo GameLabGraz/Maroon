@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Valve.VR.InteractionSystem;
 
 namespace Maroon.Chemistry.Catalyst
 {
@@ -19,38 +18,15 @@ namespace Maroon.Chemistry.Catalyst
 
         private bool _desorbActivatesConnectedMoleculeCollider = false;
 
-        private Interactable _interactable;
-        private Throwable _throwable;
-        private Transform _prePickupParent;
-
         protected override void Start()
         {
             base.Start();
-            _prePickupParent = gameObject.transform.parent;
-            if (CatalystController.IsVrVersion)
-            {
-                _interactable = GetComponent<Interactable>();
-                _throwable = GetComponent<Throwable>();
-                _interactable.enabled = true;
-            }
-                        
-            if (CatalystController.ExperimentVariation == CatalystVariation.EleyRideal)
-                ActivateDrawingCollider(true);
-            else
-                ActivateDrawingCollider(false);
+            ActivateDrawingCollider(CatalystController.ExperimentVariation == CatalystVariation.EleyRideal);
         }
         
         protected override void ReactionStart_Impl()
         {
             _desorbActivatesConnectedMoleculeCollider = true;
-            if (_interactable && _throwable)
-            {
-                _throwable.onDetachFromHand.Invoke();
-                Destroy(_throwable);
-                Destroy(_interactable);
-            }
-
-
         }
         
         /**
@@ -73,19 +49,6 @@ namespace Maroon.Chemistry.Catalyst
 
             StartCoroutine(Wobble());
             _moleculeClickCounter++;
-        }
-
-        public void OnVRPickup()
-        {
-            if (State != MoleculeState.Fixed || !SimulationController.Instance.SimulationRunning) return;
-            OnMoleculeFreed?.Invoke();
-            _interactable.enabled = false;
-            DesorbCO();
-        }
-
-        public void OnVRDrop()
-        {
-            gameObject.transform.SetParent(_prePickupParent);
         }
 
         /**
@@ -174,7 +137,7 @@ namespace Maroon.Chemistry.Catalyst
          * Handle desorb movement of molecule by setting new position and rotation.
          * Resets connected molecules.
          */
-        private void DesorbCO()
+        public void DesorbCO()
         {
             StartMoleculePosition = transform.position;
             StartMoleculeRotation = transform.rotation;
