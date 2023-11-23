@@ -99,7 +99,7 @@ jobs:
 
     steps:
       - name: Build
-        uses: game-ci/unity-builder@v3
+        uses: game-ci/unity-builder@v2
 
         # environment vars needed by unity-builder to activate the unity license
         # defined in the Actions Secrets in the repo settings
@@ -126,7 +126,6 @@ jobs:
       # we want the repo to be in its original state before each build
       - name: Restore Build Environment
         shell: bash
-        if: ${{ always() }}
         run: |
           git reset --hard
 
