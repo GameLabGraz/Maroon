@@ -5,9 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using GameLabGraz.QuestManager;
-using GameLabGraz.VRInteraction;
 using GEAR.Gadgets.Extensions;
-using Maroon.Chemistry.Catalyst.VR;
 using Maroon.Physics;
 using Maroon.UI;
 using TMPro;
@@ -18,88 +16,84 @@ using Random = UnityEngine.Random;
 
 namespace Maroon.Chemistry.Catalyst
 {
-    public class CatalystController : MonoBehaviour
+    public class CatalystController : MonoBehaviour, IResetObject
     {
         [Header("Simulation Parameters")]
-        [SerializeField] bool isVrVersion;
-        [SerializeField] QuantityFloat temperature;
-        [SerializeField] QuantityFloat partialPressure;
-        [SerializeField] int numberSpawnedO2Molecules;
-        [SerializeField] int numberSpawnedCOMolecules;
-        [SerializeField] Material catalystBoxMaterial;
-        [SerializeField] ParticleSystem pressureParticleSystem;
+        [SerializeField] protected QuantityFloat temperature;
+        [SerializeField] protected QuantityFloat partialPressure;
+        [SerializeField] protected int numberSpawnedO2Molecules;
+        [SerializeField] protected int numberSpawnedCOMolecules;
+        [SerializeField] protected Material catalystBoxMaterial;
+        [SerializeField] protected ParticleSystem pressureParticleSystem;
 
         public float Temperature => temperature.Value;
         public float PartialPressure => partialPressure.Value;
 
         [Header("Catalyst specific objects")]
-        [SerializeField] CatalystReactor catalystReactor;
-        [SerializeField] CatalystSurface catalystSurfacePrefab;
-        [SerializeField] GameObject catalystReactionBoxGameObject;
-        [SerializeField] Transform catalystReactionBoxPlayerSpawnTransform;
-        [SerializeField] Transform experimentRoomPlayerSpawnTransform;
-        [SerializeField] Transform catalystSurfaceSpawnTransform;
+        [SerializeField] protected CatalystReactor catalystReactor;
+        [SerializeField] protected CatalystSurface catalystSurfacePrefab;
+        [SerializeField] protected GameObject catalystReactionBoxGameObject;
+        [SerializeField] protected Transform catalystReactionBoxPlayerSpawnTransform;
+        [SerializeField] protected Transform experimentRoomPlayerSpawnTransform;
+        [SerializeField] protected Transform catalystSurfaceSpawnTransform;
 
         [Header("Molecule Prefabs")]
-        [SerializeField] Molecule oMoleculePrefab;
-        [SerializeField] Molecule o2MoleculePrefab;
-        [SerializeField] Molecule coMoleculePrefab;
-        [SerializeField] Molecule co2MoleculePrefab;
+        [SerializeField] protected Molecule oMoleculePrefab;
+        [SerializeField] protected Molecule o2MoleculePrefab;
+        [SerializeField] protected Molecule coMoleculePrefab;
+        [SerializeField] protected Molecule co2MoleculePrefab;
 
         [Header("Player specific objects")]
-        [SerializeField] GameObject player;
+        [SerializeField] protected GameObject player;
 
         [Header("UI Elements")]
-        [SerializeField] TextMeshProUGUI stepWiseEnableText;
-        [SerializeField] TextMeshProUGUI currentStepText;
-        [SerializeField] TextMeshProUGUI interactiveSimulationText;
-        [SerializeField] TextMeshProUGUI turnOverRateText;
-        [SerializeField] QuantityPropertyView temperatureView;
-        [SerializeField] QuantityPropertyView partialPressureView;
-        [SerializeField] VRLinearDrive temperatureViewVr;
-        [SerializeField] VRLinearDrive partialPressureViewVr;
-        [SerializeField] WhiteboardController whiteboardController;
-        [SerializeField] WhiteboardController whiteboardControllerBox;
-        [SerializeField] List<Image> theoryImages; // ordered same as the experiment variants!
-        [SerializeField] CatalystVrControlPanel controlPanel;
+        [SerializeField] protected TextMeshProUGUI stepWiseEnableText;
+        [SerializeField] protected TextMeshProUGUI currentStepText;
+        [SerializeField] protected TextMeshProUGUI interactiveSimulationText;
+        [SerializeField] protected TextMeshProUGUI turnOverRateText;
+        [SerializeField] protected QuantityPropertyView temperatureView;
+        [SerializeField] protected QuantityPropertyView partialPressureView;
+        [SerializeField] protected WhiteboardController whiteboardController;
+        [SerializeField] protected WhiteboardController whiteboardControllerBox;
+        [SerializeField] protected List<Image> theoryImages; // ordered same as the experiment variants!
         [Header("order line charts the same as the experiment variant enum!")]
-        [SerializeField] List<XCharts.LineChart> lineCharts;
-        [SerializeField] List<XCharts.LineChart> lineChartsVRBox;
-        [SerializeField] XCharts.GaugeChart progressChart;
-        [SerializeField] GameObject questManagerLabObject;
+        [SerializeField] protected List<LineChart> lineCharts;
+        [SerializeField] protected GaugeChart progressChart;
+        [SerializeField] protected GameObject questManagerLabObject;
         [Header("order quest manager objects the same as the experiment variant enum!")]
-        [SerializeField] List<GameObject> questManagerVariantObjects;
-        
-        private int _freedMoleculeCounter = 0;
-        private int _moleculesToFree = 4;
-        private List<Vector3> _platSpawnPoints = new List<Vector3>();
-        private List<Vector3> _activePlatSpawnPoints = new List<Vector3>();
-        private List<Vector3> _coSpawnPoints = new List<Vector3>();
-        private List<Vector3> _oSpawnPoints = new List<Vector3>();
-        private List<Molecule> _activeMolecules = new List<Molecule>();
-        private CatalystSurface _catalystSurface;
-        
-        private float _currentTurnOverRate = 0.0f;
-        private bool _doStepWiseSimulation = false;
-        private bool _doInteractiveSimulation = true;
+        [SerializeField] protected List<GameObject> questManagerVariantObjects;
 
-        private bool _resetPlayer = false;
+        protected bool isVrVersion;
 
-        private System.Action onReactionStart;
+        protected int _freedMoleculeCounter = 0;
+        protected int _moleculesToFree = 4;
+        protected List<Vector3> _platSpawnPoints = new List<Vector3>();
+        protected List<Vector3> _activePlatSpawnPoints = new List<Vector3>();
+        protected List<Vector3> _coSpawnPoints = new List<Vector3>();
+        protected List<Vector3> _oSpawnPoints = new List<Vector3>();
+        protected List<Molecule> _activeMolecules = new List<Molecule>();
+        protected CatalystSurface _catalystSurface;
 
-        private float _minXValLocal = 0.0f;
-        private float _maxXValLocal = 0.0f;
-        private float _minZValLocal = 0.0f;
-        private float _maxZValLocal = 0.0f;
+        protected float _currentTurnOverRate = 0.0f;
+        protected bool _doStepWiseSimulation = false;
+        protected bool _doInteractiveSimulation = true;
 
-        private List<List<Serie>> _graphSeriesList = new List<List<Serie>>();
-        
-        private static readonly Regex WhiteSpaces = new Regex(@"\s+");
+        protected bool _resetPlayer = false;
+
+        protected System.Action onReactionStart;
+
+        protected float _minXValLocal = 0.0f;
+        protected float _maxXValLocal = 0.0f;
+        protected float _minZValLocal = 0.0f;
+        protected float _maxZValLocal = 0.0f;
+
+        protected List<List<Serie>> _graphSeriesList = new List<List<Serie>>();
+
+        protected static readonly Regex WhiteSpaces = new Regex(@"\s+");
 
         //public const float FixedMoleculeYDist = 0.28f - 0.075f;
         public const float PlatinumScale = 0.14f;
 
-        public static bool IsVrVersion;
         public static bool DoStepWiseSimulation = false;
         public static ExperimentStages CurrentExperimentStage = ExperimentStages.Init;
         public static CatalystVariation ExperimentVariation = CatalystVariation.LangmuirHinshelwood;
@@ -126,42 +120,27 @@ namespace Maroon.Chemistry.Catalyst
             FillActiveSurfaceSpawnPoints(surfaceCoords);
         }
 
-        private void Start()
+        protected virtual void Start()
         {
             catalystReactionBoxGameObject.SetActive(false);
-            IsVrVersion = isVrVersion;
 
             catalystReactor.OnReactorFilled.AddListener(StartExperiment);
             foreach (var chart in lineCharts)
             {
                 chart.gameObject.SetActive(false);
+                _graphSeriesList.Add(new List<Serie>(chart.series.list));
             }
             progressChart.gameObject.SetActive(false);
             progressChart.series.list[0].data[0].data[1] = 0.0f;
-            
-            if (isVrVersion)
-            {
-                foreach (var chart in lineChartsVRBox)
-                {
-                    chart.gameObject.SetActive(false);
-                }
 
-                foreach (var questManagerObject in questManagerVariantObjects)
-                {
-                    questManagerObject.SetActive(false);
-                }
-            }
-            else
+            foreach (var img in theoryImages)
             {
-                foreach (var img in theoryImages)
-                {
-                   img.gameObject.SetActive(false); 
-                }
+                img.gameObject.SetActive(false);
             }
 
-            foreach (var chart in lineCharts)
+            foreach (var questManagerObject in questManagerVariantObjects)
             {
-                _graphSeriesList.Add(new List<Serie>(chart.series.list));
+                questManagerObject.SetActive(false);
             }
         }
 
@@ -169,11 +148,8 @@ namespace Maroon.Chemistry.Catalyst
         {
             if (_doInteractiveSimulation)
                 HandleCatalystSurfaceSetup();
-            if (!isVrVersion)
-                DrawSimulationGraphsPC();
-            else
-                DrawSimulationGraphsVR();
-
+            
+            DrawSimulationGraphs();
             TryEnableQuestManager();
         }
 
@@ -317,8 +293,6 @@ namespace Maroon.Chemistry.Catalyst
                         onReactionStart?.Invoke();
                     });
             }
-            if (controlPanel)
-                controlPanel.Setup(Mathf.Min(MaxXCoord - MinXCoord, MaxZCoord - MinZCoord), _doStepWiseSimulation);
         }
 
         /**
@@ -526,14 +500,8 @@ namespace Maroon.Chemistry.Catalyst
             _maxZValLocal = _activeMolecules.Max(molecule => molecule.gameObject.transform.localPosition.z) - 0.4f;
         }
 
-        private void SetSimulationParametersMinMax(CatalystVariation variation)
+        protected virtual void SetSimulationParametersMinMax(CatalystVariation variation)
         {
-            if (!isVrVersion)
-            {
-                temperatureView.ClearUI();
-                partialPressureView.ClearUI();
-            }
-
             // use faster direct array access since temperature is sorted
             temperature.minValue = CatalystConstants.TemperatureStageValues[(int) variation][0] - 273.15f;
             temperature.maxValue = CatalystConstants.TemperatureStageValues[(int) variation][CatalystConstants.TemperatureStageValues[(int) variation].Length - 1] - 273.15f;
@@ -544,22 +512,14 @@ namespace Maroon.Chemistry.Catalyst
             temperature.Value = temperature.minValue;
             partialPressure.Value = partialPressure.minValue;
 
-            if (isVrVersion)
-            {
-                temperatureViewVr.SetMinMax(temperature.minValue, temperature.maxValue);
-                partialPressureViewVr.SetMinMax(partialPressure.minValue, partialPressure.maxValue);
-                temperatureViewVr.ForceToValue(temperature.minValue);
-                partialPressureViewVr.ForceToValue(partialPressure.minValue);
-            }
-            else
+            if(!isVrVersion)
             {
                 temperatureView.ShowUI();
                 partialPressureView.ShowUI();
             }
-
         }
 
-        private void DrawSimulationGraphsPC()
+        protected virtual void DrawSimulationGraphs()
         {
             LineChart lineChart = lineCharts[(int) ExperimentVariation];
             lineChart.gameObject.SetActive(true);
@@ -576,26 +536,7 @@ namespace Maroon.Chemistry.Catalyst
             }
         }
         
-        private void DrawSimulationGraphsVR()
-        {
-            if (_doInteractiveSimulation)
-            {
-                LineChart lineChartVRBox = lineChartsVRBox[(int) ExperimentVariation];
-                lineChartVRBox.gameObject.SetActive(true);
-                lineChartVRBox.RefreshChart();
-            }
-            else
-            {
-                LineChart lineChart = lineCharts[(int) ExperimentVariation];
-                lineChart.gameObject.SetActive(true);
-                lineChart.series.RemoveAll();
-                StartCoroutine(CoDrawSimulationGraphs(lineChart, _graphSeriesList[(int)ExperimentVariation], 1.6f));
-                progressChart.gameObject.SetActive(true);
-                StartCoroutine(CoDrawProgressGraph());
-            }
-        }
-
-        private IEnumerator CoDrawSimulationGraphs(LineChart lineChart, List<Serie> initialSeries, float waitTime)
+        protected IEnumerator CoDrawSimulationGraphs(LineChart lineChart, List<Serie> initialSeries, float waitTime)
         {
             int serieCount = 0;
             foreach (var initialSerie in initialSeries)
@@ -614,7 +555,7 @@ namespace Maroon.Chemistry.Catalyst
             }
         }
 
-        private IEnumerator CoDrawProgressGraph()
+        protected IEnumerator CoDrawProgressGraph()
         {
             var waitTime = 0f;
             if (ExperimentVariation == CatalystVariation.LangmuirHinshelwood)
@@ -687,7 +628,7 @@ namespace Maroon.Chemistry.Catalyst
             Debug.Log("Stop catalyst simulation");
         }
 
-        public void Reset()
+        public virtual void ResetObject()
         {
             _freedMoleculeCounter = 0;
             EnsureCleanSurface();
@@ -696,7 +637,6 @@ namespace Maroon.Chemistry.Catalyst
             if (_resetPlayer)
                 player.transform.position = experimentRoomPlayerSpawnTransform.position;
             _resetPlayer = false;
-            
 
             StopAllCoroutines();
             RestoreLineGraphObjects();
@@ -706,33 +646,25 @@ namespace Maroon.Chemistry.Catalyst
             }
             progressChart.gameObject.SetActive(false);
             progressChart.series.list[0].data[0].data[1] = 0.0f;
-            if (isVrVersion)
+
+            questManagerLabObject.GetComponent<QuestManager>()?.ResetQuests();
+            foreach (var questManagerVariantObject in questManagerVariantObjects)
             {
-                foreach (var chart in lineChartsVRBox)
-                {
-                    chart.gameObject.SetActive(false);
-                }
-                questManagerLabObject.GetComponent<QuestManager>().ResetQuests();
-                foreach (var questManagerVariantObject in questManagerVariantObjects)
-                {
-                    questManagerVariantObject.GetComponent<QuestManager>().ResetQuests();
-                    questManagerVariantObject.SetActive(false);
-                }
-                if (controlPanel)
-                    controlPanel.ResetToInitialPosition();
+                questManagerVariantObject.GetComponent<QuestManager>()?.ResetQuests();
+                questManagerVariantObject.SetActive(false);
             }
-            else
+
+            foreach (var img in theoryImages)
             {
-                foreach (var img in theoryImages)
-                {
-                    img.gameObject.SetActive(false); 
-                }
+                img.gameObject.SetActive(false); 
             }
 
             _doStepWiseSimulation = false;
             _doInteractiveSimulation = true;
             
             catalystBoxMaterial.color = Color.black;
+
+            ChangExperimentVariation(0);
         }
 
         public void TemperatureChanged(float newTemperature)
