@@ -33,6 +33,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 Destroy(gameObject);
             }
         }
+        
         // Main Update loop
         private void Update()
         {
@@ -72,7 +73,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                     UIManager.Instance.StoreCurrentPosRot(oc);
                     oc.transform.hasChanged = false;
                 }
-                LightComponentManager.Instance.CheckOpticalComponentHit(oc);
+                LightComponentManager.Instance.RecalculateAllLightRoutes();
             }
         }
 
@@ -186,6 +187,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             OpticalComponentManager.Instance.OpticalComponents.RemoveAll(oc => oc.OpticalType != OpticalType.Wall);
             UIManager.Instance.DeactivateAllOpticalControlPanels();
         }
-        
+
     }
 }

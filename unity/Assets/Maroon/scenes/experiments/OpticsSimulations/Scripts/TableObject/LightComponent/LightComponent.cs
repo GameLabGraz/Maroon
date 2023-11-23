@@ -40,10 +40,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
             RecalculateLightRoute();
         }
         
-        public virtual bool CheckHitComponent(OpticalComponent.OpticalComponent oc)
-        {
-            throw new Exception("Should not call base CheckHitComponent Method!");
-        }
+        // public virtual bool CheckHitComponent(OpticalComponent.OpticalComponent oc)
+        // {
+        //     throw new Exception("Should not call base CheckHitComponent Method!");
+        // }
         
         public virtual void RecalculateLightRoute()
         {

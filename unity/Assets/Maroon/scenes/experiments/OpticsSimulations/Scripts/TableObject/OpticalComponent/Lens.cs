@@ -61,7 +61,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             if (Mathf.Abs(1 - dn) > 1E-6)
                 throw new Exception("Lens Error: " + this.n.ToString("f3") + "is not a normalized unit vector.");
             
-            LightComponentManager.Instance.CheckOpticalComponentHit(this);
+            LightComponentManager.Instance.RecalculateAllLightRoutes();
         }
              
         public override void UpdateProperties()

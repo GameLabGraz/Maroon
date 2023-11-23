@@ -23,9 +23,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         [Header("Prefabs: Light Sources")] 
         [SerializeField] private LaserPointer laserPointer;
         [SerializeField] private ParallelSource parallelSource;
-
+        [SerializeField] private PointSource pointSource;
 
         public List<LightComponent> LightComponents => _lightComponents;
+        private Vector3 _basePosition = new Vector3(1, 0, 1);
 
         private void Awake()
         {
@@ -45,13 +46,13 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
 
             // AddLightComponent(laserPointer, new Vector3(1.74f, 0, 0.5f));
             // laserPointer.Wavelength = 720;
-            AddLightComponent(laserPointer, new Vector3(1.70f,0,1.09f));
+            // AddLightComponent(laserPointer, new Vector3(1.70f,0,1.09f));
             //
             // parallelSource.numberOfRays = 10;
             // AddLightComponent(parallelSource, new Vector3(1.70f,0,1.0f));
             //
             // parallelSource.numberOfRays = 30;
-            AddLightComponent(parallelSource, new Vector3(1.70f,0,0.6f));
+            // AddLightComponent(parallelSource, new Vector3(1.70f,0,0.6f));
         }
 
         private void SpawnLaserPointerTestSetup()
@@ -64,7 +65,33 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 // wl += 20;
                 wl += 15;
             }
-            
+        }
+
+        public void AddLightComponent(LightComponent lc, Vector3 pos)
+        {
+            var lsClone = Instantiate(lc, tableLowLeftCorner.transform);
+            lsClone.transform.localPosition = pos;
+            _lightComponents.Add(lsClone);
+            lsClone.RecalculateLightRoute();
+        }
+
+        public void AddLC(int nr)
+        {
+            switch (nr)
+            {
+                case 0:
+                    return;
+                case 1:
+                    AddLightComponent(laserPointer, _basePosition);
+                    break;
+                case 2:
+                    AddLightComponent(parallelSource, _basePosition);
+                    break;
+                case 3:
+                    AddLightComponent(pointSource, _basePosition);
+                    break;
+            }
+            RecalculateAllLightRoutes();
         }
 
         public void RemoveSelectedLC()
@@ -75,24 +102,18 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             {
                 _lightComponents.Remove(selectedLc);
                 selectedLc.RemoveFromTable();
+                
+                RecalculateAllLightRoutes();
                 UIManager.Instance.SelectedLc = null;
                 UIManager.Instance.DeactivateAllLightControlPanels();
             }
         }
 
-        public void CheckOpticalComponentHit(OpticalComponent opticalComponent)
+        public void RecalculateAllLightRoutes()
         {
             foreach (var lightComponent in _lightComponents)
                 lightComponent.RecalculateLightRoute();
         }
-
-        public void AddLightComponent(LightComponent lc, Vector3 pos)
-        {
-            var lsClone = Instantiate(lc, tableLowLeftCorner.transform);
-            lsClone.transform.localPosition = pos;
-            _lightComponents.Add(lsClone);
-        }
-
         
         public void UnselectAll()
         {

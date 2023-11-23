@@ -102,7 +102,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             selectedIntensity.Value = lc.Intensity;
             selectedWavelength.Value = lc.Wavelength;
             
-            
             DeactivateAllLightControlPanels();
             
             switch (_selectedLc.LightType)
@@ -176,6 +175,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         {
             _selectedOc = oc;
             DeactivateAllOpticalControlPanels();
+            StoreCurrentPosRot(_selectedOc);
             
             switch (_selectedOc.OpticalType)
             {
@@ -192,7 +192,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                     SetMirrorControlPanelValues((TableObject.OpticalComponent.Mirror)_selectedOc);
                     break;
             }
-            oc.UpdateProperties();
+             
         }
         
         public void DeactivateAllOpticalControlPanels()
@@ -205,20 +205,19 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         
         private void SetApertureControlPanelValues(Aperture aperture)
         {
-            aperturePanel.SetActive(true);
             apertureRin.Value = aperture.Rin * Constants.InCM;
             apertureRout.Value = aperture.Rout * Constants.InCM;
+            aperturePanel.SetActive(true);
         }
         
         private void SetEyeControlPanelValues(Eye eye)
         {
-            eyePanel.SetActive(true);
             eyeF.Value = eye.f * Constants.InCM;
+            eyePanel.SetActive(true);
         }
         
         private void SetLensControlPanelValues(Lens lens)
         {
-            lensPanel.SetActive(true);
             lensR1.Value = lens.R1 * Constants.InCM;
             lensR2.Value = lens.R2 * Constants.InCM;
             lensRc.Value = lens.Rc * Constants.InCM;
@@ -226,13 +225,14 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             lensD2.Value = lens.d2 * Constants.InCM;
             lensA.Value = lens.A   * Constants.InCM;
             lensB.Value = lens.B   * Constants.InCM;
+            lensPanel.SetActive(true);
         }
         
         private void SetMirrorControlPanelValues(TableObject.OpticalComponent.Mirror mirror)
         {
-            mirrorPanel.SetActive(true);
             mirrorR.Value = mirror.R * Constants.InCM;
             mirrorRc.Value = mirror.Rc * Constants.InCM;
+            mirrorPanel.SetActive(true);
         }
 
         public void UpdateOpticalComponentValues()

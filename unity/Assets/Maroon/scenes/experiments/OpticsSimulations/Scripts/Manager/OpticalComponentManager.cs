@@ -24,6 +24,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         [SerializeField] private Wall wall;
 
         public List<OpticalComponent> OpticalComponents => _opticalComponents;
+        private Vector3 _basePosition = new Vector3(2, 0, 1);
 
         private void Awake()
         {
@@ -40,30 +41,20 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         private void Start()
         {
             AddWalls();
-            AddOpticalComponent(mirror, new Vector3(1.5f, 0, 0.30f));
-            AddOpticalComponent(mirror, new Vector3(1.8f, 0, 0.30f));
-            
-            AddOpticalComponent(aperture, new Vector3(2.1f, 0, 0.30f));
-            AddOpticalComponent(aperture, new Vector3(2.4f, 0, 0.30f));
-            
-            AddOpticalComponent(eye, new Vector3(2.7f, 0, 0.30f));
-            AddOpticalComponent(eye, new Vector3(3.0f, 0, 0.30f));
-            
-            AddOpticalComponent(lens, new Vector3(1f, 0, 0.30f));
+            // AddOpticalComponent(mirror, new Vector3(1.5f, 0, 0.30f));
+            // AddOpticalComponent(mirror, new Vector3(1.8f, 0, 0.30f));
+            //
+            // AddOpticalComponent(aperture, new Vector3(2.1f, 0, 0.30f));
+            // AddOpticalComponent(aperture, new Vector3(2.4f, 0, 0.30f));
+            //
+            // AddOpticalComponent(eye, new Vector3(2.7f, 0, 0.30f));
+            // AddOpticalComponent(eye, new Vector3(3.0f, 0, 0.30f));
+            //
+            // AddOpticalComponent(lens, new Vector3(1f, 0, 0.30f));
         }
 
         private void AddWalls()
         {
-            // _walls[0] = Instantiate(wall, new Vector3(2.0f, 0.0f, 1.0f)  + Constants.TableBaseOffset, Quaternion.Euler(0, 0, 0), tableLowLeftCorner.transform); // Bottom wall
-            // _walls[1] = Instantiate(wall, new Vector3(2.0f, 2.0f, 1.0f)  + Constants.TableBaseOffset, Quaternion.Euler(0, 0, 180), tableLowLeftCorner.transform); // Top wall
-            // _walls[2] = Instantiate(wall, new Vector3(-0.5f, 1.0f, 1.0f) + Constants.TableBaseOffset, Quaternion.Euler(0, 0, -90), tableLowLeftCorner.transform); // Left wall
-            // _walls[3] = Instantiate(wall, new Vector3(4.5f, 1.0f, 1.0f)  + Constants.TableBaseOffset, Quaternion.Euler(0, 0, 90), tableLowLeftCorner.transform); // Right wall
-            // _walls[4] = Instantiate(wall, new Vector3(2.0f, 1.0f, 2.5f)  + Constants.TableBaseOffset, Quaternion.Euler(-90, 0, 0), tableLowLeftCorner.transform); // Back wall
-            // _walls[5] = Instantiate(wall, new Vector3(2.0f, 1.0f, -0.5f) + Constants.TableBaseOffset, Quaternion.Euler(90, 0, 0), tableLowLeftCorner.transform); // Front wall
-            //
-            // foreach (var w in _walls)
-            //     _opticalComponents.Add(w);
-
             // Bottom wall
             var wBot = Instantiate(wall, tableLowLeftCorner.transform);
             wBot.SetProperties(new Vector3(2.0f, -Constants.TableObjectHeight, 1.0f), Vector3.up);
@@ -95,12 +86,38 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             _opticalComponents.Add(wFront);
         }
 
-        public void AddOpticalComponent(OpticalComponent oc, Vector3 pos)
+        public void AddOpticalComponent(OpticalComponent oc, Vector3 pos, Vector3? rot = null)
         {
+            Vector3 rotation = rot ?? new Vector3(0, 0, 0);
+            
             var ocClone = Instantiate(oc, tableLowLeftCorner.transform);
             ocClone.transform.localPosition = pos;
+            ocClone.transform.eulerAngles = rotation;
             ocClone.UpdateProperties();
             _opticalComponents.Add(ocClone);
+        }
+        
+        public void AddOC(int nr)
+        {
+            switch (nr)
+            {
+                case 0:
+                    return;
+                case 1:
+                    AddOpticalComponent(lens, _basePosition);
+                    break;
+                case 2:
+                    AddOpticalComponent(mirror, _basePosition);
+                    break;
+                case 3:
+                    AddOpticalComponent(eye, _basePosition);
+                    break;
+                case 4:
+                    AddOpticalComponent(aperture, _basePosition);
+                    break;
+            }
+            
+            LightComponentManager.Instance.RecalculateAllLightRoutes();
         }
 
         public void RemoveSelectedOC()
@@ -111,6 +128,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             {
                 _opticalComponents.Remove(selectedOc);
                 selectedOc.RemoveFromTable();
+                
+                LightComponentManager.Instance.RecalculateAllLightRoutes();
                 UIManager.Instance.SelectedOc = null;
                 UIManager.Instance.DeactivateAllOpticalControlPanels();
             }

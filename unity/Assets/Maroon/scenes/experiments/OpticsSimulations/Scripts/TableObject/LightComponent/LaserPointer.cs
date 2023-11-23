@@ -23,7 +23,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
         
         public override void RecalculateLightRoute()
         {
+            if (_lightRoute == null)
+                return;
             _lightRoute.ResetLightRoute();
+            _lightRoute = new LightRoute(Wavelength);
 
             var initialRay = new RaySegment(Origin, Intensity, Wavelength, transform.right);
             _lightRoute.AddRaySegment(initialRay);

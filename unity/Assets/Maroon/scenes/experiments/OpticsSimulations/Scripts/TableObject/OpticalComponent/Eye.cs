@@ -25,7 +25,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         private void Start()
         {
             UpdateProperties();
-            LightComponentManager.Instance.CheckOpticalComponentHit(this);
+            LightComponentManager.Instance.RecalculateAllLightRoutes();
         }
 
         public override void UpdateProperties()

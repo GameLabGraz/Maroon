@@ -30,16 +30,28 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
         public void ChangeNumberOfRays(int nrRays)
         {
             numberOfRays = nrRays;
-            foreach (var lr in _lightRoutes)
-                lr.ResetLightRoute();
-            
+            ClearLightRoutes();
             for (int i = 0; i < numberOfRays; i++)
                 _lightRoutes.Add(new LightRoute(Wavelength));
+            
             RecalculateLightRoute();
+        }
+        
+        private void ClearLightRoutes()
+        {
+            _lightRoutes.ForEach(lr => lr.ResetLightRoute());
+            _lightRoutes.Clear();
+
+            for (int i = 0; i < numberOfRays; i++)
+                _lightRoutes.Add(new LightRoute(Wavelength));
         }
         
         public override void RecalculateLightRoute()
         {
+            if (_lightRoutes == null)
+                return;
+            ClearLightRoutes();
+            
             List<Vector3> rayPositions = CalculateRayPositions();
 
             for (int i = 0; i < numberOfRays; i++)
@@ -59,6 +71,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
             Destroy(gameObject);
         }
 
+        // todo den origin der rays richtig berechnen für rotation
+        
         private List<Vector3> CalculateRayPositions()
         {
             List<Vector3> rayPositions = new List<Vector3>();
@@ -66,19 +80,25 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
             // odd
             if (numberOfRays % 2 == 1)
                 for (int i = -half; i <= half; i++)
-                    rayPositions.Add(new Vector3(Origin.x, Origin.y, Origin.z + i * distanceBetweenRays));
+                {
+                    var test = Origin + transform.forward * (i * distanceBetweenRays);
+                    rayPositions.Add(test);
+                }
             // even
             else
                 for (int i = -numberOfRays + 1; i <= numberOfRays - 1; i += 2)
-                    rayPositions.Add(new Vector3(Origin.x, Origin.y, Origin.z + i * (distanceBetweenRays / 2)));
+                {
+                    var test = Origin + transform.forward * (i * (distanceBetweenRays / 2));
+                    rayPositions.Add(test);
+                }
 
             return rayPositions;
         }
         
-        public override bool CheckHitComponent(OpticalComponent.OpticalComponent oc)
-        {
-            return oc == OpticalComponentManager.Instance.GetFirstHitComponent(Origin, transform.right);
-        }
+        // public override bool CheckHitComponent(OpticalComponent.OpticalComponent oc)
+        // {
+        //     return oc == OpticalComponentManager.Instance.GetFirstHitComponent(Origin, transform.right);
+        // }
 
         
     }
