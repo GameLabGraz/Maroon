@@ -49,6 +49,22 @@ namespace ACTA
         }
         public Language preferredLanguage = Language.English;
 
+
+        public enum Teacher
+        {
+            David, Lisa
+        }
+        public Teacher preferredTeacher = Teacher.David;
+
+
+        public enum Tone
+        {
+            advertisement_upbeat, affectionate, angry, assistant, calm, chat, cheerful, customerservice, empathetic, excited, friendly, gentle, hopeful, lyrical, serious, sports_commentary, sports_commentary_excited, whispering
+        }
+        public Tone preferredTone = Tone.assistant;
+
+
+
         void OnEnable()
         {
             if (theVoice == null)
