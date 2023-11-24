@@ -156,13 +156,13 @@ namespace ACTA
         }
 
 
-        public void Update()
+        /*public void Update()
         {
             if (Input.GetKeyUp(KeyCode.Space))
             {
                 speak(whatToSay);
             }
-        }
+        }*/
 
         private void OnApplicationQuit()
         {

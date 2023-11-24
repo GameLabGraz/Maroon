@@ -11,6 +11,8 @@ namespace Valve.VR.InteractionSystem
         public Canvas theCanvas;
         public TextMeshProUGUI theText;
         public int maxCharactersPerLine = 32;
+        public float yShift = 0;
+        public float zShift = 1;
 
         CanvasGroup canvasGroup;
         IEnumerator CurrentFadeRoutine = null;
@@ -18,10 +20,10 @@ namespace Valve.VR.InteractionSystem
         void Start()
         {
             theCamera = GameObject.Find("VRCamera");
-            /*if (theCamera != null)
+            if (theCamera != null)
             {
                 Debug.Log("Speech: found the camera.  it's at " + theCamera.transform.position.ToString());
-            }*/
+            }
             if (theCanvas != null)
             {
                 canvasGroup = theCanvas.GetComponent<CanvasGroup>();
@@ -34,7 +36,7 @@ namespace Valve.VR.InteractionSystem
             if (theCanvas != null)
             {
                 Vector3 cameraPos = theCamera.transform.position;
-                theCanvas.transform.position = new Vector3(cameraPos.x, cameraPos.y, cameraPos.z + 1f);
+                theCanvas.transform.position = new Vector3(cameraPos.x, cameraPos.y + yShift, cameraPos.z + zShift);
             }
         }
 

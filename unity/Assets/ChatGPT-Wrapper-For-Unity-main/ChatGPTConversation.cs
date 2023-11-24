@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using Reqs;
+using System.IO;
+using System;
 
 namespace ChatGPTWrapper {
 
     public class ChatGPTConversation : MonoBehaviour
     {
+
+        public UnityEngine.Object keyFile;        
 
         [SerializeField]
         private bool _useProxy = false;
@@ -14,7 +18,7 @@ namespace ChatGPTWrapper {
 
         [SerializeField]
         private string _apiKey = null;
-
+                
         public enum Model {
             ChatGPT,
             Davinci,
@@ -22,6 +26,8 @@ namespace ChatGPTWrapper {
         }
         [SerializeField]
         public Model _model = Model.ChatGPT;
+
+
         private string _selectedModel = null;
         [SerializeField]
         private int _maxTokens = 500;
@@ -48,18 +54,18 @@ namespace ChatGPTWrapper {
 
         //public string secondaryPrompt = "";
 
-
         public UnityStringEvent chatGPTResponse = new UnityStringEvent();
 
         private void OnEnable()
-        {
-            
+        {              
             TextAsset textAsset = Resources.Load<TextAsset>("APIKEY");
             if (textAsset != null) {
                 _apiKey = textAsset.text;
             }
-            
-            
+
+            GetApiKeyFromFile();
+
+
             _reqHeaders = new List<(string, string)>
             { 
                 ("Authorization", $"Bearer {_apiKey}"),
@@ -166,7 +172,7 @@ namespace ChatGPTWrapper {
                     
                     
 
-                    chatGPTReq.messages.Add(new Message("user", message));                    
+                    //chatGPTReq.messages.Add(new Message("user", message));                    
                     _chat.AppendMessage(Chat.Speaker.User, message);
 
 
@@ -221,6 +227,28 @@ namespace ChatGPTWrapper {
 
             _prompt.AppendText(Prompt.Speaker.Bot, _lastChatGPTMsg);
             chatGPTResponse.Invoke(_lastChatGPTMsg);
+        }
+
+
+        public void GetApiKeyFromFile()
+        {            
+            string path = Application.streamingAssetsPath + "/" + keyFile.name;
+            Debug.Log("dave, path is " + path);
+            try
+            {
+                if (File.Exists(path))
+                {
+                    using (StreamReader sr = new StreamReader(path))
+                    {
+                        _apiKey = sr.ReadLine();                        
+                        sr.Close();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
         }
     }
 }

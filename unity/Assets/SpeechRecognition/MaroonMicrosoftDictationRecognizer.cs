@@ -7,6 +7,7 @@ using GEAR.Localization;
 using ChatGPTWrapper;
 using System.Collections.Generic;
 using ACTA;
+using System.IO;
 
 namespace Valve.VR.InteractionSystem
 {
@@ -18,7 +19,7 @@ namespace Valve.VR.InteractionSystem
         public ChatGPTConversation commandConversation;
         public ChatGPTConversation tutorConversation;
         public ParameterChangerHelper parameterChangerHelper;
-
+        public AzureTTS azureTTS;
 
         enum menuButton
         {
@@ -179,8 +180,11 @@ namespace Valve.VR.InteractionSystem
                 //Debug.Log("Speech: found no commands in chatgpt's response, so let's say it instead");
                 textTips.DisplayTip(s);
 
-                if (narrator != null)
-                    narrator.speak(s);
+                //if (narrator != null)
+                  //  narrator.speak(s);
+
+                if (azureTTS != null)
+                    azureTTS.speak(s);
             }
         }
 
@@ -190,8 +194,10 @@ namespace Valve.VR.InteractionSystem
             Debug.Log("Speech: chatgpt tutor said " + s);
             textTips.DisplayTip(s);
 
-            if (narrator != null)
-                narrator.speak(s);
+            //if (narrator != null)
+                //narrator.speak(s);
+            if (azureTTS != null)
+                azureTTS.speak(s);
         }
 
 
@@ -271,7 +277,8 @@ namespace Valve.VR.InteractionSystem
                     dictationRecognizer.Start();
 
                 //stop talking, fade out etc.
-                narrator.DaveReallyStopSpeech();
+                //narrator.DaveReallyStopSpeech();
+                azureTTS.shutUp();
                 textTips.FadeOut();
 
                 audioSources[0].Play();
@@ -344,5 +351,9 @@ namespace Valve.VR.InteractionSystem
             public string Value { get; }
             public override string ToString() => $"({Tag}, {Value})";
         }
+
+
+       
+
     }
 }

@@ -5,6 +5,7 @@ namespace ChatGPTWrapper {
   	[CustomEditor(typeof(ChatGPTConversation))]
   	public class ChatGPTEditor : Editor
   	{
+        SerializedProperty _keyFile;
         SerializedProperty _useProxy;
         SerializedProperty _proxyUri;
 		SerializedProperty _apiKey;
@@ -29,11 +30,12 @@ namespace ChatGPTWrapper {
 			chatGPTResponse = serializedObject.FindProperty("chatGPTResponse");
 
 		}
-		public override void OnInspectorGUI()
+		/*public override void OnInspectorGUI()
 		{
 			serializedObject.Update();
 			
 			EditorGUILayout.LabelField("Parameters", EditorStyles.boldLabel);
+            EditorGUILayout.PropertyField(_keyFile);
             EditorGUILayout.PropertyField(_useProxy);
             if (_useProxy.boolValue == true) {
 			    EditorGUILayout.PropertyField(_proxyUri);
@@ -60,6 +62,6 @@ namespace ChatGPTWrapper {
 			
 
 			serializedObject.ApplyModifiedProperties();
-		}
+		}*/
   	}
 }
