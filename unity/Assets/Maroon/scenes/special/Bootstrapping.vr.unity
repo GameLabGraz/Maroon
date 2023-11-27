@@ -398,6 +398,24 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 102900000, guid: 3f891920dbf3fa149932c95930bc7d4f,
         type: 3}
+    - target: {fileID: 1147717695, guid: a28715fd0da611f4ca7f64cd5cf99a5e, type: 3}
+      propertyPath: _initialPrompt
+      value: "You are a tutor who is explaining how to use an educational, physics
+        simulation software program called Maroon.  I'm going to show you several
+        examples of commands that a player can give in the program.  \r\n\r\nOnce
+        you have read these items, I'll ask you to explain the program to a potential
+        player.  \r\n\r\nA player can change rooms by saying commands like the following:\r\nTake
+        me to Falling Coil experiment\r\nGo to the Huygen's Principle room\r\nChange
+        to Faraday's Law\r\n\r\nA player can control the playback of an experiment
+        (or simulation) by saying commands like the following:\r\nReset the simulation\r\nStop
+        experiment\r\nStart the simulation\r\nBegin the experiment\r\n\r\nA player
+        can modify attributes of the experiment by saying commands like the following:\r\nChange
+        field lines to 25\r\nModify ring resistance to 40%\r\nTurn iron filings off\r\nSet
+        vector field resolution at 85%\r\nSet magnetic moment to 25%\r\n\r\n\r\nThe
+        player is now in the Lobby.  Since this is not an experiment room, the player
+        can only change rooms from here or ask general questions.\r\n\r\nPlease limit
+        your future responses to 35 words."
+      objectReference: {fileID: 0}
     - target: {fileID: 1604457033, guid: a28715fd0da611f4ca7f64cd5cf99a5e, type: 3}
       propertyPath: _apiKey
       value: 
@@ -439,6 +457,78 @@ PrefabInstance:
       propertyPath: commandConversation
       value: 
       objectReference: {fileID: 378531257}
+    - target: {fileID: 1816658996, guid: a28715fd0da611f4ca7f64cd5cf99a5e, type: 3}
+      propertyPath: experimentScenes.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1816658996, guid: a28715fd0da611f4ca7f64cd5cf99a5e, type: 3}
+      propertyPath: experimentScenes.Array.data[0].unitySceneName
+      value: FallingCoil.vr
+      objectReference: {fileID: 0}
+    - target: {fileID: 1816658996, guid: a28715fd0da611f4ca7f64cd5cf99a5e, type: 3}
+      propertyPath: experimentScenes.Array.data[0].unityScenePath
+      value: Maroon/scenes/experiments/FallingCoil/FallingCoil.vr
+      objectReference: {fileID: 0}
+    - target: {fileID: 1816658996, guid: a28715fd0da611f4ca7f64cd5cf99a5e, type: 3}
+      propertyPath: experimentScenes.Array.data[1].unitySceneName
+      value: HuygensPrinciple.vr
+      objectReference: {fileID: 0}
+    - target: {fileID: 1816658996, guid: a28715fd0da611f4ca7f64cd5cf99a5e, type: 3}
+      propertyPath: experimentScenes.Array.data[1].unityScenePath
+      value: Maroon/scenes/experiments/HuygensPrinciple/HuygensPrinciple.vr
+      objectReference: {fileID: 0}
+    - target: {fileID: 1816658996, guid: a28715fd0da611f4ca7f64cd5cf99a5e, type: 3}
+      propertyPath: experimentScenes.Array.data[2].unitySceneName
+      value: FaradaysLaw.vr
+      objectReference: {fileID: 0}
+    - target: {fileID: 1816658996, guid: a28715fd0da611f4ca7f64cd5cf99a5e, type: 3}
+      propertyPath: experimentScenes.Array.data[2].unityScenePath
+      value: Maroon/scenes/experiments/FaradaysLaw/FaradaysLaw.vr
+      objectReference: {fileID: 0}
+    - target: {fileID: 1816658996, guid: a28715fd0da611f4ca7f64cd5cf99a5e, type: 3}
+      propertyPath: experimentScenes.Array.data[3].unitySceneName
+      value: VandeGraaffGenerator.vr
+      objectReference: {fileID: 0}
+    - target: {fileID: 1816658996, guid: a28715fd0da611f4ca7f64cd5cf99a5e, type: 3}
+      propertyPath: experimentScenes.Array.data[3].unityScenePath
+      value: Maroon/scenes/experiments/VanDeGraaffGenerator/VandeGraaffGenerator.vr
+      objectReference: {fileID: 0}
+    - target: {fileID: 1816658996, guid: a28715fd0da611f4ca7f64cd5cf99a5e, type: 3}
+      propertyPath: experimentScenes.Array.data[0].unitySceneAsset
+      value: 
+      objectReference: {fileID: 102900000, guid: d8668991e0e91ab4a9ada2bee11af03c,
+        type: 3}
+    - target: {fileID: 1816658996, guid: a28715fd0da611f4ca7f64cd5cf99a5e, type: 3}
+      propertyPath: experimentScenes.Array.data[1].unitySceneAsset
+      value: 
+      objectReference: {fileID: 102900000, guid: 787464c5a8cba60459d5a7c7bf2338ab,
+        type: 3}
+    - target: {fileID: 1816658996, guid: a28715fd0da611f4ca7f64cd5cf99a5e, type: 3}
+      propertyPath: experimentScenes.Array.data[2].unitySceneAsset
+      value: 
+      objectReference: {fileID: 102900000, guid: e3fcf3f5c3e930343ac7e497f8211e6d,
+        type: 3}
+    - target: {fileID: 1816658996, guid: a28715fd0da611f4ca7f64cd5cf99a5e, type: 3}
+      propertyPath: experimentScenes.Array.data[3].unitySceneAsset
+      value: 
+      objectReference: {fileID: 102900000, guid: 0cfbaeece20ed354b96b29159cc07e27,
+        type: 3}
+    - target: {fileID: 1816658996, guid: a28715fd0da611f4ca7f64cd5cf99a5e, type: 3}
+      propertyPath: experimentScenes.Array.data[0].isVirtualRealityScene
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1816658996, guid: a28715fd0da611f4ca7f64cd5cf99a5e, type: 3}
+      propertyPath: experimentScenes.Array.data[1].isVirtualRealityScene
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1816658996, guid: a28715fd0da611f4ca7f64cd5cf99a5e, type: 3}
+      propertyPath: experimentScenes.Array.data[2].isVirtualRealityScene
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1816658996, guid: a28715fd0da611f4ca7f64cd5cf99a5e, type: 3}
+      propertyPath: experimentScenes.Array.data[3].isVirtualRealityScene
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1874848085, guid: a28715fd0da611f4ca7f64cd5cf99a5e, type: 3}
       propertyPath: m_SizeDelta.x
       value: 185
@@ -829,8 +919,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4d9dc538981c62409bff8e055ef13a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioSource: {fileID: 0}
   narrator: {fileID: 168283655}
+  preferredGermanVoice: 9
+  preferredEnglishVoice: 1
+  germanVoiceNameList: []
+  englishVoiceNameList: []
 --- !u!1 &1919936739
 GameObject:
   m_ObjectHideFlags: 0

@@ -21,6 +21,13 @@ namespace Valve.VR.InteractionSystem
         public ParameterChangerHelper parameterChangerHelper;
         public AzureTTS azureTTS;
 
+
+        public enum TtsOption
+        {
+            OnDevice, Azure
+        }
+        public TtsOption chosenTTS = TtsOption.Azure;
+
         enum menuButton
         {
             Left, Right
@@ -88,13 +95,12 @@ namespace Valve.VR.InteractionSystem
         public void HandleChatGPTResponse(string s)
         {
             Debug.Log("chatgpt said " + s);
-            textTips.DisplayTipWithFade(s, 2f);
+            //textTips.DisplayTipWithFade(s, 2f);
 
             List<StructuredCommand> commands = ParseTheString(s);
 
             if (commands != null && commands.Count > 0)
-            {
-                //commands.ForEach(p => Debug.Log(p));
+            {                
                 audioSources[1].Play();  // play the recognize tone
 
                 for (int i = 0; i < commands.Count; i++)
@@ -112,22 +118,43 @@ namespace Valve.VR.InteractionSystem
                             //textTips.DisplayTip("let's change the room,\n to " + nextCommand.Value);  
 
                             if (nextCommand.Value.Equals("Falling Coil"))
+                            {
+                                speak(nextCommand.Value);
                                 RequestRoomChange("FallingCoil.vr");
+                            }
                             else if (nextCommand.Value.Equals("Faraday's Law"))
+                            {
+                                speak(nextCommand.Value);
                                 RequestRoomChange("FaradaysLaw.vr");
+                            }
                             else if (nextCommand.Value.Equals("Huygen's Principle"))
+                            {
+                                speak(nextCommand.Value);
                                 RequestRoomChange("HuygensPrinciple.vr");
+                            }
                             else if (nextCommand.Value.Equals("Lobby"))
+                            {
+                                speak(nextCommand.Value);
                                 RequestRoomChange("MainMenu.vr");
+                            }
                             else if (nextCommand.Value.Equals("Van de Graaf Generator"))
+                            {
+                                speak(nextCommand.Value);
                                 RequestRoomChange("VandeGraaffGenerator.vr");
+                            }
                         }
                         else if (command.Value.Equals("modifyVariable"))
                         {
                             StructuredCommand attributeToChange = commands[i + 1];
                             StructuredCommand unit = commands[i + 2];
                             StructuredCommand newValue = commands[i + 3];
-                            //Debug.Log("i need to change " + attributeToChange.Value + " to the new value " + newValue.Value + " " + unit.Value);
+                            //Debug.Log("i need to change " + attributeToChange.Value + " to the new value " + newValue.Value + " " + unit.Value);                                                        
+                            string theString = attributeToChange.Value + ": " + newValue.Value;
+                            if (unit.Value.Equals("percent"))
+                            {
+                                theString += " " + unit.Value;
+                            }
+                            textTips.DisplayTipWithFade(theString, 1.5f);
 
                             if (attributeToChange.Equals("ShowChargeButton"))
                             {
@@ -167,11 +194,17 @@ namespace Valve.VR.InteractionSystem
 
                         }
                         else if (command.Value.Equals("startExperiment"))
+                        {
                             SimulationController.Instance.StartSimulation();
+                        }
                         else if (command.Value.Equals("stopExperiment"))
+                        {
                             SimulationController.Instance.StopSimulation();
+                        }
                         else if (command.Value.Equals("resetExperiment"))
+                        {
                             SimulationController.Instance.ResetSimulation();
+                        }
                     }
                 }
             }
@@ -179,27 +212,31 @@ namespace Valve.VR.InteractionSystem
             {
                 //Debug.Log("Speech: found no commands in chatgpt's response, so let's say it instead");
                 textTips.DisplayTip(s);
-
-                //if (narrator != null)
-                  //  narrator.speak(s);
-
-                if (azureTTS != null)
-                    azureTTS.speak(s);
+                speak(s);
             }
         }
 
+
+        public void speak(string whatToSay)
+        {
+            if (chosenTTS.Equals(TtsOption.Azure))
+            {
+                if (azureTTS != null)
+                    azureTTS.speak(whatToSay, true);
+            }
+            else
+            {
+                if (narrator != null)
+                    narrator.speak(whatToSay);
+            }
+        }
 
         public void HandleChatGPTtutorResponse(string s)
         {
             Debug.Log("Speech: chatgpt tutor said " + s);
             textTips.DisplayTip(s);
-
-            //if (narrator != null)
-                //narrator.speak(s);
-            if (azureTTS != null)
-                azureTTS.speak(s);
+            speak(s);
         }
-
 
         private void HandleLanguageChange(SystemLanguage lang)
         {
@@ -221,6 +258,8 @@ namespace Valve.VR.InteractionSystem
 
         private void HandleRoomChange(UnityEngine.SceneManagement.Scene currentScene, UnityEngine.SceneManagement.LoadSceneMode loadMode)
         {
+            Debug.Log("dave, they have changed rooms, and now they're in <" + currentScene.name + ">");
+
             int foundIndex = Array.FindIndex(experimentScenes, element => element.SceneName.Equals(currentScene.name));
             if (foundIndex >= 0)
             {
@@ -231,12 +270,27 @@ namespace Valve.VR.InteractionSystem
                     {
                         Debug.Log("Speech: the language manager says that the language is " + languageManager.CurrentLanguage.ToString());
                         languageManager.OnLanguageChanged.AddListener(HandleLanguageChange);
-
                     }
                 }
 
-                // here's where i would load up a second system prompt                
-                //LoadExperimentSpecificTutorPrompt(foundIndex + 1);
+                string basePrompt = "You are a tutor who is explaining how to use an educational, physics simulation software program called Maroon.  I'm going to show you several examples of commands that a player can give in the program.  \r\n\r\nOnce you have read these items, I'll ask you to explain the program to a potential player.  \r\n\r\nA player can change rooms by saying commands like the following:\r\nTake me to Falling Coil experiment\r\nGo to the Huygen's Principle room\r\nChange to Faraday's Law\r\n\r\nA player can control the playback of an experiment (or simulation) by saying commands like the following:\r\nReset the simulation\r\nStop experiment\r\nStart the simulation\r\nBegin the experiment\r\n\r\nA player can modify attributes of the experiment by saying commands like the following:\r\nChange field lines to 25\r\nModify ring resistance to 40%\r\nTurn iron filings off\r\nSet vector field resolution at 85%\r\nSet magnetic moment to 25%\r\n\r\n\r\n";
+                string endPrompt = "\r\nPlease limit your future responses to 35 words.";
+                string roomSpecificPrompt = "\r\nThe player is now in the Lobby.  Since this is not an experiment room, the player can only change rooms from here or ask general questions.";
+
+                // here's where i load up a room-specific tutor prompt                
+                if (currentScene.name.Equals("FallingCoil.vr"))
+                {
+                    roomSpecificPrompt = "\r\nThe player is now in the Falling Coil Experiment Room.  Here’s some info about that room that will help you explain things to the player if they have questions.\r\n\r\nThe Falling Coil experiment demonstrates the dynamics between a permanent magnet and a conductive non-magnetic ring. The magnet is positioned above a table and interacts with the coil falling down because of gravity. When the coil enters the magnetic field of the magnet, it induces an electric current. This leads to a magnetic field created by the coil, which interacts with the magnetic field of the magnet. If the current is high enough, the acting force pushes the coil upwards. However, the experiment output depends on the parameters of the coil and the magnet. The coil is defined by its mass, resistance, and self-inductance. The magnet is characterized by its magnetic moment, a.k.a magnet dipole moment. Users can change these parameters to observe the change in magnetic flux and the induced current. Additional visualizations such as field lines, vector fields or iron filling make the experiment more interactive and allow the user to see invisible phenomena to get a better understanding of the underlying concepts.";                    
+                }
+                else if (currentScene.name.Equals("MainMenu.vr"))
+                {
+                    roomSpecificPrompt = "\r\nThe player is now in the Lobby.  Since this is not an experiment room, the player can only change rooms from here or ask general questions.";                    
+                }
+                else if (currentScene.name.Equals("HuygensPrinciple.vr"))
+                {
+                    roomSpecificPrompt = "\r\nThe player is now in the Huygen's Principle Room.  The Huygens’s Principle Experiment uses water waves in a basin to demonstrate the physical concept of diffraction. It is a phenomenon that occurs when a wave hits an obstacle or a slit. To show the effect of diffraction, a slit plate is placed into the basin. When a wave hits this plate, the points on the wave act as a new source of secondary waves that propagate. This results in an interference pattern behind the plate. To obtain different interference patterns, the user can replace the plate with three types of slit plates. The experiment is influenced by the user by grabbing and moving the plates and changing physical parameters such as frequency, amplitude, wavelength, or the propagation mode.";                                        
+                }
+                tutorConversation.ResetChat(basePrompt + roomSpecificPrompt + endPrompt);
             }
             else
             {
@@ -245,27 +299,18 @@ namespace Valve.VR.InteractionSystem
         }
 
 
-        /*void LoadExperimentSpecificTutorPrompt(int desiredIndex)
-        {
-            string promptToLoad = roomSpecificPrompts[desiredIndex];            
-            tutorConversation.ReplaceSecondaryPrompt(promptToLoad);
-            Debug.Log("Speech: just loaded this prompt: " + promptToLoad);
-        }*/
-
         void RequestRoomChange(string roomName)
         {
+            //speak(roomName);
             string sceneName = System.IO.Path.GetFileName(roomName);
-            Maroon.CustomSceneAsset sceneAsset;
-            //sceneAsset = SceneManager.Instance.getScenesFromAllCategories().Find(element => sceneName == element.SceneName);
+            Maroon.CustomSceneAsset sceneAsset;            
             sceneAsset = SceneManager.Instance.GetSceneAssetBySceneName(sceneName);
             SceneManager.Instance.LoadSceneRequest(sceneAsset);
-
         }
 
 
         void Update()
         {
-
             if (SteamVR_Actions.default_Fire.GetStateDown(SteamVR_Input_Sources.Any))
             {
                 if (SteamVR_Actions.default_Fire.GetStateDown(SteamVR_Input_Sources.LeftHand))
@@ -277,22 +322,18 @@ namespace Valve.VR.InteractionSystem
                     dictationRecognizer.Start();
 
                 //stop talking, fade out etc.
-                //narrator.DaveReallyStopSpeech();
-                azureTTS.shutUp();
+                if (chosenTTS.Equals(TtsOption.Azure))
+                    azureTTS.shutUp();
+                else
+                    narrator.DaveReallyStopSpeech();
+                
                 textTips.FadeOut();
 
                 audioSources[0].Play();
             }
         }
 
-        /*
-        void OnGUI()
-        {
-            listeningString = "<" + dictationRecognizer.Status.ToString() + ">";
-            GUI.Label(new Rect(10, 10, 400, 20), listeningString);
-            GUI.Label(new Rect(10, 30, 400, 20), displayString);
-        }
-        */
+        
         private List<StructuredCommand> ParseTheString(string stringToBeParsed)
         {
             List<StructuredCommand> commands = new List<StructuredCommand>();
@@ -352,8 +393,6 @@ namespace Valve.VR.InteractionSystem
             public override string ToString() => $"({Tag}, {Value})";
         }
 
-
-       
 
     }
 }

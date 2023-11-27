@@ -52,9 +52,9 @@ namespace ACTA
 
         public enum Teacher
         {
-            David, Lisa
+            David, Lisa, NoPreference
         }
-        public Teacher preferredTeacher = Teacher.David;
+        public Teacher preferredTeacher = Teacher.NoPreference;
 
 
         public enum Tone
@@ -62,8 +62,6 @@ namespace ACTA
             advertisement_upbeat, affectionate, angry, assistant, calm, chat, cheerful, customerservice, empathetic, excited, friendly, gentle, hopeful, lyrical, serious, sports_commentary, sports_commentary_excited, whispering
         }
         public Tone preferredTone = Tone.assistant;
-
-
 
         void OnEnable()
         {
@@ -93,8 +91,6 @@ namespace ACTA
         public void speak(string whatToSay, bool interruptable = true)
         {
             ChangeTheVoice();
-            
-            
 
             string speakerPreferences = "<voice required=";  //<voice required=\"Gender=Male\">
             if (preferredGender.Equals(Gender.Male))            
@@ -111,7 +107,6 @@ namespace ACTA
 
             speakerPreferences += ">";
 
-
             whatToSay = speakerPreferences + whatToSay;
             //Debug.Log("Speech: here's what i'm sending the narrator: " + whatToSay);
 
@@ -119,7 +114,6 @@ namespace ACTA
             var data = encoding.GetBytes(whatToSay);
             if (interruptable)
             {
-                //clearSpeechQueue();
                 DaveReallyStopSpeech();
             }
             addToSpeechQueue(data);
@@ -148,8 +142,7 @@ namespace ACTA
 
         public void ChangeTheVoice()
         {
-            changeVoice(voiceIdx);
-            
+            changeVoice(voiceIdx);            
         }
          
         IEnumerator CheckIfImStillTalking()
@@ -171,14 +164,6 @@ namespace ACTA
             }
         }
 
-
-        /*public void Update()
-        {
-            if (Input.GetKeyUp(KeyCode.Space))
-            {
-                speak(whatToSay);
-            }
-        }*/
 
         private void OnApplicationQuit()
         {
