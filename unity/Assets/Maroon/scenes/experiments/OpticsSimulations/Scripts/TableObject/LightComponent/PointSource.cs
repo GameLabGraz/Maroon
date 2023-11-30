@@ -8,18 +8,16 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
 {
     public class PointSource : LightComponent
     {
-        [Header("Parallel Source Settings")] 
-        private List<LightRoute> _lightRoutes;
-        
         public int numberOfRays = 40;
         
         private void Start()
         {
-            _lightRoutes = new List<LightRoute>();
+            LightRoutes = new List<LightRoute>();
             Origin = transform.localPosition;
 
-            for (int i = 0; i < numberOfRays; i++)
-                _lightRoutes.Add(new LightRoute(Wavelength));
+            foreach (var wl in Wavelengths)
+                for (int i = 0; i < numberOfRays; i++)
+                    LightRoutes.Add(new LightRoute(wl));
 
             RecalculateLightRoute();
         }
@@ -27,60 +25,44 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
         public void ChangeNumberOfRays(int nrRays)
         {
             numberOfRays = nrRays;
-            // foreach (var lr in _lightRoutes)
-            //     lr.ResetLightRoute();
             
-            ClearLightRoutes();
-            for (int i = 0; i < numberOfRays; i++)
-                _lightRoutes.Add(new LightRoute(Wavelength));
+            ResetLightRoutes(numberOfRays);
+            foreach (var wl in Wavelengths)
+                for (int i = 0; i < numberOfRays; i++)
+                    LightRoutes.Add(new LightRoute(wl));
             
             RecalculateLightRoute();
         }
 
-        private void ClearLightRoutes()
+        public override void RecalculateLightRoute()
         {
-            _lightRoutes.ForEach(lr => lr.ResetLightRoute());
-            _lightRoutes.Clear();
+            if (LightRoutes == null)
+                return;
+            ResetLightRoutes(numberOfRays);
 
-            for (int i = 0; i < numberOfRays; i++)
-                _lightRoutes.Add(new LightRoute(Wavelength));
-        }
-        
-        
+            float angle = 0;
+            float angleDelta = 360f / numberOfRays;
+
+            int pos = 0;
+            foreach (var wl in Wavelengths)
+                for (int i = 0; i < numberOfRays; i++)
+                {
+                    Vector3 dir = Quaternion.Euler(0, angle, 0) * Vector3.right;
+                    var initialRay = new RaySegment(Origin, Intensity, wl, transform.rotation * dir);
+                    LightRoutes[pos].AddRaySegment(initialRay);
+                    LightRoutes[pos].CalculateNextRay(initialRay);
+                    pos++;
+                    angle += angleDelta;
+                }
+            
         // public override bool CheckHitComponent(OpticalComponent.OpticalComponent oc)
         // {
         //     throw new NotImplementedException("CheckHitComponent Method not implemented for PointSource!");
         //     // return false;
         // }
-        
-        public override void RecalculateLightRoute()
-        {
-            if (_lightRoutes == null)
-                return;
-            ClearLightRoutes();
-
-            float angle = 0;
-            float angleDelta = 360f / numberOfRays;
-
-            for (int i = 0; i < numberOfRays; i++)
-            {
-                Vector3 dir = Quaternion.Euler(0, angle, 0) * Vector3.right;
-                var initialRay = new RaySegment(Origin, Intensity, Wavelength, transform.rotation * dir);
-                _lightRoutes[i].AddRaySegment(initialRay);
-                _lightRoutes[i].CalculateNextRay(initialRay);
-                
-                angle += angleDelta;
-            }
-            
             
         }
         
-        public override void RemoveFromTable()
-        {
-            foreach (var lr in _lightRoutes)
-                lr.ResetLightRoute();
-            Destroy(gameObject);
-        }
         
     }
 }

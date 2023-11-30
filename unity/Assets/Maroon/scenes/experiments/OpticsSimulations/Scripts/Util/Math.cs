@@ -27,6 +27,13 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Util
                    !(desiredPos.z > Constants.MaxPositionTable.z);
         }
         
+        public static void CropToTableBounds(ref Vector3 desiredPos)
+        {
+            desiredPos.x = Mathf.Max(Constants.MinPositionTable.x, Mathf.Min(desiredPos.x, Constants.MaxPositionTable.x));
+            desiredPos.y = Mathf.Max(Constants.MinPositionTable.y, Mathf.Min(desiredPos.y, Constants.MaxPositionTable.y));
+            desiredPos.z = Mathf.Max(Constants.MinPositionTable.z, Mathf.Min(desiredPos.z, Constants.MaxPositionTable.z));
+        }
+        
         // index of refraction of the environment
         public static float Nenv(float lambda, float A, float B)
         { 

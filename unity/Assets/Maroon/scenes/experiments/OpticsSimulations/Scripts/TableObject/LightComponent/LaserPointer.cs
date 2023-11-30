@@ -9,34 +9,31 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
 {
     public class LaserPointer : LightComponent
     {
-        [Header("Laser Pointer Settings")] 
-        private LightRoute _lightRoute;
-
-        public LightRoute LightRoute => _lightRoute;
-
         private void Start()
         {
-            _lightRoute = new LightRoute(Wavelength);
+            LightRoutes = new List<LightRoute>();
             Origin = transform.localPosition;
+
+            foreach (var wl in Wavelengths)
+                LightRoutes.Add(new LightRoute(wl));
+            
             RecalculateLightRoute();
         }
         
         public override void RecalculateLightRoute()
         {
-            if (_lightRoute == null)
+            if (LightRoutes == null)
                 return;
-            _lightRoute.ResetLightRoute();
-            _lightRoute = new LightRoute(Wavelength);
+            
+            ResetLightRoutes(1);
 
-            var initialRay = new RaySegment(Origin, Intensity, Wavelength, transform.right);
-            _lightRoute.AddRaySegment(initialRay);
-            _lightRoute.CalculateNextRay(initialRay);
+            for (int i = 0; i < Wavelengths.Count; i++) // We got Wavelengths.Count many LightRoutes
+            {
+                var initialRay = new RaySegment(Origin, Intensity, Wavelengths[i], transform.right);
+                LightRoutes[i].AddRaySegment(initialRay);
+                LightRoutes[i].CalculateNextRay(initialRay);
+            }
         }
-
-        public override void RemoveFromTable()
-        {
-            _lightRoute.ResetLightRoute();
-            Destroy(gameObject);
-        }
+        
     }
 }

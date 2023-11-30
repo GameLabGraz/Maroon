@@ -40,6 +40,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             _lightComponents = new List<LightComponent>();
         }
 
+        /*
         private void Start()
         {
             // SpawnLaserPointerTestSetup();
@@ -53,8 +54,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             //
             // parallelSource.numberOfRays = 30;
             // AddLightComponent(parallelSource, new Vector3(1.70f,0,0.6f));
-        }
+        }*/
 
+        /*
         private void SpawnLaserPointerTestSetup()
         {
             int wl = 382;
@@ -65,12 +67,17 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 // wl += 20;
                 wl += 15;
             }
-        }
+        }*/
 
-        public void AddLightComponent(LightComponent lc, Vector3 pos)
+        public void AddLightComponent(LightComponent lc, Vector3 pos, List<float> wavelengths = null)
         {
+            if (wavelengths == null)
+                wavelengths = new List<float> {720f};
+            
             var lsClone = Instantiate(lc, tableLowLeftCorner.transform);
             lsClone.transform.localPosition = pos;
+            lsClone.Wavelengths = wavelengths;
+            
             _lightComponents.Add(lsClone);
             lsClone.RecalculateLightRoute();
         }

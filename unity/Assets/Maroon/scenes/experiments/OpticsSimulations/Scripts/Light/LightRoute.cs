@@ -99,7 +99,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
                 case OpticalType.Lens:
                     Lens lens = (Lens) hitComponent;
                     (float distanceToLens, RaySegment reflectionLens, RaySegment refractionLens) = lens.CalculateDistanceReflectionRefraction(inRay);
-                    Debug.Log("lens dist: "+ distanceToLens.ToString("F3"));
+                    // Debug.Log("lens dist: "+ distanceToLens.ToString("F3"));
                     inRay.UpdateLength(distanceToLens);
                     if (reflectionLens != null)
                     {

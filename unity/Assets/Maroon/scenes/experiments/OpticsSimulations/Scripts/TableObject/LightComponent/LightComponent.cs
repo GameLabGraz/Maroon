@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
 using UnityEngine;
 
@@ -12,7 +13,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
         
         [Header("Light Properties")] 
         [SerializeField] private float intensity;
-        [SerializeField] private float wavelength;
+        // [SerializeField] private float wavelength;
+        [SerializeField] private List<float> wavelengths;
+        private List<LightRoute> _lightRoutes;  // Depending on the number of wavelengths and rays
 
         private Vector3 _origin;
 
@@ -22,20 +25,35 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
             get => intensity;
             set => intensity = value;
         }
-        public float Wavelength
+        public List<float> Wavelengths
         {
-            get => wavelength;
-            set => wavelength = value;
+            get => wavelengths;
+            set => wavelengths = value;
+        }
+        public List<LightRoute> LightRoutes
+        {
+            get => _lightRoutes;
+            set => _lightRoutes = value;
         }
         public Vector3 Origin
         {
             get => _origin;
             set => _origin = value;
         }
-
-        public void ChangeWavelengthAndIntensity(float wl, float it)
+        
+        protected void ResetLightRoutes(int nrRays)
         {
-            wavelength = wl;
+            _lightRoutes.ForEach(lr => lr.ResetLightRoute());
+            _lightRoutes.Clear();
+
+            foreach (var wl in Wavelengths)
+                for (int i = 0; i < nrRays; i++)
+                    _lightRoutes.Add(new LightRoute(wl));
+        }
+
+        public void ChangeWavelengthAndIntensity(List<float> wls, float it)
+        {
+            wavelengths = wls;
             intensity = it;
             RecalculateLightRoute();
         }
@@ -50,10 +68,12 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
             throw new Exception("Should not call base RecalculateLightRoute Method!");
         }
 
-        // public virtual void RemoveFromTable()
-        // {
-        //     throw new Exception("Should not call base RemoveFromTable Method!");
-        // }
+        public override void RemoveFromTable()
+        {
+            foreach (var lr in LightRoutes)
+                lr.ResetLightRoute();
+            Destroy(gameObject);
+        }
 
     }
     

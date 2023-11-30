@@ -10,19 +10,17 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
 {
     public class ParallelSource : LightComponent
     {
-        [Header("Parallel Source Settings")] 
-        private List<LightRoute> _lightRoutes;
-
         public int numberOfRays = 20;
         public float distanceBetweenRays = Constants.LaserWidth * 3;
 
         private void Start()
         {
-            _lightRoutes = new List<LightRoute>();
+            LightRoutes = new List<LightRoute>();
             Origin = transform.localPosition;
 
-            for (int i = 0; i < numberOfRays; i++)
-                _lightRoutes.Add(new LightRoute(Wavelength));
+            foreach (var wl in Wavelengths)
+                for (int i = 0; i < numberOfRays; i++)
+                    LightRoutes.Add(new LightRoute(wl));
 
             RecalculateLightRoute();
         }
@@ -30,46 +28,35 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
         public void ChangeNumberOfRays(int nrRays)
         {
             numberOfRays = nrRays;
-            ClearLightRoutes();
-            for (int i = 0; i < numberOfRays; i++)
-                _lightRoutes.Add(new LightRoute(Wavelength));
+            ResetLightRoutes(numberOfRays);
+            
+            foreach (var wl in Wavelengths)
+                for (int i = 0; i < numberOfRays; i++)
+                    LightRoutes.Add(new LightRoute(wl));
             
             RecalculateLightRoute();
         }
         
-        private void ClearLightRoutes()
-        {
-            _lightRoutes.ForEach(lr => lr.ResetLightRoute());
-            _lightRoutes.Clear();
-
-            for (int i = 0; i < numberOfRays; i++)
-                _lightRoutes.Add(new LightRoute(Wavelength));
-        }
-        
         public override void RecalculateLightRoute()
         {
-            if (_lightRoutes == null)
+            if (LightRoutes == null)
                 return;
-            ClearLightRoutes();
+            ResetLightRoutes(numberOfRays);
             
             List<Vector3> rayPositions = CalculateRayPositions();
-
-            for (int i = 0; i < numberOfRays; i++)
-            {
-                _lightRoutes[i].ResetLightRoute();
-                
-                var initialRay = new RaySegment(rayPositions[i], Intensity, Wavelength, transform.right);
-                _lightRoutes[i].AddRaySegment(initialRay);
-                _lightRoutes[i].CalculateNextRay(initialRay);
-            }
+            
+            int pos = 0;
+            foreach (var wl in Wavelengths)
+                foreach (var rp in rayPositions)
+                {
+                    LightRoutes[pos].ResetLightRoute();
+                    var initialRay = new RaySegment(rp, Intensity, wl, transform.right);
+                    LightRoutes[pos].AddRaySegment(initialRay);
+                    LightRoutes[pos].CalculateNextRay(initialRay);
+                    pos++;
+                }
         }
         
-        public override void RemoveFromTable()
-        {
-            foreach (var lr in _lightRoutes)
-                lr.ResetLightRoute();
-            Destroy(gameObject);
-        }
 
         // todo den origin der rays richtig berechnen für rotation
         
