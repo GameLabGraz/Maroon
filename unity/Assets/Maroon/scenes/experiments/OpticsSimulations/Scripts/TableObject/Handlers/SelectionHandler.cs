@@ -66,12 +66,12 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handle
             if (_componentType == ComponentType.OpticalComponent)
             {
                 OpticalComponentManager.Instance.UnselectAll();
-                UIManager.Instance.ActivateOpticalControlPanel((OpticalComponent.OpticalComponent)GetComponent<TableObject>());
+                UIManager.Instance.ActivateOpticalControlPanel(GetComponent<OpticalComponent.OpticalComponent>());
             }
             else
             {
                 LightComponentManager.Instance.UnselectAll();
-                UIManager.Instance.ActivateLightControlPanel((LightComponent.LightComponent)GetComponent<TableObject>());
+                UIManager.Instance.ActivateLightControlPanel(GetComponent<LightComponent.LightComponent>());
             }
                 
             Select();

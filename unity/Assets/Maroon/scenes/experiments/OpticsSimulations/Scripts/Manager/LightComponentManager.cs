@@ -79,7 +79,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             lsClone.Wavelengths = wavelengths;
             
             _lightComponents.Add(lsClone);
-            lsClone.RecalculateLightRoute();
         }
 
         public void AddLC(int nr)
@@ -89,16 +88,15 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 case 0:
                     return;
                 case 1:
-                    AddLightComponent(laserPointer, _basePosition);
+                    AddLightComponent(laserPointer, _basePosition, laserPointer.Wavelengths);
                     break;
                 case 2:
-                    AddLightComponent(parallelSource, _basePosition);
+                    AddLightComponent(parallelSource, _basePosition, parallelSource.Wavelengths);
                     break;
                 case 3:
-                    AddLightComponent(pointSource, _basePosition);
+                    AddLightComponent(pointSource, _basePosition, pointSource.Wavelengths);
                     break;
             }
-            RecalculateAllLightRoutes();
         }
 
         public void RemoveSelectedLC()
@@ -110,7 +108,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 _lightComponents.Remove(selectedLc);
                 selectedLc.RemoveFromTable();
                 
-                RecalculateAllLightRoutes();
                 UIManager.Instance.SelectedLc = null;
                 UIManager.Instance.DeactivateAllLightControlPanels();
             }

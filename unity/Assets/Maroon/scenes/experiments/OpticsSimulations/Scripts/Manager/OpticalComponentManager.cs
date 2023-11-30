@@ -116,8 +116,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                     AddOpticalComponent(aperture, _basePosition);
                     break;
             }
-            
-            LightComponentManager.Instance.RecalculateAllLightRoutes();
         }
 
         public void RemoveSelectedOC()

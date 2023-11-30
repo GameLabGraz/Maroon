@@ -50,12 +50,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             {
                 var lc = UIManager.Instance.SelectedLc;
                 
-                UIManager.Instance.UpdateLightComponentValues();
                 
                 if (lc.transform.hasChanged)
                 {
                     lc.Origin = lc.transform.localPosition;
-                    lc.RecalculateLightRoute();
                     UIManager.Instance.StoreCurrentPosRot(lc);
                     lc.transform.hasChanged = false;
                 }
@@ -65,7 +63,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             if (UIManager.Instance.SelectedOc != null)
             {
                 var oc = UIManager.Instance.SelectedOc;
-                UIManager.Instance.UpdateOpticalComponentValues();
+                // UIManager.Instance.UpdateOpticalComponentValues();
                 
                 if (oc.transform.hasChanged)
                 {
@@ -73,7 +71,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                     UIManager.Instance.StoreCurrentPosRot(oc);
                     oc.transform.hasChanged = false;
                 }
-                LightComponentManager.Instance.RecalculateAllLightRoutes();
             }
         }
 

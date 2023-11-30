@@ -13,7 +13,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
         
         [Header("Light Properties")] 
         [SerializeField] private float intensity;
-        // [SerializeField] private float wavelength;
         [SerializeField] private List<float> wavelengths;
         private List<LightRoute> _lightRoutes;  // Depending on the number of wavelengths and rays
 
@@ -51,9 +50,14 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
                     _lightRoutes.Add(new LightRoute(wl));
         }
 
-        public void ChangeWavelengthAndIntensity(List<float> wls, float it)
+        public void ChangeWavelength(List<float> wls)
         {
             wavelengths = wls;
+            RecalculateLightRoute();
+        }
+        
+        public void ChangeIntensity(float it)
+        {
             intensity = it;
             RecalculateLightRoute();
         }

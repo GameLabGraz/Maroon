@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -27,7 +28,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         private OpticalComponent _selectedOc;
         private GameObject _activeLcPanel;
         private GameObject _activeOcPanel;
-        private bool _singleWavelength = true;
 
         [Header("Prefabs: Control Panels")]
         [SerializeField] private GameObject aperturePanel;
@@ -37,11 +37,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         [SerializeField] private GameObject laserPointerPanel;
         [SerializeField] private GameObject parallelSourcePanel;
         [SerializeField] private GameObject pointSourcePanel;
-        [SerializeField] private GameObject wavelengths;
-        
         
         [Header("Light Parameters")]
-        public QuantityFloat selectedWavelength;
+        // public Quantity<List<float>> selectedWavelength;
+        public QuantityFloat sliderWavelength;
         public QuantityFloat selectedIntensity;
         public QuantityInt numberOfRays;
         public QuantityFloat distanceBetweenRays;
@@ -101,11 +100,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         public void ActivateLightControlPanel(LightComponent lc)
         {
             _selectedLc = lc;
-            selectedIntensity.Value = lc.Intensity;
-            selectedWavelength.Value = lc.Wavelengths.First();       // todo
-            
+            selectedIntensity.Value = _selectedLc.Intensity;
             DeactivateAllLightControlPanels();
-            
+
             switch (_selectedLc.LightType)
             {
                 case LightType.LaserPointer:
@@ -119,8 +116,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                     break;
             }
 
+            // Set wavelength textfield and slider to match lightComponents wavelength
+            WavelengthSliderLogic(lc.Wavelengths);
             StoreCurrentPosRot(_selectedLc);
-            lc.RecalculateLightRoute(); // todo check if call necessary 
         }
         
         public void DeactivateAllLightControlPanels()
@@ -152,14 +150,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             _activeLcPanel = pointSourcePanel;
         }
 
+        // Is triggered on change of selectedIntensity OR numberOfRays OR distBetweenRays
         public void UpdateLightComponentValues()
         {
-            if (_singleWavelength)
-            {
-                _selectedLc.ChangeWavelengthAndIntensity(new List<float>{selectedWavelength.Value}, selectedIntensity.Value);
-                wavelengths.GetComponent<InputField>().text = selectedWavelength.Value.ToString("f2");
-            }
-            
+            _selectedLc.ChangeIntensity(selectedIntensity.Value);
             switch (_selectedLc.LightType)
             {
                 case LightType.LaserPointer:
@@ -179,30 +173,51 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             }
         }
 
-        public void ParseWavelengthsArray(string wls)
+        // Triggered by sliderWavelength onChange or when text field input has only one value
+        public void UpdateWavelengthTextSingle()
         {
-            wls = wls.Replace(" ", "");
-            wls = wls.Trim(',');
+            _selectedLc.ChangeWavelength(new List<float> {sliderWavelength.Value});
+            float textNr = (float)Math.Round(sliderWavelength.Value, 2);
+            GetWavelengthTextInput().text = textNr.ToString(CultureInfo.InvariantCulture);
+            SetWavelengthSlider(true);
+        }
 
-            string[] splitWl = wls.Split(',');
-            List<float> wavelengths = new List<float>();
+        // Triggered only when textfield (wavelengths) is changed by user
+        public void ParseWavelengthsArray(string wavelengthText)
+        {
+            wavelengthText = wavelengthText.Replace(" ", "");
+            wavelengthText = wavelengthText.Trim(',');
+
+            string[] splitWl = wavelengthText.Split(',');
+            List<float> wls = new List<float>();
             
             foreach (string wl in splitWl)
                 if (float.TryParse(wl.Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out float f))
-                    wavelengths.Add(f);
+                    wls.Add(f);
 
-            if (_selectedLc != null)
-                _selectedLc.ChangeWavelengthAndIntensity(wavelengths, selectedIntensity.Value);
+            WavelengthSliderLogic(wls);
+        }
 
-            if (wavelengths.Count > 1)
+        private void WavelengthSliderLogic(List<float> wls)
+        {
+            // 1. Set UI slider to first entry of the wl-list (does not matter if we got multiple)
+            sliderWavelength.Value = wls.First();
+
+            // 2. Change true light component value
+            _selectedLc.ChangeWavelength(wls);
+            
+            // 3. Activate/Deactivate slider and update wavelength textfield
+            if (wls.Count == 1)
             {
-                _singleWavelength = false;
-                SetWavelengthSlider(false);
+                UpdateWavelengthTextSingle();
             }
             else
             {
-                _singleWavelength = true;
-                SetWavelengthSlider(true);
+                SetWavelengthSlider(false);
+                
+                List<string> roundedNumbers = wls.Select(n => Math.Round(n, 2).ToString(CultureInfo.InvariantCulture)).ToList();
+                string textWls = String.Join(",", roundedNumbers);
+                GetWavelengthTextInput().text = textWls;
             }
         }
 
@@ -211,9 +226,13 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             if (_activeLcPanel != null)
             {
                 var tmp = _activeLcPanel.transform.Find("Content");
-                tmp.Find("TextWavelength").gameObject.SetActive(show);
                 tmp.Find("QuantityViewWavelength").gameObject.SetActive(show);
             }
+        }
+
+        private InputField GetWavelengthTextInput()
+        {
+            return _activeLcPanel.transform.Find("Content").Find("TextInputWavelengths").GetComponent<InputField>();
         }
         
         public void SetLcPositionFromUI(Vector3 posCm)
@@ -372,20 +391,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 ocPos.Value = posCm;
         }
         
-        // public void SetOcRotationFromUI(Vector3 rot)
-        // {
-        //     Vector3 rotNormal = rot.normalized;
-        //
-        //     Vector3 rotNormalRounded = new Vector3(
-        //         (float)Math.Round(rotNormal.x, 3),
-        //         (float)Math.Round(rotNormal.y, 3),
-        //         (float)Math.Round(rotNormal.z, 3)
-        //     );
-        //     
-        //     if (ocRot.Value != rotNormalRounded)
-        //         ocRot.Value = rotNormalRounded;
-        // }
-        
         public void UpdateOcRotation()
         {
             _selectedOc.transform.right = ocRot.Value.normalized;
@@ -393,8 +398,11 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         
         // ----------------------------------- General -----------------------------------
 
+        public void RecalculateSelectedLcLightRoute()
+        {
+            _selectedLc.RecalculateLightRoute();
+        }
         
-
         public void StoreCurrentPosRot(TableObject.TableObject to)
         {
             var pos = to.transform.localPosition;
