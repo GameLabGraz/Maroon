@@ -21,7 +21,7 @@ namespace Valve.VR.InteractionSystem
         private GrammarRecognizer grammarRecognizerExperiment;
         private UnityEngine.Object[] selectedGrammarSet;
 
-        private string displayString, listeningString;
+        //private string displayString, listeningString;
         AudioSource[] audioSources;
         bool alreadySetupLanguage = false;
         TextTips textTips;
@@ -48,8 +48,8 @@ namespace Valve.VR.InteractionSystem
             else if (systemLang == SystemLanguage.German)
                 selectedGrammarSet = germanGrammarFiles;
 
-            displayString = "";
-            listeningString = "";
+            //displayString = "";
+            //listeningString = "";
 
             LoadGeneralGrammar();
             

@@ -238,7 +238,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &644522253
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -425,6 +425,44 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 102900000, guid: c2ac7db362874f44f8103e5e07d54fd8,
         type: 3}
+    - target: {fileID: 1604457033, guid: a28715fd0da611f4ca7f64cd5cf99a5e, type: 3}
+      propertyPath: _initialPrompt
+      value: "Whenever i say something, i'd like you to try to guess my intent by
+        giving back to me a formatted response.  First, i'll show you a section that
+        defines the possible values for each tag.  Lastly, I'll provide several examples,
+        along with the correct response.\r\nThe <command> tag can have the values
+        \"changeRoom\",\"startExperiment\", \"stopExperiment\", and \"resetExperiment\".\r\nThe
+        <room> tag can have the values \"Lobby\", \"Falling Coil\",\"Huygen's Principle\",
+        and \"Faraday's Law\".\r\nThe <unit> tag can have the values \"ordinal\",
+        \"amount\", and \"percent\".\r\nThe <attribute> tag can have the values \"field
+        lines\", \"ring resistance\", \"iron filings\", \"field resolution\", \"number
+        of slits\", \"slit width\", \"wave amplitude\", \"wave length\", \"wave frequency\",
+        \"\x16propagation mode\", and \"magnetic moment\".\r\nLastly, the <newValue>
+        tag can have the values \"on\", \"off\", \"rectilinear\", \"circular\", or
+        a nonnegative number, such as \"7\", \".25\", or \"100\".\r\n\r\n\r\nTake
+        me to Falling Coil experiment\r\n{<command>=\"changeRoom\"; <room>=\"Falling
+        Coil\"}\r\n\r\n\r\nGo to the Huygen's Principle room\r\n{<command>=\"changeRoom\";
+        <room>=\"Huygen's Principle\"}\r\n\r\n\r\nChange to Faraday's Law\r\n{<command>=\"changeRoom\";
+        <room>=\"Faraday's Law\"}\r\n\r\n\r\nReset the simulation\r\n{<command>=\"resetExperiment\"}\r\n\r\n\r\nStop
+        experiment\r\n{<command>=\"stopExperiment\"}\r\n\r\n\r\nStart the simulation\r\n{<command>=\"startExperiment\"}\r\n\r\n\r\nBegin
+        the experiment\r\n{<command>=\"startExperiment\"}\r\n\r\n\r\nChange field
+        lines to 25\r\n{<command>=\"modifyVariable\"; <attribute>=\"field lines\";
+        <unit>=\"amount\"; <newValue>=\"25\"}\r\n\r\n\r\nModify ring resistance to
+        40%\r\n{<command>=\"modifyVariable\"; <attribute>=\"ring resistance\"; <unit>=\"percent\";
+        <newValue>=\"40\"}\r\n\r\n\r\nTurn iron filings off\r\n{<command>=\"modifyVariable\";
+        <attribute>=\"iron filings\"; <unit>=\"ordinal\"; <newValue>=\"off\"}\r\n\r\n\r\nChange
+        propagation mode to rectilinear\r\n{<command>=\"modifyVariable\"; <attribute>=\"propagation
+        mode\"; <unit>=\"ordinal\"; <newValue>=\"rectilinear\"}\r\n\r\n\r\nSet vector
+        field resolution at 85%\r\n{<command>=\"modifyVariable\"; <attribute>=\"field
+        resolution\"; <unit>=\"percent\"; <newValue>=\"85\"}\r\n\r\n\r\nSet magnetic
+        moment to 25%\r\n{<command>=\"modifyVariable\"; <attribute>=\"magnetic moment\";
+        <unit>=\"percent\"; <newValue>=\"25\"}\r\n\r\n\r\nSet wave length to 2.5\r\n{<command>=\"modifyVariable\";
+        <attribute>=\"wave length\"; <unit>=\"amount\"; <newValue>=\"2.5\"}\r\n\r\n\r\nFinally,
+        there may be some typos in my future requests.  Please do your best to guess
+        what I meant on the first try.  For instance, if I say \"following coil\",
+        you should understand that really meant \"falling coil\". After this prompt,
+        you should only respond with formatted responses like those above."
+      objectReference: {fileID: 0}
     - target: {fileID: 1604457033, guid: a28715fd0da611f4ca7f64cd5cf99a5e, type: 3}
       propertyPath: chatGPTResponse.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 0
@@ -707,6 +745,108 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &1065478761 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2102624535730973020, guid: a28715fd0da611f4ca7f64cd5cf99a5e,
+    type: 3}
+  m_PrefabInstance: {fileID: 796429066}
+  m_PrefabAsset: {fileID: 0}
+--- !u!82 &1065478762
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1065478761}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 52e0e572efe44424a91f851eb5a3b2e9, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &1516797261 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 140929214, guid: a28715fd0da611f4ca7f64cd5cf99a5e,
@@ -919,6 +1059,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4d9dc538981c62409bff8e055ef13a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  keyFile: {fileID: 102900000, guid: 7e4e6759b9324ac45abe970bb5a61eb5, type: 3}
   narrator: {fileID: 168283655}
   preferredGermanVoice: 9
   preferredEnglishVoice: 1

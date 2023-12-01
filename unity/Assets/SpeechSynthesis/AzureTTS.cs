@@ -7,10 +7,13 @@ using static ACTA.Narrator;
 using ACTA;
 using System.Linq;
 using System.Collections.Generic;
-using UnityEngine.UI;
+using Microsoft.CognitiveServices.Speech.Audio;
+using System.IO;
+using System;
 
 public class AzureTTS : MonoBehaviour
 {
+    public UnityEngine.Object keyFile;
     public Narrator narrator;    
     
     public enum GermanVoice
@@ -32,7 +35,7 @@ public class AzureTTS : MonoBehaviour
     public IEnumerable<VoiceInfo> germanVoices;
     public IEnumerable<VoiceInfo> englishVoices;
 
-    private const string SubscriptionKey = "7d4a4b4e6fe347198f9ae1f6185b449b";
+    private string SubscriptionKey;
     private const string Region = "eastus";    
     private SpeechConfig speechConfig;
     private SpeechSynthesizer synthesizer;
@@ -40,15 +43,39 @@ public class AzureTTS : MonoBehaviour
     IEnumerable<VoiceInfo> allTheVoices;
     
 
-
     void Start()
     {
+        GetApiKeyFromFile();
+
         speechConfig = SpeechConfig.FromSubscription(SubscriptionKey, Region);
         speechConfig.SetSpeechSynthesisOutputFormat(SpeechSynthesisOutputFormat.Raw24Khz16BitMonoPcm);            
         synthesizer = new SpeechSynthesizer(speechConfig);
         speechConfig.SpeechSynthesisLanguage = "en-US";
         speechConfig.SpeechSynthesisVoiceName = "en-US-JennyNeural";   
-        GetVoices();        
+        GetVoices();
+    }
+
+
+
+    public void GetApiKeyFromFile()
+    {
+        string path = Application.streamingAssetsPath + "/" + keyFile.name;
+        Debug.Log("dave, path is " + path);
+        try
+        {
+            if (File.Exists(path))
+            {
+                using (StreamReader sr = new StreamReader(path))
+                {
+                    SubscriptionKey = sr.ReadLine();
+                    sr.Close();
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogException(e);
+        }
     }
 
     public async Task GetVoices ()
@@ -136,7 +163,7 @@ public class AzureTTS : MonoBehaviour
 
             string postfixString = "</mstts:express-as> </voice></speak>";
             whatToSay = prefixString + whatToSay.TrimEnd() + postfixString;
-            Debug.Log("dave" + whatToSay);
+            //Debug.Log("dave" + whatToSay);
             await synthesizer.SpeakSsmlAsync(whatToSay);
         }
         else
@@ -148,11 +175,12 @@ public class AzureTTS : MonoBehaviour
             tips.FadeOut();
     }
 
+
     public void shutUp()
     {
         synthesizer.StopSpeakingAsync();
     }
-
+      
     public void Update()
     {        
         if (Input.GetKeyDown(KeyCode.T))

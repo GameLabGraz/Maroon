@@ -181,7 +181,7 @@ namespace ChatGPTWrapper {
 
                     Debug.Log("---  dave, in chatgptconversation, about to send a message. chat now has this many messages: " + chatGPTReq.messages.Count.ToString());
                     //Debug.Log(message);
-                    foreach (Message msg in chatGPTReq.messages) { Debug.Log("------  " + msg.role + ", " + msg.content); }
+                    //foreach (Message msg in chatGPTReq.messages) { Debug.Log("------  " + msg.role + ", " + msg.content); }
 
                     
                     

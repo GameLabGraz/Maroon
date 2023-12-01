@@ -1,11 +1,10 @@
 using GameLabGraz.VRInteraction;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ParameterChangerHelper : MonoBehaviour
-{    
-    public void SetLinearDriveValue(string handleName, string unit, int newValue)
+{
+    //public void SetLinearDriveValue(string handleName, string unit, int newValue)
+    public void SetLinearDriveValue(string handleName, string unit, float newValue)
     {        
         VRLinearDrive theDriveIWant = FindParticularInactiveDriveInChildren("ExperimentDrawer", handleName);
 
@@ -37,6 +36,7 @@ public class ParameterChangerHelper : MonoBehaviour
             else
             {
                 //Debug.Log("Speech: so they want to change value, not percent, to <" + newValue.ToString() + ">");
+                
                 theDriveIWant.ForceToValue(newValue);
             }
             parent.SetActive(previousParentActiveSetting);

@@ -43,7 +43,7 @@ namespace Valve.VR.InteractionSystem
         public string[] roomSpecificPrompts;
 
 
-        private string displayString, listeningString;
+        //private string displayString, listeningString;
         AudioSource[] audioSources;
         bool alreadySetupLanguage = false;
 
@@ -61,8 +61,8 @@ namespace Valve.VR.InteractionSystem
             SystemLanguage systemLang = Application.systemLanguage;
 
 
-            displayString = "";
-            listeningString = "";
+            //displayString = "";
+            //listeningString = "";
             dictationRecognizer = new DictationRecognizer();
 
             dictationRecognizer.DictationResult += (text, confidence) =>
@@ -71,6 +71,7 @@ namespace Valve.VR.InteractionSystem
                 if (dictationRecognizer.Status.Equals(SpeechSystemStatus.Running))
                     dictationRecognizer.Stop();
 
+                Debug.Log(Time.time.ToString());
                 Debug.LogFormat("Dictation result: <{0}> with <{1}>% confidence", text, confidence.ToString());
                 if (lastButtonPressed == menuButton.Left && commandConversation != null)
                 {
@@ -84,16 +85,20 @@ namespace Valve.VR.InteractionSystem
 
             dictationRecognizer.DictationError += (error, hresult) =>
             {
+                Debug.Log(Time.time.ToString());
                 Debug.LogErrorFormat("Dictation error: {0}; HResult = {1}.", error, hresult);
             };
 
             //dictationRecognizer.Start();
             textTips.DisplayTip("Welcome to Maroon!\nPress the left menu button to issue a command, or the right menu button if you need help.");
+            Debug.Log(Time.time.ToString());
+            Debug.Log("begin experiment");
         }
 
 
         public void HandleChatGPTResponse(string s)
         {
+            Debug.Log(Time.time.ToString());
             Debug.Log("chatgpt said " + s);
             //textTips.DisplayTipWithFade(s, 2f);
 
@@ -106,14 +111,15 @@ namespace Valve.VR.InteractionSystem
                 for (int i = 0; i < commands.Count; i++)
                 {
                     StructuredCommand command = commands[i];
-                    Debug.Log(command.ToString());
+                    //Debug.Log(Time.time.ToString());
+                    //Debug.Log(command.ToString());
 
                     if (command.Tag.Equals("command"))
                     {
                         if (command.Value.Equals("changeRoom"))
                         {
                             StructuredCommand nextCommand = commands[i + 1];
-
+                            Debug.Log(Time.time.ToString());
                             Debug.Log("let's change the room, to " + nextCommand.Value);
                             //textTips.DisplayTip("let's change the room,\n to " + nextCommand.Value);  
 
@@ -183,14 +189,27 @@ namespace Valve.VR.InteractionSystem
                                 else
                                     Debug.Log("Speech: the script PARENT was null");
                             }
+                            
+                            else if (attributeToChange.Value.Equals("propagation mode"))
+                                parameterChangerHelper.SetLinearDriveValue("PropagationModeHandle", unit.Value, float.Parse(newValue.Value));
+                            else if (attributeToChange.Value.Equals("wave frequency"))
+                                parameterChangerHelper.SetLinearDriveValue("WaveFrequencyHandle", unit.Value, float.Parse(newValue.Value));
+                            else if (attributeToChange.Value.Equals("wave length"))
+                                parameterChangerHelper.SetLinearDriveValue("WaveLengthHandle", unit.Value, float.Parse(newValue.Value));
+                            else if (attributeToChange.Value.Equals("wave amplitude"))
+                                parameterChangerHelper.SetLinearDriveValue("WaveAmplitudeHandle", unit.Value, float.Parse(newValue.Value));
+                            else if (attributeToChange.Value.Equals("slit width"))
+                                parameterChangerHelper.SetLinearDriveValue("SlitWidthHandle", unit.Value, float.Parse(newValue.Value));
+                            else if (attributeToChange.Value.Equals("number of slits"))
+                                parameterChangerHelper.SetLinearDriveValue("NumSlitsHandle", unit.Value, float.Parse(newValue.Value));
                             else if (attributeToChange.Value.Equals("field lines"))
-                                parameterChangerHelper.SetLinearDriveValue("FieldLinesHandle", unit.Value, int.Parse(newValue.Value));
+                                parameterChangerHelper.SetLinearDriveValue("FieldLinesHandle", unit.Value, float.Parse(newValue.Value));
                             else if (attributeToChange.Value.Equals("ring resistance"))
-                                parameterChangerHelper.SetLinearDriveValue("RingResistanceHandle", unit.Value, int.Parse(newValue.Value));
+                                parameterChangerHelper.SetLinearDriveValue("RingResistanceHandle", unit.Value, float.Parse(newValue.Value));
                             else if (attributeToChange.Value.Contains("field resolution"))
-                                parameterChangerHelper.SetLinearDriveValue("VecFieldResHandle", unit.Value, int.Parse(newValue.Value));
+                                parameterChangerHelper.SetLinearDriveValue("VecFieldResHandle", unit.Value, float.Parse(newValue.Value));
                             else if (attributeToChange.Value.Contains("magnetic moment"))
-                                parameterChangerHelper.SetLinearDriveValue("MagneticMomentHandle", unit.Value, int.Parse(newValue.Value));
+                                parameterChangerHelper.SetLinearDriveValue("MagneticMomentHandle", unit.Value, float.Parse(newValue.Value));
 
                         }
                         else if (command.Value.Equals("startExperiment"))
@@ -233,6 +252,7 @@ namespace Valve.VR.InteractionSystem
 
         public void HandleChatGPTtutorResponse(string s)
         {
+            Debug.Log(Time.time.ToString());
             Debug.Log("Speech: chatgpt tutor said " + s);
             textTips.DisplayTip(s);
             speak(s);
@@ -258,6 +278,7 @@ namespace Valve.VR.InteractionSystem
 
         private void HandleRoomChange(UnityEngine.SceneManagement.Scene currentScene, UnityEngine.SceneManagement.LoadSceneMode loadMode)
         {
+            Debug.Log(Time.time.ToString());
             Debug.Log("dave, they have changed rooms, and now they're in <" + currentScene.name + ">");
 
             int foundIndex = Array.FindIndex(experimentScenes, element => element.SceneName.Equals(currentScene.name));
@@ -280,15 +301,19 @@ namespace Valve.VR.InteractionSystem
                 // here's where i load up a room-specific tutor prompt                
                 if (currentScene.name.Equals("FallingCoil.vr"))
                 {
-                    roomSpecificPrompt = "\r\nThe player is now in the Falling Coil Experiment Room.  Here’s some info about that room that will help you explain things to the player if they have questions.\r\n\r\nThe Falling Coil experiment demonstrates the dynamics between a permanent magnet and a conductive non-magnetic ring. The magnet is positioned above a table and interacts with the coil falling down because of gravity. When the coil enters the magnetic field of the magnet, it induces an electric current. This leads to a magnetic field created by the coil, which interacts with the magnetic field of the magnet. If the current is high enough, the acting force pushes the coil upwards. However, the experiment output depends on the parameters of the coil and the magnet. The coil is defined by its mass, resistance, and self-inductance. The magnet is characterized by its magnetic moment, a.k.a magnet dipole moment. Users can change these parameters to observe the change in magnetic flux and the induced current. Additional visualizations such as field lines, vector fields or iron filling make the experiment more interactive and allow the user to see invisible phenomena to get a better understanding of the underlying concepts.";                    
+                    roomSpecificPrompt = "\r\nThe player is now in the Falling Coil Experiment Room.  Here’s some info about that room that will help you explain things to the player if they have questions.\r\n\r\nThe Falling Coil experiment demonstrates the dynamics between a permanent magnet and a conductive non-magnetic ring. The magnet is positioned above a table and interacts with the coil falling down because of gravity. When the coil enters the magnetic field of the magnet, it induces an electric current. This leads to a magnetic field created by the coil, which interacts with the magnetic field of the magnet. If the current is high enough, the acting force pushes the coil upwards. However, the experiment output depends on the parameters of the coil and the magnet. The coil is defined by its mass, resistance, and self-inductance. The magnet is characterized by its magnetic moment, a.k.a magnet dipole moment. Users can change these parameters to observe the change in magnetic flux and the induced current. Additional visualizations such as field lines, vector fields or iron filling make the experiment more interactive and allow the user to see invisible phenomena to get a better understanding of the underlying concepts.\r\n\r\nIn this room, the player can change the following settings: field lines, magnetic moment, ring resistance, vector field resolution, and iron filings.";
                 }
                 else if (currentScene.name.Equals("MainMenu.vr"))
                 {
-                    roomSpecificPrompt = "\r\nThe player is now in the Lobby.  Since this is not an experiment room, the player can only change rooms from here or ask general questions.";                    
+                    roomSpecificPrompt = "\r\nThe player is now in the Lobby.  Since this is not an experiment room, the player can only change rooms from here or ask general questions.";
                 }
                 else if (currentScene.name.Equals("HuygensPrinciple.vr"))
                 {
-                    roomSpecificPrompt = "\r\nThe player is now in the Huygen's Principle Room.  The Huygens’s Principle Experiment uses water waves in a basin to demonstrate the physical concept of diffraction. It is a phenomenon that occurs when a wave hits an obstacle or a slit. To show the effect of diffraction, a slit plate is placed into the basin. When a wave hits this plate, the points on the wave act as a new source of secondary waves that propagate. This results in an interference pattern behind the plate. To obtain different interference patterns, the user can replace the plate with three types of slit plates. The experiment is influenced by the user by grabbing and moving the plates and changing physical parameters such as frequency, amplitude, wavelength, or the propagation mode.";                                        
+                    roomSpecificPrompt = "\r\nThe player is now in the Huygens’s Principle Experiment Room.  Here’s some info about that room that will help you explain things to the player if they have questions.\r\n\r\nThe Huygens’s Principle Experiment uses water waves in a basin to demonstrate the physical concept of diffraction. It is a phenomenon that occurs when a wave hits an obstacle or a slit. To show the effect of diffraction, a slit plate is placed into the basin. When a wave hits this plate, the points on the wave act as a new source of secondary waves that propagate. This results in an interference pattern behind the plate. To obtain different interference patterns, the user can replace the plate with three types of slit plates. The experiment is influenced by the user by grabbing and moving the plates and changing physical parameters such as frequency, amplitude, wavelength, or the propagation mode. To make the wave peaks and wave trough more visible, the wave color can be changed using a color wheel.\r\n\r\nIn this room, the player can change the following settings: number of slits, slit width, wave amplitude, wave frequency, wave length, and propagation mode.";
+                }
+                else if (currentScene.name.Equals("FaradaysLaw.vr"))
+                {
+                    roomSpecificPrompt = "\r\nThe player is now in the Faraday’s Law Experiment Room.  Here’s some info about that room that will help you explain things to the player if they have questions.\r\n\r\nThe Faraday’s Law Experiment shows the principle of induction when interacting with a permanent magnet and a conductive non-magnetic ring. Whenever the user moves the magnet, it causes a change in the magnetic flux and induces an electric current that generates another magnetic field. Through different visualizations the invisible magnetic field becomes visible and helps the user to better understand the underlying concepts. The virtual controls allow the user to influence the result of the experiment by changing the parameters of the magnet and the coil. The special feature of this experiment is the haptic feedback from the controllers, which allows the user to feel the acting forces. The controller vibrates as soon as a physical force acts on the magnet, where low vibration means a weak force, and high vibration means a heavy force.\r\n\r\nIn this room, the player can change the following settings: field lines, magnetic moment, ring resistance, vector field resolution, and iron filings.";
                 }
                 tutorConversation.ResetChat(basePrompt + roomSpecificPrompt + endPrompt);
             }
@@ -314,9 +339,13 @@ namespace Valve.VR.InteractionSystem
             if (SteamVR_Actions.default_Fire.GetStateDown(SteamVR_Input_Sources.Any))
             {
                 if (SteamVR_Actions.default_Fire.GetStateDown(SteamVR_Input_Sources.LeftHand))
-                    lastButtonPressed = menuButton.Left;
+                {
+                    lastButtonPressed = menuButton.Left;                    
+                }
                 else if (SteamVR_Actions.default_Fire.GetStateDown(SteamVR_Input_Sources.RightHand))
+                {
                     lastButtonPressed = menuButton.Right;
+                }
 
                 if (!dictationRecognizer.Status.Equals(SpeechSystemStatus.Running))
                     dictationRecognizer.Start();
@@ -329,7 +358,21 @@ namespace Valve.VR.InteractionSystem
                 
                 textTips.FadeOut();
 
-                audioSources[0].Play();
+                //audioSources[0].Play();
+
+                if (lastButtonPressed == menuButton.Left)
+                {
+                    audioSources[2].Play();
+                    //if (narrator != null)
+                    //narrator.speak("command?");
+                    //speak("what's your command?");
+                }
+                else if (lastButtonPressed == menuButton.Right)
+                {
+                    audioSources[0].Play();
+                    //if (narrator != null)
+                    //narrator.speak("tutor");
+                }
             }
         }
 
@@ -342,10 +385,8 @@ namespace Valve.VR.InteractionSystem
             {
                 string[] separatedString = stringToBeParsed.Split(';');
 
-
                 if (separatedString.Length > 0)
                 {
-
                     for (int i = 0; i < separatedString.Length; i++)
                     {
                         string s = separatedString[i];
