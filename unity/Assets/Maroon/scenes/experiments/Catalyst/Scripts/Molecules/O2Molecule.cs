@@ -17,7 +17,7 @@ namespace Maroon.Chemistry.Catalyst
                     StartCoroutine(DissociateO2());
                 }
             }
-            else if (State == MoleculeState.Fixed && CatalystController.ExperimentVariation == ExperimentVariation.EleyRideal)
+            else if (State == MoleculeState.Fixed && CatalystController.ExperimentVariation == CatalystVariation.EleyRideal)
             {
                 // in eley-rideal dissociate based on turn over frequency
                 if (Random.Range(0, 100) > 100 - CurrentTurnOverRate)

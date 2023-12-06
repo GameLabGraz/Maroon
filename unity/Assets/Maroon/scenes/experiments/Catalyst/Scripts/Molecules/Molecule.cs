@@ -2,6 +2,8 @@
 using System.Collections;
 using Maroon.Physics;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace Maroon.Chemistry.Catalyst
@@ -60,7 +62,9 @@ namespace Maroon.Chemistry.Catalyst
 
         protected float CurrentTurnOverRate = 0.0f;
 
-        public MoleculeType Type { get => type; }
+        public MoleculeType Type => type;
+
+        public UnityEvent OnReactionStarted;
 
         /**
          * Property to set state as well as handle RigidbodyConstraints. Always use this to
@@ -127,8 +131,8 @@ namespace Maroon.Chemistry.Catalyst
             // scale this between 0 - 1 for movement speed (0,508 max for van Krevelen)
             temperature.Value = newTemp;
             float offsetToZero = 0;
-            if (CatalystController.ExperimentVariation == ExperimentVariation.LangmuirHinshelwood ||
-                CatalystController.ExperimentVariation == ExperimentVariation.EleyRideal)
+            if (CatalystController.ExperimentVariation == CatalystVariation.LangmuirHinshelwood ||
+                CatalystController.ExperimentVariation == CatalystVariation.EleyRideal)
             {
                 offsetToZero = 23.15f;
             }
@@ -150,6 +154,8 @@ namespace Maroon.Chemistry.Catalyst
         public void ReactionStart()
         {
             ReactionStarted = true;
+            OnReactionStarted?.Invoke();
+
             ReactionStart_Impl();
         }
 
@@ -181,7 +187,7 @@ namespace Maroon.Chemistry.Catalyst
         protected override void Start()
         {
             base.Start();
-            if (CatalystController.ExperimentVariation == ExperimentVariation.MarsVanKrevelen)
+            if (CatalystController.ExperimentVariation == CatalystVariation.MarsVanKrevelen)
                 FixedMoleculeYDist -= 0.005f; // cobalt is 0.005 smaller
             GetRandomPositionAndRotation();
         }
@@ -267,7 +273,7 @@ namespace Maroon.Chemistry.Catalyst
             State = MoleculeState.Fixed;
             transform.position = new Vector3(NewMoleculePosition.x, NewMoleculePosition.y, NewMoleculePosition.z);
             transform.localRotation = Quaternion.Euler(0.0f, 0.0f, 90.0f);
-            if (type == MoleculeType.O2 && CatalystController.ExperimentVariation != ExperimentVariation.EleyRideal)
+            if (type == MoleculeType.O2 && CatalystController.ExperimentVariation != CatalystVariation.EleyRideal)
                 State = MoleculeState.WaitingToDissociate;
         }
 

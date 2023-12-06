@@ -5,10 +5,9 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using GameLabGraz.QuestManager;
-using GameLabGraz.VRInteraction;
+using GEAR.Gadgets.Extensions;
 using Maroon.Physics;
 using Maroon.UI;
-using PrivateAccess;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,187 +16,87 @@ using Random = UnityEngine.Random;
 
 namespace Maroon.Chemistry.Catalyst
 {
-    public enum ExperimentVariation
-    {
-        LangmuirHinshelwood,
-        MarsVanKrevelen,
-        EleyRideal
-    }
-
-    public enum ExperimentStages
-    {
-        Init,
-        CODesorb,
-        O2Desorb,
-        COAdsorb,
-        O2Adsorb_O2Dissociate,
-        OFillSurface,
-        OReactCO_CO2Desorb
-    }
-
-    public class CatalystController : MonoBehaviour
+    public class CatalystController : MonoBehaviour, IResetObject
     {
         [Header("Simulation Parameters")]
-        [SerializeField] bool isVrVersion;
-        [SerializeField] QuantityFloat temperature;
-        [SerializeField] QuantityFloat partialPressure;
-        [SerializeField] int numberSpawnedO2Molecules;
-        [SerializeField] int numberSpawnedCOMolecules;
-        [SerializeField] Material catalystBoxMaterial;
-        [SerializeField] ParticleSystem pressureParticleSystem;
-        
+        [SerializeField] protected QuantityFloat temperature;
+        [SerializeField] protected QuantityFloat partialPressure;
+        [SerializeField] protected int numberSpawnedO2Molecules;
+        [SerializeField] protected int numberSpawnedCOMolecules;
+        [SerializeField] protected Material catalystBoxMaterial;
+        [SerializeField] protected ParticleSystem pressureParticleSystem;
+
+        public float Temperature => temperature.Value;
+        public float PartialPressure => partialPressure.Value;
+
         [Header("Catalyst specific objects")]
-        [SerializeField] CatalystReactor catalystReactor;
-        [SerializeField] CatalystSurface catalystSurfacePrefab;
-        [SerializeField] GameObject catalystReactionBoxGameObject;
-        [SerializeField] Transform catalystReactionBoxPlayerSpawnTransform;
-        [SerializeField] Transform experimentRoomPlayerSpawnTransform;
-        [SerializeField] Transform catalystSurfaceSpawnTransform;
+        [SerializeField] protected CatalystReactor catalystReactor;
+        [SerializeField] protected CatalystSurface catalystSurfacePrefab;
+        [SerializeField] protected GameObject catalystReactionBoxGameObject;
+        [SerializeField] protected Transform catalystReactionBoxPlayerSpawnTransform;
+        [SerializeField] protected Transform experimentRoomPlayerSpawnTransform;
+        [SerializeField] protected Transform catalystSurfaceSpawnTransform;
 
         [Header("Molecule Prefabs")]
-        [SerializeField] Molecule oMoleculePrefab;
-        [SerializeField] Molecule o2MoleculePrefab;
-        [SerializeField] Molecule coMoleculePrefab;
-        [SerializeField] Molecule co2MoleculePrefab;
+        [SerializeField] protected Molecule oMoleculePrefab;
+        [SerializeField] protected Molecule o2MoleculePrefab;
+        [SerializeField] protected Molecule coMoleculePrefab;
+        [SerializeField] protected Molecule co2MoleculePrefab;
 
         [Header("Player specific objects")]
-        [SerializeField] GameObject player;
+        [SerializeField] protected GameObject player;
 
         [Header("UI Elements")]
-        [SerializeField] TextMeshProUGUI stepWiseEnableText;
-        [SerializeField] TextMeshProUGUI currentStepText;
-        [SerializeField] TextMeshProUGUI interactiveSimulationText;
-        [SerializeField] TextMeshProUGUI turnOverRateText;
-        [SerializeField] QuantityPropertyView temperatureView;
-        [SerializeField] QuantityPropertyView partialPressureView;
-        [SerializeField] VRLinearDrive temperatureViewVr;
-        [SerializeField] VRLinearDrive partialPressureViewVr;
-        [SerializeField] WhiteboardController whiteboardController;
-        [SerializeField] WhiteboardController whiteboardControllerBox;
-        [SerializeField] List<Image> theoryImages; // ordered same as the experiment variants!
-        [SerializeField] CatalystVrControlPanel controlPanel;
+        [SerializeField] protected TextMeshProUGUI stepWiseEnableText;
+        [SerializeField] protected TextMeshProUGUI currentStepText;
+        [SerializeField] protected TextMeshProUGUI interactiveSimulationText;
+        [SerializeField] protected TextMeshProUGUI turnOverRateText;
+        [SerializeField] protected QuantityPropertyView temperatureView;
+        [SerializeField] protected QuantityPropertyView partialPressureView;
+        [SerializeField] protected WhiteboardController whiteboardController;
+        [SerializeField] protected WhiteboardController whiteboardControllerBox;
+        [SerializeField] protected List<Image> theoryImages; // ordered same as the experiment variants!
         [Header("order line charts the same as the experiment variant enum!")]
-        [SerializeField] List<XCharts.LineChart> lineCharts;
-        [SerializeField] List<XCharts.LineChart> lineChartsVRBox;
-        [SerializeField] XCharts.GaugeChart progressChart;
-        [SerializeField] GameObject questManagerLabObject;
+        [SerializeField] protected List<LineChart> lineCharts;
+        [SerializeField] protected GaugeChart progressChart;
+        [SerializeField] protected GameObject questManagerLabObject;
         [Header("order quest manager objects the same as the experiment variant enum!")]
-        [SerializeField] List<GameObject> questManagerVariantObjects;
-        
+        [SerializeField] protected List<GameObject> questManagerVariantObjects;
 
-        private int _freedMoleculeCounter = 0;
-        private int _moleculesToFree = 4;
-        private List<Vector3> _platSpawnPoints = new List<Vector3>();
-        private List<Vector3> _activePlatSpawnPoints = new List<Vector3>();
-        private List<Vector3> _coSpawnPoints = new List<Vector3>();
-        private List<Vector3> _oSpawnPoints = new List<Vector3>();
-        private List<Molecule> _activeMolecules = new List<Molecule>();
-        private CatalystSurface _catalystSurface;
-        
-        private float _currentTurnOverRate = 0.0f;
-        private bool _doStepWiseSimulation = false;
-        private bool _doInteractiveSimulation = true;
+        protected bool isVrVersion;
 
-        private bool _resetPlayer = false;
+        protected int _freedMoleculeCounter = 0;
+        protected int _moleculesToFree = 4;
+        protected List<Vector3> _platSpawnPoints = new List<Vector3>();
+        protected List<Vector3> _activePlatSpawnPoints = new List<Vector3>();
+        protected List<Vector3> _coSpawnPoints = new List<Vector3>();
+        protected List<Vector3> _oSpawnPoints = new List<Vector3>();
+        protected List<Molecule> _activeMolecules = new List<Molecule>();
+        protected CatalystSurface _catalystSurface;
 
-        private System.Action onReactionStart;
+        protected float _currentTurnOverRate = 0.0f;
+        protected bool _doStepWiseSimulation = false;
+        protected bool _doInteractiveSimulation = true;
 
-        private float _minXValLocal = 0.0f;
-        private float _maxXValLocal = 0.0f;
-        private float _minZValLocal = 0.0f;
-        private float _maxZValLocal = 0.0f;
+        protected bool _resetPlayer = false;
 
-        private List<List<Serie>> _graphSeriesList = new List<List<Serie>>();
-        
-        private static float EleyTemperatureValue = 0;
-        
-        private static readonly Regex WhiteSpaces = new Regex(@"\s+");
+        protected System.Action onReactionStart;
 
-        private static readonly int[][] TemperatureStageValues = new int [][]
-        {
-            new int[] { 250, 275, 300, 325, 350, 375, 400, 425, 450 }, // langmuir-hinshelwood
-            new int[] { 321, 334, 348, 363 }, // mars van krevelen
-            new int[] { 481, 499, 519, 533, 553 } // eley-rideal
-        };
-        
-        private static readonly float[][] PartialPressureValues = new float[][]
-        {
-            new float[] { 0.01f, 0.02f, 0.04f, 0.2f }, // langmuir-hinshelwood
-            new float[] { 0.001f, 0.002f, 0.004f, 0.008f, 0.014f, 0.026f }, // mars van krevelen
-            // eley-rideal: pressure is different for each temperature stage
-            // each row below corresponds on one temperature (first line = pressure values for 208 in temp values)
-            new float[]
-            {
-                0.0010855f, 0.0019737f, 0.0062171f, 0.011053f, 0.001523f, 0f, 0f, // temperature 208
-                0.00069079f, 0.0016118f, 0.0023355f, 0.0031579f, 0.0065461f, 0.008125f, 0.013257f, // temperature 226
-                0.0010197f, 0.0022697f, 0.0028947f, 0.0042763f, 0.0098355f, 0.012434f, 0.015822f, // temperature 246
-                0.0013816f, 0.0031908f, 0.0045395f, 0.0054934f, 0.0066447f, 0.0077961f, 0f, // temperature 260
-                0.0019408f, 0.0025658f, 0.0036513f, 0.0046053f, 0.0055921f, 0.0070395f, 0.0089803f // temperature 280
-            } 
-        };
-        
-        private static readonly float[][][] TurnOverRates = new float[][][]
-        {
-            new float[][] // langmuir-hinshelwood
-            {
-                new float[] { 0f, 0f, 0.047619048f, 0.285714286f },
-                new float[] { 0f, 0.047619048f, 0.142857143f, 0.666666667f },
-                new float[] { 0f, 0.095238095f, 0.238095238f, 1.19047619f },
-                new float[] { 0.047619048f, 0.19047619f, 0.380952381f, 1.952380952f },
-                new float[] { 0.095238095f, 0.285714286f, 0.571428571f, 2.952380952f },
-                new float[] { 0.19047619f, 0.380952381f, 0.80952381f, 4.19047619f },
-                new float[] { 0.285714286f, 0.571428571f, 1.142857143f, 5.904761905f },
-                new float[] { 0.333333333f, 0.714285714f, 1.428571429f, 7.428571429f },
-                new float[] { 0.380952381f, 0.80952381f, 1.619047619f, 8.571428571f }
-            },
-            new float[][] // mars van krevelen
-            {
-                new float[] { 0.042146f, 0.095785f, 0.12644f, 0.18008f, 0.23372f, 0.29502f },
-                new float[] { 0.16475f, 0.341f, 0.4636f, 0.61686f, 0.75479f, 0.83908f },
-                new float[] { 0.26437f, 0.54023f, 0.71648f, 1.023f, 1.1686f, 1.3678f },
-                new float[] { 0.63985f, 1.1456f, 1.5747f, 2.3563f, 2.9234f, 3.6743f }
-            },
-            new float[][] // eley-rideal
-            {
-                new float[] { 0.000721806f, 0.001361116f, 0.001051789f, 0.000907325f, 0.00078371f, 0f, 0f },
-                new float[] { 0.001381773f, 0.002351066f, 0.002722298f, 0.002887225f, 0.002206666f, 0.001938587f, 0.001381773f },
-                new float[] { 0.001979835f, 0.003279112f, 0.004145254f, 0.00486706f, 0.003567847f, 0.002887225f, 0.002227323f },
-                new float[] { 0.002598554f, 0.005258947f, 0.006846895f, 0.007424624f, 0.008682072f, 0.009775561f, 0f },
-                new float[] { 0.004928964f, 0.006537697f, 0.008455499f, 0.010105415f, 0.011280884f, 0.012786207f, 0.014312831f }
-            },
-        };
+        protected float _minXValLocal = 0.0f;
+        protected float _maxXValLocal = 0.0f;
+        protected float _minZValLocal = 0.0f;
+        protected float _maxZValLocal = 0.0f;
 
-        private static readonly List<ExperimentStages> HinshelwoodStages = new List<ExperimentStages>()
-        {
-            ExperimentStages.Init,
-            ExperimentStages.CODesorb,
-            ExperimentStages.O2Adsorb_O2Dissociate,
-            ExperimentStages.OReactCO_CO2Desorb
-        };
+        protected List<List<Serie>> _graphSeriesList = new List<List<Serie>>();
 
-        private static readonly List<ExperimentStages> KrevelenStages = new List<ExperimentStages>()
-        {
-            ExperimentStages.Init,
-            ExperimentStages.COAdsorb,
-            ExperimentStages.OReactCO_CO2Desorb,
-            ExperimentStages.O2Adsorb_O2Dissociate,
-            ExperimentStages.OFillSurface
-        };
-
-        private static readonly List<ExperimentStages> EleyStages = new List<ExperimentStages>()
-        {
-            ExperimentStages.Init,
-            ExperimentStages.O2Adsorb_O2Dissociate,
-            ExperimentStages.OReactCO_CO2Desorb
-        };
+        protected static readonly Regex WhiteSpaces = new Regex(@"\s+");
 
         //public const float FixedMoleculeYDist = 0.28f - 0.075f;
         public const float PlatinumScale = 0.14f;
 
-        public static bool IsVrVersion;
         public static bool DoStepWiseSimulation = false;
         public static ExperimentStages CurrentExperimentStage = ExperimentStages.Init;
-        public static ExperimentVariation ExperimentVariation = ExperimentVariation.LangmuirHinshelwood;
+        public static CatalystVariation ExperimentVariation = CatalystVariation.LangmuirHinshelwood;
 
         // plane above surface where molecules can be spawned, and move
         public static float MinXCoord = 0.0f;
@@ -207,14 +106,8 @@ namespace Maroon.Chemistry.Catalyst
         // height above surface max and min coordinates
         public static float MinYCoord = 0.0f;
         public static float MaxYCoord = 0.0f;
-        
-        public bool AreHinshelwoodMoleculesFreed { get => _freedMoleculeCounter == _moleculesToFree; }
-        public bool HasInitialTempChanged { get => Mathf.Abs(temperature.Value - temperatureViewVr.initialValue) > 20.0f ; }
 
-        public bool HasInitialPressureChanged
-        {
-            get => Mathf.Abs(partialPressure.Value - partialPressureViewVr.initialValue) > PartialPressureValues[(int) ExperimentVariation][1];
-        }
+        public bool AreHinshelwoodMoleculesFreed => _freedMoleculeCounter == _moleculesToFree;
 
         private void Awake()
         {
@@ -227,56 +120,36 @@ namespace Maroon.Chemistry.Catalyst
             FillActiveSurfaceSpawnPoints(surfaceCoords);
         }
 
-        private void Start()
+        protected virtual void Start()
         {
             catalystReactionBoxGameObject.SetActive(false);
-            IsVrVersion = isVrVersion;
 
             catalystReactor.OnReactorFilled.AddListener(StartExperiment);
             foreach (var chart in lineCharts)
             {
                 chart.gameObject.SetActive(false);
+                _graphSeriesList.Add(new List<Serie>(chart.series.list));
             }
             progressChart.gameObject.SetActive(false);
             progressChart.series.list[0].data[0].data[1] = 0.0f;
-            
-            if (isVrVersion)
-            {
-                foreach (var chart in lineChartsVRBox)
-                {
-                    chart.gameObject.SetActive(false);
-                }
 
-                foreach (var questManagerObject in questManagerVariantObjects)
-                {
-                    questManagerObject.SetActive(false);
-                }
-            }
-            else
+            foreach (var img in theoryImages)
             {
-                foreach (var img in theoryImages)
-                {
-                   img.gameObject.SetActive(false); 
-                }
+                img.gameObject.SetActive(false);
             }
 
-            foreach (var chart in lineCharts)
+            foreach (var questManagerObject in questManagerVariantObjects)
             {
-                _graphSeriesList.Add(new List<Serie>(chart.series.list));
+                questManagerObject.SetActive(false);
             }
-
-
         }
 
         private void StartExperiment()
         {
             if (_doInteractiveSimulation)
                 HandleCatalystSurfaceSetup();
-            if (!isVrVersion)
-                DrawSimulationGraphsPC();
-            else
-                DrawSimulationGraphsVR();
-
+            
+            DrawSimulationGraphs();
             TryEnableQuestManager();
         }
 
@@ -361,7 +234,7 @@ namespace Maroon.Chemistry.Catalyst
             EnsureCleanSurface();
 
             _catalystSurface = Instantiate(catalystSurfacePrefab, catalystSurfaceSpawnTransform);
-            if (ExperimentVariation.Equals(ExperimentVariation.LangmuirHinshelwood))
+            if (ExperimentVariation.Equals(CatalystVariation.LangmuirHinshelwood))
             {
                 _catalystSurface.SetupCoordsLangmuir(_platSpawnPoints,_activePlatSpawnPoints,list =>
                     {
@@ -380,7 +253,7 @@ namespace Maroon.Chemistry.Catalyst
                     },
                     OnMoleculeFreed);
             }
-            else if (ExperimentVariation.Equals(ExperimentVariation.MarsVanKrevelen))
+            else if (ExperimentVariation.Equals(CatalystVariation.MarsVanKrevelen))
             {
                 _catalystSurface.SetupCoordsKrevelen(_coSpawnPoints, _oSpawnPoints, list =>
                     {
@@ -401,7 +274,7 @@ namespace Maroon.Chemistry.Catalyst
                         onReactionStart?.Invoke();
                     });
             }
-            else if (ExperimentVariation.Equals(ExperimentVariation.EleyRideal))
+            else if (ExperimentVariation.Equals(CatalystVariation.EleyRideal))
             {
                 _catalystSurface.SetupCoordsEley(_platSpawnPoints,_activePlatSpawnPoints,list =>
                     {
@@ -420,8 +293,6 @@ namespace Maroon.Chemistry.Catalyst
                         onReactionStart?.Invoke();
                     });
             }
-            if (controlPanel)
-                controlPanel.Setup(Mathf.Min(MaxXCoord - MinXCoord, MaxZCoord - MinZCoord), _doStepWiseSimulation);
         }
 
         /**
@@ -469,7 +340,7 @@ namespace Maroon.Chemistry.Catalyst
                     molecule.gameObject.transform.localRotation = spawnRot;
                     molecule.OnDissociate += DissociateO2;
                     molecule.State = MoleculeState.Moving;
-                    if (ExperimentVariation == ExperimentVariation.MarsVanKrevelen)
+                    if (ExperimentVariation == CatalystVariation.MarsVanKrevelen)
                         (molecule as O2Molecule)?.SetDarkMaterial();
                     onReactionStart += molecule.ReactionStart;
                     AddMoleculeToActiveList(molecule);
@@ -517,7 +388,7 @@ namespace Maroon.Chemistry.Catalyst
                 molecule.OnCO2Created += CreateCO2;
                 molecule.State = MoleculeState.Moving;
                 (molecule as OMolecule).CreateO2 += CreateO2;
-                if (ExperimentVariation == ExperimentVariation.MarsVanKrevelen)
+                if (ExperimentVariation == CatalystVariation.MarsVanKrevelen)
                     (molecule as OMolecule)?.SetDarkMaterial();
                 molecule.gameObject.transform.position = new Vector3(alternate ? o2Position.x + PlatinumScale / 3.0f : o2Position.x - PlatinumScale / 3.0f, o2Position.y - 0.07f, o2Position.z);
                 AddMoleculeToActiveList(molecule);
@@ -607,8 +478,8 @@ namespace Maroon.Chemistry.Catalyst
 
         private void UpdateTurnOverRateUI()
         {
-            if (ExperimentVariation == ExperimentVariation.EleyRideal)
-                turnOverRateText.text = (100 * TurnOverRates[(int) ExperimentVariation][GetTemperatureIndex(temperature)][GetPartialPressureIndex(partialPressure)]).ToString(CultureInfo.InvariantCulture.NumberFormat);
+            if (ExperimentVariation == CatalystVariation.EleyRideal)
+                turnOverRateText.text = (100 * CatalystConstants.TurnOverRates[(int) ExperimentVariation][GetTemperatureIndex(temperature)][GetPartialPressureIndex(partialPressure)]).ToString(CultureInfo.InvariantCulture.NumberFormat);
             else
                 turnOverRateText.text = _currentTurnOverRate.ToString(CultureInfo.InvariantCulture.NumberFormat);
         }
@@ -629,40 +500,26 @@ namespace Maroon.Chemistry.Catalyst
             _maxZValLocal = _activeMolecules.Max(molecule => molecule.gameObject.transform.localPosition.z) - 0.4f;
         }
 
-        private void SetSimulationParametersMinMax(ExperimentVariation variation)
+        protected virtual void SetSimulationParametersMinMax(CatalystVariation variation)
         {
-            if (!isVrVersion)
-            {
-                temperatureView.ClearUI();
-                partialPressureView.ClearUI();
-            }
-
             // use faster direct array access since temperature is sorted
-            temperature.minValue = TemperatureStageValues[(int) variation][0] - 273.15f;
-            temperature.maxValue = TemperatureStageValues[(int) variation][TemperatureStageValues[(int) variation].Length - 1] - 273.15f;
+            temperature.minValue = CatalystConstants.TemperatureStageValues[(int) variation][0] - 273.15f;
+            temperature.maxValue = CatalystConstants.TemperatureStageValues[(int) variation][CatalystConstants.TemperatureStageValues[(int) variation].Length - 1] - 273.15f;
             // use min max due to eley-rideal partial pressure not being sorted
-            partialPressure.minValue = PartialPressureValues[(int) variation].Min();
-            partialPressure.maxValue = PartialPressureValues[(int) variation].Max();
+            partialPressure.minValue = CatalystConstants.PartialPressureValues[(int) variation].Min();
+            partialPressure.maxValue = CatalystConstants.PartialPressureValues[(int) variation].Max();
 
             temperature.Value = temperature.minValue;
             partialPressure.Value = partialPressure.minValue;
 
-            if (isVrVersion)
-            {
-                temperatureViewVr.SetMinMax(temperature.minValue, temperature.maxValue);
-                partialPressureViewVr.SetMinMax(partialPressure.minValue, partialPressure.maxValue);
-                temperatureViewVr.ForceToValue(temperature.minValue);
-                partialPressureViewVr.ForceToValue(partialPressure.minValue);
-            }
-            else
+            if(!isVrVersion)
             {
                 temperatureView.ShowUI();
                 partialPressureView.ShowUI();
             }
-
         }
 
-        private void DrawSimulationGraphsPC()
+        protected virtual void DrawSimulationGraphs()
         {
             LineChart lineChart = lineCharts[(int) ExperimentVariation];
             lineChart.gameObject.SetActive(true);
@@ -679,26 +536,7 @@ namespace Maroon.Chemistry.Catalyst
             }
         }
         
-        private void DrawSimulationGraphsVR()
-        {
-            if (_doInteractiveSimulation)
-            {
-                LineChart lineChartVRBox = lineChartsVRBox[(int) ExperimentVariation];
-                lineChartVRBox.gameObject.SetActive(true);
-                lineChartVRBox.RefreshChart();
-            }
-            else
-            {
-                LineChart lineChart = lineCharts[(int) ExperimentVariation];
-                lineChart.gameObject.SetActive(true);
-                lineChart.series.RemoveAll();
-                StartCoroutine(CoDrawSimulationGraphs(lineChart, _graphSeriesList[(int)ExperimentVariation], 1.6f));
-                progressChart.gameObject.SetActive(true);
-                StartCoroutine(CoDrawProgressGraph());
-            }
-        }
-
-        private IEnumerator CoDrawSimulationGraphs(LineChart lineChart, List<Serie> initialSeries, float waitTime)
+        protected IEnumerator CoDrawSimulationGraphs(LineChart lineChart, List<Serie> initialSeries, float waitTime)
         {
             int serieCount = 0;
             foreach (var initialSerie in initialSeries)
@@ -717,14 +555,14 @@ namespace Maroon.Chemistry.Catalyst
             }
         }
 
-        private IEnumerator CoDrawProgressGraph()
+        protected IEnumerator CoDrawProgressGraph()
         {
             var waitTime = 0f;
-            if (ExperimentVariation == ExperimentVariation.LangmuirHinshelwood)
+            if (ExperimentVariation == CatalystVariation.LangmuirHinshelwood)
                 waitTime = 4f * 9f * 1.6f; // 4 series * 9 data entries -> 1.6 seconds per entry
-            else if (ExperimentVariation == ExperimentVariation.MarsVanKrevelen)
+            else if (ExperimentVariation == CatalystVariation.MarsVanKrevelen)
                 waitTime = 4f * 6f * 1.6f; // 4 series * 6 data entries -> 1.6 seconds per entry
-            else if (ExperimentVariation == ExperimentVariation.EleyRideal)
+            else if (ExperimentVariation == CatalystVariation.EleyRideal)
                 waitTime = (5f + 6f + 3f * 7f) * 1.6f; // 5 series (1 with 5 data points, 1 with 6 data points, and 3 with 7 data points) -> 1.6 seconds per entry
             waitTime /= 360;
             var progress = 0.0f;
@@ -790,7 +628,7 @@ namespace Maroon.Chemistry.Catalyst
             Debug.Log("Stop catalyst simulation");
         }
 
-        public void Reset()
+        public virtual void ResetObject()
         {
             _freedMoleculeCounter = 0;
             EnsureCleanSurface();
@@ -799,7 +637,6 @@ namespace Maroon.Chemistry.Catalyst
             if (_resetPlayer)
                 player.transform.position = experimentRoomPlayerSpawnTransform.position;
             _resetPlayer = false;
-            
 
             StopAllCoroutines();
             RestoreLineGraphObjects();
@@ -809,33 +646,25 @@ namespace Maroon.Chemistry.Catalyst
             }
             progressChart.gameObject.SetActive(false);
             progressChart.series.list[0].data[0].data[1] = 0.0f;
-            if (isVrVersion)
+
+            questManagerLabObject.GetComponent<QuestManager>()?.ResetQuests();
+            foreach (var questManagerVariantObject in questManagerVariantObjects)
             {
-                foreach (var chart in lineChartsVRBox)
-                {
-                    chart.gameObject.SetActive(false);
-                }
-                questManagerLabObject.GetComponent<QuestManager>().ResetQuests();
-                foreach (var questManagerVariantObject in questManagerVariantObjects)
-                {
-                    questManagerVariantObject.GetComponent<QuestManager>().ResetQuests();
-                    questManagerVariantObject.SetActive(false);
-                }
-                if (controlPanel)
-                    controlPanel.ResetToInitialPosition();
+                questManagerVariantObject.GetComponent<QuestManager>()?.ResetQuests();
+                questManagerVariantObject.SetActive(false);
             }
-            else
+
+            foreach (var img in theoryImages)
             {
-                foreach (var img in theoryImages)
-                {
-                    img.gameObject.SetActive(false); 
-                }
+                img.gameObject.SetActive(false); 
             }
 
             _doStepWiseSimulation = false;
             _doInteractiveSimulation = true;
             
             catalystBoxMaterial.color = Color.black;
+
+            ChangExperimentVariation(0);
         }
 
         public void TemperatureChanged(float newTemperature)
@@ -851,7 +680,7 @@ namespace Maroon.Chemistry.Catalyst
                 catalystBoxMaterial.color = currentColor;
             }
             // update turnover rates
-            _currentTurnOverRate = TurnOverRates[(int)ExperimentVariation][GetTemperatureIndex(temperature.Value)][GetPartialPressureIndex(partialPressure.Value)];
+            _currentTurnOverRate = CatalystConstants.TurnOverRates[(int)ExperimentVariation][GetTemperatureIndex(temperature.Value)][GetPartialPressureIndex(partialPressure.Value)];
             UpdateTurnOverRateUI();
         }
 
@@ -867,20 +696,21 @@ namespace Maroon.Chemistry.Catalyst
                 var main = pressureParticleSystem.main;
                 main.simulationSpeed = Mathf.Clamp(pressureStep * 2, 0.2f, 2.0f); // speed should go from 0.2 to 2
             }
-            _currentTurnOverRate = TurnOverRates[(int)ExperimentVariation][GetTemperatureIndex(temperature.Value)][GetPartialPressureIndex(partialPressure.Value)];
+            _currentTurnOverRate = CatalystConstants.TurnOverRates[(int)ExperimentVariation][GetTemperatureIndex(temperature.Value)][GetPartialPressureIndex(partialPressure.Value)];
             UpdateTurnOverRateUI();
         }
         
         public void ChangExperimentVariation(int val)
         {
-            ExperimentVariation = (ExperimentVariation)val;
-            if (ExperimentVariation == ExperimentVariation.LangmuirHinshelwood)
-                CurrentExperimentStage = HinshelwoodStages[0];
-            else if (ExperimentVariation == ExperimentVariation.MarsVanKrevelen)
-                CurrentExperimentStage = KrevelenStages[0];
-            else if (ExperimentVariation == ExperimentVariation.EleyRideal)
-                CurrentExperimentStage = EleyStages[0];
-            
+            ExperimentVariation = (CatalystVariation)val;
+            CurrentExperimentStage = ExperimentVariation switch
+            {
+                CatalystVariation.LangmuirHinshelwood => CatalystStages.HinshelwoodStages[0],
+                CatalystVariation.MarsVanKrevelen => CatalystStages.KrevelenStages[0],
+                CatalystVariation.EleyRideal => CatalystStages.EleyStages[0],
+                _ => CurrentExperimentStage
+            };
+
             if (currentStepText.gameObject.activeSelf)
                 currentStepText.text = CurrentExperimentStage.ToString();
             SetSimulationParametersMinMax(ExperimentVariation);
@@ -915,27 +745,23 @@ namespace Maroon.Chemistry.Catalyst
 
         public void NextStepButtonClicked()
         {
-            if (ExperimentVariation == ExperimentVariation.LangmuirHinshelwood)
+            CurrentExperimentStage = ExperimentVariation switch
             {
-                if (CurrentExperimentStage == HinshelwoodStages[HinshelwoodStages.Count - 1])
-                    CurrentExperimentStage = HinshelwoodStages[1];
-                else
-                    CurrentExperimentStage = HinshelwoodStages[HinshelwoodStages.IndexOf(CurrentExperimentStage) + 1];
-            }
-            else if (ExperimentVariation == ExperimentVariation.MarsVanKrevelen)
-            {
-                if (CurrentExperimentStage == KrevelenStages[KrevelenStages.Count - 1])
-                    CurrentExperimentStage = KrevelenStages[1];
-                else
-                    CurrentExperimentStage = KrevelenStages[KrevelenStages.IndexOf(CurrentExperimentStage) + 1];
-            }
-            else if (ExperimentVariation == ExperimentVariation.EleyRideal)
-            {
-                if (CurrentExperimentStage == EleyStages[EleyStages.Count - 1])
-                    CurrentExperimentStage = EleyStages[1];
-                else
-                    CurrentExperimentStage = EleyStages[EleyStages.IndexOf(CurrentExperimentStage) + 1];
-            }
+                CatalystVariation.LangmuirHinshelwood =>
+                    CurrentExperimentStage == CatalystStages.HinshelwoodStages.Last()
+                        ? CatalystStages.HinshelwoodStages[1]
+                        : CatalystStages.HinshelwoodStages[Array.IndexOf(CatalystStages.HinshelwoodStages, CurrentExperimentStage) + 1],
+
+                CatalystVariation.MarsVanKrevelen => CurrentExperimentStage == CatalystStages.KrevelenStages.Last()
+                    ? CatalystStages.KrevelenStages[1]
+                    : CatalystStages.KrevelenStages[Array.IndexOf(CatalystStages.KrevelenStages, CurrentExperimentStage) + 1],
+
+                CatalystVariation.EleyRideal => CurrentExperimentStage == CatalystStages.EleyStages.Last()
+                    ? CatalystStages.EleyStages[1]
+                    : CatalystStages.EleyStages[Array.IndexOf(CatalystStages.EleyStages, CurrentExperimentStage) + 1],
+
+                _ => CurrentExperimentStage
+            };
 
             currentStepText.text = CurrentExperimentStage.ToString();
         }
@@ -950,33 +776,34 @@ namespace Maroon.Chemistry.Catalyst
         private static int GetTemperatureIndex(float temperatureValue)
         {
             // add 273.16 instead of 273.15 to always get at least the first element index
-            int idx = Array.IndexOf(TemperatureStageValues[(int)ExperimentVariation], TemperatureStageValues[(int)ExperimentVariation].TakeWhile(num => num <= temperatureValue + 273.16f).LastOrDefault());
+            int idx = Array.IndexOf(CatalystConstants.TemperatureStageValues[(int)ExperimentVariation], CatalystConstants.TemperatureStageValues[(int)ExperimentVariation]
+                .TakeWhile(num => num <= temperatureValue + 273.16f).LastOrDefault());
             if (idx < 0)
                 idx = 0;
-            
-            EleyTemperatureValue = temperatureValue;
+
+            CatalystConstants.EleyTemperatureValue = temperatureValue;
             return idx;
         }
 
         private static int GetPartialPressureIndex(float partialPressureValue)
         {
             int idx = 0;
-            if (ExperimentVariation == ExperimentVariation.EleyRideal)
+            if (ExperimentVariation == CatalystVariation.EleyRideal)
             {
-                int tempStage = GetTemperatureIndex(EleyTemperatureValue);
-                int pressureValsPerTemp = PartialPressureValues[(int) ExperimentVariation].Length /
-                                          TemperatureStageValues[(int) ExperimentVariation].Length;
+                int tempStage = GetTemperatureIndex(CatalystConstants.EleyTemperatureValue);
+                int pressureValsPerTemp = CatalystConstants.PartialPressureValues[(int) ExperimentVariation].Length /
+                                          CatalystConstants.TemperatureStageValues[(int) ExperimentVariation].Length;
                 // get offset into the pressure array row
                 // stage * pressure vals per temp = first of correct row
                 int offsetIntoPressureArray = tempStage * pressureValsPerTemp;
 
                 // get slice of array for the correct temperature row with 7 values
-                var arraySlice = new ArraySegment<float>(PartialPressureValues[(int) ExperimentVariation],
+                var arraySlice = new ArraySegment<float>(CatalystConstants.PartialPressureValues[(int) ExperimentVariation],
                     offsetIntoPressureArray, pressureValsPerTemp).ToArray();
                 idx = Array.IndexOf(arraySlice, arraySlice.OrderBy(num => num).TakeWhile(num => num <= partialPressureValue + 0.00001f).LastOrDefault());
             }
             else 
-                idx = Array.IndexOf(PartialPressureValues[(int)ExperimentVariation], PartialPressureValues[(int)ExperimentVariation].TakeWhile(num => num <= partialPressureValue + 0.00001f).LastOrDefault());
+                idx = Array.IndexOf(CatalystConstants.PartialPressureValues[(int)ExperimentVariation], CatalystConstants.PartialPressureValues[(int)ExperimentVariation].TakeWhile(num => num <= partialPressureValue + 0.00001f).LastOrDefault());
             if (idx < 0)
                 idx = 0;
             return idx;
@@ -984,9 +811,9 @@ namespace Maroon.Chemistry.Catalyst
 
         public static float GetTurnOverFrequency(float temperature, float partialPressure)
         {
-            if (ExperimentVariation == ExperimentVariation.EleyRideal)
-                return 100 * TurnOverRates[(int) ExperimentVariation][GetTemperatureIndex(temperature)][GetPartialPressureIndex(partialPressure)];
-            return TurnOverRates[(int)ExperimentVariation][GetTemperatureIndex(temperature)][GetPartialPressureIndex(partialPressure)];
+            if (ExperimentVariation == CatalystVariation.EleyRideal)
+                return 100 * CatalystConstants.TurnOverRates[(int) ExperimentVariation][GetTemperatureIndex(temperature)][GetPartialPressureIndex(partialPressure)];
+            return CatalystConstants.TurnOverRates[(int)ExperimentVariation][GetTemperatureIndex(temperature)][GetPartialPressureIndex(partialPressure)];
         }
     }
 }
