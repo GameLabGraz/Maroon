@@ -49,6 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b7957d7d43a43fea35ab012fbc7644c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nrOfSegments: 64
   componentType: 1
   component: {fileID: 8537317358753298114}
   rotationArrowY: {fileID: 6947044090925271584}
@@ -71,6 +72,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2a92c90f422f2348a7fb2f35f7f09ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gizmospoint: {x: 0, y: 0, z: 0}
+  drawplane: 0
 --- !u!114 &7251520365431275335
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98,7 +101,7 @@ GameObject:
   - component: {fileID: 8537317358753298127}
   - component: {fileID: 8537317358753298124}
   - component: {fileID: 8537317358753298125}
-  - component: {fileID: 9119320825923119024}
+  - component: {fileID: 8350790165134625518}
   m_Layer: 4
   m_Name: Component
   m_TagString: Untagged
@@ -115,7 +118,7 @@ Transform:
   m_GameObject: {fileID: 8537317358753298114}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.01, y: 0.25, z: 0.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5890742504985988864}
   m_RootOrder: 0
@@ -127,7 +130,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8537317358753298114}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 0}
 --- !u!23 &8537317358753298125
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -169,8 +172,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &9119320825923119024
-BoxCollider:
+--- !u!64 &8350790165134625518
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -179,9 +182,10 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1001 &207046524865499652
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -9,6 +9,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject
 {
     public class TableObject : MonoBehaviour
     {
+        [Header("Mesh Properties")] 
+        public int nrOfSegments = 16;
+        
         [SerializeField] private ComponentType componentType;
         [SerializeField] private GameObject component;
         [SerializeField] private GameObject rotationArrowY;
@@ -40,6 +43,11 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject
             rotationArrowY.SetActive(value);
             rotationArrowZ.SetActive(value);
             translationArrowY.SetActive(value);
+        }
+
+        public virtual void RecalculateMesh()
+        {
+            throw new Exception("Should not call base RecalculateMesh Method!");
         }
         
 

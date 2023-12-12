@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Maroon.Physics;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
@@ -15,6 +16,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         public Vector3 n;
         public float Rin;
         public float Rout;
+        
+        private float _thickness = 0.01f;
 
         private void Start()
         {
@@ -22,6 +25,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             Rout = 0.125f;
             UpdateProperties();
             LightComponentManager.Instance.RecalculateAllLightRoutes();
+            
+            RecalculateMesh();
         }
 
         public override void UpdateProperties()
@@ -54,5 +59,70 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
 
             return dmin;
         }
+        
+        // ----------------------------------- Mesh Calculation -----------------------------------
+        public override void RecalculateMesh()
+        {
+            Mesh leftRing = new Mesh();
+            Mesh rightRing = new Mesh();
+            Mesh outerMantle = new Mesh();
+            Mesh innerMantle = new Mesh();
+            var mcm = MeshCalculationManager.Instance;
+            
+            List<Vector3> _verticesOuterLeft = mcm.CalculateDiskVertices(-n * (_thickness / 2), Rout, Mathf.Infinity, nrOfSegments);
+            List<Vector3> _verticesInnerLeft = mcm.CalculateDiskVertices(-n * (_thickness / 2), Rin, Mathf.Infinity, nrOfSegments);
+            List<Vector3> _verticesOuterRight = mcm.CalculateDiskVertices(n * (_thickness / 2), Rout, Mathf.Infinity, nrOfSegments);
+            List<Vector3> _verticesInnerRight = mcm.CalculateDiskVertices(n * (_thickness / 2), Rin, Mathf.Infinity, nrOfSegments);
+            
+            List<int> triangleIndices = mcm.ConnectDisksAndCalculateFaces(_verticesInnerLeft.Count, nrOfSegments);
+            List<int> trianglesLeft =  new List<int>(triangleIndices);
+            List<int> trianglesRight = new List<int>(triangleIndices);
+            List<int> trianglesOuter = new List<int>(triangleIndices);
+            List<int> trianglesInner = new List<int>(triangleIndices);
+
+            mcm.FlipTriangleVertexOrder(ref trianglesLeft);
+            mcm.FlipTriangleVertexOrder(ref trianglesInner);
+            
+            List<Vector3> verticesLeftRing = _verticesOuterLeft.Concat(_verticesInnerLeft).ToList();
+            List<Vector3> verticesRightRing = _verticesOuterRight.Concat(_verticesInnerRight).ToList();
+            List<Vector3> verticesOuterMantle = _verticesOuterLeft.Concat(_verticesOuterRight).ToList();
+            List<Vector3> verticesInnerMantle = _verticesInnerLeft.Concat(_verticesInnerRight).ToList();
+            
+            List<Vector3> normalsLeftRing = mcm.CalculateMeshNormals(verticesLeftRing, trianglesLeft);
+            List<Vector3> normalsRightRing = mcm.CalculateMeshNormals(verticesRightRing, trianglesRight);
+            List<Vector3> normalsOuterMantle = mcm.CalculateMeshNormals(verticesOuterMantle, trianglesOuter);
+            List<Vector3> normalsInnerMantle = mcm.CalculateMeshNormals(verticesInnerMantle, trianglesInner);
+            
+            leftRing.SetVertices(verticesLeftRing);
+            rightRing.SetVertices(verticesRightRing);
+            outerMantle.SetVertices(verticesOuterMantle);
+            innerMantle.SetVertices(verticesInnerMantle);
+            
+            leftRing.SetTriangles(trianglesLeft, 0);
+            rightRing.SetTriangles(trianglesRight, 0);
+            outerMantle.SetTriangles(trianglesOuter, 0);
+            innerMantle.SetTriangles(trianglesInner, 0);
+            
+            leftRing.SetNormals(normalsLeftRing);
+            rightRing.SetNormals(normalsRightRing);
+            outerMantle.SetNormals(normalsOuterMantle);
+            innerMantle.SetNormals(normalsInnerMantle);
+            
+            CombineInstance[] c = new CombineInstance[4];
+            c[0].mesh = leftRing;
+            c[0].transform = Matrix4x4.identity;
+            c[1].mesh = rightRing;
+            c[1].transform = Matrix4x4.identity;
+            c[2].mesh = outerMantle;
+            c[2].transform = Matrix4x4.identity;
+            c[3].mesh = innerMantle;
+            c[3].transform = Matrix4x4.identity;
+            Mesh apertureMesh = new Mesh();
+            apertureMesh.CombineMeshes(c);
+            
+            Component.GetComponent<MeshFilter>().mesh = apertureMesh;
+            Component.GetComponent<MeshCollider>().sharedMesh = apertureMesh;
+        }
+        
     }
 }

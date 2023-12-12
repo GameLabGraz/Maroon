@@ -1,0 +1,174 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+
+namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
+{
+    public class MeshCalculationManager : MonoBehaviour
+    {
+        public static MeshCalculationManager Instance;
+        
+        private void Awake()
+        {
+            if (Instance == null)
+                Instance = this;
+            else
+            {
+                Debug.LogError("SHOULD NOT OCCUR - Destroyed MeshCalculationManager");
+                Destroy(gameObject);
+            }
+        }
+
+        public List<T> ConcatenateLists<T>(params List<T>[] lists)
+        {
+            return lists.Aggregate(new List<T>(), (result, list) => result.Concat(list).ToList());
+        }
+
+        public void FlipTriangleVertexOrder(ref List<int> triangles)
+        {
+            for (int i = 0; i < triangles.Count; i += 3)
+            {
+                int temp = triangles[i];
+                triangles[i] = triangles[i + 2];
+                triangles[i + 2] = temp;
+            }
+        }
+        
+        public List<int> ConnectDisksAndCalculateFaces(int nrOfVertices, int nrOfSegments)
+        {
+            if (nrOfVertices != nrOfSegments)
+            {
+                Debug.LogError("nrOfVertices has to be the same as nrOfSegments! (" + nrOfVertices + ", " + nrOfSegments + ")\n");
+                return null;
+            }
+            
+            List<int> triangles = new List<int>();
+            // 2 Triangles per face (= quad)
+            for (int i = 0; i < nrOfSegments - 1; i++)
+            {
+                int v0 = i;                         // left disk 0
+                int v1 = i + 1;                     // left disk 1
+                int v2 = i + nrOfSegments;          // right disk 0
+                int v3 = i + 1 + nrOfSegments;      // right disk 1
+                
+                triangles.Add(v0);
+                triangles.Add(v2);
+                triangles.Add(v1);
+                triangles.Add(v1);
+                triangles.Add(v2);
+                triangles.Add(v3);
+            }
+            
+            // Last face (2 triangles) of the cylinder -> connection of first and last vertex
+            triangles.Add(nrOfSegments - 1);
+            triangles.Add(2 * nrOfSegments - 1);
+            triangles.Add(0);
+            triangles.Add(0);
+            triangles.Add(2 * nrOfSegments - 1);
+            triangles.Add(nrOfSegments);
+            
+            return triangles;
+        }
+        
+        public List<Vector3> CalculateMeshNormals(List<Vector3> vertices, List<int> triangles)
+        {
+            int numberOfTriangles = triangles.Count / 3;
+            List<Vector3> normals = new List<Vector3>();
+
+            for (int i = 0; i < numberOfTriangles; i++)
+            {
+                int v0 = triangles[i * 3];
+                int v1 = triangles[i * 3 + 1];
+                int v2 = triangles[i * 3 + 2];
+
+                Vector3 edge0 = vertices[v1] - vertices[v0];
+                Vector3 edge1 = vertices[v2] - vertices[v0];
+                Vector3 triangleNormal = Vector3.Cross(edge0, edge1).normalized;
+
+                normals.Add(triangleNormal);
+            }
+            return normals;
+        }
+
+        public List<Vector3> CalculateDiskVertices(Vector3 center, float radius, float Rc, int nrOfSegments)
+        {
+            List<Vector3> vertexPositions = new List<Vector3>();
+
+            if (Rc < radius)
+            {
+                throw new NotImplementedException("Rc cut-off not implemented yet!");
+            }
+            
+            for (int i = 0; i < nrOfSegments; i++)
+            {
+                float angle = i * 360f / nrOfSegments;
+                float radians = angle * Mathf.Deg2Rad;
+
+                vertexPositions.Add(new Vector3(
+                    center.x, 
+                    center.y + radius * Mathf.Sin(radians), 
+                    center.z + radius * Mathf.Cos(radians)
+                ));
+            }
+            return vertexPositions;
+        }
+        
+        // void OnDrawGizmos()
+        // {
+        //     Vector3 offset = new Vector3(-0.041f, 1.47f, 2.16f);
+        //     
+        //     // Draw the center point
+        //     Gizmos.color = Color.blue;
+        //     Gizmos.DrawSphere(offset + Vector3.left * height / 2, 0.01f);
+        //     Gizmos.DrawSphere(offset + Vector3.right * height / 2, 0.01f);
+        //
+        //     // Draw the circle points
+        //     Gizmos.color = Color.red;
+        //     for (int i = 0; i < nrOfSegments; i++)
+        //     {
+        //         Gizmos.DrawSphere(_verticesOuterLeft[i], 0.01f);
+        //         Gizmos.DrawLine(_verticesOuterLeft[i], _verticesOuterLeft[(i + 1) % nrOfSegments]); // Connect the points to form the circle
+        //     }
+        //     Gizmos.color = Color.green;
+        //     for (int i = 0; i < nrOfSegments; i++)
+        //     {
+        //         Gizmos.DrawSphere(_verticesOuterRight[i], 0.01f);
+        //         Gizmos.DrawLine(_verticesOuterRight[i], _verticesOuterRight[(i + 1) % nrOfSegments]); // Connect the points to form the circle
+        //     }
+        //     Gizmos.color = Color.red;
+        //     for (int i = 0; i < nrOfSegments; i++)
+        //     {
+        //         Gizmos.DrawSphere(_verticesInnerLeft[i], 0.01f);
+        //         Gizmos.DrawLine(_verticesInnerLeft[i], _verticesInnerLeft[(i + 1) % nrOfSegments]); // Connect the points to form the circle
+        //     }
+        //     Gizmos.color = Color.green;
+        //     for (int i = 0; i < nrOfSegments; i++)
+        //     {
+        //         Gizmos.DrawSphere(_verticesInnerRight[i], 0.01f);
+        //         Gizmos.DrawLine(_verticesInnerRight[i], _verticesInnerRight[(i + 1) % nrOfSegments]); // Connect the points to form the circle
+        //     }
+        // }
+
+        private List<Vector3> CalculateSphereVertices(bool isHalfSphere, Vector3 center, float radius, float Rc)
+        {
+            throw new NotImplementedException();
+        }
+        
+        private List<Vector3> CalculateLensFaces(Vector3[] leftSphere, Vector3[] leftCylinder, Vector3[] rightCylinder, Vector3[] rightSphere)
+        {
+            throw new NotImplementedException();
+        }
+
+        private List<Vector3> CalculateMirrorFaces(Vector3[] sphereVertices)
+        {
+            throw new NotImplementedException();
+        }
+        
+        private List<Vector3> CalculateEyeFaces(Vector3[] sphereVertices, Vector3[] pupilTexture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

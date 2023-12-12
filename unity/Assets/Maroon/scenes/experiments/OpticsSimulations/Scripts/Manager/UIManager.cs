@@ -429,7 +429,14 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 ocPos.Value = posUI;
                 ocRot.Value = rotUI;
             }
-            
+        }
+        
+        // ----------------------------------- Mesh Recalculation -----------------------------------
+
+        public void RecalculateSelectedOcMesh()
+        {
+            if (_selectedOc != null)
+                _selectedOc.RecalculateMesh();
         }
     }
 }
