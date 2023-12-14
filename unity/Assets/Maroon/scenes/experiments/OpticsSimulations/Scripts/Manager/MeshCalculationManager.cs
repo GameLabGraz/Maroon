@@ -35,8 +35,14 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 triangles[i + 2] = temp;
             }
         }
+
+        public void FlipNormals(ref List<Vector3> normals)
+        {
+            for (int i = 0; i < normals.Count; i++)
+                normals[i] *= -1;
+        }
         
-        public List<int> ConnectDisksAndCalculateFaces(int nrOfVertices, int nrOfSegments)
+        public List<int> CalculateRingFaces(int nrOfVertices, int nrOfSegments)
         {
             if (nrOfVertices != nrOfSegments)
             {
@@ -114,7 +120,73 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             }
             return vertexPositions;
         }
-        
+
+        public (List<Vector3>, List<Vector3>) CalculateHalfSphereVerticesNormals(float radius, float Rc, Vector3 n,
+            int ringSegments, int nrOfLatitudeSegments, float yRotation)
+        {
+            Vector3[] vertices = new Vector3[(nrOfLatitudeSegments + 1) * (ringSegments + 1)];
+            Vector3[] normals = new Vector3[vertices.Length];
+
+            float direction = 1;
+            if (radius < 0)
+            {
+                radius = Mathf.Abs(radius);
+                direction = -1;
+            }
+            
+            // if (Rc < radius)
+            // {
+            //     throw new NotImplementedException("Rc cut-off not implemented yet!");
+            // }
+
+            for (int lat = 0; lat <= nrOfLatitudeSegments; lat++)
+            {
+                float normalizedLatitude = lat / (float)nrOfLatitudeSegments;
+                float theta = normalizedLatitude * Mathf.PI / 2.0f;
+
+                for (int lon = 0; lon <= ringSegments; lon++)
+                {
+                    float normalizedLongitude = lon / (float)ringSegments;
+                    float phi = normalizedLongitude * Mathf.PI * 2.0f;
+                    Quaternion rotation = Quaternion.Euler(0, yRotation, 0);
+
+                    float x = Mathf.Sin(theta) * Mathf.Cos(phi);
+                    float y = Mathf.Sin(theta) * Mathf.Sin(phi);
+                    float z = Mathf.Cos(theta);
+                    Vector3 rotatedCoordinates = rotation * (new Vector3(x, y, z));
+                    
+                    int index = lat * (ringSegments + 1) + lon;
+                    vertices[index] = rotatedCoordinates * radius + radius * direction * n;
+                    normals[index] = rotatedCoordinates.normalized;
+                }
+            }
+            return (vertices.ToList(), normals.ToList());
+        }
+
+        public List<int> CalculateHalfSphereFaces(int ringSegments, int nrOfLatitudeSegments)
+        {
+            int[] triangles = new int[nrOfLatitudeSegments * ringSegments * 6];
+
+            int triangleIndex = 0;
+            for (int lat = 0; lat < nrOfLatitudeSegments; lat++)
+            {
+                for (int lon = 0; lon < ringSegments; lon++)
+                {
+                    int current = lat * (ringSegments + 1) + lon;
+                    int next = current + ringSegments + 1;
+
+                    triangles[triangleIndex++] = current;
+                    triangles[triangleIndex++] = next + 1;
+                    triangles[triangleIndex++] = current + 1;
+
+                    triangles[triangleIndex++] = current;
+                    triangles[triangleIndex++] = next;
+                    triangles[triangleIndex++] = next + 1;
+                }
+            }
+            return triangles.ToList();
+        }
+
         // void OnDrawGizmos()
         // {
         //     Vector3 offset = new Vector3(-0.041f, 1.47f, 2.16f);

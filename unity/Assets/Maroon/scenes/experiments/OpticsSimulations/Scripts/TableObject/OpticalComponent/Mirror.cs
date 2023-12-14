@@ -15,6 +15,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         public Vector3 n;
         public float R;
         public float Rc;
+        
+        private int _nrOfLatitudeSegments = 16;     // Number of rings along the Y-axis
 
         private void Start()
         {
@@ -29,7 +31,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             // transform.localScale = Vector3.one * (R * 2);
             r = transform.localPosition;
             n = transform.right;
-            
+            RecalculateMesh();
         }
 
         // ---- Mirror helper methods ----
@@ -117,7 +119,47 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             return new RaySegment(hitPoint, inRay.intensity, inRay.wavelength, reflectedRayDirection);
         }
         
-         
-        
+        // ----------------------------------- Mesh Calculation -----------------------------------
+        public override void RecalculateMesh()
+        {
+            Mesh inner = new Mesh();
+            Mesh outer = new Mesh();
+            var mcm = MeshCalculationManager.Instance;
+
+            if (R == 0) return;
+            float yRotation = (R < 0) ? 90f : -90f;
+
+            var (verticesInner, normalsInner) = mcm.CalculateHalfSphereVerticesNormals(R, Rc, n, nrOfSegments, _nrOfLatitudeSegments, yRotation);
+            List<Vector3> verticesOuter = new List<Vector3>(verticesInner);
+            List<Vector3> normalOuter = new List<Vector3>(normalsInner);
+            mcm.FlipNormals(ref normalOuter);
+
+            var trianglesInner = mcm.CalculateHalfSphereFaces(nrOfSegments, _nrOfLatitudeSegments);
+            List<int> trianglesOuter = new List<int>(trianglesInner);
+            mcm.FlipTriangleVertexOrder(ref trianglesOuter);
+
+            inner.SetVertices(verticesInner);
+            inner.SetTriangles(trianglesInner, 0);
+            inner.SetNormals(normalsInner);
+            
+            outer.SetVertices(verticesOuter);
+            outer.SetTriangles(trianglesOuter, 0);
+            outer.SetNormals(normalOuter);
+            
+            CombineInstance[] c = new CombineInstance[2];
+            c[0].mesh = inner;
+            c[0].transform = Matrix4x4.identity;
+            c[1].mesh = outer;
+            c[1].transform = Matrix4x4.identity;
+
+            Mesh sphericalMirrorMesh = new Mesh();
+            sphericalMirrorMesh.CombineMeshes(c);
+            sphericalMirrorMesh.RecalculateNormals();
+            
+            // Assign the mesh to the MeshFilter component
+            Component.GetComponent<MeshFilter>().mesh = sphericalMirrorMesh;
+            Component.GetComponent<MeshCollider>().sharedMesh = sphericalMirrorMesh;
+        }
+
     }
 }

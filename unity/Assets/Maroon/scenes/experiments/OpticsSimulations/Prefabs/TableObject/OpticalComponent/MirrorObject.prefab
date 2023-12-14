@@ -49,6 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4124a1a0a934c0cb9e17060412c85c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nrOfSegments: 16
   componentType: 1
   component: {fileID: 3152506931423097998}
   rotationArrowY: {fileID: 799699915088314164}
@@ -57,8 +58,8 @@ MonoBehaviour:
   opticalType: 3
   r: {x: 0, y: 0, z: 0}
   n: {x: 0, y: 0, z: 0}
-  R: 0
-  Rc: 0
+  R: 0.1
+  Rc: 0.1
 --- !u!114 &1879791709444414587
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71,6 +72,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2a92c90f422f2348a7fb2f35f7f09ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gizmospoint: {x: 0, y: 0, z: 0}
+  drawplane: 0
 --- !u!114 &1879791709444414586
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -83,10 +86,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45594d6158684307ad21125a9b1128ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  standard: {r: 0, g: 0, b: 0, a: 0}
-  selected: {r: 0.13450775, g: 0.5188679, b: 0.11454252, a: 0}
-  hover: {r: 0.8018868, g: 0.34577453, b: 0.010590916, a: 0}
-  dragging: {r: 0.1805196, g: 0.6981132, b: 0.15411176, a: 1}
+  standard: {r: 0, g: 0.34117648, b: 0.69803923, a: 0}
+  selected: {r: 0.017248094, g: 0.2716439, b: 0.5377358, a: 0}
+  hover: {r: 0.19971521, g: 0.37874505, b: 0.5660378, a: 0}
+  dragging: {r: 0.019607844, g: 0.27450982, b: 0.5411765, a: 0}
 --- !u!1 &3152506931423097998
 GameObject:
   m_ObjectHideFlags: 0
@@ -115,7 +118,7 @@ Transform:
   m_GameObject: {fileID: 3152506931423097998}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1879791709444414589}
   m_RootOrder: 0
@@ -127,7 +130,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3152506931423097998}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 0}
 --- !u!23 &3152506931423097999
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -180,9 +183,9 @@ MeshCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 4
-  m_Convex: 1
+  m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 0}
 --- !u!1001 &5920782814470931587
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -28,7 +28,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             ExperimentManager.Instance.ClearTable();
             
             ocm.AddOpticalComponent(lens, new Vector3(1.687f, 0, 0.687f));
-            ocm.AddOpticalComponent(mirror, new Vector3(2.2729f, 0, 0.4801f), new Vector3(0, 90, 0));
+            ocm.AddOpticalComponent(mirror, new Vector3(2.2729f, 0, 0.4801f));
 
             lcm.AddLightComponent(laserPointer, new Vector3(1.22f, 0, 0.788f), new List<float> {390f, 440f, 490f, 540f, 590f, 640f, 720f});
             

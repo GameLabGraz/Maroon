@@ -25,7 +25,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             Rout = 0.125f;
             UpdateProperties();
             LightComponentManager.Instance.RecalculateAllLightRoutes();
-            
             RecalculateMesh();
         }
 
@@ -69,12 +68,12 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             Mesh innerMantle = new Mesh();
             var mcm = MeshCalculationManager.Instance;
             
-            List<Vector3> _verticesOuterLeft = mcm.CalculateDiskVertices(-n * (_thickness / 2), Rout, Mathf.Infinity, nrOfSegments);
-            List<Vector3> _verticesInnerLeft = mcm.CalculateDiskVertices(-n * (_thickness / 2), Rin, Mathf.Infinity, nrOfSegments);
-            List<Vector3> _verticesOuterRight = mcm.CalculateDiskVertices(n * (_thickness / 2), Rout, Mathf.Infinity, nrOfSegments);
-            List<Vector3> _verticesInnerRight = mcm.CalculateDiskVertices(n * (_thickness / 2), Rin, Mathf.Infinity, nrOfSegments);
+            List<Vector3> verticesOuterLeft = mcm.CalculateDiskVertices(-n * (_thickness / 2), Rout, Mathf.Infinity, nrOfSegments);
+            List<Vector3> verticesInnerLeft = mcm.CalculateDiskVertices(-n * (_thickness / 2), Rin, Mathf.Infinity, nrOfSegments);
+            List<Vector3> verticesOuterRight = mcm.CalculateDiskVertices(n * (_thickness / 2), Rout, Mathf.Infinity, nrOfSegments);
+            List<Vector3> verticesInnerRight = mcm.CalculateDiskVertices(n * (_thickness / 2), Rin, Mathf.Infinity, nrOfSegments);
             
-            List<int> triangleIndices = mcm.ConnectDisksAndCalculateFaces(_verticesInnerLeft.Count, nrOfSegments);
+            List<int> triangleIndices = mcm.CalculateRingFaces(verticesInnerLeft.Count, nrOfSegments);
             List<int> trianglesLeft =  new List<int>(triangleIndices);
             List<int> trianglesRight = new List<int>(triangleIndices);
             List<int> trianglesOuter = new List<int>(triangleIndices);
@@ -83,10 +82,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             mcm.FlipTriangleVertexOrder(ref trianglesLeft);
             mcm.FlipTriangleVertexOrder(ref trianglesInner);
             
-            List<Vector3> verticesLeftRing = _verticesOuterLeft.Concat(_verticesInnerLeft).ToList();
-            List<Vector3> verticesRightRing = _verticesOuterRight.Concat(_verticesInnerRight).ToList();
-            List<Vector3> verticesOuterMantle = _verticesOuterLeft.Concat(_verticesOuterRight).ToList();
-            List<Vector3> verticesInnerMantle = _verticesInnerLeft.Concat(_verticesInnerRight).ToList();
+            List<Vector3> verticesLeftRing = verticesOuterLeft.Concat(verticesInnerLeft).ToList();
+            List<Vector3> verticesRightRing = verticesOuterRight.Concat(verticesInnerRight).ToList();
+            List<Vector3> verticesOuterMantle = verticesOuterLeft.Concat(verticesOuterRight).ToList();
+            List<Vector3> verticesInnerMantle = verticesInnerLeft.Concat(verticesInnerRight).ToList();
             
             List<Vector3> normalsLeftRing = mcm.CalculateMeshNormals(verticesLeftRing, trianglesLeft);
             List<Vector3> normalsRightRing = mcm.CalculateMeshNormals(verticesRightRing, trianglesRight);
@@ -119,6 +118,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             c[3].transform = Matrix4x4.identity;
             Mesh apertureMesh = new Mesh();
             apertureMesh.CombineMeshes(c);
+            apertureMesh.RecalculateNormals();
             
             Component.GetComponent<MeshFilter>().mesh = apertureMesh;
             Component.GetComponent<MeshCollider>().sharedMesh = apertureMesh;
