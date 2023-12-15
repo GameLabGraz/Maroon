@@ -104,6 +104,25 @@ namespace Maroon.NetworkSimulator {
                     (5, 8)
                 }
             ),
+            new Preset(
+                new[] {
+                    new DevicePreset(NetworkDevice.DeviceType.Computer, -0.76f, 0.41f),
+                    new DevicePreset(NetworkDevice.DeviceType.Computer, 0.48f, 0.55f),
+                    new DevicePreset(NetworkDevice.DeviceType.Computer, 1.12f, 0.31f),
+                    new DevicePreset(NetworkDevice.DeviceType.Switch, -0.78f, -0.19f),
+                    new DevicePreset(NetworkDevice.DeviceType.Switch, 0.42f, -0.19f),
+                    new DevicePreset(NetworkDevice.DeviceType.Router, -0.36f, -0.44f),
+                    new DevicePreset(NetworkDevice.DeviceType.Router, 0.01f, -0.44f)
+                },
+                new[] {
+                    (0, 3),
+                    (3, 5),
+                    (5, 6),
+                    (6, 4),
+                    (1, 4),
+                    (2, 4)
+                }
+            ),
         };
         public readonly struct Preset {
             public readonly DevicePreset[] Devices;
