@@ -122,14 +122,23 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         // ----------------------------------- Mesh Calculation -----------------------------------
         public override void RecalculateMesh()
         {
+            TranslateComponent();
             Mesh inner = new Mesh();
             Mesh outer = new Mesh();
             var mcm = MeshCalculationManager.Instance;
 
             if (R == 0) return;
-            float yRotation = (R < 0) ? 90f : -90f;
-
-            var (verticesInner, normalsInner) = mcm.CalculateHalfSphereVerticesNormals(R, Rc, n, nrOfSegments, _nrOfLatitudeSegments, yRotation);
+            float baseYRotation = (R < 0) ? 90f : -90f;
+            
+            var (verticesInner, normalsInner) = 
+                mcm.CalculateHalfSphereVerticesNormals(
+                    R, 
+                    Rc, 
+                    n, 
+                    nrOfSegments, 
+                    _nrOfLatitudeSegments, 
+                    baseYRotation
+                );
             List<Vector3> verticesOuter = new List<Vector3>(verticesInner);
             List<Vector3> normalOuter = new List<Vector3>(normalsInner);
             mcm.FlipNormals(ref normalOuter);
@@ -159,6 +168,11 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             // Assign the mesh to the MeshFilter component
             Component.GetComponent<MeshFilter>().mesh = sphericalMirrorMesh;
             Component.GetComponent<MeshCollider>().sharedMesh = sphericalMirrorMesh;
+        }
+        
+        public void TranslateComponent()
+        {
+            Component.transform.localPosition = new Vector3(R, 0, 0);
         }
 
     }

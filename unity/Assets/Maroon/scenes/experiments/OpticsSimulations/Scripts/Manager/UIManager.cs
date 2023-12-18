@@ -330,10 +330,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             lensR1.Value = lens.R1 * Constants.InCM;
             lensR2.Value = lens.R2 * Constants.InCM;
             lensRc.Value = lens.Rc * Constants.InCM;
-            lensD1.Value = lens.d1_TODO * Constants.InCM;
+            lensD1.Value = lens.d1 * Constants.InCM;
             lensD2.Value = lens.d2 * Constants.InCM;
-            lensA.Value = lens.A   * Constants.InCM;
-            lensB.Value = lens.B   * Constants.InCM;
+            lensA.Value = lens.A;
+            lensB.Value = lens.B;
             lensPanel.SetActive(true);
             _activeOcPanel = lensPanel;
         }
@@ -366,10 +366,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                     le.R1 = lensR1.Value / Constants.InCM;
                     le.R2 = lensR2.Value / Constants.InCM;
                     le.Rc = lensRc.Value / Constants.InCM;
-                    le.d1_TODO = lensD1.Value / Constants.InCM;
+                    le.d1 = lensD1.Value / Constants.InCM;
                     le.d2 = lensD2.Value / Constants.InCM;
-                    le.A = lensA.Value / Constants.InCM;
-                    le.B = lensB.Value / Constants.InCM;
+                    le.A = lensA.Value;
+                    le.B = lensB.Value;
                     break;
                 
                 case OpticalType.Mirror:

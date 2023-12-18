@@ -98,7 +98,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             return normals;
         }
 
-        public List<Vector3> CalculateDiskVertices(Vector3 center, float radius, float Rc, int nrOfSegments)
+        public List<Vector3> CalculateDiskVertices(Vector3 localCenter, float radius, float Rc, int nrOfSegments)
         {
             List<Vector3> vertexPositions = new List<Vector3>();
 
@@ -113,31 +113,25 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 float radians = angle * Mathf.Deg2Rad;
 
                 vertexPositions.Add(new Vector3(
-                    center.x, 
-                    center.y + radius * Mathf.Sin(radians), 
-                    center.z + radius * Mathf.Cos(radians)
+                    localCenter.x, 
+                    localCenter.y + radius * Mathf.Sin(radians), 
+                    localCenter.z + radius * Mathf.Cos(radians)
                 ));
             }
             return vertexPositions;
         }
 
         public (List<Vector3>, List<Vector3>) CalculateHalfSphereVerticesNormals(float radius, float Rc, Vector3 n,
-            int ringSegments, int nrOfLatitudeSegments, float yRotation)
+            int ringSegments, int nrOfLatitudeSegments, float baseYRotation, float offsetAlongOpticalAxis = 0)
         {
             Vector3[] vertices = new Vector3[(nrOfLatitudeSegments + 1) * (ringSegments + 1)];
             Vector3[] normals = new Vector3[vertices.Length];
 
-            float direction = 1;
-            if (radius < 0)
+            radius = Mathf.Abs(radius);
+            if (Rc < radius)
             {
-                radius = Mathf.Abs(radius);
-                direction = -1;
+                // throw new NotImplementedException("Rc cut-off not implemented yet!");
             }
-            
-            // if (Rc < radius)
-            // {
-            //     throw new NotImplementedException("Rc cut-off not implemented yet!");
-            // }
 
             for (int lat = 0; lat <= nrOfLatitudeSegments; lat++)
             {
@@ -148,18 +142,19 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 {
                     float normalizedLongitude = lon / (float)ringSegments;
                     float phi = normalizedLongitude * Mathf.PI * 2.0f;
-                    Quaternion rotation = Quaternion.Euler(0, yRotation, 0);
+                    Quaternion quaternionRot = Quaternion.Euler(new Vector3(0, baseYRotation, 0));
 
                     float x = Mathf.Sin(theta) * Mathf.Cos(phi);
                     float y = Mathf.Sin(theta) * Mathf.Sin(phi);
                     float z = Mathf.Cos(theta);
-                    Vector3 rotatedCoordinates = rotation * (new Vector3(x, y, z));
+                    Vector3 rotatedCoordinates = quaternionRot * new Vector3(x, y, z);
                     
                     int index = lat * (ringSegments + 1) + lon;
-                    vertices[index] = rotatedCoordinates * radius + radius * direction * n;
+                    vertices[index] = rotatedCoordinates * radius + n * offsetAlongOpticalAxis;
                     normals[index] = rotatedCoordinates.normalized;
                 }
             }
+            
             return (vertices.ToList(), normals.ToList());
         }
 

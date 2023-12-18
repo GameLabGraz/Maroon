@@ -60,8 +60,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handle
                 gizmospoint = hitPoint;
                 SetMouseToTableOffsets(hitPoint);
                 
-                Debug.Log("arrow center pos: " + transform.Find("RotationArrowY").position.ToString("f3"));
-                Debug.Log("plane        pos: " + hitPoint.ToString("f3"));
+                // Debug.Log("arrow center pos: " + transform.Find("RotationArrowY").position.ToString("f3"));
+                // Debug.Log("plane        pos: " + hitPoint.ToString("f3"));
             }
 
             if (Input.GetMouseButton(0))

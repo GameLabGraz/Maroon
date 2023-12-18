@@ -68700,62 +68700,62 @@ PrefabInstance:
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 550
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239375179209, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
@@ -70146,7 +70146,46 @@ MonoBehaviour:
     maxValue: 25
     onValueChanged:
       m_PersistentCalls:
-        m_Calls: []
+        m_Calls:
+        - m_Target: {fileID: 1875552073}
+          m_TargetAssemblyTypeName: Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager.UIManager,
+            Assembly-CSharp
+          m_MethodName: UpdateOpticalComponentValues
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 1875552073}
+          m_TargetAssemblyTypeName: Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager.UIManager,
+            Assembly-CSharp
+          m_MethodName: RecalculateSelectedOcMesh
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 950236706}
+          m_TargetAssemblyTypeName: Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager.LightComponentManager,
+            Assembly-CSharp
+          m_MethodName: RecalculateAllLightRoutes
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
     onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
@@ -70155,12 +70194,51 @@ MonoBehaviour:
     isDynamic: 0
     alwaysSendValueChangedEvent: 1
     allowSystemChange: 1
-    _value: 30
-    minValue: -80
-    maxValue: 80
+    _value: 10
+    minValue: -100
+    maxValue: 100
     onValueChanged:
       m_PersistentCalls:
-        m_Calls: []
+        m_Calls:
+        - m_Target: {fileID: 1875552073}
+          m_TargetAssemblyTypeName: Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager.UIManager,
+            Assembly-CSharp
+          m_MethodName: UpdateOpticalComponentValues
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 1875552073}
+          m_TargetAssemblyTypeName: Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager.UIManager,
+            Assembly-CSharp
+          m_MethodName: RecalculateSelectedOcMesh
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 950236706}
+          m_TargetAssemblyTypeName: Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager.LightComponentManager,
+            Assembly-CSharp
+          m_MethodName: RecalculateAllLightRoutes
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
     onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
@@ -70169,12 +70247,51 @@ MonoBehaviour:
     isDynamic: 0
     alwaysSendValueChangedEvent: 1
     allowSystemChange: 1
-    _value: -30
-    minValue: -80
-    maxValue: 80
+    _value: -10
+    minValue: -100
+    maxValue: 100
     onValueChanged:
       m_PersistentCalls:
-        m_Calls: []
+        m_Calls:
+        - m_Target: {fileID: 1875552073}
+          m_TargetAssemblyTypeName: Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager.UIManager,
+            Assembly-CSharp
+          m_MethodName: UpdateOpticalComponentValues
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 1875552073}
+          m_TargetAssemblyTypeName: Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager.UIManager,
+            Assembly-CSharp
+          m_MethodName: RecalculateSelectedOcMesh
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 950236706}
+          m_TargetAssemblyTypeName: Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager.LightComponentManager,
+            Assembly-CSharp
+          m_MethodName: RecalculateAllLightRoutes
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
     onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
@@ -70183,12 +70300,51 @@ MonoBehaviour:
     isDynamic: 0
     alwaysSendValueChangedEvent: 1
     allowSystemChange: 1
-    _value: 30
+    _value: 10
     minValue: 0
-    maxValue: 80
+    maxValue: 100
     onValueChanged:
       m_PersistentCalls:
-        m_Calls: []
+        m_Calls:
+        - m_Target: {fileID: 1875552073}
+          m_TargetAssemblyTypeName: Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager.UIManager,
+            Assembly-CSharp
+          m_MethodName: UpdateOpticalComponentValues
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 1875552073}
+          m_TargetAssemblyTypeName: Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager.UIManager,
+            Assembly-CSharp
+          m_MethodName: RecalculateSelectedOcMesh
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 950236706}
+          m_TargetAssemblyTypeName: Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager.LightComponentManager,
+            Assembly-CSharp
+          m_MethodName: RecalculateAllLightRoutes
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
     onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
@@ -70198,11 +70354,50 @@ MonoBehaviour:
     alwaysSendValueChangedEvent: 1
     allowSystemChange: 1
     _value: 20
-    minValue: 1
+    minValue: 0.01
     maxValue: 50
     onValueChanged:
       m_PersistentCalls:
-        m_Calls: []
+        m_Calls:
+        - m_Target: {fileID: 1875552073}
+          m_TargetAssemblyTypeName: Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager.UIManager,
+            Assembly-CSharp
+          m_MethodName: UpdateOpticalComponentValues
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 1875552073}
+          m_TargetAssemblyTypeName: Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager.UIManager,
+            Assembly-CSharp
+          m_MethodName: RecalculateSelectedOcMesh
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 950236706}
+          m_TargetAssemblyTypeName: Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager.LightComponentManager,
+            Assembly-CSharp
+          m_MethodName: RecalculateAllLightRoutes
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
     onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
@@ -70212,11 +70407,50 @@ MonoBehaviour:
     alwaysSendValueChangedEvent: 1
     allowSystemChange: 1
     _value: 20
-    minValue: 1
+    minValue: 0.01
     maxValue: 50
     onValueChanged:
       m_PersistentCalls:
-        m_Calls: []
+        m_Calls:
+        - m_Target: {fileID: 1875552073}
+          m_TargetAssemblyTypeName: Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager.UIManager,
+            Assembly-CSharp
+          m_MethodName: UpdateOpticalComponentValues
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 1875552073}
+          m_TargetAssemblyTypeName: Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager.UIManager,
+            Assembly-CSharp
+          m_MethodName: RecalculateSelectedOcMesh
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 950236706}
+          m_TargetAssemblyTypeName: Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager.LightComponentManager,
+            Assembly-CSharp
+          m_MethodName: RecalculateAllLightRoutes
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
     onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
@@ -70230,7 +70464,46 @@ MonoBehaviour:
     maxValue: 2
     onValueChanged:
       m_PersistentCalls:
-        m_Calls: []
+        m_Calls:
+        - m_Target: {fileID: 1875552073}
+          m_TargetAssemblyTypeName: Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager.UIManager,
+            Assembly-CSharp
+          m_MethodName: UpdateOpticalComponentValues
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 1875552073}
+          m_TargetAssemblyTypeName: Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager.UIManager,
+            Assembly-CSharp
+          m_MethodName: RecalculateSelectedOcMesh
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 950236706}
+          m_TargetAssemblyTypeName: Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager.LightComponentManager,
+            Assembly-CSharp
+          m_MethodName: RecalculateAllLightRoutes
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
     onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
@@ -70240,11 +70513,50 @@ MonoBehaviour:
     alwaysSendValueChangedEvent: 1
     allowSystemChange: 1
     _value: 13420
-    minValue: 15000
-    maxValue: 3000
+    minValue: 3000
+    maxValue: 15000
     onValueChanged:
       m_PersistentCalls:
-        m_Calls: []
+        m_Calls:
+        - m_Target: {fileID: 1875552073}
+          m_TargetAssemblyTypeName: Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager.UIManager,
+            Assembly-CSharp
+          m_MethodName: UpdateOpticalComponentValues
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 1875552073}
+          m_TargetAssemblyTypeName: Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager.UIManager,
+            Assembly-CSharp
+          m_MethodName: RecalculateSelectedOcMesh
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 950236706}
+          m_TargetAssemblyTypeName: Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager.LightComponentManager,
+            Assembly-CSharp
+          m_MethodName: RecalculateAllLightRoutes
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
     onNewValueFromSystem:
       m_PersistentCalls:
         m_Calls: []
@@ -70307,7 +70619,7 @@ MonoBehaviour:
     alwaysSendValueChangedEvent: 1
     allowSystemChange: 1
     _value: 10
-    minValue: -100
+    minValue: 0
     maxValue: 100
     onValueChanged:
       m_PersistentCalls:

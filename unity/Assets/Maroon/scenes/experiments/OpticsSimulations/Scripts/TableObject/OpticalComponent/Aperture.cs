@@ -17,7 +17,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         public float Rin;
         public float Rout;
         
-        private float _thickness = 0.01f;
+        private float _thickness = 0.003f;
 
         private void Start()
         {
