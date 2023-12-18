@@ -133,7 +133,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             var (verticesInner, normalsInner) = 
                 mcm.CalculateHalfSphereVerticesNormals(
                     R, 
-                    Rc, 
+                    AdjustRc(), 
                     n, 
                     nrOfSegments, 
                     _nrOfLatitudeSegments, 

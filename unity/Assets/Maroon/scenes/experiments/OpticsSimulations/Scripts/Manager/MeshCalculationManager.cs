@@ -126,17 +126,13 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         {
             Vector3[] vertices = new Vector3[(nrOfLatitudeSegments + 1) * (ringSegments + 1)];
             Vector3[] normals = new Vector3[vertices.Length];
-
             radius = Mathf.Abs(radius);
-            if (Rc < radius)
-            {
-                // throw new NotImplementedException("Rc cut-off not implemented yet!");
-            }
 
+            float thetaMax = Rc < radius ? Mathf.Asin(Rc / radius) : Mathf.PI / 2.0f;
             for (int lat = 0; lat <= nrOfLatitudeSegments; lat++)
             {
                 float normalizedLatitude = lat / (float)nrOfLatitudeSegments;
-                float theta = normalizedLatitude * Mathf.PI / 2.0f;
+                float theta = normalizedLatitude * thetaMax;
 
                 for (int lon = 0; lon <= ringSegments; lon++)
                 {
