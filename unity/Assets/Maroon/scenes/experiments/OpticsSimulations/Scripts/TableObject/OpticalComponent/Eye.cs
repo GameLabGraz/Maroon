@@ -13,8 +13,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         [Header("Eye Properties")]
         public Vector3 r0;
         public Vector3 n;
-        public float f = 0.024f * 5;
-        public float R = 0.012f * 5; // scale = 0.024 * 5
+        public float f = 0.024f;
+        public readonly float R = 0.012f;
 
         // normal to surface R at p
         public Vector3 NormR(Vector3 p)
@@ -107,6 +107,11 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             if (d2 > Constants.Epsilon && !float.IsNaN(d2) && d2 < dmin)
                 dmin = d2;
             return dmin;
+        }
+
+        public override void RecalculateMesh()
+        {
+            
         }
     }
 }

@@ -4,7 +4,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Util
 {
     public static class Constants
     {
-        public const float LaserWidth = 0.003f/2;
+        public const float LaserWidth = 0.003f/4;
         public const float ReflectIntensity = 0.1f;
         public const float MinimalIntensity = 0.02f;
         public const int MaxNumberOfRays = 500;

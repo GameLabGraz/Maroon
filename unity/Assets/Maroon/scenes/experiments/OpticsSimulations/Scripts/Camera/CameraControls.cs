@@ -10,17 +10,21 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Camera
     public class CameraControls : MonoBehaviour
     {
         [SerializeField] private bool topView;
-        [SerializeField] private float moveSpeed = 3.0f;
-        [SerializeField] private float zoomSpeed = 1.0f;
+        [SerializeField] private float moveSpeed = 8.0f;
+        [SerializeField] private float zoomSpeed = 15.0f;
+        
+        [SerializeField] private float baseFOV = 60f;
+        [SerializeField] private float minFOV = 1f;
+        [SerializeField] private float maxFOV = 70f;
         
         private Vector3 _newCameraPos;
         private UnityEngine.Camera _cam;
         private Transform _camTransform;
         private Vector3 _camPos;
         private Quaternion _camRot;
+        private float _camFOV;
         private bool _isMoving;
         private float _moveFactor;
-        private Plane _tablePlane;
         
         private readonly Vector3 _camTopPos = new Vector3(0, 3f, 2.5f);
         private readonly Quaternion _camTopRot = Quaternion.Euler(90, 0, 0);
@@ -29,33 +33,34 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Camera
         {
             _cam = GetComponent<UnityEngine.Camera>();
             _camTransform = _cam.transform;
-            
-            _tablePlane = new Plane(Vector3.up, new Vector3(0, Constants.TableHeight, 0));
         }
 
         void Update()
         {
             if (!topView && !_isMoving)
             {
-                Ray ray = new Ray(_camTransform.position, _camTransform.forward);
-
-                _tablePlane.Raycast(ray, out float distance);
-                _moveFactor = distance + 1; // The +1 ensures sharper camera movement
-                    
                 if (Input.GetMouseButton(1))
                 {
-                    float cameraOffsetX = -Input.GetAxis("Mouse X") * moveSpeed * Time.deltaTime;
-                    float cameraOffsetZ = Input.GetAxis("Mouse Y") * moveSpeed * Time.deltaTime;
+                    float cameraOffsetX = -Input.GetAxis("Mouse X");
+                    float cameraOffsetZ = Input.GetAxis("Mouse Y");
 
-                    _newCameraPos = transform.position + new Vector3(cameraOffsetX, 0, cameraOffsetZ);
+                    float adjustedSpeed = moveSpeed * Mathf.Lerp(0.1f, 1f, (_cam.fieldOfView - minFOV) / (maxFOV - minFOV));
+                    Debug.Log("Adj speed: " + adjustedSpeed);
+
+                    float moveFactor = adjustedSpeed * Time.deltaTime;
+                    _newCameraPos = transform.position + new Vector3(cameraOffsetX, 0, cameraOffsetZ) * moveFactor;
 
                     if (CheckPointInCuboid(_newCameraPos, Constants.MinPositionCamera, Constants.MaxPositionCamera))
                     {
-                        transform.position += new Vector3(cameraOffsetX, 0, cameraOffsetZ) * _moveFactor;
+                        transform.position = _newCameraPos;
+                    }
+                    else
+                    {
+                        // TODO Set camera back in cube
                     }
                 }
 
-                _newCameraPos = transform.position + transform.forward * (zoomSpeed * Input.GetAxis("Mouse ScrollWheel"));
+                _cam.fieldOfView = Mathf.Clamp(_cam.fieldOfView - Input.GetAxis("Mouse ScrollWheel") * zoomSpeed, minFOV, maxFOV);
                 
                 if (CheckPointInCuboid(_newCameraPos, Constants.MinPositionCamera, Constants.MaxPositionCamera))
                     transform.position = _newCameraPos;
@@ -76,32 +81,37 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Camera
             {
                 _camPos = _camTransform.position;
                 _camRot = _camTransform.rotation;
-                StartCoroutine(ChangeCameraView(_camTopPos, _camTopRot));
+                _camFOV = _cam.fieldOfView;
+                StartCoroutine(ChangeCameraView(_camTopPos, _camTopRot, baseFOV));
             }
             else
             {
-                StartCoroutine(ChangeCameraView(_camPos, _camRot));
+                StartCoroutine(ChangeCameraView(_camPos, _camRot, _camFOV));
             }
             topView = !topView;
         }
         
-        private IEnumerator ChangeCameraView(Vector3 targetPos, Quaternion targetRot)
+        private IEnumerator ChangeCameraView(Vector3 targetPos, Quaternion targetRot, float targetFOV)
         {
             _isMoving = true;
 
             float startTime = Time.time;
-            Vector3 startPos = transform.position;
-            Quaternion startRot = transform.rotation;
+            Transform trans = transform;
+            Vector3 startPos = trans.position;
+            Quaternion startRot = trans.rotation;
+            float startFOV = _cam.fieldOfView;
 
             while (Time.time - startTime < 1f)
             {
                 float t = (Time.time - startTime) / 1f;
-                transform.position = Vector3.Lerp(startPos, targetPos, t * 1.5f);
-                transform.rotation = Quaternion.Slerp(startRot, targetRot, t * 1.5f);
+                trans.position = Vector3.Lerp(startPos, targetPos, t * 1.5f);
+                trans.rotation = Quaternion.Slerp(startRot, targetRot, t * 1.5f);
+                _cam.fieldOfView = Mathf.Lerp(startFOV, targetFOV, t * 1.5f);
                 yield return null;
             }
-            transform.position = targetPos;
-            transform.rotation = targetRot;
+            trans.position = targetPos;
+            trans.rotation = targetRot;
+            _cam.fieldOfView = targetFOV;
 
             _isMoving = false;
         }

@@ -52,7 +52,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         public float Dc()
         { 
             var absR = Mathf.Abs(this.R);
-            return absR - Mathf.Sqrt(absR*absR - this.Rc*this.Rc);
+            return absR - Mathf.Sqrt(absR*absR - AdjustRc() * AdjustRc());
         }
         
         public float AdjustRc()
