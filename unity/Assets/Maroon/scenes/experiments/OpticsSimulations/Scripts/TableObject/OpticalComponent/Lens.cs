@@ -17,7 +17,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         public float R2;
         public float d1;
         public float d2;
-        public float Rc0;
+        // public float Rc0;
         public float Rc;
         public float A;
         public float B;
@@ -27,10 +27,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
 
         private void Start()
         {
-            R1 = 0.1f;
-            R2 = -0.1f;
-            d1 = 0.2f;
-            d2 = 0.2f;
+            R1 = 0.2f;
+            R2 = -0.2f;
+            d1 = 0.04f;
+            d2 = 0.04f;
             Rc = 0.1f;
             A = 1.728f;
             B = 13420f;
@@ -38,42 +38,11 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             LightComponentManager.Instance.RecalculateAllLightRoutes();
         }
 
-        public void AdjustCylinderRadiusIfUnphysical()
-        {
-            float Rc1;
-            float Rc2;
-            if (this.R1 < 0)
-                Rc1 = Mathf.Abs(this.R1);
-            else
-            {
-                if (0.5 * this.d1 > this.R1)
-                    Rc1 = Mathf.Abs(this.R1);
-                else
-                    Rc1 = Mathf.Sqrt(this.R1 * this.R1 - (this.R1 - this.d1) * (this.R1 - this.d1));
-            }
-
-            if (this.R2 < 0)
-            {
-                if (this.d2 > Mathf.Abs(this.R2))
-                    Rc2 = Mathf.Abs(this.R2);
-                else
-                    Rc2 = Mathf.Sqrt(this.R2 * this.R2 - (this.R2 + this.d2) * (this.R2 + this.d2));
-            }
-            else
-                Rc2 = Mathf.Abs(this.R2);
-
-            this.Rc = Mathf.Min(this.Rc, Rc1, Rc2);
-            var dn = this.n.magnitude;
-            if (Mathf.Abs(1 - dn) > 1E-6)
-                throw new Exception("Lens Error: " + this.n.ToString("f3") + "is not a normalized unit vector.");
-        }
-
         public override void UpdateProperties()
         {
             r = transform.localPosition;
             n = transform.right;
             RecalculateMesh();
-            // AdjustCylinderRadiusIfUnphysical();     // TODO check if necessary
         }
 
         // ---- Lens helper methods ----
@@ -177,7 +146,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             else
                 Rc2 = Mathf.Abs(this.R2);
 
-            this.Rc = Mathf.Min(this.Rc0, Rc1, Rc2);
+            // this.Rc = Mathf.Min(this.Rc0, Rc1, Rc2);
+            this.Rc = Mathf.Min(this.Rc, Rc1, Rc2);
+            // UIManager.Instance.SetLensRcValue(Rc);   // TODO Maybe find a way to show the "Rc is changed because d1 or d2 too small" in UI
         }
 
         // use small angle approximation to estimate the focal length in air
@@ -388,15 +359,40 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         // ----------------------------------- Mesh Calculation -----------------------------------
         public override void RecalculateMesh()
         {
+            AdjustRc();
             if (d1 == 0 || d2 == 0 || R1 == 0 || R2 == 0 || Rc == 0)
                 return;
+
+            float absR1 = Mathf.Abs(R1);
+            float absR2 = Mathf.Abs(R2);
+
+            // float leftCylinderThickness = Mathf.Max(0, d1 - absR1);
+            // float rightCylinderThickness = Mathf.Max(0, d2 - absR2);
+
+            // Right -> R1
+            // 1. is neg? -> 1 - rightCylinderExtend
+            // 2. rightCylinderExtend = cos(asin(Rc / R1))
             
+            float leftCylinderExtend = Rc < absR1 ? (1 - Mathf.Cos(Mathf.Asin(Rc / absR1))) * absR1 : Rc;
+            float rightCylinderExtend = Rc < absR2 ? (1 - Mathf.Cos(Mathf.Asin(Rc / absR2))) * absR2: Rc;
+
+            float leftCylinderThickness = R1 < 0 ? d1 + leftCylinderExtend : d1 - leftCylinderExtend;
+            float rightCylinderThickness = R2 < 0 ? d2 - rightCylinderExtend : d2 + rightCylinderExtend;
+            
+            
+            // float thetaMaxRight = Rc < R1 ? Mathf.Asin(Rc / R1) : Mathf.PI / 2.0f;
+            // Debug.Log("Theta: " + thetaMaxRight.ToString("F2"));
+            
+            Debug.Log("leftCylinderThickness: " + leftCylinderThickness.ToString("F3"));
+            Debug.Log("rightCylinderThickness: " + rightCylinderThickness.ToString("F3"));
+
             CombineInstance[] c = new CombineInstance[4];
             c[0].mesh = CalculateLeftSphere();
             c[0].transform = Matrix4x4.identity;
-            c[1].mesh = CalculateCylinder(d1, R1, true);
+            // c[1].mesh = CalculateCylinder(d1, cylinderRadius, true);
+            c[1].mesh = CalculateCylinder(leftCylinderThickness, Rc, true);
             c[1].transform = Matrix4x4.identity;
-            c[2].mesh = CalculateCylinder(d2, R2, false);
+            c[2].mesh = CalculateCylinder(rightCylinderThickness, Rc, false);
             c[2].transform = Matrix4x4.identity;
             c[3].mesh = CalculateRightSphere();
             c[3].transform = Matrix4x4.identity;
@@ -458,20 +454,22 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             Mesh cylinder = new Mesh();
             var mcm = MeshCalculationManager.Instance;
 
-            radius = Mathf.Abs(radius);
+            // radius = Mathf.Abs(radius);
             float cylinderThickness = isLeft ? -(thickness - radius) : (thickness - radius);
 
-            List<Vector3> verticesLeftDisk =
-                mcm.CalculateDiskVertices(n * cylinderThickness, radius, Mathf.Infinity, nrOfSegments);
-            List<Vector3> verticesRightDisk = mcm.CalculateDiskVertices(Vector3.zero, radius, Mathf.Infinity, nrOfSegments);
+            Vector3 leftCenter = isLeft ? n * -thickness : Vector3.zero;
+            Vector3 rightCenter = isLeft ? Vector3.zero : n * thickness;
+
+            List<Vector3> verticesLeftDisk = mcm.CalculateDiskVertices(leftCenter, radius, Mathf.Infinity, nrOfSegments);
+            List<Vector3> verticesRightDisk = mcm.CalculateDiskVertices(rightCenter, radius, Mathf.Infinity, nrOfSegments);
 
             List<int> triangleIndices = mcm.CalculateRingFaces(verticesLeftDisk.Count, nrOfSegments);
             List<Vector3> verticesMantle = verticesLeftDisk.Concat(verticesRightDisk).ToList();
             List<Vector3> normalsMantle = mcm.CalculateMeshNormals(verticesMantle, triangleIndices);
 
             // if (thickness > 0)
-            if (!isLeft)
-                mcm.FlipTriangleVertexOrder(ref triangleIndices);
+            // if (isLeft)
+                // mcm.FlipTriangleVertexOrder(ref triangleIndices);
             
             cylinder.SetVertices(verticesMantle);
             cylinder.SetTriangles(triangleIndices, 0);

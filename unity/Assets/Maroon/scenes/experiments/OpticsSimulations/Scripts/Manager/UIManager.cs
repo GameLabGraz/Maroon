@@ -42,7 +42,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         // public Quantity<List<float>> selectedWavelength;
         public QuantityFloat sliderWavelength;
         public QuantityFloat selectedIntensity;
-        public QuantityInt numberOfRays;
+        public QuantityInt   numberOfRays;
         public QuantityFloat distanceBetweenRays;
 
         [Header("Aperture Parameters")]
@@ -103,6 +103,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             selectedIntensity.Value = _selectedLc.Intensity;
             DeactivateAllLightControlPanels();
 
+            AllowValueChangeEvent(false);
             switch (_selectedLc.LightType)
             {
                 case LightType.LaserPointer:
@@ -119,6 +120,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             // Set wavelength textfield and slider to match lightComponents wavelength
             WavelengthSliderLogic(lc.Wavelengths);
             StoreCurrentPosRot(_selectedLc);
+            AllowValueChangeEvent(true);
         }
         
         public void DeactivateAllLightControlPanels()
@@ -283,6 +285,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             DeactivateAllOpticalControlPanels();
             StoreCurrentPosRot(_selectedOc);
             
+            AllowValueChangeEvent(false);
             switch (_selectedOc.OpticalType)
             {
                 case OpticalType.Aperture:
@@ -298,7 +301,27 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                     SetMirrorControlPanelValues((TableObject.OpticalComponent.Mirror)_selectedOc);
                     break;
             }
-             
+            AllowValueChangeEvent(true);
+        }
+
+        private void AllowValueChangeEvent(bool value)
+        {
+            apertureRin.alwaysSendValueChangedEvent = value;
+            apertureRout.alwaysSendValueChangedEvent = value;
+            eyeF.alwaysSendValueChangedEvent = value;
+            lensR1.alwaysSendValueChangedEvent = value;
+            lensR2.alwaysSendValueChangedEvent = value;
+            lensRc.alwaysSendValueChangedEvent = value;
+            lensD1.alwaysSendValueChangedEvent = value;
+            lensD2.alwaysSendValueChangedEvent = value;
+            lensA.alwaysSendValueChangedEvent = value;
+            lensB.alwaysSendValueChangedEvent = value;
+            mirrorR.alwaysSendValueChangedEvent = value;
+            mirrorRc.alwaysSendValueChangedEvent = value;
+            sliderWavelength.alwaysSendValueChangedEvent = value;
+            selectedIntensity.alwaysSendValueChangedEvent = value;
+            numberOfRays.alwaysSendValueChangedEvent = value;
+            distanceBetweenRays.alwaysSendValueChangedEvent = value;
         }
         
         public void DeactivateAllOpticalControlPanels()
@@ -337,6 +360,13 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             lensPanel.SetActive(true);
             _activeOcPanel = lensPanel;
         }
+
+        public void SetLensRcValue(float adjustedRc)
+        {
+            lensRc.alwaysSendValueChangedEvent = false;
+            lensRc.Value = adjustedRc * Constants.InCM;
+            lensRc.alwaysSendValueChangedEvent = true;
+        }
         
         private void SetMirrorControlPanelValues(TableObject.OpticalComponent.Mirror mirror)
         {
@@ -348,6 +378,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
 
         public void UpdateOpticalComponentValues()
         {
+            if (_selectedOc == null)
+                return;
+            
             switch (_selectedOc.OpticalType)
             {
                 case OpticalType.Aperture:

@@ -45,7 +45,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Camera
                     float cameraOffsetZ = Input.GetAxis("Mouse Y");
 
                     float adjustedSpeed = moveSpeed * Mathf.Lerp(0.1f, 1f, (_cam.fieldOfView - minFOV) / (maxFOV - minFOV));
-                    Debug.Log("Adj speed: " + adjustedSpeed);
+                    // Debug.Log("Adj speed: " + adjustedSpeed);
 
                     float moveFactor = adjustedSpeed * Time.deltaTime;
                     _newCameraPos = transform.position + new Vector3(cameraOffsetX, 0, cameraOffsetZ) * moveFactor;
