@@ -98,6 +98,48 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                     break;
             }
         }
+        
+        public void WavelengthMenu(int nr)
+        {
+            LightComponent lc = UIManager.Instance.SelectedLc;
+            List<float> wls = new List<float>();
+            switch (nr)
+            {
+                case 0:
+                    return;
+                case 1:
+                    wls.Add(650);
+                    break;
+                case 2:
+                    wls.Add(510);
+                    break;
+                case 3:
+                    wls.Add(450);
+                    break;
+                case 4:
+                    wls.Add(390);
+                    break;
+                case 5:
+                    wls.AddRange(new List<float>{450, 510, 650});
+                    break;
+                case 6:
+                    wls.AddRange(new List<float>{390, 440, 490, 540, 590, 640, 720});
+                    break;
+                case 7:
+                    wls.Add(633);
+                    break;
+                case 8:
+                    wls.Add(694.3f);
+                    break;
+                case 9:
+                    wls.AddRange(new List<float>{405, 436, 546, 579});
+                    break;
+                case 10:
+                    wls.Add(589);
+                    break;
+            }
+            UIManager.Instance.WavelengthSliderLogic(wls);
+        }
 
         public void RemoveSelectedLC()
         {

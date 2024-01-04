@@ -200,7 +200,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             WavelengthSliderLogic(wls);
         }
 
-        private void WavelengthSliderLogic(List<float> wls)
+        public void WavelengthSliderLogic(List<float> wls)
         {
             // 1. Set UI slider to first entry of the wl-list (does not matter if we got multiple)
             sliderWavelength.Value = wls.First();
@@ -234,7 +234,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
 
         private InputField GetWavelengthTextInput()
         {
-            return _activeLcPanel.transform.Find("Content").Find("TextInputWavelengths").GetComponent<InputField>();
+            return _activeLcPanel.transform.Find("Content").Find("HorizontalLayoutGroupWavelength").Find("TextInputWavelengths").GetComponent<InputField>();
         }
         
         public void SetLcPositionFromUI(Vector3 posCm)

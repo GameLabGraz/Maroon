@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
 using UnityEngine;
 using LightType = Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent.LightType;
 
@@ -12,6 +13,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handle
         private Plane _translationPlane;
         private Plane _rotationYPlane;
         private Plane _rotationZPlane;
+        private TableObject _tableObject;
 
         private Vector3 _initialRotation;
         public Vector3 gizmospoint;
@@ -22,6 +24,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handle
 
         private void Awake()
         {
+            _tableObject = GetComponent<TableObject>();
             _translationPlane = new Plane(transform.forward, new Vector3(0, 0, 0));
         }
 
@@ -80,6 +83,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handle
                 pointOnPlane.y = transform.position.y;  // TODO
                 var newLookDirection = (pointOnPlane - transform.position).normalized;
                 transform.right = -newLookDirection;
+                
             }
         }
 
