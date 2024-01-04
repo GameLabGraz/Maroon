@@ -363,45 +363,17 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             if (d1 == 0 || d2 == 0 || R1 == 0 || R2 == 0 || Rc == 0)
                 return;
 
-            float absR1 = Mathf.Abs(R1);
-            float absR2 = Mathf.Abs(R2);
-
-            // float leftCylinderThickness = Mathf.Max(0, d1 - absR1);
-            // float rightCylinderThickness = Mathf.Max(0, d2 - absR2);
-
-            // Right -> R1
-            // 1. is neg? -> 1 - rightCylinderExtend
-            // 2. rightCylinderExtend = cos(asin(Rc / R1))
-            
-            float leftCylinderExtend = Rc < absR1 ? (1 - Mathf.Cos(Mathf.Asin(Rc / absR1))) * absR1 : Rc;
-            float rightCylinderExtend = Rc < absR2 ? (1 - Mathf.Cos(Mathf.Asin(Rc / absR2))) * absR2: Rc;
-
-            float leftCylinderThickness = R1 < 0 ? d1 + leftCylinderExtend : d1 - leftCylinderExtend;
-            float rightCylinderThickness = R2 < 0 ? d2 - rightCylinderExtend : d2 + rightCylinderExtend;
-            
-            
-            // float thetaMaxRight = Rc < R1 ? Mathf.Asin(Rc / R1) : Mathf.PI / 2.0f;
-            // Debug.Log("Theta: " + thetaMaxRight.ToString("F2"));
-            
-            Debug.Log("leftCylinderThickness: " + leftCylinderThickness.ToString("F3"));
-            Debug.Log("rightCylinderThickness: " + rightCylinderThickness.ToString("F3"));
-
-            CombineInstance[] c = new CombineInstance[4];
-            c[0].mesh = CalculateLeftSphere();
+            CombineInstance[] c = new CombineInstance[5];
+            c[0].mesh = CalculateHalfSphere(true, true);
             c[0].transform = Matrix4x4.identity;
-            // c[1].mesh = CalculateCylinder(d1, cylinderRadius, true);
-            c[1].mesh = CalculateCylinder(leftCylinderThickness, Rc, true);
+            c[1].mesh = CalculateHalfSphere(true, false);
             c[1].transform = Matrix4x4.identity;
-            c[2].mesh = CalculateCylinder(rightCylinderThickness, Rc, false);
+            c[2].mesh = CalculateCylinder();
             c[2].transform = Matrix4x4.identity;
-            c[3].mesh = CalculateRightSphere();
+            c[3].mesh = CalculateHalfSphere(false, true);
             c[3].transform = Matrix4x4.identity;
-            
-            // CombineInstance[] c = new CombineInstance[2];
-            // c[0].mesh = CalculateCylinder(-d1, R1);
-            // c[0].transform = Matrix4x4.identity;
-            // c[1].mesh = CalculateCylinder(d2, R2);
-            // c[1].transform = Matrix4x4.identity;
+            c[4].mesh = CalculateHalfSphere(false, false);
+            c[4].transform = Matrix4x4.identity;
 
             Mesh lensMesh = new Mesh();
             lensMesh.CombineMeshes(c);
@@ -411,71 +383,66 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             Component.GetComponent<MeshCollider>().sharedMesh = lensMesh;
         }
 
-        private Mesh CalculateLeftSphere()
+        private Mesh CalculateHalfSphere(bool isLeft, bool isInner)
         {
-            Mesh leftSphere = new Mesh();
+            Mesh halfSphere = new Mesh();
             var mcm = MeshCalculationManager.Instance;
 
             float yRotation = (R1 < 0) ? 90f : -90f;
+            float radius = R1;
+            float offsetOpticalAxis = -d1 + R1;
 
-            var (vertices, normals) =
-                mcm.CalculateHalfSphereVerticesNormals(R1, Rc, n, nrOfSegments, _nrOfLatitudeSegments, yRotation, -d1 + R1);
+            if (!isLeft)
+            {
+                yRotation = (R2 < 0) ? 90f : -90f;
+                radius = R2;
+                offsetOpticalAxis = d2 + R2;
+            }
 
+            var (vertices, normals) = mcm.CalculateHalfSphereVerticesNormals(radius, Rc, n, nrOfSegments, _nrOfLatitudeSegments, yRotation, offsetOpticalAxis);
             var triangles = mcm.CalculateHalfSphereFaces(nrOfSegments, _nrOfLatitudeSegments);
 
-            leftSphere.SetVertices(vertices);
-            leftSphere.SetTriangles(triangles, 0);
-            leftSphere.SetNormals(normals);
+            if (!isInner)
+            {
+                mcm.FlipNormals(ref normals);
+                mcm.FlipTriangleVertexOrder(ref triangles);
+            }
 
-            return leftSphere;
+            halfSphere.SetVertices(vertices);
+            halfSphere.SetTriangles(triangles, 0);
+            halfSphere.SetNormals(normals);
+
+            return halfSphere;
         }
 
-        private Mesh CalculateRightSphere()
-        {
-            Mesh rightSphere = new Mesh();
-            var mcm = MeshCalculationManager.Instance;
-
-            float yRotation = (R2 < 0) ? 90f : -90f;
-
-            var (vertices, normals) =
-                mcm.CalculateHalfSphereVerticesNormals(R2, Rc, n, nrOfSegments, _nrOfLatitudeSegments, yRotation, d2 + R2);
-
-            var triangles = mcm.CalculateHalfSphereFaces(nrOfSegments, _nrOfLatitudeSegments);
-
-            rightSphere.SetVertices(vertices);
-            rightSphere.SetTriangles(triangles, 0);
-            rightSphere.SetNormals(normals);
-
-            return rightSphere;
-        }
-
-        private Mesh CalculateCylinder(float thickness, float radius, bool isLeft)
+        private Mesh CalculateCylinder()
         {
             Mesh cylinder = new Mesh();
+            
+            float absR1 = Mathf.Abs(R1);
+            float absR2 = Mathf.Abs(R2);
+            float leftCylinderExtend = Rc < absR1 ? (1 - Mathf.Cos(Mathf.Asin(Rc / absR1))) * absR1 : Rc;
+            float rightCylinderExtend = Rc < absR2 ? (1 - Mathf.Cos(Mathf.Asin(Rc / absR2))) * absR2: Rc;
+            float leftCylinderThickness = R1 < 0 ? d1 + leftCylinderExtend : d1 - leftCylinderExtend;
+            float rightCylinderThickness = R2 < 0 ? d2 - rightCylinderExtend : d2 + rightCylinderExtend;
             var mcm = MeshCalculationManager.Instance;
 
-            // radius = Mathf.Abs(radius);
-            float cylinderThickness = isLeft ? -(thickness - radius) : (thickness - radius);
-
-            Vector3 leftCenter = isLeft ? n * -thickness : Vector3.zero;
-            Vector3 rightCenter = isLeft ? Vector3.zero : n * thickness;
-
-            List<Vector3> verticesLeftDisk = mcm.CalculateDiskVertices(leftCenter, radius, Mathf.Infinity, nrOfSegments);
-            List<Vector3> verticesRightDisk = mcm.CalculateDiskVertices(rightCenter, radius, Mathf.Infinity, nrOfSegments);
+            Vector3 leftCenter = n * -leftCylinderThickness;
+            Vector3 rightCenter = n * rightCylinderThickness;
+            
+            List<Vector3> verticesLeftDisk = mcm.CalculateDiskVertices(leftCenter, Rc, Mathf.Infinity, nrOfSegments);
+            List<Vector3> verticesRightDisk = mcm.CalculateDiskVertices(rightCenter, Rc, Mathf.Infinity, nrOfSegments);
 
             List<int> triangleIndices = mcm.CalculateRingFaces(verticesLeftDisk.Count, nrOfSegments);
             List<Vector3> verticesMantle = verticesLeftDisk.Concat(verticesRightDisk).ToList();
             List<Vector3> normalsMantle = mcm.CalculateMeshNormals(verticesMantle, triangleIndices);
 
-            // if (thickness > 0)
-            // if (isLeft)
-                // mcm.FlipTriangleVertexOrder(ref triangleIndices);
-            
             cylinder.SetVertices(verticesMantle);
             cylinder.SetTriangles(triangleIndices, 0);
             cylinder.SetNormals(normalsMantle);
 
             return cylinder;
         }
+        
     }
 }
