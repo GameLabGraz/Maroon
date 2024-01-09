@@ -21,6 +21,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Util
         public const float TableHeight = 1f;
         public const float TableObjectHeight = 0.20f;
         public const int TableObjectLayer = 1 << 4;
+        public const int UILayer = 1 << 5;
         
         public const float Epsilon = 0.000001f;
         public const float InCM = 100f;

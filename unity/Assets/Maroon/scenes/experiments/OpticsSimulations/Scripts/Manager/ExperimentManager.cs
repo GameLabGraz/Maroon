@@ -10,6 +10,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
     public class ExperimentManager : MonoBehaviour
     {
         public static ExperimentManager Instance;
+        public bool mouseOnUIPanel { get; set; } = false;
         
         private UnityEngine.Camera _cam;
         private Ray _mouseRay;
@@ -37,8 +38,12 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         // Main Update loop
         private void Update()
         {
+            // if (mouseOnUIPanel && !_isDragging)
+            if (mouseOnUIPanel && CanRaycast())
+                return;
             // Handle Table object selection, dragging, y-translation, y-rotation, z-rotation
             _mouseRay = _cam.ScreenPointToRay(Input.mousePosition);
+            
             RayCollisionLogic();
             DraggingLogic();
             TranslationLogic();

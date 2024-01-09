@@ -28,6 +28,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         private OpticalComponent _selectedOc;
         private GameObject _activeLcPanel;
         private GameObject _activeOcPanel;
+        private GameObject _prevLcPanel;
+        private GameObject _prevOcPanel;
+        private bool _hideControls;
 
         [Header("Prefabs: Control Panels")]
         [SerializeField] private GameObject aperturePanel;
@@ -130,10 +133,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             pointSourcePanel.SetActive(false);
             _activeLcPanel = null;
         }
-        
+
         private void SetLaserPointerControlPanelValues(LaserPointer lp)
         {
-            laserPointerPanel.SetActive(true);
+            if (!_hideControls) laserPointerPanel.SetActive(true);
             _activeLcPanel = laserPointerPanel;
         }
         
@@ -141,14 +144,14 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         {
             distanceBetweenRays.Value = ps.distanceBetweenRays * Constants.InMM;
             numberOfRays.Value = ps.numberOfRays;
-            parallelSourcePanel.SetActive(true);
+            if (!_hideControls) parallelSourcePanel.SetActive(true);
             _activeLcPanel = parallelSourcePanel;
         }
         
         private void SetPointSourceControlPanelValues(PointSource ps)
         {
             numberOfRays.Value = ps.numberOfRays;
-            pointSourcePanel.SetActive(true);
+            if (!_hideControls) pointSourcePanel.SetActive(true);
             _activeLcPanel = pointSourcePanel;
         }
 
@@ -337,14 +340,14 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         {
             apertureRin.Value = aperture.Rin * Constants.InCM;
             apertureRout.Value = aperture.Rout * Constants.InCM;
-            aperturePanel.SetActive(true);
+            if (!_hideControls) aperturePanel.SetActive(true);
             _activeOcPanel = aperturePanel;
         }
         
         private void SetEyeControlPanelValues(Eye eye)
         {
             eyeF.Value = eye.f * Constants.InCM;
-            eyePanel.SetActive(true);
+            if (!_hideControls) eyePanel.SetActive(true);
             _activeOcPanel = eyePanel;
         }
         
@@ -357,7 +360,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             lensD2.Value = lens.d2 * Constants.InCM;
             lensA.Value = lens.A;
             lensB.Value = lens.B;
-            lensPanel.SetActive(true);
+            if (!_hideControls) lensPanel.SetActive(true);
             _activeOcPanel = lensPanel;
         }
 
@@ -372,7 +375,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         {
             mirrorR.Value = mirror.R * Constants.InCM;
             mirrorRc.Value = mirror.Rc * Constants.InCM;
-            mirrorPanel.SetActive(true);
+            if (!_hideControls) mirrorPanel.SetActive(true);
             _activeOcPanel = mirrorPanel;
         }
 
@@ -462,6 +465,26 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 ocPos.Value = posUI;
                 ocRot.Value = rotUI;
             }
+        }
+
+        public void HideControlElements()
+        {
+            if (!_hideControls)
+            {
+                if (_activeLcPanel != null)
+                    _activeLcPanel.SetActive(false);
+                if (_activeOcPanel != null)
+                    _activeOcPanel.SetActive(false);
+            }
+            else
+            {
+                if (_activeLcPanel != null)
+                    _activeLcPanel.SetActive(true);
+                if (_activeOcPanel != null)
+                    _activeOcPanel.SetActive(true);
+            }
+
+            _hideControls = !_hideControls;
         }
         
         // ----------------------------------- Mesh Recalculation -----------------------------------

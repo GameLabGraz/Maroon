@@ -37,35 +37,34 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Camera
 
         void Update()
         {
-            if (!topView && !_isMoving)
+            if (ExperimentManager.Instance.mouseOnUIPanel || topView || _isMoving)
+                return;
+            
+            if (Input.GetMouseButton(1))
             {
-                if (Input.GetMouseButton(1))
-                {
-                    float cameraOffsetX = -Input.GetAxis("Mouse X");
-                    float cameraOffsetZ = Input.GetAxis("Mouse Y");
+                float cameraOffsetX = -Input.GetAxis("Mouse X");
+                float cameraOffsetZ = Input.GetAxis("Mouse Y");
 
-                    float adjustedSpeed = moveSpeed * Mathf.Lerp(0.1f, 1f, (_cam.fieldOfView - minFOV) / (maxFOV - minFOV));
-                    // Debug.Log("Adj speed: " + adjustedSpeed);
+                float adjustedSpeed = moveSpeed * Mathf.Lerp(0.1f, 1f, (_cam.fieldOfView - minFOV) / (maxFOV - minFOV));
+                // Debug.Log("Adj speed: " + adjustedSpeed);
 
-                    float moveFactor = adjustedSpeed * Time.deltaTime;
-                    _newCameraPos = transform.position + new Vector3(cameraOffsetX, 0, cameraOffsetZ) * moveFactor;
+                float moveFactor = adjustedSpeed * Time.deltaTime;
+                _newCameraPos = transform.position + new Vector3(cameraOffsetX, 0, cameraOffsetZ) * moveFactor;
 
-                    if (CheckPointInCuboid(_newCameraPos, Constants.MinPositionCamera, Constants.MaxPositionCamera))
-                    {
-                        transform.position = _newCameraPos;
-                    }
-                    else
-                    {
-                        // TODO Set camera back in cube
-                    }
-                }
-
-                _cam.fieldOfView = Mathf.Clamp(_cam.fieldOfView - Input.GetAxis("Mouse ScrollWheel") * zoomSpeed, minFOV, maxFOV);
-                
                 if (CheckPointInCuboid(_newCameraPos, Constants.MinPositionCamera, Constants.MaxPositionCamera))
+                {
                     transform.position = _newCameraPos;
-
+                }
+                else
+                {
+                    // TODO Set camera back in cube
+                }
             }
+
+            _cam.fieldOfView = Mathf.Clamp(_cam.fieldOfView - Input.GetAxis("Mouse ScrollWheel") * zoomSpeed, minFOV, maxFOV);
+                
+            if (CheckPointInCuboid(_newCameraPos, Constants.MinPositionCamera, Constants.MaxPositionCamera))
+                transform.position = _newCameraPos;
         }
 
         bool CheckPointInCuboid(Vector3 p, Vector3 minCorner, Vector3 maxCorner)
