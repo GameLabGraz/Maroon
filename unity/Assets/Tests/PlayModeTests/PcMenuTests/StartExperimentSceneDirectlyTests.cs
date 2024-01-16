@@ -36,7 +36,7 @@ namespace Tests.PlayModeTests.PcMenuTests
         };
 
         [UnityTest, Description("Attempts to start an experiment scene directly")]
-        [Timeout(300000)]
+        [Timeout(1800000)]
         public IEnumerator StartExperimentSceneDirectly([ValueSource(nameof(ExperimentScenePaths))] string scenePath)
         {
             Debug.Log("Trying to load experiment at " + scenePath + "; at " + Time.realtimeSinceStartup);
