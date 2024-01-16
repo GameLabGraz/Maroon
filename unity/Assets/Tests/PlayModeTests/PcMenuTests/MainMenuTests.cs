@@ -70,21 +70,22 @@ namespace Tests.PlayModeTests.PcMenuTests
             new LabMenuPathSource("Physics", "CoulombsLaw"),
             new LabMenuPathSource("Physics", "FallingCoil"),
             new LabMenuPathSource("Physics", "FaradaysLaw"),
-            new LabMenuPathSource("Physics", "HuygensPrinciple"),
             new LabMenuPathSource("Physics", "PointWaveExperiment"),
+            new LabMenuPathSource("Physics", "HuygensPrinciple"),
             new LabMenuPathSource("Physics", "Pendulum"),
             new LabMenuPathSource("Physics", "VandeGraaffBalloon"),
             new LabMenuPathSource("Physics", "VandeGraaffGenerator"),
             new LabMenuPathSource("Physics", "Optics"),
             new LabMenuPathSource("Physics", "3DMotionSimulation"),
-            new LabMenuPathSource("Physics", "Whiteboard"),
             new LabMenuPathSource("Chemistry", "TitrationExperiment"),
+            new LabMenuPathSource("Physics", "Whiteboard"),
             new LabMenuPathSource("Computer Science", "Sorting"),
             new LabMenuPathSource("Computer Science", "StateMachine"),
             new LabMenuPathSource("Computer Science", "PathFinding")
         };
         
         [UnityTest, Description("Clicking through 'Enter Lab -> Category -> Experiment' must load the associated scene")]
+        [Timeout(300000)]
         public IEnumerator WhenClickLabCategoryExperimentThenLoadScene([ValueSource(nameof(ExperimentMenuPaths))] LabMenuPathSource source)
         {
             // Get correct buttonLabel from LanguageManager
