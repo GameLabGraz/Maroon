@@ -56,7 +56,7 @@ jobs:
 
       # check out repo 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -99,7 +99,7 @@ jobs:
 
     steps:
       - name: Build
-        uses: game-ci/unity-builder@v2
+        uses: game-ci/unity-builder@v4
 
         # environment vars needed by unity-builder to activate the unity license
         # defined in the Actions Secrets in the repo settings
@@ -118,6 +118,8 @@ jobs:
           projectPath: unity
           buildName: ${{ matrix.maroonBuildTarget }}
           buildsPath: build
+          # run as host user or default root container user, should fix most permission issues on self-hosted runners
+          runAsHostUser: true
 
           # if this is set to false, the job will fail if any file has changed since checkout
           # since it is set to true, it will only raise a warning
@@ -151,6 +153,7 @@ jobs:
   test:
     name: Run tests
     runs-on: self-hosted
+    timeout-minutes: 60
     needs: [setup, build]
     strategy:
       # if fail-fast is set to true, the job will abort if one of the tests fail
@@ -163,7 +166,7 @@ jobs:
           - editmode
     steps:
       - name: Test
-        uses: game-ci/unity-test-runner@v2
+        uses: game-ci/unity-test-runner@v4
         id: tests
         env:
           UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
@@ -172,6 +175,8 @@ jobs:
         with:
           projectPath: ${{ matrix.projectPath }}
           testMode: ${{ matrix.testMode }}
+          # run as host user or default root container user, should fix most permission issues on self-hosted runners
+          runAsHostUser: true
           # save test results to ./test-results/
           artifactsPath: ./test-results/${{ matrix.testMode }}-results
   
