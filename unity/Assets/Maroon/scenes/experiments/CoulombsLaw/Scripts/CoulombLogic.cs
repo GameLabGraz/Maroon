@@ -388,15 +388,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         obj.SetActive(true);
 
         AddParticle(chargeBehaviour, deactivateCollisions);
-        
-        var assessmentPos = chargeBehaviour.GetComponent<CoulombAssessmentPosition>();
-        if (assessmentPos)
-        {
-            SimulationController.Instance.onStartRunning.AddListener(assessmentPos.UpdatePosition);
-            SimulationController.Instance.onStopRunning.AddListener(assessmentPos.UpdatePosition);
-            assessmentPos.UpdatePosition();
-        }
-        
+                
         if(!_in3dMode)
             chargeBehaviour.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
         
