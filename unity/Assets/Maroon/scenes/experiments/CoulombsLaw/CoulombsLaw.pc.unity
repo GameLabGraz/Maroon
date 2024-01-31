@@ -2335,10 +2335,10 @@ RectTransform:
   m_Father: {fileID: 450124913}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 550, y: -20}
+  m_SizeDelta: {x: 1000, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &51868257
 MonoBehaviour:
@@ -6359,7 +6359,8 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7914321970559145032, guid: 17a8edfe802a9ab4caccb7dc9014a7ef, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 17a8edfe802a9ab4caccb7dc9014a7ef, type: 3}
 --- !u!224 &197090983 stripped
 RectTransform:
@@ -7575,7 +7576,6 @@ GameObject:
   - component: {fileID: 249590952}
   - component: {fileID: 249590959}
   - component: {fileID: 249590954}
-  - component: {fileID: 249590953}
   m_Layer: 0
   m_Name: Voltmeter
   m_TagString: Untagged
@@ -7598,45 +7598,6 @@ Transform:
   m_Father: {fileID: 941568971}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &249590953
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 249590951}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d275e28287338949acc3d1598513343, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  classType: 3
-  watchValues:
-  - index: 0
-    objectInfo:
-      Object: {fileID: 249590951}
-      ComponentName: VoltmeterDifferences
-      FieldName: currentValue
-  - index: 1
-    objectInfo:
-      Object: {fileID: 941568973}
-      ComponentName: CoulombAssessmentPosition
-      FieldName: position
-  - index: 1
-    objectInfo:
-      Object: {fileID: 941568972}
-      ComponentName: CoulombAssessmentPosition
-      FieldName: position
-  - index: 1
-    objectInfo:
-      Object: {fileID: 941568972}
-      ComponentName: CoulombAssessmentPosition
-      FieldName: position
-  - index: 1
-    objectInfo:
-      Object: {fileID: 249590951}
-      ComponentName: VoltmeterDifferences
-      FieldName: voltmeterEnabled
 --- !u!54 &249590954
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -22507,6 +22468,57 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &875767308
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 875767310}
+  - component: {fileID: 875767309}
+  m_Layer: 0
+  m_Name: _xcharts_
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &875767309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 875767308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 953f0e846565c4086a4bcdc6bc14cf85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_NowVersion: 2.1.1-20210413
+  m_NewVersion: 
+  m_ChartList: []
+  m_ThemeNames:
+  - Default
+  - Light
+  - Dark
+--- !u!4 &875767310
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 875767308}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 16
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &876613135
 GameObject:
   m_ObjectHideFlags: 0
@@ -23463,7 +23475,7 @@ PrefabInstance:
         type: 3}
       propertyPath: OnMovementFinish.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 941569105}
+      objectReference: {fileID: 0}
     - target: {fileID: 4513896859846796369, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}
       propertyPath: OnMovementStart.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -28933,7 +28945,7 @@ MonoBehaviour:
   onViewChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941569023}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UpdateRotation
         m_Mode: 1
@@ -29024,7 +29036,7 @@ MonoBehaviour:
   OnEndRotation:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941569023}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UpdateRotation
         m_Mode: 1
@@ -29091,182 +29103,6 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 941568970}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &941568987
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 941568973}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c367082969a1e424080b986995cd4d63, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  position:
-    assessmentName: positive_terminal_position
-    isDynamic: 0
-    alwaysSendValueChangedEvent: 1
-    allowSystemChange: 1
-    _value: {x: 0, y: 0, z: 0}
-    onValueChanged:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 249590959}
-          m_TargetAssemblyTypeName: 
-          m_MethodName: InvokeValueChangedEvent
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-    onNewValueFromSystem:
-      m_PersistentCalls:
-        m_Calls: []
-  observeLocal: 1
-  updateMode: 1
-  ignoreRuntime: 0
-  tolerance: 0.01
-  onSystemSetToInvalidPosition:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 941569004}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: HideObject
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onSystemShowObject:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 941569004}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: ShowObject
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onSystemUpdatedPosition:
-    m_PersistentCalls:
-      m_Calls: []
-  onUpdateMessageSend:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 249590959}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: InvokeValueChangedEvent
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &941568988
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 941568972}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c367082969a1e424080b986995cd4d63, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  position:
-    assessmentName: negative_terminal_position
-    isDynamic: 0
-    alwaysSendValueChangedEvent: 1
-    allowSystemChange: 1
-    _value: {x: 0, y: 0, z: 0}
-    onValueChanged:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 249590959}
-          m_TargetAssemblyTypeName: 
-          m_MethodName: InvokeValueChangedEvent
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-    onNewValueFromSystem:
-      m_PersistentCalls:
-        m_Calls: []
-  observeLocal: 1
-  updateMode: 1
-  ignoreRuntime: 0
-  tolerance: 0.01
-  onSystemSetToInvalidPosition:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 941569013}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: HideObject
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onSystemShowObject:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 941569013}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: ShowObject
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onSystemUpdatedPosition:
-    m_PersistentCalls:
-      m_Calls: []
-  onUpdateMessageSend:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 249590959}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: InvokeValueChangedEvent
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!4 &941568989 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6896857272221569599, guid: bdfec920f90e5d7499f7d0276bf96c41,
@@ -29374,7 +29210,7 @@ MonoBehaviour:
   onPositionChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941569105}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UpdatePosition
         m_Mode: 1
@@ -29389,7 +29225,7 @@ MonoBehaviour:
   onRotationChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941569106}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UpdateRotation
         m_Mode: 1
@@ -29450,7 +29286,7 @@ MonoBehaviour:
   OnEndRotation:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941569106}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UpdateRotation
         m_Mode: 1
@@ -29511,7 +29347,7 @@ MonoBehaviour:
   OnEndRotation:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941569106}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UpdateRotation
         m_Mode: 1
@@ -29572,7 +29408,7 @@ MonoBehaviour:
   OnEndRotation:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941569106}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UpdateRotation
         m_Mode: 1
@@ -29633,7 +29469,7 @@ MonoBehaviour:
   OnEndRotation:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941569106}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UpdateRotation
         m_Mode: 1
@@ -29703,7 +29539,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 941568987}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UpdatePosition
         m_Mode: 1
@@ -29785,7 +29621,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 941568987}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UpdatePosition
         m_Mode: 1
@@ -29800,7 +29636,7 @@ MonoBehaviour:
   onEndMovingInsideBoundaries:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941568987}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UpdatePosition
         m_Mode: 1
@@ -29815,7 +29651,7 @@ MonoBehaviour:
   onEnabled:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941568987}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UpdatePosition
         m_Mode: 1
@@ -29830,7 +29666,7 @@ MonoBehaviour:
   onDisabled:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941568987}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UpdatePosition
         m_Mode: 1
@@ -29891,7 +29727,7 @@ MonoBehaviour:
   OnEndRotation:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941569106}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UpdateRotation
         m_Mode: 1
@@ -29952,7 +29788,7 @@ MonoBehaviour:
   OnEndRotation:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941569106}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UpdateRotation
         m_Mode: 1
@@ -30013,7 +29849,7 @@ MonoBehaviour:
   OnEndRotation:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941569106}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UpdateRotation
         m_Mode: 1
@@ -30074,7 +29910,7 @@ MonoBehaviour:
   OnEndRotation:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941569106}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UpdateRotation
         m_Mode: 1
@@ -30144,7 +29980,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 941568988}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UpdatePosition
         m_Mode: 1
@@ -30226,7 +30062,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 941568988}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UpdatePosition
         m_Mode: 1
@@ -30241,7 +30077,7 @@ MonoBehaviour:
   onEndMovingInsideBoundaries:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941568988}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UpdatePosition
         m_Mode: 1
@@ -30256,7 +30092,7 @@ MonoBehaviour:
   onEnabled:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941568988}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UpdatePosition
         m_Mode: 1
@@ -30271,7 +30107,7 @@ MonoBehaviour:
   onDisabled:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 941568988}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UpdatePosition
         m_Mode: 1
@@ -30349,149 +30185,13 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 941568970}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &941569022
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 941568977}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d275e28287338949acc3d1598513343, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  classType: 8
-  watchValues:
-  - index: 0
-    objectInfo:
-      Object: {fileID: 941568977}
-      ComponentName: PlaneVisualization
-      FieldName: voltageVisualization
-  - index: 1
-    objectInfo:
-      Object: {fileID: 941568977}
-      ComponentName: PlaneVisualization
-      FieldName: equipotentialLineVisualization
-  - index: 2
-    objectInfo:
-      Object: {fileID: 941568977}
-      ComponentName: PlaneVisualization
-      FieldName: ironFilingVisualization
-  - index: 0
-    objectInfo:
-      Object: {fileID: 941568986}
-      ComponentName: VectorField
-      FieldName: arrows
-  - index: 3
-    objectInfo:
-      Object: {fileID: 941568977}
-      ComponentName: CoulombAssessmentPosition
-      FieldName: position
-  - index: 4
-    objectInfo:
-      Object: {fileID: 941568977}
-      ComponentName: CoulombAssessmentRotation
-      FieldName: eulerRotation
-  - index: 0
-    objectInfo:
-      Object: {fileID: 941568977}
-      ComponentName: PlaneVisualization
-      FieldName: allowInteractions
---- !u!114 &941569023
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 941568974}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d01311bc025a2c54994d21aeb19b85f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  eulerRotation:
-    assessmentName: 
-    isDynamic: 0
-    alwaysSendValueChangedEvent: 1
-    allowSystemChange: 1
-    _value: {x: 0, y: 0, z: 0}
-    onValueChanged:
-      m_PersistentCalls:
-        m_Calls: []
-    onNewValueFromSystem:
-      m_PersistentCalls:
-        m_Calls: []
-  updateMode: 1
-  ignoreRuntime: 0
-  tolerance: 0.01
---- !u!114 &941569024
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 941568978}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d275e28287338949acc3d1598513343, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  classType: 9
-  watchValues:
-  - index: 0
-    objectInfo:
-      Object: {fileID: 941569025}
-      ComponentName: SimulationController
-      FieldName: simulationRunning
-  - index: 0
-    objectInfo:
-      Object: {fileID: 941568974}
-      ComponentName: CoulombAssessmentRotation
-      FieldName: eulerRotation
-  - index: 0
-    objectInfo:
-      Object: {fileID: 941568978}
-      ComponentName: CoulombLogic
-      FieldName: currentMode
-  - index: 2
-    objectInfo:
-      Object: {fileID: 941568978}
-      ComponentName: ViewChangeHandler
-      FieldName: currentView
-  - index: 1
-    objectInfo:
-      Object: {fileID: 941568978}
-      ComponentName: CoulombLogic
-      FieldName: currentLanguage
-  - index: 1
-    objectInfo:
-      Object: {fileID: 941569025}
-      ComponentName: SimulationController
-      FieldName: simulationAllowed
-  - index: 2
-    objectInfo:
-      Object: {fileID: 941568978}
-      ComponentName: CoulombLogic
-      FieldName: chargeInteractionAllowed
-  - index: 3
-    objectInfo:
-      Object: {fileID: 941568978}
-      ComponentName: CoulombLogic
-      FieldName: modeChangeAllowed
---- !u!1 &941569025 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6895057524511495324, guid: bdfec920f90e5d7499f7d0276bf96c41,
-    type: 3}
-  m_PrefabInstance: {fileID: 941568970}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &941569066 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6782515512188068646, guid: bdfec920f90e5d7499f7d0276bf96c41,
     type: 3}
   m_PrefabInstance: {fileID: 941568970}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 941569025}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8fb080c8a2120a24b91de31503e911ae, type: 3}
@@ -30543,73 +30243,6 @@ MonoBehaviour:
   IgnoreColliders:
   - {fileID: 941568981}
   - {fileID: 941568986}
---- !u!114 &941569105
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 941568977}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c367082969a1e424080b986995cd4d63, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  position:
-    assessmentName: 
-    isDynamic: 0
-    alwaysSendValueChangedEvent: 1
-    allowSystemChange: 1
-    _value: {x: -1, y: -1, z: -1}
-    onValueChanged:
-      m_PersistentCalls:
-        m_Calls: []
-    onNewValueFromSystem:
-      m_PersistentCalls:
-        m_Calls: []
-  observeLocal: 1
-  updateMode: 1
-  ignoreRuntime: 0
-  tolerance: 0.01
-  onSystemSetToInvalidPosition:
-    m_PersistentCalls:
-      m_Calls: []
-  onSystemShowObject:
-    m_PersistentCalls:
-      m_Calls: []
-  onSystemUpdatedPosition:
-    m_PersistentCalls:
-      m_Calls: []
-  onUpdateMessageSend:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!114 &941569106
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 941568977}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d01311bc025a2c54994d21aeb19b85f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  eulerRotation:
-    assessmentName: 
-    isDynamic: 0
-    alwaysSendValueChangedEvent: 1
-    allowSystemChange: 1
-    _value: {x: 0, y: 0, z: 0}
-    onValueChanged:
-      m_PersistentCalls:
-        m_Calls: []
-    onNewValueFromSystem:
-      m_PersistentCalls:
-        m_Calls: []
-  updateMode: 1
-  ignoreRuntime: 0
-  tolerance: 0.01
 --- !u!1 &945419782
 GameObject:
   m_ObjectHideFlags: 0
@@ -32602,7 +32235,7 @@ PrefabInstance:
         type: 3}
       propertyPath: OnMovementFinish.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 941568988}
+      objectReference: {fileID: 0}
     - target: {fileID: 4513896859846796369, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}
       propertyPath: OnMovementStart.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -40555,10 +40188,10 @@ RectTransform:
   m_Father: {fileID: 450124913}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 20, y: -20}
+  m_SizeDelta: {x: 40, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1352822156
 MonoBehaviour:
@@ -48706,35 +48339,6 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 2001467409}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1747568415
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1747568414}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d275e28287338949acc3d1598513343, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  classType: 4
-  watchValues:
-  - index: 0
-    objectInfo:
-      Object: {fileID: 1747568414}
-      ComponentName: RulerPrefab
-      FieldName: currentDistance
-  - index: 0
-    objectInfo:
-      Object: {fileID: 2001467412}
-      ComponentName: CoulombAssessmentPosition
-      FieldName: position
-  - index: 0
-    objectInfo:
-      Object: {fileID: 2001467411}
-      ComponentName: CoulombAssessmentPosition
-      FieldName: position
 --- !u!114 &1747568416 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4335284374865567558, guid: 25af714453cfd4147834948a37c2a53e,
@@ -54225,7 +53829,7 @@ PrefabInstance:
         type: 3}
       propertyPath: OnMovementFinish.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 2001467425}
+      objectReference: {fileID: 0}
     - target: {fileID: 531307401340712683, guid: 25af714453cfd4147834948a37c2a53e,
         type: 3}
       propertyPath: OnMovementFinish.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -54355,7 +53959,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onEnabled.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
-      objectReference: {fileID: 2001467426}
+      objectReference: {fileID: 0}
     - target: {fileID: 3013094973333130685, guid: 25af714453cfd4147834948a37c2a53e,
         type: 3}
       propertyPath: onMove.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -54375,7 +53979,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onDisabled.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
-      objectReference: {fileID: 2001467426}
+      objectReference: {fileID: 0}
     - target: {fileID: 3013094973333130685, guid: 25af714453cfd4147834948a37c2a53e,
         type: 3}
       propertyPath: onMove.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
@@ -54465,7 +54069,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onEndMovingInsideBoundaries.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 2001467426}
+      objectReference: {fileID: 0}
     - target: {fileID: 3013094973333130685, guid: 25af714453cfd4147834948a37c2a53e,
         type: 3}
       propertyPath: onEndMovingInsideBoundaries.m_PersistentCalls.m_Calls.Array.data[1].m_Target
@@ -54480,7 +54084,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onEndMovingOutsideBoundaries.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
-      objectReference: {fileID: 2001467426}
+      objectReference: {fileID: 0}
     - target: {fileID: 3013094973333130685, guid: 25af714453cfd4147834948a37c2a53e,
         type: 3}
       propertyPath: onEndMovingOutsideBoundaries.m_PersistentCalls.m_Calls.Array.data[2].m_Target
@@ -54665,7 +54269,7 @@ PrefabInstance:
         type: 3}
       propertyPath: currentDistance.onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1747568415}
+      objectReference: {fileID: 0}
     - target: {fileID: 4335284374865567558, guid: 25af714453cfd4147834948a37c2a53e,
         type: 3}
       propertyPath: currentDistance.onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -54765,7 +54369,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onEnabled.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
-      objectReference: {fileID: 2001467425}
+      objectReference: {fileID: 0}
     - target: {fileID: 6231548434669007651, guid: 25af714453cfd4147834948a37c2a53e,
         type: 3}
       propertyPath: onMove.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -54785,7 +54389,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onDisabled.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
-      objectReference: {fileID: 2001467425}
+      objectReference: {fileID: 0}
     - target: {fileID: 6231548434669007651, guid: 25af714453cfd4147834948a37c2a53e,
         type: 3}
       propertyPath: onMove.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
@@ -54875,7 +54479,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onEndMovingInsideBoundaries.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 2001467425}
+      objectReference: {fileID: 0}
     - target: {fileID: 6231548434669007651, guid: 25af714453cfd4147834948a37c2a53e,
         type: 3}
       propertyPath: onEndMovingInsideBoundaries.m_PersistentCalls.m_Calls.Array.data[1].m_Target
@@ -54890,7 +54494,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onEndMovingOutsideBoundaries.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
-      objectReference: {fileID: 2001467425}
+      objectReference: {fileID: 0}
     - target: {fileID: 6231548434669007651, guid: 25af714453cfd4147834948a37c2a53e,
         type: 3}
       propertyPath: onEndMovingOutsideBoundaries.m_PersistentCalls.m_Calls.Array.data[2].m_Target
@@ -55075,7 +54679,7 @@ PrefabInstance:
         type: 3}
       propertyPath: OnMovementFinish.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 2001467426}
+      objectReference: {fileID: 0}
     - target: {fileID: 6600565567420275962, guid: 25af714453cfd4147834948a37c2a53e,
         type: 3}
       propertyPath: OnMovementFinish.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -55311,182 +54915,6 @@ MonoBehaviour:
   IgnoreColliders:
   - {fileID: 941568981}
   - {fileID: 941568986}
---- !u!114 &2001467425
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2001467411}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c367082969a1e424080b986995cd4d63, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  position:
-    assessmentName: end_position
-    isDynamic: 0
-    alwaysSendValueChangedEvent: 1
-    allowSystemChange: 1
-    _value: {x: 0, y: 0, z: 0}
-    onValueChanged:
-      m_PersistentCalls:
-        m_Calls: []
-    onNewValueFromSystem:
-      m_PersistentCalls:
-        m_Calls: []
-  observeLocal: 1
-  updateMode: 1
-  ignoreRuntime: 0
-  tolerance: 0.1
-  onSystemSetToInvalidPosition:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2001467411}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onSystemShowObject:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2001467411}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-  onSystemUpdatedPosition:
-    m_PersistentCalls:
-      m_Calls: []
-  onUpdateMessageSend:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1747568416}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: InvokeDistanceChangeEvent
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1401798983}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: UpdateDisplay
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &2001467426
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2001467412}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c367082969a1e424080b986995cd4d63, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  position:
-    assessmentName: start_position
-    isDynamic: 0
-    alwaysSendValueChangedEvent: 1
-    allowSystemChange: 1
-    _value: {x: 0, y: 0, z: 0}
-    onValueChanged:
-      m_PersistentCalls:
-        m_Calls: []
-    onNewValueFromSystem:
-      m_PersistentCalls:
-        m_Calls: []
-  observeLocal: 1
-  updateMode: 1
-  ignoreRuntime: 0
-  tolerance: 0.1
-  onSystemSetToInvalidPosition:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2001467412}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onSystemShowObject:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2001467412}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-  onSystemUpdatedPosition:
-    m_PersistentCalls:
-      m_Calls: []
-  onUpdateMessageSend:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1747568416}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: InvokeDistanceChangeEvent
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1401798983}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: UpdateDisplay
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &2001467427
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -55521,7 +54949,7 @@ MonoBehaviour:
   onPositionChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2001467425}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UpdatePosition
         m_Mode: 1
@@ -55570,7 +54998,7 @@ MonoBehaviour:
   onPositionChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2001467426}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UpdatePosition
         m_Mode: 1
@@ -55591,45 +55019,6 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 941568970}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2006672462
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2006672461}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d275e28287338949acc3d1598513343, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  classType: 3
-  watchValues:
-  - index: 0
-    objectInfo:
-      Object: {fileID: 2006672461}
-      ComponentName: PlaneVisualization
-      FieldName: voltageVisualization
-  - index: 1
-    objectInfo:
-      Object: {fileID: 2006672461}
-      ComponentName: PlaneVisualization
-      FieldName: equipotentialLineVisualization
-  - index: 2
-    objectInfo:
-      Object: {fileID: 2006672461}
-      ComponentName: PlaneVisualization
-      FieldName: ironFilingVisualization
-  - index: 0
-    objectInfo:
-      Object: {fileID: 941568981}
-      ComponentName: VectorField
-      FieldName: arrows
-  - index: 0
-    objectInfo:
-      Object: {fileID: 2006672461}
-      ComponentName: PlaneVisualization
-      FieldName: allowInteractions
 --- !u!1 &2006865548
 GameObject:
   m_ObjectHideFlags: 0
@@ -57079,7 +56468,7 @@ PrefabInstance:
         type: 3}
       propertyPath: OnMovementFinish.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 941568987}
+      objectReference: {fileID: 0}
     - target: {fileID: 4513896859846796369, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}
       propertyPath: OnMovementStart.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
