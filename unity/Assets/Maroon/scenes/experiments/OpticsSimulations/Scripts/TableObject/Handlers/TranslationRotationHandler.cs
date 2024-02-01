@@ -16,8 +16,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handle
         private TableObject _tableObject;
 
         private Vector3 _initialRotation;
-        public Vector3 gizmospoint;
-        public bool drawplane;
         
         private Vector3 _objectToMouseTablePosOffset;
         private Vector3 _objectToMouseTablePosLocalOffset;
@@ -55,74 +53,56 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handle
 
         public void DoYRotation(Ray mouseRay, Vector3 hitPoint)
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                // _initialRotation = transform.right;
-                _rotationYPlane.SetNormalAndPosition(transform.up, hitPoint);
-                drawplane = true;
-                gizmospoint = hitPoint;
-                SetMouseToTableOffsets(hitPoint);
-                
-                // Debug.Log("arrow center pos: " + transform.Find("RotationArrowY").position.ToString("f3"));
-                // Debug.Log("plane        pos: " + hitPoint.ToString("f3"));
-            }
+              if (Input.GetMouseButtonDown(0))
+              {
+                  // We need to adjust the collider hitPoint by projecting it onto the plane defined by: transform.up, transform.position
+                  // So the arrow is now "hit" at the middle of its thickness and not on the mantle
+                  Vector3 projHitPoint = ProjectPointOntoPlane(hitPoint, transform.GetChild(0).position, transform.up);
+                  
+                  _rotationYPlane.SetNormalAndPosition(transform.up, projHitPoint);
+                  SetMouseToTableOffsets(projHitPoint);
+              }
 
-            if (Input.GetMouseButton(0))
-            {
-                // TODO Fix this impementation.. I guess something wrong with angle
-                // _rotationYPlane.Raycast(mouseRay, out var dist);
-                // Vector3 pointOnPlane = mouseRay.GetPoint(dist);
-                // var newLookDirection = (pointOnPlane - transform.position).normalized;
-                // var angle = Vector3.Angle(-transform.right, newLookDirection);
-                // transform.RotateAround(transform.GetChild(0).position, _rotationYPlane.normal, angle);
-                
+              if (Input.GetMouseButton(0))
+              {
+                  _rotationYPlane.Raycast(mouseRay, out var dist);
+                  Vector3 pointOnPlane = mouseRay.GetPoint(dist);
+                  var newLookDirection = (pointOnPlane - transform.position).normalized;
+                  var angle = Vector3.SignedAngle(-transform.right, newLookDirection, transform.up);
+                  transform.RotateAround(transform.GetChild(0).position, transform.up, angle);
 
-                // ONLY Y ROT (RESETTING Z ROT)
-                _rotationYPlane.Raycast(mouseRay, out var dist);
-                Vector3 pointOnPlane = mouseRay.GetPoint(dist);
-                pointOnPlane.y = transform.position.y;  // TODO
-                var newLookDirection = (pointOnPlane - transform.position).normalized;
-                transform.right = -newLookDirection;
-                
-            }
-        }
+                  Debug.Log("angle: " + angle.ToString("f3"));
+              }
 
-        private void OnDrawGizmos()
-        {
-            // DrawPlane(_rotationYPlane.normal, gizmospoint, 0.3f);
         }
         
-        void DrawPlane(Vector3 planeNormal, Vector3 planeCenter, float planeSize)
-        {
-            Vector3 v0 = planeCenter + Quaternion.AngleAxis(45, planeNormal) * Vector3.right * planeSize;
-            Vector3 v1 = planeCenter + Quaternion.AngleAxis(135, planeNormal) * Vector3.right * planeSize;
-            Vector3 v2 = planeCenter + Quaternion.AngleAxis(225, planeNormal) * Vector3.right * planeSize;
-            Vector3 v3 = planeCenter + Quaternion.AngleAxis(315, planeNormal) * Vector3.right * planeSize;
-
-            Gizmos.color = Color.green;
-            Gizmos.DrawLine(v0, v1);
-            Gizmos.DrawLine(v1, v2);
-            Gizmos.DrawLine(v2, v3);
-            Gizmos.DrawLine(v3, v0);
-        }
-
         public void DoZRotation(Ray mouseRay, Vector3 hitPoint)
         {
             if (Input.GetMouseButtonDown(0))
             {
-                _rotationZPlane.SetNormalAndPosition(transform.forward, hitPoint);
-                SetMouseToTableOffsets(hitPoint);
+                // We need to adjust the collider hitPoint by projecting it onto the plane defined by: transform.up, transform.position
+                // So the arrow is now "hit" at the middle of its thickness and not on the mantle
+                Vector3 projHitPoint = ProjectPointOntoPlane(hitPoint, transform.GetChild(0).position, transform.forward);
+                _rotationZPlane.SetNormalAndPosition(transform.forward, projHitPoint);
+                SetMouseToTableOffsets(projHitPoint);
             }
 
             if (Input.GetMouseButton(0))
             {
                 _rotationZPlane.Raycast(mouseRay, out var dist);
                 Vector3 pointOnPlane = mouseRay.GetPoint(dist);
-
-                pointOnPlane.z = transform.position.z;
                 var newLookDirection = (pointOnPlane - transform.position).normalized;
-                transform.right = new Vector3(-newLookDirection.x, -newLookDirection.y, 0);
+                var angle = Vector3.SignedAngle(-transform.right, newLookDirection, transform.forward);
+                transform.RotateAround(transform.GetChild(0).position, transform.forward, angle);
+                
             }
+        }
+        
+        Vector3 ProjectPointOntoPlane(Vector3 point, Vector3 planePoint, Vector3 planeNormal)
+        {
+            Vector3 planeToHit = point - planePoint;
+            float distance = Vector3.Dot(planeToHit, planeNormal);
+            return point - distance * planeNormal;
         }
 
     }
