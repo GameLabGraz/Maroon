@@ -33,6 +33,11 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             r0 = transform.localPosition;
             n = -transform.right;
         }
+        
+        public void SetParameters(float f = 0.024f)
+        {
+            this.f = f;
+        }
 
         public override (float inRayLength, RaySegment reflection, RaySegment refraction) CalculateDistanceReflectionRefraction(RaySegment inRay)
         {

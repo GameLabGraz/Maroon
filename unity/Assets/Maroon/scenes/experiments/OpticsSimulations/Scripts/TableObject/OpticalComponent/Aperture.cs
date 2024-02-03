@@ -21,8 +21,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
 
         private void Start()
         {
-            Rin = 0.03f;
-            Rout = 0.125f;
             UpdateProperties();
             LightComponentManager.Instance.RecalculateAllLightRoutes();
             RecalculateMesh();
@@ -32,6 +30,12 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         {
             r = transform.localPosition;
             n = transform.right;
+        }
+        
+        public void SetParameters(float Rin = 0.03f, float Rout = -0.125f)
+        {
+            this.Rin = Rin;
+            this.Rout = Rout;
         }
         
         // public override (Vector3 hitPoint, Vector3 outRayReflection, Vector3 outRayRefraction) CalculateHitpointReflectionRefraction(Vector3 inRayOrigin, Vector3 inRayDirection)

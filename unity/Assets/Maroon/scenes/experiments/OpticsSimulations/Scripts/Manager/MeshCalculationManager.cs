@@ -102,11 +102,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         {
             List<Vector3> vertexPositions = new List<Vector3>();
 
-            if (Rc < radius)
-            {
-                throw new NotImplementedException("Rc cut-off not implemented yet!");
-            }
-            
             for (int i = 0; i < nrOfSegments; i++)
             {
                 float angle = i * 360f / nrOfSegments;
@@ -178,60 +173,5 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             return triangles.ToList();
         }
 
-        // void OnDrawGizmos()
-        // {
-        //     Vector3 offset = new Vector3(-0.041f, 1.47f, 2.16f);
-        //     
-        //     // Draw the center point
-        //     Gizmos.color = Color.blue;
-        //     Gizmos.DrawSphere(offset + Vector3.left * height / 2, 0.01f);
-        //     Gizmos.DrawSphere(offset + Vector3.right * height / 2, 0.01f);
-        //
-        //     // Draw the circle points
-        //     Gizmos.color = Color.red;
-        //     for (int i = 0; i < nrOfSegments; i++)
-        //     {
-        //         Gizmos.DrawSphere(_verticesOuterLeft[i], 0.01f);
-        //         Gizmos.DrawLine(_verticesOuterLeft[i], _verticesOuterLeft[(i + 1) % nrOfSegments]); // Connect the points to form the circle
-        //     }
-        //     Gizmos.color = Color.green;
-        //     for (int i = 0; i < nrOfSegments; i++)
-        //     {
-        //         Gizmos.DrawSphere(_verticesOuterRight[i], 0.01f);
-        //         Gizmos.DrawLine(_verticesOuterRight[i], _verticesOuterRight[(i + 1) % nrOfSegments]); // Connect the points to form the circle
-        //     }
-        //     Gizmos.color = Color.red;
-        //     for (int i = 0; i < nrOfSegments; i++)
-        //     {
-        //         Gizmos.DrawSphere(_verticesInnerLeft[i], 0.01f);
-        //         Gizmos.DrawLine(_verticesInnerLeft[i], _verticesInnerLeft[(i + 1) % nrOfSegments]); // Connect the points to form the circle
-        //     }
-        //     Gizmos.color = Color.green;
-        //     for (int i = 0; i < nrOfSegments; i++)
-        //     {
-        //         Gizmos.DrawSphere(_verticesInnerRight[i], 0.01f);
-        //         Gizmos.DrawLine(_verticesInnerRight[i], _verticesInnerRight[(i + 1) % nrOfSegments]); // Connect the points to form the circle
-        //     }
-        // }
-
-        private List<Vector3> CalculateSphereVertices(bool isHalfSphere, Vector3 center, float radius, float Rc)
-        {
-            throw new NotImplementedException();
-        }
-        
-        private List<Vector3> CalculateLensFaces(Vector3[] leftSphere, Vector3[] leftCylinder, Vector3[] rightCylinder, Vector3[] rightSphere)
-        {
-            throw new NotImplementedException();
-        }
-
-        private List<Vector3> CalculateMirrorFaces(Vector3[] sphereVertices)
-        {
-            throw new NotImplementedException();
-        }
-        
-        private List<Vector3> CalculateEyeFaces(Vector3[] sphereVertices, Vector3[] pupilTexture)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

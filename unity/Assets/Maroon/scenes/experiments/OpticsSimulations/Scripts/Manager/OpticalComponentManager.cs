@@ -15,7 +15,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
 
         private List<OpticalComponent> _opticalComponents;
         [SerializeField] private GameObject tableLowLeftCorner;
-        
+
+        public GameObject TableLowLeftCorner => tableLowLeftCorner;
+
         [Header("Prefabs: Optical Components")] 
         [SerializeField] private Aperture aperture;
         [SerializeField] private Eye eye;
@@ -86,15 +88,17 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             _opticalComponents.Add(wFront);
         }
 
-        public void AddOpticalComponent(OpticalComponent oc, Vector3 pos, Vector3? rot = null)
+        public OpticalComponent AddOpticalComponent(OpticalComponent oc, Vector3 pos, Vector3? rot = null)
         {
             Vector3 rotation = rot ?? new Vector3(0, 0, 0);
             
             var ocClone = Instantiate(oc, tableLowLeftCorner.transform);
             ocClone.transform.localPosition = pos;
-            ocClone.transform.eulerAngles = rotation;
+            ocClone.transform.right = rotation.normalized;
             ocClone.UpdateProperties();
             _opticalComponents.Add(ocClone);
+
+            return ocClone;
         }
         
         public void AddOC(int nr)

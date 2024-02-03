@@ -44,34 +44,23 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Camera
             {
                 float cameraOffsetX = -Input.GetAxis("Mouse X");
                 float cameraOffsetZ = Input.GetAxis("Mouse Y");
-
                 float adjustedSpeed = moveSpeed * Mathf.Lerp(0.1f, 1f, (_cam.fieldOfView - minFOV) / (maxFOV - minFOV));
-                // Debug.Log("Adj speed: " + adjustedSpeed);
 
                 float moveFactor = adjustedSpeed * Time.deltaTime;
                 _newCameraPos = transform.position + new Vector3(cameraOffsetX, 0, cameraOffsetZ) * moveFactor;
 
-                if (CheckPointInCuboid(_newCameraPos, Constants.MinPositionCamera, Constants.MaxPositionCamera))
-                {
-                    transform.position = _newCameraPos;
-                }
-                else
-                {
-                    // TODO Set camera back in cube
-                }
+                MoveCamera(_newCameraPos);
             }
-
             _cam.fieldOfView = Mathf.Clamp(_cam.fieldOfView - Input.GetAxis("Mouse ScrollWheel") * zoomSpeed, minFOV, maxFOV);
-                
-            if (CheckPointInCuboid(_newCameraPos, Constants.MinPositionCamera, Constants.MaxPositionCamera))
-                transform.position = _newCameraPos;
         }
 
-        bool CheckPointInCuboid(Vector3 p, Vector3 minCorner, Vector3 maxCorner)
+        void MoveCamera(Vector3 p)
         {
-            return p.x >= minCorner.x && p.x <= maxCorner.x &&
-                   p.y >= minCorner.y && p.y <= maxCorner.y &&
-                   p.z >= minCorner.z && p.z <= maxCorner.z;
+            Vector3 newCameraPos = new Vector3();
+            newCameraPos.x = Mathf.Clamp(p.x, Constants.MinPositionCamera.x, Constants.MaxPositionCamera.x);
+            newCameraPos.y = Mathf.Clamp(p.y, Constants.MinPositionCamera.y, Constants.MaxPositionCamera.y);
+            newCameraPos.z = Mathf.Clamp(p.z, Constants.MinPositionCamera.z, Constants.MaxPositionCamera.z);
+            transform.position = newCameraPos;
         }
 
         public void ToggleTopView()
@@ -84,9 +73,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Camera
                 StartCoroutine(ChangeCameraView(_camTopPos, _camTopRot, baseFOV));
             }
             else
-            {
                 StartCoroutine(ChangeCameraView(_camPos, _camRot, _camFOV));
-            }
             topView = !topView;
         }
         
@@ -115,19 +102,19 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Camera
             _isMoving = false;
         }
         
-        void OnDrawGizmos()
-        {
-            Gizmos.color = Color.green;
-
-            Vector3 center = (Constants.MinPositionCamera + Constants.MaxPositionCamera) * 0.5f;
-            Vector3 size = new Vector3(
-                Mathf.Abs(Constants.MinPositionCamera.x - Constants.MaxPositionCamera.x), 
-                Mathf.Abs(Constants.MinPositionCamera.y - Constants.MaxPositionCamera.y), 
-                Mathf.Abs(Constants.MinPositionCamera.z - Constants.MaxPositionCamera.z)
-                );
-
-            Gizmos.DrawWireCube(center, size);
-        }
+        // void OnDrawGizmos()
+        // {
+        //     Gizmos.color = Color.green;
+        //
+        //     Vector3 center = (Constants.MinPositionCamera + Constants.MaxPositionCamera) * 0.5f;
+        //     Vector3 size = new Vector3(
+        //         Mathf.Abs(Constants.MinPositionCamera.x - Constants.MaxPositionCamera.x), 
+        //         Mathf.Abs(Constants.MinPositionCamera.y - Constants.MaxPositionCamera.y), 
+        //         Mathf.Abs(Constants.MinPositionCamera.z - Constants.MaxPositionCamera.z)
+        //         );
+        //
+        //     Gizmos.DrawWireCube(center, size);
+        // }
         
     }
 }

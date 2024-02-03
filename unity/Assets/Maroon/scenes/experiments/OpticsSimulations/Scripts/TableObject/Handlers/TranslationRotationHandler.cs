@@ -70,8 +70,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handle
                   var newLookDirection = (pointOnPlane - transform.position).normalized;
                   var angle = Vector3.SignedAngle(-transform.right, newLookDirection, transform.up);
                   transform.RotateAround(transform.GetChild(0).position, transform.up, angle);
-
-                  Debug.Log("angle: " + angle.ToString("f3"));
               }
 
         }

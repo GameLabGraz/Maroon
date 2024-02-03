@@ -20,8 +20,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
 
         private void Start()
         {
-            R = 0.1f;
-            Rc = 0.1f;
             UpdateProperties();
             LightComponentManager.Instance.RecalculateAllLightRoutes();
         }
@@ -34,8 +32,13 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             RecalculateMesh();
         }
 
+        public void SetParameters(float R = 0.1f, float Rc = 0.1f)
+        {
+            this.R = R;
+            this.Rc = Rc;
+        }
+
         // ---- Mirror helper methods ----
-        
         // center of Mirror
         public Vector3 Center()
         {

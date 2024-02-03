@@ -249,32 +249,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             
             if (lcPos.Value != posCm)
             {
-                // lcPos.SystemSetsQuantity(posCm);
                 lcPos.Value = posCm;
             }
         }
         
-        // TODO Probably remove later
-        public void OnNewValSystem(Vector3 test)
-        {
-            // if needed: the text in the quantity view UI could be changed manually
-            // Debug.Log("new val system: " + test.ToString("f3"));
-        }
-        
-        // public void SetLcRotationFromUI(Vector3 rot)
-        // {
-        //     Vector3 rotNormal = rot.normalized;
-        //
-        //     Vector3 rotNormalRounded = new Vector3(
-        //         (float)Math.Round(rotNormal.x, 3),
-        //         (float)Math.Round(rotNormal.y, 3),
-        //         (float)Math.Round(rotNormal.z, 3)
-        //     );
-        //     
-        //     if (lcRot.Value != rotNormalRounded)
-        //         lcRot.Value = rotNormalRounded;
-        // }
-
         public void UpdateLcRotation()
         {
             _selectedLc.transform.right = lcRot.Value.normalized;

@@ -17,7 +17,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         public float R2;
         public float d1;
         public float d2;
-        // public float Rc0;
         public float Rc;
         public float A;
         public float B;
@@ -27,14 +26,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
 
         private void Start()
         {
-            R1 = 0.2f;
-            R2 = -0.2f;
-            d1 = 0.04f;
-            d2 = 0.04f;
-            Rc = 0.1f;
-            A = 1.728f;
-            B = 13420f;
             UpdateProperties();
+            RecalculateMesh();
             LightComponentManager.Instance.RecalculateAllLightRoutes();
         }
 
@@ -42,11 +35,20 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         {
             r = transform.localPosition;
             n = transform.right;
-            RecalculateMesh();
+        }
+
+        public void SetParameters(float R1 = 0.2f, float R2 = -0.2f, float d1 = 0.04f, float d2 = 0.04f, float Rc = 0.1f, float A = 1.728f, float B = 13420f)
+        {
+            this.R1 = R1;
+            this.R2 = R2;
+            this.d1 = d1;
+            this.d2 = d2;
+            this.Rc = Rc;
+            this.A = A;
+            this.B = B;
         }
 
         // ---- Lens helper methods ----
-
         // center of R1 surface
         private Vector3 Center1()
         {
@@ -399,7 +401,16 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
                 offsetOpticalAxis = d2 + R2;
             }
 
-            var (vertices, normals) = mcm.CalculateHalfSphereVerticesNormals(radius, Rc, n, nrOfSegments, _nrOfLatitudeSegments, yRotation, offsetOpticalAxis);
+            var (vertices, normals) = 
+                mcm.CalculateHalfSphereVerticesNormals(
+                    radius, 
+                    Rc, 
+                    new Vector3(1, 0, 0), // n set to (1,0,0) because mesh is calculated in "base" rotation (0 deg) and rotated afterwards via GameObject
+                    nrOfSegments, 
+                    _nrOfLatitudeSegments, 
+                    yRotation, 
+                    offsetOpticalAxis
+                    );
             var triangles = mcm.CalculateHalfSphereFaces(nrOfSegments, _nrOfLatitudeSegments);
 
             if (!isInner)
@@ -427,8 +438,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             float rightCylinderThickness = R2 < 0 ? d2 - rightCylinderExtend : d2 + rightCylinderExtend;
             var mcm = MeshCalculationManager.Instance;
 
-            Vector3 leftCenter = n * -leftCylinderThickness;
-            Vector3 rightCenter = n * rightCylinderThickness;
+            Vector3 leftCenter = new Vector3(1, 0, 0) * -leftCylinderThickness;
+            Vector3 rightCenter = new Vector3(1, 0, 0) * rightCylinderThickness;
+            // n set to (1,0,0) because mesh is calculated in "base" rotation (0 deg) and rotated afterwards via GameObject
             
             List<Vector3> verticesLeftDisk = mcm.CalculateDiskVertices(leftCenter, Rc, Mathf.Infinity, nrOfSegments);
             List<Vector3> verticesRightDisk = mcm.CalculateDiskVertices(rightCenter, Rc, Mathf.Infinity, nrOfSegments);
