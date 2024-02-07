@@ -34,8 +34,6 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
 
     [SerializeField] private GameObject ButtonResume;
     
-    [SerializeField] private GameObject ButtonNetwork;
-    
     // #################################################################################################################
     // Methods
 
@@ -50,14 +48,6 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
         this.ButtonLanguage.GetComponent<Button>().onClick.AddListener(() => this.OnClickLanguage());
         this.ButtonMainMenu.GetComponent<Button>().onClick.AddListener(() => this.OnClickMainMenu());
         this.ButtonResume.GetComponent<Button>().onClick.AddListener(() => this.OnClickResume());
-
-        // Enable WebGL button only for PC or Editor, non-VR Build
-        Platform currentPlatform = PlatformManager.Instance.CurrentPlatform;
-        if(!((currentPlatform == Platform.PC || currentPlatform == Platform.Editor) &&
-           (PlatformManager.Instance.CurrentPlatformIsVR == false)))
-        {
-            this.ButtonNetwork.GetComponent<Button>().interactable = false;
-        }
     }
 
     void OnEnable()
@@ -72,7 +62,6 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
         this.TimeScaleRestore = 1.0f;
         this.ButtonAudio.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
         this.ButtonLanguage.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
-        this.ButtonNetwork.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
     }
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -84,7 +73,6 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
         this.Menu.AddMenuColumn(this.ColumnAudio);
         this.ButtonAudio.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.white;
         this.ButtonLanguage.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
-        this.ButtonNetwork.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
     }
 
     private void OnClickLanguage()
@@ -93,7 +81,6 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
         this.Menu.AddMenuColumn(this.ColumnLanguage);
         this.ButtonAudio.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
         this.ButtonLanguage.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.white;
-        this.ButtonNetwork.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
     }
 
     private void OnClickMainMenu()
