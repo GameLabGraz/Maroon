@@ -131,35 +131,6 @@ namespace Maroon.GlobalEntities
             });
         }
 
-        // #############################################################################################################
-        // MOVE TO: NetworkManager or PlayerManager
-        public void RegisterNetworkPlayer(GameObject newPlayer)
-        {
-            _offlinePlayer = _player;
-            _player.SetActive(false);
-            _player = newPlayer;
-        }
-        
-        public void UnregisterNetworkPlayer()
-        {
-            if (_offlinePlayer == null)
-            {
-                _player = null;
-                return;
-            }
-
-            if (_player != null)
-            {
-                _playerPosition = _player.transform.position;
-                _playerRotation = _player.transform.rotation;
-            }
-            _offlinePlayer.SetActive(true);
-            _offlinePlayer.transform.position = _playerPosition;
-            //cannot set _offlinePlayer.transform.rotation = _playerRotation; because overruled by First Person Controller
-            // TODO: _offlinePlayer.GetComponent<ModeFirstPerson>().SetPlayerRotation(_playerRotation);
-            _player = _offlinePlayer;
-        }
-
         // #################################################################################################################
         // MOVE TO: Player or PlayerManager
         public Vector3 GetPlayerPosition()
