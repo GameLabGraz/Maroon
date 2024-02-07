@@ -344,17 +344,7 @@ namespace Maroon.GlobalEntities
                 return false;
             }
 
-            // If network disabled
-            if(Maroon.NetworkManager.Instance.mode == Mirror.NetworkManagerMode.Offline)
-            {
-                LoadSceneExecute(scene, showLoadingScreen);
-            }
-
-            // If network enabled
-            else
-            {
-                Maroon.NetworkManager.Instance.EnterScene(scene.ScenePath);
-            }
+            LoadSceneExecute(scene, showLoadingScreen);
 
             return true;
         }
@@ -456,18 +446,8 @@ namespace Maroon.GlobalEntities
                 return false;
             }
             
-            // If network disabled
-            if(Maroon.NetworkManager.Instance.mode == Mirror.NetworkManagerMode.Offline)
-            {
-                UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
-                AddToSceneHistory(scene);
-            }
-
-            // If network enabled
-            else
-            {
-                Maroon.NetworkManager.Instance.ServerChangeScene(scene.ScenePath);
-            }
+            UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
+            AddToSceneHistory(scene);
 
             // Add scene change to history
             return true;
