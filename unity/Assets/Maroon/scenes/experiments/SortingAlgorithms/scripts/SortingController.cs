@@ -19,8 +19,6 @@ public class SortingController : MonoBehaviour, IResetObject
     }
     private SortingMode _sortingMode;
 
-    private bool _initialized;
-
     [SerializeField] private QuizManager quizManager;
     public QuizManager TheQuizManager => quizManager;
 
@@ -42,7 +40,6 @@ public class SortingController : MonoBehaviour, IResetObject
         
         DisplayMessageByKey("EnterSortingExperiment");
         SetBattleOrder();
-        _initialized = true;
     }
 
     public void ResetObject()
