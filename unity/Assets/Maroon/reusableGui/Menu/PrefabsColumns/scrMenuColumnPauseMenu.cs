@@ -22,8 +22,6 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
     [SerializeField] private GameObject ColumnAudio;
 
     [SerializeField] private GameObject ColumnLanguage;
-    
-    [SerializeField] private GameObject ColumnNetwork;
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Buttons
@@ -52,7 +50,6 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
         this.ButtonLanguage.GetComponent<Button>().onClick.AddListener(() => this.OnClickLanguage());
         this.ButtonMainMenu.GetComponent<Button>().onClick.AddListener(() => this.OnClickMainMenu());
         this.ButtonResume.GetComponent<Button>().onClick.AddListener(() => this.OnClickResume());
-        this.ButtonNetwork.GetComponent<Button>().onClick.AddListener(() => this.OnClickNetwork());
 
         // Enable WebGL button only for PC or Editor, non-VR Build
         Platform currentPlatform = PlatformManager.Instance.CurrentPlatform;
@@ -66,16 +63,7 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
     void OnEnable()
     {
         this.TimeScaleRestore = Time.timeScale;
-        if (Maroon.NetworkManager.Instance == null)
-        {
-            Time.timeScale = 0;
-            return;
-        }
-
-        if(Maroon.NetworkManager.Instance.AllowNetworkPause())
-            Time.timeScale = 0;
-        if(Maroon.NetworkManager.Instance.IsInControl)
-            Maroon.NetworkManager.Instance.onLoseControl.Invoke();
+        Time.timeScale = 0;
     }
 
     void OnDisable()
@@ -85,10 +73,6 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
         this.ButtonAudio.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
         this.ButtonLanguage.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
         this.ButtonNetwork.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
-        if (Maroon.NetworkManager.Instance == null)
-            return;
-        if(Maroon.NetworkManager.Instance.IsInControl)
-            Maroon.NetworkManager.Instance.onGetControl.Invoke();
     }
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -129,14 +113,5 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
     private void OnClickResume()
     {
         this.Menu.CloseMenu();
-    }
-    
-    private void OnClickNetwork()
-    {
-        this.Menu.RemoveAllMenuColumnsButFirst();
-        this.Menu.AddMenuColumn(this.ColumnNetwork);
-        this.ButtonAudio.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
-        this.ButtonLanguage.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
-        this.ButtonNetwork.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.white;
     }
 }
