@@ -182,6 +182,10 @@ namespace Fury.Editor
             List<string> result = new List<string>();
             foreach (string s in temp)
             {
+                // Skip assets from the package cache
+                if(s.StartsWith("Packages"))
+                    continue;
+                
                 if (s.Contains(".prefab")) result.Add(s);
             }
             return result.ToArray();

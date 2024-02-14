@@ -23,7 +23,9 @@ namespace Tests.EditModeTests.ContentValidation
 
                 EditorSceneManager.OpenScene(scene.path);
                 missingReferenceFinder.SearchCurrentScene();
-                results.Add(scene, new List<Result>(missingReferenceFinder.results));
+
+                if(missingReferenceFinder.results.Count > 0)
+                    results.Add(scene, new List<Result>(missingReferenceFinder.results));
             }
             
             Assert.AreEqual(0, results.Count(), "There are experiment scenes with missing references:\r\n" +
