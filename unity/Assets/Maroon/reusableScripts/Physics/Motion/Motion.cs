@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Maroon.Physics;
 using NCalc;
+using System;
 
 namespace Maroon.Physics.Motion {
     public class State
@@ -12,10 +13,17 @@ namespace Maroon.Physics.Motion {
 
         public Vector3 acceleration(float t)
         {
-            return m.acceleration(this, t);
+            return model.acceleration(this, t);
         }
 
-        private Model m;
+        private Model model;
+
+        public State(Vector3 position, Vector3 velocity, Model m)
+        {
+            this.position = position;
+            this.velocity = velocity;
+            this.model = m;
+        }
     }
 
     public class Model
@@ -26,7 +34,7 @@ namespace Maroon.Physics.Motion {
         public Vector3 acceleration(State s, float t)
         {
             mass = AddParametersToExpression(mass, s, t);
-            float m = (float) mass.Evaluate();
+            float m = (float) Convert.ToDouble(mass.Evaluate());
 
             for (int i = 0; i < forces.Length; i++)
             {
@@ -35,9 +43,9 @@ namespace Maroon.Physics.Motion {
             }
             
             return new Vector3(
-                (float) forces[0].Evaluate(),
-                (float) forces[1].Evaluate(),
-                (float) forces[2].Evaluate()
+                (float) Convert.ToDouble(forces[0].Evaluate()),
+                (float) Convert.ToDouble(forces[1].Evaluate()),
+                (float) Convert.ToDouble(forces[2].Evaluate())
             );
         }
 
@@ -145,28 +153,59 @@ namespace Maroon.Physics.Motion {
         private float t;
         private IIntegrator integrator;
 
+        private String log;
+
         public MotionSimulation(float dt, int steps)
         {
             this.dt = dt;
             this.steps = steps;
             this.t = 0.0F;
             this.integrator = new RungeKutta4();
+            this.objects = new List<State>();
+        }
+
+        public void AddObject(State o)
+        {
+            objects.Add(o);
         }
 
         public void Solve()
         {
             for (int i = 0; i < steps; i++)
             {
-                Step();
+                Step(i);
             }
         }
 
-        public void Step()
+        public void Step(int step)
         {
-            foreach (var obj in objects)
-            {
+            foreach (State obj in objects)
+            { 
+                //Debug.Log(step);
+                log += String.Format("{0:f5} {1:f5} {2:f5} {3:f5} {4:f5} {5:f5} {6:f5} \n", step*dt, obj.position.x, obj.position.y, obj.position.z, obj.velocity.x, obj.velocity.y, obj.velocity.z);
                 integrator.Integrate(obj, t, dt);
             }
+        }
+
+        public void PrintLog()
+        {
+            Debug.Log(log);
+        }
+    }
+
+    public class Tests
+    {
+        public static void TestSimulation()
+        {
+            Debug.Log("HOI IM TESTING");
+            var model = new Model("-4*vx", "-4*vy", "-4*vz - m*9.807", "1");
+            var state = new State(new Vector3(0.0f, 0.0f, 0.0f), new Vector3(0.0f, 0.0f, 10.0f), model);
+
+            var sim = new MotionSimulation(0.01f, 200);
+            sim.AddObject(state);
+            sim.Solve();
+
+            sim.PrintLog();
         }
     }
 }
