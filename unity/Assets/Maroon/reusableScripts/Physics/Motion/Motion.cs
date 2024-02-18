@@ -25,12 +25,48 @@ namespace Maroon.Physics.Motion {
 
         public Vector3 acceleration(State s, float t)
         {
-            //TODO calc acceleration here from the expressions
+            mass = AddParametersToExpression(mass, s, t);
+            float m = (float) mass.Evaluate();
+
+            for (int i = 0; i < forces.Length; i++)
+            {
+                forces[i] = AddParametersToExpression(forces[i], s, t);
+                forces[i].Parameters["m"] = m;
+            }
             
-            // return a constant for now
-            return new Vector3(1.0f, 0.0f, 0.0f);
+            return new Vector3(
+                (float) forces[0].Evaluate(),
+                (float) forces[1].Evaluate(),
+                (float) forces[2].Evaluate()
+            );
+        }
+
+        public Model(string Fx, string Fy, string Fz, string mass)
+        {
+            this.forces = new[] { 
+                new Expression(Fx, EvaluateOptions.IgnoreCase), 
+                new Expression(Fy, EvaluateOptions.IgnoreCase),
+                new Expression(Fz, EvaluateOptions.IgnoreCase) 
+            };
+
+            this.mass = new Expression(mass, EvaluateOptions.IgnoreCase);
+        }
+
+        private Expression AddParametersToExpression(Expression expr, State s, float t)
+        {
+            expr.Parameters["x"] = s.position.x;
+            expr.Parameters["y"] = s.position.y;
+            expr.Parameters["z"] = s.position.z;
+            expr.Parameters["vx"] = s.velocity.x;
+            expr.Parameters["vy"] = s.velocity.y;
+            expr.Parameters["vz"] = s.velocity.z;
+
+            expr.Parameters["t"] = t;
+
+            return expr;
         }
     }
+
     public interface IIntegrator
     {
         public State Integrate(State s, float t, float dt);
@@ -41,7 +77,7 @@ namespace Maroon.Physics.Motion {
         public State Integrate(State s, float t, float dt)
         {
             s.position += s.velocity * dt;
-            s.velocity += s.acceleration(t+dt) * dt;
+            s.velocity += s.acceleration(t + dt) * dt;
 
             return s;
         }
@@ -133,5 +169,4 @@ namespace Maroon.Physics.Motion {
             }
         }
     }
-
 }
