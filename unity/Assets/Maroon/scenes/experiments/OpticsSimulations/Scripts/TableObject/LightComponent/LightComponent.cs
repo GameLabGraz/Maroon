@@ -42,6 +42,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
         
         protected void ResetLightRoutes(int nrRays)
         {
+            if (_lightRoutes == null)
+                return;
+            
             _lightRoutes.ForEach(lr => lr.ResetLightRoute());
             _lightRoutes.Clear();
 

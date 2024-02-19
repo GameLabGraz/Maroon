@@ -19,7 +19,12 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
                 for (int i = 0; i < numberOfRays; i++)
                     LightRoutes.Add(new LightRoute(wl));
 
-            RecalculateLightRoute();
+            ChangeNumberOfRays(numberOfRays);
+        }
+        
+        public void SetParameters(int numberOfRays = 40)
+        {
+            this.numberOfRays = numberOfRays;
         }
 
         public void ChangeNumberOfRays(int nrRays)

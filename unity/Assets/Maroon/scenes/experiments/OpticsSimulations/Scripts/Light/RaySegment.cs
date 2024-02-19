@@ -1,4 +1,5 @@
 ﻿using System;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
 using UnityEngine;
 
@@ -69,8 +70,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
             _lineSegment.positionCount = 2;
             _lineSegment.SetPosition(0, this.r0);
             _lineSegment.SetPosition(1, this.endpoint);
-            _lineSegment.startWidth = Constants.LaserWidth;
-            _lineSegment.endWidth = Constants.LaserWidth;
+            _lineSegment.startWidth = UIManager.Instance.rayThickness.Value / Constants.InMM;
+            _lineSegment.endWidth = UIManager.Instance.rayThickness.Value / Constants.InMM;
             _lineSegment.numCapVertices = 5;
             _lineSegment.useWorldSpace = false;
         }

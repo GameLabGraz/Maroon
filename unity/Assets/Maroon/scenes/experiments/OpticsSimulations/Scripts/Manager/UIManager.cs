@@ -39,9 +39,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         [SerializeField] private GameObject laserPointerPanel;
         [SerializeField] private GameObject parallelSourcePanel;
         [SerializeField] private GameObject pointSourcePanel;
-        
+
         [Header("Light Parameters")]
         // public Quantity<List<float>> selectedWavelength;
+        public QuantityFloat rayThickness;
         public QuantityFloat sliderWavelength;
         public QuantityFloat selectedIntensity;
         public QuantityInt   numberOfRays;
@@ -102,10 +103,20 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         public void ActivateLightControlPanel(LightComponent lc)
         {
             _selectedLc = lc;
-            selectedIntensity.Value = _selectedLc.Intensity;
-            DeactivateAllLightControlPanels();
-
             AllowValueChangeEvent(false);
+            DeactivateAllLightControlPanels();
+            SetLightControlPanelValues();
+            StoreCurrentPosRot(_selectedLc);
+            AllowValueChangeEvent(true);
+            
+            // Set wavelength textfield and slider to match lightComponents wavelength
+            WavelengthSliderLogic(lc.Wavelengths);
+            selectedIntensity.Value = _selectedLc.Intensity;
+            SetLightControlPanelValues();
+        }
+
+        private void SetLightControlPanelValues()
+        {
             switch (_selectedLc.LightType)
             {
                 case LightType.LaserPointer:
@@ -118,11 +129,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                     SetPointSourceControlPanelValues((PointSource)_selectedLc);
                     break;
             }
-
-            // Set wavelength textfield and slider to match lightComponents wavelength
-            WavelengthSliderLogic(lc.Wavelengths);
-            StoreCurrentPosRot(_selectedLc);
-            AllowValueChangeEvent(true);
         }
         
         public void DeactivateAllLightControlPanels()
@@ -262,10 +268,17 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         public void ActivateOpticalControlPanel(OpticalComponent oc)
         {
             _selectedOc = oc;
+            AllowValueChangeEvent(false);
             DeactivateAllOpticalControlPanels();
             StoreCurrentPosRot(_selectedOc);
-            
-            AllowValueChangeEvent(false);
+
+            SetOpticalControlPanelValues();
+            AllowValueChangeEvent(true);
+            SetOpticalControlPanelValues();
+        }
+
+        private void SetOpticalControlPanelValues()
+        {
             switch (_selectedOc.OpticalType)
             {
                 case OpticalType.Aperture:
@@ -281,7 +294,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                     SetMirrorControlPanelValues((TableObject.OpticalComponent.Mirror)_selectedOc);
                     break;
             }
-            AllowValueChangeEvent(true);
         }
 
         private void AllowValueChangeEvent(bool value)

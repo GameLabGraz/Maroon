@@ -11,7 +11,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
     public class ParallelSource : LightComponent
     {
         public int numberOfRays = 20;
-        public float distanceBetweenRays = Constants.LaserWidth * 3;
+        public float distanceBetweenRays = 0.00015f;
 
         private void Start()
         {
@@ -22,12 +22,20 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
                 for (int i = 0; i < numberOfRays; i++)
                     LightRoutes.Add(new LightRoute(wl));
 
-            RecalculateLightRoute();
+            ChangeNumberOfRays(numberOfRays);
+        }
+        
+        public void SetParameters(int numberOfRays = 20, float distanceBetweenRays = 0.00015f)
+        {
+            this.distanceBetweenRays = distanceBetweenRays;
+            ChangeNumberOfRays(numberOfRays);
         }
 
         public void ChangeNumberOfRays(int nrRays)
         {
             numberOfRays = nrRays;
+            if (LightRoutes == null)
+                return;
             ResetLightRoutes(numberOfRays);
             
             foreach (var wl in Wavelengths)
@@ -58,8 +66,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
         }
         
 
-        // todo den origin der rays richtig berechnen für rotation
-        
         private List<Vector3> CalculateRayPositions()
         {
             List<Vector3> rayPositions = new List<Vector3>();
@@ -67,26 +73,14 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
             // odd
             if (numberOfRays % 2 == 1)
                 for (int i = -half; i <= half; i++)
-                {
-                    var test = Origin + transform.forward * (i * distanceBetweenRays);
-                    rayPositions.Add(test);
-                }
+                    rayPositions.Add(Origin + transform.forward * (i * distanceBetweenRays));
             // even
             else
                 for (int i = -numberOfRays + 1; i <= numberOfRays - 1; i += 2)
-                {
-                    var test = Origin + transform.forward * (i * (distanceBetweenRays / 2));
-                    rayPositions.Add(test);
-                }
+                    rayPositions.Add(Origin + transform.forward * (i * (distanceBetweenRays / 2)));
 
             return rayPositions;
         }
-        
-        // public override bool CheckHitComponent(OpticalComponent.OpticalComponent oc)
-        // {
-        //     return oc == OpticalComponentManager.Instance.GetFirstHitComponent(Origin, transform.right);
-        // }
-
         
     }
 }

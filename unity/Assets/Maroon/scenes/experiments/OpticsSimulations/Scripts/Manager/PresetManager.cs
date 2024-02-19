@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
@@ -8,17 +10,33 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
     public class PresetManager : MonoBehaviour
     {
         
-        [Header("Prefabs: Light Sources")] 
+        [Header("Prefabs: Light Sources")]
         [SerializeField] private LaserPointer laserPointer;
         [SerializeField] private ParallelSource parallelSource;
         [SerializeField] private PointSource pointSource;
         
-        [Header("Prefabs: Optical Components")] 
+        [Header("Prefabs: Optical Components")]
         [SerializeField] private Aperture aperture;
         [SerializeField] private Eye eye;
         [SerializeField] private Lens lens;
         [SerializeField] private TableObject.OpticalComponent.Mirror mirror;
         
+        [Header("Camera")]
+        [SerializeField] private UnityEngine.Camera cam;
+
+        private OpticalComponentManager _ocm;
+        private LightComponentManager _lcm;
+        private UIManager _uim;
+        private ExperimentManager _em;
+
+        public void Start()
+        {
+            _ocm = OpticalComponentManager.Instance;
+            _lcm = LightComponentManager.Instance;
+            _uim = UIManager.Instance;
+            _em = ExperimentManager.Instance;
+        }
+
         public void TablePresets(int nr)
         {
             switch (nr)
@@ -42,79 +60,127 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         
         private void LensAndMirror()
         {
-            OpticalComponentManager ocm = OpticalComponentManager.Instance;
-            LightComponentManager lcm = LightComponentManager.Instance;
-            ExperimentManager.Instance.ClearTable();
+            _em.ClearTable();
+            _uim.rayThickness.Value = Constants.BaseRayThicknessInMM;
             
-            ocm.AddOpticalComponent(lens, new Vector3(1.70f, 0, 0.70f));
-            ocm.AddOpticalComponent(mirror, new Vector3(2.30f, 0, 0.57f), Vector3.back);
-            lcm.AddLightComponent(laserPointer, new Vector3(1.2f, 0, 0.75f), new List<float> {390f, 440f, 490f, 540f, 590f, 640f, 720f});
+            _lcm.AddLightComponent(laserPointer, new Vector3(1.20f, 0, 0.62f), wavelengths: new List<float> {390f, 440f, 490f, 540f, 590f, 640f, 720f});
+            _ocm.AddOpticalComponent(lens, new Vector3(1.6f, 0, 0.57f));
+            _ocm.AddOpticalComponent(mirror, new Vector3(2.2f, 0, 0.40f), Vector3.back);
+
+            SetCamera(fov: 36);
         }
 
         private void FocalLength()
         {
-            OpticalComponentManager ocm = OpticalComponentManager.Instance;
-            LightComponentManager lcm = LightComponentManager.Instance;
-            ExperimentManager.Instance.ClearTable();
+            _em.ClearTable();
+            _uim.rayThickness.Value = Constants.BaseRayThicknessInMM;
             
-            var lensObject = ocm.AddOpticalComponent(lens, new Vector3(2.00f, 0, 1.00f));
+            _lcm.AddLightComponent(parallelSource, new Vector3(1.2f, 0, 0.62f));
+            var lensObject = _ocm.AddOpticalComponent(lens, new Vector3(1.70f, 0, 0.62f));
             ((Lens)lensObject).SetParameters(R1: 0.30f, R2: -0.30f, d1: 0.015f, d2: 0.015f);
-            lcm.AddLightComponent(parallelSource, new Vector3(1.00f, 0, 1.00f));
+            
+            SetCamera(fov: 36);
         }
         
         private void NormalEye()
         {
+            _em.ClearTable();
+            _uim.rayThickness.Value = 0.15f;
             
+            var ps = _lcm.AddLightComponent(parallelSource, new Vector3(1.76f, 0, 0.577f));
+            ((ParallelSource)ps).SetParameters(distanceBetweenRays: 0.50f / Constants.InMM, numberOfRays: 31);
+            _ocm.AddOpticalComponent(eye, new Vector3(1.90f, 0, 0.577f));
+            
+            SetCamera(x: -0.12f, fov: 3);
         }
         
         private void NearsightedEye()
         {
+            _em.ClearTable();
+            _uim.rayThickness.Value = 0.3f;
+            
             
         }
         
         private void FarsightedEye()
         {
+            _em.ClearTable();
+            _uim.rayThickness.Value = 0.3f;
+            
             
         }
         
         private void UnderwaterVision()
         {
-            
+            _em.ClearTable();
+            _uim.rayThickness.Value = 0.3f;
+
+
         }
         
         private void MagnifyingGlass()
         {
-            
+            _em.ClearTable();
+            _uim.rayThickness.Value = 0.3f;
+
+
         }
         
         private void KeplerianTelescope()
         {
-            
+            _em.ClearTable();
+            _uim.rayThickness.Value = 0.3f;
+
+
         }
         
         private void GalileanTelescope()
         {
-            
+            _em.ClearTable();
+            _uim.rayThickness.Value = 0.3f;
+
+
         }
         
         private void NewtonianTelescope()
         {
-            
+            _em.ClearTable();
+            _uim.rayThickness.Value = 0.3f;
+
+
         }
         
         private void Microscope()
         {
-            
+            _em.ClearTable();
+            _uim.rayThickness.Value = 0.3f;
+
+
         }
         
         private void LightEmittingDiode()
         {
+            _em.ClearTable();
+            _uim.rayThickness.Value = Constants.BaseRayThicknessInMM;
+            
             
         }
         
         private void OpticalFiber()
         {
+            _em.ClearTable();
+            _uim.rayThickness.Value = Constants.BaseRayThicknessInMM;
             
+            
+        }
+        
+        private void SetCamera(
+            float x = Constants.BaseCameraX, 
+            float z = Constants.BaseCameraZ, 
+            float fov = Constants.BaseCameraFOV)
+        {
+            cam.transform.position = new Vector3(x, Constants.BaseCameraY, z);
+            cam.fieldOfView = fov;
         }
     }
 }

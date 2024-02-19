@@ -12,10 +12,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Camera
         [SerializeField] private bool topView;
         [SerializeField] private float moveSpeed = 8.0f;
         [SerializeField] private float zoomSpeed = 15.0f;
-        
-        [SerializeField] private float baseFOV = 60f;
-        [SerializeField] private float minFOV = 1f;
-        [SerializeField] private float maxFOV = 70f;
+
+        private const float MinFOV = 1f;
+        private const float MaxFOV = 70f;
         
         private Vector3 _newCameraPos;
         private UnityEngine.Camera _cam;
@@ -26,9 +25,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Camera
         private bool _isMoving;
         private float _moveFactor;
         
-        private readonly Vector3 _camTopPos = new Vector3(0, 3f, 2.5f);
-        private readonly Quaternion _camTopRot = Quaternion.Euler(90, 0, 0);
-
         private void Start()
         {
             _cam = GetComponent<UnityEngine.Camera>();
@@ -37,29 +33,31 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Camera
 
         void Update()
         {
-            if (ExperimentManager.Instance.mouseOnUIPanel || topView || _isMoving)
+            if (ExperimentManager.Instance.mouseOnUIPanel || _isMoving)
                 return;
             
             if (Input.GetMouseButton(1))
             {
                 float cameraOffsetX = -Input.GetAxis("Mouse X");
                 float cameraOffsetZ = Input.GetAxis("Mouse Y");
-                float adjustedSpeed = moveSpeed * Mathf.Lerp(0.1f, 1f, (_cam.fieldOfView - minFOV) / (maxFOV - minFOV));
+                float adjustedSpeed = moveSpeed * Mathf.Lerp(0.1f, 1f, (_cam.fieldOfView - MinFOV) / (MaxFOV - MinFOV));
 
                 float moveFactor = adjustedSpeed * Time.deltaTime;
                 _newCameraPos = transform.position + new Vector3(cameraOffsetX, 0, cameraOffsetZ) * moveFactor;
 
                 MoveCamera(_newCameraPos);
             }
-            _cam.fieldOfView = Mathf.Clamp(_cam.fieldOfView - Input.GetAxis("Mouse ScrollWheel") * zoomSpeed, minFOV, maxFOV);
+            _cam.fieldOfView = Mathf.Clamp(_cam.fieldOfView - Input.GetAxis("Mouse ScrollWheel") * zoomSpeed, MinFOV, MaxFOV);
         }
 
         void MoveCamera(Vector3 p)
         {
-            Vector3 newCameraPos = new Vector3();
-            newCameraPos.x = Mathf.Clamp(p.x, Constants.MinPositionCamera.x, Constants.MaxPositionCamera.x);
-            newCameraPos.y = Mathf.Clamp(p.y, Constants.MinPositionCamera.y, Constants.MaxPositionCamera.y);
-            newCameraPos.z = Mathf.Clamp(p.z, Constants.MinPositionCamera.z, Constants.MaxPositionCamera.z);
+            Vector3 newCameraPos = new Vector3
+            {
+                x = Mathf.Clamp(p.x, Constants.MinPositionCamera.x, Constants.MaxPositionCamera.x),
+                y = Mathf.Clamp(p.y, Constants.MinPositionCamera.y, Constants.MaxPositionCamera.y),
+                z = Mathf.Clamp(p.z, Constants.MinPositionCamera.z, Constants.MaxPositionCamera.z)
+            };
             transform.position = newCameraPos;
         }
 
@@ -70,7 +68,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Camera
                 _camPos = _camTransform.position;
                 _camRot = _camTransform.rotation;
                 _camFOV = _cam.fieldOfView;
-                StartCoroutine(ChangeCameraView(_camTopPos, _camTopRot, baseFOV));
+                StartCoroutine(ChangeCameraView(Constants.CamTopPos, Constants.CamTopRot, Constants.BaseCameraFOV));
             }
             else
                 StartCoroutine(ChangeCameraView(_camPos, _camRot, _camFOV));
@@ -101,20 +99,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Camera
 
             _isMoving = false;
         }
-        
-        // void OnDrawGizmos()
-        // {
-        //     Gizmos.color = Color.green;
-        //
-        //     Vector3 center = (Constants.MinPositionCamera + Constants.MaxPositionCamera) * 0.5f;
-        //     Vector3 size = new Vector3(
-        //         Mathf.Abs(Constants.MinPositionCamera.x - Constants.MaxPositionCamera.x), 
-        //         Mathf.Abs(Constants.MinPositionCamera.y - Constants.MaxPositionCamera.y), 
-        //         Mathf.Abs(Constants.MinPositionCamera.z - Constants.MaxPositionCamera.z)
-        //         );
-        //
-        //     Gizmos.DrawWireCube(center, size);
-        // }
-        
+
     }
 }

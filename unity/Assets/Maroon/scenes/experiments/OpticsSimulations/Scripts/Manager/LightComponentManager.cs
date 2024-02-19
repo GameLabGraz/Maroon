@@ -40,45 +40,19 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             _lightComponents = new List<LightComponent>();
         }
 
-        /*
-        private void Start()
+        public LightComponent AddLightComponent(LightComponent lc, Vector3 pos, Vector3? rot = null, List<float> wavelengths = null)
         {
-            // SpawnLaserPointerTestSetup();
-
-            // AddLightComponent(laserPointer, new Vector3(1.74f, 0, 0.5f));
-            // laserPointer.Wavelength = 720;
-            // AddLightComponent(laserPointer, new Vector3(1.70f,0,1.09f));
-            //
-            // parallelSource.numberOfRays = 10;
-            // AddLightComponent(parallelSource, new Vector3(1.70f,0,1.0f));
-            //
-            // parallelSource.numberOfRays = 30;
-            // AddLightComponent(parallelSource, new Vector3(1.70f,0,0.6f));
-        }*/
-
-        /*
-        private void SpawnLaserPointerTestSetup()
-        {
-            int wl = 382;
-            for (float i = 0.8f; i <= 1.8f; i+=0.06f)
-            {
-                laserPointer.Wavelength = wl;
-                AddLightComponent(laserPointer, new Vector3(1, 0, i));
-                // wl += 20;
-                wl += 15;
-            }
-        }*/
-
-        public void AddLightComponent(LightComponent lc, Vector3 pos, List<float> wavelengths = null)
-        {
+            Vector3 rotation = rot ?? new Vector3(0, 0, 0);
             if (wavelengths == null)
                 wavelengths = new List<float> {720f};
             
             var lsClone = Instantiate(lc, tableLowLeftCorner.transform);
             lsClone.transform.localPosition = pos;
+            lsClone.transform.right = rotation.normalized;
             lsClone.Wavelengths = wavelengths;
-            
             _lightComponents.Add(lsClone);
+
+            return lsClone;
         }
 
         public void AddLC(int nr)
@@ -88,13 +62,13 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 case 0:
                     return;
                 case 1:
-                    AddLightComponent(laserPointer, _basePosition, laserPointer.Wavelengths);
+                    AddLightComponent(laserPointer, _basePosition, wavelengths: laserPointer.Wavelengths);
                     break;
                 case 2:
-                    AddLightComponent(parallelSource, _basePosition, parallelSource.Wavelengths);
+                    AddLightComponent(parallelSource, _basePosition, wavelengths: parallelSource.Wavelengths);
                     break;
                 case 3:
-                    AddLightComponent(pointSource, _basePosition, pointSource.Wavelengths);
+                    AddLightComponent(pointSource, _basePosition, wavelengths: pointSource.Wavelengths);
                     break;
             }
         }
