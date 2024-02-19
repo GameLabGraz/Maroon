@@ -4,7 +4,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Util
 {
     public static class Constants
     {
-        public const float LaserWidth = 0.003f/8;
+        public const float LaserWidth = 0.003f/4;
         public const float ReflectIntensity = 0.1f;
         public const float MinimalIntensity = 0.02f;
         public const int MaxNumberOfRays = 500;
@@ -22,6 +22,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Util
         public const float TableObjectHeight = 0.20f;
         public const int TableObjectLayer = 1 << 4;
         public const int UILayer = 1 << 5;
+        
+        public static Vector3 MirrorTransformArrowPos = new Vector3(0.2408f, 0, 0);
+        public static Vector3 MirrorArrowShift = new Vector3(0.048f, 0, 0);
         
         public const float Epsilon = 0.000001f;
         public const float InCM = 100f;

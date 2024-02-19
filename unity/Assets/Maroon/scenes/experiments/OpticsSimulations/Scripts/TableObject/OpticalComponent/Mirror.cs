@@ -17,6 +17,11 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         public float Rc;
         
         private int _nrOfLatitudeSegments = 16;     // Number of rings along the Y-axis
+        
+        private float _prevR;
+        private bool _flipped = false;
+
+        public bool flipped => _flipped;
 
         private void Start()
         {
@@ -26,7 +31,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
              
         public override void UpdateProperties()
         {
-            // transform.localScale = Vector3.one * (R * 2);
             r = transform.localPosition;
             n = transform.right;
             RecalculateMesh();
@@ -36,6 +40,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         {
             this.R = R;
             this.Rc = Rc;
+            _prevR = R;
         }
 
         // ---- Mirror helper methods ----
@@ -176,6 +181,29 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         public void TranslateComponent()
         {
             Component.transform.localPosition = new Vector3(R, 0, 0);
+        }
+        
+        public void TranslateArrows()
+        {
+            if ((R < 0 && _prevR > 0) || (R > 0 && _prevR < 0))
+            {
+                float factor = _flipped ? -1 : 1;
+                Vector3 tmpScale = RotationArrowY.transform.localScale;
+                tmpScale.x *= -1;
+                RotationArrowY.transform.localScale = tmpScale;
+                RotationArrowY.transform.localPosition += Constants.MirrorArrowShift * factor;
+                
+                tmpScale = RotationArrowZ.transform.localScale;
+                tmpScale.x *= -1;
+                RotationArrowZ.transform.localScale = tmpScale;
+                RotationArrowZ.transform.localPosition += Constants.MirrorArrowShift * factor;
+
+                TranslationArrowY.transform.localPosition += (Constants.MirrorTransformArrowPos + Constants.MirrorArrowShift) * factor;
+
+                _flipped = !_flipped;
+            }
+
+            _prevR = R;
         }
 
     }

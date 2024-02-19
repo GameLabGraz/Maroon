@@ -67,8 +67,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handle
               {
                   _rotationYPlane.Raycast(mouseRay, out var dist);
                   Vector3 pointOnPlane = mouseRay.GetPoint(dist);
-                  var newLookDirection = (pointOnPlane - transform.position).normalized;
-                  var angle = Vector3.SignedAngle(-transform.right, newLookDirection, transform.up);
+                  var newLookDirection = (pointOnPlane - transform.GetChild(0).position).normalized;
+                  var angle = Vector3.SignedAngle(GetAngleMeasureVector(), newLookDirection, transform.up);
                   transform.RotateAround(transform.GetChild(0).position, transform.up, angle);
               }
 
@@ -89,8 +89,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handle
             {
                 _rotationZPlane.Raycast(mouseRay, out var dist);
                 Vector3 pointOnPlane = mouseRay.GetPoint(dist);
-                var newLookDirection = (pointOnPlane - transform.position).normalized;
-                var angle = Vector3.SignedAngle(-transform.right, newLookDirection, transform.forward);
+                var newLookDirection = (pointOnPlane - transform.GetChild(0).position).normalized;
+                var angle = Vector3.SignedAngle(GetAngleMeasureVector(), newLookDirection, transform.forward);
                 transform.RotateAround(transform.GetChild(0).position, transform.forward, angle);
                 
             }
@@ -101,6 +101,22 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handle
             Vector3 planeToHit = point - planePoint;
             float distance = Vector3.Dot(planeToHit, planeNormal);
             return point - distance * planeNormal;
+        }
+
+        Vector3 GetAngleMeasureVector()
+        {
+            if (_tableObject.ComponentType == ComponentType.OpticalComponent)
+                if ( ((OpticalComponent.OpticalComponent) _tableObject).OpticalType == OpticalType.Mirror )
+                    if (((OpticalComponent.Mirror)_tableObject).flipped)
+                        return transform.right;
+            
+            return -transform.right;
+        }
+
+        bool IsMirror()
+        {
+            return _tableObject.ComponentType == ComponentType.OpticalComponent &&
+                   ((OpticalComponent.OpticalComponent)_tableObject).OpticalType == OpticalType.Mirror;
         }
 
     }

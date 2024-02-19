@@ -11,7 +11,6 @@ using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalCom
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
 using Maroon.Tools.Calculator;
 using Maroon.UI;
-using PrivateAccess;
 using TMPro;
 using UnityEngine;
 using LaserPointer = Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent.LaserPointer;
@@ -384,12 +383,14 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                     le.d2 = lensD2.Value / Constants.InCM;
                     le.A = lensA.Value;
                     le.B = lensB.Value;
+                    le.TranslateArrows();
                     break;
                 
                 case OpticalType.Mirror:
                     var mi = (TableObject.OpticalComponent.Mirror)_selectedOc;
                     mi.R = mirrorR.Value / Constants.InCM;
                     mi.Rc = mirrorRc.Value / Constants.InCM;
+                    mi.TranslateArrows();
                     break;
             }
         }

@@ -24,11 +24,20 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
 
         private int _nrOfLatitudeSegments = 16; // Number of rings along the Y-axis
 
+        private float _baseD1;
+        private Vector3 _baseTranslationArrowY;
+        private Vector3 _baseRotationArrowY;
+        private Vector3 _baseRotationArrowZ;
+
         private void Start()
         {
             UpdateProperties();
             RecalculateMesh();
             LightComponentManager.Instance.RecalculateAllLightRoutes();
+
+            _baseTranslationArrowY = TranslationArrowY.transform.localPosition;
+            _baseRotationArrowY = RotationArrowY.transform.localPosition;
+            _baseRotationArrowZ = RotationArrowZ.transform.localPosition;
         }
 
         public override void UpdateProperties()
@@ -46,6 +55,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             this.Rc = Rc;
             this.A = A;
             this.B = B;
+            _baseD1 = d1;
         }
 
         // ---- Lens helper methods ----
@@ -454,6 +464,16 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             cylinder.SetNormals(normalsMantle);
 
             return cylinder;
+        }
+
+        public void TranslateArrows()
+        {
+            float xOffset = _baseD1 - d1;
+            if (xOffset >= 0) return;
+
+            TranslationArrowY.transform.localPosition = _baseTranslationArrowY + new Vector3(xOffset, 0, 0);
+            RotationArrowY.transform.localPosition = _baseRotationArrowY + new Vector3(xOffset, 0, 0);
+            RotationArrowZ.transform.localPosition = _baseRotationArrowZ + new Vector3(xOffset, 0, 0);
         }
         
     }
