@@ -4,24 +4,36 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Util
 {
     public static class Constants
     {
+        // ----------------------------------- Ray ----------------------------------- //
         public const float BaseRayThicknessInMM = 1.2f;
         public const float ReflectIntensity = 0.1f;
         public const float MinimalIntensity = 0.02f;
         public const int MaxNumberOfRays = 500;
 
-        public static readonly Vector3 BaseCamPos = new(0, 2.6f, 1);
-        public const float BaseCameraX = 0;
-        public const float BaseCameraY = 2.6f;
-        public const float BaseCameraZ = 1;
-        public const float BaseCameraFOV = 60;
-        public static readonly Vector3 CamTopPos = new(0, 3f, 2.5f);
-        public static readonly Quaternion CamTopRot = Quaternion.Euler(90, 0, 0);
+        // ----------------------------------- Camera ----------------------------------- //
+        public const float BaseCamFOV = 60;
+        public const float BaseCamX = 0;
+        public const float BaseCamY = 2.6f;
+        public const float BaseCamZ = 1;
+        public static readonly Vector3 BaseCamPos = new(BaseCamX, BaseCamY, BaseCamZ);
+        public static readonly Quaternion BaseCamRot = Quaternion.Euler(52.5f, 0, 0);
         
+        public const float TopCamFOV = 60;
+        public const float TopCamX = 0;
+        public const float TopCamY = 3.0f;
+        public const float TopCamZ = 2.5f;
+        public static readonly Vector3 TopCamPos = new(TopCamX, TopCamY, TopCamZ);
+        public static readonly Quaternion TopCamRot = Quaternion.Euler(90, 0, 0);
+        
+        public const float MinFOV = 1f;
+        public const float MaxFOV = 70f;
+        public static readonly Vector3 MinPositionCamera = new(-2.0f, 1.4f, 0.5f);
+        public static readonly Vector3 MaxPositionCamera = new(2.0f, 3.0f, 3.5f);
+        
+        // ----------------------------------- Optical Table ----------------------------------- //
         public const float Aenv = 1f;   // A and B define the index of refraction of the environment around the lenses 
         public const float Benv = 0f;   // A = 1, B = 0, corresponds to air/vacuum
 
-        public static readonly Vector3 MinPositionCamera = new(-2.0f, 1.4f, 0.5f);
-        public static readonly Vector3 MaxPositionCamera = new(2.0f, 3.0f, 3.5f);
         public static readonly Vector3 MinPositionTable = new(0f, -0.19f, 0f);
         public static readonly Vector3 MaxPositionTable = new(4f, 1f, 2f);
         public static readonly Vector3 TableBaseOffset = new(-2f, 1f, 1.5f);
@@ -33,10 +45,12 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Util
         public static readonly Vector3 MirrorTransformArrowPos = new(0.2408f, 0, 0);
         public static readonly Vector3 MirrorArrowShift = new(0.048f, 0, 0);
         
+        // ----------------------------------- Number Conversion ----------------------------------- //
         public const float Epsilon = 0.000001f;
         public const float InCM = 100f;
         public const float InMM = 1000f;
 
+        // ----------------------------------- Tags ----------------------------------- //
         public const string TagRotationArrowY = "rotationY";
         public const string TagRotationArrowZ = "rotationZ";
         public const string TagTranslationArrowY = "translationY";
