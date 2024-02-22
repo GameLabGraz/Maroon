@@ -99,7 +99,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             _uim.rayThickness.Value = 0.15f;
             
             var ps = _lcm.AddLightComponent(parallelSource, new Vector3(1.76f, 0, 0.577f));
-            ((ParallelSource)ps).SetParameters(distanceBetweenRays: 0.50f / Constants.InMM, numberOfRays: 31);
+            ((ParallelSource)ps).SetParameters(distanceBetweenRays: 0.40f / Constants.InMM, numberOfRays: 20);
             _ocm.AddOpticalComponent(eye, new Vector3(1.90f, 0, 0.577f));
             
             _camControls.SetPresetCameras(
@@ -114,7 +114,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             _uim.rayThickness.Value = 0.15f;
             
             var ps = _lcm.AddLightComponent(parallelSource, new Vector3(1.76f, 0, 0.577f));
-            ((ParallelSource)ps).SetParameters(distanceBetweenRays: 0.50f / Constants.InMM, numberOfRays: 31);
+            ((ParallelSource)ps).SetParameters(distanceBetweenRays: 0.40f / Constants.InMM, numberOfRays: 20);
             
             var eyeObject = _ocm.AddOpticalComponent(eye, new Vector3(1.90f, 0, 0.577f));
             ((Eye)eyeObject).SetParameters(0.022f);
@@ -134,7 +134,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             _uim.rayThickness.Value = 0.15f;
             
             var ps = _lcm.AddLightComponent(parallelSource, new Vector3(1.76f, 0, 0.577f));
-            ((ParallelSource)ps).SetParameters(distanceBetweenRays: 0.50f / Constants.InMM, numberOfRays: 31);
+            ((ParallelSource)ps).SetParameters(distanceBetweenRays: 0.40f / Constants.InMM, numberOfRays: 20);
             
             var eyeObject = _ocm.AddOpticalComponent(eye, new Vector3(1.90f, 0, 0.577f));
             ((Eye)eyeObject).SetParameters(0.026f);
@@ -170,7 +170,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             _uim.rayThickness.Value = 0.10f;
             
             var ps = _lcm.AddLightComponent(parallelSource, new Vector3(1.65f, 0, 0.577f));
-            ((ParallelSource)ps).SetParameters(distanceBetweenRays: 0.80f / Constants.InMM, numberOfRays: 40);
+            ((ParallelSource)ps).SetParameters(distanceBetweenRays: 0.40f / Constants.InMM, numberOfRays: 20);
             
             var ap = _ocm.AddOpticalComponent(aperture, new Vector3(1.75f, 0, 0.577f));
             ((Aperture)ap).SetParameters(Rin: 0.005f, Rout: 0.05f);

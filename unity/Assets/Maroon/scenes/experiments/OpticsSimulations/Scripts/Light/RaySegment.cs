@@ -74,6 +74,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
             _lineSegment.endWidth = UIManager.Instance.rayThickness.Value / Constants.InMM;
             _lineSegment.numCapVertices = 5;
             _lineSegment.useWorldSpace = false;
+            _lineSegment.sortingOrder = 1;
         }
 
         private Vector3 ToGlobal(Vector3 localPoint)

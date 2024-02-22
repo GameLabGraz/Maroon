@@ -10,8 +10,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
 {
     public class ParallelSource : LightComponent
     {
-        public int numberOfRays = 20;
-        public float distanceBetweenRays = 0.00015f;
+        public int numberOfRays = 16;
+        public float distanceBetweenRays = 0.38f / Constants.InMM;
 
         private void Start()
         {
@@ -25,7 +25,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
             ChangeNumberOfRays(numberOfRays);
         }
         
-        public void SetParameters(int numberOfRays = 20, float distanceBetweenRays = 0.00015f)
+        public void SetParameters(int numberOfRays = 16, float distanceBetweenRays = 0.00015f)
         {
             this.distanceBetweenRays = distanceBetweenRays;
             ChangeNumberOfRays(numberOfRays);
@@ -70,6 +70,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
         {
             List<Vector3> rayPositions = new List<Vector3>();
             int half = numberOfRays / 2;
+            
             // odd
             if (numberOfRays % 2 == 1)
                 for (int i = -half; i <= half; i++)

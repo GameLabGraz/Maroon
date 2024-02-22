@@ -8,7 +8,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
 {
     public class PointSource : LightComponent
     {
-        public int numberOfRays = 40;
+        public int numberOfRays = 16;
+        public float rayDistributionAngle = 30;
         
         private void Start()
         {
@@ -19,17 +20,18 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
                 for (int i = 0; i < numberOfRays; i++)
                     LightRoutes.Add(new LightRoute(wl));
 
-            ChangeNumberOfRays(numberOfRays);
+            ChangeNumberOfRaysAndAngle(numberOfRays, rayDistributionAngle);
         }
         
-        public void SetParameters(int numberOfRays = 40)
+        public void SetParameters(int numberOfRays = 16)
         {
             this.numberOfRays = numberOfRays;
         }
 
-        public void ChangeNumberOfRays(int nrRays)
+        public void ChangeNumberOfRaysAndAngle(int nrRays, float distAngle)
         {
             numberOfRays = nrRays;
+            rayDistributionAngle = distAngle;
             
             ResetLightRoutes(numberOfRays);
             foreach (var wl in Wavelengths)
@@ -45,9 +47,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
                 return;
             ResetLightRoutes(numberOfRays);
 
-            float angle = 0;
-            float angleDelta = 360f / numberOfRays;
-
+            float angle = -rayDistributionAngle / 2;
+            float angleDelta = rayDistributionAngle / (numberOfRays - 1);
+            
             int pos = 0;
             foreach (var wl in Wavelengths)
                 for (int i = 0; i < numberOfRays; i++)
@@ -59,14 +61,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
                     pos++;
                     angle += angleDelta;
                 }
-            
-        // public override bool CheckHitComponent(OpticalComponent.OpticalComponent oc)
-        // {
-        //     throw new NotImplementedException("CheckHitComponent Method not implemented for PointSource!");
-        //     // return false;
-        // }
-            
+
         }
+        
+        
         
         
     }

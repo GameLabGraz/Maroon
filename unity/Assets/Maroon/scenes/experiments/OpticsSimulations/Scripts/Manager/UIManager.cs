@@ -45,8 +45,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         public QuantityFloat rayThickness;
         public QuantityFloat sliderWavelength;
         public QuantityFloat selectedIntensity;
-        public QuantityInt   numberOfRays;
+        public QuantityInt   numberOfRaysParallel;
         public QuantityFloat distanceBetweenRays;
+        public QuantityInt   numberOfRaysPoint;
+        public QuantityFloat rayDistributionAngle;
 
         [Header("Aperture Parameters")]
         [SerializeField] private QuantityFloat apertureRin;
@@ -148,14 +150,15 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         private void SetParallelSourceControlPanelValues(ParallelSource ps)
         {
             distanceBetweenRays.Value = ps.distanceBetweenRays * Constants.InMM;
-            numberOfRays.Value = ps.numberOfRays;
+            numberOfRaysParallel.Value = ps.numberOfRays;
             if (!_hideControls) parallelSourcePanel.SetActive(true);
             _activeLcPanel = parallelSourcePanel;
         }
         
         private void SetPointSourceControlPanelValues(PointSource ps)
         {
-            numberOfRays.Value = ps.numberOfRays;
+            numberOfRaysPoint.Value = ps.numberOfRays;
+            rayDistributionAngle.Value = ps.rayDistributionAngle;
             if (!_hideControls) pointSourcePanel.SetActive(true);
             _activeLcPanel = pointSourcePanel;
         }
@@ -172,13 +175,13 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 
                 case LightType.ParallelSource:
                     var ps = (ParallelSource)_selectedLc;
-                    ps.ChangeNumberOfRays(numberOfRays.Value);
+                    ps.ChangeNumberOfRays(numberOfRaysParallel.Value);
                     ps.distanceBetweenRays = distanceBetweenRays.Value / Constants.InMM;
                     break;
                 
                 case LightType.PointSource:
                     var pointS = (PointSource)_selectedLc;
-                    pointS.ChangeNumberOfRays(numberOfRays.Value);
+                    pointS.ChangeNumberOfRaysAndAngle(numberOfRaysPoint.Value, rayDistributionAngle.Value);
                     break;
             }
         }
@@ -312,8 +315,11 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             mirrorRc.alwaysSendValueChangedEvent = value;
             sliderWavelength.alwaysSendValueChangedEvent = value;
             selectedIntensity.alwaysSendValueChangedEvent = value;
-            numberOfRays.alwaysSendValueChangedEvent = value;
+            numberOfRaysParallel.alwaysSendValueChangedEvent = value;
             distanceBetweenRays.alwaysSendValueChangedEvent = value;
+            numberOfRaysPoint.alwaysSendValueChangedEvent = value;
+            rayDistributionAngle.alwaysSendValueChangedEvent = value;
+            
         }
         
         public void DeactivateAllOpticalControlPanels()
