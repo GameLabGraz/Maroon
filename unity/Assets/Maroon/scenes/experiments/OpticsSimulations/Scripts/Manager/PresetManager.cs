@@ -98,7 +98,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             _em.ClearTable();
             _uim.rayThickness.Value = 0.15f;
             
-            var ps = _lcm.AddLightComponent(parallelSource, new Vector3(1.76f, 0, 0.577f));
+            var ps = _lcm.AddLightComponent(parallelSource, new Vector3(1.78f, 0, 0.577f));
             ((ParallelSource)ps).SetParameters(distanceBetweenRays: 0.40f / Constants.InMM, numberOfRays: 20);
             _ocm.AddOpticalComponent(eye, new Vector3(1.90f, 0, 0.577f));
             
@@ -113,7 +113,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             _em.ClearTable();
             _uim.rayThickness.Value = 0.15f;
             
-            var ps = _lcm.AddLightComponent(parallelSource, new Vector3(1.76f, 0, 0.577f));
+            var ps = _lcm.AddLightComponent(parallelSource, new Vector3(1.78f, 0, 0.577f));
             ((ParallelSource)ps).SetParameters(distanceBetweenRays: 0.40f / Constants.InMM, numberOfRays: 20);
             
             var eyeObject = _ocm.AddOpticalComponent(eye, new Vector3(1.90f, 0, 0.577f));
@@ -133,11 +133,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             _em.ClearTable();
             _uim.rayThickness.Value = 0.15f;
             
-            var ps = _lcm.AddLightComponent(parallelSource, new Vector3(1.76f, 0, 0.577f));
-            ((ParallelSource)ps).SetParameters(distanceBetweenRays: 0.40f / Constants.InMM, numberOfRays: 20);
+            var ps = _lcm.AddLightComponent(pointSource, new Vector3(1.638f, 0, 0.577f));
+            ((PointSource)ps).SetParameters(40, 4);
             
-            var eyeObject = _ocm.AddOpticalComponent(eye, new Vector3(1.90f, 0, 0.577f));
-            ((Eye)eyeObject).SetParameters(0.026f);
+            _ocm.AddOpticalComponent(eye, new Vector3(1.90f, 0, 0.577f));
             
             var lensObject = _ocm.AddOpticalComponent(lens, new Vector3(1.882f, 0, 0.577f + Constants.Epsilon));
             ((Lens)lensObject).SetParameters(R1: 0.053f, R2: 0.10f, d1: 0.0005f, d2: 0.0005f, A: 1.458f, B: 3540);
@@ -159,7 +158,20 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         private void MagnifyingGlass()
         {
             _em.ClearTable();
-            _uim.rayThickness.Value = 0.3f;
+            _uim.rayThickness.Value = 0.15f;
+            
+            var ps = _lcm.AddLightComponent(pointSource, new Vector3(1.78f, 0, 0.577f));
+            ((PointSource)ps).SetParameters(40, 22);
+            
+            var lensObject = _ocm.AddOpticalComponent(lens, new Vector3(1.866f, 0, 0.577f + Constants.Epsilon));
+            ((Lens)lensObject).SetParameters(R1: 0.08f, R2: -0.08f, d1: 0.002f, d2: 0.002f, A: 1.458f, B: 3540);
+            
+            _ocm.AddOpticalComponent(eye, new Vector3(1.90f, 0, 0.577f));
+            
+            _camControls.SetPresetCameras(
+                new CameraControls.CameraSetting(new Vector3(-0.12f, 2.6f, 1f), Constants.BaseCamRot, 3),
+                new CameraControls.CameraSetting(new Vector3(-0.12f,3,2.08f), Constants.TopCamRot, 3)
+            );
 
 
         }
@@ -167,32 +179,67 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         private void KeplerianTelescope()
         {
             _em.ClearTable();
-            _uim.rayThickness.Value = 0.10f;
-            
+            _uim.rayThickness.Value = 0.15f;
+
             var ps = _lcm.AddLightComponent(parallelSource, new Vector3(1.65f, 0, 0.577f));
-            ((ParallelSource)ps).SetParameters(distanceBetweenRays: 0.40f / Constants.InMM, numberOfRays: 20);
+            ((ParallelSource)ps).SetParameters(distanceBetweenRays: 1.40f / Constants.InMM, numberOfRays: 20);
             
-            var ap = _ocm.AddOpticalComponent(aperture, new Vector3(1.75f, 0, 0.577f));
-            ((Aperture)ap).SetParameters(Rin: 0.005f, Rout: 0.05f);
+            var ap = _ocm.AddOpticalComponent(aperture, new Vector3(1.74f, 0, 0.577f));
+            ((Aperture)ap).SetParameters(Rin: 0.005f, Rout: 0.015f);
             
-            var lensObject1 = _ocm.AddOpticalComponent(lens, new Vector3(1.77f, 0, 0.577f));
+            var lensObject1 = _ocm.AddOpticalComponent(lens, new Vector3(1.75f, 0, 0.577f));
             ((Lens)lensObject1).SetParameters(R1: 0.112f, R2: -0.112f, Rc: 0.015f, d1: 0.0015f, d2: 0.0015f, A: 1.7f, B: 0);
             
-            var lensObject2 = _ocm.AddOpticalComponent(lens, new Vector3(1.87f, 0, 0.577f));
+            var lensObject2 = _ocm.AddOpticalComponent(lens, new Vector3(1.85f, 0, 0.577f));
             ((Lens)lensObject2).SetParameters(R1: 0.028f, R2: -0.028f, Rc: 0.05f, d1: 0.001f, d2: 0.001f, A: 1.7f, B: 0);
             
-            _ocm.AddOpticalComponent(eye, new Vector3(1.887f, 0, 0.577f));
+            _ocm.AddOpticalComponent(eye, new Vector3(1.867f, 0, 0.577f));
             
             _camControls.SetPresetCameras(
-                new CameraControls.CameraSetting(new Vector3(-0.14f, 2.6f, 1f), Constants.BaseCamRot, 5),
-                new CameraControls.CameraSetting(new Vector3(-0.14f,3,2.08f), Constants.TopCamRot, 5)
+                new CameraControls.CameraSetting(new Vector3(-0.1682f, 2.6f, 1f), Constants.BaseCamRot, 3.5f),
+                new CameraControls.CameraSetting(new Vector3(-0.1682f,3,2.08f), Constants.TopCamRot, 3.5f)
             );
         }
         
         private void GalileanTelescope()
         {
             _em.ClearTable();
-            _uim.rayThickness.Value = 0.3f;
+            _uim.rayThickness.Value = 0.15f;
+
+            // Upper part
+            var ps = _lcm.AddLightComponent(parallelSource, new Vector3(1.65f, 0, 0.60f));
+            ((ParallelSource)ps).SetParameters(distanceBetweenRays: 1.40f / Constants.InMM, numberOfRays: 20);
+            
+            var ap = _ocm.AddOpticalComponent(aperture, new Vector3(1.783f, 0, 0.60f));
+            ((Aperture)ap).SetParameters(Rin: 0.005f, Rout: 0.015f);
+            
+            var lensObject1 = _ocm.AddOpticalComponent(lens, new Vector3(1.788f, 0, 0.60f));
+            ((Lens)lensObject1).SetParameters(R1: 0.112f, R2: -0.112f, Rc: 0.015f, d1: 0.0015f, d2: 0.0015f, A: 1.7f, B: 0);
+            
+            var lensObject2 = _ocm.AddOpticalComponent(lens, new Vector3(1.848f, 0, 0.60f));
+            ((Lens)lensObject2).SetParameters(R1: -0.028f, R2: 0.028f, Rc: 0.005f, d1: 0.00005f, d2: 0.00005f, A: 1.7f, B: 0);
+            
+            _ocm.AddOpticalComponent(eye, new Vector3(1.865f, 0, 0.60f));
+            
+            // Lower part (4 cm apart)
+            var ps1 = _lcm.AddLightComponent(parallelSource, new Vector3(1.65f, 0, 0.56f));
+            ((ParallelSource)ps1).SetParameters(distanceBetweenRays: 1.40f / Constants.InMM, numberOfRays: 20);
+            
+            var ap2 = _ocm.AddOpticalComponent(aperture, new Vector3(1.783f, 0, 0.56f));
+            ((Aperture)ap2).SetParameters(Rin: 0.005f, Rout: 0.015f);
+            
+            var lensObject3 = _ocm.AddOpticalComponent(lens, new Vector3(1.788f, 0, 0.56f));
+            ((Lens)lensObject3).SetParameters(R1: 0.112f, R2: -0.112f, Rc: 0.015f, d1: 0.0015f, d2: 0.0015f, A: 1.7f, B: 0);
+            
+            var lensObject4 = _ocm.AddOpticalComponent(lens, new Vector3(1.848f, 0, 0.56f));
+            ((Lens)lensObject4).SetParameters(R1: -0.028f, R2: 0.028f, Rc: 0.005f, d1: 0.00005f, d2: 0.00005f, A: 1.7f, B: 0);
+            
+            _ocm.AddOpticalComponent(eye, new Vector3(1.865f, 0, 0.56f));
+            
+            _camControls.SetPresetCameras(
+                new CameraControls.CameraSetting(new Vector3(-0.168f, 2.6f, 1f), Constants.BaseCamRot, 3.5f),
+                new CameraControls.CameraSetting(new Vector3(-0.168f,3,2.08f), Constants.TopCamRot, 3.5f)
+            );
 
 
         }

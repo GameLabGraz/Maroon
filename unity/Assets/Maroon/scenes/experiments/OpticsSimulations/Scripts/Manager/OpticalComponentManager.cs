@@ -26,7 +26,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         [SerializeField] private Wall wall;
 
         public List<OpticalComponent> OpticalComponents => _opticalComponents;
-        private Vector3 _basePosition = new Vector3(2, 0, 1);
+        
 
         private void Awake()
         {
@@ -108,16 +108,16 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 case 0:
                     return;
                 case 1:
-                    AddOpticalComponent(lens, _basePosition);
+                    AddOpticalComponent(lens, Constants.BaseOcPosition);
                     break;
                 case 2:
-                    AddOpticalComponent(mirror, _basePosition);
+                    AddOpticalComponent(mirror, Constants.BaseOcPosition);
                     break;
                 case 3:
-                    AddOpticalComponent(eye, _basePosition);
+                    AddOpticalComponent(eye, Constants.BaseOcPosition);
                     break;
                 case 4:
-                    AddOpticalComponent(aperture, _basePosition);
+                    AddOpticalComponent(aperture, Constants.BaseOcPosition);
                     break;
             }
         }

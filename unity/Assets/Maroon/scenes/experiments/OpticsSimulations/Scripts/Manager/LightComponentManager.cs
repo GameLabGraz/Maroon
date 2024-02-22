@@ -7,6 +7,7 @@ using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handlers;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
+using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
 using UnityEngine;
 using LaserPointer = Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent.LaserPointer;
 using LightType = Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent.LightType;
@@ -26,7 +27,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         [SerializeField] private PointSource pointSource;
 
         public List<LightComponent> LightComponents => _lightComponents;
-        private Vector3 _basePosition = new Vector3(1, 0, 1);
+        
 
         private void Awake()
         {
@@ -62,13 +63,13 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 case 0:
                     return;
                 case 1:
-                    AddLightComponent(laserPointer, _basePosition, wavelengths: laserPointer.Wavelengths);
+                    AddLightComponent(laserPointer, Constants.BaseLcPosition, wavelengths: laserPointer.Wavelengths);
                     break;
                 case 2:
-                    AddLightComponent(parallelSource, _basePosition, wavelengths: parallelSource.Wavelengths);
+                    AddLightComponent(parallelSource, Constants.BaseLcPosition, wavelengths: parallelSource.Wavelengths);
                     break;
                 case 3:
-                    AddLightComponent(pointSource, _basePosition, wavelengths: pointSource.Wavelengths);
+                    AddLightComponent(pointSource, Constants.BaseLcPosition, wavelengths: pointSource.Wavelengths);
                     break;
             }
         }

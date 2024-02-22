@@ -45,6 +45,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Util
         public static readonly Vector3 MirrorTransformArrowPos = new(0.2408f, 0, 0);
         public static readonly Vector3 MirrorArrowShift = new(0.048f, 0, 0);
         
+        public static readonly Vector3 BaseOcPosition = new (2.6f, 0, 1);
+        public static readonly Vector3 BaseLcPosition = new (1, 0, 1);
+        
         // ----------------------------------- Number Conversion ----------------------------------- //
         public const float Epsilon = 0.000001f;
         public const float InCM = 100f;

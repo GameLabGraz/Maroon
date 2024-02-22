@@ -23,17 +23,21 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
             ChangeNumberOfRaysAndAngle(numberOfRays, rayDistributionAngle);
         }
         
-        public void SetParameters(int numberOfRays = 16)
+        public void SetParameters(int numberOfRays = 16, float rayDistributionAngle = 30)
         {
             this.numberOfRays = numberOfRays;
+            this.rayDistributionAngle = rayDistributionAngle;
+            ChangeNumberOfRaysAndAngle(numberOfRays, rayDistributionAngle);
         }
 
         public void ChangeNumberOfRaysAndAngle(int nrRays, float distAngle)
         {
             numberOfRays = nrRays;
             rayDistributionAngle = distAngle;
-            
+            if (LightRoutes == null)
+                return;
             ResetLightRoutes(numberOfRays);
+            
             foreach (var wl in Wavelengths)
                 for (int i = 0; i < numberOfRays; i++)
                     LightRoutes.Add(new LightRoute(wl));
