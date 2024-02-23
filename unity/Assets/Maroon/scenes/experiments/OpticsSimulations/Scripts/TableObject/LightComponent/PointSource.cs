@@ -54,6 +54,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
             
             int pos = 0;
             foreach (var wl in Wavelengths)
+            {
                 for (int i = 0; i < numberOfRays; i++)
                 {
                     Vector3 dir = Quaternion.Euler(0, angle, 0) * Vector3.right;
@@ -63,6 +64,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
                     pos++;
                     angle += angleDelta;
                 }
+                angle = -rayDistributionAngle / 2;
+            }
         }
     }
 }

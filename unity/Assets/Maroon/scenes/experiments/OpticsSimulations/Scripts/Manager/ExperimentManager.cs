@@ -1,3 +1,4 @@
+using System;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handlers;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
@@ -32,7 +33,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 Destroy(gameObject);
             }
         }
-        
+
         // Main Update loop
         private void Update()
         {

@@ -9,6 +9,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
 {
     public class PresetManager : MonoBehaviour
     {
+        public static PresetManager Instance;
+        
         [Header("Prefabs: Light Sources")]
         [SerializeField] private LaserPointer laserPointer;
         [SerializeField] private ParallelSource parallelSource;
@@ -29,6 +31,17 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         private UIManager _uim;
         private ExperimentManager _em;
 
+        private void Awake()
+        {
+            if (Instance == null)
+                Instance = this;
+            else
+            {
+                Debug.LogError("SHOULD NOT OCCUR - Destroyed PresetManager");
+                Destroy(gameObject);
+            }
+        }
+        
         public void Start()
         {
             _ocm = OpticalComponentManager.Instance;
@@ -36,6 +49,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             _uim = UIManager.Instance;
             _em = ExperimentManager.Instance;
             _camControls = mainCamera.GetComponent<CameraControls>();
+            
+            LensAndMirror();
         }
 
         public void TablePresets(int nr)
@@ -45,7 +60,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 case 0: return;
                 case 1: LensAndMirror(); break;
                 case 2: FocalLength(); break;
-                case 3: NormalEye(); break;
+                case 3: StandardEye(); break;
                 case 4: NearsightedEye(); break;
                 case 5: FarsightedEye(); break;
                 case 6: UnderwaterVision(); break;
@@ -69,7 +84,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             
             _camControls.SetPresetCameras(
                 new CameraControls.CameraSetting(new Vector3(-0.065f, 2.6f, 1.0f), Constants.BaseCamRot, 30),
-                new CameraControls.CameraSetting(new Vector3(0, 3.0f, 2.0f), Constants.TopCamRot, 33)
+                new CameraControls.CameraSetting(new Vector3(-0.065f, 3.0f, 2.0f), Constants.TopCamRot, 33)
             );
         }
 
@@ -88,7 +103,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             );
         }
         
-        private void NormalEye()
+        private void StandardEye()
         {
             _em.ClearTable();
             _uim.rayThickness.Value = 0.15f;

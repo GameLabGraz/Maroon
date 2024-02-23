@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Maroon.Physics;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
 using UnityEngine;
@@ -8,7 +9,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Camera
     public class CameraControls : MonoBehaviour
     {
         [SerializeField] private bool isTopView;
-        [SerializeField] private float moveSpeed = 8.0f;
+        [SerializeField] private QuantityFloat moveSpeed = 4.0f;
         [SerializeField] private float zoomSpeed = 15.0f;
 
         private UnityEngine.Camera _cam;
@@ -38,7 +39,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Camera
             {
                 float cameraOffsetX = -Input.GetAxis("Mouse X");
                 float cameraOffsetZ = Input.GetAxis("Mouse Y");
-                float adjustedSpeed = moveSpeed * Mathf.Lerp(0.1f, 1f, (_cam.fieldOfView - Constants.MinFOV) / (Constants.MaxFOV - Constants.MinFOV));
+                float adjustedSpeed = moveSpeed.Value * 0.33f * Mathf.Lerp(0.1f, 1f, (_cam.fieldOfView - Constants.MinFOV) / (Constants.MaxFOV - Constants.MinFOV));
 
                 float moveFactor = adjustedSpeed * Time.deltaTime;
                 Vector3 newCamPos = transform.position + new Vector3(cameraOffsetX, 0, cameraOffsetZ) * moveFactor;

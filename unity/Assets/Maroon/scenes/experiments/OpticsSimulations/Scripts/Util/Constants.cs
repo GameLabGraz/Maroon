@@ -11,15 +11,15 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Util
         public const int MaxNumberOfRays = 500;
 
         // ----------------------------------- Camera ----------------------------------- //
-        public const float BaseCamFOV = 60;
-        private const float BaseCamX = 0;
+        public const float BaseCamFOV = 30;
+        private const float BaseCamX = -0.065f;
         private const float BaseCamY = 2.6f;
         private const float BaseCamZ = 1;
         public static readonly Vector3 BaseCamPos = new(BaseCamX, BaseCamY, BaseCamZ);
         public static readonly Quaternion BaseCamRot = Quaternion.Euler(52.5f, 0, 0);
         
-        public const float TopCamFOV = 60;
-        private const float TopCamX = 0;
+        public const float TopCamFOV = 30;
+        private const float TopCamX = -0.065f;
         private const float TopCamY = 3.0f;
         private const float TopCamZ = 2.5f;
         public static readonly Vector3 TopCamPos = new(TopCamX, TopCamY, TopCamZ);
@@ -45,8 +45,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Util
         public static readonly Vector3 MirrorTransformArrowPos = new(0.2408f, 0, 0);
         public static readonly Vector3 MirrorArrowShift = new(0.048f, 0, 0);
         
-        public static readonly Vector3 BaseOcPosition = new (2.6f, 0, 1);
-        public static readonly Vector3 BaseLcPosition = new (1, 0, 1);
+        public static readonly Vector3 BaseOcPosition = new (2.1f, 0, 0.9f);
+        public static readonly Vector3 BaseLcPosition = new (1.3f, 0, 0.9f);
         
         // ----------------------------------- Number Conversion ----------------------------------- //
         public const float Epsilon = 0.000001f;
