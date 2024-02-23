@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
@@ -19,7 +17,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         private int _nrOfLatitudeSegments = 16;     // Number of rings along the Y-axis
         
         private float _prevR;
-        private bool _flipped = false;
+        private bool _flipped;
 
         public bool flipped => _flipped;
 
@@ -69,7 +67,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         } 
         
         // Calculations from Peter
-        // public override (Vector3 hitPoint, Vector3 outRayReflection, Vector3 outRayRefraction) CalculateHitpointReflectionRefraction(Vector3 rayOrigin, Vector3 rayDirection)
         public override (float inRayLength, RaySegment reflection, RaySegment refraction) CalculateDistanceReflectionRefraction(RaySegment inRay)
         {
             float d = GetRelevantDistance(inRay.r0Local, inRay.n);
@@ -80,7 +77,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
 
         public override float GetRelevantDistance(Vector3 rayOrigin, Vector3 rayDirection)
         {
-            (float d1, float d2) = Util.Math.IntersectLineSphere(rayOrigin, rayDirection, R, Center());
+            (float d1, float d2) = Math.IntersectLineSphere(rayOrigin, rayDirection, R, Center());
             float dmin = Mathf.Infinity;
             
             // skip if d1 is negative, very small or NaN
@@ -116,7 +113,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
                             dmin = d2;
                 }
             }
-
             return dmin;
         }
 

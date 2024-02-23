@@ -1,9 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
 using UnityEngine;
-
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject
 {
@@ -21,17 +17,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject
         public ComponentType ComponentType => componentType;
 
         public GameObject Component => component;
-
         public GameObject TranslationArrowY => translationArrowY;
-
         public GameObject RotationArrowY => rotationArrowY;
-
         public GameObject RotationArrowZ => rotationArrowZ;
-
-        private void Awake()
-        {
-            
-        }
 
         public virtual void RemoveFromTable()
         {
@@ -49,7 +37,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject
         {
             throw new Exception("Should not call base RecalculateMesh Method!");
         }
-        
 
     }
     

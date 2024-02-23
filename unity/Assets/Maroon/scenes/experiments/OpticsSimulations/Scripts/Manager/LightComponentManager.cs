@@ -1,16 +1,9 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Maroon.Physics;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handlers;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
 using UnityEngine;
 using LaserPointer = Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent.LaserPointer;
-using LightType = Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent.LightType;
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
 {
@@ -76,7 +69,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         
         public void WavelengthMenu(int nr)
         {
-            LightComponent lc = UIManager.Instance.SelectedLc;
             List<float> wls = new List<float>();
             switch (nr)
             {

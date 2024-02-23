@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Camera;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
@@ -10,7 +9,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
 {
     public class PresetManager : MonoBehaviour
     {
-        
         [Header("Prefabs: Light Sources")]
         [SerializeField] private LaserPointer laserPointer;
         [SerializeField] private ParallelSource parallelSource;
@@ -24,7 +22,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
 
         [Header("Camera")] 
         [SerializeField] private GameObject mainCamera;
-        private UnityEngine.Camera _cam;
         private CameraControls _camControls;
 
         private OpticalComponentManager _ocm;
@@ -38,8 +35,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             _lcm = LightComponentManager.Instance;
             _uim = UIManager.Instance;
             _em = ExperimentManager.Instance;
-
-            _cam = mainCamera.GetComponent<UnityEngine.Camera>();
             _camControls = mainCamera.GetComponent<CameraControls>();
         }
 
@@ -172,8 +167,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 new CameraControls.CameraSetting(new Vector3(-0.12f, 2.6f, 1f), Constants.BaseCamRot, 3),
                 new CameraControls.CameraSetting(new Vector3(-0.12f,3,2.08f), Constants.TopCamRot, 3)
             );
-
-
         }
         
         private void KeplerianTelescope()
@@ -240,8 +233,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 new CameraControls.CameraSetting(new Vector3(-0.168f, 2.6f, 1f), Constants.BaseCamRot, 3.5f),
                 new CameraControls.CameraSetting(new Vector3(-0.168f,3,2.08f), Constants.TopCamRot, 3.5f)
             );
-
-
         }
         
         private void NewtonianTelescope()

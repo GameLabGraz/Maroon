@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
@@ -14,10 +11,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         public Vector3 r0;
         public Vector3 n;
         public float f = 0.024f;
-        public readonly float R = 0.012f;
+        private readonly float R = 0.012f;
 
         // normal to surface R at p
-        public Vector3 NormR(Vector3 p)
+        private Vector3 NormR(Vector3 p)
         {
             return 1 / this.R * (p - this.r0);
         }
@@ -41,23 +38,17 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
 
         public override (float inRayLength, RaySegment reflection, RaySegment refraction) CalculateDistanceReflectionRefraction(RaySegment inRay)
         {
-            // todo immer inRay.r0Local und inRay.enpointLocal verwenden
-
             float d = GetRelevantDistance(inRay.r0Local, inRay.n);
             Vector3 hitPoint = inRay.r0Local + inRay.n * d;
             RaySegment reflection = null;
             RaySegment refraction = null;
 
             var normal = this.NormR(hitPoint);
-            var rdotn = Vector3.Dot((hitPoint - this.r0), this.n);
             var rndotn = Vector3.Dot(inRay.n, normal);
-
-            // var debugCalc = rdotn / 1.2f;
-            // var debugCos = Mathf.Cos(0.25f);
             
+            // check that the rays strike the pupil
             if (Vector3.Angle(hitPoint - this.r0, this.n) < Mathf.Rad2Deg * 0.25f)
-            // if (rdotn / 1.2 > Mathf.Cos(0.25f)) // TODO ask peter what this means
-            { // check that the rays strike the pupil
+            { 
                 var rnpara = rndotn * normal;
                 var rnperp = inRay.n - rnpara;
                 var n_reflected = rnperp - rnpara;
@@ -103,7 +94,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
 
         public override float GetRelevantDistance(Vector3 rayOrigin, Vector3 rayDirection)
         {
-            (float d1, float d2) = Util.Math.IntersectLineSphere(rayOrigin, rayDirection, R, r0);
+            (float d1, float d2) = Math.IntersectLineSphere(rayOrigin, rayDirection, R, r0);
             float dmin = Mathf.Infinity;
 
             // skip if (d1 or d2) is negative, very small or NaN
@@ -113,10 +104,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
                 dmin = d2;
             return dmin;
         }
-
-        public override void RecalculateMesh()
-        {
-            
-        }
+        
+        public override void RecalculateMesh(){}
     }
 }

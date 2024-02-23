@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent
@@ -16,14 +13,13 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         {
             this.r0 = r0;
             this.n = n;
-            // LightComponentManager.Instance.CheckOpticalComponentHit(this);
         }
+        
         public override void UpdateProperties()
         {
             Debug.Log("Updated properties should never have to be called for Wall componentes!");
         }
 
-        // public override (Vector3 hitPoint, Vector3 outRayReflection, Vector3 outRayRefraction) CalculateHitpointReflectionRefraction(Vector3 rayOrigin, Vector3 rayDirection)
         public override (float inRayLength, RaySegment reflection, RaySegment refraction) CalculateDistanceReflectionRefraction(RaySegment inRay)
         {
             float d = GetRelevantDistance(inRay.r0Local, inRay.n);
@@ -43,7 +39,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
 
         // Walls are not removed
         public override void RemoveFromTable() {}
-        
         
     }
 }

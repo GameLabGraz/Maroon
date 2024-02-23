@@ -1,8 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent
@@ -32,16 +29,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         {
             Destroy(gameObject);
         }
-        
-        // private void Update()
-        // {
-        //     if (transform.hasChanged)
-        //     {
-        //         UpdateProperties();
-        //         LightComponentManager.Instance.CheckOpticalComponentHit(this);
-        //         transform.hasChanged = false;
-        //     }
-        // }
 
     }
     

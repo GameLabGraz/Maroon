@@ -12,16 +12,16 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Util
 
         // ----------------------------------- Camera ----------------------------------- //
         public const float BaseCamFOV = 60;
-        public const float BaseCamX = 0;
-        public const float BaseCamY = 2.6f;
-        public const float BaseCamZ = 1;
+        private const float BaseCamX = 0;
+        private const float BaseCamY = 2.6f;
+        private const float BaseCamZ = 1;
         public static readonly Vector3 BaseCamPos = new(BaseCamX, BaseCamY, BaseCamZ);
         public static readonly Quaternion BaseCamRot = Quaternion.Euler(52.5f, 0, 0);
         
         public const float TopCamFOV = 60;
-        public const float TopCamX = 0;
-        public const float TopCamY = 3.0f;
-        public const float TopCamZ = 2.5f;
+        private const float TopCamX = 0;
+        private const float TopCamY = 3.0f;
+        private const float TopCamZ = 2.5f;
         public static readonly Vector3 TopCamPos = new(TopCamX, TopCamY, TopCamZ);
         public static readonly Quaternion TopCamRot = Quaternion.Euler(90, 0, 0);
         

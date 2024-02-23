@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
@@ -158,9 +156,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             else
                 Rc2 = Mathf.Abs(this.R2);
 
-            // this.Rc = Mathf.Min(this.Rc0, Rc1, Rc2);
             this.Rc = Mathf.Min(this.Rc, Rc1, Rc2);
-            // UIManager.Instance.SetLensRcValue(Rc);   // TODO Maybe find a way to show the "Rc is changed because d1 or d2 too small" in UI
         }
 
         // use small angle approximation to estimate the focal length in air
@@ -175,7 +171,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         public override (float inRayLength, RaySegment reflection, RaySegment refraction)
             CalculateDistanceReflectionRefraction(RaySegment inRay)
         {
-            // todo immer inRay.r0Local und inRay.endpointLocal verwenden
             float dCylinder = GetDistanceCylinder(inRay.r0Local, inRay.n);
             float dR1 = GetDistanceR1(inRay.r0Local, inRay.n);
             float dR2 = GetDistanceR2(inRay.r0Local, inRay.n);
@@ -217,12 +212,12 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
                 float n2;
                 if (rndotn < 0) // air to lens
                 {
-                    n1 = Util.Math.Nenv(inRay.wavelength, Constants.Aenv, Constants.Benv);
+                    n1 = Math.Nenv(inRay.wavelength, Constants.Aenv, Constants.Benv);
                     n2 = this.Ior(inRay.wavelength);
                 }
                 else // lens to air
                 {
-                    n2 = Util.Math.Nenv(inRay.wavelength, Constants.Aenv, Constants.Benv);
+                    n2 = Math.Nenv(inRay.wavelength, Constants.Aenv, Constants.Benv);
                     n1 = this.Ior(inRay.wavelength);
                 }
 
@@ -262,7 +257,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
 
         private float GetDistanceCylinder(Vector3 rayOrigin, Vector3 rayDirection)
         {
-            (float d1, float d2) = Util.Math.IntersectLineCylinder(rayOrigin, rayDirection, this.Rc, this.r, this.n);
+            (float d1, float d2) = Math.IntersectLineCylinder(rayOrigin, rayDirection, this.Rc, this.r, this.n);
             float dmin = Mathf.Infinity;
 
             // skip if d1 is negative, very small or NaN
@@ -271,13 +266,16 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
                 var _r = rayOrigin + (d1 * rayDirection);
                 var rdotnc = Vector3.Dot((_r - this.r), this.n);
 
-                // negative side of the optical axis
-                if (rdotnc <= 0 && Mathf.Abs(rdotnc) < this.Dc1() && d1 < dmin)
-                    dmin = d1;
-
-                // positive side of the optical axis
-                else if (Mathf.Abs(rdotnc) < this.Dc2() && d1 < dmin)
-                    dmin = d1;
+                if (rdotnc <= 0) // negative side of the optical axis
+                {
+                    if (Mathf.Abs(rdotnc) < this.Dc1() && d1 < dmin)
+                        dmin = d1;
+                }
+                else // positive side of the optical axis
+                {
+                    if (Mathf.Abs(rdotnc) < this.Dc2() && d1 < dmin)
+                        dmin = d1;
+                }
             }
 
             // skip if d2 is negative, very small or NaN
@@ -287,14 +285,16 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
                 var _r = rayOrigin + (d2 * rayDirection);
                 var rdotnc = Vector3.Dot((_r - this.r), this.n);
 
-
-                // negative side of the optical axis
-                if (rdotnc <= 0 && Mathf.Abs(rdotnc) < this.Dc1() && d2 < dmin)
-                    dmin = d2;
-
-                // positive side of the optical axis
-                else if (Mathf.Abs(rdotnc) < this.Dc2() && d2 < dmin)
-                    dmin = d2;
+                if (rdotnc <= 0) // negative side of the optical axis
+                {
+                    if (Mathf.Abs(rdotnc) < this.Dc1() && d2 < dmin) 
+                        dmin = d2;
+                }
+                else // positive side of the optical axis
+                {
+                    if (Mathf.Abs(rdotnc) < this.Dc2() && d2 < dmin)
+                        dmin = d2;
+                }
             }
 
             return dmin;

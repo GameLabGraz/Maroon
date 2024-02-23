@@ -1,10 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
 using UnityEngine;
-using LightType = Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent.LightType;
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handlers
 {
@@ -13,9 +8,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handle
         private Plane _translationPlane;
         private Plane _rotationYPlane;
         private Plane _rotationZPlane;
-        private TableObject _tableObject;
-
         private Vector3 _initialRotation;
+
+        private TableObject _tableObject;
         
         private Vector3 _objectToMouseTablePosOffset;
         private Vector3 _objectToMouseTablePosLocalOffset;
@@ -53,35 +48,35 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handle
 
         public void DoYRotation(Ray mouseRay, Vector3 hitPoint)
         {
+              var transformUp = transform.up;
               if (Input.GetMouseButtonDown(0))
               {
                   // We need to adjust the collider hitPoint by projecting it onto the plane defined by: transform.up, transform.position
                   // So the arrow is now "hit" at the middle of its thickness and not on the mantle
-                  Vector3 projHitPoint = ProjectPointOntoPlane(hitPoint, transform.GetChild(0).position, transform.up);
+                  Vector3 projHitPoint = ProjectPointOntoPlane(hitPoint, transform.GetChild(0).position, transformUp);
                   
-                  _rotationYPlane.SetNormalAndPosition(transform.up, projHitPoint);
+                  _rotationYPlane.SetNormalAndPosition(transformUp, projHitPoint);
                   SetMouseToTableOffsets(projHitPoint);
               }
-
               if (Input.GetMouseButton(0))
               {
                   _rotationYPlane.Raycast(mouseRay, out var dist);
                   Vector3 pointOnPlane = mouseRay.GetPoint(dist);
                   var newLookDirection = (pointOnPlane - transform.GetChild(0).position).normalized;
                   var angle = Vector3.SignedAngle(GetAngleMeasureVector(), newLookDirection, transform.up);
-                  transform.RotateAround(transform.GetChild(0).position, transform.up, angle);
+                  transform.RotateAround(transform.GetChild(0).position, transformUp, angle);
               }
-
-        }
+        }  
         
         public void DoZRotation(Ray mouseRay, Vector3 hitPoint)
         {
+            var transformForward = transform.forward;
             if (Input.GetMouseButtonDown(0))
             {
                 // We need to adjust the collider hitPoint by projecting it onto the plane defined by: transform.up, transform.position
                 // So the arrow is now "hit" at the middle of its thickness and not on the mantle
-                Vector3 projHitPoint = ProjectPointOntoPlane(hitPoint, transform.GetChild(0).position, transform.forward);
-                _rotationZPlane.SetNormalAndPosition(transform.forward, projHitPoint);
+                Vector3 projHitPoint = ProjectPointOntoPlane(hitPoint, transform.GetChild(0).position, transformForward);
+                _rotationZPlane.SetNormalAndPosition(transformForward, projHitPoint);
                 SetMouseToTableOffsets(projHitPoint);
             }
 
@@ -90,8 +85,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handle
                 _rotationZPlane.Raycast(mouseRay, out var dist);
                 Vector3 pointOnPlane = mouseRay.GetPoint(dist);
                 var newLookDirection = (pointOnPlane - transform.GetChild(0).position).normalized;
-                var angle = Vector3.SignedAngle(GetAngleMeasureVector(), newLookDirection, transform.forward);
-                transform.RotateAround(transform.GetChild(0).position, transform.forward, angle);
+                var angle = Vector3.SignedAngle(GetAngleMeasureVector(), newLookDirection, transformForward);
+                transform.RotateAround(transform.GetChild(0).position, transformForward, angle);
                 
             }
         }
@@ -113,11 +108,11 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handle
             return -transform.right;
         }
 
-        bool IsMirror()
-        {
-            return _tableObject.ComponentType == ComponentType.OpticalComponent &&
-                   ((OpticalComponent.OpticalComponent)_tableObject).OpticalType == OpticalType.Mirror;
-        }
+        // bool IsMirror()
+        // {
+        //     return _tableObject.ComponentType == ComponentType.OpticalComponent &&
+        //            ((OpticalComponent.OpticalComponent)_tableObject).OpticalType == OpticalType.Mirror;
+        // }
 
     }
 }

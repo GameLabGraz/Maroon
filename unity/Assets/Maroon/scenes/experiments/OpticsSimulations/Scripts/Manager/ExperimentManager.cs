@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handlers;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
@@ -10,7 +8,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
     public class ExperimentManager : MonoBehaviour
     {
         public static ExperimentManager Instance;
-        public bool mouseOnUIPanel { get; set; } = false;
+        public bool mouseOnUIPanel { get; set; }
         
         private UnityEngine.Camera _cam;
         private Ray _mouseRay;

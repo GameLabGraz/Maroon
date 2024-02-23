@@ -1,8 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
 using UnityEngine;
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent
@@ -64,11 +62,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
             intensity = it;
             RecalculateLightRoute();
         }
-        
-        // public virtual bool CheckHitComponent(OpticalComponent.OpticalComponent oc)
-        // {
-        //     throw new Exception("Should not call base CheckHitComponent Method!");
-        // }
         
         public virtual void RecalculateLightRoute()
         {

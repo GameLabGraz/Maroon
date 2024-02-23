@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Maroon.Physics;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
@@ -17,7 +15,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         public float Rin;
         public float Rout;
         
-        private float _thickness = 0.0003f;
+        private readonly float _thickness = 0.0003f;
 
         private void Start()
         {
@@ -38,7 +36,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             this.Rout = Rout;
         }
         
-        // public override (Vector3 hitPoint, Vector3 outRayReflection, Vector3 outRayRefraction) CalculateHitpointReflectionRefraction(Vector3 inRayOrigin, Vector3 inRayDirection)
         public override (float inRayLength, RaySegment reflection, RaySegment refraction) CalculateDistanceReflectionRefraction(RaySegment inRay)
         {
             float d = GetRelevantDistance(inRay.r0Local, inRay.n);

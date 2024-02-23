@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts;
+﻿using System.Collections;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
 using UnityEngine;

@@ -1,8 +1,5 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handlers;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
 using UnityEngine;
@@ -158,13 +155,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 float d = oc.GetRelevantDistance(rayOrigin, rayDirection);
                 // debugComponentDistances.Add((oc, d));
                 
-                if (Util.Math.IsValidDistance(d))
+                if (Math.IsValidDistance(d) && d < dmin)
                 {
-                    if (d < dmin)
-                    {
-                        dmin = d;
-                        firstOc = oc;
-                    }
+                    dmin = d;
+                    firstOc = oc;
                 }
             }
             

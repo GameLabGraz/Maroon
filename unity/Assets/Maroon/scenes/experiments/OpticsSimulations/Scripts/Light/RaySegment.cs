@@ -1,5 +1,4 @@
-﻿using System;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
+﻿using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
 using UnityEngine;
 
