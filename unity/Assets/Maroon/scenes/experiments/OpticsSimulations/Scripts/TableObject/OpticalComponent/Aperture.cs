@@ -30,7 +30,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             n = transform.right;
         }
         
-        public void SetParameters(float Rin = 0.03f, float Rout = -0.125f)
+        public void SetParameters(float Rin = 0.03f, float Rout = 0.10f)
         {
             this.Rin = Rin;
             this.Rout = Rout;

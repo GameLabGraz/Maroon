@@ -43,7 +43,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
             if (_raySegments.Count >= Constants.MaxNumberOfRays)
                 return;
             
-            // Get the first hit component via raycast, so we do not need to go through every Component on the table
+            // Get the first hit component
             OpticalComponent hitComponent = OpticalComponentManager.Instance.GetFirstHitComponent(inRay.r0Local, inRay.n);
             
             switch (hitComponent.OpticalType)

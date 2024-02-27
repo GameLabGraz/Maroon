@@ -34,7 +34,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             RecalculateMesh();
         }
 
-        public void SetParameters(float R = 0.1f, float Rc = 0.1f)
+        public void SetParameters(float R = 0.1f, float Rc = 0.07f)
         {
             this.R = R;
             this.Rc = Rc;

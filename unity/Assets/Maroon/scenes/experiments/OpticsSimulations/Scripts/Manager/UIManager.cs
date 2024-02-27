@@ -8,6 +8,7 @@ using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
+using TMPro;
 using UnityEngine;
 using LaserPointer = Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent.LaserPointer;
 using LightType = Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent.LightType;
@@ -25,7 +26,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         private GameObject _activeOcPanel;
         private GameObject _prevLcPanel;
         private GameObject _prevOcPanel;
-        private bool _hideControls;
 
         [Header("Prefabs: Control Panels")]
         [SerializeField] private GameObject aperturePanel;
@@ -37,7 +37,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         [SerializeField] private GameObject pointSourcePanel;
 
         [Header("Light Parameters")]
-        // public Quantity<List<float>> selectedWavelength;
         public QuantityFloat rayThickness;
         public QuantityFloat sliderWavelength;
         public QuantityFloat selectedIntensity;
@@ -61,6 +60,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         [SerializeField] private QuantityFloat lensD2;
         [SerializeField] private QuantityFloat lensA;
         [SerializeField] private QuantityFloat lensB;
+        [SerializeField] private GameObject lensModelDropdown;
+        [SerializeField] private GameObject cauchyModelDropdown;
+        [SerializeField] private GameObject focalLengthDisplay;
         
         [Header("Mirror Parameters")]
         [SerializeField] private QuantityFloat mirrorR;
@@ -74,6 +76,10 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         [SerializeField] private QuantityVector3 ocPos;
         [SerializeField] private QuantityVector3 ocRot;
 
+        private TMP_Dropdown _cauchyModel;
+        private TMP_Dropdown _lensModel;
+        private TMP_Text _focalLengthText;
+        
         public LightComponent SelectedLc
         {
             get => _selectedLc;
@@ -95,7 +101,14 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 Destroy(gameObject);
             }
         }
-        
+
+        private void Start()
+        {
+            _cauchyModel = cauchyModelDropdown.GetComponent<TMP_Dropdown>();
+            _lensModel = lensModelDropdown.GetComponent<TMP_Dropdown>();
+            _focalLengthText = focalLengthDisplay.GetComponent<TMP_Text>();
+        }
+
         // ----------------------------------- Light Components -----------------------------------
         
         public void ActivateLightControlPanel(LightComponent lc)
@@ -139,7 +152,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
 
         private void SetLaserPointerControlPanelValues(LaserPointer lp)
         {
-            if (!_hideControls) laserPointerPanel.SetActive(true);
+            laserPointerPanel.SetActive(true);
             _activeLcPanel = laserPointerPanel;
         }
         
@@ -147,7 +160,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         {
             distanceBetweenRays.Value = ps.distanceBetweenRays * Constants.InMM;
             numberOfRaysParallel.Value = ps.numberOfRays;
-            if (!_hideControls) parallelSourcePanel.SetActive(true);
+            parallelSourcePanel.SetActive(true);
             _activeLcPanel = parallelSourcePanel;
         }
         
@@ -155,7 +168,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         {
             numberOfRaysPoint.Value = ps.numberOfRays;
             rayDistributionAngle.Value = ps.rayDistributionAngle;
-            if (!_hideControls) pointSourcePanel.SetActive(true);
+            pointSourcePanel.SetActive(true);
             _activeLcPanel = pointSourcePanel;
         }
 
@@ -228,6 +241,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 string textWls = String.Join(",", roundedNumbers);
                 GetWavelengthTextInput().text = textWls;
             }
+
         }
 
         private void SetWavelengthSlider(bool show)
@@ -331,14 +345,14 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         {
             apertureRin.Value = aperture.Rin * Constants.InCM;
             apertureRout.Value = aperture.Rout * Constants.InCM;
-            if (!_hideControls) aperturePanel.SetActive(true);
+            aperturePanel.SetActive(true);
             _activeOcPanel = aperturePanel;
         }
         
         private void SetEyeControlPanelValues(Eye eye)
         {
             eyeF.Value = eye.f * Constants.InCM;
-            if (!_hideControls) eyePanel.SetActive(true);
+            eyePanel.SetActive(true);
             _activeOcPanel = eyePanel;
         }
         
@@ -351,8 +365,13 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             lensD2.Value = lens.d2 * Constants.InCM;
             lensA.Value = lens.A;
             lensB.Value = lens.B;
-            if (!_hideControls) lensPanel.SetActive(true);
+            
+            
+            lensPanel.SetActive(true);
             _activeOcPanel = lensPanel;
+            // SetCustomCauchyModelDropdown();
+            // SetCustomLensModelDropdown();
+            DisplayLensFocalLength();
         }
 
         public void SetLensRcValue(float adjustedRc)
@@ -366,7 +385,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         {
             mirrorR.Value = mirror.R * Constants.InCM;
             mirrorRc.Value = mirror.Rc * Constants.InCM;
-            if (!_hideControls) mirrorPanel.SetActive(true);
+            mirrorPanel.SetActive(true);
             _activeOcPanel = mirrorPanel;
         }
 
@@ -425,6 +444,158 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             _selectedOc.transform.right = ocRot.Value.normalized;
         }
         
+        // ----------------------------------- Lens Presets -----------------------------------
+        public void LensCauchyModel(int nr)
+        {
+            if (_selectedOc == null || _selectedOc.OpticalType != OpticalType.Lens)
+                return;
+            
+            switch (nr)
+            {
+                case 0: return;
+                case 1: SetLensCauchyModel(Constants.DenseFlintGlassSF10); break;
+                case 2: SetLensCauchyModel(Constants.FusedSilica); break;
+                case 3: SetLensCauchyModel(Constants.BorosilicateGlassBK7); break;
+                case 4: SetLensCauchyModel(Constants.HardCrownGlassK5); break;
+                case 5: SetLensCauchyModel(Constants.BariumCrownGlassBaK4); break;
+                case 6: SetLensCauchyModel(Constants.BariumFlintGlassBaF10); break;
+            }
+        }
+
+        private void SetLensCauchyModel((float, float) ab)
+        {
+            var le = (Lens)_selectedOc;
+            le.A = ab.Item1;
+            lensA.Value = ab.Item1;
+            le.B = ab.Item2;
+            lensB.Value = ab.Item2;
+        }
+
+        public void SetCustomCauchyModelDropdown()
+        {
+            if (_selectedOc == null || _selectedOc.OpticalType != OpticalType.Lens)
+                return;
+
+            var ab = (lensA.Value, lensB.Value);
+            int dropdownValue = 0;
+
+            if (CheckNumberRange(ab, Constants.DenseFlintGlassSF10)) dropdownValue = 1;
+            else if (CheckNumberRange(ab, Constants.FusedSilica)) dropdownValue = 2;
+            else if (CheckNumberRange(ab, Constants.BorosilicateGlassBK7)) dropdownValue = 3;
+            else if (CheckNumberRange(ab, Constants.HardCrownGlassK5)) dropdownValue = 4;
+            else if (CheckNumberRange(ab, Constants.BariumCrownGlassBaK4)) dropdownValue = 5;
+            else if (CheckNumberRange(ab, Constants.BariumFlintGlassBaF10)) dropdownValue = 6;
+            
+            _cauchyModel.SetValueWithoutNotify(dropdownValue);
+        }
+
+        // Recalculated when lens.R1, lens.R2, lens.A, lens.B changes
+        public void DisplayLensFocalLength()
+        {
+            if (_selectedOc == null || _selectedOc.OpticalType != OpticalType.Lens)
+                return;
+
+            var le = (Lens)_selectedOc;
+            float wl = sliderWavelength.Value;
+            float fCM = le.FocalLength(wl) * Constants.InCM;
+            
+            _focalLengthText.SetText("Focal Length f ~ " + fCM.ToString("F2") + " [cm] @" + wl.ToString("F0") + " [nm]");
+        }
+        
+        public void LensType(int nr)
+        {
+            if (_selectedOc == null || _selectedOc.OpticalType != OpticalType.Lens)
+                return;
+            
+            var le = (Lens)_selectedOc;
+            
+            switch (nr)
+            {
+                case 0: return;
+                case 1: le.SetParameters(R1: Constants.Biconvex.Item1, R2: Constants.Biconvex.Item2, d1: Constants.Biconvex.Item3, d2: Constants.Biconvex.Item4, Rc: Constants.LensPrestRc, Constants.DenseFlintGlassSF10.Item1, Constants.DenseFlintGlassSF10.Item2); break;
+                case 2: le.SetParameters(R1: Constants.Planoconvex.Item1, R2: Constants.Planoconvex.Item2, d1: Constants.Planoconvex.Item3, d2: Constants.Planoconvex.Item4, Rc: Constants.LensPrestRc, Constants.DenseFlintGlassSF10.Item1, Constants.DenseFlintGlassSF10.Item2); break;
+                case 3: le.SetParameters(R1: Constants.PositiveMeniscus.Item1, R2: Constants.PositiveMeniscus.Item2, d1: Constants.PositiveMeniscus.Item3, d2: Constants.PositiveMeniscus.Item4, Rc: Constants.LensPrestRc, Constants.DenseFlintGlassSF10.Item1, Constants.DenseFlintGlassSF10.Item2); break;
+                case 4: le.SetParameters(R1: Constants.NegativeMeniscus.Item1, R2: Constants.NegativeMeniscus.Item2, d1: Constants.NegativeMeniscus.Item3, d2: Constants.NegativeMeniscus.Item4, Rc: Constants.LensPrestRc, Constants.DenseFlintGlassSF10.Item1, Constants.DenseFlintGlassSF10.Item2); break;
+                case 5: le.SetParameters(R1: Constants.Planoconcave.Item1, R2: Constants.Planoconcave.Item2, d1: Constants.Planoconcave.Item3, d2: Constants.Planoconcave.Item4, Rc: Constants.LensPrestRc, Constants.DenseFlintGlassSF10.Item1, Constants.DenseFlintGlassSF10.Item2); break;
+                case 6: le.SetParameters(R1: Constants.Biconcave.Item1, R2: Constants.Biconcave.Item2, d1: Constants.Biconcave.Item3, d2: Constants.Biconcave.Item4, Rc: Constants.LensPrestRc, Constants.DenseFlintGlassSF10.Item1, Constants.DenseFlintGlassSF10.Item2); break;
+                case 7: le.SetParameters(R1: Constants.Ball.Item1, R2: Constants.Ball.Item2, d1: Constants.Ball.Item3, d2: Constants.Ball.Item4, Rc: Constants.LensPrestRc, Constants.DenseFlintGlassSF10.Item1, Constants.DenseFlintGlassSF10.Item2); break;
+            }
+            
+            AllowValueChangeEvent(false);
+            SetLensControlPanelValues(le);
+            AllowValueChangeEvent(true);
+            SetLensControlPanelValues(le);
+        }
+        
+        public void SetCustomLensModelDropdown()
+        {
+            if (_selectedOc == null || _selectedOc.OpticalType != OpticalType.Lens)
+                return;
+            
+            var lensParams = (
+                lensR1.Value / Constants.InCM, 
+                lensR2.Value / Constants.InCM, 
+                lensD1.Value / Constants.InCM, 
+                lensD2.Value / Constants.InCM);
+            
+            int dropdownValue = 0;
+            
+            if (CheckNumberRange(lensParams, Constants.Biconvex)) dropdownValue = 1;
+            else if (CheckNumberRange(lensParams, Constants.Planoconvex)) dropdownValue = 2;
+            else if (CheckNumberRange(lensParams, Constants.PositiveMeniscus)) dropdownValue = 3;
+            else if (CheckNumberRange(lensParams, Constants.NegativeMeniscus)) dropdownValue = 4;
+            else if (CheckNumberRange(lensParams, Constants.Planoconcave)) dropdownValue = 5;
+            else if (CheckNumberRange(lensParams, Constants.Biconcave)) dropdownValue = 6;
+            else if (CheckNumberRange(lensParams, Constants.Ball)) dropdownValue = 7;
+                
+            _lensModel.SetValueWithoutNotify(dropdownValue);
+        }
+
+        private bool CheckNumberRange((float, float) t1, (float, float) t2)
+        {
+            float t2Lower1 = t2.Item1 * 0.9999f;
+            float t2Lower2 = t2.Item2 * 0.9999f;
+            float t2Upper1 = t2.Item1 * 1.0001f;
+            float t2Upper2 = t2.Item2 * 1.0001f;
+
+            return t1.Item1 >= t2Lower1 && t1.Item2 >= t2Lower2 && t1.Item1 <= t2Upper1 && t1.Item2 <= t2Upper2;
+        }
+        
+        private bool CheckNumberRange((float, float, float, float) t1, (float, float, float, float) t2)
+        {
+            float t2Lower1 = t2.Item1 * 0.9999f;
+            float t2Lower2 = t2.Item2 * 0.9999f;
+            float t2Lower3 = t2.Item3 * 0.9999f;
+            float t2Lower4 = t2.Item4 * 0.9999f;
+            
+            float t2Upper1 = t2.Item1 * 1.0001f;
+            float t2Upper2 = t2.Item2 * 1.0001f;
+            float t2Upper3 = t2.Item3 * 1.0001f;
+            float t2Upper4 = t2.Item4 * 1.0001f;
+
+            // R1 and R2 both positive
+            if (t1.Item1 > 0 && t1.Item2 > 0 && t2.Item1 > 0 && t2.Item2 > 0)
+                return t1.Item1 >= t2Lower1 && t1.Item2 >= t2Lower2 && t1.Item3 >= t2Lower3 && t1.Item4 >= t2Lower4
+                       && t1.Item1 <= t2Upper1 && t1.Item2 <= t2Upper2 && t1.Item3 <= t2Upper3 && t1.Item4 <= t2Upper4;
+            
+            // R1 and R2 both negative
+            if (t1.Item1 < 0 && t1.Item2 < 0 && t2.Item1 < 0 && t2.Item2 < 0)
+                return t1.Item1 <= t2Lower1 && t1.Item2 <= t2Lower2 && t1.Item3 >= t2Lower3 && t1.Item4 >= t2Lower4
+                       && t1.Item1 >= t2Upper1 && t1.Item2 >= t2Upper2 && t1.Item3 <= t2Upper3 && t1.Item4 <= t2Upper4;
+            
+            // R1 negative and R2 positive
+            if (t1.Item1 < 0 && t2.Item1 < 0)
+                return t1.Item1 <= t2Lower1 && t1.Item2 >= t2Lower2 && t1.Item3 >= t2Lower3 && t1.Item4 >= t2Lower4
+                       && t1.Item1 >= t2Upper1 && t1.Item2 <= t2Upper2 && t1.Item3 <= t2Upper3 && t1.Item4 <= t2Upper4;
+            
+            // R1 positive and R2 negative
+            if (t1.Item2 < 0&& t2.Item2 < 0)
+                return t1.Item1 >= t2Lower1 && t1.Item2 <= t2Lower2 && t1.Item3 >= t2Lower3 && t1.Item4 >= t2Lower4
+                       && t1.Item1 <= t2Upper1 && t1.Item2 >= t2Upper2 && t1.Item3 <= t2Upper3 && t1.Item4 <= t2Upper4;
+
+            return false;
+        }
+
         // ----------------------------------- General -----------------------------------
 
         public void RecalculateSelectedLcLightRoute()
@@ -459,27 +630,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 ocRot.Value = rotUI;
             }
         }
-
-        public void HideControlElements()
-        {
-            if (!_hideControls)
-            {
-                if (_activeLcPanel != null)
-                    _activeLcPanel.SetActive(false);
-                if (_activeOcPanel != null)
-                    _activeOcPanel.SetActive(false);
-            }
-            else
-            {
-                if (_activeLcPanel != null)
-                    _activeLcPanel.SetActive(true);
-                if (_activeOcPanel != null)
-                    _activeOcPanel.SetActive(true);
-            }
-
-            _hideControls = !_hideControls;
-        }
-        
         // ----------------------------------- Mesh Recalculation -----------------------------------
 
         public void RecalculateSelectedOcMesh()

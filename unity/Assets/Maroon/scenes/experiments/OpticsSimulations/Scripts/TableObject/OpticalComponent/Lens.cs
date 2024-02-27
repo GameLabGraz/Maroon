@@ -4,6 +4,7 @@ using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
 using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
 using UnityEngine;
+using MathSys = System.Math;
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent
 {
@@ -43,8 +44,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             r = transform.localPosition;
             n = transform.right;
         }
-
-        public void SetParameters(float R1 = 0.2f, float R2 = -0.2f, float d1 = 0.04f, float d2 = 0.04f, float Rc = 0.1f, float A = 1.728f, float B = 13420f)
+        
+        public void SetParameters(float R1 = 0.15f, float R2 = -0.15f, float d1 = 0.02f, float d2 = 0.02f, float Rc = 0.065f, float A = 1.728f, float B = 13420f)
         {
             this.R1 = R1;
             this.R2 = R2;
@@ -160,7 +161,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
         }
 
         // use small angle approximation to estimate the focal length in air
-        private float FocalLength(float lambda1)
+        public float FocalLength(float lambda1)
         {
             this.lambda = lambda1; // wavelength in nm that the focal length is estimated for
             return 1 / ((1 / this.R1 - 1 / this.R2) * (this.Ior(this.lambda) - 1));
@@ -475,6 +476,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
             RotationArrowY.transform.localPosition = _baseRotationArrowY + new Vector3(xOffset, 0, 0);
             RotationArrowZ.transform.localPosition = _baseRotationArrowZ + new Vector3(xOffset, 0, 0);
         }
-        
+
     }
 }

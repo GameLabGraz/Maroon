@@ -57,5 +57,23 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Util
         public const string TagRotationArrowY = "rotationY";
         public const string TagRotationArrowZ = "rotationZ";
         public const string TagTranslationArrowY = "translationY";
+        
+        // ----------------------------------- Lens Presets ----------------------------------- //
+        public static readonly (float, float) DenseFlintGlassSF10 = (1.728f, 13420);
+        public static readonly (float, float) FusedSilica = (1.458f, 3540);
+        public static readonly (float, float) BorosilicateGlassBK7 = (1.5046f, 4200);
+        public static readonly (float, float) HardCrownGlassK5 = (1.522f, 4590);
+        public static readonly (float, float) BariumCrownGlassBaK4 = (1.569f, 5310);
+        public static readonly (float, float) BariumFlintGlassBaF10 = (1.67f, 7430);
+
+        public const float LensPrestRc = 0.065f;
+        public static readonly (float, float, float, float) Biconvex = (0.15f, -0.15f, 0.0145f, 0.0145f); 
+        public static readonly (float, float, float, float) Planoconvex = (0.15f, -0.50f, 0.015f, 0.006f); 
+        public static readonly (float, float, float, float) PositiveMeniscus = (0.12f, 0.21f, 0.02f, 0.02f); 
+        public static readonly (float, float, float, float) NegativeMeniscus = (0.21f, 0.12f, 0.02f, 0.02f); 
+        public static readonly (float, float, float, float) Planoconcave = (0.50f, 0.10f, 0.01f, 0.01f); 
+        public static readonly (float, float, float, float) Biconcave = (-0.10f, 0.10f, 0.01f, 0.01f); 
+        public static readonly (float, float, float, float) Ball = (0.065f, -0.065f, 0.065f, 0.065f); 
+        
     }
 }

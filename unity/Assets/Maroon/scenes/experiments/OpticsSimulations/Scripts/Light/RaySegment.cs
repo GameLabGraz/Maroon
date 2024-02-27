@@ -74,6 +74,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
             _lineSegment.numCapVertices = 5;
             _lineSegment.useWorldSpace = false;
             _lineSegment.sortingOrder = 1;
+
+            ls.transform.parent = OpticalComponentManager.Instance.TableLowLeftCorner.transform;
         }
 
         private Vector3 ToGlobal(Vector3 localPoint)

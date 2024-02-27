@@ -174,19 +174,21 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         // Removes all OCs and LCs from the table
         public void ClearTable()
         {
-            UIManager.Instance.SelectedLc = null;
-            UIManager.Instance.SelectedOc = null;
+            UIManager uim = UIManager.Instance;
+            uim.SelectedLc = null;
+            uim.SelectedOc = null;
+            uim.rayThickness.Value = Constants.BaseRayThicknessInMM;
 
             foreach (var lc in LightComponentManager.Instance.LightComponents)
                 lc.RemoveFromTable();
             LightComponentManager.Instance.LightComponents.Clear();
-            UIManager.Instance.DeactivateAllLightControlPanels();
+            uim.DeactivateAllLightControlPanels();
 
             foreach (var oc in OpticalComponentManager.Instance.OpticalComponents)
                     oc.RemoveFromTable();
 
             OpticalComponentManager.Instance.OpticalComponents.RemoveAll(oc => oc.OpticalType != OpticalType.Wall);
-            UIManager.Instance.DeactivateAllOpticalControlPanels();
+            uim.DeactivateAllOpticalControlPanels();
         }
 
     }
