@@ -63,14 +63,14 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 case 3: StandardEye(); break;
                 case 4: NearsightedEye(); break;
                 case 5: FarsightedEye(); break;
-                case 6: UnderwaterVision(); break;
-                case 7: MagnifyingGlass(); break;
-                case 8: KeplerianTelescope(); break;
-                case 9: GalileanTelescope(); break;
-                case 10: NewtonianTelescope(); break;
-                case 11: Microscope(); break;
-                case 12: LightEmittingDiode(); break;
-                case 13: OpticalFiber(); break;
+                // case 6: UnderwaterVision(); break;
+                case 6: MagnifyingGlass(); break;
+                case 7: KeplerianTelescope(); break;
+                case 8: GalileanTelescope(); break;
+                case 9: NewtonianTelescope(); break;
+                case 10: Microscope(); break;
+                case 11: LightEmittingDiode(); break;
+                case 12: OpticalFiber(); break;
             }
         }
         

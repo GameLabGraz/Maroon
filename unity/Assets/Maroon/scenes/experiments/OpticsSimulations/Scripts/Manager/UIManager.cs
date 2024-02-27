@@ -369,8 +369,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             
             lensPanel.SetActive(true);
             _activeOcPanel = lensPanel;
-            // SetCustomCauchyModelDropdown();
-            // SetCustomLensModelDropdown();
             DisplayLensFocalLength();
         }
 
@@ -499,7 +497,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             float wl = sliderWavelength.Value;
             float fCM = le.FocalLength(wl) * Constants.InCM;
             
-            _focalLengthText.SetText("Focal Length f ~ " + fCM.ToString("F2") + " [cm] @" + wl.ToString("F0") + " [nm]");
+            _focalLengthText.SetText("f ~ " + fCM.ToString("F2") + " [cm] @" + wl.ToString("F0") + " [nm]");
         }
         
         public void LensType(int nr)
