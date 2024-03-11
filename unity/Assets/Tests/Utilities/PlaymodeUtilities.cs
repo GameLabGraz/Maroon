@@ -21,9 +21,9 @@ namespace Tests.Utilities
         public static IEnumerator LoadSceneAndCheckItsLoadedCorrectly(string pathOfSceneToLoad)
         {
             // Start from Main Menu for every following test
-             EditorSceneManager.LoadScene(pathOfSceneToLoad,
+            EditorSceneManager.LoadScene(pathOfSceneToLoad,
                 new LoadSceneParameters(LoadSceneMode.Single));
-             yield return null;
+            yield return null;
             var currentSceneName = SceneManager.GetActiveScene().path;
             Assert.AreEqual(pathOfSceneToLoad, currentSceneName, $"'{pathOfSceneToLoad}' scene was not loaded");
         }

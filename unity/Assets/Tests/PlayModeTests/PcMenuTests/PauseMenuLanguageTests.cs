@@ -34,7 +34,6 @@ namespace Tests.PlayModeTests.PcMenuTests.LanguageMenuTests
         private static TestCaseData[] _pauseMenuButtonKeysSource = new [] {
             new TestCaseData("Menu Audio").Returns(null),
             new TestCaseData("Menu Language").Returns(null),
-            new TestCaseData("Menu Network").Returns(null),
             new TestCaseData("Menu Main Menu").Returns(null),
             new TestCaseData("Menu Resume").Returns(null)
         };
@@ -76,7 +75,6 @@ namespace Tests.PlayModeTests.PcMenuTests.LanguageMenuTests
         private static TestCaseData[] _checkSubMenuTitlesSource = new [] {
             new TestCaseData("Menu Audio", "preMenuColumnAudio").Returns(null),
             new TestCaseData("Menu Language", "preMenuColumnLanguage").Returns(null),
-            new TestCaseData("Menu Network", "preMenuColumnNetwork").Returns(null)
         };
         
         [UnityTest, Order(4), TestCaseSource(nameof(_checkSubMenuTitlesSource)),
@@ -147,34 +145,6 @@ namespace Tests.PlayModeTests.PcMenuTests.LanguageMenuTests
                 $"German Language Button label is wrong after changing language to {ExpectedLanguage}");
             Assert.AreEqual(expectedEnglishButtonLabel, actualEnglishButtonLabel,
                 $"English Language Button label is wrong after changing language to {ExpectedLanguage}");
-        }
-        
-        [UnityTest, Order(7), Description("On selecting a new language in the Pause Menu, the Network sub menu's labels match")]
-        public IEnumerator WhenSelectGermanLanguageThenNetworkSubMenuIsGerman()
-        {
-            yield return OpenLanguageSubMenu();
-            yield return ClickGermanLanguageButton();
-
-            // Find and click Pause Menu Network button
-            string networkButtonLabel = LanguageManager.Instance.GetString("Menu Network", ExpectedLanguage);
-            GetButtonViaTextLabel(networkButtonLabel).onClick.Invoke();
-            yield return null;
-            
-            var expectedJoinButtonLabel = LanguageManager.Instance.GetString("Menu Join Server", ExpectedLanguage);
-            var expectedHostButtonLabel = LanguageManager.Instance.GetString("Menu Host Server", ExpectedLanguage);
-            
-            // Find Network Menu's Join and Host Server buttons
-            Button joinButton = GetButtonViaTextLabel(expectedJoinButtonLabel);
-            Button hostButton = GetButtonViaTextLabel(expectedHostButtonLabel);
-            
-            // Get translated text labels from Buttons
-            var actualJoinButtonLabel = joinButton.GetComponentInChildren<TextMeshProUGUI>().text;
-            var actualHostButtonLabel = hostButton.GetComponentInChildren<TextMeshProUGUI>().text;
-
-            Assert.AreEqual(expectedJoinButtonLabel, actualJoinButtonLabel,
-                $"Join Server Button label is wrong after changing language to {ExpectedLanguage}");
-            Assert.AreEqual(expectedHostButtonLabel, actualHostButtonLabel,
-                $"Host Server Button label is wrong after changing language to {ExpectedLanguage}");
         }
     }
 }
