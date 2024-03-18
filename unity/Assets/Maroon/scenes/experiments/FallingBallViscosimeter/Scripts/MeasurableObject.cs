@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Mirror.SimpleWeb;
 using UnityEngine;
 
 namespace Maroon.Physics

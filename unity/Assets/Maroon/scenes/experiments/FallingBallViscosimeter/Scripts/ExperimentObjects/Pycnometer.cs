@@ -9,7 +9,7 @@ namespace Maroon.Physics
   {
     decimal volume = 50.28m / 1000000.0m; //m^3
     WeighableObject weighableObject;
-    decimal weight;
+    decimal starting_weight = 0.029167m;
     private MeshRenderer renderer_;
     public bool filled;
 
@@ -17,6 +17,8 @@ namespace Maroon.Physics
     void Start()
     {
       weighableObject = GetComponent<WeighableObject>();
+      weighableObject.starting_weight = starting_weight;
+      weighableObject.resetWeight();
       renderer_ = GetComponent<MeshRenderer>();
       filled = false;
     }

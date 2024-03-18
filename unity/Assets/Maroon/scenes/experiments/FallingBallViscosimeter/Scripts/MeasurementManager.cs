@@ -20,6 +20,7 @@ namespace Maroon.Physics
 
     public Button startButton;
     public Button endButton;
+    public GameObject uiText;
 
     private bool measuring = false;
     private float minSize = 0.2f;
@@ -41,7 +42,10 @@ namespace Maroon.Physics
 
     void startMeasuringMode()
     {
-      measurementState = MeasurementState.Measuring; 
+      measurementState = MeasurementState.Measuring;
+      startButton.gameObject.SetActive(false);
+      uiText.gameObject.SetActive(false);
+      endButton.gameObject.SetActive(true);
       if(current_caliper != null)
       {
         Destroy(current_caliper);
@@ -62,6 +66,9 @@ namespace Maroon.Physics
 
     public void endMeasuringMode()
     {
+      endButton.gameObject.SetActive(false);
+      uiText.gameObject.SetActive(false);
+      startButton.gameObject.SetActive(true);
       Destroy(current_caliper.gameObject);
       current_caliper = null;
       main_camera.gameObject.SetActive(true);
@@ -108,6 +115,7 @@ namespace Maroon.Physics
       {
         mObject.setChooseable(chooseable);
       }
+      uiText.SetActive(chooseable);
     }
 
     public void setChosenObject(MeasurableObject mObject)
@@ -124,13 +132,13 @@ namespace Maroon.Physics
 
     void getAllMeasurableObjects()
     {
-      Object[] foundObjects = Object.FindObjectsOfType<MeasurableObject>();
+      MeasurableObject[] foundObjects = Object.FindObjectsOfType<MeasurableObject>();
 
       measurableObjects = new List<MeasurableObject>();
 
-      foreach (Object obj in foundObjects)
+      foreach (MeasurableObject obj in foundObjects)
       {
-        measurableObjects.Add(obj as MeasurableObject);
+        measurableObjects.Add(obj);
       }
     }
   }

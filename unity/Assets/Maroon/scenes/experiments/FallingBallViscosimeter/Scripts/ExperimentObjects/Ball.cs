@@ -23,7 +23,8 @@ namespace Maroon.Physics
     
     private Vector3 start_position_;
     public decimal start_weight_ = 0.033m / 1000m;
-    public decimal start_diameter_ = 1.97m;
+    //public decimal start_diameter_ = 1.97m;
+    public decimal start_diameter_ = 30.00m;
     private bool dropped_ = true;
     private bool touching_oil = false;
     private decimal viscosity_force_ = 0.0m;
@@ -72,6 +73,8 @@ namespace Maroon.Physics
 
     private void Awake()
     {
+      //randomize start diameter a bit here
+      
       _rigidbody = GetComponent<Rigidbody>();
       _weighableObject = GetComponent<WeighableObject>();
       _mass = start_weight_;
