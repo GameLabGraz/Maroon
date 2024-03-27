@@ -114,6 +114,11 @@ namespace Maroon.Physics
       foreach (MeasurableObject mObject in measurableObjects)
       {
         mObject.setChooseable(chooseable);
+        DragDrop dragDrop = mObject.GetComponent<DragDrop>();
+        if (dragDrop)
+        {
+          dragDrop.enabled = !chooseable;
+        }
       }
       uiText.SetActive(chooseable);
     }
@@ -121,7 +126,14 @@ namespace Maroon.Physics
     public void setChosenObject(MeasurableObject mObject)
     {
       measuredObject = mObject;
+      
       setAllChooseable(false);
+      DragDrop dragDrop = mObject.GetComponent<DragDrop>();
+      if (dragDrop)
+      {
+        dragDrop.enabled = false;
+      }
+       
       startMeasuringMode();
     }
 

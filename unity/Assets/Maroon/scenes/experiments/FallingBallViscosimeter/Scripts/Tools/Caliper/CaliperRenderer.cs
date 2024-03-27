@@ -114,6 +114,57 @@ public class CaliperRenderer : MonoBehaviour
 
     private void drawVernierScale()
     {
+        vernier_scale_division = (decimal)(vernier_scale_length / number_of_divisions);
+        vernier_scale_subdivision = vernier_scale_division / vernier_subdivisions;
+        GameObject vernier_lines = new GameObject("Vernier_Lines");
+        vernier_lines.transform.SetParent(slider);
+        vernier_lines.transform.position = origin + new Vector3(0f, 0f, -0.005f);
+
+        for (int i = 0; i <= number_of_divisions; i++)
+        {
+            GameObject new_line = new GameObject("Vernier Line");
+            new_line.transform.SetParent(vernier_lines.transform);
+            new_line.transform.localPosition = new Vector3((float)vernier_scale_division * i, 0f, 0f);
+            
+            addVernierLineRenderer(new_line, false);
+
+            if (i == number_of_divisions)
+            {
+                return;
+            }
+            
+            for (int j = 1; j < vernier_subdivisions; j++)
+            {
+                GameObject new_subdivision_line = new GameObject("Subdivision Line");
+                new_subdivision_line.transform.SetParent(vernier_lines.transform);
+                new_subdivision_line.transform.localPosition = 
+                    new Vector3((float)(vernier_scale_division * i) + (float)vernier_scale_subdivision * j, 0f,0f);
+                addVernierLineRenderer(new_subdivision_line, true);
+            }
+        }
+    }
+
+    private void addVernierLineRenderer(GameObject lineObject, bool isSubdivision)
+    {
+        LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
+        List<Vector3> positions = new List<Vector3>();
+        positions.Add(Vector3.zero);
+                
+        lineRenderer.startWidth = lineWidth;
+        lineRenderer.endWidth = lineWidth;
+        lineRenderer.startColor = Color.black;
+        lineRenderer.endColor = Color.black;
+        lineRenderer.useWorldSpace = false;
         
+        if (!isSubdivision)
+        {
+            positions.Add(new Vector3(0f, -halfCentimeterLineHeight, 0f));
+            lineRenderer.SetPositions(positions.ToArray());
+        }
+        else
+        {
+            positions.Add(new Vector3(0f, -millimeterLineHeight, 0f));
+            lineRenderer.SetPositions(positions.ToArray());
+        }
     }
 }

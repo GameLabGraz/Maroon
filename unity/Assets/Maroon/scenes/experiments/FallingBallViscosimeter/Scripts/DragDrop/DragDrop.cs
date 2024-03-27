@@ -115,7 +115,7 @@ public class DragDrop : MonoBehaviour
 
   private void OnMouseEnter()
   {
-    if (hoverSizeIncrease)
+    if (hoverSizeIncrease && enabled)
     {
       oldScale = transform.localScale;
       transform.localScale = oldScale * hoverSizeFactor;
@@ -124,7 +124,7 @@ public class DragDrop : MonoBehaviour
 
   private void OnMouseOver()
   {
-    if (hoverSizeIncrease)
+    if (hoverSizeIncrease && enabled)
     {
       transform.localScale = oldScale * hoverSizeFactor;
     }
@@ -132,7 +132,7 @@ public class DragDrop : MonoBehaviour
 
   private void OnMouseExit()
   {
-    if (hoverSizeIncrease)
+    if (hoverSizeIncrease && enabled)
     {
       transform.localScale = oldScale;
     }

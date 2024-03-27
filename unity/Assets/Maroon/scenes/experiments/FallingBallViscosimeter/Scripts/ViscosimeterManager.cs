@@ -42,7 +42,11 @@ namespace Maroon.Physics
     private decimal ballMaxSpeed = -1.0m;
     private Rigidbody _rigidbody;
     private void Awake()
-    {
+    { 
+#if UNITY_EDITOR
+      QualitySettings.vSyncCount = 0;  // VSync must be disabled
+      Application.targetFrameRate = 60;
+#endif
       if(Instance == null)
       {
         Instance = this;
