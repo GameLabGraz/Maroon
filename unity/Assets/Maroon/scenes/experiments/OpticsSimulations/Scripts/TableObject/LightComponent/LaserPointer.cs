@@ -7,11 +7,11 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
     {
         private void Start()
         {
-            LightRoutes = new List<LightRoute>();
+            LightRoutes = new List<LightPath>();
             Origin = transform.localPosition;
 
             foreach (var wl in Wavelengths)
-                LightRoutes.Add(new LightRoute(wl));
+                LightRoutes.Add(new LightPath(wl));
             
             RecalculateLightRoute();
         }

@@ -10,7 +10,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
 {
     public class Lens : OpticalComponent
     {
-        [Header("Lens Properties")] public Vector3 r;
+        [Header("Lens Properties")]
+        public Vector3 r;
         public Vector3 n;
         public float R1;
         public float R2;

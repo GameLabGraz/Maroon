@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
 {
-    public class LightRoute
+    public class LightPath
     {
         private float _wavelength;
         private List<RaySegment> _raySegments = new List<RaySegment>();
@@ -22,7 +22,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
             set => _wavelength = value;
         }
 
-        public LightRoute(float wavelength)
+        public LightPath(float wavelength)
         {
             this._wavelength = wavelength;
         }

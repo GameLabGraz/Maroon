@@ -11,12 +11,12 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
         
         private void Start()
         {
-            LightRoutes = new List<LightRoute>();
+            LightRoutes = new List<LightPath>();
             Origin = transform.localPosition;
 
             foreach (var wl in Wavelengths)
                 for (int i = 0; i < numberOfRays; i++)
-                    LightRoutes.Add(new LightRoute(wl));
+                    LightRoutes.Add(new LightPath(wl));
 
             ChangeNumberOfRaysAndAngle(numberOfRays, rayDistributionAngle);
         }
@@ -38,7 +38,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
             
             foreach (var wl in Wavelengths)
                 for (int i = 0; i < numberOfRays; i++)
-                    LightRoutes.Add(new LightRoute(wl));
+                    LightRoutes.Add(new LightPath(wl));
             
             RecalculateLightRoute();
         }

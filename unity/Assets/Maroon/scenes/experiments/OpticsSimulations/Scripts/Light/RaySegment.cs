@@ -6,14 +6,14 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
 {
     public class RaySegment
     {
+        public float wavelength;
+        public float intensity;
         public Vector3 r0;
         public Vector3 r0Local;
-        public Vector3 endpoint;
-        public Vector3 endpointLocal;
         public Vector3 n;
-        public float intensity;
-        public float wavelength;
-        public float raylength;
+        private Vector3 endpoint;
+        private Vector3 endpointLocal;
+        private float raylength;
 
         private LineRenderer _lineSegment;
 
