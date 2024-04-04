@@ -8,7 +8,7 @@ public class CameraControls : MonoBehaviour
 {
     private float rotationSpeed = 500f;
     private Vector3 mouseWorldPosStart;
-    private float zoomMin = 0.1f;
+    [SerializeField]private float zoomMin = 0.1f;
     private float zoomMax = 1f;
     public Camera zoomCamera;
     

@@ -23,7 +23,7 @@ namespace Maroon.Physics
     public GameObject uiText;
 
     private bool measuring = false;
-    private float minSize = 0.2f;
+    private float minSize = 0.1f;
 
     private void Awake()
     { 
