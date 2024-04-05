@@ -17,6 +17,7 @@ namespace Maroon.Physics
     void Start()
     {
       weighableObject = GetComponent<WeighableObject>();
+      starting_weight = ViscosimeterManager.addInaccuracy(starting_weight);
       weighableObject.starting_weight = starting_weight;
       weighableObject.resetWeight();
       renderer_ = GetComponent<MeshRenderer>();

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Maroon.Physics;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Purchasing;
 
 
 public class DragDrop : MonoBehaviour
@@ -26,12 +27,41 @@ public class DragDrop : MonoBehaviour
   public bool axisLocked = false;
   public Axis axisLockedInto = Axis.X;
 
+  public bool localPositionLimit = false;
+  public float localPositionMax = 0.0f;
+  public float localPositionMin = 0.0f;
+
   private PausableObject _pausableObject;
   private Vector3 oldScale;
   private void Awake() {
     plane = new Plane(new Vector3(0,0,-1), planePosition);
     _pausableObject = gameObject.GetComponent<PausableObject>();
   }
+
+  private void Update()
+  {
+    if (localPositionLimit && axisLocked)
+    {
+      Vector3 current_local_position = transform.localPosition;
+      switch (axisLockedInto)
+      {
+        case Axis.Y:
+          transform.localPosition = new Vector3(Mathf.Clamp(transform.localPosition.x, localPositionMin, localPositionMax),
+                                                current_local_position.y, current_local_position.z);
+          break;
+        case Axis.X:
+          transform.localPosition = new Vector3(current_local_position.x,
+                                        Mathf.Clamp(transform.localPosition.y, localPositionMin, localPositionMax),
+                                        current_local_position.z);
+          break;
+        case Axis.Z:
+          transform.localPosition = new Vector3(current_local_position.x, current_local_position.y,
+            Mathf.Clamp(transform.localPosition.z, localPositionMin, localPositionMax));
+          break;
+      }
+    }
+  }
+
   private void OnMouseDown() 
   {
     if (!enabled)

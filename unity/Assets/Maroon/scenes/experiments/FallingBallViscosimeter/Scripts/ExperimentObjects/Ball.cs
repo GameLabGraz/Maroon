@@ -74,7 +74,9 @@ namespace Maroon.Physics
     private void Awake()
     {
       //randomize start diameter a bit here
+      start_diameter_ = ViscosimeterManager.addInaccuracy(start_diameter_);
       
+      Mass = ViscosimeterManager.addInaccuracy(Mass);
       _rigidbody = GetComponent<Rigidbody>();
       _weighableObject = GetComponent<WeighableObject>();
       _mass = start_weight_;

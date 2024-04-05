@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using PlatformControls.PC;
 using UnityEngine;
 using TMPro;
 
@@ -8,6 +9,7 @@ namespace Maroon.Physics
   public class ViscosimeterManager : MonoBehaviour, IResetObject
   {
     public static ViscosimeterManager Instance;
+    public static float inaccuracyRange = 0.1f;
     
     public TMP_Text debug_text;
 
@@ -127,6 +129,18 @@ namespace Maroon.Physics
     public void ResetObject()
     {
       ballMaxSpeed = -1;
+    }
+
+    public static float addInaccuracy(float input)
+    {
+      float value = input * inaccuracyRange;
+      return input + Random.Range(-value, value);
+    }
+
+    public static decimal addInaccuracy(decimal input)
+    {
+      decimal value = input * (decimal)inaccuracyRange;
+      return input + (decimal)Random.Range(-(float)value, (float)value);
     }
   }
 }
