@@ -13,7 +13,7 @@ namespace Maroon.Physics
     private float scale_position_offset;
     private TMP_Text scale_text;
 
-    private static string scale_text_format = "0.0000";
+    private static string scale_text_format = "000.0000";
 
 
 
