@@ -450,7 +450,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 00.00m
+  m_text: 00.00cm
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 6a6f2ce70b6d64ee9b654a5ab08b4a0f, type: 2}
   m_sharedMaterial: {fileID: -7528854642806149891, guid: 6a6f2ce70b6d64ee9b654a5ab08b4a0f,
@@ -478,8 +478,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 0.08
-  m_fontSizeBase: 0.08
+  m_fontSize: 0.065
+  m_fontSizeBase: 0.065
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 0
@@ -1251,7 +1251,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efba756c1a4f82f41a37480aa9f61f97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  caliperPrefab: {fileID: 0}
+  caliperPrefab: {fileID: 5826187699455302848, guid: 51490b7112c35544489dea8d2f001853,
+    type: 3}
   main_camera: {fileID: 408642616}
   zoom_camera: {fileID: 1626083810}
   measurableObjects: []
@@ -2640,7 +2641,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 641038386}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.735, z: 2}
+  m_LocalPosition: {x: 0.204, y: 1.848, z: 2}
   m_LocalScale: {x: 0.07, y: 0.07, z: 0.02}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2665,7 +2666,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enabled: 1
-  snap: 1
+  snap: 0
   offsetDragging: 1
   hoverSizeIncrease: 0
   hoverSizeFactor: 1.2
@@ -2691,7 +2692,8 @@ MonoBehaviour:
   slider: {fileID: 1448328507}
   head: {fileID: 641038387}
   text: {fileID: 225246735}
-  offset: -0.0275
+  measuredLength: 0
+  offset: 0.0375
 --- !u!65 &641038390
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4390,6 +4392,7 @@ GameObject:
   - component: {fileID: 1448328510}
   - component: {fileID: 1448328509}
   - component: {fileID: 1448328508}
+  - component: {fileID: 1448328511}
   m_Layer: 0
   m_Name: Hook
   m_TagString: Untagged
@@ -4405,7 +4408,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1448328506}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.5357143, y: -0.39285764, z: 0}
+  m_LocalPosition: {x: -0.535, y: -0.39285764, z: 0}
   m_LocalScale: {x: 0.071428575, y: 0.21428572, z: 1.125}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4423,8 +4426,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 3.223219, y: 1.5782515, z: 2.2253304}
+  m_Center: {x: -0.19446108, y: -0.084376335, z: -0.28806528}
 --- !u!23 &1448328509
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4475,6 +4478,30 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1448328506}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1448328511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1448328506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a94fdde4616c454d94d0f3946a3e2ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enabled: 1
+  snap: 0
+  offsetDragging: 1
+  hoverSizeIncrease: 1
+  hoverSizeFactor: 1.2
+  planePosition: {x: 0, y: 0, z: 2}
+  snapPoint: {fileID: 0}
+  axisLocked: 1
+  axisLockedInto: 1
+  localPositionLimit: 1
+  localPositionMax: -0.5357143
+  localPositionMin: -10
 --- !u!1 &1465506714
 GameObject:
   m_ObjectHideFlags: 0
