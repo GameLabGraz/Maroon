@@ -34,7 +34,7 @@ namespace Maroon.Physics.Motion
 
         public void AddObject(State o)
         {
-            objects.Add(o);
+            objects.Add(new State(o));
         }
 
         public void Solve()

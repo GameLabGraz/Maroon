@@ -24,6 +24,14 @@ namespace Maroon.Physics.Motion {
             this.velocity = velocity;
             this.model = m;
         }
+
+        //TODO: Maybe this is not good after all, maybe a immutable representation of state would be desiarable
+        public State(State state)
+        {
+            this.position = state.position;
+            this.velocity = state.velocity;
+            this.model = state.model;
+        }
     }
 
     public class Model
