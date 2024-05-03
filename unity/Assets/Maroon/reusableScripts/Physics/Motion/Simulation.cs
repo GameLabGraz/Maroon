@@ -7,25 +7,25 @@ namespace Maroon.Physics.Motion
     public class Simulation
     {
         private List<SimulationEntity> objects;
-        private float dt;
+        private double dt;
         private int current_step = 0;
-        private float t = 0.0f;
+        private double t = 0.0;
         private IIntegrator integrator;
 
         private String log;
 
-        public Simulation(float dt)
+        public Simulation(double dt)
         {
             this.dt = dt;
-            this.t = 0.0F;
+            this.t = 0.0;
             this.integrator = new RungeKutta4();
             this.objects = new List<SimulationEntity>();
         }
 
-        public Simulation(float dt, IIntegrator integrator)
+        public Simulation(double dt, IIntegrator integrator)
         {
             this.dt = dt;
-            this.t = 0.0F;
+            this.t = 0.0;
             this.integrator = integrator;
             this.objects = new List<SimulationEntity>();
         }

@@ -9,7 +9,7 @@ namespace Maroon.Physics.Motion
     /// </summary>
     public class ExplicitEuler : IIntegrator
     {
-        public State Integrate(State s, float t, float dt)
+        public State Integrate(State s, double t, double dt)
         {
             s.position += s.velocity * dt;
             s.velocity += s.Acceleration(t + dt) * dt;
@@ -24,7 +24,7 @@ namespace Maroon.Physics.Motion
     /// </summary>
     public class SemiImplicitEuler : IIntegrator
     {
-        public State Integrate(State s, float t, float dt)
+        public State Integrate(State s, double t, double dt)
         { 
             s.velocity += s.Acceleration(t + dt) * dt;
             s.position += s.velocity * dt;
@@ -39,15 +39,15 @@ namespace Maroon.Physics.Motion
     /// </summary>
     public class RungeKutta4 : IIntegrator
     {
-        public State Integrate(State s, float t, float dt)
+        public State Integrate(State s, double t, double dt)
         {
-            var k1 = Evaluate(s, t, 0.0f, new Derivative());
-            var k2 = Evaluate(s, t, dt * 0.5f, k1);
-            var k3 = Evaluate(s, t, dt * 0.5f, k2);
+            var k1 = Evaluate(s, t, 0.0, new Derivative());
+            var k2 = Evaluate(s, t, dt * 0.5, k1);
+            var k3 = Evaluate(s, t, dt * 0.5, k2);
             var k4 = Evaluate(s, t, dt, k3);
 
-            var dxdt = 1.0f / 6.0f * (k1.dx + 2.0 * k2.dx + 2.0 * k3.dx + k4.dx);
-            var dvdt = 1.0f / 6.0f * (k1.dv + 2.0 * k2.dv + 2.0 * k3.dv + k4.dv);
+            var dxdt = 1.0 / 6.0 * (k1.dx + 2.0 * k2.dx + 2.0 * k3.dx + k4.dx);
+            var dvdt = 1.0 / 6.0 * (k1.dv + 2.0 * k2.dv + 2.0 * k3.dv + k4.dv);
 
             s.position += dxdt * dt;
             s.velocity += dvdt * dt;
@@ -55,7 +55,7 @@ namespace Maroon.Physics.Motion
             return s;
         }
 
-        private Derivative Evaluate(State s, float t, float dt, Derivative d)
+        private Derivative Evaluate(State s, double t, double dt, Derivative d)
         {
             return new Derivative(s.velocity + d.dv * dt, s.Acceleration(t + dt));
         }

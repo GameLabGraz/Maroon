@@ -12,7 +12,7 @@ namespace Maroon.Physics.Motion
         public State state;
         private Dictionary<String, Expression> _exprs = new Dictionary<String, Expression>();
 
-        public Vector3d EvaluateForceAt(float t)
+        public Vector3d EvaluateForceAt(double t)
         {
             _exprs["fx"].Parameters["t"] = t;
             _exprs["fy"].Parameters["t"] = t;
@@ -25,7 +25,7 @@ namespace Maroon.Physics.Motion
             );
         }
 
-        public double EvaluateMassAt(float t)
+        public double EvaluateMassAt(double t)
         {
             _exprs["m"].Parameters["t"] = t;
             return Convert.ToDouble(_exprs["m"].Evaluate());
@@ -67,25 +67,13 @@ namespace Maroon.Physics.Motion
             _exprs["fz"] = new Expression("0", EvaluateOptions.IgnoreCase);
         }
 
-        public SimulationEntity(SimulationEntity mo)
+        public SimulationEntity(Vector3d initialPosition, Vector3d initialVelocity) 
         {
-            this.state = new State(mo.state, this);
-            this._exprs = mo._exprs;
+            this.state = new State(initialPosition, initialVelocity, this);
         }
 
-        public SimulationEntity(State initialState) : 
-            this()
-        {
-            this.state = new State(initialState, this);
-        }
-
-        public SimulationEntity(Vector3 initialPosition, Vector3 initialVelocity) :
-            this(new State(initialPosition, initialVelocity))
-        {
-        }
-
-        public SimulationEntity(Vector3 initialPosition, Vector3 initialVelocity, String Fx, String Fy, String Fz) :
-            this(new State(initialPosition, initialVelocity))
+        public SimulationEntity(Vector3d initialPosition, Vector3d initialVelocity, String Fx, String Fy, String Fz) :
+            this(initialPosition, initialVelocity)
         {
             _exprs["fx"] = new Expression(Fx, EvaluateOptions.IgnoreCase);
             _exprs["fx"].EvaluateParameter += MotionObject_EvaluateParameter;
@@ -94,7 +82,7 @@ namespace Maroon.Physics.Motion
             _exprs["fz"] = new Expression(Fz, EvaluateOptions.IgnoreCase);
             _exprs["fz"].EvaluateParameter += MotionObject_EvaluateParameter;
         }
-        public SimulationEntity(Vector3 initialPosition, Vector3 initialVelocity, String Fx, String Fy, String Fz, String m) :
+        public SimulationEntity(Vector3d initialPosition, Vector3d initialVelocity, String Fx, String Fy, String Fz, String m) :
             this(initialPosition, initialVelocity, Fx, Fy, Fz)
         {
             _exprs["m"] = new Expression(m, EvaluateOptions.IgnoreCase);

@@ -4,7 +4,7 @@ namespace Maroon.Physics.Motion
 {
     public class State
     {
-        private float _t = 0.0f;
+        private double _t = 0.0;
         private Vector3d _position;
         private Vector3d _velocity;
         private Vector3d _acceleration;
@@ -17,7 +17,7 @@ namespace Maroon.Physics.Motion
         public Vector3d velocity { get { return _velocity; } set { _velocity = value; } }
         public Vector3d acceleration { get { return _acceleration; } }
 
-        public Vector3d Acceleration(float t)
+        public Vector3d Acceleration(double t)
         {
             _t = t;
             _mass = _reference.EvaluateMassAt(t);
@@ -31,11 +31,6 @@ namespace Maroon.Physics.Motion
             _position = position;
             _velocity = velocity;
         }
-        public State(Vector3 position, Vector3 velocity)
-        {
-            _position = (Vector3d)position;
-            _velocity = (Vector3d)velocity;
-        }
 
         public State(State state)
         {
@@ -43,9 +38,9 @@ namespace Maroon.Physics.Motion
             _velocity = state.velocity;
         }
 
-        public State(State state, SimulationEntity reference) : this(state)
+        public State(Vector3d position, Vector3d velocity, SimulationEntity refernce) : this (position, velocity)
         {
-            _reference = reference;
+            _reference = refernce;
         }
     }
 }
