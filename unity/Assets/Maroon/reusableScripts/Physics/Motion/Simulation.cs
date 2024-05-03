@@ -6,7 +6,7 @@ namespace Maroon.Physics.Motion
 {
     public class Simulation
     {
-        private List<SimulationEntity> objects;
+        private List<SimultaedEntity> entities;
         private double dt;
         private int current_step = 0;
         private double t = 0.0;
@@ -19,7 +19,7 @@ namespace Maroon.Physics.Motion
             this.dt = dt;
             this.t = 0.0;
             this.integrator = new RungeKutta4();
-            this.objects = new List<SimulationEntity>();
+            this.entities = new List<SimultaedEntity>();
         }
 
         public Simulation(double dt, IIntegrator integrator)
@@ -27,12 +27,12 @@ namespace Maroon.Physics.Motion
             this.dt = dt;
             this.t = 0.0;
             this.integrator = integrator;
-            this.objects = new List<SimulationEntity>();
+            this.entities = new List<SimultaedEntity>();
         }
 
-        public void AddObject(SimulationEntity o)
+        public void AddEntity(SimultaedEntity o)
         {
-            objects.Add(o);
+            entities.Add(o);
         }
 
         public void Solve(int steps)
@@ -47,11 +47,9 @@ namespace Maroon.Physics.Motion
 
         public void Step()
         {
-            foreach (SimulationEntity obj in objects)
+            foreach (SimultaedEntity entity in entities)
             { 
-
-                log += String.Format("{0:f5} {1:f5} {2:f5} {3:f5} {4:f5} {5:f5} {6:f5} \n", current_step*dt, obj.state.position.x, obj.state.position.y, obj.state.position.z, obj.state.velocity.x, obj.state.velocity.y, obj.state.velocity.z);
-                integrator.Integrate(obj.state, t, dt);
+                integrator.Integrate(entity.state, t, dt);
             }
         }
 

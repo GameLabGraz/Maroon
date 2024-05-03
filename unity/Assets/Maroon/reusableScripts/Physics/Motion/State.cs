@@ -11,7 +11,7 @@ namespace Maroon.Physics.Motion
         private Vector3d _force;
         private double _mass;
 
-        private SimulationEntity _reference;
+        private SimultaedEntity _reference;
 
         public Vector3d position { get { return _position; } set { _position = value; } }
         public Vector3d velocity { get { return _velocity; } set { _velocity = value; } }
@@ -40,7 +40,7 @@ namespace Maroon.Physics.Motion
             _reference.state = this;
         }
 
-        public State(Vector3d position, Vector3d velocity, SimulationEntity refernce) : this (position, velocity)
+        public State(Vector3d position, Vector3d velocity, SimultaedEntity refernce) : this (position, velocity)
         {
             _reference = refernce;
         }

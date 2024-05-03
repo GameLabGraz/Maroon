@@ -7,7 +7,7 @@ using System;
 
 namespace Maroon.Physics.Motion
 {
-    public class SimulationEntity
+    public class SimultaedEntity
     {
         public State state;
         private Dictionary<String, Expression> _exprs = new Dictionary<String, Expression>();
@@ -60,19 +60,19 @@ namespace Maroon.Physics.Motion
             }
         }
 
-        public SimulationEntity() {
+        public SimultaedEntity() {
             _exprs["m"] = new Expression("1", EvaluateOptions.IgnoreCase);
             _exprs["fx"] = new Expression("0", EvaluateOptions.IgnoreCase);
             _exprs["fy"] = new Expression("0", EvaluateOptions.IgnoreCase);
             _exprs["fz"] = new Expression("0", EvaluateOptions.IgnoreCase);
         }
 
-        public SimulationEntity(Vector3d initialPosition, Vector3d initialVelocity) 
+        public SimultaedEntity(Vector3d initialPosition, Vector3d initialVelocity) 
         {
             this.state = new State(initialPosition, initialVelocity, this);
         }
 
-        public SimulationEntity(Vector3d initialPosition, Vector3d initialVelocity, String Fx, String Fy, String Fz) :
+        public SimultaedEntity(Vector3d initialPosition, Vector3d initialVelocity, String Fx, String Fy, String Fz) :
             this(initialPosition, initialVelocity)
         {
             _exprs["fx"] = new Expression(Fx, EvaluateOptions.IgnoreCase);
@@ -82,7 +82,7 @@ namespace Maroon.Physics.Motion
             _exprs["fz"] = new Expression(Fz, EvaluateOptions.IgnoreCase);
             _exprs["fz"].EvaluateParameter += MotionObject_EvaluateParameter;
         }
-        public SimulationEntity(Vector3d initialPosition, Vector3d initialVelocity, String Fx, String Fy, String Fz, String m) :
+        public SimultaedEntity(Vector3d initialPosition, Vector3d initialVelocity, String Fx, String Fy, String Fz, String m) :
             this(initialPosition, initialVelocity, Fx, Fy, Fz)
         {
             _exprs["m"] = new Expression(m, EvaluateOptions.IgnoreCase);
