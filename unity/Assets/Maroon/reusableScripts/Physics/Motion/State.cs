@@ -36,6 +36,8 @@ namespace Maroon.Physics.Motion
         {
             _position = state.position;
             _velocity = state.velocity;
+            _reference = state._reference;
+            _reference.state = this;
         }
 
         public State(Vector3d position, Vector3d velocity, SimulationEntity refernce) : this (position, velocity)
