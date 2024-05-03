@@ -51,6 +51,7 @@ namespace Maroon.Physics.Motion
 
             s.position += dxdt * dt;
             s.velocity += dvdt * dt;
+            s.Acceleration(t + dt);
 
             return s;
         }
