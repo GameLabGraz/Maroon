@@ -6,56 +6,57 @@ namespace Maroon.Physics.Motion
 {
     public class Simulation
     {
-        private List<SimultaedEntity> entities;
         private double dt;
+        private double t;
+        private int steps;
         private int current_step = 0;
-        private double t = 0.0;
         private IIntegrator integrator;
 
+        private List<SimulatedEntity> entities = new List<SimulatedEntity>();
+
+        private Bounds bounds;
         private String log;
 
-        public Simulation(double dt)
+        public Simulation(double dt, double t, int steps, IIntegrator integrator)
         {
             this.dt = dt;
-            this.t = 0.0;
-            this.integrator = new RungeKutta4();
-            this.entities = new List<SimultaedEntity>();
-        }
-
-        public Simulation(double dt, IIntegrator integrator)
-        {
-            this.dt = dt;
-            this.t = 0.0;
+            this.t = t;
+            this.steps = steps;
             this.integrator = integrator;
-            this.entities = new List<SimultaedEntity>();
         }
 
-        public void AddEntity(SimultaedEntity o)
+        public Simulation(double dt, double t, double duration, IIntegrator integrator)
         {
-            entities.Add(o);
+            this.dt = dt;
+            this.t = t;
+            this.steps = (int) (duration / dt);
+            this.integrator = integrator;
+        }
+
+        public void AddEntity(SimulatedEntity entity)
+        {
+            entity.Initialize(t, dt);
+            entities.Add(entity);
         }
 
         public void Solve(int steps)
         {
-            current_step = 0;
+            int initial_step = current_step;
 
-            for (; current_step <= steps; current_step++)
-            {
-                Step();
+            while(current_step++ < (initial_step + steps)) { 
+                foreach (SimulatedEntity entity in entities)
+                {
+                    entity.state = integrator.Integrate(entity.state, t, dt);
+                    entity.PushBackState();
+                }
+
+                t = current_step * dt;
             }
         }
 
-        public void Step()
+        public void Solve()
         {
-            foreach (SimultaedEntity entity in entities)
-            { 
-                integrator.Integrate(entity.state, t, dt);
-            }
-        }
-
-        public void PrintLog()
-        {
-            Debug.Log(log);
+            Solve(this.steps);
         }
     }
 }

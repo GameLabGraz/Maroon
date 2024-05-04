@@ -4,13 +4,19 @@ using UnityEngine;
 using Maroon.Physics;
 using NCalc;
 using System;
+using System.Linq;
 
 namespace Maroon.Physics.Motion
 {
-    public class SimultaedEntity
+    public class SimulatedEntity
     {
         public State state;
         private Dictionary<String, Expression> _exprs = new Dictionary<String, Expression>();
+
+        private List<State> states;
+        private State _initial_state;
+
+        private double dt;
 
         public Vector3d EvaluateForceAt(double t)
         {
@@ -52,7 +58,7 @@ namespace Maroon.Physics.Motion
                 default:
                     if (_exprs.ContainsKey(name))
                     {
-                        args.Result = _exprs[name].Evaluate(); 
+                        args.Result = _exprs[name].Evaluate();
                         break;
                     }
 
@@ -60,19 +66,52 @@ namespace Maroon.Physics.Motion
             }
         }
 
-        public SimultaedEntity() {
+        public void SetInitialState(State s)
+        {
+            _initial_state = new State(s, this);
+        }
+
+        public void Initialize(double initial_t, double dt)
+        {
+            state = _initial_state;
+            state.Acceleration(initial_t);
+
+            states = new List<State>();
+            states.Add(new State(state));
+        }
+
+        public void PushBackState()
+        {
+            double prev_power = states.Last().power;
+
+            states.Add(new State(state));
+            states.Last().UpdateEnergies(prev_power, dt);
+        }
+
+        public void PrintDataPoints()
+        {
+            String log = "";
+            foreach (var item in states)
+            {
+                log += String.Format("{0:f5} {1:f5} {2:f5} {3:f5} {4:f5} {5:f5} {6:f5} \n", item.t, item.position.x, item.position.y, item.position.z, item.velocity.x, item.velocity.y, item.velocity.z);
+            }
+            Debug.Log(log);
+        }
+
+        public SimulatedEntity()
+        {
             _exprs["m"] = new Expression("1", EvaluateOptions.IgnoreCase);
             _exprs["fx"] = new Expression("0", EvaluateOptions.IgnoreCase);
             _exprs["fy"] = new Expression("0", EvaluateOptions.IgnoreCase);
             _exprs["fz"] = new Expression("0", EvaluateOptions.IgnoreCase);
         }
 
-        public SimultaedEntity(Vector3d initialPosition, Vector3d initialVelocity) 
+        public SimulatedEntity(Vector3d initialPosition, Vector3d initialVelocity)
         {
-            this.state = new State(initialPosition, initialVelocity, this);
+            SetInitialState(new State(initialPosition, initialVelocity));
         }
 
-        public SimultaedEntity(Vector3d initialPosition, Vector3d initialVelocity, String Fx, String Fy, String Fz) :
+        public SimulatedEntity(Vector3d initialPosition, Vector3d initialVelocity, String Fx, String Fy, String Fz) :
             this(initialPosition, initialVelocity)
         {
             _exprs["fx"] = new Expression(Fx, EvaluateOptions.IgnoreCase);
@@ -82,7 +121,7 @@ namespace Maroon.Physics.Motion
             _exprs["fz"] = new Expression(Fz, EvaluateOptions.IgnoreCase);
             _exprs["fz"].EvaluateParameter += MotionObject_EvaluateParameter;
         }
-        public SimultaedEntity(Vector3d initialPosition, Vector3d initialVelocity, String Fx, String Fy, String Fz, String m) :
+        public SimulatedEntity(Vector3d initialPosition, Vector3d initialVelocity, String Fx, String Fy, String Fz, String m) :
             this(initialPosition, initialVelocity, Fx, Fy, Fz)
         {
             _exprs["m"] = new Expression(m, EvaluateOptions.IgnoreCase);

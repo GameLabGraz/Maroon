@@ -58,7 +58,7 @@ namespace Maroon.Physics.Motion
 
         private Derivative Evaluate(State initial, double t, double dt, Derivative d)
         {
-            State s = new State(initial);
+            State s = new State(initial, true);
             s.position += d.dx * dt;
             s.velocity += d.dv * dt;
             return new Derivative(s.velocity, s.Acceleration(t + dt));
