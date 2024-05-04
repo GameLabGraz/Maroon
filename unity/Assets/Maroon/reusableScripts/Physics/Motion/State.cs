@@ -23,8 +23,9 @@ namespace Maroon.Physics.Motion
         public Vector3d acceleration { get { return _acceleration; } }
         public Vector3d force { get { return _force; } }
         public double mass { get { return _mass; } }
-        public double kinetic_energy { get { return ((velocity.x * velocity.x) + (velocity.y * velocity.y) + (velocity.z * velocity.z)) * mass * 0.5; } }
-        public double power { get { return (velocity.x * force.x) + (velocity.y * force.y) + (velocity.z * force.z); } }
+        public double kinetic_energy { get { return _kinetic_energy; } }
+        public double power { get { return _power; } }
+        public double work { get { return _work; } }
 
         public Vector3d Acceleration(double t)
         {
@@ -39,7 +40,7 @@ namespace Maroon.Physics.Motion
         {
             _kinetic_energy = ((velocity.x * velocity.x) + (velocity.y * velocity.y) + (velocity.z * velocity.z)) * mass * 0.5;
             _power = (velocity.x * force.x) + (velocity.y * force.y) + (velocity.z * force.z);
-            _work += 0.5 * (_power + prev_power) * dt;
+            _work += 0.5 * (power + prev_power) * dt;
         }
 
 
@@ -51,12 +52,12 @@ namespace Maroon.Physics.Motion
 
         public State(State state)
         {
-            _t = state.t;
-            _position = state.position;
-            _velocity = state.velocity;
-            _force = state.force;
-            _mass = state.mass;
-            _acceleration = state.acceleration;
+            _t = state._t;
+            _position = state._position;
+            _velocity = state._velocity;
+            _force = state._force;
+            _mass = state._mass;
+            _acceleration = state._acceleration;
 
             entity = state.entity;
         }
@@ -77,6 +78,5 @@ namespace Maroon.Physics.Motion
         {
             this.entity = entity;
         }
-
     }
 }
