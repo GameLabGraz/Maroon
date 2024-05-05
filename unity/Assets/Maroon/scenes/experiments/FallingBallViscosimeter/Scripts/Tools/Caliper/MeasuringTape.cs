@@ -38,10 +38,7 @@ public class MeasuringTape : MonoBehaviour
         lineRenderer.SetPositions(positions);
         
         //sets the text to the measured distance
-        Debug.Log("LineRendererStart: " + lineRenderer.GetPosition(0));
-        Debug.Log("Head Position: " + lineRenderer.GetPosition(1));
         measuredLength = (slider.position.x - head.position.x + offset) * -100;
         text.text = Math.Round(measuredLength, 2).ToString("N2") + "cm";
-        Debug.Log(measuredLength);
     }
 }

@@ -23,7 +23,6 @@ public class StopWatchStartButton : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("Hover Timer: " + hover_timer.ToString("0.000"));
         if (simStartButton.enabled)
         {
             if (hover_timer >= 3.0f)

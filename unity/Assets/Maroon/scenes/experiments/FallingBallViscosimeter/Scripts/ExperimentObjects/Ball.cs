@@ -20,30 +20,19 @@ namespace Maroon.Physics
       private set { _velocity = value; }
     }
     private decimal _volume = 0;
-    
+
     private Vector3 start_position_;
-    public decimal start_weight_ = 0.033m / 1000m;
     //public decimal start_diameter_ = 1.97m;
-    public decimal start_diameter_ = 30.00m;
+    public decimal start_diameter_ = 30.00m; //millimeter
     private bool dropped_ = true;
     private bool touching_oil = false;
     private decimal viscosity_force_ = 0.0m;
     private decimal buoyancy_force_ = 0.0m;
 
-    private decimal ball_density_ = 0.0m;
+    private decimal ball_density_ = 8243.5949328270666898586m;
     private WeighableObject _weighableObject;
 
 
-    public QuantityDecimal diameter_millimeter_;
-    public decimal DiameterMillimeter
-    {
-      get => diameter_millimeter_.Value;
-      set
-      {
-        diameter_millimeter_.Value = value;
-      }
-    }
-    
     private decimal radius_;
     //diameter in meter
     public QuantityDecimal diameter_;
@@ -69,7 +58,6 @@ namespace Maroon.Physics
       }
     }
 
-    private Rigidbody _rigidbody;
 
     private void Awake()
     {
@@ -77,17 +65,14 @@ namespace Maroon.Physics
       start_diameter_ = ViscosimeterManager.addInaccuracy(start_diameter_);
       
       Mass = ViscosimeterManager.addInaccuracy(Mass);
-      _rigidbody = GetComponent<Rigidbody>();
       _weighableObject = GetComponent<WeighableObject>();
-      _mass = start_weight_;
-      _weighableObject.starting_weight = start_weight_;
-      DiameterMillimeter = start_diameter_;
-      diameter_millimeter_.minValue = 1.0m;
-      diameter_millimeter_.maxValue = 30.0m;
       radius_ = start_diameter_ / 2000m;
-      ball_density_ = Mass / calculateVolume();
+      _volume = calculateVolume();
+      Mass = ball_density_ * _volume;
+      _weighableObject.starting_weight = Mass;
       start_position_ = transform.position;
-      updateBall();
+      transform.localScale = new Vector3((float)start_diameter_/1000, (float)start_diameter_/1000, (float)start_diameter_/1000);
+      _weighableObject.setWeight(_mass);
     }
 
     protected override void Start()
@@ -103,7 +88,7 @@ namespace Maroon.Physics
 
     protected override void HandleFixedUpdate()
     {
-      updateBall();
+      //updateBall();
       ApplyFallPhysics();
     }
 
@@ -115,43 +100,12 @@ namespace Maroon.Physics
     }
 
 
-    void calculateBuoyancy()
-    {
-      //to make this more accurate volume should only be the displaced volume
-      buoyancy_force_ = (_volume * ViscosimeterManager.Instance.fluid_density_ * 9.81m); //kg/m^3
-      Debug.Log("Buoyancy: " + buoyancy_force_);
-    }
-
-    
-    void calculateViscosityForce()
-    {
-      //Debug.Log("Radius: " + radius_);
-      decimal velocity = (decimal)_rigidbody.velocity.y;
-      decimal viscosity = (2.0m / 9.0m) * ((ball_density_ - ViscosimeterManager.Instance.fluid_density_) / velocity) * 9.81m * radius_ * radius_;
-      //Debug.Log("Velocity: " + velocity);
-      Debug.Log("Viscosity: " + viscosity);
-      viscosity_force_ = 6.0m * (decimal)Mathf.PI * viscosity * radius_ * velocity;
-    }
-
-
-
-    public void updateBall()
-    {
-      _volume = calculateVolume();
-      Diameter = DiameterMillimeter / 1000m;
-      radius_ = Diameter / 2.0m;
-      transform.localScale = new Vector3((float)Diameter, (float)Diameter, (float)Diameter);
-      _mass = ball_density_ * _volume;
-      _weighableObject.setWeight(_mass);
-      //calculateBuoyancy();
-    }
-
 
     public void ResetObject()
     {
       dropped_ = false;
       touching_oil = false;
-      _velocity = 0;
+      Velocity = 0;
 
       transform.position = start_position_;
       //rigidbody_.velocity = Vector3.zero;
@@ -178,7 +132,7 @@ namespace Maroon.Physics
     void ApplyFallPhysics()
     {
       //calculate gravity force:
-      decimal f_grav = _mass * G;
+      decimal f_grav = Mass * G;
 
       if (!touching_oil)
       {
@@ -187,18 +141,21 @@ namespace Maroon.Physics
       }
 
       decimal fluid_density = ViscosimeterManager.Instance.fluid_density_;
+      decimal temperature = ViscosimeterManager.Instance.fluid_temperature_;
       //calculate buoyancy force:
-      decimal f_buoy = fluid_density * _volume * G;
+      decimal f_buoy = 0;
+      if (_velocity != 0)
+      {
+        f_buoy = fluid_density * _volume * G;
+      }
       
       //calculate dynamic viscosity
-      decimal dynamic_viscosity = (2.0m / 9.0m) *
-                                  ((ball_density_ - fluid_density) / _velocity) * G *
-                                  radius_ * radius_;
+      decimal dynamic_viscosity = calculateDynamicViscosity(temperature);
       
-      Debug.Log("Dynamic Viscosity: " + dynamic_viscosity);
-      
+      Debug.Log("dynamic visc " + dynamic_viscosity);
+       
       //calculate viscosity friction force (stoke's law)
-      decimal f_fric = 6.0m * (decimal)Math.PI * dynamic_viscosity * radius_ * _velocity;
+      decimal f_fric = 6.0m * (decimal)Math.PI * dynamic_viscosity * radius_ * Velocity;
       
       //calculate net force applied to ball
       decimal f_net = f_grav - (f_fric + f_buoy);
@@ -208,15 +165,15 @@ namespace Maroon.Physics
 
     void ApplyForce(decimal force)
     {
-      decimal acceleration = force / _mass;
+      decimal acceleration = force / Mass;
       Vector3 current_position = transform.position;
-      _velocity += acceleration * (decimal)Time.deltaTime;
-      bool noCollision = CheckCollision(current_position, _velocity);
+      Velocity += acceleration * (decimal)Time.deltaTime;
+      bool noCollision = CheckCollision(current_position, Velocity);
 
       if (noCollision)
       {
         transform.position = new Vector3(current_position.x,
-        current_position.y - (float)(_velocity * (decimal)Time.deltaTime),
+        current_position.y - (float)(Velocity * (decimal)Time.deltaTime),
         current_position.z);
       }
     }
@@ -233,7 +190,7 @@ namespace Maroon.Physics
         {
           float possibleMovement = GetPossibleMovement(ray, range);
           transform.position = new Vector3(position.x, position.y - possibleMovement + (float)radius_, position.z);
-          _velocity = 0;
+          Velocity = 0;
           return false;
         }
       }
@@ -249,7 +206,15 @@ namespace Maroon.Physics
       {
         new_range -= 0.001f;
       }
+
       return new_range;
+    }
+
+    decimal calculateDynamicViscosity(decimal temperature)
+    {
+      decimal kelvin = ViscosimeterManager.Instance.celsiusToKelvin(temperature);
+      Debug.Log(kelvin);
+      return 3773.6621783367m * (decimal)Math.Pow(0.9715280088d, (double)kelvin) + 0.3334873589m;
     }
   }
 }

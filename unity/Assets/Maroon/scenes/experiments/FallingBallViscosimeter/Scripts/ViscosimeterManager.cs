@@ -60,9 +60,14 @@ namespace Maroon.Physics
       fluid_temperature_.maxValue = 100.0m;
     }
 
+    public decimal celsiusToKelvin(decimal celsius)
+    {
+      return celsius + 273.15m;
+    }
     void calculateFluidDensity()
     {
-      fluid_density_ = (FluidTemperature * -0.37m + 891.83m); //kg/m^3
+      //fluid_density_ = (FluidTemperature * -0.37m + 891.83m); //kg/m^3
+      fluid_density_ = celsiusToKelvin(FluidTemperature) * -0.881m + 1049.846m; //kg/m^3
     }
 
     public void togglePycnometerFill(bool fill)
@@ -111,7 +116,7 @@ namespace Maroon.Physics
     void FixedUpdate()
     {
       calculateFluidDensity();
-      ball.updateBall();
+      //ball.updateBall();
       update_debug_text();
     }
 
