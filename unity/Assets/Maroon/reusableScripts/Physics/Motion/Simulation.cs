@@ -11,11 +11,11 @@ namespace Maroon.Physics.Motion
         private int steps;
         private int current_step = 0;
         private IIntegrator integrator;
+        private Bounds _bounds = new Bounds();
 
         private List<SimulatedEntity> entities = new List<SimulatedEntity>();
 
-        private Bounds bounds;
-        private String log;
+        public Bounds bounds { get { return _bounds; } }
 
         public Simulation(double dt, double t, int steps, IIntegrator integrator)
         {
@@ -47,10 +47,15 @@ namespace Maroon.Physics.Motion
                 foreach (SimulatedEntity entity in entities)
                 {
                     entity.state = integrator.Integrate(entity.state, t, dt);
-                    entity.PushBackState();
+                    entity.SaveState();
                 }
 
                 t = current_step * dt;
+            }
+
+
+            foreach (SimulatedEntity entity in entities) {
+                _bounds.Encapsulate(entity.bounds);
             }
         }
 

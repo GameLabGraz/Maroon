@@ -11,12 +11,19 @@ namespace Maroon.Physics.Motion
     public class SimulatedEntity
     {
         public State state;
+
         private Dictionary<String, Expression> _exprs = new Dictionary<String, Expression>();
 
         private List<State> states;
         private State _initial_state;
 
-        private double dt;
+        private double _dt;
+        private bool _isInitialized = false;
+        private Bounds _bounds = new Bounds();
+
+        public Bounds bounds { get { return _bounds; } }
+        public bool isInitialized { get { return _isInitialized; } }
+
 
         public Vector3d EvaluateForceAt(double t)
         {
@@ -73,19 +80,27 @@ namespace Maroon.Physics.Motion
 
         public void Initialize(double initial_t, double dt)
         {
+            states = new List<State>();
+
             state = _initial_state;
             state.Acceleration(initial_t);
+            state.CalculateEnergy();
+            state.CalculatePower();
 
-            states = new List<State>();
             states.Add(new State(state));
+
+            _dt = dt;
+            _isInitialized = true;
         }
 
-        public void PushBackState()
+        public void SaveState()
         {
+            _bounds.Encapsulate((Vector3)state.position);
+            
             double prev_power = states.Last().power;
 
+            state.CalculateEnergyPowerWork(prev_power, _dt);
             states.Add(new State(state));
-            states.Last().UpdateEnergies(prev_power, dt);
         }
 
         public void PrintDataPoints()
@@ -106,7 +121,7 @@ namespace Maroon.Physics.Motion
             _exprs["fz"] = new Expression("0", EvaluateOptions.IgnoreCase);
         }
 
-        public SimulatedEntity(Vector3d initialPosition, Vector3d initialVelocity)
+        public SimulatedEntity(Vector3d initialPosition, Vector3d initialVelocity) : this()
         {
             SetInitialState(new State(initialPosition, initialVelocity));
         }

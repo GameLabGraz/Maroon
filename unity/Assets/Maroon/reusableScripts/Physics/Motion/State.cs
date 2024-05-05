@@ -36,13 +36,26 @@ namespace Maroon.Physics.Motion
             return acceleration;
         }
 
-        public void UpdateEnergies(double prev_power, double dt)
+        public void CalculateEnergyPowerWork(double prev_power, double dt)
+        {
+            CalculateEnergy();
+            CalculatePower();
+            CalculateWork(prev_power, dt);
+        }
+        public void CalculateEnergy()
         {
             _kinetic_energy = ((velocity.x * velocity.x) + (velocity.y * velocity.y) + (velocity.z * velocity.z)) * mass * 0.5;
-            _power = (velocity.x * force.x) + (velocity.y * force.y) + (velocity.z * force.z);
-            _work += 0.5 * (power + prev_power) * dt;
         }
 
+        public void CalculatePower()
+        {
+            _power = (velocity.x * force.x) + (velocity.y * force.y) + (velocity.z * force.z);
+        }
+
+        public void CalculateWork(double prev_power, double dt)
+        {
+            _work += 0.5 * (power + prev_power) * dt;
+        }
 
         public State(Vector3d position, Vector3d velocity) 
         {
@@ -58,6 +71,9 @@ namespace Maroon.Physics.Motion
             _force = state._force;
             _mass = state._mass;
             _acceleration = state._acceleration;
+            _kinetic_energy = state._kinetic_energy;
+            _power = state._power;
+            _work = state._work;
 
             entity = state.entity;
         }
