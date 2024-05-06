@@ -1,8 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Maroon.scenes.experiments.FallingBallViscosimeter.Scripts;
 using PlatformControls.PC;
 using UnityEngine;
 using TMPro;
+using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 namespace Maroon.Physics
 {
@@ -43,6 +47,11 @@ namespace Maroon.Physics
 
     private decimal ballMaxSpeed = -1.0m;
     private Rigidbody _rigidbody;
+
+    [SerializeField] private TMP_Dropdown _fluid_dropdown;
+    private FluidViscosityData[] _fluids;
+    private FluidViscosityData _current_fluid;
+    
     private void Awake()
     { 
 #if UNITY_EDITOR
@@ -53,13 +62,38 @@ namespace Maroon.Physics
       {
         Instance = this;
       }
+      prepareFluids();
       calculateFluidDensity();
       getAllMeasurableObjects();
+      
       _rigidbody = ball.gameObject.GetComponent<Rigidbody>();
       fluid_temperature_.minValue = 15.0m;
       fluid_temperature_.maxValue = 100.0m;
     }
 
+    private void prepareFluids()
+    {
+      _fluids = Resources.LoadAll<FluidViscosityData>(
+        "FluidData");
+      _current_fluid = _fluids[0];
+      foreach (var fluid in _fluids)
+      {
+        _fluid_dropdown.options.Add(new TMP_Dropdown.OptionData() {text=fluid.name});
+      }
+    }
+
+    public void OnFluidChange()
+    {
+      _current_fluid = _fluids[_fluid_dropdown.value];
+    }
+    
+    
+    public decimal calculateDynamicViscosity(decimal temperature)
+    {
+      decimal kelvin = celsiusToKelvin(temperature);
+      return (decimal)(_current_fluid.viscosity_a * Math.Pow(_current_fluid.viscosity_b, (double)kelvin) + _current_fluid.viscosity_c);
+    }
+    
     public decimal celsiusToKelvin(decimal celsius)
     {
       return celsius + 273.15m;
@@ -67,7 +101,7 @@ namespace Maroon.Physics
     void calculateFluidDensity()
     {
       //fluid_density_ = (FluidTemperature * -0.37m + 891.83m); //kg/m^3
-      fluid_density_ = celsiusToKelvin(FluidTemperature) * -0.881m + 1049.846m; //kg/m^3
+      fluid_density_ = (decimal)celsiusToKelvin(FluidTemperature) * (decimal)_current_fluid.density_a + (decimal)_current_fluid.density_b; //kg/m^3
     }
 
     public void togglePycnometerFill(bool fill)

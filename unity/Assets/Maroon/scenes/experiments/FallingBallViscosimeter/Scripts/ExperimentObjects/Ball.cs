@@ -150,7 +150,7 @@ namespace Maroon.Physics
       }
       
       //calculate dynamic viscosity
-      decimal dynamic_viscosity = calculateDynamicViscosity(temperature);
+      decimal dynamic_viscosity = ViscosimeterManager.Instance.calculateDynamicViscosity(temperature);
       
       Debug.Log("dynamic visc " + dynamic_viscosity);
        
@@ -210,11 +210,6 @@ namespace Maroon.Physics
       return new_range;
     }
 
-    decimal calculateDynamicViscosity(decimal temperature)
-    {
-      decimal kelvin = ViscosimeterManager.Instance.celsiusToKelvin(temperature);
-      Debug.Log(kelvin);
-      return 3773.6621783367m * (decimal)Math.Pow(0.9715280088d, (double)kelvin) + 0.3334873589m;
-    }
+
   }
 }
