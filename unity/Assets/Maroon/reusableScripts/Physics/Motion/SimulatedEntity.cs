@@ -44,13 +44,13 @@ namespace Maroon.Physics.Motion
             return Convert.ToDouble(_exprs["m"].Evaluate());
         }
 
-        public void AddExpressions(String name, String expression)
+        public void AddExpression(String name, String expression)
         {
             _exprs[name] = new Expression(expression, EvaluateOptions.IgnoreCase);
-            _exprs[name].EvaluateParameter += MotionObject_EvaluateParameter;
+            _exprs[name].EvaluateParameter += SimulatedEntity_EvaluateParameter;
         }
 
-        private void MotionObject_EvaluateParameter(string param, ParameterArgs args)
+        private void SimulatedEntity_EvaluateParameter(string param, ParameterArgs args)
         {
             var name = param.ToLower();
 
@@ -103,12 +103,22 @@ namespace Maroon.Physics.Motion
             states.Add(new State(state));
         }
 
-        public void PrintDataPoints()
+        public void PrintData()
         {
             String log = "";
             foreach (var item in states)
             {
                 log += String.Format("{0:f5} {1:f5} {2:f5} {3:f5} {4:f5} {5:f5} {6:f5} \n", item.t, item.position.x, item.position.y, item.position.z, item.velocity.x, item.velocity.y, item.velocity.z);
+            }
+            Debug.Log(log);
+        }
+
+        public void PrintDataCsv(String header_prefix)
+        {
+            String log = String.Format("t;{0}_x;{0}_y;{0}_z;{0}_vx;{0}_vy;{0}_vz\n", header_prefix);
+            foreach (var item in states)
+            {
+                log += String.Format("{0:f5};{1:f5};{2:f5};{3:f5};{4:f5};{5:f5};{6:f5} \n", item.t, item.position.x, item.position.y, item.position.z, item.velocity.x, item.velocity.y, item.velocity.z);
             }
             Debug.Log(log);
         }
@@ -129,18 +139,14 @@ namespace Maroon.Physics.Motion
         public SimulatedEntity(Vector3d initialPosition, Vector3d initialVelocity, String Fx, String Fy, String Fz) :
             this(initialPosition, initialVelocity)
         {
-            _exprs["fx"] = new Expression(Fx, EvaluateOptions.IgnoreCase);
-            _exprs["fx"].EvaluateParameter += MotionObject_EvaluateParameter;
-            _exprs["fy"] = new Expression(Fy, EvaluateOptions.IgnoreCase);
-            _exprs["fy"].EvaluateParameter += MotionObject_EvaluateParameter;
-            _exprs["fz"] = new Expression(Fz, EvaluateOptions.IgnoreCase);
-            _exprs["fz"].EvaluateParameter += MotionObject_EvaluateParameter;
+            AddExpression("fx", Fx);
+            AddExpression("fy", Fy);
+            AddExpression("fz", Fz);
         }
         public SimulatedEntity(Vector3d initialPosition, Vector3d initialVelocity, String Fx, String Fy, String Fz, String m) :
             this(initialPosition, initialVelocity, Fx, Fy, Fz)
         {
-            _exprs["m"] = new Expression(m, EvaluateOptions.IgnoreCase);
-            _exprs["m"].EvaluateParameter += MotionObject_EvaluateParameter;
+            AddExpression("m", m);
         }
     }
 }

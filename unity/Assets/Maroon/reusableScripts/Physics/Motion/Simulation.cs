@@ -6,37 +6,57 @@ namespace Maroon.Physics.Motion
 {
     public class Simulation
     {
-        private double dt;
-        private double t;
-        private int steps;
+        private double _dt;
+        private double _t0;
+        private double _t;
+        private int _steps;
         private int current_step = 0;
         private IIntegrator integrator;
         private Bounds _bounds = new Bounds();
 
         private List<SimulatedEntity> entities = new List<SimulatedEntity>();
 
+        public double dt { get { return _dt; } set { _dt = value; } }
+        public double t { get { return _t; } }
+        public double t0 { get { return _t0; } set { _t0 = value; } }
+        public int steps { get { return _steps; } set { _steps = value; } }
         public Bounds bounds { get { return _bounds; } }
 
-        public Simulation(double dt, double t, int steps, IIntegrator integrator)
+        public Simulation()
         {
-            this.dt = dt;
-            this.t = t;
-            this.steps = steps;
+            integrator = new RungeKutta4();
+        }
+
+        public Simulation(IIntegrator integrator)
+        {
             this.integrator = integrator;
         }
 
-        public Simulation(double dt, double t, double duration, IIntegrator integrator)
+        public Simulation(IIntegrator integrator, double dt, double t0, int steps) : this(integrator)
         {
-            this.dt = dt;
-            this.t = t;
+            _dt = dt;
+            _t0 = t0;
+            _steps = steps;
+        }
+
+        public Simulation(IIntegrator integrator, double dt, double t0, double duration) : this(integrator)
+        {
+            _dt = dt;
+            _t0 = t0;
             this.steps = (int) (duration / dt);
-            this.integrator = integrator;
         }
 
         public void AddEntity(SimulatedEntity entity)
         {
-            entity.Initialize(t, dt);
             entities.Add(entity);
+        }
+
+        public void InitializeEntities()
+        {
+            foreach (SimulatedEntity entity in entities)
+            {
+                entity.Initialize(t0, dt);
+            }
         }
 
         public void Solve(int steps)
@@ -50,7 +70,7 @@ namespace Maroon.Physics.Motion
                     entity.SaveState();
                 }
 
-                t = current_step * dt;
+                _t = current_step * dt;
             }
 
 
@@ -59,8 +79,11 @@ namespace Maroon.Physics.Motion
             }
         }
 
-        public void Solve()
+        public void Run()
         {
+            _t = t0;
+
+            InitializeEntities();
             Solve(this.steps);
         }
     }
