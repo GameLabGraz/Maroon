@@ -79,4 +79,17 @@ namespace Maroon.Physics.Motion
         }
     }
 
+    /// <summary>
+    /// Velocity Verlet Integrator
+    /// </summary>
+    public class VelocityVerlet : IIntegrator
+    {
+        public State Integrate(State s, double t, double dt)
+        {
+            s.position += s.velocity * dt + s.acceleration * dt * dt * 0.5;
+            s.velocity += (s.acceleration + s.Acceleration(t + dt)) * dt * 0.5;
+
+            return s;
+        }
+    }
 }
