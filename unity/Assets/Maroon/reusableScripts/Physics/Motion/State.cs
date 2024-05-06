@@ -56,6 +56,11 @@ namespace Maroon.Physics.Motion
         {
             _work += 0.5 * (power + prev_power) * dt;
         }
+        public State(Vector3 position, Vector3 velocity)
+        {
+            _position = new Vector3d(position);
+            _velocity = new Vector3d(velocity);
+        }
 
         public State(Vector3d position, Vector3d velocity) 
         {
@@ -90,7 +95,7 @@ namespace Maroon.Physics.Motion
                 entity.state = this;
         }
 
-        public State(Vector3d position, Vector3d velocity, SimulatedEntity entity) : this (position, velocity)
+        public State(Vector3 position, Vector3 velocity, SimulatedEntity entity) : this(position, velocity)
         {
             this.entity = entity;
         }
