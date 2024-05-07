@@ -5,6 +5,7 @@ using Maroon.Physics;
 using NCalc;
 using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Maroon.Physics.Motion
 {
@@ -27,10 +28,6 @@ namespace Maroon.Physics.Motion
 
         public Vector3d EvaluateForceAt(double t)
         {
-            _exprs["fx"].Parameters["t"] = t;
-            _exprs["fy"].Parameters["t"] = t;
-            _exprs["fz"].Parameters["t"] = t;
-
             return new Vector3d(
                 Convert.ToDouble(_exprs["fx"].Evaluate()),
                 Convert.ToDouble(_exprs["fy"].Evaluate()),
@@ -40,22 +37,81 @@ namespace Maroon.Physics.Motion
 
         public double EvaluateMassAt(double t)
         {
-            _exprs["m"].Parameters["t"] = t;
             return Convert.ToDouble(_exprs["m"].Evaluate());
         }
 
-        public void AddExpression(String name, String expression)
+        public void AddExpression(String signature, String expression)
         {
-            _exprs[name] = new Expression(expression, EvaluateOptions.IgnoreCase);
-            _exprs[name].EvaluateParameter += SimulatedEntity_EvaluateParameter;
+            var expr = new Expression(expression, EvaluateOptions.IgnoreCase);
+            expr.EvaluateParameter += Expression_EvaluateParameter;
+            expr.EvaluateFunction += Expression_EvaluateFunction;
+
+
+            (String name, List<String> parameters) = SplitSignature(signature);
+
+            if (parameters != null)
+            {
+                foreach (String parameter in parameters)
+                {
+                    //expr.Parameters[parameter] = null;
+                }
+            }
+
+            _exprs[name] = expr;
         }
 
-        private void SimulatedEntity_EvaluateParameter(string param, ParameterArgs args)
+        private (String, List<String>) SplitSignature(String signature)
         {
-            var name = param.ToLower();
+            String pattern = @"(\w+)(?:\(([^)]*)\))?";
+            // This regex pattern matches expression signatures
+            //
+            // It works by using 2 capture groups:
+            //  (\w+) - matches the name eg. h(t) -> h
+            //  (?:\(([^)]*)\)) - matches the parameters eg. f(x,y,_) -> x,y,_
+            // 
+            // The question mark at the end ensures that there is a
+            // match for the name of a expression if it is not a
+            // function which takes parameters eg. mass -> mass
 
-            switch (name)
+            String name = null;
+            List<String> parameters = null;
+
+            Match match = Regex.Match(signature, pattern);
+
+            if (match.Success)
             {
+                name = match.Groups[1].Value;
+
+                if (match.Groups[2].Success)
+                {
+                    parameters = new List<String>();
+                    String parameterStr = match.Groups[2].Value;
+                    String[] parameterArray = parameterStr.Split(',');
+
+                    foreach (String parameter in parameterArray)
+                    {
+                        parameters.Add(parameter.Trim());
+                    }
+                }
+            }
+
+            return (name, parameters);
+        }
+
+        private void Expression_EvaluateFunction(string name, FunctionArgs args)
+        {
+            if(_exprs.ContainsKey(name))
+            {
+                args.Result = _exprs[name].Evaluate();
+            }
+        }
+
+        private void Expression_EvaluateParameter(string param, ParameterArgs args)
+        {
+            switch (param)
+            {
+
+                case "t": args.Result = state.t; break;
                 case "x": args.Result = state.position.x; break;
                 case "y": args.Result = state.position.y; break;
                 case "z": args.Result = state.position.z; break;
@@ -63,13 +119,13 @@ namespace Maroon.Physics.Motion
                 case "vy": args.Result = state.velocity.y; break;
                 case "vz": args.Result = state.velocity.z; break;
                 default:
-                    if (_exprs.ContainsKey(name))
+                    if (_exprs.ContainsKey(param))
                     {
-                        args.Result = _exprs[name].Evaluate();
+                        args.Result = _exprs[param].Evaluate();
                         break;
                     }
 
-                    throw new ArgumentException("Unknown Parameter", name);
+                    throw new ArgumentException("Unknown Parameter", param);
             }
         }
 
