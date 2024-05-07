@@ -107,7 +107,7 @@ namespace Maroon.Physics.Motion
                 for(int i = 0; i < expr.Parameters.Count; i++)
                 {
                     var key = expr.Parameters.Keys.ToList()[i];
-                    expr.Parameters[key] = args.Parameters[i];
+                    expr.Parameters[key] = args.Parameters[i].Evaluate();
                 }
 
                 args.Result = expr.Evaluate();
