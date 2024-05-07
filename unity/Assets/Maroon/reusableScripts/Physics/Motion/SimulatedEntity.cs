@@ -53,7 +53,7 @@ namespace Maroon.Physics.Motion
             {
                 foreach (String parameter in parameters)
                 {
-                    //expr.Parameters[parameter] = null;
+                    expr.Parameters[parameter] = null;
                 }
             }
 
@@ -102,7 +102,15 @@ namespace Maroon.Physics.Motion
         {
             if(_exprs.ContainsKey(name))
             {
-                args.Result = _exprs[name].Evaluate();
+                var expr = _exprs[name];
+
+                for(int i = 0; i < expr.Parameters.Count; i++)
+                {
+                    var key = expr.Parameters.Keys.ToList()[i];
+                    expr.Parameters[key] = args.Parameters[i];
+                }
+
+                args.Result = expr.Evaluate();
             }
         }
 
