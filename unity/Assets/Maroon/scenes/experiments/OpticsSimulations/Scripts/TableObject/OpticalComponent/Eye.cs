@@ -1,9 +1,9 @@
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
+using Maroon.Physics.Optics.Light;
+using Maroon.Physics.Optics.Manager;
+using Maroon.Physics.Optics.Util;
 using UnityEngine;
 
-namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent
+namespace Maroon.Physics.Optics.TableObject.OpticalComponent
 {
     public class Eye : OpticalComponent
     {

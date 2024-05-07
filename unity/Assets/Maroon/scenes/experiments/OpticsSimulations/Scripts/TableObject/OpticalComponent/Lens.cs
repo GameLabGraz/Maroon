@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
+using Maroon.Physics.Optics.Light;
+using Maroon.Physics.Optics.Manager;
+using Maroon.Physics.Optics.Util;
 using UnityEngine;
 using MathSys = System.Math;
 
-namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent
+namespace Maroon.Physics.Optics.TableObject.OpticalComponent
 {
     public class Lens : OpticalComponent
     {

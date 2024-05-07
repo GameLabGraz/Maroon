@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
+using Maroon.Physics.Optics.Manager;
+using Maroon.Physics.Optics.TableObject.OpticalComponent;
+using Maroon.Physics.Optics.Util;
 using UnityEngine;
 
-namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
+namespace Maroon.Physics.Optics.Light
 {
     public class LightPath
     {
@@ -46,26 +46,23 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
             // Get the first hit component
             OpticalComponent hitComponent = OpticalComponentManager.Instance.GetFirstHitComponent(inRay.r0Local, inRay.n);
             
-            switch (hitComponent.OpticalType)
+            switch (hitComponent)
             {
                 // End of ray - no further reflection/refraction
-                case OpticalType.Wall:
-                    Wall wall = (Wall) hitComponent;
+                case Wall wall:
                     (float distanceToWall, _, _) = wall.CalculateDistanceReflectionRefraction(inRay);
                     
                     inRay.UpdateLength(distanceToWall);
                     break;
                 
-                case OpticalType.Aperture:
-                    Aperture aperture = (Aperture)hitComponent;
+                case Aperture aperture:
                     (float distanceToAperture, _, _) = aperture.CalculateDistanceReflectionRefraction(inRay);
                     
                     inRay.UpdateLength(distanceToAperture);
                     break;
                         
                 // Ray has 1 further reflection
-                case OpticalType.Mirror:
-                    TableObject.OpticalComponent.Mirror mirror = (TableObject.OpticalComponent.Mirror) hitComponent;
+                case TableObject.OpticalComponent.Mirror mirror:
                     (float distanceToMirror, RaySegment reflectionM, _) = mirror.CalculateDistanceReflectionRefraction(inRay);
                     
                     inRay.UpdateLength(distanceToMirror);
@@ -74,8 +71,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
                     break;
 
                 // Ray has potential reflection and refraction
-                case OpticalType.Eye:
-                    Eye eye = (Eye)hitComponent;
+                case Eye eye:
                     (float distanceToEye, RaySegment reflectionEye, RaySegment refractionEye) = eye.CalculateDistanceReflectionRefraction(inRay);
 
                     inRay.UpdateLength(distanceToEye);
@@ -93,10 +89,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Light
                     break;
                 
                 // Ray has reflection and refraction
-                case OpticalType.Lens:
-                    Lens lens = (Lens) hitComponent;
+                case Lens lens:
                     (float distanceToLens, RaySegment reflectionLens, RaySegment refractionLens) = lens.CalculateDistanceReflectionRefraction(inRay);
-                    // Debug.Log("lens dist: "+ distanceToLens.ToString("F3"));
                     inRay.UpdateLength(distanceToLens);
                     if (reflectionLens != null)
                     {

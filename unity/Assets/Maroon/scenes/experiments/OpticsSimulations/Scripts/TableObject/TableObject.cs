@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject
+namespace Maroon.Physics.Optics.TableObject
 {
     public class TableObject : MonoBehaviour
     {

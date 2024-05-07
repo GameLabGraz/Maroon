@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.Camera;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
+using Maroon.Physics.Optics.Camera;
+using Maroon.Physics.Optics.TableObject.LightComponent;
+using Maroon.Physics.Optics.TableObject.OpticalComponent;
+using Maroon.Physics.Optics.Util;
 using UnityEngine;
 
-namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
+namespace Maroon.Physics.Optics.Manager
 {
     public class PresetManager : MonoBehaviour
     {
@@ -42,7 +42,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             }
         }
         
-        public void Start()
+        private void Start()
         {
             _ocm = OpticalComponentManager.Instance;
             _lcm = LightComponentManager.Instance;
@@ -55,22 +55,21 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
 
         public void TablePresets(int nr)
         {
-            switch (nr)
+            switch ((TablePreset) nr)
             {
-                case 0: return;
-                case 1: LensAndMirror(); break;
-                case 2: FocalLength(); break;
-                case 3: StandardEye(); break;
-                case 4: NearsightedEye(); break;
-                case 5: FarsightedEye(); break;
-                // case 6: UnderwaterVision(); break;
-                case 6: MagnifyingGlass(); break;
-                case 7: KeplerianTelescope(); break;
-                case 8: GalileanTelescope(); break;
-                case 9: NewtonianTelescope(); break;
-                case 10: Microscope(); break;
-                case 11: LightEmittingDiode(); break;
-                case 12: OpticalFiber(); break;
+                case TablePreset.Undefined: return;
+                case TablePreset.LensAndMirror: LensAndMirror(); break;
+                case TablePreset.FocalLength: FocalLength(); break;
+                case TablePreset.StandardEye: StandardEye(); break;
+                case TablePreset.NearsightedEye: NearsightedEye(); break;
+                case TablePreset.FarsightedEye: FarsightedEye(); break;
+                case TablePreset.MagnifyingGlass: MagnifyingGlass(); break;
+                case TablePreset.KeplerianTelescope: KeplerianTelescope(); break;
+                case TablePreset.GalileanTelescope: GalileanTelescope(); break;
+                case TablePreset.NewtonianTelescope: NewtonianTelescope(); break;
+                case TablePreset.Microscope: Microscope(); break;
+                case TablePreset.LightEmittingDiode: LightEmittingDiode(); break;
+                case TablePreset.OpticalFiber: OpticalFiber(); break;
             }
         }
         
@@ -95,7 +94,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             
             _lcm.AddLightComponent(parallelSource, new Vector3(1.2f, 0, 0.62f));
             var lensObject = _ocm.AddOpticalComponent(lens, new Vector3(1.70f, 0, 0.62f));
-            // ((Lens)lensObject).SetParameters(R1: 0.30f, R2: -0.30f, d1: 0.015f, d2: 0.015f);
             ((Lens)lensObject).SetParameters(R1: Constants.Biconvex.Item1, R2: Constants.Biconvex.Item2, d1: Constants.Biconvex.Item3, d2: Constants.Biconvex.Item4);
             
             _camControls.SetPresetCameras(
@@ -156,14 +154,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 new CameraControls.CameraSetting(new Vector3(-0.12f, 2.6f, 1f), Constants.BaseCamRot, 3),
                 new CameraControls.CameraSetting(new Vector3(-0.12f,3,2.08f), Constants.TopCamRot, 3)
             );
-        }
-        
-        private void UnderwaterVision()
-        {
-            _em.ClearTable();
-            _uim.rayThickness.Value = 0.3f;
-
-
         }
         
         private void MagnifyingGlass()
@@ -287,8 +277,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 new CameraControls.CameraSetting(new Vector3(-0.1825f, 2.6f, 1f), Constants.BaseCamRot, 3.5f),
                 new CameraControls.CameraSetting(new Vector3(-0.1825f,3,2.08f), Constants.TopCamRot, 3.5f)
             );
-
-
         }
         
         private void Microscope()
@@ -355,6 +343,23 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 new CameraControls.CameraSetting(new Vector3(-0.124f, 2.6f, 1f), Constants.BaseCamRot, 3),
                 new CameraControls.CameraSetting(new Vector3(-0.124f,3,2.08f), Constants.TopCamRot, 3)
             );
+        }
+        
+        private enum TablePreset
+        {
+            Undefined,
+            LensAndMirror,
+            FocalLength,
+            StandardEye,
+            NearsightedEye,
+            FarsightedEye,
+            MagnifyingGlass,
+            KeplerianTelescope,
+            GalileanTelescope,
+            NewtonianTelescope,
+            Microscope,
+            LightEmittingDiode,
+            OpticalFiber
         }
 
     }

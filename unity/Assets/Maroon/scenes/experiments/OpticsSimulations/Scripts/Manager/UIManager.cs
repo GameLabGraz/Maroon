@@ -3,18 +3,15 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using GameLabGraz.UI;
-using Maroon.Physics;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
+using Maroon.Physics.Optics.TableObject;
+using Maroon.Physics.Optics.TableObject.LightComponent;
+using Maroon.Physics.Optics.TableObject.OpticalComponent;
+using Maroon.Physics.Optics.Util;
 using TMPro;
 using UnityEngine;
-using LaserPointer = Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent.LaserPointer;
-using LightType = Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent.LightType;
 using Math = System.Math;
 
-namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
+namespace Maroon.Physics.Optics.Manager
 {
     public class UIManager : MonoBehaviour
     {
@@ -128,15 +125,15 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
 
         private void SetLightControlPanelValues()
         {
-            switch (_selectedLc.LightType)
+            switch (_selectedLc.LightCategory)
             {
-                case LightType.LaserPointer:
+                case LightCategory.LaserPointer:
                     SetLaserPointerControlPanelValues((LaserPointer)_selectedLc);
                     break;
-                case LightType.ParallelSource:
+                case LightCategory.ParallelSource:
                     SetParallelSourceControlPanelValues((ParallelSource)_selectedLc);
                     break;
-                case LightType.PointSource:
+                case LightCategory.PointSource:
                     SetPointSourceControlPanelValues((PointSource)_selectedLc);
                     break;
             }
@@ -176,19 +173,19 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         public void UpdateLightComponentValues()
         {
             _selectedLc.ChangeIntensity(selectedIntensity.Value);
-            switch (_selectedLc.LightType)
+            switch (_selectedLc.LightCategory)
             {
-                case LightType.LaserPointer:
+                case LightCategory.LaserPointer:
                     // Placeholder for potential future LaserPointer properties
                     break;
                 
-                case LightType.ParallelSource:
+                case LightCategory.ParallelSource:
                     var ps = (ParallelSource)_selectedLc;
                     ps.ChangeNumberOfRays(numberOfRaysParallel.Value);
                     ps.distanceBetweenRays = distanceBetweenRays.Value / Constants.InMM;
                     break;
                 
-                case LightType.PointSource:
+                case LightCategory.PointSource:
                     var pointS = (PointSource)_selectedLc;
                     pointS.ChangeNumberOfRaysAndAngle(numberOfRaysPoint.Value, rayDistributionAngle.Value);
                     break;
@@ -292,18 +289,18 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
 
         private void SetOpticalControlPanelValues()
         {
-            switch (_selectedOc.OpticalType)
+            switch (_selectedOc.OpticalCategory)
             {
-                case OpticalType.Aperture:
+                case OpticalCategory.Aperture:
                     SetApertureControlPanelValues((Aperture)_selectedOc);
                     break;
-                case OpticalType.Eye:
+                case OpticalCategory.Eye:
                     SetEyeControlPanelValues((Eye)_selectedOc);
                     break;
-                case OpticalType.Lens:
+                case OpticalCategory.Lens:
                     SetLensControlPanelValues((Lens)_selectedOc);
                     break;
-                case OpticalType.Mirror:
+                case OpticalCategory.Mirror:
                     SetMirrorControlPanelValues((TableObject.OpticalComponent.Mirror)_selectedOc);
                     break;
             }
@@ -392,20 +389,20 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
             if (_selectedOc == null)
                 return;
             
-            switch (_selectedOc.OpticalType)
+            switch (_selectedOc.OpticalCategory)
             {
-                case OpticalType.Aperture:
+                case OpticalCategory.Aperture:
                     var ap = (Aperture)_selectedOc;
                     ap.Rin = apertureRin.Value / Constants.InCM;
                     ap.Rout = apertureRout.Value / Constants.InCM;
                     break;
                 
-                case OpticalType.Eye:
+                case OpticalCategory.Eye:
                     var ey = (Eye)_selectedOc;
                     ey.f = eyeF.Value / Constants.InCM;
                     break;
                 
-                case OpticalType.Lens:
+                case OpticalCategory.Lens:
                     var le = (Lens)_selectedOc;
                     le.R1 = lensR1.Value / Constants.InCM;
                     le.R2 = lensR2.Value / Constants.InCM;
@@ -417,7 +414,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                     le.TranslateArrows();
                     break;
                 
-                case OpticalType.Mirror:
+                case OpticalCategory.Mirror:
                     var mi = (TableObject.OpticalComponent.Mirror)_selectedOc;
                     mi.R = mirrorR.Value / Constants.InCM;
                     mi.Rc = mirrorRc.Value / Constants.InCM;
@@ -445,7 +442,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         // ----------------------------------- Lens Presets -----------------------------------
         public void LensCauchyModel(int nr)
         {
-            if (_selectedOc == null || _selectedOc.OpticalType != OpticalType.Lens)
+            if (_selectedOc == null || _selectedOc.OpticalCategory != OpticalCategory.Lens)
                 return;
             
             switch (nr)
@@ -471,7 +468,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
 
         public void SetCustomCauchyModelDropdown()
         {
-            if (_selectedOc == null || _selectedOc.OpticalType != OpticalType.Lens)
+            if (_selectedOc == null || _selectedOc.OpticalCategory != OpticalCategory.Lens)
                 return;
 
             var ab = (lensA.Value, lensB.Value);
@@ -490,7 +487,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         // Recalculated when lens.R1, lens.R2, lens.A, lens.B changes
         public void DisplayLensFocalLength()
         {
-            if (_selectedOc == null || _selectedOc.OpticalType != OpticalType.Lens)
+            if (_selectedOc == null || _selectedOc.OpticalCategory != OpticalCategory.Lens)
                 return;
 
             var le = (Lens)_selectedOc;
@@ -502,7 +499,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         
         public void LensType(int nr)
         {
-            if (_selectedOc == null || _selectedOc.OpticalType != OpticalType.Lens)
+            if (_selectedOc == null || _selectedOc.OpticalCategory != OpticalCategory.Lens)
                 return;
             
             var le = (Lens)_selectedOc;
@@ -527,7 +524,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         
         public void SetCustomLensModelDropdown()
         {
-            if (_selectedOc == null || _selectedOc.OpticalType != OpticalType.Lens)
+            if (_selectedOc == null || _selectedOc.OpticalCategory != OpticalCategory.Lens)
                 return;
             
             var lensParams = (

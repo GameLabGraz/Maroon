@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Util
+namespace Maroon.Physics.Optics.Util
 {
     public static class Math
     {

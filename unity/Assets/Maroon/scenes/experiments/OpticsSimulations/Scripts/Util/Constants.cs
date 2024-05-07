@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Util
+namespace Maroon.Physics.Optics.Util
 {
     public static class Constants
     {
@@ -42,8 +42,8 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Util
         public const int TableObjectLayer = 1 << 4;
         public const int UILayer = 1 << 5;
         
-        public static readonly Vector3 MirrorTransformArrowPos = new(0.2408f, 0, 0);
-        public static readonly Vector3 MirrorArrowShift = new(0.048f, 0, 0);
+        public static readonly Vector3 MirrorTransformArrowPos = new(0.1759f, 0, 0);
+        public static readonly Vector3 MirrorArrowShift = new(0.0593f, 0, 0);
         
         public static readonly Vector3 BaseOcPosition = new (2.1f, 0, 0.9f);
         public static readonly Vector3 BaseLcPosition = new (1.3f, 0, 0.9f);

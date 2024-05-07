@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
+namespace Maroon.Physics.Optics.Manager
 {
     public class MeshCalculationManager : MonoBehaviour
     {
@@ -17,11 +17,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                 Debug.LogError("SHOULD NOT OCCUR - Destroyed MeshCalculationManager");
                 Destroy(gameObject);
             }
-        }
-
-        public List<T> ConcatenateLists<T>(params List<T>[] lists)
-        {
-            return lists.Aggregate(new List<T>(), (result, list) => result.Concat(list).ToList());
         }
 
         public void FlipTriangleVertexOrder(ref List<int> triangles)

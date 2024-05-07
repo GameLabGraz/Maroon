@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
+using Maroon.Physics.Optics.Light;
 using UnityEngine;
 
-namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent
+namespace Maroon.Physics.Optics.TableObject.LightComponent
 {
     public class PointSource : LightComponent
     {

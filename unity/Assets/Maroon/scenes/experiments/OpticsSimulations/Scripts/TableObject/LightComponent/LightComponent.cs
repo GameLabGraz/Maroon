@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
+using Maroon.Physics.Optics.Light;
 using UnityEngine;
 
-namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightComponent
+namespace Maroon.Physics.Optics.TableObject.LightComponent
 {
     public class LightComponent : TableObject
     {
-        [SerializeField] private LightType lightType;
+        [SerializeField] private LightCategory lightCategory;
         
         [Header("Light Properties")] 
         [SerializeField] private float intensity;
@@ -16,7 +16,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
 
         private Vector3 _origin;
 
-        public LightType LightType => lightType;
+        public LightCategory LightCategory => lightCategory;
         public float Intensity
         {
             get => intensity;
@@ -77,10 +77,11 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.LightC
 
     }
     
-    public enum LightType
+    public enum LightCategory
     {
-        LaserPointer = 0,
-        PointSource = 1,
-        ParallelSource = 2
+        Undefined,
+        LaserPointer,
+        ParallelSource,
+        PointSource
     }
 }

@@ -1,14 +1,14 @@
 using System;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.Light;
+using Maroon.Physics.Optics.Light;
 using UnityEngine;
 
-namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent
+namespace Maroon.Physics.Optics.TableObject.OpticalComponent
 {
     public class OpticalComponent : TableObject
     {
-        [SerializeField] private OpticalType opticalType;
+        [SerializeField] private OpticalCategory opticalCategory;
         
-        public OpticalType OpticalType => opticalType;
+        public OpticalCategory OpticalCategory => opticalCategory;
 
         public virtual (float inRayLength, RaySegment reflection, RaySegment refraction) CalculateDistanceReflectionRefraction(RaySegment inRay)
         {
@@ -32,12 +32,13 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Optica
 
     }
     
-    public enum OpticalType
+    public enum OpticalCategory
     {
-        Aperture = 0,
-        Eye = 1,
-        Lens = 2,
-        Mirror = 3,
-        Wall = 4,
+        Undefined,
+        Lens,
+        Mirror,
+        Eye,
+        Aperture,
+        Wall
     }
 }

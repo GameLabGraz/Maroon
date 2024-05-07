@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handlers;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
+using Maroon.Physics.Optics.TableObject.Handlers;
+using Maroon.Physics.Optics.TableObject.OpticalComponent;
+using Maroon.Physics.Optics.Util;
 using UnityEngine;
 
-namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
+namespace Maroon.Physics.Optics.Manager
 {
     public class OpticalComponentManager : MonoBehaviour
     {
@@ -19,7 +19,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         [SerializeField] private Aperture aperture;
         [SerializeField] private Eye eye;
         [SerializeField] private Lens lens;
-        [SerializeField] private TableObject.OpticalComponent.Mirror mirror;
+        [SerializeField] private Mirror mirror;
         [SerializeField] private Wall wall;
 
         public List<OpticalComponent> OpticalComponents => _opticalComponents;
@@ -40,16 +40,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         private void Start()
         {
             AddWalls();
-            // AddOpticalComponent(mirror, new Vector3(1.5f, 0, 0.30f));
-            // AddOpticalComponent(mirror, new Vector3(1.8f, 0, 0.30f));
-            //
-            // AddOpticalComponent(aperture, new Vector3(2.1f, 0, 0.30f));
-            // AddOpticalComponent(aperture, new Vector3(2.4f, 0, 0.30f));
-            //
-            // AddOpticalComponent(eye, new Vector3(2.7f, 0, 0.30f));
-            // AddOpticalComponent(eye, new Vector3(3.0f, 0, 0.30f));
-            //
-            // AddOpticalComponent(lens, new Vector3(1f, 0, 0.30f));
         }
 
         private void AddWalls()
@@ -87,7 +77,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
 
         public OpticalComponent AddOpticalComponent(OpticalComponent oc, Vector3 pos, Vector3? rot = null)
         {
-            Vector3 rotation = rot ?? new Vector3(0, 0, 0);
+            Vector3 rotation = rot ?? Vector3.zero;
             
             var ocClone = Instantiate(oc, tableLowLeftCorner.transform);
             ocClone.transform.localPosition = pos;
@@ -100,20 +90,20 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         
         public void AddOC(int nr)
         {
-            switch (nr)
+            switch ((OpticalCategory) nr)
             {
-                case 0:
+                case OpticalCategory.Undefined:
                     return;
-                case 1:
+                case OpticalCategory.Lens:
                     AddOpticalComponent(lens, Constants.BaseOcPosition);
                     break;
-                case 2:
+                case OpticalCategory.Mirror:
                     AddOpticalComponent(mirror, Constants.BaseOcPosition);
                     break;
-                case 3:
+                case OpticalCategory.Eye:
                     AddOpticalComponent(eye, Constants.BaseOcPosition);
                     break;
-                case 4:
+                case OpticalCategory.Aperture:
                     AddOpticalComponent(aperture, Constants.BaseOcPosition);
                     break;
             }
@@ -138,7 +128,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         {
             foreach (var oc in _opticalComponents)
             {
-                if (oc.OpticalType != OpticalType.Wall)
+                if (oc.OpticalCategory != OpticalCategory.Wall)
                     oc.GetComponent<SelectionHandler>().Unselect();
             }
         }
@@ -147,13 +137,9 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
         {
             float dmin = Mathf.Infinity;
             OpticalComponent firstOc = _opticalComponents[0];
-
-            // List<(OpticalComponent oc, float dist)> debugComponentDistances = new List<(OpticalComponent oc, float dist)>();
-            
             foreach (var oc in _opticalComponents)
             {
                 float d = oc.GetRelevantDistance(rayOrigin, rayDirection);
-                // debugComponentDistances.Add((oc, d));
                 
                 if (Math.IsValidDistance(d) && d < dmin)
                 {
@@ -161,7 +147,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager
                     firstOc = oc;
                 }
             }
-            
             return firstOc;
         }
         

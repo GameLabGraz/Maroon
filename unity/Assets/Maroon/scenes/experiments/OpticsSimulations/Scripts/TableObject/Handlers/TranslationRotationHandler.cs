@@ -1,7 +1,7 @@
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.OpticalComponent;
+using Maroon.Physics.Optics.TableObject.OpticalComponent;
 using UnityEngine;
 
-namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handlers
+namespace Maroon.Physics.Optics.TableObject.Handlers
 {
     public class TranslationRotationHandler : MonoBehaviour
     {
@@ -18,7 +18,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handle
         private void Awake()
         {
             _tableObject = GetComponent<TableObject>();
-            _translationPlane = new Plane(transform.forward, new Vector3(0, 0, 0));
+            _translationPlane = new Plane(transform.forward, Vector3.zero);
         }
 
         private void SetMouseToTableOffsets(Vector3 hitPoint)
@@ -101,7 +101,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handle
         Vector3 GetAngleMeasureVector()
         {
             if (_tableObject.ComponentType == ComponentType.OpticalComponent)
-                if ( ((OpticalComponent.OpticalComponent) _tableObject).OpticalType == OpticalType.Mirror )
+                if ( ((OpticalComponent.OpticalComponent) _tableObject).OpticalCategory == OpticalCategory.Mirror )
                     if (((OpticalComponent.Mirror)_tableObject).flipped)
                         return transform.right;
             

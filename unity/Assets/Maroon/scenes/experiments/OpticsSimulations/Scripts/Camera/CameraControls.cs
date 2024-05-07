@@ -1,10 +1,9 @@
 ﻿using System.Collections;
-using Maroon.Physics;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.Util;
+using Maroon.Physics.Optics.Manager;
+using Maroon.Physics.Optics.Util;
 using UnityEngine;
 
-namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Camera
+namespace Maroon.Physics.Optics.Camera
 {
     public class CameraControls : MonoBehaviour
     {
@@ -22,6 +21,20 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Camera
         
         public bool IsTopView => isTopView;
         
+        public struct CameraSetting
+        {
+            public Vector3 Position;
+            public Quaternion Rotation;
+            public float FOV;
+
+            public CameraSetting(Vector3 position, Quaternion rotation, float fov)
+            {
+                Position = position;
+                Rotation = rotation;
+                FOV = fov;
+            }
+        }
+        
         private void Start()
         {
             _cam = GetComponent<UnityEngine.Camera>();
@@ -30,7 +43,7 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Camera
             _topView = new CameraSetting(Constants.TopCamPos, Constants.TopCamRot, Constants.TopCamFOV);
         }
 
-        void Update()
+        private void Update()
         {
             if (ExperimentManager.Instance.mouseOnUIPanel || _isMoving)
                 return;
@@ -111,21 +124,6 @@ namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.Camera
             
             if (!isTopView) StartCoroutine(ChangeCameraView(_baseView));
             else StartCoroutine(ChangeCameraView(_topView));
-        }
-        
-        public struct CameraSetting
-        {
-            public Vector3 Position;
-            public Quaternion Rotation;
-            public float FOV;
-
-            public CameraSetting(Vector3 position, Quaternion rotation, float fov)
-            {
-                Position = position;
-                Rotation = rotation;
-                FOV = fov;
-            }
-            
         }
         
         private void CopyCameraSetting(CameraSetting a, out CameraSetting b)

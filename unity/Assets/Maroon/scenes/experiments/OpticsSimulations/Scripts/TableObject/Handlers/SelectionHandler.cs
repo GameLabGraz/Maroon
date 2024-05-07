@@ -1,7 +1,7 @@
-using Maroon.scenes.experiments.OpticsSimulations.Scripts.Manager;
+using Maroon.Physics.Optics.Manager;
 using UnityEngine;
 
-namespace Maroon.scenes.experiments.OpticsSimulations.Scripts.TableObject.Handlers
+namespace Maroon.Physics.Optics.TableObject.Handlers
 {
     public class SelectionHandler : MonoBehaviour
     {
