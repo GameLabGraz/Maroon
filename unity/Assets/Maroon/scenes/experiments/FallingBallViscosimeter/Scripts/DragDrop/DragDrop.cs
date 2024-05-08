@@ -43,22 +43,24 @@ public class DragDrop : MonoBehaviour
     if (localPositionLimit && axisLocked)
     {
       Vector3 current_local_position = transform.localPosition;
-      switch (axisLockedInto)
-      {
-        case Axis.Y:
-          transform.localPosition = new Vector3(Mathf.Clamp(transform.localPosition.x, localPositionMin, localPositionMax),
-                                                current_local_position.y, current_local_position.z);
-          break;
-        case Axis.X:
-          transform.localPosition = new Vector3(current_local_position.x,
-                                        Mathf.Clamp(transform.localPosition.y, localPositionMin, localPositionMax),
-                                        current_local_position.z);
-          break;
-        case Axis.Z:
-          transform.localPosition = new Vector3(current_local_position.x, current_local_position.y,
-            Mathf.Clamp(transform.localPosition.z, localPositionMin, localPositionMax));
-          break;
-      }
+      transform.localPosition = new Vector3(Mathf.Clamp(transform.localPosition.x, localPositionMin, localPositionMax),
+                                                      current_local_position.y, current_local_position.z);
+      //switch (axisLockedInto)
+      //{
+      //  case Axis.Y:
+      //    transform.localPosition = new Vector3(Mathf.Clamp(transform.localPosition.x, localPositionMin, localPositionMax),
+      //                                          current_local_position.y, current_local_position.z);
+      //    break;
+      //  case Axis.X:
+      //    transform.localPosition = new Vector3(current_local_position.x,
+      //                                  Mathf.Clamp(current_local_position.y, localPositionMin, localPositionMax),
+      //                                  current_local_position.z);
+      //    break;
+      //  case Axis.Z:
+      //    transform.localPosition = new Vector3(current_local_position.x, current_local_position.y,
+      //      Mathf.Clamp(transform.localPosition.z, localPositionMin, localPositionMax));
+        //  break;
+      //}
     }
   }
 

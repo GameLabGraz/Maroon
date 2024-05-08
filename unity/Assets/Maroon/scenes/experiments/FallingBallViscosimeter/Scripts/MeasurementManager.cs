@@ -11,7 +11,7 @@ namespace Maroon.Physics
   {
     public static MeasurementManager Instance;
     public Caliper caliperPrefab;
-    private Caliper current_caliper = null;
+    private GameObject current_caliper = null;
     public Camera main_camera;
     public Camera zoom_camera;
     public List<MeasurableObject> measurableObjects;
@@ -53,13 +53,29 @@ namespace Maroon.Physics
       main_camera.gameObject.SetActive(false);
       fitObjectToCamera();
       zoom_camera.transform.position = new Vector3(measuredObject.transform.position.x + zoom_camera.orthographicSize * 0.5f, measuredObject.transform.position.y, zoom_camera.transform.position.z);
-
-      current_caliper = Instantiate(caliperPrefab,
+      if (measuredObject.measurement_device)
+      {
+         current_caliper = Instantiate(measuredObject.measurement_device,
+                                             new Vector3(measuredObject.transform.position.x + 0.25f,
+                                                         measuredObject.transform.position.y + 0.05f,
+                                                         measuredObject.transform.position.z),
+                                             Quaternion.identity).gameObject;
+      }
+      else
+      {
+        current_caliper = Instantiate(caliperPrefab,
                                     new Vector3(measuredObject.transform.position.x + 0.25f,
                                                 measuredObject.transform.position.y + 0.05f,
                                                 measuredObject.transform.position.z),
-                                    Quaternion.identity);
+                                    Quaternion.identity).gameObject;
+      }
+
+      current_caliper.transform.rotation = Quaternion.Euler(0.0f, 0.0f,measuredObject.device_rotation);
+      
+      zoom_camera.gameObject.SetActive(true);
       zoom_camera.enabled = true;
+      zoom_camera.gameObject.tag = "MainCamera";
+      main_camera.gameObject.tag = null;
       startButton.interactable = false;
       endButton.interactable = true;
     }
@@ -72,7 +88,10 @@ namespace Maroon.Physics
       Destroy(current_caliper.gameObject);
       current_caliper = null;
       main_camera.gameObject.SetActive(true);
+      zoom_camera.gameObject.SetActive(false);
       zoom_camera.enabled = false;
+      zoom_camera.gameObject.tag = null;
+      main_camera.gameObject.tag = "MainCamera";
       startButton.interactable = true;
       endButton.interactable = false;
       measurementState = MeasurementState.Off;

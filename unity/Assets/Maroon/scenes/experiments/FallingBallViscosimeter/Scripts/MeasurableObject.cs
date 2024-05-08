@@ -11,9 +11,11 @@ namespace Maroon.Physics
     private MeasurementManager _measurementManager;
     private float length_;
     private bool clickable = false;
-    
+    public GameObject measurement_device;
+    public float device_rotation = 0;
     
     public Axis measuredAxis;
+    
 
     private void Awake()
     {
