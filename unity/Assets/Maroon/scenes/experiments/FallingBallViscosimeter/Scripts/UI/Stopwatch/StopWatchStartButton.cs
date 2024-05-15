@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using Maroon.UI;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
+[RequireComponent(typeof(EventTrigger))]
 public class StopWatchStartButton : MonoBehaviour
 {
     private float hover_timer = 0.0f;
