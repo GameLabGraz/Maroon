@@ -32,7 +32,7 @@ namespace Maroon.Physics.Motion
             _t = t;
             _mass = entity.EvaluateMassAt(t);
             _force = entity.EvaluateForceAt(t);
-            _acceleration = force * (1.0 / mass);
+            _acceleration = _force * (1.0 / _mass);
             return acceleration;
         }
 
