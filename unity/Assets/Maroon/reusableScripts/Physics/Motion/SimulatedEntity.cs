@@ -14,6 +14,7 @@ namespace Maroon.Physics.Motion
         public State state;
 
         private Dictionary<String, Expression> _exprs = new Dictionary<String, Expression>();
+        private Dictionary<String, double> _params = new Dictionary<string, double>();
 
         private List<State> states;
         private State _initial_state;
@@ -60,6 +61,11 @@ namespace Maroon.Physics.Motion
             _exprs[name] = expr;
         }
 
+        public void AddParameter(String name, double parameter)
+        {
+            _params[name] = parameter;
+        }
+
         private (String, List<String>) SplitSignature(String signature)
         {
             String pattern = @"(\w+)(?:\(([^)]*)\))?";
@@ -100,17 +106,20 @@ namespace Maroon.Physics.Motion
 
         private void Expression_EvaluateFunction(string name, FunctionArgs args)
         {
-            if(_exprs.ContainsKey(name))
+            if (_exprs.ContainsKey(name))
             {
                 var expr = _exprs[name];
 
-                for(int i = 0; i < expr.Parameters.Count; i++)
+                for (int i = 0; i < expr.Parameters.Count; i++)
                 {
                     var key = expr.Parameters.Keys.ToList()[i];
                     expr.Parameters[key] = args.Parameters[i].Evaluate();
                 }
 
                 args.Result = expr.Evaluate();
+            } else
+            {
+
             }
         }
 
@@ -119,21 +128,26 @@ namespace Maroon.Physics.Motion
             switch (param)
             {
 
-                case "t": args.Result = state.t; break;
-                case "x": args.Result = state.position.x; break;
-                case "y": args.Result = state.position.y; break;
-                case "z": args.Result = state.position.z; break;
-                case "vx": args.Result = state.velocity.x; break;
-                case "vy": args.Result = state.velocity.y; break;
-                case "vz": args.Result = state.velocity.z; break;
-                default:
-                    if (_exprs.ContainsKey(param))
-                    {
-                        args.Result = _exprs[param].Evaluate();
-                        break;
-                    }
+                case "t": args.Result = state.t; return;
+                case "x": args.Result = state.position.x; return;
+                case "y": args.Result = state.position.y; return;
+                case "z": args.Result = state.position.z; return;
+                case "vx": args.Result = state.velocity.x; return;
+                case "vy": args.Result = state.velocity.y; return;
+                case "vz": args.Result = state.velocity.z; return;
+            }
 
-                    throw new ArgumentException("Unknown Parameter", param);
+            if (_params.ContainsKey(param))
+            {
+                args.Result = _params[param];
+            }
+            else if (_exprs.ContainsKey(param))
+            {
+                args.Result = _exprs[param].Evaluate();
+            }
+            else
+            {
+                throw new ArgumentException(String.Format("Unknown Parameter '{0}'", param));
             }
         }
 
