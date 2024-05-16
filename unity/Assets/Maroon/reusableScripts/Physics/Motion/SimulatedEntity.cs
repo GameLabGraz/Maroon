@@ -12,11 +12,12 @@ namespace Maroon.Physics.Motion
     public class SimulatedEntity
     {
         public State state;
+        public List<State> States { get { return _states; } }
 
         private Dictionary<String, Expression> _exprs = new Dictionary<String, Expression>();
         private Dictionary<String, double> _params = new Dictionary<string, double>();
 
-        private List<State> states;
+        private List<State> _states;
         private State _initial_state;
 
         private double _dt;
@@ -158,14 +159,14 @@ namespace Maroon.Physics.Motion
 
         public void Initialize(double initial_t, double dt)
         {
-            states = new List<State>();
+            _states = new List<State>();
 
             state = _initial_state;
             state.Acceleration(initial_t);
             state.CalculateEnergy();
             state.CalculatePower();
 
-            states.Add(new State(state));
+            _states.Add(new State(state));
 
             _dt = dt;
             _isInitialized = true;
@@ -175,16 +176,16 @@ namespace Maroon.Physics.Motion
         {
             _bounds.Encapsulate((Vector3)state.position);
             
-            double prev_power = states.Last().power;
+            double prev_power = _states.Last().power;
 
             state.CalculateEnergyPowerWork(prev_power, _dt);
-            states.Add(new State(state));
+            _states.Add(new State(state));
         }
 
         public void PrintData()
         {
             String log = "";
-            foreach (var item in states)
+            foreach (var item in _states)
             {
                 log += String.Format("{0:f5} {1:f5} {2:f5} {3:f5} {4:f5} {5:f5} {6:f5} \n", item.t, item.position.x, item.position.y, item.position.z, item.velocity.x, item.velocity.y, item.velocity.z);
             }
@@ -194,7 +195,7 @@ namespace Maroon.Physics.Motion
         public void PrintDataCsv(String header_prefix)
         {
             String log = String.Format("t;{0}_x;{0}_y;{0}_z;{0}_vx;{0}_vy;{0}_vz\n", header_prefix);
-            foreach (var item in states)
+            foreach (var item in _states)
             {
                 log += String.Format("{0:f5};{1:f5};{2:f5};{3:f5};{4:f5};{5:f5};{6:f5} \n", item.t, item.position.x, item.position.y, item.position.z, item.velocity.x, item.velocity.y, item.velocity.z);
             }
