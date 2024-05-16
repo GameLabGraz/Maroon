@@ -71,6 +71,12 @@ namespace Maroon.Physics.ThreeDimensionalMotion
         private List<Vector2> _dataEkin = new List<Vector2>();
         private List<Vector2> _data_W = new List<Vector2>();
 
+        /// new members
+        private Motion.Simulation simulation = null;
+        private Motion.SimulatedEntity entity = null;
+
+        private int render_step = 0;
+
         /// <summary>
         /// Update is called every frame
         /// </summary>
@@ -86,37 +92,96 @@ namespace Maroon.Physics.ThreeDimensionalMotion
         /// </summary>
         protected override void HandleFixedUpdate()
         {
-            if (!_startCalcPlot && !_initialized)
-                StartCalcPlot();
-
-            try
+            // Create new simulation from UI Paramters
+            if (simulation == null && entity == null)
             {
-                if (_startCalcPlot && _currentSteps < _steps && _currentUpdateRate == 1)
-                {
-                    _point = new Vector3(_dataX[_currentSteps].y, _dataZ[_currentSteps].y, _dataY[_currentSteps].y);
-                    Vector3 mappedPoint = CoordSystem.Instance.MapValues(_point);
-                    CoordSystem.Instance.DrawPoint(mappedPoint, _drawTrajectory);
+                render_step = 0;
 
-                    _currentSteps++;
-                    _currentUpdateRate = 0;
-                }
-                else if (_startCalcPlot && _currentSteps >= _steps)
-                {
-                    _currentSteps = 0;
-                    _drawTrajectory = false;
-                }
-                else
-                {
-                    if (_startCalcPlot)
-                        _currentUpdateRate++;
-                }
+                Vector3 initialPosition = ParameterUI.Instance.GetXYZ();
+                Vector3 initialVelocity = ParameterUI.Instance.GetVxVyVz();
+
+                entity = new Motion.SimulatedEntity();
+                entity.SetInitialState(new Motion.State(initialPosition, initialVelocity));
+                entity.AddExpression("fx", ParameterUI.Instance.GetFunctionFx());
+                entity.AddExpression("fy", ParameterUI.Instance.GetFunctionFy());
+                entity.AddExpression("fz", ParameterUI.Instance.GetFunctionFz());
+                entity.AddParameter("m", ParameterUI.Instance.GetMass());
+
+                simulation = new Motion.Simulation();
+                simulation.t0 = ParameterUI.Instance.GetTimes().x;
+                simulation.dt = ParameterUI.Instance.GetTimes().y;
+                simulation.steps = (int) ParameterUI.Instance.GetTimes().z;
+
+                simulation.AddEntity(entity);
+                simulation.Run();
+
+
+                Vector3 min_hack = simulation.bounds.min;
+                Vector3 max_hack = simulation.bounds.max;
+
+                // oh god oh god why do i have to abuse this thing like this??? 
+                // i would really like to clean up this experiment but i don't know
+                // if this would be out of scope....
+
+                // this is from the previous implementation
+                min_hack.x -= GetMinMaxScaleFactor(min_hack.x);
+                min_hack.y -= GetMinMaxScaleFactor(min_hack.y);
+                min_hack.z -= GetMinMaxScaleFactor(min_hack.z);
+
+                if (ScalingNeeded(min_hack.x))
+                    max_hack.x += GetMinMaxScaleFactor(max_hack.x);
+                if (ScalingNeeded(min_hack.y))
+                    max_hack.y += GetMinMaxScaleFactor(max_hack.y);
+                if (ScalingNeeded(min_hack.z))
+                    max_hack.z += GetMinMaxScaleFactor(max_hack.z);
+
+
+                CoordSystem.Instance.SetRealCoordBorders(min_hack, max_hack);
+
+
+                CoordSystem.Instance.SetParticleActive(_particleInUse);
             }
-            catch
+
+            var pos = entity.States[render_step++].position;
+            var mapped_pos = CoordSystem.Instance.MapValues((Vector3) pos);
+            CoordSystem.Instance.DrawPoint(mapped_pos, true);
+
+            if (render_step == simulation.steps)
             {
-                ShowError();
-                SimulationController.Instance.ResetSimulation();
-                _startCalcPlot = false;
+                render_step = 0;
             }
+
+            return;
+
+            ///// skip the rest
+
+            //try
+            //{
+            //    if (_startCalcPlot && _currentSteps < _steps && _currentUpdateRate == 1)
+            //    {
+            //        _point = new Vector3(_dataX[_currentSteps].y, _dataZ[_currentSteps].y, _dataY[_currentSteps].y);
+            //        Vector3 mappedPoint = CoordSystem.Instance.MapValues(_point);
+            //        CoordSystem.Instance.DrawPoint(mappedPoint, _drawTrajectory);
+
+            //        _currentUpdateRate = 0;
+            //    }
+            //    else if (_startCalcPlot && _currentSteps >= _steps)
+            //    {
+            //        _currentSteps = 0;
+            //        //_drawTrajectory = false;
+            //    }
+            //    else
+            //    {
+            //        if (_startCalcPlot)
+            //            _currentUpdateRate++;
+            //    }
+            //}
+            //catch
+            //{
+            //    ShowError();
+            //    SimulationController.Instance.ResetSimulation();
+            //    _startCalcPlot = false;
+            //}
         }
 
         /// <summary>
@@ -539,6 +604,10 @@ namespace Maroon.Physics.ThreeDimensionalMotion
             _zMin = long.MaxValue;
 
             ClearData();
+
+            // clear new members
+            entity = null;
+            simulation = null;
         }
 
         /// <summary>
