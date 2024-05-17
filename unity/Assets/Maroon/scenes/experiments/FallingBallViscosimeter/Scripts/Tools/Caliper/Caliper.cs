@@ -22,15 +22,7 @@ public class Caliper : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        updateText();
     }
 
-    void updateText()
-    {
-        //sets the text to the measured distance
-        //floats are dumb so we get some rounding errors but whatever
-        //0.0075 is the distance between the slider transform and the head transform
-        measuredLength = (head.position.x - slider.position.x + 0.0075f) * -1;
-        text.text = Math.Round(measuredLength, 4).ToString("N4");
-    }
+
 }
