@@ -138,50 +138,12 @@ namespace Maroon.Physics.ThreeDimensionalMotion
 
                 CoordSystem.Instance.SetRealCoordBorders(min_hack, max_hack);
 
-
                 CoordSystem.Instance.SetParticleActive(_particleInUse);
             }
 
-            var pos = entity.States[render_step++].position;
+            var pos = entity.States[render_step++ % simulation.steps].position;
             var mapped_pos = CoordSystem.Instance.MapValues((Vector3) pos);
-            CoordSystem.Instance.DrawPoint(mapped_pos, true);
-
-            if (render_step == simulation.steps)
-            {
-                render_step = 0;
-            }
-
-            return;
-
-            ///// skip the rest
-
-            //try
-            //{
-            //    if (_startCalcPlot && _currentSteps < _steps && _currentUpdateRate == 1)
-            //    {
-            //        _point = new Vector3(_dataX[_currentSteps].y, _dataZ[_currentSteps].y, _dataY[_currentSteps].y);
-            //        Vector3 mappedPoint = CoordSystem.Instance.MapValues(_point);
-            //        CoordSystem.Instance.DrawPoint(mappedPoint, _drawTrajectory);
-
-            //        _currentUpdateRate = 0;
-            //    }
-            //    else if (_startCalcPlot && _currentSteps >= _steps)
-            //    {
-            //        _currentSteps = 0;
-            //        //_drawTrajectory = false;
-            //    }
-            //    else
-            //    {
-            //        if (_startCalcPlot)
-            //            _currentUpdateRate++;
-            //    }
-            //}
-            //catch
-            //{
-            //    ShowError();
-            //    SimulationController.Instance.ResetSimulation();
-            //    _startCalcPlot = false;
-            //}
+            CoordSystem.Instance.DrawPoint(mapped_pos, render_step < simulation.steps);
         }
 
         /// <summary>
