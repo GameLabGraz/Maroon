@@ -3,6 +3,7 @@ using UnityEngine;
 using NCalc;
 using ObjectsInUse;
 using System;
+using System.Linq;
 using GEAR.Localization;
 
 namespace Maroon.Physics.ThreeDimensionalMotion
@@ -517,21 +518,21 @@ namespace Maroon.Physics.ThreeDimensionalMotion
 
         // Getter for all values
         // --------------------------------------------------------------
-        public List<Vector2> GetDataX() { return _dataX; }
-        public List<Vector2> GetDataY() { return _dataY; }
-        public List<Vector2> GetDataZ() { return _dataZ; }
+        public List<Vector2> GetDataX() { return entity.States.Select(s => new Vector2((float) s.t, (float) s.position.x)).ToList(); }
+        public List<Vector2> GetDataY() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.position.y)).ToList(); }
+        public List<Vector2> GetDataZ() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.position.z)).ToList(); }
 
-        public List<Vector2> GetDataVX() { return _dataVx; }
-        public List<Vector2> GetDataVY() { return _dataVy; }
-        public List<Vector2> GetDataVZ() { return _dataVz; }
+        public List<Vector2> GetDataVX() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.velocity.x)).ToList(); }
+        public List<Vector2> GetDataVY() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.velocity.y)).ToList(); }
+        public List<Vector2> GetDataVZ() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.velocity.z)).ToList(); }
 
-        public List<Vector2> GetDataFX() { return _dataFx; }
-        public List<Vector2> GetDataFY() { return _dataFy; }
-        public List<Vector2> GetDataFZ() { return _dataFz; }
+        public List<Vector2> GetDataFX() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.force.x)).ToList(); }
+        public List<Vector2> GetDataFY() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.force.y)).ToList(); }
+        public List<Vector2> GetDataFZ() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.force.z)).ToList(); }
 
-        public List<Vector2> GetDataP() { return _dataP; }
-        public List<Vector2> GetDataEkin() { return _dataEkin; }
-        public List<Vector2> GetDataW() { return _data_W; }
+        public List<Vector2> GetDataP() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.power)).ToList(); }
+        public List<Vector2> GetDataEkin() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.kinetic_energy)).ToList(); }
+        public List<Vector2> GetDataW() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.work)).ToList(); }
         // --------------------------------------------------------------
 
         /// <summary>
