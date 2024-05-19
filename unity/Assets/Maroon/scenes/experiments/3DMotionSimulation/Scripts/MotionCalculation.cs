@@ -570,6 +570,7 @@ namespace Maroon.Physics.ThreeDimensionalMotion
             // clear new members
             entity = null;
             simulation = null;
+            render_step = 0;
         }
 
         /// <summary>
