@@ -106,7 +106,7 @@ namespace Maroon.Physics.ThreeDimensionalMotion
                 entity.AddExpression("fx", ParameterUI.Instance.GetFunctionFx());
                 entity.AddExpression("fy", ParameterUI.Instance.GetFunctionFy());
                 entity.AddExpression("fz", ParameterUI.Instance.GetFunctionFz());
-                entity.AddParameter("m", ParameterUI.Instance.GetMass());
+                entity.AddExpression("m", ParameterUI.Instance.GetMass());
 
                 simulation = new Motion.Simulation();
                 simulation.t0 = ParameterUI.Instance.GetTimes().x;
@@ -116,9 +116,8 @@ namespace Maroon.Physics.ThreeDimensionalMotion
                 simulation.AddEntity(entity);
                 simulation.Run();
 
-
-                Vector3 min_hack = simulation.bounds.min;
-                Vector3 max_hack = simulation.bounds.max;
+                Vector3 min_hack = TransformZUp(simulation.bounds.min);
+                Vector3 max_hack = TransformZUp(simulation.bounds.max);
 
                 // oh god oh god why do i have to abuse this thing like this??? 
                 // i would really like to clean up this experiment but i don't know
@@ -142,11 +141,15 @@ namespace Maroon.Physics.ThreeDimensionalMotion
                 CoordSystem.Instance.SetParticleActive(_particleInUse);
             }
 
-            var pos = entity.States[render_step++ % simulation.steps].position;
-            var mapped_pos = CoordSystem.Instance.MapValues((Vector3) pos);
+            var pos = TransformZUp((Vector3)entity.States[render_step++ % simulation.steps].position);
+            var mapped_pos = CoordSystem.Instance.MapValues(pos);
             CoordSystem.Instance.DrawPoint(mapped_pos, render_step < simulation.steps);
         }
 
+        static Vector3 TransformZUp(Vector3 v)
+        {
+            return new Vector3(v.x, v.z, v.y);
+        }
         /// <summary>
         /// Inits the calculation process
         /// </summary>
