@@ -213,18 +213,11 @@ public class ParameterUI : PausableObject, IResetObject
     /// Gets the mass from the UI and checks the value range
     /// </summary>
     /// <returns>The mass</returns>
-    public float GetMass()
+    public string GetMass()
     {
-        if (_mass <= 0)
-        {
-            ShowError(LanguageManager.Instance.GetString("MassError"));
-            _mass = 1f;
-            ifMass.text = "1";
-        }
         
-        return _mass;
+        return ifMass.text;
     }
-
     /// <summary>
     /// Sets the value for mass from the UI
     /// </summary>
