@@ -521,7 +521,7 @@ namespace Maroon.Physics.ThreeDimensionalMotion
 
         // Getter for all values
         // --------------------------------------------------------------
-        public List<Vector2> GetDataX() { return entity.States.Select(s => new Vector2((float) s.t, (float) s.position.x)).ToList(); }
+        public List<Vector2> GetDataX() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.position.x)).ToList(); }
         public List<Vector2> GetDataY() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.position.y)).ToList(); }
         public List<Vector2> GetDataZ() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.position.z)).ToList(); }
 
