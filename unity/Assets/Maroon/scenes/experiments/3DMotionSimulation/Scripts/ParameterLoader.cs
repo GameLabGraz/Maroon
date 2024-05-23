@@ -18,10 +18,6 @@ public class ParameterLoader : MonoBehaviour
     {
         public string Background;
         public string Particle;
-        public string FunctionX;
-        public string FunctionY;
-        public string FunctionZ;
-        public float Mass;
         public float T0;
         public float DeltaT;
         public float Steps;
@@ -32,6 +28,12 @@ public class ParameterLoader : MonoBehaviour
         public float Vy;
         public float Vz;
 
+        public string m;
+        public string fx;
+        public string fy;
+        public string fz;
+
+        public Dictionary<string, string> exprs;
     }
 
     // Start is called before the first frame update
@@ -60,18 +62,9 @@ public class ParameterLoader : MonoBehaviour
     public List<Parameters> LoadJsonFile(int file)
     {  
         string json_text = _jsonFile[file].text;
-        
-        byte[] byteArray = System.Text.Encoding.ASCII.GetBytes(json_text);
-        
-        MemoryStream stream = new MemoryStream(byteArray);
-        
-        using (StreamReader r = new StreamReader(stream))
-        {
-            
-            string json = r.ReadToEnd();
-            //Debug.Log("Json data: " + json);
-            _parameters = JsonConvert.DeserializeObject<List<Parameters>>(json);
-        }
+
+        _parameters = JsonConvert.DeserializeObject<List<Parameters>>(json_text);
+
         return _parameters;
     }
 
@@ -99,15 +92,7 @@ public class ParameterLoader : MonoBehaviour
     /// <param name="data">JSON data</param>
     public void LoadExternJsonFile(string data)
     {
-        byte[] byteArray = System.Text.Encoding.ASCII.GetBytes(data);
-
-        MemoryStream stream = new MemoryStream(byteArray);
-
-        using (StreamReader r = new StreamReader(stream))
-        {
-            string json = r.ReadToEnd();
-            _parameters = JsonConvert.DeserializeObject<List<Parameters>>(json);
-        }
+        _parameters = JsonConvert.DeserializeObject<List<Parameters>>(data);
 
         ParameterUI.Instance.LoadExternParametersFromFile(_parameters);
     }

@@ -426,11 +426,11 @@ public class ParameterUI : PausableObject, IResetObject
             else
                 _particleInUse = ParticleObject.Default;
 
-            fxIF.text = GetCorrectedFormula(par.FunctionX);
-            fyIF.text = GetCorrectedFormula(par.FunctionY);
-            fzIF.text = GetCorrectedFormula(par.FunctionZ);
+            fxIF.text = GetCorrectedFormula(par.fx);
+            fyIF.text = GetCorrectedFormula(par.fy);
+            fzIF.text = GetCorrectedFormula(par.fz);
 
-            ifMass.text = par.Mass.ToString();
+            ifMass.text = par.m;
             
             ifT0.text = par.T0.ToString();
             ifDeltat.text = par.DeltaT.ToString();
@@ -463,11 +463,11 @@ public class ParameterUI : PausableObject, IResetObject
             else
                 _particleInUse = ParticleObject.Default;
 
-            fxIF.text = GetCorrectedFormula(par.FunctionX);
-            fyIF.text = GetCorrectedFormula(par.FunctionY);
-            fzIF.text = GetCorrectedFormula(par.FunctionZ);
+            fxIF.text = GetCorrectedFormula(par.fx);
+            fyIF.text = GetCorrectedFormula(par.fy);
+            fzIF.text = GetCorrectedFormula(par.fz);
             
-            ifMass.text = par.Mass.ToString();
+            ifMass.text = par.m;
             ifT0.text = par.T0.ToString();
             ifDeltat.text = par.DeltaT.ToString();
             ifSteps.text = par.Steps.ToString();
