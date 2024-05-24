@@ -2,6 +2,9 @@
 
 namespace Maroon.Physics.Motion
 {
+    /// <summary>
+    /// Represents the current state of an entity in motion.
+    /// </summary>
     public class State
     {
         internal Vector3d position;
@@ -59,6 +62,8 @@ namespace Maroon.Physics.Motion
             work += 0.5 * (power + prev_power) * dt;
         }
 
+
+        // Copy Constructor
         public State(State state)
         {
             t = state.t;

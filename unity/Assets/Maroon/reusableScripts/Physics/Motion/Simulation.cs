@@ -4,6 +4,9 @@ using System;
 
 namespace Maroon.Physics.Motion
 {
+    /// <summary>
+    /// Simulates the movement of entities over time through space
+    /// </summary>
     public class Simulation
     {
         private double _dt;

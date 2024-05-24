@@ -9,6 +9,10 @@ using System.Text.RegularExpressions;
 
 namespace Maroon.Physics.Motion
 {
+
+    /// <summary>
+    /// An entity which moves through space as described by differential equations of first order
+    /// </summary>
     public class SimulatedEntity
     {
         internal State current_state;
@@ -26,7 +30,6 @@ namespace Maroon.Physics.Motion
         public List<Vector3> Position { get => _state.Select(s => (Vector3)s.position).ToList(); }
         public List<State> State { get => _state; }
         public Bounds Bounds { get => _bounds; }
-
 
         internal Vector3d EvaluateForceAt(double t)
         {
@@ -47,7 +50,6 @@ namespace Maroon.Physics.Motion
             var expr = new Expression(expression, EvaluateOptions.IgnoreCase);
             expr.EvaluateParameter += Expression_EvaluateParameter;
             expr.EvaluateFunction += Expression_EvaluateFunction;
-
 
             (String name, List<String> parameters) = SplitSignature(signature);
 
