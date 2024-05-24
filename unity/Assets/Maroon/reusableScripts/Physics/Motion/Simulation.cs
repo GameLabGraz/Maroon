@@ -86,6 +86,8 @@ namespace Maroon.Physics.Motion
             foreach (SimulatedEntity entity in entities) {
                 _bounds.Encapsulate(entity.Bounds);
             }
+
+            this.steps = Math.Max(this.steps, current_step);
         }
 
         public void Run()
