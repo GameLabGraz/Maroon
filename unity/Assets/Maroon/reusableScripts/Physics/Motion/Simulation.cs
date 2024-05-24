@@ -14,13 +14,15 @@ namespace Maroon.Physics.Motion
         private IIntegrator integrator;
         private Bounds _bounds = new Bounds();
 
+        private bool isInitialized = false;
+
         private List<SimulatedEntity> entities = new List<SimulatedEntity>();
 
-        public double dt { get { return _dt; } set { _dt = value; } }
-        public double t { get { return _t; } }
-        public double t0 { get { return _t0; } set { _t0 = value; } }
-        public int steps { get { return _steps; } set { _steps = value; } }
-        public Bounds bounds { get { return _bounds; } }
+        public double dt { get => _dt; set { _dt = value; } }
+        public double t { get => _t; }
+        public double t0 { get => _t0;  set { _t0 = value; } }
+        public int steps { get => _steps; set { _steps = value; } }
+        public Bounds bounds { get => _bounds; }
 
         public Simulation()
         {
@@ -51,39 +53,44 @@ namespace Maroon.Physics.Motion
             entities.Add(entity);
         }
 
-        public void InitializeEntities()
+        public void Initialize()
         {
+            _t = t0;
+
             foreach (SimulatedEntity entity in entities)
             {
                 entity.Initialize(t0, dt);
             }
+
+            this.isInitialized = true;
         }
 
         public void Solve(int steps)
         {
-            int initial_step = current_step;
+            if (!isInitialized)
+                throw new Exception("Simulation must be initialized");
 
-            while(current_step++ < (initial_step + steps)) { 
+            int start = current_step;
+
+            while(current_step < (start + steps)) {
                 foreach (SimulatedEntity entity in entities)
                 {
-                    entity.state = integrator.Integrate(entity.state, t, dt);
+                    entity.current_state = integrator.Integrate(entity.current_state, t, dt);
                     entity.SaveState();
                 }
 
+                current_step++;
                 _t = current_step * dt;
             }
 
-
             foreach (SimulatedEntity entity in entities) {
-                _bounds.Encapsulate(entity.bounds);
+                _bounds.Encapsulate(entity.Bounds);
             }
         }
 
         public void Run()
         {
-            _t = t0;
-
-            InitializeEntities();
+            Initialize();
             Solve(this.steps);
         }
     }

@@ -12,7 +12,7 @@ namespace Maroon.Physics.Motion
         public State Integrate(State s, double t, double dt)
         {
             s.position += s.velocity * dt;
-            s.velocity += s.Acceleration(t + dt) * dt;
+            s.velocity += s.EvaluateAccelerationAt(t + dt) * dt;
 
             return s;
         }
@@ -26,7 +26,7 @@ namespace Maroon.Physics.Motion
     {
         public State Integrate(State s, double t, double dt)
         { 
-            s.velocity += s.Acceleration(t + dt) * dt;
+            s.velocity += s.EvaluateAccelerationAt(t + dt) * dt;
             s.position += s.velocity * dt;
 
             return s;
@@ -51,7 +51,7 @@ namespace Maroon.Physics.Motion
 
             s.position += dxdt * dt;
             s.velocity += dvdt * dt;
-            s.Acceleration(t + dt);
+            s.EvaluateAccelerationAt(t + dt);
 
             return s;
         }
@@ -61,7 +61,7 @@ namespace Maroon.Physics.Motion
             State s = new State(initial, true);
             s.position += d.dx * dt;
             s.velocity += d.dv * dt;
-            return new Derivative(s.velocity, s.Acceleration(t + dt));
+            return new Derivative(s.velocity, s.EvaluateAccelerationAt(t + dt));
         }
 
         private class Derivative
@@ -87,7 +87,7 @@ namespace Maroon.Physics.Motion
         public State Integrate(State s, double t, double dt)
         {
             s.position += s.velocity * dt + s.acceleration * dt * dt * 0.5;
-            s.velocity += (s.acceleration + s.Acceleration(t + dt)) * dt * 0.5;
+            s.velocity += (s.acceleration + s.EvaluateAccelerationAt(t + dt)) * dt * 0.5;
 
             return s;
         }

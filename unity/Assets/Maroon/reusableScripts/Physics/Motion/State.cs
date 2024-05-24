@@ -4,37 +4,38 @@ namespace Maroon.Physics.Motion
 {
     public class State
     {
-        private double _t;
-        private Vector3d _position;
-        private Vector3d _velocity;
-        private Vector3d _acceleration;
-        private Vector3d _force;
-        private double _mass;
-        private double _kinetic_energy;
-        private double _power;
-        private double _work;
+        internal Vector3d position;
+        internal Vector3d velocity;
+        internal Vector3d acceleration;
+        internal Vector3d force;
+
+        internal double t;
+        internal double mass;
+        internal double kinetic_energy;
+        internal double power;
+        internal double work;
 
         private SimulatedEntity entity;
 
+        public double Time { get => t; }
+        public Vector3 Position { get => (Vector3) position; }
+        public Vector3 Velocity { get => (Vector3) velocity; }
+        public Vector3 Acceleration { get => (Vector3) acceleration; }
+        public Vector3 Force { get => (Vector3) force; }
+        public double Mass { get => mass; }
+        public double KineticEnergy { get => kinetic_energy; }
+        public double Power { get => power; }
+        public double Work { get => work; }
 
-        public double t { get { return _t; } }
-        public Vector3d position { get { return _position; } set { _position = value; } }
-        public Vector3d velocity { get { return _velocity; } set { _velocity = value; } }
-        public Vector3d acceleration { get { return _acceleration; } }
-        public Vector3d force { get { return _force; } }
-        public double mass { get { return _mass; } }
-        public double kinetic_energy { get { return _kinetic_energy; } }
-        public double power { get { return _power; } }
-        public double work { get { return _work; } }
-
-        public Vector3d Acceleration(double t)
+        public Vector3d EvaluateAccelerationAt(double t)
         {
-            _t = t;
-            _mass = entity.EvaluateMassAt(t);
-            _force = entity.EvaluateForceAt(t);
-            _acceleration = _force * (1.0 / _mass);
+            this.t = t;
+            mass = entity.EvaluateMassAt(t);
+            force = entity.EvaluateForceAt(t);
+            acceleration = force * (1.0 / mass);
             return acceleration;
         }
+
 
         public void CalculateEnergyPowerWork(double prev_power, double dt)
         {
@@ -42,43 +43,33 @@ namespace Maroon.Physics.Motion
             CalculatePower();
             CalculateWork(prev_power, dt);
         }
+
         public void CalculateEnergy()
         {
-            _kinetic_energy = ((velocity.x * velocity.x) + (velocity.y * velocity.y) + (velocity.z * velocity.z)) * mass * 0.5;
+            kinetic_energy = ((velocity.x * velocity.x) + (velocity.y * velocity.y) + (velocity.z * velocity.z)) * mass * 0.5;
         }
 
         public void CalculatePower()
         {
-            _power = (velocity.x * force.x) + (velocity.y * force.y) + (velocity.z * force.z);
+            power = (velocity.x * force.x) + (velocity.y * force.y) + (velocity.z * force.z);
         }
 
         public void CalculateWork(double prev_power, double dt)
         {
-            _work += 0.5 * (power + prev_power) * dt;
-        }
-        public State(Vector3 position, Vector3 velocity)
-        {
-            _position = new Vector3d(position);
-            _velocity = new Vector3d(velocity);
-        }
-
-        public State(Vector3d position, Vector3d velocity) 
-        {
-            _position = position;
-            _velocity = velocity;
+            work += 0.5 * (power + prev_power) * dt;
         }
 
         public State(State state)
         {
-            _t = state._t;
-            _position = state._position;
-            _velocity = state._velocity;
-            _force = state._force;
-            _mass = state._mass;
-            _acceleration = state._acceleration;
-            _kinetic_energy = state._kinetic_energy;
-            _power = state._power;
-            _work = state._work;
+            t = state.t;
+            position = state.position;
+            velocity = state.velocity;
+            force = state.force;
+            mass = state.mass;
+            acceleration = state.acceleration;
+            kinetic_energy = state.kinetic_energy;
+            power = state.power;
+            work = state.work;
 
             entity = state.entity;
         }
@@ -86,17 +77,27 @@ namespace Maroon.Physics.Motion
         public State(State state, SimulatedEntity entity) : this(state)
         {
             this.entity = entity;
-            this.entity.state = this;
+            this.entity.current_state = this;
         }
 
         public State(State state, bool update_entity) : this(state)
         {
             if (update_entity && entity != null)
-                entity.state = this;
+                entity.current_state = this;
         }
 
-        public State(Vector3 position, Vector3 velocity, SimulatedEntity entity) : this(position, velocity)
+        public State(Vector3 position, Vector3 velocity, SimulatedEntity entity)
         {
+            this.position = new Vector3d(position);
+            this.velocity = new Vector3d(velocity);
+            this.entity = entity;
+        }
+
+
+        public State(Vector3d position, Vector3d velocity, SimulatedEntity entity)
+        {
+            this.position = position;
+            this.velocity = velocity;
             this.entity = entity;
         }
     }

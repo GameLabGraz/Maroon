@@ -11,24 +11,24 @@ namespace Maroon.Physics.Motion
 {
     public class SimulatedEntity
     {
-        public State state;
-        public List<State> States { get { return _states; } }
+        internal State current_state;
 
         private Dictionary<String, Expression> _exprs = new Dictionary<String, Expression>();
         private Dictionary<String, double> _params = new Dictionary<string, double>();
 
-        private List<State> _states;
-        private State _initial_state;
+        private List<State> _state;
+        private State _initial_state = null;
 
         private double _dt;
         private bool _isInitialized = false;
         private Bounds _bounds = new Bounds();
 
-        public Bounds bounds { get { return _bounds; } }
-        public bool isInitialized { get { return _isInitialized; } }
+        public List<Vector3> Position { get => _state.Select(s => (Vector3)s.position).ToList(); }
+        public List<State> State { get => _state; }
+        public Bounds Bounds { get => _bounds; }
 
 
-        public Vector3d EvaluateForceAt(double t)
+        internal Vector3d EvaluateForceAt(double t)
         {
             return new Vector3d(
                 Convert.ToDouble(_exprs["fx"].Evaluate()),
@@ -37,7 +37,7 @@ namespace Maroon.Physics.Motion
             );
         }
 
-        public double EvaluateMassAt(double t)
+        internal double EvaluateMassAt(double t)
         {
             return Convert.ToDouble(_exprs["m"].Evaluate());
         }
@@ -62,9 +62,14 @@ namespace Maroon.Physics.Motion
             _exprs[name] = expr;
         }
 
-        public void AddParameter(String name, double parameter)
+        public void AddParamter(String name, int value)
         {
-            _params[name] = parameter;
+            _params[name] = (double)value;
+        }
+
+        public void AddParameter(String name, double value)
+        {
+            _params[name] = value;
         }
 
         private (String, List<String>) SplitSignature(String signature)
@@ -129,13 +134,13 @@ namespace Maroon.Physics.Motion
             switch (param)
             {
 
-                case "t": args.Result = state.t; return;
-                case "x": args.Result = state.position.x; return;
-                case "y": args.Result = state.position.y; return;
-                case "z": args.Result = state.position.z; return;
-                case "vx": args.Result = state.velocity.x; return;
-                case "vy": args.Result = state.velocity.y; return;
-                case "vz": args.Result = state.velocity.z; return;
+                case "t": args.Result = current_state.t; return;
+                case "x": args.Result = current_state.position.x; return;
+                case "y": args.Result = current_state.position.y; return;
+                case "z": args.Result = current_state.position.z; return;
+                case "vx": args.Result = current_state.velocity.x; return;
+                case "vy": args.Result = current_state.velocity.y; return;
+                case "vz": args.Result = current_state.velocity.z; return;
             }
 
             if (_params.ContainsKey(param))
@@ -152,21 +157,21 @@ namespace Maroon.Physics.Motion
             }
         }
 
-        public void SetInitialState(State s)
+        public void SetInitialState(Vector3 position, Vector3 velocity)
         {
-            _initial_state = new State(s, this);
+            _initial_state = new State(position, velocity, this);
         }
 
         public void Initialize(double initial_t, double dt)
         {
-            _states = new List<State>();
+            _state = new List<State>();
 
-            state = _initial_state;
-            state.Acceleration(initial_t);
-            state.CalculateEnergy();
-            state.CalculatePower();
+            current_state = _initial_state;
+            current_state.EvaluateAccelerationAt(initial_t);
+            current_state.CalculateEnergy();
+            current_state.CalculatePower();
 
-            _states.Add(new State(state));
+            _state.Add(new State(current_state));
 
             _dt = dt;
             _isInitialized = true;
@@ -174,18 +179,18 @@ namespace Maroon.Physics.Motion
 
         public void SaveState()
         {
-            _bounds.Encapsulate((Vector3)state.position);
+            _bounds.Encapsulate((Vector3)current_state.position);
             
-            double prev_power = _states.Last().power;
+            double prev_power = _state.Last().power;
 
-            state.CalculateEnergyPowerWork(prev_power, _dt);
-            _states.Add(new State(state));
+            current_state.CalculateEnergyPowerWork(prev_power, _dt);
+            _state.Add(new State(current_state));
         }
 
         public void PrintData()
         {
             String log = "";
-            foreach (var item in _states)
+            foreach (var item in _state)
             {
                 log += String.Format("{0:f5} {1:f5} {2:f5} {3:f5} {4:f5} {5:f5} {6:f5} \n", item.t, item.position.x, item.position.y, item.position.z, item.velocity.x, item.velocity.y, item.velocity.z);
             }
@@ -195,7 +200,7 @@ namespace Maroon.Physics.Motion
         public void PrintDataCsv(String header_prefix)
         {
             String log = String.Format("t;{0}_x;{0}_y;{0}_z;{0}_vx;{0}_vy;{0}_vz\n", header_prefix);
-            foreach (var item in _states)
+            foreach (var item in _state)
             {
                 log += String.Format("{0:f5};{1:f5};{2:f5};{3:f5};{4:f5};{5:f5};{6:f5} \n", item.t, item.position.x, item.position.y, item.position.z, item.velocity.x, item.velocity.y, item.velocity.z);
             }
@@ -208,24 +213,6 @@ namespace Maroon.Physics.Motion
             _exprs["fx"] = new Expression("0", EvaluateOptions.IgnoreCase);
             _exprs["fy"] = new Expression("0", EvaluateOptions.IgnoreCase);
             _exprs["fz"] = new Expression("0", EvaluateOptions.IgnoreCase);
-        }
-
-        public SimulatedEntity(Vector3d initialPosition, Vector3d initialVelocity) : this()
-        {
-            SetInitialState(new State(initialPosition, initialVelocity));
-        }
-
-        public SimulatedEntity(Vector3d initialPosition, Vector3d initialVelocity, String Fx, String Fy, String Fz) :
-            this(initialPosition, initialVelocity)
-        {
-            AddExpression("fx", Fx);
-            AddExpression("fy", Fy);
-            AddExpression("fz", Fz);
-        }
-        public SimulatedEntity(Vector3d initialPosition, Vector3d initialVelocity, String Fx, String Fy, String Fz, String m) :
-            this(initialPosition, initialVelocity, Fx, Fy, Fz)
-        {
-            AddExpression("m", m);
         }
     }
 }
