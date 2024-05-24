@@ -76,7 +76,7 @@ namespace Maroon.Physics.ThreeDimensionalMotion
         private Motion.Simulation simulation = null;
         private Motion.SimulatedEntity entity = null;
 
-        private int render_step = 0;
+        private int frame = 0;
 
         /// <summary>
         /// Update is called every frame
@@ -96,13 +96,11 @@ namespace Maroon.Physics.ThreeDimensionalMotion
             // Create new simulation from UI Paramters
             if (simulation == null && entity == null)
             {
-                render_step = 0;
-
                 Vector3 initialPosition = ParameterUI.Instance.GetXYZ();
                 Vector3 initialVelocity = ParameterUI.Instance.GetVxVyVz();
 
                 entity = new Motion.SimulatedEntity();
-                entity.SetInitialState(new Motion.State(initialPosition, initialVelocity));
+                entity.SetInitialState(initialPosition, initialVelocity);
                 entity.AddExpression("fx", ParameterUI.Instance.GetFunctionFx());
                 entity.AddExpression("fy", ParameterUI.Instance.GetFunctionFy());
                 entity.AddExpression("fz", ParameterUI.Instance.GetFunctionFz());
@@ -141,9 +139,12 @@ namespace Maroon.Physics.ThreeDimensionalMotion
                 CoordSystem.Instance.SetParticleActive(_particleInUse);
             }
 
-            var pos = TransformZUp((Vector3)entity.States[render_step++ % simulation.steps].position);
+            var step = frame % simulation.steps;
+            var pos = TransformZUp(entity.Position[step]);
             var mapped_pos = CoordSystem.Instance.MapValues(pos);
-            CoordSystem.Instance.DrawPoint(mapped_pos, render_step < simulation.steps);
+            CoordSystem.Instance.DrawPoint(mapped_pos, frame < simulation.steps);
+
+            frame++;
         }
 
         static Vector3 TransformZUp(Vector3 v)
@@ -521,21 +522,21 @@ namespace Maroon.Physics.ThreeDimensionalMotion
 
         // Getter for all values
         // --------------------------------------------------------------
-        public List<Vector2> GetDataX() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.position.x)).ToList(); }
-        public List<Vector2> GetDataY() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.position.y)).ToList(); }
-        public List<Vector2> GetDataZ() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.position.z)).ToList(); }
+        public List<Vector2> GetDataX() { return entity.State.Select(s => new Vector2((float)s.Time, s.Position.x)).ToList(); }
+        public List<Vector2> GetDataY() { return entity.State.Select(s => new Vector2((float)s.Time, s.Position.y)).ToList(); }
+        public List<Vector2> GetDataZ() { return entity.State.Select(s => new Vector2((float)s.Time, s.Position.z)).ToList(); }
 
-        public List<Vector2> GetDataVX() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.velocity.x)).ToList(); }
-        public List<Vector2> GetDataVY() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.velocity.y)).ToList(); }
-        public List<Vector2> GetDataVZ() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.velocity.z)).ToList(); }
+        public List<Vector2> GetDataVX() { return entity.State.Select(s => new Vector2((float)s.Time, s.Velocity.x)).ToList(); }
+        public List<Vector2> GetDataVY() { return entity.State.Select(s => new Vector2((float)s.Time, s.Velocity.y)).ToList(); }
+        public List<Vector2> GetDataVZ() { return entity.State.Select(s => new Vector2((float)s.Time, s.Velocity.z)).ToList(); }
 
-        public List<Vector2> GetDataFX() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.force.x)).ToList(); }
-        public List<Vector2> GetDataFY() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.force.y)).ToList(); }
-        public List<Vector2> GetDataFZ() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.force.z)).ToList(); }
+        public List<Vector2> GetDataFX() { return entity.State.Select(s => new Vector2((float)s.Time, s.Force.x)).ToList(); }
+        public List<Vector2> GetDataFY() { return entity.State.Select(s => new Vector2((float)s.Time, s.Force.y)).ToList(); }
+        public List<Vector2> GetDataFZ() { return entity.State.Select(s => new Vector2((float)s.Time, s.Force.z)).ToList(); }
 
-        public List<Vector2> GetDataP() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.power)).ToList(); }
-        public List<Vector2> GetDataEkin() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.kinetic_energy)).ToList(); }
-        public List<Vector2> GetDataW() { return entity.States.Select(s => new Vector2((float)s.t, (float)s.work)).ToList(); }
+        public List<Vector2> GetDataP() { return entity.State.Select(s => new Vector2((float)s.Time, (float)s.Power)).ToList(); }
+        public List<Vector2> GetDataEkin() { return entity.State.Select(s => new Vector2((float)s.Time, (float)s.KineticEnergy)).ToList(); }
+        public List<Vector2> GetDataW() { return entity.State.Select(s => new Vector2((float)s.Time, (float)s.Work)).ToList(); }
         // --------------------------------------------------------------
 
         /// <summary>
@@ -574,7 +575,7 @@ namespace Maroon.Physics.ThreeDimensionalMotion
             // clear new members
             entity = null;
             simulation = null;
-            render_step = 0;
+            frame = 0;
         }
 
         /// <summary>
