@@ -126,9 +126,9 @@ namespace Maroon.Physics.Motion
             }
         }
 
-        private void Expression_EvaluateParameter(string param, ParameterArgs args)
+        private void Expression_EvaluateParameter(string name, ParameterArgs args)
         {
-            switch (param)
+            switch (name)
             {
 
                 case "t": args.Result = current_state.t; return;
@@ -140,17 +140,17 @@ namespace Maroon.Physics.Motion
                 case "vz": args.Result = current_state.velocity.z; return;
             }
 
-            if (_params.ContainsKey(param))
+            if (_params.ContainsKey(name))
             {
-                args.Result = _params[param];
+                args.Result = _params[name];
             }
-            else if (_exprs.ContainsKey(param))
+            else if (_exprs.ContainsKey(name))
             {
-                args.Result = _exprs[param].Evaluate();
+                args.Result = _exprs[name].Evaluate();
             }
             else
             {
-                throw new ArgumentException(String.Format("Unknown Parameter '{0}'", param));
+                throw new ArgumentException(String.Format("Unknown Parameter '{0}'", name));
             }
         }
 
