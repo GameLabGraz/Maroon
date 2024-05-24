@@ -112,7 +112,7 @@ namespace Maroon.Physics.Motion
 
         private void Expression_EvaluateFunction(string name, FunctionArgs args)
         {
-            if (_exprs.ContainsKey(name))
+            if (_exprs.ContainsKey(name) && _exprs[name].Parameters.Count == args.Parameters.Length)
             {
                 var expr = _exprs[name];
 
@@ -123,9 +123,6 @@ namespace Maroon.Physics.Motion
                 }
 
                 args.Result = expr.Evaluate();
-            } else
-            {
-
             }
         }
 
