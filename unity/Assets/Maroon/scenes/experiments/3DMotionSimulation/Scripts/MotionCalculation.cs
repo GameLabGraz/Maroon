@@ -11,66 +11,7 @@ namespace Maroon.Physics.ThreeDimensionalMotion
     public class MotionCalculation : PausableObject, IResetObject
     {
         private ParticleObject _particleInUse;
-        private Vector3 _point;
-
-        private bool _stopSimulation = false;
-        private bool _startCalcPlot = false;
-        private int _currentSteps = 0;
-        private int _currentUpdateRate = 0;
-        private bool _drawTrajectory = true;
-        private bool _firstIteration = true;
-        private bool _initialized = false;
         private const float Threshold = 0.001f;
-
-        private float _xMax = long.MinValue;
-        private float _yMax = long.MinValue;
-        private float _zMax = long.MinValue;
-
-        private float _xMin = long.MaxValue;
-        private float _yMin = long.MaxValue;
-        private float _zMin = long.MaxValue;
-
-        private string _formulaFx;
-        private string _formulaFy;
-        private string _formulaFz;
-
-        private double _currentFx = 0;
-        private double _currentFy = 0;
-        private double _currentFz = 0;
-
-        private double _currentX = 0;
-        private double _currentY = 0;
-        private double _currentZ = 0;
-
-        private double _currentVx = 0;
-        private double _currentVy = 0;
-        private double _currentVz = 0;
-
-        private double _currentP = 0;
-        private double _currentEkin = 0;
-        private double _currentW = 0;
-        private double _oldPower = 0;
-
-        private double _deltaT = 0;
-        private double _steps = 0;
-        private double _currentTime = 0;
-        private double _mass = 1;
-
-        private List<Vector2> _dataX = new List<Vector2>();
-        private List<Vector2> _dataY = new List<Vector2>();
-        private List<Vector2> _dataZ = new List<Vector2>();
-
-        private List<Vector2> _dataVx = new List<Vector2>();
-        private List<Vector2> _dataVy = new List<Vector2>();
-        private List<Vector2> _dataVz = new List<Vector2>();
-
-        private List<Vector2> _dataFx = new List<Vector2>();
-        private List<Vector2> _dataFy = new List<Vector2>();
-        private List<Vector2> _dataFz = new List<Vector2>();
-
-        private List<Vector2> _dataP = new List<Vector2>();
-        private List<Vector2> _dataEkin = new List<Vector2>();
-        private List<Vector2> _data_W = new List<Vector2>();
 
         /// new members
         private Motion.Simulation simulation = null;
