@@ -26,8 +26,6 @@ public class ParameterUI : PausableObject, IResetObject
 
     private static ParameterUI _instance;
     private DialogueManager _dialogueManager;
-
-    private Dictionary<string, string> _functions = new Dictionary<string, string>();
    
     public TMP_Dropdown dropdown;
     List<TMP_Dropdown.OptionData> menuOptions;
@@ -89,27 +87,6 @@ public class ParameterUI : PausableObject, IResetObject
     {
         if (_dialogueManager == null)
             _dialogueManager = FindObjectOfType<DialogueManager>();
-
-        _functions.Add("abs", "Abs");
-        _functions.Add("acos", "Acos");
-        _functions.Add("asin", "Asin");
-        _functions.Add("atan", "Atan");
-        _functions.Add("ceiling", "Ceiling");
-        _functions.Add("cos", "Cos");
-        _functions.Add("exp", "Exp");
-        _functions.Add("floor", "Floor");
-        _functions.Add("ieeeremainder", "IEEERemainder");
-        _functions.Add("log", "Log");
-        _functions.Add("log10", "Log10");
-        _functions.Add("max", "Max");
-        _functions.Add("min", "Min");
-        _functions.Add("pow", "Pow");
-        _functions.Add("round", "Round");
-        _functions.Add("sign", "Sign");
-        _functions.Add("sin", "Sin");
-        _functions.Add("sqrt", "Sqrt");
-        _functions.Add("tan", "Tan");
-        _functions.Add("truncate", "Truncate");
 
         string message = LanguageManager.Instance.GetString("Welcome");
         DisplayMessage(message);
@@ -188,7 +165,7 @@ public class ParameterUI : PausableObject, IResetObject
     /// <returns>The corrected formula Fx</returns>
     public string GetFunctionFx()
     {
-        return GetCorrectedFormula(fxIF.text);
+        return fxIF.text;
     }
 
     /// <summary>
@@ -197,7 +174,7 @@ public class ParameterUI : PausableObject, IResetObject
     /// <returns>The corrected formula Fy</returns>
     public string GetFunctionFy()
     {
-        return GetCorrectedFormula(fyIF.text);
+        return fyIF.text;
     }
 
     /// <summary>
@@ -206,7 +183,7 @@ public class ParameterUI : PausableObject, IResetObject
     /// <returns>The corrected formula Fz</returns>
     public string GetFunctionFz()
     {
-        return GetCorrectedFormula(fzIF.text);
+        return fzIF.text;
     }
 
     /// <summary>
@@ -215,7 +192,6 @@ public class ParameterUI : PausableObject, IResetObject
     /// <returns>The mass</returns>
     public string GetMass()
     {
-        
         return ifMass.text;
     }
     /// <summary>
@@ -426,9 +402,9 @@ public class ParameterUI : PausableObject, IResetObject
             else
                 _particleInUse = ParticleObject.Default;
 
-            fxIF.text = GetCorrectedFormula(par.fx);
-            fyIF.text = GetCorrectedFormula(par.fy);
-            fzIF.text = GetCorrectedFormula(par.fz);
+            fxIF.text = par.fx;
+            fyIF.text = par.fy;
+            fzIF.text = par.fz;
 
             ifMass.text = par.m;
             
@@ -463,9 +439,9 @@ public class ParameterUI : PausableObject, IResetObject
             else
                 _particleInUse = ParticleObject.Default;
 
-            fxIF.text = GetCorrectedFormula(par.fx);
-            fyIF.text = GetCorrectedFormula(par.fy);
-            fzIF.text = GetCorrectedFormula(par.fz);
+            fxIF.text = par.fx;
+            fyIF.text = par.fy;
+            fzIF.text = par.fz;
             
             ifMass.text = par.m;
             ifT0.text = par.T0.ToString();
@@ -481,23 +457,6 @@ public class ParameterUI : PausableObject, IResetObject
             ifVz.text = par.Vz.ToString();
         }
         SkyboxController.Instance.SetBackground(_background);
-    }
-   
-    /// <summary>
-    /// Brings the given formula into the correct form for evaluating
-    /// </summary>
-    /// <param name="formula">Formula to check</param>
-    /// <returns>The corrected formula</returns>
-    private string GetCorrectedFormula(string formula)
-    {
-        string tmp = formula.ToLower();
-        
-        foreach (KeyValuePair<string, string> entry in _functions)
-        {
-            tmp = tmp.Replace(entry.Key, entry.Value);
-        }
-       
-        return tmp;
     }
 
     /// <summary>
