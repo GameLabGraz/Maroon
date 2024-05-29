@@ -340,47 +340,14 @@ public class ParameterUI : PausableObject, IResetObject
     /// Loads the chosen parameters from the JSON file 
     /// </summary>
     /// <param name="choice">The choice from the UI (Dropdown menu)</param>
-    public void LoadParameters(int choice)
+    public void DropdownListener(int choice)
     {
         _resetBackground = false;
         SimulationController.Instance.ResetSimulation();
 
-        switch (choice)
-        {
-            case 0:
-                LoadDefault();
-                dropdown.SetValueWithoutNotify(0);
-                break;
-            case 1:
-                LoadParametersFromFile(choice);
-                dropdown.SetValueWithoutNotify(1);
-                break;
-            case 2:
-                LoadParametersFromFile(choice);
-                dropdown.SetValueWithoutNotify(2);
-                break;
-            case 3:
-                LoadParametersFromFile(choice);
-                dropdown.SetValueWithoutNotify(3);
-                break;
-            case 4:
-                LoadParametersFromFile(choice);
-                dropdown.SetValueWithoutNotify(4);
-                break;
-            case 5:
-                LoadParametersFromFile(choice);
-                dropdown.SetValueWithoutNotify(5);
-                break;
-            case 6:
-                LoadParametersFromFile(choice);
-                dropdown.SetValueWithoutNotify(6);
-                break;
-            default:
-                LoadDefault();
-                dropdown.SetValueWithoutNotify(0);
-                break;
-        }
-        SkyboxController.Instance.SetBackground(_background);
+        LoadParametersFromFile(choice);
+        dropdown.SetValueWithoutNotify(choice);
+        
     }
 
     /// <summary>
@@ -389,73 +356,38 @@ public class ParameterUI : PausableObject, IResetObject
     /// <param name="file">File to load</param>
     private void LoadParametersFromFile(int file)
     {
-        List<ParameterLoader.Parameters> parameters = ParameterLoader.Instance.LoadJsonFile(file);
-
-        foreach (var par in parameters)     
-        {
-            _background = par.Background;
-
-            if (par.Particle == "Satellite")
-                _particleInUse = ParticleObject.Satellite;
-            else if (par.Particle == "Ball")
-                _particleInUse = ParticleObject.Ball;
-            else
-                _particleInUse = ParticleObject.Default;
-
-            fxIF.text = par.fx;
-            fyIF.text = par.fy;
-            fzIF.text = par.fz;
-
-            ifMass.text = par.m;
-            
-            ifT0.text = par.T0.ToString();
-            ifDeltat.text = par.DeltaT.ToString();
-            ifSteps.text = par.Steps.ToString();
-
-            ifX.text = par.X.ToString();
-            ifY.text = par.Y.ToString();
-            ifZ.text = par.Z.ToString();
-
-            ifVx.text = par.Vx.ToString();
-            ifVy.text = par.Vy.ToString();
-            ifVz.text = par.Vz.ToString();
-        }
+        var parameters = ParameterLoader.Instance.LoadJsonFromFile(file);
+        LoadParameters(parameters);
     }
 
-    /// <summary>
-    /// Handles loading the parameters from the EXTERN JSON file and sets the member variables
-    /// </summary>
-    /// <param name="parameters">Parameter list of the extern JSON file</param>
-    public void LoadExternParametersFromFile(List<ParameterLoader.Parameters> parameters)
+    public void LoadParameters(ParameterLoader.Parameters parameters)
     {
-        foreach (var par in parameters) 
-        {
-            _background = par.Background;
- 
-            if (par.Particle == "Satellite")
-                _particleInUse = ParticleObject.Satellite;
-            else if (par.Particle == "Ball")
-                _particleInUse = ParticleObject.Ball;
-            else
-                _particleInUse = ParticleObject.Default;
+        _background = parameters.Background;
 
-            fxIF.text = par.fx;
-            fyIF.text = par.fy;
-            fzIF.text = par.fz;
-            
-            ifMass.text = par.m;
-            ifT0.text = par.T0.ToString();
-            ifDeltat.text = par.DeltaT.ToString();
-            ifSteps.text = par.Steps.ToString();
+        if (parameters.Particle == "Satellite")
+            _particleInUse = ParticleObject.Satellite;
+        else if (parameters.Particle == "Ball")
+            _particleInUse = ParticleObject.Ball;
+        else
+            _particleInUse = ParticleObject.Default;
 
-            ifX.text = par.X.ToString();
-            ifY.text = par.Y.ToString();
-            ifZ.text = par.Z.ToString();
+        fxIF.text = parameters.fx;
+        fyIF.text = parameters.fy;
+        fzIF.text = parameters.fz;
 
-            ifVx.text = par.Vx.ToString();
-            ifVy.text = par.Vy.ToString();
-            ifVz.text = par.Vz.ToString();
-        }
+        ifMass.text = parameters.m;
+        ifT0.text = parameters.T0.ToString();
+        ifDeltat.text = parameters.DeltaT.ToString();
+        ifSteps.text = parameters.Steps.ToString();
+
+        ifX.text = parameters.X.ToString();
+        ifY.text = parameters.Y.ToString();
+        ifZ.text = parameters.Z.ToString();
+
+        ifVx.text = parameters.Vx.ToString();
+        ifVy.text = parameters.Vy.ToString();
+        ifVz.text = parameters.Vz.ToString();
+
         SkyboxController.Instance.SetBackground(_background);
     }
 
@@ -522,8 +454,6 @@ public class ParameterUI : PausableObject, IResetObject
             _background = "ExperimentRoom";
         
         _resetBackground = true;
-        dropdown.SetValueWithoutNotify(0);
-        LoadDefault();
     }
 
     /// <summary>
@@ -541,35 +471,7 @@ public class ParameterUI : PausableObject, IResetObject
     /// </summary>
     private void LoadDefault()
     {
-        _background = "ExperimentRoom";
-
-        fxIF.text = "-x";
-        fyIF.text = "0";
-        fzIF.text = "0";
-
-        ifMass.text = "1";
-
-        ifT0.text = "0";
-        ifDeltat.text = "0,05";
-        ifSteps.text = "500";
-
-        ifX.text = "0";
-        ifY.text = "0";
-        ifZ.text = "0";
-
-        ifVx.text = "1";
-        ifVy.text = "0";
-        ifVz.text = "0";
-
-        _mass = 1;
-        _t0 = 0;
-        _deltaT = 0.05f;
-        _steps = 500;
-        _x = 0;
-        _y = 0;
-        _z = 0;
-        _vx = 1;
-        _vy = 0;
-        _vz = 0;
+        LoadParametersFromFile(0);
+        dropdown.SetValueWithoutNotify(0);
     }
 }

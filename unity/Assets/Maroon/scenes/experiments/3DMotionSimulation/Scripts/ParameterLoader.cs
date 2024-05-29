@@ -8,7 +8,7 @@ public class ParameterLoader : MonoBehaviour
 {
     private static ParameterLoader _instance;
     [SerializeField] private List<TextAsset> _jsonFile = new List<TextAsset>();
-    private List<Parameters> _parameters;
+    private Parameters _parameters;
 
     /// <summary>
     /// Class for storing parameters from a JSON-File
@@ -41,7 +41,7 @@ public class ParameterLoader : MonoBehaviour
     {
         // Listener for extern json data 
 #if UNITY_WEBGL
-        WebGlReceiver.Instance.OnIncomingData.AddListener(LoadExternJsonFile);
+        WebGlReceiver.Instance.OnIncomingData.AddListener(HandleExternalJson);
 #endif
     }
 
@@ -49,7 +49,7 @@ public class ParameterLoader : MonoBehaviour
     /// Getter for the stored parameters
     /// </summary>
     /// <returns>Parameter list</returns>
-    public List<Parameters> GetParameters()
+    public Parameters GetParameters()
     {
         return _parameters;
     }
@@ -59,13 +59,11 @@ public class ParameterLoader : MonoBehaviour
     /// </summary>
     /// <param name="file">File to load</param>
     /// <returns>Parameters</returns>
-    public List<Parameters> LoadJsonFile(int file)
-    {  
-        string json_text = _jsonFile[file].text;
+    public Parameters LoadJsonFromFile(int index)
+    {
+        string data = _jsonFile[index].text;
 
-        _parameters = JsonConvert.DeserializeObject<List<Parameters>>(json_text);
-
-        return _parameters;
+        return LoadJson(data);
     }
 
     /// <summary>
@@ -90,11 +88,17 @@ public class ParameterLoader : MonoBehaviour
     /// gameInstance.SendMessage('WebGL Receiver', 'GetDataFromJavaScript', data);
     /// </summary>
     /// <param name="data">JSON data</param>
-    public void LoadExternJsonFile(string data)
+    public void HandleExternalJson(string data)
     {
-        _parameters = JsonConvert.DeserializeObject<List<Parameters>>(data);
+        var parameters = LoadJson(data);
+        ParameterUI.Instance.LoadParameters(parameters);
+    }
 
-        ParameterUI.Instance.LoadExternParametersFromFile(_parameters);
+    public Parameters LoadJson(string data)
+    {
+        _parameters = JsonConvert.DeserializeObject<Parameters>(data);
+
+        return _parameters;
     }
 
     public static ParameterLoader Instance
