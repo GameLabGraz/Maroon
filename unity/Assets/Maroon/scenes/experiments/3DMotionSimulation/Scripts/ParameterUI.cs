@@ -401,6 +401,11 @@ public class ParameterUI : PausableObject, IResetObject
         MotionCalculation.Instance.InitializeCalculation();
     }
 
+    public Dictionary<string,string> GetExpressions()
+    {
+        return ParameterLoader.Instance.GetParameters().exprs;
+    }
+
     /// <summary>
     /// Displays a message on the screen. (welcome message, error messages)
     /// </summary>

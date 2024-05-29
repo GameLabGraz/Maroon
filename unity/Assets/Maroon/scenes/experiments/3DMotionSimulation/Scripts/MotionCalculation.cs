@@ -68,6 +68,12 @@ namespace Maroon.Physics.ThreeDimensionalMotion
             entity.AddExpression("fy", ParameterUI.Instance.GetFunctionFy());
             entity.AddExpression("fz", ParameterUI.Instance.GetFunctionFz());
             entity.AddExpression("m", ParameterUI.Instance.GetMass());
+            // Add arbitrary expressions
+            foreach (var (key, value) in ParameterUI.Instance.GetExpressions())
+            {
+                entity.AddExpression(key, value);
+            }
+
 
             simulation = new Motion.Simulation();
             simulation.t0 = ParameterUI.Instance.GetTimes().x;

@@ -33,7 +33,7 @@ public class ParameterLoader : MonoBehaviour
         public string fy;
         public string fz;
 
-        public Dictionary<string, string> exprs;
+        public Dictionary<string, string> exprs = new Dictionary<string, string>();
     }
 
     // Start is called before the first frame update
