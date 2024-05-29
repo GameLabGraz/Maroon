@@ -45,6 +45,8 @@ namespace Maroon.Physics.ThreeDimensionalMotion
         private Vector3 _realXYZMin;
         private Vector3 _realXYZMax;
 
+        private bool drawOrigin = true;
+
         /// <summary>
         /// Inits the scale of objects, trajectory
         /// Inits the coord system (visibility range)
@@ -104,7 +106,7 @@ namespace Maroon.Physics.ThreeDimensionalMotion
             _textZ2 = "Z: " + RoundDisplayedValues(_realXYZMin.y) + "m";
 
             _borderValuesSet = true;
-            DrawOriginGrid(true);
+            DrawOriginGrid();
         }
 
         /// <summary>
@@ -289,9 +291,9 @@ namespace Maroon.Physics.ThreeDimensionalMotion
         /// Method calculates the origin points and map them for drawing
         /// </summary>
         /// <param name="draw">Bool if grid should be drawn or deleted</param>
-        public void DrawOriginGrid(bool draw)
+        public void DrawOriginGrid()
         {
-            if (draw && _borderValuesSet)
+            if (drawOrigin && _borderValuesSet)
             {
                 Vector3 start;
                 Vector3 end;
@@ -326,6 +328,12 @@ namespace Maroon.Physics.ThreeDimensionalMotion
                     Destroy(line);
                 _origin.Clear();
             }
+        }
+
+        public void DrawOriginGrid(bool draw)
+        {
+            drawOrigin = draw;
+            DrawOriginGrid();
         }
 
         /// <summary>

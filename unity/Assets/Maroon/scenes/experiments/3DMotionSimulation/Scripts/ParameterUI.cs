@@ -6,6 +6,7 @@ using Maroon.UI;
 using ObjectsInUse;
 using GEAR.Localization;
 using Maroon.Physics;
+using Maroon.Physics.ThreeDimensionalMotion;
 
 namespace ObjectsInUse
 {
@@ -343,7 +344,14 @@ public class ParameterUI : PausableObject, IResetObject
     public void DropdownListener(int choice)
     {
         _resetBackground = false;
-        SimulationController.Instance.ResetSimulation();
+
+        // This has caused some sort of double invocation of this code,
+        // which was the source of some bugs, so for the time being it is
+        // commented out.
+        //
+        // I am not quite sure what is more hacky, the reset of the whole
+        // simulation or my solution of just commenting it out ...
+        //SimulationController.Instance.ResetSimulation();
 
         LoadParametersFromFile(choice);
         dropdown.SetValueWithoutNotify(choice);
@@ -389,6 +397,8 @@ public class ParameterUI : PausableObject, IResetObject
         ifVz.text = parameters.Vz.ToString();
 
         SkyboxController.Instance.SetBackground(_background);
+
+        MotionCalculation.Instance.InitializeCalculation();
     }
 
     /// <summary>

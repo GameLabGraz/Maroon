@@ -18,6 +18,7 @@ namespace Maroon.Physics.ThreeDimensionalMotion
         private Motion.SimulatedEntity entity = null;
 
         private int frame = 0;
+        private static MotionCalculation _instance;
 
         /// <summary>
         /// Update is called every frame
@@ -37,48 +38,7 @@ namespace Maroon.Physics.ThreeDimensionalMotion
             // Create new simulation from UI Paramters
             if (simulation == null && entity == null)
             {
-                Vector3 initialPosition = ParameterUI.Instance.GetXYZ();
-                Vector3 initialVelocity = ParameterUI.Instance.GetVxVyVz();
-
-                entity = new Motion.SimulatedEntity();
-                entity.SetInitialState(initialPosition, initialVelocity);
-                entity.AddExpression("fx", ParameterUI.Instance.GetFunctionFx());
-                entity.AddExpression("fy", ParameterUI.Instance.GetFunctionFy());
-                entity.AddExpression("fz", ParameterUI.Instance.GetFunctionFz());
-                entity.AddExpression("m", ParameterUI.Instance.GetMass());
-
-                simulation = new Motion.Simulation();
-                simulation.t0 = ParameterUI.Instance.GetTimes().x;
-                simulation.dt = ParameterUI.Instance.GetTimes().y;
-                simulation.steps = (int) ParameterUI.Instance.GetTimes().z;
-
-                simulation.AddEntity(entity);
-                simulation.Run();
-
-                Vector3 min_hack = TransformZUp(simulation.bounds.min);
-                Vector3 max_hack = TransformZUp(simulation.bounds.max);
-
-                // oh god oh god why do i have to abuse this thing like this??? 
-                // i would really like to clean up this experiment but i don't know
-                // if this would be out of scope....
-
-                // this is from the previous implementation
-                min_hack.x -= GetMinMaxScaleFactor(min_hack.x);
-                min_hack.y -= GetMinMaxScaleFactor(min_hack.y);
-                min_hack.z -= GetMinMaxScaleFactor(min_hack.z);
-
-                if (ScalingNeeded(min_hack.x))
-                    max_hack.x += GetMinMaxScaleFactor(max_hack.x);
-                if (ScalingNeeded(min_hack.y))
-                    max_hack.y += GetMinMaxScaleFactor(max_hack.y);
-                if (ScalingNeeded(min_hack.z))
-                    max_hack.z += GetMinMaxScaleFactor(max_hack.z);
-
-
-                CoordSystem.Instance.SetRealCoordBorders(min_hack, max_hack);
-
-                _particleInUse = ParameterUI.Instance.GetObjectInUse();
-                CoordSystem.Instance.SetParticleActive(_particleInUse);
+                InitializeCalculation();
             }
 
             var step = frame % simulation.steps;
@@ -92,6 +52,60 @@ namespace Maroon.Physics.ThreeDimensionalMotion
         static Vector3 TransformZUp(Vector3 v)
         {
             return new Vector3(v.x, v.z, v.y);
+        }
+
+        public void InitializeCalculation()
+        {
+            // this is needed to reset the drawn coordinate systems
+            CoordSystem.Instance.ResetObject();
+
+            Vector3 initialPosition = ParameterUI.Instance.GetXYZ();
+            Vector3 initialVelocity = ParameterUI.Instance.GetVxVyVz();
+
+            entity = new Motion.SimulatedEntity();
+            entity.SetInitialState(initialPosition, initialVelocity);
+            entity.AddExpression("fx", ParameterUI.Instance.GetFunctionFx());
+            entity.AddExpression("fy", ParameterUI.Instance.GetFunctionFy());
+            entity.AddExpression("fz", ParameterUI.Instance.GetFunctionFz());
+            entity.AddExpression("m", ParameterUI.Instance.GetMass());
+
+            simulation = new Motion.Simulation();
+            simulation.t0 = ParameterUI.Instance.GetTimes().x;
+            simulation.dt = ParameterUI.Instance.GetTimes().y;
+            simulation.steps = (int)ParameterUI.Instance.GetTimes().z;
+
+            simulation.AddEntity(entity);
+            simulation.Run();
+
+            Vector3 min_hack = TransformZUp(simulation.bounds.min);
+            Vector3 max_hack = TransformZUp(simulation.bounds.max);
+
+            // oh god oh god why do i have to abuse this thing like this???
+            // i would really like to clean up this experiment but i don't know
+            // if this would be out of scope....
+
+            // this is from the previous implementation
+            min_hack.x -= GetMinMaxScaleFactor(min_hack.x);
+            min_hack.y -= GetMinMaxScaleFactor(min_hack.y);
+            min_hack.z -= GetMinMaxScaleFactor(min_hack.z);
+
+            if (ScalingNeeded(min_hack.x))
+                max_hack.x += GetMinMaxScaleFactor(max_hack.x);
+            if (ScalingNeeded(min_hack.y))
+                max_hack.y += GetMinMaxScaleFactor(max_hack.y);
+            if (ScalingNeeded(min_hack.z))
+                max_hack.z += GetMinMaxScaleFactor(max_hack.z);
+
+
+            CoordSystem.Instance.SetRealCoordBorders(min_hack, max_hack);
+
+            _particleInUse = ParameterUI.Instance.GetObjectInUse();
+            CoordSystem.Instance.SetParticleActive(_particleInUse);
+
+
+            var pos = TransformZUp(entity.Position[0]);
+            var mapped_pos = CoordSystem.Instance.MapValues(pos);
+            CoordSystem.Instance.DrawPoint(mapped_pos, false);
         }
 
         /// <summary>
@@ -155,5 +169,15 @@ namespace Maroon.Physics.ThreeDimensionalMotion
             ParameterUI.Instance.DisplayMessage(message);
         }
 
+
+        public static MotionCalculation Instance
+        {
+            get
+            {
+                if (_instance == null)
+                    _instance = FindObjectOfType<MotionCalculation>();
+                return _instance;
+            }
+        }
     }
 }
