@@ -51,7 +51,7 @@ namespace Maroon.Physics.ThreeDimensionalMotion
         /// Inits the scale of objects, trajectory
         /// Inits the coord system (visibility range)
         /// </summary>
-        private void Start()
+        private void Awake()
         {
             _particle = _particleObjects[0];
 

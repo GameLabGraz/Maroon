@@ -94,6 +94,8 @@ public class ParameterUI : PausableObject, IResetObject
 
         _showInputPanelButton.interactable = false;
         _showDataVisualizationButton.interactable = false;
+
+        LoadDefault();
     }
 
     /// <summary>
