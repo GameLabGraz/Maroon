@@ -9,7 +9,7 @@ namespace Maroon.Physics.ThreeDimensionalMotion
     {
         private static CoordSystem _instance;
 
-        [SerializeField] private GameObject _trajectory;
+        private GameObject _trajectory;
         private GameObject _particle;
         [SerializeField] private List<GameObject> _particleObjects = new List<GameObject>();
         [SerializeField] private GameObject _planet;
@@ -63,6 +63,14 @@ namespace Maroon.Physics.ThreeDimensionalMotion
             _yMax = end;
             end = new Vector3(transform.position.x, transform.position.y, transform.position.z + _scaleXYZ.z);
             _zMax = end;
+
+            _trajectory = new GameObject();
+            _trajectory.name = "Trajectory";
+            _trajectory.AddComponent<LineRenderer>();
+            LineRenderer line = _trajectory.GetComponent<LineRenderer>();
+            line.widthCurve = AnimationCurve.Constant(0, 1, 0.01f);
+            line.material = _lineRendererMaterial;
+            line.material.color = Color.red;
         }
 
         /// <summary>
@@ -79,7 +87,7 @@ namespace Maroon.Physics.ThreeDimensionalMotion
             LineRenderer lr = myLine.GetComponent<LineRenderer>();
             lr.material = _lineRendererMaterial;
             lr.material.color = color;
-            lr.SetWidth(0.02f, 0.02f);
+            lr.widthCurve = AnimationCurve.Constant(0, 1, 0.02f);
             lr.SetPosition(0, start);
             lr.SetPosition(1, end);
             _origin.Add(myLine);
@@ -191,7 +199,11 @@ namespace Maroon.Physics.ThreeDimensionalMotion
             _particle.transform.position = point;
 
             if (drawTrajectory)
-                _objects.Add(Instantiate(_trajectory, point, Quaternion.identity));
+            {
+                LineRenderer line = _trajectory.GetComponent<LineRenderer>();
+                line.SetPosition(line.positionCount++, point);
+            }
+
         }
 
         public static CoordSystem Instance
@@ -209,15 +221,10 @@ namespace Maroon.Physics.ThreeDimensionalMotion
         /// </summary>
         public void ResetObject()
         {
-            // deleting game objects
-            foreach (GameObject trajectory in _objects)
-                Destroy(trajectory);
-
             // deleting origin lines
             foreach (GameObject line in _origin)
                 Destroy(line);
 
-            _objects.Clear();
             _origin.Clear();
 
             _particle.SetActive(false);
@@ -233,6 +240,8 @@ namespace Maroon.Physics.ThreeDimensionalMotion
 
             _borderValuesSet = false;
             _color = Color.black;
+
+            _trajectory.GetComponent<LineRenderer>().positionCount = 0;
         }
 
         /// <summary>
