@@ -57,7 +57,7 @@ namespace Maroon.Physics.ThreeDimensionalMotion
         public void InitializeCalculation()
         {
             // Reset all parameters
-            ResetObject();
+            CoordSystem.Instance.ResetObject();
 
             Vector3 initialPosition = ParameterUI.Instance.GetXYZ();
             Vector3 initialVelocity = ParameterUI.Instance.GetVxVyVz();
@@ -161,11 +161,9 @@ namespace Maroon.Physics.ThreeDimensionalMotion
         /// </summary>
         public void ResetObject()
         {
-            entity = null;
-            simulation = null;
             frame = 0;
 
-            CoordSystem.Instance.ResetObject();
+            InitializeCalculation();
         }
 
         /// <summary>

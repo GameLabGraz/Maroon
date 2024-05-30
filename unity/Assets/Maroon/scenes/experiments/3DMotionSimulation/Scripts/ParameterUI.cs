@@ -400,7 +400,7 @@ public class ParameterUI : PausableObject, IResetObject
 
         SkyboxController.Instance.SetBackground(_background);
 
-        MotionCalculation.Instance.InitializeCalculation();
+        MotionCalculation.Instance.ResetObject();
     }
 
     public Dictionary<string,string> GetExpressions()

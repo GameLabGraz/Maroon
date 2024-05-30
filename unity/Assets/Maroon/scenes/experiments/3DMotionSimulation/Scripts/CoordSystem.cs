@@ -5,7 +5,7 @@ using ObjectsInUse;
 
 namespace Maroon.Physics.ThreeDimensionalMotion
 {
-    public class CoordSystem : MonoBehaviour, IResetObject
+    public class CoordSystem : MonoBehaviour
     {
         private static CoordSystem _instance;
 
