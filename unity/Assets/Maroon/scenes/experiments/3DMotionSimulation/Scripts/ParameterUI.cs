@@ -403,6 +403,11 @@ public class ParameterUI : PausableObject, IResetObject
         MotionCalculation.Instance.ResetObject();
     }
 
+    public void OnEndEdit(string param)
+    {
+        MotionCalculation.Instance.ResetObject();
+    }
+
     public Dictionary<string,string> GetExpressions()
     {
         return ParameterLoader.Instance.GetParameters().exprs;
