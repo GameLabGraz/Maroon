@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class SkyboxController : MonoBehaviour, IResetObject
+public class SkyboxController : MonoBehaviour
 {
     private static SkyboxController _instance;
 
@@ -76,6 +76,5 @@ public class SkyboxController : MonoBehaviour, IResetObject
     /// </summary>
     public void ResetObject()
     {
-        SetExperimentRoom();
     }
 }

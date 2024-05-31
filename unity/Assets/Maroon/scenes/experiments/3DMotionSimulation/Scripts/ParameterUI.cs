@@ -18,7 +18,7 @@ namespace ObjectsInUse
     }
 }
 
-public class ParameterUI : PausableObject, IResetObject
+public class ParameterUI : PausableObject
 {
     private ParticleObject _particleInUse = ParticleObject.Default;
     [SerializeField] private GameObject _parameters;
@@ -35,12 +35,10 @@ public class ParameterUI : PausableObject, IResetObject
     [SerializeField] private TMP_Text _inputPanelButtonText;
     [SerializeField] private UnityEngine.UI.Button _showDataVisualizationButton;
     [SerializeField] private TMP_Text _dataVisualizationButtonText;
-    private bool _showInputPanel = false;
-    private bool _showDataPanel = false;
+    private bool _showInputPanel = true;
+    private bool _showDataPanel = true;
 
     private string _background = "ExperimentRoom";
-    private bool _resetBackground = true;
-    private bool _dropdownReset = false;
 
     [SerializeField] InputField fxIF;
     [SerializeField] InputField fyIF;
@@ -92,9 +90,6 @@ public class ParameterUI : PausableObject, IResetObject
         string message = LanguageManager.Instance.GetString("Welcome");
         DisplayMessage(message);
 
-        _showInputPanelButton.interactable = false;
-        _showDataVisualizationButton.interactable = false;
-
         LoadDefault();
     }
 
@@ -111,55 +106,34 @@ public class ParameterUI : PausableObject, IResetObject
     /// </summary>
     protected override void HandleFixedUpdate()
     {
-        if (_showInputPanel)
-        {
-            _parameters.SetActive(true);
-            _initialConditions.SetActive(true);
-            _showInputPanelButton.interactable = true;
-            _inputPanelButtonText.text = LanguageManager.Instance.GetString("HideInputField");
-        }
-        else
-        {
-            _parameters.SetActive(false);
-            _initialConditions.SetActive(false);
-            _showInputPanelButton.interactable = true;
-            _inputPanelButtonText.text = LanguageManager.Instance.GetString("ShowInputField");
-        }
 
-        if (_showDataPanel)
-        {
-            _dataVisualization.SetActive(true);
-            _showDataVisualizationButton.interactable = true;
-            _dataVisualizationButtonText.text = LanguageManager.Instance.GetString("HideDataVisualization");
-        }
-        else
-        {
-            _dataVisualization.SetActive(false);
-            _showDataVisualizationButton.interactable = true;
-            _dataVisualizationButtonText.text = LanguageManager.Instance.GetString("ShowDataVisualization");
-        }
     }
 
     /// <summary>
     /// Show/Hide the Input Panel
     /// </summary>
-    public void ShowInputPanel()
+    public void ToggleInputPanel()
     {
-        if (_showInputPanel)
-            _showInputPanel = false;
-        else
-            _showInputPanel = true;
+        _showInputPanel = !_showInputPanel;
+
+        _parameters.SetActive(_showInputPanel);
+        _initialConditions.SetActive(_showInputPanel);
+        _inputPanelButtonText.text = _showInputPanel ? 
+            LanguageManager.Instance.GetString("HideInputField") :
+            LanguageManager.Instance.GetString("ShowInputField");
     }
 
     /// <summary>
     /// Show/Hide Data Visualization Panel
     /// </summary>
-    public void ShowDataVisualizationPanel()
+    public void ToggleDataVisualizationPanel()
     {
-        if (_showDataPanel)
-            _showDataPanel = false;
-        else
-            _showDataPanel = true;
+        _showDataPanel = !_showDataPanel;
+
+        _dataVisualization.SetActive(_showDataPanel);
+        _dataVisualizationButtonText.text = _showDataPanel ?
+             LanguageManager.Instance.GetString("HideDataVisualization") :
+             LanguageManager.Instance.GetString("ShowDataVisualization");
     }
 
     /// <summary>
@@ -345,8 +319,6 @@ public class ParameterUI : PausableObject, IResetObject
     /// <param name="choice">The choice from the UI (Dropdown menu)</param>
     public void DropdownListener(int choice)
     {
-        _resetBackground = false;
-
         // This has caused some sort of double invocation of this code,
         // which was the source of some bugs, so for the time being it is
         // commented out.
@@ -458,24 +430,6 @@ public class ParameterUI : PausableObject, IResetObject
     /// </summary>
     public void ResetObject()
     {
-        _showLabel.isOn = false;
-        _showOriginGrid.isOn = true;
-        _showInputPanel = false;
-        _showDataPanel = false;
-        _showInputPanelButton.interactable = false;
-        _showDataVisualizationButton.interactable = false;
-        _inputPanelButtonText.text = LanguageManager.Instance.GetString("ShowInputField");
-        _dataVisualizationButtonText.text = LanguageManager.Instance.GetString("ShowDataVisualization");
-        _parameters.SetActive(true);
-        _initialConditions.SetActive(true);
-        _dataVisualization.SetActive(true);
-
-        _particleInUse = ParticleObject.Default;
-
-        if (_resetBackground)
-            _background = "ExperimentRoom";
-        
-        _resetBackground = true;
     }
 
     /// <summary>
