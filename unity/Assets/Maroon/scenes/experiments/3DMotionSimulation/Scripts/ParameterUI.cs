@@ -329,7 +329,6 @@ public class ParameterUI : PausableObject
 
         LoadParametersFromFile(choice);
         dropdown.SetValueWithoutNotify(choice);
-        
     }
 
     /// <summary>
@@ -373,6 +372,7 @@ public class ParameterUI : PausableObject
         SkyboxController.Instance.SetBackground(_background);
 
         MotionCalculation.Instance.ResetObject();
+        ValueGraph.Instance.ResetObject();
     }
 
     public void OnEndEdit(string param)
