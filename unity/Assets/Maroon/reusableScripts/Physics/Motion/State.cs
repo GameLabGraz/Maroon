@@ -18,7 +18,7 @@ namespace Maroon.Physics.Motion
         internal double power;
         internal double work;
 
-        private SimulatedEntity entity;
+        private MotionEntity entity;
 
         public double Time { get => t; }
         public Vector3 Position { get => (Vector3) position; }
@@ -79,7 +79,7 @@ namespace Maroon.Physics.Motion
             entity = state.entity;
         }
 
-        public State(State state, SimulatedEntity entity) : this(state)
+        public State(State state, MotionEntity entity) : this(state)
         {
             this.entity = entity;
             this.entity.current_state = this;
@@ -91,7 +91,7 @@ namespace Maroon.Physics.Motion
                 entity.current_state = this;
         }
 
-        public State(Vector3 position, Vector3 velocity, SimulatedEntity entity)
+        public State(Vector3 position, Vector3 velocity, MotionEntity entity)
         {
             this.position = new Vector3d(position);
             this.velocity = new Vector3d(velocity);
@@ -99,7 +99,7 @@ namespace Maroon.Physics.Motion
         }
 
 
-        public State(Vector3d position, Vector3d velocity, SimulatedEntity entity)
+        public State(Vector3d position, Vector3d velocity, MotionEntity entity)
         {
             this.position = position;
             this.velocity = velocity;

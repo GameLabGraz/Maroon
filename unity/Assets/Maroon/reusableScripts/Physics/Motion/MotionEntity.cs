@@ -13,19 +13,19 @@ namespace Maroon.Physics.Motion
     /// <summary>
     /// An entity which moves through space as described by differential equations of first order
     /// </summary>
-    public class SimulatedEntity
+    public class MotionEntity
     {
         internal State current_state;
 
-        private Dictionary<String, Expression> _exprs = new Dictionary<String, Expression>();
-        private Dictionary<String, double> _params = new Dictionary<string, double>();
+        private Dictionary<String, Expression> _exprs = new();
+        private Dictionary<String, double> _params = new();
 
         private List<State> _state;
-        private State _initial_state = null;
+        private State _initial_state;
 
         private double _dt;
         private bool _isInitialized = false;
-        private Bounds _bounds = new Bounds();
+        private Bounds _bounds = new();
 
         public List<Vector3> Position { get => _state.Select(s => (Vector3)s.position).ToList(); }
         public List<State> State { get => _state; }
@@ -206,7 +206,7 @@ namespace Maroon.Physics.Motion
             Debug.Log(log);
         }
 
-        public SimulatedEntity()
+        public MotionEntity()
         {
             _exprs["m"] = new Expression("1", EvaluateOptions.IgnoreCase);
             _exprs["fx"] = new Expression("0", EvaluateOptions.IgnoreCase);

@@ -7,7 +7,7 @@ namespace Maroon.Physics.Motion
     /// <summary>
     /// Simulates the movement of entities over time through space
     /// </summary>
-    public class Simulation
+    public class Solver
     {
         private double _dt;
         private double _t0;
@@ -19,7 +19,7 @@ namespace Maroon.Physics.Motion
 
         private bool isInitialized = false;
 
-        private List<SimulatedEntity> entities = new List<SimulatedEntity>();
+        private List<MotionEntity> entities = new List<MotionEntity>();
 
         public double dt { get => _dt; set { _dt = value; } }
         public double t { get => _t; }
@@ -27,31 +27,31 @@ namespace Maroon.Physics.Motion
         public int steps { get => _steps; set { _steps = value; } }
         public Bounds bounds { get => _bounds; }
 
-        public Simulation()
+        public Solver()
         {
             integrator = new RungeKutta4();
         }
 
-        public Simulation(IIntegrator integrator)
+        public Solver(IIntegrator integrator)
         {
             this.integrator = integrator;
         }
 
-        public Simulation(IIntegrator integrator, double dt, double t0, int steps) : this(integrator)
+        public Solver(IIntegrator integrator, double dt, double t0, int steps) : this(integrator)
         {
             _dt = dt;
             _t0 = t0;
             _steps = steps;
         }
 
-        public Simulation(IIntegrator integrator, double dt, double t0, double duration) : this(integrator)
+        public Solver(IIntegrator integrator, double dt, double t0, double duration) : this(integrator)
         {
             _dt = dt;
             _t0 = t0;
             this.steps = (int) (duration / dt);
         }
 
-        public void AddEntity(SimulatedEntity entity)
+        public void AddEntity(MotionEntity entity)
         {
             entities.Add(entity);
         }
@@ -60,7 +60,7 @@ namespace Maroon.Physics.Motion
         {
             _t = t0;
 
-            foreach (SimulatedEntity entity in entities)
+            foreach (MotionEntity entity in entities)
             {
                 entity.Initialize(t0, dt);
             }
@@ -71,12 +71,12 @@ namespace Maroon.Physics.Motion
         public void Solve(int steps)
         {
             if (!isInitialized)
-                throw new Exception("Simulation must be initialized");
+                Initialize();
 
             int start = current_step;
 
             while(current_step < (start + steps)) {
-                foreach (SimulatedEntity entity in entities)
+                foreach (MotionEntity entity in entities)
                 {
                     entity.current_state = integrator.Integrate(entity.current_state, t, dt);
                     entity.SaveState();
@@ -86,14 +86,14 @@ namespace Maroon.Physics.Motion
                 _t = current_step * dt;
             }
 
-            foreach (SimulatedEntity entity in entities) {
+            foreach (MotionEntity entity in entities) {
                 _bounds.Encapsulate(entity.Bounds);
             }
 
             this.steps = Math.Max(this.steps, current_step);
         }
 
-        public void Run()
+        public void Solve()
         {
             Initialize();
             Solve(this.steps);

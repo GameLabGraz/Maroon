@@ -5,6 +5,7 @@ using ObjectsInUse;
 using System;
 using System.Linq;
 using GEAR.Localization;
+using Maroon.Physics.Motion;
 
 namespace Maroon.Physics.ThreeDimensionalMotion
 {
@@ -14,8 +15,8 @@ namespace Maroon.Physics.ThreeDimensionalMotion
         private const float Threshold = 0.001f;
 
         /// new members
-        private Motion.Simulation simulation = null;
-        private Motion.SimulatedEntity entity = null;
+        private Solver solver = null;
+        private MotionEntity entity = null;
 
         private int frame = 0;
         private static MotionCalculation _instance;
@@ -36,15 +37,15 @@ namespace Maroon.Physics.ThreeDimensionalMotion
         protected override void HandleFixedUpdate()
         {
             // Create new simulation from UI Paramters
-            if (simulation == null && entity == null)
+            if (solver == null && entity == null)
             {
                 InitializeCalculation();
             }
 
-            var step = frame % simulation.steps;
+            var step = frame % solver.steps;
             var pos = TransformZUp(entity.Position[step]);
             var mapped_pos = CoordSystem.Instance.MapValues(pos);
-            CoordSystem.Instance.DrawPoint(mapped_pos, frame < simulation.steps);
+            CoordSystem.Instance.DrawPoint(mapped_pos, frame < solver.steps);
 
             frame++;
         }
@@ -62,7 +63,7 @@ namespace Maroon.Physics.ThreeDimensionalMotion
             Vector3 initialPosition = ParameterUI.Instance.GetXYZ();
             Vector3 initialVelocity = ParameterUI.Instance.GetVxVyVz();
 
-            entity = new Motion.SimulatedEntity();
+            entity = new MotionEntity();
             entity.SetInitialState(initialPosition, initialVelocity);
             entity.AddExpression("fx", ParameterUI.Instance.GetFunctionFx());
             entity.AddExpression("fy", ParameterUI.Instance.GetFunctionFy());
@@ -75,16 +76,16 @@ namespace Maroon.Physics.ThreeDimensionalMotion
             }
 
 
-            simulation = new Motion.Simulation();
-            simulation.t0 = ParameterUI.Instance.GetTimes().x;
-            simulation.dt = ParameterUI.Instance.GetTimes().y;
-            simulation.steps = (int)ParameterUI.Instance.GetTimes().z;
+            solver = new Solver();
+            solver.t0 = ParameterUI.Instance.GetTimes().x;
+            solver.dt = ParameterUI.Instance.GetTimes().y;
+            solver.steps = (int)ParameterUI.Instance.GetTimes().z;
 
-            simulation.AddEntity(entity);
-            simulation.Run();
+            solver.AddEntity(entity);
+            solver.Solve();
 
-            Vector3 min_hack = TransformZUp(simulation.bounds.min);
-            Vector3 max_hack = TransformZUp(simulation.bounds.max);
+            Vector3 min_hack = TransformZUp(solver.bounds.min);
+            Vector3 max_hack = TransformZUp(solver.bounds.max);
 
             // oh god oh god why do i have to abuse this thing like this???
             // i would really like to clean up this experiment but i don't know
