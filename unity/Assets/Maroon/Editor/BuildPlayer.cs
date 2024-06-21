@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
+using UnityEngine.XR.Management;
 
 namespace Maroon.Build
 {
@@ -144,6 +145,9 @@ namespace Maroon.Build
 
             // Set PlayerSettings for Build
             SetPlayerSettings(BuildPlayerSetOptions);
+
+            // Enable "Initialize XR on Startup" only for VR
+            XRGeneralSettings.Instance.InitManagerOnStart = buildTarget == MaroonBuildTarget.VR;
 
             var unityBuildTarget = MaroonBuildTarget2UnityBuildTarget(buildTarget);
             var unityBuildTargetGroup = GetBuildTargetGroup(buildTarget);
