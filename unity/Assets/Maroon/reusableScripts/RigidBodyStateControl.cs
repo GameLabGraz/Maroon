@@ -27,9 +27,9 @@ namespace Maroon.Physics
 
             _startState.Position = _rigidBody.position;
             _startState.Rotation = _rigidBody.rotation;
+            _startState.IsKinematic = _rigidBody.isKinematic;
             _startState.Velocity = _rigidBody.velocity;
             _startState.AngularVelocity = _rigidBody.angularVelocity;
-            _startState.IsKinematic = _rigidBody.isKinematic;
 
             StoreRigidBodyState();
             
@@ -44,9 +44,9 @@ namespace Maroon.Physics
         
             _currentState.Position = _rigidBody.position;
             _currentState.Rotation = _rigidBody.rotation;
+            _currentState.IsKinematic = _rigidBody.isKinematic;
             _currentState.Velocity = _rigidBody.velocity;
             _currentState.AngularVelocity = _rigidBody.angularVelocity;
-            _currentState.IsKinematic = _rigidBody.isKinematic;
 
             _rigidBody.isKinematic = true;
             IsStateStored = true;
@@ -56,9 +56,9 @@ namespace Maroon.Physics
         {
             _rigidBody.position = _currentState.Position;
             _rigidBody.rotation = _currentState.Rotation;
+            _rigidBody.isKinematic = _currentState.IsKinematic;
             _rigidBody.velocity = _currentState.Velocity;
             _rigidBody.angularVelocity = _currentState.AngularVelocity;
-            _rigidBody.isKinematic = _currentState.IsKinematic;
 
             IsStateStored = false;
         }
@@ -67,9 +67,9 @@ namespace Maroon.Physics
         {
             _rigidBody.position = _startState.Position;
             _rigidBody.rotation = _startState.Rotation;
+            _rigidBody.isKinematic = _startState.IsKinematic;
             _rigidBody.velocity = _startState.Velocity;
             _rigidBody.angularVelocity = _startState.AngularVelocity;
-            _rigidBody.isKinematic = _startState.IsKinematic;
 
             IsStateStored = false;
         }
