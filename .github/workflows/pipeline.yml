@@ -18,6 +18,12 @@ on:
   schedule:
     - cron: 50 5 * * *
 
+# only allow one workflow to run at a time
+# this should prevent us from running out of unity license seats
+# should also prevent more than one steampipe upload running simultaneously 
+concurrency:
+  group: default
+  cancel-in-progress: false
 
 jobs:
 
