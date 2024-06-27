@@ -382,7 +382,7 @@ public class ParameterUI : PausableObject
 
     public Dictionary<string,string> GetExpressions()
     {
-        return ParameterLoader.Instance.GetParameters().exprs;
+        return ParameterLoader.Instance.GetParameters().expressions;
     }
 
     /// <summary>
