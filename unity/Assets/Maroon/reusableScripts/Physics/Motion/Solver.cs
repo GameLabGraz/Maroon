@@ -68,6 +68,37 @@ namespace Maroon.Physics.Motion
             this.isInitialized = true;
         }
 
+        internal void SolveStep()
+        {
+            foreach (MotionEntity entity in entities)
+            {
+                entity.current_state = integrator.Integrate(entity.current_state, t, dt);
+                entity.SaveState();
+            }
+
+            current_step++;
+            _t = current_step * dt;
+        }
+
+        internal void UpdateBounds()
+        {
+            foreach (MotionEntity entity in entities)
+            {
+                _bounds.Encapsulate(entity.Bounds);
+            }
+        }
+
+        public void Step()
+        {
+            if (!isInitialized)
+                Initialize();
+
+            SolveStep();
+            UpdateBounds();
+
+            this.steps = Math.Max(this.steps, current_step);
+        }
+
         public void Solve(int steps)
         {
             if (!isInitialized)
@@ -76,19 +107,10 @@ namespace Maroon.Physics.Motion
             int start = current_step;
 
             while(current_step < (start + steps)) {
-                foreach (MotionEntity entity in entities)
-                {
-                    entity.current_state = integrator.Integrate(entity.current_state, t, dt);
-                    entity.SaveState();
-                }
-
-                current_step++;
-                _t = current_step * dt;
+                SolveStep();
             }
 
-            foreach (MotionEntity entity in entities) {
-                _bounds.Encapsulate(entity.Bounds);
-            }
+            UpdateBounds();
 
             this.steps = Math.Max(this.steps, current_step);
         }
