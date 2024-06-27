@@ -37,7 +37,6 @@ public class SkyboxController : MonoBehaviour
     /// </summary>
     public void SetSpace()
     {
-        CoordCameraController.Instance.ChangePosition();
         Camera.main.clearFlags = CameraClearFlags.Skybox;
         RenderSettings.skybox = _space;
     }
@@ -47,7 +46,6 @@ public class SkyboxController : MonoBehaviour
     /// </summary>
     public void SetGrass()
     {
-        CoordCameraController.Instance.ChangePosition();
         Camera.main.clearFlags = CameraClearFlags.Skybox;
         RenderSettings.skybox = _grass;
     }
@@ -69,12 +67,5 @@ public class SkyboxController : MonoBehaviour
                 _instance = FindObjectOfType<SkyboxController>();
             return _instance;
         }
-    }
-
-    /// <summary>
-    /// Resets the object
-    /// </summary>
-    public void ResetObject()
-    {
     }
 }
