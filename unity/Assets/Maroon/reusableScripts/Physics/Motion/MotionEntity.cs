@@ -27,6 +27,10 @@ namespace Maroon.Physics.Motion
         private Bounds _bounds = new();
 
         public List<Vector3> Position { get => _state.Select(s => (Vector3)s.position).ToList(); }
+        public List<Vector3> Velocity { get => _state.Select(s => (Vector3)s.Velocity).ToList(); }
+        public List<Vector3> Acceleration { get => _state.Select(s => (Vector3)s.Acceleration).ToList(); }
+        public List<Vector3> Force { get => _state.Select(s => (Vector3)s.Force).ToList(); }
+        public List<Double> Mass { get => _state.Select(s => s.Mass).ToList(); }
         public List<MotionState> State { get => _state; }
         public Bounds Bounds { get => _bounds; }
 
