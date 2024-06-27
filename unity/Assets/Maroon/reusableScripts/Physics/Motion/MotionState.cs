@@ -5,7 +5,7 @@ namespace Maroon.Physics.Motion
     /// <summary>
     /// Represents the current state of an entity in motion.
     /// </summary>
-    public class State
+    public class MotionState
     {
         internal Vector3d position;
         internal Vector3d velocity;
@@ -64,7 +64,7 @@ namespace Maroon.Physics.Motion
 
 
         // Copy Constructor
-        public State(State state)
+        public MotionState(MotionState state)
         {
             t = state.t;
             position = state.position;
@@ -79,19 +79,19 @@ namespace Maroon.Physics.Motion
             entity = state.entity;
         }
 
-        public State(State state, MotionEntity entity) : this(state)
+        public MotionState(MotionState state, MotionEntity entity) : this(state)
         {
             this.entity = entity;
             this.entity.current_state = this;
         }
 
-        public State(State state, bool update_entity) : this(state)
+        public MotionState(MotionState state, bool update_entity) : this(state)
         {
             if (update_entity && entity != null)
                 entity.current_state = this;
         }
 
-        public State(Vector3 position, Vector3 velocity, MotionEntity entity)
+        public MotionState(Vector3 position, Vector3 velocity, MotionEntity entity)
         {
             this.position = new Vector3d(position);
             this.velocity = new Vector3d(velocity);
@@ -99,7 +99,7 @@ namespace Maroon.Physics.Motion
         }
 
 
-        public State(Vector3d position, Vector3d velocity, MotionEntity entity)
+        public MotionState(Vector3d position, Vector3d velocity, MotionEntity entity)
         {
             this.position = position;
             this.velocity = velocity;

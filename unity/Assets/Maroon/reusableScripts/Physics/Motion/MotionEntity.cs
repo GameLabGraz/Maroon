@@ -15,19 +15,19 @@ namespace Maroon.Physics.Motion
     /// </summary>
     public class MotionEntity
     {
-        internal State current_state;
+        internal MotionState current_state;
 
         private Dictionary<String, Expression> _exprs = new();
         private Dictionary<String, double> _params = new();
 
-        private List<State> _state;
-        private State _initial_state;
+        private List<MotionState> _state;
+        private MotionState _initial_state;
 
         private double _dt;
         private Bounds _bounds = new();
 
         public List<Vector3> Position { get => _state.Select(s => (Vector3)s.position).ToList(); }
-        public List<State> State { get => _state; }
+        public List<MotionState> State { get => _state; }
         public Bounds Bounds { get => _bounds; }
 
         internal Vector3d EvaluateForceAt(double t)
@@ -157,19 +157,19 @@ namespace Maroon.Physics.Motion
 
         public void SetInitialState(Vector3 position, Vector3 velocity)
         {
-            _initial_state = new State(position, velocity, this);
+            _initial_state = new MotionState(position, velocity, this);
         }
 
         public void Initialize(double initial_t, double dt)
         {
-            _state = new List<State>();
+            _state = new List<MotionState>();
 
             current_state = _initial_state;
             current_state.EvaluateAccelerationAt(initial_t);
             current_state.CalculateEnergy();
             current_state.CalculatePower();
 
-            _state.Add(new State(current_state));
+            _state.Add(new MotionState(current_state));
 
             _dt = dt;
         }
@@ -181,7 +181,7 @@ namespace Maroon.Physics.Motion
             double prev_power = _state.Last().power;
 
             current_state.CalculateEnergyPowerWork(prev_power, _dt);
-            _state.Add(new State(current_state));
+            _state.Add(new MotionState(current_state));
         }
 
         public void PrintData()

@@ -5,5 +5,5 @@ using Maroon.Physics.Motion;
 
 public interface IIntegrator
 {
-    public State Integrate(State initial, double t, double dt);
+    public MotionState Integrate(MotionState initial, double t, double dt);
 }

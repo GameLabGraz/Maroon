@@ -9,7 +9,7 @@ namespace Maroon.Physics.Motion
     /// </summary>
     public class ExplicitEuler : IIntegrator
     {
-        public State Integrate(State s, double t, double dt)
+        public MotionState Integrate(MotionState s, double t, double dt)
         {
             s.position += s.velocity * dt;
             s.velocity += s.EvaluateAccelerationAt(t + dt) * dt;
@@ -24,7 +24,7 @@ namespace Maroon.Physics.Motion
     /// </summary>
     public class SemiImplicitEuler : IIntegrator
     {
-        public State Integrate(State s, double t, double dt)
+        public MotionState Integrate(MotionState s, double t, double dt)
         { 
             s.velocity += s.EvaluateAccelerationAt(t + dt) * dt;
             s.position += s.velocity * dt;
@@ -39,7 +39,7 @@ namespace Maroon.Physics.Motion
     /// </summary>
     public class RungeKutta4 : IIntegrator
     {
-        public State Integrate(State s, double t, double dt)
+        public MotionState Integrate(MotionState s, double t, double dt)
         {
             var k1 = Evaluate(s, t, 0.0, new Derivative());
             var k2 = Evaluate(s, t, dt * 0.5, k1);
@@ -56,9 +56,9 @@ namespace Maroon.Physics.Motion
             return s;
         }
 
-        private Derivative Evaluate(State initial, double t, double dt, Derivative d)
+        private Derivative Evaluate(MotionState initial, double t, double dt, Derivative d)
         {
-            State s = new State(initial, true);
+            MotionState s = new MotionState(initial, true);
             s.position += d.dx * dt;
             s.velocity += d.dv * dt;
             return new Derivative(s.velocity, s.EvaluateAccelerationAt(t + dt));
@@ -84,7 +84,7 @@ namespace Maroon.Physics.Motion
     /// </summary>
     public class VelocityVerlet : IIntegrator
     {
-        public State Integrate(State s, double t, double dt)
+        public MotionState Integrate(MotionState s, double t, double dt)
         {
             s.position += s.velocity * dt + s.acceleration * dt * dt * 0.5;
             s.velocity += (s.acceleration + s.EvaluateAccelerationAt(t + dt)) * dt * 0.5;
