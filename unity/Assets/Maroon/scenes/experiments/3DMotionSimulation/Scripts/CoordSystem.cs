@@ -22,7 +22,6 @@ namespace Maroon.Physics.ThreeDimensionalMotion
         [SerializeField] private TMP_Text _yLabel2;
         [SerializeField] private TMP_Text _zLabel2;
 
-        private string _text;
         private string _textX = "";
         private string _textY = "";
         private string _textZ = "";
@@ -37,7 +36,6 @@ namespace Maroon.Physics.ThreeDimensionalMotion
         private bool _borderValuesSet = false;
         private Color _color = Color.black;
 
-        private List<GameObject> _objects = new List<GameObject>();
         private List<GameObject> _origin = new List<GameObject>();
 
         [SerializeField] private Vector3 _scaleXYZ = new Vector3(4.5f, 3.5f, 3.5f);
