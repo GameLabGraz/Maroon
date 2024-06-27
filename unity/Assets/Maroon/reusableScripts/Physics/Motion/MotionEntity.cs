@@ -24,7 +24,6 @@ namespace Maroon.Physics.Motion
         private State _initial_state;
 
         private double _dt;
-        private bool _isInitialized = false;
         private Bounds _bounds = new();
 
         public List<Vector3> Position { get => _state.Select(s => (Vector3)s.position).ToList(); }
@@ -173,7 +172,6 @@ namespace Maroon.Physics.Motion
             _state.Add(new State(current_state));
 
             _dt = dt;
-            _isInitialized = true;
         }
 
         public void SaveState()
