@@ -17,8 +17,8 @@ namespace Maroon.Physics.Motion
     {
         internal MotionState current_state;
 
-        private Dictionary<String, Expression> _exprs = new();
-        private Dictionary<String, double> _params = new();
+        private Dictionary<String, Expression> _expressions = new();
+        private Dictionary<String, object> _parameters = new();
 
         private List<MotionState> _state;
         private MotionState _initial_state;
@@ -33,15 +33,18 @@ namespace Maroon.Physics.Motion
         internal Vector3d EvaluateForceAt(double t)
         {
             return new Vector3d(
-                Convert.ToDouble(_exprs["fx"].Evaluate()),
-                Convert.ToDouble(_exprs["fy"].Evaluate()),
-                Convert.ToDouble(_exprs["fz"].Evaluate())
+                Convert.ToDouble(_expressions["fx"].Evaluate()),
+                Convert.ToDouble(_expressions["fy"].Evaluate()),
+                Convert.ToDouble(_expressions["fz"].Evaluate())
             );
         }
 
         internal double EvaluateMassAt(double t)
         {
-            return Convert.ToDouble(_exprs["m"].Evaluate());
+            if (_parameters.ContainsKey("m"))
+                return Convert.ToDouble(_parameters["m"]);
+
+            return Convert.ToDouble(_expressions["m"].Evaluate());
         }
 
         public void AddExpression(String signature, String expression)
@@ -60,17 +63,12 @@ namespace Maroon.Physics.Motion
                 }
             }
 
-            _exprs[name] = expr;
+            _expressions[name] = expr;
         }
 
-        public void AddParamter(String name, int value)
+        public void AddParameter(String name, object value)
         {
-            _params[name] = (double)value;
-        }
-
-        public void AddParameter(String name, double value)
-        {
-            _params[name] = value;
+            _parameters[name] = value;
         }
 
         private (String, List<String>) SplitSignature(String signature)
@@ -113,9 +111,9 @@ namespace Maroon.Physics.Motion
 
         private void Expression_EvaluateFunction(string name, FunctionArgs args)
         {
-            if (_exprs.ContainsKey(name) && _exprs[name].Parameters.Count == args.Parameters.Length)
+            if (_expressions.ContainsKey(name) && _expressions[name].Parameters.Count == args.Parameters.Length)
             {
-                var expr = _exprs[name];
+                var expr = _expressions[name];
 
                 for (int i = 0; i < expr.Parameters.Count; i++)
                 {
@@ -141,13 +139,13 @@ namespace Maroon.Physics.Motion
                 case "vz": args.Result = current_state.velocity.z; return;
             }
 
-            if (_params.ContainsKey(name))
+            if (_parameters.ContainsKey(name))
             {
-                args.Result = _params[name];
+                args.Result = _parameters[name];
             }
-            else if (_exprs.ContainsKey(name))
+            else if (_expressions.ContainsKey(name))
             {
-                args.Result = _exprs[name].Evaluate();
+                args.Result = _expressions[name].Evaluate();
             }
             else
             {
@@ -206,10 +204,10 @@ namespace Maroon.Physics.Motion
 
         public MotionEntity()
         {
-            _exprs["m"] = new Expression("1", EvaluateOptions.IgnoreCase);
-            _exprs["fx"] = new Expression("0", EvaluateOptions.IgnoreCase);
-            _exprs["fy"] = new Expression("0", EvaluateOptions.IgnoreCase);
-            _exprs["fz"] = new Expression("0", EvaluateOptions.IgnoreCase);
+            _expressions["m"] = new Expression("1", EvaluateOptions.IgnoreCase);
+            _expressions["fx"] = new Expression("0", EvaluateOptions.IgnoreCase);
+            _expressions["fy"] = new Expression("0", EvaluateOptions.IgnoreCase);
+            _expressions["fz"] = new Expression("0", EvaluateOptions.IgnoreCase);
         }
     }
 }
