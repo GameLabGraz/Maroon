@@ -30,7 +30,7 @@ namespace Maroon.Physics.Motion
         public double Power { get => power; }
         public double Work { get => work; }
 
-        public Vector3d EvaluateAccelerationAt(double t)
+        internal Vector3d EvaluateAccelerationAt(double t)
         {
             this.t = t;
             mass = entity.EvaluateMassAt(t);
@@ -40,24 +40,24 @@ namespace Maroon.Physics.Motion
         }
 
 
-        public void CalculateEnergyPowerWork(double prev_power, double dt)
+        internal void CalculateEnergyPowerWork(double prev_power, double dt)
         {
             CalculateEnergy();
             CalculatePower();
             CalculateWork(prev_power, dt);
         }
 
-        public void CalculateEnergy()
+        internal void CalculateEnergy()
         {
             kinetic_energy = ((velocity.x * velocity.x) + (velocity.y * velocity.y) + (velocity.z * velocity.z)) * mass * 0.5;
         }
 
-        public void CalculatePower()
+        internal void CalculatePower()
         {
             power = (velocity.x * force.x) + (velocity.y * force.y) + (velocity.z * force.z);
         }
 
-        public void CalculateWork(double prev_power, double dt)
+        internal void CalculateWork(double prev_power, double dt)
         {
             work += 0.5 * (power + prev_power) * dt;
         }
