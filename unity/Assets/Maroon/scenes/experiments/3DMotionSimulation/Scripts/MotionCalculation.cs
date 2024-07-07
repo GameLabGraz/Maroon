@@ -43,8 +43,8 @@ namespace Maroon.Physics.ThreeDimensionalMotion
 
             var step = frame % solver.steps;
             var pos = TransformZUp(entity.Position[step]);
-            var mapped_pos = CoordSystem.Instance.MapValues(pos);
-            CoordSystem.Instance.DrawPoint(mapped_pos, frame < solver.steps);
+            var look_at = TransformZUp(entity.Position[step+1]);
+            CoordSystem.Instance.DrawPoint(pos, look_at, frame < solver.steps);
 
             frame++;
         }
@@ -110,8 +110,7 @@ namespace Maroon.Physics.ThreeDimensionalMotion
 
 
             var pos = TransformZUp(entity.Position[0]);
-            var mapped_pos = CoordSystem.Instance.MapValues(pos);
-            CoordSystem.Instance.DrawPoint(mapped_pos, false);
+            CoordSystem.Instance.DrawPoint(pos, Vector3.up, false);
         }
 
         /// <summary>

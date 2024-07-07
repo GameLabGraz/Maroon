@@ -194,15 +194,22 @@ namespace Maroon.Physics.ThreeDimensionalMotion
         /// <param name="particleInUse">Current object in use (e.g. Particle, Ball, Satellite)</param>
         public void DrawPoint(Vector3 point, bool drawTrajectory)
         {
-            _particle.transform.position = point;
+            _particle.transform.position = MapValues(point);
 
             if (drawTrajectory)
             {
                 LineRenderer line = _trajectory.GetComponent<LineRenderer>();
-                line.SetPosition(line.positionCount++, point);
+                line.SetPosition(line.positionCount++, MapValues(point));
             }
 
         }
+
+        public void DrawPoint(Vector3 point, Vector3 look_at, bool drawTrajectory)
+        {
+            DrawPoint(point, drawTrajectory);
+            _particle.transform.LookAt(MapValues(look_at));
+        }
+
 
         public static CoordSystem Instance
         {
