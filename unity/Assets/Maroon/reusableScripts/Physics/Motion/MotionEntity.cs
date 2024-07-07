@@ -131,17 +131,19 @@ namespace Maroon.Physics.Motion
 
         private void Expression_EvaluateParameter(string name, ParameterArgs args)
         {
-            switch (name)
+            args.Result = name switch
             {
+                "t" => current_state.t,
+                "x" => current_state.position.x,
+                "y" => current_state.position.y,
+                "z" => current_state.position.z,
+                "vx" => current_state.velocity.x,
+                "vy" => current_state.velocity.y,
+                "vz" => current_state.velocity.z,
+                _ => null
+            };
 
-                case "t": args.Result = current_state.t; return;
-                case "x": args.Result = current_state.position.x; return;
-                case "y": args.Result = current_state.position.y; return;
-                case "z": args.Result = current_state.position.z; return;
-                case "vx": args.Result = current_state.velocity.x; return;
-                case "vy": args.Result = current_state.velocity.y; return;
-                case "vz": args.Result = current_state.velocity.z; return;
-            }
+            if (args.Result != null) return;
 
             if (_parameters.ContainsKey(name))
             {
