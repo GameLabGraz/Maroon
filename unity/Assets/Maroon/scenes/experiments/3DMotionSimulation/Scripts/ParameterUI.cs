@@ -14,6 +14,7 @@ namespace ObjectsInUse
     {
         Default,
         Ball,
+        Rocket,
         Satellite
     }
 }
@@ -345,12 +346,13 @@ public class ParameterUI : PausableObject
     {
         _background = parameters.Background;
 
-        if (parameters.Particle == "Satellite")
-            _particleInUse = ParticleObject.Satellite;
-        else if (parameters.Particle == "Ball")
-            _particleInUse = ParticleObject.Ball;
-        else
-            _particleInUse = ParticleObject.Default;
+        _particleInUse = parameters.Particle.ToLower() switch
+        {
+            "ball" => ParticleObject.Ball,
+            "rocket" => ParticleObject.Rocket,
+            "satellite" => ParticleObject.Satellite,
+            _ => ParticleObject.Default
+        };
 
         fxIF.text = parameters.fx;
         fyIF.text = parameters.fy;

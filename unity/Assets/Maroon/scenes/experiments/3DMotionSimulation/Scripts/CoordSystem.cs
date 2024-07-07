@@ -259,6 +259,9 @@ namespace Maroon.Physics.ThreeDimensionalMotion
                     _particle = _particleObjects[2];
                     _planet.SetActive(true);
                     break;
+                case ParticleObject.Rocket:
+                    _particle = _particleObjects[3];
+                    break;
                 default:
                     _particle = _particleObjects[0];
                     break;
