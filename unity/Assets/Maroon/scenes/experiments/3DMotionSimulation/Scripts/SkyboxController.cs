@@ -15,15 +15,15 @@ public class SkyboxController : MonoBehaviour
     /// <param name="background">Background to use</param>
     public void SetBackground(string background)
     {
-        switch (background)
+        switch (background.ToLower())
         {
-            case "ExperimentRoom":
+            case "experimentroom":
                 SetExperimentRoom();
                 break;
-            case "Grass":
+            case "grass":
                 SetGrass();
                 break;
-            case "Space":
+            case "space":
                 SetSpace();
                 break;
             default:
