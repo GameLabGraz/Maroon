@@ -29,7 +29,7 @@ public class ValueGraph : PausableObject
     private static ValueGraph _instance;
     public SimpleLineChart simpleLineChart;
 
-    private int _choice = 0;
+    private int _choice = int.MinValue;
 
 
     /// <summary>
@@ -182,6 +182,9 @@ public class ValueGraph : PausableObject
     /// </summary>
     public void ResetObject()
     {
+        // a bit hacky but does its job
+        if (_choice < 0) return;
+
         LoadChoosenValue(_choice);
     }
 }
