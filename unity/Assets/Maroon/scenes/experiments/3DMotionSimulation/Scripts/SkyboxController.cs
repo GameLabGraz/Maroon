@@ -15,7 +15,7 @@ public class SkyboxController : MonoBehaviour
     /// <param name="background">Background to use</param>
     public void SetBackground(string background)
     {
-        switch (background.ToLower())
+        switch (background?.ToLower())
         {
             case "experimentroom":
                 SetExperimentRoom();

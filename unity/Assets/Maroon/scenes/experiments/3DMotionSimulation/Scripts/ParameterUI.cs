@@ -346,7 +346,7 @@ public class ParameterUI : PausableObject
     {
         _background = parameters.Background;
 
-        _particleInUse = parameters.Particle.ToLower() switch
+        _particleInUse = parameters.Particle?.ToLower() switch
         {
             "ball" => ParticleObject.Ball,
             "rocket" => ParticleObject.Rocket,
