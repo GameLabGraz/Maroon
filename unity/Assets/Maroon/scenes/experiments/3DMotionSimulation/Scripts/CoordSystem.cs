@@ -5,11 +5,11 @@ using ObjectsInUse;
 
 namespace Maroon.Physics.ThreeDimensionalMotion
 {
-    public class CoordSystem : MonoBehaviour, IResetObject
+    public class CoordSystem : MonoBehaviour
     {
         private static CoordSystem _instance;
 
-        [SerializeField] private GameObject _trajectory;
+        private GameObject _trajectory;
         private GameObject _particle;
         [SerializeField] private List<GameObject> _particleObjects = new List<GameObject>();
         [SerializeField] private GameObject _planet;
@@ -22,7 +22,6 @@ namespace Maroon.Physics.ThreeDimensionalMotion
         [SerializeField] private TMP_Text _yLabel2;
         [SerializeField] private TMP_Text _zLabel2;
 
-        private string _text;
         private string _textX = "";
         private string _textY = "";
         private string _textZ = "";
@@ -37,7 +36,6 @@ namespace Maroon.Physics.ThreeDimensionalMotion
         private bool _borderValuesSet = false;
         private Color _color = Color.black;
 
-        private List<GameObject> _objects = new List<GameObject>();
         private List<GameObject> _origin = new List<GameObject>();
 
         [SerializeField] private Vector3 _scaleXYZ = new Vector3(4.5f, 3.5f, 3.5f);
@@ -45,11 +43,13 @@ namespace Maroon.Physics.ThreeDimensionalMotion
         private Vector3 _realXYZMin;
         private Vector3 _realXYZMax;
 
+        private bool drawOrigin = true;
+
         /// <summary>
         /// Inits the scale of objects, trajectory
         /// Inits the coord system (visibility range)
         /// </summary>
-        private void Start()
+        private void Awake()
         {
             _particle = _particleObjects[0];
 
@@ -61,6 +61,14 @@ namespace Maroon.Physics.ThreeDimensionalMotion
             _yMax = end;
             end = new Vector3(transform.position.x, transform.position.y, transform.position.z + _scaleXYZ.z);
             _zMax = end;
+
+            _trajectory = new GameObject();
+            _trajectory.name = "Trajectory";
+            _trajectory.AddComponent<LineRenderer>();
+            LineRenderer line = _trajectory.GetComponent<LineRenderer>();
+            line.widthCurve = AnimationCurve.Constant(0, 1, 0.01f);
+            line.material = _lineRendererMaterial;
+            line.material.color = Color.red;
         }
 
         /// <summary>
@@ -77,7 +85,7 @@ namespace Maroon.Physics.ThreeDimensionalMotion
             LineRenderer lr = myLine.GetComponent<LineRenderer>();
             lr.material = _lineRendererMaterial;
             lr.material.color = color;
-            lr.SetWidth(0.02f, 0.02f);
+            lr.widthCurve = AnimationCurve.Constant(0, 1, 0.02f);
             lr.SetPosition(0, start);
             lr.SetPosition(1, end);
             _origin.Add(myLine);
@@ -104,7 +112,7 @@ namespace Maroon.Physics.ThreeDimensionalMotion
             _textZ2 = "Z: " + RoundDisplayedValues(_realXYZMin.y) + "m";
 
             _borderValuesSet = true;
-            DrawOriginGrid(true);
+            DrawOriginGrid();
         }
 
         /// <summary>
@@ -186,11 +194,22 @@ namespace Maroon.Physics.ThreeDimensionalMotion
         /// <param name="particleInUse">Current object in use (e.g. Particle, Ball, Satellite)</param>
         public void DrawPoint(Vector3 point, bool drawTrajectory)
         {
-            _particle.transform.position = point;
+            _particle.transform.position = MapValues(point);
 
             if (drawTrajectory)
-                _objects.Add(Instantiate(_trajectory, point, Quaternion.identity));
+            {
+                LineRenderer line = _trajectory.GetComponent<LineRenderer>();
+                line.SetPosition(line.positionCount++, MapValues(point));
+            }
+
         }
+
+        public void DrawPoint(Vector3 point, Vector3 look_at, bool drawTrajectory)
+        {
+            DrawPoint(point, drawTrajectory);
+            _particle.transform.LookAt(MapValues(look_at));
+        }
+
 
         public static CoordSystem Instance
         {
@@ -207,15 +226,10 @@ namespace Maroon.Physics.ThreeDimensionalMotion
         /// </summary>
         public void ResetObject()
         {
-            // deleting game objects
-            foreach (GameObject trajectory in _objects)
-                Destroy(trajectory);
-
             // deleting origin lines
             foreach (GameObject line in _origin)
                 Destroy(line);
 
-            _objects.Clear();
             _origin.Clear();
 
             _particle.SetActive(false);
@@ -231,6 +245,8 @@ namespace Maroon.Physics.ThreeDimensionalMotion
 
             _borderValuesSet = false;
             _color = Color.black;
+
+            _trajectory.GetComponent<LineRenderer>().positionCount = 0;
         }
 
         /// <summary>
@@ -249,6 +265,9 @@ namespace Maroon.Physics.ThreeDimensionalMotion
                 case ParticleObject.Satellite:
                     _particle = _particleObjects[2];
                     _planet.SetActive(true);
+                    break;
+                case ParticleObject.Rocket:
+                    _particle = _particleObjects[3];
                     break;
                 default:
                     _particle = _particleObjects[0];
@@ -289,9 +308,9 @@ namespace Maroon.Physics.ThreeDimensionalMotion
         /// Method calculates the origin points and map them for drawing
         /// </summary>
         /// <param name="draw">Bool if grid should be drawn or deleted</param>
-        public void DrawOriginGrid(bool draw)
+        public void DrawOriginGrid()
         {
-            if (draw && _borderValuesSet)
+            if (drawOrigin && _borderValuesSet)
             {
                 Vector3 start;
                 Vector3 end;
@@ -326,6 +345,12 @@ namespace Maroon.Physics.ThreeDimensionalMotion
                     Destroy(line);
                 _origin.Clear();
             }
+        }
+
+        public void DrawOriginGrid(bool draw)
+        {
+            drawOrigin = draw;
+            DrawOriginGrid();
         }
 
         /// <summary>
