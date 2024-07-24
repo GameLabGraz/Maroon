@@ -142,6 +142,8 @@ namespace Maroon.Chemistry.Catalyst
             {
                 questManagerObject.SetActive(false);
             }
+
+            ResetObject();
         }
 
         private void StartExperiment()
@@ -647,7 +649,9 @@ namespace Maroon.Chemistry.Catalyst
             progressChart.gameObject.SetActive(false);
             progressChart.series.list[0].data[0].data[1] = 0.0f;
 
-            questManagerLabObject.GetComponent<QuestManager>()?.ResetQuests();
+            if (questManagerLabObject != null)
+                questManagerLabObject.GetComponent<QuestManager>()?.ResetQuests();
+
             foreach (var questManagerVariantObject in questManagerVariantObjects)
             {
                 questManagerVariantObject.GetComponent<QuestManager>()?.ResetQuests();
@@ -664,7 +668,7 @@ namespace Maroon.Chemistry.Catalyst
             
             catalystBoxMaterial.color = Color.black;
 
-            ChangExperimentVariation(0);
+            ChangeExperimentVariation(0);
         }
 
         public void TemperatureChanged(float newTemperature)
@@ -700,7 +704,7 @@ namespace Maroon.Chemistry.Catalyst
             UpdateTurnOverRateUI();
         }
         
-        public void ChangExperimentVariation(int val)
+        public void ChangeExperimentVariation(int val)
         {
             ExperimentVariation = (CatalystVariation)val;
             CurrentExperimentStage = ExperimentVariation switch

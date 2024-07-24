@@ -30,6 +30,8 @@ namespace Maroon.Chemistry.Catalyst.VR
                 if (controlPanel)
                     controlPanel.Setup(Mathf.Min(MaxXCoord - MinXCoord, MaxZCoord - MinZCoord), _doStepWiseSimulation);
             });
+
+            ResetObject();
         }
 
         public override void ResetObject()
