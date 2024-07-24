@@ -444,6 +444,7 @@ namespace Maroon.GlobalEntities
             }
             
             UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
+            CheckCursorLocking(scene);
             AddToSceneHistory(scene);
 
             // Add scene change to history
@@ -465,6 +466,7 @@ namespace Maroon.GlobalEntities
             }    
         
             UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
+            CheckCursorLocking(scene);
             AddToSceneHistory(scene);
             return true;
         }
@@ -478,6 +480,21 @@ namespace Maroon.GlobalEntities
                     Debug.Log("[SceneManager] Push Scene to history: " + scene.SceneName);
                 this._sceneHistory.Push(scene);
             }
+        }
+
+        public void CheckCursorLocking(Maroon.CustomSceneAsset scene)
+        {
+            if(scene.SceneNameWithoutPlatformExtension == "Laboratory")
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+        
         }
 
         // Called when the game should be closed
