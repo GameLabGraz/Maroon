@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Maroon.GlobalEntities;
 
 public class scrMenu : MonoBehaviour
 {
@@ -77,10 +78,20 @@ public class scrMenu : MonoBehaviour
     {
         this.Canvas.SetActive(true);
         this.IsOpen = true;
+        
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     public void CloseMenu()
     {
+        if(SceneManager.Instance.ActiveSceneNameWithoutPlatformExtension == "Laboratory")
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            Debug.Log(SceneManager.Instance.ActiveSceneNameWithoutPlatformExtension);
+        }
+
         this.Canvas.SetActive(false);
         this.IsOpen = false;
 
