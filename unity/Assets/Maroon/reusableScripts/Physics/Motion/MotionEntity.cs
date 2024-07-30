@@ -1,8 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Maroon.Physics;
 using NCalc;
+using NCalc.Handlers;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -53,7 +52,7 @@ namespace Maroon.Physics.Motion
 
         public void AddExpression(String signature, String expression)
         {
-            var expr = new Expression(expression, EvaluateOptions.IgnoreCase);
+            var expr = new Expression(expression, ExpressionOptions.IgnoreCaseAtBuiltInFunctions);
             expr.EvaluateParameter += Expression_EvaluateParameter;
             expr.EvaluateFunction += Expression_EvaluateFunction;
 
