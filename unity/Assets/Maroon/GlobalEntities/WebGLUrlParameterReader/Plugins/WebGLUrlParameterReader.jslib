@@ -3,7 +3,7 @@ mergeInto(LibraryManager.library,
     _getUrlParameter: function(url_parameter_name_ptr)
     {   
         // Get requested parameter
-        var url_parameter_name = Pointer_stringify(url_parameter_name_ptr);
+        var url_parameter_name = UTF8ToString(url_parameter_name_ptr);
 
         // Extract requested parameter from URL
         var searchParams = new URLSearchParams(window.location.search);
