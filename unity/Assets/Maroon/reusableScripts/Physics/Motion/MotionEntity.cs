@@ -209,6 +209,8 @@ namespace Maroon.Physics.Motion
 
         public MotionEntity()
         {
+            _parameters["pi"] = Math.PI;
+
             _expressions["m"] = new Expression("1", ExpressionOptions.IgnoreCaseAtBuiltInFunctions);
             _expressions["fx"] = new Expression("0", ExpressionOptions.IgnoreCaseAtBuiltInFunctions);
             _expressions["fy"] = new Expression("0", ExpressionOptions.IgnoreCaseAtBuiltInFunctions);
