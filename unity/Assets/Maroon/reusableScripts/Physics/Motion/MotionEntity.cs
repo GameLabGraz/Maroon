@@ -209,10 +209,10 @@ namespace Maroon.Physics.Motion
 
         public MotionEntity()
         {
-            _expressions["m"] = new Expression("1", EvaluateOptions.IgnoreCase);
-            _expressions["fx"] = new Expression("0", EvaluateOptions.IgnoreCase);
-            _expressions["fy"] = new Expression("0", EvaluateOptions.IgnoreCase);
-            _expressions["fz"] = new Expression("0", EvaluateOptions.IgnoreCase);
+            _expressions["m"] = new Expression("1", ExpressionOptions.IgnoreCaseAtBuiltInFunctions);
+            _expressions["fx"] = new Expression("0", ExpressionOptions.IgnoreCaseAtBuiltInFunctions);
+            _expressions["fy"] = new Expression("0", ExpressionOptions.IgnoreCaseAtBuiltInFunctions);
+            _expressions["fz"] = new Expression("0", ExpressionOptions.IgnoreCaseAtBuiltInFunctions);
         }
     }
 }
