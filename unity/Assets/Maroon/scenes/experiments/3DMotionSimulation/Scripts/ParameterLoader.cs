@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
-using System.IO;
 using Maroon.GlobalEntities;
+using UnityEditor;
+using System.Linq;
 
 public class ParameterLoader : MonoBehaviour
 {
     private static ParameterLoader _instance;
-    [SerializeField] private List<TextAsset> _jsonFile = new List<TextAsset>();
+    [SerializeField] private List<string> _jsonFileSelectionOrder = new List<string>();
+    private List<TextAsset> _jsonFiles = new List<TextAsset>();
     private Parameters _parameters;
 
     /// <summary>
@@ -43,6 +45,25 @@ public class ParameterLoader : MonoBehaviour
 #if UNITY_WEBGL
         WebGlReceiver.Instance.OnIncomingData.AddListener(HandleExternalJson);
 #endif
+
+        // Add all json files in StreamingAssets/Config/3DMotionSimulation to the list
+        // Note: Those are loacted in STREAMINGASSETS not in the RESOURCES folder
+
+        var configPath = System.IO.Path.Combine(Application.streamingAssetsPath, "Config", "3DMotionSimulation");
+        var files = System.IO.Directory.GetFiles(configPath, "*.json");
+        _jsonFiles = Enumerable.Repeat<TextAsset>(null, _jsonFileSelectionOrder.Count).ToList();
+
+        foreach(var path in files)
+        {
+            string jsonContent = System.IO.File.ReadAllText(path);
+            string fileName = System.IO.Path.GetFileNameWithoutExtension(path);
+
+            int index = _jsonFileSelectionOrder.FindIndex(name => name == fileName);
+            if (index == -1) continue;
+
+            TextAsset jsonAsset = new TextAsset(jsonContent);
+            _jsonFiles[index] = jsonAsset;
+        }
     }
 
     /// <summary>
@@ -61,7 +82,7 @@ public class ParameterLoader : MonoBehaviour
     /// <returns>Parameters</returns>
     public Parameters LoadJsonFromFile(int index)
     {
-        string data = _jsonFile[index].text;
+        string data = _jsonFiles[index].text;
 
         return LoadJson(data);
     }
