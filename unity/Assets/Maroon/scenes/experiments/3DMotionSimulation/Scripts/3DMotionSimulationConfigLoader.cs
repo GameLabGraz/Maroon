@@ -1,14 +1,18 @@
+#if UNITY_WEBGL && !UNITY_EDITOR
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
 
 namespace Maroon.Config
 {
     public class ConfigLoader3DMotionSimulation : Maroon.Config.ConfigLoader
     {
-        public override void LoadConfig()
+        public override void SetParameters()
         {
-            Debug.Log("Loading 3D Motion Simulation Config");
+            var parameters = JsonConvert.DeserializeObject<ParameterLoader.Parameters>(_parametersString);
+            ParameterUI.Instance.LoadParameters(parameters);
         }
     }
 }
+#endif

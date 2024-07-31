@@ -1,6 +1,9 @@
+#if UNITY_WEBGL && !UNITY_EDITOR
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
+using UnityEngine.Networking;
 using Newtonsoft.Json;
 
 namespace Maroon.Config
@@ -9,28 +12,42 @@ namespace Maroon.Config
     {
         protected string _config;
         protected string _configPath;
+        protected string _parametersString;
         protected Dictionary<string, string> _parameters;
 
         void Start()
         {
             _config = Maroon.GlobalEntities.BootstrappingManager.Instance.UrlParameters[Maroon.WebGlUrlParameter.Config];
-            Debug.Log("Config: " + _config);
             
-            if(_config == null || _config == "Default") return;
+            if(_config == null) return;
 
             var experimentName = Maroon.GlobalEntities.SceneManager.Instance.ActiveSceneNameWithoutPlatformExtension;
-            _configPath = System.IO.Path.Combine(Application.streamingAssetsPath, "Config", experimentName, _config + ".json");
-            Debug.Log("ConfigPath: " + _configPath);
+            _configPath = Path.Combine(Application.streamingAssetsPath, "Config", experimentName, _config + ".json");
 
             if(_configPath == null) return;
 
-            var configString = System.IO.File.ReadAllText(_configPath);
-            _parameters = JsonConvert.DeserializeObject<Dictionary<string, string>>(configString);
-            Debug.Log("Parameters: " + _parameters);
-
-            LoadConfig();
+            StartCoroutine(LoadJsonWebGL(_configPath));
         }
 
-        public abstract void LoadConfig();
+        private IEnumerator LoadJsonWebGL(string url)
+        {
+            Debug.Log("Loading JSON using UnityWebRequest");
+            UnityWebRequest request = UnityWebRequest.Get(url);
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError($"Failed to load JSON file: {request.error}");
+                yield break;
+            }
+
+            _parametersString = request.downloadHandler.text;
+            _parameters = JsonConvert.DeserializeObject<Dictionary<string, string>>(_parametersString);
+
+            SetParameters();
+        }
+
+        public abstract void SetParameters();
     }
 }
+#endif
