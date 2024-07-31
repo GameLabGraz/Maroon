@@ -70,7 +70,6 @@ namespace Maroon.GlobalEntities
                         (this._webglEnableSceneLoadingViaUrlParameter) )
                     {
                         // Read URL parameter
-                        // string parameter = Maroon.WebGLUrlParameterReader.GetUrlParameter(this._webglUrlParameterName);
                         this.UrlParameters = Maroon.WebGlUrlParameterReader.GetAllUrlParameters();
 
                         // Get scene asset
