@@ -1,4 +1,3 @@
-#if UNITY_WEBGL && !UNITY_EDITOR
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -10,24 +9,23 @@ namespace Maroon.Config
 {
     public abstract class ConfigLoader : MonoBehaviour
     {
-        protected string _config;
-        protected string _configPath;
         protected string _parametersString;
         protected Dictionary<string, string> _parameters;
 
+        #if UNITY_WEBGL && !UNITY_EDITOR
         void Start()
         {
-            _config = Maroon.GlobalEntities.BootstrappingManager.Instance.UrlParameters[Maroon.WebGlUrlParameter.Config];
-            
-            if(_config == null) return;
+            if(Maroon.GlobalEntities.BootstrappingManager.Instance.UrlParameters.TryGetValue(WebGlUrlParameter.Config, out string config))
+            {
+                var experimentName = Maroon.GlobalEntities.SceneManager.Instance.ActiveSceneNameWithoutPlatformExtension;
+                var configPath = Path.Combine(Application.streamingAssetsPath, "Config", experimentName, config + ".json");
 
-            var experimentName = Maroon.GlobalEntities.SceneManager.Instance.ActiveSceneNameWithoutPlatformExtension;
-            _configPath = Path.Combine(Application.streamingAssetsPath, "Config", experimentName, _config + ".json");
+                if(configPath == null) return;
 
-            if(_configPath == null) return;
-
-            StartCoroutine(LoadJsonWebGL(_configPath));
+                StartCoroutine(LoadJsonWebGL(configPath));
+            }
         }
+        #endif
 
         private IEnumerator LoadJsonWebGL(string url)
         {
@@ -47,7 +45,6 @@ namespace Maroon.Config
             SetParameters();
         }
 
-        public abstract void SetParameters();
+        protected abstract void SetParameters();
     }
 }
-#endif
