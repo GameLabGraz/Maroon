@@ -21,9 +21,15 @@ namespace Maroon
 
         public static string GetUrlParameter(WebGlUrlParameter urlParameter)
         {
+            // Deprectated due to case-sensitivity
+            /*
             var param = _getUrlParameter(urlParameter.ToString());
-            Debug.Log($"WebGLUrlParameterReader: {urlParameter} = {param}");
-            return param;
+            if (param == null)
+                Debug.LogWarning($"WebGLUrlParameterReader: {urlParameter} not found. Is it spelled correctly? (case-sensitive)");
+            */
+
+            Debug.LogWarning("GetUrlParameter is deprecated due to case-sensitivity. Use 'BootstrappingManager.UrlParameters' instead.");
+            return GetAllUrlParameters().TryGetValue(urlParameter, out string value) ? value : null;
         }
 
         public static Dictionary<WebGlUrlParameter, string> GetAllUrlParameters()
@@ -31,6 +37,7 @@ namespace Maroon
             // rawJson = {"LoadScene":"Optics","Config":"Default"}
             var rawJson = Marshal.PtrToStringAnsi(_getAllUrlParameters());
             var values = JsonConvert.DeserializeObject<Dictionary<WebGlUrlParameter, string>>(rawJson);
+
             return values;
         }
     }
