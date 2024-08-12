@@ -21,6 +21,7 @@ namespace Maroon.Physics
     public Button startButton;
     public Button endButton;
     public GameObject uiText;
+    public GameObject hintText;
 
     private bool measuring = false;
     private float minSize = 0.1f;
@@ -71,20 +72,26 @@ namespace Maroon.Physics
       }
 
       current_caliper.transform.rotation = Quaternion.Euler(0.0f, 0.0f,measuredObject.device_rotation);
-      
+      //disable colliders of measured object
+      Collider measuredObjectCollider = measuredObject.gameObject.GetComponent<Collider>();
+      measuredObjectCollider.enabled = false;
       zoom_camera.gameObject.SetActive(true);
       zoom_camera.enabled = true;
       zoom_camera.gameObject.tag = "MainCamera";
       main_camera.gameObject.tag = null;
       startButton.interactable = false;
       endButton.interactable = true;
+      hintText.gameObject.SetActive(true);
     }
 
     public void endMeasuringMode()
     {
       endButton.gameObject.SetActive(false);
       uiText.gameObject.SetActive(false);
+      hintText.gameObject.SetActive(false);
       startButton.gameObject.SetActive(true);
+      Collider measuredObjectCollider = measuredObject.gameObject.GetComponent<Collider>();
+      measuredObjectCollider.enabled = true;
       Destroy(current_caliper.gameObject);
       current_caliper = null;
       main_camera.gameObject.SetActive(true);
