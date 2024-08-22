@@ -259,12 +259,5 @@ public class VoltmeterDifferences : MonoBehaviour
         if (!charge) return;
 
         charge.charge.onValueChanged.AddListener(newVal => InvokeValueChangedEvent());
-        
-        var dragHandler = charge.GetComponent<CoulombAssessmentPosition>();
-        if (dragHandler)
-        {
-            dragHandler.onUpdateMessageSend.AddListener(InvokeValueChangedEvent);
-        }
-
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using GEAR.Localization;
-using Mirror;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,10 +9,6 @@ public class QuizManager : MonoBehaviour
 {
     [SerializeField] private GameObject scrollViewContent;
 
-    [SerializeField] private Button leftOnlineButton;
-    [SerializeField] private Button rightOnlineButton;
-    [SerializeField] private Button resetOnlineButton;
-    
     [SerializeField] private Button leftOfflineButton;
     [SerializeField] private Button rightOfflineButton;
     [SerializeField] private Button resetOfflineButton;
@@ -23,27 +18,16 @@ public class QuizManager : MonoBehaviour
     [SerializeField] private Color defaultButtonColor;
     [SerializeField] private Color selectedButtonColor;
 
-    private bool _isServer;
-
     private QuizScore _localQuizScore;
 
     private List<QuizScore> _allScores = new List<QuizScore>();
 
     private void Start()
     {
-        leftOnlineButton.onClick.AddListener(ChooseLeftAlgorithmOnline);
-        rightOnlineButton.onClick.AddListener(ChooseRightAlgorithmOnline);
-        resetOnlineButton.onClick.AddListener(FullReset);
-        
         leftOfflineButton.onClick.AddListener(ChooseLeftAlgorithmOffline);
         rightOfflineButton.onClick.AddListener(ChooseRightAlgorithmOffline);
         resetOfflineButton.onClick.AddListener(FullReset);
 
-        _isServer = NetworkServer.active;
-
-        leftOnlineButton.image.color = defaultButtonColor;
-        rightOnlineButton.image.color = defaultButtonColor;
-        
         leftOfflineButton.image.color = defaultButtonColor;
         rightOfflineButton.image.color = defaultButtonColor;
         
@@ -53,13 +37,11 @@ public class QuizManager : MonoBehaviour
 
     public void SetLeftButtonText(string text)
     {
-        leftOnlineButton.GetComponentInChildren<TextMeshProUGUI>().text = text;
         leftOfflineButton.GetComponentInChildren<TextMeshProUGUI>().text = text;
     }
     
     public void SetRightButtonText(string text)
     {
-        rightOnlineButton.GetComponentInChildren<TextMeshProUGUI>().text = text;
         rightOfflineButton.GetComponentInChildren<TextMeshProUGUI>().text = text;
     }
 
@@ -72,20 +54,6 @@ public class QuizManager : MonoBehaviour
     public void SetLocalQuizScore(GameObject local)
     {
         _localQuizScore = local.GetComponent<QuizScore>();
-    }
-
-    public void ChooseLeftAlgorithmOnline()
-    {
-        _localQuizScore.ChooseAlgorithm(QuizScore.QuizChoice.Left);
-        leftOnlineButton.image.color = selectedButtonColor;
-        rightOnlineButton.image.color = defaultButtonColor;
-    }
-    
-    public void ChooseRightAlgorithmOnline()
-    {
-        _localQuizScore.ChooseAlgorithm(QuizScore.QuizChoice.Right);
-        leftOnlineButton.image.color = defaultButtonColor;
-        rightOnlineButton.image.color = selectedButtonColor;
     }
 
     private QuizScore.QuizChoice _offlineChoice;
@@ -109,9 +77,6 @@ public class QuizManager : MonoBehaviour
     public void SortingStarted()
     {
         ShowAllChoices();
-        leftOnlineButton.interactable = false;
-        rightOnlineButton.interactable = false;
-        
         leftOfflineButton.interactable = false;
         rightOfflineButton.interactable = false;
     }
@@ -126,15 +91,6 @@ public class QuizManager : MonoBehaviour
 
     public void CorrectChoice(QuizScore.QuizChoice correct)
     {
-        if (_isServer)
-        {
-            foreach (var score in _allScores)
-            {
-                if(score.Choice == correct)
-                    score.IncreaseScore();
-            }
-        }
-
         if (_offlineChoice == QuizScore.QuizChoice.Nothing)
             return;
 
@@ -157,18 +113,6 @@ public class QuizManager : MonoBehaviour
 
     public void ResetAllChoices()
     {
-        if (_isServer)
-        {
-            foreach (var score in _allScores)
-            {
-                score.ResetChoice();
-            }
-        }
-        leftOnlineButton.interactable = true;
-        rightOnlineButton.interactable = true;
-        leftOnlineButton.image.color = defaultButtonColor;
-        rightOnlineButton.image.color = defaultButtonColor;
-
         _offlineChoice = QuizScore.QuizChoice.Nothing;
         
         leftOfflineButton.interactable = true;
@@ -179,13 +123,6 @@ public class QuizManager : MonoBehaviour
 
     public void FullReset()
     {
-        if (_isServer)
-        {
-            foreach (var score in _allScores)
-            {
-                score.ResetScore();
-            }
-        }
         ResetAllChoices();
         
         _offlineScore = 0;

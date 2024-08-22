@@ -1,0 +1,241 @@
+name: Build, Test & Deploy
+
+on:
+ # run workflow on push events on any branch
+ # one can tell Actions to not run the pipeline 
+ # by including certain strings in the commit message
+ # e.g.: "[ci skip]", "[no ci]"
+ # https://docs.github.com/en/enterprise-cloud@latest/actions/managing-workflow-runs/skipping-workflow-runs
+  push:
+    
+  # allow to run the workflow manually
+  workflow_dispatch:
+  
+  # run daily at 5:50 AM UTC
+  # to quickly spot issues with workflow/runner
+  # scheduled runs do not trigger deployment to steam
+  # (runs at 5:50 AM to avoid congestion at the start of the hour )
+  schedule:
+    - cron: 50 5 * * *
+
+
+jobs:
+
+  wait-in-queue:
+    name: Workflow queued
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+    # wait for max 3h
+    timeout-minutes: 180
+    steps:
+      - uses: jsok/serialize-workflow-action@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+
+  # test job matrix
+  test:
+    name: Run ${{ matrix.testMode }} tests
+    runs-on: ubuntu-latest
+    needs: [wait-in-queue]
+    # needed to create status check
+    permissions:
+      checks: write
+    strategy:
+      fail-fast: false
+      matrix:
+        projectPath: [unity]
+        testMode: [playmode, editmode]
+
+    steps:
+    
+      # Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Cache
+      - uses: actions/cache@v4
+        with:
+          path: ${{ matrix.projectPath }}/Library
+          key: Library-${{ hashFiles(format('{0}/Assets/**', matrix.projectPath), format('{0}/Packages/**', matrix.projectPath), format('{0}/ProjectSettings/**', matrix.projectPath)) }}
+          restore-keys: |
+            Library-
+      
+      # Run tests
+      - name: Run ${{ matrix.testMode }} tests
+        id: tests
+        uses: game-ci/unity-test-runner@v4.3.1
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: ${{ matrix.projectPath }}
+          testMode: ${{ matrix.testMode }}
+          artifactsPath: test-${{ matrix.testMode }}-results
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          checkName: "Test Results: ${{ matrix.testMode }}"
+
+      # Upload results
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.tests.outputs.artifactsPath }}
+          path: ${{ steps.tests.outputs.artifactsPath }}
+          # if no files match the supplied path, fail job with error
+          if-no-files-found: error
+
+  # build job matrix
+  build:
+    name: Build for ${{ matrix.maroonBuildTarget }}
+    runs-on: ubuntu-latest
+    needs: [wait-in-queue]
+
+    # create job matrix
+    # runs job once for each build target
+    strategy:
+      # if fail-fast is set to true, the job will abort if one of the builds fail
+      fail-fast: false
+      matrix:
+        include:
+          - targetPlatform: StandaloneWindows64
+            maroonBuildTarget: PC
+            projectPath: unity
+
+          - targetPlatform: StandaloneWindows64
+            maroonBuildTarget: VR
+            projectPath: unity
+
+          - targetPlatform: WebGL
+            maroonBuildTarget: WebGL
+            projectPath: unity
+
+    # this step is needed because the free GitHub runners come with limited disk space
+    # the action deletes unused files, packages and dependencies that the GitHub runner provides
+    # more info:
+    # https://game.ci/docs/troubleshooting/common-issues#no-space-left-on-device
+    # https://github.com/marketplace/actions/free-disk-space-ubuntu
+    steps:
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@main
+        with:
+          # excluded because they might be needed
+          docker-images: false
+          swap-storage: false
+          # excluded since it takes a very long time to run
+          large-packages: false
+
+      # Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Cache
+      - uses: actions/cache@v4
+        with:
+          path: ${{ matrix.projectPath }}/Library
+          key: Library-${{ hashFiles(format('{0}/Assets/**', matrix.projectPath), format('{0}/Packages/**', matrix.projectPath), format('{0}/ProjectSettings/**', matrix.projectPath)) }}
+          restore-keys: |
+            Library-
+            
+      # Build
+      - name: Build
+        uses: game-ci/unity-builder@v4.2.3
+
+        # environment vars needed by unity-builder to activate the unity license
+        # defined in the Actions Secrets in the repo settings
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+
+        with:
+          # run the custom build script
+          buildMethod: Maroon.Build.BuildPlayer.ActionsBuild
+          # with these params:
+          customParameters: -maroonBuildPath ../build -maroonBuildTarget ${{ matrix.maroonBuildTarget }}
+          # we must specify a target platform, build path, build name and project path for unity-builder
+          targetPlatform: ${{ matrix.targetPlatform }}
+          projectPath: ${{ matrix.projectPath }}
+          buildName: ${{ matrix.maroonBuildTarget }}
+          buildsPath: build
+          
+      # Upload build
+      - name: Upload build for ${{ matrix.maroonBuildTarget }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ matrix.maroonBuildTarget }}
+          path: build
+          # if no files match the supplied path, fail job with error
+          if-no-files-found: error
+
+  # deploy build
+  deploy:
+
+    name: Deploy to Steam
+    
+    # only deploy if :
+    # the event happened on the development branch
+    # the event was not triggered by a schedule
+    # the builds were successful
+    # the tests were successful
+    if: |
+     github.ref_name               == 'develop'  && 
+     github.event_name             != 'schedule' && 
+     needs.build.result            == 'success'  && 
+     needs.test.result             == 'success'
+    
+    # prevent that more than one deploy job runs at any given time
+    # https://docs.github.com/en/enterprise-cloud@latest/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idconcurrency
+    concurrency:
+      group: active-deployment
+      cancel-in-progress: false
+
+    runs-on: ubuntu-latest
+    needs: [test, build]
+    steps:
+      
+      # download the build artifacts generated during the build job
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: build-*
+
+      # create release/ dir and move the PC and the VR build inside
+      - name: Preparing deployment
+        run: |
+          mkdir release
+          echo "Commit hash:   ${{ github.sha }}"
+          mv build-PC/PC release/PC
+          mv build-VR/VR release/VR
+
+      # deploy via SteamPipe
+      - name: Deploy to Steam
+        uses: game-ci/steam-deploy@v3
+        with:
+          # username of the steam account used to upload
+          username: ${{ secrets.STEAM_USERNAME }}
+
+          # needed so we do not have to complete 2FA every time we deploy
+          # if the login fails, even though username and password have not changed
+          # it may be necessary to regenerate the config.vdf, 
+          # base64 encode it and update the STEAM_CONFIG_VDF github secret
+          # https://game.ci/docs/github/deployment/steam#3-add-github-secrets
+          configVdf: ${{ secrets.STEAM_CONFIG_VDF}}
+
+          # appId of the application we are uploading to build for
+          appId: ${{ secrets.STEAM_APP_ID }}
+
+          # set build description to commit hash
+          buildDescription: CI/CD build ${{ github.sha }}
+
+          # path where SteamPipe looks for the build
+          rootPath: release
+
+          # path for depot1, relative form rootPath
+          # we only have 1 depot, so . is sufficient
+          depot1Path: .
+
+          # deploy to the development branch of the app
+          releaseBranch: development
