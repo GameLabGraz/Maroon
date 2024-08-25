@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Maroon.UI.Charts;
 using UnityEngine;
 using XCharts;
+using System.Linq;
 
 namespace Maroon.Physics.CathodeRayTube
 {
@@ -301,7 +302,6 @@ namespace Maroon.Physics.CathodeRayTube
             plot.ResetObject();
             float timeStep = GetTimeStep();
             var lineChart = plot.GetComponent<LineChart>();
-            lineChart.series.GetSerie(0).maxShow = lineResolution;
             List<float> xAxisData = new List<float>();
             List<float> yAxisData = new List<float>();
 
@@ -312,16 +312,15 @@ namespace Maroon.Physics.CathodeRayTube
             {
                 case XAxisEnum.X:
                     lineChart.xAxis0.minMaxType = Axis.AxisMinMaxType.Custom;
-                    lineChart.xAxis0.min = GetCRTStart().x;
-                    lineChart.xAxis0.max = screen.transform.position.x;
-                    for (int i = 0; i < lineResolution; i++)
-                        xAxisData.Add(_pointData[i].x);
+                    lineChart.xAxis0.min = 0;
+                    lineChart.xAxis0.max = _pointData.Last().x;
+                    xAxisData.AddRange(_pointData.Select(point => point.x));
                     break;
                 case XAxisEnum.Time:
                     lineChart.xAxis0.minMaxType = Axis.AxisMinMaxType.Custom;
                     lineChart.xAxis0.min = 0;
-                    lineChart.xAxis0.max = lineResolution * timeStep;
-                    for (int i = 0; i < lineResolution; i++)
+                    lineChart.xAxis0.max = _pointData.Count * timeStep;
+                    for (int i = 0; i < _pointData.Count; i++)
                         xAxisData.Add(i * timeStep);
                     break;
             }
@@ -330,66 +329,52 @@ namespace Maroon.Physics.CathodeRayTube
             {
                 case YAxisEnum.X:
                     lineChart.yAxis0.minMaxType = Axis.AxisMinMaxType.Custom;
-                    lineChart.yAxis0.min = GetCRTStart().x;
-                    lineChart.yAxis0.max = screen.transform.position.x;
-                    for (int i = 0; i < lineResolution; i++)
-                        yAxisData.Add(_pointData[i].x);
+                    lineChart.yAxis0.min = 0;
+                    lineChart.yAxis0.max = _pointData.Last().x;
+                    yAxisData.AddRange(_pointData.Select(point => point.x));
                     break;
                 case YAxisEnum.Vx:
-                    for (int i = 0; i < lineResolution; i++)
-                        yAxisData.Add(_velocityData[i].x);
+                    yAxisData.AddRange(_velocityData.Select(point => point.x));
                     break;
                 case YAxisEnum.Fx:
                     lineChart.yAxis0.minMaxType = Axis.AxisMinMaxType.Custom;
-                    lineChart.yAxis0.min = vX / 100 * -(float)Math.Pow(10, -15);
-                    lineChart.yAxis0.max = vX / 100 * (float)Math.Pow(10, -15);
-                    for (int i = 0; i < lineResolution; i++)
-                        yAxisData.Add(_forceData[i].x);
+                    lineChart.yAxis0.min = 7 * -(float)Math.Pow(10, -15);
+                    lineChart.yAxis0.max = 7 * (float)Math.Pow(10, -15);
+                    yAxisData.AddRange(_forceData.Select(point => point.x));
                     break;
                 case YAxisEnum.Y:
                     lineChart.yAxis0.minMaxType = Axis.AxisMinMaxType.Custom;
-                    lineChart.yAxis0.min =
-                        screen.transform.position.y - screen.GetComponent<Renderer>().bounds.size.y / 2;
-                    lineChart.yAxis0.max =
-                        screen.transform.position.y + screen.GetComponent<Renderer>().bounds.size.y / 2;
-                    for (int i = 0; i < lineResolution; i++)
-                        yAxisData.Add(_pointData[i].y);
+                    lineChart.yAxis0.min = 0;
+                    lineChart.yAxis0.max = _pointData.Last().y;
+                    yAxisData.AddRange(_pointData.Select(point => point.y));
                     break;
                 case YAxisEnum.Vy:
-                    for (int i = 0; i < lineResolution; i++)
-                        yAxisData.Add(_velocityData[i].y);
+                    yAxisData.AddRange(_velocityData.Select(point => point.y));
                     break;
                 case YAxisEnum.Fy:
                     lineChart.yAxis0.minMaxType = Axis.AxisMinMaxType.Custom;
-                    lineChart.yAxis0.min = -(float)Math.Pow(10, -15);
-                    lineChart.yAxis0.max = (float)Math.Pow(10, -15);
-                    for (int i = 0; i < lineResolution; i++)
-                        yAxisData.Add(_forceData[i].y);
+                    lineChart.yAxis0.min = 7 * -(float)Math.Pow(10, -15);
+                    lineChart.yAxis0.max = 7 * (float)Math.Pow(10, -15);
+                    yAxisData.AddRange(_forceData.Select(point => point.y));
                     break;
                 case YAxisEnum.Z:
                     lineChart.yAxis0.minMaxType = Axis.AxisMinMaxType.Custom;
-                    lineChart.yAxis0.min =
-                        screen.transform.position.z - screen.GetComponent<Renderer>().bounds.size.z / 2;
-                    lineChart.yAxis0.max =
-                        screen.transform.position.z + screen.GetComponent<Renderer>().bounds.size.z / 2;
-                    for (int i = 0; i < lineResolution; i++)
-                        yAxisData.Add(_pointData[i].z);
+                    lineChart.yAxis0.min = 0;
+                    lineChart.yAxis0.max = _pointData.Last().z;
+                    yAxisData.AddRange(_pointData.Select(point => point.z));
                     break;
                 case YAxisEnum.Vz:
-                    for (int i = 0; i < lineResolution; i++)
-                        yAxisData.Add(_velocityData[i].z);
+                    yAxisData.AddRange(_velocityData.Select(point => point.z));
                     break;
                 case YAxisEnum.Fz:
                     lineChart.yAxis0.minMaxType = Axis.AxisMinMaxType.Custom;
-                    lineChart.yAxis0.min = -(float)Math.Pow(10, -15);
-                    lineChart.yAxis0.max = (float)Math.Pow(10, -15);
-                    for (int i = 0; i < lineResolution; i++)
-                        yAxisData.Add(_forceData[i].z);
+                    lineChart.yAxis0.min = 7 * -(float)Math.Pow(10, -15);
+                    lineChart.yAxis0.max = 7* (float)Math.Pow(10, -15);
+                    yAxisData.AddRange(_forceData.Select(point => point.z));
                     break;
             }
 
-            for (int i = 0; i < lineResolution; i++)
-                plot.AddData(xAxisData[i], yAxisData[i]);
+            plot.AddData(xAxisData.Zip(yAxisData, (x, y) => Tuple.Create(x, y)).ToList());
         }
 
         public float GetTimeStep()
