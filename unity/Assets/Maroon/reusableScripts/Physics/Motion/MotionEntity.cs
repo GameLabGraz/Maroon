@@ -72,7 +72,11 @@ namespace Maroon.Physics.Motion
 
         public void AddParameter(String name, object value)
         {
-            _parameters[name] = value;
+            _parameters[name] = value switch
+            {
+               float f => (double) f,
+                _ => value
+            };
         }
 
         private (String, List<String>) SplitSignature(String signature)
