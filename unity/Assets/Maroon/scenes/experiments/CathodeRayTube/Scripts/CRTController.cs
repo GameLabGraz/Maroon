@@ -39,7 +39,7 @@ namespace Maroon.Physics.CathodeRayTube
         Vz,
         Fz
     }
-    
+
     public class CRTController : MonoBehaviour
     {
         private ElectronLineController _electronLineController;
@@ -76,8 +76,8 @@ namespace Maroon.Physics.CathodeRayTube
         public int XAxis { get; set; }
         public int YAxis { get; set; }
 
-        private const float ElectronCharge = -1.6022e-19f;
-        private const float ElectronMass = 9.11e-31f;
+        public const float ElectronCharge = -1.6022e-19f;
+        public const float ElectronMass = 9.11e-31f;
         private float _electronGunLength;
         public int lineResolution = 500;
 
@@ -95,6 +95,24 @@ namespace Maroon.Physics.CathodeRayTube
         private List<Vector3> _pointData = new List<Vector3>();
         private List<Vector3> _velocityData = new List<Vector3>();
         private List<Vector3> _forceData = new List<Vector3>();
+
+        public float EX;
+        public float EY;
+        public float EZ;
+
+        internal float ElectronGunLength { get => _electronGunLength; }
+        internal float VerticalPlatePosition { get => verticalDeflectionPlate.transform.position.x - GetCRTStart().x; }
+        internal float VerticalPlateLength { get => _verticalDeflectionPlateTop.GetComponent<Renderer>().bounds.size.x / 2; }
+        internal float VerticalPlateWidth { get => _verticalDeflectionPlateTop.GetComponent<Renderer>().bounds.size.z / 2; }
+
+        internal float HorizontalPlatePosition { get => horizontalDeflectionPlate.transform.position.x - GetCRTStart().x; }
+        internal float HorizontalPlateLength { get => _horizontalDeflectionPlateLeft.GetComponent<Renderer>().bounds.size.x / 2; }
+        internal float HorizontalPlateWidth { get => _horizontalDeflectionPlateLeft.GetComponent<Renderer>().bounds.size.y / 2; }
+
+        internal bool VerticalPlateEnabled { get => _verticalDeflectionPlateBottom.activeSelf; }
+        internal bool HorizontalPlateEnabled { get => _horizontalDeflectionPlateLeft.activeSelf; }
+        internal Vector3 WorldSpaceOrigin { get => GetCRTStart(); }
+
 
         private void Start()
         {
@@ -224,19 +242,19 @@ namespace Maroon.Physics.CathodeRayTube
             float length;
             float size;
 
-            int eXValue = (int)(vX / (Math.Truncate(informationResolution * _electronGunLength) / informationResolution));
-            int eYValue = (int)(vY / (Math.Truncate(informationResolution * _vertDeflPlateDistance) / informationResolution));
-            int eZValue = (int)(vZ / (Math.Truncate(informationResolution * _horizDeflPlateDistance) / informationResolution));
+            EX = (int)(vX / (Math.Truncate(informationResolution * _electronGunLength) / informationResolution));
+            EY = (int)(vY / (Math.Truncate(informationResolution * _vertDeflPlateDistance) / informationResolution));
+            EZ = (int)(vZ / (Math.Truncate(informationResolution * _horizDeflPlateDistance) / informationResolution));
 
             eXInfo.Value = vX.Value + " / " +
                            (Math.Truncate(informationResolution * _electronGunLength) / informationResolution)
-                           + " \n= " + eXValue + " V/m";
+                           + " \n= " + EX + " V/m";
             eYInfo.Value = vY.Value + " / " +
                            (Math.Truncate(informationResolution * _vertDeflPlateDistance) / informationResolution)
-                           + " \n= " + eYValue + " V/m";
+                           + " \n= " + EY + " V/m";
             eZInfo.Value = vZ.Value + " / " +
                            (Math.Truncate(informationResolution * _horizDeflPlateDistance) / informationResolution)
-                           + " \n= " + eZValue + " V/m";
+                           + " \n= " + EZ + " V/m";
 
             float fXValue = -ElectronCharge *
                        (vX / (float)(Math.Truncate(informationResolution * _electronGunLength) /
@@ -248,13 +266,13 @@ namespace Maroon.Physics.CathodeRayTube
                             (vZ / (float)(Math.Truncate(informationResolution * _horizDeflPlateDistance) /
                                           informationResolution)) * (float)Math.Pow(10, 15);
 
-            fXInfo.Value = "1.6022e-19 * " + eXValue + " * H(" +
+            fXInfo.Value = "1.6022e-19 * " + EX + " * H(" +
                            (Math.Truncate(informationResolution * _electronGunLength) / informationResolution) +
                            " - x)" + " \n= " + fXValue + " * (10 ^ -15) N"  ;
 
             size = _verticalDeflectionPlateTop.GetComponent<Renderer>().bounds.size.z / 2;
             length = Math.Abs(GetCRTStart().x - verticalDeflectionPlate.transform.position.x);
-            fYInfo.Value = "1.6022e-19 * " + eYValue + " * \nH(" +
+            fYInfo.Value = "1.6022e-19 * " + EY + " * \nH(" +
                            (Math.Truncate(informationResolution * size) / informationResolution)
                            + " - abs(x - " + (Math.Truncate(informationResolution * length) / informationResolution) +
                            "))" + " * \nH(" + _verticalDeflectionPlateTop.GetComponent<Renderer>().bounds.size.z / 2 
@@ -263,7 +281,7 @@ namespace Maroon.Physics.CathodeRayTube
 
             size = _horizontalDeflectionPlateLeft.GetComponent<Renderer>().bounds.size.y / 2;
             length = Math.Abs(GetCRTStart().x - horizontalDeflectionPlate.transform.position.x);
-            fZInfo.Value = "1.6022e-19 * " + eZValue + " * \nH(" +
+            fZInfo.Value = "1.6022e-19 * " + EZ + " * \nH(" +
                            (Math.Truncate(informationResolution * size) / informationResolution)
                            + " - abs(x - " + (Math.Truncate(informationResolution * length) / informationResolution) +
                            "))" + " * \nH(" + _horizontalDeflectionPlateLeft.GetComponent<Renderer>().bounds.size.y / 2 
@@ -372,67 +390,6 @@ namespace Maroon.Physics.CathodeRayTube
 
             for (int i = 0; i < lineResolution; i++)
                 plot.AddData(xAxisData[i], yAxisData[i]);
-        }
-
-        private float H(float x)
-        {
-            return x == 0 ? 0.5f : (1 + x / Math.Abs(x)) / 2;
-        }
-
-        public Vector3 ApplyForce(Vector3 currentPoint)
-        {
-            float x;
-            float y;
-            float z;
-            float length;
-            float size;
-            float dist;
-
-            var point = Vector3.zero;
-
-            point.x = -ElectronCharge * (vX / _electronGunLength) *
-                      H((GetCRTStart().x + _electronGunLength) - currentPoint.x);
-
-            float scale = _verticalDeflectionPlateTop.GetComponent<Renderer>().bounds.size.x;
-            if (verticalDeflectionPlate.transform.position != Vector3.zero)
-            {
-                length = Math.Abs(GetCRTStart().x - verticalDeflectionPlate.transform.position.x);
-                x = (scale / 2) - Math.Abs(currentPoint.x - (GetCRTStart().x + length));
-
-                dist = _vertDeflPlateDistance / 2;
-                y = dist - Math.Abs(currentPoint.y - GetCRTStart().y);
-
-                size = _verticalDeflectionPlateTop.GetComponent<Renderer>().bounds.size.z / 2;
-                z = size - Math.Abs(currentPoint.z - GetCRTStart().z);
-
-                point.y = -ElectronCharge * (vY / _vertDeflPlateDistance) * H(x) * H(y) * H(z);
-            }
-
-            scale = _horizontalDeflectionPlateLeft.GetComponent<Renderer>().bounds.size.x;
-            if (horizontalDeflectionPlate.transform.position != Vector3.zero)
-            {
-                length = Math.Abs(GetCRTStart().x - horizontalDeflectionPlate.transform.position.x);
-                x = (scale / 2) - Math.Abs(currentPoint.x - (GetCRTStart().x + length));
-
-                size = _horizontalDeflectionPlateLeft.GetComponent<Renderer>().bounds.size.y / 2;
-                y = size - Math.Abs(currentPoint.y - GetCRTStart().y);
-
-                dist = _horizDeflPlateDistance / 2;
-                z = dist - Math.Abs(currentPoint.z - GetCRTStart().z);
-
-                point.z = -ElectronCharge * (vZ / _horizDeflPlateDistance) * H(x) * H(y) * H(z);
-            }
-
-            return point;
-        }
-
-        public Vector3 RK4(Vector3 currentPoint)
-        {
-            float timeStep = GetTimeStep();
-            var k1 = timeStep * ApplyForce(currentPoint) / ElectronMass;
-            var k23 = timeStep * ApplyForce(currentPoint + new Vector3(timeStep / 2, 0, 0)) / ElectronMass;
-            var k4 = timeStep * ApplyForce(currentPoint + new Vector3(timeStep, 0, 0)) / ElectronMass;
-            return (k1 + 2 * k23 + 2 * k23 + k4) / 6;
         }
 
         public float GetTimeStep()
