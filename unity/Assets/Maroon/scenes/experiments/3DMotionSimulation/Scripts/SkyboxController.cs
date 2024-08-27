@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class SkyboxController : MonoBehaviour, IResetObject
+public class SkyboxController : MonoBehaviour
 {
     private static SkyboxController _instance;
 
@@ -15,15 +15,15 @@ public class SkyboxController : MonoBehaviour, IResetObject
     /// <param name="background">Background to use</param>
     public void SetBackground(string background)
     {
-        switch (background)
+        switch (background?.ToLower())
         {
-            case "ExperimentRoom":
+            case "experimentroom":
                 SetExperimentRoom();
                 break;
-            case "Grass":
+            case "grass":
                 SetGrass();
                 break;
-            case "Space":
+            case "space":
                 SetSpace();
                 break;
             default:
@@ -57,6 +57,7 @@ public class SkyboxController : MonoBehaviour, IResetObject
     /// </summary>
     public void SetExperimentRoom()
     {
+        CoordCameraController.Instance.ResetObject();
         Camera.main.clearFlags = CameraClearFlags.Depth;
         RenderSettings.skybox = _experimentRoom;
     }
@@ -69,13 +70,5 @@ public class SkyboxController : MonoBehaviour, IResetObject
                 _instance = FindObjectOfType<SkyboxController>();
             return _instance;
         }
-    }
-
-    /// <summary>
-    /// Resets the object
-    /// </summary>
-    public void ResetObject()
-    {
-        SetExperimentRoom();
     }
 }

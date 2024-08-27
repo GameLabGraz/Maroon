@@ -18,6 +18,8 @@ namespace Maroon.Chemistry.Catalyst.VR
         {
             base.Start();
 
+            player = VRPlayer.instance.gameObject;
+
             isVrVersion = true;
 
             foreach (var chart in lineChartsVRBox)
@@ -28,6 +30,8 @@ namespace Maroon.Chemistry.Catalyst.VR
                 if (controlPanel)
                     controlPanel.Setup(Mathf.Min(MaxXCoord - MinXCoord, MaxZCoord - MinZCoord), _doStepWiseSimulation);
             });
+
+            ResetObject();
         }
 
         public override void ResetObject()
