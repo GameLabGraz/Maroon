@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using Maroon.Utils;
+using UnityEditor;
 
 namespace Maroon.reusableGui.Experiment.Scripts.Runtime
 {
@@ -52,11 +53,15 @@ namespace Maroon.reusableGui.Experiment.Scripts.Runtime
             onSelect.Invoke(SelectedIndex, buttons[SelectedIndex]);
         }
 
+        public bool refreshButtons;
+
         private void OnValidate()
         {
-            if (PrefabModeIsActive() || !gameObject.activeInHierarchy)
-                return;
-            Refresh();
+            if (refreshButtons)
+            {
+                Refresh();
+                refreshButtons = false;
+            }
         }
 
         private void Refresh()
@@ -73,12 +78,11 @@ namespace Maroon.reusableGui.Experiment.Scripts.Runtime
                 _button_objects.Any(b => b == null))
             {
                 Debug.LogWarning("RadioButton OnValidate: something went wrong, reset");
-                _button_objects.Clear();
-                for (int i = 1; i < currentSize; i++)
+                foreach (var buttonObject in _button_objects.Skip(1))
                 {
-                    var go = transform.GetChild(i).gameObject;
-                    this.EndFrame(() => DestroyImmediate(go));
+                    EditorApplication.delayCall += () => DestroyImmediate(buttonObject.gameObject);
                 }
+                _button_objects.Clear();
 
                 var template = transform.GetChild(0);
                 template.gameObject.SetActive(true);
@@ -94,7 +98,7 @@ namespace Maroon.reusableGui.Experiment.Scripts.Runtime
             {
                 //delete excess buttons
                 var go = transform.GetChild(i).gameObject;
-                this.EndFrame(() => DestroyImmediate(go));
+                EditorApplication.delayCall += () => DestroyImmediate(go);
                 _button_objects.RemoveAt(i);
             }
 
@@ -131,15 +135,6 @@ namespace Maroon.reusableGui.Experiment.Scripts.Runtime
 
             foreach (var button in _button_objects)
                 button.interactable = button != _selected;
-        }
-
-        bool PrefabModeIsActive()
-        {
-#if UNITY_EDITOR
-            return UnityEditor.Experimental.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage() != null;
-#else
-            return false;
-#endif
         }
     }
 }
