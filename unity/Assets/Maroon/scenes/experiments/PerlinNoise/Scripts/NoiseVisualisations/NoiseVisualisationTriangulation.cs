@@ -8,7 +8,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
     public class NoiseVisualisationTriangulation : NoiseVisualisation
     {
         [SerializeField] [Range(0, 5)] private float heightScale = 1;
-        [SerializeField] [Range(0, 0.2f)] private float thickness = 1;
+        [SerializeField] [Range(0, 0.2f)] private float thickness;
         private int _noise_samples;
         private int _size;
         private float _total_noise_height;

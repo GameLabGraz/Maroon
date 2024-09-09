@@ -23,9 +23,9 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         [Space(10)] [SerializeField]
         protected float speed = 1;
 
-        [SerializeField] protected bool dirty;
-        [SerializeField] protected bool dirtyImmediate;
-        [SerializeField] protected TimeSpan dirtyRefreshRate = new TimeSpan(0, 0, 0, 0, 50);
+        protected bool dirty;
+        protected bool dirtyImmediate;
+        protected TimeSpan dirtyRefreshRate = new TimeSpan(0, 0, 0, 0, 50);
 
         public DateTime lastUpdate;
 
@@ -45,8 +45,6 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         protected bool is_rotating;
         private float _time;
 
-
-        // Start is called before the first frame update
         protected void Start()
         {
             if (!meshFilter)

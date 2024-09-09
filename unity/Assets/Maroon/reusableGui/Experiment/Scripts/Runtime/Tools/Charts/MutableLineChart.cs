@@ -5,10 +5,6 @@ namespace Maroon.UI.Charts
 {
     public class MutableLineChart : BaseLineChart
     {
-        //I created this class for the Noise Experiment, it has only the minimum necessary features for that.
-        // feel free to extend this class 
-        //I also didnt do a lot of testing so it might have some bugs
-
         private int _max_value_count;
 
         protected override void Start()

@@ -70,7 +70,6 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 #endif
         }
 
-        // Update is called once per frame
         private void Update()
         {
             if (!_mesh_filter)
