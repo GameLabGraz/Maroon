@@ -2,7 +2,6 @@
 using System.Linq;
 using GameLabGraz.UI;
 using GEAR.Localization;
-using Maroon.reusableGui.Experiment.Scripts.Runtime;
 using Maroon.UI;
 using Maroon.Utils;
 using UnityEditor;
@@ -37,7 +36,6 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
         [SerializeField] private bool force_refresh;
         [SerializeField] private bool animated;
         [SerializeField] private Vector2 scale_bounds = new Vector2(1, 5);
-        [SerializeField] private RadioButton shader_type_selection;
         [SerializeField] private QuantityPropertyView size_property_view;
         [SerializeField] private Shader[] shaders;
         public UnityEvent onUpdateMesh;
@@ -127,15 +125,16 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
 
         private void OnMouseUp() => _is_rotating = false;
 
-        private void SetShader(int index)
+        public void SetShader(int index)
         {
             if (!shaders.IsValidIndex(index))
                 return;
 
+            SetDirty();
             _mesh_filter.GetComponent<MeshRenderer>().material.shader = shaders[index];
         }
 
-        public void OnSelectVisualisation(int index, string _)
+        public void OnSelectVisualisation(int index)
         {
             if (!noise_visualisations.IsValidIndex(index))
                 return;
@@ -173,12 +172,6 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             InitQuantityListener(scale.onValueChanged);
             InitQuantityListener(octaves.onValueChanged);
 
-            shader_type_selection.onSelect.RemoveAllListeners();
-            shader_type_selection.onSelect.AddListener((index, _) =>
-            {
-                SetShader(index);
-                SetDirty();
-            });
             seed.onValueChanged.AddListener(SetSeed);
 
             if (!_mesh_filter)
