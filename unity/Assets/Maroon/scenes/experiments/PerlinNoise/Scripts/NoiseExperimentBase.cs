@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using Maroon.Physics;
-using Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations;
+using Maroon.ComputerScience.PerlinNoise.NoiseVisualisations;
 using UnityEngine;
 
-namespace Maroon.scenes.experiments.PerlinNoise.Scripts
+namespace Maroon.ComputerScience.PerlinNoise
 {
     public class NoiseExperimentBase : MonoBehaviour
     {

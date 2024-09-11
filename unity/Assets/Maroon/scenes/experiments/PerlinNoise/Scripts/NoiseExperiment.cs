@@ -8,7 +8,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Maroon.scenes.experiments.PerlinNoise.Scripts
+namespace Maroon.ComputerScience.PerlinNoise
 {
     public abstract class NoiseVisualisation : MonoBehaviour
     {
@@ -61,7 +61,7 @@ namespace Maroon.scenes.experiments.PerlinNoise.Scripts
             noise_visualisation.GenerateMesh(_mesh_filter.sharedMesh);
 
             SimulationController.Instance.StartSimulation();
-
+            OnSelectVisualisation(0); // Set Default Visualization
 
 #if UNITY_EDITOR
             animated = false;

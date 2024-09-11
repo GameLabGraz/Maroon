@@ -3,7 +3,7 @@ using System.Linq;
 using Maroon.Utils;
 using UnityEngine;
 
-namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
+namespace Maroon.ComputerScience.PerlinNoise.NoiseVisualisations
 {
     public class NoiseVisualisationTriangulation : NoiseVisualisation
     {

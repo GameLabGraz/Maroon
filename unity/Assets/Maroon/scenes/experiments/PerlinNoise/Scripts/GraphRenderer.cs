@@ -2,7 +2,7 @@
 using Maroon.UI.Charts;
 using UnityEngine;
 
-namespace Maroon.scenes.experiments.PerlinNoise.Scripts
+namespace Maroon.ComputerScience.PerlinNoise
 {
     public class GraphRenderer : MonoBehaviour
     {

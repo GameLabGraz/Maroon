@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
-namespace Maroon.scenes.experiments.PerlinNoise.Scripts.NoiseVisualisations
+namespace Maroon.ComputerScience.PerlinNoise.NoiseVisualisations
 {
     public class NoiseVisualisationVoxel : NoiseVisualisation
     {

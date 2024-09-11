@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Maroon.scenes.experiments.PerlinNoise.Scripts
+namespace Maroon.ComputerScience.PerlinNoise
 {
     public class Noise : OpenSimplexNoise
     {

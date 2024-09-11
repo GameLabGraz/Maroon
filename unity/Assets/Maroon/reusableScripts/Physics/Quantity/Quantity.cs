@@ -53,13 +53,13 @@ namespace Maroon.Physics
             get => _value;
             set
             {
-                _value = SetVaApplyValueBounds(value);
+                _value = ApplyValueBounds(value);
                 if(alwaysSendValueChangedEvent)
-                    onValueChanged?.Invoke(value);
+                    onValueChanged?.Invoke(_value);
             }
         }
 
-        protected virtual T SetVaApplyValueBounds(T v) => v;
+        protected virtual T ApplyValueBounds(T v) => v;
 
         public Quantity(T value)
         {
@@ -118,7 +118,7 @@ namespace Maroon.Physics
         public static implicit operator QuantityFloat(float value) => new QuantityFloat(value);
         public static implicit operator float(QuantityFloat quantity) => quantity.Value;
 
-        protected override float SetVaApplyValueBounds(float v) => Mathf.Clamp(v, minValue, maxValue);
+        protected override float ApplyValueBounds(float v) => Mathf.Clamp(v, minValue, maxValue);
     }
 
     [Serializable]
@@ -173,7 +173,7 @@ namespace Maroon.Physics
         private void OnNewValueFromSystemHandler(int value) { onNewValueFromSystem?.Invoke(value); }
         public static implicit operator QuantityInt(int value) => new QuantityInt(value);
         public static implicit operator int(QuantityInt quantity) => quantity.Value;
-        protected override int SetVaApplyValueBounds(int v) => Mathf.Clamp(v, minValue, maxValue);
+        protected override int ApplyValueBounds(int v) => Mathf.Clamp(v, minValue, maxValue);
     }
     
     [Serializable]

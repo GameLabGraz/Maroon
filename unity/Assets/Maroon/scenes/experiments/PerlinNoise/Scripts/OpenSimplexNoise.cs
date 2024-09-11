@@ -5,7 +5,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace Maroon.scenes.experiments.PerlinNoise.Scripts
+namespace Maroon.ComputerScience.PerlinNoise
 {
     public class OpenSimplexNoise
     {

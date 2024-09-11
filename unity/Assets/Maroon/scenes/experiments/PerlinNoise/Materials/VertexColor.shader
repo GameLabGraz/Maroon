@@ -1,4 +1,4 @@
-﻿Shader "Custom/VertexColor" {
+﻿Shader "PerlinNoise/VertexColor" {
 	SubShader {
 		Tags { "RenderType"="Opaque" }
 		LOD 200
