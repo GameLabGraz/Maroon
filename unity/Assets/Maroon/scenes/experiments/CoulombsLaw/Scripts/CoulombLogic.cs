@@ -113,7 +113,7 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
     {
         _charges = new List<CoulombChargeBehaviour>();
         _chargesGameObjects = new HashSet<GameObject>();
-        OnSwitch3d2dMode(startIn2dMode? 0f : 1f);
+        OnSwitch3d2dMode(startIn2dMode? 2 : 3);
 
         currentLanguage.Value = LanguageManager.Instance.CurrentLanguage.ToString();
         
@@ -464,14 +464,14 @@ public class CoulombLogic : MonoBehaviour, IResetWholeObject
         if (newMode != 2 && newMode != 3)
             return;
         
-        OnSwitch3d2dMode(newMode == 2? 0f : 1f);
+        OnSwitch3d2dMode(newMode);
     }
 
     public void OnSwitch3d2dMode(float newMode)
     {
         if (!modeChangeAllowed) return;
         
-        _in3dMode = !(newMode < 0.5);
+        _in3dMode = newMode > 2;
         onModeChange.Invoke(_in3dMode);
         if(_in3dMode)
             onModeChangeTo3d.Invoke();
