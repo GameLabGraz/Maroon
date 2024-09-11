@@ -1,8 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Maroon.Physics;
 using NCalc;
+using NCalc.Handlers;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -19,6 +18,8 @@ namespace Maroon.Physics.Motion
 
         private Dictionary<String, Expression> _expressions = new();
         private Dictionary<String, object> _parameters = new();
+
+        private ExpressionContext _context;
 
         private List<MotionState> _state;
         private MotionState _initial_state;
@@ -53,25 +54,21 @@ namespace Maroon.Physics.Motion
 
         public void AddExpression(String signature, String expression)
         {
-            var expr = new Expression(expression, EvaluateOptions.IgnoreCase);
-            expr.EvaluateParameter += Expression_EvaluateParameter;
-            expr.EvaluateFunction += Expression_EvaluateFunction;
-
             (String name, List<String> parameters) = SplitSignature(signature);
 
-            if (parameters != null)
-            {
-                foreach (String parameter in parameters)
-                {
-                    expr.Parameters[parameter] = null;
-                }
+            var context = _context;
+
+            if (parameters != null) {
+                context = _context with { StaticParameters = parameters.ToDictionary(x => x, x => (object)null)};
             }
 
-            _expressions[name] = expr;
+            name = name.ToLower();
+            _expressions[name] = new Expression(expression, context);
         }
 
         public void AddParameter(String name, object value)
         {
+            name = name.ToLower();
             _parameters[name] = value switch
             {
                float f => (double) f,
@@ -119,6 +116,7 @@ namespace Maroon.Physics.Motion
 
         private void Expression_EvaluateFunction(string name, FunctionArgs args)
         {
+            name = name.ToLower();
             if (_expressions.ContainsKey(name) && _expressions[name].Parameters.Count == args.Parameters.Length)
             {
                 var expr = _expressions[name];
@@ -126,7 +124,8 @@ namespace Maroon.Physics.Motion
                 for (int i = 0; i < expr.Parameters.Count; i++)
                 {
                     var key = expr.Parameters.Keys.ToList()[i];
-                    expr.Parameters[key] = args.Parameters[i].Evaluate();
+                    var param = args.Parameters[i].Evaluate();
+                    expr.Parameters[key] = param;
                 }
 
                 args.Result = expr.Evaluate();
@@ -135,20 +134,7 @@ namespace Maroon.Physics.Motion
 
         private void Expression_EvaluateParameter(string name, ParameterArgs args)
         {
-            args.Result = name switch
-            {
-                "t" => current_state.t,
-                "x" => current_state.position.x,
-                "y" => current_state.position.y,
-                "z" => current_state.position.z,
-                "vx" => current_state.velocity.x,
-                "vy" => current_state.velocity.y,
-                "vz" => current_state.velocity.z,
-                _ => null
-            };
-
-            if (args.Result != null) return;
-
+            name = name.ToLower();
             if (_parameters.ContainsKey(name))
             {
                 args.Result = _parameters[name];
@@ -156,10 +142,6 @@ namespace Maroon.Physics.Motion
             else if (_expressions.ContainsKey(name))
             {
                 args.Result = _expressions[name].Evaluate();
-            }
-            else
-            {
-                throw new ArgumentException(String.Format("Unknown Parameter '{0}'", name));
             }
         }
 
@@ -216,10 +198,27 @@ namespace Maroon.Physics.Motion
         {
             _parameters["pi"] = Math.PI;
 
-            _expressions["m"] = new Expression("1", EvaluateOptions.IgnoreCase);
-            _expressions["fx"] = new Expression("0", EvaluateOptions.IgnoreCase);
-            _expressions["fy"] = new Expression("0", EvaluateOptions.IgnoreCase);
-            _expressions["fz"] = new Expression("0", EvaluateOptions.IgnoreCase);
+            _context = new ExpressionContext
+            {
+                Options = ExpressionOptions.IgnoreCaseAtBuiltInFunctions,
+                EvaluateFunctionHandler = Expression_EvaluateFunction,
+                EvaluateParameterHandler = Expression_EvaluateParameter,
+                DynamicParameters = new Dictionary<string, ExpressionParameter>()
+                {
+                    { "t", _ => { return current_state.t; } },
+                    { "x", _ => { return current_state.position.x; } },
+                    { "y", _ => { return current_state.position.y; } },
+                    { "z", _ => { return current_state.position.z; } },
+                    { "vx", _ => { return current_state.velocity.x; } },
+                    { "vy", _ => { return current_state.velocity.y; } },
+                    { "vz", _ => { return current_state.velocity.z; } }
+                }
+            };
+
+            _expressions["m"] = new Expression("1", _context);
+            _expressions["fx"] = new Expression("0", _context);
+            _expressions["fy"] = new Expression("0", _context);
+            _expressions["fz"] = new Expression("0", _context);
         }
     }
 }
