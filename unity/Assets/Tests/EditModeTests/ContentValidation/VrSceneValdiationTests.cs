@@ -14,11 +14,6 @@ namespace Tests.EditModeTests.ContentValidation
     public sealed class VrSceneValidationTests : SceneValidationBaseFixture<VrSceneValidationTests>
     {
         /// <summary>
-        /// Provides all scenes in Build Settings of type PC
-        /// </summary>
-        private class VrScenesProvider : ScenesProvider { protected override string sceneType => TypeVR; }
-    
-        /// <summary>
         /// Derived constructor used by TestFixtureSource annotation to initialize attributes
         /// </summary>
         /// <param name="experimentName">Name of the experiment scene to be tested</param>

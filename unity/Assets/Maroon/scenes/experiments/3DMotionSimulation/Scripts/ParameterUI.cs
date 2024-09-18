@@ -6,6 +6,7 @@ using Maroon.UI;
 using ObjectsInUse;
 using GEAR.Localization;
 using Maroon.Physics;
+using Maroon.Physics.ThreeDimensionalMotion;
 
 namespace ObjectsInUse
 {
@@ -13,11 +14,12 @@ namespace ObjectsInUse
     {
         Default,
         Ball,
+        Rocket,
         Satellite
     }
 }
 
-public class ParameterUI : PausableObject, IResetObject
+public class ParameterUI : PausableObject
 {
     private ParticleObject _particleInUse = ParticleObject.Default;
     [SerializeField] private GameObject _parameters;
@@ -26,8 +28,6 @@ public class ParameterUI : PausableObject, IResetObject
 
     private static ParameterUI _instance;
     private DialogueManager _dialogueManager;
-
-    private Dictionary<string, string> _functions = new Dictionary<string, string>();
    
     public TMP_Dropdown dropdown;
     List<TMP_Dropdown.OptionData> menuOptions;
@@ -36,12 +36,10 @@ public class ParameterUI : PausableObject, IResetObject
     [SerializeField] private TMP_Text _inputPanelButtonText;
     [SerializeField] private UnityEngine.UI.Button _showDataVisualizationButton;
     [SerializeField] private TMP_Text _dataVisualizationButtonText;
-    private bool _showInputPanel = false;
-    private bool _showDataPanel = false;
+    private bool _showInputPanel = true;
+    private bool _showDataPanel = true;
 
     private string _background = "ExperimentRoom";
-    private bool _resetBackground = true;
-    private bool _dropdownReset = false;
 
     [SerializeField] InputField fxIF;
     [SerializeField] InputField fyIF;
@@ -90,32 +88,10 @@ public class ParameterUI : PausableObject, IResetObject
         if (_dialogueManager == null)
             _dialogueManager = FindObjectOfType<DialogueManager>();
 
-        _functions.Add("abs", "Abs");
-        _functions.Add("acos", "Acos");
-        _functions.Add("asin", "Asin");
-        _functions.Add("atan", "Atan");
-        _functions.Add("ceiling", "Ceiling");
-        _functions.Add("cos", "Cos");
-        _functions.Add("exp", "Exp");
-        _functions.Add("floor", "Floor");
-        _functions.Add("ieeeremainder", "IEEERemainder");
-        _functions.Add("log", "Log");
-        _functions.Add("log10", "Log10");
-        _functions.Add("max", "Max");
-        _functions.Add("min", "Min");
-        _functions.Add("pow", "Pow");
-        _functions.Add("round", "Round");
-        _functions.Add("sign", "Sign");
-        _functions.Add("sin", "Sin");
-        _functions.Add("sqrt", "Sqrt");
-        _functions.Add("tan", "Tan");
-        _functions.Add("truncate", "Truncate");
-
         string message = LanguageManager.Instance.GetString("Welcome");
         DisplayMessage(message);
 
-        _showInputPanelButton.interactable = false;
-        _showDataVisualizationButton.interactable = false;
+        LoadDefault();
     }
 
     /// <summary>
@@ -131,55 +107,34 @@ public class ParameterUI : PausableObject, IResetObject
     /// </summary>
     protected override void HandleFixedUpdate()
     {
-        if (_showInputPanel)
-        {
-            _parameters.SetActive(true);
-            _initialConditions.SetActive(true);
-            _showInputPanelButton.interactable = true;
-            _inputPanelButtonText.text = LanguageManager.Instance.GetString("HideInputField");
-        }
-        else
-        {
-            _parameters.SetActive(false);
-            _initialConditions.SetActive(false);
-            _showInputPanelButton.interactable = true;
-            _inputPanelButtonText.text = LanguageManager.Instance.GetString("ShowInputField");
-        }
 
-        if (_showDataPanel)
-        {
-            _dataVisualization.SetActive(true);
-            _showDataVisualizationButton.interactable = true;
-            _dataVisualizationButtonText.text = LanguageManager.Instance.GetString("HideDataVisualization");
-        }
-        else
-        {
-            _dataVisualization.SetActive(false);
-            _showDataVisualizationButton.interactable = true;
-            _dataVisualizationButtonText.text = LanguageManager.Instance.GetString("ShowDataVisualization");
-        }
     }
 
     /// <summary>
     /// Show/Hide the Input Panel
     /// </summary>
-    public void ShowInputPanel()
+    public void ToggleInputPanel()
     {
-        if (_showInputPanel)
-            _showInputPanel = false;
-        else
-            _showInputPanel = true;
+        _showInputPanel = !_showInputPanel;
+
+        _parameters.SetActive(_showInputPanel);
+        _initialConditions.SetActive(_showInputPanel);
+        _inputPanelButtonText.text = _showInputPanel ? 
+            LanguageManager.Instance.GetString("HideInputField") :
+            LanguageManager.Instance.GetString("ShowInputField");
     }
 
     /// <summary>
     /// Show/Hide Data Visualization Panel
     /// </summary>
-    public void ShowDataVisualizationPanel()
+    public void ToggleDataVisualizationPanel()
     {
-        if (_showDataPanel)
-            _showDataPanel = false;
-        else
-            _showDataPanel = true;
+        _showDataPanel = !_showDataPanel;
+
+        _dataVisualization.SetActive(_showDataPanel);
+        _dataVisualizationButtonText.text = _showDataPanel ?
+             LanguageManager.Instance.GetString("HideDataVisualization") :
+             LanguageManager.Instance.GetString("ShowDataVisualization");
     }
 
     /// <summary>
@@ -188,7 +143,7 @@ public class ParameterUI : PausableObject, IResetObject
     /// <returns>The corrected formula Fx</returns>
     public string GetFunctionFx()
     {
-        return GetCorrectedFormula(fxIF.text);
+        return fxIF.text;
     }
 
     /// <summary>
@@ -197,7 +152,7 @@ public class ParameterUI : PausableObject, IResetObject
     /// <returns>The corrected formula Fy</returns>
     public string GetFunctionFy()
     {
-        return GetCorrectedFormula(fyIF.text);
+        return fyIF.text;
     }
 
     /// <summary>
@@ -206,25 +161,17 @@ public class ParameterUI : PausableObject, IResetObject
     /// <returns>The corrected formula Fz</returns>
     public string GetFunctionFz()
     {
-        return GetCorrectedFormula(fzIF.text);
+        return fzIF.text;
     }
 
     /// <summary>
     /// Gets the mass from the UI and checks the value range
     /// </summary>
     /// <returns>The mass</returns>
-    public float GetMass()
+    public string GetMass()
     {
-        if (_mass <= 0)
-        {
-            ShowError(LanguageManager.Instance.GetString("MassError"));
-            _mass = 1f;
-            ifMass.text = "1";
-        }
-        
-        return _mass;
+        return ifMass.text;
     }
-
     /// <summary>
     /// Sets the value for mass from the UI
     /// </summary>
@@ -371,47 +318,18 @@ public class ParameterUI : PausableObject, IResetObject
     /// Loads the chosen parameters from the JSON file 
     /// </summary>
     /// <param name="choice">The choice from the UI (Dropdown menu)</param>
-    public void LoadParameters(int choice)
+    public void DropdownListener(int choice)
     {
-        _resetBackground = false;
-        SimulationController.Instance.ResetSimulation();
+        // This has caused some sort of double invocation of this code,
+        // which was the source of some bugs, so for the time being it is
+        // commented out.
+        //
+        // I am not quite sure what is more hacky, the reset of the whole
+        // simulation or my solution of just commenting it out ...
+        //SimulationController.Instance.ResetSimulation();
 
-        switch (choice)
-        {
-            case 0:
-                LoadDefault();
-                dropdown.SetValueWithoutNotify(0);
-                break;
-            case 1:
-                LoadParametersFromFile(choice);
-                dropdown.SetValueWithoutNotify(1);
-                break;
-            case 2:
-                LoadParametersFromFile(choice);
-                dropdown.SetValueWithoutNotify(2);
-                break;
-            case 3:
-                LoadParametersFromFile(choice);
-                dropdown.SetValueWithoutNotify(3);
-                break;
-            case 4:
-                LoadParametersFromFile(choice);
-                dropdown.SetValueWithoutNotify(4);
-                break;
-            case 5:
-                LoadParametersFromFile(choice);
-                dropdown.SetValueWithoutNotify(5);
-                break;
-            case 6:
-                LoadParametersFromFile(choice);
-                dropdown.SetValueWithoutNotify(6);
-                break;
-            default:
-                LoadDefault();
-                dropdown.SetValueWithoutNotify(0);
-                break;
-        }
-        SkyboxController.Instance.SetBackground(_background);
+        LoadParametersFromFile(choice);
+        dropdown.SetValueWithoutNotify(choice);
     }
 
     /// <summary>
@@ -420,91 +338,53 @@ public class ParameterUI : PausableObject, IResetObject
     /// <param name="file">File to load</param>
     private void LoadParametersFromFile(int file)
     {
-        List<ParameterLoader.Parameters> parameters = ParameterLoader.Instance.LoadJsonFile(file);
-
-        foreach (var par in parameters)     
-        {
-            _background = par.Background;
-
-            if (par.Particle == "Satellite")
-                _particleInUse = ParticleObject.Satellite;
-            else if (par.Particle == "Ball")
-                _particleInUse = ParticleObject.Ball;
-            else
-                _particleInUse = ParticleObject.Default;
-
-            fxIF.text = GetCorrectedFormula(par.FunctionX);
-            fyIF.text = GetCorrectedFormula(par.FunctionY);
-            fzIF.text = GetCorrectedFormula(par.FunctionZ);
-
-            ifMass.text = par.Mass.ToString();
-            
-            ifT0.text = par.T0.ToString();
-            ifDeltat.text = par.DeltaT.ToString();
-            ifSteps.text = par.Steps.ToString();
-
-            ifX.text = par.X.ToString();
-            ifY.text = par.Y.ToString();
-            ifZ.text = par.Z.ToString();
-
-            ifVx.text = par.Vx.ToString();
-            ifVy.text = par.Vy.ToString();
-            ifVz.text = par.Vz.ToString();
-        }
+        var parameters = ParameterLoader.Instance.LoadJsonFromFile(file);
+        LoadParameters(parameters);
     }
 
-    /// <summary>
-    /// Handles loading the parameters from the EXTERN JSON file and sets the member variables
-    /// </summary>
-    /// <param name="parameters">Parameter list of the extern JSON file</param>
-    public void LoadExternParametersFromFile(List<ParameterLoader.Parameters> parameters)
+    public void LoadParameters(ParameterLoader.Parameters parameters)
     {
-        foreach (var par in parameters) 
+        _background = parameters.Background;
+
+        _particleInUse = parameters.Particle?.ToLower() switch
         {
-            _background = par.Background;
- 
-            if (par.Particle == "Satellite")
-                _particleInUse = ParticleObject.Satellite;
-            else if (par.Particle == "Ball")
-                _particleInUse = ParticleObject.Ball;
-            else
-                _particleInUse = ParticleObject.Default;
+            "ball" => ParticleObject.Ball,
+            "rocket" => ParticleObject.Rocket,
+            "satellite" => ParticleObject.Satellite,
+            _ => ParticleObject.Default
+        };
 
-            fxIF.text = GetCorrectedFormula(par.FunctionX);
-            fyIF.text = GetCorrectedFormula(par.FunctionY);
-            fzIF.text = GetCorrectedFormula(par.FunctionZ);
-            
-            ifMass.text = par.Mass.ToString();
-            ifT0.text = par.T0.ToString();
-            ifDeltat.text = par.DeltaT.ToString();
-            ifSteps.text = par.Steps.ToString();
+        fxIF.text = parameters.fx;
+        fyIF.text = parameters.fy;
+        fzIF.text = parameters.fz;
 
-            ifX.text = par.X.ToString();
-            ifY.text = par.Y.ToString();
-            ifZ.text = par.Z.ToString();
+        ifMass.text = parameters.m;
+        ifT0.text = parameters.T0.ToString();
+        ifDeltat.text = parameters.DeltaT.ToString();
+        ifSteps.text = parameters.Steps.ToString();
 
-            ifVx.text = par.Vx.ToString();
-            ifVy.text = par.Vy.ToString();
-            ifVz.text = par.Vz.ToString();
-        }
+        ifX.text = parameters.X.ToString();
+        ifY.text = parameters.Y.ToString();
+        ifZ.text = parameters.Z.ToString();
+
+        ifVx.text = parameters.Vx.ToString();
+        ifVy.text = parameters.Vy.ToString();
+        ifVz.text = parameters.Vz.ToString();
+
         SkyboxController.Instance.SetBackground(_background);
+
+        MotionCalculation.Instance.ResetObject();
+        ValueGraph.Instance.ResetObject();
     }
-   
-    /// <summary>
-    /// Brings the given formula into the correct form for evaluating
-    /// </summary>
-    /// <param name="formula">Formula to check</param>
-    /// <returns>The corrected formula</returns>
-    private string GetCorrectedFormula(string formula)
+
+    public void OnEndEdit(string param)
     {
-        string tmp = formula.ToLower();
-        
-        foreach (KeyValuePair<string, string> entry in _functions)
-        {
-            tmp = tmp.Replace(entry.Key, entry.Value);
-        }
-       
-        return tmp;
+        MotionCalculation.Instance.ResetObject();
+    }
+
+    public Dictionary<string,string> GetExpressions()
+    {
+        return ParameterLoader.Instance.GetParameters().expressions;
     }
 
     /// <summary>
@@ -552,26 +432,6 @@ public class ParameterUI : PausableObject, IResetObject
     /// </summary>
     public void ResetObject()
     {
-        _showLabel.isOn = false;
-        _showOriginGrid.isOn = true;
-        _showInputPanel = false;
-        _showDataPanel = false;
-        _showInputPanelButton.interactable = false;
-        _showDataVisualizationButton.interactable = false;
-        _inputPanelButtonText.text = LanguageManager.Instance.GetString("ShowInputField");
-        _dataVisualizationButtonText.text = LanguageManager.Instance.GetString("ShowDataVisualization");
-        _parameters.SetActive(true);
-        _initialConditions.SetActive(true);
-        _dataVisualization.SetActive(true);
-
-        _particleInUse = ParticleObject.Default;
-
-        if (_resetBackground)
-            _background = "ExperimentRoom";
-        
-        _resetBackground = true;
-        dropdown.SetValueWithoutNotify(0);
-        LoadDefault();
     }
 
     /// <summary>
@@ -589,35 +449,7 @@ public class ParameterUI : PausableObject, IResetObject
     /// </summary>
     private void LoadDefault()
     {
-        _background = "ExperimentRoom";
-
-        fxIF.text = "-x";
-        fyIF.text = "0";
-        fzIF.text = "0";
-
-        ifMass.text = "1";
-
-        ifT0.text = "0";
-        ifDeltat.text = "0,05";
-        ifSteps.text = "500";
-
-        ifX.text = "0";
-        ifY.text = "0";
-        ifZ.text = "0";
-
-        ifVx.text = "1";
-        ifVy.text = "0";
-        ifVz.text = "0";
-
-        _mass = 1;
-        _t0 = 0;
-        _deltaT = 0.05f;
-        _steps = 500;
-        _x = 0;
-        _y = 0;
-        _z = 0;
-        _vx = 1;
-        _vy = 0;
-        _vz = 0;
+        LoadParametersFromFile(0);
+        dropdown.SetValueWithoutNotify(0);
     }
 }

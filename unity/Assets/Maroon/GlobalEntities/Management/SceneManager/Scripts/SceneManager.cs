@@ -326,9 +326,6 @@ namespace Maroon.GlobalEntities
         ///     Loades a scene based on a Maroon.CustomSceneAsset. The scene must be registered in one of the
         ///     categories in the SceneManager to be able to load it with this method. Always use this method for 
         ///     loading a new scene, it updates the scene history and checks if the platform is correct.
-        ///
-        ///     TODO: Pipe all scene changes through this method so that this method can notify the NetworkManager
-        ///     consistently.
         /// </summary>
         /// <param name="scene">
         ///     A Maroon.CustomSceneAsset to be loaded.
@@ -344,17 +341,7 @@ namespace Maroon.GlobalEntities
                 return false;
             }
 
-            // If network disabled
-            if(Maroon.NetworkManager.Instance.mode == Mirror.NetworkManagerMode.Offline)
-            {
-                LoadSceneExecute(scene, showLoadingScreen);
-            }
-
-            // If network enabled
-            else
-            {
-                Maroon.NetworkManager.Instance.EnterScene(scene.ScenePath);
-            }
+            LoadSceneExecute(scene, showLoadingScreen);
 
             return true;
         }
@@ -456,18 +443,8 @@ namespace Maroon.GlobalEntities
                 return false;
             }
             
-            // If network disabled
-            if(Maroon.NetworkManager.Instance.mode == Mirror.NetworkManagerMode.Offline)
-            {
-                UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
-                AddToSceneHistory(scene);
-            }
-
-            // If network enabled
-            else
-            {
-                Maroon.NetworkManager.Instance.ServerChangeScene(scene.ScenePath);
-            }
+            UnityEngine.SceneManagement.SceneManager.LoadScene(scene);
+            AddToSceneHistory(scene);
 
             // Add scene change to history
             return true;
@@ -492,7 +469,7 @@ namespace Maroon.GlobalEntities
             return true;
         }
 
-        // Called by network to update scene changes on clients, that were initiated by server
+        // Called by SceneManager to update scene history
         public void AddToSceneHistory(Maroon.CustomSceneAsset scene)
         {
             if(_sceneHistory.Count == 0 || scene.SceneName != _sceneHistory.Peek().SceneName)

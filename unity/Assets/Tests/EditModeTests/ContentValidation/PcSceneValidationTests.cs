@@ -16,11 +16,6 @@ namespace Tests.EditModeTests.ContentValidation
     public sealed class PcSceneValidationTests : SceneValidationBaseFixture<PcSceneValidationTests>
     {
         /// <summary>
-        /// Provides all scenes in Build Settings of type PC
-        /// </summary>
-        private class PcScenesProvider : ScenesProvider { protected override string sceneType => TypePC; }
-        
-        /// <summary>
         /// Derived constructor used by TestFixtureSource annotation to initialize attributes
         /// </summary>
         /// <param name="experimentName">Name of the experiment scene to be tested</param>
