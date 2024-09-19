@@ -55,10 +55,11 @@ namespace Maroon.ReusableScripts.ExperimentParameters
         /// <returns>The loaded ExperimentParameters</returns>
         public ExperimentParameters LoadJsonFromFileIndex(int index)
         {
-            Debug.Log("Length = " + _jsonFile.Count + " and index is " + index);
             if (index >= _jsonFile.Count)
             {
                 Debug.LogError("Index " + index + " is greater or equal the number of files " + _jsonFile.Count);
+                MostRecentParameters = null;
+                return null;
             }
 
             string data = _jsonFile[index].text;
