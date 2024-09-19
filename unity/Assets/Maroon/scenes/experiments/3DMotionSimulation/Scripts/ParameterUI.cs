@@ -345,7 +345,16 @@ public class ParameterUI : PausableObject
 
     public void LoadParameters(ExperimentParameters experimentParameters)
     {
-        ThreeDimensionalMotionParameters parameters = (ThreeDimensionalMotionParameters)experimentParameters;
+        ThreeDimensionalMotionParameters parameters;
+        if (experimentParameters is ThreeDimensionalMotionParameters)
+        {
+            parameters = (ThreeDimensionalMotionParameters)experimentParameters;
+        }
+        else
+        {
+            Debug.LogError("ExperimentParameters are not of the expected type ThreeDimensionalMotionParameters!");
+            return;
+        }
 
         _background = parameters.Background;
 

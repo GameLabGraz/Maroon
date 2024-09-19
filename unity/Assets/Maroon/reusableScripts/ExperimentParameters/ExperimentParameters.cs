@@ -22,7 +22,7 @@ namespace Maroon.ReusableScripts.ExperimentParameters
     /// gameInstance.SendMessage('WebGL Receiver', 'GetDataFromJavaScript', data);
     /// </summary>
     [System.Serializable]
-    public abstract class ExperimentParameters
+    public class ExperimentParameters
     {
     }
 }

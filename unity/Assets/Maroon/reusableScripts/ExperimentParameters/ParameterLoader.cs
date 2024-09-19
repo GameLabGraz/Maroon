@@ -80,8 +80,15 @@ namespace Maroon.ReusableScripts.ExperimentParameters
         /// <returns>The loaded ExperimentParameters</returns>
         private ExperimentParameters ConvertJsonToExperimentParameters(string data)
         {
+            JsonSerializerSettings settings = new JsonSerializerSettings
+            {
+                TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full,
+                Formatting = Formatting.Indented,
+                TypeNameHandling = TypeNameHandling.All,
+                // if we allow loading of some sort of external JSON file in the future, then we need to assign a custom SerializationBinder here
+            };
 
-            return JsonConvert.DeserializeObject<ExperimentParameters>(data);
+            return JsonConvert.DeserializeObject<ExperimentParameters>(data, settings);
         }
         #endregion
     }
