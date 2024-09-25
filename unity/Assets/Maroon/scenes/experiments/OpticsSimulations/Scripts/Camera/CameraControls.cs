@@ -20,7 +20,8 @@ namespace Maroon.Physics.Optics.Camera
         private float _moveFactor;
         
         public bool IsTopView => isTopView;
-        
+
+        [System.Serializable]
         public struct CameraSetting
         {
             public Vector3 Position;
