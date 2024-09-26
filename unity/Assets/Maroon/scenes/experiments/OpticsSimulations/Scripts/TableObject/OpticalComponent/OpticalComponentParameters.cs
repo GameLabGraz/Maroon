@@ -9,5 +9,6 @@ namespace Maroon.Physics.Optics.TableObject.OpticalComponent
     [System.Serializable]
     public class OpticalComponentParameters : TableObjectParameters
     {
+        public OpticalCategory opticalCategory;
     }
 }

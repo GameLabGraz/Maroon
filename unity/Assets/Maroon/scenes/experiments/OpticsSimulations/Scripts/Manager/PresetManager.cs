@@ -81,13 +81,15 @@ namespace Maroon.Physics.Optics.Manager
 
             foreach (TableObjectParameters componentParameters in experimentParameters.tableObjectParameters)
             {
-                if (componentParameters is LightComponentParameters)
+                if (componentParameters is LightComponentParameters lightComponentParameters)
                 {
-
+                    LightComponent prefab = GetLightComponentPrefabForCategory(lightComponentParameters.lightCategory);
+                    LightComponent lightComp = _lcm.AddLightComponent(prefab, lightComponentParameters.position, lightComponentParameters.rotation, lightComponentParameters.waveLengths);
                 }
-                else if (componentParameters is OpticalComponentParameters)
+                else if (componentParameters is OpticalComponentParameters opticalComponentParameters)
                 {
-
+                    OpticalComponent prefab = GetLightComponentPrefabForCategory(opticalComponentParameters.opticalCategory);
+                    OpticalComponent opticalComp = _ocm.AddOpticalComponent(prefab, opticalComponentParameters.position, opticalComponentParameters.rotation);
                 }
                 else
                 {
@@ -99,6 +101,43 @@ namespace Maroon.Physics.Optics.Manager
                 experimentParameters.cameraSettingBaseView,
                 experimentParameters.cameraSettingTopView
             );
+        }
+
+        private LightComponent GetLightComponentPrefabForCategory(LightCategory category)
+        {
+            Dictionary<LightCategory, LightComponent> prefabsPerCategory = new Dictionary<LightCategory, LightComponent>()
+            {
+                { LightCategory.LaserPointer, laserPointer },
+                { LightCategory.ParallelSource, parallelSource },
+                { LightCategory.PointSource, pointSource },
+            };
+
+            if (prefabsPerCategory.ContainsKey(category))
+                return prefabsPerCategory[category];
+            else
+            {
+                Debug.LogError("Unknown LightCategory: " + category);
+                return null;
+            }
+        }
+
+        private LightComponent GetOpticalComponentPrefabForCategory(OpticalCategory category)
+        {
+            Dictionary<OpticalCategory, LightComponent> prefabsPerCategory = new Dictionary<OpticalCategory, LightComponent>()
+            {
+                { OpticalCategory.Mirror, mirror },
+                { OpticalCategory.Eye, eye },
+                { OpticalCategory.Lens, lens },
+                { OpticalCategory.Aperture, aperture },
+            };
+
+            if (prefabsPerCategory.ContainsKey(category))
+                return prefabsPerCategory[category];
+            else
+            {
+                Debug.LogError("Unknown OpticalCategory: " + category);
+                return null;
+            }
         }
 
         #region Old Presets
