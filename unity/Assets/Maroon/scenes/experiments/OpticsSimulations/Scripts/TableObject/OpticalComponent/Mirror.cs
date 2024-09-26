@@ -40,6 +40,12 @@ namespace Maroon.Physics.Optics.TableObject.OpticalComponent
             this.Rc = Rc;
             _prevR = R;
         }
+        public void SetParameters(MirrorParameters parameters)
+        {
+            this.R = parameters.R;
+            this.Rc = parameters.Rc;
+            _prevR = R;
+        }
 
         // ---- Mirror helper methods ----
         // center of Mirror

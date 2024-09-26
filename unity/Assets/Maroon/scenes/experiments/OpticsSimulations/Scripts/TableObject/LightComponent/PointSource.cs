@@ -27,6 +27,12 @@ namespace Maroon.Physics.Optics.TableObject.LightComponent
             this.rayDistributionAngle = rayDistributionAngle;
             ChangeNumberOfRaysAndAngle(numberOfRays, rayDistributionAngle);
         }
+        public void SetParameters(PointSourceParameters parameters)
+        {
+            this.numberOfRays = parameters.numberOfRays;
+            this.rayDistributionAngle = parameters.rayDistributionAngle;
+            ChangeNumberOfRaysAndAngle(numberOfRays, rayDistributionAngle);
+        }
 
         public void ChangeNumberOfRaysAndAngle(int nrRays, float distAngle)
         {

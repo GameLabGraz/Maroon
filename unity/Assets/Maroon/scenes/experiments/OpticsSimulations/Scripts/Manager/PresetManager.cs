@@ -88,8 +88,14 @@ namespace Maroon.Physics.Optics.Manager
 
                     switch (lightComponentParameters.lightCategory)
                     {
+                        case LightCategory.LaserPointer:
+                            // LaserPointer has no other adjustable parameters
+                            break;
                         case LightCategory.ParallelSource:
                             ((ParallelSource)lightComp).SetParameters((ParallelSourceParameters)lightComponentParameters);
+                            break;
+                        case LightCategory.PointSource:
+                            ((PointSource)lightComp).SetParameters((PointSourceParameters)lightComponentParameters);
                             break;
                     }
                 }
@@ -105,6 +111,15 @@ namespace Maroon.Physics.Optics.Manager
                             break;
                         case OpticalCategory.Eye:
                             ((Eye)opticalComp).SetParameters((EyeParameters)opticalComponentParameters);
+                            break;
+                        case OpticalCategory.Aperture:
+                            ((Aperture)opticalComp).SetParameters((ApertureParameters)opticalComponentParameters);
+                            break;
+                        case OpticalCategory.Mirror:
+                            ((Mirror)opticalComp).SetParameters((MirrorParameters)opticalComponentParameters);
+                            break;
+                        case OpticalCategory.Wall:
+                            ((Wall)opticalComp).SetParameters((WallParameters)opticalComponentParameters);
                             break;
                     }
                 }
@@ -221,7 +236,6 @@ namespace Maroon.Physics.Optics.Manager
                 new CameraControls.CameraSetting(new Vector3(-0.12f,3,2.08f), Constants.TopCamRot, 3)
             );
         }
-        // till here
 
         private void FarsightedEye()
         {
@@ -260,7 +274,7 @@ namespace Maroon.Physics.Optics.Manager
                 new CameraControls.CameraSetting(new Vector3(-0.12f,3,2.08f), Constants.TopCamRot, 3)
             );
         }
-        
+
         private void KeplerianTelescope()
         {
             _em.ClearTable();
@@ -326,7 +340,7 @@ namespace Maroon.Physics.Optics.Manager
                 new CameraControls.CameraSetting(new Vector3(-0.168f,3,2.08f), Constants.TopCamRot, 3.5f)
             );
         }
-        
+
         private void NewtonianTelescope()
         {
             _em.ClearTable();

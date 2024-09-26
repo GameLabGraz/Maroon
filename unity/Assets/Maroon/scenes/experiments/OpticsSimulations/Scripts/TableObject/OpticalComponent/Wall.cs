@@ -14,7 +14,12 @@ namespace Maroon.Physics.Optics.TableObject.OpticalComponent
             this.r0 = r0;
             this.n = n;
         }
-        
+        public void SetParameters(WallParameters parameters)
+        {
+            this.r0 = parameters.r0;
+            this.n = parameters.n;
+        }
+
         public override void UpdateProperties()
         {
             Debug.Log("Updated properties should never have to be called for Wall componentes!");
