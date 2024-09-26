@@ -57,6 +57,17 @@ namespace Maroon.Physics.Optics.TableObject.OpticalComponent
             this.B = B;
             _baseD1 = d1;
         }
+        public void SetParameters(LensParameters parameters)
+        {
+            this.R1 = parameters.R1;
+            this.R2 = parameters.R2;
+            this.d1 = parameters.d1;
+            this.d2 = parameters.d2;
+            this.Rc = parameters.Rc;
+            this.A = parameters.A;
+            this.B = parameters.B;
+            _baseD1 = parameters.d1;
+        }
 
         // ---- Lens helper methods ----
         // center of R1 surface

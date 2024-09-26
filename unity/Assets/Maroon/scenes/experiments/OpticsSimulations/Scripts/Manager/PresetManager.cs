@@ -85,11 +85,28 @@ namespace Maroon.Physics.Optics.Manager
                 {
                     LightComponent prefab = GetLightComponentPrefabForCategory(lightComponentParameters.lightCategory);
                     LightComponent lightComp = _lcm.AddLightComponent(prefab, lightComponentParameters.position, lightComponentParameters.rotation, lightComponentParameters.waveLengths);
+
+                    switch (lightComponentParameters.lightCategory)
+                    {
+                        case LightCategory.ParallelSource:
+                            ((ParallelSource)lightComp).SetParameters((ParallelSourceParameters)lightComponentParameters);
+                            break;
+                    }
                 }
                 else if (componentParameters is OpticalComponentParameters opticalComponentParameters)
                 {
-                    OpticalComponent prefab = GetLightComponentPrefabForCategory(opticalComponentParameters.opticalCategory);
-                    OpticalComponent opticalComp = _ocm.AddOpticalComponent(prefab, opticalComponentParameters.position, opticalComponentParameters.rotation);
+                    OpticalComponent prefab = GetOpticalComponentPrefabForCategory(opticalComponentParameters.opticalCategory);
+                    OpticalComponent opticalComp = _ocm.AddOpticalComponent(prefab, opticalComponentParameters.position, opticalComponentParameters.rotation); 
+                    
+                    switch (opticalComponentParameters.opticalCategory)
+                    {
+                        case OpticalCategory.Lens:
+                            ((Lens)opticalComp).SetParameters((LensParameters)opticalComponentParameters);
+                            break;
+                        case OpticalCategory.Eye:
+                            ((Eye)opticalComp).SetParameters((EyeParameters)opticalComponentParameters);
+                            break;
+                    }
                 }
                 else
                 {
@@ -121,9 +138,9 @@ namespace Maroon.Physics.Optics.Manager
             }
         }
 
-        private LightComponent GetOpticalComponentPrefabForCategory(OpticalCategory category)
+        private OpticalComponent GetOpticalComponentPrefabForCategory(OpticalCategory category)
         {
-            Dictionary<OpticalCategory, LightComponent> prefabsPerCategory = new Dictionary<OpticalCategory, LightComponent>()
+            Dictionary<OpticalCategory, OpticalComponent> prefabsPerCategory = new Dictionary<OpticalCategory, OpticalComponent>()
             {
                 { OpticalCategory.Mirror, mirror },
                 { OpticalCategory.Eye, eye },
@@ -169,7 +186,7 @@ namespace Maroon.Physics.Optics.Manager
                 new CameraControls.CameraSetting(new Vector3(-0.06f,3,2.1f), Constants.TopCamRot, 36)
             );
         }
-        
+
         private void StandardEye()
         {
             _em.ClearTable();
@@ -184,7 +201,7 @@ namespace Maroon.Physics.Optics.Manager
                 new CameraControls.CameraSetting(new Vector3(-0.12f,3,2.08f), Constants.TopCamRot, 3)
             );
         }
-        
+
         private void NearsightedEye()
         {
             _em.ClearTable();
@@ -204,7 +221,8 @@ namespace Maroon.Physics.Optics.Manager
                 new CameraControls.CameraSetting(new Vector3(-0.12f,3,2.08f), Constants.TopCamRot, 3)
             );
         }
-        
+        // till here
+
         private void FarsightedEye()
         {
             _em.ClearTable();

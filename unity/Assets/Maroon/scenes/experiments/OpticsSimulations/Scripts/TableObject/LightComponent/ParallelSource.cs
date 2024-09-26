@@ -27,6 +27,11 @@ namespace Maroon.Physics.Optics.TableObject.LightComponent
             this.distanceBetweenRays = distanceBetweenRays;
             ChangeNumberOfRays(numberOfRays);
         }
+        public void SetParameters(ParallelSourceParameters parameters)
+        {
+            this.distanceBetweenRays = parameters.distanceBetweenRays;
+            ChangeNumberOfRays(parameters.numberOfRays);
+        }
 
         public void ChangeNumberOfRays(int nrRays)
         {
