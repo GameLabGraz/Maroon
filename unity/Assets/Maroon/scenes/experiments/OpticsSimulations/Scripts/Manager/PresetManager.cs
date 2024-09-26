@@ -72,7 +72,35 @@ namespace Maroon.Physics.Optics.Manager
                 case TablePreset.OpticalFiber: OpticalFiber(); break;
             }
         }
-        
+
+        private void LoadExperimentParameters(OpticsParameters experimentParameters)
+        {
+            _em.ClearTable();
+            _uim.rayThickness.Value = experimentParameters.rayThickness;
+
+            foreach (OpticalComponentParameters componentParameters in experimentParameters.tableObjectParameters)
+            {
+                if (componentParameters is LightComponentParameters)
+                {
+
+                }
+                else if (componentParameters is OpticalComponentParameters)
+                {
+
+                }
+                else
+                {
+                    Debug.LogError("Unknown OpticalComponentParameters class.");
+                }
+            }
+
+            _camControls.SetPresetCameras(
+                experimentParameters.cameraSettingBaseView,
+                experimentParameters.cameraSettingTopView
+            );
+        }
+
+        #region Old Presets
         private void LensAndMirror()
         {
             _em.ClearTable();
@@ -361,6 +389,6 @@ namespace Maroon.Physics.Optics.Manager
             LightEmittingDiode,
             OpticalFiber
         }
-
+        #endregion
     }
 }
