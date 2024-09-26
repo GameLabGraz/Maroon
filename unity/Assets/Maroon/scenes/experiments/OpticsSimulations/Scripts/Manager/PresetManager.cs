@@ -4,6 +4,7 @@ using Maroon.Physics.Optics.TableObject;
 using Maroon.Physics.Optics.TableObject.LightComponent;
 using Maroon.Physics.Optics.TableObject.OpticalComponent;
 using Maroon.Physics.Optics.Util;
+using Maroon.ReusableScripts.ExperimentParameters;
 using UnityEngine;
 using Newtonsoft.Json;
 using System.IO;
@@ -74,6 +75,18 @@ namespace Maroon.Physics.Optics.Manager
                 case TablePreset.Microscope: Microscope(); break;
                 case TablePreset.LightEmittingDiode: LightEmittingDiode(); break;
                 case TablePreset.OpticalFiber: OpticalFiber(); break;
+            }
+        }
+
+        public void OnLoadedExperimentParameters(ExperimentParameters experimentParameters)
+        {
+            if (experimentParameters is OpticsParameters)
+            {
+                LoadExperimentParameters((OpticsParameters) experimentParameters);
+            }
+            else
+            {
+                Debug.LogError("OnLoadedExperimentParameters requires OpticsParameters");
             }
         }
 
