@@ -16,6 +16,9 @@ namespace Maroon.Physics.Optics.Manager
     {
         public static PresetManager Instance;
 
+        [Header("ParameterLoader")]
+        [SerializeField] private ParameterLoader parameterLoader;
+
         [Header("Prefabs: Light Sources")]
         [SerializeField] private LaserPointer laserPointer;
         [SerializeField] private ParallelSource parallelSource;
@@ -60,6 +63,13 @@ namespace Maroon.Physics.Optics.Manager
 
         public void TablePresets(int nr)
         {
+            if (nr > 0) // First index should not load anything
+            {
+                parameterLoader.LoadJsonFromFileIndex(nr - 1);
+            }
+
+            return; // To test json deserializing
+
             switch ((TablePreset) nr)
             {
                 case TablePreset.Undefined: return;
