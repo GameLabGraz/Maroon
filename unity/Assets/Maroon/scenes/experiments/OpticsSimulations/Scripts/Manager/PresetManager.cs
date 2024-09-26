@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Maroon.Physics.Optics.Camera;
+using Maroon.Physics.Optics.TableObject;
 using Maroon.Physics.Optics.TableObject.LightComponent;
 using Maroon.Physics.Optics.TableObject.OpticalComponent;
 using Maroon.Physics.Optics.Util;
@@ -78,7 +79,7 @@ namespace Maroon.Physics.Optics.Manager
             _em.ClearTable();
             _uim.rayThickness.Value = experimentParameters.rayThickness;
 
-            foreach (OpticalComponentParameters componentParameters in experimentParameters.tableObjectParameters)
+            foreach (TableObjectParameters componentParameters in experimentParameters.tableObjectParameters)
             {
                 if (componentParameters is LightComponentParameters)
                 {
