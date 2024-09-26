@@ -8,6 +8,7 @@ namespace Maroon.Physics.Optics.Manager
     [System.Serializable]
     public class OpticsParameters : ExperimentParameters
     {
+        public string presetNameTranslationKey;
         public float rayThickness;
         public CameraSetting cameraSettingBaseView;
         public CameraSetting cameraSettingTopView;

@@ -5,13 +5,16 @@ using Maroon.Physics.Optics.TableObject.LightComponent;
 using Maroon.Physics.Optics.TableObject.OpticalComponent;
 using Maroon.Physics.Optics.Util;
 using UnityEngine;
+using Newtonsoft.Json;
+using System.IO;
+using System;
 
 namespace Maroon.Physics.Optics.Manager
 {
     public class PresetManager : MonoBehaviour
     {
         public static PresetManager Instance;
-        
+
         [Header("Prefabs: Light Sources")]
         [SerializeField] private LaserPointer laserPointer;
         [SerializeField] private ParallelSource parallelSource;
@@ -185,6 +188,52 @@ namespace Maroon.Physics.Optics.Manager
                 new CameraControls.CameraSetting(new Vector3(-0.065f, 2.6f, 1.0f), Constants.BaseCamRot, 30),
                 new CameraControls.CameraSetting(new Vector3(-0.065f, 3.0f, 2.0f), Constants.TopCamRot, 33)
             );
+
+
+            OpticsParameters parameters = new OpticsParameters()
+            {
+                presetNameTranslationKey = "Lens and Mirror",
+                rayThickness = Constants.BaseRayThicknessInMM,
+                cameraSettingBaseView = new CameraControls.CameraSetting(new Vector3(-0.065f, 2.6f, 1.0f), Constants.BaseCamRot, 30),
+                cameraSettingTopView = new CameraControls.CameraSetting(new Vector3(-0.065f, 3.0f, 2.0f), Constants.TopCamRot, 33),
+                tableObjectParameters = new List<TableObjectParameters>()
+                {
+                    new LaserPointerParameters(){
+                        lightCategory = LightCategory.LaserPointer,
+                        position = new Vector3(1.30f, 0, 0.60f),
+                        waveLengths = new List<float> { 390f, 440f, 490f, 540f, 590f, 640f, 720f },
+                    },
+                    new LensParameters(){ 
+                        opticalCategory = OpticalCategory.Lens,
+                        position = new Vector3(1.6f, 0, 0.57f)
+                    },
+                    new MirrorParameters()
+                    {
+                        opticalCategory = OpticalCategory.Mirror,
+                        position = new Vector3(2.2f, 0, 0.40f), 
+                        rotation = new Vector3(1, 0, -1),
+                    }
+                },
+            };
+
+            ExportToJSON(parameters, "LensAndMirror.json");
+        }
+
+        private void ExportToJSON(OpticsParameters parameters, string filename)
+        {
+            JsonSerializerSettings settings = new JsonSerializerSettings
+            {
+                TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full,
+                Formatting = Formatting.Indented,
+                TypeNameHandling = TypeNameHandling.All,
+            };
+
+            string jsonText = JsonConvert.SerializeObject(parameters, settings);
+
+            string docPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+            File.WriteAllText(Path.Combine(docPath, filename), jsonText);
+            Debug.Log("Exported to file " + Path.Combine(docPath, filename));
         }
 
         private void FocalLength()
