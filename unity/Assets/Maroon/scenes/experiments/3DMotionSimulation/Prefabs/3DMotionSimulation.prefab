@@ -440,16 +440,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d32c5eddf3ce7741b5301b8f565f542, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _jsonFileSelectionOrder:
-  - Default
-  - Satellite
-  - BallInTheWind
-  - ChargedParticle
-  - Resonance
-  - ParametricOscillator
-  - RelaxationOscillator
-  - RocketLaunch
-  - CoupledOscillators
 --- !u!1 &2615165636305501045
 GameObject:
   m_ObjectHideFlags: 0
@@ -1481,6 +1471,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2615165636625313108}
+  - component: {fileID: 6484876488195960525}
   - component: {fileID: 2615165636625313109}
   m_Layer: 0
   m_Name: ParameterController
@@ -1504,6 +1495,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2615165636486811591}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6484876488195960525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2615165636625313115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 788f6c90d459ded4e939841192cc0e76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnParameterChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &2615165636625313109
 MonoBehaviour:
   m_ObjectHideFlags: 0
