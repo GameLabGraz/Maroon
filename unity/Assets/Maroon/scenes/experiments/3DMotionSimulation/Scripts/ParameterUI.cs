@@ -7,6 +7,7 @@ using ObjectsInUse;
 using GEAR.Localization;
 using Maroon.Physics;
 using Maroon.Physics.ThreeDimensionalMotion;
+using Maroon;
 
 namespace ObjectsInUse
 {
@@ -30,7 +31,6 @@ public class ParameterUI : PausableObject
     private DialogueManager _dialogueManager;
    
     public TMP_Dropdown dropdown;
-    List<TMP_Dropdown.OptionData> menuOptions;
 
     [SerializeField] private UnityEngine.UI.Button _showInputPanelButton;
     [SerializeField] private TMP_Text _inputPanelButtonText;
@@ -85,13 +85,19 @@ public class ParameterUI : PausableObject
     /// </summary>
     protected override void Start()
     {
+        dropdown.ClearOptions();
+        dropdown.AddOptions(ParameterController3DMotionSimulation.Instance.GetParameterNames());
+        
+        ParameterController3DMotionSimulation.Instance.OnParameterChanged.AddListener((parameter, index) => {
+            LoadParametersFromFile(parameter.ToString());
+            dropdown.SetValueWithoutNotify(index);
+        });
+
         if (_dialogueManager == null)
             _dialogueManager = FindObjectOfType<DialogueManager>();
 
         string message = LanguageManager.Instance.GetString("Welcome");
         DisplayMessage(message);
-
-        LoadDefault();
     }
 
     /// <summary>
@@ -320,25 +326,18 @@ public class ParameterUI : PausableObject
     /// <param name="choice">The choice from the UI (Dropdown menu)</param>
     public void DropdownListener(int choice)
     {
-        // This has caused some sort of double invocation of this code,
-        // which was the source of some bugs, so for the time being it is
-        // commented out.
-        //
-        // I am not quite sure what is more hacky, the reset of the whole
-        // simulation or my solution of just commenting it out ...
-        //SimulationController.Instance.ResetSimulation();
-
-        LoadParametersFromFile(choice);
-        dropdown.SetValueWithoutNotify(choice);
+        Parameter3DMotionSimulation parameter = ParameterController3DMotionSimulation.Instance.GetParameterByIndex(choice);
+        ParameterController3DMotionSimulation.Instance.OnParameterChanged.Invoke(parameter, choice);
     }
 
     /// <summary>
     /// Handles loading the parameters from the (intern) JSON file and sets the member variables
     /// </summary>
     /// <param name="file">File to load</param>
-    private void LoadParametersFromFile(int file)
+    private async void LoadParametersFromFile(string filename)
     {
-        var parameters = ParameterLoader.Instance.LoadJsonFromFile(file);
+        string convertedFilename = StreamingAssetsLoader.Instance.ConvertToPascalCase(filename);
+        var parameters = await ParameterLoader.Instance.LoadJsonFromFile(convertedFilename);
         LoadParameters(parameters);
     }
 
@@ -441,15 +440,5 @@ public class ParameterUI : PausableObject
     private void ShowError(string message)
     {
         DisplayMessage(message);
-    }
-
-    /// <summary>
-    /// Loads the default parameters for resetting the experiment.
-    /// Hard coded because of WebGL version
-    /// </summary>
-    private void LoadDefault()
-    {
-        LoadParametersFromFile(0);
-        dropdown.SetValueWithoutNotify(0);
     }
 }

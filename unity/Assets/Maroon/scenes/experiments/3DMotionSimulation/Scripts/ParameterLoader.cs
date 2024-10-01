@@ -1,15 +1,13 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
+using Maroon;
+using System.Threading.Tasks;
 using Maroon.GlobalEntities;
-using UnityEditor;
-using System.Linq;
 
 public class ParameterLoader : MonoBehaviour
 {
     private static ParameterLoader _instance;
-    [SerializeField] private List<string> _jsonFileSelectionOrder = new List<string>();
-    private List<TextAsset> _jsonFiles = new List<TextAsset>();
     private Parameters _parameters;
 
     /// <summary>
@@ -45,25 +43,6 @@ public class ParameterLoader : MonoBehaviour
 #if UNITY_WEBGL
         WebGlReceiver.Instance.OnIncomingData.AddListener(HandleExternalJson);
 #endif
-
-        // Add all json files in StreamingAssets/Config/3DMotionSimulation to the list
-        // Note: Those are loacted in STREAMINGASSETS not in the RESOURCES folder
-
-        var configPath = System.IO.Path.Combine(Application.streamingAssetsPath, "Config", "3DMotionSimulation");
-        var files = System.IO.Directory.GetFiles(configPath, "*.json");
-        _jsonFiles = Enumerable.Repeat<TextAsset>(null, _jsonFileSelectionOrder.Count).ToList();
-
-        foreach(var path in files)
-        {
-            string jsonContent = System.IO.File.ReadAllText(path);
-            string fileName = System.IO.Path.GetFileNameWithoutExtension(path);
-
-            int index = _jsonFileSelectionOrder.FindIndex(name => name == fileName);
-            if (index == -1) continue;
-
-            TextAsset jsonAsset = new TextAsset(jsonContent);
-            _jsonFiles[index] = jsonAsset;
-        }
     }
 
     /// <summary>
@@ -80,11 +59,18 @@ public class ParameterLoader : MonoBehaviour
     /// </summary>
     /// <param name="file">File to load</param>
     /// <returns>Parameters</returns>
-    public Parameters LoadJsonFromFile(int index)
+    public async Task<Parameters> LoadJsonFromFile(string filename)
     {
-        string data = _jsonFiles[index].text;
+        filename = "Config/3DMotionSimulation/" + filename + ".json";
+        string fileContent = await StreamingAssetsLoader.Instance.LoadFile(filename);
 
-        return LoadJson(data);
+        if (string.IsNullOrEmpty(fileContent))
+        {
+            Debug.LogError("Failed to load JSON file: " + filename);
+            return null;
+        }
+
+        return LoadJson(fileContent);
     }
 
     /// <summary>
