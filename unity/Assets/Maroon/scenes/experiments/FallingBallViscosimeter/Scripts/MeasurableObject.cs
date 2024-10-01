@@ -1,102 +1,46 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace Maroon.Physics
+namespace Maroon.Physics.Viscosimeter
 {
   
-  public class MeasurableObject : MonoBehaviour
-  {
-    private MeasurementManager _measurementManager;
-    private float length_;
-    private bool clickable = false;
-    public GameObject measurement_device;
-    public float device_rotation = 0;
+    public class MeasurableObject : MonoBehaviour
+    {
+        private bool clickable = false;
+        public GameObject measurement_device;
+        public float device_rotation = 0;
     
-    public Axis measuredAxis;
     
-
-    private void Awake()
-    {
-      _measurementManager = MeasurementManager.Instance;
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-      if(measuredAxis == null)
-      {
-        Debug.LogWarning("No Axis Chosen!");
-      }
-
-      switch (measuredAxis){
-        case Axis.X:
-          length_ = gameObject.transform.localScale.x;
-          break;
-        case Axis.Y:
-          length_ = gameObject.transform.localScale.y;
-          break;
-        case Axis.Z:
-          length_ = gameObject.transform.localScale.z;
-          break;
-      }
-    }
-
-    public void setChooseable(bool chooseable)
-    {
-      if (chooseable)
-      {
-        makeChooseable();
-        return;
-      }
-      makeNotChooseable();
-    }
+        public void SetChooseable(bool chooseable)
+        {
+            clickable = chooseable;
+            SetDragDrop(!chooseable);
+        }
     
-    private void makeChooseable()
-    {
-      clickable = true;
-      setDragDrop(false);
-    }
+        private void SetDragDrop(bool active)
+        {
+            DragDrop dragDrop = gameObject.GetComponent<DragDrop>();
+            if (dragDrop)
+            {
+                dragDrop.dragAndDropEnabled = active;
+                Debug.Log(dragDrop.dragAndDropEnabled);
+            }
+        }
 
-    private void makeNotChooseable()
-    {
-      clickable = false;
-      setDragDrop(true);
-    }
-
-    private void setDragDrop(bool active)
-    {
-      DragDrop dragDrop = gameObject.GetComponent<DragDrop>();
-      if (dragDrop)
-      {
-        dragDrop.enabled = active;
-        Debug.Log(dragDrop.enabled);
-      }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    private void OnMouseDown()
-    {
-      Debug.Log("Clicked this Boy");
-      if (!clickable)
-      {
-        return;
-      }
+        private void OnMouseDown()
+        {
+            if (!clickable)
+            {
+                return;
+            }
       
-      MeasurementManager.Instance.setChosenObject(this);
+            MeasurementManager.Instance.SetChosenObject(this);
+        }
     }
-  }
 
-  public enum Axis
-  {
-    X,
-    Y,
-    Z
-  }
+    public enum Axis
+    {
+        X,
+        Y,
+        Z
+    }
 }

@@ -1,185 +1,166 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using GameLabGraz.UI;
 using Maroon.scenes.experiments.FallingBallViscosimeter.Scripts;
-using PlatformControls.PC;
+using Maroon.UI;
 using UnityEngine;
 using TMPro;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
-namespace Maroon.Physics
+namespace Maroon.Physics.Viscosimeter
 {
-  public class ViscosimeterManager : MonoBehaviour, IResetObject
-  {
-    public static ViscosimeterManager Instance;
-    public static float inaccuracyRange = 0.1f;
-    
-    public TMP_Text debug_text;
-
-    public Ball ball;
-    public Pycnometer pycnometer;
-
-    public decimal fluid_density_ = 0.0m;
-    public QuantityDecimal fluid_temperature_ = 25.0m;
-    public decimal FluidTemperature
+    public class ViscosimeterManager : MonoBehaviour, IResetObject
     {
-      get => fluid_temperature_.Value;
-      set
-      {
-        fluid_temperature_.Value = value;
-      }
-    }
-
-    public QuantityBool measurement_mode_ = false;
-    public bool MeasurementMode
-    {
-      get => measurement_mode_;
-      set
-      {
-        measurement_mode_.Value = value;
-        toggleMeasurementBoxes(value);
-      }
-    }
+        public static ViscosimeterManager Instance;
+        private static float inaccuracyRange = 0.1f;
     
-    MeasurableObject currentMeasurableObject;
-    public List<MeasurableObject> measurableObjects;
+        public TMP_Text debug_text;
 
-    private decimal ballMaxSpeed = -1.0m;
-    private Rigidbody _rigidbody;
+        public Ball ball;
+        public Pycnometer pycnometer;
 
-    [SerializeField] private TMP_Dropdown _fluid_dropdown;
-    private FluidViscosityData[] _fluids;
-    private FluidViscosityData _current_fluid;
+        public decimal fluid_density_ = 0.0m;
+        public QuantityFloat fluid_temperature_ = 25.0f;
+        public float FluidTemperature
+        {
+            get => fluid_temperature_.Value;
+            set
+            {
+                fluid_temperature_.Value = value;
+            }
+        }
+
+        public Slider temperatureSlider;
+
+        public QuantityBool measurement_mode_ = false;
+        public bool MeasurementMode
+        {
+            get => measurement_mode_;
+            set
+            {
+                measurement_mode_.Value = value;
+                ToggleMeasurementBoxes(value);
+            }
+        }
     
-    private void Awake()
-    { 
+        public List<MeasurableObject> measurableObjects;
+
+        private decimal ballMaxSpeed = -1.0m;
+
+        [SerializeField] private TMP_Dropdown _fluid_dropdown;
+        private FluidViscosityData[] _fluids;
+        private FluidViscosityData _current_fluid;
+    
+        private void Awake()
+        { 
 #if UNITY_EDITOR
-      QualitySettings.vSyncCount = 0;  // VSync must be disabled
-      Application.targetFrameRate = 60;
+            QualitySettings.vSyncCount = 0;  // VSync must be disabled
+            Application.targetFrameRate = 60;
 #endif
-      if(Instance == null)
-      {
-        Instance = this;
-      }
-      prepareFluids();
-      calculateFluidDensity();
-      getAllMeasurableObjects();
-      
-      _rigidbody = ball.gameObject.GetComponent<Rigidbody>();
-      fluid_temperature_.minValue = 15.0m;
-      fluid_temperature_.maxValue = 100.0m;
-    }
+            temperatureSlider.AllowReset(false);
+            if(Instance == null)
+            {
+                Instance = this;
+            }
+            PrepareFluids();
+            CalculateFluidDensity();
+            GetAllMeasurableObjects();
+        }
 
-    private void prepareFluids()
-    {
-      _fluids = Resources.LoadAll<FluidViscosityData>(
-        "FluidData");
-      _current_fluid = _fluids[0];
-      foreach (var fluid in _fluids)
-      {
-        _fluid_dropdown.options.Add(new TMP_Dropdown.OptionData() {text=fluid.name});
-      }
-    }
+        private void PrepareFluids()
+        {
+            _fluids = Resources.LoadAll<FluidViscosityData>(
+                "FluidData");
+            _current_fluid = _fluids[0];
+            foreach (var fluid in _fluids)
+            {
+                _fluid_dropdown.options.Add(new TMP_Dropdown.OptionData() {text=fluid.fluidName});
+            }
+        }
 
-    public void OnFluidChange()
-    {
-      _current_fluid = _fluids[_fluid_dropdown.value];
-    }
+        public void OnFluidChange()
+        {
+            _current_fluid = _fluids[_fluid_dropdown.value];
+        }
     
     
-    public decimal calculateDynamicViscosity(decimal temperature)
-    {
-      decimal kelvin = celsiusToKelvin(temperature);
-      return (decimal)(_current_fluid.viscosity_a * Math.Pow(_current_fluid.viscosity_b, (double)kelvin) + _current_fluid.viscosity_c);
-    }
+        public decimal CalculateDynamicViscosity(decimal temperature)
+        {
+            decimal kelvin = CelsiusToKelvin(temperature);
+            return (decimal)(_current_fluid.viscosity_a * Math.Pow(_current_fluid.viscosity_b, (double)kelvin) + _current_fluid.viscosity_c);
+        }
     
-    public decimal celsiusToKelvin(decimal celsius)
-    {
-      return celsius + 273.15m;
-    }
-    void calculateFluidDensity()
-    {
-      //fluid_density_ = (FluidTemperature * -0.37m + 891.83m); //kg/m^3
-      fluid_density_ = (decimal)celsiusToKelvin(FluidTemperature) * (decimal)_current_fluid.density_a + (decimal)_current_fluid.density_b; //kg/m^3
-    }
+        public decimal CelsiusToKelvin(decimal celsius)
+        {
+            return celsius + 273.15m;
+        }
+        private void CalculateFluidDensity()
+        {
+            fluid_density_ = (decimal)CelsiusToKelvin((decimal)FluidTemperature) * (decimal)_current_fluid.density_a + (decimal)_current_fluid.density_b; //kg/m^3
+        }
 
-    public void togglePycnometerFill(bool fill)
-    {
-      if(fill)
-      {
-        pycnometer.fillPycnometer();
-      }
-      else
-      {
-        pycnometer.emptyPycnometer();
-      }
-    }
-
-
-    private void toggleMeasurementBoxes(bool mode)
-    {
-      BroadcastMessage("toggleMeasurement", mode);
-    }
-
-    public void toggleMeasurementMode()
-    {
-      MeasurementMode = !MeasurementMode;
-    }
-
-    void getAllMeasurableObjects()
-    {
-      Object[] foundObjects = Object.FindObjectsOfType<MeasurableObject>();
-
-      measurableObjects = new List<MeasurableObject>();
-
-      foreach (Object obj in foundObjects)
-      {
-        measurableObjects.Add(obj as MeasurableObject);
-      }
-    }
+        public void TogglePycnometerFill(bool fill)
+        {
+            if(fill)
+            {
+                pycnometer.FillPycnometer();
+            }
+            else
+            {
+                pycnometer.EmptyPycnometer();
+            }
+        }
 
 
-    // Start is called before the first frame update
-    void Start()
-    {
+        private void ToggleMeasurementBoxes(bool mode)
+        {
+            BroadcastMessage("toggleMeasurement", mode);
+        }
+
+        public void ToggleMeasurementMode()
+        {
+            MeasurementMode = !MeasurementMode;
+        }
+
+        private void GetAllMeasurableObjects()
+        {
+            Object[] foundObjects = FindObjectsOfType<MeasurableObject>();
+
+            measurableObjects = new List<MeasurableObject>();
+
+            foreach (Object obj in foundObjects)
+            {
+                measurableObjects.Add(obj as MeasurableObject);
+            }
+        }
+
+        void FixedUpdate()
+        {
+            CalculateFluidDensity();
+            UpdateDebugText();
+        }
+
+        void UpdateDebugText()
+        {
+            decimal ball_velocity = ball.Velocity;
+            if (ball_velocity > ballMaxSpeed)
+            {
+                ballMaxSpeed = ball_velocity;
+            }
+            debug_text.text = "Ball Velocity:\n" + ball_velocity.ToString("0.00000000") + "\nMax Vel:\n" + ballMaxSpeed.ToString("0.00000000") + "\nFluid density\n" + fluid_density_;
       
-    }
+        }
 
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-      calculateFluidDensity();
-      //ball.updateBall();
-      update_debug_text();
-    }
+        public void ResetObject()
+        {
+            ballMaxSpeed = -1;
+        }
 
-    void update_debug_text()
-    {
-      decimal ball_velocity = ball.Velocity;
-      if (ball_velocity > ballMaxSpeed)
-      {
-        ballMaxSpeed = ball_velocity;
-      }
-      debug_text.text = "Ball Velocity:\n" + ball_velocity.ToString("0.00000000") + "\nMax Vel:\n" + ballMaxSpeed.ToString("0.00000000") + "\nFluid density\n" + fluid_density_;
-      
+        public static decimal AddInaccuracy(decimal input)
+        {
+            decimal value = input * (decimal)inaccuracyRange;
+            return input + (decimal)Random.Range(-(float)value, (float)value);
+        }
     }
-
-    public void ResetObject()
-    {
-      ballMaxSpeed = -1;
-    }
-
-    public static float addInaccuracy(float input)
-    {
-      float value = input * inaccuracyRange;
-      return input + Random.Range(-value, value);
-    }
-
-    public static decimal addInaccuracy(decimal input)
-    {
-      decimal value = input * (decimal)inaccuracyRange;
-      return input + (decimal)Random.Range(-(float)value, (float)value);
-    }
-  }
 }

@@ -1,0 +1,1 @@
+Nobel Foundation (https://commons.wikimedia.org/wiki/File:Sir_CV_Raman.JPG), „Sir CV Raman“, marked as public domain, more details on Wikimedia Commons: https://commons.wikimedia.org/wiki/Template:PD-1996 

@@ -1,11 +1,12 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Maroon.scenes.experiments.FallingBallViscosimeter.Scripts
 {
     [CreateAssetMenu(fileName = "Fluid", menuName = "Scriptable Objects/FluidViscosityData", order = 1)]
     public class FluidViscosityData : ScriptableObject
     {
-        public string name;
+        public string fluidName;
         [Header("Viscosity Parameters (Curve-fit to f(x) = a * b^x + c)")]
         public double viscosity_a;
         public double viscosity_b;

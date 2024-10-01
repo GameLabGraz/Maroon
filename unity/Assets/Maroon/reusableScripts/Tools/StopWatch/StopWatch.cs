@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using Maroon.Physics;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -51,7 +50,6 @@ namespace Maroon.Tools
             }
         }
 
-        public QuantityFloat timeScale = 1;
         public float TimeScale
         {
             get => Time.timeScale;

@@ -2,7 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SnapPoint : MonoBehaviour
+
+namespace Maroon.Physics.Viscosimeter
 {
-    public DragDrop currentObject = null;
+    public class SnapPoint : MonoBehaviour
+    {
+        public DragDrop currentObject = null;
+        public bool onlyPycnometerSnap = false;
+    }
 }

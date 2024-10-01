@@ -1,36 +1,38 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class WeighableObject : MonoBehaviour, IResetObject
+
+namespace Maroon.Physics.Viscosimeter
 {
-
-    public decimal starting_weight;
-    private decimal weight;
-
-    private void Awake()
+    public class WeighableObject : MonoBehaviour, IResetObject
     {
-        ResetObject();
-    }
 
-    public decimal getWeight()
-    {
-        return weight;
-    }
+        public decimal starting_weight;
+        private decimal weight;
 
-    public void setWeight(decimal new_weight)
-    {
-        weight = new_weight;
-    }
+        private void Awake()
+        {
+            ResetObject();
+        }
 
-    public void resetWeight()
-    {
-        weight = starting_weight;
-    }
+        public decimal GetWeight()
+        {
+            return weight;
+        }
 
-    public void ResetObject()
-    {
-        resetWeight();
-    }
+        public void SetWeight(decimal new_weight)
+        {
+            weight = new_weight;
+        }
 
+        public void ResetWeight()
+        {
+            weight = starting_weight;
+        }
+
+        public void ResetObject()
+        {
+            ResetWeight();
+        }
+
+    }
 }

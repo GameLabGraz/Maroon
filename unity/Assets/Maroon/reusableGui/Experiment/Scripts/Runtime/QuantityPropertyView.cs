@@ -12,8 +12,6 @@ namespace Maroon.UI
     {
         public QuantityReferenceValue quantity;
 
-        public bool allowReset = true;
-        
         public UnityEvent OnQuantityViewVisible;
 
         private void Start()
@@ -169,10 +167,6 @@ namespace Maroon.UI
             slider.minValue = minValue;
             slider.maxValue = maxValue;
             slider.wholeNumbers = wholeNumbers;
-
-            ResetSlider reset_slider = slider.gameObject.AddComponent<ResetSlider>();
-            reset_slider.AllowReset = allowReset;
-            
             
             return slider;
         }

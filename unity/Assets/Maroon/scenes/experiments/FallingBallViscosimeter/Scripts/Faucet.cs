@@ -1,40 +1,32 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Maroon.Physics;
 using UnityEngine;
 
-public class Faucet : MonoBehaviour
+
+
+
+namespace Maroon.Physics.Viscosimeter
 {
-
-    public SnapPoint snapPoint;
-    private Pycnometer _pycnometer;
-    
-    
-    // Start is called before the first frame update
-    void Start()
+    public class Faucet : MonoBehaviour
     {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+        public SnapPoint snapPoint;
+        private Pycnometer _pycnometer;
 
-    private void OnMouseDown()
-    {
-        _pycnometer = snapPoint.currentObject.gameObject.GetComponent<Pycnometer>();
-        if (_pycnometer != null)
+        private void OnMouseDown()
         {
-            if (_pycnometer.filled)
+            if (snapPoint != null)
             {
-                _pycnometer.emptyPycnometer();
-            }
-            else
-            {
-                _pycnometer.fillPycnometer();
+                _pycnometer = snapPoint.currentObject.gameObject.GetComponent<Pycnometer>();
+                if (_pycnometer != null)
+                {
+                    if (_pycnometer.filled)
+                    {
+                        _pycnometer.EmptyPycnometer();
+                    }
+                    else
+                    {
+                        _pycnometer.FillPycnometer();
+                    }
+                }
             }
         }
     }
