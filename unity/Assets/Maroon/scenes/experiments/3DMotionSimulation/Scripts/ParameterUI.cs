@@ -85,6 +85,8 @@ public class ParameterUI : PausableObject
     /// </summary>
     protected override void Start()
     {
+        if (_dialogueManager == null)
+            _dialogueManager = FindObjectOfType<DialogueManager>();
         dropdown.ClearOptions();
         dropdown.AddOptions(ParameterController3DMotionSimulation.Instance.GetParameterNames());
         
@@ -93,8 +95,7 @@ public class ParameterUI : PausableObject
             dropdown.SetValueWithoutNotify(index);
         });
 
-        if (_dialogueManager == null)
-            _dialogueManager = FindObjectOfType<DialogueManager>();
+        ParameterController3DMotionSimulation.Instance.SetParameter(Parameter3DMotionSimulation.Default);
 
         string message = LanguageManager.Instance.GetString("Welcome");
         DisplayMessage(message);
