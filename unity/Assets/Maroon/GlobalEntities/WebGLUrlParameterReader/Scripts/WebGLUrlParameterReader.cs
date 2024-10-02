@@ -21,13 +21,6 @@ namespace Maroon
 
         public static string GetUrlParameter(WebGlUrlParameter urlParameter)
         {
-            // Deprectated due to case-sensitivity
-            /*
-            var param = _getUrlParameter(urlParameter.ToString());
-            if (param == null)
-                Debug.LogWarning($"WebGLUrlParameterReader: {urlParameter} not found. Is it spelled correctly? (case-sensitive)");
-            */
-
             Debug.LogWarning("GetUrlParameter is deprecated due to case-sensitivity. Use 'BootstrappingManager.UrlParameters' instead.");
             return GetAllUrlParameters().TryGetValue(urlParameter, out string value) ? value : null;
         }
