@@ -8,7 +8,7 @@ public class ParameterLoader : MonoBehaviour
 {
     private static ParameterLoader _instance;
     [SerializeField] private List<TextAsset> _jsonFile = new List<TextAsset>();
-    private List<Parameters> _parameters;
+    private Parameters _parameters;
 
     /// <summary>
     /// Class for storing parameters from a JSON-File
@@ -18,10 +18,6 @@ public class ParameterLoader : MonoBehaviour
     {
         public string Background;
         public string Particle;
-        public string FunctionX;
-        public string FunctionY;
-        public string FunctionZ;
-        public float Mass;
         public float T0;
         public float DeltaT;
         public float Steps;
@@ -32,20 +28,28 @@ public class ParameterLoader : MonoBehaviour
         public float Vy;
         public float Vz;
 
+        public string m;
+        public string fx;
+        public string fy;
+        public string fz;
+
+        public Dictionary<string, string> expressions = new Dictionary<string, string>();
     }
 
     // Start is called before the first frame update
     private void Start()
     {
         // Listener for extern json data 
-        WebGlReceiver.Instance.OnIncomingData.AddListener(LoadExternJsonFile);
+#if UNITY_WEBGL
+        WebGlReceiver.Instance.OnIncomingData.AddListener(HandleExternalJson);
+#endif
     }
 
     /// <summary>
     /// Getter for the stored parameters
     /// </summary>
     /// <returns>Parameter list</returns>
-    public List<Parameters> GetParameters()
+    public Parameters GetParameters()
     {
         return _parameters;
     }
@@ -55,22 +59,11 @@ public class ParameterLoader : MonoBehaviour
     /// </summary>
     /// <param name="file">File to load</param>
     /// <returns>Parameters</returns>
-    public List<Parameters> LoadJsonFile(int file)
-    {  
-        string json_text = _jsonFile[file].text;
-        
-        byte[] byteArray = System.Text.Encoding.ASCII.GetBytes(json_text);
-        
-        MemoryStream stream = new MemoryStream(byteArray);
-        
-        using (StreamReader r = new StreamReader(stream))
-        {
-            
-            string json = r.ReadToEnd();
-            //Debug.Log("Json data: " + json);
-            _parameters = JsonConvert.DeserializeObject<List<Parameters>>(json);
-        }
-        return _parameters;
+    public Parameters LoadJsonFromFile(int index)
+    {
+        string data = _jsonFile[index].text;
+
+        return LoadJson(data);
     }
 
     /// <summary>
@@ -95,19 +88,17 @@ public class ParameterLoader : MonoBehaviour
     /// gameInstance.SendMessage('WebGL Receiver', 'GetDataFromJavaScript', data);
     /// </summary>
     /// <param name="data">JSON data</param>
-    public void LoadExternJsonFile(string data)
+    public void HandleExternalJson(string data)
     {
-        byte[] byteArray = System.Text.Encoding.ASCII.GetBytes(data);
+        var parameters = LoadJson(data);
+        ParameterUI.Instance.LoadParameters(parameters);
+    }
 
-        MemoryStream stream = new MemoryStream(byteArray);
+    public Parameters LoadJson(string data)
+    {
+        _parameters = JsonConvert.DeserializeObject<Parameters>(data);
 
-        using (StreamReader r = new StreamReader(stream))
-        {
-            string json = r.ReadToEnd();
-            _parameters = JsonConvert.DeserializeObject<List<Parameters>>(json);
-        }
-
-        ParameterUI.Instance.LoadExternParametersFromFile(_parameters);
+        return _parameters;
     }
 
     public static ParameterLoader Instance

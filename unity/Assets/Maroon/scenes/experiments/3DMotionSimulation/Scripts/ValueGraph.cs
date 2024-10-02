@@ -23,12 +23,14 @@ namespace PlottableValues
     }
 }
 
-public class ValueGraph : PausableObject, IResetObject
+public class ValueGraph : PausableObject
 {
 
     private static ValueGraph _instance;
     public SimpleLineChart simpleLineChart;
-    public MotionCalculation motionCalculation;
+
+    private int _choice = int.MinValue;
+
 
     /// <summary>
     /// Update is called every frame
@@ -52,58 +54,49 @@ public class ValueGraph : PausableObject, IResetObject
     /// <param name="choice">Data to load</param>
     public void LoadChoosenValue(int choice)
     {
-        PlotValue value = (PlotValue)choice;
+        simpleLineChart.ResetObject();
+        _choice = choice;
+
+        PlotValue value = (PlotValue)_choice;
 
         switch (value)
         {
             case PlotValue.None:
                 break;
             case PlotValue.X:
-                simpleLineChart.ResetObject();
                 PlotX();
                 break;
             case PlotValue.Y:
-                simpleLineChart.ResetObject();
                 PlotY();
                 break;
             case PlotValue.Z:
-                simpleLineChart.ResetObject();
                 PlotZ();
                 break;
             case PlotValue.Vx:
-                simpleLineChart.ResetObject();
                 PlotVX();
                 break;
             case PlotValue.Vy:
-                simpleLineChart.ResetObject();
                 PlotVY();
                 break;
             case PlotValue.Vz:
-                simpleLineChart.ResetObject();
                 PlotVZ();
                 break;
             case PlotValue.Fx:
-                simpleLineChart.ResetObject();
                 PlotFX();
                 break;
             case PlotValue.Fy:
-                simpleLineChart.ResetObject();
                 PlotFY();
                 break;
             case PlotValue.Fz:
-                simpleLineChart.ResetObject();
                 PlotFZ();
                 break;
             case PlotValue.Power:
-                simpleLineChart.ResetObject();
                 PlotP();
                 break;
             case PlotValue.Ekin:
-                simpleLineChart.ResetObject();
                 PlotEkin();
                 break;
             case PlotValue.Work:
-                simpleLineChart.ResetObject();
                 PlotW();
                 break;
             default:
@@ -115,62 +108,62 @@ public class ValueGraph : PausableObject, IResetObject
     // -----------------------------------------------------------------
     private void PlotX()
     {
-        simpleLineChart.AddData(motionCalculation.GetDataX());
+        simpleLineChart.AddData(MotionCalculation.Instance.GetDataX());
     }
 
     private void PlotY()
     {
-        simpleLineChart.AddData(motionCalculation.GetDataY());
+        simpleLineChart.AddData(MotionCalculation.Instance.GetDataY());
     }
 
     private void PlotZ()
     {
-        simpleLineChart.AddData(motionCalculation.GetDataZ());
+        simpleLineChart.AddData(MotionCalculation.Instance.GetDataZ());
     }
 
     private void PlotVX()
     {
-        simpleLineChart.AddData(motionCalculation.GetDataVX());
+        simpleLineChart.AddData(MotionCalculation.Instance.GetDataVX());
     }
 
     private void PlotVY()
     {
-        simpleLineChart.AddData(motionCalculation.GetDataVY());
+        simpleLineChart.AddData(MotionCalculation.Instance.GetDataVY());
     }
 
     private void PlotVZ()
     {
-        simpleLineChart.AddData(motionCalculation.GetDataVZ());
+        simpleLineChart.AddData(MotionCalculation.Instance.GetDataVZ());
     }
 
     private void PlotFX()
     {
-        simpleLineChart.AddData(motionCalculation.GetDataFX());
+        simpleLineChart.AddData(MotionCalculation.Instance.GetDataFX());
     }
 
     private void PlotFY()
     {
-        simpleLineChart.AddData(motionCalculation.GetDataFY());
+        simpleLineChart.AddData(MotionCalculation.Instance.GetDataFY());
     }
 
     private void PlotFZ()
     {
-        simpleLineChart.AddData(motionCalculation.GetDataFZ());
+        simpleLineChart.AddData(MotionCalculation.Instance.GetDataFZ());
     }
 
     private void PlotP()
     {
-        simpleLineChart.AddData(motionCalculation.GetDataP());
+        simpleLineChart.AddData(MotionCalculation.Instance.GetDataP());
     }
 
     private void PlotEkin()
     {
-        simpleLineChart.AddData(motionCalculation.GetDataEkin());
+        simpleLineChart.AddData(MotionCalculation.Instance.GetDataEkin());
     }
 
     private void PlotW()
     {
-        simpleLineChart.AddData(motionCalculation.GetDataW());
+        simpleLineChart.AddData(MotionCalculation.Instance.GetDataW());
     }
     // -----------------------------------------------------------------
 
@@ -189,7 +182,9 @@ public class ValueGraph : PausableObject, IResetObject
     /// </summary>
     public void ResetObject()
     {
-        simpleLineChart.ResetObject();
-        motionCalculation.ResetObject();
+        // a bit hacky but does its job
+        if (_choice < 0) return;
+
+        LoadChoosenValue(_choice);
     }
 }

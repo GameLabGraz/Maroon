@@ -62,6 +62,7 @@ namespace Maroon.GlobalEntities
 
                     // Webgl redirect
                     // If on WebGL platform and URL redirect enabled
+#if UNITY_WEBGL
                     if( (PlatformManager.Instance.CurrentPlatform == Platform.WebGL) &&
                         (this._webglEnableSceneLoadingViaUrlParameter) )
                     {
@@ -78,7 +79,7 @@ namespace Maroon.GlobalEntities
                             alreadyRedirected = true;
                         }
                     }
-
+#endif
                     // First Scene Redirect
                     // On any platform, but on WebGL only if not redirected via URL
                     if(!alreadyRedirected)
