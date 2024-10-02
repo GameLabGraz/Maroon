@@ -27,7 +27,9 @@ namespace Maroon.GlobalEntities
 
         MonoBehaviour GlobalEntity.Instance => Instance;
 
+#if UNITY_WEBGL
         public Dictionary<WebGlUrlParameter, string> UrlParameters { get; private set; }
+#endif
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Methods
