@@ -1,4 +1,4 @@
-﻿using Maroon.Physics.CoordinateSystem;
+﻿using Maroon.Extensions;
 using UnityEngine;
 
 namespace Maroon.Physics.Electromagnetism
