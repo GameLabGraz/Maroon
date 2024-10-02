@@ -1,18 +1,9 @@
-﻿using Maroon.GlobalEntities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Maroon.Physics.CoordinateSystem
 {
-    public static class CoordSystemExtensions
-    {
-        public static Vector3 SystemPosition(this GameObject gameObject)
-        {
-            return CoordSystemHandler.Instance.GetSystemPosition(gameObject.transform.position);
-        }
-    }
-
     public class CoordSystem : MonoBehaviour
     {
         [SerializeField] private Transform origin;

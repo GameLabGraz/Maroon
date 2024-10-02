@@ -1,4 +1,4 @@
-﻿using Maroon.Physics.CoordinateSystem;
+﻿using Maroon.Extensions;
 using System;
 using UnityEngine;
 using UnityEngine.Events;
@@ -31,4 +31,3 @@ namespace Maroon.Tools.Voltmeter
         }
     }
 }
-

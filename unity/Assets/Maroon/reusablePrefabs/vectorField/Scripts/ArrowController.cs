@@ -11,7 +11,7 @@
 //
 
 using Maroon.Physics;
-using Maroon.Physics.CoordinateSystem;
+using Maroon.Extensions;
 using UnityEngine;
 
 /// <summary>
