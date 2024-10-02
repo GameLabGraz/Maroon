@@ -30,7 +30,6 @@ namespace Maroon.Experiments.PlanetarySystem
         #region SolarSystem
         private float G;
         private GameObject sun;
-        //[SerializeField] private bool isSunKinematic = true;
 
         [System.Serializable]
         public class PlanetData : MonoBehaviour
