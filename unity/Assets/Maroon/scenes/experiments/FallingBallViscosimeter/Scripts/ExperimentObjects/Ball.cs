@@ -20,8 +20,8 @@ namespace Maroon.Physics.Viscosimeter
 
         private Vector3 start_position_;
         public decimal start_diameter_in_mm = 30.00m; //millimeter
-        private bool dropped_ = true;
         private bool touching_liquid = false;
+        public bool falling = true;
 
 
         private decimal ball_density_ = 8243.5949328270666898586m;
@@ -83,7 +83,10 @@ namespace Maroon.Physics.Viscosimeter
 
         protected override void HandleFixedUpdate()
         {
-            ApplyFallPhysics();
+            if (falling)
+            {
+                ApplyFallPhysics();
+            }
         }
 
 
@@ -97,16 +100,11 @@ namespace Maroon.Physics.Viscosimeter
 
         public void ResetObject()
         {
-            dropped_ = false;
             touching_liquid = false;
             Velocity = 0;
+            falling = true;
 
             transform.position = start_position_;
-        }
-
-        public void DropBall()
-        {
-            dropped_ = true;
         }
 
         private void OnTriggerStay(Collider other)
@@ -184,7 +182,9 @@ namespace Maroon.Physics.Viscosimeter
                     float possibleMovement = GetPossibleMovement(ray, range);
                     transform.position = new Vector3(position.x, position.y - possibleMovement + (float)radius_in_m, position.z);
                     Velocity = 0;
+                    falling = false;
                     return false;
+                    
                 }
             }
 

@@ -39,7 +39,16 @@ namespace Maroon.Physics.Viscosimeter
                 draggable.transform.position = closestSnapPoint.transform.position;
                 draggable.snapPoint = closestSnapPoint;
                 closestSnapPoint.currentObject = draggable;
+                if (draggable.ball)
+                {
+                    draggable.ball.falling = false;
+                }
             }
+            else if (draggable.ball)
+            {
+                draggable.ball.falling = true;
+            }
+            
         }
 
         private bool SnapIsAllowed(DragDrop draggable, SnapPoint snapPoint)

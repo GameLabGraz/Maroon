@@ -28,11 +28,13 @@ namespace Maroon.Physics.Viscosimeter
 
         private PausableObject _pausableObject;
         private Vector3 oldScale;
-
+        public Ball ball;
+        
         private void Awake()
         {
             plane = new Plane(new Vector3(0, 0, -1), planePosition);
             _pausableObject = gameObject.GetComponent<PausableObject>();
+            ball = gameObject.GetComponent<Ball>();
         }
 
         private void Update()
