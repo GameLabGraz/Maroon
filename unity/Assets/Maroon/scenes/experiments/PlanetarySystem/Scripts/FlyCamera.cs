@@ -106,16 +106,8 @@ namespace Maroon.Experiments.PlanetarySystem
          */
         private void ToggleCameraControl(bool active)
         {
-            if (active)
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-            }
-            else
-            {
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-            }
+            Cursor.lockState = active ? CursorLockMode.Locked : CursorLockMode.None;
+            Cursor.visible = !active;
         }
 
 

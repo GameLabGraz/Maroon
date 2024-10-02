@@ -23,20 +23,22 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 990526961467559764}
+  serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2945672693836019667}
   - {fileID: 1090953561962548800}
   m_Father: {fileID: 7781811799945164519}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!1001 &1741020611458432259
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 2033302179324134045}
     m_Modifications:
     - target: {fileID: 3515192210099604176, guid: 2dff9d4e9b50b594d8870537ef41d3ce,
@@ -115,6 +117,9 @@ PrefabInstance:
       value: 6_SaturnRing
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2dff9d4e9b50b594d8870537ef41d3ce, type: 3}
 --- !u!4 &2945672693836019667 stripped
 Transform:
@@ -127,6 +132,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 546305578989583217, guid: 9d80b2335a44d094494afc73ac9d983c,
@@ -210,6 +216,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 6304027196752116322, guid: 9d80b2335a44d094494afc73ac9d983c,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2033302179324134045}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5466093576532734486, guid: 9d80b2335a44d094494afc73ac9d983c,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3102531691516563323}
   m_SourcePrefab: {fileID: 100100000, guid: 9d80b2335a44d094494afc73ac9d983c, type: 3}
 --- !u!4 &7781811799945164519 stripped
 Transform:
@@ -217,11 +234,45 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 4360306667706059909}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &8600077493520842387 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5466093576532734486, guid: 9d80b2335a44d094494afc73ac9d983c,
+    type: 3}
+  m_PrefabInstance: {fileID: 4360306667706059909}
+  m_PrefabAsset: {fileID: 0}
+--- !u!54 &3102531691516563323
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8600077493520842387}
+  serializedVersion: 4
+  m_Mass: 0.0568
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &4605951845692376208
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 2033302179324134045}
     m_Modifications:
     - target: {fileID: 3515192210099604176, guid: 2dff9d4e9b50b594d8870537ef41d3ce,
@@ -300,6 +351,9 @@ PrefabInstance:
       value: 6_SaturnRingBottom
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2dff9d4e9b50b594d8870537ef41d3ce, type: 3}
 --- !u!4 &1090953561962548800 stripped
 Transform:
