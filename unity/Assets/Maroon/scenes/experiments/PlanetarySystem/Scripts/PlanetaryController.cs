@@ -89,7 +89,7 @@ namespace Maroon.Experiments.PlanetarySystem
         #endregion Helpi
 
         #region KeyInput
-        [SerializeField] private Material[] skyboxes;
+        [SerializeField] private Material skyboxMaterial;
         [SerializeField] private Light sunLight;
         [SerializeField] private ParticleSystem solarFlares;
         #endregion KeyInput
@@ -215,7 +215,6 @@ namespace Maroon.Experiments.PlanetarySystem
         #region KeyInput
         /*
          * HandlesKeyInput during Update
-         * change skybox                     on key [F1],[F2],[F3]
          * toggle sunlight                   on key [L]
          */
         private void HandleKeyInput()
@@ -230,18 +229,6 @@ namespace Maroon.Experiments.PlanetarySystem
                             sunLight.gameObject.SetActive(!sunLight.gameObject.activeSelf);
                             // Sync the toggle button state with sunLight's state
                             toggleSunLight.isOn = sunLight.gameObject.activeSelf;
-                            break;
-
-                        case KeyCode.F1:
-                            RenderSettings.skybox = skyboxes[0];
-                            break;
-
-                        case KeyCode.F2:
-                            RenderSettings.skybox = skyboxes[1];
-                            break;
-
-                        case KeyCode.F3:
-                            RenderSettings.skybox = skyboxes[2];
                             break;
 
                         default:
@@ -536,7 +523,7 @@ namespace Maroon.Experiments.PlanetarySystem
          */
         private void SetSkybox()
         {
-            RenderSettings.skybox = skyboxes[0];
+            RenderSettings.skybox = skyboxMaterial;
         }
 
 
