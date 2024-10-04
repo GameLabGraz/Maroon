@@ -10855,7 +10855,6 @@ MonoBehaviour:
   Interactibles: {fileID: 1730546069}
   AnimationUI: {fileID: 466727019}
   SortingGamePlanetInfoUI: {fileID: 2033498728}
-  flyCameraScript: {fileID: 0}
   sortedPlanetCount: 0
   sortingGamePlanetPlaceholderSlots: {fileID: 663129655}
   resetAnimationDelay: 0.5
@@ -17003,6 +17002,22 @@ Camera:
     type: 3}
   m_PrefabInstance: {fileID: 1014239835562216942}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1779433767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1779433759}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90ae4ef28bb1494469691344f7bb2c47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flyCamera: {fileID: 0}
+  flyCameraFocus: {fileID: 0}
+  mouseSpeed: 50
+  mouseSensitivity: 100
 --- !u!1001 &1784400132
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21864,7 +21879,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1014239835930266865, guid: dc4a87cfc1de3b94e9f28141a0ae617e,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1779433767}
   m_SourcePrefab: {fileID: 100100000, guid: dc4a87cfc1de3b94e9f28141a0ae617e, type: 3}
 --- !u!1 &1724116092779713134
 GameObject:

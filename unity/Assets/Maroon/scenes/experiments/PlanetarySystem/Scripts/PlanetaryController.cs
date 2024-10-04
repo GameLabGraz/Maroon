@@ -64,7 +64,6 @@ namespace Maroon.Experiments.PlanetarySystem
         [SerializeField] private GameObject Interactibles;          //off
         [SerializeField] private GameObject AnimationUI;            //on
         [SerializeField] private GameObject SortingGamePlanetInfoUI;//off
-        [SerializeField] private FlyCamera flyCameraScript;         //on
         #endregion StartScreenScenes
 
         #region SortingGameSpawner
@@ -158,7 +157,6 @@ namespace Maroon.Experiments.PlanetarySystem
             SetupToggle();
             SetupSliders();
             StoreInitialCameras();
-            GetFlyCameraScript();
             SetupLineRenderer();
             Animation.SetActive(false);
         }
@@ -556,20 +554,6 @@ namespace Maroon.Experiments.PlanetarySystem
 
             sliderAnimationCameraFov.value = initialAnimationCameraFov;
         }
-
-
-        /*
-         * get flycamere script to dis/enable later
-         */
-        private void GetFlyCameraScript()
-        {
-            flyCameraScript = GetComponent<FlyCamera>();
-            if (flyCameraScript == null)
-            {
-                Debug.Log("PlanetaryController: GetFlyCameraScript(): script not found");
-            }
-        }
-
 
         /*
          * check if planets and suns collider intersect
@@ -1147,7 +1131,6 @@ namespace Maroon.Experiments.PlanetarySystem
             Interactibles.SetActive(false);
 
             Animation.SetActive(true);
-            flyCameraScript.enabled = true;
 
             MainCamera.SetActive(false);
             SolarSystemAnimationCamera.SetActive(true);
@@ -1169,7 +1152,6 @@ namespace Maroon.Experiments.PlanetarySystem
             Interactibles.SetActive(true);
 
             Animation.SetActive(false);
-            flyCameraScript.enabled = false;
             ResetCamera();
 
             SolarSystemAnimationCamera.SetActive(false);
