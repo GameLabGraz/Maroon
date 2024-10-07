@@ -28,32 +28,21 @@ namespace Maroon.Experiments.PlanetarySystem
         {
             if (Input.GetKeyUp(KeyCode.H))
             {
-                if (!AnimationUI.activeSelf)
-                {
-                    AnimationUI.SetActive(true);
-                    PlanetInformationUI.SetActive(true);
-                    toggleHideUI.isOn = false;
-                    //Debug.Log("CameraAndUIController: HideUIOnKeyInput(): [H] UI Active Self: " + AnimationUI.activeSelf);
-                }
-                else
-                {
-                    AnimationUI.SetActive(false); //turn off UI
-                    PlanetInformationUI.SetActive(false); //turn off UI
-                    toggleHideUI.isOn = true;
-                    //Debug.Log("CameraAndUIController: HideUIOnKeyInput(): [H] UI Active Self: " + AnimationUI.activeSelf);
-                }
+                bool visible = !AnimationUI.activeSelf;
+                SetUIActive(visible);
+                toggleHideUI.isOn = !visible;
             }
         }
 
 
         /*
-         *  toggle HideUI with boolean from ToggleGroup function
+         *  toggle HideUI and SetUIActive with boolean from ToggleGroup function
          */
-        public void ToggleHideUI(bool hide)
+        public void SetUIActive(bool active)
         {
-            AnimationUI.SetActive(!hide);
-            PlanetInformationUI.SetActive(!hide);
-            //Debug.Log("CameraAndUIController: ToggleHideUI(): " + ui.activeSelf);
+            AnimationUI.SetActive(!active);
+            PlanetInformationUI.SetActive(!active);
+            //Debug.Log("CameraAndUIController: SetUIActive(active): " + active);
         }
         #endregion ToggleUI
     }

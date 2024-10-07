@@ -32,7 +32,7 @@ namespace Maroon.Experiments.PlanetarySystem
                 return;
             }
 
-            ToggleCameraControl(isCameraControlActive);
+            SetCameraControlActive(isCameraControlActive);
         }
 
 
@@ -54,7 +54,7 @@ namespace Maroon.Experiments.PlanetarySystem
                 }
 
                 isCameraControlActive = !isCameraControlActive;
-                ToggleCameraControl(isCameraControlActive);
+                SetCameraControlActive(isCameraControlActive);
                 LookAtFocus();
             }
 
@@ -104,7 +104,7 @@ namespace Maroon.Experiments.PlanetarySystem
         /*
          * locks the cursor when switched between normal mode and FlyCam mode
          */
-        private void ToggleCameraControl(bool active)
+        private void SetCameraControlActive(bool active)
         {
             Cursor.lockState = active ? CursorLockMode.Locked : CursorLockMode.None;
             Cursor.visible = !active;
