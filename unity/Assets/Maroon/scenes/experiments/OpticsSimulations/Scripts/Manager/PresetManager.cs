@@ -314,6 +314,31 @@ namespace Maroon.Physics.Optics.Manager
                 new CameraControls.CameraSetting(new Vector3(-0.12f, 2.6f, 1f), Constants.BaseCamRot, 3),
                 new CameraControls.CameraSetting(new Vector3(-0.12f,3,2.08f), Constants.TopCamRot, 3)
             );
+
+
+            OpticsParameters parameters = new OpticsParameters()
+            {
+                presetNameTranslationKey = "Standard Eye",
+                rayThickness = 0.15f,
+                cameraSettingBaseView = new CameraControls.CameraSetting(new Vector3(-0.12f, 2.6f, 1f), Constants.BaseCamRot, 3),
+                cameraSettingTopView = new CameraControls.CameraSetting(new Vector3(-0.12f, 3, 2.08f), Constants.TopCamRot, 3),
+
+                tableObjectParameters = new List<TableObjectParameters>()
+                {
+                    new ParallelSourceParameters(){
+                        lightCategory = LightCategory.ParallelSource,
+                        position = new Vector3(1.78f, 0f, 0.577f),
+                        distanceBetweenRays = 0.40f / Constants.InMM,
+                        numberOfRays = 20,
+                    },
+                    new EyeParameters(){
+                        opticalCategory = OpticalCategory.Eye,
+                        position = new Vector3(1.90f, 0, 0.577f),
+                    },
+                },
+            };
+
+            ExportToJSON(parameters, "StandardEye.json");
         }
 
         private void NearsightedEye()
@@ -334,6 +359,43 @@ namespace Maroon.Physics.Optics.Manager
                 new CameraControls.CameraSetting(new Vector3(-0.12f, 2.6f, 1f), Constants.BaseCamRot, 3),
                 new CameraControls.CameraSetting(new Vector3(-0.12f,3,2.08f), Constants.TopCamRot, 3)
             );
+
+
+            OpticsParameters parameters = new OpticsParameters()
+            {
+                presetNameTranslationKey = "Nearsighted Eye",
+                rayThickness = 0.15f,
+                cameraSettingBaseView = new CameraControls.CameraSetting(new Vector3(-0.12f, 2.6f, 1f), Constants.BaseCamRot, 3),
+                cameraSettingTopView = new CameraControls.CameraSetting(new Vector3(-0.12f, 3, 2.08f), Constants.TopCamRot, 3),
+
+                tableObjectParameters = new List<TableObjectParameters>()
+                {
+                    new ParallelSourceParameters(){
+                        lightCategory = LightCategory.ParallelSource,
+                        position = new Vector3(1.78f, 0f, 0.577f),
+                        distanceBetweenRays = 0.40f / Constants.InMM,
+                        numberOfRays = 20,
+                    },
+                    new EyeParameters(){
+                        opticalCategory = OpticalCategory.Eye,
+                        position = new Vector3(1.90f, 0, 0.577f),
+                        f = 0.022f,
+                    },
+                    new LensParameters()
+                    {
+                        opticalCategory = OpticalCategory.Lens,
+                        position = new Vector3(1.882f, 0, 0.577f + Constants.Epsilon),
+                        R1 = 0.05f, 
+                        R2 = 0.024f, 
+                        d1 = 0.001f, 
+                        d2 = 0.001f, 
+                        A = 1.458f, 
+                        B = 3540,
+                    },
+                },
+            };
+
+            ExportToJSON(parameters, "NearsightedEye.json");
         }
 
         private void FarsightedEye()
@@ -353,6 +415,42 @@ namespace Maroon.Physics.Optics.Manager
                 new CameraControls.CameraSetting(new Vector3(-0.12f, 2.6f, 1f), Constants.BaseCamRot, 3),
                 new CameraControls.CameraSetting(new Vector3(-0.12f,3,2.08f), Constants.TopCamRot, 3)
             );
+
+
+            OpticsParameters parameters = new OpticsParameters()
+            {
+                presetNameTranslationKey = "Farsighted Eye",
+                rayThickness = 0.15f,
+                cameraSettingBaseView = new CameraControls.CameraSetting(new Vector3(-0.12f, 2.6f, 1f), Constants.BaseCamRot, 3),
+                cameraSettingTopView = new CameraControls.CameraSetting(new Vector3(-0.12f, 3, 2.08f), Constants.TopCamRot, 3),
+
+                tableObjectParameters = new List<TableObjectParameters>()
+                {
+                    new PointSourceParameters(){
+                        lightCategory = LightCategory.PointSource,
+                        position = new Vector3(1.638f, 0, 0.577f),
+                        numberOfRays = 40,
+                        rayDistributionAngle = 4,
+                    },
+                    new EyeParameters(){
+                        opticalCategory = OpticalCategory.Eye,
+                        position = new Vector3(1.90f, 0, 0.577f),
+                    },
+                    new LensParameters()
+                    {
+                        opticalCategory = OpticalCategory.Lens,
+                        position = new Vector3(1.882f, 0, 0.577f + Constants.Epsilon),
+                        R1 = 0.053f, 
+                        R2 = 0.10f, 
+                        d1 = 0.0005f, 
+                        d2 = 0.0005f, 
+                        A = 1.458f, 
+                        B = 3540,
+                    },
+                },
+            };
+
+            ExportToJSON(parameters, "FarsightedEye.json");
         }
         
         private void MagnifyingGlass()
@@ -372,6 +470,42 @@ namespace Maroon.Physics.Optics.Manager
                 new CameraControls.CameraSetting(new Vector3(-0.12f, 2.6f, 1f), Constants.BaseCamRot, 3),
                 new CameraControls.CameraSetting(new Vector3(-0.12f,3,2.08f), Constants.TopCamRot, 3)
             );
+            
+
+            OpticsParameters parameters = new OpticsParameters()
+            {
+                presetNameTranslationKey = "Magnifying Glass",
+                rayThickness = 0.15f,
+                cameraSettingBaseView = new CameraControls.CameraSetting(new Vector3(-0.12f, 2.6f, 1f), Constants.BaseCamRot, 3),
+                cameraSettingTopView = new CameraControls.CameraSetting(new Vector3(-0.12f, 3, 2.08f), Constants.TopCamRot, 3),
+
+                tableObjectParameters = new List<TableObjectParameters>()
+                {
+                    new PointSourceParameters(){
+                        lightCategory = LightCategory.PointSource,
+                        position = new Vector3(1.78f, 0, 0.577f),
+                        numberOfRays = 40,
+                        rayDistributionAngle = 22,
+                    },
+                    new LensParameters()
+                    {
+                        opticalCategory = OpticalCategory.Lens,
+                        position = new Vector3(1.866f, 0, 0.577f + Constants.Epsilon),
+                        R1 = 0.08f,
+                        R2 = -0.08f, 
+                        d1 = 0.002f, 
+                        d2 = 0.002f, 
+                        A = 1.458f, 
+                        B = 3540
+                    },
+                    new EyeParameters(){
+                        opticalCategory = OpticalCategory.Eye,
+                        position = new Vector3(1.90f, 0, 0.577f),
+                    },
+                },
+            };
+
+            ExportToJSON(parameters, "MagnifyingGlass.json");
         }
 
         private void KeplerianTelescope()
@@ -397,6 +531,62 @@ namespace Maroon.Physics.Optics.Manager
                 new CameraControls.CameraSetting(new Vector3(-0.1682f, 2.6f, 1f), Constants.BaseCamRot, 3.5f),
                 new CameraControls.CameraSetting(new Vector3(-0.1682f,3,2.08f), Constants.TopCamRot, 3.5f)
             );
+
+
+            OpticsParameters parameters = new OpticsParameters()
+            {
+                presetNameTranslationKey = "Keplerian Telescope",
+                rayThickness = 0.15f,
+                cameraSettingBaseView = new CameraControls.CameraSetting(new Vector3(-0.1682f, 2.6f, 1f), Constants.BaseCamRot, 3.5f),
+                cameraSettingTopView = new CameraControls.CameraSetting(new Vector3(-0.1682f, 3, 2.08f), Constants.TopCamRot, 3.5f),
+
+                tableObjectParameters = new List<TableObjectParameters>()
+                {
+                    new ParallelSourceParameters(){
+                        lightCategory = LightCategory.ParallelSource,
+                        position = new Vector3(1.65f, 0, 0.577f),
+                        distanceBetweenRays = 1.40f / Constants.InMM,
+                        numberOfRays = 20,
+                    },
+                    new ApertureParameters()
+                    {
+                        opticalCategory = OpticalCategory.Aperture,
+                        position = new Vector3(1.74f, 0, 0.577f),
+                        Rin = 0.005f, 
+                        Rout = 0.015f,
+                    },
+                    new LensParameters()
+                    {
+                        opticalCategory = OpticalCategory.Lens,
+                        position = new Vector3(1.75f, 0, 0.577f),
+                        R1 = 0.112f, 
+                        R2 = -0.112f, 
+                        Rc = 0.015f, 
+                        d1 = 0.0015f, 
+                        d2 = 0.0015f, 
+                        A = 1.7f, 
+                        B = 0,
+                    },
+                    new LensParameters()
+                    {
+                        opticalCategory = OpticalCategory.Lens,
+                        position = new Vector3(1.85f, 0, 0.577f),
+                        R1 = 0.028f, 
+                        R2 = -0.028f,
+                        Rc = 0.05f,
+                        d1 = 0.001f,
+                        d2 = 0.001f,
+                        A = 1.7f,
+                        B = 0,
+                    },
+                    new EyeParameters(){
+                        opticalCategory = OpticalCategory.Eye,
+                        position = new Vector3(1.867f, 0, 0.577f),
+                    },
+                },
+            };
+
+            ExportToJSON(parameters, "KeplerianTelescope.json");
         }
         
         private void GalileanTelescope()
@@ -438,6 +628,108 @@ namespace Maroon.Physics.Optics.Manager
                 new CameraControls.CameraSetting(new Vector3(-0.168f, 2.6f, 1f), Constants.BaseCamRot, 3.5f),
                 new CameraControls.CameraSetting(new Vector3(-0.168f,3,2.08f), Constants.TopCamRot, 3.5f)
             );
+
+
+            OpticsParameters parameters = new OpticsParameters()
+            {
+                presetNameTranslationKey = "Galilean Telescope",
+                rayThickness = 0.15f,
+                cameraSettingBaseView = new CameraControls.CameraSetting(new Vector3(-0.168f, 2.6f, 1f), Constants.BaseCamRot, 3.5f),
+                cameraSettingTopView = new CameraControls.CameraSetting(new Vector3(-0.168f, 3, 2.08f), Constants.TopCamRot, 3.5f),
+
+                tableObjectParameters = new List<TableObjectParameters>()
+                {
+                    // Upper part
+                    new ParallelSourceParameters(){
+                        lightCategory = LightCategory.ParallelSource,
+                        position = new Vector3(1.65f, 0, 0.60f),
+                        distanceBetweenRays = 1.40f / Constants.InMM,
+                        numberOfRays = 20,
+                    },
+                    new ApertureParameters()
+                    {
+                        opticalCategory = OpticalCategory.Aperture,
+                        position = new Vector3(1.783f, 0, 0.60f),
+                        Rin = 0.005f,
+                        Rout = 0.015f,
+                    },
+                    new LensParameters()
+                    {
+                        opticalCategory = OpticalCategory.Lens,
+                        position = new Vector3(1.788f, 0, 0.60f),
+                        R1 = 0.112f,
+                        R2 = -0.112f,
+                        Rc = 0.015f,
+                        d1 = 0.0015f,
+                        d2 = 0.0015f,
+                        A = 1.7f,
+                        B = 0,
+                    },
+                    new LensParameters()
+                    {
+                        opticalCategory = OpticalCategory.Lens,
+                        position = new Vector3(1.848f, 0, 0.60f),
+                        R1 = -0.028f,
+                        R2 = 0.028f,
+                        Rc = 0.005f,
+                        d1 = 0.00005f,
+                        d2 = 0.00005f,
+                        A = 1.7f,
+                        B = 0,
+                    },
+                    new EyeParameters()
+                    {
+                        opticalCategory = OpticalCategory.Eye,
+                        position = new Vector3(1.865f, 0, 0.60f),
+                    },
+                    // Lower part (4 cm apart)
+                    new ParallelSourceParameters()
+                    {
+                        lightCategory = LightCategory.ParallelSource,
+                        position = new Vector3(1.65f, 0, 0.56f),                        
+                        distanceBetweenRays = 1.40f / Constants.InMM,
+                        numberOfRays = 20,
+                    },
+                    new ApertureParameters()
+                    {
+                        opticalCategory = OpticalCategory.Aperture,
+                        position = new Vector3(1.783f, 0, 0.56f),
+                        Rin = 0.005f,
+                        Rout = 0.015f,
+                    },
+                    new LensParameters()
+                    {
+                        opticalCategory = OpticalCategory.Lens,
+                        position = new Vector3(1.788f, 0, 0.56f),
+                        R1 = 0.112f,
+                        R2 = -0.112f,
+                        Rc = 0.015f,
+                        d1 = 0.0015f,
+                        d2 = 0.0015f,
+                        A = 1.7f,
+                        B = 0,
+                    },
+                    new LensParameters()
+                    {
+                        opticalCategory = OpticalCategory.Lens,
+                        position = new Vector3(1.848f, 0, 0.56f),
+                        R1 = -0.028f,
+                        R2 = 0.028f,
+                        Rc = 0.005f,
+                        d1 = 0.00005f,
+                        d2 = 0.00005f,
+                        A = 1.7f,
+                        B = 0,
+                    },
+                    new EyeParameters()
+                    {
+                        opticalCategory = OpticalCategory.Eye,
+                        position = new Vector3(1.865f, 0, 0.56f),
+                    },
+                },
+            };
+
+            ExportToJSON(parameters, "GalileanTelescope.json");
         }
 
         private void NewtonianTelescope()
@@ -476,6 +768,87 @@ namespace Maroon.Physics.Optics.Manager
                 new CameraControls.CameraSetting(new Vector3(-0.1825f, 2.6f, 1f), Constants.BaseCamRot, 3.5f),
                 new CameraControls.CameraSetting(new Vector3(-0.1825f,3,2.08f), Constants.TopCamRot, 3.5f)
             );
+
+            OpticsParameters parameters = new OpticsParameters()
+            {
+                presetNameTranslationKey = "Newtonian Telescope",
+                rayThickness = 0.15f,
+                cameraSettingBaseView = new CameraControls.CameraSetting(new Vector3(-0.1825f, 2.6f, 1f), Constants.BaseCamRot, 3.5f),
+                cameraSettingTopView = new CameraControls.CameraSetting(new Vector3(-0.1825f, 3, 2.08f), Constants.TopCamRot, 3.5f),
+
+                tableObjectParameters = new List<TableObjectParameters>()
+                {
+                    new ParallelSourceParameters(){
+                        lightCategory = LightCategory.ParallelSource,
+                        position = new Vector3(1.65f, 0, 0.55f),
+                        distanceBetweenRays = 1.40f / Constants.InMM,
+                        numberOfRays = 20,
+                    },
+                    new ParallelSourceParameters(){
+                        lightCategory = LightCategory.ParallelSource,
+                        position = new Vector3(1.65f, 0, 0.55f + 0.028f),
+                        distanceBetweenRays = 1.40f / Constants.InMM,
+                        numberOfRays = 20,
+                    },
+                    new ParallelSourceParameters(){
+                        lightCategory = LightCategory.ParallelSource,
+                        position = new Vector3(1.65f, 0, 0.55f + 2 * 0.028f),
+                        distanceBetweenRays = 1.40f / Constants.InMM,
+                        numberOfRays = 20,
+                    },
+                    new ApertureParameters()
+                    {
+                        opticalCategory = OpticalCategory.Aperture,
+                        position = new Vector3(1.735f, 0, 0.56f),
+                        Rin = 0.019f,
+                        Rout = 0.10f,
+                    },
+                    new MirrorParameters()
+                    {
+                        opticalCategory = OpticalCategory.Mirror,
+                        position = new Vector3(1.856f, 0, 0.56f),
+                        R = -0.20f, 
+                        Rc = 0.02f,
+                    },
+                    new MirrorParameters()
+                    {
+                        opticalCategory = OpticalCategory.Mirror,
+                        position = new Vector3(1.77f, 0, 0.56f),
+                        rotation = new Vector3(1, 0, 1),
+                        R = 0.5f,
+                        Rc = 0.006f,
+                    },
+                    new ApertureParameters()
+                    {
+                        opticalCategory = OpticalCategory.Aperture,
+                        position = new Vector3(1.77f, 0, 0.5595f), 
+                        rotation = new Vector3(1, 0, 1),
+                        Rin = 0f,
+                        Rout = 0.006f,
+                    },
+                    new LensParameters()
+                    {
+                        opticalCategory = OpticalCategory.Lens,
+                        position = new Vector3(1.77f, 0, 0.592f), 
+                        rotation = new Vector3(0, 0, 1),
+                        R1 = 0.024f,
+                        R2 = -0.024f,
+                        Rc = 0.006855f,
+                        d1 = 0.001f,
+                        d2 = 0.001f,
+                        A = 1.63f,
+                        B = 0,
+                    },
+                    new EyeParameters()
+                    {
+                        opticalCategory = OpticalCategory.Eye,
+                        position = new Vector3(1.77f, 0, 0.611f), 
+                        rotation = new Vector3(0, 0, 1),
+                    },
+                },
+            };
+
+            ExportToJSON(parameters, "NewtonianTelescope.json");
         }
         
         private void Microscope()
@@ -501,6 +874,63 @@ namespace Maroon.Physics.Optics.Manager
                 new CameraControls.CameraSetting(new Vector3(-0.12f, 2.6f, 1f), Constants.BaseCamRot, 3f),
                 new CameraControls.CameraSetting(new Vector3(-0.12f,3,2.08f), Constants.TopCamRot, 3f)
             );
+
+
+            OpticsParameters parameters = new OpticsParameters()
+            {
+                presetNameTranslationKey = "Microscope",
+                rayThickness = 0.08f,
+                cameraSettingBaseView = new CameraControls.CameraSetting(new Vector3(-0.12f, 2.6f, 1f), Constants.BaseCamRot, 3f),
+                cameraSettingTopView = new CameraControls.CameraSetting(new Vector3(-0.12f, 3, 2.08f), Constants.TopCamRot, 3f),
+
+                tableObjectParameters = new List<TableObjectParameters>()
+                {
+                    new PointSourceParameters(){
+                        lightCategory = LightCategory.PointSource,
+                        position = new Vector3(1.78f, 0, 0.577f),
+                        numberOfRays = 40,
+                        rayDistributionAngle = 22,
+                    },
+                    new ApertureParameters()
+                    {
+                        opticalCategory = OpticalCategory.Aperture,
+                        position = new Vector3(1.809f, 0, 0.577f),
+                        Rin = 0.002f,
+                        Rout = 0.05f,
+                    },
+                    new LensParameters()
+                    {
+                        opticalCategory = OpticalCategory.Lens,
+                        position = new Vector3(1.81f, 0, 0.577f),
+                        R1 = 0.028f,
+                        R2 = -0.028f,
+                        Rc = 0.52678f,
+                        d1 = 0.0005f,
+                        d2 = 0.0005f,
+                        A = 1.7f,
+                        B = 0,
+                    },
+                    new LensParameters()
+                    {
+                        opticalCategory = OpticalCategory.Lens,
+                        position = new Vector3(1.89f, 0, 0.577f),
+                        R1 = 0.028f,
+                        R2 = -0.028f,
+                        Rc = 0.52678f,
+                        d1 = 0.0005f,
+                        d2 = 0.0005f,
+                        A = 1.7f,
+                        B = 0,
+                    },
+                    new EyeParameters()
+                    {
+                        opticalCategory = OpticalCategory.Eye,
+                        position = new Vector3(1.907f, 0, 0.577f),
+                    },
+                },
+            };
+
+            ExportToJSON(parameters, "Microscope.json");
         }
         
         private void LightEmittingDiode()
@@ -522,6 +952,49 @@ namespace Maroon.Physics.Optics.Manager
                 new CameraControls.CameraSetting(new Vector3(-0.17f, 2.6f, 1f), Constants.BaseCamRot, 7f),
                 new CameraControls.CameraSetting(new Vector3(-0.17f,3,2.08f), Constants.TopCamRot, 7f)
             );
+
+
+            OpticsParameters parameters = new OpticsParameters()
+            {
+                presetNameTranslationKey = "Light Emitting Diode",
+                rayThickness = 0.30f,
+                cameraSettingBaseView = new CameraControls.CameraSetting(new Vector3(-0.17f, 2.6f, 1f), Constants.BaseCamRot, 7f),
+                cameraSettingTopView = new CameraControls.CameraSetting(new Vector3(-0.17f, 3, 2.08f), Constants.TopCamRot, 7f),
+
+                tableObjectParameters = new List<TableObjectParameters>()
+                {
+                    new PointSourceParameters(){
+                        lightCategory = LightCategory.PointSource,
+                        position = new Vector3(1.82f, 0, 0.56f),
+                        numberOfRays = 40,
+                        rayDistributionAngle = 360,
+                        // TODO disable mesh renderer (?)
+                    },
+                    new LensParameters()
+                    {
+                        opticalCategory = OpticalCategory.Lens,
+                        position = new Vector3(1.82f, 0, 0.57f), 
+                        rotation = new Vector3(0, 0, -1),
+                        R1 = 0.03f,
+                        R2 = 0.5f,
+                        Rc = 0.03f,
+                        d1 = 0.04f,
+                        d2 = 0.04f,
+                        A = 1.41f,
+                        B = 0,
+                    },
+                    new MirrorParameters()
+                    {
+                        opticalCategory = OpticalCategory.Mirror,
+                        position = new Vector3(1.82f, 0, 0.55f), 
+                        rotation = new Vector3(0, 0, 1),
+                        R = 0.01f, 
+                        Rc = 0.01f,
+                    }
+                },
+            };
+
+            ExportToJSON(parameters, "LightEmittingDiode.json");
         }
         
         private void OpticalFiber()
@@ -542,6 +1015,50 @@ namespace Maroon.Physics.Optics.Manager
                 new CameraControls.CameraSetting(new Vector3(-0.124f, 2.6f, 1f), Constants.BaseCamRot, 3),
                 new CameraControls.CameraSetting(new Vector3(-0.124f,3,2.08f), Constants.TopCamRot, 3)
             );
+
+            OpticsParameters parameters = new OpticsParameters()
+            {
+                presetNameTranslationKey = "Optical Fiber",
+                rayThickness = 0.15f,
+                cameraSettingBaseView = new CameraControls.CameraSetting(new Vector3(-0.124f, 2.6f, 1f), Constants.BaseCamRot, 3),
+                cameraSettingTopView = new CameraControls.CameraSetting(new Vector3(-0.124f, 3, 2.08f), Constants.TopCamRot, 3),
+
+                tableObjectParameters = new List<TableObjectParameters>()
+                {
+                    new ParallelSourceParameters(){
+                        lightCategory = LightCategory.ParallelSource,
+                        position = new Vector3(1.75f, 0, 0.577f),
+                        distanceBetweenRays = 0.40f / Constants.InMM,
+                        numberOfRays = 20,
+                    },
+                    new LensParameters()
+                    {
+                        opticalCategory = OpticalCategory.Lens,
+                        position = new Vector3(1.80f, 0, 0.577f),
+                        R1 = 0.03f,
+                        R2 = -0.03f,
+                        Rc = 0.009367f,
+                        d1 = 0.0015f,
+                        d2 = 0.0015f,
+                        A = 1.7f,
+                        B = 0,
+                    },
+                    new LensParameters()
+                    {
+                        opticalCategory = OpticalCategory.Lens,
+                        position = new Vector3(1.872f, 0, 0.577f),
+                        R1 = 0.5f,
+                        R2 = -0.5f,
+                        Rc = 0.002f,
+                        d1 = 0.05f,
+                        d2 = 0.05f,
+                        A = 1.7f,
+                        B = 0,
+                    },
+                },
+            };
+
+            ExportToJSON(parameters, "OpticalFiber.json");
         }
         
         private enum TablePreset
