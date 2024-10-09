@@ -107,51 +107,65 @@ namespace Maroon.Physics.Optics.Manager
 
             foreach (TableObjectParameters componentParameters in experimentParameters.tableObjectParameters)
             {
+                TableObject.TableObject prefab = GetTableObjectPrefabForParameters(componentParameters);
+
                 if (componentParameters is LightComponentParameters lightComponentParameters)
                 {
-                    LightComponent prefab = GetLightComponentPrefabForCategory(lightComponentParameters.lightCategory);
-                    LightComponent lightComp = _lcm.AddLightComponent(prefab, lightComponentParameters.position, lightComponentParameters.rotation, lightComponentParameters.waveLengths);
+                    LightComponent lightComp = _lcm.AddLightComponent((LightComponent)prefab, lightComponentParameters.position, lightComponentParameters.rotation, lightComponentParameters.waveLengths);
 
-                    switch (lightComponentParameters.lightCategory)
+                    Type lightType = lightComponentParameters.GetType();
+                    // Cannot use switch here, as switch cases require a constant expression
+                    if (lightType == typeof(LaserPointerParameters))
                     {
-                        case LightCategory.LaserPointer:
-                            // LaserPointer has no other adjustable parameters
-                            break;
-                        case LightCategory.ParallelSource:
-                            ((ParallelSource)lightComp).SetParameters((ParallelSourceParameters)lightComponentParameters);
-                            break;
-                        case LightCategory.PointSource:
-                            ((PointSource)lightComp).SetParameters((PointSourceParameters)lightComponentParameters);
-                            break;
+                        // LaserPointer has no other adjustable parameters
+                    }
+                    else if (lightType == typeof(ParallelSourceParameters))
+                    {
+                        ((ParallelSource)lightComp).SetParameters((ParallelSourceParameters)lightComponentParameters);
+                    }
+                    else if (lightType == typeof(PointSourceParameters))
+                    {
+                        ((PointSource)lightComp).SetParameters((PointSourceParameters)lightComponentParameters);
+                    }
+                    else
+                    {
+                        Debug.LogError("Unknown type of LightComponentParameters: " + lightType);
                     }
                 }
                 else if (componentParameters is OpticalComponentParameters opticalComponentParameters)
                 {
-                    OpticalComponent prefab = GetOpticalComponentPrefabForCategory(opticalComponentParameters.opticalCategory);
-                    OpticalComponent opticalComp = _ocm.AddOpticalComponent(prefab, opticalComponentParameters.position, opticalComponentParameters.rotation); 
-                    
-                    switch (opticalComponentParameters.opticalCategory)
+                    OpticalComponent opticalComp = _ocm.AddOpticalComponent((OpticalComponent)prefab, opticalComponentParameters.position, opticalComponentParameters.rotation);
+
+                    Type opticalType = opticalComponentParameters.GetType();
+                    // Cannot use switch here, as switch cases require a constant expression
+                    if (opticalType == typeof(LensParameters))
                     {
-                        case OpticalCategory.Lens:
-                            ((Lens)opticalComp).SetParameters((LensParameters)opticalComponentParameters);
-                            break;
-                        case OpticalCategory.Eye:
-                            ((Eye)opticalComp).SetParameters((EyeParameters)opticalComponentParameters);
-                            break;
-                        case OpticalCategory.Aperture:
-                            ((Aperture)opticalComp).SetParameters((ApertureParameters)opticalComponentParameters);
-                            break;
-                        case OpticalCategory.Mirror:
-                            ((Mirror)opticalComp).SetParameters((MirrorParameters)opticalComponentParameters);
-                            break;
-                        case OpticalCategory.Wall:
-                            ((Wall)opticalComp).SetParameters((WallParameters)opticalComponentParameters);
-                            break;
+                        ((Lens)opticalComp).SetParameters((LensParameters)opticalComponentParameters);
+                    }
+                    else if (opticalType == typeof(EyeParameters))
+                    {
+                        ((Eye)opticalComp).SetParameters((EyeParameters)opticalComponentParameters);
+                    }
+                    else if (opticalType == typeof(ApertureParameters))
+                    {
+                        ((Aperture)opticalComp).SetParameters((ApertureParameters)opticalComponentParameters);
+                    }
+                    else if (opticalType == typeof(MirrorParameters))
+                    {
+                        ((Mirror)opticalComp).SetParameters((MirrorParameters)opticalComponentParameters);
+                    }
+                    else if (opticalType == typeof(WallParameters))
+                    {
+                        ((Wall)opticalComp).SetParameters((WallParameters)opticalComponentParameters);
+                    }
+                    else
+                    {
+                        Debug.LogError("Unknown type of OpticalComponentParameters: " + opticalType);
                     }
                 }
                 else
                 {
-                    Debug.LogError("Unknown OpticalComponentParameters class.");
+                    Debug.LogError("Unknown TableObjectParameters class.");
                 }
             }
 
@@ -161,39 +175,24 @@ namespace Maroon.Physics.Optics.Manager
             );
         }
 
-        private LightComponent GetLightComponentPrefabForCategory(LightCategory category)
+        private TableObject.TableObject GetTableObjectPrefabForParameters(TableObjectParameters parameters)
         {
-            Dictionary<LightCategory, LightComponent> prefabsPerCategory = new Dictionary<LightCategory, LightComponent>()
+            Dictionary<Type, TableObject.TableObject> prefabsPerType = new()
             {
-                { LightCategory.LaserPointer, laserPointer },
-                { LightCategory.ParallelSource, parallelSource },
-                { LightCategory.PointSource, pointSource },
+                { typeof(LaserPointerParameters), laserPointer },
+                { typeof(ParallelSourceParameters), parallelSource },
+                { typeof(PointSourceParameters), pointSource },
+                { typeof(MirrorParameters), mirror },
+                { typeof(EyeParameters), eye },
+                { typeof(LensParameters), lens },
+                { typeof(ApertureParameters), aperture },
             };
 
-            if (prefabsPerCategory.ContainsKey(category))
-                return prefabsPerCategory[category];
+            if (prefabsPerType.ContainsKey(parameters.GetType()))
+                return prefabsPerType[parameters.GetType()];
             else
             {
-                Debug.LogError("Unknown LightCategory: " + category);
-                return null;
-            }
-        }
-
-        private OpticalComponent GetOpticalComponentPrefabForCategory(OpticalCategory category)
-        {
-            Dictionary<OpticalCategory, OpticalComponent> prefabsPerCategory = new Dictionary<OpticalCategory, OpticalComponent>()
-            {
-                { OpticalCategory.Mirror, mirror },
-                { OpticalCategory.Eye, eye },
-                { OpticalCategory.Lens, lens },
-                { OpticalCategory.Aperture, aperture },
-            };
-
-            if (prefabsPerCategory.ContainsKey(category))
-                return prefabsPerCategory[category];
-            else
-            {
-                Debug.LogError("Unknown OpticalCategory: " + category);
+                Debug.LogError("Unknown TableObjectParameters type: " + parameters.GetType());
                 return null;
             }
         }
@@ -238,18 +237,17 @@ namespace Maroon.Physics.Optics.Manager
                 cameraSettingTopView = new CameraControls.CameraSetting(new Vector3(-0.065f, 3.0f, 2.0f), Constants.TopCamRot, 33),
                 tableObjectParameters = new List<TableObjectParameters>()
                 {
-                    new LaserPointerParameters(){
-                        lightCategory = LightCategory.LaserPointer,
+                    new LaserPointerParameters()
+                    {
                         position = new Vector3(1.30f, 0, 0.60f),
                         waveLengths = new List<float> { 390f, 440f, 490f, 540f, 590f, 640f, 720f },
                     },
-                    new LensParameters(){ 
-                        opticalCategory = OpticalCategory.Lens,
+                    new LensParameters()
+                    { 
                         position = new Vector3(1.6f, 0, 0.57f)
                     },
                     new MirrorParameters()
                     {
-                        opticalCategory = OpticalCategory.Mirror,
                         position = new Vector3(2.2f, 0, 0.40f), 
                         rotation = new Vector3(1, 0, -1),
                     }
@@ -283,12 +281,12 @@ namespace Maroon.Physics.Optics.Manager
 
                 tableObjectParameters = new List<TableObjectParameters>()
                 {
-                    new ParallelSourceParameters(){
-                        lightCategory = LightCategory.ParallelSource,
+                    new ParallelSourceParameters()
+                    {
                         position = new Vector3(1.2f, 0, 0.62f),
                     },
-                    new LensParameters(){
-                        opticalCategory = OpticalCategory.Lens,
+                    new LensParameters()
+                    {
                         position = new Vector3(1.70f, 0, 0.62f),
                         R1 = Constants.Biconvex.Item1, 
                         R2 = Constants.Biconvex.Item2, 
@@ -325,14 +323,14 @@ namespace Maroon.Physics.Optics.Manager
 
                 tableObjectParameters = new List<TableObjectParameters>()
                 {
-                    new ParallelSourceParameters(){
-                        lightCategory = LightCategory.ParallelSource,
+                    new ParallelSourceParameters()
+                    {
                         position = new Vector3(1.78f, 0f, 0.577f),
                         distanceBetweenRays = 0.40f / Constants.InMM,
                         numberOfRays = 20,
                     },
-                    new EyeParameters(){
-                        opticalCategory = OpticalCategory.Eye,
+                    new EyeParameters()
+                    {
                         position = new Vector3(1.90f, 0, 0.577f),
                     },
                 },
@@ -370,20 +368,19 @@ namespace Maroon.Physics.Optics.Manager
 
                 tableObjectParameters = new List<TableObjectParameters>()
                 {
-                    new ParallelSourceParameters(){
-                        lightCategory = LightCategory.ParallelSource,
+                    new ParallelSourceParameters()
+                    {
                         position = new Vector3(1.78f, 0f, 0.577f),
                         distanceBetweenRays = 0.40f / Constants.InMM,
                         numberOfRays = 20,
                     },
-                    new EyeParameters(){
-                        opticalCategory = OpticalCategory.Eye,
+                    new EyeParameters()
+                    {
                         position = new Vector3(1.90f, 0, 0.577f),
                         f = 0.022f,
                     },
                     new LensParameters()
                     {
-                        opticalCategory = OpticalCategory.Lens,
                         position = new Vector3(1.882f, 0, 0.577f + Constants.Epsilon),
                         R1 = 0.05f, 
                         R2 = 0.024f, 
@@ -426,19 +423,18 @@ namespace Maroon.Physics.Optics.Manager
 
                 tableObjectParameters = new List<TableObjectParameters>()
                 {
-                    new PointSourceParameters(){
-                        lightCategory = LightCategory.PointSource,
+                    new PointSourceParameters()
+                    {
                         position = new Vector3(1.638f, 0, 0.577f),
                         numberOfRays = 40,
                         rayDistributionAngle = 4,
                     },
-                    new EyeParameters(){
-                        opticalCategory = OpticalCategory.Eye,
+                    new EyeParameters()
+                    {
                         position = new Vector3(1.90f, 0, 0.577f),
                     },
                     new LensParameters()
                     {
-                        opticalCategory = OpticalCategory.Lens,
                         position = new Vector3(1.882f, 0, 0.577f + Constants.Epsilon),
                         R1 = 0.053f, 
                         R2 = 0.10f, 
@@ -481,15 +477,14 @@ namespace Maroon.Physics.Optics.Manager
 
                 tableObjectParameters = new List<TableObjectParameters>()
                 {
-                    new PointSourceParameters(){
-                        lightCategory = LightCategory.PointSource,
+                    new PointSourceParameters()
+                    {
                         position = new Vector3(1.78f, 0, 0.577f),
                         numberOfRays = 40,
                         rayDistributionAngle = 22,
                     },
                     new LensParameters()
                     {
-                        opticalCategory = OpticalCategory.Lens,
                         position = new Vector3(1.866f, 0, 0.577f + Constants.Epsilon),
                         R1 = 0.08f,
                         R2 = -0.08f, 
@@ -498,8 +493,8 @@ namespace Maroon.Physics.Optics.Manager
                         A = 1.458f, 
                         B = 3540
                     },
-                    new EyeParameters(){
-                        opticalCategory = OpticalCategory.Eye,
+                    new EyeParameters()
+                    {
                         position = new Vector3(1.90f, 0, 0.577f),
                     },
                 },
@@ -542,22 +537,20 @@ namespace Maroon.Physics.Optics.Manager
 
                 tableObjectParameters = new List<TableObjectParameters>()
                 {
-                    new ParallelSourceParameters(){
-                        lightCategory = LightCategory.ParallelSource,
+                    new ParallelSourceParameters()
+                    {
                         position = new Vector3(1.65f, 0, 0.577f),
                         distanceBetweenRays = 1.40f / Constants.InMM,
                         numberOfRays = 20,
                     },
                     new ApertureParameters()
                     {
-                        opticalCategory = OpticalCategory.Aperture,
                         position = new Vector3(1.74f, 0, 0.577f),
                         Rin = 0.005f, 
                         Rout = 0.015f,
                     },
                     new LensParameters()
                     {
-                        opticalCategory = OpticalCategory.Lens,
                         position = new Vector3(1.75f, 0, 0.577f),
                         R1 = 0.112f, 
                         R2 = -0.112f, 
@@ -569,7 +562,6 @@ namespace Maroon.Physics.Optics.Manager
                     },
                     new LensParameters()
                     {
-                        opticalCategory = OpticalCategory.Lens,
                         position = new Vector3(1.85f, 0, 0.577f),
                         R1 = 0.028f, 
                         R2 = -0.028f,
@@ -579,8 +571,8 @@ namespace Maroon.Physics.Optics.Manager
                         A = 1.7f,
                         B = 0,
                     },
-                    new EyeParameters(){
-                        opticalCategory = OpticalCategory.Eye,
+                    new EyeParameters()
+                    {
                         position = new Vector3(1.867f, 0, 0.577f),
                     },
                 },
@@ -640,22 +632,20 @@ namespace Maroon.Physics.Optics.Manager
                 tableObjectParameters = new List<TableObjectParameters>()
                 {
                     // Upper part
-                    new ParallelSourceParameters(){
-                        lightCategory = LightCategory.ParallelSource,
+                    new ParallelSourceParameters()
+                    {
                         position = new Vector3(1.65f, 0, 0.60f),
                         distanceBetweenRays = 1.40f / Constants.InMM,
                         numberOfRays = 20,
                     },
                     new ApertureParameters()
                     {
-                        opticalCategory = OpticalCategory.Aperture,
                         position = new Vector3(1.783f, 0, 0.60f),
                         Rin = 0.005f,
                         Rout = 0.015f,
                     },
                     new LensParameters()
                     {
-                        opticalCategory = OpticalCategory.Lens,
                         position = new Vector3(1.788f, 0, 0.60f),
                         R1 = 0.112f,
                         R2 = -0.112f,
@@ -667,7 +657,6 @@ namespace Maroon.Physics.Optics.Manager
                     },
                     new LensParameters()
                     {
-                        opticalCategory = OpticalCategory.Lens,
                         position = new Vector3(1.848f, 0, 0.60f),
                         R1 = -0.028f,
                         R2 = 0.028f,
@@ -679,27 +668,23 @@ namespace Maroon.Physics.Optics.Manager
                     },
                     new EyeParameters()
                     {
-                        opticalCategory = OpticalCategory.Eye,
                         position = new Vector3(1.865f, 0, 0.60f),
                     },
                     // Lower part (4 cm apart)
                     new ParallelSourceParameters()
                     {
-                        lightCategory = LightCategory.ParallelSource,
                         position = new Vector3(1.65f, 0, 0.56f),                        
                         distanceBetweenRays = 1.40f / Constants.InMM,
                         numberOfRays = 20,
                     },
                     new ApertureParameters()
                     {
-                        opticalCategory = OpticalCategory.Aperture,
                         position = new Vector3(1.783f, 0, 0.56f),
                         Rin = 0.005f,
                         Rout = 0.015f,
                     },
                     new LensParameters()
                     {
-                        opticalCategory = OpticalCategory.Lens,
                         position = new Vector3(1.788f, 0, 0.56f),
                         R1 = 0.112f,
                         R2 = -0.112f,
@@ -711,7 +696,6 @@ namespace Maroon.Physics.Optics.Manager
                     },
                     new LensParameters()
                     {
-                        opticalCategory = OpticalCategory.Lens,
                         position = new Vector3(1.848f, 0, 0.56f),
                         R1 = -0.028f,
                         R2 = 0.028f,
@@ -723,7 +707,6 @@ namespace Maroon.Physics.Optics.Manager
                     },
                     new EyeParameters()
                     {
-                        opticalCategory = OpticalCategory.Eye,
                         position = new Vector3(1.865f, 0, 0.56f),
                     },
                 },
@@ -778,41 +761,38 @@ namespace Maroon.Physics.Optics.Manager
 
                 tableObjectParameters = new List<TableObjectParameters>()
                 {
-                    new ParallelSourceParameters(){
-                        lightCategory = LightCategory.ParallelSource,
+                    new ParallelSourceParameters()
+                    {
                         position = new Vector3(1.65f, 0, 0.55f),
                         distanceBetweenRays = 1.40f / Constants.InMM,
                         numberOfRays = 20,
                     },
-                    new ParallelSourceParameters(){
-                        lightCategory = LightCategory.ParallelSource,
+                    new ParallelSourceParameters()
+                    {
                         position = new Vector3(1.65f, 0, 0.55f + 0.028f),
                         distanceBetweenRays = 1.40f / Constants.InMM,
                         numberOfRays = 20,
                     },
-                    new ParallelSourceParameters(){
-                        lightCategory = LightCategory.ParallelSource,
+                    new ParallelSourceParameters()
+                    {
                         position = new Vector3(1.65f, 0, 0.55f + 2 * 0.028f),
                         distanceBetweenRays = 1.40f / Constants.InMM,
                         numberOfRays = 20,
                     },
                     new ApertureParameters()
                     {
-                        opticalCategory = OpticalCategory.Aperture,
                         position = new Vector3(1.735f, 0, 0.56f),
                         Rin = 0.019f,
                         Rout = 0.10f,
                     },
                     new MirrorParameters()
                     {
-                        opticalCategory = OpticalCategory.Mirror,
                         position = new Vector3(1.856f, 0, 0.56f),
                         R = -0.20f, 
                         Rc = 0.02f,
                     },
                     new MirrorParameters()
                     {
-                        opticalCategory = OpticalCategory.Mirror,
                         position = new Vector3(1.77f, 0, 0.56f),
                         rotation = new Vector3(1, 0, 1),
                         R = 0.5f,
@@ -820,7 +800,6 @@ namespace Maroon.Physics.Optics.Manager
                     },
                     new ApertureParameters()
                     {
-                        opticalCategory = OpticalCategory.Aperture,
                         position = new Vector3(1.77f, 0, 0.5595f), 
                         rotation = new Vector3(1, 0, 1),
                         Rin = 0f,
@@ -828,7 +807,6 @@ namespace Maroon.Physics.Optics.Manager
                     },
                     new LensParameters()
                     {
-                        opticalCategory = OpticalCategory.Lens,
                         position = new Vector3(1.77f, 0, 0.592f), 
                         rotation = new Vector3(0, 0, 1),
                         R1 = 0.024f,
@@ -841,7 +819,6 @@ namespace Maroon.Physics.Optics.Manager
                     },
                     new EyeParameters()
                     {
-                        opticalCategory = OpticalCategory.Eye,
                         position = new Vector3(1.77f, 0, 0.611f), 
                         rotation = new Vector3(0, 0, 1),
                     },
@@ -885,22 +862,20 @@ namespace Maroon.Physics.Optics.Manager
 
                 tableObjectParameters = new List<TableObjectParameters>()
                 {
-                    new PointSourceParameters(){
-                        lightCategory = LightCategory.PointSource,
+                    new PointSourceParameters()
+                    {
                         position = new Vector3(1.78f, 0, 0.577f),
                         numberOfRays = 40,
                         rayDistributionAngle = 22,
                     },
                     new ApertureParameters()
                     {
-                        opticalCategory = OpticalCategory.Aperture,
                         position = new Vector3(1.809f, 0, 0.577f),
                         Rin = 0.002f,
                         Rout = 0.05f,
                     },
                     new LensParameters()
                     {
-                        opticalCategory = OpticalCategory.Lens,
                         position = new Vector3(1.81f, 0, 0.577f),
                         R1 = 0.028f,
                         R2 = -0.028f,
@@ -912,7 +887,6 @@ namespace Maroon.Physics.Optics.Manager
                     },
                     new LensParameters()
                     {
-                        opticalCategory = OpticalCategory.Lens,
                         position = new Vector3(1.89f, 0, 0.577f),
                         R1 = 0.028f,
                         R2 = -0.028f,
@@ -924,7 +898,6 @@ namespace Maroon.Physics.Optics.Manager
                     },
                     new EyeParameters()
                     {
-                        opticalCategory = OpticalCategory.Eye,
                         position = new Vector3(1.907f, 0, 0.577f),
                     },
                 },
@@ -963,8 +936,8 @@ namespace Maroon.Physics.Optics.Manager
 
                 tableObjectParameters = new List<TableObjectParameters>()
                 {
-                    new PointSourceParameters(){
-                        lightCategory = LightCategory.PointSource,
+                    new PointSourceParameters()
+                    {
                         position = new Vector3(1.82f, 0, 0.56f),
                         numberOfRays = 40,
                         rayDistributionAngle = 360,
@@ -972,7 +945,6 @@ namespace Maroon.Physics.Optics.Manager
                     },
                     new LensParameters()
                     {
-                        opticalCategory = OpticalCategory.Lens,
                         position = new Vector3(1.82f, 0, 0.57f), 
                         rotation = new Vector3(0, 0, -1),
                         R1 = 0.03f,
@@ -985,7 +957,6 @@ namespace Maroon.Physics.Optics.Manager
                     },
                     new MirrorParameters()
                     {
-                        opticalCategory = OpticalCategory.Mirror,
                         position = new Vector3(1.82f, 0, 0.55f), 
                         rotation = new Vector3(0, 0, 1),
                         R = 0.01f, 
@@ -1025,15 +996,14 @@ namespace Maroon.Physics.Optics.Manager
 
                 tableObjectParameters = new List<TableObjectParameters>()
                 {
-                    new ParallelSourceParameters(){
-                        lightCategory = LightCategory.ParallelSource,
+                    new ParallelSourceParameters()
+                    {
                         position = new Vector3(1.75f, 0, 0.577f),
                         distanceBetweenRays = 0.40f / Constants.InMM,
                         numberOfRays = 20,
                     },
                     new LensParameters()
                     {
-                        opticalCategory = OpticalCategory.Lens,
                         position = new Vector3(1.80f, 0, 0.577f),
                         R1 = 0.03f,
                         R2 = -0.03f,
@@ -1045,7 +1015,6 @@ namespace Maroon.Physics.Optics.Manager
                     },
                     new LensParameters()
                     {
-                        opticalCategory = OpticalCategory.Lens,
                         position = new Vector3(1.872f, 0, 0.577f),
                         R1 = 0.5f,
                         R2 = -0.5f,

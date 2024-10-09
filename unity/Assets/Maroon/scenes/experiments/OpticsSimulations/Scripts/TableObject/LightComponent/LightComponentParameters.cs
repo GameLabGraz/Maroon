@@ -8,7 +8,6 @@ namespace Maroon.Physics.Optics.TableObject.LightComponent
     [System.Serializable]
     public class LightComponentParameters : TableObjectParameters
     {
-        public LightCategory lightCategory;
         public List<float> waveLengths;
     }
 }
