@@ -35,7 +35,7 @@ namespace Maroon.Experiments.PlanetarySystem
          */
         public void RotatePlanets()
         {
-            planetRotationPerSecond = (360 / -planetInfo.rotationPeriod) * (ROTATION_PERIOD_SCALE_FACTOR / 50);
+            planetRotationPerSecond = (360 / -planetInfo.rotationPeriod) * (ROTATION_PERIOD_SCALE_FACTOR * Time.fixedDeltaTime);
             transform.Rotate(new Vector3(0, planetRotationPerSecond, 0));
         }
     }
