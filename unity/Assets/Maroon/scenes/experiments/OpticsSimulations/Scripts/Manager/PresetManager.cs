@@ -284,6 +284,7 @@ namespace Maroon.Physics.Optics.Manager
                     new ParallelSourceParameters()
                     {
                         position = new Vector3(1.2f, 0, 0.62f),
+                        distanceBetweenRays = 0.0038f,
                     },
                     new LensParameters()
                     {
