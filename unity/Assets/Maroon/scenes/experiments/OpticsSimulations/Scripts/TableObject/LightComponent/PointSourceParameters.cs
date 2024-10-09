@@ -9,5 +9,6 @@ namespace Maroon.Physics.Optics.TableObject.LightComponent
     {
         public int numberOfRays = 16;
         public float rayDistributionAngle = 30;
+        public bool enableMeshRenderer = true;
     }
 }

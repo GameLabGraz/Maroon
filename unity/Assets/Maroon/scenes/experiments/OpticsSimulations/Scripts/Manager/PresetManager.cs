@@ -67,7 +67,7 @@ namespace Maroon.Physics.Optics.Manager
             {
                 parameterLoader.LoadJsonFromFileIndex(nr - 1);
             }
-
+            
             return; // To test json deserializing
 
             switch ((TablePreset) nr)
@@ -968,7 +968,7 @@ namespace Maroon.Physics.Optics.Manager
                         position = new Vector3(1.82f, 0, 0.56f),
                         numberOfRays = 40,
                         rayDistributionAngle = 360,
-                        // TODO disable mesh renderer (?)
+                        enableMeshRenderer = false,
                     },
                     new LensParameters()
                     {
