@@ -70,6 +70,7 @@ namespace Maroon.Physics.Optics.Manager
             
             return; // To test json deserializing
 
+            // TODO get rid of legacy code (e.g. switch below)
             switch ((TablePreset) nr)
             {
                 case TablePreset.Undefined: return;
@@ -87,6 +88,8 @@ namespace Maroon.Physics.Optics.Manager
                 case TablePreset.OpticalFiber: OpticalFiber(); break;
             }
         }
+
+        // TODO provide one example how JSON for a new scenario could be created that can be kept in the code base
 
         public void OnLoadedExperimentParameters(ExperimentParameters experimentParameters)
         {
@@ -1031,6 +1034,7 @@ namespace Maroon.Physics.Optics.Manager
             ExportToJSON(parameters, "OpticalFiber.json");
         }
         
+        // TODO instead of this enum, use the JSON Files provided to ParameterLoader?
         private enum TablePreset
         {
             Undefined,
