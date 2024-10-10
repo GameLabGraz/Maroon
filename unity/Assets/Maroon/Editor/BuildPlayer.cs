@@ -49,55 +49,55 @@ namespace Maroon.Build
         // #############################################################################################################
         // Editor Build Methods
 
-        [MenuItem("Build/Conventional Maroon/PC")]
+        [MenuItem("Maroon Build/Conventional Maroon/PC")]
         public static void BuildLaboratoryPC()
         {
             BuildConventionalMaroon(MaroonBuildTarget.PC);
         }
 
-        [MenuItem("Build/Conventional Maroon/PC VR")]
+        [MenuItem("Maroon Build/Conventional Maroon/PC VR")]
         public static void BuildLaboratoryVR()
         {
             BuildConventionalMaroon(MaroonBuildTarget.VR);
         }
 
-        [MenuItem("Build/Conventional Maroon/Mac")]
+        [MenuItem("Maroon Build/Conventional Maroon/Mac")]
         public static void BuildLaboratoryMAC()
         {
             BuildConventionalMaroon(MaroonBuildTarget.MAC);
         }
 
-        [MenuItem("Build/Conventional Maroon/WebGL")]
+        [MenuItem("Maroon Build/Conventional Maroon/WebGL")]
         public static void BuildLaboratoryWebGL()
         {
             BuildConventionalMaroon(MaroonBuildTarget.WebGL);
         }
 
-        [MenuItem("Build/Standalone Experiments/PC")]
+        [MenuItem("Maroon Build/Standalone Experiments/PC")]
         public static void BuildExperimentsPC()
         {
             BuildStandaloneExperiments(MaroonBuildTarget.PC);
         }
 
-        [MenuItem("Build/Standalone Experiments/PC VR")]
+        [MenuItem("Maroon Build/Standalone Experiments/PC VR")]
         public static void BuildExperimentsVR()
         {
             BuildStandaloneExperiments(MaroonBuildTarget.VR);
         }
 
-        [MenuItem("Build/Standalone Experiments/Mac")]
+        [MenuItem("Maroon Build/Standalone Experiments/Mac")]
         public static void BuildExperimentsMAC()
         {
             BuildStandaloneExperiments(MaroonBuildTarget.MAC);
         }
 
-        [MenuItem("Build/Standalone Experiments/WebGL")]
+        [MenuItem("Maroon Build/Standalone Experiments/WebGL")]
         public static void BuildExperimentsWebGL()
         {
             BuildStandaloneExperiments(MaroonBuildTarget.WebGL);
         }
 
-        [MenuItem("Build/All Platforms, Conventional and Standalone")]
+        [MenuItem("Maroon Build/All Platforms, Conventional and Standalone")]
         public static void BuildAll()
         {
             var buildPath = EditorUtility.SaveFolderPanel("Choose Build Location", string.Empty, "Build");
