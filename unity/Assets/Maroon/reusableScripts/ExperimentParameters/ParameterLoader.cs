@@ -63,9 +63,7 @@ namespace Maroon.ReusableScripts.ExperimentParameters
             }
 
             string data = _jsonFile[index].text;
-            MostRecentParameters = ConvertJsonToExperimentParameters(data);
-            parametersLoaded?.Invoke(MostRecentParameters);
-            return MostRecentParameters;
+            return LoadJsonFromString(data);
         }
 
         /// <summary>

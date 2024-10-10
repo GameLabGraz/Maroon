@@ -61,9 +61,13 @@ namespace Maroon.Physics.Optics.Manager
             parameterLoader.LoadJsonFromFileIndex(0);
         }
 
+        /// <summary>
+        /// Called when the user selects a preset in the Dropdown menu
+        /// </summary>
+        /// <param name="nr">The index of the selected item.</param>
         public void TablePresets(int nr)
         {
-            if (nr > 0) // First index should not load anything
+            if (nr > 0) // First dropdown item should not load anything
             {
                 parameterLoader.LoadJsonFromFileIndex(nr - 1);
             }
