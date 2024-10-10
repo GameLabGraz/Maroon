@@ -7,7 +7,7 @@ namespace DigitalRuby.ThunderAndLightning.Editor
     [InitializeOnLoad]
     public class MoveGizmosScript
     {
-        private static readonly string sourcePath = Path.Combine(Application.dataPath, "3rd Party/ProceduralLightning/Prefab/Editor/Gizmos");
+        private static readonly string sourcePath = Path.Combine(Application.dataPath, "Vendor/ProceduralLightning/Prefab/Editor/Gizmos");
 
         static MoveGizmosScript()
         {
