@@ -236,24 +236,5 @@ namespace Maroon.Physics.Optics.Manager
             ExportToJSON(parameters, "FocalLength.json");
         }
         #endregion
-
-
-        // TODO instead of this enum, use the JSON Files provided to ParameterLoader?
-        private enum TablePreset
-        {
-            Undefined,
-            LensAndMirror,
-            FocalLength,
-            StandardEye,
-            NearsightedEye,
-            FarsightedEye,
-            MagnifyingGlass,
-            KeplerianTelescope,
-            GalileanTelescope,
-            NewtonianTelescope,
-            Microscope,
-            LightEmittingDiode,
-            OpticalFiber
-        }
     }
 }
