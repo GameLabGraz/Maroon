@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using GameLabGraz.UI;
+using Maroon.GlobalEntities;
 using Maroon.Physics.Optics.TableObject;
 using Maroon.Physics.Optics.TableObject.LightComponent;
 using Maroon.Physics.Optics.TableObject.OpticalComponent;
@@ -32,6 +33,9 @@ namespace Maroon.Physics.Optics.Manager
         [SerializeField] private GameObject laserPointerPanel;
         [SerializeField] private GameObject parallelSourcePanel;
         [SerializeField] private GameObject pointSourcePanel;
+
+        [Header("Preset")]
+        [SerializeField] private TMP_Dropdown presetDropdown;
 
         [Header("Light Parameters")]
         public QuantityFloat rayThickness;
@@ -104,6 +108,10 @@ namespace Maroon.Physics.Optics.Manager
             _cauchyModel = cauchyModelDropdown.GetComponent<TMP_Dropdown>();
             _lensModel = lensModelDropdown.GetComponent<TMP_Dropdown>();
             _focalLengthText = focalLengthDisplay.GetComponent<TMP_Text>();
+            WebGlReceiver.Instance.OnIncomingData.AddListener((string _jsonData) => {
+                // When OpticsParameters config JSON gets sent via Javascript, set the preset Dropdown to index 0, as that's representing an 'undefined' preset
+                presetDropdown.SetValueWithoutNotify(0);
+            });
         }
 
         // ----------------------------------- Light Components -----------------------------------
