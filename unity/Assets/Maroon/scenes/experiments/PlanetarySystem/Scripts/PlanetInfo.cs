@@ -1,3 +1,4 @@
+using GEAR.Localization;
 using UnityEngine;
 
 
@@ -21,6 +22,8 @@ namespace Maroon.Experiments.PlanetarySystem
 
     public class PlanetInfo : MonoBehaviour
     {
+        public bool IsSnapped { get; set; }
+
         //source: NASA.gov https://nssdc.gsfc.nasa.gov/planetary/factsheet/planetfact_notes.html
         #region Legend
         public PlanetInformation PlanetInformationOf;
@@ -444,5 +447,131 @@ namespace Maroon.Experiments.PlanetarySystem
                     #endregion Unknown
             }
         }
+
+
+        //create CreatePlanetInfoMessage for PlanetInfoUI
+        #region CreatePlanetInfoMessage
+        /// <summary>
+        /// get key from LanguageManager
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        private string GetMessagByKey(string key)
+        {
+            return LanguageManager.Instance.GetString(key);
+        }
+
+
+        /// <summary>
+        /// CreateNasaDataMessage from PlanetInfo for the rest of the PlanetInfoUI
+        /// </summary>
+        /// <returns></returns>
+        public string CreateNasaDataMessage()
+        {
+            string nasaDataMessage = "";
+            string messageTMP;
+
+            messageTMP = GetMessagByKey("PlanetInfo1");
+            nasaDataMessage += " " + messageTMP + " " + mass + "\n\n";
+            messageTMP = GetMessagByKey("PlanetInfo2");
+            nasaDataMessage += " " + messageTMP + " " + diameter + "\n\n";
+            messageTMP = GetMessagByKey("PlanetInfo3");
+            nasaDataMessage += " " + messageTMP + " " + density + "\n\n";
+            messageTMP = GetMessagByKey("PlanetInfo4");
+            nasaDataMessage += " " + messageTMP + " " + gravity + "\n\n";
+            messageTMP = GetMessagByKey("PlanetInfo5");
+            nasaDataMessage += " " + messageTMP + " " + escapeVelocity + "\n\n";
+            messageTMP = GetMessagByKey("PlanetInfo6");
+            nasaDataMessage += " " + messageTMP + " " + rotationPeriod + "\n\n";
+            messageTMP = GetMessagByKey("PlanetInfo7");
+            nasaDataMessage += " " + messageTMP + " " + lengthOfDay + "\n\n";
+            messageTMP = GetMessagByKey("PlanetInfo8");
+            nasaDataMessage += " " + messageTMP + " " + distanceFromSun + "\n\n";
+            messageTMP = GetMessagByKey("PlanetInfo9");
+            nasaDataMessage += " " + messageTMP + " " + perihelion + "\n\n";
+            messageTMP = GetMessagByKey("PlanetInfo10");
+            nasaDataMessage += " " + messageTMP + " " + aphelion + "\n\n";
+            messageTMP = GetMessagByKey("PlanetInfo11");
+            nasaDataMessage += " " + messageTMP + " " + orbitalPeriod + "\n\n";
+            messageTMP = GetMessagByKey("PlanetInfo12");
+            nasaDataMessage += " " + messageTMP + " " + orbitalVelocity + "\n\n";
+            messageTMP = GetMessagByKey("PlanetInfo13");
+            nasaDataMessage += " " + messageTMP + " " + orbitalInclination + "\n\n";
+            messageTMP = GetMessagByKey("PlanetInfo14");
+            nasaDataMessage += " " + messageTMP + " " + orbitalEccentricity + "\n\n";
+            messageTMP = GetMessagByKey("PlanetInfo15");
+            nasaDataMessage += " " + messageTMP + " " + obliquityToOrbit + "\n\n";
+            messageTMP = GetMessagByKey("PlanetInfo16");
+            nasaDataMessage += " " + messageTMP + " " + meanTemperature + "\n\n";
+            messageTMP = GetMessagByKey("PlanetInfo17");
+            nasaDataMessage += " " + messageTMP + " " + surfacePressure + "\n\n";
+            messageTMP = GetMessagByKey("PlanetInfo18");
+            nasaDataMessage += " " + messageTMP + " " + numberOfMoons + "\n\n";
+            messageTMP = GetMessagByKey("PlanetInfo19");
+            nasaDataMessage += " " + messageTMP + " " + ringSystem + "\n\n";
+            messageTMP = GetMessagByKey("PlanetInfo20");
+            nasaDataMessage += " " + messageTMP + " " + globalMagneticField + "\n";
+
+            return nasaDataMessage;
+        }
+
+
+        /// <summary>
+        /// CreatePlanetInfoMessage from PlanetInfo for whole PlanetInfoUI 
+        /// </summary>
+        /// <returns></returns>
+        public string CreatePlanetInfoMessage()
+        {
+            string planetInfoMessage = "";
+            string messageTMP;
+
+            messageTMP = GetMessagByKey("PlanetInfo0");
+            planetInfoMessage += " " + messageTMP + " " + GetMessagByKey(PlanetInformationOf.ToString()) + "\n\n";
+
+            string nasaDataMessage = CreateNasaDataMessage();
+            planetInfoMessage += nasaDataMessage;
+
+            return planetInfoMessage;
+        }
+
+
+        /// <summary>
+        /// CreatePlanetInfoMessage from PlanetInfo for PlanetInfoUI without name when not snapped
+        /// or with name when klicked on again
+        /// Pluto is not a planet anymore
+        /// </summary>
+        /// <returns></returns>
+        public string CreateUnnamedPlanetInfoMessage()
+        {
+            string planetInfoMessage = "";
+            string messageTMP;
+
+            if (IsSnapped)
+            {
+                messageTMP = GetMessagByKey("PlanetInfo0");
+                planetInfoMessage += " " + messageTMP + " " + GetMessagByKey(PlanetInformationOf.ToString()) + "\n\n";
+            }
+            // pluto is not a planet
+            else if (PlanetInformationOf == PlanetInformation.Pluto)
+            {
+                messageTMP = GetMessagByKey("PlanetInfo0");
+                planetInfoMessage += " " + messageTMP + " " + GetMessagByKey(PlanetInformationOf.ToString()) + "\n\n";
+
+                messageTMP = GetMessagByKey("PlutoNotAPlanet");
+                planetInfoMessage += " " + messageTMP + " " + "\n\n";
+            }
+            // celestial body = ???
+            else
+            {
+                messageTMP = GetMessagByKey("PlanetInfo0");
+                planetInfoMessage += " " + messageTMP + " ???\n\n";
+            }
+
+            string nasaDataMessage = CreateNasaDataMessage();
+            planetInfoMessage += nasaDataMessage;
+
+            return planetInfoMessage;
+        }
+        #endregion CreatePlanetInfoMessage
     }
 }

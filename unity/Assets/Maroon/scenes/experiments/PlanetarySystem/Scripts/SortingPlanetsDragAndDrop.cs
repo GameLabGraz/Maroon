@@ -21,7 +21,6 @@ namespace Maroon.Experiments.PlanetarySystem
 
         public TextMeshProUGUI planetInfoMessageText;
         string createdPlanetInfoMessage;
-        string createdNasaDataMessage;
 
 
         //handle mouse input
@@ -34,14 +33,16 @@ namespace Maroon.Experiments.PlanetarySystem
             audioSource.PlayOneShot(pickUpClip);
             mousePosition = Input.mousePosition - Camera.main.WorldToScreenPoint(transform.position);
             // Show PlanetInfo data when planet is clicked on
-            CreateUnnamedPlanetInfoMessage();
+
+            PlanetInfo planetInfo = GetComponent<PlanetInfo>();
+            createdPlanetInfoMessage = planetInfo.CreateUnnamedPlanetInfoMessage();
             planetInfoMessageText.text = createdPlanetInfoMessage;
         }
 
 
-        /*
-        * calculate position
-        */
+        /// <summary>
+        /// calculate position
+        /// </summary>
         private void OnMouseDrag()
         {
             if (!isSnapped)
@@ -52,10 +53,10 @@ namespace Maroon.Experiments.PlanetarySystem
         }
 
 
-        /*
-         * snap to target when distance is smaller han snap distance
-         * or snap back to start slot
-         */
+        /// <summary>
+        /// snap to target when distance is smaller han snap distance
+        /// or snap back to start slot
+        /// </summary>
         private void OnMouseUp()
         {
             if (!isSnapped)
@@ -71,6 +72,8 @@ namespace Maroon.Experiments.PlanetarySystem
                 {
                     transform.position = transform.parent.position;
                     isSnapped = false;
+                    PlanetInfo planetInfo = GetComponent<PlanetInfo>();
+                    planetInfo.IsSnapped = false;
                 }
             }
         }
@@ -109,147 +112,36 @@ namespace Maroon.Experiments.PlanetarySystem
             planetRotation.SetObliquityToOrbit();
 
             isSnapped = true;
+            PlanetInfo planetInfo = GetComponent<PlanetInfo>();
+            planetInfo.IsSnapped = true;
             IncrementSnappedPlanetCount();
             audioSource.PlayOneShot(dropClip);
 
-            CreatePlanetInfoMessage();
+            createdPlanetInfoMessage = planetInfo.CreatePlanetInfoMessage();
             planetInfoMessageText.text = createdPlanetInfoMessage;
         }
         #endregion SnapPlanet
 
 
-        //CreatePlanetInfoMessage from PlanetInfo for whole PlanetInfoUI
-        #region PlanetInfoMessage
-        /// <summary>
-        /// get key from LanguageManager
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        private string GetMessagByKey(string key)
-        {
-            return LanguageManager.Instance.GetString(key);
-        }
-
-
-        /// <summary>
-        /// CreateNasaDataMessage from PlanetInfo for the rest of the PlanetInfoUI
-        /// </summary>
-        private void CreateNasaDataMessage()
-        {
-            string nasaDataMessage = "";
-            PlanetInfo planetInfo = GetComponent<PlanetInfo>();
-            string messageTMP;
-
-            //Debug.Log("SortingPlanetsDragAndDrop: CreatePlanetInfoMessage(): " + messageTMP);
-            messageTMP = GetMessagByKey("PlanetInfo1");
-            nasaDataMessage += " " + messageTMP + " " + planetInfo.mass + "\n\n";
-            messageTMP = GetMessagByKey("PlanetInfo2");
-            nasaDataMessage += " " + messageTMP + " " + planetInfo.diameter + "\n\n";
-            messageTMP = GetMessagByKey("PlanetInfo3");
-            nasaDataMessage += " " + messageTMP + " " + planetInfo.density + "\n\n";
-            messageTMP = GetMessagByKey("PlanetInfo4");
-            nasaDataMessage += " " + messageTMP + " " + planetInfo.gravity + "\n\n";
-            messageTMP = GetMessagByKey("PlanetInfo5");
-            nasaDataMessage += " " + messageTMP + " " + planetInfo.escapeVelocity + "\n\n";
-            messageTMP = GetMessagByKey("PlanetInfo6");
-            nasaDataMessage += " " + messageTMP + " " + planetInfo.rotationPeriod + "\n\n";
-            messageTMP = GetMessagByKey("PlanetInfo7");
-            nasaDataMessage += " " + messageTMP + " " + planetInfo.lengthOfDay + "\n\n";
-            messageTMP = GetMessagByKey("PlanetInfo8");
-            nasaDataMessage += " " + messageTMP + " " + planetInfo.distanceFromSun + "\n\n";
-            messageTMP = GetMessagByKey("PlanetInfo9");
-            nasaDataMessage += " " + messageTMP + " " + planetInfo.perihelion + "\n\n";
-            messageTMP = GetMessagByKey("PlanetInfo10");
-            nasaDataMessage += " " + messageTMP + " " + planetInfo.aphelion + "\n\n";
-            messageTMP = GetMessagByKey("PlanetInfo11");
-            nasaDataMessage += " " + messageTMP + " " + planetInfo.orbitalPeriod + "\n\n";
-            messageTMP = GetMessagByKey("PlanetInfo12");
-            nasaDataMessage += " " + messageTMP + " " + planetInfo.orbitalVelocity + "\n\n";
-            messageTMP = GetMessagByKey("PlanetInfo13");
-            nasaDataMessage += " " + messageTMP + " " + planetInfo.orbitalInclination + "\n\n";
-            messageTMP = GetMessagByKey("PlanetInfo14");
-            nasaDataMessage += " " + messageTMP + " " + planetInfo.orbitalEccentricity + "\n\n";
-            messageTMP = GetMessagByKey("PlanetInfo15");
-            nasaDataMessage += " " + messageTMP + " " + planetInfo.obliquityToOrbit + "\n\n";
-            messageTMP = GetMessagByKey("PlanetInfo16");
-            nasaDataMessage += " " + messageTMP + " " + planetInfo.meanTemperature + "\n\n";
-            messageTMP = GetMessagByKey("PlanetInfo17");
-            nasaDataMessage += " " + messageTMP + " " + planetInfo.surfacePressure + "\n\n";
-            messageTMP = GetMessagByKey("PlanetInfo18");
-            nasaDataMessage += " " + messageTMP + " " + planetInfo.numberOfMoons + "\n\n";
-            messageTMP = GetMessagByKey("PlanetInfo19");
-            nasaDataMessage += " " + messageTMP + " " + planetInfo.ringSystem + "\n\n";
-            messageTMP = GetMessagByKey("PlanetInfo20");
-            nasaDataMessage += " " + messageTMP + " " + planetInfo.globalMagneticField + "\n";
-
-            createdNasaDataMessage = nasaDataMessage;
-        }
-
-
-        /// <summary>
-        /// CreatePlanetInfoMessage from PlanetInfo for whole PlanetInfoUI without name when not snapped
-        /// Pluto is not a planet anymore
-        /// </summary>
-        private void CreateUnnamedPlanetInfoMessage()
-        {
-            string planetInfoMessage = "";
-            PlanetInfo planetInfo = GetComponent<PlanetInfo>();
-            string messageTMP;
-
-            if (isSnapped)
-            {
-                messageTMP = GetMessagByKey("PlanetInfo0");
-                planetInfoMessage += " " + messageTMP + " " + GetMessagByKey(planetInfo.PlanetInformationOf.ToString()) + "\n\n";
-            }
-            // pluto is not a planet
-            else if(planetInfo.PlanetInformationOf == PlanetInformation.Pluto)
-             {
-                messageTMP = GetMessagByKey("PlanetInfo0");
-                planetInfoMessage += " " + messageTMP + " " + GetMessagByKey(planetInfo.PlanetInformationOf.ToString()) + "\n\n";
-
-                messageTMP = GetMessagByKey("PlutoNotAPlanet");
-                planetInfoMessage += " " + messageTMP + " " + "\n\n";
-            }
-            // celestial body = ???
-            else
-            {
-                messageTMP = GetMessagByKey("PlanetInfo0");
-                planetInfoMessage += " " + messageTMP + " ???\n\n";
-            }
-
-            CreateNasaDataMessage();
-            createdPlanetInfoMessage = planetInfoMessage + createdNasaDataMessage;
-        }
-
-
-        /// <summary>
-        /// CreatePlanetInfoMessage from PlanetInfo for whole PlanetInfoUI when snapped
-        /// </summary>
-        private void CreatePlanetInfoMessage()
-        {
-            string planetInfoMessage = "";
-            PlanetInfo planetInfo = GetComponent<PlanetInfo>();
-            string messageTMP;
-      
-            messageTMP = GetMessagByKey("PlanetInfo0");
-            planetInfoMessage += " " + messageTMP + " " + GetMessagByKey(planetInfo.PlanetInformationOf.ToString()) + "\n\n";
-
-            CreateNasaDataMessage();
-            createdPlanetInfoMessage = planetInfoMessage + createdNasaDataMessage;
-        }
-        #endregion PlanetInfoMessage
-
-
         // reset ResetSortingGame
         #region Reset
+        /// <summary>
+        /// ResetPlanetInfoMessage
+        /// </summary>
+        public void ResetPlanetInfoMessage()
+        {
+            createdPlanetInfoMessage = "PlanetDescription";
+            planetInfoMessageText.text = LanguageManager.Instance.GetString(createdPlanetInfoMessage);
+        }
+    
+
+
         /// <summary>
         /// reset sortingPlanet parent, scale, position, sortedPlanetCount
         /// </summary>
         public void ResetObject()
         {
-            createdPlanetInfoMessage = "PlanetDescription";
-            createdNasaDataMessage = "";
-            planetInfoMessageText.text = GetMessagByKey(createdPlanetInfoMessage);
+            ResetPlanetInfoMessage();
 
             transform.localScale = new Vector3(1, 1, 1);
             transform.localRotation = Quaternion.identity;
@@ -259,6 +151,8 @@ namespace Maroon.Experiments.PlanetarySystem
 
             PlanetaryController.Instance.sortedPlanetCount = 0;
             isSnapped = false;
+            PlanetInfo planetInfo = GetComponent<PlanetInfo>();
+            planetInfo.IsSnapped = false;
         }
         #endregion Reset
     }
