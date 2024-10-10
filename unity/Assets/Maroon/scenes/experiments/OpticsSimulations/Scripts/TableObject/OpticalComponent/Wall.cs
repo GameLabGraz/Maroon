@@ -9,11 +9,6 @@ namespace Maroon.Physics.Optics.TableObject.OpticalComponent
         public Vector3 r0;
         public Vector3 n;
 
-        public void SetProperties(Vector3 r0, Vector3 n)
-        {
-            this.r0 = r0;
-            this.n = n;
-        }
         public void SetParameters(WallParameters parameters)
         {
             this.r0 = parameters.r0;

@@ -58,7 +58,7 @@ namespace Maroon.Physics.Optics.Manager
             _em = ExperimentManager.Instance;
             _camControls = mainCamera.GetComponent<CameraControls>();
             
-            LensAndMirror();
+            parameterLoader.LoadJsonFromFileIndex(0);
         }
 
         public void TablePresets(int nr)
@@ -71,6 +71,7 @@ namespace Maroon.Physics.Optics.Manager
             return; // To test json deserializing
 
             // TODO get rid of legacy code (e.g. switch below)
+            /*
             switch ((TablePreset) nr)
             {
                 case TablePreset.Undefined: return;
@@ -87,6 +88,7 @@ namespace Maroon.Physics.Optics.Manager
                 case TablePreset.LightEmittingDiode: LightEmittingDiode(); break;
                 case TablePreset.OpticalFiber: OpticalFiber(); break;
             }
+            */
         }
 
         // TODO provide one example how JSON for a new scenario could be created that can be kept in the code base
@@ -120,7 +122,7 @@ namespace Maroon.Physics.Optics.Manager
                     // Cannot use switch here, as switch cases require a constant expression
                     if (lightType == typeof(LaserPointerParameters))
                     {
-                        // LaserPointer has no other adjustable parameters
+                        ((LaserPointer)lightComp).SetParameters((LaserPointerParameters)lightComponentParameters);
                     }
                     else if (lightType == typeof(ParallelSourceParameters))
                     {
@@ -200,6 +202,11 @@ namespace Maroon.Physics.Optics.Manager
             }
         }
 
+        /// <summary>
+        /// Exports OpticsParameters to a file in the Documents folder
+        /// </summary>
+        /// <param name="parameters"></param>
+        /// <param name="filename"></param>
         private void ExportToJSON(OpticsParameters parameters, string filename)
         {
             JsonSerializerSettings settings = new JsonSerializerSettings
@@ -217,7 +224,41 @@ namespace Maroon.Physics.Optics.Manager
             Debug.Log("Exported to file " + Path.Combine(docPath, filename));
         }
 
+        /// <summary>
+        /// Example method, how one can create and export an Optics Scenario (OpticsParameters) to a JSON file
+        /// </summary>
+        private void ExampleExportToJSON()
+        {
+            OpticsParameters parameters = new OpticsParameters()
+            {
+                presetNameTranslationKey = "Focal Length",
+                rayThickness = Constants.BaseRayThicknessInMM,
+                cameraSettingBaseView = new CameraControls.CameraSetting(new Vector3(-0.065f, 2.6f, 1.0f), Constants.BaseCamRot, 36),
+                cameraSettingTopView = new CameraControls.CameraSetting(new Vector3(-0.06f, 3, 2.1f), Constants.TopCamRot, 36),
+
+                tableObjectParameters = new List<TableObjectParameters>()
+                {
+                    new ParallelSourceParameters()
+                    {
+                        position = new Vector3(1.2f, 0, 0.62f),
+                        distanceBetweenRays = 0.0038f,
+                    },
+                    new LensParameters()
+                    {
+                        position = new Vector3(1.70f, 0, 0.62f),
+                        R1 = Constants.Biconvex.Item1,
+                        R2 = Constants.Biconvex.Item2,
+                        d1 = Constants.Biconvex.Item3,
+                        d2 = Constants.Biconvex.Item4,
+                    },
+                },
+            };
+
+            ExportToJSON(parameters, "FocalLength.json");
+        }
+
         #region Old Presets
+        /*
         private void LensAndMirror()
         {
             _em.ClearTable();
@@ -259,6 +300,8 @@ namespace Maroon.Physics.Optics.Manager
 
             ExportToJSON(parameters, "LensAndMirror.json");
         }
+
+
 
         private void FocalLength()
         {
@@ -1033,6 +1076,7 @@ namespace Maroon.Physics.Optics.Manager
 
             ExportToJSON(parameters, "OpticalFiber.json");
         }
+        */
         
         // TODO instead of this enum, use the JSON Files provided to ParameterLoader?
         private enum TablePreset

@@ -31,10 +31,6 @@ namespace Maroon.Physics.Optics.TableObject.OpticalComponent
             n = -transform.right;
         }
         
-        public void SetParameters(float f = 0.024f)
-        {
-            this.f = f;
-        }
         public void SetParameters(EyeParameters parameters)
         {
             this.f = parameters.f;

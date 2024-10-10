@@ -30,11 +30,6 @@ namespace Maroon.Physics.Optics.TableObject.OpticalComponent
             n = transform.right;
         }
         
-        public void SetParameters(float Rin = 0.03f, float Rout = 0.10f)
-        {
-            this.Rin = Rin;
-            this.Rout = Rout;
-        }
         public void SetParameters(ApertureParameters parameters)
         {
             this.Rin = parameters.Rin;

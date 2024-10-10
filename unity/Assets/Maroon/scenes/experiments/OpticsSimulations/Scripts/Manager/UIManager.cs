@@ -506,14 +506,92 @@ namespace Maroon.Physics.Optics.Manager
             
             switch (nr)
             {
-                case 0: return;
-                case 1: le.SetParameters(R1: Constants.Biconvex.Item1, R2: Constants.Biconvex.Item2, d1: Constants.Biconvex.Item3, d2: Constants.Biconvex.Item4, Rc: Constants.LensPrestRc, Constants.DenseFlintGlassSF10.Item1, Constants.DenseFlintGlassSF10.Item2); break;
-                case 2: le.SetParameters(R1: Constants.Planoconvex.Item1, R2: Constants.Planoconvex.Item2, d1: Constants.Planoconvex.Item3, d2: Constants.Planoconvex.Item4, Rc: Constants.LensPrestRc, Constants.DenseFlintGlassSF10.Item1, Constants.DenseFlintGlassSF10.Item2); break;
-                case 3: le.SetParameters(R1: Constants.PositiveMeniscus.Item1, R2: Constants.PositiveMeniscus.Item2, d1: Constants.PositiveMeniscus.Item3, d2: Constants.PositiveMeniscus.Item4, Rc: Constants.LensPrestRc, Constants.DenseFlintGlassSF10.Item1, Constants.DenseFlintGlassSF10.Item2); break;
-                case 4: le.SetParameters(R1: Constants.NegativeMeniscus.Item1, R2: Constants.NegativeMeniscus.Item2, d1: Constants.NegativeMeniscus.Item3, d2: Constants.NegativeMeniscus.Item4, Rc: Constants.LensPrestRc, Constants.DenseFlintGlassSF10.Item1, Constants.DenseFlintGlassSF10.Item2); break;
-                case 5: le.SetParameters(R1: Constants.Planoconcave.Item1, R2: Constants.Planoconcave.Item2, d1: Constants.Planoconcave.Item3, d2: Constants.Planoconcave.Item4, Rc: Constants.LensPrestRc, Constants.DenseFlintGlassSF10.Item1, Constants.DenseFlintGlassSF10.Item2); break;
-                case 6: le.SetParameters(R1: Constants.Biconcave.Item1, R2: Constants.Biconcave.Item2, d1: Constants.Biconcave.Item3, d2: Constants.Biconcave.Item4, Rc: Constants.LensPrestRc, Constants.DenseFlintGlassSF10.Item1, Constants.DenseFlintGlassSF10.Item2); break;
-                case 7: le.SetParameters(R1: Constants.Ball.Item1, R2: Constants.Ball.Item2, d1: Constants.Ball.Item3, d2: Constants.Ball.Item4, Rc: Constants.LensPrestRc, Constants.DenseFlintGlassSF10.Item1, Constants.DenseFlintGlassSF10.Item2); break;
+                case 0: 
+                    return;
+                case 1:
+                    le.SetParameters(new LensParameters
+                    {
+                        R1 = Constants.Biconvex.Item1,
+                        R2 = Constants.Biconvex.Item2,
+                        d1 = Constants.Biconvex.Item3,
+                        d2 = Constants.Biconvex.Item4,
+                        Rc = Constants.LensPrestRc,
+                        A = Constants.DenseFlintGlassSF10.Item1,
+                        B = Constants.DenseFlintGlassSF10.Item2,
+                    });
+                    break;
+                case 2:
+                    le.SetParameters(new LensParameters
+                    {
+                        R1 = Constants.Planoconvex.Item1,
+                        R2 = Constants.Planoconvex.Item2,
+                        d1 = Constants.Planoconvex.Item3,
+                        d2 = Constants.Planoconvex.Item4,
+                        Rc = Constants.LensPrestRc,
+                        A = Constants.DenseFlintGlassSF10.Item1,
+                        B = Constants.DenseFlintGlassSF10.Item2,
+                    });
+                    break;
+                case 3:
+                    le.SetParameters(new LensParameters
+                    {
+                        R1 = Constants.PositiveMeniscus.Item1,
+                        R2 = Constants.PositiveMeniscus.Item2,
+                        d1 = Constants.PositiveMeniscus.Item3,
+                        d2 = Constants.PositiveMeniscus.Item4,
+                        Rc = Constants.LensPrestRc,
+                        A = Constants.DenseFlintGlassSF10.Item1,
+                        B = Constants.DenseFlintGlassSF10.Item2,
+                    });
+                    break;
+                case 4:
+                    le.SetParameters(new LensParameters
+                    {
+                        R1 = Constants.NegativeMeniscus.Item1,
+                        R2 = Constants.NegativeMeniscus.Item2,
+                        d1 = Constants.NegativeMeniscus.Item3,
+                        d2 = Constants.NegativeMeniscus.Item4,
+                        Rc = Constants.LensPrestRc,
+                        A = Constants.DenseFlintGlassSF10.Item1,
+                        B = Constants.DenseFlintGlassSF10.Item2,
+                    });
+                    break;
+                case 5:
+                    le.SetParameters(new LensParameters
+                    {
+                        R1 = Constants.Planoconcave.Item1,
+                        R2 = Constants.Planoconcave.Item2,
+                        d1 = Constants.Planoconcave.Item3,
+                        d2 = Constants.Planoconcave.Item4,
+                        Rc = Constants.LensPrestRc,
+                        A = Constants.DenseFlintGlassSF10.Item1,
+                        B = Constants.DenseFlintGlassSF10.Item2,
+                    });
+                    break;
+                case 6:
+                    le.SetParameters(new LensParameters
+                    {
+                        R1 = Constants.Biconcave.Item1,
+                        R2 = Constants.Biconcave.Item2,
+                        d1 = Constants.Biconcave.Item3,
+                        d2 = Constants.Biconcave.Item4,
+                        Rc = Constants.LensPrestRc,
+                        A = Constants.DenseFlintGlassSF10.Item1,
+                        B = Constants.DenseFlintGlassSF10.Item2,
+                    });
+                    break;
+                case 7:
+                    le.SetParameters(new LensParameters
+                    {
+                        R1 = Constants.Ball.Item1,
+                        R2 = Constants.Ball.Item2,
+                        d1 = Constants.Ball.Item3,
+                        d2 = Constants.Ball.Item4,
+                        Rc = Constants.LensPrestRc,
+                        A = Constants.DenseFlintGlassSF10.Item1,
+                        B = Constants.DenseFlintGlassSF10.Item2,
+                    });
+                    break;
             }
             
             AllowValueChangeEvent(false);

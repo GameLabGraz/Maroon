@@ -22,12 +22,6 @@ namespace Maroon.Physics.Optics.TableObject.LightComponent
             ChangeNumberOfRays(numberOfRays);
         }
         
-        // TODO for all optical and light components, remove the legacy setParameters methods
-        public void SetParameters(int numberOfRays = 16, float distanceBetweenRays = 0.00015f)
-        {
-            this.distanceBetweenRays = distanceBetweenRays;
-            ChangeNumberOfRays(numberOfRays);
-        }
         public void SetParameters(ParallelSourceParameters parameters)
         {
             this.distanceBetweenRays = parameters.distanceBetweenRays;
