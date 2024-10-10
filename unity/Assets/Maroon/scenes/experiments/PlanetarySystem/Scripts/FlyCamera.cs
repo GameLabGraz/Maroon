@@ -15,9 +15,9 @@ namespace Maroon.Experiments.PlanetarySystem
         private bool hasCameraBeenToggled = false;
 
 
-        /*
-         * check camera control state
-         */
+        /// <summary>
+        /// check camera control state
+        /// </summary>
         private void Start()
         {
             if (flyCamera == null)
@@ -36,11 +36,11 @@ namespace Maroon.Experiments.PlanetarySystem
         }
 
 
-        /*
-         * enables FlyCam after [TAB] key is pressed
-         * Helpi message after first [TAB]
-         * updating Camera
-         */
+        /// <summary>
+        /// enables FlyCam after [TAB] key is pressed
+        /// Helpi message after first [TAB]
+        /// updating Camera
+        /// </summary>
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.Tab))
@@ -68,9 +68,9 @@ namespace Maroon.Experiments.PlanetarySystem
         }
 
 
-        /*
-         * movement of the FlyCamera
-         */
+        /// <summary>
+        /// movement of the FlyCamera
+        /// </summary>
         private void FlyCameraMovement()
         {
             float x = Input.GetAxis("Horizontal") * mouseSpeed * Time.deltaTime;
@@ -101,9 +101,10 @@ namespace Maroon.Experiments.PlanetarySystem
         }
 
 
-        /*
-         * locks the cursor when switched between normal mode and FlyCam mode
-         */
+        /// <summary>
+        /// locks the cursor when switched between normal mode and FlyCam mode
+        /// </summary>
+        /// <param name="active"></param>
         private void SetCameraControlActive(bool active)
         {
             Cursor.lockState = active ? CursorLockMode.Locked : CursorLockMode.None;
@@ -111,9 +112,9 @@ namespace Maroon.Experiments.PlanetarySystem
         }
 
 
-        /*
-         * focus the camera on public object (sun after reset or toggle camera)
-         */
+        /// <summary>
+        /// focus the camera on public object (sun after reset or toggle camera)
+        /// </summary>
         private void LookAtFocus()
         {
             if (isCameraControlActive)

@@ -17,13 +17,9 @@ namespace Maroon.Experiments.PlanetarySystem
         }
 
 
-        /*
-         * hide UI on key or toggle input 
-         */
-        #region ToggleUI
-        /*
-         *  hide UI on Key input and update toggle
-         */
+        /// <summary>
+        /// hide UI on Key input and update toggle
+        /// </summary>
         private void HideUIOnKeyInput()
         {
             if (Input.GetKeyUp(KeyCode.H))
@@ -35,15 +31,15 @@ namespace Maroon.Experiments.PlanetarySystem
         }
 
 
-        /*
-         *  toggle HideUI and SetUIActive with boolean from ToggleGroup function
-         */
+        /// <summary>
+        /// toggle HideUI and SetUIActive with boolean from ToggleGroup function
+        /// </summary>
+        /// <param name="active"></param>
         public void SetUIActive(bool active)
         {
             AnimationUI.SetActive(!active);
             PlanetInformationUI.SetActive(!active);
-            //Debug.Log("CameraAndUIController: SetUIActive(active): " + active);
+            //Debug.Log("HideUI: SetUIActive(active): " + active);
         }
-        #endregion ToggleUI
     }
 }

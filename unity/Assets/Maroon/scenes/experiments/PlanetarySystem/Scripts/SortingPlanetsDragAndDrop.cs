@@ -24,13 +24,11 @@ namespace Maroon.Experiments.PlanetarySystem
         string createdNasaDataMessage;
 
 
-        /*
-         * handle mouse input
-         */
+        //handle mouse input
         #region MouseInput
-        /*
-         * get mouse position
-         */
+        /// <summary>
+        /// get mouse position
+        /// </summary>
         private void OnMouseDown()
         {
             audioSource.PlayOneShot(pickUpClip);
@@ -79,13 +77,11 @@ namespace Maroon.Experiments.PlanetarySystem
         #endregion MouseInput
 
 
-        /*
-         * snap the planets to target
-         */
+        //snap the planets to target
         #region SnapPlanet
-        /*
-         * increments the snapped planets and displays a Helpi message when all planets except pluto are in its place 
-         */
+        /// <summary>
+        /// increments the snapped planets and displays a Helpi message when all planets except pluto are in its place 
+        /// </summary>
         private void IncrementSnappedPlanetCount()
         {
             int solarSystemPlanet = 10;
@@ -99,9 +95,9 @@ namespace Maroon.Experiments.PlanetarySystem
         }
 
 
-        /*
-         * snaps the planets to target by setting its parent and scales them
-         */
+        /// <summary>
+        /// snaps the planets to target by setting its parent and scales them
+        /// </summary>
         private void SnapToTarget()
         {
             transform.SetParent(sortingPlanetTarget);
@@ -122,23 +118,22 @@ namespace Maroon.Experiments.PlanetarySystem
         #endregion SnapPlanet
 
 
-        /*
-         * CreatePlanetInfoMessage from PlanetInfo for whole PlanetInfoUI
-         */
+        //CreatePlanetInfoMessage from PlanetInfo for whole PlanetInfoUI
         #region PlanetInfoMessage
-        /*
-         * get key from LanguageManager
-         */
+        /// <summary>
+        /// get key from LanguageManager
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         private string GetMessagByKey(string key)
-
         {
             return LanguageManager.Instance.GetString(key);
         }
 
 
-        /*
-        * CreateNasaDataMessage from PlanetInfo for the rest of the PlanetInfoUI
-        */
+        /// <summary>
+        /// CreateNasaDataMessage from PlanetInfo for the rest of the PlanetInfoUI
+        /// </summary>
         private void CreateNasaDataMessage()
         {
             string nasaDataMessage = "";
@@ -191,10 +186,10 @@ namespace Maroon.Experiments.PlanetarySystem
         }
 
 
-        /*
-        * CreatePlanetInfoMessage from PlanetInfo for whole PlanetInfoUI without name when not snapped
-        * pluto is not a planet anymore
-        */
+        /// <summary>
+        /// CreatePlanetInfoMessage from PlanetInfo for whole PlanetInfoUI without name when not snapped
+        /// Pluto is not a planet anymore
+        /// </summary>
         private void CreateUnnamedPlanetInfoMessage()
         {
             string planetInfoMessage = "";
@@ -206,7 +201,7 @@ namespace Maroon.Experiments.PlanetarySystem
                 messageTMP = GetMessagByKey("PlanetInfo0");
                 planetInfoMessage += " " + messageTMP + " " + GetMessagByKey(planetInfo.PlanetInformationOf.ToString()) + "\n\n";
             }
-            //pluto is not a planet
+            // pluto is not a planet
             else if(planetInfo.PlanetInformationOf == PlanetInformation.Pluto)
              {
                 messageTMP = GetMessagByKey("PlanetInfo0");
@@ -222,15 +217,14 @@ namespace Maroon.Experiments.PlanetarySystem
                 planetInfoMessage += " " + messageTMP + " ???\n\n";
             }
 
-            //combined message
             CreateNasaDataMessage();
             createdPlanetInfoMessage = planetInfoMessage + createdNasaDataMessage;
         }
 
 
-       /*
-        * CreatePlanetInfoMessage from PlanetInfo for whole PlanetInfoUI when snapped
-        */
+        /// <summary>
+        /// CreatePlanetInfoMessage from PlanetInfo for whole PlanetInfoUI when snapped
+        /// </summary>
         private void CreatePlanetInfoMessage()
         {
             string planetInfoMessage = "";
@@ -240,20 +234,17 @@ namespace Maroon.Experiments.PlanetarySystem
             messageTMP = GetMessagByKey("PlanetInfo0");
             planetInfoMessage += " " + messageTMP + " " + GetMessagByKey(planetInfo.PlanetInformationOf.ToString()) + "\n\n";
 
-            //combined message
             CreateNasaDataMessage();
             createdPlanetInfoMessage = planetInfoMessage + createdNasaDataMessage;
         }
         #endregion PlanetInfoMessage
 
 
-        /*
-         * reset
-         */
+        // reset ResetSortingGame
         #region Reset
-        /*
-         * reset sortingPlanet parent, scale, position, sortedPlanetCount
-         */
+        /// <summary>
+        /// reset sortingPlanet parent, scale, position, sortedPlanetCount
+        /// </summary>
         public void ResetObject()
         {
             createdPlanetInfoMessage = "PlanetDescription";

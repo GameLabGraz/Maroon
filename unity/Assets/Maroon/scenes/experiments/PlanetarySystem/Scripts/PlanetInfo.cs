@@ -136,17 +136,16 @@ namespace Maroon.Experiments.PlanetarySystem
         public bool globalMagneticField { get; private set; }
         #endregion Legend
 
-        /*
-         * assign PlanetInfo
-         */
-        #region PlanetInfo
+        /// <summary>
+        /// assign PlanetInfo
+        /// </summary>
         private void Awake()
         {
-            //Debug.Log("PlanetInfo: Awake()");
             switch (PlanetInformationOf)
             {
                 //sun source: NASA.gov https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html
                 case PlanetInformation.Sun:
+                    #region Sun
                     mass = 1988500f;
                     diameter = (695700 * 2); //volumetric mean radius
                     density = 1408f;
@@ -168,8 +167,10 @@ namespace Maroon.Experiments.PlanetarySystem
                     ringSystem = false;
                     globalMagneticField = true;
                     break;
+                #endregion Sun
 
                 case PlanetInformation.Mercury:
+                    #region Mercury
                     mass = 0.33f;
                     diameter = 4879f;
                     density = 5429f;
@@ -191,8 +192,10 @@ namespace Maroon.Experiments.PlanetarySystem
                     ringSystem = false;
                     globalMagneticField = true;
                     break;
+                #endregion Mercury
 
                 case PlanetInformation.Venus:
+                    #region Venus
                     mass = 4.87f;
                     diameter = 12104f;
                     density = 5243f;
@@ -214,8 +217,10 @@ namespace Maroon.Experiments.PlanetarySystem
                     ringSystem = false;
                     globalMagneticField = false;
                     break;
+                #endregion Venus
 
                 case PlanetInformation.Earth:
+                    #region Earth
                     mass = 5.97f;
                     diameter = 12756f;
                     density = 5514f;
@@ -237,8 +242,10 @@ namespace Maroon.Experiments.PlanetarySystem
                     ringSystem = false;
                     globalMagneticField = true;
                     break;
+                #endregion Earth
 
                 case PlanetInformation.Mars:
+                    #region Mars
                     mass = 0.642f;
                     diameter = 6792f;
                     density = 3934f;
@@ -260,7 +267,10 @@ namespace Maroon.Experiments.PlanetarySystem
                     ringSystem = false;
                     globalMagneticField = false;
                     break;
+                #endregion Mars
+
                 case PlanetInformation.Jupiter:
+                    #region Jupiter
                     mass = 1898f;
                     diameter = 142984f;
                     density = 1326f;
@@ -282,8 +292,10 @@ namespace Maroon.Experiments.PlanetarySystem
                     ringSystem = true;
                     globalMagneticField = true;
                     break;
+                #endregion Jupiter
 
                 case PlanetInformation.Saturn:
+                    #region Saturn
                     mass = 568f;
                     diameter = 120536f;
                     density = 687f;
@@ -305,8 +317,10 @@ namespace Maroon.Experiments.PlanetarySystem
                     ringSystem = true;
                     globalMagneticField = true;
                     break;
+                #endregion Saturn
 
                 case PlanetInformation.Uranus:
+                    #region Uranus
                     mass = 86.8f;
                     diameter = 51118f;
                     density = 1270f;
@@ -328,8 +342,10 @@ namespace Maroon.Experiments.PlanetarySystem
                     ringSystem = true;
                     globalMagneticField = true;
                     break;
+                #endregion Uranus
 
                 case PlanetInformation.Neptune:
+                    #region Neptune
                     mass = 102f;
                     diameter = 49528f;
                     density = 1638f;
@@ -351,8 +367,10 @@ namespace Maroon.Experiments.PlanetarySystem
                     ringSystem = true;
                     globalMagneticField = true;
                     break;
+                #endregion Neptune
 
                 case PlanetInformation.Moon:
+                    #region Moon
                     mass = 0.073f;
                     diameter = 3475f;
                     density = 3340f;
@@ -374,8 +392,10 @@ namespace Maroon.Experiments.PlanetarySystem
                     ringSystem = false;
                     globalMagneticField = false;
                     break;
+                #endregion Moon
 
                 case PlanetInformation.Pluto:
+                    #region Pluto
                     mass = 0.0130f;
                     diameter = 2376f;
                     density = 1850f;
@@ -397,8 +417,9 @@ namespace Maroon.Experiments.PlanetarySystem
                     ringSystem = false;
                     globalMagneticField = false;
                     break;
-
+                #endregion Pluto
                 default:
+                    #region Unknown
                     mass = 0f;    //1
                     diameter = 0f;    //2
                     density = 0f;    //3
@@ -420,8 +441,8 @@ namespace Maroon.Experiments.PlanetarySystem
                     ringSystem = false; //19
                     globalMagneticField = false; //20
                     break;
+                    #endregion Unknown
             }
         }
-        #endregion PlanetInfo
     }
 }

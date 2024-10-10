@@ -6,40 +6,42 @@ namespace Maroon.Experiments.PlanetarySystem
     public class StartInteraction : MonoBehaviour
     {
         public UnityEvent onMouseDownEvent;
+        private Material material; // screen png
         public Color hoverColor;
-
-        // screen png
-        private Material material;
         private Color originalColor;
 
-        /*
-         * Store the screen png
-         */
+
+        /// <summary>
+        /// store the screen png
+        /// </summary>
         private void Start()
         {
             material = GetComponent<Renderer>().material;
             originalColor = material.color;
         }
 
-        /*
-         * UnityEvent to starts SortingGame or Animation when the screen is clicked
-         */
+
+        /// <summary>
+        /// UnityEvent to starts SortingGame or Animation when the screen is clicked
+        /// </summary>
         private void OnMouseDown()
         {
             onMouseDownEvent.Invoke();
         }
 
-        /*
-         * Update the material's color on hover
-         */
+
+        /// <summary>
+        /// update the material's color on hover
+        /// </summary>
         private void OnMouseEnter()
         {
             material.color = hoverColor;
         }
 
-        /*
-         * Restore the original color on mouse exit
-         */
+
+        /// <summary>
+        /// restore the original color on mouse exit
+        /// </summary>
         private void OnMouseExit()
         {
             material.color = originalColor;
