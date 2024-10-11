@@ -249,7 +249,7 @@ GameObject:
   - component: {fileID: 70881450}
   - component: {fileID: 70881451}
   m_Layer: 0
-  m_Name: Start Scene Controller
+  m_Name: Interaction Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -284,6 +284,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   planetaryController: {fileID: 1319881025}
   planetTrajectoryController: {fileID: 1319881032}
+  planetSortingGameController: {fileID: 1319881033}
   SortingMinigame: {fileID: 1788952704}
   SortingGamePlanetInfoUI: {fileID: 2033498728}
   FormulaUI: {fileID: 1482898994}
@@ -7908,62 +7909,62 @@ PrefabInstance:
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 550
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239375179209, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
@@ -10750,6 +10751,7 @@ GameObject:
   - component: {fileID: 1319881025}
   - component: {fileID: 1319881031}
   - component: {fileID: 1319881032}
+  - component: {fileID: 1319881033}
   m_Layer: 0
   m_Name: Game Controller
   m_TagString: Untagged
@@ -10806,12 +10808,8 @@ MonoBehaviour:
   - {fileID: 761802526}
   - {fileID: 471740719}
   - {fileID: 1137449821}
-  sortedPlanetCount: 0
-  sortingGamePlanetPlaceholderSlots: {fileID: 663129655}
   resetAnimationDelay: 0.5
   skyboxMaterial: {fileID: 2100000, guid: f0742823962d31b4ebfa4be9309ddd4e, type: 2}
-  sunLight: {fileID: 2106201721}
-  solarFlares: {fileID: 1316150660}
 --- !u!114 &1319881027
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10857,6 +10855,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   planetaryController: {fileID: 1319881025}
   planetTrajectoryController: {fileID: 1319881032}
+  planetSortingGameController: {fileID: 1319881033}
   gravitationalConstantG: 6.674
   timeSpeed: 1
   sliderG: {fileID: 1853700500}
@@ -10931,6 +10930,22 @@ MonoBehaviour:
       type: 2}
     segments: 11000
   lineThickness: 0.4
+--- !u!114 &1319881033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1319881022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e05487abe1ec90f4cb4adcf4980ec5c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sortedPlanetCount: 0
+  sortingGamePlanetPlaceholderSlots: {fileID: 663129655}
+  sunLight: {fileID: 2106201721}
+  solarFlares: {fileID: 1316150660}
 --- !u!1001 &1323812446
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17093,62 +17108,62 @@ PrefabInstance:
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 550
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239375179209, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
@@ -17799,62 +17814,62 @@ PrefabInstance:
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 550
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239375179209, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
@@ -18710,32 +18725,32 @@ PrefabInstance:
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 550
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200116, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
@@ -18755,32 +18770,32 @@ PrefabInstance:
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239375179209, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
@@ -21692,6 +21707,11 @@ PrefabInstance:
       propertyPath: planetInfoMessageText
       value: 
       objectReference: {fileID: 1205371376}
+    - target: {fileID: 759164026816812497, guid: 2d939f8da696c6347ac11f0ab79ec278,
+        type: 3}
+      propertyPath: planetSortingGameController
+      value: 
+      objectReference: {fileID: 1319881033}
     - target: {fileID: 759164027129479563, guid: 2d939f8da696c6347ac11f0ab79ec278,
         type: 3}
       propertyPath: m_Name
@@ -21702,11 +21722,21 @@ PrefabInstance:
       propertyPath: planetInfoMessageText
       value: 
       objectReference: {fileID: 1205371376}
+    - target: {fileID: 759164027226428126, guid: 2d939f8da696c6347ac11f0ab79ec278,
+        type: 3}
+      propertyPath: planetSortingGameController
+      value: 
+      objectReference: {fileID: 1319881033}
     - target: {fileID: 759164027265173056, guid: 2d939f8da696c6347ac11f0ab79ec278,
         type: 3}
       propertyPath: planetInfoMessageText
       value: 
       objectReference: {fileID: 1205371376}
+    - target: {fileID: 759164027265173056, guid: 2d939f8da696c6347ac11f0ab79ec278,
+        type: 3}
+      propertyPath: planetSortingGameController
+      value: 
+      objectReference: {fileID: 1319881033}
     - target: {fileID: 759164027332656697, guid: 2d939f8da696c6347ac11f0ab79ec278,
         type: 3}
       propertyPath: m_Name
@@ -21722,26 +21752,51 @@ PrefabInstance:
       propertyPath: planetInfoMessageText
       value: 
       objectReference: {fileID: 1205371376}
+    - target: {fileID: 759164027332656701, guid: 2d939f8da696c6347ac11f0ab79ec278,
+        type: 3}
+      propertyPath: planetSortingGameController
+      value: 
+      objectReference: {fileID: 1319881033}
     - target: {fileID: 759164027675506815, guid: 2d939f8da696c6347ac11f0ab79ec278,
+        type: 3}
+      propertyPath: planetInfoMessageText
+      value: 
+      objectReference: {fileID: 1205371376}
+    - target: {fileID: 759164027675506815, guid: 2d939f8da696c6347ac11f0ab79ec278,
+        type: 3}
+      propertyPath: planetSortingGameController
+      value: 
+      objectReference: {fileID: 1319881033}
+    - target: {fileID: 759164027765880800, guid: 2d939f8da696c6347ac11f0ab79ec278,
         type: 3}
       propertyPath: planetInfoMessageText
       value: 
       objectReference: {fileID: 1205371376}
     - target: {fileID: 759164027765880800, guid: 2d939f8da696c6347ac11f0ab79ec278,
         type: 3}
+      propertyPath: planetSortingGameController
+      value: 
+      objectReference: {fileID: 1319881033}
+    - target: {fileID: 759164027959692948, guid: 2d939f8da696c6347ac11f0ab79ec278,
+        type: 3}
       propertyPath: planetInfoMessageText
       value: 
       objectReference: {fileID: 1205371376}
     - target: {fileID: 759164027959692948, guid: 2d939f8da696c6347ac11f0ab79ec278,
+        type: 3}
+      propertyPath: planetSortingGameController
+      value: 
+      objectReference: {fileID: 1319881033}
+    - target: {fileID: 759164028071141588, guid: 2d939f8da696c6347ac11f0ab79ec278,
         type: 3}
       propertyPath: planetInfoMessageText
       value: 
       objectReference: {fileID: 1205371376}
     - target: {fileID: 759164028071141588, guid: 2d939f8da696c6347ac11f0ab79ec278,
         type: 3}
-      propertyPath: planetInfoMessageText
+      propertyPath: planetSortingGameController
       value: 
-      objectReference: {fileID: 1205371376}
+      objectReference: {fileID: 1319881033}
     - target: {fileID: 759164028402303402, guid: 2d939f8da696c6347ac11f0ab79ec278,
         type: 3}
       propertyPath: m_Name
@@ -21807,16 +21862,31 @@ PrefabInstance:
       propertyPath: planetInfoMessageText
       value: 
       objectReference: {fileID: 1205371376}
+    - target: {fileID: 759164028452427905, guid: 2d939f8da696c6347ac11f0ab79ec278,
+        type: 3}
+      propertyPath: planetSortingGameController
+      value: 
+      objectReference: {fileID: 1319881033}
     - target: {fileID: 759164028915578239, guid: 2d939f8da696c6347ac11f0ab79ec278,
+        type: 3}
+      propertyPath: planetInfoMessageText
+      value: 
+      objectReference: {fileID: 1205371376}
+    - target: {fileID: 759164028915578239, guid: 2d939f8da696c6347ac11f0ab79ec278,
+        type: 3}
+      propertyPath: planetSortingGameController
+      value: 
+      objectReference: {fileID: 1319881033}
+    - target: {fileID: 759164028951561139, guid: 2d939f8da696c6347ac11f0ab79ec278,
         type: 3}
       propertyPath: planetInfoMessageText
       value: 
       objectReference: {fileID: 1205371376}
     - target: {fileID: 759164028951561139, guid: 2d939f8da696c6347ac11f0ab79ec278,
         type: 3}
-      propertyPath: planetInfoMessageText
+      propertyPath: planetSortingGameController
       value: 
-      objectReference: {fileID: 1205371376}
+      objectReference: {fileID: 1319881033}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

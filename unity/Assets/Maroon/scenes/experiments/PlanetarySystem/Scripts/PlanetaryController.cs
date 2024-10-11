@@ -5,7 +5,6 @@ using GEAR.Localization;    //MLG
 using System.Collections;
 
 
-
 namespace Maroon.Experiments.PlanetarySystem
 {
     public class PlanetaryController : MonoBehaviour, IResetObject
@@ -14,7 +13,6 @@ namespace Maroon.Experiments.PlanetarySystem
         public PlanetTrajectoryController planetTrajectoryController;
         public StartScreenScenes startScreenScenes;
 
-
         #region Cameras
         [SerializeField] private GameObject MainCamera;                 //off
         [SerializeField] private GameObject SolarSystemAnimationCamera; //on
@@ -22,41 +20,21 @@ namespace Maroon.Experiments.PlanetarySystem
         [SerializeField] private GameObject TelescopeCamera;            //off
         public Camera AnimationCamera;
 
-        public float initialAnimationCameraFov;
-        public Vector3 initialAnimationCameraPosition;
-        public Quaternion initialAnimationCameraRotation;
+        [HideInInspector] public float initialAnimationCameraFov;
+        [HideInInspector] public Vector3 initialAnimationCameraPosition;
+        [HideInInspector] public Quaternion initialAnimationCameraRotation;
         #endregion Cameras
 
-        #region SolarSystem
-        public float G; // gravitational constant 6.674
+        [HideInInspector] public float G; // gravitational constant 6.674
         private GameObject sun;
-
         public GameObject[] planets;
-        #endregion SolarSystem
 
-        #region SortingGameSpawner
-        public int sortedPlanetCount = 0;
-        [SerializeField] private GameObject sortingGamePlanetPlaceholderSlots;
-        GameObject[] sortingPlanets;
-        private readonly List<int> sortingGameAvailableSlotPositions = new List<int>();
-        #endregion SortingGameSpawner
-
-        #region ResetAnimation
         private readonly List<Vector3> initialPlanetPositions = new List<Vector3>();
         private readonly List<Vector3> initialPlanetRotations = new List<Vector3>();
         [SerializeField] private float resetAnimationDelay = 0.3f;
-        #endregion ResetAnimation
 
-        #region Helpi
         private DialogueManager _dialogueManager;
-        #endregion Helpi
-
-        #region KeyInput
         [SerializeField] private Material skyboxMaterial;
-        [SerializeField] private Light sunLight;
-        [SerializeField] private ParticleSystem solarFlares;
-        #endregion KeyInput
-
         //---------------------------------------------------------------------------------------
        
         // Instance of PlanetaryController
@@ -85,7 +63,6 @@ namespace Maroon.Experiments.PlanetarySystem
             sun.SetActive(true);
 
             InitializeAndScalePlanets();
-            planetTrajectoryController.InitializeLineRenderer();
         }
 
 
@@ -95,7 +72,6 @@ namespace Maroon.Experiments.PlanetarySystem
         private void Start()
         {
             StoreInitialCamera();
-            planetTrajectoryController.SetupLineRenderer();
             startScreenScenes.Animation.SetActive(false);
         }
 
@@ -106,9 +82,7 @@ namespace Maroon.Experiments.PlanetarySystem
         /// </summary>
         private void Update()
         {
-            HandleKeyInput();
             AnimationCameraMouseWheelFOV();
-            planetTrajectoryController.DrawTrajectory(); // switch off and activate Particle System in planet prefab for optional trajectory approach
         }
 
 
@@ -132,7 +106,6 @@ namespace Maroon.Experiments.PlanetarySystem
         /// <param name="key"></param>
         public void DisplayMessageByKey(string key)
         {
-
             if (_dialogueManager == null)
                 _dialogueManager = FindObjectOfType<DialogueManager>();
 
@@ -144,95 +117,6 @@ namespace Maroon.Experiments.PlanetarySystem
             _dialogueManager.ShowMessage(message);
         }
         #endregion Helpi
-
-
-        // HandlesKeyInput during Update
-        #region KeyInput
-        /// <summary>
-        /// HandlesKeyInput during Update
-        /// toggle sunlight                   on key [L]
-        /// </summary>
-        private void HandleKeyInput()
-        {
-            foreach (KeyCode keyCode in System.Enum.GetValues(typeof(KeyCode)))
-            {
-                if (Input.GetKeyDown(keyCode))
-                {
-                    switch (keyCode)
-                    {
-                        case KeyCode.L:
-                            sunLight.gameObject.SetActive(!sunLight.gameObject.activeSelf);
-                            // Sync the toggle button state with sunLight's state
-                            //ToggleSunLight.isOn = sunLight.gameObject.activeSelf;
-                            ToggleSunLight(sunLight.gameObject.activeSelf);
-                            break;
-
-                        default:
-                            break;
-                    }
-                }
-            }
-        }
-        #endregion KeyInput
-
-
-        // handles the SortingGame
-        #region SortingGameSpawner
-        /*
-         * find planets with tag Planet and initializes them
-         */
-        private void InitializeSortingPlanets()
-        {
-            //Debug.Log("PlanetaryController: InitializePlanets():");
-            sortingPlanets = GameObject.FindGameObjectsWithTag("SortingGamePlanet");
-            if (planets.Length <= 0)
-            {
-                //Should not happen
-                Debug.Log("PlanetaryController: InitializeSortingPlanets(): No sortingPlanets found:  " + sortingPlanets.Length);
-            }
-        }
-
-
-        /*
-         * Initialize the availablePositions list with all possible sorting positions
-         * called from StartSortingGame
-         */
-        public void InitializeAvailableSortingGameSlotPositions()
-        {
-            //Debug.Log("PlanetaryController: InitializeAvailableSortingGameSlotPositions():");
-            int boxSize = 24;
-            for (int i = 0; i < boxSize; i++)
-            {
-                sortingGameAvailableSlotPositions.Add(i);
-            }
-
-            InitializeSortingPlanets();
-            SpawnSortingPlanets();
-        }
-
-
-        /*
-         * Spawn the SortingPlanets on a random sortingGameAvailableSlotPositions
-         */
-        private void SpawnSortingPlanets()
-        {
-            //Debug.Log("PlanetaryController: SpawnSortingPlanets():");
-            for (int i = 0; i < sortingPlanets.Length; i++)
-            {
-                // Randomly select a position index from the sortingGameAvailableSlotPositions list
-                int randomIndex = Random.Range(0, sortingGameAvailableSlotPositions.Count);
-
-                // Get the selected position index and remove it from the list to avoid duplicate positions
-                int positionIndex = sortingGameAvailableSlotPositions[randomIndex];
-                sortingGameAvailableSlotPositions.RemoveAt(randomIndex);
-
-                // Get the child object of the placeholder GameObject at the selected position index
-                Transform spawnPosition = sortingGamePlanetPlaceholderSlots.transform.GetChild(positionIndex);
-                sortingPlanets[i].transform.SetParent(spawnPosition);
-                sortingPlanets[i].transform.position = spawnPosition.position;
-            }
-        }
-        #endregion SortingGameSpawner
 
 
         //SolarSystems handles Newtons Gravity, Initial Velocity and the planets
@@ -469,6 +353,22 @@ namespace Maroon.Experiments.PlanetarySystem
 
 
         /// <summary>
+        /// StoreInitialCameras
+        /// </summary>
+        private void StoreInitialCamera()
+        {
+            if (AnimationCamera == null)
+            {
+                Debug.Log("PlanetaryController: StoreInitialAnimationCamera(): AnimationCamera missing");
+            }
+
+            initialAnimationCameraPosition = AnimationCamera.transform.position;
+            initialAnimationCameraRotation = AnimationCamera.transform.rotation;
+            initialAnimationCameraFov = AnimationCamera.fieldOfView;
+        }
+
+
+        /// <summary>
         /// change AnimationCamera FOV with mouse scroll wheel
         /// </summary>
         private void AnimationCameraMouseWheelFOV()
@@ -482,7 +382,6 @@ namespace Maroon.Experiments.PlanetarySystem
                 AnimationCamera.fieldOfView = Mathf.Clamp(AnimationCamera.fieldOfView, 10, 180);
             }
         }
-
 
 
         /// <summary>
@@ -524,32 +423,8 @@ namespace Maroon.Experiments.PlanetarySystem
         #endregion Animation
 
 
-        
-
-
         // toggle functions
         #region ToggleFunctions
-        /// <summary>
-        /// toggles the rotation of the minigame sortable planets after button press
-        /// </summary>
-        /// <param name="isOn"></param>
-        public void ToggleSGRotation(bool isOn)
-        {
-            //Debug.Log("PlanetController(): UIToggleSGRotation = " + isOn);
-            InitializeSortingPlanets();
-
-            foreach (GameObject planet in sortingPlanets)
-            {
-                //Debug.Log("PlanetController(): UIToggleSGRotation(): planet = " + planet);
-                PlanetRotation rotationScript = planet.GetComponent<PlanetRotation>();
-                if (rotationScript != null)
-                {
-                    rotationScript.enabled = isOn;
-                }
-            }
-        }
-
-
         /// <summary>
         /// toggles the rotation of the animation planets button press
         /// </summary>
@@ -564,31 +439,6 @@ namespace Maroon.Experiments.PlanetarySystem
                 if (rotationScript != null)
                 {
                     rotationScript.enabled = isOn;
-                }
-            }
-        }
-
-
-        /// <summary>
-        /// toggles the rotation of the minigame sortable planets button press
-        /// </summary>
-        /// <param name="isOn"></param>
-        public void ToggleSGOrientation(bool isOn)
-        {
-            //Debug.Log("PlanetController(): UIToggleSGOrientation = " + isOn);
-            InitializeSortingPlanets();
-
-            foreach (GameObject sortingPlanet in sortingPlanets)
-            {
-                //Debug.Log("PlanetController(): UIToggleSGOrientation(): planet = " + planet);
-                GameObject orientationGizmo = sortingPlanet.transform.Find("orientation gizmo").gameObject;
-                if (orientationGizmo != null)
-                {
-                    orientationGizmo.SetActive(isOn);
-                }
-                else
-                {
-                    Debug.Log("PlanetController(): UIToggleSGOrientation(): No orientation gizmo found");
                 }
             }
         }
@@ -633,37 +483,6 @@ namespace Maroon.Experiments.PlanetarySystem
 
 
         /// <summary>
-        /// toggles the sun's solarflares in the sorting game after button press
-        /// </summary>
-        /// <param name="isOn"></param>
-        public void ToggleSolarFlares(bool isOn)
-        {
-            //Debug.Log("PlanetController(): UIToggleSolarFlares = " + isOn);
-            solarFlares.gameObject.SetActive(isOn);
-            if (isOn)
-            {
-                solarFlares.Play();
-            }
-            else
-            {
-                solarFlares.Stop();
-            }
-        }
-
-
-        /// <summary>
-        /// toggles the sun's pointlight in the sorting game after button press
-        /// </summary>
-        /// <param name="isOn"></param>
-        public void ToggleSunLight(bool isOn)
-        {
-            //Debug.Log("PlanetController(): UIToggleSunLight = " + !isOn);
-            sunLight.gameObject.SetActive(isOn);
-        }
-        #endregion ToggleFunctions
-
-
-        /// <summary>
         /// hides planets and trajectories after radiobutton is pressed
         /// </summary>
         /// <param name="isOn"></param>
@@ -676,36 +495,11 @@ namespace Maroon.Experiments.PlanetarySystem
             planetTrajectoryController.ToggleTrajectory(index, !isOn);
             uiController.planetToggles[index].isOn = isOn;
         }
+        #endregion ToggleFunctions
 
 
-        /// <summary>
-        /// StoreInitialCameras
-        /// </summary>
-        private void StoreInitialCamera()
-        {
-            if (AnimationCamera == null)
-            {
-                Debug.Log("PlanetaryController: StoreInitialAnimationCamera(): AnimationCamera missing");
-            }
-
-            initialAnimationCameraPosition = AnimationCamera.transform.position;
-            initialAnimationCameraRotation = AnimationCamera.transform.rotation;
-            initialAnimationCameraFov = AnimationCamera.fieldOfView;
-        }
-
-
-        // handles homeReset / reset vunctinality
+        // handles homeReset / reset functinality
         #region ResetBar
-        /// <summary>
-        /// ResetSortingGame planet positions
-        /// </summary>
-        public void ResetSortingGame()
-        {
-            sortingGameAvailableSlotPositions.Clear();
-            InitializeAvailableSortingGameSlotPositions();
-        }
-
-
         /// <summary>
         /// Reset planets during ResetAnimation on reset 
         /// </summary>
@@ -749,7 +543,7 @@ namespace Maroon.Experiments.PlanetarySystem
         /// <summary>
         /// ResetAnimation on reset and on StartAnimation
         /// </summary>
-        public void ResetAnimation()
+        /*public void ResetAnimation()
         {
             bool hide = false;
             for (int index = 0; index < uiController.planetToggles.Length; index++)
@@ -762,7 +556,7 @@ namespace Maroon.Experiments.PlanetarySystem
             planetTrajectoryController.ClearTrajectories();
             ResetAnimationPlanets();
         }
-
+        */
 
         /// <summary>
         /// ResetHome button deactivates Animation and SortingGame Gameobjects
@@ -787,7 +581,7 @@ namespace Maroon.Experiments.PlanetarySystem
         public void ResetObject()
         {
             //Debug.Log("PlanetaryController: ResetObject(): button pressed");
-            ResetAnimation();
+            uiController.ResetAnimation();
         }
         #endregion ResetBar
     }

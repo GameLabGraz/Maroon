@@ -6,8 +6,10 @@ namespace Maroon.Experiments.PlanetarySystem
 {
     public class StartScreenScenes : MonoBehaviour
     {
+        public PlanetarySimulationUIController uiController;
         public PlanetaryController planetaryController;
         public PlanetTrajectoryController planetTrajectoryController;
+        public PlanetSortingGameController planetSortingGameController;
 
         public GameObject SortingMinigame;
         public GameObject SortingGamePlanetInfoUI;
@@ -141,7 +143,7 @@ namespace Maroon.Experiments.PlanetarySystem
             SortingGamePlanetInfoUI.SetActive(true);
             FormulaUI.SetActive(false);
 
-            planetaryController.ToggleSGRotation(true);
+            planetSortingGameController.ToggleSGRotation(true);
             planetaryController.DisplayMessageByKey("EnterSortingGame");
         }
 
@@ -167,7 +169,7 @@ namespace Maroon.Experiments.PlanetarySystem
         {
             yield return StartCoroutine(LerpCameraToInitialPosition(MainCamera, 0.5f));
 
-            planetaryController.ToggleSunLight(false);
+            planetSortingGameController.ToggleSunLight(false);
             SortingMinigame.SetActive(false);
         }
 
@@ -205,7 +207,7 @@ namespace Maroon.Experiments.PlanetarySystem
             MainCamera.SetActive(false);
             SolarSystemAnimationCamera.SetActive(true);
 
-            planetaryController.ResetAnimation();
+            uiController.ResetAnimation();
             planetaryController.DisplayMessageByKey("EnterAnimation");
         }
 

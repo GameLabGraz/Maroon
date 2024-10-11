@@ -7,6 +7,7 @@ namespace Maroon.Experiments.PlanetarySystem
     {
         public PlanetaryController planetaryController;
         public PlanetTrajectoryController planetTrajectoryController;
+        public PlanetSortingGameController planetSortingGameController;
 
         [SerializeField] private float gravitationalConstantG = 6.674f;
         [SerializeField] private float timeSpeed = 1f;
@@ -48,11 +49,12 @@ namespace Maroon.Experiments.PlanetarySystem
             toggleAllTrajectories.onValueChanged.AddListener((bool isOn) => planetTrajectoryController.ToggleAllTrajectories(isOn));
             toggleARotation.onValueChanged.AddListener((bool isOn) => planetaryController.ToggleARotation(!isOn));
             toggleSunKinematic.onValueChanged.AddListener((bool isOn) => planetaryController.ToggleSunKinematic(isOn));
-            toggleSGOrientationGizmo.onValueChanged.AddListener((bool isOn) => planetaryController.ToggleSGOrientation(isOn));
             toggleAOrientationGizmo.onValueChanged.AddListener((bool isOn) => planetaryController.ToggleAOrientation(isOn));
-            toggleSGRotation.onValueChanged.AddListener((bool isOn) => planetaryController.ToggleSGRotation(isOn));
-            toggleSunLight.onValueChanged.AddListener((bool isOn) => planetaryController.ToggleSunLight(isOn));
-            toggleSolarFlares.onValueChanged.AddListener((bool isOn) => planetaryController.ToggleSolarFlares(isOn));
+
+            toggleSGOrientationGizmo.onValueChanged.AddListener((bool isOn) => planetSortingGameController.ToggleSGOrientation(isOn));
+            toggleSGRotation.onValueChanged.AddListener((bool isOn) => planetSortingGameController.ToggleSGRotation(isOn));
+            toggleSunLight.onValueChanged.AddListener((bool isOn) => planetSortingGameController.ToggleSunLight(isOn));
+            toggleSolarFlares.onValueChanged.AddListener((bool isOn) => planetSortingGameController.ToggleSolarFlares(isOn));
    
             for (int index = 0; index < planetToggles.Length; index++)
             {
@@ -74,11 +76,12 @@ namespace Maroon.Experiments.PlanetarySystem
             toggleAllTrajectories.onValueChanged.RemoveListener((bool isOn) => planetTrajectoryController.ToggleAllTrajectories(isOn));
             toggleARotation.onValueChanged.RemoveListener((bool isOn) => planetaryController.ToggleARotation(isOn));
             toggleSunKinematic.onValueChanged.RemoveListener((bool isOn) => planetaryController.ToggleSunKinematic(isOn));
-            toggleSGOrientationGizmo.onValueChanged.RemoveListener((bool isOn) => planetaryController.ToggleSGOrientation(isOn));
             toggleAOrientationGizmo.onValueChanged.RemoveListener((bool isOn) => planetaryController.ToggleAOrientation(isOn));
-            toggleSGRotation.onValueChanged.RemoveListener((bool isOn) => planetaryController.ToggleSGRotation(isOn));
-            toggleSunLight.onValueChanged.RemoveListener((bool isOn) => planetaryController.ToggleSunLight(isOn));
-            toggleSolarFlares.onValueChanged.RemoveListener((bool isOn) => planetaryController.ToggleSolarFlares(isOn));
+
+            toggleSGOrientationGizmo.onValueChanged.RemoveListener((bool isOn) => planetSortingGameController.ToggleSGOrientation(isOn));
+            toggleSGRotation.onValueChanged.RemoveListener((bool isOn) => planetSortingGameController.ToggleSGRotation(isOn));
+            toggleSunLight.onValueChanged.RemoveListener((bool isOn) => planetSortingGameController.ToggleSunLight(isOn));
+            toggleSolarFlares.onValueChanged.RemoveListener((bool isOn) => planetSortingGameController.ToggleSolarFlares(isOn));
     
             for (int index = 0; index < planetToggles.Length; index++)
             {
@@ -161,7 +164,7 @@ namespace Maroon.Experiments.PlanetarySystem
         /// <summary>
         /// ResetAnimation on reset and on StartAnimation
         /// </summary>
-        /*
+        
         public void ResetAnimation()
         {
             bool hide = false;
@@ -170,12 +173,11 @@ namespace Maroon.Experiments.PlanetarySystem
                 planetaryController.TogglePlanet(hide, index);
             }
 
-            planetaryController.ClearTrajectories();
+            planetTrajectoryController.ClearTrajectories();
             ResetCamera();
             ResetAnimationValues();
             planetaryController.ResetAnimationPlanets();
         }
-        */
 
 
         /// <summary>

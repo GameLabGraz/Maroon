@@ -7,6 +7,8 @@ namespace Maroon.Experiments.PlanetarySystem
 {
     public class SortingPlanetsDragAndDrop : MonoBehaviour, IResetObject
     {
+        public PlanetSortingGameController planetSortingGameController;
+
         public AudioSource audioSource;
         public AudioClip pickUpClip;
         public AudioClip dropClip;
@@ -88,10 +90,10 @@ namespace Maroon.Experiments.PlanetarySystem
         private void IncrementSnappedPlanetCount()
         {
             int solarSystemPlanet = 10;
-            PlanetaryController.Instance.sortedPlanetCount++;
+            planetSortingGameController.sortedPlanetCount++;
 
             // check if we have snapped all 10 out of 11 planets, excluding pluto, including moon ad sun
-            if (PlanetaryController.Instance.sortedPlanetCount >= solarSystemPlanet)
+            if (planetSortingGameController.sortedPlanetCount >= solarSystemPlanet)
             {
                 PlanetaryController.Instance.DisplayMessageByKey("OrderedSortingGame");
             }
@@ -145,11 +147,11 @@ namespace Maroon.Experiments.PlanetarySystem
 
             transform.localScale = new Vector3(1, 1, 1);
             transform.localRotation = Quaternion.identity;
-            PlanetaryController.Instance.ResetSortingGame();
+            planetSortingGameController.ResetSortingGame();
             if (sunLightHalo != null)
                 sunLightHalo.range = 0.25f;
 
-            PlanetaryController.Instance.sortedPlanetCount = 0;
+            planetSortingGameController.sortedPlanetCount = 0;
             isSnapped = false;
             PlanetInfo planetInfo = GetComponent<PlanetInfo>();
             planetInfo.IsSnapped = false;

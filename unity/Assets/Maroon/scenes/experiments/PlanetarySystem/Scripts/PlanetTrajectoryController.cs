@@ -22,6 +22,26 @@ namespace Maroon.Experiments.PlanetarySystem
         //---------------------------------------------------------------------------------------
 
 
+        /// <summary>
+        /// general start setup
+        /// </summary>
+        private void Start()
+        {
+            InitializeLineRenderer();
+            SetupLineRenderer();
+        }
+
+
+        /// <summary>
+        /// updates he LineRenderer to draw the paths 
+        /// dequeue the drawn trajectory paths to be deleted number of segments 
+        /// </summary>
+        private void Update()
+        {
+            DrawTrajectory(); // switch off and activate Particle System in planet prefab for optional trajectory approach
+        }
+
+
         //create LineRender and Trajectories
         #region Trajectories
         /// <summary>
@@ -82,9 +102,6 @@ namespace Maroon.Experiments.PlanetarySystem
                 }
 
                 previousPositions.Enqueue(pt.planet.transform.position);
-                //if (lineRenderers[i].enabled == false)
-                //    Debug.Log("Linerenderer[" + i + "] disabled ");
-
                 lineRenderers[i].positionCount = previousPositions.Count;
                 lineRenderers[i].SetPositions(previousPositions.ToArray());
             }
