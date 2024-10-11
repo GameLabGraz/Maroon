@@ -6,6 +6,7 @@ namespace Maroon.Experiments.PlanetarySystem
     public class PlanetarySimulationUIController : MonoBehaviour
     {
         public PlanetaryController planetaryController;
+        public PlanetTrajectoryController planetTrajectoryController;
 
         [SerializeField] private float gravitationalConstantG = 6.674f;
         [SerializeField] private float timeSpeed = 1f;
@@ -44,7 +45,7 @@ namespace Maroon.Experiments.PlanetarySystem
             sliderTimeSpeed.onValueChanged.AddListener(OnTimeSliderValueChanged);
             sliderAnimationCameraFov.onValueChanged.AddListener(OnFOVSliderValueChanged);
 
-            toggleAllTrajectories.onValueChanged.AddListener((bool isOn) => planetaryController.ToggleAllTrajectories(isOn));
+            toggleAllTrajectories.onValueChanged.AddListener((bool isOn) => planetTrajectoryController.ToggleAllTrajectories(isOn));
             toggleARotation.onValueChanged.AddListener((bool isOn) => planetaryController.ToggleARotation(!isOn));
             toggleSunKinematic.onValueChanged.AddListener((bool isOn) => planetaryController.ToggleSunKinematic(isOn));
             toggleSGOrientationGizmo.onValueChanged.AddListener((bool isOn) => planetaryController.ToggleSGOrientation(isOn));
@@ -70,7 +71,7 @@ namespace Maroon.Experiments.PlanetarySystem
             sliderTimeSpeed.onValueChanged.RemoveListener(OnTimeSliderValueChanged);
             sliderAnimationCameraFov.onValueChanged.RemoveListener(OnFOVSliderValueChanged);
 
-            toggleAllTrajectories.onValueChanged.RemoveListener((bool isOn) => planetaryController.ToggleAllTrajectories(isOn));
+            toggleAllTrajectories.onValueChanged.RemoveListener((bool isOn) => planetTrajectoryController.ToggleAllTrajectories(isOn));
             toggleARotation.onValueChanged.RemoveListener((bool isOn) => planetaryController.ToggleARotation(isOn));
             toggleSunKinematic.onValueChanged.RemoveListener((bool isOn) => planetaryController.ToggleSunKinematic(isOn));
             toggleSGOrientationGizmo.onValueChanged.RemoveListener((bool isOn) => planetaryController.ToggleSGOrientation(isOn));

@@ -7,6 +7,7 @@ namespace Maroon.Experiments.PlanetarySystem
     public class StartScreenScenes : MonoBehaviour
     {
         public PlanetaryController planetaryController;
+        public PlanetTrajectoryController planetTrajectoryController;
 
         public GameObject SortingMinigame;
         public GameObject SortingGamePlanetInfoUI;
@@ -179,7 +180,7 @@ namespace Maroon.Experiments.PlanetarySystem
             LeaveSortingGame();
             FormulaUI.SetActive(false);
 
-            planetaryController.ToggleAllTrajectories(true);
+            planetTrajectoryController.ToggleAllTrajectories(true);
 
             StartCoroutine(LerpCameraStartAnimation());
         }
