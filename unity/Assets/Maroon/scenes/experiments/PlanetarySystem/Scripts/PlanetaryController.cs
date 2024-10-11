@@ -541,24 +541,6 @@ namespace Maroon.Experiments.PlanetarySystem
 
 
         /// <summary>
-        /// ResetAnimation on reset and on StartAnimation
-        /// </summary>
-        /*public void ResetAnimation()
-        {
-            bool hide = false;
-            for (int index = 0; index < uiController.planetToggles.Length; index++)
-            {
-                TogglePlanet(hide, index);
-            }
-
-            uiController.ResetCamera();
-            uiController.ResetAnimationValues();
-            planetTrajectoryController.ClearTrajectories();
-            ResetAnimationPlanets();
-        }
-        */
-
-        /// <summary>
         /// ResetHome button deactivates Animation and SortingGame Gameobjects
         /// activates FormulaUI
         /// stopps all LERP camera coroutines

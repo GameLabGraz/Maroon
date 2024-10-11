@@ -190,17 +190,5 @@ namespace Maroon.Experiments.PlanetarySystem
 
             sliderAnimationCameraFov.value = planetaryController.initialAnimationCameraFov;
         }
-
-
-        /// <summary>
-        /// reset
-        /// </summary>
-        /*
-        public void ResetObject()
-        {
-            //Debug.Log("PlanetarySimulationUIController: ResetObject(): button pressed");
-            ResetAnimation();
-        }
-        */
     }
 }
