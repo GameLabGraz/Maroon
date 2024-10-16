@@ -7,9 +7,8 @@ using System.Collections;
 
 namespace Maroon.Experiments.PlanetarySystem
 {
-    public class PlanetaryController : MonoBehaviour, IResetObject
+    public class PlanetaryController : MonoBehaviour
     {
-        public PlanetarySimulationUIController uiController;
         public PlanetTrajectoryController planetTrajectoryController;
         public StartScreenScenes startScreenScenes;
 
@@ -94,7 +93,6 @@ namespace Maroon.Experiments.PlanetarySystem
         private void FixedUpdate()
         {
             Gravity();
-            CheckCollisionsWithSun();
         }
 
 
@@ -389,7 +387,7 @@ namespace Maroon.Experiments.PlanetarySystem
         /// </summary>
         /// <param name="planet"></param>
         /// <returns></returns>
-        private bool CheckCollisionWithSun(GameObject planet)
+        public bool CheckCollisionWithSun(GameObject planet)
         {
             Collider planetCollider = planet.GetComponent<Collider>();
             Collider sunCollider = sun.GetComponent<Collider>();
@@ -402,23 +400,6 @@ namespace Maroon.Experiments.PlanetarySystem
             }
 
             return false;
-        }
-
-
-        /// <summary>
-        /// check if planet collides with sun and toggles the planet if there is a collision
-        /// </summary>
-        private void CheckCollisionsWithSun()
-        {
-            for (int index = 1; index < planets.Length; index++)
-            {
-                if (CheckCollisionWithSun(planets[index]))
-                {
-                    //Debug.Log("PlanetaryController: CheckCollisionsWithSun(): " + planets[index] + " collides with sun");
-                    bool hide = true;
-                    TogglePlanet(hide, index);
-                }
-            }
         }
         #endregion Animation
 
@@ -480,21 +461,6 @@ namespace Maroon.Experiments.PlanetarySystem
                 RecalculateInitialVelocity(planets[0]);
             }
         }
-
-
-        /// <summary>
-        /// hides planets and trajectories after radiobutton is pressed
-        /// </summary>
-        /// <param name="isOn"></param>
-        /// <param name="index"></param>
-        public void TogglePlanet(bool isOn, int index)
-        {
-            //Debug.Log(planets[index].name + " checkbox: " + !isOn);
-            planets[index].SetActive(!isOn);
-
-            planetTrajectoryController.ToggleTrajectory(index, !isOn);
-            uiController.planetToggles[index].isOn = isOn;
-        }
         #endregion ToggleFunctions
 
 
@@ -554,16 +520,6 @@ namespace Maroon.Experiments.PlanetarySystem
 
             DisplayMessageByKey("EnterPlanetarySystem");
             startScreenScenes.FormulaUI.SetActive(true);
-        }
-
-
-        /// <summary>
-        /// reset
-        /// </summary>
-        public void ResetObject()
-        {
-            //Debug.Log("PlanetaryController: ResetObject(): button pressed");
-            uiController.ResetAnimation();
         }
         #endregion ResetBar
     }

@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace Maroon.Experiments.PlanetarySystem
 {
-    public class PlanetarySimulationUIController : MonoBehaviour
+    public class PlanetarySimulationUIController : MonoBehaviour, IResetObject
     {
         public PlanetaryController planetaryController;
         public PlanetTrajectoryController planetTrajectoryController;
@@ -38,6 +38,15 @@ namespace Maroon.Experiments.PlanetarySystem
 
 
         /// <summary>
+        /// CheckCollisionsWithSun
+        /// </summary>
+        private void FixedUpdate()
+        {
+            CheckCollisionsWithSun();
+        }
+
+
+        /// <summary>
         /// Initialize UI event listeners for toggle buttons
         /// </summary>
         private void SetupListeners()
@@ -59,7 +68,7 @@ namespace Maroon.Experiments.PlanetarySystem
             for (int index = 0; index < planetToggles.Length; index++)
             {
                 int planet_index = index;
-                planetToggles[index].onValueChanged.AddListener((bool isOn) => planetaryController.TogglePlanet(isOn, planet_index));
+                planetToggles[index].onValueChanged.AddListener((bool isOn) => TogglePlanet(isOn, planet_index));
             }
         }
 
@@ -151,6 +160,38 @@ namespace Maroon.Experiments.PlanetarySystem
 
 
         /// <summary>
+        /// hides planets and trajectories after radiobutton is pressed
+        /// </summary>
+        /// <param name="isOn"></param>
+        /// <param name="index"></param>
+        public void TogglePlanet(bool isOn, int index)
+        {
+            //Debug.Log(planets[index].name + " checkbox: " + !isOn);
+            planetaryController.planets[index].SetActive(!isOn);
+
+            planetTrajectoryController.ToggleTrajectory(index, !isOn);
+            planetToggles[index].isOn = isOn;
+        }
+
+
+        /// <summary>
+        /// check if planet collides with sun and toggles the planet if there is a collision
+        /// </summary>
+        private void CheckCollisionsWithSun()
+        {
+            for (int index = 1; index < planetaryController.planets.Length; index++)
+            {
+                if (planetaryController.CheckCollisionWithSun(planetaryController.planets[index]))
+                {
+                    //Debug.Log("PlanetaryController: CheckCollisionsWithSun(): " + planets[index] + " collides with sun");
+                    bool hide = true;
+                    TogglePlanet(hide, index);
+                }
+            }
+        }
+
+
+        /// <summary>
         /// reset slider values
         /// </summary>
         public void ResetAnimationValues()
@@ -170,7 +211,7 @@ namespace Maroon.Experiments.PlanetarySystem
             bool hide = false;
             for (int index = 0; index < planetToggles.Length; index++)
             {
-                planetaryController.TogglePlanet(hide, index);
+                TogglePlanet(hide, index);
             }
 
             planetTrajectoryController.ClearTrajectories();
@@ -189,6 +230,16 @@ namespace Maroon.Experiments.PlanetarySystem
             planetaryController.AnimationCamera.fieldOfView = planetaryController.initialAnimationCameraFov;
 
             sliderAnimationCameraFov.value = planetaryController.initialAnimationCameraFov;
+        }
+
+
+        /// <summary>
+        /// reset
+        /// </summary>
+        public void ResetObject()
+        {
+            //Debug.Log("PlanetaryController: ResetObject(): button pressed");
+            ResetAnimation();
         }
     }
 }
