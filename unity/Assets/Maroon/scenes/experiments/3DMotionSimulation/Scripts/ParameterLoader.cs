@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
-using System.IO;
+using Maroon;
+using System.Threading.Tasks;
 using Maroon.GlobalEntities;
 
 public class ParameterLoader : MonoBehaviour
 {
     private static ParameterLoader _instance;
-    [SerializeField] private List<TextAsset> _jsonFile = new List<TextAsset>();
     private Parameters _parameters;
 
     /// <summary>
@@ -59,11 +59,18 @@ public class ParameterLoader : MonoBehaviour
     /// </summary>
     /// <param name="file">File to load</param>
     /// <returns>Parameters</returns>
-    public Parameters LoadJsonFromFile(int index)
+    public async Task<Parameters> LoadJsonFromFile(string filename)
     {
-        string data = _jsonFile[index].text;
+        filename = "Config/3DMotionSimulation/" + filename + ".json";
+        string fileContent = await StreamingAssetsLoader.Instance.LoadFile(filename);
 
-        return LoadJson(data);
+        if (string.IsNullOrEmpty(fileContent))
+        {
+            Debug.LogError("Failed to load JSON file: " + filename);
+            return null;
+        }
+
+        return LoadJson(fileContent);
     }
 
     /// <summary>
