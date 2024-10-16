@@ -1,21 +1,21 @@
 using System.Collections;
-using System.Text.RegularExpressions;
-using UnityEditor;
 using UnityEngine;
 using System.IO;
-using static Tests.Utilities.Constants;
 
 namespace Tests.EditModeTests.ContentValidation
 {
     /// <summary>
     /// Provides names of the experiment folders to test fixtures using the <c>TestFixtureSource</c> attribute
+    /// 
+    /// Note: Enumerator just returns the folder name, cannot directly return the absolute path, 
+    /// as that long name would be truncated for test case identification resulting in test cases named the same.
     /// </summary>
     public class ExperimentFolderProvider : IEnumerable
     {
         /// <summary>
         /// Enumerates the folders of all experiments
         /// </summary>
-        /// <returns>Absolute path to experiment folders</returns>
+        /// <returns>Name of the experiment folder</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             string[] experimentDirectories = Directory.GetDirectories(GetBaseExperimentsPath());
