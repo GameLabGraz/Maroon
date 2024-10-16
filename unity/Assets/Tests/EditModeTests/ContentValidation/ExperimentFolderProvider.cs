@@ -6,23 +6,20 @@ namespace Tests.EditModeTests.ContentValidation
 {
     /// <summary>
     /// Provides names of the experiment folders to test fixtures using the <c>TestFixtureSource</c> attribute
-    /// 
-    /// Note: Enumerator just returns the folder name, cannot directly return the absolute path, 
-    /// as that long name would be truncated for test case identification resulting in test cases named the same.
     /// </summary>
     public class ExperimentFolderProvider : IEnumerable
     {
         /// <summary>
         /// Enumerates the folders of all experiments
         /// </summary>
-        /// <returns>Name of the experiment folder</returns>
+        /// <returns>Array with [0] being the name of the experiment folder, and [1] being the absolute path to the folder</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             string[] experimentDirectories = Directory.GetDirectories(GetBaseExperimentsPath());
             foreach (string experimentDirectory in experimentDirectories)
             {
                 string dirName = Path.GetFileName(experimentDirectory.TrimEnd(Path.DirectorySeparatorChar));
-                yield return dirName;
+                yield return new string[] { dirName, Path.Combine(GetBaseExperimentsPath(), dirName) };
             }
         }
 

@@ -10,9 +10,9 @@ namespace Tests.EditModeTests.ContentValidation
     {
         private string experimentFolderPath;
 
-        public MissingAssemblyDefinitionTests(string experimentFolderName)
+        public MissingAssemblyDefinitionTests(string experimentFolderName, string absolutePathExperimentFolder)
         {
-            experimentFolderPath = Path.Combine(ExperimentFolderProvider.GetBaseExperimentsPath(), experimentFolderName);
+            experimentFolderPath = absolutePathExperimentFolder;
         }
 
         [Test, Description("Tests if each experiment has its own Assembly Definition.")]
