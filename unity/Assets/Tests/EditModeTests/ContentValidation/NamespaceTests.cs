@@ -22,8 +22,9 @@ namespace Tests.EditModeTests.ContentValidation
             experimentFolderPath = absolutePathExperimentFolder;
         }
 
-        [SkipTestForScenesWithReason("Capacitor, Catalyst, CoulombsLaw, HuygensPrinciple, MinimumSpanningTree, PathFinding, " +
-            "PointWave, SortingAlgorithms, TitrationExperiment, VanDeGraaffGenerator, Whiteboard", 
+        // Do NOT add new experiments to this list of skipped experiments! Instead simply use namespaces in all .cs files
+        [SkipTestForScenesWithReason("3DMotionSimulation, Capacitor, Catalyst, CoulombsLaw, HuygensPrinciple, MinimumSpanningTree, " +
+            "PathFinding, PointWave, SortingAlgorithms, TitrationExperiment, VanDeGraaffGenerator, Whiteboard", 
             "Legacy code; should be ported to include namespaces some time soon.")]
         [Test, Description("Tests if every script of an experiment contains a namespace.")]
         public void TestNamespaceInScriptsForExperiments()
