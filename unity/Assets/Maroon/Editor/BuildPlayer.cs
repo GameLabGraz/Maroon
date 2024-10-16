@@ -245,13 +245,6 @@ namespace Maroon.Build
         public static void ActionsBuild()
         {
             var args = Environment.GetCommandLineArgs();
-
-            // array of build targets
-            MaroonBuildTarget[] targets = {
-                MaroonBuildTarget.PC,
-                MaroonBuildTarget.VR,
-                MaroonBuildTarget.WebGL
-            };
             
             // usage: -maroonBuildPath /path/to/build/dir -maroonBuildTarget (WebGL/PC/VR)
             // path is relative to project dir (./unity)
