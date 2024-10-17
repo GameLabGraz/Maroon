@@ -6,7 +6,7 @@ namespace Maroon.Experiments.PlanetarySystem
     public class PlanetSortingGameController : MonoBehaviour
     {
         [SerializeField] private GameObject sortingGamePlanetPlaceholderSlots;
-        GameObject[] sortingPlanets;
+        [SerializeField] private GameObject[] sortingPlanets;
         private readonly List<int> sortingGameAvailableSlotPositions = new List<int>();
 
         [SerializeField] private Light sunLight;
@@ -43,21 +43,6 @@ namespace Maroon.Experiments.PlanetarySystem
         // handles the SortingGame
         #region SortingGameSpawner
         /*
-         * find planets with tag SortingPlanet and initializes them
-         */
-        private void InitializeSortingPlanets()
-        {
-            //Debug.Log("PlanetaryController: InitializePlanets():");
-            sortingPlanets = GameObject.FindGameObjectsWithTag("SortingGamePlanet");
-            if (sortingPlanets.Length <= 0)
-            {
-                //Should not happen
-                Debug.Log("PlanetSortingGameController: InitializeSortingPlanets(): No sortingPlanets found:  " + sortingPlanets.Length);
-            }
-        }
-
-
-        /*
          * Initialize the availablePositions list with all possible sorting positions
          * called from StartSortingGame
          */
@@ -70,7 +55,6 @@ namespace Maroon.Experiments.PlanetarySystem
                 sortingGameAvailableSlotPositions.Add(i);
             }
 
-            InitializeSortingPlanets();
             SpawnSortingPlanets();
         }
 
@@ -108,7 +92,6 @@ namespace Maroon.Experiments.PlanetarySystem
         public void ToggleSGRotation(bool isOn)
         {
             //Debug.Log("PlanetSortingGameController(): UIToggleSGRotation = " + isOn);
-            InitializeSortingPlanets();
 
             foreach (GameObject planet in sortingPlanets)
             {
@@ -128,7 +111,6 @@ namespace Maroon.Experiments.PlanetarySystem
         public void ToggleSGOrientation(bool isOn)
         {
             //Debug.Log("PlanetSortingGameController(): UIToggleSGOrientation = " + isOn);
-            InitializeSortingPlanets();
 
             foreach (GameObject sortingPlanet in sortingPlanets)
             {
