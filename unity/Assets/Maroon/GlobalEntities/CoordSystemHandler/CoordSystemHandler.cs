@@ -35,6 +35,7 @@ namespace Maroon.GlobalEntities
                 return;
             }
 
+            this.transform.parent = null;
             DontDestroyOnLoad(this.gameObject);
         }     
     }
