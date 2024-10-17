@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Maroon.Extensions;
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -20,7 +21,7 @@ namespace Maroon.Tools.Voltmeter
         {
             if (!gameObject.activeSelf || !eField) return; 
 
-            _potential = eField.getStrength(transform.position);
+            _potential = eField.getStrength(gameObject.SystemPosition());
         }
 
         public void ResetObject()
@@ -30,4 +31,3 @@ namespace Maroon.Tools.Voltmeter
         }
     }
 }
-

@@ -24,10 +24,16 @@ namespace Maroon.Tools.Voltmeter
 
             var currentDifference = startPinPotential - endPinPotential;
 
-            if (Mathf.Abs(currentDifference - currentValue.Value) > 0.0001)
+            if (Mathf.Abs(currentDifference - currentValue.Value) > 0.00000001)
                 currentValue.Value = currentDifference;
 
-            return currentDifference;
+            var check = currentValue.Value;
+            for (var cnt = 0; Mathf.Abs(check) < 1f && cnt < 2; ++cnt)
+            {
+                check *= Mathf.Pow(10, 3);
+            }
+
+            return check;
         }
 
         public string GetCurrentUnit()
@@ -37,6 +43,5 @@ namespace Maroon.Tools.Voltmeter
             if (Mathf.Abs(currentValue.Value) > 0.000001) return "\u00B5V";
             return "";
         }
-
     }
 }
