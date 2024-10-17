@@ -95,7 +95,7 @@ namespace Tests.Utilities
             }
 
             // Check if the object is part of our ExperimentSetting prefab otherwise skip test
-            if (!objectNamesFromExperimentPrefab.Any(x => x.ToUpper().Contains(nameOfObjectUnderTest.ToUpper())))
+            if (objectNamesFromExperimentPrefab != null && !objectNamesFromExperimentPrefab.Any(x => x.ToUpper().Contains(nameOfObjectUnderTest.ToUpper())))
             {
                 Assert.Ignore(
                     $"{ExperimentPrefabName + sceneType} contains no {nameOfObjectUnderTest} - skipping test!");
