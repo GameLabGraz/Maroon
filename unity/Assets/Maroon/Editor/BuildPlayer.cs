@@ -331,7 +331,7 @@ namespace Maroon.Build
                     return BuildTarget.StandaloneOSX;
                 case MaroonBuildTarget.PC:
                 case MaroonBuildTarget.VR:
-                    return BuildTarget.StandaloneWindows;
+                    return BuildTarget.StandaloneWindows64;
                 default:
                     return BuildTarget.NoTarget;
             }
