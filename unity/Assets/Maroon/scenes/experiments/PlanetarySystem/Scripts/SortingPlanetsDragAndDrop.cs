@@ -23,7 +23,7 @@ namespace Maroon.Experiments.PlanetarySystem
 
         public TextMeshProUGUI planetInfoMessageText;
         string createdPlanetInfoMessage;
-
+        //---------------------------------------------------------------------------------------
 
         //handle mouse input
         #region MouseInput
@@ -85,22 +85,6 @@ namespace Maroon.Experiments.PlanetarySystem
         //snap the planets to target
         #region SnapPlanet
         /// <summary>
-        /// increments the snapped planets and displays a Helpi message when all planets except pluto are in its place 
-        /// </summary>
-        private void IncrementSnappedPlanetCount()
-        {
-            int solarSystemPlanet = 10;
-            planetSortingGameController.sortedPlanetCount++;
-
-            // check if we have snapped all 10 out of 11 planets, excluding pluto, including moon ad sun
-            if (planetSortingGameController.sortedPlanetCount >= solarSystemPlanet)
-            {
-                PlanetaryController.Instance.DisplayMessageByKey("OrderedSortingGame");
-            }
-        }
-
-
-        /// <summary>
         /// snaps the planets to target by setting its parent and scales them
         /// </summary>
         private void SnapToTarget()
@@ -116,7 +100,7 @@ namespace Maroon.Experiments.PlanetarySystem
             isSnapped = true;
             PlanetInfo planetInfo = GetComponent<PlanetInfo>();
             planetInfo.IsSnapped = true;
-            IncrementSnappedPlanetCount();
+            PlanetaryController.Instance.IncrementSnappedPlanetCount();
             audioSource.PlayOneShot(dropClip);
 
             createdPlanetInfoMessage = planetInfo.CreatePlanetInfoMessage();
@@ -151,7 +135,7 @@ namespace Maroon.Experiments.PlanetarySystem
             if (sunLightHalo != null)
                 sunLightHalo.range = 0.25f;
 
-            planetSortingGameController.sortedPlanetCount = 0;
+            PlanetaryController.Instance.sortedPlanetCount = 0;
             isSnapped = false;
             PlanetInfo planetInfo = GetComponent<PlanetInfo>();
             planetInfo.IsSnapped = false;

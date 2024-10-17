@@ -13,7 +13,7 @@ namespace Maroon.Experiments.PlanetarySystem
         private float yRotation = 0f;
         private bool isCameraControlActive = false;
         private bool hasCameraBeenToggled = false;
-
+        //---------------------------------------------------------------------------------------
 
         /// <summary>
         /// check camera control state
@@ -73,24 +73,24 @@ namespace Maroon.Experiments.PlanetarySystem
         /// </summary>
         private void FlyCameraMovement()
         {
-            float x = Input.GetAxis("Horizontal") * mouseSpeed * Time.deltaTime;
-            float y = Input.GetAxis("Vertical") * mouseSpeed * Time.deltaTime;
+            float x = Input.GetAxis("Horizontal") * mouseSpeed * Time.unscaledDeltaTime;
+            float y = Input.GetAxis("Vertical") * mouseSpeed * Time.unscaledDeltaTime;
             float z = 0f;
 
             if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.Q))
             {
-                z += mouseSpeed * Time.deltaTime;
+                z += mouseSpeed * Time.unscaledDeltaTime;
             }
             if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.E))
             {
-                z -= mouseSpeed * Time.deltaTime;
+                z -= mouseSpeed * Time.unscaledDeltaTime;
             }
 
             flyCamera.transform.Translate(new Vector3(x, z, y));
 
             // Camera rotation
-            float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-            float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+            float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.unscaledDeltaTime;
+            float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.unscaledDeltaTime;
 
             xRotation += mouseY;
             yRotation += mouseX;

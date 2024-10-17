@@ -5,7 +5,6 @@ namespace Maroon.Experiments.PlanetarySystem
 {
     public class PlanetSortingGameController : MonoBehaviour
     {
-        public int sortedPlanetCount = 0;
         [SerializeField] private GameObject sortingGamePlanetPlaceholderSlots;
         GameObject[] sortingPlanets;
         private readonly List<int> sortingGameAvailableSlotPositions = new List<int>();
@@ -31,23 +30,11 @@ namespace Maroon.Experiments.PlanetarySystem
         /// </summary>
         private void HandleKeyInput()
         {
-            foreach (KeyCode keyCode in System.Enum.GetValues(typeof(KeyCode)))
+            if (Input.GetKeyDown(KeyCode.L))
             {
-                if (Input.GetKeyDown(keyCode))
-                {
-                    switch (keyCode)
-                    {
-                        case KeyCode.L:
-                            sunLight.gameObject.SetActive(!sunLight.gameObject.activeSelf);
-                            // Sync the toggle button state with sunLight's state
-                            //ToggleSunLight.isOn = sunLight.gameObject.activeSelf;
-                            ToggleSunLight(sunLight.gameObject.activeSelf);
-                            break;
-
-                        default:
-                            break;
-                    }
-                }
+                sunLight.gameObject.SetActive(!sunLight.gameObject.activeSelf);
+                // Sync the toggle button state with sunLight's state
+                ToggleSunLight(sunLight.gameObject.activeSelf);
             }
         }
         #endregion KeyInput

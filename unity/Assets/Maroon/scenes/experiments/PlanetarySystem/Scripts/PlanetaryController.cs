@@ -27,6 +27,7 @@ namespace Maroon.Experiments.PlanetarySystem
         [HideInInspector] public float G; // gravitational constant 6.674
         private GameObject sun;
         public GameObject[] planets;
+        public int sortedPlanetCount = 0;
 
         private readonly List<Vector3> initialPlanetPositions = new List<Vector3>();
         private readonly List<Vector3> initialPlanetRotations = new List<Vector3>();
@@ -462,6 +463,22 @@ namespace Maroon.Experiments.PlanetarySystem
             }
         }
         #endregion ToggleFunctions
+
+
+        /// <summary>
+        /// increments the snapped planets and displays a Helpi message when all planets except pluto are in its place 
+        /// </summary>
+        public void IncrementSnappedPlanetCount()
+        {
+            int solarSystemPlanet = 10;
+            sortedPlanetCount++;
+
+            // check if we have snapped all 10 out of 11 planets, excluding pluto, including moon ad sun
+            if (sortedPlanetCount >= solarSystemPlanet)
+            {
+                DisplayMessageByKey("OrderedSortingGame");
+            }
+        }
 
 
         // handles homeReset / reset functinality

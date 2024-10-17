@@ -19,14 +19,13 @@ namespace Maroon.Experiments.PlanetarySystem
         public GameObject Environment;
         public GameObject Interactibles;
         public GameObject MainCamera;
+        public GameObject InitialCamera;
         public GameObject SortingGameCamera;
         public GameObject TelescopeCamera;
         public GameObject SolarSystemAnimationCamera;
         public GameObject HelpiDialogueUI;
+        //---------------------------------------------------------------------------------------
 
-        private Vector3 initialMainCameraPosition;
-        private Quaternion initialMainCameraRotation;
-        private float initialMainCameraFOV;
 
         /// <summary>
         /// deactivate SortingMinigame
@@ -38,30 +37,8 @@ namespace Maroon.Experiments.PlanetarySystem
         }
 
 
-        private void Start()
-        {
-            StoreInitialMainCamera();
-        }
-
-
-         // LERPs the currentCamera(MainCamera) to the targetCameras position
+        // LERPs the currentCamera(MainCamera) to the targetCameras position
         #region LerpCamera
-        /// <summary>
-        /// store the StoreInitialMainCamera's position, rotation, and field of view
-        /// </summary>
-        private void StoreInitialMainCamera()
-        {
-            if (MainCamera == null)
-            {
-                Debug.Log("StartScreenScenes: StoreInitialCameras(): MainCamera missing");
-            }
-
-            initialMainCameraPosition = MainCamera.transform.position;
-            initialMainCameraRotation = MainCamera.transform.rotation;
-            initialMainCameraFOV = MainCamera.GetComponent<Camera>().fieldOfView;
-        }
-
-
         /// <summary>
         /// LERPs the currentCamere(MainCamera) to the targetCameras position
         /// targetCameras are just used for theire position not for theire view
@@ -100,22 +77,7 @@ namespace Maroon.Experiments.PlanetarySystem
         /// <returns></returns>
         private IEnumerator LerpCameraToInitialPosition(GameObject currentCamera, float lerpDuration)
         {
-            float time = 0f;
-            Vector3 initialPosition = currentCamera.transform.position;
-            Quaternion initialRotation = currentCamera.transform.rotation;
-            float initialFOV = currentCamera.GetComponent<Camera>().fieldOfView;
-
-            while (time < lerpDuration)
-            {
-                time += Time.deltaTime;
-                float t = time / lerpDuration;
-
-                currentCamera.transform.position = Vector3.Lerp(initialPosition, initialMainCameraPosition, t);
-                currentCamera.transform.rotation = Quaternion.Lerp(initialRotation, initialMainCameraRotation, t);
-                currentCamera.GetComponent<Camera>().fieldOfView = Mathf.Lerp(initialFOV, initialMainCameraFOV, t);
-
-                yield return null;
-            }
+            yield return StartCoroutine(LerpCameraToPosition(currentCamera, InitialCamera, lerpDuration));
         }
         #endregion LerpCamera
 

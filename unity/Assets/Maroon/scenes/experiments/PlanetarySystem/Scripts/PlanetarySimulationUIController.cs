@@ -25,6 +25,7 @@ namespace Maroon.Experiments.PlanetarySystem
         public Toggle toggleSunLight;
         public Toggle toggleSolarFlares;
         public Toggle[] planetToggles;
+        //---------------------------------------------------------------------------------------
 
 
         /// <summary>
