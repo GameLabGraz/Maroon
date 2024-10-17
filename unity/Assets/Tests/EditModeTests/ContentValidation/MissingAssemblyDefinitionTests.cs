@@ -1,7 +1,7 @@
 using NUnit.Framework;
-using UnityEngine;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Tests.EditModeTests.ContentValidation
 {
@@ -18,17 +18,44 @@ namespace Tests.EditModeTests.ContentValidation
         [Test, Description("Tests if each experiment has its own Assembly Definition.")]
         public void TestMissingAssemblyDefinitionForExperiments()
         {
-            int numberOfCsFiles = Directory.EnumerateFiles(experimentFolderPath, "*.*", SearchOption.AllDirectories)
-                .Count(s => Path.GetExtension(s).TrimStart('.').ToLowerInvariant().Equals("cs"));
-            if (numberOfCsFiles > 0)
+            IEnumerable<string> csFilePaths = Directory.EnumerateFiles(experimentFolderPath, "*.*", SearchOption.AllDirectories)
+                .Where(s => Path.GetExtension(s).TrimStart('.').ToLowerInvariant().Equals("cs"));
+
+            if (csFilePaths.Count() > 0)
             {
-                string[] asmdefFiles = Directory.GetFiles(experimentFolderPath, "*.asmdef", SearchOption.AllDirectories);
-                Assert.AreNotEqual(asmdefFiles.Length, 0, "Experiment needs at least one .asmdef Assembly Definition file in " + experimentFolderPath + ".");
+                // Get all Assembly Definition files WITHIN the experiment folder
+                IEnumerable<string> asmdefFilePaths = Directory.EnumerateFiles(experimentFolderPath, "*.*", SearchOption.AllDirectories)
+                    .Where(s => Path.GetExtension(s).TrimStart('.').ToLowerInvariant().Equals("asmdef"));
+                HashSet<string> directoriesWithAsmdefFiles = asmdefFilePaths.Select(path => Path.GetDirectoryName(path)).ToHashSet();
+
+                foreach (string csFilePath in csFilePaths)
+                {
+                    string csFileDirectory = Path.GetDirectoryName(csFilePath);
+
+                    // Check if the directory of the .cs file also contains any of the .asmdef files
+                    if (directoriesWithAsmdefFiles.Contains(csFileDirectory))
+                        continue;
+
+                    // Check if any parent directory contains any of the .asmdef files
+                    string parentDirectory = Path.GetDirectoryName(csFileDirectory);
+                    bool foundAsmdef = false;
+                    while (!string.IsNullOrEmpty(parentDirectory))
+                    {
+                        if (directoriesWithAsmdefFiles.Contains(parentDirectory))
+                        {
+                            foundAsmdef = true;
+                            break;
+                        }
+
+                        parentDirectory = Path.GetDirectoryName(parentDirectory);
+                    }
+
+                    Assert.True(foundAsmdef, "The experiment .cs file \"" + csFilePath + "\" needs to be part of an AssemblyDefinition in the experiment folder \"" + experimentFolderPath + "\".");
+                }
             }
             else
             {
-                Assert.Zero(numberOfCsFiles, "No .cs files in an experiment, not need for its own assembly definition.");
-                Debug.Log("No .cs files, no assembly definition required.");
+                Assert.Pass("Experiment has no .cs files, thus no AssemblyDefinition required.");
             }
         }
     }
