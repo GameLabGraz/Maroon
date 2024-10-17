@@ -161,24 +161,6 @@ namespace Maroon.Experiments.PlanetarySystem
                 return;
             }
             lr.enabled = isOn;
-
-            //toggle particle system
-            ParticleSystem ps = planetaryController.planets[index].GetComponentInChildren<ParticleSystem>();
-            if (ps == null)
-            {
-                //Debug.Log("PlanetController: ToggleTrajectory(): ParticleSystem in Planet at index " + index + " is null or deactivated off in planet prefab");
-                return;
-            }
-
-            if (isOn)
-            {
-                ps.Play();
-            }
-            else
-            {
-                ps.Clear();
-                ps.Pause();
-            }
         }
 
 
@@ -192,24 +174,6 @@ namespace Maroon.Experiments.PlanetarySystem
             for (int index = 0; index < planetTrajectories.Count; index++)
             {
                 lineRenderers[index].enabled = isOn;
-            }
-
-            // toggle particle system
-            foreach (GameObject planet in planetaryController.planets)
-            {
-                ParticleSystem ps = planet.GetComponentInChildren<ParticleSystem>();
-                if (ps != null)
-                {
-                    if (isOn)
-                    {
-                        ps.Play();
-                    }
-                    else
-                    {
-                        ps.Clear();
-                        ps.Pause();
-                    }
-                }
             }
         }
         #endregion ToggleTrajectories
