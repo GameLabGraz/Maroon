@@ -21,7 +21,7 @@ namespace Tests.EditModeTests.ContentValidation
             IEnumerable<string> csFilePaths = Directory.EnumerateFiles(experimentFolderPath, "*.*", SearchOption.AllDirectories)
                 .Where(s => Path.GetExtension(s).TrimStart('.').ToLowerInvariant().Equals("cs"));
 
-            if (csFilePaths.Count() > 0)
+            if (csFilePaths.Any())
             {
                 // Get all Assembly Definition files WITHIN the experiment folder
                 IEnumerable<string> asmdefFilePaths = Directory.EnumerateFiles(experimentFolderPath, "*.*", SearchOption.AllDirectories)
