@@ -30,12 +30,12 @@ namespace Maroon.Physics.Optics.TableObject.OpticalComponent
             n = transform.right;
         }
         
-        public void SetParameters(float Rin = 0.03f, float Rout = 0.10f)
+        public void SetParameters(ApertureParameters parameters)
         {
-            this.Rin = Rin;
-            this.Rout = Rout;
+            this.Rin = parameters.Rin;
+            this.Rout = parameters.Rout;
         }
-        
+
         public override (float inRayLength, RaySegment reflection, RaySegment refraction) CalculateDistanceReflectionRefraction(RaySegment inRay)
         {
             float d = GetRelevantDistance(inRay.r0Local, inRay.n);
