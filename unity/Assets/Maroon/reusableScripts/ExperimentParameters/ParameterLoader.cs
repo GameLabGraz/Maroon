@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using Maroon.GlobalEntities;
 using Newtonsoft.Json;
+#if UNITY_WEBGL
+using Maroon.GlobalEntities; // For WebGlReceiver
+#endif
 
 namespace Maroon.ReusableScripts.ExperimentParameters
 {
