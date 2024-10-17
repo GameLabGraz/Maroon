@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using GameLabGraz.UI;
-using Maroon.GlobalEntities;
+#if UNITY_WEBGL
+using Maroon.GlobalEntities; // WebGLReceiver
+#endif
 using Maroon.Physics.Optics.TableObject;
 using Maroon.Physics.Optics.TableObject.LightComponent;
 using Maroon.Physics.Optics.TableObject.OpticalComponent;
@@ -108,14 +110,16 @@ namespace Maroon.Physics.Optics.Manager
             _cauchyModel = cauchyModelDropdown.GetComponent<TMP_Dropdown>();
             _lensModel = lensModelDropdown.GetComponent<TMP_Dropdown>();
             _focalLengthText = focalLengthDisplay.GetComponent<TMP_Text>();
+#if UNITY_WEBGL
             WebGlReceiver.Instance.OnIncomingData.AddListener((string _jsonData) => {
                 // When OpticsParameters config JSON gets sent via Javascript, set the preset Dropdown to index 0, as that's representing an 'undefined' preset
                 presetDropdown.SetValueWithoutNotify(0);
             });
+#endif
         }
 
         // ----------------------------------- Light Components -----------------------------------
-        
+
         public void ActivateLightControlPanel(LightComponent lc)
         {
             _selectedLc = lc;
