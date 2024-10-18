@@ -30,67 +30,62 @@ namespace Maroon.Physics.Viscosimeter
         }
 
 
-
-
-        private void StartMeasuringMode()
+        public void ToggleMeasuringMode(bool isMeasuring)
         {
-            measurementState = MeasurementState.Measuring;
-            startButton.gameObject.SetActive(false);
-            uiText.gameObject.SetActive(false);
-            endButton.gameObject.SetActive(true);
-            if(current_caliper != null)
+            measurementState = isMeasuring ? MeasurementState.Measuring : MeasurementState.Off;
+    
+            startButton.gameObject.SetActive(!isMeasuring);
+            uiText.gameObject.SetActive(!isMeasuring);
+            endButton.gameObject.SetActive(isMeasuring);
+    
+            hintText.gameObject.SetActive(isMeasuring);
+            startButton.interactable = !isMeasuring;
+            endButton.interactable = isMeasuring;
+    
+            main_camera.gameObject.SetActive(!isMeasuring);
+            main_camera.enabled = !isMeasuring;
+    
+            zoom_camera.gameObject.SetActive(isMeasuring);
+            zoom_camera.enabled = isMeasuring;
+    
+            Collider measuredObjectCollider = measuredObject.gameObject.GetComponent<Collider>();
+            measuredObjectCollider.enabled = !isMeasuring;
+
+            if (isMeasuring)
             {
-                Destroy(current_caliper);
-            }
-            main_camera.gameObject.SetActive(false);
-            FitObjectToCamera();
-            zoom_camera.transform.position = new Vector3(measuredObject.transform.position.x + zoom_camera.orthographicSize * 0.5f, measuredObject.transform.position.y, zoom_camera.transform.position.z);
-            if (measuredObject.measurement_device)
-            {
-                current_caliper = Instantiate(measuredObject.measurement_device,
+                if (current_caliper != null)
+                {
+                    Destroy(current_caliper);
+                }
+
+                FitObjectToCamera();
+
+                zoom_camera.transform.position = new Vector3(
+                    measuredObject.transform.position.x + zoom_camera.orthographicSize * 0.5f,
+                    measuredObject.transform.position.y,
+                    zoom_camera.transform.position.z
+                );
+
+                GameObject caliperSource = measuredObject.measurement_device != null
+                    ? measuredObject.measurement_device
+                    : caliperPrefab;
+
+                current_caliper = Instantiate(caliperSource,
                     new Vector3(measuredObject.transform.position.x + 0.25f,
                         measuredObject.transform.position.y + 0.05f,
                         measuredObject.transform.position.z),
                     Quaternion.identity).gameObject;
+
+                current_caliper.transform.rotation = Quaternion.Euler(0.0f, 0.0f, measuredObject.device_rotation);
             }
             else
             {
-                current_caliper = Instantiate(caliperPrefab,
-                    new Vector3(measuredObject.transform.position.x + 0.25f,
-                        measuredObject.transform.position.y + 0.05f,
-                        measuredObject.transform.position.z),
-                    Quaternion.identity).gameObject;
+                if (current_caliper != null)
+                {
+                    Destroy(current_caliper.gameObject);
+                    current_caliper = null;
+                }
             }
-
-            current_caliper.transform.rotation = Quaternion.Euler(0.0f, 0.0f,measuredObject.device_rotation);
-            //disable colliders of measured object
-            Collider measuredObjectCollider = measuredObject.gameObject.GetComponent<Collider>();
-            measuredObjectCollider.enabled = false;
-            zoom_camera.gameObject.SetActive(true);
-            zoom_camera.enabled = true;
-            main_camera.enabled = false;
-            startButton.interactable = false;
-            endButton.interactable = true;
-            hintText.gameObject.SetActive(true);
-        }
-
-        public void EndMeasuringMode()
-        {
-            endButton.gameObject.SetActive(false);
-            uiText.gameObject.SetActive(false);
-            hintText.gameObject.SetActive(false);
-            startButton.gameObject.SetActive(true);
-            Collider measuredObjectCollider = measuredObject.gameObject.GetComponent<Collider>();
-            measuredObjectCollider.enabled = true;
-            Destroy(current_caliper.gameObject);
-            current_caliper = null;
-            main_camera.gameObject.SetActive(true);
-            zoom_camera.gameObject.SetActive(false);
-            zoom_camera.enabled = false;
-            main_camera.enabled = true;
-            startButton.interactable = true;
-            endButton.interactable = false;
-            measurementState = MeasurementState.Off;
         }
 
         private void FitObjectToCamera()
@@ -152,7 +147,7 @@ namespace Maroon.Physics.Viscosimeter
                 dragDrop.dragAndDropEnabled = false;
             }
        
-            StartMeasuringMode();
+            ToggleMeasuringMode(true);
         }
 
         private void GetAllMeasurableObjects()

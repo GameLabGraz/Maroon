@@ -28,7 +28,7 @@ namespace Maroon.Physics.Viscosimeter
         public void FillPycnometer() //kg/m^3
         {
             decimal density = ViscosimeterManager.Instance.fluid_density_;
-            weighableObject.SetWeight(weighableObject.starting_weight + (density * volume));
+            weighableObject.Weight = weighableObject.starting_weight + (density * volume);
             renderer_.material.color = new Color(0.65f,0.16f,0.16f,0.3f);
             filled = true;
         }

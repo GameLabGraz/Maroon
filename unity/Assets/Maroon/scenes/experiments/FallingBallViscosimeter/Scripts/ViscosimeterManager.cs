@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using GameLabGraz.UI;
+using GEAR.Localization.Text;
 using Maroon.scenes.experiments.FallingBallViscosimeter.Scripts;
 using Maroon.UI;
 using UnityEngine;
@@ -51,6 +52,7 @@ namespace Maroon.Physics.Viscosimeter
         [SerializeField] private TMP_Dropdown _fluid_dropdown;
         private FluidViscosityData[] _fluids;
         private FluidViscosityData _current_fluid;
+        private LocalizedTextBase localizedTextBase;
     
         private void Awake()
         { 
@@ -75,7 +77,7 @@ namespace Maroon.Physics.Viscosimeter
             _current_fluid = _fluids[0];
             foreach (var fluid in _fluids)
             {
-                _fluid_dropdown.options.Add(new TMP_Dropdown.OptionData() {text=fluid.fluidName});
+                _fluid_dropdown.options.Add(new TMP_Dropdown.OptionData() {text=fluid.fluidNameTranslationKey});
             }
         }
 

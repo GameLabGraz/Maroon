@@ -67,7 +67,7 @@ namespace Maroon.Physics.Viscosimeter
             _weighableObject.starting_weight = Mass;
             start_position_ = transform.position;
             transform.localScale = new Vector3((float)start_diameter_in_mm/1000, (float)start_diameter_in_mm/1000, (float)start_diameter_in_mm/1000);
-            _weighableObject.SetWeight(_mass);
+            _weighableObject.Weight = _mass;
         }
 
         protected override void Start()
@@ -143,8 +143,6 @@ namespace Maroon.Physics.Viscosimeter
             //calculate dynamic viscosity
             decimal dynamic_viscosity = ViscosimeterManager.Instance.CalculateDynamicViscosity((decimal)temperature);
       
-            Debug.Log("dynamic visc " + dynamic_viscosity);
-       
             //calculate viscosity friction force (stoke's law)
             decimal f_fric = 6.0m * (decimal)Math.PI * dynamic_viscosity * radius_in_m * Velocity;
       

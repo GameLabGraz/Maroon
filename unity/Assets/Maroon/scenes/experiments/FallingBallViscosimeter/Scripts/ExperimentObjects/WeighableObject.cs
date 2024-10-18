@@ -8,20 +8,15 @@ namespace Maroon.Physics.Viscosimeter
 
         public decimal starting_weight;
         private decimal weight;
+        public decimal Weight
+        {
+            get { return weight; }
+            set { weight = value; }
+        }
 
         private void Awake()
         {
             ResetObject();
-        }
-
-        public decimal GetWeight()
-        {
-            return weight;
-        }
-
-        public void SetWeight(decimal new_weight)
-        {
-            weight = new_weight;
         }
 
         public void ResetWeight()

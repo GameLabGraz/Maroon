@@ -1390,6 +1390,7 @@ GameObject:
   - component: {fileID: 577927346}
   - component: {fileID: 577927345}
   - component: {fileID: 577927344}
+  - component: {fileID: 577927348}
   m_Layer: 5
   m_Name: FluidDropdown
   m_TagString: Untagged
@@ -1543,6 +1544,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 577927342}
   m_CullTransparentMesh: 0
+--- !u!114 &577927348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 577927342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87bdbf503828e0c43a74cf82ad4d83c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &591129823 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1218428693177916310, guid: edbe5c86879b0e74986e2588df1ba215,
@@ -9084,7 +9097,7 @@ PrefabInstance:
     - target: {fileID: 5681846035356040140, guid: 804ae9890eac3f941be98f32cab2066a,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5681846035356040140, guid: 804ae9890eac3f941be98f32cab2066a,
         type: 3}
@@ -9099,12 +9112,12 @@ PrefabInstance:
     - target: {fileID: 5681846035356040140, guid: 804ae9890eac3f941be98f32cab2066a,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: EndMeasuringMode
+      value: ToggleMeasuringMode
       objectReference: {fileID: 0}
     - target: {fileID: 5681846035356040140, guid: 804ae9890eac3f941be98f32cab2066a,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Maroon.Physics.Viscosimeter.MeasurementManager, Assembly-CSharp
+      value: Maroon.Physics.Viscosimeter.MeasurementManager, Maroon.Experiments.Viscosimeter
       objectReference: {fileID: 0}
     - target: {fileID: 5681846035356040140, guid: 804ae9890eac3f941be98f32cab2066a,
         type: 3}

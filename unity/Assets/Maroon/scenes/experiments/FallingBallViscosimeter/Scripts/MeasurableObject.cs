@@ -22,7 +22,6 @@ namespace Maroon.Physics.Viscosimeter
             if (dragDrop)
             {
                 dragDrop.dragAndDropEnabled = active;
-                Debug.Log(dragDrop.dragAndDropEnabled);
             }
         }
 

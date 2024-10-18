@@ -43,7 +43,7 @@ namespace Maroon.Physics.Viscosimeter
             else
             {
                 WeighableObject weighable_object = snapPoint.currentObject.gameObject.GetComponent<WeighableObject>();
-                scale_text.SetText((weighable_object.GetWeight() * 1000.0m).ToString(scale_text_format) + " g");
+                scale_text.SetText((weighable_object.Weight * 1000.0m).ToString(scale_text_format) + " g");
             }
         }
     }
