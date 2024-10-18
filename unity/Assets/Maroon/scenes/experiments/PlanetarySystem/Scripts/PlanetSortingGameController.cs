@@ -115,7 +115,7 @@ namespace Maroon.Experiments.PlanetarySystem
             foreach (GameObject sortingPlanet in sortingPlanets)
             {
                 //Debug.Log("PlanetSortingGameController(): UIToggleSGOrientation(): planet = " + planet);
-                GameObject orientationGizmo = sortingPlanet.transform.Find("orientation gizmo").gameObject;
+                GameObject orientationGizmo = sortingPlanet.transform.Find("orientation_gizmo").gameObject;
                 if (orientationGizmo != null)
                 {
                     orientationGizmo.SetActive(isOn);

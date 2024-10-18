@@ -436,7 +436,7 @@ namespace Maroon.Experiments.PlanetarySystem
             foreach (GameObject planet in planets)
             {
                 //Debug.Log("PlanetController(): ToggleSimOrientation(): planet = " + planet);
-                GameObject orientationGizmo = planet.transform.Find("orientation gizmo").gameObject;
+                GameObject orientationGizmo = planet.transform.Find("orientation_gizmo").gameObject;
                 if (orientationGizmo != null)
                 {
                     orientationGizmo.SetActive(isOn);
