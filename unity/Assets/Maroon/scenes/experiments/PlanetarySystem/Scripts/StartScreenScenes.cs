@@ -11,18 +11,18 @@ namespace Maroon.Experiments.PlanetarySystem
         public PlanetTrajectoryController planetTrajectoryController;
         public PlanetSortingGameController planetSortingGameController;
 
-        public GameObject SortingMinigame;
-        public GameObject SortingGamePlanetInfoUI;
+        public GameObject PlanetarySortingGame;
+        public GameObject PlanetarySortingGamePlanetInfoUI;
         public GameObject FormulaUI;
-        public GameObject Animation;
-        public GameObject AnimationUI;
+        public GameObject PlanetarySystemSimulation;
+        public GameObject PlanetarySystemSimulationUI;
         public GameObject Environment;
-        public GameObject Interactibles;
+        public GameObject InteractablePlanetarySystemScreens;
         public GameObject MainCamera;
-        public GameObject InitialCamera;
-        public GameObject SortingGameCamera;
-        public GameObject TelescopeCamera;
-        public GameObject SolarSystemAnimationCamera;
+        public GameObject InitialMainCamera;
+        public GameObject PlanetarySortingGameCamera;
+        public GameObject PlanetarySystemSimulationTelescopeCamera;
+        public GameObject PlanetarySystemSimulationCamera;
         public GameObject HelpiDialogueUI;
         //---------------------------------------------------------------------------------------
 
@@ -32,9 +32,19 @@ namespace Maroon.Experiments.PlanetarySystem
         /// </summary>
         private void Awake()
         {
-            SortingMinigame.SetActive(false);
-            SortingGamePlanetInfoUI.SetActive(false);
+            PlanetarySortingGame.SetActive(false);
+            PlanetarySortingGamePlanetInfoUI.SetActive(false);
         }
+
+        /// <summary>
+        /// Reset MainCamera values to InitialCamera
+        /// </summary>
+        private void ResetMainCamera()
+        {
+            MainCamera.transform.SetPositionAndRotation(InitialMainCamera.transform.position, InitialMainCamera.transform.rotation);
+            MainCamera.GetComponent<Camera>().fieldOfView = InitialMainCamera.GetComponent<Camera>().fieldOfView;
+        }
+
 
 
         // LERPs the currentCamera(MainCamera) to the targetCameras position
@@ -77,7 +87,7 @@ namespace Maroon.Experiments.PlanetarySystem
         /// <returns></returns>
         private IEnumerator LerpCameraToInitialPosition(GameObject currentCamera, float lerpDuration)
         {
-            yield return StartCoroutine(LerpCameraToPosition(currentCamera, InitialCamera, lerpDuration));
+            yield return StartCoroutine(LerpCameraToPosition(currentCamera, InitialMainCamera, lerpDuration));
         }
         #endregion LerpCamera
 
@@ -87,10 +97,10 @@ namespace Maroon.Experiments.PlanetarySystem
         /// <summary>
         /// StartSortingGameOnInput and calls LERP camera couroutine
         /// </summary>
-        public void StartSortingGameOnInput()
+        public void StartPlanetarySortingGameOnInput()
         {
-            LeaveAnimation();
-            SortingMinigame.SetActive(true);
+            LeavePlanetorySystemSimulation();
+            PlanetarySortingGame.SetActive(true);
             StartCoroutine(LerpCameraStartSortingGame());
         }
 
@@ -100,9 +110,9 @@ namespace Maroon.Experiments.PlanetarySystem
         /// <returns></returns>
         private IEnumerator LerpCameraStartSortingGame()
         {
-            yield return StartCoroutine(LerpCameraToPosition(MainCamera, SortingGameCamera, 1f));
-            SortingMinigame.SetActive(true);
-            SortingGamePlanetInfoUI.SetActive(true);
+            yield return StartCoroutine(LerpCameraToPosition(MainCamera, PlanetarySortingGameCamera, 1f));
+            PlanetarySortingGame.SetActive(true);
+            PlanetarySortingGamePlanetInfoUI.SetActive(true);
             FormulaUI.SetActive(false);
 
             planetSortingGameController.ToggleSGRotation(true);
@@ -113,13 +123,13 @@ namespace Maroon.Experiments.PlanetarySystem
         /// <summary>
         /// LeaveSortingGame and deactivates gameobjects
         /// </summary>
-        public void LeaveSortingGame()
+        public void LeavePlanetarySortingGame()
         {
             HelpiDialogueUI.SetActive(false);
-            SortingGamePlanetInfoUI.SetActive(false);
+            PlanetarySortingGamePlanetInfoUI.SetActive(false);
             FormulaUI.SetActive(false);
 
-            StartCoroutine(LerpCameraLeave());
+            StartCoroutine(LerpCameraLeavePlanetarySortingGame());
         }
 
 
@@ -127,26 +137,26 @@ namespace Maroon.Experiments.PlanetarySystem
         /// reverse LERP camera when leaving a ScreenScene
         /// </summary>
         /// <returns></returns>
-        private IEnumerator LerpCameraLeave()
+        private IEnumerator LerpCameraLeavePlanetarySortingGame()
         {
             yield return StartCoroutine(LerpCameraToInitialPosition(MainCamera, 0.5f));
 
             planetSortingGameController.ToggleSunLight(false);
-            SortingMinigame.SetActive(false);
+            PlanetarySortingGame.SetActive(false);
         }
 
 
         /// <summary>
         /// StartAnimationOnInput and calls LERP camera couroutine
         /// </summary>
-        public void StartAnimationOnInput()
+        public void StartPlanetorySystemSimulationOnInput()
         {
-            LeaveSortingGame();
+            LeavePlanetarySortingGame();
             FormulaUI.SetActive(false);
 
             planetTrajectoryController.ToggleAllTrajectories(true);
 
-            StartCoroutine(LerpCameraStartAnimation());
+            StartCoroutine(LerpCameraStartPlanetarySystemSimulation());
         }
 
 
@@ -154,20 +164,20 @@ namespace Maroon.Experiments.PlanetarySystem
         /// waits for LERP camera couroutine and de/activates gameobjects
         /// </summary>
         /// <returns></returns>
-        private IEnumerator LerpCameraStartAnimation()
+        private IEnumerator LerpCameraStartPlanetarySystemSimulation()
         {
-            yield return StartCoroutine(LerpCameraToPosition(MainCamera, TelescopeCamera, 1f));
+            yield return StartCoroutine(LerpCameraToPosition(MainCamera, PlanetarySystemSimulationTelescopeCamera, 1f));
 
-            AnimationUI.SetActive(true);
+            PlanetarySystemSimulationUI.SetActive(true);
             planetaryController.SetSkybox();
 
             Environment.SetActive(false);
-            Interactibles.SetActive(false);
+            InteractablePlanetarySystemScreens.SetActive(false);
 
-            Animation.SetActive(true);
+            PlanetarySystemSimulation.SetActive(true);
 
             MainCamera.SetActive(false);
-            SolarSystemAnimationCamera.SetActive(true);
+            PlanetarySystemSimulationCamera.SetActive(true);
 
             uiController.ResetAnimation();
             planetaryController.DisplayMessageByKey("EnterAnimation");
@@ -177,17 +187,18 @@ namespace Maroon.Experiments.PlanetarySystem
         /// <summary>
         /// LeaveAnimation and deactivates gameobjects
         /// </summary>
-        public void LeaveAnimation()
+        public void LeavePlanetorySystemSimulation()
         {
             HelpiDialogueUI.SetActive(false);
-            AnimationUI.SetActive(false);
+            PlanetarySystemSimulationUI.SetActive(false);
 
             Environment.SetActive(true);
-            Interactibles.SetActive(true);
+            InteractablePlanetarySystemScreens.SetActive(true);
 
-            Animation.SetActive(false);
-            SolarSystemAnimationCamera.SetActive(false);
+            PlanetarySystemSimulation.SetActive(false);
+            PlanetarySystemSimulationCamera.SetActive(false);
             MainCamera.SetActive(true);
+
         }
         #endregion StartScreenScenes
     }

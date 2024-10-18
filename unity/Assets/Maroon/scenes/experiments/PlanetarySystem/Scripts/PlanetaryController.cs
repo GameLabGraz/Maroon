@@ -72,7 +72,7 @@ namespace Maroon.Experiments.PlanetarySystem
         private void Start()
         {
             StoreInitialCamera();
-            startScreenScenes.Animation.SetActive(false);
+            startScreenScenes.PlanetarySystemSimulation.SetActive(false);
         }
 
 
@@ -532,8 +532,8 @@ namespace Maroon.Experiments.PlanetarySystem
         {
             //Debug.Log("PlanetaryController: ResetHome(): button pressed");
             StopAllCoroutines();
-            startScreenScenes.LeaveSortingGame();
-            startScreenScenes.LeaveAnimation();
+            startScreenScenes.LeavePlanetarySortingGame();
+            startScreenScenes.LeavePlanetorySystemSimulation();
 
             DisplayMessageByKey("EnterPlanetarySystem");
             startScreenScenes.FormulaUI.SetActive(true);

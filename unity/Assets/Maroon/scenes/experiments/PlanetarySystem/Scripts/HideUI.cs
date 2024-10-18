@@ -35,11 +35,11 @@ namespace Maroon.Experiments.PlanetarySystem
         /// toggle HideUI and SetUIActive with boolean from ToggleGroup function
         /// </summary>
         /// <param name="active"></param>
-        public void SetUIActive(bool active)
+        public void SetUIActive(bool hide)
         {
-            AnimationUI.SetActive(!active);
-            PlanetInformationUI.SetActive(!active);
-            //Debug.Log("HideUI: SetUIActive(active): " + active);
+            AnimationUI.SetActive(!hide);
+            PlanetInformationUI.SetActive(!hide);
+            //Debug.Log("HideUI: SetUIActive(active): " + hide);
         }
     }
 }
