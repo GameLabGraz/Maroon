@@ -17,11 +17,11 @@ namespace Maroon.Experiments.PlanetarySystem
         [SerializeField] private GameObject SolarSystemAnimationCamera; //on
         [SerializeField] private GameObject SortingGameCamera;          //off
         [SerializeField] private GameObject TelescopeCamera;            //off
-        public Camera AnimationCamera;
+        public Camera SimulationCamera;
 
-        [HideInInspector] public float initialAnimationCameraFov;
-        [HideInInspector] public Vector3 initialAnimationCameraPosition;
-        [HideInInspector] public Quaternion initialAnimationCameraRotation;
+        [HideInInspector] public float initialSimulationCameraFov;
+        [HideInInspector] public Vector3 initialSimulationCameraPosition;
+        [HideInInspector] public Quaternion initialSimulationCameraRotation;
         #endregion Cameras
 
         [HideInInspector] public float G; // gravitational constant 6.674
@@ -31,7 +31,7 @@ namespace Maroon.Experiments.PlanetarySystem
 
         private readonly List<Vector3> initialPlanetPositions = new List<Vector3>();
         private readonly List<Vector3> initialPlanetRotations = new List<Vector3>();
-        [SerializeField] private float resetAnimationDelay = 0.3f;
+        [SerializeField] private float resetSimulationDelay = 0.3f;
 
         private DialogueManager _dialogueManager;
         [SerializeField] private Material skyboxMaterial;
@@ -82,7 +82,7 @@ namespace Maroon.Experiments.PlanetarySystem
         /// </summary>
         private void Update()
         {
-            AnimationCameraMouseWheelFOV();
+            SimulationCameraMouseWheelFOV();
         }
 
 
@@ -340,8 +340,8 @@ namespace Maroon.Experiments.PlanetarySystem
         #endregion SolarSystem
 
 
-        // Animation game
-        #region Animation
+        // Simulation
+        #region Simulation
         /// <summary>
         /// set skybox
         /// </summary>
@@ -356,29 +356,29 @@ namespace Maroon.Experiments.PlanetarySystem
         /// </summary>
         private void StoreInitialCamera()
         {
-            if (AnimationCamera == null)
+            if (SimulationCamera == null)
             {
                 Debug.Log("PlanetaryController: StoreInitialAnimationCamera(): AnimationCamera missing");
             }
 
-            initialAnimationCameraPosition = AnimationCamera.transform.position;
-            initialAnimationCameraRotation = AnimationCamera.transform.rotation;
-            initialAnimationCameraFov = AnimationCamera.fieldOfView;
+            initialSimulationCameraPosition = SimulationCamera.transform.position;
+            initialSimulationCameraRotation = SimulationCamera.transform.rotation;
+            initialSimulationCameraFov = SimulationCamera.fieldOfView;
         }
 
 
         /// <summary>
-        /// change AnimationCamera FOV with mouse scroll wheel
+        /// change SimulationCamera FOV with mouse scroll wheel
         /// </summary>
-        private void AnimationCameraMouseWheelFOV()
+        private void SimulationCameraMouseWheelFOV()
         {
             float scrollData = Input.GetAxis("Mouse ScrollWheel");
             float mouseScrollSensitivity = 40;
 
             if (scrollData != 0)
             {
-                AnimationCamera.fieldOfView -= scrollData * mouseScrollSensitivity;
-                AnimationCamera.fieldOfView = Mathf.Clamp(AnimationCamera.fieldOfView, 10, 180);
+                SimulationCamera.fieldOfView -= scrollData * mouseScrollSensitivity;
+                SimulationCamera.fieldOfView = Mathf.Clamp(SimulationCamera.fieldOfView, 10, 180);
             }
         }
 
@@ -402,7 +402,7 @@ namespace Maroon.Experiments.PlanetarySystem
 
             return false;
         }
-        #endregion Animation
+        #endregion Simulation
 
 
         // toggle functions
@@ -411,12 +411,12 @@ namespace Maroon.Experiments.PlanetarySystem
         /// toggles the rotation of the animation planets button press
         /// </summary>
         /// <param name="isOn"></param>
-        public void ToggleARotation(bool isOn)
+        public void ToggleSimRotation(bool isOn)
         {
-            //Debug.Log("PlanetController(): ToggleARotation = " + isOn);
+            //Debug.Log("PlanetController(): ToggleSimRotation = " + isOn);
             foreach (GameObject planet in planets)
             {
-                //Debug.Log("PlanetController(): ToggleARotation(): planet = " + planet);
+                //Debug.Log("PlanetController(): ToggleSimRotation(): planet = " + planet);
                 PlanetRotation rotationScript = planet.GetComponent<PlanetRotation>();
                 if (rotationScript != null)
                 {
@@ -427,15 +427,15 @@ namespace Maroon.Experiments.PlanetarySystem
 
 
         /// <summary>
-        /// toggles the rotation of the animation planets button press
+        /// toggles the rotation of the simulation planets button press
         /// </summary>
         /// <param name="isOn"></param>
-        public void ToggleAOrientation(bool isOn)
+        public void ToggleSimOrientation(bool isOn)
         {
-            //Debug.Log("PlanetController(): UIToggleAOrientation(): planet.Length = " + planet.Length);
+            //Debug.Log("PlanetController(): ToggleSimOrientation(): planet.Length = " + planet.Length);
             foreach (GameObject planet in planets)
             {
-                //Debug.Log("PlanetController(): UIToggleAOrientation(): planet = " + planet);
+                //Debug.Log("PlanetController(): ToggleSimOrientation(): planet = " + planet);
                 GameObject orientationGizmo = planet.transform.Find("orientation gizmo").gameObject;
                 if (orientationGizmo != null)
                 {
@@ -443,7 +443,7 @@ namespace Maroon.Experiments.PlanetarySystem
                 }
                 else
                 {
-                    Debug.Log("PlanetController(): UIToggleAOrientation(): No orientation gizmo found");
+                    Debug.Log("PlanetController(): ToggleSimOrientation(): No orientation gizmo found");
                 }
             }
         }
@@ -484,9 +484,9 @@ namespace Maroon.Experiments.PlanetarySystem
         // handles homeReset / reset functinality
         #region ResetBar
         /// <summary>
-        /// Reset planets during ResetAnimation on reset 
+        /// Reset planets during ResetPlanetarySystemSimulation on reset 
         /// </summary>
-        public void ResetAnimationPlanets()
+        public void ResetSimulationPlanets()
             {
                 for (int planet = 0; planet < planets.Length; planet++)
             {
@@ -498,18 +498,18 @@ namespace Maroon.Experiments.PlanetarySystem
                 rb.isKinematic = true;
             }
 
-            StartCoroutine(RestartAnimationDelay());
+            StartCoroutine(RestartSimulationDelay());
         }
 
 
         /// <summary>
-        /// ResetAnimation after delay sets all planets kinematic to stop physics
+        /// ResetPlanetarySystemSimulation after delay sets all planets kinematic to stop physics
         /// reaplies InitialVelocity
         /// </summary>
         /// <returns></returns>
-        private IEnumerator RestartAnimationDelay()
+        private IEnumerator RestartSimulationDelay()
         {
-            yield return new WaitForSeconds(resetAnimationDelay);
+            yield return new WaitForSeconds(resetSimulationDelay);
 
             //reapply initial velocities and start planet movement after delay
             for (int planet = 0; planet < planets.Length; planet++)
@@ -524,7 +524,7 @@ namespace Maroon.Experiments.PlanetarySystem
 
 
         /// <summary>
-        /// ResetHome button deactivates Animation and SortingGame Gameobjects
+        /// ResetHome button deactivates Simulation and SortingGame Gameobjects
         /// activates FormulaUI
         /// stopps all LERP camera coroutines
         /// </summary>

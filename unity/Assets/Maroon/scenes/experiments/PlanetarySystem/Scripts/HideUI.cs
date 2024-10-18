@@ -6,7 +6,7 @@ namespace Maroon.Experiments.PlanetarySystem
 {
     public class HideUI : MonoBehaviour
     {
-        public GameObject AnimationUI;
+        public GameObject UI;
         public GameObject PlanetInformationUI;
         public Toggle toggleHideUI;
 
@@ -24,7 +24,7 @@ namespace Maroon.Experiments.PlanetarySystem
         {
             if (Input.GetKeyUp(KeyCode.H))
             {
-                bool visible = !AnimationUI.activeSelf;
+                bool visible = !UI.activeSelf;
                 SetUIActive(visible);
                 toggleHideUI.isOn = !visible;
             }
@@ -37,7 +37,7 @@ namespace Maroon.Experiments.PlanetarySystem
         /// <param name="active"></param>
         public void SetUIActive(bool hide)
         {
-            AnimationUI.SetActive(!hide);
+            UI.SetActive(!hide);
             PlanetInformationUI.SetActive(!hide);
             //Debug.Log("HideUI: SetUIActive(active): " + hide);
         }

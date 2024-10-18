@@ -22,7 +22,7 @@ namespace Maroon.Experiments.PlanetarySystem
 
 
         /// <summary>
-        /// UnityEvent to starts SortingGame or Animation when the screen is clicked
+        /// UnityEvent to starts SortingGame or Simulation when the screen is clicked
         /// </summary>
         private void OnMouseDown()
         {

@@ -1266,12 +1266,12 @@ Transform:
   m_GameObject: {fileID: 311220537}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.20000005, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 811955599}
-  m_Father: {fileID: 774167223}
+  m_Father: {fileID: 396563818}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!81 &311220539
 AudioListener:
@@ -2006,6 +2006,12 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4778086216559992466, guid: b8da8622f68b13745ae8e0539da57919,
     type: 3}
   m_PrefabInstance: {fileID: 7555855105021213382}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &396563818 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2131119207974420912, guid: 4698ba446015d9f4ea6cde9f4c774547,
+    type: 3}
+  m_PrefabInstance: {fileID: 1600574731}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &407531872
 PrefabInstance:
@@ -3497,12 +3503,12 @@ PrefabInstance:
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: UIToggleSunKinematic
+      value: ToggleSunKinematic
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: PlanetController, Maroon.Experiments.PlanetarySystem
+      value: Maroon.Experiments.PlanetarySystem.PlanetaryController, Maroon.Experiments.PlanetarySystem
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
@@ -5349,12 +5355,6 @@ RectTransform:
 --- !u!1 &774167219 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2131119208124075180, guid: 4698ba446015d9f4ea6cde9f4c774547,
-    type: 3}
-  m_PrefabInstance: {fileID: 1600574731}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &774167223 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2131119208124075183, guid: 4698ba446015d9f4ea6cde9f4c774547,
     type: 3}
   m_PrefabInstance: {fileID: 1600574731}
   m_PrefabAsset: {fileID: 0}
@@ -8380,7 +8380,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1319881025}
+      objectReference: {fileID: 1319881033}
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -8389,12 +8389,12 @@ PrefabInstance:
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: UIToggleSunLight
+      value: ToggleSunLight
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: PlanetController, Maroon.Experiments.PlanetarySystem
+      value: Maroon.Experiments.PlanetarySystem.PlanetSortingGameController, Maroon.Experiments.PlanetarySystem
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
@@ -8852,12 +8852,12 @@ PrefabInstance:
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: UIToggleAOrientation
+      value: ToggleSimOrientation
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: PlanetController, Maroon.Experiments.PlanetarySystem
+      value: Maroon.Experiments.PlanetarySystem.PlanetaryController, Maroon.Experiments.PlanetarySystem
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
@@ -9171,7 +9171,7 @@ PrefabInstance:
     - target: {fileID: 1347347726476049598, guid: 09c73ed225a086845b90fbeaba0dc5ea,
         type: 3}
       propertyPath: m_Name
-      value: SliderAnimationCameraFov
+      value: SliderSimulationCameraFov
       objectReference: {fileID: 0}
     - target: {fileID: 1347347726476049598, guid: 09c73ed225a086845b90fbeaba0dc5ea,
         type: 3}
@@ -9994,62 +9994,62 @@ PrefabInstance:
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 550
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239040558691, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239350200118, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239375179209, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
@@ -11080,10 +11080,10 @@ MonoBehaviour:
   SolarSystemAnimationCamera: {fileID: 1779433759}
   SortingGameCamera: {fileID: 650313889}
   TelescopeCamera: {fileID: 175935273}
-  AnimationCamera: {fileID: 1779433763}
-  initialAnimationCameraFov: 0
-  initialAnimationCameraPosition: {x: 0, y: 0, z: 0}
-  initialAnimationCameraRotation: {x: 0, y: 0, z: 0, w: 0}
+  SimulationCamera: {fileID: 1779433763}
+  initialSimulationCameraFov: 0
+  initialSimulationCameraPosition: {x: 0, y: 0, z: 0}
+  initialSimulationCameraRotation: {x: 0, y: 0, z: 0, w: 0}
   G: 0
   planets:
   - {fileID: 801903772}
@@ -11096,7 +11096,7 @@ MonoBehaviour:
   - {fileID: 471740719}
   - {fileID: 1137449821}
   sortedPlanetCount: 0
-  resetAnimationDelay: 0.5
+  resetSimulationDelay: 0.3
   skyboxMaterial: {fileID: 2100000, guid: f0742823962d31b4ebfa4be9309ddd4e, type: 2}
 --- !u!114 &1319881027
 MonoBehaviour:
@@ -11126,7 +11126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66bbd1b7b4fc83742803b7e50fdf02cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AnimationUI: {fileID: 1228143527}
+  UI: {fileID: 1228143527}
   PlanetInformationUI: {fileID: 4370550776285657456}
   toggleHideUI: {fileID: 738462474}
 --- !u!114 &1319881031
@@ -11148,11 +11148,11 @@ MonoBehaviour:
   timeSpeed: 1
   sliderG: {fileID: 1853700500}
   sliderTimeSpeed: {fileID: 1028880782}
-  sliderAnimationCameraFov: {fileID: 1830430494}
+  sliderSimulationCameraFov: {fileID: 1830430494}
   toggleAllTrajectories: {fileID: 894214465}
-  toggleARotation: {fileID: 2108486509}
+  toggleSimRotation: {fileID: 2108486509}
   toggleSunKinematic: {fileID: 1931713557}
-  toggleAOrientationGizmo: {fileID: 1882523122}
+  toggleSimOrientationGizmo: {fileID: 1882523122}
   toggleSGOrientationGizmo: {fileID: 2027029529}
   toggleSGRotation: {fileID: 491713910}
   toggleSunLight: {fileID: 1968387558}
@@ -16426,7 +16426,7 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1730546070}
-    - targetCorrespondingSourceObject: {fileID: 2131119208124075183, guid: 4698ba446015d9f4ea6cde9f4c774547,
+    - targetCorrespondingSourceObject: {fileID: 2131119207974420912, guid: 4698ba446015d9f4ea6cde9f4c774547,
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 311220538}
@@ -17603,7 +17603,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1319881025}
+      objectReference: {fileID: 1319881033}
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -17612,12 +17612,12 @@ PrefabInstance:
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: UIToggleSGOrientation
+      value: ToggleSGOrientation
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: PlanetController, Maroon.Experiments.PlanetarySystem
+      value: Maroon.Experiments.PlanetarySystem.PlanetSortingGameController, Maroon.Experiments.PlanetarySystem
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
@@ -18309,7 +18309,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1319881025}
+      objectReference: {fileID: 1319881033}
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -18318,12 +18318,12 @@ PrefabInstance:
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: UIToggleSGRotation
+      value: ToggleSGRotation
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: PlanetController, Maroon.Experiments.PlanetarySystem
+      value: Maroon.Experiments.PlanetarySystem.PlanetSortingGameController, Maroon.Experiments.PlanetarySystem
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
@@ -19235,7 +19235,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1319881025}
+      objectReference: {fileID: 1319881033}
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
@@ -19244,12 +19244,12 @@ PrefabInstance:
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: UIToggleSolarFlares
+      value: ToggleSolarFlares
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: PlanetController, Maroon.Experiments.PlanetarySystem
+      value: Maroon.Experiments.PlanetarySystem.PlanetSortingGameController, Maroon.Experiments.PlanetarySystem
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
@@ -20214,12 +20214,12 @@ PrefabInstance:
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: UIToggleARotation
+      value: ToggleSimRotation
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: PlanetController, Maroon.Experiments.PlanetarySystem
+      value: Maroon.Experiments.PlanetarySystem.PlanetaryController, Maroon.Experiments.PlanetarySystem
       objectReference: {fileID: 0}
     - target: {fileID: 9085299239375179215, guid: 47808144d6757244da5be7e2e38f1f94,
         type: 3}

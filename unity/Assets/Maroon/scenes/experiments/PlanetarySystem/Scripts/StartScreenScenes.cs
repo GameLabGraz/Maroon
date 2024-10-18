@@ -92,7 +92,7 @@ namespace Maroon.Experiments.PlanetarySystem
         #endregion LerpCamera
 
 
-        // StartSortingGameOnInput or StartAnimationOnInputand de/activates gameobjects after coroutine has finished 
+        // StartSortingGameOnInput or StartPlanetarySystemSimulationOnInputand de/activates gameobjects after coroutine has finished 
         #region StartScreenScenes
         /// <summary>
         /// StartSortingGameOnInput and calls LERP camera couroutine
@@ -101,14 +101,14 @@ namespace Maroon.Experiments.PlanetarySystem
         {
             LeavePlanetorySystemSimulation();
             PlanetarySortingGame.SetActive(true);
-            StartCoroutine(LerpCameraStartSortingGame());
+            StartCoroutine(LerpCameraStartPlanetarySortingGame());
         }
 
         /// <summary>
         /// waits for LERP camera couroutine and de/activates gameobjects
         /// </summary>
         /// <returns></returns>
-        private IEnumerator LerpCameraStartSortingGame()
+        private IEnumerator LerpCameraStartPlanetarySortingGame()
         {
             yield return StartCoroutine(LerpCameraToPosition(MainCamera, PlanetarySortingGameCamera, 1f));
             PlanetarySortingGame.SetActive(true);
@@ -116,7 +116,7 @@ namespace Maroon.Experiments.PlanetarySystem
             FormulaUI.SetActive(false);
 
             planetSortingGameController.ToggleSGRotation(true);
-            planetaryController.DisplayMessageByKey("EnterSortingGame");
+            planetaryController.DisplayMessageByKey("EnterPlanetarySortingGame");
         }
 
 
@@ -147,7 +147,7 @@ namespace Maroon.Experiments.PlanetarySystem
 
 
         /// <summary>
-        /// StartAnimationOnInput and calls LERP camera couroutine
+        /// StartPlanetorySystemSimulationOnInput and calls LERP camera couroutine
         /// </summary>
         public void StartPlanetorySystemSimulationOnInput()
         {
@@ -179,13 +179,13 @@ namespace Maroon.Experiments.PlanetarySystem
             MainCamera.SetActive(false);
             PlanetarySystemSimulationCamera.SetActive(true);
 
-            uiController.ResetAnimation();
-            planetaryController.DisplayMessageByKey("EnterAnimation");
+            uiController.ResetPlanetarySystemSimulation();
+            planetaryController.DisplayMessageByKey("EnterPlanetarySystemSimulation");
         }
 
 
         /// <summary>
-        /// LeaveAnimation and deactivates gameobjects
+        /// LeavePlanetorySystemSimulation and deactivates gameobjects
         /// </summary>
         public void LeavePlanetorySystemSimulation()
         {

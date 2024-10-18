@@ -14,12 +14,12 @@ namespace Maroon.Experiments.PlanetarySystem
 
         public Slider sliderG;
         public Slider sliderTimeSpeed;
-        public Slider sliderAnimationCameraFov;
+        public Slider sliderSimulationCameraFov;
 
         public Toggle toggleAllTrajectories;
-        public Toggle toggleARotation;
+        public Toggle toggleSimRotation;
         public Toggle toggleSunKinematic;
-        public Toggle toggleAOrientationGizmo;
+        public Toggle toggleSimOrientationGizmo;
         public Toggle toggleSGOrientationGizmo;
         public Toggle toggleSGRotation;
         public Toggle toggleSunLight;
@@ -54,12 +54,12 @@ namespace Maroon.Experiments.PlanetarySystem
         {
             sliderG.onValueChanged.AddListener(OnGSliderValueChanged);
             sliderTimeSpeed.onValueChanged.AddListener(OnTimeSliderValueChanged);
-            sliderAnimationCameraFov.onValueChanged.AddListener(OnFOVSliderValueChanged);
+            sliderSimulationCameraFov.onValueChanged.AddListener(OnFOVSliderValueChanged);
 
             toggleAllTrajectories.onValueChanged.AddListener((bool isOn) => planetTrajectoryController.ToggleAllTrajectories(isOn));
-            toggleARotation.onValueChanged.AddListener((bool isOn) => planetaryController.ToggleARotation(!isOn));
+            toggleSimRotation.onValueChanged.AddListener((bool isOn) => planetaryController.ToggleSimRotation(!isOn));
             toggleSunKinematic.onValueChanged.AddListener((bool isOn) => planetaryController.ToggleSunKinematic(isOn));
-            toggleAOrientationGizmo.onValueChanged.AddListener((bool isOn) => planetaryController.ToggleAOrientation(isOn));
+            toggleSimOrientationGizmo.onValueChanged.AddListener((bool isOn) => planetaryController.ToggleSimOrientation(isOn));
 
             toggleSGOrientationGizmo.onValueChanged.AddListener((bool isOn) => planetSortingGameController.ToggleSGOrientation(isOn));
             toggleSGRotation.onValueChanged.AddListener((bool isOn) => planetSortingGameController.ToggleSGRotation(isOn));
@@ -81,12 +81,12 @@ namespace Maroon.Experiments.PlanetarySystem
         {
             sliderG.onValueChanged.RemoveListener(OnGSliderValueChanged);
             sliderTimeSpeed.onValueChanged.RemoveListener(OnTimeSliderValueChanged);
-            sliderAnimationCameraFov.onValueChanged.RemoveListener(OnFOVSliderValueChanged);
+            sliderSimulationCameraFov.onValueChanged.RemoveListener(OnFOVSliderValueChanged);
 
             toggleAllTrajectories.onValueChanged.RemoveListener((bool isOn) => planetTrajectoryController.ToggleAllTrajectories(isOn));
-            toggleARotation.onValueChanged.RemoveListener((bool isOn) => planetaryController.ToggleARotation(isOn));
+            toggleSimRotation.onValueChanged.RemoveListener((bool isOn) => planetaryController.ToggleSimRotation(isOn));
             toggleSunKinematic.onValueChanged.RemoveListener((bool isOn) => planetaryController.ToggleSunKinematic(isOn));
-            toggleAOrientationGizmo.onValueChanged.RemoveListener((bool isOn) => planetaryController.ToggleAOrientation(isOn));
+            toggleSimOrientationGizmo.onValueChanged.RemoveListener((bool isOn) => planetaryController.ToggleSimOrientation(isOn));
 
             toggleSGOrientationGizmo.onValueChanged.RemoveListener((bool isOn) => planetSortingGameController.ToggleSGOrientation(isOn));
             toggleSGRotation.onValueChanged.RemoveListener((bool isOn) => planetSortingGameController.ToggleSGRotation(isOn));
@@ -121,11 +121,11 @@ namespace Maroon.Experiments.PlanetarySystem
                 sliderG.value = timeSpeed;
             }
 
-            if (sliderAnimationCameraFov != null)
+            if (sliderSimulationCameraFov != null)
             {
-                sliderAnimationCameraFov.minValue = 10;
-                sliderAnimationCameraFov.maxValue = 180;
-                sliderAnimationCameraFov.value = planetaryController.AnimationCamera.fieldOfView;
+                sliderSimulationCameraFov.minValue = 10;
+                sliderSimulationCameraFov.maxValue = 180;
+                sliderSimulationCameraFov.value = planetaryController.SimulationCamera.fieldOfView;
             }
         }
 
@@ -156,7 +156,7 @@ namespace Maroon.Experiments.PlanetarySystem
         /// <param name="fovValue"></param>
         public void OnFOVSliderValueChanged(float fovValue)
         {
-            planetaryController.AnimationCamera.fieldOfView = fovValue;
+            planetaryController.SimulationCamera.fieldOfView = fovValue;
         }
 
 
@@ -195,7 +195,7 @@ namespace Maroon.Experiments.PlanetarySystem
         /// <summary>
         /// reset slider values
         /// </summary>
-        public void ResetAnimationValues()
+        public void ResetPlanetarySystemSimulationValues()
         {
             sliderG.value = gravitationalConstantG;
             sliderTimeSpeed.value = timeSpeed;
@@ -204,10 +204,10 @@ namespace Maroon.Experiments.PlanetarySystem
 
 
         /// <summary>
-        /// ResetAnimation on reset and on StartAnimation
+        /// ResetPlanetarySystemSimulation on reset and on StartPlanetarySystemSimulation
         /// </summary>
-        
-        public void ResetAnimation()
+
+        public void ResetPlanetarySystemSimulation()
         {
             bool hide = false;
             for (int index = 0; index < planetToggles.Length; index++)
@@ -217,8 +217,8 @@ namespace Maroon.Experiments.PlanetarySystem
 
             planetTrajectoryController.ClearTrajectories();
             ResetCamera();
-            ResetAnimationValues();
-            planetaryController.ResetAnimationPlanets();
+            ResetPlanetarySystemSimulationValues();
+            planetaryController.ResetSimulationPlanets();
         }
 
 
@@ -227,10 +227,10 @@ namespace Maroon.Experiments.PlanetarySystem
         /// </summary>
         public void ResetCamera()
         {
-            planetaryController.AnimationCamera.transform.SetPositionAndRotation(planetaryController.initialAnimationCameraPosition, planetaryController.initialAnimationCameraRotation);
-            planetaryController.AnimationCamera.fieldOfView = planetaryController.initialAnimationCameraFov;
+            planetaryController.SimulationCamera.transform.SetPositionAndRotation(planetaryController.initialSimulationCameraPosition, planetaryController.initialSimulationCameraRotation);
+            planetaryController.SimulationCamera.fieldOfView = planetaryController.initialSimulationCameraFov;
 
-            sliderAnimationCameraFov.value = planetaryController.initialAnimationCameraFov;
+            sliderSimulationCameraFov.value = planetaryController.initialSimulationCameraFov;
         }
 
 
@@ -240,7 +240,7 @@ namespace Maroon.Experiments.PlanetarySystem
         public void ResetObject()
         {
             //Debug.Log("PlanetaryController: ResetObject(): button pressed");
-            ResetAnimation();
+            ResetPlanetarySystemSimulation();
         }
     }
 }

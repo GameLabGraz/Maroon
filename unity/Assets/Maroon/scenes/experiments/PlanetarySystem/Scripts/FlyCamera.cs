@@ -63,8 +63,8 @@ namespace Maroon.Experiments.PlanetarySystem
 
             FlyCameraMovement();
 
-            // Update AnimationCameraFov and angle from PlanetaryController
-            flyCamera.fieldOfView = PlanetaryController.Instance.AnimationCamera.fieldOfView;
+            // UpdateSimulationCameraFov and angle from PlanetaryController
+            flyCamera.fieldOfView = PlanetaryController.Instance.SimulationCamera.fieldOfView;
         }
 
 

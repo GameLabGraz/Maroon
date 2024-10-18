@@ -20,7 +20,7 @@ namespace Maroon.Experiments.PlanetarySystem
 
         /// <summary>
         /// rotate planets obliquityToOrbit = rotation angle
-        /// called after resetting Animation
+        /// called after resetting Simulation
         /// z axis
         /// </summary>
         public void SetObliquityToOrbit()
