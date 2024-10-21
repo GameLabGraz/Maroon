@@ -8,6 +8,7 @@ using GEAR.Localization;
 using Maroon.Physics;
 using Maroon.Physics.ThreeDimensionalMotion;
 using Maroon;
+using Maroon.GlobalEntities;
 
 namespace ObjectsInUse
 {
