@@ -117,4 +117,10 @@ public class ParameterLoader : MonoBehaviour
             return _instance;
         }
     }
+
+    public void OnParametersLoaded(string paramString)
+    {
+        var parameters = JsonConvert.DeserializeObject<ParameterLoader.Parameters>(paramString);
+        ParameterUI.Instance.LoadParameters(parameters);
+    }
 }
