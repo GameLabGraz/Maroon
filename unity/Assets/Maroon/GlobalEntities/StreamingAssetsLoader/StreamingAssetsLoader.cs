@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Maroon
+namespace Maroon.GlobalEntities
 {
     public class StreamingAssetsLoader : MonoBehaviour
     {
