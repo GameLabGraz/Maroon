@@ -13,12 +13,7 @@ namespace Maroon.Experiments.PlanetarySystem
         public StartScreenScenes startScreenScenes;
 
         #region Cameras
-        [SerializeField] private GameObject MainCamera;                 //off
-        [SerializeField] private GameObject SolarSystemAnimationCamera; //on
-        [SerializeField] private GameObject SortingGameCamera;          //off
-        [SerializeField] private GameObject TelescopeCamera;            //off
         public Camera SimulationCamera;
-
         [HideInInspector] public float initialSimulationCameraFov;
         [HideInInspector] public Vector3 initialSimulationCameraPosition;
         [HideInInspector] public Quaternion initialSimulationCameraRotation;

@@ -36,16 +36,6 @@ namespace Maroon.Experiments.PlanetarySystem
             PlanetarySortingGamePlanetInfoUI.SetActive(false);
         }
 
-        /// <summary>
-        /// Reset MainCamera values to InitialCamera
-        /// </summary>
-        private void ResetMainCamera()
-        {
-            MainCamera.transform.SetPositionAndRotation(InitialMainCamera.transform.position, InitialMainCamera.transform.rotation);
-            MainCamera.GetComponent<Camera>().fieldOfView = InitialMainCamera.GetComponent<Camera>().fieldOfView;
-        }
-
-
 
         // LERPs the currentCamera(MainCamera) to the targetCameras position
         #region LerpCamera
@@ -59,6 +49,8 @@ namespace Maroon.Experiments.PlanetarySystem
         /// <returns></returns>
         private IEnumerator LerpCameraToPosition(GameObject currentCamera, GameObject targetCamera, float lerpDuration)
         {
+            //Debug.Log("StartScreenScenes(): LerpCameraToPosition(): ");
+
             float time = 0f;
             Vector3 initialPosition = currentCamera.transform.position;
             Quaternion initialRotation = currentCamera.transform.rotation;
@@ -99,8 +91,11 @@ namespace Maroon.Experiments.PlanetarySystem
         /// </summary>
         public void StartPlanetarySortingGameOnInput()
         {
+            //Debug.Log("StartScreenScenes(): StartPlanetarySortingGameOnInput(): ");
+
             LeavePlanetorySystemSimulation();
             PlanetarySortingGame.SetActive(true);
+
             StartCoroutine(LerpCameraStartPlanetarySortingGame());
         }
 
@@ -110,6 +105,8 @@ namespace Maroon.Experiments.PlanetarySystem
         /// <returns></returns>
         private IEnumerator LerpCameraStartPlanetarySortingGame()
         {
+            //Debug.Log("StartScreenScenes(): LerpCameraStartPlanetarySortingGame(): ");
+
             yield return StartCoroutine(LerpCameraToPosition(MainCamera, PlanetarySortingGameCamera, 1f));
             PlanetarySortingGame.SetActive(true);
             PlanetarySortingGamePlanetInfoUI.SetActive(true);
