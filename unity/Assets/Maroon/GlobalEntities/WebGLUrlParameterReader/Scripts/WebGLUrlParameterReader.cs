@@ -19,9 +19,9 @@ namespace Maroon
         [DllImport("__Internal")]
         private static extern IntPtr _getAllUrlParameters();
 
+        [Obsolete("GetUrlParameter is deprecated due to case-sensitivity. Use 'BootstrappingManager.UrlParameters' instead.")]
         public static string GetUrlParameter(WebGlUrlParameter urlParameter)
         {
-            Debug.LogWarning("GetUrlParameter is deprecated due to case-sensitivity. Use 'BootstrappingManager.UrlParameters' instead.");
             return GetAllUrlParameters().TryGetValue(urlParameter, out string value) ? value : null;
         }
 
