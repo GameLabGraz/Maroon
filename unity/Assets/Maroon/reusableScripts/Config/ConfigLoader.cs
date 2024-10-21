@@ -1,14 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
+using UnityEngine.Events;
 
 namespace Maroon.Config
 {
-    public abstract class ConfigLoader : MonoBehaviour
+    public class ConfigLoader : MonoBehaviour
     {
+        public UnityEvent<string> ParametersLoaded = new UnityEvent<string>();
+
         protected string _parametersString;
         protected Dictionary<string, string> _parameters;
 
@@ -42,9 +44,10 @@ namespace Maroon.Config
             _parametersString = request.downloadHandler.text;
             _parameters = JsonConvert.DeserializeObject<Dictionary<string, string>>(_parametersString);
 
-            SetParameters();
+            // -> SetParameters();
+            ParametersLoaded.Invoke(_parametersString);
         }
 
-        protected abstract void SetParameters();
+        // protected abstract void SetParameters();
     }
 }
