@@ -1,20 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace Maroon.Physics
 {
-  [Serializable]
-  public class Node
-  {
-    public string interestingValue = "value";
-    //The field below is what makes the serialization data become huge because
-    //it introduces a 'class cycle'.
-    public List<Node> children = new List<Node>();
-  }
-
-  [RequireComponent(typeof(HingeJoint))]
+    [RequireComponent(typeof(HingeJoint))]
     public class Pendulum : PausableObject, IResetObject
     {
         public QuantityFloat weight = 1.0f;
