@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Maroon.Physics
+namespace Maroon.Physics.Pendulum
 {
     [RequireComponent(typeof(AdvancedLineRenderer))]
     public class PendulumRope : PausableObject, IResetObject

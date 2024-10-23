@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Maroon.Physics
+namespace Maroon.Physics.Pendulum
 {
     [RequireComponent(typeof(HingeJoint))]
     public class Pendulum : PausableObject, IResetObject

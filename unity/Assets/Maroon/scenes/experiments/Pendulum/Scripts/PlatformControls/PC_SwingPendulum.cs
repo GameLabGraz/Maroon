@@ -1,5 +1,5 @@
 ﻿using System;
-using Maroon.Physics;
+using Maroon.Physics.Pendulum;
 using UnityEngine;
 using UnityEngine.Events;
 
