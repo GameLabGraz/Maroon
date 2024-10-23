@@ -8,7 +8,7 @@ public class PWSourceEvent : UnityEvent<PointWaveSource>
 {
 }
 
-public class PointWavePoolHandler : MonoBehaviour
+public class PointWavePoolHandler : MonoBehaviour, IResetObject
 {
     public enum Axis
     {
@@ -72,7 +72,7 @@ public class PointWavePoolHandler : MonoBehaviour
         }
     }
 
-    void Start()
+    private void Start()
     {
         Initialize();
     }
@@ -201,6 +201,7 @@ public class PointWavePoolHandler : MonoBehaviour
 
     public void ResetObject()
     {
+        ResetWholeObject();
     }
 
     public void RemoveAllSources()
