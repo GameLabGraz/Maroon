@@ -6,7 +6,6 @@ using Maroon.scenes.experiments.FallingBallViscosimeter.Scripts;
 using Maroon.UI;
 using UnityEngine;
 using TMPro;
-using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 namespace Maroon.Physics.Viscosimeter
@@ -120,30 +119,25 @@ namespace Maroon.Physics.Viscosimeter
             BroadcastMessage("toggleMeasurement", mode);
         }
 
-        public void ToggleMeasurementMode()
-        {
-            MeasurementMode = !MeasurementMode;
-        }
-
         private void GetAllMeasurableObjects()
         {
-            Object[] foundObjects = FindObjectsOfType<MeasurableObject>();
+            MeasurableObject[] foundObjects = FindObjectsOfType<MeasurableObject>();
 
             measurableObjects = new List<MeasurableObject>();
 
-            foreach (Object obj in foundObjects)
+            foreach (MeasurableObject obj in foundObjects)
             {
-                measurableObjects.Add(obj as MeasurableObject);
+                measurableObjects.Add(obj);
             }
         }
 
-        void FixedUpdate()
+        private void FixedUpdate()
         {
             CalculateFluidDensity();
             UpdateDebugText();
         }
 
-        void UpdateDebugText()
+        private void UpdateDebugText()
         {
             decimal ball_velocity = ball.Velocity;
             if (ball_velocity > ballMaxSpeed)

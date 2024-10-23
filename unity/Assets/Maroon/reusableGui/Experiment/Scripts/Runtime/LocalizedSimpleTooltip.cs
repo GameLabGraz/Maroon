@@ -1,7 +1,8 @@
+using GEAR.Localization.Text;
 using UnityEngine;
 using Vendor.SimpleTooltip;
 
-namespace GEAR.Localization.Text
+namespace Maroon.UI
 {
     [RequireComponent(typeof(SimpleTooltip))]
     public class LocalizedSimpleTooltip : LocalizedTextBase

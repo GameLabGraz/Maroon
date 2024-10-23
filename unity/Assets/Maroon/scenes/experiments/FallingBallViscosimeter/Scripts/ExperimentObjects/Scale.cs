@@ -16,6 +16,7 @@ namespace Maroon.Physics.Viscosimeter
 
         public void ResetObject()
         {
+            snapPoint.currentObject = null;
         }
 
         private void OnDrawGizmos() {
