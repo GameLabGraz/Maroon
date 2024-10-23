@@ -33,6 +33,8 @@ public class PointWaveWaterPlane : PausableObject, IResetObject
         base.Start();
 
         _meshRenderer = GetComponent<MeshRenderer>();
+        _meshRenderer.material.SetColor("_ColorMin", startMinColor);
+        _meshRenderer.material.SetColor("_ColorMax", startMaxColor);
         UpdateParameterAndPosition();
         
 
