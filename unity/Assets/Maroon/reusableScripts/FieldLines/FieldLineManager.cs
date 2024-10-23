@@ -70,6 +70,8 @@ public class FieldLineManager : MonoBehaviour
     {
         foreach (var fL in fieldLines)
             fL.SetVisibility(visibility);
+
+        DrawFieldLines();
     }
 
     /// <summary>
