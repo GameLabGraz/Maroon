@@ -151,7 +151,6 @@ namespace Maroon.Physics.Pendulum
                     Debug.Log("Pendulum Maximum" + _currentElongation + " - " + _previousElongation);
                 }
             }
-
         }
 
         public float GetDeflection()
@@ -188,6 +187,8 @@ namespace Maroon.Physics.Pendulum
             _rigidBody.angularVelocity = Vector3.zero;
 
             Elongation = 0f;
+
+            UpdatePendulum();
         }
 
         public void PendulumReleased()
