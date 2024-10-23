@@ -196,6 +196,8 @@ namespace Maroon.Physics
 
             _rigidBody.velocity = Vector3.zero;
             _rigidBody.angularVelocity = Vector3.zero;
+
+            Elongation = 0f;
         }
 
         public void PendulumReleased()
