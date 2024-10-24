@@ -9,6 +9,7 @@ using Maroon.Physics;
 using Maroon.Physics.ThreeDimensionalMotion;
 using Maroon;
 using Maroon.GlobalEntities;
+using Maroon.Config;
 
 namespace ObjectsInUse
 {
@@ -29,6 +30,7 @@ public class ParameterUI : PausableObject
     [SerializeField] private GameObject _dataVisualization;
 
     private static ParameterUI _instance;
+    public static ParameterUI Instance => _instance;
     private DialogueManager _dialogueManager;
    
     public TMP_Dropdown dropdown;
@@ -80,6 +82,23 @@ public class ParameterUI : PausableObject
     [SerializeField] private UnityEngine.UI.Toggle _showLabel;
     [SerializeField] private UnityEngine.UI.Toggle _showOriginGrid;
 
+
+    private void Awake()
+    {
+        if (_instance == null)
+        {
+            _instance = this;
+            ConfigLoader.Instance.OnConfigLoaded.AddListener(OnConfigsLoadedInital);
+            ConfigLoader.Instance.OnConfigLoaded.AddListener(OnConfigLoaded);
+        }
+        else if (_instance != this)
+        {
+            DestroyImmediate(this.gameObject);
+            return;
+        }
+
+        DontDestroyOnLoad(this.gameObject);
+    }
     /// <summary>
     /// Inits the dictionary for the formulas and handles the visibility of UI elements
     /// Displays the welcome message
@@ -88,18 +107,22 @@ public class ParameterUI : PausableObject
     {
         if (_dialogueManager == null)
             _dialogueManager = FindObjectOfType<DialogueManager>();
-        dropdown.ClearOptions();
-        dropdown.AddOptions(ParameterController3DMotionSimulation.Instance.GetParameterNames());
-        
-        ParameterController3DMotionSimulation.Instance.OnParameterChanged.AddListener((parameter, index) => {
-            LoadParametersFromFile(parameter.ToString());
-            dropdown.SetValueWithoutNotify(index);
-        });
-
-        ParameterController3DMotionSimulation.Instance.SetParameter(Parameter3DMotionSimulation.Default);
 
         string message = LanguageManager.Instance.GetString("Welcome");
         DisplayMessage(message);
+    }
+
+    private void OnConfigsLoadedInital()
+    {
+        dropdown.ClearOptions();
+        dropdown.AddOptions(ConfigLoader.Instance.GetConfigNames());
+        
+        ConfigLoader.Instance.OnConfigLoaded.RemoveListener(OnConfigsLoadedInital);
+    }
+
+    private void OnConfigLoaded()
+    {
+        dropdown.SetValueWithoutNotify(ConfigLoader.Instance.CurrentConfigIndex);
     }
 
     /// <summary>
@@ -328,23 +351,13 @@ public class ParameterUI : PausableObject
     /// <param name="choice">The choice from the UI (Dropdown menu)</param>
     public void DropdownListener(int choice)
     {
-        Parameter3DMotionSimulation parameter = ParameterController3DMotionSimulation.Instance.GetParameterByIndex(choice);
-        ParameterController3DMotionSimulation.Instance.OnParameterChanged.Invoke(parameter, choice);
+        string configName = ConfigLoader.Instance.GetConfigNames()[choice];
+        ConfigLoader.Instance.ChangeConfig(configName);
     }
 
-    /// <summary>
-    /// Handles loading the parameters from the (intern) JSON file and sets the member variables
-    /// </summary>
-    /// <param name="file">File to load</param>
-    private async void LoadParametersFromFile(string filename)
+    public void LoadParameters()
     {
-        string convertedFilename = StreamingAssetsLoader.Instance.ConvertToPascalCase(filename);
-        var parameters = await ParameterLoader.Instance.LoadJsonFromFile(convertedFilename);
-        LoadParameters(parameters);
-    }
-
-    public void LoadParameters(ParameterLoader.Parameters parameters)
-    {
+        var parameters = ParameterLoader.Instance.GetParameters();
         _background = parameters.Background;
 
         _particleInUse = parameters.Particle?.ToLower() switch
@@ -416,16 +429,6 @@ public class ParameterUI : PausableObject
     public string GetBackground()
     {
         return _background;
-    }
-
-    public static ParameterUI Instance
-    {
-        get
-        {
-            if (_instance == null)
-                _instance = FindObjectOfType<ParameterUI>();
-            return _instance;
-        }
     }
 
     /// <summary>
