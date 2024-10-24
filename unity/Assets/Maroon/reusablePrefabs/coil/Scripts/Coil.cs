@@ -171,6 +171,7 @@ public class Coil : EMObject, IResetObject
     {
         Vector3 B = Vector3.zero;
         const float stepTheta = Mathf.PI / 20f; // Step size for the integration
+        float muOver4Pi = u0 * Current / (4 * Mathf.PI);
 
         // Get the coil's up direction and right direction for orientation
         Vector3 coilUp = transform.up;     // Coil's up direction
@@ -180,8 +181,11 @@ public class Coil : EMObject, IResetObject
         // Loop over the current loop (coil)
         for (float theta = 0; theta < 2 * Mathf.PI; theta += stepTheta)
         {
+            float cosTheta = Mathf.Cos(theta);
+            float sinTheta = Mathf.Sin(theta);
+
             // Calculate the local position of the current element in the coil's plane
-            Vector3 localPosition = Radius * (Mathf.Cos(theta) * coilRight + Mathf.Sin(theta) * coilForward);
+            Vector3 localPosition = Radius * (cosTheta * coilRight + sinTheta * coilForward);
 
             // The actual world position of the current element on the coil
             Vector3 coilPosition = transform.position + localPosition;
@@ -193,10 +197,10 @@ public class Coil : EMObject, IResetObject
             if (rMagnitude == 0) continue; // Avoid division by 0
 
             // Tangential direction of the current element in the coil
-            Vector3 dl = Radius * (-Mathf.Sin(theta) * coilRight + Mathf.Cos(theta) * coilForward) * stepTheta;
+            Vector3 dl = Radius * (-sinTheta * coilRight + cosTheta * coilForward) * stepTheta;
 
             // Biot-Savart law: dB = (μ0 * I / 4π) * (dl × r) / r^3
-            Vector3 dB = (u0 * Current / (4 * Mathf.PI)) * Vector3.Cross(dl, r) / Mathf.Pow(rMagnitude, 3);
+            Vector3 dB = muOver4Pi * Vector3.Cross(dl, r) / Mathf.Pow(rMagnitude, 3);
 
             // Add the small dB to the total field B
             B += dB;
