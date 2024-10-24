@@ -22,10 +22,10 @@ namespace Maroon.Physics.Optics.TableObject.LightComponent
             ChangeNumberOfRays(numberOfRays);
         }
         
-        public void SetParameters(int numberOfRays = 16, float distanceBetweenRays = 0.00015f)
+        public void SetParameters(ParallelSourceParameters parameters)
         {
-            this.distanceBetweenRays = distanceBetweenRays;
-            ChangeNumberOfRays(numberOfRays);
+            this.distanceBetweenRays = parameters.distanceBetweenRays;
+            ChangeNumberOfRays(parameters.numberOfRays);
         }
 
         public void ChangeNumberOfRays(int nrRays)

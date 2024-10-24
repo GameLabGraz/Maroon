@@ -16,7 +16,12 @@ namespace Maroon.Physics.Optics.TableObject.LightComponent
             
             RecalculateLightRoute();
         }
-        
+
+        public void SetParameters(LaserPointerParameters parameters)
+        {
+            // No parameters, do nothing
+        }
+
         public override void RecalculateLightRoute()
         {
             if (LightRoutes == null)

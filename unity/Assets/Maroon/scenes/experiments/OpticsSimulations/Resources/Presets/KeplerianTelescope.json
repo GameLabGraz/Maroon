@@ -1,0 +1,114 @@
+{
+  "$type": "Maroon.Physics.Optics.Manager.OpticsParameters, Maroon.Experiments.OpticsSimulations, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+  "presetNameTranslationKey": "Keplerian Telescope",
+  "rayThickness": 0.15,
+  "cameraSettingBaseView": {
+    "$type": "Maroon.Physics.Optics.Camera.CameraControls+CameraSetting, Maroon.Experiments.OpticsSimulations, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+    "Position": {
+      "$type": "Maroon.Utils.SerializableVector3, Maroon.ReusableScripts.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "x": -0.1682,
+      "y": 2.6,
+      "z": 1.0
+    },
+    "Rotation": {
+      "$type": "Maroon.Utils.SerializableQuaternion, Maroon.ReusableScripts.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "x": 0.4422887,
+      "y": 0.0,
+      "z": 0.0,
+      "w": 0.896872759
+    },
+    "FOV": 3.5
+  },
+  "cameraSettingTopView": {
+    "$type": "Maroon.Physics.Optics.Camera.CameraControls+CameraSetting, Maroon.Experiments.OpticsSimulations, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+    "Position": {
+      "$type": "Maroon.Utils.SerializableVector3, Maroon.ReusableScripts.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "x": -0.1682,
+      "y": 3.0,
+      "z": 2.08
+    },
+    "Rotation": {
+      "$type": "Maroon.Utils.SerializableQuaternion, Maroon.ReusableScripts.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "x": 0.707106769,
+      "y": 0.0,
+      "z": 0.0,
+      "w": 0.707106769
+    },
+    "FOV": 3.5
+  },
+  "tableObjectParameters": {
+    "$type": "System.Collections.Generic.List`1[[Maroon.Physics.Optics.TableObject.TableObjectParameters, Maroon.Experiments.OpticsSimulations, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+    "$values": [
+      {
+        "$type": "Maroon.Physics.Optics.TableObject.LightComponent.ParallelSourceParameters, Maroon.Experiments.OpticsSimulations, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "numberOfRays": 20,
+        "distanceBetweenRays": 0.0014,
+        "waveLengths": null,
+        "position": {
+          "$type": "Maroon.Utils.SerializableVector3, Maroon.ReusableScripts.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+          "x": 1.65,
+          "y": 0.0,
+          "z": 0.577
+        },
+        "rotation": null
+      },
+      {
+        "$type": "Maroon.Physics.Optics.TableObject.OpticalComponent.ApertureParameters, Maroon.Experiments.OpticsSimulations, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "Rin": 0.005,
+        "Rout": 0.015,
+        "position": {
+          "$type": "Maroon.Utils.SerializableVector3, Maroon.ReusableScripts.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+          "x": 1.74,
+          "y": 0.0,
+          "z": 0.577
+        },
+        "rotation": null
+      },
+      {
+        "$type": "Maroon.Physics.Optics.TableObject.OpticalComponent.LensParameters, Maroon.Experiments.OpticsSimulations, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "R1": 0.112,
+        "R2": -0.112,
+        "d1": 0.0015,
+        "d2": 0.0015,
+        "Rc": 0.015,
+        "A": 1.7,
+        "B": 0.0,
+        "position": {
+          "$type": "Maroon.Utils.SerializableVector3, Maroon.ReusableScripts.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+          "x": 1.75,
+          "y": 0.0,
+          "z": 0.577
+        },
+        "rotation": null
+      },
+      {
+        "$type": "Maroon.Physics.Optics.TableObject.OpticalComponent.LensParameters, Maroon.Experiments.OpticsSimulations, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "R1": 0.028,
+        "R2": -0.028,
+        "d1": 0.001,
+        "d2": 0.001,
+        "Rc": 0.05,
+        "A": 1.7,
+        "B": 0.0,
+        "position": {
+          "$type": "Maroon.Utils.SerializableVector3, Maroon.ReusableScripts.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+          "x": 1.85,
+          "y": 0.0,
+          "z": 0.577
+        },
+        "rotation": null
+      },
+      {
+        "$type": "Maroon.Physics.Optics.TableObject.OpticalComponent.EyeParameters, Maroon.Experiments.OpticsSimulations, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "f": 0.024,
+        "position": {
+          "$type": "Maroon.Utils.SerializableVector3, Maroon.ReusableScripts.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+          "x": 1.867,
+          "y": 0.0,
+          "z": 0.577
+        },
+        "rotation": null
+      }
+    ]
+  }
+}

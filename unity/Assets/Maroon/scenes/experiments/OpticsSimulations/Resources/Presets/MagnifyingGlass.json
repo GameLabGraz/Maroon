@@ -1,0 +1,86 @@
+{
+  "$type": "Maroon.Physics.Optics.Manager.OpticsParameters, Maroon.Experiments.OpticsSimulations, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+  "presetNameTranslationKey": "Magnifying Glass",
+  "rayThickness": 0.15,
+  "cameraSettingBaseView": {
+    "$type": "Maroon.Physics.Optics.Camera.CameraControls+CameraSetting, Maroon.Experiments.OpticsSimulations, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+    "Position": {
+      "$type": "Maroon.Utils.SerializableVector3, Maroon.ReusableScripts.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "x": -0.12,
+      "y": 2.6,
+      "z": 1.0
+    },
+    "Rotation": {
+      "$type": "Maroon.Utils.SerializableQuaternion, Maroon.ReusableScripts.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "x": 0.4422887,
+      "y": 0.0,
+      "z": 0.0,
+      "w": 0.896872759
+    },
+    "FOV": 3.0
+  },
+  "cameraSettingTopView": {
+    "$type": "Maroon.Physics.Optics.Camera.CameraControls+CameraSetting, Maroon.Experiments.OpticsSimulations, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+    "Position": {
+      "$type": "Maroon.Utils.SerializableVector3, Maroon.ReusableScripts.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "x": -0.12,
+      "y": 3.0,
+      "z": 2.08
+    },
+    "Rotation": {
+      "$type": "Maroon.Utils.SerializableQuaternion, Maroon.ReusableScripts.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "x": 0.707106769,
+      "y": 0.0,
+      "z": 0.0,
+      "w": 0.707106769
+    },
+    "FOV": 3.0
+  },
+  "tableObjectParameters": {
+    "$type": "System.Collections.Generic.List`1[[Maroon.Physics.Optics.TableObject.TableObjectParameters, Maroon.Experiments.OpticsSimulations, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+    "$values": [
+      {
+        "$type": "Maroon.Physics.Optics.TableObject.LightComponent.PointSourceParameters, Maroon.Experiments.OpticsSimulations, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "numberOfRays": 40,
+        "rayDistributionAngle": 22.0,
+        "enableMeshRenderer": true,
+        "waveLengths": null,
+        "position": {
+          "$type": "Maroon.Utils.SerializableVector3, Maroon.ReusableScripts.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+          "x": 1.78,
+          "y": 0.0,
+          "z": 0.577
+        },
+        "rotation": null
+      },
+      {
+        "$type": "Maroon.Physics.Optics.TableObject.OpticalComponent.LensParameters, Maroon.Experiments.OpticsSimulations, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "R1": 0.08,
+        "R2": -0.08,
+        "d1": 0.002,
+        "d2": 0.002,
+        "Rc": 0.065,
+        "A": 1.458,
+        "B": 3540.0,
+        "position": {
+          "$type": "Maroon.Utils.SerializableVector3, Maroon.ReusableScripts.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+          "x": 1.866,
+          "y": 0.0,
+          "z": 0.577001035
+        },
+        "rotation": null
+      },
+      {
+        "$type": "Maroon.Physics.Optics.TableObject.OpticalComponent.EyeParameters, Maroon.Experiments.OpticsSimulations, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "f": 0.024,
+        "position": {
+          "$type": "Maroon.Utils.SerializableVector3, Maroon.ReusableScripts.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+          "x": 1.9,
+          "y": 0.0,
+          "z": 0.577
+        },
+        "rotation": null
+      }
+    ]
+  }
+}
