@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Maroon.Physics
+namespace Maroon.Physics.Pendulum
 {
     [RequireComponent(typeof(AdvancedLineRenderer))]
     public class PendulumRope : PausableObject, IResetObject
@@ -14,7 +14,7 @@ namespace Maroon.Physics
         private GameObject _weight;
 
         [SerializeField]
-        private float _ropeWeidth = 0.001f;
+        private float _ropeWidth = 0.001f;
 
         protected override void Start()
         {
@@ -22,7 +22,7 @@ namespace Maroon.Physics
             _lineRenderer = GetComponent<AdvancedLineRenderer>();
             _lineRenderer.useWorldSpace = true;
             _lineRenderer.InitLineRenderer();
-            _lineRenderer.SetWidth(_ropeWeidth, _ropeWeidth);
+            _lineRenderer.SetWidth(_ropeWidth, _ropeWidth);
 
             SimulationController.Instance.OnStop.AddListener(() => { DrawRope();});
 

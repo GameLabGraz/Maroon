@@ -1,20 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Maroon.Physics
+namespace Maroon.Physics.Pendulum
 {
-  [Serializable]
-  public class Node
-  {
-    public string interestingValue = "value";
-    //The field below is what makes the serialization data become huge because
-    //it introduces a 'class cycle'.
-    public List<Node> children = new List<Node>();
-  }
-
-  [RequireComponent(typeof(HingeJoint))]
+    [RequireComponent(typeof(HingeJoint))]
     public class Pendulum : PausableObject, IResetObject
     {
         public QuantityFloat weight = 1.0f;
@@ -161,7 +151,6 @@ namespace Maroon.Physics
                     Debug.Log("Pendulum Maximum" + _currentElongation + " - " + _previousElongation);
                 }
             }
-
         }
 
         public float GetDeflection()
@@ -196,6 +185,10 @@ namespace Maroon.Physics
 
             _rigidBody.velocity = Vector3.zero;
             _rigidBody.angularVelocity = Vector3.zero;
+
+            Elongation = 0f;
+
+            UpdatePendulum();
         }
 
         public void PendulumReleased()
