@@ -128,6 +128,55 @@ public class Coil : EMObject, IResetObject
         return field.get(transform.position + new Vector3(0, 0, diameter / 2f), gameObject).magnitude * (diameter / 2f) * (diameter / 2f) * Mathf.PI;
     }
 
+
+    private const float u0 = 4 * Mathf.PI * 1e-7f; // Permeability of free space
+
+    /// <summary>
+    /// Gets the magnetic field at a given position
+    /// </summary>
+    /// <param name="point">The required position</param>
+    /// <returns>The magnetic field vector at the position</returns>
+    public override Vector3 GetB(Vector3 point)
+    {
+        Vector3 B = Vector3.zero;
+        float stepTheta = 0.1f; // Step size for the integration
+
+        // Get the coil's up direction and right direction for orientation
+        Vector3 coilUp = transform.up;     // Coil's up direction
+        Vector3 coilRight = transform.right; // Perpendicular to the coil plane
+        Vector3 coilForward = transform.forward; // Perpendicular vector forming coil's local plane
+        float radius = diameter / 2f;
+
+        // Loop over the current loop (coil)
+        for (float theta = 0; theta < 2 * Mathf.PI; theta += stepTheta)
+        {
+            // Calculate the local position of the current element in the coil's plane
+            Vector3 localPosition = radius * (Mathf.Cos(theta) * coilRight + Mathf.Sin(theta) * coilForward);
+
+            // The actual world position of the current element on the coil
+            Vector3 coilPosition = transform.position + localPosition;
+
+            // Vector from the current element to the observation point
+            Vector3 r = point - coilPosition;
+            float rMagnitude = r.magnitude;
+
+            if (rMagnitude == 0) continue; // Avoid division by 0
+
+            // Tangential direction of the current element in the coil
+            Vector3 dl = radius * (-Mathf.Sin(theta) * coilRight + Mathf.Cos(theta) * coilForward) * stepTheta;
+
+            // Biot-Savart law: dB = (μ0 * I / 4π) * (dl × r) / r^3
+            Vector3 dB = (u0 * Current / (4 * Mathf.PI)) * Vector3.Cross(dl, r) / Mathf.Pow(rMagnitude, 3);
+
+            // Add the small dB to the total field B
+            B += dB;
+        }
+
+        // Multiply by the number of turns of the coil
+        B *= numberOfTurns;
+        return B;
+    }
+
     /// <summary>
     /// Gets the external force which affects the coil.
     /// </summary>
@@ -146,7 +195,7 @@ public class Coil : EMObject, IResetObject
         var deltaFlux = newFlux - flux;
         var voltage = (numberOfTurns * -deltaFlux) / Time.fixedDeltaTime;
 
-        _current += voltage / (resistance + resistance * _resistanceFactor);
+        Current += voltage / (resistance + resistance * _resistanceFactor);
         flux = newFlux;
     }
 
@@ -162,7 +211,7 @@ public class Coil : EMObject, IResetObject
         }
         transform.position = startPos;
         transform.rotation = startRot;
-        _current = 0.0f;
+        Current = 0.0f;
         fieldStrength = 0.0f;
         flux = _startFlux;
     }
