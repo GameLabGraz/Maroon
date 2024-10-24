@@ -7,6 +7,9 @@ using ObjectsInUse;
 using GEAR.Localization;
 using Maroon.Physics;
 using Maroon.Physics.ThreeDimensionalMotion;
+using Maroon;
+using Maroon.GlobalEntities;
+using Maroon.Config;
 
 namespace ObjectsInUse
 {
@@ -27,10 +30,10 @@ public class ParameterUI : PausableObject
     [SerializeField] private GameObject _dataVisualization;
 
     private static ParameterUI _instance;
+    public static ParameterUI Instance => _instance;
     private DialogueManager _dialogueManager;
    
     public TMP_Dropdown dropdown;
-    List<TMP_Dropdown.OptionData> menuOptions;
 
     [SerializeField] private UnityEngine.UI.Button _showInputPanelButton;
     [SerializeField] private TMP_Text _inputPanelButtonText;
@@ -79,6 +82,23 @@ public class ParameterUI : PausableObject
     [SerializeField] private UnityEngine.UI.Toggle _showLabel;
     [SerializeField] private UnityEngine.UI.Toggle _showOriginGrid;
 
+
+    private void Awake()
+    {
+        if (_instance == null)
+        {
+            _instance = this;
+            ConfigLoader.Instance.OnConfigLoaded.AddListener(OnConfigsLoadedInital);
+            ConfigLoader.Instance.OnConfigLoaded.AddListener(OnConfigLoaded);
+        }
+        else if (_instance != this)
+        {
+            DestroyImmediate(this.gameObject);
+            return;
+        }
+
+        DontDestroyOnLoad(this.gameObject);
+    }
     /// <summary>
     /// Inits the dictionary for the formulas and handles the visibility of UI elements
     /// Displays the welcome message
@@ -90,8 +110,19 @@ public class ParameterUI : PausableObject
 
         string message = LanguageManager.Instance.GetString("Welcome");
         DisplayMessage(message);
+    }
 
-        LoadDefault();
+    private void OnConfigsLoadedInital()
+    {
+        dropdown.ClearOptions();
+        dropdown.AddOptions(ConfigLoader.Instance.GetConfigNames());
+        
+        ConfigLoader.Instance.OnConfigLoaded.RemoveListener(OnConfigsLoadedInital);
+    }
+
+    private void OnConfigLoaded()
+    {
+        dropdown.SetValueWithoutNotify(ConfigLoader.Instance.CurrentConfigIndex);
     }
 
     /// <summary>
@@ -320,30 +351,13 @@ public class ParameterUI : PausableObject
     /// <param name="choice">The choice from the UI (Dropdown menu)</param>
     public void DropdownListener(int choice)
     {
-        // This has caused some sort of double invocation of this code,
-        // which was the source of some bugs, so for the time being it is
-        // commented out.
-        //
-        // I am not quite sure what is more hacky, the reset of the whole
-        // simulation or my solution of just commenting it out ...
-        //SimulationController.Instance.ResetSimulation();
-
-        LoadParametersFromFile(choice);
-        dropdown.SetValueWithoutNotify(choice);
+        string configName = ConfigLoader.Instance.GetConfigNames()[choice];
+        ConfigLoader.Instance.ChangeConfig(configName);
     }
 
-    /// <summary>
-    /// Handles loading the parameters from the (intern) JSON file and sets the member variables
-    /// </summary>
-    /// <param name="file">File to load</param>
-    private void LoadParametersFromFile(int file)
+    public void LoadParameters()
     {
-        var parameters = ParameterLoader.Instance.LoadJsonFromFile(file);
-        LoadParameters(parameters);
-    }
-
-    public void LoadParameters(ParameterLoader.Parameters parameters)
-    {
+        var parameters = ParameterLoader.Instance.GetParameters();
         _background = parameters.Background;
 
         _particleInUse = parameters.Particle?.ToLower() switch
@@ -417,16 +431,6 @@ public class ParameterUI : PausableObject
         return _background;
     }
 
-    public static ParameterUI Instance
-    {
-        get
-        {
-            if (_instance == null)
-                _instance = FindObjectOfType<ParameterUI>();
-            return _instance;
-        }
-    }
-
     /// <summary>
     /// Resets the object
     /// </summary>
@@ -441,15 +445,5 @@ public class ParameterUI : PausableObject
     private void ShowError(string message)
     {
         DisplayMessage(message);
-    }
-
-    /// <summary>
-    /// Loads the default parameters for resetting the experiment.
-    /// Hard coded because of WebGL version
-    /// </summary>
-    private void LoadDefault()
-    {
-        LoadParametersFromFile(0);
-        dropdown.SetValueWithoutNotify(0);
     }
 }
