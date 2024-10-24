@@ -51,7 +51,7 @@ public class Coil : EMObject, IResetObject
     public float Conductivity { get; set; } = 57f; // Copper has 57 m/(Ω*mm²)
 
     /// <summary>
-    /// The resistance of the coil, based on the conductor length, cross section radius, and the conductivity
+    /// The electrical resistance of the coil, based on the conductor length, cross section radius, and the conductivity
     /// </summary>
     public float Resistance { 
         get {
