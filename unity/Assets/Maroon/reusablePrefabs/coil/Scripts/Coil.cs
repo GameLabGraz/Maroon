@@ -75,6 +75,11 @@ public class Coil : EMObject, IResetObject
     private float _startFlux;
 
     /// <summary>
+    /// The start conductivity (for resetting)
+    /// </summary>
+    private float _startConductivity;
+
+    /// <summary>
     /// The current flux
     /// </summary>
     private float flux;
@@ -106,6 +111,7 @@ public class Coil : EMObject, IResetObject
         Radius = Diameter / 2f;
         flux = GetMagneticFluxInCoil();
         _startFlux = flux;
+        _startConductivity = Conductivity;
     }
 
     /// <summary>
@@ -164,7 +170,7 @@ public class Coil : EMObject, IResetObject
     public override Vector3 GetB(Vector3 point)
     {
         Vector3 B = Vector3.zero;
-        float stepTheta = 0.1f; // Step size for the integration
+        const float stepTheta = Mathf.PI / 20f; // Step size for the integration
 
         // Get the coil's up direction and right direction for orientation
         Vector3 coilUp = transform.up;     // Coil's up direction
@@ -198,7 +204,8 @@ public class Coil : EMObject, IResetObject
 
         // Multiply by the number of turns of the coil
         B *= numberOfTurns;
-        return B;
+        const float visualizationMultiplier = 1000000f; // Workaround, as otherwise Coil field is not visible
+        return B * visualizationMultiplier;
         
     }
 
@@ -239,5 +246,6 @@ public class Coil : EMObject, IResetObject
         Current = 0.0f;
         fieldStrength = 0.0f;
         flux = _startFlux;
+        Conductivity = _startConductivity;
     }
 }
