@@ -45,11 +45,12 @@ public class Coil : EMObject, IResetObject
     /// <summary>
     /// The radius of the cross section of the wire that makes up the coil
     /// </summary>
-    /*[SerializeField]*/ private float crossSectionRadius = 0.05f;
+    private float crossSectionRadius = 0.05f;
+
     /// <summary>
     /// Conductivity of the material of the coil
     /// </summary>
-    /*[SerializeField]*/ public float conductivity = 57f; // Copper has 57 m/(Ω*mm²)
+    public float Conductivity { get; set; } = 57f; // Copper has 57 m/(Ω*mm²)
 
     /// <summary>
     /// The resistance of the coil, based on the conductor length, cross section radius, and the conductivity
@@ -58,7 +59,7 @@ public class Coil : EMObject, IResetObject
         get {
             float conductorLength = Diameter * Mathf.PI * numberOfTurns;
             float conductorCrossSectionArea = crossSectionRadius * crossSectionRadius * Mathf.PI;
-            float resistance = conductorLength / (conductivity * conductorCrossSectionArea);
+            float resistance = conductorLength / (Conductivity * conductorCrossSectionArea);
             return resistance;
         }
     }
