@@ -346,9 +346,9 @@ public class ParameterUI : PausableObject
     public void LoadParameters(ExperimentParameters experimentParameters)
     {
         ThreeDimensionalMotionParameters parameters;
-        if (experimentParameters is ThreeDimensionalMotionParameters)
+        if (experimentParameters is ThreeDimensionalMotionParameters motionParameters)
         {
-            parameters = (ThreeDimensionalMotionParameters)experimentParameters;
+            parameters = motionParameters;
         }
         else
         {

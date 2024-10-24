@@ -5,7 +5,7 @@ namespace Maroon.ReusableScripts.ExperimentParameters
     /// Hint: Ensure each derived class also has the [System.Serializable] attribute; the attribute is not inherited by default.
     /// </summary>
     [System.Serializable]
-    public class ExperimentParameters
+    public abstract class ExperimentParameters
     {
     }
 }

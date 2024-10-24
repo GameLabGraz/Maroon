@@ -76,9 +76,9 @@ namespace Maroon.Physics.Optics.Manager
         #region LoadingPresets
         public void OnLoadedExperimentParameters(ExperimentParameters experimentParameters)
         {
-            if (experimentParameters is OpticsParameters)
+            if (experimentParameters is OpticsParameters opticsParameters)
             {
-                LoadExperimentParameters((OpticsParameters) experimentParameters);
+                LoadExperimentParameters(opticsParameters);
             }
             else
             {
@@ -99,54 +99,46 @@ namespace Maroon.Physics.Optics.Manager
                 {
                     LightComponent lightComp = _lcm.AddLightComponent((LightComponent)prefab, lightComponentParameters.position, lightComponentParameters.rotation, lightComponentParameters.waveLengths);
 
-                    Type lightType = lightComponentParameters.GetType();
-                    // Cannot use switch here, as switch cases require a constant expression
-                    if (lightType == typeof(LaserPointerParameters))
+                    switch (lightComponentParameters)
                     {
-                        ((LaserPointer)lightComp).SetParameters((LaserPointerParameters)lightComponentParameters);
-                    }
-                    else if (lightType == typeof(ParallelSourceParameters))
-                    {
-                        ((ParallelSource)lightComp).SetParameters((ParallelSourceParameters)lightComponentParameters);
-                    }
-                    else if (lightType == typeof(PointSourceParameters))
-                    {
-                        ((PointSource)lightComp).SetParameters((PointSourceParameters)lightComponentParameters);
-                    }
-                    else
-                    {
-                        Debug.LogError("Unknown type of LightComponentParameters: " + lightType);
+                        case LaserPointerParameters laserPointerParams:
+                            ((LaserPointer)lightComp).SetParameters(laserPointerParams);
+                            break;
+                        case ParallelSourceParameters parallelSourceParams:
+                            ((ParallelSource)lightComp).SetParameters(parallelSourceParams);
+                            break;
+                        case PointSourceParameters pointSourceParams:
+                            ((PointSource)lightComp).SetParameters(pointSourceParams);
+                            break;
+                        default:
+                            Debug.LogError("Unknown type of LightComponentParameters: " + lightComponentParameters.GetType());
+                            break;
                     }
                 }
                 else if (componentParameters is OpticalComponentParameters opticalComponentParameters)
                 {
                     OpticalComponent opticalComp = _ocm.AddOpticalComponent((OpticalComponent)prefab, opticalComponentParameters.position, opticalComponentParameters.rotation);
 
-                    Type opticalType = opticalComponentParameters.GetType();
-                    // Cannot use switch here, as switch cases require a constant expression
-                    if (opticalType == typeof(LensParameters))
+                    switch (opticalComponentParameters)
                     {
-                        ((Lens)opticalComp).SetParameters((LensParameters)opticalComponentParameters);
-                    }
-                    else if (opticalType == typeof(EyeParameters))
-                    {
-                        ((Eye)opticalComp).SetParameters((EyeParameters)opticalComponentParameters);
-                    }
-                    else if (opticalType == typeof(ApertureParameters))
-                    {
-                        ((Aperture)opticalComp).SetParameters((ApertureParameters)opticalComponentParameters);
-                    }
-                    else if (opticalType == typeof(MirrorParameters))
-                    {
-                        ((Mirror)opticalComp).SetParameters((MirrorParameters)opticalComponentParameters);
-                    }
-                    else if (opticalType == typeof(WallParameters))
-                    {
-                        ((Wall)opticalComp).SetParameters((WallParameters)opticalComponentParameters);
-                    }
-                    else
-                    {
-                        Debug.LogError("Unknown type of OpticalComponentParameters: " + opticalType);
+                        case LensParameters lensParams:
+                            ((Lens)opticalComp).SetParameters(lensParams);
+                            break;
+                        case EyeParameters eyeParams:
+                            ((Eye)opticalComp).SetParameters(eyeParams);
+                            break;
+                        case ApertureParameters apertureParams:
+                            ((Aperture)opticalComp).SetParameters(apertureParams);
+                            break;
+                        case MirrorParameters mirrorParams:
+                            ((Mirror)opticalComp).SetParameters(mirrorParams);
+                            break;
+                        case WallParameters wallParams:
+                            ((Wall)opticalComp).SetParameters(wallParams);
+                            break;
+                        default:
+                            Debug.LogError("Unknown type of OpticalComponentParameters: " + opticalComponentParameters.GetType());
+                            break;
                     }
                 }
                 else
