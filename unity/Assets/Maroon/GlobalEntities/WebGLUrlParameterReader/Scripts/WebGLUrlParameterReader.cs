@@ -29,9 +29,24 @@ namespace Maroon
         {
             // rawJson = {"LoadScene":"Optics","Config":"Default"}
             var rawJson = Marshal.PtrToStringAnsi(_getAllUrlParameters());
-            var values = JsonConvert.DeserializeObject<Dictionary<WebGlUrlParameter, string>>(rawJson);
+            var stringKeyedValues = JsonConvert.DeserializeObject<Dictionary<string, string>>(rawJson);
 
-            return values;
+            var enumKeyedValues = new Dictionary<WebGlUrlParameter, string>();
+
+            foreach (var kvp in stringKeyedValues)
+            {
+                if (Enum.TryParse(kvp.Key, out WebGlUrlParameter parsedEnum))
+                {
+                    enumKeyedValues[parsedEnum] = kvp.Value;
+                }
+                else
+                {
+                    // Handle the case where the key cannot be parsed into an enum
+                    Debug.LogWarning($"Key '{kvp.Key}' does not exist in WebGlUrlParameter enum and will be ignored.");
+                }
+            }
+
+            return enumKeyedValues;
         }
     }
 }
