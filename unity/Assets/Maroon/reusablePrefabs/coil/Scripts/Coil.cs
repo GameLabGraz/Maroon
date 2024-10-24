@@ -6,8 +6,6 @@
 //-----------------------------------------------------------------------------
 //
 
-using System;
-using System.Runtime.ConstrainedExecution;
 using UnityEngine;
 
 /// <summary>
