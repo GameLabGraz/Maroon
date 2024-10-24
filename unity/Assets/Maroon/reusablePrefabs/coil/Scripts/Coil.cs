@@ -7,6 +7,7 @@
 //
 
 using System;
+using System.Runtime.ConstrainedExecution;
 using UnityEngine;
 
 /// <summary>
@@ -24,6 +25,23 @@ public class Coil : EMObject, IResetObject
     /// The coil diameter
     /// </summary>
     [SerializeField] private float diameter = 0.33f;
+    public float Diameter
+    {
+        get { return diameter; }
+        set { 
+            diameter = value;
+            Radius = diameter / 2f;
+        }
+    }
+
+    /// <summary>
+    /// The coil radius
+    /// </summary>
+    public float Radius { 
+        get; 
+        private set; 
+    }
+
 
     /// <summary>
     /// The electrical resistance of the coil
@@ -63,7 +81,7 @@ public class Coil : EMObject, IResetObject
     public float Current
     {
         set => _current = value;
-        get => _current;
+        get => _current * 1000;
     }
 
     public float ResistanceFactor
@@ -79,6 +97,7 @@ public class Coil : EMObject, IResetObject
     {
         base.Start();
 
+        Radius = diameter / 2f;
         flux = GetMagneticFluxInCoil();
         _startFlux = flux;
     }
@@ -99,7 +118,7 @@ public class Coil : EMObject, IResetObject
     {
         CalculateInduction();
 
-        FieldStrength = (Current * numberOfTurns) / Mathf.Sqrt(Length * Length + diameter * diameter);
+        FieldStrength = (Current * numberOfTurns) / Mathf.Sqrt(Length * Length + Diameter * Diameter);
 
         if (forceActive)
             _rigidBody.AddForce(GetExternalForce() * transform.up);
@@ -112,7 +131,7 @@ public class Coil : EMObject, IResetObject
     private float GetMagneticFluxInCoil()
     {
         return  GetExternalField() * 
-                (diameter / 2.0f) * (diameter / 2.0f) * Mathf.PI;
+                Radius * Radius * Mathf.PI;
     }
 
     /// <summary>
@@ -125,7 +144,7 @@ public class Coil : EMObject, IResetObject
         if (field == null)
             return 0.0f;
 
-        return field.get(transform.position + new Vector3(0, 0, diameter / 2f), gameObject).magnitude * (diameter / 2f) * (diameter / 2f) * Mathf.PI;
+        return field.get(transform.position + new Vector3(0, 0, Radius), gameObject).magnitude * Radius * Radius * Mathf.PI;
     }
 
 
@@ -138,6 +157,8 @@ public class Coil : EMObject, IResetObject
     /// <returns>The magnetic field vector at the position</returns>
     public override Vector3 GetB(Vector3 point)
     {
+        //return Calculate(point);
+        
         Vector3 B = Vector3.zero;
         float stepTheta = 0.1f; // Step size for the integration
 
@@ -145,13 +166,12 @@ public class Coil : EMObject, IResetObject
         Vector3 coilUp = transform.up;     // Coil's up direction
         Vector3 coilRight = transform.right; // Perpendicular to the coil plane
         Vector3 coilForward = transform.forward; // Perpendicular vector forming coil's local plane
-        float radius = diameter / 2f;
 
         // Loop over the current loop (coil)
         for (float theta = 0; theta < 2 * Mathf.PI; theta += stepTheta)
         {
             // Calculate the local position of the current element in the coil's plane
-            Vector3 localPosition = radius * (Mathf.Cos(theta) * coilRight + Mathf.Sin(theta) * coilForward);
+            Vector3 localPosition = Radius * (Mathf.Cos(theta) * coilRight + Mathf.Sin(theta) * coilForward);
 
             // The actual world position of the current element on the coil
             Vector3 coilPosition = transform.position + localPosition;
@@ -163,7 +183,7 @@ public class Coil : EMObject, IResetObject
             if (rMagnitude == 0) continue; // Avoid division by 0
 
             // Tangential direction of the current element in the coil
-            Vector3 dl = radius * (-Mathf.Sin(theta) * coilRight + Mathf.Cos(theta) * coilForward) * stepTheta;
+            Vector3 dl = Radius * (-Mathf.Sin(theta) * coilRight + Mathf.Cos(theta) * coilForward) * stepTheta;
 
             // Biot-Savart law: dB = (μ0 * I / 4π) * (dl × r) / r^3
             Vector3 dB = (u0 * Current / (4 * Mathf.PI)) * Vector3.Cross(dl, r) / Mathf.Pow(rMagnitude, 3);
@@ -175,6 +195,7 @@ public class Coil : EMObject, IResetObject
         // Multiply by the number of turns of the coil
         B *= numberOfTurns;
         return B;
+        
     }
 
     /// <summary>
@@ -183,7 +204,7 @@ public class Coil : EMObject, IResetObject
     /// <returns>The external force</returns>
     public float GetExternalForce()
     {
-        return -2 * Mathf.PI * (diameter / 2.0f) * numberOfTurns * _current * GetExternalField();
+        return -2 * Mathf.PI * Radius * numberOfTurns * Current * GetExternalField();
     }
 
     /// <summary>
