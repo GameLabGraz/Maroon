@@ -206,7 +206,6 @@ public class Coil : EMObject, IResetObject
         B *= numberOfTurns;
         const float visualizationMultiplier = 1000000f; // Workaround, as otherwise Coil field is not visible
         return B * visualizationMultiplier;
-        
     }
 
     /// <summary>
