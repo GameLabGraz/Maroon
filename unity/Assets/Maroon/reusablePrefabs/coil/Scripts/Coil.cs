@@ -42,11 +42,26 @@ public class Coil : EMObject, IResetObject
         private set; 
     }
 
+    /// <summary>
+    /// The radius of the cross section of the wire that makes up the coil
+    /// </summary>
+    /*[SerializeField]*/ private float crossSectionRadius = 0.05f;
+    /// <summary>
+    /// Conductivity of the material of the coil
+    /// </summary>
+    /*[SerializeField]*/ public float conductivity = 57f; // Copper has 57 m/(Ω*mm²)
 
     /// <summary>
-    /// The electrical resistance of the coil
+    /// The resistance of the coil, based on the conductor length, cross section radius, and the conductivity
     /// </summary>
-    [SerializeField] private float resistance = 33f;
+    public float Resistance { 
+        get {
+            float conductorLength = Diameter * Mathf.PI * numberOfTurns;
+            float conductorCrossSectionArea = crossSectionRadius * crossSectionRadius * Mathf.PI;
+            float resistance = conductorLength / (conductivity * conductorCrossSectionArea);
+            return resistance;
+        }
+    }
 
     /// <summary>
     /// The number of turns
@@ -63,31 +78,21 @@ public class Coil : EMObject, IResetObject
     /// </summary>
     private float flux;
 
-    /// <summary>
-    /// The resistance factor
-    /// </summary>
-    private float _resistanceFactor = 0;
-
-    /// <summary>
-    /// The electrical current in the conductor
-    /// </summary>
-    private float _current = 0.0f;
 
     /// <summary>
     /// The length of the coil
     /// </summary>
-    private float Length => diameter * Mathf.PI * numberOfTurns;
+    private float Length => Diameter * Mathf.PI * numberOfTurns;
 
+    private float _current = 0.0f;
+
+    /// <summary>
+    /// The electrical current in the conductor
+    /// </summary>
     public float Current
     {
         set => _current = value;
-        get => _current * 1000;
-    }
-
-    public float ResistanceFactor
-    {
-        set => _resistanceFactor = value;
-        get => _resistanceFactor;
+        get => _current;
     }
 
     /// <summary>
@@ -97,7 +102,7 @@ public class Coil : EMObject, IResetObject
     {
         base.Start();
 
-        Radius = diameter / 2f;
+        Radius = Diameter / 2f;
         flux = GetMagneticFluxInCoil();
         _startFlux = flux;
     }
@@ -157,8 +162,6 @@ public class Coil : EMObject, IResetObject
     /// <returns>The magnetic field vector at the position</returns>
     public override Vector3 GetB(Vector3 point)
     {
-        //return Calculate(point);
-        
         Vector3 B = Vector3.zero;
         float stepTheta = 0.1f; // Step size for the integration
 
@@ -216,7 +219,7 @@ public class Coil : EMObject, IResetObject
         var deltaFlux = newFlux - flux;
         var voltage = (numberOfTurns * -deltaFlux) / Time.fixedDeltaTime;
 
-        Current += voltage / (resistance + resistance * _resistanceFactor);
+        Current += voltage / Resistance;
         flux = newFlux;
     }
 
