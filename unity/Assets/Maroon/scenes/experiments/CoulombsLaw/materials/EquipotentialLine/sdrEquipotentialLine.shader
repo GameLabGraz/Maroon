@@ -91,35 +91,34 @@
 				float voltage3 = 0.0;
 				float voltage4 = 0.0;
             
-				float radius = 0.71;
 				for(int i = 0; i < entries; ++i){
 					float3 posEntry = _Entries[i].xyz;
 					float charge = _Entries[i].w;
                 
-					float dist = distance(world_pos, posEntry) - radius;
+					float dist = distance(world_pos, posEntry);
 					if(dist < 0) dist = 0;
 					float tmp = CoulombConstant * CoulombMultiplyFactor * charge / (dist * dist); //TODO: check formula
 					voltage = voltage + tmp;
                 
-					dist = distance(world_pos1, posEntry) - radius;
+					dist = distance(world_pos1, posEntry);
 					if(dist < 0) dist = 0;
 					tmp = CoulombConstant * CoulombMultiplyFactor * charge / (dist * dist); //TODO: check formula
 					voltage1 = voltage1 + tmp;
                 
                 
-					dist = distance(world_pos2, posEntry) - radius;
+					dist = distance(world_pos2, posEntry);
 					if(dist < 0) dist = 0;
 					tmp = CoulombConstant * CoulombMultiplyFactor * charge / (dist * dist); //TODO: check formula
 					voltage2 = voltage2 + tmp;
                 
                 
-					dist = distance(world_pos3, posEntry) - radius;
+					dist = distance(world_pos3, posEntry);
 					if(dist < 0) dist = 0;
 					tmp = CoulombConstant * CoulombMultiplyFactor * charge / (dist * dist); //TODO: check formula
 					voltage3 = voltage3 + tmp;
                 
                 
-					dist = distance(world_pos4, posEntry) - radius;
+					dist = distance(world_pos4, posEntry);
 					if(dist < 0) dist = 0;
 					tmp = CoulombConstant * CoulombMultiplyFactor * charge / (dist * dist); //TODO: check formula
 					voltage4 = voltage4 + tmp;
