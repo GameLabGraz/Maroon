@@ -92,7 +92,10 @@ namespace Maroon.Config
             
             if(Maroon.GlobalEntities.BootstrappingManager.Instance.UrlParameters.TryGetValue(WebGlUrlParameter.Config, out string config))
             {
-                ChangeConfig(config);
+                if (!ChangeConfig(config))
+                {
+                    ChangeConfig("Default");
+                }
             }
             else
             {
@@ -101,7 +104,11 @@ namespace Maroon.Config
         }
 #endif
 
-        public void ChangeConfig(string configName)
+        /// <summary>
+        /// Changes current config to the one with the given name.
+        /// Returns true if the config was found and changed, false otherwise.
+        /// </summary>
+        public bool ChangeConfig(string configName)
         {
             foreach (var key in _configs.Keys)
             {
@@ -110,9 +117,11 @@ namespace Maroon.Config
                     _currentConfigString = _configs[key];
                     _currentConfigIndex = GetConfigNames().IndexOf(key);
                     OnConfigLoaded.Invoke();
-                    return;
+                    return true;
                 }
             }
+
+            return false;
         }
 
         public List<string> GetConfigNames()
