@@ -27,6 +27,6 @@ Multi-User) illustrates the different forms of engagement Maroon supports or pla
 
 # Simulations and Experiments
 
-Maroon contains several physics, chemistry and computer science experiments, but will be extended with experiences from other STEM fields in the future. The physics experiments cover Coulombs Law, Falling Coil, Faradays Law, Huygens Principle, Point Wave, Pendulum, Van de Graaff Balloon, Van de Graaff Generator, Optics, 3D Motion Simulation and Cathode Ray Tube. The chemistry experiments are represented by Titration and Catalyst. And Computer Science experiments include Sorting, State Machine, Path Finding and Minimum Spanning Tree.
+Maroon contains several physics, chemistry and computer science experiments, but will be extended with experiences from other STEM fields in the future. The physics experiments cover Coulomb's Law, Falling Coil, Faraday's Law, Huygen's Principle, Point Wave, Pendulum, Van de Graaff Balloon, Van de Graaff Generator, Optics, 3D Motion Simulation and Cathode Ray Tube. The chemistry experiments are represented by Titration and Catalyst. And Computer Science experiments include Sorting, State Machine, Path Finding and Minimum Spanning Tree.
 
 <img src="/images/screenshots/experiment-room.jpg" width="600"/>
