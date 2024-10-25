@@ -35,7 +35,9 @@ namespace Maroon
 
             foreach (var kvp in stringKeyedValues)
             {
-                if (Enum.TryParse(kvp.Key, out WebGlUrlParameter parsedEnum))
+                // TODO: ignore case sensitivity of enums
+                // Enum consists of LoadScene and Config
+                if (Enum.TryParse(kvp.Key, true, out WebGlUrlParameter parsedEnum))
                 {
                     enumKeyedValues[parsedEnum] = kvp.Value;
                 }
