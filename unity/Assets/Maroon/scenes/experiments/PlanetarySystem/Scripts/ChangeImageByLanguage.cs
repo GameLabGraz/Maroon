@@ -43,7 +43,7 @@ namespace Maroon.Experiments.PlanetarySystem
             //Debug.Log("ChangeImageByLanguage(): ChangeImageLanguage(): listener invoked with language: " + lang);
             if (lang.Equals(SystemLanguage.German))
             {
-                Debug.Log("ChangeImageByLanguage(): ChangeImageLanguage(): should be DE " + lang);
+                //Debug.Log("ChangeImageByLanguage(): ChangeImageLanguage(): should be DE " + lang);
                 sortingGamePlanetChartMaterial.mainTexture = sortingGamePlanetChartDETexture;
                 startSortingGameMaterial.mainTexture = startSortingGameDETexture;
                 //same texture in DE and ENG
@@ -51,7 +51,7 @@ namespace Maroon.Experiments.PlanetarySystem
             }
             else //if( lang.Equals(SystemLanguage.English))
             {
-                Debug.Log("ChangeImageByLanguage(): ChangeImageLanguage(): should be ENG " + lang);
+                //Debug.Log("ChangeImageByLanguage(): ChangeImageLanguage(): should be ENG " + lang);
                 sortingGamePlanetChartMaterial.mainTexture = sortingGamePlanetChartENGTexture;
                 startSortingGameMaterial.mainTexture = startSortingGameENGTexture;
                 startSimulationMaterial.mainTexture = startSimulationENGTexture;
