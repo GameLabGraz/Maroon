@@ -9,7 +9,6 @@ namespace Maroon.Experiments.PlanetarySystem
 {
     public class PlanetaryController : MonoBehaviour
     {
-        public PlanetTrajectoryController planetTrajectoryController;
         public StartScreenScenes startScreenScenes;
 
         #region Cameras

@@ -6,19 +6,9 @@ namespace Maroon.Experiments.PlanetarySystem
     public class StartInteraction : MonoBehaviour
     {
         public UnityEvent onMouseDownEvent;
-        private Material material; // screen png
+        private Material material;
         public Color hoverColor;
         private Color originalColor;
-
-
-        /// <summary>
-        /// store the screen png
-        /// </summary>
-        private void Start()
-        {
-            material = GetComponent<Renderer>().material;
-            originalColor = material.color;
-        }
 
 
         /// <summary>
@@ -35,6 +25,8 @@ namespace Maroon.Experiments.PlanetarySystem
         /// </summary>
         private void OnMouseEnter()
         {
+            material = GetComponent<Renderer>().material;
+            originalColor = material.color;
             material.color = hoverColor;
         }
 
