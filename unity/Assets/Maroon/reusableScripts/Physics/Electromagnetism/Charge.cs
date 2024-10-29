@@ -15,6 +15,8 @@ namespace Maroon.Physics.Electromagnetism
 
         private const float CoulombConstant = 1f / (4 * Mathf.PI * 8.8542e-12f);
 
+        public float StrengthMultiplicationFactor = 1.0f;
+
         public float Strength
         {
             get => strength.Value;

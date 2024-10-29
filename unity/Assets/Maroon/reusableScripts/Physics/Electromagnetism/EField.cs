@@ -117,7 +117,13 @@ namespace Maroon.Physics.Electromagnetism
                 {
                     if (producer.gameObject.activeSelf)
                     {
-                        strength += Mathf.Pow(producer.GetComponent<IGenerateE>().getEPotential(position), 2f);
+                        float strengthMultiplicationFactor = 1.0f;
+                        if (producer.TryGetComponent(out Charge charge)) {
+                            strengthMultiplicationFactor = charge.StrengthMultiplicationFactor;
+                        }
+                        var producerPotential = Mathf.Pow(producer.GetComponent<IGenerateE>().getEPotential(position), 2f);
+                        producerPotential *= strengthMultiplicationFactor;
+                        strength += producerPotential;
                     }
                 }
 
