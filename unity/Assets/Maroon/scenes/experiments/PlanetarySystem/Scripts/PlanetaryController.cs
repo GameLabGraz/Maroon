@@ -56,7 +56,6 @@ namespace Maroon.Experiments.PlanetarySystem
             sun = planets[0];
             sun.SetActive(true);
 
-            InitializeAndScalePlanets();
         }
 
 
@@ -65,6 +64,7 @@ namespace Maroon.Experiments.PlanetarySystem
         /// </summary>
         private void Start()
         {
+            InitializeAndScalePlanets();
             StoreInitialCamera();
             startScreenScenes.PlanetarySystemSimulation.SetActive(false);
         }
