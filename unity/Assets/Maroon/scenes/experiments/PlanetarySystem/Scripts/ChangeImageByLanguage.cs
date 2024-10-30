@@ -40,18 +40,15 @@ namespace Maroon.Experiments.PlanetarySystem
         /// <param name="lang"></param>
         private void ChangeImageLanguage(SystemLanguage lang)
         {
-            //Debug.Log("ChangeImageByLanguage(): ChangeImageLanguage(): listener invoked with language: " + lang);
             if (lang.Equals(SystemLanguage.German))
             {
-                //Debug.Log("ChangeImageByLanguage(): ChangeImageLanguage(): should be DE " + lang);
                 sortingGamePlanetChartMaterial.mainTexture = sortingGamePlanetChartDETexture;
                 startSortingGameMaterial.mainTexture = startSortingGameDETexture;
                 //same texture in DE and ENG
                 startSimulationMaterial.mainTexture = startSimulationDETexture;
             }
-            else //if( lang.Equals(SystemLanguage.English))
+            else
             {
-                //Debug.Log("ChangeImageByLanguage(): ChangeImageLanguage(): should be ENG " + lang);
                 sortingGamePlanetChartMaterial.mainTexture = sortingGamePlanetChartENGTexture;
                 startSortingGameMaterial.mainTexture = startSortingGameENGTexture;
                 startSimulationMaterial.mainTexture = startSimulationENGTexture;
