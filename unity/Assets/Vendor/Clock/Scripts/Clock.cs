@@ -1,70 +1,46 @@
+using System;
+using System.Collections;
 using UnityEngine;
 
-public class Clock : MonoBehaviour {
-
-	//-- set start time 00:00
-    public int minutes = 0;
-    public int hour = 0;
-	public int second = 0;
-	public bool realTime;
-	
-	public GameObject pointerSeconds;
-    public GameObject pointerMinutes;
-    public GameObject pointerHours;
-    
-    //-- time speed factor
-    public float clockSpeed = 1.0f;     // 1.0f = realtime, < 1.0f = slower, > 1.0f = faster
-
-    //-- internal vars
-    int seconds;
-    float msecs;
-
-void Start() 
+namespace Vendor.Clock
 {
-    msecs = 0.0f;
-    seconds = 0;
-	//-- set real time
-	if (realTime)
-	{
-		hour=System.DateTime.Now.Hour;
-		minutes=System.DateTime.Now.Minute;
-		second=System.DateTime.Now.Second;
-	}
-
-}
-
-void Update() 
-{
-    //-- calculate time
-    msecs += Time.deltaTime * clockSpeed;
-    if(msecs >= 1.0f)
+    public class Clock : MonoBehaviour
     {
-        msecs -= 1.0f;
-        seconds++;
-        if(seconds >= 60)
+        private int hours = 0;
+        private int minutes = 0;
+        private int seconds = 0;
+
+        [Header("Clock Hands")]
+        [SerializeField] private GameObject ClockHandHours;
+        [SerializeField] private GameObject ClockHandMinutes;
+        [SerializeField] private GameObject ClockHandSeconds;
+
+        private void Start()
         {
-            seconds = 0;
-            minutes++;
-            if(minutes > 60)
+            StartCoroutine(UpdateClock());
+        }
+
+        private IEnumerator UpdateClock()
+        {
+            while (true)
             {
-                minutes = 0;
-                hour++;
-                if(hour >= 24)
-                    hour = 0;
+                DateTime now = DateTime.Now;
+                seconds = now.Second;
+                minutes = now.Minute;
+                hours = now.Hour;
+
+                // calculate clock hand angles
+                float rotationHours = ((360.0f / 12.0f) * hours) + ((360.0f / (60.0f * 12.0f)) * minutes);
+                float rotationMinutes = (360.0f / 60.0f) * minutes;
+                float rotationSeconds = (360.0f / 60.0f) * seconds;
+
+                // set clock hand rotations
+                ClockHandHours.transform.localEulerAngles = new Vector3(0.0f, 0.0f, rotationHours);
+                ClockHandMinutes.transform.localEulerAngles = new Vector3(0.0f, 0.0f, rotationMinutes);
+                ClockHandSeconds.transform.localEulerAngles = new Vector3(0.0f, 0.0f, rotationSeconds);
+
+                yield return new WaitForSeconds(1f);
             }
         }
     }
-
-
-    //-- calculate pointer angles
-    float rotationSeconds = (360.0f / 60.0f)  * seconds;
-    float rotationMinutes = (360.0f / 60.0f)  * minutes;
-    float rotationHours   = ((360.0f / 12.0f) * hour) + ((360.0f / (60.0f * 12.0f)) * minutes);
-
-    //-- draw pointers
-    pointerSeconds.transform.localEulerAngles = new Vector3(0.0f, 0.0f, rotationSeconds);
-    pointerMinutes.transform.localEulerAngles = new Vector3(0.0f, 0.0f, rotationMinutes);
-    pointerHours.transform.localEulerAngles   = new Vector3(0.0f, 0.0f, rotationHours);
-
-}
 }

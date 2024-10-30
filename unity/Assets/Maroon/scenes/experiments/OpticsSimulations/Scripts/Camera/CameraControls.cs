@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using Maroon.Physics.Optics.Manager;
 using Maroon.Physics.Optics.Util;
+using Maroon.Utils;
 using UnityEngine;
+using Newtonsoft.Json;
 
 namespace Maroon.Physics.Optics.Camera
 {
@@ -20,17 +22,18 @@ namespace Maroon.Physics.Optics.Camera
         private float _moveFactor;
         
         public bool IsTopView => isTopView;
-        
+
+        [System.Serializable]
         public struct CameraSetting
         {
-            public Vector3 Position;
-            public Quaternion Rotation;
+            public SerializableVector3 Position;
+            public SerializableQuaternion Rotation;
             public float FOV;
 
             public CameraSetting(Vector3 position, Quaternion rotation, float fov)
             {
-                Position = position;
-                Rotation = rotation;
+                Position = new SerializableVector3(position);
+                Rotation = new SerializableQuaternion(rotation);
                 FOV = fov;
             }
         }
@@ -57,12 +60,12 @@ namespace Maroon.Physics.Optics.Camera
                 float moveFactor = adjustedSpeed * Time.deltaTime;
                 Vector3 newCamPos = transform.position + new Vector3(cameraOffsetX, 0, cameraOffsetZ) * moveFactor;
 
-                _currentView.Position = new Vector3
+                _currentView.Position.Set(new Vector3
                 {
                     x = Mathf.Clamp(newCamPos.x, Constants.MinPositionCamera.x, Constants.MaxPositionCamera.x),
                     y = Mathf.Clamp(newCamPos.y, Constants.MinPositionCamera.y, Constants.MaxPositionCamera.y),
                     z = Mathf.Clamp(newCamPos.z, Constants.MinPositionCamera.z, Constants.MaxPositionCamera.z)
-                };
+                });
                 UpdateCamera(_currentView);
             }
             _currentView.FOV = Mathf.Clamp(_cam.fieldOfView - Input.GetAxis("Mouse ScrollWheel") * zoomSpeed, Constants.MinFOV, Constants.MaxFOV);
@@ -128,7 +131,7 @@ namespace Maroon.Physics.Optics.Camera
         
         private void CopyCameraSetting(CameraSetting a, out CameraSetting b)
         {
-            b = new CameraSetting {Position = a.Position, Rotation = a.Rotation, FOV = a.FOV};
+            b = new CameraSetting (a.Position, a.Rotation, a.FOV);
         }
     }
 }

@@ -21,11 +21,12 @@ namespace Maroon.Physics.Optics.TableObject.LightComponent
             ChangeNumberOfRaysAndAngle(numberOfRays, rayDistributionAngle);
         }
         
-        public void SetParameters(int numberOfRays = 16, float rayDistributionAngle = 30)
+        public void SetParameters(PointSourceParameters parameters)
         {
-            this.numberOfRays = numberOfRays;
-            this.rayDistributionAngle = rayDistributionAngle;
+            this.numberOfRays = parameters.numberOfRays;
+            this.rayDistributionAngle = parameters.rayDistributionAngle;
             ChangeNumberOfRaysAndAngle(numberOfRays, rayDistributionAngle);
+            Component.GetComponent<MeshRenderer>().enabled = parameters.enableMeshRenderer;
         }
 
         public void ChangeNumberOfRaysAndAngle(int nrRays, float distAngle)

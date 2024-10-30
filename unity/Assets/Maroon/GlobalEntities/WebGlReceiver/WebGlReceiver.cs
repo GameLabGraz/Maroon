@@ -54,6 +54,7 @@ namespace Maroon.GlobalEntities
             }
 
             // Keep alive
+            this.transform.parent = null;
             DontDestroyOnLoad(gameObject);
         }
 

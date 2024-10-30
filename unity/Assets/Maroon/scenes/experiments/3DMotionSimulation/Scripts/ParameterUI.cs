@@ -7,6 +7,7 @@ using ObjectsInUse;
 using GEAR.Localization;
 using Maroon.Physics;
 using Maroon.Physics.ThreeDimensionalMotion;
+using Maroon.ReusableScripts.ExperimentParameters;
 
 namespace ObjectsInUse
 {
@@ -335,15 +336,26 @@ public class ParameterUI : PausableObject
     /// <summary>
     /// Handles loading the parameters from the (intern) JSON file and sets the member variables
     /// </summary>
-    /// <param name="file">File to load</param>
-    private void LoadParametersFromFile(int file)
+    /// <param name="fileIndex">FileIndex to load</param>
+    private void LoadParametersFromFile(int fileIndex)
     {
-        var parameters = ParameterLoader.Instance.LoadJsonFromFile(file);
+        ThreeDimensionalMotionParameters parameters = (ThreeDimensionalMotionParameters)ParameterLoader.Instance.LoadJsonFromFileIndex(fileIndex);
         LoadParameters(parameters);
     }
 
-    public void LoadParameters(ParameterLoader.Parameters parameters)
+    public void LoadParameters(ExperimentParameters experimentParameters)
     {
+        ThreeDimensionalMotionParameters parameters;
+        if (experimentParameters is ThreeDimensionalMotionParameters motionParameters)
+        {
+            parameters = motionParameters;
+        }
+        else
+        {
+            Debug.LogError("ExperimentParameters are not of the expected type ThreeDimensionalMotionParameters!");
+            return;
+        }
+
         _background = parameters.Background;
 
         _particleInUse = parameters.Particle?.ToLower() switch
@@ -384,7 +396,7 @@ public class ParameterUI : PausableObject
 
     public Dictionary<string,string> GetExpressions()
     {
-        return ParameterLoader.Instance.GetParameters().expressions;
+        return ((ThreeDimensionalMotionParameters)ParameterLoader.Instance.MostRecentParameters).expressions;
     }
 
     /// <summary>

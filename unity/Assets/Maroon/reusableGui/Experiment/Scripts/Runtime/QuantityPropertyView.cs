@@ -152,9 +152,7 @@ namespace Maroon.UI
             slider.minValue = minValue;
             slider.maxValue = maxValue;
             slider.wholeNumbers = wholeNumbers;
-
-            slider.gameObject.AddComponent<ResetSlider>();
-
+            
             return slider;
         }
 

@@ -277,6 +277,7 @@ namespace Maroon.GlobalEntities
             }
 
             // Keep alive
+            this.transform.parent = null;
             DontDestroyOnLoad(this.gameObject);
 
             // Check if only VR scenes are in VR categories and only standard scenes are in standard categories
