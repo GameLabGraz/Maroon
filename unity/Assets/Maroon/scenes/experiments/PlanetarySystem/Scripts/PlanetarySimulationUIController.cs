@@ -57,7 +57,7 @@ namespace Maroon.Experiments.PlanetarySystem
             sliderSimulationCameraFov.onValueChanged.AddListener(OnFOVSliderValueChanged);
 
             toggleAllTrajectories.onValueChanged.AddListener((bool isOn) => planetTrajectoryController.ToggleAllTrajectories(isOn));
-            toggleSimRotation.onValueChanged.AddListener((bool isOn) => planetaryController.ToggleSimRotation(!isOn));
+            toggleSimRotation.onValueChanged.AddListener((bool isOn) => planetaryController.ToggleSimRotation(isOn));
             toggleSunKinematic.onValueChanged.AddListener((bool isOn) => planetaryController.ToggleSunKinematic(isOn));
             toggleSimOrientationGizmo.onValueChanged.AddListener((bool isOn) => planetaryController.ToggleSimOrientation(isOn));
 
@@ -197,8 +197,16 @@ namespace Maroon.Experiments.PlanetarySystem
         /// </summary>
         public void ResetPlanetarySystemSimulationValues()
         {
+            bool isOn = true;
             sliderG.value = gravitationalConstantG;
             sliderTimeSpeed.value = timeSpeed;
+
+            toggleAllTrajectories.isOn = isOn;
+            planetTrajectoryController.ToggleAllTrajectories(isOn);
+            toggleSunKinematic.isOn = isOn;
+            planetaryController.ToggleSunKinematic(isOn);
+
+
         }
         #endregion sliders
 
@@ -239,7 +247,7 @@ namespace Maroon.Experiments.PlanetarySystem
         /// </summary>
         public void ResetObject()
         {
-            //Debug.Log("PlanetaryController: ResetObject(): button pressed");
+            Debug.Log("PlanetaryController: ResetObject(): button pressed");
             ResetPlanetarySystemSimulation();
         }
     }
