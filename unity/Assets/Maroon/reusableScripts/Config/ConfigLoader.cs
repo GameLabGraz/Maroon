@@ -30,17 +30,16 @@ namespace Maroon.Config
 #if UNITY_WEBGL && !UNITY_EDITOR
             StartCoroutine(LoadAllConfigs());
 #else
-            string basePath = Application.streamingAssetsPath + "/Config/3DMotionSimulation";
+            string basePath = Path.Combine(Application.streamingAssetsPath, "Config", "3DMotionSimulation");
             string[] txtFiles = Directory.GetFiles(basePath, "*.json");
 
             _configs = new Dictionary<string, string>();
             foreach (string file in txtFiles)
             {
                 string json = File.ReadAllText(file);
-                string cutFilename = file.Replace(basePath + "\\", "");
-                cutFilename = cutFilename.Replace(".json", "");
+                string filename = Path.GetFileNameWithoutExtension(file);
                 
-                _configs.Add(cutFilename, json);
+                _configs.Add(filename, json);
             }
 
             ChangeConfig("Default");
@@ -68,10 +67,9 @@ namespace Maroon.Config
                 yield return webReq.SendWebRequest();
 
                 var json = webReq.downloadHandler.text;
-                string cutFilename = httpFiles[i].Replace(basePath, "");
-                cutFilename = cutFilename.Replace(".json", "");
+                string filename = Path.GetFileNameWithoutExtension(httpFiles[i]);
 
-                _configs.Add(cutFilename, json);
+                _configs.Add(filename, json);
             }
             
             if(Maroon.GlobalEntities.BootstrappingManager.Instance.UrlParameters.TryGetValue(WebGlUrlParameter.Config, out string config))
