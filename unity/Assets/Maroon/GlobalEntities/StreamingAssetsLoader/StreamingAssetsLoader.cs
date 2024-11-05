@@ -27,16 +27,6 @@ namespace Maroon.GlobalEntities
             DontDestroyOnLoad(this.gameObject);
         }
 
-        public string ConvertToPascalCase(string input)
-        {
-            // Convert the input string to title case (capitalize each word)
-            TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
-            string titleCase = textInfo.ToTitleCase(input.ToLower());
-
-            // Remove spaces from the title cased string
-            return titleCase.Replace(" ", "");
-        }
-
         // LoadFile method returns a string (file content).
         public Task<string> LoadFile(string fileName)
         {
