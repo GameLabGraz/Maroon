@@ -52,6 +52,7 @@ public class ParameterLoader : MonoBehaviour
             return;
         }
 
+        transform.parent = null;
         DontDestroyOnLoad(this.gameObject);
     }
 

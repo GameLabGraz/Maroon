@@ -37,6 +37,7 @@ namespace Maroon.Config
                 return;
             }
 
+            transform.parent = null;
             DontDestroyOnLoad(this.gameObject);
         }
 
