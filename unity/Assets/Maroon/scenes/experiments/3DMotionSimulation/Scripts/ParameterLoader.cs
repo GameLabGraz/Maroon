@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
-using Maroon;
-using System.Threading.Tasks;
 using Maroon.GlobalEntities;
 using Maroon.Config;
 
