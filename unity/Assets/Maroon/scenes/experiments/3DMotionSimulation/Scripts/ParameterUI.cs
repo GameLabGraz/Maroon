@@ -118,8 +118,10 @@ namespace Maroon.Parameter
         {
             dropdown.ClearOptions();
             dropdown.AddOptions(_configLoader.GetConfigNames());
+            OnConfigLoaded();
             
             _configLoader.OnConfigLoaded.RemoveListener(OnConfigsLoadedInital);
+            _configLoader.OnConfigLoaded.AddListener(OnConfigLoaded);
         }
 
         public void OnConfigLoaded()
