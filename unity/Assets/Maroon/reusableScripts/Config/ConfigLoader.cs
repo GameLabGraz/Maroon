@@ -1,11 +1,15 @@
-using System.Collections;
+
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
-using Newtonsoft.Json;
 using UnityEngine.Events;
 using System.IO;
 using System.Linq;
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+using System.Collections;
+using UnityEngine.Networking;
+using Newtonsoft.Json;
+#endif
 
 namespace Maroon.Config
 {
