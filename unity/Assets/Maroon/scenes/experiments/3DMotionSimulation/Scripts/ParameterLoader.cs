@@ -13,6 +13,8 @@ public class ParameterLoader : MonoBehaviour
     
     public static ParameterLoader Instance => _instance;
 
+    [SerializeField] private ConfigLoader _configLoader;
+
     /// <summary>
     /// Class for storing parameters from a JSON-File
     /// </summary>
@@ -44,7 +46,6 @@ public class ParameterLoader : MonoBehaviour
         if (_instance == null)
         {
             _instance = this;
-            ConfigLoader.Instance.OnConfigLoaded.AddListener(OnConfigLoaded);
         }
         else if (_instance != this)
         {
@@ -76,7 +77,7 @@ public class ParameterLoader : MonoBehaviour
 
     public void OnConfigLoaded()
     {
-        _parameters = JsonConvert.DeserializeObject<Parameters>(ConfigLoader.Instance.CurrentConfigString);
+        _parameters = JsonConvert.DeserializeObject<Parameters>(_configLoader.CurrentConfigString);
         ParameterUI.Instance.LoadParameters();
     }
 }

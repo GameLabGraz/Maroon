@@ -83,13 +83,13 @@ public class ParameterUI : PausableObject
     [SerializeField] private UnityEngine.UI.Toggle _showOriginGrid;
 
 
+    [SerializeField] private ConfigLoader _configLoader;
+
     private void Awake()
     {
         if (_instance == null)
         {
             _instance = this;
-            ConfigLoader.Instance.OnConfigLoaded.AddListener(OnConfigsLoadedInital);
-            ConfigLoader.Instance.OnConfigLoaded.AddListener(OnConfigLoaded);
         }
         else if (_instance != this)
         {
@@ -112,17 +112,17 @@ public class ParameterUI : PausableObject
         DisplayMessage(message);
     }
 
-    private void OnConfigsLoadedInital()
+    public void OnConfigsLoadedInital()
     {
         dropdown.ClearOptions();
-        dropdown.AddOptions(ConfigLoader.Instance.GetConfigNames());
+        dropdown.AddOptions(_configLoader.GetConfigNames());
         
-        ConfigLoader.Instance.OnConfigLoaded.RemoveListener(OnConfigsLoadedInital);
+        _configLoader.OnConfigLoaded.RemoveListener(OnConfigsLoadedInital);
     }
 
-    private void OnConfigLoaded()
+    public void OnConfigLoaded()
     {
-        dropdown.SetValueWithoutNotify(ConfigLoader.Instance.CurrentConfigIndex);
+        dropdown.SetValueWithoutNotify(_configLoader.CurrentConfigIndex);
     }
 
     /// <summary>
@@ -351,8 +351,8 @@ public class ParameterUI : PausableObject
     /// <param name="choice">The choice from the UI (Dropdown menu)</param>
     public void DropdownListener(int choice)
     {
-        string configName = ConfigLoader.Instance.GetConfigNames()[choice];
-        ConfigLoader.Instance.ChangeConfig(configName);
+        string configName = _configLoader.GetConfigNames()[choice];
+        _configLoader.ChangeConfig(configName);
     }
 
     public void LoadParameters()

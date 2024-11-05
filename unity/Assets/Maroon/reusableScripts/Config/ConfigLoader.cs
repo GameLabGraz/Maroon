@@ -21,29 +21,9 @@ namespace Maroon.Config
         protected int _currentConfigIndex;
         protected Dictionary<string, string> _configs = new Dictionary<string, string>();
 
-        private static ConfigLoader _instance;
-
         public string CurrentConfigString => _currentConfigString;
 
         public int CurrentConfigIndex => _currentConfigIndex;
-        
-        public static ConfigLoader Instance => _instance;
-
-        private void Awake()
-        {
-            if (_instance == null)
-            {
-                _instance = this;
-            }
-            else if (_instance != this)
-            {
-                DestroyImmediate(this.gameObject);
-                return;
-            }
-
-            transform.parent = null;
-            DontDestroyOnLoad(this.gameObject);
-        }
 
         void Start()
         {
