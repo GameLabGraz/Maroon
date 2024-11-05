@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
-using Maroon.GlobalEntities;
 using Maroon.Config;
 
 namespace Maroon.Parameter
@@ -55,15 +54,6 @@ namespace Maroon.Parameter
 
             transform.parent = null;
             DontDestroyOnLoad(this.gameObject);
-        }
-
-        // Start is called before the first frame update
-        private void Start()
-        {
-            // Listener for extern json data 
-    #if UNITY_WEBGL
-            WebGlReceiver.Instance.OnIncomingData.AddListener((str) => Debug.Log("Incoming data: " + str));
-    #endif
         }
 
         /// <summary>
