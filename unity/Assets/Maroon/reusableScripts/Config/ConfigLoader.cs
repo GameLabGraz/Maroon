@@ -25,7 +25,7 @@ namespace Maroon.Config
 
         public int CurrentConfigIndex => _currentConfigIndex;
 
-        void Start()
+        private void Start()
         {
 #if UNITY_WEBGL && !UNITY_EDITOR
             StartCoroutine(LoadAllConfigs());
@@ -49,7 +49,7 @@ namespace Maroon.Config
 
 
 #if UNITY_WEBGL && !UNITY_EDITOR
-        IEnumerator LoadAllConfigs()
+        private IEnumerator LoadAllConfigs()
         {
             string basePath = "http://localhost:8000/StreamingAssets/Config/3DMotionSimulation/";
             List<string> httpFiles = new List<string>();
