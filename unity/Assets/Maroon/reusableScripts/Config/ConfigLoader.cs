@@ -92,9 +92,10 @@ namespace Maroon.Config
         /// </summary>
         public bool ChangeConfig(string configName)
         {
+            string lowerConfigName = configName.ToLower().Replace(" ", "");
             foreach (var key in _configs.Keys)
             {
-                if (key.ToLower() == configName.Replace(" ", "").ToLower())
+                if (key.ToLower() == lowerConfigName)
                 {
                     _currentConfigString = _configs[key];
                     _currentConfigIndex = GetConfigNames().IndexOf(key);
