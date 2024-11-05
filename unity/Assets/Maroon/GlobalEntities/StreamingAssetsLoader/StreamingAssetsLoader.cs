@@ -23,6 +23,7 @@ namespace Maroon.GlobalEntities
                 return;
             }
 
+            transform.parent = null;
             DontDestroyOnLoad(this.gameObject);
         }
 
