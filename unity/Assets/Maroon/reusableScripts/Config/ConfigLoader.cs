@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
 using UnityEngine.Events;
-using SimpleJSON;
 using System.IO;
 using System.Linq;
 
@@ -73,10 +72,10 @@ namespace Maroon.Config
             yield return uwr.SendWebRequest();
 
             var jsonFile = uwr.downloadHandler.text;
-            var parseJSON = JSON.Parse(jsonFile);
+            var parseJSON = JsonConvert.DeserializeObject<List<string>>(jsonFile);
 
-            for(int i = 0; i < parseJSON.Count; i++) {
-                httpFiles.Add(basePath + parseJSON[i]);
+            for(int i = 0; i < parseJSON2.Count; i++) {
+                httpFiles.Add(basePath + parseJSON2[i]);
             }
 
             for(int i = 0; i < httpFiles.Count; i++) {
