@@ -58,8 +58,8 @@ namespace Maroon.Config
             var jsonFile = uwr.downloadHandler.text;
             var parseJSON = JsonConvert.DeserializeObject<List<string>>(jsonFile);
 
-            for(int i = 0; i < parseJSON2.Count; i++) {
-                httpFiles.Add(basePath + parseJSON2[i]);
+            for(int i = 0; i < parseJSON.Count; i++) {
+                httpFiles.Add(basePath + parseJSON[i]);
             }
 
             for(int i = 0; i < httpFiles.Count; i++) {
