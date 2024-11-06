@@ -19,6 +19,11 @@ namespace Maroon.ReusableScripts.ExperimentParameters
         public UnityEvent<ExperimentParameters> parametersLoaded = new UnityEvent<ExperimentParameters>();
 
         /// <summary>
+        /// Invoked when ExperimentParameters have been loaded, which are custom (e.g. received from Javascript WebGL).
+        /// </summary>
+        public UnityEvent CustomParametersLoaded = new UnityEvent();
+
+        /// <summary>
         /// The most recently loaded ExperimentParameters
         /// </summary>
         public ExperimentParameters MostRecentParameters
@@ -30,7 +35,7 @@ namespace Maroon.ReusableScripts.ExperimentParameters
         /// <summary>
         /// Used to know whether there was already an experiment which potentially used the URL fragment parameters on WebGL already
         /// </summary>
-        private bool firstExperimentDefaultParametersLoaded = false;
+        private static bool firstExperimentDefaultParametersLoaded = false;
 
         #region Singleton
         private static ParameterLoader _instance;
@@ -50,7 +55,10 @@ namespace Maroon.ReusableScripts.ExperimentParameters
         {
             // Listener for external json data (sent e.g. via a Javascript button from a website where Maroon is embedded)
 #if UNITY_WEBGL
-            WebGlReceiver.Instance.OnIncomingData.AddListener((string jsonData) => { LoadJsonFromString(jsonData); });
+            WebGlReceiver.Instance.OnIncomingData.AddListener((string jsonData) => {
+                LoadJsonFromString(jsonData);
+                CustomParametersLoaded?.Invoke();
+            });
 #endif
         }
 
@@ -72,6 +80,7 @@ namespace Maroon.ReusableScripts.ExperimentParameters
             if (firstDefaultParametersLoad && !firstExperimentDefaultParametersLoaded && !string.IsNullOrWhiteSpace(WebGlReceiver.Instance.MostRecentData))
             {
                 firstExperimentDefaultParametersLoaded = true;
+                CustomParametersLoaded?.Invoke();
                 return LoadJsonFromString(WebGlReceiver.Instance.MostRecentData);
             }
 #endif
