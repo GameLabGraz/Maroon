@@ -27,6 +27,11 @@ namespace Maroon.ReusableScripts.ExperimentParameters
             private set;
         }
 
+        /// <summary>
+        /// Used to know whether there was already an experiment which potentially used the URL fragment parameters on WebGL already
+        /// </summary>
+        private bool firstExperimentDefaultParametersLoaded = false;
+
         #region Singleton
         private static ParameterLoader _instance;
         public static ParameterLoader Instance
@@ -61,11 +66,12 @@ namespace Maroon.ReusableScripts.ExperimentParameters
         {
 #if UNITY_WEBGL
             /*
-             * Initial config received from Javascript (originating from the URL Fragment config) will be received before experiment is loaded,
-             * thus if on WebGL and the WebGlReceiver.Instance.MostRecentData is not null, load instead the WebGlReceiver.Instance.MostRecentData instead of the requested default file.
+             * Initial config received from Javascript (originating from the URL Fragment config) will be received before the requested experiment is loaded,
+             * thus if on WebGL and the WebGlReceiver.Instance.MostRecentData is not null and this it the first experiment, load instead the WebGlReceiver.Instance.MostRecentData instead of the requested default file.
              */
-            if (firstDefaultParametersLoad && !string.IsNullOrWhiteSpace(WebGlReceiver.Instance.MostRecentData))
+            if (firstDefaultParametersLoad && !firstExperimentDefaultParametersLoaded && !string.IsNullOrWhiteSpace(WebGlReceiver.Instance.MostRecentData))
             {
+                firstExperimentDefaultParametersLoaded = true;
                 return LoadJsonFromString(WebGlReceiver.Instance.MostRecentData);
             }
 #endif
