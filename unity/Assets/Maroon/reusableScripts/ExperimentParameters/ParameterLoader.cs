@@ -54,9 +54,22 @@ namespace Maroon.ReusableScripts.ExperimentParameters
         /// Method for loading intern JSON-File
         /// </summary>
         /// <param name="file">File to load</param>
+        /// <param name="firstDefaultParametersLoad">If a new experiment has just loaded and this is call should load the initial default parameters.
+        /// If true, might be ignored and instead the URL fragment parameters will be used.</param>
         /// <returns>The loaded ExperimentParameters</returns>
-        public ExperimentParameters LoadJsonFromFileIndex(int index)
+        public ExperimentParameters LoadJsonFromFileIndex(int index, bool firstDefaultParametersLoad = false)
         {
+#if UNITY_WEBGL
+            /*
+             * Initial config received from Javascript (originating from the URL Fragment config) will be received before experiment is loaded,
+             * thus if on WebGL and the WebGlReceiver.Instance.MostRecentData is not null, load instead the WebGlReceiver.Instance.MostRecentData instead of the requested default file.
+             */
+            if (firstDefaultParametersLoad && !string.IsNullOrWhiteSpace(WebGlReceiver.Instance.MostRecentData))
+            {
+                return LoadJsonFromString(WebGlReceiver.Instance.MostRecentData);
+            }
+#endif
+
             if (index >= _jsonFile.Count)
             {
                 Debug.LogError("Index " + index + " is greater or equal the number of files " + _jsonFile.Count);
@@ -106,6 +119,6 @@ namespace Maroon.ReusableScripts.ExperimentParameters
 
             return JsonConvert.DeserializeObject<ExperimentParameters>(data, settings);
         }
-        #endregion
+#endregion
     }
 }

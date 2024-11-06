@@ -58,7 +58,7 @@ namespace Maroon.Physics.Optics.Manager
             _em = ExperimentManager.Instance;
             _camControls = mainCamera.GetComponent<CameraControls>();
             
-            parameterLoader.LoadJsonFromFileIndex(0);
+            parameterLoader.LoadJsonFromFileIndex(0, true);
         }
 
         /// <summary>

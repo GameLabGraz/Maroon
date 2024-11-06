@@ -337,9 +337,10 @@ public class ParameterUI : PausableObject
     /// Handles loading the parameters from the (intern) JSON file and sets the member variables
     /// </summary>
     /// <param name="fileIndex">FileIndex to load</param>
-    private void LoadParametersFromFile(int fileIndex)
+    /// <param name="firstDefaultParametersLoad">If this parameter loading is the initial default parameter loading.</param>
+    private void LoadParametersFromFile(int fileIndex, bool firstDefaultParametersLoad = false)
     {
-        ThreeDimensionalMotionParameters parameters = (ThreeDimensionalMotionParameters)ParameterLoader.Instance.LoadJsonFromFileIndex(fileIndex);
+        ThreeDimensionalMotionParameters parameters = (ThreeDimensionalMotionParameters)ParameterLoader.Instance.LoadJsonFromFileIndex(fileIndex, firstDefaultParametersLoad);
         LoadParameters(parameters);
     }
 
@@ -461,7 +462,7 @@ public class ParameterUI : PausableObject
     /// </summary>
     private void LoadDefault()
     {
-        LoadParametersFromFile(0);
+        LoadParametersFromFile(0, true);
         dropdown.SetValueWithoutNotify(0);
     }
 }
