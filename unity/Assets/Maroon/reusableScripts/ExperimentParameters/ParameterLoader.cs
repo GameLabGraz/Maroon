@@ -75,7 +75,16 @@ namespace Maroon.ReusableScripts.ExperimentParameters
         /// <returns>The loaded ExperimentParameters</returns>
         public ExperimentParameters LoadJsonFromString(string data)
         {
+            Debug.Log("Trying to load ExperimentParameters from JSON String.");
             MostRecentParameters = ConvertJsonToExperimentParameters(data);
+            if (MostRecentParameters == null)
+            {
+                Debug.LogError("Loaded ExperimentParameters are null.");
+            }
+            else
+            {
+                Debug.Log("Successfully parsed ExperimentParameters: " + MostRecentParameters.GetType());
+            }
             parametersLoaded?.Invoke(MostRecentParameters);
             return MostRecentParameters;
         }
