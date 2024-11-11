@@ -100,6 +100,7 @@ namespace Maroon.Parameter
             }
 
             DontDestroyOnLoad(this.gameObject);
+            _configLoader.OnConfigLoaded.AddListener(OnConfigsLoadedInital);
         }
         /// <summary>
         /// Inits the dictionary for the formulas and handles the visibility of UI elements
