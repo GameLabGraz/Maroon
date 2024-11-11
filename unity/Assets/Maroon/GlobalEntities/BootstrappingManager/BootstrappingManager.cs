@@ -26,8 +26,10 @@ namespace Maroon.GlobalEntities
         public static BootstrappingManager Instance => BootstrappingManager._instance;
 
         MonoBehaviour GlobalEntity.Instance => Instance;
-        
+
+#if UNITY_WEBGL
         public Dictionary<WebGlUrlParameter, string> UrlParameters { get; private set; }
+#endif
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Methods

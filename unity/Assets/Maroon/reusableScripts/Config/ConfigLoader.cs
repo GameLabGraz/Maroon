@@ -1,13 +1,16 @@
 
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Networking;
-using System;
 using System.IO;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+using UnityEngine.Networking;
+using System;
+using System.Collections;
 using Newtonsoft.Json;
+#endif
 
 namespace Maroon.Config
 {
@@ -44,6 +47,7 @@ namespace Maroon.Config
 #endif
         } 
 
+#if UNITY_WEBGL && !UNITY_EDITOR
         private IEnumerator LoadAllConfigs()
         {
             string baseDomain = new Uri(Application.absoluteURL).ToString();
@@ -85,6 +89,7 @@ namespace Maroon.Config
                 ChangeConfig("Default");
             }
         }
+#endif
 
         /// <summary>
         /// Changes current config to the one with the given name.
