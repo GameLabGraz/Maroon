@@ -1,15 +1,13 @@
 
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Networking;
+using System;
 using System.IO;
 using System.Linq;
-
-#if UNITY_WEBGL && !UNITY_EDITOR
 using System.Collections;
-using UnityEngine.Networking;
+using System.Collections.Generic;
 using Newtonsoft.Json;
-#endif
 
 namespace Maroon.Config
 {
@@ -46,13 +44,16 @@ namespace Maroon.Config
 #endif
         } 
 
-
-#if UNITY_WEBGL && !UNITY_EDITOR
         private IEnumerator LoadAllConfigs()
         {
-            string basePath = "http://localhost:8000/StreamingAssets/Config/3DMotionSimulation/";
+            string baseDomain = new Uri(Application.absoluteURL).ToString();
+            if (baseDomain.Contains("?")) baseDomain = baseDomain.Substring(0, baseDomain.IndexOf('?'));
+            string basePath = $"{baseDomain}/StreamingAssets/Config/3DMotionSimulation/";
+            string configListUrl = $"{baseDomain}/configs.php";
+            
             List<string> httpFiles = new List<string>();
-            UnityWebRequest uwr = UnityWebRequest.Get("http://localhost:8000/configs.php");
+            UnityWebRequest uwr = UnityWebRequest.Get(configListUrl);
+            
             yield return uwr.SendWebRequest();
 
             var jsonFile = uwr.downloadHandler.text;
@@ -84,7 +85,6 @@ namespace Maroon.Config
                 ChangeConfig("Default");
             }
         }
-#endif
 
         /// <summary>
         /// Changes current config to the one with the given name.
