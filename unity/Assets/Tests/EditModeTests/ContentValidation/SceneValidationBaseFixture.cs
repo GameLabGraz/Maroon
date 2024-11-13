@@ -143,16 +143,14 @@ namespace Tests.EditModeTests.ContentValidation
                             continue;
                         }
 
-                        // Assert the event target method exists
-                        if (eventTargetObjectType == null)
-                            continue;
-
                         string eventTargetMethodName = unityEvent.GetPersistentMethodName(persistentEventCountIndex);
                         try
                         {
                             MethodInfo methodInfo = eventTargetObjectType.GetMethod
                                 (eventTargetMethodName,
                                 BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+                            // Assert the event target method exists
                             if (methodInfo != null)
                                 continue;
                             errors.Add($"The UnityEvent of  {monoBehaviourType.Name}  \" {monoBehaviour.name} \" called \"{field.Name}\" " +
