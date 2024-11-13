@@ -9,18 +9,18 @@ namespace Maroon.Tools.Stopwatch.UI
 
         protected virtual void Start()
         {
-            DisplayText = $"0.00";
+            DisplayText = $"0.000";
         }
 
         public void StopWatchOnReset(SWEventArgs args)
         {
-            DisplayText = $"0.00";
+            DisplayText = $"0.000";
         }
 
         public void StopWatchOnTick(SWEventArgs args)
         {
 
-            DisplayText = string.Format(CultureInfo.InvariantCulture, "{0:0.0}", args.SecondsPassed);
+            DisplayText = string.Format(CultureInfo.InvariantCulture, "{0:0.000}", args.SecondsPassed);
         }
     }
 }
