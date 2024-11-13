@@ -201,7 +201,8 @@ public class PointWavePoolHandler : MonoBehaviour, IResetObject
 
     public void ResetObject()
     {
-        ResetWholeObject();
+        RemoveAllSources();
+        waterPlane.UpdateParameterAndPosition();
     }
 
     public void RemoveAllSources()
@@ -213,12 +214,6 @@ public class PointWavePoolHandler : MonoBehaviour, IResetObject
         }
 
         _sources.Clear();
-    }
-
-    public void ResetWholeObject()
-    {
-        RemoveAllSources();
-        waterPlane.UpdateParameterAndPosition();
     }
 
     public Vector3 GetMinimumPos()
