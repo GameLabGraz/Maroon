@@ -10,6 +10,7 @@ using static Tests.Utilities.UtilityFunctions;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine.Events;
+
 namespace Tests.EditModeTests.ContentValidation
 {
     /// <summary>
@@ -112,52 +113,50 @@ namespace Tests.EditModeTests.ContentValidation
                 FieldInfo[] fields = monoBehaviourType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
                 foreach (FieldInfo field in fields)
                 {
-                    if (typeof(UnityEvent).IsAssignableFrom(field.FieldType))
+                    if (!typeof(UnityEvent).IsAssignableFrom(field.FieldType)) 
+                        continue;
+
+                    UnityEvent unityEvent = field.GetValue(monoBehaviour) as UnityEvent;
+                    // Check all persistent (assigned via the Inspector) UnityEvent listeners
+                    for (int persistentEventCountIndex = 0; persistentEventCountIndex < unityEvent.GetPersistentEventCount(); persistentEventCountIndex++)
                     {
-                        UnityEvent unityEvent = field.GetValue(monoBehaviour) as UnityEvent;
-                        // Check all persistent (assigned via the Inspector) UnityEvent listeners
-                        for (int persistentEventCountIndex = 0; persistentEventCountIndex < unityEvent.GetPersistentEventCount(); persistentEventCountIndex++)
+                        // Assert event target object is not null
+                        UnityEngine.Object eventTargetObject = unityEvent.GetPersistentTarget(persistentEventCountIndex);
+                        if (eventTargetObject == null)
                         {
-                            // Assert event target object is not null
-                            UnityEngine.Object eventTargetObject = unityEvent.GetPersistentTarget(persistentEventCountIndex);
-                            if (eventTargetObject == null)
-                            {
-                                errors.Add($"The UnityEvent of {monoBehaviourType.Name} \"{monoBehaviour.name}\" called \"{field.Name}\" " +
-                                    $"has an event target object that is null (index {persistentEventCountIndex}).");
-                                continue;
-                            }
+                            errors.Add($"The UnityEvent of {monoBehaviourType.Name} \"{monoBehaviour.name}\" called \"{field.Name}\" " +
+                                $"has an event target object that is null (index {persistentEventCountIndex}).");
+                            continue;
+                        }
 
-                            // Assert event target object Type is not null
-                            string eventTargetObjectFullName = eventTargetObject.GetType().AssemblyQualifiedName;
-                            System.Type eventTargetObjectType = System.Type.GetType(eventTargetObjectFullName);
-                            if (eventTargetObjectType == null)
-                            {
-                                errors.Add($"The UnityEvent of {monoBehaviourType.Name} \"{monoBehaviour.name}\" called \"{field.Name}\" " +
-                                    $"has an event target object whose type is null (index {persistentEventCountIndex}).");
-                                continue;
-                            }
+                        // Assert event target object Type is not null
+                        string eventTargetObjectFullName = eventTargetObject.GetType().AssemblyQualifiedName;
+                        System.Type eventTargetObjectType = System.Type.GetType(eventTargetObjectFullName);
+                        if (eventTargetObjectType == null)
+                        {
+                            errors.Add($"The UnityEvent of {monoBehaviourType.Name} \"{monoBehaviour.name}\" called \"{field.Name}\" " +
+                                $"has an event target object whose type is null (index {persistentEventCountIndex}).");
+                            continue;
+                        }
 
-                            // Assert the event target method exists
-                            if (eventTargetObjectType != null)
-                            {
-                                string eventTargetMethodName = unityEvent.GetPersistentMethodName(persistentEventCountIndex);
-                                try
-                                {
-                                    MethodInfo methodInfo = eventTargetObjectType.GetMethod
-                                        (eventTargetMethodName,
-                                        BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-                                    if (methodInfo == null)
-                                    {
-                                        errors.Add($"The UnityEvent of  {monoBehaviourType.Name}  \" {monoBehaviour.name} \" called \"{field.Name}\" " +
-                                            $"has an event target method \"{eventTargetMethodName}\" that could not be found (index {persistentEventCountIndex}).");
-                                        continue;
-                                    }
-                                }
-                                catch (AmbiguousMatchException)
-                                {
-                                    // Multiple overloads for the method found, this is okay
-                                }
-                            }
+                        // Assert the event target method exists
+                        if (eventTargetObjectType == null)
+                            continue;
+
+                        string eventTargetMethodName = unityEvent.GetPersistentMethodName(persistentEventCountIndex);
+                        try
+                        {
+                            MethodInfo methodInfo = eventTargetObjectType.GetMethod
+                                (eventTargetMethodName,
+                                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                            if (methodInfo != null)
+                                continue;
+                            errors.Add($"The UnityEvent of  {monoBehaviourType.Name}  \" {monoBehaviour.name} \" called \"{field.Name}\" " +
+                                $"has an event target method \"{eventTargetMethodName}\" that could not be found (index {persistentEventCountIndex}).");
+                        }
+                        catch (AmbiguousMatchException)
+                        {
+                            // Multiple overloads for the method found, this is okay
                         }
                     }
                 }
