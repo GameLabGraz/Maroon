@@ -125,7 +125,8 @@ namespace Tests.EditModeTests.ContentValidation
                         if (eventTargetObject == null)
                         {
                             errors.Add($"The UnityEvent of {monoBehaviourType.Name} \"{monoBehaviour.name}\" called \"{field.Name}\" " +
-                                $"has an event target object that is null (index {persistentEventCountIndex}).");
+                                $"has an event target object that is null (index {persistentEventCountIndex}). " +
+                                $"The path of the GameObject is {monoBehaviour.gameObject.GetScenePath()}");
                             continue;
                         }
 
@@ -137,7 +138,8 @@ namespace Tests.EditModeTests.ContentValidation
                         if (eventTargetObjectType == null)
                         {
                             errors.Add($"The UnityEvent of {monoBehaviourType.Name} \"{monoBehaviour.name}\" called \"{field.Name}\" " +
-                                $"has an event target object whose type is null (index {persistentEventCountIndex}).");
+                                $"has an event target object whose type is null (index {persistentEventCountIndex})." +
+                                $"The path of the GameObject is {monoBehaviour.gameObject.GetScenePath()}");
                             continue;
                         }
 
@@ -154,7 +156,8 @@ namespace Tests.EditModeTests.ContentValidation
                             if (methodInfo != null)
                                 continue;
                             errors.Add($"The UnityEvent of  {monoBehaviourType.Name}  \" {monoBehaviour.name} \" called \"{field.Name}\" " +
-                                $"has an event target method \"{eventTargetMethodName}\" that could not be found (index {persistentEventCountIndex}).");
+                                $"has an event target method \"{eventTargetMethodName}\" that could not be found (index {persistentEventCountIndex}). " +
+                                $"The path of the GameObject is {monoBehaviour.gameObject.GetScenePath()}");
                         }
                         catch (AmbiguousMatchException)
                         {
