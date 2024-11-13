@@ -130,7 +130,9 @@ namespace Tests.EditModeTests.ContentValidation
                         }
 
                         // Assert event target object Type is not null
-                        string eventTargetObjectFullName = eventTargetObject.GetType().AssemblyQualifiedName;
+                        string eventTargetObjectFullName = eventTargetObject.GetType()?.AssemblyQualifiedName;
+                        if (string.IsNullOrEmpty(eventTargetObjectFullName)) // AssemblyQualifiedName can be null if the current instance represents a generic type parameter
+                            continue;
                         System.Type eventTargetObjectType = System.Type.GetType(eventTargetObjectFullName);
                         if (eventTargetObjectType == null)
                         {
