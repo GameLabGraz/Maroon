@@ -17,18 +17,18 @@ namespace Maroon.Editor
         [MenuItem("Tools/Resave Assets")]
         public static void ResaveAllAssets()
         {
-            int changes = 0;
+            int counter = 0;
 
-            changes += ResaveAllAssetsOfType<GameObject>("t:Prefab");
-            changes += ResaveAllAssetsOfType<Material>("t:Material");
-            changes += ResaveAllAssetsOfType<Shader>("t:Shader");
-            changes += ResaveAllAssetsOfType<ScriptableObject>("t:ScriptableObject");
-            changes += ResaveAllAssetsOfType<Texture>("t:Texture");
-            changes += ResaveAllAssetsOfType<AnimationClip>("t:AnimationClip");
-            changes += ResaveAllScenes();
+            counter += ResaveAllAssetsOfType<GameObject>("t:Prefab");
+            counter += ResaveAllAssetsOfType<Material>("t:Material");
+            counter += ResaveAllAssetsOfType<Shader>("t:Shader");
+            counter += ResaveAllAssetsOfType<ScriptableObject>("t:ScriptableObject");
+            counter += ResaveAllAssetsOfType<Texture>("t:Texture");
+            counter += ResaveAllAssetsOfType<AnimationClip>("t:AnimationClip");
+            counter += ResaveAllScenes();
 
             AssetDatabase.Refresh();
-            Debug.Log($"Finished resaving assets. Made {changes} change(s).");
+            Debug.Log($"Finished resaving {counter} assets.");
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Maroon.Editor
         /// <returns>The number of assets resaved</returns>
         private static int ResaveAllAssetsOfType<T>(string filter) where T : UnityEngine.Object
         {
-            int changes = 0;
+            int counter = 0;
             string[] guids = AssetDatabase.FindAssets(filter, foldersToSearch);
             foreach (string guid in guids)
             {
@@ -49,11 +49,11 @@ namespace Maroon.Editor
                 {
                     EditorUtility.SetDirty(asset);
                     AssetDatabase.SaveAssets();
-                    changes++;
+                    counter++;
                 }
             }
-            Debug.Log($"Resaved {changes} assets of type {typeof(T).Name}.");
-            return changes;
+            Debug.Log($"Resaved {counter} assets of type {typeof(T).Name}.");
+            return counter;
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace Maroon.Editor
         /// <returns>The number of scenes resaved</returns>
         private static int ResaveAllScenes()
         {
-            int changes = 0;
+            int counter = 0;
             string[] sceneGuids = AssetDatabase.FindAssets("t:Scene", foldersToSearch);
             foreach (string guid in sceneGuids)
             {
@@ -71,12 +71,12 @@ namespace Maroon.Editor
                 {
                     EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Additive);
                     EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
-                    changes++;
+                    counter++;
                 }
             }
 
-            Debug.Log($"Resaved {changes} scenes.");
-            return changes;
+            Debug.Log($"Resaved {counter} scenes.");
+            return counter;
         }
     }
 }
