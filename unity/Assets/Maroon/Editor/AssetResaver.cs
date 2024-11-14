@@ -64,17 +64,20 @@ namespace Maroon.Editor
         {
             int counter = 0;
             string[] sceneGuids = AssetDatabase.FindAssets("t:Scene", foldersToSearch);
+            string initialScenePath = EditorSceneManager.GetActiveScene().path;
             foreach (string guid in sceneGuids)
             {
                 string scenePath = AssetDatabase.GUIDToAssetPath(guid);
                 if (File.Exists(scenePath))
                 {
-                    EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+                    EditorSceneManager.OpenScene(scenePath);
                     EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
                     counter++;
                 }
             }
 
+            // Restore initial scene
+            EditorSceneManager.OpenScene(initialScenePath);
             Debug.Log($"Resaved {counter} scenes.");
             return counter;
         }
