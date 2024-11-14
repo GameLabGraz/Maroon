@@ -69,7 +69,7 @@ namespace Maroon.Editor
                 string scenePath = AssetDatabase.GUIDToAssetPath(guid);
                 if (File.Exists(scenePath))
                 {
-                    EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Additive);
+                    EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
                     EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
                     counter++;
                 }
