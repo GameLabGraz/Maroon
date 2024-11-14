@@ -227,5 +227,22 @@ namespace Tests.Utilities
             EditorUtility.DisplayDialog(GuiPopupTitle, $"{result.FailCount} test{(result.FailCount > 1 ? "s" : "")} failed:\n{failedTestNames}\n\n" +
                                                        "Check Test Runner window for more information", "Ok");
         }
+
+        /// <summary>
+        /// Gets the path of the GameObject in the scene hierarchy.
+        /// </summary>
+        /// <returns>The path to the gameObject</returns>
+        /// based on https://discussions.unity.com/t/how-can-i-get-the-full-path-to-a-gameobject/412/2
+        public static string GetScenePath(this GameObject gameObject)
+        {
+            char delimiter = '/';
+            string path = delimiter + gameObject.name;
+            while (gameObject.transform.parent != null)
+            {
+                gameObject = gameObject.transform.parent.gameObject;
+                path = delimiter + gameObject.name + path;
+            }
+            return path;
+        }
     }
 }
