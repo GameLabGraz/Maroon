@@ -27,13 +27,12 @@ namespace Maroon.Tools.Voltmeter
             if (Mathf.Abs(currentDifference - currentValue.Value) > 0.00000001)
                 currentValue.Value = currentDifference;
 
-            var check = currentValue.Value;
-            for (var cnt = 0; Mathf.Abs(check) < 1f && cnt < 2; ++cnt)
+            var returnValue = currentValue.Value;
+            for (int i = 0; i < 2 && Mathf.Abs(returnValue ) < 1f; i++)
             {
-                check *= Mathf.Pow(10, 3);
+                returnValue *= 1000;
             }
-
-            return check;
+            return returnValue;
         }
 
         public string GetCurrentUnit()
