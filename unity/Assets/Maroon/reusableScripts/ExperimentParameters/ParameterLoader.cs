@@ -79,7 +79,7 @@ namespace Maroon.ReusableScripts.ExperimentParameters
         /// Method for when the JSON files are not set in the inspector but are loaded from an external source.
         /// </summary>
         /// <param name="jsonFiles">List of JSON files to load</param>
-        public void InitJSONfiles(List<TextAsset> jsonFiles)
+        public void InitJsonFiles(List<TextAsset> jsonFiles)
         {
             if (_jsonFile.Count > 0)
             {
