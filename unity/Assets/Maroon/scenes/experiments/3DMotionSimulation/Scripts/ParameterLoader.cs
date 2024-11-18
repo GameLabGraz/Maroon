@@ -1,44 +1,18 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Newtonsoft.Json;
 using Maroon.Config;
+using Maroon.Physics.ThreeDimensionalMotion;
 
 namespace Maroon.Parameter
 {
     public class ParameterLoader : MonoBehaviour
     {
         private static ParameterLoader _instance;
-        private Parameters _parameters;
+        private ThreeDimensionalMotionParameters _parameters;
         
         public static ParameterLoader Instance => _instance;
 
         [SerializeField] private ConfigLoader _configLoader;
-
-        /// <summary>
-        /// Class for storing parameters from a JSON-File
-        /// </summary>
-        [System.Serializable]
-        public class Parameters
-        {
-            public string Background;
-            public string Particle;
-            public float T0;
-            public float DeltaT;
-            public float Steps;
-            public float X;
-            public float Y;
-            public float Z;
-            public float Vx;
-            public float Vy;
-            public float Vz;
-
-            public string m;
-            public string fx;
-            public string fy;
-            public string fz;
-
-            public Dictionary<string, string> expressions = new Dictionary<string, string>();
-        }
 
         private void Awake()
         {
@@ -60,14 +34,14 @@ namespace Maroon.Parameter
         /// Getter for the stored parameters
         /// </summary>
         /// <returns>Parameter list</returns>
-        public Parameters GetParameters()
+        public ThreeDimensionalMotionParameters GetParameters()
         {
             return _parameters;
         }
 
         public void OnConfigLoaded()
         {
-            _parameters = JsonConvert.DeserializeObject<Parameters>(_configLoader.CurrentConfigString);
+            _parameters = JsonConvert.DeserializeObject<ThreeDimensionalMotionParameters>(_configLoader.CurrentConfigString);
             ParameterUI.Instance.LoadParameters();
         }
     }
