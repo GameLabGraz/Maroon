@@ -5,7 +5,7 @@ using PlatformControls.PC;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Maroon.UI
+namespace Maroon.Experiments.CoulombsLaw
 {
     public class PC_ObjectSelectionHandler : MonoBehaviour 
     {

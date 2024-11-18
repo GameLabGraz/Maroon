@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Maroon.UI
+namespace Maroon.Experiments.CoulombsLaw
 {
     public class PC_ObjectSelection : MonoBehaviour
     {
