@@ -49,6 +49,47 @@ namespace Maroon.ReusableScripts.ExperimentParameters
 #endif
         }
 
+        public List<string> GetJsonNames()
+        {
+            List<string> names = new List<string>();
+            foreach (TextAsset file in _jsonFile)
+            {
+                names.Add(file.name);
+            }
+
+            return names;
+        }
+
+        public int IndexOfJson(string name)
+        {
+            string lowerName = name.ToLower().Replace(" ", "");
+            for (int i = 0; i < _jsonFile.Count; i++)
+            {
+                if (_jsonFile[i].name.ToLower() == lowerName)
+                {
+                    return i;
+                }
+            }
+
+            Debug.LogError("No file with name " + name + " found.");
+            return -1;
+        }
+
+        /// <summary>
+        /// Method for when the JSON files are not set in the inspector but are loaded from an external source.
+        /// </summary>
+        /// <param name="jsonFiles">List of JSON files to load</param>
+        public void InitJSONfiles(List<TextAsset> jsonFiles)
+        {
+            if (_jsonFile.Count > 0)
+            {
+                Debug.LogWarning("JSON files have already been initialized. Action denied.");
+                return;
+            }
+
+            _jsonFile = jsonFiles;
+        }
+
         #region Loading of Parameters
         /// <summary>
         /// Method for loading intern JSON-File
@@ -66,6 +107,21 @@ namespace Maroon.ReusableScripts.ExperimentParameters
 
             string data = _jsonFile[index].text;
             return LoadJsonFromString(data);
+        }
+
+        public ExperimentParameters LoadJsonFromFileName(string name)
+        {
+            string lowerName = name.ToLower().Replace(" ", "");
+            foreach (TextAsset file in _jsonFile)
+            {
+                if (file.name.ToLower() == lowerName)
+                {
+                    return LoadJsonFromString(file.text);
+                }
+            }
+
+            Debug.LogError("No file with name " + name + " found.");
+            return null;
         }
 
         /// <summary>
@@ -95,6 +151,7 @@ namespace Maroon.ReusableScripts.ExperimentParameters
                 // if we allow loading of some sort of external JSON file in the future, then we need to assign a custom SerializationBinder here
             };
 
+            // TODO: ExperimentParamters is expected but ThreeDExperimentParameters is received
             return JsonConvert.DeserializeObject<ExperimentParameters>(data, settings);
         }
         #endregion

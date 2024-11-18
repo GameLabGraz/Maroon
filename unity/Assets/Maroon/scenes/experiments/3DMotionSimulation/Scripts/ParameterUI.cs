@@ -10,6 +10,8 @@ using Maroon;
 using Maroon.GlobalEntities;
 using Maroon.Config;
 using Maroon.Parameter.ObjectsInUse;
+using System;
+using Maroon.ReusableScripts.ExperimentParameters;
 
 namespace Maroon.Parameter
 {
@@ -85,7 +87,9 @@ namespace Maroon.Parameter
         [SerializeField] private UnityEngine.UI.Toggle _showOriginGrid;
 
 
-        [SerializeField] private ConfigLoader _configLoader;
+        [SerializeField] private JsonFileLoader _jsonFileLoader;
+
+        private int _currentConfigIndex = 0;
 
         private void Awake()
         {
@@ -100,8 +104,9 @@ namespace Maroon.Parameter
             }
 
             DontDestroyOnLoad(this.gameObject);
-            _configLoader.OnConfigLoaded.AddListener(OnConfigsLoadedInital);
+            _jsonFileLoader.OnFilesInitialized.AddListener(OnFilesLoadedInital);
         }
+
         /// <summary>
         /// Inits the dictionary for the formulas and handles the visibility of UI elements
         /// Displays the welcome message
@@ -115,19 +120,32 @@ namespace Maroon.Parameter
             DisplayMessage(message);
         }
 
-        public void OnConfigsLoadedInital()
+        public void OnFilesLoadedInital(List<TextAsset> _)
         {
             dropdown.ClearOptions();
-            dropdown.AddOptions(_configLoader.GetConfigNames());
-            OnConfigLoaded();
+            dropdown.AddOptions(ParameterLoader.Instance.GetJsonNames());
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+            if (BootstrappingManager.Instance.UrlParameters.TryGetValue(WebGlUrlParameter.Config, out string config))
+            {
+                if (!ApplyConfig(config)) ApplyConfig("Default");
+            }
+            else
+#endif
+            {
+                ApplyConfig("Default");
+            }
             
-            _configLoader.OnConfigLoaded.RemoveListener(OnConfigsLoadedInital);
-            _configLoader.OnConfigLoaded.AddListener(OnConfigLoaded);
+            _jsonFileLoader.OnFilesInitialized.RemoveListener(OnFilesLoadedInital);
         }
 
-        public void OnConfigLoaded()
+        public bool ApplyConfig(string configName)
         {
-            dropdown.SetValueWithoutNotify(_configLoader.CurrentConfigIndex);
+            _currentConfigIndex = ParameterLoader.Instance.IndexOfJson(configName);
+            dropdown.SetValueWithoutNotify(_currentConfigIndex);
+            var parameters = ParameterLoader.Instance.LoadJsonFromFileName(configName);
+            
+            return parameters != null;
         }
 
         /// <summary>
@@ -356,13 +374,25 @@ namespace Maroon.Parameter
         /// <param name="choice">The choice from the UI (Dropdown menu)</param>
         public void DropdownListener(int choice)
         {
-            string configName = _configLoader.GetConfigNames()[choice];
-            _configLoader.ChangeConfig(configName);
+            string configName = ParameterLoader.Instance.GetJsonNames()[choice];
+            ApplyConfig(configName);
         }
 
-        public void LoadParameters()
+        public void OnLoadedExperimentParameters(ExperimentParameters experimentParameters)
         {
-            var parameters = ParameterLoader.Instance.GetParameters();
+            if (experimentParameters is ThreeDimensionalMotionParameters threeDimensionalMotionParameters)
+            {
+                LoadExperimentParameters(threeDimensionalMotionParameters);
+            }
+            else
+            {
+                Debug.LogError("OnLoadedExperimentParameters requires ThreeDimensionalMotionParameters");
+            }
+        }
+
+
+        private void LoadExperimentParameters(ThreeDimensionalMotionParameters parameters)
+        {
             _background = parameters.Background;
 
             _particleInUse = parameters.Particle?.ToLower() switch
@@ -403,7 +433,7 @@ namespace Maroon.Parameter
 
         public Dictionary<string,string> GetExpressions()
         {
-            return ParameterLoader.Instance.GetParameters().expressions;
+            return ((ThreeDimensionalMotionParameters) ParameterLoader.Instance.MostRecentParameters).expressions;
         }
 
         /// <summary>

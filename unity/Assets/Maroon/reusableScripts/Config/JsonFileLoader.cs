@@ -50,6 +50,7 @@ namespace Maroon.Config
             string basePath = $"{baseDomain}/StreamingAssets/Config/3DMotionSimulation/";
             string configListUrl = $"{baseDomain}/configs.php";
             
+            List<TextAsset> assets = new List<TextAsset>();
             List<string> httpFiles = new List<string>();
             UnityWebRequest uwr = UnityWebRequest.Get(configListUrl);
             
@@ -76,18 +77,6 @@ namespace Maroon.Config
             }
 
             OnFilesInitialized.Invoke(assets);
-            
-            /*if(Maroon.GlobalEntities.BootstrappingManager.Instance.UrlParameters.TryGetValue(WebGlUrlParameter.Config, out string config))
-            {
-                if (!ChangeConfig(config))
-                {
-                    ChangeConfig("Default");
-                }
-            }
-            else
-            {
-                ChangeConfig("Default");
-            }*/
         }
 #endif
     }

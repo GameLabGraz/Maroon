@@ -405,7 +405,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2615165635816148406}
-  - component: {fileID: 2615165635816148407}
+  - component: {fileID: 3819443581575981680}
   m_Layer: 0
   m_Name: ParameterLoader
   m_TagString: Untagged
@@ -428,7 +428,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2615165636486811591}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2615165635816148407
+--- !u!114 &3819443581575981680
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -437,9 +437,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 2615165635816148405}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d32c5eddf3ce7741b5301b8f565f542, type: 3}
+  m_Script: {fileID: 11500000, guid: 194f2b069550fd34fa1e4499e3e5752c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _jsonFile: []
+  parametersLoaded:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2615165636625313109}
+        m_TargetAssemblyTypeName: Maroon.Parameter.ParameterUI, Maroon.Experiments.3DMotionSimulation
+        m_MethodName: OnLoadedExperimentParameters
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2615165636305501045
 GameObject:
   m_ObjectHideFlags: 0
@@ -1529,6 +1545,7 @@ MonoBehaviour:
   ifVz: {fileID: 0}
   _showLabel: {fileID: 0}
   _showOriginGrid: {fileID: 0}
+  _jsonFileLoader: {fileID: 0}
 --- !u!1001 &2615165635000705309
 PrefabInstance:
   m_ObjectHideFlags: 0
