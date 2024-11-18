@@ -54,12 +54,12 @@ public abstract class IField : MonoBehaviour
     /// </summary>
     protected HashSet<GameObject> producers = new HashSet<GameObject>();
     
-    public void addProducerToSet(GameObject producer)
+    public void AddProducerToSet(GameObject producer)
     {
         producers.Add(producer);
     }
 
-    public void removeProducerFromSet(GameObject producer)
+    public void RemoveProducerFromSet(GameObject producer)
     {
         producers.Remove(producer);
     }

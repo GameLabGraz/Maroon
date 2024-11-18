@@ -35,7 +35,7 @@ namespace Maroon.Experiments.CoulombsLaw
 
             _charges.Add(charge);
 
-            eField.addProducerToSet(obj);
+            eField.AddProducerToSet(obj);
             eField.updateProducers();
 
             ChangeColorOfParticle(obj, chargeStrength);
@@ -45,7 +45,7 @@ namespace Maroon.Experiments.CoulombsLaw
 
         public void RemoveSourceFromEField(GameObject source)
         {
-            eField.removeProducerFromSet(source);
+            eField.RemoveProducerFromSet(source);
             _charges.Remove(source.GetComponent<Maroon.Physics.Electromagnetism.Charge>());
         }
 
@@ -53,7 +53,7 @@ namespace Maroon.Experiments.CoulombsLaw
         {
             foreach (var charge in _charges)
             {
-                eField.removeProducerFromSet(charge.gameObject);
+                eField.RemoveProducerFromSet(charge.gameObject);
                 Destroy(charge.gameObject);
             }
 
