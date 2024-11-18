@@ -108,14 +108,4 @@ public class BField : IField
     {
         return 1f;
     }
-
-    public override void addProducerToSet(GameObject producer)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public override void removeProducerFromSet(GameObject producer)
-    {
-        throw new System.NotImplementedException();
-    }
 }

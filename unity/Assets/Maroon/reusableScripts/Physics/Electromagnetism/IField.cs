@@ -53,6 +53,16 @@ public abstract class IField : MonoBehaviour
     /// Lists of producers which generates the field
     /// </summary>
     protected HashSet<GameObject> producers = new HashSet<GameObject>();
+    
+    public void addProducerToSet(GameObject producer)
+    {
+        producers.Add(producer);
+    }
+
+    public void removeProducerFromSet(GameObject producer)
+    {
+        producers.Remove(producer);
+    }
         
     /// <summary>
     /// Gets the field type
@@ -83,8 +93,4 @@ public abstract class IField : MonoBehaviour
     public abstract float getStrength(Vector3 position);
 
     public abstract float getStrengthInPercent(Vector3 position);
-
-    public abstract void addProducerToSet(GameObject producer);
-
-    public abstract void removeProducerFromSet(GameObject producer);
 }
