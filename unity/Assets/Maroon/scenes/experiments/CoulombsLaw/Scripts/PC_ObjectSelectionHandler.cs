@@ -27,7 +27,7 @@ namespace Maroon.UI
         private PC_InputParser_Float_TMP _yVariableInputParser;
         private PC_InputParser_Float_TMP _zVariableInputParser;
 
-        void Start()
+        private void Start()
         {
             AdaptButtonTextCharge();
 

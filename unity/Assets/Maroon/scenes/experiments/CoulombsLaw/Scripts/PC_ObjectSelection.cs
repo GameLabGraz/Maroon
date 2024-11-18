@@ -17,7 +17,7 @@ namespace Maroon.UI
 
         private PC_ObjectSelectionHandler _objectSelectionHandler;
 
-        void Start()
+        private void Start()
         {
             if (!_objectSelectionHandler)
                 _objectSelectionHandler = GameObject.FindObjectOfType<PC_ObjectSelectionHandler>();
