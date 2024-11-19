@@ -4,6 +4,7 @@ using UnityEngine.Events;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
+using Maroon.GlobalEntities;
 
 #if UNITY_WEBGL && !UNITY_EDITOR
 using UnityEngine.Networking;
@@ -17,13 +18,16 @@ namespace Maroon.Config
     public class JsonFileLoader : MonoBehaviour
     {
         public UnityEvent<List<TextAsset>> OnFilesInitialized = new UnityEvent<List<TextAsset>>();
+        private string _experimentName;
 
         private void Start()
         {
+            _experimentName = SceneManager.Instance.ActiveSceneNameWithoutPlatformExtension;
+            
 #if UNITY_WEBGL && !UNITY_EDITOR
             StartCoroutine(LoadAllConfigs());
 #else
-            string basePath = Path.Combine(Application.streamingAssetsPath, "Config", "3DMotionSimulation");
+            string basePath = Path.Combine(Application.streamingAssetsPath, "Config", _experimentName);
             string[] txtFiles = Directory.GetFiles(basePath, "*.json");
             List<TextAsset> assets = new List<TextAsset>();
 
@@ -47,8 +51,8 @@ namespace Maroon.Config
         {
             string baseDomain = new Uri(Application.absoluteURL).ToString();
             if (baseDomain.Contains("?")) baseDomain = baseDomain.Substring(0, baseDomain.IndexOf('?'));
-            string basePath = $"{baseDomain}/StreamingAssets/Config/3DMotionSimulation/";
-            string configListUrl = $"{baseDomain}/configs.php";
+            string basePath = $"{baseDomain}/StreamingAssets/Config/{_experimentName}/";
+            string configListUrl = $"{baseDomain}/configs.php?experimentName={_experimentName}";
             
             List<TextAsset> assets = new List<TextAsset>();
             List<string> httpFiles = new List<string>();

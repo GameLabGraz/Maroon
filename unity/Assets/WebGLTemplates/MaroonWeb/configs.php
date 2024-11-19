@@ -1,6 +1,7 @@
 <?php
 
-$dir          = "./StreamingAssets/Config/3DMotionSimulation";
+$experimentName = isset($_GET['experimentName']) ? $_GET['experimentName'] : '';
+$dir          = "./StreamingAssets/Config/" . $experimentName;
 $return_array = array();
 
 if(is_dir($dir)){
