@@ -53,22 +53,23 @@ namespace Maroon.Physics.Electromagnetism.VanDeGraaff
             {
                 _lightningBolt.Duration = count == 1 ? singleDuration : singleDuration * ((float)random.NextDouble() * 0.4f) + 0.8f;
                 _lightningBolt.Trigger();
-                StartCoroutine(FadeOutLightningBolt());
+                float fadeFactor = 0.3f;
+                StartCoroutine(FadeOutLightningBolt(_lightningBolt.Duration * (1f - fadeFactor), _lightningBolt.Duration * fadeFactor));
 
                 delay += (singleDuration * (((float)random.NextDouble() * 0.8f) + 0.4f));
             }
         }
 
-        private IEnumerator FadeOutLightningBolt()
+        private IEnumerator FadeOutLightningBolt(float initialDelay, float fadeDuration)
         {
             LineRenderer lineRenderer = _lightningBolt.GetComponent<LineRenderer>();
+            if (lineRenderer == null)
+                Debug.LogWarning("LineRenderer is null. Aborting.");
             lineRenderer.startColor = Color.white;
             lineRenderer.endColor = Color.white;
 
-            if (lineRenderer == null)
-                Debug.LogWarning("LineRenderer is null. Aborting.");
+            yield return new WaitForSeconds(initialDelay);
 
-            float fadeDuration = _lightningBolt.Duration;
             float startOfEndFadeTime = Time.time;
             while (Time.time < startOfEndFadeTime + fadeDuration)
             {
