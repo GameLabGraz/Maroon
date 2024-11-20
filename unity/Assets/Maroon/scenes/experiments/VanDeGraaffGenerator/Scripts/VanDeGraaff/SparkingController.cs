@@ -1,4 +1,4 @@
-﻿using DigitalRuby.ThunderAndLightning;
+﻿using DigitalRuby.LightningBolt;
 using UnityEngine;
 
 namespace Maroon.Physics.Electromagnetism.VanDeGraaff
@@ -50,6 +50,16 @@ namespace Maroon.Physics.Electromagnetism.VanDeGraaff
 
             while (count-- > 0)
             {
+                //Vector3 start, Vector3 end, int generation, int totalGenerations, float offsetAmount
+                /*
+                _lightningBolt.GenerateLightningBolt(
+                    sparkingStartPoint.position,
+                    sparkingEndPoint.position,
+                    6,
+                    10, //?
+                    0.5f
+                );*/
+                /*
                 _lightningBolt.CreateLightningBolt(new LightningBoltParameters()
                 {
                     Start = sparkingStartPoint.position,
@@ -65,7 +75,7 @@ namespace Maroon.Physics.Electromagnetism.VanDeGraaff
                     Random = random,
                     FadePercent = 0.15f, // set to 0 to disable fade in / out
                     GrowthMultiplier = 0f
-                });
+                });*/
                 delay += (singleDuration * (((float)random.NextDouble() * 0.8f) + 0.4f));
             }
         }
