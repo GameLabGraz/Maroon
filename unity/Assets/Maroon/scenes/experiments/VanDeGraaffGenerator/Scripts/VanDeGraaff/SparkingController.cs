@@ -50,15 +50,8 @@ namespace Maroon.Physics.Electromagnetism.VanDeGraaff
 
             while (count-- > 0)
             {
-                //Vector3 start, Vector3 end, int generation, int totalGenerations, float offsetAmount
-                /*
-                _lightningBolt.GenerateLightningBolt(
-                    sparkingStartPoint.position,
-                    sparkingEndPoint.position,
-                    6,
-                    10, //?
-                    0.5f
-                );*/
+                _lightningBolt.Duration = count == 1 ? singleDuration : singleDuration * ((float)random.NextDouble() * 0.4f) + 0.8f;
+                _lightningBolt.Trigger();
                 /*
                 _lightningBolt.CreateLightningBolt(new LightningBoltParameters()
                 {
@@ -75,7 +68,8 @@ namespace Maroon.Physics.Electromagnetism.VanDeGraaff
                     Random = random,
                     FadePercent = 0.15f, // set to 0 to disable fade in / out
                     GrowthMultiplier = 0f
-                });*/
+                });
+                */
                 delay += (singleDuration * (((float)random.NextDouble() * 0.8f) + 0.4f));
             }
         }
