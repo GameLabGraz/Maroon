@@ -6,11 +6,7 @@ using Maroon.UI;
 using GEAR.Localization;
 using Maroon.Physics;
 using Maroon.Physics.ThreeDimensionalMotion;
-using Maroon;
-using Maroon.GlobalEntities;
-using Maroon.Config;
 using Maroon.Parameter.ObjectsInUse;
-using System;
 using Maroon.ReusableScripts.ExperimentParameters;
 
 namespace Maroon.Parameter
@@ -86,9 +82,6 @@ namespace Maroon.Parameter
         [SerializeField] private UnityEngine.UI.Toggle _showLabel;
         [SerializeField] private UnityEngine.UI.Toggle _showOriginGrid;
 
-
-        [SerializeField] private JsonFileLoader _jsonFileLoader;
-
         private int _currentConfigIndex = 0;
 
         private void Awake()
@@ -104,7 +97,7 @@ namespace Maroon.Parameter
             }
 
             DontDestroyOnLoad(this.gameObject);
-            _jsonFileLoader.OnFilesInitialized.AddListener(OnFilesLoadedInital);
+            ParameterLoader.Instance.OnFilesInitialized.AddListener(OnFilesLoadedInital);
         }
 
         /// <summary>
@@ -120,7 +113,7 @@ namespace Maroon.Parameter
             DisplayMessage(message);
         }
 
-        public void OnFilesLoadedInital(List<TextAsset> _)
+        public void OnFilesLoadedInital()
         {
             dropdown.ClearOptions();
             dropdown.AddOptions(ParameterLoader.Instance.GetJsonNames());
@@ -136,7 +129,7 @@ namespace Maroon.Parameter
                 ApplyConfig("Default");
             }
             
-            _jsonFileLoader.OnFilesInitialized.RemoveListener(OnFilesLoadedInital);
+            ParameterLoader.Instance.OnFilesInitialized.RemoveListener(OnFilesLoadedInital);
         }
 
         public bool ApplyConfig(string configName)
