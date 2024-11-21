@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEngine.Events;
 using System.IO;
-using System.Linq;
 using System.Collections.Generic;
 using Maroon.GlobalEntities;
 
@@ -25,8 +24,14 @@ namespace Maroon.Config
             _experimentName = SceneManager.Instance.ActiveSceneNameWithoutPlatformExtension;
             
 #if UNITY_WEBGL && !UNITY_EDITOR
-            StartCoroutine(LoadAllConfigs());
+            StartCoroutine(LoadAllConfigsWebGl());
 #else
+            LoadAllConfigs();
+#endif
+        }
+
+        private void LoadAllConfigs()
+        {
             string basePath = Path.Combine(Application.streamingAssetsPath, "Config", _experimentName);
             string[] txtFiles = Directory.GetFiles(basePath, "*.json");
             List<TextAsset> assets = new List<TextAsset>();
@@ -43,11 +48,10 @@ namespace Maroon.Config
             }
 
             OnFilesInitialized.Invoke(assets);
-#endif
-        } 
+        }
 
 #if UNITY_WEBGL && !UNITY_EDITOR
-        private IEnumerator LoadAllConfigs()
+        private IEnumerator LoadAllConfigsWebGl()
         {
             string baseDomain = new Uri(Application.absoluteURL).ToString();
             if (baseDomain.Contains("?")) baseDomain = baseDomain.Substring(0, baseDomain.IndexOf('?'));
@@ -70,6 +74,12 @@ namespace Maroon.Config
             for(int i = 0; i < httpFiles.Count; i++) {
                 UnityWebRequest webReq = UnityWebRequest.Get(httpFiles[i]);
                 yield return webReq.SendWebRequest();
+
+                if (webReq.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogError(webReq.error);
+                    continue;
+                }
 
                 var jsonText = webReq.downloadHandler.text;
                 string fileName = Path.GetFileNameWithoutExtension(httpFiles[i]);
