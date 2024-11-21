@@ -62,10 +62,12 @@ namespace Maroon.ReusableScripts.ExperimentParameters
 
         public int IndexOfJson(string name)
         {
-            string lowerName = name.ToLower().Replace(" ", "");
+            string modifiedName = name.ToLower().Replace(" ", "");
             for (int i = 0; i < _jsonFile.Count; i++)
             {
-                if (_jsonFile[i].name.ToLower() == lowerName)
+                string modifiedFileName = _jsonFile[i].name.ToLower().Replace(" ", "");
+
+                if (modifiedFileName == modifiedName)
                 {
                     return i;
                 }
@@ -111,17 +113,14 @@ namespace Maroon.ReusableScripts.ExperimentParameters
 
         public ExperimentParameters LoadJsonFromFileName(string name)
         {
-            string lowerName = name.ToLower().Replace(" ", "");
-            foreach (TextAsset file in _jsonFile)
+            int index = IndexOfJson(name);
+            if (index == -1)
             {
-                if (file.name.ToLower() == lowerName)
-                {
-                    return LoadJsonFromString(file.text);
-                }
+                Debug.LogError("No file with name " + name + " found.");
+                return null;
             }
 
-            Debug.LogError("No file with name " + name + " found.");
-            return null;
+            return LoadJsonFromFileIndex(index);
         }
 
         /// <summary>
@@ -151,7 +150,6 @@ namespace Maroon.ReusableScripts.ExperimentParameters
                 // if we allow loading of some sort of external JSON file in the future, then we need to assign a custom SerializationBinder here
             };
 
-            // TODO: ExperimentParamters is expected but ThreeDExperimentParameters is received
             return JsonConvert.DeserializeObject<ExperimentParameters>(data, settings);
         }
         #endregion
