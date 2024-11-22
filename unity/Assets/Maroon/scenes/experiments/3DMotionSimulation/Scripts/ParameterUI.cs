@@ -9,6 +9,11 @@ using Maroon.Physics.ThreeDimensionalMotion;
 using Maroon.Parameter.ObjectsInUse;
 using Maroon.ReusableScripts.ExperimentParameters;
 
+// IMPORTS USED FOR WEBGL
+#if UNITY_WEBGL && !UNITY_EDITOR
+using Maroon.GlobalEntities;
+#endif
+
 namespace Maroon.Parameter
 {
     namespace ObjectsInUse

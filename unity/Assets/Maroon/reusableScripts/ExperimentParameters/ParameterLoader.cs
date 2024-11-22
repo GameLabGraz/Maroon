@@ -5,6 +5,13 @@ using Newtonsoft.Json;
 using Maroon.GlobalEntities;
 using System.IO;
 
+// IMPORTS USED FOR WEBGL
+#if UNITY_WEBGL && !UNITY_EDITOR
+using System.Collections;
+using UnityEngine.Networking;
+using System;
+#endif
+
 namespace Maroon.ReusableScripts.ExperimentParameters
 {
     public class ParameterLoader : MonoBehaviour
@@ -59,14 +66,14 @@ namespace Maroon.ReusableScripts.ExperimentParameters
         {
             _experimentName = SceneManager.Instance.ActiveSceneNameWithoutPlatformExtension;
 
-#if UNITY_WEBGL
+#if UNITY_WEBGL && !UNITY_EDITOR
             // Listener for external json data (sent e.g. via a Javascript button from a website where Maroon is embedded)
             WebGlReceiver.Instance.OnIncomingData.AddListener((string jsonData) => { LoadJsonFromString(jsonData); });
 #endif
             
             if (_automaticiallyDetectJsonFiles)
             {
-#if UNITY_WEBGL      
+#if UNITY_WEBGL && !UNITY_EDITOR
                 StartCoroutine(LoadAllConfigsWebGl());
 #else
                 LoadAllConfigs();
