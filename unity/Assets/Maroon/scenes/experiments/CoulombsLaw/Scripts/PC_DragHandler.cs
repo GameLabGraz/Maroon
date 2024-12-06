@@ -62,6 +62,12 @@ public class PC_DragHandler : MonoBehaviour
         if(!movingObject.activeSelf) return;
         if (!Input.GetMouseButtonDown(0)) return;
         
+        var rb = GetComponent<Rigidbody>();
+        if(rb != null)
+        {
+            rb.isKinematic = true;
+        }
+
         _moving = true;
 
         var main = Camera.main;
@@ -130,6 +136,12 @@ public class PC_DragHandler : MonoBehaviour
     {
         if (!Input.GetMouseButtonUp(0)) return;
         
+        var rb = GetComponent<Rigidbody>();
+        if(rb != null)
+        {
+            rb.isKinematic = false;
+        }
+
         _moving = false;
         if (_isOutsideBoundaries) onEndMovingOutsideBoundaries.Invoke();
         else onEndMovingInsideBoundaries.Invoke();

@@ -13,7 +13,7 @@ namespace Maroon.Physics.Electromagnetism
 
         private EField _eField;
 
-        private const float CoulombConstant = 1f / (4 * Mathf.PI * 8.8542e-12f);
+        private const float CoulombConstant = 1f / (4 * Mathf.PI * PhysicalConstants.e0);
 
         public float StrengthMultiplicationFactor = 1.0f;
 
@@ -45,7 +45,7 @@ namespace Maroon.Physics.Electromagnetism
             var direction = (position - gameObject.SystemPosition()).normalized;
             var distance = Vector3.Distance(gameObject.SystemPosition(), position);
 
-            return (strength * direction) / (4 * Mathf.PI * PhysicalConstants.e0 * Mathf.Pow(distance, 3));
+            return (strength * direction * CoulombConstant) /  Mathf.Pow(distance, 2);
         }
 
         public float getEFlux(Vector3 position)
@@ -76,7 +76,9 @@ namespace Maroon.Physics.Electromagnetism
             if (!enableForces || !_eField) return;
 
             var force = strength * forceFactor * _eField.get(gameObject.SystemPosition(), gameObject);
-            _rigidBody.AddForce(force);
+            
+            //_rigidBody.velocity = Vector3.zero;
+            _rigidBody.AddForce(force, ForceMode.VelocityChange);
         }
     }
 }
