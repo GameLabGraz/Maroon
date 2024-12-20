@@ -43,6 +43,7 @@ namespace Maroon.GlobalEntities
             }
 
             // Keep alive
+            this.transform.parent = null;
             DontDestroyOnLoad(this.gameObject);
 
             // Detect platform

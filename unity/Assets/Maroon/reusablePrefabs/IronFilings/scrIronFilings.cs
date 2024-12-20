@@ -115,8 +115,7 @@ public class scrIronFilings : MonoBehaviour, IResetObject
     {
         if (SimulationController.Instance.SimulationRunning)
         {
-            gameObject.SetActive(false);
-            onHideIronFilings.Invoke();
+            hideFieldImage();
         }
     }
 

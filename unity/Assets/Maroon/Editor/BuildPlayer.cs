@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
+using UnityEngine.XR.Management;
 
 namespace Maroon.Build
 {
@@ -48,55 +49,55 @@ namespace Maroon.Build
         // #############################################################################################################
         // Editor Build Methods
 
-        [MenuItem("Build/Conventional Maroon/PC")]
+        [MenuItem("Maroon Build/Conventional Maroon/PC")]
         public static void BuildLaboratoryPC()
         {
             BuildConventionalMaroon(MaroonBuildTarget.PC);
         }
 
-        [MenuItem("Build/Conventional Maroon/PC VR")]
+        [MenuItem("Maroon Build/Conventional Maroon/PC VR")]
         public static void BuildLaboratoryVR()
         {
             BuildConventionalMaroon(MaroonBuildTarget.VR);
         }
 
-        [MenuItem("Build/Conventional Maroon/Mac")]
+        [MenuItem("Maroon Build/Conventional Maroon/Mac")]
         public static void BuildLaboratoryMAC()
         {
             BuildConventionalMaroon(MaroonBuildTarget.MAC);
         }
 
-        [MenuItem("Build/Conventional Maroon/WebGL")]
+        [MenuItem("Maroon Build/Conventional Maroon/WebGL")]
         public static void BuildLaboratoryWebGL()
         {
             BuildConventionalMaroon(MaroonBuildTarget.WebGL);
         }
 
-        [MenuItem("Build/Standalone Experiments/PC")]
+        [MenuItem("Maroon Build/Standalone Experiments/PC")]
         public static void BuildExperimentsPC()
         {
             BuildStandaloneExperiments(MaroonBuildTarget.PC);
         }
 
-        [MenuItem("Build/Standalone Experiments/PC VR")]
+        [MenuItem("Maroon Build/Standalone Experiments/PC VR")]
         public static void BuildExperimentsVR()
         {
             BuildStandaloneExperiments(MaroonBuildTarget.VR);
         }
 
-        [MenuItem("Build/Standalone Experiments/Mac")]
+        [MenuItem("Maroon Build/Standalone Experiments/Mac")]
         public static void BuildExperimentsMAC()
         {
             BuildStandaloneExperiments(MaroonBuildTarget.MAC);
         }
 
-        [MenuItem("Build/Standalone Experiments/WebGL")]
+        [MenuItem("Maroon Build/Standalone Experiments/WebGL")]
         public static void BuildExperimentsWebGL()
         {
             BuildStandaloneExperiments(MaroonBuildTarget.WebGL);
         }
 
-        [MenuItem("Build/All Platforms, Conventional and Standalone")]
+        [MenuItem("Maroon Build/All Platforms, Conventional and Standalone")]
         public static void BuildAll()
         {
             var buildPath = EditorUtility.SaveFolderPanel("Choose Build Location", string.Empty, "Build");
@@ -144,6 +145,9 @@ namespace Maroon.Build
 
             // Set PlayerSettings for Build
             SetPlayerSettings(BuildPlayerSetOptions);
+
+            // Enable "Initialize XR on Startup" only for VR
+            XRGeneralSettings.Instance.InitManagerOnStart = buildTarget == MaroonBuildTarget.VR;
 
             var unityBuildTarget = MaroonBuildTarget2UnityBuildTarget(buildTarget);
             var unityBuildTargetGroup = GetBuildTargetGroup(buildTarget);
@@ -241,13 +245,6 @@ namespace Maroon.Build
         public static void ActionsBuild()
         {
             var args = Environment.GetCommandLineArgs();
-
-            // array of build targets
-            MaroonBuildTarget[] targets = {
-                MaroonBuildTarget.PC,
-                MaroonBuildTarget.VR,
-                MaroonBuildTarget.WebGL
-            };
             
             // usage: -maroonBuildPath /path/to/build/dir -maroonBuildTarget (WebGL/PC/VR)
             // path is relative to project dir (./unity)
@@ -334,7 +331,7 @@ namespace Maroon.Build
                     return BuildTarget.StandaloneOSX;
                 case MaroonBuildTarget.PC:
                 case MaroonBuildTarget.VR:
-                    return BuildTarget.StandaloneWindows;
+                    return BuildTarget.StandaloneWindows64;
                 default:
                     return BuildTarget.NoTarget;
             }

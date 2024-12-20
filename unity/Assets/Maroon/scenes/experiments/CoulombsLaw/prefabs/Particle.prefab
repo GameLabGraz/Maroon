@@ -26,14 +26,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 43556716716376549}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5991014159398745934}
   - {fileID: 3046867823948206692}
   m_Father: {fileID: 222567040141688388}
-  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4589385753357242748
 MonoBehaviour:
@@ -106,12 +107,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 222567040141845088}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 100, y: 100, z: 100}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 222567040141688388}
-  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &222567040142982758
 MeshFilter:
@@ -132,6 +134,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -176,8 +179,6 @@ GameObject:
   - component: {fileID: 5106389307625418835}
   - component: {fileID: 1182506105227209955}
   - component: {fileID: 1376864048248906643}
-  - component: {fileID: 5246116731593758841}
-  - component: {fileID: 2519088853291130249}
   m_Layer: 0
   m_Name: Particle
   m_TagString: Particle
@@ -192,9 +193,11 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 222567040141845092}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2647912965679092133}
   - {fileID: 222567040141688390}
@@ -203,7 +206,6 @@ Transform:
   - {fileID: 725601085861586812}
   - {fileID: 263544389824666547}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &222567040141845091
 MonoBehaviour:
@@ -285,10 +287,21 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 222567040141845092}
-  serializedVersion: 2
+  serializedVersion: 4
   m_Mass: 1
   m_Drag: 0
   m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -302,9 +315,17 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 222567040141845092}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Radius: 0.70224214
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1182506105227209955
@@ -388,18 +409,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 5246116731593758841}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: UpdatePosition
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
   onEndMovingInsideBoundaries:
     m_PersistentCalls:
       m_Calls:
@@ -415,48 +424,12 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 5246116731593758841}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: UpdatePosition
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
   onEnabled:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5246116731593758841}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: UpdatePosition
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   onDisabled:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5246116731593758841}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: UpdatePosition
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1376864048248906643
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -480,7 +453,7 @@ MonoBehaviour:
   onPositionChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5246116731593758841}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: UpdatePosition
         m_Mode: 1
@@ -507,109 +480,6 @@ MonoBehaviour:
   onRotationChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &5246116731593758841
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 222567040141845092}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c367082969a1e424080b986995cd4d63, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  position:
-    assessmentName: position
-    isDynamic: 0
-    alwaysSendValueChangedEvent: 1
-    allowSystemChange: 1
-    _value: {x: 0, y: 0, z: 0}
-    onValueChanged:
-      m_PersistentCalls:
-        m_Calls: []
-    onNewValueFromSystem:
-      m_PersistentCalls:
-        m_Calls: []
-  observeLocal: 1
-  updateMode: 1
-  ignoreRuntime: 1
-  tolerance: 0.01
-  onSystemSetToInvalidPosition:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 222567040141845091}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: MovementEndOutsideBoundaries
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onSystemShowObject:
-    m_PersistentCalls:
-      m_Calls: []
-  onSystemUpdatedPosition:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 222567040141845091}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: UpdateResetPosition
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onUpdateMessageSend:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!114 &2519088853291130249
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 222567040141845092}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d275e28287338949acc3d1598513343, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  classType: 5
-  watchValues:
-  - index: 0
-    objectInfo:
-      Object: {fileID: 222567040141845092}
-      ComponentName: CoulombChargeBehaviour
-      FieldName: charge
-  - index: 1
-    objectInfo:
-      Object: {fileID: 222567040141845092}
-      ComponentName: CoulombChargeBehaviour
-      FieldName: chargeUnit
-  - index: 2
-    objectInfo:
-      Object: {fileID: 222567040141845092}
-      ComponentName: CoulombChargeBehaviour
-      FieldName: fixedPosition
-  - index: 3
-    objectInfo:
-      Object: {fileID: 222567040141845092}
-      ComponentName: CoulombAssessmentPosition
-      FieldName: position
-  - index: 4
-    objectInfo:
-      Object: {fileID: 222567040141845092}
-      ComponentName: CoulombAssessmentPosition
-      FieldName: position
 --- !u!1 &222567040141845094
 GameObject:
   m_ObjectHideFlags: 0
@@ -635,12 +505,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 222567040141845094}
+  serializedVersion: 2
   m_LocalRotation: {x: 0.5, y: -0.5, z: 0.5, w: 0.5}
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 100, y: 100, z: 100}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 222567040141688388}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 90, y: -90, z: 0}
 --- !u!33 &222567040142982756
 MeshFilter:
@@ -661,6 +532,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -716,12 +588,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2433028222904055166}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 263544389824666547}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3150413966677578302
 GameObject:
@@ -748,12 +621,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3150413966677578302}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.45, y: 1.45, z: 1.45}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 222567040141688388}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &849048382167916708
 MeshFilter:
@@ -774,6 +648,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -826,13 +701,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6981387575739027365}
+  serializedVersion: 2
   m_LocalRotation: {x: 0.00000016292066, y: -0.00000016292071, z: -0.00000016292071,
     w: 1}
   m_LocalPosition: {x: -69.304565, y: 14.722417, z: 3.0781066}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 263544389824666547}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7401672955092122463
 GameObject:
@@ -857,18 +733,20 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7401672955092122463}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 222567040141688388}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2198766957091068995
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 222567040141688388}
     m_Modifications:
     - target: {fileID: 1482331554849848127, guid: 565f734b46691944bb8c7cb7888df542,
@@ -979,7 +857,7 @@ PrefabInstance:
     - target: {fileID: 4513896859846796369, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}
       propertyPath: OnMovementFinish.m_PersistentCalls.m_Calls.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4513896859846796369, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}
@@ -1030,7 +908,7 @@ PrefabInstance:
         type: 3}
       propertyPath: OnMovementFinish.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
-      objectReference: {fileID: 5246116731593758841}
+      objectReference: {fileID: 0}
     - target: {fileID: 4513896859846796369, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}
       propertyPath: OnMovementFinished.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
@@ -1132,6 +1010,9 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 565f734b46691944bb8c7cb7888df542, type: 3}
 --- !u!4 &725601085861586812 stripped
 Transform:
@@ -1151,12 +1032,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f20556496be8f1d4c9d3ba968ac00ac6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &5430855144425759330 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6187333593230884385, guid: 565f734b46691944bb8c7cb7888df542,
-    type: 3}
-  m_PrefabInstance: {fileID: 2198766957091068995}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2793186196924214518 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4053506750638633141, guid: 565f734b46691944bb8c7cb7888df542,
@@ -1166,6 +1041,12 @@ GameObject:
 --- !u!1 &4015202728723004117 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2971051385462793878, guid: 565f734b46691944bb8c7cb7888df542,
+    type: 3}
+  m_PrefabInstance: {fileID: 2198766957091068995}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5430855144425759330 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6187333593230884385, guid: 565f734b46691944bb8c7cb7888df542,
     type: 3}
   m_PrefabInstance: {fileID: 2198766957091068995}
   m_PrefabAsset: {fileID: 0}

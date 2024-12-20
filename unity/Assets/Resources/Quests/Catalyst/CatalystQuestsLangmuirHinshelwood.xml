@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<QuestManager>
+    <QuestList>
+
+        <MainQuest>
+            <TranslationKey>CatalystReactorControls</TranslationKey>
+            <DefaultText>Reactor Controls</DefaultText>
+
+            <SubQuest>
+                <TranslationKey>CatalystMoveToAnotherLocation</TranslationKey>
+                <DefaultText>Teleport to another location</DefaultText>
+                <Script>Quests.MoveToOtherLocation</Script>
+            </SubQuest>
+            <SubQuest>
+                <TranslationKey>CatalystGetControls</TranslationKey>
+                <DefaultText>Touch the sphere on your left arm to move the control panel</DefaultText>
+                <Script>Quests.MoveVrControlsPanel</Script>
+            </SubQuest>
+        </MainQuest>
+
+        <MainQuest>
+            <TranslationKey>CatalystStartReaction</TranslationKey>
+            <DefaultText>Start the reaction</DefaultText>
+
+            <SubQuest>
+                <TranslationKey>CatalystFreeMolecules</TranslationKey>
+                <DefaultText>Grab surface CO molecules to free them</DefaultText>
+                <Script>Quests.FreeMolecules</Script>
+            </SubQuest>
+        </MainQuest>
+
+        <MainQuest>
+            <TranslationKey>CatalystInfluenceReaction</TranslationKey>
+            <DefaultText>Influence the reaction</DefaultText>
+
+            <SubQuest>
+                <TranslationKey>CatalystIncreaseTemperature</TranslationKey>
+                <DefaultText>Increase the temperature using the slider</DefaultText>
+                <Script>Quests.IncreaseTemperature</Script>
+            </SubQuest>
+            
+            <SubQuest>
+                <TranslationKey>CatalystIncreasePressure</TranslationKey>
+                <DefaultText>Increase the partial pressure using the slider</DefaultText>
+                <Script>Quests.IncreasePressure</Script>
+            </SubQuest>
+        </MainQuest>
+        
+        
+    </QuestList>
+</QuestManager>

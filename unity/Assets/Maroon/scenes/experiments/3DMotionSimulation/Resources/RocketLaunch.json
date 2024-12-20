@@ -1,0 +1,17 @@
+{
+	"$type": "Maroon.Physics.ThreeDimensionalMotion.ThreeDimensionalMotionParameters, Maroon.Experiments.3DMotionSimulation, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+	"background": "grass",
+	"particle": "rocket",
+	"fx": "(-0.01*(vx-(0.2*exp(-t*t/50)))-0.03*(vx-(0.2*exp(-t*t/50)))*sqrt((vx-(0.2*exp(-t*t/50)))*(vx-(0.2*exp(-t*t/50)))+(vy-(-0.3*exp(-t*t/50)))*(vy-(-0.3*exp(-t*t/50)))+(vz-(0))*(vz-(0))))",
+	"fy": "(-0.01*(vy-(-0.3*exp(-t*t/50)))-0.03*(vy-(-0.3*exp(-t*t/50)))*sqrt((vx-(0.2*exp(-t*t/50)))*(vx-(0.2*exp(-t*t/50)))+(vy-(-0.3*exp(-t*t/50)))*(vy-(-0.3*exp(-t*t/50)))+(vz-(0))*(vz-(0))))",
+	"fz": "(-0.01*(vz-(0))-0.03*(vz-(0))*sqrt((vx-(0.2*exp(-t*t/50)))*(vx-(0.2*exp(-t*t/50)))+(vy-(-0.3*exp(-t*t/50)))*(vy-(-0.3*exp(-t*t/50)))+(vz-(0))*(vz-(0))))-9.81*0.1*(2-H(3-t)*t/3-H(t-3))+5*H(3-t)",
+	"m": "0.1*(2-H(3-t)*t/3-H(t-3))",
+	"t0": "0",
+	"deltaT": "0.02",
+	"steps": "500",
+	"x": "0", "y": "0", "z": "0",
+	"vx": "0", "vy": "0", "vz": "0",
+	"expressions": {
+		"h(x)": "if(x == 0, 0.5, (1 + x/abs(x))/2)"
+	}
+}

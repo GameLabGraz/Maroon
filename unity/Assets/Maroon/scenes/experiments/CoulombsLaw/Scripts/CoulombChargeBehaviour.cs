@@ -103,6 +103,9 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
     
     public void Init()
     {
+        charge.maxValue = maxChargeValue;
+        charge.minValue = minChargeValue;
+
         _rigidbody = GetComponent<Rigidbody>();
         _rigidbody.velocity = Vector3.zero;
 

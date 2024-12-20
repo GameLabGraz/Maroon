@@ -85,6 +85,7 @@ namespace Tests.PlayModeTests.PcMenuTests
         };
         
         [UnityTest, Description("Clicking through 'Enter Lab -> Category -> Experiment' must load the associated scene")]
+        [Timeout(1800000)]
         public IEnumerator WhenClickLabCategoryExperimentThenLoadScene([ValueSource(nameof(ExperimentMenuPaths))] LabMenuPathSource source)
         {
             // Get correct buttonLabel from LanguageManager

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Mirror;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class QuizScore : NetworkBehaviour
+public class QuizScore : MonoBehaviour
 {
     private QuizManager _quizManager;
 
@@ -19,18 +18,6 @@ public class QuizScore : NetworkBehaviour
         _quizManager.SetQuizScoreParent(gameObject);
     }
 
-    public override void OnStartAuthority()
-    {
-        base.OnStartAuthority();
-        
-        CmdSetName(Maroon.NetworkManager.Instance.PlayerName);
-        if(_quizManager == null)
-            _quizManager = FindObjectOfType<SortingController>().TheQuizManager;
-        _quizManager.SetLocalQuizScore(gameObject);
-
-        GetComponent<Image>().color = localColor;
-    }
-
     public enum QuizChoice
     {
         Nothing,
@@ -41,41 +28,41 @@ public class QuizScore : NetworkBehaviour
     [SerializeField] private TextMeshProUGUI nameText;
     [SerializeField] private TextMeshProUGUI choiceText;
     [SerializeField] private TextMeshProUGUI scoreText;
+    
+    private string _name;
 
-    [SyncVar(hook = "OnNameChanged")] private string _name;
-    public string Name  => _name;
-
-    [Command]
-    private void CmdSetName(string playerName)
+    public string Name
     {
-        _name = playerName;
+        get { return _name; }
+        set { 
+            _name = value;
+            nameText.text = _name;
+        }
     }
 
-    private void OnNameChanged(string oldName, string newName)
+    private void SetName(string playerName)
     {
-        nameText.text = newName;
+        Name = playerName;
     }
 
-    [SyncVar(hook = "OnChoiceChanged")] private QuizChoice _choice;
-    public QuizChoice Choice => _choice;
+    private QuizChoice _choice;
+
+    public QuizChoice Choice
+    {
+        get { return _choice; }
+        set { 
+            _choice = value;
+            if (_choice == QuizChoice.Nothing)
+                choiceText.text = "";
+            else
+                choiceText.text = "?";
+        }
+    }
+
 
     public void ChooseAlgorithm(QuizChoice choice)
     {
-        CmdChooseAlgorithm(choice);
-    }
-
-    [Command]
-    private void CmdChooseAlgorithm(QuizChoice choice)
-    {
-        _choice = choice;
-    }
-
-    private void OnChoiceChanged(QuizChoice oldChoice, QuizChoice newChoice)
-    {
-        if(newChoice == QuizChoice.Nothing)
-            choiceText.text = "";
-        else
-            choiceText.text = "?";
+        Choice = choice;
     }
 
     public void ShowChoice()
@@ -94,30 +81,30 @@ public class QuizScore : NetworkBehaviour
         }
     }
     
-    [Server]
     public void ResetChoice()
     {
-        _choice = QuizChoice.Nothing;
+        Choice = QuizChoice.Nothing;
     }
 
-    [SyncVar(hook = "OnScoreChanged")] private int _score;
-    public int Score => _score;
+    private int _score;
 
-    [Server]
+    public int Score
+    {
+        get { return _score; }
+        set { 
+            _score = value;
+            scoreText.text = _score.ToString();
+            transform.SetSiblingIndex(_quizManager.GetRanking(this));
+        }
+    }
+
     public void ResetScore()
     {
-        _score = 0;
+        Score = 0;
     }
     
-    [Server]
     public void IncreaseScore()
     {
-        _score++;
-    }
-
-    private void OnScoreChanged(int oldScore, int newScore)
-    {
-        scoreText.text = newScore.ToString();
-        transform.SetSiblingIndex(_quizManager.GetRanking(this));
+        Score++;
     }
 }

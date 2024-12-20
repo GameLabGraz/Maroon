@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using Maroon.UI;
 using Slider = GameLabGraz.UI.Slider;
 
-public class PointWave_SelectionHandler : MonoBehaviour
+public class PointWave_SelectionHandler : MonoBehaviour, IResetObject
 {
     [Header("Charge Specific Game Objects")]
     public GameObject inputXVariable;
@@ -297,5 +297,13 @@ public class PointWave_SelectionHandler : MonoBehaviour
             case PointWaveSelectScript.SelectObjectType.VisualizationPlaneSelect:
                 break;
         }
+    }
+
+    public void ResetObject()
+    {
+        selectedObject = null;
+        AdaptButtonTextCharge();
+        inputXVariable.GetComponent<PC_TextFormatter_TMP>().FormatString(0f);
+        inputZVariable.GetComponent<PC_TextFormatter_TMP>().FormatString(0f);
     }
 }

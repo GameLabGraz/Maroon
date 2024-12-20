@@ -3,9 +3,13 @@ using System.Runtime.CompilerServices;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using NUnit.Framework;
 using static Tests.Utilities.Constants;
 using static Tests.Utilities.CustomAttributes;
 using static Tests.Utilities.UtilityFunctions;
+using System.Collections.Generic;
+using System.Reflection;
+using UnityEngine.Events;
 
 namespace Tests.EditModeTests.ContentValidation
 {
@@ -90,6 +94,78 @@ namespace Tests.EditModeTests.ContentValidation
         {
             SkipCheckBase<Type>(TypePC, _objectNamesFromExperimentPrefab,
                 _experimentName, objectNameUnderTest, callingMethodName);
+        }
+
+        [Test, Description("MonoBehaviours must not have any missing target objects or methods for UnityEvents.")]
+        public void SceneHasNoMissingUnityEventMethods()
+        {
+            // Based on https://gist.github.com/AaronV/3fd7cc22039cf34f536ab98db47d044a
+            // and https://stackoverflow.com/questions/42784338/unity-missing-warning-when-button-has-missing-onclick/42788400
+
+            List<string> errors = new List<string>();
+
+            // Iterate over all MonoBehaviours
+            MonoBehaviour[] monoBehavioursInScene = Resources.FindObjectsOfTypeAll<MonoBehaviour>();
+            foreach (MonoBehaviour monoBehaviour in monoBehavioursInScene)
+            {
+                // Check all fields whether they are a UnityEvent
+                System.Type monoBehaviourType = monoBehaviour.GetType();
+                FieldInfo[] fields = monoBehaviourType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+                foreach (FieldInfo field in fields)
+                {
+                    if (!typeof(UnityEvent).IsAssignableFrom(field.FieldType)) 
+                        continue;
+
+                    UnityEvent unityEvent = field.GetValue(monoBehaviour) as UnityEvent;
+                    // Check all persistent (assigned via the Inspector) UnityEvent listeners
+                    for (int persistentEventCountIndex = 0; persistentEventCountIndex < unityEvent.GetPersistentEventCount(); persistentEventCountIndex++)
+                    {
+                        // Assert event target object is not null
+                        UnityEngine.Object eventTargetObject = unityEvent.GetPersistentTarget(persistentEventCountIndex);
+                        if (eventTargetObject == null)
+                        {
+                            errors.Add($"The UnityEvent of {monoBehaviourType.Name} \"{monoBehaviour.name}\" called \"{field.Name}\" " +
+                                $"has an event target object that is null (index {persistentEventCountIndex}). " +
+                                $"The path of the GameObject is {monoBehaviour.gameObject.GetScenePath()}");
+                            continue;
+                        }
+
+                        // Assert event target object Type is not null
+                        string eventTargetObjectFullName = eventTargetObject.GetType()?.AssemblyQualifiedName;
+                        if (string.IsNullOrEmpty(eventTargetObjectFullName)) // AssemblyQualifiedName can be null if the current instance represents a generic type parameter
+                            continue;
+                        System.Type eventTargetObjectType = System.Type.GetType(eventTargetObjectFullName);
+                        if (eventTargetObjectType == null)
+                        {
+                            errors.Add($"The UnityEvent of {monoBehaviourType.Name} \"{monoBehaviour.name}\" called \"{field.Name}\" " +
+                                $"has an event target object whose type is null (index {persistentEventCountIndex})." +
+                                $"The path of the GameObject is {monoBehaviour.gameObject.GetScenePath()}");
+                            continue;
+                        }
+
+                        string eventTargetMethodName = unityEvent.GetPersistentMethodName(persistentEventCountIndex);
+                        try
+                        {
+                            MethodInfo methodInfo = eventTargetObjectType.GetMethod
+                                (eventTargetMethodName,
+                                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+                            // Assert the event target method exists
+                            if (methodInfo != null)
+                                continue;
+                            errors.Add($"The UnityEvent of  {monoBehaviourType.Name}  \" {monoBehaviour.name} \" called \"{field.Name}\" " +
+                                $"has an event target method \"{eventTargetMethodName}\" that could not be found (index {persistentEventCountIndex}). " +
+                                $"The path of the GameObject is {monoBehaviour.gameObject.GetScenePath()}");
+                        }
+                        catch (AmbiguousMatchException)
+                        {
+                            // Multiple overloads for the method found, this is okay
+                        }
+                    }
+                }
+            }
+
+            Assert.Zero(errors.Count, "Found " + errors.Count + " error(s):\r\n" + string.Join("\r\n", errors));
         }
     }
 }
