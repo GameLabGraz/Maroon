@@ -46,16 +46,16 @@ namespace Maroon.Physics.Optics.TableObject.OpticalComponent
             n = transform.right;
         }
         
-        public void SetParameters(float R1 = 0.15f, float R2 = -0.15f, float d1 = 0.02f, float d2 = 0.02f, float Rc = 0.065f, float A = 1.728f, float B = 13420f)
+        public void SetParameters(LensParameters parameters)
         {
-            this.R1 = R1;
-            this.R2 = R2;
-            this.d1 = d1;
-            this.d2 = d2;
-            this.Rc = Rc;
-            this.A = A;
-            this.B = B;
-            _baseD1 = d1;
+            this.R1 = parameters.R1;
+            this.R2 = parameters.R2;
+            this.d1 = parameters.d1;
+            this.d2 = parameters.d2;
+            this.Rc = parameters.Rc;
+            this.A = parameters.A;
+            this.B = parameters.B;
+            _baseD1 = parameters.d1;
         }
 
         // ---- Lens helper methods ----

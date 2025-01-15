@@ -34,10 +34,10 @@ namespace Maroon.Physics.Optics.TableObject.OpticalComponent
             RecalculateMesh();
         }
 
-        public void SetParameters(float R = 0.1f, float Rc = 0.07f)
+        public void SetParameters(MirrorParameters parameters)
         {
-            this.R = R;
-            this.Rc = Rc;
+            this.R = parameters.R;
+            this.Rc = parameters.Rc;
             _prevR = R;
         }
 

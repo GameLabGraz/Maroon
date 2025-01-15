@@ -46,32 +46,56 @@ namespace Maroon.Physics.Optics.Manager
         {
             // Bottom wall
             var wBot = Instantiate(wall, tableLowLeftCorner.transform);
-            wBot.SetProperties(new Vector3(2.0f, -Constants.TableObjectHeight, 1.0f), Vector3.up);
+            wBot.SetParameters(new WallParameters
+            {
+                r0 = new Vector3(2.0f, -Constants.TableObjectHeight, 1.0f),
+                n = Vector3.up,
+            });
             _opticalComponents.Add(wBot);
             
             // Top wall
             var wTop = Instantiate(wall, tableLowLeftCorner.transform);
-            wTop.SetProperties(new Vector3(2.0f, 2.0f, 1.0f), Vector3.down);
+            wTop.SetParameters(new WallParameters
+            {
+                r0 = new Vector3(2.0f, 2.0f, 1.0f),
+                n = Vector3.down,
+            });
             _opticalComponents.Add(wTop);
             
             // Left wall
             var wL = Instantiate(wall, tableLowLeftCorner.transform);
-            wL.SetProperties(new Vector3(-0.5f, 1.0f, 1.0f), Vector3.right);
+            wL.SetParameters(new WallParameters
+            {
+                r0 = new Vector3(-0.5f, 1.0f, 1.0f),
+                n = Vector3.right,
+            });
             _opticalComponents.Add(wL);
             
             // Right wall
             var wR = Instantiate(wall, tableLowLeftCorner.transform);
-            wR.SetProperties(new Vector3(4.5f, 1.0f, 1.0f), Vector3.left);
+            wR.SetParameters(new WallParameters
+            {
+                r0 = new Vector3(4.5f, 1.0f, 1.0f),
+                n = Vector3.left,
+            });
             _opticalComponents.Add(wR);
             
             // Back wall
             var wBack = Instantiate(wall, tableLowLeftCorner.transform);
-            wBack.SetProperties(new Vector3(2.0f, 1.0f, 2.5f), Vector3.forward);
+            wBack.SetParameters(new WallParameters
+            {
+                r0 = new Vector3(2.0f, 1.0f, 2.5f),
+                n = Vector3.forward,
+            });
             _opticalComponents.Add(wBack);
             
             // Front wall
             var wFront = Instantiate(wall, tableLowLeftCorner.transform);
-            wFront.SetProperties(new Vector3(2.0f, 1.0f, -0.5f), Vector3.back);
+            wFront.SetParameters(new WallParameters
+            {
+                r0 = new Vector3(2.0f, 1.0f, -0.5f),
+                n = Vector3.back,
+            });
             _opticalComponents.Add(wFront);
         }
 

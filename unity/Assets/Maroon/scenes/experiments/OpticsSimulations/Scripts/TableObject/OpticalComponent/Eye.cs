@@ -31,9 +31,9 @@ namespace Maroon.Physics.Optics.TableObject.OpticalComponent
             n = -transform.right;
         }
         
-        public void SetParameters(float f = 0.024f)
+        public void SetParameters(EyeParameters parameters)
         {
-            this.f = f;
+            this.f = parameters.f;
         }
 
         public override (float inRayLength, RaySegment reflection, RaySegment refraction) CalculateDistanceReflectionRefraction(RaySegment inRay)
