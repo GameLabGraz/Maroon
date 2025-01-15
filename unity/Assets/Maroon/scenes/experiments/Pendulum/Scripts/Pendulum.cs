@@ -26,7 +26,7 @@ namespace Maroon.Physics.Pendulum
         private float _startWeight;
 
         private float _startRopeLength;
-        private Vector3 _startRopePosition;
+        private Vector3 _startRopeLocalPosition;
 
         private bool _pendulumRelease = false;
 
@@ -74,9 +74,7 @@ namespace Maroon.Physics.Pendulum
             _weightObj.transform.localScale = Vector3.one * Mathf.Pow(weight.Value, 1f / 3f); // 3D object changes with cube root of weight
             
             //rope len
-            var pos = _weightObj.transform.position;
-            var moveDirection = (_startRopePosition - _standRopeJoint.transform.position).normalized;
-            _weightObj.transform.position = _startRopePosition + moveDirection * (ropeLength.Value - _startRopeLength);
+            _weightObj.transform.localPosition = _startRopeLocalPosition + Vector3.down * (ropeLength.Value - _startRopeLength);
         }
         
         public float Elongation
@@ -96,7 +94,7 @@ namespace Maroon.Physics.Pendulum
             _startRot = transform.rotation;
             _startWeight = Weight;
             _startRopeLength = RopeLength;
-            _startRopePosition = _weightObj.transform.position;
+            _startRopeLocalPosition = _weightObj.transform.localPosition;
         }
 
         protected override void HandleUpdate()
