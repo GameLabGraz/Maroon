@@ -30,6 +30,11 @@ namespace Maroon.ReusableScripts.ExperimentParameters
         public UnityEvent<ExperimentParameters> parametersLoaded = new UnityEvent<ExperimentParameters>();
 
         /// <summary>
+        /// Invoked when ExperimentParameters have been loaded, which are custom (e.g. received from Javascript WebGL).
+        /// </summary>
+        public UnityEvent CustomParametersLoaded = new UnityEvent();
+
+        /// <summary>
         /// Invoked when the JSON files have been initialized.
         /// </summary>
         public UnityEvent OnFilesInitialized = new UnityEvent();
@@ -47,6 +52,11 @@ namespace Maroon.ReusableScripts.ExperimentParameters
             get;
             private set;
         }
+
+        /// <summary>
+        /// Used to know whether there was already an experiment which potentially used the URL fragment parameters on WebGL already
+        /// </summary>
+        private static bool firstExperimentDefaultParametersLoaded = false;
 
         #region Singleton
         private static ParameterLoader _instance;
@@ -70,9 +80,10 @@ namespace Maroon.ReusableScripts.ExperimentParameters
             // Listener for external json data (sent e.g. via a Javascript button from a website where Maroon is embedded)
             WebGlReceiver.Instance.OnIncomingData.AddListener((string jsonData) => {
                 LoadJsonFromString(jsonData);
+                CustomParametersLoaded?.Invoke();
             });
 #endif
-            
+
             if (_automaticiallyDetectJsonFiles)
             {
 #if UNITY_WEBGL && !UNITY_EDITOR
@@ -142,8 +153,22 @@ namespace Maroon.ReusableScripts.ExperimentParameters
         /// </summary>
         /// <param name="file">File to load</param>
         /// <returns>The loaded ExperimentParameters</returns>
-        public ExperimentParameters LoadJsonFromFileIndex(int index)
+        public ExperimentParameters LoadJsonFromFileIndex(int index, bool firstDefaultParametersLoad = false)
         {
+#if UNITY_WEBGL
+            /*
+             * Initial config received from Javascript (originating from the URL Fragment config) will be received before the requested experiment is loaded,
+             * thus if on WebGL and the WebGlReceiver.Instance.MostRecentData is not null and this it the first experiment, load instead the WebGlReceiver.Instance.MostRecentData instead of the requested default file.
+             */
+            if (firstDefaultParametersLoad && !firstExperimentDefaultParametersLoaded && !string.IsNullOrWhiteSpace(WebGlReceiver.Instance.MostRecentData))
+            {
+                firstExperimentDefaultParametersLoaded = true;
+                CustomParametersLoaded?.Invoke();
+                return LoadJsonFromString(WebGlReceiver.Instance.MostRecentData);
+            }
+#endif
+
+
             if (index >= _jsonFile.Count)
             {
                 Debug.LogError("Index " + index + " is greater or equal the number of files " + _jsonFile.Count);
@@ -160,7 +185,7 @@ namespace Maroon.ReusableScripts.ExperimentParameters
         /// </summary>
         /// <param name="name">Name of the file to load</param>
         /// <returns>The loaded ExperimentParameters</returns>
-        public ExperimentParameters LoadJsonFromFileName(string name)
+        public ExperimentParameters LoadJsonFromFileName(string name, bool firstDefaultParametersLoad = false)
         {
             int index = IndexOfJson(name);
             if (index == -1)
@@ -169,7 +194,7 @@ namespace Maroon.ReusableScripts.ExperimentParameters
                 return null;
             }
 
-            return LoadJsonFromFileIndex(index);
+            return LoadJsonFromFileIndex(index, firstDefaultParametersLoad);
         }
 
         /// <summary>
@@ -179,7 +204,16 @@ namespace Maroon.ReusableScripts.ExperimentParameters
         /// <returns>The loaded ExperimentParameters</returns>
         public ExperimentParameters LoadJsonFromString(string data)
         {
+            Debug.Log("Trying to load ExperimentParameters from JSON String.");
             MostRecentParameters = ConvertJsonToExperimentParameters(data);
+            if (MostRecentParameters == null)
+            {
+                Debug.LogError("Loaded ExperimentParameters are null.");
+            }
+            else
+            {
+                Debug.Log("Successfully parsed ExperimentParameters: " + MostRecentParameters.GetType());
+            }
             parametersLoaded?.Invoke(MostRecentParameters);
             return MostRecentParameters;
         }
