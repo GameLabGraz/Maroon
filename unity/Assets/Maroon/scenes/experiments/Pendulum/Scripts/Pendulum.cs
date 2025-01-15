@@ -71,7 +71,7 @@ namespace Maroon.Physics.Pendulum
         {
             //weight
             _rigidBody.mass = weight.Value;
-            _weightObj.transform.localScale = Vector3.one * weight.Value;
+            _weightObj.transform.localScale = Vector3.one * Mathf.Pow(weight.Value, 1f / 3f); // 3D object changes with cube root of weight
             
             //rope len
             var pos = _weightObj.transform.position;
