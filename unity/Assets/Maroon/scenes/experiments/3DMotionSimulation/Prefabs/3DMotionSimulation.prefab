@@ -405,7 +405,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2615165635816148406}
-  - component: {fileID: 492032003982172904}
+  - component: {fileID: 3819443581575981680}
   m_Layer: 0
   m_Name: ParameterLoader
   m_TagString: Untagged
@@ -428,7 +428,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2615165636486811591}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &492032003982172904
+--- !u!114 &3819443581575981680
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -440,23 +440,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 194f2b069550fd34fa1e4499e3e5752c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _jsonFile:
-  - {fileID: 4900000, guid: c68c6d1aa7a3303478aab8504f865cd7, type: 3}
-  - {fileID: 4900000, guid: ef900496e1772a54cb19bc6f5ea05a1e, type: 3}
-  - {fileID: 4900000, guid: c8337eeb0f28ad145a874c9274610dc6, type: 3}
-  - {fileID: 4900000, guid: f3d4ced9881170d409402fc79031ccbf, type: 3}
-  - {fileID: 4900000, guid: 82559040d372fde4680750696eb12682, type: 3}
-  - {fileID: 4900000, guid: 383fa3b65b7348d4ebdc8c0d7de333d5, type: 3}
-  - {fileID: 4900000, guid: 615f64ec8fb0bfb4f870466f4654ad1b, type: 3}
-  - {fileID: 4900000, guid: 69892c5131c81bb42b43b9ce04b07704, type: 3}
-  - {fileID: 4900000, guid: 51ff4ffbc5c2efb45a18b7dd2f6a7231, type: 3}
+  _automaticiallyDetectJsonFiles: 1
+  _jsonFile: []
   parametersLoaded:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2615165636625313109}
-        m_TargetAssemblyTypeName: ParameterUI, Maroon.Experiments.3DMotionSimulation
-        m_MethodName: LoadParameters
-        m_Mode: 0
+        m_TargetAssemblyTypeName: Maroon.Parameter.ParameterUI, Maroon.Experiments.3DMotionSimulation
+        m_MethodName: OnLoadedExperimentParameters
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -465,6 +457,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  OnFilesInitialized:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &2615165636305501045
 GameObject:
   m_ObjectHideFlags: 0

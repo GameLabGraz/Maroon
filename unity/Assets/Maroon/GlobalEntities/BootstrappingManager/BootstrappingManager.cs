@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Maroon.GlobalEntities
 {
@@ -25,6 +26,10 @@ namespace Maroon.GlobalEntities
         public static BootstrappingManager Instance => BootstrappingManager._instance;
 
         MonoBehaviour GlobalEntity.Instance => Instance;
+
+#if UNITY_WEBGL
+        public Dictionary<WebGlUrlParameter, string> UrlParameters { get; private set; }
+#endif
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Methods
@@ -68,16 +73,19 @@ namespace Maroon.GlobalEntities
                         (this._webglEnableSceneLoadingViaUrlParameter) )
                     {
                         // Read URL parameter
-                        string parameter = Maroon.WebGLUrlParameterReader.GetUrlParameter(this._webglUrlParameterName);
+                        this.UrlParameters = Maroon.WebGlUrlParameterReader.GetAllUrlParameters();
 
                         // Get scene asset
-                        Maroon.CustomSceneAsset urlScene;
-                        urlScene = SceneManager.Instance.GetSceneAssetBySceneName(parameter + ".pc");
-
-                        // Check if scene requested by parameter exists, and try to load it
-                        if((urlScene != null) && (SceneManager.Instance.LoadSceneRequest(urlScene)))
+                        if(this.UrlParameters.TryGetValue(WebGlUrlParameter.LoadScene, out string parameter))
                         {
-                            alreadyRedirected = true;
+                            Maroon.CustomSceneAsset urlScene;
+                            urlScene = SceneManager.Instance.GetSceneAssetBySceneName(parameter + ".pc");
+
+                            // Check if scene requested by parameter exists, and try to load it
+                            if((urlScene != null) && (SceneManager.Instance.LoadSceneRequest(urlScene)))
+                            {
+                                alreadyRedirected = true;
+                            }
                         }
                     }
 #endif
