@@ -5,6 +5,9 @@ public class scrMenu : MonoBehaviour
     // #################################################################################################################
     // Members
 
+    private CursorLockMode cursorLockModeBeforeMenu = CursorLockMode.None;
+    private bool cursorVisibleBeforeMenu = true;
+
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Open/Close
 
@@ -75,6 +78,12 @@ public class scrMenu : MonoBehaviour
 
     public void OpenMenu()
     {
+        // Save cursor state and ensure cursor is useable
+        cursorLockModeBeforeMenu = Cursor.lockState;
+        cursorVisibleBeforeMenu = Cursor.visible;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         this.Canvas.SetActive(true);
         this.IsOpen = true;
     }
@@ -88,6 +97,12 @@ public class scrMenu : MonoBehaviour
         {
             this.RemoveAllMenuColumnsButFirst();
         }
+
+        // Restore cursor state
+        Cursor.visible = cursorVisibleBeforeMenu;
+        Cursor.lockState = cursorLockModeBeforeMenu;
+        cursorLockModeBeforeMenu = CursorLockMode.None;
+        cursorVisibleBeforeMenu = true;
     }
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
