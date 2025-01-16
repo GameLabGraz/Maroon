@@ -95,6 +95,8 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
             SceneManager.Instance.LoadSceneRequest(this.targetMainMenuScenePC);
         }
         this.Menu.CloseMenu();
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     private void OnClickResume()
