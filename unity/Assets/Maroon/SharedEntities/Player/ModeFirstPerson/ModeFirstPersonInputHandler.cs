@@ -20,10 +20,8 @@ public class ModeFirstPersonInputHandler : MonoBehaviour
     {
         m_PlayerCharacterController = GetComponent<ModeFirstPerson>();
 
-        /*
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        */
     }
 
     private void LateUpdate()
@@ -33,7 +31,6 @@ public class ModeFirstPersonInputHandler : MonoBehaviour
 
     public bool CanProcessInput()
     {
-        return true; // TODO
         return Cursor.lockState == CursorLockMode.Locked;
     }
 
