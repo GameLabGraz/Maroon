@@ -19,6 +19,7 @@ namespace Maroon.Editor
         [MenuItem("Tools/Remove CanvasRenderer from TMPs")]
         public static void RemoveCanvasRenderersFromTMPs()
         {
+            Debug.Log("Starting to remove CanvasRenderers from TMPs");
             int counter = 0;
 
             counter += RemoveFromPrefabs();
@@ -45,7 +46,7 @@ namespace Maroon.Editor
                     foreach (TMP_Text tmp in go.GetComponentsInChildren<TMP_Text>(true))
                     {
                         GameObject childGo = tmp.gameObject;
-                        if (childGo.GetComponent<CanvasRenderer>() != null)
+                        if (childGo.GetComponent<CanvasRenderer>() != null && childGo.GetComponent<TextMeshProUGUI>() == null)
                         {
                             // Found TMP and CanvasRenderer -> remove CanvasRenderer
                             Undo.DestroyObjectImmediate(childGo.GetComponent<CanvasRenderer>());
@@ -80,7 +81,7 @@ namespace Maroon.Editor
                     GameObject[] sceneGameObjects = GameObject.FindObjectsOfType<GameObject>();
                     foreach (GameObject go in sceneGameObjects)
                     {
-                        if (go.GetComponent<TMP_Text>() != null && go.GetComponent<CanvasRenderer>() != null)
+                        if (go.GetComponent<TMP_Text>() != null && go.GetComponent<CanvasRenderer>() != null && go.GetComponent<TextMeshProUGUI>() == null)
                         {
                             // Found TMP and CanvasRenderer -> remove CanvasRenderer
                             Undo.DestroyObjectImmediate(go.GetComponent<CanvasRenderer>());
