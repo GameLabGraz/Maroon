@@ -7,6 +7,7 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEditor.SceneManagement;
 
 namespace Maroon.Physics.Electromagnetism
 {
@@ -79,6 +80,15 @@ namespace Maroon.Physics.Electromagnetism
             _lineRenderer.SetWidth(_lineWidth, _lineWidth);
 
             emObj = transform.parent.gameObject;
+        }
+
+        private void OnValidate()
+        {
+            // Only print warning if not in prefab mode
+            if (PrefabStageUtility.GetCurrentPrefabStage() == null && field == null)
+            {
+                Debug.LogWarning($"Field of FieldLine \"{this.name}\" is null.");
+            }
         }
 
         /// <summary>
@@ -174,7 +184,7 @@ namespace Maroon.Physics.Electromagnetism
             // Draw gizmo where the field line starts
             Gizmos.color = Color.red;
             Vector3 fieldLineGlobalStartPosition = transform.TransformPoint(Vector3.zero - originOffset);
-            Gizmos.DrawWireSphere(fieldLineGlobalStartPosition, 0.02f);
+            Gizmos.DrawWireSphere(fieldLineGlobalStartPosition, 0.01f);
 #endif
         }
     }
