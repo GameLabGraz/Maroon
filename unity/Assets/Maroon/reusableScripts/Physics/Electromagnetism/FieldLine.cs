@@ -104,23 +104,25 @@ namespace Maroon.Physics.Electromagnetism
             if (!visible || Mathf.Abs(GetFieldStrengthFromEmObj()) * fieldStrengthFactor < 0.05)
                 return;
 
-            var closingAngle = fixClosingAngle + (4 - GetFieldStrengthFromEmObj()) * 2;
-
+            // Start drawing at originOffset
             var positionIndex = 0;
             var position = transform.TransformPoint(Vector3.zero - originOffset);
             _lineRenderer.SetPosition(positionIndex, transform.InverseTransformPoint(position));
             positionIndex++;
+
             while (positionIndex < vertexCount)
             {
+                // Calculate direction of field at the position
                 Vector3 direction = Vector3.Normalize(field.get(position));
                 if (invertDirection)
                     direction *= -1f;
 
+                // Set new position
                 position += direction * lineSegmentLength;
-
                 _lineRenderer.SetPosition(positionIndex, transform.InverseTransformPoint(position));
                 positionIndex++;
 
+                // Check if we should stop drawing
                 if (stopDrawingCheck != null && stopDrawingCheck(position))
                     break;
             }
