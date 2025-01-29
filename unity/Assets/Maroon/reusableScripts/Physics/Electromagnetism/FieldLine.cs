@@ -112,9 +112,9 @@ namespace Maroon.Physics.Electromagnetism
             positionIndex++;
             while (positionIndex < vertexCount)
             {
-                var p = Vector3.Normalize(field.get(position) * PhysicalConstants.FieldStrengthFactor);
+                Vector3 normalizedFieldAtPosition = Vector3.Normalize(field.get(position));
 
-                var direction = Quaternion.AngleAxis(closingAngle, transform.forward) * p;
+                Vector3 direction = Quaternion.AngleAxis(closingAngle, transform.forward) * normalizedFieldAtPosition;
                 if (invertDirection)
                     direction *= -1f;
 
