@@ -1,3 +1,4 @@
+using log4net.Util;
 using UnityEditor;
 using UnityEngine;
 
@@ -21,17 +22,14 @@ namespace Maroon.Physics.Electromagnetism.Editor
         {
             FieldLine fieldLine = (FieldLine)target;
 
-            Vector3 originOffset = (fieldLine.originOffset);
-            originOffset.Scale(fieldLine.transform.lossyScale);
-            originOffset += fieldLine.transform.position;
-            originOffset = Handles.PositionHandle(originOffset, Quaternion.identity);
+            Vector3 originPosition = fieldLine.transform.TransformPoint(Vector3.zero - fieldLine.originOffset);
+            originPosition = Handles.PositionHandle(originPosition, Quaternion.identity);
 
             if (GUI.changed)
             {
                 Undo.RecordObject(target, "Move originOffset");
-                Vector3 newOriginOffset = (originOffset - fieldLine.transform.position);
-                newOriginOffset.Scale(new Vector3(1f / fieldLine.transform.lossyScale.x, 1f / fieldLine.transform.lossyScale.y, 1f / fieldLine.transform.lossyScale.z));
-                fieldLine.originOffset = newOriginOffset;
+                Vector3 inverseOriginOffset = Vector3.zero - fieldLine.transform.InverseTransformPoint(originPosition);
+                fieldLine.originOffset = inverseOriginOffset;
             }
         }
     }

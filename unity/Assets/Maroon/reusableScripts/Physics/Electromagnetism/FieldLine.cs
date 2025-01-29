@@ -171,9 +171,10 @@ namespace Maroon.Physics.Electromagnetism
         void OnDrawGizmosSelected()
         {
 #if UNITY_EDITOR
+            // Draw gizmo where the field line starts
             Gizmos.color = Color.red;
-            Vector3 scaledOffset = Vector3.Scale(originOffset, transform.lossyScale);
-            Gizmos.DrawWireSphere(transform.position + scaledOffset, 0.02f);
+            Vector3 fieldLineGlobalStartPosition = transform.TransformPoint(Vector3.zero - originOffset);
+            Gizmos.DrawWireSphere(fieldLineGlobalStartPosition, 0.02f);
 #endif
         }
     }
