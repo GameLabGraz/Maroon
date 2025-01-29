@@ -167,5 +167,14 @@ namespace Maroon.Physics.Electromagnetism
                     return 0f;
             }
         }
+
+        void OnDrawGizmosSelected()
+        {
+#if UNITY_EDITOR
+            Gizmos.color = Color.red;
+            Vector3 scaledOffset = Vector3.Scale(originOffset, transform.lossyScale);
+            Gizmos.DrawWireSphere(transform.position + scaledOffset, 0.02f);
+#endif
+        }
     }
 }
