@@ -70,6 +70,32 @@ namespace Maroon.Physics.Electromagnetism
 
         [SerializeField] private bool invertDirection;
 
+        [Header("Line Segments")]
+        /// <summary>
+        /// The minimum length of the line between two vertices
+        /// This value is used when the angle difference between two lineSegments is maxLineSegmentDirectionAngleChangeValueForLengthAdjustment
+        /// </summary>
+        [SerializeField] public float minLineSegmentLength = 0.005f;
+
+        /// <summary>
+        /// The maximum length of the line between two vertices.
+        /// This value is used when the angle difference between two lineSegments is 0
+        /// </summary>
+        [SerializeField] public float maxLineSegmentLength = 0.1f;
+
+        /// <summary>
+        /// Maximum reasonably to be expected angle change between two line segments.
+        /// If this value is reached, the minLineSegmentLength is used to achieve maximum precision.
+        /// </summary>
+        [SerializeField] private float maxLineSegmentAngleChangeForLengthAdjustment = 10f;
+
+        /// <summary>
+        /// Affects the length of line segments.
+        /// The value between 0 and 1 (how the line segment angle changes is in relation 
+        /// to the maxLineSegmentAngleChangeForLengthAdjustment) is set to the power of this variable.
+        /// </summary>
+        [SerializeField] private float lineSegmentLengthAdjustmentExponent = 3.0f;
+
         /// <summary>
         /// Initializes the line renderer.
         /// </summary>
@@ -105,8 +131,9 @@ namespace Maroon.Physics.Electromagnetism
                 return;
 
             // Start drawing at originOffset
-            var positionIndex = 0;
-            var position = transform.TransformPoint(Vector3.zero - originOffset);
+            int positionIndex = 0;
+            Vector3 previousDirection = Vector3.zero;
+            Vector3 position = transform.TransformPoint(Vector3.zero - originOffset);
             _lineRenderer.SetPosition(positionIndex, transform.InverseTransformPoint(position));
             positionIndex++;
 
@@ -117,13 +144,27 @@ namespace Maroon.Physics.Electromagnetism
                 if (invertDirection)
                     direction *= -1f;
 
+                float currentLineSegmentLength = minLineSegmentLength;
+                if (positionIndex > 3)
+                {
+                    // Set line segment length based on how steep the angle to previous direction is
+                    // Except for the first positions (because previousDirection is still Vector3.zero at the beginning,
+                    // and then we also get more accurate result with less jumping around of field lines when moving objects)
+                    float difference = Vector3.Angle(previousDirection, direction);
+                    float lerpFactor = 1f - Mathf.Clamp01(difference / maxLineSegmentAngleChangeForLengthAdjustment);
+                    lerpFactor = Mathf.Pow(lerpFactor, lineSegmentLengthAdjustmentExponent);
+                    currentLineSegmentLength = Mathf.Lerp(minLineSegmentLength, maxLineSegmentLength, lerpFactor);
+                }
+                
                 // Set new position
-                position += direction * lineSegmentLength;
+                position += direction * currentLineSegmentLength;
                 _lineRenderer.SetPosition(positionIndex, transform.InverseTransformPoint(position));
                 positionIndex++;
 
+                previousDirection = direction;
+
                 // Check if we should stop drawing
-                if (stopDrawingCheck != null && stopDrawingCheck(position))
+                if (positionIndex > 3 && stopDrawingCheck != null && stopDrawingCheck(position))
                     break;
             }
 
