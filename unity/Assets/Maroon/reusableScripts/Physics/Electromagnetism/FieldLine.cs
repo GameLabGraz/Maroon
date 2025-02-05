@@ -7,7 +7,9 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+#if UNITY_EDITOR
 using UnityEditor.SceneManagement;
+#endif
 
 namespace Maroon.Physics.Electromagnetism
 {
@@ -110,11 +112,13 @@ namespace Maroon.Physics.Electromagnetism
 
         private void OnValidate()
         {
+#if UNITY_EDITOR
             // Only print warning if not in prefab mode
             if (PrefabStageUtility.GetCurrentPrefabStage() == null && field == null)
             {
                 Debug.LogWarning($"Field of FieldLine \"{this.name}\" is null.");
             }
+#endif
         }
 
         /// <summary>
