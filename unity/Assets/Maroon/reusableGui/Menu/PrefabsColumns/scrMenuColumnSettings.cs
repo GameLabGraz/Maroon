@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 
@@ -53,7 +52,7 @@ public class scrMenuColumnSettings : MonoBehaviour
 
     private void ClearButtonActiveIcons()
     {
-        List<Button> buttons = new List<Button> { 
+        Button[] buttons = new Button[] { 
             ButtonAudio, 
             ButtonLanguage, 
             ButtonControls 

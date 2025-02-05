@@ -66,26 +66,25 @@ public class scrMenuColumnMainMenu : MonoBehaviour
 
     public void OnClickLaboratory()
     {
-        this.Menu.RemoveAllMenuColumnsButFirst();
-        this.Menu.AddMenuColumn(this.ColumnLaboratory);
-        this.ClearButtonActiveIcons();
-        this.SetButtonActiveIcon(this.ButtonLaboratory);
+        SpawnNewColumn(ColumnLaboratory, ButtonLaboratory);
     }
 
     private void OnClickSettings()
     {
-        this.Menu.RemoveAllMenuColumnsButFirst();
-        this.Menu.AddMenuColumn(this.ColumnSettings);
-        this.ClearButtonActiveIcons();
-        this.SetButtonActiveIcon(this.ButtonSettings);
+        SpawnNewColumn(ColumnSettings, ButtonSettings);
     }
 
     private void OnClickCredits()
     {
+        SpawnNewColumn(ColumnCredits, ButtonCredits);
+    }
+
+    private void SpawnNewColumn(GameObject newColumn, GameObject pressedButton)
+    {
         this.Menu.RemoveAllMenuColumnsButFirst();
-        this.Menu.AddMenuColumn(this.ColumnCredits);
+        this.Menu.AddMenuColumn(newColumn);
         this.ClearButtonActiveIcons();
-        this.SetButtonActiveIcon(this.ButtonCredits);
+        this.SetButtonActiveIcon(pressedButton);
     }
 
     private void OnClickExit()
@@ -95,10 +94,17 @@ public class scrMenuColumnMainMenu : MonoBehaviour
 
     private void ClearButtonActiveIcons()
     {
+        GameObject[] buttons = new GameObject[] {
+            ButtonLaboratory,
+            ButtonSettings,
+            ButtonCredits
+        };
         Color clr = Color.clear;
-        this.ButtonLaboratory.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;
-        this.ButtonSettings.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;
-        this.ButtonCredits.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;
+
+        foreach (GameObject button in buttons)
+        {
+            button.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;
+        }
     }
 
     private void SetButtonActiveIcon(GameObject btn)
