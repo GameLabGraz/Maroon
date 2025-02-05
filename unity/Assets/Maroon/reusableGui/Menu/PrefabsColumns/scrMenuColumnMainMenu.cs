@@ -16,9 +16,7 @@ public class scrMenuColumnMainMenu : MonoBehaviour
 
     [SerializeField] private GameObject ColumnLaboratory;
 
-    [SerializeField] private GameObject ColumnAudio;
-
-    [SerializeField] private GameObject ColumnLanguage;
+    [SerializeField] private GameObject ColumnSettings;
 
     [SerializeField] private GameObject ColumnCredits;
 
@@ -27,9 +25,7 @@ public class scrMenuColumnMainMenu : MonoBehaviour
 
     [SerializeField] private GameObject ButtonLaboratory;
 
-    [SerializeField] private GameObject ButtonAudio;
-
-    [SerializeField] private GameObject ButtonLanguage;
+    [SerializeField] private GameObject ButtonSettings;
 
     [SerializeField] private GameObject ButtonCredits;
 
@@ -51,8 +47,7 @@ public class scrMenuColumnMainMenu : MonoBehaviour
 
         // Link button actions
         this.ButtonLaboratory.GetComponent<Button>().onClick.AddListener(() => this.OnClickLaboratory());
-        this.ButtonAudio.GetComponent<Button>().onClick.AddListener(() => this.OnClickAudio());
-        this.ButtonLanguage.GetComponent<Button>().onClick.AddListener(() => this.OnClickLanguage());
+        this.ButtonSettings.GetComponent<Button>().onClick.AddListener(() => this.OnClickSettings());
         this.ButtonCredits.GetComponent<Button>().onClick.AddListener(() => this.OnClickCredits());
         this.ButtonExit.GetComponent<Button>().onClick.AddListener(() => this.OnClickExit());
     }
@@ -77,20 +72,12 @@ public class scrMenuColumnMainMenu : MonoBehaviour
         this.SetButtonActiveIcon(this.ButtonLaboratory);
     }
 
-    private void OnClickAudio()
+    private void OnClickSettings()
     {
         this.Menu.RemoveAllMenuColumnsButFirst();
-        this.Menu.AddMenuColumn(this.ColumnAudio);
+        this.Menu.AddMenuColumn(this.ColumnSettings);
         this.ClearButtonActiveIcons();
-        this.SetButtonActiveIcon(this.ButtonAudio);
-    }
-
-    private void OnClickLanguage()
-    {
-        this.Menu.RemoveAllMenuColumnsButFirst();
-        this.Menu.AddMenuColumn(this.ColumnLanguage);
-        this.ClearButtonActiveIcons();
-        this.SetButtonActiveIcon(this.ButtonLanguage);
+        this.SetButtonActiveIcon(this.ButtonSettings);
     }
 
     private void OnClickCredits()
@@ -110,8 +97,7 @@ public class scrMenuColumnMainMenu : MonoBehaviour
     {
         Color clr = Color.clear;
         this.ButtonLaboratory.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;
-        this.ButtonAudio.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;
-        this.ButtonLanguage.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;
+        this.ButtonSettings.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;
         this.ButtonCredits.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;
     }
 
