@@ -16,7 +16,7 @@ namespace Maroon.GlobalEntities.ControlsManager
         MonoBehaviour GlobalEntity.Instance => Instance;
 
 
-        private float _mouseSensitivity = 1f;
+        private float _mouseSensitivity = 200f;
         /// <summary>
         ///     The sensitivity of the mouse for first-person controls, e.g. when looking around in the laboratory.
         /// </summary>

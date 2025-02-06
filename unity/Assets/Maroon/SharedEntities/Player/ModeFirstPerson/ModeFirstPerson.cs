@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using Maroon.GlobalEntities;
+using Maroon.GlobalEntities.ControlsManager;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -38,8 +39,6 @@ public class ModeFirstPerson : MonoBehaviour
     public float killHeight = -50f;
 
     [Header("Rotation")]
-    [Tooltip("Rotation speed for moving the camera")]
-    public float rotationSpeed = 200f;
     [Range(0.1f, 1f)]
     [Tooltip("Rotation speed multiplier when aiming")]
     public float aimingRotationMultiplier = 0.4f;
@@ -225,13 +224,13 @@ public class ModeFirstPerson : MonoBehaviour
         // horizontal character rotation
         {
             // rotate the transform with the input speed around its local Y axis
-            transform.Rotate(new Vector3(0f, (m_InputHandler.GetLookInputsHorizontal() * rotationSpeed * RotationMultiplier), 0f), Space.Self);
+            transform.Rotate(new Vector3(0f, (m_InputHandler.GetLookInputsHorizontal() * ControlsManager.Instance.MouseSensitivity * RotationMultiplier), 0f), Space.Self);
         }
 
         // vertical camera rotation
         {
             // add vertical inputs to the camera's vertical angle
-            m_CameraVerticalAngle += m_InputHandler.GetLookInputsVertical() * rotationSpeed * RotationMultiplier;
+            m_CameraVerticalAngle += m_InputHandler.GetLookInputsVertical() * ControlsManager.Instance.MouseSensitivity * RotationMultiplier;
 
             // limit the camera's vertical angle to min/max
             m_CameraVerticalAngle = Mathf.Clamp(m_CameraVerticalAngle, -89f, 89f);
