@@ -16,8 +16,10 @@ namespace Maroon.GlobalEntities.SettingsManager
         MonoBehaviour GlobalEntity.Instance => Instance;
 
         /// <summary>
-        ///     Called by Unity. Initializes singleton instance and DontDestroyOnLoad (stays active on new scene load).
+        /// The currently in-use SettingsResource
         /// </summary>
+        public SettingsResource Settings { get; private set; }
+
         private void Awake()
         {
             // Singleton
@@ -34,6 +36,17 @@ namespace Maroon.GlobalEntities.SettingsManager
             // Keep alive
             this.transform.parent = null;
             DontDestroyOnLoad(this.gameObject);
+        }
+
+        private void Start()
+        {
+            Settings = SaveHelper.LoadSettingsResource();
+            Settings.settingsChangedEvent?.AddListener(SaveSettings);
+        }
+
+        private void SaveSettings()
+        {
+            SaveHelper.SaveSettingsResource(Settings);
         }
     }
 }

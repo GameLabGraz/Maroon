@@ -1,4 +1,5 @@
 ﻿using GEAR.Localization;
+using Maroon.GlobalEntities.SettingsManager;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,13 +23,13 @@ public class scrMenuColumnLanguage : MonoBehaviour
 
     private void OnClickGerman()
     {
-        LanguageManager.Instance.CurrentLanguage = SystemLanguage.German;
+        SettingsManager.Instance.Settings.Language = SystemLanguage.German;
         this.UpdateActiveButton();
     }
 
     private void OnClickEnglish()
     {
-        LanguageManager.Instance.CurrentLanguage = SystemLanguage.English;
+        SettingsManager.Instance.Settings.Language = SystemLanguage.English;
         this.UpdateActiveButton();
     }
 
