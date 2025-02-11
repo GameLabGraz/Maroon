@@ -40,7 +40,13 @@ namespace Maroon.GlobalEntities.SettingsManager
 
         private void Start()
         {
+            LoadSettings();
+        }
+
+        private void LoadSettings()
+        {
             Settings = SaveHelper.LoadSettingsResource();
+            Settings.ApplyAllSettings();
             Settings.settingsChangedEvent?.AddListener(SaveSettings);
         }
 

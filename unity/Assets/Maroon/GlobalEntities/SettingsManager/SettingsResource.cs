@@ -59,5 +59,13 @@ namespace Maroon.GlobalEntities.SettingsManager
             }
         }
         #endregion
+
+        public void ApplyAllSettings()
+        {
+            SoundManager.Instance.MusicVolume = MusicVolume;
+            SoundManager.Instance.SoundEffectVolume = SoundEffectVolume;
+            LanguageManager.Instance.CurrentLanguage = Language;
+            // TODO set mouse sensitivity
+        }
     }
 }
