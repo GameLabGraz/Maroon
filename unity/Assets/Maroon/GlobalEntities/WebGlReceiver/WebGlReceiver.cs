@@ -21,6 +21,7 @@ namespace Maroon.GlobalEntities
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Properties, Getters and Setters
+        public string MostRecentData { get; private set; }
 
         // -------------------------------------------------------------------------------------------------------------
         // Singleton
@@ -68,6 +69,7 @@ namespace Maroon.GlobalEntities
         public void GetDataFromJavaScript(string data)
         {
             Debug.Log("Received Data: " + data);
+            MostRecentData = data;
             OnIncomingData.Invoke(data);
         }
     }

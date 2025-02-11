@@ -126,22 +126,22 @@ namespace Maroon.Parameter
 #if UNITY_WEBGL && !UNITY_EDITOR
             if (BootstrappingManager.Instance.UrlParameters.TryGetValue(WebGlUrlParameter.Config, out string config))
             {
-                if (!ApplyConfig(config)) ApplyConfig("Default");
+                if (!ApplyConfig(config)) ApplyConfig("Default", true);
             }
             else
 #endif
             {
-                ApplyConfig("Default");
+                ApplyConfig("Default", true);
             }
             
             ParameterLoader.Instance.OnFilesInitialized.RemoveListener(OnFilesLoadedInital);
         }
 
-        public bool ApplyConfig(string configName)
+        public bool ApplyConfig(string configName, bool firstDefaultParametersLoad = false)
         {
             _currentConfigIndex = ParameterLoader.Instance.IndexOfJson(configName);
             dropdown.SetValueWithoutNotify(_currentConfigIndex);
-            var parameters = ParameterLoader.Instance.LoadJsonFromFileName(configName);
+            var parameters = ParameterLoader.Instance.LoadJsonFromFileName(configName, firstDefaultParametersLoad);
             
             return parameters != null;
         }
