@@ -38,7 +38,11 @@ namespace Maroon.GlobalEntities.SettingsManager
 
         public static string TryLoadFile(string filePath, string defaultValue)
         {
-            // TODO does this file loading/saving code work in webgl?
+#if UNITY_WEBGL && !UNITY_EDITOR
+            // Saving not supported in WebGL
+            return defaultValue;
+#endif
+
             if (File.Exists(filePath))
             {
                 try
@@ -57,6 +61,10 @@ namespace Maroon.GlobalEntities.SettingsManager
 
         public static void SaveToFile(string filePath, string content)
         {
+#if UNITY_WEBGL && !UNITY_EDITOR
+            // Saving not supported in WebGL
+            return;
+#endif
             try
             {
                 File.WriteAllText(filePath, content);
