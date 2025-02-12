@@ -1,4 +1,7 @@
-﻿using Maroon.GlobalEntities;
+﻿#if UNITY_WEBGL
+// For WebGlReceiver
+using Maroon.GlobalEntities;
+#endif
 using UnityEngine;
 
 public class scrMenu : MonoBehaviour
@@ -57,10 +60,12 @@ public class scrMenu : MonoBehaviour
             this.OpenMenu();
         }
 
+#if UNITY_WEBGL
         if (this.EnableEscKey)
         {
             WebGlReceiver.Instance.OnPauseRequest.AddListener(() => OpenMenu());
         }
+#endif
     }
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
