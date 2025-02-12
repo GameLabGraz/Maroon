@@ -19,6 +19,8 @@ namespace Maroon.GlobalEntities
 
         public WebGlDataEvent OnIncomingData = new WebGlDataEvent();
 
+        public UnityEvent OnPauseRequest = new UnityEvent();
+
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Properties, Getters and Setters
         public string MostRecentData { get; private set; }
@@ -71,6 +73,18 @@ namespace Maroon.GlobalEntities
             Debug.Log("Received Data: " + data);
             MostRecentData = data;
             OnIncomingData.Invoke(data);
+        }
+
+        
+        /// <summary>
+        /// Called from Javascript code when Escape is pressed.
+        /// Useful because Input.GetKeyDown(KeyCode.Escape) might not always be caught,
+        /// because browser unlocks mouse cursor when pressing Escape while cursor is locked
+        /// </summary>
+        public void PauseRequest()
+        {
+            Debug.Log("Unity PauseRequest from Javascript");
+            OnPauseRequest?.Invoke();
         }
     }
 }

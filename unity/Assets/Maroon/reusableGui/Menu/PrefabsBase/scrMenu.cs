@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Maroon.GlobalEntities;
+using UnityEngine;
 
 public class scrMenu : MonoBehaviour
 {
@@ -54,6 +55,11 @@ public class scrMenu : MonoBehaviour
         if(this.EnableOnStart)
         {
             this.OpenMenu();
+        }
+
+        if (this.EnableEscKey)
+        {
+            WebGlReceiver.Instance.OnPauseRequest.AddListener(() => OpenMenu());
         }
     }
 
