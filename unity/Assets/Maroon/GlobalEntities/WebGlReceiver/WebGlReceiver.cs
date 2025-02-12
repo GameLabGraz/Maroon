@@ -83,7 +83,7 @@ namespace Maroon.GlobalEntities
         /// </summary>
         public void PauseRequest()
         {
-            Debug.Log("Unity PauseRequest from Javascript");
+            Debug.Log("Unity received a PauseRequest from Javascript");
             OnPauseRequest?.Invoke();
         }
     }

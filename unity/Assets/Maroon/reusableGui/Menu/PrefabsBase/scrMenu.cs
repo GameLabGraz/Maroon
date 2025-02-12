@@ -84,6 +84,9 @@ public class scrMenu : MonoBehaviour
 
     public void OpenMenu()
     {
+        if (IsOpen)
+            return;
+        
         // Save cursor state and ensure cursor is useable
         cursorLockModeBeforeMenu = Cursor.lockState;
         cursorVisibleBeforeMenu = Cursor.visible;
