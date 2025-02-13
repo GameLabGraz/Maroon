@@ -100,7 +100,14 @@ namespace Maroon.Build
         [MenuItem("Maroon Build/All Platforms, Conventional and Standalone")]
         public static void BuildAll()
         {
-            var buildPath = EditorUtility.SaveFolderPanel("Choose Build Location", string.Empty, "Build");
+            bool confirmed = EditorUtility.DisplayDialog("Build for ALL?", 
+                "Are you sure you want to build everything?\n" +
+                "This includes a build for the Laboratory version as well as ALL standalone versions, for ALL platforms.", 
+                "Yes, build everything", "Cancel");
+            if (!confirmed)
+                return;
+
+            var buildPath = EditorUtility.SaveFolderPanel("Choose Build Location (All Platforms, Conventional and Standalone)", string.Empty, "Build");
 
             if (buildPath.Length == 0)
             {
@@ -126,7 +133,7 @@ namespace Maroon.Build
                     return;
                 }
 
-                buildPath = EditorUtility.SaveFolderPanel("Choose Build Location", "Build", "Laboratory");
+                buildPath = EditorUtility.SaveFolderPanel("Choose Build Location (Conventional Maroon)", "Build", "Laboratory");
 
                 if(buildPath.Length == 0)
                 {
@@ -179,8 +186,14 @@ namespace Maroon.Build
                 {
                     return;
                 }
+                bool confirmed = EditorUtility.DisplayDialog("Build Standalone Experiments?",
+                    "Are you sure you build all Standalone Experiments?\n" +
+                    "This will create a separate build for EACH experiment. If you want to create one build that includes all experiments, choose \"Conventional Maroon\"",
+                    "Yes, build standalone experiments", "Cancel");
+                if (!confirmed)
+                    return;
 
-                buildPath = EditorUtility.SaveFolderPanel("Choose Build Location", "Build", "Experiments");
+                buildPath = EditorUtility.SaveFolderPanel("Choose Build Location (Standalone Experiments)", "Build", "Experiments");
 
                 if (buildPath.Length == 0)
                 {

@@ -15,17 +15,36 @@ namespace Tests.EditModeTests.ContentValidation
     /// The build process stops if any test should fail and a popup with all failed tests is shown.
     /// </summary>
     /// <remarks>
-    /// To disable the tests during build, simply comment out the entire class :)
+    /// To disable the tests during build, in the Unity Editor select "Maroon Build" -> "Settings" -> "ENABLE/DISABLE SceneValidationTests during Build"
     /// </remarks>
     public class RunSceneValidationTestsDuringBuild : IProcessSceneWithReport
     {
+        private static bool doRunSceneValidationTestsDuringBuild = true;
         public int callbackOrder => 0;
         private readonly Regex _experimentNameRegex = new Regex(@"\w+\.(pc|vr)");
+
+        [MenuItem("Maroon Build/Settings/ENABLE SceneValidationTests during Build", priority = 101)]
+        static void TurnOnSceneValidationTests()
+        {
+            doRunSceneValidationTestsDuringBuild = true;
+            Debug.Log("Running SceneValidationTests during Build has been ENABLED.");
+        }
+
+        [MenuItem("Maroon Build/Settings/DISABLE SceneValidationTests during Build", priority = 100)]
+        static void TurnOffSceneValidationTests()
+        {
+            doRunSceneValidationTestsDuringBuild = false;
+            Debug.Log("Running SceneValidationTests during Build has been DISABLED.");
+        }
 
         public void OnProcessScene(Scene scene, BuildReport report)
         {
             // Don't execute scene validation tests during playmode
             if (report == null)
+                return;
+
+            // Skip SceneValidation tests if turned off
+            if (!doRunSceneValidationTestsDuringBuild)
                 return;
 
             var scenePath = scene.path;
