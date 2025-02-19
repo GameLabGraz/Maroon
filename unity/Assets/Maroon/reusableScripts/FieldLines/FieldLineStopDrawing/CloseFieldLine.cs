@@ -61,6 +61,13 @@ public class CloseFieldLine : MonoBehaviour
         if (currentLineSegmentIndex < minLineSegmentCount)
             return false;
 
+        // Check if any producer is close enough
+        float distanceToClosestProducer = fieldLine.field.GetDistanceToClosestProducer(lineSegmentPosition);
+        if (distanceToClosestProducer < fieldLine.maxLineSegmentLength)
+        {
+            return true;
+        }
+
         if (PreviousSegmentRecededStartPos())
         {
             // Don't stop drawing when receding from start pos
