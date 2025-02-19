@@ -7,6 +7,8 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Events;
+
 #if UNITY_EDITOR
 using UnityEditor.SceneManagement;
 #endif
@@ -62,6 +64,10 @@ namespace Maroon.Physics.Electromagnetism
         /// </summary>
         private AdvancedLineRenderer _lineRenderer;
 
+        /// <summary>
+        /// Invoked when the FieldLine starts the drawing process.
+        /// </summary>
+        public UnityEvent StartDrawing = new UnityEvent();
         public delegate bool StopDrawingCheck(Vector3 position);
         public StopDrawingCheck stopDrawingCheck;
 
@@ -134,6 +140,8 @@ namespace Maroon.Physics.Electromagnetism
             if (!visible || Mathf.Abs(GetFieldStrengthFromEmObj()) * fieldStrengthFactor < 0.05)
                 return;
 
+            StartDrawing?.Invoke();
+
             // Start drawing at originOffset
             int positionIndex = 0;
             Vector3 previousDirection = Vector3.zero;
@@ -152,8 +160,9 @@ namespace Maroon.Physics.Electromagnetism
                 if (positionIndex > 3)
                 {
                     // Set line segment length based on how steep the angle to previous direction is
-                    // Except for the first positions (because previousDirection is still Vector3.zero at the beginning,
-                    // and then we also get more accurate result with less jumping around of field lines when moving objects)
+                    // Except for the first positions, because:
+                    //   1. previousDirection is still Vector3.zero at the beginning
+                    //   2. and then we also get more accurate result with less jumping around of field lines when moving objects)
                     float difference = Vector3.Angle(previousDirection, direction);
                     float lerpFactor = 1f - Mathf.Clamp01(difference / maxLineSegmentAngleChangeForLengthAdjustment);
                     lerpFactor = Mathf.Pow(lerpFactor, lineSegmentLengthAdjustmentExponent);
@@ -168,7 +177,7 @@ namespace Maroon.Physics.Electromagnetism
                 previousDirection = direction;
 
                 // Check if we should stop drawing
-                if (positionIndex > 3 && stopDrawingCheck != null && stopDrawingCheck(position))
+                if (stopDrawingCheck != null && stopDrawingCheck(position))
                     break;
             }
 
