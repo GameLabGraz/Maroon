@@ -4,12 +4,13 @@ using UnityEngine;
 [RequireComponent(typeof(FieldLine))]
 public class CloseFieldLine : MonoBehaviour
 {
-    private FieldLine fieldLine;
-
     [Tooltip("Don't stop drawing until at least this many line segments have been drawn (i.e. the number of StopDrawing calls)")]
     [SerializeField] private int minLineSegmentCount = 3;
 
+    private FieldLine fieldLine;
     private int currentLineSegmentIndex;
+    private float furthestDistanceToStart;
+    private float distanceToStartWhenDrawingShouldStop;
 
     private void Awake()
     {
@@ -23,7 +24,10 @@ public class CloseFieldLine : MonoBehaviour
 
     private void OnStartDrawing()
     {
+        // Reset field line's segment-related variables
         currentLineSegmentIndex = -1;
+        furthestDistanceToStart = 0f;
+        distanceToStartWhenDrawingShouldStop = ((fieldLine.minLineSegmentLength + fieldLine.maxLineSegmentLength) / 2f);
     }
 
     /// <summary>
@@ -36,16 +40,31 @@ public class CloseFieldLine : MonoBehaviour
     {
         currentLineSegmentIndex++;
 
-        if (currentLineSegmentIndex < minLineSegmentCount)
-        {
-            // Don't stop drawing until minLineSegmentCount has been reached
-            return false;
-        }
-
+        // Check if distance to start pos got larger
         Vector3 fieldLineStartPosition = fieldLine.transform.TransformPoint(Vector3.zero - fieldLine.originOffset);
         float lineDistanceToStart = Vector3.Distance(lineSegmentPosition, fieldLineStartPosition);
-        bool closeToStart = lineDistanceToStart <= (fieldLine.minLineSegmentLength * 2);
+        if (lineDistanceToStart > furthestDistanceToStart)
+        {
+            // distance to start position got larger
+            furthestDistanceToStart = lineDistanceToStart;
+        }
 
-        return closeToStart;
+        if (currentLineSegmentIndex < minLineSegmentCount)
+            // Don't stop drawing until at least minLineSegmentCount has been reached
+            return false;
+
+        if (lineDistanceToStart < furthestDistanceToStart)
+        {
+            // furthestDistanceToStart did not update
+            // i.e. we might be already getting close to start pos
+            if (lineDistanceToStart < distanceToStartWhenDrawingShouldStop)
+            {
+                return true;
+            }
+        }
+
+        // If very small field line loop, we also should stop when very close to Start even when we have not yet reached a smaller furthestDistanceToStart
+        bool VeryCloseToStartPos = lineDistanceToStart <= (fieldLine.minLineSegmentLength * 2);
+        return VeryCloseToStartPos;
     }
 }
