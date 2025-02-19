@@ -6,11 +6,22 @@ public class CloseFieldLine : MonoBehaviour
 {
     [Tooltip("Don't stop drawing until at least this many line segments have been drawn (i.e. the number of StopDrawing calls)")]
     [SerializeField] private int minLineSegmentCount = 3;
+    [Tooltip("Stop drawing when this many FieldLine turning points have been reached")]
+    [SerializeField] private int maxTurningPoints = 4;
 
     private FieldLine fieldLine;
     private int currentLineSegmentIndex;
-    private float furthestDistanceToStart;
+    private float lastDistanceToStart;
     private float distanceToStartWhenDrawingShouldStop;
+
+    /// <summary>
+    /// Describes if the fieldline segment is approaching or receding from the FieldLine's Start Position, and how many times this has changed 
+    /// (Not entierely accurate, but more or less the number of turning points the fieldLine had).
+    /// An even value means the field Line segment is getting further away from the start pos, odd means coming closer to the start pos.
+    /// Each time a fieldLine segment reaches a turning point (i.e. changes the approaching/receding status), the value will be increased by 1.
+    /// E.g. At first the segments receded (0), then they got closer (1), then they receded again (2), then they got closer again (1)
+    /// </summary>
+    private int fieldLineTurningPoints;
 
     private void Awake()
     {
@@ -26,7 +37,8 @@ public class CloseFieldLine : MonoBehaviour
     {
         // Reset field line's segment-related variables
         currentLineSegmentIndex = -1;
-        furthestDistanceToStart = 0f;
+        lastDistanceToStart = 0f;
+        fieldLineTurningPoints = 0;
         distanceToStartWhenDrawingShouldStop = ((fieldLine.minLineSegmentLength + fieldLine.maxLineSegmentLength) / 2f);
     }
 
@@ -40,31 +52,50 @@ public class CloseFieldLine : MonoBehaviour
     {
         currentLineSegmentIndex++;
 
-        // Check if distance to start pos got larger
+        // Check if distance to start pos got larger (receding from start pos)
         Vector3 fieldLineStartPosition = fieldLine.transform.TransformPoint(Vector3.zero - fieldLine.originOffset);
         float lineDistanceToStart = Vector3.Distance(lineSegmentPosition, fieldLineStartPosition);
-        if (lineDistanceToStart > furthestDistanceToStart)
-        {
-            // distance to start position got larger
-            furthestDistanceToStart = lineDistanceToStart;
-        }
+        UpdateSegmentProperties(lineDistanceToStart);
 
+        // Don't stop drawing when not at least minLineSegmentCount reached
         if (currentLineSegmentIndex < minLineSegmentCount)
-            // Don't stop drawing until at least minLineSegmentCount has been reached
             return false;
 
-        if (lineDistanceToStart < furthestDistanceToStart)
+        if (PreviousSegmentRecededStartPos())
         {
-            // furthestDistanceToStart did not update
-            // i.e. we might be already getting close to start pos
+            // Don't stop drawing when receding from start pos
+            return false;
+        }
+        else
+        {
+            // Approaching start pos again, check if close enough
             if (lineDistanceToStart < distanceToStartWhenDrawingShouldStop)
             {
                 return true;
             }
         }
 
+        // If too many turning points reached, stop drawing
+        if (fieldLineTurningPoints > maxTurningPoints)
+            return true;
+
         // If very small field line loop, we also should stop when very close to Start even when we have not yet reached a smaller furthestDistanceToStart
         bool VeryCloseToStartPos = lineDistanceToStart <= (fieldLine.minLineSegmentLength * 2);
         return VeryCloseToStartPos;
+    }
+
+    private void UpdateSegmentProperties(float newLineDistanceToStart)
+    {
+        bool segmentIsNowReceding = newLineDistanceToStart > lastDistanceToStart;
+        if (segmentIsNowReceding != PreviousSegmentRecededStartPos())
+        {
+            fieldLineTurningPoints++;
+        }
+        lastDistanceToStart = newLineDistanceToStart;
+    }
+
+    private bool PreviousSegmentRecededStartPos()
+    {
+        return fieldLineTurningPoints % 2 == 0;
     }
 }
