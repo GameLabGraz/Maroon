@@ -302,5 +302,31 @@
       );
 
     </script>
+    <script>
+		let pointerWasLocked = false;
+		// Listen to pointerlockchange, because then we should pause Maroon (browser does not forward Escape press to Maroon)
+		document.addEventListener('pointerlockchange', function() {
+			if (document.pointerLockElement === null && pointerWasLocked) {
+				try{
+					sendPauseRequestToUnity();
+				}
+				catch (e) {
+					console.log('Could not send pause request to Unity: ' + e);
+				}
+			}
+			
+			pointerWasLocked = document.pointerLockElement !== null;
+		});
+		
+		async function sendPauseRequestToUnity(){
+			if (!unityInstance)
+			{
+				console.log("UnityInstance is null, waiting...");
+			}
+			await waitForNonNullUnityInstance();
+			
+			unityInstance.SendMessage("WebGL Receiver", "PauseRequest");
+		}
+    </script>
   </body>
 </html>

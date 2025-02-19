@@ -61,6 +61,17 @@ public class scrMenuColumnMainMenu : MonoBehaviour
         this.ClearButtonActiveIcons();
     }
 
+    public void OnGUI()
+    {
+        // show build version on lower left corner
+        GUI.Label(new Rect(10, Screen.height - 20f, 300f, 200f), $"build {GameManager.Instance.version}", new GUIStyle
+        {
+            fontSize = 14,
+            fontStyle = FontStyle.Bold,
+            normal = { textColor = Color.white }
+        });
+    }
+
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Button Actions
 
