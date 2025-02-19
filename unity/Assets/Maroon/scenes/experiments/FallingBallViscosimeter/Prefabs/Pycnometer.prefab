@@ -31,7 +31,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2766359086249199001}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -202,6 +201,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5253320313206395304}
+  serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0.0244, y: 1.6335, z: 2}
   m_LocalScale: {x: 2.514695, y: 2.514695, z: 2.5146947}
@@ -209,7 +209,6 @@ Transform:
   m_Children:
   - {fileID: 8161504472290837110}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!33 &3469685927624026093
 MeshFilter:
@@ -269,8 +268,17 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5253320313206395304}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
+  serializedVersion: 2
   m_Radius: 0.015233383
   m_Height: 0.05895459
   m_Direction: 2
@@ -287,7 +295,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a94fdde4616c454d94d0f3946a3e2ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enabled: 1
+  dragAndDropEnabled: 1
   snap: 1
   offsetDragging: 1
   hoverSizeIncrease: 1
@@ -299,6 +307,7 @@ MonoBehaviour:
   localPositionLimit: 0
   localPositionMax: 0
   localPositionMin: 0
+  ball: {fileID: 0}
 --- !u!114 &1850199748018465138
 MonoBehaviour:
   m_ObjectHideFlags: 0
