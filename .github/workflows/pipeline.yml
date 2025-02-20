@@ -32,8 +32,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        projectPath: [unity]
-        testMode: [playmode, editmode]
+        include:
+          # first matrix job (playmode, no params)
+          - projectPath: unity
+            testMode: playmode
+            params: ""
+          # second matrix job (editmode, run in parallel)
+          - projectPath: unity
+            testMode: editmode
+            params: "-runSynchronously"
 
     steps:
     
@@ -63,6 +70,7 @@ jobs:
           artifactsPath: test-${{ matrix.testMode }}-results
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           checkName: "Test Results: ${{ matrix.testMode }}"
+          customParameters: ${{ matrix.params }}
 
       # Upload results
       - name: Upload test results
