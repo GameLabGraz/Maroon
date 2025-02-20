@@ -12,7 +12,7 @@ namespace Maroon.GlobalEntities
         // Fields
         private static GameManager _instance = null;
 
-        private string _version;
+        public string version;
 
         private Maroon.SceneCategory _lastCategory;
 
@@ -68,9 +68,9 @@ namespace Maroon.GlobalEntities
 
             // Version
             #if UNITY_EDITOR
-                _version = DateTime.UtcNow.Date.ToString("yyyyMMdd");
+                version = DateTime.UtcNow.Date.ToString("yyyyMMdd");
             #else
-                _version = Application.version;
+                version = Application.version;
             #endif
         }
 
@@ -118,18 +118,6 @@ namespace Maroon.GlobalEntities
             // one GameManager at all times, not copying stuff from a temporary game manager to another one and then 
             // silently destroying the duplicate game manager
             
-        }
-
-        // #############################################################################################################
-        // MOVE TO: Main Menu
-
-        public void OnGUI()
-        {
-            // show build version on lower right corner
-            GUI.Label(new Rect(10, Screen.height - 20f, 300f, 200f), $"build {_version}", new GUIStyle
-            {
-                fontSize = 14, fontStyle = FontStyle.Bold, normal = { textColor = Color.white }
-            });
         }
 
         // #################################################################################################################

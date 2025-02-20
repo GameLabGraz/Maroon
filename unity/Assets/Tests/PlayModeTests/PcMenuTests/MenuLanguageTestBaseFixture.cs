@@ -80,6 +80,7 @@ namespace Tests.PlayModeTests.PcMenuTests
         /// </summary>
         protected IEnumerator OpenLanguageSubMenu()
         {
+            yield return ClickButtonByLanguageManagerKey("Menu Settings", DefaultLanguage);
             yield return ClickButtonByLanguageManagerKey("Menu Language", DefaultLanguage);
         }
 

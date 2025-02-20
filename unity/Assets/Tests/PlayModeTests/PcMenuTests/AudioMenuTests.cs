@@ -20,6 +20,7 @@ namespace Tests.PlayModeTests.PcMenuTests
     {
         private readonly string _menuType;
         private bool _sceneLoaded;
+        private Button _settingsButton;
         private Button _audioButton;
         
         private const string MusicAudioSourceName = "MusicSource";
@@ -79,7 +80,15 @@ namespace Tests.PlayModeTests.PcMenuTests
                     yield return null;
                     AssertGameObjectIsActive(canvasGameObject);
                 }
-                
+
+                // Find settings button
+                string mainMenuSettingsButtonLabel = LanguageManager.Instance.GetString("Menu Settings");
+                _settingsButton = GetButtonViaTextLabel(mainMenuSettingsButtonLabel);
+
+                // Click Settings
+                _settingsButton.onClick.Invoke();
+                yield return null;
+
                 // Find audio submenu button
                 string mainMenuAudioButtonLabel = LanguageManager.Instance.GetString("Menu Audio");
                 _audioButton = GetButtonViaTextLabel(mainMenuAudioButtonLabel);
@@ -88,7 +97,7 @@ namespace Tests.PlayModeTests.PcMenuTests
             // The code below is run before every test case in the test fixture
             // Open/reset audio menu
             _audioButton.onClick.Invoke();
-            
+
             // Get AudioSource components
             _musicAudioSourceComponent = GetComponentFromGameObjectOrItsChildrenByName<AudioSource>(MusicAudioSourceName);
             _fxAudioSourceComponent = GetComponentFromGameObjectOrItsChildrenByName<AudioSource>(FxAudioSourceName);
