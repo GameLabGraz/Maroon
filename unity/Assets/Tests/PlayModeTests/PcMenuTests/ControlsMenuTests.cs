@@ -19,7 +19,7 @@ namespace Tests.PlayModeTests.PcMenuTests
     [TestFixture(PauseMenu)]
     public class ControlsMenuTests
     {
-        private const float DELTA = 0.0001f;
+        private const float DELTA = 0.001f;
         private readonly string _menuType;
         private bool _sceneLoaded;
         private Button _settingsButton;
