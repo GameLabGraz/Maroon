@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 namespace Maroon.GlobalEntities.SettingsManager
 {
@@ -38,8 +39,11 @@ namespace Maroon.GlobalEntities.SettingsManager
             DontDestroyOnLoad(this.gameObject);
         }
 
-        private void Start()
+        private IEnumerator Start()
         {
+            // Wait a frame, otherwise LanguageManager will not have been initialized
+            yield return null;
+
             LoadSettings();
         }
 
