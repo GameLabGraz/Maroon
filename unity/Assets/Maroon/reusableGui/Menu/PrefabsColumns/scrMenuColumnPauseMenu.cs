@@ -19,16 +19,12 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Columns
 
-    [SerializeField] private GameObject ColumnAudio;
-
-    [SerializeField] private GameObject ColumnLanguage;
+    [SerializeField] private GameObject ColumnSettings;
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Buttons
 
-    [SerializeField] private GameObject ButtonAudio;
-
-    [SerializeField] private GameObject ButtonLanguage;
+    [SerializeField] private GameObject ButtonSettings;
 
     [SerializeField] private GameObject ButtonMainMenu;
 
@@ -44,8 +40,7 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
         this.Menu = (scrMenu) this.transform.parent.parent.parent.GetComponent(typeof(scrMenu));
 
         // Link button actions
-        this.ButtonAudio.GetComponent<Button>().onClick.AddListener(() => this.OnClickAudio());
-        this.ButtonLanguage.GetComponent<Button>().onClick.AddListener(() => this.OnClickLanguage());
+        this.ButtonSettings.GetComponent<Button>().onClick.AddListener(() => this.OnClickSettings());
         this.ButtonMainMenu.GetComponent<Button>().onClick.AddListener(() => this.OnClickMainMenu());
         this.ButtonResume.GetComponent<Button>().onClick.AddListener(() => this.OnClickResume());
     }
@@ -60,27 +55,18 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
     {
         Time.timeScale = this.TimeScaleRestore;
         this.TimeScaleRestore = 1.0f;
-        this.ButtonAudio.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
-        this.ButtonLanguage.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
+        ClearButtonActiveIcons();
     }
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Button Actions
 
-    private void OnClickAudio()
+    private void OnClickSettings()
     {
         this.Menu.RemoveAllMenuColumnsButFirst();
-        this.Menu.AddMenuColumn(this.ColumnAudio);
-        this.ButtonAudio.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.white;
-        this.ButtonLanguage.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
-    }
-
-    private void OnClickLanguage()
-    {
-        this.Menu.RemoveAllMenuColumnsButFirst();
-        this.Menu.AddMenuColumn(this.ColumnLanguage);
-        this.ButtonAudio.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.clear;
-        this.ButtonLanguage.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.white;
+        this.Menu.AddMenuColumn(this.ColumnSettings);
+        ClearButtonActiveIcons();
+        SetButtonActiveIcon(ButtonSettings);
     }
 
     private void OnClickMainMenu()
@@ -102,5 +88,24 @@ public class scrMenuColumnPauseMenu : MonoBehaviour
     private void OnClickResume()
     {
         this.Menu.CloseMenu();
+    }
+
+
+    private void ClearButtonActiveIcons()
+    {
+        GameObject[] buttons = new GameObject[] {
+            ButtonSettings
+        };
+        Color clr = Color.clear;
+
+        foreach (GameObject button in buttons)
+        {
+            button.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = clr;
+        }
+    }
+
+    private void SetButtonActiveIcon(GameObject btn)
+    {
+        btn.transform.Find("IconActiveContainer").Find("Icon").GetComponent<RawImage>().color = Color.white;
     }
 }
