@@ -1,6 +1,5 @@
 ﻿using GEAR.Localization.Text;
 using Maroon.GlobalEntities;
-using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,12 +21,12 @@ public class scrMenuColumnLaboratorySelectionDetail : MonoBehaviour
 
     [SerializeField] private GameObject ExperimentButtonPrefab;
 
-    private IEnumerator Start()
+    private void Start()
     {
         // Do not init anything if no category is selected, because no lab can be built and no experiments will show up
         if(SceneManager.Instance.ActiveSceneCategory == null)
         {
-            yield break;
+            return;
         }
 
         // Update Title
@@ -63,10 +62,12 @@ public class scrMenuColumnLaboratorySelectionDetail : MonoBehaviour
                 Maroon.GlobalEntities.SceneManager.Instance.LoadSceneRequest(current_scene));
         }
 
+        // Force update canvases, to ensure scene buttons have been properly added
+        Canvas.ForceUpdateCanvases();
+
         // Fully scroll up
-        yield return null; // Wait a frame for scrollRect to get updated
         ScrollRect experimentsScrollRect = ExperimentButtonsContainer.GetComponentInParent<ScrollRect>();
-        experimentsScrollRect.verticalScrollbar.value = 1;
+        experimentsScrollRect.verticalNormalizedPosition = 1f;
     }
 
     private void OnClickGo()
