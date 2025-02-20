@@ -1,4 +1,5 @@
 using GEAR.Localization;
+using Maroon.GlobalEntities.ControlsManager;
 using System;
 using UnityEngine;
 using UnityEngine.Events;
@@ -54,7 +55,7 @@ namespace Maroon.GlobalEntities.SettingsManager
             set
             {
                 mouseSensitivity = value;
-                // TODO set mouse sensitivity
+                ControlsManager.ControlsManager.Instance.MouseSensitivity = mouseSensitivity;
                 settingsChangedEvent?.Invoke();
             }
         }
@@ -65,7 +66,7 @@ namespace Maroon.GlobalEntities.SettingsManager
             SoundManager.Instance.MusicVolume = MusicVolume;
             SoundManager.Instance.SoundEffectVolume = SoundEffectVolume;
             LanguageManager.Instance.CurrentLanguage = Language;
-            // TODO set mouse sensitivity
+            ControlsManager.ControlsManager.Instance.MouseSensitivity = MouseSensitivity;
         }
     }
 }
