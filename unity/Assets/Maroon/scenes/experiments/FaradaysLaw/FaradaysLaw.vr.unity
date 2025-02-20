@@ -432,7 +432,7 @@ LightingSettings:
   m_LightmapMaxSize: 1024
   m_BakeResolution: 40
   m_Padding: 2
-  m_LightmapCompression: 2
+  m_LightmapCompression: 3
   m_AO: 0
   m_AOMaxDistance: 1
   m_CompAOExponent: 1
@@ -1031,8 +1031,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1252003187}
-        m_TargetAssemblyTypeName: 
+      - m_Target: {fileID: 1252003183}
+        m_TargetAssemblyTypeName: EMObject, Maroon.Physics.Electromagnetism
         m_MethodName: set_FieldStrength
         m_Mode: 0
         m_Arguments:
@@ -1188,7 +1188,7 @@ PrefabInstance:
         type: 3}
       propertyPath: valueGetter._target
       value: 
-      objectReference: {fileID: 1252003188}
+      objectReference: {fileID: 1252003184}
     - target: {fileID: 1762013046297486303, guid: d4ab877282073fe48837a142a361ea5a,
         type: 3}
       propertyPath: valueGetter._methodName
@@ -2557,7 +2557,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
-      objectReference: {fileID: 1252003187}
+      objectReference: {fileID: 0}
     - target: {fileID: 1807761203073081812, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
@@ -2921,12 +2921,17 @@ PrefabInstance:
     - target: {fileID: 8143316764071650168, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
       propertyPath: m_Name
-      value: RingResistance
+      value: CoilConductivity
       objectReference: {fileID: 0}
     - target: {fileID: 8143316764316309353, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
       propertyPath: maximum
-      value: 10
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8143316764316309353, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: initialValue
+      value: 57
       objectReference: {fileID: 0}
     - target: {fileID: 8143316764316309353, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
@@ -2942,7 +2947,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
-      objectReference: {fileID: 1252003188}
+      objectReference: {fileID: 1252003184}
     - target: {fileID: 8143316764316309353, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
@@ -2951,7 +2956,12 @@ PrefabInstance:
     - target: {fileID: 8143316764316309353, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: set_ResistanceFactor
+      value: set_Conductivity
+      objectReference: {fileID: 0}
+    - target: {fileID: 8143316764316309353, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: Coil, Maroon.ReusablePrefabs
       objectReference: {fileID: 0}
     - target: {fileID: 8143316764316309353, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
@@ -2961,7 +2971,7 @@ PrefabInstance:
     - target: {fileID: 8143316764316309355, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
       propertyPath: m_Name
-      value: RingResistanceHandle
+      value: CoilConductivityHandle
       objectReference: {fileID: 0}
     - target: {fileID: 8143316764755460566, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
@@ -3041,7 +3051,7 @@ PrefabInstance:
     - target: {fileID: 8143316765097717293, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
       propertyPath: key
-      value: RingResistance
+      value: CoilConductivity
       objectReference: {fileID: 0}
     - target: {fileID: 8167744851631067677, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
@@ -3071,7 +3081,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1272221725471183081, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 989797770}
+      addedObject: {fileID: 1252003182}
     - targetCorrespondingSourceObject: {fileID: 1272221725471183081, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
       insertIndex: -1
@@ -4420,19 +4430,7 @@ PrefabInstance:
     - {fileID: 1569596360, guid: b523193efcd4e074ab3a36220d8e3703, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1145523142630352, guid: b523193efcd4e074ab3a36220d8e3703,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1252003185}
-    - targetCorrespondingSourceObject: {fileID: 1145523142630352, guid: b523193efcd4e074ab3a36220d8e3703,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1252003186}
-    - targetCorrespondingSourceObject: {fileID: 1145523142630352, guid: b523193efcd4e074ab3a36220d8e3703,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1252003193}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b523193efcd4e074ab3a36220d8e3703, type: 3}
 --- !u!114 &1252003181 stripped
 MonoBehaviour:
@@ -4448,126 +4446,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
 --- !u!4 &1252003182 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 4082273022283910, guid: b523193efcd4e074ab3a36220d8e3703,
+  m_CorrespondingSourceObject: {fileID: 4136362258603276, guid: b523193efcd4e074ab3a36220d8e3703,
     type: 3}
   m_PrefabInstance: {fileID: 1252003180}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &1252003183 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4059657311206730, guid: b523193efcd4e074ab3a36220d8e3703,
-    type: 3}
-  m_PrefabInstance: {fileID: 1252003180}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1252003184 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1145523142630352, guid: b523193efcd4e074ab3a36220d8e3703,
-    type: 3}
-  m_PrefabInstance: {fileID: 1252003180}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1252003185
+--- !u!114 &1252003183 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1252003184}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5701f2821f7ba1e469aef7f532de7676, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  startPosition: {fileID: 1252003182}
-  endPosition: {fileID: 1252003183}
-  linearMapping: {fileID: 0}
-  repositionGameObject: 1
-  maintainMomemntum: 0
-  momemtumDampenRate: 5
-  _showDebugMessages: 0
-  useSteps: 0
-  stepSize: 0
-  useAsInteger: 0
-  initialValue: 5
-  minimum: 0
-  maximum: 10
-  onValueChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  onValueChangedInt:
-    m_PersistentCalls:
-      m_Calls: []
-  onRelease:
-    m_PersistentCalls:
-      m_Calls: []
-  onReleaseInt:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!114 &1252003186
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1252003184}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b93b6a877adcbf94c89a9d6e0c0e844d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  activateActionSetOnAttach:
-    actionSetPath: 
-  hideHandOnAttach: 1
-  hideSkeletonOnAttach: 0
-  hideControllerOnAttach: 0
-  handAnimationOnPickup: 0
-  setRangeOfMotionOnPickup: -1
-  useHandObjectAttachmentPoint: 1
-  attachEaseIn: 0
-  snapAttachEaseInCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  snapAttachEaseInTime: 0.15
-  snapAttachEaseInCompleted: 0
-  skeletonPoser: {fileID: 0}
-  handFollowTransform: 1
-  highlightOnHover: 1
-  hideHighlight: []
-  hoverPriority: 0
---- !u!114 &1252003187 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 114905592008585124, guid: b523193efcd4e074ab3a36220d8e3703,
+  m_CorrespondingSourceObject: {fileID: 2251548962617729013, guid: b523193efcd4e074ab3a36220d8e3703,
     type: 3}
   m_PrefabInstance: {fileID: 1252003180}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1252003184}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83654afd125489243843b22706a34d25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1252003188 stripped
+--- !u!114 &1252003184 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 114962379944208238, guid: b523193efcd4e074ab3a36220d8e3703,
+  m_CorrespondingSourceObject: {fileID: 7510927799387150677, guid: b523193efcd4e074ab3a36220d8e3703,
     type: 3}
   m_PrefabInstance: {fileID: 1252003180}
   m_PrefabAsset: {fileID: 0}
@@ -4601,44 +4498,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69e6e14f88da74d48af217adf1414b40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1252003191 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1873798252212520, guid: b523193efcd4e074ab3a36220d8e3703,
-    type: 3}
-  m_PrefabInstance: {fileID: 1252003180}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1252003192 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1940610905041724, guid: b523193efcd4e074ab3a36220d8e3703,
-    type: 3}
-  m_PrefabInstance: {fileID: 1252003180}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1252003193
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1252003184}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9dbf43ace0a3bb5438009a86afbf4e50, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Speed: 1.33
-  MinPosition: {fileID: 1252003192}
-  MaxPosition: {fileID: 1252003191}
-  SimulationRunningDuringMovement: 0
-  onMovementStart:
-    m_PersistentCalls:
-      m_Calls: []
-  onMovementStopped:
-    m_PersistentCalls:
-      m_Calls: []
-  onMovement:
-    m_PersistentCalls:
-      m_Calls: []
-  hapticFeedbackFrequency: 100
 --- !u!1 &1298670505
 GameObject:
   m_ObjectHideFlags: 0

@@ -200,8 +200,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1207524765}
-        m_TargetAssemblyTypeName: 
+      - m_Target: {fileID: 629872226}
+        m_TargetAssemblyTypeName: EMObject, Maroon.Physics.Electromagnetism
         m_MethodName: set_FieldStrength
         m_Mode: 0
         m_Arguments:
@@ -884,12 +884,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ee2d7c5a3c12e54caff0bfeb8ab5ae7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &629872224 stripped
+--- !u!114 &629872224 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5852569358844984464, guid: b3a885b399754944f92a55728f51d56d,
+    type: 3}
+  m_PrefabInstance: {fileID: 629872222}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e735cbf69dc3ed14ab73437a73a13bb4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &629872225 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4162132290535176, guid: b3a885b399754944f92a55728f51d56d,
     type: 3}
   m_PrefabInstance: {fileID: 629872222}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &629872226 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2794989950629628914, guid: b3a885b399754944f92a55728f51d56d,
+    type: 3}
+  m_PrefabInstance: {fileID: 629872222}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83654afd125489243843b22706a34d25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &703498016
 GameObject:
   m_ObjectHideFlags: 0
@@ -933,7 +957,7 @@ PrefabInstance:
         type: 3}
       propertyPath: valueGetter._target
       value: 
-      objectReference: {fileID: 1889023036}
+      objectReference: {fileID: 629872224}
     - target: {fileID: 1762013046297486303, guid: d4ab877282073fe48837a142a361ea5a,
         type: 3}
       propertyPath: valueGetter._methodName
@@ -2960,18 +2984,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1207524765 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 114461730017026036, guid: b3a885b399754944f92a55728f51d56d,
-    type: 3}
-  m_PrefabInstance: {fileID: 629872222}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83654afd125489243843b22706a34d25, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1227558775
 GameObject:
   m_ObjectHideFlags: 0
@@ -3691,7 +3703,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
-      objectReference: {fileID: 1207524765}
+      objectReference: {fileID: 0}
     - target: {fileID: 1807761203073081812, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
@@ -4410,17 +4422,22 @@ PrefabInstance:
     - target: {fileID: 8143316764071650168, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
       propertyPath: m_Name
-      value: RingResistance
+      value: CoilConductivity
       objectReference: {fileID: 0}
     - target: {fileID: 8143316764316309353, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
       propertyPath: maximum
-      value: 10
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 8143316764316309353, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
       propertyPath: stepSize
       value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 8143316764316309353, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: initialValue
+      value: 57
       objectReference: {fileID: 0}
     - target: {fileID: 8143316764316309353, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
@@ -4436,7 +4453,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
-      objectReference: {fileID: 1889023036}
+      objectReference: {fileID: 629872224}
     - target: {fileID: 8143316764316309353, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
@@ -4445,7 +4462,12 @@ PrefabInstance:
     - target: {fileID: 8143316764316309353, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: set_ResistanceFactor
+      value: set_Conductivity
+      objectReference: {fileID: 0}
+    - target: {fileID: 8143316764316309353, guid: 31a6116c7cb92304fae6c40f09b2d852,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: Coil, Maroon.ReusablePrefabs
       objectReference: {fileID: 0}
     - target: {fileID: 8143316764316309353, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
@@ -4455,7 +4477,7 @@ PrefabInstance:
     - target: {fileID: 8143316764316309355, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
       propertyPath: m_Name
-      value: RingResistanceHandle
+      value: CoilConductivityHandle
       objectReference: {fileID: 0}
     - target: {fileID: 8143316764755460566, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
@@ -4540,7 +4562,7 @@ PrefabInstance:
     - target: {fileID: 8143316765097717293, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
       propertyPath: key
-      value: RingResistance
+      value: CoilConductivity
       objectReference: {fileID: 0}
     - target: {fileID: 8143316765148892518, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
@@ -4580,7 +4602,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1272221725471183081, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 629872224}
+      addedObject: {fileID: 629872225}
     - targetCorrespondingSourceObject: {fileID: 1272221725471183081, guid: 31a6116c7cb92304fae6c40f09b2d852,
         type: 3}
       insertIndex: -1
@@ -5411,18 +5433,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1846138256}
   m_Mesh: {fileID: -2732997405945465056, guid: c6993d0b1428e6e40b62e81f721ab7db, type: 3}
---- !u!114 &1889023036 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 114044277980319426, guid: b3a885b399754944f92a55728f51d56d,
-    type: 3}
-  m_PrefabInstance: {fileID: 629872222}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e735cbf69dc3ed14ab73437a73a13bb4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1939868830 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 114273710252896464, guid: b3a885b399754944f92a55728f51d56d,

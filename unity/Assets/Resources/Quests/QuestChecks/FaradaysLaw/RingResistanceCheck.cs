@@ -9,19 +9,19 @@ namespace Quests
     public class RingResistanceCheck : QuestCheck
     {
         private Coil _coil;
-        private float _initResistancefactor;
+        private float _initConductivity;
 
         protected override void InitCheck()
         {
             _coil = FindObjectOfType<Coil>();
             if (_coil == null) throw new NullReferenceException("There is no coil in the scene.");
 
-            _initResistancefactor = _coil.ResistanceFactor;
+            _initConductivity = _coil.Conductivity;
         }
 
         protected override bool CheckCompliance()
         {
-            return Math.Abs(_initResistancefactor - _coil.ResistanceFactor) > 0.1f;
+            return Math.Abs(_initConductivity - _coil.Conductivity) > 0.1f;
         }
     }
 }
