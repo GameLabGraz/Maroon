@@ -19,6 +19,7 @@ namespace Tests.PlayModeTests.PcMenuTests
     [TestFixture(PauseMenu)]
     public class ControlsMenuTests
     {
+        private const float DELTA = 0.0001f;
         private readonly string _menuType;
         private bool _sceneLoaded;
         private Button _settingsButton;
@@ -98,9 +99,12 @@ namespace Tests.PlayModeTests.PcMenuTests
         }
         
         [UnityTest, Order(1), Description("On opening audio menu, slider values and ControlsManager mouse sensitivity must match")]
-        public IEnumerator WhenOpenControlsMenuInitialSliderValuesEqualMouseSensitivity()
+        public IEnumerator WhenOpenControlsMenuInitialSliderValuesMatchesMouseSensitivity()
         {
-            Assert.AreEqual(_mouseSensitivitySliderComponent.value, ControlsManager.Instance.MouseSensitivity, 0.0, 
+            Assert.AreEqual(
+                ConvertSliderValueToMouseSensitivity(_mouseSensitivitySliderComponent.value), 
+                ControlsManager.Instance.MouseSensitivity,
+                DELTA, 
                 $"Initial mouse sensitivity Slider and ControlsManager.MouseSensitivity values must be equal");
             
             yield return null;
@@ -109,20 +113,22 @@ namespace Tests.PlayModeTests.PcMenuTests
         [UnityTest, Order(2), Description("Change the mouse sensitivity slider's value, then the ControlManager's volume must match")]
         public IEnumerator WhenChangeMouseSensitivitySliderValue_ThenControlManagerMatches()
         {
-            _mouseSensitivitySliderComponent.value = 50.0f;
+            float sliderValue = 0.2f;
+            _mouseSensitivitySliderComponent.value = sliderValue;
             
             yield return null;
-            
-            Assert.AreEqual(ControlsManager.Instance.MouseSensitivity, _mouseSensitivitySliderComponent.value, 0.0, 
+
+            float expectedMouseSensitivity = ConvertSliderValueToMouseSensitivity(sliderValue);
+            Assert.AreEqual(ControlsManager.Instance.MouseSensitivity, expectedMouseSensitivity, DELTA, 
                 $"After {MouseSensitivitySliderName} value change, unexpected ControlManager mouse Sensitivity");
         }
         
         [UnityTest, Order(3), Description("Change mouse sensitivity sliders' values, then reload menu, the ControlManager's mouse sensitivity must match")]
         public IEnumerator WhenChangeSliderValuesAndReloadSubMenu_ThenControlManagersMouseSensitivityMatch()
         {
-            float expectedMouseSensitivity = 300.0f;
+            float sliderValue = 0.9f;
 
-            _mouseSensitivitySliderComponent.value = expectedMouseSensitivity;
+            _mouseSensitivitySliderComponent.value = sliderValue;
             
             yield return null;
             
@@ -134,11 +140,18 @@ namespace Tests.PlayModeTests.PcMenuTests
             // Get newly created sliders
             _mouseSensitivitySliderComponent = GetComponentFromGameObjectOrItsChildrenByName<Slider>(MouseSensitivitySliderName);
 
-            Assert.AreEqual(expectedMouseSensitivity, _mouseSensitivitySliderComponent.value, 0.0, 
+            Assert.AreEqual(sliderValue, _mouseSensitivitySliderComponent.value, DELTA, 
                 $"After Controls menu reload, unexpected slider '{MouseSensitivitySliderName}' value");
             
+            float expectedMouseSensitivity = ConvertSliderValueToMouseSensitivity(sliderValue);
             Assert.AreEqual(expectedMouseSensitivity, ControlsManager.Instance.MouseSensitivity, 0.0, 
                 $"After Controls menu reload, unexpected ControlsManager mouse sensitivity");
+        }
+
+        private float ConvertSliderValueToMouseSensitivity(float sliderValue)
+        {
+            return Mathf.Pow((scrMenuColumnControls.MAX_MOUSE_SENSITIVITY / scrMenuColumnControls.MIN_MOUSE_SENSITIVITY), sliderValue)
+                * scrMenuColumnControls.MIN_MOUSE_SENSITIVITY;
         }
     }
 }

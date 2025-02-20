@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 public class scrMenuColumnControls : MonoBehaviour
 {
-    const float MIN_MOUSE_SENSITIVITY = 20;
-    const float MAX_MOUSE_SENSITIVITY = 1000;
+    public const float MIN_MOUSE_SENSITIVITY = 20;
+    public const float MAX_MOUSE_SENSITIVITY = 1000;
 
     [Header("Buttons/Sliders")]
     [SerializeField] private Slider _mouseSensitivitySlider;
