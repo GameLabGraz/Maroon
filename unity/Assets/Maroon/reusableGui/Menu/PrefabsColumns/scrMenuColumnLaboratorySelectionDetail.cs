@@ -61,6 +61,13 @@ public class scrMenuColumnLaboratorySelectionDetail : MonoBehaviour
             newButton.GetComponent<Button>().onClick.AddListener(() => 
                 Maroon.GlobalEntities.SceneManager.Instance.LoadSceneRequest(current_scene));
         }
+
+        // Force update canvases, to ensure scene buttons have been properly added
+        Canvas.ForceUpdateCanvases();
+
+        // Fully scroll up
+        ScrollRect experimentsScrollRect = ExperimentButtonsContainer.GetComponentInParent<ScrollRect>();
+        experimentsScrollRect.verticalNormalizedPosition = 1f;
     }
 
     private void OnClickGo()
