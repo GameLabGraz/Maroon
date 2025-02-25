@@ -1,4 +1,5 @@
 ﻿using Maroon.GlobalEntities.ControlsManager;
+using Maroon.GlobalEntities.SettingsManager;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -32,6 +33,6 @@ public class scrMenuColumnControls : MonoBehaviour
     {
         // Convert slider value (betwenn 0 and 1) logarithmically to a mouse sensitvity value between min and max
         float mouseSensitivity = Mathf.Pow((MAX_MOUSE_SENSITIVITY / MIN_MOUSE_SENSITIVITY), sliderValue01) * MIN_MOUSE_SENSITIVITY;
-        ControlsManager.Instance.MouseSensitivity = mouseSensitivity;
+        SettingsManager.Instance.Settings.MouseSensitivity = mouseSensitivity;
     }
 }
