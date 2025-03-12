@@ -1,7 +1,7 @@
+using Maroon.Physics.Optics.Camera;
 using Maroon.Physics.Optics.TableObject;
 using Maroon.ReusableScripts.ExperimentParameters;
 using System.Collections.Generic;
-using static Maroon.Physics.Optics.Camera.CameraControls;
 
 namespace Maroon.Physics.Optics.Manager
 {

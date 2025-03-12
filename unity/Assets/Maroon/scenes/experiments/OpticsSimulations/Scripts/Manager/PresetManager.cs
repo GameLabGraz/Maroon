@@ -208,8 +208,8 @@ namespace Maroon.Physics.Optics.Manager
             {
                 presetNameTranslationKey = "Focal Length",
                 rayThickness = Constants.BaseRayThicknessInMM,
-                cameraSettingBaseView = new CameraControls.CameraSetting(new Vector3(-0.065f, 2.6f, 1.0f), Constants.BaseCamRot, 36),
-                cameraSettingTopView = new CameraControls.CameraSetting(new Vector3(-0.06f, 3, 2.1f), Constants.TopCamRot, 36),
+                cameraSettingBaseView = new CameraSetting(new Vector3(-0.065f, 2.6f, 1.0f), Constants.BaseCamRot, 36),
+                cameraSettingTopView = new CameraSetting(new Vector3(-0.06f, 3, 2.1f), Constants.TopCamRot, 36),
 
                 tableObjectParameters = new List<TableObjectParameters>()
                 {

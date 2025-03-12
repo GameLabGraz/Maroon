@@ -22,22 +22,7 @@ namespace Maroon.Physics.Optics.Camera
         private float _moveFactor;
         
         public bool IsTopView => isTopView;
-
-        [System.Serializable]
-        public struct CameraSetting
-        {
-            public SerializableVector3 Position;
-            public SerializableQuaternion Rotation;
-            public float FOV;
-
-            public CameraSetting(Vector3 position, Quaternion rotation, float fov)
-            {
-                Position = new SerializableVector3(position);
-                Rotation = new SerializableQuaternion(rotation);
-                FOV = fov;
-            }
-        }
-        
+                
         private void Start()
         {
             _cam = GetComponent<UnityEngine.Camera>();
