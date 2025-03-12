@@ -6,12 +6,21 @@ namespace Maroon.Physics.Optics.Camera
     [System.Serializable]
     public struct CameraSetting
     {
+        /// <summary>
+        /// The position of the camera.
+        /// </summary>
         public SerializableVector3 Position;
+        /// <summary>
+        /// The camera's rotation as Quaternion. If set, this value will override Rotation.
+        /// </summary>
         public SerializableQuaternion RotationQuaternion;
         /// <summary>
-        /// Rotation as Euler angles. If RotationQuaternion is set, this value will be overriden.
+        /// The camera's rotation as Euler angles. If RotationQuaternion is set, this value will be overriden.
         /// </summary>
         public SerializableVector3 Rotation;
+        /// <summary>
+        /// The field of view of the camera.
+        /// </summary>
         public float FOV;
 
         public CameraSetting(Vector3 position, Quaternion rotationQuaternion, float fov)
