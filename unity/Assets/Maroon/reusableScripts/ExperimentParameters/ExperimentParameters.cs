@@ -7,5 +7,9 @@ namespace Maroon.ReusableScripts.ExperimentParameters
     [System.Serializable]
     public abstract class ExperimentParameters
     {
+        // Called when the ExperimentParameters have been loaded
+        public virtual void OnLoaded()
+        {
+        }
     }
 }

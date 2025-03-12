@@ -13,5 +13,13 @@ namespace Maroon.Physics.Optics.Manager
         public CameraSetting cameraSettingBaseView;
         public CameraSetting cameraSettingTopView;
         public List<TableObjectParameters> tableObjectParameters;
+
+        public override void OnLoaded()
+        {
+            base.OnLoaded();
+
+            cameraSettingBaseView.CheckRotations();
+            cameraSettingTopView.CheckRotations();
+        }
     }
 }
