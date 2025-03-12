@@ -20,6 +20,11 @@ namespace Maroon.Physics.Optics.Manager
 
             cameraSettingBaseView.CheckRotations();
             cameraSettingTopView.CheckRotations();
+
+            foreach (TableObjectParameters top in tableObjectParameters)
+            {
+                top.CheckRotations();
+            }
         }
     }
 }
