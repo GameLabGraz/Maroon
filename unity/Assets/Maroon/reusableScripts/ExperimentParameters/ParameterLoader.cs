@@ -212,6 +212,7 @@ namespace Maroon.ReusableScripts.ExperimentParameters
             }
             else
             {
+                MostRecentParameters.OnLoaded();
                 Debug.Log("Successfully parsed ExperimentParameters: " + MostRecentParameters.GetType());
             }
             parametersLoaded?.Invoke(MostRecentParameters);
