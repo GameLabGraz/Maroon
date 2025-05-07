@@ -41,9 +41,9 @@ public class PC_DragHandler : MonoBehaviour
     public UnityEvent onDisabled;
     
     private bool _moving = false;
-    private Vector3 _lastMousePos = Vector3.zero;
     private bool _isOutsideBoundaries = false;
-    private float _distance;
+    private Vector3 _objectPostionAtDragStart;
+    private Vector3 _objectToMousePosOffsetAtDragStart;
 
     // Start is called before the first frame update
     void Start()
@@ -57,61 +57,72 @@ public class PC_DragHandler : MonoBehaviour
         maxBoundary = max.transform;
     }
 
+    private static Vector3 getMousePointOnPlaneParallelToCamera(Vector3 pointOnPlane)
+    {
+        Plane movementPlane = new Plane(Camera.main.transform.rotation * Vector3.back, pointOnPlane);
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        float planeIntersectionDistance = 0.0f;
+        movementPlane.Raycast(ray, out planeIntersectionDistance);
+        return ray.GetPoint(planeIntersectionDistance);
+    }
+
     private void OnMouseDown()
     {
         if(!movingObject.activeSelf) return;
         if (!Input.GetMouseButtonDown(0)) return;
         
-        var rb = GetComponent<Rigidbody>();
-        if(rb != null)
-        {
-            rb.isKinematic = true;
-        }
+        // var rb = GetComponent<Rigidbody>();
+        // if(rb != null)
+        // {
+        //     rb.isKinematic = true;
+        // }
 
         _moving = true;
+        _objectPostionAtDragStart = movingObject.transform.position;
+        _objectToMousePosOffsetAtDragStart = _objectPostionAtDragStart - getMousePointOnPlaneParallelToCamera(_objectPostionAtDragStart);
 
-        var main = Camera.main;
-        Debug.Assert(main != null);
-        _lastMousePos = Input.mousePosition;
-        _distance = Vector3.Distance( movingObject.transform.position, main.transform.position);
-        
         onStartedMoving.Invoke();
     }
     
     private void OnMouseDrag()
     {
-        if (!_moving || Vector3.Distance(_lastMousePos, Input.mousePosition) < 2f) return;
+        // Note(MartinR): Before merge, check why the distance-check was here, as it causes stuttering drag-and-drop on my Machine
+        // if (!_moving || Vector3.Distance(_lastMousePos, Input.mousePosition) < 2f) return;
+        if (!_moving) return;
 
-        _lastMousePos = Input.mousePosition;
-        var ray = Camera.main.ScreenPointToRay(_lastMousePos);
-        var pt = ray.GetPoint(_distance);
-        var pos = movingObject.transform.position;
+        // Calculate new Position based on Mouse-Pos
+        Plane movementPlane = new Plane(Camera.main.transform.rotation * Vector3.back, _objectPostionAtDragStart);
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        float planeIntersectionDistance = 0.0f;
+        bool intersectsPlane = movementPlane.Raycast(ray, out planeIntersectionDistance);
+        if (!intersectsPlane || planeIntersectionDistance <= 0) return;
+        var newPos = ray.GetPoint(planeIntersectionDistance) + _objectToMousePosOffsetAtDragStart;
 
-        if (!allowedXMovement) pt.x = pos.x;
-        if (!allowedYMovement) pt.y = pos.y;
-        if (!allowedZMovement) pt.z = pos.z;
-
+        // Apply Movement-Restrictions to new point
+        if (!allowedXMovement) newPos.x = _objectPostionAtDragStart.x;
+        if (!allowedYMovement) newPos.y = _objectPostionAtDragStart.y;
+        if (!allowedZMovement) newPos.z = _objectPostionAtDragStart.z;
         
+        // Check if point is outside of boundaries
         var outside = false;
         if (minBoundary != null && maxBoundary != null)
         {
             var minPosition = useLocalCoordinates ? minBoundary.localPosition : minBoundary.position;
             var maxPosition = useLocalCoordinates ? maxBoundary.localPosition : maxBoundary.position;
-            var checkPt = useLocalCoordinates? minBoundary.parent.InverseTransformPoint(pt) : pt;
+            var checkPos = useLocalCoordinates? minBoundary.parent.InverseTransformPoint(newPos) : newPos;
 
             Debug.Assert(minBoundary.parent == maxBoundary.parent);
-            if (allowedXMovement && (checkPt.x + 0.2f < Mathf.Min(minPosition.x, maxPosition.x)
-                                     || Mathf.Max(minPosition.x, maxPosition.x) < checkPt.x - 0.2f))
-                outside = true;
-            else if (allowedYMovement && (checkPt.y + 0.2f < Mathf.Min(minPosition.y, maxPosition.y) 
-                                          || Mathf.Max(minPosition.y, maxPosition.y) < checkPt.y - 0.2f))
-                outside = true;
-            else if (allowedZMovement && (checkPt.z + 0.2f < Mathf.Min(minPosition.z, maxPosition.z) 
-                                          || Mathf.Max(minPosition.z, maxPosition.z)  < checkPt.z - 0.2f))
-                outside = true;
+            Vector3 min = Vector3.Min(minPosition, maxPosition);
+            Vector3 max = Vector3.Max(minPosition, maxPosition);
+            const float tolerance = 0.2f; // Note(MartinR): Tolerance was here before, not sure why
+
+            outside = 
+                (allowedXMovement && checkPos.x + tolerance < min.x || checkPos.x - tolerance > max.x) ||
+                (allowedYMovement && checkPos.y + tolerance < min.y || checkPos.y - tolerance > max.y) ||
+                (allowedZMovement && checkPos.z + tolerance < min.z || checkPos.z - tolerance > max.z);
         }
 
-        // ReSharper disable once RedundantCheckBeforeAssignment
+        // Change material transparency if object was moved between inside/outside of boundaries
         if (outside != _isOutsideBoundaries)
         {
             _isOutsideBoundaries = outside;
@@ -128,7 +139,8 @@ public class PC_DragHandler : MonoBehaviour
             }
         }
         
-        movingObject.transform.position = pt;
+        // Set new position
+        movingObject.transform.position = newPos;
         onMove.Invoke();
     }
     
@@ -136,11 +148,11 @@ public class PC_DragHandler : MonoBehaviour
     {
         if (!Input.GetMouseButtonUp(0)) return;
         
-        var rb = GetComponent<Rigidbody>();
-        if(rb != null)
-        {
-            rb.isKinematic = false;
-        }
+        // var rb = GetComponent<Rigidbody>();
+        // if(rb != null)
+        // {
+        //     rb.isKinematic = false;
+        // }
 
         _moving = false;
         if (_isOutsideBoundaries) onEndMovingOutsideBoundaries.Invoke();
