@@ -51,33 +51,6 @@ namespace Maroon.Physics.Electromagnetism
         }
 
         /// <summary>
-        /// Gets the combined electric field at a given position
-        /// </summary>
-        /// <param name="position">The required position</param>
-        /// <returns>The electric field vector</returns>
-        public override Vector3 get(Vector3 position)
-        {
-            var field = Vector3.zero;
-            try
-            {
-                if (useCallback) producers = onGetProducers.Invoke();
-                
-                foreach (var producer in producers.Select(p => p.GetComponent<IGenerateE>()))
-                {
-                    if (producer != null && producer.Enabled)
-                    {
-                        field += producer.getE(position);
-                    }
-                }
-            }
-            catch
-            {
-                updateProducers();
-            }
-            return field;
-        }
-
-        /// <summary>
         /// Gets the combined electric field at a given position excluded the given EM object.
         /// </summary>
         /// <param name="position">The required position</param>
@@ -105,6 +78,17 @@ namespace Maroon.Physics.Electromagnetism
             }
             return field;
         }
+
+        /// <summary>
+        /// Gets the combined electric field at a given position
+        /// </summary>
+        /// <param name="position">The required position</param>
+        /// <returns>The electric field vector</returns>
+        public override Vector3 get(Vector3 position)
+        {
+            return get(position, null);
+        }
+
 
         public override float getStrength(Vector3 position)
         {
