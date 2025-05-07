@@ -46,6 +46,25 @@ namespace Maroon.Experiments.PlanetarySystem
             CheckCollisionsWithSun();
         }
 
+        private void Update()
+        {
+            HandleKeyInput();
+        }
+
+        #region KeyInput
+        /// <summary>
+        /// HandlesKeyInput during Update
+        /// toggle sunlight on key [L]
+        /// </summary>
+        private void HandleKeyInput()
+        {
+            if (Input.GetKeyDown(KeyCode.L))
+            {
+                toggleSunLight.isOn = !toggleSunLight.isOn;
+            }
+        }
+        #endregion KeyInput
+
 
         /// <summary>
         /// Initialize UI event listeners for toggle buttons
@@ -214,7 +233,6 @@ namespace Maroon.Experiments.PlanetarySystem
         /// <summary>
         /// ResetPlanetarySystemSimulation on reset and on StartPlanetarySystemSimulation
         /// </summary>
-
         public void ResetPlanetarySystemSimulation()
         {
             bool hide = false;

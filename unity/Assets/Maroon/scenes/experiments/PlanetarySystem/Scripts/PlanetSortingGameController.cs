@@ -12,33 +12,7 @@ namespace Maroon.Experiments.PlanetarySystem
         [SerializeField] private Light sunLight;
         [SerializeField] private ParticleSystem solarFlares;
         //---------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// HandleKeyInput sunlight 
-        /// </summary>
-        private void Update()
-        {
-            HandleKeyInput();
-        }
-
-
-        // HandlesKeyInput during Update
-        #region KeyInput
-        /// <summary>
-        /// HandlesKeyInput during Update
-        /// toggle sunlight                   on key [L]
-        /// </summary>
-        private void HandleKeyInput()
-        {
-            if (Input.GetKeyDown(KeyCode.L))
-            {
-                sunLight.gameObject.SetActive(!sunLight.gameObject.activeSelf);
-                // Sync the toggle button state with sunLight's state
-                ToggleSunLight(sunLight.gameObject.activeSelf);
-            }
-        }
-        #endregion KeyInput
-
+        
 
         // handles the SortingGame
         #region SortingGameSpawner
@@ -151,7 +125,6 @@ namespace Maroon.Experiments.PlanetarySystem
         /// <param name="isOn"></param>
         public void ToggleSunLight(bool isOn)
         {
-            //Debug.Log("PlanetSortingGameController(): UIToggleSunLight = " + !isOn);
             sunLight.gameObject.SetActive(isOn);
         }
         #endregion SGToggleFunctions
