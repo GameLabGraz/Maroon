@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class PointWaveSource : MonoBehaviour, IResetObject, IDeleteObject
+public class PointWaveSource : MonoBehaviour, IResetObject
 {
     [SerializeField]
     private PointWaveWaterPlane planeObject;

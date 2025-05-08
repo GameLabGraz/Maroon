@@ -19,12 +19,19 @@ namespace Maroon.Experiments.CoulombsLaw
         [SerializeField] private PC_InputParser_Float_TMP _textfieldPosZ;
 
         [SerializeField] private PC_Slider _electricChargeSlider;
+        [SerializeField] private PC_InputParser_Float_TMP _electricChargeTextField;
         [SerializeField] private Button _buttonAddDeleteParticle;
         [SerializeField] private LocalizedTMP _buttonAddDeleteParticleText;
 
         private void Start()
         {
             UpdateAddDeleteButtonText();
+
+            float max_charge = ChargedParticle.MAX_ABSOLUTE_CHARGE * 1e6f; // Units in UI are in micro-Coulomb 
+            _electricChargeSlider.maxValue = max_charge;
+            _electricChargeSlider.minValue = -max_charge;
+            _electricChargeTextField.maximum = max_charge; 
+            _electricChargeTextField.minimum = -max_charge; 
 
             _textfieldPosX?.onValueChangedFloat.AddListener((endVal) =>
             {
@@ -60,7 +67,7 @@ namespace Maroon.Experiments.CoulombsLaw
                     var pos = new Vector3(_textfieldPosX.GetValue(), _textfieldPosY.GetValue(), _textfieldPosZ.GetValue());
                     pos = CoordSystemHandler.Instance.GetWorldPosition(pos);
                     var particle = GameObject.Instantiate(particlePrefab, pos, Quaternion.identity);
-                    particle.electricCharge = _electricChargeSlider.value;
+                    particle.electricCharge = _electricChargeSlider.value * 1e-6f; // Slider shows Value in micro-coulomb, and particle stores coulomb
                     particle.UpdateParticleColor();
                 }
                 UpdateAddDeleteButtonText();
@@ -98,7 +105,7 @@ namespace Maroon.Experiments.CoulombsLaw
             // Update Charge slider
             if (selectedParticle != null)
             {
-                _electricChargeSlider.value = selectedParticle.electricCharge;
+                _electricChargeSlider.value = selectedParticle.electricCharge * 1e6f;
             }
         }
 
@@ -111,7 +118,7 @@ namespace Maroon.Experiments.CoulombsLaw
         {
             if (selectedParticle == null) return;
 
-            var systemPos = CoordSystemHandler.Instance.GetSystemPosition(selectedParticle.transform.position, Unit.µm);
+            var systemPos = CoordSystemHandler.Instance.GetSystemPosition(selectedParticle.transform.position, Unit.m);
             _textfieldPosX.SetValue(systemPos.x);
             _textfieldPosY.SetValue(systemPos.y);
             _textfieldPosZ.SetValue(systemPos.z);

@@ -38,15 +38,17 @@ namespace Maroon.Experiments.CoulombsLaw
             }
         }
 
-        private void Start()
+        protected override void Start()
         {
+            base.Start();
+
             ChargeValue = _chargeValueSlider.value;
             _chargeValueSlider.onValueChanged.AddListener((newValue) => ChargeValue = newValue);
         }
 
         protected override void ShowObject(Vector3 position, Transform parent)
         {
-            var particle = Instantiate(particlePrefab, position, Quaternion.identity);
+            var particle = Instantiate(particlePrefab, position + Vector3.back * (ChargedParticle.RADIUS + 0.01f), Quaternion.identity);
             particle.electricCharge = ChargeValue;
             particle.UpdateParticleColor();
         }

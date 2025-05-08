@@ -18,7 +18,7 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
     private GameObject _item;
     private Transform _parent;
 
-    protected void Start()
+    protected virtual void Start()
     {
         if (childObject == null)
             childObject = generatedObject;
