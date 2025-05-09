@@ -7,25 +7,38 @@ namespace Maroon.Experiments.CoulombsLaw
     // Note(MartinR):
     // In previous Versions the Particles/Spheres in CoulombsExperiment were handled by
     // different classes, namely: CoulombChargeBehavior, then Charge, and in the newest version this class is used
-    public class ChargedParticle : MonoBehaviour, IGenerateE
+    public class ChargedParticle : Maroon.Physics.PausableObject, IGenerateE
     {
-        public const float MAX_ABSOLUTE_CHARGE = 1e-6f; // Current max is 1 mikro coulomb
-        public const float RADIUS = 0.05f; // In unity units
+        public const float MAX_ABSOLUTE_CHARGE = 5e-6f; // In Coulomb, current max is 1 mikro coulomb
+        public const float RADIUS = 0.05f; // In unity units (World units)
         public float electricCharge = 0.0f; // In Coulomb
 
         [SerializeField] private PC_DragHandler _dragHandler = null; 
         private Maroon.Physics.Electromagnetism.EField _eField = null;
 
+        // @TODO(MartinR):
+        // Using the CoordSystem causes some problems for calculation, as GetSystemPosition
+        // returns values in Axis Units, which may not be in meters, but rather cm in the Coulombs Law experiment.
+        // This causes problems in the calculation, as the strength is affected by distance _squared_, so the unit prefix matters.
+        // And it's also not possible to just get the coordinates in meters, because the position parameter in getE is also in local values.
+        // I generally don't get why CoordAxis returns Values in Subdivision Units, and not in LocalLength units (See properties of CoordAxis)
+        // As a quick and dirty fix, I just assume that the CoordinateSystem is uniformly scaled and not rotated, and do the correct conversion manually.
+        private float _localToMeterScaleFactor = 1.0f;
+        private float _meterToWorldScaleFactor = 1.0f;
+
         // IGenerateE
         public bool Enabled { get; set; } = true;
 
-        private void Start()
+        protected override void Start()
         {
-            // base.Start();
+            base.Start();
 
+            var coordSystem = Maroon.GlobalEntities.CoordSystemHandler.Instance;
+            _localToMeterScaleFactor = Mathf.Pow(10, (int) coordSystem.GetSubdivisionUnits()[0]);
+            _meterToWorldScaleFactor = 2.25f / 2.0f; // Note(MartinR): Hardcoded values for CoulombsLaw experiment
+
+            // Update Drag Handler
             _dragHandler.onEndMovingOutsideBoundaries.AddListener( () => { GameObject.Destroy(gameObject); } );
-
-            // Set Drag Handler boundary
             var maxBoundary = GameObject.Find("MaxBoundary");
             var minBoundary = GameObject.Find("MinBoundary");
             if (maxBoundary != null && minBoundary != null)
@@ -34,14 +47,16 @@ namespace Maroon.Experiments.CoulombsLaw
                 _dragHandler.maxBoundary = maxBoundary.transform;
             }
 
-            // Register this Particle in EField as Producer
+            // Register Particle in EField (OnDestroy removs it from EField, so we can just use DestroyObject to remove Particles)
             _eField = FindObjectOfType<Maroon.Physics.Electromagnetism.EField>();
-            if (_eField == null)
+            if (_eField != null)
+            {
+                _eField.AddProducerToSet(gameObject);
+            }
+            else
             {
                 Debug.LogError("No efield found after Particle Instanciation, so particle won't do anything!");
-                return;
             }
-            _eField.AddProducerToSet(gameObject);
         }
 
         private void OnDestroy()
@@ -86,21 +101,14 @@ namespace Maroon.Experiments.CoulombsLaw
         {
             var coordSystem = Maroon.GlobalEntities.CoordSystemHandler.Instance;
             var direction = position - coordSystem.GetSystemPosition(transform.position);
-            // Note(MartinR): To get the corrects units for the E-Field, we need to use meters in our calculation
-            var unit = coordSystem.GetSubdivisionUnits()[0];
-            var distanceInMeters = direction.magnitude * Mathf.Pow(10, -(int)unit); 
+            float distanceInMeter = direction.magnitude * _localToMeterScaleFactor;
             direction = direction.normalized;
 
-            // Find Sphere radius in coord system, TODO(MartinR): There has to be a better way to do this
-            var diff = 
-                coordSystem.GetSystemPosition(new Vector3(RADIUS, RADIUS, RADIUS), Physics.CoordinateSystem.Unit.m) -
-                coordSystem.GetSystemPosition(Vector3.zero, Physics.CoordinateSystem.Unit.m);
-            float radiusInCoordSystem = Mathf.Max(diff.z, Mathf.Max(diff.x, diff.y));
-
             // Clamp Strength to sphere-radius, which avoids division by 0 and makes force not explode on overlapping particles
-            distanceInMeters = Mathf.Max(distanceInMeters, radiusInCoordSystem);
+            distanceInMeter = Mathf.Max(distanceInMeter, RADIUS / _meterToWorldScaleFactor);
 
-            return direction * electricCharge * CoulombConstant /  (distanceInMeters * distanceInMeters);
+            // Coulombs Law calculation (Unit Newton/Coulomb, [N/C])
+            return direction * electricCharge * CoulombConstant /  (distanceInMeter * distanceInMeter);
         }
 
         public float getEPotential(Vector3 position)
@@ -122,29 +130,23 @@ namespace Maroon.Experiments.CoulombsLaw
         // ------------------------------
         // Pausable Object Implementation
         // ------------------------------
-        private void Update() {}
+        protected override void HandleUpdate() {}
 
-        private void FixedUpdate()
+        protected override void HandleFixedUpdate()
         {
             if (_eField == null) return;
 
             var coordSystem = Maroon.GlobalEntities.CoordSystemHandler.Instance;
             var pos = coordSystem.GetSystemPosition(transform.position);
-            var fieldValue = _eField.get(pos, gameObject); // In [Newton/Coulomb]
-            var force = fieldValue * electricCharge;
+            var fieldValue = _eField.get(coordSystem.GetSystemPosition(transform.position), gameObject); // In [Newton/Coulomb]
+
             // TODO(MartinR): Force needs to be converted from simulation position to world position,
-            // but we only need scale + rotation, but no translation, as this will add a constant offset to force...
-
-            // For debugging, add a constant acceleration towards target
-            force = fieldValue.normalized * 10;
-            force = Vector3.left * 10;
-
-            var rigidBody = GetComponent<Rigidbody>();
-            if (Input.GetKey(KeyCode.V) && rigidBody != null)
-            {
-                rigidBody.AddForce(force, ForceMode.Acceleration); // Assuming mass = 1kg
-            }
+            // but we cannot use coordSystem.GetWorldPosition, because only need scaling + rotation,
+            // without translation, as this will add a constant offset to force...
+            // See comment at the start of this file 
+            var forceInSystemScale = fieldValue * electricCharge;
+            var force = forceInSystemScale * _meterToWorldScaleFactor;
+            _rigidBody.AddForce(force, ForceMode.Force);
         }
-
     }
 }

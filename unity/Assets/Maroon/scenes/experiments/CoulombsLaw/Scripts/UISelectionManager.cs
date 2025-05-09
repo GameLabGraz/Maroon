@@ -77,32 +77,50 @@ namespace Maroon.Experiments.CoulombsLaw
         // Update checks if we clicked on a charged particle (Raycasts the scene), and updates the X/Y/Z labels if position has changed
         private void Update()
         {
-            // Check if we clicked on a Particle
+            // Check for mouse-clicks, and update selection accordingly
             if (Input.GetMouseButtonDown(0))
             {
+                // Check if we clicked on particle, and update selection if we did
                 Camera cam = Camera.main;
                 Ray ray = cam.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hitInfo;
+                bool raycastHitParticle = false;
                 if (UnityEngine.Physics.Raycast(ray, out hitInfo))
                 {
                     var hitObject = hitInfo.collider.gameObject;
                     var clickedParticle = hitObject.GetComponent<ChargedParticle>();
-                    if (hitObject.tag == "DeselectBoundary")
+                    if (clickedParticle != null)
                     {
-                        // Note(MartinR): We currently only deselect particles if we click on the whiteboard
-                        selectedParticle = null;
-                    }
-                    else if (clickedParticle != null)
-                    {
+                        raycastHitParticle = true;
                         selectedParticle = clickedParticle;
                     }
                 }
+
+                // Find out if we clicked on UI (Don't deselect the selected charge if we clicked on UI)
+                bool clickedOnUIElement = false;
+                {
+                    // Note(MartinR): There may be a better way to do this, but for now we raycast the UI to check if we hit anything
+                    var eventSystem = UnityEngine.EventSystems.EventSystem.current;
+                    var eventData = new UnityEngine.EventSystems.PointerEventData(eventSystem);
+                    eventData.position = Input.mousePosition;
+                    var results = new System.Collections.Generic.List<UnityEngine.EventSystems.RaycastResult>();
+                    eventSystem.RaycastAll(eventData, results);
+                    if (results.Count > 0)
+                    {
+                        clickedOnUIElement = true;
+                    }
+                }
+
+                // Deselect current particle if we clicked on something else that wasn't UI
+                if (!raycastHitParticle && !clickedOnUIElement)
+                {
+                    selectedParticle = null;
+                }
             }
 
+            // Update UI elements based on current selection
             UpdatePositionText();
             UpdateAddDeleteButtonText();
-
-            // Update Charge slider
             if (selectedParticle != null)
             {
                 _electricChargeSlider.value = selectedParticle.electricCharge * 1e6f;

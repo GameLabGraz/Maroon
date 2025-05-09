@@ -44,11 +44,14 @@ public class PC_DragHandler : MonoBehaviour
     private bool _isOutsideBoundaries = false;
     private Vector3 _objectPostionAtDragStart;
     private Vector3 _objectToMousePosOffsetAtDragStart;
+    private bool _wasKinematicAtDragStart = false;
 
     // Start is called before the first frame update
     void Start()
     {
         if (movingObject == null) movingObject = gameObject;
+
+        var rb = GetComponent<Rigidbody>();
     }
     
     public void SetBoundaries(GameObject min, GameObject max)
@@ -71,11 +74,12 @@ public class PC_DragHandler : MonoBehaviour
         if(!movingObject.activeSelf) return;
         if (!Input.GetMouseButtonDown(0)) return;
         
-        // var rb = GetComponent<Rigidbody>();
-        // if(rb != null)
-        // {
-        //     rb.isKinematic = true;
-        // }
+        var rb = GetComponent<Rigidbody>();
+        if(rb != null)
+        {
+            _wasKinematicAtDragStart = rb.isKinematic;
+            rb.isKinematic = true;
+        }
 
         _moving = true;
         _objectPostionAtDragStart = movingObject.transform.position;
@@ -86,7 +90,7 @@ public class PC_DragHandler : MonoBehaviour
     
     private void OnMouseDrag()
     {
-        // Note(MartinR): Before merge, check why the distance-check was here, as it causes stuttering drag-and-drop on my Machine
+        // Note(MartinR): Before merge, check why the distance-check was here, as it causes stuttering durign drag-and-drop on my Machine
         // if (!_moving || Vector3.Distance(_lastMousePos, Input.mousePosition) < 2f) return;
         if (!_moving) return;
 
@@ -148,11 +152,11 @@ public class PC_DragHandler : MonoBehaviour
     {
         if (!Input.GetMouseButtonUp(0)) return;
         
-        // var rb = GetComponent<Rigidbody>();
-        // if(rb != null)
-        // {
-        //     rb.isKinematic = false;
-        // }
+        var rb = GetComponent<Rigidbody>();
+        if(rb != null && !_wasKinematicAtDragStart)
+        {
+            rb.isKinematic = false;
+        }
 
         _moving = false;
         if (_isOutsideBoundaries) onEndMovingOutsideBoundaries.Invoke();
