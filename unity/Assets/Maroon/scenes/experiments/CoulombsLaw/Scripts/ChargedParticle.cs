@@ -7,7 +7,7 @@ namespace Maroon.Experiments.CoulombsLaw
     // Note(MartinR):
     // In previous Versions the Particles/Spheres in CoulombsExperiment were handled by
     // different classes, namely: CoulombChargeBehavior, then Charge, and in the newest version this class is used
-    public class ChargedParticle : Maroon.Physics.PausableObject, IGenerateE
+    public class ChargedParticle : MonoBehaviour, IGenerateE
     {
         public const float MAX_ABSOLUTE_CHARGE = 5e-6f; // In Coulomb, current max is 1 mikro coulomb
         public const float RADIUS = 0.05f; // In unity units (World units)
@@ -15,6 +15,8 @@ namespace Maroon.Experiments.CoulombsLaw
 
         [SerializeField] private PC_DragHandler _dragHandler = null; 
         private Maroon.Physics.Electromagnetism.EField _eField = null;
+        private SimulationController _simulationController = null;
+        private Rigidbody _rigidBody = null;
 
         // @TODO(MartinR):
         // Using the CoordSystem causes some problems for calculation, as GetSystemPosition
@@ -26,13 +28,41 @@ namespace Maroon.Experiments.CoulombsLaw
         private float _localToMeterScaleFactor = 1.0f;
         private float _meterToWorldScaleFactor = 1.0f;
 
+        private Vector3 _positionAtSimulationStart;
+
         // IGenerateE
         public bool Enabled { get; set; } = true;
 
-        protected override void Start()
+        private void Start()
         {
-            base.Start();
+            _positionAtSimulationStart = transform.position;
+            _simulationController = SimulationController.Instance;
+            _rigidBody = GetComponent<Rigidbody>();
 
+            // Register Simulation Start/Stop/Reset Handlers
+            // Note(MartinR): I'm specifically not using the PausableObject class, because Particles in the CoulombsLaw Experiment
+            //      can be edited/moved while the simulation is paused, which leads to inconsistent Behaviour with PausableObject
+            //      (e.g. particles resetting to different positions depending if they were edited...)
+            // Also currently velocity is not stored between start/stop presses, not sure if this is wanted without a way to edit/view velocity
+            if (_simulationController != null && _rigidBody != null)
+            {
+                _simulationController.onStartRunning.AddListener(() =>
+                {
+                    _rigidBody.isKinematic = false;
+                    _positionAtSimulationStart = transform.position;
+                });
+                _simulationController.onStopRunning.AddListener(() =>
+                {
+                    _rigidBody.isKinematic = true;
+                });
+                _simulationController.OnReset.AddListener(() =>
+                {
+                    _rigidBody.isKinematic = true;
+                    transform.position = _positionAtSimulationStart;
+                });
+            }
+
+            // Calculate Conversion-Factors between Unity-Coordinates and CoordSystem
             var coordSystem = Maroon.GlobalEntities.CoordSystemHandler.Instance;
             _localToMeterScaleFactor = Mathf.Pow(10, (int) coordSystem.GetSubdivisionUnits()[0]);
             _meterToWorldScaleFactor = 2.25f / 2.0f; // Note(MartinR): Hardcoded values for CoulombsLaw experiment
@@ -99,8 +129,11 @@ namespace Maroon.Experiments.CoulombsLaw
 
         public Vector3 getE(Vector3 position)
         {
+            var chargePos = transform.position;
+            chargePos.z = 0.0f; // 2D mode
+
             var coordSystem = Maroon.GlobalEntities.CoordSystemHandler.Instance;
-            var direction = position - coordSystem.GetSystemPosition(transform.position);
+            var direction = position - coordSystem.GetSystemPosition(chargePos);
             float distanceInMeter = direction.magnitude * _localToMeterScaleFactor;
             direction = direction.normalized;
 
@@ -127,18 +160,15 @@ namespace Maroon.Experiments.CoulombsLaw
             return electricCharge;
         }
 
-        // ------------------------------
-        // Pausable Object Implementation
-        // ------------------------------
-        protected override void HandleUpdate() {}
-
-        protected override void HandleFixedUpdate()
+        private void FixedUpdate()
         {
-            if (_eField == null) return;
+            if (_simulationController == null || _eField == null || _rigidBody == null) return;
+            if (!_simulationController.SimulationRunning) return;
 
             var coordSystem = Maroon.GlobalEntities.CoordSystemHandler.Instance;
-            var pos = coordSystem.GetSystemPosition(transform.position);
-            var fieldValue = _eField.get(coordSystem.GetSystemPosition(transform.position), gameObject); // In [Newton/Coulomb]
+            var pos = transform.position;
+            pos.z = 0.0f;
+            var fieldValue = _eField.get(coordSystem.GetSystemPosition(pos), gameObject); // In [Newton/Coulomb]
 
             // TODO(MartinR): Force needs to be converted from simulation position to world position,
             // but we cannot use coordSystem.GetWorldPosition, because only need scaling + rotation,

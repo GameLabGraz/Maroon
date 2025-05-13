@@ -118,7 +118,8 @@ public class PC_DragHandler : MonoBehaviour
             Debug.Assert(minBoundary.parent == maxBoundary.parent);
             Vector3 min = Vector3.Min(minPosition, maxPosition);
             Vector3 max = Vector3.Max(minPosition, maxPosition);
-            const float tolerance = 0.2f; // Note(MartinR): Tolerance was here before, not sure why
+            // Note(MartinR): Tolerance was previously 0.2f, not sure where/why this was used
+            const float tolerance = 0.0f;
 
             outside = 
                 (allowedXMovement && checkPos.x + tolerance < min.x || checkPos.x - tolerance > max.x) ||

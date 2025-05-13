@@ -85,6 +85,7 @@ namespace Maroon.Experiments.CoulombsLaw
                 Ray ray = cam.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hitInfo;
                 bool raycastHitParticle = false;
+                LayerMask mask = new LayerMask();
                 if (UnityEngine.Physics.Raycast(ray, out hitInfo))
                 {
                     var hitObject = hitInfo.collider.gameObject;
