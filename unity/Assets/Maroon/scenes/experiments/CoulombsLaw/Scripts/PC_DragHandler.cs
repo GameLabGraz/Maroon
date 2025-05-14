@@ -9,7 +9,11 @@ public class PC_DragHandler : MonoBehaviour
     public GameObject movingObject;
     
     [Tooltip("If used in conjunction with arrowMovement, this reference should be set")]
-    public PC_ArrowMovement arrowMovement = null; 
+    [SerializeField] private PC_ArrowMovement _arrowMovement = null; 
+
+    [Tooltip("For dragging physics objects, the rigidBody reference should be set to avoid interpolation problems")]
+    [SerializeField] private Rigidbody _rigidBody = null; 
+    private bool _wasKinematicAtDragStart = false;
 
     [Header("Movement Restrictions")]
     public Transform minBoundary;
@@ -44,14 +48,11 @@ public class PC_DragHandler : MonoBehaviour
     private bool _isOutsideBoundaries = false;
     private Vector3 _objectPostionAtDragStart;
     private Vector3 _objectToMousePosOffsetAtDragStart;
-    private bool _wasKinematicAtDragStart = false;
 
     // Start is called before the first frame update
     void Start()
     {
         if (movingObject == null) movingObject = gameObject;
-
-        var rb = GetComponent<Rigidbody>();
     }
     
     public void SetBoundaries(GameObject min, GameObject max)
@@ -73,17 +74,16 @@ public class PC_DragHandler : MonoBehaviour
     {
         if(!movingObject.activeSelf) return;
 
-        if (arrowMovement != null)
+        if (_arrowMovement != null)
         {
-            arrowMovement.OnChildMouseDown();
-            if (arrowMovement.IsDragActive()) return;
+            _arrowMovement.OnChildMouseDown();
+            if (_arrowMovement.IsDragActive()) return;
         }
         
-        var rb = GetComponent<Rigidbody>();
-        if(rb != null)
+        if(_rigidBody != null)
         {
-            _wasKinematicAtDragStart = rb.isKinematic;
-            rb.isKinematic = true;
+            _wasKinematicAtDragStart = _rigidBody.isKinematic;
+            _rigidBody.isKinematic = true;
         }
 
         _moving = true;
@@ -95,9 +95,9 @@ public class PC_DragHandler : MonoBehaviour
     
     private void OnMouseDrag()
     {
-        if (arrowMovement != null && arrowMovement.IsDragActive())
+        if (_arrowMovement != null && _arrowMovement.IsDragActive())
         {
-            arrowMovement.OnChildMouseDrag();
+            _arrowMovement.OnChildMouseDrag();
             return;
         }
 
@@ -126,9 +126,9 @@ public class PC_DragHandler : MonoBehaviour
             const float tolerance = 0.0f;
 
             outside = 
-                (allowedXMovement && checkPos.x + tolerance < min.x || checkPos.x - tolerance > max.x) ||
-                (allowedYMovement && checkPos.y + tolerance < min.y || checkPos.y - tolerance > max.y) ||
-                (allowedZMovement && checkPos.z + tolerance < min.z || checkPos.z - tolerance > max.z);
+                (allowedXMovement && (checkPos.x + tolerance < min.x || checkPos.x - tolerance > max.x)) ||
+                (allowedYMovement && (checkPos.y + tolerance < min.y || checkPos.y - tolerance > max.y)) ||
+                (allowedZMovement && (checkPos.z + tolerance < min.z || checkPos.z - tolerance > max.z));
         }
 
         // Change material transparency if object was moved between inside/outside of boundaries
@@ -149,22 +149,30 @@ public class PC_DragHandler : MonoBehaviour
         }
         
         // Set new position
-        movingObject.transform.position = newPos;
+        if (_rigidBody != null)
+        {
+            // Note(MartinR): Just setting transform.position causes problems when Physics interpolation is enabled.
+            //      _rigidBody.MovePosition also does not seem to do the trick, I guess because it is expected to be called during FixedUpdate?
+            _rigidBody.position = newPos;
+        }
+        else
+        {
+            movingObject.transform.position = newPos;
+        }
         onMove.Invoke();
     }
     
     private void OnMouseUp()
     {
-        if (arrowMovement != null && arrowMovement.IsDragActive())
+        if (_arrowMovement != null && _arrowMovement.IsDragActive())
         {
-            arrowMovement.OnChildMouseUp();
+            _arrowMovement.OnChildMouseUp();
             return;
         }
         
-        var rb = GetComponent<Rigidbody>();
-        if(rb != null && !_wasKinematicAtDragStart)
+        if(_rigidBody != null && !_wasKinematicAtDragStart)
         {
-            rb.isKinematic = false;
+            _rigidBody.isKinematic = false;
         }
 
         _moving = false;
@@ -178,7 +186,6 @@ public class PC_DragHandler : MonoBehaviour
         allowedYMovement = allowY;
         allowedZMovement = allowZ;
     }
-
 
     private void OnDisable()
     {

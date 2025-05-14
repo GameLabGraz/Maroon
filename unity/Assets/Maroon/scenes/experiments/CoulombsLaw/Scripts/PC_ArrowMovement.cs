@@ -10,6 +10,10 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
     public GameObject movingObject = null;
     public bool useMovementOffset = true;
 
+    [Tooltip("For dragging physics objects, the rigidBody reference should be set to avoid interpolation problems")]
+    [SerializeField] private Rigidbody _rigidBody = null; 
+    private bool _wasKinematicAtDragStart = false;
+
     [Header("Restrictions")]
     public bool restrictXMovement = false;
     public bool restrictYMovement = false;
@@ -139,6 +143,12 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
             _movingDirection = Vector3.forward;
         else return;
         
+        if(_rigidBody != null)
+        {
+            _wasKinematicAtDragStart = _rigidBody.isKinematic;
+            _rigidBody.isKinematic = true;
+        }
+
         DrawMovingLines(_movingDirection);
         
         _moving = true;
@@ -213,13 +223,29 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
                 pt.z = Mathf.Clamp(pt.z, _localMinBoundary.z, _localMaxBoundary.z);
         }
 
-        movingObject.transform.localPosition =  pt;
+        if (_rigidBody != null)
+        {
+            // Note(MartinR): Just setting transform.position causes problems when Physics interpolation is enabled.
+            //      _rigidBody.MovePosition also does not seem to do the trick, I guess because it is expected to be called during FixedUpdate?
+            var globalPos = movingObject.transform.parent.transform.TransformPoint(pt);
+            _rigidBody.position = globalPos;
+        }
+        else
+        {
+            movingObject.transform.localPosition = pt;
+        }
         OnMove.Invoke();
     }
 
     public void OnChildMouseUp()
     {
         if (!_moving) return;
+
+        if(_rigidBody != null && !_wasKinematicAtDragStart)
+        {
+            _rigidBody.isKinematic = false;
+        }
+
         _moving = false;
         _movingDirection = Vector3.zero;
         if (_lineRenderer && _lineRenderer.enabled) _lineRenderer.enabled = false;

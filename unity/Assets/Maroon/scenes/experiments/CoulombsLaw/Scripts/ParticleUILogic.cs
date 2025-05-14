@@ -13,6 +13,12 @@ namespace Maroon.Experiments.CoulombsLaw
         private ChargedParticle selectedParticle = null;
         [SerializeField] private ChargedParticle particlePrefab = null;
         [SerializeField] private Transform _particleParentObject = null;
+        [SerializeField] private GameObject _selectionHighlightMarker = null;
+        [SerializeField] private Transform _minBoundary = null;
+        [SerializeField] private Transform _maxBoundary = null;
+        [SerializeField] private Color _selectionColor;
+        [SerializeField] private Color _outOfBoundsSelectionColor;
+        [Range(1.0f, 1.5f)] [SerializeField] private float _selectionScaleMultiplier = 1.2f;
 
         // UI-Element References
         [SerializeField] private PC_InputParser_Float_TMP _textfieldPosX; 
@@ -135,6 +141,23 @@ namespace Maroon.Experiments.CoulombsLaw
                 _electricChargeSlider.value = selectedParticle.electricCharge * 1e6f;
                 _fixPositionToggle.isOn = selectedParticle.GetFixPosition();
             }
+        }
+
+        private void LateUpdate()
+        {
+            // Update highlight marker position when a particle is selected
+            _selectionHighlightMarker.SetActive(selectedParticle != null);
+            if (selectedParticle == null) return;
+
+            Vector3 pos = selectedParticle.transform.position;
+            Vector3 max = Vector3.Max(_minBoundary.position, _maxBoundary.position);
+            Vector3 min = Vector3.Min(_minBoundary.position, _maxBoundary.position);
+            bool outsideBounds = pos.x < min.x || pos.y < min.y || pos.x > max.x || pos.y > max.y;
+            _selectionHighlightMarker.GetComponent<SpriteRenderer>().color = outsideBounds ? _outOfBoundsSelectionColor : _selectionColor;
+
+            float scale = ChargedParticle.RADIUS * _selectionScaleMultiplier * 2;
+            _selectionHighlightMarker.transform.localScale = new Vector3(scale, scale, scale);
+            _selectionHighlightMarker.transform.position = selectedParticle.transform.position;
         }
 
         private void UpdateAddDeleteButtonText()
