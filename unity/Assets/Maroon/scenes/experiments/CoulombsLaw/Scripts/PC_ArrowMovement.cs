@@ -77,6 +77,7 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
         //Needed for resetting later
         _originalPosition = movingObject.transform.position;
         UpdateMovementRestriction();
+        ChangeRunMode();
     }
 
     // Update is called once per frame
@@ -121,7 +122,7 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
                     !SimulationController.Instance.SimulationRunning || hideWhileInRunMode && _arrowXPositive.GetComponent<Collider>().enabled;
     }
     
-    public void OnChildMouseDown(GameObject child)
+    public void OnChildMouseDown()
     {
         if (_moving) return;
         
@@ -242,5 +243,10 @@ public class PC_ArrowMovement : MonoBehaviour, IResetWholeObject
     public void ResetWholeObject()
     {
         if (resetOnWholeReset) movingObject.transform.position = _originalPosition;
+    }
+
+    public bool IsDragActive()
+    {
+        return _moving;
     }
 }

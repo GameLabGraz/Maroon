@@ -7,11 +7,12 @@ using UnityEngine.UI;
 
 namespace Maroon.Experiments.CoulombsLaw
 {
-    public class UISelectionManager : MonoBehaviour 
+    public class ParticleUILogic : MonoBehaviour 
     {
         // Selection Data
         private ChargedParticle selectedParticle = null;
         [SerializeField] private ChargedParticle particlePrefab = null;
+        [SerializeField] private Transform _particleParentObject = null;
 
         // UI-Element References
         [SerializeField] private PC_InputParser_Float_TMP _textfieldPosX; 
@@ -22,6 +23,7 @@ namespace Maroon.Experiments.CoulombsLaw
         [SerializeField] private PC_InputParser_Float_TMP _electricChargeTextField;
         [SerializeField] private Button _buttonAddDeleteParticle;
         [SerializeField] private LocalizedTMP _buttonAddDeleteParticleText;
+        [SerializeField] private Toggle _fixPositionToggle;
 
         private void Start()
         {
@@ -31,7 +33,13 @@ namespace Maroon.Experiments.CoulombsLaw
             _electricChargeSlider.maxValue = max_charge;
             _electricChargeSlider.minValue = -max_charge;
             _electricChargeTextField.maximum = max_charge; 
-            _electricChargeTextField.minimum = -max_charge; 
+            _electricChargeTextField.minimum = -max_charge;
+            _fixPositionToggle.isOn = false;
+
+            _fixPositionToggle.onValueChanged.AddListener((fixPosition) =>
+            {
+                if (selectedParticle != null) selectedParticle.SetFixPosition(fixPosition);
+            });
 
             _textfieldPosX?.onValueChangedFloat.AddListener((endVal) =>
             {
@@ -66,8 +74,9 @@ namespace Maroon.Experiments.CoulombsLaw
                 {
                     var pos = new Vector3(_textfieldPosX.GetValue(), _textfieldPosY.GetValue(), _textfieldPosZ.GetValue());
                     pos = CoordSystemHandler.Instance.GetWorldPosition(pos);
-                    var particle = GameObject.Instantiate(particlePrefab, pos, Quaternion.identity);
+                    var particle = GameObject.Instantiate(particlePrefab, pos, Quaternion.identity, _particleParentObject);
                     particle.electricCharge = _electricChargeSlider.value * 1e-6f; // Slider shows Value in micro-coulomb, and particle stores coulomb
+                    particle.SetFixPosition(_fixPositionToggle.isOn);
                     particle.UpdateParticleColor();
                 }
                 UpdateAddDeleteButtonText();
@@ -77,7 +86,7 @@ namespace Maroon.Experiments.CoulombsLaw
         // Update checks if we clicked on a charged particle (Raycasts the scene), and updates the X/Y/Z labels if position has changed
         private void Update()
         {
-            // Check for mouse-clicks, and update selection accordingly
+            // Check if we selected/deselected a Particle
             if (Input.GetMouseButtonDown(0))
             {
                 // Check if we clicked on particle, and update selection if we did
@@ -85,7 +94,6 @@ namespace Maroon.Experiments.CoulombsLaw
                 Ray ray = cam.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hitInfo;
                 bool raycastHitParticle = false;
-                LayerMask mask = new LayerMask();
                 if (UnityEngine.Physics.Raycast(ray, out hitInfo))
                 {
                     var hitObject = hitInfo.collider.gameObject;
@@ -125,6 +133,7 @@ namespace Maroon.Experiments.CoulombsLaw
             if (selectedParticle != null)
             {
                 _electricChargeSlider.value = selectedParticle.electricCharge * 1e6f;
+                _fixPositionToggle.isOn = selectedParticle.GetFixPosition();
             }
         }
 

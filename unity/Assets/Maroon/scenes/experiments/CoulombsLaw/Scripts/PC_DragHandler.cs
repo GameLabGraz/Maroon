@@ -8,6 +8,9 @@ public class PC_DragHandler : MonoBehaviour
     [Tooltip("The object that will move. If empty, the object where this script is attached will be moved.")]
     public GameObject movingObject;
     
+    [Tooltip("If used in conjunction with arrowMovement, this reference should be set")]
+    public PC_ArrowMovement arrowMovement = null; 
+
     [Header("Movement Restrictions")]
     public Transform minBoundary;
     public Transform maxBoundary;
@@ -22,9 +25,6 @@ public class PC_DragHandler : MonoBehaviour
     public List<GameObject> changeMaterialIfOutside;
     [Tooltip("The materials must support transparency for this.")]
     public float outsideTransparency = 0.7f;
-
-    [Header("Additional Object References")]
-    public PC_ArrowMovement ArrowMovement = null;
     
     [Header("Events")]
     [Tooltip("Event that gets triggered when the Object starts to move.")]
@@ -39,7 +39,7 @@ public class PC_DragHandler : MonoBehaviour
     public UnityEvent onEnabled;
     [Tooltip("Event that gets triggered when the object is disabled.")]
     public UnityEvent onDisabled;
-    
+
     private bool _moving = false;
     private bool _isOutsideBoundaries = false;
     private Vector3 _objectPostionAtDragStart;
@@ -72,7 +72,12 @@ public class PC_DragHandler : MonoBehaviour
     private void OnMouseDown()
     {
         if(!movingObject.activeSelf) return;
-        if (!Input.GetMouseButtonDown(0)) return;
+
+        if (arrowMovement != null)
+        {
+            arrowMovement.OnChildMouseDown();
+            if (arrowMovement.IsDragActive()) return;
+        }
         
         var rb = GetComponent<Rigidbody>();
         if(rb != null)
@@ -90,19 +95,18 @@ public class PC_DragHandler : MonoBehaviour
     
     private void OnMouseDrag()
     {
+        if (arrowMovement != null && arrowMovement.IsDragActive())
+        {
+            arrowMovement.OnChildMouseDrag();
+            return;
+        }
+
         // Note(MartinR): Before merge, check why the distance-check was here, as it causes stuttering durign drag-and-drop on my Machine
         // if (!_moving || Vector3.Distance(_lastMousePos, Input.mousePosition) < 2f) return;
         if (!_moving) return;
 
         // Calculate new Position based on Mouse-Pos
-        Plane movementPlane = new Plane(Camera.main.transform.rotation * Vector3.back, _objectPostionAtDragStart);
-        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        float planeIntersectionDistance = 0.0f;
-        bool intersectsPlane = movementPlane.Raycast(ray, out planeIntersectionDistance);
-        if (!intersectsPlane || planeIntersectionDistance <= 0) return;
-        var newPos = ray.GetPoint(planeIntersectionDistance) + _objectToMousePosOffsetAtDragStart;
-
-        // Apply Movement-Restrictions to new point
+        var newPos = getMousePointOnPlaneParallelToCamera(_objectPostionAtDragStart) + _objectToMousePosOffsetAtDragStart;
         if (!allowedXMovement) newPos.x = _objectPostionAtDragStart.x;
         if (!allowedYMovement) newPos.y = _objectPostionAtDragStart.y;
         if (!allowedZMovement) newPos.z = _objectPostionAtDragStart.z;
@@ -151,7 +155,11 @@ public class PC_DragHandler : MonoBehaviour
     
     private void OnMouseUp()
     {
-        if (!Input.GetMouseButtonUp(0)) return;
+        if (arrowMovement != null && arrowMovement.IsDragActive())
+        {
+            arrowMovement.OnChildMouseUp();
+            return;
+        }
         
         var rb = GetComponent<Rigidbody>();
         if(rb != null && !_wasKinematicAtDragStart)

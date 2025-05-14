@@ -6,7 +6,6 @@ namespace Maroon.Experiments.CoulombsLaw
 {
     public class ArrowMeshCreator
     {
-        // Start is called before the first frame update
         private static int PushVertexRing(Vector2 point2D, List<Vector3> vertices, int radialResolution)
         {
             int ringStartIndex = vertices.Count;
