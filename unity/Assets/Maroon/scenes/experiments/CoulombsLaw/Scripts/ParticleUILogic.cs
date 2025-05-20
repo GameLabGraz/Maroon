@@ -11,8 +11,7 @@ namespace Maroon.Experiments.CoulombsLaw
     {
         // Selection Data
         private ChargedParticle selectedParticle = null;
-        [SerializeField] private ChargedParticle particlePrefab = null;
-        [SerializeField] private Transform _particleParentObject = null;
+        [SerializeField] private ParticleController _particleController = null;
         [SerializeField] private GameObject _selectionHighlightMarker = null;
         [SerializeField] private Transform _minBoundary = null;
         [SerializeField] private Transform _maxBoundary = null;
@@ -44,7 +43,7 @@ namespace Maroon.Experiments.CoulombsLaw
 
             _fixPositionToggle.onValueChanged.AddListener((fixPosition) =>
             {
-                if (selectedParticle != null) selectedParticle.SetFixPosition(fixPosition);
+                if (selectedParticle != null) selectedParticle.SetPositionLocked(fixPosition);
             });
 
             _textfieldPosX?.onValueChangedFloat.AddListener((endVal) =>
@@ -64,26 +63,44 @@ namespace Maroon.Experiments.CoulombsLaw
 
             _electricChargeSlider.onValueChanged.AddListener((newValue) =>
             {
+                // Update other UI component (Slider updates text-field)
+                if (_electricChargeTextField.GetValue() != newValue)
+                {
+                    _electricChargeTextField.SetValue(newValue);
+                }
+
+                // Update particle if selected
                 if (selectedParticle == null) return;
-                selectedParticle.electricCharge = newValue;
+                selectedParticle.electricCharge = newValue * 1e-6f;
+                selectedParticle.UpdateParticleColor();
+            });
+
+            _electricChargeTextField.onValueChangedFloat.AddListener((newValue) =>
+            {
+                // Update other UI component (Text field also updates slider values)
+                if (_electricChargeSlider.value != newValue)
+                {
+                    _electricChargeSlider.value = newValue;
+                }
+
+                // Update particle if selected
+                if (selectedParticle == null) return;
+                selectedParticle.electricCharge = newValue * 1e-6f;
                 selectedParticle.UpdateParticleColor();
             });
 
             _buttonAddDeleteParticle.GetComponent<Button>().onClick.AddListener(() =>
             {
-                if (selectedParticle != null)
+                if (selectedParticle == null)
                 {
-                    GameObject.Destroy(selectedParticle.gameObject);
-                    selectedParticle = null;
+                    var pos = new Vector3(_textfieldPosX.GetValue(), _textfieldPosY.GetValue(), _textfieldPosZ.GetValue());
+                    // Note(MartinR): Slider shows Value in micro-coulomb, and particle stores charge in Coulomb
+                    _particleController.CreateChargedParticle(pos, _electricChargeSlider.value * 1e-6f, _fixPositionToggle.isOn);
                 }
                 else
                 {
-                    var pos = new Vector3(_textfieldPosX.GetValue(), _textfieldPosY.GetValue(), _textfieldPosZ.GetValue());
-                    pos = CoordSystemHandler.Instance.GetWorldPosition(pos);
-                    var particle = GameObject.Instantiate(particlePrefab, pos, Quaternion.identity, _particleParentObject);
-                    particle.electricCharge = _electricChargeSlider.value * 1e-6f; // Slider shows Value in micro-coulomb, and particle stores coulomb
-                    particle.SetFixPosition(_fixPositionToggle.isOn);
-                    particle.UpdateParticleColor();
+                    _particleController.RemoveChargedParticle(selectedParticle);
+                    selectedParticle = null;
                 }
                 UpdateAddDeleteButtonText();
             });

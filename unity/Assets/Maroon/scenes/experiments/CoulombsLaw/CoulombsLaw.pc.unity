@@ -8912,7 +8912,7 @@ Transform:
   m_GameObject: {fileID: 619089830}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.856, z: -0.02}
+  m_LocalPosition: {x: 0, y: 1.856, z: 0.081}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -9051,24 +9051,24 @@ MonoBehaviour:
   equipotentialMaterial: {fileID: 2100000, guid: abd43a867bcb864429d57da4c6363ff1,
     type: 2}
   onGetChargePosition:
-    _target: {fileID: 0}
-    _methodName: GetChargesAsVector
+    _target: {fileID: 723704692}
+    _methodName: GetPackedParticleInfo
     _args: []
     _dynamic: 0
     _typeName: ChargesCallback, Maroon.Experiments.CoulombsLaw, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     dirty: 0
   onGetMaxChargesCount:
-    _target: {fileID: 0}
-    _methodName: GetMaxChargesCount
+    _target: {fileID: 723704692}
+    _methodName: GetMaxChargeCount
     _args: []
     _dynamic: 0
     _typeName: IntConditionCallback, Maroon.Experiments.CoulombsLaw, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     dirty: 0
   onAllowVisualization:
-    _target: {fileID: 0}
-    _methodName: IsVisualizationAllowed
+    _target: {fileID: 723704692}
+    _methodName: GetVisualizationEnabled
     _args: []
     _dynamic: 0
     _typeName: BoolConditionCallback, Maroon.Experiments.CoulombsLaw, Version=0.0.0.0,
@@ -9557,6 +9557,55 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &723704691
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 723704693}
+  - component: {fileID: 723704692}
+  m_Layer: 0
+  m_Name: ParticleController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &723704692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 723704691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 312da6e07ea358d43b2742647f3d48c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _particlePrefab: {fileID: 4469247505126578226, guid: 111fb891f106a394f8c451557d6558a0,
+    type: 3}
+  _eField: {fileID: 1053413847}
+  _minBoundary: {fileID: 394351908}
+  _maxBoundary: {fileID: 397087235}
+--- !u!4 &723704693
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 723704691}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1572432902}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &728051734
 GameObject:
   m_ObjectHideFlags: 0
@@ -16306,6 +16355,7 @@ Transform:
   - {fileID: 397087235}
   - {fileID: 1053413848}
   - {fileID: 1300168813}
+  - {fileID: 723704693}
   m_Father: {fileID: 158385093}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1583672643
@@ -18953,9 +19003,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9bc09ecf7f48a04592c5baf2f15d222, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  particlePrefab: {fileID: 4469247505126578226, guid: 111fb891f106a394f8c451557d6558a0,
-    type: 3}
-  _particleParentObject: {fileID: 1572432902}
+  _particleController: {fileID: 723704692}
   _selectionHighlightMarker: {fileID: 531740428}
   _minBoundary: {fileID: 394351908}
   _maxBoundary: {fileID: 397087235}
@@ -19754,9 +19802,8 @@ MonoBehaviour:
   resetRotation: 1
   changeLayerObject: {fileID: 0}
   _chargeValueSlider: {fileID: 9926214}
-  particlePrefab: {fileID: 4469247505126578226, guid: 111fb891f106a394f8c451557d6558a0,
-    type: 3}
   _fixPositionToggle: {fileID: 2045845935}
+  _particleController: {fileID: 723704692}
   BackgroundImage: {fileID: 40995274}
   MinusImage: {fileID: 1659189546}
   PlusImage: {fileID: 413707606}

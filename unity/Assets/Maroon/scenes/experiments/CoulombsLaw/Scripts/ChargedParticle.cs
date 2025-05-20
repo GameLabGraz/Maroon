@@ -15,16 +15,16 @@ namespace Maroon.Experiments.CoulombsLaw
 
         // DATA MEMBERS
         public float electricCharge = 0.0f; // In Coulomb
-        private bool _fixPositionDuringSimulation = false;
+        private bool _positionLocked = false;
         private Vector3 _positionAtSimulationStart;
 
         // REFERENCES TO OTHER OBJECTS
+        private ParticleController _particleController = null;
+        private Rigidbody _rigidBody = null;
+        private IField _eField = null;
         [SerializeField] private GameObject _fixingRing = null;
         [SerializeField] private PC_DragHandler _dragHandler = null; 
         [SerializeField] private PC_ArrowMovement _arrowMovement = null; 
-        private Maroon.Physics.Electromagnetism.EField _eField = null;
-        private SimulationController _simulationController = null;
-        private Rigidbody _rigidBody = null;
 
         // @TODO(MartinR):
         // Using the CoordSystem causes some problems for calculation, as GetSystemPosition
@@ -42,9 +42,19 @@ namespace Maroon.Experiments.CoulombsLaw
 
         private void Awake()
         {
-            _positionAtSimulationStart = transform.position;
-            _simulationController = SimulationController.Instance;
+        }
+
+        // Note(MartinR): Only a ParticleController should create particles
+        public void Initialize(
+            ParticleController particleController, IField efield, Transform maxBoundary, Transform minBoundary, float charge, bool positionLocked)
+        {
+            _particleController = particleController;
+            _eField = efield;
+            electricCharge = charge;
             _rigidBody = GetComponent<Rigidbody>();
+            UpdateParticleColor();
+            SetPositionLocked(positionLocked);
+            _positionAtSimulationStart = transform.position;
 
             // Note(MartinR): The Prefab Mesh has a radius of 1, e.g. bounds in the range [-1, 1]
             transform.localScale = new Vector3(RADIUS, RADIUS, RADIUS);
@@ -54,21 +64,22 @@ namespace Maroon.Experiments.CoulombsLaw
             //      can be edited/moved while the simulation is paused, which leads to inconsistent Behaviour with PausableObject
             //      (e.g. particles resetting to different positions depending if they were edited...)
             // Also currently velocity is not stored between start/stop presses, not sure if this is wanted without a way to edit/view velocity
-            if (_simulationController != null && _rigidBody != null)
+            var simulationController = SimulationController.Instance;
+            if (simulationController != null && _rigidBody != null)
             {
-                _rigidBody.isKinematic = _fixPositionDuringSimulation || !_simulationController.SimulationRunning;
+                _rigidBody.isKinematic = _positionLocked || !simulationController.SimulationRunning;
 
-                _simulationController.onStartRunning.AddListener(() =>
+                simulationController.onStartRunning.AddListener(() =>
                 {
                     // Note(MartinR): Particles are always set kinematic, except while the simulation is running
-                    _rigidBody.isKinematic = _fixPositionDuringSimulation;
+                    _rigidBody.isKinematic = _positionLocked;
                     _positionAtSimulationStart = transform.position;
                 });
-                _simulationController.onStopRunning.AddListener(() =>
+                simulationController.onStopRunning.AddListener(() =>
                 {
                     _rigidBody.isKinematic = true;
                 });
-                _simulationController.OnReset.AddListener(() =>
+                simulationController.OnReset.AddListener(() =>
                 {
                     _rigidBody.isKinematic = true;
                     transform.position = _positionAtSimulationStart;
@@ -81,43 +92,10 @@ namespace Maroon.Experiments.CoulombsLaw
             _meterToWorldScaleFactor = 2.25f / 2.0f; // Note(MartinR): Hardcoded values for CoulombsLaw experiment
 
             // Update Drag Handler and MovementArrows (Set boundary)
-            _dragHandler.onEndMovingOutsideBoundaries.AddListener( () => { GameObject.Destroy(gameObject); } );
-            var maxBoundary = GameObject.Find("MaxBoundary");
-            var minBoundary = GameObject.Find("MinBoundary");
-            if (maxBoundary != null && minBoundary != null)
-            {
-                _dragHandler.minBoundary = minBoundary.transform;
-                _dragHandler.maxBoundary = maxBoundary.transform;
-                _arrowMovement.SetBoundaries(minBoundary.transform, maxBoundary.transform);
-            }
-
-            // Register Particle in EField (OnDestroy removs it from EField, so we can just use DestroyObject to remove Particles)
-            _eField = FindObjectOfType<Maroon.Physics.Electromagnetism.EField>();
-            if (_eField != null)
-            {
-                _eField.AddProducerToSet(gameObject);
-            }
-            else
-            {
-                Debug.LogError("No efield found after Particle Instanciation, so particle won't do anything!");
-            }
-        }
-
-        public static ChargedParticle InstanciateParticle(
-            ChargedParticle particlePrefab, Vector3 position, float charge, bool fixPosition, Transform parentTransform)
-        {
-            var particle = Instantiate(particlePrefab, position, Quaternion.identity, parentTransform);
-            particle.electricCharge = charge;
-            particle.UpdateParticleColor();
-            particle.SetFixPosition(fixPosition);
-
-            return particle;
-        }
-
-        private void OnDestroy()
-        {
-            if (_eField == null) return;
-            _eField.RemoveProducerFromSet(gameObject);
+            _dragHandler.onEndMovingOutsideBoundaries.AddListener( () => { _particleController.RemoveChargedParticle(this); } );
+            _dragHandler.minBoundary = minBoundary.transform;
+            _dragHandler.maxBoundary = maxBoundary.transform;
+            _arrowMovement.SetBoundaries(minBoundary.transform, maxBoundary.transform);
         }
 
         public void UpdateParticleColor()
@@ -145,16 +123,17 @@ namespace Maroon.Experiments.CoulombsLaw
             particleBase.materials = mat;
         }
 
-        public void SetFixPosition(bool fixPosition)
+        public void SetPositionLocked(bool positionLocked)
         {
-            _fixPositionDuringSimulation = fixPosition;
-            _fixingRing.SetActive(_fixPositionDuringSimulation);
+            _positionLocked = positionLocked;
+            _fixingRing.SetActive(_positionLocked);
             // Note(MartinR): Particle is always kinematic while simulation is not running
-            _rigidBody.isKinematic = _fixPositionDuringSimulation || !_simulationController.SimulationRunning;
+            _rigidBody.isKinematic = _positionLocked || !SimulationController.Instance.SimulationRunning;
         }
+
         public bool GetFixPosition()
         {
-            return _fixPositionDuringSimulation;
+            return _positionLocked;
         }
 
 
@@ -198,8 +177,7 @@ namespace Maroon.Experiments.CoulombsLaw
 
         private void FixedUpdate()
         {
-            if (_simulationController == null || _eField == null || _rigidBody == null) return;
-            if (!_simulationController.SimulationRunning) return;
+            if (!SimulationController.Instance.SimulationRunning) return;
 
             var coordSystem = Maroon.GlobalEntities.CoordSystemHandler.Instance;
             var pos = transform.position;

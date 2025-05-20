@@ -8,8 +8,8 @@ namespace Maroon.Experiments.CoulombsLaw
     public class UIParticleDragHandler : UIItemDragHandlerSimple, IBeginDragHandler, IEndDragHandler
     {
         [SerializeField] private PC_Slider _chargeValueSlider;
-        [SerializeField] private ChargedParticle particlePrefab = null;
         [SerializeField] private Toggle _fixPositionToggle = null;
+        [SerializeField] private ParticleController _particleController = null;
 
         [Header("Image Components")]
         [SerializeField] private Image BackgroundImage;
@@ -49,10 +49,7 @@ namespace Maroon.Experiments.CoulombsLaw
 
         protected override void ShowObject(Vector3 position, Transform parent)
         {
-            var particle = Instantiate(particlePrefab, position, Quaternion.identity, parent);
-            particle.electricCharge = ChargeValue;
-            particle.UpdateParticleColor();
-            particle.SetFixPosition(_fixPositionToggle.isOn);
+            _particleController.CreateChargedParticle(position, ChargeValue, _fixPositionToggle.isOn);
         }
     }
 }
