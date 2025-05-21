@@ -3,7 +3,7 @@
         _Transparency("Transparency", Range(0.0,1.0)) = 0.75
 		// Note(MartinR): 2 Charges with 0.1m distance at 10microCoulomb Charge-Difference results in 1 Mega Volt 
         _MaxAbsoluteVoltage ("Maximum Absolute Voltage", Float) = 300000
-		// Note(MartinR): To prevent division by 0, the voltage calculation always clamps the distance to a minimum value
+		// Note(MartinR): To prevent division by 0, the voltage calculation always clamps the distance to a minimum value (Radius of the spheres)
         _MinDistance ("Minimum Distance", Float) = 0.05
 
 		// Note(MartinR): The shader interpolates between 2 colors, either between
