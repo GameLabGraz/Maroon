@@ -8,7 +8,7 @@ public class PC_DragHandler : MonoBehaviour
     [Tooltip("The object that will move. If empty, the object where this script is attached will be moved.")]
     public GameObject movingObject;
     
-    [Tooltip("If used in conjunction with arrowMovement, this reference should be set")]
+    [Tooltip("If used in conjunction with arrowMovement + rigidbody, this reference should be set, otherwise collisions won't work properly")]
     [SerializeField] private PC_ArrowMovement _arrowMovement = null; 
 
     [Tooltip("For dragging physics objects, the rigidBody reference should be set to avoid interpolation problems")]
@@ -122,7 +122,8 @@ public class PC_DragHandler : MonoBehaviour
             Debug.Assert(minBoundary.parent == maxBoundary.parent);
             Vector3 min = Vector3.Min(minPosition, maxPosition);
             Vector3 max = Vector3.Max(minPosition, maxPosition);
-            // Note(MartinR): Tolerance was previously 0.2f, not sure where/why this was used
+            // Note(MartinR): Tolerance was previously 0.2f, not sure where/why this was used,
+            //      I guess to compensate for radius of some spherical objects
             const float tolerance = 0.0f;
 
             outside = 

@@ -13,9 +13,12 @@ namespace Maroon.Tools.Voltmeter
         [SerializeField] private InputField distanceText;
         [SerializeField] private Unit selectedDistanceUnit;
         [SerializeField] private VoltmeterLogic voltmeter;
-        
-        public void UpdateDisplay()
+
+        public void LateUpdate()
         {
+            // Note(MartinR): I think voltmeter should just update the voltage once per frame, instead of only when
+            //      something has moved. In the previous version, the value would not be updated if charges were moved (CoulombsLaw),
+            //      and while the simulation runs this has to be called once per frame anyway.
             if (voltmeter == null) return;
 
             if(!voltmeter.isOn || !voltmeter.startPoint.gameObject.activeSelf || !voltmeter.endPoint.gameObject.activeSelf)
@@ -32,6 +35,11 @@ namespace Maroon.Tools.Voltmeter
 
             var difference = voltmeter.GetDifference().ToString();
             voltageText.text = string.Format(culture, "{0} {1}", difference, voltmeter.GetCurrentUnit());
+        }
+
+        public void UpdateDisplay()
+        {
+            // Note(MartinR): See comment in LateUpdate
         }
     }
 }

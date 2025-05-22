@@ -161,7 +161,18 @@ namespace Maroon.Experiments.CoulombsLaw
 
         public float getEPotential(Vector3 position)
         {
-            return 0.0f;
+            var chargePos = transform.position;
+            chargePos.z = 0.0f; // 2D mode
+
+            var coordSystem = Maroon.GlobalEntities.CoordSystemHandler.Instance;
+            var direction = position - coordSystem.GetSystemPosition(chargePos);
+            float distanceInMeter = direction.magnitude * _localToMeterScaleFactor;
+
+            // Clamp Strength to sphere-radius, which avoids division by 0 and makes force not explode on overlapping particles
+            distanceInMeter = Mathf.Max(distanceInMeter, RADIUS / _meterToWorldScaleFactor);
+
+            // Coulombs Law calculation for Voltage (Unit Newton meter/Coulomb, [Nm/C])
+            return electricCharge * CoulombConstant / distanceInMeter;
         }
 
         public float getEFlux(Vector3 position)
