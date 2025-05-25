@@ -32,7 +32,7 @@ namespace Maroon.Experiments.PlanetarySystem
         /// </summary>
         private void Awake()
         {
-            PlanetarySortingGame.SetActive(false);
+            PlanetarySortingGame.SetActive(true);
             PlanetarySortingGamePlanetInfoUI.SetActive(false);
         }
 

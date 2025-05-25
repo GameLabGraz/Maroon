@@ -1,30 +1,30 @@
 using UnityEngine;
 using GEAR.Localization;    //MLG
 using TMPro;
-
+using Valve.VR.InteractionSystem;
 
 namespace Maroon.Experiments.PlanetarySystem
 {
     public class SortingPlanetsDragAndDrop : MonoBehaviour, IResetObject
     {
         public PlanetSortingGameController planetSortingGameController;
-
+        public TextMeshProUGUI whiteboardText;
         public AudioSource audioSource;
         public AudioClip pickUpClip;
         public AudioClip dropClip;
 
         public PlanetRotation planetRotation;
         public Transform sortingPlanetTarget;
+        public WhiteboardDisplay whiteboardDisplay;
+        
         public float snapDistance;
         private bool isSnapped = false;
         private readonly float scaleFactor = 1.02f;
         public Light sunLightHalo;
         Vector3 mousePosition;
-
         public TextMeshProUGUI planetInfoMessageText;
         string createdPlanetInfoMessage;
         //---------------------------------------------------------------------------------------
-
         //handle mouse input
         #region MouseInput
         /// <summary>
@@ -80,7 +80,53 @@ namespace Maroon.Experiments.PlanetarySystem
             }
         }
         #endregion MouseInput
+        #region VRInput
+        private Interactable _interactable;
+        private Throwable _throwable;
 
+        private void Awake()
+        {
+            _interactable = GetComponent<Interactable>();
+            _throwable = GetComponent<Throwable>();
+        }
+
+        public void OnAttachedToHand(Hand hand)
+        {
+            audioSource.PlayOneShot(pickUpClip);
+
+            PlanetInfo planetInfo = GetComponent<PlanetInfo>();
+            createdPlanetInfoMessage = planetInfo.CreateUnnamedPlanetInfoMessage();
+            whiteboardText.text = createdPlanetInfoMessage;
+        }
+
+        public void OnDetachedFromHand(Hand hand)
+        {
+            if (!isSnapped)
+            {
+                float distance = Vector3.Distance(
+                    transform.position,
+                    sortingPlanetTarget.position);
+
+                if (distance <= snapDistance)
+                {
+                    SnapToTarget();
+                }
+                else
+                {
+                if (transform.parent != null)
+                {
+                    transform.position = transform.parent.position;
+                }
+                    isSnapped = false;
+                    PlanetInfo planetInfo = GetComponent<PlanetInfo>();
+                    if (planetInfo != null)
+                    {
+                        planetInfo.IsSnapped = false;
+                    }
+                }
+            }
+        }
+        #endregion VRInput
 
         //snap the planets to target
         #region SnapPlanet
@@ -105,6 +151,7 @@ namespace Maroon.Experiments.PlanetarySystem
 
             createdPlanetInfoMessage = planetInfo.CreatePlanetInfoMessage();
             planetInfoMessageText.text = createdPlanetInfoMessage;
+            whiteboardText.text = createdPlanetInfoMessage;
         }
         #endregion SnapPlanet
 
@@ -118,6 +165,7 @@ namespace Maroon.Experiments.PlanetarySystem
         {
             createdPlanetInfoMessage = "PlanetDescription";
             planetInfoMessageText.text = LanguageManager.Instance.GetString(createdPlanetInfoMessage);
+            whiteboardText.text = LanguageManager.Instance.GetString(createdPlanetInfoMessage);
         }
     
 

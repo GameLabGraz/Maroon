@@ -98,8 +98,43 @@ namespace Maroon.Experiments.PlanetarySystem
                 planetToggles[index].onValueChanged.RemoveAllListeners();
             }
         }
+        #region Buttons
+        /// <summary>
+        /// Sunlight toggle with button
+        /// </summary>
+        public void ToggleSunLightWithButton()
+        {
+            bool newValue = !toggleSunLight.isOn;
+            toggleSunLight.isOn = newValue;
+        }
 
+        /// <summary>
+        /// Rotation toggle with button
+        /// </summary>
+        public void ToggleSGRotationWithButton()
+        {
+            bool newValue = !toggleSGRotation.isOn;
+            toggleSGRotation.isOn = newValue;
+        }
 
+        /// <summary>
+        /// Orientation toggle with button
+        /// </summary>
+        public void ToggleSGOrientationWithButton()
+        {
+            bool newValue = !toggleSGOrientationGizmo.isOn;
+            toggleSGOrientationGizmo.isOn = newValue;
+        }
+
+        /// <summary>
+        /// Solar Flare toggle with button
+        /// </summary>
+        public void ToggleSolarFlaresWithButton()
+        {
+            bool newValue = !toggleSolarFlares.isOn;
+            toggleSolarFlares.isOn = newValue;
+        }
+        #endregion Buttons
         /// SetupSlider FOV, G, time
         #region sliders
         /// <summary>

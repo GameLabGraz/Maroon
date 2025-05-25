@@ -213,7 +213,7 @@ namespace Maroon.Experiments.PlanetarySystem
                     orbitalVelocity = 35f;
                     orbitalInclination = 3.4f;
                     orbitalEccentricity = 0.007f;
-                    obliquityToOrbit = 177.4f;
+                    obliquityToOrbit = 2.6f;
                     meanTemperature = 464f;
                     surfacePressure = 92f;
                     numberOfMoons = 0;
