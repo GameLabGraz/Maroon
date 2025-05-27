@@ -3,7 +3,6 @@
 		// Note(MartinR): To prevent division by 0, the voltage calculation always clamps the distance to a minimum value
         _MinDistance ("Minimum Distance To Charges", Float) = 0.05
         _LineColor("Line Color", Color) = (0.3, 0.3, 0.3, 1)
-        _BgColor("Background Color", Color) = (1,1,1,1)
 
 		// At which voltage intervals the lines are drawn
         _LineSpacingVoltage ("LineSpacingVoltage", Float) = 30000
@@ -54,7 +53,6 @@
 			// Data structures
 			float _MinDistance;
 			float4 _LineColor;
-			float4 _BgColor;
 
 			float _LineSpacingVoltage;
 			float _MaxAbsLineVoltage;
@@ -104,10 +102,11 @@
 
 			half4 frag(vert2frag input) : COLOR 
 			{
-				float3 initialPos = input.pos_world_space;
-				if (_EntryCnt > 0) { // 2D mode
-					initialPos.z = _Entries[0].z;
+				if (_EntryCnt == 0) {
+					return half4(0, 0, 0, 0);
 				}
+				float3 initialPos = input.pos_world_space.xyz;
+				initialPos.z = _Entries[0].z;
 
 				// Calculate voltage at current position
 				float voltage;
@@ -116,7 +115,7 @@
 
 				// Find voltage of closest field-line
 				float targetVoltage = floor(voltage / _LineSpacingVoltage + 0.5) * _LineSpacingVoltage;
-				if (abs(targetVoltage) > _MaxAbsLineVoltage) return _BgColor;
+				if (abs(targetVoltage) > _MaxAbsLineVoltage) return half4(0, 0, 0, 0);
 
 				// Try to find a point near current position which is directly on the equipotential line.
 				// We use this point to determine the distance of the current position to the equipotential line, and
@@ -154,8 +153,9 @@
 				}
 
 				// Calculate color based on distance to closest point on equipotential line
-				float alpha = smoothstep(_LineHalfWidth, _LineHalfWidth + falloffDistance, distance(pos, initialPos));
-				float4 finalColor = lerp(_LineColor, _BgColor, alpha);
+				float alpha = 1.0 - smoothstep(_LineHalfWidth, _LineHalfWidth + falloffDistance, distance(pos, initialPos));
+				float4 finalColor = _LineColor;
+				finalColor.w *= alpha;
 
 
 

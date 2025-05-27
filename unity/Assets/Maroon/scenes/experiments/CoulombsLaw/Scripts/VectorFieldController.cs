@@ -80,6 +80,7 @@ namespace Maroon.Experiments.CoulombsLaw
                     newArrow.transform.parent = transform;
                     var meshRenderer = newArrow.AddComponent<MeshRenderer>();
                     meshRenderer.material = vectorMaterial;
+                    meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                     var meshFilter = newArrow.AddComponent<MeshFilter>();
                     meshFilter.mesh = arrowMesh;
 

@@ -25,7 +25,7 @@ namespace Maroon.Physics.CoordinateSystem
             }
         }
 
-        private void Start()
+        private void Awake()
         {
             _ = origin ?? throw new NullReferenceException();
             _ = axisController ?? throw new NullReferenceException();

@@ -128,7 +128,7 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7333818732060180029}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: e44810a4016898344949ac00957d2046, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -166,9 +166,9 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 0
   m_IsKinematic: 1
-  m_Interpolate: 1
+  m_Interpolate: 0
   m_Constraints: 120
-  m_CollisionDetection: 2
+  m_CollisionDetection: 0
 --- !u!114 &4469247505126578226
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -181,7 +181,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5312645e5006b9148aaeb271ce91a171, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  electricCharge: 0
   _fixingRing: {fileID: 7333818732060180025}
   _dragHandler: {fileID: 3475251772070007900}
   _arrowMovement: {fileID: 6965834355325527908}
@@ -200,30 +199,15 @@ MonoBehaviour:
   movingObject: {fileID: 7333818732060180029}
   _arrowMovement: {fileID: 6965834355325527908}
   _rigidBody: {fileID: 4055257505931961413}
+  _addVelocityAfterDragEnd: 1
+  _maxVelocity: 6
   minBoundary: {fileID: 0}
   maxBoundary: {fileID: 0}
-  allowedXMovement: 1
-  allowedYMovement: 1
-  allowedZMovement: 0
-  useLocalCoordinates: 0
-  changeMaterialIfOutside: []
-  outsideTransparency: 0.7
-  onStartedMoving:
-    m_PersistentCalls:
-      m_Calls: []
-  onMove:
-    m_PersistentCalls:
-      m_Calls: []
+  allowZMovement: 0
   onEndMovingOutsideBoundaries:
     m_PersistentCalls:
       m_Calls: []
   onEndMovingInsideBoundaries:
-    m_PersistentCalls:
-      m_Calls: []
-  onEnabled:
-    m_PersistentCalls:
-      m_Calls: []
-  onDisabled:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &7333818732060180031

@@ -22,7 +22,7 @@ public class PC_InputParser_Float_TMP : MonoBehaviour
     
     public TextChangeFloat onValueChangedFloat;
     
-    private void Start()
+    private void Awake()
     {
         _textField = GetComponent<TMP_InputField>();
         _textField.onEndEdit.AddListener(OnTextChanged);
@@ -47,10 +47,9 @@ public class PC_InputParser_Float_TMP : MonoBehaviour
         else
         {
             text = _prevText;
-            _textField.text = text;
         }
 
-        _textField.textComponent.text = text;
+        _textField.text = text;
     }
 
     public float GetValue()
@@ -60,6 +59,12 @@ public class PC_InputParser_Float_TMP : MonoBehaviour
 
     public void SetValue(float value)
     {
-        _textField.text = value.ToString(textFormat, CultureInfo.CurrentCulture);
+        value = Mathf.Clamp(value, minimum, maximum);
+        if (_value == value) return;
+        _value = value;
+        if (_textField != null)
+        {
+            _textField.text = value.ToString(textFormat, CultureInfo.CurrentCulture);
+        }
     }
 }

@@ -14,7 +14,7 @@ namespace Maroon.Experiments.CoulombsLaw
         public const float RADIUS = 0.065f; // In unity units (World units)
 
         // DATA MEMBERS
-        public float electricCharge = 0.0f; // In Coulomb
+        private float _charge = 0.0f; // In Coulomb
         private bool _positionLocked = false;
         private Vector3 _positionAtSimulationStart;
 
@@ -40,19 +40,14 @@ namespace Maroon.Experiments.CoulombsLaw
         // IGenerateE
         public bool Enabled { get; set; } = true;
 
-        private void Awake()
-        {
-        }
-
         // Note(MartinR): Only a ParticleController should create particles
         public void Initialize(
             ParticleController particleController, IField efield, Transform maxBoundary, Transform minBoundary, float charge, bool positionLocked)
         {
             _particleController = particleController;
             _eField = efield;
-            electricCharge = charge;
             _rigidBody = GetComponent<Rigidbody>();
-            UpdateParticleColor();
+            SetCharge(charge);
             SetPositionLocked(positionLocked);
             _positionAtSimulationStart = transform.position;
 
@@ -98,31 +93,6 @@ namespace Maroon.Experiments.CoulombsLaw
             _arrowMovement.SetBoundaries(minBoundary.transform, maxBoundary.transform);
         }
 
-        public void UpdateParticleColor()
-        {
-            var particleBase = transform.Find("Base").GetComponent<MeshRenderer>();
-            var mat = particleBase.materials;
-
-            electricCharge = Mathf.Clamp(electricCharge, -MAX_ABSOLUTE_CHARGE, MAX_ABSOLUTE_CHARGE);
-            if (electricCharge < 0)
-            {
-                mat[0].color = Color.blue;
-                mat[1].color = Color.white;
-                mat[2].color = mat[0].color;
-            }
-            else if (electricCharge > 0)
-            {
-                mat[0].color = Color.red;
-                mat[1].color = mat[2].color = Color.white;
-            }
-            else
-            {
-                mat[0].color = mat[1].color = mat[2].color = Color.green;
-            }
-
-            particleBase.materials = mat;
-        }
-
         public void SetPositionLocked(bool positionLocked)
         {
             _positionLocked = positionLocked;
@@ -131,10 +101,35 @@ namespace Maroon.Experiments.CoulombsLaw
             _rigidBody.isKinematic = _positionLocked || !SimulationController.Instance.SimulationRunning;
         }
 
-        public bool GetFixPosition()
+        public bool GetPositionLocked()
         {
             return _positionLocked;
         }
+
+        public static Color ChargeValueToColor(float charge)
+        {
+            return Color.Lerp(Color.gray, charge < 0 ? Color.blue : Color.red, Mathf.Pow(Mathf.Abs(charge) / MAX_ABSOLUTE_CHARGE, 2));
+        }
+
+        public void SetCharge(float newCharge)
+        {
+            _charge = Mathf.Clamp(newCharge, -MAX_ABSOLUTE_CHARGE, MAX_ABSOLUTE_CHARGE);
+            Color color = ChargeValueToColor(_charge);
+
+            // Change second material (Upper and lower part of the + symbol) to show + or - depending on charge
+            var particleBase = transform.Find("Base").GetComponent<MeshRenderer>();
+            List<Material> materials = new List<Material>();
+            particleBase.GetMaterials(materials);
+            materials[0].color = color;
+            materials[2] = particleBase.materials[_charge < 0 ? 0 : 1];
+            particleBase.SetMaterials(materials);
+        }
+
+        public float GetCharge()
+        {
+            return _charge;
+        }
+
 
 
         // ---------------------------------
@@ -156,7 +151,7 @@ namespace Maroon.Experiments.CoulombsLaw
             distanceInMeter = Mathf.Max(distanceInMeter, RADIUS / _meterToWorldScaleFactor);
 
             // Coulombs Law calculation (Unit Newton/Coulomb, [N/C])
-            return direction * electricCharge * CoulombConstant /  (distanceInMeter * distanceInMeter);
+            return direction * _charge * CoulombConstant /  (distanceInMeter * distanceInMeter);
         }
 
         public float getEPotential(Vector3 position)
@@ -172,7 +167,7 @@ namespace Maroon.Experiments.CoulombsLaw
             distanceInMeter = Mathf.Max(distanceInMeter, RADIUS / _meterToWorldScaleFactor);
 
             // Coulombs Law calculation for Voltage (Unit Newton meter/Coulomb, [Nm/C])
-            return electricCharge * CoulombConstant / distanceInMeter;
+            return _charge * CoulombConstant / distanceInMeter;
         }
 
         public float getEFlux(Vector3 position)
@@ -182,8 +177,8 @@ namespace Maroon.Experiments.CoulombsLaw
 
         public float getFieldStrength()
         {
-            // Note(MartinR): Not sure when this is used, and if this value is correct
-            return electricCharge;
+            // Note(MartinR): Not sure when this function is used by efield, and if charge should be returned
+            return _charge;
         }
 
         private void FixedUpdate()
@@ -199,7 +194,7 @@ namespace Maroon.Experiments.CoulombsLaw
             // but we cannot use coordSystem.GetWorldPosition, because only need scaling + rotation,
             // without translation, as this will add a constant offset to force...
             // See comment at the start of this file 
-            var forceInSystemScale = fieldValue * electricCharge;
+            var forceInSystemScale = fieldValue * _charge;
             var force = forceInSystemScale * _meterToWorldScaleFactor;
             _rigidBody.AddForce(force, ForceMode.Force);
         }
