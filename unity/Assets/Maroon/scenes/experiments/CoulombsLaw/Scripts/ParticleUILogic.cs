@@ -88,7 +88,10 @@ namespace Maroon.Experiments.CoulombsLaw
         }
 
         // Initialize UI values and set up callbacks for UI-Interactions
-        private void Awake()
+        // Note(MartinR): I would like to do the initialization in the Awake method, but
+        //      using the CoordSystem in Awake axis-controller causes an exception in the WebGL build, so now the initialization
+        //      is done on Start(), I assume it has something to do with the initialization order the order in which Awake is called on Objects...
+        private void Start()
         {
             // Initialize UI-Element limits
             float max_charge = ChargedParticle.MAX_ABSOLUTE_CHARGE * 1e6f; // Units in UI are in micro-Coulomb 
@@ -99,6 +102,7 @@ namespace Maroon.Experiments.CoulombsLaw
 
             Vector3 min = CoordSystem.Instance.GetPositionInAxisUnits(_minBoundary.transform.position, Unit.m);
             Vector3 max = CoordSystem.Instance.GetPositionInAxisUnits(_maxBoundary.transform.position, Unit.m);
+
             _textfieldPosX.minimum = min.x;
             _textfieldPosX.maximum = max.x;
             _textfieldPosY.minimum = min.y;

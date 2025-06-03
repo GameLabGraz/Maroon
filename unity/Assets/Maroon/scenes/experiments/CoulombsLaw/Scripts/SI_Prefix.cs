@@ -1,61 +1,8 @@
-﻿using Maroon.GlobalEntities;
-using Maroon.Physics;
-using Maroon.Physics.CoordinateSystem;
-using GameLabGraz.UI;
+
 using UnityEngine;
 
-namespace Maroon.Tools.Voltmeter
+namespace Maroon.Utility
 {
-    public class VoltmeterLogic : MonoBehaviour
-    {
-        [Header("UI-Element References")]
-        [SerializeField] private InputField voltageText;
-        [SerializeField] private InputField distanceText;
-
-        [Header("Game-Object References")]
-        [SerializeField] private Maroon.Physics.Electromagnetism.EField eField;
-        [SerializeField] private Transform positivePin;
-        [SerializeField] private Transform negativePin;
-
-        public void LateUpdate()
-        {
-            if (!positivePin.gameObject.activeSelf || !negativePin.gameObject.activeSelf)
-            {
-                voltageText.text = "---";
-                distanceText.text = "---";
-                return;
-            }
-
-            // Calculate and update distance
-            float distance = 
-                (CoordSystemHandler.Instance.GetSystemPosition(positivePin.position, Unit.m) - 
-                CoordSystemHandler.Instance.GetSystemPosition(negativePin.position, Unit.m)).magnitude;
-            SI_Prefix distancePrefix = SI_Prefix_Helpers.GetClosestPrefix(distance);
-            distanceText.text = string.Format("{0:0.000}{1}m", distance / distancePrefix.GetFactor(), distancePrefix.GetAbbreviation());
-
-            // Calculate and update Voltage
-            float voltage = 
-                eField.getStrength(CoordSystemHandler.Instance.GetSystemPosition(positivePin.position)) -
-                eField.getStrength(CoordSystemHandler.Instance.GetSystemPosition(negativePin.position));
-            SI_Prefix voltagePrefix = SI_Prefix_Helpers.GetClosestPrefix(voltage);
-            voltageText.text = string.Format("{0:0.000}{1}V", voltage / voltagePrefix.GetFactor(), voltagePrefix.GetAbbreviation());
-        }
-
-        public void SetPositivePinPositionAndActive(Vector3 pos)
-        {
-            if (positivePin == null) return;
-            positivePin.gameObject.SetActive(true);
-            positivePin.position = pos;
-        }
-
-        public void SetNegativePinPositionAndActive(Vector3 pos)
-        {
-            if (negativePin == null) return;
-            negativePin.gameObject.SetActive(true);
-            negativePin.position = pos;
-        }
-    }
-
     public enum SI_Prefix
     {
         PETA,
@@ -70,7 +17,6 @@ namespace Maroon.Tools.Voltmeter
         PICO,
         FEMTO
     }
-
     public static class SI_Prefix_Helpers
     {
         public static float GetFactor(this SI_Prefix prefix)
@@ -90,7 +36,7 @@ namespace Maroon.Tools.Voltmeter
                 case SI_Prefix.FEMTO: return 1e-15f;
             }
             return 1;
-        } 
+        }
 
         public static string GetAbbreviation(this SI_Prefix prefix)
         {
@@ -103,13 +49,13 @@ namespace Maroon.Tools.Voltmeter
                 case SI_Prefix.KILO: return "k";
                 case SI_Prefix.NO_PREFIX: return "";
                 case SI_Prefix.MILI: return "m";
-                case SI_Prefix.MICRO: return "µ";
+                case SI_Prefix.MICRO: return "�";
                 case SI_Prefix.NANO: return "n";
                 case SI_Prefix.PICO: return "p";
                 case SI_Prefix.FEMTO: return "f";
             }
             return "";
-        } 
+        }
 
         public static SI_Prefix GetClosestPrefix(float number)
         {

@@ -1,36 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3766645233131386537
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3766645233131386536}
-  m_Layer: 11
-  m_Name: Tag:ResetObject
-  m_TagString: ResetObject
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3766645233131386536
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3766645233131386537}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3766645234878327331}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3766645233453232117
 GameObject:
   m_ObjectHideFlags: 0
@@ -79,9 +48,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   voltageText: {fileID: 0}
   distanceText: {fileID: 0}
+  positionDisplayPositivePin: {fileID: 0}
+  positionDisplayNegativePin: {fileID: 0}
+  positivePinDragHandler: {fileID: 0}
+  negativePinDragHandler: {fileID: 0}
   eField: {fileID: 0}
-  positivePin: {fileID: 0}
-  negativePin: {fileID: 0}
+  positivePin: {fileID: 3766645234878327331}
+  negativePin: {fileID: 3766645233477550703}
 --- !u!1 &3766645233477550690
 GameObject:
   m_ObjectHideFlags: 0
@@ -96,7 +69,6 @@ GameObject:
   - component: {fileID: 3766645233477550698}
   - component: {fileID: 3766645233477550693}
   - component: {fileID: 3766645233477550688}
-  - component: {fileID: 3766645233477550689}
   m_Layer: 11
   m_Name: VoltmeterNeg
   m_TagString: Untagged
@@ -118,7 +90,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3955676508311769128}
-  - {fileID: 3766645234372827217}
   m_Father: {fileID: 3766645233453232120}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3766645233477550696
@@ -213,8 +184,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movingObject: {fileID: 3766645233477550690}
-  _arrowMovement: {fileID: 0}
+  _arrowMovement: {fileID: 2077209628277591878}
   _rigidBody: {fileID: 0}
+  _addVelocityAfterDragEnd: 0
+  _maxVelocity: 2
   minBoundary: {fileID: 0}
   maxBoundary: {fileID: 0}
   allowZMovement: 1
@@ -224,79 +197,6 @@ MonoBehaviour:
   onEndMovingInsideBoundaries:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &3766645233477550689
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3766645233477550690}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2b5968f72a721f499c43e35a3c527e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  onRulerPinEnable:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: UpdateDisplay
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onRulerPinDisable:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: UpdateDisplay
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!1 &3766645234372827218
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3766645234372827217}
-  m_Layer: 11
-  m_Name: Tag:ResetObject
-  m_TagString: ResetObject
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3766645234372827217
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3766645234372827218}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3766645233477550703}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3766645234878327349
 GameObject:
   m_ObjectHideFlags: 0
@@ -311,7 +211,6 @@ GameObject:
   - component: {fileID: 3766645234878327358}
   - component: {fileID: 3766645234878327353}
   - component: {fileID: 3766645234878327355}
-  - component: {fileID: 3766645234878327348}
   m_Layer: 11
   m_Name: VoltmeterPos
   m_TagString: Untagged
@@ -333,7 +232,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7343916212670580656}
-  - {fileID: 3766645233131386536}
   m_Father: {fileID: 3766645233453232120}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3766645234878327356
@@ -428,8 +326,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movingObject: {fileID: 3766645234878327349}
-  _arrowMovement: {fileID: 0}
+  _arrowMovement: {fileID: 5754488820497144030}
   _rigidBody: {fileID: 0}
+  _addVelocityAfterDragEnd: 0
+  _maxVelocity: 2
   minBoundary: {fileID: 0}
   maxBoundary: {fileID: 0}
   allowZMovement: 1
@@ -439,48 +339,6 @@ MonoBehaviour:
   onEndMovingInsideBoundaries:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &3766645234878327348
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3766645234878327349}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2b5968f72a721f499c43e35a3c527e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  onRulerPinEnable:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: UpdateDisplay
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onRulerPinDisable:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: UpdateDisplay
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1001 &2483504715852851991
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -564,6 +422,18 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 565f734b46691944bb8c7cb7888df542, type: 3}
+--- !u!114 &2077209628277591878 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4513896859846796369, guid: 565f734b46691944bb8c7cb7888df542,
+    type: 3}
+  m_PrefabInstance: {fileID: 2483504715852851991}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f20556496be8f1d4c9d3ba968ac00ac6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &3955676508311769128 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1482331554849848127, guid: 565f734b46691944bb8c7cb7888df542,
@@ -653,6 +523,18 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 565f734b46691944bb8c7cb7888df542, type: 3}
+--- !u!114 &5754488820497144030 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4513896859846796369, guid: 565f734b46691944bb8c7cb7888df542,
+    type: 3}
+  m_PrefabInstance: {fileID: 8176452595982482575}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f20556496be8f1d4c9d3ba968ac00ac6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &7343916212670580656 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1482331554849848127, guid: 565f734b46691944bb8c7cb7888df542,

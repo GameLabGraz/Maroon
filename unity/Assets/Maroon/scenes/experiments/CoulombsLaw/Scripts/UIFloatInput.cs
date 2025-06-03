@@ -12,7 +12,7 @@ namespace Maroon.Experiments.CoulombsLaw
         [SerializeField] private string unitName = "m";
         [SerializeField] private float minValue = 0;
         [SerializeField] private float maxValue = 1;
-        [SerializeField] private float initialValue = 0.5f;
+        [SerializeField] private float value = 0.5f;
         [SerializeField] private int postCommaDigits = 2;
 
         [Header("References to UI-Objects")]
@@ -22,7 +22,6 @@ namespace Maroon.Experiments.CoulombsLaw
         [SerializeField] private UnityEngine.UI.Slider slider;
         [SerializeField] private UnityEngine.UI.LayoutElement inputFieldLayoutElement;
 
-        private float value = 0.5f;
         public UnityEngine.Events.UnityEvent<float> OnValueChanged;
 
         public float GetValue() { return value; }
@@ -51,10 +50,9 @@ namespace Maroon.Experiments.CoulombsLaw
             
         private void Awake()
         {
-            value = initialValue;
             slider.minValue = minValue;
             slider.maxValue = maxValue;
-            SetValue(initialValue);
+            SetValue(value); // Applies min and max to initial value, also sets slider and input field text
 
             const float APPROXIMATE_CHAR_WIDTH = 24; // Note(MartinR): Just an approximation with font size 36
             int expectedPreCommaDigits = (int) Mathf.Max(1.0f, Mathf.Log10(Mathf.Max(Mathf.Abs(minValue), Mathf.Abs(maxValue))));

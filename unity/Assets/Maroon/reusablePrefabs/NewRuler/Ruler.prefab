@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 1868934271926398209}
   - component: {fileID: 4209236518993689527}
   - component: {fileID: 4201606569830674114}
-  - component: {fileID: 1905071099}
   m_Layer: 0
   m_Name: RulerStart
   m_TagString: Untagged
@@ -121,57 +120,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movingObject: {fileID: 2792781189551255133}
+  _arrowMovement: {fileID: 1934183040995033334}
+  _rigidBody: {fileID: 0}
+  _addVelocityAfterDragEnd: 0
+  _maxVelocity: 2
   minBoundary: {fileID: 0}
   maxBoundary: {fileID: 0}
-  allowedXMovement: 1
-  allowedYMovement: 1
-  allowedZMovement: 1
-  useLocalCoordinates: 0
-  changeMaterialIfOutside: []
-  outsideTransparency: 0.7
-  ArrowMovement: {fileID: 1934183040995033334}
-  onStartedMoving:
-    m_PersistentCalls:
-      m_Calls: []
-  onMove:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: UpdateDisplay
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: UpdateDisplay
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 8167284104948070404}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: UpdateRulerLine
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  allowZMovement: 1
   onEndMovingOutsideBoundaries:
     m_PersistentCalls:
       m_Calls:
@@ -190,30 +145,6 @@ MonoBehaviour:
   onEndMovingInsideBoundaries:
     m_PersistentCalls:
       m_Calls: []
-  onEnabled:
-    m_PersistentCalls:
-      m_Calls: []
-  onDisabled:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!114 &1905071099
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2792781189551255133}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2b5968f72a721f499c43e35a3c527e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  onRulerPinEnable:
-    m_PersistentCalls:
-      m_Calls: []
-  onRulerPinDisable:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &3784915407541068464
 GameObject:
   m_ObjectHideFlags: 0
@@ -227,7 +158,6 @@ GameObject:
   - component: {fileID: 2031832825775252536}
   - component: {fileID: 2411551839009300190}
   - component: {fileID: 5036532127402512476}
-  - component: {fileID: 1544720590}
   m_Layer: 0
   m_Name: RulerEnd
   m_TagString: Untagged
@@ -335,57 +265,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movingObject: {fileID: 3784915407541068464}
+  _arrowMovement: {fileID: 7453821085730524969}
+  _rigidBody: {fileID: 0}
+  _addVelocityAfterDragEnd: 0
+  _maxVelocity: 2
   minBoundary: {fileID: 0}
   maxBoundary: {fileID: 0}
-  allowedXMovement: 1
-  allowedYMovement: 1
-  allowedZMovement: 1
-  useLocalCoordinates: 0
-  changeMaterialIfOutside: []
-  outsideTransparency: 0.7
-  ArrowMovement: {fileID: 7453821085730524969}
-  onStartedMoving:
-    m_PersistentCalls:
-      m_Calls: []
-  onMove:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: UpdateDisplay
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: UpdateDisplay
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 8167284104948070404}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: UpdateRulerLine
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  allowZMovement: 1
   onEndMovingOutsideBoundaries:
     m_PersistentCalls:
       m_Calls:
@@ -402,30 +288,6 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   onEndMovingInsideBoundaries:
-    m_PersistentCalls:
-      m_Calls: []
-  onEnabled:
-    m_PersistentCalls:
-      m_Calls: []
-  onDisabled:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!114 &1544720590
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3784915407541068464}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2b5968f72a721f499c43e35a3c527e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  onRulerPinEnable:
-    m_PersistentCalls:
-      m_Calls: []
-  onRulerPinDisable:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &7905501318339730370
@@ -582,7 +444,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7434061693016864480}
-  - component: {fileID: 8926986585900895689}
   - component: {fileID: 8167284104948070404}
   m_Layer: 0
   m_Name: Ruler
@@ -609,51 +470,6 @@ Transform:
   - {fileID: 8206984259736167506}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &8926986585900895689
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8167284104948070405}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
 --- !u!114 &8167284104948070404
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -666,9 +482,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96651d9e625f06448aad6f575fb4ccde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RulerStart: {fileID: 1905071099}
-  RulerEnd: {fileID: 1544720590}
-  RulerLine: {fileID: 3863614276310913548}
+  distanceText: {fileID: 0}
+  positionDisplayStartPin: {fileID: 0}
+  positionDisplayEndPin: {fileID: 0}
+  startPinDragHandler: {fileID: 0}
+  endPinDragHandler: {fileID: 0}
+  startPin: {fileID: 2222670609454138047}
+  endPin: {fileID: 8206984259736167506}
+  lineRenderer: {fileID: 3863614276310913548}
 --- !u!1001 &2626456739283952807
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -775,7 +596,7 @@ PrefabInstance:
     - target: {fileID: 4513896859846796369, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}
       propertyPath: OnMove.m_PersistentCalls.m_Calls.Array.size
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4513896859846796369, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}
@@ -1012,7 +833,7 @@ PrefabInstance:
     - target: {fileID: 4513896859846796369, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}
       propertyPath: OnMove.m_PersistentCalls.m_Calls.Array.size
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4513896859846796369, guid: 565f734b46691944bb8c7cb7888df542,
         type: 3}

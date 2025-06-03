@@ -17,6 +17,7 @@ namespace Maroon.Experiments.CoulombsLaw
 
         [SerializeField] private UIFloatInput _dragInput = null;
         [SerializeField] private UIFloatInput _bouncinessInput = null;
+        [SerializeField] private UIFloatInput _frictionInput = null;
         [SerializeField] private UnityEngine.PhysicMaterial _chargePhysicsMaterial = null;
 
         private void Awake()
@@ -36,7 +37,15 @@ namespace Maroon.Experiments.CoulombsLaw
                 _chargePhysicsMaterial.bounciness = bounciness;
             });
 
+            _frictionInput.OnValueChanged.AddListener((float friction) =>
+            {
+                _chargePhysicsMaterial.staticFriction = friction;
+                _chargePhysicsMaterial.dynamicFriction = friction;
+            });
+
             _chargePhysicsMaterial.bounciness = _bouncinessInput.GetValue();
+            _chargePhysicsMaterial.staticFriction = _frictionInput.GetValue();
+            _chargePhysicsMaterial.dynamicFriction = _frictionInput.GetValue();
         }
 
         public ChargedParticle CreateChargedParticle(Vector3 position, float charge, bool positionLocked)

@@ -4,9 +4,7 @@ using UnityEngine.EventSystems;
 
 public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
-    [SerializeField] private Canvas _parentCanvas;
-
-    // Note(MartinR): As this is used for 
+    private Canvas _parentCanvas = null;
 
     [Tooltip("To determine at which Depth objects are spawned/placed, a reference position + offset can be used")]
     [SerializeField] private Transform _referencePosition = null;
@@ -18,6 +16,12 @@ public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHa
 
     public UnityEngine.Events.UnityEvent<Vector3> OnDragFinished; 
     private GameObject _placeholderObject; // The 2D object used as placeholder until the drag has finished
+
+    private void Awake()
+    {
+        _parentCanvas = GetComponentInParent<Canvas>();
+        Debug.Assert(_parentCanvas != null, "UIItemDragHandler should only be used on UI-objects");
+    }
 
     public void OnBeginDrag(PointerEventData eventData)
     {

@@ -27,7 +27,7 @@ namespace Maroon.Experiments.CoulombsLaw
         private float padding = 0.0f;
         [SerializeField]
         private Maroon.Physics.Electromagnetism.EField efield = null;
-        private bool _visible = true;
+        private bool _visible = false;
         public bool Visible { get { return _visible;  } set { _visible = value; GenerateVectorFieldArrows(); } }
 
         private int _resolution = 10;
