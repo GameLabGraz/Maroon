@@ -13,8 +13,10 @@ namespace Maroon.Tools.Voltmeter
         [SerializeField] private TMPro.TMP_Text distanceText;
         [SerializeField] private UIPositionDisplay positionDisplayPositivePin;
         [SerializeField] private UIPositionDisplay positionDisplayNegativePin;
-        [SerializeField] private UIItemDragHandlerSimple positivePinDragHandler;
-        [SerializeField] private UIItemDragHandlerSimple negativePinDragHandler;
+        [SerializeField] private UIItemDragHandlerSimple uiPositivePinDragHandler;
+        [SerializeField] private UIItemDragHandlerSimple uiNegativePinDragHandler;
+        [SerializeField] private PC_DragHandler positivePinDragHandler;
+        [SerializeField] private PC_DragHandler negativePinDragHandler;
 
         [Header("Game-Object References")]
         [SerializeField] private Maroon.Physics.Electromagnetism.EField eField;
@@ -26,25 +28,28 @@ namespace Maroon.Tools.Voltmeter
             // Note(MartinR): Pins have a weird starting position (Y=51.7m), I guess because they are children of some UI-components,
             //      which may have weird transforms for 3D objects,
             //      so I set the position manually to zero here (Pins are disabled at startup anyways, this only affects the UI)
-            positivePin.transform.position = Vector3.zero;
-            negativePin.transform.position = Vector3.zero;
+            positivePin.position = Vector3.zero;
+            negativePin.position = Vector3.zero;
 
             // Set UI callbacks
             positionDisplayPositivePin.affectedObject = positivePin;
             positionDisplayNegativePin.affectedObject = negativePin;
 
-            positivePinDragHandler.OnDragFinished.AddListener((Vector3 pos) =>
+            uiPositivePinDragHandler.OnDragFinished.AddListener((Vector3 pos) =>
             {
                 if (positivePin == null) return;
                 positivePin.gameObject.SetActive(true);
                 positivePin.position = pos;
             });
-            negativePinDragHandler.OnDragFinished.AddListener((Vector3 pos) =>
+            uiNegativePinDragHandler.OnDragFinished.AddListener((Vector3 pos) =>
             {
                 if (negativePin == null) return;
                 negativePin.gameObject.SetActive(true);
                 negativePin.position = pos;
             });
+
+            positivePinDragHandler.onEndMovingOutsideBoundaries.AddListener(() => positivePin.gameObject.SetActive(false));
+            negativePinDragHandler.onEndMovingOutsideBoundaries.AddListener(() => negativePin.gameObject.SetActive(false));
         }
 
         public void LateUpdate()

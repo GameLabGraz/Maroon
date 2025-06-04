@@ -17,25 +17,18 @@ namespace Maroon.Experiments.CoulombsLaw
         private Mesh arrowMesh = null;
         private GameObject[] vectorFieldArrows = null;
 
-        [SerializeField]
-        private Material vectorMaterial = null;
-        [SerializeField]
-        private Transform maxBoundary = null;
-        [SerializeField]
-        private Transform minBoundary = null;
-        [SerializeField]
-        private float padding = 0.0f;
-        [SerializeField]
-        private Maroon.Physics.Electromagnetism.EField efield = null;
+        [SerializeField] private Material vectorMaterial = null;
+        [SerializeField] private Transform maxBoundary = null;
+        [SerializeField] private Transform minBoundary = null;
+        [SerializeField] private float padding = 0.0f;
+        [SerializeField] private Maroon.Physics.Electromagnetism.EField efield = null;
+
         private bool _visible = false;
         public bool Visible { get { return _visible;  } set { _visible = value; GenerateVectorFieldArrows(); } }
 
         private int _resolution = 10;
-        [SerializeField]
-        private float maxArrowWorldSize = 0.1f;
-        [Range(0.1f, 1.3f)]
-        [SerializeField]
-        private float arrowSizeScale = 1.0f;
+        [SerializeField] private float maxArrowWorldSize = 0.1f;
+        [Range(0.1f, 1.3f)] [SerializeField] private float arrowSizeScale = 1.0f;
 
         // Start is called before the first frame update
         void Start()

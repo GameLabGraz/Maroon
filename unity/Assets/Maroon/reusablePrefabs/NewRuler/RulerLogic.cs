@@ -13,12 +13,14 @@ namespace Maroon.Tools.Ruler
         [SerializeField] private TMPro.TMP_Text distanceText;
         [SerializeField] private UIPositionDisplay positionDisplayStartPin;
         [SerializeField] private UIPositionDisplay positionDisplayEndPin;
-        [SerializeField] private UIItemDragHandlerSimple startPinDragHandler;
-        [SerializeField] private UIItemDragHandlerSimple endPinDragHandler;
+        [SerializeField] private UIItemDragHandlerSimple uiStartPinDragHandler;
+        [SerializeField] private UIItemDragHandlerSimple uiEndPinDragHandler;
 
         [Header("Game-Object References")]
         [SerializeField] private Transform startPin;
         [SerializeField] private Transform endPin;
+        [SerializeField] private PC_DragHandler startPinDragHandler;
+        [SerializeField] private PC_DragHandler endPinDragHandler;
         public LineRenderer lineRenderer;
        
         private void Awake()
@@ -33,18 +35,21 @@ namespace Maroon.Tools.Ruler
             positionDisplayStartPin.affectedObject = startPin;
             positionDisplayEndPin.affectedObject = endPin;
 
-            startPinDragHandler.OnDragFinished.AddListener((Vector3 pos) =>
+            uiStartPinDragHandler.OnDragFinished.AddListener((Vector3 pos) =>
             {
                 if (startPin == null) return;
                 startPin.gameObject.SetActive(true);
                 startPin.position = pos;
             });
-            endPinDragHandler.OnDragFinished.AddListener((Vector3 pos) =>
+            uiEndPinDragHandler.OnDragFinished.AddListener((Vector3 pos) =>
             {
                 if (endPin == null) return;
                 endPin.gameObject.SetActive(true);
                 endPin.position = pos;
             });
+
+            startPinDragHandler.onEndMovingOutsideBoundaries.AddListener(() => startPin.gameObject.SetActive(false));
+            endPinDragHandler.onEndMovingOutsideBoundaries.AddListener(() => endPin.gameObject.SetActive(false));
         }
 
         public void LateUpdate()

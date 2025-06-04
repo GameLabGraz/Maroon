@@ -1,20 +1,52 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 namespace Maroon.Experiments.CoulombsLaw
 {
     public class VisualizationPlaneController : MonoBehaviour
     {
+        [Header("Game object references")]
         [SerializeField] private MeshRenderer voltageHeatmapPlane;
         [SerializeField] private MeshRenderer equipotentialLinesPlane;
         [SerializeField] private ParticleController particleController;
+        [SerializeField] private VectorFieldController vectorFieldController;
 
-        [SerializeField] private UIFloatInput heatmapFalloff;
-        [SerializeField] private UIFloatInput heatmapMaxKiloVolt;
+        [Header("UI references")]
+        [SerializeField] private Toggle uiVectorFieldToggle;
+        [SerializeField] private Slider uiVectorFieldResolutionSlider;
 
-        [SerializeField] private UIFloatInput spacingKiloVoltage;
-        [SerializeField] private UIFloatInput maxEquipotentialKiloVoltage;
+        [SerializeField] private Toggle uiHeatmapToggle;
+        [SerializeField] private UIFloatInput uiHeatmapCutoffKiloVoltSlider;
+        [SerializeField] private UIFloatInput uiHeatmapFalloffSlider;
+
+        [SerializeField] private Toggle uiEquipotentialToggle;
+        [SerializeField] private UIFloatInput uiEquipotentialMaximumSlider;
+        [SerializeField] private UIFloatInput uiEquipotentialSpacingSlider;
+
+        private void Awake()
+        {
+            // Register UI-Callbacks
+            uiVectorFieldToggle.onValueChanged.AddListener((bool enabled) =>
+            {
+                vectorFieldController.Visible = enabled;
+            });
+            uiVectorFieldResolutionSlider.onValueChanged.AddListener((float resolution) =>
+            {
+                vectorFieldController.SetResolutionFromFloat(resolution);
+            });
+
+            uiHeatmapToggle.onValueChanged.AddListener((bool enabled) =>
+            {
+                voltageHeatmapPlane.gameObject.SetActive(enabled);
+            });
+
+            uiEquipotentialToggle.onValueChanged.AddListener((bool enabled) =>
+            {
+                equipotentialLinesPlane.gameObject.SetActive(enabled);
+            });
+        }
 
         void LateUpdate()
         {
@@ -38,16 +70,16 @@ namespace Maroon.Experiments.CoulombsLaw
                 voltageHeatmapPlane.sharedMaterial.SetVectorArray(Shader.PropertyToID("_Entries"), packedParticles);
                 voltageHeatmapPlane.sharedMaterial.SetInt(Shader.PropertyToID("_EntryCnt"), activeParticleCount);
 
-                voltageHeatmapPlane.sharedMaterial.SetFloat(Shader.PropertyToID("_Falloff"), heatmapFalloff.GetValue());
-                voltageHeatmapPlane.sharedMaterial.SetFloat(Shader.PropertyToID("_MaxAbsoluteVoltage"), heatmapMaxKiloVolt.GetValue() * 1000.0f);
+                voltageHeatmapPlane.sharedMaterial.SetFloat(Shader.PropertyToID("_Falloff"), uiHeatmapFalloffSlider.GetValue());
+                voltageHeatmapPlane.sharedMaterial.SetFloat(Shader.PropertyToID("_MaxAbsoluteVoltage"), uiHeatmapCutoffKiloVoltSlider.GetValue() * 1000.0f);
             }
             if (equipotentialLinesPlane.gameObject.activeInHierarchy)
             {
                 equipotentialLinesPlane.sharedMaterial.SetInt(Shader.PropertyToID("_EntryCnt"), activeParticleCount);
                 equipotentialLinesPlane.sharedMaterial.SetVectorArray(Shader.PropertyToID("_Entries"), packedParticles);
 
-                equipotentialLinesPlane.sharedMaterial.SetFloat(Shader.PropertyToID("_LineSpacingVoltage"), spacingKiloVoltage.GetValue() * 1000.0f);
-                equipotentialLinesPlane.sharedMaterial.SetFloat(Shader.PropertyToID("_MaxAbsLineVoltage"), maxEquipotentialKiloVoltage.GetValue() * 1000.0f);
+                equipotentialLinesPlane.sharedMaterial.SetFloat(Shader.PropertyToID("_LineSpacingVoltage"), uiEquipotentialSpacingSlider.GetValue() * 1000.0f);
+                equipotentialLinesPlane.sharedMaterial.SetFloat(Shader.PropertyToID("_MaxAbsLineVoltage"), uiEquipotentialMaximumSlider.GetValue() * 1000.0f);
 
             }
         }
