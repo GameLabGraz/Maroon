@@ -41,8 +41,7 @@ namespace Tests.PlayModeTests.PcMenuTests
         private static readonly ButtonLabelMatchingMenuColumnSource[] TopLevelMenuPaths =
         {
             new ButtonLabelMatchingMenuColumnSource(EnterLabLabel, "preMenuColumnLaboratorySelection.prefab"),
-            new ButtonLabelMatchingMenuColumnSource("Menu Audio", "preMenuColumnAudio.prefab"),
-            new ButtonLabelMatchingMenuColumnSource("Menu Language", "preMenuColumnLanguage.prefab"),
+            new ButtonLabelMatchingMenuColumnSource("Menu Settings", "preMenuColumnSettings.prefab"),
             new ButtonLabelMatchingMenuColumnSource("Menu Credits", "preMenuColumnCredits.prefab")
         };
         

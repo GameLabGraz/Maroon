@@ -182,7 +182,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2615165635596911606}
   - component: {fileID: 2615165635596911601}
-  - component: {fileID: 2615165635596911600}
   - component: {fileID: 2615165635596911607}
   m_Layer: 0
   m_Name: y2Label
@@ -252,14 +251,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!222 &2615165635596911600
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2615165635596911605}
-  m_CullTransparentMesh: 0
 --- !u!114 &2615165635596911607
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -405,7 +396,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2615165635816148406}
-  - component: {fileID: 492032003982172904}
+  - component: {fileID: 3819443581575981680}
   m_Layer: 0
   m_Name: ParameterLoader
   m_TagString: Untagged
@@ -428,7 +419,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2615165636486811591}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &492032003982172904
+--- !u!114 &3819443581575981680
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -440,23 +431,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 194f2b069550fd34fa1e4499e3e5752c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _jsonFile:
-  - {fileID: 4900000, guid: c68c6d1aa7a3303478aab8504f865cd7, type: 3}
-  - {fileID: 4900000, guid: ef900496e1772a54cb19bc6f5ea05a1e, type: 3}
-  - {fileID: 4900000, guid: c8337eeb0f28ad145a874c9274610dc6, type: 3}
-  - {fileID: 4900000, guid: f3d4ced9881170d409402fc79031ccbf, type: 3}
-  - {fileID: 4900000, guid: 82559040d372fde4680750696eb12682, type: 3}
-  - {fileID: 4900000, guid: 383fa3b65b7348d4ebdc8c0d7de333d5, type: 3}
-  - {fileID: 4900000, guid: 615f64ec8fb0bfb4f870466f4654ad1b, type: 3}
-  - {fileID: 4900000, guid: 69892c5131c81bb42b43b9ce04b07704, type: 3}
-  - {fileID: 4900000, guid: 51ff4ffbc5c2efb45a18b7dd2f6a7231, type: 3}
+  _automaticiallyDetectJsonFiles: 1
+  _jsonFile: []
   parametersLoaded:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2615165636625313109}
-        m_TargetAssemblyTypeName: ParameterUI, Maroon.Experiments.3DMotionSimulation
-        m_MethodName: LoadParameters
-        m_Mode: 0
+        m_TargetAssemblyTypeName: Maroon.Parameter.ParameterUI, Maroon.Experiments.3DMotionSimulation
+        m_MethodName: OnLoadedExperimentParameters
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -465,6 +448,12 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  CustomParametersLoaded:
+    m_PersistentCalls:
+      m_Calls: []
+  OnFilesInitialized:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &2615165636305501045
 GameObject:
   m_ObjectHideFlags: 0
@@ -475,7 +464,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2615165636305501046}
   - component: {fileID: 2615165636305501041}
-  - component: {fileID: 2615165636305501040}
   - component: {fileID: 2615165636305501047}
   m_Layer: 0
   m_Name: z2Label
@@ -545,14 +533,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!222 &2615165636305501040
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2615165636305501045}
-  m_CullTransparentMesh: 0
 --- !u!114 &2615165636305501047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -655,7 +635,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2615165636402229838}
   - component: {fileID: 2615165636402229833}
-  - component: {fileID: 2615165636402229832}
   - component: {fileID: 2615165636402229839}
   m_Layer: 0
   m_Name: x2Label
@@ -725,14 +704,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!222 &2615165636402229832
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2615165636402229837}
-  m_CullTransparentMesh: 0
 --- !u!114 &2615165636402229839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -835,7 +806,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2615165636408897022}
   - component: {fileID: 2615165636408897018}
-  - component: {fileID: 2615165636408897016}
   - component: {fileID: 2615165636408897023}
   m_Layer: 0
   m_Name: zLabel
@@ -905,14 +875,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!222 &2615165636408897016
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2615165636408897021}
-  m_CullTransparentMesh: 0
 --- !u!114 &2615165636408897023
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1054,7 +1016,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2615165636522610311}
   - component: {fileID: 2615165636522610307}
-  - component: {fileID: 2615165636522610305}
   - component: {fileID: 2615165636522610304}
   m_Layer: 0
   m_Name: xLabel
@@ -1124,14 +1085,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!222 &2615165636522610305
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2615165636522610310}
-  m_CullTransparentMesh: 0
 --- !u!114 &2615165636522610304
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1317,7 +1270,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2615165636621415837}
   - component: {fileID: 2615165636621415833}
-  - component: {fileID: 2615165636621415839}
   - component: {fileID: 2615165636621415838}
   m_Layer: 0
   m_Name: yLabel
@@ -1387,14 +1339,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!222 &2615165636621415839
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2615165636621415836}
-  m_CullTransparentMesh: 0
 --- !u!114 &2615165636621415838
 MonoBehaviour:
   m_ObjectHideFlags: 0

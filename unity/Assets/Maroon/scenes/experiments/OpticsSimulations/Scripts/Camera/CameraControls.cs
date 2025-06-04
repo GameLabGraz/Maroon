@@ -22,22 +22,7 @@ namespace Maroon.Physics.Optics.Camera
         private float _moveFactor;
         
         public bool IsTopView => isTopView;
-
-        [System.Serializable]
-        public struct CameraSetting
-        {
-            public SerializableVector3 Position;
-            public SerializableQuaternion Rotation;
-            public float FOV;
-
-            public CameraSetting(Vector3 position, Quaternion rotation, float fov)
-            {
-                Position = new SerializableVector3(position);
-                Rotation = new SerializableQuaternion(rotation);
-                FOV = fov;
-            }
-        }
-        
+                
         private void Start()
         {
             _cam = GetComponent<UnityEngine.Camera>();
@@ -75,7 +60,7 @@ namespace Maroon.Physics.Optics.Camera
         private void UpdateCamera(CameraSetting cs)
         {
             _cam.transform.position = cs.Position;
-            _cam.transform.rotation = cs.Rotation;
+            _cam.transform.rotation = cs.RotationQuaternion;
             _cam.fieldOfView = cs.FOV;
 
             if (!isTopView)   CopyCameraSetting(_currentView, out _baseView);
@@ -108,12 +93,12 @@ namespace Maroon.Physics.Optics.Camera
             {
                 float t = (Time.time - startTime) / 1f;
                 camTransform.position = Vector3.Lerp(_currentView.Position, cs.Position, t * 1.5f);
-                camTransform.rotation = Quaternion.Slerp(_currentView.Rotation, cs.Rotation, t * 1.5f);
+                camTransform.rotation = Quaternion.Slerp(_currentView.RotationQuaternion, cs.RotationQuaternion, t * 1.5f);
                 _cam.fieldOfView = Mathf.Lerp(_currentView.FOV, cs.FOV, t * 1.5f);
                 yield return null;
             }
             camTransform.position = cs.Position;
-            camTransform.rotation = cs.Rotation;
+            camTransform.rotation = cs.RotationQuaternion;
             _cam.fieldOfView = cs.FOV;
             CopyCameraSetting(cs, out _currentView);
 
@@ -131,7 +116,7 @@ namespace Maroon.Physics.Optics.Camera
         
         private void CopyCameraSetting(CameraSetting a, out CameraSetting b)
         {
-            b = new CameraSetting (a.Position, a.Rotation, a.FOV);
+            b = new CameraSetting(a.Position, a.Rotation, a.FOV);
         }
     }
 }

@@ -10,6 +10,7 @@ using Maroon.Physics.Optics.TableObject;
 using Maroon.Physics.Optics.TableObject.LightComponent;
 using Maroon.Physics.Optics.TableObject.OpticalComponent;
 using Maroon.Physics.Optics.Util;
+using Maroon.ReusableScripts.ExperimentParameters;
 using TMPro;
 using UnityEngine;
 using Math = System.Math;
@@ -97,7 +98,14 @@ namespace Maroon.Physics.Optics.Manager
         private void Awake()
         {
             if (Instance == null)
+            {
                 Instance = this;
+
+                ParameterLoader.Instance.CustomParametersLoaded.AddListener(() => {
+                    // When OpticsParameters config JSON gets sent via Javascript, set the preset Dropdown to index 0, as that's representing an 'undefined' preset
+                    presetDropdown.SetValueWithoutNotify(0);
+                });
+            }
             else
             {
                 Debug.LogError("SHOULD NOT OCCUR - Destroyed UIManager");
@@ -110,12 +118,6 @@ namespace Maroon.Physics.Optics.Manager
             _cauchyModel = cauchyModelDropdown.GetComponent<TMP_Dropdown>();
             _lensModel = lensModelDropdown.GetComponent<TMP_Dropdown>();
             _focalLengthText = focalLengthDisplay.GetComponent<TMP_Text>();
-#if UNITY_WEBGL
-            WebGlReceiver.Instance.OnIncomingData.AddListener((string _jsonData) => {
-                // When OpticsParameters config JSON gets sent via Javascript, set the preset Dropdown to index 0, as that's representing an 'undefined' preset
-                presetDropdown.SetValueWithoutNotify(0);
-            });
-#endif
         }
 
         // ----------------------------------- Light Components -----------------------------------

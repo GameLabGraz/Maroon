@@ -1,9 +1,16 @@
-﻿using UnityEngine;
+﻿#if UNITY_WEBGL
+// For WebGlReceiver
+using Maroon.GlobalEntities;
+#endif
+using UnityEngine;
 
 public class scrMenu : MonoBehaviour
 {
     // #################################################################################################################
     // Members
+
+    private CursorLockMode cursorLockModeBeforeMenu = CursorLockMode.None;
+    private bool cursorVisibleBeforeMenu = true;
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // Open/Close
@@ -52,6 +59,13 @@ public class scrMenu : MonoBehaviour
         {
             this.OpenMenu();
         }
+
+#if UNITY_WEBGL
+        if (this.EnableEscKey)
+        {
+            WebGlReceiver.Instance.OnPauseRequest.AddListener(() => OpenMenu());
+        }
+#endif
     }
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -75,19 +89,32 @@ public class scrMenu : MonoBehaviour
 
     public void OpenMenu()
     {
+        if (IsOpen)
+            return;
+        
+        // Save cursor state and ensure cursor is useable
+        cursorLockModeBeforeMenu = Cursor.lockState;
+        cursorVisibleBeforeMenu = Cursor.visible;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         this.Canvas.SetActive(true);
         this.IsOpen = true;
     }
-
     public void CloseMenu()
     {
         this.Canvas.SetActive(false);
         this.IsOpen = false;
-
-        if(this.RemoveExtraColumnsOnClose)
+        if (this.RemoveExtraColumnsOnClose)
         {
             this.RemoveAllMenuColumnsButFirst();
         }
+
+        // Restore cursor state
+        Cursor.visible = cursorVisibleBeforeMenu;
+        Cursor.lockState = cursorLockModeBeforeMenu;
+        cursorLockModeBeforeMenu = CursorLockMode.None;
+        cursorVisibleBeforeMenu = true;
     }
 
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

@@ -57,8 +57,12 @@ namespace Maroon.Physics
             _rigidBody.position = _currentState.Position;
             _rigidBody.rotation = _currentState.Rotation;
             _rigidBody.isKinematic = _currentState.IsKinematic;
-            _rigidBody.velocity = _currentState.Velocity;
-            _rigidBody.angularVelocity = _currentState.AngularVelocity;
+            if (!_rigidBody.isKinematic)
+            {
+                // Setting linear/angular velocity of a kinematic body is not supported.
+                _rigidBody.angularVelocity = _currentState.AngularVelocity;
+                _rigidBody.velocity = _currentState.Velocity;
+            }
 
             IsStateStored = false;
         }

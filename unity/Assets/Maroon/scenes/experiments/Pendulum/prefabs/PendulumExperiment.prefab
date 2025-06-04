@@ -1045,7 +1045,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &5202824135287962044
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1288,11 +1288,11 @@ MonoBehaviour:
   weight:
     assessmentName: weight
     isDynamic: 0
-    alwaysSendValueChangedEvent: 0
+    alwaysSendValueChangedEvent: 1
     allowSystemChange: 1
     _value: 1
     minValue: 1
-    maxValue: 2
+    maxValue: 5
     onValueChanged:
       m_PersistentCalls:
         m_Calls: []
@@ -1338,7 +1338,7 @@ MonoBehaviour:
   ropeLength:
     assessmentName: ropeLength
     isDynamic: 0
-    alwaysSendValueChangedEvent: 0
+    alwaysSendValueChangedEvent: 1
     allowSystemChange: 1
     _value: 0.3
     minValue: 0.2
@@ -1425,18 +1425,6 @@ MonoBehaviour:
   OnRelease:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: pull
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 5998583639729668546}
         m_TargetAssemblyTypeName: 
         m_MethodName: PendulumReleased
@@ -1446,7 +1434,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: pull
           m_BoolArgument: 0
         m_CallState: 2
   OnGrab:
@@ -1600,7 +1588,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _ropeJoint: {fileID: 5202824134377885964}
   _weight: {fileID: 5202824134415402285}
-  _ropeWeidth: 0.001
+  _ropeWidth: 0.005
 --- !u!1 &5202824136149113554
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,20 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Maroon.Physics
+namespace Maroon.Physics.Pendulum
 {
-  [Serializable]
-  public class Node
-  {
-    public string interestingValue = "value";
-    //The field below is what makes the serialization data become huge because
-    //it introduces a 'class cycle'.
-    public List<Node> children = new List<Node>();
-  }
-
-  [RequireComponent(typeof(HingeJoint))]
+    [RequireComponent(typeof(HingeJoint))]
     public class Pendulum : PausableObject, IResetObject
     {
         public QuantityFloat weight = 1.0f;
@@ -36,7 +26,7 @@ namespace Maroon.Physics
         private float _startWeight;
 
         private float _startRopeLength;
-        private Vector3 _startRopePosition;
+        private Vector3 _startRopeLocalPosition;
 
         private bool _pendulumRelease = false;
 
@@ -81,12 +71,10 @@ namespace Maroon.Physics
         {
             //weight
             _rigidBody.mass = weight.Value;
-            _weightObj.transform.localScale = Vector3.one * weight.Value;
+            _weightObj.transform.localScale = Vector3.one * Mathf.Pow(weight.Value, 1f / 3f); // 3D object changes with cube root of weight
             
             //rope len
-            var pos = _weightObj.transform.position;
-            var moveDirection = (_startRopePosition - _standRopeJoint.transform.position).normalized;
-            _weightObj.transform.position = _startRopePosition + moveDirection * (ropeLength.Value - _startRopeLength);
+            _weightObj.transform.localPosition = _startRopeLocalPosition + Vector3.down * (ropeLength.Value - _startRopeLength);
         }
         
         public float Elongation
@@ -106,7 +94,7 @@ namespace Maroon.Physics
             _startRot = transform.rotation;
             _startWeight = Weight;
             _startRopeLength = RopeLength;
-            _startRopePosition = _weightObj.transform.position;
+            _startRopeLocalPosition = _weightObj.transform.localPosition;
         }
 
         protected override void HandleUpdate()
@@ -161,7 +149,6 @@ namespace Maroon.Physics
                     Debug.Log("Pendulum Maximum" + _currentElongation + " - " + _previousElongation);
                 }
             }
-
         }
 
         public float GetDeflection()
@@ -196,6 +183,10 @@ namespace Maroon.Physics
 
             _rigidBody.velocity = Vector3.zero;
             _rigidBody.angularVelocity = Vector3.zero;
+
+            Elongation = 0f;
+
+            UpdatePendulum();
         }
 
         public void PendulumReleased()

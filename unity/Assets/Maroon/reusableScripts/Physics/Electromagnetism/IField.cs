@@ -27,7 +27,7 @@ public enum FieldType
 public class ProducersCallback : SerializableCallback<HashSet<GameObject>> {}
 
 /// <summary>
-/// Interface to represent a physical field
+/// Abstract class to represent a physical field
 /// </summary>
 public abstract class IField : MonoBehaviour
 {
@@ -76,6 +76,42 @@ public abstract class IField : MonoBehaviour
     /// <param name="position">The required positio</param>
     /// <returns>The field vector</returns>
     public abstract Vector3 get(Vector3 position);
+
+    /// <summary>
+    /// Gets the closest producer (independent of their strength) at the position
+    /// </summary>
+    /// <param name="position">The position at which to look for closest producers</param>
+    /// <returns>GameObject for the closest Producer</returns>
+    public GameObject GetClosestProducer(Vector3 position)
+    {
+        float closestDistance = float.MaxValue;
+        GameObject closestProducer = null;
+        foreach (GameObject prod in producers)
+        {
+            float distance = Vector3.Distance(position, prod.transform.position);
+            if (distance < closestDistance)
+            {
+                closestProducer = prod;
+                closestDistance = distance;
+            }
+        }
+
+        return closestProducer;
+    }
+
+    /// <summary>
+    /// Returns the distance to the closest producer at the passed position
+    /// </summary>
+    /// <param name="position">The position at which to look for closest producers</param>
+    /// <returns>The distance to the closest producer</returns>
+    public float GetDistanceToClosestProducer(Vector3 position)
+    {
+        GameObject closestProducer = GetClosestProducer(position);
+        if (closestProducer == null)
+            return float.MaxValue;
+        
+        return Vector3.Distance(position, closestProducer.transform.position);
+    }
 
     /// <summary>
     ///  Gets the combined field at a given position excluded the given EM object.

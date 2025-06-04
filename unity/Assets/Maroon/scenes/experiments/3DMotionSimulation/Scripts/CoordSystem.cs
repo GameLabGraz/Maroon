@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using ObjectsInUse;
+using Maroon.Parameter.ObjectsInUse;
 
 namespace Maroon.Physics.ThreeDimensionalMotion
 {

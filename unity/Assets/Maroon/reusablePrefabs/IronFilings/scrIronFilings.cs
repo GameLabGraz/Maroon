@@ -129,6 +129,7 @@ public class scrIronFilings : MonoBehaviour, IResetObject
 
         SimulationController.Instance.StopSimulation();
 
+        float startTime = Time.realtimeSinceStartup;
         Debug.Log("Start IronFiling");
         
         foreach( var child in _lines)
@@ -141,7 +142,9 @@ public class scrIronFilings : MonoBehaviour, IResetObject
             var origin = new Vector3(Random.Range(-1f, 1f) * width/2, 0, Random.Range(-1f, 1f) * height/2);
             drawIron(origin, linerenderers[i]);
         }
-        Debug.Log("End IronFiling");
+        float endTime = Time.realtimeSinceStartup;
+        float neededTime = endTime - startTime;
+        Debug.Log("End IronFiling; done in " + neededTime + " s");
 
         gameObject.SetActive(true);
         _linesVisible = true;

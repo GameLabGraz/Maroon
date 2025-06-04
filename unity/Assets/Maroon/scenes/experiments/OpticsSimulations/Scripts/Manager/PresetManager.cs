@@ -28,7 +28,7 @@ namespace Maroon.Physics.Optics.Manager
         [SerializeField] private Aperture aperture;
         [SerializeField] private Eye eye;
         [SerializeField] private Lens lens;
-        [SerializeField] private TableObject.OpticalComponent.Mirror mirror;
+        [SerializeField] private Mirror mirror;
 
         [Header("Camera")] 
         [SerializeField] private GameObject mainCamera;
@@ -57,8 +57,8 @@ namespace Maroon.Physics.Optics.Manager
             _uim = UIManager.Instance;
             _em = ExperimentManager.Instance;
             _camControls = mainCamera.GetComponent<CameraControls>();
-            
-            parameterLoader.LoadJsonFromFileIndex(0);
+
+            parameterLoader.LoadJsonFromFileIndex(0, true);
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace Maroon.Physics.Optics.Manager
 
                 if (componentParameters is LightComponentParameters lightComponentParameters)
                 {
-                    LightComponent lightComp = _lcm.AddLightComponent((LightComponent)prefab, lightComponentParameters.position, lightComponentParameters.rotation, lightComponentParameters.waveLengths);
+                    LightComponent lightComp = _lcm.AddLightComponent((LightComponent)prefab, lightComponentParameters.Position, lightComponentParameters.Rotation, lightComponentParameters.waveLengths);
 
                     switch (lightComponentParameters)
                     {
@@ -117,7 +117,7 @@ namespace Maroon.Physics.Optics.Manager
                 }
                 else if (componentParameters is OpticalComponentParameters opticalComponentParameters)
                 {
-                    OpticalComponent opticalComp = _ocm.AddOpticalComponent((OpticalComponent)prefab, opticalComponentParameters.position, opticalComponentParameters.rotation);
+                    OpticalComponent opticalComp = _ocm.AddOpticalComponent((OpticalComponent)prefab, opticalComponentParameters.Position, opticalComponentParameters.Rotation);
 
                     switch (opticalComponentParameters)
                     {
@@ -208,19 +208,19 @@ namespace Maroon.Physics.Optics.Manager
             {
                 presetNameTranslationKey = "Focal Length",
                 rayThickness = Constants.BaseRayThicknessInMM,
-                cameraSettingBaseView = new CameraControls.CameraSetting(new Vector3(-0.065f, 2.6f, 1.0f), Constants.BaseCamRot, 36),
-                cameraSettingTopView = new CameraControls.CameraSetting(new Vector3(-0.06f, 3, 2.1f), Constants.TopCamRot, 36),
+                cameraSettingBaseView = new CameraSetting(new Vector3(-0.065f, 2.6f, 1.0f), Constants.BaseCamRot, 36),
+                cameraSettingTopView = new CameraSetting(new Vector3(-0.06f, 3, 2.1f), Constants.TopCamRot, 36),
 
                 tableObjectParameters = new List<TableObjectParameters>()
                 {
                     new ParallelSourceParameters()
                     {
-                        position = new Vector3(1.2f, 0, 0.62f),
+                        Position = new Vector3(1.2f, 0, 0.62f),
                         distanceBetweenRays = 0.0038f,
                     },
                     new LensParameters()
                     {
-                        position = new Vector3(1.70f, 0, 0.62f),
+                        Position = new Vector3(1.70f, 0, 0.62f),
                         R1 = Constants.Biconvex.Item1,
                         R2 = Constants.Biconvex.Item2,
                         d1 = Constants.Biconvex.Item3,

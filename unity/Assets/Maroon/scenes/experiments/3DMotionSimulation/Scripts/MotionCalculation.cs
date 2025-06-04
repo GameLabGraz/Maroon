@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using ObjectsInUse;
 using System;
 using System.Linq;
 using GEAR.Localization;
 using Maroon.Physics.Motion;
+using Maroon.Parameter.ObjectsInUse;
+using Maroon.Parameter;
 
 namespace Maroon.Physics.ThreeDimensionalMotion
 {
