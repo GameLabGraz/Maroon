@@ -22,6 +22,8 @@ namespace Maroon.Experiments.CoulombsLaw
 
         private void Awake()
         {
+            Camera.main.orthographic = true;
+
             _dragInput.OnValueChanged.AddListener((float newDrag) =>
             {
                 foreach (var particle in _particles)
