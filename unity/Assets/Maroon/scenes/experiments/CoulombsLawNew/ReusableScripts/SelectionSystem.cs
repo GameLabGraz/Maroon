@@ -35,20 +35,26 @@ namespace Maroon.Experiments.CoulombsLawNew
             // Check if we clicked on a selectable object, and update selection if we did
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hitInfo;
-            bool raycastHitSelectable = false;
+            bool deselectObject = true;
             if (UnityEngine.Physics.Raycast(ray, out hitInfo))
             {
+                // Check if we hit a selectable object
                 var hitObject = hitInfo.collider.gameObject;
                 var selectableObject = hitObject.GetComponent<SelectableObject>();
                 if (selectableObject != null)
                 {
-                    raycastHitSelectable = true;
+                    deselectObject = false;
                     SetSelectedObject(selectableObject);
+                }
+
+                // Don't deselect if we click on movement arrow
+                if (hitObject.GetComponent<MovementGizmoArrow>() != null)
+                {
+                    deselectObject = false;
                 }
             }
 
-            // Find out if we clicked on UI (Don't deselect if we clicked on UI)
-            bool clickedOnUIElement = false;
+            // Don't deselect if we clicked somewhere in UI
             {
                 // Note(MartinR): There may be a better way to do this, but for now we raycast the UI to check if we hit anything
                 var eventSystem = UnityEngine.EventSystems.EventSystem.current;
@@ -58,12 +64,12 @@ namespace Maroon.Experiments.CoulombsLawNew
                 eventSystem.RaycastAll(eventData, results);
                 if (results.Count > 0)
                 {
-                    clickedOnUIElement = true;
+                    deselectObject = false;
                 }
             }
 
-            // Deselect current particle if we clicked somewhere that wasn't UI (e.g. empty space/background)
-            if (!raycastHitSelectable && !clickedOnUIElement)
+            // Deselect current particle if we clicked somewhere that wasn't UI nor MovementGizmo (e.g. empty space/background)
+            if (deselectObject)
             {
                 SetSelectedObject(null);
             }

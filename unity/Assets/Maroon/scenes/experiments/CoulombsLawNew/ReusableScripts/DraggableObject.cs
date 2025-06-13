@@ -11,7 +11,6 @@ namespace Maroon.Experiments.CoulombsLawNew
         [Tooltip("If not set, the script searches for an attached rigidbody on Awake")]
         [SerializeField] private Rigidbody _rigidbody = null;
 
-        private bool _dragIsActive = false;
         private Vector3 _objectPositionAtDragStart;
         private Vector3 _objectToMousePosOffsetAtDragStart;
         private bool _rigidbodyWasKinematicAtDragStart;
@@ -29,7 +28,6 @@ namespace Maroon.Experiments.CoulombsLawNew
                 _rigidbody.isKinematic = true;
             }
 
-            _dragIsActive = true;
             _objectPositionAtDragStart = transform.position;
             _objectToMousePosOffsetAtDragStart = 
                 _objectPositionAtDragStart - 
@@ -38,8 +36,6 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private void OnMouseDrag()
         {
-            if (!_dragIsActive) return;
-
             // Calculate and set new position based on Mouse-Pos
             transform.position = 
                 CameraController.GetMousePointOnPlaneParallelToCamera(_objectPositionAtDragStart) + 
@@ -61,7 +57,6 @@ namespace Maroon.Experiments.CoulombsLawNew
                 _rigidbody.isKinematic = _rigidbodyWasKinematicAtDragStart;
             }
 
-            _dragIsActive = false;
             if (!SimulationBox.Instance.Bounds.Contains(transform.position))
             {
                 OnDraggedOutOfBounds.Invoke(this);
