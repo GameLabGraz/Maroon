@@ -6,21 +6,35 @@ namespace Maroon.Experiments.CoulombsLawNew
 {
     public class CoulombsLawUILogic : MonoBehaviour
     {
-        [SerializeField] private GuiIconTo3DObjectDrag dragIconParticle;
         [SerializeField] private PointCharge prefabPointCharge;
+        [SerializeField] private ChargedRod prefabChargedRod;
         [SerializeField] private Transform parentForNewObjects;
 
-        [SerializeField] private GuiFloatInputHandler pointChargeChargeInput;
+        [Header("UI-Element References")]
+        [SerializeField] private GuiIconTo3DObjectDrag dragIconParticle;
+        [SerializeField] private GuiIconTo3DObjectDrag dragIconChargedRod;
+
         [SerializeField] private TMPro.TMP_Text selectionLabel;
         [SerializeField] private UnityEngine.UI.Button deleteButton;
-        [SerializeField] private GuiPositionDisplayHandler positionDisplay;
+
+        [SerializeField] private GuiFloatInputHandler pointChargeChargeInput;
+        [SerializeField] private GuiPositionDisplayHandler pointChargePosDisplay;
+
+        [SerializeField] private GuiFloatInputHandler chargedRodChargeDensityInput;
+        [SerializeField] private GuiPositionDisplayHandler chargedRodPosA;
+        [SerializeField] private GuiPositionDisplayHandler chargedRodPosB;
 
         private void SetUISelectionEmpty()
         {
             selectionLabel.text = "Selection: Empty";
-            pointChargeChargeInput.gameObject.SetActive(false);
             deleteButton.gameObject.SetActive(false);
-            positionDisplay.gameObject.SetActive(false);
+
+            pointChargeChargeInput.gameObject.SetActive(false);
+            pointChargePosDisplay.gameObject.SetActive(false);
+
+            chargedRodChargeDensityInput.gameObject.SetActive(false);
+            chargedRodPosA.gameObject.SetActive(false);
+            chargedRodPosB.gameObject.SetActive(false);
         }
 
         private void Awake()
@@ -30,6 +44,29 @@ namespace Maroon.Experiments.CoulombsLawNew
             dragIconParticle.OnDragFinished.AddListener((Vector3 pos) =>
             {
                 var newParticle = GameObject.Instantiate(prefabPointCharge, pos, Quaternion.identity, parentForNewObjects);
+            });
+
+            dragIconChargedRod.OnDragFinished.AddListener((Vector3 pos) =>
+            {
+                var newRod = GameObject.Instantiate(prefabChargedRod, pos, Quaternion.identity, parentForNewObjects);
+                newRod.SetRodPosition(pos, pos + Vector3.up);
+            });
+
+            chargedRodPosA.OnEndEdit.AddListener((Vector3 _unused) =>
+            {
+                var selectable = SelectionSystem.Instance.GetSelectedObject();
+                if (selectable == null) return;
+                var rod = selectable.GetComponent<ChargedRod>();
+                if (rod == null) return;
+                rod.SetRodPosition(chargedRodPosA.GetValue(), chargedRodPosB.GetValue());
+            });
+            chargedRodPosB.OnEndEdit.AddListener((Vector3 _unused) =>
+            {
+                var selectable = SelectionSystem.Instance.GetSelectedObject();
+                if (selectable == null) return;
+                var rod = selectable.GetComponent<ChargedRod>();
+                if (rod == null) return;
+                rod.SetRodPosition(chargedRodPosA.GetValue(), chargedRodPosB.GetValue());
             });
 
             SelectionSystem.Instance.OnSelectionChanged.AddListener((SelectableObject selectable) =>
@@ -45,8 +82,20 @@ namespace Maroon.Experiments.CoulombsLawNew
                     selectionLabel.text = "Selection: PointCharge";
                     pointChargeChargeInput.gameObject.SetActive(true);
                     pointChargeChargeInput.SetValue(pointCharge.GetCharge() * 1e6f); // In MicroCoulomb
-                    positionDisplay.gameObject.SetActive(true);
-                    positionDisplay.affectedObject = pointCharge.gameObject.transform;
+                    pointChargePosDisplay.gameObject.SetActive(true);
+                    pointChargePosDisplay.affectedObject = pointCharge.gameObject.transform;
+                    return;
+                }
+
+                var chargedRod = selectable.GetComponent<ChargedRod>();
+                if (chargedRod != null)
+                {
+                    selectionLabel.text = "Selection: Charged Rod";
+                    chargedRodPosA.gameObject.SetActive(true);
+                    chargedRodPosA.SetValue(chargedRod.GetStartPos());
+                    chargedRodPosB.gameObject.SetActive(true);
+                    chargedRodPosB.SetValue(chargedRod.GetEndPos());
+                    chargedRodChargeDensityInput.gameObject.SetActive(true);
                     return;
                 }
             });

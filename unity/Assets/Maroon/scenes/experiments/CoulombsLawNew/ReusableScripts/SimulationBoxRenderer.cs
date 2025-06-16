@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Maroon.Experiments.CoulombsLawNew
 {
+    [ExecuteAlways]
     public class SimulationBoxRenderer : MonoBehaviour
     {
         // Note(MartinR): It seems like it's not possible to draw multiple lines with a single line-renderer,

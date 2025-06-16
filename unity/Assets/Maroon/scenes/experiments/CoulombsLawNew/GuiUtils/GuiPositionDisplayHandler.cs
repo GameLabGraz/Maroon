@@ -6,18 +6,72 @@ namespace Maroon.Experiments.CoulombsLawNew
 {
     public class GuiPositionDisplayHandler : MonoBehaviour
     {
+        // If this is set, the text-inputs will track the objects position (Queried once every LateUpdate)
         public Transform affectedObject = null;
+        // This Event is only triggered on text-field edits, not when the tracked/affected object moves
+        public UnityEngine.Events.UnityEvent<Vector3> OnEndEdit;
 
-        [SerializeField] private PC_InputParser_Float_TMP xCoordinateInput;
-        [SerializeField] private PC_InputParser_Float_TMP yCoordinateInput;
-        [SerializeField] private PC_InputParser_Float_TMP zCoordinateInput;
+        [SerializeField] private string valueName = "Name:";
+        [SerializeField] private string unitName = "m";
 
-        private void OnCoordinateValueChanged(float value, int dimension)
+        private TMPro.TMP_Text nameLabel;
+        private TMPro.TMP_Text unitLabel;
+        private PC_InputParser_Float_TMP xCoordinateInput;
+        private PC_InputParser_Float_TMP yCoordinateInput;
+        private PC_InputParser_Float_TMP zCoordinateInput;
+
+        private void Initialize()
         {
-            if (affectedObject == null) return;
-            var newPos = affectedObject.position;
-            newPos[dimension] = value;
-            affectedObject.transform.position = newPos;
+            nameLabel = GuiFloatInputHandler.FindChildObjectByNameRecursive(gameObject, "Label").GetComponent<TMPro.TMP_Text>();
+            unitLabel = GuiFloatInputHandler.FindChildObjectByNameRecursive(gameObject, "UnitLabel").GetComponent<TMPro.TMP_Text>();
+            xCoordinateInput = GuiFloatInputHandler.FindChildObjectByNameRecursive(
+                GuiFloatInputHandler.FindChildObjectByNameRecursive(gameObject, "XPanel"),
+                "ValueInputField").GetComponent<PC_InputParser_Float_TMP>();
+            yCoordinateInput = GuiFloatInputHandler.FindChildObjectByNameRecursive(
+                GuiFloatInputHandler.FindChildObjectByNameRecursive(gameObject, "YPanel"),
+                "ValueInputField").GetComponent<PC_InputParser_Float_TMP>();
+            zCoordinateInput = GuiFloatInputHandler.FindChildObjectByNameRecursive(
+                GuiFloatInputHandler.FindChildObjectByNameRecursive(gameObject, "ZPanel"),
+                "ValueInputField").GetComponent<PC_InputParser_Float_TMP>();
+            if (nameLabel == null || unitLabel == null || xCoordinateInput == null || yCoordinateInput == null || zCoordinateInput == null)
+            {
+                Debug.LogWarning("GuiFloatInputHandler should be able to find all child objects if the prefab is used correctly");
+                return;
+            }
+
+            nameLabel.text = valueName;
+            unitLabel.text = unitName;
+            unitLabel.gameObject.SetActive(unitName.Length > 0);
+        }
+        private void OnValidate() { Initialize(); }
+
+        private void Awake() 
+        {
+            Initialize(); 
+            SimulationBox.Instance.OnBoundsChanged.AddListener((Bounds _unused) => { UpdateInputBounds(); });
+            UpdateInputBounds();
+
+            // Register UI callbacks
+            xCoordinateInput?.onValueChangedFloat.AddListener((value) => OnCoordinateValueChanged(value, 0));
+            yCoordinateInput?.onValueChangedFloat.AddListener((value) => OnCoordinateValueChanged(value, 1));
+            zCoordinateInput?.onValueChangedFloat.AddListener((value) => OnCoordinateValueChanged(value, 2));
+        }
+
+        private void OnCoordinateValueChanged(float coordValue, int dimension)
+        {
+            Vector3 value = GetValue();
+            if (affectedObject != null)
+            {
+                value = affectedObject.transform.position;
+            }
+
+            value[dimension] = coordValue;
+            if (affectedObject != null)
+            {
+                affectedObject.transform.position = value;
+            }
+
+            OnEndEdit.Invoke(value);
         }
 
         private void UpdateInputBounds()
@@ -31,17 +85,6 @@ namespace Maroon.Experiments.CoulombsLawNew
             zCoordinateInput.maximum = bounds.max.z;
         }
 
-        private void Awake()
-        {
-            SimulationBox.Instance.OnBoundsChanged.AddListener((Bounds _unused) => { UpdateInputBounds(); });
-            UpdateInputBounds();
-
-            // Register UI callbacks
-            xCoordinateInput?.onValueChangedFloat.AddListener((value) => OnCoordinateValueChanged(value, 0));
-            yCoordinateInput?.onValueChangedFloat.AddListener((value) => OnCoordinateValueChanged(value, 1));
-            zCoordinateInput?.onValueChangedFloat.AddListener((value) => OnCoordinateValueChanged(value, 2));
-        }
-
         private void LateUpdate()
         {
             // Update text fields
@@ -52,6 +95,23 @@ namespace Maroon.Experiments.CoulombsLawNew
             xCoordinateInput.SetValue(systemPos.x);
             yCoordinateInput.SetValue(systemPos.y);
             zCoordinateInput.SetValue(systemPos.z);
+        }
+
+        public Vector3 GetValue()
+        {
+            if (affectedObject != null) return affectedObject.transform.position;
+            return new Vector3(xCoordinateInput.GetValue(), yCoordinateInput.GetValue(), zCoordinateInput.GetValue());
+        }
+
+        public void SetValue(Vector3 value)
+        {
+            if (affectedObject != null)
+            {
+                affectedObject.transform.position = value;
+            }
+            xCoordinateInput.SetValue(value.x);
+            yCoordinateInput.SetValue(value.y);
+            zCoordinateInput.SetValue(value.z);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                 float distanceInMeter = toChargeDirection.magnitude;
                 toChargeDirection = toChargeDirection.normalized; // Note(MartinR): This creates a zero-vector if the position is exactly the charge pos
                 if (limitPointChargeInfluence) { 
-                    distanceInMeter = Mathf.Min(distanceInMeter, PointCharge.RADIUS); 
+                    distanceInMeter = Mathf.Max(distanceInMeter, PointCharge.RADIUS); 
                 }
 
                 fieldValue += toChargeDirection * pointCharge.GetCharge() * COULOMB_CONSTANT / (distanceInMeter * distanceInMeter);
@@ -45,7 +45,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
                 float distanceInMeter = (position - pointCharge.transform.position).magnitude;
                 if (limitPointChargeInfluence) { 
-                    distanceInMeter = Mathf.Min(distanceInMeter, PointCharge.RADIUS); 
+                    distanceInMeter = Mathf.Max(distanceInMeter, PointCharge.RADIUS); 
                 }
 
                 potential += pointCharge.GetCharge() * COULOMB_CONSTANT / (distanceInMeter * distanceInMeter);
