@@ -10,14 +10,18 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         // Note(MartinR): Electrically charged objects (points, rods, planes) register themselves in these lists
         public List<PointCharge> pointCharges = new List<PointCharge>();
+        public List<ChargedRod> chargedRods = new List<ChargedRod>();
+        public List<ChargedPlane> chargedPlanes = new List<ChargedPlane>();
 
         // Returns the vector-value of the electric field at a given position, Unit: [Newton/Coulomb]
-        //      If limitPointChargeInfluence is set, then point charges use a distance threshhold so that
+        //      If limitChargeInfluenceDistance is set, then charged objects use a distance threshhold so that
         //      no division by zero/infinitely high values can be produces. This behavior is usually desired
-        //      for visualizations and physics calculations (To prevent simulations from exploding due to e.g. overlapping particles)
-        public Vector3 GetFieldValue(Vector3 position, bool limitPointChargeInfluence, GameObject excludeObject = null)
+        //      for visualizations and physics calculations (To prevent simulations from exploding due to e.g. overlapping objects)
+        public Vector3 GetFieldValue(Vector3 position, bool limitChargeInfluenceDistance, GameObject excludeObject = null)
         {
             Vector3 fieldValue = Vector3.zero;
+
+            // Add point charge influence
             foreach (var pointCharge in pointCharges)
             {
                 if (pointCharge.gameObject == excludeObject) continue;
@@ -25,30 +29,97 @@ namespace Maroon.Experiments.CoulombsLawNew
                 var toChargeDirection = position - pointCharge.transform.position;
                 float distanceInMeter = toChargeDirection.magnitude;
                 toChargeDirection = toChargeDirection.normalized; // Note(MartinR): This creates a zero-vector if the position is exactly the charge pos
-                if (limitPointChargeInfluence) { 
+                if (limitChargeInfluenceDistance) 
+                {
                     distanceInMeter = Mathf.Max(distanceInMeter, PointCharge.RADIUS); 
                 }
 
                 fieldValue += toChargeDirection * pointCharge.GetCharge() * COULOMB_CONSTANT / (distanceInMeter * distanceInMeter);
             }
 
+            // Add rod influences
+            foreach (var chargedRod in chargedRods)
+            {
+                if (chargedRod.gameObject == excludeObject) continue;
+
+                Vector3 direction = chargedRod.GetDirection(); // Should be normalized
+                Vector3 rodPos = chargedRod.transform.position;
+
+                Vector3 positionProjectedOnRod = rodPos + direction * Vector3.Dot(position - rodPos, direction);
+                Vector3 rodToPositionDir = position - positionProjectedOnRod;
+                float distanceToRod = rodToPositionDir.magnitude;
+                rodToPositionDir = rodToPositionDir.normalized;
+                if (limitChargeInfluenceDistance)
+                {
+                    distanceToRod = Mathf.Max(distanceToRod, ChargedRod.RADIUS);
+                }
+
+                fieldValue += chargedRod.GetChargeDenstiy() * 2 * COULOMB_CONSTANT * rodToPositionDir / distanceToRod;
+            }
+
+            // Add plane influences
+            foreach (var chargedPlane in chargedPlanes)
+            {
+                if (chargedPlane.gameObject == excludeObject) continue;
+
+                var normal = chargedPlane.GetNormal();
+                var pointOnPlane = chargedPlane.transform.position;
+                var signedDistance = Vector3.Dot(normal, position - pointOnPlane);
+
+                fieldValue += chargedPlane.GetChargeDensity() * (2 * Mathf.PI * COULOMB_CONSTANT) * (Mathf.Sign(signedDistance) * normal);
+            }
+
             return fieldValue;
         }
 
         // Returns the electric potential (In Volt) at a given position, parameters are similar to GetFieldValue
-        public float GetPotential(Vector3 position, bool limitPointChargeInfluence, GameObject excludeObject = null)
+        public float GetPotential(Vector3 position, bool limitChargeInfluenceDistance, GameObject excludeObject = null)
         {
             float potential = 0.0f;
+
+            // Add point charge influence
             foreach (var pointCharge in pointCharges)
             {
                 if (pointCharge.gameObject == excludeObject) continue;
 
                 float distanceInMeter = (position - pointCharge.transform.position).magnitude;
-                if (limitPointChargeInfluence) { 
+                if (limitChargeInfluenceDistance) { 
                     distanceInMeter = Mathf.Max(distanceInMeter, PointCharge.RADIUS); 
                 }
 
-                potential += pointCharge.GetCharge() * COULOMB_CONSTANT / (distanceInMeter * distanceInMeter);
+                potential += pointCharge.GetCharge() * COULOMB_CONSTANT / distanceInMeter;
+            }
+
+            // Add rod influences
+            foreach (var chargedRod in chargedRods)
+            {
+                if (chargedRod.gameObject == excludeObject) continue;
+
+                Vector3 direction = chargedRod.GetDirection(); // Should be normalized
+                Vector3 rodPos = chargedRod.transform.position;
+
+                Vector3 positionProjectedOnRod = rodPos + direction * Vector3.Dot(position - rodPos, direction);
+                Vector3 rodToPositionDir = position - positionProjectedOnRod;
+                float distanceToRod = rodToPositionDir.magnitude;
+                rodToPositionDir = rodToPositionDir.normalized;
+                if (limitChargeInfluenceDistance)
+                {
+                    distanceToRod = Mathf.Max(distanceToRod, ChargedRod.RADIUS);
+                }
+
+                potential += -chargedRod.GetChargeDenstiy() * 2 * COULOMB_CONSTANT * Mathf.Log(distanceToRod);
+            }
+
+            // Add plane influences
+            foreach (var chargedPlane in chargedPlanes)
+            {
+                if (chargedPlane.gameObject == excludeObject) continue;
+
+                var normal = chargedPlane.GetNormal();
+                var pointOnPlane = chargedPlane.transform.position;
+                var signedDistance = Vector3.Dot(normal, position - pointOnPlane);
+
+                potential += -chargedPlane.GetChargeDensity() * Mathf.Abs(signedDistance) * (2 * Mathf.PI * COULOMB_CONSTANT);
             }
 
             return potential;

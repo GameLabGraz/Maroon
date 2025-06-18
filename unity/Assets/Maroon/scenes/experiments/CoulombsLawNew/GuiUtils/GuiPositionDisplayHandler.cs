@@ -13,6 +13,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         [SerializeField] private string valueName = "Name:";
         [SerializeField] private string unitName = "m";
+        [SerializeField] private bool clampValuesToSimulationBox = true;
 
         private TMPro.TMP_Text nameLabel;
         private TMPro.TMP_Text unitLabel;
@@ -77,12 +78,24 @@ namespace Maroon.Experiments.CoulombsLawNew
         private void UpdateInputBounds()
         {
             var bounds = SimulationBox.Instance.Bounds;
-            xCoordinateInput.minimum = bounds.min.x;
-            xCoordinateInput.maximum = bounds.max.x;
-            yCoordinateInput.minimum = bounds.min.y;
-            yCoordinateInput.maximum = bounds.max.y;
-            zCoordinateInput.minimum = bounds.min.z;
-            zCoordinateInput.maximum = bounds.max.z;
+            if (clampValuesToSimulationBox)
+            {
+                xCoordinateInput.minimum = bounds.min.x;
+                xCoordinateInput.maximum = bounds.max.x;
+                yCoordinateInput.minimum = bounds.min.y;
+                yCoordinateInput.maximum = bounds.max.y;
+                zCoordinateInput.minimum = bounds.min.z;
+                zCoordinateInput.maximum = bounds.max.z;
+            }
+            else
+            {
+                xCoordinateInput.minimum = float.NegativeInfinity;
+                yCoordinateInput.minimum = float.NegativeInfinity;
+                zCoordinateInput.minimum = float.NegativeInfinity;
+                xCoordinateInput.maximum = float.PositiveInfinity;
+                yCoordinateInput.maximum = float.PositiveInfinity;
+                zCoordinateInput.maximum = float.PositiveInfinity;
+            }
         }
 
         private void LateUpdate()

@@ -7,6 +7,8 @@ namespace Maroon.Experiments.CoulombsLawNew
 {
     public class SimulationBox : MonoBehaviour
     {
+        // Note(MartinR): Instead of having a Bounds member to store the extends, this
+        //      class uses transform.postion for the center and _size member for box size.
         [SerializeField] private Vector3 _size = Vector3.one * 2; // Sidelengths of the bounding box (Not extends, to use Unity vocabulary of Bounds)
         public UnityEvent<Bounds> OnBoundsChanged;
 
@@ -53,6 +55,8 @@ namespace Maroon.Experiments.CoulombsLawNew
             // To avoid duplication, this script delets the attached gameObject if an instance of the Singleton already exists
             if (_instance != null && _instance != this)
             {
+                _instance.Bounds = Bounds;
+                _instance.OnBoundsChanged.Invoke(_instance.Bounds);
                 Destroy(this.gameObject);
                 Debug.LogWarning("SimulationBox instance was destroyed due to duplication");
                 return;

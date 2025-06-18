@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Maroon.Experiments.CoulombsLawNew
 {
-    [ExecuteAlways]
     public class SimulationBoxRenderer : MonoBehaviour
     {
         // Note(MartinR): It seems like it's not possible to draw multiple lines with a single line-renderer,
@@ -13,27 +12,52 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private Material lineMaterial;
         [SerializeField] private float lineWidth;
 
-        // Start is called before the first frame update
-        void Awake()
+        private void Initialize()
         {
-            // Initialize line renderers
-            for (int i = 0; i < 12; i++)
+            // Search for line-renderers in children
+            List<GameObject> children = new List<GameObject>();
+            int i = 0;
+            foreach (Transform child in transform)
             {
-                var lineObject = new GameObject("");
-                lineObject.transform.SetParent(transform);
-                
-                lineRenderers[i] = lineObject.AddComponent<LineRenderer>();
-                lineRenderers[i].positionCount = 2;
-                lineRenderers[i].material = lineMaterial;
-                lineRenderers[i].generateLightingData = false;
-                lineRenderers[i].endWidth = lineWidth;
-                lineRenderers[i].startWidth = lineWidth;
-                lineRenderers[i].numCapVertices = 8;
+                var lineRendererChild = child.GetComponent<LineRenderer>();
+                if (lineRendererChild == null) continue;
+                lineRenderers[i] = lineRendererChild;
+                i += 1;
+                if (i == lineRenderers.Length) break;
             }
 
-            var simBox = SimulationBox.Instance;
-            UpdateLines(simBox.Bounds);
-            simBox.OnBoundsChanged.AddListener(UpdateLines);
+            // Add line renderers as children if we don't have enough
+            for (; i < lineRenderers.Length; i++)
+            {
+                var lineObject = new GameObject("LineRenderer#" + i);
+                lineObject.transform.SetParent(transform);
+                lineRenderers[i] = lineObject.AddComponent<LineRenderer>();
+            }
+
+            // Update line-renderer parameters
+            foreach (var lineRenderer in lineRenderers)
+            {
+                lineRenderer.positionCount = 2;
+                lineRenderer.material = lineMaterial;
+                lineRenderer.generateLightingData = false;
+                lineRenderer.endWidth = lineWidth;
+                lineRenderer.startWidth = lineWidth;
+                lineRenderer.numCapVertices = 8;
+            }
+        }
+
+        // Start is called before the first frame update
+        private void Awake()
+        {
+            Initialize();
+            UpdateLines(SimulationBox.Instance.Bounds);
+            SimulationBox.Instance.OnBoundsChanged.AddListener(UpdateLines);
+        }
+
+        private void OnValidate()
+        {
+            Initialize();
+            UpdateLines(new Bounds(transform.position, Vector3.one * 2));
         }
 
         private static Vector3 elementwiseMultiply(Vector3 a, Vector3 b)

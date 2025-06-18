@@ -39,9 +39,9 @@ namespace Maroon.Experiments.CoulombsLawNew
             ElectricField.Instance.pointCharges.Remove(this); 
         }
 
-        public static Color ChargeValueToColor(float charge)
+        public static Color ChargeValueToColor(float charge, float max_value)
         {
-            return Color.Lerp(Color.gray, charge < 0 ? Color.blue : Color.red, Mathf.Pow(Mathf.Abs(charge) / MAX_ABSOLUTE_CHARGE, 2));
+            return Color.Lerp(Color.gray, charge < 0 ? Color.blue : Color.red, Mathf.Pow(Mathf.Abs(charge) / max_value, 2));
         }
 
         public float GetCharge() { return _charge; }
@@ -49,7 +49,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         public void SetCharge(float newCharge)
         {
             _charge = Mathf.Clamp(newCharge, -MAX_ABSOLUTE_CHARGE, MAX_ABSOLUTE_CHARGE);
-            Color color = ChargeValueToColor(_charge);
+            Color color = ChargeValueToColor(_charge, MAX_ABSOLUTE_CHARGE);
 
             // Change second material (Upper and lower part of the + symbol) to show + or - depending on charge
             List<Material> materials = new List<Material>();

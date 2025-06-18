@@ -196,6 +196,8 @@ namespace Maroon.Experiments.CoulombsLawNew
 
             // Update arrow position
             UpdateArrowsDependingOnSelection();
+
+            selected.OnMovedWithGizmo.Invoke(selected);
         }
 
         public void OnArrowMouseUp(int dimension)

@@ -7,25 +7,82 @@ namespace Maroon.Experiments.CoulombsLawNew
 {
     public class ChargedRod : MonoBehaviour
     {
-        public const float RADIUS = 0.05f; // In unity units
+        public const float RADIUS = 0.03f; // In unity units
+        public const float MAX_CHARGE_DENSITY = 1e-5f; // In Coulomb/meter
 
-        // Line is defined by start and end point
-        [SerializeField] private Vector3 startPos;
-        [SerializeField] private Vector3 endPos;
+        private float chargeDensity;
 
+        // Line is defined by point (transform.position and direction)
+        [SerializeField] private Vector3 direction;
+
+        [Header("References to components")]
+        [SerializeField] private CapsuleCollider capsuleCollider;
+        [SerializeField] private SelectableObject selectableComponent;
+        [SerializeField] private DraggableObject draggableComponent;
+
+        [Header("References to Child-objects")]
         [SerializeField] private GameObject childStartSphere;
         [SerializeField] private GameObject childEndSphere;
         [SerializeField] private GameObject childCylinder;
-        [SerializeField] private CapsuleCollider capsuleCollider;
+        [SerializeField] private GameObject childSelectionSphere;
+
+        private Vector3 lastUpdatePos;
 
         void Awake()
         {
-            SetRodPosition(startPos, endPos);
+            SetRodParameters(transform.position, direction);
+            SetChargeDensity(chargeDensity);
+            childSelectionSphere.SetActive(false);
+            lastUpdatePos = transform.position;
+
+            // Register Callbacks
+            selectableComponent.OnObjectSelectedOrDeselected.AddListener((bool isSelected) => { childSelectionSphere.SetActive(isSelected); });
+            selectableComponent.OnMovedWithGizmo.AddListener((SelectableObject _unused) => { Update3DRepresentation(); });
+            draggableComponent.OnMoved.AddListener((DraggableObject _unused) => { Update3DRepresentation(); });
+            GetComponent<DraggableObject>().OnDraggedOutOfBounds.AddListener((DraggableObject _unused) =>
+            {
+                GameObject.Destroy(this.gameObject);
+            });
+
+            // Register in Efield
+            ElectricField.Instance.chargedRods.Add(this);
+        }
+
+        private void OnDestroy()
+        {
+            ElectricField.Instance.chargedRods.Remove(this);
         }
 
         private void OnValidate()
         {
-            SetRodPosition(startPos, endPos);
+            SetRodParameters(transform.position, direction);
+        }
+
+        public void SetRodParameters(Vector3 position, Vector3 direction)
+        {
+            if (direction.magnitude < 0.01f)
+            {
+                direction = Vector3.up;
+            }
+            direction = direction.normalized;
+            this.direction = direction;
+            transform.position = position;
+            Update3DRepresentation();
+        }
+
+        public Vector3 GetDirection() { return direction; }
+
+        public float GetChargeDenstiy() { return chargeDensity; }
+        public void SetChargeDensity(float newChargeDensity) 
+        {
+            newChargeDensity = Mathf.Clamp(newChargeDensity, -MAX_CHARGE_DENSITY, MAX_CHARGE_DENSITY);
+            chargeDensity = newChargeDensity;
+
+            // Set color of all child objects
+            Color color = PointCharge.ChargeValueToColor(chargeDensity, MAX_CHARGE_DENSITY);
+            childStartSphere.GetComponent<MeshRenderer>().material.color = color;
+            childEndSphere.GetComponent<MeshRenderer>().material.color = color;
+            childCylinder.GetComponent<MeshRenderer>().material.color = color;
         }
 
         // Note(MartinR): Unity Bounds has a bounds.intersectsRay, but that doesn't return both intersection points
@@ -58,18 +115,12 @@ namespace Maroon.Experiments.CoulombsLawNew
             return t0 <= t1;
         }
 
-        public void SetRodPosition(Vector3 startPos, Vector3 endPos)
+        public void Update3DRepresentation()
         {
-            this.startPos = startPos;
-            this.endPos = endPos;
-
-            if ((endPos - startPos).magnitude < 0.01f)
-            {
-                endPos = startPos + Vector3.up;
-            }
+            var pos = transform.position;
 
             // Find intersection of rod and SimulationBox (For visual display)
-            Ray ray = new Ray(startPos, endPos - startPos);
+            Ray ray = new Ray(pos, direction);
             float t0, t1;
             bool rayIntersectsBox = RayBoxIntersection(ray, SimulationBox.Instance.Bounds, out t0, out t1);
 
@@ -81,12 +132,13 @@ namespace Maroon.Experiments.CoulombsLawNew
             var posA = ray.GetPoint(t0);
             var posB = ray.GetPoint(t1);
 
-            // Update collider first, as child objects are otherwise influenced by parent transform changing
-            transform.position = (posA + posB) / 2;
+            // Update this transform (parent) first, as child objects are otherwise influenced by parent transform changing
+            var capsuleYOffset = Vector3.Dot((posA + posB) / 2 - pos, direction);
             transform.rotation = Quaternion.FromToRotation(Vector3.up, posA - posB);
             transform.localScale = Vector3.one;
             capsuleCollider.height = (posA - posB).magnitude + RADIUS;
             capsuleCollider.radius = RADIUS/2;
+            capsuleCollider.center = new Vector3(0, capsuleYOffset, 0);
 
             // Update child transforms
             childStartSphere.transform.position = posA;
@@ -101,7 +153,5 @@ namespace Maroon.Experiments.CoulombsLawNew
             childCylinder.transform.localScale = new Vector3(RADIUS, (posA - posB).magnitude / 2, RADIUS);
         }
 
-        public Vector3 GetStartPos() { return startPos; }
-        public Vector3 GetEndPos() { return endPos; }
     }
 }

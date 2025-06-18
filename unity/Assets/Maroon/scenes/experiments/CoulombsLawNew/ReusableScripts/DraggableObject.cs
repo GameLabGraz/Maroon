@@ -7,6 +7,7 @@ namespace Maroon.Experiments.CoulombsLawNew
     public class DraggableObject : MonoBehaviour
     {
         public UnityEngine.Events.UnityEvent<DraggableObject> OnDraggedOutOfBounds;
+        public UnityEngine.Events.UnityEvent<DraggableObject> OnMoved;
 
         [Tooltip("If not set, the script searches for an attached rigidbody on Awake")]
         [SerializeField] private Rigidbody _rigidbody = null;
@@ -48,6 +49,8 @@ namespace Maroon.Experiments.CoulombsLawNew
             {
                 _rigidbody.position = transform.position;
             }
+
+            OnMoved.Invoke(this);
         }
 
         private void OnMouseUp()

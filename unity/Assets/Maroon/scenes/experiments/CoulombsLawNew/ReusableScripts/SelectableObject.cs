@@ -13,6 +13,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         public float boundingRadius = 1.0f;
 
         public UnityEngine.Events.UnityEvent<bool> OnObjectSelectedOrDeselected; // Is called when object was selected/deselected
+        public UnityEngine.Events.UnityEvent<SelectableObject> OnMovedWithGizmo;
 
         private void OnDestroy()
         {

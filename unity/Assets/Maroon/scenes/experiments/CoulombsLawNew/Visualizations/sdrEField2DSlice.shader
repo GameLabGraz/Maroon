@@ -1,7 +1,8 @@
 ﻿Shader "Custom/EField2DSlice" {
     Properties {
 		// Note(MartinR): To prevent division by 0, the voltage calculation always clamps the distance to a minimum value
-        _MinDistance ("Minimum Distance To Point Charges", Float) = 0.05
+        _PointChargeMinDist ("Minimum Distance To Point Charges", Float) = 0.05
+        _ChargedRodMinDist ("Minimum Distance To Charged Rods", Float) = 0.05
         _Transparency("Transparency", Range(0.0,1.0)) = 0.75
 		// Note(MartinR): xyz is normal vector, w is the negative distance from origin to plane
         _PlaneEquation("PlaneEquation", Vector) = (1, 0, 0, 0)
@@ -67,7 +68,8 @@
 			// --------------------------------------------------------------------------------------------------------------
 			// Data structures
 
-			float _MinDistance;
+			float _PointChargeMinDist;
+			float _ChargedRodMinDist;
 			float _Transparency;
 			float4 _PlaneEquation;
 
@@ -82,24 +84,33 @@
 			float _LineSpacingVoltage;
 			float _LineMaxVoltage;
 
-			uniform int _EntryCnt;
-			uniform float4 _Entries[100];
+			uniform int _PointChargeCount;
+			uniform float4 _PointChargeData[100]; // Packed data, xyz is position, w is charge in Coulomb
+			uniform int _ChargedRodCount;
+			uniform float4 _ChargedRodPositions[30]; // Packed data, xyz is position, w is charge-density in Coulomb
+			uniform float4 _ChargedRodDirections[30]; // w is currently unused
+			uniform int _ChargedPlaneCount;
+			uniform float4 _ChargedPlaneEquations[30]; // xyz is normalized normal, w is negative distance of plane to origin
+			uniform float _ChargedPlaneChargeDensities[30];
 
 			// --------------------------------------------------------------------------------------------------------------
 			// Fragment shader
 
 			// Unit is Newton meter^2 / Coulomb^2 [N m^2 / C^2] 
 			#define COULOMBS_CONSTANT 9e9
+			#define PI 3.14159265359
 
 			// Returns Voltage and electric field value
 			void evaluateField(float3 pos, out float voltage, out float3 fieldVector) 
 			{
 				voltage = 0.0; // In Volt
 				fieldVector = float3(0, 0, 0); // In Newton / Coulomb [N/C]
-				for(int i = 0; i < _EntryCnt; ++i)
+
+				// Evaluate point charges
+				for(int i = 0; i < _PointChargeCount; i++)
 				{
-					float3 chargePos    = _Entries[i].xyz;
-					float  electricCharge = _Entries[i].w;
+					float3 chargePos      = _PointChargeData[i].xyz;
+					float  electricCharge = _PointChargeData[i].w;
                 
 					// Safe normalization (Check if vector is 0)
 					float3 direction = pos - chargePos;
@@ -112,11 +123,46 @@
 					}
 
 					// Clamp distance to avoid division by 0
-					dist = max(dist, _MinDistance);
+					dist = max(dist, _PointChargeMinDist);
 
 					// Sum up field values
-					voltage += COULOMBS_CONSTANT * electricCharge / dist;
-					fieldVector += direction * COULOMBS_CONSTANT * electricCharge / (dist * dist);
+					fieldVector += COULOMBS_CONSTANT * electricCharge * direction / (dist * dist);
+					voltage     += COULOMBS_CONSTANT * electricCharge / dist;
+				}
+
+				// Evaluate charged rods
+				for(int i = 0; i < _ChargedRodCount; i++)
+				{
+					float3 rodPos = _ChargedRodPositions[i].xyz;
+					float3 rodDir = _ChargedRodDirections[i].xyz;
+					float  rodChargeDensity = _ChargedRodPositions[i].w;
+
+					float3 posProjected = rodPos + rodDir * dot(pos - rodPos, rodDir);
+					float3 rodToPos = pos - posProjected;
+					float dist = length(rodToPos);
+					if (dist < 0.0001) {
+						rodToPos = float3(0, 1, 0);
+					}
+					else {
+						rodToPos = rodToPos / dist;
+					}
+
+					// Clamp distance
+					dist = max(dist, _ChargedRodMinDist);
+
+					fieldVector +=   (2.0 * COULOMBS_CONSTANT) * rodChargeDensity * rodToPos / dist;
+					voltage     += - (2.0 * COULOMBS_CONSTANT) * rodChargeDensity * log(dist);
+				}
+
+				// Add plane influences
+				for (int i = 0; i < _ChargedPlaneCount; i++) 
+				{
+					float4 planeEquation = _ChargedPlaneEquations[i];
+					float planeChargeDensity = _ChargedPlaneChargeDensities[i];
+
+					float signedDistance = dot(float4(pos, 1.0), planeEquation);
+				    fieldVector +=   (2 * PI * COULOMBS_CONSTANT) * planeChargeDensity * sign(signedDistance) * planeEquation.xyz;
+					voltage     += - (2 * PI * COULOMBS_CONSTANT) * planeChargeDensity * abs(signedDistance);
 				}
 			}
 
@@ -193,7 +239,7 @@
 			float4 frag(vert2frag input) : COLOR 
 			{
 				// Early exit if we have no charged objects
-				if (_EntryCnt == 0) {
+				if (_PointChargeCount == 0 && _ChargedRodCount == 0 && _ChargedPlaneCount == 0) {
 					return float4(1, 1, 1, _Transparency);
 				}
 
