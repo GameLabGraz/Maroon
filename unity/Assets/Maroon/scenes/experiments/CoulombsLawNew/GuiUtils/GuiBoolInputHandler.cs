@@ -47,6 +47,8 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         public void SetValue(bool newValue) {
             _value = newValue;
+            // Note(MartinR): This check is required so SetValue can be called from other gameobjects in Awake
+            if (toggle == null) return;
             toggle.isOn = newValue;
         }
     }

@@ -21,6 +21,8 @@ namespace Maroon.Experiments.CoulombsLawNew
         private PC_InputParser_Float_TMP yCoordinateInput;
         private PC_InputParser_Float_TMP zCoordinateInput;
 
+        private Vector3 value = Vector3.zero;
+
         private void Initialize()
         {
             nameLabel = GuiFloatInputHandler.FindChildObjectByNameRecursive(gameObject, "Label").GetComponent<TMPro.TMP_Text>();
@@ -43,6 +45,8 @@ namespace Maroon.Experiments.CoulombsLawNew
             nameLabel.text = valueName;
             unitLabel.text = unitName;
             unitLabel.gameObject.SetActive(unitName.Length > 0);
+
+            SetValue(value);
         }
         private void OnValidate() { Initialize(); }
 
@@ -60,7 +64,6 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private void OnCoordinateValueChanged(float coordValue, int dimension)
         {
-            Vector3 value = GetValue();
             if (affectedObject != null)
             {
                 value = affectedObject.transform.position;
@@ -77,6 +80,9 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private void UpdateInputBounds()
         {
+            // Note(MartinR): This check is required so UpdateInputBounds can be called from other gameobjects in Awake
+            if (xCoordinateInput == null || yCoordinateInput == null || zCoordinateInput == null) return;
+
             var bounds = SimulationBox.Instance.Bounds;
             if (clampValuesToSimulationBox)
             {
@@ -113,15 +119,20 @@ namespace Maroon.Experiments.CoulombsLawNew
         public Vector3 GetValue()
         {
             if (affectedObject != null) return affectedObject.transform.position;
-            return new Vector3(xCoordinateInput.GetValue(), yCoordinateInput.GetValue(), zCoordinateInput.GetValue());
+            return value;
         }
 
-        public void SetValue(Vector3 value)
+        public void SetValue(Vector3 newValue)
         {
+            value = newValue;
             if (affectedObject != null)
             {
                 affectedObject.transform.position = value;
             }
+
+            // Note(MartinR): This check is required so UpdateInputBounds can be called from other gameobjects in Awake
+            if (xCoordinateInput == null || yCoordinateInput == null || zCoordinateInput == null) return;
+
             xCoordinateInput.SetValue(value.x);
             yCoordinateInput.SetValue(value.y);
             zCoordinateInput.SetValue(value.z);

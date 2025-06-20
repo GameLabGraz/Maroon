@@ -94,6 +94,9 @@ namespace Maroon.Experiments.CoulombsLawNew
             newValue = newValue > maxValue ? maxValue : newValue;
             value = newValue;
 
+            // Note(MartinR): This check is required so SetValue can be called from other gameobjects in Awake
+            if (inputField == null || slider == null) return;
+
             inputField.text = value.ToString();
             if ((int)(slider.value + 0.5f) != newValue)
             {

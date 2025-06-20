@@ -97,7 +97,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             {
                 var pos = chargedRod.transform.position;
                 var dir = chargedRod.GetDirection();
-                Vector4 packedPos = new Vector4(pos.x, pos.y, pos.z, chargedRod.GetChargeDenstiy());
+                Vector4 packedPos = new Vector4(pos.x, pos.y, pos.z, chargedRod.GetChargeDensity());
                 Vector4 packedDir = new Vector4(dir.x, dir.y, dir.z, 0);
                 chargedRodPositions.Add(packedPos);
                 chargedRodDirections.Add(packedDir);

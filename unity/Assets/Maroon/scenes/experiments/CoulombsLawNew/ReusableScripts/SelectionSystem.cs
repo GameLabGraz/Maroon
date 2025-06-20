@@ -7,9 +7,14 @@ namespace Maroon.Experiments.CoulombsLawNew
     public class SelectionSystem : MonoBehaviour
     {
         private SelectableObject selectedObject = null;
+
+        [SerializeField] private TMPro.TMP_Text emptySelectionLabel = null;
+        [SerializeField] private GameObject uiSelectionParentPanel = null;
+        private GameObject lastInstancedSelectedObjectPanel = null;
+
         public UnityEngine.Events.UnityEvent<SelectableObject> OnSelectionChanged;
 
-        // Note(MartinR): gameObject may be null to remove current selection
+        // Note(MartinR): set newSelectedObject parameter to null to remove current selection
         public void SetSelectedObject(SelectableObject newSelectedObject)
         {
             if (selectedObject == newSelectedObject) return;
@@ -20,12 +25,33 @@ namespace Maroon.Experiments.CoulombsLawNew
             prevSelectedObject?.OnObjectSelectedOrDeselected.Invoke(false);
             selectedObject?.OnObjectSelectedOrDeselected.Invoke(true);
             OnSelectionChanged.Invoke(newSelectedObject);
+
+
+
+            // Remove previous UI instanciation
+            if (lastInstancedSelectedObjectPanel != null)
+            {
+                GameObject.Destroy(lastInstancedSelectedObjectPanel);
+            }
+
+            // Create selection UI for newly selected object
+            if (uiSelectionParentPanel != null && selectedObject != null && selectedObject.uiSelectionPanelPrefab != null)
+            {
+                lastInstancedSelectedObjectPanel = GameObject.Instantiate(selectedObject.uiSelectionPanelPrefab, uiSelectionParentPanel.transform);
+            }
+
+            // Show empty selection label if nothing is selected
+            if (emptySelectionLabel != null)
+            {
+                emptySelectionLabel.gameObject.SetActive(selectedObject == null);
+            }
         }
 
         public SelectableObject GetSelectedObject() {
             return selectedObject;
         }
 
+        // Update checks if user changes selection with mouse-clicks
         public void Update()
         {
             if (!Input.GetMouseButtonDown(0)) return;

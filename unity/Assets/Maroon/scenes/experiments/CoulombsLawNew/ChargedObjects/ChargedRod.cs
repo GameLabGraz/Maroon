@@ -72,7 +72,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         public Vector3 GetDirection() { return direction; }
 
-        public float GetChargeDenstiy() { return chargeDensity; }
+        public float GetChargeDensity() { return chargeDensity; }
         public void SetChargeDensity(float newChargeDensity) 
         {
             newChargeDensity = Mathf.Clamp(newChargeDensity, -MAX_CHARGE_DENSITY, MAX_CHARGE_DENSITY);

@@ -6,6 +6,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 {
     public class SelectableObject : MonoBehaviour
     {
+        public GameObject uiSelectionPanelPrefab = null;
         public bool enableMovementGizmo = false;
         [Tooltip("Display an orange highlight circle behind the object when selected")]
         public bool enableSelectionHighlightCircle = true;

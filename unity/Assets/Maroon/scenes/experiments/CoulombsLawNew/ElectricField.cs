@@ -54,7 +54,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                     distanceToRod = Mathf.Max(distanceToRod, ChargedRod.RADIUS);
                 }
 
-                fieldValue += chargedRod.GetChargeDenstiy() * 2 * COULOMB_CONSTANT * rodToPositionDir / distanceToRod;
+                fieldValue += chargedRod.GetChargeDensity() * 2 * COULOMB_CONSTANT * rodToPositionDir / distanceToRod;
             }
 
             // Add plane influences
@@ -107,7 +107,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                     distanceToRod = Mathf.Max(distanceToRod, ChargedRod.RADIUS);
                 }
 
-                potential += -chargedRod.GetChargeDenstiy() * 2 * COULOMB_CONSTANT * Mathf.Log(distanceToRod);
+                potential += -chargedRod.GetChargeDensity() * 2 * COULOMB_CONSTANT * Mathf.Log(distanceToRod);
             }
 
             // Add plane influences

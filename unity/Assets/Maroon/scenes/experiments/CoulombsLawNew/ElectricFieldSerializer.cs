@@ -72,7 +72,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             for (int i = 0; i < efield.chargedRods.Count; i++)
             {
                 var chargedRod = efield.chargedRods[i];
-                result.chargedRods[i] = new ChargedRodData(chargedRod.transform.position, chargedRod.GetDirection(), chargedRod.GetChargeDenstiy());
+                result.chargedRods[i] = new ChargedRodData(chargedRod.transform.position, chargedRod.GetDirection(), chargedRod.GetChargeDensity());
             }
             for (int i = 0; i < efield.chargedPlanes.Count; i++)
             {

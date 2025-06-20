@@ -113,6 +113,9 @@ namespace Maroon.Experiments.CoulombsLawNew
                 }
             }
 
+            // Note(MartinR): This check is required so SetValue can be called from other gameobjects in Awake
+            if (inputField == null || slider == null) return;
+
             inputField.text = value.ToString(formatString);
             if (slider.value != newValue)
             {
@@ -125,6 +128,9 @@ namespace Maroon.Experiments.CoulombsLawNew
             this.minValue = minValue;
             this.maxValue = maxValue;
             SetValue(value); // Clamps value to new min/max and updates text if necessary
+
+            // Note(MartinR): This check is required so SetMinMax can be called from other gameobjects in Awake
+            if (inputField == null || slider == null) return;
 
             // Update UI slider to new min/max
             slider.minValue = minValue;
