@@ -85,9 +85,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             {
                 if (_instance == null)
                 {
-                    // Check if scene already contains a singleton instance
                     _instance = GameObject.FindObjectOfType<SelectionSystem>();
-                    // Create instance if none exists in scene
                     if (_instance == null) _instance = new GameObject("SelectionSystem").AddComponent<SelectionSystem>();
                 }
 
@@ -101,7 +99,6 @@ namespace Maroon.Experiments.CoulombsLawNew
             if (_instance != null && _instance != this)
             {
                 Destroy(this.gameObject);
-                Debug.LogWarning("SelectionSystem instance was destroyed due to duplication");
                 return;
             }
             _instance = this;

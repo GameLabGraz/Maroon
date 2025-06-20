@@ -58,7 +58,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         {
             newChargeDensity = Mathf.Clamp(newChargeDensity, -MAX_CHARGE_DENSITY, MAX_CHARGE_DENSITY);
             chargeDensity = newChargeDensity;
-            meshRenderer.material.color = PointCharge.ChargeValueToColor(chargeDensity, MAX_CHARGE_DENSITY);
+            meshRenderer.material.color = ChargedPoint.ChargeValueToColor(chargeDensity, MAX_CHARGE_DENSITY);
         }
 
 

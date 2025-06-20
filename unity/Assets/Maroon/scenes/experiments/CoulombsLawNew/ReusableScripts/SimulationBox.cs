@@ -23,9 +23,33 @@ namespace Maroon.Experiments.CoulombsLawNew
         }
 
         // Singleton pattern
-        // Note(MartinR):
-        //      See https://gamedev.stackexchange.com/questions/116009/in-unity-how-do-i-correctly-implement-the-singleton-pattern
-        //      for rationals behind this singleton design.
+        /* Note(MartinR): 
+            See https://gamedev.stackexchange.com/questions/116009/in-unity-how-do-i-correctly-implement-the-singleton-pattern
+            for considerations when making a singleton in unity.
+
+            Here are some thoughts/design for this singleton implementation:
+             - GameObjects using the singleton should be allowed to assume that the Singleton-Instance always exists in the scene,
+                 so they don't need extra code-paths if the singleton does not exist. To facilitate this,
+                 a new Instance is created in the scene with reasonable default values if a gameObject accesses the 
+                 singleton for the first time and no instance is present in the scene.
+             - It should be possible to set the initial values of the SimulationBox (position/size) in the Unity Editor.
+                 To do this, a scene needs to contain one GameObject with this Singelton-Component. Then, the inspector
+                 can be used to tweak the properties of the singleton. The problem that arises with this is that
+                 multiple GameObjects with this component could be created in the scene. To solve this, if an
+                 instance of this singleton is created when another instance already exists, the newly created singleton
+                 updates the values of the currently existing one, and then destroys itself.
+             - Scene changes should be handled correctly 
+                 If two scenes each contain one instance of the SimulationBox (with possibly different values), then 
+                 when the scenes are changed, the Instance member should point to the correct object and the correct objects should be used.
+                 Note that editing prefabs also change the scene, and this use case should also work.
+                 Most of this is currently handled by setting the instance to null in OnDestroy().
+             - GameObjects should be able to access the singleton-values in Awake().
+                 Note that the order of Awake() calls in Unity cannot be relied upon, so what is currently done
+                 is that all gameObjects that use the singleton values should have logic to handle changes to
+                 the singleton (If SimulationBox is resized/moved) by listening to the correct UnityEvents (OnBoundsChanged for SimulationBox)
+
+            Note that Maroon also has GlobalEntities and maybe making this class a global entity is the preferred way of doing this...
+        */
         private static SimulationBox _instance;
 
         public static SimulationBox Instance
@@ -35,14 +59,8 @@ namespace Maroon.Experiments.CoulombsLawNew
                 if (_instance == null)
                 {
                     // Check if scene already contains a simulationBox
-                    // Note(MartinR):
-                    //      This is necessary in addition to the "_instance = this;" in Awake,
-                    //      because during Scene initialization, other GameObjects may use SimulationBox in their Awake,
-                    //      and as the order in which Awake is called among GameObjects is undefined,
-                    //      the _instance may not be set at that point, so a scene-search is required.
                     _instance = GameObject.FindObjectOfType<SimulationBox>();
-
-                    // Create a simulation box object if none was found
+                    // Create a simulation box object if none exists in the scene
                     if (_instance == null) _instance = new GameObject("SimulationBox").AddComponent<SimulationBox>();
                 }
 
@@ -58,7 +76,6 @@ namespace Maroon.Experiments.CoulombsLawNew
                 _instance.Bounds = Bounds;
                 _instance.OnBoundsChanged.Invoke(_instance.Bounds);
                 Destroy(this.gameObject);
-                Debug.LogWarning("SimulationBox instance was destroyed due to duplication");
                 return;
             }
             _instance = this;

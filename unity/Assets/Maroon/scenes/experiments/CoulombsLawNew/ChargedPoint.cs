@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Maroon.Experiments.CoulombsLawNew
 {
-    public class PointCharge : MonoBehaviour
+    public class ChargedPoint : MonoBehaviour
     {
         // Constants
         public const float RADIUS = 0.065f; // In unity units
@@ -14,11 +14,14 @@ namespace Maroon.Experiments.CoulombsLawNew
         private float _charge = 0.0f; // In Coulomb
         private MeshRenderer _baseMeshRenderer;
         private GameObject _fixingRing;
+        public Rigidbody rigidBody;
 
         private void Awake()
         {
             _baseMeshRenderer = transform.Find("Base").GetComponent<MeshRenderer>();
             _fixingRing       = transform.Find("FixingRing").gameObject;
+            rigidBody = GetComponent<Rigidbody>();
+            Debug.Assert(rigidBody != null, "PointCharge should have rigidbody");
 
             GetComponent<SelectableObject>().boundingRadius = RADIUS;
             GetComponent<DraggableObject>().OnDraggedOutOfBounds.AddListener((DraggableObject _unused) =>
@@ -29,14 +32,14 @@ namespace Maroon.Experiments.CoulombsLawNew
             // Note(MartinR): The Prefab Mesh has a radius of 1, e.g. bounds in the range [-1, 1]
             transform.localScale = new Vector3(RADIUS, RADIUS, RADIUS);
 
-            ElectricField.Instance.pointCharges.Add(this);
-
+            ElectricField.Instance.chargedPoints.Add(this);
             SetCharge(_charge);
+            rigidBody.isKinematic = !SimulationController.Instance.SimulationRunning;
         }
 
         private void OnDestroy() 
         { 
-            ElectricField.Instance.pointCharges.Remove(this); 
+            ElectricField.Instance.chargedPoints.Remove(this); 
         }
 
         public static Color ChargeValueToColor(float charge, float max_value)
@@ -57,6 +60,15 @@ namespace Maroon.Experiments.CoulombsLawNew
             materials[0].color = color;
             materials[2] = _baseMeshRenderer.materials[_charge < 0 ? 0 : 1];
             _baseMeshRenderer.SetMaterials(materials);
+        }
+
+        public void FixedUpdate()
+        {
+            if (!SimulationController.Instance.SimulationRunning) return;
+
+            // Apply forces from electric field on the particle
+            var fieldVector = ElectricField.Instance.GetFieldValue(transform.position, true, gameObject); // In [Newton/Coulomb]
+            rigidBody.AddForce(fieldVector * _charge, ForceMode.Force);
         }
     }
 }

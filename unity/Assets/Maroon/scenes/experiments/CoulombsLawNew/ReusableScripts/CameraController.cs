@@ -153,11 +153,16 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private void Awake()
         {
-            // To avoid duplication, this script delets the attached gameObject if an instance of the Singleton already exists
             if (_instance != null && _instance != this)
             {
+                _instance.orbitDistanceToCenter = this.orbitDistanceToCenter;
+                _instance.orbitInclineAngle = this.orbitInclineAngle;
+                _instance.orbitRotationAngle = this.orbitRotationAngle;
+                _instance.SetIn3DMode(this.In3DMode);
+                _instance.SetCameraMode2D(this.CameraMode2D);
+                _instance.UpdateCamera();
+                
                 Destroy(this.gameObject);
-                Debug.LogWarning("CameraController instance was destroyed due to duplication");
                 return;
             }
             _instance = this;

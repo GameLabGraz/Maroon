@@ -96,9 +96,9 @@ GameObject:
   - component: {fileID: 4055257505931961413}
   - component: {fileID: 3801166724071374137}
   - component: {fileID: 8231774304316418711}
-  - component: {fileID: 6127573339102008954}
+  - component: {fileID: 6691319744410416705}
   m_Layer: 0
-  m_Name: PointChargePrefab
+  m_Name: ChargedPointPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -184,6 +184,9 @@ MonoBehaviour:
   OnDraggedOutOfBounds:
     m_PersistentCalls:
       m_Calls: []
+  OnMoved:
+    m_PersistentCalls:
+      m_Calls: []
   _rigidbody: {fileID: 0}
 --- !u!114 &8231774304316418711
 MonoBehaviour:
@@ -203,7 +206,10 @@ MonoBehaviour:
   OnObjectSelectedOrDeselected:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &6127573339102008954
+  OnMovedWithGizmo:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &6691319744410416705
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -212,9 +218,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7333818732060180029}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 704ec692416b85544a815159ee7343bf, type: 3}
+  m_Script: {fileID: 11500000, guid: b76782ae8fe712d4daa6969f3fc3e220, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rigidBody: {fileID: 4055257505931961413}
 --- !u!1 &7333818732060180031
 GameObject:
   m_ObjectHideFlags: 0

@@ -70,7 +70,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
             // Get packed particle data
             List<Vector4> pointChargeData = new List<Vector4>();
-            foreach (var pointCharge in ElectricField.Instance.pointCharges)
+            foreach (var pointCharge in ElectricField.Instance.chargedPoints)
             {
                 var pos = pointCharge.transform.position;
                 Vector4 packedInfo = new Vector4(pos.x, pos.y, pos.z, pointCharge.GetCharge());

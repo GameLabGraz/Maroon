@@ -9,7 +9,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         private const float COULOMB_CONSTANT = 1f / (4 * Mathf.PI * Maroon.Physics.PhysicalConstants.e0);
 
         // Note(MartinR): Electrically charged objects (points, rods, planes) register themselves in these lists
-        public List<PointCharge> pointCharges = new List<PointCharge>();
+        public List<ChargedPoint> chargedPoints = new List<ChargedPoint>();
         public List<ChargedRod> chargedRods = new List<ChargedRod>();
         public List<ChargedPlane> chargedPlanes = new List<ChargedPlane>();
 
@@ -22,19 +22,19 @@ namespace Maroon.Experiments.CoulombsLawNew
             Vector3 fieldValue = Vector3.zero;
 
             // Add point charge influence
-            foreach (var pointCharge in pointCharges)
+            foreach (var chargedPoint in chargedPoints)
             {
-                if (pointCharge.gameObject == excludeObject) continue;
+                if (chargedPoint.gameObject == excludeObject) continue;
 
-                var toChargeDirection = position - pointCharge.transform.position;
+                var toChargeDirection = position - chargedPoint.transform.position;
                 float distanceInMeter = toChargeDirection.magnitude;
                 toChargeDirection = toChargeDirection.normalized; // Note(MartinR): This creates a zero-vector if the position is exactly the charge pos
                 if (limitChargeInfluenceDistance) 
                 {
-                    distanceInMeter = Mathf.Max(distanceInMeter, PointCharge.RADIUS); 
+                    distanceInMeter = Mathf.Max(distanceInMeter, ChargedPoint.RADIUS); 
                 }
 
-                fieldValue += toChargeDirection * pointCharge.GetCharge() * COULOMB_CONSTANT / (distanceInMeter * distanceInMeter);
+                fieldValue += toChargeDirection * chargedPoint.GetCharge() * COULOMB_CONSTANT / (distanceInMeter * distanceInMeter);
             }
 
             // Add rod influences
@@ -78,16 +78,16 @@ namespace Maroon.Experiments.CoulombsLawNew
             float potential = 0.0f;
 
             // Add point charge influence
-            foreach (var pointCharge in pointCharges)
+            foreach (var chargedPoint in chargedPoints)
             {
-                if (pointCharge.gameObject == excludeObject) continue;
+                if (chargedPoint.gameObject == excludeObject) continue;
 
-                float distanceInMeter = (position - pointCharge.transform.position).magnitude;
+                float distanceInMeter = (position - chargedPoint.transform.position).magnitude;
                 if (limitChargeInfluenceDistance) { 
-                    distanceInMeter = Mathf.Max(distanceInMeter, PointCharge.RADIUS); 
+                    distanceInMeter = Mathf.Max(distanceInMeter, ChargedPoint.RADIUS); 
                 }
 
-                potential += pointCharge.GetCharge() * COULOMB_CONSTANT / distanceInMeter;
+                potential += chargedPoint.GetCharge() * COULOMB_CONSTANT / distanceInMeter;
             }
 
             // Add rod influences
@@ -136,9 +136,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             {
                 if (_instance == null)
                 {
-                    // Check if scene already contains a singleton Instance
                     _instance = GameObject.FindObjectOfType<ElectricField>();
-                    // Create instance if none exists in scene
                     if (_instance == null) _instance = new GameObject("ElectricField").AddComponent<ElectricField>();
                 }
 
@@ -148,11 +146,9 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private void Awake()
         {
-            // To avoid duplication, this script deletes the attached gameObject if an instance of the Singleton already exists
             if (_instance != null && _instance != this)
             {
                 Destroy(this.gameObject);
-                Debug.LogWarning("ElectricField instance was destroyed due to duplication");
                 return;
             }
             _instance = this;

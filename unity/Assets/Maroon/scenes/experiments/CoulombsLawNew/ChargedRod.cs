@@ -79,7 +79,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             chargeDensity = newChargeDensity;
 
             // Set color of all child objects
-            Color color = PointCharge.ChargeValueToColor(chargeDensity, MAX_CHARGE_DENSITY);
+            Color color = ChargedPoint.ChargeValueToColor(chargeDensity, MAX_CHARGE_DENSITY);
             childStartSphere.GetComponent<MeshRenderer>().material.color = color;
             childEndSphere.GetComponent<MeshRenderer>().material.color = color;
             childCylinder.GetComponent<MeshRenderer>().material.color = color;
