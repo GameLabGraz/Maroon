@@ -6,7 +6,6 @@ namespace Maroon.Experiments.CoulombsLawNew
 {
     public class GuiBoolInputHandler : MonoBehaviour
     {
-        [SerializeField] private string valueName = "Name:";
         [SerializeField] private bool _value = false;
 
         public UnityEngine.Events.UnityEvent<bool> OnValueChanged;
@@ -27,7 +26,6 @@ namespace Maroon.Experiments.CoulombsLawNew
 
             // Initialize ui elements
             toggle.isOn = _value;
-            label.text = valueName;
 
             // Register UI-Callbacks
             toggle.onValueChanged.RemoveAllListeners(); 

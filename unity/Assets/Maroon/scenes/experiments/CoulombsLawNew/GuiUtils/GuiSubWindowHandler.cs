@@ -11,6 +11,12 @@ namespace Maroon.Experiments.CoulombsLawNew
     {
         [SerializeField] private string subwindowTitle = "SubWindowTitle";
 
+        // For aesthetic reasons similar UI elements (labels and input-fields) should have equal size in the subwindow.
+        // See ComponentLabelHandler for how this value is used to achieve this.
+        public float minimumLabelWidth      = 150;
+        public float minimumInputFieldWidth = 60;
+        public float minimumUnitLabelWidth  = 22;
+
         // Private references to UI-Elements
         private TMPro.TMP_Text titleLabel;
         private RectTransform contentPanel;

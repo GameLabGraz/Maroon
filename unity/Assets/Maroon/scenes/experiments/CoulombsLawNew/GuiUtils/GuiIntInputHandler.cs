@@ -10,19 +10,18 @@ namespace Maroon.Experiments.CoulombsLawNew
     //      some code-duplication here should be fine
     public class GuiIntInputHandler : MonoBehaviour
     {
-        [SerializeField] private string valueName = "Name:";
-        [SerializeField] private string unitName = "m";
         [SerializeField] private int minValue = 1;
         [SerializeField] private int maxValue = 10;
         [SerializeField] private int value = 1;
+
+        [SerializeField] private bool sliderEnabled = true;
+        [SerializeField] private bool inputFieldEnabled = true;
 
         public UnityEngine.Events.UnityEvent<int> OnValueChanged;
 
         // Private references to UI-Elements
         // Note(MartinR): In Awake these references are searched by name instead of having references set via [SerializeField],
         //      because I wanted these fields to not show up in the unity editor when using the prefab
-        private TMPro.TMP_Text nameLabel;
-        private TMPro.TMP_Text unitLabel;
         private TMPro.TMP_InputField inputField;
         private UnityEngine.UI.Slider slider;
         private UnityEngine.UI.LayoutElement inputFieldLayoutElement;
@@ -34,31 +33,24 @@ namespace Maroon.Experiments.CoulombsLawNew
         private void Initialize()
         {
             // Find ui elements by name reference gameobjects by name
-            nameLabel               = GuiFloatInputHandler.FindChildObjectByNameRecursive(gameObject, "ValueName").GetComponent<TMPro.TMP_Text>();
-            unitLabel               = GuiFloatInputHandler.FindChildObjectByNameRecursive(gameObject, "UnitLabel").GetComponent<TMPro.TMP_Text>();
             slider                  = GuiFloatInputHandler.FindChildObjectByNameRecursive(gameObject, "Slider").GetComponent<UnityEngine.UI.Slider>();
             inputField              = GuiFloatInputHandler.FindChildObjectByNameRecursive(gameObject, "ValueInputField").GetComponent<TMPro.TMP_InputField>();
             inputFieldLayoutElement = GuiFloatInputHandler.FindChildObjectByNameRecursive(gameObject, "ValueInputField").GetComponent<UnityEngine.UI.LayoutElement>();
-            if (nameLabel == null || unitLabel == null || slider == null || inputField == null || inputFieldLayoutElement == null)
+            if (slider == null || inputField == null || inputFieldLayoutElement == null)
             {
                 Debug.LogWarning("GuiFloatInputHandler should be able to find all child objects if the prefab is used correctly");
                 return;
             }
 
             // Initialize ui elements
+            inputField.gameObject.SetActive(inputFieldEnabled);
+            slider.gameObject.SetActive(sliderEnabled);
+
             slider.minValue = minValue;
             slider.maxValue = maxValue;
             SetValue(value); // Applies min and max to initial value, also sets slider and input field text
 
-            const float APPROXIMATE_CHAR_WIDTH = 28; // Note(MartinR): Just an approximation with font size 36
-            float maxAbsValue = Mathf.Max(Mathf.Abs(minValue), Mathf.Abs(maxValue));
-            int expectedPreCommaDigits = MaxInt(1, 1 + (int) (Mathf.Log10(maxAbsValue) + 0.5f));
-            // Text-Field minWidth depends on all characters, including the dot "." and a possible "-" at the start
-            inputFieldLayoutElement.minWidth = APPROXIMATE_CHAR_WIDTH * (expectedPreCommaDigits + (minValue < 0 ? 1 : 0));
-
-            nameLabel.text = valueName;
-            unitLabel.text = unitName;
-            unitLabel.gameObject.SetActive(unitName.Length > 0);
+            inputFieldLayoutElement.minWidth = GuiFloatInputHandler.FindParentSubWindow(gameObject).minimumInputFieldWidth;
 
             // Register UI-Callbacks
             slider.onValueChanged.RemoveAllListeners();
