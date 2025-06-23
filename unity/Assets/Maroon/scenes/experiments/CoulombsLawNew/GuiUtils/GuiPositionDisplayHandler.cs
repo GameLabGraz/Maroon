@@ -4,62 +4,60 @@ using UnityEngine;
 
 namespace Maroon.Experiments.CoulombsLawNew
 {
+    [RequireComponent(typeof(GuiGenericValueHandler))]
     public class GuiPositionDisplayHandler : MonoBehaviour
     {
+        [SerializeField] private Vector3 value = Vector3.zero;
+        [SerializeField] private bool clampValuesToSimulationBox = true;
+
+        // UI-References
+        private GuiSubWindowHandler parentSubwindow;
+        private PC_InputParser_Float_TMP xCoordinateInput;
+        private PC_InputParser_Float_TMP yCoordinateInput;
+        private PC_InputParser_Float_TMP zCoordinateInput;
+
+        // Public members
         // If this is set, the text-inputs will track the objects position (Queried once every LateUpdate)
         public Transform affectedObject = null;
         // This Event is only triggered on text-field edits, not when the tracked/affected object moves
         public UnityEngine.Events.UnityEvent<Vector3> OnEndEdit;
 
-        [SerializeField] private string valueName = "Name:";
-        [SerializeField] private string unitName = "m";
-        [SerializeField] private bool clampValuesToSimulationBox = true;
-
-        private TMPro.TMP_Text nameLabel;
-        private TMPro.TMP_Text unitLabel;
-        private PC_InputParser_Float_TMP xCoordinateInput;
-        private PC_InputParser_Float_TMP yCoordinateInput;
-        private PC_InputParser_Float_TMP zCoordinateInput;
-
-        private Vector3 value = Vector3.zero;
-
-        private void Initialize()
-        {
-            nameLabel = GuiFloatInputHandler.FindChildObjectByNameRecursive(gameObject, "Label").GetComponent<TMPro.TMP_Text>();
-            unitLabel = GuiFloatInputHandler.FindChildObjectByNameRecursive(gameObject, "UnitLabel").GetComponent<TMPro.TMP_Text>();
-            xCoordinateInput = GuiFloatInputHandler.FindChildObjectByNameRecursive(
-                GuiFloatInputHandler.FindChildObjectByNameRecursive(gameObject, "XPanel"),
-                "ValueInputField").GetComponent<PC_InputParser_Float_TMP>();
-            yCoordinateInput = GuiFloatInputHandler.FindChildObjectByNameRecursive(
-                GuiFloatInputHandler.FindChildObjectByNameRecursive(gameObject, "YPanel"),
-                "ValueInputField").GetComponent<PC_InputParser_Float_TMP>();
-            zCoordinateInput = GuiFloatInputHandler.FindChildObjectByNameRecursive(
-                GuiFloatInputHandler.FindChildObjectByNameRecursive(gameObject, "ZPanel"),
-                "ValueInputField").GetComponent<PC_InputParser_Float_TMP>();
-            if (nameLabel == null || unitLabel == null || xCoordinateInput == null || yCoordinateInput == null || zCoordinateInput == null)
-            {
-                Debug.LogWarning("GuiFloatInputHandler should be able to find all child objects if the prefab is used correctly");
-                return;
-            }
-
-            nameLabel.text = valueName;
-            unitLabel.text = unitName;
-            unitLabel.gameObject.SetActive(unitName.Length > 0);
-
-            SetValue(value);
-        }
-        private void OnValidate() { Initialize(); }
-
         private void Awake() 
         {
-            Initialize(); 
+            // Create UI elements by instanciating prefab
+            var contentPanel = GetComponent<GuiGenericValueHandler>().GetEmptyContentPanel();
+            var inputPrefab = Resources.Load("GuiPositionDisplayPrefab");
+            var inputObject = (GameObject) GameObject.Instantiate(inputPrefab, contentPanel.transform);
+
+            parentSubwindow = GuiSubWindowHandler.FindParentSubWindow(gameObject);
+            xCoordinateInput = GuiSubWindowHandler.FindChildObjectByNameRecursive(
+                GuiSubWindowHandler.FindChildObjectByNameRecursive(contentPanel, "XPanel"),
+                "ValueInputField").GetComponent<PC_InputParser_Float_TMP>();
+            yCoordinateInput = GuiSubWindowHandler.FindChildObjectByNameRecursive(
+                GuiSubWindowHandler.FindChildObjectByNameRecursive(contentPanel, "YPanel"),
+                "ValueInputField").GetComponent<PC_InputParser_Float_TMP>();
+            zCoordinateInput = GuiSubWindowHandler.FindChildObjectByNameRecursive(
+                GuiSubWindowHandler.FindChildObjectByNameRecursive(contentPanel, "ZPanel"),
+                "ValueInputField").GetComponent<PC_InputParser_Float_TMP>();
+
+            if (xCoordinateInput == null || yCoordinateInput == null || zCoordinateInput == null)
+            {
+                Debug.LogWarning("With correct use of prefab all child objects should be found");
+                return;
+            }
+        }
+
+        private void Start()
+        {
+            // Register callbacks
             SimulationBox.Instance.OnBoundsChanged.AddListener((Bounds _unused) => { UpdateInputBounds(); });
             UpdateInputBounds();
 
-            // Register UI callbacks
             xCoordinateInput?.onValueChangedFloat.AddListener((value) => OnCoordinateValueChanged(value, 0));
             yCoordinateInput?.onValueChangedFloat.AddListener((value) => OnCoordinateValueChanged(value, 1));
             zCoordinateInput?.onValueChangedFloat.AddListener((value) => OnCoordinateValueChanged(value, 2));
+
+            SetValue(value);
         }
 
         private void OnCoordinateValueChanged(float coordValue, int dimension)

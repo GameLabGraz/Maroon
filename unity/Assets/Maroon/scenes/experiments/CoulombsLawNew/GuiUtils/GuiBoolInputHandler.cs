@@ -4,6 +4,8 @@ using UnityEngine;
 
 namespace Maroon.Experiments.CoulombsLawNew
 {
+    [ExecuteAlways]
+    [RequireComponent(typeof(GuiGenericValueHandler))]
     public class GuiBoolInputHandler : MonoBehaviour
     {
         [SerializeField] private bool _value = false;
@@ -13,20 +15,24 @@ namespace Maroon.Experiments.CoulombsLawNew
         // Private references to UI-Elements
         private UnityEngine.UI.Toggle toggle = null;
 
-        private void Initialize()
+        private void Awake()
         {
-            // Find ui elements by name reference gameobjects by name
-            var label  = GuiFloatInputHandler.FindChildObjectByNameRecursive(gameObject, "ValueName").GetComponent<TMPro.TMP_Text>();
-            toggle = GuiFloatInputHandler.FindChildObjectByNameRecursive(gameObject, "Toggle").GetComponent<UnityEngine.UI.Toggle>();
-            if (label == null || toggle == null)
+            // Create UI elements by instanciating prefab
+            var contentPanel = GetComponent<GuiGenericValueHandler>().GetEmptyContentPanel();
+            var boolInputPrefab = Resources.Load("GuiBoolInputPrefab");
+            var boolInputObject = (GameObject) GameObject.Instantiate(boolInputPrefab, contentPanel.transform);
+
+            // Find child-ui-elements by name
+            toggle = GuiSubWindowHandler.FindChildObjectByNameRecursive(boolInputObject, "Toggle").GetComponent<UnityEngine.UI.Toggle>();
+            if (toggle == null)
             {
                 Debug.LogWarning("GuiBoolInputHandler should be able to find all child objects if the prefab is used correctly");
                 return;
             }
+        }
 
-            // Initialize ui elements
-            toggle.isOn = _value;
-
+        private void Start()
+        {
             // Register UI-Callbacks
             toggle.onValueChanged.RemoveAllListeners(); 
             toggle.onValueChanged.AddListener((bool newValue) =>
@@ -34,11 +40,18 @@ namespace Maroon.Experiments.CoulombsLawNew
                 _value = newValue;
                 OnValueChanged.Invoke(newValue);
             });
+
+            SetUIElementValues();
         }
 
-        private void Awake() { Initialize(); }
+        void SetUIElementValues()
+        {
+            if (toggle == null) return;
+            toggle.isOn = _value;
+        }
 
-        private void OnValidate() { Initialize(); }
+        private void OnValidate() { SetUIElementValues(); }
+
 
 
         public bool GetValue() { return _value; }

@@ -14,7 +14,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private ChargedPlane chargedPlane;
 
-        private void Awake()
+        private void Start()
         {
             chargedPlane = SelectionSystem.Instance.GetSelectedObject().GetComponent<ChargedPlane>();
             Debug.Assert(chargedPlane != null, "Charged object must be selected when this ui is created");

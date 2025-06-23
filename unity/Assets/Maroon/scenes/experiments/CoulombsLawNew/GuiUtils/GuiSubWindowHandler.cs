@@ -5,8 +5,7 @@ using UnityEngine;
 
 namespace Maroon.Experiments.CoulombsLawNew
 {
-    // Note(MartinR): Currently doesn't do a lot, but I want to have a prefab, so that
-    //      later on I can add e.g. an image or a button to collaps the subwindow
+    [ExecuteAlways]
     public class GuiSubWindowHandler : MonoBehaviour
     {
         [SerializeField] private string subwindowTitle = "SubWindowTitle";
@@ -21,20 +20,47 @@ namespace Maroon.Experiments.CoulombsLawNew
         private TMPro.TMP_Text titleLabel;
         private RectTransform contentPanel;
 
-        private void Initialize()
+        public static GameObject FindChildObjectByNameRecursive(GameObject gameObject, string name)
         {
-            titleLabel   = GuiFloatInputHandler.FindChildObjectByNameRecursive(gameObject, "TitleText").GetComponent<TMPro.TMP_Text>();
-            contentPanel = GuiFloatInputHandler.FindChildObjectByNameRecursive(gameObject, "Content").GetComponent<RectTransform>();
+            if (gameObject.name == name) return gameObject;
+            for (int i = 0; i < gameObject.transform.childCount; i++)
+            {
+                var foundObject = FindChildObjectByNameRecursive(gameObject.transform.GetChild(i).gameObject, name);
+                if (foundObject != null) return foundObject;
+            }
+            return null;
+        }
+
+        public static GuiSubWindowHandler FindParentSubWindow(GameObject gameObject)
+        {
+            while (gameObject != null)
+            {
+                var subwindow = gameObject.GetComponent<GuiSubWindowHandler>();
+                if (subwindow != null) return subwindow;
+                if (gameObject.transform.parent == null) return null;
+                gameObject = gameObject.transform.parent.gameObject;
+            }
+            return null;
+        }
+
+        private void Awake()
+        {
+            titleLabel   = GuiSubWindowHandler.FindChildObjectByNameRecursive(gameObject, "TitleText").GetComponent<TMPro.TMP_Text>();
+            contentPanel = GuiSubWindowHandler.FindChildObjectByNameRecursive(gameObject, "Content").GetComponent<RectTransform>();
             if (titleLabel == null || contentPanel == null)
             {
                 Debug.LogWarning("GuiSubWindowHandler should be able to find all child objects if the prefab is used correctly");
                 return;
             }
+        }
+        private void Start() { SetUIElementValues(); }
 
+        private void SetUIElementValues()
+        {
+            if (titleLabel == null) return;
             titleLabel.text = subwindowTitle;
         }
 
-        private void Awake() { Initialize(); }
-        private void OnValidate() { Initialize(); }
+        private void OnValidate() { SetUIElementValues(); }
     }
 }

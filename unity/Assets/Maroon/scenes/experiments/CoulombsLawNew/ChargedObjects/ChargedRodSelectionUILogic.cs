@@ -13,7 +13,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private ChargedRod chargedRod;
 
-        private void Awake()
+        private void Start()
         {
             chargedRod = SelectionSystem.Instance.GetSelectedObject().GetComponent<ChargedRod>();
             Debug.Assert(chargedRod != null, "Charged object must be selected when this ui is created");
