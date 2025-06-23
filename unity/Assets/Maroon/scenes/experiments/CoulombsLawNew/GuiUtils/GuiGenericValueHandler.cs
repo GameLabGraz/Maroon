@@ -9,45 +9,58 @@ namespace Maroon.Experiments.CoulombsLawNew
     {
         [SerializeField] private string valueName = "Name";
         [SerializeField] private string unitName = "m";
+        [SerializeField] private bool   useVerticalLayout = false;
 
         private GuiSubWindowHandler parentSubwindow;
-        TMPro.TMP_Text valueNameLabel;
-        UnityEngine.UI.LayoutElement valueNameLayoutElement;
-        TMPro.TMP_Text unitNameLabel;
-        UnityEngine.UI.LayoutElement unitNameLayoutElement;
+        private UnityEngine.UI.VerticalLayoutGroup verticalLayoutPanel;
+        private UnityEngine.UI.HorizontalLayoutGroup horizontalLayoutPanel;
+        private GameObject[] valueNameLabels = new GameObject[2];
+        private GameObject[] unitNameLabels = new GameObject[2];
 
         private void Awake()
         {
             parentSubwindow = GuiSubWindowHandler.FindParentSubWindow(gameObject);
 
-            var valueLabel = GuiSubWindowHandler.FindChildObjectByNameRecursive(gameObject, "ValueLabel");
-            valueNameLabel = valueLabel.GetComponent<TMPro.TMP_Text>();
-            valueNameLayoutElement = valueLabel.GetComponent<UnityEngine.UI.LayoutElement>();
+            horizontalLayoutPanel = GuiSubWindowHandler.FindChildObjectByNameRecursive(gameObject, "HorizontalLayout").GetComponent<UnityEngine.UI.HorizontalLayoutGroup>();
+            verticalLayoutPanel   = GuiSubWindowHandler.FindChildObjectByNameRecursive(gameObject, "VerticalLayout").GetComponent<UnityEngine.UI.VerticalLayoutGroup>();
 
-            var unitLabel = GuiSubWindowHandler.FindChildObjectByNameRecursive(gameObject, "UnitLabel");
-            unitNameLabel = unitLabel.GetComponent<TMPro.TMP_Text>();
-            unitNameLayoutElement = unitLabel.GetComponent<UnityEngine.UI.LayoutElement>();
+            valueNameLabels[0]    = GuiSubWindowHandler.FindChildObjectByNameRecursive(horizontalLayoutPanel.gameObject, "ValueLabel");
+            valueNameLabels[1]    = GuiSubWindowHandler.FindChildObjectByNameRecursive(verticalLayoutPanel.gameObject, "ValueLabel");
+            unitNameLabels[0]     = GuiSubWindowHandler.FindChildObjectByNameRecursive(horizontalLayoutPanel.gameObject, "UnitLabel");
+            unitNameLabels[1]     = GuiSubWindowHandler.FindChildObjectByNameRecursive(verticalLayoutPanel.gameObject, "UnitLabel");
+
+            horizontalLayoutPanel.gameObject.SetActive(!useVerticalLayout);
+            verticalLayoutPanel.gameObject.SetActive(useVerticalLayout);
         }
 
         private void Start() { SetUIElementValues(); }
 
         private void SetUIElementValues()
         {
-            if (valueNameLabel == null || unitNameLabel == null || parentSubwindow == null) return;
+            if (horizontalLayoutPanel == null || verticalLayoutPanel == null || parentSubwindow == null) return;
 
-            valueNameLabel.text = valueName;
-            valueNameLayoutElement.minWidth = parentSubwindow.minimumLabelWidth;
+            horizontalLayoutPanel.gameObject.SetActive(!useVerticalLayout);
+            verticalLayoutPanel.gameObject.SetActive(useVerticalLayout);
 
-            unitNameLabel.text = unitName;
-            unitNameLayoutElement.minWidth = parentSubwindow.minimumUnitLabelWidth;
-            unitNameLayoutElement.gameObject.SetActive(unitName.Length != 0);
+            // Update labels
+            for (int i = 0; i < 2; i++)
+            {
+                valueNameLabels[i].GetComponent<TMPro.TMP_Text>().text = valueName;
+                valueNameLabels[i].GetComponent<UnityEngine.UI.LayoutElement>().minWidth = parentSubwindow.minimumLabelWidth;
+                unitNameLabels[i].GetComponent<TMPro.TMP_Text>().text = unitName;
+                unitNameLabels[i].GetComponent<UnityEngine.UI.LayoutElement>().minWidth = parentSubwindow.minimumUnitLabelWidth;
+                unitNameLabels[i].SetActive(unitName.Length != 0);
+            }
         }
 
         private void OnValidate() { SetUIElementValues(); }
 
         public GameObject GetEmptyContentPanel() 
         { 
-            var panel = GuiSubWindowHandler.FindChildObjectByNameRecursive(gameObject, "Content");
+            var panel = 
+                GuiSubWindowHandler.FindChildObjectByNameRecursive(
+                    GuiSubWindowHandler.FindChildObjectByNameRecursive(gameObject, useVerticalLayout ? "VerticalLayout" : "HorizontalLayout"), 
+                    "Content");
 
             // Note(MartinR): I'm removing all children here so that the UI-code can use [ExecuteAlways],
             //      so it also get's updated correctly in the editor

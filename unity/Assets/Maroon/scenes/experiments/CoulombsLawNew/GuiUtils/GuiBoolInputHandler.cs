@@ -8,8 +8,10 @@ namespace Maroon.Experiments.CoulombsLawNew
     [RequireComponent(typeof(GuiGenericValueHandler))]
     public class GuiBoolInputHandler : MonoBehaviour
     {
-        [SerializeField] private bool _value = false;
+        [SerializeField] private bool initialValue = false;
+        [SerializeField] private bool isInteractable = true;
 
+        private bool _value = false;
         public UnityEngine.Events.UnityEvent<bool> OnValueChanged;
 
         // Private references to UI-Elements
@@ -42,15 +44,17 @@ namespace Maroon.Experiments.CoulombsLawNew
             });
 
             SetUIElementValues();
+            SetValue(initialValue);
         }
 
         void SetUIElementValues()
         {
             if (toggle == null) return;
             toggle.isOn = _value;
+            toggle.interactable = isInteractable;
         }
 
-        private void OnValidate() { SetUIElementValues(); }
+        private void OnValidate() { SetUIElementValues(); SetValue(initialValue); }
 
 
 
@@ -58,6 +62,11 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         public void SetValue(bool newValue) {
             _value = newValue;
+            if (!Application.isEditor || Application.isPlaying)
+            {
+                initialValue = newValue; // This is required if SetValue is used before Start() was called on this object
+            }
+
             // Note(MartinR): This check is required so SetValue can be called from other gameobjects in Awake
             if (toggle == null) return;
             toggle.isOn = newValue;

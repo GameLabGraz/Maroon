@@ -7,8 +7,8 @@ namespace Maroon.Experiments.CoulombsLawNew
 {
     public class ChargedPlaneSelectionUILogic : MonoBehaviour
     {
-        [SerializeField] private GuiPositionDisplayHandler positionDisplay;
-        [SerializeField] private GuiPositionDisplayHandler normalDisplay;
+        [SerializeField] private GuiVector3InputHandler positionDisplay;
+        [SerializeField] private GuiVector3InputHandler normalDisplay;
         [SerializeField] private GuiFloatInputHandler chargeDensityInput;
         [SerializeField] private UnityEngine.UI.Button deleteButton;
 

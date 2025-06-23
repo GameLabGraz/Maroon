@@ -6,8 +6,8 @@ namespace Maroon.Experiments.CoulombsLawNew
 {
     public class ChargedRodSelectionUILogic : MonoBehaviour
     {
-        [SerializeField] private GuiPositionDisplayHandler positionDisplay;
-        [SerializeField] private GuiPositionDisplayHandler directionDisplay;
+        [SerializeField] private GuiVector3InputHandler positionDisplay;
+        [SerializeField] private GuiVector3InputHandler directionDisplay;
         [SerializeField] private GuiFloatInputHandler chargeDensityInput;
         [SerializeField] private UnityEngine.UI.Button deleteButton;
 

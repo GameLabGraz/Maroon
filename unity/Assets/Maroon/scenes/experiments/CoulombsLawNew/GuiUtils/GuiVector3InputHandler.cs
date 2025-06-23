@@ -4,10 +4,12 @@ using UnityEngine;
 
 namespace Maroon.Experiments.CoulombsLawNew
 {
+    [ExecuteAlways]
     [RequireComponent(typeof(GuiGenericValueHandler))]
-    public class GuiPositionDisplayHandler : MonoBehaviour
+    public class GuiVector3InputHandler : MonoBehaviour
     {
         [SerializeField] private Vector3 value = Vector3.zero;
+        [SerializeField] private bool isInteractable = true;
         [SerializeField] private bool clampValuesToSimulationBox = true;
 
         // UI-References
@@ -26,7 +28,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         {
             // Create UI elements by instanciating prefab
             var contentPanel = GetComponent<GuiGenericValueHandler>().GetEmptyContentPanel();
-            var inputPrefab = Resources.Load("GuiPositionDisplayPrefab");
+            var inputPrefab = Resources.Load("GuiVector3InputPrefab");
             var inputObject = (GameObject) GameObject.Instantiate(inputPrefab, contentPanel.transform);
 
             parentSubwindow = GuiSubWindowHandler.FindParentSubWindow(gameObject);
@@ -53,11 +55,16 @@ namespace Maroon.Experiments.CoulombsLawNew
             SimulationBox.Instance.OnBoundsChanged.AddListener((Bounds _unused) => { UpdateInputBounds(); });
             UpdateInputBounds();
 
+            SetValue(value);
+
+            if (xCoordinateInput == null || yCoordinateInput == null || zCoordinateInput == null) return;
+            xCoordinateInput.GetInputField().readOnly = !isInteractable;
+            yCoordinateInput.GetInputField().readOnly = !isInteractable;
+            zCoordinateInput.GetInputField().readOnly = !isInteractable;
+
             xCoordinateInput?.onValueChangedFloat.AddListener((value) => OnCoordinateValueChanged(value, 0));
             yCoordinateInput?.onValueChangedFloat.AddListener((value) => OnCoordinateValueChanged(value, 1));
             zCoordinateInput?.onValueChangedFloat.AddListener((value) => OnCoordinateValueChanged(value, 2));
-
-            SetValue(value);
         }
 
         private void OnCoordinateValueChanged(float coordValue, int dimension)

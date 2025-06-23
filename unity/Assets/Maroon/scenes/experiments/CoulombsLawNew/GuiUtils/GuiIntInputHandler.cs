@@ -9,12 +9,17 @@ namespace Maroon.Experiments.CoulombsLawNew
     [RequireComponent(typeof(GuiGenericValueHandler))]
     public class GuiIntInputHandler : MonoBehaviour
     {
-        [SerializeField] private int value = 1;
-        [SerializeField] private int minValue = 1;
-        [SerializeField] private int maxValue = 10;
+        [SerializeField] private int  initialValue = 1;
+        [SerializeField] private bool isInteractable = true;
+        [SerializeField] private bool useMinMax = true;
+        [SerializeField] private int  minValue = 1;
+        [SerializeField] private int  maxValue = 10;
 
         [SerializeField] private bool sliderEnabled = true;
         [SerializeField] private bool textInputEnabled = true;
+
+        private int value = 1;
+        private bool ignoreNextSliderInput = false;
 
         public UnityEngine.Events.UnityEvent<int> OnValueChanged;
 
@@ -53,6 +58,11 @@ namespace Maroon.Experiments.CoulombsLawNew
             slider.onValueChanged.RemoveAllListeners();
             slider.onValueChanged.AddListener((float newValue) =>
             {
+                if (ignoreNextSliderInput)
+                {
+                    ignoreNextSliderInput = false;
+                    return;
+                }
                 SetValue((int)(newValue + 0.5f));
                 OnValueChanged.Invoke(value);
             });
@@ -71,6 +81,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             });
 
             SetUIElementValues();
+            SetValue(initialValue);
         }
 
         private void SetUIElementValues()
@@ -78,18 +89,20 @@ namespace Maroon.Experiments.CoulombsLawNew
             if (inputField == null || slider == null || parentSubwindow == null) return;
 
             // Initialize ui elements
+            slider.interactable = isInteractable;
+            inputField.readOnly = !isInteractable;
+
             sliderPanel.gameObject.SetActive(sliderEnabled);
             textInputPanel.gameObject.SetActive(textInputEnabled);
             textInputPanel.childForceExpandWidth = !sliderEnabled; // Expand text field to whole size if no slider is present
 
-            slider.minValue = minValue;
-            slider.maxValue = maxValue;
+            SetMinMax(minValue, maxValue);
             SetValue(value); // Applies min and max to initial value, also sets slider and input field text
 
             inputFieldLayoutElement.minWidth = parentSubwindow.minimumInputFieldWidth;
         }
 
-        private void OnValidate() { SetUIElementValues(); }
+        private void OnValidate() { SetUIElementValues(); SetValue(initialValue); }
 
 
 
@@ -97,9 +110,17 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         public void SetValue(int newValue)
         {
-            newValue = newValue < minValue ? minValue : newValue;
-            newValue = newValue > maxValue ? maxValue : newValue;
+            if (useMinMax)
+            {
+                newValue = newValue < minValue ? minValue : newValue;
+                newValue = newValue > maxValue ? maxValue : newValue;
+            }
             value = newValue;
+
+            if (!Application.isEditor || Application.isPlaying)
+            {
+                initialValue = newValue; // This is required if SetValue is used before Start() was called on this object
+            }
 
             // Note(MartinR): This check is required so SetValue can be called from other gameobjects in Awake
             if (inputField == null || slider == null) return;
@@ -107,6 +128,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             inputField.text = value.ToString();
             if ((int)(slider.value + 0.5f) != newValue)
             {
+                ignoreNextSliderInput = true;
                 slider.value = newValue;
             }
         }
