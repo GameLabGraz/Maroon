@@ -72,6 +72,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         {
             if (Application.isEditor && !Application.isPlaying) return;
             this.initialValue = initialValue;
+            SetValue(initialValue);
         }
     }
 }

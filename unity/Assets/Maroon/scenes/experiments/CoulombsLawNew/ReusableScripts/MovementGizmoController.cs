@@ -83,7 +83,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             }
         }
 
-        private void UpdateArrowsDependingOnSelection()
+        public void UpdateArrowsDependingOnSelection()
         {
             // Hide/Show arrows depending on selection
             var selected = SelectionSystem.Instance.GetSelectedObject();

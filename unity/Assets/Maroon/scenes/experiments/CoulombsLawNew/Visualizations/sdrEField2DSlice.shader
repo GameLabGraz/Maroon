@@ -33,7 +33,6 @@
         
         ZWrite On
         Blend SrcAlpha OneMinusSrcAlpha
-		Cull Off
         
         Pass {
 			CGPROGRAM

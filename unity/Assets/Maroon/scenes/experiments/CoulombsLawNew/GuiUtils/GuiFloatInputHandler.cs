@@ -139,6 +139,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         {
             if (Application.isEditor && !Application.isPlaying) return;
             this.initialValue = initialValue;
+            SetValue(initialValue);
         }
 
         public void SetMinMax(float minValue, float maxValue)

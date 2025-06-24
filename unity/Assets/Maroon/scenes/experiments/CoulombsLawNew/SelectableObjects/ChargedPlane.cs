@@ -22,14 +22,14 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private void Awake()
         {
-            UpdateMeshClippedBySimulationBox();
+            UpdateChargedPlaneMesh();
             SetChargeDensity(chargeDensity); // Initializes color
 
             selectionHighlightSphere.SetActive(false);
             selectableComponent.OnObjectSelectedOrDeselected.AddListener((bool isSelected) => selectionHighlightSphere.SetActive(isSelected));
             draggableComponent.OnDraggedOutOfBounds.AddListener((DraggableObject _unused) => { GameObject.Destroy(this.gameObject); });
-            draggableComponent.OnMoved.AddListener((DraggableObject _unused) => { UpdateMeshClippedBySimulationBox(); });
-            selectableComponent.OnMovedWithGizmo.AddListener((SelectableObject _unused) => { UpdateMeshClippedBySimulationBox(); });
+            draggableComponent.OnMoved.AddListener((DraggableObject _unused) => { UpdateChargedPlaneMesh(); });
+            selectableComponent.OnMovedWithGizmo.AddListener((SelectableObject _unused) => { UpdateChargedPlaneMesh(); });
 
             ElectricField.Instance.chargedPlanes.Add(this);
         }
@@ -48,7 +48,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             this.transform.position = position;
             this.transform.rotation = Quaternion.identity;
 
-            UpdateMeshClippedBySimulationBox();
+            UpdateChargedPlaneMesh();
         }
         public Vector3 GetNormal() { return planeNormal; }
 
@@ -59,6 +59,13 @@ namespace Maroon.Experiments.CoulombsLawNew
             newChargeDensity = Mathf.Clamp(newChargeDensity, -MAX_CHARGE_DENSITY, MAX_CHARGE_DENSITY);
             chargeDensity = newChargeDensity;
             meshRenderer.material.color = ChargedPoint.ChargeValueToColor(chargeDensity, MAX_CHARGE_DENSITY);
+        }
+
+        private void UpdateChargedPlaneMesh()
+        {
+            var newMesh = CalculateClippedPlaneMeshWithVolume(transform.position, planeNormal, THICKNESS);
+            meshFilter.mesh = newMesh;
+            meshCollider.sharedMesh = newMesh;
         }
 
 
@@ -114,12 +121,12 @@ namespace Maroon.Experiments.CoulombsLawNew
             }
         }
 
-        private void UpdateMeshClippedBySimulationBox()
+        private static List<Vector3> CalculateClippedPlaneVertices(Vector3 position, Vector3 normal)
         {
             // Get clipping planes (Note: in object local space)
             Bounds bounds = SimulationBox.Instance.Bounds;
-            Vector3 min = bounds.min - transform.position;
-            Vector3 max = bounds.max - transform.position;
+            Vector3 min = bounds.min - position;
+            Vector3 max = bounds.max - position;
             Vector4[] clippingPlanes = new Vector4[]
             {
                 new Vector4( 1,  0,  0, -min.x),
@@ -131,7 +138,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             };
 
             // Define Vertices
-            Quaternion rotation = Quaternion.FromToRotation(Vector3.back, planeNormal);
+            Quaternion rotation = Quaternion.FromToRotation(Vector3.back, normal);
             List<Vector3> vertices = new List<Vector3>
             {
                 rotation * (100 * new Vector3(-1, -1, 0)),
@@ -151,13 +158,20 @@ namespace Maroon.Experiments.CoulombsLawNew
                 clippedVertices = swap;
             }
 
+            return vertices;
+        }
+
+        public static Mesh CalculateClippedPlaneMeshWithVolume(Vector3 position, Vector3 planeNormal, float thickness)
+        {
+            var vertices = CalculateClippedPlaneVertices(position, planeNormal);
+
             var meshVertices = new List<Vector3>();
             foreach (var vertex in vertices)
             {
-                meshVertices.Add(vertex + planeNormal * THICKNESS / 2); // Upper face vertex
-                meshVertices.Add(vertex + planeNormal * THICKNESS / 2); // Side face upper vertex
-                meshVertices.Add(vertex - planeNormal * THICKNESS / 2); // Side face lower vertex
-                meshVertices.Add(vertex - planeNormal * THICKNESS / 2); // Lower face vertex
+                meshVertices.Add(vertex + planeNormal * thickness / 2); // Upper face vertex
+                meshVertices.Add(vertex + planeNormal * thickness / 2); // Side face upper vertex
+                meshVertices.Add(vertex - planeNormal * thickness / 2); // Side face lower vertex
+                meshVertices.Add(vertex - planeNormal * thickness / 2); // Lower face vertex
             }
 
             // Generate triangle indices (Top + bottom face and border faces)
@@ -175,6 +189,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                 indices.Add((i) * 4 + 3);
             }
 
+            // Side-Faces
             for (int i = 0; i < vertices.Count; i++)
             {
                 int i0 = i * 4 + 1; 
@@ -212,9 +227,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             mesh.SetVertices(meshVertices);
             mesh.SetNormals(normals);
             mesh.SetIndices(indices, MeshTopology.Triangles, 0);
-
-            meshFilter.mesh = mesh;
-            meshCollider.sharedMesh = mesh;
+            return mesh;
         }
     }
 }

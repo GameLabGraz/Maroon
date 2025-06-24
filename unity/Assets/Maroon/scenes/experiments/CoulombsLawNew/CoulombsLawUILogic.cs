@@ -11,12 +11,14 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private ChargedPoint prefabChargedPoint;
         [SerializeField] private ChargedRod prefabChargedRod;
         [SerializeField] private ChargedPlane prefabChargedPlane;
+        [SerializeField] private VisualizationPlaneLogic prefabVisualizationPlane;
         [SerializeField] private Transform parentForNewObjects;
 
         [Header("UI-Element References")]
         [SerializeField] private GuiIconTo3DObjectDrag dragIconParticle;
         [SerializeField] private GuiIconTo3DObjectDrag dragIconChargedRod;
         [SerializeField] private GuiIconTo3DObjectDrag dragIconChargedPlane;
+        [SerializeField] private GuiIconTo3DObjectDrag dragIconPlaneVisualization;
 
         // Note(MartinR): I'm overwritting the normal Maroon button behavior in Awake
         //      so that all UI-elements in the whole scene are handled in a uniform manner
@@ -40,6 +42,13 @@ namespace Maroon.Experiments.CoulombsLawNew
             {
                 var newPlane = GameObject.Instantiate(prefabChargedPlane, pos, Quaternion.identity, parentForNewObjects);
                 newPlane.SetPlaneParameters(pos, Vector3.right);
+            });
+            dragIconPlaneVisualization.OnDragFinished.AddListener((Vector3 pos) =>
+            {
+                var plane = GameObject.Instantiate(prefabVisualizationPlane, pos, Quaternion.identity, parentForNewObjects);
+                plane.position = pos;
+                plane.planeNormal = Vector3.back;
+                plane.UpdateMeshAndDraggable();
             });
 
 

@@ -16,6 +16,8 @@ namespace Maroon.Experiments.CoulombsLawNew
         private Vector3 _objectToMousePosOffsetAtDragStart;
         private bool _rigidbodyWasKinematicAtDragStart;
 
+        public bool draggableEnabled = true;
+
         private void Awake()
         {
             if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody>();
@@ -23,6 +25,8 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private void OnMouseDown()
         {
+            if (!draggableEnabled) return;
+
             if (_rigidbody != null)
             {
                 _rigidbodyWasKinematicAtDragStart = _rigidbody.isKinematic;
@@ -37,6 +41,8 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private void OnMouseDrag()
         {
+            if (!draggableEnabled) return;
+
             // Calculate and set new position based on Mouse-Pos
             transform.position = 
                 CameraController.GetMousePointOnPlaneParallelToCamera(_objectPositionAtDragStart) + 
@@ -55,6 +61,8 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private void OnMouseUp()
         {
+            if (!draggableEnabled) return;
+
             if (_rigidbody != null)
             {
                 _rigidbody.isKinematic = _rigidbodyWasKinematicAtDragStart;
