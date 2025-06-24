@@ -60,16 +60,18 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         public bool GetValue() { return _value; }
 
-        public void SetValue(bool newValue) {
+        public void SetValue(bool newValue) 
+        {
             _value = newValue;
-            if (!Application.isEditor || Application.isPlaying)
-            {
-                initialValue = newValue; // This is required if SetValue is used before Start() was called on this object
-            }
-
-            // Note(MartinR): This check is required so SetValue can be called from other gameobjects in Awake
             if (toggle == null) return;
             toggle.isOn = newValue;
+        }
+
+        // Note: See notes in GuiFloatInputHandler.SetInitialValue
+        public void SetInitialValue(bool initialValue)
+        {
+            if (Application.isEditor && !Application.isPlaying) return;
+            this.initialValue = initialValue;
         }
     }
 }

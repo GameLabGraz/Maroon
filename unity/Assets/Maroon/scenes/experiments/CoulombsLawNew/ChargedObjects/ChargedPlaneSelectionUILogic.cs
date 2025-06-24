@@ -19,7 +19,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             chargedPlane = SelectionSystem.Instance.GetSelectedObject().GetComponent<ChargedPlane>();
             Debug.Assert(chargedPlane != null, "Charged object must be selected when this ui is created");
 
-            positionDisplay.affectedObject = chargedPlane.transform;
+            positionDisplay.TrackTransform(chargedPlane.transform);
             normalDisplay.SetValue(chargedPlane.GetNormal());
             normalDisplay.OnEndEdit.AddListener((Vector3 newNormal) =>
             {
@@ -32,6 +32,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
             chargeDensityInput.SetMinMax(-ChargedPlane.MAX_CHARGE_DENSITY * 1e6f, ChargedPlane.MAX_CHARGE_DENSITY * 1e6f);
             chargeDensityInput.SetValue(chargedPlane.GetChargeDensity() * 1e6f);
+            chargeDensityInput.SetInitialValue(chargedPlane.GetChargeDensity() * 1e6f);
             chargeDensityInput.OnValueChanged.AddListener((float newDensity) => { chargedPlane.SetChargeDensity(newDensity * 1e-6f); });
 
             deleteButton.onClick.AddListener(() => GameObject.Destroy(chargedPlane.gameObject));

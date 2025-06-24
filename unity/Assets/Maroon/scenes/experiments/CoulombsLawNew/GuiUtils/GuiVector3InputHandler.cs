@@ -20,7 +20,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         // Public members
         // If this is set, the text-inputs will track the objects position (Queried once every LateUpdate)
-        public Transform affectedObject = null;
+        private Transform _trackedTransform = null;
         // This Event is only triggered on text-field edits, not when the tracked/affected object moves
         public UnityEngine.Events.UnityEvent<Vector3> OnEndEdit;
 
@@ -69,15 +69,15 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private void OnCoordinateValueChanged(float coordValue, int dimension)
         {
-            if (affectedObject != null)
+            if (_trackedTransform != null)
             {
-                value = affectedObject.transform.position;
+                value = _trackedTransform.transform.position;
             }
 
             value[dimension] = coordValue;
-            if (affectedObject != null)
+            if (_trackedTransform != null)
             {
-                affectedObject.transform.position = value;
+                _trackedTransform.transform.position = value;
             }
 
             OnEndEdit.Invoke(value);
@@ -112,8 +112,8 @@ namespace Maroon.Experiments.CoulombsLawNew
         private void LateUpdate()
         {
             // Update text fields
-            if (affectedObject == null) return;
-            var systemPos = affectedObject.position;
+            if (_trackedTransform == null) return;
+            var systemPos = _trackedTransform.position;
             // Note(MartinR): SetValue checks if the new value is different from the current textfield-value, so it
             //      doesn't cause any problems while the text-field is edited even if we call SetValue each frame
             xCoordinateInput.SetValue(systemPos.x);
@@ -123,16 +123,16 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         public Vector3 GetValue()
         {
-            if (affectedObject != null) return affectedObject.transform.position;
+            if (_trackedTransform != null) return _trackedTransform.transform.position;
             return value;
         }
 
         public void SetValue(Vector3 newValue)
         {
             value = newValue;
-            if (affectedObject != null)
+            if (_trackedTransform != null)
             {
-                affectedObject.transform.position = value;
+                _trackedTransform.transform.position = value;
             }
 
             // Note(MartinR): This check is required so UpdateInputBounds can be called from other gameobjects in Awake
@@ -141,6 +141,12 @@ namespace Maroon.Experiments.CoulombsLawNew
             xCoordinateInput.SetValue(value.x);
             yCoordinateInput.SetValue(value.y);
             zCoordinateInput.SetValue(value.z);
+        }
+
+        public void TrackTransform(Transform transform)
+        {
+            SetValue(transform.position);
+            _trackedTransform = transform;
         }
     }
 }

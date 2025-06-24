@@ -5,16 +5,13 @@ using UnityEngine;
 
 namespace Maroon.Experiments.CoulombsLawNew
 {
-    // Note(MartinR): This is currently just a copy-paste from GuiIntInputHandler, with int changed to float.
-    //      Not sure if this could be done better, but since both of these classes shouldn't change a lot (In the best case these never change),
-    //      some code-duplication here should be fine
     [ExecuteAlways]
     [RequireComponent(typeof(GuiGenericValueHandler))]
     public class GuiFloatInputHandler : MonoBehaviour
     {
         [SerializeField] private float initialValue = 1;
         [SerializeField] private bool  isInteractable = true;
-        [SerializeField] private int postCommaDigits = 2;
+        [SerializeField] private int   postCommaDigits = 2;
         [SerializeField] private bool  useMinMax = true;
         [SerializeField] private float minValue = 1;
         [SerializeField] private float maxValue = 10;
@@ -23,10 +20,10 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private bool textInputEnabled = true;
 
         private float value = 1;
-        private bool ignoreNextSliderInput = false;
 
         public UnityEngine.Events.UnityEvent<float> OnValueChanged;
 
+        // UI-Element references
         private GuiSubWindowHandler parentSubwindow;
         private TMPro.TMP_InputField inputField;
         private UnityEngine.UI.Slider slider;
@@ -41,7 +38,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             var inputPrefab = Resources.Load("GuiFloatInputPrefab");
             var inputObject = (GameObject) GameObject.Instantiate(inputPrefab, contentPanel.transform);
 
-            // Find ui elements by name reference gameobjects by name
+            // Find ui elements by name
             parentSubwindow         = GuiSubWindowHandler.FindParentSubWindow(gameObject);
             slider                  = GuiSubWindowHandler.FindChildObjectByNameRecursive(contentPanel, "Slider").GetComponent<UnityEngine.UI.Slider>();
             inputField              = GuiSubWindowHandler.FindChildObjectByNameRecursive(contentPanel, "ValueInputField").GetComponent<TMPro.TMP_InputField>();
@@ -62,12 +59,6 @@ namespace Maroon.Experiments.CoulombsLawNew
             slider.onValueChanged.RemoveAllListeners();
             slider.onValueChanged.AddListener((float newValue) =>
             {
-                if (ignoreNextSliderInput)
-                {
-                    ignoreNextSliderInput = false;
-                    return;
-                }
-
                 SetValue(newValue);
                 OnValueChanged.Invoke(value);
             });
@@ -122,9 +113,9 @@ namespace Maroon.Experiments.CoulombsLawNew
             }
             value = newValue;
 
-            if (!Application.isEditor || Application.isPlaying)
-            {
-                initialValue = newValue; // This is required if SetValue is used before Start() was called on this object
+            // This null check is required so SetValue can be called from other gameobjects in Awake/Start
+            if (inputField == null || slider == null || parentSubwindow == null) {
+                return;
             }
 
             string formatString = "0";
@@ -136,13 +127,18 @@ namespace Maroon.Experiments.CoulombsLawNew
                     formatString += "0";
                 }
             }
-
-            // Note(MartinR): This check is required so SetValue can be called from other gameobjects in Awake
-            if (inputField == null || slider == null) return;
-
             inputField.text = value.ToString(formatString);
-            ignoreNextSliderInput = true;
             slider.value = value;
+        }
+
+        // Note(MartinR):
+        // This function should only be used if it is not clear if Start/Awake has already been called
+        // on this FloatInput. I wish there was a way to make SetValue just always work correctly,
+        // but also having [ExecuteAlways] without constantly reseting properties set in the editor makes this really tricky
+        public void SetInitialValue(float initialValue)
+        {
+            if (Application.isEditor && !Application.isPlaying) return;
+            this.initialValue = initialValue;
         }
 
         public void SetMinMax(float minValue, float maxValue)
@@ -151,7 +147,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             this.maxValue = maxValue;
             SetValue(value); // Clamps value to new min/max and updates text if necessary
 
-            // Note(MartinR): This check is required so SetMinMax can be called from other gameobjects in Awake
+            // Note(MartinR): This check is required so SetMinMax can be called from other gameobjects in Awake/Start
             if (inputField == null || slider == null) return;
 
             // Update UI slider to new min/max

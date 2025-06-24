@@ -18,7 +18,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             chargedRod = SelectionSystem.Instance.GetSelectedObject().GetComponent<ChargedRod>();
             Debug.Assert(chargedRod != null, "Charged object must be selected when this ui is created");
 
-            positionDisplay.affectedObject = chargedRod.transform;
+            positionDisplay.TrackTransform(chargedRod.transform);
             directionDisplay.SetValue(chargedRod.GetDirection());
             directionDisplay.OnEndEdit.AddListener((Vector3 newDirection) =>
             {
@@ -31,6 +31,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
             chargeDensityInput.SetMinMax(-ChargedRod.MAX_CHARGE_DENSITY * 1e6f, ChargedRod.MAX_CHARGE_DENSITY * 1e6f);
             chargeDensityInput.SetValue(chargedRod.GetChargeDensity() * 1e6f);
+            chargeDensityInput.SetInitialValue(chargedRod.GetChargeDensity() * 1e6f);
             chargeDensityInput.OnValueChanged.AddListener((float newDensity) => { chargedRod.SetChargeDensity(newDensity * 1e-6f); });
 
             deleteButton.onClick.AddListener(() => GameObject.Destroy(chargedRod.gameObject));

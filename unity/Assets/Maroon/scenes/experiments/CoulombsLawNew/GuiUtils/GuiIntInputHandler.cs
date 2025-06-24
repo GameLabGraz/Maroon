@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace Maroon.Experiments.CoulombsLawNew
 {
+    // Note(MartinR): This is currently just a copy-paste from GuiFloatInputHandler, with float changed to int.
+    //      Not sure if this could be done better, but since both of these classes shouldn't change a lot (In the best case these never change),
+    //      some code-duplication here should be fine
     [ExecuteAlways]
     [RequireComponent(typeof(GuiGenericValueHandler))]
     public class GuiIntInputHandler : MonoBehaviour
@@ -19,7 +22,6 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private bool textInputEnabled = true;
 
         private int value = 1;
-        private bool ignoreNextSliderInput = false;
 
         public UnityEngine.Events.UnityEvent<int> OnValueChanged;
 
@@ -37,7 +39,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             var inputPrefab = Resources.Load("GuiIntInputPrefab");
             var inputObject = (GameObject) GameObject.Instantiate(inputPrefab, contentPanel.transform);
 
-            // Find ui elements by name reference gameobjects by name
+            // Find ui elements by name
             parentSubwindow         = GuiSubWindowHandler.FindParentSubWindow(gameObject);
             slider                  = GuiSubWindowHandler.FindChildObjectByNameRecursive(contentPanel, "Slider").GetComponent<UnityEngine.UI.Slider>();
             inputField              = GuiSubWindowHandler.FindChildObjectByNameRecursive(contentPanel, "ValueInputField").GetComponent<TMPro.TMP_InputField>();
@@ -47,7 +49,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
             if (slider == null || inputField == null || inputFieldLayoutElement == null)
             {
-                Debug.LogWarning("GuiFloatInputHandler should be able to find all child objects if the prefab is used correctly");
+                Debug.LogWarning("GuiIntInputHandler should be able to find all child objects if the prefab is used correctly");
                 return;
             }
         }
@@ -58,11 +60,6 @@ namespace Maroon.Experiments.CoulombsLawNew
             slider.onValueChanged.RemoveAllListeners();
             slider.onValueChanged.AddListener((float newValue) =>
             {
-                if (ignoreNextSliderInput)
-                {
-                    ignoreNextSliderInput = false;
-                    return;
-                }
                 SetValue((int)(newValue + 0.5f));
                 OnValueChanged.Invoke(value);
             });
@@ -117,28 +114,30 @@ namespace Maroon.Experiments.CoulombsLawNew
             }
             value = newValue;
 
-            if (!Application.isEditor || Application.isPlaying)
-            {
-                initialValue = newValue; // This is required if SetValue is used before Start() was called on this object
-            }
-
-            // Note(MartinR): This check is required so SetValue can be called from other gameobjects in Awake
-            if (inputField == null || slider == null) return;
+            // This null check is required so SetValue can be called from other gameobjects in Awake/Start
+            if (inputField == null || slider == null || parentSubwindow == null) { return; }
 
             inputField.text = value.ToString();
             if ((int)(slider.value + 0.5f) != newValue)
             {
-                ignoreNextSliderInput = true;
                 slider.value = newValue;
             }
         }
+
+        // Note: See notes in GuiFloatInputHandler.SetInitialValue
+        public void SetInitialValue(int initialValue)
+        {
+            if (Application.isEditor && !Application.isPlaying) return;
+            this.initialValue = initialValue;
+        }
+
         public void SetMinMax(int minValue, int maxValue)
         {
             this.minValue = minValue;
             this.maxValue = maxValue;
             SetValue(value); // Clamps value to new min/max and updates text if necessary
 
-            // Note(MartinR): This check is required so SetMinMax can be called from other gameobjects in Awake
+            // Note(MartinR): This check is required so SetMinMax can be called from other gameobjects in Awake/Start
             if (inputField == null || slider == null) return;
 
             // Update UI slider to new min/max
