@@ -28,10 +28,13 @@ namespace Maroon.Experiments.CoulombsLawNew
             for considerations when making a singleton in unity.
 
             Here are some thoughts/design for this singleton implementation:
-             - GameObjects using the singleton should be allowed to assume that the Singleton-Instance always exists in the scene,
-                 so they don't need extra code-paths if the singleton does not exist. To facilitate this,
-                 a new Instance is created in the scene with reasonable default values if a gameObject accesses the 
-                 singleton for the first time and no instance is present in the scene.
+             - Some scenes may not contain instances (gameobjects) of this singleton.
+                 Although it is possible to design singletons so that they always exist 
+                 (by spawning a new gameObject if not, or by using static member functions that return default values if no instance exists),
+                 I decided to just return null as the instance, which will cause a nullpointerexception.
+                 I guess this depends on the use-case of the singleton, but for all singletons in CoulombsLaw 
+                 (SimulationBox, CameraController, ElectricField, SelectionSystem),
+                 there aren't any good ways to set default values if the singleton does not exist.
              - It should be possible to set the initial values of the SimulationBox (position/size) in the Unity Editor.
                  To do this, a scene needs to contain one GameObject with this Singelton-Component. Then, the inspector
                  can be used to tweak the properties of the singleton. The problem that arises with this is that
@@ -60,10 +63,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                 {
                     // Check if scene already contains a simulationBox
                     _instance = GameObject.FindObjectOfType<SimulationBox>();
-                    // Create a simulation box object if none exists in the scene
-                    if (_instance == null) _instance = new GameObject("SimulationBox").AddComponent<SimulationBox>();
                 }
-
                 return _instance;
             }
         }

@@ -15,7 +15,6 @@ namespace Maroon.Experiments.CoulombsLawNew
         {
             uiDragIcon.OnDragFinished.AddListener((Vector3 position) =>
             {
-                SelectionSystem.Instance.SetSelectedObject(null);
                 positiveTerminal.gameObject.SetActive(true);
                 negativeTerminal.gameObject.SetActive(true);
                 positiveTerminal.transform.position = position + 0.1f * Vector3.left;

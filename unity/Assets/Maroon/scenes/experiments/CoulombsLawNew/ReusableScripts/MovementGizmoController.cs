@@ -145,10 +145,13 @@ namespace Maroon.Experiments.CoulombsLawNew
             return ClosestPointOnRayToOtherRay(movementRay, mouseRay);
         }
 
+        private bool dragActive = false;
         public void OnArrowMouseDown(int dimension)
         {
             var selected = SelectionSystem.Instance.GetSelectedObject();
             if (selected == null) return;
+            if (SelectionSystem.IsMouseOverVisibleUIElement()) return;
+            dragActive = true;
 
             if (_rigidbodyOfSelected != null)
             {
@@ -177,7 +180,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         public void OnArrowMouseDrag(int dimension)
         {
             var selected = SelectionSystem.Instance.GetSelectedObject();
-            if (selected == null) return;
+            if (selected == null || !dragActive) return;
 
             // Calculate new position based on Mouse-Pos
             var newPos = ClosestPointOnMovementAxisToMouse(dimension) + _offsetAtDragStart;
@@ -202,6 +205,9 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         public void OnArrowMouseUp(int dimension)
         {
+            if (!dragActive) return;
+            dragActive = false;
+
             if (_lineRenderer != null)
             {
                 _lineRenderer.enabled = false;

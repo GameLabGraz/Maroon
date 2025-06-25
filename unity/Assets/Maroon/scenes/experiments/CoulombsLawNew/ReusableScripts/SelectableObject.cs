@@ -20,9 +20,10 @@ namespace Maroon.Experiments.CoulombsLawNew
         {
             // Remove selection from this object if the gameObject is destroyed
             var selectionSystem = SelectionSystem.Instance;
+            if (selectionSystem == null) return;
             if (selectionSystem.GetSelectedObject() == this)
             {
-                selectionSystem.SetSelectedObject(null);
+                SelectionSystem.SetSelectedObject(null);
             }
         }
     }

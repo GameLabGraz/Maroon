@@ -137,9 +137,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                 if (_instance == null)
                 {
                     _instance = GameObject.FindObjectOfType<ElectricField>();
-                    if (_instance == null) _instance = new GameObject("ElectricField").AddComponent<ElectricField>();
                 }
-
                 return _instance;
             }
         }

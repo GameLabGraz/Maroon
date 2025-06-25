@@ -16,35 +16,38 @@ namespace Maroon.Experiments.CoulombsLawNew
         public UnityEngine.Events.UnityEvent<SelectableObject> OnSelectionChanged;
 
         // Note(MartinR): set newSelectedObject parameter to null to remove current selection
-        public void SetSelectedObject(SelectableObject newSelectedObject)
+        //  This is a static method so we can handle the case where no selectionSystem instance exists
+        public static void SetSelectedObject(SelectableObject newSelectedObject)
         {
-            if (selectedObject == newSelectedObject) return;
-            var prevSelectedObject = selectedObject;
-            selectedObject = newSelectedObject;
+            var system = Instance;
+            if (system == null) return;
+
+            if (system.selectedObject == newSelectedObject) return;
+            var prevSelectedObject = system.selectedObject;
+            system.selectedObject = newSelectedObject;
 
             // Invoke callbacks
             prevSelectedObject?.OnObjectSelectedOrDeselected.Invoke(false);
-            selectedObject?.OnObjectSelectedOrDeselected.Invoke(true);
-            OnSelectionChanged.Invoke(newSelectedObject);
-
-
+            system.selectedObject?.OnObjectSelectedOrDeselected.Invoke(true);
+            system.OnSelectionChanged.Invoke(newSelectedObject);
 
             // Remove previous UI instanciation
-            if (lastInstancedSelectedObjectPanel != null)
+            if (system.lastInstancedSelectedObjectPanel != null)
             {
-                GameObject.Destroy(lastInstancedSelectedObjectPanel);
+                GameObject.Destroy(system.lastInstancedSelectedObjectPanel);
             }
 
             // Create selection UI for newly selected object
-            if (uiSelectionParentPanel != null && selectedObject != null && selectedObject.uiSelectionPanelPrefab != null)
+            if (system.uiSelectionParentPanel != null && system.selectedObject != null && system.selectedObject.uiSelectionPanelPrefab != null)
             {
-                lastInstancedSelectedObjectPanel = GameObject.Instantiate(selectedObject.uiSelectionPanelPrefab, uiSelectionParentPanel.transform);
+                system.lastInstancedSelectedObjectPanel = GameObject.Instantiate(
+                    system.selectedObject.uiSelectionPanelPrefab, system.uiSelectionParentPanel.transform);
             }
 
-            // Show empty selection label if nothing is selected
-            if (emptySelectionLabel != null)
+            // Update empty selection label
+            if (system.emptySelectionLabel != null)
             {
-                emptySelectionLabel.gameObject.SetActive(selectedObject == null);
+                system.emptySelectionLabel.gameObject.SetActive(system.selectedObject == null);
             }
         }
 
@@ -52,10 +55,39 @@ namespace Maroon.Experiments.CoulombsLawNew
             return selectedObject;
         }
 
+        public static bool IsMouseOverVisibleUIElement()
+        {
+            // Note(MartinR): There may be a better way to do this, but for now we raycast the UI to check if we hit anything
+            var eventSystem = UnityEngine.EventSystems.EventSystem.current;
+            var eventData = new UnityEngine.EventSystems.PointerEventData(eventSystem);
+            eventData.position = Input.mousePosition;
+            var results = new System.Collections.Generic.List<UnityEngine.EventSystems.RaycastResult>();
+            eventSystem.RaycastAll(eventData, results);
+
+            bool hitVisibleUIElement = false;
+            foreach (var hit in results)
+            {
+                if (!hit.gameObject.activeInHierarchy) { continue; }
+
+                // Note: This check with image and mask is definitly not perfect, as UI elements may use other compontents? to
+                //      render on the screen, but it works in pretty much all cases for the current Maroon UI
+                var imageComponent = hit.gameObject.GetComponent<UnityEngine.UI.Image>();
+                var hasMask = hit.gameObject.GetComponent<UnityEngine.UI.Mask>() != null;
+                if (imageComponent != null && imageComponent.IsActive() && !hasMask)
+                {
+                    hitVisibleUIElement = true;
+                    break;
+                }
+            }
+
+            return hitVisibleUIElement;
+        }
+
         // Update checks if user changes selection with mouse-clicks
         public void Update()
         {
             if (!Input.GetMouseButtonDown(0)) return;
+            if (IsMouseOverVisibleUIElement()) return;
 
             SelectableObject previousSelection = selectedObject;
 
@@ -81,20 +113,6 @@ namespace Maroon.Experiments.CoulombsLawNew
                 }
             }
 
-            // Don't deselect if we clicked somewhere in UI
-            {
-                // Note(MartinR): There may be a better way to do this, but for now we raycast the UI to check if we hit anything
-                var eventSystem = UnityEngine.EventSystems.EventSystem.current;
-                var eventData = new UnityEngine.EventSystems.PointerEventData(eventSystem);
-                eventData.position = Input.mousePosition;
-                var results = new System.Collections.Generic.List<UnityEngine.EventSystems.RaycastResult>();
-                eventSystem.RaycastAll(eventData, results);
-                if (results.Count > 0)
-                {
-                    deselectObject = false;
-                }
-            }
-
             // Deselect current particle if we clicked somewhere that wasn't UI nor MovementGizmo (e.g. empty space/background)
             if (deselectObject)
             {
@@ -113,9 +131,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                 if (_instance == null)
                 {
                     _instance = GameObject.FindObjectOfType<SelectionSystem>();
-                    if (_instance == null) _instance = new GameObject("SelectionSystem").AddComponent<SelectionSystem>();
                 }
-
                 return _instance;
             }
         }

@@ -39,12 +39,12 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private void OnDestroy() 
         { 
-            ElectricField.Instance.chargedPoints.Remove(this); 
+            ElectricField.Instance?.chargedPoints.Remove(this); 
         }
 
         public static Color ChargeValueToColor(float charge, float max_value)
         {
-            return Color.Lerp(Color.gray, charge < 0 ? Color.blue : Color.red, Mathf.Pow(Mathf.Abs(charge) / max_value, 2));
+            return Color.Lerp(Color.gray, charge < 0 ? Color.blue : Color.red, Mathf.Pow(Mathf.Abs(charge) / max_value, 1/2.2f));
         }
 
         public float GetCharge() { return _charge; }

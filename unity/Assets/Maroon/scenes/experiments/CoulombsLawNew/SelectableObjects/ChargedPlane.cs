@@ -36,7 +36,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private void OnDestroy()
         {
-            ElectricField.Instance.chargedPlanes.Remove(this);
+            ElectricField.Instance?.chargedPlanes.Remove(this);
         }
         public void SetPlaneParameters(Vector3 position, Vector3 normal)
         {

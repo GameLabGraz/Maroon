@@ -21,8 +21,8 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private GuiFloatInputHandler uiEquipotentialSpacingSlider;
 
         [SerializeField] private GuiFloatInputHandler uiTransparencySlider;
-        [SerializeField] private GuiBoolInputHandler uiOrthogonalIn2DMode;
-        [SerializeField] private GuiFloatInputHandler uiZCoordinateIn2D;
+        [SerializeField] private GuiBoolInputHandler uiFixedPositionToggle;
+        [SerializeField] private GuiFloatInputHandler uiVirtualZ;
 
         [SerializeField] private UnityEngine.UI.Button uiDeleteButton;
 
@@ -36,16 +36,17 @@ namespace Maroon.Experiments.CoulombsLawNew
             uiNormalInput.SetValue(visualizationPlane.planeNormal);
 
             uiHeatmapToggle.SetInitialValue(visualizationPlane.heatmapEnabled);
-            uiHeatmapCutoffKiloVoltSlider.SetInitialValue(visualizationPlane.heatmapCutoff / 1000.0f);
-            uiHeatmapFalloffSlider.SetInitialValue(visualizationPlane.heatmapFalloff);
-
             uiEquipotentialToggle.SetInitialValue(visualizationPlane.equipotentialLinesEnabled);
-            uiEquipotentialMaximumSlider.SetInitialValue(visualizationPlane.equipotentialLinesMaximum / 1000.0f);
-            uiEquipotentialSpacingSlider.SetInitialValue(visualizationPlane.equipotentialLinesSpacing / 1000.0f);
+
+            // These were used before parameters were global across all visualization planes
+            // uiHeatmapCutoffKiloVoltSlider.SetInitialValue(visualizationPlane.heatmapCutoff / 1000.0f);
+            // uiHeatmapFalloffSlider.SetInitialValue(visualizationPlane.heatmapFalloff);
+            // uiEquipotentialMaximumSlider.SetInitialValue(visualizationPlane.equipotentialLinesMaximum / 1000.0f);
+            // uiEquipotentialSpacingSlider.SetInitialValue(visualizationPlane.equipotentialLinesSpacing / 1000.0f);
 
             uiTransparencySlider.SetInitialValue(visualizationPlane.transparency);
-            uiOrthogonalIn2DMode.SetInitialValue(visualizationPlane.orthogonalToCameraPlaneIn2DMode);
-            uiZCoordinateIn2D.SetInitialValue(visualizationPlane.zCoordinateIn2DMode);
+            uiFixedPositionToggle.SetInitialValue(visualizationPlane.fixedPosition);
+            uiVirtualZ.SetInitialValue(visualizationPlane.fixedPositionVirtualZ);
 
 
 
@@ -66,16 +67,16 @@ namespace Maroon.Experiments.CoulombsLawNew
             });
 
             uiHeatmapToggle.OnValueChanged.AddListener((bool enabled) => { visualizationPlane.heatmapEnabled = enabled; });
-            uiHeatmapCutoffKiloVoltSlider.OnValueChanged.AddListener((float value) => { visualizationPlane.heatmapCutoff = value * 1000.0f; });
-            uiHeatmapFalloffSlider.OnValueChanged.AddListener((float value) => { visualizationPlane.heatmapFalloff = value; });
+            uiHeatmapCutoffKiloVoltSlider.OnValueChanged.AddListener((float value) => { VisualizationPlaneLogic.heatmapCutoff = value * 1000.0f; });
+            uiHeatmapFalloffSlider.OnValueChanged.AddListener((float value) => { VisualizationPlaneLogic.heatmapFalloff = value; });
 
             uiEquipotentialToggle.OnValueChanged.AddListener((bool enabled) => { visualizationPlane.equipotentialLinesEnabled = enabled; });
-            uiEquipotentialMaximumSlider.OnValueChanged.AddListener((float value) => { visualizationPlane.equipotentialLinesMaximum = value * 1000.0f; });
-            uiEquipotentialSpacingSlider.OnValueChanged.AddListener((float value) => { visualizationPlane.equipotentialLinesSpacing = value * 1000.0f; });
+            uiEquipotentialMaximumSlider.OnValueChanged.AddListener((float value) => { VisualizationPlaneLogic.equipotentialLinesMaximum = value * 1000.0f; });
+            uiEquipotentialSpacingSlider.OnValueChanged.AddListener((float value) => { VisualizationPlaneLogic.equipotentialLinesSpacing = value * 1000.0f; });
 
             uiTransparencySlider.OnValueChanged.AddListener((float value) => { visualizationPlane.transparency = value; });
-            uiOrthogonalIn2DMode.OnValueChanged.AddListener((bool value) => { visualizationPlane.orthogonalToCameraPlaneIn2DMode = value; visualizationPlane.UpdateMeshAndDraggable(); });
-            uiZCoordinateIn2D.OnValueChanged.AddListener((float value) => { visualizationPlane.zCoordinateIn2DMode = value; visualizationPlane.UpdateMeshAndDraggable(); });
+            uiFixedPositionToggle.OnValueChanged.AddListener((bool value) => { visualizationPlane.fixedPosition = value; visualizationPlane.UpdateMeshAndDraggable(); });
+            uiVirtualZ.OnValueChanged.AddListener((float value) => { visualizationPlane.fixedPositionVirtualZ = value; });
 
             visualizationPlane.selectable.OnMovedWithGizmo.AddListener((SelectableObject _unused) => { uiPositionInput.SetValue(visualizationPlane.position); });
             visualizationPlane.draggable.OnMoved.AddListener((DraggableObject _unused) => { uiPositionInput.SetValue(visualizationPlane.position); });

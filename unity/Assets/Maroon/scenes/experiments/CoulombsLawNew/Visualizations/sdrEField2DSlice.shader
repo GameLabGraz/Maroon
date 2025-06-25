@@ -106,7 +106,8 @@
 				fieldVector = float3(0, 0, 0); // In Newton / Coulomb [N/C]
 
 				// Evaluate point charges
-				for(int i = 0; i < _PointChargeCount; i++)
+				int i = 0; // Note: If i is declared in the loop header, there are warnings in unity...
+				for(i = 0; i < _PointChargeCount; i++)
 				{
 					float3 chargePos      = _PointChargeData[i].xyz;
 					float  electricCharge = _PointChargeData[i].w;
@@ -130,7 +131,7 @@
 				}
 
 				// Evaluate charged rods
-				for(int i = 0; i < _ChargedRodCount; i++)
+				for(i = 0; i < _ChargedRodCount; i++)
 				{
 					float3 rodPos = _ChargedRodPositions[i].xyz;
 					float3 rodDir = _ChargedRodDirections[i].xyz;
@@ -154,7 +155,7 @@
 				}
 
 				// Add plane influences
-				for (int i = 0; i < _ChargedPlaneCount; i++) 
+				for (i = 0; i < _ChargedPlaneCount; i++) 
 				{
 					float4 planeEquation = _ChargedPlaneEquations[i];
 					float planeChargeDensity = _ChargedPlaneChargeDensities[i];
@@ -247,17 +248,21 @@
 				posOnPlane = posOnPlane - _PlaneEquation.xyz * (dot(posOnPlane, _PlaneEquation.xyz) + _PlaneEquation.w);
 
 				// Compose heatmap, equipotential lines and transparency into final color
-				float3 outputColor = float3(1, 1, 1);
+				float4 outputColor = float4(1, 1, 1, 1);
 				if (_DrawHeatmap != 0) {
-					outputColor = GetHeatmapColor(posOnPlane);
-				}
-				
-				if (_DrawEquipotentialLines != 0) {
-					float lineAlpha = getEquipotentialLineAlpha(posOnPlane);
-					outputColor = lerp(outputColor, _LineColor.xyz, lineAlpha * _LineColor.w);
+					outputColor.xyz = GetHeatmapColor(posOnPlane);
 				}
 
-				return float4(outputColor.x, outputColor.y, outputColor.z, _Transparency);
+				outputColor.w = _Transparency;
+				if (_DrawEquipotentialLines != 0) {
+					float lineAlpha = getEquipotentialLineAlpha(posOnPlane);
+					outputColor = lerp(outputColor, _LineColor, lineAlpha);
+				}
+
+				// Gamma correct alpha
+				outputColor.w = pow(outputColor.w, 1.0 / 2.2);
+
+				return outputColor;
 			}
 
 			ENDCG

@@ -50,7 +50,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private void OnDestroy()
         {
-            ElectricField.Instance.chargedRods.Remove(this);
+            ElectricField.Instance?.chargedRods.Remove(this);
         }
 
         private void OnValidate()

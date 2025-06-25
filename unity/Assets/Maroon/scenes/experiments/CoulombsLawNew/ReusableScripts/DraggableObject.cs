@@ -23,9 +23,12 @@ namespace Maroon.Experiments.CoulombsLawNew
             if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody>();
         }
 
+        private bool dragActive = false;
         private void OnMouseDown()
         {
             if (!draggableEnabled) return;
+            if (SelectionSystem.IsMouseOverVisibleUIElement()) return;
+            dragActive = true;
 
             if (_rigidbody != null)
             {
@@ -41,7 +44,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private void OnMouseDrag()
         {
-            if (!draggableEnabled) return;
+            if (!draggableEnabled || !dragActive) return;
 
             // Calculate and set new position based on Mouse-Pos
             transform.position = 
@@ -61,7 +64,8 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private void OnMouseUp()
         {
-            if (!draggableEnabled) return;
+            if (!draggableEnabled || !dragActive) return;
+            dragActive = false;
 
             if (_rigidbody != null)
             {

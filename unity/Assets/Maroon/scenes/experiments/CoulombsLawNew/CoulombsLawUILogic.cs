@@ -48,6 +48,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                 var plane = GameObject.Instantiate(prefabVisualizationPlane, pos, Quaternion.identity, parentForNewObjects);
                 plane.position = pos;
                 plane.planeNormal = Vector3.back;
+                plane.fixedPosition = !CameraController.Instance.In3DMode;
                 plane.UpdateMeshAndDraggable();
             });
 
@@ -74,7 +75,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                 configurationOnSimulationStart = ElectricFieldSerializer.CreateConfigurationForCurrentSetup();
 
                 // Configure objects for simulation start
-                SelectionSystem.Instance.SetSelectedObject(null);
+                SelectionSystem.SetSelectedObject(null);
                 foreach (var chargedPoint in ElectricField.Instance.chargedPoints)
                 {
                     chargedPoint.rigidBody.isKinematic = false;

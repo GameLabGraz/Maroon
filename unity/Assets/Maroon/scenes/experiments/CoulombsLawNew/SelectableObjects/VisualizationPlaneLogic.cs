@@ -19,16 +19,16 @@ namespace Maroon.Experiments.CoulombsLawNew
         // Note(MartinR): Instead of having setters for all parameters, other objects can 
         //  just update the public members and call SetPlaneParametersAndUpdateMesh
         public bool heatmapEnabled;
-        public float heatmapCutoff;
-        public float heatmapFalloff;
-
         public bool equipotentialLinesEnabled;
-        public float equipotentialLinesMaximum;
-        public float equipotentialLinesSpacing;
+
+        public static float heatmapCutoff = 200000.0f;
+        public static float heatmapFalloff = 5.0f;
+        public static float equipotentialLinesMaximum = 200000.0f;
+        public static float equipotentialLinesSpacing = 30000.0f;
 
         public float transparency;
-        public bool orthogonalToCameraPlaneIn2DMode;
-        public float zCoordinateIn2DMode;
+        public bool fixedPosition;
+        public float fixedPositionVirtualZ;
 
         public Vector3 position = Vector3.zero; //Note: In 2D camera mode this may not be the same as transform.position
         public Vector3 planeNormal = Vector3.back;
@@ -39,20 +39,22 @@ namespace Maroon.Experiments.CoulombsLawNew
             transform.rotation = Quaternion.identity;
 
             // Update draggable and movement gizmo
-            bool inOrthogonalMode = !CameraController.Instance.In3DMode && orthogonalToCameraPlaneIn2DMode;
-            draggable.draggableEnabled = !inOrthogonalMode;
-            selectable.enableMovementGizmo = !inOrthogonalMode;
+            draggable.draggableEnabled = !fixedPosition;
+            selectable.enableMovementGizmo = !fixedPosition;
             SelectionSystem.Instance.movementGizmo.UpdateArrowsDependingOnSelection();
 
             // Update mesh
             Mesh newMesh = null;
-            if (inOrthogonalMode)
+            if (fixedPosition)
             {
                 Vector3 normal = Vector3.back;
-
                 var bounds = SimulationBox.Instance.Bounds;
                 var pos = bounds.center;
-                pos.z = bounds.max.z + 3.0f;
+                pos.z = bounds.max.z; // Place at end of box in fixed position mode
+                if (!CameraController.Instance.In3DMode)
+                {
+                    pos.z += 3.0f; // Moves it further back in orthogonal mode to make room for vector-field
+                }
                 transform.position = pos;
                 newMesh = ChargedPlane.CalculateClippedPlaneMeshWithVolume(bounds.center, planeNormal, THICKNESS);
             }
@@ -85,6 +87,10 @@ namespace Maroon.Experiments.CoulombsLawNew
         // Updating shader data happens in LateUpdate
         void LateUpdate()
         {
+            // If the scene has no charged objects, we notify the shader, as otherwise
+            // the plane would be completely grey as every point lies on the 0-equipotential-line
+            bool sceneHasObjectWithCharge = false;
+
             // Get packed particle data
             List<Vector4> pointChargeData = new List<Vector4>();
             foreach (var pointCharge in ElectricField.Instance.chargedPoints)
@@ -92,11 +98,13 @@ namespace Maroon.Experiments.CoulombsLawNew
                 var pos = pointCharge.transform.position;
                 Vector4 packedInfo = new Vector4(pos.x, pos.y, pos.z, pointCharge.GetCharge());
                 pointChargeData.Add(packedInfo);
+
+                sceneHasObjectWithCharge = sceneHasObjectWithCharge || Mathf.Abs(pointCharge.GetCharge()) != 0;
             }
 
             // Trim/Resize particle count since we cannot resize the vector array
             //    --> https://docs.unity3d.com/ScriptReference/MaterialPropertyBlock.SetVectorArray.html
-            int activePointCharges = pointChargeData.Count;
+            int activePointChargeCount = pointChargeData.Count;
             const int MAX_POINT_CHARGES = 100; // Currently hardcoded in shader
             for (var i = pointChargeData.Count; i < MAX_POINT_CHARGES; i++)
             {
@@ -118,6 +126,8 @@ namespace Maroon.Experiments.CoulombsLawNew
                 Vector4 packedDir = new Vector4(dir.x, dir.y, dir.z, 0);
                 chargedRodPositions.Add(packedPos);
                 chargedRodDirections.Add(packedDir);
+
+                sceneHasObjectWithCharge = sceneHasObjectWithCharge || Mathf.Abs(chargedRod.GetChargeDensity()) != 0;
             }
 
             int activeChargedRodCount = chargedRodPositions.Count;
@@ -142,9 +152,11 @@ namespace Maroon.Experiments.CoulombsLawNew
                 Vector4 equation = new Vector4(normal.x, normal.y, normal.z, -Vector3.Dot(normal, chargedPlane.transform.position));
                 chargedPlaneEquations.Add(equation);
                 chargedPlaneChargeDensities.Add(chargedPlane.GetChargeDensity());
+
+                sceneHasObjectWithCharge = sceneHasObjectWithCharge || Mathf.Abs(chargedPlane.GetChargeDensity()) != 0;
             }
 
-            int activeChargedPlanes = chargedPlaneEquations.Count;
+            int activeChargedPlaneCount = chargedPlaneEquations.Count;
             const int MAX_CHARGED_PLANES = 30; // Currently hardcoded in shader
             for (var i = chargedPlaneEquations.Count; i < MAX_CHARGED_PLANES; i++)
             {
@@ -159,13 +171,13 @@ namespace Maroon.Experiments.CoulombsLawNew
 
             // Get plane equation (See comment in shader about layout)
             Vector4 planeEquation = Vector4.zero;
-            if (!CameraController.Instance.In3DMode && orthogonalToCameraPlaneIn2DMode)
+            if (fixedPosition)
             {
                 Vector3 normal = planeNormal;
                 normal = Vector3.back;
                 var bounds = SimulationBox.Instance.Bounds;
                 Vector3 pointOnPlane = SimulationBox.Instance.Bounds.center;
-                pointOnPlane.z = Mathf.Lerp(bounds.min.z, bounds.max.z, zCoordinateIn2DMode / 2 + 0.5f);
+                pointOnPlane.z = Mathf.Lerp(bounds.min.z, bounds.max.z, fixedPositionVirtualZ / 2 + 0.5f);
                 planeEquation = new Vector4(normal.x, normal.y, normal.z, -Vector3.Dot(normal, pointOnPlane));
             }
             else
@@ -173,14 +185,21 @@ namespace Maroon.Experiments.CoulombsLawNew
                 planeEquation = new Vector4(planeNormal.x, planeNormal.y, planeNormal.z, -Vector3.Dot(planeNormal, position));
             }
 
+            if (!sceneHasObjectWithCharge)
+            {
+                activePointChargeCount = 0;
+                activeChargedRodCount = 0;
+                activeChargedPlaneCount = 0;
+            }
+
             // Update shader properties
             var material = meshRenderer.material;
-            material.SetInt(Shader.PropertyToID("_PointChargeCount"), activePointCharges);
+            material.SetInt(Shader.PropertyToID("_PointChargeCount"), activePointChargeCount);
             material.SetVectorArray(Shader.PropertyToID("_PointChargeData"), pointChargeData);
             material.SetInt(Shader.PropertyToID("_ChargedRodCount"), activeChargedRodCount);
             material.SetVectorArray(Shader.PropertyToID("_ChargedRodPositions"), chargedRodPositions);
             material.SetVectorArray(Shader.PropertyToID("_ChargedRodDirections"), chargedRodDirections);
-            material.SetInt(Shader.PropertyToID("_ChargedPlaneCount"), activeChargedPlanes);
+            material.SetInt(Shader.PropertyToID("_ChargedPlaneCount"), activeChargedPlaneCount);
             material.SetVectorArray(Shader.PropertyToID("_ChargedPlaneEquations"), chargedPlaneEquations);
             material.SetFloatArray(Shader.PropertyToID("_ChargedPlaneChargeDensities"), chargedPlaneChargeDensities);
 
@@ -192,8 +211,8 @@ namespace Maroon.Experiments.CoulombsLawNew
             material.SetFloat(Shader.PropertyToID("_HeatmapFalloff"), heatmapFalloff);
 
             material.SetInteger(Shader.PropertyToID("_DrawEquipotentialLines"), equipotentialLinesEnabled ? 1 : 0);
-            material.SetFloat(Shader.PropertyToID("_LineSpacingVoltage"), equipotentialLinesMaximum);
-            material.SetFloat(Shader.PropertyToID("_LineMaxVoltage"), equipotentialLinesSpacing);
+            material.SetFloat(Shader.PropertyToID("_LineMaxVoltage"), equipotentialLinesMaximum);
+            material.SetFloat(Shader.PropertyToID("_LineSpacingVoltage"), equipotentialLinesSpacing);
         }
     }
 }
