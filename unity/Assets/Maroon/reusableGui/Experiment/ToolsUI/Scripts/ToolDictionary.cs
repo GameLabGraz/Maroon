@@ -1,29 +1,33 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.Maroon.reusableGui.Experiment.ToolsUI.Scripts
 {
     public class ToolDictionary : MonoBehaviour
     {
-        private List<GameObject> childGameObjects = new List<GameObject>();
-           
+        private List<GameObject> toolObjects = new List<GameObject>();
+
+        [SerializeField]
+        [Tooltip("UI elements that should be hidden when the tool UI is displayed.")]
+        private List<GameObject> hideUiObjects = new List<GameObject>();
+
         private void Start()
         {
             foreach(Transform child in gameObject.transform)
-            { 
-                childGameObjects.Add(child.gameObject);
-            }
+                toolObjects.Add(child.gameObject);
         }
 
-        public void HideAllOtherTools(GameObject toolToRemainActive)
-        { 
-            foreach(var tool in childGameObjects)
-            {
-                if(toolToRemainActive != tool)
-                    tool.SetActive(false);
-            }
+        public void ShowTool(GameObject activeTool)
+        {
+            // Hide all other tools
+            foreach (var tool in toolObjects.Where(tool => tool != activeTool))
+                tool.SetActive(false);
 
-            toolToRemainActive.SetActive(true);
+            activeTool.SetActive(!activeTool.activeSelf);
+
+            foreach (var uiObject in hideUiObjects)
+                uiObject.SetActive(!activeTool.activeSelf);
         }
     }
 }
