@@ -34,7 +34,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private void LateUpdate()
         {
-            if (!uiEnabledToggle.GetValue()) return;
+            if (!uiEnabledToggle.GetValue() || true) return;
 
             Bounds box = SimulationBox.Instance.Bounds;
             var efield = ElectricField.Instance;
