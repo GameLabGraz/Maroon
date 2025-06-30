@@ -137,7 +137,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             var movementRay = new Ray(_objectPositionAtDragStart, movementDir);
 
             // If mouse ray and axis ray are almost parallel, return initial position (disallow movement)
-            if (1.0f - Mathf.Abs(Vector3.Dot(movementRay.direction, mouseRay.direction)) < 0.01f)
+            if (1.0f - Mathf.Abs(Vector3.Dot(movementRay.direction, mouseRay.direction)) < 0.00001f)
             {
                 return _objectPositionAtDragStart;
             }

@@ -66,7 +66,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                 var pointOnPlane = chargedPlane.transform.position;
                 var signedDistance = Vector3.Dot(normal, position - pointOnPlane);
 
-                fieldValue += chargedPlane.GetChargeDensity() * (2 * Mathf.PI * COULOMB_CONSTANT) * (Mathf.Sign(signedDistance) * normal);
+                fieldValue += chargedPlane.GetChargeDensity() * (2 * Mathf.PI * COULOMB_CONSTANT) * Mathf.Sign(signedDistance) * normal;
             }
 
             return fieldValue;

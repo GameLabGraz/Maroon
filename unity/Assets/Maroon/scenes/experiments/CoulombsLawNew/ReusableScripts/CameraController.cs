@@ -78,7 +78,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.B))
+            if (Input.GetKeyDown(KeyCode.B) || Input.GetKeyDown(KeyCode.C))
             {
                 _in3DMode = !_in3DMode;
                 UpdateCamera();

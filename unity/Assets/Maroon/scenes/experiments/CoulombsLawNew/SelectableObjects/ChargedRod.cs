@@ -138,7 +138,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             transform.localScale = Vector3.one;
             capsuleCollider.height = (posA - posB).magnitude + RADIUS;
             capsuleCollider.radius = RADIUS/2;
-            capsuleCollider.center = new Vector3(0, capsuleYOffset, 0);
+            capsuleCollider.center = new Vector3(0, -capsuleYOffset, 0);
 
             // Update child transforms
             childStartSphere.transform.position = posA;

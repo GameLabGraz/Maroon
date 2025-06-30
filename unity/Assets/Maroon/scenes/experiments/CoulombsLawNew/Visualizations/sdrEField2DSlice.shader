@@ -31,7 +31,7 @@
         Tags {"Queue"="Transparent" "RenderType"="Transparent" "IgnoreProjector"="True" }
         LOD 100
         
-        ZWrite On
+        ZWrite Off
         Blend SrcAlpha OneMinusSrcAlpha
         
         Pass {
