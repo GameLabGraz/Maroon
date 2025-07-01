@@ -57,6 +57,11 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         public static bool IsMouseOverVisibleUIElement()
         {
+            // I also return true if mouse is not over window
+            Vector2 view = Camera.main.ScreenToViewportPoint(Input.mousePosition);
+            bool isOutside = view.x < 0 || view.x > 1 || view.y < 0 || view.y > 1;
+            if (isOutside) return true;
+
             // Note(MartinR): There may be a better way to do this, but for now we raycast the UI to check if we hit anything
             var eventSystem = UnityEngine.EventSystems.EventSystem.current;
             var eventData = new UnityEngine.EventSystems.PointerEventData(eventSystem);

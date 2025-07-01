@@ -89,7 +89,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             var camera = Camera.main;
 
             bool lastDragActive = orbitDragActive;
-            orbitDragActive = _in3DMode && Input.GetMouseButton(1) && Application.isFocused;
+            orbitDragActive = _in3DMode && Input.GetMouseButton(1) && Application.isFocused && !SelectionSystem.IsMouseOverVisibleUIElement();
 
             // Active/Deactive cursor
             if (lastDragActive != orbitDragActive)
@@ -114,6 +114,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                 orbitInclineAngle = Mathf.Clamp(orbitInclineAngle, -45.0f, 75.0f);
             }
             // Update Camera zoom
+            if (Application.isFocused && !SelectionSystem.IsMouseOverVisibleUIElement())
             {
                 const float MOUSE_WHEEL_SENSITIVITY = 0.3f;
                 orbitDistanceToCenter -= Input.mouseScrollDelta.y * MOUSE_WHEEL_SENSITIVITY;

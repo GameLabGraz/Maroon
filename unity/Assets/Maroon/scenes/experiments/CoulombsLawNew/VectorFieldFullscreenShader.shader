@@ -21,6 +21,8 @@ Shader "Custom/VectorFieldFullscreenShader"
 
             #include "UnityCG.cginc"
 
+			#define PI 3.14159265359
+
             uniform sampler2D _MainTex;
             uniform sampler2D _CameraDepthTexture; // Set automatically by unity, see VectorFieldFullscreenLogic
             uniform float4x4 _InverseView;
@@ -28,7 +30,18 @@ Shader "Custom/VectorFieldFullscreenShader"
             uniform float4 _BoxMin; // xyz is box min, w is used for cell-size (Sidelength of a cell)
             uniform int _FieldResolution;
             uniform float _CellSize;
-            // uniform StructuredBuffer<float4> _MyBuffer;
+
+            uniform int _EnableScalingBool;
+            uniform float _MinMagnitude;
+            uniform float _MaxMagnitude;
+            uniform float _SizeInterpolationExponent;
+            uniform float _ArrowSize;
+            uniform float _MinArrowSize;
+            uniform int _CutoffAboveMaxBool;
+
+            uniform StructuredBuffer<float4> _VectorFieldValues; // xyz is efield vector value at grid positions, w is potential
+
+
 
             struct appdata
             {
@@ -48,6 +61,27 @@ Shader "Custom/VectorFieldFullscreenShader"
                 return o;
             }
 
+
+
+            // Returns distance to intersection, or -1 if not hit
+            float raySphereIntersection(float3 rayOrigin, float3 dir, float3 spherePos, float radius, out float3 normal)
+            {
+                normal = float3(1, 0, 0);
+
+                float3 toCenter = spherePos - rayOrigin;
+                float t_closest = dot(toCenter, dir);
+                if (t_closest < 0.0) return -1.0;
+
+                float r2 = radius * radius;
+                float d2 = dot(toCenter, toCenter) - t_closest * t_closest;
+                float offset = r2 - d2;
+                if (offset < 0.0) return -1.0;
+                offset = sqrt(offset);
+
+                float t_intersection = t_closest - offset;
+                normal = normalize((rayOrigin + dir * t_intersection) - spherePos);
+                return t_intersection;
+            }
 
             // Returns distance to first intersection, or -1 if not hit
             float rayBoxIntersection(float3 rayOrigin, float3 rayDir, float3 boxMin, float3 boxMax)
@@ -77,24 +111,79 @@ Shader "Custom/VectorFieldFullscreenShader"
                 return t0;
             }
 
-            // Returns distance to intersection, or -1 if not hit
-            float raySphereIntersection(float3 rayOrigin, float3 dir, float3 spherePos, float radius, out float3 normal)
+            // Returns distance to first intersection > 0, or a negative value
+            // Note(MartinR): Based on the calculation from here:
+            //  https://lousodrome.net/blog/light/2017/01/03/intersection-of-a-ray-and-a-cone/
+            float rayConeIntersection(
+                float3 rayOrigin, float3 rayDir, float3 coneOrigin, float3 coneDir, float halfAngle, float coneHeight, out float3 normal)
             {
-                normal = float3(1, 0, 0);
+                normal = float3(0, 1, 0);
 
-                float3 toCenter = spherePos - rayOrigin;
-                float t_closest = dot(toCenter, dir);
-                if (t_closest < 0.0) return -1.0;
+                // Cone intersection equation
+                float cosSquared = cos(halfAngle) * cos(halfAngle);
+                float3 co = rayOrigin - coneOrigin;
+                float dotRayConeDir = dot(rayDir, coneDir);
+                float dotCoRayDir = dot(co, rayDir);
+                float dotCoConeDir = dot(co, coneDir);
 
-                float r2 = radius * radius;
-                float d2 = dot(toCenter, toCenter) - t_closest * t_closest;
-                float offset = r2 - d2;
-                if (offset < 0.0) return -1.0;
-                offset = sqrt(offset);
+                float a = dotRayConeDir * dotRayConeDir - cosSquared;
+                float b = 2 * (dotRayConeDir * dotCoConeDir - dotCoRayDir * cosSquared);
+                float c = dotCoConeDir * dotCoConeDir - dot(co, co) * cosSquared;
 
-                float t_intersection = t_closest - offset;
-                normal = normalize((rayOrigin + dir * t_intersection) - spherePos);
-                return t_intersection;
+                // Get both cone intersection distances 
+                float delta = b*b - 4 * a * c;
+                if (delta < 0.0) return -1.0;
+                float t1 = (-b + sqrt(delta)) / (2 * a);
+                float t2 = (-b - sqrt(delta)) / (2 * a);
+
+                // Check which/if any of the two intersections are valid
+                // (The formula provides intersections for infinite cones that extend on both sides of coneOrigin)
+                if (t1 > t2) { // Sort intersections
+                    float swap = t1;
+                    t1 = t2;
+                    t2 = swap;
+                }
+
+                float tCone = -1.0;
+                if (t1 >= 0.0) 
+                {
+                    // Check if intersection is on "wrong side" of the cone
+                    float3 intersection = rayOrigin + t1 * rayDir;
+                    float distanceAlongCone = dot(intersection - coneOrigin, coneDir);
+                    if (distanceAlongCone >= 0.0 && distanceAlongCone <= coneHeight) {
+                        tCone = t1;
+                    }
+                }
+
+                // Check if t2 is valid if t1 isn't
+                if (tCone < 0.0 && t2 >= 0.0) 
+                {
+                    float3 intersection = rayOrigin + t2 * rayDir;
+                    float distanceAlongCone = dot(intersection - coneOrigin, coneDir);
+                    if (distanceAlongCone >= 0.0 && distanceAlongCone <= coneHeight) {
+                        tCone = t2;
+                    }
+                }
+
+                // Check if we hit the "Cone-Top plate" before the cone (hit from above)
+                float4 planeEq = float4(coneDir.x, coneDir.y, coneDir.z, -(dot(coneDir, coneOrigin) + coneHeight));
+                float distanceToPlane = dot(planeEq, float4(rayOrigin.x, rayOrigin.y, rayOrigin.z, 1.0));
+                float tPlane = distanceToPlane / dot(rayDir, -coneDir);
+                if (tPlane > 0.0 && (tPlane <= tCone || tCone < 0.0)) 
+                {
+                    float3 planeIntersection = rayOrigin + rayDir * tPlane;
+                    // Check if plane intersection is a point inside the cone
+                    if (dot(normalize(planeIntersection - coneOrigin), coneDir) >= cos(halfAngle)) {
+                        normal = coneDir;
+                        return tPlane;
+                    }
+                }
+
+                // Get cone normal
+                float3 coneOriginToIntersection = rayOrigin + tCone * rayDir - coneOrigin;
+                normal = normalize(cross(cross(coneDir, coneOriginToIntersection), coneOriginToIntersection));
+
+                return tCone;
             }
 
             float3 phongShading(float3 viewDir, float3 normal, float3 materialColor)
@@ -113,6 +202,7 @@ Shader "Custom/VectorFieldFullscreenShader"
                 return color;
             }
 
+            // xyz contain color, w distance on ray, or negative
             float4 rayGridTraversal(float3 rayOrigin, float3 rayDir)
             {
                 // Grid setup
@@ -121,7 +211,7 @@ Shader "Custom/VectorFieldFullscreenShader"
                 float3 gridMin = _BoxMin;
                 float3 gridMax = _BoxMin + gridResolution * cellSize;
 
-                // Check if ray even hits grid-box
+                // Check if ray hits grid-box
                 float4 result = float4(0, 0, 0, 0);
                 float tBox = rayBoxIntersection(rayOrigin, rayDir, gridMin, gridMax);
                 if (tBox < 0) return result;
@@ -137,25 +227,59 @@ Shader "Custom/VectorFieldFullscreenShader"
                 float3 tMax = nextBoundary / rayDir;
                 float3 tDelta = cellSize * float3(1, 1, 1) / abs(rayDir);
 
-                float tSpheres = -1.0;
-
-                float targetDist = sin(_Time.y) * 1.5 + length(_WorldSpaceCameraPos - (gridMin + gridMax) / 2.0);
-                float targetRange = cellSize;
-
                 int cellsTraversed = 0;
-                while (cellsTraversed < 250) // Just a hardcoded limit so we don't run this loop infinetly long
+                while (cellsTraversed < 250) // Just a hardcoded limit so we don't run this loop forever if there are bugs
                 {
                     // Handle cell logic here
-                    float3 cellCenter = (float3(cellCoord) + 0.5) * cellSize;
-                    float3 normal;
-                    float d = length(_WorldSpaceCameraPos - cellCenter);
-                    float sphereT = raySphereIntersection(rayOrigin, rayDir, cellCenter, cellSize/3.0, normal);
-                    if (sphereT > 0.0) {
-                        float3 matColor = cellCoord / (gridResolution * float3(1, 1, 1));
-                        result.xyz = phongShading(rayDir, normal, matColor);
-                        result.w = 1.0;
-                        return result;
+                    {
+                        // Get cell information
+                        float3 cellCenter = (float3(cellCoord) + 0.5) * cellSize;
+                        int linearCoord = cellCoord.x + cellCoord.y * _FieldResolution + cellCoord.z * _FieldResolution * _FieldResolution;
+                        float4 vectorFieldValuePacked = _VectorFieldValues[linearCoord];
+
+                        // Figure out size-scaling based on efield magnitude
+                        float alpha = 1.0;
+                        float efieldMagnitude = length(vectorFieldValuePacked.xyz);
+                        if (_EnableScalingBool != 0)
+                        {
+                            alpha = (efieldMagnitude - _MinMagnitude) / (_MaxMagnitude - _MinMagnitude);
+                            alpha = min(alpha, 1.0);
+                            alpha = pow(alpha, _SizeInterpolationExponent);
+                            alpha = max(alpha, _MinArrowSize);
+                        }
+                        if (_CutoffAboveMaxBool != 0 && efieldMagnitude > _MaxMagnitude) {
+                            alpha = 0.0;
+                        }
+
+                        // Find cone parameters
+                        float coneHeight = cellSize * 0.9 * alpha * _ArrowSize; // 0.9 so rotations don't extend the cone outwards of the cell
+                        float3 coneDir;
+                        if (efieldMagnitude < 0.000001) {
+                            coneDir = float3(0, -1, 0);
+                        }
+                        else {
+                            coneDir = -normalize(vectorFieldValuePacked.xyz);
+                        }
+                        float coneHalfAngle = 15.0 / 360.0 * 2 * PI;
+
+                        // Ray-Cone intersection
+                        float3 coneNormal;
+                        float tCone = rayConeIntersection(rayOrigin, rayDir, cellCenter - coneDir * coneHeight / 2.0, coneDir, coneHalfAngle, coneHeight, coneNormal);
+                        if (tCone > 0.0) {
+                            float3 matColor = cellCoord / (gridResolution * float3(1, 1, 1));
+                            result.xyz = phongShading(rayDir, coneNormal, matColor);
+                            result.w = tBox + tCone;
+                            return result;
+                        }
                     }
+
+                    // float sphereT = raySphereIntersection(rayOrigin, rayDir, cellCenter, cellSize/3.0, normal);
+                    // if (sphereT > 0.0) {
+                    //     float3 matColor = cellCoord / (gridResolution * float3(1, 1, 1));
+                    //     result.xyz = phongShading(rayDir, normal, matColor);
+                    //     result.w = 1.0;
+                    //     return result;
+                    // }
 
                     // Traverse to next cell
                     cellsTraversed += 1;
@@ -208,12 +332,6 @@ Shader "Custom/VectorFieldFullscreenShader"
             float4 traceRayThroughScene(float3 rayOrigin, float3 rayDir, float maxDist)
             {
                 float4 result = float4(0, 0, 0, 0);
-
-                float4 gridColor = rayGridTraversal(rayOrigin, rayDir);
-                return gridColor;
-                if (gridColor.w > 0.1) {
-                    return gridColor;
-                }
 
                 float3 normal;
                 float tSphere = raySphereIntersection(rayOrigin, rayDir, _BoxMin + (_FieldResolution * _CellSize) / 2.0, 0.2, normal);
@@ -270,10 +388,11 @@ Shader "Custom/VectorFieldFullscreenShader"
                 float3 dir = normalize(worldPos - pos);
 
                 float4 outputColor = tex2D(_MainTex, uv);
-                float4 sceneColor = traceRayThroughScene(pos, dir, length(pos - worldPos));
-
-                outputColor = lerp(outputColor, sceneColor, sceneColor.w);
-
+                float4 gridTraversalResult = rayGridTraversal(pos, dir);
+                if (gridTraversalResult.w > 0.0 && gridTraversalResult.w < length(pos - worldPos)) {
+                    gridTraversalResult.w = 1.0;
+                    return gridTraversalResult;
+                }
                 return outputColor;
             }
             ENDCG
