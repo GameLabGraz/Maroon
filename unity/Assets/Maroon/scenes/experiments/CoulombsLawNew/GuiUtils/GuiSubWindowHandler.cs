@@ -19,6 +19,11 @@ namespace Maroon.Experiments.CoulombsLawNew
         // Private references to UI-Elements
         private TMPro.TMP_Text titleLabel;
         private RectTransform contentPanel;
+        private UnityEngine.UI.Button headerButton;
+        private UnityEngine.UI.Image collapsableImage;
+
+        [SerializeField] private bool isCollapsed = false;
+        [SerializeField] private bool collapseEnabled = true;
 
         public static GameObject FindChildObjectByNameRecursive(GameObject gameObject, string name)
         {
@@ -47,12 +52,33 @@ namespace Maroon.Experiments.CoulombsLawNew
         {
             titleLabel   = GuiSubWindowHandler.FindChildObjectByNameRecursive(gameObject, "TitleText").GetComponent<TMPro.TMP_Text>();
             contentPanel = GuiSubWindowHandler.FindChildObjectByNameRecursive(gameObject, "Content").GetComponent<RectTransform>();
-            if (titleLabel == null || contentPanel == null)
+            headerButton = GuiSubWindowHandler.FindChildObjectByNameRecursive(gameObject, "HeaderPanel").GetComponent<UnityEngine.UI.Button>();
+            collapsableImage = GuiSubWindowHandler.FindChildObjectByNameRecursive(gameObject, "CollapsableImage").GetComponent<UnityEngine.UI.Image>();
+
+            if (titleLabel == null || contentPanel == null || headerButton == null || collapsableImage == null)
             {
                 Debug.LogWarning("GuiSubWindowHandler should be able to find all child objects if the prefab is used correctly");
                 return;
             }
+
+            collapsableImage.gameObject.SetActive(collapseEnabled);
+            if (!collapseEnabled)
+            {
+                isCollapsed = false;
+            }
+
+            contentPanel.gameObject.SetActive(!isCollapsed);
+            collapsableImage.rectTransform.rotation = Quaternion.Euler(0, 0, isCollapsed ? 180 : 0);
+
+            headerButton.onClick.AddListener(() =>
+            {
+                if (!collapseEnabled) return;
+                isCollapsed = !isCollapsed;
+                contentPanel.gameObject.SetActive(!isCollapsed);
+                collapsableImage.rectTransform.rotation = Quaternion.Euler(0, 0, isCollapsed ? 180 : 0);
+            });
         }
+
         private void Start() { SetUIElementValues(); }
 
         private void SetUIElementValues()

@@ -13,6 +13,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private MeshFilter meshFilter;
         [SerializeField] private MeshCollider meshCollider;
         [SerializeField] private GameObject selectionHighlightObject;
+        [SerializeField] private VectorFieldFullscreenLogic vectorFieldLogic; // For access to electric-field buffers
         public DraggableObject draggable;
         public SelectableObject selectable;
 
@@ -78,7 +79,11 @@ namespace Maroon.Experiments.CoulombsLawNew
             {
                 selectionHighlightObject.SetActive(selected);
             });
-            draggable.OnDraggedOutOfBounds.AddListener((DraggableObject _unused) => { Destroy(gameObject); });
+            draggable.OnDraggedOutOfBounds.AddListener((DraggableObject _unused) => 
+            { 
+                gameObject.SetActive(false); 
+                SelectionSystem.SetSelectedObject(null);
+            });
 
             selectable.OnMovedWithGizmo.AddListener((SelectableObject _unused) => { position = transform.position; UpdateMeshAndDraggable(); });
             draggable.OnMoved.AddListener((DraggableObject _unused) => { position = transform.position; UpdateMeshAndDraggable(); });
@@ -87,88 +92,6 @@ namespace Maroon.Experiments.CoulombsLawNew
         // Updating shader data happens in LateUpdate
         void LateUpdate()
         {
-            // If the scene has no charged objects, we notify the shader, as otherwise
-            // the plane would be completely grey as every point lies on the 0-equipotential-line
-            bool sceneHasObjectWithCharge = false;
-
-            // Get packed particle data
-            List<Vector4> pointChargeData = new List<Vector4>();
-            foreach (var pointCharge in ElectricField.Instance.chargedPoints)
-            {
-                var pos = pointCharge.transform.position;
-                Vector4 packedInfo = new Vector4(pos.x, pos.y, pos.z, pointCharge.GetCharge());
-                pointChargeData.Add(packedInfo);
-
-                sceneHasObjectWithCharge = sceneHasObjectWithCharge || Mathf.Abs(pointCharge.GetCharge()) != 0;
-            }
-
-            // Trim/Resize particle count since we cannot resize the vector array
-            //    --> https://docs.unity3d.com/ScriptReference/MaterialPropertyBlock.SetVectorArray.html
-            int activePointChargeCount = pointChargeData.Count;
-            const int MAX_POINT_CHARGES = 100; // Currently hardcoded in shader
-            for (var i = pointChargeData.Count; i < MAX_POINT_CHARGES; i++)
-            {
-                pointChargeData.Add(new Vector4(0f, 0f, 0f, 0f));
-            }
-            if (pointChargeData.Count > MAX_POINT_CHARGES)
-            {
-                pointChargeData.RemoveRange(MAX_POINT_CHARGES - 1, pointChargeData.Count - MAX_POINT_CHARGES);
-            }
-
-            // Get packed charged rod data
-            List<Vector4> chargedRodPositions = new List<Vector4>();
-            List<Vector4> chargedRodDirections = new List<Vector4>();
-            foreach (var chargedRod in ElectricField.Instance.chargedRods)
-            {
-                var pos = chargedRod.transform.position;
-                var dir = chargedRod.GetDirection();
-                Vector4 packedPos = new Vector4(pos.x, pos.y, pos.z, chargedRod.GetChargeDensity());
-                Vector4 packedDir = new Vector4(dir.x, dir.y, dir.z, 0);
-                chargedRodPositions.Add(packedPos);
-                chargedRodDirections.Add(packedDir);
-
-                sceneHasObjectWithCharge = sceneHasObjectWithCharge || Mathf.Abs(chargedRod.GetChargeDensity()) != 0;
-            }
-
-            int activeChargedRodCount = chargedRodPositions.Count;
-            const int MAX_CHARGED_RODS = 30; // Currently hardcoded in shader
-            for (var i = chargedRodPositions.Count; i < MAX_CHARGED_RODS; i++)
-            {
-                chargedRodPositions.Add(Vector4.zero);
-                chargedRodDirections.Add(Vector4.zero);
-            }
-            if (chargedRodPositions.Count > MAX_CHARGED_RODS)
-            {
-                chargedRodPositions.RemoveRange(MAX_CHARGED_RODS - 1, chargedRodPositions.Count - MAX_CHARGED_RODS);
-                chargedRodDirections.RemoveRange(MAX_CHARGED_RODS - 1, chargedRodDirections.Count - MAX_CHARGED_RODS);
-            }
-
-            // Get charged plane packed data
-            List<Vector4> chargedPlaneEquations = new List<Vector4>();
-            List<float> chargedPlaneChargeDensities = new List<float>();
-            foreach (var chargedPlane in ElectricField.Instance.chargedPlanes)
-            {
-                var normal = chargedPlane.GetNormal();
-                Vector4 equation = new Vector4(normal.x, normal.y, normal.z, -Vector3.Dot(normal, chargedPlane.transform.position));
-                chargedPlaneEquations.Add(equation);
-                chargedPlaneChargeDensities.Add(chargedPlane.GetChargeDensity());
-
-                sceneHasObjectWithCharge = sceneHasObjectWithCharge || Mathf.Abs(chargedPlane.GetChargeDensity()) != 0;
-            }
-
-            int activeChargedPlaneCount = chargedPlaneEquations.Count;
-            const int MAX_CHARGED_PLANES = 30; // Currently hardcoded in shader
-            for (var i = chargedPlaneEquations.Count; i < MAX_CHARGED_PLANES; i++)
-            {
-                chargedPlaneEquations.Add(Vector4.zero);
-                chargedPlaneChargeDensities.Add(0.0f);
-            }
-            if (chargedPlaneEquations.Count > MAX_CHARGED_PLANES)
-            {
-                chargedPlaneEquations.RemoveRange(MAX_CHARGED_PLANES - 1, chargedPlaneEquations.Count - MAX_CHARGED_PLANES);
-                chargedPlaneChargeDensities.RemoveRange(MAX_CHARGED_PLANES - 1, chargedPlaneChargeDensities.Count - MAX_CHARGED_PLANES);
-            }
-
             // Get plane equation (See comment in shader about layout)
             Vector4 planeEquation = Vector4.zero;
             if (fixedPosition)
@@ -185,23 +108,9 @@ namespace Maroon.Experiments.CoulombsLawNew
                 planeEquation = new Vector4(planeNormal.x, planeNormal.y, planeNormal.z, -Vector3.Dot(planeNormal, position));
             }
 
-            if (!sceneHasObjectWithCharge)
-            {
-                activePointChargeCount = 0;
-                activeChargedRodCount = 0;
-                activeChargedPlaneCount = 0;
-            }
-
             // Update shader properties
             var material = meshRenderer.material;
-            material.SetInt(Shader.PropertyToID("_PointChargeCount"), activePointChargeCount);
-            material.SetVectorArray(Shader.PropertyToID("_PointChargeData"), pointChargeData);
-            material.SetInt(Shader.PropertyToID("_ChargedRodCount"), activeChargedRodCount);
-            material.SetVectorArray(Shader.PropertyToID("_ChargedRodPositions"), chargedRodPositions);
-            material.SetVectorArray(Shader.PropertyToID("_ChargedRodDirections"), chargedRodDirections);
-            material.SetInt(Shader.PropertyToID("_ChargedPlaneCount"), activeChargedPlaneCount);
-            material.SetVectorArray(Shader.PropertyToID("_ChargedPlaneEquations"), chargedPlaneEquations);
-            material.SetFloatArray(Shader.PropertyToID("_ChargedPlaneChargeDensities"), chargedPlaneChargeDensities);
+            vectorFieldLogic.chargedObjectComputeBuffers.SetUniformsForMaterial(material);
 
             material.SetFloat(Shader.PropertyToID("_Transparency"), transparency);
             material.SetVector(Shader.PropertyToID("_PlaneEquation"), planeEquation);

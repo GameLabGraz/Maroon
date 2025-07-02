@@ -35,7 +35,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             chargeDensityInput.SetInitialValue(chargedPlane.GetChargeDensity() * 1e6f);
             chargeDensityInput.OnValueChanged.AddListener((float newDensity) => { chargedPlane.SetChargeDensity(newDensity * 1e-6f); });
 
-            deleteButton.onClick.AddListener(() => GameObject.Destroy(chargedPlane.gameObject));
+            deleteButton.onClick.AddListener(() => { GameObject.Destroy(gameObject); });
         }
     }
 }

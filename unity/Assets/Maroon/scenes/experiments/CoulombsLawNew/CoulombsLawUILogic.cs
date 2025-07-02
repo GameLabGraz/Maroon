@@ -11,7 +11,6 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private ChargedPoint prefabChargedPoint;
         [SerializeField] private ChargedRod prefabChargedRod;
         [SerializeField] private ChargedPlane prefabChargedPlane;
-        [SerializeField] private VisualizationPlaneLogic prefabVisualizationPlane;
         [SerializeField] private Transform parentForNewObjects;
 
         [Header("UI-Element References")]
@@ -25,6 +24,8 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private UnityEngine.UI.Button simulationStartButton;
         [SerializeField] private UnityEngine.UI.Button simulationPauseButton;
         [SerializeField] private UnityEngine.UI.Button simulationResetButton;
+
+        [SerializeField] private VisualizationPlaneLogic visualizationPlane;
 
         private void Awake()
         {
@@ -45,11 +46,16 @@ namespace Maroon.Experiments.CoulombsLawNew
             });
             dragIconPlaneVisualization.OnDragFinished.AddListener((Vector3 pos) =>
             {
-                var plane = GameObject.Instantiate(prefabVisualizationPlane, pos, Quaternion.identity, parentForNewObjects);
-                plane.position = pos;
-                plane.planeNormal = Vector3.back;
-                plane.fixedPosition = !CameraController.Instance.In3DMode;
-                plane.UpdateMeshAndDraggable();
+                bool isActive = visualizationPlane.gameObject.activeSelf;
+                visualizationPlane.position = pos;
+                if (!isActive)
+                {
+                    visualizationPlane.gameObject.SetActive(true);
+                    visualizationPlane.planeNormal = Vector3.back;
+                    visualizationPlane.fixedPosition = !CameraController.Instance.In3DMode;
+                    visualizationPlane.transparency = 0.8f;
+                }
+                visualizationPlane.UpdateMeshAndDraggable();
             });
 
 

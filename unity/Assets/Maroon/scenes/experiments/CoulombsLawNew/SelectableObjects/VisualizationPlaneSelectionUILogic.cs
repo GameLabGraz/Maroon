@@ -81,7 +81,10 @@ namespace Maroon.Experiments.CoulombsLawNew
             visualizationPlane.selectable.OnMovedWithGizmo.AddListener((SelectableObject _unused) => { uiPositionInput.SetValue(visualizationPlane.position); });
             visualizationPlane.draggable.OnMoved.AddListener((DraggableObject _unused) => { uiPositionInput.SetValue(visualizationPlane.position); });
 
-            uiDeleteButton.onClick.AddListener(() => { GameObject.Destroy(visualizationPlane.gameObject); });
+            uiDeleteButton.onClick.AddListener(() => {
+                visualizationPlane.gameObject.SetActive(false);
+                SelectionSystem.SetSelectedObject(null);
+            });
         }
     }
 }

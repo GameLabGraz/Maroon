@@ -7,7 +7,7 @@ namespace Maroon.Experiments.CoulombsLawNew
     public class ChargedPlane : MonoBehaviour
     {
         public const float THICKNESS = 0.02f; // In unity units
-        public const float MAX_CHARGE_DENSITY = 1e-5f; // In Coulomb/meter^2
+        public const float MAX_CHARGE_DENSITY = 5e-6f; // In Coulomb/meter^2
 
         [SerializeField] private Vector3 planeNormal = Vector3.up;
         [SerializeField] private MeshFilter meshFilter;

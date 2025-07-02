@@ -8,7 +8,7 @@ namespace Maroon.Experiments.CoulombsLawNew
     public class ChargedRod : MonoBehaviour
     {
         public const float RADIUS = 0.03f; // In unity units
-        public const float MAX_CHARGE_DENSITY = 1e-5f; // In Coulomb/meter
+        public const float MAX_CHARGE_DENSITY = 5e-6f; // In Coulomb/meter
 
         private float chargeDensity;
 
