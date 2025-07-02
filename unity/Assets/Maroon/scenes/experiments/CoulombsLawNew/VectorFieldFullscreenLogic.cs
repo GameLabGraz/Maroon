@@ -14,14 +14,20 @@ namespace Maroon.Experiments.CoulombsLawNew
         [Header("UI-References")]
         [SerializeField] private GuiBoolInputHandler uiEnabledToggle;
         [SerializeField] private GuiIntInputHandler  uiResolutionSlider;
+        [SerializeField] private GuiFloatInputHandler uiArrowSizeSlider;
 
-        [SerializeField] private GuiBoolInputHandler uiEnableScalingToggle;
-        [SerializeField] private GuiFloatInputHandler uiMaxMagnitude;
-        [SerializeField] private GuiFloatInputHandler uiMinMagnitude;
-        [SerializeField] private GuiFloatInputHandler uiInterpolationExponent;
-        [SerializeField] private GuiFloatInputHandler uiSizeSlider;
-        [SerializeField] private GuiFloatInputHandler uiMinSizeSlider;
-        [SerializeField] private GuiBoolInputHandler  uiCutoffAboveMaxToggle;
+        [SerializeField] private GuiDropdownInputHandler uiColorModeDropdown;
+        [SerializeField] private GuiDropdownInputHandler uiScaleModeDropdown;
+        [SerializeField] private GuiDropdownInputHandler uiTransparencyModeDropdown;
+        [SerializeField] private GuiFloatInputHandler uiFixedTransparencySlider;
+
+        [SerializeField] private GuiFloatInputHandler uiMaxMagnitudeK; // in kilo newton/coulomb
+        [SerializeField] private GuiFloatInputHandler uiMagnitudeInterpolationExponent;
+
+        [SerializeField] private GuiFloatInputHandler uiVoltageCenterKV;
+        [SerializeField] private GuiFloatInputHandler uiVoltageRangeKV;
+        [SerializeField] private GuiFloatInputHandler uiVoltageInterpolationExponent;
+        [SerializeField] private GuiBoolInputHandler uiDisplayOutsideOfRangeBool;
 
         private void Start()
         {
@@ -30,6 +36,11 @@ namespace Maroon.Experiments.CoulombsLawNew
 
             vectorFieldValuesBuffer = new ComputeBuffer(
                 MAX_RESOLUTION * MAX_RESOLUTION * MAX_RESOLUTION, 4 * 4, ComputeBufferType.Structured, ComputeBufferMode.Dynamic);
+
+            uiTransparencyModeDropdown.OnValueChanged.AddListener((int dropdownValue) =>
+            {
+                uiFixedTransparencySlider.gameObject.SetActive(dropdownValue == 3);
+            });
         }
 
         private void OnDestroy()
@@ -39,6 +50,8 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private void LateUpdate()
         {
+            // Calculate vector field values at grid-cell positions, and update compute buffer
+
             var efield = ElectricField.Instance;
             var box = SimulationBox.Instance.Bounds;
             int resolution = uiResolutionSlider.GetValue();
@@ -53,7 +66,6 @@ namespace Maroon.Experiments.CoulombsLawNew
 
             Vector4[] bufferValues = new Vector4[resolution * resolution * resolution];
 
-            // Generate draw calls for each arrow
             for (int x = 0; x < resolution; x++)
             {
                 for (int y = 0; y < resolution; y++)
@@ -84,14 +96,6 @@ namespace Maroon.Experiments.CoulombsLawNew
                 Graphics.Blit(source, destination);
                 return;
             }
-            if (uiEnableScalingToggle.GetValue())
-            {
-                if (uiMaxMagnitude.GetValue() < uiMinMagnitude.GetValue() || uiMinSizeSlider.GetValue() >= uiSizeSlider.GetValue())
-                {
-                    Graphics.Blit(source, destination);
-                    return;
-                }
-            }
 
             var box = SimulationBox.Instance.Bounds;
             int resolution = uiResolutionSlider.GetValue();
@@ -106,19 +110,26 @@ namespace Maroon.Experiments.CoulombsLawNew
 
             // Update shader values
             Matrix4x4 inverseView = Camera.main.worldToCameraMatrix.inverse;
+            vectorFieldMaterial.SetBuffer("_VectorFieldValues", vectorFieldValuesBuffer);
             vectorFieldMaterial.SetMatrix("_InverseView", inverseView);
+            
             vectorFieldMaterial.SetVector("_BoxMin", domainOrigin);
             vectorFieldMaterial.SetInt("_FieldResolution", resolution);
             vectorFieldMaterial.SetFloat("_CellSize", cellSize);
-            vectorFieldMaterial.SetBuffer("_VectorFieldValues", vectorFieldValuesBuffer);
+            vectorFieldMaterial.SetFloat("_ArrowSize", uiArrowSizeSlider.GetValue());
 
-            vectorFieldMaterial.SetInt("_EnableScalingBool", uiEnableScalingToggle.GetValue() ? 1 : 0);
-            vectorFieldMaterial.SetFloat("_MaxMagnitude", uiMaxMagnitude.GetValue() * 1000.0f);
-            vectorFieldMaterial.SetFloat("_MinMagnitude", uiMinMagnitude.GetValue() * 1000.0f);
-            vectorFieldMaterial.SetFloat("_SizeInterpolationExponent", uiInterpolationExponent.GetValue());
-            vectorFieldMaterial.SetFloat("_ArrowSize", uiSizeSlider.GetValue());
-            vectorFieldMaterial.SetFloat("_MinArrowSize", uiMinSizeSlider.GetValue());
-            vectorFieldMaterial.SetInt("_CutoffAboveMaxBool", uiCutoffAboveMaxToggle.GetValue() ? 1 : 0);
+            vectorFieldMaterial.SetInt("_ColorMode", uiColorModeDropdown.GetSelectedIndex());
+            vectorFieldMaterial.SetInt("_ScaleMode", uiScaleModeDropdown.GetSelectedIndex());
+            vectorFieldMaterial.SetInt("_TransparencyMode", uiTransparencyModeDropdown.GetSelectedIndex());
+            vectorFieldMaterial.SetFloat("_FixedTransparencyValue", uiFixedTransparencySlider.GetValue());
+
+            vectorFieldMaterial.SetFloat("_MaxMagnitude", uiMaxMagnitudeK.GetValue() * 1000.0f);
+            vectorFieldMaterial.SetFloat("_MagnitudeInterpolationExponent", uiMagnitudeInterpolationExponent.GetValue());
+
+            vectorFieldMaterial.SetFloat("_VoltageCenter", uiVoltageCenterKV.GetValue() * 1000.0f);
+            vectorFieldMaterial.SetFloat("_VoltageRange",  uiVoltageRangeKV.GetValue() * 1000.0f);
+            vectorFieldMaterial.SetFloat("_VoltageInterpolationExponent", uiVoltageInterpolationExponent.GetValue());
+            vectorFieldMaterial.SetInt("_DisplayOutsideOfRangeBool", uiDisplayOutsideOfRangeBool.GetValue() ? 1 : 0);
 
             Graphics.Blit(source, destination, vectorFieldMaterial);
         }
