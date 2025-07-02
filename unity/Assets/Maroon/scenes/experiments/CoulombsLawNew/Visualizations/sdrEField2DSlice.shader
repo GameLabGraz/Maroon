@@ -66,7 +66,6 @@
 
 			// --------------------------------------------------------------------------------------------------------------
 			// Data structures
-
 			float _PointChargeMinDist;
 			float _ChargedRodMinDist;
 			float _Transparency;

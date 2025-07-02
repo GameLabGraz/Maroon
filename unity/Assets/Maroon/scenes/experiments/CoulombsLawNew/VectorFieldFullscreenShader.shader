@@ -294,7 +294,7 @@ Shader "Custom/VectorFieldFullscreenShader"
                         int linearCoord = cellCoord.x + cellCoord.y * _FieldResolution + cellCoord.z * _FieldResolution * _FieldResolution;
                         float4 vectorFieldValuePacked = _VectorFieldValues[linearCoord];
 
-                        // Figure out interpolatio coefficients based on magnitude and potential size-scaling based on efield magnitude
+                        // Figure out interpolation coefficients based on magnitude and potential size-scaling based on efield magnitude
                         float efieldMagnitude = length(vectorFieldValuePacked.xyz);
                         float tMagnitude = efieldMagnitude / _MaxMagnitude;
                         tMagnitude = min(tMagnitude, 1.0);
@@ -303,6 +303,7 @@ Shader "Custom/VectorFieldFullscreenShader"
                         float tPotential = (vectorFieldValuePacked.w - _VoltageCenter) / _VoltageRange;
                         tPotential = pow(min(abs(tPotential), 1.0), _VoltageInterpolationExponent);
 
+                        // Check if we want to skip cell
                         bool skipCell = false;
                         if (_DisplayOutsideOfRangeBool == 0) {
                             float potential = vectorFieldValuePacked.w;
@@ -323,8 +324,8 @@ Shader "Custom/VectorFieldFullscreenShader"
                             {
                                 coneHeight *= tMagnitude;
                             }
-
                             coneHeight = min(coneHeight, 0.3); // Apply max cone height (So low resolution settings don't create large arrows)
+
                             float3 coneDir;
                             if (efieldMagnitude < 0.000001) {
                                 coneDir = float3(0, -1, 0);
@@ -336,7 +337,8 @@ Shader "Custom/VectorFieldFullscreenShader"
 
                             // Ray-Cone intersection
                             float3 coneNormal;
-                            float tCone = rayConeIntersection(rayOrigin, rayDir, cellCenter - coneDir * coneHeight / 2.0, coneDir, coneHalfAngle, coneHeight, coneNormal);
+                            float tCone = rayConeIntersection(
+                                rayOrigin, rayDir, cellCenter - coneDir * coneHeight / 2.0, coneDir, coneHalfAngle, coneHeight, coneNormal);
                             if (tCone > 0.0 && tCone < maxDist) 
                             {
                                 // Find cone color
@@ -426,35 +428,6 @@ Shader "Custom/VectorFieldFullscreenShader"
                 // result.w =  1.0;
 
                 // return result;
-            }
-
-            // Returns possibly transparent color
-            float4 traceRayThroughScene(float3 rayOrigin, float3 rayDir, float maxDist)
-            {
-                float4 result = float4(0, 0, 0, 0);
-
-                float3 normal;
-                float tSphere = raySphereIntersection(rayOrigin, rayDir, _BoxMin + (_FieldResolution * _CellSize) / 2.0, 0.2, normal);
-                // tSphere = -1;
-                float3 offset = float3(0, 1, 0);
-                float tBox = rayBoxIntersection(rayOrigin, rayDir, float3(-1, -1, -1) + offset, float3(1, 1, 1) + offset);
-
-                float closestDist = 1000.0;
-                if (tSphere > 0.0) closestDist = min(closestDist, tSphere);
-                // if (tBox > 0.0) closestDist = min(closestDist, tBox);
-                if (closestDist > maxDist) return result;
-
-                if (tSphere == closestDist) 
-                {
-                    float3 color = phongShading(rayDir, normal, float3(1, .3, .5));
-                    result = float4(color.x, color.y, color.z, 1.0);
-                }
-                // else if (tBox == closestDist) 
-                // {
-                //     result = float4(1, 0, 0, 1);
-                // }
-
-                return result;
             }
 
             float3 pixelPosToWorldPos(float2 uv)
