@@ -13,7 +13,11 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private ChargedPlane prefabChargedPlane;
         [SerializeField] private Transform parentForNewObjects;
 
+        [SerializeField] private VisualizationPlaneLogic visualizationPlane;
+
         [Header("UI-Element References")]
+        [SerializeField] private GuiBoolInputHandler vectorFieldEnabledToggle;
+
         [SerializeField] private GuiIconTo3DObjectDrag dragIconParticle;
         [SerializeField] private GuiIconTo3DObjectDrag dragIconChargedRod;
         [SerializeField] private GuiIconTo3DObjectDrag dragIconChargedPlane;
@@ -25,7 +29,6 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private UnityEngine.UI.Button simulationPauseButton;
         [SerializeField] private UnityEngine.UI.Button simulationResetButton;
 
-        [SerializeField] private VisualizationPlaneLogic visualizationPlane;
 
         private void Awake()
         {
@@ -37,7 +40,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             dragIconChargedRod.OnDragFinished.AddListener((Vector3 pos) =>
             {
                 var newRod = GameObject.Instantiate(prefabChargedRod, pos, Quaternion.identity, parentForNewObjects);
-                newRod.SetRodParameters(pos, Vector3.up);
+                newRod.SetRodParameters(pos, Vector3.forward);
             });
             dragIconChargedPlane.OnDragFinished.AddListener((Vector3 pos) =>
             {
@@ -52,10 +55,21 @@ namespace Maroon.Experiments.CoulombsLawNew
                 {
                     visualizationPlane.gameObject.SetActive(true);
                     visualizationPlane.planeNormal = Vector3.back;
-                    visualizationPlane.fixedPosition = !CameraController.Instance.In3DMode;
                     visualizationPlane.transparency = 0.8f;
+                    visualizationPlane.heatmapMode = 1;
                 }
                 visualizationPlane.UpdateMeshAndDraggable();
+
+                // Only one transparent object can be active at the same time
+                vectorFieldEnabledToggle.SetValue(false);
+            });
+            vectorFieldEnabledToggle.OnValueChanged.AddListener((bool newValue) =>
+            {
+                // Only one transparent object can be active at the same time
+                if (newValue)
+                {
+                    visualizationPlane.gameObject.SetActive(false);
+                }
             });
 
 

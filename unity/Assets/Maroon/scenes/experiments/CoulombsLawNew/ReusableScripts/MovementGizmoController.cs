@@ -186,9 +186,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             var newPos = ClosestPointOnMovementAxisToMouse(dimension) + _offsetAtDragStart;
             var box = SimulationBox.Instance.Bounds;
             float r = selected.boundingRadius;
-            newPos.x = Mathf.Clamp(newPos.x, box.min.x + r, box.max.x - r);
-            newPos.y = Mathf.Clamp(newPos.y, box.min.y + r, box.max.y - r);
-            newPos.z = Mathf.Clamp(newPos.z, box.min.z + r, box.max.z - r);
+            newPos[dimension] = Mathf.Clamp(newPos[dimension], box.min[dimension] + r, box.max[dimension] - r);
 
             // Set new position, see comment in DraggableObject.cs
             selected.transform.position = newPos;

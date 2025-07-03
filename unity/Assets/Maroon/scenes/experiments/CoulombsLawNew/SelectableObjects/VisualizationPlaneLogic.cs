@@ -13,58 +13,43 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private MeshFilter meshFilter;
         [SerializeField] private MeshCollider meshCollider;
         [SerializeField] private GameObject selectionHighlightObject;
-        [SerializeField] private VectorFieldFullscreenLogic vectorFieldLogic; // For access to electric-field buffers
         public DraggableObject draggable;
         public SelectableObject selectable;
 
         // Note(MartinR): Instead of having setters for all parameters, other objects can 
         //  just update the public members and call SetPlaneParametersAndUpdateMesh
-        public bool heatmapEnabled;
+        public int heatmapMode; // 0 = disabled, 1 = Potential, 2 = Magnitude
         public bool equipotentialLinesEnabled;
-
-        public static float heatmapCutoff = 200000.0f;
-        public static float heatmapFalloff = 5.0f;
-        public static float equipotentialLinesMaximum = 200000.0f;
-        public static float equipotentialLinesSpacing = 30000.0f;
-
-        public float transparency;
-        public bool fixedPosition;
-        public float fixedPositionVirtualZ;
+        public float equipotentialLinesSpacing = 30000.0f;
+        public float transparency = 0.8f;
 
         public Vector3 position = Vector3.zero; //Note: In 2D camera mode this may not be the same as transform.position
         public Vector3 planeNormal = Vector3.back;
 
+        private Vector3 positionOffset = Vector3.zero;
+
+        [SerializeField] private GuiFloatInputHandler uiPotentialRange;
+        [SerializeField] private GuiFloatInputHandler uiPotentialOffset;
+        [SerializeField] private GuiFloatInputHandler uiPotentialInterpolationExponent;
+        [SerializeField] private GuiFloatInputHandler uiMaxMagnitude;
+        [SerializeField] private GuiFloatInputHandler uiMagnitudeInterpolationExponent;
+
         public void UpdateMeshAndDraggable()
         {
+            positionOffset = Vector3.zero;
+            if (!CameraController.Instance.In3DMode)
+            {
+                // In 2D-Mode we move the plane further back so it doesn't occlude other objects
+                Bounds box = SimulationBox.Instance.Bounds;
+                positionOffset = new Vector3(0, 0, (box.max.z - box.min.z) + 1.0f);
+            }
+
+            transform.position = position + positionOffset;
             transform.localScale = Vector3.one;
             transform.rotation = Quaternion.identity;
 
-            // Update draggable and movement gizmo
-            draggable.draggableEnabled = !fixedPosition;
-            selectable.enableMovementGizmo = !fixedPosition;
-            SelectionSystem.Instance.movementGizmo.UpdateArrowsDependingOnSelection();
-
             // Update mesh
-            Mesh newMesh = null;
-            if (fixedPosition)
-            {
-                Vector3 normal = Vector3.back;
-                var bounds = SimulationBox.Instance.Bounds;
-                var pos = bounds.center;
-                pos.z = bounds.max.z; // Place at end of box in fixed position mode
-                if (!CameraController.Instance.In3DMode)
-                {
-                    pos.z += 3.0f; // Moves it further back in orthogonal mode to make room for vector-field
-                }
-                transform.position = pos;
-                newMesh = ChargedPlane.CalculateClippedPlaneMeshWithVolume(bounds.center, planeNormal, THICKNESS);
-            }
-            else
-            {
-                transform.position = position;
-                newMesh = ChargedPlane.CalculateClippedPlaneMeshWithVolume(position, planeNormal, THICKNESS);
-            }
-
+            Mesh newMesh = ChargedPlane.CalculateClippedPlaneMeshWithVolume(position, planeNormal, THICKNESS);
             meshFilter.mesh = newMesh;
             meshCollider.sharedMesh = newMesh;
         }
@@ -80,47 +65,49 @@ namespace Maroon.Experiments.CoulombsLawNew
                 selectionHighlightObject.SetActive(selected);
             });
             draggable.OnDraggedOutOfBounds.AddListener((DraggableObject _unused) => 
-            { 
+            {
+                Vector3 pos = transform.position - positionOffset;
+                // This extra check is needed because of the positionOffset
+                if (SimulationBox.Instance.Bounds.Contains(pos)) return;
+
                 gameObject.SetActive(false); 
                 SelectionSystem.SetSelectedObject(null);
             });
 
-            selectable.OnMovedWithGizmo.AddListener((SelectableObject _unused) => { position = transform.position; UpdateMeshAndDraggable(); });
-            draggable.OnMoved.AddListener((DraggableObject _unused) => { position = transform.position; UpdateMeshAndDraggable(); });
+            selectable.OnMovedWithGizmo.AddListener((SelectableObject _unused) => 
+            { 
+                position = transform.position - positionOffset; 
+                UpdateMeshAndDraggable(); 
+            });
+            draggable.OnMoved.AddListener((DraggableObject _unused) => 
+            { 
+                position = transform.position - positionOffset; 
+                UpdateMeshAndDraggable(); 
+            });
         }
 
         // Updating shader data happens in LateUpdate
         void LateUpdate()
         {
             // Get plane equation (See comment in shader about layout)
-            Vector4 planeEquation = Vector4.zero;
-            if (fixedPosition)
-            {
-                Vector3 normal = planeNormal;
-                normal = Vector3.back;
-                var bounds = SimulationBox.Instance.Bounds;
-                Vector3 pointOnPlane = SimulationBox.Instance.Bounds.center;
-                pointOnPlane.z = Mathf.Lerp(bounds.min.z, bounds.max.z, fixedPositionVirtualZ / 2 + 0.5f);
-                planeEquation = new Vector4(normal.x, normal.y, normal.z, -Vector3.Dot(normal, pointOnPlane));
-            }
-            else
-            {
-                planeEquation = new Vector4(planeNormal.x, planeNormal.y, planeNormal.z, -Vector3.Dot(planeNormal, position));
-            }
+            Vector4 planeEquation = new Vector4(planeNormal.x, planeNormal.y, planeNormal.z, -Vector3.Dot(planeNormal, position));
 
             // Update shader properties
             var material = meshRenderer.material;
-            vectorFieldLogic.chargedObjectComputeBuffers.SetUniformsForMaterial(material);
+            ElectricField.Instance.computeBuffers.SetUniformsForMaterial(material);
 
             material.SetFloat(Shader.PropertyToID("_Transparency"), transparency);
             material.SetVector(Shader.PropertyToID("_PlaneEquation"), planeEquation);
+            material.SetVector(Shader.PropertyToID("_PositionOffset"), positionOffset);
 
-            material.SetInteger(Shader.PropertyToID("_DrawHeatmap"), heatmapEnabled ? 1 : 0);
-            material.SetFloat(Shader.PropertyToID("_HeatmapMaxVoltage"), heatmapCutoff);
-            material.SetFloat(Shader.PropertyToID("_HeatmapFalloff"), heatmapFalloff);
+            material.SetInteger(Shader.PropertyToID("_HeatmapMode"), heatmapMode);
+            material.SetFloat(Shader.PropertyToID("_VoltageRange"), uiPotentialRange.GetValue() * 1000.0f);
+            material.SetFloat(Shader.PropertyToID("_VoltageOffset"), uiPotentialOffset.GetValue() * 1000.0f);
+            material.SetFloat(Shader.PropertyToID("_VoltageInterpolationExponent"), uiPotentialInterpolationExponent.GetValue());
+            material.SetFloat(Shader.PropertyToID("_MaxMagnitude"), uiMaxMagnitude.GetValue() * 1000.0f);
+            material.SetFloat(Shader.PropertyToID("_MagnitudeInterpolationExponent"), uiMagnitudeInterpolationExponent.GetValue());
 
             material.SetInteger(Shader.PropertyToID("_DrawEquipotentialLines"), equipotentialLinesEnabled ? 1 : 0);
-            material.SetFloat(Shader.PropertyToID("_LineMaxVoltage"), equipotentialLinesMaximum);
             material.SetFloat(Shader.PropertyToID("_LineSpacingVoltage"), equipotentialLinesSpacing);
         }
     }

@@ -43,5 +43,14 @@ namespace Maroon.Experiments.CoulombsLawNew
         }
 
         public int GetSelectedIndex() { return dropdownField.value; }
+
+        public void SetSelectedIndex(int index)
+        {
+            if (dropdownField != null)
+            {
+                dropdownField.value = index;
+            }
+            initialSelectionIndex = index;
+        }
     }
 }

@@ -4,124 +4,34 @@ using UnityEngine;
 
 namespace Maroon.Experiments.CoulombsLawNew
 {
-    public class ChargedObjectComputeBuffers
+    public struct VectorFieldInfos
     {
-        public const int MAX_CHARGED_POINTS = 50;
-        public const int MAX_CHARGED_RODS = 30;
-        public const int MAX_CHARGED_PLANES = 30;
-
-        public ComputeBuffer chargedPointData; // xyz position, w is charge
-        public ComputeBuffer chargedRodPositions; // xyz position, w is charge
-        public ComputeBuffer chargedRodDirections; // xyz direction, w unused
-        public ComputeBuffer chargedPlaneEquations; // xyz normal, w is negative distance from plane to origin
-        public ComputeBuffer chargedPlaneChargeDensities; // Note: this is a float buffer, all other are float4
-
-        List<Vector4> cpuChargedPointData = new List<Vector4>();
-        List<Vector4> cpuChargedRodPositions = new List<Vector4>();
-        List<Vector4> cpuChargedRodDirections = new List<Vector4>();
-        List<Vector4> cpuChargedPlaneEquations = new List<Vector4>();
-        List<float> cpuChargedPlaneChargeDensities = new List<float>();
-
-        private int lastUpdateFrame = -1;
-
-        public ChargedObjectComputeBuffers()
+        public VectorFieldInfos(int resolution, bool vectorField3DMode)
         {
-            chargedPointData = new ComputeBuffer(MAX_CHARGED_POINTS, 4 * 4);
-            chargedRodPositions = new ComputeBuffer(MAX_CHARGED_RODS, 4 * 4);
-            chargedRodDirections = new ComputeBuffer(MAX_CHARGED_RODS, 4 * 4);
-            chargedPlaneEquations = new ComputeBuffer(MAX_CHARGED_PLANES, 4 * 4);
-            chargedPlaneChargeDensities = new ComputeBuffer(MAX_CHARGED_PLANES, 4);
-        }
+            var box = SimulationBox.Instance.Bounds;
+            float maxDimSize = Mathf.Max(box.size.z, Mathf.Max(box.size.x, box.size.y));
+            cellSize = maxDimSize / resolution;
 
-        public void DisposeBuffers()
-        {
-            chargedPointData.Dispose();
-            chargedRodPositions.Dispose();
-            chargedRodDirections.Dispose();
-            chargedPlaneEquations.Dispose();
-            chargedPlaneChargeDensities.Dispose();
-        }
+            resolutionX = resolution;
+            resolutionY = resolution;
+            resolutionZ = resolution;
+            gridMin = box.min +
+                (box.size - Vector3.one * resolution * cellSize) / 2;
 
-        private void UpdateBuffersForCurrentFrame()
-        {
-            if (lastUpdateFrame == UnityEngine.Time.frameCount) return;
-            lastUpdateFrame = UnityEngine.Time.frameCount;
-
-            cpuChargedPointData.Clear();
-            cpuChargedRodPositions.Clear();
-            cpuChargedRodDirections.Clear();
-            cpuChargedPlaneEquations.Clear();
-            cpuChargedPlaneChargeDensities.Clear();
-
-            // Update charged object buffers
-            foreach (var pointCharge in ElectricField.Instance.chargedPoints)
+            // In 2D mode we only show one row of arrows in z
+            if (!vectorField3DMode || !CameraController.Instance.In3DMode)
             {
-                if (cpuChargedPointData.Count + 1 >= MAX_CHARGED_POINTS) break;
-                var pos = pointCharge.transform.position;
-                Vector4 packedInfo = new Vector4(pos.x, pos.y, pos.z, pointCharge.GetCharge());
-                cpuChargedPointData.Add(packedInfo);
+                resolutionZ = 1;
+                gridMin.z = box.center.z - cellSize / 2.0f;
             }
-            chargedPointData.SetData<Vector4>(cpuChargedPointData);
-
-            foreach (var chargedRod in ElectricField.Instance.chargedRods)
-            {
-                if (cpuChargedRodPositions.Count + 1 >= MAX_CHARGED_POINTS) break;
-                var pos = chargedRod.transform.position;
-                var dir = chargedRod.GetDirection();
-                Vector4 packedPos = new Vector4(pos.x, pos.y, pos.z, chargedRod.GetChargeDensity());
-                Vector4 packedDir = new Vector4(dir.x, dir.y, dir.z, 0);
-                cpuChargedRodPositions.Add(packedPos);
-                cpuChargedRodDirections.Add(packedDir);
-            }
-            chargedRodPositions.SetData<Vector4>(cpuChargedRodPositions);
-            chargedRodDirections.SetData<Vector4>(cpuChargedRodDirections);
-
-            // Get charged plane packed data
-            foreach (var chargedPlane in ElectricField.Instance.chargedPlanes)
-            {
-                if (cpuChargedPlaneEquations.Count + 1 >= MAX_CHARGED_PLANES) break;
-                var normal = chargedPlane.GetNormal();
-                Vector4 equation = new Vector4(normal.x, normal.y, normal.z, -Vector3.Dot(normal, chargedPlane.transform.position));
-                cpuChargedPlaneEquations.Add(equation);
-                cpuChargedPlaneChargeDensities.Add(chargedPlane.GetChargeDensity());
-            }
-            chargedPlaneEquations.SetData<Vector4>(cpuChargedPlaneEquations);
-            chargedPlaneChargeDensities.SetData<float>(cpuChargedPlaneChargeDensities);
         }
 
-        // Shader should include "ShaderUtils.cginc" for this to work
-        public void SetUniformsForComputeShader(ComputeShader computeShader, int kernelIndex)
-        {
-            UpdateBuffersForCurrentFrame();
-
-            computeShader.SetFloat("_PointChargeMinDist", ChargedPoint.RADIUS);
-            computeShader.SetFloat("_ChargedRodMinDist", ChargedRod.RADIUS);
-            computeShader.SetInt("_ChargedPointCount", cpuChargedPointData.Count);
-            computeShader.SetInt("_ChargedRodCount", cpuChargedRodPositions.Count);
-            computeShader.SetInt("_ChargedPlaneCount", cpuChargedPlaneEquations.Count);
-            computeShader.SetBuffer(kernelIndex, "_ChargedPointData", chargedPointData);
-            computeShader.SetBuffer(kernelIndex, "_ChargedRodPositions", chargedRodPositions);
-            computeShader.SetBuffer(kernelIndex, "_ChargedRodDirections", chargedRodDirections);
-            computeShader.SetBuffer(kernelIndex, "_ChargedPlaneEquations", chargedPlaneEquations);
-            computeShader.SetBuffer(kernelIndex, "_ChargedPlaneChargeDensities", chargedPlaneChargeDensities);
-        }
-
-        public void SetUniformsForMaterial(Material material)
-        {
-            UpdateBuffersForCurrentFrame();
-
-            material.SetFloat("_PointChargeMinDist", ChargedPoint.RADIUS);
-            material.SetFloat("_ChargedRodMinDist", ChargedRod.RADIUS);
-            material.SetInt("_ChargedPointCount", cpuChargedPointData.Count);
-            material.SetInt("_ChargedRodCount", cpuChargedRodPositions.Count);
-            material.SetInt("_ChargedPlaneCount", cpuChargedPlaneEquations.Count);
-            material.SetBuffer("_ChargedPointData", chargedPointData);
-            material.SetBuffer("_ChargedRodPositions", chargedRodPositions);
-            material.SetBuffer("_ChargedRodDirections", chargedRodDirections);
-            material.SetBuffer("_ChargedPlaneEquations", chargedPlaneEquations);
-            material.SetBuffer("_ChargedPlaneChargeDensities", chargedPlaneChargeDensities);
-        }
-    }
+        public Vector3 gridMin;
+        public float cellSize;
+        public int resolutionX;
+        public int resolutionY;
+        public int resolutionZ;
+    };
 
     public class VectorFieldFullscreenLogic : MonoBehaviour
     {
@@ -131,10 +41,10 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private ComputeShader gridValuesComputeShader;
 
         private ComputeBuffer gridValuesComputeBuffer;
-        public ChargedObjectComputeBuffers chargedObjectComputeBuffers;
 
         [Header("UI-References")]
         [SerializeField] private GuiBoolInputHandler uiEnabledToggle;
+        [SerializeField] private GuiBoolInputHandler ui3DModeToggle;
         [SerializeField] private GuiIntInputHandler uiResolutionSlider;
         [SerializeField] private GuiFloatInputHandler uiArrowSizeSlider;
 
@@ -157,7 +67,6 @@ namespace Maroon.Experiments.CoulombsLawNew
             cam.depthTextureMode = cam.depthTextureMode | DepthTextureMode.Depth; // Request depth texture for rendering
 
             gridValuesComputeBuffer = new ComputeBuffer(MAX_RESOLUTION * MAX_RESOLUTION * MAX_RESOLUTION, 4 * 4);
-            chargedObjectComputeBuffers = new ChargedObjectComputeBuffers();
 
             uiTransparencyModeDropdown.OnValueChanged.AddListener((int dropdownValue) =>
             {
@@ -168,30 +77,29 @@ namespace Maroon.Experiments.CoulombsLawNew
         private void OnDestroy()
         {
             gridValuesComputeBuffer.Dispose();
-            chargedObjectComputeBuffers.DisposeBuffers();
         }
 
+        // Calculate vector field values at grid-cell positions, updates compute buffer
         private void LateUpdate()
         {
-            // Calculate vector field values at grid-cell positions, and update compute buffer
-            var box = SimulationBox.Instance.Bounds;
-            int resolution = uiResolutionSlider.GetValue();
-            float maxDimSize = Mathf.Max(box.size.z, Mathf.Max(box.size.x, box.size.y));
-            float cellSize = maxDimSize / resolution;
-            Vector3 min = SimulationBox.Instance.Bounds.min;
+            VectorFieldInfos gridInfo = new VectorFieldInfos(uiResolutionSlider.GetValue(), ui3DModeToggle.GetValue());
 
             // Set compute shader uniform values
             int kernelIndex = gridValuesComputeShader.FindKernel("CSMain");
-            chargedObjectComputeBuffers.SetUniformsForComputeShader(gridValuesComputeShader, kernelIndex);
+            ElectricField.Instance.computeBuffers.SetUniformsForComputeShader(gridValuesComputeShader, kernelIndex);
             gridValuesComputeShader.SetBuffer(kernelIndex, "_VectorFieldBuffer", gridValuesComputeBuffer);
-            gridValuesComputeShader.SetInt("_VectorFieldResolution", resolution);
-            gridValuesComputeShader.SetVector("_GridMin", new Vector4(min.x, min.y, min.z, 0.0f));
-            gridValuesComputeShader.SetFloat("_CellSize", cellSize);
+            gridValuesComputeShader.SetInt("_VectorFieldResolutionX", gridInfo.resolutionX);
+            gridValuesComputeShader.SetInt("_VectorFieldResolutionY", gridInfo.resolutionY);
+            gridValuesComputeShader.SetInt("_VectorFieldResolutionZ", gridInfo.resolutionZ);
+            gridValuesComputeShader.SetVector("_GridMin", new Vector4(gridInfo.gridMin.x, gridInfo.gridMin.y, gridInfo.gridMin.z, 0.0f));
+            gridValuesComputeShader.SetFloat("_CellSize", gridInfo.cellSize);
 
             // Launch compute shader
             uint threadGroupX, threadGroupY, threadGroupZ;
             gridValuesComputeShader.GetKernelThreadGroupSizes(kernelIndex, out threadGroupX, out threadGroupY, out threadGroupZ);
-            int requiredGroups = ((resolution * resolution * resolution) / (int)(threadGroupX * threadGroupY * threadGroupZ)) + 1;
+            int requiredGroups = 
+                ((gridInfo.resolutionX * gridInfo.resolutionY * gridInfo.resolutionZ) / 
+                (int)(threadGroupX * threadGroupY * threadGroupZ)) + 1;
             gridValuesComputeShader.Dispatch(kernelIndex, requiredGroups, 1, 1);
 
 
@@ -227,21 +135,18 @@ namespace Maroon.Experiments.CoulombsLawNew
                 return;
             }
 
-            var box = SimulationBox.Instance.Bounds;
-            int resolution = uiResolutionSlider.GetValue();
-            float maxDimSize = Mathf.Max(box.size.z, Mathf.Max(box.size.x, box.size.y));
-            float cellSize = maxDimSize / uiResolutionSlider.GetValue();
-            var domainOrigin = box.min +
-                (box.size - Vector3.one * resolution * cellSize) / 2;
+            VectorFieldInfos gridInfo = new VectorFieldInfos(uiResolutionSlider.GetValue(), ui3DModeToggle.GetValue());
 
             // Update shader values
             Matrix4x4 inverseView = Camera.main.worldToCameraMatrix.inverse;
             vectorFieldMaterial.SetBuffer("_VectorFieldValues", gridValuesComputeBuffer);
             vectorFieldMaterial.SetMatrix("_InverseView", inverseView);
 
-            vectorFieldMaterial.SetVector("_BoxMin", domainOrigin);
-            vectorFieldMaterial.SetInt("_FieldResolution", resolution);
-            vectorFieldMaterial.SetFloat("_CellSize", cellSize);
+            vectorFieldMaterial.SetVector("_BoxMin", gridInfo.gridMin);
+            vectorFieldMaterial.SetInt("_FieldResolutionX", gridInfo.resolutionX);
+            vectorFieldMaterial.SetInt("_FieldResolutionY", gridInfo.resolutionY);
+            vectorFieldMaterial.SetInt("_FieldResolutionZ", gridInfo.resolutionZ);
+            vectorFieldMaterial.SetFloat("_CellSize", gridInfo.cellSize);
             vectorFieldMaterial.SetFloat("_ArrowSize", uiArrowSizeSlider.GetValue());
 
             vectorFieldMaterial.SetInt("_ColorMode", uiColorModeDropdown.GetSelectedIndex());

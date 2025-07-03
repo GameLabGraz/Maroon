@@ -1,0 +1,92 @@
+#ifndef _EFIELD_SHADER_UTILS_CGINC_
+#define _EFIELD_SHADER_UTILS_CGINC_
+
+// Unit is Newton meter^2 / Coulomb^2 [N m^2 / C^2] 
+#define COULOMBS_CONSTANT 9e9
+#define PI 3.14159265359
+
+uniform float _PointChargeMinDist;
+uniform float _ChargedRodMinDist;
+
+uniform int _ChargedPointCount;
+uniform int _ChargedRodCount;
+uniform int _ChargedPlaneCount;
+uniform StructuredBuffer<float4> _ChargedPointData; // Packed data, xyz is position, w is charge in Coulomb
+uniform StructuredBuffer<float4> _ChargedRodPositions; // Packed data, xyz is position, w is charge-density in Coulomb
+uniform StructuredBuffer<float4> _ChargedRodDirections; // w is currently unused
+uniform StructuredBuffer<float4> _ChargedPlaneEquations; // xyz is normalized normal, w is negative distance of plane to origin
+uniform StructuredBuffer<float>  _ChargedPlaneChargeDensities;
+
+// Returns Voltage and electric field value
+void evaluateField(float3 pos, out float voltage, out float3 fieldVector)
+{
+    voltage = 0.0; // In Volt
+    fieldVector = float3(0, 0, 0); // In Newton / Coulomb [N/C]
+
+	// Evaluate point charges
+    int i = 0; // Note: If i is declared in the loop header, there are warnings in unity...
+    for (i = 0; i < _ChargedPointCount; i++)
+    {
+        float3 chargePos = _ChargedPointData[i].xyz;
+        float electricCharge = _ChargedPointData[i].w;
+                
+		// Safe normalization (Check if vector is 0)
+        float3 direction = pos - chargePos;
+        float dist = length(direction);
+        if (dist < 0.0001)
+        {
+            direction = float3(0, 1, 0);
+        }
+        else
+        {
+            direction = direction / dist;
+        }
+
+		// Clamp distance to avoid division by 0
+        dist = max(dist, _PointChargeMinDist);
+
+		// Sum up field values
+        fieldVector += COULOMBS_CONSTANT * electricCharge * direction / (dist * dist);
+        voltage += COULOMBS_CONSTANT * electricCharge / dist;
+    }
+
+	// Evaluate charged rods
+    for (i = 0; i < _ChargedRodCount; i++)
+    {
+        float3 rodPos = _ChargedRodPositions[i].xyz;
+        float3 rodDir = _ChargedRodDirections[i].xyz;
+        float rodChargeDensity = _ChargedRodPositions[i].w;
+
+        float3 posProjected = rodPos + rodDir * dot(pos - rodPos, rodDir);
+        float3 rodToPos = pos - posProjected;
+        float dist = length(rodToPos);
+        if (dist < 0.0001)
+        {
+            rodToPos = float3(0, 1, 0);
+        }
+        else
+        {
+            rodToPos = rodToPos / dist;
+        }
+
+		// Clamp distance
+        dist = max(dist, _ChargedRodMinDist);
+
+        fieldVector += (2.0 * COULOMBS_CONSTANT) * rodChargeDensity * rodToPos / dist;
+        voltage += -(2.0 * COULOMBS_CONSTANT) * rodChargeDensity * log(dist);
+    }
+
+	// Add plane influences
+    for (i = 0; i < _ChargedPlaneCount; i++)
+    {
+        float4 planeEquation = _ChargedPlaneEquations[i];
+        float planeChargeDensity = _ChargedPlaneChargeDensities[i];
+
+        float signedDistance = dot(float4(pos, 1.0), planeEquation);
+        fieldVector += (2 * PI * COULOMBS_CONSTANT) * planeChargeDensity * sign(signedDistance) * planeEquation.xyz;
+        voltage += -(2 * PI * COULOMBS_CONSTANT) * planeChargeDensity * abs(signedDistance);
+    }
+}
+
+
+#endif

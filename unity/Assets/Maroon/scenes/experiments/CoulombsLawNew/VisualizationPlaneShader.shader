@@ -25,6 +25,7 @@
 			#pragma vertex vert  
 			#pragma fragment frag
 			#include "UnityCG.cginc"
+			#include "ElectricFieldShaderUtils.cginc"
 			#include "ShaderUtils.cginc"
         
 			struct vertInput {
@@ -56,14 +57,18 @@
 
 			uniform float _Transparency;
 			uniform float4 _PlaneEquation;
+			uniform float4 _PositionOffset; // In 2D mode we draw the plane with an offset, which we need to subtract again
 
-			uniform int _DrawHeatmap;
-			uniform float _HeatmapMaxVoltage;
-			uniform float _HeatmapFalloff;
+			uniform int _HeatmapMode; // 0 = disabled, 1 = potential, 2 = magnitude
+            uniform float _VoltageRange;
+            uniform float _VoltageOffset;
+            uniform float _VoltageInterpolationExponent;
+
+            uniform float _MaxMagnitude;
+            uniform float _MagnitudeInterpolationExponent;
 
 			uniform int _DrawEquipotentialLines;
 			uniform float _LineSpacingVoltage;
-			uniform float _LineMaxVoltage;
 
 			// --------------------------------------------------------------------------------------------------------------
 			// Fragment shader
@@ -72,10 +77,11 @@
 				float voltage;
 				float3 _unused;
 				evaluateField(initialPos, voltage, _unused);
+				voltage -= _VoltageOffset;
 
 				// Find voltage of closest field-line
 				float targetVoltage = floor(voltage / _LineSpacingVoltage + 0.5) * _LineSpacingVoltage;
-				if (abs(targetVoltage) > _LineMaxVoltage) return half4(0, 0, 0, 0);
+				if (abs(targetVoltage) > _VoltageRange) return half4(0, 0, 0, 0);
 
 				// Try to find a point near current position which is directly on the equipotential line.
 				// We use this point to determine the distance of the current position to the equipotential line, and
@@ -91,6 +97,7 @@
 					float voltage;
 					float3 fieldVector;
 					evaluateField(pos, voltage, fieldVector);
+					voltage -= _VoltageOffset;
 
 					// Calculate Step
 					// Note(MartinR): EField is the negative gradient of the Electric Potential, so we can use it for gradient descend
@@ -118,23 +125,37 @@
 
 			float3 GetHeatmapColor(float3 pos) 
 			{
+				if (_HeatmapMode == 0) return float3(1, 1, 1);
+
 				float voltage;
-				float3 _unused;
-				evaluateField(pos, voltage, _unused);
+				float3 fieldValue;
+				evaluateField(pos, voltage, fieldValue);
+				voltage -= _VoltageOffset;
 
-				// Mix color based on voltage
-				float alpha = min(1.0, abs(voltage / _HeatmapMaxVoltage));
-				alpha = pow(alpha, 1.0 / _HeatmapFalloff);
-				
-				float3 primaryColor = float3(0, 0, 0);
-				if (voltage >= 0) {
-					primaryColor.x = 1.0;
-				}
-				else {
-					primaryColor.z = 1.0;
-				}
+				if (_HeatmapMode == 1) 
+				{
+					// Mix color based on voltage
+					float alpha = min(1.0, abs(voltage / _VoltageRange));
+					alpha = pow(alpha, 1.0 / _VoltageInterpolationExponent);
+					
+					float3 primaryColor = float3(0, 0, 0);
+					if (voltage >= 0) {
+						primaryColor.x = 1.0;
+					}
+					else {
+						primaryColor.z = 1.0;
+					}
 
-				return lerp(float3(1, 1, 1), primaryColor, alpha);
+					return lerp(float3(1, 1, 1), primaryColor, alpha);
+				}	
+				else
+				{
+					// Mix colors based on magnitude
+                    float tMagnitude = length(fieldValue) / _MaxMagnitude;
+                    tMagnitude = min(tMagnitude, 1.0);
+                    tMagnitude = pow(tMagnitude, 1.0 / _MagnitudeInterpolationExponent);
+					return colorRamp5PointGetValue(tMagnitude);
+				}
 			}
 
 			float4 frag(vert2frag input) : COLOR 
@@ -144,13 +165,13 @@
 					return float4(1, 1, 1, _Transparency);
 				}
 
-				// Project frag-position onto plane (Used in 2D mode of CoulombsLaw, maybe this should be changed at some point)
-				float3 posOnPlane = input.pos_world_space.xyz;
+				// Project frag-position onto plane (So it works on all mesh types)
+				float3 posOnPlane = input.pos_world_space.xyz - _PositionOffset;
 				posOnPlane = posOnPlane - _PlaneEquation.xyz * (dot(posOnPlane, _PlaneEquation.xyz) + _PlaneEquation.w);
 
 				// Compose heatmap, equipotential lines and transparency into final color
 				float4 outputColor = float4(1, 1, 1, 1);
-				if (_DrawHeatmap != 0) {
+				if (_HeatmapMode != 0) {
 					outputColor.xyz = GetHeatmapColor(posOnPlane);
 				}
 
