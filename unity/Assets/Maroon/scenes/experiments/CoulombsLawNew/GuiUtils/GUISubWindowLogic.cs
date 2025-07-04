@@ -42,11 +42,11 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private void Start() 
         {
-            var titleLabel       = GuiSubWindowHandler.FindChildObjectByNameRecursive(gameObject, "TitleText").GetComponent<TMPro.TMP_Text>();
-            var localizedTitle   = GuiSubWindowHandler.FindChildObjectByNameRecursive(gameObject, "TitleText").GetComponent<LocalizedTMP>();
-            var contentPanel     = GuiSubWindowHandler.FindChildObjectByNameRecursive(gameObject, "Content").GetComponent<RectTransform>();
-            var headerButton     = GuiSubWindowHandler.FindChildObjectByNameRecursive(gameObject, "HeaderPanel").GetComponent<UnityEngine.UI.Button>();
-            var collapsableImage = GuiSubWindowHandler.FindChildObjectByNameRecursive(gameObject, "CollapsableImage").GetComponent<UnityEngine.UI.Image>();
+            var titleLabel       = GUISubwindowLogic.FindChildObjectByNameRecursive(gameObject, "TitleText").GetComponent<TMPro.TMP_Text>();
+            var localizedTitle   = GUISubwindowLogic.FindChildObjectByNameRecursive(gameObject, "TitleText").GetComponent<LocalizedTMP>();
+            var contentPanel     = GUISubwindowLogic.FindChildObjectByNameRecursive(gameObject, "Content").GetComponent<RectTransform>();
+            var headerButton     = GUISubwindowLogic.FindChildObjectByNameRecursive(gameObject, "HeaderPanel").GetComponent<UnityEngine.UI.Button>();
+            var collapsableImage = GUISubwindowLogic.FindChildObjectByNameRecursive(gameObject, "CollapsableImage").GetComponent<UnityEngine.UI.Image>();
             if (titleLabel == null || contentPanel == null || headerButton == null || collapsableImage == null)
             {
                 Debug.LogWarning("Could not find all gui references, is prefab used properly?");
