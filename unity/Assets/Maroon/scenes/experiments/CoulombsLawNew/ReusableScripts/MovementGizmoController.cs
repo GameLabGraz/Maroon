@@ -6,16 +6,13 @@ namespace Maroon.Experiments.CoulombsLawNew
 {
     public class MovementGizmoController : MonoBehaviour
     {
+        const float MIN_ANGLE = 20.0f;
+        const float FADE_ANGLE_DISTANCE = 10.0f;
+
         [SerializeField] [Range(0, 1)] private float offsetFromObject = 0.1f;
         [SerializeField] [Range(0, 1)] private float arrowSize = 0.1f;
-        [SerializeField] private LineRenderer _lineRenderer;
 
         private MovementGizmoArrow[] arrows = new MovementGizmoArrow[6]; // See Awake to know which arrows are which
-
-        private Rigidbody _rigidbodyOfSelected = null;
-        private Vector3 _objectPositionAtDragStart;
-        private Vector3 _offsetAtDragStart;
-        private bool _rigidbodyWasKinematicAtDragStart;
 
         private void InitializeArrows()
         {
@@ -67,20 +64,9 @@ namespace Maroon.Experiments.CoulombsLawNew
             UpdateArrowsDependingOnSelection();
             SelectionSystem.Instance.OnSelectionChanged.AddListener((SelectableObject selected) => 
             {
-                _rigidbodyOfSelected = null;
-                if (selected != null)
-                {
-                    _rigidbodyOfSelected = selected.GetComponent<Rigidbody>();
-                }
-
                 UpdateArrowsDependingOnSelection();
             });
             CameraController.Instance.OnCameraModeChanged.AddListener(() => UpdateArrowsDependingOnSelection());
-
-            if (_lineRenderer != null)
-            {
-                _lineRenderer.enabled = false;
-            }
         }
 
         public void UpdateArrowsDependingOnSelection()
@@ -90,131 +76,39 @@ namespace Maroon.Experiments.CoulombsLawNew
             bool arrowsActive = selected != null && selected.enableMovementGizmo;
             bool in3D = CameraController.Instance.In3DMode;
             foreach (var arrow in arrows) {
-                arrow.gameObject.SetActive(arrowsActive && !(arrow.dimension == 2 && !in3D)); 
+                arrow.gameObject.SetActive(arrowsActive); 
             }
             if (!arrowsActive) return;
 
             // Position arrows around selected object
+            Vector3 camDir = Camera.main.transform.TransformDirection(Vector3.forward);
             for (int i = 0; i < arrows.Length; i++)
             {
                 var arrow = arrows[i];
-                Vector3 offsetDir = Vector3.zero;
-                offsetDir[i % 3] = i >= 3 ? -1 : 1; // See Awake for how arrow-indices relate to dimensions
 
-                // TODO(MartinR): Scale arrows depending on distance to camera, so far away objects still have visible gizmo
-                arrow.transform.localScale = new Vector3(arrowSize, arrowSize, arrowSize);
+                // Set position
+                Vector3 arrowDir = Vector3.zero;
+                arrowDir[i % 3] = i >= 3 ? -1 : 1; // See Awake for how arrow-indices relate to dimensions
                 arrow.transform.position = 
                     selected.transform.position + 
-                    offsetDir * (selected.boundingRadius + offsetFromObject + arrowSize);
+                    arrowDir * (selected.boundingRadius + offsetFromObject + arrowSize);
+                arrow.dimension = i % 3;
+
+                // Set arrow scale (Arrows are disabled if camDir and arrowDir are too close together
+                float angle = Mathf.Acos(Mathf.Abs(Vector3.Dot(camDir, arrowDir))) / (2.0f * Mathf.PI) * 360.0f; // Angle in Degree
+                arrow.validDragTarget = angle >= MIN_ANGLE;
+                float scale = arrowSize;
+                if (!arrow.validDragTarget)
+                {
+                    // Fade arrow out if angle is too small
+                    float t = (angle - (MIN_ANGLE - FADE_ANGLE_DISTANCE)) / (FADE_ANGLE_DISTANCE);
+                    t = Mathf.Clamp(t, 0.0f, 1.0f);
+                    scale = scale * t;
+                }
+                arrow.transform.localScale = new Vector3(scale, scale, scale);
             }
         }
 
         private void LateUpdate() { UpdateArrowsDependingOnSelection(); }
-
-
-
-        // Drag-and-Drop Logic starts here
-
-        // It is assumed that ray directions are normalized
-        private static Vector3 ClosestPointOnRayToOtherRay(Ray ray, Ray other)
-        {
-            Vector3 a = ray.direction;
-            Vector3 b = other.direction;
-            Vector3 c = other.origin - ray.origin;
-
-            float t = 
-                (-Vector3.Dot(a, b) * Vector3.Dot(b, c) + Vector3.Dot(a, c) * Vector3.Dot(b, b)) /
-                (Vector3.Dot(a, a) * Vector3.Dot(b, b) - Vector3.Dot(a, b) * Vector3.Dot(a, b));
-
-            return ray.GetPoint(t);
-        }
-
-        private Vector3 ClosestPointOnMovementAxisToMouse(int axis)
-        {
-            var mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-            Vector3 movementDir = Vector3.zero;
-            movementDir[axis] = 1.0f;
-            var movementRay = new Ray(_objectPositionAtDragStart, movementDir);
-
-            // If mouse ray and axis ray are almost parallel, return initial position (disallow movement)
-            if (1.0f - Mathf.Abs(Vector3.Dot(movementRay.direction, mouseRay.direction)) < 0.00001f)
-            {
-                return _objectPositionAtDragStart;
-            }
-
-            return ClosestPointOnRayToOtherRay(movementRay, mouseRay);
-        }
-
-        private bool dragActive = false;
-        public void OnArrowMouseDown(int dimension)
-        {
-            var selected = SelectionSystem.Instance.GetSelectedObject();
-            if (selected == null) return;
-            if (SelectionSystem.IsMouseOverVisibleUIElement()) return;
-            dragActive = true;
-
-            if (_rigidbodyOfSelected != null)
-            {
-                _rigidbodyWasKinematicAtDragStart = _rigidbodyOfSelected.isKinematic;
-                _rigidbodyOfSelected.isKinematic = true;
-            }
-
-            _objectPositionAtDragStart = selected.transform.position;
-            _offsetAtDragStart = _objectPositionAtDragStart - ClosestPointOnMovementAxisToMouse(dimension);
-
-            // Draw movement line
-            if (_lineRenderer != null)
-            {
-                var box = SimulationBox.Instance.Bounds;
-                Vector3 lineStart = _objectPositionAtDragStart;
-                Vector3 lineEnd = _objectPositionAtDragStart;
-                lineStart[dimension] = box.min[dimension];
-                lineEnd[dimension] = box.max[dimension];
-
-                _lineRenderer.enabled = true;
-                _lineRenderer.positionCount = 2;
-                _lineRenderer.SetPositions(new Vector3[] { lineStart, lineEnd });
-            }
-        }
-
-        public void OnArrowMouseDrag(int dimension)
-        {
-            var selected = SelectionSystem.Instance.GetSelectedObject();
-            if (selected == null || !dragActive) return;
-
-            // Calculate new position based on Mouse-Pos
-            var newPos = ClosestPointOnMovementAxisToMouse(dimension) + _offsetAtDragStart;
-            var box = SimulationBox.Instance.Bounds;
-            float r = selected.boundingRadius;
-            newPos[dimension] = Mathf.Clamp(newPos[dimension], box.min[dimension] + r, box.max[dimension] - r);
-
-            // Set new position, see comment in DraggableObject.cs
-            selected.transform.position = newPos;
-            if (_rigidbodyOfSelected != null)
-            {
-                _rigidbodyOfSelected.position = selected.transform.position;
-            }
-
-            // Update arrow position
-            UpdateArrowsDependingOnSelection();
-
-            selected.OnMovedWithGizmo.Invoke(selected);
-        }
-
-        public void OnArrowMouseUp(int dimension)
-        {
-            if (!dragActive) return;
-            dragActive = false;
-
-            if (_lineRenderer != null)
-            {
-                _lineRenderer.enabled = false;
-            }
-
-            if (_rigidbodyOfSelected != null)
-            {
-                _rigidbodyOfSelected.isKinematic = _rigidbodyWasKinematicAtDragStart;
-            }
-        }
     }
 }

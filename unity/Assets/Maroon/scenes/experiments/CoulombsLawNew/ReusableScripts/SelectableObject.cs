@@ -7,6 +7,7 @@ namespace Maroon.Experiments.CoulombsLawNew
     public class SelectableObject : MonoBehaviour
     {
         public GameObject uiSelectionPanelPrefab = null;
+        public bool enableMouseDrag = false;
         public bool enableMovementGizmo = false;
         [Tooltip("Display an orange highlight circle behind the object when selected")]
         public bool enableSelectionHighlightCircle = true;
@@ -14,7 +15,8 @@ namespace Maroon.Experiments.CoulombsLawNew
         public float boundingRadius = 1.0f;
 
         public UnityEngine.Events.UnityEvent<bool> OnObjectSelectedOrDeselected; // Is called when object was selected/deselected
-        public UnityEngine.Events.UnityEvent<SelectableObject> OnMovedWithGizmo;
+        public UnityEngine.Events.UnityEvent<SelectableObject> OnMoved; // Either through gizmo or mouse-drag
+        public UnityEngine.Events.UnityEvent<SelectableObject> OnDraggedOutOfBounds;
 
         private void OnDestroy()
         {

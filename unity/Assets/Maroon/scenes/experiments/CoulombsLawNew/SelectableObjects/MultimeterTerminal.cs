@@ -11,7 +11,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private void Start()
         {
-            GetComponent<DraggableObject>().OnDraggedOutOfBounds.AddListener((DraggableObject unused) => {
+            GetComponent<SelectableObject>().OnDraggedOutOfBounds.AddListener((SelectableObject unused) => {
                 SelectionSystem.SetSelectedObject(null);
                 multimeterController.positiveTerminal.gameObject.SetActive(false);
                 multimeterController.negativeTerminal.gameObject.SetActive(false);

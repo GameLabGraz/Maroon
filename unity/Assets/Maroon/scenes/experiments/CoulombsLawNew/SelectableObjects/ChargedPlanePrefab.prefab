@@ -95,7 +95,6 @@ GameObject:
   - component: {fileID: 7991605802125912951}
   - component: {fileID: 8051397353798196664}
   - component: {fileID: 7135485477663570168}
-  - component: {fileID: 130608688354085623}
   - component: {fileID: 2885351886512891393}
   - component: {fileID: 7373578247829775126}
   m_Layer: 0
@@ -193,25 +192,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &130608688354085623
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9082846516116947603}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c94de181a956d94482de54a4d57af34, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OnDraggedOutOfBounds:
-    m_PersistentCalls:
-      m_Calls: []
-  OnMoved:
-    m_PersistentCalls:
-      m_Calls: []
-  _rigidbody: {fileID: 0}
 --- !u!114 &2885351886512891393
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -226,13 +206,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiSelectionPanelPrefab: {fileID: 5582799874551089183, guid: 19c5bf3e3fed2f14e898d092e61d4d5e,
     type: 3}
+  enableMouseDrag: 1
   enableMovementGizmo: 1
   enableSelectionHighlightCircle: 0
   boundingRadius: 0.07
   OnObjectSelectedOrDeselected:
     m_PersistentCalls:
       m_Calls: []
-  OnMovedWithGizmo:
+  OnMoved:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDraggedOutOfBounds:
     m_PersistentCalls:
       m_Calls: []
 --- !u!114 &7373578247829775126
@@ -252,5 +236,4 @@ MonoBehaviour:
   meshCollider: {fileID: 7991605802125912951}
   meshRenderer: {fileID: 7135485477663570168}
   selectionHighlightSphere: {fileID: 515258278838437095}
-  draggableComponent: {fileID: 130608688354085623}
   selectableComponent: {fileID: 2885351886512891393}

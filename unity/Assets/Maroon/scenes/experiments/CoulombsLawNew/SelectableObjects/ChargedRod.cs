@@ -18,7 +18,6 @@ namespace Maroon.Experiments.CoulombsLawNew
         [Header("References to components")]
         [SerializeField] private CapsuleCollider capsuleCollider;
         [SerializeField] private SelectableObject selectableComponent;
-        [SerializeField] private DraggableObject draggableComponent;
 
         [Header("References to Child-objects")]
         [SerializeField] private GameObject childStartSphere;
@@ -37,9 +36,8 @@ namespace Maroon.Experiments.CoulombsLawNew
 
             // Register Callbacks
             selectableComponent.OnObjectSelectedOrDeselected.AddListener((bool isSelected) => { childSelectionSphere.SetActive(isSelected); });
-            selectableComponent.OnMovedWithGizmo.AddListener((SelectableObject _unused) => { Update3DRepresentation(); });
-            draggableComponent.OnMoved.AddListener((DraggableObject _unused) => { Update3DRepresentation(); });
-            GetComponent<DraggableObject>().OnDraggedOutOfBounds.AddListener((DraggableObject _unused) =>
+            selectableComponent.OnMoved.AddListener((SelectableObject _unused) => { Update3DRepresentation(); });
+            selectableComponent.OnDraggedOutOfBounds.AddListener((SelectableObject _unused) =>
             {
                 GameObject.Destroy(this.gameObject);
             });

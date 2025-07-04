@@ -92,7 +92,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5370975856508787106}
-  - component: {fileID: 7549723984367060662}
   - component: {fileID: 4504515543152472861}
   - component: {fileID: 1758586720142194207}
   - component: {fileID: 8961207044362558500}
@@ -122,26 +121,6 @@ Transform:
   - {fileID: 2629582647449703096}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7549723984367060662
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5287687557362176378}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c94de181a956d94482de54a4d57af34, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OnDraggedOutOfBounds:
-    m_PersistentCalls:
-      m_Calls: []
-  OnMoved:
-    m_PersistentCalls:
-      m_Calls: []
-  _rigidbody: {fileID: 0}
-  draggableEnabled: 1
 --- !u!114 &4504515543152472861
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -156,13 +135,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiSelectionPanelPrefab: {fileID: 8595788616578802574, guid: d2358ac708f8bc84a99ecdbc6d1d150e,
     type: 3}
+  enableMouseDrag: 1
   enableMovementGizmo: 1
   enableSelectionHighlightCircle: 0
   boundingRadius: 0.05
   OnObjectSelectedOrDeselected:
     m_PersistentCalls:
       m_Calls: []
-  OnMovedWithGizmo:
+  OnMoved:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDraggedOutOfBounds:
     m_PersistentCalls:
       m_Calls: []
 --- !u!136 &1758586720142194207
@@ -203,7 +186,7 @@ MonoBehaviour:
   direction: {x: 0, y: 1, z: 0}
   capsuleCollider: {fileID: 1758586720142194207}
   selectableComponent: {fileID: 4504515543152472861}
-  draggableComponent: {fileID: 7549723984367060662}
+  draggableComponent: {fileID: 0}
   childStartSphere: {fileID: 7740629207098909325}
   childEndSphere: {fileID: 5615203636729959041}
   childCylinder: {fileID: 840667542644511923}

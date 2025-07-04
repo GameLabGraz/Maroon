@@ -11,6 +11,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private Vector3 value = Vector3.zero;
         [SerializeField] private bool isInteractable = true;
         [SerializeField] private bool clampValuesToSimulationBox = true;
+        [SerializeField] private bool displayRelativeToSimulationBox = false;
 
         // UI-References
         private GuiSubWindowHandler parentSubwindow;
@@ -74,7 +75,8 @@ namespace Maroon.Experiments.CoulombsLawNew
                 value = _trackedTransform.transform.position;
             }
 
-            value[dimension] = coordValue;
+            Vector3 offset = displayRelativeToSimulationBox ? SimulationBox.Instance.Bounds.center : Vector3.zero;
+            value[dimension] = coordValue + offset[dimension];
             if (_trackedTransform != null)
             {
                 _trackedTransform.transform.position = value;
@@ -91,12 +93,13 @@ namespace Maroon.Experiments.CoulombsLawNew
             var bounds = SimulationBox.Instance.Bounds;
             if (clampValuesToSimulationBox)
             {
-                xCoordinateInput.minimum = bounds.min.x;
-                xCoordinateInput.maximum = bounds.max.x;
-                yCoordinateInput.minimum = bounds.min.y;
-                yCoordinateInput.maximum = bounds.max.y;
-                zCoordinateInput.minimum = bounds.min.z;
-                zCoordinateInput.maximum = bounds.max.z;
+                Vector3 offset = displayRelativeToSimulationBox ? SimulationBox.Instance.Bounds.center : Vector3.zero;
+                xCoordinateInput.minimum = bounds.min.x - offset.x;
+                xCoordinateInput.maximum = bounds.max.x - offset.x;
+                yCoordinateInput.minimum = bounds.min.y - offset.y;
+                yCoordinateInput.maximum = bounds.max.y - offset.y;
+                zCoordinateInput.minimum = bounds.min.z - offset.z;
+                zCoordinateInput.maximum = bounds.max.z - offset.z;
             }
             else
             {
@@ -113,12 +116,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         {
             // Update text fields
             if (_trackedTransform == null) return;
-            var systemPos = _trackedTransform.position;
-            // Note(MartinR): SetValue checks if the new value is different from the current textfield-value, so it
-            //      doesn't cause any problems while the text-field is edited even if we call SetValue each frame
-            xCoordinateInput.SetValue(systemPos.x);
-            yCoordinateInput.SetValue(systemPos.y);
-            zCoordinateInput.SetValue(systemPos.z);
+            SetValue(_trackedTransform.position);
         }
 
         public Vector3 GetValue()
@@ -138,9 +136,14 @@ namespace Maroon.Experiments.CoulombsLawNew
             // Note(MartinR): This check is required so UpdateInputBounds can be called from other gameobjects in Awake
             if (xCoordinateInput == null || yCoordinateInput == null || zCoordinateInput == null) return;
 
-            xCoordinateInput.SetValue(value.x);
-            yCoordinateInput.SetValue(value.y);
-            zCoordinateInput.SetValue(value.z);
+            Vector3 displayPos = value;
+            if (displayRelativeToSimulationBox)
+            {
+                displayPos -= SimulationBox.Instance.Bounds.center;
+            }
+            xCoordinateInput.SetValue(displayPos.x);
+            yCoordinateInput.SetValue(displayPos.y);
+            zCoordinateInput.SetValue(displayPos.z);
         }
 
         public void TrackTransform(Transform transform)

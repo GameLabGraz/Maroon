@@ -36,6 +36,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             dragIconParticle.OnDragFinished.AddListener((Vector3 pos) =>
             {
                 var newParticle = GameObject.Instantiate(prefabChargedPoint, pos, Quaternion.identity, parentForNewObjects);
+                newParticle.SetCharge(0.001f * 1e-6f); // HACK so that visualization plane doesn't have 0 equipotential surface everywhere
             });
             dragIconChargedRod.OnDragFinished.AddListener((Vector3 pos) =>
             {

@@ -95,7 +95,6 @@ GameObject:
   - component: {fileID: 7958265336232530932}
   - component: {fileID: 4828584861493470670}
   - component: {fileID: 4629959925373470659}
-  - component: {fileID: 7170900528460126916}
   - component: {fileID: 4200622598773367309}
   - component: {fileID: 3470896259303749839}
   m_Layer: 11
@@ -193,26 +192,6 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &7170900528460126916
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5680737344683117272}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c94de181a956d94482de54a4d57af34, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OnDraggedOutOfBounds:
-    m_PersistentCalls:
-      m_Calls: []
-  OnMoved:
-    m_PersistentCalls:
-      m_Calls: []
-  _rigidbody: {fileID: 0}
-  draggableEnabled: 1
 --- !u!114 &4200622598773367309
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -227,13 +206,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiSelectionPanelPrefab: {fileID: 8809803364628126161, guid: f4cfd5f2d92c68f498ce9c4c53ebd7db,
     type: 3}
+  enableMouseDrag: 1
   enableMovementGizmo: 1
   enableSelectionHighlightCircle: 0
   boundingRadius: 0.05
   OnObjectSelectedOrDeselected:
     m_PersistentCalls:
       m_Calls: []
-  OnMovedWithGizmo:
+  OnMoved:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDraggedOutOfBounds:
     m_PersistentCalls:
       m_Calls: []
 --- !u!114 &3470896259303749839
@@ -252,16 +235,16 @@ MonoBehaviour:
   meshFilter: {fileID: 4828584861493470670}
   meshCollider: {fileID: 4629959925373470659}
   selectionHighlightObject: {fileID: 473339110943745893}
-  draggable: {fileID: 7170900528460126916}
+  draggable: {fileID: 0}
   selectable: {fileID: 4200622598773367309}
-  heatmapEnabled: 1
-  heatmapCutoff: 200000
-  heatmapFalloff: 5
+  heatmapMode: 0
   equipotentialLinesEnabled: 1
-  equipotentialLinesMaximum: 200000
   equipotentialLinesSpacing: 30000
   transparency: 1
-  orthogonalToCameraPlaneIn2DMode: 1
-  zCoordinateIn2DMode: 0
   position: {x: 0, y: 0, z: 0}
   planeNormal: {x: 0, y: 0, z: -1}
+  uiPotentialRange: {fileID: 0}
+  uiPotentialOffset: {fileID: 0}
+  uiPotentialInterpolationExponent: {fileID: 0}
+  uiMaxMagnitude: {fileID: 0}
+  uiMagnitudeInterpolationExponent: {fileID: 0}

@@ -24,7 +24,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             Debug.Assert(rigidBody != null, "PointCharge should have rigidbody");
 
             GetComponent<SelectableObject>().boundingRadius = RADIUS;
-            GetComponent<DraggableObject>().OnDraggedOutOfBounds.AddListener((DraggableObject _unused) =>
+            GetComponent<SelectableObject>().OnDraggedOutOfBounds.AddListener((SelectableObject _unused) =>
             {
                 GameObject.Destroy(this.gameObject);
             });

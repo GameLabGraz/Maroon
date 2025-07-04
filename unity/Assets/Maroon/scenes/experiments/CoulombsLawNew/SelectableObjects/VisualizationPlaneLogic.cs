@@ -13,8 +13,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private MeshFilter meshFilter;
         [SerializeField] private MeshCollider meshCollider;
         [SerializeField] private GameObject selectionHighlightObject;
-        public DraggableObject draggable;
-        public SelectableObject selectable;
+        public SelectableObject selectable; // public because the UI-logic also needs to access this
 
         // Note(MartinR): Instead of having setters for all parameters, other objects can 
         //  just update the public members and call SetPlaneParametersAndUpdateMesh
@@ -64,7 +63,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             {
                 selectionHighlightObject.SetActive(selected);
             });
-            draggable.OnDraggedOutOfBounds.AddListener((DraggableObject _unused) => 
+            selectable.OnDraggedOutOfBounds.AddListener((SelectableObject _unused) => 
             {
                 Vector3 pos = transform.position - positionOffset;
                 // This extra check is needed because of the positionOffset
@@ -73,13 +72,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                 gameObject.SetActive(false); 
                 SelectionSystem.SetSelectedObject(null);
             });
-
-            selectable.OnMovedWithGizmo.AddListener((SelectableObject _unused) => 
-            { 
-                position = transform.position - positionOffset; 
-                UpdateMeshAndDraggable(); 
-            });
-            draggable.OnMoved.AddListener((DraggableObject _unused) => 
+            selectable.OnMoved.AddListener((SelectableObject _unused) => 
             { 
                 position = transform.position - positionOffset; 
                 UpdateMeshAndDraggable(); 

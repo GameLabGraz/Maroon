@@ -15,7 +15,6 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private MeshRenderer meshRenderer;
 
         [SerializeField] private GameObject selectionHighlightSphere;
-        [SerializeField] private DraggableObject draggableComponent;
         [SerializeField] private SelectableObject selectableComponent;
 
         private float chargeDensity = 0.0f;
@@ -27,9 +26,8 @@ namespace Maroon.Experiments.CoulombsLawNew
 
             selectionHighlightSphere.SetActive(false);
             selectableComponent.OnObjectSelectedOrDeselected.AddListener((bool isSelected) => selectionHighlightSphere.SetActive(isSelected));
-            draggableComponent.OnDraggedOutOfBounds.AddListener((DraggableObject _unused) => { GameObject.Destroy(this.gameObject); });
-            draggableComponent.OnMoved.AddListener((DraggableObject _unused) => { UpdateChargedPlaneMesh(); });
-            selectableComponent.OnMovedWithGizmo.AddListener((SelectableObject _unused) => { UpdateChargedPlaneMesh(); });
+            selectableComponent.OnDraggedOutOfBounds.AddListener((SelectableObject _unused) => { GameObject.Destroy(this.gameObject); });
+            selectableComponent.OnMoved.AddListener((SelectableObject _unused) => { UpdateChargedPlaneMesh(); });
 
             ElectricField.Instance.chargedPlanes.Add(this);
         }

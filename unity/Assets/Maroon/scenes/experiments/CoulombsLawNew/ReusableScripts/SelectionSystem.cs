@@ -7,13 +7,24 @@ namespace Maroon.Experiments.CoulombsLawNew
     public class SelectionSystem : MonoBehaviour
     {
         private SelectableObject selectedObject = null;
+        public UnityEngine.Events.UnityEvent<SelectableObject> OnSelectionChanged;
 
+        // UI references
         [SerializeField] private TMPro.TMP_Text emptySelectionLabel = null;
         [SerializeField] private GameObject uiSelectionParentPanel = null;
         private GameObject lastInstancedSelectedObjectPanel = null;
-        public MovementGizmoController movementGizmo = null;
 
-        public UnityEngine.Events.UnityEvent<SelectableObject> OnSelectionChanged;
+        // Drag data
+        private bool dragActive = false;
+        private int dragDimension = -1; // if movementGizmo drag, then this is the drag dimension
+        public MovementGizmoController movementGizmo = null;
+        [SerializeField] private LineRenderer _lineRenderer;
+        private Rigidbody _rigidbodyOfSelected = null;
+        private Vector3 _objectPositionAtDragStart;
+        private Vector3 _offsetAtDragStart;
+        private bool _rigidbodyWasKinematicAtDragStart;
+
+
 
         // Note(MartinR): set newSelectedObject parameter to null to remove current selection
         //  This is a static method so we can handle the case where no selectionSystem instance exists
@@ -21,6 +32,11 @@ namespace Maroon.Experiments.CoulombsLawNew
         {
             var system = Instance;
             if (system == null) return;
+
+            if (system._lineRenderer != null)
+            {
+                system._lineRenderer.enabled = false;
+            }
 
             if (system.selectedObject == newSelectedObject) return;
             var prevSelectedObject = system.selectedObject;
@@ -88,41 +104,183 @@ namespace Maroon.Experiments.CoulombsLawNew
             return hitVisibleUIElement;
         }
 
-        // Update checks if user changes selection with mouse-clicks
+        // Update checks if selection changed and handles drag-and-drop logic
         public void Update()
         {
+            // Active-Drag-Logic starts here
+            if (selectedObject == null)
+            {
+                dragActive = false;
+            }
+
+            if (dragActive)
+            {
+                if (Input.GetMouseButton(0))
+                {
+                    // Continue drag
+                    Vector3 projectedMousePos = 
+                        dragDimension == -1 ? 
+                        CameraController.GetMousePointOnPlaneParallelToCamera(_objectPositionAtDragStart) :
+                        ClosestPointOnMovementAxisToMouse(dragDimension);
+
+                    var newPos = projectedMousePos + _offsetAtDragStart;
+                    if (dragDimension != -1)
+                    {
+                        var box = SimulationBox.Instance.Bounds;
+                        float r = selectedObject.boundingRadius;
+                        newPos[dragDimension] = Mathf.Clamp(newPos[dragDimension], box.min[dragDimension] + r, box.max[dragDimension] - r);
+                    }
+
+                    // Note(MartinR): Just setting transform.position causes problems when Physics interpolation is enabled.
+                    //      _rigidBody.MovePosition also does not seem to do the trick, I guess because it is expected to be called during FixedUpdate?
+                    //      Setting rigidBody.position seems to work in all cases
+                    selectedObject.transform.position = newPos;
+                    if (_rigidbodyOfSelected != null)
+                    {
+                        _rigidbodyOfSelected.position = selectedObject.transform.position;
+                    }
+
+                    // Update arrow position
+                    movementGizmo.UpdateArrowsDependingOnSelection();
+                    selectedObject.OnMoved.Invoke(selectedObject);
+                }
+                else
+                {
+                    // Release drag
+                    dragActive = false;
+                    if (_lineRenderer != null)
+                    {
+                        _lineRenderer.enabled = false;
+                    }
+                    if (_rigidbodyOfSelected != null)
+                    {
+                        _rigidbodyOfSelected.isKinematic = _rigidbodyWasKinematicAtDragStart;
+                    }
+                    if (!SimulationBox.Instance.Bounds.Contains(selectedObject.transform.position))
+                    {
+                        selectedObject.OnDraggedOutOfBounds.Invoke(selectedObject);
+                    }
+                }
+            }
+
+
+
+            // Selection and Drag-start logic starts here
             if (!Input.GetMouseButtonDown(0)) return;
             if (IsMouseOverVisibleUIElement()) return;
 
-            SelectableObject previousSelection = selectedObject;
+            // Raycast mouse ray
+            float tCurrentlySelected         = 10000.0f;
+            float tClosestSelectable         = 10001.0f;
+            float tClosestMovementGizmoArrow = 10002.0f;
+            MovementGizmoArrow closestGizmoArrow = null;
+            SelectableObject   closestSelectable = null;
 
-            // Check if we clicked on a selectable object, and update selection if we did
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hitInfo;
-            bool deselectObject = true;
-            if (UnityEngine.Physics.Raycast(ray, out hitInfo))
+            RaycastHit[] raycastHits = UnityEngine.Physics.RaycastAll(ray);
+            foreach (var hit in raycastHits)
             {
-                // Check if we hit a selectable object
-                var hitObject = hitInfo.collider.gameObject;
-                var selectableObject = hitObject.GetComponent<SelectableObject>();
-                if (selectableObject != null)
+                var hitObject = hit.collider.gameObject;
+                var selectable = hitObject.GetComponent<SelectableObject>();
+                if (selectable != null)
                 {
-                    deselectObject = false;
-                    SetSelectedObject(selectableObject);
+                    if (selectable == selectedObject)
+                    {
+                        tCurrentlySelected = hit.distance;
+                    }
+                    if (hit.distance < tClosestSelectable)
+                    {
+                        tClosestSelectable = hit.distance;
+                        closestSelectable = selectable;
+                    }
                 }
 
-                // Don't deselect if we click on movement arrow
-                if (hitObject.GetComponent<MovementGizmoArrow>() != null)
+                var gizmoArrow = hitObject.GetComponent<MovementGizmoArrow>();
+                if (gizmoArrow != null && gizmoArrow.validDragTarget && hit.distance < tClosestMovementGizmoArrow)
                 {
-                    deselectObject = false;
+                    tClosestMovementGizmoArrow = hit.distance;
+                    closestGizmoArrow = gizmoArrow;
                 }
             }
 
-            // Deselect current particle if we clicked somewhere that wasn't UI nor MovementGizmo (e.g. empty space/background)
-            if (deselectObject)
+            // Prioritize movement gizmos over new selection (Mostly usefull for transparent plane)
+            bool startDrag = false;
+            if (closestGizmoArrow != null && tClosestMovementGizmoArrow < tCurrentlySelected)
+            {
+                startDrag = true;
+                dragDimension = closestGizmoArrow.dimension;
+            }
+            else if (closestSelectable != null)
+            {
+                SetSelectedObject(closestSelectable);
+                startDrag = true;
+                dragDimension = -1;
+            }
+            else
             {
                 SetSelectedObject(null);
             }
+
+            // Drag start logic if clicked on an object or movement gizmo
+            if (startDrag)
+            {
+                dragActive = true;
+                _objectPositionAtDragStart = selectedObject.transform.position;
+                Vector3 projectedMousePos = 
+                    dragDimension == -1 ? 
+                    CameraController.GetMousePointOnPlaneParallelToCamera(_objectPositionAtDragStart) :
+                    ClosestPointOnMovementAxisToMouse(dragDimension);
+                _offsetAtDragStart = _objectPositionAtDragStart - projectedMousePos;
+
+                _rigidbodyOfSelected = selectedObject.GetComponent<Rigidbody>();
+                if (_rigidbodyOfSelected != null)
+                {
+                    _rigidbodyWasKinematicAtDragStart = _rigidbodyOfSelected.isKinematic;
+                    _rigidbodyOfSelected.isKinematic = true;
+                }
+                if (_lineRenderer != null && dragDimension != -1)
+                {
+                    var box = SimulationBox.Instance.Bounds;
+                    Vector3 lineStart = _objectPositionAtDragStart;
+                    Vector3 lineEnd = _objectPositionAtDragStart;
+                    lineStart[dragDimension] = box.min[dragDimension];
+                    lineEnd[dragDimension] = box.max[dragDimension];
+
+                    _lineRenderer.enabled = true;
+                    _lineRenderer.positionCount = 2;
+                    _lineRenderer.SetPositions(new Vector3[] { lineStart, lineEnd });
+                }
+            }
+        }
+
+        // Drag-and-Drop Helpers
+        private static Vector3 ClosestPointOnRayToOtherRay(Ray ray, Ray other)
+        {
+            Vector3 a = ray.direction;
+            Vector3 b = other.direction;
+            Vector3 c = other.origin - ray.origin;
+
+            float t = 
+                (-Vector3.Dot(a, b) * Vector3.Dot(b, c) + Vector3.Dot(a, c) * Vector3.Dot(b, b)) /
+                (Vector3.Dot(a, a) * Vector3.Dot(b, b) - Vector3.Dot(a, b) * Vector3.Dot(a, b));
+
+            return ray.GetPoint(t);
+        }
+
+        private Vector3 ClosestPointOnMovementAxisToMouse(int axis)
+        {
+            var mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Vector3 movementDir = Vector3.zero;
+            movementDir[axis] = 1.0f;
+            var movementRay = new Ray(_objectPositionAtDragStart, movementDir);
+
+            // If mouse ray and axis ray are almost parallel, return initial position (disallow movement)
+            if (1.0f - Mathf.Abs(Vector3.Dot(movementRay.direction, mouseRay.direction)) < 0.00001f)
+            {
+                return _objectPositionAtDragStart;
+            }
+
+            return ClosestPointOnRayToOtherRay(movementRay, mouseRay);
         }
 
 

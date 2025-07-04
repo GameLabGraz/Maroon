@@ -57,8 +57,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             uiEquipotentialSpacingSlider.OnValueChanged.AddListener((float value) => { visualizationPlane.equipotentialLinesSpacing = value * 1000.0f; });
             uiTransparencySlider.OnValueChanged.AddListener((float value) => { visualizationPlane.transparency = value; });
 
-            visualizationPlane.selectable.OnMovedWithGizmo.AddListener((SelectableObject _unused) => { uiPositionInput.SetValue(visualizationPlane.position); });
-            visualizationPlane.draggable.OnMoved.AddListener((DraggableObject _unused) => { uiPositionInput.SetValue(visualizationPlane.position); });
+            visualizationPlane.selectable.OnMoved.AddListener((SelectableObject _unused) => { uiPositionInput.SetValue(visualizationPlane.position); });
 
             uiDeleteButton.onClick.AddListener(() => {
                 visualizationPlane.gameObject.SetActive(false);

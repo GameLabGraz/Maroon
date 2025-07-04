@@ -162,7 +162,7 @@
 			{
 				// Early exit if we have no charged objects
 				if (_ChargedPointCount == 0 && _ChargedRodCount == 0 && _ChargedPlaneCount == 0) {
-					return float4(1, 1, 1, _Transparency);
+					return float4(1, 1, 1, pow(_Transparency, 2.2));
 				}
 
 				// Project frag-position onto plane (So it works on all mesh types)
@@ -175,7 +175,7 @@
 					outputColor.xyz = GetHeatmapColor(posOnPlane);
 				}
 
-				outputColor.w = _Transparency;
+				outputColor.w = pow(_Transparency, 2.2);
 				if (_DrawEquipotentialLines != 0) {
 					float lineAlpha = getEquipotentialLineAlpha(posOnPlane);
 					outputColor = lerp(outputColor, _LineColor, lineAlpha);
