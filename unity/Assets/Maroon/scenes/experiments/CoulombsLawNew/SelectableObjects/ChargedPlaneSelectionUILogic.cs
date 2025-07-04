@@ -7,10 +7,10 @@ namespace Maroon.Experiments.CoulombsLawNew
 {
     public class ChargedPlaneSelectionUILogic : MonoBehaviour
     {
-        [SerializeField] private GuiVector3InputHandler positionDisplay;
-        [SerializeField] private GuiVector3InputHandler normalDisplay;
-        [SerializeField] private GuiFloatInputHandler chargeDensityInput;
-        [SerializeField] private UnityEngine.UI.Button deleteButton;
+        [SerializeField] private GUIVector3InputLogic positionDisplay;
+        [SerializeField] private GUIVector3InputLogic normalDisplay;
+        [SerializeField] private GUIFloatInputLogic chargeDensityInput;
+        [SerializeField] private GUIButtonLogic deleteButton;
 
         private ChargedPlane chargedPlane;
 
@@ -30,12 +30,10 @@ namespace Maroon.Experiments.CoulombsLawNew
                 chargedPlane.SetPlaneParameters(chargedPlane.transform.position, newNormal);
             });
 
-            chargeDensityInput.SetMinMax(-ChargedPlane.MAX_CHARGE_DENSITY * 1e6f, ChargedPlane.MAX_CHARGE_DENSITY * 1e6f);
-            chargeDensityInput.SetValue(chargedPlane.GetChargeDensity() * 1e6f);
-            chargeDensityInput.SetInitialValue(chargedPlane.GetChargeDensity() * 1e6f);
-            chargeDensityInput.OnValueChanged.AddListener((float newDensity) => { chargedPlane.SetChargeDensity(newDensity * 1e-6f); });
-
-            deleteButton.onClick.AddListener(() => { GameObject.Destroy(gameObject); });
+            chargeDensityInput.SetMinMax(-ChargedPlane.MAX_CHARGE_DENSITY, ChargedPlane.MAX_CHARGE_DENSITY);
+            chargeDensityInput.SetValue(chargedPlane.GetChargeDensity());
+            chargeDensityInput.OnValueChanged.AddListener((float newDensity) => { chargedPlane.SetChargeDensity(newDensity); });
+            deleteButton.OnButtonClick.AddListener(() => { GameObject.Destroy(gameObject); });
         }
     }
 }

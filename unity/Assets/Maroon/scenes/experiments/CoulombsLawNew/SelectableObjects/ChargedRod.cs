@@ -73,7 +73,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         public float GetChargeDensity() { return chargeDensity; }
         public void SetChargeDensity(float newChargeDensity) 
         {
-            newChargeDensity = Mathf.Clamp(newChargeDensity, -MAX_CHARGE_DENSITY, MAX_CHARGE_DENSITY);
+            // newChargeDensity = Mathf.Clamp(newChargeDensity, -MAX_CHARGE_DENSITY, MAX_CHARGE_DENSITY);
             chargeDensity = newChargeDensity;
 
             // Set color of all child objects

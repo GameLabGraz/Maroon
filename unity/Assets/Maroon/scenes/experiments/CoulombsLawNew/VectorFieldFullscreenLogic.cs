@@ -43,23 +43,23 @@ namespace Maroon.Experiments.CoulombsLawNew
         private ComputeBuffer gridValuesComputeBuffer;
 
         [Header("UI-References")]
-        [SerializeField] private GuiBoolInputHandler uiEnabledToggle;
-        [SerializeField] private GuiBoolInputHandler ui3DModeToggle;
-        [SerializeField] private GuiIntInputHandler uiResolutionSlider;
-        [SerializeField] private GuiFloatInputHandler uiArrowSizeSlider;
+        [SerializeField] private GUIBoolInputLogic  uiEnabledToggle;
+        [SerializeField] private GUIBoolInputLogic  ui3DModeToggle;
+        [SerializeField] private GUIIntInputLogic   uiResolutionSlider;
+        [SerializeField] private GUIFloatInputLogic uiArrowSizeSlider;
 
-        [SerializeField] private GuiDropdownInputHandler uiColorModeDropdown;
-        [SerializeField] private GuiDropdownInputHandler uiScaleModeDropdown;
-        [SerializeField] private GuiDropdownInputHandler uiTransparencyModeDropdown;
-        [SerializeField] private GuiFloatInputHandler uiFixedTransparencySlider;
+        [SerializeField] private GUIDropdownInputLogic uiColorModeDropdown;
+        [SerializeField] private GUIDropdownInputLogic uiScaleModeDropdown;
+        [SerializeField] private GUIDropdownInputLogic uiTransparencyModeDropdown;
+        [SerializeField] private GUIFloatInputLogic    uiFixedTransparencySlider;
+        [SerializeField] private GUIBoolInputLogic     uiDisplayOutsideOfRangeBool;
 
-        [SerializeField] private GuiFloatInputHandler uiMaxMagnitudeK; // in kilo newton/coulomb
-        [SerializeField] private GuiFloatInputHandler uiMagnitudeInterpolationExponent;
+        [SerializeField] private GUIFloatInputLogic uiMaxMagnitudeK; // in kilo newton/coulomb
+        [SerializeField] private GUIFloatInputLogic uiMagnitudeInterpolationExponent;
 
-        [SerializeField] private GuiFloatInputHandler uiVoltageCenterKV;
-        [SerializeField] private GuiFloatInputHandler uiVoltageRangeKV;
-        [SerializeField] private GuiFloatInputHandler uiVoltageInterpolationExponent;
-        [SerializeField] private GuiBoolInputHandler uiDisplayOutsideOfRangeBool;
+        [SerializeField] private GUIFloatInputLogic uiVoltageCenterKV;
+        [SerializeField] private GUIFloatInputLogic uiVoltageRangeKV;
+        [SerializeField] private GUIFloatInputLogic uiVoltageInterpolationExponent;
 
         private void Start()
         {
@@ -154,11 +154,11 @@ namespace Maroon.Experiments.CoulombsLawNew
             vectorFieldMaterial.SetInt("_TransparencyMode", uiTransparencyModeDropdown.GetSelectedIndex());
             vectorFieldMaterial.SetFloat("_FixedTransparencyValue", uiFixedTransparencySlider.GetValue());
 
-            vectorFieldMaterial.SetFloat("_MaxMagnitude", uiMaxMagnitudeK.GetValue() * 1000.0f);
+            vectorFieldMaterial.SetFloat("_MaxMagnitude", uiMaxMagnitudeK.GetValue());
             vectorFieldMaterial.SetFloat("_MagnitudeInterpolationExponent", uiMagnitudeInterpolationExponent.GetValue());
 
-            vectorFieldMaterial.SetFloat("_VoltageCenter", uiVoltageCenterKV.GetValue() * 1000.0f);
-            vectorFieldMaterial.SetFloat("_VoltageRange", uiVoltageRangeKV.GetValue() * 1000.0f);
+            vectorFieldMaterial.SetFloat("_VoltageCenter", uiVoltageCenterKV.GetValue());
+            vectorFieldMaterial.SetFloat("_VoltageRange", uiVoltageRangeKV.GetValue());
             vectorFieldMaterial.SetFloat("_VoltageInterpolationExponent", uiVoltageInterpolationExponent.GetValue());
             vectorFieldMaterial.SetInt("_DisplayOutsideOfRangeBool", uiDisplayOutsideOfRangeBool.GetValue() ? 1 : 0);
 

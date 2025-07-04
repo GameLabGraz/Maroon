@@ -8,6 +8,7 @@ namespace Maroon.Experiments.CoulombsLawNew
     public class GuiGenericValueHandler : MonoBehaviour
     {
         [SerializeField] private string valueName = "Name";
+        [SerializeField] private string localizationKey = "";
         [SerializeField] private string unitName = "m";
         [SerializeField] private bool   useVerticalLayout = false;
 
@@ -16,6 +17,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         private UnityEngine.UI.HorizontalLayoutGroup horizontalLayoutPanel;
         private GameObject[] valueNameLabels = new GameObject[2];
         private GameObject[] unitNameLabels = new GameObject[2];
+        private GEAR.Localization.Text.LocalizedTMP[] nameLocalization = new GEAR.Localization.Text.LocalizedTMP[2];
 
         private void Awake()
         {
@@ -24,10 +26,12 @@ namespace Maroon.Experiments.CoulombsLawNew
             horizontalLayoutPanel = GuiSubWindowHandler.FindChildObjectByNameRecursive(gameObject, "HorizontalLayout").GetComponent<UnityEngine.UI.HorizontalLayoutGroup>();
             verticalLayoutPanel   = GuiSubWindowHandler.FindChildObjectByNameRecursive(gameObject, "VerticalLayout").GetComponent<UnityEngine.UI.VerticalLayoutGroup>();
 
-            valueNameLabels[0]    = GuiSubWindowHandler.FindChildObjectByNameRecursive(horizontalLayoutPanel.gameObject, "ValueLabel");
-            valueNameLabels[1]    = GuiSubWindowHandler.FindChildObjectByNameRecursive(verticalLayoutPanel.gameObject, "ValueLabel");
-            unitNameLabels[0]     = GuiSubWindowHandler.FindChildObjectByNameRecursive(horizontalLayoutPanel.gameObject, "UnitLabel");
-            unitNameLabels[1]     = GuiSubWindowHandler.FindChildObjectByNameRecursive(verticalLayoutPanel.gameObject, "UnitLabel");
+            valueNameLabels[0]  = GuiSubWindowHandler.FindChildObjectByNameRecursive(horizontalLayoutPanel.gameObject, "ValueLabel");
+            valueNameLabels[1]  = GuiSubWindowHandler.FindChildObjectByNameRecursive(verticalLayoutPanel.gameObject, "ValueLabel");
+            nameLocalization[0] = GuiSubWindowHandler.FindChildObjectByNameRecursive(horizontalLayoutPanel.gameObject, "ValueLabel").GetComponent<GEAR.Localization.Text.LocalizedTMP>();
+            nameLocalization[1] = GuiSubWindowHandler.FindChildObjectByNameRecursive(verticalLayoutPanel.gameObject, "ValueLabel").GetComponent<GEAR.Localization.Text.LocalizedTMP>();
+            unitNameLabels[0]   = GuiSubWindowHandler.FindChildObjectByNameRecursive(horizontalLayoutPanel.gameObject, "UnitLabel");
+            unitNameLabels[1]   = GuiSubWindowHandler.FindChildObjectByNameRecursive(verticalLayoutPanel.gameObject, "UnitLabel");
 
             horizontalLayoutPanel.gameObject.SetActive(!useVerticalLayout);
             verticalLayoutPanel.gameObject.SetActive(useVerticalLayout);
@@ -45,7 +49,16 @@ namespace Maroon.Experiments.CoulombsLawNew
             // Update labels
             for (int i = 0; i < 2; i++)
             {
-                valueNameLabels[i].GetComponent<TMPro.TMP_Text>().text = valueName;
+                if (localizationKey.Length != 0)
+                {
+                    nameLocalization[i].Key = localizationKey;
+                }
+                else
+                {
+                    nameLocalization[i].enabled = false;
+                    valueNameLabels[i].GetComponent<TMPro.TMP_Text>().text = valueName;
+                }
+
                 valueNameLabels[i].GetComponent<UnityEngine.UI.LayoutElement>().minWidth = parentSubwindow.minimumLabelWidth;
                 unitNameLabels[i].GetComponent<TMPro.TMP_Text>().text = unitName;
                 unitNameLabels[i].GetComponent<UnityEngine.UI.LayoutElement>().minWidth = parentSubwindow.minimumUnitLabelWidth;

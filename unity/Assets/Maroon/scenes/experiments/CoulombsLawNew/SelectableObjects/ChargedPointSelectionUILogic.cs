@@ -7,9 +7,9 @@ namespace Maroon.Experiments.CoulombsLawNew
 {
     public class ChargedPointSelectionUILogic : MonoBehaviour
     {
-        [SerializeField] private GuiVector3InputHandler positionDisplay;
-        [SerializeField] private GuiFloatInputHandler chargeInput;
-        [SerializeField] private UnityEngine.UI.Button deleteButton;
+        [SerializeField] private GUIVector3InputLogic positionDisplay;
+        [SerializeField] private GUIFloatInputLogic chargeInput;
+        [SerializeField] private GUIButtonLogic deleteButton;
 
         private ChargedPoint chargedPoint;
 
@@ -18,16 +18,13 @@ namespace Maroon.Experiments.CoulombsLawNew
             chargedPoint = SelectionSystem.Instance.GetSelectedObject().GetComponent<ChargedPoint>();
             Debug.Assert(chargedPoint != null, "Charged object must be selected when this ui is created");
 
+            chargeInput.SetMinMax(-ChargedPoint.MAX_ABSOLUTE_CHARGE, ChargedPoint.MAX_ABSOLUTE_CHARGE);
+            chargeInput.SetValue(chargedPoint.GetCharge());
             positionDisplay.TrackTransform(chargedPoint.transform);
-
-            chargeInput.SetMinMax(-ChargedPoint.MAX_ABSOLUTE_CHARGE * 1e6f, ChargedPoint.MAX_ABSOLUTE_CHARGE * 1e6f);
-            chargeInput.SetInitialValue(chargedPoint.GetCharge() * 1e6f);
-            chargeInput.SetValue(chargedPoint.GetCharge() * 1e6f);
             chargeInput.OnValueChanged.AddListener((float newCharge) => { 
-                chargedPoint.SetCharge(newCharge * 1e-6f); 
+                chargedPoint.SetCharge(newCharge); 
             });
-                
-            deleteButton.onClick.AddListener(() => GameObject.Destroy(chargedPoint.gameObject));
+            deleteButton.OnButtonClick.AddListener(() => GameObject.Destroy(chargedPoint.gameObject));
         }
     }
 

@@ -9,15 +9,15 @@ namespace Maroon.Experiments.CoulombsLawNew
         private VisualizationPlaneLogic visualizationPlane;
 
         [Header("UI references")]
-        [SerializeField] private GuiVector3InputHandler uiPositionInput;
-        [SerializeField] private GuiVector3InputHandler uiNormalInput;
+        [SerializeField] private GUIVector3InputLogic uiPositionInput;
+        [SerializeField] private GUIVector3InputLogic uiNormalInput;
 
-        [SerializeField] private GuiDropdownInputHandler uiHeatmapDropdown;
-        [SerializeField] private GuiBoolInputHandler uiEquipotentialToggle;
-        [SerializeField] private GuiFloatInputHandler uiEquipotentialSpacingSlider;
-        [SerializeField] private GuiFloatInputHandler uiTransparencySlider;
+        [SerializeField] private GUIDropdownInputLogic uiHeatmapDropdown;
+        [SerializeField] private GUIBoolInputLogic uiEquipotentialToggle;
+        [SerializeField] private GUIFloatInputLogic uiEquipotentialSpacingSlider;
+        [SerializeField] private GUIFloatInputLogic uiTransparencySlider;
 
-        [SerializeField] private UnityEngine.UI.Button uiDeleteButton;
+        [SerializeField] private GUIButtonLogic uiDeleteButton;
 
         private void Awake()
         {
@@ -29,12 +29,9 @@ namespace Maroon.Experiments.CoulombsLawNew
             uiNormalInput.SetValue(visualizationPlane.planeNormal);
 
             uiHeatmapDropdown.SetSelectedIndex(visualizationPlane.heatmapMode);
-            uiEquipotentialToggle.SetInitialValue(visualizationPlane.equipotentialLinesEnabled);
-            uiEquipotentialSpacingSlider.SetInitialValue(visualizationPlane.equipotentialLinesSpacing / 1000.0f);
-
-            uiTransparencySlider.SetInitialValue(visualizationPlane.transparency);
-
-
+            uiEquipotentialToggle.SetValue(visualizationPlane.equipotentialLinesEnabled);
+            uiEquipotentialSpacingSlider.SetValue(visualizationPlane.equipotentialLinesSpacing);
+            uiTransparencySlider.SetValue(visualizationPlane.transparency);
 
             // Register Callbacks
             uiPositionInput.OnEndEdit.AddListener((Vector3 newPos) => 
@@ -54,12 +51,12 @@ namespace Maroon.Experiments.CoulombsLawNew
 
             uiHeatmapDropdown.OnValueChanged.AddListener((int heatmapMode) => { visualizationPlane.heatmapMode = heatmapMode; });
             uiEquipotentialToggle.OnValueChanged.AddListener((bool enabled) => { visualizationPlane.equipotentialLinesEnabled = enabled; });
-            uiEquipotentialSpacingSlider.OnValueChanged.AddListener((float value) => { visualizationPlane.equipotentialLinesSpacing = value * 1000.0f; });
+            uiEquipotentialSpacingSlider.OnValueChanged.AddListener((float value) => { visualizationPlane.equipotentialLinesSpacing = value; });
             uiTransparencySlider.OnValueChanged.AddListener((float value) => { visualizationPlane.transparency = value; });
 
             visualizationPlane.selectable.OnMoved.AddListener((SelectableObject _unused) => { uiPositionInput.SetValue(visualizationPlane.position); });
 
-            uiDeleteButton.onClick.AddListener(() => {
+            uiDeleteButton.OnButtonClick.AddListener(() => {
                 visualizationPlane.gameObject.SetActive(false);
                 SelectionSystem.SetSelectedObject(null);
             });

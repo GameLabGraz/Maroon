@@ -10,7 +10,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         public UnityEngine.Events.UnityEvent<SelectableObject> OnSelectionChanged;
 
         // UI references
-        [SerializeField] private TMPro.TMP_Text emptySelectionLabel = null;
+        [SerializeField] private GUILabelLogic emptySelectionLabel = null;
         [SerializeField] private GameObject uiSelectionParentPanel = null;
         private GameObject lastInstancedSelectedObjectPanel = null;
 

@@ -6,12 +6,12 @@ namespace Maroon.Experiments.CoulombsLawNew
 {
     public class MultimeterSelectionUILogic : MonoBehaviour
     {
-        [SerializeField] GuiVector3InputHandler uiPosition;
-        [SerializeField] GuiVector3InputHandler uiVectorFieldValue;
-        [SerializeField] GuiFloatInputHandler uiVectorFieldMagnitude;
-        [SerializeField] GuiFloatInputHandler uiPotentialToGround;
-        [SerializeField] GuiFloatInputHandler uiDistanceBetween;
-        [SerializeField] GuiFloatInputHandler uiVoltageAcross;
+        [SerializeField] GUIVector3InputLogic uiPosition;
+        [SerializeField] GUIVector3InputLogic uiVectorFieldValue;
+        [SerializeField] GUIFloatInputLogic uiVectorFieldMagnitude;
+        [SerializeField] GUIFloatInputLogic uiPotentialToGround;
+        [SerializeField] GUIFloatInputLogic uiDistanceBetween;
+        [SerializeField] GUIFloatInputLogic uiVoltageAcross;
 
         private void Start()
         {
@@ -42,15 +42,15 @@ namespace Maroon.Experiments.CoulombsLawNew
             uiPosition.SetValue(terminal.transform.position);
 
             var fieldValue = efield.GetFieldValue(terminal.transform.position, false);
-            uiVectorFieldValue.SetValue(fieldValue / 1000.0f);
-            uiVectorFieldMagnitude.SetValue(fieldValue.magnitude / 1000.0f);
+            uiVectorFieldValue.SetValue(fieldValue);
+            uiVectorFieldMagnitude.SetValue(fieldValue.magnitude);
 
             var potential = efield.GetPotential(terminal.transform.position, false);
-            uiPotentialToGround.SetValue(potential / 1000.0f);
+            uiPotentialToGround.SetValue(potential);
 
             uiDistanceBetween.SetValue((terminal.transform.position - otherTerminal.transform.position).magnitude);
             var otherPotential = efield.GetPotential(otherTerminal.transform.position, false);
-            uiVoltageAcross.SetValue((potential - otherPotential) * (terminal.isPositiveTerminal ? 1 : -1) / 1000.0f);
+            uiVoltageAcross.SetValue((potential - otherPotential) * (terminal.isPositiveTerminal ? 1 : -1));
         }
     }
 }

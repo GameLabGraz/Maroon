@@ -27,11 +27,11 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private Vector3 positionOffset = Vector3.zero;
 
-        [SerializeField] private GuiFloatInputHandler uiPotentialRange;
-        [SerializeField] private GuiFloatInputHandler uiPotentialOffset;
-        [SerializeField] private GuiFloatInputHandler uiPotentialInterpolationExponent;
-        [SerializeField] private GuiFloatInputHandler uiMaxMagnitude;
-        [SerializeField] private GuiFloatInputHandler uiMagnitudeInterpolationExponent;
+        [SerializeField] private GUIFloatInputLogic uiPotentialRange;
+        [SerializeField] private GUIFloatInputLogic uiPotentialOffset;
+        [SerializeField] private GUIFloatInputLogic uiPotentialInterpolationExponent;
+        [SerializeField] private GUIFloatInputLogic uiMaxMagnitude;
+        [SerializeField] private GUIFloatInputLogic uiMagnitudeInterpolationExponent;
 
         public void UpdateMeshAndDraggable()
         {
@@ -94,10 +94,10 @@ namespace Maroon.Experiments.CoulombsLawNew
             material.SetVector(Shader.PropertyToID("_PositionOffset"), positionOffset);
 
             material.SetInteger(Shader.PropertyToID("_HeatmapMode"), heatmapMode);
-            material.SetFloat(Shader.PropertyToID("_VoltageRange"), uiPotentialRange.GetValue() * 1000.0f);
-            material.SetFloat(Shader.PropertyToID("_VoltageOffset"), uiPotentialOffset.GetValue() * 1000.0f);
+            material.SetFloat(Shader.PropertyToID("_VoltageRange"), uiPotentialRange.GetValue());
+            material.SetFloat(Shader.PropertyToID("_VoltageOffset"), uiPotentialOffset.GetValue());
             material.SetFloat(Shader.PropertyToID("_VoltageInterpolationExponent"), uiPotentialInterpolationExponent.GetValue());
-            material.SetFloat(Shader.PropertyToID("_MaxMagnitude"), uiMaxMagnitude.GetValue() * 1000.0f);
+            material.SetFloat(Shader.PropertyToID("_MaxMagnitude"), uiMaxMagnitude.GetValue());
             material.SetFloat(Shader.PropertyToID("_MagnitudeInterpolationExponent"), uiMagnitudeInterpolationExponent.GetValue());
 
             material.SetInteger(Shader.PropertyToID("_DrawEquipotentialLines"), equipotentialLinesEnabled ? 1 : 0);

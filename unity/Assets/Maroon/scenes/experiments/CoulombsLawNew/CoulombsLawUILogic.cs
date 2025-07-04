@@ -16,7 +16,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private VisualizationPlaneLogic visualizationPlane;
 
         [Header("UI-Element References")]
-        [SerializeField] private GuiBoolInputHandler vectorFieldEnabledToggle;
+        [SerializeField] private GUIBoolInputLogic vectorFieldEnabledToggle;
 
         [SerializeField] private GuiIconTo3DObjectDrag dragIconParticle;
         [SerializeField] private GuiIconTo3DObjectDrag dragIconChargedRod;
