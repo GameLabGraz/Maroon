@@ -15,6 +15,8 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private GameObject selectionHighlightObject;
         public SelectableObject selectable; // public because the UI-logic also needs to access this
 
+        [SerializeField] private GroundPinLogic groundPin;
+
         // Note(MartinR): Instead of having setters for all parameters, other objects can 
         //  just update the public members and call SetPlaneParametersAndUpdateMesh
         public int heatmapMode; // 0 = disabled, 1 = Potential, 2 = Magnitude
@@ -82,6 +84,12 @@ namespace Maroon.Experiments.CoulombsLawNew
         // Updating shader data happens in LateUpdate
         void LateUpdate()
         {
+            float groundPotential = 0.0f;
+            if (groundPin != null && groundPin.isActiveAndEnabled && groundPin.applyToVisualization)
+            {
+                groundPotential = ElectricField.Instance.GetPotential(groundPin.transform.position, true);
+            }
+
             // Get plane equation (See comment in shader about layout)
             Vector4 planeEquation = new Vector4(planeNormal.x, planeNormal.y, planeNormal.z, -Vector3.Dot(planeNormal, position));
 
@@ -95,7 +103,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
             material.SetInteger(Shader.PropertyToID("_HeatmapMode"), heatmapMode);
             material.SetFloat(Shader.PropertyToID("_VoltageRange"), uiPotentialRange.GetValue());
-            material.SetFloat(Shader.PropertyToID("_VoltageOffset"), uiPotentialOffset.GetValue());
+            material.SetFloat(Shader.PropertyToID("_VoltageOffset"), uiPotentialOffset.GetValue() + groundPotential);
             material.SetFloat(Shader.PropertyToID("_VoltageInterpolationExponent"), uiPotentialInterpolationExponent.GetValue());
             material.SetFloat(Shader.PropertyToID("_MaxMagnitude"), uiMaxMagnitude.GetValue());
             material.SetFloat(Shader.PropertyToID("_MagnitudeInterpolationExponent"), uiMagnitudeInterpolationExponent.GetValue());

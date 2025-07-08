@@ -49,20 +49,22 @@ namespace Maroon.Experiments.CoulombsLawNew
 
     public class GUILabelLogic : MonoBehaviour
     {
-        [SerializeField] bool isHorizontal = false;
-        [SerializeField] string localizationKey = "";
+        [SerializeField] private bool isHorizontal = false;
+        [SerializeField] private string localizationKey = "";
+        [SerializeField] private string unitAbbreviation = "";
 
         // Note: GuiLabelLogic should be mostly used by the other GUI prefabs, e.g. int/float/vector3 inputs.
         //      But it can also work by itself, to just display a name, which is why the start method does what it does.
         private void Start()
         {
             GUISubwindowLogic.FindChildObjectByNameRecursive(gameObject, "ValueLabel").GetComponent<LocalizedTMP>().Key = localizationKey;
-            GUISubwindowLogic.FindChildObjectByNameRecursive(gameObject, "UnitLabel").SetActive(false);
+            GUISubwindowLogic.FindChildObjectByNameRecursive(gameObject, "UnitLabel").SetActive(unitAbbreviation.Length > 0);
         }
 
         public void SetLabelData(string localizationKey, string unitAbbreviation, SI_Prefix prefix)
         {
             this.localizationKey = localizationKey;
+            this.unitAbbreviation = unitAbbreviation;
             
             var parentSubwindow  = GUISubwindowLogic.FindParentSubWindow(gameObject);
             var nameLocalization = GUISubwindowLogic.FindChildObjectByNameRecursive(gameObject, "ValueLabel").GetComponent<LocalizedTMP>();

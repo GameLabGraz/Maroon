@@ -98,6 +98,10 @@ namespace Maroon.Experiments.CoulombsLawNew
             inputFields[1].readOnly = !isInteractable;
             inputFields[2].onEndEdit.AddListener((string value) => { OnTextFieldEndEdit(value, 2); });
             inputFields[2].readOnly = !isInteractable;
+
+            UpdateTextFieldValue(0);
+            UpdateTextFieldValue(1);
+            UpdateTextFieldValue(2);
         }
 
         private void LateUpdate()

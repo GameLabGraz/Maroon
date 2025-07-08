@@ -29,6 +29,9 @@ namespace Maroon.Experiments.CoulombsLawNew
             dropdownField.value = initialSelectionIndex;
             dropdownField.onValueChanged.RemoveAllListeners();
             dropdownField.onValueChanged.AddListener((int newValue) => { OnValueChanged.Invoke(newValue); });
+
+            // Note: Add localization component after options are set, otherwise the localization may be overwritten
+            dropdownField.gameObject.AddComponent<GEAR.Localization.DropDown.LocalizedDropDownTMP>();
         }
 
         public int GetSelectedIndex() 

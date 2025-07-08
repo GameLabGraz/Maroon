@@ -45,7 +45,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         public static Color ChargeValueToColor(float charge, float maxValue)
         {
             float t = Mathf.Clamp(Mathf.Abs(charge) / maxValue, 0.0f, 1.0f);
-            return Color.Lerp(Color.gray, charge < 0 ? Color.blue : Color.red, Mathf.Pow(t / maxValue, 1/2.2f));
+            return Color.Lerp(Color.gray, charge < 0 ? Color.blue : Color.red, t);
         }
 
         public float GetCharge() { return _charge; }

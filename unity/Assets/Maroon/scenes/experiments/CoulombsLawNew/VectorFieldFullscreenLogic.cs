@@ -39,6 +39,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         [SerializeField] private Material vectorFieldMaterial;
         [SerializeField] private ComputeShader gridValuesComputeShader;
+        [SerializeField] private GroundPinLogic groundPin;
 
         private ComputeBuffer gridValuesComputeBuffer;
 
@@ -135,6 +136,12 @@ namespace Maroon.Experiments.CoulombsLawNew
                 return;
             }
 
+            float groundPotential = 0.0f;
+            if (groundPin != null && groundPin.isActiveAndEnabled && groundPin.applyToVisualization)
+            {
+                groundPotential = ElectricField.Instance.GetPotential(groundPin.transform.position, true);
+            }
+
             VectorFieldInfos gridInfo = new VectorFieldInfos(uiResolutionSlider.GetValue(), ui3DModeToggle.GetValue());
 
             // Update shader values
@@ -157,7 +164,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             vectorFieldMaterial.SetFloat("_MaxMagnitude", uiMaxMagnitudeK.GetValue());
             vectorFieldMaterial.SetFloat("_MagnitudeInterpolationExponent", uiMagnitudeInterpolationExponent.GetValue());
 
-            vectorFieldMaterial.SetFloat("_VoltageCenter", uiVoltageCenterKV.GetValue());
+            vectorFieldMaterial.SetFloat("_VoltageCenter", uiVoltageCenterKV.GetValue() + groundPotential);
             vectorFieldMaterial.SetFloat("_VoltageRange", uiVoltageRangeKV.GetValue());
             vectorFieldMaterial.SetFloat("_VoltageInterpolationExponent", uiVoltageInterpolationExponent.GetValue());
             vectorFieldMaterial.SetInt("_DisplayOutsideOfRangeBool", uiDisplayOutsideOfRangeBool.GetValue() ? 1 : 0);

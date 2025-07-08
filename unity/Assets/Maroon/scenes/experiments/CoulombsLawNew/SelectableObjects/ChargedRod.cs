@@ -51,11 +51,6 @@ namespace Maroon.Experiments.CoulombsLawNew
             ElectricField.Instance?.chargedRods.Remove(this);
         }
 
-        private void OnValidate()
-        {
-            SetRodParameters(transform.position, direction);
-        }
-
         public void SetRodParameters(Vector3 position, Vector3 direction)
         {
             if (direction.magnitude < 0.01f)
