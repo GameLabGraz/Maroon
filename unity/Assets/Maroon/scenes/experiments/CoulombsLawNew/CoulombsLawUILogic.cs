@@ -17,6 +17,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         [Header("UI-Element References")]
         [SerializeField] private GUIBoolInputLogic vectorFieldEnabledToggle;
+        [SerializeField] private GUIBoolInputLogic isoSurfaceEnabledToggle;
 
         [SerializeField] private GuiIconTo3DObjectDrag dragIconParticle;
         [SerializeField] private GuiIconTo3DObjectDrag dragIconChargedRod;
@@ -63,6 +64,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
                 // Only one transparent object can be active at the same time
                 vectorFieldEnabledToggle.SetValue(false);
+                isoSurfaceEnabledToggle.SetValue(false);
             });
             vectorFieldEnabledToggle.OnValueChanged.AddListener((bool newValue) =>
             {
@@ -70,6 +72,16 @@ namespace Maroon.Experiments.CoulombsLawNew
                 if (newValue)
                 {
                     visualizationPlane.gameObject.SetActive(false);
+                    isoSurfaceEnabledToggle.SetValue(false);
+                }
+            });
+            isoSurfaceEnabledToggle.OnValueChanged.AddListener((bool newValue) =>
+            {
+                // Only one transparent object can be active at the same time
+                if (newValue)
+                {
+                    visualizationPlane.gameObject.SetActive(false);
+                    vectorFieldEnabledToggle.SetValue(false);
                 }
             });
 

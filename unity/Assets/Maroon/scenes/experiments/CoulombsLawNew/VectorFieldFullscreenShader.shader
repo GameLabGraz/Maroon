@@ -29,7 +29,7 @@ Shader "Custom/VectorFieldFullscreenShader"
             uniform sampler2D _CameraDepthTexture; // Set automatically by unity, see VectorFieldFullscreenLogic
             uniform float4x4 _InverseView;
 
-            uniform float4 _BoxMin; // xyz is box min, w is used for cell-size (Sidelength of a cell)
+            uniform float4 _BoxMin; // xyz is box min, w unused
             uniform int _FieldResolutionX;
             uniform int _FieldResolutionY;
             uniform int _FieldResolutionZ;
@@ -77,23 +77,20 @@ Shader "Custom/VectorFieldFullscreenShader"
                 // Grid setup
                 int3 gridResolution = int3(_FieldResolutionX, _FieldResolutionY, _FieldResolutionZ);
                 float cellSize = _CellSize; // Alias for easier use/portability
-                float3 gridMin = _BoxMin;
-                float3 gridMax = _BoxMin + gridResolution * cellSize;
+                float3 gridMin = _BoxMin.xyz;
+                float3 gridMax = gridMin + gridResolution * cellSize;
 
                 // Update ray-origin (Make gridMin the origin of the coordinate system)
-                float tBox = 0.0; // distance to box, 0 if start is inside box
-                if (boxContainsPoint(rayOrigin, gridMin, gridMax))
-                {
-                    rayOrigin = rayOrigin - gridMin;
+                float tBoxMax = 0.0;
+                float tBoxMin = rayBoxIntersection(rayOrigin, rayDir, gridMin, gridMax, tBoxMax);
+                if (tBoxMin >= tBoxMax || tBoxMax < 0.0 || (tBoxMin > 0.0 && maxDist < tBoxMin)) { // No intersection with box, or box behind us
+                    return float4(0, 0, 0, 0);
                 }
-                else 
-                {
-                    // Check if ray hits grid-box
-                    tBox = rayBoxIntersection(rayOrigin, rayDir, gridMin, gridMax);
-                    if (tBox < 0 || tBox >= maxDist) return float4(0, 0, 0, 0);
 
-                    rayOrigin = rayOrigin + tBox * rayDir - gridMin; // Move ray-origin to coordinate-system where grid_min is at 0
-                    maxDist -= tBox; // Since we moved forward on the ray, we need to update maxDist
+                rayOrigin = rayOrigin - gridMin;
+                if (tBoxMin >= 0.0) { // Start outside of box
+                    rayOrigin = rayOrigin + tBoxMin * rayDir; // Move ray-origin to coordinate-system where grid_min is at 0
+                    maxDist -= tBoxMin; // Since we moved forward on the ray, we need to reduce maxDist
                 }
 
                 // Find integer coordinates of grid at box-intersection
@@ -109,7 +106,7 @@ Shader "Custom/VectorFieldFullscreenShader"
                 int cellsTraversed = 0;
                 float3 resultColor = float4(0, 0, 0, 0);
                 float resultAlpha = 0.0;
-                while (cellsTraversed < 250) // Just a hardcoded limit so we don't run this loop forever if there are bugs
+                while (cellsTraversed < 100) // Just a hardcoded limit so we don't run this loop forever if there are bugs
                 {
                     // Handle cell logic here
                     float3 cellColor = float3(0, 0, 0);
@@ -277,7 +274,7 @@ Shader "Custom/VectorFieldFullscreenShader"
                 float3 worldPos = pixelPosToWorldPos(uv);
 
                 float3 pos = _WorldSpaceCameraPos;
-                if (unity_OrthoParams.w > 0.5) {
+                if (unity_OrthoParams.w > 0.5) {  // Handle orthographic camera
                     float4 orthoOffset = float4(0, 0, 0, 0);
                     orthoOffset.x = (uv.x * 2.0 - 1.0) * unity_OrthoParams.x;
                     orthoOffset.y = (uv.y * 2.0 - 1.0) * unity_OrthoParams.y;

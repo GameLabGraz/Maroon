@@ -25,9 +25,11 @@ float raySphereIntersection(float3 rayOrigin, float3 dir, float3 spherePos, floa
     return t_intersection;
 }
 
-// Returns distance to first intersection, or -1 if not hit
-float rayBoxIntersection(float3 rayOrigin, float3 rayDir, float3 boxMin, float3 boxMax)
+// Returns distance to first/last intersection, box not hit if tMin >= tMax
+float rayBoxIntersection(float3 rayOrigin, float3 rayDir, float3 boxMin, float3 boxMax, out float tMax)
 {
+    tMax = -1.0;
+
     // Move box to coord system center
     rayOrigin -= (boxMax + boxMin) / 2.0;
 
@@ -45,12 +47,7 @@ float rayBoxIntersection(float3 rayOrigin, float3 rayDir, float3 boxMin, float3 
     float t0 = max(max(tMins.x, tMins.y), tMins.z);
     float t1 = min(min(tMaxs.x, tMaxs.y), tMaxs.z);
 
-    // If intersection is empty, no collision
-    if (t0 >= t1)
-    {
-        return -1.0;
-    }
-
+    tMax = t1;
     return t0;
 }
 
