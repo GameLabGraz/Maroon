@@ -9,6 +9,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private GUIVector3InputLogic positionDisplay;
         [SerializeField] private GUIVector3InputLogic directionDisplay;
         [SerializeField] private GUIFloatInputLogic chargeDensityInput;
+        [SerializeField] private GUIBoolInputLogic createFieldLinesToggle;
         [SerializeField] private GUIButtonLogic deleteButton;
 
         private ChargedRod chargedRod;
@@ -27,6 +28,12 @@ namespace Maroon.Experiments.CoulombsLawNew
                     newDirection = Vector3.up;
                 }
                 chargedRod.SetRodParameters(chargedRod.transform.position, newDirection);
+            });
+
+            createFieldLinesToggle.SetValue(chargedRod.generateFieldLines);
+            createFieldLinesToggle.OnValueChanged.AddListener((bool newValue) =>
+            {
+                chargedRod.generateFieldLines = newValue;
             });
 
             chargeDensityInput.SetMinMax(-ChargedRod.MAX_CHARGE_DENSITY, ChargedRod.MAX_CHARGE_DENSITY);

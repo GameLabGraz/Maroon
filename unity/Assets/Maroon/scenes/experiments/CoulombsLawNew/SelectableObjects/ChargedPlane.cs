@@ -18,6 +18,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private SelectableObject selectableComponent;
 
         private float chargeDensity = 0.0f;
+        public bool generateFieldLines = false;
 
         private void Awake()
         {
@@ -65,7 +66,10 @@ namespace Maroon.Experiments.CoulombsLawNew
             meshFilter.mesh = newMesh;
             meshCollider.sharedMesh = newMesh;
         }
-
+        public Vector4 GetPlaneEquation()
+        {
+            return new Vector4(planeNormal.x, planeNormal.y, planeNormal.z, -Vector3.Dot(planeNormal, transform.position));
+        }
 
         // Mesh-Clipping starts here
 
@@ -78,12 +82,12 @@ namespace Maroon.Experiments.CoulombsLawNew
         //      complicated problem (intersection of 2 convex polygons, then extracting vertices and faces from that).
         //      Instead of doing that I decided to use polygon-clipping to clip the 2D-plane inside the 3D-box with
         //      the Sutherland-Hodgeman polygon clipping algorithm, and then extrude the resulting 2D-polygon into a 3D mesh
-        private static float SignedDistanceToPlane(Vector3 pos, Vector4 plane)
+        public static float SignedDistanceToPlane(Vector3 pos, Vector4 plane)
         {
             return Vector4.Dot(new Vector4(pos.x, pos.y, pos.z, 1.0f), plane);
         }
 
-        private static Vector3 GetLinePlaneIntersectionPoint(Vector3 a, Vector3 b, Vector4 plane)
+        public static Vector3 GetLinePlaneIntersectionPoint(Vector3 a, Vector3 b, Vector4 plane)
         {
             float ta = SignedDistanceToPlane(a, plane);
             float tb = SignedDistanceToPlane(b, plane);

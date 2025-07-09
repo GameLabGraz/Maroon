@@ -9,6 +9,7 @@ namespace Maroon.Experiments.CoulombsLawNew
     {
         [SerializeField] private GUIVector3InputLogic positionDisplay;
         [SerializeField] private GUIFloatInputLogic chargeInput;
+        [SerializeField] private GUIBoolInputLogic generateFieldLinesToggle;
         [SerializeField] private GUIButtonLogic deleteButton;
 
         private ChargedPoint chargedPoint;
@@ -23,6 +24,11 @@ namespace Maroon.Experiments.CoulombsLawNew
             positionDisplay.TrackTransform(chargedPoint.transform);
             chargeInput.OnValueChanged.AddListener((float newCharge) => { 
                 chargedPoint.SetCharge(newCharge); 
+            });
+            generateFieldLinesToggle.SetValue(chargedPoint.generateFieldLines);
+            generateFieldLinesToggle.OnValueChanged.AddListener((bool newValue) =>
+            {
+                chargedPoint.generateFieldLines = newValue;
             });
             deleteButton.OnButtonClick.AddListener(() => GameObject.Destroy(chargedPoint.gameObject));
         }

@@ -11,6 +11,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         public const float MAX_CHARGE_DENSITY = 5e-6f; // In Coulomb/meter
 
         private float chargeDensity;
+        public bool generateFieldLines = false;
 
         // Line is defined by point (transform.position and direction)
         [SerializeField] private Vector3 direction;
@@ -64,6 +65,13 @@ namespace Maroon.Experiments.CoulombsLawNew
         }
 
         public Vector3 GetDirection() { return direction; }
+
+        public Vector3 ProjectPointOntoRod(Vector3 point)
+        {
+            Vector3 pos = transform.position;
+            Vector3 dir = direction;
+            return pos + dir * Vector3.Dot(dir, point - pos);
+        }
 
         public float GetChargeDensity() { return chargeDensity; }
         public void SetChargeDensity(float newChargeDensity) 

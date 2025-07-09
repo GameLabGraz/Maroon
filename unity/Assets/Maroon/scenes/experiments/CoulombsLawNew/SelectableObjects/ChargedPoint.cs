@@ -16,6 +16,8 @@ namespace Maroon.Experiments.CoulombsLawNew
         private GameObject _fixingRing;
         public Rigidbody rigidBody;
 
+        public bool generateFieldLines = false;
+
         private void Awake()
         {
             _baseMeshRenderer = transform.Find("Base").GetComponent<MeshRenderer>();

@@ -6,44 +6,50 @@ namespace Maroon.Experiments.CoulombsLawNew
 {
     public struct ChargedPointData
     {
-        public ChargedPointData(Vector3 pos, Vector3 initialVelocity, float charge)
+        public ChargedPointData(Vector3 pos, Vector3 initialVelocity, float charge, bool createFieldLines)
         {
             this.position = pos;
             this.initialVelocity = initialVelocity;
             this.charge = charge;
+            this.createFieldLines = createFieldLines;
         }
 
         public Vector3 position;
         public Vector3 initialVelocity;
         public float charge; // Coulombs
+        public bool createFieldLines;
     }
 
     public struct ChargedRodData
     {
-        public ChargedRodData(Vector3 pos, Vector3 direction, float chargeDensity)
+        public ChargedRodData(Vector3 pos, Vector3 direction, float chargeDensity, bool createFieldLines)
         {
             this.position = pos;
             this.direction = direction;
             this.chargeDensity = chargeDensity;
+            this.createFieldLines = createFieldLines;
         }
 
         public Vector3 position;
         public Vector3 direction; // normalized
         public float chargeDensity; // Coulombs/meter
+        public bool createFieldLines;
     }
 
     public struct ChargedPlaneData
     {
-        public ChargedPlaneData(Vector3 pos, Vector3 normal, float chargeDensity)
+        public ChargedPlaneData(Vector3 pos, Vector3 normal, float chargeDensity, bool createFieldLines)
         {
             this.position = pos;
             this.normal = normal;
             this.chargeDensity = chargeDensity;
+            this.createFieldLines = createFieldLines;
         }
 
         public Vector3 position;
         public Vector3 normal; // normalized
         public float chargeDensity; // Coulombs/meter^2
+        public bool createFieldLines;
     }
 
     public struct Configuration
@@ -67,17 +73,20 @@ namespace Maroon.Experiments.CoulombsLawNew
             for (int i = 0; i < efield.chargedPoints.Count; i++)
             {
                 var pointCharge = efield.chargedPoints[i];
-                result.chargedPoints[i] = new ChargedPointData(pointCharge.transform.position, Vector3.zero, pointCharge.GetCharge());
+                result.chargedPoints[i] = new ChargedPointData(
+                    pointCharge.transform.position, Vector3.zero, pointCharge.GetCharge(), pointCharge.generateFieldLines);
             }
             for (int i = 0; i < efield.chargedRods.Count; i++)
             {
                 var chargedRod = efield.chargedRods[i];
-                result.chargedRods[i] = new ChargedRodData(chargedRod.transform.position, chargedRod.GetDirection(), chargedRod.GetChargeDensity());
+                result.chargedRods[i] = new ChargedRodData(
+                    chargedRod.transform.position, chargedRod.GetDirection(), chargedRod.GetChargeDensity(), chargedRod.generateFieldLines);
             }
             for (int i = 0; i < efield.chargedPlanes.Count; i++)
             {
                 var chargedPlane = efield.chargedPlanes[i];
-                result.chargedPlanes[i] = new ChargedPlaneData(chargedPlane.transform.position, chargedPlane.GetNormal(), chargedPlane.GetChargeDensity());
+                result.chargedPlanes[i] = new ChargedPlaneData(
+                    chargedPlane.transform.position, chargedPlane.GetNormal(), chargedPlane.GetChargeDensity(), chargedPlane.generateFieldLines);
             }
             
             return result;
@@ -101,18 +110,21 @@ namespace Maroon.Experiments.CoulombsLawNew
             {
                 var newParticle = GameObject.Instantiate(pointChargePrefab, pointData.position, Quaternion.identity, parentForNewObjects);
                 newParticle.SetCharge(pointData.charge);
+                newParticle.generateFieldLines = pointData.createFieldLines;
             }
             foreach (var rodData in configuration.chargedRods)
             {
                 var newRod = GameObject.Instantiate(chargedRodPrefab, rodData.position, Quaternion.identity, parentForNewObjects);
                 newRod.SetRodParameters(rodData.position, rodData.direction);
                 newRod.SetChargeDensity(rodData.chargeDensity);
+                newRod.generateFieldLines = rodData.createFieldLines;
             }
             foreach (var planeData in configuration.chargedPlanes)
             {
                 var newPlane = GameObject.Instantiate(chargedPlanePrefab, planeData.position, Quaternion.identity, parentForNewObjects);
                 newPlane.SetPlaneParameters(planeData.position, planeData.normal);
                 newPlane.SetChargeDensity(planeData.chargeDensity);
+                newPlane.generateFieldLines = planeData.createFieldLines;
             }
         }
     }
