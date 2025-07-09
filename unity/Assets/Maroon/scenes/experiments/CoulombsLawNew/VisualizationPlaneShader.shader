@@ -72,26 +72,24 @@
 
 			// --------------------------------------------------------------------------------------------------------------
 			// Fragment shader
-			float getEquipotentialLineAlpha(float3 initialPos)
+			float3 getClosestEquipotentialPosition(float3 initialPos, float targetVoltage, float maxSearchRadius)
 			{
+				if (abs(targetVoltage) > _VoltageRange) return maxSearchRadius * 2.0;
+
+				const int REFINEMENT_STEPS = 8;
+				const float MAX_STEP_SIZE = 0.3;
+
 				float voltage;
 				float3 _unused;
 				evaluateField(initialPos, voltage, _unused);
 				voltage -= _VoltageOffset;
 
-				// Find voltage of closest field-line
-				float targetVoltage = floor(voltage / _LineSpacingVoltage + 0.5) * _LineSpacingVoltage;
-				if (abs(targetVoltage) > _VoltageRange) return half4(0, 0, 0, 0);
-
-				// Try to find a point near current position which is directly on the equipotential line.
-				// We use this point to determine the distance of the current position to the equipotential line, and
-				//		use the distance for coloring the pixel
-				// Approximate search is done with Gradient-Descend (step-distance limited proportionally to line-width)
-				float falloffDistance = _LineHalfWidth * _LineSmoothFalloff;
-				float maxSearchRadius = (_LineHalfWidth + falloffDistance) * 1.3;
-
+				// The nearest point on an equipotential line should be in the direction of the gradient (linear approximation)
+				//	and to refine this result further we take a few gradient-descent steps
+				//  Note that this does not optimize for 'closest' point on equipotential line, but rather just
+				//		searches for a point on the equipotential line, but in practice this is good enough
 				float3 pos = initialPos;
-				for (int i = 0; i < 8; i++) 
+				for (int i = 0; i < REFINEMENT_STEPS; i++) 
 				{
 					// Evaluate Field at current iteration position
 					float voltage;
@@ -108,7 +106,7 @@
 						stepSize = -stepSize;
 						stepDir = -stepDir;
 					}
-					stepSize = min(stepSize, 1);
+					stepSize = min(stepSize, MAX_STEP_SIZE);
 					pos = pos + stepSize * stepDir;
 
 					// Limit search to a radius around initialPos
@@ -119,7 +117,33 @@
 					}
 				}
 
-				float alpha = 1.0 - smoothstep(_LineHalfWidth, _LineHalfWidth + falloffDistance, distance(pos, initialPos));
+				return pos;
+			}
+
+			float getEquipotentialLineAlpha(float3 pos)
+			{
+				float voltage;
+				float3 _unused;
+				evaluateField(pos, voltage, _unused);
+				voltage -= _VoltageOffset;
+
+				// Find voltage of the two closest equipotential lines
+				float intervalIndex = floor(voltage / _LineSpacingVoltage);
+				float targetVoltageLow = intervalIndex * _LineSpacingVoltage;
+				float targetVoltageHigh = targetVoltageLow + _LineSpacingVoltage;
+				float falloffDistance = _LineHalfWidth * _LineSmoothFalloff;
+				// Make search radius a little larger (1.3), so we can also detect if the line is outside of range
+				float maxSearchRadius = (_LineHalfWidth + falloffDistance) * 1.3; 
+
+				// Try to find a point near current position which is directly on the equipotential line.
+				// We use this point to determine the distance of the current position to the equipotential line,
+				//		which is used to color the pixel
+				float distanceVoltageLow  = length(pos - getClosestEquipotentialPosition(pos, targetVoltageLow, maxSearchRadius));
+				float distanceVoltageHigh = length(pos - getClosestEquipotentialPosition(pos, targetVoltageHigh, maxSearchRadius));
+				float distanceClosest     = min(distanceVoltageHigh, distanceVoltageLow);
+
+				// Return smoothed line alpha
+				float alpha = 1.0 - smoothstep(_LineHalfWidth, _LineHalfWidth + falloffDistance, distanceClosest);
 				return alpha;
 			}
 
@@ -175,13 +199,13 @@
 					outputColor.xyz = GetHeatmapColor(posOnPlane);
 				}
 
-				outputColor.w = pow(_Transparency, 2.2);
+				outputColor.w = _Transparency;
 				if (_DrawEquipotentialLines != 0) {
 					float lineAlpha = getEquipotentialLineAlpha(posOnPlane);
 					outputColor = lerp(outputColor, _LineColor, lineAlpha);
 				}
 
-				// Gamma correct alpha
+				// Gamma correct alpha (not sure if this is needed/usefull)
 				outputColor.w = pow(outputColor.w, 1.0 / 2.2);
 
 				return outputColor;

@@ -7,7 +7,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 {
     public class ChargedRod : MonoBehaviour
     {
-        public const float RADIUS = 0.08f; // In unity units
+        public const float RADIUS = 0.04f; // In unity units // NOTE: This may actually be the diameter!
         public const float MAX_CHARGE_DENSITY = 5e-6f; // In Coulomb/meter
 
         private float chargeDensity;
@@ -129,21 +129,21 @@ namespace Maroon.Experiments.CoulombsLawNew
             var capsuleYOffset = Vector3.Dot((posA + posB) / 2 - pos, direction);
             transform.rotation = Quaternion.FromToRotation(Vector3.up, posA - posB);
             transform.localScale = Vector3.one;
-            capsuleCollider.height = (posA - posB).magnitude + RADIUS;
-            capsuleCollider.radius = RADIUS/2;
+            capsuleCollider.height = (posA - posB).magnitude + 2.0f * RADIUS;
+            capsuleCollider.radius = RADIUS;
             capsuleCollider.center = new Vector3(0, -capsuleYOffset, 0);
 
             // Update child transforms
             childStartSphere.transform.position = posA;
-            childStartSphere.transform.localScale = new Vector3(RADIUS, RADIUS, RADIUS);
+            childStartSphere.transform.localScale = 2.0f * RADIUS * Vector3.one;
 
             childEndSphere.transform.position = posB;
-            childEndSphere.transform.localScale = new Vector3(RADIUS, RADIUS, RADIUS);
+            childEndSphere.transform.localScale = 2.0f * RADIUS * Vector3.one;
 
             childCylinder.transform.position = (posA + posB) / 2;
             // Cylinder mesh points upwards by default
             childCylinder.transform.rotation = transform.rotation;
-            childCylinder.transform.localScale = new Vector3(RADIUS, (posA - posB).magnitude / 2, RADIUS);
+            childCylinder.transform.localScale = new Vector3(2.0f * RADIUS, (posA - posB).magnitude / 2, 2.0f * RADIUS);
         }
 
     }

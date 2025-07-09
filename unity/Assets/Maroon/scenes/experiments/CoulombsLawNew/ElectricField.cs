@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Maroon.Experiments.CoulombsLawNew
 {
-
     public class ElectricField : MonoBehaviour
     {
         private const float COULOMB_CONSTANT = 1f / (4 * Mathf.PI * Maroon.Physics.PhysicalConstants.e0);
