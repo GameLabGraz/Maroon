@@ -89,14 +89,17 @@ namespace Maroon.Experiments.CoulombsLawNew
             var camera = Camera.main;
 
             bool lastDragActive = orbitDragActive;
-            orbitDragActive = _in3DMode && Input.GetMouseButton(1) && Application.isFocused && !SelectionSystem.IsMouseOverVisibleUIElement();
+            orbitDragActive = _in3DMode && (Input.GetMouseButton(1) || Input.GetMouseButton(2)) && Application.isFocused;
 
             // Active/Deactive cursor
+            // Note(MartinR): cursorLockMode does not seem to work well in browser...
+#if UNITY_EDITOR || !UNITY_WEBGL
             if (lastDragActive != orbitDragActive)
             {
                 UnityEngine.Cursor.lockState = orbitDragActive ? CursorLockMode.Locked : CursorLockMode.None;
                 UnityEngine.Cursor.visible = !orbitDragActive;
             }
+#endif
 
             // Update camera rotation
             if (orbitDragActive)

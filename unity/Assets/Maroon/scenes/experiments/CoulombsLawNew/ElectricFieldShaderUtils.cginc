@@ -8,14 +8,18 @@
 uniform float _PointChargeMinDist;
 uniform float _ChargedRodMinDist;
 
-uniform int _ChargedPointCount;
-uniform int _ChargedRodCount;
-uniform int _ChargedPlaneCount;
-uniform StructuredBuffer<float4> _ChargedPointData; // Packed data, xyz is position, w is charge in Coulomb
-uniform StructuredBuffer<float4> _ChargedRodPositions; // Packed data, xyz is position, w is charge-density in Coulomb
-uniform StructuredBuffer<float4> _ChargedRodDirections; // w is currently unused
-uniform StructuredBuffer<float4> _ChargedPlaneEquations; // xyz is normalized normal, w is negative distance of plane to origin
-uniform StructuredBuffer<float>  _ChargedPlaneChargeDensities;
+uniform uint _ChargedPointCount;
+uniform uint _ChargedRodCount;
+uniform uint _ChargedPlaneCount;
+uniform uint _ChargedObjectTextureWidth;
+
+// To see how the packing is done look at ElectricField.cs
+uniform texture2D _ChargedObjectDataPacked;
+
+float4 accessPackedDataAtIndex(uint linearIndex)
+{
+    return _ChargedObjectDataPacked.Load(uint3(linearIndex % _ChargedObjectTextureWidth, linearIndex / _ChargedObjectTextureWidth, 0));
+}
 
 // Returns Voltage and electric field value
 void evaluateField(float3 pos, out float voltage, out float3 fieldVector)
@@ -24,11 +28,12 @@ void evaluateField(float3 pos, out float voltage, out float3 fieldVector)
     fieldVector = float3(0, 0, 0); // In Newton / Coulomb [N/C]
 
 	// Evaluate point charges
-    int i = 0; // Note: If i is declared in the loop header, there are warnings in unity...
+    uint i = 0; // Note: If i is declared in the loop header, there are warnings in unity...
     for (i = 0; i < _ChargedPointCount; i++)
     {
-        float3 chargePos = _ChargedPointData[i].xyz;
-        float electricCharge = _ChargedPointData[i].w;
+        float4 packedPointData = accessPackedDataAtIndex(i);
+        float3 chargePos = packedPointData.xyz;
+        float electricCharge = packedPointData.w;
                 
 		// Safe normalization (Check if vector is 0)
         float3 direction = pos - chargePos;
@@ -51,11 +56,14 @@ void evaluateField(float3 pos, out float voltage, out float3 fieldVector)
     }
 
 	// Evaluate charged rods
+    uint packedRodDataStartIndex = _ChargedPointCount;
     for (i = 0; i < _ChargedRodCount; i++)
     {
-        float3 rodPos = _ChargedRodPositions[i].xyz;
-        float3 rodDir = _ChargedRodDirections[i].xyz;
-        float rodChargeDensity = _ChargedRodPositions[i].w;
+        float4 packedRodPosData = accessPackedDataAtIndex(packedRodDataStartIndex + i * 2);
+        float4 packedRodDirData = accessPackedDataAtIndex(packedRodDataStartIndex + i * 2 + 1);
+        float3 rodPos = packedRodPosData.xyz;
+        float3 rodDir = packedRodDirData.xyz;
+        float rodChargeDensity = packedRodPosData.w;
 
         float3 posProjected = rodPos + rodDir * dot(pos - rodPos, rodDir);
         float3 rodToPos = pos - posProjected;
@@ -76,13 +84,14 @@ void evaluateField(float3 pos, out float voltage, out float3 fieldVector)
         voltage += -(2.0 * COULOMBS_CONSTANT) * rodChargeDensity * log(dist);
     }
 
-	// Add plane influences
+	// Evaluate charged planes
+    uint packedPlaneDataStartIndex = _ChargedPointCount + 2 * _ChargedRodCount;
     for (i = 0; i < _ChargedPlaneCount; i++)
     {
-        float4 planeEquation = _ChargedPlaneEquations[i];
-        float planeChargeDensity = _ChargedPlaneChargeDensities[i];
+        float4 planeEquation      = accessPackedDataAtIndex(packedPlaneDataStartIndex + i * 2);
+        float  planeChargeDensity = accessPackedDataAtIndex(packedPlaneDataStartIndex + i * 2 + 1).x;
 
-        float signedDistance = dot(float4(pos, 1.0), planeEquation);
+        float signedDistance = dot(float4(pos.x, pos.y, pos.z, 1.0), planeEquation);
         fieldVector += (2 * PI * COULOMBS_CONSTANT) * planeChargeDensity * sign(signedDistance) * planeEquation.xyz;
         voltage += -(2 * PI * COULOMBS_CONSTANT) * planeChargeDensity * abs(signedDistance);
     }

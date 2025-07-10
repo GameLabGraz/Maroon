@@ -95,7 +95,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
             // Update shader properties
             var material = meshRenderer.material;
-            ElectricField.Instance.computeBuffers.SetUniformsForMaterial(material);
+            ElectricField.Instance.electricFieldPackedGPUData.SetUniformsForMaterial(material);
 
             material.SetFloat(Shader.PropertyToID("_Transparency"), transparency);
             material.SetVector(Shader.PropertyToID("_PlaneEquation"), planeEquation);

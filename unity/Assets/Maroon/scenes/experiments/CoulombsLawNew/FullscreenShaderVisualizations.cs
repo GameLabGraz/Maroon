@@ -35,14 +35,20 @@ namespace Maroon.Experiments.CoulombsLawNew
 
     public class FullscreenShaderVisualizations : MonoBehaviour
     {
+        // Note: RenderTexture size is currently 256x256 = 65.536,
+        //  so a VectorField with 40*40*40 = 64.000 still fits into the texture
         public const int VECTORFIELD_MAX_RESOLUTION = 40;
+        public const int TEXTURE_RESOLUTION = 256;
 
         [SerializeField] private Material vectorFieldMaterial;
         [SerializeField] private Material isoSurfaceMaterial;
+        [SerializeField] private Material vectorFieldGridCalculationMaterial;
         [SerializeField] private ComputeShader gridValuesComputeShader;
         [SerializeField] private GroundPinLogic groundPin;
 
-        private ComputeBuffer gridValuesComputeBuffer;
+        // This texture stores the vector value and potential of the vector field
+        //  evaluated at the grid-positions. See VectorFieldGridCalculateShader for how the packing is done
+        private CustomRenderTexture gridValuesTexture;
 
         [Header("UI-Vector-Field References")]
         [SerializeField] private GUIBoolInputLogic  uiVectorFieldEnabledToggle;
@@ -73,18 +79,18 @@ namespace Maroon.Experiments.CoulombsLawNew
             Camera cam = GetComponent<Camera>();
             cam.depthTextureMode = cam.depthTextureMode | DepthTextureMode.Depth; // Request depth texture for rendering
 
-            gridValuesComputeBuffer = new ComputeBuffer(VECTORFIELD_MAX_RESOLUTION * VECTORFIELD_MAX_RESOLUTION * VECTORFIELD_MAX_RESOLUTION, 4 * 4);
+            gridValuesTexture = new CustomRenderTexture(
+                TEXTURE_RESOLUTION, TEXTURE_RESOLUTION, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
+            gridValuesTexture.doubleBuffered = false;
+            gridValuesTexture.initializationMode = CustomRenderTextureUpdateMode.OnDemand;
+            gridValuesTexture.material = vectorFieldGridCalculationMaterial;
+            gridValuesTexture.updateMode = CustomRenderTextureUpdateMode.OnDemand;
 
             // Add UI callbacks
             uiVectorFieldTransparencyModeDropdown.OnValueChanged.AddListener((int dropdownValue) =>
             {
                 uiVectorFieldFixedTransparencySlider.gameObject.SetActive(dropdownValue == 3);
             });
-        }
-
-        private void OnDestroy()
-        {
-            gridValuesComputeBuffer.Dispose();
         }
 
         // Calculate vector field values at grid-cell positions, updates compute buffer
@@ -95,45 +101,46 @@ namespace Maroon.Experiments.CoulombsLawNew
             VectorFieldInfos gridInfo = new VectorFieldInfos(uiVectorFieldResolutionSlider.GetValue(), uiVectorField3DModeToggle.GetValue());
 
             // Set compute shader uniform values
-            int kernelIndex = gridValuesComputeShader.FindKernel("CSMain");
-            ElectricField.Instance.computeBuffers.SetUniformsForComputeShader(gridValuesComputeShader, kernelIndex);
-            gridValuesComputeShader.SetBuffer(kernelIndex, "_VectorFieldBuffer", gridValuesComputeBuffer);
-            gridValuesComputeShader.SetInt("_VectorFieldResolutionX", gridInfo.resolutionX);
-            gridValuesComputeShader.SetInt("_VectorFieldResolutionY", gridInfo.resolutionY);
-            gridValuesComputeShader.SetInt("_VectorFieldResolutionZ", gridInfo.resolutionZ);
-            gridValuesComputeShader.SetVector("_GridMin", new Vector4(gridInfo.gridMin.x, gridInfo.gridMin.y, gridInfo.gridMin.z, 0.0f));
-            gridValuesComputeShader.SetFloat("_CellSize", gridInfo.cellSize);
+            var efield = ElectricField.Instance;
+            vectorFieldGridCalculationMaterial.SetInt("_GridResolutionX", gridInfo.resolutionX);
+            vectorFieldGridCalculationMaterial.SetInt("_GridResolutionY", gridInfo.resolutionY);
+            vectorFieldGridCalculationMaterial.SetInt("_GridResolutionZ", gridInfo.resolutionZ);
+            vectorFieldGridCalculationMaterial.SetVector("_GridMin", new Vector4(gridInfo.gridMin.x, gridInfo.gridMin.y, gridInfo.gridMin.z, 0.0f));
+            vectorFieldGridCalculationMaterial.SetFloat("_CellSize", gridInfo.cellSize);
+            efield.electricFieldPackedGPUData.SetUniformsForMaterial(vectorFieldGridCalculationMaterial);
 
-            // Launch compute shader
-            uint threadGroupX, threadGroupY, threadGroupZ;
-            gridValuesComputeShader.GetKernelThreadGroupSizes(kernelIndex, out threadGroupX, out threadGroupY, out threadGroupZ);
-            int requiredGroups = 
-                ((gridInfo.resolutionX * gridInfo.resolutionY * gridInfo.resolutionZ) / 
-                (int)(threadGroupX * threadGroupY * threadGroupZ)) + 1;
-            gridValuesComputeShader.Dispatch(kernelIndex, requiredGroups, 1, 1);
+            gridValuesTexture.Update();
 
-
-            // CPU-Logic for buffer-values, maybe we want this if ComputeShader is not supported?
-            // Vector4[] bufferValues = new Vector4[resolution * resolution * resolution];
-            // for (int x = 0; x < resolution; x++)
+            // CPU-Logic for buffer-values, maybe we want this if CustomRenderTexture is not supported?
+            // var efield = ElectricField.Instance;
+            // Unity.Collections.NativeArray<Color> rawTextureData = gridValuesTexture.GetRawTextureData<Color>();
+            // for (int x = 0; x < gridInfo.resolutionX; x++)
             // {
-            //     for (int y = 0; y < resolution; y++)
+            //     for (int y = 0; y < gridInfo.resolutionY; y++)
             //     {
-            //         for (int z = 0; z < resolution; z++)
+            //         for (int z = 0; z < gridInfo.resolutionZ; z++)
             //         {
+            //             int linearIndex = x + y * gridInfo.resolutionX + z * gridInfo.resolutionX * gridInfo.resolutionY;
+
             //             // Get arrow position (At arrow center)
-            //             Vector3 arrowPos = domainOrigin + cellSize * new Vector3(x, y, z) + cellSize * Vector3.one / 2.0f;
+            //             Vector3 arrowPos = gridInfo.gridMin + gridInfo.cellSize * (new Vector3(x, y, z) + Vector3.one * 0.5f);
 
             //             // Calculate Electric Field value
             //             var fieldValue = efield.GetFieldValue(arrowPos, true); // In [Newton/Coulomb]
             //             var potential = efield.GetPotential(arrowPos, true); // In Volt
 
-            //             // Note: indexing needs to match with shader
-            //             bufferValues[x + y * resolution + z * resolution * resolution] = new Vector4(fieldValue.x, fieldValue.y, fieldValue.z, potential);
+            //             // Pack values and store in texture
+            //             Color color = new Color(fieldValue.x, fieldValue.y, fieldValue.z, potential);
+            //             rawTextureData[linearIndex] = color;
             //         }
             //     }
             // }
-            // vectorFieldValuesBuffer.SetData(bufferValues, 0, 0, bufferValues.Length);
+            // // Upload texture data to GPU (Unity keeps Texture2D data in ram and in vram, and only uploads data on Update)
+            // //      Note: We're uploading 1MB of texture data each frame, given a PCIe 3.0 connection (2010 technology)
+            // //          @60FPS we have 266MB of data to upload per frame, so 1MB per frame should be fine on a laptop/desktop
+            // //          Not sure about moblile devices, to improve performance we could only upload parts of the texture that are
+            // //          actually changed.
+            // gridValuesTexture.Apply();
         }
 
         private void OnRenderImage(RenderTexture source, RenderTexture destination)
@@ -155,8 +162,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             {
                 // Update shader values
                 Matrix4x4 inverseView = Camera.main.worldToCameraMatrix.inverse;
-                ElectricField.Instance.computeBuffers.SetUniformsForMaterial(isoSurfaceMaterial);
-                isoSurfaceMaterial.SetBuffer("_VectorFieldValues", gridValuesComputeBuffer);
+                ElectricField.Instance.electricFieldPackedGPUData.SetUniformsForMaterial(isoSurfaceMaterial);
                 isoSurfaceMaterial.SetMatrix("_InverseView", inverseView);
 
                 var box = SimulationBox.Instance.Bounds;
@@ -172,13 +178,14 @@ namespace Maroon.Experiments.CoulombsLawNew
 
                 Graphics.Blit(source, destination, isoSurfaceMaterial);
             }
-            else // Vectorfield rendering
+            else if (uiVectorFieldEnabledToggle.GetValue()) // Vectorfield rendering
             {
                 VectorFieldInfos gridInfo = new VectorFieldInfos(uiVectorFieldResolutionSlider.GetValue(), uiVectorField3DModeToggle.GetValue());
 
                 // Update shader values
                 Matrix4x4 inverseView = Camera.main.worldToCameraMatrix.inverse;
-                vectorFieldMaterial.SetBuffer("_VectorFieldValues", gridValuesComputeBuffer);
+                // vectorFieldMaterial.SetBuffer("_VectorFieldValues", gridValuesComputeBuffer);
+                vectorFieldMaterial.SetTexture("_GridValuesTexture", gridValuesTexture);
                 vectorFieldMaterial.SetMatrix("_InverseView", inverseView);
 
                 vectorFieldMaterial.SetVector("_BoxMin", gridInfo.gridMin);

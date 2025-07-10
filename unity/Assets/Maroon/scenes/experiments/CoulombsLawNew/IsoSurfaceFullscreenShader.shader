@@ -140,9 +140,9 @@ Shader "Custom/IsoSurfaceShader"
 
                         // Do surface shading
                         float3 normal = normalize(vectorValue);
-                        if (dot(normal, -rayDir) < 0.0) { // Shading should work on both sides 
-                            normal = -normal;
-                        }
+                        // if (dot(normal, -rayDir) < 0.0) { // Shading should work on both sides 
+                        //     normal = -normal;
+                        // }
                         float3 materialColor = GetColorAtPos(rayOrigin + rayDir * intersectionT);
 
                         // Over-Blending
@@ -165,40 +165,49 @@ Shader "Custom/IsoSurfaceShader"
                 return float4(resultColor.x, resultColor.y, resultColor.z, resultAlpha);
             }
 
-            float3 pixelPosToWorldPos(float2 uv)
+			// Note(MartinR): This is copy-pasted from VectorFieldFullscreenShader, because it seems like
+			//		we cannot move this to a shared source file "e.g. ShaderUtils.cginc" because of the unity defines...
+            void getPixelAndCameraWorldPositions(float2 uv, float4x4 inverseView, out float3 pixelPos, out float3 cameraPos)
             {
+                // Note: Camera depth-texture-mode needs to be set for this to work, see FullscreenShadervisualizations.cs
                 float depth = tex2D(_CameraDepthTexture, uv).r;
-                depth = (1.0 - depth) * 2 - 1; // Note: From unity documentation this does not make sense, but is the only thing that works so far
-                float4 clipPos = float4(uv.x * 2 - 1, uv.y * 2 - 1, depth, 1.0);
-
-                float4 worldPos = mul(unity_CameraInvProjection, clipPos);
-                worldPos = mul(_InverseView, worldPos);
-                return worldPos.xyz / worldPos.w;
+                #if UNITY_REVERSED_Z
+                    depth = 1.0 - depth;
+                #endif
+            
+                // Transform to NDC
+                depth = depth * 2.0 - 1.0;
+                float4 ndcPos = float4(uv.x * 2 - 1, uv.y * 2 - 1, depth, 1.0);
+            
+                // Transform from NDC to world position
+                ndcPos = mul(unity_CameraInvProjection, ndcPos);
+                ndcPos = mul(inverseView, ndcPos);
+                pixelPos = ndcPos.xyz / ndcPos.w;
+            
+                // Handle orthographic camera
+                cameraPos = _WorldSpaceCameraPos;
+                if (unity_OrthoParams.w > 0.5)
+                {
+                    float4 orthoOffset = float4(0, 0, 0, 0);
+                    orthoOffset.x = (uv.x * 2.0 - 1.0) * unity_OrthoParams.x;
+                    orthoOffset.y = (uv.y * 2.0 - 1.0) * unity_OrthoParams.y;
+                    orthoOffset = mul(inverseView, orthoOffset);
+                    cameraPos = cameraPos + orthoOffset.xyz;
+                }
             }
 
             fixed4 frag (v2f i) : SV_Target
             {
                 float2 uv = i.position.xy / _ScreenParams.xy;
-                // #if UNITY_UV_STARTS_AT_TOP
-                //     uv.y = 1.0 - uv.y;
-                // #endif
 
-                float3 worldPos = pixelPosToWorldPos(uv);
+                float3 cameraPos;
+                float3 pixelPos;
+                getPixelAndCameraWorldPositions(uv, _InverseView, pixelPos, cameraPos);
 
-                float3 pos = _WorldSpaceCameraPos;
-                if (unity_OrthoParams.w > 0.5) { // Handle orthographic camera
-                    float4 orthoOffset = float4(0, 0, 0, 0);
-                    orthoOffset.x = (uv.x * 2.0 - 1.0) * unity_OrthoParams.x;
-                    orthoOffset.y = (uv.y * 2.0 - 1.0) * unity_OrthoParams.y;
-                    orthoOffset = mul(_InverseView, orthoOffset);
-                    pos = pos + orthoOffset.xyz;
-                }
-                float3 dir = normalize(worldPos - pos);
-
-                float4 outputColor = tex2D(_MainTex, uv);
-                float4 rayMarchResult = rayMarchIsoSurface(pos, dir, length(pos - worldPos));
-                outputColor = lerp(outputColor, rayMarchResult, rayMarchResult.w);
-                return outputColor;
+                float3 dir = normalize(pixelPos - cameraPos);
+                float4 overlayColor = rayMarchIsoSurface(cameraPos, dir, length(cameraPos - pixelPos));
+                float4 backbufferColor = tex2D(_MainTex, uv);
+                return lerp(backbufferColor, overlayColor, overlayColor.w);
             }
             ENDCG
         }

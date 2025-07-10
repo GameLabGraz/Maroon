@@ -49,7 +49,8 @@ Shader "Custom/VectorFieldFullscreenShader"
             uniform float _VoltageInterpolationExponent;
             uniform int _DisplayOutsideOfRangeBool;
 
-            uniform StructuredBuffer<float4> _VectorFieldValues; // xyz is efield vector value at grid positions, w is potential
+            uniform texture2D _GridValuesTexture;
+            // uniform StructuredBuffer<float4> _VectorFieldValues; // xyz is efield vector value at grid positions, w is potential
 
             // STRUCTS
             struct appdata
@@ -114,8 +115,11 @@ Shader "Custom/VectorFieldFullscreenShader"
                     {
                         // Get cell information
                         float3 cellCenter = (float3(cellCoord) + 0.5) * cellSize;
-                        int linearCoord = cellCoord.x + cellCoord.y * gridResolution.x + cellCoord.z * gridResolution.x * gridResolution.y;
-                        float4 vectorFieldValuePacked = _VectorFieldValues[linearCoord];
+                        uint linearCoord = (uint) (cellCoord.x + cellCoord.y * gridResolution.x + cellCoord.z * gridResolution.x * gridResolution.y);
+                        uint textureX = linearCoord % 256;
+                        uint textureY = linearCoord / 256;
+                        // float4 vectorFieldValuePacked =  _VectorFieldValues[linearCoord];
+                        float4 vectorFieldValuePacked = _GridValuesTexture.Load(uint3(textureX, textureY, 0));
 
                         // Figure out interpolation coefficients based on magnitude and potential size-scaling based on efield magnitude
                         float efieldMagnitude = length(vectorFieldValuePacked.xyz);
@@ -253,40 +257,47 @@ Shader "Custom/VectorFieldFullscreenShader"
                 // return result;
             }
 
-            float3 pixelPosToWorldPos(float2 uv)
+            void getPixelAndCameraWorldPositions(float2 uv, float4x4 inverseView, out float3 pixelPos, out float3 cameraPos)
             {
+                // Note: Camera depth-texture-mode needs to be set for this to work, see FullscreenShadervisualizations.cs
                 float depth = tex2D(_CameraDepthTexture, uv).r;
-                depth = (1.0 - depth) * 2 - 1; // Note: From unity documentation this does not make sense, but is the only thing that works so far
-                float4 clipPos = float4(uv.x * 2 - 1, uv.y * 2 - 1, depth, 1.0);
-
-                float4 worldPos = mul(unity_CameraInvProjection, clipPos);
-                worldPos = mul(_InverseView, worldPos);
-                return worldPos.xyz / worldPos.w;
+                #if UNITY_REVERSED_Z
+                    depth = 1.0 - depth;
+                #endif
+            
+                // Transform to NDC
+                depth = depth * 2.0 - 1.0;
+                float4 ndcPos = float4(uv.x * 2 - 1, uv.y * 2 - 1, depth, 1.0);
+            
+                // Transform from NDC to world position
+                ndcPos = mul(unity_CameraInvProjection, ndcPos);
+                ndcPos = mul(inverseView, ndcPos);
+                pixelPos = ndcPos.xyz / ndcPos.w;
+            
+                // Handle orthographic camera
+                cameraPos = _WorldSpaceCameraPos;
+                if (unity_OrthoParams.w > 0.5)
+                {
+                    float4 orthoOffset = float4(0, 0, 0, 0);
+                    orthoOffset.x = (uv.x * 2.0 - 1.0) * unity_OrthoParams.x;
+                    orthoOffset.y = (uv.y * 2.0 - 1.0) * unity_OrthoParams.y;
+                    orthoOffset = mul(inverseView, orthoOffset);
+                    cameraPos = cameraPos + orthoOffset.xyz;
+                }
             }
 
             fixed4 frag (v2f i) : SV_Target
             {
                 float2 uv = i.position.xy / _ScreenParams.xy;
-                // #if UNITY_UV_STARTS_AT_TOP
-                //     uv.y = 1.0 - uv.y;
-                // #endif
 
-                float3 worldPos = pixelPosToWorldPos(uv);
+                float3 cameraPos;
+                float3 pixelPos;
+                getPixelAndCameraWorldPositions(uv, _InverseView, pixelPos, cameraPos);
 
-                float3 pos = _WorldSpaceCameraPos;
-                if (unity_OrthoParams.w > 0.5) {  // Handle orthographic camera
-                    float4 orthoOffset = float4(0, 0, 0, 0);
-                    orthoOffset.x = (uv.x * 2.0 - 1.0) * unity_OrthoParams.x;
-                    orthoOffset.y = (uv.y * 2.0 - 1.0) * unity_OrthoParams.y;
-                    orthoOffset = mul(_InverseView, orthoOffset);
-                    pos = pos + orthoOffset.xyz;
-                }
-                float3 dir = normalize(worldPos - pos);
-
-                float4 outputColor = tex2D(_MainTex, uv);
-                float4 gridTraversalResult = rayGridTraversal(pos, dir, length(pos - worldPos));
-                outputColor = lerp(outputColor, gridTraversalResult, gridTraversalResult.w);
-                return outputColor;
+                float3 dir = normalize(pixelPos - cameraPos);
+                float4 overlayColor = rayGridTraversal(cameraPos, dir, length(pixelPos - cameraPos));
+                float4 backbufferColor = tex2D(_MainTex, uv);
+                return lerp(backbufferColor, overlayColor, overlayColor.w);
             }
             ENDCG
         }

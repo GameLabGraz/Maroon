@@ -55,7 +55,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             lineStartIndices.Add(nextVertexIndex);
             var efield = ElectricField.Instance;
             var box = SimulationBox.Instance.Bounds;
-            box.extents = 2.0f * box.extents;
+            // box.extents = 2.0f * box.extents;
 
             AddVertex(pos);
             float dirSign = forwards ? 1.0f : -1.0f;

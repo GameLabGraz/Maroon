@@ -12,7 +12,14 @@ namespace Maroon.Experiments.CoulombsLawNew
         public List<ChargedPoint> chargedPoints = new List<ChargedPoint>();
         public List<ChargedRod> chargedRods = new List<ChargedRod>();
         public List<ChargedPlane> chargedPlanes = new List<ChargedPlane>();
-        public ElectricFieldComputeBuffers computeBuffers; // Cannot initialize here because of computeBuffers
+        public ElectricFieldPackedGPUData electricFieldPackedGPUData; // Cannot initialize here because of computeBuffers
+
+        private void Start()
+        {
+            // Note(MartinR): My pc keeps churning through frames, and as there are no vsynch options in maroon
+            //      i have this here. Remove this before release I guess
+            Application.targetFrameRate = 120;
+        }
 
         // Returns the vector-value of the electric field at a given position, Unit: [Newton/Coulomb]
         //      If limitChargeInfluenceDistance is set, then charged objects use a distance threshhold so that
@@ -151,53 +158,38 @@ namespace Maroon.Experiments.CoulombsLawNew
                 return;
             }
             _instance = this;
-            computeBuffers = new ElectricFieldComputeBuffers();
+            electricFieldPackedGPUData = new ElectricFieldPackedGPUData();
         }
 
         private void OnDestroy()
         {
             if (this == _instance) { _instance = null; }
-            computeBuffers.DisposeBuffers();
         }
     }
 
     // Contains compute buffers for evaluating the efield inside shaders (See ElectricFieldShaderUtils.cginc)
-    public class ElectricFieldComputeBuffers
+    public class ElectricFieldPackedGPUData
     {
-        public const int MAX_CHARGED_POINTS = 50;
-        public const int MAX_CHARGED_RODS = 30;
-        public const int MAX_CHARGED_PLANES = 30;
-
-        public ComputeBuffer chargedPointData; // xyz position, w is charge
-        public ComputeBuffer chargedRodPositions; // xyz position, w is charge
-        public ComputeBuffer chargedRodDirections; // xyz direction, w unused
-        public ComputeBuffer chargedPlaneEquations; // xyz normal, w is negative distance from plane to origin
-        public ComputeBuffer chargedPlaneChargeDensities; // Note: this is a float buffer, all other are float4
-
-        List<Vector4> cpuChargedPointData = new List<Vector4>();
-        List<Vector4> cpuChargedRodPositions = new List<Vector4>();
-        List<Vector4> cpuChargedRodDirections = new List<Vector4>();
-        List<Vector4> cpuChargedPlaneEquations = new List<Vector4>();
-        List<float> cpuChargedPlaneChargeDensities = new List<float>();
+        private const int MAX_CHARGED_POINTS = 50;
+        private const int MAX_CHARGED_RODS = 25;
+        private const int MAX_CHARGED_PLANES = 25;
+        private const int PACKED_TEXTURE_WIDTH = 16;
 
         private int lastUpdateFrame = -1;
 
-        public ElectricFieldComputeBuffers()
+        // Data is linearized into a float4 array, which is then stored in the
+        // texture with the following conversion: linear_index = texture_x + texture_y * TEXTURE_WIDTH
+        // See UpdateBuffersForCurrentFrame on how the charged objects are linearized
+        private Texture2D packedDataTexture;
+
+        public ElectricFieldPackedGPUData()
         {
-            chargedPointData = new ComputeBuffer(MAX_CHARGED_POINTS, sizeof(float) * 4);
-            chargedRodPositions = new ComputeBuffer(MAX_CHARGED_RODS, sizeof(float) * 4);
-            chargedRodDirections = new ComputeBuffer(MAX_CHARGED_RODS, sizeof(float) * 4);
-            chargedPlaneEquations = new ComputeBuffer(MAX_CHARGED_PLANES, sizeof(float) * 4);
-            chargedPlaneChargeDensities = new ComputeBuffer(MAX_CHARGED_PLANES, sizeof(float));
+            packedDataTexture = new Texture2D(PACKED_TEXTURE_WIDTH, PACKED_TEXTURE_WIDTH, TextureFormat.RGBAFloat, false, true);
         }
 
-        public void DisposeBuffers()
+        private static int intMin(int a, int b)
         {
-            chargedPointData.Dispose();
-            chargedRodPositions.Dispose();
-            chargedRodDirections.Dispose();
-            chargedPlaneEquations.Dispose();
-            chargedPlaneChargeDensities.Dispose();
+            return a < b ? a : b;
         }
 
         private void UpdateBuffersForCurrentFrame()
@@ -205,79 +197,73 @@ namespace Maroon.Experiments.CoulombsLawNew
             if (lastUpdateFrame == UnityEngine.Time.frameCount) return;
             lastUpdateFrame = UnityEngine.Time.frameCount;
 
-            cpuChargedPointData.Clear();
-            cpuChargedRodPositions.Clear();
-            cpuChargedRodDirections.Clear();
-            cpuChargedPlaneEquations.Clear();
-            cpuChargedPlaneChargeDensities.Clear();
+            // Update packed data
+            var efield = ElectricField.Instance;
+            Unity.Collections.NativeArray<Vector4> rawTextureData = packedDataTexture.GetRawTextureData<Vector4>();
+            int linearIndex = 0;
 
-            // Update charged object buffers
-            foreach (var pointCharge in ElectricField.Instance.chargedPoints)
+            for (int i = 0; i < intMin(efield.chargedPoints.Count, MAX_CHARGED_POINTS); i++)
             {
-                if (cpuChargedPointData.Count + 1 >= MAX_CHARGED_POINTS) break;
-                var pos = pointCharge.transform.position;
-                Vector4 packedInfo = new Vector4(pos.x, pos.y, pos.z, pointCharge.GetCharge());
-                cpuChargedPointData.Add(packedInfo);
-            }
-            chargedPointData.SetData<Vector4>(cpuChargedPointData);
+                var point = efield.chargedPoints[i];
+                var pos = point.transform.position;
 
-            foreach (var chargedRod in ElectricField.Instance.chargedRods)
-            {
-                if (cpuChargedRodPositions.Count + 1 >= MAX_CHARGED_POINTS) break;
-                var pos = chargedRod.transform.position;
-                var dir = chargedRod.GetDirection();
-                Vector4 packedPos = new Vector4(pos.x, pos.y, pos.z, chargedRod.GetChargeDensity());
-                Vector4 packedDir = new Vector4(dir.x, dir.y, dir.z, 0);
-                cpuChargedRodPositions.Add(packedPos);
-                cpuChargedRodDirections.Add(packedDir);
+                rawTextureData[linearIndex] = new Vector4(pos.x, pos.y, pos.z, point.GetCharge());
+                linearIndex += 1;
             }
-            chargedRodPositions.SetData<Vector4>(cpuChargedRodPositions);
-            chargedRodDirections.SetData<Vector4>(cpuChargedRodDirections);
+            for (int i = 0; i < intMin(efield.chargedRods.Count, MAX_CHARGED_RODS); i++)
+            {
+                var rod = efield.chargedRods[i];
+                var pos = rod.transform.position;
+                var dir = rod.GetDirection();
+                float charge = rod.GetChargeDensity();
 
-            // Get charged plane packed data
-            foreach (var chargedPlane in ElectricField.Instance.chargedPlanes)
-            {
-                if (cpuChargedPlaneEquations.Count + 1 >= MAX_CHARGED_PLANES) break;
-                var normal = chargedPlane.GetNormal();
-                Vector4 equation = new Vector4(normal.x, normal.y, normal.z, -Vector3.Dot(normal, chargedPlane.transform.position));
-                cpuChargedPlaneEquations.Add(equation);
-                cpuChargedPlaneChargeDensities.Add(chargedPlane.GetChargeDensity());
+                rawTextureData[linearIndex] = new Vector4(pos.x, pos.y, pos.z, charge);
+                linearIndex += 1;
+                rawTextureData[linearIndex] = new Vector4(dir.x, dir.y, dir.z, charge);
+                linearIndex += 1;
             }
-            chargedPlaneEquations.SetData<Vector4>(cpuChargedPlaneEquations);
-            chargedPlaneChargeDensities.SetData<float>(cpuChargedPlaneChargeDensities);
+            for (int i = 0; i < intMin(efield.chargedPlanes.Count, MAX_CHARGED_PLANES); i++)
+            {
+                var plane = efield.chargedPlanes[i];
+                var planeEquation = plane.GetPlaneEquation();
+                float charge = plane.GetChargeDensity();
+
+                rawTextureData[linearIndex] = planeEquation;
+                linearIndex += 1;
+                rawTextureData[linearIndex] = charge * Vector4.one;
+                linearIndex += 1;
+            }
+            // Upload packed data to gpu texture
+            packedDataTexture.Apply();
         }
 
-        // Shader should include "ShaderUtils.cginc" for this to work
+        // Shader should include "ElectricFieldShaderUtils.cginc" for this to work
         public void SetUniformsForComputeShader(ComputeShader computeShader, int kernelIndex)
         {
             UpdateBuffersForCurrentFrame();
 
+            var efield = ElectricField.Instance;
             computeShader.SetFloat("_PointChargeMinDist", ChargedPoint.RADIUS);
             computeShader.SetFloat("_ChargedRodMinDist", ChargedRod.RADIUS);
-            computeShader.SetInt("_ChargedPointCount", cpuChargedPointData.Count);
-            computeShader.SetInt("_ChargedRodCount", cpuChargedRodPositions.Count);
-            computeShader.SetInt("_ChargedPlaneCount", cpuChargedPlaneEquations.Count);
-            computeShader.SetBuffer(kernelIndex, "_ChargedPointData", chargedPointData);
-            computeShader.SetBuffer(kernelIndex, "_ChargedRodPositions", chargedRodPositions);
-            computeShader.SetBuffer(kernelIndex, "_ChargedRodDirections", chargedRodDirections);
-            computeShader.SetBuffer(kernelIndex, "_ChargedPlaneEquations", chargedPlaneEquations);
-            computeShader.SetBuffer(kernelIndex, "_ChargedPlaneChargeDensities", chargedPlaneChargeDensities);
+            computeShader.SetInt("_ChargedPointCount", intMin(MAX_CHARGED_POINTS, efield.chargedPoints.Count));
+            computeShader.SetInt("_ChargedRodCount", intMin(MAX_CHARGED_RODS, efield.chargedRods.Count));
+            computeShader.SetInt("_ChargedPlaneCount", intMin(MAX_CHARGED_PLANES, efield.chargedPlanes.Count));
+            computeShader.SetInt("_ChargedObjectTextureWidth", PACKED_TEXTURE_WIDTH);
+            computeShader.SetTexture(kernelIndex, "_ChargedObjectDataPacked", packedDataTexture);
         }
 
         public void SetUniformsForMaterial(Material material)
         {
             UpdateBuffersForCurrentFrame();
 
+            var efield = ElectricField.Instance;
             material.SetFloat("_PointChargeMinDist", ChargedPoint.RADIUS);
             material.SetFloat("_ChargedRodMinDist", ChargedRod.RADIUS);
-            material.SetInt("_ChargedPointCount", cpuChargedPointData.Count);
-            material.SetInt("_ChargedRodCount", cpuChargedRodPositions.Count);
-            material.SetInt("_ChargedPlaneCount", cpuChargedPlaneEquations.Count);
-            material.SetBuffer("_ChargedPointData", chargedPointData);
-            material.SetBuffer("_ChargedRodPositions", chargedRodPositions);
-            material.SetBuffer("_ChargedRodDirections", chargedRodDirections);
-            material.SetBuffer("_ChargedPlaneEquations", chargedPlaneEquations);
-            material.SetBuffer("_ChargedPlaneChargeDensities", chargedPlaneChargeDensities);
+            material.SetInt("_ChargedPointCount", intMin(MAX_CHARGED_POINTS, efield.chargedPoints.Count));
+            material.SetInt("_ChargedRodCount", intMin(MAX_CHARGED_RODS, efield.chargedRods.Count));
+            material.SetInt("_ChargedPlaneCount", intMin(MAX_CHARGED_PLANES, efield.chargedPlanes.Count));
+            material.SetInt("_ChargedObjectTextureWidth", PACKED_TEXTURE_WIDTH);
+            material.SetTexture("_ChargedObjectDataPacked", packedDataTexture);
         }
     }
 }

@@ -134,17 +134,29 @@ float rayConeIntersection(
 // Note: Just uses a single hardcoded directional light and hardcoded material values for simple shading
 float3 phongShading(float3 viewDir, float3 normal, float3 materialColor)
 {
-    const float3 lightDir = normalize(float3(1, -1, 1));
+    float3 lightDir = normalize(float3(1, -1, 1));
     const float3 lightColor = float3(1, 1, 1);
-    const float lightStrength = 0.5;
+    const float lightStrength = 0.4;
     const float3 ambientColor = float3(1, 1, 1);
     const float specularCoefficient = 10.0;
-    const float ambientStrength = 0.1;
+    const float specularStrength = 0.5;
+    const float ambientStrength = 0.25;
+
+    // Handle backfaces correctly (Isosurfaces)
+    if (dot(normal, viewDir) >= 0.0)
+    {
+        normal = -normal;
+    }
+    // Make double sided lighting (Mostly so that isosurfaces look a bit better)
+    if (dot(normal, lightDir) >= 0.0)
+    {
+        lightDir = -lightDir;
+    }
 
     float3 color = float3(0, 0, 0);
     color += ambientColor * materialColor * ambientStrength;
     color += materialColor * lightColor * max(0.0, dot(normal, -lightDir)) * lightStrength;
-    color += lightColor * lightStrength * pow(max(0.0, dot(reflect(viewDir, normal), -lightDir)), specularCoefficient);
+    color += lightColor * specularStrength * lightStrength * pow(max(0.0, dot(reflect(viewDir, normal), -lightDir)), specularCoefficient);
     return color;
 }
 
@@ -189,6 +201,5 @@ float3 colorRamp5PointGetValue(float alpha)
     t = clamp(t, 0.0, 1.0);
     return lerp(minColor, maxColor, t);
 }
-
 
 #endif
