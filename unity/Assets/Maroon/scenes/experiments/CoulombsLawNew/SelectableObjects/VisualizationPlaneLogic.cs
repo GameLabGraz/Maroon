@@ -22,7 +22,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         public int heatmapMode; // 0 = disabled, 1 = Potential, 2 = Magnitude
         public bool equipotentialLinesEnabled;
         public float equipotentialLinesSpacing = 30000.0f;
-        public float transparency = 0.8f;
+        public float transparency = 0.5f;
 
         public Vector3 position = Vector3.zero; //Note: In 2D camera mode this may not be the same as transform.position
         public Vector3 planeNormal = Vector3.back;
@@ -30,7 +30,6 @@ namespace Maroon.Experiments.CoulombsLawNew
         private Vector3 positionOffset = Vector3.zero;
 
         [SerializeField] private GUIFloatInputLogic uiPotentialRange;
-        [SerializeField] private GUIFloatInputLogic uiPotentialOffset;
         [SerializeField] private GUIFloatInputLogic uiPotentialInterpolationExponent;
         [SerializeField] private GUIFloatInputLogic uiMaxMagnitude;
         [SerializeField] private GUIFloatInputLogic uiMagnitudeInterpolationExponent;
@@ -103,7 +102,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
             material.SetInteger(Shader.PropertyToID("_HeatmapMode"), heatmapMode);
             material.SetFloat(Shader.PropertyToID("_VoltageRange"), uiPotentialRange.GetValue());
-            material.SetFloat(Shader.PropertyToID("_VoltageOffset"), uiPotentialOffset.GetValue() + groundPotential);
+            material.SetFloat(Shader.PropertyToID("_VoltageOffset"), groundPotential);
             material.SetFloat(Shader.PropertyToID("_VoltageInterpolationExponent"), uiPotentialInterpolationExponent.GetValue());
             material.SetFloat(Shader.PropertyToID("_MaxMagnitude"), uiMaxMagnitude.GetValue());
             material.SetFloat(Shader.PropertyToID("_MagnitudeInterpolationExponent"), uiMagnitudeInterpolationExponent.GetValue());

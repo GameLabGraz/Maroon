@@ -61,7 +61,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             }
 
             // Update empty selection label
-            if (system.emptySelectionLabel != null)
+            if (system.emptySelectionLabel.gameObject != null)
             {
                 system.emptySelectionLabel.gameObject.SetActive(system.selectedObject == null);
             }

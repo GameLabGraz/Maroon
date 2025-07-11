@@ -6,50 +6,67 @@ namespace Maroon.Experiments.CoulombsLawNew
 {
     public struct ChargedPointData
     {
-        public ChargedPointData(Vector3 pos, Vector3 initialVelocity, float charge, bool createFieldLines)
+        public ChargedPointData(
+            Vector3 pos, Vector3 initialVelocity, float charge, bool createFieldLines, 
+            float mass, bool hasCollision, bool lockPosition, bool contributeToEField, bool isConductive)
         {
             this.position = pos;
             this.initialVelocity = initialVelocity;
             this.charge = charge;
             this.createFieldLines = createFieldLines;
+            this.mass = mass;
+            this.hasCollision = hasCollision;
+            this.lockPosition = lockPosition;
+            this.contributeToEField = contributeToEField;
+            this.isConductive = isConductive;
         }
 
         public Vector3 position;
-        public Vector3 initialVelocity;
         public float charge; // Coulombs
         public bool createFieldLines;
+
+        public Vector3 initialVelocity;
+        public float mass;
+        public bool hasCollision;
+        public bool lockPosition;
+        public bool contributeToEField;
+        public bool isConductive;
     }
 
     public struct ChargedRodData
     {
-        public ChargedRodData(Vector3 pos, Vector3 direction, float chargeDensity, bool createFieldLines)
+        public ChargedRodData(Vector3 pos, Vector3 direction, float chargeDensity, bool createFieldLines, bool isConductive)
         {
             this.position = pos;
             this.direction = direction;
             this.chargeDensity = chargeDensity;
             this.createFieldLines = createFieldLines;
+            this.isConductive = isConductive;
         }
 
         public Vector3 position;
         public Vector3 direction; // normalized
         public float chargeDensity; // Coulombs/meter
         public bool createFieldLines;
+        public bool isConductive;
     }
 
     public struct ChargedPlaneData
     {
-        public ChargedPlaneData(Vector3 pos, Vector3 normal, float chargeDensity, bool createFieldLines)
+        public ChargedPlaneData(Vector3 pos, Vector3 normal, float chargeDensity, bool createFieldLines, bool isConductive)
         {
             this.position = pos;
             this.normal = normal;
             this.chargeDensity = chargeDensity;
             this.createFieldLines = createFieldLines;
+            this.isConductive = isConductive;
         }
 
         public Vector3 position;
         public Vector3 normal; // normalized
         public float chargeDensity; // Coulombs/meter^2
         public bool createFieldLines;
+        public bool isConductive;
     }
 
     public struct Configuration
@@ -74,19 +91,23 @@ namespace Maroon.Experiments.CoulombsLawNew
             {
                 var pointCharge = efield.chargedPoints[i];
                 result.chargedPoints[i] = new ChargedPointData(
-                    pointCharge.transform.position, Vector3.zero, pointCharge.GetCharge(), pointCharge.generateFieldLines);
+                    pointCharge.transform.position, pointCharge.initialVelocity, pointCharge.GetCharge(), pointCharge.generateFieldLines,
+                    pointCharge.GetMass(), pointCharge.GetHasCollision(), pointCharge.lockPosition, 
+                    pointCharge.contributeToEField, pointCharge.isConductive);
             }
             for (int i = 0; i < efield.chargedRods.Count; i++)
             {
                 var chargedRod = efield.chargedRods[i];
                 result.chargedRods[i] = new ChargedRodData(
-                    chargedRod.transform.position, chargedRod.GetDirection(), chargedRod.GetChargeDensity(), chargedRod.generateFieldLines);
+                    chargedRod.transform.position, chargedRod.GetDirection(), chargedRod.GetChargeDensity(), 
+                    chargedRod.generateFieldLines, chargedRod.isConductive);
             }
             for (int i = 0; i < efield.chargedPlanes.Count; i++)
             {
                 var chargedPlane = efield.chargedPlanes[i];
                 result.chargedPlanes[i] = new ChargedPlaneData(
-                    chargedPlane.transform.position, chargedPlane.GetNormal(), chargedPlane.GetChargeDensity(), chargedPlane.generateFieldLines);
+                    chargedPlane.transform.position, chargedPlane.GetNormal(), chargedPlane.GetChargeDensity(), 
+                    chargedPlane.generateFieldLines, chargedPlane.isConductive);
             }
             
             return result;
@@ -111,6 +132,12 @@ namespace Maroon.Experiments.CoulombsLawNew
                 var newParticle = GameObject.Instantiate(pointChargePrefab, pointData.position, Quaternion.identity, parentForNewObjects);
                 newParticle.SetCharge(pointData.charge);
                 newParticle.generateFieldLines = pointData.createFieldLines;
+                newParticle.initialVelocity = pointData.initialVelocity;
+                newParticle.SetHasCollision(pointData.hasCollision);
+                newParticle.SetMass(pointData.mass);
+                newParticle.contributeToEField = pointData.contributeToEField;
+                newParticle.lockPosition = pointData.lockPosition;
+                newParticle.isConductive = pointData.isConductive;
             }
             foreach (var rodData in configuration.chargedRods)
             {
@@ -118,6 +145,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                 newRod.SetRodParameters(rodData.position, rodData.direction);
                 newRod.SetChargeDensity(rodData.chargeDensity);
                 newRod.generateFieldLines = rodData.createFieldLines;
+                newRod.isConductive = rodData.isConductive;
             }
             foreach (var planeData in configuration.chargedPlanes)
             {
@@ -125,6 +153,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                 newPlane.SetPlaneParameters(planeData.position, planeData.normal);
                 newPlane.SetChargeDensity(planeData.chargeDensity);
                 newPlane.generateFieldLines = planeData.createFieldLines;
+                newPlane.isConductive = planeData.isConductive;
             }
         }
     }

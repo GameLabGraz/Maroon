@@ -44,6 +44,12 @@ namespace Maroon.Experiments.CoulombsLawNew
         // Generates vertices and lineStartIndices
         private void GenerateLine(Vector3 pos, bool forwards)
         {
+            var efield = ElectricField.Instance;
+            var box = SimulationBox.Instance.Bounds;
+            // box.extents = 2.0f * box.extents;
+            if (!box.Contains(pos)) return;
+
+            // Init ringbuffer values
             for (int i = 0; i < prevPositionsRingBuffer.Length; i++)
             {
                 prevPositionsRingBuffer[i] = new Vector3(-10000, -1000, 0);
@@ -52,14 +58,12 @@ namespace Maroon.Experiments.CoulombsLawNew
             int ringbufferIndex = 0;
             prevPositionsRingBuffer[(ringbufferIndex + RINGBUFFER_SIZE - 1) % RINGBUFFER_SIZE] = pos; // Initial previous pos
 
+            // Add initial vertex
             lineStartIndices.Add(nextVertexIndex);
-            var efield = ElectricField.Instance;
-            var box = SimulationBox.Instance.Bounds;
-            // box.extents = 2.0f * box.extents;
-
             AddVertex(pos);
-            float dirSign = forwards ? 1.0f : -1.0f;
 
+            // Step through field line, generating new vertices
+            float dirSign = forwards ? 1.0f : -1.0f;
             for (int i = 0; i < MAX_STEPS_PER_LINE; i++)
             {
                 // Step

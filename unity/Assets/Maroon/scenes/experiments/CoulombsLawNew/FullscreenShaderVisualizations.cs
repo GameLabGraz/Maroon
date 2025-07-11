@@ -37,13 +37,13 @@ namespace Maroon.Experiments.CoulombsLawNew
     {
         // Note: RenderTexture size is currently 256x256 = 65.536,
         //  so a VectorField with 40*40*40 = 64.000 still fits into the texture
+        //  The TEXTURE_RESOLUTION needs to be manually updated if the limits are changed...
         public const int VECTORFIELD_MAX_RESOLUTION = 40;
         public const int TEXTURE_RESOLUTION = 256;
 
         [SerializeField] private Material vectorFieldMaterial;
         [SerializeField] private Material isoSurfaceMaterial;
         [SerializeField] private Material vectorFieldGridCalculationMaterial;
-        [SerializeField] private ComputeShader gridValuesComputeShader;
         [SerializeField] private GroundPinLogic groundPin;
 
         // This texture stores the vector value and potential of the vector field
@@ -70,7 +70,6 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private GUIFloatInputLogic uiMaxMagnitude;
         [SerializeField] private GUIFloatInputLogic uiMagnitudeInterpolationExponent;
 
-        [SerializeField] private GUIFloatInputLogic uiVoltageCenter;
         [SerializeField] private GUIFloatInputLogic uiVoltageRange;
         [SerializeField] private GUIFloatInputLogic uiVoltageInterpolationExponent;
 
@@ -86,6 +85,8 @@ namespace Maroon.Experiments.CoulombsLawNew
             gridValuesTexture.material = vectorFieldGridCalculationMaterial;
             gridValuesTexture.updateMode = CustomRenderTextureUpdateMode.OnDemand;
 
+            uiVectorFieldResolutionSlider.SetMinMax(4, VECTORFIELD_MAX_RESOLUTION);
+
             // Add UI callbacks
             uiVectorFieldTransparencyModeDropdown.OnValueChanged.AddListener((int dropdownValue) =>
             {
@@ -93,14 +94,14 @@ namespace Maroon.Experiments.CoulombsLawNew
             });
         }
 
-        // Calculate vector field values at grid-cell positions, updates compute buffer
+        // Calculate vector field values at grid-cell positions, stores results it in gridValuesTexture
         private void LateUpdate()
         {
             if (!uiVectorFieldEnabledToggle.GetValue()) return;
 
             VectorFieldInfos gridInfo = new VectorFieldInfos(uiVectorFieldResolutionSlider.GetValue(), uiVectorField3DModeToggle.GetValue());
 
-            // Set compute shader uniform values
+            // Calculate Vector-Field Values using CustomRenderTexture
             var efield = ElectricField.Instance;
             vectorFieldGridCalculationMaterial.SetInt("_GridResolutionX", gridInfo.resolutionX);
             vectorFieldGridCalculationMaterial.SetInt("_GridResolutionY", gridInfo.resolutionY);
@@ -112,6 +113,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             gridValuesTexture.Update();
 
             // CPU-Logic for buffer-values, maybe we want this if CustomRenderTexture is not supported?
+            //      Note that for this to work CustomRenderTexture should be changed to Texture2D type
             // var efield = ElectricField.Instance;
             // Unity.Collections.NativeArray<Color> rawTextureData = gridValuesTexture.GetRawTextureData<Color>();
             // for (int x = 0; x < gridInfo.resolutionX; x++)
@@ -135,7 +137,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             //         }
             //     }
             // }
-            // // Upload texture data to GPU (Unity keeps Texture2D data in ram and in vram, and only uploads data on Update)
+            // // Upload texture data to GPU (Unity keeps Texture2D data in ram and in vram, and only uploads data on Apply)
             // //      Note: We're uploading 1MB of texture data each frame, given a PCIe 3.0 connection (2010 technology)
             // //          @60FPS we have 266MB of data to upload per frame, so 1MB per frame should be fine on a laptop/desktop
             // //          Not sure about moblile devices, to improve performance we could only upload parts of the texture that are
@@ -174,7 +176,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
                 isoSurfaceMaterial.SetFloat("_MaxMagnitude", uiMaxMagnitude.GetValue());
                 isoSurfaceMaterial.SetFloat("_MagnitudeInterpolationExponent", uiMagnitudeInterpolationExponent.GetValue());
-                isoSurfaceMaterial.SetFloat("_VoltageCenter", uiVoltageCenter.GetValue() + groundPotential);
+                isoSurfaceMaterial.SetFloat("_VoltageCenter", groundPotential);
 
                 Graphics.Blit(source, destination, isoSurfaceMaterial);
             }
@@ -203,7 +205,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                 vectorFieldMaterial.SetFloat("_MaxMagnitude", uiMaxMagnitude.GetValue());
                 vectorFieldMaterial.SetFloat("_MagnitudeInterpolationExponent", uiMagnitudeInterpolationExponent.GetValue());
 
-                vectorFieldMaterial.SetFloat("_VoltageCenter", uiVoltageCenter.GetValue() + groundPotential);
+                vectorFieldMaterial.SetFloat("_VoltageCenter", groundPotential);
                 vectorFieldMaterial.SetFloat("_VoltageRange", uiVoltageRange.GetValue());
                 vectorFieldMaterial.SetFloat("_VoltageInterpolationExponent", uiVoltageInterpolationExponent.GetValue());
                 vectorFieldMaterial.SetInt("_DisplayOutsideOfRangeBool", uiVectorFieldDisplayOutsideOfRangeBool.GetValue() ? 1 : 0);

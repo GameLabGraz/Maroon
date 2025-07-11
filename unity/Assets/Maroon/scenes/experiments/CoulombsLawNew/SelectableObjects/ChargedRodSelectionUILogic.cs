@@ -11,6 +11,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private GUIFloatInputLogic chargeDensityInput;
         [SerializeField] private GUIBoolInputLogic createFieldLinesToggle;
         [SerializeField] private GUIButtonLogic deleteButton;
+        [SerializeField] private GUIBoolInputLogic uiIsConductiveToggle;
 
         private ChargedRod chargedRod;
 
@@ -35,11 +36,17 @@ namespace Maroon.Experiments.CoulombsLawNew
             {
                 chargedRod.generateFieldLines = newValue;
             });
+            uiIsConductiveToggle.SetValue(chargedRod.isConductive);
+            uiIsConductiveToggle.OnValueChanged.AddListener((bool newValue) =>
+            {
+                chargedRod.isConductive = newValue;
+            });
 
             chargeDensityInput.SetMinMax(-ChargedRod.MAX_CHARGE_DENSITY, ChargedRod.MAX_CHARGE_DENSITY);
             chargeDensityInput.SetValue(chargedRod.GetChargeDensity());
             chargeDensityInput.OnValueChanged.AddListener((float newDensity) => { chargedRod.SetChargeDensity(newDensity); });
             deleteButton.OnButtonClick.AddListener(() => GameObject.Destroy(chargedRod.gameObject));
+
         }
     }
 }

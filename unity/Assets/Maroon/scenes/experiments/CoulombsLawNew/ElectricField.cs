@@ -14,13 +14,6 @@ namespace Maroon.Experiments.CoulombsLawNew
         public List<ChargedPlane> chargedPlanes = new List<ChargedPlane>();
         public ElectricFieldPackedGPUData electricFieldPackedGPUData; // Cannot initialize here because of computeBuffers
 
-        private void Start()
-        {
-            // Note(MartinR): My pc keeps churning through frames, and as there are no vsynch options in maroon
-            //      i have this here. Remove this before release I guess
-            Application.targetFrameRate = 120;
-        }
-
         // Returns the vector-value of the electric field at a given position, Unit: [Newton/Coulomb]
         //      If limitChargeInfluenceDistance is set, then charged objects use a distance threshhold so that
         //      no division by zero/infinitely high values can be produces. This behavior is usually desired
@@ -32,7 +25,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             // Add point charge influence
             foreach (var chargedPoint in chargedPoints)
             {
-                if (chargedPoint.gameObject == excludeObject) continue;
+                if (chargedPoint.gameObject == excludeObject || !chargedPoint.contributeToEField) continue;
 
                 var toChargeDirection = position - chargedPoint.transform.position;
                 float distanceInMeter = toChargeDirection.magnitude;
@@ -176,6 +169,9 @@ namespace Maroon.Experiments.CoulombsLawNew
         private const int PACKED_TEXTURE_WIDTH = 16;
 
         private int lastUpdateFrame = -1;
+        private int activePoints = 0;
+        private int activeRods = 0;
+        private int activePlanes = 0;
 
         // Data is linearized into a float4 array, which is then stored in the
         // texture with the following conversion: linear_index = texture_x + texture_y * TEXTURE_WIDTH
@@ -201,14 +197,19 @@ namespace Maroon.Experiments.CoulombsLawNew
             var efield = ElectricField.Instance;
             Unity.Collections.NativeArray<Vector4> rawTextureData = packedDataTexture.GetRawTextureData<Vector4>();
             int linearIndex = 0;
+            activeRods = 0;
+            activePoints = 0;
+            activePlanes = 0;
 
             for (int i = 0; i < intMin(efield.chargedPoints.Count, MAX_CHARGED_POINTS); i++)
             {
                 var point = efield.chargedPoints[i];
+                if (!point.contributeToEField) continue;
                 var pos = point.transform.position;
 
                 rawTextureData[linearIndex] = new Vector4(pos.x, pos.y, pos.z, point.GetCharge());
                 linearIndex += 1;
+                activePoints += 1;
             }
             for (int i = 0; i < intMin(efield.chargedRods.Count, MAX_CHARGED_RODS); i++)
             {
@@ -221,6 +222,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                 linearIndex += 1;
                 rawTextureData[linearIndex] = new Vector4(dir.x, dir.y, dir.z, charge);
                 linearIndex += 1;
+                activeRods += 1;
             }
             for (int i = 0; i < intMin(efield.chargedPlanes.Count, MAX_CHARGED_PLANES); i++)
             {
@@ -232,6 +234,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                 linearIndex += 1;
                 rawTextureData[linearIndex] = charge * Vector4.one;
                 linearIndex += 1;
+                activePlanes += 1;
             }
             // Upload packed data to gpu texture
             packedDataTexture.Apply();
@@ -242,12 +245,11 @@ namespace Maroon.Experiments.CoulombsLawNew
         {
             UpdateBuffersForCurrentFrame();
 
-            var efield = ElectricField.Instance;
             computeShader.SetFloat("_PointChargeMinDist", ChargedPoint.RADIUS);
             computeShader.SetFloat("_ChargedRodMinDist", ChargedRod.RADIUS);
-            computeShader.SetInt("_ChargedPointCount", intMin(MAX_CHARGED_POINTS, efield.chargedPoints.Count));
-            computeShader.SetInt("_ChargedRodCount", intMin(MAX_CHARGED_RODS, efield.chargedRods.Count));
-            computeShader.SetInt("_ChargedPlaneCount", intMin(MAX_CHARGED_PLANES, efield.chargedPlanes.Count));
+            computeShader.SetInt("_ChargedPointCount",   activePoints);
+            computeShader.SetInt("_ChargedRodCount",     activeRods);
+            computeShader.SetInt("_ChargedPlaneCount",   activePlanes);
             computeShader.SetInt("_ChargedObjectTextureWidth", PACKED_TEXTURE_WIDTH);
             computeShader.SetTexture(kernelIndex, "_ChargedObjectDataPacked", packedDataTexture);
         }
@@ -259,9 +261,9 @@ namespace Maroon.Experiments.CoulombsLawNew
             var efield = ElectricField.Instance;
             material.SetFloat("_PointChargeMinDist", ChargedPoint.RADIUS);
             material.SetFloat("_ChargedRodMinDist", ChargedRod.RADIUS);
-            material.SetInt("_ChargedPointCount", intMin(MAX_CHARGED_POINTS, efield.chargedPoints.Count));
-            material.SetInt("_ChargedRodCount", intMin(MAX_CHARGED_RODS, efield.chargedRods.Count));
-            material.SetInt("_ChargedPlaneCount", intMin(MAX_CHARGED_PLANES, efield.chargedPlanes.Count));
+            material.SetInt("_ChargedPointCount",   activePoints);
+            material.SetInt("_ChargedRodCount",     activeRods);
+            material.SetInt("_ChargedPlaneCount",   activePlanes);
             material.SetInt("_ChargedObjectTextureWidth", PACKED_TEXTURE_WIDTH);
             material.SetTexture("_ChargedObjectDataPacked", packedDataTexture);
         }

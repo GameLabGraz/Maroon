@@ -3,8 +3,8 @@
     Properties 
 	{
 		_LineHalfWidth("LineHalfWidth", Float) = 0.005 // In Unity coordinates
-		// Extra line thickness (percentual to normal line thickness), where line smoothly fades into background color
-		_LineSmoothFalloff("LineSmoothFalloff", Range(0, 1)) = 1.0
+		// Extra line thickness, where line smoothly fades into background color
+		_LineSmoothFalloff("LineSmoothFalloff", Float) = 0.005
 		_LineColor("LineColor", Vector) = (0.0, 0.0, 0.0, 1.0)
     }
     
@@ -131,9 +131,8 @@
 				float intervalIndex = floor(voltage / _LineSpacingVoltage);
 				float targetVoltageLow = intervalIndex * _LineSpacingVoltage;
 				float targetVoltageHigh = targetVoltageLow + _LineSpacingVoltage;
-				float falloffDistance = _LineHalfWidth * _LineSmoothFalloff;
 				// Make search radius a little larger (1.3), so we can also detect if the line is outside of range
-				float maxSearchRadius = (_LineHalfWidth + falloffDistance) * 1.3; 
+				float maxSearchRadius = (_LineHalfWidth + _LineSmoothFalloff) * 1.3; 
 
 				// Try to find a point near current position which is directly on the equipotential line.
 				// We use this point to determine the distance of the current position to the equipotential line,
@@ -143,7 +142,7 @@
 				float distanceClosest     = min(distanceVoltageHigh, distanceVoltageLow);
 
 				// Return smoothed line alpha
-				float alpha = 1.0 - smoothstep(_LineHalfWidth, _LineHalfWidth + falloffDistance, distanceClosest);
+				float alpha = 1.0 - smoothstep(_LineHalfWidth, _LineHalfWidth + _LineSmoothFalloff, distanceClosest);
 				return alpha;
 			}
 
@@ -186,7 +185,7 @@
 			{
 				// Early exit if we have no charged objects
 				if (_ChargedPointCount == 0 && _ChargedRodCount == 0 && _ChargedPlaneCount == 0) {
-					return float4(1, 1, 1, pow(_Transparency, 2.2));
+					return float4(1, 1, 1, _Transparency);
 				}
 
 				// Project frag-position onto plane (So it works on all mesh types)
@@ -194,19 +193,15 @@
 				posOnPlane = posOnPlane - _PlaneEquation.xyz * (dot(posOnPlane, _PlaneEquation.xyz) + _PlaneEquation.w);
 
 				// Compose heatmap, equipotential lines and transparency into final color
-				float4 outputColor = float4(1, 1, 1, 1);
+				float4 outputColor = float4(1, 1, 1, _Transparency);
 				if (_HeatmapMode != 0) {
 					outputColor.xyz = GetHeatmapColor(posOnPlane);
 				}
 
-				outputColor.w = _Transparency;
 				if (_DrawEquipotentialLines != 0) {
 					float lineAlpha = getEquipotentialLineAlpha(posOnPlane);
 					outputColor = lerp(outputColor, _LineColor, lineAlpha);
 				}
-
-				// Gamma correct alpha (not sure if this is needed/usefull)
-				outputColor.w = pow(outputColor.w, 1.0 / 2.2);
 
 				return outputColor;
 			}

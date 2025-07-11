@@ -11,6 +11,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private GUIVector3InputLogic normalDisplay;
         [SerializeField] private GUIFloatInputLogic chargeDensityInput;
         [SerializeField] private GUIBoolInputLogic createFieldLinesToggle;
+        [SerializeField] private GUIBoolInputLogic uiIsConductiveToggle;
         [SerializeField] private GUIButtonLogic deleteButton;
 
         private ChargedPlane chargedPlane;
@@ -35,6 +36,11 @@ namespace Maroon.Experiments.CoulombsLawNew
             createFieldLinesToggle.OnValueChanged.AddListener((bool newValue) =>
             {
                 chargedPlane.generateFieldLines = newValue;
+            });
+            uiIsConductiveToggle.SetValue(chargedPlane.isConductive);
+            uiIsConductiveToggle.OnValueChanged.AddListener((bool newValue) =>
+            {
+                chargedPlane.isConductive = newValue;
             });
 
             chargeDensityInput.SetMinMax(-ChargedPlane.MAX_CHARGE_DENSITY, ChargedPlane.MAX_CHARGE_DENSITY);

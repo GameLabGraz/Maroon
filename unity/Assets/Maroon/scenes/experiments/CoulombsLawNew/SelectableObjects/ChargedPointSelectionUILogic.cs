@@ -12,6 +12,13 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private GUIBoolInputLogic generateFieldLinesToggle;
         [SerializeField] private GUIButtonLogic deleteButton;
 
+        [SerializeField] private GUIVector3InputLogic uiInitialVelocityInput;
+        [SerializeField] private GUIFloatInputLogic   uiMassSlider;
+        [SerializeField] private GUIBoolInputLogic    uiHasCollisionToggle;
+        [SerializeField] private GUIBoolInputLogic    uiLockPositionToggle;
+        [SerializeField] private GUIBoolInputLogic    uiContributeToEFieldToggle;
+        [SerializeField] private GUIBoolInputLogic    uiIsConductiveToggle;
+
         private ChargedPoint chargedPoint;
 
         private void Start()
@@ -31,6 +38,23 @@ namespace Maroon.Experiments.CoulombsLawNew
                 chargedPoint.generateFieldLines = newValue;
             });
             deleteButton.OnButtonClick.AddListener(() => GameObject.Destroy(chargedPoint.gameObject));
+
+            uiInitialVelocityInput.SetValue(chargedPoint.initialVelocity);
+            uiInitialVelocityInput.OnEndEdit.AddListener((Vector3 newValue) => 
+            {
+                chargedPoint.initialVelocity = newValue;
+            });
+
+            uiMassSlider.SetValue(chargedPoint.GetMass());
+            uiMassSlider.OnValueChanged.AddListener((float newValue) => { chargedPoint.SetMass(newValue); });
+            uiHasCollisionToggle.SetValue(chargedPoint.GetHasCollision());
+            uiHasCollisionToggle.OnValueChanged.AddListener((bool newValue) => { chargedPoint.SetHasCollision(newValue); }); ;
+            uiLockPositionToggle.SetValue(chargedPoint.lockPosition);
+            uiLockPositionToggle.OnValueChanged.AddListener((bool newValue) => { chargedPoint.lockPosition = newValue; }); ;
+            uiContributeToEFieldToggle.SetValue(chargedPoint.contributeToEField);
+            uiContributeToEFieldToggle.OnValueChanged.AddListener((bool newValue) => { chargedPoint.contributeToEField = newValue; }); ;
+            uiIsConductiveToggle.SetValue(chargedPoint.isConductive);
+            uiIsConductiveToggle.OnValueChanged.AddListener((bool newValue) => { chargedPoint.isConductive = newValue; }); ;
         }
     }
 

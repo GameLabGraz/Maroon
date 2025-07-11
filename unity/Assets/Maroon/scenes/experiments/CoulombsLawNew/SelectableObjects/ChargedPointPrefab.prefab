@@ -26,13 +26,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7333818732060180025}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.38268343, w: 0.92387956}
+  m_LocalRotation: {x: 0.07085052, y: 0.44869465, z: 0.5447024, w: 0.7049487}
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 7333818732060008989}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 45}
+  m_LocalEulerAnglesHint: {x: -22.887, y: 50.395, z: 64.504}
 --- !u!33 &7333818732063400511
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -207,7 +207,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b76782ae8fe712d4daa6969f3fc3e220, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _fixingRing: {fileID: 7333818732060180025}
   rigidBody: {fileID: 4055257505931961413}
+  generateFieldLines: 0
+  initialVelocity: {x: 0, y: 0, z: 0}
+  storedVelocity: {x: 0, y: 0, z: 0}
+  hasCollision: 1
+  contributeToEField: 1
+  isConductive: 0
+  lockPosition: 0
 --- !u!1 &7333818732060180031
 GameObject:
   m_ObjectHideFlags: 0

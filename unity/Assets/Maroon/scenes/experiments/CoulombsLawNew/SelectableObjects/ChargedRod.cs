@@ -12,6 +12,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private float chargeDensity;
         public bool generateFieldLines = false;
+        public bool isConductive = false;
 
         // Line is defined by point (transform.position and direction)
         [SerializeField] private Vector3 direction;
@@ -130,8 +131,8 @@ namespace Maroon.Experiments.CoulombsLawNew
             childCylinder.SetActive(rayIntersectsBox);
             if (!rayIntersectsBox) return;
 
-            var posA = ray.GetPoint(t0);
-            var posB = ray.GetPoint(t1);
+            var posA = ray.GetPoint(t0 + RADIUS);
+            var posB = ray.GetPoint(t1 - RADIUS);
 
             // Update this transform (parent) first, as child objects are otherwise influenced by parent transform changing
             var capsuleYOffset = Vector3.Dot((posA + posB) / 2 - pos, direction);

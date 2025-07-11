@@ -19,6 +19,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private float chargeDensity = 0.0f;
         public bool generateFieldLines = false;
+        public bool isConductive = false;
 
         private void Awake()
         {

@@ -4,16 +4,6 @@ using UnityEngine;
 
 namespace Maroon.Experiments.CoulombsLawNew
 {
-    public enum CameraMode2D
-    {
-        FRONT,
-        BACK,
-        LEFT,
-        RIGHT,
-        TOP,
-        BOTTOM
-    }
-
     public class CameraController : MonoBehaviour
     {
         // Note(MartinR): Since maroon has the player object, we should use this for camera movement,
@@ -24,10 +14,8 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private bool _in3DMode = false;
         public bool In3DMode { get { return _in3DMode; } }
 
-        [SerializeField] private CameraMode2D _cameraMode2D = CameraMode2D.FRONT;
-        public CameraMode2D CameraMode2D { get { return _cameraMode2D; } }
-
         public UnityEngine.Events.UnityEvent OnCameraModeChanged;
+        public float cameraSensitivity = 1.0f;
 
         // Orbit Camera variables (Angles in Degree)
         private float orbitInclineAngle = 0.0f;
@@ -44,21 +32,12 @@ namespace Maroon.Experiments.CoulombsLawNew
             OnCameraModeChanged.Invoke();
         }
 
-        public void SetCameraMode2D(CameraMode2D mode2D)
-        {
-            if (_cameraMode2D == mode2D) return;
-            _cameraMode2D = mode2D;
-            if (_in3DMode) return;
-            UpdateCamera();
-            OnCameraModeChanged.Invoke();
-        }
-
         private void UpdateCamera()
         {
             if (_cameraObject == null) return;
             var camera = Camera.main;
             camera.orthographic = !_in3DMode;
-            camera.orthographicSize = 1.25f; // Half-size of orthographic height (width is determined by screen aspect ratio)
+            camera.orthographicSize = 1.25f; // This is half of orthographic height (width is determined by screen aspect ratio)
 
             var simBox = SimulationBox.Instance.Bounds;
             var transform = _cameraObject.transform;
@@ -78,13 +57,6 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.B) || Input.GetKeyDown(KeyCode.C))
-            {
-                _in3DMode = !_in3DMode;
-                UpdateCamera();
-                OnCameraModeChanged.Invoke();
-            }
-
             if (_cameraObject == null || !_in3DMode) return;
             var camera = Camera.main;
 
@@ -92,7 +64,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             orbitDragActive = _in3DMode && (Input.GetMouseButton(1) || Input.GetMouseButton(2)) && Application.isFocused;
 
             // Active/Deactive cursor
-            // Note(MartinR): cursorLockMode does not seem to work well in browser...
+            // Note(MartinR): cursorLockMode does not seem to work in browser...
 #if UNITY_EDITOR || !UNITY_WEBGL
             if (lastDragActive != orbitDragActive)
             {
@@ -106,9 +78,9 @@ namespace Maroon.Experiments.CoulombsLawNew
             {
                 // Update orbit camera coordinates based on mouse delta
                 Vector2 mouseDelta = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-                float maxScreenDimension = Mathf.Max(Screen.currentResolution.width, Screen.currentResolution.height);
-                float sensitivity = 3.0f * 360 / maxScreenDimension; // 3 Rotation for every 1 screen of mouse movement
 
+                float sensitivity = 360 / 300.0f; // Base sensitivity is 1 full rotation every 300 pixel
+                sensitivity *= cameraSensitivity;
                 orbitRotationAngle += mouseDelta.x * sensitivity;
                 orbitInclineAngle += mouseDelta.y * sensitivity;
 
@@ -121,7 +93,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             {
                 const float MOUSE_WHEEL_SENSITIVITY = 0.3f;
                 orbitDistanceToCenter -= Input.mouseScrollDelta.y * MOUSE_WHEEL_SENSITIVITY;
-                orbitDistanceToCenter = Mathf.Clamp(orbitDistanceToCenter, 1.0f, 3.0f);
+                orbitDistanceToCenter = Mathf.Clamp(orbitDistanceToCenter, 0.5f, 3.0f);
             }
 
             UpdateCamera();
@@ -163,7 +135,6 @@ namespace Maroon.Experiments.CoulombsLawNew
                 _instance.orbitInclineAngle = this.orbitInclineAngle;
                 _instance.orbitRotationAngle = this.orbitRotationAngle;
                 _instance.SetIn3DMode(this.In3DMode);
-                _instance.SetCameraMode2D(this.CameraMode2D);
                 _instance.UpdateCamera();
                 
                 Destroy(this.gameObject);

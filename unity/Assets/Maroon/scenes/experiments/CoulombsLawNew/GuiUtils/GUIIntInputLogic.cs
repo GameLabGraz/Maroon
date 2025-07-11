@@ -11,6 +11,7 @@ namespace Maroon.Experiments.CoulombsLawNew
     {
         [SerializeField] private int       value = 1;
         [SerializeField] private bool      isInteractable = true;
+        [SerializeField] private bool      isReadonly = false;
         [SerializeField] private string    nameLocalizationKey = "";
         [SerializeField] private string    unitName = "";
         [SerializeField] private SI_Prefix prefix = SI_Prefix.NONE;
@@ -52,7 +53,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             UpdateTextFieldValue();
 
             // Configure slider
-            slider.interactable = isInteractable;
+            slider.interactable = isInteractable && !isReadonly;
             slider.gameObject.SetActive(sliderEnabled);
             slider.onValueChanged.RemoveAllListeners();
             slider.onValueChanged.AddListener((float newValueFloat) =>
@@ -69,7 +70,8 @@ namespace Maroon.Experiments.CoulombsLawNew
             });
 
             // Configure textfield
-            inputField.readOnly = !isInteractable;
+            inputField.readOnly = isReadonly;
+            inputField.interactable = isInteractable;
             inputField.gameObject.SetActive(textInputEnabled);
             inputField.onEndEdit.RemoveAllListeners();
             inputField.onEndEdit.AddListener((string text) =>
@@ -98,6 +100,22 @@ namespace Maroon.Experiments.CoulombsLawNew
                 }
             });
         }
+
+        public void SetInteractable(bool interactable, bool readOnly)
+        {
+            this.isInteractable = interactable;
+            this.isReadonly = readOnly;
+            if (slider != null)
+            {
+                slider.interactable = isInteractable && !readOnly;
+            }
+            if (inputField != null)
+            {
+                inputField.readOnly = readOnly;
+                inputField.interactable = isInteractable;
+            }
+        }
+
         private void UpdateTextFieldValue()
         {
             if (inputField == null) return;
