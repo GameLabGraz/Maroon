@@ -21,6 +21,10 @@ namespace Maroon.Experiments.CoulombsLawNew
             Debug.Assert(chargedRod != null, "Charged object must be selected when this ui is created");
 
             positionDisplay.TrackTransform(chargedRod.transform);
+            positionDisplay.OnEndEdit.AddListener((Vector3 newPos) =>
+            {
+                chargedRod.SetRodParameters(newPos, chargedRod.GetDirection());
+            });
             directionDisplay.SetValue(chargedRod.GetDirection());
             directionDisplay.OnEndEdit.AddListener((Vector3 newDirection) =>
             {

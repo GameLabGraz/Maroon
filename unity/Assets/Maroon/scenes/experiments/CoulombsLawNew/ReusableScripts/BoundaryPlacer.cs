@@ -6,7 +6,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 {
     public class BoundaryPlacer : MonoBehaviour
     {
-        [SerializeField] private float thickness = 0.2f;
+        [SerializeField] private float thickness = 0.5f;
         [SerializeField] private PhysicMaterial physicMaterial;
 
         private void Start()

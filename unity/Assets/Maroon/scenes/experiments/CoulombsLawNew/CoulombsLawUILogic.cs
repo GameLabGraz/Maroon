@@ -42,16 +42,21 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private GUIBoolInputLogic  uiCameraVSynchToggle;
         [SerializeField] private GUIIntInputLogic   uiCameraMaxFramerateInput;
 
-        [SerializeField] private GUIBoolInputLogic  uiEnableBoundaryToggle;
-        [SerializeField] private GUIFloatInputLogic uiDragSlider;
-        [SerializeField] private GUIFloatInputLogic uiBouncinessSlider;
-        [SerializeField] private GUIFloatInputLogic uiFrictionSlider;
+        [SerializeField] private GUIBoolInputLogic     uiEnableBoundaryToggle;
+        [SerializeField] private GUIFloatInputLogic    uiDragSlider;
+        [SerializeField] private GUIFloatInputLogic    uiBouncinessSlider;
+        [SerializeField] private GUIFloatInputLogic    uiFrictionSlider;
+        [SerializeField] private GUIDropdownInputLogic uiScenarioDropdown;
 
         // Note(MartinR): I'm overwritting the normal Maroon button behavior in Awake
         //      so that all UI-elements in the whole scene are handled in a uniform manner
         [SerializeField] private UnityEngine.UI.Button simulationStartButton;
         [SerializeField] private UnityEngine.UI.Button simulationPauseButton;
         [SerializeField] private UnityEngine.UI.Button simulationResetButton;
+
+        private void ResetSimulation()
+        {
+        }
 
         private void Awake()
         {
@@ -115,7 +120,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             simulationSettings.drag = 1.0f;
             SetSimulationSettings(simulationSettings);
 
-            uiEnableBoundaryToggle.OnValueChanged.AddListener((bool newValue) => 
+            uiEnableBoundaryToggle.OnValueChanged.AddListener((bool newValue) =>
             {
                 simulationSettings.boundaryEnabled = newValue;
                 SetSimulationSettings(simulationSettings);
@@ -134,6 +139,149 @@ namespace Maroon.Experiments.CoulombsLawNew
             {
                 simulationSettings.friction = newValue;
                 SetSimulationSettings(simulationSettings);
+            });
+
+            uiScenarioDropdown.OnValueChanged.AddListener((int newValue) =>
+            {
+                SimulationController.Instance.StopSimulation();
+
+                // Update UI
+                simulationStartButton.gameObject.SetActive(true);
+                simulationPauseButton.gameObject.SetActive(false);
+                simulationResetButton.gameObject.SetActive(false);
+
+                // Load scenario
+                Configuration configuration = new Configuration();
+                configuration.chargedPoints = new ChargedPointData[0];
+                configuration.chargedRods   = new ChargedRodData[0];
+                configuration.chargedPlanes = new ChargedPlaneData[0];
+                SimulationSettings settings = new SimulationSettings();
+                settings.bounciness = 0.0f;
+                settings.boundaryEnabled = true;
+                settings.drag = 0.2f;
+                settings.friction = 1.0f;
+
+                const int POINT_COUNT_1D = 4;
+                switch (newValue)
+                {
+                    case 0: // Empty-Simulation
+                        break;
+                    case 1: // 2 Points
+                        configuration.chargedPoints = new ChargedPointData[2];
+                        configuration.chargedPoints[0] = new ChargedPointData(
+                            new Vector3(-0.5f, 0, 0), Vector3.zero, -ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false);
+                        configuration.chargedPoints[1] = new ChargedPointData(
+                            new Vector3( 0.5f, 0, 0), Vector3.zero,  ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false);
+                        settings.bounciness = .75f;
+                        settings.drag = .1f;
+                        break;
+                    case 2: // 2 Points orbiting
+                        configuration.chargedPoints = new ChargedPointData[2];
+                        configuration.chargedPoints[0] = new ChargedPointData(
+                            new Vector3(0, 0, 0), Vector3.zero, ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, true, true, false);
+                        configuration.chargedPoints[1] = new ChargedPointData(
+                            new Vector3(0.5f, 0, 0), Vector3.up, -2.0f * ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false);
+                        settings.bounciness = 0;
+                        settings.drag = 0;
+                        settings.friction = 0;
+                        break;
+                    case 3: // Multi orbit
+                        configuration.chargedPoints = new ChargedPointData[4];
+                        configuration.chargedPoints[0] = new ChargedPointData(
+                            new Vector3(0, 0, 0), Vector3.zero, 3.0f * ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, false, true, true, false);
+                        configuration.chargedPoints[1] = new ChargedPointData(
+                            new Vector3(0.5f, 0, 0), Vector3.up, -ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false);
+                        configuration.chargedPoints[2] = new ChargedPointData(
+                            new Vector3(-0.5f, 0, 0), Vector3.down, -ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false);
+                        configuration.chargedPoints[3] = new ChargedPointData(
+                            new Vector3(0.0f, -.5f, 0.0f), Vector3.forward, -ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false);
+                        settings.bounciness = 0.8f;
+                        settings.drag = 0;
+                        settings.friction = 0;
+                        break;
+                    case 4: // 3 Bodies
+                        configuration.chargedPoints = new ChargedPointData[3];
+                        configuration.chargedPoints[0] = new ChargedPointData(
+                            new Vector3(0, 0, 0), Vector3.up * 0.1f, ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, false, false, true, false);
+                        configuration.chargedPoints[1] = new ChargedPointData(
+                            new Vector3(0.5f, 0, 0), Vector3.up * 0.1f, -0.5f * ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, false, false, true, false);
+                        configuration.chargedPoints[2] = new ChargedPointData(
+                            new Vector3(-0.5f, 0, 0), Vector3.down * 0.1f, -0.5f * ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, false, false, true, false);
+                        settings.bounciness = 0.8f;
+                        settings.drag = 0;
+                        settings.friction = 0;
+                        break;
+                    case 5: // Charged Transfer single particle
+                        configuration.chargedPoints = new ChargedPointData[1];
+                        configuration.chargedPoints[0] = new ChargedPointData(
+                            new Vector3(0, 0, 0), Vector3.zero, ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, true);
+                        configuration.chargedPlanes = new ChargedPlaneData[2];
+                        configuration.chargedPlanes[0] = new ChargedPlaneData(
+                            new Vector3(-0.6f, 0, 0), Vector3.left, -ChargedPlane.MAX_CHARGE_DENSITY, false, true);
+                        configuration.chargedPlanes[1] = new ChargedPlaneData(
+                            new Vector3(0.6f, 0, 0), Vector3.left, ChargedPlane.MAX_CHARGE_DENSITY, false, true);
+                        settings.bounciness = 0.3f;
+                        settings.drag = 0;
+                        settings.friction = 0;
+                        break;
+                    case 6: // Charge Transfer multiple particles
+                        configuration.chargedPlanes = new ChargedPlaneData[2];
+                        configuration.chargedPlanes[0] = new ChargedPlaneData(
+                            new Vector3(-0.6f, 0, 0), Vector3.left, -ChargedPlane.MAX_CHARGE_DENSITY, false, true);
+                        configuration.chargedPlanes[1] = new ChargedPlaneData(
+                            new Vector3(0.6f, 0, 0), Vector3.left, 0.7f * ChargedPlane.MAX_CHARGE_DENSITY, false, true);
+
+                        configuration.chargedPoints = new ChargedPointData[POINT_COUNT_1D * POINT_COUNT_1D];
+                        for (int x = 0; x < POINT_COUNT_1D; x++)
+                        {
+                            for (int y = 0; y < POINT_COUNT_1D; y++)
+                            {
+                                float tX = x / (float)(POINT_COUNT_1D - 1);
+                                float tY = y / (float)(POINT_COUNT_1D - 1);
+                                float chargeSign = (x + y) % 2 == 0 ? 1.0f : -1.0f;
+
+                                float MIN_COORD = -.8f;
+                                configuration.chargedPoints[x + y * POINT_COUNT_1D] = new ChargedPointData(
+                                    new Vector3(0, MIN_COORD + tX * (-2 * MIN_COORD), MIN_COORD + tY * (-2 * MIN_COORD)), 
+                                    Vector3.zero, chargeSign * ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, true);
+                            }
+                        }
+
+                        settings.bounciness = 0.4f;
+                        settings.drag = 0;
+                        settings.friction = 0;
+                        break;
+                    case 7: // Ballpit
+                        configuration.chargedPoints = new ChargedPointData[POINT_COUNT_1D * POINT_COUNT_1D * POINT_COUNT_1D];
+                        for (int x = 0; x < POINT_COUNT_1D; x++)
+                        {
+                            for (int y = 0; y < POINT_COUNT_1D; y++)
+                            {
+                                for (int z = 0; z < POINT_COUNT_1D; z++)
+                                {
+                                    float tX = x / (float)(POINT_COUNT_1D - 1);
+                                    float tY = y / (float)(POINT_COUNT_1D - 1);
+                                    float tZ = z / (float)(POINT_COUNT_1D - 1);
+                                    bool conductive = (x + y + z) % 3 == 1;
+                                    float chargeSign = (x + y + z) % 2 == 0 ? 1.0f : -1.0f;
+
+                                    float MIN_COORD = -.8f;
+                                    configuration.chargedPoints[x + y * POINT_COUNT_1D + z * POINT_COUNT_1D * POINT_COUNT_1D] = new ChargedPointData(
+                                        new Vector3(MIN_COORD + tX * (-2 * MIN_COORD), MIN_COORD + tY * (-2 * MIN_COORD), MIN_COORD + tZ * (-2 * MIN_COORD)), 
+                                        Vector3.zero, chargeSign * Random.Range(0, ChargedPoint.MAX_ABSOLUTE_CHARGE), false, 1.0f, true, false, true, conductive);
+                                }
+                            }
+                        }
+
+                        settings.bounciness = 0.4f;
+                        settings.drag = 0;
+                        settings.friction = 0;
+                        break;
+                }
+
+                ElectricFieldSerializer.RestoreConfiguration(
+                    configuration, parentForNewObjects, prefabChargedPoint, prefabChargedRod, prefabChargedPlane);
+                SetSimulationSettings(settings);
             });
 
 
@@ -261,11 +409,11 @@ namespace Maroon.Experiments.CoulombsLawNew
 
             // Enable tab movement in UI, see https://discussions.unity.com/t/tab-between-input-fields/547817/10
             // Slightly changed so it only works with InputFields for now...
-            // Note(MartinR): Sometimes this isn't working right, but it's good enough for now
+            // Note(MartinR): This isn't currently working for moving vertically, but it's good enough for now
             UnityEngine.EventSystems.EventSystem system = UnityEngine.EventSystems.EventSystem.current;
             bool forward = !(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
-            if (Input.GetKeyDown(KeyCode.Tab) && 
-                system.currentSelectedGameObject != null && 
+            if (Input.GetKeyDown(KeyCode.Tab) &&
+                system.currentSelectedGameObject != null &&
                 system.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>() != null)
             {
                 // Find next selectable that is also an TMP_InputField

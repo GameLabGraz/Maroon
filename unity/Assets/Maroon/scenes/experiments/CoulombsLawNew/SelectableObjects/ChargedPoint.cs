@@ -46,6 +46,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             ElectricField.Instance.chargedPoints.Add(this);
             SetCharge(_charge);
             rigidBody.isKinematic = !SimulationController.Instance.SimulationRunning;
+            SetHasCollision(hasCollision);
         }
 
         private void OnDestroy() 
@@ -77,7 +78,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         public void SetHasCollision(bool hasCollision)
         {
             this.hasCollision = hasCollision;
-            gameObject.layer = hasCollision ? 0 : 11; // 11 is justMouseCollisions layer
+            gameObject.layer = hasCollision ? 0 : 16; // 16 is BoundaryCollisionOnly layer
         }
 
         public bool GetHasCollision()
@@ -137,11 +138,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         {
             if (!SimulationController.Instance.SimulationRunning) return;
             rigidBody.isKinematic = lockPosition;
-            if (lockPosition)
-            {
-                rigidBody.velocity = Vector3.zero;
-                return;
-            }
+            if (lockPosition) return;
 
             // Apply forces from electric field on the particle
             var fieldVector = ElectricField.Instance.GetFieldValue(transform.position, true, gameObject); // In [Newton/Coulomb]

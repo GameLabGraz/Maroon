@@ -22,6 +22,10 @@ namespace Maroon.Experiments.CoulombsLawNew
             Debug.Assert(chargedPlane != null, "Charged object must be selected when this ui is created");
 
             positionDisplay.TrackTransform(chargedPlane.transform);
+            positionDisplay.OnEndEdit.AddListener((Vector3 newPos) =>
+            {
+                chargedPlane.SetPlaneParameters(newPos, chargedPlane.GetNormal());
+            });
             normalDisplay.SetValue(chargedPlane.GetNormal());
             normalDisplay.OnEndEdit.AddListener((Vector3 newNormal) =>
             {

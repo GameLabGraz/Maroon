@@ -160,13 +160,13 @@ namespace Maroon.Experiments.CoulombsLawNew
         }
     }
 
-    // Contains compute buffers for evaluating the efield inside shaders (See ElectricFieldShaderUtils.cginc)
+    // Contains packed texture for evaluating the efield inside shaders (See ElectricFieldShaderUtils.cginc)
     public class ElectricFieldPackedGPUData
     {
-        private const int MAX_CHARGED_POINTS = 50;
+        private const int MAX_CHARGED_POINTS = 100;
         private const int MAX_CHARGED_RODS = 25;
         private const int MAX_CHARGED_PLANES = 25;
-        private const int PACKED_TEXTURE_WIDTH = 16;
+        private const int PACKED_TEXTURE_WIDTH = 32;
 
         private int lastUpdateFrame = -1;
         private int activePoints = 0;
@@ -181,6 +181,11 @@ namespace Maroon.Experiments.CoulombsLawNew
         public ElectricFieldPackedGPUData()
         {
             packedDataTexture = new Texture2D(PACKED_TEXTURE_WIDTH, PACKED_TEXTURE_WIDTH, TextureFormat.RGBAFloat, false, true);
+
+            // One pixel contains 4 floats (RGBA), a charged point is stored in 1 pixel, and rods and planes both require 2 pixels
+            Debug.Assert(
+                MAX_CHARGED_POINTS + MAX_CHARGED_RODS * 2 + MAX_CHARGED_PLANES * 2 < PACKED_TEXTURE_WIDTH * PACKED_TEXTURE_WIDTH,
+                "Texture-Width should be set large enough to be able to store the maximum amount of data");
         }
 
         private static int intMin(int a, int b)
@@ -236,7 +241,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                 linearIndex += 1;
                 activePlanes += 1;
             }
-            // Upload packed data to gpu texture
+            // Upload packed data to gpu memory
             packedDataTexture.Apply();
         }
 

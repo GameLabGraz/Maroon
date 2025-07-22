@@ -87,11 +87,12 @@ namespace Maroon.Experiments.CoulombsLawNew
             result.chargedRods   = new ChargedRodData[efield.chargedRods.Count];
             result.chargedPlanes = new ChargedPlaneData[efield.chargedPlanes.Count];
 
+            Bounds box = SimulationBox.Instance.Bounds;
             for (int i = 0; i < efield.chargedPoints.Count; i++)
             {
                 var pointCharge = efield.chargedPoints[i];
                 result.chargedPoints[i] = new ChargedPointData(
-                    pointCharge.transform.position, pointCharge.initialVelocity, pointCharge.GetCharge(), pointCharge.generateFieldLines,
+                    pointCharge.transform.position - box.center, pointCharge.initialVelocity, pointCharge.GetCharge(), pointCharge.generateFieldLines,
                     pointCharge.GetMass(), pointCharge.GetHasCollision(), pointCharge.lockPosition, 
                     pointCharge.contributeToEField, pointCharge.isConductive);
             }
@@ -99,14 +100,14 @@ namespace Maroon.Experiments.CoulombsLawNew
             {
                 var chargedRod = efield.chargedRods[i];
                 result.chargedRods[i] = new ChargedRodData(
-                    chargedRod.transform.position, chargedRod.GetDirection(), chargedRod.GetChargeDensity(), 
+                    chargedRod.transform.position - box.center, chargedRod.GetDirection(), chargedRod.GetChargeDensity(), 
                     chargedRod.generateFieldLines, chargedRod.isConductive);
             }
             for (int i = 0; i < efield.chargedPlanes.Count; i++)
             {
                 var chargedPlane = efield.chargedPlanes[i];
                 result.chargedPlanes[i] = new ChargedPlaneData(
-                    chargedPlane.transform.position, chargedPlane.GetNormal(), chargedPlane.GetChargeDensity(), 
+                    chargedPlane.transform.position - box.center, chargedPlane.GetNormal(), chargedPlane.GetChargeDensity(), 
                     chargedPlane.generateFieldLines, chargedPlane.isConductive);
             }
             
@@ -127,9 +128,10 @@ namespace Maroon.Experiments.CoulombsLawNew
             efield.chargedRods.Clear();
             efield.chargedPlanes.Clear();
 
+            Bounds box = SimulationBox.Instance.Bounds;
             foreach (var pointData in configuration.chargedPoints)
             {
-                var newParticle = GameObject.Instantiate(pointChargePrefab, pointData.position, Quaternion.identity, parentForNewObjects);
+                var newParticle = GameObject.Instantiate(pointChargePrefab, pointData.position + box.center, Quaternion.identity, parentForNewObjects);
                 newParticle.SetCharge(pointData.charge);
                 newParticle.generateFieldLines = pointData.createFieldLines;
                 newParticle.initialVelocity = pointData.initialVelocity;
@@ -141,16 +143,16 @@ namespace Maroon.Experiments.CoulombsLawNew
             }
             foreach (var rodData in configuration.chargedRods)
             {
-                var newRod = GameObject.Instantiate(chargedRodPrefab, rodData.position, Quaternion.identity, parentForNewObjects);
-                newRod.SetRodParameters(rodData.position, rodData.direction);
+                var newRod = GameObject.Instantiate(chargedRodPrefab, rodData.position + box.center, Quaternion.identity, parentForNewObjects);
+                newRod.SetRodParameters(rodData.position + box.center, rodData.direction);
                 newRod.SetChargeDensity(rodData.chargeDensity);
                 newRod.generateFieldLines = rodData.createFieldLines;
                 newRod.isConductive = rodData.isConductive;
             }
             foreach (var planeData in configuration.chargedPlanes)
             {
-                var newPlane = GameObject.Instantiate(chargedPlanePrefab, planeData.position, Quaternion.identity, parentForNewObjects);
-                newPlane.SetPlaneParameters(planeData.position, planeData.normal);
+                var newPlane = GameObject.Instantiate(chargedPlanePrefab, planeData.position + box.center, Quaternion.identity, parentForNewObjects);
+                newPlane.SetPlaneParameters(planeData.position + box.center, planeData.normal);
                 newPlane.SetChargeDensity(planeData.chargeDensity);
                 newPlane.generateFieldLines = planeData.createFieldLines;
                 newPlane.isConductive = planeData.isConductive;
