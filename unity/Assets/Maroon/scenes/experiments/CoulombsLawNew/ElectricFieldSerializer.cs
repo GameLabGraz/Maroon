@@ -8,7 +8,7 @@ namespace Maroon.Experiments.CoulombsLawNew
     {
         public ChargedPointData(
             Vector3 pos, Vector3 initialVelocity, float charge, bool createFieldLines, 
-            float mass, bool hasCollision, bool lockPosition, bool contributeToEField, bool isConductive)
+            float mass, bool hasCollision, bool lockPosition, bool contributeToEField, bool isConductive, bool generateTrail)
         {
             this.position = pos;
             this.initialVelocity = initialVelocity;
@@ -19,6 +19,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             this.lockPosition = lockPosition;
             this.contributeToEField = contributeToEField;
             this.isConductive = isConductive;
+            this.generateTrail = generateTrail;
         }
 
         public Vector3 position;
@@ -31,6 +32,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         public bool lockPosition;
         public bool contributeToEField;
         public bool isConductive;
+        public bool generateTrail;
     }
 
     public struct ChargedRodData
@@ -92,9 +94,9 @@ namespace Maroon.Experiments.CoulombsLawNew
             {
                 var pointCharge = efield.chargedPoints[i];
                 result.chargedPoints[i] = new ChargedPointData(
-                    pointCharge.transform.position - box.center, pointCharge.initialVelocity, pointCharge.GetCharge(), pointCharge.generateFieldLines,
+                    pointCharge.transform.position - box.center, pointCharge.GetVelocity(), pointCharge.GetCharge(), pointCharge.generateFieldLines,
                     pointCharge.GetMass(), pointCharge.GetHasCollision(), pointCharge.lockPosition, 
-                    pointCharge.contributeToEField, pointCharge.isConductive);
+                    pointCharge.contributeToEField, pointCharge.isConductive, pointCharge.GetGenerateTrail());
             }
             for (int i = 0; i < efield.chargedRods.Count; i++)
             {
@@ -134,7 +136,8 @@ namespace Maroon.Experiments.CoulombsLawNew
                 var newParticle = GameObject.Instantiate(pointChargePrefab, pointData.position + box.center, Quaternion.identity, parentForNewObjects);
                 newParticle.SetCharge(pointData.charge);
                 newParticle.generateFieldLines = pointData.createFieldLines;
-                newParticle.initialVelocity = pointData.initialVelocity;
+                newParticle.SetGenerateTrail(pointData.generateTrail);
+                newParticle.SetVelocity(pointData.initialVelocity);
                 newParticle.SetHasCollision(pointData.hasCollision);
                 newParticle.SetMass(pointData.mass);
                 newParticle.contributeToEField = pointData.contributeToEField;

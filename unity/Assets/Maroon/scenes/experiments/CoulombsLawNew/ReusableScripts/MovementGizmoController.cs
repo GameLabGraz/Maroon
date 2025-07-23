@@ -67,13 +67,16 @@ namespace Maroon.Experiments.CoulombsLawNew
                 UpdateArrowsDependingOnSelection();
             });
             CameraController.Instance.OnCameraModeChanged.AddListener(() => UpdateArrowsDependingOnSelection());
+            SimulationController.Instance.OnStart.AddListener(() => UpdateArrowsDependingOnSelection());
+            SimulationController.Instance.OnStop.AddListener(() => UpdateArrowsDependingOnSelection());
         }
 
         public void UpdateArrowsDependingOnSelection()
         {
             // Hide/Show arrows depending on selection
             var selected = SelectionSystem.Instance.GetSelectedObject();
-            bool arrowsActive = selected != null && selected.enableMovementGizmo;
+            bool arrowsActive = selected != null && selected.enableMovementGizmo &&
+                !(selected.applySpringForceIfSimulationIsRunning && SimulationController.Instance.SimulationRunning);
             bool in3D = CameraController.Instance.In3DMode;
             foreach (var arrow in arrows) {
                 arrow.gameObject.SetActive(arrowsActive); 

@@ -9,6 +9,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         public float bounciness;
         public float drag;
         public float friction;
+        public float dragSpringStrength;
         public bool boundaryEnabled;
     }
 
@@ -46,6 +47,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private GUIFloatInputLogic    uiDragSlider;
         [SerializeField] private GUIFloatInputLogic    uiBouncinessSlider;
         [SerializeField] private GUIFloatInputLogic    uiFrictionSlider;
+        [SerializeField] private GUIFloatInputLogic    uiSpringStrengthSlider;
         [SerializeField] private GUIDropdownInputLogic uiScenarioDropdown;
 
         // Note(MartinR): I'm overwritting the normal Maroon button behavior in Awake
@@ -53,10 +55,6 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private UnityEngine.UI.Button simulationStartButton;
         [SerializeField] private UnityEngine.UI.Button simulationPauseButton;
         [SerializeField] private UnityEngine.UI.Button simulationResetButton;
-
-        private void ResetSimulation()
-        {
-        }
 
         private void Awake()
         {
@@ -114,31 +112,37 @@ namespace Maroon.Experiments.CoulombsLawNew
 
 
             // Simulation window setup
-            simulationSettings.bounciness = 0.0f;
-            simulationSettings.friction = 0.6f;
+            simulationSettings.bounciness = 0.5f;
+            simulationSettings.friction = 0.03f;
             simulationSettings.boundaryEnabled = true;
-            simulationSettings.drag = 1.0f;
-            SetSimulationSettings(simulationSettings);
+            simulationSettings.drag = 0.3f;
+            simulationSettings.dragSpringStrength = 3.0f;
+            ApplySimulationSettings(simulationSettings);
 
             uiEnableBoundaryToggle.OnValueChanged.AddListener((bool newValue) =>
             {
                 simulationSettings.boundaryEnabled = newValue;
-                SetSimulationSettings(simulationSettings);
+                ApplySimulationSettings(simulationSettings);
             });
             uiDragSlider.OnValueChanged.AddListener((float newValue) =>
             {
                 simulationSettings.drag = newValue;
-                SetSimulationSettings(simulationSettings);
+                ApplySimulationSettings(simulationSettings);
             });
             uiBouncinessSlider.OnValueChanged.AddListener((float newValue) =>
             {
                 simulationSettings.bounciness = newValue;
-                SetSimulationSettings(simulationSettings);
+                ApplySimulationSettings(simulationSettings);
             });
             uiFrictionSlider.OnValueChanged.AddListener((float newValue) =>
             {
                 simulationSettings.friction = newValue;
-                SetSimulationSettings(simulationSettings);
+                ApplySimulationSettings(simulationSettings);
+            });
+            uiSpringStrengthSlider.OnValueChanged.AddListener((float newValue) =>
+            {
+                simulationSettings.dragSpringStrength = newValue;
+                ApplySimulationSettings(simulationSettings);
             });
 
             uiScenarioDropdown.OnValueChanged.AddListener((int newValue) =>
@@ -160,6 +164,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                 settings.boundaryEnabled = true;
                 settings.drag = 0.2f;
                 settings.friction = 1.0f;
+                settings.dragSpringStrength = 3.0f;
 
                 const int POINT_COUNT_1D = 4;
                 switch (newValue)
@@ -169,18 +174,18 @@ namespace Maroon.Experiments.CoulombsLawNew
                     case 1: // 2 Points
                         configuration.chargedPoints = new ChargedPointData[2];
                         configuration.chargedPoints[0] = new ChargedPointData(
-                            new Vector3(-0.5f, 0, 0), Vector3.zero, -ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false);
+                            new Vector3(-0.5f, 0, 0), Vector3.zero, -ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false, true);
                         configuration.chargedPoints[1] = new ChargedPointData(
-                            new Vector3( 0.5f, 0, 0), Vector3.zero,  ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false);
+                            new Vector3( 0.5f, 0, 0), Vector3.zero,  ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false, true);
                         settings.bounciness = .75f;
                         settings.drag = .1f;
                         break;
                     case 2: // 2 Points orbiting
                         configuration.chargedPoints = new ChargedPointData[2];
                         configuration.chargedPoints[0] = new ChargedPointData(
-                            new Vector3(0, 0, 0), Vector3.zero, ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, true, true, false);
+                            new Vector3(0, 0, 0), Vector3.zero, ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, true, true, false, true);
                         configuration.chargedPoints[1] = new ChargedPointData(
-                            new Vector3(0.5f, 0, 0), Vector3.up, -2.0f * ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false);
+                            new Vector3(0.5f, 0, 0), Vector3.up, -2.0f * ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false, true);
                         settings.bounciness = 0;
                         settings.drag = 0;
                         settings.friction = 0;
@@ -188,13 +193,13 @@ namespace Maroon.Experiments.CoulombsLawNew
                     case 3: // Multi orbit
                         configuration.chargedPoints = new ChargedPointData[4];
                         configuration.chargedPoints[0] = new ChargedPointData(
-                            new Vector3(0, 0, 0), Vector3.zero, 3.0f * ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, false, true, true, false);
+                            new Vector3(0, 0, 0), Vector3.zero, 3.0f * ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, false, true, true, false, false);
                         configuration.chargedPoints[1] = new ChargedPointData(
-                            new Vector3(0.5f, 0, 0), Vector3.up, -ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false);
+                            new Vector3(0.5f, 0, 0), Vector3.up, -ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false, true);
                         configuration.chargedPoints[2] = new ChargedPointData(
-                            new Vector3(-0.5f, 0, 0), Vector3.down, -ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false);
+                            new Vector3(-0.5f, 0, 0), Vector3.down, -ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false, true);
                         configuration.chargedPoints[3] = new ChargedPointData(
-                            new Vector3(0.0f, -.5f, 0.0f), Vector3.forward, -ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false);
+                            new Vector3(0.0f, -.5f, 0.0f), Vector3.forward, -ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false, true);
                         settings.bounciness = 0.8f;
                         settings.drag = 0;
                         settings.friction = 0;
@@ -202,11 +207,14 @@ namespace Maroon.Experiments.CoulombsLawNew
                     case 4: // 3 Bodies
                         configuration.chargedPoints = new ChargedPointData[3];
                         configuration.chargedPoints[0] = new ChargedPointData(
-                            new Vector3(0, 0, 0), Vector3.up * 0.1f, ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, false, false, true, false);
+                            new Vector3(0, 0, 0), Vector3.up * 0.1f, ChargedPoint.MAX_ABSOLUTE_CHARGE, 
+                            false, 1.0f, false, false, true, false, true);
                         configuration.chargedPoints[1] = new ChargedPointData(
-                            new Vector3(0.5f, 0, 0), Vector3.up * 0.1f, -0.5f * ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, false, false, true, false);
+                            new Vector3(0.5f, 0, 0), Vector3.up * 0.1f, -0.5f * ChargedPoint.MAX_ABSOLUTE_CHARGE, 
+                            false, 1.0f, false, false, true, false, true);
                         configuration.chargedPoints[2] = new ChargedPointData(
-                            new Vector3(-0.5f, 0, 0), Vector3.down * 0.1f, -0.5f * ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, false, false, true, false);
+                            new Vector3(-0.5f, 0, 0), Vector3.down * 0.1f, -0.5f * ChargedPoint.MAX_ABSOLUTE_CHARGE, 
+                            false, 1.0f, false, false, true, false, true);
                         settings.bounciness = 0.8f;
                         settings.drag = 0;
                         settings.friction = 0;
@@ -214,7 +222,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                     case 5: // Charged Transfer single particle
                         configuration.chargedPoints = new ChargedPointData[1];
                         configuration.chargedPoints[0] = new ChargedPointData(
-                            new Vector3(0, 0, 0), Vector3.zero, ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, true);
+                            new Vector3(0, 0, 0), Vector3.zero, ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, true, false);
                         configuration.chargedPlanes = new ChargedPlaneData[2];
                         configuration.chargedPlanes[0] = new ChargedPlaneData(
                             new Vector3(-0.6f, 0, 0), Vector3.left, -ChargedPlane.MAX_CHARGE_DENSITY, false, true);
@@ -243,7 +251,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                                 float MIN_COORD = -.8f;
                                 configuration.chargedPoints[x + y * POINT_COUNT_1D] = new ChargedPointData(
                                     new Vector3(0, MIN_COORD + tX * (-2 * MIN_COORD), MIN_COORD + tY * (-2 * MIN_COORD)), 
-                                    Vector3.zero, chargeSign * ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, true);
+                                    Vector3.zero, chargeSign * ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, true, false);
                             }
                         }
 
@@ -268,7 +276,8 @@ namespace Maroon.Experiments.CoulombsLawNew
                                     float MIN_COORD = -.8f;
                                     configuration.chargedPoints[x + y * POINT_COUNT_1D + z * POINT_COUNT_1D * POINT_COUNT_1D] = new ChargedPointData(
                                         new Vector3(MIN_COORD + tX * (-2 * MIN_COORD), MIN_COORD + tY * (-2 * MIN_COORD), MIN_COORD + tZ * (-2 * MIN_COORD)), 
-                                        Vector3.zero, chargeSign * Random.Range(0, ChargedPoint.MAX_ABSOLUTE_CHARGE), false, 1.0f, true, false, true, conductive);
+                                        Vector3.zero, chargeSign * Random.Range(0, ChargedPoint.MAX_ABSOLUTE_CHARGE), 
+                                        false, 1.0f, true, false, true, conductive, false);
                                 }
                             }
                         }
@@ -277,13 +286,37 @@ namespace Maroon.Experiments.CoulombsLawNew
                         settings.drag = 0;
                         settings.friction = 0;
                         break;
+                    case 8: // Circle formation
+                        int CIRCLE_POINTS = 10;
+                        float CIRCLE_RADIUS = 0.9f;
+                        configuration.chargedPoints = new ChargedPointData[CIRCLE_POINTS + 1];
+                        for (int i = 0; i < CIRCLE_POINTS; i++)
+                        {
+                            float angle = i / (float) CIRCLE_POINTS * 2 * Mathf.PI;
+                            Vector3 pos = new Vector3(Mathf.Sin(angle), Mathf.Cos(angle), 0.0f) * CIRCLE_RADIUS;
+                            configuration.chargedPoints[i] = new ChargedPointData(
+                                pos, Vector3.zero, ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, true, true, false, false);
+                        }
+
+                        // One point slightly offset from center
+                        configuration.chargedPoints[CIRCLE_POINTS] = new ChargedPointData(
+                            new Vector3(0.2f, 0.1f, 0.0f), Vector3.up * 0.7f, ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false, true);
+
+                        settings.bounciness = 0.5f;
+                        settings.drag = 0;
+                        settings.friction = 0;
+                        break;
                 }
 
                 ElectricFieldSerializer.RestoreConfiguration(
                     configuration, parentForNewObjects, prefabChargedPoint, prefabChargedRod, prefabChargedPlane);
-                SetSimulationSettings(settings);
+                ApplySimulationSettings(settings);
             });
 
+            // Note(MartinR): Not sure where to put this, I hope this doesn't mess with any other simulations,
+            //  but in the Coulombs-Law-Experiment the default value for the bounceThreshold (2) results in bad collision handling
+            //  https://stackoverflow.com/questions/54656220/physics-object-doesnt-bounce-correctly-at-low-speed-in-unity
+            UnityEngine.Physics.bounceThreshold = 0.15f;
 
 
             // Camera window setup
@@ -329,17 +362,13 @@ namespace Maroon.Experiments.CoulombsLawNew
 
 
             // Initialize simulation start/pause/reset buttions
-            simulationStartButton.onClick.RemoveAllListeners();
             simulationStartButton.gameObject.SetActive(true);
-            simulationPauseButton.onClick.RemoveAllListeners();
             simulationPauseButton.gameObject.SetActive(false);
-            simulationResetButton.onClick.RemoveAllListeners();
             simulationResetButton.gameObject.SetActive(false);
 
             simulationStartButton.onClick.AddListener(() =>
             {
-                SimulationController.Instance.StartSimulation();
-
+                // We either start the simulation or continue from pause when play is pressed
                 bool newSimulationStart = !simulationResetButton.gameObject.activeSelf;
 
                 // Update UI
@@ -353,38 +382,19 @@ namespace Maroon.Experiments.CoulombsLawNew
                     configurationOnSimulationStart = ElectricFieldSerializer.CreateConfigurationForCurrentSetup();
                     settingsAtSimulationStart = simulationSettings;
                 }
-
-                // Configure objects for simulation start
                 SelectionSystem.SetSelectedObject(null);
-                foreach (var chargedPoint in ElectricField.Instance.chargedPoints)
-                {
-                    if (chargedPoint.lockPosition) continue;
-                    chargedPoint.rigidBody.isKinematic = false;
-                    chargedPoint.rigidBody.velocity = newSimulationStart ? chargedPoint.initialVelocity : chargedPoint.storedVelocity;
-                }
             });
 
             simulationPauseButton.onClick.AddListener(() =>
             {
-                SimulationController.Instance.StopSimulation();
-
                 // Update UI
                 simulationStartButton.gameObject.SetActive(true);
                 simulationPauseButton.gameObject.SetActive(false);
-
-                // Stop object movement
-                foreach (var chargedPoint in ElectricField.Instance.chargedPoints)
-                {
-                    chargedPoint.storedVelocity = chargedPoint.rigidBody.velocity;
-                    chargedPoint.rigidBody.isKinematic = true;
-                }
             });
 
             // Note: Reset could be pressed while simulation is paused or while it's running
             simulationResetButton.onClick.AddListener(() =>
             {
-                SimulationController.Instance.StopSimulation();
-
                 // Update UI
                 simulationStartButton.gameObject.SetActive(true);
                 simulationPauseButton.gameObject.SetActive(false);
@@ -394,7 +404,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                 ElectricFieldSerializer.RestoreConfiguration(
                     configurationOnSimulationStart, parentForNewObjects, prefabChargedPoint, prefabChargedRod, prefabChargedPlane);
 
-                SetSimulationSettings(settingsAtSimulationStart);
+                ApplySimulationSettings(settingsAtSimulationStart);
             });
         }
 
@@ -436,18 +446,20 @@ namespace Maroon.Experiments.CoulombsLawNew
             }
         }
 
-        private void SetSimulationSettings(SimulationSettings settings)
+        private void ApplySimulationSettings(SimulationSettings settings)
         {
             this.simulationSettings = settings;
             particleSimulationBoundary.SetActive(settings.boundaryEnabled);
             physicMaterial.bounciness = settings.bounciness;
             physicMaterial.staticFriction = settings.friction;
             physicMaterial.dynamicFriction = settings.friction;
+            SelectionSystem.Instance.dragSpringCoefficient = settings.dragSpringStrength;
 
             uiEnableBoundaryToggle.SetValue(particleSimulationBoundary.activeSelf);
             uiDragSlider.SetValue(settings.drag);
             uiBouncinessSlider.SetValue(physicMaterial.bounciness);
             uiFrictionSlider.SetValue(physicMaterial.staticFriction);
+            uiSpringStrengthSlider.SetValue(settings.dragSpringStrength);
 
             foreach (var chargedPoint in ElectricField.Instance.chargedPoints)
             {

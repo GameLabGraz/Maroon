@@ -84,7 +84,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         void LateUpdate()
         {
             float groundPotential = 0.0f;
-            if (groundPin != null && groundPin.isActiveAndEnabled && groundPin.applyToVisualization)
+            if (groundPin != null && groundPin.isActiveAndEnabled)
             {
                 groundPotential = ElectricField.Instance.GetPotential(groundPin.transform.position, true);
             }

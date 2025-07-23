@@ -10,6 +10,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private GUIVector3InputLogic positionDisplay;
         [SerializeField] private GUIFloatInputLogic chargeInput;
         [SerializeField] private GUIBoolInputLogic generateFieldLinesToggle;
+        [SerializeField] private GUIBoolInputLogic generateTrailToggle;
         [SerializeField] private GUIButtonLogic deleteButton;
 
         [SerializeField] private GUIVector3InputLogic uiInitialVelocityInput;
@@ -37,12 +38,17 @@ namespace Maroon.Experiments.CoulombsLawNew
             {
                 chargedPoint.generateFieldLines = newValue;
             });
+            generateTrailToggle.SetValue(chargedPoint.GetGenerateTrail());
+            generateTrailToggle.OnValueChanged.AddListener((bool newValue) =>
+            {
+                chargedPoint.SetGenerateTrail(newValue);
+            });
             deleteButton.OnButtonClick.AddListener(() => GameObject.Destroy(chargedPoint.gameObject));
 
-            uiInitialVelocityInput.SetValue(chargedPoint.initialVelocity);
+            uiInitialVelocityInput.SetValue(chargedPoint.GetVelocity());
             uiInitialVelocityInput.OnEndEdit.AddListener((Vector3 newValue) => 
             {
-                chargedPoint.initialVelocity = newValue;
+                chargedPoint.SetVelocity(newValue);
             });
 
             uiMassSlider.SetValue(chargedPoint.GetMass());
@@ -55,6 +61,11 @@ namespace Maroon.Experiments.CoulombsLawNew
             uiContributeToEFieldToggle.OnValueChanged.AddListener((bool newValue) => { chargedPoint.contributeToEField = newValue; }); ;
             uiIsConductiveToggle.SetValue(chargedPoint.isConductive);
             uiIsConductiveToggle.OnValueChanged.AddListener((bool newValue) => { chargedPoint.isConductive = newValue; }); ;
+        }
+
+        private void LateUpdate()
+        {
+            uiInitialVelocityInput.SetValue(chargedPoint.GetVelocity());
         }
     }
 

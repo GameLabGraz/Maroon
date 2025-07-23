@@ -17,9 +17,11 @@ namespace Maroon.Experiments.CoulombsLawNew
         public Rigidbody rigidBody;
 
         public bool generateFieldLines = false;
+        private bool generateTrail = false;
+        [SerializeField] private TrailRenderer trailRenderer;
+        [SerializeField] private Material trailMaterial;
 
-        public Vector3 initialVelocity = Vector3.zero;
-        public Vector3 storedVelocity  = Vector3.zero; // See CoulombsLawUILogic start/stop/continue buttons for this
+        private Vector3 storedVelocity  = Vector3.zero; // While the simulation is not running, we store the velocity in this member
         [SerializeField] private bool hasCollision = true;
         public bool contributeToEField = true;
         public bool isConductive = false;
@@ -39,6 +41,10 @@ namespace Maroon.Experiments.CoulombsLawNew
             {
                 GameObject.Destroy(this.gameObject);
             });
+            GetComponent<SelectableObject>().OnMoved.AddListener((SelectableObject _unused) =>
+            {
+                trailRenderer.Clear();
+            });
 
             // Note(MartinR): The Prefab Mesh has a radius of 1, e.g. bounds in the range [-1, 1]
             transform.localScale = new Vector3(RADIUS, RADIUS, RADIUS);
@@ -47,6 +53,32 @@ namespace Maroon.Experiments.CoulombsLawNew
             SetCharge(_charge);
             rigidBody.isKinematic = !SimulationController.Instance.SimulationRunning;
             SetHasCollision(hasCollision);
+
+            // Init trailrenderer
+            trailRenderer.emitting = false;
+            trailRenderer.startWidth = 0.02f;
+            trailRenderer.endWidth = 0.02f;
+            trailRenderer.time = 3.0f;
+            trailRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            trailRenderer.minVertexDistance = 0.05f;
+            trailRenderer.material = trailMaterial;
+
+            SimulationController.Instance.OnStart.AddListener(() =>
+            {
+                if (generateTrail)
+                {
+                    trailRenderer.emitting = true;
+                }
+                if (lockPosition) return;
+                rigidBody.isKinematic = false;
+                rigidBody.velocity = storedVelocity;
+            });
+            SimulationController.Instance.OnStop.AddListener(() =>
+            {
+                trailRenderer.emitting = false;
+                storedVelocity = rigidBody.velocity;
+                rigidBody.isKinematic = true;
+            });
         }
 
         private void OnDestroy() 
@@ -73,6 +105,28 @@ namespace Maroon.Experiments.CoulombsLawNew
             materials[0].color = color;
             materials[2] = _baseMeshRenderer.materials[_charge < 0 ? 0 : 1];
             _baseMeshRenderer.SetMaterials(materials);
+        }
+
+        public bool GetGenerateTrail()
+        {
+            return generateTrail;
+        }
+
+        public void SetGenerateTrail(bool generateTrail)
+        {
+            this.generateTrail = generateTrail;
+            if (generateTrail)
+            {
+                if (SimulationController.Instance.SimulationRunning)
+                {
+                    trailRenderer.emitting = true;
+                }
+            }
+            else
+            {
+                trailRenderer.Clear();
+                trailRenderer.emitting = false;
+            }
         }
 
         public void SetHasCollision(bool hasCollision)
@@ -132,6 +186,24 @@ namespace Maroon.Experiments.CoulombsLawNew
         private void OnCollisionStay(Collision collision)
         {
             DistributeChargeWithOther(collision.gameObject);
+        }
+
+        public Vector3 GetVelocity()
+        {
+            if (SimulationController.Instance.SimulationRunning && !rigidBody.isKinematic)
+            {
+                return rigidBody.velocity;
+            }
+            return storedVelocity;
+        }
+
+        public void SetVelocity(Vector3 newValue)
+        {
+            storedVelocity = newValue;
+            if (SimulationController.Instance.SimulationRunning && !rigidBody.isKinematic)
+            {
+                rigidBody.velocity = newValue;
+            }
         }
 
         public void FixedUpdate()

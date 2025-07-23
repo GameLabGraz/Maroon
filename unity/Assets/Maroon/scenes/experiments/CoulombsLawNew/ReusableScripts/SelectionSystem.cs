@@ -23,6 +23,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         private Vector3 _objectPositionAtDragStart;
         private Vector3 _offsetAtDragStart;
         private bool _rigidbodyWasKinematicAtDragStart;
+        public float dragSpringCoefficient = 1.0f;
 
 
 
@@ -131,18 +132,36 @@ namespace Maroon.Experiments.CoulombsLawNew
                         newPos[dragDimension] = Mathf.Clamp(newPos[dragDimension], box.min[dragDimension] + r, box.max[dragDimension] - r);
                     }
 
-                    // Note(MartinR): Just setting transform.position causes problems when Physics interpolation is enabled.
-                    //      _rigidBody.MovePosition also does not seem to do the trick, I guess because it is expected to be called during FixedUpdate?
-                    //      Setting rigidBody.position seems to work in all cases
-                    selectedObject.transform.position = newPos;
-                    if (_rigidbodyOfSelected != null)
+                    // Check if we should only apply a force
+                    if (SimulationController.Instance.SimulationRunning && selectedObject.applySpringForceIfSimulationIsRunning)
                     {
-                        _rigidbodyOfSelected.position = selectedObject.transform.position;
-                    }
+                        var rigidBody = selectedObject.GetComponent<Rigidbody>();
+                        if (rigidBody != null)
+                        {
+                            newPos = newPos - _offsetAtDragStart; // Don't use mouse-offset for spring
+                            Vector3 dir = newPos - selectedObject.transform.position;
+                            rigidBody.AddForce(dir * dragSpringCoefficient, ForceMode.Force);
 
-                    // Update arrow position
-                    movementGizmo.UpdateArrowsDependingOnSelection();
-                    selectedObject.OnMoved.Invoke(selectedObject);
+                            _lineRenderer.enabled = true;
+                            _lineRenderer.positionCount = 2;
+                            _lineRenderer.SetPositions(new Vector3[] { newPos, selectedObject.transform.position });
+                        }
+                    }
+                    else
+                    {
+                        // Note(MartinR): Just setting transform.position causes problems when Physics interpolation is enabled.
+                        //      _rigidBody.MovePosition also does not seem to do the trick, I guess because it is expected to be called during FixedUpdate?
+                        //      Setting rigidBody.position seems to work in all cases
+                        selectedObject.transform.position = newPos;
+                        if (_rigidbodyOfSelected != null)
+                        {
+                            _rigidbodyOfSelected.position = selectedObject.transform.position;
+                        }
+
+                        // Update arrow position
+                        movementGizmo.UpdateArrowsDependingOnSelection();
+                        selectedObject.OnMoved.Invoke(selectedObject);
+                    }
                 }
                 else
                 {
@@ -161,6 +180,10 @@ namespace Maroon.Experiments.CoulombsLawNew
                         selectedObject.OnDraggedOutOfBounds.Invoke(selectedObject);
                     }
                 }
+            }
+            else
+            {
+                _lineRenderer.enabled = false;
             }
 
 
@@ -232,11 +255,12 @@ namespace Maroon.Experiments.CoulombsLawNew
                     ClosestPointOnMovementAxisToMouse(dragDimension);
                 _offsetAtDragStart = _objectPositionAtDragStart - projectedMousePos;
 
+                bool setKinematic = !(SimulationController.Instance.SimulationRunning && selectedObject.applySpringForceIfSimulationIsRunning);
                 _rigidbodyOfSelected = selectedObject.GetComponent<Rigidbody>();
                 if (_rigidbodyOfSelected != null)
                 {
                     _rigidbodyWasKinematicAtDragStart = _rigidbodyOfSelected.isKinematic;
-                    _rigidbodyOfSelected.isKinematic = true;
+                    _rigidbodyOfSelected.isKinematic = setKinematic;
                 }
                 if (_lineRenderer != null && dragDimension != -1)
                 {

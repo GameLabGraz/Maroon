@@ -13,6 +13,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         public bool enableSelectionHighlightCircle = true;
         [Tooltip("Used to determine the size of the selection-marker and movement arrows")]
         public float boundingRadius = 1.0f;
+        public bool applySpringForceIfSimulationIsRunning = false;
 
         public UnityEngine.Events.UnityEvent<bool> OnObjectSelectedOrDeselected; // Is called when object was selected/deselected
         public UnityEngine.Events.UnityEvent<SelectableObject> OnMoved; // Either through gizmo or mouse-drag

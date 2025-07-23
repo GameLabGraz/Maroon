@@ -7,7 +7,6 @@ namespace Maroon.Experiments.CoulombsLawNew
     public class GroundPinLogic : MonoBehaviour
     {
         [SerializeField] private GuiIconTo3DObjectDrag dragIcon;
-        public bool applyToVisualization = false;
 
         private void Awake()
         {
