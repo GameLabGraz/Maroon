@@ -112,7 +112,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
 
             // Simulation window setup
-            simulationSettings.bounciness = 0.5f;
+            simulationSettings.bounciness = 0.0f;
             simulationSettings.friction = 0.03f;
             simulationSettings.boundaryEnabled = true;
             simulationSettings.drag = 0.3f;
@@ -177,7 +177,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                             new Vector3(-0.5f, 0, 0), Vector3.zero, -ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false, true);
                         configuration.chargedPoints[1] = new ChargedPointData(
                             new Vector3( 0.5f, 0, 0), Vector3.zero,  ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false, true);
-                        settings.bounciness = .75f;
+                        settings.bounciness = 0.0f;
                         settings.drag = .1f;
                         break;
                     case 2: // 2 Points orbiting
@@ -348,11 +348,11 @@ namespace Maroon.Experiments.CoulombsLawNew
                 {
                     QualitySettings.vSyncCount = 0;
                 }
-                uiCameraMaxFramerateInput.SetInteractable(!newValue, !newValue);
+                uiCameraMaxFramerateInput.SetInteractable(!newValue, newValue);
             });
 
             Application.targetFrameRate = 120;
-            uiCameraMaxFramerateInput.SetInteractable(QualitySettings.vSyncCount == 0, QualitySettings.vSyncCount == 0);
+            uiCameraMaxFramerateInput.SetInteractable(QualitySettings.vSyncCount == 0, QualitySettings.vSyncCount != 0);
             uiCameraMaxFramerateInput.SetValue(Application.targetFrameRate);
             uiCameraMaxFramerateInput.OnValueChanged.AddListener((int newValue) =>
             {
