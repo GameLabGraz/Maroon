@@ -28,27 +28,29 @@ float raySphereIntersection(float3 rayOrigin, float3 dir, float3 spherePos, floa
 // Returns distance to first/last intersection, box not hit if tMin >= tMax
 float rayBoxIntersection(float3 rayOrigin, float3 rayDir, float3 boxMin, float3 boxMax, out float tMax)
 {
-    tMax = -1.0;
-
     // Move box to coord system center
     rayOrigin -= (boxMax + boxMin) / 2.0;
 
     // Flip coordinate system so ray direction coordinates are all positive
+    // Note: The sign test for 0.0 is required for orthographic camera to work.
+    //      This is because sign(0) in hlsl returns 0, but we only want -1.0 or 1.0
     float3 dirSign = sign(rayDir);
+    if (dirSign.x == 0.0) dirSign.x = 1.0;
+    if (dirSign.y == 0.0) dirSign.y = 1.0;
+    if (dirSign.z == 0.0) dirSign.z = 1.0;
     rayDir = dirSign * rayDir;
     rayOrigin = dirSign * rayOrigin;
 
     // Find intersection-distances with all six box planes
     float3 extends = (boxMax - boxMin) / 2.0;
-    float3 tMaxs = (extends - rayOrigin) / rayDir;
+    float3 tMaxs = (extends - rayOrigin) / rayDir; // Note: Division by 0 works because -INF and +INF are handled correctly afterwards
     float3 tMins = (-extends - rayOrigin) / rayDir;
 
     // Find intersection of all 3 intervals
-    float t0 = max(max(tMins.x, tMins.y), tMins.z);
-    float t1 = min(min(tMaxs.x, tMaxs.y), tMaxs.z);
+    float tMin = max(max(tMins.x, tMins.y), tMins.z);
+    tMax = min(min(tMaxs.x, tMaxs.y), tMaxs.z);
 
-    tMax = t1;
-    return t0;
+    return tMin;
 }
 
 // Returns distance to first intersection > 0, or a negative value

@@ -131,6 +131,7 @@
 				float intervalIndex = floor(voltage / _LineSpacingVoltage);
 				float targetVoltageLow = intervalIndex * _LineSpacingVoltage;
 				float targetVoltageHigh = targetVoltageLow + _LineSpacingVoltage;
+
 				// Make search radius a little larger (1.3), so we can also detect if the line is outside of range
 				float maxSearchRadius = (_LineHalfWidth + _LineSmoothFalloff) * 1.3; 
 

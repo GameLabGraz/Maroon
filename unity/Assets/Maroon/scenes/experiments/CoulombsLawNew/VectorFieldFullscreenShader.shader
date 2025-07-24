@@ -236,7 +236,7 @@ Shader "Custom/VectorFieldFullscreenShader"
                         cellCoord.y < 0 || cellCoord.y >= gridResolution.y ||
                         cellCoord.z < 0 || cellCoord.z >= gridResolution.z ||
                         tGrid >= maxDist || 
-                        resultAlpha >= 1.0) 
+                        resultAlpha >= 0.99) 
                     {
                         break;
                     }

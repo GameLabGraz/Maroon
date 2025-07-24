@@ -77,8 +77,8 @@ Shader "Custom/IsoSurfaceShader"
             // xyz contain color, w alpha
             float4 rayMarchIsoSurface(float3 rayOrigin, float3 rayDir, float maxDist)
             {
-                const float STEP_SIZE = 0.1;
-                const int BINARY_SEARCH_STEPS = 8;
+                const float STEP_SIZE = 1.0;
+                const int BINARY_SEARCH_STEPS = 16;
                 const float DISTANCE_AFTER_INTERSECTION = 0.02;
                 float TARGET_POTENTIAL = _VoltageCenter;
 
@@ -201,10 +201,10 @@ Shader "Custom/IsoSurfaceShader"
                 float2 uv = i.position.xy / _ScreenParams.xy;
 
                 float3 cameraPos;
-                float3 pixelPos;
+                float3 pixelPos; // Position of pixel in world-space, reconstructed from uv-coordinate and depth-buffer
                 getPixelAndCameraWorldPositions(uv, _InverseView, pixelPos, cameraPos);
-
                 float3 dir = normalize(pixelPos - cameraPos);
+
                 float4 overlayColor = rayMarchIsoSurface(cameraPos, dir, length(cameraPos - pixelPos));
                 float4 backbufferColor = tex2D(_MainTex, uv);
                 return lerp(backbufferColor, overlayColor, overlayColor.w);
