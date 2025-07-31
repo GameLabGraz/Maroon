@@ -15,18 +15,15 @@ namespace Maroon.Physics.CoordinateSystem
 
         public Dictionary<Axis, CoordAxis> AxisDictionary => _axisDictionary;
 
-        public static CoordSystem Instance
-        {
-            get
-            {
-                if (_instance == null)
-                    _instance = FindObjectOfType<CoordSystem>();
-                return _instance;
-            }
-        }
+        public static CoordSystem Instance => _instance;
 
         private void Awake()
         {
+            if(_instance == null)
+                _instance = this;
+            else
+                Destroy(gameObject);
+
             _ = origin ?? throw new NullReferenceException();
             _ = axisController ?? throw new NullReferenceException();
 
