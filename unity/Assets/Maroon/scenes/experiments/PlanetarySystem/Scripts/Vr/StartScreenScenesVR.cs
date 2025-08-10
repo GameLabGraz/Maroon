@@ -26,6 +26,10 @@ namespace Maroon.Experiments.PlanetarySystem
         public Transform planetarySpawnPoint;
         public GameObject PlanetarySystemSimulationCamera;
         public GameObject HelpiDialogueUI;
+
+        public GameObject uiButton;
+        public GameObject ExitButton;
+        public Transform simulationSpawnPoint;
         //---------------------------------------------------------------------------------------
 
 
@@ -97,7 +101,10 @@ namespace Maroon.Experiments.PlanetarySystem
 
             LeavePlanetorySystemSimulation();
             PlanetarySortingGame.SetActive(true);
-
+            ExitButton.SetActive(false);
+            uiButton.SetActive(false);
+            Player.instance.transform.position = simulationSpawnPoint.position;
+            Player.instance.transform.rotation = simulationSpawnPoint.rotation;
             StartCoroutine(LerpCameraStartPlanetarySortingGame());
         }
 
@@ -153,7 +160,12 @@ namespace Maroon.Experiments.PlanetarySystem
             LeavePlanetarySortingGame();
             FormulaUI.SetActive(false);
 
+            uiButton.SetActive(true);
+
             planetTrajectoryController.ToggleAllTrajectories(true);
+            Player.instance.transform.position = planetarySpawnPoint.position;
+            Player.instance.transform.rotation = planetarySpawnPoint.rotation;
+
             StartCoroutine(LerpCameraStartPlanetarySystemSimulation());
         }
 
@@ -164,20 +176,18 @@ namespace Maroon.Experiments.PlanetarySystem
         /// <returns></returns>
         private IEnumerator LerpCameraStartPlanetarySystemSimulation()
         {
-            yield return StartCoroutine(LerpCameraToPosition(MainCamera, PlanetarySystemSimulationTelescopeCamera, 1f));
+            //yield return StartCoroutine(LerpCameraToPosition(MainCamera, PlanetarySystemSimulationTelescopeCamera, 1f));
 
-            PlanetarySystemSimulationUI.SetActive(true);
             planetaryController.SetSkybox();
 
             Environment.SetActive(false);
             InteractablePlanetarySystemScreens.SetActive(false);
-            
-            PlanetarySystemSimulation.SetActive(true);
 
-            MainCamera.SetActive(false);
-            PlanetarySystemSimulationCamera.SetActive(true);
+            PlanetarySystemSimulation.SetActive(true);
             uiController.ResetPlanetarySystemSimulation();
             planetaryController.DisplayMessageByKey("EnterPlanetarySystemSimulation");
+
+            yield return null;
         }
 
 
@@ -192,8 +202,6 @@ namespace Maroon.Experiments.PlanetarySystem
             Environment.SetActive(true);
             InteractablePlanetarySystemScreens.SetActive(true);
             PlanetarySystemSimulation.SetActive(false);
-            PlanetarySystemSimulationCamera.SetActive(false);
-            MainCamera.SetActive(true);
             VRPlayer.SetActive(true);
             VRPlayer.transform.position = Vector3.zero;
             VRPlayer.transform.rotation = Quaternion.identity;

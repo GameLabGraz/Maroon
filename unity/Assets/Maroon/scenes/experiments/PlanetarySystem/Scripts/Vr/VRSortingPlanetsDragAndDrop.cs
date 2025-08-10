@@ -15,6 +15,7 @@ namespace Maroon.Experiments.PlanetarySystem
 
         public PlanetRotation planetRotation;
         public Transform sortingPlanetTarget;
+        public WhiteboardDisplay whiteboardDisplay;
         
         public float snapDistance;
         private bool isSnapped = false;
@@ -79,6 +80,53 @@ namespace Maroon.Experiments.PlanetarySystem
             }
         }
         #endregion MouseInput
+        #region VRInput
+        private Interactable _interactable;
+        private Throwable _throwable;
+
+        private void Awake()
+        {
+            _interactable = GetComponent<Interactable>();
+            _throwable = GetComponent<Throwable>();
+        }
+
+        public void OnAttachedToHand(Hand hand)
+        {
+            audioSource.PlayOneShot(pickUpClip);
+
+            PlanetInfo planetInfo = GetComponent<PlanetInfo>();
+            createdPlanetInfoMessage = planetInfo.CreateUnnamedPlanetInfoMessage();
+            whiteboardText.text = createdPlanetInfoMessage;
+        }
+
+        public void OnDetachedFromHand(Hand hand)
+        {
+            if (!isSnapped)
+            {
+                float distance = Vector3.Distance(
+                    transform.position,
+                    sortingPlanetTarget.position);
+
+                if (distance <= snapDistance)
+                {
+                    SnapToTarget();
+                }
+                else
+                {
+                if (transform.parent != null)
+                {
+                    transform.position = transform.parent.position;
+                }
+                    isSnapped = false;
+                    PlanetInfo planetInfo = GetComponent<PlanetInfo>();
+                    if (planetInfo != null)
+                    {
+                        planetInfo.IsSnapped = false;
+                    }
+                }
+            }
+        }
+        #endregion VRInput
 
         //snap the planets to target
         #region SnapPlanet
