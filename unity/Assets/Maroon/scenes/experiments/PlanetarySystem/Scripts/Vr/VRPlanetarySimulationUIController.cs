@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using GameLabGraz.VRInteraction;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,12 +14,14 @@ namespace Maroon.Experiments.PlanetarySystem
         [SerializeField] private float gravitationalConstantG = 6.674f;
         [SerializeField] private float timeSpeed = 1f;
 
-        public Slider sliderG;
-        public Slider sliderTimeSpeed;
+        public VRLinearDrive sliderG;
+        public VRLinearDrive sliderTimeSpeed;
         public Slider sliderSimulationCameraFov;
 
         public GameObject Back;
-
+        public GameObject Timeto1Button;
+        public GameObject SliderG;
+        public GameObject SliderTimeSpeed;
         public Toggle toggleAllTrajectories;
         public Toggle toggleSimRotation;
         public Toggle toggleSunKinematic;
@@ -141,7 +145,18 @@ namespace Maroon.Experiments.PlanetarySystem
         public void ToggleOptionMenuSimulation()
         {
             bool newValue = !Back.activeSelf;
-            Back.SetActive(newValue);   
+            Back.SetActive(newValue);
+            newValue = !SliderG.activeSelf;
+            SliderG.SetActive(newValue);
+            newValue = !SliderTimeSpeed.activeSelf;
+            SliderTimeSpeed.SetActive(newValue);
+            newValue = !Timeto1Button.activeSelf;
+            Timeto1Button.SetActive(newValue);
+        }
+
+        public void setTimeto1()
+        {
+            sliderTimeSpeed.ForceToValue(timeSpeed);
         }
 
         #endregion Buttons
@@ -152,19 +167,19 @@ namespace Maroon.Experiments.PlanetarySystem
         /// </summary>
         public void SetupSliders()
         {
-            if (sliderG != null)
-            {
-                sliderG.minValue = 0f;
-                sliderG.maxValue = 25f;
-                sliderG.value = gravitationalConstantG;
-            }
+            //            if (sliderG != null)
+            //            {
+            //                sliderG.minimum = 0f;
+            //                sliderG.maximum = 25f;
+            //                sliderG.ForceToValue(gravitationalConstantG);
+            //            }
 
-            if (sliderTimeSpeed != null)
-            {
-                sliderTimeSpeed.minValue = 0f;
-                sliderTimeSpeed.maxValue = 35f;
-                sliderG.value = timeSpeed;
-            }
+            //            if (sliderTimeSpeed != null)
+            //            {
+            //                sliderTimeSpeed.minimum = 0f;
+            //                sliderTimeSpeed.maximum = 35f;
+            //                sliderTimeSpeed.ForceToValue(timeSpeed);
+            //            }
 
             if (sliderSimulationCameraFov != null)
             {
@@ -243,8 +258,8 @@ namespace Maroon.Experiments.PlanetarySystem
         public void ResetPlanetarySystemSimulationValues()
         {
             bool isOn = true;
-            sliderG.value = gravitationalConstantG;
-            sliderTimeSpeed.value = timeSpeed;
+            sliderG.ForceToValue(gravitationalConstantG);
+            sliderTimeSpeed.ForceToValue(timeSpeed);
 
             toggleAllTrajectories.isOn = isOn;
             planetTrajectoryController.ToggleAllTrajectories(isOn);

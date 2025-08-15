@@ -1,6 +1,8 @@
 using System.Collections;
 using UnityEngine;
 using Valve.VR.InteractionSystem;
+using System.Collections.Generic;
+using GameLabGraz.VRInteraction;
 
 namespace Maroon.Experiments.PlanetarySystem
 {
@@ -29,6 +31,11 @@ namespace Maroon.Experiments.PlanetarySystem
 
         public GameObject uiButton;
         public GameObject ExitButton;
+        public GameObject SliderG;
+        public GameObject SliderTimeSpeed;
+        public GameObject TimeTo1Button;
+
+        public VRLinearDrive HandleTimeSpeed;
         public Transform simulationSpawnPoint;
         //---------------------------------------------------------------------------------------
 
@@ -102,6 +109,10 @@ namespace Maroon.Experiments.PlanetarySystem
             LeavePlanetorySystemSimulation();
             PlanetarySortingGame.SetActive(true);
             ExitButton.SetActive(false);
+            SliderG.SetActive(false);
+            TimeTo1Button.SetActive(false);
+            HandleTimeSpeed.ForceToValue(1f);
+            SliderTimeSpeed.SetActive(false);
             uiButton.SetActive(false);
             Player.instance.transform.position = simulationSpawnPoint.position;
             Player.instance.transform.rotation = simulationSpawnPoint.rotation;
