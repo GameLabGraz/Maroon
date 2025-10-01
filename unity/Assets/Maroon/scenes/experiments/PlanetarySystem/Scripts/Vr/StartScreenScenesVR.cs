@@ -14,12 +14,10 @@ namespace Maroon.Experiments.PlanetarySystem
         public PlanetSortingGameController planetSortingGameController;
 
         public GameObject PlanetarySortingGame;
-        public GameObject PlanetarySortingGamePlanetInfoUI;
         public GameObject FormulaUI;
         public GameObject PlanetarySystemSimulation;
         public GameObject PlanetarySystemSimulationUI;
         public GameObject Environment;
-        public GameObject InteractablePlanetarySystemScreens;
         public GameObject MainCamera;
         public GameObject InitialMainCamera;
         public GameObject PlanetarySortingGameCamera;
@@ -27,13 +25,17 @@ namespace Maroon.Experiments.PlanetarySystem
         public GameObject VRPlayer;
         public Transform planetarySpawnPoint;
         public GameObject PlanetarySystemSimulationCamera;
-        public GameObject HelpiDialogueUI;
 
         public GameObject uiButton;
         public GameObject ExitButton;
         public GameObject SliderG;
         public GameObject SliderTimeSpeed;
         public GameObject TimeTo1Button;
+        public GameObject ResetButton;
+        public GameObject OrientationButton;
+        public GameObject RotationButton;
+        public GameObject TrajectoriesButton;
+        public GameObject ClearTrajectoriesButton; 
 
         public VRLinearDrive HandleTimeSpeed;
         public Transform simulationSpawnPoint;
@@ -46,7 +48,6 @@ namespace Maroon.Experiments.PlanetarySystem
         private void Awake()
         {
             PlanetarySortingGame.SetActive(true);
-            PlanetarySortingGamePlanetInfoUI.SetActive(false);
         }
 
 
@@ -111,6 +112,11 @@ namespace Maroon.Experiments.PlanetarySystem
             ExitButton.SetActive(false);
             SliderG.SetActive(false);
             TimeTo1Button.SetActive(false);
+            ResetButton.SetActive(false);
+            OrientationButton.SetActive(false);
+            RotationButton.SetActive(false);
+            TrajectoriesButton.SetActive(false);
+            ClearTrajectoriesButton.SetActive(false);
             HandleTimeSpeed.ForceToValue(1f);
             SliderTimeSpeed.SetActive(false);
             uiButton.SetActive(false);
@@ -129,7 +135,6 @@ namespace Maroon.Experiments.PlanetarySystem
 
             yield return StartCoroutine(LerpCameraToPosition(MainCamera, PlanetarySortingGameCamera, 1f));
             PlanetarySortingGame.SetActive(true);
-            PlanetarySortingGamePlanetInfoUI.SetActive(true);
             FormulaUI.SetActive(false);
 
             planetSortingGameController.ToggleSGRotation(true);
@@ -142,8 +147,6 @@ namespace Maroon.Experiments.PlanetarySystem
         /// </summary>
         public void LeavePlanetarySortingGame()
         {
-            HelpiDialogueUI.SetActive(false);
-            PlanetarySortingGamePlanetInfoUI.SetActive(false);
             FormulaUI.SetActive(false);
 
             StartCoroutine(LerpCameraLeavePlanetarySortingGame());
@@ -192,7 +195,6 @@ namespace Maroon.Experiments.PlanetarySystem
             planetaryController.SetSkybox();
 
             Environment.SetActive(false);
-            InteractablePlanetarySystemScreens.SetActive(false);
 
             PlanetarySystemSimulation.SetActive(true);
             uiController.ResetPlanetarySystemSimulation();
@@ -207,11 +209,9 @@ namespace Maroon.Experiments.PlanetarySystem
         /// </summary>
         public void LeavePlanetorySystemSimulation()
         {
-            HelpiDialogueUI.SetActive(false);
             PlanetarySystemSimulationUI.SetActive(false);
 
             Environment.SetActive(true);
-            InteractablePlanetarySystemScreens.SetActive(true);
             PlanetarySystemSimulation.SetActive(false);
             VRPlayer.SetActive(true);
             VRPlayer.transform.position = Vector3.zero;

@@ -34,7 +34,7 @@ namespace Maroon.Experiments.PlanetarySystem
         /// <summary>
         /// rotate planet in its rotation period
         /// y axis
-        /// 360° rotation for each earth day (24h) in 1 FixedUpdate(0.02) * 50 for 1 sec
+        /// 360ï¿½ rotation for each earth day (24h) in 1 FixedUpdate(0.02) * 50 for 1 sec
         /// </summary>
         public void RotatePlanets()
         {

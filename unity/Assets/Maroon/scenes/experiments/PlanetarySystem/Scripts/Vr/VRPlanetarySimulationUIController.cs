@@ -17,11 +17,19 @@ namespace Maroon.Experiments.PlanetarySystem
         public VRLinearDrive sliderG;
         public VRLinearDrive sliderTimeSpeed;
         public Slider sliderSimulationCameraFov;
-
+        public Transform JupiterTransform;
+        public GameObject Jupiter;
         public GameObject Back;
         public GameObject Timeto1Button;
+        public GameObject Reset;
+        public GameObject OrientationButton;
+        public GameObject RotationButton;
+        public GameObject TrajectoriesButton;
+        public GameObject ClearTrajectoriesButton; 
+        public GameObject Player;
         public GameObject SliderG;
         public GameObject SliderTimeSpeed;
+        public PlanetRotation[] planetRotations;
         public Toggle toggleAllTrajectories;
         public Toggle toggleSimRotation;
         public Toggle toggleSunKinematic;
@@ -152,6 +160,16 @@ namespace Maroon.Experiments.PlanetarySystem
             SliderTimeSpeed.SetActive(newValue);
             newValue = !Timeto1Button.activeSelf;
             Timeto1Button.SetActive(newValue);
+            newValue = !Reset.activeSelf;
+            Reset.SetActive(newValue);
+            newValue = !OrientationButton.activeSelf;
+            OrientationButton.SetActive(newValue);
+            newValue = !RotationButton.activeSelf;
+            RotationButton.SetActive(newValue);
+            newValue = !TrajectoriesButton.activeSelf;
+            TrajectoriesButton.SetActive(newValue);
+            newValue = !ClearTrajectoriesButton.activeSelf;
+            ClearTrajectoriesButton.SetActive(newValue);
         }
 
         public void setTimeto1()
@@ -270,7 +288,12 @@ namespace Maroon.Experiments.PlanetarySystem
         }
         #endregion sliders
 
-
+        public void TeleportToJupiter()
+        {
+            Player.transform.position = JupiterTransform.position;
+            Player.transform.rotation = Quaternion.Euler(0f, JupiterTransform.rotation.eulerAngles.y, 0f);
+            Player.transform.SetParent(Jupiter.transform, worldPositionStays: true);
+        }
         /// <summary>
         /// ResetPlanetarySystemSimulation on reset and on StartPlanetarySystemSimulation
         /// </summary>
