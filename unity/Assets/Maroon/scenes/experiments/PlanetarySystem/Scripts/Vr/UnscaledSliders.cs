@@ -2,162 +2,164 @@ using System.Reflection;
 using UnityEngine;
 using Valve.VR.InteractionSystem;
 using GameLabGraz.VRInteraction;
-
-public class UnscaledSliderDriver : MonoBehaviour
+namespace Maroon.Experiments.PlanetarySystem
 {
-    [Header("Hands")]
-    public Hand leftHand;
-    public Hand rightHand;
-
-    [Header("Sliders")]
-    public LinearDrive[] sliders;
-    public float enterRadius = 0.10f;
-    public float exitRadius = 0.14f;
-
-    private LinearDrive currentL, currentR;
-
-    static MethodInfo miBegin, miEnd, miHoverUpdate;
-    static bool reflReady, reflFailed;
-
-    void Awake() => CacheReflection();
-
-    void Update()
+    public class UnscaledSliderDriver : MonoBehaviour
     {
-        if (Mathf.Approximately(Time.timeScale, 1f))
-        {
-            return;
-        }
+        [Header("Hands")]
+        public Hand leftHand;
+        public Hand rightHand;
 
-        DriveHand(leftHand,  ref currentL);
-        DriveHand(rightHand, ref currentR);
-    }
+        [Header("Sliders")]
+        public LinearDrive[] sliders;
+        public float enterRadius = 0.10f;
+        public float exitRadius = 0.14f;
 
-    void DriveHand(Hand hand, ref LinearDrive current)
-    {
-        LinearDrive best = current;
-        float bestDist = float.PositiveInfinity;
-        if (current != null && TryDistance(hand, current, out float dCur))
+        private LinearDrive currentL, currentR;
+
+        static MethodInfo miBegin, miEnd, miHoverUpdate;
+        static bool reflReady, reflFailed;
+
+        void Awake() => CacheReflection();
+
+        void Update()
         {
-            if (dCur > exitRadius)
+            if (Mathf.Approximately(Time.timeScale, 1f))
             {
-                best = null;
+                return;
             }
-            bestDist = dCur;
-        }
-        else
-        {
-            current = null;
-        }
-        if (best == null)
-        {
-            foreach (var d in sliders)
-            {
-                if (!TryDistance(hand, d, out float d2)) continue;
-                if (d2 <= enterRadius && d2 < bestDist)
-                {
-                    best = d; bestDist = d2;
-                }
-            }
+
+            DriveHand(leftHand, ref currentL);
+            DriveHand(rightHand, ref currentR);
         }
 
-        foreach (var d in sliders)
+        void DriveHand(Hand hand, ref LinearDrive current)
         {
-            if (d == best)
+            LinearDrive best = current;
+            float bestDist = float.PositiveInfinity;
+            if (current != null && TryDistance(hand, current, out float dCur))
             {
-                if (current != best)
+                if (dCur > exitRadius)
                 {
-                    if (current != null) CallEnd(current, hand);
-                    CallBegin(best, hand);
-                    current = best;
+                    best = null;
                 }
-                CallHoverUpdate(best, hand);
+                bestDist = dCur;
             }
             else
             {
-                if (current != null && d == current)
+                current = null;
+            }
+            if (best == null)
+            {
+                foreach (var d in sliders)
                 {
-                    CallEnd(d, hand);
-                    if (current == d)
+                    if (!TryDistance(hand, d, out float d2)) continue;
+                    if (d2 <= enterRadius && d2 < bestDist)
                     {
-                        current = null;
+                        best = d; bestDist = d2;
+                    }
+                }
+            }
+
+            foreach (var d in sliders)
+            {
+                if (d == best)
+                {
+                    if (current != best)
+                    {
+                        if (current != null) CallEnd(current, hand);
+                        CallBegin(best, hand);
+                        current = best;
+                    }
+                    CallHoverUpdate(best, hand);
+                }
+                else
+                {
+                    if (current != null && d == current)
+                    {
+                        CallEnd(d, hand);
+                        if (current == d)
+                        {
+                            current = null;
+                        }
                     }
                 }
             }
         }
-    }
 
-    bool TryDistance(Hand hand, LinearDrive drive, out float dist)
-    {
-        dist = float.PositiveInfinity;
-        if (!hand || !drive)
+        bool TryDistance(Hand hand, LinearDrive drive, out float dist)
         {
-            return false;
+            dist = float.PositiveInfinity;
+            if (!hand || !drive)
+            {
+                return false;
+            }
+
+            Vector3 handPos = hand.transform.position;
+
+            Collider col = drive.GetComponent<Collider>();
+            if (!col) col = drive.GetComponentInChildren<Collider>();
+
+            if (col != null)
+            {
+                Vector3 p = col.ClosestPoint(handPos);
+                dist = Vector3.Distance(handPos, p);
+                return true;
+            }
+            else
+            {
+                dist = Vector3.Distance(handPos, drive.transform.position);
+                return true;
+            }
         }
 
-        Vector3 handPos = hand.transform.position;
-
-        Collider col = drive.GetComponent<Collider>();
-        if (!col) col = drive.GetComponentInChildren<Collider>();
-
-        if (col != null)
+        void CacheReflection()
         {
-            Vector3 p = col.ClosestPoint(handPos);
-            dist = Vector3.Distance(handPos, p);
-            return true;
-        }
-        else
-        {
-            dist = Vector3.Distance(handPos, drive.transform.position);
-            return true;
-        }
-    }
-
-    void CacheReflection()
-    {
-        if (reflReady || reflFailed) return;
-        try
-        {
-            var flags = BindingFlags.Instance | BindingFlags.NonPublic;
-            miBegin       = typeof(Interactable).GetMethod("OnHandHoverBegin", flags);
-            miEnd         = typeof(Interactable).GetMethod("OnHandHoverEnd",   flags);
-            miHoverUpdate = typeof(LinearDrive) .GetMethod("HandHoverUpdate",  flags);
-            reflReady = (miBegin != null && miEnd != null && miHoverUpdate != null);
-            reflFailed = !reflReady;
-        }
-        catch { reflFailed = true; }
-    }
-
-    void CallBegin(LinearDrive d, Hand h)
-    {
-        if (reflReady)
-        {
+            if (reflReady || reflFailed) return;
             try
             {
-                miBegin.Invoke(d, new object[] { h });
+                var flags = BindingFlags.Instance | BindingFlags.NonPublic;
+                miBegin = typeof(Interactable).GetMethod("OnHandHoverBegin", flags);
+                miEnd = typeof(Interactable).GetMethod("OnHandHoverEnd", flags);
+                miHoverUpdate = typeof(LinearDrive).GetMethod("HandHoverUpdate", flags);
+                reflReady = (miBegin != null && miEnd != null && miHoverUpdate != null);
+                reflFailed = !reflReady;
             }
-            catch { }
+            catch { reflFailed = true; }
         }
-    }
-    void CallHoverUpdate(LinearDrive d, Hand h)
-    {
-        if (reflReady)
+
+        void CallBegin(LinearDrive d, Hand h)
         {
-            try
+            if (reflReady)
             {
-                miHoverUpdate.Invoke(d, new object[] { h });
+                try
+                {
+                    miBegin.Invoke(d, new object[] { h });
+                }
+                catch { }
             }
-            catch { }
         }
-    }
-    void CallEnd(LinearDrive d, Hand h)
-    {
-        if (reflReady)
+        void CallHoverUpdate(LinearDrive d, Hand h)
         {
-            try
+            if (reflReady)
             {
-                miEnd.Invoke(d, new object[] { h });
+                try
+                {
+                    miHoverUpdate.Invoke(d, new object[] { h });
+                }
+                catch { }
             }
-            catch { }
+        }
+        void CallEnd(LinearDrive d, Hand h)
+        {
+            if (reflReady)
+            {
+                try
+                {
+                    miEnd.Invoke(d, new object[] { h });
+                }
+                catch { }
+            }
         }
     }
 }
