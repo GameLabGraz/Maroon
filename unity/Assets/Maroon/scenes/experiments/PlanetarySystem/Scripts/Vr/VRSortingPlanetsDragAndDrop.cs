@@ -113,16 +113,20 @@ namespace Maroon.Experiments.PlanetarySystem
                 }
                 else
                 {
-                if (transform.parent != null)
-                {
                     transform.position = transform.parent.position;
-                }
                     isSnapped = false;
                     PlanetInfo planetInfo = GetComponent<PlanetInfo>();
-                    if (planetInfo != null)
-                    {
-                        planetInfo.IsSnapped = false;
-                    }
+                    planetInfo.IsSnapped = false;
+                    //if (transform.parent != null)
+                    //{
+                    //    transform.position = transform.parent.position;
+                    //}
+                    //isSnapped = false;
+                    //PlanetInfo planetInfo = GetComponent<PlanetInfo>();
+                    //if (planetInfo != null)
+                    //{
+                    //    planetInfo.IsSnapped = false;
+                    //}
                 }
             }
         }
@@ -146,7 +150,7 @@ namespace Maroon.Experiments.PlanetarySystem
             isSnapped = true;
             PlanetInfo planetInfo = GetComponent<PlanetInfo>();
             planetInfo.IsSnapped = true;
-            PlanetaryController.Instance.IncrementSnappedPlanetCount();
+            PlanetaryControllerVR.Instance.IncrementSnappedPlanetCount();
             audioSource.PlayOneShot(dropClip);
 
             createdPlanetInfoMessage = planetInfo.CreatePlanetInfoMessage();
@@ -157,7 +161,7 @@ namespace Maroon.Experiments.PlanetarySystem
             }
         }
         #endregion SnapPlanet
-
+ 
 
         // reset ResetSortingGame
         #region Reset
@@ -167,7 +171,6 @@ namespace Maroon.Experiments.PlanetarySystem
         public void ResetPlanetInfoMessage()
         {
             createdPlanetInfoMessage = "PlanetDescription";
-            planetInfoMessageText.text = LanguageManager.Instance.GetString(createdPlanetInfoMessage);
             whiteboardText.text = LanguageManager.Instance.GetString(createdPlanetInfoMessage);
         }
     
@@ -186,7 +189,7 @@ namespace Maroon.Experiments.PlanetarySystem
             if (sunLightHalo != null)
                 sunLightHalo.range = 0.25f;
 
-            PlanetaryController.Instance.sortedPlanetCount = 0;
+            PlanetaryControllerVR.Instance.sortedPlanetCount = 0;
             isSnapped = false;
             PlanetInfo planetInfo = GetComponent<PlanetInfo>();
             planetInfo.IsSnapped = false;

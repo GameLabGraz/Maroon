@@ -7,7 +7,7 @@ namespace Maroon.Experiments.PlanetarySystem
 {
     public class PlanetarySimulationUIController : MonoBehaviour, IResetObject
     {
-        public PlanetaryController planetaryController;
+        public PlanetaryControllerVR planetaryController;
         public PlanetTrajectoryController planetTrajectoryController;
         public PlanetSortingGameController planetSortingGameController;
 

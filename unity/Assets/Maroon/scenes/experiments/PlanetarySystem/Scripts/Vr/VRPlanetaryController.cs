@@ -7,7 +7,7 @@ using System.Collections;
 
 namespace Maroon.Experiments.PlanetarySystem
 {
-    public class PlanetaryController : MonoBehaviour
+    public class PlanetaryControllerVR : MonoBehaviour
     {
         public StartScreenScenes startScreenScenes;
 
@@ -33,13 +33,13 @@ namespace Maroon.Experiments.PlanetarySystem
        
         // Instance of PlanetaryController
         #region PlanetaryControllerInstance
-        private static PlanetaryController _instance;
-        public static PlanetaryController Instance
+        private static PlanetaryControllerVR _instance;
+        public static PlanetaryControllerVR Instance
         {
             get
             {
                 if (_instance == null)
-                    _instance = FindObjectOfType<PlanetaryController>();
+                    _instance = FindObjectOfType<PlanetaryControllerVR>();
                 return _instance;
             }
         }

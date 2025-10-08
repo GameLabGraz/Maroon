@@ -5,7 +5,7 @@ namespace Maroon.Experiments.PlanetarySystem
 {
     public class PlanetTrajectoryController : MonoBehaviour
     {
-        public PlanetaryController planetaryController;
+        public PlanetaryControllerVR planetaryController;
 
         public List<PlanetTrajectory> planetTrajectories;
         [SerializeField] private float lineThickness = 0.4f;

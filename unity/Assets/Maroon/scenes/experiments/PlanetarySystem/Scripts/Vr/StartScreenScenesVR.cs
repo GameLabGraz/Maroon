@@ -9,7 +9,7 @@ namespace Maroon.Experiments.PlanetarySystem
     public class StartScreenScenes : MonoBehaviour
     {
         public PlanetarySimulationUIController uiController;
-        public PlanetaryController planetaryController;
+        public PlanetaryControllerVR planetaryController;
         public PlanetTrajectoryController planetTrajectoryController;
         public PlanetSortingGameController planetSortingGameController;
 
@@ -122,7 +122,7 @@ namespace Maroon.Experiments.PlanetarySystem
             uiButton.SetActive(false);
             Player.instance.transform.position = simulationSpawnPoint.position;
             Player.instance.transform.rotation = simulationSpawnPoint.rotation;
-            StartCoroutine(LerpCameraStartPlanetarySortingGame());
+            //StartCoroutine(LerpCameraStartPlanetarySortingGame());
         }
 
         /// <summary>
