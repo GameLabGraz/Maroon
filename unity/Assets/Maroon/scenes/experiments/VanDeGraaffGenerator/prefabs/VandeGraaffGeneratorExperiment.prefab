@@ -40,9 +40,8 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4174859224572615557}
   m_Enabled: 1
-  serializedVersion: 10
+  serializedVersion: 11
   m_Type: 2
-  m_Shape: 0
   m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_Intensity: 0.4
   m_Range: 1.33
@@ -92,8 +91,12 @@ Light:
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
 --- !u!1 &4174902023802184073
 GameObject:
   m_ObjectHideFlags: 0
@@ -178,6 +181,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -237,13 +243,13 @@ HingeJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4174902023802184073}
+  serializedVersion: 3
   m_ConnectedBody: {fileID: 4122250831610298227}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: -0.5, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0.000031789146, y: 0.5150021, z: 0.000007947287}
-  serializedVersion: 2
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -355,6 +361,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -446,9 +455,16 @@ MonoBehaviour:
   lineSegmentLength: 0.1
   originOffset: {x: 0, y: 0, z: 0}
   fixClosingAngle: 15
+  StartDrawing:
+    m_PersistentCalls:
+      m_Calls: []
   _lineWidth: 0.04
   fieldStrengthFactor: 10000
   invertDirection: 0
+  minLineSegmentLength: 0.005
+  maxLineSegmentLength: 0.1
+  maxLineSegmentAngleChangeForLengthAdjustment: 10
+  lineSegmentLengthAdjustmentExponent: 3
 --- !u!114 &4174939069573609260
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -547,6 +563,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -606,13 +625,13 @@ HingeJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4174956751936883059}
+  serializedVersion: 3
   m_ConnectedBody: {fileID: 4122250831610298227}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: -0.5, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: -0.00007947287, y: 0.06833673, z: 0.000007947287}
-  serializedVersion: 2
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -750,6 +769,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -809,13 +831,13 @@ HingeJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4174971648926916335}
+  serializedVersion: 3
   m_ConnectedBody: {fileID: 4122250831610298227}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: -0.5, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: -0.000007947287, y: 0.06833673, z: 0.000007947287}
-  serializedVersion: 2
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -940,9 +962,8 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4174999898199723203}
   m_Enabled: 1
-  serializedVersion: 10
+  serializedVersion: 11
   m_Type: 2
-  m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 2
   m_Range: 0
@@ -992,8 +1013,12 @@ Light:
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
 --- !u!1 &4175069832928632437
 GameObject:
   m_ObjectHideFlags: 0
@@ -1078,6 +1103,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -1137,13 +1165,13 @@ HingeJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4175069832928632437}
+  serializedVersion: 3
   m_ConnectedBody: {fileID: 4122250831610298227}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: -0.5, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0.000015894573, y: -0.35165948, z: 0.000007947287}
-  serializedVersion: 2
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -1364,6 +1392,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -1423,13 +1454,13 @@ HingeJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4175096670049449199}
+  serializedVersion: 3
   m_ConnectedBody: {fileID: 4122250831610298227}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: -0.5, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0.000007947287, y: 0.9350062, z: 0.000007947287}
-  serializedVersion: 2
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -1567,6 +1598,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -1626,13 +1660,13 @@ HingeJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4175097671514011907}
+  serializedVersion: 3
   m_ConnectedBody: {fileID: 4122250831610298227}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: -0.5, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0, y: 0.9349983, z: 0.000007947287}
-  serializedVersion: 2
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -1818,7 +1852,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 03e3bd08a6e70684dbe299a3e185fdd2, type: 3}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: 03e3bd08a6e70684dbe299a3e185fdd2, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.18
   m_Pitch: 1
@@ -1988,6 +2023,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -2047,13 +2085,13 @@ HingeJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4175154942337723717}
+  serializedVersion: 3
   m_ConnectedBody: {fileID: 4122250831610298227}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: -0.5, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: -0.000039736435, y: 0.5150021, z: -0.00020662945}
-  serializedVersion: 2
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -2173,9 +2211,16 @@ MonoBehaviour:
   lineSegmentLength: 0.1
   originOffset: {x: 0, y: 0, z: 0}
   fixClosingAngle: 15
+  StartDrawing:
+    m_PersistentCalls:
+      m_Calls: []
   _lineWidth: 0.04
   fieldStrengthFactor: 10000
   invertDirection: 0
+  minLineSegmentLength: 0.005
+  maxLineSegmentLength: 0.1
+  maxLineSegmentAngleChangeForLengthAdjustment: 10
+  lineSegmentLengthAdjustmentExponent: 3
 --- !u!114 &4175155269766489748
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2256,9 +2301,16 @@ MonoBehaviour:
   lineSegmentLength: 0.1
   originOffset: {x: 0, y: 0, z: 0}
   fixClosingAngle: 15
+  StartDrawing:
+    m_PersistentCalls:
+      m_Calls: []
   _lineWidth: 0.04
   fieldStrengthFactor: 10000
   invertDirection: 0
+  minLineSegmentLength: 0.005
+  maxLineSegmentLength: 0.1
+  maxLineSegmentAngleChangeForLengthAdjustment: 10
+  lineSegmentLengthAdjustmentExponent: 3
 --- !u!114 &4175164280473188062
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2313,9 +2365,8 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4175167915704685339}
   m_Enabled: 1
-  serializedVersion: 10
+  serializedVersion: 11
   m_Type: 2
-  m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 2
   m_Range: 0
@@ -2365,8 +2416,12 @@ Light:
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
 --- !u!1 &4175179027204494521
 GameObject:
   m_ObjectHideFlags: 0
@@ -2433,9 +2488,16 @@ MonoBehaviour:
   lineSegmentLength: 0.1
   originOffset: {x: 0, y: 0, z: 0}
   fixClosingAngle: 15
+  StartDrawing:
+    m_PersistentCalls:
+      m_Calls: []
   _lineWidth: 0.04
   fieldStrengthFactor: 10000
   invertDirection: 0
+  minLineSegmentLength: 0.005
+  maxLineSegmentLength: 0.1
+  maxLineSegmentAngleChangeForLengthAdjustment: 10
+  lineSegmentLengthAdjustmentExponent: 3
 --- !u!114 &4175179027204494526
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2533,6 +2595,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -2651,9 +2716,16 @@ MonoBehaviour:
   lineSegmentLength: 0.1
   originOffset: {x: 0, y: 0, z: 0}
   fixClosingAngle: 15
+  StartDrawing:
+    m_PersistentCalls:
+      m_Calls: []
   _lineWidth: 0.04
   fieldStrengthFactor: 10000
   invertDirection: 0
+  minLineSegmentLength: 0.005
+  maxLineSegmentLength: 0.1
+  maxLineSegmentAngleChangeForLengthAdjustment: 10
+  lineSegmentLengthAdjustmentExponent: 3
 --- !u!114 &4175237838357150134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2752,6 +2824,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -2811,13 +2886,13 @@ HingeJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4175248433784293527}
+  serializedVersion: 3
   m_ConnectedBody: {fileID: 4122250831610298227}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: -0.5, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0.000015894573, y: 0.06833673, z: 0.000007947287}
-  serializedVersion: 2
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -2955,6 +3030,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -3014,13 +3092,13 @@ HingeJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4175275207150644991}
+  serializedVersion: 3
   m_ConnectedBody: {fileID: 4122250831610298227}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: -0.5, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: -0.00007947287, y: -0.35166743, z: 0.00007549922}
-  serializedVersion: 2
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -3158,6 +3236,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -3217,13 +3298,13 @@ HingeJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4175283248744339003}
+  serializedVersion: 3
   m_ConnectedBody: {fileID: 4122250831610298227}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: -0.5, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0.00004768372, y: 0.06833673, z: -0.000027815502}
-  serializedVersion: 2
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -3361,6 +3442,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -3420,13 +3504,13 @@ HingeJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4175286782645329725}
+  serializedVersion: 3
   m_ConnectedBody: {fileID: 4122250831610298227}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: -0.5, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0.000015894573, y: 0.5150021, z: -0.00006357829}
-  serializedVersion: 2
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -3647,6 +3731,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -3706,13 +3793,13 @@ HingeJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4175315795595374217}
+  serializedVersion: 3
   m_ConnectedBody: {fileID: 4122250831610298227}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: -0.5, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0.00004768372, y: -0.35166743, z: 0.000007947287}
-  serializedVersion: 2
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -3850,6 +3937,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -3909,13 +3999,13 @@ HingeJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4175326982759700531}
+  serializedVersion: 3
   m_ConnectedBody: {fileID: 4122250831610298227}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: -0.5, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: -0.000031789146, y: 0.51501, z: -0.00006357829}
-  serializedVersion: 2
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -4014,7 +4104,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 2c0e7c66169e044f2bc9d914b086e59f, type: 3}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: 2c0e7c66169e044f2bc9d914b086e59f, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -4135,6 +4226,9 @@ LineRenderer:
   m_ReflectionProbeUsage: 0
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -4310,9 +4404,16 @@ MonoBehaviour:
   lineSegmentLength: 0.1
   originOffset: {x: 0, y: 0, z: 0}
   fixClosingAngle: 15
+  StartDrawing:
+    m_PersistentCalls:
+      m_Calls: []
   _lineWidth: 0.04
   fieldStrengthFactor: 10000
   invertDirection: 0
+  minLineSegmentLength: 0.005
+  maxLineSegmentLength: 0.1
+  maxLineSegmentAngleChangeForLengthAdjustment: 10
+  lineSegmentLengthAdjustmentExponent: 3
 --- !u!114 &4175361133556399942
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4432,9 +4533,16 @@ MonoBehaviour:
   lineSegmentLength: 0.1
   originOffset: {x: 0, y: 0, z: 0}
   fixClosingAngle: 15
+  StartDrawing:
+    m_PersistentCalls:
+      m_Calls: []
   _lineWidth: 0.04
   fieldStrengthFactor: 10000
   invertDirection: 0
+  minLineSegmentLength: 0.005
+  maxLineSegmentLength: 0.1
+  maxLineSegmentAngleChangeForLengthAdjustment: 10
+  lineSegmentLengthAdjustmentExponent: 3
 --- !u!114 &4175378696042060360
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4515,9 +4623,16 @@ MonoBehaviour:
   lineSegmentLength: 0.1
   originOffset: {x: 0, y: 0, z: 0}
   fixClosingAngle: 15
+  StartDrawing:
+    m_PersistentCalls:
+      m_Calls: []
   _lineWidth: 0.04
   fieldStrengthFactor: 10000
   invertDirection: 0
+  minLineSegmentLength: 0.005
+  maxLineSegmentLength: 0.1
+  maxLineSegmentAngleChangeForLengthAdjustment: 10
+  lineSegmentLengthAdjustmentExponent: 3
 --- !u!114 &4175384071545403808
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4647,6 +4762,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -4706,13 +4824,13 @@ HingeJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4175413475157520605}
+  serializedVersion: 3
   m_ConnectedBody: {fileID: 4122250831610298227}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: -0.5, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0, y: 0.9349983, z: 0.000007947287}
-  serializedVersion: 2
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -4832,9 +4950,16 @@ MonoBehaviour:
   lineSegmentLength: 0.1
   originOffset: {x: 0, y: 0, z: 0}
   fixClosingAngle: 15
+  StartDrawing:
+    m_PersistentCalls:
+      m_Calls: []
   _lineWidth: 0.04
   fieldStrengthFactor: 10000
   invertDirection: 0
+  minLineSegmentLength: 0.005
+  maxLineSegmentLength: 0.1
+  maxLineSegmentAngleChangeForLengthAdjustment: 10
+  lineSegmentLengthAdjustmentExponent: 3
 --- !u!114 &4175496803045342918
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4915,9 +5040,16 @@ MonoBehaviour:
   lineSegmentLength: 0.1
   originOffset: {x: 0, y: 0, z: 0}
   fixClosingAngle: 15
+  StartDrawing:
+    m_PersistentCalls:
+      m_Calls: []
   _lineWidth: 0.04
   fieldStrengthFactor: 10000
   invertDirection: 0
+  minLineSegmentLength: 0.005
+  maxLineSegmentLength: 0.1
+  maxLineSegmentAngleChangeForLengthAdjustment: 10
+  lineSegmentLengthAdjustmentExponent: 3
 --- !u!114 &4175575001132968690
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5016,6 +5148,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -5075,13 +5210,13 @@ HingeJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4175625188984119703}
+  serializedVersion: 3
   m_ConnectedBody: {fileID: 4122250831610298227}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: -0.5, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0, y: 0.9349983, z: 0.000007947287}
-  serializedVersion: 2
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -5252,6 +5387,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -5311,13 +5449,13 @@ HingeJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4175669684839123745}
+  serializedVersion: 3
   m_ConnectedBody: {fileID: 4122250831610298227}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: -0.5, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0.000007947287, y: -0.35165948, z: 0.000039736435}
-  serializedVersion: 2
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -5437,9 +5575,16 @@ MonoBehaviour:
   lineSegmentLength: 0.1
   originOffset: {x: 0, y: 0, z: 0}
   fixClosingAngle: 15
+  StartDrawing:
+    m_PersistentCalls:
+      m_Calls: []
   _lineWidth: 0.04
   fieldStrengthFactor: 10000
   invertDirection: 0
+  minLineSegmentLength: 0.005
+  maxLineSegmentLength: 0.1
+  maxLineSegmentAngleChangeForLengthAdjustment: 10
+  lineSegmentLengthAdjustmentExponent: 3
 --- !u!114 &4175809623024660744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5520,9 +5665,16 @@ MonoBehaviour:
   lineSegmentLength: 0.1
   originOffset: {x: 0, y: 0, z: 0}
   fixClosingAngle: 15
+  StartDrawing:
+    m_PersistentCalls:
+      m_Calls: []
   _lineWidth: 0.04
   fieldStrengthFactor: 10000
   invertDirection: 0
+  minLineSegmentLength: 0.005
+  maxLineSegmentLength: 0.1
+  maxLineSegmentAngleChangeForLengthAdjustment: 10
+  lineSegmentLengthAdjustmentExponent: 3
 --- !u!114 &4175813239859029598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5642,6 +5794,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -7611,6 +7766,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -7825,6 +7983,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -7935,15 +8096,15 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2339602, guid: 7c5162e9b880445dea8aa174475e453d, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 82b229f63d7fd0847aef675ddcc5aa95, type: 2}
     - target: {fileID: 2367834, guid: 7c5162e9b880445dea8aa174475e453d, type: 3}
-      propertyPath: m_Materials.Array.data[1]
+      propertyPath: 'm_Materials.Array.data[1]'
       value: 
       objectReference: {fileID: 2100000, guid: 82b229f63d7fd0847aef675ddcc5aa95, type: 2}
     - target: {fileID: 2379536, guid: 7c5162e9b880445dea8aa174475e453d, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: b180a087b6f40a94387c4b1cffb232a7, type: 2}
     - target: {fileID: 11481412, guid: 7c5162e9b880445dea8aa174475e453d, type: 3}
