@@ -107,7 +107,7 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
         charge.minValue = minChargeValue;
 
         _rigidbody = GetComponent<Rigidbody>();
-        _rigidbody.velocity = Vector3.zero;
+        _rigidbody.linearVelocity = Vector3.zero;
 
         var obj  = GameObject.Find("CoulombLogic");
         if (obj)
@@ -216,7 +216,7 @@ public class CoulombChargeBehaviour : MonoBehaviour, IResetObject, IGenerateE, I
 
     public void UpdateCalculations()
     {
-        _rigidbody.velocity = Vector3.zero;
+        _rigidbody.linearVelocity = Vector3.zero;
         if(_collided < 3)
             transform.position = _updatePosition;
     }
