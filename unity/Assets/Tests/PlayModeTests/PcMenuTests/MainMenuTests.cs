@@ -28,6 +28,7 @@ namespace Tests.PlayModeTests.PcMenuTests
         public IEnumerator Setup()
         {
             yield return LoadSceneAndCheckItsLoadedCorrectly(MainMenuScenePath);
+            LanguageManager.Instance.CurrentLanguage = SystemLanguage.English;
         }
         
         [TearDown]
