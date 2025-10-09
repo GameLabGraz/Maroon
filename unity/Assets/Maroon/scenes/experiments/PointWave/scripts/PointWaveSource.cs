@@ -44,7 +44,7 @@ public class PointWaveSource : MonoBehaviour, IResetObject, IDeleteObject
     public void Init()
     {
         _rigidbody = GetComponent<Rigidbody>();
-        _rigidbody.velocity = Vector3.zero;
+        _rigidbody.linearVelocity = Vector3.zero;
 
         var obj = FindObjectOfType<PointWavePoolHandler>();
         if (obj)
