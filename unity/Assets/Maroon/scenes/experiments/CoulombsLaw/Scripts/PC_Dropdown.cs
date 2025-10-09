@@ -44,9 +44,10 @@ public class PC_Dropdown : TMP_Dropdown
             this.key = key;
         }
         
-        public LocalizedOptionData(string key, string text, Sprite image) : base(text, image)
+        public LocalizedOptionData(string key, string text, Sprite image) : base(text)
         {
             this.key = key;
+            this.image = image;
         }
 
         public void UpdateKey()
