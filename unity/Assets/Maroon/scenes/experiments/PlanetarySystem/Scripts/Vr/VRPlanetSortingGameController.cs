@@ -8,7 +8,8 @@ namespace Maroon.Experiments.PlanetarySystem
         [SerializeField] private GameObject sortingGamePlanetPlaceholderSlots;
         [SerializeField] private GameObject[] sortingPlanets;
         private readonly List<int> sortingGameAvailableSlotPositions = new List<int>();
-
+        public GameObject WhiteboardGerman;
+        public GameObject WhiteboardEnglisch;
         [SerializeField] private Light sunLight;
         [SerializeField] private ParticleSystem solarFlares;
         //---------------------------------------------------------------------------------------
@@ -103,7 +104,16 @@ namespace Maroon.Experiments.PlanetarySystem
                 }
             }
         }
-
+        public void GermanWhiteboardToggle()
+        {
+            WhiteboardGerman.SetActive(true);
+            WhiteboardEnglisch.SetActive(false);
+        }
+        public void EnglishWhiteboardToggle()
+        {
+            WhiteboardGerman.SetActive(false);
+            WhiteboardEnglisch.SetActive(true);
+        }
         /// <summary>
         /// toggles the rotation of the minigame sortable planets button press
         /// </summary>

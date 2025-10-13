@@ -25,11 +25,15 @@ namespace Maroon.Experiments.PlanetarySystem
         public GameObject VRPlayer;
         public Transform planetarySpawnPoint;
         public GameObject PlanetarySystemSimulationCamera;
-
+        public GameObject simButton;
+        public GameObject ShelveWithDrawer;
+        public GameObject resButton;
         public GameObject uiButton;
         public GameObject ExitButton;
         public GameObject SliderG;
         public GameObject SliderTimeSpeed;
+        public GameObject Language;
+        public GameObject QuestManager;
         public GameObject TimeTo1Button;
         public GameObject ResetButton;
         public GameObject OrientationButton;
@@ -115,6 +119,7 @@ namespace Maroon.Experiments.PlanetarySystem
             ResetButton.SetActive(false);
             OrientationButton.SetActive(false);
             RotationButton.SetActive(false);
+            Language.SetActive(false);
             TrajectoriesButton.SetActive(false);
             ClearTrajectoriesButton.SetActive(false);
             HandleTimeSpeed.ForceToValue(1f);
@@ -195,7 +200,10 @@ namespace Maroon.Experiments.PlanetarySystem
             planetaryController.SetSkybox();
 
             Environment.SetActive(false);
-
+            resButton.SetActive(false);
+            simButton.SetActive(false);
+            QuestManager.SetActive(false);
+            ShelveWithDrawer.SetActive(false);
             PlanetarySystemSimulation.SetActive(true);
             uiController.ResetPlanetarySystemSimulation();
             planetaryController.DisplayMessageByKey("EnterPlanetarySystemSimulation");
@@ -210,8 +218,12 @@ namespace Maroon.Experiments.PlanetarySystem
         public void LeavePlanetorySystemSimulation()
         {
             PlanetarySystemSimulationUI.SetActive(false);
-
+            resButton.SetActive(true);
+            ExitButton.SetActive(true);
             Environment.SetActive(true);
+            ShelveWithDrawer.SetActive(true);
+            simButton.SetActive(true);
+            QuestManager.SetActive(true);
             PlanetarySystemSimulation.SetActive(false);
             VRPlayer.SetActive(true);
             VRPlayer.transform.position = Vector3.zero;

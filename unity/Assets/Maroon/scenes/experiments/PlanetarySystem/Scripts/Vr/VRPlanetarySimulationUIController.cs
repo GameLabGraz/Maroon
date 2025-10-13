@@ -25,7 +25,8 @@ namespace Maroon.Experiments.PlanetarySystem
         public GameObject OrientationButton;
         public GameObject RotationButton;
         public GameObject TrajectoriesButton;
-        public GameObject ClearTrajectoriesButton; 
+        public GameObject ClearTrajectoriesButton;
+        public GameObject Language;
         public GameObject Player;
         public GameObject SliderG;
         public GameObject SliderTimeSpeed;
@@ -166,6 +167,8 @@ namespace Maroon.Experiments.PlanetarySystem
             OrientationButton.SetActive(newValue);
             newValue = !RotationButton.activeSelf;
             RotationButton.SetActive(newValue);
+            newValue = !Language.activeSelf;
+            Language.SetActive(newValue);
             newValue = !TrajectoriesButton.activeSelf;
             TrajectoriesButton.SetActive(newValue);
             newValue = !ClearTrajectoriesButton.activeSelf;

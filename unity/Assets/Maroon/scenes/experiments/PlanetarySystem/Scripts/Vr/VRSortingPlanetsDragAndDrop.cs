@@ -15,7 +15,6 @@ namespace Maroon.Experiments.PlanetarySystem
 
         public PlanetRotation planetRotation;
         public Transform sortingPlanetTarget;
-        public WhiteboardDisplay whiteboardDisplay;
         
         public float snapDistance;
         private bool isSnapped = false;
@@ -81,17 +80,21 @@ namespace Maroon.Experiments.PlanetarySystem
         }
         #endregion MouseInput
         #region VRInput
-        private Interactable _interactable;
-        private Throwable _throwable;
+        private GameLabGraz.VRInteraction.VRInteractable _vri;
+        private GameLabGraz.VRInteraction.VRThrowable    _vrth;
+        private Rigidbody _rb;
 
         private void Awake()
         {
-            _interactable = GetComponent<Interactable>();
-            _throwable = GetComponent<Throwable>();
+            _vri  = GetComponent<GameLabGraz.VRInteraction.VRInteractable>();
+            _vrth = GetComponent<GameLabGraz.VRInteraction.VRThrowable>();
+            _rb   = GetComponent<Rigidbody>();
         }
+
 
         public void OnAttachedToHand(Hand hand)
         {
+            if (isSnapped) { hand.DetachObject(gameObject); return; }
             audioSource.PlayOneShot(pickUpClip);
 
             PlanetInfo planetInfo = GetComponent<PlanetInfo>();
@@ -110,23 +113,6 @@ namespace Maroon.Experiments.PlanetarySystem
                 if (distance <= snapDistance)
                 {
                     SnapToTarget();
-                }
-                else
-                {
-                    transform.position = transform.parent.position;
-                    isSnapped = false;
-                    PlanetInfo planetInfo = GetComponent<PlanetInfo>();
-                    planetInfo.IsSnapped = false;
-                    //if (transform.parent != null)
-                    //{
-                    //    transform.position = transform.parent.position;
-                    //}
-                    //isSnapped = false;
-                    //PlanetInfo planetInfo = GetComponent<PlanetInfo>();
-                    //if (planetInfo != null)
-                    //{
-                    //    planetInfo.IsSnapped = false;
-                    //}
                 }
             }
         }
@@ -152,7 +138,16 @@ namespace Maroon.Experiments.PlanetarySystem
             planetInfo.IsSnapped = true;
             PlanetaryControllerVR.Instance.IncrementSnappedPlanetCount();
             audioSource.PlayOneShot(dropClip);
+            if (_vri)  { _vri.interactable = false; _vri.hoverable = false; _vri.highlightOnHover = false; }
+            if (_vrth) _vrth.enabled = false;
 
+            // Physik beruhigen, aber NICHT kinematic:
+            if (_rb)
+            {
+                _rb.velocity = Vector3.zero;
+                _rb.angularVelocity = Vector3.zero;
+                _rb.constraints = RigidbodyConstraints.FreezeAll;
+            }
             createdPlanetInfoMessage = planetInfo.CreatePlanetInfoMessage();
             planetInfoMessageText.text = createdPlanetInfoMessage;
             if (whiteboardText != null)
@@ -173,7 +168,7 @@ namespace Maroon.Experiments.PlanetarySystem
             createdPlanetInfoMessage = "PlanetDescription";
             whiteboardText.text = LanguageManager.Instance.GetString(createdPlanetInfoMessage);
         }
-    
+
 
 
         /// <summary>
@@ -191,8 +186,19 @@ namespace Maroon.Experiments.PlanetarySystem
 
             PlanetaryControllerVR.Instance.sortedPlanetCount = 0;
             isSnapped = false;
+            StartCoroutine(ReenableNextFrame());
             PlanetInfo planetInfo = GetComponent<PlanetInfo>();
             planetInfo.IsSnapped = false;
+        }
+        
+        private System.Collections.IEnumerator ReenableNextFrame()
+        {
+            yield return null; // kommt nach Reset/OnReset anderer Systeme
+
+            if (_vri)  { _vri.interactable = true; _vri.hoverable = true; _vri.highlightOnHover = true; }
+            if (_vrth) _vrth.enabled = true;
+
+            if (_rb)   _rb.constraints = RigidbodyConstraints.None;
         }
         #endregion Reset
     }

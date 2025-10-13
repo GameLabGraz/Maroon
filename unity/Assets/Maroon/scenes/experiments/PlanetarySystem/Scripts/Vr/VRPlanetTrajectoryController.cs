@@ -25,7 +25,7 @@ namespace Maroon.Experiments.PlanetarySystem
         /// <summary>
         /// general start setup
         /// </summary>
-        private void Start()
+        private void Awake()
         {
             InitializeLineRenderer();
             SetupLineRenderer();
@@ -173,7 +173,10 @@ namespace Maroon.Experiments.PlanetarySystem
             //Debug.Log("PlanetController(): ToggleAllTrajectories = " + isOn);
             for (int index = 0; index < planetTrajectories.Count; index++)
             {
-                lineRenderers[index].enabled = isOn;
+                if (lineRenderers[index] != null)
+                {
+                    lineRenderers[index].enabled = isOn;
+                }
             }
         }
         #endregion ToggleTrajectories

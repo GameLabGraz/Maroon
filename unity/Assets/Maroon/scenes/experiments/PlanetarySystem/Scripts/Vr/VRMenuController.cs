@@ -15,6 +15,7 @@ namespace Maroon.Experiments.PlanetarySystem
         public GameObject RotationButton;
         public GameObject TrajectoriesButton;
         public GameObject ClearTrajectoriesButton;
+        public GameObject Language;
 
         void Start()
         {
@@ -28,6 +29,7 @@ namespace Maroon.Experiments.PlanetarySystem
             RotationButton.SetActive(false);
             TrajectoriesButton.SetActive(false);
             ClearTrajectoriesButton.SetActive(false);
+            Language.SetActive(false);
         }
     }
 }
