@@ -140,8 +140,6 @@ namespace Maroon.Experiments.PlanetarySystem
             audioSource.PlayOneShot(dropClip);
             if (_vri)  { _vri.interactable = false; _vri.hoverable = false; _vri.highlightOnHover = false; }
             if (_vrth) _vrth.enabled = false;
-
-            // Physik beruhigen, aber NICHT kinematic:
             if (_rb)
             {
                 _rb.velocity = Vector3.zero;
@@ -193,7 +191,7 @@ namespace Maroon.Experiments.PlanetarySystem
         
         private System.Collections.IEnumerator ReenableNextFrame()
         {
-            yield return null; // kommt nach Reset/OnReset anderer Systeme
+            yield return null;
 
             if (_vri)  { _vri.interactable = true; _vri.hoverable = true; _vri.highlightOnHover = true; }
             if (_vrth) _vrth.enabled = true;
