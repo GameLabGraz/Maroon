@@ -2,11 +2,11 @@ using UnityEngine;
 using Valve.VR;
 using Valve.VR.InteractionSystem;
 
-[RequireComponent(typeof(Hand))]
-[RequireComponent(typeof(HandPhysics))]
-[RequireComponent(typeof(SteamVR_Behaviour_Pose))]
 namespace Maroon.Experiments.PlanetarySystem
 {
+    [RequireComponent(typeof(Hand))]
+    [RequireComponent(typeof(HandPhysics))]
+    [RequireComponent(typeof(SteamVR_Behaviour_Pose))]
     public class HandUnscaledFollower : MonoBehaviour
     {
         private Hand hand;
