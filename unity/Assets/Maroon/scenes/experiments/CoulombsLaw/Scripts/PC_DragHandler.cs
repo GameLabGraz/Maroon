@@ -8,42 +8,33 @@ public class PC_DragHandler : MonoBehaviour
     [Tooltip("The object that will move. If empty, the object where this script is attached will be moved.")]
     public GameObject movingObject;
     
+    [Tooltip("If used in conjunction with arrowMovement + rigidbody, this reference should be set, otherwise collisions won't work properly")]
+    [SerializeField] private PC_ArrowMovement _arrowMovement = null; 
+
+    [Header("Physics")]
+    [Tooltip("For dragging physics objects, the rigidBody reference should be set to avoid interpolation problems")]
+    [SerializeField] private Rigidbody _rigidBody = null; 
+    private bool _wasKinematicAtDragStart = false;
+    [SerializeField] private bool _addVelocityAfterDragEnd = false;
+    [SerializeField] private float _maxVelocity = 2;
+    private Vector3 _previousDragPos;
+    private Vector3 _dragVelocity;
+
     [Header("Movement Restrictions")]
     public Transform minBoundary;
     public Transform maxBoundary;
-    
-    public bool allowedXMovement = true;
-    public bool allowedYMovement = true;
-    public bool allowedZMovement = true;
-    public bool useLocalCoordinates = false;
-
-    [Header("Movement Restrictions Appearances")]
-    [Tooltip("Boundaries need to be set for this")]
-    public List<GameObject> changeMaterialIfOutside;
-    [Tooltip("The materials must support transparency for this.")]
-    public float outsideTransparency = 0.7f;
-
-    [Header("Additional Object References")]
-    public PC_ArrowMovement ArrowMovement = null;
+    public bool allowZMovement = true;
     
     [Header("Events")]
-    [Tooltip("Event that gets triggered when the Object starts to move.")]
-    public UnityEvent onStartedMoving;
-    public UnityEvent onMove;
     [Tooltip("Event that gets triggered when the Object is outside the boundaries when the movement finished. This only gets triggered if the boundaries are set.")]
     public UnityEvent onEndMovingOutsideBoundaries;
     [Tooltip("Event that gets triggered at the end of the movement if the object is within the boundaries (or none are specified).")]
     public UnityEvent onEndMovingInsideBoundaries;
-    
-    [Tooltip("Event that gets triggered when the object is enabled.")]
-    public UnityEvent onEnabled;
-    [Tooltip("Event that gets triggered when the object is disabled.")]
-    public UnityEvent onDisabled;
-    
-    private bool _moving = false;
-    private Vector3 _lastMousePos = Vector3.zero;
+
+    private bool _dragIsActive = false;
     private bool _isOutsideBoundaries = false;
-    private float _distance;
+    private Vector3 _objectPostionAtDragStart;
+    private Vector3 _objectToMousePosOffsetAtDragStart;
 
     // Start is called before the first frame update
     void Start()
@@ -57,104 +48,107 @@ public class PC_DragHandler : MonoBehaviour
         maxBoundary = max.transform;
     }
 
+    public static Vector3 GetMousePointOnPlaneParallelToCamera(Vector3 pointOnPlane)
+    {
+        Plane movementPlane = new Plane(Camera.main.transform.rotation * Vector3.back, pointOnPlane);
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        float planeIntersectionDistance = 0.0f;
+        movementPlane.Raycast(ray, out planeIntersectionDistance);
+        return ray.GetPoint(planeIntersectionDistance);
+    }
+
     private void OnMouseDown()
     {
         if(!movingObject.activeSelf) return;
-        if (!Input.GetMouseButtonDown(0)) return;
-        
-        _moving = true;
 
-        var main = Camera.main;
-        Debug.Assert(main != null);
-        _lastMousePos = Input.mousePosition;
-        _distance = Vector3.Distance( movingObject.transform.position, main.transform.position);
+        if (_arrowMovement != null)
+        {
+            _arrowMovement.OnChildMouseDown();
+            if (_arrowMovement.IsDragActive()) return;
+        }
         
-        onStartedMoving.Invoke();
+        if(_rigidBody != null)
+        {
+            _wasKinematicAtDragStart = _rigidBody.isKinematic;
+            _rigidBody.isKinematic = true;
+        }
+
+        _dragIsActive = true;
+        _objectPostionAtDragStart = movingObject.transform.position;
+        _objectToMousePosOffsetAtDragStart = _objectPostionAtDragStart - GetMousePointOnPlaneParallelToCamera(_objectPostionAtDragStart);
+        _previousDragPos = movingObject.transform.position;
+        _dragVelocity = Vector3.zero;
     }
     
     private void OnMouseDrag()
     {
-        if (!_moving || Vector3.Distance(_lastMousePos, Input.mousePosition) < 2f) return;
+        if (_arrowMovement != null && _arrowMovement.IsDragActive())
+        {
+            _arrowMovement.OnChildMouseDrag();
+            return;
+        }
 
-        _lastMousePos = Input.mousePosition;
-        var ray = Camera.main.ScreenPointToRay(_lastMousePos);
-        var pt = ray.GetPoint(_distance);
-        var pos = movingObject.transform.position;
+        // Note(MartinR): Before merge, check why the distance-check was here, as it causes stuttering durign drag-and-drop on my Machine
+        // if (!_moving || Vector3.Distance(_lastMousePos, Input.mousePosition) < 2f) return;
+        if (!_dragIsActive) return;
 
-        if (!allowedXMovement) pt.x = pos.x;
-        if (!allowedYMovement) pt.y = pos.y;
-        if (!allowedZMovement) pt.z = pos.z;
+        // Calculate new Position based on Mouse-Pos
+        var newPos = GetMousePointOnPlaneParallelToCamera(_objectPostionAtDragStart) + _objectToMousePosOffsetAtDragStart;
+        if (!allowZMovement) newPos.z = _objectPostionAtDragStart.z;
 
+        // Calculate drag velocity
+        _dragVelocity = (newPos - _previousDragPos) / Time.deltaTime;
+        _previousDragPos = newPos;
         
-        var outside = false;
+        // Check if point is outside of boundaries
         if (minBoundary != null && maxBoundary != null)
         {
-            var minPosition = useLocalCoordinates ? minBoundary.localPosition : minBoundary.position;
-            var maxPosition = useLocalCoordinates ? maxBoundary.localPosition : maxBoundary.position;
-            var checkPt = useLocalCoordinates? minBoundary.parent.InverseTransformPoint(pt) : pt;
-
-            Debug.Assert(minBoundary.parent == maxBoundary.parent);
-            if (allowedXMovement && (checkPt.x + 0.2f < Mathf.Min(minPosition.x, maxPosition.x)
-                                     || Mathf.Max(minPosition.x, maxPosition.x) < checkPt.x - 0.2f))
-                outside = true;
-            else if (allowedYMovement && (checkPt.y + 0.2f < Mathf.Min(minPosition.y, maxPosition.y) 
-                                          || Mathf.Max(minPosition.y, maxPosition.y) < checkPt.y - 0.2f))
-                outside = true;
-            else if (allowedZMovement && (checkPt.z + 0.2f < Mathf.Min(minPosition.z, maxPosition.z) 
-                                          || Mathf.Max(minPosition.z, maxPosition.z)  < checkPt.z - 0.2f))
-                outside = true;
-        }
-
-        // ReSharper disable once RedundantCheckBeforeAssignment
-        if (outside != _isOutsideBoundaries)
-        {
-            _isOutsideBoundaries = outside;
-
-            foreach(var obj in changeMaterialIfOutside)
-            {
-                if(!obj.activeSelf) continue;
-                foreach (var mat in obj.GetComponent<MeshRenderer>().materials)
-                {
-                    var col = mat.color;
-                    col.a = outside ? outsideTransparency : 1f;
-                    mat.color = col;
-                }
-            }
+            Vector3 min = Vector3.Min(minBoundary.position, maxBoundary.position);
+            Vector3 max = Vector3.Max(minBoundary.position, maxBoundary.position);
+            _isOutsideBoundaries = 
+                (newPos.x < min.x || newPos.x > max.x) ||
+                (newPos.y < min.y || newPos.y > max.y) ||
+                (allowZMovement && (newPos.z < min.z || newPos.z > max.z));
         }
         
-        movingObject.transform.position = pt;
-        onMove.Invoke();
+        // Set new position
+        // Note(MartinR): Just setting transform.position causes problems when Physics interpolation is enabled.
+        //      _rigidBody.MovePosition also does not seem to do the trick, I guess because it is expected to be called during FixedUpdate?
+        if (_rigidBody != null)
+        {
+            _rigidBody.position = newPos;
+        }
+        else
+        {
+            movingObject.transform.position = newPos;
+        }
     }
     
     private void OnMouseUp()
     {
-        if (!Input.GetMouseButtonUp(0)) return;
+        if (_arrowMovement != null && _arrowMovement.IsDragActive())
+        {
+            _arrowMovement.OnChildMouseUp();
+            return;
+        }
         
-        _moving = false;
+        if(_rigidBody != null && !_wasKinematicAtDragStart)
+        {
+            _rigidBody.isKinematic = false;
+
+            if (_addVelocityAfterDragEnd)
+            {
+                var speed = _dragVelocity.magnitude;
+                if (speed > _maxVelocity)
+                {
+                    _dragVelocity = _dragVelocity.normalized * _maxVelocity;
+                }
+                _rigidBody.velocity = _dragVelocity;
+            }
+        }
+
+        _dragIsActive = false;
         if (_isOutsideBoundaries) onEndMovingOutsideBoundaries.Invoke();
         else onEndMovingInsideBoundaries.Invoke();
-    }
-
-    public void RestrictMovement(bool allowX, bool allowY, bool allowZ)
-    {
-        allowedXMovement = allowX;
-        allowedYMovement = allowY;
-        allowedZMovement = allowZ;
-    }
-
-
-    private void OnDisable()
-    {
-        onDisabled.Invoke();
-    }
-
-    private void OnEnable()
-    {
-        onEnabled.Invoke();
-    }
-
-    public void SetUseLocalCoordinates(bool useLocal)
-    {
-        useLocalCoordinates = useLocal;
     }
 }

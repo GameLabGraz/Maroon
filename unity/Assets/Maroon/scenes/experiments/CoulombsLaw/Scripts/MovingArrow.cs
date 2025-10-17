@@ -12,7 +12,7 @@ public class MovingArrow : MonoBehaviour
 
     private void OnMouseDown()
     {
-        _arrowMovement.OnChildMouseDown(gameObject);
+        _arrowMovement.OnChildMouseDown();
     }
 
     private void OnMouseDrag()

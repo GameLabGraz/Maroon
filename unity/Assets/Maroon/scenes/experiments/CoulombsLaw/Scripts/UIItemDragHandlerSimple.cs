@@ -4,95 +4,72 @@ using UnityEngine.EventSystems;
 
 public class UIItemDragHandlerSimple : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
-    [Header("General Settings")]
-    public Canvas parentCanvas;
-    public float returnTime = 1f;
-    public GameObject generatedObject;
-    [Tooltip("The object which is set as the new child, if empty the generated Object will be used as childObject.")]
-    public GameObject childObject = null;
-    public bool resetRotation = true;
-    
-    [Header("Other Affected GameObjects")]
-    public GameObject changeLayerObject;
-    
-    private GameObject _item;
-    private Transform _parent;
+    private Canvas _parentCanvas = null;
 
-    protected void Start()
+    [Tooltip("To determine at which Depth objects are spawned/placed, a reference position + offset can be used")]
+    [SerializeField] private Transform _referencePosition = null;
+    [Tooltip("To determine at which Depth objects are spawned/placed, a reference position + offset can be used")]
+    [SerializeField] private float _zOffset = 0;
+
+    [SerializeField] private Transform _minBoundary = null;
+    [SerializeField] private Transform _maxBoundary = null;
+
+    public UnityEngine.Events.UnityEvent<Vector3> OnDragFinished; 
+    private GameObject _placeholderObject; // The 2D object used as placeholder until the drag has finished
+
+    private void Awake()
     {
-        if (childObject == null)
-            childObject = generatedObject;
-
-        _parent = transform.parent;
+        _parentCanvas = GetComponentInParent<Canvas>();
+        Debug.Assert(_parentCanvas != null, "UIItemDragHandler should only be used on UI-objects");
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        _item = Instantiate(gameObject, parentCanvas.transform);
+        _placeholderObject = Instantiate(gameObject, _parentCanvas.transform);
         var recTransformOrig = gameObject.GetComponent<RectTransform>();
-        var recTransform = _item.GetComponent<RectTransform>();
-
+        var recTransform = _placeholderObject.GetComponent<RectTransform>();
         recTransform.sizeDelta = recTransformOrig.sizeDelta;
         recTransform.localScale = recTransformOrig.localScale;
-
-
-        if (changeLayerObject)
-        {
-            changeLayerObject.layer = 0;
-        }
     }
     
     public void OnDrag(PointerEventData eventData)
     {
-        //_item.transform.parent = parentCanvas.transform;
-
         var screenPoint = Input.mousePosition;
-        var finish = parentCanvas.worldCamera.ScreenToWorldPoint(screenPoint);
+        var finish = _parentCanvas.worldCamera.ScreenToWorldPoint(screenPoint);
         finish.z = 0f;
-        _item.transform.position = finish;
+        _placeholderObject.transform.position = finish;
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        var hits = Physics.RaycastAll(ray, 100f);
+        Destroy(_placeholderObject);
 
-        foreach (var hit in hits)
+        // Note(MartinR): Currently I'm assuming that we spawn everything in 2D-Mode
+        Vector3 referencePoint = new Vector3(0, 0, _zOffset);
+        if (_referencePosition != null)
         {
-            if(!hit.transform.CompareTag("VectorField"))
-                continue;
+            referencePoint += _referencePosition.position;
+        }
+        Vector3 dragEndPoint = PC_DragHandler.GetMousePointOnPlaneParallelToCamera(referencePoint);
 
-            ShowObject(hit.point, hit.transform.parent);
+        // Early exit if we placed something out of bounds
+        if (_minBoundary != null && _maxBoundary != null)
+        {
+            Vector3 min = Vector3.Min(_minBoundary.position, _maxBoundary.position);
+            Vector3 max = Vector3.Max(_minBoundary.position, _maxBoundary.position);
+            if (dragEndPoint.x < min.x || dragEndPoint.x > max.x ||
+                dragEndPoint.y < min.y || dragEndPoint.y > max.y)
+            {
+                return;
+            }
         }
 
-        if (changeLayerObject)
-        {
-            changeLayerObject.layer = 2; //IgnoreRaycast
-        }
-
-        Destroy(_item);
-    }
-    
-    public virtual void SetObjectToOrigin()
-    {
-        var vecFields = GameObject.FindGameObjectsWithTag("VectorField"); //should be 2 -> one 2d and one 3d, where only one should be active at a time
-
-        foreach (var vecField in vecFields)
-        {
-            if(!vecField.activeInHierarchy) continue;
-            ShowObject(vecField.transform.position, vecField.transform.parent);
-        }
+        OnDragFinished.Invoke(dragEndPoint);
     }
 
-    protected virtual void ShowObject(Vector3 position, Transform parent)
+    public void SetBoundaries(Transform min, Transform max)
     {
-        if (generatedObject == null) return;
-
-        childObject.transform.parent = parent;
-        generatedObject.transform.position = position;
-        if(resetRotation)
-            generatedObject.transform.localRotation = Quaternion.identity;
-        generatedObject.SetActive(false);
-        generatedObject.SetActive(true);
+        _minBoundary = min;
+        _maxBoundary = max;
     }
 }

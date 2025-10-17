@@ -53,6 +53,16 @@ public abstract class IField : MonoBehaviour
     /// Lists of producers which generates the field
     /// </summary>
     protected HashSet<GameObject> producers = new HashSet<GameObject>();
+    
+    public void AddProducerToSet(GameObject producer)
+    {
+        producers.Add(producer);
+    }
+
+    public void RemoveProducerFromSet(GameObject producer)
+    {
+        producers.Remove(producer);
+    }
         
     /// <summary>
     /// Gets the field type

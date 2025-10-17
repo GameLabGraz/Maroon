@@ -1,12 +1,17 @@
 ﻿Shader "Custom/CoulombEquipotentialLineShader" {
     Properties {
-        _MainTex ("Sprite Texture", 2D) = "white" {}        
-        _LineColor("Line Color", Color) = (1,1,1,1)
-        _BkgdColor("Background Color", Color) = (1,1,1,1)
-        _LineWidth("Line Width", Range(0, 1)) = 0.0001
-        _ChargeStepTolerance("Charge Step Tolerance", Range(0.0,1.0)) = 0.001
-        _MaxDistance("Maxium Distance", Range(0.0, 100.0)) = 22.0
-        _DistanceStep("Distance Steps", Range(0.0, 100.0)) = 1.0
+		// Note(MartinR): To prevent division by 0, the voltage calculation always clamps the distance to a minimum value
+        _MinDistance ("Minimum Distance To Charges", Float) = 0.05
+        _LineColor("Line Color", Color) = (0.3, 0.3, 0.3, 1)
+
+		// At which voltage intervals the lines are drawn
+        _LineSpacingVoltage ("LineSpacingVoltage", Float) = 30000
+		// Voltage at which we stop drawing lines (As the lines would get too dense)
+        _MaxAbsLineVoltage ("MaxAbsLineVoltage", Float) = 500000
+
+		_LineHalfWidth("LineHalfWidth", Float) = 0.005 // In Unity coordinates
+		// Extra line thickness (percentual to normal line thickness), where line smoothly fades into background color
+		_LineSmoothFalloff("LineSmoothFalloff", Range(0, 1)) = 1.0
     }
     
     SubShader {
@@ -30,7 +35,6 @@
 			};  
         
 			struct vert2frag {
-				float4 pos_object_space : TEXCOORD0;
 				float4 pos_world_space  : TEXCOORD1;
 				float4 pos_clip_space   : SV_POSITION;
 			};
@@ -40,7 +44,6 @@
         
 			vert2frag vert(vertInput input) {
 				vert2frag output;
-				output.pos_object_space = input.pos;
 				output.pos_world_space = mul(unity_ObjectToWorld, input.pos);
 				output.pos_clip_space = UnityObjectToClipPos(input.pos);
 				return output;
@@ -48,111 +51,152 @@
 
 			// --------------------------------------------------------------------------------------------------------------
 			// Data structures
-
-			float _ChargeStepTolerance;
-			float _MaxDistance;
-			float _DistanceStep;
+			float _MinDistance;
 			float4 _LineColor;
-			float4 _BkgdColor;
-			float _LineWidth;
+
+			float _LineSpacingVoltage;
+			float _MaxAbsLineVoltage;
+			float _LineHalfWidth;
+			float _LineSmoothFalloff;
 
 			uniform int _EntryCnt;
 			uniform float4 _Entries[100];
 
 			// --------------------------------------------------------------------------------------------------------------
 			// Fragment shader
-        
-			half4 frag(vert2frag input) : COLOR {
 
-				// Variables
-				float CoulombConstant = 9; 
-				float CoulombMultiplyFactor = 0.001;
-				float3 pos, pos1, pos2, pos3, pos4;
+			// Unit is Newton meter^2 / Coulomb^2 [N m^2 / C^2] 
+			#define COULOMBS_CONSTANT 9e9
 
-				// Init
-				pos = pos1 = pos2 = pos3 = pos4 = input.pos_world_space;
-				pos1.x = pos2.x = input.pos_world_space.x - _LineWidth;
-				pos3.x = pos4.x = input.pos_world_space.x + _LineWidth;
-            
-				pos1.z = pos3.z = input.pos_world_space.z - _LineWidth;
-				pos2.z = pos4.z = input.pos_world_space.z + _LineWidth;
-            
-				float3 world_pos = pos;
-				float3 world_pos1 = pos1;
-				float3 world_pos2 = pos2;
-				float3 world_pos3 = pos3;
-				float3 world_pos4 = pos4;
-                        
-				//TODO: check voltage on 4 neigbouring points -> not a tolerance for the voltage -> use linewidth
-				int entries = _EntryCnt;
-				float voltage = 0.0;
-				float voltage1 = 0.0;
-				float voltage2 = 0.0;
-				float voltage3 = 0.0;
-				float voltage4 = 0.0;
-            
-				float radius = 0.71;
-				for(int i = 0; i < entries; ++i){
-					float3 posEntry = _Entries[i].xyz;
-					float charge = _Entries[i].w;
+			// Returns Voltage and electric field value
+			void evaluateField(float3 pos, out float voltage, out float3 fieldVector) 
+			{
+				voltage = 0.0; // In Volt
+				fieldVector = float3(0, 0, 0); // In Newton / Coulomb [N/C]
+				for(int i = 0; i < _EntryCnt; ++i)
+				{
+					float3 chargePos    = _Entries[i].xyz;
+					float  electricCharge = _Entries[i].w;
+
+					// 2D mode
+					chargePos.z = pos.z;
                 
-					float dist = distance(world_pos, posEntry) - radius;
-					if(dist < 0) dist = 0;
-					float tmp = CoulombConstant * CoulombMultiplyFactor * charge / (dist * dist); //TODO: check formula
-					voltage = voltage + tmp;
-                
-					dist = distance(world_pos1, posEntry) - radius;
-					if(dist < 0) dist = 0;
-					tmp = CoulombConstant * CoulombMultiplyFactor * charge / (dist * dist); //TODO: check formula
-					voltage1 = voltage1 + tmp;
-                
-                
-					dist = distance(world_pos2, posEntry) - radius;
-					if(dist < 0) dist = 0;
-					tmp = CoulombConstant * CoulombMultiplyFactor * charge / (dist * dist); //TODO: check formula
-					voltage2 = voltage2 + tmp;
-                
-                
-					dist = distance(world_pos3, posEntry) - radius;
-					if(dist < 0) dist = 0;
-					tmp = CoulombConstant * CoulombMultiplyFactor * charge / (dist * dist); //TODO: check formula
-					voltage3 = voltage3 + tmp;
-                
-                
-					dist = distance(world_pos4, posEntry) - radius;
-					if(dist < 0) dist = 0;
-					tmp = CoulombConstant * CoulombMultiplyFactor * charge / (dist * dist); //TODO: check formula
-					voltage4 = voltage4 + tmp;
-				}           
-                  
-             
-				if(voltage < 0.0) voltage *= -1.0;
-				if(voltage1 < 0.0) voltage1 *= -1.0;
-				if(voltage2 < 0.0) voltage2 *= -1.0;
-				if(voltage3 < 0.0) voltage3 *= -1.0;
-				if(voltage4 < 0.0) voltage4 *= -1.0;
-            
-				if(_DistanceStep < 0.0001)
-					return _BkgdColor;
-            
-				for(float distance = _DistanceStep / 2; distance <= _MaxDistance; distance += _DistanceStep){
-					float VoltAtDistance = CoulombConstant * CoulombMultiplyFactor / (distance * distance);
-					float UpperVoltAtDistance = CoulombConstant * CoulombMultiplyFactor / ((distance - _LineWidth)*(distance - _LineWidth));
-					float LowerVoltAtDistance = CoulombConstant * CoulombMultiplyFactor / ((distance + _LineWidth)*(distance + _LineWidth));
-                
-					if(((voltage < LowerVoltAtDistance || voltage1 < LowerVoltAtDistance || voltage2 < LowerVoltAtDistance || voltage3 < LowerVoltAtDistance || voltage4 < LowerVoltAtDistance)
-					&& (voltage > UpperVoltAtDistance || voltage1 > UpperVoltAtDistance || voltage2 > UpperVoltAtDistance || voltage3 > UpperVoltAtDistance || voltage4 > UpperVoltAtDistance))
-					|| (LowerVoltAtDistance - _ChargeStepTolerance < voltage && voltage < UpperVoltAtDistance + _ChargeStepTolerance)
-					||(LowerVoltAtDistance - _ChargeStepTolerance < voltage1 && voltage1 < UpperVoltAtDistance + _ChargeStepTolerance)
-					||(LowerVoltAtDistance - _ChargeStepTolerance < voltage2 && voltage2 < UpperVoltAtDistance + _ChargeStepTolerance)
-					||(LowerVoltAtDistance - _ChargeStepTolerance < voltage3 && voltage3 < UpperVoltAtDistance + _ChargeStepTolerance)
-					||(LowerVoltAtDistance - _ChargeStepTolerance < voltage4 && voltage4 < UpperVoltAtDistance + _ChargeStepTolerance) ){
-                
-						return _LineColor;
+					// Safe normalization (Check if vector is 0)
+					float3 direction = pos - chargePos;
+					float dist = length(direction);
+					if (dist < 0.0001) {
+						direction = float3(0, 1, 0);
+					}
+					else {
+						direction = direction / dist;
+					}
+
+					// Clamp distance to avoid division by 0
+					dist = max(dist, _MinDistance);
+
+					// Sum up field values
+					voltage += COULOMBS_CONSTANT * electricCharge / dist;
+					fieldVector += direction * COULOMBS_CONSTANT * electricCharge / (dist * dist);
+				}
+			}
+
+			half4 frag(vert2frag input) : COLOR 
+			{
+				if (_EntryCnt == 0) {
+					return half4(0, 0, 0, 0);
+				}
+				float3 initialPos = input.pos_world_space.xyz;
+				initialPos.z = _Entries[0].z;
+
+				// Calculate voltage at current position
+				float voltage;
+				float3 _unused;
+				evaluateField(initialPos, voltage, _unused);
+
+				// Find voltage of closest field-line
+				float targetVoltage = floor(voltage / _LineSpacingVoltage + 0.5) * _LineSpacingVoltage;
+				if (abs(targetVoltage) > _MaxAbsLineVoltage) return half4(0, 0, 0, 0);
+
+				// Try to find a point near current position which is directly on the equipotential line.
+				// We use this point to determine the distance of the current position to the equipotential line, and
+				//		use the distance for coloring the pixel
+				// Search is done (Approximate search with range-limited Gradient-Descend)
+				float falloffDistance = _LineHalfWidth * _LineSmoothFalloff;
+				float maxSearchRadius = (_LineHalfWidth + falloffDistance) * 1.3;
+
+				float3 pos = initialPos;
+				for (int i = 0; i < 8; i++) 
+				{
+					// Evaluate Field at current iteration position
+					float voltage;
+					float3 fieldVector;
+					evaluateField(pos, voltage, fieldVector);
+
+					// Calculate Step
+					// Note(MartinR): EField is the negative gradient of the Electric Potential, so we can use it for gradient descend
+					float mag = length(fieldVector);
+					float3 stepDir = -normalize(fieldVector);
+					float stepSize = (targetVoltage - voltage) / mag;
+					if (stepSize < 0) {
+						stepSize = -stepSize;
+						stepDir = -stepDir;
+					}
+					stepSize = min(stepSize, 1);
+					pos = pos + stepSize * stepDir;
+
+					// Limit search to a radius around initialPos
+					float3 toPos = pos - initialPos;
+					float distanceFromInitial = length(toPos);
+					if (distanceFromInitial > maxSearchRadius) {
+						pos = initialPos + toPos / distanceFromInitial * maxSearchRadius;
 					}
 				}
-            
-				return _BkgdColor;
+
+				// Calculate color based on distance to closest point on equipotential line
+				float alpha = 1.0 - smoothstep(_LineHalfWidth, _LineHalfWidth + falloffDistance, distance(pos, initialPos));
+				float4 finalColor = _LineColor;
+				finalColor.w *= alpha;
+
+
+
+				// TODO(MartinR): Remove debugging code when everything works
+				// if (false)
+				// {
+				// 	float3 posA = float3(1, 1.8, input.pos_world_space.z);
+				// 	float3 posB = posA;
+				// 	for (int i = 0; i < 8; i++)
+				// 	{
+				// 		float voltage; 
+				// 		float3 fieldVector;
+				// 		evaluateField(posB, voltage, fieldVector);
+
+				// 		float stepSize = (targetVoltage - voltage) / length(fieldVector);
+				// 		float3 stepDir = -normalize(fieldVector);
+
+				// 		float maxStep = 0.5;
+				// 		stepSize = clamp(stepSize, -maxStep, maxStep);
+				// 		posB = posB + stepSize * stepDir;
+
+				// 		// Intermediate step circles
+				// 		float a = i / 10.0;
+				// 		float r = 0.1 * (0.5 + a / 2);
+				// 		if (distance(input.pos_world_space, posB) < r) {
+				// 			finalColor = float4(a, 0, a, 1);
+				// 		}
+				// 	}
+				// 	posB.z = input.pos_world_space.z;
+
+				// 	// Start circle 
+				// 	if (distance(posA, input.pos_world_space) < 0.1) {
+				// 		finalColor = float4(0, 1, 0, 1);
+				// 	}
+				// 	// End circle
+				// 	if (distance(posB, input.pos_world_space) < 0.07) {
+				// 		finalColor = float4(1, 0, 0, 1);
+				// 	}
+				// }
+
+				return finalColor;
 			}
 
 			ENDCG
