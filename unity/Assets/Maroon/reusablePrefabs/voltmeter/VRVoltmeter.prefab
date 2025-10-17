@@ -185,7 +185,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 582181457915414939}
-  - component: {fileID: 582181457915414938}
   - component: {fileID: 1278219861}
   m_Layer: 0
   m_Name: VRVoltmeter
@@ -215,56 +214,6 @@ Transform:
   - {fileID: 582181458082030489}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &582181457915414938
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 582181457915414940}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d31f8fc99af96543bd659e0637bee65, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  positiveMeasuringPoint: {fileID: 582181459402360750}
-  negativeMeasuringPoint: {fileID: 582181459072212147}
-  VoltageText: {fileID: 0}
-  DistanceText: {fileID: 0}
-  NegPositionX: {fileID: 0}
-  NegPositionY: {fileID: 0}
-  NegPositionZ: {fileID: 0}
-  PosPositionX: {fileID: 0}
-  PosPositionY: {fileID: 0}
-  PosPositionZ: {fileID: 0}
-  onPerDefault: 0
-  showUnitInText: 0
-  currentValue:
-    assessmentName: 
-    isDynamic: 0
-    alwaysSendValueChangedEvent: 1
-    allowSystemChange: 1
-    _value: 0
-    minValue: 0
-    maxValue: 0
-    onValueChanged:
-      m_PersistentCalls:
-        m_Calls: []
-    onNewValueFromSystem:
-      m_PersistentCalls:
-        m_Calls: []
-  voltmeterEnabled:
-    assessmentName: 
-    isDynamic: 0
-    alwaysSendValueChangedEvent: 1
-    allowSystemChange: 1
-    _value: 1
-    onValueChanged:
-      m_PersistentCalls:
-        m_Calls: []
-    onNewValueFromSystem:
-      m_PersistentCalls:
-        m_Calls: []
 --- !u!54 &1278219861
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -757,7 +706,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 582181459072212148}
-  - component: {fileID: 582181459072212147}
   m_Layer: 0
   m_Name: NegativeMeasuringPoint
   m_TagString: Untagged
@@ -780,37 +728,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8861920663706522072}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &582181459072212147
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 582181459072212149}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66bf5cd5ecdf5af429495ffe9376c96a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  field: {fileID: 0}
-  onVoltageChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  onVoltageChangedUnit:
-    m_PersistentCalls:
-      m_Calls: []
-  calculatedPosition:
-    assessmentName: 
-    isDynamic: 0
-    alwaysSendValueChangedEvent: 1
-    allowSystemChange: 1
-    _value: {x: 0, y: 0, z: 0}
-    onValueChanged:
-      m_PersistentCalls:
-        m_Calls: []
-    onNewValueFromSystem:
-      m_PersistentCalls:
-        m_Calls: []
 --- !u!1 &582181459120943173
 GameObject:
   m_ObjectHideFlags: 0
@@ -903,7 +820,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 582181459402360751}
-  - component: {fileID: 582181459402360750}
   m_Layer: 0
   m_Name: PositiveMeasuringPoint
   m_TagString: Untagged
@@ -926,37 +842,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8861920663706522070}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &582181459402360750
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 582181459402360720}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66bf5cd5ecdf5af429495ffe9376c96a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  field: {fileID: 0}
-  onVoltageChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  onVoltageChangedUnit:
-    m_PersistentCalls:
-      m_Calls: []
-  calculatedPosition:
-    assessmentName: 
-    isDynamic: 0
-    alwaysSendValueChangedEvent: 1
-    allowSystemChange: 1
-    _value: {x: 0, y: 0, z: 0}
-    onValueChanged:
-      m_PersistentCalls:
-        m_Calls: []
-    onNewValueFromSystem:
-      m_PersistentCalls:
-        m_Calls: []
 --- !u!1 &582181459417513178
 GameObject:
   m_ObjectHideFlags: 0
