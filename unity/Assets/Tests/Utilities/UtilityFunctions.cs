@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using TMPro;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 using UnityEngine.UI;
 using NUnit.Framework;
@@ -72,9 +73,12 @@ namespace Tests.Utilities
         {
             var namedObjectsInScene = new List<GameObject>();
 
-            foreach (var go in Resources.FindObjectsOfTypeAll(typeof(GameObject)) as GameObject[])
+            foreach (GameObject go in Resources.FindObjectsOfTypeAll(typeof(GameObject)) as GameObject[])
             {
-                if (//!EditorUtility.IsPersistent(go.transform.root.gameObject) && // Cannot use EditorUtility for PlayModeTests
+                if (
+#if UNITY_EDITOR
+                    !EditorUtility.IsPersistent(go.transform.root.gameObject) &&
+#endif
                     !(go.hideFlags == HideFlags.NotEditable || go.hideFlags == HideFlags.HideAndDontSave) &&
                     go.name.Equals(name))
                     namedObjectsInScene.Add(go);
