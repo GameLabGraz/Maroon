@@ -41,9 +41,9 @@ namespace Tests.PlayModeTests.PcMenuTests
         // Auto-generated combinations would require access of the necessary data from a static context outside of the test fixture
         private static readonly ButtonLabelMatchingMenuColumnSource[] TopLevelMenuPaths =
         {
-            new ButtonLabelMatchingMenuColumnSource(EnterLabLabel, "preMenuColumnLaboratorySelection.prefab"),
-            new ButtonLabelMatchingMenuColumnSource("Menu Settings", "preMenuColumnSettings.prefab"),
-            new ButtonLabelMatchingMenuColumnSource("Menu Credits", "preMenuColumnCredits.prefab")
+            new ButtonLabelMatchingMenuColumnSource(EnterLabLabel, "preMenuColumnLaboratorySelection"),
+            new ButtonLabelMatchingMenuColumnSource("Menu Settings", "preMenuColumnSettings"),
+            new ButtonLabelMatchingMenuColumnSource("Menu Credits", "preMenuColumnCredits")
         };
         
         [UnityTest, Description("Clicking on the top-level Main Menu entries must open the matching SubMenu")]
@@ -168,7 +168,7 @@ namespace Tests.PlayModeTests.PcMenuTests
             public ButtonLabelMatchingMenuColumnSource(string languageManagerButtonLabel, string expectedMenuColumn)
             {
                 LanguageManagerButtonLabel = languageManagerButtonLabel;
-                ExpectedMenuColumn = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabsColumnsPath + expectedMenuColumn).name + "(Clone)";
+                ExpectedMenuColumn = expectedMenuColumn + "(Clone)";
             }
 
             public string LanguageManagerButtonLabel { get; }
