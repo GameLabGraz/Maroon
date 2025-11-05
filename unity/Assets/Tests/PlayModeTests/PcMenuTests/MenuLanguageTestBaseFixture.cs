@@ -41,7 +41,7 @@ namespace Tests.PlayModeTests.PcMenuTests
         public IEnumerator Setup()
         {
             yield return LoadSceneAndCheckItsLoadedCorrectly(_scenePathToLoad);
-                
+            
             DefaultLanguage = LanguageManager.Instance.CurrentLanguage;
             if (!DefaultLanguage.Equals(ExpectedDefaultLanguage))
             {
@@ -57,8 +57,6 @@ namespace Tests.PlayModeTests.PcMenuTests
             // Workaround to pressing ESC: enable the Pause Menu Canvas
             // Looked into Input System tests to try simulating ESC keypress but could not access InputSystem assemblies :(
             // https://docs.unity3d.com/Packages/com.unity.inputsystem@1.3/manual/Testing.html
-            // Enter playmode to allow for activating the Pause Menu Canvas
-            yield return new EnterPlayMode();
             
             var canvasGameObject = FindObjectByName("Canvas");
             Assert.AreEqual(canvasGameObject.transform.parent.name, PauseMenu);

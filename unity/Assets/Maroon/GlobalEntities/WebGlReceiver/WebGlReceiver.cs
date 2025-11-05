@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace Maroon.GlobalEntities
@@ -16,9 +17,9 @@ namespace Maroon.GlobalEntities
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Fields
         private static WebGlReceiver _instance;
-
+        [NonSerialized]
         public WebGlDataEvent OnIncomingData = new WebGlDataEvent();
-
+        [NonSerialized]
         public UnityEvent OnPauseRequest = new UnityEvent();
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

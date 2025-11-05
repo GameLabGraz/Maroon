@@ -58,9 +58,6 @@ namespace Tests.PlayModeTests.PcMenuTests
                 }
                 
                 _sceneLoaded = true;
-                
-                // Enter playmode to enable proper testing
-                yield return new EnterPlayMode();
 
                 // Testing the Pause Menu requires activating it (usually done by pressing ESC)
                 if (_menuType == "PauseMenu")

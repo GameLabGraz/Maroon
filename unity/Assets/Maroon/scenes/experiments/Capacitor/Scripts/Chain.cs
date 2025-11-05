@@ -183,7 +183,7 @@ public class Chain : MonoBehaviour, IPath, IResetObject
     {
         for(int i = 0; i < LinkObjects.Count; i++)
         {
-            LinkObjects[i].GetComponent<Rigidbody>().velocity = Vector3.zero;
+            LinkObjects[i].GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
             LinkObjects[i].GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
 
             LinkObjects[i].transform.position = startLinkPositions[i];

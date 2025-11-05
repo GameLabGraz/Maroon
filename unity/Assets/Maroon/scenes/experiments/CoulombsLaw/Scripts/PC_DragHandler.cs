@@ -143,7 +143,7 @@ public class PC_DragHandler : MonoBehaviour
                 {
                     _dragVelocity = _dragVelocity.normalized * _maxVelocity;
                 }
-                _rigidBody.velocity = _dragVelocity;
+                _rigidBody.linearVelocity = _dragVelocity;
             }
         }
 

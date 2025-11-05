@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using static Tests.Utilities.Constants;
 using static Tests.Utilities.UtilityFunctions;
+using static Tests.Utilities.Editor.EditorUtilityFunctions;
 
 namespace Tests.EditModeTests.ContentValidation
 {
