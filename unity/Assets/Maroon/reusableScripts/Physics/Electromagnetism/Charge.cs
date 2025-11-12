@@ -40,12 +40,12 @@ namespace Maroon.Physics.Electromagnetism
 
         public Vector3 getE(Vector3 position)
         {
-            //if (Mathf.Abs(strength) < 0.0001f) return Vector3.zero;
+            var chargePosition = gameObject.SystemPosition();
 
-            var direction = (position - gameObject.SystemPosition()).normalized;
-            var distance = Vector3.Distance(gameObject.SystemPosition(), position);
+            var direction = position - chargePosition;
+            var distance = Vector3.Distance(chargePosition, position);
 
-            return (strength * direction * CoulombConstant) /  Mathf.Pow(distance, 2);
+            return (strength * direction) / (4 * Mathf.PI * PhysicalConstants.e0 * Mathf.Pow(distance, 3));
         }
 
         public float getEFlux(Vector3 position)
@@ -76,9 +76,8 @@ namespace Maroon.Physics.Electromagnetism
             if (!enableForces || !_eField) return;
 
             var force = strength * forceFactor * _eField.get(gameObject.SystemPosition(), gameObject);
-            
-            //_rigidBody.velocity = Vector3.zero;
-            _rigidBody.AddForce(force, ForceMode.VelocityChange);
+
+            _rigidBody.AddForce(force);
         }
     }
 }
