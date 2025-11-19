@@ -43,7 +43,17 @@ jobs:
             params: "-runSynchronously"
 
     steps:
-    
+
+      # free disk space so the runner does not run out of space while pulling Docker images
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@main
+        with:
+          # excluded because they might be needed
+          docker-images: false
+          swap-storage: false
+          # excluded since it takes a very long time to run
+          large-packages: false
+
       # Checkout
       - name: Checkout repository
         uses: actions/checkout@v4
