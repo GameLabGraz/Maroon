@@ -52,7 +52,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             }
         }
 
-        private static void PushRingConnectionPoint(List<int> indices, int ringStartIndex, int radialResolution, int pointIndex)
+        private static void PushRingConnectionPoint(List<int> indices, int ringStartIndex, int radialResolution, int pointIndex, bool swap = false)
         {
             for (int i = 0; i < radialResolution; i++)
             {
@@ -60,13 +60,20 @@ namespace Maroon.Experiments.CoulombsLawNew
                 int i0 = ringStartIndex + i;
                 int i1 = ringStartIndex + (i + 1) % radialResolution;
 
+                if (swap)
+                {
+                    int s = i0;
+                    i0 = i1;
+                    i1 = s;
+                }
+
                 indices.Add(i0);
                 indices.Add(pointIndex);
                 indices.Add(i1);
             }
         }
 
-        private static void PushRingFace(List<int> indices, int ringStartIndex, int radialResolution)
+        private static void PushRingFace(List<int> indices, int ringStartIndex, int radialResolution, bool invert = false)
         {
             for (int i = 0; i < radialResolution - 2; i++)
             {
@@ -75,54 +82,21 @@ namespace Maroon.Experiments.CoulombsLawNew
                 int i1 = ringStartIndex + i + 1;
                 int i2 = ringStartIndex + i + 2;
 
+                if (invert)
+                {
+                    int swap = i1;
+                    i1 = i2;
+                    i2 = swap;
+                }
+
                 indices.Add(i0);
                 indices.Add(i1);
                 indices.Add(i2);
             }
         }
 
-        public static Mesh CreateArrowMesh(float radiusCylinder, float lengthCylinder, float radiusCone, int radialResolution, int coneSubdivisions)
+        private static Mesh GenerateMeshFromVertices(List<Vector3> vertices, List<int> indices)
         {
-            List<Vector3> vertices = new List<Vector3>();
-            List<int> indices = new List<int>();
-
-            // Generate vertices and indices for Arrow-Mesh
-            {
-                // Stem backface
-                int stemStartRingIndex = PushVertexRing(new Vector2(radiusCylinder, -1), vertices, radialResolution);
-                PushRingFace(indices, stemStartRingIndex, radialResolution);
-
-                // Stem Cylinder-Face triangles
-                stemStartRingIndex = PushVertexRing(new Vector2(radiusCylinder, -1), vertices, radialResolution);
-                int stemEndRingIndex = PushVertexRing(new Vector2(radiusCylinder, -1 + lengthCylinder), vertices, radialResolution);
-                PushRingConnectionTriangles(indices, stemStartRingIndex, stemEndRingIndex, radialResolution, false);
-
-                // Cylinder to Cone connection
-                Vector2 outerCone = new Vector2(radiusCone, -1 + lengthCylinder);
-                stemEndRingIndex = PushVertexRing(new Vector2(radiusCylinder, -1 + lengthCylinder), vertices, radialResolution);
-                int headRingIndex = PushVertexRing(outerCone, vertices, radialResolution);
-                PushRingConnectionTriangles(indices, stemEndRingIndex, headRingIndex, radialResolution, false);
-
-                // Cone to tip connection
-                Vector2 tipPos = new Vector2(0, 1);
-                int lastRingIndex = PushVertexRing(outerCone, vertices, radialResolution);
-                Vector2 lastPos = outerCone;
-                for (int i = 0; i < coneSubdivisions; i++)
-                {
-                    Vector2 nextPos = (lastPos + tipPos) / 2.0f;
-                    lastPos = nextPos;
-                    int ringIndex = PushVertexRing(nextPos, vertices, radialResolution);
-                    PushRingConnectionTriangles(indices, lastRingIndex, ringIndex, radialResolution, false);
-                    lastRingIndex = ringIndex;
-                }
-
-                // int tipRingIndex = pushVertexRing(new Vector2(0.0000f, 1.0f), vertices, radialResolution);
-                // pushRingConnectionTriangles(indices, headRingIndex, tipRingIndex, radialResolution, true);
-                int tipRingIndex = vertices.Count;
-                vertices.Add(new Vector3(0, 0, 1));
-                PushRingConnectionPoint(indices, lastRingIndex, radialResolution, tipRingIndex);
-            }
-
             // Generate normals (Average connected triangle normals...)
             Vector3[] normals = new Vector3[vertices.Count];
             Vector3[] vertexArray = vertices.ToArray();
@@ -160,6 +134,97 @@ namespace Maroon.Experiments.CoulombsLawNew
             arrowMesh.SetIndices(indexArray, MeshTopology.Triangles, 0);
             arrowMesh.SetNormals(normals);
             return arrowMesh;
+        }
+
+        // Cylinder points in z-direction, and starts at (0, 0, 0)
+        public static Mesh CreateCylinderMesh(float radiusCylinder, float length, int radialResolution)
+        {
+            List<Vector3> vertices = new List<Vector3>();
+            List<int> indices = new List<int>();
+
+            // Stem backface
+            int stemStartRingIndex = PushVertexRing(new Vector2(radiusCylinder, 0), vertices, radialResolution);
+            PushRingFace(indices, stemStartRingIndex, radialResolution);
+            stemStartRingIndex = PushVertexRing(new Vector2(radiusCylinder, 0), vertices, radialResolution); // New ring for normals
+            int stemEndRingIndex = PushVertexRing(new Vector2(radiusCylinder, length), vertices, radialResolution);
+            PushRingConnectionTriangles(indices, stemStartRingIndex, stemEndRingIndex, radialResolution, false);
+            stemEndRingIndex = PushVertexRing(new Vector2(radiusCylinder, length), vertices, radialResolution); // New ring for normals
+            PushRingFace(indices, stemEndRingIndex, radialResolution, true);
+
+            return GenerateMeshFromVertices(vertices, indices);
+        }
+
+        public static Mesh CreateConeMesh(float coneRadius, float length, int radialResolution, int coneSubdivisions)
+        {
+            List<Vector3> vertices = new List<Vector3>();
+            List<int> indices = new List<int>();
+
+            // Stem backface
+            int ringStartIndex = PushVertexRing(new Vector2(coneRadius, 0), vertices, radialResolution);
+            PushRingFace(indices, ringStartIndex, radialResolution);
+            ringStartIndex = PushVertexRing(new Vector2(coneRadius, 0), vertices, radialResolution); // New ring for normals
+
+            // Cone to tip connection
+            Vector2 tipPos = new Vector2(0, length);
+            Vector2 lastPos = new Vector2(coneRadius, 0);
+            int lastRingIndex = ringStartIndex;
+            for (int i = 0; i < coneSubdivisions; i++)
+            {
+                Vector2 nextPos = (lastPos + tipPos) / 2.0f;
+                lastPos = nextPos;
+                int ringIndex = PushVertexRing(nextPos, vertices, radialResolution);
+                PushRingConnectionTriangles(indices, lastRingIndex, ringIndex, radialResolution, false);
+                lastRingIndex = ringIndex;
+            }
+
+            int tipVertexIndex = vertices.Count;
+            vertices.Add(new Vector3(0, 0, length));
+            PushRingConnectionPoint(indices, lastRingIndex, radialResolution, tipVertexIndex);
+
+            return GenerateMeshFromVertices(vertices, indices);
+        }
+
+        public static Mesh CreateArrowMesh(float radiusCylinder, float lengthCylinder, float radiusCone, int radialResolution, int coneSubdivisions)
+        {
+            List<Vector3> vertices = new List<Vector3>();
+            List<int> indices = new List<int>();
+
+            // Generate vertices and indices for Arrow-Mesh
+            {
+                // Stem backface
+                int stemStartRingIndex = PushVertexRing(new Vector2(radiusCylinder, -1), vertices, radialResolution);
+                PushRingFace(indices, stemStartRingIndex, radialResolution);
+
+                // Stem Cylinder-Face triangles
+                stemStartRingIndex = PushVertexRing(new Vector2(radiusCylinder, -1), vertices, radialResolution);
+                int stemEndRingIndex = PushVertexRing(new Vector2(radiusCylinder, -1 + lengthCylinder), vertices, radialResolution);
+                PushRingConnectionTriangles(indices, stemStartRingIndex, stemEndRingIndex, radialResolution, false);
+
+                // Cylinder to Cone connection
+                Vector2 outerCone = new Vector2(radiusCone, -1 + lengthCylinder);
+                stemEndRingIndex = PushVertexRing(new Vector2(radiusCylinder, -1 + lengthCylinder), vertices, radialResolution);
+                int headRingIndex = PushVertexRing(outerCone, vertices, radialResolution);
+                PushRingConnectionTriangles(indices, stemEndRingIndex, headRingIndex, radialResolution, false);
+
+                // Cone to tip connection
+                Vector2 tipPos = new Vector2(0, 1);
+                int lastRingIndex = PushVertexRing(outerCone, vertices, radialResolution);
+                Vector2 lastPos = outerCone;
+                for (int i = 0; i < coneSubdivisions; i++)
+                {
+                    Vector2 nextPos = (lastPos + tipPos) / 2.0f;
+                    lastPos = nextPos;
+                    int ringIndex = PushVertexRing(nextPos, vertices, radialResolution);
+                    PushRingConnectionTriangles(indices, lastRingIndex, ringIndex, radialResolution, false);
+                    lastRingIndex = ringIndex;
+                }
+
+                int tipRingIndex = vertices.Count;
+                vertices.Add(new Vector3(0, 0, 1));
+                PushRingConnectionPoint(indices, lastRingIndex, radialResolution, tipRingIndex);
+            }
+
+            return GenerateMeshFromVertices(vertices, indices);
         }
     }
 }

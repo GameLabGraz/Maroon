@@ -6,7 +6,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 {
     public class ElectricField : MonoBehaviour
     {
-        private const float COULOMB_CONSTANT = 1f / (4 * Mathf.PI * Maroon.Physics.PhysicalConstants.e0);
+        public const float COULOMB_CONSTANT = 1f / (4 * Mathf.PI * Maroon.Physics.PhysicalConstants.e0);
 
         // Note(MartinR): Electrically charged objects (points, rods, planes) register themselves in these lists
         public List<ChargedPoint> chargedPoints = new List<ChargedPoint>();

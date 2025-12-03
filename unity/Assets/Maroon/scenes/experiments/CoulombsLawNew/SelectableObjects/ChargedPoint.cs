@@ -9,6 +9,9 @@ namespace Maroon.Experiments.CoulombsLawNew
         // Constants
         public const float RADIUS = 0.065f; // In unity units
         public const float MAX_ABSOLUTE_CHARGE = 5e-6f; // In Coulomb, current max is 1 mikro coulomb
+        public const float FORCE_ARROW_CYLINDER_RADIUS = RADIUS * 0.25f;
+        public const float FORCE_ARROW_CONE_RADIUS = FORCE_ARROW_CYLINDER_RADIUS * 2.5f;
+        public const float FORCE_ARROW_CONE_LENGTH = FORCE_ARROW_CONE_RADIUS * 2.0f;
 
         // Members
         private float _charge = 0.0f; // In Coulomb
@@ -28,6 +31,11 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private bool _lockPosition = false;
         public bool lockPosition { get { return _lockPosition; } set { _lockPosition = value; _fixingRing.SetActive(_lockPosition); } }
+
+        static private Mesh _forceArrowCylinderMesh = null;
+        static private Mesh _forceArrowConeMesh = null;
+        private GameObject _forceArrowChildCylinder = null;
+        private GameObject _forceArrowChildCone = null;
 
         private void Awake()
         {
@@ -63,6 +71,21 @@ namespace Maroon.Experiments.CoulombsLawNew
             trailRenderer.minVertexDistance = 0.05f;
             trailRenderer.material = trailMaterial;
 
+            // Generate mesh for Force-Arrow-Display
+            if (_forceArrowConeMesh == null || _forceArrowCylinderMesh == null)
+            {
+                _forceArrowConeMesh     = ArrowMeshCreator.CreateConeMesh(FORCE_ARROW_CONE_RADIUS, FORCE_ARROW_CONE_LENGTH, 12, 3);
+                _forceArrowCylinderMesh = ArrowMeshCreator.CreateCylinderMesh(FORCE_ARROW_CYLINDER_RADIUS, 1.0f, 12); // Length is 1 because it is scaled later
+            }
+            // Set mesh for child game-objects
+            _forceArrowChildCylinder = transform.Find("ForceArrowCone").gameObject;
+            _forceArrowChildCone     = transform.Find("ForceArrowCylinder").gameObject;
+            _forceArrowChildCylinder.GetComponent<MeshFilter>().mesh = _forceArrowCylinderMesh;
+            _forceArrowChildCone.GetComponent<MeshFilter>().mesh     = _forceArrowConeMesh;
+            _forceArrowChildCylinder.SetActive(false);
+            _forceArrowChildCone.SetActive(false);
+
+            // Add simulation callbacks
             SimulationController.Instance.OnStart.AddListener(() =>
             {
                 if (generateTrail)
@@ -206,8 +229,55 @@ namespace Maroon.Experiments.CoulombsLawNew
             }
         }
 
+        public void Update()
+        {
+            bool enabled = CoulombsLawUILogic.forceVectorsEnabled;
+            float forceVectorScaling   = CoulombsLawUILogic.forceVectorsScaling;
+            float forceVectorMaxLength = CoulombsLawUILogic.forceVectorsMaxLength;
+
+            _forceArrowChildCone.SetActive(enabled);
+            _forceArrowChildCylinder.SetActive(enabled);
+
+            if (!enabled) return;
+
+            // Find out arrow length
+            Vector3 force = ElectricField.Instance.GetFieldValue(transform.position, true, gameObject) * _charge;
+            float arrowLength = force.magnitude * forceVectorScaling;
+            arrowLength = Mathf.Clamp(arrowLength, 0.001f, forceVectorMaxLength);
+            if (force.magnitude < 0.0001f) {
+                force = Vector3.up;
+            }
+            Quaternion orientation = Quaternion.FromToRotation(Vector3.forward, force.normalized);
+
+            // We either scale the whole arrow or only scale the cylinder in length depending on the arrow's length
+            if (arrowLength >= FORCE_ARROW_CONE_LENGTH * 2.0f)
+            {
+                // Only scale cylinder length
+                float cylinderLength = arrowLength - FORCE_ARROW_CONE_LENGTH;
+                _forceArrowChildCylinder.transform.rotation = orientation;
+                _forceArrowChildCylinder.transform.localScale = new Vector3(1, 1, cylinderLength) / RADIUS; // Counteract parent scaling
+
+                _forceArrowChildCone.transform.position = transform.position + orientation * (cylinderLength * Vector3.forward);
+                _forceArrowChildCone.transform.rotation = orientation;
+                _forceArrowChildCone.transform.localScale = Vector3.one / RADIUS; // Counteracts parent scaling
+            }
+            else
+            {
+                float scale = arrowLength / (FORCE_ARROW_CONE_LENGTH * 2.0f);
+                float cylinderLength = FORCE_ARROW_CONE_LENGTH * scale;
+                // Scale whole arrow
+                _forceArrowChildCylinder.transform.rotation = orientation;
+                _forceArrowChildCylinder.transform.localScale = new Vector3(scale, scale, cylinderLength) / RADIUS; // Counteract parent scaling
+
+                _forceArrowChildCone.transform.position = transform.position + orientation * (cylinderLength * Vector3.forward);
+                _forceArrowChildCone.transform.rotation = orientation;
+                _forceArrowChildCone.transform.localScale = Vector3.one * scale / RADIUS;
+            }
+        }
+
         public void FixedUpdate()
         {
+            // Check for early exit
             if (!SimulationController.Instance.SimulationRunning) return;
             rigidBody.isKinematic = lockPosition;
             if (lockPosition) return;

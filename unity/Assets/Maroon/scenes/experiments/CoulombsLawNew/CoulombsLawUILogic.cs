@@ -50,6 +50,16 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private GUIFloatInputLogic    uiSpringStrengthSlider;
         [SerializeField] private GUIDropdownInputLogic uiScenarioDropdown;
 
+        // Force Visualization
+        [SerializeField] private GUIBoolInputLogic  uiForceVectorsEnabledToggle;
+        [SerializeField] private GUIFloatInputLogic uiForceVectorsScalingSlider;
+        [SerializeField] private GUIFloatInputLogic uiForceVectorsMaxLengthSlider;
+
+        // Somewhat hacky, but all ChargedPoints need to know if they should display force-vectors or not
+        public static bool forceVectorsEnabled = false;
+        public static float forceVectorsScaling = 0.3f;
+        public static float forceVectorsMaxLength = 0.6f;
+
         // Note(MartinR): I'm overwritting the normal Maroon button behavior in Awake
         //      so that all UI-elements in the whole scene are handled in a uniform manner
         [SerializeField] private UnityEngine.UI.Button simulationStartButton;
@@ -85,17 +95,13 @@ namespace Maroon.Experiments.CoulombsLawNew
                     visualizationPlane.planeNormal = Vector3.back;
                 }
                 visualizationPlane.UpdateMeshAndDraggable();
-
-                // Only one transparent object can be active at the same time
-                vectorFieldEnabledToggle.SetValue(false);
-                isoSurfaceEnabledToggle.SetValue(false);
             });
             vectorFieldEnabledToggle.OnValueChanged.AddListener((bool newValue) =>
             {
                 // Only one transparent object can be active at the same time
                 if (newValue)
                 {
-                    visualizationPlane.gameObject.SetActive(false);
+                    // visualizationPlane.gameObject.SetActive(false);
                     isoSurfaceEnabledToggle.SetValue(false);
                 }
             });
@@ -104,9 +110,28 @@ namespace Maroon.Experiments.CoulombsLawNew
                 // Only one transparent object can be active at the same time
                 if (newValue)
                 {
-                    visualizationPlane.gameObject.SetActive(false);
+                    // visualizationPlane.gameObject.SetActive(false);
                     vectorFieldEnabledToggle.SetValue(false);
                 }
+            });
+
+
+
+            // Force Vector setup
+            uiForceVectorsEnabledToggle.SetValue(forceVectorsEnabled);
+            uiForceVectorsScalingSlider.SetValue(forceVectorsScaling);
+            uiForceVectorsMaxLengthSlider.SetValue(forceVectorsMaxLength);
+            uiForceVectorsEnabledToggle.OnValueChanged.AddListener((bool newValue) =>
+            {
+                forceVectorsEnabled = newValue;
+            });
+            uiForceVectorsScalingSlider.OnValueChanged.AddListener((float newValue) =>
+            {
+                forceVectorsScaling = newValue;
+            });
+            uiForceVectorsMaxLengthSlider.OnValueChanged.AddListener((float newValue) =>
+            {
+                forceVectorsMaxLength = newValue;
             });
 
 

@@ -77,9 +77,9 @@ Shader "Custom/IsoSurfaceShader"
             // xyz contain color, w alpha
             float4 rayMarchIsoSurface(float3 rayOrigin, float3 rayDir, float maxDist)
             {
-                const float STEP_SIZE = 1.0;
-                const int BINARY_SEARCH_STEPS = 16;
-                const float DISTANCE_AFTER_INTERSECTION = 0.02;
+                const float STEP_SIZE = 0.2;
+                const int BINARY_SEARCH_STEPS = 6;
+                const float DISTANCE_AFTER_INTERSECTION = 0.01;
                 float TARGET_POTENTIAL = _VoltageCenter;
 
                 float3 gridMin = _BoxMin;
