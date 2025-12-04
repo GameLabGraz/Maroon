@@ -9,7 +9,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         // Constants
         public const float RADIUS = 0.065f; // In unity units
         public const float MAX_ABSOLUTE_CHARGE = 5e-6f; // In Coulomb, current max is 1 mikro coulomb
-        public const float FORCE_ARROW_CYLINDER_RADIUS = RADIUS * 0.25f;
+        public const float FORCE_ARROW_CYLINDER_RADIUS = RADIUS * 0.30f;
         public const float FORCE_ARROW_CONE_RADIUS = FORCE_ARROW_CYLINDER_RADIUS * 2.5f;
         public const float FORCE_ARROW_CONE_LENGTH = FORCE_ARROW_CONE_RADIUS * 2.0f;
 

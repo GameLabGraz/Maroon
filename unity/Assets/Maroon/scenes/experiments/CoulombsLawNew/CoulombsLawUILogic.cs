@@ -118,21 +118,29 @@ namespace Maroon.Experiments.CoulombsLawNew
 
 
             // Force Vector setup
-            uiForceVectorsEnabledToggle.SetValue(forceVectorsEnabled);
-            uiForceVectorsScalingSlider.SetValue(forceVectorsScaling);
-            uiForceVectorsMaxLengthSlider.SetValue(forceVectorsMaxLength);
-            uiForceVectorsEnabledToggle.OnValueChanged.AddListener((bool newValue) =>
             {
-                forceVectorsEnabled = newValue;
-            });
-            uiForceVectorsScalingSlider.OnValueChanged.AddListener((float newValue) =>
-            {
-                forceVectorsScaling = newValue;
-            });
-            uiForceVectorsMaxLengthSlider.OnValueChanged.AddListener((float newValue) =>
-            {
-                forceVectorsMaxLength = newValue;
-            });
+                // Initialize static variables again (So that leaving/re-entering the experiment resets these values)
+                forceVectorsEnabled = false;
+                forceVectorsScaling = 0.4f;
+                forceVectorsMaxLength = 0.8f;
+
+                // Initialize ui-element values and callbacks
+                uiForceVectorsEnabledToggle.SetValue(forceVectorsEnabled);
+                uiForceVectorsScalingSlider.SetValue(forceVectorsScaling);
+                uiForceVectorsMaxLengthSlider.SetValue(forceVectorsMaxLength);
+                uiForceVectorsEnabledToggle.OnValueChanged.AddListener((bool newValue) =>
+                {
+                    forceVectorsEnabled = newValue;
+                });
+                uiForceVectorsScalingSlider.OnValueChanged.AddListener((float newValue) =>
+                {
+                    forceVectorsScaling = newValue;
+                });
+                uiForceVectorsMaxLengthSlider.OnValueChanged.AddListener((float newValue) =>
+                {
+                    forceVectorsMaxLength = newValue;
+                });
+            }
 
 
 
