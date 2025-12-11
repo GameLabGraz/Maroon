@@ -39,6 +39,9 @@ Shader "Custom/IsoSurfaceShader"
             uniform float _MagnitudeInterpolationExponent;
             uniform float _VoltageCenter;
 
+            uniform float _LINEAR_STEP_SIZE;
+            uniform int _BINARY_SEARCH_STEP_COUNT;
+
             // STRUCTS
             struct appdata
             {
@@ -77,8 +80,6 @@ Shader "Custom/IsoSurfaceShader"
             // xyz contain color, w alpha
             float4 rayMarchIsoSurface(float3 rayOrigin, float3 rayDir, float maxDist)
             {
-                const float STEP_SIZE = 0.2;
-                const int BINARY_SEARCH_STEPS = 6;
                 const float DISTANCE_AFTER_INTERSECTION = 0.01;
                 float TARGET_POTENTIAL = _VoltageCenter;
 
@@ -99,13 +100,14 @@ Shader "Custom/IsoSurfaceShader"
 				evaluateField(rayOrigin + rayDir * rayDistance, currentPotential, vectorValue);
 
                 bool lastAbove = currentPotential > TARGET_POTENTIAL;
-                rayDistance += STEP_SIZE;
+                rayDistance += _LINEAR_STEP_SIZE;
 
                 float3 resultColor = float3(0, 0, 0);
                 float resultAlpha = 0.0;
-                while (rayDistance - 2.0 * STEP_SIZE < maxDist)
+                while (rayDistance - 2.0 * _LINEAR_STEP_SIZE < maxDist)
                 {
                     // Get potential at current point
+                    float prevPotential = currentPotential;
 				    evaluateField(rayOrigin + rayDir * rayDistance, currentPotential, vectorValue);
 
                     // Check if we crossed over target potential
@@ -113,10 +115,12 @@ Shader "Custom/IsoSurfaceShader"
                     if (lastAbove != above)
                     {
                         // Binary search to refine intersection distance
-                        float minT = rayDistance - STEP_SIZE;
+                        float minT = rayDistance - _LINEAR_STEP_SIZE;
                         float maxT = rayDistance;
                         float midpointPotential = 0.0;
-                        for (int i = 0; i < BINARY_SEARCH_STEPS; i++)
+                        float minTPotential = prevPotential;
+                        float maxTPotential = currentPotential;
+                        for (int i = 0; i < _BINARY_SEARCH_STEP_COUNT; i++)
                         {
                             float midT = (minT + maxT) / 2.0;
 				            evaluateField(rayOrigin + rayDir * midT, midpointPotential, vectorValue);
@@ -125,15 +129,29 @@ Shader "Custom/IsoSurfaceShader"
                             if (takeUpperInterval) 
                             {
                                 minT = midT;
+                                minTPotential = midpointPotential;
                             }
                             else 
                             {
                                 maxT = midT;
+                                maxTPotential = midpointPotential;
                             }
                         }
 
-                        // Check intersection distance
-                        float intersectionT = (maxT + minT) / 2.0;
+                        // Find final intersection distance by linear interpolation
+                        float intersectionT = (minT + maxT) / 2.0;
+                        // {
+                        //     float alpha;
+                        //     if (minTPotential < maxTPotential) {
+                        //         alpha = (TARGET_POTENTIAL - minTPotential) / (maxTPotential - minTPotential);
+                        //     }
+                        //     else {
+                        //         alpha = 1.0 - (TARGET_POTENTIAL - maxTPotential) / (minTPotential - maxTPotential);
+                        //     }
+                        //     alpha = clamp(alpha, 0.0, 1.0);
+                        //     intersectionT = lerp(minT, maxT, alpha);
+                        // }
+
                         if (intersectionT > maxDist) {
                             return float4(resultColor.x, resultColor.y, resultColor.z, resultAlpha);
                         }
@@ -159,7 +177,7 @@ Shader "Custom/IsoSurfaceShader"
 
                     // Continue Stepping
                     lastAbove = above;
-                    rayDistance += STEP_SIZE;
+                    rayDistance += _LINEAR_STEP_SIZE;
                 }
 
                 return float4(resultColor.x, resultColor.y, resultColor.z, resultAlpha);

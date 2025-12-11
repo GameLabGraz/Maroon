@@ -43,6 +43,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private GUIBoolInputLogic  uiCameraVSynchToggle;
         [SerializeField] private GUIIntInputLogic   uiCameraMaxFramerateInput;
 
+        [SerializeField] private GUIBoolInputLogic     uiShowTrajectoriesToggle;
         [SerializeField] private GUIBoolInputLogic     uiEnableBoundaryToggle;
         [SerializeField] private GUIFloatInputLogic    uiDragSlider;
         [SerializeField] private GUIFloatInputLogic    uiBouncinessSlider;
@@ -74,6 +75,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                 var newParticle = GameObject.Instantiate(prefabChargedPoint, pos, Quaternion.identity, parentForNewObjects);
                 newParticle.SetCharge(ChargedPoint.MAX_ABSOLUTE_CHARGE);
                 newParticle.GetComponent<SphereCollider>().sharedMaterial = physicMaterial;
+                newParticle.SetGenerateTrail(uiShowTrajectoriesToggle.GetValue());
             });
             dragIconChargedRod.OnDragFinished.AddListener((Vector3 pos) =>
             {
@@ -95,24 +97,6 @@ namespace Maroon.Experiments.CoulombsLawNew
                     visualizationPlane.planeNormal = Vector3.back;
                 }
                 visualizationPlane.UpdateMeshAndDraggable();
-            });
-            vectorFieldEnabledToggle.OnValueChanged.AddListener((bool newValue) =>
-            {
-                // Only one transparent object can be active at the same time
-                if (newValue)
-                {
-                    // visualizationPlane.gameObject.SetActive(false);
-                    isoSurfaceEnabledToggle.SetValue(false);
-                }
-            });
-            isoSurfaceEnabledToggle.OnValueChanged.AddListener((bool newValue) =>
-            {
-                // Only one transparent object can be active at the same time
-                if (newValue)
-                {
-                    // visualizationPlane.gameObject.SetActive(false);
-                    vectorFieldEnabledToggle.SetValue(false);
-                }
             });
 
 
@@ -152,6 +136,13 @@ namespace Maroon.Experiments.CoulombsLawNew
             simulationSettings.dragSpringStrength = 3.0f;
             ApplySimulationSettings(simulationSettings);
 
+            uiShowTrajectoriesToggle.OnValueChanged.AddListener((bool newValue) =>
+            {
+                foreach (ChargedPoint point in ElectricField.Instance.chargedPoints)
+                {
+                    point.SetGenerateTrail(newValue);
+                }
+            });
             uiEnableBoundaryToggle.OnValueChanged.AddListener((bool newValue) =>
             {
                 simulationSettings.boundaryEnabled = newValue;
@@ -344,6 +335,10 @@ namespace Maroon.Experiments.CoulombsLawNew
                 ElectricFieldSerializer.RestoreConfiguration(
                     configuration, parentForNewObjects, prefabChargedPoint, prefabChargedRod, prefabChargedPlane);
                 ApplySimulationSettings(settings);
+                foreach (ChargedPoint point in ElectricField.Instance.chargedPoints)
+                {
+                    point.SetGenerateTrail(uiShowTrajectoriesToggle.GetValue());
+                }
             });
 
             // Note(MartinR): Not sure where to put this, I hope this doesn't mess with any other simulations,

@@ -10,7 +10,6 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private GUIVector3InputLogic positionDisplay;
         [SerializeField] private GUIFloatInputLogic chargeInput;
         [SerializeField] private GUIBoolInputLogic generateFieldLinesToggle;
-        [SerializeField] private GUIBoolInputLogic generateTrailToggle;
         [SerializeField] private GUIButtonLogic deleteButton;
 
         [SerializeField] private GUIVector3InputLogic uiInitialVelocityInput;
@@ -37,11 +36,6 @@ namespace Maroon.Experiments.CoulombsLawNew
             generateFieldLinesToggle.OnValueChanged.AddListener((bool newValue) =>
             {
                 chargedPoint.generateFieldLines = newValue;
-            });
-            generateTrailToggle.SetValue(chargedPoint.GetGenerateTrail());
-            generateTrailToggle.OnValueChanged.AddListener((bool newValue) =>
-            {
-                chargedPoint.SetGenerateTrail(newValue);
             });
             deleteButton.OnButtonClick.AddListener(() => GameObject.Destroy(chargedPoint.gameObject));
 

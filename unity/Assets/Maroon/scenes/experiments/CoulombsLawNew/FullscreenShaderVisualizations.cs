@@ -45,6 +45,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private Material isoSurfaceMaterial;
         [SerializeField] private Material vectorFieldGridCalculationMaterial;
         [SerializeField] private GroundPinLogic groundPin;
+        private RenderTexture renderTextureTemporary = null;
 
         // This texture stores the vector value and potential of the vector field
         //  evaluated at the grid-positions. See VectorFieldGridCalculateShader for how the packing is done
@@ -65,6 +66,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private GUIBoolInputLogic  uiIsoSurfaceEnabledToggle;
         [SerializeField] private GUIFloatInputLogic uiIsoSurfaceTransparency;
         [SerializeField] private GUIBoolInputLogic  uiIsoSurfaceUseMagnitudeColor;
+        [SerializeField] private GUIIntInputLogic   uiIsoSurfaceQualitySlider;
 
         [Header("UI-Interpolation References")]
         [SerializeField] private GUIFloatInputLogic uiMaxMagnitude;
@@ -147,8 +149,16 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         private void OnRenderImage(RenderTexture source, RenderTexture destination)
         {
+            // Create temporary render texture if not done already
+            if (renderTextureTemporary == null)
+            {
+                renderTextureTemporary = new RenderTexture(source);
+            }
+
             // Early exit if not enabled
-            if (!uiVectorFieldEnabledToggle.GetValue() && !uiIsoSurfaceEnabledToggle.GetValue())
+            bool renderVectorField = uiVectorFieldEnabledToggle.GetValue();
+            bool renderIsoSurface  = uiIsoSurfaceEnabledToggle.GetValue();
+            if (!renderVectorField && !renderIsoSurface)
             {
                 Graphics.Blit(source, destination);
                 return;
@@ -160,7 +170,8 @@ namespace Maroon.Experiments.CoulombsLawNew
                 groundPotential = ElectricField.Instance.GetPotential(groundPin.transform.position, true);
             }
 
-            if (uiIsoSurfaceEnabledToggle.GetValue()) // Isosurface rendering
+            // Isosurface rendering (Done before vector-field)
+            if (renderIsoSurface)
             {
                 // Update shader values
                 Matrix4x4 inverseView = Camera.main.worldToCameraMatrix.inverse;
@@ -178,15 +189,38 @@ namespace Maroon.Experiments.CoulombsLawNew
                 isoSurfaceMaterial.SetFloat("_MagnitudeInterpolationExponent", uiMagnitudeInterpolationExponent.GetValue());
                 isoSurfaceMaterial.SetFloat("_VoltageCenter", groundPotential);
 
-                Graphics.Blit(source, destination, isoSurfaceMaterial);
+                // Figure out linear-step-size and binary search size through quality slider
+                {
+                    // These values are hardcoded from experimentation,
+                    // but generally the lowest level is the fastest that still displays reasonable iso-surfaces
+                    // and the highest level is almost overkill
+                    float[] quality_levels_step_size = { 0.5f, 0.3f, 0.1f, 0.05f, 0.02f };
+                    int[] quality_levels_binary_search_steps = { 6, 5, 8, 6, 4 };
+
+                    int quality_index = uiIsoSurfaceQualitySlider.GetValue();
+                    if (quality_index < 1 || quality_index > 5)
+                    {
+                        quality_index = 3;
+                    }
+                    float linear_step_size = 0.1f;
+                    int binary_search_step_count = 8;
+                    linear_step_size = quality_levels_step_size[quality_index - 1];
+                    binary_search_step_count = quality_levels_binary_search_steps[quality_index - 1];
+
+                    isoSurfaceMaterial.SetFloat("_LINEAR_STEP_SIZE", Mathf.Max(0.01f, linear_step_size));
+                    isoSurfaceMaterial.SetInt("_BINARY_SEARCH_STEP_COUNT", (binary_search_step_count > 32 ? 32 : binary_search_step_count));
+                }
+
+                Graphics.Blit(source, (renderVectorField ? renderTextureTemporary : destination), isoSurfaceMaterial);
             }
-            else if (uiVectorFieldEnabledToggle.GetValue()) // Vectorfield rendering
+
+            // Vectorfield rendering
+            if (uiVectorFieldEnabledToggle.GetValue())
             {
                 VectorFieldInfos gridInfo = new VectorFieldInfos(uiVectorFieldResolutionSlider.GetValue(), uiVectorField3DModeToggle.GetValue());
 
                 // Update shader values
                 Matrix4x4 inverseView = Camera.main.worldToCameraMatrix.inverse;
-                // vectorFieldMaterial.SetBuffer("_VectorFieldValues", gridValuesComputeBuffer);
                 vectorFieldMaterial.SetTexture("_GridValuesTexture", gridValuesTexture);
                 vectorFieldMaterial.SetMatrix("_InverseView", inverseView);
 
@@ -210,7 +244,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                 vectorFieldMaterial.SetFloat("_VoltageInterpolationExponent", uiVoltageInterpolationExponent.GetValue());
                 vectorFieldMaterial.SetInt("_DisplayOutsideOfRangeBool", uiVectorFieldDisplayOutsideOfRangeBool.GetValue() ? 1 : 0);
 
-                Graphics.Blit(source, destination, vectorFieldMaterial);
+                Graphics.Blit((renderIsoSurface ? renderTextureTemporary : source), destination, vectorFieldMaterial);
             }
         }
     }

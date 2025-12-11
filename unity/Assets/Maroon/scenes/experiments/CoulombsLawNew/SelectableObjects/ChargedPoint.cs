@@ -70,6 +70,9 @@ namespace Maroon.Experiments.CoulombsLawNew
             trailRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             trailRenderer.minVertexDistance = 0.05f;
             trailRenderer.material = trailMaterial;
+            Gradient trailGradient = new Gradient();
+            trailRenderer.startColor = new Color(0.0f, 1.0f, 1.0f, 1.0f);
+            trailRenderer.endColor = new Color(0.0f, 0.0f, 0.7f, 1.0f);
 
             // Generate mesh for Force-Arrow-Display
             if (_forceArrowConeMesh == null || _forceArrowCylinderMesh == null)
@@ -91,6 +94,8 @@ namespace Maroon.Experiments.CoulombsLawNew
                 if (generateTrail)
                 {
                     trailRenderer.emitting = true;
+                    trailRenderer.time = 3.0f;
+                    trailRenderer.Clear();
                 }
                 if (lockPosition) return;
                 rigidBody.isKinematic = false;
@@ -99,6 +104,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             SimulationController.Instance.OnStop.AddListener(() =>
             {
                 trailRenderer.emitting = false;
+                trailRenderer.time = float.PositiveInfinity; // So that trail-renderer does not fade-out while paused
                 storedVelocity = rigidBody.velocity;
                 rigidBody.isKinematic = true;
             });
