@@ -9,6 +9,8 @@ namespace Maroon.Experiments.CoulombsLawNew
     {
         [SerializeField] private GUIVector3InputLogic positionDisplay;
         [SerializeField] private GUIFloatInputLogic chargeInput;
+        [SerializeField] private GUIBoolInputLogic showForceVectorToggle;
+        [SerializeField] private GUIBoolInputLogic showTrajectoryToggle;
         [SerializeField] private GUIBoolInputLogic generateFieldLinesToggle;
         [SerializeField] private GUIButtonLogic deleteButton;
 
@@ -45,6 +47,11 @@ namespace Maroon.Experiments.CoulombsLawNew
                 chargedPoint.SetVelocity(newValue);
             });
 
+            showForceVectorToggle.SetValue(chargedPoint.displayForceArrow);
+            showForceVectorToggle.OnValueChanged.AddListener((bool newValue) => { chargedPoint.displayForceArrow = newValue; });
+            showTrajectoryToggle.SetValue(chargedPoint.GetGenerateTrail());
+            showTrajectoryToggle.OnValueChanged.AddListener((bool newValue) => { chargedPoint.SetGenerateTrail(newValue); });
+
             uiMassSlider.SetValue(chargedPoint.GetMass());
             uiMassSlider.OnValueChanged.AddListener((float newValue) => { chargedPoint.SetMass(newValue); });
             uiHasCollisionToggle.SetValue(chargedPoint.GetHasCollision());
@@ -60,6 +67,9 @@ namespace Maroon.Experiments.CoulombsLawNew
         private void LateUpdate()
         {
             uiInitialVelocityInput.SetValue(chargedPoint.GetVelocity());
+            // Next two properties also need update because they can be changed through the global toggles
+            showForceVectorToggle.SetValue(chargedPoint.displayForceArrow);
+            showTrajectoryToggle.SetValue(chargedPoint.GetGenerateTrail());
         }
     }
 

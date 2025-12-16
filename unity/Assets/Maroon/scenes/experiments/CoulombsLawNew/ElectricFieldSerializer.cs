@@ -7,8 +7,10 @@ namespace Maroon.Experiments.CoulombsLawNew
     public struct ChargedPointData
     {
         public ChargedPointData(
-            Vector3 pos, Vector3 initialVelocity, float charge, bool createFieldLines, 
-            float mass, bool hasCollision, bool lockPosition, bool contributeToEField, bool isConductive, bool generateTrail)
+            Vector3 pos, Vector3 initialVelocity, float charge, 
+            bool createFieldLines, float mass, bool hasCollision, 
+            bool lockPosition, bool contributeToEField, bool isConductive, 
+            bool generateTrail, bool showForceArrow)
         {
             this.position = pos;
             this.initialVelocity = initialVelocity;
@@ -20,6 +22,22 @@ namespace Maroon.Experiments.CoulombsLawNew
             this.contributeToEField = contributeToEField;
             this.isConductive = isConductive;
             this.generateTrail = generateTrail;
+            this.showForceArrow = showForceArrow;
+        }
+
+        public ChargedPointData(Vector3 pos, float charge)
+        {
+            this.position = pos;
+            this.charge = charge;
+            this.initialVelocity = Vector3.zero;
+            this.mass = 1.0f;
+            this.createFieldLines = false;
+            this.hasCollision = true;
+            this.lockPosition = false;
+            this.contributeToEField = true;
+            this.isConductive = false;
+            this.generateTrail = false;
+            this.showForceArrow = false;
         }
 
         public Vector3 position;
@@ -33,6 +51,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         public bool contributeToEField;
         public bool isConductive;
         public bool generateTrail;
+        public bool showForceArrow;
     }
 
     public struct ChargedRodData
@@ -96,7 +115,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                 result.chargedPoints[i] = new ChargedPointData(
                     pointCharge.transform.position - box.center, pointCharge.GetVelocity(), pointCharge.GetCharge(), pointCharge.generateFieldLines,
                     pointCharge.GetMass(), pointCharge.GetHasCollision(), pointCharge.lockPosition, 
-                    pointCharge.contributeToEField, pointCharge.isConductive, pointCharge.GetGenerateTrail());
+                    pointCharge.contributeToEField, pointCharge.isConductive, pointCharge.GetGenerateTrail(), pointCharge.displayForceArrow);
             }
             for (int i = 0; i < efield.chargedRods.Count; i++)
             {
@@ -143,6 +162,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                 newParticle.contributeToEField = pointData.contributeToEField;
                 newParticle.lockPosition = pointData.lockPosition;
                 newParticle.isConductive = pointData.isConductive;
+                newParticle.displayForceArrow = pointData.showForceArrow;
             }
             foreach (var rodData in configuration.chargedRods)
             {

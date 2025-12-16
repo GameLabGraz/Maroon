@@ -57,7 +57,6 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private GUIFloatInputLogic uiForceVectorsMaxLengthSlider;
 
         // Somewhat hacky, but all ChargedPoints need to know if they should display force-vectors or not
-        public static bool forceVectorsEnabled = false;
         public static float forceVectorsScaling = 0.3f;
         public static float forceVectorsMaxLength = 0.6f;
 
@@ -76,6 +75,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                 newParticle.SetCharge(ChargedPoint.MAX_ABSOLUTE_CHARGE);
                 newParticle.GetComponent<SphereCollider>().sharedMaterial = physicMaterial;
                 newParticle.SetGenerateTrail(uiShowTrajectoriesToggle.GetValue());
+                newParticle.displayForceArrow = uiForceVectorsEnabledToggle.GetValue();
             });
             dragIconChargedRod.OnDragFinished.AddListener((Vector3 pos) =>
             {
@@ -104,17 +104,19 @@ namespace Maroon.Experiments.CoulombsLawNew
             // Force Vector setup
             {
                 // Initialize static variables again (So that leaving/re-entering the experiment resets these values)
-                forceVectorsEnabled = false;
                 forceVectorsScaling = 0.4f;
                 forceVectorsMaxLength = 0.8f;
 
                 // Initialize ui-element values and callbacks
-                uiForceVectorsEnabledToggle.SetValue(forceVectorsEnabled);
+                uiForceVectorsEnabledToggle.SetValue(false);
                 uiForceVectorsScalingSlider.SetValue(forceVectorsScaling);
                 uiForceVectorsMaxLengthSlider.SetValue(forceVectorsMaxLength);
                 uiForceVectorsEnabledToggle.OnValueChanged.AddListener((bool newValue) =>
                 {
-                    forceVectorsEnabled = newValue;
+                    foreach (ChargedPoint point in ElectricField.Instance.chargedPoints)
+                    {
+                        point.displayForceArrow = newValue;
+                    }
                 });
                 uiForceVectorsScalingSlider.OnValueChanged.AddListener((float newValue) =>
                 {
@@ -197,19 +199,19 @@ namespace Maroon.Experiments.CoulombsLawNew
                         break;
                     case 1: // 2 Points
                         configuration.chargedPoints = new ChargedPointData[2];
-                        configuration.chargedPoints[0] = new ChargedPointData(
-                            new Vector3(-0.5f, 0, 0), Vector3.zero, -ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false, true);
-                        configuration.chargedPoints[1] = new ChargedPointData(
-                            new Vector3( 0.5f, 0, 0), Vector3.zero,  ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false, true);
+                        configuration.chargedPoints[0] = new ChargedPointData(new Vector3(-0.5f, 0, 0), -ChargedPoint.MAX_ABSOLUTE_CHARGE);
+                        configuration.chargedPoints[1] = new ChargedPointData(new Vector3( 0.5f, 0, 0), ChargedPoint.MAX_ABSOLUTE_CHARGE);
+                        configuration.chargedPoints[0].generateTrail = true;
+                        configuration.chargedPoints[1].generateTrail = true;
                         settings.bounciness = 0.0f;
                         settings.drag = .1f;
                         break;
                     case 2: // 2 Points orbiting
                         configuration.chargedPoints = new ChargedPointData[2];
                         configuration.chargedPoints[0] = new ChargedPointData(
-                            new Vector3(0, 0, 0), Vector3.zero, ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, true, true, false, true);
+                            new Vector3(0, 0, 0), Vector3.zero, ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, true, true, false, true, false);
                         configuration.chargedPoints[1] = new ChargedPointData(
-                            new Vector3(0.5f, 0, 0), Vector3.up, -2.0f * ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false, true);
+                            new Vector3(0.5f, 0, 0), Vector3.up, -2.0f * ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false, true, false);
                         settings.bounciness = 0;
                         settings.drag = 0;
                         settings.friction = 0;
@@ -217,13 +219,17 @@ namespace Maroon.Experiments.CoulombsLawNew
                     case 3: // Multi orbit
                         configuration.chargedPoints = new ChargedPointData[4];
                         configuration.chargedPoints[0] = new ChargedPointData(
-                            new Vector3(0, 0, 0), Vector3.zero, 3.0f * ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, false, true, true, false, false);
+                            new Vector3(0, 0, 0), Vector3.zero, 3.0f * ChargedPoint.MAX_ABSOLUTE_CHARGE, 
+                            false, 1.0f, false, true, true, false, false, false);
                         configuration.chargedPoints[1] = new ChargedPointData(
-                            new Vector3(0.5f, 0, 0), Vector3.up, -ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false, true);
+                            new Vector3(0.5f, 0, 0), Vector3.up, -ChargedPoint.MAX_ABSOLUTE_CHARGE, 
+                            false, 1.0f, true, false, true, false, true, false);
                         configuration.chargedPoints[2] = new ChargedPointData(
-                            new Vector3(-0.5f, 0, 0), Vector3.down, -ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false, true);
+                            new Vector3(-0.5f, 0, 0), Vector3.down, -ChargedPoint.MAX_ABSOLUTE_CHARGE, 
+                            false, 1.0f, true, false, true, false, true, false);
                         configuration.chargedPoints[3] = new ChargedPointData(
-                            new Vector3(0.0f, -.5f, 0.0f), Vector3.forward, -ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false, true);
+                            new Vector3(0.0f, -.5f, 0.0f), Vector3.forward, -ChargedPoint.MAX_ABSOLUTE_CHARGE, 
+                            false, 1.0f, true, false, true, false, true, false);
                         settings.bounciness = 0.8f;
                         settings.drag = 0;
                         settings.friction = 0;
@@ -232,13 +238,13 @@ namespace Maroon.Experiments.CoulombsLawNew
                         configuration.chargedPoints = new ChargedPointData[3];
                         configuration.chargedPoints[0] = new ChargedPointData(
                             new Vector3(0, 0, 0), Vector3.up * 0.1f, ChargedPoint.MAX_ABSOLUTE_CHARGE, 
-                            false, 1.0f, false, false, true, false, true);
+                            false, 1.0f, false, false, true, false, true, false);
                         configuration.chargedPoints[1] = new ChargedPointData(
                             new Vector3(0.5f, 0, 0), Vector3.up * 0.1f, -0.5f * ChargedPoint.MAX_ABSOLUTE_CHARGE, 
-                            false, 1.0f, false, false, true, false, true);
+                            false, 1.0f, false, false, true, false, true, false);
                         configuration.chargedPoints[2] = new ChargedPointData(
                             new Vector3(-0.5f, 0, 0), Vector3.down * 0.1f, -0.5f * ChargedPoint.MAX_ABSOLUTE_CHARGE, 
-                            false, 1.0f, false, false, true, false, true);
+                            false, 1.0f, false, false, true, false, true, false);
                         settings.bounciness = 0.8f;
                         settings.drag = 0;
                         settings.friction = 0;
@@ -246,7 +252,8 @@ namespace Maroon.Experiments.CoulombsLawNew
                     case 5: // Charged Transfer single particle
                         configuration.chargedPoints = new ChargedPointData[1];
                         configuration.chargedPoints[0] = new ChargedPointData(
-                            new Vector3(0, 0, 0), Vector3.zero, ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, true, false);
+                            new Vector3(0, 0, 0), Vector3.zero, ChargedPoint.MAX_ABSOLUTE_CHARGE, 
+                            false, 1.0f, true, false, true, true, false, false);
                         configuration.chargedPlanes = new ChargedPlaneData[2];
                         configuration.chargedPlanes[0] = new ChargedPlaneData(
                             new Vector3(-0.6f, 0, 0), Vector3.left, -ChargedPlane.MAX_CHARGE_DENSITY, false, true);
@@ -275,7 +282,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                                 float MIN_COORD = -.8f;
                                 configuration.chargedPoints[x + y * POINT_COUNT_1D] = new ChargedPointData(
                                     new Vector3(0, MIN_COORD + tX * (-2 * MIN_COORD), MIN_COORD + tY * (-2 * MIN_COORD)), 
-                                    Vector3.zero, chargeSign * ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, true, false);
+                                    Vector3.zero, chargeSign * ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, true, false, false);
                             }
                         }
 
@@ -301,7 +308,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                                     configuration.chargedPoints[x + y * POINT_COUNT_1D + z * POINT_COUNT_1D * POINT_COUNT_1D] = new ChargedPointData(
                                         new Vector3(MIN_COORD + tX * (-2 * MIN_COORD), MIN_COORD + tY * (-2 * MIN_COORD), MIN_COORD + tZ * (-2 * MIN_COORD)), 
                                         Vector3.zero, chargeSign * Random.Range(0, ChargedPoint.MAX_ABSOLUTE_CHARGE), 
-                                        false, 1.0f, true, false, true, conductive, false);
+                                        false, 1.0f, true, false, true, conductive, false, false);
                                 }
                             }
                         }
@@ -319,12 +326,14 @@ namespace Maroon.Experiments.CoulombsLawNew
                             float angle = i / (float) CIRCLE_POINTS * 2 * Mathf.PI;
                             Vector3 pos = new Vector3(Mathf.Sin(angle), Mathf.Cos(angle), 0.0f) * CIRCLE_RADIUS;
                             configuration.chargedPoints[i] = new ChargedPointData(
-                                pos, Vector3.zero, ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, true, true, false, false);
+                                pos, Vector3.zero, ChargedPoint.MAX_ABSOLUTE_CHARGE, 
+                                false, 1.0f, true, true, true, false, false, false);
                         }
 
                         // One point slightly offset from center
                         configuration.chargedPoints[CIRCLE_POINTS] = new ChargedPointData(
-                            new Vector3(0.2f, 0.1f, 0.0f), Vector3.up * 0.7f, ChargedPoint.MAX_ABSOLUTE_CHARGE, false, 1.0f, true, false, true, false, true);
+                            new Vector3(0.2f, 0.1f, 0.0f), Vector3.up * 0.7f, ChargedPoint.MAX_ABSOLUTE_CHARGE, 
+                            false, 1.0f, true, false, true, false, true, false);
 
                         settings.bounciness = 0.5f;
                         settings.drag = 0;
@@ -335,10 +344,6 @@ namespace Maroon.Experiments.CoulombsLawNew
                 ElectricFieldSerializer.RestoreConfiguration(
                     configuration, parentForNewObjects, prefabChargedPoint, prefabChargedRod, prefabChargedPlane);
                 ApplySimulationSettings(settings);
-                foreach (ChargedPoint point in ElectricField.Instance.chargedPoints)
-                {
-                    point.SetGenerateTrail(uiShowTrajectoriesToggle.GetValue());
-                }
             });
 
             // Note(MartinR): Not sure where to put this, I hope this doesn't mess with any other simulations,

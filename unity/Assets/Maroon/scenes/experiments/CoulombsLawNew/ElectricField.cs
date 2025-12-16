@@ -81,7 +81,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             // Add point charge influence
             foreach (var chargedPoint in chargedPoints)
             {
-                if (chargedPoint.gameObject == excludeObject) continue;
+                if (chargedPoint.gameObject == excludeObject || !chargedPoint.contributeToEField) continue;
 
                 float distanceInMeter = (position - chargedPoint.transform.position).magnitude;
                 if (limitChargeInfluenceDistance) { 
@@ -241,6 +241,7 @@ namespace Maroon.Experiments.CoulombsLawNew
                 linearIndex += 1;
                 activePlanes += 1;
             }
+            Debug.Log("Active points/planes/rods: " + activePoints + "/" + activePlanes + "/" + activeRods);
             // Upload packed data to gpu memory
             packedDataTexture.Apply();
         }

@@ -20,6 +20,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         public Rigidbody rigidBody;
 
         public bool generateFieldLines = false;
+        public bool displayForceArrow = false;
         private bool generateTrail = false;
         [SerializeField] private TrailRenderer trailRenderer;
         [SerializeField] private Material trailMaterial;
@@ -237,7 +238,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
         public void Update()
         {
-            bool enabled = CoulombsLawUILogic.forceVectorsEnabled;
+            bool enabled = displayForceArrow;
             float forceVectorScaling   = CoulombsLawUILogic.forceVectorsScaling;
             float forceVectorMaxLength = CoulombsLawUILogic.forceVectorsMaxLength;
 
