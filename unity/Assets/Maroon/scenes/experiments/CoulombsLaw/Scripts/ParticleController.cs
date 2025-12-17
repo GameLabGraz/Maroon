@@ -18,7 +18,7 @@ namespace Maroon.Experiments.CoulombsLaw
         [SerializeField] private UIFloatInput _dragInput = null;
         [SerializeField] private UIFloatInput _bouncinessInput = null;
         [SerializeField] private UIFloatInput _frictionInput = null;
-        [SerializeField] private UnityEngine.PhysicMaterial _chargePhysicsMaterial = null;
+        [SerializeField] private PhysicsMaterial _chargePhysicsMaterial = null;
 
         private void Awake()
         {
@@ -30,7 +30,7 @@ namespace Maroon.Experiments.CoulombsLaw
                 {
                     var rigidbody = particle.GetComponent<Rigidbody>();
                     if (rigidbody == null) continue;
-                    rigidbody.drag = newDrag;
+                    rigidbody.linearDamping = newDrag;
                 }
             });
 
@@ -54,7 +54,7 @@ namespace Maroon.Experiments.CoulombsLaw
         {
             var particle = Instantiate(_particlePrefab, position, Quaternion.identity, transform);
             particle.Initialize(this, _eField, _maxBoundary, _minBoundary, charge, positionLocked);
-            particle.GetComponent<Rigidbody>().drag = _dragInput.GetValue();
+            particle.GetComponent<Rigidbody>().linearDamping = _dragInput.GetValue();
 
             if (_eField != null)
             {

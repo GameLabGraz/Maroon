@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using TMPro;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 using UnityEngine.UI;
 using NUnit.Framework;
-using UnityEditor.TestTools.TestRunner.Api;
-using static Tests.Utilities.Constants;
 
 namespace Tests.Utilities
 {
@@ -17,37 +16,6 @@ namespace Tests.Utilities
     /// </summary>
     public static class UtilityFunctions
     {
-        /// <summary>
-        /// Get a prefab by name from anywhere in 'Assets/Maroon/'
-        /// </summary>
-        /// <param name="name">name of the Prefab</param>
-        /// <returns>the first prefab found with the given name</returns>
-        /// <remarks>triggers a test failure if no prefab of given name was found</remarks>
-        public static GameObject GetPrefabByName(string name)
-        {
-            // Look for prefab's filesystem path
-            Regex regex = new Regex($"/{name}\\.prefab");
-            string path = "";
-            bool found = false;
-            foreach (var guid in AssetDatabase.FindAssets("t:Prefab", new []{"Assets/Maroon"}))
-            {
-                path = AssetDatabase.GUIDToAssetPath(guid);
-                if (regex.IsMatch(path))
-                {
-                    found = true;
-                    break;
-                }
-            }
-            Assert.True(found, $"No prefab with name {name} found - faulty test?");
-
-            // Load prefab from filesystem path
-            var prefab = (GameObject)AssetDatabase.LoadMainAssetAtPath(path);
-            Assert.NotNull(prefab, $"No prefab in path '{path}' found - faulty test?");
-            Assert.AreEqual(name, prefab.name, $"Expected name '{name}' doesn't match prefab name '{prefab.name}' - faulty test?");
-            
-            return prefab;
-        }
-
         /// <summary>
         /// Wrapper of GetComponent specifically for use with Prefabs.
         /// </summary>
@@ -101,19 +69,16 @@ namespace Tests.Utilities
 
         // public static bool ContainsWrapper(string a, string b) => return a.Contains(b);
 
-        /// <summary>
-        /// Get any active or inactive GameObject by name
-        /// </summary>
-        /// <param name="name">name of GameObject to find</param>
-        /// <returns>the found GameObject</returns>
-        /// <remarks>triggers a test failure if anything goes wrong, e.g. wrong number of GameObjects found</remarks>
         public static GameObject FindObjectByName(string name)
         {
             var namedObjectsInScene = new List<GameObject>();
 
-            foreach (var go in Resources.FindObjectsOfTypeAll(typeof(GameObject)) as GameObject[])
+            foreach (GameObject go in Resources.FindObjectsOfTypeAll(typeof(GameObject)) as GameObject[])
             {
-                if (!EditorUtility.IsPersistent(go.transform.root.gameObject) &&
+                if (
+#if UNITY_EDITOR
+                    !EditorUtility.IsPersistent(go.transform.root.gameObject) &&
+#endif
                     !(go.hideFlags == HideFlags.NotEditable || go.hideFlags == HideFlags.HideAndDontSave) &&
                     go.name.Equals(name))
                     namedObjectsInScene.Add(go);
@@ -202,30 +167,6 @@ namespace Tests.Utilities
                     list.Add(child.gameObject);
                 AddDescendantsUntilDepth(child, list, maxDepth, depth+1);
             }
-        }
-
-        /// <summary>
-        /// Recursion helper to retrieve all failed test names from TestRunner results
-        /// </summary>
-        /// <param name="result">the test results</param>
-        /// <returns>string array containing all failed test names</returns>
-        public static IEnumerable<string> GetFailedTestNames(ITestResultAdaptor result)
-        {
-            if (result.HasChildren)
-                return result.Children.SelectMany(GetFailedTestNames);
-
-            return result.TestStatus == TestStatus.Failed ? new[] { result.Name } : Array.Empty<string>();
-        }
-
-        /// <summary>
-        /// Gathers all failed test names and displays them in a simple popup
-        /// </summary>
-        /// <param name="result">the test results</param>
-        public static void ReportTestFailureWithPopup(ITestResultAdaptor result)
-        {
-            var failedTestNames = string.Join("\n", GetFailedTestNames(result).Select(t => $"\t• {t}"));
-            EditorUtility.DisplayDialog(GuiPopupTitle, $"{result.FailCount} test{(result.FailCount > 1 ? "s" : "")} failed:\n{failedTestNames}\n\n" +
-                                                       "Check Test Runner window for more information", "Ok");
         }
 
         /// <summary>

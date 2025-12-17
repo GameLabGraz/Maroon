@@ -32,7 +32,7 @@ public class Magnet : EMObject
         var rg = GetComponent<Rigidbody>();
         if (rg)
         {
-            rg.velocity = Vector3.zero;
+            rg.linearVelocity = Vector3.zero;
             rg.angularVelocity = Vector3.zero;
         }
         transform.position = startPos;

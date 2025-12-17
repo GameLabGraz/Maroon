@@ -23,7 +23,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         [SerializeField] private Transform parentForNewObjects;
 
         [SerializeField] private VisualizationPlaneLogic visualizationPlane;
-        [SerializeField] private PhysicMaterial physicMaterial;
+        [SerializeField] private PhysicsMaterial physicMaterial;
         [SerializeField] private GameObject particleSimulationBoundary;
 
         private SimulationSettings simulationSettings;
@@ -496,7 +496,7 @@ namespace Maroon.Experiments.CoulombsLawNew
 
             foreach (var chargedPoint in ElectricField.Instance.chargedPoints)
             {
-                chargedPoint.GetComponent<Rigidbody>().drag = settings.drag;
+                chargedPoint.GetComponent<Rigidbody>().linearDamping = settings.drag;
                 chargedPoint.GetComponent<SphereCollider>().sharedMaterial = physicMaterial;
             }
         }

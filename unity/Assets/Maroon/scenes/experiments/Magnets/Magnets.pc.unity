@@ -13,7 +13,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 9
+  serializedVersion: 10
   m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
@@ -42,8 +42,8 @@ RenderSettings:
 --- !u!157 &4
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 12
-  m_GIWorkflowMode: 1
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -66,9 +66,6 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 0
     m_TextureCompression: 1
-    m_FinalGather: 0
-    m_FinalGatherFiltering: 1
-    m_FinalGatherRayCount: 1024
     m_ReflectionCompression: 2
     m_MixedBakeMode: 1
     m_BakeBackend: 1
@@ -350,6 +347,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -619,9 +619,16 @@ MonoBehaviour:
   lineSegmentLength: 0.3
   originOffset: {x: 0, y: 0, z: 0}
   fixClosingAngle: 15
+  StartDrawing:
+    m_PersistentCalls:
+      m_Calls: []
   _lineWidth: 0.1
   fieldStrengthFactor: 1
   invertDirection: 1
+  minLineSegmentLength: 0.005
+  maxLineSegmentLength: 0.1
+  maxLineSegmentAngleChangeForLengthAdjustment: 10
+  lineSegmentLengthAdjustmentExponent: 3
 --- !u!114 &364600668
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -936,9 +943,16 @@ MonoBehaviour:
   lineSegmentLength: 0.3
   originOffset: {x: 0, y: 0, z: 0}
   fixClosingAngle: 15
+  StartDrawing:
+    m_PersistentCalls:
+      m_Calls: []
   _lineWidth: 0.1
   fieldStrengthFactor: 1
   invertDirection: 1
+  minLineSegmentLength: 0.005
+  maxLineSegmentLength: 0.1
+  maxLineSegmentAngleChangeForLengthAdjustment: 10
+  lineSegmentLengthAdjustmentExponent: 3
 --- !u!114 &501260057
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1463,6 +1477,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -1581,9 +1598,16 @@ MonoBehaviour:
   lineSegmentLength: 0.3
   originOffset: {x: 0, y: 0, z: 0}
   fixClosingAngle: 15
+  StartDrawing:
+    m_PersistentCalls:
+      m_Calls: []
   _lineWidth: 0.1
   fieldStrengthFactor: 1
   invertDirection: 1
+  minLineSegmentLength: 0.005
+  maxLineSegmentLength: 0.1
+  maxLineSegmentAngleChangeForLengthAdjustment: 10
+  lineSegmentLengthAdjustmentExponent: 3
 --- !u!114 &804438505
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1676,9 +1700,16 @@ MonoBehaviour:
   lineSegmentLength: 0.3
   originOffset: {x: 0, y: 0, z: 0}
   fixClosingAngle: 15
+  StartDrawing:
+    m_PersistentCalls:
+      m_Calls: []
   _lineWidth: 0.1
   fieldStrengthFactor: 1
   invertDirection: 1
+  minLineSegmentLength: 0.005
+  maxLineSegmentLength: 0.1
+  maxLineSegmentAngleChangeForLengthAdjustment: 10
+  lineSegmentLengthAdjustmentExponent: 3
 --- !u!114 &809397299
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1841,9 +1872,16 @@ MonoBehaviour:
   lineSegmentLength: 0.3
   originOffset: {x: 0, y: 0, z: 0}
   fixClosingAngle: 15
+  StartDrawing:
+    m_PersistentCalls:
+      m_Calls: []
   _lineWidth: 0.1
   fieldStrengthFactor: 1
   invertDirection: 1
+  minLineSegmentLength: 0.005
+  maxLineSegmentLength: 0.1
+  maxLineSegmentAngleChangeForLengthAdjustment: 10
+  lineSegmentLengthAdjustmentExponent: 3
 --- !u!114 &868701225
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1997,9 +2035,16 @@ MonoBehaviour:
   lineSegmentLength: 0.3
   originOffset: {x: 0, y: 0, z: 0}
   fixClosingAngle: 15
+  StartDrawing:
+    m_PersistentCalls:
+      m_Calls: []
   _lineWidth: 0.1
   fieldStrengthFactor: 1
   invertDirection: 1
+  minLineSegmentLength: 0.005
+  maxLineSegmentLength: 0.1
+  maxLineSegmentAngleChangeForLengthAdjustment: 10
+  lineSegmentLengthAdjustmentExponent: 3
 --- !u!114 &927223226
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2076,6 +2121,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -2614,6 +2662,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -3309,12 +3360,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9079110210785623905, guid: fe0a30be743451540982d538c670799e,
         type: 3}
-      propertyPath: _mlgFiles.Array.data[0]
+      propertyPath: '_mlgFiles.Array.data[0]'
       value: 
       objectReference: {fileID: 4900000, guid: 2258892e97f1737449abc915e9761c66, type: 3}
     - target: {fileID: 9079110210785623905, guid: fe0a30be743451540982d538c670799e,
         type: 3}
-      propertyPath: _mlgFiles.Array.data[1]
+      propertyPath: '_mlgFiles.Array.data[1]'
       value: 
       objectReference: {fileID: 4900000, guid: 28e3d56fcfa9f214cb12bcbb2501e709, type: 3}
     - target: {fileID: 9079110210785623910, guid: fe0a30be743451540982d538c670799e,
@@ -3459,6 +3510,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -4840,6 +4894,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -4957,9 +5014,16 @@ MonoBehaviour:
   lineSegmentLength: 0.3
   originOffset: {x: 0, y: 0, z: 0}
   fixClosingAngle: 15
+  StartDrawing:
+    m_PersistentCalls:
+      m_Calls: []
   _lineWidth: 0.1
   fieldStrengthFactor: 1
   invertDirection: 1
+  minLineSegmentLength: 0.005
+  maxLineSegmentLength: 0.1
+  maxLineSegmentAngleChangeForLengthAdjustment: 10
+  lineSegmentLengthAdjustmentExponent: 3
 --- !u!114 &1836956469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5171,12 +5235,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6839884875476809572, guid: 10c26744ecceac04bb4ab6fcce082646,
         type: 3}
-      propertyPath: ignoreForLightBaking.Array.data[0]
+      propertyPath: 'ignoreForLightBaking.Array.data[0]'
       value: 
       objectReference: {fileID: 1857240627}
     - target: {fileID: 6839884875476809572, guid: 10c26744ecceac04bb4ab6fcce082646,
         type: 3}
-      propertyPath: ignoreForLightBaking.Array.data[1]
+      propertyPath: 'ignoreForLightBaking.Array.data[1]'
       value: 
       objectReference: {fileID: 1857240626}
     - target: {fileID: 7757255437315887208, guid: 10c26744ecceac04bb4ab6fcce082646,
@@ -5449,9 +5513,16 @@ MonoBehaviour:
   lineSegmentLength: 0.3
   originOffset: {x: 0, y: 0, z: 0}
   fixClosingAngle: 15
+  StartDrawing:
+    m_PersistentCalls:
+      m_Calls: []
   _lineWidth: 0.1
   fieldStrengthFactor: 1
   invertDirection: 1
+  minLineSegmentLength: 0.005
+  maxLineSegmentLength: 0.1
+  maxLineSegmentAngleChangeForLengthAdjustment: 10
+  lineSegmentLengthAdjustmentExponent: 3
 --- !u!114 &1959306108
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5548,6 +5619,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -5966,9 +6040,16 @@ MonoBehaviour:
   lineSegmentLength: 0.3
   originOffset: {x: 0, y: 0, z: 0}
   fixClosingAngle: 15
+  StartDrawing:
+    m_PersistentCalls:
+      m_Calls: []
   _lineWidth: 0.1
   fieldStrengthFactor: 1
   invertDirection: 1
+  minLineSegmentLength: 0.005
+  maxLineSegmentLength: 0.1
+  maxLineSegmentAngleChangeForLengthAdjustment: 10
+  lineSegmentLengthAdjustmentExponent: 3
 --- !u!114 &2041873080
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6032,6 +6113,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -6151,9 +6235,16 @@ MonoBehaviour:
   lineSegmentLength: 0.3
   originOffset: {x: 0, y: 0, z: 0}
   fixClosingAngle: 15
+  StartDrawing:
+    m_PersistentCalls:
+      m_Calls: []
   _lineWidth: 0.1
   fieldStrengthFactor: 1
   invertDirection: 1
+  minLineSegmentLength: 0.005
+  maxLineSegmentLength: 0.1
+  maxLineSegmentAngleChangeForLengthAdjustment: 10
+  lineSegmentLengthAdjustmentExponent: 3
 --- !u!114 &2125441968
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6584,6 +6675,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -6626,6 +6720,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -6668,6 +6765,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:

@@ -3,10 +3,9 @@ using System.Collections;
 using GEAR.Localization;
 using UnityEngine;
 using NUnit.Framework;
-using UnityEditor.SceneManagement;
-using UnityEngine.SceneManagement;
 using static Tests.Utilities.UtilityFunctions;
 using Object = UnityEngine.Object;
+using UnityEngine.SceneManagement;
 
 namespace Tests.Utilities
 {
@@ -21,8 +20,13 @@ namespace Tests.Utilities
         public static IEnumerator LoadSceneAndCheckItsLoadedCorrectly(string pathOfSceneToLoad)
         {
             // Start from Main Menu for every following test
-            EditorSceneManager.LoadScene(pathOfSceneToLoad,
-                new LoadSceneParameters(LoadSceneMode.Single));
+            AsyncOperation loadSceneOperation = SceneManager.LoadSceneAsync(pathOfSceneToLoad, LoadSceneMode.Single);
+            while (!loadSceneOperation.isDone)
+            {
+                yield return null;
+            }
+
+            yield return null;
             yield return null;
             var currentSceneName = SceneManager.GetActiveScene().path;
             Assert.AreEqual(pathOfSceneToLoad, currentSceneName, $"'{pathOfSceneToLoad}' scene was not loaded");

@@ -31,7 +31,7 @@ public class SimpleResetObject : MonoBehaviour, IResetObject
         transform.position = startPos;
         transform.rotation = startRot;
 
-        rigidBody.velocity = Vector3.zero;
+        rigidBody.linearVelocity = Vector3.zero;
         rigidBody.angularVelocity = Vector3.zero;
 
         foreach (Component component in GetComponents<Component>())

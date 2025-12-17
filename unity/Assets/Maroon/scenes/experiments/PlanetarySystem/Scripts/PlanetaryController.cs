@@ -305,7 +305,7 @@ namespace Maroon.Experiments.PlanetarySystem
                         a.transform.LookAt(b.transform);
 
                         // circular orbit instant velocity: v0 = sqrt((G * m2) / r)
-                        a.GetComponent<Rigidbody>().velocity += a.transform.right * Mathf.Sqrt((G * 10 * m2) / r);
+                        a.GetComponent<Rigidbody>().linearVelocity += a.transform.right * Mathf.Sqrt((G * 10 * m2) / r);
                     }
                 }
             }
@@ -327,7 +327,7 @@ namespace Maroon.Experiments.PlanetarySystem
 
                     a.transform.LookAt(b.transform);
 
-                    a.GetComponent<Rigidbody>().velocity += a.transform.right * Mathf.Sqrt((G * 10 * m2) / r);
+                    a.GetComponent<Rigidbody>().linearVelocity += a.transform.right * Mathf.Sqrt((G * 10 * m2) / r);
                 }
             }
         }

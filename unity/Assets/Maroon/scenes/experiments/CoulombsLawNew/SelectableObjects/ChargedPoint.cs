@@ -100,13 +100,13 @@ namespace Maroon.Experiments.CoulombsLawNew
                 }
                 if (lockPosition) return;
                 rigidBody.isKinematic = false;
-                rigidBody.velocity = storedVelocity;
+                rigidBody.linearVelocity = storedVelocity;
             });
             SimulationController.Instance.OnStop.AddListener(() =>
             {
                 trailRenderer.emitting = false;
                 trailRenderer.time = float.PositiveInfinity; // So that trail-renderer does not fade-out while paused
-                storedVelocity = rigidBody.velocity;
+                storedVelocity = rigidBody.linearVelocity;
                 rigidBody.isKinematic = true;
             });
         }
@@ -222,7 +222,7 @@ namespace Maroon.Experiments.CoulombsLawNew
         {
             if (SimulationController.Instance.SimulationRunning && !rigidBody.isKinematic)
             {
-                return rigidBody.velocity;
+                return rigidBody.linearVelocity;
             }
             return storedVelocity;
         }
@@ -232,7 +232,7 @@ namespace Maroon.Experiments.CoulombsLawNew
             storedVelocity = newValue;
             if (SimulationController.Instance.SimulationRunning && !rigidBody.isKinematic)
             {
-                rigidBody.velocity = newValue;
+                rigidBody.linearVelocity = newValue;
             }
         }
 

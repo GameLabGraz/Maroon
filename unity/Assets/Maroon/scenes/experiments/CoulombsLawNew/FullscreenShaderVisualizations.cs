@@ -154,6 +154,11 @@ namespace Maroon.Experiments.CoulombsLawNew
             {
                 renderTextureTemporary = new RenderTexture(source);
             }
+            // Update temporary render texture size if necessary
+            if (renderTextureTemporary.width != source.width || renderTextureTemporary.height != source.height)
+            {
+                renderTextureTemporary = new RenderTexture(source);
+            }
 
             // Early exit if not enabled
             bool renderVectorField = uiVectorFieldEnabledToggle.GetValue();
