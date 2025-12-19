@@ -1,9 +1,7 @@
-﻿using System;
-using Maroon.Physics;
+﻿using Maroon.Physics;
 using Maroon.Physics.CoordinateSystem;
 using UnityEngine;
 using Maroon.GlobalEntities;
-using Maroon.Utility;
 
 namespace Maroon.Tools.Ruler
 {

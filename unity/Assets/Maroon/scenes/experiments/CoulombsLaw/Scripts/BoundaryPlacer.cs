@@ -2,56 +2,53 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BoundaryPlacer : MonoBehaviour
+namespace Maroon.Experiments.CoulombsLawNew
 {
-    // Start is called before the first frame update
-    [SerializeField] private Transform min = null;
-    [SerializeField] private Transform max = null;
-    [SerializeField] private float thicknessXY = 0.2f; 
-    [SerializeField] private float thicknessZ = 1.0f;
-
-    void Start()
+    public class BoundaryPlacer : MonoBehaviour
     {
-        if (min == null || max == null)
+        [SerializeField] private float thickness = 0.5f;
+        [SerializeField] private PhysicsMaterial physicMaterial;
+
+        private void Start()
         {
-            Debug.LogWarning("Boundary Placer requires min/max to be set to work properly");
-            return;
+            UpdateBoundaries();
+            SimulationBox.Instance.OnBoundsChanged.AddListener((Bounds newBounds) => { UpdateBoundaries(); });
         }
 
-        var colliders = GetComponents<BoxCollider>();
-        if (colliders.Length != 4)
+        private void UpdateBoundaries()
         {
-            Debug.LogWarning("Boundary Placer expects 4 Box-Colliders on the Object to work, given: " + colliders.Length);
-            return;
+            var box = SimulationBox.Instance.Bounds;
+    
+            // Get all colliders
+            var colliders = GetComponents<BoxCollider>();
+            if (colliders.Length != 6)
+            {
+                for (int i = 0; i < 6 - colliders.Length; i++)
+                {
+                    var collider = gameObject.AddComponent<BoxCollider>();
+                    collider.sharedMaterial = physicMaterial;
+                }
+            }
+            colliders = GetComponents<BoxCollider>();
+
+            // Set collider position to form a outer wall around box
+            transform.position = box.center;
+            for (int i = 0; i < 6; i++)
+            {
+                var collider = colliders[i];
+                collider.sharedMaterial = physicMaterial;
+
+                int dimension = i % 3;
+                float sign = i < 3 ? 1.0f : -1.0f;
+
+                Vector3 pos = Vector3.zero;
+                pos[dimension] = sign * (box.extents[dimension] + thickness/2.0f);
+                Vector3 size = box.size;
+                size[dimension] = thickness;
+
+                collider.center = pos;
+                collider.size = size;
+            }
         }
-
-        // Set collider position to form a outer wall around min/max
-        transform.position = min.position;
-
-        var boundarySize = max.position - min.position;
-        var localCenter = boundarySize / 2.0f;
-
-        var left = colliders[0];
-        var right = colliders[1];
-        var top = colliders[2];
-        var bottom = colliders[3];
-
-        left.center = localCenter - (boundarySize.x / 2.0f + thicknessXY) * Vector3.right;
-        left.size = new Vector3(thicknessXY, boundarySize.y + 4 * thicknessXY, thicknessZ);
-
-        right.center = localCenter + (boundarySize.x / 2.0f + thicknessXY) * Vector3.right;
-        right.size = new Vector3(thicknessXY, boundarySize.y + 4 * thicknessXY, thicknessZ);
-        
-        top.center = localCenter + (boundarySize.y / 2.0f + thicknessXY) * Vector3.up;
-        top.size = new Vector3(boundarySize.x + 4 * thicknessXY, thicknessXY, thicknessZ);
-
-        bottom.center = localCenter - (boundarySize.y / 2.0f + thicknessXY) * Vector3.up;
-        bottom.size = new Vector3(boundarySize.x + 4 * thicknessXY, thicknessXY, thicknessZ);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
