@@ -56,10 +56,10 @@ jobs:
 
       # Checkout
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # Cache
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
           path: ${{ matrix.projectPath }}/Library
           key: Library-${{ hashFiles(format('{0}/Assets/**', matrix.projectPath), format('{0}/Packages/**', matrix.projectPath), format('{0}/ProjectSettings/**', matrix.projectPath)) }}
@@ -69,6 +69,7 @@ jobs:
       # Run tests
       - name: Run ${{ matrix.testMode }} tests
         id: tests
+        # TODO: bump version once released
         uses: game-ci/unity-test-runner@v4.3.1
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_PERSONAL_LICENSE }}
@@ -85,7 +86,7 @@ jobs:
       # Upload results
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.tests.outputs.artifactsPath }}
           path: ${{ steps.tests.outputs.artifactsPath }}
@@ -133,10 +134,10 @@ jobs:
 
       # Checkout
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # Cache
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
           path: ${{ matrix.projectPath }}/Library
           key: Library-${{ hashFiles(format('{0}/Assets/**', matrix.projectPath), format('{0}/Packages/**', matrix.projectPath), format('{0}/ProjectSettings/**', matrix.projectPath)) }}
@@ -167,7 +168,7 @@ jobs:
           
       # Upload build
       - name: Upload build for ${{ matrix.maroonBuildTarget }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: build-${{ matrix.maroonBuildTarget }}
           path: build
