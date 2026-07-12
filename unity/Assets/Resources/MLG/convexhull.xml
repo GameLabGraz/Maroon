@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageManager>
+    <Translations>
+        <Translation Key="CH_Options">
+            <English>Options</English>
+            <German>Optionen</German>
+        </Translation>
+
+        <Translation Key="CH_Controls">
+            <English>Controls</English>
+            <German>Steuerung</German>
+        </Translation>
+
+        <Translation Key="CH_Pseudocode">
+            <English>Pseudocode</English>
+            <German>Pseudocode</German>
+        </Translation>
+        
+        <Translation Key="CH_FacesAndSteps">
+            <English>Faces and Steps Counter</English>
+            <German>Flächen and Schrittezähler</German>
+        </Translation>
+
+        <Translation Key="CH_Descriptions">
+            <English>Description</English>
+            <German>Beschreibung</German>
+        </Translation>
+
+        <Translation Key="CH_Algorithm">
+            <English>Convexhull Algorithm</English>
+            <German>Convexhull Algorithmus</German>
+        </Translation>
+
+        <Translation Key="CH_LeftConvexhullAlgo">
+            <English>Left Convexhull Algorithm:</English>
+            <German>Linker ConvexHull Algorithmus:</German>
+        </Translation>
+
+        <Translation Key="CH_RightConvexhullAlgo">
+            <English>Right Convexhull Algorithm:</English>
+            <German>Rechter ConvexHull Algorithmus:</German>
+        </Translation>
+
+        <Translation Key="CH_NumberOfPoints">
+            <English>Number of Points</English>
+            <German>Anzahl der Punkte</German>
+        </Translation>
+
+        <Translation Key="CH_AnimationSpeed">
+            <English>Animation Speed</English>
+            <German>Animationsgeschwindigkeit</German>
+        </Translation>
+
+        <Translation Key="CH_ShowSearchLines">
+            <English>Show Search Lines</English>
+            <German>Suchlinien anzeigen</German>
+        </Translation>
+
+        <Translation Key="CH_ShowFaces">
+            <English>Show Faces</English>
+            <German>Flächen anzeigen</German>
+        </Translation>
+
+        <Translation Key="CH_Play">
+            <English>Play</English>
+            <German>Abspielen</German>
+        </Translation>
+
+        <Translation Key="CH_Pause">
+            <English>Pause</English>
+            <German>Pause</German>
+        </Translation>
+
+        <Translation Key="CH_Resume">
+            <English>Resume</English>
+            <German>Fortsetzen</German>
+        </Translation>
+
+        <Translation Key="CH_Reset">
+            <English>Reset</English>
+            <German>Zurücksetzen</German>
+        </Translation>
+
+        <Translation Key="CH_NextStep">
+            <English>Next Step</English>
+            <German>Nächster Schritt</German>
+        </Translation>
+
+        <Translation Key="CH_PreviousStep">
+            <English>Previous Step</English>
+            <German>Vorheriger Schritt</German>
+        </Translation>
+
+        <Translation Key="CH_FacesPrefix">
+            <English>&lt;b>Faces:&lt;/b> &lt;pos=50%></English>
+            <German>&lt;b>Flächen:&lt;/b> &lt;pos=50%></German>
+        </Translation>
+
+        <Translation Key="CH_StepsPrefix">
+            <English>&lt;b>Steps:&lt;/b> &lt;pos=50%></English>
+            <German>&lt;b>Schritte:&lt;/b> &lt;pos=50%></German>
+        </Translation>
+
+        <Translation Key="CH_EnterBattleMode">
+            <English>Enter Battle Mode:</English>
+            <German>Gehe in den Battle Modus:</German>
+        </Translation>
+
+        <Translation Key="CH_EnterDetailMode">
+            <English>Enter Detail Mode:</English>
+            <German>Gehe in den Detail Modus:</German>
+        </Translation>
+
+        <Translation Key="CH_GeneratePoints">
+            <English>Generate Points</English>
+            <German>Generiere Punkte</German>
+        </Translation>
+
+        <Translation Key="Gift Wrapping Description">
+            <English>Gift Wrapping starts with the leftmost point and repeatedly pivots around each hull edge to find the next face.
+                
+&lt;b>Key functions:&lt;/b>
+pivot(a,b) - rotates a plane around edge (a,b) and returns the point that requires the smallest rotation, i.e. the next hull point.
+add triangle(a,b,c) - draws the face and enqueues its three edges for future pivoting.
+dequeue - takes the next unprocessed edge from the queue to pivot around.
+
+&lt;b>Legend:&lt;/b>
+&lt;color=#0000FF>■&lt;/color> Normal Point
+&lt;color=#54FF00>■&lt;/color> Hull Point
+&lt;color=#FFFC00>■&lt;/color> Current Point
+&lt;color=#00F3FF>■&lt;/color> Active Edge
+&lt;color=#FF8700>■&lt;/color> New Face</English>
+            <German>Gift Wrapping beginnt mit dem linkesten Punkt und dreht die Ebene schrittweise um jede Hüllkante, bis der nächste Punkt gefunden wird.
+
+&lt;b>Wichtige Funktionen:&lt;/b>
+pivot(a,b) - dreht eine Ebene um die Kante (a,b) und gibt den Punkt zurück, der die kleinste Drehung erfordert, d.h. den nächsten Hüllpunkt.
+add triangle(a,b,c) - zeichnet die Fläche und fügt ihre drei Kanten zur Warteschlange hinzu.
+dequeue - entnimmt die nächste unverarbeitete Kante aus der Warteschlange.
+
+&lt;b>Legende:&lt;/b>
+&lt;color=#0000FF>■&lt;/color> Normaler Punkt
+&lt;color=#54FF00>■&lt;/color> Hüllpunkt
+&lt;color=#FFFC00>■&lt;/color> Aktueller Punkt
+&lt;color=#00F3FF>■&lt;/color> Aktive Kante
+&lt;color=#FF8700>■&lt;/color> Neue Fläche</German>
+        </Translation>
+
+        <Translation Key="Incremental Description">
+            <English>Incremental Hull starts with a tetrahedron of four non-coplanar points, then adds remaining points one by one, removing visible faces and patching the hole each time.
+
+&lt;b>Key functions:&lt;/b>
+tetrahedron - builds the initial 4-face hull from the four most spread-out non-coplanar points.
+visible faces - a face is visible from point p if p lies on the outside of its normal: dot(p − face.a, face.normal).
+horizon edges - edges shared by exactly one visible and one non-visible face; they form the boundary of the hole.
+
+&lt;b>Legend:&lt;/b>
+&lt;color=#0000FF>■&lt;/color> Normal Point
+&lt;color=#54FF00>■&lt;/color> Hull Point
+&lt;color=#FFFC00>■&lt;/color> Current Point
+&lt;color=#3D11AB>■&lt;/color> Visible Face
+&lt;color=#00FF8C>■&lt;/color> Horizon Edge
+&lt;color=#FF8700>■&lt;/color> New Face</English>
+            <German>Incremental Hull beginnt mit einem Tetraeder aus vier nicht-koplanaren Punkten und fügt danach jeden weiteren Punkt einzeln hinzu, wobei sichtbare Flächen entfernt und das entstandene Loch gefüllt wird.
+
+&lt;b>Wichtige Funktionen:&lt;/b>
+tetrahedron - erstellt die initiale 4-flächige Hülle aus den am weitesten verstreuten nicht-koplanaren Punkten.
+sichtbare Flächen - eine Fläche ist von Punkt p sichtbar, wenn p außerhalb ihrer Normalen liegt: dot(p − face.a, face.normal).
+Horizontkanten - Kanten, die genau eine sichtbare und eine nicht-sichtbare Fläche teilen; sie bilden die Grenze des Lochs.
+
+&lt;b>Legende:&lt;/b>
+&lt;color=#0000FF>■&lt;/color> Normaler Punkt
+&lt;color=#54FF00>■&lt;/color> Hüllpunkt
+&lt;color=#FFFC00>■&lt;/color> Aktueller Punkt
+&lt;color=#3D11AB>■&lt;/color> Sichtbare Fläche
+&lt;color=#00FF8C>■&lt;/color> Horizontkante
+&lt;color=#FF8700>■&lt;/color> Neue Fläche</German>
+        </Translation>
+
+        <Translation Key="QuickHull Description">
+            <English>QuickHull builds an initial tetrahedron, assigns each point to the face it lies furthest above, then repeatedly expands the hull from the furthest point until no outside points remain.
+
+&lt;b>Key functions:&lt;/b>
+eye point - the point with the greatest distance to its assigned face. It becomes the next hull vertex.
+visible faces - faces that the eye point can see.
+reassign - after removing visible faces, orphaned points are re-checked against the new faces and re-assigned or discarded.
+
+&lt;b>Legend:&lt;/b>
+&lt;color=#0000FF>■&lt;/color> Normal PointFF8700
+&lt;color=#54FF00>■&lt;/color> Hull Point
+&lt;color=#FFFC00>■&lt;/color> Current Point
+&lt;color=#FFE500>■&lt;/color> Assigned Point
+&lt;color=#AA00FF>■&lt;/color> Visible Face
+&lt;color=#00FF8C>■&lt;/color> Horizon Edge</English>
+            <German>QuickHull erstellt ein initiales Tetraeder, ordnet jeden Punkt der Fläche zu, die er am weitesten überragt, und erweitert die Hülle iterativ vom weitesten Punkt aus, bis keine Außenpunkte mehr übrig sind.
+
+&lt;b>Wichtige Funktionen:&lt;/b>
+Augenpunkt - der Punkt mit dem größten Abstand zu seiner zugeordneten Fläche. Er wird der nächste Hüllknoten.
+sichtbare Flächen - Flächen, die der Augenpunkt sehen kann.
+reassign - nach dem Entfernen sichtbarer Flächen werden verwaiste Punkte gegen die neuen Flächen geprüft und neu zugeordnet oder verworfen.
+
+&lt;b>Legende:&lt;/b>
+&lt;color=#0000FF>■&lt;/color> Normaler Punkt
+&lt;color=#54FF00>■&lt;/color> Hüllpunkt
+&lt;color=#FFFC00>■&lt;/color> Aktueller Punkt
+&lt;color=#FFE500>■&lt;/color> Zugewiesener Punkt
+&lt;color=#AA00FF>■&lt;/color> Sichtbare Fläche
+&lt;color=#00FF8C>■&lt;/color> Horizontkante</German>
+        </Translation>
+
+        <Translation Key="EnterConvexHullExperiment">
+            <English>Welcome! Here you can explore different algorithms for computing the 3D convex hull of a point cloud. Generate points, choose an algorithm, and press Play to watch it build the hull step by step.</English>
+            <German>Willkommen! Hier kannst du verschiedene Algorithmen zur Berechnung der konvexen Hülle einer 3D-Punktwolke erkunden. Generiere Punkte, wähle einen Algorithmus und drücke Abspielen, um die schrittweise Konstruktion zu beobachten.</German>
+        </Translation>
+
+        <Translation Key="EnterBattleMode">
+            <English>Battle Mode: Two algorithms race on the same point cloud at the same time. Press Play to start and see which one finishes building the convex hull first!</English>
+            <German>Battlemode: Zwei Algorithmen treten gleichzeitig auf derselben Punktwolke an. Drücke Abspielen und schau, welcher die konvexe Hülle zuerst fertigstellt!</German>
+        </Translation>
+
+    </Translations>
+</LanguageManager>
