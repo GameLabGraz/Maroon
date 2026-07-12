@@ -56,10 +56,10 @@ jobs:
 
       # Checkout
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # Cache
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
           path: ${{ matrix.projectPath }}/Library
           key: Library-${{ hashFiles(format('{0}/Assets/**', matrix.projectPath), format('{0}/Packages/**', matrix.projectPath), format('{0}/ProjectSettings/**', matrix.projectPath)) }}
@@ -69,7 +69,8 @@ jobs:
       # Run tests
       - name: Run ${{ matrix.testMode }} tests
         id: tests
-        uses: game-ci/unity-test-runner@v4.3.1
+        # TODO: bump version once released
+        uses: game-ci/unity-test-runner@08fd329f00a18efa297140b14ac28ebce742759e
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_PERSONAL_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_PERSONAL_EMAIL }}
@@ -85,7 +86,7 @@ jobs:
       # Upload results
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.tests.outputs.artifactsPath }}
           path: ${{ steps.tests.outputs.artifactsPath }}
@@ -133,10 +134,10 @@ jobs:
 
       # Checkout
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # Cache
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
           path: ${{ matrix.projectPath }}/Library
           key: Library-${{ hashFiles(format('{0}/Assets/**', matrix.projectPath), format('{0}/Packages/**', matrix.projectPath), format('{0}/ProjectSettings/**', matrix.projectPath)) }}
@@ -145,7 +146,7 @@ jobs:
             
       # Build
       - name: Build
-        uses: game-ci/unity-builder@v4.2.3
+        uses: game-ci/unity-builder@v5.0.0
 
         # environment vars needed by unity-builder to activate the unity license
         # defined in the Actions Secrets in the repo settings
@@ -167,7 +168,7 @@ jobs:
           
       # Upload build
       - name: Upload build for ${{ matrix.maroonBuildTarget }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: build-${{ matrix.maroonBuildTarget }}
           path: build
