@@ -85,7 +85,7 @@ public abstract class EMObject : PausableObject, IGenerateB, IResetObject
     /// Gets the dipole moment
     /// </summary>
     /// <returns>The dipole moment</returns>
-    private Vector3 GetDipoleMoment()
+    protected Vector3 GetDipoleMoment()
     {
         return FieldAlignment * fieldStrength;
     }
@@ -95,7 +95,7 @@ public abstract class EMObject : PausableObject, IGenerateB, IResetObject
     /// </summary>
     /// <param name="position">The required position</param>
     /// <returns>The magnetic field vector at the position</returns>
-    public Vector3 GetB(Vector3 position)
+    public virtual Vector3 GetB(Vector3 position)
     {
         var n = position - transform.position;
         var m = GetDipoleMoment();

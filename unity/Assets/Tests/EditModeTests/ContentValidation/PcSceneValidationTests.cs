@@ -16,11 +16,6 @@ namespace Tests.EditModeTests.ContentValidation
     public sealed class PcSceneValidationTests : SceneValidationBaseFixture<PcSceneValidationTests>
     {
         /// <summary>
-        /// Provides all scenes in Build Settings of type PC
-        /// </summary>
-        private class PcScenesProvider : ScenesProvider { protected override string sceneType => TypePC; }
-        
-        /// <summary>
         /// Derived constructor used by TestFixtureSource annotation to initialize attributes
         /// </summary>
         /// <param name="experimentName">Name of the experiment scene to be tested</param>
@@ -39,7 +34,7 @@ namespace Tests.EditModeTests.ContentValidation
         
         /* Tests start here! */
 
-        [SkipTestForScenesWithReason("StateMachine", "scene has a different camera setup")]
+        [SkipTestForScenesWithReason("StateMachine, MinimumSpanningTree", "scene has a different camera setup")]
         [Test, Description("Must have a GameObject named 'MainCamera' with a configured <Camera> component")]
         public void SceneHasMainCamera()
         {
@@ -161,6 +156,7 @@ namespace Tests.EditModeTests.ContentValidation
         }
         
         [SkipTestForScenesWithReason("FaradaysLaw", "scene accidently(?) has two EventSystems!")] // TODO fixme
+        [SkipTestForScenesWithReason("PlanetarySystem", ReasonIntentionallyMissing)]
         [Test, Description("Must have a GameObject named 'EventSystem'")]
         public void SceneHasEventSystem()
         {
@@ -183,7 +179,7 @@ namespace Tests.EditModeTests.ContentValidation
                 $"GameObject '{objectNameUnderTest}' is not a child GameObject of '{prefab.transform.parent.name}'");
         }
         
-        [SkipTestForScenesWithReason("CathodeRayTube", ReasonIntentionallyMissing)]
+        [SkipTestForScenesWithReason("CathodeRayTube, PlanetarySystem", ReasonIntentionallyMissing)]
         [SkipTestForScenesWithReason("CoulombsLaw", ReasonItsOutdated)]
         [Test, Description("Must have a GameObject named 'PanelAssessment'")]
         public void SceneHasUiPanelAssessment()
@@ -207,7 +203,7 @@ namespace Tests.EditModeTests.ContentValidation
                 $"GameObject '{objectNameUnderTest}' is not a child GameObject of '{prefab.transform.parent.name}'");
         }
         
-        [SkipTestForScenesWithReason("Optics", ReasonIntentionallyMissing)]
+        [SkipTestForScenesWithReason("Optics, PlanetarySystem", ReasonIntentionallyMissing)]
         [Test, Description("Must have a GameObject named 'PanelControls'")]
         public void SceneHasUiPanelControls()
         {
@@ -229,7 +225,8 @@ namespace Tests.EditModeTests.ContentValidation
             Assert.AreEqual(prefab.transform.parent.name, gameObjectUnderTest.transform.parent.name,
                 $"GameObject '{objectNameUnderTest}' is not a child GameObject of '{prefab.transform.parent.name}'");
         }
-        
+
+        [SkipTestForScenesWithReason("PlanetarySystem", ReasonIntentionallyMissing)]
         [Test, Description("Must have a GameObject named 'PanelDialogue '")]
         public void SceneHasUiPanelDialogue()
         {
@@ -251,7 +248,8 @@ namespace Tests.EditModeTests.ContentValidation
             Assert.AreEqual(prefab.transform.parent.name, gameObjectUnderTest.transform.parent.name,
                 $"GameObject '{objectNameUnderTest}' is not a child GameObject of '{prefab.transform.parent.name}'");
         }
-               
+
+        [SkipTestForScenesWithReason("PlanetarySystem", ReasonIntentionallyMissing)]
         [Test, Description("Must have a GameObject named 'PanelExit'")]
         public void SceneHasUiPanelExit()
         {
@@ -273,7 +271,8 @@ namespace Tests.EditModeTests.ContentValidation
             Assert.AreEqual(prefab.transform.parent.name, gameObjectUnderTest.transform.parent.name,
                 $"GameObject '{objectNameUnderTest}' is not a child GameObject of '{prefab.transform.parent.name}'");
         }
-        
+
+        [SkipTestForScenesWithReason("PlanetarySystem", ReasonIntentionallyMissing)]
         [Test, Description("Must have a GameObject named 'PanelOptions'")]
         public void SceneHasUiPanelOptions()
         {

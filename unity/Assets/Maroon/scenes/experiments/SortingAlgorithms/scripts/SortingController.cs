@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using GEAR.Localization;
 using Maroon.UI;
-using Mirror;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,10 +19,6 @@ public class SortingController : MonoBehaviour, IResetObject
     }
     private SortingMode _sortingMode;
 
-    [SerializeField] private SortingNetworkSync networkSync;
-    private bool _isOnline;
-    private bool _initialized;
-
     [SerializeField] private QuizManager quizManager;
     public QuizManager TheQuizManager => quizManager;
 
@@ -31,7 +26,6 @@ public class SortingController : MonoBehaviour, IResetObject
 
     private void Start()
     {
-        _isOnline = NetworkClient.active;
         detailSortingLogic.Init(detailArraySize);
         leftBattleSorting.Init(battleArraySize, this);
         rightBattleSorting.Init(battleArraySize, this);
@@ -46,20 +40,8 @@ public class SortingController : MonoBehaviour, IResetObject
         
         DisplayMessageByKey("EnterSortingExperiment");
         SetBattleOrder();
-        _initialized = true;
     }
 
-    public void GoOffline()
-    {
-        _isOnline = false;
-        battleQuizOnline.SetActive(false);
-        if (_sortingMode == SortingMode.SM_BattleMode)
-        {
-            battleQuizOffline.SetActive(true);
-            ResetQuiz();
-        }
-    }
-    
     public void ResetObject()
     {
         switch (_sortingMode)
@@ -115,7 +97,6 @@ public class SortingController : MonoBehaviour, IResetObject
         battleOptionsUi.SetActive(false);
         
         detailDescriptionUi.SetActive(true);
-        battleQuizOnline.gameObject.SetActive(false);
         battleQuizOffline.gameObject.SetActive(false);
         ResetQuiz();
         
@@ -140,22 +121,12 @@ public class SortingController : MonoBehaviour, IResetObject
     
     private void RandomizeDetailArray()
     {
-        if (_initialized && _isOnline && !Maroon.NetworkManager.Instance.IsInControl)
-            return;
         _detailOrder = new List<int>();
         for (int i = 0; i < 10; ++i)
         {
             _detailOrder.Add(rng.Next(100));
         }
         detailSortingLogic.SortingValues = _detailOrder.GetRange(0, detailArraySize);
-        
-        DistributeDetailArray();
-    }
-
-    private void DistributeDetailArray()
-    {
-        if(_initialized && _isOnline && Maroon.NetworkManager.Instance.IsInControl)
-            networkSync.SynchronizeArray(_detailOrder);
     }
 
     public void SetDetailArray(List<int> array)
@@ -192,7 +163,6 @@ public class SortingController : MonoBehaviour, IResetObject
     
     [SerializeField] private GameObject battleArrays;
     [SerializeField] private GameObject battleOptionsUi;
-    [SerializeField] private GameObject battleQuizOnline;
     [SerializeField] private GameObject battleQuizOffline;
     [SerializeField] private GameObject battlePanels;
     
@@ -213,10 +183,7 @@ public class SortingController : MonoBehaviour, IResetObject
         battleOptionsUi.SetActive(true);
         
         detailDescriptionUi.SetActive(false);
-        if (_isOnline)
-            battleQuizOnline.SetActive(true);
-        else
-            battleQuizOffline.SetActive(true);
+        battleQuizOffline.SetActive(true);
         
         battlePanels.SetActive(true);
         
@@ -275,9 +242,6 @@ public class SortingController : MonoBehaviour, IResetObject
     
     private void SetBattleOrder()
     {
-        if (_initialized && _isOnline && !Maroon.NetworkManager.Instance.IsInControl)
-            return;
-        
         var order = Enumerable.Range(0, battleArraySize).ToList();
         switch (_arrangementMode)
         {
@@ -293,9 +257,6 @@ public class SortingController : MonoBehaviour, IResetObject
         }
 
         SetBattleOrder(order);
-        
-        if(_initialized && _isOnline && Maroon.NetworkManager.Instance.IsInControl)
-            networkSync.SynchronizeBattleOrder(order);
     }
 
     public void SetBattleOrder(List<int> order)
@@ -382,10 +343,7 @@ public class SortingController : MonoBehaviour, IResetObject
 
         if (_leftFinished && _rightFinished)
         {
-            if(!_isOnline)
-                StopSimulation();
-            else
-                Invoke(nameof(StopSimulation), 1.0f); //give other clients time to finish!
+            StopSimulation();
         }
     }
 

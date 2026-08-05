@@ -10,6 +10,74 @@ using System.Threading.Tasks;
 using AOT;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using System.Collections;
+
+public class MainThreadUtil : MonoBehaviour
+{
+    public static MainThreadUtil Instance { get; private set; }
+    public static SynchronizationContext synchronizationContext { get; private set; }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    public static void Setup()
+    {
+        Instance = new GameObject("MainThreadUtil")
+            .AddComponent<MainThreadUtil>();
+        synchronizationContext = SynchronizationContext.Current;
+    }
+
+    public static void Run(IEnumerator waitForUpdate)
+    {
+        synchronizationContext.Post(_ => Instance.StartCoroutine(
+                    waitForUpdate), null);
+    }
+
+    void Awake()
+    {
+        gameObject.hideFlags = HideFlags.HideAndDontSave;
+        DontDestroyOnLoad(gameObject);
+    }
+}
+
+public class WaitForUpdate : CustomYieldInstruction
+{
+    public override bool keepWaiting
+    {
+        get { return false; }
+    }
+
+    public MainThreadAwaiter GetAwaiter()
+    {
+        var awaiter = new MainThreadAwaiter();
+        MainThreadUtil.Run(CoroutineWrapper(this, awaiter));
+        return awaiter;
+    }
+
+    public class MainThreadAwaiter : INotifyCompletion
+    {
+        Action continuation;
+
+        public bool IsCompleted { get; set; }
+
+        public void GetResult() { }
+
+        public void Complete()
+        {
+            IsCompleted = true;
+            continuation?.Invoke();
+        }
+
+        void INotifyCompletion.OnCompleted(Action continuation)
+        {
+            this.continuation = continuation;
+        }
+    }
+
+    public static IEnumerator CoroutineWrapper(IEnumerator theWorker, MainThreadAwaiter awaiter)
+    {
+        yield return theWorker;
+        awaiter.Complete();
+    }
+}
 
 namespace NativeWebSocket
 {
@@ -172,6 +240,34 @@ namespace NativeWebSocket
       this.instanceId = instanceId;
     }
 
+    public WebSocket (string url, string subprotocol, Dictionary<string, string> headers = null) {
+      if (!WebSocketFactory.isInitialized) {
+        WebSocketFactory.Initialize ();
+      }
+
+      int instanceId = WebSocketFactory.WebSocketAllocate (url);
+      WebSocketFactory.instances.Add (instanceId, this);
+
+      WebSocketFactory.WebSocketAddSubProtocol(instanceId, subprotocol);
+
+      this.instanceId = instanceId;
+    }
+
+    public WebSocket (string url, List<string> subprotocols, Dictionary<string, string> headers = null) {
+      if (!WebSocketFactory.isInitialized) {
+        WebSocketFactory.Initialize ();
+      }
+
+      int instanceId = WebSocketFactory.WebSocketAllocate (url);
+      WebSocketFactory.instances.Add (instanceId, this);
+
+      foreach (string subprotocol in subprotocols) {
+        WebSocketFactory.WebSocketAddSubProtocol(instanceId, subprotocol);
+      }
+
+      this.instanceId = instanceId;
+    }
+
     ~WebSocket () {
       WebSocketFactory.HandleInstanceDestroy (this.instanceId);
     }
@@ -276,12 +372,14 @@ namespace NativeWebSocket
 
         private Uri uri;
         private Dictionary<string, string> headers;
+        private List<string> subprotocols;
         private ClientWebSocket m_Socket = new ClientWebSocket();
 
         private CancellationTokenSource m_TokenSource;
         private CancellationToken m_CancellationToken;
 
-        private readonly object Lock = new object();
+        private readonly object OutgoingMessageLock = new object();
+        private readonly object IncomingMessageLock = new object();
 
         private bool isSending = false;
         private List<ArraySegment<byte>> sendBytesQueue = new List<ArraySegment<byte>>();
@@ -299,6 +397,48 @@ namespace NativeWebSocket
             {
                 this.headers = headers;
             }
+
+            subprotocols = new List<string>();
+
+            string protocol = uri.Scheme;
+            if (!protocol.Equals("ws") && !protocol.Equals("wss"))
+                throw new ArgumentException("Unsupported protocol: " + protocol);
+        }
+
+        public WebSocket(string url, string subprotocol, Dictionary<string, string> headers = null)
+        {
+            uri = new Uri(url);
+
+            if (headers == null)
+            {
+                this.headers = new Dictionary<string, string>();
+            }
+            else
+            {
+                this.headers = headers;
+            }
+
+            subprotocols = new List<string> {subprotocol};
+
+            string protocol = uri.Scheme;
+            if (!protocol.Equals("ws") && !protocol.Equals("wss"))
+                throw new ArgumentException("Unsupported protocol: " + protocol);
+        }
+
+        public WebSocket(string url, List<string> subprotocols, Dictionary<string, string> headers = null)
+        {
+            uri = new Uri(url);
+
+            if (headers == null)
+            {
+                this.headers = new Dictionary<string, string>();
+            }
+            else
+            {
+                this.headers = headers;
+            }
+
+            this.subprotocols = subprotocols;
 
             string protocol = uri.Scheme;
             if (!protocol.Equals("ws") && !protocol.Equals("wss"))
@@ -322,6 +462,10 @@ namespace NativeWebSocket
                 foreach (var header in headers)
                 {
                     m_Socket.Options.SetRequestHeader(header.Key, header.Value);
+                }
+
+                foreach (string subprotocol in subprotocols) {
+                    m_Socket.Options.AddSubProtocol(subprotocol);
                 }
 
                 await m_Socket.ConnectAsync(uri, m_CancellationToken);
@@ -397,7 +541,7 @@ namespace NativeWebSocket
             // The state of the connection is contained in the context Items dictionary.
             bool sending;
 
-            lock (Lock)
+            lock (OutgoingMessageLock)
             {
                 sending = isSending;
 
@@ -430,7 +574,7 @@ namespace NativeWebSocket
                 }
 
                 // Note that we've finished sending.
-                lock (Lock)
+                lock (OutgoingMessageLock)
                 {
                     isSending = false;
                 }
@@ -441,7 +585,7 @@ namespace NativeWebSocket
             else
             {
                 // Add the message to the queue.
-                lock (Lock)
+                lock (OutgoingMessageLock)
                 {
                     queue.Add(buffer);
                 }
@@ -451,7 +595,7 @@ namespace NativeWebSocket
         private async Task HandleQueue(List<ArraySegment<byte>> queue, WebSocketMessageType messageType)
         {
             var buffer = new ArraySegment<byte>();
-            lock (Lock)
+            lock (OutgoingMessageLock)
             {
                 // Check for an item in the queue.
                 if (queue.Count > 0)
@@ -469,28 +613,34 @@ namespace NativeWebSocket
             }
         }
 
-        private Mutex m_MessageListMutex = new Mutex();
         private List<byte[]> m_MessageList = new List<byte[]>();
 
         // simple dispatcher for queued messages.
         public void DispatchMessageQueue()
         {
-            // lock mutex, copy queue content and clear the queue.
-            m_MessageListMutex.WaitOne();
-            List<byte[]> messageListCopy = new List<byte[]>();
-            messageListCopy.AddRange(m_MessageList);
-            m_MessageList.Clear();
-            // release mutex to allow the websocket to add new messages
-            m_MessageListMutex.ReleaseMutex();
-
-            foreach (byte[] bytes in messageListCopy)
+            if (m_MessageList.Count == 0)
             {
-                OnMessage?.Invoke(bytes);
+                return;
+            }
+
+            List<byte[]> messageListCopy;
+
+            lock (IncomingMessageLock)
+            {
+                messageListCopy = new List<byte[]>(m_MessageList);
+                m_MessageList.Clear();
+            }
+
+            var len = messageListCopy.Count;
+            for (int i = 0; i < len; i++)
+            {
+                OnMessage?.Invoke(messageListCopy[i]);
             }
         }
 
         public async Task Receive()
         {
+            WebSocketCloseCode closeCode = WebSocketCloseCode.Abnormal;
             await new WaitForBackgroundThread();
 
             ArraySegment<byte> buffer = new ArraySegment<byte>(new byte[8192]);
@@ -513,9 +663,10 @@ namespace NativeWebSocket
 
                         if (result.MessageType == WebSocketMessageType.Text)
                         {
-                            m_MessageListMutex.WaitOne();
-                            m_MessageList.Add(ms.ToArray());
-                            m_MessageListMutex.ReleaseMutex();
+                            lock (IncomingMessageLock)
+                            {
+                              m_MessageList.Add(ms.ToArray());
+                            }
 
                             //using (var reader = new StreamReader(ms, Encoding.UTF8))
                             //{
@@ -525,14 +676,15 @@ namespace NativeWebSocket
                         }
                         else if (result.MessageType == WebSocketMessageType.Binary)
                         {
-                            m_MessageListMutex.WaitOne();
-                            m_MessageList.Add(ms.ToArray());
-                            m_MessageListMutex.ReleaseMutex();
+                            lock (IncomingMessageLock)
+                            {
+                              m_MessageList.Add(ms.ToArray());
+                            }
                         }
                         else if (result.MessageType == WebSocketMessageType.Close)
                         {
                             await Close();
-                            OnClose?.Invoke(WebSocketHelpers.ParseCloseCodeEnum((int)result.CloseStatus));
+                            closeCode = WebSocketHelpers.ParseCloseCodeEnum((int)result.CloseStatus);
                             break;
                         }
                     }
@@ -541,7 +693,11 @@ namespace NativeWebSocket
             catch (Exception)
             {
                 m_TokenSource.Cancel();
-                OnClose?.Invoke(WebSocketCloseCode.Abnormal);
+            }
+            finally
+            {
+                await new WaitForUpdate();
+                OnClose?.Invoke(closeCode);
             }
         }
 
@@ -578,6 +734,9 @@ namespace NativeWebSocket
     /* WebSocket JSLIB callback setters and other functions */
     [DllImport ("__Internal")]
     public static extern int WebSocketAllocate (string url);
+
+    [DllImport ("__Internal")]
+    public static extern int WebSocketAddSubProtocol (int instanceId, string subprotocol);
 
     [DllImport ("__Internal")]
     public static extern void WebSocketFree (int instanceId);

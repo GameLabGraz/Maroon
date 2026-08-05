@@ -11,8 +11,8 @@ using System.IO;
 using System.Text;
 using Object = UnityEngine.Object;
 #if UNITY_2018_3_OR_NEWER
-using PrefabStage = UnityEditor.Experimental.SceneManagement.PrefabStage;
-using PrefabStageUtility = UnityEditor.Experimental.SceneManagement.PrefabStageUtility;
+using PrefabStage = UnityEditor.SceneManagement.PrefabStage;
+using PrefabStageUtility = UnityEditor.SceneManagement.PrefabStageUtility;
 #endif
 
 namespace AssetUsageDetectorNamespace
@@ -83,7 +83,7 @@ namespace AssetUsageDetectorNamespace
 		private bool isInPlayMode;
 
 #if UNITY_2018_3_OR_NEWER
-		private PrefabStage openPrefabStage;
+		private UnityEditor.SceneManagement.PrefabStage openPrefabStage;
 		private GameObject openPrefabStagePrefabAsset;
 #if UNITY_2020_1_OR_NEWER
 		private GameObject openPrefabStageContextObject;
@@ -123,7 +123,7 @@ namespace AssetUsageDetectorNamespace
 #if UNITY_2018_3_OR_NEWER
 			openPrefabStagePrefabAsset = null;
 			string openPrefabStageAssetPath = null;
-			openPrefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+			openPrefabStage = UnityEditor.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage();
 			if( openPrefabStage != null )
 			{
 				if( !openPrefabStage.stageHandle.IsValid() )
@@ -281,7 +281,7 @@ namespace AssetUsageDetectorNamespace
 					if( ( searchParameters.searchInScenes & SceneSearchMode.OpenScenes ) == SceneSearchMode.OpenScenes )
 					{
 						// Get all open (and loaded) scenes
-						for( int i = 0; i < EditorSceneManager.loadedSceneCount; i++ )
+						for( int i = 0; i < SceneManager.loadedSceneCount; i++ )
 						{
 							Scene scene = EditorSceneManager.GetSceneAt( i );
 							if( scene.IsValid() )
@@ -306,7 +306,7 @@ namespace AssetUsageDetectorNamespace
 				if( isInPlayMode )
 				{
 					HashSet<string> openScenes = new HashSet<string>();
-					for( int i = 0; i < EditorSceneManager.loadedSceneCount; i++ )
+					for( int i = 0; i < SceneManager.loadedSceneCount; i++ )
 					{
 						Scene scene = EditorSceneManager.GetSceneAt( i );
 						if( scene.IsValid() )
@@ -588,7 +588,7 @@ namespace AssetUsageDetectorNamespace
 						try
 						{
 							// Try to access this method: https://github.com/Unity-Technologies/UnityCsReference/blob/73925b1711847c067e607ec8371f8e9ffe7ab65d/Editor/Mono/SceneManagement/StageManager/PrefabStage/PrefabStageUtility.cs#L61-L65
-							MethodInfo prefabStageOpenerWithContext = typeof( PrefabStageUtility ).GetMethod( "OpenPrefab", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static, null, new Type[2] { typeof( string ), typeof( GameObject ) }, null );
+							MethodInfo prefabStageOpenerWithContext = typeof( UnityEditor.SceneManagement.PrefabStageUtility ).GetMethod( "OpenPrefab", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static, null, new Type[2] { typeof( string ), typeof( GameObject ) }, null );
 							if( prefabStageOpenerWithContext != null )
 							{
 								prefabStageOpenerWithContext.Invoke( null, new object[2] { openPrefabStageAssetPath, openPrefabStageContextObject } );

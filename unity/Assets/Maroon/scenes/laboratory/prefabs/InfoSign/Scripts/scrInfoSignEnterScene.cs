@@ -22,6 +22,13 @@ public class scrInfoSignEnterScene : MonoBehaviour
     public void EnterScene()
     {
         Debug.Log("Enter Scene : " + this.targetScene);
+
+        if (!(PlatformManager.Instance.CurrentPlatformIsVR))
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+
         Maroon.GlobalEntities.SceneManager.Instance.LoadSceneRequest(this.targetScene);
     }
 

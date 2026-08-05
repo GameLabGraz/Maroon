@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Maroon.Physics.Motion;
+using System.Linq;
 
 namespace Maroon.Physics.CathodeRayTube
 {
@@ -38,50 +40,62 @@ namespace Maroon.Physics.CathodeRayTube
 
         private IEnumerator UpdateElectronLineCoRoutine()
         {
-            _lineRenderer.positionCount = crtController.lineResolution;
+            _lineRenderer.positionCount = 0;
             _lineRenderer.enabled = true;
             spiral.GetComponent<MeshRenderer>().material = hotMetal;
             electronCloud.SetActive(true);
-            var currentVel = new Vector3();
-            List<Vector3> points = new List<Vector3>();
-            List<Vector3> lineRendererPoints = new List<Vector3>();
-            List<Vector3> velocities = new List<Vector3>();
-            List<Vector3> forces = new List<Vector3>();
 
-            points.Add(crtController.GetCRTStart());
-            lineRendererPoints.Add(anode.transform.position);
-            velocities.Add(Vector3.zero);
-            forces.Add(crtController.ApplyForce(points[0]));
-            var oldPoint = points[0];
-            var newPoint = points[0];
+            var solver = new Solver();
+            solver.t0 = 0;
+            solver.dt = _timeStep;
 
-            for (int i = 1; i < crtController.lineResolution; i++)
+            var electronBeam = new MotionEntity();
+            electronBeam.SetInitialState(Vector3.zero, Vector3.zero);
+            electronBeam.AddExpression("fx", "-q * ex * h(electronGunLength - x)");
+            electronBeam.AddExpression("fy", "if(verticalPlateEnabled, -q * ey * h(verticalPlateLength - abs(verticalPlatePosition - x)) * h(verticalPlateWidth - y), 0)");
+            electronBeam.AddExpression("fz", "if(horizontalPlateEnabled, -q * ez * h(horizontalPlateLength - abs(horizontalPlatePosition - x)) * h(horizontalPlateWidth - z), 0)");
+            electronBeam.AddExpression("h(x)", "if(x == 0, 0.5, (1 + x/abs(x))/2)");
+
+            electronBeam.AddParameter("m", CRTController.ElectronMass);
+            electronBeam.AddParameter("q", CRTController.ElectronCharge);
+            electronBeam.AddParameter("ex", crtController.EX);
+            electronBeam.AddParameter("ey", crtController.EY);
+            electronBeam.AddParameter("ez", crtController.EZ);
+            electronBeam.AddParameter("electronGunLength", crtController.ElectronGunLength);
+            electronBeam.AddParameter("verticalPlatePosition", crtController.VerticalPlatePosition);
+            electronBeam.AddParameter("verticalPlateLength", crtController.VerticalPlateLength);
+            electronBeam.AddParameter("verticalPlateWidth", crtController.VerticalPlateWidth);
+            electronBeam.AddParameter("horizontalPlatePosition", crtController.HorizontalPlatePosition);
+            electronBeam.AddParameter("horizontalPlateLength", crtController.HorizontalPlateLength);
+            electronBeam.AddParameter("horizontalPlateWidth", crtController.HorizontalPlateWidth);
+            electronBeam.AddParameter("horizontalPlateEnabled", crtController.HorizontalPlateEnabled);
+            electronBeam.AddParameter("verticalPlateEnabled", crtController.VerticalPlateEnabled);
+
+            solver.AddEntity(electronBeam);
+
+            RaycastHit hitInfo = new();
+            for (int i = 1; i <= crtController.lineResolution; i++)
             {
-                oldPoint = points[i - 1];
+                solver.Step();
 
-                currentVel += crtController.RK4(oldPoint);
-
-                newPoint = oldPoint;
-                newPoint += currentVel * _timeStep;
-
-                points.Add(UnityEngine.Physics.Linecast(newPoint, oldPoint) ? oldPoint : newPoint);
-
-                if (points[i].x > anode.transform.position.x)
-                    lineRendererPoints.Add(points[i]);
-                else
-                    lineRendererPoints.Add(anode.transform.position);
-
-                velocities.Add(currentVel);
-                forces.Add(crtController.ApplyForce(points[i]));
+                if (UnityEngine.Physics.Linecast(ToWorldSpace(electronBeam.Position[i - 1]), ToWorldSpace(electronBeam.Position[i]), out hitInfo))
+                {
+                    break;
+                }
             }
 
-            UnityEngine.Physics.Linecast(newPoint, oldPoint, out var hitInfo);
             if (hitInfo.collider != null && hitInfo.collider.name.Equals("Screen"))
                 screen.GetComponent<ScreenSetup>().ActivatePixel(hitInfo.point);
-            
-            _lineRenderer.SetPositions(lineRendererPoints.ToArray());
-            crtController.UpdateData(points, velocities, forces);
+
+            _lineRenderer.positionCount = solver.steps;
+            _lineRenderer.SetPositions(electronBeam.Position.ConvertAll(x => ToWorldSpace(x)).ToArray());
+            crtController.UpdateData(electronBeam.Position, electronBeam.Velocity, electronBeam.Force);
             yield return null;
+        }
+
+        private Vector3 ToWorldSpace(Vector3 input)
+        {
+            return input + crtController.WorldSpaceOrigin;
         }
 
         public void ResetObject()

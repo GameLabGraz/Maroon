@@ -16,14 +16,21 @@ public class ModeFirstPersonInputHandler : MonoBehaviour
     ModeFirstPerson m_PlayerCharacterController;
     bool m_FireInputWasHeld;
 
+    /// <summary>
+    /// The last time the jump input was pressed
+    /// </summary>
+    private float lastTimeJumpPressed = float.MinValue;
+    /// <summary>
+    /// The time for how early you can press Jump in the air and still jump when touching the ground. In seconds
+    /// </summary>
+    private float jumpInputBufferingTime = 0.15f;
+
     private void Start()
     {
         m_PlayerCharacterController = GetComponent<ModeFirstPerson>();
 
-        /*
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        */
     }
 
     private void LateUpdate()
@@ -31,9 +38,21 @@ public class ModeFirstPersonInputHandler : MonoBehaviour
         m_FireInputWasHeld = GetFireInputHeld();
     }
 
+    private void Update()
+    {
+        if (!CanProcessInput())
+        {
+            return;
+        }
+
+        if (Input.GetButtonDown("Jump"))
+        {
+            lastTimeJumpPressed = Time.time;
+        }
+    }
+
     public bool CanProcessInput()
     {
-        return true; // TODO
         return Cursor.lockState == CursorLockMode.Locked;
     }
 
@@ -66,7 +85,7 @@ public class ModeFirstPersonInputHandler : MonoBehaviour
     {
         if (CanProcessInput())
         {
-            return Input.GetButtonDown("Jump");
+            return (lastTimeJumpPressed + jumpInputBufferingTime) > Time.time;
         }
 
         return false;

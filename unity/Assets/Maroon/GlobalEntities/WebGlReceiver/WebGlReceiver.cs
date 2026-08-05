@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace Maroon.GlobalEntities
@@ -16,11 +17,14 @@ namespace Maroon.GlobalEntities
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Fields
         private static WebGlReceiver _instance;
-
+        [NonSerialized]
         public WebGlDataEvent OnIncomingData = new WebGlDataEvent();
+        [NonSerialized]
+        public UnityEvent OnPauseRequest = new UnityEvent();
 
         // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // Properties, Getters and Setters
+        public string MostRecentData { get; private set; }
 
         // -------------------------------------------------------------------------------------------------------------
         // Singleton
@@ -54,6 +58,7 @@ namespace Maroon.GlobalEntities
             }
 
             // Keep alive
+            this.transform.parent = null;
             DontDestroyOnLoad(gameObject);
         }
 
@@ -67,7 +72,20 @@ namespace Maroon.GlobalEntities
         public void GetDataFromJavaScript(string data)
         {
             Debug.Log("Received Data: " + data);
+            MostRecentData = data;
             OnIncomingData.Invoke(data);
+        }
+
+        
+        /// <summary>
+        /// Called from Javascript code when Escape is pressed.
+        /// Useful because Input.GetKeyDown(KeyCode.Escape) might not always be caught,
+        /// because browser unlocks mouse cursor when pressing Escape while cursor is locked
+        /// </summary>
+        public void PauseRequest()
+        {
+            Debug.Log("Unity received a PauseRequest from Javascript");
+            OnPauseRequest?.Invoke();
         }
     }
 }
