@@ -12,7 +12,7 @@ namespace Maroon.GlobalEntities
         // Fields
         private static GameManager _instance = null;
 
-        private string _version;
+        public string version;
 
         private Maroon.SceneCategory _lastCategory;
 
@@ -63,13 +63,14 @@ namespace Maroon.GlobalEntities
             }
 
             // Keep alive
+            this.transform.parent = null;
             DontDestroyOnLoad(this.gameObject);
 
             // Version
             #if UNITY_EDITOR
-                _version = DateTime.UtcNow.Date.ToString("yyyyMMdd");
+                version = DateTime.UtcNow.Date.ToString("yyyyMMdd");
             #else
-                _version = Application.version;
+                version = Application.version;
             #endif
         }
 
@@ -117,47 +118,6 @@ namespace Maroon.GlobalEntities
             // one GameManager at all times, not copying stuff from a temporary game manager to another one and then 
             // silently destroying the duplicate game manager
             
-        }
-
-        // #############################################################################################################
-        // MOVE TO: Main Menu
-
-        public void OnGUI()
-        {
-            // show build version on lower right corner
-            GUI.Label(new Rect(10, Screen.height - 20f, 300f, 200f), $"build {_version}", new GUIStyle
-            {
-                fontSize = 14, fontStyle = FontStyle.Bold, normal = { textColor = Color.white }
-            });
-        }
-
-        // #############################################################################################################
-        // MOVE TO: NetworkManager or PlayerManager
-        public void RegisterNetworkPlayer(GameObject newPlayer)
-        {
-            _offlinePlayer = _player;
-            _player.SetActive(false);
-            _player = newPlayer;
-        }
-        
-        public void UnregisterNetworkPlayer()
-        {
-            if (_offlinePlayer == null)
-            {
-                _player = null;
-                return;
-            }
-
-            if (_player != null)
-            {
-                _playerPosition = _player.transform.position;
-                _playerRotation = _player.transform.rotation;
-            }
-            _offlinePlayer.SetActive(true);
-            _offlinePlayer.transform.position = _playerPosition;
-            //cannot set _offlinePlayer.transform.rotation = _playerRotation; because overruled by First Person Controller
-            // TODO: _offlinePlayer.GetComponent<ModeFirstPerson>().SetPlayerRotation(_playerRotation);
-            _player = _offlinePlayer;
         }
 
         // #################################################################################################################

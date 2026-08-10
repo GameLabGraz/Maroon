@@ -1,9 +1,21 @@
 using System.Collections;
 using System.Text.RegularExpressions;
 using UnityEditor;
+using static Tests.Utilities.Constants;
 
 namespace Tests.EditModeTests.ContentValidation
 {
+    /// <summary>
+    /// Provides all scenes in Build Settings of type PC
+    /// </summary>
+    public class PcScenesProvider : ScenesProvider { protected override string sceneType => TypePC; }
+
+    /// <summary>
+    /// Provides all scenes in Build Settings of type PC
+    /// </summary>
+    public class VrScenesProvider : ScenesProvider { protected override string sceneType => TypeVR; }
+
+
     /// <summary>
     /// Provides scene names and paths from build settings to test fixtures using the <c>TestFixtureSource</c> attribute
     /// </summary>

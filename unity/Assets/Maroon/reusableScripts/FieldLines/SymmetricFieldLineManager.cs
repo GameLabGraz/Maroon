@@ -53,6 +53,8 @@ public class SymmetricFieldLineManager : FieldLineManager
     {
         symmetryEnabled = symmetryCnt != 1;
         symmetryCount = symmetryCnt;
+
+        DrawFieldLines();
     }
 
     public int GetSymmetryCount()

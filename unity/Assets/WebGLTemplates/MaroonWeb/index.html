@@ -34,6 +34,7 @@
               row_progress.style.display = "none";
               row_game.style.display = "flex";
               enableFitGame();
+              parseUrlFragment();
           }
       }
 
@@ -76,6 +77,56 @@
         fitGame();
         window.addEventListener('resize', fitGame);
       }
+	  
+	  function parseUrlFragment()
+	  {
+		// Access the URL fragment (after the #)
+		const fragment = window.location.hash.substr(1);  // Remove the '#' symbol
+		const fragmentParams = new URLSearchParams(fragment);
+		const config = fragmentParams.get('config');
+		
+		if (!config)
+		{
+			console.log("URL Fragment Config is empty.");
+		}
+		else
+		{
+			console.log("URL Fragment Config: ", config);
+			sendConfig(config);
+		}
+	  }
+	  
+	  function sendConfig(config) {
+		try {
+			// Send configuration to Maroon.
+			sendDataToUnity(config);
+		} catch (e) {
+			alert('Check the syntax of the input. ' + e);
+		}
+	  }
+	
+	  async function sendDataToUnity(data){
+		console.log("Send Data to Unity");
+		
+		if (!unityInstance)
+		{
+			console.log("UnityInstance is null, waiting...");
+		}
+		await waitForNonNullUnityInstance();
+		
+		unityInstance.SendMessage("WebGL Receiver", "GetDataFromJavaScript", data);
+	  }
+	
+	  async function waitForNonNullUnityInstance() {
+		return new Promise(resolve => {
+		  const checkInterval = setInterval(() => {
+			if (unityInstance !== null) {
+			  clearInterval(checkInterval);
+			  resolve(unityInstance); // Resolves once unityInstance is no longer null
+			}
+		  }, 100); // Check every 100ms
+		});
+	  }
 
     </script>
 
@@ -250,6 +301,32 @@
           }
       );
 
+    </script>
+    <script>
+		let pointerWasLocked = false;
+		// Listen to pointerlockchange, because then we should pause Maroon (browser does not forward Escape press to Maroon)
+		document.addEventListener('pointerlockchange', function() {
+			if (document.pointerLockElement === null && pointerWasLocked) {
+				try{
+					sendPauseRequestToUnity();
+				}
+				catch (e) {
+					console.log('Could not send pause request to Unity: ' + e);
+				}
+			}
+			
+			pointerWasLocked = document.pointerLockElement !== null;
+		});
+		
+		async function sendPauseRequestToUnity(){
+			if (!unityInstance)
+			{
+				console.log("UnityInstance is null, waiting...");
+			}
+			await waitForNonNullUnityInstance();
+			
+			unityInstance.SendMessage("WebGL Receiver", "PauseRequest");
+		}
     </script>
   </body>
 </html>

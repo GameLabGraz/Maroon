@@ -33,8 +33,7 @@ namespace Tests.PlayModeTests.PcMenuTests.LanguageMenuTests
 
         private static TestCaseData[] _mainMenuButtonKeysSource = new [] {
             new TestCaseData("Menu Lab").Returns(null),
-            new TestCaseData("Menu Audio").Returns(null),
-            new TestCaseData("Menu Language").Returns(null),
+            new TestCaseData("Menu Settings").Returns(null),
             new TestCaseData("Menu Credits").Returns(null),
             new TestCaseData("Menu Exit").Returns(null)
         };

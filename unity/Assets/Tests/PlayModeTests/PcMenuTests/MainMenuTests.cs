@@ -28,6 +28,7 @@ namespace Tests.PlayModeTests.PcMenuTests
         public IEnumerator Setup()
         {
             yield return LoadSceneAndCheckItsLoadedCorrectly(MainMenuScenePath);
+            LanguageManager.Instance.CurrentLanguage = SystemLanguage.English;
         }
         
         [TearDown]
@@ -40,10 +41,9 @@ namespace Tests.PlayModeTests.PcMenuTests
         // Auto-generated combinations would require access of the necessary data from a static context outside of the test fixture
         private static readonly ButtonLabelMatchingMenuColumnSource[] TopLevelMenuPaths =
         {
-            new ButtonLabelMatchingMenuColumnSource(EnterLabLabel, "preMenuColumnLaboratorySelection.prefab"),
-            new ButtonLabelMatchingMenuColumnSource("Menu Audio", "preMenuColumnAudio.prefab"),
-            new ButtonLabelMatchingMenuColumnSource("Menu Language", "preMenuColumnLanguage.prefab"),
-            new ButtonLabelMatchingMenuColumnSource("Menu Credits", "preMenuColumnCredits.prefab")
+            new ButtonLabelMatchingMenuColumnSource(EnterLabLabel, "preMenuColumnLaboratorySelection"),
+            new ButtonLabelMatchingMenuColumnSource("Menu Settings", "preMenuColumnSettings"),
+            new ButtonLabelMatchingMenuColumnSource("Menu Credits", "preMenuColumnCredits")
         };
         
         [UnityTest, Description("Clicking on the top-level Main Menu entries must open the matching SubMenu")]
@@ -85,6 +85,7 @@ namespace Tests.PlayModeTests.PcMenuTests
         };
         
         [UnityTest, Description("Clicking through 'Enter Lab -> Category -> Experiment' must load the associated scene")]
+        [Timeout(1800000)]
         public IEnumerator WhenClickLabCategoryExperimentThenLoadScene([ValueSource(nameof(ExperimentMenuPaths))] LabMenuPathSource source)
         {
             // Get correct buttonLabel from LanguageManager
@@ -167,7 +168,7 @@ namespace Tests.PlayModeTests.PcMenuTests
             public ButtonLabelMatchingMenuColumnSource(string languageManagerButtonLabel, string expectedMenuColumn)
             {
                 LanguageManagerButtonLabel = languageManagerButtonLabel;
-                ExpectedMenuColumn = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabsColumnsPath + expectedMenuColumn).name + "(Clone)";
+                ExpectedMenuColumn = expectedMenuColumn + "(Clone)";
             }
 
             public string LanguageManagerButtonLabel { get; }

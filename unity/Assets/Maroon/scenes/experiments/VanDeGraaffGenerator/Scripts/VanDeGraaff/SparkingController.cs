@@ -1,4 +1,5 @@
-﻿using DigitalRuby.ThunderAndLightning;
+﻿using DigitalRuby.LightningBolt;
+using System.Collections;
 using UnityEngine;
 
 namespace Maroon.Physics.Electromagnetism.VanDeGraaff
@@ -50,24 +51,35 @@ namespace Maroon.Physics.Electromagnetism.VanDeGraaff
 
             while (count-- > 0)
             {
-                _lightningBolt.CreateLightningBolt(new LightningBoltParameters()
-                {
-                    Start = sparkingStartPoint.position,
-                    End = sparkingEndPoint.position,
-                    Generations = 6,
-                    LifeTime = count == 1 ? singleDuration : singleDuration * ((float)random.NextDouble() * 0.4f) + 0.8f,
-                    Delay = delay,
-                    ChaosFactor = 0.2f,
-                    TrunkWidth = 0.05f,
-                    GlowIntensity = 0.1793653f,
-                    GlowWidthMultiplier = 4f,
-                    Forkedness = 0.5f,
-                    Random = random,
-                    FadePercent = 0.15f, // set to 0 to disable fade in / out
-                    GrowthMultiplier = 0f
-                });
+                _lightningBolt.Duration = count == 1 ? singleDuration : singleDuration * ((float)random.NextDouble() * 0.4f) + 0.8f;
+                _lightningBolt.Trigger();
+                float fadeFactor = 0.3f;
+                StartCoroutine(FadeOutLightningBolt(_lightningBolt.Duration * (1f - fadeFactor), _lightningBolt.Duration * fadeFactor));
+
                 delay += (singleDuration * (((float)random.NextDouble() * 0.8f) + 0.4f));
             }
+        }
+
+        private IEnumerator FadeOutLightningBolt(float initialDelay, float fadeDuration)
+        {
+            LineRenderer lineRenderer = _lightningBolt.GetComponent<LineRenderer>();
+            if (lineRenderer == null)
+                Debug.LogWarning("LineRenderer is null. Aborting.");
+            lineRenderer.startColor = Color.white;
+            lineRenderer.endColor = Color.white;
+
+            yield return new WaitForSeconds(initialDelay);
+
+            float startOfEndFadeTime = Time.time;
+            while (Time.time < startOfEndFadeTime + fadeDuration)
+            {
+                float alpha = 1f - ((Time.time - startOfEndFadeTime) / fadeDuration);
+                lineRenderer.startColor = new Color(1f, 1f, 1f, alpha);
+                lineRenderer.endColor = new Color(1f, 1f, 1f, alpha);
+                yield return null;
+            }
+            lineRenderer.startColor = new Color(1f, 1f, 1f, 0f);
+            lineRenderer.endColor = new Color(1f, 1f, 1f, 0f);
         }
 
         protected override void HandleUpdate()

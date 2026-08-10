@@ -204,10 +204,10 @@ namespace Tests.PlayModeTests.ProofOfConcept
             // Get VectorFieldSlider start value
             var vectorFieldSlider = GameObject.Find("VectorFieldResolutionSliderGroup").GetComponentInChildren<Slider>();
             var vectorFieldSliderStartValue = vectorFieldSlider.value;
-            
-            // Get RingResistanceSlider start value
-            var ringResistanceSlider = GameObject.Find("RingResistanceSliderGroup").GetComponentInChildren<Slider>();
-            var ringResistanceSliderStartValue = ringResistanceSlider.value;
+
+            // Get CoilConductivitySlider start value
+            var coilConductivitySlider = GameObject.Find("CoilConductivitySliderGroup").GetComponentInChildren<Slider>();
+            var coilConductivitySliderStartValue = coilConductivitySlider.value;
             
             // Get MagneticMomentSlider start value
             var magneticMomentSlider = GameObject.Find("MagneticMomentSliderGroup").GetComponentInChildren<Slider>();
@@ -223,7 +223,7 @@ namespace Tests.PlayModeTests.ProofOfConcept
             fieldLinesSlider.value = 40;
             vectorFieldToggle.onValueChanged.Invoke(false);
             vectorFieldSlider.value = 10;
-            ringResistanceSlider.value = 5f;
+            coilConductivitySlider.value = 5f;
             magneticMomentSlider.value = 4f;
             yield return null;
             
@@ -237,7 +237,7 @@ namespace Tests.PlayModeTests.ProofOfConcept
             Assert.AreEqual(fieldLinesSliderStartValue, fieldLinesSlider.value, "FieldLinesSlider did not reset correctly");
             Assert.AreEqual(vectorFieldToggleStartValue, vectorFieldToggle.isOn, "VectorFieldToggle did not reset correctly");
             Assert.AreEqual(vectorFieldSliderStartValue, vectorFieldSlider.value, "VectorFieldSlider did not reset correctly");
-            Assert.AreEqual(ringResistanceSliderStartValue, ringResistanceSlider.value, "RingResistanceSlider did not reset correctly");
+            Assert.AreEqual(coilConductivitySliderStartValue, coilConductivitySlider.value, "CoilConductivitySlider did not reset correctly");
             Assert.AreEqual(magneticMomentSliderStartValue, magneticMomentSlider.value, "MagneticMomentSlider did not reset correctly");
         }
     }

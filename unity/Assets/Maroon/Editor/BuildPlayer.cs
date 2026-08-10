@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
+using UnityEngine.XR.Management;
 
 namespace Maroon.Build
 {
@@ -48,58 +49,65 @@ namespace Maroon.Build
         // #############################################################################################################
         // Editor Build Methods
 
-        [MenuItem("Build/Conventional Maroon/PC")]
+        [MenuItem("Maroon Build/Conventional Maroon/PC")]
         public static void BuildLaboratoryPC()
         {
             BuildConventionalMaroon(MaroonBuildTarget.PC);
         }
 
-        [MenuItem("Build/Conventional Maroon/PC VR")]
+        [MenuItem("Maroon Build/Conventional Maroon/PC VR")]
         public static void BuildLaboratoryVR()
         {
             BuildConventionalMaroon(MaroonBuildTarget.VR);
         }
 
-        [MenuItem("Build/Conventional Maroon/Mac")]
+        [MenuItem("Maroon Build/Conventional Maroon/Mac")]
         public static void BuildLaboratoryMAC()
         {
             BuildConventionalMaroon(MaroonBuildTarget.MAC);
         }
 
-        [MenuItem("Build/Conventional Maroon/WebGL")]
+        [MenuItem("Maroon Build/Conventional Maroon/WebGL")]
         public static void BuildLaboratoryWebGL()
         {
             BuildConventionalMaroon(MaroonBuildTarget.WebGL);
         }
 
-        [MenuItem("Build/Standalone Experiments/PC")]
+        [MenuItem("Maroon Build/Standalone Experiments/PC")]
         public static void BuildExperimentsPC()
         {
             BuildStandaloneExperiments(MaroonBuildTarget.PC);
         }
 
-        [MenuItem("Build/Standalone Experiments/PC VR")]
+        [MenuItem("Maroon Build/Standalone Experiments/PC VR")]
         public static void BuildExperimentsVR()
         {
             BuildStandaloneExperiments(MaroonBuildTarget.VR);
         }
 
-        [MenuItem("Build/Standalone Experiments/Mac")]
+        [MenuItem("Maroon Build/Standalone Experiments/Mac")]
         public static void BuildExperimentsMAC()
         {
             BuildStandaloneExperiments(MaroonBuildTarget.MAC);
         }
 
-        [MenuItem("Build/Standalone Experiments/WebGL")]
+        [MenuItem("Maroon Build/Standalone Experiments/WebGL")]
         public static void BuildExperimentsWebGL()
         {
             BuildStandaloneExperiments(MaroonBuildTarget.WebGL);
         }
 
-        [MenuItem("Build/All Platforms, Conventional and Standalone")]
+        [MenuItem("Maroon Build/All Platforms, Conventional and Standalone")]
         public static void BuildAll()
         {
-            var buildPath = EditorUtility.SaveFolderPanel("Choose Build Location", string.Empty, "Build");
+            bool confirmed = EditorUtility.DisplayDialog("Build for ALL?", 
+                "Are you sure you want to build everything?\n" +
+                "This includes a build for the Laboratory version as well as ALL standalone versions, for ALL platforms.", 
+                "Yes, build everything", "Cancel");
+            if (!confirmed)
+                return;
+
+            var buildPath = EditorUtility.SaveFolderPanel("Choose Build Location (All Platforms, Conventional and Standalone)", string.Empty, "Build");
 
             if (buildPath.Length == 0)
             {
@@ -125,7 +133,7 @@ namespace Maroon.Build
                     return;
                 }
 
-                buildPath = EditorUtility.SaveFolderPanel("Choose Build Location", "Build", "Laboratory");
+                buildPath = EditorUtility.SaveFolderPanel("Choose Build Location (Conventional Maroon)", "Build", "Laboratory");
 
                 if(buildPath.Length == 0)
                 {
@@ -144,6 +152,9 @@ namespace Maroon.Build
 
             // Set PlayerSettings for Build
             SetPlayerSettings(BuildPlayerSetOptions);
+
+            // Enable "Initialize XR on Startup" only for VR
+            XRGeneralSettings.Instance.InitManagerOnStart = buildTarget == MaroonBuildTarget.VR;
 
             var unityBuildTarget = MaroonBuildTarget2UnityBuildTarget(buildTarget);
             var unityBuildTargetGroup = GetBuildTargetGroup(buildTarget);
@@ -175,8 +186,14 @@ namespace Maroon.Build
                 {
                     return;
                 }
+                bool confirmed = EditorUtility.DisplayDialog("Build Standalone Experiments?",
+                    "Are you sure you build all Standalone Experiments?\n" +
+                    "This will create a separate build for EACH experiment. If you want to create one build that includes all experiments, choose \"Conventional Maroon\"",
+                    "Yes, build standalone experiments", "Cancel");
+                if (!confirmed)
+                    return;
 
-                buildPath = EditorUtility.SaveFolderPanel("Choose Build Location", "Build", "Experiments");
+                buildPath = EditorUtility.SaveFolderPanel("Choose Build Location (Standalone Experiments)", "Build", "Experiments");
 
                 if (buildPath.Length == 0)
                 {
@@ -236,26 +253,20 @@ namespace Maroon.Build
             SetPlayerSettings(defaultPlayerSettings);
         }
         
-        public static void JenkinsBuild()
+
+        // called by github actions workflow
+        public static void ActionsBuild()
         {
             var args = Environment.GetCommandLineArgs();
+            
+            // usage: -maroonBuildPath /path/to/build/dir -maroonBuildTarget (WebGL/PC/VR)
+            // path is relative to project dir (./unity)
 
-            var executeMethodIndex = Array.IndexOf(args, "-executeMethod");
-            if (executeMethodIndex + 2 >= args.Length)
-            {
-                Log("[JenkinsBuild] Incorrect Parameters for -executeMethod Format: -executeMethod <output dir>");
-                return;
-            }
+            // extract path and build target from commandline arguments
+            var maroonBuildPath = args[Array.IndexOf(args, "-maroonBuildPath") + 1];
+            var maroonBuildTarget = (MaroonBuildTarget)Enum.Parse(typeof(MaroonBuildTarget), args[Array.IndexOf(args, "-maroonBuildTarget") + 1]);
 
-            //  args[executeMethodIndex + 1] = JenkinsBuild.Build
-            var buildPath = args[executeMethodIndex + 2];
-
-            // run build for each build target
-            foreach(var buildTarget in (MaroonBuildTarget[])Enum.GetValues(typeof(MaroonBuildTarget)))
-            {
-                BuildConventionalMaroon(buildTarget, $"{buildPath}/Laboratory");
-                BuildStandaloneExperiments(buildTarget, $"{buildPath}/Experiments");
-            }
+            BuildConventionalMaroon(maroonBuildTarget, maroonBuildPath);
         }
 
         // #############################################################################################################
@@ -333,7 +344,7 @@ namespace Maroon.Build
                     return BuildTarget.StandaloneOSX;
                 case MaroonBuildTarget.PC:
                 case MaroonBuildTarget.VR:
-                    return BuildTarget.StandaloneWindows;
+                    return BuildTarget.StandaloneWindows64;
                 default:
                     return BuildTarget.NoTarget;
             }
@@ -360,6 +371,7 @@ namespace Maroon.Build
             {
                 case BuildResult.Succeeded:
                     Log($"Build succeeded: {summary.totalSize} bytes");
+                    Log($"Saved build to: {summary.outputPath}");
                     break;
                 case BuildResult.Failed:
                     Log("Build failed!");

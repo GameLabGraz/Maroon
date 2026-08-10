@@ -1,4 +1,4 @@
-﻿using Maroon.GlobalEntities;
+﻿using Maroon.Extensions;
 using UnityEngine;
 
 namespace Maroon.Physics.Electromagnetism
@@ -13,7 +13,9 @@ namespace Maroon.Physics.Electromagnetism
 
         private EField _eField;
 
-        private const float CoulombConstant = 1f / (4 * Mathf.PI * 8.8542e-12f);
+        private const float CoulombConstant = 1f / (4 * Mathf.PI * PhysicalConstants.e0);
+
+        public float StrengthMultiplicationFactor = 1.0f;
 
         public float Strength
         {
@@ -38,7 +40,7 @@ namespace Maroon.Physics.Electromagnetism
 
         public Vector3 getE(Vector3 position)
         {
-            var chargePosition = transform.position;
+            var chargePosition = gameObject.SystemPosition();
 
             var direction = position - chargePosition;
             var distance = Vector3.Distance(chargePosition, position);
@@ -55,7 +57,7 @@ namespace Maroon.Physics.Electromagnetism
         {
             if (Mathf.Abs(strength) < 0.0001f) return 0f;
 
-            var distance = CoordSystemHandler.Instance.CalculateDistanceBetween(transform.position, position);
+            var distance = Vector3.Distance(position, gameObject.SystemPosition());
             return CoulombConstant * strength / distance;
         }
 
@@ -73,7 +75,8 @@ namespace Maroon.Physics.Electromagnetism
         {
             if (!enableForces || !_eField) return;
 
-            var force = strength * forceFactor * _eField.get(transform.position, gameObject);
+            var force = strength * forceFactor * _eField.get(gameObject.SystemPosition(), gameObject);
+
             _rigidBody.AddForce(force);
         }
     }

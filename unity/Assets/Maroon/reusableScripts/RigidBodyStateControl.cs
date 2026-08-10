@@ -27,11 +27,14 @@ namespace Maroon.Physics
 
             _startState.Position = _rigidBody.position;
             _startState.Rotation = _rigidBody.rotation;
-            _startState.Velocity = _rigidBody.velocity;
-            _startState.AngularVelocity = _rigidBody.angularVelocity;
             _startState.IsKinematic = _rigidBody.isKinematic;
+            _startState.Velocity = _rigidBody.linearVelocity;
+            _startState.AngularVelocity = _rigidBody.angularVelocity;
 
             StoreRigidBodyState();
+            
+            if (SimulationController.Instance.SimulationRunning)
+                RestoreRigidBodyState();
         }
 
         public void StoreRigidBodyState()
@@ -41,9 +44,9 @@ namespace Maroon.Physics
         
             _currentState.Position = _rigidBody.position;
             _currentState.Rotation = _rigidBody.rotation;
-            _currentState.Velocity = _rigidBody.velocity;
-            _currentState.AngularVelocity = _rigidBody.angularVelocity;
             _currentState.IsKinematic = _rigidBody.isKinematic;
+            _currentState.Velocity = _rigidBody.linearVelocity;
+            _currentState.AngularVelocity = _rigidBody.angularVelocity;
 
             _rigidBody.isKinematic = true;
             IsStateStored = true;
@@ -53,9 +56,13 @@ namespace Maroon.Physics
         {
             _rigidBody.position = _currentState.Position;
             _rigidBody.rotation = _currentState.Rotation;
-            _rigidBody.velocity = _currentState.Velocity;
-            _rigidBody.angularVelocity = _currentState.AngularVelocity;
             _rigidBody.isKinematic = _currentState.IsKinematic;
+            if (!_rigidBody.isKinematic)
+            {
+                // Setting linear/angular velocity of a kinematic body is not supported.
+                _rigidBody.angularVelocity = _currentState.AngularVelocity;
+                _rigidBody.linearVelocity = _currentState.Velocity;
+            }
 
             IsStateStored = false;
         }
@@ -64,9 +71,9 @@ namespace Maroon.Physics
         {
             _rigidBody.position = _startState.Position;
             _rigidBody.rotation = _startState.Rotation;
-            _rigidBody.velocity = _startState.Velocity;
-            _rigidBody.angularVelocity = _startState.AngularVelocity;
             _rigidBody.isKinematic = _startState.IsKinematic;
+            _rigidBody.linearVelocity = _startState.Velocity;
+            _rigidBody.angularVelocity = _startState.AngularVelocity;
 
             IsStateStored = false;
         }
