@@ -14,10 +14,12 @@ namespace Maroon.ComputerScience.ConvexHull3D
             "<color=red>for each</color> remaining point p:",        //2
             "    visible = faces that p can see",                    //3
             "    <color=red>if</color> no visible faces: skip p",    //4
-            "    remove all visible faces",                          //5
-            "    horizon = boundary edges of the hole",              //6
+            "    horizon = boundary edges of the hole",              //5
+            "    remove all visible faces",                          //6
             "    <color=red>for each</color> edge in horizon:",      //7
             "        add new triangle(edge, p)",                     //8
+            "",                                                      //9
+            "<color=red>Hull complete</color>",                      //10
         };
 
         public void Run(ConvexHull3D ctx)
@@ -29,6 +31,7 @@ namespace Maroon.ComputerScience.ConvexHull3D
 
 
             int[] initial = HullUtils.FindInitialTetrahedron(pts);
+            if(initial == null) return;
 
             int i0 = initial[0];
             int i1 = initial[1];
@@ -88,7 +91,7 @@ namespace Maroon.ComputerScience.ConvexHull3D
                 Vector3 fc = visible[0].Center(pts);
                 ctx.UpdateSearchLine(pts[i], fc);
 
-                ctx.CaptureStep(5);
+                ctx.CaptureStep(3);
 
 
                 var horizon = HullUtils.FindHorizonEdges(faces, visible);
@@ -96,7 +99,7 @@ namespace Maroon.ComputerScience.ConvexHull3D
                 {
                     ctx.AddHighlightLine(pts[e.a], pts[e.b], ctx.HorizonEdgeColor);
                 }
-                ctx.CaptureStep(6);
+                ctx.CaptureStep(5);
 
 
                 foreach(var vf in visible)
@@ -107,6 +110,7 @@ namespace Maroon.ComputerScience.ConvexHull3D
                 ctx.ResetHullFaceColors();
 
 
+                ctx.CaptureStep(6);
 
                 ctx.CaptureStep(7);
 
@@ -138,7 +142,7 @@ namespace Maroon.ComputerScience.ConvexHull3D
             ctx.ClearHighlightLines();
             ctx.ResetHullFaceColors();
 
-            ctx.CaptureStep(9);
+            ctx.CaptureStep(10);
         }
     }
 }

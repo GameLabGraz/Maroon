@@ -21,6 +21,8 @@ namespace Maroon.ComputerScience.ConvexHull3D
             "    <color=red>for each</color> edge in horizon:",         //9
             "        add new triangle(edge, eye)",                      //10
             "    reassign points from removed faces",                   //11
+            "",                                                         //12
+            "<color=red>Hull complete</color>",                         //13
         };
 
         public void Run(ConvexHull3D ctx)
@@ -32,6 +34,7 @@ namespace Maroon.ComputerScience.ConvexHull3D
 
 
             int[] initial = HullUtils.FindInitialTetrahedron(pts);
+            if(initial == null) return;
 
             int i0 = initial[0]; 
             int i1 = initial[1]; 
@@ -197,7 +200,7 @@ namespace Maroon.ComputerScience.ConvexHull3D
                 }
             }
 
-            ctx.CaptureStep(12);
+            ctx.CaptureStep(13);
         }
 
         bool TryGetFaceWithPoints(List<HullUtils.Face> faces, out HullUtils.Face result)

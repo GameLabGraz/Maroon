@@ -27,6 +27,8 @@ namespace Maroon.ComputerScience.ConvexHull3D
             "        <color=red>if</color> p is more outward than best:", //14
             "            best = p",                                       //15
             "    <color=red>return</color> best",                         //16
+            "",                                                           //17
+            "<color=red>Hull complete</color>",                           //18
         };
 
         private struct UndirectedEdge
@@ -151,6 +153,7 @@ namespace Maroon.ComputerScience.ConvexHull3D
 
                 ctx.UpdateSearchLine(pts[e.a], pts[pivotResult]);
 
+                ctx.CaptureStep(9);
 
                 ctx.ClearHighlightLines();
                 var face = new List<int> { e.a, e.b, pivotResult };
@@ -183,7 +186,7 @@ namespace Maroon.ComputerScience.ConvexHull3D
             ctx.ClearHighlightLines();
             ctx.ResetHullFaceColors();
 
-            ctx.CaptureStep(17);
+            ctx.CaptureStep(18);
         }
 
         void RegisterFace(Dictionary<UndirectedEdge, int> edgeFaceCount, int a, int b, int c)
