@@ -67,4 +67,6 @@ public class PC_InputParser_Float_TMP : MonoBehaviour
             _textField.text = value.ToString(textFormat, CultureInfo.CurrentCulture);
         }
     }
+    
+    public TMP_InputField GetInputField() { return _textField; }
 }

@@ -1,0 +1,56 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+
+namespace Maroon.Experiments.CoulombsLawNew
+{
+    public class ChargedPlaneSelectionUILogic : MonoBehaviour
+    {
+        [SerializeField] private GUIVector3InputLogic positionDisplay;
+        [SerializeField] private GUIVector3InputLogic normalDisplay;
+        [SerializeField] private GUIFloatInputLogic chargeDensityInput;
+        [SerializeField] private GUIBoolInputLogic createFieldLinesToggle;
+        [SerializeField] private GUIBoolInputLogic uiIsConductiveToggle;
+        [SerializeField] private GUIButtonLogic deleteButton;
+
+        private ChargedPlane chargedPlane;
+
+        private void Start()
+        {
+            chargedPlane = SelectionSystem.Instance.GetSelectedObject().GetComponent<ChargedPlane>();
+            Debug.Assert(chargedPlane != null, "Charged object must be selected when this ui is created");
+
+            positionDisplay.TrackTransform(chargedPlane.transform);
+            positionDisplay.OnEndEdit.AddListener((Vector3 newPos) =>
+            {
+                chargedPlane.SetPlaneParameters(newPos, chargedPlane.GetNormal());
+            });
+            normalDisplay.SetValue(chargedPlane.GetNormal());
+            normalDisplay.OnEndEdit.AddListener((Vector3 newNormal) =>
+            {
+                if (newNormal.magnitude < 0.001)
+                {
+                    newNormal = Vector3.up;
+                }
+                chargedPlane.SetPlaneParameters(chargedPlane.transform.position, newNormal);
+            });
+
+            createFieldLinesToggle.SetValue(chargedPlane.generateFieldLines);
+            createFieldLinesToggle.OnValueChanged.AddListener((bool newValue) =>
+            {
+                chargedPlane.generateFieldLines = newValue;
+            });
+            uiIsConductiveToggle.SetValue(chargedPlane.isConductive);
+            uiIsConductiveToggle.OnValueChanged.AddListener((bool newValue) =>
+            {
+                chargedPlane.isConductive = newValue;
+            });
+
+            chargeDensityInput.SetMinMax(-ChargedPlane.MAX_CHARGE_DENSITY, ChargedPlane.MAX_CHARGE_DENSITY);
+            chargeDensityInput.SetValue(chargedPlane.GetChargeDensity());
+            chargeDensityInput.OnValueChanged.AddListener((float newDensity) => { chargedPlane.SetChargeDensity(newDensity); });
+            deleteButton.OnButtonClick.AddListener(() => { GameObject.Destroy(gameObject); });
+        }
+    }
+}
